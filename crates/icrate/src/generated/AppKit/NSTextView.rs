@@ -717,8 +717,8 @@ extern_methods!(
             &self,
             pasteString: &NSString,
             charRangeToReplace: NSRange,
-            beforeString: Option<&mut Option<Id<NSString, Shared>>>,
-            afterString: Option<&mut Option<Id<NSString, Shared>>>,
+            beforeString: *mut *mut NSString,
+            afterString: *mut *mut NSString,
         );
 
         #[method_id(@__retain_semantics Other smartInsertBeforeStringForString:replacingRange:)]

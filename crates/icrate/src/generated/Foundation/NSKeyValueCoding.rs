@@ -68,7 +68,7 @@ extern_methods!(
         #[method(validateValue:forKey:error:)]
         pub unsafe fn validateValue_forKey_error(
             &self,
-            ioValue: &mut Option<Id<Object, Shared>>,
+            ioValue: NonNull<*mut Object>,
             inKey: &NSString,
         ) -> Result<(), Id<NSError, Shared>>;
 
@@ -93,7 +93,7 @@ extern_methods!(
         #[method(validateValue:forKeyPath:error:)]
         pub unsafe fn validateValue_forKeyPath_error(
             &self,
-            ioValue: &mut Option<Id<Object, Shared>>,
+            ioValue: NonNull<*mut Object>,
             inKeyPath: &NSString,
         ) -> Result<(), Id<NSError, Shared>>;
 

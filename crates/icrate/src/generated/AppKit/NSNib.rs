@@ -35,7 +35,7 @@ extern_methods!(
         pub unsafe fn instantiateWithOwner_topLevelObjects(
             &self,
             owner: Option<&Object>,
-            topLevelObjects: Option<&mut Option<Id<NSArray, Shared>>>,
+            topLevelObjects: *mut *mut NSArray,
         ) -> bool;
     }
 );
@@ -59,7 +59,7 @@ extern_methods!(
         pub unsafe fn instantiateNibWithOwner_topLevelObjects(
             &self,
             owner: Option<&Object>,
-            topLevelObjects: Option<&mut Option<Id<NSArray, Shared>>>,
+            topLevelObjects: *mut *mut NSArray,
         ) -> bool;
     }
 );

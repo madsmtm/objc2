@@ -49,27 +49,27 @@ extern_methods!(
         #[method(getObjectValue:forString:errorDescription:)]
         pub unsafe fn getObjectValue_forString_errorDescription(
             &self,
-            obj: Option<&mut Option<Id<Object, Shared>>>,
+            obj: *mut *mut Object,
             string: &NSString,
-            error: Option<&mut Option<Id<NSString, Shared>>>,
+            error: *mut *mut NSString,
         ) -> bool;
 
         #[method(isPartialStringValid:newEditingString:errorDescription:)]
         pub unsafe fn isPartialStringValid_newEditingString_errorDescription(
             &self,
             partialString: &NSString,
-            newString: Option<&mut Option<Id<NSString, Shared>>>,
-            error: Option<&mut Option<Id<NSString, Shared>>>,
+            newString: *mut *mut NSString,
+            error: *mut *mut NSString,
         ) -> bool;
 
         #[method(isPartialStringValid:proposedSelectedRange:originalString:originalSelectedRange:errorDescription:)]
         pub unsafe fn isPartialStringValid_proposedSelectedRange_originalString_originalSelectedRange_errorDescription(
             &self,
-            partialStringPtr: &mut Id<NSString, Shared>,
+            partialStringPtr: NonNull<NonNull<NSString>>,
             proposedSelRangePtr: NSRangePointer,
             origString: &NSString,
             origSelRange: NSRange,
-            error: Option<&mut Option<Id<NSString, Shared>>>,
+            error: *mut *mut NSString,
         ) -> bool;
     }
 );

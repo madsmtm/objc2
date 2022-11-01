@@ -637,39 +637,36 @@ impl fmt::Display for RustType {
                 is_const,
                 pointee,
             } => match &**pointee {
-                Self::Id {
-                    type_,
-                    is_const: false,
-                    lifetime: Lifetime::Autoreleasing,
-                    nullability: inner_nullability,
-                } => {
-                    let tokens = format!("Id<{type_}, Shared>");
-                    let tokens = if *inner_nullability == Nullability::NonNull {
-                        tokens
-                    } else {
-                        format!("Option<{tokens}>")
-                    };
-
-                    let tokens = if *is_const {
-                        format!("&{tokens}")
-                    } else {
-                        format!("&mut {tokens}")
-                    };
-                    if *nullability == Nullability::NonNull {
-                        write!(f, "{tokens}")
-                    } else {
-                        write!(f, "Option<{tokens}>")
-                    }
-                }
+                // Self::Id {
+                //     type_,
+                //     is_const: false,
+                //     lifetime: Lifetime::Autoreleasing,
+                //     nullability: inner_nullability,
+                // } => {
+                //     let tokens = format!("Id<{type_}, Shared>");
+                //     let tokens = if *inner_nullability == Nullability::NonNull {
+                //         tokens
+                //     } else {
+                //         format!("Option<{tokens}>")
+                //     };
+                //
+                //     let tokens = if *is_const {
+                //         format!("&{tokens}")
+                //     } else {
+                //         format!("&mut {tokens}")
+                //     };
+                //     if *nullability == Nullability::NonNull {
+                //         write!(f, "{tokens}")
+                //     } else {
+                //         write!(f, "Option<{tokens}>")
+                //     }
+                // }
                 Self::Id {
                     type_: tokens,
                     is_const: false,
-                    lifetime: Lifetime::Unspecified,
+                    lifetime: _,
                     nullability: inner_nullability,
                 } => {
-                    if tokens.name != "NSError" {
-                        println!("id*: {self:?}");
-                    }
                     let tokens = if *inner_nullability == Nullability::NonNull {
                         format!("NonNull<{tokens}>")
                     } else {

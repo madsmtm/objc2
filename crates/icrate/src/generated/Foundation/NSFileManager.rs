@@ -245,7 +245,7 @@ extern_methods!(
         pub unsafe fn trashItemAtURL_resultingItemURL_error(
             &self,
             url: &NSURL,
-            outResultingURL: Option<&mut Option<Id<NSURL, Shared>>>,
+            outResultingURL: *mut *mut NSURL,
         ) -> Result<(), Id<NSError, Shared>>;
 
         #[method_id(@__retain_semantics Other fileAttributesAtPath:traverseLink:)]
@@ -418,7 +418,7 @@ extern_methods!(
             newItemURL: &NSURL,
             backupItemName: Option<&NSString>,
             options: NSFileManagerItemReplacementOptions,
-            resultingURL: Option<&mut Option<Id<NSURL, Shared>>>,
+            resultingURL: *mut *mut NSURL,
         ) -> Result<(), Id<NSError, Shared>>;
 
         #[method(setUbiquitous:itemAtURL:destinationURL:error:)]
@@ -454,7 +454,7 @@ extern_methods!(
         pub unsafe fn URLForPublishingUbiquitousItemAtURL_expirationDate_error(
             &self,
             url: &NSURL,
-            outDate: Option<&mut Option<Id<NSDate, Shared>>>,
+            outDate: *mut *mut NSDate,
         ) -> Result<Id<NSURL, Shared>, Id<NSError, Shared>>;
 
         #[method_id(@__retain_semantics Other ubiquityIdentityToken)]

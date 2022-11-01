@@ -57,9 +57,9 @@ extern_methods!(
         #[method(completePathIntoString:caseSensitive:matchesIntoArray:filterTypes:)]
         pub unsafe fn completePathIntoString_caseSensitive_matchesIntoArray_filterTypes(
             &self,
-            outputName: Option<&mut Option<Id<NSString, Shared>>>,
+            outputName: *mut *mut NSString,
             flag: bool,
-            outputArray: Option<&mut Option<Id<NSArray<NSString>, Shared>>>,
+            outputArray: *mut *mut NSArray<NSString>,
             filterTypes: Option<&NSArray<NSString>>,
         ) -> NSUInteger;
 

@@ -154,16 +154,16 @@ extern_methods!(
         pub unsafe fn getStreamsToHostWithName_port_inputStream_outputStream(
             hostname: &NSString,
             port: NSInteger,
-            inputStream: Option<&mut Option<Id<NSInputStream, Shared>>>,
-            outputStream: Option<&mut Option<Id<NSOutputStream, Shared>>>,
+            inputStream: *mut *mut NSInputStream,
+            outputStream: *mut *mut NSOutputStream,
         );
 
         #[method(getStreamsToHost:port:inputStream:outputStream:)]
         pub unsafe fn getStreamsToHost_port_inputStream_outputStream(
             host: &NSHost,
             port: NSInteger,
-            inputStream: Option<&mut Option<Id<NSInputStream, Shared>>>,
-            outputStream: Option<&mut Option<Id<NSOutputStream, Shared>>>,
+            inputStream: *mut *mut NSInputStream,
+            outputStream: *mut *mut NSOutputStream,
         );
     }
 );
@@ -174,8 +174,8 @@ extern_methods!(
         #[method(getBoundStreamsWithBufferSize:inputStream:outputStream:)]
         pub unsafe fn getBoundStreamsWithBufferSize_inputStream_outputStream(
             bufferSize: NSUInteger,
-            inputStream: Option<&mut Option<Id<NSInputStream, Shared>>>,
-            outputStream: Option<&mut Option<Id<NSOutputStream, Shared>>>,
+            inputStream: *mut *mut NSInputStream,
+            outputStream: *mut *mut NSOutputStream,
         );
     }
 );

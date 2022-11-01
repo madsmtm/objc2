@@ -259,7 +259,7 @@ extern_methods!(
         pub unsafe fn rangeOfUnit_startDate_interval_forDate(
             &self,
             unit: NSCalendarUnit,
-            datep: Option<&mut Option<Id<NSDate, Shared>>>,
+            datep: *mut *mut NSDate,
             tip: *mut NSTimeInterval,
             date: &NSDate,
         ) -> bool;
@@ -397,7 +397,7 @@ extern_methods!(
         #[method(rangeOfWeekendStartDate:interval:containingDate:)]
         pub unsafe fn rangeOfWeekendStartDate_interval_containingDate(
             &self,
-            datep: Option<&mut Option<Id<NSDate, Shared>>>,
+            datep: *mut *mut NSDate,
             tip: *mut NSTimeInterval,
             date: &NSDate,
         ) -> bool;
@@ -405,7 +405,7 @@ extern_methods!(
         #[method(nextWeekendStartDate:interval:options:afterDate:)]
         pub unsafe fn nextWeekendStartDate_interval_options_afterDate(
             &self,
-            datep: Option<&mut Option<Id<NSDate, Shared>>>,
+            datep: *mut *mut NSDate,
             tip: *mut NSTimeInterval,
             options: NSCalendarOptions,
             date: &NSDate,

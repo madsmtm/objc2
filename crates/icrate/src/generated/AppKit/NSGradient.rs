@@ -93,7 +93,7 @@ extern_methods!(
         #[method(getColor:location:atIndex:)]
         pub unsafe fn getColor_location_atIndex(
             &self,
-            color: Option<&mut Id<NSColor, Shared>>,
+            color: *mut NonNull<NSColor>,
             location: *mut CGFloat,
             index: NSInteger,
         );

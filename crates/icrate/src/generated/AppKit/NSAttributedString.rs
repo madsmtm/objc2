@@ -439,11 +439,7 @@ extern_methods!(
             this: Option<Allocated<Self>>,
             url: &NSURL,
             options: &NSDictionary<NSAttributedStringDocumentReadingOptionKey, Object>,
-            dict: Option<
-                &mut Option<
-                    Id<NSDictionary<NSAttributedStringDocumentAttributeKey, Object>, Shared>,
-                >,
-            >,
+            dict: *mut *mut NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithData:options:documentAttributes:error:)]
@@ -451,11 +447,7 @@ extern_methods!(
             this: Option<Allocated<Self>>,
             data: &NSData,
             options: &NSDictionary<NSAttributedStringDocumentReadingOptionKey, Object>,
-            dict: Option<
-                &mut Option<
-                    Id<NSDictionary<NSAttributedStringDocumentAttributeKey, Object>, Shared>,
-                >,
-            >,
+            dict: *mut *mut NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
         #[method_id(@__retain_semantics Other dataFromRange:documentAttributes:error:)]
@@ -476,33 +468,21 @@ extern_methods!(
         pub unsafe fn initWithRTF_documentAttributes(
             this: Option<Allocated<Self>>,
             data: &NSData,
-            dict: Option<
-                &mut Option<
-                    Id<NSDictionary<NSAttributedStringDocumentAttributeKey, Object>, Shared>,
-                >,
-            >,
+            dict: *mut *mut NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithRTFD:documentAttributes:)]
         pub unsafe fn initWithRTFD_documentAttributes(
             this: Option<Allocated<Self>>,
             data: &NSData,
-            dict: Option<
-                &mut Option<
-                    Id<NSDictionary<NSAttributedStringDocumentAttributeKey, Object>, Shared>,
-                >,
-            >,
+            dict: *mut *mut NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithHTML:documentAttributes:)]
         pub unsafe fn initWithHTML_documentAttributes(
             this: Option<Allocated<Self>>,
             data: &NSData,
-            dict: Option<
-                &mut Option<
-                    Id<NSDictionary<NSAttributedStringDocumentAttributeKey, Object>, Shared>,
-                >,
-            >,
+            dict: *mut *mut NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithHTML:baseURL:documentAttributes:)]
@@ -510,22 +490,14 @@ extern_methods!(
             this: Option<Allocated<Self>>,
             data: &NSData,
             base: &NSURL,
-            dict: Option<
-                &mut Option<
-                    Id<NSDictionary<NSAttributedStringDocumentAttributeKey, Object>, Shared>,
-                >,
-            >,
+            dict: *mut *mut NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithDocFormat:documentAttributes:)]
         pub unsafe fn initWithDocFormat_documentAttributes(
             this: Option<Allocated<Self>>,
             data: &NSData,
-            dict: Option<
-                &mut Option<
-                    Id<NSDictionary<NSAttributedStringDocumentAttributeKey, Object>, Shared>,
-                >,
-            >,
+            dict: *mut *mut NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithHTML:options:documentAttributes:)]
@@ -533,22 +505,14 @@ extern_methods!(
             this: Option<Allocated<Self>>,
             data: &NSData,
             options: &NSDictionary<NSAttributedStringDocumentReadingOptionKey, Object>,
-            dict: Option<
-                &mut Option<
-                    Id<NSDictionary<NSAttributedStringDocumentAttributeKey, Object>, Shared>,
-                >,
-            >,
+            dict: *mut *mut NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithRTFDFileWrapper:documentAttributes:)]
         pub unsafe fn initWithRTFDFileWrapper_documentAttributes(
             this: Option<Allocated<Self>>,
             wrapper: &NSFileWrapper,
-            dict: Option<
-                &mut Option<
-                    Id<NSDictionary<NSAttributedStringDocumentAttributeKey, Object>, Shared>,
-                >,
-            >,
+            dict: *mut *mut NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Other RTFFromRange:documentAttributes:)]
@@ -589,11 +553,7 @@ extern_methods!(
             &self,
             url: &NSURL,
             opts: &NSDictionary<NSAttributedStringDocumentReadingOptionKey, Object>,
-            dict: Option<
-                &mut Option<
-                    Id<NSDictionary<NSAttributedStringDocumentAttributeKey, Object>, Shared>,
-                >,
-            >,
+            dict: *mut *mut NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Result<(), Id<NSError, Shared>>;
 
         #[method(readFromData:options:documentAttributes:error:)]
@@ -601,11 +561,7 @@ extern_methods!(
             &self,
             data: &NSData,
             opts: &NSDictionary<NSAttributedStringDocumentReadingOptionKey, Object>,
-            dict: Option<
-                &mut Option<
-                    Id<NSDictionary<NSAttributedStringDocumentAttributeKey, Object>, Shared>,
-                >,
-            >,
+            dict: *mut *mut NSDictionary<NSAttributedStringDocumentAttributeKey, Object>,
         ) -> Result<(), Id<NSError, Shared>>;
     }
 );
@@ -773,14 +729,14 @@ extern_methods!(
         pub unsafe fn initWithURL_documentAttributes(
             this: Option<Allocated<Self>>,
             url: &NSURL,
-            dict: Option<&mut Option<Id<NSDictionary, Shared>>>,
+            dict: *mut *mut NSDictionary,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithPath:documentAttributes:)]
         pub unsafe fn initWithPath_documentAttributes(
             this: Option<Allocated<Self>>,
             path: &NSString,
-            dict: Option<&mut Option<Id<NSDictionary, Shared>>>,
+            dict: *mut *mut NSDictionary,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Other URLAtIndex:effectiveRange:)]
@@ -800,7 +756,7 @@ extern_methods!(
             &self,
             url: &NSURL,
             options: &NSDictionary,
-            dict: Option<&mut Option<Id<NSDictionary, Shared>>>,
+            dict: *mut *mut NSDictionary,
         ) -> bool;
 
         #[method(readFromData:options:documentAttributes:)]
@@ -808,7 +764,7 @@ extern_methods!(
             &self,
             data: &NSData,
             options: &NSDictionary,
-            dict: Option<&mut Option<Id<NSDictionary, Shared>>>,
+            dict: *mut *mut NSDictionary,
         ) -> bool;
     }
 );

@@ -65,9 +65,9 @@ extern_methods!(
         #[method(getObjectValue:forString:errorDescription:)]
         pub unsafe fn getObjectValue_forString_errorDescription(
             &self,
-            obj: Option<&mut Option<Id<Object, Shared>>>,
+            obj: *mut *mut Object,
             string: &NSString,
-            error: Option<&mut Option<Id<NSString, Shared>>>,
+            error: *mut *mut NSString,
         ) -> bool;
     }
 );

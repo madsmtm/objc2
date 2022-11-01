@@ -112,7 +112,7 @@ extern_methods!(
             language: Option<&NSString>,
             wrapFlag: bool,
             tag: NSInteger,
-            details: Option<&mut Option<Id<NSArray<NSDictionary<NSString, Object>>, Shared>>>,
+            details: *mut *mut NSArray<NSDictionary<NSString, Object>>,
         ) -> NSRange;
 
         #[method_id(@__retain_semantics Other checkString:range:types:options:inSpellDocumentWithTag:orthography:wordCount:)]
@@ -123,7 +123,7 @@ extern_methods!(
             checkingTypes: NSTextCheckingTypes,
             options: Option<&NSDictionary<NSTextCheckingOptionKey, Object>>,
             tag: NSInteger,
-            orthography: Option<&mut Option<Id<NSOrthography, Shared>>>,
+            orthography: *mut *mut NSOrthography,
             wordCount: *mut NSInteger,
         ) -> Id<NSArray<NSTextCheckingResult>, Shared>;
 

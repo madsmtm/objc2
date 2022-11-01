@@ -119,8 +119,8 @@ extern_methods!(
             removableFlag: *mut bool,
             writableFlag: *mut bool,
             unmountableFlag: *mut bool,
-            description: Option<&mut Option<Id<NSString, Shared>>>,
-            fileSystemType: Option<&mut Option<Id<NSString, Shared>>>,
+            description: *mut *mut NSString,
+            fileSystemType: *mut *mut NSString,
         ) -> bool;
 
         #[method(unmountAndEjectDeviceAtPath:)]
@@ -598,7 +598,7 @@ extern_methods!(
             bundleIdentifier: &NSString,
             options: NSWorkspaceLaunchOptions,
             descriptor: Option<&NSAppleEventDescriptor>,
-            identifier: Option<&mut Option<Id<NSNumber, Shared>>>,
+            identifier: *mut *mut NSNumber,
         ) -> bool;
 
         #[method(openURLs:withAppBundleIdentifier:options:additionalEventParamDescriptor:launchIdentifiers:)]
@@ -608,7 +608,7 @@ extern_methods!(
             bundleIdentifier: Option<&NSString>,
             options: NSWorkspaceLaunchOptions,
             descriptor: Option<&NSAppleEventDescriptor>,
-            identifiers: Option<&mut Option<Id<NSArray<NSNumber>, Shared>>>,
+            identifiers: *mut *mut NSArray<NSNumber>,
         ) -> bool;
 
         #[method(openTempFile:)]
@@ -678,8 +678,8 @@ extern_methods!(
         pub unsafe fn getInfoForFile_application_type(
             &self,
             fullPath: &NSString,
-            appName: Option<&mut Option<Id<NSString, Shared>>>,
-            type_: Option<&mut Option<Id<NSString, Shared>>>,
+            appName: *mut *mut NSString,
+            type_: *mut *mut NSString,
         ) -> bool;
 
         #[method_id(@__retain_semantics Other iconForFileType:)]

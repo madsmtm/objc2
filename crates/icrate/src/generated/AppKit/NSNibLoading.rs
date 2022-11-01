@@ -12,7 +12,7 @@ extern_methods!(
             &self,
             nibName: &NSNibName,
             owner: Option<&Object>,
-            topLevelObjects: Option<&mut Option<Id<NSArray, Shared>>>,
+            topLevelObjects: *mut *mut NSArray,
         ) -> bool;
     }
 );

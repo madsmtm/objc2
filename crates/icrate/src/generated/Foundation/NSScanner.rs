@@ -89,28 +89,28 @@ extern_methods!(
         pub unsafe fn scanString_intoString(
             &self,
             string: &NSString,
-            result: Option<&mut Option<Id<NSString, Shared>>>,
+            result: *mut *mut NSString,
         ) -> bool;
 
         #[method(scanCharactersFromSet:intoString:)]
         pub unsafe fn scanCharactersFromSet_intoString(
             &self,
             set: &NSCharacterSet,
-            result: Option<&mut Option<Id<NSString, Shared>>>,
+            result: *mut *mut NSString,
         ) -> bool;
 
         #[method(scanUpToString:intoString:)]
         pub unsafe fn scanUpToString_intoString(
             &self,
             string: &NSString,
-            result: Option<&mut Option<Id<NSString, Shared>>>,
+            result: *mut *mut NSString,
         ) -> bool;
 
         #[method(scanUpToCharactersFromSet:intoString:)]
         pub unsafe fn scanUpToCharactersFromSet_intoString(
             &self,
             set: &NSCharacterSet,
-            result: Option<&mut Option<Id<NSString, Shared>>>,
+            result: *mut *mut NSString,
         ) -> bool;
 
         #[method(isAtEnd)]

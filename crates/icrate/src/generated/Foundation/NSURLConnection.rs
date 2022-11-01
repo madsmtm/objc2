@@ -77,7 +77,7 @@ extern_methods!(
         #[method_id(@__retain_semantics Other sendSynchronousRequest:returningResponse:error:)]
         pub unsafe fn sendSynchronousRequest_returningResponse_error(
             request: &NSURLRequest,
-            response: Option<&mut Option<Id<NSURLResponse, Shared>>>,
+            response: *mut *mut NSURLResponse,
         ) -> Result<Id<NSData, Shared>, Id<NSError, Shared>>;
     }
 );

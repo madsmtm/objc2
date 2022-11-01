@@ -267,7 +267,7 @@ extern_methods!(
             unit: NSLinguisticTaggerUnit,
             scheme: &NSLinguisticTagScheme,
             options: NSLinguisticTaggerOptions,
-            tokenRanges: Option<&mut Option<Id<NSArray<NSValue>, Shared>>>,
+            tokenRanges: *mut *mut NSArray<NSValue>,
         ) -> Id<NSArray<NSLinguisticTag>, Shared>;
 
         #[method(enumerateTagsInRange:scheme:options:usingBlock:)]
@@ -294,7 +294,7 @@ extern_methods!(
             range: NSRange,
             tagScheme: &NSString,
             opts: NSLinguisticTaggerOptions,
-            tokenRanges: Option<&mut Option<Id<NSArray<NSValue>, Shared>>>,
+            tokenRanges: *mut *mut NSArray<NSValue>,
         ) -> Id<NSArray<NSString>, Shared>;
 
         #[method_id(@__retain_semantics Other dominantLanguage)]
@@ -321,7 +321,7 @@ extern_methods!(
             scheme: &NSLinguisticTagScheme,
             options: NSLinguisticTaggerOptions,
             orthography: Option<&NSOrthography>,
-            tokenRanges: Option<&mut Option<Id<NSArray<NSValue>, Shared>>>,
+            tokenRanges: *mut *mut NSArray<NSValue>,
         ) -> Id<NSArray<NSLinguisticTag>, Shared>;
 
         #[method(enumerateTagsForString:range:unit:scheme:options:orthography:usingBlock:)]
@@ -342,7 +342,7 @@ extern_methods!(
             tagScheme: &NSString,
             tokenRange: NSRangePointer,
             sentenceRange: NSRangePointer,
-            scores: Option<&mut Option<Id<NSArray<NSValue>, Shared>>>,
+            scores: *mut *mut NSArray<NSValue>,
         ) -> Option<Id<NSArray<NSString>, Shared>>;
     }
 );
@@ -357,7 +357,7 @@ extern_methods!(
             scheme: &NSLinguisticTagScheme,
             options: NSLinguisticTaggerOptions,
             orthography: Option<&NSOrthography>,
-            tokenRanges: Option<&mut Option<Id<NSArray<NSValue>, Shared>>>,
+            tokenRanges: *mut *mut NSArray<NSValue>,
         ) -> Id<NSArray<NSLinguisticTag>, Shared>;
 
         #[method(enumerateLinguisticTagsInRange:scheme:options:orthography:usingBlock:)]

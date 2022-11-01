@@ -67,7 +67,7 @@ extern_methods!(
         #[method(getObjectValue:forString:range:error:)]
         pub unsafe fn getObjectValue_forString_range_error(
             &self,
-            obj: Option<&mut Option<Id<Object, Shared>>>,
+            obj: *mut *mut Object,
             string: &NSString,
             rangep: *mut NSRange,
         ) -> Result<(), Id<NSError, Shared>>;
