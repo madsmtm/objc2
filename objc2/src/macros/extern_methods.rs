@@ -9,12 +9,13 @@
 /// Within the `impl` block you can define two types of functions without
 /// bodies; ["associated functions"] and ["methods"]. These are then mapped to
 /// the Objective-C equivalents "class methods" and "instance methods", and an
-/// appropriate body is created for you. In particular, if you use `self` your
-/// method will assumbed to be an instance method, and if you don't it will be
-/// assumed to be a class method.
+/// appropriate body is created for you. In particular, if you use `self` or
+/// the special name `this` (or `_this`), your method will assumed to be an
+/// instance method, and if you don't it will be assumed to be a class method.
 ///
 /// The desired selector can be specified using the `#[method(my:selector:)]`
-/// attribute. The name of the function doesn't matter.
+/// attribute. The name of the function doesn't matter for out purposes, but
+/// is of course what the user will use to access the functionality.
 ///
 /// If you specify a function/method with a body, the macro will simply ignore
 /// it.
@@ -102,8 +103,14 @@
 ///         // passed.
 ///         pub unsafe fn date_matches(&self, date: &NSObject, components: &NSObject) -> bool;
 ///
+///         #[method(minimumRangeOfUnit:)]
+///         pub fn min_range(&self, unit: NSCalendarUnit) -> NSRange;
+///
 ///         #[method(maximumRangeOfUnit:)]
-///         pub fn max_range(&self, unit: NSCalendarUnit) -> NSRange;
+///         // Arbitary self types are not stable, but we can work around it
+///         // with the special name `this`. In this case, it is `unsafe`
+///         // because the self type is a pointer instead of a reference.
+///         pub unsafe fn max_range(this: *const Self, unit: NSCalendarUnit) -> NSRange;
 ///
 ///         // From `NSKeyValueCoding`
 ///         #[method(validateValue:forKey:error:)]
@@ -183,8 +190,12 @@
 ///         unsafe { msg_send![self, date: date, matchesComponents: components] }
 ///     }
 ///
-///     pub fn max_range(&self, unit: NSCalendarUnit) -> NSRange {
-///         unsafe { msg_send![self, maximumRangeOfUnit: unit] }
+///     pub fn min_range(&self, unit: NSCalendarUnit) -> NSRange {
+///         unsafe { msg_send![self, minimumRangeOfUnit: unit] }
+///     }
+///
+///     pub fn max_range(this: *const Self, unit: NSCalendarUnit) -> NSRange {
+///         unsafe { msg_send![this, maximumRangeOfUnit: unit] }
 ///     }
 ///
 ///     pub unsafe fn validate_value_for_key(
@@ -333,7 +344,7 @@ macro_rules! __inner_extern_methods {
         @unsafe_method_body
         @(instance_method)
         @(
-            $self:ident: $self_ty:ty,
+            $self_or_this:ident: $self_or_this_ty:ty,
             _: $sel_ty:ty,
         )
         @($($args_rest:tt)*)
@@ -341,7 +352,7 @@ macro_rules! __inner_extern_methods {
     } => {
         $crate::__collect_msg_send! {
             $crate::msg_send;
-            $self;
+            $self_or_this;
             ($($sel)*);
             ($($args_rest)*);
         }

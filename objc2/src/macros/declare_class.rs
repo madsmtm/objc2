@@ -44,8 +44,9 @@
 /// Within the `impl` block you can define two types of functions;
 /// ["associated functions"] and ["methods"]. These are then mapped to the
 /// Objective-C equivalents "class methods" and "instance methods". In
-/// particular, if you use `self` your method will be registered as an
-/// instance method, and if you don't it will be registered as a class method.
+/// particular, if you use `self` or the special name `this` (or `_this`),
+/// your method will be registered as an instance method, and if you don't it
+/// will be registered as a class method.
 ///
 /// The desired selector can be specified using the `#[method(my:selector:)]`
 /// attribute, similar to the [`extern_methods!`] macro.
@@ -140,9 +141,9 @@
 ///
 ///     unsafe impl MyCustomObject {
 ///         #[method(initWithFoo:)]
-///         fn init_with(&mut self, foo: u8) -> Option<&mut Self> {
+///         fn init_with(this: &mut Self, foo: u8) -> Option<&mut Self> {
 ///             let this: Option<&mut Self> = unsafe {
-///                 msg_send![super(self), init]
+///                 msg_send![super(this), init]
 ///             };
 ///
 ///             // TODO: `ns_string` can't be used inside closures.

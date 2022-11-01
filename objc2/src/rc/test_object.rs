@@ -94,9 +94,9 @@ declare_class!(
         }
 
         #[method(init)]
-        fn init(&mut self) -> *mut Self {
+        fn init(this: &mut Self) -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().init += 1);
-            unsafe { msg_send![super(self), init] }
+            unsafe { msg_send![super(this), init] }
         }
 
         #[method(initReturningNull)]
@@ -153,12 +153,12 @@ declare_class!(
         }
 
         #[method(copyReturningNull)]
-        fn copy_returning_null(&self) -> *const Self {
+        fn copy_returning_null(_this: &Self) -> *const Self {
             ptr::null()
         }
 
         #[method(methodReturningNull)]
-        fn method_returning_null(&self) -> *const Self {
+        fn method_returning_null(self: &Self) -> *const Self {
             ptr::null()
         }
 
@@ -207,7 +207,7 @@ declare_class!(
 
         #[method(idAndShouldError:error:)]
         fn instance_error_id(
-            &self,
+            self: &Self,
             should_error: bool,
             err: Option<&mut *mut RcTestObject>,
         ) -> *mut RcTestObject {
@@ -247,7 +247,7 @@ declare_class!(
 
         #[method(initAndShouldError:error:)]
         fn init_error(
-            &mut self,
+            this: &mut Self,
             should_error: bool,
             err: Option<&mut *mut RcTestObject>,
         ) -> *mut Self {
@@ -255,10 +255,10 @@ declare_class!(
                 if let Some(err) = err {
                     *err = RcTestObject::new().autorelease_inner();
                 }
-                let _: () = unsafe { msg_send![self, release] };
+                let _: () = unsafe { msg_send![this, release] };
                 ptr::null_mut()
             } else {
-                unsafe { msg_send![self, init] }
+                unsafe { msg_send![this, init] }
             }
         }
     }
