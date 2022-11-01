@@ -55,7 +55,7 @@ extern_methods!(
         ) -> Id<NSAppleEventDescriptor, Shared>;
 
         #[method_id(descriptorWithInt32:)]
-        pub unsafe fn descriptorWithInt32(signedInt: SInt32) -> Id<NSAppleEventDescriptor, Shared>;
+        pub unsafe fn descriptorWithInt32(signedInt: i32) -> Id<NSAppleEventDescriptor, Shared>;
 
         #[method_id(descriptorWithDouble:)]
         pub unsafe fn descriptorWithDouble(
@@ -160,7 +160,7 @@ extern_methods!(
         pub unsafe fn enumCodeValue(&self) -> OSType;
 
         #[method(int32Value)]
-        pub unsafe fn int32Value(&self) -> SInt32;
+        pub unsafe fn int32Value(&self) -> i32;
 
         #[method(doubleValue)]
         pub unsafe fn doubleValue(&self) -> c_double;

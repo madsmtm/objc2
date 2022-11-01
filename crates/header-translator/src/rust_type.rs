@@ -260,6 +260,8 @@ pub enum RustType {
     ULongLong,
     Float,
     Double,
+    F32,
+    F64,
     I8,
     U8,
     I16,
@@ -414,6 +416,7 @@ impl RustType {
                 let typedef_name = ty.get_typedef_name().expect("typedef has name");
                 match &*typedef_name {
                     "BOOL" => Self::ObjcBool,
+
                     "int8_t" => Self::I8,
                     "uint8_t" => Self::U8,
                     "int16_t" => Self::I16,
@@ -422,6 +425,21 @@ impl RustType {
                     "uint32_t" => Self::U32,
                     "int164_t" => Self::I64,
                     "uint64_t" => Self::U64,
+
+                    // MacTypes.h
+                    "UInt8" => Self::U8,
+                    "UInt16" => Self::U16,
+                    "UInt32" => Self::U32,
+                    "UInt64" => Self::U64,
+                    "SInt8" => Self::I8,
+                    "SInt16" => Self::I16,
+                    "SInt32" => Self::I32,
+                    "SInt64" => Self::I64,
+                    "Float32" => Self::F32,
+                    "Float64" => Self::F64,
+                    "Float80" => panic!("can't handle 80 bit MacOS float"),
+                    "Float96" => panic!("can't handle 96 bit 68881 float"),
+
                     "instancetype" => Self::Id {
                         type_: GenericType {
                             name: "Self".to_string(),
@@ -571,6 +589,8 @@ impl fmt::Display for RustType {
             ULongLong => write!(f, "c_ulonglong"),
             Float => write!(f, "c_float"),
             Double => write!(f, "c_double"),
+            F32 => write!(f, "f32"),
+            F64 => write!(f, "f64"),
             I8 => write!(f, "i8"),
             U8 => write!(f, "u8"),
             I16 => write!(f, "i16"),
