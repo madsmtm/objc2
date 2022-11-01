@@ -1,0 +1,27 @@
+error: Cannot not specify a selector twice!
+ --> ui/extern_methods_selector_twice.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method(a)]
+  | |         #[method(a)]
+  | |         fn a();
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__attribute_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: Cannot not specify a selector twice!
+ --> ui/extern_methods_selector_twice.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method(b)]
+  | |         #[method_id(b)]
+  | |         fn b();
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__attribute_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

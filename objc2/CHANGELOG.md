@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added the ability to specify an extra parameter at the end of the selector
   in methods declared with `extern_methods!`, and let that be the `NSError**`
   parameter.
+* Added `#[method_id(...)]` attribute to `extern_methods!`.
 
 ### Changed
 * Allow other types than `&Class` as the receiver in `msg_send_id!` methods

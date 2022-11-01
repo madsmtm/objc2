@@ -1,7 +1,10 @@
 /// Define methods on an external class.
 ///
 /// This is a convenience macro to easily generate associated functions and
-/// methods that call [`msg_send!`][crate::msg_send] appropriately.
+/// methods that call [`msg_send!`] or [`msg_send_id!`] appropriately.
+///
+/// [`msg_send!`]: crate::msg_send
+/// [`msg_send_id!`]: crate::msg_send_id
 ///
 ///
 /// # Specification
@@ -14,8 +17,11 @@
 /// instance method, and if you don't it will be assumed to be a class method.
 ///
 /// The desired selector can be specified using the `#[method(my:selector:)]`
-/// attribute. The name of the function doesn't matter for out purposes, but
-/// is of course what the user will use to access the functionality.
+/// or `#[method_id(my:selector:)]` attribute. The `method` attribute maps to
+/// a call to [`msg_send!`], while the `method_id` maps to [`msg_send_id!`].
+///
+/// The name of the function doesn't matter for out purposes, but is of course
+/// what the user will use to access the functionality.
 ///
 /// If you specify a function/method with a body, the macro will simply ignore
 /// it.
@@ -27,8 +33,12 @@
 /// # Safety
 ///
 /// You must ensure that any methods you declare with the `#[method(...)]`
-/// attribute upholds the safety guarantees decribed in the
-/// [`msg_send!`][crate::msg_send] macro, _or_ are marked `unsafe`.
+/// attribute upholds the safety guarantees decribed in the [`msg_send!`]
+/// macro, _or_ are marked `unsafe`.
+///
+/// Likewise, you must ensure that any methods you declare with the
+/// `#[method_id(...)]` attribute upholds the safety guarantees decribed in
+/// the [`msg_send_id!`] macro, _or_ are marked `unsafe`.
 ///
 ///
 /// # Examples
@@ -39,7 +49,7 @@
 ///
 /// ```
 /// use objc2::foundation::{NSError, NSObject, NSRange, NSString, NSUInteger};
-/// use objc2::rc::{Id, Shared};
+/// use objc2::rc::{Allocated, Id, Shared};
 /// use objc2::runtime::Object;
 /// use objc2::{extern_class, extern_methods, msg_send_id, Encode, Encoding, ClassType};
 /// #
@@ -71,20 +81,15 @@
 ///
 /// extern_methods!(
 ///     /// Creation methods.
-///     // TODO: Support methods returning `Id`
 ///     unsafe impl NSCalendar {
-///         pub fn current() -> Id<Self, Shared> {
-///             unsafe { msg_send_id![Self::class(), currentCalendar] }
-///         }
+///         #[method_id(currentCalendar)]
+///         pub fn current() -> Id<Self, Shared>;
 ///
-///         pub fn new(identifier: &NSCalendarIdentifier) -> Id<Self, Shared> {
-///             unsafe {
-///                 msg_send_id![
-///                     Self::alloc(),
-///                     initWithCalendarIdentifier: identifier,
-///                 ]
-///             }
-///         }
+///         #[method_id(initWithCalendarIdentifier:)]
+///         pub fn init(
+///             this: Option<Allocated<Self>>,
+///             identifier: &NSCalendarIdentifier,
+///         ) -> Id<Self, Shared>;
 ///     }
 ///
 ///     /// Accessor methods.
@@ -93,9 +98,8 @@
 ///         #[method(firstWeekday)]
 ///         pub fn first_weekday(&self) -> NSUInteger;
 ///
-///         pub fn am_symbol(&self) -> Id<NSString, Shared> {
-///             unsafe { msg_send_id![self, amSymbol] }
-///         }
+///         #[method_id(amSymbol)]
+///         pub fn am_symbol(&self) -> Id<NSString, Shared>;
 ///
 ///         #[method(date:matchesComponents:)]
 ///         // `unsafe` because we don't have definitions for `NSDate` and
@@ -129,7 +133,7 @@
 ///
 /// ```
 /// # use objc2::foundation::{NSError, NSObject, NSRange, NSString, NSUInteger};
-/// # use objc2::rc::{Id, Shared};
+/// # use objc2::rc::{Allocated, Id, Shared};
 /// # use objc2::runtime::Object;
 /// # use objc2::{extern_class, extern_methods, msg_send_id, Encode, Encoding, ClassType};
 /// #
@@ -166,13 +170,11 @@
 ///         unsafe { msg_send_id![Self::class(), currentCalendar] }
 ///     }
 ///
-///     pub fn new(identifier: &NSCalendarIdentifier) -> Id<Self, Shared> {
-///         unsafe {
-///             msg_send_id![
-///                 Self::alloc(),
-///                 initWithCalendarIdentifier: identifier,
-///             ]
-///         }
+///     pub fn init(
+///         this: Option<Allocated<Self>>,
+///         identifier: &NSCalendarIdentifier,
+///     ) -> Id<Self, Shared> {
+///         unsafe { msg_send_id![this, initWithCalendarIdentifier: identifier] }
 ///     }
 /// }
 ///
@@ -334,6 +336,10 @@ macro_rules! __inner_extern_methods {
                         @($($kind)*)
                         @($($args_start)*)
                         @($($args_rest)*)
+
+                        // Will add
+                        // @(sel)
+                        // @(output macro)
                     }
                 }
             })
@@ -349,9 +355,10 @@ macro_rules! __inner_extern_methods {
         )
         @($($args_rest:tt)*)
         @($($sel:tt)*)
+        @($macro:ident)
     } => {
         $crate::__collect_msg_send! {
-            $crate::msg_send;
+            $crate::$macro;
             $self_or_this;
             ($($sel)*);
             ($($args_rest)*);
@@ -366,9 +373,10 @@ macro_rules! __inner_extern_methods {
         )
         @($($args_rest:tt)*)
         @($($sel:tt)*)
+        @($macro:ident)
     } => {
         $crate::__collect_msg_send! {
-            $crate::msg_send;
+            $crate::$macro;
             Self::class();
             ($($sel)*);
             ($($args_rest)*);
