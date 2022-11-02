@@ -251,16 +251,16 @@ extern_methods!(
     }
 );
 
-pub const NSEnterCharacter: i32 = 0x0003;
-pub const NSBackspaceCharacter: i32 = 0x0008;
-pub const NSTabCharacter: i32 = 0x0009;
-pub const NSNewlineCharacter: i32 = 0x000a;
-pub const NSFormFeedCharacter: i32 = 0x000c;
-pub const NSCarriageReturnCharacter: i32 = 0x000d;
-pub const NSBackTabCharacter: i32 = 0x0019;
-pub const NSDeleteCharacter: i32 = 0x007f;
-pub const NSLineSeparatorCharacter: i32 = 0x2028;
-pub const NSParagraphSeparatorCharacter: i32 = 0x2029;
+pub const NSEnterCharacter: c_uint = 0x0003;
+pub const NSBackspaceCharacter: c_uint = 0x0008;
+pub const NSTabCharacter: c_uint = 0x0009;
+pub const NSNewlineCharacter: c_uint = 0x000a;
+pub const NSFormFeedCharacter: c_uint = 0x000c;
+pub const NSCarriageReturnCharacter: c_uint = 0x000d;
+pub const NSBackTabCharacter: c_uint = 0x0019;
+pub const NSDeleteCharacter: c_uint = 0x007f;
+pub const NSLineSeparatorCharacter: c_uint = 0x2028;
+pub const NSParagraphSeparatorCharacter: c_uint = 0x2029;
 
 pub type NSTextMovement = NSInteger;
 pub const NSTextMovementReturn: NSTextMovement = 0x10;
@@ -289,21 +289,21 @@ extern "C" {
     pub static NSTextMovementUserInfoKey: &'static NSString;
 }
 
-pub const NSIllegalTextMovement: i32 = 0;
-pub const NSReturnTextMovement: i32 = 0x10;
-pub const NSTabTextMovement: i32 = 0x11;
-pub const NSBacktabTextMovement: i32 = 0x12;
-pub const NSLeftTextMovement: i32 = 0x13;
-pub const NSRightTextMovement: i32 = 0x14;
-pub const NSUpTextMovement: i32 = 0x15;
-pub const NSDownTextMovement: i32 = 0x16;
-pub const NSCancelTextMovement: i32 = 0x17;
-pub const NSOtherTextMovement: i32 = 0;
+pub const NSIllegalTextMovement: c_uint = 0;
+pub const NSReturnTextMovement: c_uint = 0x10;
+pub const NSTabTextMovement: c_uint = 0x11;
+pub const NSBacktabTextMovement: c_uint = 0x12;
+pub const NSLeftTextMovement: c_uint = 0x13;
+pub const NSRightTextMovement: c_uint = 0x14;
+pub const NSUpTextMovement: c_uint = 0x15;
+pub const NSDownTextMovement: c_uint = 0x16;
+pub const NSCancelTextMovement: c_uint = 0x17;
+pub const NSOtherTextMovement: c_uint = 0;
 
 pub type NSTextDelegate = NSObject;
 
-pub const NSTextWritingDirectionEmbedding: i32 = 0 << 1;
-pub const NSTextWritingDirectionOverride: i32 = 1 << 1;
+pub const NSTextWritingDirectionEmbedding: c_uint = 0 << 1;
+pub const NSTextWritingDirectionOverride: c_uint = 1 << 1;
 
 pub static NSLeftTextAlignment: NSTextAlignment = NSTextAlignmentLeft;
 

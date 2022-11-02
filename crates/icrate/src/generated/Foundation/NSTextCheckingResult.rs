@@ -20,9 +20,10 @@ pub const NSTextCheckingTypeTransitInformation: NSTextCheckingType = 1 << 12;
 
 pub type NSTextCheckingTypes = u64;
 
-pub const NSTextCheckingAllSystemTypes: i32 = 0xffffffff;
-pub const NSTextCheckingAllCustomTypes: i32 = 0xffffffff << 32;
-pub const NSTextCheckingAllTypes: i32 = NSTextCheckingAllSystemTypes | NSTextCheckingAllCustomTypes;
+pub const NSTextCheckingAllSystemTypes: NSTextCheckingTypes = 0xffffffff;
+pub const NSTextCheckingAllCustomTypes: NSTextCheckingTypes = 0xffffffff << 32;
+pub const NSTextCheckingAllTypes: NSTextCheckingTypes =
+    NSTextCheckingAllSystemTypes | NSTextCheckingAllCustomTypes;
 
 pub type NSTextCheckingKey = NSString;
 

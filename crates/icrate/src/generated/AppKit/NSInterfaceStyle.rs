@@ -4,10 +4,10 @@ use crate::common::*;
 use crate::AppKit::*;
 use crate::Foundation::*;
 
-pub const NSNoInterfaceStyle: i32 = 0;
-pub const NSNextStepInterfaceStyle: i32 = 1;
-pub const NSWindows95InterfaceStyle: i32 = 2;
-pub const NSMacintoshInterfaceStyle: i32 = 3;
+pub const NSNoInterfaceStyle: c_uint = 0;
+pub const NSNextStepInterfaceStyle: c_uint = 1;
+pub const NSWindows95InterfaceStyle: c_uint = 2;
+pub const NSMacintoshInterfaceStyle: c_uint = 3;
 
 pub type NSInterfaceStyle = NSUInteger;
 

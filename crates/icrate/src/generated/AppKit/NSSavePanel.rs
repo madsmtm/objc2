@@ -4,8 +4,8 @@ use crate::common::*;
 use crate::AppKit::*;
 use crate::Foundation::*;
 
-pub const NSFileHandlingPanelCancelButton: i32 = NSModalResponseCancel;
-pub const NSFileHandlingPanelOKButton: i32 = NSModalResponseOK;
+pub const NSFileHandlingPanelCancelButton: c_uint = NSModalResponseCancel;
+pub const NSFileHandlingPanelOKButton: c_uint = NSModalResponseOK;
 
 extern_class!(
     #[derive(Debug)]

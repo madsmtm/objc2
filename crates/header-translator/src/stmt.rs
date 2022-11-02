@@ -836,7 +836,7 @@ impl fmt::Display for Stmt {
                     }
                 } else {
                     for (variant_name, expr) in variants {
-                        writeln!(f, "pub const {variant_name}: i32 = {expr};")?;
+                        writeln!(f, "pub const {variant_name}: {ty} = {expr};")?;
                     }
                 }
             }

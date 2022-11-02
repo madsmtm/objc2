@@ -146,7 +146,7 @@ pub static NSModalResponseAbort: NSModalResponse = -1001;
 
 pub static NSModalResponseContinue: NSModalResponse = -1002;
 
-pub const NSUpdateWindowsRunLoopOrdering: i32 = 500000;
+pub const NSUpdateWindowsRunLoopOrdering: c_uint = 500000;
 
 pub type NSApplicationPresentationOptions = NSUInteger;
 pub const NSApplicationPresentationDefault: NSApplicationPresentationOptions = 0;
@@ -719,9 +719,9 @@ extern "C" {
     pub static NSApplicationDidChangeOcclusionStateNotification: &'static NSNotificationName;
 }
 
-pub const NSRunStoppedResponse: i32 = -1000;
-pub const NSRunAbortedResponse: i32 = -1001;
-pub const NSRunContinuesResponse: i32 = -1002;
+pub const NSRunStoppedResponse: c_int = -1000;
+pub const NSRunAbortedResponse: c_int = -1001;
+pub const NSRunContinuesResponse: c_int = -1002;
 
 extern_methods!(
     /// NSDeprecated

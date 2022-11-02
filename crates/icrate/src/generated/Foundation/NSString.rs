@@ -18,29 +18,29 @@ pub const NSRegularExpressionSearch: NSStringCompareOptions = 1024;
 
 pub type NSStringEncoding = NSUInteger;
 
-pub const NSASCIIStringEncoding: i32 = 1;
-pub const NSNEXTSTEPStringEncoding: i32 = 2;
-pub const NSJapaneseEUCStringEncoding: i32 = 3;
-pub const NSUTF8StringEncoding: i32 = 4;
-pub const NSISOLatin1StringEncoding: i32 = 5;
-pub const NSSymbolStringEncoding: i32 = 6;
-pub const NSNonLossyASCIIStringEncoding: i32 = 7;
-pub const NSShiftJISStringEncoding: i32 = 8;
-pub const NSISOLatin2StringEncoding: i32 = 9;
-pub const NSUnicodeStringEncoding: i32 = 10;
-pub const NSWindowsCP1251StringEncoding: i32 = 11;
-pub const NSWindowsCP1252StringEncoding: i32 = 12;
-pub const NSWindowsCP1253StringEncoding: i32 = 13;
-pub const NSWindowsCP1254StringEncoding: i32 = 14;
-pub const NSWindowsCP1250StringEncoding: i32 = 15;
-pub const NSISO2022JPStringEncoding: i32 = 21;
-pub const NSMacOSRomanStringEncoding: i32 = 30;
-pub const NSUTF16StringEncoding: i32 = NSUnicodeStringEncoding;
-pub const NSUTF16BigEndianStringEncoding: i32 = 0x90000100;
-pub const NSUTF16LittleEndianStringEncoding: i32 = 0x94000100;
-pub const NSUTF32StringEncoding: i32 = 0x8c000100;
-pub const NSUTF32BigEndianStringEncoding: i32 = 0x98000100;
-pub const NSUTF32LittleEndianStringEncoding: i32 = 0x9c000100;
+pub const NSASCIIStringEncoding: NSStringEncoding = 1;
+pub const NSNEXTSTEPStringEncoding: NSStringEncoding = 2;
+pub const NSJapaneseEUCStringEncoding: NSStringEncoding = 3;
+pub const NSUTF8StringEncoding: NSStringEncoding = 4;
+pub const NSISOLatin1StringEncoding: NSStringEncoding = 5;
+pub const NSSymbolStringEncoding: NSStringEncoding = 6;
+pub const NSNonLossyASCIIStringEncoding: NSStringEncoding = 7;
+pub const NSShiftJISStringEncoding: NSStringEncoding = 8;
+pub const NSISOLatin2StringEncoding: NSStringEncoding = 9;
+pub const NSUnicodeStringEncoding: NSStringEncoding = 10;
+pub const NSWindowsCP1251StringEncoding: NSStringEncoding = 11;
+pub const NSWindowsCP1252StringEncoding: NSStringEncoding = 12;
+pub const NSWindowsCP1253StringEncoding: NSStringEncoding = 13;
+pub const NSWindowsCP1254StringEncoding: NSStringEncoding = 14;
+pub const NSWindowsCP1250StringEncoding: NSStringEncoding = 15;
+pub const NSISO2022JPStringEncoding: NSStringEncoding = 21;
+pub const NSMacOSRomanStringEncoding: NSStringEncoding = 30;
+pub const NSUTF16StringEncoding: NSStringEncoding = NSUnicodeStringEncoding;
+pub const NSUTF16BigEndianStringEncoding: NSStringEncoding = 0x90000100;
+pub const NSUTF16LittleEndianStringEncoding: NSStringEncoding = 0x94000100;
+pub const NSUTF32StringEncoding: NSStringEncoding = 0x8c000100;
+pub const NSUTF32BigEndianStringEncoding: NSStringEncoding = 0x98000100;
+pub const NSUTF32LittleEndianStringEncoding: NSStringEncoding = 0x9c000100;
 
 pub type NSStringEncodingConversionOptions = NSUInteger;
 pub const NSStringEncodingConversionAllowLossy: NSStringEncodingConversionOptions = 1;
@@ -922,7 +922,7 @@ extern_methods!(
     }
 );
 
-pub const NSProprietaryStringEncoding: i32 = 65536;
+pub const NSProprietaryStringEncoding: NSStringEncoding = 65536;
 
 extern_class!(
     #[derive(Debug)]

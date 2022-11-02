@@ -3,11 +3,11 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub const NSBundleExecutableArchitectureI386: i32 = 0x00000007;
-pub const NSBundleExecutableArchitecturePPC: i32 = 0x00000012;
-pub const NSBundleExecutableArchitectureX86_64: i32 = 0x01000007;
-pub const NSBundleExecutableArchitecturePPC64: i32 = 0x01000012;
-pub const NSBundleExecutableArchitectureARM64: i32 = 0x0100000c;
+pub const NSBundleExecutableArchitectureI386: c_uint = 0x00000007;
+pub const NSBundleExecutableArchitecturePPC: c_uint = 0x00000012;
+pub const NSBundleExecutableArchitectureX86_64: c_uint = 0x01000007;
+pub const NSBundleExecutableArchitecturePPC64: c_uint = 0x01000012;
+pub const NSBundleExecutableArchitectureARM64: c_uint = 0x0100000c;
 
 extern_class!(
     #[derive(Debug)]

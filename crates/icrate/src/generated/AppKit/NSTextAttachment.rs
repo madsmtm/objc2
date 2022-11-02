@@ -4,7 +4,7 @@ use crate::common::*;
 use crate::AppKit::*;
 use crate::Foundation::*;
 
-pub const NSAttachmentCharacter: i32 = 0xFFFC;
+pub const NSAttachmentCharacter: c_uint = 0xFFFC;
 
 pub type NSTextAttachmentContainer = NSObject;
 

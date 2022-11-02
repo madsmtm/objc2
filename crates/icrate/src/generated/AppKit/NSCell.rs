@@ -711,10 +711,10 @@ extern "C" {
     pub static NSControlTintDidChangeNotification: &'static NSNotificationName;
 }
 
-pub const NSAnyType: i32 = 0;
-pub const NSIntType: i32 = 1;
-pub const NSPositiveIntType: i32 = 2;
-pub const NSFloatType: i32 = 3;
-pub const NSPositiveFloatType: i32 = 4;
-pub const NSDoubleType: i32 = 6;
-pub const NSPositiveDoubleType: i32 = 7;
+pub const NSAnyType: c_uint = 0;
+pub const NSIntType: c_uint = 1;
+pub const NSPositiveIntType: c_uint = 2;
+pub const NSFloatType: c_uint = 3;
+pub const NSPositiveFloatType: c_uint = 4;
+pub const NSDoubleType: c_uint = 6;
+pub const NSPositiveDoubleType: c_uint = 7;

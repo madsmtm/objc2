@@ -495,8 +495,8 @@ extern "C" {
     pub static NSCalendarDayChangedNotification: &'static NSNotificationName;
 }
 
-pub const NSDateComponentUndefined: i32 = 9223372036854775807;
-pub const NSUndefinedDateComponent: i32 = NSDateComponentUndefined;
+pub const NSDateComponentUndefined: NSInteger = 9223372036854775807;
+pub const NSUndefinedDateComponent: NSInteger = NSDateComponentUndefined;
 
 extern_class!(
     #[derive(Debug)]

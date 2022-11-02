@@ -74,22 +74,22 @@ extern_methods!(
     }
 );
 
-pub const NSFontPanelFaceModeMask: i32 = 1 << 0;
-pub const NSFontPanelSizeModeMask: i32 = 1 << 1;
-pub const NSFontPanelCollectionModeMask: i32 = 1 << 2;
-pub const NSFontPanelUnderlineEffectModeMask: i32 = 1 << 8;
-pub const NSFontPanelStrikethroughEffectModeMask: i32 = 1 << 9;
-pub const NSFontPanelTextColorEffectModeMask: i32 = 1 << 10;
-pub const NSFontPanelDocumentColorEffectModeMask: i32 = 1 << 11;
-pub const NSFontPanelShadowEffectModeMask: i32 = 1 << 12;
-pub const NSFontPanelAllEffectsModeMask: i32 = 0xFFF00;
-pub const NSFontPanelStandardModesMask: i32 = 0xFFFF;
-pub const NSFontPanelAllModesMask: i32 = 0xFFFFFFFF;
+pub const NSFontPanelFaceModeMask: c_uint = 1 << 0;
+pub const NSFontPanelSizeModeMask: c_uint = 1 << 1;
+pub const NSFontPanelCollectionModeMask: c_uint = 1 << 2;
+pub const NSFontPanelUnderlineEffectModeMask: c_uint = 1 << 8;
+pub const NSFontPanelStrikethroughEffectModeMask: c_uint = 1 << 9;
+pub const NSFontPanelTextColorEffectModeMask: c_uint = 1 << 10;
+pub const NSFontPanelDocumentColorEffectModeMask: c_uint = 1 << 11;
+pub const NSFontPanelShadowEffectModeMask: c_uint = 1 << 12;
+pub const NSFontPanelAllEffectsModeMask: c_uint = 0xFFF00;
+pub const NSFontPanelStandardModesMask: c_uint = 0xFFFF;
+pub const NSFontPanelAllModesMask: c_uint = 0xFFFFFFFF;
 
-pub const NSFPPreviewButton: i32 = 131;
-pub const NSFPRevertButton: i32 = 130;
-pub const NSFPSetButton: i32 = 132;
-pub const NSFPPreviewField: i32 = 128;
-pub const NSFPSizeField: i32 = 129;
-pub const NSFPSizeTitle: i32 = 133;
-pub const NSFPCurrentField: i32 = 134;
+pub const NSFPPreviewButton: c_uint = 131;
+pub const NSFPRevertButton: c_uint = 130;
+pub const NSFPSetButton: c_uint = 132;
+pub const NSFPPreviewField: c_uint = 128;
+pub const NSFPSizeField: c_uint = 129;
+pub const NSFPSizeTitle: c_uint = 133;
+pub const NSFPCurrentField: c_uint = 134;

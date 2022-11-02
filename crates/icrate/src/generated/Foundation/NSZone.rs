@@ -3,5 +3,5 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub const NSScannedOption: i32 = 1 << 0;
-pub const NSCollectorDisabledOption: i32 = 1 << 1;
+pub const NSScannedOption: NSUInteger = 1 << 0;
+pub const NSCollectorDisabledOption: NSUInteger = 1 << 1;

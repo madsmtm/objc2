@@ -728,10 +728,10 @@ extern_methods!(
 
 pub type NSLayoutManagerDelegate = NSObject;
 
-pub const NSGlyphAttributeSoft: i32 = 0;
-pub const NSGlyphAttributeElastic: i32 = 1;
-pub const NSGlyphAttributeBidiLevel: i32 = 2;
-pub const NSGlyphAttributeInscribe: i32 = 5;
+pub const NSGlyphAttributeSoft: c_uint = 0;
+pub const NSGlyphAttributeElastic: c_uint = 1;
+pub const NSGlyphAttributeBidiLevel: c_uint = 2;
+pub const NSGlyphAttributeInscribe: c_uint = 5;
 
 pub type NSGlyphInscription = NSUInteger;
 pub const NSGlyphInscribeBase: NSGlyphInscription = 0;

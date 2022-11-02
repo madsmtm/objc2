@@ -353,27 +353,27 @@ extern "C" {
 
 pub type NSFontFamilyClass = u32;
 
-pub const NSFontUnknownClass: i32 = 0 << 28;
-pub const NSFontOldStyleSerifsClass: i32 = 1 << 28;
-pub const NSFontTransitionalSerifsClass: i32 = 2 << 28;
-pub const NSFontModernSerifsClass: i32 = 3 << 28;
-pub const NSFontClarendonSerifsClass: i32 = 4 << 28;
-pub const NSFontSlabSerifsClass: i32 = 5 << 28;
-pub const NSFontFreeformSerifsClass: i32 = 7 << 28;
-pub const NSFontSansSerifClass: i32 = 8 << 28;
-pub const NSFontOrnamentalsClass: i32 = 9 << 28;
-pub const NSFontScriptsClass: i32 = 10 << 28;
-pub const NSFontSymbolicClass: i32 = 12 << 28;
+pub const NSFontUnknownClass: c_int = 0 << 28;
+pub const NSFontOldStyleSerifsClass: c_int = 1 << 28;
+pub const NSFontTransitionalSerifsClass: c_int = 2 << 28;
+pub const NSFontModernSerifsClass: c_int = 3 << 28;
+pub const NSFontClarendonSerifsClass: c_int = 4 << 28;
+pub const NSFontSlabSerifsClass: c_int = 5 << 28;
+pub const NSFontFreeformSerifsClass: c_int = 7 << 28;
+pub const NSFontSansSerifClass: c_int = 8 << 28;
+pub const NSFontOrnamentalsClass: c_int = 9 << 28;
+pub const NSFontScriptsClass: c_int = 10 << 28;
+pub const NSFontSymbolicClass: c_int = 12 << 28;
 
-pub const NSFontFamilyClassMask: i32 = 0xF0000000;
+pub const NSFontFamilyClassMask: c_uint = 0xF0000000;
 
-pub const NSFontItalicTrait: i32 = 1 << 0;
-pub const NSFontBoldTrait: i32 = 1 << 1;
-pub const NSFontExpandedTrait: i32 = 1 << 5;
-pub const NSFontCondensedTrait: i32 = 1 << 6;
-pub const NSFontMonoSpaceTrait: i32 = 1 << 10;
-pub const NSFontVerticalTrait: i32 = 1 << 11;
-pub const NSFontUIOptimizedTrait: i32 = 1 << 12;
+pub const NSFontItalicTrait: c_uint = 1 << 0;
+pub const NSFontBoldTrait: c_uint = 1 << 1;
+pub const NSFontExpandedTrait: c_uint = 1 << 5;
+pub const NSFontCondensedTrait: c_uint = 1 << 6;
+pub const NSFontMonoSpaceTrait: c_uint = 1 << 10;
+pub const NSFontVerticalTrait: c_uint = 1 << 11;
+pub const NSFontUIOptimizedTrait: c_uint = 1 << 12;
 
 extern "C" {
     pub static NSFontColorAttribute: &'static NSString;

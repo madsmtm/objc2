@@ -4,7 +4,7 @@ use crate::common::*;
 use crate::AppKit::*;
 use crate::Foundation::*;
 
-pub const NSOutlineViewDropOnItemIndex: i32 = -1;
+pub const NSOutlineViewDropOnItemIndex: c_int = -1;
 
 extern_class!(
     #[derive(Debug)]

@@ -3,13 +3,13 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub const NSWindowsNTOperatingSystem: i32 = 1;
-pub const NSWindows95OperatingSystem: i32 = 2;
-pub const NSSolarisOperatingSystem: i32 = 3;
-pub const NSHPUXOperatingSystem: i32 = 4;
-pub const NSMACHOperatingSystem: i32 = 5;
-pub const NSSunOSOperatingSystem: i32 = 6;
-pub const NSOSF1OperatingSystem: i32 = 7;
+pub const NSWindowsNTOperatingSystem: c_uint = 1;
+pub const NSWindows95OperatingSystem: c_uint = 2;
+pub const NSSolarisOperatingSystem: c_uint = 3;
+pub const NSHPUXOperatingSystem: c_uint = 4;
+pub const NSMACHOperatingSystem: c_uint = 5;
+pub const NSSunOSOperatingSystem: c_uint = 6;
+pub const NSOSF1OperatingSystem: c_uint = 7;
 
 struct_impl!(
     pub struct NSOperatingSystemVersion {

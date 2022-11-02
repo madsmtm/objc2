@@ -696,8 +696,8 @@ extern "C" {
     pub static NSUsesScreenFontsDocumentAttribute: &'static NSAttributedStringKey;
 }
 
-pub const NSNoUnderlineStyle: i32 = 0;
-pub const NSSingleUnderlineStyle: i32 = 1;
+pub const NSNoUnderlineStyle: c_uint = 0;
+pub const NSSingleUnderlineStyle: c_uint = 1;
 
 extern "C" {
     pub static NSUnderlineStrikethroughMask: NSUInteger;

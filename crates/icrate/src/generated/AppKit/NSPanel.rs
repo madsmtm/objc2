@@ -35,10 +35,10 @@ extern_methods!(
     }
 );
 
-pub const NSAlertDefaultReturn: i32 = 1;
-pub const NSAlertAlternateReturn: i32 = 0;
-pub const NSAlertOtherReturn: i32 = -1;
-pub const NSAlertErrorReturn: i32 = -2;
+pub const NSAlertDefaultReturn: c_int = 1;
+pub const NSAlertAlternateReturn: c_int = 0;
+pub const NSAlertOtherReturn: c_int = -1;
+pub const NSAlertErrorReturn: c_int = -2;
 
-pub const NSOKButton: i32 = NSModalResponseOK;
-pub const NSCancelButton: i32 = NSModalResponseCancel;
+pub const NSOKButton: c_uint = NSModalResponseOK;
+pub const NSCancelButton: c_uint = NSModalResponseCancel;

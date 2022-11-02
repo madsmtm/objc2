@@ -27,8 +27,8 @@ pub static NSModalResponseOK: NSModalResponse = 1;
 
 pub static NSModalResponseCancel: NSModalResponse = 0;
 
-pub const NSDisplayWindowRunLoopOrdering: i32 = 600000;
-pub const NSResetCursorRectsRunLoopOrdering: i32 = 700000;
+pub const NSDisplayWindowRunLoopOrdering: c_uint = 600000;
+pub const NSResetCursorRectsRunLoopOrdering: c_uint = 700000;
 
 pub type NSWindowSharingType = NSUInteger;
 pub const NSWindowSharingNone: NSWindowSharingType = 0;

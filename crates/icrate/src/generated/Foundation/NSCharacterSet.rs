@@ -3,7 +3,7 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub const NSOpenStepUnicodeReservedBase: i32 = 0xF400;
+pub const NSOpenStepUnicodeReservedBase: c_uint = 0xF400;
 
 extern_class!(
     #[derive(Debug)]

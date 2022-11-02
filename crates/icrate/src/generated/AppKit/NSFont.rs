@@ -227,8 +227,8 @@ extern "C" {
 
 pub type NSGlyph = c_uint;
 
-pub const NSControlGlyph: i32 = 0x00FFFFFF;
-pub const NSNullGlyph: i32 = 0x0;
+pub const NSControlGlyph: c_uint = 0x00FFFFFF;
+pub const NSNullGlyph: c_uint = 0x0;
 
 pub type NSFontRenderingMode = NSUInteger;
 pub const NSFontDefaultRenderingMode: NSFontRenderingMode = 0;

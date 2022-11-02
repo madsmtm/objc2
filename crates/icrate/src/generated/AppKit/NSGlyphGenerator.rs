@@ -4,9 +4,9 @@ use crate::common::*;
 use crate::AppKit::*;
 use crate::Foundation::*;
 
-pub const NSShowControlGlyphs: i32 = 1 << 0;
-pub const NSShowInvisibleGlyphs: i32 = 1 << 1;
-pub const NSWantsBidiLevels: i32 = 1 << 2;
+pub const NSShowControlGlyphs: c_uint = 1 << 0;
+pub const NSShowInvisibleGlyphs: c_uint = 1 << 1;
+pub const NSWantsBidiLevels: c_uint = 1 << 2;
 
 pub type NSGlyphStorage = NSObject;
 

@@ -6,7 +6,7 @@ use crate::Foundation::*;
 
 pub type NSImageHintKey = NSString;
 
-pub const NSImageRepMatchesDevice: i32 = 0;
+pub const NSImageRepMatchesDevice: c_uint = 0;
 
 pub type NSImageLayoutDirection = NSInteger;
 pub const NSImageLayoutDirectionUnspecified: NSImageLayoutDirection = -1;

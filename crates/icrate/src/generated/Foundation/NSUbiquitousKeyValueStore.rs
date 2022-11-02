@@ -97,7 +97,7 @@ extern "C" {
     pub static NSUbiquitousKeyValueStoreChangedKeysKey: &'static NSString;
 }
 
-pub const NSUbiquitousKeyValueStoreServerChange: i32 = 0;
-pub const NSUbiquitousKeyValueStoreInitialSyncChange: i32 = 1;
-pub const NSUbiquitousKeyValueStoreQuotaViolationChange: i32 = 2;
-pub const NSUbiquitousKeyValueStoreAccountChange: i32 = 3;
+pub const NSUbiquitousKeyValueStoreServerChange: NSInteger = 0;
+pub const NSUbiquitousKeyValueStoreInitialSyncChange: NSInteger = 1;
+pub const NSUbiquitousKeyValueStoreQuotaViolationChange: NSInteger = 2;
+pub const NSUbiquitousKeyValueStoreAccountChange: NSInteger = 3;

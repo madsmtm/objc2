@@ -3,17 +3,17 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub const NSNoScriptError: i32 = 0;
-pub const NSReceiverEvaluationScriptError: i32 = 1;
-pub const NSKeySpecifierEvaluationScriptError: i32 = 2;
-pub const NSArgumentEvaluationScriptError: i32 = 3;
-pub const NSReceiversCantHandleCommandScriptError: i32 = 4;
-pub const NSRequiredArgumentsMissingScriptError: i32 = 5;
-pub const NSArgumentsWrongScriptError: i32 = 6;
-pub const NSUnknownKeyScriptError: i32 = 7;
-pub const NSInternalScriptError: i32 = 8;
-pub const NSOperationNotSupportedForKeyScriptError: i32 = 9;
-pub const NSCannotCreateScriptCommandError: i32 = 10;
+pub const NSNoScriptError: NSInteger = 0;
+pub const NSReceiverEvaluationScriptError: NSInteger = 1;
+pub const NSKeySpecifierEvaluationScriptError: NSInteger = 2;
+pub const NSArgumentEvaluationScriptError: NSInteger = 3;
+pub const NSReceiversCantHandleCommandScriptError: NSInteger = 4;
+pub const NSRequiredArgumentsMissingScriptError: NSInteger = 5;
+pub const NSArgumentsWrongScriptError: NSInteger = 6;
+pub const NSUnknownKeyScriptError: NSInteger = 7;
+pub const NSInternalScriptError: NSInteger = 8;
+pub const NSOperationNotSupportedForKeyScriptError: NSInteger = 9;
+pub const NSCannotCreateScriptCommandError: NSInteger = 10;
 
 extern_class!(
     #[derive(Debug)]

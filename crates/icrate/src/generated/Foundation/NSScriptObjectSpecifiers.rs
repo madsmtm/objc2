@@ -3,13 +3,13 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub const NSNoSpecifierError: i32 = 0;
-pub const NSNoTopLevelContainersSpecifierError: i32 = 1;
-pub const NSContainerSpecifierError: i32 = 2;
-pub const NSUnknownKeySpecifierError: i32 = 3;
-pub const NSInvalidIndexSpecifierError: i32 = 4;
-pub const NSInternalSpecifierError: i32 = 5;
-pub const NSOperationNotSupportedForKeySpecifierError: i32 = 6;
+pub const NSNoSpecifierError: NSInteger = 0;
+pub const NSNoTopLevelContainersSpecifierError: NSInteger = 1;
+pub const NSContainerSpecifierError: NSInteger = 2;
+pub const NSUnknownKeySpecifierError: NSInteger = 3;
+pub const NSInvalidIndexSpecifierError: NSInteger = 4;
+pub const NSInternalSpecifierError: NSInteger = 5;
+pub const NSOperationNotSupportedForKeySpecifierError: NSInteger = 6;
 
 pub type NSInsertionPosition = NSUInteger;
 pub const NSPositionAfter: NSInsertionPosition = 0;
