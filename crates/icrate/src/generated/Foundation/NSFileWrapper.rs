@@ -146,13 +146,13 @@ extern_methods!(
         pub unsafe fn initWithPath(
             this: Option<Allocated<Self>>,
             path: &NSString,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initSymbolicLinkWithDestination:)]
         pub unsafe fn initSymbolicLinkWithDestination(
             this: Option<Allocated<Self>>,
             path: &NSString,
-        ) -> Id<Object, Shared>;
+        ) -> Id<Self, Shared>;
 
         #[method(needsToBeUpdatedFromPath:)]
         pub unsafe fn needsToBeUpdatedFromPath(&self, path: &NSString) -> bool;

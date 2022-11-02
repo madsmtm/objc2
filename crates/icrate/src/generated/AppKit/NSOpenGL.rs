@@ -84,7 +84,7 @@ extern_methods!(
         pub unsafe fn initWithData(
             this: Option<Allocated<Self>>,
             attribs: Option<&NSData>,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Other attributes)]
         pub unsafe fn attributes(&self) -> Option<Id<NSData, Shared>>;

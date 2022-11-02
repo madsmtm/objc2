@@ -886,13 +886,13 @@ extern_methods!(
         pub unsafe fn initWithContentsOfFile(
             this: Option<Allocated<Self>>,
             path: &NSString,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
             this: Option<Allocated<Self>>,
             url: &NSURL,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Other stringWithContentsOfFile:)]
         pub unsafe fn stringWithContentsOfFile(path: &NSString) -> Option<Id<Object, Shared>>;
@@ -906,20 +906,20 @@ extern_methods!(
             bytes: NonNull<c_char>,
             length: NSUInteger,
             freeBuffer: bool,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithCString:length:)]
         pub unsafe fn initWithCString_length(
             this: Option<Allocated<Self>>,
             bytes: NonNull<c_char>,
             length: NSUInteger,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithCString:)]
         pub unsafe fn initWithCString(
             this: Option<Allocated<Self>>,
             bytes: NonNull<c_char>,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Other stringWithCString:length:)]
         pub unsafe fn stringWithCString_length(

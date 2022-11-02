@@ -48,7 +48,7 @@ extern_methods!(
         pub unsafe fn associatedIndex(&self) -> NSUInteger;
 
         #[method_id(@__retain_semantics Init init)]
-        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Object, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init initWithObject:type:index:)]
         pub unsafe fn initWithObject_type_index(

@@ -715,13 +715,11 @@ impl fmt::Display for RustType {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct RustTypeReturn {
-    inner: RustType,
-}
+pub struct RustTypeReturn(pub RustType);
 
 impl RustTypeReturn {
     pub fn is_id(&self) -> bool {
-        matches!(self.inner, RustType::Id { .. })
+        matches!(self.0, RustType::Id { .. })
     }
 
     pub fn new(inner: RustType) -> Self {
@@ -731,7 +729,7 @@ impl RustTypeReturn {
             }
         });
 
-        Self { inner }
+        Self(inner)
     }
 
     pub fn parse(ty: Type<'_>) -> Self {
@@ -739,7 +737,7 @@ impl RustTypeReturn {
     }
 
     pub fn as_error(&self) -> String {
-        match &self.inner {
+        match &self.0 {
             RustType::Id {
                 type_,
                 lifetime: Lifetime::Unspecified,
@@ -758,13 +756,13 @@ impl RustTypeReturn {
     }
 
     pub fn is_alloc(&self) -> bool {
-        match &self.inner {
+        match &self.0 {
             RustType::Id {
                 type_,
                 lifetime: Lifetime::Unspecified,
                 is_const: false,
                 nullability: Nullability::NonNull,
-            } => type_.name == "Object" && type_.generics.is_empty(),
+            } => type_.name == "Self" && type_.generics.is_empty(),
             _ => false,
         }
     }
@@ -772,7 +770,7 @@ impl RustTypeReturn {
 
 impl fmt::Display for RustTypeReturn {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match &self.inner {
+        match &self.0 {
             RustType::Void => Ok(()),
             RustType::Id {
                 type_,

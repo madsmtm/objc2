@@ -136,6 +136,10 @@ impl MemoryManagement {
     fn is_alloc(sel: &str) -> bool {
         in_selector_family(sel.as_bytes(), b"alloc")
     }
+
+    fn is_new(sel: &str) -> bool {
+        in_selector_family(sel.as_bytes(), b"new")
+    }
 }
 
 #[allow(dead_code)]
@@ -259,7 +263,34 @@ impl<'tu> PartialMethod<'tu> {
         }
 
         let result_type = entity.get_result_type().expect("method return type");
-        let result_type = RustTypeReturn::parse(result_type);
+        let result_type = match RustTypeReturn::parse(result_type) {
+            RustTypeReturn(RustType::Id {
+                mut type_,
+                is_const,
+                lifetime,
+                nullability,
+            }) => {
+                // Related result types
+                // https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types
+                if type_.name == "Object" {
+                    assert!(type_.generics.is_empty(), "Object return generics empty");
+                    if (is_class && MemoryManagement::is_new(&selector))
+                        || (is_class && MemoryManagement::is_alloc(&selector))
+                        || (!is_class && MemoryManagement::is_init(&selector))
+                        || (!is_class && selector == "self")
+                    {
+                        type_.name = "Self".into();
+                    }
+                }
+                RustTypeReturn(RustType::Id {
+                    type_,
+                    is_const,
+                    lifetime,
+                    nullability,
+                })
+            }
+            ty => ty,
+        };
 
         let mut designated_initializer = false;
         let mut consumes_self = false;
@@ -396,7 +427,7 @@ impl fmt::Display for Method {
                     self.result_type,
                     self.fn_name
                 );
-                writeln!(f, "-> Option<Allocated<Object>>;")?;
+                writeln!(f, "-> Option<Allocated<Self>>;")?;
             } else {
                 writeln!(f, "{};", self.result_type)?;
             }

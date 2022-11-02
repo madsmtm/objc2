@@ -119,7 +119,7 @@ extern_methods!(
             this: Option<Allocated<Self>>,
             anURL: Option<&NSURL>,
             willCache: bool,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Other propertyForKey:)]
         pub unsafe fn propertyForKey(

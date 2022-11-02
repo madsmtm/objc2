@@ -20,7 +20,7 @@ extern_methods!(
             this: Option<Allocated<Self>>,
             win: Option<&NSWindow>,
             rect: NSRect,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithSize:depth:separate:alpha:)]
         pub unsafe fn initWithSize_depth_separate_alpha(
@@ -29,7 +29,7 @@ extern_methods!(
             depth: NSWindowDepth,
             flag: bool,
             alpha: bool,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Other window)]
         pub unsafe fn window(&self) -> Option<Id<NSWindow, Shared>>;

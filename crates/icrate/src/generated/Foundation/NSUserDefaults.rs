@@ -45,7 +45,7 @@ extern_methods!(
         pub unsafe fn initWithUser(
             this: Option<Allocated<Self>>,
             username: &NSString,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Other objectForKey:)]
         pub unsafe fn objectForKey(&self, defaultName: &NSString) -> Option<Id<Object, Shared>>;

@@ -15,7 +15,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSInflectionRule {
         #[method_id(@__retain_semantics Init init)]
-        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Object, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Other automaticRule)]
         pub unsafe fn automaticRule() -> Id<NSInflectionRule, Shared>;

@@ -623,14 +623,14 @@ extern_methods!(
             this: Option<Allocated<Self>>,
             absolutePath: &NSString,
             typeName: &NSString,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithContentsOfURL:ofType:)]
         pub unsafe fn initWithContentsOfURL_ofType(
             this: Option<Allocated<Self>>,
             url: &NSURL,
             typeName: &NSString,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method(loadDataRepresentation:ofType:)]
         pub unsafe fn loadDataRepresentation_ofType(&self, data: &NSData, type_: &NSString)

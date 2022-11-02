@@ -315,7 +315,7 @@ extern_methods!(
             this: Option<Allocated<Self>>,
             format: &NSString,
             flag: bool,
-        ) -> Id<Object, Shared>;
+        ) -> Id<Self, Shared>;
 
         #[method(allowsNaturalLanguage)]
         pub unsafe fn allowsNaturalLanguage(&self) -> bool;

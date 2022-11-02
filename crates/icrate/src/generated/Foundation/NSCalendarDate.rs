@@ -108,20 +108,20 @@ extern_methods!(
             description: &NSString,
             format: &NSString,
             locale: Option<&Object>,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithString:calendarFormat:)]
         pub unsafe fn initWithString_calendarFormat(
             this: Option<Allocated<Self>>,
             description: &NSString,
             format: &NSString,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithString:)]
         pub unsafe fn initWithString(
             this: Option<Allocated<Self>>,
             description: &NSString,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithYear:month:day:hour:minute:second:timeZone:)]
         pub unsafe fn initWithYear_month_day_hour_minute_second_timeZone(
@@ -133,7 +133,7 @@ extern_methods!(
             minute: NSUInteger,
             second: NSUInteger,
             aTimeZone: Option<&NSTimeZone>,
-        ) -> Id<Object, Shared>;
+        ) -> Id<Self, Shared>;
 
         #[method(setCalendarFormat:)]
         pub unsafe fn setCalendarFormat(&self, format: Option<&NSString>);
@@ -197,6 +197,6 @@ extern_methods!(
         pub unsafe fn initWithString(
             this: Option<Allocated<Self>>,
             description: &NSString,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
     }
 );

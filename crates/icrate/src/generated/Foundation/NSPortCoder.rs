@@ -42,7 +42,7 @@ extern_methods!(
             rcvPort: Option<&NSPort>,
             sndPort: Option<&NSPort>,
             comps: Option<&NSArray>,
-        ) -> Id<Object, Shared>;
+        ) -> Id<Self, Shared>;
 
         #[method(dispatch)]
         pub unsafe fn dispatch(&self);

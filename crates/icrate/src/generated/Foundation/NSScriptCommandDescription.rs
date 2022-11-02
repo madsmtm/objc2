@@ -15,7 +15,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSScriptCommandDescription {
         #[method_id(@__retain_semantics Init init)]
-        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Object, Shared>;
+        pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init initWithSuiteName:commandName:dictionary:)]
         pub unsafe fn initWithSuiteName_commandName_dictionary(

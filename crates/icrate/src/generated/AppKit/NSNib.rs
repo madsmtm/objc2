@@ -47,7 +47,7 @@ extern_methods!(
         pub unsafe fn initWithContentsOfURL(
             this: Option<Allocated<Self>>,
             nibFileURL: Option<&NSURL>,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method(instantiateNibWithExternalNameTable:)]
         pub unsafe fn instantiateNibWithExternalNameTable(

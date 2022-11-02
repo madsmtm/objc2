@@ -286,13 +286,13 @@ extern_methods!(
         pub unsafe fn initWithContentsOfMappedFile(
             this: Option<Allocated<Self>>,
             path: &NSString,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Init initWithBase64Encoding:)]
         pub unsafe fn initWithBase64Encoding(
             this: Option<Allocated<Self>>,
             base64String: &NSString,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Other base64Encoding)]
         pub unsafe fn base64Encoding(&self) -> Id<NSString, Shared>;

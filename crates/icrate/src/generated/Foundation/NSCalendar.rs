@@ -144,7 +144,7 @@ extern_methods!(
         pub unsafe fn initWithCalendarIdentifier(
             this: Option<Allocated<Self>>,
             ident: &NSCalendarIdentifier,
-        ) -> Option<Id<Object, Shared>>;
+        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Other calendarIdentifier)]
         pub unsafe fn calendarIdentifier(&self) -> Id<NSCalendarIdentifier, Shared>;
