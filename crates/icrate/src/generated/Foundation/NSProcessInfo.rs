@@ -11,6 +11,14 @@ pub const NSMACHOperatingSystem: i32 = 5;
 pub const NSSunOSOperatingSystem: i32 = 6;
 pub const NSOSF1OperatingSystem: i32 = 7;
 
+struct_impl!(
+    pub struct NSOperatingSystemVersion {
+        pub majorVersion: NSInteger,
+        pub minorVersion: NSInteger,
+        pub patchVersion: NSInteger,
+    }
+);
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSProcessInfo;

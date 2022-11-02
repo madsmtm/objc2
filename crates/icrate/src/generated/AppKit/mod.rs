@@ -771,12 +771,12 @@ mod __exported {
         NSCollectionLayoutSectionOrthogonalScrollingBehaviorPaging, NSCollectionLayoutSize,
         NSCollectionLayoutSpacing, NSCollectionLayoutSupplementaryItem,
         NSCollectionLayoutVisibleItem, NSCollectionViewCompositionalLayout,
-        NSCollectionViewCompositionalLayoutConfiguration, NSDirectionalEdgeInsetsZero,
-        NSDirectionalRectEdge, NSDirectionalRectEdgeAll, NSDirectionalRectEdgeBottom,
-        NSDirectionalRectEdgeLeading, NSDirectionalRectEdgeNone, NSDirectionalRectEdgeTop,
-        NSDirectionalRectEdgeTrailing, NSRectAlignment, NSRectAlignmentBottom,
-        NSRectAlignmentBottomLeading, NSRectAlignmentBottomTrailing, NSRectAlignmentLeading,
-        NSRectAlignmentNone, NSRectAlignmentTop, NSRectAlignmentTopLeading,
+        NSCollectionViewCompositionalLayoutConfiguration, NSDirectionalEdgeInsets,
+        NSDirectionalEdgeInsetsZero, NSDirectionalRectEdge, NSDirectionalRectEdgeAll,
+        NSDirectionalRectEdgeBottom, NSDirectionalRectEdgeLeading, NSDirectionalRectEdgeNone,
+        NSDirectionalRectEdgeTop, NSDirectionalRectEdgeTrailing, NSRectAlignment,
+        NSRectAlignmentBottom, NSRectAlignmentBottomLeading, NSRectAlignmentBottomTrailing,
+        NSRectAlignmentLeading, NSRectAlignmentNone, NSRectAlignmentTop, NSRectAlignmentTopLeading,
         NSRectAlignmentTopTrailing, NSRectAlignmentTrailing,
     };
     pub use super::NSCollectionViewFlowLayout::{

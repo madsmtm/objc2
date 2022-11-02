@@ -19,6 +19,33 @@ extern crate std;
 #[cfg(feature = "objective-c")]
 pub use objc2;
 
+macro_rules! struct_impl {
+    (
+        $v:vis struct $name:ident {
+            $($field_v:vis $field:ident: $ty:ty),* $(,)?
+        }
+    ) => {
+        #[repr(C)]
+        #[derive(Clone, Copy, Debug, PartialEq)]
+        $v struct $name {
+            $($field_v $field: $ty,)*
+        }
+
+        #[cfg(feature = "objective-c")]
+        unsafe impl objc2::Encode for $name {
+            const ENCODING: objc2::Encoding = objc2::Encoding::Struct(
+                stringify!($name),
+                &[$(<$ty as objc2::Encode>::ENCODING),*],
+            );
+        }
+
+        #[cfg(feature = "objective-c")]
+        unsafe impl objc2::RefEncode for $name {
+            const ENCODING_REF: objc2::Encoding = objc2::Encoding::Pointer(&<Self as objc2::Encode>::ENCODING);
+        }
+    };
+}
+
 // Frameworks
 #[cfg(feature = "AppKit")]
 pub mod AppKit;

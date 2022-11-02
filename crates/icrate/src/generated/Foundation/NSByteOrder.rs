@@ -6,3 +6,15 @@ use crate::Foundation::*;
 pub const NS_UnknownByteOrder: i32 = CFByteOrderUnknown;
 pub const NS_LittleEndian: i32 = CFByteOrderLittleEndian;
 pub const NS_BigEndian: i32 = CFByteOrderBigEndian;
+
+struct_impl!(
+    pub struct NSSwappedFloat {
+        pub v: c_uint,
+    }
+);
+
+struct_impl!(
+    pub struct NSSwappedDouble {
+        pub v: c_ulonglong,
+    }
+);

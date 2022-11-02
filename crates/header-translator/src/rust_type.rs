@@ -558,6 +558,18 @@ impl RustType {
         this
     }
 
+    pub fn parse_struct_field(ty: Type<'_>) -> Self {
+        let this = Self::parse(ty, false, Nullability::Unspecified);
+
+        this.visit_lifetime(|lifetime| {
+            if lifetime != Lifetime::Unspecified {
+                panic!("unexpected lifetime in struct field {this:?}");
+            }
+        });
+
+        this
+    }
+
     pub fn parse_enum(ty: Type<'_>) -> Self {
         let this = Self::parse(ty, false, Nullability::Unspecified);
 

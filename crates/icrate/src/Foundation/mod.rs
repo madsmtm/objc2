@@ -2,7 +2,7 @@
 pub(crate) mod generated;
 
 pub use objc2::ffi::NSIntegerMax;
-pub use objc2::foundation::{CGFloat, CGPoint, CGRect, CGSize, NSRange, NSTimeInterval, NSZone};
+pub use objc2::foundation::{CGFloat, CGPoint, CGRect, CGSize, NSTimeInterval, NSZone};
 pub use objc2::ns_string;
 
 objc2::__inner_extern_class! {
@@ -95,6 +95,18 @@ impl std::fmt::Debug for NSProxy {
 // TODO
 pub type NSRangePointer = *const NSRange;
 
+struct_impl!(
+    pub struct NSDecimal {
+        // signed   int _exponent:8;
+        // unsigned int _length:4;
+        // unsigned int _isNegative:1;
+        // unsigned int _isCompact:1;
+        // unsigned int _reserved:18;
+        _inner: i32,
+        _mantissa: [std::ffi::c_ushort; 8],
+    }
+);
+
 // Generated
 
 pub use self::generated::FoundationErrors::{
@@ -130,7 +142,7 @@ pub use self::generated::FoundationErrors::{
     NSXPCConnectionErrorMaximum, NSXPCConnectionErrorMinimum, NSXPCConnectionInterrupted,
     NSXPCConnectionInvalid, NSXPCConnectionReplyInvalid,
 };
-pub use self::generated::NSAffineTransform::NSAffineTransform;
+pub use self::generated::NSAffineTransform::{NSAffineTransform, NSAffineTransformStruct};
 pub use self::generated::NSAppleEventDescriptor::{
     NSAppleEventDescriptor, NSAppleEventSendAlwaysInteract, NSAppleEventSendCanInteract,
     NSAppleEventSendCanSwitchLayer, NSAppleEventSendDefaultOptions, NSAppleEventSendDontAnnotate,
@@ -204,7 +216,9 @@ pub use self::generated::NSByteCountFormatter::{
     NSByteCountFormatterUsePB, NSByteCountFormatterUseTB, NSByteCountFormatterUseYBOrHigher,
     NSByteCountFormatterUseZB,
 };
-pub use self::generated::NSByteOrder::{NS_BigEndian, NS_LittleEndian, NS_UnknownByteOrder};
+pub use self::generated::NSByteOrder::{
+    NSSwappedDouble, NSSwappedFloat, NS_BigEndian, NS_LittleEndian, NS_UnknownByteOrder,
+};
 pub use self::generated::NSCache::{NSCache, NSCacheDelegate};
 pub use self::generated::NSCalendar::{
     NSCalendar, NSCalendarCalendarUnit, NSCalendarDayChangedNotification, NSCalendarIdentifier,
@@ -328,7 +342,7 @@ pub use self::generated::NSEnergyFormatter::{
     NSEnergyFormatter, NSEnergyFormatterUnit, NSEnergyFormatterUnitCalorie,
     NSEnergyFormatterUnitJoule, NSEnergyFormatterUnitKilocalorie, NSEnergyFormatterUnitKilojoule,
 };
-pub use self::generated::NSEnumerator::{NSEnumerator, NSFastEnumeration};
+pub use self::generated::NSEnumerator::{NSEnumerator, NSFastEnumeration, NSFastEnumerationState};
 pub use self::generated::NSError::{
     NSCocoaErrorDomain, NSDebugDescriptionErrorKey, NSError, NSErrorDomain, NSErrorUserInfoKey,
     NSFilePathErrorKey, NSHelpAnchorErrorKey, NSLocalizedDescriptionKey,
@@ -425,8 +439,8 @@ pub use self::generated::NSGeometry::{
     NSAlignMaxXOutward, NSAlignMaxYInward, NSAlignMaxYNearest, NSAlignMaxYOutward,
     NSAlignMinXInward, NSAlignMinXNearest, NSAlignMinXOutward, NSAlignMinYInward,
     NSAlignMinYNearest, NSAlignMinYOutward, NSAlignRectFlipped, NSAlignWidthInward,
-    NSAlignWidthNearest, NSAlignWidthOutward, NSAlignmentOptions, NSEdgeInsetsZero, NSMaxXEdge,
-    NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint, NSRect, NSRectEdge, NSRectEdgeMaxX,
+    NSAlignWidthNearest, NSAlignWidthOutward, NSAlignmentOptions, NSEdgeInsets, NSEdgeInsetsZero,
+    NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint, NSRect, NSRectEdge, NSRectEdgeMaxX,
     NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize, NSZeroPoint, NSZeroRect, NSZeroSize,
 };
 pub use self::generated::NSHTTPCookie::{
@@ -443,11 +457,12 @@ pub use self::generated::NSHTTPCookieStorage::{
     NSHTTPCookieManagerCookiesChangedNotification, NSHTTPCookieStorage,
 };
 pub use self::generated::NSHashTable::{
-    NSHashTable, NSHashTableCopyIn, NSHashTableObjectPointerPersonality, NSHashTableOptions,
-    NSHashTableStrongMemory, NSHashTableWeakMemory, NSHashTableZeroingWeakMemory,
-    NSIntHashCallBacks, NSIntegerHashCallBacks, NSNonOwnedPointerHashCallBacks,
-    NSNonRetainedObjectHashCallBacks, NSObjectHashCallBacks, NSOwnedObjectIdentityHashCallBacks,
-    NSOwnedPointerHashCallBacks, NSPointerToStructHashCallBacks,
+    NSHashEnumerator, NSHashTable, NSHashTableCallBacks, NSHashTableCopyIn,
+    NSHashTableObjectPointerPersonality, NSHashTableOptions, NSHashTableStrongMemory,
+    NSHashTableWeakMemory, NSHashTableZeroingWeakMemory, NSIntHashCallBacks,
+    NSIntegerHashCallBacks, NSNonOwnedPointerHashCallBacks, NSNonRetainedObjectHashCallBacks,
+    NSObjectHashCallBacks, NSOwnedObjectIdentityHashCallBacks, NSOwnedPointerHashCallBacks,
+    NSPointerToStructHashCallBacks,
 };
 pub use self::generated::NSHost::NSHost;
 pub use self::generated::NSISO8601DateFormatter::{
@@ -549,12 +564,14 @@ pub use self::generated::NSLock::{
 };
 pub use self::generated::NSMapTable::{
     NSIntMapKeyCallBacks, NSIntMapValueCallBacks, NSIntegerMapKeyCallBacks,
-    NSIntegerMapValueCallBacks, NSMapTable, NSMapTableCopyIn, NSMapTableObjectPointerPersonality,
-    NSMapTableOptions, NSMapTableStrongMemory, NSMapTableWeakMemory, NSMapTableZeroingWeakMemory,
-    NSNonOwnedPointerMapKeyCallBacks, NSNonOwnedPointerMapValueCallBacks,
-    NSNonOwnedPointerOrNullMapKeyCallBacks, NSNonRetainedObjectMapKeyCallBacks,
-    NSNonRetainedObjectMapValueCallBacks, NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks,
-    NSOwnedPointerMapKeyCallBacks, NSOwnedPointerMapValueCallBacks,
+    NSIntegerMapValueCallBacks, NSMapEnumerator, NSMapTable, NSMapTableCopyIn,
+    NSMapTableKeyCallBacks, NSMapTableObjectPointerPersonality, NSMapTableOptions,
+    NSMapTableStrongMemory, NSMapTableValueCallBacks, NSMapTableWeakMemory,
+    NSMapTableZeroingWeakMemory, NSNonOwnedPointerMapKeyCallBacks,
+    NSNonOwnedPointerMapValueCallBacks, NSNonOwnedPointerOrNullMapKeyCallBacks,
+    NSNonRetainedObjectMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks,
+    NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, NSOwnedPointerMapKeyCallBacks,
+    NSOwnedPointerMapValueCallBacks,
 };
 pub use self::generated::NSMassFormatter::{
     NSMassFormatter, NSMassFormatterUnit, NSMassFormatterUnitGram, NSMassFormatterUnitKilogram,
@@ -785,7 +802,7 @@ pub use self::generated::NSProcessInfo::{
     NSActivityIdleDisplaySleepDisabled, NSActivityIdleSystemSleepDisabled,
     NSActivityLatencyCritical, NSActivityOptions, NSActivitySuddenTerminationDisabled,
     NSActivityUserInitiated, NSActivityUserInitiatedAllowingIdleSystemSleep, NSHPUXOperatingSystem,
-    NSMACHOperatingSystem, NSOSF1OperatingSystem, NSProcessInfo,
+    NSMACHOperatingSystem, NSOSF1OperatingSystem, NSOperatingSystemVersion, NSProcessInfo,
     NSProcessInfoPowerStateDidChangeNotification, NSProcessInfoThermalState,
     NSProcessInfoThermalStateCritical, NSProcessInfoThermalStateDidChangeNotification,
     NSProcessInfoThermalStateFair, NSProcessInfoThermalStateNominal,
@@ -811,6 +828,7 @@ pub use self::generated::NSPropertyList::{
     NSPropertyListXMLFormat_v1_0,
 };
 pub use self::generated::NSProtocolChecker::NSProtocolChecker;
+pub use self::generated::NSRange::NSRange;
 pub use self::generated::NSRegularExpression::{
     NSDataDetector, NSMatchingAnchored, NSMatchingCompleted, NSMatchingFlags, NSMatchingHitEnd,
     NSMatchingInternalError, NSMatchingOptions, NSMatchingProgress, NSMatchingReportCompletion,

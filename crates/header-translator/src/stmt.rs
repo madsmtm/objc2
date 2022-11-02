@@ -185,6 +185,22 @@ pub enum Stmt {
         protocols: Vec<String>,
         methods: Vec<MethodOrProperty>,
     },
+    /// struct name {
+    ///     fields*
+    /// };
+    ///
+    /// typedef struct {
+    ///     fields*
+    /// } name;
+    ///
+    /// typedef struct _name {
+    ///     fields*
+    /// } name;
+    StructDecl {
+        name: String,
+        boxable: bool,
+        fields: Vec<(String, RustType)>,
+    },
     /// typedef NS_OPTIONS(type, name) {
     ///     variants*
     /// };
@@ -227,8 +243,43 @@ pub enum Stmt {
     },
     /// typedef Type TypedefName;
     AliasDecl { name: String, type_: RustType },
-    // /// typedef struct Name { fields } TypedefName;
-    // X,
+}
+
+fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
+    let mut boxable = false;
+    let mut fields = Vec::new();
+
+    entity.visit_children(|entity, _parent| {
+        match entity.get_kind() {
+            EntityKind::UnexposedAttr => {
+                if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                    panic!("unexpected attribute: {macro_:?}");
+                }
+            }
+            EntityKind::FieldDecl => {
+                let name = entity.get_name().expect("struct field name");
+                let ty = entity.get_type().expect("struct field type");
+                let ty = RustType::parse_struct_field(ty);
+
+                if entity.is_bit_field() {
+                    println!("[UNSOUND] struct bitfield {name}: {entity:?}");
+                }
+
+                fields.push((name, ty))
+            }
+            EntityKind::ObjCBoxable => {
+                boxable = true;
+            }
+            _ => panic!("unknown struct field {entity:?}"),
+        }
+        EntityVisitResult::Continue
+    });
+
+    Stmt::StructDecl {
+        name,
+        boxable,
+        fields,
+    }
 }
 
 impl Stmt {
@@ -338,6 +389,7 @@ impl Stmt {
             }
             EntityKind::TypedefDecl => {
                 let name = entity.get_name().expect("typedef name");
+                let mut struct_ = None;
 
                 entity.visit_children(|entity, _parent| {
                     match entity.get_kind() {
@@ -348,7 +400,26 @@ impl Stmt {
                             }
                         }
                         EntityKind::StructDecl => {
-                            // TODO?
+                            if config
+                                .struct_data
+                                .get(&name)
+                                .map(|data| data.skipped)
+                                .unwrap_or_default()
+                            {
+                                return EntityVisitResult::Continue;
+                            }
+
+                            let struct_name = entity.get_name();
+                            if struct_name.is_none()
+                                || struct_name
+                                    .map(|name| name.starts_with('_'))
+                                    .unwrap_or(false)
+                            {
+                                // If this struct doesn't have a name, or the
+                                // name is private, let's parse it with the
+                                // typedef name.
+                                struct_ = Some(parse_struct(&entity, name.clone()))
+                            }
                         }
                         EntityKind::ObjCClassRef
                         | EntityKind::ObjCProtocolRef
@@ -358,6 +429,10 @@ impl Stmt {
                     };
                     EntityVisitResult::Continue
                 });
+
+                if let Some(struct_) = struct_ {
+                    return Some(struct_);
+                }
 
                 let ty = entity
                     .get_typedef_underlying_type()
@@ -444,14 +519,19 @@ impl Stmt {
                 }
             }
             EntityKind::StructDecl => {
-                // println!(
-                //     "struct: {:?}, {:?}, {:#?}, {:#?}",
-                //     entity.get_display_name(),
-                //     entity.get_name(),
-                //     entity.has_attributes(),
-                //     entity.get_children(),
-                // );
-                // EntityKind::FieldDecl | EntityKind::IntegerLiteral | EntityKind::ObjCBoxable => {}
+                if let Some(name) = entity.get_name() {
+                    if config
+                        .struct_data
+                        .get(&name)
+                        .map(|data| data.skipped)
+                        .unwrap_or_default()
+                    {
+                        return None;
+                    }
+                    if !name.starts_with('_') {
+                        return Some(parse_struct(entity, name));
+                    }
+                }
                 None
             }
             EntityKind::EnumDecl => {
@@ -735,6 +815,23 @@ impl fmt::Display for Stmt {
                 //     }
                 // }
                 writeln!(f, "pub type {name} = NSObject;")?;
+            }
+            Self::StructDecl {
+                name,
+                boxable: _,
+                fields,
+            } => {
+                writeln!(f, "struct_impl!(")?;
+                writeln!(f, "    pub struct {name} {{")?;
+                for (name, ty) in fields {
+                    write!(f, "        ")?;
+                    if !name.starts_with('_') {
+                        write!(f, "pub ")?;
+                    }
+                    writeln!(f, "{name}: {ty},")?;
+                }
+                writeln!(f, "    }}")?;
+                writeln!(f, ");")?;
             }
             Self::EnumDecl {
                 name,

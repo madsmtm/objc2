@@ -201,7 +201,7 @@ mod __exported {
         NSXPCConnectionErrorMaximum, NSXPCConnectionErrorMinimum, NSXPCConnectionInterrupted,
         NSXPCConnectionInvalid, NSXPCConnectionReplyInvalid,
     };
-    pub use super::NSAffineTransform::NSAffineTransform;
+    pub use super::NSAffineTransform::{NSAffineTransform, NSAffineTransformStruct};
     pub use super::NSAppleEventDescriptor::{
         NSAppleEventDescriptor, NSAppleEventSendAlwaysInteract, NSAppleEventSendCanInteract,
         NSAppleEventSendCanSwitchLayer, NSAppleEventSendDefaultOptions,
@@ -276,7 +276,9 @@ mod __exported {
         NSByteCountFormatterUseMB, NSByteCountFormatterUsePB, NSByteCountFormatterUseTB,
         NSByteCountFormatterUseYBOrHigher, NSByteCountFormatterUseZB,
     };
-    pub use super::NSByteOrder::{NS_BigEndian, NS_LittleEndian, NS_UnknownByteOrder};
+    pub use super::NSByteOrder::{
+        NSSwappedDouble, NSSwappedFloat, NS_BigEndian, NS_LittleEndian, NS_UnknownByteOrder,
+    };
     pub use super::NSCache::{NSCache, NSCacheDelegate};
     pub use super::NSCalendar::{
         NSCalendar, NSCalendarCalendarUnit, NSCalendarDayChangedNotification, NSCalendarIdentifier,
@@ -406,7 +408,7 @@ mod __exported {
         NSEnergyFormatterUnitJoule, NSEnergyFormatterUnitKilocalorie,
         NSEnergyFormatterUnitKilojoule,
     };
-    pub use super::NSEnumerator::{NSEnumerator, NSFastEnumeration};
+    pub use super::NSEnumerator::{NSEnumerator, NSFastEnumeration, NSFastEnumerationState};
     pub use super::NSError::{
         NSCocoaErrorDomain, NSDebugDescriptionErrorKey, NSError, NSErrorDomain, NSErrorUserInfoKey,
         NSFilePathErrorKey, NSHelpAnchorErrorKey, NSLocalizedDescriptionKey,
@@ -507,10 +509,10 @@ mod __exported {
         NSAlignMaxXOutward, NSAlignMaxYInward, NSAlignMaxYNearest, NSAlignMaxYOutward,
         NSAlignMinXInward, NSAlignMinXNearest, NSAlignMinXOutward, NSAlignMinYInward,
         NSAlignMinYNearest, NSAlignMinYOutward, NSAlignRectFlipped, NSAlignWidthInward,
-        NSAlignWidthNearest, NSAlignWidthOutward, NSAlignmentOptions, NSEdgeInsetsZero, NSMaxXEdge,
-        NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint, NSRect, NSRectEdge, NSRectEdgeMaxX,
-        NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize, NSZeroPoint, NSZeroRect,
-        NSZeroSize,
+        NSAlignWidthNearest, NSAlignWidthOutward, NSAlignmentOptions, NSEdgeInsets,
+        NSEdgeInsetsZero, NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint, NSRect,
+        NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize,
+        NSZeroPoint, NSZeroRect, NSZeroSize,
     };
     pub use super::NSHTTPCookie::{
         NSHTTPCookie, NSHTTPCookieComment, NSHTTPCookieCommentURL, NSHTTPCookieDiscard,
@@ -526,11 +528,11 @@ mod __exported {
         NSHTTPCookieManagerCookiesChangedNotification, NSHTTPCookieStorage,
     };
     pub use super::NSHashTable::{
-        NSHashTable, NSHashTableCopyIn, NSHashTableObjectPointerPersonality, NSHashTableOptions,
-        NSHashTableStrongMemory, NSHashTableWeakMemory, NSHashTableZeroingWeakMemory,
-        NSIntHashCallBacks, NSIntegerHashCallBacks, NSNonOwnedPointerHashCallBacks,
-        NSNonRetainedObjectHashCallBacks, NSObjectHashCallBacks,
-        NSOwnedObjectIdentityHashCallBacks, NSOwnedPointerHashCallBacks,
+        NSHashEnumerator, NSHashTable, NSHashTableCallBacks, NSHashTableCopyIn,
+        NSHashTableObjectPointerPersonality, NSHashTableOptions, NSHashTableStrongMemory,
+        NSHashTableWeakMemory, NSHashTableZeroingWeakMemory, NSIntHashCallBacks,
+        NSIntegerHashCallBacks, NSNonOwnedPointerHashCallBacks, NSNonRetainedObjectHashCallBacks,
+        NSObjectHashCallBacks, NSOwnedObjectIdentityHashCallBacks, NSOwnedPointerHashCallBacks,
         NSPointerToStructHashCallBacks,
     };
     pub use super::NSHost::NSHost;
@@ -635,9 +637,10 @@ mod __exported {
     pub use super::NSLock::{NSCondition, NSConditionLock, NSLock, NSLocking, NSRecursiveLock};
     pub use super::NSMapTable::{
         NSIntMapKeyCallBacks, NSIntMapValueCallBacks, NSIntegerMapKeyCallBacks,
-        NSIntegerMapValueCallBacks, NSMapTable, NSMapTableCopyIn,
-        NSMapTableObjectPointerPersonality, NSMapTableOptions, NSMapTableStrongMemory,
-        NSMapTableWeakMemory, NSMapTableZeroingWeakMemory, NSNonOwnedPointerMapKeyCallBacks,
+        NSIntegerMapValueCallBacks, NSMapEnumerator, NSMapTable, NSMapTableCopyIn,
+        NSMapTableKeyCallBacks, NSMapTableObjectPointerPersonality, NSMapTableOptions,
+        NSMapTableStrongMemory, NSMapTableValueCallBacks, NSMapTableWeakMemory,
+        NSMapTableZeroingWeakMemory, NSNonOwnedPointerMapKeyCallBacks,
         NSNonOwnedPointerMapValueCallBacks, NSNonOwnedPointerOrNullMapKeyCallBacks,
         NSNonRetainedObjectMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks,
         NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, NSOwnedPointerMapKeyCallBacks,
@@ -878,12 +881,13 @@ mod __exported {
         NSActivityIdleDisplaySleepDisabled, NSActivityIdleSystemSleepDisabled,
         NSActivityLatencyCritical, NSActivityOptions, NSActivitySuddenTerminationDisabled,
         NSActivityUserInitiated, NSActivityUserInitiatedAllowingIdleSystemSleep,
-        NSHPUXOperatingSystem, NSMACHOperatingSystem, NSOSF1OperatingSystem, NSProcessInfo,
-        NSProcessInfoPowerStateDidChangeNotification, NSProcessInfoThermalState,
-        NSProcessInfoThermalStateCritical, NSProcessInfoThermalStateDidChangeNotification,
-        NSProcessInfoThermalStateFair, NSProcessInfoThermalStateNominal,
-        NSProcessInfoThermalStateSerious, NSSolarisOperatingSystem, NSSunOSOperatingSystem,
-        NSWindows95OperatingSystem, NSWindowsNTOperatingSystem,
+        NSHPUXOperatingSystem, NSMACHOperatingSystem, NSOSF1OperatingSystem,
+        NSOperatingSystemVersion, NSProcessInfo, NSProcessInfoPowerStateDidChangeNotification,
+        NSProcessInfoThermalState, NSProcessInfoThermalStateCritical,
+        NSProcessInfoThermalStateDidChangeNotification, NSProcessInfoThermalStateFair,
+        NSProcessInfoThermalStateNominal, NSProcessInfoThermalStateSerious,
+        NSSolarisOperatingSystem, NSSunOSOperatingSystem, NSWindows95OperatingSystem,
+        NSWindowsNTOperatingSystem,
     };
     pub use super::NSProgress::{
         NSProgress, NSProgressEstimatedTimeRemainingKey, NSProgressFileAnimationImageKey,
@@ -904,6 +908,7 @@ mod __exported {
         NSPropertyListXMLFormat_v1_0,
     };
     pub use super::NSProtocolChecker::NSProtocolChecker;
+    pub use super::NSRange::NSRange;
     pub use super::NSRegularExpression::{
         NSDataDetector, NSMatchingAnchored, NSMatchingCompleted, NSMatchingFlags, NSMatchingHitEnd,
         NSMatchingInternalError, NSMatchingOptions, NSMatchingProgress, NSMatchingReportCompletion,

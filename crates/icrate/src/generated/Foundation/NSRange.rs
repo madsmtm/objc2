@@ -3,6 +3,13 @@
 use crate::common::*;
 use crate::Foundation::*;
 
+struct_impl!(
+    pub struct NSRange {
+        pub location: NSUInteger,
+        pub length: NSUInteger,
+    }
+);
+
 extern_methods!(
     /// NSValueRangeExtensions
     unsafe impl NSValue {

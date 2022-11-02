@@ -43,6 +43,9 @@ impl RustFile {
             Stmt::ProtocolDecl { name, .. } => {
                 self.declared_types.insert(name.clone());
             }
+            Stmt::StructDecl { name, .. } => {
+                self.declared_types.insert(name.clone());
+            }
             Stmt::EnumDecl { name, variants, .. } => {
                 if let Some(name) = name {
                     self.declared_types.insert(name.clone());

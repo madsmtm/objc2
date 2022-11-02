@@ -3,6 +3,17 @@
 use crate::common::*;
 use crate::Foundation::*;
 
+struct_impl!(
+    pub struct NSAffineTransformStruct {
+        pub m11: CGFloat,
+        pub m12: CGFloat,
+        pub m21: CGFloat,
+        pub m22: CGFloat,
+        pub tX: CGFloat,
+        pub tY: CGFloat,
+    }
+);
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSAffineTransform;

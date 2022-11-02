@@ -3,6 +3,15 @@
 use crate::common::*;
 use crate::Foundation::*;
 
+struct_impl!(
+    pub struct NSFastEnumerationState {
+        pub state: c_ulong,
+        pub itemsPtr: *mut *mut Object,
+        pub mutationsPtr: *mut c_ulong,
+        pub extra: [c_ulong; 5],
+    }
+);
+
 pub type NSFastEnumeration = NSObject;
 
 __inner_extern_class!(

@@ -116,6 +116,33 @@ extern_methods!(
     }
 );
 
+struct_impl!(
+    pub struct NSMapEnumerator {
+        _pi: NSUInteger,
+        _si: NSUInteger,
+        _bs: *mut c_void,
+    }
+);
+
+struct_impl!(
+    pub struct NSMapTableKeyCallBacks {
+        pub hash: *mut TodoFunction,
+        pub isEqual: *mut TodoFunction,
+        pub retain: *mut TodoFunction,
+        pub release: *mut TodoFunction,
+        pub describe: *mut TodoFunction,
+        pub notAKeyMarker: *mut c_void,
+    }
+);
+
+struct_impl!(
+    pub struct NSMapTableValueCallBacks {
+        pub retain: *mut TodoFunction,
+        pub release: *mut TodoFunction,
+        pub describe: *mut TodoFunction,
+    }
+);
+
 extern "C" {
     pub static NSIntegerMapKeyCallBacks: NSMapTableKeyCallBacks;
 }

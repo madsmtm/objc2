@@ -15,6 +15,15 @@ pub const NSDirectionalRectEdgeAll: NSDirectionalRectEdge = NSDirectionalRectEdg
     | NSDirectionalRectEdgeBottom
     | NSDirectionalRectEdgeTrailing;
 
+struct_impl!(
+    pub struct NSDirectionalEdgeInsets {
+        pub top: CGFloat,
+        pub leading: CGFloat,
+        pub bottom: CGFloat,
+        pub trailing: CGFloat,
+    }
+);
+
 extern "C" {
     pub static NSDirectionalEdgeInsetsZero: NSDirectionalEdgeInsets;
 }

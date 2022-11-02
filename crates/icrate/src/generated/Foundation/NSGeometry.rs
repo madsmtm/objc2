@@ -19,6 +19,15 @@ pub const NSMinYEdge: NSRectEdge = NSRectEdgeMinY;
 pub const NSMaxXEdge: NSRectEdge = NSRectEdgeMaxX;
 pub const NSMaxYEdge: NSRectEdge = NSRectEdgeMaxY;
 
+struct_impl!(
+    pub struct NSEdgeInsets {
+        pub top: CGFloat,
+        pub left: CGFloat,
+        pub bottom: CGFloat,
+        pub right: CGFloat,
+    }
+);
+
 pub type NSAlignmentOptions = c_ulonglong;
 pub const NSAlignMinXInward: NSAlignmentOptions = 1 << 0;
 pub const NSAlignMinYInward: NSAlignmentOptions = 1 << 1;

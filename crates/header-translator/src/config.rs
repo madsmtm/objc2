@@ -14,6 +14,9 @@ pub struct Config {
     #[serde(rename = "protocol")]
     #[serde(default)]
     pub protocol_data: HashMap<String, ClassData>,
+    #[serde(rename = "struct")]
+    #[serde(default)]
+    pub struct_data: HashMap<String, StructData>,
     #[serde(default)]
     pub imports: Vec<String>,
 }
@@ -27,6 +30,13 @@ pub struct ClassData {
     pub methods: HashMap<String, MethodData>,
     #[serde(default)]
     pub properties: HashMap<String, MethodData>,
+}
+
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct StructData {
+    #[serde(default)]
+    pub skipped: bool,
 }
 
 #[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq)]

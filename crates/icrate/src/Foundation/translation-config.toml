@@ -83,3 +83,7 @@ skipped = true
 # Root class
 [class.NSProxy]
 skipped = true
+
+# Contains bitfields
+[struct.NSDecimal]
+skipped = true
