@@ -35,12 +35,6 @@ extern_methods!(
             arguments: &NSArray,
         ) -> Id<NSExpression, Shared>;
 
-        #[method_id(@__retain_semantics Other expressionWithFormat:arguments:)]
-        pub unsafe fn expressionWithFormat_arguments(
-            expressionFormat: &NSString,
-            argList: va_list,
-        ) -> Id<NSExpression, Shared>;
-
         #[method_id(@__retain_semantics Other expressionForConstantValue:)]
         pub unsafe fn expressionForConstantValue(obj: Option<&Object>) -> Id<NSExpression, Shared>;
 

@@ -111,14 +111,7 @@ extern_methods!(
 
 extern_methods!(
     /// NSExceptionRaisingConveniences
-    unsafe impl NSException {
-        #[method(raise:format:arguments:)]
-        pub unsafe fn raise_format_arguments(
-            name: &NSExceptionName,
-            format: &NSString,
-            argList: va_list,
-        );
-    }
+    unsafe impl NSException {}
 );
 
 pub type NSUncaughtExceptionHandler = TodoFunction;

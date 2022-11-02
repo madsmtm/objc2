@@ -20,12 +20,6 @@ extern_methods!(
             arguments: Option<&NSArray>,
         ) -> Id<NSPredicate, Shared>;
 
-        #[method_id(@__retain_semantics Other predicateWithFormat:arguments:)]
-        pub unsafe fn predicateWithFormat_arguments(
-            predicateFormat: &NSString,
-            argList: va_list,
-        ) -> Id<NSPredicate, Shared>;
-
         #[method_id(@__retain_semantics Other predicateFromMetadataQueryString:)]
         pub unsafe fn predicateFromMetadataQueryString(
             queryString: &NSString,

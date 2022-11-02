@@ -31,9 +31,6 @@ extern_methods!(
         #[method_id(@__retain_semantics Other currentMode)]
         pub unsafe fn currentMode(&self) -> Option<Id<NSRunLoopMode, Shared>>;
 
-        #[method(getCFRunLoop)]
-        pub unsafe fn getCFRunLoop(&self) -> CFRunLoopRef;
-
         #[method(addTimer:forMode:)]
         pub unsafe fn addTimer_forMode(&self, timer: &NSTimer, mode: &NSRunLoopMode);
 

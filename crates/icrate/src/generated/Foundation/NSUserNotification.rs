@@ -112,12 +112,6 @@ extern_methods!(
         #[method(setIdentifier:)]
         pub unsafe fn setIdentifier(&self, identifier: Option<&NSString>);
 
-        #[method_id(@__retain_semantics Other contentImage)]
-        pub unsafe fn contentImage(&self) -> Option<Id<NSImage, Shared>>;
-
-        #[method(setContentImage:)]
-        pub unsafe fn setContentImage(&self, contentImage: Option<&NSImage>);
-
         #[method(hasReplyButton)]
         pub unsafe fn hasReplyButton(&self) -> bool;
 

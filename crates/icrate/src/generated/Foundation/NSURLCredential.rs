@@ -57,24 +57,6 @@ extern_methods!(
 extern_methods!(
     /// NSClientCertificate
     unsafe impl NSURLCredential {
-        #[method_id(@__retain_semantics Init initWithIdentity:certificates:persistence:)]
-        pub unsafe fn initWithIdentity_certificates_persistence(
-            this: Option<Allocated<Self>>,
-            identity: SecIdentityRef,
-            certArray: Option<&NSArray>,
-            persistence: NSURLCredentialPersistence,
-        ) -> Id<Self, Shared>;
-
-        #[method_id(@__retain_semantics Other credentialWithIdentity:certificates:persistence:)]
-        pub unsafe fn credentialWithIdentity_certificates_persistence(
-            identity: SecIdentityRef,
-            certArray: Option<&NSArray>,
-            persistence: NSURLCredentialPersistence,
-        ) -> Id<NSURLCredential, Shared>;
-
-        #[method(identity)]
-        pub unsafe fn identity(&self) -> SecIdentityRef;
-
         #[method_id(@__retain_semantics Other certificates)]
         pub unsafe fn certificates(&self) -> Id<NSArray, Shared>;
     }
@@ -82,14 +64,5 @@ extern_methods!(
 
 extern_methods!(
     /// NSServerTrust
-    unsafe impl NSURLCredential {
-        #[method_id(@__retain_semantics Init initWithTrust:)]
-        pub unsafe fn initWithTrust(
-            this: Option<Allocated<Self>>,
-            trust: SecTrustRef,
-        ) -> Id<Self, Shared>;
-
-        #[method_id(@__retain_semantics Other credentialForTrust:)]
-        pub unsafe fn credentialForTrust(trust: SecTrustRef) -> Id<NSURLCredential, Shared>;
-    }
+    unsafe impl NSURLCredential {}
 );

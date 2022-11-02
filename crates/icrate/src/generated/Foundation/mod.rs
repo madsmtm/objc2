@@ -278,9 +278,7 @@ mod __exported {
         NSByteCountFormatterUseMB, NSByteCountFormatterUsePB, NSByteCountFormatterUseTB,
         NSByteCountFormatterUseYBOrHigher, NSByteCountFormatterUseZB,
     };
-    pub use super::NSByteOrder::{
-        NSSwappedDouble, NSSwappedFloat, NS_BigEndian, NS_LittleEndian, NS_UnknownByteOrder,
-    };
+    pub use super::NSByteOrder::{NSSwappedDouble, NSSwappedFloat};
     pub use super::NSCache::{NSCache, NSCacheDelegate};
     pub use super::NSCalendar::{
         NSCalendar, NSCalendarCalendarUnit, NSCalendarDayChangedNotification, NSCalendarIdentifier,
@@ -303,8 +301,7 @@ mod __exported {
         NSMinuteCalendarUnit, NSMonthCalendarUnit, NSQuarterCalendarUnit, NSSecondCalendarUnit,
         NSTimeZoneCalendarUnit, NSUndefinedDateComponent, NSWeekCalendarUnit,
         NSWeekOfMonthCalendarUnit, NSWeekOfYearCalendarUnit, NSWeekdayCalendarUnit,
-        NSWeekdayOrdinalCalendarUnit, NSWrapCalendarComponents, NSYearCalendarUnit,
-        NSYearForWeekOfYearCalendarUnit,
+        NSWeekdayOrdinalCalendarUnit, NSYearCalendarUnit, NSYearForWeekOfYearCalendarUnit,
     };
     pub use super::NSCalendarDate::NSCalendarDate;
     pub use super::NSCharacterSet::{

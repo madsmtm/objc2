@@ -4,19 +4,17 @@ use crate::common::*;
 use crate::Foundation::*;
 
 pub type NSAppleEventSendOptions = NSUInteger;
-pub const NSAppleEventSendNoReply: NSAppleEventSendOptions = kAENoReply;
-pub const NSAppleEventSendQueueReply: NSAppleEventSendOptions = kAEQueueReply;
-pub const NSAppleEventSendWaitForReply: NSAppleEventSendOptions = kAEWaitReply;
-pub const NSAppleEventSendNeverInteract: NSAppleEventSendOptions = kAENeverInteract;
-pub const NSAppleEventSendCanInteract: NSAppleEventSendOptions = kAECanInteract;
-pub const NSAppleEventSendAlwaysInteract: NSAppleEventSendOptions = kAEAlwaysInteract;
-pub const NSAppleEventSendCanSwitchLayer: NSAppleEventSendOptions = kAECanSwitchLayer;
-pub const NSAppleEventSendDontRecord: NSAppleEventSendOptions = kAEDontRecord;
-pub const NSAppleEventSendDontExecute: NSAppleEventSendOptions = kAEDontExecute;
-pub const NSAppleEventSendDontAnnotate: NSAppleEventSendOptions =
-    kAEDoNotAutomaticallyAddAnnotationsToEvent;
-pub const NSAppleEventSendDefaultOptions: NSAppleEventSendOptions =
-    NSAppleEventSendWaitForReply | NSAppleEventSendCanInteract;
+pub const NSAppleEventSendNoReply: NSAppleEventSendOptions = 1;
+pub const NSAppleEventSendQueueReply: NSAppleEventSendOptions = 2;
+pub const NSAppleEventSendWaitForReply: NSAppleEventSendOptions = 3;
+pub const NSAppleEventSendNeverInteract: NSAppleEventSendOptions = 16;
+pub const NSAppleEventSendCanInteract: NSAppleEventSendOptions = 32;
+pub const NSAppleEventSendAlwaysInteract: NSAppleEventSendOptions = 48;
+pub const NSAppleEventSendCanSwitchLayer: NSAppleEventSendOptions = 64;
+pub const NSAppleEventSendDontRecord: NSAppleEventSendOptions = 4096;
+pub const NSAppleEventSendDontExecute: NSAppleEventSendOptions = 8192;
+pub const NSAppleEventSendDontAnnotate: NSAppleEventSendOptions = 65536;
+pub const NSAppleEventSendDefaultOptions: NSAppleEventSendOptions = 35;
 
 extern_class!(
     #[derive(Debug)]
@@ -31,19 +29,6 @@ extern_methods!(
     unsafe impl NSAppleEventDescriptor {
         #[method_id(@__retain_semantics Other nullDescriptor)]
         pub unsafe fn nullDescriptor() -> Id<NSAppleEventDescriptor, Shared>;
-
-        #[method_id(@__retain_semantics Other descriptorWithDescriptorType:bytes:length:)]
-        pub unsafe fn descriptorWithDescriptorType_bytes_length(
-            descriptorType: DescType,
-            bytes: *mut c_void,
-            byteCount: NSUInteger,
-        ) -> Option<Id<NSAppleEventDescriptor, Shared>>;
-
-        #[method_id(@__retain_semantics Other descriptorWithDescriptorType:data:)]
-        pub unsafe fn descriptorWithDescriptorType_data(
-            descriptorType: DescType,
-            data: Option<&NSData>,
-        ) -> Option<Id<NSAppleEventDescriptor, Shared>>;
 
         #[method_id(@__retain_semantics Other descriptorWithBoolean:)]
         pub unsafe fn descriptorWithBoolean(boolean: Boolean)
@@ -77,15 +62,6 @@ extern_methods!(
         #[method_id(@__retain_semantics Other descriptorWithFileURL:)]
         pub unsafe fn descriptorWithFileURL(fileURL: &NSURL) -> Id<NSAppleEventDescriptor, Shared>;
 
-        #[method_id(@__retain_semantics Other appleEventWithEventClass:eventID:targetDescriptor:returnID:transactionID:)]
-        pub unsafe fn appleEventWithEventClass_eventID_targetDescriptor_returnID_transactionID(
-            eventClass: AEEventClass,
-            eventID: AEEventID,
-            targetDescriptor: Option<&NSAppleEventDescriptor>,
-            returnID: AEReturnID,
-            transactionID: AETransactionID,
-        ) -> Id<NSAppleEventDescriptor, Shared>;
-
         #[method_id(@__retain_semantics Other listDescriptor)]
         pub unsafe fn listDescriptor() -> Id<NSAppleEventDescriptor, Shared>;
 
@@ -94,11 +70,6 @@ extern_methods!(
 
         #[method_id(@__retain_semantics Other currentProcessDescriptor)]
         pub unsafe fn currentProcessDescriptor() -> Id<NSAppleEventDescriptor, Shared>;
-
-        #[method_id(@__retain_semantics Other descriptorWithProcessIdentifier:)]
-        pub unsafe fn descriptorWithProcessIdentifier(
-            processIdentifier: pid_t,
-        ) -> Id<NSAppleEventDescriptor, Shared>;
 
         #[method_id(@__retain_semantics Other descriptorWithBundleIdentifier:)]
         pub unsafe fn descriptorWithBundleIdentifier(
@@ -110,48 +81,11 @@ extern_methods!(
             applicationURL: &NSURL,
         ) -> Id<NSAppleEventDescriptor, Shared>;
 
-        #[method_id(@__retain_semantics Init initWithAEDescNoCopy:)]
-        pub unsafe fn initWithAEDescNoCopy(
-            this: Option<Allocated<Self>>,
-            aeDesc: NonNull<AEDesc>,
-        ) -> Id<Self, Shared>;
-
-        #[method_id(@__retain_semantics Init initWithDescriptorType:bytes:length:)]
-        pub unsafe fn initWithDescriptorType_bytes_length(
-            this: Option<Allocated<Self>>,
-            descriptorType: DescType,
-            bytes: *mut c_void,
-            byteCount: NSUInteger,
-        ) -> Option<Id<Self, Shared>>;
-
-        #[method_id(@__retain_semantics Init initWithDescriptorType:data:)]
-        pub unsafe fn initWithDescriptorType_data(
-            this: Option<Allocated<Self>>,
-            descriptorType: DescType,
-            data: Option<&NSData>,
-        ) -> Option<Id<Self, Shared>>;
-
-        #[method_id(@__retain_semantics Init initWithEventClass:eventID:targetDescriptor:returnID:transactionID:)]
-        pub unsafe fn initWithEventClass_eventID_targetDescriptor_returnID_transactionID(
-            this: Option<Allocated<Self>>,
-            eventClass: AEEventClass,
-            eventID: AEEventID,
-            targetDescriptor: Option<&NSAppleEventDescriptor>,
-            returnID: AEReturnID,
-            transactionID: AETransactionID,
-        ) -> Id<Self, Shared>;
-
         #[method_id(@__retain_semantics Init initListDescriptor)]
         pub unsafe fn initListDescriptor(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init initRecordDescriptor)]
         pub unsafe fn initRecordDescriptor(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
-
-        #[method(aeDesc)]
-        pub unsafe fn aeDesc(&self) -> *mut AEDesc;
-
-        #[method(descriptorType)]
-        pub unsafe fn descriptorType(&self) -> DescType;
 
         #[method_id(@__retain_semantics Other data)]
         pub unsafe fn data(&self) -> Id<NSData, Shared>;
@@ -180,54 +114,6 @@ extern_methods!(
         #[method_id(@__retain_semantics Other fileURLValue)]
         pub unsafe fn fileURLValue(&self) -> Option<Id<NSURL, Shared>>;
 
-        #[method(eventClass)]
-        pub unsafe fn eventClass(&self) -> AEEventClass;
-
-        #[method(eventID)]
-        pub unsafe fn eventID(&self) -> AEEventID;
-
-        #[method(returnID)]
-        pub unsafe fn returnID(&self) -> AEReturnID;
-
-        #[method(transactionID)]
-        pub unsafe fn transactionID(&self) -> AETransactionID;
-
-        #[method(setParamDescriptor:forKeyword:)]
-        pub unsafe fn setParamDescriptor_forKeyword(
-            &self,
-            descriptor: &NSAppleEventDescriptor,
-            keyword: AEKeyword,
-        );
-
-        #[method_id(@__retain_semantics Other paramDescriptorForKeyword:)]
-        pub unsafe fn paramDescriptorForKeyword(
-            &self,
-            keyword: AEKeyword,
-        ) -> Option<Id<NSAppleEventDescriptor, Shared>>;
-
-        #[method(removeParamDescriptorWithKeyword:)]
-        pub unsafe fn removeParamDescriptorWithKeyword(&self, keyword: AEKeyword);
-
-        #[method(setAttributeDescriptor:forKeyword:)]
-        pub unsafe fn setAttributeDescriptor_forKeyword(
-            &self,
-            descriptor: &NSAppleEventDescriptor,
-            keyword: AEKeyword,
-        );
-
-        #[method_id(@__retain_semantics Other attributeDescriptorForKeyword:)]
-        pub unsafe fn attributeDescriptorForKeyword(
-            &self,
-            keyword: AEKeyword,
-        ) -> Option<Id<NSAppleEventDescriptor, Shared>>;
-
-        #[method_id(@__retain_semantics Other sendEventWithOptions:timeout:error:)]
-        pub unsafe fn sendEventWithOptions_timeout_error(
-            &self,
-            sendOptions: NSAppleEventSendOptions,
-            timeoutInSeconds: NSTimeInterval,
-        ) -> Result<Id<NSAppleEventDescriptor, Shared>, Id<NSError, Shared>>;
-
         #[method(isRecordDescriptor)]
         pub unsafe fn isRecordDescriptor(&self) -> bool;
 
@@ -249,30 +135,5 @@ extern_methods!(
 
         #[method(removeDescriptorAtIndex:)]
         pub unsafe fn removeDescriptorAtIndex(&self, index: NSInteger);
-
-        #[method(setDescriptor:forKeyword:)]
-        pub unsafe fn setDescriptor_forKeyword(
-            &self,
-            descriptor: &NSAppleEventDescriptor,
-            keyword: AEKeyword,
-        );
-
-        #[method_id(@__retain_semantics Other descriptorForKeyword:)]
-        pub unsafe fn descriptorForKeyword(
-            &self,
-            keyword: AEKeyword,
-        ) -> Option<Id<NSAppleEventDescriptor, Shared>>;
-
-        #[method(removeDescriptorWithKeyword:)]
-        pub unsafe fn removeDescriptorWithKeyword(&self, keyword: AEKeyword);
-
-        #[method(keywordForDescriptorAtIndex:)]
-        pub unsafe fn keywordForDescriptorAtIndex(&self, index: NSInteger) -> AEKeyword;
-
-        #[method_id(@__retain_semantics Other coerceToDescriptorType:)]
-        pub unsafe fn coerceToDescriptorType(
-            &self,
-            descriptorType: DescType,
-        ) -> Option<Id<NSAppleEventDescriptor, Shared>>;
     }
 );

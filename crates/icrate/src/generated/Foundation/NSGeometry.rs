@@ -22,14 +22,14 @@ pub type NSRectPointer = *mut NSRect;
 pub type NSRectArray = *mut NSRect;
 
 pub type NSRectEdge = NSUInteger;
-pub const NSRectEdgeMinX: NSRectEdge = CGRectMinXEdge;
-pub const NSRectEdgeMinY: NSRectEdge = CGRectMinYEdge;
-pub const NSRectEdgeMaxX: NSRectEdge = CGRectMaxXEdge;
-pub const NSRectEdgeMaxY: NSRectEdge = CGRectMaxYEdge;
-pub const NSMinXEdge: NSRectEdge = NSRectEdgeMinX;
-pub const NSMinYEdge: NSRectEdge = NSRectEdgeMinY;
-pub const NSMaxXEdge: NSRectEdge = NSRectEdgeMaxX;
-pub const NSMaxYEdge: NSRectEdge = NSRectEdgeMaxY;
+pub const NSRectEdgeMinX: NSRectEdge = 0;
+pub const NSRectEdgeMinY: NSRectEdge = 1;
+pub const NSRectEdgeMaxX: NSRectEdge = 2;
+pub const NSRectEdgeMaxY: NSRectEdge = 3;
+pub const NSMinXEdge: NSRectEdge = 0;
+pub const NSMinYEdge: NSRectEdge = 1;
+pub const NSMaxXEdge: NSRectEdge = 2;
+pub const NSMaxYEdge: NSRectEdge = 3;
 
 struct_impl!(
     pub struct NSEdgeInsets {

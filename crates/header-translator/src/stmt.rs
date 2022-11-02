@@ -496,6 +496,16 @@ impl Stmt {
                 }
 
                 let name = entity.get_name();
+
+                let data = config
+                    .enum_data
+                    .get(name.as_deref().unwrap_or("anonymous"))
+                    .cloned()
+                    .unwrap_or_default();
+                if data.skipped {
+                    return None;
+                }
+
                 let ty = entity.get_enum_underlying_type().expect("enum type");
                 let is_signed = ty.is_signed_integer();
                 let ty = RustType::parse_enum(ty);
@@ -506,11 +516,27 @@ impl Stmt {
                     match entity.get_kind() {
                         EntityKind::EnumConstantDecl => {
                             let name = entity.get_name().expect("enum constant name");
-                            let val = entity
-                                .get_enum_constant_value()
-                                .expect("enum constant value");
-                            let expr = Expr::parse_enum_constant(&entity)
-                                .unwrap_or_else(|| Expr::from_val(val, is_signed));
+
+                            if data
+                                .constants
+                                .get(&name)
+                                .map(|data| data.skipped)
+                                .unwrap_or_default()
+                            {
+                                return EntityVisitResult::Continue;
+                            }
+
+                            let val = Expr::from_val(
+                                entity
+                                    .get_enum_constant_value()
+                                    .expect("enum constant value"),
+                                is_signed,
+                            );
+                            let expr = if data.use_value {
+                                val
+                            } else {
+                                Expr::parse_enum_constant(&entity).unwrap_or(val)
+                            };
                             variants.push((name, expr));
                         }
                         EntityKind::UnexposedAttr => {

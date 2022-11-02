@@ -243,17 +243,6 @@ extern_methods!(
             objects: &NSArray<ObjectType>,
             keys: &NSArray<NSCopying>,
         ) -> Id<Self, Shared>;
-
-        #[method_id(@__retain_semantics Init initWithContentsOfURL:error:)]
-        pub unsafe fn initWithContentsOfURL_error(
-            this: Option<Allocated<Self>>,
-            url: &NSURL,
-        ) -> Result<Id<NSDictionary<NSString, ObjectType>, Shared>, Id<NSError, Shared>>;
-
-        #[method_id(@__retain_semantics Other dictionaryWithContentsOfURL:error:)]
-        pub unsafe fn dictionaryWithContentsOfURL_error(
-            url: &NSURL,
-        ) -> Result<Id<NSDictionary<NSString, ObjectType>, Shared>, Id<NSError, Shared>>;
     }
 );
 

@@ -312,16 +312,7 @@ pub const NSAttributedStringFormattingApplyReplacementIndexAttribute:
 
 extern_methods!(
     /// NSAttributedStringFormatting
-    unsafe impl NSAttributedString {
-        #[method_id(@__retain_semantics Init initWithFormat:options:locale:arguments:)]
-        pub unsafe fn initWithFormat_options_locale_arguments(
-            this: Option<Allocated<Self>>,
-            format: &NSAttributedString,
-            options: NSAttributedStringFormattingOptions,
-            locale: Option<&NSLocale>,
-            arguments: va_list,
-        ) -> Id<Self, Shared>;
-    }
+    unsafe impl NSAttributedString {}
 );
 
 extern_methods!(

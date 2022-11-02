@@ -70,38 +70,38 @@ extern "C" {
 }
 
 pub type NSCalendarUnit = NSUInteger;
-pub const NSCalendarUnitEra: NSCalendarUnit = kCFCalendarUnitEra;
-pub const NSCalendarUnitYear: NSCalendarUnit = kCFCalendarUnitYear;
-pub const NSCalendarUnitMonth: NSCalendarUnit = kCFCalendarUnitMonth;
-pub const NSCalendarUnitDay: NSCalendarUnit = kCFCalendarUnitDay;
-pub const NSCalendarUnitHour: NSCalendarUnit = kCFCalendarUnitHour;
-pub const NSCalendarUnitMinute: NSCalendarUnit = kCFCalendarUnitMinute;
-pub const NSCalendarUnitSecond: NSCalendarUnit = kCFCalendarUnitSecond;
-pub const NSCalendarUnitWeekday: NSCalendarUnit = kCFCalendarUnitWeekday;
-pub const NSCalendarUnitWeekdayOrdinal: NSCalendarUnit = kCFCalendarUnitWeekdayOrdinal;
-pub const NSCalendarUnitQuarter: NSCalendarUnit = kCFCalendarUnitQuarter;
-pub const NSCalendarUnitWeekOfMonth: NSCalendarUnit = kCFCalendarUnitWeekOfMonth;
-pub const NSCalendarUnitWeekOfYear: NSCalendarUnit = kCFCalendarUnitWeekOfYear;
-pub const NSCalendarUnitYearForWeekOfYear: NSCalendarUnit = kCFCalendarUnitYearForWeekOfYear;
-pub const NSCalendarUnitNanosecond: NSCalendarUnit = 1 << 15;
-pub const NSCalendarUnitCalendar: NSCalendarUnit = 1 << 20;
-pub const NSCalendarUnitTimeZone: NSCalendarUnit = 1 << 21;
-pub const NSEraCalendarUnit: NSCalendarUnit = NSCalendarUnitEra;
-pub const NSYearCalendarUnit: NSCalendarUnit = NSCalendarUnitYear;
-pub const NSMonthCalendarUnit: NSCalendarUnit = NSCalendarUnitMonth;
-pub const NSDayCalendarUnit: NSCalendarUnit = NSCalendarUnitDay;
-pub const NSHourCalendarUnit: NSCalendarUnit = NSCalendarUnitHour;
-pub const NSMinuteCalendarUnit: NSCalendarUnit = NSCalendarUnitMinute;
-pub const NSSecondCalendarUnit: NSCalendarUnit = NSCalendarUnitSecond;
-pub const NSWeekCalendarUnit: NSCalendarUnit = kCFCalendarUnitWeek;
-pub const NSWeekdayCalendarUnit: NSCalendarUnit = NSCalendarUnitWeekday;
-pub const NSWeekdayOrdinalCalendarUnit: NSCalendarUnit = NSCalendarUnitWeekdayOrdinal;
-pub const NSQuarterCalendarUnit: NSCalendarUnit = NSCalendarUnitQuarter;
-pub const NSWeekOfMonthCalendarUnit: NSCalendarUnit = NSCalendarUnitWeekOfMonth;
-pub const NSWeekOfYearCalendarUnit: NSCalendarUnit = NSCalendarUnitWeekOfYear;
-pub const NSYearForWeekOfYearCalendarUnit: NSCalendarUnit = NSCalendarUnitYearForWeekOfYear;
-pub const NSCalendarCalendarUnit: NSCalendarUnit = NSCalendarUnitCalendar;
-pub const NSTimeZoneCalendarUnit: NSCalendarUnit = NSCalendarUnitTimeZone;
+pub const NSCalendarUnitEra: NSCalendarUnit = 2;
+pub const NSCalendarUnitYear: NSCalendarUnit = 4;
+pub const NSCalendarUnitMonth: NSCalendarUnit = 8;
+pub const NSCalendarUnitDay: NSCalendarUnit = 16;
+pub const NSCalendarUnitHour: NSCalendarUnit = 32;
+pub const NSCalendarUnitMinute: NSCalendarUnit = 64;
+pub const NSCalendarUnitSecond: NSCalendarUnit = 128;
+pub const NSCalendarUnitWeekday: NSCalendarUnit = 512;
+pub const NSCalendarUnitWeekdayOrdinal: NSCalendarUnit = 1024;
+pub const NSCalendarUnitQuarter: NSCalendarUnit = 2048;
+pub const NSCalendarUnitWeekOfMonth: NSCalendarUnit = 4096;
+pub const NSCalendarUnitWeekOfYear: NSCalendarUnit = 8192;
+pub const NSCalendarUnitYearForWeekOfYear: NSCalendarUnit = 16384;
+pub const NSCalendarUnitNanosecond: NSCalendarUnit = 32768;
+pub const NSCalendarUnitCalendar: NSCalendarUnit = 1048576;
+pub const NSCalendarUnitTimeZone: NSCalendarUnit = 2097152;
+pub const NSEraCalendarUnit: NSCalendarUnit = 2;
+pub const NSYearCalendarUnit: NSCalendarUnit = 4;
+pub const NSMonthCalendarUnit: NSCalendarUnit = 8;
+pub const NSDayCalendarUnit: NSCalendarUnit = 16;
+pub const NSHourCalendarUnit: NSCalendarUnit = 32;
+pub const NSMinuteCalendarUnit: NSCalendarUnit = 64;
+pub const NSSecondCalendarUnit: NSCalendarUnit = 128;
+pub const NSWeekCalendarUnit: NSCalendarUnit = 256;
+pub const NSWeekdayCalendarUnit: NSCalendarUnit = 512;
+pub const NSWeekdayOrdinalCalendarUnit: NSCalendarUnit = 1024;
+pub const NSQuarterCalendarUnit: NSCalendarUnit = 2048;
+pub const NSWeekOfMonthCalendarUnit: NSCalendarUnit = 4096;
+pub const NSWeekOfYearCalendarUnit: NSCalendarUnit = 8192;
+pub const NSYearForWeekOfYearCalendarUnit: NSCalendarUnit = 16384;
+pub const NSCalendarCalendarUnit: NSCalendarUnit = 1048576;
+pub const NSTimeZoneCalendarUnit: NSCalendarUnit = 2097152;
 
 pub type NSCalendarOptions = NSUInteger;
 pub const NSCalendarWrapComponents: NSCalendarOptions = 1 << 0;
@@ -112,8 +112,6 @@ pub const NSCalendarMatchNextTimePreservingSmallerUnits: NSCalendarOptions = 1 <
 pub const NSCalendarMatchNextTime: NSCalendarOptions = 1 << 10;
 pub const NSCalendarMatchFirst: NSCalendarOptions = 1 << 12;
 pub const NSCalendarMatchLast: NSCalendarOptions = 1 << 13;
-
-pub const NSWrapCalendarComponents: i32 = NSCalendarWrapComponents;
 
 extern_class!(
     #[derive(Debug)]

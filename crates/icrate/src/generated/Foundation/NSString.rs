@@ -578,21 +578,6 @@ extern_methods!(
             aString: &NSString,
         ) -> Id<Self, Shared>;
 
-        #[method_id(@__retain_semantics Init initWithFormat:arguments:)]
-        pub unsafe fn initWithFormat_arguments(
-            this: Option<Allocated<Self>>,
-            format: &NSString,
-            argList: va_list,
-        ) -> Id<Self, Shared>;
-
-        #[method_id(@__retain_semantics Init initWithFormat:locale:arguments:)]
-        pub unsafe fn initWithFormat_locale_arguments(
-            this: Option<Allocated<Self>>,
-            format: &NSString,
-            locale: Option<&Object>,
-            argList: va_list,
-        ) -> Id<Self, Shared>;
-
         #[method_id(@__retain_semantics Init initWithData:encoding:)]
         pub unsafe fn initWithData_encoding(
             this: Option<Allocated<Self>>,

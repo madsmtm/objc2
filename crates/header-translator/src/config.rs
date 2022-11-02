@@ -17,6 +17,9 @@ pub struct Config {
     #[serde(rename = "struct")]
     #[serde(default)]
     pub struct_data: HashMap<String, StructData>,
+    #[serde(rename = "enum")]
+    #[serde(default)]
+    pub enum_data: HashMap<String, EnumData>,
     #[serde(default)]
     pub imports: Vec<String>,
 }
@@ -37,6 +40,18 @@ pub struct ClassData {
 pub struct StructData {
     #[serde(default)]
     pub skipped: bool,
+}
+
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct EnumData {
+    #[serde(default)]
+    pub skipped: bool,
+    #[serde(rename = "use-value")]
+    #[serde(default)]
+    pub use_value: bool,
+    #[serde(default)]
+    pub constants: HashMap<String, StructData>,
 }
 
 #[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq)]

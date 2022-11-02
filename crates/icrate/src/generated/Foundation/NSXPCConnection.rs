@@ -101,18 +101,6 @@ extern_methods!(
         #[method(invalidate)]
         pub unsafe fn invalidate(&self);
 
-        #[method(auditSessionIdentifier)]
-        pub unsafe fn auditSessionIdentifier(&self) -> au_asid_t;
-
-        #[method(processIdentifier)]
-        pub unsafe fn processIdentifier(&self) -> pid_t;
-
-        #[method(effectiveUserIdentifier)]
-        pub unsafe fn effectiveUserIdentifier(&self) -> uid_t;
-
-        #[method(effectiveGroupIdentifier)]
-        pub unsafe fn effectiveGroupIdentifier(&self) -> gid_t;
-
         #[method_id(@__retain_semantics Other currentConnection)]
         pub unsafe fn currentConnection() -> Option<Id<NSXPCConnection, Shared>>;
 
@@ -219,23 +207,6 @@ extern_methods!(
             arg: NSUInteger,
             ofReply: bool,
         ) -> Option<Id<NSXPCInterface, Shared>>;
-
-        #[method(setXPCType:forSelector:argumentIndex:ofReply:)]
-        pub unsafe fn setXPCType_forSelector_argumentIndex_ofReply(
-            &self,
-            type_: xpc_type_t,
-            sel: Sel,
-            arg: NSUInteger,
-            ofReply: bool,
-        );
-
-        #[method(XPCTypeForSelector:argumentIndex:ofReply:)]
-        pub unsafe fn XPCTypeForSelector_argumentIndex_ofReply(
-            &self,
-            sel: Sel,
-            arg: NSUInteger,
-            ofReply: bool,
-        ) -> xpc_type_t;
     }
 );
 
@@ -263,16 +234,6 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSXPCCoder {
-        #[method(encodeXPCObject:forKey:)]
-        pub unsafe fn encodeXPCObject_forKey(&self, xpcObject: xpc_object_t, key: &NSString);
-
-        #[method(decodeXPCObjectOfType:forKey:)]
-        pub unsafe fn decodeXPCObjectOfType_forKey(
-            &self,
-            type_: xpc_type_t,
-            key: &NSString,
-        ) -> xpc_object_t;
-
         #[method_id(@__retain_semantics Other userInfo)]
         pub unsafe fn userInfo(&self) -> Option<Id<NSObject, Shared>>;
 

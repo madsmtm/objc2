@@ -26,15 +26,6 @@ extern_methods!(
             string: &NSString,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(@__retain_semantics Init initWithUUIDBytes:)]
-        pub unsafe fn initWithUUIDBytes(
-            this: Option<Allocated<Self>>,
-            bytes: uuid_t,
-        ) -> Id<Self, Shared>;
-
-        #[method(getUUIDBytes:)]
-        pub unsafe fn getUUIDBytes(&self, uuid: uuid_t);
-
         #[method(compare:)]
         pub unsafe fn compare(&self, otherUUID: &NSUUID) -> NSComparisonResult;
 

@@ -130,8 +130,5 @@ extern_methods!(
 
 extern_methods!(
     /// NSServerTrustValidationSpace
-    unsafe impl NSURLProtectionSpace {
-        #[method(serverTrust)]
-        pub unsafe fn serverTrust(&self) -> SecTrustRef;
-    }
+    unsafe impl NSURLProtectionSpace {}
 );

@@ -31,30 +31,6 @@ extern_methods!(
         #[method_id(@__retain_semantics Other sharedAppleEventManager)]
         pub unsafe fn sharedAppleEventManager() -> Id<NSAppleEventManager, Shared>;
 
-        #[method(setEventHandler:andSelector:forEventClass:andEventID:)]
-        pub unsafe fn setEventHandler_andSelector_forEventClass_andEventID(
-            &self,
-            handler: &Object,
-            handleEventSelector: Sel,
-            eventClass: AEEventClass,
-            eventID: AEEventID,
-        );
-
-        #[method(removeEventHandlerForEventClass:andEventID:)]
-        pub unsafe fn removeEventHandlerForEventClass_andEventID(
-            &self,
-            eventClass: AEEventClass,
-            eventID: AEEventID,
-        );
-
-        #[method(dispatchRawAppleEvent:withRawReply:handlerRefCon:)]
-        pub unsafe fn dispatchRawAppleEvent_withRawReply_handlerRefCon(
-            &self,
-            theAppleEvent: NonNull<AppleEvent>,
-            theReply: NonNull<AppleEvent>,
-            handlerRefCon: SRefCon,
-        ) -> OSErr;
-
         #[method_id(@__retain_semantics Other currentAppleEvent)]
         pub unsafe fn currentAppleEvent(&self) -> Option<Id<NSAppleEventDescriptor, Shared>>;
 

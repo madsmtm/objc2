@@ -680,42 +680,6 @@ extern_methods!(
             connectionProxyDictionary: Option<&NSDictionary>,
         );
 
-        #[method(TLSMinimumSupportedProtocol)]
-        pub unsafe fn TLSMinimumSupportedProtocol(&self) -> SSLProtocol;
-
-        #[method(setTLSMinimumSupportedProtocol:)]
-        pub unsafe fn setTLSMinimumSupportedProtocol(
-            &self,
-            TLSMinimumSupportedProtocol: SSLProtocol,
-        );
-
-        #[method(TLSMaximumSupportedProtocol)]
-        pub unsafe fn TLSMaximumSupportedProtocol(&self) -> SSLProtocol;
-
-        #[method(setTLSMaximumSupportedProtocol:)]
-        pub unsafe fn setTLSMaximumSupportedProtocol(
-            &self,
-            TLSMaximumSupportedProtocol: SSLProtocol,
-        );
-
-        #[method(TLSMinimumSupportedProtocolVersion)]
-        pub unsafe fn TLSMinimumSupportedProtocolVersion(&self) -> tls_protocol_version_t;
-
-        #[method(setTLSMinimumSupportedProtocolVersion:)]
-        pub unsafe fn setTLSMinimumSupportedProtocolVersion(
-            &self,
-            TLSMinimumSupportedProtocolVersion: tls_protocol_version_t,
-        );
-
-        #[method(TLSMaximumSupportedProtocolVersion)]
-        pub unsafe fn TLSMaximumSupportedProtocolVersion(&self) -> tls_protocol_version_t;
-
-        #[method(setTLSMaximumSupportedProtocolVersion:)]
-        pub unsafe fn setTLSMaximumSupportedProtocolVersion(
-            &self,
-            TLSMaximumSupportedProtocolVersion: tls_protocol_version_t,
-        );
-
         #[method(HTTPShouldUsePipelining)]
         pub unsafe fn HTTPShouldUsePipelining(&self) -> bool;
 

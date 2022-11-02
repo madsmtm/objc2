@@ -1,3 +1,4 @@
+#[allow(unused_imports)]
 #[path = "../generated/Foundation/mod.rs"]
 pub(crate) mod generated;
 
@@ -215,9 +216,7 @@ pub use self::generated::NSByteCountFormatter::{
     NSByteCountFormatterUsePB, NSByteCountFormatterUseTB, NSByteCountFormatterUseYBOrHigher,
     NSByteCountFormatterUseZB,
 };
-pub use self::generated::NSByteOrder::{
-    NSSwappedDouble, NSSwappedFloat, NS_BigEndian, NS_LittleEndian, NS_UnknownByteOrder,
-};
+pub use self::generated::NSByteOrder::{NSSwappedDouble, NSSwappedFloat};
 pub use self::generated::NSCache::{NSCache, NSCacheDelegate};
 pub use self::generated::NSCalendar::{
     NSCalendar, NSCalendarCalendarUnit, NSCalendarDayChangedNotification, NSCalendarIdentifier,
@@ -239,8 +238,7 @@ pub use self::generated::NSCalendar::{
     NSEraCalendarUnit, NSHourCalendarUnit, NSMinuteCalendarUnit, NSMonthCalendarUnit,
     NSQuarterCalendarUnit, NSSecondCalendarUnit, NSTimeZoneCalendarUnit, NSUndefinedDateComponent,
     NSWeekCalendarUnit, NSWeekOfMonthCalendarUnit, NSWeekOfYearCalendarUnit, NSWeekdayCalendarUnit,
-    NSWeekdayOrdinalCalendarUnit, NSWrapCalendarComponents, NSYearCalendarUnit,
-    NSYearForWeekOfYearCalendarUnit,
+    NSWeekdayOrdinalCalendarUnit, NSYearCalendarUnit, NSYearForWeekOfYearCalendarUnit,
 };
 pub use self::generated::NSCalendarDate::NSCalendarDate;
 pub use self::generated::NSCharacterSet::{
