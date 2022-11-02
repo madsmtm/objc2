@@ -66,24 +66,6 @@ pub const NSWindowOcclusionStateVisible: NSWindowOcclusionState = 1 << 1;
 
 pub type NSWindowLevel = NSInteger;
 
-pub static NSNormalWindowLevel: NSWindowLevel = todo;
-
-pub static NSFloatingWindowLevel: NSWindowLevel = todo;
-
-pub static NSSubmenuWindowLevel: NSWindowLevel = todo;
-
-pub static NSTornOffMenuWindowLevel: NSWindowLevel = todo;
-
-pub static NSMainMenuWindowLevel: NSWindowLevel = todo;
-
-pub static NSStatusWindowLevel: NSWindowLevel = todo;
-
-pub static NSModalPanelWindowLevel: NSWindowLevel = todo;
-
-pub static NSPopUpMenuWindowLevel: NSWindowLevel = todo;
-
-pub static NSScreenSaverWindowLevel: NSWindowLevel = todo;
-
 pub type NSSelectionDirection = NSUInteger;
 pub const NSDirectSelection: NSSelectionDirection = 0;
 pub const NSSelectingNext: NSSelectionDirection = 1;
@@ -107,8 +89,6 @@ pub const NSWindowToolbarStyleExpanded: NSWindowToolbarStyle = 1;
 pub const NSWindowToolbarStylePreference: NSWindowToolbarStyle = 2;
 pub const NSWindowToolbarStyleUnified: NSWindowToolbarStyle = 3;
 pub const NSWindowToolbarStyleUnifiedCompact: NSWindowToolbarStyle = 4;
-
-pub static NSEventDurationForever: NSTimeInterval = todo;
 
 pub type NSWindowUserTabbingPreference = NSInteger;
 pub const NSWindowUserTabbingPreferenceManual: NSWindowUserTabbingPreference = 0;
@@ -1427,5 +1407,3 @@ pub static NSHUDWindowMask: NSWindowStyleMask = NSWindowStyleMaskHUDWindow;
 pub static NSUnscaledWindowMask: NSWindowStyleMask = 1 << 11;
 
 pub static NSWindowFullScreenButton: NSWindowButton = 7;
-
-pub static NSDockWindowLevel: NSWindowLevel = todo;

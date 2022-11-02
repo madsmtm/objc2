@@ -168,8 +168,6 @@ pub static NSOtherMouseUpMask: NSEventMask = NSEventMaskOtherMouseUp;
 
 pub static NSOtherMouseDraggedMask: NSEventMask = NSEventMaskOtherMouseDragged;
 
-pub static NSAnyEventMask: NSEventMask = todo;
-
 pub type NSEventModifierFlags = NSUInteger;
 pub const NSEventModifierFlagCapsLock: NSEventModifierFlags = 1 << 16;
 pub const NSEventModifierFlagShift: NSEventModifierFlags = 1 << 17;

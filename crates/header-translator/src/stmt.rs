@@ -227,7 +227,7 @@ pub enum Stmt {
     VarDecl {
         name: String,
         ty: RustTypeStatic,
-        value: Option<Option<Expr>>,
+        value: Option<Expr>,
     },
     /// extern ret name(args*);
     ///
@@ -600,6 +600,15 @@ impl Stmt {
                     EntityVisitResult::Continue
                 });
 
+                let value = match value {
+                    Some(Some(expr)) => Some(expr),
+                    Some(None) => {
+                        println!("skipped static {name}");
+                        return None;
+                    }
+                    None => None,
+                };
+
                 Some(Self::VarDecl { name, ty, value })
             }
             EntityKind::FunctionDecl => {
@@ -843,14 +852,7 @@ impl fmt::Display for Stmt {
             Self::VarDecl {
                 name,
                 ty,
-                value: Some(None),
-            } => {
-                writeln!(f, "pub static {name}: {ty} = todo;")?;
-            }
-            Self::VarDecl {
-                name,
-                ty,
-                value: Some(Some(expr)),
+                value: Some(expr),
             } => {
                 writeln!(f, "pub static {name}: {ty} = {expr};")?;
             }

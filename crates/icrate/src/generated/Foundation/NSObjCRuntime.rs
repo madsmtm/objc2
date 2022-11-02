@@ -32,5 +32,3 @@ pub const NSQualityOfServiceUserInitiated: NSQualityOfService = 0x19;
 pub const NSQualityOfServiceUtility: NSQualityOfService = 0x11;
 pub const NSQualityOfServiceBackground: NSQualityOfService = 0x09;
 pub const NSQualityOfServiceDefault: NSQualityOfService = -1;
-
-pub static NSNotFound: NSInteger = todo;

@@ -804,9 +804,9 @@ mod __exported {
     };
     pub use super::NSObjCRuntime::{
         NSComparator, NSComparisonResult, NSEnumerationConcurrent, NSEnumerationOptions,
-        NSEnumerationReverse, NSExceptionName, NSFoundationVersionNumber, NSNotFound,
-        NSOrderedAscending, NSOrderedDescending, NSOrderedSame, NSQualityOfService,
-        NSQualityOfServiceBackground, NSQualityOfServiceDefault, NSQualityOfServiceUserInitiated,
+        NSEnumerationReverse, NSExceptionName, NSFoundationVersionNumber, NSOrderedAscending,
+        NSOrderedDescending, NSOrderedSame, NSQualityOfService, NSQualityOfServiceBackground,
+        NSQualityOfServiceDefault, NSQualityOfServiceUserInitiated,
         NSQualityOfServiceUserInteractive, NSQualityOfServiceUtility, NSRunLoopMode,
         NSSortConcurrent, NSSortOptions, NSSortStable,
     };

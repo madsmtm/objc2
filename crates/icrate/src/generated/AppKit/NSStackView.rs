@@ -27,8 +27,6 @@ pub static NSStackViewVisibilityPriorityDetachOnlyIfNecessary: NSStackViewVisibi
 
 pub static NSStackViewVisibilityPriorityNotVisible: NSStackViewVisibilityPriority = 0;
 
-pub static NSStackViewSpacingUseDefault: CGFloat = todo;
-
 extern_class!(
     #[derive(Debug)]
     pub struct NSStackView;

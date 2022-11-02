@@ -724,11 +724,10 @@ pub use self::generated::NSNumberFormatter::{
 };
 pub use self::generated::NSObjCRuntime::{
     NSComparator, NSComparisonResult, NSEnumerationConcurrent, NSEnumerationOptions,
-    NSEnumerationReverse, NSExceptionName, NSFoundationVersionNumber, NSNotFound,
-    NSOrderedAscending, NSOrderedDescending, NSOrderedSame, NSQualityOfService,
-    NSQualityOfServiceBackground, NSQualityOfServiceDefault, NSQualityOfServiceUserInitiated,
-    NSQualityOfServiceUserInteractive, NSQualityOfServiceUtility, NSRunLoopMode, NSSortConcurrent,
-    NSSortOptions, NSSortStable,
+    NSEnumerationReverse, NSExceptionName, NSFoundationVersionNumber, NSOrderedAscending,
+    NSOrderedDescending, NSOrderedSame, NSQualityOfService, NSQualityOfServiceBackground,
+    NSQualityOfServiceDefault, NSQualityOfServiceUserInitiated, NSQualityOfServiceUserInteractive,
+    NSQualityOfServiceUtility, NSRunLoopMode, NSSortConcurrent, NSSortOptions, NSSortStable,
 };
 pub use self::generated::NSObject::{
     NSCoding, NSCopying, NSDiscardableContent, NSMutableCopying, NSSecureCoding,
