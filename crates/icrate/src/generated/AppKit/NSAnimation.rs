@@ -5,26 +5,30 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSAnimationCurve = NSUInteger;
-pub const NSAnimationEaseInOut: NSAnimationCurve = 0;
-pub const NSAnimationEaseIn: NSAnimationCurve = 1;
-pub const NSAnimationEaseOut: NSAnimationCurve = 2;
-pub const NSAnimationLinear: NSAnimationCurve = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSAnimationCurve {
+        NSAnimationEaseInOut = 0,
+        NSAnimationEaseIn = 1,
+        NSAnimationEaseOut = 2,
+        NSAnimationLinear = 3,
+    }
+);
 
-pub type NSAnimationBlockingMode = NSUInteger;
-pub const NSAnimationBlocking: NSAnimationBlockingMode = 0;
-pub const NSAnimationNonblocking: NSAnimationBlockingMode = 1;
-pub const NSAnimationNonblockingThreaded: NSAnimationBlockingMode = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSAnimationBlockingMode {
+        NSAnimationBlocking = 0,
+        NSAnimationNonblocking = 1,
+        NSAnimationNonblockingThreaded = 2,
+    }
+);
 
 pub type NSAnimationProgress = c_float;
 
-extern "C" {
-    pub static NSAnimationProgressMarkNotification: &'static NSNotificationName;
-}
+extern_static!(NSAnimationProgressMarkNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSAnimationProgressMark: &'static NSString;
-}
+extern_static!(NSAnimationProgressMark: &'static NSString);
 
 extern_class!(
     #[derive(Debug)]
@@ -143,31 +147,19 @@ pub type NSAnimationDelegate = NSObject;
 
 pub type NSViewAnimationKey = NSString;
 
-extern "C" {
-    pub static NSViewAnimationTargetKey: &'static NSViewAnimationKey;
-}
+extern_static!(NSViewAnimationTargetKey: &'static NSViewAnimationKey);
 
-extern "C" {
-    pub static NSViewAnimationStartFrameKey: &'static NSViewAnimationKey;
-}
+extern_static!(NSViewAnimationStartFrameKey: &'static NSViewAnimationKey);
 
-extern "C" {
-    pub static NSViewAnimationEndFrameKey: &'static NSViewAnimationKey;
-}
+extern_static!(NSViewAnimationEndFrameKey: &'static NSViewAnimationKey);
 
-extern "C" {
-    pub static NSViewAnimationEffectKey: &'static NSViewAnimationKey;
-}
+extern_static!(NSViewAnimationEffectKey: &'static NSViewAnimationKey);
 
 pub type NSViewAnimationEffectName = NSString;
 
-extern "C" {
-    pub static NSViewAnimationFadeInEffect: &'static NSViewAnimationEffectName;
-}
+extern_static!(NSViewAnimationFadeInEffect: &'static NSViewAnimationEffectName);
 
-extern "C" {
-    pub static NSViewAnimationFadeOutEffect: &'static NSViewAnimationEffectName;
-}
+extern_static!(NSViewAnimationFadeOutEffect: &'static NSViewAnimationEffectName);
 
 extern_class!(
     #[derive(Debug)]
@@ -203,10 +195,6 @@ pub type NSAnimatablePropertyKey = NSString;
 
 pub type NSAnimatablePropertyContainer = NSObject;
 
-extern "C" {
-    pub static NSAnimationTriggerOrderIn: &'static NSAnimatablePropertyKey;
-}
+extern_static!(NSAnimationTriggerOrderIn: &'static NSAnimatablePropertyKey);
 
-extern "C" {
-    pub static NSAnimationTriggerOrderOut: &'static NSAnimatablePropertyKey;
-}
+extern_static!(NSAnimationTriggerOrderOut: &'static NSAnimatablePropertyKey);

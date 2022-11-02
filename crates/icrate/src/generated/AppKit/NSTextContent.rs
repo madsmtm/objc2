@@ -7,16 +7,10 @@ use crate::Foundation::*;
 
 pub type NSTextContentType = NSString;
 
-extern "C" {
-    pub static NSTextContentTypeUsername: &'static NSTextContentType;
-}
+extern_static!(NSTextContentTypeUsername: &'static NSTextContentType);
 
-extern "C" {
-    pub static NSTextContentTypePassword: &'static NSTextContentType;
-}
+extern_static!(NSTextContentTypePassword: &'static NSTextContentType);
 
-extern "C" {
-    pub static NSTextContentTypeOneTimeCode: &'static NSTextContentType;
-}
+extern_static!(NSTextContentTypeOneTimeCode: &'static NSTextContentType);
 
 pub type NSTextContent = NSObject;

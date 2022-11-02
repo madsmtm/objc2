@@ -3,9 +3,13 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSDecodingFailurePolicy = NSInteger;
-pub const NSDecodingFailurePolicyRaiseException: NSDecodingFailurePolicy = 0;
-pub const NSDecodingFailurePolicySetErrorAndReturn: NSDecodingFailurePolicy = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSDecodingFailurePolicy {
+        NSDecodingFailurePolicyRaiseException = 0,
+        NSDecodingFailurePolicySetErrorAndReturn = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

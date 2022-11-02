@@ -161,8 +161,6 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSUserActivityTypeBrowsingWeb: &'static NSString;
-}
+extern_static!(NSUserActivityTypeBrowsingWeb: &'static NSString);
 
 pub type NSUserActivityDelegate = NSObject;

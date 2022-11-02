@@ -5,7 +5,12 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub const NSAttachmentCharacter: c_uint = 0xFFFC;
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+        NSAttachmentCharacter = 0xFFFC,
+    }
+);
 
 pub type NSTextAttachmentContainer = NSObject;
 

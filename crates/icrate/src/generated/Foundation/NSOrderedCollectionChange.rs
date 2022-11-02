@@ -3,9 +3,13 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSCollectionChangeType = NSInteger;
-pub const NSCollectionChangeInsert: NSCollectionChangeType = 0;
-pub const NSCollectionChangeRemove: NSCollectionChangeType = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSCollectionChangeType {
+        NSCollectionChangeInsert = 0,
+        NSCollectionChangeRemove = 1,
+    }
+);
 
 __inner_extern_class!(
     #[derive(Debug)]

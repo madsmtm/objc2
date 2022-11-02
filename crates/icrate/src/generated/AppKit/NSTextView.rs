@@ -5,18 +5,24 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSSelectionGranularity = NSUInteger;
-pub const NSSelectByCharacter: NSSelectionGranularity = 0;
-pub const NSSelectByWord: NSSelectionGranularity = 1;
-pub const NSSelectByParagraph: NSSelectionGranularity = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSSelectionGranularity {
+        NSSelectByCharacter = 0,
+        NSSelectByWord = 1,
+        NSSelectByParagraph = 2,
+    }
+);
 
-pub type NSSelectionAffinity = NSUInteger;
-pub const NSSelectionAffinityUpstream: NSSelectionAffinity = 0;
-pub const NSSelectionAffinityDownstream: NSSelectionAffinity = 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSSelectionAffinity {
+        NSSelectionAffinityUpstream = 0,
+        NSSelectionAffinityDownstream = 1,
+    }
+);
 
-extern "C" {
-    pub static NSAllRomanInputSourcesLocaleIdentifier: &'static NSString;
-}
+extern_static!(NSAllRomanInputSourcesLocaleIdentifier: &'static NSString);
 
 extern_class!(
     #[derive(Debug)]
@@ -951,78 +957,58 @@ extern_methods!(
 
 pub type NSTextViewDelegate = NSObject;
 
-extern "C" {
-    pub static NSTouchBarItemIdentifierCharacterPicker: &'static NSTouchBarItemIdentifier;
-}
+extern_static!(NSTouchBarItemIdentifierCharacterPicker: &'static NSTouchBarItemIdentifier);
 
-extern "C" {
-    pub static NSTouchBarItemIdentifierTextColorPicker: &'static NSTouchBarItemIdentifier;
-}
+extern_static!(NSTouchBarItemIdentifierTextColorPicker: &'static NSTouchBarItemIdentifier);
 
-extern "C" {
-    pub static NSTouchBarItemIdentifierTextStyle: &'static NSTouchBarItemIdentifier;
-}
+extern_static!(NSTouchBarItemIdentifierTextStyle: &'static NSTouchBarItemIdentifier);
 
-extern "C" {
-    pub static NSTouchBarItemIdentifierTextAlignment: &'static NSTouchBarItemIdentifier;
-}
+extern_static!(NSTouchBarItemIdentifierTextAlignment: &'static NSTouchBarItemIdentifier);
 
-extern "C" {
-    pub static NSTouchBarItemIdentifierTextList: &'static NSTouchBarItemIdentifier;
-}
+extern_static!(NSTouchBarItemIdentifierTextList: &'static NSTouchBarItemIdentifier);
 
-extern "C" {
-    pub static NSTouchBarItemIdentifierTextFormat: &'static NSTouchBarItemIdentifier;
-}
+extern_static!(NSTouchBarItemIdentifierTextFormat: &'static NSTouchBarItemIdentifier);
 
-extern "C" {
-    pub static NSTextViewWillChangeNotifyingTextViewNotification: &'static NSNotificationName;
-}
+extern_static!(NSTextViewWillChangeNotifyingTextViewNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSTextViewDidChangeSelectionNotification: &'static NSNotificationName;
-}
+extern_static!(NSTextViewDidChangeSelectionNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSTextViewDidChangeTypingAttributesNotification: &'static NSNotificationName;
-}
+extern_static!(NSTextViewDidChangeTypingAttributesNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSTextViewWillSwitchToNSLayoutManagerNotification: &'static NSNotificationName;
-}
+extern_static!(NSTextViewWillSwitchToNSLayoutManagerNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSTextViewDidSwitchToNSLayoutManagerNotification: &'static NSNotificationName;
-}
+extern_static!(NSTextViewDidSwitchToNSLayoutManagerNotification: &'static NSNotificationName);
 
-pub type NSFindPanelAction = NSUInteger;
-pub const NSFindPanelActionShowFindPanel: NSFindPanelAction = 1;
-pub const NSFindPanelActionNext: NSFindPanelAction = 2;
-pub const NSFindPanelActionPrevious: NSFindPanelAction = 3;
-pub const NSFindPanelActionReplaceAll: NSFindPanelAction = 4;
-pub const NSFindPanelActionReplace: NSFindPanelAction = 5;
-pub const NSFindPanelActionReplaceAndFind: NSFindPanelAction = 6;
-pub const NSFindPanelActionSetFindString: NSFindPanelAction = 7;
-pub const NSFindPanelActionReplaceAllInSelection: NSFindPanelAction = 8;
-pub const NSFindPanelActionSelectAll: NSFindPanelAction = 9;
-pub const NSFindPanelActionSelectAllInSelection: NSFindPanelAction = 10;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSFindPanelAction {
+        NSFindPanelActionShowFindPanel = 1,
+        NSFindPanelActionNext = 2,
+        NSFindPanelActionPrevious = 3,
+        NSFindPanelActionReplaceAll = 4,
+        NSFindPanelActionReplace = 5,
+        NSFindPanelActionReplaceAndFind = 6,
+        NSFindPanelActionSetFindString = 7,
+        NSFindPanelActionReplaceAllInSelection = 8,
+        NSFindPanelActionSelectAll = 9,
+        NSFindPanelActionSelectAllInSelection = 10,
+    }
+);
 
-extern "C" {
-    pub static NSFindPanelSearchOptionsPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSFindPanelSearchOptionsPboardType: &'static NSPasteboardType);
 
 pub type NSPasteboardTypeFindPanelSearchOptionKey = NSString;
 
-extern "C" {
-    pub static NSFindPanelCaseInsensitiveSearch: &'static NSPasteboardTypeFindPanelSearchOptionKey;
-}
+extern_static!(NSFindPanelCaseInsensitiveSearch: &'static NSPasteboardTypeFindPanelSearchOptionKey);
 
-extern "C" {
-    pub static NSFindPanelSubstringMatch: &'static NSPasteboardTypeFindPanelSearchOptionKey;
-}
+extern_static!(NSFindPanelSubstringMatch: &'static NSPasteboardTypeFindPanelSearchOptionKey);
 
-pub type NSFindPanelSubstringMatchType = NSUInteger;
-pub const NSFindPanelSubstringMatchTypeContains: NSFindPanelSubstringMatchType = 0;
-pub const NSFindPanelSubstringMatchTypeStartsWith: NSFindPanelSubstringMatchType = 1;
-pub const NSFindPanelSubstringMatchTypeFullWord: NSFindPanelSubstringMatchType = 2;
-pub const NSFindPanelSubstringMatchTypeEndsWith: NSFindPanelSubstringMatchType = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSFindPanelSubstringMatchType {
+        NSFindPanelSubstringMatchTypeContains = 0,
+        NSFindPanelSubstringMatchTypeStartsWith = 1,
+        NSFindPanelSubstringMatchTypeFullWord = 2,
+        NSFindPanelSubstringMatchTypeEndsWith = 3,
+    }
+);

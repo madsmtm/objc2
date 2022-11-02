@@ -3,45 +3,47 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSKeyValueObservingOptions = NSUInteger;
-pub const NSKeyValueObservingOptionNew: NSKeyValueObservingOptions = 0x01;
-pub const NSKeyValueObservingOptionOld: NSKeyValueObservingOptions = 0x02;
-pub const NSKeyValueObservingOptionInitial: NSKeyValueObservingOptions = 0x04;
-pub const NSKeyValueObservingOptionPrior: NSKeyValueObservingOptions = 0x08;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSKeyValueObservingOptions {
+        NSKeyValueObservingOptionNew = 0x01,
+        NSKeyValueObservingOptionOld = 0x02,
+        NSKeyValueObservingOptionInitial = 0x04,
+        NSKeyValueObservingOptionPrior = 0x08,
+    }
+);
 
-pub type NSKeyValueChange = NSUInteger;
-pub const NSKeyValueChangeSetting: NSKeyValueChange = 1;
-pub const NSKeyValueChangeInsertion: NSKeyValueChange = 2;
-pub const NSKeyValueChangeRemoval: NSKeyValueChange = 3;
-pub const NSKeyValueChangeReplacement: NSKeyValueChange = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSKeyValueChange {
+        NSKeyValueChangeSetting = 1,
+        NSKeyValueChangeInsertion = 2,
+        NSKeyValueChangeRemoval = 3,
+        NSKeyValueChangeReplacement = 4,
+    }
+);
 
-pub type NSKeyValueSetMutationKind = NSUInteger;
-pub const NSKeyValueUnionSetMutation: NSKeyValueSetMutationKind = 1;
-pub const NSKeyValueMinusSetMutation: NSKeyValueSetMutationKind = 2;
-pub const NSKeyValueIntersectSetMutation: NSKeyValueSetMutationKind = 3;
-pub const NSKeyValueSetSetMutation: NSKeyValueSetMutationKind = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSKeyValueSetMutationKind {
+        NSKeyValueUnionSetMutation = 1,
+        NSKeyValueMinusSetMutation = 2,
+        NSKeyValueIntersectSetMutation = 3,
+        NSKeyValueSetSetMutation = 4,
+    }
+);
 
 pub type NSKeyValueChangeKey = NSString;
 
-extern "C" {
-    pub static NSKeyValueChangeKindKey: &'static NSKeyValueChangeKey;
-}
+extern_static!(NSKeyValueChangeKindKey: &'static NSKeyValueChangeKey);
 
-extern "C" {
-    pub static NSKeyValueChangeNewKey: &'static NSKeyValueChangeKey;
-}
+extern_static!(NSKeyValueChangeNewKey: &'static NSKeyValueChangeKey);
 
-extern "C" {
-    pub static NSKeyValueChangeOldKey: &'static NSKeyValueChangeKey;
-}
+extern_static!(NSKeyValueChangeOldKey: &'static NSKeyValueChangeKey);
 
-extern "C" {
-    pub static NSKeyValueChangeIndexesKey: &'static NSKeyValueChangeKey;
-}
+extern_static!(NSKeyValueChangeIndexesKey: &'static NSKeyValueChangeKey);
 
-extern "C" {
-    pub static NSKeyValueChangeNotificationIsPriorKey: &'static NSKeyValueChangeKey;
-}
+extern_static!(NSKeyValueChangeNotificationIsPriorKey: &'static NSKeyValueChangeKey);
 
 extern_methods!(
     /// NSKeyValueObserving

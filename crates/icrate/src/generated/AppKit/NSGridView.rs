@@ -5,25 +5,31 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSGridCellPlacement = NSInteger;
-pub const NSGridCellPlacementInherited: NSGridCellPlacement = 0;
-pub const NSGridCellPlacementNone: NSGridCellPlacement = 1;
-pub const NSGridCellPlacementLeading: NSGridCellPlacement = 2;
-pub const NSGridCellPlacementTop: NSGridCellPlacement = NSGridCellPlacementLeading;
-pub const NSGridCellPlacementTrailing: NSGridCellPlacement = 3;
-pub const NSGridCellPlacementBottom: NSGridCellPlacement = NSGridCellPlacementTrailing;
-pub const NSGridCellPlacementCenter: NSGridCellPlacement = 4;
-pub const NSGridCellPlacementFill: NSGridCellPlacement = 5;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSGridCellPlacement {
+        NSGridCellPlacementInherited = 0,
+        NSGridCellPlacementNone = 1,
+        NSGridCellPlacementLeading = 2,
+        NSGridCellPlacementTop = NSGridCellPlacementLeading,
+        NSGridCellPlacementTrailing = 3,
+        NSGridCellPlacementBottom = NSGridCellPlacementTrailing,
+        NSGridCellPlacementCenter = 4,
+        NSGridCellPlacementFill = 5,
+    }
+);
 
-pub type NSGridRowAlignment = NSInteger;
-pub const NSGridRowAlignmentInherited: NSGridRowAlignment = 0;
-pub const NSGridRowAlignmentNone: NSGridRowAlignment = 1;
-pub const NSGridRowAlignmentFirstBaseline: NSGridRowAlignment = 2;
-pub const NSGridRowAlignmentLastBaseline: NSGridRowAlignment = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSGridRowAlignment {
+        NSGridRowAlignmentInherited = 0,
+        NSGridRowAlignmentNone = 1,
+        NSGridRowAlignmentFirstBaseline = 2,
+        NSGridRowAlignmentLastBaseline = 3,
+    }
+);
 
-extern "C" {
-    pub static NSGridViewSizeForContent: CGFloat;
-}
+extern_static!(NSGridViewSizeForContent: CGFloat);
 
 extern_class!(
     #[derive(Debug)]

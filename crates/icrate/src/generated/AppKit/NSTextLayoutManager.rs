@@ -5,23 +5,26 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextLayoutManagerSegmentType = NSInteger;
-pub const NSTextLayoutManagerSegmentTypeStandard: NSTextLayoutManagerSegmentType = 0;
-pub const NSTextLayoutManagerSegmentTypeSelection: NSTextLayoutManagerSegmentType = 1;
-pub const NSTextLayoutManagerSegmentTypeHighlight: NSTextLayoutManagerSegmentType = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTextLayoutManagerSegmentType {
+        NSTextLayoutManagerSegmentTypeStandard = 0,
+        NSTextLayoutManagerSegmentTypeSelection = 1,
+        NSTextLayoutManagerSegmentTypeHighlight = 2,
+    }
+);
 
-pub type NSTextLayoutManagerSegmentOptions = NSUInteger;
-pub const NSTextLayoutManagerSegmentOptionsNone: NSTextLayoutManagerSegmentOptions = 0;
-pub const NSTextLayoutManagerSegmentOptionsRangeNotRequired: NSTextLayoutManagerSegmentOptions =
-    1 << 0;
-pub const NSTextLayoutManagerSegmentOptionsMiddleFragmentsExcluded:
-    NSTextLayoutManagerSegmentOptions = 1 << 1;
-pub const NSTextLayoutManagerSegmentOptionsHeadSegmentExtended: NSTextLayoutManagerSegmentOptions =
-    1 << 2;
-pub const NSTextLayoutManagerSegmentOptionsTailSegmentExtended: NSTextLayoutManagerSegmentOptions =
-    1 << 3;
-pub const NSTextLayoutManagerSegmentOptionsUpstreamAffinity: NSTextLayoutManagerSegmentOptions =
-    1 << 4;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSTextLayoutManagerSegmentOptions {
+        NSTextLayoutManagerSegmentOptionsNone = 0,
+        NSTextLayoutManagerSegmentOptionsRangeNotRequired = 1 << 0,
+        NSTextLayoutManagerSegmentOptionsMiddleFragmentsExcluded = 1 << 1,
+        NSTextLayoutManagerSegmentOptionsHeadSegmentExtended = 1 << 2,
+        NSTextLayoutManagerSegmentOptionsTailSegmentExtended = 1 << 3,
+        NSTextLayoutManagerSegmentOptionsUpstreamAffinity = 1 << 4,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

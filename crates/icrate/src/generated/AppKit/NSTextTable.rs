@@ -5,32 +5,52 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextBlockValueType = NSUInteger;
-pub const NSTextBlockAbsoluteValueType: NSTextBlockValueType = 0;
-pub const NSTextBlockPercentageValueType: NSTextBlockValueType = 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTextBlockValueType {
+        NSTextBlockAbsoluteValueType = 0,
+        NSTextBlockPercentageValueType = 1,
+    }
+);
 
-pub type NSTextBlockDimension = NSUInteger;
-pub const NSTextBlockWidth: NSTextBlockDimension = 0;
-pub const NSTextBlockMinimumWidth: NSTextBlockDimension = 1;
-pub const NSTextBlockMaximumWidth: NSTextBlockDimension = 2;
-pub const NSTextBlockHeight: NSTextBlockDimension = 4;
-pub const NSTextBlockMinimumHeight: NSTextBlockDimension = 5;
-pub const NSTextBlockMaximumHeight: NSTextBlockDimension = 6;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTextBlockDimension {
+        NSTextBlockWidth = 0,
+        NSTextBlockMinimumWidth = 1,
+        NSTextBlockMaximumWidth = 2,
+        NSTextBlockHeight = 4,
+        NSTextBlockMinimumHeight = 5,
+        NSTextBlockMaximumHeight = 6,
+    }
+);
 
-pub type NSTextBlockLayer = NSInteger;
-pub const NSTextBlockPadding: NSTextBlockLayer = -1;
-pub const NSTextBlockBorder: NSTextBlockLayer = 0;
-pub const NSTextBlockMargin: NSTextBlockLayer = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTextBlockLayer {
+        NSTextBlockPadding = -1,
+        NSTextBlockBorder = 0,
+        NSTextBlockMargin = 1,
+    }
+);
 
-pub type NSTextBlockVerticalAlignment = NSUInteger;
-pub const NSTextBlockTopAlignment: NSTextBlockVerticalAlignment = 0;
-pub const NSTextBlockMiddleAlignment: NSTextBlockVerticalAlignment = 1;
-pub const NSTextBlockBottomAlignment: NSTextBlockVerticalAlignment = 2;
-pub const NSTextBlockBaselineAlignment: NSTextBlockVerticalAlignment = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTextBlockVerticalAlignment {
+        NSTextBlockTopAlignment = 0,
+        NSTextBlockMiddleAlignment = 1,
+        NSTextBlockBottomAlignment = 2,
+        NSTextBlockBaselineAlignment = 3,
+    }
+);
 
-pub type NSTextTableLayoutAlgorithm = NSUInteger;
-pub const NSTextTableAutomaticLayoutAlgorithm: NSTextTableLayoutAlgorithm = 0;
-pub const NSTextTableFixedLayoutAlgorithm: NSTextTableLayoutAlgorithm = 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTextTableLayoutAlgorithm {
+        NSTextTableAutomaticLayoutAlgorithm = 0,
+        NSTextTableFixedLayoutAlgorithm = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

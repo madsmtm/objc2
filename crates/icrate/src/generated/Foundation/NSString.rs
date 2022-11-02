@@ -5,46 +5,59 @@ use crate::Foundation::*;
 
 pub type unichar = c_ushort;
 
-pub type NSStringCompareOptions = NSUInteger;
-pub const NSCaseInsensitiveSearch: NSStringCompareOptions = 1;
-pub const NSLiteralSearch: NSStringCompareOptions = 2;
-pub const NSBackwardsSearch: NSStringCompareOptions = 4;
-pub const NSAnchoredSearch: NSStringCompareOptions = 8;
-pub const NSNumericSearch: NSStringCompareOptions = 64;
-pub const NSDiacriticInsensitiveSearch: NSStringCompareOptions = 128;
-pub const NSWidthInsensitiveSearch: NSStringCompareOptions = 256;
-pub const NSForcedOrderingSearch: NSStringCompareOptions = 512;
-pub const NSRegularExpressionSearch: NSStringCompareOptions = 1024;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSStringCompareOptions {
+        NSCaseInsensitiveSearch = 1,
+        NSLiteralSearch = 2,
+        NSBackwardsSearch = 4,
+        NSAnchoredSearch = 8,
+        NSNumericSearch = 64,
+        NSDiacriticInsensitiveSearch = 128,
+        NSWidthInsensitiveSearch = 256,
+        NSForcedOrderingSearch = 512,
+        NSRegularExpressionSearch = 1024,
+    }
+);
 
 pub type NSStringEncoding = NSUInteger;
 
-pub const NSASCIIStringEncoding: NSStringEncoding = 1;
-pub const NSNEXTSTEPStringEncoding: NSStringEncoding = 2;
-pub const NSJapaneseEUCStringEncoding: NSStringEncoding = 3;
-pub const NSUTF8StringEncoding: NSStringEncoding = 4;
-pub const NSISOLatin1StringEncoding: NSStringEncoding = 5;
-pub const NSSymbolStringEncoding: NSStringEncoding = 6;
-pub const NSNonLossyASCIIStringEncoding: NSStringEncoding = 7;
-pub const NSShiftJISStringEncoding: NSStringEncoding = 8;
-pub const NSISOLatin2StringEncoding: NSStringEncoding = 9;
-pub const NSUnicodeStringEncoding: NSStringEncoding = 10;
-pub const NSWindowsCP1251StringEncoding: NSStringEncoding = 11;
-pub const NSWindowsCP1252StringEncoding: NSStringEncoding = 12;
-pub const NSWindowsCP1253StringEncoding: NSStringEncoding = 13;
-pub const NSWindowsCP1254StringEncoding: NSStringEncoding = 14;
-pub const NSWindowsCP1250StringEncoding: NSStringEncoding = 15;
-pub const NSISO2022JPStringEncoding: NSStringEncoding = 21;
-pub const NSMacOSRomanStringEncoding: NSStringEncoding = 30;
-pub const NSUTF16StringEncoding: NSStringEncoding = NSUnicodeStringEncoding;
-pub const NSUTF16BigEndianStringEncoding: NSStringEncoding = 0x90000100;
-pub const NSUTF16LittleEndianStringEncoding: NSStringEncoding = 0x94000100;
-pub const NSUTF32StringEncoding: NSStringEncoding = 0x8c000100;
-pub const NSUTF32BigEndianStringEncoding: NSStringEncoding = 0x98000100;
-pub const NSUTF32LittleEndianStringEncoding: NSStringEncoding = 0x9c000100;
+ns_enum!(
+    #[underlying(NSStringEncoding)]
+    pub enum {
+        NSASCIIStringEncoding = 1,
+        NSNEXTSTEPStringEncoding = 2,
+        NSJapaneseEUCStringEncoding = 3,
+        NSUTF8StringEncoding = 4,
+        NSISOLatin1StringEncoding = 5,
+        NSSymbolStringEncoding = 6,
+        NSNonLossyASCIIStringEncoding = 7,
+        NSShiftJISStringEncoding = 8,
+        NSISOLatin2StringEncoding = 9,
+        NSUnicodeStringEncoding = 10,
+        NSWindowsCP1251StringEncoding = 11,
+        NSWindowsCP1252StringEncoding = 12,
+        NSWindowsCP1253StringEncoding = 13,
+        NSWindowsCP1254StringEncoding = 14,
+        NSWindowsCP1250StringEncoding = 15,
+        NSISO2022JPStringEncoding = 21,
+        NSMacOSRomanStringEncoding = 30,
+        NSUTF16StringEncoding = NSUnicodeStringEncoding,
+        NSUTF16BigEndianStringEncoding = 0x90000100,
+        NSUTF16LittleEndianStringEncoding = 0x94000100,
+        NSUTF32StringEncoding = 0x8c000100,
+        NSUTF32BigEndianStringEncoding = 0x98000100,
+        NSUTF32LittleEndianStringEncoding = 0x9c000100,
+    }
+);
 
-pub type NSStringEncodingConversionOptions = NSUInteger;
-pub const NSStringEncodingConversionAllowLossy: NSStringEncodingConversionOptions = 1;
-pub const NSStringEncodingConversionExternalRepresentation: NSStringEncodingConversionOptions = 2;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSStringEncodingConversionOptions {
+        NSStringEncodingConversionAllowLossy = 1,
+        NSStringEncodingConversionExternalRepresentation = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -74,83 +87,55 @@ extern_methods!(
     }
 );
 
-pub type NSStringEnumerationOptions = NSUInteger;
-pub const NSStringEnumerationByLines: NSStringEnumerationOptions = 0;
-pub const NSStringEnumerationByParagraphs: NSStringEnumerationOptions = 1;
-pub const NSStringEnumerationByComposedCharacterSequences: NSStringEnumerationOptions = 2;
-pub const NSStringEnumerationByWords: NSStringEnumerationOptions = 3;
-pub const NSStringEnumerationBySentences: NSStringEnumerationOptions = 4;
-pub const NSStringEnumerationByCaretPositions: NSStringEnumerationOptions = 5;
-pub const NSStringEnumerationByDeletionClusters: NSStringEnumerationOptions = 6;
-pub const NSStringEnumerationReverse: NSStringEnumerationOptions = 1 << 8;
-pub const NSStringEnumerationSubstringNotRequired: NSStringEnumerationOptions = 1 << 9;
-pub const NSStringEnumerationLocalized: NSStringEnumerationOptions = 1 << 10;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSStringEnumerationOptions {
+        NSStringEnumerationByLines = 0,
+        NSStringEnumerationByParagraphs = 1,
+        NSStringEnumerationByComposedCharacterSequences = 2,
+        NSStringEnumerationByWords = 3,
+        NSStringEnumerationBySentences = 4,
+        NSStringEnumerationByCaretPositions = 5,
+        NSStringEnumerationByDeletionClusters = 6,
+        NSStringEnumerationReverse = 1 << 8,
+        NSStringEnumerationSubstringNotRequired = 1 << 9,
+        NSStringEnumerationLocalized = 1 << 10,
+    }
+);
 
 pub type NSStringTransform = NSString;
 
-extern "C" {
-    pub static NSStringTransformLatinToKatakana: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformLatinToKatakana: &'static NSStringTransform);
 
-extern "C" {
-    pub static NSStringTransformLatinToHiragana: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformLatinToHiragana: &'static NSStringTransform);
 
-extern "C" {
-    pub static NSStringTransformLatinToHangul: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformLatinToHangul: &'static NSStringTransform);
 
-extern "C" {
-    pub static NSStringTransformLatinToArabic: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformLatinToArabic: &'static NSStringTransform);
 
-extern "C" {
-    pub static NSStringTransformLatinToHebrew: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformLatinToHebrew: &'static NSStringTransform);
 
-extern "C" {
-    pub static NSStringTransformLatinToThai: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformLatinToThai: &'static NSStringTransform);
 
-extern "C" {
-    pub static NSStringTransformLatinToCyrillic: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformLatinToCyrillic: &'static NSStringTransform);
 
-extern "C" {
-    pub static NSStringTransformLatinToGreek: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformLatinToGreek: &'static NSStringTransform);
 
-extern "C" {
-    pub static NSStringTransformToLatin: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformToLatin: &'static NSStringTransform);
 
-extern "C" {
-    pub static NSStringTransformMandarinToLatin: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformMandarinToLatin: &'static NSStringTransform);
 
-extern "C" {
-    pub static NSStringTransformHiraganaToKatakana: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformHiraganaToKatakana: &'static NSStringTransform);
 
-extern "C" {
-    pub static NSStringTransformFullwidthToHalfwidth: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformFullwidthToHalfwidth: &'static NSStringTransform);
 
-extern "C" {
-    pub static NSStringTransformToXMLHex: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformToXMLHex: &'static NSStringTransform);
 
-extern "C" {
-    pub static NSStringTransformToUnicodeName: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformToUnicodeName: &'static NSStringTransform);
 
-extern "C" {
-    pub static NSStringTransformStripCombiningMarks: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformStripCombiningMarks: &'static NSStringTransform);
 
-extern "C" {
-    pub static NSStringTransformStripDiacritics: &'static NSStringTransform;
-}
+extern_static!(NSStringTransformStripDiacritics: &'static NSStringTransform);
 
 extern_methods!(
     /// NSStringExtensionMethods
@@ -697,39 +682,34 @@ extern_methods!(
 
 pub type NSStringEncodingDetectionOptionsKey = NSString;
 
-extern "C" {
-    pub static NSStringEncodingDetectionSuggestedEncodingsKey:
-        &'static NSStringEncodingDetectionOptionsKey;
-}
+extern_static!(
+    NSStringEncodingDetectionSuggestedEncodingsKey: &'static NSStringEncodingDetectionOptionsKey
+);
 
-extern "C" {
-    pub static NSStringEncodingDetectionDisallowedEncodingsKey:
-        &'static NSStringEncodingDetectionOptionsKey;
-}
+extern_static!(
+    NSStringEncodingDetectionDisallowedEncodingsKey: &'static NSStringEncodingDetectionOptionsKey
+);
 
-extern "C" {
-    pub static NSStringEncodingDetectionUseOnlySuggestedEncodingsKey:
-        &'static NSStringEncodingDetectionOptionsKey;
-}
+extern_static!(
+    NSStringEncodingDetectionUseOnlySuggestedEncodingsKey:
+        &'static NSStringEncodingDetectionOptionsKey
+);
 
-extern "C" {
-    pub static NSStringEncodingDetectionAllowLossyKey: &'static NSStringEncodingDetectionOptionsKey;
-}
+extern_static!(
+    NSStringEncodingDetectionAllowLossyKey: &'static NSStringEncodingDetectionOptionsKey
+);
 
-extern "C" {
-    pub static NSStringEncodingDetectionFromWindowsKey:
-        &'static NSStringEncodingDetectionOptionsKey;
-}
+extern_static!(
+    NSStringEncodingDetectionFromWindowsKey: &'static NSStringEncodingDetectionOptionsKey
+);
 
-extern "C" {
-    pub static NSStringEncodingDetectionLossySubstitutionKey:
-        &'static NSStringEncodingDetectionOptionsKey;
-}
+extern_static!(
+    NSStringEncodingDetectionLossySubstitutionKey: &'static NSStringEncodingDetectionOptionsKey
+);
 
-extern "C" {
-    pub static NSStringEncodingDetectionLikelyLanguageKey:
-        &'static NSStringEncodingDetectionOptionsKey;
-}
+extern_static!(
+    NSStringEncodingDetectionLikelyLanguageKey: &'static NSStringEncodingDetectionOptionsKey
+);
 
 extern_methods!(
     /// NSStringEncodingDetection
@@ -813,13 +793,9 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSCharacterConversionException: &'static NSExceptionName;
-}
+extern_static!(NSCharacterConversionException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSParseErrorException: &'static NSExceptionName;
-}
+extern_static!(NSParseErrorException: &'static NSExceptionName);
 
 extern_methods!(
     /// NSExtendedStringPropertyListParsing
@@ -922,7 +898,12 @@ extern_methods!(
     }
 );
 
-pub const NSProprietaryStringEncoding: NSStringEncoding = 65536;
+ns_enum!(
+    #[underlying(NSStringEncoding)]
+    pub enum {
+        NSProprietaryStringEncoding = 65536,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

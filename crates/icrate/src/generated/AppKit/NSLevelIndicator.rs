@@ -5,11 +5,14 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSLevelIndicatorPlaceholderVisibility = NSInteger;
-pub const NSLevelIndicatorPlaceholderVisibilityAutomatic: NSLevelIndicatorPlaceholderVisibility = 0;
-pub const NSLevelIndicatorPlaceholderVisibilityAlways: NSLevelIndicatorPlaceholderVisibility = 1;
-pub const NSLevelIndicatorPlaceholderVisibilityWhileEditing: NSLevelIndicatorPlaceholderVisibility =
-    2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSLevelIndicatorPlaceholderVisibility {
+        NSLevelIndicatorPlaceholderVisibilityAutomatic = 0,
+        NSLevelIndicatorPlaceholderVisibilityAlways = 1,
+        NSLevelIndicatorPlaceholderVisibilityWhileEditing = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

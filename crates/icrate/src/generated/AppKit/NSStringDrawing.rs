@@ -69,13 +69,17 @@ extern_methods!(
     }
 );
 
-pub type NSStringDrawingOptions = NSInteger;
-pub const NSStringDrawingUsesLineFragmentOrigin: NSStringDrawingOptions = 1 << 0;
-pub const NSStringDrawingUsesFontLeading: NSStringDrawingOptions = 1 << 1;
-pub const NSStringDrawingUsesDeviceMetrics: NSStringDrawingOptions = 1 << 3;
-pub const NSStringDrawingTruncatesLastVisibleLine: NSStringDrawingOptions = 1 << 5;
-pub const NSStringDrawingDisableScreenFontSubstitution: NSStringDrawingOptions = 1 << 2;
-pub const NSStringDrawingOneShot: NSStringDrawingOptions = 1 << 4;
+ns_options!(
+    #[underlying(NSInteger)]
+    pub enum NSStringDrawingOptions {
+        NSStringDrawingUsesLineFragmentOrigin = 1 << 0,
+        NSStringDrawingUsesFontLeading = 1 << 1,
+        NSStringDrawingUsesDeviceMetrics = 1 << 3,
+        NSStringDrawingTruncatesLastVisibleLine = 1 << 5,
+        NSStringDrawingDisableScreenFontSubstitution = 1 << 2,
+        NSStringDrawingOneShot = 1 << 4,
+    }
+);
 
 extern_methods!(
     /// NSExtendedStringDrawing

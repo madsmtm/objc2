@@ -3,17 +3,11 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSInvalidArchiveOperationException: &'static NSExceptionName;
-}
+extern_static!(NSInvalidArchiveOperationException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSInvalidUnarchiveOperationException: &'static NSExceptionName;
-}
+extern_static!(NSInvalidUnarchiveOperationException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSKeyedArchiveRootObjectKey: &'static NSString;
-}
+extern_static!(NSKeyedArchiveRootObjectKey: &'static NSString);
 
 extern_class!(
     #[derive(Debug)]

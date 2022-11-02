@@ -5,39 +5,55 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextSelectionNavigationDirection = NSInteger;
-pub const NSTextSelectionNavigationDirectionForward: NSTextSelectionNavigationDirection = 0;
-pub const NSTextSelectionNavigationDirectionBackward: NSTextSelectionNavigationDirection = 1;
-pub const NSTextSelectionNavigationDirectionRight: NSTextSelectionNavigationDirection = 2;
-pub const NSTextSelectionNavigationDirectionLeft: NSTextSelectionNavigationDirection = 3;
-pub const NSTextSelectionNavigationDirectionUp: NSTextSelectionNavigationDirection = 4;
-pub const NSTextSelectionNavigationDirectionDown: NSTextSelectionNavigationDirection = 5;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTextSelectionNavigationDirection {
+        NSTextSelectionNavigationDirectionForward = 0,
+        NSTextSelectionNavigationDirectionBackward = 1,
+        NSTextSelectionNavigationDirectionRight = 2,
+        NSTextSelectionNavigationDirectionLeft = 3,
+        NSTextSelectionNavigationDirectionUp = 4,
+        NSTextSelectionNavigationDirectionDown = 5,
+    }
+);
 
-pub type NSTextSelectionNavigationDestination = NSInteger;
-pub const NSTextSelectionNavigationDestinationCharacter: NSTextSelectionNavigationDestination = 0;
-pub const NSTextSelectionNavigationDestinationWord: NSTextSelectionNavigationDestination = 1;
-pub const NSTextSelectionNavigationDestinationLine: NSTextSelectionNavigationDestination = 2;
-pub const NSTextSelectionNavigationDestinationSentence: NSTextSelectionNavigationDestination = 3;
-pub const NSTextSelectionNavigationDestinationParagraph: NSTextSelectionNavigationDestination = 4;
-pub const NSTextSelectionNavigationDestinationContainer: NSTextSelectionNavigationDestination = 5;
-pub const NSTextSelectionNavigationDestinationDocument: NSTextSelectionNavigationDestination = 6;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTextSelectionNavigationDestination {
+        NSTextSelectionNavigationDestinationCharacter = 0,
+        NSTextSelectionNavigationDestinationWord = 1,
+        NSTextSelectionNavigationDestinationLine = 2,
+        NSTextSelectionNavigationDestinationSentence = 3,
+        NSTextSelectionNavigationDestinationParagraph = 4,
+        NSTextSelectionNavigationDestinationContainer = 5,
+        NSTextSelectionNavigationDestinationDocument = 6,
+    }
+);
 
-pub type NSTextSelectionNavigationModifier = NSUInteger;
-pub const NSTextSelectionNavigationModifierExtend: NSTextSelectionNavigationModifier = 1 << 0;
-pub const NSTextSelectionNavigationModifierVisual: NSTextSelectionNavigationModifier = 1 << 1;
-pub const NSTextSelectionNavigationModifierMultiple: NSTextSelectionNavigationModifier = 1 << 2;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSTextSelectionNavigationModifier {
+        NSTextSelectionNavigationModifierExtend = 1 << 0,
+        NSTextSelectionNavigationModifierVisual = 1 << 1,
+        NSTextSelectionNavigationModifierMultiple = 1 << 2,
+    }
+);
 
-pub type NSTextSelectionNavigationWritingDirection = NSInteger;
-pub const NSTextSelectionNavigationWritingDirectionLeftToRight:
-    NSTextSelectionNavigationWritingDirection = 0;
-pub const NSTextSelectionNavigationWritingDirectionRightToLeft:
-    NSTextSelectionNavigationWritingDirection = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTextSelectionNavigationWritingDirection {
+        NSTextSelectionNavigationWritingDirectionLeftToRight = 0,
+        NSTextSelectionNavigationWritingDirectionRightToLeft = 1,
+    }
+);
 
-pub type NSTextSelectionNavigationLayoutOrientation = NSInteger;
-pub const NSTextSelectionNavigationLayoutOrientationHorizontal:
-    NSTextSelectionNavigationLayoutOrientation = 0;
-pub const NSTextSelectionNavigationLayoutOrientationVertical:
-    NSTextSelectionNavigationLayoutOrientation = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTextSelectionNavigationLayoutOrientation {
+        NSTextSelectionNavigationLayoutOrientationHorizontal = 0,
+        NSTextSelectionNavigationLayoutOrientationVertical = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

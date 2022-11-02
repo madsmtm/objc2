@@ -4,9 +4,13 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSFetchIndexElementType = NSUInteger;
-pub const NSFetchIndexElementTypeBinary: NSFetchIndexElementType = 0;
-pub const NSFetchIndexElementTypeRTree: NSFetchIndexElementType = 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSFetchIndexElementType {
+        NSFetchIndexElementTypeBinary = 0,
+        NSFetchIndexElementTypeRTree = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

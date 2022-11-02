@@ -5,12 +5,16 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTokenStyle = NSUInteger;
-pub const NSTokenStyleDefault: NSTokenStyle = 0;
-pub const NSTokenStyleNone: NSTokenStyle = 1;
-pub const NSTokenStyleRounded: NSTokenStyle = 2;
-pub const NSTokenStyleSquared: NSTokenStyle = 3;
-pub const NSTokenStylePlainSquared: NSTokenStyle = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTokenStyle {
+        NSTokenStyleDefault = 0,
+        NSTokenStyleNone = 1,
+        NSTokenStyleRounded = 2,
+        NSTokenStyleSquared = 3,
+        NSTokenStylePlainSquared = 4,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -60,8 +64,8 @@ extern_methods!(
 
 pub type NSTokenFieldCellDelegate = NSObject;
 
-pub static NSDefaultTokenStyle: NSTokenStyle = NSTokenStyleDefault;
+extern_static!(NSDefaultTokenStyle: NSTokenStyle = NSTokenStyleDefault);
 
-pub static NSPlainTextTokenStyle: NSTokenStyle = NSTokenStyleNone;
+extern_static!(NSPlainTextTokenStyle: NSTokenStyle = NSTokenStyleNone);
 
-pub static NSRoundedTokenStyle: NSTokenStyle = NSTokenStyleRounded;
+extern_static!(NSRoundedTokenStyle: NSTokenStyle = NSTokenStyleRounded);

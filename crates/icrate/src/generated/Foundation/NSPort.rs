@@ -5,9 +5,7 @@ use crate::Foundation::*;
 
 pub type NSSocketNativeHandle = c_int;
 
-extern "C" {
-    pub static NSPortDidBecomeInvalidNotification: &'static NSNotificationName;
-}
+extern_static!(NSPortDidBecomeInvalidNotification: &'static NSNotificationName);
 
 extern_class!(
     #[derive(Debug)]
@@ -83,10 +81,14 @@ extern_methods!(
 
 pub type NSPortDelegate = NSObject;
 
-pub type NSMachPortOptions = NSUInteger;
-pub const NSMachPortDeallocateNone: NSMachPortOptions = 0;
-pub const NSMachPortDeallocateSendRight: NSMachPortOptions = 1 << 0;
-pub const NSMachPortDeallocateReceiveRight: NSMachPortOptions = 1 << 1;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSMachPortOptions {
+        NSMachPortDeallocateNone = 0,
+        NSMachPortDeallocateSendRight = 1 << 0,
+        NSMachPortDeallocateReceiveRight = 1 << 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

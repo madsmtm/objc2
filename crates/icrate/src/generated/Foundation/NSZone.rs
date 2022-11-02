@@ -3,5 +3,10 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub const NSScannedOption: NSUInteger = 1 << 0;
-pub const NSCollectorDisabledOption: NSUInteger = 1 << 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum {
+        NSScannedOption = 1<<0,
+        NSCollectorDisabledOption = 1<<1,
+    }
+);

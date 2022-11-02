@@ -5,21 +5,13 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSComboBoxWillPopUpNotification: &'static NSNotificationName;
-}
+extern_static!(NSComboBoxWillPopUpNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSComboBoxWillDismissNotification: &'static NSNotificationName;
-}
+extern_static!(NSComboBoxWillDismissNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSComboBoxSelectionDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSComboBoxSelectionDidChangeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSComboBoxSelectionIsChangingNotification: &'static NSNotificationName;
-}
+extern_static!(NSComboBoxSelectionIsChangingNotification: &'static NSNotificationName);
 
 pub type NSComboBoxDataSource = NSObject;
 

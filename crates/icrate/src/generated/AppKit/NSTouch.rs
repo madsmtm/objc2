@@ -5,23 +5,34 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTouchPhase = NSUInteger;
-pub const NSTouchPhaseBegan: NSTouchPhase = 1 << 0;
-pub const NSTouchPhaseMoved: NSTouchPhase = 1 << 1;
-pub const NSTouchPhaseStationary: NSTouchPhase = 1 << 2;
-pub const NSTouchPhaseEnded: NSTouchPhase = 1 << 3;
-pub const NSTouchPhaseCancelled: NSTouchPhase = 1 << 4;
-pub const NSTouchPhaseTouching: NSTouchPhase =
-    NSTouchPhaseBegan | NSTouchPhaseMoved | NSTouchPhaseStationary;
-pub const NSTouchPhaseAny: NSTouchPhase = 18446744073709551615;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSTouchPhase {
+        NSTouchPhaseBegan = 1 << 0,
+        NSTouchPhaseMoved = 1 << 1,
+        NSTouchPhaseStationary = 1 << 2,
+        NSTouchPhaseEnded = 1 << 3,
+        NSTouchPhaseCancelled = 1 << 4,
+        NSTouchPhaseTouching = NSTouchPhaseBegan | NSTouchPhaseMoved | NSTouchPhaseStationary,
+        NSTouchPhaseAny = 18446744073709551615,
+    }
+);
 
-pub type NSTouchType = NSInteger;
-pub const NSTouchTypeDirect: NSTouchType = 0;
-pub const NSTouchTypeIndirect: NSTouchType = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTouchType {
+        NSTouchTypeDirect = 0,
+        NSTouchTypeIndirect = 1,
+    }
+);
 
-pub type NSTouchTypeMask = NSUInteger;
-pub const NSTouchTypeMaskDirect: NSTouchTypeMask = 1 << NSTouchTypeDirect;
-pub const NSTouchTypeMaskIndirect: NSTouchTypeMask = 1 << NSTouchTypeIndirect;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSTouchTypeMask {
+        NSTouchTypeMaskDirect = 1 << NSTouchTypeDirect,
+        NSTouchTypeMaskIndirect = 1 << NSTouchTypeIndirect,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

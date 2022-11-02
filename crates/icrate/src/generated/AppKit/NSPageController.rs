@@ -7,10 +7,14 @@ use crate::Foundation::*;
 
 pub type NSPageControllerObjectIdentifier = NSString;
 
-pub type NSPageControllerTransitionStyle = NSInteger;
-pub const NSPageControllerTransitionStyleStackHistory: NSPageControllerTransitionStyle = 0;
-pub const NSPageControllerTransitionStyleStackBook: NSPageControllerTransitionStyle = 1;
-pub const NSPageControllerTransitionStyleHorizontalStrip: NSPageControllerTransitionStyle = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSPageControllerTransitionStyle {
+        NSPageControllerTransitionStyleStackHistory = 0,
+        NSPageControllerTransitionStyleStackBook = 1,
+        NSPageControllerTransitionStyleHorizontalStrip = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

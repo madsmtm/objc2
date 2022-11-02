@@ -3,15 +3,20 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub const NSWindowsNTOperatingSystem: c_uint = 1;
-pub const NSWindows95OperatingSystem: c_uint = 2;
-pub const NSSolarisOperatingSystem: c_uint = 3;
-pub const NSHPUXOperatingSystem: c_uint = 4;
-pub const NSMACHOperatingSystem: c_uint = 5;
-pub const NSSunOSOperatingSystem: c_uint = 6;
-pub const NSOSF1OperatingSystem: c_uint = 7;
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+        NSWindowsNTOperatingSystem = 1,
+        NSWindows95OperatingSystem = 2,
+        NSSolarisOperatingSystem = 3,
+        NSHPUXOperatingSystem = 4,
+        NSMACHOperatingSystem = 5,
+        NSSunOSOperatingSystem = 6,
+        NSOSF1OperatingSystem = 7,
+    }
+);
 
-struct_impl!(
+extern_struct!(
     pub struct NSOperatingSystemVersion {
         pub majorVersion: NSInteger,
         pub minorVersion: NSInteger,
@@ -107,17 +112,20 @@ extern_methods!(
     }
 );
 
-pub type NSActivityOptions = u64;
-pub const NSActivityIdleDisplaySleepDisabled: NSActivityOptions = 1 << 40;
-pub const NSActivityIdleSystemSleepDisabled: NSActivityOptions = 1 << 20;
-pub const NSActivitySuddenTerminationDisabled: NSActivityOptions = 1 << 14;
-pub const NSActivityAutomaticTerminationDisabled: NSActivityOptions = 1 << 15;
-pub const NSActivityUserInitiated: NSActivityOptions =
-    0x00FFFFFF | NSActivityIdleSystemSleepDisabled;
-pub const NSActivityUserInitiatedAllowingIdleSystemSleep: NSActivityOptions =
-    NSActivityUserInitiated & !NSActivityIdleSystemSleepDisabled;
-pub const NSActivityBackground: NSActivityOptions = 0x000000FF;
-pub const NSActivityLatencyCritical: NSActivityOptions = 0xFF00000000;
+ns_options!(
+    #[underlying(u64)]
+    pub enum NSActivityOptions {
+        NSActivityIdleDisplaySleepDisabled = 1 << 40,
+        NSActivityIdleSystemSleepDisabled = 1 << 20,
+        NSActivitySuddenTerminationDisabled = 1 << 14,
+        NSActivityAutomaticTerminationDisabled = 1 << 15,
+        NSActivityUserInitiated = 0x00FFFFFF | NSActivityIdleSystemSleepDisabled,
+        NSActivityUserInitiatedAllowingIdleSystemSleep =
+            NSActivityUserInitiated & !NSActivityIdleSystemSleepDisabled,
+        NSActivityBackground = 0x000000FF,
+        NSActivityLatencyCritical = 0xFF00000000,
+    }
+);
 
 extern_methods!(
     /// NSProcessInfoActivity
@@ -160,11 +168,15 @@ extern_methods!(
     }
 );
 
-pub type NSProcessInfoThermalState = NSInteger;
-pub const NSProcessInfoThermalStateNominal: NSProcessInfoThermalState = 0;
-pub const NSProcessInfoThermalStateFair: NSProcessInfoThermalState = 1;
-pub const NSProcessInfoThermalStateSerious: NSProcessInfoThermalState = 2;
-pub const NSProcessInfoThermalStateCritical: NSProcessInfoThermalState = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSProcessInfoThermalState {
+        NSProcessInfoThermalStateNominal = 0,
+        NSProcessInfoThermalStateFair = 1,
+        NSProcessInfoThermalStateSerious = 2,
+        NSProcessInfoThermalStateCritical = 3,
+    }
+);
 
 extern_methods!(
     /// NSProcessInfoThermalState
@@ -182,13 +194,9 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSProcessInfoThermalStateDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSProcessInfoThermalStateDidChangeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSProcessInfoPowerStateDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSProcessInfoPowerStateDidChangeNotification: &'static NSNotificationName);
 
 extern_methods!(
     /// NSProcessInfoPlatform

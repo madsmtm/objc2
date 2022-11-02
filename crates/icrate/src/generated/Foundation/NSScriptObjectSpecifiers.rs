@@ -3,31 +3,48 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub const NSNoSpecifierError: NSInteger = 0;
-pub const NSNoTopLevelContainersSpecifierError: NSInteger = 1;
-pub const NSContainerSpecifierError: NSInteger = 2;
-pub const NSUnknownKeySpecifierError: NSInteger = 3;
-pub const NSInvalidIndexSpecifierError: NSInteger = 4;
-pub const NSInternalSpecifierError: NSInteger = 5;
-pub const NSOperationNotSupportedForKeySpecifierError: NSInteger = 6;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum {
+        NSNoSpecifierError = 0,
+        NSNoTopLevelContainersSpecifierError = 1,
+        NSContainerSpecifierError = 2,
+        NSUnknownKeySpecifierError = 3,
+        NSInvalidIndexSpecifierError = 4,
+        NSInternalSpecifierError = 5,
+        NSOperationNotSupportedForKeySpecifierError = 6,
+    }
+);
 
-pub type NSInsertionPosition = NSUInteger;
-pub const NSPositionAfter: NSInsertionPosition = 0;
-pub const NSPositionBefore: NSInsertionPosition = 1;
-pub const NSPositionBeginning: NSInsertionPosition = 2;
-pub const NSPositionEnd: NSInsertionPosition = 3;
-pub const NSPositionReplace: NSInsertionPosition = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSInsertionPosition {
+        NSPositionAfter = 0,
+        NSPositionBefore = 1,
+        NSPositionBeginning = 2,
+        NSPositionEnd = 3,
+        NSPositionReplace = 4,
+    }
+);
 
-pub type NSRelativePosition = NSUInteger;
-pub const NSRelativeAfter: NSRelativePosition = 0;
-pub const NSRelativeBefore: NSRelativePosition = 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSRelativePosition {
+        NSRelativeAfter = 0,
+        NSRelativeBefore = 1,
+    }
+);
 
-pub type NSWhoseSubelementIdentifier = NSUInteger;
-pub const NSIndexSubelement: NSWhoseSubelementIdentifier = 0;
-pub const NSEverySubelement: NSWhoseSubelementIdentifier = 1;
-pub const NSMiddleSubelement: NSWhoseSubelementIdentifier = 2;
-pub const NSRandomSubelement: NSWhoseSubelementIdentifier = 3;
-pub const NSNoSubelement: NSWhoseSubelementIdentifier = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSWhoseSubelementIdentifier {
+        NSIndexSubelement = 0,
+        NSEverySubelement = 1,
+        NSMiddleSubelement = 2,
+        NSRandomSubelement = 3,
+        NSNoSubelement = 4,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

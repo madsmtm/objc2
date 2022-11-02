@@ -5,16 +5,20 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSAlertStyle = NSUInteger;
-pub const NSAlertStyleWarning: NSAlertStyle = 0;
-pub const NSAlertStyleInformational: NSAlertStyle = 1;
-pub const NSAlertStyleCritical: NSAlertStyle = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSAlertStyle {
+        NSAlertStyleWarning = 0,
+        NSAlertStyleInformational = 1,
+        NSAlertStyleCritical = 2,
+    }
+);
 
-pub static NSAlertFirstButtonReturn: NSModalResponse = 1000;
+extern_static!(NSAlertFirstButtonReturn: NSModalResponse = 1000);
 
-pub static NSAlertSecondButtonReturn: NSModalResponse = 1001;
+extern_static!(NSAlertSecondButtonReturn: NSModalResponse = 1001);
 
-pub static NSAlertThirdButtonReturn: NSModalResponse = 1002;
+extern_static!(NSAlertThirdButtonReturn: NSModalResponse = 1002);
 
 extern_class!(
     #[derive(Debug)]
@@ -127,8 +131,8 @@ extern_methods!(
     }
 );
 
-pub static NSWarningAlertStyle: NSAlertStyle = NSAlertStyleWarning;
+extern_static!(NSWarningAlertStyle: NSAlertStyle = NSAlertStyleWarning);
 
-pub static NSInformationalAlertStyle: NSAlertStyle = NSAlertStyleInformational;
+extern_static!(NSInformationalAlertStyle: NSAlertStyle = NSAlertStyleInformational);
 
-pub static NSCriticalAlertStyle: NSAlertStyle = NSAlertStyleCritical;
+extern_static!(NSCriticalAlertStyle: NSAlertStyle = NSAlertStyleCritical);

@@ -5,32 +5,44 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSFontTraitMask = NSUInteger;
-pub const NSItalicFontMask: NSFontTraitMask = 0x00000001;
-pub const NSBoldFontMask: NSFontTraitMask = 0x00000002;
-pub const NSUnboldFontMask: NSFontTraitMask = 0x00000004;
-pub const NSNonStandardCharacterSetFontMask: NSFontTraitMask = 0x00000008;
-pub const NSNarrowFontMask: NSFontTraitMask = 0x00000010;
-pub const NSExpandedFontMask: NSFontTraitMask = 0x00000020;
-pub const NSCondensedFontMask: NSFontTraitMask = 0x00000040;
-pub const NSSmallCapsFontMask: NSFontTraitMask = 0x00000080;
-pub const NSPosterFontMask: NSFontTraitMask = 0x00000100;
-pub const NSCompressedFontMask: NSFontTraitMask = 0x00000200;
-pub const NSFixedPitchFontMask: NSFontTraitMask = 0x00000400;
-pub const NSUnitalicFontMask: NSFontTraitMask = 0x01000000;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSFontTraitMask {
+        NSItalicFontMask = 0x00000001,
+        NSBoldFontMask = 0x00000002,
+        NSUnboldFontMask = 0x00000004,
+        NSNonStandardCharacterSetFontMask = 0x00000008,
+        NSNarrowFontMask = 0x00000010,
+        NSExpandedFontMask = 0x00000020,
+        NSCondensedFontMask = 0x00000040,
+        NSSmallCapsFontMask = 0x00000080,
+        NSPosterFontMask = 0x00000100,
+        NSCompressedFontMask = 0x00000200,
+        NSFixedPitchFontMask = 0x00000400,
+        NSUnitalicFontMask = 0x01000000,
+    }
+);
 
-pub type NSFontCollectionOptions = NSUInteger;
-pub const NSFontCollectionApplicationOnlyMask: NSFontCollectionOptions = 1 << 0;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSFontCollectionOptions {
+        NSFontCollectionApplicationOnlyMask = 1 << 0,
+    }
+);
 
-pub type NSFontAction = NSUInteger;
-pub const NSNoFontChangeAction: NSFontAction = 0;
-pub const NSViaPanelFontAction: NSFontAction = 1;
-pub const NSAddTraitFontAction: NSFontAction = 2;
-pub const NSSizeUpFontAction: NSFontAction = 3;
-pub const NSSizeDownFontAction: NSFontAction = 4;
-pub const NSHeavierFontAction: NSFontAction = 5;
-pub const NSLighterFontAction: NSFontAction = 6;
-pub const NSRemoveTraitFontAction: NSFontAction = 7;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSFontAction {
+        NSNoFontChangeAction = 0,
+        NSViaPanelFontAction = 1,
+        NSAddTraitFontAction = 2,
+        NSSizeUpFontAction = 3,
+        NSSizeDownFontAction = 4,
+        NSHeavierFontAction = 5,
+        NSLighterFontAction = 6,
+        NSRemoveTraitFontAction = 7,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

@@ -3,30 +3,41 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSURLRequestCachePolicy = NSUInteger;
-pub const NSURLRequestUseProtocolCachePolicy: NSURLRequestCachePolicy = 0;
-pub const NSURLRequestReloadIgnoringLocalCacheData: NSURLRequestCachePolicy = 1;
-pub const NSURLRequestReloadIgnoringLocalAndRemoteCacheData: NSURLRequestCachePolicy = 4;
-pub const NSURLRequestReloadIgnoringCacheData: NSURLRequestCachePolicy =
-    NSURLRequestReloadIgnoringLocalCacheData;
-pub const NSURLRequestReturnCacheDataElseLoad: NSURLRequestCachePolicy = 2;
-pub const NSURLRequestReturnCacheDataDontLoad: NSURLRequestCachePolicy = 3;
-pub const NSURLRequestReloadRevalidatingCacheData: NSURLRequestCachePolicy = 5;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSURLRequestCachePolicy {
+        NSURLRequestUseProtocolCachePolicy = 0,
+        NSURLRequestReloadIgnoringLocalCacheData = 1,
+        NSURLRequestReloadIgnoringLocalAndRemoteCacheData = 4,
+        NSURLRequestReloadIgnoringCacheData = NSURLRequestReloadIgnoringLocalCacheData,
+        NSURLRequestReturnCacheDataElseLoad = 2,
+        NSURLRequestReturnCacheDataDontLoad = 3,
+        NSURLRequestReloadRevalidatingCacheData = 5,
+    }
+);
 
-pub type NSURLRequestNetworkServiceType = NSUInteger;
-pub const NSURLNetworkServiceTypeDefault: NSURLRequestNetworkServiceType = 0;
-pub const NSURLNetworkServiceTypeVoIP: NSURLRequestNetworkServiceType = 1;
-pub const NSURLNetworkServiceTypeVideo: NSURLRequestNetworkServiceType = 2;
-pub const NSURLNetworkServiceTypeBackground: NSURLRequestNetworkServiceType = 3;
-pub const NSURLNetworkServiceTypeVoice: NSURLRequestNetworkServiceType = 4;
-pub const NSURLNetworkServiceTypeResponsiveData: NSURLRequestNetworkServiceType = 6;
-pub const NSURLNetworkServiceTypeAVStreaming: NSURLRequestNetworkServiceType = 8;
-pub const NSURLNetworkServiceTypeResponsiveAV: NSURLRequestNetworkServiceType = 9;
-pub const NSURLNetworkServiceTypeCallSignaling: NSURLRequestNetworkServiceType = 11;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSURLRequestNetworkServiceType {
+        NSURLNetworkServiceTypeDefault = 0,
+        NSURLNetworkServiceTypeVoIP = 1,
+        NSURLNetworkServiceTypeVideo = 2,
+        NSURLNetworkServiceTypeBackground = 3,
+        NSURLNetworkServiceTypeVoice = 4,
+        NSURLNetworkServiceTypeResponsiveData = 6,
+        NSURLNetworkServiceTypeAVStreaming = 8,
+        NSURLNetworkServiceTypeResponsiveAV = 9,
+        NSURLNetworkServiceTypeCallSignaling = 11,
+    }
+);
 
-pub type NSURLRequestAttribution = NSUInteger;
-pub const NSURLRequestAttributionDeveloper: NSURLRequestAttribution = 0;
-pub const NSURLRequestAttributionUser: NSURLRequestAttribution = 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSURLRequestAttribution {
+        NSURLRequestAttributionDeveloper = 0,
+        NSURLRequestAttributionUser = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

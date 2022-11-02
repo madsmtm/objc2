@@ -60,40 +60,22 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSAppearanceNameAqua: &'static NSAppearanceName;
-}
+extern_static!(NSAppearanceNameAqua: &'static NSAppearanceName);
 
-extern "C" {
-    pub static NSAppearanceNameDarkAqua: &'static NSAppearanceName;
-}
+extern_static!(NSAppearanceNameDarkAqua: &'static NSAppearanceName);
 
-extern "C" {
-    pub static NSAppearanceNameLightContent: &'static NSAppearanceName;
-}
+extern_static!(NSAppearanceNameLightContent: &'static NSAppearanceName);
 
-extern "C" {
-    pub static NSAppearanceNameVibrantDark: &'static NSAppearanceName;
-}
+extern_static!(NSAppearanceNameVibrantDark: &'static NSAppearanceName);
 
-extern "C" {
-    pub static NSAppearanceNameVibrantLight: &'static NSAppearanceName;
-}
+extern_static!(NSAppearanceNameVibrantLight: &'static NSAppearanceName);
 
-extern "C" {
-    pub static NSAppearanceNameAccessibilityHighContrastAqua: &'static NSAppearanceName;
-}
+extern_static!(NSAppearanceNameAccessibilityHighContrastAqua: &'static NSAppearanceName);
 
-extern "C" {
-    pub static NSAppearanceNameAccessibilityHighContrastDarkAqua: &'static NSAppearanceName;
-}
+extern_static!(NSAppearanceNameAccessibilityHighContrastDarkAqua: &'static NSAppearanceName);
 
-extern "C" {
-    pub static NSAppearanceNameAccessibilityHighContrastVibrantLight: &'static NSAppearanceName;
-}
+extern_static!(NSAppearanceNameAccessibilityHighContrastVibrantLight: &'static NSAppearanceName);
 
-extern "C" {
-    pub static NSAppearanceNameAccessibilityHighContrastVibrantDark: &'static NSAppearanceName;
-}
+extern_static!(NSAppearanceNameAccessibilityHighContrastVibrantDark: &'static NSAppearanceName);
 
 pub type NSAppearanceCustomization = NSObject;

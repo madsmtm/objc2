@@ -3,13 +3,21 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSFileWrapperReadingOptions = NSUInteger;
-pub const NSFileWrapperReadingImmediate: NSFileWrapperReadingOptions = 1 << 0;
-pub const NSFileWrapperReadingWithoutMapping: NSFileWrapperReadingOptions = 1 << 1;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSFileWrapperReadingOptions {
+        NSFileWrapperReadingImmediate = 1 << 0,
+        NSFileWrapperReadingWithoutMapping = 1 << 1,
+    }
+);
 
-pub type NSFileWrapperWritingOptions = NSUInteger;
-pub const NSFileWrapperWritingAtomic: NSFileWrapperWritingOptions = 1 << 0;
-pub const NSFileWrapperWritingWithNameUpdating: NSFileWrapperWritingOptions = 1 << 1;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSFileWrapperWritingOptions {
+        NSFileWrapperWritingAtomic = 1 << 0,
+        NSFileWrapperWritingWithNameUpdating = 1 << 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

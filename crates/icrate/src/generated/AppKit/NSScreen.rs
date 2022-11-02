@@ -81,9 +81,7 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSScreenColorSpaceDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSScreenColorSpaceDidChangeNotification: &'static NSNotificationName);
 
 extern_methods!(
     unsafe impl NSScreen {

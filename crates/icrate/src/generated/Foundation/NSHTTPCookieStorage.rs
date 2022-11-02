@@ -3,10 +3,14 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSHTTPCookieAcceptPolicy = NSUInteger;
-pub const NSHTTPCookieAcceptPolicyAlways: NSHTTPCookieAcceptPolicy = 0;
-pub const NSHTTPCookieAcceptPolicyNever: NSHTTPCookieAcceptPolicy = 1;
-pub const NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain: NSHTTPCookieAcceptPolicy = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSHTTPCookieAcceptPolicy {
+        NSHTTPCookieAcceptPolicyAlways = 0,
+        NSHTTPCookieAcceptPolicyNever = 1,
+        NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -86,10 +90,6 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSHTTPCookieManagerAcceptPolicyChangedNotification: &'static NSNotificationName;
-}
+extern_static!(NSHTTPCookieManagerAcceptPolicyChangedNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSHTTPCookieManagerCookiesChangedNotification: &'static NSNotificationName;
-}
+extern_static!(NSHTTPCookieManagerCookiesChangedNotification: &'static NSNotificationName);

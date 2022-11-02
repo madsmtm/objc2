@@ -5,10 +5,14 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTabState = NSUInteger;
-pub const NSSelectedTab: NSTabState = 0;
-pub const NSBackgroundTab: NSTabState = 1;
-pub const NSPressedTab: NSTabState = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTabState {
+        NSSelectedTab = 0,
+        NSBackgroundTab = 1,
+        NSPressedTab = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

@@ -5,28 +5,44 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSUsableScrollerParts = NSUInteger;
-pub const NSNoScrollerParts: NSUsableScrollerParts = 0;
-pub const NSOnlyScrollerArrows: NSUsableScrollerParts = 1;
-pub const NSAllScrollerParts: NSUsableScrollerParts = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSUsableScrollerParts {
+        NSNoScrollerParts = 0,
+        NSOnlyScrollerArrows = 1,
+        NSAllScrollerParts = 2,
+    }
+);
 
-pub type NSScrollerPart = NSUInteger;
-pub const NSScrollerNoPart: NSScrollerPart = 0;
-pub const NSScrollerDecrementPage: NSScrollerPart = 1;
-pub const NSScrollerKnob: NSScrollerPart = 2;
-pub const NSScrollerIncrementPage: NSScrollerPart = 3;
-pub const NSScrollerDecrementLine: NSScrollerPart = 4;
-pub const NSScrollerIncrementLine: NSScrollerPart = 5;
-pub const NSScrollerKnobSlot: NSScrollerPart = 6;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSScrollerPart {
+        NSScrollerNoPart = 0,
+        NSScrollerDecrementPage = 1,
+        NSScrollerKnob = 2,
+        NSScrollerIncrementPage = 3,
+        NSScrollerDecrementLine = 4,
+        NSScrollerIncrementLine = 5,
+        NSScrollerKnobSlot = 6,
+    }
+);
 
-pub type NSScrollerStyle = NSInteger;
-pub const NSScrollerStyleLegacy: NSScrollerStyle = 0;
-pub const NSScrollerStyleOverlay: NSScrollerStyle = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSScrollerStyle {
+        NSScrollerStyleLegacy = 0,
+        NSScrollerStyleOverlay = 1,
+    }
+);
 
-pub type NSScrollerKnobStyle = NSInteger;
-pub const NSScrollerKnobStyleDefault: NSScrollerKnobStyle = 0;
-pub const NSScrollerKnobStyleDark: NSScrollerKnobStyle = 1;
-pub const NSScrollerKnobStyleLight: NSScrollerKnobStyle = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSScrollerKnobStyle {
+        NSScrollerKnobStyleDefault = 0,
+        NSScrollerKnobStyleDark = 1,
+        NSScrollerKnobStyleLight = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -101,19 +117,25 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSPreferredScrollerStyleDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSPreferredScrollerStyleDidChangeNotification: &'static NSNotificationName);
 
-pub type NSScrollArrowPosition = NSUInteger;
-pub const NSScrollerArrowsMaxEnd: NSScrollArrowPosition = 0;
-pub const NSScrollerArrowsMinEnd: NSScrollArrowPosition = 1;
-pub const NSScrollerArrowsDefaultSetting: NSScrollArrowPosition = 0;
-pub const NSScrollerArrowsNone: NSScrollArrowPosition = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSScrollArrowPosition {
+        NSScrollerArrowsMaxEnd = 0,
+        NSScrollerArrowsMinEnd = 1,
+        NSScrollerArrowsDefaultSetting = 0,
+        NSScrollerArrowsNone = 2,
+    }
+);
 
-pub type NSScrollerArrow = NSUInteger;
-pub const NSScrollerIncrementArrow: NSScrollerArrow = 0;
-pub const NSScrollerDecrementArrow: NSScrollerArrow = 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSScrollerArrow {
+        NSScrollerIncrementArrow = 0,
+        NSScrollerDecrementArrow = 1,
+    }
+);
 
 extern_methods!(
     /// NSDeprecated

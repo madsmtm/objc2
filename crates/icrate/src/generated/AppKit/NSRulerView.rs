@@ -5,27 +5,23 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSRulerOrientation = NSUInteger;
-pub const NSHorizontalRuler: NSRulerOrientation = 0;
-pub const NSVerticalRuler: NSRulerOrientation = 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSRulerOrientation {
+        NSHorizontalRuler = 0,
+        NSVerticalRuler = 1,
+    }
+);
 
 pub type NSRulerViewUnitName = NSString;
 
-extern "C" {
-    pub static NSRulerViewUnitInches: &'static NSRulerViewUnitName;
-}
+extern_static!(NSRulerViewUnitInches: &'static NSRulerViewUnitName);
 
-extern "C" {
-    pub static NSRulerViewUnitCentimeters: &'static NSRulerViewUnitName;
-}
+extern_static!(NSRulerViewUnitCentimeters: &'static NSRulerViewUnitName);
 
-extern "C" {
-    pub static NSRulerViewUnitPoints: &'static NSRulerViewUnitName;
-}
+extern_static!(NSRulerViewUnitPoints: &'static NSRulerViewUnitName);
 
-extern "C" {
-    pub static NSRulerViewUnitPicas: &'static NSRulerViewUnitName;
-}
+extern_static!(NSRulerViewUnitPicas: &'static NSRulerViewUnitName);
 
 extern_class!(
     #[derive(Debug)]

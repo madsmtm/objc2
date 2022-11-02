@@ -5,39 +5,57 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSDragOperation = NSUInteger;
-pub const NSDragOperationNone: NSDragOperation = 0;
-pub const NSDragOperationCopy: NSDragOperation = 1;
-pub const NSDragOperationLink: NSDragOperation = 2;
-pub const NSDragOperationGeneric: NSDragOperation = 4;
-pub const NSDragOperationPrivate: NSDragOperation = 8;
-pub const NSDragOperationMove: NSDragOperation = 16;
-pub const NSDragOperationDelete: NSDragOperation = 32;
-pub const NSDragOperationEvery: NSDragOperation = 18446744073709551615;
-pub const NSDragOperationAll_Obsolete: NSDragOperation = 15;
-pub const NSDragOperationAll: NSDragOperation = NSDragOperationAll_Obsolete;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSDragOperation {
+        NSDragOperationNone = 0,
+        NSDragOperationCopy = 1,
+        NSDragOperationLink = 2,
+        NSDragOperationGeneric = 4,
+        NSDragOperationPrivate = 8,
+        NSDragOperationMove = 16,
+        NSDragOperationDelete = 32,
+        NSDragOperationEvery = 18446744073709551615,
+        NSDragOperationAll_Obsolete = 15,
+        NSDragOperationAll = NSDragOperationAll_Obsolete,
+    }
+);
 
-pub type NSDraggingFormation = NSInteger;
-pub const NSDraggingFormationDefault: NSDraggingFormation = 0;
-pub const NSDraggingFormationNone: NSDraggingFormation = 1;
-pub const NSDraggingFormationPile: NSDraggingFormation = 2;
-pub const NSDraggingFormationList: NSDraggingFormation = 3;
-pub const NSDraggingFormationStack: NSDraggingFormation = 4;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSDraggingFormation {
+        NSDraggingFormationDefault = 0,
+        NSDraggingFormationNone = 1,
+        NSDraggingFormationPile = 2,
+        NSDraggingFormationList = 3,
+        NSDraggingFormationStack = 4,
+    }
+);
 
-pub type NSDraggingContext = NSInteger;
-pub const NSDraggingContextOutsideApplication: NSDraggingContext = 0;
-pub const NSDraggingContextWithinApplication: NSDraggingContext = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSDraggingContext {
+        NSDraggingContextOutsideApplication = 0,
+        NSDraggingContextWithinApplication = 1,
+    }
+);
 
-pub type NSDraggingItemEnumerationOptions = NSUInteger;
-pub const NSDraggingItemEnumerationConcurrent: NSDraggingItemEnumerationOptions =
-    NSEnumerationConcurrent;
-pub const NSDraggingItemEnumerationClearNonenumeratedImages: NSDraggingItemEnumerationOptions =
-    1 << 16;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSDraggingItemEnumerationOptions {
+        NSDraggingItemEnumerationConcurrent = NSEnumerationConcurrent,
+        NSDraggingItemEnumerationClearNonenumeratedImages = 1 << 16,
+    }
+);
 
-pub type NSSpringLoadingHighlight = NSInteger;
-pub const NSSpringLoadingHighlightNone: NSSpringLoadingHighlight = 0;
-pub const NSSpringLoadingHighlightStandard: NSSpringLoadingHighlight = 1;
-pub const NSSpringLoadingHighlightEmphasized: NSSpringLoadingHighlight = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSSpringLoadingHighlight {
+        NSSpringLoadingHighlightNone = 0,
+        NSSpringLoadingHighlightStandard = 1,
+        NSSpringLoadingHighlightEmphasized = 2,
+    }
+);
 
 pub type NSDraggingInfo = NSObject;
 
@@ -45,11 +63,15 @@ pub type NSDraggingDestination = NSObject;
 
 pub type NSDraggingSource = NSObject;
 
-pub type NSSpringLoadingOptions = NSUInteger;
-pub const NSSpringLoadingDisabled: NSSpringLoadingOptions = 0;
-pub const NSSpringLoadingEnabled: NSSpringLoadingOptions = 1 << 0;
-pub const NSSpringLoadingContinuousActivation: NSSpringLoadingOptions = 1 << 1;
-pub const NSSpringLoadingNoHover: NSSpringLoadingOptions = 1 << 3;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSSpringLoadingOptions {
+        NSSpringLoadingDisabled = 0,
+        NSSpringLoadingEnabled = 1 << 0,
+        NSSpringLoadingContinuousActivation = 1 << 1,
+        NSSpringLoadingNoHover = 1 << 3,
+    }
+);
 
 pub type NSSpringLoadingDestination = NSObject;
 

@@ -7,9 +7,13 @@ use crate::Foundation::*;
 
 pub type NSStatusItemAutosaveName = NSString;
 
-pub type NSStatusItemBehavior = NSUInteger;
-pub const NSStatusItemBehaviorRemovalAllowed: NSStatusItemBehavior = 1 << 1;
-pub const NSStatusItemBehaviorTerminationOnRemoval: NSStatusItemBehavior = 1 << 2;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSStatusItemBehavior {
+        NSStatusItemBehaviorRemovalAllowed = 1 << 1,
+        NSStatusItemBehaviorTerminationOnRemoval = 1 << 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

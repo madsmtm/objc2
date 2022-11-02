@@ -173,12 +173,16 @@ extern_methods!(
     }
 );
 
-pub type NSLocaleLanguageDirection = NSUInteger;
-pub const NSLocaleLanguageDirectionUnknown: NSLocaleLanguageDirection = 0;
-pub const NSLocaleLanguageDirectionLeftToRight: NSLocaleLanguageDirection = 1;
-pub const NSLocaleLanguageDirectionRightToLeft: NSLocaleLanguageDirection = 2;
-pub const NSLocaleLanguageDirectionTopToBottom: NSLocaleLanguageDirection = 3;
-pub const NSLocaleLanguageDirectionBottomToTop: NSLocaleLanguageDirection = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSLocaleLanguageDirection {
+        NSLocaleLanguageDirectionUnknown = 0,
+        NSLocaleLanguageDirectionLeftToRight = 1,
+        NSLocaleLanguageDirectionRightToLeft = 2,
+        NSLocaleLanguageDirectionTopToBottom = 3,
+        NSLocaleLanguageDirectionBottomToTop = 4,
+    }
+);
 
 extern_methods!(
     /// NSLocaleGeneralInfo
@@ -240,126 +244,64 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSCurrentLocaleDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSCurrentLocaleDidChangeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSLocaleIdentifier: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleIdentifier: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleLanguageCode: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleLanguageCode: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleCountryCode: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleCountryCode: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleScriptCode: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleScriptCode: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleVariantCode: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleVariantCode: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleExemplarCharacterSet: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleExemplarCharacterSet: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleCalendar: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleCalendar: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleCollationIdentifier: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleCollationIdentifier: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleUsesMetricSystem: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleUsesMetricSystem: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleMeasurementSystem: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleMeasurementSystem: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleDecimalSeparator: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleDecimalSeparator: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleGroupingSeparator: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleGroupingSeparator: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleCurrencySymbol: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleCurrencySymbol: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleCurrencyCode: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleCurrencyCode: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleCollatorIdentifier: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleCollatorIdentifier: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleQuotationBeginDelimiterKey: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleQuotationBeginDelimiterKey: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleQuotationEndDelimiterKey: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleQuotationEndDelimiterKey: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleAlternateQuotationBeginDelimiterKey: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleAlternateQuotationBeginDelimiterKey: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSLocaleAlternateQuotationEndDelimiterKey: &'static NSLocaleKey;
-}
+extern_static!(NSLocaleAlternateQuotationEndDelimiterKey: &'static NSLocaleKey);
 
-extern "C" {
-    pub static NSGregorianCalendar: &'static NSString;
-}
+extern_static!(NSGregorianCalendar: &'static NSString);
 
-extern "C" {
-    pub static NSBuddhistCalendar: &'static NSString;
-}
+extern_static!(NSBuddhistCalendar: &'static NSString);
 
-extern "C" {
-    pub static NSChineseCalendar: &'static NSString;
-}
+extern_static!(NSChineseCalendar: &'static NSString);
 
-extern "C" {
-    pub static NSHebrewCalendar: &'static NSString;
-}
+extern_static!(NSHebrewCalendar: &'static NSString);
 
-extern "C" {
-    pub static NSIslamicCalendar: &'static NSString;
-}
+extern_static!(NSIslamicCalendar: &'static NSString);
 
-extern "C" {
-    pub static NSIslamicCivilCalendar: &'static NSString;
-}
+extern_static!(NSIslamicCivilCalendar: &'static NSString);
 
-extern "C" {
-    pub static NSJapaneseCalendar: &'static NSString;
-}
+extern_static!(NSJapaneseCalendar: &'static NSString);
 
-extern "C" {
-    pub static NSRepublicOfChinaCalendar: &'static NSString;
-}
+extern_static!(NSRepublicOfChinaCalendar: &'static NSString);
 
-extern "C" {
-    pub static NSPersianCalendar: &'static NSString;
-}
+extern_static!(NSPersianCalendar: &'static NSString);
 
-extern "C" {
-    pub static NSIndianCalendar: &'static NSString;
-}
+extern_static!(NSIndianCalendar: &'static NSString);
 
-extern "C" {
-    pub static NSISO8601Calendar: &'static NSString;
-}
+extern_static!(NSISO8601Calendar: &'static NSString);

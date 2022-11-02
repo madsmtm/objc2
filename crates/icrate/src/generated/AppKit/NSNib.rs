@@ -65,10 +65,6 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSNibOwner: &'static NSString;
-}
+extern_static!(NSNibOwner: &'static NSString);
 
-extern "C" {
-    pub static NSNibTopLevelObjects: &'static NSString;
-}
+extern_static!(NSNibTopLevelObjects: &'static NSString);

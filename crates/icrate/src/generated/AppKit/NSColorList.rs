@@ -79,6 +79,4 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSColorListDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSColorListDidChangeNotification: &'static NSNotificationName);

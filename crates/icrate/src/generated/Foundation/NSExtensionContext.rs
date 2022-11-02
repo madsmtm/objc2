@@ -32,22 +32,12 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSExtensionItemsAndErrorsKey: Option<&'static NSString>;
-}
+extern_static!(NSExtensionItemsAndErrorsKey: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSExtensionHostWillEnterForegroundNotification: Option<&'static NSString>;
-}
+extern_static!(NSExtensionHostWillEnterForegroundNotification: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSExtensionHostDidEnterBackgroundNotification: Option<&'static NSString>;
-}
+extern_static!(NSExtensionHostDidEnterBackgroundNotification: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSExtensionHostWillResignActiveNotification: Option<&'static NSString>;
-}
+extern_static!(NSExtensionHostWillResignActiveNotification: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSExtensionHostDidBecomeActiveNotification: Option<&'static NSString>;
-}
+extern_static!(NSExtensionHostDidBecomeActiveNotification: Option<&'static NSString>);

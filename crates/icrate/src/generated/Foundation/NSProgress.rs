@@ -221,67 +221,36 @@ extern_methods!(
 
 pub type NSProgressReporting = NSObject;
 
-extern "C" {
-    pub static NSProgressEstimatedTimeRemainingKey: &'static NSProgressUserInfoKey;
-}
+extern_static!(NSProgressEstimatedTimeRemainingKey: &'static NSProgressUserInfoKey);
 
-extern "C" {
-    pub static NSProgressThroughputKey: &'static NSProgressUserInfoKey;
-}
+extern_static!(NSProgressThroughputKey: &'static NSProgressUserInfoKey);
 
-extern "C" {
-    pub static NSProgressKindFile: &'static NSProgressKind;
-}
+extern_static!(NSProgressKindFile: &'static NSProgressKind);
 
-extern "C" {
-    pub static NSProgressFileOperationKindKey: &'static NSProgressUserInfoKey;
-}
+extern_static!(NSProgressFileOperationKindKey: &'static NSProgressUserInfoKey);
 
-extern "C" {
-    pub static NSProgressFileOperationKindDownloading: &'static NSProgressFileOperationKind;
-}
+extern_static!(NSProgressFileOperationKindDownloading: &'static NSProgressFileOperationKind);
 
-extern "C" {
-    pub static NSProgressFileOperationKindDecompressingAfterDownloading:
-        &'static NSProgressFileOperationKind;
-}
+extern_static!(
+    NSProgressFileOperationKindDecompressingAfterDownloading: &'static NSProgressFileOperationKind
+);
 
-extern "C" {
-    pub static NSProgressFileOperationKindReceiving: &'static NSProgressFileOperationKind;
-}
+extern_static!(NSProgressFileOperationKindReceiving: &'static NSProgressFileOperationKind);
 
-extern "C" {
-    pub static NSProgressFileOperationKindCopying: &'static NSProgressFileOperationKind;
-}
+extern_static!(NSProgressFileOperationKindCopying: &'static NSProgressFileOperationKind);
 
-extern "C" {
-    pub static NSProgressFileOperationKindUploading: &'static NSProgressFileOperationKind;
-}
+extern_static!(NSProgressFileOperationKindUploading: &'static NSProgressFileOperationKind);
 
-extern "C" {
-    pub static NSProgressFileOperationKindDuplicating: &'static NSProgressFileOperationKind;
-}
+extern_static!(NSProgressFileOperationKindDuplicating: &'static NSProgressFileOperationKind);
 
-extern "C" {
-    pub static NSProgressFileURLKey: &'static NSProgressUserInfoKey;
-}
+extern_static!(NSProgressFileURLKey: &'static NSProgressUserInfoKey);
 
-extern "C" {
-    pub static NSProgressFileTotalCountKey: &'static NSProgressUserInfoKey;
-}
+extern_static!(NSProgressFileTotalCountKey: &'static NSProgressUserInfoKey);
 
-extern "C" {
-    pub static NSProgressFileCompletedCountKey: &'static NSProgressUserInfoKey;
-}
+extern_static!(NSProgressFileCompletedCountKey: &'static NSProgressUserInfoKey);
 
-extern "C" {
-    pub static NSProgressFileAnimationImageKey: &'static NSProgressUserInfoKey;
-}
+extern_static!(NSProgressFileAnimationImageKey: &'static NSProgressUserInfoKey);
 
-extern "C" {
-    pub static NSProgressFileAnimationImageOriginalRectKey: &'static NSProgressUserInfoKey;
-}
+extern_static!(NSProgressFileAnimationImageOriginalRectKey: &'static NSProgressUserInfoKey);
 
-extern "C" {
-    pub static NSProgressFileIconKey: &'static NSProgressUserInfoKey;
-}
+extern_static!(NSProgressFileIconKey: &'static NSProgressUserInfoKey);

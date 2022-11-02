@@ -7,65 +7,78 @@ use crate::Foundation::*;
 
 pub type NSLayoutPriority = c_float;
 
-pub static NSLayoutPriorityRequired: NSLayoutPriority = 1000;
+extern_static!(NSLayoutPriorityRequired: NSLayoutPriority = 1000);
 
-pub static NSLayoutPriorityDefaultHigh: NSLayoutPriority = 750;
+extern_static!(NSLayoutPriorityDefaultHigh: NSLayoutPriority = 750);
 
-pub static NSLayoutPriorityDragThatCanResizeWindow: NSLayoutPriority = 510;
+extern_static!(NSLayoutPriorityDragThatCanResizeWindow: NSLayoutPriority = 510);
 
-pub static NSLayoutPriorityWindowSizeStayPut: NSLayoutPriority = 500;
+extern_static!(NSLayoutPriorityWindowSizeStayPut: NSLayoutPriority = 500);
 
-pub static NSLayoutPriorityDragThatCannotResizeWindow: NSLayoutPriority = 490;
+extern_static!(NSLayoutPriorityDragThatCannotResizeWindow: NSLayoutPriority = 490);
 
-pub static NSLayoutPriorityDefaultLow: NSLayoutPriority = 250;
+extern_static!(NSLayoutPriorityDefaultLow: NSLayoutPriority = 250);
 
-pub static NSLayoutPriorityFittingSizeCompression: NSLayoutPriority = 50;
+extern_static!(NSLayoutPriorityFittingSizeCompression: NSLayoutPriority = 50);
 
-pub type NSLayoutConstraintOrientation = NSInteger;
-pub const NSLayoutConstraintOrientationHorizontal: NSLayoutConstraintOrientation = 0;
-pub const NSLayoutConstraintOrientationVertical: NSLayoutConstraintOrientation = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSLayoutConstraintOrientation {
+        NSLayoutConstraintOrientationHorizontal = 0,
+        NSLayoutConstraintOrientationVertical = 1,
+    }
+);
 
-pub type NSLayoutRelation = NSInteger;
-pub const NSLayoutRelationLessThanOrEqual: NSLayoutRelation = -1;
-pub const NSLayoutRelationEqual: NSLayoutRelation = 0;
-pub const NSLayoutRelationGreaterThanOrEqual: NSLayoutRelation = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSLayoutRelation {
+        NSLayoutRelationLessThanOrEqual = -1,
+        NSLayoutRelationEqual = 0,
+        NSLayoutRelationGreaterThanOrEqual = 1,
+    }
+);
 
-pub type NSLayoutAttribute = NSInteger;
-pub const NSLayoutAttributeLeft: NSLayoutAttribute = 1;
-pub const NSLayoutAttributeRight: NSLayoutAttribute = 2;
-pub const NSLayoutAttributeTop: NSLayoutAttribute = 3;
-pub const NSLayoutAttributeBottom: NSLayoutAttribute = 4;
-pub const NSLayoutAttributeLeading: NSLayoutAttribute = 5;
-pub const NSLayoutAttributeTrailing: NSLayoutAttribute = 6;
-pub const NSLayoutAttributeWidth: NSLayoutAttribute = 7;
-pub const NSLayoutAttributeHeight: NSLayoutAttribute = 8;
-pub const NSLayoutAttributeCenterX: NSLayoutAttribute = 9;
-pub const NSLayoutAttributeCenterY: NSLayoutAttribute = 10;
-pub const NSLayoutAttributeLastBaseline: NSLayoutAttribute = 11;
-pub const NSLayoutAttributeBaseline: NSLayoutAttribute = NSLayoutAttributeLastBaseline;
-pub const NSLayoutAttributeFirstBaseline: NSLayoutAttribute = 12;
-pub const NSLayoutAttributeNotAnAttribute: NSLayoutAttribute = 0;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSLayoutAttribute {
+        NSLayoutAttributeLeft = 1,
+        NSLayoutAttributeRight = 2,
+        NSLayoutAttributeTop = 3,
+        NSLayoutAttributeBottom = 4,
+        NSLayoutAttributeLeading = 5,
+        NSLayoutAttributeTrailing = 6,
+        NSLayoutAttributeWidth = 7,
+        NSLayoutAttributeHeight = 8,
+        NSLayoutAttributeCenterX = 9,
+        NSLayoutAttributeCenterY = 10,
+        NSLayoutAttributeLastBaseline = 11,
+        NSLayoutAttributeBaseline = NSLayoutAttributeLastBaseline,
+        NSLayoutAttributeFirstBaseline = 12,
+        NSLayoutAttributeNotAnAttribute = 0,
+    }
+);
 
-pub type NSLayoutFormatOptions = NSUInteger;
-pub const NSLayoutFormatAlignAllLeft: NSLayoutFormatOptions = 1 << NSLayoutAttributeLeft;
-pub const NSLayoutFormatAlignAllRight: NSLayoutFormatOptions = 1 << NSLayoutAttributeRight;
-pub const NSLayoutFormatAlignAllTop: NSLayoutFormatOptions = 1 << NSLayoutAttributeTop;
-pub const NSLayoutFormatAlignAllBottom: NSLayoutFormatOptions = 1 << NSLayoutAttributeBottom;
-pub const NSLayoutFormatAlignAllLeading: NSLayoutFormatOptions = 1 << NSLayoutAttributeLeading;
-pub const NSLayoutFormatAlignAllTrailing: NSLayoutFormatOptions = 1 << NSLayoutAttributeTrailing;
-pub const NSLayoutFormatAlignAllCenterX: NSLayoutFormatOptions = 1 << NSLayoutAttributeCenterX;
-pub const NSLayoutFormatAlignAllCenterY: NSLayoutFormatOptions = 1 << NSLayoutAttributeCenterY;
-pub const NSLayoutFormatAlignAllLastBaseline: NSLayoutFormatOptions =
-    1 << NSLayoutAttributeLastBaseline;
-pub const NSLayoutFormatAlignAllFirstBaseline: NSLayoutFormatOptions =
-    1 << NSLayoutAttributeFirstBaseline;
-pub const NSLayoutFormatAlignAllBaseline: NSLayoutFormatOptions =
-    NSLayoutFormatAlignAllLastBaseline;
-pub const NSLayoutFormatAlignmentMask: NSLayoutFormatOptions = 0xFFFF;
-pub const NSLayoutFormatDirectionLeadingToTrailing: NSLayoutFormatOptions = 0 << 16;
-pub const NSLayoutFormatDirectionLeftToRight: NSLayoutFormatOptions = 1 << 16;
-pub const NSLayoutFormatDirectionRightToLeft: NSLayoutFormatOptions = 2 << 16;
-pub const NSLayoutFormatDirectionMask: NSLayoutFormatOptions = 0x3 << 16;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSLayoutFormatOptions {
+        NSLayoutFormatAlignAllLeft = 1 << NSLayoutAttributeLeft,
+        NSLayoutFormatAlignAllRight = 1 << NSLayoutAttributeRight,
+        NSLayoutFormatAlignAllTop = 1 << NSLayoutAttributeTop,
+        NSLayoutFormatAlignAllBottom = 1 << NSLayoutAttributeBottom,
+        NSLayoutFormatAlignAllLeading = 1 << NSLayoutAttributeLeading,
+        NSLayoutFormatAlignAllTrailing = 1 << NSLayoutAttributeTrailing,
+        NSLayoutFormatAlignAllCenterX = 1 << NSLayoutAttributeCenterX,
+        NSLayoutFormatAlignAllCenterY = 1 << NSLayoutAttributeCenterY,
+        NSLayoutFormatAlignAllLastBaseline = 1 << NSLayoutAttributeLastBaseline,
+        NSLayoutFormatAlignAllFirstBaseline = 1 << NSLayoutAttributeFirstBaseline,
+        NSLayoutFormatAlignAllBaseline = NSLayoutFormatAlignAllLastBaseline,
+        NSLayoutFormatAlignmentMask = 0xFFFF,
+        NSLayoutFormatDirectionLeadingToTrailing = 0 << 16,
+        NSLayoutFormatDirectionLeftToRight = 1 << 16,
+        NSLayoutFormatDirectionRightToLeft = 2 << 16,
+        NSLayoutFormatDirectionMask = 0x3 << 16,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -269,13 +282,9 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSViewNoInstrinsicMetric: CGFloat;
-}
+extern_static!(NSViewNoInstrinsicMetric: CGFloat);
 
-extern "C" {
-    pub static NSViewNoIntrinsicMetric: CGFloat;
-}
+extern_static!(NSViewNoIntrinsicMetric: CGFloat);
 
 extern_methods!(
     /// NSConstraintBasedLayoutLayering

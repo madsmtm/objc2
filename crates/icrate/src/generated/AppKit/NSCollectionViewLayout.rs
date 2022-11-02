@@ -5,18 +5,21 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSCollectionElementCategory = NSInteger;
-pub const NSCollectionElementCategoryItem: NSCollectionElementCategory = 0;
-pub const NSCollectionElementCategorySupplementaryView: NSCollectionElementCategory = 1;
-pub const NSCollectionElementCategoryDecorationView: NSCollectionElementCategory = 2;
-pub const NSCollectionElementCategoryInterItemGap: NSCollectionElementCategory = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSCollectionElementCategory {
+        NSCollectionElementCategoryItem = 0,
+        NSCollectionElementCategorySupplementaryView = 1,
+        NSCollectionElementCategoryDecorationView = 2,
+        NSCollectionElementCategoryInterItemGap = 3,
+    }
+);
 
 pub type NSCollectionViewDecorationElementKind = NSString;
 
-extern "C" {
-    pub static NSCollectionElementKindInterItemGapIndicator:
-        &'static NSCollectionViewSupplementaryElementKind;
-}
+extern_static!(
+    NSCollectionElementKindInterItemGapIndicator: &'static NSCollectionViewSupplementaryElementKind
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -95,12 +98,16 @@ extern_methods!(
     }
 );
 
-pub type NSCollectionUpdateAction = NSInteger;
-pub const NSCollectionUpdateActionInsert: NSCollectionUpdateAction = 0;
-pub const NSCollectionUpdateActionDelete: NSCollectionUpdateAction = 1;
-pub const NSCollectionUpdateActionReload: NSCollectionUpdateAction = 2;
-pub const NSCollectionUpdateActionMove: NSCollectionUpdateAction = 3;
-pub const NSCollectionUpdateActionNone: NSCollectionUpdateAction = 4;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSCollectionUpdateAction {
+        NSCollectionUpdateActionInsert = 0,
+        NSCollectionUpdateActionDelete = 1,
+        NSCollectionUpdateActionReload = 2,
+        NSCollectionUpdateActionMove = 3,
+        NSCollectionUpdateActionNone = 4,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

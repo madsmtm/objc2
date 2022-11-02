@@ -3,24 +3,32 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSByteCountFormatterUnits = NSUInteger;
-pub const NSByteCountFormatterUseDefault: NSByteCountFormatterUnits = 0;
-pub const NSByteCountFormatterUseBytes: NSByteCountFormatterUnits = 1 << 0;
-pub const NSByteCountFormatterUseKB: NSByteCountFormatterUnits = 1 << 1;
-pub const NSByteCountFormatterUseMB: NSByteCountFormatterUnits = 1 << 2;
-pub const NSByteCountFormatterUseGB: NSByteCountFormatterUnits = 1 << 3;
-pub const NSByteCountFormatterUseTB: NSByteCountFormatterUnits = 1 << 4;
-pub const NSByteCountFormatterUsePB: NSByteCountFormatterUnits = 1 << 5;
-pub const NSByteCountFormatterUseEB: NSByteCountFormatterUnits = 1 << 6;
-pub const NSByteCountFormatterUseZB: NSByteCountFormatterUnits = 1 << 7;
-pub const NSByteCountFormatterUseYBOrHigher: NSByteCountFormatterUnits = 0x0FF << 8;
-pub const NSByteCountFormatterUseAll: NSByteCountFormatterUnits = 0x0FFFF;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSByteCountFormatterUnits {
+        NSByteCountFormatterUseDefault = 0,
+        NSByteCountFormatterUseBytes = 1 << 0,
+        NSByteCountFormatterUseKB = 1 << 1,
+        NSByteCountFormatterUseMB = 1 << 2,
+        NSByteCountFormatterUseGB = 1 << 3,
+        NSByteCountFormatterUseTB = 1 << 4,
+        NSByteCountFormatterUsePB = 1 << 5,
+        NSByteCountFormatterUseEB = 1 << 6,
+        NSByteCountFormatterUseZB = 1 << 7,
+        NSByteCountFormatterUseYBOrHigher = 0x0FF << 8,
+        NSByteCountFormatterUseAll = 0x0FFFF,
+    }
+);
 
-pub type NSByteCountFormatterCountStyle = NSInteger;
-pub const NSByteCountFormatterCountStyleFile: NSByteCountFormatterCountStyle = 0;
-pub const NSByteCountFormatterCountStyleMemory: NSByteCountFormatterCountStyle = 1;
-pub const NSByteCountFormatterCountStyleDecimal: NSByteCountFormatterCountStyle = 2;
-pub const NSByteCountFormatterCountStyleBinary: NSByteCountFormatterCountStyle = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSByteCountFormatterCountStyle {
+        NSByteCountFormatterCountStyleFile = 0,
+        NSByteCountFormatterCountStyleMemory = 1,
+        NSByteCountFormatterCountStyleDecimal = 2,
+        NSByteCountFormatterCountStyleBinary = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

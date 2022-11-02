@@ -5,20 +5,28 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub static NSAppKitVersionNumberWithContinuousScrollingBrowser: NSAppKitVersion = 680.0;
+extern_static!(NSAppKitVersionNumberWithContinuousScrollingBrowser: NSAppKitVersion = 680.0);
 
-pub static NSAppKitVersionNumberWithColumnResizingBrowser: NSAppKitVersion = 685.0;
+extern_static!(NSAppKitVersionNumberWithColumnResizingBrowser: NSAppKitVersion = 685.0);
 
 pub type NSBrowserColumnsAutosaveName = NSString;
 
-pub type NSBrowserColumnResizingType = NSUInteger;
-pub const NSBrowserNoColumnResizing: NSBrowserColumnResizingType = 0;
-pub const NSBrowserAutoColumnResizing: NSBrowserColumnResizingType = 1;
-pub const NSBrowserUserColumnResizing: NSBrowserColumnResizingType = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSBrowserColumnResizingType {
+        NSBrowserNoColumnResizing = 0,
+        NSBrowserAutoColumnResizing = 1,
+        NSBrowserUserColumnResizing = 2,
+    }
+);
 
-pub type NSBrowserDropOperation = NSUInteger;
-pub const NSBrowserDropOn: NSBrowserDropOperation = 0;
-pub const NSBrowserDropAbove: NSBrowserDropOperation = 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSBrowserDropOperation {
+        NSBrowserDropOn = 0,
+        NSBrowserDropAbove = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -417,9 +425,7 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSBrowserColumnConfigurationDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSBrowserColumnConfigurationDidChangeNotification: &'static NSNotificationName);
 
 pub type NSBrowserDelegate = NSObject;
 

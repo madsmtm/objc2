@@ -5,35 +5,47 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSVisualEffectMaterial = NSInteger;
-pub const NSVisualEffectMaterialTitlebar: NSVisualEffectMaterial = 3;
-pub const NSVisualEffectMaterialSelection: NSVisualEffectMaterial = 4;
-pub const NSVisualEffectMaterialMenu: NSVisualEffectMaterial = 5;
-pub const NSVisualEffectMaterialPopover: NSVisualEffectMaterial = 6;
-pub const NSVisualEffectMaterialSidebar: NSVisualEffectMaterial = 7;
-pub const NSVisualEffectMaterialHeaderView: NSVisualEffectMaterial = 10;
-pub const NSVisualEffectMaterialSheet: NSVisualEffectMaterial = 11;
-pub const NSVisualEffectMaterialWindowBackground: NSVisualEffectMaterial = 12;
-pub const NSVisualEffectMaterialHUDWindow: NSVisualEffectMaterial = 13;
-pub const NSVisualEffectMaterialFullScreenUI: NSVisualEffectMaterial = 15;
-pub const NSVisualEffectMaterialToolTip: NSVisualEffectMaterial = 17;
-pub const NSVisualEffectMaterialContentBackground: NSVisualEffectMaterial = 18;
-pub const NSVisualEffectMaterialUnderWindowBackground: NSVisualEffectMaterial = 21;
-pub const NSVisualEffectMaterialUnderPageBackground: NSVisualEffectMaterial = 22;
-pub const NSVisualEffectMaterialAppearanceBased: NSVisualEffectMaterial = 0;
-pub const NSVisualEffectMaterialLight: NSVisualEffectMaterial = 1;
-pub const NSVisualEffectMaterialDark: NSVisualEffectMaterial = 2;
-pub const NSVisualEffectMaterialMediumLight: NSVisualEffectMaterial = 8;
-pub const NSVisualEffectMaterialUltraDark: NSVisualEffectMaterial = 9;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSVisualEffectMaterial {
+        NSVisualEffectMaterialTitlebar = 3,
+        NSVisualEffectMaterialSelection = 4,
+        NSVisualEffectMaterialMenu = 5,
+        NSVisualEffectMaterialPopover = 6,
+        NSVisualEffectMaterialSidebar = 7,
+        NSVisualEffectMaterialHeaderView = 10,
+        NSVisualEffectMaterialSheet = 11,
+        NSVisualEffectMaterialWindowBackground = 12,
+        NSVisualEffectMaterialHUDWindow = 13,
+        NSVisualEffectMaterialFullScreenUI = 15,
+        NSVisualEffectMaterialToolTip = 17,
+        NSVisualEffectMaterialContentBackground = 18,
+        NSVisualEffectMaterialUnderWindowBackground = 21,
+        NSVisualEffectMaterialUnderPageBackground = 22,
+        NSVisualEffectMaterialAppearanceBased = 0,
+        NSVisualEffectMaterialLight = 1,
+        NSVisualEffectMaterialDark = 2,
+        NSVisualEffectMaterialMediumLight = 8,
+        NSVisualEffectMaterialUltraDark = 9,
+    }
+);
 
-pub type NSVisualEffectBlendingMode = NSInteger;
-pub const NSVisualEffectBlendingModeBehindWindow: NSVisualEffectBlendingMode = 0;
-pub const NSVisualEffectBlendingModeWithinWindow: NSVisualEffectBlendingMode = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSVisualEffectBlendingMode {
+        NSVisualEffectBlendingModeBehindWindow = 0,
+        NSVisualEffectBlendingModeWithinWindow = 1,
+    }
+);
 
-pub type NSVisualEffectState = NSInteger;
-pub const NSVisualEffectStateFollowsWindowActiveState: NSVisualEffectState = 0;
-pub const NSVisualEffectStateActive: NSVisualEffectState = 1;
-pub const NSVisualEffectStateInactive: NSVisualEffectState = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSVisualEffectState {
+        NSVisualEffectStateFollowsWindowActiveState = 0,
+        NSVisualEffectStateActive = 1,
+        NSVisualEffectStateInactive = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

@@ -5,28 +5,40 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub static NSAppKitVersionNumberWithDirectionalTabs: NSAppKitVersion = 631.0;
+extern_static!(NSAppKitVersionNumberWithDirectionalTabs: NSAppKitVersion = 631.0);
 
-pub type NSTabViewType = NSUInteger;
-pub const NSTopTabsBezelBorder: NSTabViewType = 0;
-pub const NSLeftTabsBezelBorder: NSTabViewType = 1;
-pub const NSBottomTabsBezelBorder: NSTabViewType = 2;
-pub const NSRightTabsBezelBorder: NSTabViewType = 3;
-pub const NSNoTabsBezelBorder: NSTabViewType = 4;
-pub const NSNoTabsLineBorder: NSTabViewType = 5;
-pub const NSNoTabsNoBorder: NSTabViewType = 6;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTabViewType {
+        NSTopTabsBezelBorder = 0,
+        NSLeftTabsBezelBorder = 1,
+        NSBottomTabsBezelBorder = 2,
+        NSRightTabsBezelBorder = 3,
+        NSNoTabsBezelBorder = 4,
+        NSNoTabsLineBorder = 5,
+        NSNoTabsNoBorder = 6,
+    }
+);
 
-pub type NSTabPosition = NSUInteger;
-pub const NSTabPositionNone: NSTabPosition = 0;
-pub const NSTabPositionTop: NSTabPosition = 1;
-pub const NSTabPositionLeft: NSTabPosition = 2;
-pub const NSTabPositionBottom: NSTabPosition = 3;
-pub const NSTabPositionRight: NSTabPosition = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTabPosition {
+        NSTabPositionNone = 0,
+        NSTabPositionTop = 1,
+        NSTabPositionLeft = 2,
+        NSTabPositionBottom = 3,
+        NSTabPositionRight = 4,
+    }
+);
 
-pub type NSTabViewBorderType = NSUInteger;
-pub const NSTabViewBorderTypeNone: NSTabViewBorderType = 0;
-pub const NSTabViewBorderTypeLine: NSTabViewBorderType = 1;
-pub const NSTabViewBorderTypeBezel: NSTabViewBorderType = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTabViewBorderType {
+        NSTabViewBorderTypeNone = 0,
+        NSTabViewBorderTypeLine = 1,
+        NSTabViewBorderTypeBezel = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

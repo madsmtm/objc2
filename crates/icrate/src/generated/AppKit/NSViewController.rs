@@ -5,17 +5,20 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSViewControllerTransitionOptions = NSUInteger;
-pub const NSViewControllerTransitionNone: NSViewControllerTransitionOptions = 0x0;
-pub const NSViewControllerTransitionCrossfade: NSViewControllerTransitionOptions = 0x1;
-pub const NSViewControllerTransitionSlideUp: NSViewControllerTransitionOptions = 0x10;
-pub const NSViewControllerTransitionSlideDown: NSViewControllerTransitionOptions = 0x20;
-pub const NSViewControllerTransitionSlideLeft: NSViewControllerTransitionOptions = 0x40;
-pub const NSViewControllerTransitionSlideRight: NSViewControllerTransitionOptions = 0x80;
-pub const NSViewControllerTransitionSlideForward: NSViewControllerTransitionOptions = 0x140;
-pub const NSViewControllerTransitionSlideBackward: NSViewControllerTransitionOptions = 0x180;
-pub const NSViewControllerTransitionAllowUserInteraction: NSViewControllerTransitionOptions =
-    0x1000;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSViewControllerTransitionOptions {
+        NSViewControllerTransitionNone = 0x0,
+        NSViewControllerTransitionCrossfade = 0x1,
+        NSViewControllerTransitionSlideUp = 0x10,
+        NSViewControllerTransitionSlideDown = 0x20,
+        NSViewControllerTransitionSlideLeft = 0x40,
+        NSViewControllerTransitionSlideRight = 0x80,
+        NSViewControllerTransitionSlideForward = 0x140,
+        NSViewControllerTransitionSlideBackward = 0x180,
+        NSViewControllerTransitionAllowUserInteraction = 0x1000,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

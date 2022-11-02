@@ -5,15 +5,23 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSHapticFeedbackPattern = NSInteger;
-pub const NSHapticFeedbackPatternGeneric: NSHapticFeedbackPattern = 0;
-pub const NSHapticFeedbackPatternAlignment: NSHapticFeedbackPattern = 1;
-pub const NSHapticFeedbackPatternLevelChange: NSHapticFeedbackPattern = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSHapticFeedbackPattern {
+        NSHapticFeedbackPatternGeneric = 0,
+        NSHapticFeedbackPatternAlignment = 1,
+        NSHapticFeedbackPatternLevelChange = 2,
+    }
+);
 
-pub type NSHapticFeedbackPerformanceTime = NSUInteger;
-pub const NSHapticFeedbackPerformanceTimeDefault: NSHapticFeedbackPerformanceTime = 0;
-pub const NSHapticFeedbackPerformanceTimeNow: NSHapticFeedbackPerformanceTime = 1;
-pub const NSHapticFeedbackPerformanceTimeDrawCompleted: NSHapticFeedbackPerformanceTime = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSHapticFeedbackPerformanceTime {
+        NSHapticFeedbackPerformanceTimeDefault = 0,
+        NSHapticFeedbackPerformanceTimeNow = 1,
+        NSHapticFeedbackPerformanceTimeDrawCompleted = 2,
+    }
+);
 
 pub type NSHapticFeedbackPerformer = NSObject;
 

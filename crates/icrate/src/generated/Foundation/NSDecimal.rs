@@ -3,15 +3,23 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSRoundingMode = NSUInteger;
-pub const NSRoundPlain: NSRoundingMode = 0;
-pub const NSRoundDown: NSRoundingMode = 1;
-pub const NSRoundUp: NSRoundingMode = 2;
-pub const NSRoundBankers: NSRoundingMode = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSRoundingMode {
+        NSRoundPlain = 0,
+        NSRoundDown = 1,
+        NSRoundUp = 2,
+        NSRoundBankers = 3,
+    }
+);
 
-pub type NSCalculationError = NSUInteger;
-pub const NSCalculationNoError: NSCalculationError = 0;
-pub const NSCalculationLossOfPrecision: NSCalculationError = 1;
-pub const NSCalculationUnderflow: NSCalculationError = 2;
-pub const NSCalculationOverflow: NSCalculationError = 3;
-pub const NSCalculationDivideByZero: NSCalculationError = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSCalculationError {
+        NSCalculationNoError = 0,
+        NSCalculationLossOfPrecision = 1,
+        NSCalculationUnderflow = 2,
+        NSCalculationOverflow = 3,
+        NSCalculationDivideByZero = 4,
+    }
+);

@@ -5,9 +5,7 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSSplitViewControllerAutomaticDimension: CGFloat;
-}
+extern_static!(NSSplitViewControllerAutomaticDimension: CGFloat);
 
 extern_class!(
     #[derive(Debug)]

@@ -5,10 +5,14 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSMediaLibrary = NSUInteger;
-pub const NSMediaLibraryAudio: NSMediaLibrary = 1 << 0;
-pub const NSMediaLibraryImage: NSMediaLibrary = 1 << 1;
-pub const NSMediaLibraryMovie: NSMediaLibrary = 1 << 2;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSMediaLibrary {
+        NSMediaLibraryAudio = 1 << 0,
+        NSMediaLibraryImage = 1 << 1,
+        NSMediaLibraryMovie = 1 << 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

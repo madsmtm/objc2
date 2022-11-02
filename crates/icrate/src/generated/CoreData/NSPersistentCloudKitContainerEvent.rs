@@ -4,18 +4,18 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSPersistentCloudKitContainerEventType = NSInteger;
-pub const NSPersistentCloudKitContainerEventTypeSetup: NSPersistentCloudKitContainerEventType = 0;
-pub const NSPersistentCloudKitContainerEventTypeImport: NSPersistentCloudKitContainerEventType = 1;
-pub const NSPersistentCloudKitContainerEventTypeExport: NSPersistentCloudKitContainerEventType = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSPersistentCloudKitContainerEventType {
+        NSPersistentCloudKitContainerEventTypeSetup = 0,
+        NSPersistentCloudKitContainerEventTypeImport = 1,
+        NSPersistentCloudKitContainerEventTypeExport = 2,
+    }
+);
 
-extern "C" {
-    pub static NSPersistentCloudKitContainerEventChangedNotification: &'static NSNotificationName;
-}
+extern_static!(NSPersistentCloudKitContainerEventChangedNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSPersistentCloudKitContainerEventUserInfoKey: &'static NSString;
-}
+extern_static!(NSPersistentCloudKitContainerEventUserInfoKey: &'static NSString);
 
 extern_class!(
     #[derive(Debug)]

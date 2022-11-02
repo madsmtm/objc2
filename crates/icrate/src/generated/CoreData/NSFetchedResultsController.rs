@@ -85,10 +85,14 @@ extern_methods!(
 
 pub type NSFetchedResultsSectionInfo = NSObject;
 
-pub type NSFetchedResultsChangeType = NSUInteger;
-pub const NSFetchedResultsChangeInsert: NSFetchedResultsChangeType = 1;
-pub const NSFetchedResultsChangeDelete: NSFetchedResultsChangeType = 2;
-pub const NSFetchedResultsChangeMove: NSFetchedResultsChangeType = 3;
-pub const NSFetchedResultsChangeUpdate: NSFetchedResultsChangeType = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSFetchedResultsChangeType {
+        NSFetchedResultsChangeInsert = 1,
+        NSFetchedResultsChangeDelete = 2,
+        NSFetchedResultsChangeMove = 3,
+        NSFetchedResultsChangeUpdate = 4,
+    }
+);
 
 pub type NSFetchedResultsControllerDelegate = NSObject;

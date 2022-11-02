@@ -4,22 +4,26 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSAttributeType = NSUInteger;
-pub const NSUndefinedAttributeType: NSAttributeType = 0;
-pub const NSInteger16AttributeType: NSAttributeType = 100;
-pub const NSInteger32AttributeType: NSAttributeType = 200;
-pub const NSInteger64AttributeType: NSAttributeType = 300;
-pub const NSDecimalAttributeType: NSAttributeType = 400;
-pub const NSDoubleAttributeType: NSAttributeType = 500;
-pub const NSFloatAttributeType: NSAttributeType = 600;
-pub const NSStringAttributeType: NSAttributeType = 700;
-pub const NSBooleanAttributeType: NSAttributeType = 800;
-pub const NSDateAttributeType: NSAttributeType = 900;
-pub const NSBinaryDataAttributeType: NSAttributeType = 1000;
-pub const NSUUIDAttributeType: NSAttributeType = 1100;
-pub const NSURIAttributeType: NSAttributeType = 1200;
-pub const NSTransformableAttributeType: NSAttributeType = 1800;
-pub const NSObjectIDAttributeType: NSAttributeType = 2000;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSAttributeType {
+        NSUndefinedAttributeType = 0,
+        NSInteger16AttributeType = 100,
+        NSInteger32AttributeType = 200,
+        NSInteger64AttributeType = 300,
+        NSDecimalAttributeType = 400,
+        NSDoubleAttributeType = 500,
+        NSFloatAttributeType = 600,
+        NSStringAttributeType = 700,
+        NSBooleanAttributeType = 800,
+        NSDateAttributeType = 900,
+        NSBinaryDataAttributeType = 1000,
+        NSUUIDAttributeType = 1100,
+        NSURIAttributeType = 1200,
+        NSTransformableAttributeType = 1800,
+        NSObjectIDAttributeType = 2000,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

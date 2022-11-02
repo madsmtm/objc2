@@ -4,10 +4,14 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSPersistentHistoryChangeType = NSInteger;
-pub const NSPersistentHistoryChangeTypeInsert: NSPersistentHistoryChangeType = 0;
-pub const NSPersistentHistoryChangeTypeUpdate: NSPersistentHistoryChangeType = 1;
-pub const NSPersistentHistoryChangeTypeDelete: NSPersistentHistoryChangeType = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSPersistentHistoryChangeType {
+        NSPersistentHistoryChangeTypeInsert = 0,
+        NSPersistentHistoryChangeTypeUpdate = 1,
+        NSPersistentHistoryChangeTypeDelete = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

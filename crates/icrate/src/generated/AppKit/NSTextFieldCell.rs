@@ -5,9 +5,13 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextFieldBezelStyle = NSUInteger;
-pub const NSTextFieldSquareBezel: NSTextFieldBezelStyle = 0;
-pub const NSTextFieldRoundedBezel: NSTextFieldBezelStyle = 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTextFieldBezelStyle {
+        NSTextFieldSquareBezel = 0,
+        NSTextFieldRoundedBezel = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

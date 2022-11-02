@@ -35,6 +35,4 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSUserActivityDocumentURLKey: &'static NSString;
-}
+extern_static!(NSUserActivityDocumentURLKey: &'static NSString);

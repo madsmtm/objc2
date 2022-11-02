@@ -3,44 +3,46 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSXMLNodeOptions = NSUInteger;
-pub const NSXMLNodeOptionsNone: NSXMLNodeOptions = 0;
-pub const NSXMLNodeIsCDATA: NSXMLNodeOptions = 1 << 0;
-pub const NSXMLNodeExpandEmptyElement: NSXMLNodeOptions = 1 << 1;
-pub const NSXMLNodeCompactEmptyElement: NSXMLNodeOptions = 1 << 2;
-pub const NSXMLNodeUseSingleQuotes: NSXMLNodeOptions = 1 << 3;
-pub const NSXMLNodeUseDoubleQuotes: NSXMLNodeOptions = 1 << 4;
-pub const NSXMLNodeNeverEscapeContents: NSXMLNodeOptions = 1 << 5;
-pub const NSXMLDocumentTidyHTML: NSXMLNodeOptions = 1 << 9;
-pub const NSXMLDocumentTidyXML: NSXMLNodeOptions = 1 << 10;
-pub const NSXMLDocumentValidate: NSXMLNodeOptions = 1 << 13;
-pub const NSXMLNodeLoadExternalEntitiesAlways: NSXMLNodeOptions = 1 << 14;
-pub const NSXMLNodeLoadExternalEntitiesSameOriginOnly: NSXMLNodeOptions = 1 << 15;
-pub const NSXMLNodeLoadExternalEntitiesNever: NSXMLNodeOptions = 1 << 19;
-pub const NSXMLDocumentXInclude: NSXMLNodeOptions = 1 << 16;
-pub const NSXMLNodePrettyPrint: NSXMLNodeOptions = 1 << 17;
-pub const NSXMLDocumentIncludeContentTypeDeclaration: NSXMLNodeOptions = 1 << 18;
-pub const NSXMLNodePreserveNamespaceOrder: NSXMLNodeOptions = 1 << 20;
-pub const NSXMLNodePreserveAttributeOrder: NSXMLNodeOptions = 1 << 21;
-pub const NSXMLNodePreserveEntities: NSXMLNodeOptions = 1 << 22;
-pub const NSXMLNodePreservePrefixes: NSXMLNodeOptions = 1 << 23;
-pub const NSXMLNodePreserveCDATA: NSXMLNodeOptions = 1 << 24;
-pub const NSXMLNodePreserveWhitespace: NSXMLNodeOptions = 1 << 25;
-pub const NSXMLNodePreserveDTD: NSXMLNodeOptions = 1 << 26;
-pub const NSXMLNodePreserveCharacterReferences: NSXMLNodeOptions = 1 << 27;
-pub const NSXMLNodePromoteSignificantWhitespace: NSXMLNodeOptions = 1 << 28;
-pub const NSXMLNodePreserveEmptyElements: NSXMLNodeOptions =
-    NSXMLNodeExpandEmptyElement | NSXMLNodeCompactEmptyElement;
-pub const NSXMLNodePreserveQuotes: NSXMLNodeOptions =
-    NSXMLNodeUseSingleQuotes | NSXMLNodeUseDoubleQuotes;
-pub const NSXMLNodePreserveAll: NSXMLNodeOptions = NSXMLNodePreserveNamespaceOrder
-    | NSXMLNodePreserveAttributeOrder
-    | NSXMLNodePreserveEntities
-    | NSXMLNodePreservePrefixes
-    | NSXMLNodePreserveCDATA
-    | NSXMLNodePreserveEmptyElements
-    | NSXMLNodePreserveQuotes
-    | NSXMLNodePreserveWhitespace
-    | NSXMLNodePreserveDTD
-    | NSXMLNodePreserveCharacterReferences
-    | 0xFFF00000;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSXMLNodeOptions {
+        NSXMLNodeOptionsNone = 0,
+        NSXMLNodeIsCDATA = 1 << 0,
+        NSXMLNodeExpandEmptyElement = 1 << 1,
+        NSXMLNodeCompactEmptyElement = 1 << 2,
+        NSXMLNodeUseSingleQuotes = 1 << 3,
+        NSXMLNodeUseDoubleQuotes = 1 << 4,
+        NSXMLNodeNeverEscapeContents = 1 << 5,
+        NSXMLDocumentTidyHTML = 1 << 9,
+        NSXMLDocumentTidyXML = 1 << 10,
+        NSXMLDocumentValidate = 1 << 13,
+        NSXMLNodeLoadExternalEntitiesAlways = 1 << 14,
+        NSXMLNodeLoadExternalEntitiesSameOriginOnly = 1 << 15,
+        NSXMLNodeLoadExternalEntitiesNever = 1 << 19,
+        NSXMLDocumentXInclude = 1 << 16,
+        NSXMLNodePrettyPrint = 1 << 17,
+        NSXMLDocumentIncludeContentTypeDeclaration = 1 << 18,
+        NSXMLNodePreserveNamespaceOrder = 1 << 20,
+        NSXMLNodePreserveAttributeOrder = 1 << 21,
+        NSXMLNodePreserveEntities = 1 << 22,
+        NSXMLNodePreservePrefixes = 1 << 23,
+        NSXMLNodePreserveCDATA = 1 << 24,
+        NSXMLNodePreserveWhitespace = 1 << 25,
+        NSXMLNodePreserveDTD = 1 << 26,
+        NSXMLNodePreserveCharacterReferences = 1 << 27,
+        NSXMLNodePromoteSignificantWhitespace = 1 << 28,
+        NSXMLNodePreserveEmptyElements = NSXMLNodeExpandEmptyElement | NSXMLNodeCompactEmptyElement,
+        NSXMLNodePreserveQuotes = NSXMLNodeUseSingleQuotes | NSXMLNodeUseDoubleQuotes,
+        NSXMLNodePreserveAll = NSXMLNodePreserveNamespaceOrder
+            | NSXMLNodePreserveAttributeOrder
+            | NSXMLNodePreserveEntities
+            | NSXMLNodePreservePrefixes
+            | NSXMLNodePreserveCDATA
+            | NSXMLNodePreserveEmptyElements
+            | NSXMLNodePreserveQuotes
+            | NSXMLNodePreserveWhitespace
+            | NSXMLNodePreserveDTD
+            | NSXMLNodePreserveCharacterReferences
+            | 0xFFF00000,
+    }
+);

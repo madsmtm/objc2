@@ -5,35 +5,41 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSAccessibilityCustomRotorSearchDirection = NSInteger;
-pub const NSAccessibilityCustomRotorSearchDirectionPrevious:
-    NSAccessibilityCustomRotorSearchDirection = 0;
-pub const NSAccessibilityCustomRotorSearchDirectionNext: NSAccessibilityCustomRotorSearchDirection =
-    1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSAccessibilityCustomRotorSearchDirection {
+        NSAccessibilityCustomRotorSearchDirectionPrevious = 0,
+        NSAccessibilityCustomRotorSearchDirectionNext = 1,
+    }
+);
 
-pub type NSAccessibilityCustomRotorType = NSInteger;
-pub const NSAccessibilityCustomRotorTypeCustom: NSAccessibilityCustomRotorType = 0;
-pub const NSAccessibilityCustomRotorTypeAny: NSAccessibilityCustomRotorType = 1;
-pub const NSAccessibilityCustomRotorTypeAnnotation: NSAccessibilityCustomRotorType = 2;
-pub const NSAccessibilityCustomRotorTypeBoldText: NSAccessibilityCustomRotorType = 3;
-pub const NSAccessibilityCustomRotorTypeHeading: NSAccessibilityCustomRotorType = 4;
-pub const NSAccessibilityCustomRotorTypeHeadingLevel1: NSAccessibilityCustomRotorType = 5;
-pub const NSAccessibilityCustomRotorTypeHeadingLevel2: NSAccessibilityCustomRotorType = 6;
-pub const NSAccessibilityCustomRotorTypeHeadingLevel3: NSAccessibilityCustomRotorType = 7;
-pub const NSAccessibilityCustomRotorTypeHeadingLevel4: NSAccessibilityCustomRotorType = 8;
-pub const NSAccessibilityCustomRotorTypeHeadingLevel5: NSAccessibilityCustomRotorType = 9;
-pub const NSAccessibilityCustomRotorTypeHeadingLevel6: NSAccessibilityCustomRotorType = 10;
-pub const NSAccessibilityCustomRotorTypeImage: NSAccessibilityCustomRotorType = 11;
-pub const NSAccessibilityCustomRotorTypeItalicText: NSAccessibilityCustomRotorType = 12;
-pub const NSAccessibilityCustomRotorTypeLandmark: NSAccessibilityCustomRotorType = 13;
-pub const NSAccessibilityCustomRotorTypeLink: NSAccessibilityCustomRotorType = 14;
-pub const NSAccessibilityCustomRotorTypeList: NSAccessibilityCustomRotorType = 15;
-pub const NSAccessibilityCustomRotorTypeMisspelledWord: NSAccessibilityCustomRotorType = 16;
-pub const NSAccessibilityCustomRotorTypeTable: NSAccessibilityCustomRotorType = 17;
-pub const NSAccessibilityCustomRotorTypeTextField: NSAccessibilityCustomRotorType = 18;
-pub const NSAccessibilityCustomRotorTypeUnderlinedText: NSAccessibilityCustomRotorType = 19;
-pub const NSAccessibilityCustomRotorTypeVisitedLink: NSAccessibilityCustomRotorType = 20;
-pub const NSAccessibilityCustomRotorTypeAudiograph: NSAccessibilityCustomRotorType = 21;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSAccessibilityCustomRotorType {
+        NSAccessibilityCustomRotorTypeCustom = 0,
+        NSAccessibilityCustomRotorTypeAny = 1,
+        NSAccessibilityCustomRotorTypeAnnotation = 2,
+        NSAccessibilityCustomRotorTypeBoldText = 3,
+        NSAccessibilityCustomRotorTypeHeading = 4,
+        NSAccessibilityCustomRotorTypeHeadingLevel1 = 5,
+        NSAccessibilityCustomRotorTypeHeadingLevel2 = 6,
+        NSAccessibilityCustomRotorTypeHeadingLevel3 = 7,
+        NSAccessibilityCustomRotorTypeHeadingLevel4 = 8,
+        NSAccessibilityCustomRotorTypeHeadingLevel5 = 9,
+        NSAccessibilityCustomRotorTypeHeadingLevel6 = 10,
+        NSAccessibilityCustomRotorTypeImage = 11,
+        NSAccessibilityCustomRotorTypeItalicText = 12,
+        NSAccessibilityCustomRotorTypeLandmark = 13,
+        NSAccessibilityCustomRotorTypeLink = 14,
+        NSAccessibilityCustomRotorTypeList = 15,
+        NSAccessibilityCustomRotorTypeMisspelledWord = 16,
+        NSAccessibilityCustomRotorTypeTable = 17,
+        NSAccessibilityCustomRotorTypeTextField = 18,
+        NSAccessibilityCustomRotorTypeUnderlinedText = 19,
+        NSAccessibilityCustomRotorTypeVisitedLink = 20,
+        NSAccessibilityCustomRotorTypeAudiograph = 21,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

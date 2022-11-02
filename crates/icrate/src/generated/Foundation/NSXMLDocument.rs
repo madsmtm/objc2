@@ -3,11 +3,15 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSXMLDocumentContentKind = NSUInteger;
-pub const NSXMLDocumentXMLKind: NSXMLDocumentContentKind = 0;
-pub const NSXMLDocumentXHTMLKind: NSXMLDocumentContentKind = 1;
-pub const NSXMLDocumentHTMLKind: NSXMLDocumentContentKind = 2;
-pub const NSXMLDocumentTextKind: NSXMLDocumentContentKind = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSXMLDocumentContentKind {
+        NSXMLDocumentXMLKind = 0,
+        NSXMLDocumentXHTMLKind = 1,
+        NSXMLDocumentHTMLKind = 2,
+        NSXMLDocumentTextKind = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

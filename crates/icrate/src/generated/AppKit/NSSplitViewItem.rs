@@ -5,22 +5,26 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSSplitViewItemBehavior = NSInteger;
-pub const NSSplitViewItemBehaviorDefault: NSSplitViewItemBehavior = 0;
-pub const NSSplitViewItemBehaviorSidebar: NSSplitViewItemBehavior = 1;
-pub const NSSplitViewItemBehaviorContentList: NSSplitViewItemBehavior = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSSplitViewItemBehavior {
+        NSSplitViewItemBehaviorDefault = 0,
+        NSSplitViewItemBehaviorSidebar = 1,
+        NSSplitViewItemBehaviorContentList = 2,
+    }
+);
 
-pub type NSSplitViewItemCollapseBehavior = NSInteger;
-pub const NSSplitViewItemCollapseBehaviorDefault: NSSplitViewItemCollapseBehavior = 0;
-pub const NSSplitViewItemCollapseBehaviorPreferResizingSplitViewWithFixedSiblings:
-    NSSplitViewItemCollapseBehavior = 1;
-pub const NSSplitViewItemCollapseBehaviorPreferResizingSiblingsWithFixedSplitView:
-    NSSplitViewItemCollapseBehavior = 2;
-pub const NSSplitViewItemCollapseBehaviorUseConstraints: NSSplitViewItemCollapseBehavior = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSSplitViewItemCollapseBehavior {
+        NSSplitViewItemCollapseBehaviorDefault = 0,
+        NSSplitViewItemCollapseBehaviorPreferResizingSplitViewWithFixedSiblings = 1,
+        NSSplitViewItemCollapseBehaviorPreferResizingSiblingsWithFixedSplitView = 2,
+        NSSplitViewItemCollapseBehaviorUseConstraints = 3,
+    }
+);
 
-extern "C" {
-    pub static NSSplitViewItemUnspecifiedDimension: CGFloat;
-}
+extern_static!(NSSplitViewItemUnspecifiedDimension: CGFloat);
 
 extern_class!(
     #[derive(Debug)]

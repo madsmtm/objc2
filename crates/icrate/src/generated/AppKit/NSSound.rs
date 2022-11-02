@@ -5,9 +5,7 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSSoundPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSSoundPboardType: &'static NSPasteboardType);
 
 pub type NSSoundName = NSString;
 

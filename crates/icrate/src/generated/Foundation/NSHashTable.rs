@@ -3,17 +3,20 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub static NSHashTableStrongMemory: NSPointerFunctionsOptions = NSPointerFunctionsStrongMemory;
+extern_static!(NSHashTableStrongMemory: NSPointerFunctionsOptions = NSPointerFunctionsStrongMemory);
 
-pub static NSHashTableZeroingWeakMemory: NSPointerFunctionsOptions =
-    NSPointerFunctionsZeroingWeakMemory;
+extern_static!(
+    NSHashTableZeroingWeakMemory: NSPointerFunctionsOptions = NSPointerFunctionsZeroingWeakMemory
+);
 
-pub static NSHashTableCopyIn: NSPointerFunctionsOptions = NSPointerFunctionsCopyIn;
+extern_static!(NSHashTableCopyIn: NSPointerFunctionsOptions = NSPointerFunctionsCopyIn);
 
-pub static NSHashTableObjectPointerPersonality: NSPointerFunctionsOptions =
-    NSPointerFunctionsObjectPointerPersonality;
+extern_static!(
+    NSHashTableObjectPointerPersonality: NSPointerFunctionsOptions =
+        NSPointerFunctionsObjectPointerPersonality
+);
 
-pub static NSHashTableWeakMemory: NSPointerFunctionsOptions = NSPointerFunctionsWeakMemory;
+extern_static!(NSHashTableWeakMemory: NSPointerFunctionsOptions = NSPointerFunctionsWeakMemory);
 
 pub type NSHashTableOptions = NSUInteger;
 
@@ -108,7 +111,7 @@ extern_methods!(
     }
 );
 
-struct_impl!(
+extern_struct!(
     pub struct NSHashEnumerator {
         _pi: NSUInteger,
         _si: NSUInteger,
@@ -116,7 +119,7 @@ struct_impl!(
     }
 );
 
-struct_impl!(
+extern_struct!(
     pub struct NSHashTableCallBacks {
         pub hash: *mut TodoFunction,
         pub isEqual: *mut TodoFunction,
@@ -126,34 +129,18 @@ struct_impl!(
     }
 );
 
-extern "C" {
-    pub static NSIntegerHashCallBacks: NSHashTableCallBacks;
-}
+extern_static!(NSIntegerHashCallBacks: NSHashTableCallBacks);
 
-extern "C" {
-    pub static NSNonOwnedPointerHashCallBacks: NSHashTableCallBacks;
-}
+extern_static!(NSNonOwnedPointerHashCallBacks: NSHashTableCallBacks);
 
-extern "C" {
-    pub static NSNonRetainedObjectHashCallBacks: NSHashTableCallBacks;
-}
+extern_static!(NSNonRetainedObjectHashCallBacks: NSHashTableCallBacks);
 
-extern "C" {
-    pub static NSObjectHashCallBacks: NSHashTableCallBacks;
-}
+extern_static!(NSObjectHashCallBacks: NSHashTableCallBacks);
 
-extern "C" {
-    pub static NSOwnedObjectIdentityHashCallBacks: NSHashTableCallBacks;
-}
+extern_static!(NSOwnedObjectIdentityHashCallBacks: NSHashTableCallBacks);
 
-extern "C" {
-    pub static NSOwnedPointerHashCallBacks: NSHashTableCallBacks;
-}
+extern_static!(NSOwnedPointerHashCallBacks: NSHashTableCallBacks);
 
-extern "C" {
-    pub static NSPointerToStructHashCallBacks: NSHashTableCallBacks;
-}
+extern_static!(NSPointerToStructHashCallBacks: NSHashTableCallBacks);
 
-extern "C" {
-    pub static NSIntHashCallBacks: NSHashTableCallBacks;
-}
+extern_static!(NSIntHashCallBacks: NSHashTableCallBacks);

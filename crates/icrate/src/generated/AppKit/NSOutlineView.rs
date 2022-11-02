@@ -5,7 +5,12 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub const NSOutlineViewDropOnItemIndex: c_int = -1;
+extern_enum!(
+    #[underlying(c_int)]
+    pub enum {
+        NSOutlineViewDropOnItemIndex = -1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -188,42 +193,22 @@ pub type NSOutlineViewDataSource = NSObject;
 
 pub type NSOutlineViewDelegate = NSObject;
 
-extern "C" {
-    pub static NSOutlineViewDisclosureButtonKey: &'static NSUserInterfaceItemIdentifier;
-}
+extern_static!(NSOutlineViewDisclosureButtonKey: &'static NSUserInterfaceItemIdentifier);
 
-extern "C" {
-    pub static NSOutlineViewShowHideButtonKey: &'static NSUserInterfaceItemIdentifier;
-}
+extern_static!(NSOutlineViewShowHideButtonKey: &'static NSUserInterfaceItemIdentifier);
 
-extern "C" {
-    pub static NSOutlineViewSelectionDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSOutlineViewSelectionDidChangeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSOutlineViewColumnDidMoveNotification: &'static NSNotificationName;
-}
+extern_static!(NSOutlineViewColumnDidMoveNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSOutlineViewColumnDidResizeNotification: &'static NSNotificationName;
-}
+extern_static!(NSOutlineViewColumnDidResizeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSOutlineViewSelectionIsChangingNotification: &'static NSNotificationName;
-}
+extern_static!(NSOutlineViewSelectionIsChangingNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSOutlineViewItemWillExpandNotification: &'static NSNotificationName;
-}
+extern_static!(NSOutlineViewItemWillExpandNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSOutlineViewItemDidExpandNotification: &'static NSNotificationName;
-}
+extern_static!(NSOutlineViewItemDidExpandNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSOutlineViewItemWillCollapseNotification: &'static NSNotificationName;
-}
+extern_static!(NSOutlineViewItemWillCollapseNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSOutlineViewItemDidCollapseNotification: &'static NSNotificationName;
-}
+extern_static!(NSOutlineViewItemDidCollapseNotification: &'static NSNotificationName);

@@ -3,21 +3,13 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSDecimalNumberExactnessException: &'static NSExceptionName;
-}
+extern_static!(NSDecimalNumberExactnessException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSDecimalNumberOverflowException: &'static NSExceptionName;
-}
+extern_static!(NSDecimalNumberOverflowException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSDecimalNumberUnderflowException: &'static NSExceptionName;
-}
+extern_static!(NSDecimalNumberUnderflowException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSDecimalNumberDivideByZeroException: &'static NSExceptionName;
-}
+extern_static!(NSDecimalNumberDivideByZeroException: &'static NSExceptionName);
 
 pub type NSDecimalNumberBehaviors = NSObject;
 

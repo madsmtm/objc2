@@ -5,8 +5,12 @@ use crate::Foundation::*;
 
 pub type NSXPCProxyCreating = NSObject;
 
-pub type NSXPCConnectionOptions = NSUInteger;
-pub const NSXPCConnectionPrivileged: NSXPCConnectionOptions = 1 << 12;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSXPCConnectionOptions {
+        NSXPCConnectionPrivileged = 1 << 12,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

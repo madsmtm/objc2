@@ -5,17 +5,25 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextAlignment = NSInteger;
-pub const NSTextAlignmentLeft: NSTextAlignment = 0;
-pub const NSTextAlignmentRight: NSTextAlignment = 1;
-pub const NSTextAlignmentCenter: NSTextAlignment = 2;
-pub const NSTextAlignmentJustified: NSTextAlignment = 3;
-pub const NSTextAlignmentNatural: NSTextAlignment = 4;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTextAlignment {
+        NSTextAlignmentLeft = 0,
+        NSTextAlignmentRight = 1,
+        NSTextAlignmentCenter = 2,
+        NSTextAlignmentJustified = 3,
+        NSTextAlignmentNatural = 4,
+    }
+);
 
-pub type NSWritingDirection = NSInteger;
-pub const NSWritingDirectionNatural: NSWritingDirection = -1;
-pub const NSWritingDirectionLeftToRight: NSWritingDirection = 0;
-pub const NSWritingDirectionRightToLeft: NSWritingDirection = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSWritingDirection {
+        NSWritingDirectionNatural = -1,
+        NSWritingDirectionLeftToRight = 0,
+        NSWritingDirectionRightToLeft = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -252,66 +260,77 @@ extern_methods!(
     }
 );
 
-pub const NSEnterCharacter: c_uint = 0x0003;
-pub const NSBackspaceCharacter: c_uint = 0x0008;
-pub const NSTabCharacter: c_uint = 0x0009;
-pub const NSNewlineCharacter: c_uint = 0x000a;
-pub const NSFormFeedCharacter: c_uint = 0x000c;
-pub const NSCarriageReturnCharacter: c_uint = 0x000d;
-pub const NSBackTabCharacter: c_uint = 0x0019;
-pub const NSDeleteCharacter: c_uint = 0x007f;
-pub const NSLineSeparatorCharacter: c_uint = 0x2028;
-pub const NSParagraphSeparatorCharacter: c_uint = 0x2029;
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+        NSEnterCharacter = 0x0003,
+        NSBackspaceCharacter = 0x0008,
+        NSTabCharacter = 0x0009,
+        NSNewlineCharacter = 0x000a,
+        NSFormFeedCharacter = 0x000c,
+        NSCarriageReturnCharacter = 0x000d,
+        NSBackTabCharacter = 0x0019,
+        NSDeleteCharacter = 0x007f,
+        NSLineSeparatorCharacter = 0x2028,
+        NSParagraphSeparatorCharacter = 0x2029,
+    }
+);
 
-pub type NSTextMovement = NSInteger;
-pub const NSTextMovementReturn: NSTextMovement = 0x10;
-pub const NSTextMovementTab: NSTextMovement = 0x11;
-pub const NSTextMovementBacktab: NSTextMovement = 0x12;
-pub const NSTextMovementLeft: NSTextMovement = 0x13;
-pub const NSTextMovementRight: NSTextMovement = 0x14;
-pub const NSTextMovementUp: NSTextMovement = 0x15;
-pub const NSTextMovementDown: NSTextMovement = 0x16;
-pub const NSTextMovementCancel: NSTextMovement = 0x17;
-pub const NSTextMovementOther: NSTextMovement = 0;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTextMovement {
+        NSTextMovementReturn = 0x10,
+        NSTextMovementTab = 0x11,
+        NSTextMovementBacktab = 0x12,
+        NSTextMovementLeft = 0x13,
+        NSTextMovementRight = 0x14,
+        NSTextMovementUp = 0x15,
+        NSTextMovementDown = 0x16,
+        NSTextMovementCancel = 0x17,
+        NSTextMovementOther = 0,
+    }
+);
 
-extern "C" {
-    pub static NSTextDidBeginEditingNotification: &'static NSNotificationName;
-}
+extern_static!(NSTextDidBeginEditingNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSTextDidEndEditingNotification: &'static NSNotificationName;
-}
+extern_static!(NSTextDidEndEditingNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSTextDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSTextDidChangeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSTextMovementUserInfoKey: &'static NSString;
-}
+extern_static!(NSTextMovementUserInfoKey: &'static NSString);
 
-pub const NSIllegalTextMovement: c_uint = 0;
-pub const NSReturnTextMovement: c_uint = 0x10;
-pub const NSTabTextMovement: c_uint = 0x11;
-pub const NSBacktabTextMovement: c_uint = 0x12;
-pub const NSLeftTextMovement: c_uint = 0x13;
-pub const NSRightTextMovement: c_uint = 0x14;
-pub const NSUpTextMovement: c_uint = 0x15;
-pub const NSDownTextMovement: c_uint = 0x16;
-pub const NSCancelTextMovement: c_uint = 0x17;
-pub const NSOtherTextMovement: c_uint = 0;
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+        NSIllegalTextMovement = 0,
+        NSReturnTextMovement = 0x10,
+        NSTabTextMovement = 0x11,
+        NSBacktabTextMovement = 0x12,
+        NSLeftTextMovement = 0x13,
+        NSRightTextMovement = 0x14,
+        NSUpTextMovement = 0x15,
+        NSDownTextMovement = 0x16,
+        NSCancelTextMovement = 0x17,
+        NSOtherTextMovement = 0,
+    }
+);
 
 pub type NSTextDelegate = NSObject;
 
-pub const NSTextWritingDirectionEmbedding: c_uint = 0 << 1;
-pub const NSTextWritingDirectionOverride: c_uint = 1 << 1;
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+        NSTextWritingDirectionEmbedding = 0<<1,
+        NSTextWritingDirectionOverride = 1<<1,
+    }
+);
 
-pub static NSLeftTextAlignment: NSTextAlignment = NSTextAlignmentLeft;
+extern_static!(NSLeftTextAlignment: NSTextAlignment = NSTextAlignmentLeft);
 
-pub static NSRightTextAlignment: NSTextAlignment = NSTextAlignmentRight;
+extern_static!(NSRightTextAlignment: NSTextAlignment = NSTextAlignmentRight);
 
-pub static NSCenterTextAlignment: NSTextAlignment = NSTextAlignmentCenter;
+extern_static!(NSCenterTextAlignment: NSTextAlignment = NSTextAlignmentCenter);
 
-pub static NSJustifiedTextAlignment: NSTextAlignment = NSTextAlignmentJustified;
+extern_static!(NSJustifiedTextAlignment: NSTextAlignment = NSTextAlignmentJustified);
 
-pub static NSNaturalTextAlignment: NSTextAlignment = NSTextAlignmentNatural;
+extern_static!(NSNaturalTextAlignment: NSTextAlignment = NSTextAlignmentNatural);

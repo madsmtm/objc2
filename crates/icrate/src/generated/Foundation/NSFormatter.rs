@@ -3,18 +3,26 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSFormattingContext = NSInteger;
-pub const NSFormattingContextUnknown: NSFormattingContext = 0;
-pub const NSFormattingContextDynamic: NSFormattingContext = 1;
-pub const NSFormattingContextStandalone: NSFormattingContext = 2;
-pub const NSFormattingContextListItem: NSFormattingContext = 3;
-pub const NSFormattingContextBeginningOfSentence: NSFormattingContext = 4;
-pub const NSFormattingContextMiddleOfSentence: NSFormattingContext = 5;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSFormattingContext {
+        NSFormattingContextUnknown = 0,
+        NSFormattingContextDynamic = 1,
+        NSFormattingContextStandalone = 2,
+        NSFormattingContextListItem = 3,
+        NSFormattingContextBeginningOfSentence = 4,
+        NSFormattingContextMiddleOfSentence = 5,
+    }
+);
 
-pub type NSFormattingUnitStyle = NSInteger;
-pub const NSFormattingUnitStyleShort: NSFormattingUnitStyle = 1;
-pub const NSFormattingUnitStyleMedium: NSFormattingUnitStyle = 2;
-pub const NSFormattingUnitStyleLong: NSFormattingUnitStyle = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSFormattingUnitStyle {
+        NSFormattingUnitStyleShort = 1,
+        NSFormattingUnitStyleMedium = 2,
+        NSFormattingUnitStyleLong = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

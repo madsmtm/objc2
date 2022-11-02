@@ -5,23 +5,31 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSImageAlignment = NSUInteger;
-pub const NSImageAlignCenter: NSImageAlignment = 0;
-pub const NSImageAlignTop: NSImageAlignment = 1;
-pub const NSImageAlignTopLeft: NSImageAlignment = 2;
-pub const NSImageAlignTopRight: NSImageAlignment = 3;
-pub const NSImageAlignLeft: NSImageAlignment = 4;
-pub const NSImageAlignBottom: NSImageAlignment = 5;
-pub const NSImageAlignBottomLeft: NSImageAlignment = 6;
-pub const NSImageAlignBottomRight: NSImageAlignment = 7;
-pub const NSImageAlignRight: NSImageAlignment = 8;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSImageAlignment {
+        NSImageAlignCenter = 0,
+        NSImageAlignTop = 1,
+        NSImageAlignTopLeft = 2,
+        NSImageAlignTopRight = 3,
+        NSImageAlignLeft = 4,
+        NSImageAlignBottom = 5,
+        NSImageAlignBottomLeft = 6,
+        NSImageAlignBottomRight = 7,
+        NSImageAlignRight = 8,
+    }
+);
 
-pub type NSImageFrameStyle = NSUInteger;
-pub const NSImageFrameNone: NSImageFrameStyle = 0;
-pub const NSImageFramePhoto: NSImageFrameStyle = 1;
-pub const NSImageFrameGrayBezel: NSImageFrameStyle = 2;
-pub const NSImageFrameGroove: NSImageFrameStyle = 3;
-pub const NSImageFrameButton: NSImageFrameStyle = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSImageFrameStyle {
+        NSImageFrameNone = 0,
+        NSImageFramePhoto = 1,
+        NSImageFrameGrayBezel = 2,
+        NSImageFrameGroove = 3,
+        NSImageFrameButton = 4,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

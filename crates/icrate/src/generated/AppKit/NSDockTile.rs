@@ -5,7 +5,7 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub static NSAppKitVersionNumberWithDockTilePlugInSupport: NSAppKitVersion = 1001.0;
+extern_static!(NSAppKitVersionNumberWithDockTilePlugInSupport: NSAppKitVersion = 1001.0);
 
 extern_class!(
     #[derive(Debug)]

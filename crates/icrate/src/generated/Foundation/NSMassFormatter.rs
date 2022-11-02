@@ -3,12 +3,16 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSMassFormatterUnit = NSInteger;
-pub const NSMassFormatterUnitGram: NSMassFormatterUnit = 11;
-pub const NSMassFormatterUnitKilogram: NSMassFormatterUnit = 14;
-pub const NSMassFormatterUnitOunce: NSMassFormatterUnit = (6 << 8) + 1;
-pub const NSMassFormatterUnitPound: NSMassFormatterUnit = (6 << 8) + 2;
-pub const NSMassFormatterUnitStone: NSMassFormatterUnit = (6 << 8) + 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSMassFormatterUnit {
+        NSMassFormatterUnitGram = 11,
+        NSMassFormatterUnitKilogram = 14,
+        NSMassFormatterUnitOunce = (6 << 8) + 1,
+        NSMassFormatterUnitPound = (6 << 8) + 2,
+        NSMassFormatterUnitStone = (6 << 8) + 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

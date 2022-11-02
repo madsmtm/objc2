@@ -5,40 +5,35 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSPrintPanelOptions = NSUInteger;
-pub const NSPrintPanelShowsCopies: NSPrintPanelOptions = 1 << 0;
-pub const NSPrintPanelShowsPageRange: NSPrintPanelOptions = 1 << 1;
-pub const NSPrintPanelShowsPaperSize: NSPrintPanelOptions = 1 << 2;
-pub const NSPrintPanelShowsOrientation: NSPrintPanelOptions = 1 << 3;
-pub const NSPrintPanelShowsScaling: NSPrintPanelOptions = 1 << 4;
-pub const NSPrintPanelShowsPrintSelection: NSPrintPanelOptions = 1 << 5;
-pub const NSPrintPanelShowsPageSetupAccessory: NSPrintPanelOptions = 1 << 8;
-pub const NSPrintPanelShowsPreview: NSPrintPanelOptions = 1 << 17;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSPrintPanelOptions {
+        NSPrintPanelShowsCopies = 1 << 0,
+        NSPrintPanelShowsPageRange = 1 << 1,
+        NSPrintPanelShowsPaperSize = 1 << 2,
+        NSPrintPanelShowsOrientation = 1 << 3,
+        NSPrintPanelShowsScaling = 1 << 4,
+        NSPrintPanelShowsPrintSelection = 1 << 5,
+        NSPrintPanelShowsPageSetupAccessory = 1 << 8,
+        NSPrintPanelShowsPreview = 1 << 17,
+    }
+);
 
 pub type NSPrintPanelJobStyleHint = NSString;
 
-extern "C" {
-    pub static NSPrintPhotoJobStyleHint: &'static NSPrintPanelJobStyleHint;
-}
+extern_static!(NSPrintPhotoJobStyleHint: &'static NSPrintPanelJobStyleHint);
 
-extern "C" {
-    pub static NSPrintAllPresetsJobStyleHint: &'static NSPrintPanelJobStyleHint;
-}
+extern_static!(NSPrintAllPresetsJobStyleHint: &'static NSPrintPanelJobStyleHint);
 
-extern "C" {
-    pub static NSPrintNoPresetsJobStyleHint: &'static NSPrintPanelJobStyleHint;
-}
+extern_static!(NSPrintNoPresetsJobStyleHint: &'static NSPrintPanelJobStyleHint);
 
 pub type NSPrintPanelAccessorySummaryKey = NSString;
 
-extern "C" {
-    pub static NSPrintPanelAccessorySummaryItemNameKey: &'static NSPrintPanelAccessorySummaryKey;
-}
+extern_static!(NSPrintPanelAccessorySummaryItemNameKey: &'static NSPrintPanelAccessorySummaryKey);
 
-extern "C" {
-    pub static NSPrintPanelAccessorySummaryItemDescriptionKey:
-        &'static NSPrintPanelAccessorySummaryKey;
-}
+extern_static!(
+    NSPrintPanelAccessorySummaryItemDescriptionKey: &'static NSPrintPanelAccessorySummaryKey
+);
 
 pub type NSPrintPanelAccessorizing = NSObject;
 

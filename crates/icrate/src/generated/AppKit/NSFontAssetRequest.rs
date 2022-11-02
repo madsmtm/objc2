@@ -5,8 +5,12 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSFontAssetRequestOptions = NSUInteger;
-pub const NSFontAssetRequestOptionUsesStandardUI: NSFontAssetRequestOptions = 1 << 0;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSFontAssetRequestOptions {
+        NSFontAssetRequestOptionUsesStandardUI = 1 << 0,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

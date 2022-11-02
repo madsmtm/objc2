@@ -7,10 +7,14 @@ use crate::Foundation::*;
 
 pub type NSSplitViewAutosaveName = NSString;
 
-pub type NSSplitViewDividerStyle = NSInteger;
-pub const NSSplitViewDividerStyleThick: NSSplitViewDividerStyle = 1;
-pub const NSSplitViewDividerStyleThin: NSSplitViewDividerStyle = 2;
-pub const NSSplitViewDividerStylePaneSplitter: NSSplitViewDividerStyle = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSSplitViewDividerStyle {
+        NSSplitViewDividerStyleThick = 1,
+        NSSplitViewDividerStyleThin = 2,
+        NSSplitViewDividerStylePaneSplitter = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -121,13 +125,9 @@ extern_methods!(
 
 pub type NSSplitViewDelegate = NSObject;
 
-extern "C" {
-    pub static NSSplitViewWillResizeSubviewsNotification: &'static NSNotificationName;
-}
+extern_static!(NSSplitViewWillResizeSubviewsNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSSplitViewDidResizeSubviewsNotification: &'static NSNotificationName;
-}
+extern_static!(NSSplitViewDidResizeSubviewsNotification: &'static NSNotificationName);
 
 extern_methods!(
     /// NSDeprecated

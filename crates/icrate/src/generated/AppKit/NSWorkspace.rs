@@ -5,9 +5,13 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSWorkspaceIconCreationOptions = NSUInteger;
-pub const NSExcludeQuickDrawElementsIconCreationOption: NSWorkspaceIconCreationOptions = 1 << 1;
-pub const NSExclude10_4ElementsIconCreationOption: NSWorkspaceIconCreationOptions = 1 << 2;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSWorkspaceIconCreationOptions {
+        NSExcludeQuickDrawElementsIconCreationOption = 1 << 1,
+        NSExclude10_4ElementsIconCreationOption = 1 << 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -308,17 +312,11 @@ extern_methods!(
 
 pub type NSWorkspaceDesktopImageOptionKey = NSString;
 
-extern "C" {
-    pub static NSWorkspaceDesktopImageScalingKey: &'static NSWorkspaceDesktopImageOptionKey;
-}
+extern_static!(NSWorkspaceDesktopImageScalingKey: &'static NSWorkspaceDesktopImageOptionKey);
 
-extern "C" {
-    pub static NSWorkspaceDesktopImageAllowClippingKey: &'static NSWorkspaceDesktopImageOptionKey;
-}
+extern_static!(NSWorkspaceDesktopImageAllowClippingKey: &'static NSWorkspaceDesktopImageOptionKey);
 
-extern "C" {
-    pub static NSWorkspaceDesktopImageFillColorKey: &'static NSWorkspaceDesktopImageOptionKey;
-}
+extern_static!(NSWorkspaceDesktopImageFillColorKey: &'static NSWorkspaceDesktopImageOptionKey);
 
 extern_methods!(
     /// NSDesktopImages
@@ -345,10 +343,14 @@ extern_methods!(
     }
 );
 
-pub type NSWorkspaceAuthorizationType = NSInteger;
-pub const NSWorkspaceAuthorizationTypeCreateSymbolicLink: NSWorkspaceAuthorizationType = 0;
-pub const NSWorkspaceAuthorizationTypeSetAttributes: NSWorkspaceAuthorizationType = 1;
-pub const NSWorkspaceAuthorizationTypeReplaceFile: NSWorkspaceAuthorizationType = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSWorkspaceAuthorizationType {
+        NSWorkspaceAuthorizationTypeCreateSymbolicLink = 0,
+        NSWorkspaceAuthorizationTypeSetAttributes = 1,
+        NSWorkspaceAuthorizationTypeReplaceFile = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -385,141 +387,91 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSWorkspaceApplicationKey: &'static NSString;
-}
+extern_static!(NSWorkspaceApplicationKey: &'static NSString);
 
-extern "C" {
-    pub static NSWorkspaceWillLaunchApplicationNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceWillLaunchApplicationNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceDidLaunchApplicationNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceDidLaunchApplicationNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceDidTerminateApplicationNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceDidTerminateApplicationNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceDidHideApplicationNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceDidHideApplicationNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceDidUnhideApplicationNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceDidUnhideApplicationNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceDidActivateApplicationNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceDidActivateApplicationNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceDidDeactivateApplicationNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceDidDeactivateApplicationNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceVolumeLocalizedNameKey: &'static NSString;
-}
+extern_static!(NSWorkspaceVolumeLocalizedNameKey: &'static NSString);
 
-extern "C" {
-    pub static NSWorkspaceVolumeURLKey: &'static NSString;
-}
+extern_static!(NSWorkspaceVolumeURLKey: &'static NSString);
 
-extern "C" {
-    pub static NSWorkspaceVolumeOldLocalizedNameKey: &'static NSString;
-}
+extern_static!(NSWorkspaceVolumeOldLocalizedNameKey: &'static NSString);
 
-extern "C" {
-    pub static NSWorkspaceVolumeOldURLKey: &'static NSString;
-}
+extern_static!(NSWorkspaceVolumeOldURLKey: &'static NSString);
 
-extern "C" {
-    pub static NSWorkspaceDidMountNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceDidMountNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceDidUnmountNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceDidUnmountNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceWillUnmountNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceWillUnmountNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceDidRenameVolumeNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceDidRenameVolumeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceWillPowerOffNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceWillPowerOffNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceWillSleepNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceWillSleepNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceDidWakeNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceDidWakeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceScreensDidSleepNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceScreensDidSleepNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceScreensDidWakeNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceScreensDidWakeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceSessionDidBecomeActiveNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceSessionDidBecomeActiveNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceSessionDidResignActiveNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceSessionDidResignActiveNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceDidChangeFileLabelsNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceDidChangeFileLabelsNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSWorkspaceActiveSpaceDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceActiveSpaceDidChangeNotification: &'static NSNotificationName);
 
 pub type NSWorkspaceFileOperationName = NSString;
 
-pub type NSWorkspaceLaunchOptions = NSUInteger;
-pub const NSWorkspaceLaunchAndPrint: NSWorkspaceLaunchOptions = 0x00000002;
-pub const NSWorkspaceLaunchWithErrorPresentation: NSWorkspaceLaunchOptions = 0x00000040;
-pub const NSWorkspaceLaunchInhibitingBackgroundOnly: NSWorkspaceLaunchOptions = 0x00000080;
-pub const NSWorkspaceLaunchWithoutAddingToRecents: NSWorkspaceLaunchOptions = 0x00000100;
-pub const NSWorkspaceLaunchWithoutActivation: NSWorkspaceLaunchOptions = 0x00000200;
-pub const NSWorkspaceLaunchAsync: NSWorkspaceLaunchOptions = 0x00010000;
-pub const NSWorkspaceLaunchNewInstance: NSWorkspaceLaunchOptions = 0x00080000;
-pub const NSWorkspaceLaunchAndHide: NSWorkspaceLaunchOptions = 0x00100000;
-pub const NSWorkspaceLaunchAndHideOthers: NSWorkspaceLaunchOptions = 0x00200000;
-pub const NSWorkspaceLaunchDefault: NSWorkspaceLaunchOptions = NSWorkspaceLaunchAsync;
-pub const NSWorkspaceLaunchAllowingClassicStartup: NSWorkspaceLaunchOptions = 0x00020000;
-pub const NSWorkspaceLaunchPreferringClassic: NSWorkspaceLaunchOptions = 0x00040000;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSWorkspaceLaunchOptions {
+        NSWorkspaceLaunchAndPrint = 0x00000002,
+        NSWorkspaceLaunchWithErrorPresentation = 0x00000040,
+        NSWorkspaceLaunchInhibitingBackgroundOnly = 0x00000080,
+        NSWorkspaceLaunchWithoutAddingToRecents = 0x00000100,
+        NSWorkspaceLaunchWithoutActivation = 0x00000200,
+        NSWorkspaceLaunchAsync = 0x00010000,
+        NSWorkspaceLaunchNewInstance = 0x00080000,
+        NSWorkspaceLaunchAndHide = 0x00100000,
+        NSWorkspaceLaunchAndHideOthers = 0x00200000,
+        NSWorkspaceLaunchDefault = NSWorkspaceLaunchAsync,
+        NSWorkspaceLaunchAllowingClassicStartup = 0x00020000,
+        NSWorkspaceLaunchPreferringClassic = 0x00040000,
+    }
+);
 
 pub type NSWorkspaceLaunchConfigurationKey = NSString;
 
-extern "C" {
-    pub static NSWorkspaceLaunchConfigurationAppleEvent: &'static NSWorkspaceLaunchConfigurationKey;
-}
+extern_static!(
+    NSWorkspaceLaunchConfigurationAppleEvent: &'static NSWorkspaceLaunchConfigurationKey
+);
 
-extern "C" {
-    pub static NSWorkspaceLaunchConfigurationArguments: &'static NSWorkspaceLaunchConfigurationKey;
-}
+extern_static!(NSWorkspaceLaunchConfigurationArguments: &'static NSWorkspaceLaunchConfigurationKey);
 
-extern "C" {
-    pub static NSWorkspaceLaunchConfigurationEnvironment:
-        &'static NSWorkspaceLaunchConfigurationKey;
-}
+extern_static!(
+    NSWorkspaceLaunchConfigurationEnvironment: &'static NSWorkspaceLaunchConfigurationKey
+);
 
-extern "C" {
-    pub static NSWorkspaceLaunchConfigurationArchitecture:
-        &'static NSWorkspaceLaunchConfigurationKey;
-}
+extern_static!(
+    NSWorkspaceLaunchConfigurationArchitecture: &'static NSWorkspaceLaunchConfigurationKey
+);
 
 extern_methods!(
     /// NSDeprecated
@@ -714,66 +666,34 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSWorkspaceMoveOperation: &'static NSWorkspaceFileOperationName;
-}
+extern_static!(NSWorkspaceMoveOperation: &'static NSWorkspaceFileOperationName);
 
-extern "C" {
-    pub static NSWorkspaceCopyOperation: &'static NSWorkspaceFileOperationName;
-}
+extern_static!(NSWorkspaceCopyOperation: &'static NSWorkspaceFileOperationName);
 
-extern "C" {
-    pub static NSWorkspaceLinkOperation: &'static NSWorkspaceFileOperationName;
-}
+extern_static!(NSWorkspaceLinkOperation: &'static NSWorkspaceFileOperationName);
 
-extern "C" {
-    pub static NSWorkspaceCompressOperation: &'static NSWorkspaceFileOperationName;
-}
+extern_static!(NSWorkspaceCompressOperation: &'static NSWorkspaceFileOperationName);
 
-extern "C" {
-    pub static NSWorkspaceDecompressOperation: &'static NSWorkspaceFileOperationName;
-}
+extern_static!(NSWorkspaceDecompressOperation: &'static NSWorkspaceFileOperationName);
 
-extern "C" {
-    pub static NSWorkspaceEncryptOperation: &'static NSWorkspaceFileOperationName;
-}
+extern_static!(NSWorkspaceEncryptOperation: &'static NSWorkspaceFileOperationName);
 
-extern "C" {
-    pub static NSWorkspaceDecryptOperation: &'static NSWorkspaceFileOperationName;
-}
+extern_static!(NSWorkspaceDecryptOperation: &'static NSWorkspaceFileOperationName);
 
-extern "C" {
-    pub static NSWorkspaceDestroyOperation: &'static NSWorkspaceFileOperationName;
-}
+extern_static!(NSWorkspaceDestroyOperation: &'static NSWorkspaceFileOperationName);
 
-extern "C" {
-    pub static NSWorkspaceRecycleOperation: &'static NSWorkspaceFileOperationName;
-}
+extern_static!(NSWorkspaceRecycleOperation: &'static NSWorkspaceFileOperationName);
 
-extern "C" {
-    pub static NSWorkspaceDuplicateOperation: &'static NSWorkspaceFileOperationName;
-}
+extern_static!(NSWorkspaceDuplicateOperation: &'static NSWorkspaceFileOperationName);
 
-extern "C" {
-    pub static NSWorkspaceDidPerformFileOperationNotification: &'static NSNotificationName;
-}
+extern_static!(NSWorkspaceDidPerformFileOperationNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSPlainFileType: &'static NSString;
-}
+extern_static!(NSPlainFileType: &'static NSString);
 
-extern "C" {
-    pub static NSDirectoryFileType: &'static NSString;
-}
+extern_static!(NSDirectoryFileType: &'static NSString);
 
-extern "C" {
-    pub static NSApplicationFileType: &'static NSString;
-}
+extern_static!(NSApplicationFileType: &'static NSString);
 
-extern "C" {
-    pub static NSFilesystemFileType: &'static NSString;
-}
+extern_static!(NSFilesystemFileType: &'static NSString);
 
-extern "C" {
-    pub static NSShellCommandFileType: &'static NSString;
-}
+extern_static!(NSShellCommandFileType: &'static NSString);

@@ -4,13 +4,17 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSSnapshotEventType = NSUInteger;
-pub const NSSnapshotEventUndoInsertion: NSSnapshotEventType = 1 << 1;
-pub const NSSnapshotEventUndoDeletion: NSSnapshotEventType = 1 << 2;
-pub const NSSnapshotEventUndoUpdate: NSSnapshotEventType = 1 << 3;
-pub const NSSnapshotEventRollback: NSSnapshotEventType = 1 << 4;
-pub const NSSnapshotEventRefresh: NSSnapshotEventType = 1 << 5;
-pub const NSSnapshotEventMergePolicy: NSSnapshotEventType = 1 << 6;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSSnapshotEventType {
+        NSSnapshotEventUndoInsertion = 1 << 1,
+        NSSnapshotEventUndoDeletion = 1 << 2,
+        NSSnapshotEventUndoUpdate = 1 << 3,
+        NSSnapshotEventRollback = 1 << 4,
+        NSSnapshotEventRefresh = 1 << 5,
+        NSSnapshotEventMergePolicy = 1 << 6,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

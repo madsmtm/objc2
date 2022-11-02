@@ -3,17 +3,20 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub static NSMapTableStrongMemory: NSPointerFunctionsOptions = NSPointerFunctionsStrongMemory;
+extern_static!(NSMapTableStrongMemory: NSPointerFunctionsOptions = NSPointerFunctionsStrongMemory);
 
-pub static NSMapTableZeroingWeakMemory: NSPointerFunctionsOptions =
-    NSPointerFunctionsZeroingWeakMemory;
+extern_static!(
+    NSMapTableZeroingWeakMemory: NSPointerFunctionsOptions = NSPointerFunctionsZeroingWeakMemory
+);
 
-pub static NSMapTableCopyIn: NSPointerFunctionsOptions = NSPointerFunctionsCopyIn;
+extern_static!(NSMapTableCopyIn: NSPointerFunctionsOptions = NSPointerFunctionsCopyIn);
 
-pub static NSMapTableObjectPointerPersonality: NSPointerFunctionsOptions =
-    NSPointerFunctionsObjectPointerPersonality;
+extern_static!(
+    NSMapTableObjectPointerPersonality: NSPointerFunctionsOptions =
+        NSPointerFunctionsObjectPointerPersonality
+);
 
-pub static NSMapTableWeakMemory: NSPointerFunctionsOptions = NSPointerFunctionsWeakMemory;
+extern_static!(NSMapTableWeakMemory: NSPointerFunctionsOptions = NSPointerFunctionsWeakMemory);
 
 pub type NSMapTableOptions = NSUInteger;
 
@@ -116,7 +119,7 @@ extern_methods!(
     }
 );
 
-struct_impl!(
+extern_struct!(
     pub struct NSMapEnumerator {
         _pi: NSUInteger,
         _si: NSUInteger,
@@ -124,7 +127,7 @@ struct_impl!(
     }
 );
 
-struct_impl!(
+extern_struct!(
     pub struct NSMapTableKeyCallBacks {
         pub hash: *mut TodoFunction,
         pub isEqual: *mut TodoFunction,
@@ -135,7 +138,7 @@ struct_impl!(
     }
 );
 
-struct_impl!(
+extern_struct!(
     pub struct NSMapTableValueCallBacks {
         pub retain: *mut TodoFunction,
         pub release: *mut TodoFunction,
@@ -143,54 +146,28 @@ struct_impl!(
     }
 );
 
-extern "C" {
-    pub static NSIntegerMapKeyCallBacks: NSMapTableKeyCallBacks;
-}
+extern_static!(NSIntegerMapKeyCallBacks: NSMapTableKeyCallBacks);
 
-extern "C" {
-    pub static NSNonOwnedPointerMapKeyCallBacks: NSMapTableKeyCallBacks;
-}
+extern_static!(NSNonOwnedPointerMapKeyCallBacks: NSMapTableKeyCallBacks);
 
-extern "C" {
-    pub static NSNonOwnedPointerOrNullMapKeyCallBacks: NSMapTableKeyCallBacks;
-}
+extern_static!(NSNonOwnedPointerOrNullMapKeyCallBacks: NSMapTableKeyCallBacks);
 
-extern "C" {
-    pub static NSNonRetainedObjectMapKeyCallBacks: NSMapTableKeyCallBacks;
-}
+extern_static!(NSNonRetainedObjectMapKeyCallBacks: NSMapTableKeyCallBacks);
 
-extern "C" {
-    pub static NSObjectMapKeyCallBacks: NSMapTableKeyCallBacks;
-}
+extern_static!(NSObjectMapKeyCallBacks: NSMapTableKeyCallBacks);
 
-extern "C" {
-    pub static NSOwnedPointerMapKeyCallBacks: NSMapTableKeyCallBacks;
-}
+extern_static!(NSOwnedPointerMapKeyCallBacks: NSMapTableKeyCallBacks);
 
-extern "C" {
-    pub static NSIntMapKeyCallBacks: NSMapTableKeyCallBacks;
-}
+extern_static!(NSIntMapKeyCallBacks: NSMapTableKeyCallBacks);
 
-extern "C" {
-    pub static NSIntegerMapValueCallBacks: NSMapTableValueCallBacks;
-}
+extern_static!(NSIntegerMapValueCallBacks: NSMapTableValueCallBacks);
 
-extern "C" {
-    pub static NSNonOwnedPointerMapValueCallBacks: NSMapTableValueCallBacks;
-}
+extern_static!(NSNonOwnedPointerMapValueCallBacks: NSMapTableValueCallBacks);
 
-extern "C" {
-    pub static NSObjectMapValueCallBacks: NSMapTableValueCallBacks;
-}
+extern_static!(NSObjectMapValueCallBacks: NSMapTableValueCallBacks);
 
-extern "C" {
-    pub static NSNonRetainedObjectMapValueCallBacks: NSMapTableValueCallBacks;
-}
+extern_static!(NSNonRetainedObjectMapValueCallBacks: NSMapTableValueCallBacks);
 
-extern "C" {
-    pub static NSOwnedPointerMapValueCallBacks: NSMapTableValueCallBacks;
-}
+extern_static!(NSOwnedPointerMapValueCallBacks: NSMapTableValueCallBacks);
 
-extern "C" {
-    pub static NSIntMapValueCallBacks: NSMapTableValueCallBacks;
-}
+extern_static!(NSIntMapValueCallBacks: NSMapTableValueCallBacks);

@@ -5,11 +5,15 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSLevelIndicatorStyle = NSUInteger;
-pub const NSLevelIndicatorStyleRelevancy: NSLevelIndicatorStyle = 0;
-pub const NSLevelIndicatorStyleContinuousCapacity: NSLevelIndicatorStyle = 1;
-pub const NSLevelIndicatorStyleDiscreteCapacity: NSLevelIndicatorStyle = 2;
-pub const NSLevelIndicatorStyleRating: NSLevelIndicatorStyle = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSLevelIndicatorStyle {
+        NSLevelIndicatorStyleRelevancy = 0,
+        NSLevelIndicatorStyleContinuousCapacity = 1,
+        NSLevelIndicatorStyleDiscreteCapacity = 2,
+        NSLevelIndicatorStyleRating = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -84,12 +88,18 @@ extern_methods!(
     }
 );
 
-pub static NSRelevancyLevelIndicatorStyle: NSLevelIndicatorStyle = NSLevelIndicatorStyleRelevancy;
+extern_static!(
+    NSRelevancyLevelIndicatorStyle: NSLevelIndicatorStyle = NSLevelIndicatorStyleRelevancy
+);
 
-pub static NSContinuousCapacityLevelIndicatorStyle: NSLevelIndicatorStyle =
-    NSLevelIndicatorStyleContinuousCapacity;
+extern_static!(
+    NSContinuousCapacityLevelIndicatorStyle: NSLevelIndicatorStyle =
+        NSLevelIndicatorStyleContinuousCapacity
+);
 
-pub static NSDiscreteCapacityLevelIndicatorStyle: NSLevelIndicatorStyle =
-    NSLevelIndicatorStyleDiscreteCapacity;
+extern_static!(
+    NSDiscreteCapacityLevelIndicatorStyle: NSLevelIndicatorStyle =
+        NSLevelIndicatorStyleDiscreteCapacity
+);
 
-pub static NSRatingLevelIndicatorStyle: NSLevelIndicatorStyle = NSLevelIndicatorStyleRating;
+extern_static!(NSRatingLevelIndicatorStyle: NSLevelIndicatorStyle = NSLevelIndicatorStyleRating);

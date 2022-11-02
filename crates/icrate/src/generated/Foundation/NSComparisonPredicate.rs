@@ -3,31 +3,43 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSComparisonPredicateOptions = NSUInteger;
-pub const NSCaseInsensitivePredicateOption: NSComparisonPredicateOptions = 0x01;
-pub const NSDiacriticInsensitivePredicateOption: NSComparisonPredicateOptions = 0x02;
-pub const NSNormalizedPredicateOption: NSComparisonPredicateOptions = 0x04;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSComparisonPredicateOptions {
+        NSCaseInsensitivePredicateOption = 0x01,
+        NSDiacriticInsensitivePredicateOption = 0x02,
+        NSNormalizedPredicateOption = 0x04,
+    }
+);
 
-pub type NSComparisonPredicateModifier = NSUInteger;
-pub const NSDirectPredicateModifier: NSComparisonPredicateModifier = 0;
-pub const NSAllPredicateModifier: NSComparisonPredicateModifier = 1;
-pub const NSAnyPredicateModifier: NSComparisonPredicateModifier = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSComparisonPredicateModifier {
+        NSDirectPredicateModifier = 0,
+        NSAllPredicateModifier = 1,
+        NSAnyPredicateModifier = 2,
+    }
+);
 
-pub type NSPredicateOperatorType = NSUInteger;
-pub const NSLessThanPredicateOperatorType: NSPredicateOperatorType = 0;
-pub const NSLessThanOrEqualToPredicateOperatorType: NSPredicateOperatorType = 1;
-pub const NSGreaterThanPredicateOperatorType: NSPredicateOperatorType = 2;
-pub const NSGreaterThanOrEqualToPredicateOperatorType: NSPredicateOperatorType = 3;
-pub const NSEqualToPredicateOperatorType: NSPredicateOperatorType = 4;
-pub const NSNotEqualToPredicateOperatorType: NSPredicateOperatorType = 5;
-pub const NSMatchesPredicateOperatorType: NSPredicateOperatorType = 6;
-pub const NSLikePredicateOperatorType: NSPredicateOperatorType = 7;
-pub const NSBeginsWithPredicateOperatorType: NSPredicateOperatorType = 8;
-pub const NSEndsWithPredicateOperatorType: NSPredicateOperatorType = 9;
-pub const NSInPredicateOperatorType: NSPredicateOperatorType = 10;
-pub const NSCustomSelectorPredicateOperatorType: NSPredicateOperatorType = 11;
-pub const NSContainsPredicateOperatorType: NSPredicateOperatorType = 99;
-pub const NSBetweenPredicateOperatorType: NSPredicateOperatorType = 100;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSPredicateOperatorType {
+        NSLessThanPredicateOperatorType = 0,
+        NSLessThanOrEqualToPredicateOperatorType = 1,
+        NSGreaterThanPredicateOperatorType = 2,
+        NSGreaterThanOrEqualToPredicateOperatorType = 3,
+        NSEqualToPredicateOperatorType = 4,
+        NSNotEqualToPredicateOperatorType = 5,
+        NSMatchesPredicateOperatorType = 6,
+        NSLikePredicateOperatorType = 7,
+        NSBeginsWithPredicateOperatorType = 8,
+        NSEndsWithPredicateOperatorType = 9,
+        NSInPredicateOperatorType = 10,
+        NSCustomSelectorPredicateOperatorType = 11,
+        NSContainsPredicateOperatorType = 99,
+        NSBetweenPredicateOperatorType = 100,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

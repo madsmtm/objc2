@@ -3,19 +3,27 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSJSONReadingOptions = NSUInteger;
-pub const NSJSONReadingMutableContainers: NSJSONReadingOptions = 1 << 0;
-pub const NSJSONReadingMutableLeaves: NSJSONReadingOptions = 1 << 1;
-pub const NSJSONReadingFragmentsAllowed: NSJSONReadingOptions = 1 << 2;
-pub const NSJSONReadingJSON5Allowed: NSJSONReadingOptions = 1 << 3;
-pub const NSJSONReadingTopLevelDictionaryAssumed: NSJSONReadingOptions = 1 << 4;
-pub const NSJSONReadingAllowFragments: NSJSONReadingOptions = NSJSONReadingFragmentsAllowed;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSJSONReadingOptions {
+        NSJSONReadingMutableContainers = 1 << 0,
+        NSJSONReadingMutableLeaves = 1 << 1,
+        NSJSONReadingFragmentsAllowed = 1 << 2,
+        NSJSONReadingJSON5Allowed = 1 << 3,
+        NSJSONReadingTopLevelDictionaryAssumed = 1 << 4,
+        NSJSONReadingAllowFragments = NSJSONReadingFragmentsAllowed,
+    }
+);
 
-pub type NSJSONWritingOptions = NSUInteger;
-pub const NSJSONWritingPrettyPrinted: NSJSONWritingOptions = 1 << 0;
-pub const NSJSONWritingSortedKeys: NSJSONWritingOptions = 1 << 1;
-pub const NSJSONWritingFragmentsAllowed: NSJSONWritingOptions = 1 << 2;
-pub const NSJSONWritingWithoutEscapingSlashes: NSJSONWritingOptions = 1 << 3;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSJSONWritingOptions {
+        NSJSONWritingPrettyPrinted = 1 << 0,
+        NSJSONWritingSortedKeys = 1 << 1,
+        NSJSONWritingFragmentsAllowed = 1 << 2,
+        NSJSONWritingWithoutEscapingSlashes = 1 << 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

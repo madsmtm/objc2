@@ -5,19 +5,21 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSCollectionViewScrollDirection = NSInteger;
-pub const NSCollectionViewScrollDirectionVertical: NSCollectionViewScrollDirection = 0;
-pub const NSCollectionViewScrollDirectionHorizontal: NSCollectionViewScrollDirection = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSCollectionViewScrollDirection {
+        NSCollectionViewScrollDirectionVertical = 0,
+        NSCollectionViewScrollDirectionHorizontal = 1,
+    }
+);
 
-extern "C" {
-    pub static NSCollectionElementKindSectionHeader:
-        &'static NSCollectionViewSupplementaryElementKind;
-}
+extern_static!(
+    NSCollectionElementKindSectionHeader: &'static NSCollectionViewSupplementaryElementKind
+);
 
-extern "C" {
-    pub static NSCollectionElementKindSectionFooter:
-        &'static NSCollectionViewSupplementaryElementKind;
-}
+extern_static!(
+    NSCollectionElementKindSectionFooter: &'static NSCollectionViewSupplementaryElementKind
+);
 
 extern_class!(
     #[derive(Debug)]

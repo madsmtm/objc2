@@ -5,19 +5,25 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSPrintingPageOrder = NSInteger;
-pub const NSDescendingPageOrder: NSPrintingPageOrder = -1;
-pub const NSSpecialPageOrder: NSPrintingPageOrder = 0;
-pub const NSAscendingPageOrder: NSPrintingPageOrder = 1;
-pub const NSUnknownPageOrder: NSPrintingPageOrder = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSPrintingPageOrder {
+        NSDescendingPageOrder = -1,
+        NSSpecialPageOrder = 0,
+        NSAscendingPageOrder = 1,
+        NSUnknownPageOrder = 2,
+    }
+);
 
-pub type NSPrintRenderingQuality = NSInteger;
-pub const NSPrintRenderingQualityBest: NSPrintRenderingQuality = 0;
-pub const NSPrintRenderingQualityResponsive: NSPrintRenderingQuality = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSPrintRenderingQuality {
+        NSPrintRenderingQualityBest = 0,
+        NSPrintRenderingQualityResponsive = 1,
+    }
+);
 
-extern "C" {
-    pub static NSPrintOperationExistsException: &'static NSExceptionName;
-}
+extern_static!(NSPrintOperationExistsException: &'static NSExceptionName);
 
 extern_class!(
     #[derive(Debug)]

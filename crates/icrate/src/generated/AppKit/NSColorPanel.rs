@@ -5,27 +5,35 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSColorPanelMode = NSInteger;
-pub const NSColorPanelModeNone: NSColorPanelMode = -1;
-pub const NSColorPanelModeGray: NSColorPanelMode = 0;
-pub const NSColorPanelModeRGB: NSColorPanelMode = 1;
-pub const NSColorPanelModeCMYK: NSColorPanelMode = 2;
-pub const NSColorPanelModeHSB: NSColorPanelMode = 3;
-pub const NSColorPanelModeCustomPalette: NSColorPanelMode = 4;
-pub const NSColorPanelModeColorList: NSColorPanelMode = 5;
-pub const NSColorPanelModeWheel: NSColorPanelMode = 6;
-pub const NSColorPanelModeCrayon: NSColorPanelMode = 7;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSColorPanelMode {
+        NSColorPanelModeNone = -1,
+        NSColorPanelModeGray = 0,
+        NSColorPanelModeRGB = 1,
+        NSColorPanelModeCMYK = 2,
+        NSColorPanelModeHSB = 3,
+        NSColorPanelModeCustomPalette = 4,
+        NSColorPanelModeColorList = 5,
+        NSColorPanelModeWheel = 6,
+        NSColorPanelModeCrayon = 7,
+    }
+);
 
-pub type NSColorPanelOptions = NSUInteger;
-pub const NSColorPanelGrayModeMask: NSColorPanelOptions = 0x00000001;
-pub const NSColorPanelRGBModeMask: NSColorPanelOptions = 0x00000002;
-pub const NSColorPanelCMYKModeMask: NSColorPanelOptions = 0x00000004;
-pub const NSColorPanelHSBModeMask: NSColorPanelOptions = 0x00000008;
-pub const NSColorPanelCustomPaletteModeMask: NSColorPanelOptions = 0x00000010;
-pub const NSColorPanelColorListModeMask: NSColorPanelOptions = 0x00000020;
-pub const NSColorPanelWheelModeMask: NSColorPanelOptions = 0x00000040;
-pub const NSColorPanelCrayonModeMask: NSColorPanelOptions = 0x00000080;
-pub const NSColorPanelAllModesMask: NSColorPanelOptions = 0x0000ffff;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSColorPanelOptions {
+        NSColorPanelGrayModeMask = 0x00000001,
+        NSColorPanelRGBModeMask = 0x00000002,
+        NSColorPanelCMYKModeMask = 0x00000004,
+        NSColorPanelHSBModeMask = 0x00000008,
+        NSColorPanelCustomPaletteModeMask = 0x00000010,
+        NSColorPanelColorListModeMask = 0x00000020,
+        NSColorPanelWheelModeMask = 0x00000040,
+        NSColorPanelCrayonModeMask = 0x00000080,
+        NSColorPanelAllModesMask = 0x0000ffff,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -122,24 +130,22 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSColorPanelColorDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSColorPanelColorDidChangeNotification: &'static NSNotificationName);
 
-pub static NSNoModeColorPanel: NSColorPanelMode = NSColorPanelModeNone;
+extern_static!(NSNoModeColorPanel: NSColorPanelMode = NSColorPanelModeNone);
 
-pub static NSGrayModeColorPanel: NSColorPanelMode = NSColorPanelModeGray;
+extern_static!(NSGrayModeColorPanel: NSColorPanelMode = NSColorPanelModeGray);
 
-pub static NSRGBModeColorPanel: NSColorPanelMode = NSColorPanelModeRGB;
+extern_static!(NSRGBModeColorPanel: NSColorPanelMode = NSColorPanelModeRGB);
 
-pub static NSCMYKModeColorPanel: NSColorPanelMode = NSColorPanelModeCMYK;
+extern_static!(NSCMYKModeColorPanel: NSColorPanelMode = NSColorPanelModeCMYK);
 
-pub static NSHSBModeColorPanel: NSColorPanelMode = NSColorPanelModeHSB;
+extern_static!(NSHSBModeColorPanel: NSColorPanelMode = NSColorPanelModeHSB);
 
-pub static NSCustomPaletteModeColorPanel: NSColorPanelMode = NSColorPanelModeCustomPalette;
+extern_static!(NSCustomPaletteModeColorPanel: NSColorPanelMode = NSColorPanelModeCustomPalette);
 
-pub static NSColorListModeColorPanel: NSColorPanelMode = NSColorPanelModeColorList;
+extern_static!(NSColorListModeColorPanel: NSColorPanelMode = NSColorPanelModeColorList);
 
-pub static NSWheelModeColorPanel: NSColorPanelMode = NSColorPanelModeWheel;
+extern_static!(NSWheelModeColorPanel: NSColorPanelMode = NSColorPanelModeWheel);
 
-pub static NSCrayonModeColorPanel: NSColorPanelMode = NSColorPanelModeCrayon;
+extern_static!(NSCrayonModeColorPanel: NSColorPanelMode = NSColorPanelModeCrayon);

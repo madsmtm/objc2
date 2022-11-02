@@ -43,14 +43,8 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSExtensionItemAttributedTitleKey: Option<&'static NSString>;
-}
+extern_static!(NSExtensionItemAttributedTitleKey: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSExtensionItemAttributedContentTextKey: Option<&'static NSString>;
-}
+extern_static!(NSExtensionItemAttributedContentTextKey: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSExtensionItemAttachmentsKey: Option<&'static NSString>;
-}
+extern_static!(NSExtensionItemAttachmentsKey: Option<&'static NSString>);

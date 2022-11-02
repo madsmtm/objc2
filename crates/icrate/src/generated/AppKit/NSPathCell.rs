@@ -5,10 +5,14 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSPathStyle = NSInteger;
-pub const NSPathStyleStandard: NSPathStyle = 0;
-pub const NSPathStylePopUp: NSPathStyle = 2;
-pub const NSPathStyleNavigationBar: NSPathStyle = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSPathStyle {
+        NSPathStyleStandard = 0,
+        NSPathStylePopUp = 2,
+        NSPathStyleNavigationBar = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

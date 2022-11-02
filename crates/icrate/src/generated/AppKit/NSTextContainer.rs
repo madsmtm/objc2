@@ -100,18 +100,26 @@ extern_methods!(
     }
 );
 
-pub type NSLineSweepDirection = NSUInteger;
-pub const NSLineSweepLeft: NSLineSweepDirection = 0;
-pub const NSLineSweepRight: NSLineSweepDirection = 1;
-pub const NSLineSweepDown: NSLineSweepDirection = 2;
-pub const NSLineSweepUp: NSLineSweepDirection = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSLineSweepDirection {
+        NSLineSweepLeft = 0,
+        NSLineSweepRight = 1,
+        NSLineSweepDown = 2,
+        NSLineSweepUp = 3,
+    }
+);
 
-pub type NSLineMovementDirection = NSUInteger;
-pub const NSLineDoesntMove: NSLineMovementDirection = 0;
-pub const NSLineMovesLeft: NSLineMovementDirection = 1;
-pub const NSLineMovesRight: NSLineMovementDirection = 2;
-pub const NSLineMovesDown: NSLineMovementDirection = 3;
-pub const NSLineMovesUp: NSLineMovementDirection = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSLineMovementDirection {
+        NSLineDoesntMove = 0,
+        NSLineMovesLeft = 1,
+        NSLineMovesRight = 2,
+        NSLineMovesDown = 3,
+        NSLineMovesUp = 4,
+    }
+);
 
 extern_methods!(
     /// NSTextContainerDeprecated

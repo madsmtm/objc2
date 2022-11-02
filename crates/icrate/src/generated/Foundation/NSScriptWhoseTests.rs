@@ -3,15 +3,19 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSTestComparisonOperation = NSUInteger;
-pub const NSEqualToComparison: NSTestComparisonOperation = 0;
-pub const NSLessThanOrEqualToComparison: NSTestComparisonOperation = 1;
-pub const NSLessThanComparison: NSTestComparisonOperation = 2;
-pub const NSGreaterThanOrEqualToComparison: NSTestComparisonOperation = 3;
-pub const NSGreaterThanComparison: NSTestComparisonOperation = 4;
-pub const NSBeginsWithComparison: NSTestComparisonOperation = 5;
-pub const NSEndsWithComparison: NSTestComparisonOperation = 6;
-pub const NSContainsComparison: NSTestComparisonOperation = 7;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTestComparisonOperation {
+        NSEqualToComparison = 0,
+        NSLessThanOrEqualToComparison = 1,
+        NSLessThanComparison = 2,
+        NSGreaterThanOrEqualToComparison = 3,
+        NSGreaterThanComparison = 4,
+        NSBeginsWithComparison = 5,
+        NSEndsWithComparison = 6,
+        NSContainsComparison = 7,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

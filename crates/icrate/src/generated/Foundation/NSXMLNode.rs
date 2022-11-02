@@ -3,20 +3,24 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSXMLNodeKind = NSUInteger;
-pub const NSXMLInvalidKind: NSXMLNodeKind = 0;
-pub const NSXMLDocumentKind: NSXMLNodeKind = 1;
-pub const NSXMLElementKind: NSXMLNodeKind = 2;
-pub const NSXMLAttributeKind: NSXMLNodeKind = 3;
-pub const NSXMLNamespaceKind: NSXMLNodeKind = 4;
-pub const NSXMLProcessingInstructionKind: NSXMLNodeKind = 5;
-pub const NSXMLCommentKind: NSXMLNodeKind = 6;
-pub const NSXMLTextKind: NSXMLNodeKind = 7;
-pub const NSXMLDTDKind: NSXMLNodeKind = 8;
-pub const NSXMLEntityDeclarationKind: NSXMLNodeKind = 9;
-pub const NSXMLAttributeDeclarationKind: NSXMLNodeKind = 10;
-pub const NSXMLElementDeclarationKind: NSXMLNodeKind = 11;
-pub const NSXMLNotationDeclarationKind: NSXMLNodeKind = 12;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSXMLNodeKind {
+        NSXMLInvalidKind = 0,
+        NSXMLDocumentKind = 1,
+        NSXMLElementKind = 2,
+        NSXMLAttributeKind = 3,
+        NSXMLNamespaceKind = 4,
+        NSXMLProcessingInstructionKind = 5,
+        NSXMLCommentKind = 6,
+        NSXMLTextKind = 7,
+        NSXMLDTDKind = 8,
+        NSXMLEntityDeclarationKind = 9,
+        NSXMLAttributeDeclarationKind = 10,
+        NSXMLElementDeclarationKind = 11,
+        NSXMLNotationDeclarationKind = 12,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

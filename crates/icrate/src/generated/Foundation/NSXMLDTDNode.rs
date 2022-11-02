@@ -3,27 +3,31 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSXMLDTDNodeKind = NSUInteger;
-pub const NSXMLEntityGeneralKind: NSXMLDTDNodeKind = 1;
-pub const NSXMLEntityParsedKind: NSXMLDTDNodeKind = 2;
-pub const NSXMLEntityUnparsedKind: NSXMLDTDNodeKind = 3;
-pub const NSXMLEntityParameterKind: NSXMLDTDNodeKind = 4;
-pub const NSXMLEntityPredefined: NSXMLDTDNodeKind = 5;
-pub const NSXMLAttributeCDATAKind: NSXMLDTDNodeKind = 6;
-pub const NSXMLAttributeIDKind: NSXMLDTDNodeKind = 7;
-pub const NSXMLAttributeIDRefKind: NSXMLDTDNodeKind = 8;
-pub const NSXMLAttributeIDRefsKind: NSXMLDTDNodeKind = 9;
-pub const NSXMLAttributeEntityKind: NSXMLDTDNodeKind = 10;
-pub const NSXMLAttributeEntitiesKind: NSXMLDTDNodeKind = 11;
-pub const NSXMLAttributeNMTokenKind: NSXMLDTDNodeKind = 12;
-pub const NSXMLAttributeNMTokensKind: NSXMLDTDNodeKind = 13;
-pub const NSXMLAttributeEnumerationKind: NSXMLDTDNodeKind = 14;
-pub const NSXMLAttributeNotationKind: NSXMLDTDNodeKind = 15;
-pub const NSXMLElementDeclarationUndefinedKind: NSXMLDTDNodeKind = 16;
-pub const NSXMLElementDeclarationEmptyKind: NSXMLDTDNodeKind = 17;
-pub const NSXMLElementDeclarationAnyKind: NSXMLDTDNodeKind = 18;
-pub const NSXMLElementDeclarationMixedKind: NSXMLDTDNodeKind = 19;
-pub const NSXMLElementDeclarationElementKind: NSXMLDTDNodeKind = 20;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSXMLDTDNodeKind {
+        NSXMLEntityGeneralKind = 1,
+        NSXMLEntityParsedKind = 2,
+        NSXMLEntityUnparsedKind = 3,
+        NSXMLEntityParameterKind = 4,
+        NSXMLEntityPredefined = 5,
+        NSXMLAttributeCDATAKind = 6,
+        NSXMLAttributeIDKind = 7,
+        NSXMLAttributeIDRefKind = 8,
+        NSXMLAttributeIDRefsKind = 9,
+        NSXMLAttributeEntityKind = 10,
+        NSXMLAttributeEntitiesKind = 11,
+        NSXMLAttributeNMTokenKind = 12,
+        NSXMLAttributeNMTokensKind = 13,
+        NSXMLAttributeEnumerationKind = 14,
+        NSXMLAttributeNotationKind = 15,
+        NSXMLElementDeclarationUndefinedKind = 16,
+        NSXMLElementDeclarationEmptyKind = 17,
+        NSXMLElementDeclarationAnyKind = 18,
+        NSXMLElementDeclarationMixedKind = 19,
+        NSXMLElementDeclarationElementKind = 20,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

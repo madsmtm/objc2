@@ -7,34 +7,40 @@ use crate::Foundation::*;
 
 pub type NSImageName = NSString;
 
-extern "C" {
-    pub static NSImageHintCTM: &'static NSImageHintKey;
-}
+extern_static!(NSImageHintCTM: &'static NSImageHintKey);
 
-extern "C" {
-    pub static NSImageHintInterpolation: &'static NSImageHintKey;
-}
+extern_static!(NSImageHintInterpolation: &'static NSImageHintKey);
 
-extern "C" {
-    pub static NSImageHintUserInterfaceLayoutDirection: &'static NSImageHintKey;
-}
+extern_static!(NSImageHintUserInterfaceLayoutDirection: &'static NSImageHintKey);
 
-pub type NSImageLoadStatus = NSUInteger;
-pub const NSImageLoadStatusCompleted: NSImageLoadStatus = 0;
-pub const NSImageLoadStatusCancelled: NSImageLoadStatus = 1;
-pub const NSImageLoadStatusInvalidData: NSImageLoadStatus = 2;
-pub const NSImageLoadStatusUnexpectedEOF: NSImageLoadStatus = 3;
-pub const NSImageLoadStatusReadError: NSImageLoadStatus = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSImageLoadStatus {
+        NSImageLoadStatusCompleted = 0,
+        NSImageLoadStatusCancelled = 1,
+        NSImageLoadStatusInvalidData = 2,
+        NSImageLoadStatusUnexpectedEOF = 3,
+        NSImageLoadStatusReadError = 4,
+    }
+);
 
-pub type NSImageCacheMode = NSUInteger;
-pub const NSImageCacheDefault: NSImageCacheMode = 0;
-pub const NSImageCacheAlways: NSImageCacheMode = 1;
-pub const NSImageCacheBySize: NSImageCacheMode = 2;
-pub const NSImageCacheNever: NSImageCacheMode = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSImageCacheMode {
+        NSImageCacheDefault = 0,
+        NSImageCacheAlways = 1,
+        NSImageCacheBySize = 2,
+        NSImageCacheNever = 3,
+    }
+);
 
-pub type NSImageResizingMode = NSInteger;
-pub const NSImageResizingModeStretch: NSImageResizingMode = 0;
-pub const NSImageResizingModeTile: NSImageResizingMode = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSImageResizingMode {
+        NSImageResizingModeStretch = 0,
+        NSImageResizingModeTile = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -466,566 +472,292 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSImageNameAddTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameBluetoothTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameBonjour: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameBookmarksTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameCaution: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameComputer: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameEnterFullScreenTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameExitFullScreenTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameFolder: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameFolderBurnable: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameFolderSmart: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameFollowLinkFreestandingTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameHomeTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameIChatTheaterTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameLockLockedTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameLockUnlockedTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameNetwork: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNamePathTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameQuickLookTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameRefreshFreestandingTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameRefreshTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameRemoveTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameRevealFreestandingTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameShareTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameSlideshowTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameStatusAvailable: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameStatusNone: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameStatusPartiallyAvailable: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameStatusUnavailable: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameStopProgressFreestandingTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameStopProgressTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTrashEmpty: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTrashFull: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameActionTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameSmartBadgeTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameIconViewTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameListViewTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameColumnViewTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameFlowViewTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameInvalidDataFreestandingTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameGoForwardTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameGoBackTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameGoRightTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameGoLeftTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameRightFacingTriangleTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameLeftFacingTriangleTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameDotMac: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameMobileMe: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameMultipleDocuments: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameUserAccounts: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNamePreferencesGeneral: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameAdvanced: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameInfo: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameFontPanel: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameColorPanel: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameUser: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameUserGroup: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameEveryone: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameUserGuest: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameMenuOnStateTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameMenuMixedStateTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameApplicationIcon: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarAddDetailTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarAddTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarAlarmTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarAudioInputMuteTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarAudioInputTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarAudioOutputMuteTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarAudioOutputVolumeHighTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarAudioOutputVolumeLowTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarAudioOutputVolumeMediumTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarAudioOutputVolumeOffTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarBookmarksTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarColorPickerFill: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarColorPickerFont: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarColorPickerStroke: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarCommunicationAudioTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarCommunicationVideoTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarComposeTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarDeleteTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarDownloadTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarEnterFullScreenTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarExitFullScreenTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarFastForwardTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarFolderCopyToTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarFolderMoveToTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarFolderTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarGetInfoTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarGoBackTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarGoDownTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarGoForwardTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarGoUpTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarHistoryTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarIconViewTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarListViewTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarMailTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarNewFolderTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarNewMessageTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarOpenInBrowserTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarPauseTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarPlayPauseTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarPlayTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarQuickLookTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarRecordStartTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarRecordStopTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarRefreshTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarRemoveTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarRewindTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarRotateLeftTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarRotateRightTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarSearchTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarShareTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarSidebarTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarSkipAhead15SecondsTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarSkipAhead30SecondsTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarSkipAheadTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarSkipBack15SecondsTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarSkipBack30SecondsTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarSkipBackTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarSkipToEndTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarSkipToStartTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarSlideshowTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarTagIconTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarTextBoldTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarTextBoxTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarTextCenterAlignTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarTextItalicTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarTextJustifiedAlignTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarTextLeftAlignTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarTextListTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarTextRightAlignTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarTextStrikethroughTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarTextUnderlineTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarUserAddTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarUserGroupTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarUserTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarVolumeDownTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarVolumeUpTemplate: &'static NSImageName;
-}
-
-extern "C" {
-    pub static NSImageNameTouchBarPlayheadTemplate: &'static NSImageName;
-}
-
-pub type NSImageSymbolScale = NSInteger;
-pub const NSImageSymbolScaleSmall: NSImageSymbolScale = 1;
-pub const NSImageSymbolScaleMedium: NSImageSymbolScale = 2;
-pub const NSImageSymbolScaleLarge: NSImageSymbolScale = 3;
+extern_static!(NSImageNameAddTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameBluetoothTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameBonjour: &'static NSImageName);
+
+extern_static!(NSImageNameBookmarksTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameCaution: &'static NSImageName);
+
+extern_static!(NSImageNameComputer: &'static NSImageName);
+
+extern_static!(NSImageNameEnterFullScreenTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameExitFullScreenTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameFolder: &'static NSImageName);
+
+extern_static!(NSImageNameFolderBurnable: &'static NSImageName);
+
+extern_static!(NSImageNameFolderSmart: &'static NSImageName);
+
+extern_static!(NSImageNameFollowLinkFreestandingTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameHomeTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameIChatTheaterTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameLockLockedTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameLockUnlockedTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameNetwork: &'static NSImageName);
+
+extern_static!(NSImageNamePathTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameQuickLookTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameRefreshFreestandingTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameRefreshTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameRemoveTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameRevealFreestandingTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameShareTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameSlideshowTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameStatusAvailable: &'static NSImageName);
+
+extern_static!(NSImageNameStatusNone: &'static NSImageName);
+
+extern_static!(NSImageNameStatusPartiallyAvailable: &'static NSImageName);
+
+extern_static!(NSImageNameStatusUnavailable: &'static NSImageName);
+
+extern_static!(NSImageNameStopProgressFreestandingTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameStopProgressTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTrashEmpty: &'static NSImageName);
+
+extern_static!(NSImageNameTrashFull: &'static NSImageName);
+
+extern_static!(NSImageNameActionTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameSmartBadgeTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameIconViewTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameListViewTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameColumnViewTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameFlowViewTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameInvalidDataFreestandingTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameGoForwardTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameGoBackTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameGoRightTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameGoLeftTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameRightFacingTriangleTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameLeftFacingTriangleTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameDotMac: &'static NSImageName);
+
+extern_static!(NSImageNameMobileMe: &'static NSImageName);
+
+extern_static!(NSImageNameMultipleDocuments: &'static NSImageName);
+
+extern_static!(NSImageNameUserAccounts: &'static NSImageName);
+
+extern_static!(NSImageNamePreferencesGeneral: &'static NSImageName);
+
+extern_static!(NSImageNameAdvanced: &'static NSImageName);
+
+extern_static!(NSImageNameInfo: &'static NSImageName);
+
+extern_static!(NSImageNameFontPanel: &'static NSImageName);
+
+extern_static!(NSImageNameColorPanel: &'static NSImageName);
+
+extern_static!(NSImageNameUser: &'static NSImageName);
+
+extern_static!(NSImageNameUserGroup: &'static NSImageName);
+
+extern_static!(NSImageNameEveryone: &'static NSImageName);
+
+extern_static!(NSImageNameUserGuest: &'static NSImageName);
+
+extern_static!(NSImageNameMenuOnStateTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameMenuMixedStateTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameApplicationIcon: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarAddDetailTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarAddTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarAlarmTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarAudioInputMuteTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarAudioInputTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarAudioOutputMuteTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarAudioOutputVolumeHighTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarAudioOutputVolumeLowTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarAudioOutputVolumeMediumTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarAudioOutputVolumeOffTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarBookmarksTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarColorPickerFill: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarColorPickerFont: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarColorPickerStroke: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarCommunicationAudioTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarCommunicationVideoTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarComposeTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarDeleteTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarDownloadTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarEnterFullScreenTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarExitFullScreenTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarFastForwardTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarFolderCopyToTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarFolderMoveToTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarFolderTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarGetInfoTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarGoBackTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarGoDownTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarGoForwardTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarGoUpTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarHistoryTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarIconViewTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarListViewTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarMailTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarNewFolderTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarNewMessageTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarOpenInBrowserTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarPauseTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarPlayPauseTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarPlayTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarQuickLookTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarRecordStartTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarRecordStopTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarRefreshTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarRemoveTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarRewindTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarRotateLeftTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarRotateRightTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarSearchTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarShareTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarSidebarTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarSkipAhead15SecondsTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarSkipAhead30SecondsTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarSkipAheadTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarSkipBack15SecondsTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarSkipBack30SecondsTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarSkipBackTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarSkipToEndTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarSkipToStartTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarSlideshowTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarTagIconTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarTextBoldTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarTextBoxTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarTextCenterAlignTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarTextItalicTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarTextJustifiedAlignTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarTextLeftAlignTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarTextListTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarTextRightAlignTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarTextStrikethroughTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarTextUnderlineTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarUserAddTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarUserGroupTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarUserTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarVolumeDownTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarVolumeUpTemplate: &'static NSImageName);
+
+extern_static!(NSImageNameTouchBarPlayheadTemplate: &'static NSImageName);
+
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSImageSymbolScale {
+        NSImageSymbolScaleSmall = 1,
+        NSImageSymbolScaleMedium = 2,
+        NSImageSymbolScaleLarge = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

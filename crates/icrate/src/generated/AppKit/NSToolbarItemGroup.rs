@@ -5,18 +5,23 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSToolbarItemGroupSelectionMode = NSInteger;
-pub const NSToolbarItemGroupSelectionModeSelectOne: NSToolbarItemGroupSelectionMode = 0;
-pub const NSToolbarItemGroupSelectionModeSelectAny: NSToolbarItemGroupSelectionMode = 1;
-pub const NSToolbarItemGroupSelectionModeMomentary: NSToolbarItemGroupSelectionMode = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSToolbarItemGroupSelectionMode {
+        NSToolbarItemGroupSelectionModeSelectOne = 0,
+        NSToolbarItemGroupSelectionModeSelectAny = 1,
+        NSToolbarItemGroupSelectionModeMomentary = 2,
+    }
+);
 
-pub type NSToolbarItemGroupControlRepresentation = NSInteger;
-pub const NSToolbarItemGroupControlRepresentationAutomatic:
-    NSToolbarItemGroupControlRepresentation = 0;
-pub const NSToolbarItemGroupControlRepresentationExpanded: NSToolbarItemGroupControlRepresentation =
-    1;
-pub const NSToolbarItemGroupControlRepresentationCollapsed:
-    NSToolbarItemGroupControlRepresentation = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSToolbarItemGroupControlRepresentation {
+        NSToolbarItemGroupControlRepresentationAutomatic = 0,
+        NSToolbarItemGroupControlRepresentationExpanded = 1,
+        NSToolbarItemGroupControlRepresentationCollapsed = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

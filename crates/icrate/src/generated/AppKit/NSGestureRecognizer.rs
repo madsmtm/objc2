@@ -5,15 +5,18 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSGestureRecognizerState = NSInteger;
-pub const NSGestureRecognizerStatePossible: NSGestureRecognizerState = 0;
-pub const NSGestureRecognizerStateBegan: NSGestureRecognizerState = 1;
-pub const NSGestureRecognizerStateChanged: NSGestureRecognizerState = 2;
-pub const NSGestureRecognizerStateEnded: NSGestureRecognizerState = 3;
-pub const NSGestureRecognizerStateCancelled: NSGestureRecognizerState = 4;
-pub const NSGestureRecognizerStateFailed: NSGestureRecognizerState = 5;
-pub const NSGestureRecognizerStateRecognized: NSGestureRecognizerState =
-    NSGestureRecognizerStateEnded;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSGestureRecognizerState {
+        NSGestureRecognizerStatePossible = 0,
+        NSGestureRecognizerStateBegan = 1,
+        NSGestureRecognizerStateChanged = 2,
+        NSGestureRecognizerStateEnded = 3,
+        NSGestureRecognizerStateCancelled = 4,
+        NSGestureRecognizerStateFailed = 5,
+        NSGestureRecognizerStateRecognized = NSGestureRecognizerStateEnded,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

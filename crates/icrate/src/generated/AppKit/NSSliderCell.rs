@@ -5,15 +5,23 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTickMarkPosition = NSUInteger;
-pub const NSTickMarkPositionBelow: NSTickMarkPosition = 0;
-pub const NSTickMarkPositionAbove: NSTickMarkPosition = 1;
-pub const NSTickMarkPositionLeading: NSTickMarkPosition = NSTickMarkPositionAbove;
-pub const NSTickMarkPositionTrailing: NSTickMarkPosition = NSTickMarkPositionBelow;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTickMarkPosition {
+        NSTickMarkPositionBelow = 0,
+        NSTickMarkPositionAbove = 1,
+        NSTickMarkPositionLeading = NSTickMarkPositionAbove,
+        NSTickMarkPositionTrailing = NSTickMarkPositionBelow,
+    }
+);
 
-pub type NSSliderType = NSUInteger;
-pub const NSSliderTypeLinear: NSSliderType = 0;
-pub const NSSliderTypeCircular: NSSliderType = 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSSliderType {
+        NSSliderTypeLinear = 0,
+        NSSliderTypeCircular = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -151,14 +159,14 @@ extern_methods!(
     }
 );
 
-pub static NSTickMarkBelow: NSTickMarkPosition = NSTickMarkPositionBelow;
+extern_static!(NSTickMarkBelow: NSTickMarkPosition = NSTickMarkPositionBelow);
 
-pub static NSTickMarkAbove: NSTickMarkPosition = NSTickMarkPositionAbove;
+extern_static!(NSTickMarkAbove: NSTickMarkPosition = NSTickMarkPositionAbove);
 
-pub static NSTickMarkLeft: NSTickMarkPosition = NSTickMarkPositionLeading;
+extern_static!(NSTickMarkLeft: NSTickMarkPosition = NSTickMarkPositionLeading);
 
-pub static NSTickMarkRight: NSTickMarkPosition = NSTickMarkPositionTrailing;
+extern_static!(NSTickMarkRight: NSTickMarkPosition = NSTickMarkPositionTrailing);
 
-pub static NSLinearSlider: NSSliderType = NSSliderTypeLinear;
+extern_static!(NSLinearSlider: NSSliderType = NSSliderTypeLinear);
 
-pub static NSCircularSlider: NSSliderType = NSSliderTypeCircular;
+extern_static!(NSCircularSlider: NSSliderType = NSSliderTypeCircular);

@@ -3,18 +3,22 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSAppleEventSendOptions = NSUInteger;
-pub const NSAppleEventSendNoReply: NSAppleEventSendOptions = 1;
-pub const NSAppleEventSendQueueReply: NSAppleEventSendOptions = 2;
-pub const NSAppleEventSendWaitForReply: NSAppleEventSendOptions = 3;
-pub const NSAppleEventSendNeverInteract: NSAppleEventSendOptions = 16;
-pub const NSAppleEventSendCanInteract: NSAppleEventSendOptions = 32;
-pub const NSAppleEventSendAlwaysInteract: NSAppleEventSendOptions = 48;
-pub const NSAppleEventSendCanSwitchLayer: NSAppleEventSendOptions = 64;
-pub const NSAppleEventSendDontRecord: NSAppleEventSendOptions = 4096;
-pub const NSAppleEventSendDontExecute: NSAppleEventSendOptions = 8192;
-pub const NSAppleEventSendDontAnnotate: NSAppleEventSendOptions = 65536;
-pub const NSAppleEventSendDefaultOptions: NSAppleEventSendOptions = 35;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSAppleEventSendOptions {
+        NSAppleEventSendNoReply = 1,
+        NSAppleEventSendQueueReply = 2,
+        NSAppleEventSendWaitForReply = 3,
+        NSAppleEventSendNeverInteract = 16,
+        NSAppleEventSendCanInteract = 32,
+        NSAppleEventSendAlwaysInteract = 48,
+        NSAppleEventSendCanSwitchLayer = 64,
+        NSAppleEventSendDontRecord = 4096,
+        NSAppleEventSendDontExecute = 8192,
+        NSAppleEventSendDontAnnotate = 65536,
+        NSAppleEventSendDefaultOptions = 35,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

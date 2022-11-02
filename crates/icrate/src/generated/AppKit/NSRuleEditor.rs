@@ -7,43 +7,37 @@ use crate::Foundation::*;
 
 pub type NSRuleEditorPredicatePartKey = NSString;
 
-extern "C" {
-    pub static NSRuleEditorPredicateLeftExpression: &'static NSRuleEditorPredicatePartKey;
-}
+extern_static!(NSRuleEditorPredicateLeftExpression: &'static NSRuleEditorPredicatePartKey);
 
-extern "C" {
-    pub static NSRuleEditorPredicateRightExpression: &'static NSRuleEditorPredicatePartKey;
-}
+extern_static!(NSRuleEditorPredicateRightExpression: &'static NSRuleEditorPredicatePartKey);
 
-extern "C" {
-    pub static NSRuleEditorPredicateComparisonModifier: &'static NSRuleEditorPredicatePartKey;
-}
+extern_static!(NSRuleEditorPredicateComparisonModifier: &'static NSRuleEditorPredicatePartKey);
 
-extern "C" {
-    pub static NSRuleEditorPredicateOptions: &'static NSRuleEditorPredicatePartKey;
-}
+extern_static!(NSRuleEditorPredicateOptions: &'static NSRuleEditorPredicatePartKey);
 
-extern "C" {
-    pub static NSRuleEditorPredicateOperatorType: &'static NSRuleEditorPredicatePartKey;
-}
+extern_static!(NSRuleEditorPredicateOperatorType: &'static NSRuleEditorPredicatePartKey);
 
-extern "C" {
-    pub static NSRuleEditorPredicateCustomSelector: &'static NSRuleEditorPredicatePartKey;
-}
+extern_static!(NSRuleEditorPredicateCustomSelector: &'static NSRuleEditorPredicatePartKey);
 
-extern "C" {
-    pub static NSRuleEditorPredicateCompoundType: &'static NSRuleEditorPredicatePartKey;
-}
+extern_static!(NSRuleEditorPredicateCompoundType: &'static NSRuleEditorPredicatePartKey);
 
-pub type NSRuleEditorNestingMode = NSUInteger;
-pub const NSRuleEditorNestingModeSingle: NSRuleEditorNestingMode = 0;
-pub const NSRuleEditorNestingModeList: NSRuleEditorNestingMode = 1;
-pub const NSRuleEditorNestingModeCompound: NSRuleEditorNestingMode = 2;
-pub const NSRuleEditorNestingModeSimple: NSRuleEditorNestingMode = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSRuleEditorNestingMode {
+        NSRuleEditorNestingModeSingle = 0,
+        NSRuleEditorNestingModeList = 1,
+        NSRuleEditorNestingModeCompound = 2,
+        NSRuleEditorNestingModeSimple = 3,
+    }
+);
 
-pub type NSRuleEditorRowType = NSUInteger;
-pub const NSRuleEditorRowTypeSimple: NSRuleEditorRowType = 0;
-pub const NSRuleEditorRowTypeCompound: NSRuleEditorRowType = 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSRuleEditorRowType {
+        NSRuleEditorRowTypeSimple = 0,
+        NSRuleEditorRowTypeCompound = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -213,6 +207,4 @@ extern_methods!(
 
 pub type NSRuleEditorDelegate = NSObject;
 
-extern "C" {
-    pub static NSRuleEditorRowsDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSRuleEditorRowsDidChangeNotification: &'static NSNotificationName);

@@ -7,13 +7,9 @@ use crate::Foundation::*;
 
 pub type NSDraggingImageComponentKey = NSString;
 
-extern "C" {
-    pub static NSDraggingImageComponentIconKey: &'static NSDraggingImageComponentKey;
-}
+extern_static!(NSDraggingImageComponentIconKey: &'static NSDraggingImageComponentKey);
 
-extern "C" {
-    pub static NSDraggingImageComponentLabelKey: &'static NSDraggingImageComponentKey;
-}
+extern_static!(NSDraggingImageComponentLabelKey: &'static NSDraggingImageComponentKey);
 
 extern_class!(
     #[derive(Debug)]

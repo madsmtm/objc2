@@ -3,55 +3,31 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSUndefinedKeyException: &'static NSExceptionName;
-}
+extern_static!(NSUndefinedKeyException: &'static NSExceptionName);
 
 pub type NSKeyValueOperator = NSString;
 
-extern "C" {
-    pub static NSAverageKeyValueOperator: &'static NSKeyValueOperator;
-}
+extern_static!(NSAverageKeyValueOperator: &'static NSKeyValueOperator);
 
-extern "C" {
-    pub static NSCountKeyValueOperator: &'static NSKeyValueOperator;
-}
+extern_static!(NSCountKeyValueOperator: &'static NSKeyValueOperator);
 
-extern "C" {
-    pub static NSDistinctUnionOfArraysKeyValueOperator: &'static NSKeyValueOperator;
-}
+extern_static!(NSDistinctUnionOfArraysKeyValueOperator: &'static NSKeyValueOperator);
 
-extern "C" {
-    pub static NSDistinctUnionOfObjectsKeyValueOperator: &'static NSKeyValueOperator;
-}
+extern_static!(NSDistinctUnionOfObjectsKeyValueOperator: &'static NSKeyValueOperator);
 
-extern "C" {
-    pub static NSDistinctUnionOfSetsKeyValueOperator: &'static NSKeyValueOperator;
-}
+extern_static!(NSDistinctUnionOfSetsKeyValueOperator: &'static NSKeyValueOperator);
 
-extern "C" {
-    pub static NSMaximumKeyValueOperator: &'static NSKeyValueOperator;
-}
+extern_static!(NSMaximumKeyValueOperator: &'static NSKeyValueOperator);
 
-extern "C" {
-    pub static NSMinimumKeyValueOperator: &'static NSKeyValueOperator;
-}
+extern_static!(NSMinimumKeyValueOperator: &'static NSKeyValueOperator);
 
-extern "C" {
-    pub static NSSumKeyValueOperator: &'static NSKeyValueOperator;
-}
+extern_static!(NSSumKeyValueOperator: &'static NSKeyValueOperator);
 
-extern "C" {
-    pub static NSUnionOfArraysKeyValueOperator: &'static NSKeyValueOperator;
-}
+extern_static!(NSUnionOfArraysKeyValueOperator: &'static NSKeyValueOperator);
 
-extern "C" {
-    pub static NSUnionOfObjectsKeyValueOperator: &'static NSKeyValueOperator;
-}
+extern_static!(NSUnionOfObjectsKeyValueOperator: &'static NSKeyValueOperator);
 
-extern "C" {
-    pub static NSUnionOfSetsKeyValueOperator: &'static NSKeyValueOperator;
-}
+extern_static!(NSUnionOfSetsKeyValueOperator: &'static NSKeyValueOperator);
 
 extern_methods!(
     /// NSKeyValueCoding

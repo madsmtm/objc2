@@ -5,76 +5,104 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSCellType = NSUInteger;
-pub const NSNullCellType: NSCellType = 0;
-pub const NSTextCellType: NSCellType = 1;
-pub const NSImageCellType: NSCellType = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSCellType {
+        NSNullCellType = 0,
+        NSTextCellType = 1,
+        NSImageCellType = 2,
+    }
+);
 
-pub type NSCellAttribute = NSUInteger;
-pub const NSCellDisabled: NSCellAttribute = 0;
-pub const NSCellState: NSCellAttribute = 1;
-pub const NSPushInCell: NSCellAttribute = 2;
-pub const NSCellEditable: NSCellAttribute = 3;
-pub const NSChangeGrayCell: NSCellAttribute = 4;
-pub const NSCellHighlighted: NSCellAttribute = 5;
-pub const NSCellLightsByContents: NSCellAttribute = 6;
-pub const NSCellLightsByGray: NSCellAttribute = 7;
-pub const NSChangeBackgroundCell: NSCellAttribute = 8;
-pub const NSCellLightsByBackground: NSCellAttribute = 9;
-pub const NSCellIsBordered: NSCellAttribute = 10;
-pub const NSCellHasOverlappingImage: NSCellAttribute = 11;
-pub const NSCellHasImageHorizontal: NSCellAttribute = 12;
-pub const NSCellHasImageOnLeftOrBottom: NSCellAttribute = 13;
-pub const NSCellChangesContents: NSCellAttribute = 14;
-pub const NSCellIsInsetButton: NSCellAttribute = 15;
-pub const NSCellAllowsMixedState: NSCellAttribute = 16;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSCellAttribute {
+        NSCellDisabled = 0,
+        NSCellState = 1,
+        NSPushInCell = 2,
+        NSCellEditable = 3,
+        NSChangeGrayCell = 4,
+        NSCellHighlighted = 5,
+        NSCellLightsByContents = 6,
+        NSCellLightsByGray = 7,
+        NSChangeBackgroundCell = 8,
+        NSCellLightsByBackground = 9,
+        NSCellIsBordered = 10,
+        NSCellHasOverlappingImage = 11,
+        NSCellHasImageHorizontal = 12,
+        NSCellHasImageOnLeftOrBottom = 13,
+        NSCellChangesContents = 14,
+        NSCellIsInsetButton = 15,
+        NSCellAllowsMixedState = 16,
+    }
+);
 
-pub type NSCellImagePosition = NSUInteger;
-pub const NSNoImage: NSCellImagePosition = 0;
-pub const NSImageOnly: NSCellImagePosition = 1;
-pub const NSImageLeft: NSCellImagePosition = 2;
-pub const NSImageRight: NSCellImagePosition = 3;
-pub const NSImageBelow: NSCellImagePosition = 4;
-pub const NSImageAbove: NSCellImagePosition = 5;
-pub const NSImageOverlaps: NSCellImagePosition = 6;
-pub const NSImageLeading: NSCellImagePosition = 7;
-pub const NSImageTrailing: NSCellImagePosition = 8;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSCellImagePosition {
+        NSNoImage = 0,
+        NSImageOnly = 1,
+        NSImageLeft = 2,
+        NSImageRight = 3,
+        NSImageBelow = 4,
+        NSImageAbove = 5,
+        NSImageOverlaps = 6,
+        NSImageLeading = 7,
+        NSImageTrailing = 8,
+    }
+);
 
-pub type NSImageScaling = NSUInteger;
-pub const NSImageScaleProportionallyDown: NSImageScaling = 0;
-pub const NSImageScaleAxesIndependently: NSImageScaling = 1;
-pub const NSImageScaleNone: NSImageScaling = 2;
-pub const NSImageScaleProportionallyUpOrDown: NSImageScaling = 3;
-pub const NSScaleProportionally: NSImageScaling = 0;
-pub const NSScaleToFit: NSImageScaling = 1;
-pub const NSScaleNone: NSImageScaling = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSImageScaling {
+        NSImageScaleProportionallyDown = 0,
+        NSImageScaleAxesIndependently = 1,
+        NSImageScaleNone = 2,
+        NSImageScaleProportionallyUpOrDown = 3,
+        NSScaleProportionally = 0,
+        NSScaleToFit = 1,
+        NSScaleNone = 2,
+    }
+);
 
 pub type NSControlStateValue = NSInteger;
 
-pub static NSControlStateValueMixed: NSControlStateValue = -1;
+extern_static!(NSControlStateValueMixed: NSControlStateValue = -1);
 
-pub static NSControlStateValueOff: NSControlStateValue = 0;
+extern_static!(NSControlStateValueOff: NSControlStateValue = 0);
 
-pub static NSControlStateValueOn: NSControlStateValue = 1;
+extern_static!(NSControlStateValueOn: NSControlStateValue = 1);
 
-pub type NSCellStyleMask = NSUInteger;
-pub const NSNoCellMask: NSCellStyleMask = 0;
-pub const NSContentsCellMask: NSCellStyleMask = 1;
-pub const NSPushInCellMask: NSCellStyleMask = 2;
-pub const NSChangeGrayCellMask: NSCellStyleMask = 4;
-pub const NSChangeBackgroundCellMask: NSCellStyleMask = 8;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSCellStyleMask {
+        NSNoCellMask = 0,
+        NSContentsCellMask = 1,
+        NSPushInCellMask = 2,
+        NSChangeGrayCellMask = 4,
+        NSChangeBackgroundCellMask = 8,
+    }
+);
 
-pub type NSControlTint = NSUInteger;
-pub const NSDefaultControlTint: NSControlTint = 0;
-pub const NSBlueControlTint: NSControlTint = 1;
-pub const NSGraphiteControlTint: NSControlTint = 6;
-pub const NSClearControlTint: NSControlTint = 7;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSControlTint {
+        NSDefaultControlTint = 0,
+        NSBlueControlTint = 1,
+        NSGraphiteControlTint = 6,
+        NSClearControlTint = 7,
+    }
+);
 
-pub type NSControlSize = NSUInteger;
-pub const NSControlSizeRegular: NSControlSize = 0;
-pub const NSControlSizeSmall: NSControlSize = 1;
-pub const NSControlSizeMini: NSControlSize = 2;
-pub const NSControlSizeLarge: NSControlSize = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSControlSize {
+        NSControlSizeRegular = 0,
+        NSControlSizeSmall = 1,
+        NSControlSizeMini = 2,
+        NSControlSizeLarge = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -596,11 +624,15 @@ extern_methods!(
     }
 );
 
-pub type NSCellHitResult = NSUInteger;
-pub const NSCellHitNone: NSCellHitResult = 0;
-pub const NSCellHitContentArea: NSCellHitResult = 1 << 0;
-pub const NSCellHitEditableTextArea: NSCellHitResult = 1 << 1;
-pub const NSCellHitTrackableArea: NSCellHitResult = 1 << 2;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSCellHitResult {
+        NSCellHitNone = 0,
+        NSCellHitContentArea = 1 << 0,
+        NSCellHitEditableTextArea = 1 << 1,
+        NSCellHitTrackableArea = 1 << 2,
+    }
+);
 
 extern_methods!(
     /// NSCellHitTest
@@ -630,11 +662,15 @@ extern_methods!(
     }
 );
 
-pub type NSBackgroundStyle = NSInteger;
-pub const NSBackgroundStyleNormal: NSBackgroundStyle = 0;
-pub const NSBackgroundStyleEmphasized: NSBackgroundStyle = 1;
-pub const NSBackgroundStyleRaised: NSBackgroundStyle = 2;
-pub const NSBackgroundStyleLowered: NSBackgroundStyle = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSBackgroundStyle {
+        NSBackgroundStyleNormal = 0,
+        NSBackgroundStyleEmphasized = 1,
+        NSBackgroundStyleRaised = 2,
+        NSBackgroundStyleLowered = 3,
+    }
+);
 
 extern_methods!(
     /// NSCellBackgroundStyle
@@ -690,32 +726,35 @@ extern_methods!(
     }
 );
 
-pub static NSBackgroundStyleLight: NSBackgroundStyle = NSBackgroundStyleNormal;
+extern_static!(NSBackgroundStyleLight: NSBackgroundStyle = NSBackgroundStyleNormal);
 
-pub static NSBackgroundStyleDark: NSBackgroundStyle = NSBackgroundStyleEmphasized;
+extern_static!(NSBackgroundStyleDark: NSBackgroundStyle = NSBackgroundStyleEmphasized);
 
 pub type NSCellStateValue = NSControlStateValue;
 
-pub static NSMixedState: NSControlStateValue = NSControlStateValueMixed;
+extern_static!(NSMixedState: NSControlStateValue = NSControlStateValueMixed);
 
-pub static NSOffState: NSControlStateValue = NSControlStateValueOff;
+extern_static!(NSOffState: NSControlStateValue = NSControlStateValueOff);
 
-pub static NSOnState: NSControlStateValue = NSControlStateValueOn;
+extern_static!(NSOnState: NSControlStateValue = NSControlStateValueOn);
 
-pub static NSRegularControlSize: NSControlSize = NSControlSizeRegular;
+extern_static!(NSRegularControlSize: NSControlSize = NSControlSizeRegular);
 
-pub static NSSmallControlSize: NSControlSize = NSControlSizeSmall;
+extern_static!(NSSmallControlSize: NSControlSize = NSControlSizeSmall);
 
-pub static NSMiniControlSize: NSControlSize = NSControlSizeMini;
+extern_static!(NSMiniControlSize: NSControlSize = NSControlSizeMini);
 
-extern "C" {
-    pub static NSControlTintDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSControlTintDidChangeNotification: &'static NSNotificationName);
 
-pub const NSAnyType: c_uint = 0;
-pub const NSIntType: c_uint = 1;
-pub const NSPositiveIntType: c_uint = 2;
-pub const NSFloatType: c_uint = 3;
-pub const NSPositiveFloatType: c_uint = 4;
-pub const NSDoubleType: c_uint = 6;
-pub const NSPositiveDoubleType: c_uint = 7;
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+        NSAnyType = 0,
+        NSIntType = 1,
+        NSPositiveIntType = 2,
+        NSFloatType = 3,
+        NSPositiveFloatType = 4,
+        NSDoubleType = 6,
+        NSPositiveDoubleType = 7,
+    }
+);

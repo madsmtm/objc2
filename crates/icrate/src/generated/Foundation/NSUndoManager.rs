@@ -3,11 +3,9 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub static NSUndoCloseGroupingRunLoopOrdering: NSUInteger = 350000;
+extern_static!(NSUndoCloseGroupingRunLoopOrdering: NSUInteger = 350000);
 
-extern "C" {
-    pub static NSUndoManagerGroupIsDiscardableKey: &'static NSString;
-}
+extern_static!(NSUndoManagerGroupIsDiscardableKey: &'static NSString);
 
 extern_class!(
     #[derive(Debug)]
@@ -139,34 +137,18 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSUndoManagerCheckpointNotification: &'static NSNotificationName;
-}
+extern_static!(NSUndoManagerCheckpointNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSUndoManagerWillUndoChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSUndoManagerWillUndoChangeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSUndoManagerWillRedoChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSUndoManagerWillRedoChangeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSUndoManagerDidUndoChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSUndoManagerDidUndoChangeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSUndoManagerDidRedoChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSUndoManagerDidRedoChangeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSUndoManagerDidOpenUndoGroupNotification: &'static NSNotificationName;
-}
+extern_static!(NSUndoManagerDidOpenUndoGroupNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSUndoManagerWillCloseUndoGroupNotification: &'static NSNotificationName;
-}
+extern_static!(NSUndoManagerWillCloseUndoGroupNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSUndoManagerDidCloseUndoGroupNotification: &'static NSNotificationName;
-}
+extern_static!(NSUndoManagerDidCloseUndoGroupNotification: &'static NSNotificationName);

@@ -3,15 +3,23 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSPropertyListMutabilityOptions = NSUInteger;
-pub const NSPropertyListImmutable: NSPropertyListMutabilityOptions = 0;
-pub const NSPropertyListMutableContainers: NSPropertyListMutabilityOptions = 1;
-pub const NSPropertyListMutableContainersAndLeaves: NSPropertyListMutabilityOptions = 2;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSPropertyListMutabilityOptions {
+        NSPropertyListImmutable = 0,
+        NSPropertyListMutableContainers = 1,
+        NSPropertyListMutableContainersAndLeaves = 2,
+    }
+);
 
-pub type NSPropertyListFormat = NSUInteger;
-pub const NSPropertyListOpenStepFormat: NSPropertyListFormat = 1;
-pub const NSPropertyListXMLFormat_v1_0: NSPropertyListFormat = 100;
-pub const NSPropertyListBinaryFormat_v1_0: NSPropertyListFormat = 200;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSPropertyListFormat {
+        NSPropertyListOpenStepFormat = 1,
+        NSPropertyListXMLFormat_v1_0 = 100,
+        NSPropertyListBinaryFormat_v1_0 = 200,
+    }
+);
 
 pub type NSPropertyListReadOptions = NSPropertyListMutabilityOptions;
 

@@ -5,10 +5,18 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSUserInterfaceLayoutDirection = NSInteger;
-pub const NSUserInterfaceLayoutDirectionLeftToRight: NSUserInterfaceLayoutDirection = 0;
-pub const NSUserInterfaceLayoutDirectionRightToLeft: NSUserInterfaceLayoutDirection = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSUserInterfaceLayoutDirection {
+        NSUserInterfaceLayoutDirectionLeftToRight = 0,
+        NSUserInterfaceLayoutDirectionRightToLeft = 1,
+    }
+);
 
-pub type NSUserInterfaceLayoutOrientation = NSInteger;
-pub const NSUserInterfaceLayoutOrientationHorizontal: NSUserInterfaceLayoutOrientation = 0;
-pub const NSUserInterfaceLayoutOrientationVertical: NSUserInterfaceLayoutOrientation = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSUserInterfaceLayoutOrientation {
+        NSUserInterfaceLayoutOrientationHorizontal = 0,
+        NSUserInterfaceLayoutOrientationVertical = 1,
+    }
+);

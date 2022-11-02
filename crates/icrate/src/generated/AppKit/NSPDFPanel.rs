@@ -5,10 +5,14 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSPDFPanelOptions = NSInteger;
-pub const NSPDFPanelShowsPaperSize: NSPDFPanelOptions = 1 << 2;
-pub const NSPDFPanelShowsOrientation: NSPDFPanelOptions = 1 << 3;
-pub const NSPDFPanelRequestsParentDirectory: NSPDFPanelOptions = 1 << 24;
+ns_options!(
+    #[underlying(NSInteger)]
+    pub enum NSPDFPanelOptions {
+        NSPDFPanelShowsPaperSize = 1 << 2,
+        NSPDFPanelShowsOrientation = 1 << 3,
+        NSPDFPanelRequestsParentDirectory = 1 << 24,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

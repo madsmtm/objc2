@@ -5,26 +5,26 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSFontCollectionVisibility = NSUInteger;
-pub const NSFontCollectionVisibilityProcess: NSFontCollectionVisibility = 1 << 0;
-pub const NSFontCollectionVisibilityUser: NSFontCollectionVisibility = 1 << 1;
-pub const NSFontCollectionVisibilityComputer: NSFontCollectionVisibility = 1 << 2;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSFontCollectionVisibility {
+        NSFontCollectionVisibilityProcess = 1 << 0,
+        NSFontCollectionVisibilityUser = 1 << 1,
+        NSFontCollectionVisibilityComputer = 1 << 2,
+    }
+);
 
 pub type NSFontCollectionMatchingOptionKey = NSString;
 
-extern "C" {
-    pub static NSFontCollectionIncludeDisabledFontsOption:
-        &'static NSFontCollectionMatchingOptionKey;
-}
+extern_static!(
+    NSFontCollectionIncludeDisabledFontsOption: &'static NSFontCollectionMatchingOptionKey
+);
 
-extern "C" {
-    pub static NSFontCollectionRemoveDuplicatesOption: &'static NSFontCollectionMatchingOptionKey;
-}
+extern_static!(NSFontCollectionRemoveDuplicatesOption: &'static NSFontCollectionMatchingOptionKey);
 
-extern "C" {
-    pub static NSFontCollectionDisallowAutoActivationOption:
-        &'static NSFontCollectionMatchingOptionKey;
-}
+extern_static!(
+    NSFontCollectionDisallowAutoActivationOption: &'static NSFontCollectionMatchingOptionKey
+);
 
 pub type NSFontCollectionName = NSString;
 
@@ -178,54 +178,30 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSFontCollectionDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSFontCollectionDidChangeNotification: &'static NSNotificationName);
 
 pub type NSFontCollectionUserInfoKey = NSString;
 
-extern "C" {
-    pub static NSFontCollectionActionKey: &'static NSFontCollectionUserInfoKey;
-}
+extern_static!(NSFontCollectionActionKey: &'static NSFontCollectionUserInfoKey);
 
-extern "C" {
-    pub static NSFontCollectionNameKey: &'static NSFontCollectionUserInfoKey;
-}
+extern_static!(NSFontCollectionNameKey: &'static NSFontCollectionUserInfoKey);
 
-extern "C" {
-    pub static NSFontCollectionOldNameKey: &'static NSFontCollectionUserInfoKey;
-}
+extern_static!(NSFontCollectionOldNameKey: &'static NSFontCollectionUserInfoKey);
 
-extern "C" {
-    pub static NSFontCollectionVisibilityKey: &'static NSFontCollectionUserInfoKey;
-}
+extern_static!(NSFontCollectionVisibilityKey: &'static NSFontCollectionUserInfoKey);
 
 pub type NSFontCollectionActionTypeKey = NSString;
 
-extern "C" {
-    pub static NSFontCollectionWasShown: &'static NSFontCollectionActionTypeKey;
-}
+extern_static!(NSFontCollectionWasShown: &'static NSFontCollectionActionTypeKey);
 
-extern "C" {
-    pub static NSFontCollectionWasHidden: &'static NSFontCollectionActionTypeKey;
-}
+extern_static!(NSFontCollectionWasHidden: &'static NSFontCollectionActionTypeKey);
 
-extern "C" {
-    pub static NSFontCollectionWasRenamed: &'static NSFontCollectionActionTypeKey;
-}
+extern_static!(NSFontCollectionWasRenamed: &'static NSFontCollectionActionTypeKey);
 
-extern "C" {
-    pub static NSFontCollectionAllFonts: &'static NSFontCollectionName;
-}
+extern_static!(NSFontCollectionAllFonts: &'static NSFontCollectionName);
 
-extern "C" {
-    pub static NSFontCollectionUser: &'static NSFontCollectionName;
-}
+extern_static!(NSFontCollectionUser: &'static NSFontCollectionName);
 
-extern "C" {
-    pub static NSFontCollectionFavorites: &'static NSFontCollectionName;
-}
+extern_static!(NSFontCollectionFavorites: &'static NSFontCollectionName);
 
-extern "C" {
-    pub static NSFontCollectionRecentlyUsed: &'static NSFontCollectionName;
-}
+extern_static!(NSFontCollectionRecentlyUsed: &'static NSFontCollectionName);

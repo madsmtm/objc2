@@ -117,37 +117,21 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSFileHandleOperationException: &'static NSExceptionName;
-}
+extern_static!(NSFileHandleOperationException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSFileHandleReadCompletionNotification: &'static NSNotificationName;
-}
+extern_static!(NSFileHandleReadCompletionNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSFileHandleReadToEndOfFileCompletionNotification: &'static NSNotificationName;
-}
+extern_static!(NSFileHandleReadToEndOfFileCompletionNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSFileHandleConnectionAcceptedNotification: &'static NSNotificationName;
-}
+extern_static!(NSFileHandleConnectionAcceptedNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSFileHandleDataAvailableNotification: &'static NSNotificationName;
-}
+extern_static!(NSFileHandleDataAvailableNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSFileHandleNotificationDataItem: &'static NSString;
-}
+extern_static!(NSFileHandleNotificationDataItem: &'static NSString);
 
-extern "C" {
-    pub static NSFileHandleNotificationFileHandleItem: &'static NSString;
-}
+extern_static!(NSFileHandleNotificationFileHandleItem: &'static NSString);
 
-extern "C" {
-    pub static NSFileHandleNotificationMonitorModes: &'static NSString;
-}
+extern_static!(NSFileHandleNotificationMonitorModes: &'static NSString);
 
 extern_methods!(
     /// NSFileHandleAsynchronousAccess

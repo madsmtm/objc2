@@ -3,37 +3,49 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSGrammaticalGender = NSInteger;
-pub const NSGrammaticalGenderNotSet: NSGrammaticalGender = 0;
-pub const NSGrammaticalGenderFeminine: NSGrammaticalGender = 1;
-pub const NSGrammaticalGenderMasculine: NSGrammaticalGender = 2;
-pub const NSGrammaticalGenderNeuter: NSGrammaticalGender = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSGrammaticalGender {
+        NSGrammaticalGenderNotSet = 0,
+        NSGrammaticalGenderFeminine = 1,
+        NSGrammaticalGenderMasculine = 2,
+        NSGrammaticalGenderNeuter = 3,
+    }
+);
 
-pub type NSGrammaticalPartOfSpeech = NSInteger;
-pub const NSGrammaticalPartOfSpeechNotSet: NSGrammaticalPartOfSpeech = 0;
-pub const NSGrammaticalPartOfSpeechDeterminer: NSGrammaticalPartOfSpeech = 1;
-pub const NSGrammaticalPartOfSpeechPronoun: NSGrammaticalPartOfSpeech = 2;
-pub const NSGrammaticalPartOfSpeechLetter: NSGrammaticalPartOfSpeech = 3;
-pub const NSGrammaticalPartOfSpeechAdverb: NSGrammaticalPartOfSpeech = 4;
-pub const NSGrammaticalPartOfSpeechParticle: NSGrammaticalPartOfSpeech = 5;
-pub const NSGrammaticalPartOfSpeechAdjective: NSGrammaticalPartOfSpeech = 6;
-pub const NSGrammaticalPartOfSpeechAdposition: NSGrammaticalPartOfSpeech = 7;
-pub const NSGrammaticalPartOfSpeechVerb: NSGrammaticalPartOfSpeech = 8;
-pub const NSGrammaticalPartOfSpeechNoun: NSGrammaticalPartOfSpeech = 9;
-pub const NSGrammaticalPartOfSpeechConjunction: NSGrammaticalPartOfSpeech = 10;
-pub const NSGrammaticalPartOfSpeechNumeral: NSGrammaticalPartOfSpeech = 11;
-pub const NSGrammaticalPartOfSpeechInterjection: NSGrammaticalPartOfSpeech = 12;
-pub const NSGrammaticalPartOfSpeechPreposition: NSGrammaticalPartOfSpeech = 13;
-pub const NSGrammaticalPartOfSpeechAbbreviation: NSGrammaticalPartOfSpeech = 14;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSGrammaticalPartOfSpeech {
+        NSGrammaticalPartOfSpeechNotSet = 0,
+        NSGrammaticalPartOfSpeechDeterminer = 1,
+        NSGrammaticalPartOfSpeechPronoun = 2,
+        NSGrammaticalPartOfSpeechLetter = 3,
+        NSGrammaticalPartOfSpeechAdverb = 4,
+        NSGrammaticalPartOfSpeechParticle = 5,
+        NSGrammaticalPartOfSpeechAdjective = 6,
+        NSGrammaticalPartOfSpeechAdposition = 7,
+        NSGrammaticalPartOfSpeechVerb = 8,
+        NSGrammaticalPartOfSpeechNoun = 9,
+        NSGrammaticalPartOfSpeechConjunction = 10,
+        NSGrammaticalPartOfSpeechNumeral = 11,
+        NSGrammaticalPartOfSpeechInterjection = 12,
+        NSGrammaticalPartOfSpeechPreposition = 13,
+        NSGrammaticalPartOfSpeechAbbreviation = 14,
+    }
+);
 
-pub type NSGrammaticalNumber = NSInteger;
-pub const NSGrammaticalNumberNotSet: NSGrammaticalNumber = 0;
-pub const NSGrammaticalNumberSingular: NSGrammaticalNumber = 1;
-pub const NSGrammaticalNumberZero: NSGrammaticalNumber = 2;
-pub const NSGrammaticalNumberPlural: NSGrammaticalNumber = 3;
-pub const NSGrammaticalNumberPluralTwo: NSGrammaticalNumber = 4;
-pub const NSGrammaticalNumberPluralFew: NSGrammaticalNumber = 5;
-pub const NSGrammaticalNumberPluralMany: NSGrammaticalNumber = 6;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSGrammaticalNumber {
+        NSGrammaticalNumberNotSet = 0,
+        NSGrammaticalNumberSingular = 1,
+        NSGrammaticalNumberZero = 2,
+        NSGrammaticalNumberPlural = 3,
+        NSGrammaticalNumberPluralTwo = 4,
+        NSGrammaticalNumberPluralFew = 5,
+        NSGrammaticalNumberPluralMany = 6,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

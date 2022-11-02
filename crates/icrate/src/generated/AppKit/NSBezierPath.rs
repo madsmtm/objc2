@@ -5,25 +5,41 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSLineCapStyle = NSUInteger;
-pub const NSLineCapStyleButt: NSLineCapStyle = 0;
-pub const NSLineCapStyleRound: NSLineCapStyle = 1;
-pub const NSLineCapStyleSquare: NSLineCapStyle = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSLineCapStyle {
+        NSLineCapStyleButt = 0,
+        NSLineCapStyleRound = 1,
+        NSLineCapStyleSquare = 2,
+    }
+);
 
-pub type NSLineJoinStyle = NSUInteger;
-pub const NSLineJoinStyleMiter: NSLineJoinStyle = 0;
-pub const NSLineJoinStyleRound: NSLineJoinStyle = 1;
-pub const NSLineJoinStyleBevel: NSLineJoinStyle = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSLineJoinStyle {
+        NSLineJoinStyleMiter = 0,
+        NSLineJoinStyleRound = 1,
+        NSLineJoinStyleBevel = 2,
+    }
+);
 
-pub type NSWindingRule = NSUInteger;
-pub const NSWindingRuleNonZero: NSWindingRule = 0;
-pub const NSWindingRuleEvenOdd: NSWindingRule = 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSWindingRule {
+        NSWindingRuleNonZero = 0,
+        NSWindingRuleEvenOdd = 1,
+    }
+);
 
-pub type NSBezierPathElement = NSUInteger;
-pub const NSBezierPathElementMoveTo: NSBezierPathElement = 0;
-pub const NSBezierPathElementLineTo: NSBezierPathElement = 1;
-pub const NSBezierPathElementCurveTo: NSBezierPathElement = 2;
-pub const NSBezierPathElementClosePath: NSBezierPathElement = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSBezierPathElement {
+        NSBezierPathElementMoveTo = 0,
+        NSBezierPathElementLineTo = 1,
+        NSBezierPathElementCurveTo = 2,
+        NSBezierPathElementClosePath = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -330,26 +346,26 @@ extern_methods!(
     }
 );
 
-pub static NSButtLineCapStyle: NSLineCapStyle = NSLineCapStyleButt;
+extern_static!(NSButtLineCapStyle: NSLineCapStyle = NSLineCapStyleButt);
 
-pub static NSRoundLineCapStyle: NSLineCapStyle = NSLineCapStyleRound;
+extern_static!(NSRoundLineCapStyle: NSLineCapStyle = NSLineCapStyleRound);
 
-pub static NSSquareLineCapStyle: NSLineCapStyle = NSLineCapStyleSquare;
+extern_static!(NSSquareLineCapStyle: NSLineCapStyle = NSLineCapStyleSquare);
 
-pub static NSMiterLineJoinStyle: NSLineJoinStyle = NSLineJoinStyleMiter;
+extern_static!(NSMiterLineJoinStyle: NSLineJoinStyle = NSLineJoinStyleMiter);
 
-pub static NSRoundLineJoinStyle: NSLineJoinStyle = NSLineJoinStyleRound;
+extern_static!(NSRoundLineJoinStyle: NSLineJoinStyle = NSLineJoinStyleRound);
 
-pub static NSBevelLineJoinStyle: NSLineJoinStyle = NSLineJoinStyleBevel;
+extern_static!(NSBevelLineJoinStyle: NSLineJoinStyle = NSLineJoinStyleBevel);
 
-pub static NSNonZeroWindingRule: NSWindingRule = NSWindingRuleNonZero;
+extern_static!(NSNonZeroWindingRule: NSWindingRule = NSWindingRuleNonZero);
 
-pub static NSEvenOddWindingRule: NSWindingRule = NSWindingRuleEvenOdd;
+extern_static!(NSEvenOddWindingRule: NSWindingRule = NSWindingRuleEvenOdd);
 
-pub static NSMoveToBezierPathElement: NSBezierPathElement = NSBezierPathElementMoveTo;
+extern_static!(NSMoveToBezierPathElement: NSBezierPathElement = NSBezierPathElementMoveTo);
 
-pub static NSLineToBezierPathElement: NSBezierPathElement = NSBezierPathElementLineTo;
+extern_static!(NSLineToBezierPathElement: NSBezierPathElement = NSBezierPathElementLineTo);
 
-pub static NSCurveToBezierPathElement: NSBezierPathElement = NSBezierPathElementCurveTo;
+extern_static!(NSCurveToBezierPathElement: NSBezierPathElement = NSBezierPathElementCurveTo);
 
-pub static NSClosePathBezierPathElement: NSBezierPathElement = NSBezierPathElementClosePath;
+extern_static!(NSClosePathBezierPathElement: NSBezierPathElement = NSBezierPathElementClosePath);

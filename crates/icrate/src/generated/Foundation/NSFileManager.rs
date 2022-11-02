@@ -11,41 +11,53 @@ pub type NSFileProtectionType = NSString;
 
 pub type NSFileProviderServiceName = NSString;
 
-pub type NSVolumeEnumerationOptions = NSUInteger;
-pub const NSVolumeEnumerationSkipHiddenVolumes: NSVolumeEnumerationOptions = 1 << 1;
-pub const NSVolumeEnumerationProduceFileReferenceURLs: NSVolumeEnumerationOptions = 1 << 2;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSVolumeEnumerationOptions {
+        NSVolumeEnumerationSkipHiddenVolumes = 1 << 1,
+        NSVolumeEnumerationProduceFileReferenceURLs = 1 << 2,
+    }
+);
 
-pub type NSDirectoryEnumerationOptions = NSUInteger;
-pub const NSDirectoryEnumerationSkipsSubdirectoryDescendants: NSDirectoryEnumerationOptions =
-    1 << 0;
-pub const NSDirectoryEnumerationSkipsPackageDescendants: NSDirectoryEnumerationOptions = 1 << 1;
-pub const NSDirectoryEnumerationSkipsHiddenFiles: NSDirectoryEnumerationOptions = 1 << 2;
-pub const NSDirectoryEnumerationIncludesDirectoriesPostOrder: NSDirectoryEnumerationOptions =
-    1 << 3;
-pub const NSDirectoryEnumerationProducesRelativePathURLs: NSDirectoryEnumerationOptions = 1 << 4;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSDirectoryEnumerationOptions {
+        NSDirectoryEnumerationSkipsSubdirectoryDescendants = 1 << 0,
+        NSDirectoryEnumerationSkipsPackageDescendants = 1 << 1,
+        NSDirectoryEnumerationSkipsHiddenFiles = 1 << 2,
+        NSDirectoryEnumerationIncludesDirectoriesPostOrder = 1 << 3,
+        NSDirectoryEnumerationProducesRelativePathURLs = 1 << 4,
+    }
+);
 
-pub type NSFileManagerItemReplacementOptions = NSUInteger;
-pub const NSFileManagerItemReplacementUsingNewMetadataOnly: NSFileManagerItemReplacementOptions =
-    1 << 0;
-pub const NSFileManagerItemReplacementWithoutDeletingBackupItem:
-    NSFileManagerItemReplacementOptions = 1 << 1;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSFileManagerItemReplacementOptions {
+        NSFileManagerItemReplacementUsingNewMetadataOnly = 1 << 0,
+        NSFileManagerItemReplacementWithoutDeletingBackupItem = 1 << 1,
+    }
+);
 
-pub type NSURLRelationship = NSInteger;
-pub const NSURLRelationshipContains: NSURLRelationship = 0;
-pub const NSURLRelationshipSame: NSURLRelationship = 1;
-pub const NSURLRelationshipOther: NSURLRelationship = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSURLRelationship {
+        NSURLRelationshipContains = 0,
+        NSURLRelationshipSame = 1,
+        NSURLRelationshipOther = 2,
+    }
+);
 
-pub type NSFileManagerUnmountOptions = NSUInteger;
-pub const NSFileManagerUnmountAllPartitionsAndEjectDisk: NSFileManagerUnmountOptions = 1 << 0;
-pub const NSFileManagerUnmountWithoutUI: NSFileManagerUnmountOptions = 1 << 1;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSFileManagerUnmountOptions {
+        NSFileManagerUnmountAllPartitionsAndEjectDisk = 1 << 0,
+        NSFileManagerUnmountWithoutUI = 1 << 1,
+    }
+);
 
-extern "C" {
-    pub static NSFileManagerUnmountDissentingProcessIdentifierErrorKey: &'static NSString;
-}
+extern_static!(NSFileManagerUnmountDissentingProcessIdentifierErrorKey: &'static NSString);
 
-extern "C" {
-    pub static NSUbiquityIdentityDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSUbiquityIdentityDidChangeNotification: &'static NSNotificationName);
 
 extern_class!(
     #[derive(Debug)]
@@ -566,145 +578,75 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSFileType: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileType: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileTypeDirectory: &'static NSFileAttributeType;
-}
+extern_static!(NSFileTypeDirectory: &'static NSFileAttributeType);
 
-extern "C" {
-    pub static NSFileTypeRegular: &'static NSFileAttributeType;
-}
+extern_static!(NSFileTypeRegular: &'static NSFileAttributeType);
 
-extern "C" {
-    pub static NSFileTypeSymbolicLink: &'static NSFileAttributeType;
-}
+extern_static!(NSFileTypeSymbolicLink: &'static NSFileAttributeType);
 
-extern "C" {
-    pub static NSFileTypeSocket: &'static NSFileAttributeType;
-}
+extern_static!(NSFileTypeSocket: &'static NSFileAttributeType);
 
-extern "C" {
-    pub static NSFileTypeCharacterSpecial: &'static NSFileAttributeType;
-}
+extern_static!(NSFileTypeCharacterSpecial: &'static NSFileAttributeType);
 
-extern "C" {
-    pub static NSFileTypeBlockSpecial: &'static NSFileAttributeType;
-}
+extern_static!(NSFileTypeBlockSpecial: &'static NSFileAttributeType);
 
-extern "C" {
-    pub static NSFileTypeUnknown: &'static NSFileAttributeType;
-}
+extern_static!(NSFileTypeUnknown: &'static NSFileAttributeType);
 
-extern "C" {
-    pub static NSFileSize: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileSize: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileModificationDate: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileModificationDate: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileReferenceCount: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileReferenceCount: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileDeviceIdentifier: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileDeviceIdentifier: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileOwnerAccountName: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileOwnerAccountName: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileGroupOwnerAccountName: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileGroupOwnerAccountName: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFilePosixPermissions: &'static NSFileAttributeKey;
-}
+extern_static!(NSFilePosixPermissions: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileSystemNumber: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileSystemNumber: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileSystemFileNumber: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileSystemFileNumber: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileExtensionHidden: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileExtensionHidden: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileHFSCreatorCode: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileHFSCreatorCode: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileHFSTypeCode: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileHFSTypeCode: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileImmutable: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileImmutable: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileAppendOnly: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileAppendOnly: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileCreationDate: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileCreationDate: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileOwnerAccountID: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileOwnerAccountID: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileGroupOwnerAccountID: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileGroupOwnerAccountID: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileBusy: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileBusy: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileProtectionKey: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileProtectionKey: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileProtectionNone: &'static NSFileProtectionType;
-}
+extern_static!(NSFileProtectionNone: &'static NSFileProtectionType);
 
-extern "C" {
-    pub static NSFileProtectionComplete: &'static NSFileProtectionType;
-}
+extern_static!(NSFileProtectionComplete: &'static NSFileProtectionType);
 
-extern "C" {
-    pub static NSFileProtectionCompleteUnlessOpen: &'static NSFileProtectionType;
-}
+extern_static!(NSFileProtectionCompleteUnlessOpen: &'static NSFileProtectionType);
 
-extern "C" {
-    pub static NSFileProtectionCompleteUntilFirstUserAuthentication: &'static NSFileProtectionType;
-}
+extern_static!(NSFileProtectionCompleteUntilFirstUserAuthentication: &'static NSFileProtectionType);
 
-extern "C" {
-    pub static NSFileSystemSize: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileSystemSize: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileSystemFreeSize: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileSystemFreeSize: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileSystemNodes: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileSystemNodes: &'static NSFileAttributeKey);
 
-extern "C" {
-    pub static NSFileSystemFreeNodes: &'static NSFileAttributeKey;
-}
+extern_static!(NSFileSystemFreeNodes: &'static NSFileAttributeKey);
 
 extern_methods!(
     /// NSFileAttributes

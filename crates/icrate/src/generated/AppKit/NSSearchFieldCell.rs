@@ -5,13 +5,13 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub static NSSearchFieldRecentsTitleMenuItemTag: NSInteger = 1000;
+extern_static!(NSSearchFieldRecentsTitleMenuItemTag: NSInteger = 1000);
 
-pub static NSSearchFieldRecentsMenuItemTag: NSInteger = 1001;
+extern_static!(NSSearchFieldRecentsMenuItemTag: NSInteger = 1001);
 
-pub static NSSearchFieldClearRecentsMenuItemTag: NSInteger = 1002;
+extern_static!(NSSearchFieldClearRecentsMenuItemTag: NSInteger = 1002);
 
-pub static NSSearchFieldNoRecentsMenuItemTag: NSInteger = 1003;
+extern_static!(NSSearchFieldNoRecentsMenuItemTag: NSInteger = 1003);
 
 extern_class!(
     #[derive(Debug)]

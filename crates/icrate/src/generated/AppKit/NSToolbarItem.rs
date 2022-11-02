@@ -7,13 +7,13 @@ use crate::Foundation::*;
 
 pub type NSToolbarItemVisibilityPriority = NSInteger;
 
-pub static NSToolbarItemVisibilityPriorityStandard: NSToolbarItemVisibilityPriority = 0;
+extern_static!(NSToolbarItemVisibilityPriorityStandard: NSToolbarItemVisibilityPriority = 0);
 
-pub static NSToolbarItemVisibilityPriorityLow: NSToolbarItemVisibilityPriority = -1000;
+extern_static!(NSToolbarItemVisibilityPriorityLow: NSToolbarItemVisibilityPriority = -1000);
 
-pub static NSToolbarItemVisibilityPriorityHigh: NSToolbarItemVisibilityPriority = 1000;
+extern_static!(NSToolbarItemVisibilityPriorityHigh: NSToolbarItemVisibilityPriority = 1000);
 
-pub static NSToolbarItemVisibilityPriorityUser: NSToolbarItemVisibilityPriority = 2000;
+extern_static!(NSToolbarItemVisibilityPriorityUser: NSToolbarItemVisibilityPriority = 2000);
 
 extern_class!(
     #[derive(Debug)]
@@ -167,42 +167,22 @@ extern_methods!(
 
 pub type NSCloudSharingValidation = NSObject;
 
-extern "C" {
-    pub static NSToolbarSeparatorItemIdentifier: &'static NSToolbarItemIdentifier;
-}
+extern_static!(NSToolbarSeparatorItemIdentifier: &'static NSToolbarItemIdentifier);
 
-extern "C" {
-    pub static NSToolbarSpaceItemIdentifier: &'static NSToolbarItemIdentifier;
-}
+extern_static!(NSToolbarSpaceItemIdentifier: &'static NSToolbarItemIdentifier);
 
-extern "C" {
-    pub static NSToolbarFlexibleSpaceItemIdentifier: &'static NSToolbarItemIdentifier;
-}
+extern_static!(NSToolbarFlexibleSpaceItemIdentifier: &'static NSToolbarItemIdentifier);
 
-extern "C" {
-    pub static NSToolbarShowColorsItemIdentifier: &'static NSToolbarItemIdentifier;
-}
+extern_static!(NSToolbarShowColorsItemIdentifier: &'static NSToolbarItemIdentifier);
 
-extern "C" {
-    pub static NSToolbarShowFontsItemIdentifier: &'static NSToolbarItemIdentifier;
-}
+extern_static!(NSToolbarShowFontsItemIdentifier: &'static NSToolbarItemIdentifier);
 
-extern "C" {
-    pub static NSToolbarCustomizeToolbarItemIdentifier: &'static NSToolbarItemIdentifier;
-}
+extern_static!(NSToolbarCustomizeToolbarItemIdentifier: &'static NSToolbarItemIdentifier);
 
-extern "C" {
-    pub static NSToolbarPrintItemIdentifier: &'static NSToolbarItemIdentifier;
-}
+extern_static!(NSToolbarPrintItemIdentifier: &'static NSToolbarItemIdentifier);
 
-extern "C" {
-    pub static NSToolbarToggleSidebarItemIdentifier: &'static NSToolbarItemIdentifier;
-}
+extern_static!(NSToolbarToggleSidebarItemIdentifier: &'static NSToolbarItemIdentifier);
 
-extern "C" {
-    pub static NSToolbarCloudSharingItemIdentifier: &'static NSToolbarItemIdentifier;
-}
+extern_static!(NSToolbarCloudSharingItemIdentifier: &'static NSToolbarItemIdentifier);
 
-extern "C" {
-    pub static NSToolbarSidebarTrackingSeparatorItemIdentifier: &'static NSToolbarItemIdentifier;
-}
+extern_static!(NSToolbarSidebarTrackingSeparatorItemIdentifier: &'static NSToolbarItemIdentifier);

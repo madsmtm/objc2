@@ -5,14 +5,22 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSApplicationActivationOptions = NSUInteger;
-pub const NSApplicationActivateAllWindows: NSApplicationActivationOptions = 1 << 0;
-pub const NSApplicationActivateIgnoringOtherApps: NSApplicationActivationOptions = 1 << 1;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSApplicationActivationOptions {
+        NSApplicationActivateAllWindows = 1 << 0,
+        NSApplicationActivateIgnoringOtherApps = 1 << 1,
+    }
+);
 
-pub type NSApplicationActivationPolicy = NSInteger;
-pub const NSApplicationActivationPolicyRegular: NSApplicationActivationPolicy = 0;
-pub const NSApplicationActivationPolicyAccessory: NSApplicationActivationPolicy = 1;
-pub const NSApplicationActivationPolicyProhibited: NSApplicationActivationPolicy = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSApplicationActivationPolicy {
+        NSApplicationActivationPolicyRegular = 0,
+        NSApplicationActivationPolicyAccessory = 1,
+        NSApplicationActivationPolicyProhibited = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

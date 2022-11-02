@@ -4,98 +4,58 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSManagedObjectContextWillSaveNotification: &'static NSString;
-}
+extern_static!(NSManagedObjectContextWillSaveNotification: &'static NSString);
 
-extern "C" {
-    pub static NSManagedObjectContextDidSaveNotification: &'static NSString;
-}
+extern_static!(NSManagedObjectContextDidSaveNotification: &'static NSString);
 
-extern "C" {
-    pub static NSManagedObjectContextObjectsDidChangeNotification: &'static NSString;
-}
+extern_static!(NSManagedObjectContextObjectsDidChangeNotification: &'static NSString);
 
-extern "C" {
-    pub static NSManagedObjectContextDidSaveObjectIDsNotification: &'static NSString;
-}
+extern_static!(NSManagedObjectContextDidSaveObjectIDsNotification: &'static NSString);
 
-extern "C" {
-    pub static NSManagedObjectContextDidMergeChangesObjectIDsNotification: &'static NSString;
-}
+extern_static!(NSManagedObjectContextDidMergeChangesObjectIDsNotification: &'static NSString);
 
-extern "C" {
-    pub static NSInsertedObjectsKey: &'static NSString;
-}
+extern_static!(NSInsertedObjectsKey: &'static NSString);
 
-extern "C" {
-    pub static NSUpdatedObjectsKey: &'static NSString;
-}
+extern_static!(NSUpdatedObjectsKey: &'static NSString);
 
-extern "C" {
-    pub static NSDeletedObjectsKey: &'static NSString;
-}
+extern_static!(NSDeletedObjectsKey: &'static NSString);
 
-extern "C" {
-    pub static NSRefreshedObjectsKey: &'static NSString;
-}
+extern_static!(NSRefreshedObjectsKey: &'static NSString);
 
-extern "C" {
-    pub static NSInvalidatedObjectsKey: &'static NSString;
-}
+extern_static!(NSInvalidatedObjectsKey: &'static NSString);
 
-extern "C" {
-    pub static NSManagedObjectContextQueryGenerationKey: &'static NSString;
-}
+extern_static!(NSManagedObjectContextQueryGenerationKey: &'static NSString);
 
-extern "C" {
-    pub static NSInvalidatedAllObjectsKey: &'static NSString;
-}
+extern_static!(NSInvalidatedAllObjectsKey: &'static NSString);
 
-extern "C" {
-    pub static NSInsertedObjectIDsKey: &'static NSString;
-}
+extern_static!(NSInsertedObjectIDsKey: &'static NSString);
 
-extern "C" {
-    pub static NSUpdatedObjectIDsKey: &'static NSString;
-}
+extern_static!(NSUpdatedObjectIDsKey: &'static NSString);
 
-extern "C" {
-    pub static NSDeletedObjectIDsKey: &'static NSString;
-}
+extern_static!(NSDeletedObjectIDsKey: &'static NSString);
 
-extern "C" {
-    pub static NSRefreshedObjectIDsKey: &'static NSString;
-}
+extern_static!(NSRefreshedObjectIDsKey: &'static NSString);
 
-extern "C" {
-    pub static NSInvalidatedObjectIDsKey: &'static NSString;
-}
+extern_static!(NSInvalidatedObjectIDsKey: &'static NSString);
 
-extern "C" {
-    pub static NSErrorMergePolicy: &'static Object;
-}
+extern_static!(NSErrorMergePolicy: &'static Object);
 
-extern "C" {
-    pub static NSMergeByPropertyStoreTrumpMergePolicy: &'static Object;
-}
+extern_static!(NSMergeByPropertyStoreTrumpMergePolicy: &'static Object);
 
-extern "C" {
-    pub static NSMergeByPropertyObjectTrumpMergePolicy: &'static Object;
-}
+extern_static!(NSMergeByPropertyObjectTrumpMergePolicy: &'static Object);
 
-extern "C" {
-    pub static NSOverwriteMergePolicy: &'static Object;
-}
+extern_static!(NSOverwriteMergePolicy: &'static Object);
 
-extern "C" {
-    pub static NSRollbackMergePolicy: &'static Object;
-}
+extern_static!(NSRollbackMergePolicy: &'static Object);
 
-pub type NSManagedObjectContextConcurrencyType = NSUInteger;
-pub const NSConfinementConcurrencyType: NSManagedObjectContextConcurrencyType = 0x00;
-pub const NSPrivateQueueConcurrencyType: NSManagedObjectContextConcurrencyType = 0x01;
-pub const NSMainQueueConcurrencyType: NSManagedObjectContextConcurrencyType = 0x02;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSManagedObjectContextConcurrencyType {
+        NSConfinementConcurrencyType = 0x00,
+        NSPrivateQueueConcurrencyType = 0x01,
+        NSMainQueueConcurrencyType = 0x02,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

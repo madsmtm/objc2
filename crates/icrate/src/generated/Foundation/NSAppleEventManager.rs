@@ -5,17 +5,11 @@ use crate::Foundation::*;
 
 pub type NSAppleEventManagerSuspensionID = *mut c_void;
 
-extern "C" {
-    pub static NSAppleEventTimeOutDefault: c_double;
-}
+extern_static!(NSAppleEventTimeOutDefault: c_double);
 
-extern "C" {
-    pub static NSAppleEventTimeOutNone: c_double;
-}
+extern_static!(NSAppleEventTimeOutNone: c_double);
 
-extern "C" {
-    pub static NSAppleEventManagerWillProcessFirstEventNotification: &'static NSNotificationName;
-}
+extern_static!(NSAppleEventManagerWillProcessFirstEventNotification: &'static NSNotificationName);
 
 extern_class!(
     #[derive(Debug)]

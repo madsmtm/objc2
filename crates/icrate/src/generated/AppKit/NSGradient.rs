@@ -5,9 +5,13 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSGradientDrawingOptions = NSUInteger;
-pub const NSGradientDrawsBeforeStartingLocation: NSGradientDrawingOptions = 1 << 0;
-pub const NSGradientDrawsAfterEndingLocation: NSGradientDrawingOptions = 1 << 1;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSGradientDrawingOptions {
+        NSGradientDrawsBeforeStartingLocation = 1 << 0,
+        NSGradientDrawsAfterEndingLocation = 1 << 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

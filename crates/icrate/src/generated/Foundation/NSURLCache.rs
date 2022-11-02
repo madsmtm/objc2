@@ -3,10 +3,14 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSURLCacheStoragePolicy = NSUInteger;
-pub const NSURLCacheStorageAllowed: NSURLCacheStoragePolicy = 0;
-pub const NSURLCacheStorageAllowedInMemoryOnly: NSURLCacheStoragePolicy = 1;
-pub const NSURLCacheStorageNotAllowed: NSURLCacheStoragePolicy = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSURLCacheStoragePolicy {
+        NSURLCacheStorageAllowed = 0,
+        NSURLCacheStorageAllowedInMemoryOnly = 1,
+        NSURLCacheStorageNotAllowed = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

@@ -3,17 +3,22 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub const NSNoScriptError: NSInteger = 0;
-pub const NSReceiverEvaluationScriptError: NSInteger = 1;
-pub const NSKeySpecifierEvaluationScriptError: NSInteger = 2;
-pub const NSArgumentEvaluationScriptError: NSInteger = 3;
-pub const NSReceiversCantHandleCommandScriptError: NSInteger = 4;
-pub const NSRequiredArgumentsMissingScriptError: NSInteger = 5;
-pub const NSArgumentsWrongScriptError: NSInteger = 6;
-pub const NSUnknownKeyScriptError: NSInteger = 7;
-pub const NSInternalScriptError: NSInteger = 8;
-pub const NSOperationNotSupportedForKeyScriptError: NSInteger = 9;
-pub const NSCannotCreateScriptCommandError: NSInteger = 10;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum {
+        NSNoScriptError = 0,
+        NSReceiverEvaluationScriptError = 1,
+        NSKeySpecifierEvaluationScriptError = 2,
+        NSArgumentEvaluationScriptError = 3,
+        NSReceiversCantHandleCommandScriptError = 4,
+        NSRequiredArgumentsMissingScriptError = 5,
+        NSArgumentsWrongScriptError = 6,
+        NSUnknownKeyScriptError = 7,
+        NSInternalScriptError = 8,
+        NSOperationNotSupportedForKeyScriptError = 9,
+        NSCannotCreateScriptCommandError = 10,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

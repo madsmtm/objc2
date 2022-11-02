@@ -28,10 +28,13 @@ extern_methods!(
     }
 );
 
-pub type NSAttributedStringEnumerationOptions = NSUInteger;
-pub const NSAttributedStringEnumerationReverse: NSAttributedStringEnumerationOptions = 1 << 1;
-pub const NSAttributedStringEnumerationLongestEffectiveRangeNotRequired:
-    NSAttributedStringEnumerationOptions = 1 << 20;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSAttributedStringEnumerationOptions {
+        NSAttributedStringEnumerationReverse = 1 << 1,
+        NSAttributedStringEnumerationLongestEffectiveRangeNotRequired = 1 << 20,
+    }
+);
 
 extern_methods!(
     /// NSExtendedAttributedString
@@ -189,45 +192,44 @@ extern_methods!(
     }
 );
 
-pub type NSInlinePresentationIntent = NSUInteger;
-pub const NSInlinePresentationIntentEmphasized: NSInlinePresentationIntent = 1 << 0;
-pub const NSInlinePresentationIntentStronglyEmphasized: NSInlinePresentationIntent = 1 << 1;
-pub const NSInlinePresentationIntentCode: NSInlinePresentationIntent = 1 << 2;
-pub const NSInlinePresentationIntentStrikethrough: NSInlinePresentationIntent = 1 << 5;
-pub const NSInlinePresentationIntentSoftBreak: NSInlinePresentationIntent = 1 << 6;
-pub const NSInlinePresentationIntentLineBreak: NSInlinePresentationIntent = 1 << 7;
-pub const NSInlinePresentationIntentInlineHTML: NSInlinePresentationIntent = 1 << 8;
-pub const NSInlinePresentationIntentBlockHTML: NSInlinePresentationIntent = 1 << 9;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSInlinePresentationIntent {
+        NSInlinePresentationIntentEmphasized = 1 << 0,
+        NSInlinePresentationIntentStronglyEmphasized = 1 << 1,
+        NSInlinePresentationIntentCode = 1 << 2,
+        NSInlinePresentationIntentStrikethrough = 1 << 5,
+        NSInlinePresentationIntentSoftBreak = 1 << 6,
+        NSInlinePresentationIntentLineBreak = 1 << 7,
+        NSInlinePresentationIntentInlineHTML = 1 << 8,
+        NSInlinePresentationIntentBlockHTML = 1 << 9,
+    }
+);
 
-extern "C" {
-    pub static NSInlinePresentationIntentAttributeName: &'static NSAttributedStringKey;
-}
+extern_static!(NSInlinePresentationIntentAttributeName: &'static NSAttributedStringKey);
 
-extern "C" {
-    pub static NSAlternateDescriptionAttributeName: &'static NSAttributedStringKey;
-}
+extern_static!(NSAlternateDescriptionAttributeName: &'static NSAttributedStringKey);
 
-extern "C" {
-    pub static NSImageURLAttributeName: &'static NSAttributedStringKey;
-}
+extern_static!(NSImageURLAttributeName: &'static NSAttributedStringKey);
 
-extern "C" {
-    pub static NSLanguageIdentifierAttributeName: &'static NSAttributedStringKey;
-}
+extern_static!(NSLanguageIdentifierAttributeName: &'static NSAttributedStringKey);
 
-pub type NSAttributedStringMarkdownParsingFailurePolicy = NSInteger;
-pub const NSAttributedStringMarkdownParsingFailureReturnError:
-    NSAttributedStringMarkdownParsingFailurePolicy = 0;
-pub const NSAttributedStringMarkdownParsingFailureReturnPartiallyParsedIfPossible:
-    NSAttributedStringMarkdownParsingFailurePolicy = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSAttributedStringMarkdownParsingFailurePolicy {
+        NSAttributedStringMarkdownParsingFailureReturnError = 0,
+        NSAttributedStringMarkdownParsingFailureReturnPartiallyParsedIfPossible = 1,
+    }
+);
 
-pub type NSAttributedStringMarkdownInterpretedSyntax = NSInteger;
-pub const NSAttributedStringMarkdownInterpretedSyntaxFull:
-    NSAttributedStringMarkdownInterpretedSyntax = 0;
-pub const NSAttributedStringMarkdownInterpretedSyntaxInlineOnly:
-    NSAttributedStringMarkdownInterpretedSyntax = 1;
-pub const NSAttributedStringMarkdownInterpretedSyntaxInlineOnlyPreservingWhitespace:
-    NSAttributedStringMarkdownInterpretedSyntax = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSAttributedStringMarkdownInterpretedSyntax {
+        NSAttributedStringMarkdownInterpretedSyntaxFull = 0,
+        NSAttributedStringMarkdownInterpretedSyntaxInlineOnly = 1,
+        NSAttributedStringMarkdownInterpretedSyntaxInlineOnlyPreservingWhitespace = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -304,11 +306,13 @@ extern_methods!(
     }
 );
 
-pub type NSAttributedStringFormattingOptions = NSUInteger;
-pub const NSAttributedStringFormattingInsertArgumentAttributesWithoutMerging:
-    NSAttributedStringFormattingOptions = 1 << 0;
-pub const NSAttributedStringFormattingApplyReplacementIndexAttribute:
-    NSAttributedStringFormattingOptions = 1 << 1;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSAttributedStringFormattingOptions {
+        NSAttributedStringFormattingInsertArgumentAttributesWithoutMerging = 1 << 0,
+        NSAttributedStringFormattingApplyReplacementIndexAttribute = 1 << 1,
+    }
+);
 
 extern_methods!(
     /// NSAttributedStringFormatting
@@ -320,9 +324,7 @@ extern_methods!(
     unsafe impl NSMutableAttributedString {}
 );
 
-extern "C" {
-    pub static NSReplacementIndexAttributeName: &'static NSAttributedStringKey;
-}
+extern_static!(NSReplacementIndexAttributeName: &'static NSAttributedStringKey);
 
 extern_methods!(
     /// NSMorphology
@@ -332,43 +334,40 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSMorphologyAttributeName: &'static NSAttributedStringKey;
-}
+extern_static!(NSMorphologyAttributeName: &'static NSAttributedStringKey);
 
-extern "C" {
-    pub static NSInflectionRuleAttributeName: &'static NSAttributedStringKey;
-}
+extern_static!(NSInflectionRuleAttributeName: &'static NSAttributedStringKey);
 
-extern "C" {
-    pub static NSInflectionAlternativeAttributeName: &'static NSAttributedStringKey;
-}
+extern_static!(NSInflectionAlternativeAttributeName: &'static NSAttributedStringKey);
 
-extern "C" {
-    pub static NSPresentationIntentAttributeName: &'static NSAttributedStringKey;
-}
+extern_static!(NSPresentationIntentAttributeName: &'static NSAttributedStringKey);
 
-pub type NSPresentationIntentKind = NSInteger;
-pub const NSPresentationIntentKindParagraph: NSPresentationIntentKind = 0;
-pub const NSPresentationIntentKindHeader: NSPresentationIntentKind = 1;
-pub const NSPresentationIntentKindOrderedList: NSPresentationIntentKind = 2;
-pub const NSPresentationIntentKindUnorderedList: NSPresentationIntentKind = 3;
-pub const NSPresentationIntentKindListItem: NSPresentationIntentKind = 4;
-pub const NSPresentationIntentKindCodeBlock: NSPresentationIntentKind = 5;
-pub const NSPresentationIntentKindBlockQuote: NSPresentationIntentKind = 6;
-pub const NSPresentationIntentKindThematicBreak: NSPresentationIntentKind = 7;
-pub const NSPresentationIntentKindTable: NSPresentationIntentKind = 8;
-pub const NSPresentationIntentKindTableHeaderRow: NSPresentationIntentKind = 9;
-pub const NSPresentationIntentKindTableRow: NSPresentationIntentKind = 10;
-pub const NSPresentationIntentKindTableCell: NSPresentationIntentKind = 11;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSPresentationIntentKind {
+        NSPresentationIntentKindParagraph = 0,
+        NSPresentationIntentKindHeader = 1,
+        NSPresentationIntentKindOrderedList = 2,
+        NSPresentationIntentKindUnorderedList = 3,
+        NSPresentationIntentKindListItem = 4,
+        NSPresentationIntentKindCodeBlock = 5,
+        NSPresentationIntentKindBlockQuote = 6,
+        NSPresentationIntentKindThematicBreak = 7,
+        NSPresentationIntentKindTable = 8,
+        NSPresentationIntentKindTableHeaderRow = 9,
+        NSPresentationIntentKindTableRow = 10,
+        NSPresentationIntentKindTableCell = 11,
+    }
+);
 
-pub type NSPresentationIntentTableColumnAlignment = NSInteger;
-pub const NSPresentationIntentTableColumnAlignmentLeft: NSPresentationIntentTableColumnAlignment =
-    0;
-pub const NSPresentationIntentTableColumnAlignmentCenter: NSPresentationIntentTableColumnAlignment =
-    1;
-pub const NSPresentationIntentTableColumnAlignmentRight: NSPresentationIntentTableColumnAlignment =
-    2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSPresentationIntentTableColumnAlignment {
+        NSPresentationIntentTableColumnAlignmentLeft = 0,
+        NSPresentationIntentTableColumnAlignmentCenter = 1,
+        NSPresentationIntentTableColumnAlignmentRight = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

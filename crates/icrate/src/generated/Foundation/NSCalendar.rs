@@ -5,113 +5,95 @@ use crate::Foundation::*;
 
 pub type NSCalendarIdentifier = NSString;
 
-extern "C" {
-    pub static NSCalendarIdentifierGregorian: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierGregorian: &'static NSCalendarIdentifier);
 
-extern "C" {
-    pub static NSCalendarIdentifierBuddhist: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierBuddhist: &'static NSCalendarIdentifier);
 
-extern "C" {
-    pub static NSCalendarIdentifierChinese: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierChinese: &'static NSCalendarIdentifier);
 
-extern "C" {
-    pub static NSCalendarIdentifierCoptic: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierCoptic: &'static NSCalendarIdentifier);
 
-extern "C" {
-    pub static NSCalendarIdentifierEthiopicAmeteMihret: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierEthiopicAmeteMihret: &'static NSCalendarIdentifier);
 
-extern "C" {
-    pub static NSCalendarIdentifierEthiopicAmeteAlem: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierEthiopicAmeteAlem: &'static NSCalendarIdentifier);
 
-extern "C" {
-    pub static NSCalendarIdentifierHebrew: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierHebrew: &'static NSCalendarIdentifier);
 
-extern "C" {
-    pub static NSCalendarIdentifierISO8601: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierISO8601: &'static NSCalendarIdentifier);
 
-extern "C" {
-    pub static NSCalendarIdentifierIndian: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierIndian: &'static NSCalendarIdentifier);
 
-extern "C" {
-    pub static NSCalendarIdentifierIslamic: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierIslamic: &'static NSCalendarIdentifier);
 
-extern "C" {
-    pub static NSCalendarIdentifierIslamicCivil: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierIslamicCivil: &'static NSCalendarIdentifier);
 
-extern "C" {
-    pub static NSCalendarIdentifierJapanese: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierJapanese: &'static NSCalendarIdentifier);
 
-extern "C" {
-    pub static NSCalendarIdentifierPersian: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierPersian: &'static NSCalendarIdentifier);
 
-extern "C" {
-    pub static NSCalendarIdentifierRepublicOfChina: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierRepublicOfChina: &'static NSCalendarIdentifier);
 
-extern "C" {
-    pub static NSCalendarIdentifierIslamicTabular: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierIslamicTabular: &'static NSCalendarIdentifier);
 
-extern "C" {
-    pub static NSCalendarIdentifierIslamicUmmAlQura: &'static NSCalendarIdentifier;
-}
+extern_static!(NSCalendarIdentifierIslamicUmmAlQura: &'static NSCalendarIdentifier);
 
-pub type NSCalendarUnit = NSUInteger;
-pub const NSCalendarUnitEra: NSCalendarUnit = 2;
-pub const NSCalendarUnitYear: NSCalendarUnit = 4;
-pub const NSCalendarUnitMonth: NSCalendarUnit = 8;
-pub const NSCalendarUnitDay: NSCalendarUnit = 16;
-pub const NSCalendarUnitHour: NSCalendarUnit = 32;
-pub const NSCalendarUnitMinute: NSCalendarUnit = 64;
-pub const NSCalendarUnitSecond: NSCalendarUnit = 128;
-pub const NSCalendarUnitWeekday: NSCalendarUnit = 512;
-pub const NSCalendarUnitWeekdayOrdinal: NSCalendarUnit = 1024;
-pub const NSCalendarUnitQuarter: NSCalendarUnit = 2048;
-pub const NSCalendarUnitWeekOfMonth: NSCalendarUnit = 4096;
-pub const NSCalendarUnitWeekOfYear: NSCalendarUnit = 8192;
-pub const NSCalendarUnitYearForWeekOfYear: NSCalendarUnit = 16384;
-pub const NSCalendarUnitNanosecond: NSCalendarUnit = 32768;
-pub const NSCalendarUnitCalendar: NSCalendarUnit = 1048576;
-pub const NSCalendarUnitTimeZone: NSCalendarUnit = 2097152;
-pub const NSEraCalendarUnit: NSCalendarUnit = 2;
-pub const NSYearCalendarUnit: NSCalendarUnit = 4;
-pub const NSMonthCalendarUnit: NSCalendarUnit = 8;
-pub const NSDayCalendarUnit: NSCalendarUnit = 16;
-pub const NSHourCalendarUnit: NSCalendarUnit = 32;
-pub const NSMinuteCalendarUnit: NSCalendarUnit = 64;
-pub const NSSecondCalendarUnit: NSCalendarUnit = 128;
-pub const NSWeekCalendarUnit: NSCalendarUnit = 256;
-pub const NSWeekdayCalendarUnit: NSCalendarUnit = 512;
-pub const NSWeekdayOrdinalCalendarUnit: NSCalendarUnit = 1024;
-pub const NSQuarterCalendarUnit: NSCalendarUnit = 2048;
-pub const NSWeekOfMonthCalendarUnit: NSCalendarUnit = 4096;
-pub const NSWeekOfYearCalendarUnit: NSCalendarUnit = 8192;
-pub const NSYearForWeekOfYearCalendarUnit: NSCalendarUnit = 16384;
-pub const NSCalendarCalendarUnit: NSCalendarUnit = 1048576;
-pub const NSTimeZoneCalendarUnit: NSCalendarUnit = 2097152;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSCalendarUnit {
+        NSCalendarUnitEra = 2,
+        NSCalendarUnitYear = 4,
+        NSCalendarUnitMonth = 8,
+        NSCalendarUnitDay = 16,
+        NSCalendarUnitHour = 32,
+        NSCalendarUnitMinute = 64,
+        NSCalendarUnitSecond = 128,
+        NSCalendarUnitWeekday = 512,
+        NSCalendarUnitWeekdayOrdinal = 1024,
+        NSCalendarUnitQuarter = 2048,
+        NSCalendarUnitWeekOfMonth = 4096,
+        NSCalendarUnitWeekOfYear = 8192,
+        NSCalendarUnitYearForWeekOfYear = 16384,
+        NSCalendarUnitNanosecond = 32768,
+        NSCalendarUnitCalendar = 1048576,
+        NSCalendarUnitTimeZone = 2097152,
+        NSEraCalendarUnit = 2,
+        NSYearCalendarUnit = 4,
+        NSMonthCalendarUnit = 8,
+        NSDayCalendarUnit = 16,
+        NSHourCalendarUnit = 32,
+        NSMinuteCalendarUnit = 64,
+        NSSecondCalendarUnit = 128,
+        NSWeekCalendarUnit = 256,
+        NSWeekdayCalendarUnit = 512,
+        NSWeekdayOrdinalCalendarUnit = 1024,
+        NSQuarterCalendarUnit = 2048,
+        NSWeekOfMonthCalendarUnit = 4096,
+        NSWeekOfYearCalendarUnit = 8192,
+        NSYearForWeekOfYearCalendarUnit = 16384,
+        NSCalendarCalendarUnit = 1048576,
+        NSTimeZoneCalendarUnit = 2097152,
+    }
+);
 
-pub type NSCalendarOptions = NSUInteger;
-pub const NSCalendarWrapComponents: NSCalendarOptions = 1 << 0;
-pub const NSCalendarMatchStrictly: NSCalendarOptions = 1 << 1;
-pub const NSCalendarSearchBackwards: NSCalendarOptions = 1 << 2;
-pub const NSCalendarMatchPreviousTimePreservingSmallerUnits: NSCalendarOptions = 1 << 8;
-pub const NSCalendarMatchNextTimePreservingSmallerUnits: NSCalendarOptions = 1 << 9;
-pub const NSCalendarMatchNextTime: NSCalendarOptions = 1 << 10;
-pub const NSCalendarMatchFirst: NSCalendarOptions = 1 << 12;
-pub const NSCalendarMatchLast: NSCalendarOptions = 1 << 13;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSCalendarOptions {
+        NSCalendarWrapComponents = 1 << 0,
+        NSCalendarMatchStrictly = 1 << 1,
+        NSCalendarSearchBackwards = 1 << 2,
+        NSCalendarMatchPreviousTimePreservingSmallerUnits = 1 << 8,
+        NSCalendarMatchNextTimePreservingSmallerUnits = 1 << 9,
+        NSCalendarMatchNextTime = 1 << 10,
+        NSCalendarMatchFirst = 1 << 12,
+        NSCalendarMatchLast = 1 << 13,
+    }
+);
+
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -491,12 +473,15 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSCalendarDayChangedNotification: &'static NSNotificationName;
-}
+extern_static!(NSCalendarDayChangedNotification: &'static NSNotificationName);
 
-pub const NSDateComponentUndefined: NSInteger = 9223372036854775807;
-pub const NSUndefinedDateComponent: NSInteger = NSDateComponentUndefined;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum {
+        NSDateComponentUndefined = 9223372036854775807,
+        NSUndefinedDateComponent = NSDateComponentUndefined,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

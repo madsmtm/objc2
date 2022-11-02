@@ -5,33 +5,49 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextLayoutOrientation = NSInteger;
-pub const NSTextLayoutOrientationHorizontal: NSTextLayoutOrientation = 0;
-pub const NSTextLayoutOrientationVertical: NSTextLayoutOrientation = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTextLayoutOrientation {
+        NSTextLayoutOrientationHorizontal = 0,
+        NSTextLayoutOrientationVertical = 1,
+    }
+);
 
-pub type NSGlyphProperty = NSInteger;
-pub const NSGlyphPropertyNull: NSGlyphProperty = 1 << 0;
-pub const NSGlyphPropertyControlCharacter: NSGlyphProperty = 1 << 1;
-pub const NSGlyphPropertyElastic: NSGlyphProperty = 1 << 2;
-pub const NSGlyphPropertyNonBaseCharacter: NSGlyphProperty = 1 << 3;
+ns_options!(
+    #[underlying(NSInteger)]
+    pub enum NSGlyphProperty {
+        NSGlyphPropertyNull = 1 << 0,
+        NSGlyphPropertyControlCharacter = 1 << 1,
+        NSGlyphPropertyElastic = 1 << 2,
+        NSGlyphPropertyNonBaseCharacter = 1 << 3,
+    }
+);
 
-pub type NSControlCharacterAction = NSInteger;
-pub const NSControlCharacterActionZeroAdvancement: NSControlCharacterAction = 1 << 0;
-pub const NSControlCharacterActionWhitespace: NSControlCharacterAction = 1 << 1;
-pub const NSControlCharacterActionHorizontalTab: NSControlCharacterAction = 1 << 2;
-pub const NSControlCharacterActionLineBreak: NSControlCharacterAction = 1 << 3;
-pub const NSControlCharacterActionParagraphBreak: NSControlCharacterAction = 1 << 4;
-pub const NSControlCharacterActionContainerBreak: NSControlCharacterAction = 1 << 5;
+ns_options!(
+    #[underlying(NSInteger)]
+    pub enum NSControlCharacterAction {
+        NSControlCharacterActionZeroAdvancement = 1 << 0,
+        NSControlCharacterActionWhitespace = 1 << 1,
+        NSControlCharacterActionHorizontalTab = 1 << 2,
+        NSControlCharacterActionLineBreak = 1 << 3,
+        NSControlCharacterActionParagraphBreak = 1 << 4,
+        NSControlCharacterActionContainerBreak = 1 << 5,
+    }
+);
 
 pub type NSTextLayoutOrientationProvider = NSObject;
 
-pub type NSTypesetterBehavior = NSInteger;
-pub const NSTypesetterLatestBehavior: NSTypesetterBehavior = -1;
-pub const NSTypesetterOriginalBehavior: NSTypesetterBehavior = 0;
-pub const NSTypesetterBehavior_10_2_WithCompatibility: NSTypesetterBehavior = 1;
-pub const NSTypesetterBehavior_10_2: NSTypesetterBehavior = 2;
-pub const NSTypesetterBehavior_10_3: NSTypesetterBehavior = 3;
-pub const NSTypesetterBehavior_10_4: NSTypesetterBehavior = 4;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTypesetterBehavior {
+        NSTypesetterLatestBehavior = -1,
+        NSTypesetterOriginalBehavior = 0,
+        NSTypesetterBehavior_10_2_WithCompatibility = 1,
+        NSTypesetterBehavior_10_2 = 2,
+        NSTypesetterBehavior_10_3 = 3,
+        NSTypesetterBehavior_10_4 = 4,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -729,17 +745,26 @@ extern_methods!(
 
 pub type NSLayoutManagerDelegate = NSObject;
 
-pub const NSGlyphAttributeSoft: c_uint = 0;
-pub const NSGlyphAttributeElastic: c_uint = 1;
-pub const NSGlyphAttributeBidiLevel: c_uint = 2;
-pub const NSGlyphAttributeInscribe: c_uint = 5;
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+        NSGlyphAttributeSoft = 0,
+        NSGlyphAttributeElastic = 1,
+        NSGlyphAttributeBidiLevel = 2,
+        NSGlyphAttributeInscribe = 5,
+    }
+);
 
-pub type NSGlyphInscription = NSUInteger;
-pub const NSGlyphInscribeBase: NSGlyphInscription = 0;
-pub const NSGlyphInscribeBelow: NSGlyphInscription = 1;
-pub const NSGlyphInscribeAbove: NSGlyphInscription = 2;
-pub const NSGlyphInscribeOverstrike: NSGlyphInscription = 3;
-pub const NSGlyphInscribeOverBelow: NSGlyphInscription = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSGlyphInscription {
+        NSGlyphInscribeBase = 0,
+        NSGlyphInscribeBelow = 1,
+        NSGlyphInscribeAbove = 2,
+        NSGlyphInscribeOverstrike = 3,
+        NSGlyphInscribeOverBelow = 4,
+    }
+);
 
 extern_methods!(
     /// NSLayoutManagerDeprecated

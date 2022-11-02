@@ -120,10 +120,9 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification:
-        &'static NSNotificationName;
-}
+extern_static!(
+    NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification: &'static NSNotificationName
+);
 
 extern_methods!(
     /// NSAccessibilityAdditions

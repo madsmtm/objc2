@@ -5,14 +5,22 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSPopoverAppearance = NSInteger;
-pub const NSPopoverAppearanceMinimal: NSPopoverAppearance = 0;
-pub const NSPopoverAppearanceHUD: NSPopoverAppearance = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSPopoverAppearance {
+        NSPopoverAppearanceMinimal = 0,
+        NSPopoverAppearanceHUD = 1,
+    }
+);
 
-pub type NSPopoverBehavior = NSInteger;
-pub const NSPopoverBehaviorApplicationDefined: NSPopoverBehavior = 0;
-pub const NSPopoverBehaviorTransient: NSPopoverBehavior = 1;
-pub const NSPopoverBehaviorSemitransient: NSPopoverBehavior = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSPopoverBehavior {
+        NSPopoverBehaviorApplicationDefined = 0,
+        NSPopoverBehaviorTransient = 1,
+        NSPopoverBehaviorSemitransient = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -101,34 +109,20 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSPopoverCloseReasonKey: &'static NSString;
-}
+extern_static!(NSPopoverCloseReasonKey: &'static NSString);
 
 pub type NSPopoverCloseReasonValue = NSString;
 
-extern "C" {
-    pub static NSPopoverCloseReasonStandard: &'static NSPopoverCloseReasonValue;
-}
+extern_static!(NSPopoverCloseReasonStandard: &'static NSPopoverCloseReasonValue);
 
-extern "C" {
-    pub static NSPopoverCloseReasonDetachToWindow: &'static NSPopoverCloseReasonValue;
-}
+extern_static!(NSPopoverCloseReasonDetachToWindow: &'static NSPopoverCloseReasonValue);
 
-extern "C" {
-    pub static NSPopoverWillShowNotification: &'static NSNotificationName;
-}
+extern_static!(NSPopoverWillShowNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSPopoverDidShowNotification: &'static NSNotificationName;
-}
+extern_static!(NSPopoverDidShowNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSPopoverWillCloseNotification: &'static NSNotificationName;
-}
+extern_static!(NSPopoverWillCloseNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSPopoverDidCloseNotification: &'static NSNotificationName;
-}
+extern_static!(NSPopoverDidCloseNotification: &'static NSNotificationName);
 
 pub type NSPopoverDelegate = NSObject;

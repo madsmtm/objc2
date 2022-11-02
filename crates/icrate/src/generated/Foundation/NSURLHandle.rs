@@ -3,55 +3,37 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSHTTPPropertyStatusCodeKey: Option<&'static NSString>;
-}
+extern_static!(NSHTTPPropertyStatusCodeKey: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSHTTPPropertyStatusReasonKey: Option<&'static NSString>;
-}
+extern_static!(NSHTTPPropertyStatusReasonKey: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSHTTPPropertyServerHTTPVersionKey: Option<&'static NSString>;
-}
+extern_static!(NSHTTPPropertyServerHTTPVersionKey: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSHTTPPropertyRedirectionHeadersKey: Option<&'static NSString>;
-}
+extern_static!(NSHTTPPropertyRedirectionHeadersKey: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSHTTPPropertyErrorPageDataKey: Option<&'static NSString>;
-}
+extern_static!(NSHTTPPropertyErrorPageDataKey: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSHTTPPropertyHTTPProxy: Option<&'static NSString>;
-}
+extern_static!(NSHTTPPropertyHTTPProxy: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSFTPPropertyUserLoginKey: Option<&'static NSString>;
-}
+extern_static!(NSFTPPropertyUserLoginKey: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSFTPPropertyUserPasswordKey: Option<&'static NSString>;
-}
+extern_static!(NSFTPPropertyUserPasswordKey: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSFTPPropertyActiveTransferModeKey: Option<&'static NSString>;
-}
+extern_static!(NSFTPPropertyActiveTransferModeKey: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSFTPPropertyFileOffsetKey: Option<&'static NSString>;
-}
+extern_static!(NSFTPPropertyFileOffsetKey: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSFTPPropertyFTPProxy: Option<&'static NSString>;
-}
+extern_static!(NSFTPPropertyFTPProxy: Option<&'static NSString>);
 
-pub type NSURLHandleStatus = NSUInteger;
-pub const NSURLHandleNotLoaded: NSURLHandleStatus = 0;
-pub const NSURLHandleLoadSucceeded: NSURLHandleStatus = 1;
-pub const NSURLHandleLoadInProgress: NSURLHandleStatus = 2;
-pub const NSURLHandleLoadFailed: NSURLHandleStatus = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSURLHandleStatus {
+        NSURLHandleNotLoaded = 0,
+        NSURLHandleLoadSucceeded = 1,
+        NSURLHandleLoadInProgress = 2,
+        NSURLHandleLoadFailed = 3,
+    }
+);
 
 pub type NSURLHandleClient = NSObject;
 

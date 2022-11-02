@@ -7,69 +7,37 @@ pub type NSHTTPCookiePropertyKey = NSString;
 
 pub type NSHTTPCookieStringPolicy = NSString;
 
-extern "C" {
-    pub static NSHTTPCookieName: &'static NSHTTPCookiePropertyKey;
-}
+extern_static!(NSHTTPCookieName: &'static NSHTTPCookiePropertyKey);
 
-extern "C" {
-    pub static NSHTTPCookieValue: &'static NSHTTPCookiePropertyKey;
-}
+extern_static!(NSHTTPCookieValue: &'static NSHTTPCookiePropertyKey);
 
-extern "C" {
-    pub static NSHTTPCookieOriginURL: &'static NSHTTPCookiePropertyKey;
-}
+extern_static!(NSHTTPCookieOriginURL: &'static NSHTTPCookiePropertyKey);
 
-extern "C" {
-    pub static NSHTTPCookieVersion: &'static NSHTTPCookiePropertyKey;
-}
+extern_static!(NSHTTPCookieVersion: &'static NSHTTPCookiePropertyKey);
 
-extern "C" {
-    pub static NSHTTPCookieDomain: &'static NSHTTPCookiePropertyKey;
-}
+extern_static!(NSHTTPCookieDomain: &'static NSHTTPCookiePropertyKey);
 
-extern "C" {
-    pub static NSHTTPCookiePath: &'static NSHTTPCookiePropertyKey;
-}
+extern_static!(NSHTTPCookiePath: &'static NSHTTPCookiePropertyKey);
 
-extern "C" {
-    pub static NSHTTPCookieSecure: &'static NSHTTPCookiePropertyKey;
-}
+extern_static!(NSHTTPCookieSecure: &'static NSHTTPCookiePropertyKey);
 
-extern "C" {
-    pub static NSHTTPCookieExpires: &'static NSHTTPCookiePropertyKey;
-}
+extern_static!(NSHTTPCookieExpires: &'static NSHTTPCookiePropertyKey);
 
-extern "C" {
-    pub static NSHTTPCookieComment: &'static NSHTTPCookiePropertyKey;
-}
+extern_static!(NSHTTPCookieComment: &'static NSHTTPCookiePropertyKey);
 
-extern "C" {
-    pub static NSHTTPCookieCommentURL: &'static NSHTTPCookiePropertyKey;
-}
+extern_static!(NSHTTPCookieCommentURL: &'static NSHTTPCookiePropertyKey);
 
-extern "C" {
-    pub static NSHTTPCookieDiscard: &'static NSHTTPCookiePropertyKey;
-}
+extern_static!(NSHTTPCookieDiscard: &'static NSHTTPCookiePropertyKey);
 
-extern "C" {
-    pub static NSHTTPCookieMaximumAge: &'static NSHTTPCookiePropertyKey;
-}
+extern_static!(NSHTTPCookieMaximumAge: &'static NSHTTPCookiePropertyKey);
 
-extern "C" {
-    pub static NSHTTPCookiePort: &'static NSHTTPCookiePropertyKey;
-}
+extern_static!(NSHTTPCookiePort: &'static NSHTTPCookiePropertyKey);
 
-extern "C" {
-    pub static NSHTTPCookieSameSitePolicy: &'static NSHTTPCookiePropertyKey;
-}
+extern_static!(NSHTTPCookieSameSitePolicy: &'static NSHTTPCookiePropertyKey);
 
-extern "C" {
-    pub static NSHTTPCookieSameSiteLax: &'static NSHTTPCookieStringPolicy;
-}
+extern_static!(NSHTTPCookieSameSiteLax: &'static NSHTTPCookieStringPolicy);
 
-extern "C" {
-    pub static NSHTTPCookieSameSiteStrict: &'static NSHTTPCookieStringPolicy;
-}
+extern_static!(NSHTTPCookieSameSiteStrict: &'static NSHTTPCookieStringPolicy);
 
 extern_class!(
     #[derive(Debug)]

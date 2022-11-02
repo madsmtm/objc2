@@ -4,10 +4,9 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSCoreDataCoreSpotlightDelegateIndexDidUpdateNotification:
-        &'static NSNotificationName;
-}
+extern_static!(
+    NSCoreDataCoreSpotlightDelegateIndexDidUpdateNotification: &'static NSNotificationName
+);
 
 extern_class!(
     #[derive(Debug)]

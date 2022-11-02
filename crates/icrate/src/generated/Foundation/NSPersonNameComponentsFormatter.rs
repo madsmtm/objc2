@@ -3,15 +3,23 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSPersonNameComponentsFormatterStyle = NSInteger;
-pub const NSPersonNameComponentsFormatterStyleDefault: NSPersonNameComponentsFormatterStyle = 0;
-pub const NSPersonNameComponentsFormatterStyleShort: NSPersonNameComponentsFormatterStyle = 1;
-pub const NSPersonNameComponentsFormatterStyleMedium: NSPersonNameComponentsFormatterStyle = 2;
-pub const NSPersonNameComponentsFormatterStyleLong: NSPersonNameComponentsFormatterStyle = 3;
-pub const NSPersonNameComponentsFormatterStyleAbbreviated: NSPersonNameComponentsFormatterStyle = 4;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSPersonNameComponentsFormatterStyle {
+        NSPersonNameComponentsFormatterStyleDefault = 0,
+        NSPersonNameComponentsFormatterStyleShort = 1,
+        NSPersonNameComponentsFormatterStyleMedium = 2,
+        NSPersonNameComponentsFormatterStyleLong = 3,
+        NSPersonNameComponentsFormatterStyleAbbreviated = 4,
+    }
+);
 
-pub type NSPersonNameComponentsFormatterOptions = NSUInteger;
-pub const NSPersonNameComponentsFormatterPhonetic: NSPersonNameComponentsFormatterOptions = 1 << 1;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSPersonNameComponentsFormatterOptions {
+        NSPersonNameComponentsFormatterPhonetic = 1 << 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -77,34 +85,18 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSPersonNameComponentKey: &'static NSString;
-}
+extern_static!(NSPersonNameComponentKey: &'static NSString);
 
-extern "C" {
-    pub static NSPersonNameComponentGivenName: &'static NSString;
-}
+extern_static!(NSPersonNameComponentGivenName: &'static NSString);
 
-extern "C" {
-    pub static NSPersonNameComponentFamilyName: &'static NSString;
-}
+extern_static!(NSPersonNameComponentFamilyName: &'static NSString);
 
-extern "C" {
-    pub static NSPersonNameComponentMiddleName: &'static NSString;
-}
+extern_static!(NSPersonNameComponentMiddleName: &'static NSString);
 
-extern "C" {
-    pub static NSPersonNameComponentPrefix: &'static NSString;
-}
+extern_static!(NSPersonNameComponentPrefix: &'static NSString);
 
-extern "C" {
-    pub static NSPersonNameComponentSuffix: &'static NSString;
-}
+extern_static!(NSPersonNameComponentSuffix: &'static NSString);
 
-extern "C" {
-    pub static NSPersonNameComponentNickname: &'static NSString;
-}
+extern_static!(NSPersonNameComponentNickname: &'static NSString);
 
-extern "C" {
-    pub static NSPersonNameComponentDelimiter: &'static NSString;
-}
+extern_static!(NSPersonNameComponentDelimiter: &'static NSString);

@@ -19,18 +19,10 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSTypeIdentifierDateText: &'static NSString;
-}
+extern_static!(NSTypeIdentifierDateText: &'static NSString);
 
-extern "C" {
-    pub static NSTypeIdentifierAddressText: &'static NSString;
-}
+extern_static!(NSTypeIdentifierAddressText: &'static NSString);
 
-extern "C" {
-    pub static NSTypeIdentifierPhoneNumberText: &'static NSString;
-}
+extern_static!(NSTypeIdentifierPhoneNumberText: &'static NSString);
 
-extern "C" {
-    pub static NSTypeIdentifierTransitInformationText: &'static NSString;
-}
+extern_static!(NSTypeIdentifierTransitInformationText: &'static NSString);

@@ -7,31 +7,28 @@ use crate::Foundation::*;
 
 pub type NSGraphicsContextAttributeKey = NSString;
 
-extern "C" {
-    pub static NSGraphicsContextDestinationAttributeName: &'static NSGraphicsContextAttributeKey;
-}
+extern_static!(NSGraphicsContextDestinationAttributeName: &'static NSGraphicsContextAttributeKey);
 
-extern "C" {
-    pub static NSGraphicsContextRepresentationFormatAttributeName:
-        &'static NSGraphicsContextAttributeKey;
-}
+extern_static!(
+    NSGraphicsContextRepresentationFormatAttributeName: &'static NSGraphicsContextAttributeKey
+);
 
 pub type NSGraphicsContextRepresentationFormatName = NSString;
 
-extern "C" {
-    pub static NSGraphicsContextPSFormat: &'static NSGraphicsContextRepresentationFormatName;
-}
+extern_static!(NSGraphicsContextPSFormat: &'static NSGraphicsContextRepresentationFormatName);
 
-extern "C" {
-    pub static NSGraphicsContextPDFFormat: &'static NSGraphicsContextRepresentationFormatName;
-}
+extern_static!(NSGraphicsContextPDFFormat: &'static NSGraphicsContextRepresentationFormatName);
 
-pub type NSImageInterpolation = NSUInteger;
-pub const NSImageInterpolationDefault: NSImageInterpolation = 0;
-pub const NSImageInterpolationNone: NSImageInterpolation = 1;
-pub const NSImageInterpolationLow: NSImageInterpolation = 2;
-pub const NSImageInterpolationMedium: NSImageInterpolation = 4;
-pub const NSImageInterpolationHigh: NSImageInterpolation = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSImageInterpolation {
+        NSImageInterpolationDefault = 0,
+        NSImageInterpolationNone = 1,
+        NSImageInterpolationLow = 2,
+        NSImageInterpolationMedium = 4,
+        NSImageInterpolationHigh = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

@@ -5,10 +5,14 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSScrollElasticity = NSInteger;
-pub const NSScrollElasticityAutomatic: NSScrollElasticity = 0;
-pub const NSScrollElasticityNone: NSScrollElasticity = 1;
-pub const NSScrollElasticityAllowed: NSScrollElasticity = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSScrollElasticity {
+        NSScrollElasticityAutomatic = 0,
+        NSScrollElasticityNone = 1,
+        NSScrollElasticityAllowed = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -291,25 +295,15 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSScrollViewWillStartLiveMagnifyNotification: &'static NSNotificationName;
-}
+extern_static!(NSScrollViewWillStartLiveMagnifyNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSScrollViewDidEndLiveMagnifyNotification: &'static NSNotificationName;
-}
+extern_static!(NSScrollViewDidEndLiveMagnifyNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSScrollViewWillStartLiveScrollNotification: &'static NSNotificationName;
-}
+extern_static!(NSScrollViewWillStartLiveScrollNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSScrollViewDidLiveScrollNotification: &'static NSNotificationName;
-}
+extern_static!(NSScrollViewDidLiveScrollNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSScrollViewDidEndLiveScrollNotification: &'static NSNotificationName;
-}
+extern_static!(NSScrollViewDidEndLiveScrollNotification: &'static NSNotificationName);
 
 extern_methods!(
     /// NSRulerSupport
@@ -352,10 +346,14 @@ extern_methods!(
     }
 );
 
-pub type NSScrollViewFindBarPosition = NSInteger;
-pub const NSScrollViewFindBarPositionAboveHorizontalRuler: NSScrollViewFindBarPosition = 0;
-pub const NSScrollViewFindBarPositionAboveContent: NSScrollViewFindBarPosition = 1;
-pub const NSScrollViewFindBarPositionBelowContent: NSScrollViewFindBarPosition = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSScrollViewFindBarPosition {
+        NSScrollViewFindBarPositionAboveHorizontalRuler = 0,
+        NSScrollViewFindBarPositionAboveContent = 1,
+        NSScrollViewFindBarPositionBelowContent = 2,
+    }
+);
 
 extern_methods!(
     /// NSFindBarSupport

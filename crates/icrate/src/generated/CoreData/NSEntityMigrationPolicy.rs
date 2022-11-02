@@ -4,29 +4,17 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSMigrationManagerKey: &'static NSString;
-}
+extern_static!(NSMigrationManagerKey: &'static NSString);
 
-extern "C" {
-    pub static NSMigrationSourceObjectKey: &'static NSString;
-}
+extern_static!(NSMigrationSourceObjectKey: &'static NSString);
 
-extern "C" {
-    pub static NSMigrationDestinationObjectKey: &'static NSString;
-}
+extern_static!(NSMigrationDestinationObjectKey: &'static NSString);
 
-extern "C" {
-    pub static NSMigrationEntityMappingKey: &'static NSString;
-}
+extern_static!(NSMigrationEntityMappingKey: &'static NSString);
 
-extern "C" {
-    pub static NSMigrationPropertyMappingKey: &'static NSString;
-}
+extern_static!(NSMigrationPropertyMappingKey: &'static NSString);
 
-extern "C" {
-    pub static NSMigrationEntityPolicyKey: &'static NSString;
-}
+extern_static!(NSMigrationEntityPolicyKey: &'static NSString);
 
 extern_class!(
     #[derive(Debug)]

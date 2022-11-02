@@ -31,13 +31,17 @@ extern_methods!(
     }
 );
 
-pub type NSCharacterCollection = NSUInteger;
-pub const NSIdentityMappingCharacterCollection: NSCharacterCollection = 0;
-pub const NSAdobeCNS1CharacterCollection: NSCharacterCollection = 1;
-pub const NSAdobeGB1CharacterCollection: NSCharacterCollection = 2;
-pub const NSAdobeJapan1CharacterCollection: NSCharacterCollection = 3;
-pub const NSAdobeJapan2CharacterCollection: NSCharacterCollection = 4;
-pub const NSAdobeKorea1CharacterCollection: NSCharacterCollection = 5;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSCharacterCollection {
+        NSIdentityMappingCharacterCollection = 0,
+        NSAdobeCNS1CharacterCollection = 1,
+        NSAdobeGB1CharacterCollection = 2,
+        NSAdobeJapan1CharacterCollection = 3,
+        NSAdobeJapan2CharacterCollection = 4,
+        NSAdobeKorea1CharacterCollection = 5,
+    }
+);
 
 extern_methods!(
     /// NSGlyphInfo_Deprecated

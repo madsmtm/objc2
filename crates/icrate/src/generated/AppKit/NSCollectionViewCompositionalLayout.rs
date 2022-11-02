@@ -5,18 +5,22 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSDirectionalRectEdge = NSUInteger;
-pub const NSDirectionalRectEdgeNone: NSDirectionalRectEdge = 0;
-pub const NSDirectionalRectEdgeTop: NSDirectionalRectEdge = 1 << 0;
-pub const NSDirectionalRectEdgeLeading: NSDirectionalRectEdge = 1 << 1;
-pub const NSDirectionalRectEdgeBottom: NSDirectionalRectEdge = 1 << 2;
-pub const NSDirectionalRectEdgeTrailing: NSDirectionalRectEdge = 1 << 3;
-pub const NSDirectionalRectEdgeAll: NSDirectionalRectEdge = NSDirectionalRectEdgeTop
-    | NSDirectionalRectEdgeLeading
-    | NSDirectionalRectEdgeBottom
-    | NSDirectionalRectEdgeTrailing;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSDirectionalRectEdge {
+        NSDirectionalRectEdgeNone = 0,
+        NSDirectionalRectEdgeTop = 1 << 0,
+        NSDirectionalRectEdgeLeading = 1 << 1,
+        NSDirectionalRectEdgeBottom = 1 << 2,
+        NSDirectionalRectEdgeTrailing = 1 << 3,
+        NSDirectionalRectEdgeAll = NSDirectionalRectEdgeTop
+            | NSDirectionalRectEdgeLeading
+            | NSDirectionalRectEdgeBottom
+            | NSDirectionalRectEdgeTrailing,
+    }
+);
 
-struct_impl!(
+extern_struct!(
     pub struct NSDirectionalEdgeInsets {
         pub top: CGFloat,
         pub leading: CGFloat,
@@ -25,20 +29,22 @@ struct_impl!(
     }
 );
 
-extern "C" {
-    pub static NSDirectionalEdgeInsetsZero: NSDirectionalEdgeInsets;
-}
+extern_static!(NSDirectionalEdgeInsetsZero: NSDirectionalEdgeInsets);
 
-pub type NSRectAlignment = NSInteger;
-pub const NSRectAlignmentNone: NSRectAlignment = 0;
-pub const NSRectAlignmentTop: NSRectAlignment = 1;
-pub const NSRectAlignmentTopLeading: NSRectAlignment = 2;
-pub const NSRectAlignmentLeading: NSRectAlignment = 3;
-pub const NSRectAlignmentBottomLeading: NSRectAlignment = 4;
-pub const NSRectAlignmentBottom: NSRectAlignment = 5;
-pub const NSRectAlignmentBottomTrailing: NSRectAlignment = 6;
-pub const NSRectAlignmentTrailing: NSRectAlignment = 7;
-pub const NSRectAlignmentTopTrailing: NSRectAlignment = 8;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSRectAlignment {
+        NSRectAlignmentNone = 0,
+        NSRectAlignmentTop = 1,
+        NSRectAlignmentTopLeading = 2,
+        NSRectAlignmentLeading = 3,
+        NSRectAlignmentBottomLeading = 4,
+        NSRectAlignmentBottom = 5,
+        NSRectAlignmentBottomTrailing = 6,
+        NSRectAlignmentTrailing = 7,
+        NSRectAlignmentTopTrailing = 8,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -134,19 +140,17 @@ extern_methods!(
     }
 );
 
-pub type NSCollectionLayoutSectionOrthogonalScrollingBehavior = NSInteger;
-pub const NSCollectionLayoutSectionOrthogonalScrollingBehaviorNone:
-    NSCollectionLayoutSectionOrthogonalScrollingBehavior = 0;
-pub const NSCollectionLayoutSectionOrthogonalScrollingBehaviorContinuous:
-    NSCollectionLayoutSectionOrthogonalScrollingBehavior = 1;
-pub const NSCollectionLayoutSectionOrthogonalScrollingBehaviorContinuousGroupLeadingBoundary:
-    NSCollectionLayoutSectionOrthogonalScrollingBehavior = 2;
-pub const NSCollectionLayoutSectionOrthogonalScrollingBehaviorPaging:
-    NSCollectionLayoutSectionOrthogonalScrollingBehavior = 3;
-pub const NSCollectionLayoutSectionOrthogonalScrollingBehaviorGroupPaging:
-    NSCollectionLayoutSectionOrthogonalScrollingBehavior = 4;
-pub const NSCollectionLayoutSectionOrthogonalScrollingBehaviorGroupPagingCentered:
-    NSCollectionLayoutSectionOrthogonalScrollingBehavior = 5;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSCollectionLayoutSectionOrthogonalScrollingBehavior {
+        NSCollectionLayoutSectionOrthogonalScrollingBehaviorNone = 0,
+        NSCollectionLayoutSectionOrthogonalScrollingBehaviorContinuous = 1,
+        NSCollectionLayoutSectionOrthogonalScrollingBehaviorContinuousGroupLeadingBoundary = 2,
+        NSCollectionLayoutSectionOrthogonalScrollingBehaviorPaging = 3,
+        NSCollectionLayoutSectionOrthogonalScrollingBehaviorGroupPaging = 4,
+        NSCollectionLayoutSectionOrthogonalScrollingBehaviorGroupPagingCentered = 5,
+    }
+);
 
 pub type NSCollectionLayoutSectionVisibleItemsInvalidationHandler = TodoBlock;
 

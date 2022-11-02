@@ -5,9 +5,13 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextStorageEditActions = NSUInteger;
-pub const NSTextStorageEditedAttributes: NSTextStorageEditActions = 1 << 0;
-pub const NSTextStorageEditedCharacters: NSTextStorageEditActions = 1 << 1;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSTextStorageEditActions {
+        NSTextStorageEditedAttributes = 1 << 0,
+        NSTextStorageEditedCharacters = 1 << 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -77,13 +81,9 @@ extern_methods!(
 
 pub type NSTextStorageDelegate = NSObject;
 
-extern "C" {
-    pub static NSTextStorageWillProcessEditingNotification: &'static NSNotificationName;
-}
+extern_static!(NSTextStorageWillProcessEditingNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSTextStorageDidProcessEditingNotification: &'static NSNotificationName;
-}
+extern_static!(NSTextStorageDidProcessEditingNotification: &'static NSNotificationName);
 
 pub type NSTextStorageObserving = NSObject;
 

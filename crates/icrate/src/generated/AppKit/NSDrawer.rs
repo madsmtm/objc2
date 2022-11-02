@@ -5,11 +5,15 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSDrawerState = NSUInteger;
-pub const NSDrawerClosedState: NSDrawerState = 0;
-pub const NSDrawerOpeningState: NSDrawerState = 1;
-pub const NSDrawerOpenState: NSDrawerState = 2;
-pub const NSDrawerClosingState: NSDrawerState = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSDrawerState {
+        NSDrawerClosedState = 0,
+        NSDrawerOpeningState = 1,
+        NSDrawerOpenState = 2,
+        NSDrawerClosingState = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -107,18 +111,10 @@ extern_methods!(
 
 pub type NSDrawerDelegate = NSObject;
 
-extern "C" {
-    pub static NSDrawerWillOpenNotification: &'static NSNotificationName;
-}
+extern_static!(NSDrawerWillOpenNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSDrawerDidOpenNotification: &'static NSNotificationName;
-}
+extern_static!(NSDrawerDidOpenNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSDrawerWillCloseNotification: &'static NSNotificationName;
-}
+extern_static!(NSDrawerWillCloseNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSDrawerDidCloseNotification: &'static NSNotificationName;
-}
+extern_static!(NSDrawerDidCloseNotification: &'static NSNotificationName);

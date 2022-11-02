@@ -9,156 +9,90 @@ pub type NSSpeechSynthesizerVoiceName = NSString;
 
 pub type NSVoiceAttributeKey = NSString;
 
-extern "C" {
-    pub static NSVoiceName: &'static NSVoiceAttributeKey;
-}
+extern_static!(NSVoiceName: &'static NSVoiceAttributeKey);
 
-extern "C" {
-    pub static NSVoiceIdentifier: &'static NSVoiceAttributeKey;
-}
+extern_static!(NSVoiceIdentifier: &'static NSVoiceAttributeKey);
 
-extern "C" {
-    pub static NSVoiceAge: &'static NSVoiceAttributeKey;
-}
+extern_static!(NSVoiceAge: &'static NSVoiceAttributeKey);
 
-extern "C" {
-    pub static NSVoiceGender: &'static NSVoiceAttributeKey;
-}
+extern_static!(NSVoiceGender: &'static NSVoiceAttributeKey);
 
-extern "C" {
-    pub static NSVoiceDemoText: &'static NSVoiceAttributeKey;
-}
+extern_static!(NSVoiceDemoText: &'static NSVoiceAttributeKey);
 
-extern "C" {
-    pub static NSVoiceLocaleIdentifier: &'static NSVoiceAttributeKey;
-}
+extern_static!(NSVoiceLocaleIdentifier: &'static NSVoiceAttributeKey);
 
-extern "C" {
-    pub static NSVoiceSupportedCharacters: &'static NSVoiceAttributeKey;
-}
+extern_static!(NSVoiceSupportedCharacters: &'static NSVoiceAttributeKey);
 
-extern "C" {
-    pub static NSVoiceIndividuallySpokenCharacters: &'static NSVoiceAttributeKey;
-}
+extern_static!(NSVoiceIndividuallySpokenCharacters: &'static NSVoiceAttributeKey);
 
 pub type NSSpeechDictionaryKey = NSString;
 
-extern "C" {
-    pub static NSSpeechDictionaryLocaleIdentifier: &'static NSSpeechDictionaryKey;
-}
+extern_static!(NSSpeechDictionaryLocaleIdentifier: &'static NSSpeechDictionaryKey);
 
-extern "C" {
-    pub static NSSpeechDictionaryModificationDate: &'static NSSpeechDictionaryKey;
-}
+extern_static!(NSSpeechDictionaryModificationDate: &'static NSSpeechDictionaryKey);
 
-extern "C" {
-    pub static NSSpeechDictionaryPronunciations: &'static NSSpeechDictionaryKey;
-}
+extern_static!(NSSpeechDictionaryPronunciations: &'static NSSpeechDictionaryKey);
 
-extern "C" {
-    pub static NSSpeechDictionaryAbbreviations: &'static NSSpeechDictionaryKey;
-}
+extern_static!(NSSpeechDictionaryAbbreviations: &'static NSSpeechDictionaryKey);
 
-extern "C" {
-    pub static NSSpeechDictionaryEntrySpelling: &'static NSSpeechDictionaryKey;
-}
+extern_static!(NSSpeechDictionaryEntrySpelling: &'static NSSpeechDictionaryKey);
 
-extern "C" {
-    pub static NSSpeechDictionaryEntryPhonemes: &'static NSSpeechDictionaryKey;
-}
+extern_static!(NSSpeechDictionaryEntryPhonemes: &'static NSSpeechDictionaryKey);
 
 pub type NSVoiceGenderName = NSString;
 
-extern "C" {
-    pub static NSVoiceGenderNeuter: &'static NSVoiceGenderName;
-}
+extern_static!(NSVoiceGenderNeuter: &'static NSVoiceGenderName);
 
-extern "C" {
-    pub static NSVoiceGenderMale: &'static NSVoiceGenderName;
-}
+extern_static!(NSVoiceGenderMale: &'static NSVoiceGenderName);
 
-extern "C" {
-    pub static NSVoiceGenderFemale: &'static NSVoiceGenderName;
-}
+extern_static!(NSVoiceGenderFemale: &'static NSVoiceGenderName);
 
-extern "C" {
-    pub static NSVoiceGenderNeutral: &'static NSVoiceGenderName;
-}
+extern_static!(NSVoiceGenderNeutral: &'static NSVoiceGenderName);
 
 pub type NSSpeechPropertyKey = NSString;
 
-extern "C" {
-    pub static NSSpeechStatusProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechStatusProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSSpeechErrorsProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechErrorsProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSSpeechInputModeProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechInputModeProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSSpeechCharacterModeProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechCharacterModeProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSSpeechNumberModeProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechNumberModeProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSSpeechRateProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechRateProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSSpeechPitchBaseProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechPitchBaseProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSSpeechPitchModProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechPitchModProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSSpeechVolumeProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechVolumeProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSSpeechSynthesizerInfoProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechSynthesizerInfoProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSSpeechRecentSyncProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechRecentSyncProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSSpeechPhonemeSymbolsProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechPhonemeSymbolsProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSSpeechCurrentVoiceProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechCurrentVoiceProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSSpeechCommandDelimiterProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechCommandDelimiterProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSSpeechResetProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechResetProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSSpeechOutputToFileURLProperty: &'static NSSpeechPropertyKey;
-}
+extern_static!(NSSpeechOutputToFileURLProperty: &'static NSSpeechPropertyKey);
 
-extern "C" {
-    pub static NSVoiceLanguage: &'static NSVoiceAttributeKey;
-}
+extern_static!(NSVoiceLanguage: &'static NSVoiceAttributeKey);
 
-pub type NSSpeechBoundary = NSUInteger;
-pub const NSSpeechImmediateBoundary: NSSpeechBoundary = 0;
-pub const NSSpeechWordBoundary: NSSpeechBoundary = 1;
-pub const NSSpeechSentenceBoundary: NSSpeechBoundary = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSSpeechBoundary {
+        NSSpeechImmediateBoundary = 0,
+        NSSpeechWordBoundary = 1,
+        NSSpeechSentenceBoundary = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -270,100 +204,56 @@ pub type NSSpeechSynthesizerDelegate = NSObject;
 
 pub type NSSpeechMode = NSString;
 
-extern "C" {
-    pub static NSSpeechModeText: &'static NSSpeechMode;
-}
+extern_static!(NSSpeechModeText: &'static NSSpeechMode);
 
-extern "C" {
-    pub static NSSpeechModePhoneme: &'static NSSpeechMode;
-}
+extern_static!(NSSpeechModePhoneme: &'static NSSpeechMode);
 
-extern "C" {
-    pub static NSSpeechModeNormal: &'static NSSpeechMode;
-}
+extern_static!(NSSpeechModeNormal: &'static NSSpeechMode);
 
-extern "C" {
-    pub static NSSpeechModeLiteral: &'static NSSpeechMode;
-}
+extern_static!(NSSpeechModeLiteral: &'static NSSpeechMode);
 
 pub type NSSpeechStatusKey = NSString;
 
-extern "C" {
-    pub static NSSpeechStatusOutputBusy: &'static NSSpeechStatusKey;
-}
+extern_static!(NSSpeechStatusOutputBusy: &'static NSSpeechStatusKey);
 
-extern "C" {
-    pub static NSSpeechStatusOutputPaused: &'static NSSpeechStatusKey;
-}
+extern_static!(NSSpeechStatusOutputPaused: &'static NSSpeechStatusKey);
 
-extern "C" {
-    pub static NSSpeechStatusNumberOfCharactersLeft: &'static NSSpeechStatusKey;
-}
+extern_static!(NSSpeechStatusNumberOfCharactersLeft: &'static NSSpeechStatusKey);
 
-extern "C" {
-    pub static NSSpeechStatusPhonemeCode: &'static NSSpeechStatusKey;
-}
+extern_static!(NSSpeechStatusPhonemeCode: &'static NSSpeechStatusKey);
 
 pub type NSSpeechErrorKey = NSString;
 
-extern "C" {
-    pub static NSSpeechErrorCount: &'static NSSpeechErrorKey;
-}
+extern_static!(NSSpeechErrorCount: &'static NSSpeechErrorKey);
 
-extern "C" {
-    pub static NSSpeechErrorOldestCode: &'static NSSpeechErrorKey;
-}
+extern_static!(NSSpeechErrorOldestCode: &'static NSSpeechErrorKey);
 
-extern "C" {
-    pub static NSSpeechErrorOldestCharacterOffset: &'static NSSpeechErrorKey;
-}
+extern_static!(NSSpeechErrorOldestCharacterOffset: &'static NSSpeechErrorKey);
 
-extern "C" {
-    pub static NSSpeechErrorNewestCode: &'static NSSpeechErrorKey;
-}
+extern_static!(NSSpeechErrorNewestCode: &'static NSSpeechErrorKey);
 
-extern "C" {
-    pub static NSSpeechErrorNewestCharacterOffset: &'static NSSpeechErrorKey;
-}
+extern_static!(NSSpeechErrorNewestCharacterOffset: &'static NSSpeechErrorKey);
 
 pub type NSSpeechSynthesizerInfoKey = NSString;
 
-extern "C" {
-    pub static NSSpeechSynthesizerInfoIdentifier: &'static NSSpeechSynthesizerInfoKey;
-}
+extern_static!(NSSpeechSynthesizerInfoIdentifier: &'static NSSpeechSynthesizerInfoKey);
 
-extern "C" {
-    pub static NSSpeechSynthesizerInfoVersion: &'static NSSpeechSynthesizerInfoKey;
-}
+extern_static!(NSSpeechSynthesizerInfoVersion: &'static NSSpeechSynthesizerInfoKey);
 
 pub type NSSpeechPhonemeInfoKey = NSString;
 
-extern "C" {
-    pub static NSSpeechPhonemeInfoOpcode: &'static NSSpeechPhonemeInfoKey;
-}
+extern_static!(NSSpeechPhonemeInfoOpcode: &'static NSSpeechPhonemeInfoKey);
 
-extern "C" {
-    pub static NSSpeechPhonemeInfoSymbol: &'static NSSpeechPhonemeInfoKey;
-}
+extern_static!(NSSpeechPhonemeInfoSymbol: &'static NSSpeechPhonemeInfoKey);
 
-extern "C" {
-    pub static NSSpeechPhonemeInfoExample: &'static NSSpeechPhonemeInfoKey;
-}
+extern_static!(NSSpeechPhonemeInfoExample: &'static NSSpeechPhonemeInfoKey);
 
-extern "C" {
-    pub static NSSpeechPhonemeInfoHiliteStart: &'static NSSpeechPhonemeInfoKey;
-}
+extern_static!(NSSpeechPhonemeInfoHiliteStart: &'static NSSpeechPhonemeInfoKey);
 
-extern "C" {
-    pub static NSSpeechPhonemeInfoHiliteEnd: &'static NSSpeechPhonemeInfoKey;
-}
+extern_static!(NSSpeechPhonemeInfoHiliteEnd: &'static NSSpeechPhonemeInfoKey);
 
 pub type NSSpeechCommandDelimiterKey = NSString;
 
-extern "C" {
-    pub static NSSpeechCommandPrefix: &'static NSSpeechCommandDelimiterKey;
-}
+extern_static!(NSSpeechCommandPrefix: &'static NSSpeechCommandDelimiterKey);
 
-extern "C" {
-    pub static NSSpeechCommandSuffix: &'static NSSpeechCommandDelimiterKey;
-}
+extern_static!(NSSpeechCommandSuffix: &'static NSSpeechCommandDelimiterKey);

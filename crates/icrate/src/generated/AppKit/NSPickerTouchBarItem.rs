@@ -5,18 +5,23 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSPickerTouchBarItemSelectionMode = NSInteger;
-pub const NSPickerTouchBarItemSelectionModeSelectOne: NSPickerTouchBarItemSelectionMode = 0;
-pub const NSPickerTouchBarItemSelectionModeSelectAny: NSPickerTouchBarItemSelectionMode = 1;
-pub const NSPickerTouchBarItemSelectionModeMomentary: NSPickerTouchBarItemSelectionMode = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSPickerTouchBarItemSelectionMode {
+        NSPickerTouchBarItemSelectionModeSelectOne = 0,
+        NSPickerTouchBarItemSelectionModeSelectAny = 1,
+        NSPickerTouchBarItemSelectionModeMomentary = 2,
+    }
+);
 
-pub type NSPickerTouchBarItemControlRepresentation = NSInteger;
-pub const NSPickerTouchBarItemControlRepresentationAutomatic:
-    NSPickerTouchBarItemControlRepresentation = 0;
-pub const NSPickerTouchBarItemControlRepresentationExpanded:
-    NSPickerTouchBarItemControlRepresentation = 1;
-pub const NSPickerTouchBarItemControlRepresentationCollapsed:
-    NSPickerTouchBarItemControlRepresentation = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSPickerTouchBarItemControlRepresentation {
+        NSPickerTouchBarItemControlRepresentationAutomatic = 0,
+        NSPickerTouchBarItemControlRepresentationExpanded = 1,
+        NSPickerTouchBarItemControlRepresentationCollapsed = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

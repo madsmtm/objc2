@@ -3,37 +3,53 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSNumberFormatterBehavior = NSUInteger;
-pub const NSNumberFormatterBehaviorDefault: NSNumberFormatterBehavior = 0;
-pub const NSNumberFormatterBehavior10_0: NSNumberFormatterBehavior = 1000;
-pub const NSNumberFormatterBehavior10_4: NSNumberFormatterBehavior = 1040;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSNumberFormatterBehavior {
+        NSNumberFormatterBehaviorDefault = 0,
+        NSNumberFormatterBehavior10_0 = 1000,
+        NSNumberFormatterBehavior10_4 = 1040,
+    }
+);
 
-pub type NSNumberFormatterStyle = NSUInteger;
-pub const NSNumberFormatterNoStyle: NSNumberFormatterStyle = 0;
-pub const NSNumberFormatterDecimalStyle: NSNumberFormatterStyle = 1;
-pub const NSNumberFormatterCurrencyStyle: NSNumberFormatterStyle = 2;
-pub const NSNumberFormatterPercentStyle: NSNumberFormatterStyle = 3;
-pub const NSNumberFormatterScientificStyle: NSNumberFormatterStyle = 4;
-pub const NSNumberFormatterSpellOutStyle: NSNumberFormatterStyle = 5;
-pub const NSNumberFormatterOrdinalStyle: NSNumberFormatterStyle = 6;
-pub const NSNumberFormatterCurrencyISOCodeStyle: NSNumberFormatterStyle = 8;
-pub const NSNumberFormatterCurrencyPluralStyle: NSNumberFormatterStyle = 9;
-pub const NSNumberFormatterCurrencyAccountingStyle: NSNumberFormatterStyle = 10;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSNumberFormatterStyle {
+        NSNumberFormatterNoStyle = 0,
+        NSNumberFormatterDecimalStyle = 1,
+        NSNumberFormatterCurrencyStyle = 2,
+        NSNumberFormatterPercentStyle = 3,
+        NSNumberFormatterScientificStyle = 4,
+        NSNumberFormatterSpellOutStyle = 5,
+        NSNumberFormatterOrdinalStyle = 6,
+        NSNumberFormatterCurrencyISOCodeStyle = 8,
+        NSNumberFormatterCurrencyPluralStyle = 9,
+        NSNumberFormatterCurrencyAccountingStyle = 10,
+    }
+);
 
-pub type NSNumberFormatterPadPosition = NSUInteger;
-pub const NSNumberFormatterPadBeforePrefix: NSNumberFormatterPadPosition = 0;
-pub const NSNumberFormatterPadAfterPrefix: NSNumberFormatterPadPosition = 1;
-pub const NSNumberFormatterPadBeforeSuffix: NSNumberFormatterPadPosition = 2;
-pub const NSNumberFormatterPadAfterSuffix: NSNumberFormatterPadPosition = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSNumberFormatterPadPosition {
+        NSNumberFormatterPadBeforePrefix = 0,
+        NSNumberFormatterPadAfterPrefix = 1,
+        NSNumberFormatterPadBeforeSuffix = 2,
+        NSNumberFormatterPadAfterSuffix = 3,
+    }
+);
 
-pub type NSNumberFormatterRoundingMode = NSUInteger;
-pub const NSNumberFormatterRoundCeiling: NSNumberFormatterRoundingMode = 0;
-pub const NSNumberFormatterRoundFloor: NSNumberFormatterRoundingMode = 1;
-pub const NSNumberFormatterRoundDown: NSNumberFormatterRoundingMode = 2;
-pub const NSNumberFormatterRoundUp: NSNumberFormatterRoundingMode = 3;
-pub const NSNumberFormatterRoundHalfEven: NSNumberFormatterRoundingMode = 4;
-pub const NSNumberFormatterRoundHalfDown: NSNumberFormatterRoundingMode = 5;
-pub const NSNumberFormatterRoundHalfUp: NSNumberFormatterRoundingMode = 6;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSNumberFormatterRoundingMode {
+        NSNumberFormatterRoundCeiling = 0,
+        NSNumberFormatterRoundFloor = 1,
+        NSNumberFormatterRoundDown = 2,
+        NSNumberFormatterRoundUp = 3,
+        NSNumberFormatterRoundHalfEven = 4,
+        NSNumberFormatterRoundHalfDown = 5,
+        NSNumberFormatterRoundHalfUp = 6,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

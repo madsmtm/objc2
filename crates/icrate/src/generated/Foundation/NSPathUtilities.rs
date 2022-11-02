@@ -86,38 +86,46 @@ extern_methods!(
     }
 );
 
-pub type NSSearchPathDirectory = NSUInteger;
-pub const NSApplicationDirectory: NSSearchPathDirectory = 1;
-pub const NSDemoApplicationDirectory: NSSearchPathDirectory = 2;
-pub const NSDeveloperApplicationDirectory: NSSearchPathDirectory = 3;
-pub const NSAdminApplicationDirectory: NSSearchPathDirectory = 4;
-pub const NSLibraryDirectory: NSSearchPathDirectory = 5;
-pub const NSDeveloperDirectory: NSSearchPathDirectory = 6;
-pub const NSUserDirectory: NSSearchPathDirectory = 7;
-pub const NSDocumentationDirectory: NSSearchPathDirectory = 8;
-pub const NSDocumentDirectory: NSSearchPathDirectory = 9;
-pub const NSCoreServiceDirectory: NSSearchPathDirectory = 10;
-pub const NSAutosavedInformationDirectory: NSSearchPathDirectory = 11;
-pub const NSDesktopDirectory: NSSearchPathDirectory = 12;
-pub const NSCachesDirectory: NSSearchPathDirectory = 13;
-pub const NSApplicationSupportDirectory: NSSearchPathDirectory = 14;
-pub const NSDownloadsDirectory: NSSearchPathDirectory = 15;
-pub const NSInputMethodsDirectory: NSSearchPathDirectory = 16;
-pub const NSMoviesDirectory: NSSearchPathDirectory = 17;
-pub const NSMusicDirectory: NSSearchPathDirectory = 18;
-pub const NSPicturesDirectory: NSSearchPathDirectory = 19;
-pub const NSPrinterDescriptionDirectory: NSSearchPathDirectory = 20;
-pub const NSSharedPublicDirectory: NSSearchPathDirectory = 21;
-pub const NSPreferencePanesDirectory: NSSearchPathDirectory = 22;
-pub const NSApplicationScriptsDirectory: NSSearchPathDirectory = 23;
-pub const NSItemReplacementDirectory: NSSearchPathDirectory = 99;
-pub const NSAllApplicationsDirectory: NSSearchPathDirectory = 100;
-pub const NSAllLibrariesDirectory: NSSearchPathDirectory = 101;
-pub const NSTrashDirectory: NSSearchPathDirectory = 102;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSSearchPathDirectory {
+        NSApplicationDirectory = 1,
+        NSDemoApplicationDirectory = 2,
+        NSDeveloperApplicationDirectory = 3,
+        NSAdminApplicationDirectory = 4,
+        NSLibraryDirectory = 5,
+        NSDeveloperDirectory = 6,
+        NSUserDirectory = 7,
+        NSDocumentationDirectory = 8,
+        NSDocumentDirectory = 9,
+        NSCoreServiceDirectory = 10,
+        NSAutosavedInformationDirectory = 11,
+        NSDesktopDirectory = 12,
+        NSCachesDirectory = 13,
+        NSApplicationSupportDirectory = 14,
+        NSDownloadsDirectory = 15,
+        NSInputMethodsDirectory = 16,
+        NSMoviesDirectory = 17,
+        NSMusicDirectory = 18,
+        NSPicturesDirectory = 19,
+        NSPrinterDescriptionDirectory = 20,
+        NSSharedPublicDirectory = 21,
+        NSPreferencePanesDirectory = 22,
+        NSApplicationScriptsDirectory = 23,
+        NSItemReplacementDirectory = 99,
+        NSAllApplicationsDirectory = 100,
+        NSAllLibrariesDirectory = 101,
+        NSTrashDirectory = 102,
+    }
+);
 
-pub type NSSearchPathDomainMask = NSUInteger;
-pub const NSUserDomainMask: NSSearchPathDomainMask = 1;
-pub const NSLocalDomainMask: NSSearchPathDomainMask = 2;
-pub const NSNetworkDomainMask: NSSearchPathDomainMask = 4;
-pub const NSSystemDomainMask: NSSearchPathDomainMask = 8;
-pub const NSAllDomainsMask: NSSearchPathDomainMask = 0x0ffff;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSSearchPathDomainMask {
+        NSUserDomainMask = 1,
+        NSLocalDomainMask = 2,
+        NSNetworkDomainMask = 4,
+        NSSystemDomainMask = 8,
+        NSAllDomainsMask = 0x0ffff,
+    }
+);

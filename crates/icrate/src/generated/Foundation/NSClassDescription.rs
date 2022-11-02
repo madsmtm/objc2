@@ -68,6 +68,4 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSClassDescriptionNeededForClassNotification: &'static NSNotificationName;
-}
+extern_static!(NSClassDescriptionNeededForClassNotification: &'static NSNotificationName);

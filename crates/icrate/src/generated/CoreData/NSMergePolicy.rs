@@ -4,32 +4,26 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSErrorMergePolicy: &'static Object;
-}
+extern_static!(NSErrorMergePolicy: &'static Object);
 
-extern "C" {
-    pub static NSMergeByPropertyStoreTrumpMergePolicy: &'static Object;
-}
+extern_static!(NSMergeByPropertyStoreTrumpMergePolicy: &'static Object);
 
-extern "C" {
-    pub static NSMergeByPropertyObjectTrumpMergePolicy: &'static Object;
-}
+extern_static!(NSMergeByPropertyObjectTrumpMergePolicy: &'static Object);
 
-extern "C" {
-    pub static NSOverwriteMergePolicy: &'static Object;
-}
+extern_static!(NSOverwriteMergePolicy: &'static Object);
 
-extern "C" {
-    pub static NSRollbackMergePolicy: &'static Object;
-}
+extern_static!(NSRollbackMergePolicy: &'static Object);
 
-pub type NSMergePolicyType = NSUInteger;
-pub const NSErrorMergePolicyType: NSMergePolicyType = 0x00;
-pub const NSMergeByPropertyStoreTrumpMergePolicyType: NSMergePolicyType = 0x01;
-pub const NSMergeByPropertyObjectTrumpMergePolicyType: NSMergePolicyType = 0x02;
-pub const NSOverwriteMergePolicyType: NSMergePolicyType = 0x03;
-pub const NSRollbackMergePolicyType: NSMergePolicyType = 0x04;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSMergePolicyType {
+        NSErrorMergePolicyType = 0x00,
+        NSMergeByPropertyStoreTrumpMergePolicyType = 0x01,
+        NSMergeByPropertyObjectTrumpMergePolicyType = 0x02,
+        NSOverwriteMergePolicyType = 0x03,
+        NSRollbackMergePolicyType = 0x04,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

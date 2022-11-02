@@ -5,9 +5,13 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSProgressIndicatorStyle = NSUInteger;
-pub const NSProgressIndicatorStyleBar: NSProgressIndicatorStyle = 0;
-pub const NSProgressIndicatorStyleSpinning: NSProgressIndicatorStyle = 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSProgressIndicatorStyle {
+        NSProgressIndicatorStyleBar = 0,
+        NSProgressIndicatorStyleSpinning = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -94,16 +98,21 @@ extern_methods!(
     }
 );
 
-pub type NSProgressIndicatorThickness = NSUInteger;
-pub const NSProgressIndicatorPreferredThickness: NSProgressIndicatorThickness = 14;
-pub const NSProgressIndicatorPreferredSmallThickness: NSProgressIndicatorThickness = 10;
-pub const NSProgressIndicatorPreferredLargeThickness: NSProgressIndicatorThickness = 18;
-pub const NSProgressIndicatorPreferredAquaThickness: NSProgressIndicatorThickness = 12;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSProgressIndicatorThickness {
+        NSProgressIndicatorPreferredThickness = 14,
+        NSProgressIndicatorPreferredSmallThickness = 10,
+        NSProgressIndicatorPreferredLargeThickness = 18,
+        NSProgressIndicatorPreferredAquaThickness = 12,
+    }
+);
 
-pub static NSProgressIndicatorBarStyle: NSProgressIndicatorStyle = NSProgressIndicatorStyleBar;
+extern_static!(NSProgressIndicatorBarStyle: NSProgressIndicatorStyle = NSProgressIndicatorStyleBar);
 
-pub static NSProgressIndicatorSpinningStyle: NSProgressIndicatorStyle =
-    NSProgressIndicatorStyleSpinning;
+extern_static!(
+    NSProgressIndicatorSpinningStyle: NSProgressIndicatorStyle = NSProgressIndicatorStyleSpinning
+);
 
 extern_methods!(
     /// NSProgressIndicatorDeprecated

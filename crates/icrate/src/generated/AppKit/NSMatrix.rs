@@ -5,11 +5,15 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSMatrixMode = NSUInteger;
-pub const NSRadioModeMatrix: NSMatrixMode = 0;
-pub const NSHighlightModeMatrix: NSMatrixMode = 1;
-pub const NSListModeMatrix: NSMatrixMode = 2;
-pub const NSTrackModeMatrix: NSMatrixMode = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSMatrixMode {
+        NSRadioModeMatrix = 0,
+        NSHighlightModeMatrix = 1,
+        NSListModeMatrix = 2,
+        NSTrackModeMatrix = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

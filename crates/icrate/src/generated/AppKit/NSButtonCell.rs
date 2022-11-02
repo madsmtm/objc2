@@ -5,32 +5,40 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSButtonType = NSUInteger;
-pub const NSButtonTypeMomentaryLight: NSButtonType = 0;
-pub const NSButtonTypePushOnPushOff: NSButtonType = 1;
-pub const NSButtonTypeToggle: NSButtonType = 2;
-pub const NSButtonTypeSwitch: NSButtonType = 3;
-pub const NSButtonTypeRadio: NSButtonType = 4;
-pub const NSButtonTypeMomentaryChange: NSButtonType = 5;
-pub const NSButtonTypeOnOff: NSButtonType = 6;
-pub const NSButtonTypeMomentaryPushIn: NSButtonType = 7;
-pub const NSButtonTypeAccelerator: NSButtonType = 8;
-pub const NSButtonTypeMultiLevelAccelerator: NSButtonType = 9;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSButtonType {
+        NSButtonTypeMomentaryLight = 0,
+        NSButtonTypePushOnPushOff = 1,
+        NSButtonTypeToggle = 2,
+        NSButtonTypeSwitch = 3,
+        NSButtonTypeRadio = 4,
+        NSButtonTypeMomentaryChange = 5,
+        NSButtonTypeOnOff = 6,
+        NSButtonTypeMomentaryPushIn = 7,
+        NSButtonTypeAccelerator = 8,
+        NSButtonTypeMultiLevelAccelerator = 9,
+    }
+);
 
-pub type NSBezelStyle = NSUInteger;
-pub const NSBezelStyleRounded: NSBezelStyle = 1;
-pub const NSBezelStyleRegularSquare: NSBezelStyle = 2;
-pub const NSBezelStyleDisclosure: NSBezelStyle = 5;
-pub const NSBezelStyleShadowlessSquare: NSBezelStyle = 6;
-pub const NSBezelStyleCircular: NSBezelStyle = 7;
-pub const NSBezelStyleTexturedSquare: NSBezelStyle = 8;
-pub const NSBezelStyleHelpButton: NSBezelStyle = 9;
-pub const NSBezelStyleSmallSquare: NSBezelStyle = 10;
-pub const NSBezelStyleTexturedRounded: NSBezelStyle = 11;
-pub const NSBezelStyleRoundRect: NSBezelStyle = 12;
-pub const NSBezelStyleRecessed: NSBezelStyle = 13;
-pub const NSBezelStyleRoundedDisclosure: NSBezelStyle = 14;
-pub const NSBezelStyleInline: NSBezelStyle = 15;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSBezelStyle {
+        NSBezelStyleRounded = 1,
+        NSBezelStyleRegularSquare = 2,
+        NSBezelStyleDisclosure = 5,
+        NSBezelStyleShadowlessSquare = 6,
+        NSBezelStyleCircular = 7,
+        NSBezelStyleTexturedSquare = 8,
+        NSBezelStyleHelpButton = 9,
+        NSBezelStyleSmallSquare = 10,
+        NSBezelStyleTexturedRounded = 11,
+        NSBezelStyleRoundRect = 12,
+        NSBezelStyleRecessed = 13,
+        NSBezelStyleRoundedDisclosure = 14,
+        NSBezelStyleInline = 15,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -218,68 +226,72 @@ extern_methods!(
     }
 );
 
-pub type NSGradientType = NSUInteger;
-pub const NSGradientNone: NSGradientType = 0;
-pub const NSGradientConcaveWeak: NSGradientType = 1;
-pub const NSGradientConcaveStrong: NSGradientType = 2;
-pub const NSGradientConvexWeak: NSGradientType = 3;
-pub const NSGradientConvexStrong: NSGradientType = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSGradientType {
+        NSGradientNone = 0,
+        NSGradientConcaveWeak = 1,
+        NSGradientConcaveStrong = 2,
+        NSGradientConvexWeak = 3,
+        NSGradientConvexStrong = 4,
+    }
+);
 
-pub static NSMomentaryLightButton: NSButtonType = NSButtonTypeMomentaryLight;
+extern_static!(NSMomentaryLightButton: NSButtonType = NSButtonTypeMomentaryLight);
 
-pub static NSPushOnPushOffButton: NSButtonType = NSButtonTypePushOnPushOff;
+extern_static!(NSPushOnPushOffButton: NSButtonType = NSButtonTypePushOnPushOff);
 
-pub static NSToggleButton: NSButtonType = NSButtonTypeToggle;
+extern_static!(NSToggleButton: NSButtonType = NSButtonTypeToggle);
 
-pub static NSSwitchButton: NSButtonType = NSButtonTypeSwitch;
+extern_static!(NSSwitchButton: NSButtonType = NSButtonTypeSwitch);
 
-pub static NSRadioButton: NSButtonType = NSButtonTypeRadio;
+extern_static!(NSRadioButton: NSButtonType = NSButtonTypeRadio);
 
-pub static NSMomentaryChangeButton: NSButtonType = NSButtonTypeMomentaryChange;
+extern_static!(NSMomentaryChangeButton: NSButtonType = NSButtonTypeMomentaryChange);
 
-pub static NSOnOffButton: NSButtonType = NSButtonTypeOnOff;
+extern_static!(NSOnOffButton: NSButtonType = NSButtonTypeOnOff);
 
-pub static NSMomentaryPushInButton: NSButtonType = NSButtonTypeMomentaryPushIn;
+extern_static!(NSMomentaryPushInButton: NSButtonType = NSButtonTypeMomentaryPushIn);
 
-pub static NSAcceleratorButton: NSButtonType = NSButtonTypeAccelerator;
+extern_static!(NSAcceleratorButton: NSButtonType = NSButtonTypeAccelerator);
 
-pub static NSMultiLevelAcceleratorButton: NSButtonType = NSButtonTypeMultiLevelAccelerator;
+extern_static!(NSMultiLevelAcceleratorButton: NSButtonType = NSButtonTypeMultiLevelAccelerator);
 
-pub static NSMomentaryPushButton: NSButtonType = NSButtonTypeMomentaryLight;
+extern_static!(NSMomentaryPushButton: NSButtonType = NSButtonTypeMomentaryLight);
 
-pub static NSMomentaryLight: NSButtonType = NSButtonTypeMomentaryPushIn;
+extern_static!(NSMomentaryLight: NSButtonType = NSButtonTypeMomentaryPushIn);
 
-pub static NSRoundedBezelStyle: NSBezelStyle = NSBezelStyleRounded;
+extern_static!(NSRoundedBezelStyle: NSBezelStyle = NSBezelStyleRounded);
 
-pub static NSRegularSquareBezelStyle: NSBezelStyle = NSBezelStyleRegularSquare;
+extern_static!(NSRegularSquareBezelStyle: NSBezelStyle = NSBezelStyleRegularSquare);
 
-pub static NSDisclosureBezelStyle: NSBezelStyle = NSBezelStyleDisclosure;
+extern_static!(NSDisclosureBezelStyle: NSBezelStyle = NSBezelStyleDisclosure);
 
-pub static NSShadowlessSquareBezelStyle: NSBezelStyle = NSBezelStyleShadowlessSquare;
+extern_static!(NSShadowlessSquareBezelStyle: NSBezelStyle = NSBezelStyleShadowlessSquare);
 
-pub static NSCircularBezelStyle: NSBezelStyle = NSBezelStyleCircular;
+extern_static!(NSCircularBezelStyle: NSBezelStyle = NSBezelStyleCircular);
 
-pub static NSTexturedSquareBezelStyle: NSBezelStyle = NSBezelStyleTexturedSquare;
+extern_static!(NSTexturedSquareBezelStyle: NSBezelStyle = NSBezelStyleTexturedSquare);
 
-pub static NSHelpButtonBezelStyle: NSBezelStyle = NSBezelStyleHelpButton;
+extern_static!(NSHelpButtonBezelStyle: NSBezelStyle = NSBezelStyleHelpButton);
 
-pub static NSSmallSquareBezelStyle: NSBezelStyle = NSBezelStyleSmallSquare;
+extern_static!(NSSmallSquareBezelStyle: NSBezelStyle = NSBezelStyleSmallSquare);
 
-pub static NSTexturedRoundedBezelStyle: NSBezelStyle = NSBezelStyleTexturedRounded;
+extern_static!(NSTexturedRoundedBezelStyle: NSBezelStyle = NSBezelStyleTexturedRounded);
 
-pub static NSRoundRectBezelStyle: NSBezelStyle = NSBezelStyleRoundRect;
+extern_static!(NSRoundRectBezelStyle: NSBezelStyle = NSBezelStyleRoundRect);
 
-pub static NSRecessedBezelStyle: NSBezelStyle = NSBezelStyleRecessed;
+extern_static!(NSRecessedBezelStyle: NSBezelStyle = NSBezelStyleRecessed);
 
-pub static NSRoundedDisclosureBezelStyle: NSBezelStyle = NSBezelStyleRoundedDisclosure;
+extern_static!(NSRoundedDisclosureBezelStyle: NSBezelStyle = NSBezelStyleRoundedDisclosure);
 
-pub static NSInlineBezelStyle: NSBezelStyle = NSBezelStyleInline;
+extern_static!(NSInlineBezelStyle: NSBezelStyle = NSBezelStyleInline);
 
-pub static NSSmallIconButtonBezelStyle: NSBezelStyle = 2;
+extern_static!(NSSmallIconButtonBezelStyle: NSBezelStyle = 2);
 
-pub static NSThickSquareBezelStyle: NSBezelStyle = 3;
+extern_static!(NSThickSquareBezelStyle: NSBezelStyle = 3);
 
-pub static NSThickerSquareBezelStyle: NSBezelStyle = 4;
+extern_static!(NSThickerSquareBezelStyle: NSBezelStyle = 4);
 
 extern_methods!(
     /// NSDeprecated

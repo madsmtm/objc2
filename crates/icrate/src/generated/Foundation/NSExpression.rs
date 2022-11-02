@@ -3,20 +3,24 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSExpressionType = NSUInteger;
-pub const NSConstantValueExpressionType: NSExpressionType = 0;
-pub const NSEvaluatedObjectExpressionType: NSExpressionType = 1;
-pub const NSVariableExpressionType: NSExpressionType = 2;
-pub const NSKeyPathExpressionType: NSExpressionType = 3;
-pub const NSFunctionExpressionType: NSExpressionType = 4;
-pub const NSUnionSetExpressionType: NSExpressionType = 5;
-pub const NSIntersectSetExpressionType: NSExpressionType = 6;
-pub const NSMinusSetExpressionType: NSExpressionType = 7;
-pub const NSSubqueryExpressionType: NSExpressionType = 13;
-pub const NSAggregateExpressionType: NSExpressionType = 14;
-pub const NSAnyKeyExpressionType: NSExpressionType = 15;
-pub const NSBlockExpressionType: NSExpressionType = 19;
-pub const NSConditionalExpressionType: NSExpressionType = 20;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSExpressionType {
+        NSConstantValueExpressionType = 0,
+        NSEvaluatedObjectExpressionType = 1,
+        NSVariableExpressionType = 2,
+        NSKeyPathExpressionType = 3,
+        NSFunctionExpressionType = 4,
+        NSUnionSetExpressionType = 5,
+        NSIntersectSetExpressionType = 6,
+        NSMinusSetExpressionType = 7,
+        NSSubqueryExpressionType = 13,
+        NSAggregateExpressionType = 14,
+        NSAnyKeyExpressionType = 15,
+        NSBlockExpressionType = 19,
+        NSConditionalExpressionType = 20,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

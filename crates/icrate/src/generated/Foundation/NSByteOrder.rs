@@ -3,13 +3,19 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-struct_impl!(
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+    }
+);
+
+extern_struct!(
     pub struct NSSwappedFloat {
         pub v: c_uint,
     }
 );
 
-struct_impl!(
+extern_struct!(
     pub struct NSSwappedDouble {
         pub v: c_ulonglong,
     }

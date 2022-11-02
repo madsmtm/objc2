@@ -5,41 +5,57 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSAutoresizingMaskOptions = NSUInteger;
-pub const NSViewNotSizable: NSAutoresizingMaskOptions = 0;
-pub const NSViewMinXMargin: NSAutoresizingMaskOptions = 1;
-pub const NSViewWidthSizable: NSAutoresizingMaskOptions = 2;
-pub const NSViewMaxXMargin: NSAutoresizingMaskOptions = 4;
-pub const NSViewMinYMargin: NSAutoresizingMaskOptions = 8;
-pub const NSViewHeightSizable: NSAutoresizingMaskOptions = 16;
-pub const NSViewMaxYMargin: NSAutoresizingMaskOptions = 32;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSAutoresizingMaskOptions {
+        NSViewNotSizable = 0,
+        NSViewMinXMargin = 1,
+        NSViewWidthSizable = 2,
+        NSViewMaxXMargin = 4,
+        NSViewMinYMargin = 8,
+        NSViewHeightSizable = 16,
+        NSViewMaxYMargin = 32,
+    }
+);
 
-pub type NSBorderType = NSUInteger;
-pub const NSNoBorder: NSBorderType = 0;
-pub const NSLineBorder: NSBorderType = 1;
-pub const NSBezelBorder: NSBorderType = 2;
-pub const NSGrooveBorder: NSBorderType = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSBorderType {
+        NSNoBorder = 0,
+        NSLineBorder = 1,
+        NSBezelBorder = 2,
+        NSGrooveBorder = 3,
+    }
+);
 
-pub type NSViewLayerContentsRedrawPolicy = NSInteger;
-pub const NSViewLayerContentsRedrawNever: NSViewLayerContentsRedrawPolicy = 0;
-pub const NSViewLayerContentsRedrawOnSetNeedsDisplay: NSViewLayerContentsRedrawPolicy = 1;
-pub const NSViewLayerContentsRedrawDuringViewResize: NSViewLayerContentsRedrawPolicy = 2;
-pub const NSViewLayerContentsRedrawBeforeViewResize: NSViewLayerContentsRedrawPolicy = 3;
-pub const NSViewLayerContentsRedrawCrossfade: NSViewLayerContentsRedrawPolicy = 4;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSViewLayerContentsRedrawPolicy {
+        NSViewLayerContentsRedrawNever = 0,
+        NSViewLayerContentsRedrawOnSetNeedsDisplay = 1,
+        NSViewLayerContentsRedrawDuringViewResize = 2,
+        NSViewLayerContentsRedrawBeforeViewResize = 3,
+        NSViewLayerContentsRedrawCrossfade = 4,
+    }
+);
 
-pub type NSViewLayerContentsPlacement = NSInteger;
-pub const NSViewLayerContentsPlacementScaleAxesIndependently: NSViewLayerContentsPlacement = 0;
-pub const NSViewLayerContentsPlacementScaleProportionallyToFit: NSViewLayerContentsPlacement = 1;
-pub const NSViewLayerContentsPlacementScaleProportionallyToFill: NSViewLayerContentsPlacement = 2;
-pub const NSViewLayerContentsPlacementCenter: NSViewLayerContentsPlacement = 3;
-pub const NSViewLayerContentsPlacementTop: NSViewLayerContentsPlacement = 4;
-pub const NSViewLayerContentsPlacementTopRight: NSViewLayerContentsPlacement = 5;
-pub const NSViewLayerContentsPlacementRight: NSViewLayerContentsPlacement = 6;
-pub const NSViewLayerContentsPlacementBottomRight: NSViewLayerContentsPlacement = 7;
-pub const NSViewLayerContentsPlacementBottom: NSViewLayerContentsPlacement = 8;
-pub const NSViewLayerContentsPlacementBottomLeft: NSViewLayerContentsPlacement = 9;
-pub const NSViewLayerContentsPlacementLeft: NSViewLayerContentsPlacement = 10;
-pub const NSViewLayerContentsPlacementTopLeft: NSViewLayerContentsPlacement = 11;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSViewLayerContentsPlacement {
+        NSViewLayerContentsPlacementScaleAxesIndependently = 0,
+        NSViewLayerContentsPlacementScaleProportionallyToFit = 1,
+        NSViewLayerContentsPlacementScaleProportionallyToFill = 2,
+        NSViewLayerContentsPlacementCenter = 3,
+        NSViewLayerContentsPlacementTop = 4,
+        NSViewLayerContentsPlacementTopRight = 5,
+        NSViewLayerContentsPlacementRight = 6,
+        NSViewLayerContentsPlacementBottomRight = 7,
+        NSViewLayerContentsPlacementBottom = 8,
+        NSViewLayerContentsPlacementBottomLeft = 9,
+        NSViewLayerContentsPlacementLeft = 10,
+        NSViewLayerContentsPlacementTopLeft = 11,
+    }
+);
 
 pub type NSTrackingRectTag = NSInteger;
 
@@ -887,22 +903,15 @@ extern_methods!(
 
 pub type NSViewFullScreenModeOptionKey = NSString;
 
-extern "C" {
-    pub static NSFullScreenModeAllScreens: &'static NSViewFullScreenModeOptionKey;
-}
+extern_static!(NSFullScreenModeAllScreens: &'static NSViewFullScreenModeOptionKey);
 
-extern "C" {
-    pub static NSFullScreenModeSetting: &'static NSViewFullScreenModeOptionKey;
-}
+extern_static!(NSFullScreenModeSetting: &'static NSViewFullScreenModeOptionKey);
 
-extern "C" {
-    pub static NSFullScreenModeWindowLevel: &'static NSViewFullScreenModeOptionKey;
-}
+extern_static!(NSFullScreenModeWindowLevel: &'static NSViewFullScreenModeOptionKey);
 
-extern "C" {
-    pub static NSFullScreenModeApplicationPresentationOptions:
-        &'static NSViewFullScreenModeOptionKey;
-}
+extern_static!(
+    NSFullScreenModeApplicationPresentationOptions: &'static NSViewFullScreenModeOptionKey
+);
 
 extern_methods!(
     /// NSFullScreenMode
@@ -927,20 +936,15 @@ extern_methods!(
 
 pub type NSDefinitionOptionKey = NSString;
 
-extern "C" {
-    pub static NSDefinitionPresentationTypeKey: &'static NSDefinitionOptionKey;
-}
+extern_static!(NSDefinitionPresentationTypeKey: &'static NSDefinitionOptionKey);
 
 pub type NSDefinitionPresentationType = NSString;
 
-extern "C" {
-    pub static NSDefinitionPresentationTypeOverlay: &'static NSDefinitionPresentationType;
-}
+extern_static!(NSDefinitionPresentationTypeOverlay: &'static NSDefinitionPresentationType);
 
-extern "C" {
-    pub static NSDefinitionPresentationTypeDictionaryApplication:
-        &'static NSDefinitionPresentationType;
-}
+extern_static!(
+    NSDefinitionPresentationTypeDictionaryApplication: &'static NSDefinitionPresentationType
+);
 
 extern_methods!(
     /// NSDefinition
@@ -1097,22 +1101,12 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSViewFrameDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSViewFrameDidChangeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSViewFocusDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSViewFocusDidChangeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSViewBoundsDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSViewBoundsDidChangeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSViewGlobalFrameDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSViewGlobalFrameDidChangeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSViewDidUpdateTrackingAreasNotification: &'static NSNotificationName;
-}
+extern_static!(NSViewDidUpdateTrackingAreasNotification: &'static NSNotificationName);

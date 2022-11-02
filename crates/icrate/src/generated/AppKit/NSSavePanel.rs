@@ -5,8 +5,13 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub const NSFileHandlingPanelCancelButton: c_uint = NSModalResponseCancel;
-pub const NSFileHandlingPanelOKButton: c_uint = NSModalResponseOK;
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+        NSFileHandlingPanelCancelButton = NSModalResponseCancel,
+        NSFileHandlingPanelOKButton = NSModalResponseOK,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

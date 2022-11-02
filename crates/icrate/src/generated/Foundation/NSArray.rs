@@ -40,10 +40,14 @@ extern_methods!(
     }
 );
 
-pub type NSBinarySearchingOptions = NSUInteger;
-pub const NSBinarySearchingFirstEqual: NSBinarySearchingOptions = 1 << 8;
-pub const NSBinarySearchingLastEqual: NSBinarySearchingOptions = 1 << 9;
-pub const NSBinarySearchingInsertionIndex: NSBinarySearchingOptions = 1 << 10;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSBinarySearchingOptions {
+        NSBinarySearchingFirstEqual = 1 << 8,
+        NSBinarySearchingLastEqual = 1 << 9,
+        NSBinarySearchingInsertionIndex = 1 << 10,
+    }
+);
 
 extern_methods!(
     /// NSExtendedArray

@@ -171,23 +171,15 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSConnectionReplyMode: &'static NSString;
-}
+extern_static!(NSConnectionReplyMode: &'static NSString);
 
-extern "C" {
-    pub static NSConnectionDidDieNotification: &'static NSString;
-}
+extern_static!(NSConnectionDidDieNotification: &'static NSString);
 
 pub type NSConnectionDelegate = NSObject;
 
-extern "C" {
-    pub static NSFailedAuthenticationException: &'static NSString;
-}
+extern_static!(NSFailedAuthenticationException: &'static NSString);
 
-extern "C" {
-    pub static NSConnectionDidInitializeNotification: &'static NSString;
-}
+extern_static!(NSConnectionDidInitializeNotification: &'static NSString);
 
 extern_class!(
     #[derive(Debug)]

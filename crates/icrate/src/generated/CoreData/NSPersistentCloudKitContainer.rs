@@ -4,13 +4,14 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSPersistentCloudKitContainerSchemaInitializationOptions = NSUInteger;
-pub const NSPersistentCloudKitContainerSchemaInitializationOptionsNone:
-    NSPersistentCloudKitContainerSchemaInitializationOptions = 0;
-pub const NSPersistentCloudKitContainerSchemaInitializationOptionsDryRun:
-    NSPersistentCloudKitContainerSchemaInitializationOptions = 1 << 1;
-pub const NSPersistentCloudKitContainerSchemaInitializationOptionsPrintSchema:
-    NSPersistentCloudKitContainerSchemaInitializationOptions = 1 << 2;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSPersistentCloudKitContainerSchemaInitializationOptions {
+        NSPersistentCloudKitContainerSchemaInitializationOptionsNone = 0,
+        NSPersistentCloudKitContainerSchemaInitializationOptionsDryRun = 1 << 1,
+        NSPersistentCloudKitContainerSchemaInitializationOptionsPrintSchema = 1 << 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

@@ -3,25 +3,15 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSAppleScriptErrorMessage: &'static NSString;
-}
+extern_static!(NSAppleScriptErrorMessage: &'static NSString);
 
-extern "C" {
-    pub static NSAppleScriptErrorNumber: &'static NSString;
-}
+extern_static!(NSAppleScriptErrorNumber: &'static NSString);
 
-extern "C" {
-    pub static NSAppleScriptErrorAppName: &'static NSString;
-}
+extern_static!(NSAppleScriptErrorAppName: &'static NSString);
 
-extern "C" {
-    pub static NSAppleScriptErrorBriefMessage: &'static NSString;
-}
+extern_static!(NSAppleScriptErrorBriefMessage: &'static NSString);
 
-extern "C" {
-    pub static NSAppleScriptErrorRange: &'static NSString;
-}
+extern_static!(NSAppleScriptErrorRange: &'static NSString);
 
 extern_class!(
     #[derive(Debug)]

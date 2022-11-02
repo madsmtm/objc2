@@ -3,17 +3,25 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSDateFormatterStyle = NSUInteger;
-pub const NSDateFormatterNoStyle: NSDateFormatterStyle = 0;
-pub const NSDateFormatterShortStyle: NSDateFormatterStyle = 1;
-pub const NSDateFormatterMediumStyle: NSDateFormatterStyle = 2;
-pub const NSDateFormatterLongStyle: NSDateFormatterStyle = 3;
-pub const NSDateFormatterFullStyle: NSDateFormatterStyle = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSDateFormatterStyle {
+        NSDateFormatterNoStyle = 0,
+        NSDateFormatterShortStyle = 1,
+        NSDateFormatterMediumStyle = 2,
+        NSDateFormatterLongStyle = 3,
+        NSDateFormatterFullStyle = 4,
+    }
+);
 
-pub type NSDateFormatterBehavior = NSUInteger;
-pub const NSDateFormatterBehaviorDefault: NSDateFormatterBehavior = 0;
-pub const NSDateFormatterBehavior10_0: NSDateFormatterBehavior = 1000;
-pub const NSDateFormatterBehavior10_4: NSDateFormatterBehavior = 1040;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSDateFormatterBehavior {
+        NSDateFormatterBehaviorDefault = 0,
+        NSDateFormatterBehavior10_0 = 1000,
+        NSDateFormatterBehavior10_4 = 1040,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

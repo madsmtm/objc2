@@ -3,9 +3,7 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSOperationNotSupportedForKeyException: &'static NSString;
-}
+extern_static!(NSOperationNotSupportedForKeyException: &'static NSString);
 
 extern_methods!(
     /// NSScriptKeyValueCoding

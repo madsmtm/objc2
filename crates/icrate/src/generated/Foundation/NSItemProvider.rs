@@ -3,15 +3,22 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSItemProviderRepresentationVisibility = NSInteger;
-pub const NSItemProviderRepresentationVisibilityAll: NSItemProviderRepresentationVisibility = 0;
-pub const NSItemProviderRepresentationVisibilityTeam: NSItemProviderRepresentationVisibility = 1;
-pub const NSItemProviderRepresentationVisibilityGroup: NSItemProviderRepresentationVisibility = 2;
-pub const NSItemProviderRepresentationVisibilityOwnProcess: NSItemProviderRepresentationVisibility =
-    3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSItemProviderRepresentationVisibility {
+        NSItemProviderRepresentationVisibilityAll = 0,
+        NSItemProviderRepresentationVisibilityTeam = 1,
+        NSItemProviderRepresentationVisibilityGroup = 2,
+        NSItemProviderRepresentationVisibilityOwnProcess = 3,
+    }
+);
 
-pub type NSItemProviderFileOptions = NSInteger;
-pub const NSItemProviderFileOptionOpenInPlace: NSItemProviderFileOptions = 1;
+ns_options!(
+    #[underlying(NSInteger)]
+    pub enum NSItemProviderFileOptions {
+        NSItemProviderFileOptionOpenInPlace = 1,
+    }
+);
 
 pub type NSItemProviderWriting = NSObject;
 
@@ -141,9 +148,7 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSItemProviderPreferredImageSizeKey: &'static NSString;
-}
+extern_static!(NSItemProviderPreferredImageSizeKey: &'static NSString);
 
 extern_methods!(
     /// NSPreviewSupport
@@ -163,20 +168,18 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSExtensionJavaScriptPreprocessingResultsKey: Option<&'static NSString>;
-}
+extern_static!(NSExtensionJavaScriptPreprocessingResultsKey: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSExtensionJavaScriptFinalizeArgumentKey: Option<&'static NSString>;
-}
+extern_static!(NSExtensionJavaScriptFinalizeArgumentKey: Option<&'static NSString>);
 
-extern "C" {
-    pub static NSItemProviderErrorDomain: &'static NSString;
-}
+extern_static!(NSItemProviderErrorDomain: &'static NSString);
 
-pub type NSItemProviderErrorCode = NSInteger;
-pub const NSItemProviderUnknownError: NSItemProviderErrorCode = -1;
-pub const NSItemProviderItemUnavailableError: NSItemProviderErrorCode = -1000;
-pub const NSItemProviderUnexpectedValueClassError: NSItemProviderErrorCode = -1100;
-pub const NSItemProviderUnavailableCoercionError: NSItemProviderErrorCode = -1200;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSItemProviderErrorCode {
+        NSItemProviderUnknownError = -1,
+        NSItemProviderItemUnavailableError = -1000,
+        NSItemProviderUnexpectedValueClassError = -1100,
+        NSItemProviderUnavailableCoercionError = -1200,
+    }
+);

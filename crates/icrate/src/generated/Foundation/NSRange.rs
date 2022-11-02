@@ -3,7 +3,7 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-struct_impl!(
+extern_struct!(
     pub struct NSRange {
         pub location: NSUInteger,
         pub length: NSUInteger,

@@ -5,10 +5,14 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextInputTraitType = NSInteger;
-pub const NSTextInputTraitTypeDefault: NSTextInputTraitType = 0;
-pub const NSTextInputTraitTypeNo: NSTextInputTraitType = 1;
-pub const NSTextInputTraitTypeYes: NSTextInputTraitType = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTextInputTraitType {
+        NSTextInputTraitTypeDefault = 0,
+        NSTextInputTraitTypeNo = 1,
+        NSTextInputTraitTypeYes = 2,
+    }
+);
 
 pub type NSTextInputTraits = NSObject;
 

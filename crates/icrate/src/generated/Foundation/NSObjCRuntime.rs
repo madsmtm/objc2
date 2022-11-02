@@ -3,32 +3,46 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSFoundationVersionNumber: c_double;
-}
+extern_static!(NSFoundationVersionNumber: c_double);
 
 pub type NSExceptionName = NSString;
 
 pub type NSRunLoopMode = NSString;
 
-pub type NSComparisonResult = NSInteger;
-pub const NSOrderedAscending: NSComparisonResult = -1;
-pub const NSOrderedSame: NSComparisonResult = 0;
-pub const NSOrderedDescending: NSComparisonResult = 1;
+ns_closed_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSComparisonResult {
+        NSOrderedAscending = -1,
+        NSOrderedSame = 0,
+        NSOrderedDescending = 1,
+    }
+);
 
 pub type NSComparator = TodoBlock;
 
-pub type NSEnumerationOptions = NSUInteger;
-pub const NSEnumerationConcurrent: NSEnumerationOptions = 1 << 0;
-pub const NSEnumerationReverse: NSEnumerationOptions = 1 << 1;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSEnumerationOptions {
+        NSEnumerationConcurrent = 1 << 0,
+        NSEnumerationReverse = 1 << 1,
+    }
+);
 
-pub type NSSortOptions = NSUInteger;
-pub const NSSortConcurrent: NSSortOptions = 1 << 0;
-pub const NSSortStable: NSSortOptions = 1 << 4;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSSortOptions {
+        NSSortConcurrent = 1 << 0,
+        NSSortStable = 1 << 4,
+    }
+);
 
-pub type NSQualityOfService = NSInteger;
-pub const NSQualityOfServiceUserInteractive: NSQualityOfService = 0x21;
-pub const NSQualityOfServiceUserInitiated: NSQualityOfService = 0x19;
-pub const NSQualityOfServiceUtility: NSQualityOfService = 0x11;
-pub const NSQualityOfServiceBackground: NSQualityOfService = 0x09;
-pub const NSQualityOfServiceDefault: NSQualityOfService = -1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSQualityOfService {
+        NSQualityOfServiceUserInteractive = 0x21,
+        NSQualityOfServiceUserInitiated = 0x19,
+        NSQualityOfServiceUtility = 0x11,
+        NSQualityOfServiceBackground = 0x09,
+        NSQualityOfServiceDefault = -1,
+    }
+);

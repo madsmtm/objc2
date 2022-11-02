@@ -3,13 +3,16 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSUserNotificationActivationType = NSInteger;
-pub const NSUserNotificationActivationTypeNone: NSUserNotificationActivationType = 0;
-pub const NSUserNotificationActivationTypeContentsClicked: NSUserNotificationActivationType = 1;
-pub const NSUserNotificationActivationTypeActionButtonClicked: NSUserNotificationActivationType = 2;
-pub const NSUserNotificationActivationTypeReplied: NSUserNotificationActivationType = 3;
-pub const NSUserNotificationActivationTypeAdditionalActionClicked:
-    NSUserNotificationActivationType = 4;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSUserNotificationActivationType {
+        NSUserNotificationActivationTypeNone = 0,
+        NSUserNotificationActivationTypeContentsClicked = 1,
+        NSUserNotificationActivationTypeActionButtonClicked = 2,
+        NSUserNotificationActivationTypeReplied = 3,
+        NSUserNotificationActivationTypeAdditionalActionClicked = 4,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -170,9 +173,7 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSUserNotificationDefaultSoundName: &'static NSString;
-}
+extern_static!(NSUserNotificationDefaultSoundName: &'static NSString);
 
 extern_class!(
     #[derive(Debug)]

@@ -3,20 +3,26 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSFileCoordinatorReadingOptions = NSUInteger;
-pub const NSFileCoordinatorReadingWithoutChanges: NSFileCoordinatorReadingOptions = 1 << 0;
-pub const NSFileCoordinatorReadingResolvesSymbolicLink: NSFileCoordinatorReadingOptions = 1 << 1;
-pub const NSFileCoordinatorReadingImmediatelyAvailableMetadataOnly:
-    NSFileCoordinatorReadingOptions = 1 << 2;
-pub const NSFileCoordinatorReadingForUploading: NSFileCoordinatorReadingOptions = 1 << 3;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSFileCoordinatorReadingOptions {
+        NSFileCoordinatorReadingWithoutChanges = 1 << 0,
+        NSFileCoordinatorReadingResolvesSymbolicLink = 1 << 1,
+        NSFileCoordinatorReadingImmediatelyAvailableMetadataOnly = 1 << 2,
+        NSFileCoordinatorReadingForUploading = 1 << 3,
+    }
+);
 
-pub type NSFileCoordinatorWritingOptions = NSUInteger;
-pub const NSFileCoordinatorWritingForDeleting: NSFileCoordinatorWritingOptions = 1 << 0;
-pub const NSFileCoordinatorWritingForMoving: NSFileCoordinatorWritingOptions = 1 << 1;
-pub const NSFileCoordinatorWritingForMerging: NSFileCoordinatorWritingOptions = 1 << 2;
-pub const NSFileCoordinatorWritingForReplacing: NSFileCoordinatorWritingOptions = 1 << 3;
-pub const NSFileCoordinatorWritingContentIndependentMetadataOnly: NSFileCoordinatorWritingOptions =
-    1 << 4;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSFileCoordinatorWritingOptions {
+        NSFileCoordinatorWritingForDeleting = 1 << 0,
+        NSFileCoordinatorWritingForMoving = 1 << 1,
+        NSFileCoordinatorWritingForMerging = 1 << 2,
+        NSFileCoordinatorWritingForReplacing = 1 << 3,
+        NSFileCoordinatorWritingContentIndependentMetadataOnly = 1 << 4,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

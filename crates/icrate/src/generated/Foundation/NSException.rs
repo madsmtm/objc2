@@ -3,65 +3,35 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSGenericException: &'static NSExceptionName;
-}
+extern_static!(NSGenericException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSRangeException: &'static NSExceptionName;
-}
+extern_static!(NSRangeException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSInvalidArgumentException: &'static NSExceptionName;
-}
+extern_static!(NSInvalidArgumentException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSInternalInconsistencyException: &'static NSExceptionName;
-}
+extern_static!(NSInternalInconsistencyException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSMallocException: &'static NSExceptionName;
-}
+extern_static!(NSMallocException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSObjectInaccessibleException: &'static NSExceptionName;
-}
+extern_static!(NSObjectInaccessibleException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSObjectNotAvailableException: &'static NSExceptionName;
-}
+extern_static!(NSObjectNotAvailableException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSDestinationInvalidException: &'static NSExceptionName;
-}
+extern_static!(NSDestinationInvalidException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSPortTimeoutException: &'static NSExceptionName;
-}
+extern_static!(NSPortTimeoutException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSInvalidSendPortException: &'static NSExceptionName;
-}
+extern_static!(NSInvalidSendPortException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSInvalidReceivePortException: &'static NSExceptionName;
-}
+extern_static!(NSInvalidReceivePortException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSPortSendException: &'static NSExceptionName;
-}
+extern_static!(NSPortSendException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSPortReceiveException: &'static NSExceptionName;
-}
+extern_static!(NSPortReceiveException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSOldStyleException: &'static NSExceptionName;
-}
+extern_static!(NSOldStyleException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSInconsistentArchiveException: &'static NSExceptionName;
-}
+extern_static!(NSInconsistentArchiveException: &'static NSExceptionName);
 
 extern_class!(
     #[derive(Debug)]
@@ -116,9 +86,7 @@ extern_methods!(
 
 pub type NSUncaughtExceptionHandler = TodoFunction;
 
-extern "C" {
-    pub static NSAssertionHandlerKey: &'static NSString;
-}
+extern_static!(NSAssertionHandlerKey: &'static NSString);
 
 extern_class!(
     #[derive(Debug)]

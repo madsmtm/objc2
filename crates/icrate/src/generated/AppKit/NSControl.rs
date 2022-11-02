@@ -248,17 +248,11 @@ extern_methods!(
 
 pub type NSControlTextEditingDelegate = NSObject;
 
-extern "C" {
-    pub static NSControlTextDidBeginEditingNotification: &'static NSNotificationName;
-}
+extern_static!(NSControlTextDidBeginEditingNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSControlTextDidEndEditingNotification: &'static NSNotificationName;
-}
+extern_static!(NSControlTextDidEndEditingNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSControlTextDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSControlTextDidChangeNotification: &'static NSNotificationName);
 
 extern_methods!(
     /// NSDeprecated

@@ -3,21 +3,25 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSISO8601DateFormatOptions = NSUInteger;
-pub const NSISO8601DateFormatWithYear: NSISO8601DateFormatOptions = 1;
-pub const NSISO8601DateFormatWithMonth: NSISO8601DateFormatOptions = 2;
-pub const NSISO8601DateFormatWithWeekOfYear: NSISO8601DateFormatOptions = 4;
-pub const NSISO8601DateFormatWithDay: NSISO8601DateFormatOptions = 16;
-pub const NSISO8601DateFormatWithTime: NSISO8601DateFormatOptions = 32;
-pub const NSISO8601DateFormatWithTimeZone: NSISO8601DateFormatOptions = 64;
-pub const NSISO8601DateFormatWithSpaceBetweenDateAndTime: NSISO8601DateFormatOptions = 128;
-pub const NSISO8601DateFormatWithDashSeparatorInDate: NSISO8601DateFormatOptions = 256;
-pub const NSISO8601DateFormatWithColonSeparatorInTime: NSISO8601DateFormatOptions = 512;
-pub const NSISO8601DateFormatWithColonSeparatorInTimeZone: NSISO8601DateFormatOptions = 1024;
-pub const NSISO8601DateFormatWithFractionalSeconds: NSISO8601DateFormatOptions = 2048;
-pub const NSISO8601DateFormatWithFullDate: NSISO8601DateFormatOptions = 275;
-pub const NSISO8601DateFormatWithFullTime: NSISO8601DateFormatOptions = 1632;
-pub const NSISO8601DateFormatWithInternetDateTime: NSISO8601DateFormatOptions = 1907;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSISO8601DateFormatOptions {
+        NSISO8601DateFormatWithYear = 1,
+        NSISO8601DateFormatWithMonth = 2,
+        NSISO8601DateFormatWithWeekOfYear = 4,
+        NSISO8601DateFormatWithDay = 16,
+        NSISO8601DateFormatWithTime = 32,
+        NSISO8601DateFormatWithTimeZone = 64,
+        NSISO8601DateFormatWithSpaceBetweenDateAndTime = 128,
+        NSISO8601DateFormatWithDashSeparatorInDate = 256,
+        NSISO8601DateFormatWithColonSeparatorInTime = 512,
+        NSISO8601DateFormatWithColonSeparatorInTimeZone = 1024,
+        NSISO8601DateFormatWithFractionalSeconds = 2048,
+        NSISO8601DateFormatWithFullDate = 275,
+        NSISO8601DateFormatWithFullTime = 1632,
+        NSISO8601DateFormatWithInternetDateTime = 1907,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

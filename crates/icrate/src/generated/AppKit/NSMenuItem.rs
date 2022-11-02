@@ -220,9 +220,7 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSMenuItemImportFromDeviceIdentifier: &'static NSUserInterfaceItemIdentifier;
-}
+extern_static!(NSMenuItemImportFromDeviceIdentifier: &'static NSUserInterfaceItemIdentifier);
 
 extern_methods!(
     /// NSDeprecated

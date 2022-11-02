@@ -25,9 +25,7 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSApplicationDidFinishRestoringWindowsNotification: &'static NSNotificationName;
-}
+extern_static!(NSApplicationDidFinishRestoringWindowsNotification: &'static NSNotificationName);
 
 extern_methods!(
     /// NSUserInterfaceRestoration

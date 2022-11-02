@@ -5,10 +5,14 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSPrinterTableStatus = NSUInteger;
-pub const NSPrinterTableOK: NSPrinterTableStatus = 0;
-pub const NSPrinterTableNotFound: NSPrinterTableStatus = 1;
-pub const NSPrinterTableError: NSPrinterTableStatus = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSPrinterTableStatus {
+        NSPrinterTableOK = 0,
+        NSPrinterTableNotFound = 1,
+        NSPrinterTableError = 2,
+    }
+);
 
 pub type NSPrinterTypeName = NSString;
 

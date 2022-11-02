@@ -93,7 +93,7 @@ impl std::fmt::Debug for NSProxy {
     }
 }
 
-struct_impl!(
+extern_struct!(
     pub struct NSDecimal {
         // signed   int _exponent:8;
         // unsigned int _length:4;

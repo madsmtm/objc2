@@ -3,10 +3,14 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSCompoundPredicateType = NSUInteger;
-pub const NSNotPredicateType: NSCompoundPredicateType = 0;
-pub const NSAndPredicateType: NSCompoundPredicateType = 1;
-pub const NSOrPredicateType: NSCompoundPredicateType = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSCompoundPredicateType {
+        NSNotPredicateType = 0,
+        NSAndPredicateType = 1,
+        NSOrPredicateType = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

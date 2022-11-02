@@ -239,13 +239,17 @@ extern_methods!(
 
 pub type NSMenuDelegate = NSObject;
 
-pub type NSMenuProperties = NSUInteger;
-pub const NSMenuPropertyItemTitle: NSMenuProperties = 1 << 0;
-pub const NSMenuPropertyItemAttributedTitle: NSMenuProperties = 1 << 1;
-pub const NSMenuPropertyItemKeyEquivalent: NSMenuProperties = 1 << 2;
-pub const NSMenuPropertyItemImage: NSMenuProperties = 1 << 3;
-pub const NSMenuPropertyItemEnabled: NSMenuProperties = 1 << 4;
-pub const NSMenuPropertyItemAccessibilityDescription: NSMenuProperties = 1 << 5;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSMenuProperties {
+        NSMenuPropertyItemTitle = 1 << 0,
+        NSMenuPropertyItemAttributedTitle = 1 << 1,
+        NSMenuPropertyItemKeyEquivalent = 1 << 2,
+        NSMenuPropertyItemImage = 1 << 3,
+        NSMenuPropertyItemEnabled = 1 << 4,
+        NSMenuPropertyItemAccessibilityDescription = 1 << 5,
+    }
+);
 
 extern_methods!(
     /// NSMenuPropertiesToUpdate
@@ -255,33 +259,19 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSMenuWillSendActionNotification: &'static NSNotificationName;
-}
+extern_static!(NSMenuWillSendActionNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSMenuDidSendActionNotification: &'static NSNotificationName;
-}
+extern_static!(NSMenuDidSendActionNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSMenuDidAddItemNotification: &'static NSNotificationName;
-}
+extern_static!(NSMenuDidAddItemNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSMenuDidRemoveItemNotification: &'static NSNotificationName;
-}
+extern_static!(NSMenuDidRemoveItemNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSMenuDidChangeItemNotification: &'static NSNotificationName;
-}
+extern_static!(NSMenuDidChangeItemNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSMenuDidBeginTrackingNotification: &'static NSNotificationName;
-}
+extern_static!(NSMenuDidBeginTrackingNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSMenuDidEndTrackingNotification: &'static NSNotificationName;
-}
+extern_static!(NSMenuDidEndTrackingNotification: &'static NSNotificationName);
 
 extern_methods!(
     /// NSDeprecated

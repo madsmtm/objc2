@@ -3,32 +3,33 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSDateComponentsFormatterUnitsStyle = NSInteger;
-pub const NSDateComponentsFormatterUnitsStylePositional: NSDateComponentsFormatterUnitsStyle = 0;
-pub const NSDateComponentsFormatterUnitsStyleAbbreviated: NSDateComponentsFormatterUnitsStyle = 1;
-pub const NSDateComponentsFormatterUnitsStyleShort: NSDateComponentsFormatterUnitsStyle = 2;
-pub const NSDateComponentsFormatterUnitsStyleFull: NSDateComponentsFormatterUnitsStyle = 3;
-pub const NSDateComponentsFormatterUnitsStyleSpellOut: NSDateComponentsFormatterUnitsStyle = 4;
-pub const NSDateComponentsFormatterUnitsStyleBrief: NSDateComponentsFormatterUnitsStyle = 5;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSDateComponentsFormatterUnitsStyle {
+        NSDateComponentsFormatterUnitsStylePositional = 0,
+        NSDateComponentsFormatterUnitsStyleAbbreviated = 1,
+        NSDateComponentsFormatterUnitsStyleShort = 2,
+        NSDateComponentsFormatterUnitsStyleFull = 3,
+        NSDateComponentsFormatterUnitsStyleSpellOut = 4,
+        NSDateComponentsFormatterUnitsStyleBrief = 5,
+    }
+);
 
-pub type NSDateComponentsFormatterZeroFormattingBehavior = NSUInteger;
-pub const NSDateComponentsFormatterZeroFormattingBehaviorNone:
-    NSDateComponentsFormatterZeroFormattingBehavior = 0;
-pub const NSDateComponentsFormatterZeroFormattingBehaviorDefault:
-    NSDateComponentsFormatterZeroFormattingBehavior = 1 << 0;
-pub const NSDateComponentsFormatterZeroFormattingBehaviorDropLeading:
-    NSDateComponentsFormatterZeroFormattingBehavior = 1 << 1;
-pub const NSDateComponentsFormatterZeroFormattingBehaviorDropMiddle:
-    NSDateComponentsFormatterZeroFormattingBehavior = 1 << 2;
-pub const NSDateComponentsFormatterZeroFormattingBehaviorDropTrailing:
-    NSDateComponentsFormatterZeroFormattingBehavior = 1 << 3;
-pub const NSDateComponentsFormatterZeroFormattingBehaviorDropAll:
-    NSDateComponentsFormatterZeroFormattingBehavior =
-    NSDateComponentsFormatterZeroFormattingBehaviorDropLeading
-        | NSDateComponentsFormatterZeroFormattingBehaviorDropMiddle
-        | NSDateComponentsFormatterZeroFormattingBehaviorDropTrailing;
-pub const NSDateComponentsFormatterZeroFormattingBehaviorPad:
-    NSDateComponentsFormatterZeroFormattingBehavior = 1 << 16;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSDateComponentsFormatterZeroFormattingBehavior {
+        NSDateComponentsFormatterZeroFormattingBehaviorNone = 0,
+        NSDateComponentsFormatterZeroFormattingBehaviorDefault = 1 << 0,
+        NSDateComponentsFormatterZeroFormattingBehaviorDropLeading = 1 << 1,
+        NSDateComponentsFormatterZeroFormattingBehaviorDropMiddle = 1 << 2,
+        NSDateComponentsFormatterZeroFormattingBehaviorDropTrailing = 1 << 3,
+        NSDateComponentsFormatterZeroFormattingBehaviorDropAll =
+            NSDateComponentsFormatterZeroFormattingBehaviorDropLeading
+                | NSDateComponentsFormatterZeroFormattingBehaviorDropMiddle
+                | NSDateComponentsFormatterZeroFormattingBehaviorDropTrailing,
+        NSDateComponentsFormatterZeroFormattingBehaviorPad = 1 << 16,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

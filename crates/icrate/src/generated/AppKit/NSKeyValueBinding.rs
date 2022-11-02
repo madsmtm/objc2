@@ -49,31 +49,19 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSMultipleValuesMarker: &'static Object;
-}
+extern_static!(NSMultipleValuesMarker: &'static Object);
 
-extern "C" {
-    pub static NSNoSelectionMarker: &'static Object;
-}
+extern_static!(NSNoSelectionMarker: &'static Object);
 
-extern "C" {
-    pub static NSNotApplicableMarker: &'static Object;
-}
+extern_static!(NSNotApplicableMarker: &'static Object);
 
 pub type NSBindingInfoKey = NSString;
 
-extern "C" {
-    pub static NSObservedObjectKey: &'static NSBindingInfoKey;
-}
+extern_static!(NSObservedObjectKey: &'static NSBindingInfoKey);
 
-extern "C" {
-    pub static NSObservedKeyPathKey: &'static NSBindingInfoKey;
-}
+extern_static!(NSObservedKeyPathKey: &'static NSBindingInfoKey);
 
-extern "C" {
-    pub static NSOptionsKey: &'static NSBindingInfoKey;
-}
+extern_static!(NSOptionsKey: &'static NSBindingInfoKey);
 
 extern_methods!(
     /// NSKeyValueBindingCreation
@@ -171,425 +159,215 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSAlignmentBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSAlternateImageBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSAlternateTitleBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSAnimateBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSAnimationDelayBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSArgumentBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSAttributedStringBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSContentArrayBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSContentArrayForMultipleSelectionBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSContentBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSContentDictionaryBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSContentHeightBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSContentObjectBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSContentObjectsBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSContentSetBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSContentValuesBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSContentWidthBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSCriticalValueBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSDataBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSDisplayPatternTitleBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSDisplayPatternValueBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSDocumentEditedBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSDoubleClickArgumentBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSDoubleClickTargetBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSEditableBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSEnabledBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSExcludedKeysBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSFilterPredicateBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSFontBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSFontBoldBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSFontFamilyNameBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSFontItalicBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSFontNameBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSFontSizeBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSHeaderTitleBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSHiddenBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSImageBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSIncludedKeysBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSInitialKeyBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSInitialValueBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSIsIndeterminateBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSLabelBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSLocalizedKeyDictionaryBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSManagedObjectContextBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSMaximumRecentsBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSMaxValueBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSMaxWidthBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSMinValueBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSMinWidthBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSMixedStateImageBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSOffStateImageBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSOnStateImageBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSPositioningRectBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSPredicateBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSRecentSearchesBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSRepresentedFilenameBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSRowHeightBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSSelectedIdentifierBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSSelectedIndexBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSSelectedLabelBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSSelectedObjectBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSSelectedObjectsBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSSelectedTagBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSSelectedValueBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSSelectedValuesBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSSelectionIndexesBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSSelectionIndexPathsBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSSortDescriptorsBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSTargetBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSTextColorBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSTitleBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSToolTipBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSTransparentBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSValueBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSValuePathBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSValueURLBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSVisibleBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSWarningValueBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSWidthBinding: &'static NSBindingName;
-}
-
-extern "C" {
-    pub static NSAllowsEditingMultipleValuesSelectionBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSAllowsNullArgumentBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSAlwaysPresentsApplicationModalAlertsBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSConditionallySetsEditableBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSConditionallySetsEnabledBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSConditionallySetsHiddenBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSContinuouslyUpdatesValueBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSCreatesSortDescriptorBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSDeletesObjectsOnRemoveBindingsOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSDisplayNameBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSDisplayPatternBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSContentPlacementTagBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSHandlesContentAsCompoundValueBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSInsertsNullPlaceholderBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSInvokesSeparatelyWithArrayObjectsBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSMultipleValuesPlaceholderBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSNoSelectionPlaceholderBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSNotApplicablePlaceholderBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSNullPlaceholderBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSRaisesForNotApplicableKeysBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSPredicateFormatBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSSelectorNameBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSSelectsAllWhenSettingContentBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSValidatesImmediatelyBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSValueTransformerNameBindingOption: &'static NSBindingOption;
-}
-
-extern "C" {
-    pub static NSValueTransformerBindingOption: &'static NSBindingOption;
-}
+extern_static!(NSAlignmentBinding: &'static NSBindingName);
+
+extern_static!(NSAlternateImageBinding: &'static NSBindingName);
+
+extern_static!(NSAlternateTitleBinding: &'static NSBindingName);
+
+extern_static!(NSAnimateBinding: &'static NSBindingName);
+
+extern_static!(NSAnimationDelayBinding: &'static NSBindingName);
+
+extern_static!(NSArgumentBinding: &'static NSBindingName);
+
+extern_static!(NSAttributedStringBinding: &'static NSBindingName);
+
+extern_static!(NSContentArrayBinding: &'static NSBindingName);
+
+extern_static!(NSContentArrayForMultipleSelectionBinding: &'static NSBindingName);
+
+extern_static!(NSContentBinding: &'static NSBindingName);
+
+extern_static!(NSContentDictionaryBinding: &'static NSBindingName);
+
+extern_static!(NSContentHeightBinding: &'static NSBindingName);
+
+extern_static!(NSContentObjectBinding: &'static NSBindingName);
+
+extern_static!(NSContentObjectsBinding: &'static NSBindingName);
+
+extern_static!(NSContentSetBinding: &'static NSBindingName);
+
+extern_static!(NSContentValuesBinding: &'static NSBindingName);
+
+extern_static!(NSContentWidthBinding: &'static NSBindingName);
+
+extern_static!(NSCriticalValueBinding: &'static NSBindingName);
+
+extern_static!(NSDataBinding: &'static NSBindingName);
+
+extern_static!(NSDisplayPatternTitleBinding: &'static NSBindingName);
+
+extern_static!(NSDisplayPatternValueBinding: &'static NSBindingName);
+
+extern_static!(NSDocumentEditedBinding: &'static NSBindingName);
+
+extern_static!(NSDoubleClickArgumentBinding: &'static NSBindingName);
+
+extern_static!(NSDoubleClickTargetBinding: &'static NSBindingName);
+
+extern_static!(NSEditableBinding: &'static NSBindingName);
+
+extern_static!(NSEnabledBinding: &'static NSBindingName);
+
+extern_static!(NSExcludedKeysBinding: &'static NSBindingName);
+
+extern_static!(NSFilterPredicateBinding: &'static NSBindingName);
+
+extern_static!(NSFontBinding: &'static NSBindingName);
+
+extern_static!(NSFontBoldBinding: &'static NSBindingName);
+
+extern_static!(NSFontFamilyNameBinding: &'static NSBindingName);
+
+extern_static!(NSFontItalicBinding: &'static NSBindingName);
+
+extern_static!(NSFontNameBinding: &'static NSBindingName);
+
+extern_static!(NSFontSizeBinding: &'static NSBindingName);
+
+extern_static!(NSHeaderTitleBinding: &'static NSBindingName);
+
+extern_static!(NSHiddenBinding: &'static NSBindingName);
+
+extern_static!(NSImageBinding: &'static NSBindingName);
+
+extern_static!(NSIncludedKeysBinding: &'static NSBindingName);
+
+extern_static!(NSInitialKeyBinding: &'static NSBindingName);
+
+extern_static!(NSInitialValueBinding: &'static NSBindingName);
+
+extern_static!(NSIsIndeterminateBinding: &'static NSBindingName);
+
+extern_static!(NSLabelBinding: &'static NSBindingName);
+
+extern_static!(NSLocalizedKeyDictionaryBinding: &'static NSBindingName);
+
+extern_static!(NSManagedObjectContextBinding: &'static NSBindingName);
+
+extern_static!(NSMaximumRecentsBinding: &'static NSBindingName);
+
+extern_static!(NSMaxValueBinding: &'static NSBindingName);
+
+extern_static!(NSMaxWidthBinding: &'static NSBindingName);
+
+extern_static!(NSMinValueBinding: &'static NSBindingName);
+
+extern_static!(NSMinWidthBinding: &'static NSBindingName);
+
+extern_static!(NSMixedStateImageBinding: &'static NSBindingName);
+
+extern_static!(NSOffStateImageBinding: &'static NSBindingName);
+
+extern_static!(NSOnStateImageBinding: &'static NSBindingName);
+
+extern_static!(NSPositioningRectBinding: &'static NSBindingName);
+
+extern_static!(NSPredicateBinding: &'static NSBindingName);
+
+extern_static!(NSRecentSearchesBinding: &'static NSBindingName);
+
+extern_static!(NSRepresentedFilenameBinding: &'static NSBindingName);
+
+extern_static!(NSRowHeightBinding: &'static NSBindingName);
+
+extern_static!(NSSelectedIdentifierBinding: &'static NSBindingName);
+
+extern_static!(NSSelectedIndexBinding: &'static NSBindingName);
+
+extern_static!(NSSelectedLabelBinding: &'static NSBindingName);
+
+extern_static!(NSSelectedObjectBinding: &'static NSBindingName);
+
+extern_static!(NSSelectedObjectsBinding: &'static NSBindingName);
+
+extern_static!(NSSelectedTagBinding: &'static NSBindingName);
+
+extern_static!(NSSelectedValueBinding: &'static NSBindingName);
+
+extern_static!(NSSelectedValuesBinding: &'static NSBindingName);
+
+extern_static!(NSSelectionIndexesBinding: &'static NSBindingName);
+
+extern_static!(NSSelectionIndexPathsBinding: &'static NSBindingName);
+
+extern_static!(NSSortDescriptorsBinding: &'static NSBindingName);
+
+extern_static!(NSTargetBinding: &'static NSBindingName);
+
+extern_static!(NSTextColorBinding: &'static NSBindingName);
+
+extern_static!(NSTitleBinding: &'static NSBindingName);
+
+extern_static!(NSToolTipBinding: &'static NSBindingName);
+
+extern_static!(NSTransparentBinding: &'static NSBindingName);
+
+extern_static!(NSValueBinding: &'static NSBindingName);
+
+extern_static!(NSValuePathBinding: &'static NSBindingName);
+
+extern_static!(NSValueURLBinding: &'static NSBindingName);
+
+extern_static!(NSVisibleBinding: &'static NSBindingName);
+
+extern_static!(NSWarningValueBinding: &'static NSBindingName);
+
+extern_static!(NSWidthBinding: &'static NSBindingName);
+
+extern_static!(NSAllowsEditingMultipleValuesSelectionBindingOption: &'static NSBindingOption);
+
+extern_static!(NSAllowsNullArgumentBindingOption: &'static NSBindingOption);
+
+extern_static!(NSAlwaysPresentsApplicationModalAlertsBindingOption: &'static NSBindingOption);
+
+extern_static!(NSConditionallySetsEditableBindingOption: &'static NSBindingOption);
+
+extern_static!(NSConditionallySetsEnabledBindingOption: &'static NSBindingOption);
+
+extern_static!(NSConditionallySetsHiddenBindingOption: &'static NSBindingOption);
+
+extern_static!(NSContinuouslyUpdatesValueBindingOption: &'static NSBindingOption);
+
+extern_static!(NSCreatesSortDescriptorBindingOption: &'static NSBindingOption);
+
+extern_static!(NSDeletesObjectsOnRemoveBindingsOption: &'static NSBindingOption);
+
+extern_static!(NSDisplayNameBindingOption: &'static NSBindingOption);
+
+extern_static!(NSDisplayPatternBindingOption: &'static NSBindingOption);
+
+extern_static!(NSContentPlacementTagBindingOption: &'static NSBindingOption);
+
+extern_static!(NSHandlesContentAsCompoundValueBindingOption: &'static NSBindingOption);
+
+extern_static!(NSInsertsNullPlaceholderBindingOption: &'static NSBindingOption);
+
+extern_static!(NSInvokesSeparatelyWithArrayObjectsBindingOption: &'static NSBindingOption);
+
+extern_static!(NSMultipleValuesPlaceholderBindingOption: &'static NSBindingOption);
+
+extern_static!(NSNoSelectionPlaceholderBindingOption: &'static NSBindingOption);
+
+extern_static!(NSNotApplicablePlaceholderBindingOption: &'static NSBindingOption);
+
+extern_static!(NSNullPlaceholderBindingOption: &'static NSBindingOption);
+
+extern_static!(NSRaisesForNotApplicableKeysBindingOption: &'static NSBindingOption);
+
+extern_static!(NSPredicateFormatBindingOption: &'static NSBindingOption);
+
+extern_static!(NSSelectorNameBindingOption: &'static NSBindingOption);
+
+extern_static!(NSSelectsAllWhenSettingContentBindingOption: &'static NSBindingOption);
+
+extern_static!(NSValidatesImmediatelyBindingOption: &'static NSBindingOption);
+
+extern_static!(NSValueTransformerNameBindingOption: &'static NSBindingOption);
+
+extern_static!(NSValueTransformerBindingOption: &'static NSBindingOption);
 
 extern_methods!(
     /// NSEditorAndEditorRegistrationConformance

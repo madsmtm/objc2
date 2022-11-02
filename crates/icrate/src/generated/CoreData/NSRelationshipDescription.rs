@@ -4,11 +4,15 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSDeleteRule = NSUInteger;
-pub const NSNoActionDeleteRule: NSDeleteRule = 0;
-pub const NSNullifyDeleteRule: NSDeleteRule = 1;
-pub const NSCascadeDeleteRule: NSDeleteRule = 2;
-pub const NSDenyDeleteRule: NSDeleteRule = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSDeleteRule {
+        NSNoActionDeleteRule = 0,
+        NSNullifyDeleteRule = 1,
+        NSCascadeDeleteRule = 2,
+        NSDenyDeleteRule = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

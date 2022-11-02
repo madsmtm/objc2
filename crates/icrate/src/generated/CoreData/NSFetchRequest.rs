@@ -4,11 +4,15 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSFetchRequestResultType = NSUInteger;
-pub const NSManagedObjectResultType: NSFetchRequestResultType = 0x00;
-pub const NSManagedObjectIDResultType: NSFetchRequestResultType = 0x01;
-pub const NSDictionaryResultType: NSFetchRequestResultType = 0x02;
-pub const NSCountResultType: NSFetchRequestResultType = 0x04;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSFetchRequestResultType {
+        NSManagedObjectResultType = 0x00,
+        NSManagedObjectIDResultType = 0x01,
+        NSDictionaryResultType = 0x02,
+        NSCountResultType = 0x04,
+    }
+);
 
 pub type NSFetchRequestResult = NSObject;
 

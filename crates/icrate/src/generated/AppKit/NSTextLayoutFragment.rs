@@ -5,22 +5,26 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextLayoutFragmentEnumerationOptions = NSUInteger;
-pub const NSTextLayoutFragmentEnumerationOptionsNone: NSTextLayoutFragmentEnumerationOptions = 0;
-pub const NSTextLayoutFragmentEnumerationOptionsReverse: NSTextLayoutFragmentEnumerationOptions =
-    1 << 0;
-pub const NSTextLayoutFragmentEnumerationOptionsEstimatesSize:
-    NSTextLayoutFragmentEnumerationOptions = 1 << 1;
-pub const NSTextLayoutFragmentEnumerationOptionsEnsuresLayout:
-    NSTextLayoutFragmentEnumerationOptions = 1 << 2;
-pub const NSTextLayoutFragmentEnumerationOptionsEnsuresExtraLineFragment:
-    NSTextLayoutFragmentEnumerationOptions = 1 << 3;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSTextLayoutFragmentEnumerationOptions {
+        NSTextLayoutFragmentEnumerationOptionsNone = 0,
+        NSTextLayoutFragmentEnumerationOptionsReverse = 1 << 0,
+        NSTextLayoutFragmentEnumerationOptionsEstimatesSize = 1 << 1,
+        NSTextLayoutFragmentEnumerationOptionsEnsuresLayout = 1 << 2,
+        NSTextLayoutFragmentEnumerationOptionsEnsuresExtraLineFragment = 1 << 3,
+    }
+);
 
-pub type NSTextLayoutFragmentState = NSUInteger;
-pub const NSTextLayoutFragmentStateNone: NSTextLayoutFragmentState = 0;
-pub const NSTextLayoutFragmentStateEstimatedUsageBounds: NSTextLayoutFragmentState = 1;
-pub const NSTextLayoutFragmentStateCalculatedUsageBounds: NSTextLayoutFragmentState = 2;
-pub const NSTextLayoutFragmentStateLayoutAvailable: NSTextLayoutFragmentState = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTextLayoutFragmentState {
+        NSTextLayoutFragmentStateNone = 0,
+        NSTextLayoutFragmentStateEstimatedUsageBounds = 1,
+        NSTextLayoutFragmentStateCalculatedUsageBounds = 2,
+        NSTextLayoutFragmentStateLayoutAvailable = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

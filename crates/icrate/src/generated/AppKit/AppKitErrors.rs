@@ -5,24 +5,29 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub const NSTextReadInapplicableDocumentTypeError: c_uint = 65806;
-pub const NSTextWriteInapplicableDocumentTypeError: c_uint = 66062;
-pub const NSTextReadWriteErrorMinimum: c_uint = 65792;
-pub const NSTextReadWriteErrorMaximum: c_uint = 66303;
-pub const NSFontAssetDownloadError: c_uint = 66304;
-pub const NSFontErrorMinimum: c_uint = 66304;
-pub const NSFontErrorMaximum: c_uint = 66335;
-pub const NSServiceApplicationNotFoundError: c_uint = 66560;
-pub const NSServiceApplicationLaunchFailedError: c_uint = 66561;
-pub const NSServiceRequestTimedOutError: c_uint = 66562;
-pub const NSServiceInvalidPasteboardDataError: c_uint = 66563;
-pub const NSServiceMalformedServiceDictionaryError: c_uint = 66564;
-pub const NSServiceMiscellaneousError: c_uint = 66800;
-pub const NSServiceErrorMinimum: c_uint = 66560;
-pub const NSServiceErrorMaximum: c_uint = 66817;
-pub const NSSharingServiceNotConfiguredError: c_uint = 67072;
-pub const NSSharingServiceErrorMinimum: c_uint = 67072;
-pub const NSSharingServiceErrorMaximum: c_uint = 67327;
-pub const NSWorkspaceAuthorizationInvalidError: c_uint = 67328;
-pub const NSWorkspaceErrorMinimum: c_uint = 67328;
-pub const NSWorkspaceErrorMaximum: c_uint = 67455;
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+        NSTextReadInapplicableDocumentTypeError = 65806,
+        NSTextWriteInapplicableDocumentTypeError = 66062,
+        NSTextReadWriteErrorMinimum = 65792,
+        NSTextReadWriteErrorMaximum = 66303,
+        NSFontAssetDownloadError = 66304,
+        NSFontErrorMinimum = 66304,
+        NSFontErrorMaximum = 66335,
+        NSServiceApplicationNotFoundError = 66560,
+        NSServiceApplicationLaunchFailedError = 66561,
+        NSServiceRequestTimedOutError = 66562,
+        NSServiceInvalidPasteboardDataError = 66563,
+        NSServiceMalformedServiceDictionaryError = 66564,
+        NSServiceMiscellaneousError = 66800,
+        NSServiceErrorMinimum = 66560,
+        NSServiceErrorMaximum = 66817,
+        NSSharingServiceNotConfiguredError = 67072,
+        NSSharingServiceErrorMinimum = 67072,
+        NSSharingServiceErrorMaximum = 67327,
+        NSWorkspaceAuthorizationInvalidError = 67328,
+        NSWorkspaceErrorMinimum = 67328,
+        NSWorkspaceErrorMaximum = 67455,
+    }
+);

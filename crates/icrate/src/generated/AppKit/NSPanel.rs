@@ -36,10 +36,20 @@ extern_methods!(
     }
 );
 
-pub const NSAlertDefaultReturn: c_int = 1;
-pub const NSAlertAlternateReturn: c_int = 0;
-pub const NSAlertOtherReturn: c_int = -1;
-pub const NSAlertErrorReturn: c_int = -2;
+extern_enum!(
+    #[underlying(c_int)]
+    pub enum {
+        NSAlertDefaultReturn = 1,
+        NSAlertAlternateReturn = 0,
+        NSAlertOtherReturn = -1,
+        NSAlertErrorReturn = -2,
+    }
+);
 
-pub const NSOKButton: c_uint = NSModalResponseOK;
-pub const NSCancelButton: c_uint = NSModalResponseCancel;
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+        NSOKButton = NSModalResponseOK,
+        NSCancelButton = NSModalResponseCancel,
+    }
+);

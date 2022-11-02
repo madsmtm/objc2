@@ -7,12 +7,21 @@ use crate::Foundation::*;
 
 pub type NSImageHintKey = NSString;
 
-pub const NSImageRepMatchesDevice: c_uint = 0;
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+        NSImageRepMatchesDevice = 0,
+    }
+);
 
-pub type NSImageLayoutDirection = NSInteger;
-pub const NSImageLayoutDirectionUnspecified: NSImageLayoutDirection = -1;
-pub const NSImageLayoutDirectionLeftToRight: NSImageLayoutDirection = 2;
-pub const NSImageLayoutDirectionRightToLeft: NSImageLayoutDirection = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSImageLayoutDirection {
+        NSImageLayoutDirectionUnspecified = -1,
+        NSImageLayoutDirectionLeftToRight = 2,
+        NSImageLayoutDirectionRightToLeft = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -187,6 +196,4 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSImageRepRegistryDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSImageRepRegistryDidChangeNotification: &'static NSNotificationName);

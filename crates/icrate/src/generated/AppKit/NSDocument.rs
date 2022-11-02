@@ -5,23 +5,31 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSDocumentChangeType = NSUInteger;
-pub const NSChangeDone: NSDocumentChangeType = 0;
-pub const NSChangeUndone: NSDocumentChangeType = 1;
-pub const NSChangeRedone: NSDocumentChangeType = 5;
-pub const NSChangeCleared: NSDocumentChangeType = 2;
-pub const NSChangeReadOtherContents: NSDocumentChangeType = 3;
-pub const NSChangeAutosaved: NSDocumentChangeType = 4;
-pub const NSChangeDiscardable: NSDocumentChangeType = 256;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSDocumentChangeType {
+        NSChangeDone = 0,
+        NSChangeUndone = 1,
+        NSChangeRedone = 5,
+        NSChangeCleared = 2,
+        NSChangeReadOtherContents = 3,
+        NSChangeAutosaved = 4,
+        NSChangeDiscardable = 256,
+    }
+);
 
-pub type NSSaveOperationType = NSUInteger;
-pub const NSSaveOperation: NSSaveOperationType = 0;
-pub const NSSaveAsOperation: NSSaveOperationType = 1;
-pub const NSSaveToOperation: NSSaveOperationType = 2;
-pub const NSAutosaveInPlaceOperation: NSSaveOperationType = 4;
-pub const NSAutosaveElsewhereOperation: NSSaveOperationType = 3;
-pub const NSAutosaveAsOperation: NSSaveOperationType = 5;
-pub const NSAutosaveOperation: NSSaveOperationType = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSSaveOperationType {
+        NSSaveOperation = 0,
+        NSSaveAsOperation = 1,
+        NSSaveToOperation = 2,
+        NSAutosaveInPlaceOperation = 4,
+        NSAutosaveElsewhereOperation = 3,
+        NSAutosaveAsOperation = 5,
+        NSAutosaveOperation = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

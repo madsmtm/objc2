@@ -5,172 +5,104 @@ use crate::Foundation::*;
 
 pub type NSLinguisticTagScheme = NSString;
 
-extern "C" {
-    pub static NSLinguisticTagSchemeTokenType: &'static NSLinguisticTagScheme;
-}
+extern_static!(NSLinguisticTagSchemeTokenType: &'static NSLinguisticTagScheme);
 
-extern "C" {
-    pub static NSLinguisticTagSchemeLexicalClass: &'static NSLinguisticTagScheme;
-}
+extern_static!(NSLinguisticTagSchemeLexicalClass: &'static NSLinguisticTagScheme);
 
-extern "C" {
-    pub static NSLinguisticTagSchemeNameType: &'static NSLinguisticTagScheme;
-}
+extern_static!(NSLinguisticTagSchemeNameType: &'static NSLinguisticTagScheme);
 
-extern "C" {
-    pub static NSLinguisticTagSchemeNameTypeOrLexicalClass: &'static NSLinguisticTagScheme;
-}
+extern_static!(NSLinguisticTagSchemeNameTypeOrLexicalClass: &'static NSLinguisticTagScheme);
 
-extern "C" {
-    pub static NSLinguisticTagSchemeLemma: &'static NSLinguisticTagScheme;
-}
+extern_static!(NSLinguisticTagSchemeLemma: &'static NSLinguisticTagScheme);
 
-extern "C" {
-    pub static NSLinguisticTagSchemeLanguage: &'static NSLinguisticTagScheme;
-}
+extern_static!(NSLinguisticTagSchemeLanguage: &'static NSLinguisticTagScheme);
 
-extern "C" {
-    pub static NSLinguisticTagSchemeScript: &'static NSLinguisticTagScheme;
-}
+extern_static!(NSLinguisticTagSchemeScript: &'static NSLinguisticTagScheme);
 
 pub type NSLinguisticTag = NSString;
 
-extern "C" {
-    pub static NSLinguisticTagWord: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagWord: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagPunctuation: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagPunctuation: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagWhitespace: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagWhitespace: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagOther: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagOther: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagNoun: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagNoun: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagVerb: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagVerb: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagAdjective: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagAdjective: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagAdverb: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagAdverb: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagPronoun: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagPronoun: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagDeterminer: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagDeterminer: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagParticle: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagParticle: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagPreposition: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagPreposition: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagNumber: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagNumber: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagConjunction: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagConjunction: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagInterjection: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagInterjection: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagClassifier: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagClassifier: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagIdiom: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagIdiom: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagOtherWord: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagOtherWord: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagSentenceTerminator: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagSentenceTerminator: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagOpenQuote: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagOpenQuote: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagCloseQuote: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagCloseQuote: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagOpenParenthesis: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagOpenParenthesis: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagCloseParenthesis: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagCloseParenthesis: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagWordJoiner: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagWordJoiner: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagDash: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagDash: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagOtherPunctuation: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagOtherPunctuation: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagParagraphBreak: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagParagraphBreak: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagOtherWhitespace: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagOtherWhitespace: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagPersonalName: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagPersonalName: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagPlaceName: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagPlaceName: &'static NSLinguisticTag);
 
-extern "C" {
-    pub static NSLinguisticTagOrganizationName: &'static NSLinguisticTag;
-}
+extern_static!(NSLinguisticTagOrganizationName: &'static NSLinguisticTag);
 
-pub type NSLinguisticTaggerUnit = NSInteger;
-pub const NSLinguisticTaggerUnitWord: NSLinguisticTaggerUnit = 0;
-pub const NSLinguisticTaggerUnitSentence: NSLinguisticTaggerUnit = 1;
-pub const NSLinguisticTaggerUnitParagraph: NSLinguisticTaggerUnit = 2;
-pub const NSLinguisticTaggerUnitDocument: NSLinguisticTaggerUnit = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSLinguisticTaggerUnit {
+        NSLinguisticTaggerUnitWord = 0,
+        NSLinguisticTaggerUnitSentence = 1,
+        NSLinguisticTaggerUnitParagraph = 2,
+        NSLinguisticTaggerUnitDocument = 3,
+    }
+);
 
-pub type NSLinguisticTaggerOptions = NSUInteger;
-pub const NSLinguisticTaggerOmitWords: NSLinguisticTaggerOptions = 1 << 0;
-pub const NSLinguisticTaggerOmitPunctuation: NSLinguisticTaggerOptions = 1 << 1;
-pub const NSLinguisticTaggerOmitWhitespace: NSLinguisticTaggerOptions = 1 << 2;
-pub const NSLinguisticTaggerOmitOther: NSLinguisticTaggerOptions = 1 << 3;
-pub const NSLinguisticTaggerJoinNames: NSLinguisticTaggerOptions = 1 << 4;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSLinguisticTaggerOptions {
+        NSLinguisticTaggerOmitWords = 1 << 0,
+        NSLinguisticTaggerOmitPunctuation = 1 << 1,
+        NSLinguisticTaggerOmitWhitespace = 1 << 2,
+        NSLinguisticTaggerOmitOther = 1 << 3,
+        NSLinguisticTaggerJoinNames = 1 << 4,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

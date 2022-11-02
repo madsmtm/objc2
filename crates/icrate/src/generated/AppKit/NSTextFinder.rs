@@ -5,36 +5,40 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextFinderAction = NSInteger;
-pub const NSTextFinderActionShowFindInterface: NSTextFinderAction = 1;
-pub const NSTextFinderActionNextMatch: NSTextFinderAction = 2;
-pub const NSTextFinderActionPreviousMatch: NSTextFinderAction = 3;
-pub const NSTextFinderActionReplaceAll: NSTextFinderAction = 4;
-pub const NSTextFinderActionReplace: NSTextFinderAction = 5;
-pub const NSTextFinderActionReplaceAndFind: NSTextFinderAction = 6;
-pub const NSTextFinderActionSetSearchString: NSTextFinderAction = 7;
-pub const NSTextFinderActionReplaceAllInSelection: NSTextFinderAction = 8;
-pub const NSTextFinderActionSelectAll: NSTextFinderAction = 9;
-pub const NSTextFinderActionSelectAllInSelection: NSTextFinderAction = 10;
-pub const NSTextFinderActionHideFindInterface: NSTextFinderAction = 11;
-pub const NSTextFinderActionShowReplaceInterface: NSTextFinderAction = 12;
-pub const NSTextFinderActionHideReplaceInterface: NSTextFinderAction = 13;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTextFinderAction {
+        NSTextFinderActionShowFindInterface = 1,
+        NSTextFinderActionNextMatch = 2,
+        NSTextFinderActionPreviousMatch = 3,
+        NSTextFinderActionReplaceAll = 4,
+        NSTextFinderActionReplace = 5,
+        NSTextFinderActionReplaceAndFind = 6,
+        NSTextFinderActionSetSearchString = 7,
+        NSTextFinderActionReplaceAllInSelection = 8,
+        NSTextFinderActionSelectAll = 9,
+        NSTextFinderActionSelectAllInSelection = 10,
+        NSTextFinderActionHideFindInterface = 11,
+        NSTextFinderActionShowReplaceInterface = 12,
+        NSTextFinderActionHideReplaceInterface = 13,
+    }
+);
 
 pub type NSPasteboardTypeTextFinderOptionKey = NSString;
 
-extern "C" {
-    pub static NSTextFinderCaseInsensitiveKey: &'static NSPasteboardTypeTextFinderOptionKey;
-}
+extern_static!(NSTextFinderCaseInsensitiveKey: &'static NSPasteboardTypeTextFinderOptionKey);
 
-extern "C" {
-    pub static NSTextFinderMatchingTypeKey: &'static NSPasteboardTypeTextFinderOptionKey;
-}
+extern_static!(NSTextFinderMatchingTypeKey: &'static NSPasteboardTypeTextFinderOptionKey);
 
-pub type NSTextFinderMatchingType = NSInteger;
-pub const NSTextFinderMatchingTypeContains: NSTextFinderMatchingType = 0;
-pub const NSTextFinderMatchingTypeStartsWith: NSTextFinderMatchingType = 1;
-pub const NSTextFinderMatchingTypeFullWord: NSTextFinderMatchingType = 2;
-pub const NSTextFinderMatchingTypeEndsWith: NSTextFinderMatchingType = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTextFinderMatchingType {
+        NSTextFinderMatchingTypeContains = 0,
+        NSTextFinderMatchingTypeStartsWith = 1,
+        NSTextFinderMatchingTypeFullWord = 2,
+        NSTextFinderMatchingTypeEndsWith = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

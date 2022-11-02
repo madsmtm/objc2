@@ -4,7 +4,7 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub static NSFetchRequestExpressionType: NSExpressionType = 50;
+extern_static!(NSFetchRequestExpressionType: NSExpressionType = 50);
 
 extern_class!(
     #[derive(Debug)]

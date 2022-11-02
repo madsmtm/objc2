@@ -4,12 +4,16 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSPersistentStoreRequestType = NSUInteger;
-pub const NSFetchRequestType: NSPersistentStoreRequestType = 1;
-pub const NSSaveRequestType: NSPersistentStoreRequestType = 2;
-pub const NSBatchInsertRequestType: NSPersistentStoreRequestType = 5;
-pub const NSBatchUpdateRequestType: NSPersistentStoreRequestType = 6;
-pub const NSBatchDeleteRequestType: NSPersistentStoreRequestType = 7;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSPersistentStoreRequestType {
+        NSFetchRequestType = 1,
+        NSSaveRequestType = 2,
+        NSBatchInsertRequestType = 5,
+        NSBatchUpdateRequestType = 6,
+        NSBatchDeleteRequestType = 7,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

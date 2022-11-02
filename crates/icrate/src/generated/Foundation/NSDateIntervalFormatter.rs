@@ -3,12 +3,16 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSDateIntervalFormatterStyle = NSUInteger;
-pub const NSDateIntervalFormatterNoStyle: NSDateIntervalFormatterStyle = 0;
-pub const NSDateIntervalFormatterShortStyle: NSDateIntervalFormatterStyle = 1;
-pub const NSDateIntervalFormatterMediumStyle: NSDateIntervalFormatterStyle = 2;
-pub const NSDateIntervalFormatterLongStyle: NSDateIntervalFormatterStyle = 3;
-pub const NSDateIntervalFormatterFullStyle: NSDateIntervalFormatterStyle = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSDateIntervalFormatterStyle {
+        NSDateIntervalFormatterNoStyle = 0,
+        NSDateIntervalFormatterShortStyle = 1,
+        NSDateIntervalFormatterMediumStyle = 2,
+        NSDateIntervalFormatterLongStyle = 3,
+        NSDateIntervalFormatterFullStyle = 4,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

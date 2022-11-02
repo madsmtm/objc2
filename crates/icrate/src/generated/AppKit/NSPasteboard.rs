@@ -7,105 +7,64 @@ use crate::Foundation::*;
 
 pub type NSPasteboardType = NSString;
 
-extern "C" {
-    pub static NSPasteboardTypeString: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypeString: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypePDF: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypePDF: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypeTIFF: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypeTIFF: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypePNG: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypePNG: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypeRTF: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypeRTF: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypeRTFD: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypeRTFD: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypeHTML: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypeHTML: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypeTabularText: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypeTabularText: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypeFont: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypeFont: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypeRuler: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypeRuler: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypeColor: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypeColor: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypeSound: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypeSound: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypeMultipleTextSelection: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypeMultipleTextSelection: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypeTextFinderOptions: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypeTextFinderOptions: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypeURL: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypeURL: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypeFileURL: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypeFileURL: &'static NSPasteboardType);
 
 pub type NSPasteboardName = NSString;
 
-extern "C" {
-    pub static NSPasteboardNameGeneral: &'static NSPasteboardName;
-}
+extern_static!(NSPasteboardNameGeneral: &'static NSPasteboardName);
 
-extern "C" {
-    pub static NSPasteboardNameFont: &'static NSPasteboardName;
-}
+extern_static!(NSPasteboardNameFont: &'static NSPasteboardName);
 
-extern "C" {
-    pub static NSPasteboardNameRuler: &'static NSPasteboardName;
-}
+extern_static!(NSPasteboardNameRuler: &'static NSPasteboardName);
 
-extern "C" {
-    pub static NSPasteboardNameFind: &'static NSPasteboardName;
-}
+extern_static!(NSPasteboardNameFind: &'static NSPasteboardName);
 
-extern "C" {
-    pub static NSPasteboardNameDrag: &'static NSPasteboardName;
-}
+extern_static!(NSPasteboardNameDrag: &'static NSPasteboardName);
 
-pub type NSPasteboardContentsOptions = NSUInteger;
-pub const NSPasteboardContentsCurrentHostOnly: NSPasteboardContentsOptions = 1 << 0;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSPasteboardContentsOptions {
+        NSPasteboardContentsCurrentHostOnly = 1 << 0,
+    }
+);
 
 pub type NSPasteboardReadingOptionKey = NSString;
 
-extern "C" {
-    pub static NSPasteboardURLReadingFileURLsOnlyKey: &'static NSPasteboardReadingOptionKey;
-}
+extern_static!(NSPasteboardURLReadingFileURLsOnlyKey: &'static NSPasteboardReadingOptionKey);
 
-extern "C" {
-    pub static NSPasteboardURLReadingContentsConformToTypesKey:
-        &'static NSPasteboardReadingOptionKey;
-}
+extern_static!(
+    NSPasteboardURLReadingContentsConformToTypesKey: &'static NSPasteboardReadingOptionKey
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -275,16 +234,24 @@ extern_methods!(
     }
 );
 
-pub type NSPasteboardWritingOptions = NSUInteger;
-pub const NSPasteboardWritingPromised: NSPasteboardWritingOptions = 1 << 9;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSPasteboardWritingOptions {
+        NSPasteboardWritingPromised = 1 << 9,
+    }
+);
 
 pub type NSPasteboardWriting = NSObject;
 
-pub type NSPasteboardReadingOptions = NSUInteger;
-pub const NSPasteboardReadingAsData: NSPasteboardReadingOptions = 0;
-pub const NSPasteboardReadingAsString: NSPasteboardReadingOptions = 1 << 0;
-pub const NSPasteboardReadingAsPropertyList: NSPasteboardReadingOptions = 1 << 1;
-pub const NSPasteboardReadingAsKeyedArchive: NSPasteboardReadingOptions = 1 << 2;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSPasteboardReadingOptions {
+        NSPasteboardReadingAsData = 0,
+        NSPasteboardReadingAsString = 1 << 0,
+        NSPasteboardReadingAsPropertyList = 1 << 1,
+        NSPasteboardReadingAsKeyedArchive = 1 << 2,
+    }
+);
 
 pub type NSPasteboardReading = NSObject;
 
@@ -325,102 +292,52 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSFileContentsPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSFileContentsPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSStringPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSStringPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSFilenamesPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSFilenamesPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSTIFFPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSTIFFPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSRTFPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSRTFPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSTabularTextPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSTabularTextPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSFontPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSFontPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSRulerPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSRulerPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSColorPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSColorPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSRTFDPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSRTFDPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSHTMLPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSHTMLPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSURLPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSURLPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPDFPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSPDFPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSMultipleTextSelectionPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSMultipleTextSelectionPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPostScriptPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSPostScriptPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSVCardPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSVCardPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSInkTextPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSInkTextPboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSFilesPromisePboardType: &'static NSPasteboardType;
-}
+extern_static!(NSFilesPromisePboardType: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSPasteboardTypeFindPanelSearchOptions: &'static NSPasteboardType;
-}
+extern_static!(NSPasteboardTypeFindPanelSearchOptions: &'static NSPasteboardType);
 
-extern "C" {
-    pub static NSGeneralPboard: &'static NSPasteboardName;
-}
+extern_static!(NSGeneralPboard: &'static NSPasteboardName);
 
-extern "C" {
-    pub static NSFontPboard: &'static NSPasteboardName;
-}
+extern_static!(NSFontPboard: &'static NSPasteboardName);
 
-extern "C" {
-    pub static NSRulerPboard: &'static NSPasteboardName;
-}
+extern_static!(NSRulerPboard: &'static NSPasteboardName);
 
-extern "C" {
-    pub static NSFindPboard: &'static NSPasteboardName;
-}
+extern_static!(NSFindPboard: &'static NSPasteboardName);
 
-extern "C" {
-    pub static NSDragPboard: &'static NSPasteboardName;
-}
+extern_static!(NSDragPboard: &'static NSPasteboardName);
 
-extern "C" {
-    pub static NSPICTPboardType: &'static NSPasteboardType;
-}
+extern_static!(NSPICTPboardType: &'static NSPasteboardType);

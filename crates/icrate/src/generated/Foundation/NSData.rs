@@ -3,37 +3,56 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSDataReadingOptions = NSUInteger;
-pub const NSDataReadingMappedIfSafe: NSDataReadingOptions = 1 << 0;
-pub const NSDataReadingUncached: NSDataReadingOptions = 1 << 1;
-pub const NSDataReadingMappedAlways: NSDataReadingOptions = 1 << 3;
-pub const NSDataReadingMapped: NSDataReadingOptions = NSDataReadingMappedIfSafe;
-pub const NSMappedRead: NSDataReadingOptions = NSDataReadingMapped;
-pub const NSUncachedRead: NSDataReadingOptions = NSDataReadingUncached;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSDataReadingOptions {
+        NSDataReadingMappedIfSafe = 1 << 0,
+        NSDataReadingUncached = 1 << 1,
+        NSDataReadingMappedAlways = 1 << 3,
+        NSDataReadingMapped = NSDataReadingMappedIfSafe,
+        NSMappedRead = NSDataReadingMapped,
+        NSUncachedRead = NSDataReadingUncached,
+    }
+);
 
-pub type NSDataWritingOptions = NSUInteger;
-pub const NSDataWritingAtomic: NSDataWritingOptions = 1 << 0;
-pub const NSDataWritingWithoutOverwriting: NSDataWritingOptions = 1 << 1;
-pub const NSDataWritingFileProtectionNone: NSDataWritingOptions = 0x10000000;
-pub const NSDataWritingFileProtectionComplete: NSDataWritingOptions = 0x20000000;
-pub const NSDataWritingFileProtectionCompleteUnlessOpen: NSDataWritingOptions = 0x30000000;
-pub const NSDataWritingFileProtectionCompleteUntilFirstUserAuthentication: NSDataWritingOptions =
-    0x40000000;
-pub const NSDataWritingFileProtectionMask: NSDataWritingOptions = 0xf0000000;
-pub const NSAtomicWrite: NSDataWritingOptions = NSDataWritingAtomic;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSDataWritingOptions {
+        NSDataWritingAtomic = 1 << 0,
+        NSDataWritingWithoutOverwriting = 1 << 1,
+        NSDataWritingFileProtectionNone = 0x10000000,
+        NSDataWritingFileProtectionComplete = 0x20000000,
+        NSDataWritingFileProtectionCompleteUnlessOpen = 0x30000000,
+        NSDataWritingFileProtectionCompleteUntilFirstUserAuthentication = 0x40000000,
+        NSDataWritingFileProtectionMask = 0xf0000000,
+        NSAtomicWrite = NSDataWritingAtomic,
+    }
+);
 
-pub type NSDataSearchOptions = NSUInteger;
-pub const NSDataSearchBackwards: NSDataSearchOptions = 1 << 0;
-pub const NSDataSearchAnchored: NSDataSearchOptions = 1 << 1;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSDataSearchOptions {
+        NSDataSearchBackwards = 1 << 0,
+        NSDataSearchAnchored = 1 << 1,
+    }
+);
 
-pub type NSDataBase64EncodingOptions = NSUInteger;
-pub const NSDataBase64Encoding64CharacterLineLength: NSDataBase64EncodingOptions = 1 << 0;
-pub const NSDataBase64Encoding76CharacterLineLength: NSDataBase64EncodingOptions = 1 << 1;
-pub const NSDataBase64EncodingEndLineWithCarriageReturn: NSDataBase64EncodingOptions = 1 << 4;
-pub const NSDataBase64EncodingEndLineWithLineFeed: NSDataBase64EncodingOptions = 1 << 5;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSDataBase64EncodingOptions {
+        NSDataBase64Encoding64CharacterLineLength = 1 << 0,
+        NSDataBase64Encoding76CharacterLineLength = 1 << 1,
+        NSDataBase64EncodingEndLineWithCarriageReturn = 1 << 4,
+        NSDataBase64EncodingEndLineWithLineFeed = 1 << 5,
+    }
+);
 
-pub type NSDataBase64DecodingOptions = NSUInteger;
-pub const NSDataBase64DecodingIgnoreUnknownCharacters: NSDataBase64DecodingOptions = 1 << 0;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSDataBase64DecodingOptions {
+        NSDataBase64DecodingIgnoreUnknownCharacters = 1 << 0,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -250,11 +269,15 @@ extern_methods!(
     }
 );
 
-pub type NSDataCompressionAlgorithm = NSInteger;
-pub const NSDataCompressionAlgorithmLZFSE: NSDataCompressionAlgorithm = 0;
-pub const NSDataCompressionAlgorithmLZ4: NSDataCompressionAlgorithm = 1;
-pub const NSDataCompressionAlgorithmLZMA: NSDataCompressionAlgorithm = 2;
-pub const NSDataCompressionAlgorithmZlib: NSDataCompressionAlgorithm = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSDataCompressionAlgorithm {
+        NSDataCompressionAlgorithmLZFSE = 0,
+        NSDataCompressionAlgorithmLZ4 = 1,
+        NSDataCompressionAlgorithmLZMA = 2,
+        NSDataCompressionAlgorithmZlib = 3,
+    }
+);
 
 extern_methods!(
     /// NSDataCompression

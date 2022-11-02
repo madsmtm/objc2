@@ -5,10 +5,14 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTableColumnResizingOptions = NSUInteger;
-pub const NSTableColumnNoResizing: NSTableColumnResizingOptions = 0;
-pub const NSTableColumnAutoresizingMask: NSTableColumnResizingOptions = 1 << 0;
-pub const NSTableColumnUserResizingMask: NSTableColumnResizingOptions = 1 << 1;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSTableColumnResizingOptions {
+        NSTableColumnNoResizing = 0,
+        NSTableColumnAutoresizingMask = 1 << 0,
+        NSTableColumnUserResizingMask = 1 << 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

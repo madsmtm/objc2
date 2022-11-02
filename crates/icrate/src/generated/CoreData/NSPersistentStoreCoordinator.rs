@@ -4,185 +4,95 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSSQLiteStoreType: &'static NSString;
-}
+extern_static!(NSSQLiteStoreType: &'static NSString);
 
-extern "C" {
-    pub static NSXMLStoreType: &'static NSString;
-}
+extern_static!(NSXMLStoreType: &'static NSString);
 
-extern "C" {
-    pub static NSBinaryStoreType: &'static NSString;
-}
+extern_static!(NSBinaryStoreType: &'static NSString);
 
-extern "C" {
-    pub static NSInMemoryStoreType: &'static NSString;
-}
+extern_static!(NSInMemoryStoreType: &'static NSString);
 
-extern "C" {
-    pub static NSStoreTypeKey: &'static NSString;
-}
+extern_static!(NSStoreTypeKey: &'static NSString);
 
-extern "C" {
-    pub static NSStoreUUIDKey: &'static NSString;
-}
+extern_static!(NSStoreUUIDKey: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreCoordinatorStoresWillChangeNotification: &'static NSString;
-}
+extern_static!(NSPersistentStoreCoordinatorStoresWillChangeNotification: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreCoordinatorStoresDidChangeNotification: &'static NSString;
-}
+extern_static!(NSPersistentStoreCoordinatorStoresDidChangeNotification: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreCoordinatorWillRemoveStoreNotification: &'static NSString;
-}
+extern_static!(NSPersistentStoreCoordinatorWillRemoveStoreNotification: &'static NSString);
 
-extern "C" {
-    pub static NSAddedPersistentStoresKey: &'static NSString;
-}
+extern_static!(NSAddedPersistentStoresKey: &'static NSString);
 
-extern "C" {
-    pub static NSRemovedPersistentStoresKey: &'static NSString;
-}
+extern_static!(NSRemovedPersistentStoresKey: &'static NSString);
 
-extern "C" {
-    pub static NSUUIDChangedPersistentStoresKey: &'static NSString;
-}
+extern_static!(NSUUIDChangedPersistentStoresKey: &'static NSString);
 
-extern "C" {
-    pub static NSReadOnlyPersistentStoreOption: &'static NSString;
-}
+extern_static!(NSReadOnlyPersistentStoreOption: &'static NSString);
 
-extern "C" {
-    pub static NSValidateXMLStoreOption: &'static NSString;
-}
+extern_static!(NSValidateXMLStoreOption: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreTimeoutOption: &'static NSString;
-}
+extern_static!(NSPersistentStoreTimeoutOption: &'static NSString);
 
-extern "C" {
-    pub static NSSQLitePragmasOption: &'static NSString;
-}
+extern_static!(NSSQLitePragmasOption: &'static NSString);
 
-extern "C" {
-    pub static NSSQLiteAnalyzeOption: &'static NSString;
-}
+extern_static!(NSSQLiteAnalyzeOption: &'static NSString);
 
-extern "C" {
-    pub static NSSQLiteManualVacuumOption: &'static NSString;
-}
+extern_static!(NSSQLiteManualVacuumOption: &'static NSString);
 
-extern "C" {
-    pub static NSIgnorePersistentStoreVersioningOption: &'static NSString;
-}
+extern_static!(NSIgnorePersistentStoreVersioningOption: &'static NSString);
 
-extern "C" {
-    pub static NSMigratePersistentStoresAutomaticallyOption: &'static NSString;
-}
+extern_static!(NSMigratePersistentStoresAutomaticallyOption: &'static NSString);
 
-extern "C" {
-    pub static NSInferMappingModelAutomaticallyOption: &'static NSString;
-}
+extern_static!(NSInferMappingModelAutomaticallyOption: &'static NSString);
 
-extern "C" {
-    pub static NSStoreModelVersionHashesKey: &'static NSString;
-}
+extern_static!(NSStoreModelVersionHashesKey: &'static NSString);
 
-extern "C" {
-    pub static NSStoreModelVersionIdentifiersKey: &'static NSString;
-}
+extern_static!(NSStoreModelVersionIdentifiersKey: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreOSCompatibility: &'static NSString;
-}
+extern_static!(NSPersistentStoreOSCompatibility: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreConnectionPoolMaxSizeKey: &'static NSString;
-}
+extern_static!(NSPersistentStoreConnectionPoolMaxSizeKey: &'static NSString);
 
-extern "C" {
-    pub static NSCoreDataCoreSpotlightExporter: &'static NSString;
-}
+extern_static!(NSCoreDataCoreSpotlightExporter: &'static NSString);
 
-extern "C" {
-    pub static NSXMLExternalRecordType: &'static NSString;
-}
+extern_static!(NSXMLExternalRecordType: &'static NSString);
 
-extern "C" {
-    pub static NSBinaryExternalRecordType: &'static NSString;
-}
+extern_static!(NSBinaryExternalRecordType: &'static NSString);
 
-extern "C" {
-    pub static NSExternalRecordsFileFormatOption: &'static NSString;
-}
+extern_static!(NSExternalRecordsFileFormatOption: &'static NSString);
 
-extern "C" {
-    pub static NSExternalRecordsDirectoryOption: &'static NSString;
-}
+extern_static!(NSExternalRecordsDirectoryOption: &'static NSString);
 
-extern "C" {
-    pub static NSExternalRecordExtensionOption: &'static NSString;
-}
+extern_static!(NSExternalRecordExtensionOption: &'static NSString);
 
-extern "C" {
-    pub static NSEntityNameInPathKey: &'static NSString;
-}
+extern_static!(NSEntityNameInPathKey: &'static NSString);
 
-extern "C" {
-    pub static NSStoreUUIDInPathKey: &'static NSString;
-}
+extern_static!(NSStoreUUIDInPathKey: &'static NSString);
 
-extern "C" {
-    pub static NSStorePathKey: &'static NSString;
-}
+extern_static!(NSStorePathKey: &'static NSString);
 
-extern "C" {
-    pub static NSModelPathKey: &'static NSString;
-}
+extern_static!(NSModelPathKey: &'static NSString);
 
-extern "C" {
-    pub static NSObjectURIKey: &'static NSString;
-}
+extern_static!(NSObjectURIKey: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreForceDestroyOption: &'static NSString;
-}
+extern_static!(NSPersistentStoreForceDestroyOption: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreFileProtectionKey: &'static NSString;
-}
+extern_static!(NSPersistentStoreFileProtectionKey: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentHistoryTrackingKey: &'static NSString;
-}
+extern_static!(NSPersistentHistoryTrackingKey: &'static NSString);
 
-extern "C" {
-    pub static NSBinaryStoreSecureDecodingClasses: &'static NSString;
-}
+extern_static!(NSBinaryStoreSecureDecodingClasses: &'static NSString);
 
-extern "C" {
-    pub static NSBinaryStoreInsecureDecodingCompatibilityOption: &'static NSString;
-}
+extern_static!(NSBinaryStoreInsecureDecodingCompatibilityOption: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreRemoteChangeNotificationPostOptionKey: &'static NSString;
-}
+extern_static!(NSPersistentStoreRemoteChangeNotificationPostOptionKey: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreRemoteChangeNotification: &'static NSString;
-}
+extern_static!(NSPersistentStoreRemoteChangeNotification: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreURLKey: &'static NSString;
-}
+extern_static!(NSPersistentStoreURLKey: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentHistoryTokenKey: &'static NSString;
-}
+extern_static!(NSPersistentHistoryTokenKey: &'static NSString);
 
 extern_class!(
     #[derive(Debug)]
@@ -390,44 +300,28 @@ extern_methods!(
     }
 );
 
-pub type NSPersistentStoreUbiquitousTransitionType = NSUInteger;
-pub const NSPersistentStoreUbiquitousTransitionTypeAccountAdded:
-    NSPersistentStoreUbiquitousTransitionType = 1;
-pub const NSPersistentStoreUbiquitousTransitionTypeAccountRemoved:
-    NSPersistentStoreUbiquitousTransitionType = 2;
-pub const NSPersistentStoreUbiquitousTransitionTypeContentRemoved:
-    NSPersistentStoreUbiquitousTransitionType = 3;
-pub const NSPersistentStoreUbiquitousTransitionTypeInitialImportCompleted:
-    NSPersistentStoreUbiquitousTransitionType = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSPersistentStoreUbiquitousTransitionType {
+        NSPersistentStoreUbiquitousTransitionTypeAccountAdded = 1,
+        NSPersistentStoreUbiquitousTransitionTypeAccountRemoved = 2,
+        NSPersistentStoreUbiquitousTransitionTypeContentRemoved = 3,
+        NSPersistentStoreUbiquitousTransitionTypeInitialImportCompleted = 4,
+    }
+);
 
-extern "C" {
-    pub static NSPersistentStoreUbiquitousContentNameKey: &'static NSString;
-}
+extern_static!(NSPersistentStoreUbiquitousContentNameKey: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreUbiquitousContentURLKey: &'static NSString;
-}
+extern_static!(NSPersistentStoreUbiquitousContentURLKey: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreDidImportUbiquitousContentChangesNotification: &'static NSString;
-}
+extern_static!(NSPersistentStoreDidImportUbiquitousContentChangesNotification: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreUbiquitousTransitionTypeKey: &'static NSString;
-}
+extern_static!(NSPersistentStoreUbiquitousTransitionTypeKey: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreUbiquitousPeerTokenOption: &'static NSString;
-}
+extern_static!(NSPersistentStoreUbiquitousPeerTokenOption: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreRemoveUbiquitousMetadataOption: &'static NSString;
-}
+extern_static!(NSPersistentStoreRemoveUbiquitousMetadataOption: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreUbiquitousContainerIdentifierKey: &'static NSString;
-}
+extern_static!(NSPersistentStoreUbiquitousContainerIdentifierKey: &'static NSString);
 
-extern "C" {
-    pub static NSPersistentStoreRebuildFromUbiquitousContentOption: &'static NSString;
-}
+extern_static!(NSPersistentStoreRebuildFromUbiquitousContentOption: &'static NSString);

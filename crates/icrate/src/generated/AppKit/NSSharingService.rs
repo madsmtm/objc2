@@ -7,85 +7,45 @@ use crate::Foundation::*;
 
 pub type NSSharingServiceName = NSString;
 
-extern "C" {
-    pub static NSSharingServiceNameComposeEmail: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNameComposeEmail: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNameComposeMessage: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNameComposeMessage: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNameSendViaAirDrop: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNameSendViaAirDrop: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNameAddToSafariReadingList: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNameAddToSafariReadingList: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNameAddToIPhoto: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNameAddToIPhoto: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNameAddToAperture: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNameAddToAperture: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNameUseAsDesktopPicture: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNameUseAsDesktopPicture: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNamePostOnFacebook: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNamePostOnFacebook: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNamePostOnTwitter: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNamePostOnTwitter: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNamePostOnSinaWeibo: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNamePostOnSinaWeibo: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNamePostOnTencentWeibo: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNamePostOnTencentWeibo: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNamePostOnLinkedIn: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNamePostOnLinkedIn: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNameUseAsTwitterProfileImage: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNameUseAsTwitterProfileImage: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNameUseAsFacebookProfileImage: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNameUseAsFacebookProfileImage: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNameUseAsLinkedInProfileImage: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNameUseAsLinkedInProfileImage: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNamePostImageOnFlickr: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNamePostImageOnFlickr: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNamePostVideoOnVimeo: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNamePostVideoOnVimeo: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNamePostVideoOnYouku: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNamePostVideoOnYouku: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNamePostVideoOnTudou: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNamePostVideoOnTudou: &'static NSSharingServiceName);
 
-extern "C" {
-    pub static NSSharingServiceNameCloudSharing: &'static NSSharingServiceName;
-}
+extern_static!(NSSharingServiceNameCloudSharing: &'static NSSharingServiceName);
 
 extern_class!(
     #[derive(Debug)]
@@ -173,19 +133,27 @@ extern_methods!(
     }
 );
 
-pub type NSSharingContentScope = NSInteger;
-pub const NSSharingContentScopeItem: NSSharingContentScope = 0;
-pub const NSSharingContentScopePartial: NSSharingContentScope = 1;
-pub const NSSharingContentScopeFull: NSSharingContentScope = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSSharingContentScope {
+        NSSharingContentScopeItem = 0,
+        NSSharingContentScopePartial = 1,
+        NSSharingContentScopeFull = 2,
+    }
+);
 
 pub type NSSharingServiceDelegate = NSObject;
 
-pub type NSCloudKitSharingServiceOptions = NSUInteger;
-pub const NSCloudKitSharingServiceStandard: NSCloudKitSharingServiceOptions = 0;
-pub const NSCloudKitSharingServiceAllowPublic: NSCloudKitSharingServiceOptions = 1 << 0;
-pub const NSCloudKitSharingServiceAllowPrivate: NSCloudKitSharingServiceOptions = 1 << 1;
-pub const NSCloudKitSharingServiceAllowReadOnly: NSCloudKitSharingServiceOptions = 1 << 4;
-pub const NSCloudKitSharingServiceAllowReadWrite: NSCloudKitSharingServiceOptions = 1 << 5;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSCloudKitSharingServiceOptions {
+        NSCloudKitSharingServiceStandard = 0,
+        NSCloudKitSharingServiceAllowPublic = 1 << 0,
+        NSCloudKitSharingServiceAllowPrivate = 1 << 1,
+        NSCloudKitSharingServiceAllowReadOnly = 1 << 4,
+        NSCloudKitSharingServiceAllowReadWrite = 1 << 5,
+    }
+);
 
 pub type NSCloudSharingServiceDelegate = NSObject;
 

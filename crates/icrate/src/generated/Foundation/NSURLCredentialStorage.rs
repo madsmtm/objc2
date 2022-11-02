@@ -111,10 +111,6 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSURLCredentialStorageChangedNotification: &'static NSNotificationName;
-}
+extern_static!(NSURLCredentialStorageChangedNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSURLCredentialStorageRemoveSynchronizableCredentials: &'static NSString;
-}
+extern_static!(NSURLCredentialStorageRemoveSynchronizableCredentials: &'static NSString);

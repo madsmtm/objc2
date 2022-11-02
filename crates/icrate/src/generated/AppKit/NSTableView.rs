@@ -5,68 +5,99 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTableViewDropOperation = NSUInteger;
-pub const NSTableViewDropOn: NSTableViewDropOperation = 0;
-pub const NSTableViewDropAbove: NSTableViewDropOperation = 1;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTableViewDropOperation {
+        NSTableViewDropOn = 0,
+        NSTableViewDropAbove = 1,
+    }
+);
 
-pub type NSTableViewColumnAutoresizingStyle = NSUInteger;
-pub const NSTableViewNoColumnAutoresizing: NSTableViewColumnAutoresizingStyle = 0;
-pub const NSTableViewUniformColumnAutoresizingStyle: NSTableViewColumnAutoresizingStyle = 1;
-pub const NSTableViewSequentialColumnAutoresizingStyle: NSTableViewColumnAutoresizingStyle = 2;
-pub const NSTableViewReverseSequentialColumnAutoresizingStyle: NSTableViewColumnAutoresizingStyle =
-    3;
-pub const NSTableViewLastColumnOnlyAutoresizingStyle: NSTableViewColumnAutoresizingStyle = 4;
-pub const NSTableViewFirstColumnOnlyAutoresizingStyle: NSTableViewColumnAutoresizingStyle = 5;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTableViewColumnAutoresizingStyle {
+        NSTableViewNoColumnAutoresizing = 0,
+        NSTableViewUniformColumnAutoresizingStyle = 1,
+        NSTableViewSequentialColumnAutoresizingStyle = 2,
+        NSTableViewReverseSequentialColumnAutoresizingStyle = 3,
+        NSTableViewLastColumnOnlyAutoresizingStyle = 4,
+        NSTableViewFirstColumnOnlyAutoresizingStyle = 5,
+    }
+);
 
-pub type NSTableViewGridLineStyle = NSUInteger;
-pub const NSTableViewGridNone: NSTableViewGridLineStyle = 0;
-pub const NSTableViewSolidVerticalGridLineMask: NSTableViewGridLineStyle = 1 << 0;
-pub const NSTableViewSolidHorizontalGridLineMask: NSTableViewGridLineStyle = 1 << 1;
-pub const NSTableViewDashedHorizontalGridLineMask: NSTableViewGridLineStyle = 1 << 3;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSTableViewGridLineStyle {
+        NSTableViewGridNone = 0,
+        NSTableViewSolidVerticalGridLineMask = 1 << 0,
+        NSTableViewSolidHorizontalGridLineMask = 1 << 1,
+        NSTableViewDashedHorizontalGridLineMask = 1 << 3,
+    }
+);
 
-pub type NSTableViewRowSizeStyle = NSInteger;
-pub const NSTableViewRowSizeStyleDefault: NSTableViewRowSizeStyle = -1;
-pub const NSTableViewRowSizeStyleCustom: NSTableViewRowSizeStyle = 0;
-pub const NSTableViewRowSizeStyleSmall: NSTableViewRowSizeStyle = 1;
-pub const NSTableViewRowSizeStyleMedium: NSTableViewRowSizeStyle = 2;
-pub const NSTableViewRowSizeStyleLarge: NSTableViewRowSizeStyle = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTableViewRowSizeStyle {
+        NSTableViewRowSizeStyleDefault = -1,
+        NSTableViewRowSizeStyleCustom = 0,
+        NSTableViewRowSizeStyleSmall = 1,
+        NSTableViewRowSizeStyleMedium = 2,
+        NSTableViewRowSizeStyleLarge = 3,
+    }
+);
 
-pub type NSTableViewStyle = NSInteger;
-pub const NSTableViewStyleAutomatic: NSTableViewStyle = 0;
-pub const NSTableViewStyleFullWidth: NSTableViewStyle = 1;
-pub const NSTableViewStyleInset: NSTableViewStyle = 2;
-pub const NSTableViewStyleSourceList: NSTableViewStyle = 3;
-pub const NSTableViewStylePlain: NSTableViewStyle = 4;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTableViewStyle {
+        NSTableViewStyleAutomatic = 0,
+        NSTableViewStyleFullWidth = 1,
+        NSTableViewStyleInset = 2,
+        NSTableViewStyleSourceList = 3,
+        NSTableViewStylePlain = 4,
+    }
+);
 
-pub type NSTableViewSelectionHighlightStyle = NSInteger;
-pub const NSTableViewSelectionHighlightStyleNone: NSTableViewSelectionHighlightStyle = -1;
-pub const NSTableViewSelectionHighlightStyleRegular: NSTableViewSelectionHighlightStyle = 0;
-pub const NSTableViewSelectionHighlightStyleSourceList: NSTableViewSelectionHighlightStyle = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTableViewSelectionHighlightStyle {
+        NSTableViewSelectionHighlightStyleNone = -1,
+        NSTableViewSelectionHighlightStyleRegular = 0,
+        NSTableViewSelectionHighlightStyleSourceList = 1,
+    }
+);
 
-pub type NSTableViewDraggingDestinationFeedbackStyle = NSInteger;
-pub const NSTableViewDraggingDestinationFeedbackStyleNone:
-    NSTableViewDraggingDestinationFeedbackStyle = -1;
-pub const NSTableViewDraggingDestinationFeedbackStyleRegular:
-    NSTableViewDraggingDestinationFeedbackStyle = 0;
-pub const NSTableViewDraggingDestinationFeedbackStyleSourceList:
-    NSTableViewDraggingDestinationFeedbackStyle = 1;
-pub const NSTableViewDraggingDestinationFeedbackStyleGap:
-    NSTableViewDraggingDestinationFeedbackStyle = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTableViewDraggingDestinationFeedbackStyle {
+        NSTableViewDraggingDestinationFeedbackStyleNone = -1,
+        NSTableViewDraggingDestinationFeedbackStyleRegular = 0,
+        NSTableViewDraggingDestinationFeedbackStyleSourceList = 1,
+        NSTableViewDraggingDestinationFeedbackStyleGap = 2,
+    }
+);
 
-pub type NSTableRowActionEdge = NSInteger;
-pub const NSTableRowActionEdgeLeading: NSTableRowActionEdge = 0;
-pub const NSTableRowActionEdgeTrailing: NSTableRowActionEdge = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTableRowActionEdge {
+        NSTableRowActionEdgeLeading = 0,
+        NSTableRowActionEdgeTrailing = 1,
+    }
+);
 
 pub type NSTableViewAutosaveName = NSString;
 
-pub type NSTableViewAnimationOptions = NSUInteger;
-pub const NSTableViewAnimationEffectNone: NSTableViewAnimationOptions = 0x0;
-pub const NSTableViewAnimationEffectFade: NSTableViewAnimationOptions = 0x1;
-pub const NSTableViewAnimationEffectGap: NSTableViewAnimationOptions = 0x2;
-pub const NSTableViewAnimationSlideUp: NSTableViewAnimationOptions = 0x10;
-pub const NSTableViewAnimationSlideDown: NSTableViewAnimationOptions = 0x20;
-pub const NSTableViewAnimationSlideLeft: NSTableViewAnimationOptions = 0x30;
-pub const NSTableViewAnimationSlideRight: NSTableViewAnimationOptions = 0x40;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSTableViewAnimationOptions {
+        NSTableViewAnimationEffectNone = 0x0,
+        NSTableViewAnimationEffectFade = 0x1,
+        NSTableViewAnimationEffectGap = 0x2,
+        NSTableViewAnimationSlideUp = 0x10,
+        NSTableViewAnimationSlideDown = 0x20,
+        NSTableViewAnimationSlideLeft = 0x30,
+        NSTableViewAnimationSlideRight = 0x40,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -610,25 +641,15 @@ extern_methods!(
 
 pub type NSTableViewDelegate = NSObject;
 
-extern "C" {
-    pub static NSTableViewSelectionDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSTableViewSelectionDidChangeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSTableViewColumnDidMoveNotification: &'static NSNotificationName;
-}
+extern_static!(NSTableViewColumnDidMoveNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSTableViewColumnDidResizeNotification: &'static NSNotificationName;
-}
+extern_static!(NSTableViewColumnDidResizeNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSTableViewSelectionIsChangingNotification: &'static NSNotificationName;
-}
+extern_static!(NSTableViewSelectionIsChangingNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSTableViewRowViewKey: &'static NSUserInterfaceItemIdentifier;
-}
+extern_static!(NSTableViewRowViewKey: &'static NSUserInterfaceItemIdentifier);
 
 pub type NSTableViewDataSource = NSObject;
 

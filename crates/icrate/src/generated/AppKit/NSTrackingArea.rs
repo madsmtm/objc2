@@ -5,17 +5,21 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTrackingAreaOptions = NSUInteger;
-pub const NSTrackingMouseEnteredAndExited: NSTrackingAreaOptions = 0x01;
-pub const NSTrackingMouseMoved: NSTrackingAreaOptions = 0x02;
-pub const NSTrackingCursorUpdate: NSTrackingAreaOptions = 0x04;
-pub const NSTrackingActiveWhenFirstResponder: NSTrackingAreaOptions = 0x10;
-pub const NSTrackingActiveInKeyWindow: NSTrackingAreaOptions = 0x20;
-pub const NSTrackingActiveInActiveApp: NSTrackingAreaOptions = 0x40;
-pub const NSTrackingActiveAlways: NSTrackingAreaOptions = 0x80;
-pub const NSTrackingAssumeInside: NSTrackingAreaOptions = 0x100;
-pub const NSTrackingInVisibleRect: NSTrackingAreaOptions = 0x200;
-pub const NSTrackingEnabledDuringMouseDrag: NSTrackingAreaOptions = 0x400;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSTrackingAreaOptions {
+        NSTrackingMouseEnteredAndExited = 0x01,
+        NSTrackingMouseMoved = 0x02,
+        NSTrackingCursorUpdate = 0x04,
+        NSTrackingActiveWhenFirstResponder = 0x10,
+        NSTrackingActiveInKeyWindow = 0x20,
+        NSTrackingActiveInActiveApp = 0x40,
+        NSTrackingActiveAlways = 0x80,
+        NSTrackingAssumeInside = 0x100,
+        NSTrackingInVisibleRect = 0x200,
+        NSTrackingEnabledDuringMouseDrag = 0x400,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

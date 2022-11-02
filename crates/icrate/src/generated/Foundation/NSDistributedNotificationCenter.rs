@@ -5,25 +5,35 @@ use crate::Foundation::*;
 
 pub type NSDistributedNotificationCenterType = NSString;
 
-extern "C" {
-    pub static NSLocalNotificationCenterType: &'static NSDistributedNotificationCenterType;
-}
+extern_static!(NSLocalNotificationCenterType: &'static NSDistributedNotificationCenterType);
 
-pub type NSNotificationSuspensionBehavior = NSUInteger;
-pub const NSNotificationSuspensionBehaviorDrop: NSNotificationSuspensionBehavior = 1;
-pub const NSNotificationSuspensionBehaviorCoalesce: NSNotificationSuspensionBehavior = 2;
-pub const NSNotificationSuspensionBehaviorHold: NSNotificationSuspensionBehavior = 3;
-pub const NSNotificationSuspensionBehaviorDeliverImmediately: NSNotificationSuspensionBehavior = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSNotificationSuspensionBehavior {
+        NSNotificationSuspensionBehaviorDrop = 1,
+        NSNotificationSuspensionBehaviorCoalesce = 2,
+        NSNotificationSuspensionBehaviorHold = 3,
+        NSNotificationSuspensionBehaviorDeliverImmediately = 4,
+    }
+);
 
-pub type NSDistributedNotificationOptions = NSUInteger;
-pub const NSDistributedNotificationDeliverImmediately: NSDistributedNotificationOptions = 1 << 0;
-pub const NSDistributedNotificationPostToAllSessions: NSDistributedNotificationOptions = 1 << 1;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSDistributedNotificationOptions {
+        NSDistributedNotificationDeliverImmediately = 1 << 0,
+        NSDistributedNotificationPostToAllSessions = 1 << 1,
+    }
+);
 
-pub static NSNotificationDeliverImmediately: NSDistributedNotificationOptions =
-    NSDistributedNotificationDeliverImmediately;
+extern_static!(
+    NSNotificationDeliverImmediately: NSDistributedNotificationOptions =
+        NSDistributedNotificationDeliverImmediately
+);
 
-pub static NSNotificationPostToAllSessions: NSDistributedNotificationOptions =
-    NSDistributedNotificationPostToAllSessions;
+extern_static!(
+    NSNotificationPostToAllSessions: NSDistributedNotificationOptions =
+        NSDistributedNotificationPostToAllSessions
+);
 
 extern_class!(
     #[derive(Debug)]

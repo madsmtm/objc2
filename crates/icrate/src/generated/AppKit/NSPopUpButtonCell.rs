@@ -5,10 +5,14 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSPopUpArrowPosition = NSUInteger;
-pub const NSPopUpNoArrow: NSPopUpArrowPosition = 0;
-pub const NSPopUpArrowAtCenter: NSPopUpArrowPosition = 1;
-pub const NSPopUpArrowAtBottom: NSPopUpArrowPosition = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSPopUpArrowPosition {
+        NSPopUpNoArrow = 0,
+        NSPopUpArrowAtCenter = 1,
+        NSPopUpArrowAtBottom = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -172,6 +176,4 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSPopUpButtonCellWillPopUpNotification: &'static NSNotificationName;
-}
+extern_static!(NSPopUpButtonCellWillPopUpNotification: &'static NSNotificationName);

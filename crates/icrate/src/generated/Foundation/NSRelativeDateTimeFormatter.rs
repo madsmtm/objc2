@@ -3,16 +3,23 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSRelativeDateTimeFormatterStyle = NSInteger;
-pub const NSRelativeDateTimeFormatterStyleNumeric: NSRelativeDateTimeFormatterStyle = 0;
-pub const NSRelativeDateTimeFormatterStyleNamed: NSRelativeDateTimeFormatterStyle = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSRelativeDateTimeFormatterStyle {
+        NSRelativeDateTimeFormatterStyleNumeric = 0,
+        NSRelativeDateTimeFormatterStyleNamed = 1,
+    }
+);
 
-pub type NSRelativeDateTimeFormatterUnitsStyle = NSInteger;
-pub const NSRelativeDateTimeFormatterUnitsStyleFull: NSRelativeDateTimeFormatterUnitsStyle = 0;
-pub const NSRelativeDateTimeFormatterUnitsStyleSpellOut: NSRelativeDateTimeFormatterUnitsStyle = 1;
-pub const NSRelativeDateTimeFormatterUnitsStyleShort: NSRelativeDateTimeFormatterUnitsStyle = 2;
-pub const NSRelativeDateTimeFormatterUnitsStyleAbbreviated: NSRelativeDateTimeFormatterUnitsStyle =
-    3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSRelativeDateTimeFormatterUnitsStyle {
+        NSRelativeDateTimeFormatterUnitsStyleFull = 0,
+        NSRelativeDateTimeFormatterUnitsStyleSpellOut = 1,
+        NSRelativeDateTimeFormatterUnitsStyleShort = 2,
+        NSRelativeDateTimeFormatterUnitsStyleAbbreviated = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

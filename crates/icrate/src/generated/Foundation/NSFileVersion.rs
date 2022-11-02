@@ -3,11 +3,19 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSFileVersionAddingOptions = NSUInteger;
-pub const NSFileVersionAddingByMoving: NSFileVersionAddingOptions = 1 << 0;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSFileVersionAddingOptions {
+        NSFileVersionAddingByMoving = 1 << 0,
+    }
+);
 
-pub type NSFileVersionReplacingOptions = NSUInteger;
-pub const NSFileVersionReplacingByMoving: NSFileVersionReplacingOptions = 1 << 0;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSFileVersionReplacingOptions {
+        NSFileVersionReplacingByMoving = 1 << 0,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

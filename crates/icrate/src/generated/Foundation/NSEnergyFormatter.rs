@@ -3,11 +3,15 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSEnergyFormatterUnit = NSInteger;
-pub const NSEnergyFormatterUnitJoule: NSEnergyFormatterUnit = 11;
-pub const NSEnergyFormatterUnitKilojoule: NSEnergyFormatterUnit = 14;
-pub const NSEnergyFormatterUnitCalorie: NSEnergyFormatterUnit = (7 << 8) + 1;
-pub const NSEnergyFormatterUnitKilocalorie: NSEnergyFormatterUnit = (7 << 8) + 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSEnergyFormatterUnit {
+        NSEnergyFormatterUnitJoule = 11,
+        NSEnergyFormatterUnitKilojoule = 14,
+        NSEnergyFormatterUnitCalorie = (7 << 8) + 1,
+        NSEnergyFormatterUnitKilocalorie = (7 << 8) + 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

@@ -3,11 +3,14 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSMeasurementFormatterUnitOptions = NSUInteger;
-pub const NSMeasurementFormatterUnitOptionsProvidedUnit: NSMeasurementFormatterUnitOptions = 1 << 0;
-pub const NSMeasurementFormatterUnitOptionsNaturalScale: NSMeasurementFormatterUnitOptions = 1 << 1;
-pub const NSMeasurementFormatterUnitOptionsTemperatureWithoutUnit:
-    NSMeasurementFormatterUnitOptions = 1 << 2;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSMeasurementFormatterUnitOptions {
+        NSMeasurementFormatterUnitOptionsProvidedUnit = 1 << 0,
+        NSMeasurementFormatterUnitOptionsNaturalScale = 1 << 1,
+        NSMeasurementFormatterUnitOptionsTemperatureWithoutUnit = 1 << 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

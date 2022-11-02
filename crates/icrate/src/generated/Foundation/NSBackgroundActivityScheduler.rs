@@ -3,9 +3,13 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSBackgroundActivityResult = NSInteger;
-pub const NSBackgroundActivityResultFinished: NSBackgroundActivityResult = 1;
-pub const NSBackgroundActivityResultDeferred: NSBackgroundActivityResult = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSBackgroundActivityResult {
+        NSBackgroundActivityResultFinished = 1,
+        NSBackgroundActivityResultDeferred = 2,
+    }
+);
 
 pub type NSBackgroundActivityCompletionHandler = TodoBlock;
 

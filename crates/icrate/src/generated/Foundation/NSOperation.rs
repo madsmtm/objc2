@@ -3,12 +3,16 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSOperationQueuePriority = NSInteger;
-pub const NSOperationQueuePriorityVeryLow: NSOperationQueuePriority = -8;
-pub const NSOperationQueuePriorityLow: NSOperationQueuePriority = -4;
-pub const NSOperationQueuePriorityNormal: NSOperationQueuePriority = 0;
-pub const NSOperationQueuePriorityHigh: NSOperationQueuePriority = 4;
-pub const NSOperationQueuePriorityVeryHigh: NSOperationQueuePriority = 8;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSOperationQueuePriority {
+        NSOperationQueuePriorityVeryLow = -8,
+        NSOperationQueuePriorityLow = -4,
+        NSOperationQueuePriorityNormal = 0,
+        NSOperationQueuePriorityHigh = 4,
+        NSOperationQueuePriorityVeryHigh = 8,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -144,15 +148,11 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSInvocationOperationVoidResultException: &'static NSExceptionName;
-}
+extern_static!(NSInvocationOperationVoidResultException: &'static NSExceptionName);
 
-extern "C" {
-    pub static NSInvocationOperationCancelledException: &'static NSExceptionName;
-}
+extern_static!(NSInvocationOperationCancelledException: &'static NSExceptionName);
 
-pub static NSOperationQueueDefaultMaxConcurrentOperationCount: NSInteger = -1;
+extern_static!(NSOperationQueueDefaultMaxConcurrentOperationCount: NSInteger = -1);
 
 extern_class!(
     #[derive(Debug)]

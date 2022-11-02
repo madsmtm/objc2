@@ -3,7 +3,7 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-struct_impl!(
+extern_struct!(
     pub struct NSFastEnumerationState {
         pub state: c_ulong,
         pub itemsPtr: *mut *mut Object,

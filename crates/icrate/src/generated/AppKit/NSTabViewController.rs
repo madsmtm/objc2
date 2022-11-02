@@ -5,11 +5,15 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTabViewControllerTabStyle = NSInteger;
-pub const NSTabViewControllerTabStyleSegmentedControlOnTop: NSTabViewControllerTabStyle = 0;
-pub const NSTabViewControllerTabStyleSegmentedControlOnBottom: NSTabViewControllerTabStyle = 1;
-pub const NSTabViewControllerTabStyleToolbar: NSTabViewControllerTabStyle = 2;
-pub const NSTabViewControllerTabStyleUnspecified: NSTabViewControllerTabStyle = -1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTabViewControllerTabStyle {
+        NSTabViewControllerTabStyleSegmentedControlOnTop = 0,
+        NSTabViewControllerTabStyleSegmentedControlOnBottom = 1,
+        NSTabViewControllerTabStyleToolbar = 2,
+        NSTabViewControllerTabStyleUnspecified = -1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

@@ -5,10 +5,15 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub const NSNoInterfaceStyle: c_uint = 0;
-pub const NSNextStepInterfaceStyle: c_uint = 1;
-pub const NSWindows95InterfaceStyle: c_uint = 2;
-pub const NSMacintoshInterfaceStyle: c_uint = 3;
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+        NSNoInterfaceStyle = 0,
+        NSNextStepInterfaceStyle = 1,
+        NSWindows95InterfaceStyle = 2,
+        NSMacintoshInterfaceStyle = 3,
+    }
+);
 
 pub type NSInterfaceStyle = NSUInteger;
 
@@ -23,6 +28,4 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSInterfaceStyleDefault: Option<&'static NSString>;
-}
+extern_static!(NSInterfaceStyleDefault: Option<&'static NSString>);

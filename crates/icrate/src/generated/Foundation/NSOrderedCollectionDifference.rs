@@ -3,13 +3,14 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSOrderedCollectionDifferenceCalculationOptions = NSUInteger;
-pub const NSOrderedCollectionDifferenceCalculationOmitInsertedObjects:
-    NSOrderedCollectionDifferenceCalculationOptions = 1 << 0;
-pub const NSOrderedCollectionDifferenceCalculationOmitRemovedObjects:
-    NSOrderedCollectionDifferenceCalculationOptions = 1 << 1;
-pub const NSOrderedCollectionDifferenceCalculationInferMoves:
-    NSOrderedCollectionDifferenceCalculationOptions = 1 << 2;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSOrderedCollectionDifferenceCalculationOptions {
+        NSOrderedCollectionDifferenceCalculationOmitInsertedObjects = 1 << 0,
+        NSOrderedCollectionDifferenceCalculationOmitRemovedObjects = 1 << 1,
+        NSOrderedCollectionDifferenceCalculationInferMoves = 1 << 2,
+    }
+);
 
 __inner_extern_class!(
     #[derive(Debug)]

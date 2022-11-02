@@ -4,13 +4,17 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSEntityMappingType = NSUInteger;
-pub const NSUndefinedEntityMappingType: NSEntityMappingType = 0x00;
-pub const NSCustomEntityMappingType: NSEntityMappingType = 0x01;
-pub const NSAddEntityMappingType: NSEntityMappingType = 0x02;
-pub const NSRemoveEntityMappingType: NSEntityMappingType = 0x03;
-pub const NSCopyEntityMappingType: NSEntityMappingType = 0x04;
-pub const NSTransformEntityMappingType: NSEntityMappingType = 0x05;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSEntityMappingType {
+        NSUndefinedEntityMappingType = 0x00,
+        NSCustomEntityMappingType = 0x01,
+        NSAddEntityMappingType = 0x02,
+        NSRemoveEntityMappingType = 0x03,
+        NSCopyEntityMappingType = 0x04,
+        NSTransformEntityMappingType = 0x05,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

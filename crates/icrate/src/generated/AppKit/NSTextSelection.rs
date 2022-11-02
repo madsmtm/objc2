@@ -5,16 +5,24 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextSelectionGranularity = NSInteger;
-pub const NSTextSelectionGranularityCharacter: NSTextSelectionGranularity = 0;
-pub const NSTextSelectionGranularityWord: NSTextSelectionGranularity = 1;
-pub const NSTextSelectionGranularityParagraph: NSTextSelectionGranularity = 2;
-pub const NSTextSelectionGranularityLine: NSTextSelectionGranularity = 3;
-pub const NSTextSelectionGranularitySentence: NSTextSelectionGranularity = 4;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTextSelectionGranularity {
+        NSTextSelectionGranularityCharacter = 0,
+        NSTextSelectionGranularityWord = 1,
+        NSTextSelectionGranularityParagraph = 2,
+        NSTextSelectionGranularityLine = 3,
+        NSTextSelectionGranularitySentence = 4,
+    }
+);
 
-pub type NSTextSelectionAffinity = NSInteger;
-pub const NSTextSelectionAffinityUpstream: NSTextSelectionAffinity = 0;
-pub const NSTextSelectionAffinityDownstream: NSTextSelectionAffinity = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTextSelectionAffinity {
+        NSTextSelectionAffinityUpstream = 0,
+        NSTextSelectionAffinityDownstream = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

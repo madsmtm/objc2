@@ -7,58 +7,46 @@ use crate::Foundation::*;
 
 pub type NSTextCheckingOptionKey = NSString;
 
-extern "C" {
-    pub static NSTextCheckingOrthographyKey: &'static NSTextCheckingOptionKey;
-}
+extern_static!(NSTextCheckingOrthographyKey: &'static NSTextCheckingOptionKey);
 
-extern "C" {
-    pub static NSTextCheckingQuotesKey: &'static NSTextCheckingOptionKey;
-}
+extern_static!(NSTextCheckingQuotesKey: &'static NSTextCheckingOptionKey);
 
-extern "C" {
-    pub static NSTextCheckingReplacementsKey: &'static NSTextCheckingOptionKey;
-}
+extern_static!(NSTextCheckingReplacementsKey: &'static NSTextCheckingOptionKey);
 
-extern "C" {
-    pub static NSTextCheckingReferenceDateKey: &'static NSTextCheckingOptionKey;
-}
+extern_static!(NSTextCheckingReferenceDateKey: &'static NSTextCheckingOptionKey);
 
-extern "C" {
-    pub static NSTextCheckingReferenceTimeZoneKey: &'static NSTextCheckingOptionKey;
-}
+extern_static!(NSTextCheckingReferenceTimeZoneKey: &'static NSTextCheckingOptionKey);
 
-extern "C" {
-    pub static NSTextCheckingDocumentURLKey: &'static NSTextCheckingOptionKey;
-}
+extern_static!(NSTextCheckingDocumentURLKey: &'static NSTextCheckingOptionKey);
 
-extern "C" {
-    pub static NSTextCheckingDocumentTitleKey: &'static NSTextCheckingOptionKey;
-}
+extern_static!(NSTextCheckingDocumentTitleKey: &'static NSTextCheckingOptionKey);
 
-extern "C" {
-    pub static NSTextCheckingDocumentAuthorKey: &'static NSTextCheckingOptionKey;
-}
+extern_static!(NSTextCheckingDocumentAuthorKey: &'static NSTextCheckingOptionKey);
 
-extern "C" {
-    pub static NSTextCheckingRegularExpressionsKey: &'static NSTextCheckingOptionKey;
-}
+extern_static!(NSTextCheckingRegularExpressionsKey: &'static NSTextCheckingOptionKey);
 
-extern "C" {
-    pub static NSTextCheckingSelectedRangeKey: &'static NSTextCheckingOptionKey;
-}
+extern_static!(NSTextCheckingSelectedRangeKey: &'static NSTextCheckingOptionKey);
 
-pub type NSCorrectionResponse = NSInteger;
-pub const NSCorrectionResponseNone: NSCorrectionResponse = 0;
-pub const NSCorrectionResponseAccepted: NSCorrectionResponse = 1;
-pub const NSCorrectionResponseRejected: NSCorrectionResponse = 2;
-pub const NSCorrectionResponseIgnored: NSCorrectionResponse = 3;
-pub const NSCorrectionResponseEdited: NSCorrectionResponse = 4;
-pub const NSCorrectionResponseReverted: NSCorrectionResponse = 5;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSCorrectionResponse {
+        NSCorrectionResponseNone = 0,
+        NSCorrectionResponseAccepted = 1,
+        NSCorrectionResponseRejected = 2,
+        NSCorrectionResponseIgnored = 3,
+        NSCorrectionResponseEdited = 4,
+        NSCorrectionResponseReverted = 5,
+    }
+);
 
-pub type NSCorrectionIndicatorType = NSInteger;
-pub const NSCorrectionIndicatorTypeDefault: NSCorrectionIndicatorType = 0;
-pub const NSCorrectionIndicatorTypeReversion: NSCorrectionIndicatorType = 1;
-pub const NSCorrectionIndicatorTypeGuesses: NSCorrectionIndicatorType = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSCorrectionIndicatorType {
+        NSCorrectionIndicatorTypeDefault = 0,
+        NSCorrectionIndicatorTypeReversion = 1,
+        NSCorrectionIndicatorTypeGuesses = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -360,40 +348,33 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSSpellCheckerDidChangeAutomaticSpellingCorrectionNotification:
-        &'static NSNotificationName;
-}
+extern_static!(
+    NSSpellCheckerDidChangeAutomaticSpellingCorrectionNotification: &'static NSNotificationName
+);
 
-extern "C" {
-    pub static NSSpellCheckerDidChangeAutomaticTextReplacementNotification:
-        &'static NSNotificationName;
-}
+extern_static!(
+    NSSpellCheckerDidChangeAutomaticTextReplacementNotification: &'static NSNotificationName
+);
 
-extern "C" {
-    pub static NSSpellCheckerDidChangeAutomaticQuoteSubstitutionNotification:
-        &'static NSNotificationName;
-}
+extern_static!(
+    NSSpellCheckerDidChangeAutomaticQuoteSubstitutionNotification: &'static NSNotificationName
+);
 
-extern "C" {
-    pub static NSSpellCheckerDidChangeAutomaticDashSubstitutionNotification:
-        &'static NSNotificationName;
-}
+extern_static!(
+    NSSpellCheckerDidChangeAutomaticDashSubstitutionNotification: &'static NSNotificationName
+);
 
-extern "C" {
-    pub static NSSpellCheckerDidChangeAutomaticCapitalizationNotification:
-        &'static NSNotificationName;
-}
+extern_static!(
+    NSSpellCheckerDidChangeAutomaticCapitalizationNotification: &'static NSNotificationName
+);
 
-extern "C" {
-    pub static NSSpellCheckerDidChangeAutomaticPeriodSubstitutionNotification:
-        &'static NSNotificationName;
-}
+extern_static!(
+    NSSpellCheckerDidChangeAutomaticPeriodSubstitutionNotification: &'static NSNotificationName
+);
 
-extern "C" {
-    pub static NSSpellCheckerDidChangeAutomaticTextCompletionNotification:
-        &'static NSNotificationName;
-}
+extern_static!(
+    NSSpellCheckerDidChangeAutomaticTextCompletionNotification: &'static NSNotificationName
+);
 
 extern_methods!(
     /// NSDeprecated

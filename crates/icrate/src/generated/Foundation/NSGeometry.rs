@@ -21,17 +21,21 @@ pub type NSRectPointer = *mut NSRect;
 
 pub type NSRectArray = *mut NSRect;
 
-pub type NSRectEdge = NSUInteger;
-pub const NSRectEdgeMinX: NSRectEdge = 0;
-pub const NSRectEdgeMinY: NSRectEdge = 1;
-pub const NSRectEdgeMaxX: NSRectEdge = 2;
-pub const NSRectEdgeMaxY: NSRectEdge = 3;
-pub const NSMinXEdge: NSRectEdge = 0;
-pub const NSMinYEdge: NSRectEdge = 1;
-pub const NSMaxXEdge: NSRectEdge = 2;
-pub const NSMaxYEdge: NSRectEdge = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSRectEdge {
+        NSRectEdgeMinX = 0,
+        NSRectEdgeMinY = 1,
+        NSRectEdgeMaxX = 2,
+        NSRectEdgeMaxY = 3,
+        NSMinXEdge = 0,
+        NSMinYEdge = 1,
+        NSMaxXEdge = 2,
+        NSMaxYEdge = 3,
+    }
+);
 
-struct_impl!(
+extern_struct!(
     pub struct NSEdgeInsets {
         pub top: CGFloat,
         pub left: CGFloat,
@@ -40,48 +44,44 @@ struct_impl!(
     }
 );
 
-pub type NSAlignmentOptions = c_ulonglong;
-pub const NSAlignMinXInward: NSAlignmentOptions = 1 << 0;
-pub const NSAlignMinYInward: NSAlignmentOptions = 1 << 1;
-pub const NSAlignMaxXInward: NSAlignmentOptions = 1 << 2;
-pub const NSAlignMaxYInward: NSAlignmentOptions = 1 << 3;
-pub const NSAlignWidthInward: NSAlignmentOptions = 1 << 4;
-pub const NSAlignHeightInward: NSAlignmentOptions = 1 << 5;
-pub const NSAlignMinXOutward: NSAlignmentOptions = 1 << 8;
-pub const NSAlignMinYOutward: NSAlignmentOptions = 1 << 9;
-pub const NSAlignMaxXOutward: NSAlignmentOptions = 1 << 10;
-pub const NSAlignMaxYOutward: NSAlignmentOptions = 1 << 11;
-pub const NSAlignWidthOutward: NSAlignmentOptions = 1 << 12;
-pub const NSAlignHeightOutward: NSAlignmentOptions = 1 << 13;
-pub const NSAlignMinXNearest: NSAlignmentOptions = 1 << 16;
-pub const NSAlignMinYNearest: NSAlignmentOptions = 1 << 17;
-pub const NSAlignMaxXNearest: NSAlignmentOptions = 1 << 18;
-pub const NSAlignMaxYNearest: NSAlignmentOptions = 1 << 19;
-pub const NSAlignWidthNearest: NSAlignmentOptions = 1 << 20;
-pub const NSAlignHeightNearest: NSAlignmentOptions = 1 << 21;
-pub const NSAlignRectFlipped: NSAlignmentOptions = 1 << 63;
-pub const NSAlignAllEdgesInward: NSAlignmentOptions =
-    NSAlignMinXInward | NSAlignMaxXInward | NSAlignMinYInward | NSAlignMaxYInward;
-pub const NSAlignAllEdgesOutward: NSAlignmentOptions =
-    NSAlignMinXOutward | NSAlignMaxXOutward | NSAlignMinYOutward | NSAlignMaxYOutward;
-pub const NSAlignAllEdgesNearest: NSAlignmentOptions =
-    NSAlignMinXNearest | NSAlignMaxXNearest | NSAlignMinYNearest | NSAlignMaxYNearest;
+ns_options!(
+    #[underlying(c_ulonglong)]
+    pub enum NSAlignmentOptions {
+        NSAlignMinXInward = 1 << 0,
+        NSAlignMinYInward = 1 << 1,
+        NSAlignMaxXInward = 1 << 2,
+        NSAlignMaxYInward = 1 << 3,
+        NSAlignWidthInward = 1 << 4,
+        NSAlignHeightInward = 1 << 5,
+        NSAlignMinXOutward = 1 << 8,
+        NSAlignMinYOutward = 1 << 9,
+        NSAlignMaxXOutward = 1 << 10,
+        NSAlignMaxYOutward = 1 << 11,
+        NSAlignWidthOutward = 1 << 12,
+        NSAlignHeightOutward = 1 << 13,
+        NSAlignMinXNearest = 1 << 16,
+        NSAlignMinYNearest = 1 << 17,
+        NSAlignMaxXNearest = 1 << 18,
+        NSAlignMaxYNearest = 1 << 19,
+        NSAlignWidthNearest = 1 << 20,
+        NSAlignHeightNearest = 1 << 21,
+        NSAlignRectFlipped = 1 << 63,
+        NSAlignAllEdgesInward =
+            NSAlignMinXInward | NSAlignMaxXInward | NSAlignMinYInward | NSAlignMaxYInward,
+        NSAlignAllEdgesOutward =
+            NSAlignMinXOutward | NSAlignMaxXOutward | NSAlignMinYOutward | NSAlignMaxYOutward,
+        NSAlignAllEdgesNearest =
+            NSAlignMinXNearest | NSAlignMaxXNearest | NSAlignMinYNearest | NSAlignMaxYNearest,
+    }
+);
 
-extern "C" {
-    pub static NSZeroPoint: NSPoint;
-}
+extern_static!(NSZeroPoint: NSPoint);
 
-extern "C" {
-    pub static NSZeroSize: NSSize;
-}
+extern_static!(NSZeroSize: NSSize);
 
-extern "C" {
-    pub static NSZeroRect: NSRect;
-}
+extern_static!(NSZeroRect: NSRect);
 
-extern "C" {
-    pub static NSEdgeInsetsZero: NSEdgeInsets;
-}
+extern_static!(NSEdgeInsetsZero: NSEdgeInsets);
 
 extern_methods!(
     /// NSValueGeometryExtensions

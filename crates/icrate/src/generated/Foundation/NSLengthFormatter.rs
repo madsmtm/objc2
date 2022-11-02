@@ -3,15 +3,19 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSLengthFormatterUnit = NSInteger;
-pub const NSLengthFormatterUnitMillimeter: NSLengthFormatterUnit = 8;
-pub const NSLengthFormatterUnitCentimeter: NSLengthFormatterUnit = 9;
-pub const NSLengthFormatterUnitMeter: NSLengthFormatterUnit = 11;
-pub const NSLengthFormatterUnitKilometer: NSLengthFormatterUnit = 14;
-pub const NSLengthFormatterUnitInch: NSLengthFormatterUnit = (5 << 8) + 1;
-pub const NSLengthFormatterUnitFoot: NSLengthFormatterUnit = (5 << 8) + 2;
-pub const NSLengthFormatterUnitYard: NSLengthFormatterUnit = (5 << 8) + 3;
-pub const NSLengthFormatterUnitMile: NSLengthFormatterUnit = (5 << 8) + 4;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSLengthFormatterUnit {
+        NSLengthFormatterUnitMillimeter = 8,
+        NSLengthFormatterUnitCentimeter = 9,
+        NSLengthFormatterUnitMeter = 11,
+        NSLengthFormatterUnitKilometer = 14,
+        NSLengthFormatterUnitInch = (5 << 8) + 1,
+        NSLengthFormatterUnitFoot = (5 << 8) + 2,
+        NSLengthFormatterUnitYard = (5 << 8) + 3,
+        NSLengthFormatterUnitMile = (5 << 8) + 4,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

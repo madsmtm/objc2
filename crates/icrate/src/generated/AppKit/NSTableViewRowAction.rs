@@ -5,9 +5,13 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTableViewRowActionStyle = NSInteger;
-pub const NSTableViewRowActionStyleRegular: NSTableViewRowActionStyle = 0;
-pub const NSTableViewRowActionStyleDestructive: NSTableViewRowActionStyle = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTableViewRowActionStyle {
+        NSTableViewRowActionStyleRegular = 0,
+        NSTableViewRowActionStyleDestructive = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

@@ -810,7 +810,7 @@ impl fmt::Display for Stmt {
                 boxable: _,
                 fields,
             } => {
-                writeln!(f, "struct_impl!(")?;
+                writeln!(f, "extern_struct!(")?;
                 writeln!(f, "    pub struct {name} {{")?;
                 for (name, ty) in fields {
                     write!(f, "        ")?;
@@ -825,36 +825,42 @@ impl fmt::Display for Stmt {
             Self::EnumDecl {
                 name,
                 ty,
-                // TODO: Use the enum kind
-                kind: _,
+                kind,
                 variants,
             } => {
+                let macro_name = match kind {
+                    None => "extern_enum",
+                    Some(UnexposedMacro::Enum) => "ns_enum",
+                    Some(UnexposedMacro::Options) => "ns_options",
+                    Some(UnexposedMacro::ClosedEnum) => "ns_closed_enum",
+                    Some(UnexposedMacro::ErrorEnum) => "ns_error_enum",
+                };
+                writeln!(f, "{}!(", macro_name)?;
+                writeln!(f, "    #[underlying({ty})]")?;
+                write!(f, "    pub enum ",)?;
                 if let Some(name) = name {
-                    writeln!(f, "pub type {name} = {ty};")?;
-                    for (variant_name, expr) in variants {
-                        writeln!(f, "pub const {variant_name}: {name} = {expr};")?;
-                    }
-                } else {
-                    for (variant_name, expr) in variants {
-                        writeln!(f, "pub const {variant_name}: {ty} = {expr};")?;
-                    }
+                    write!(f, "{name} ")?;
                 }
+                writeln!(f, "{{")?;
+                for (name, expr) in variants {
+                    writeln!(f, "        {name} = {expr},")?;
+                }
+                writeln!(f, "    }}")?;
+                writeln!(f, ");")?;
             }
             Self::VarDecl {
                 name,
                 ty,
                 value: None,
             } => {
-                writeln!(f, r#"extern "C" {{"#)?;
-                writeln!(f, "    pub static {name}: {ty};")?;
-                writeln!(f, "}}")?;
+                writeln!(f, "extern_static!({name}: {ty});")?;
             }
             Self::VarDecl {
                 name,
                 ty,
                 value: Some(expr),
             } => {
-                writeln!(f, "pub static {name}: {ty} = {expr};")?;
+                writeln!(f, "extern_static!({name}: {ty} = {expr});")?;
             }
             Self::FnDecl {
                 name: _,

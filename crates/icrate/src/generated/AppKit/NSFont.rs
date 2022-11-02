@@ -5,9 +5,7 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSFontIdentityMatrix: NonNull<CGFloat>;
-}
+extern_static!(NSFontIdentityMatrix: NonNull<CGFloat>);
 
 extern_class!(
     #[derive(Debug)]
@@ -218,27 +216,36 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSAntialiasThresholdChangedNotification: &'static NSNotificationName;
-}
+extern_static!(NSAntialiasThresholdChangedNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSFontSetChangedNotification: &'static NSNotificationName;
-}
+extern_static!(NSFontSetChangedNotification: &'static NSNotificationName);
 
 pub type NSGlyph = c_uint;
 
-pub const NSControlGlyph: c_uint = 0x00FFFFFF;
-pub const NSNullGlyph: c_uint = 0x0;
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+        NSControlGlyph = 0x00FFFFFF,
+        NSNullGlyph = 0x0,
+    }
+);
 
-pub type NSFontRenderingMode = NSUInteger;
-pub const NSFontDefaultRenderingMode: NSFontRenderingMode = 0;
-pub const NSFontAntialiasedRenderingMode: NSFontRenderingMode = 1;
-pub const NSFontIntegerAdvancementsRenderingMode: NSFontRenderingMode = 2;
-pub const NSFontAntialiasedIntegerAdvancementsRenderingMode: NSFontRenderingMode = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSFontRenderingMode {
+        NSFontDefaultRenderingMode = 0,
+        NSFontAntialiasedRenderingMode = 1,
+        NSFontIntegerAdvancementsRenderingMode = 2,
+        NSFontAntialiasedIntegerAdvancementsRenderingMode = 3,
+    }
+);
 
-pub type NSMultibyteGlyphPacking = NSUInteger;
-pub const NSNativeShortGlyphPacking: NSMultibyteGlyphPacking = 5;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSMultibyteGlyphPacking {
+        NSNativeShortGlyphPacking = 5,
+    }
+);
 
 extern_methods!(
     /// NSFont_Deprecated

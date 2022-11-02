@@ -5,31 +5,40 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSCollectionViewDropOperation = NSInteger;
-pub const NSCollectionViewDropOn: NSCollectionViewDropOperation = 0;
-pub const NSCollectionViewDropBefore: NSCollectionViewDropOperation = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSCollectionViewDropOperation {
+        NSCollectionViewDropOn = 0,
+        NSCollectionViewDropBefore = 1,
+    }
+);
 
-pub type NSCollectionViewItemHighlightState = NSInteger;
-pub const NSCollectionViewItemHighlightNone: NSCollectionViewItemHighlightState = 0;
-pub const NSCollectionViewItemHighlightForSelection: NSCollectionViewItemHighlightState = 1;
-pub const NSCollectionViewItemHighlightForDeselection: NSCollectionViewItemHighlightState = 2;
-pub const NSCollectionViewItemHighlightAsDropTarget: NSCollectionViewItemHighlightState = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSCollectionViewItemHighlightState {
+        NSCollectionViewItemHighlightNone = 0,
+        NSCollectionViewItemHighlightForSelection = 1,
+        NSCollectionViewItemHighlightForDeselection = 2,
+        NSCollectionViewItemHighlightAsDropTarget = 3,
+    }
+);
 
-pub type NSCollectionViewScrollPosition = NSUInteger;
-pub const NSCollectionViewScrollPositionNone: NSCollectionViewScrollPosition = 0;
-pub const NSCollectionViewScrollPositionTop: NSCollectionViewScrollPosition = 1 << 0;
-pub const NSCollectionViewScrollPositionCenteredVertically: NSCollectionViewScrollPosition = 1 << 1;
-pub const NSCollectionViewScrollPositionBottom: NSCollectionViewScrollPosition = 1 << 2;
-pub const NSCollectionViewScrollPositionNearestHorizontalEdge: NSCollectionViewScrollPosition =
-    1 << 9;
-pub const NSCollectionViewScrollPositionLeft: NSCollectionViewScrollPosition = 1 << 3;
-pub const NSCollectionViewScrollPositionCenteredHorizontally: NSCollectionViewScrollPosition =
-    1 << 4;
-pub const NSCollectionViewScrollPositionRight: NSCollectionViewScrollPosition = 1 << 5;
-pub const NSCollectionViewScrollPositionLeadingEdge: NSCollectionViewScrollPosition = 1 << 6;
-pub const NSCollectionViewScrollPositionTrailingEdge: NSCollectionViewScrollPosition = 1 << 7;
-pub const NSCollectionViewScrollPositionNearestVerticalEdge: NSCollectionViewScrollPosition =
-    1 << 8;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSCollectionViewScrollPosition {
+        NSCollectionViewScrollPositionNone = 0,
+        NSCollectionViewScrollPositionTop = 1 << 0,
+        NSCollectionViewScrollPositionCenteredVertically = 1 << 1,
+        NSCollectionViewScrollPositionBottom = 1 << 2,
+        NSCollectionViewScrollPositionNearestHorizontalEdge = 1 << 9,
+        NSCollectionViewScrollPositionLeft = 1 << 3,
+        NSCollectionViewScrollPositionCenteredHorizontally = 1 << 4,
+        NSCollectionViewScrollPositionRight = 1 << 5,
+        NSCollectionViewScrollPositionLeadingEdge = 1 << 6,
+        NSCollectionViewScrollPositionTrailingEdge = 1 << 7,
+        NSCollectionViewScrollPositionNearestVerticalEdge = 1 << 8,
+    }
+);
 
 pub type NSCollectionViewSupplementaryElementKind = NSString;
 

@@ -40,13 +40,17 @@ extern_methods!(
     }
 );
 
-pub type NSTimeZoneNameStyle = NSInteger;
-pub const NSTimeZoneNameStyleStandard: NSTimeZoneNameStyle = 0;
-pub const NSTimeZoneNameStyleShortStandard: NSTimeZoneNameStyle = 1;
-pub const NSTimeZoneNameStyleDaylightSaving: NSTimeZoneNameStyle = 2;
-pub const NSTimeZoneNameStyleShortDaylightSaving: NSTimeZoneNameStyle = 3;
-pub const NSTimeZoneNameStyleGeneric: NSTimeZoneNameStyle = 4;
-pub const NSTimeZoneNameStyleShortGeneric: NSTimeZoneNameStyle = 5;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTimeZoneNameStyle {
+        NSTimeZoneNameStyleStandard = 0,
+        NSTimeZoneNameStyleShortStandard = 1,
+        NSTimeZoneNameStyleDaylightSaving = 2,
+        NSTimeZoneNameStyleShortDaylightSaving = 3,
+        NSTimeZoneNameStyleGeneric = 4,
+        NSTimeZoneNameStyleShortGeneric = 5,
+    }
+);
 
 extern_methods!(
     /// NSExtendedTimeZone
@@ -144,6 +148,4 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSSystemTimeZoneDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSSystemTimeZoneDidChangeNotification: &'static NSNotificationName);

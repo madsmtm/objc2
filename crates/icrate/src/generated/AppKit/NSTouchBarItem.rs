@@ -9,11 +9,11 @@ pub type NSTouchBarItemIdentifier = NSString;
 
 pub type NSTouchBarItemPriority = c_float;
 
-pub static NSTouchBarItemPriorityHigh: NSTouchBarItemPriority = 1000;
+extern_static!(NSTouchBarItemPriorityHigh: NSTouchBarItemPriority = 1000);
 
-pub static NSTouchBarItemPriorityNormal: NSTouchBarItemPriority = 0;
+extern_static!(NSTouchBarItemPriorityNormal: NSTouchBarItemPriority = 0);
 
-pub static NSTouchBarItemPriorityLow: NSTouchBarItemPriority = -1000;
+extern_static!(NSTouchBarItemPriorityLow: NSTouchBarItemPriority = -1000);
 
 extern_class!(
     #[derive(Debug)]
@@ -64,18 +64,10 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSTouchBarItemIdentifierFixedSpaceSmall: &'static NSTouchBarItemIdentifier;
-}
+extern_static!(NSTouchBarItemIdentifierFixedSpaceSmall: &'static NSTouchBarItemIdentifier);
 
-extern "C" {
-    pub static NSTouchBarItemIdentifierFixedSpaceLarge: &'static NSTouchBarItemIdentifier;
-}
+extern_static!(NSTouchBarItemIdentifierFixedSpaceLarge: &'static NSTouchBarItemIdentifier);
 
-extern "C" {
-    pub static NSTouchBarItemIdentifierFlexibleSpace: &'static NSTouchBarItemIdentifier;
-}
+extern_static!(NSTouchBarItemIdentifierFlexibleSpace: &'static NSTouchBarItemIdentifier);
 
-extern "C" {
-    pub static NSTouchBarItemIdentifierOtherItemsProxy: &'static NSTouchBarItemIdentifier;
-}
+extern_static!(NSTouchBarItemIdentifierOtherItemsProxy: &'static NSTouchBarItemIdentifier);

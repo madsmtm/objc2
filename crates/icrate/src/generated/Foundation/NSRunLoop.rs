@@ -3,13 +3,9 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSDefaultRunLoopMode: &'static NSRunLoopMode;
-}
+extern_static!(NSDefaultRunLoopMode: &'static NSRunLoopMode);
 
-extern "C" {
-    pub static NSRunLoopCommonModes: &'static NSRunLoopMode;
-}
+extern_static!(NSRunLoopCommonModes: &'static NSRunLoopMode);
 
 extern_class!(
     #[derive(Debug)]

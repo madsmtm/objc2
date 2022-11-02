@@ -5,10 +5,13 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextContentManagerEnumerationOptions = NSUInteger;
-pub const NSTextContentManagerEnumerationOptionsNone: NSTextContentManagerEnumerationOptions = 0;
-pub const NSTextContentManagerEnumerationOptionsReverse: NSTextContentManagerEnumerationOptions =
-    1 << 0;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSTextContentManagerEnumerationOptions {
+        NSTextContentManagerEnumerationOptionsNone = 0,
+        NSTextContentManagerEnumerationOptionsReverse = 1 << 0,
+    }
+);
 
 pub type NSTextElementProvider = NSObject;
 
@@ -160,7 +163,6 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSTextContentStorageUnsupportedAttributeAddedNotification:
-        &'static NSNotificationName;
-}
+extern_static!(
+    NSTextContentStorageUnsupportedAttributeAddedNotification: &'static NSNotificationName
+);

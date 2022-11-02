@@ -5,27 +5,39 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSSegmentSwitchTracking = NSUInteger;
-pub const NSSegmentSwitchTrackingSelectOne: NSSegmentSwitchTracking = 0;
-pub const NSSegmentSwitchTrackingSelectAny: NSSegmentSwitchTracking = 1;
-pub const NSSegmentSwitchTrackingMomentary: NSSegmentSwitchTracking = 2;
-pub const NSSegmentSwitchTrackingMomentaryAccelerator: NSSegmentSwitchTracking = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSSegmentSwitchTracking {
+        NSSegmentSwitchTrackingSelectOne = 0,
+        NSSegmentSwitchTrackingSelectAny = 1,
+        NSSegmentSwitchTrackingMomentary = 2,
+        NSSegmentSwitchTrackingMomentaryAccelerator = 3,
+    }
+);
 
-pub type NSSegmentStyle = NSInteger;
-pub const NSSegmentStyleAutomatic: NSSegmentStyle = 0;
-pub const NSSegmentStyleRounded: NSSegmentStyle = 1;
-pub const NSSegmentStyleRoundRect: NSSegmentStyle = 3;
-pub const NSSegmentStyleTexturedSquare: NSSegmentStyle = 4;
-pub const NSSegmentStyleSmallSquare: NSSegmentStyle = 6;
-pub const NSSegmentStyleSeparated: NSSegmentStyle = 8;
-pub const NSSegmentStyleTexturedRounded: NSSegmentStyle = 2;
-pub const NSSegmentStyleCapsule: NSSegmentStyle = 5;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSSegmentStyle {
+        NSSegmentStyleAutomatic = 0,
+        NSSegmentStyleRounded = 1,
+        NSSegmentStyleRoundRect = 3,
+        NSSegmentStyleTexturedSquare = 4,
+        NSSegmentStyleSmallSquare = 6,
+        NSSegmentStyleSeparated = 8,
+        NSSegmentStyleTexturedRounded = 2,
+        NSSegmentStyleCapsule = 5,
+    }
+);
 
-pub type NSSegmentDistribution = NSInteger;
-pub const NSSegmentDistributionFit: NSSegmentDistribution = 0;
-pub const NSSegmentDistributionFill: NSSegmentDistribution = 1;
-pub const NSSegmentDistributionFillEqually: NSSegmentDistribution = 2;
-pub const NSSegmentDistributionFillProportionally: NSSegmentDistribution = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSSegmentDistribution {
+        NSSegmentDistributionFit = 0,
+        NSSegmentDistributionFill = 1,
+        NSSegmentDistributionFillEqually = 2,
+        NSSegmentDistributionFillProportionally = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

@@ -3,10 +3,14 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSSaveOptions = NSUInteger;
-pub const NSSaveOptionsYes: NSSaveOptions = 0;
-pub const NSSaveOptionsNo: NSSaveOptions = 1;
-pub const NSSaveOptionsAsk: NSSaveOptions = 2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSSaveOptions {
+        NSSaveOptionsYes = 0,
+        NSSaveOptionsNo = 1,
+        NSSaveOptionsAsk = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

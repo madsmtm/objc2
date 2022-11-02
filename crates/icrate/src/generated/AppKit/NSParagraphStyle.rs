@@ -5,25 +5,31 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSLineBreakMode = NSUInteger;
-pub const NSLineBreakByWordWrapping: NSLineBreakMode = 0;
-pub const NSLineBreakByCharWrapping: NSLineBreakMode = 1;
-pub const NSLineBreakByClipping: NSLineBreakMode = 2;
-pub const NSLineBreakByTruncatingHead: NSLineBreakMode = 3;
-pub const NSLineBreakByTruncatingTail: NSLineBreakMode = 4;
-pub const NSLineBreakByTruncatingMiddle: NSLineBreakMode = 5;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSLineBreakMode {
+        NSLineBreakByWordWrapping = 0,
+        NSLineBreakByCharWrapping = 1,
+        NSLineBreakByClipping = 2,
+        NSLineBreakByTruncatingHead = 3,
+        NSLineBreakByTruncatingTail = 4,
+        NSLineBreakByTruncatingMiddle = 5,
+    }
+);
 
-pub type NSLineBreakStrategy = NSUInteger;
-pub const NSLineBreakStrategyNone: NSLineBreakStrategy = 0;
-pub const NSLineBreakStrategyPushOut: NSLineBreakStrategy = 1 << 0;
-pub const NSLineBreakStrategyHangulWordPriority: NSLineBreakStrategy = 1 << 1;
-pub const NSLineBreakStrategyStandard: NSLineBreakStrategy = 0xFFFF;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSLineBreakStrategy {
+        NSLineBreakStrategyNone = 0,
+        NSLineBreakStrategyPushOut = 1 << 0,
+        NSLineBreakStrategyHangulWordPriority = 1 << 1,
+        NSLineBreakStrategyStandard = 0xFFFF,
+    }
+);
 
 pub type NSTextTabOptionKey = NSString;
 
-extern "C" {
-    pub static NSTabColumnTerminatorsAttributeName: &'static NSTextTabOptionKey;
-}
+extern_static!(NSTabColumnTerminatorsAttributeName: &'static NSTextTabOptionKey);
 
 extern_class!(
     #[derive(Debug)]
@@ -307,11 +313,15 @@ extern_methods!(
     }
 );
 
-pub type NSTextTabType = NSUInteger;
-pub const NSLeftTabStopType: NSTextTabType = 0;
-pub const NSRightTabStopType: NSTextTabType = 1;
-pub const NSCenterTabStopType: NSTextTabType = 2;
-pub const NSDecimalTabStopType: NSTextTabType = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTextTabType {
+        NSLeftTabStopType = 0,
+        NSRightTabStopType = 1,
+        NSCenterTabStopType = 2,
+        NSDecimalTabStopType = 3,
+    }
+);
 
 extern_methods!(
     /// NSTextTabDeprecated

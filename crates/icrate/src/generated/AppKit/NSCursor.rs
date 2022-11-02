@@ -112,7 +112,7 @@ extern_methods!(
     }
 );
 
-pub static NSAppKitVersionNumberWithCursorSizeSupport: NSAppKitVersion = 682.0;
+extern_static!(NSAppKitVersionNumberWithCursorSizeSupport: NSAppKitVersion = 682.0);
 
 extern_methods!(
     /// NSDeprecated

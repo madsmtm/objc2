@@ -3,27 +3,35 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSTextCheckingType = u64;
-pub const NSTextCheckingTypeOrthography: NSTextCheckingType = 1 << 0;
-pub const NSTextCheckingTypeSpelling: NSTextCheckingType = 1 << 1;
-pub const NSTextCheckingTypeGrammar: NSTextCheckingType = 1 << 2;
-pub const NSTextCheckingTypeDate: NSTextCheckingType = 1 << 3;
-pub const NSTextCheckingTypeAddress: NSTextCheckingType = 1 << 4;
-pub const NSTextCheckingTypeLink: NSTextCheckingType = 1 << 5;
-pub const NSTextCheckingTypeQuote: NSTextCheckingType = 1 << 6;
-pub const NSTextCheckingTypeDash: NSTextCheckingType = 1 << 7;
-pub const NSTextCheckingTypeReplacement: NSTextCheckingType = 1 << 8;
-pub const NSTextCheckingTypeCorrection: NSTextCheckingType = 1 << 9;
-pub const NSTextCheckingTypeRegularExpression: NSTextCheckingType = 1 << 10;
-pub const NSTextCheckingTypePhoneNumber: NSTextCheckingType = 1 << 11;
-pub const NSTextCheckingTypeTransitInformation: NSTextCheckingType = 1 << 12;
+ns_options!(
+    #[underlying(u64)]
+    pub enum NSTextCheckingType {
+        NSTextCheckingTypeOrthography = 1 << 0,
+        NSTextCheckingTypeSpelling = 1 << 1,
+        NSTextCheckingTypeGrammar = 1 << 2,
+        NSTextCheckingTypeDate = 1 << 3,
+        NSTextCheckingTypeAddress = 1 << 4,
+        NSTextCheckingTypeLink = 1 << 5,
+        NSTextCheckingTypeQuote = 1 << 6,
+        NSTextCheckingTypeDash = 1 << 7,
+        NSTextCheckingTypeReplacement = 1 << 8,
+        NSTextCheckingTypeCorrection = 1 << 9,
+        NSTextCheckingTypeRegularExpression = 1 << 10,
+        NSTextCheckingTypePhoneNumber = 1 << 11,
+        NSTextCheckingTypeTransitInformation = 1 << 12,
+    }
+);
 
 pub type NSTextCheckingTypes = u64;
 
-pub const NSTextCheckingAllSystemTypes: NSTextCheckingTypes = 0xffffffff;
-pub const NSTextCheckingAllCustomTypes: NSTextCheckingTypes = 0xffffffff << 32;
-pub const NSTextCheckingAllTypes: NSTextCheckingTypes =
-    NSTextCheckingAllSystemTypes | NSTextCheckingAllCustomTypes;
+ns_enum!(
+    #[underlying(NSTextCheckingTypes)]
+    pub enum {
+        NSTextCheckingAllSystemTypes = 0xffffffff,
+        NSTextCheckingAllCustomTypes = 0xffffffff<<32,
+        NSTextCheckingAllTypes = NSTextCheckingAllSystemTypes|NSTextCheckingAllCustomTypes,
+    }
+);
 
 pub type NSTextCheckingKey = NSString;
 
@@ -108,49 +116,27 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSTextCheckingNameKey: &'static NSTextCheckingKey;
-}
+extern_static!(NSTextCheckingNameKey: &'static NSTextCheckingKey);
 
-extern "C" {
-    pub static NSTextCheckingJobTitleKey: &'static NSTextCheckingKey;
-}
+extern_static!(NSTextCheckingJobTitleKey: &'static NSTextCheckingKey);
 
-extern "C" {
-    pub static NSTextCheckingOrganizationKey: &'static NSTextCheckingKey;
-}
+extern_static!(NSTextCheckingOrganizationKey: &'static NSTextCheckingKey);
 
-extern "C" {
-    pub static NSTextCheckingStreetKey: &'static NSTextCheckingKey;
-}
+extern_static!(NSTextCheckingStreetKey: &'static NSTextCheckingKey);
 
-extern "C" {
-    pub static NSTextCheckingCityKey: &'static NSTextCheckingKey;
-}
+extern_static!(NSTextCheckingCityKey: &'static NSTextCheckingKey);
 
-extern "C" {
-    pub static NSTextCheckingStateKey: &'static NSTextCheckingKey;
-}
+extern_static!(NSTextCheckingStateKey: &'static NSTextCheckingKey);
 
-extern "C" {
-    pub static NSTextCheckingZIPKey: &'static NSTextCheckingKey;
-}
+extern_static!(NSTextCheckingZIPKey: &'static NSTextCheckingKey);
 
-extern "C" {
-    pub static NSTextCheckingCountryKey: &'static NSTextCheckingKey;
-}
+extern_static!(NSTextCheckingCountryKey: &'static NSTextCheckingKey);
 
-extern "C" {
-    pub static NSTextCheckingPhoneKey: &'static NSTextCheckingKey;
-}
+extern_static!(NSTextCheckingPhoneKey: &'static NSTextCheckingKey);
 
-extern "C" {
-    pub static NSTextCheckingAirlineKey: &'static NSTextCheckingKey;
-}
+extern_static!(NSTextCheckingAirlineKey: &'static NSTextCheckingKey);
 
-extern "C" {
-    pub static NSTextCheckingFlightKey: &'static NSTextCheckingKey;
-}
+extern_static!(NSTextCheckingFlightKey: &'static NSTextCheckingKey);
 
 extern_methods!(
     /// NSTextCheckingResultCreation

@@ -3,9 +3,13 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSTaskTerminationReason = NSInteger;
-pub const NSTaskTerminationReasonExit: NSTaskTerminationReason = 1;
-pub const NSTaskTerminationReasonUncaughtSignal: NSTaskTerminationReason = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSTaskTerminationReason {
+        NSTaskTerminationReasonExit = 1,
+        NSTaskTerminationReasonUncaughtSignal = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -146,6 +150,4 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSTaskDidTerminateNotification: &'static NSNotificationName;
-}
+extern_static!(NSTaskDidTerminateNotification: &'static NSNotificationName);

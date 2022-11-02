@@ -5,19 +5,27 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTitlePosition = NSUInteger;
-pub const NSNoTitle: NSTitlePosition = 0;
-pub const NSAboveTop: NSTitlePosition = 1;
-pub const NSAtTop: NSTitlePosition = 2;
-pub const NSBelowTop: NSTitlePosition = 3;
-pub const NSAboveBottom: NSTitlePosition = 4;
-pub const NSAtBottom: NSTitlePosition = 5;
-pub const NSBelowBottom: NSTitlePosition = 6;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSTitlePosition {
+        NSNoTitle = 0,
+        NSAboveTop = 1,
+        NSAtTop = 2,
+        NSBelowTop = 3,
+        NSAboveBottom = 4,
+        NSAtBottom = 5,
+        NSBelowBottom = 6,
+    }
+);
 
-pub type NSBoxType = NSUInteger;
-pub const NSBoxPrimary: NSBoxType = 0;
-pub const NSBoxSeparator: NSBoxType = 2;
-pub const NSBoxCustom: NSBoxType = 4;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSBoxType {
+        NSBoxPrimary = 0,
+        NSBoxSeparator = 2,
+        NSBoxCustom = 4,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -127,6 +135,6 @@ extern_methods!(
     }
 );
 
-pub static NSBoxSecondary: NSBoxType = 1;
+extern_static!(NSBoxSecondary: NSBoxType = 1);
 
-pub static NSBoxOldStyle: NSBoxType = 3;
+extern_static!(NSBoxOldStyle: NSBoxType = 3);

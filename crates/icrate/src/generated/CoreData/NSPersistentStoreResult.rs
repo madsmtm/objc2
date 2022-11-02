@@ -4,28 +4,44 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSBatchInsertRequestResultType = NSUInteger;
-pub const NSBatchInsertRequestResultTypeStatusOnly: NSBatchInsertRequestResultType = 0x0;
-pub const NSBatchInsertRequestResultTypeObjectIDs: NSBatchInsertRequestResultType = 0x1;
-pub const NSBatchInsertRequestResultTypeCount: NSBatchInsertRequestResultType = 0x2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSBatchInsertRequestResultType {
+        NSBatchInsertRequestResultTypeStatusOnly = 0x0,
+        NSBatchInsertRequestResultTypeObjectIDs = 0x1,
+        NSBatchInsertRequestResultTypeCount = 0x2,
+    }
+);
 
-pub type NSBatchUpdateRequestResultType = NSUInteger;
-pub const NSStatusOnlyResultType: NSBatchUpdateRequestResultType = 0x0;
-pub const NSUpdatedObjectIDsResultType: NSBatchUpdateRequestResultType = 0x1;
-pub const NSUpdatedObjectsCountResultType: NSBatchUpdateRequestResultType = 0x2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSBatchUpdateRequestResultType {
+        NSStatusOnlyResultType = 0x0,
+        NSUpdatedObjectIDsResultType = 0x1,
+        NSUpdatedObjectsCountResultType = 0x2,
+    }
+);
 
-pub type NSBatchDeleteRequestResultType = NSUInteger;
-pub const NSBatchDeleteResultTypeStatusOnly: NSBatchDeleteRequestResultType = 0x0;
-pub const NSBatchDeleteResultTypeObjectIDs: NSBatchDeleteRequestResultType = 0x1;
-pub const NSBatchDeleteResultTypeCount: NSBatchDeleteRequestResultType = 0x2;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSBatchDeleteRequestResultType {
+        NSBatchDeleteResultTypeStatusOnly = 0x0,
+        NSBatchDeleteResultTypeObjectIDs = 0x1,
+        NSBatchDeleteResultTypeCount = 0x2,
+    }
+);
 
-pub type NSPersistentHistoryResultType = NSInteger;
-pub const NSPersistentHistoryResultTypeStatusOnly: NSPersistentHistoryResultType = 0x0;
-pub const NSPersistentHistoryResultTypeObjectIDs: NSPersistentHistoryResultType = 0x1;
-pub const NSPersistentHistoryResultTypeCount: NSPersistentHistoryResultType = 0x2;
-pub const NSPersistentHistoryResultTypeTransactionsOnly: NSPersistentHistoryResultType = 0x3;
-pub const NSPersistentHistoryResultTypeChangesOnly: NSPersistentHistoryResultType = 0x4;
-pub const NSPersistentHistoryResultTypeTransactionsAndChanges: NSPersistentHistoryResultType = 0x5;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSPersistentHistoryResultType {
+        NSPersistentHistoryResultTypeStatusOnly = 0x0,
+        NSPersistentHistoryResultTypeObjectIDs = 0x1,
+        NSPersistentHistoryResultTypeCount = 0x2,
+        NSPersistentHistoryResultTypeTransactionsOnly = 0x3,
+        NSPersistentHistoryResultTypeChangesOnly = 0x4,
+        NSPersistentHistoryResultTypeTransactionsAndChanges = 0x5,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -162,11 +178,13 @@ extern_methods!(
     }
 );
 
-pub type NSPersistentCloudKitContainerEventResultType = NSInteger;
-pub const NSPersistentCloudKitContainerEventResultTypeEvents:
-    NSPersistentCloudKitContainerEventResultType = 0;
-pub const NSPersistentCloudKitContainerEventResultTypeCountEvents:
-    NSPersistentCloudKitContainerEventResultType = 1;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSPersistentCloudKitContainerEventResultType {
+        NSPersistentCloudKitContainerEventResultTypeEvents = 0,
+        NSPersistentCloudKitContainerEventResultTypeCountEvents = 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

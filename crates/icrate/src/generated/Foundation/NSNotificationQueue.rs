@@ -3,15 +3,23 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSPostingStyle = NSUInteger;
-pub const NSPostWhenIdle: NSPostingStyle = 1;
-pub const NSPostASAP: NSPostingStyle = 2;
-pub const NSPostNow: NSPostingStyle = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSPostingStyle {
+        NSPostWhenIdle = 1,
+        NSPostASAP = 2,
+        NSPostNow = 3,
+    }
+);
 
-pub type NSNotificationCoalescing = NSUInteger;
-pub const NSNotificationNoCoalescing: NSNotificationCoalescing = 0;
-pub const NSNotificationCoalescingOnName: NSNotificationCoalescing = 1;
-pub const NSNotificationCoalescingOnSender: NSNotificationCoalescing = 2;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSNotificationCoalescing {
+        NSNotificationNoCoalescing = 0,
+        NSNotificationCoalescingOnName = 1,
+        NSNotificationCoalescingOnSender = 2,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

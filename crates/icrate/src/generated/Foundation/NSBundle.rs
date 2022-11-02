@@ -3,11 +3,16 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub const NSBundleExecutableArchitectureI386: c_uint = 0x00000007;
-pub const NSBundleExecutableArchitecturePPC: c_uint = 0x00000012;
-pub const NSBundleExecutableArchitectureX86_64: c_uint = 0x01000007;
-pub const NSBundleExecutableArchitecturePPC64: c_uint = 0x01000012;
-pub const NSBundleExecutableArchitectureARM64: c_uint = 0x0100000c;
+extern_enum!(
+    #[underlying(c_uint)]
+    pub enum {
+        NSBundleExecutableArchitectureI386 = 0x00000007,
+        NSBundleExecutableArchitecturePPC = 0x00000012,
+        NSBundleExecutableArchitectureX86_64 = 0x01000007,
+        NSBundleExecutableArchitecturePPC64 = 0x01000012,
+        NSBundleExecutableArchitectureARM64 = 0x0100000c,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -270,13 +275,9 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSBundleDidLoadNotification: &'static NSNotificationName;
-}
+extern_static!(NSBundleDidLoadNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSLoadedClasses: &'static NSString;
-}
+extern_static!(NSLoadedClasses: &'static NSString);
 
 extern_class!(
     #[derive(Debug)]
@@ -352,10 +353,6 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSBundleResourceRequestLowDiskSpaceNotification: &'static NSNotificationName;
-}
+extern_static!(NSBundleResourceRequestLowDiskSpaceNotification: &'static NSNotificationName);
 
-extern "C" {
-    pub static NSBundleResourceRequestLoadingPriorityUrgent: c_double;
-}
+extern_static!(NSBundleResourceRequestLoadingPriorityUrgent: c_double);

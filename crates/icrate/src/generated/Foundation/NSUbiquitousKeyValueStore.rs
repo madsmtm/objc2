@@ -84,20 +84,20 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSUbiquitousKeyValueStoreDidChangeExternallyNotification:
-        &'static NSNotificationName;
-}
+extern_static!(
+    NSUbiquitousKeyValueStoreDidChangeExternallyNotification: &'static NSNotificationName
+);
 
-extern "C" {
-    pub static NSUbiquitousKeyValueStoreChangeReasonKey: &'static NSString;
-}
+extern_static!(NSUbiquitousKeyValueStoreChangeReasonKey: &'static NSString);
 
-extern "C" {
-    pub static NSUbiquitousKeyValueStoreChangedKeysKey: &'static NSString;
-}
+extern_static!(NSUbiquitousKeyValueStoreChangedKeysKey: &'static NSString);
 
-pub const NSUbiquitousKeyValueStoreServerChange: NSInteger = 0;
-pub const NSUbiquitousKeyValueStoreInitialSyncChange: NSInteger = 1;
-pub const NSUbiquitousKeyValueStoreQuotaViolationChange: NSInteger = 2;
-pub const NSUbiquitousKeyValueStoreAccountChange: NSInteger = 3;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum {
+        NSUbiquitousKeyValueStoreServerChange = 0,
+        NSUbiquitousKeyValueStoreInitialSyncChange = 1,
+        NSUbiquitousKeyValueStoreQuotaViolationChange = 2,
+        NSUbiquitousKeyValueStoreAccountChange = 3,
+    }
+);

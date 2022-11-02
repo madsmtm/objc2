@@ -3,11 +3,15 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSURLCredentialPersistence = NSUInteger;
-pub const NSURLCredentialPersistenceNone: NSURLCredentialPersistence = 0;
-pub const NSURLCredentialPersistenceForSession: NSURLCredentialPersistence = 1;
-pub const NSURLCredentialPersistencePermanent: NSURLCredentialPersistence = 2;
-pub const NSURLCredentialPersistenceSynchronizable: NSURLCredentialPersistence = 3;
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSURLCredentialPersistence {
+        NSURLCredentialPersistenceNone = 0,
+        NSURLCredentialPersistenceForSession = 1,
+        NSURLCredentialPersistencePermanent = 2,
+        NSURLCredentialPersistenceSynchronizable = 3,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

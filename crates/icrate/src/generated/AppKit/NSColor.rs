@@ -5,19 +5,27 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub static NSAppKitVersionNumberWithPatternColorLeakFix: NSAppKitVersion = 641.0;
+extern_static!(NSAppKitVersionNumberWithPatternColorLeakFix: NSAppKitVersion = 641.0);
 
-pub type NSColorType = NSInteger;
-pub const NSColorTypeComponentBased: NSColorType = 0;
-pub const NSColorTypePattern: NSColorType = 1;
-pub const NSColorTypeCatalog: NSColorType = 2;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSColorType {
+        NSColorTypeComponentBased = 0,
+        NSColorTypePattern = 1,
+        NSColorTypeCatalog = 2,
+    }
+);
 
-pub type NSColorSystemEffect = NSInteger;
-pub const NSColorSystemEffectNone: NSColorSystemEffect = 0;
-pub const NSColorSystemEffectPressed: NSColorSystemEffect = 1;
-pub const NSColorSystemEffectDeepPressed: NSColorSystemEffect = 2;
-pub const NSColorSystemEffectDisabled: NSColorSystemEffect = 3;
-pub const NSColorSystemEffectRollover: NSColorSystemEffect = 4;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSColorSystemEffect {
+        NSColorSystemEffectNone = 0,
+        NSColorSystemEffectPressed = 1,
+        NSColorSystemEffectDeepPressed = 2,
+        NSColorSystemEffectDisabled = 3,
+        NSColorSystemEffectRollover = 4,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -613,6 +621,4 @@ extern_methods!(
     }
 );
 
-extern "C" {
-    pub static NSSystemColorsDidChangeNotification: &'static NSNotificationName;
-}
+extern_static!(NSSystemColorsDidChangeNotification: &'static NSNotificationName);

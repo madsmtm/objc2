@@ -3,28 +3,32 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-extern "C" {
-    pub static NSNetServicesErrorCode: &'static NSString;
-}
+extern_static!(NSNetServicesErrorCode: &'static NSString);
 
-extern "C" {
-    pub static NSNetServicesErrorDomain: &'static NSErrorDomain;
-}
+extern_static!(NSNetServicesErrorDomain: &'static NSErrorDomain);
 
-pub type NSNetServicesError = NSInteger;
-pub const NSNetServicesUnknownError: NSNetServicesError = -72000;
-pub const NSNetServicesCollisionError: NSNetServicesError = -72001;
-pub const NSNetServicesNotFoundError: NSNetServicesError = -72002;
-pub const NSNetServicesActivityInProgress: NSNetServicesError = -72003;
-pub const NSNetServicesBadArgumentError: NSNetServicesError = -72004;
-pub const NSNetServicesCancelledError: NSNetServicesError = -72005;
-pub const NSNetServicesInvalidError: NSNetServicesError = -72006;
-pub const NSNetServicesTimeoutError: NSNetServicesError = -72007;
-pub const NSNetServicesMissingRequiredConfigurationError: NSNetServicesError = -72008;
+ns_enum!(
+    #[underlying(NSInteger)]
+    pub enum NSNetServicesError {
+        NSNetServicesUnknownError = -72000,
+        NSNetServicesCollisionError = -72001,
+        NSNetServicesNotFoundError = -72002,
+        NSNetServicesActivityInProgress = -72003,
+        NSNetServicesBadArgumentError = -72004,
+        NSNetServicesCancelledError = -72005,
+        NSNetServicesInvalidError = -72006,
+        NSNetServicesTimeoutError = -72007,
+        NSNetServicesMissingRequiredConfigurationError = -72008,
+    }
+);
 
-pub type NSNetServiceOptions = NSUInteger;
-pub const NSNetServiceNoAutoRename: NSNetServiceOptions = 1 << 0;
-pub const NSNetServiceListenForConnections: NSNetServiceOptions = 1 << 1;
+ns_options!(
+    #[underlying(NSUInteger)]
+    pub enum NSNetServiceOptions {
+        NSNetServiceNoAutoRename = 1 << 0,
+        NSNetServiceListenForConnections = 1 << 1,
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
