@@ -441,6 +441,7 @@ pub(crate) fn handle_reserved(s: &str) -> &str {
     match s {
         "type" => "type_",
         "trait" => "trait_",
+        "abstract" => "abstract_",
         s => s,
     }
 }
