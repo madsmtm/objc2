@@ -72,12 +72,6 @@ extern_methods!(
         #[method(currentContextDrawingToScreen)]
         pub unsafe fn currentContextDrawingToScreen() -> bool;
 
-        #[method(saveGraphicsState)]
-        pub unsafe fn saveGraphicsState();
-
-        #[method(restoreGraphicsState)]
-        pub unsafe fn restoreGraphicsState();
-
         #[method_id(@__retain_semantics Other attributes)]
         pub unsafe fn attributes(
             &self,
@@ -85,12 +79,6 @@ extern_methods!(
 
         #[method(isDrawingToScreen)]
         pub unsafe fn isDrawingToScreen(&self) -> bool;
-
-        #[method(saveGraphicsState)]
-        pub unsafe fn saveGraphicsState(&self);
-
-        #[method(restoreGraphicsState)]
-        pub unsafe fn restoreGraphicsState(&self);
 
         #[method(flushGraphics)]
         pub unsafe fn flushGraphics(&self);

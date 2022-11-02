@@ -52,20 +52,8 @@ extern_methods!(
         #[method(setDelegate:)]
         pub unsafe fn setDelegate(&self, delegate: Option<&NSDrawerDelegate>);
 
-        #[method(open)]
-        pub unsafe fn open(&self);
-
         #[method(openOnEdge:)]
         pub unsafe fn openOnEdge(&self, edge: NSRectEdge);
-
-        #[method(close)]
-        pub unsafe fn close(&self);
-
-        #[method(open:)]
-        pub unsafe fn open(&self, sender: Option<&Object>);
-
-        #[method(close:)]
-        pub unsafe fn close(&self, sender: Option<&Object>);
 
         #[method(toggle:)]
         pub unsafe fn toggle(&self, sender: Option<&Object>);

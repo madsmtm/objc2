@@ -31,25 +31,10 @@ extern_methods!(
 extern_methods!(
     /// NSNibLoadingDeprecated
     unsafe impl NSBundle {
-        #[method(loadNibFile:externalNameTable:withZone:)]
-        pub unsafe fn loadNibFile_externalNameTable_withZone(
-            fileName: Option<&NSString>,
-            context: Option<&NSDictionary>,
-            zone: *mut NSZone,
-        ) -> bool;
-
         #[method(loadNibNamed:owner:)]
         pub unsafe fn loadNibNamed_owner(
             nibName: Option<&NSString>,
             owner: Option<&Object>,
-        ) -> bool;
-
-        #[method(loadNibFile:externalNameTable:withZone:)]
-        pub unsafe fn loadNibFile_externalNameTable_withZone(
-            &self,
-            fileName: Option<&NSString>,
-            context: Option<&NSDictionary>,
-            zone: *mut NSZone,
         ) -> bool;
     }
 );

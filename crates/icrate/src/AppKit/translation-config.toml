@@ -15,3 +15,31 @@ skipped = true
 skipped = true
 [protocol.NSAccessibilityElement]
 skipped = true
+
+# Both instance and class methods
+[class.NSCursor.methods.pop]
+skipped = true
+[class.NSDrawer.methods.open]
+skipped = true
+[class.NSDrawer.methods.close]
+skipped = true
+[class.NSEvent.properties.modifierFlags]
+skipped = true
+[class.NSFormCell.methods.titleWidth]
+skipped = true
+[class.NSGestureRecognizer.properties.state]
+skipped = true
+[class.NSGraphicsContext.methods.saveGraphicsState]
+skipped = true
+[class.NSGraphicsContext.methods.restoreGraphicsState]
+skipped = true
+[class.NSSlider.properties.vertical]
+skipped = true
+[class.NSSliderCell.methods.drawKnob]
+skipped = true
+[class.NSSliderCell.properties.vertical]
+skipped = true
+[class.NSWorkspace.methods.noteFileSystemChanged]
+skipped = true
+[class.NSBundle.methods.loadNibFile_externalNameTable_withZone]
+skipped = true

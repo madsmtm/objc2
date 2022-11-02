@@ -50,9 +50,6 @@ extern_methods!(
         #[method(setAction:)]
         pub unsafe fn setAction(&self, action: OptionSel);
 
-        #[method(state)]
-        pub unsafe fn state(&self) -> NSGestureRecognizerState;
-
         #[method_id(@__retain_semantics Other delegate)]
         pub unsafe fn delegate(&self) -> Option<Id<NSGestureRecognizerDelegate, Shared>>;
 
@@ -140,12 +137,6 @@ pub type NSGestureRecognizerDelegate = NSObject;
 extern_methods!(
     /// NSSubclassUse
     unsafe impl NSGestureRecognizer {
-        #[method(state)]
-        pub unsafe fn state(&self) -> NSGestureRecognizerState;
-
-        #[method(setState:)]
-        pub unsafe fn setState(&self, state: NSGestureRecognizerState);
-
         #[method(reset)]
         pub unsafe fn reset(&self);
 

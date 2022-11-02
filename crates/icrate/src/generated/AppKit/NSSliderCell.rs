@@ -52,12 +52,6 @@ extern_methods!(
         #[method(setSliderType:)]
         pub unsafe fn setSliderType(&self, sliderType: NSSliderType);
 
-        #[method(isVertical)]
-        pub unsafe fn isVertical(&self) -> bool;
-
-        #[method(setVertical:)]
-        pub unsafe fn setVertical(&self, vertical: bool);
-
         #[method(trackRect)]
         pub unsafe fn trackRect(&self) -> NSRect;
 
@@ -70,12 +64,6 @@ extern_methods!(
         #[method(barRectFlipped:)]
         pub unsafe fn barRectFlipped(&self, flipped: bool) -> NSRect;
 
-        #[method(drawKnob:)]
-        pub unsafe fn drawKnob(&self, knobRect: NSRect);
-
-        #[method(drawKnob)]
-        pub unsafe fn drawKnob(&self);
-
         #[method(drawBarInside:flipped:)]
         pub unsafe fn drawBarInside_flipped(&self, rect: NSRect, flipped: bool);
     }
@@ -83,10 +71,7 @@ extern_methods!(
 
 extern_methods!(
     /// NSSliderCellVerticalGetter
-    unsafe impl NSSliderCell {
-        #[method(isVertical)]
-        pub unsafe fn isVertical(&self) -> bool;
-    }
+    unsafe impl NSSliderCell {}
 );
 
 extern_methods!(
