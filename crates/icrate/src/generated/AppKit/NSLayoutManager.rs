@@ -225,7 +225,7 @@ extern_methods!(
         pub unsafe fn CGGlyphAtIndex_isValidIndex(
             &self,
             glyphIndex: NSUInteger,
-            isValidIndex: *mut bool,
+            isValidIndex: *mut Bool,
         ) -> CGGlyph;
 
         #[method(CGGlyphAtIndex:)]
@@ -747,7 +747,7 @@ extern_methods!(
         pub unsafe fn glyphAtIndex_isValidIndex(
             &self,
             glyphIndex: NSUInteger,
-            isValidIndex: *mut bool,
+            isValidIndex: *mut Bool,
         ) -> NSGlyph;
 
         #[method(glyphAtIndex:)]
@@ -839,7 +839,7 @@ extern_methods!(
             glyphBuffer: *mut NSGlyph,
             charIndexBuffer: *mut NSUInteger,
             inscribeBuffer: *mut NSGlyphInscription,
-            elasticBuffer: *mut bool,
+            elasticBuffer: *mut Bool,
         ) -> NSUInteger;
 
         #[method(getGlyphsInRange:glyphs:characterIndexes:glyphInscriptions:elasticBits:bidiLevels:)]
@@ -849,7 +849,7 @@ extern_methods!(
             glyphBuffer: *mut NSGlyph,
             charIndexBuffer: *mut NSUInteger,
             inscribeBuffer: *mut NSGlyphInscription,
-            elasticBuffer: *mut bool,
+            elasticBuffer: *mut Bool,
             bidiLevelBuffer: *mut c_uchar,
         ) -> NSUInteger;
 

@@ -754,7 +754,7 @@ extern_methods!(
             data: &NSData,
             opts: Option<&NSDictionary<NSStringEncodingDetectionOptionsKey, Object>>,
             string: *mut *mut NSString,
-            usedLossyConversion: *mut bool,
+            usedLossyConversion: *mut Bool,
         ) -> NSStringEncoding;
     }
 );

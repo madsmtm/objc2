@@ -63,10 +63,16 @@ mod common {
 
     pub(crate) use objc2::ffi::{NSInteger, NSUInteger};
     pub(crate) use objc2::rc::{Allocated, Id, Shared};
-    pub(crate) use objc2::runtime::{Class, Object, Sel};
+    pub(crate) use objc2::runtime::{Bool, Class, Object, Sel};
     pub(crate) use objc2::{
         __inner_extern_class, extern_class, extern_methods, ClassType, Message,
     };
+
+    // TODO
+    pub struct OptionSel(*const objc2::ffi::objc_selector);
+    unsafe impl objc2::Encode for OptionSel {
+        const ENCODING: objc2::Encoding = objc2::Encoding::Sel;
+    }
 
     // TODO
     pub(crate) type Protocol = Object;

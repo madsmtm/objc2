@@ -94,7 +94,7 @@ extern_methods!(
             printInfo: &NSPrintInfo,
             docWindow: &NSWindow,
             delegate: Option<&Object>,
-            didEndSelector: Option<Sel>,
+            didEndSelector: OptionSel,
             contextInfo: *mut c_void,
         );
 

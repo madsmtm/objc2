@@ -108,7 +108,7 @@ extern_methods!(
         #[method_id(@__retain_semantics Other sliderWithTarget:action:)]
         pub unsafe fn sliderWithTarget_action(
             target: Option<&Object>,
-            action: Option<Sel>,
+            action: OptionSel,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Other sliderWithValue:minValue:maxValue:target:action:)]
@@ -117,7 +117,7 @@ extern_methods!(
             minValue: c_double,
             maxValue: c_double,
             target: Option<&Object>,
-            action: Option<Sel>,
+            action: OptionSel,
         ) -> Id<Self, Shared>;
     }
 );

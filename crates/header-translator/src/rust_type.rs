@@ -696,7 +696,7 @@ impl fmt::Display for RustType {
                 if *nullability == Nullability::NonNull {
                     write!(f, "Sel")
                 } else {
-                    write!(f, "Option<Sel>")
+                    write!(f, "OptionSel")
                 }
             }
             ObjcBool => write!(f, "bool"),
@@ -752,6 +752,15 @@ impl fmt::Display for RustType {
                 }
                 Self::Id { .. } => {
                     unreachable!("there should be no id with other values: {self:?}")
+                }
+                Self::ObjcBool => {
+                    if *nullability == Nullability::NonNull {
+                        write!(f, "NonNull<Bool>")
+                    } else if *is_const {
+                        write!(f, "*const Bool")
+                    } else {
+                        write!(f, "*mut Bool")
+                    }
                 }
                 pointee => {
                     if *nullability == Nullability::NonNull {

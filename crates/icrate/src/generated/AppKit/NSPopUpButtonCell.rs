@@ -109,7 +109,7 @@ extern_methods!(
         pub unsafe fn indexOfItemWithTarget_andAction(
             &self,
             target: Option<&Object>,
-            actionSelector: Option<Sel>,
+            actionSelector: OptionSel,
         ) -> NSInteger;
 
         #[method_id(@__retain_semantics Other itemAtIndex:)]

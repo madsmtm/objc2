@@ -143,7 +143,7 @@ extern_methods!(
             &self,
             docWindow: &NSWindow,
             delegate: Option<&Object>,
-            didRunSelector: Option<Sel>,
+            didRunSelector: OptionSel,
             contextInfo: *mut c_void,
         );
 

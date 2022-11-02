@@ -257,10 +257,10 @@ extern_methods!(
         pub unsafe fn clickedRow(&self) -> NSInteger;
 
         #[method(doubleAction)]
-        pub unsafe fn doubleAction(&self) -> Option<Sel>;
+        pub unsafe fn doubleAction(&self) -> OptionSel;
 
         #[method(setDoubleAction:)]
-        pub unsafe fn setDoubleAction(&self, doubleAction: Option<Sel>);
+        pub unsafe fn setDoubleAction(&self, doubleAction: OptionSel);
 
         #[method_id(@__retain_semantics Other sortDescriptors)]
         pub unsafe fn sortDescriptors(&self) -> Id<NSArray<NSSortDescriptor>, Shared>;

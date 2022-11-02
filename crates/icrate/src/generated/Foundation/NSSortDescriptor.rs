@@ -24,7 +24,7 @@ extern_methods!(
         pub unsafe fn sortDescriptorWithKey_ascending_selector(
             key: Option<&NSString>,
             ascending: bool,
-            selector: Option<Sel>,
+            selector: OptionSel,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init initWithKey:ascending:)]
@@ -39,7 +39,7 @@ extern_methods!(
             this: Option<Allocated<Self>>,
             key: Option<&NSString>,
             ascending: bool,
-            selector: Option<Sel>,
+            selector: OptionSel,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init initWithCoder:)]
@@ -55,7 +55,7 @@ extern_methods!(
         pub unsafe fn ascending(&self) -> bool;
 
         #[method(selector)]
-        pub unsafe fn selector(&self) -> Option<Sel>;
+        pub unsafe fn selector(&self) -> OptionSel;
 
         #[method(allowEvaluation)]
         pub unsafe fn allowEvaluation(&self);

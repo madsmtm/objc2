@@ -63,16 +63,16 @@ extern_methods!(
     /// NSStatusItemDeprecated
     unsafe impl NSStatusItem {
         #[method(action)]
-        pub unsafe fn action(&self) -> Option<Sel>;
+        pub unsafe fn action(&self) -> OptionSel;
 
         #[method(setAction:)]
-        pub unsafe fn setAction(&self, action: Option<Sel>);
+        pub unsafe fn setAction(&self, action: OptionSel);
 
         #[method(doubleAction)]
-        pub unsafe fn doubleAction(&self) -> Option<Sel>;
+        pub unsafe fn doubleAction(&self) -> OptionSel;
 
         #[method(setDoubleAction:)]
-        pub unsafe fn setDoubleAction(&self, doubleAction: Option<Sel>);
+        pub unsafe fn setDoubleAction(&self, doubleAction: OptionSel);
 
         #[method_id(@__retain_semantics Other target)]
         pub unsafe fn target(&self) -> Option<Id<Object, Shared>>;

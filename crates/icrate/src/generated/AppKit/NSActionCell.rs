@@ -22,10 +22,10 @@ extern_methods!(
         pub unsafe fn setTarget(&self, target: Option<&Object>);
 
         #[method(action)]
-        pub unsafe fn action(&self) -> Option<Sel>;
+        pub unsafe fn action(&self) -> OptionSel;
 
         #[method(setAction:)]
-        pub unsafe fn setAction(&self, action: Option<Sel>);
+        pub unsafe fn setAction(&self, action: OptionSel);
 
         #[method(tag)]
         pub unsafe fn tag(&self) -> NSInteger;

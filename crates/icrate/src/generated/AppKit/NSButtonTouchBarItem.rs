@@ -20,7 +20,7 @@ extern_methods!(
             identifier: &NSTouchBarItemIdentifier,
             title: &NSString,
             target: Option<&Object>,
-            action: Option<Sel>,
+            action: OptionSel,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Other buttonTouchBarItemWithIdentifier:image:target:action:)]
@@ -28,7 +28,7 @@ extern_methods!(
             identifier: &NSTouchBarItemIdentifier,
             image: &NSImage,
             target: Option<&Object>,
-            action: Option<Sel>,
+            action: OptionSel,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Other buttonTouchBarItemWithIdentifier:title:image:target:action:)]
@@ -37,7 +37,7 @@ extern_methods!(
             title: &NSString,
             image: &NSImage,
             target: Option<&Object>,
-            action: Option<Sel>,
+            action: OptionSel,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Other title)]
@@ -65,10 +65,10 @@ extern_methods!(
         pub unsafe fn setTarget(&self, target: Option<&Object>);
 
         #[method(action)]
-        pub unsafe fn action(&self) -> Option<Sel>;
+        pub unsafe fn action(&self) -> OptionSel;
 
         #[method(setAction:)]
-        pub unsafe fn setAction(&self, action: Option<Sel>);
+        pub unsafe fn setAction(&self, action: OptionSel);
 
         #[method(isEnabled)]
         pub unsafe fn isEnabled(&self) -> bool;

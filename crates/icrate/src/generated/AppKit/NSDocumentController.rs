@@ -138,7 +138,7 @@ extern_methods!(
             title: Option<&NSString>,
             cancellable: bool,
             delegate: Option<&Object>,
-            didReviewAllSelector: Option<Sel>,
+            didReviewAllSelector: OptionSel,
             contextInfo: *mut c_void,
         );
 
@@ -146,7 +146,7 @@ extern_methods!(
         pub unsafe fn closeAllDocumentsWithDelegate_didCloseAllSelector_contextInfo(
             &self,
             delegate: Option<&Object>,
-            didCloseAllSelector: Option<Sel>,
+            didCloseAllSelector: OptionSel,
             contextInfo: *mut c_void,
         );
 
@@ -170,7 +170,7 @@ extern_methods!(
             error: &NSError,
             window: &NSWindow,
             delegate: Option<&Object>,
-            didPresentSelector: Option<Sel>,
+            didPresentSelector: OptionSel,
             contextInfo: *mut c_void,
         );
 

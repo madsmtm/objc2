@@ -872,7 +872,7 @@ extern_methods!(
             bookmarkData: &NSData,
             options: NSURLBookmarkResolutionOptions,
             relativeURL: Option<&NSURL>,
-            isStale: *mut bool,
+            isStale: *mut Bool,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
         #[method_id(@__retain_semantics Other URLByResolvingBookmarkData:options:relativeToURL:bookmarkDataIsStale:error:)]
@@ -880,7 +880,7 @@ extern_methods!(
             bookmarkData: &NSData,
             options: NSURLBookmarkResolutionOptions,
             relativeURL: Option<&NSURL>,
-            isStale: *mut bool,
+            isStale: *mut Bool,
         ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
 
         #[method_id(@__retain_semantics Other resourceValuesForKeys:fromBookmarkData:)]

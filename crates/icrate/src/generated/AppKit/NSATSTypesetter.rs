@@ -194,7 +194,7 @@ extern_methods!(
             glyphBuffer: *mut NSGlyph,
             charIndexBuffer: *mut NSUInteger,
             inscribeBuffer: *mut NSGlyphInscription,
-            elasticBuffer: *mut bool,
+            elasticBuffer: *mut Bool,
         ) -> NSUInteger;
     }
 );

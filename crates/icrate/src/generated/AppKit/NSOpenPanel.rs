@@ -79,7 +79,7 @@ extern_methods!(
             fileTypes: Option<&NSArray>,
             docWindow: Option<&NSWindow>,
             delegate: Option<&Object>,
-            didEndSelector: Option<Sel>,
+            didEndSelector: OptionSel,
             contextInfo: *mut c_void,
         );
 
@@ -90,7 +90,7 @@ extern_methods!(
             name: Option<&NSString>,
             fileTypes: Option<&NSArray>,
             delegate: Option<&Object>,
-            didEndSelector: Option<Sel>,
+            didEndSelector: OptionSel,
             contextInfo: *mut c_void,
         );
 

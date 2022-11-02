@@ -93,7 +93,7 @@ extern_methods!(
         pub unsafe fn rightExpression(&self) -> Id<NSExpression, Shared>;
 
         #[method(customSelector)]
-        pub unsafe fn customSelector(&self) -> Option<Sel>;
+        pub unsafe fn customSelector(&self) -> OptionSel;
 
         #[method(options)]
         pub unsafe fn options(&self) -> NSComparisonPredicateOptions;

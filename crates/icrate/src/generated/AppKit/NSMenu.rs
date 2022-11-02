@@ -78,7 +78,7 @@ extern_methods!(
         pub unsafe fn insertItemWithTitle_action_keyEquivalent_atIndex(
             &self,
             string: &NSString,
-            selector: Option<Sel>,
+            selector: OptionSel,
             charCode: &NSString,
             index: NSInteger,
         ) -> Id<NSMenuItem, Shared>;
@@ -87,7 +87,7 @@ extern_methods!(
         pub unsafe fn addItemWithTitle_action_keyEquivalent(
             &self,
             string: &NSString,
-            selector: Option<Sel>,
+            selector: OptionSel,
             charCode: &NSString,
         ) -> Id<NSMenuItem, Shared>;
 
@@ -135,7 +135,7 @@ extern_methods!(
         pub unsafe fn indexOfItemWithTarget_andAction(
             &self,
             target: Option<&Object>,
-            actionSelector: Option<Sel>,
+            actionSelector: OptionSel,
         ) -> NSInteger;
 
         #[method_id(@__retain_semantics Other itemWithTitle:)]

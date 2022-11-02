@@ -753,7 +753,7 @@ extern_methods!(
             sheet: &NSWindow,
             docWindow: &NSWindow,
             modalDelegate: Option<&Object>,
-            didEndSelector: Option<Sel>,
+            didEndSelector: OptionSel,
             contextInfo: *mut c_void,
         );
 

@@ -95,10 +95,10 @@ extern_methods!(
         );
 
         #[method(doubleAction)]
-        pub unsafe fn doubleAction(&self) -> Option<Sel>;
+        pub unsafe fn doubleAction(&self) -> OptionSel;
 
         #[method(setDoubleAction:)]
-        pub unsafe fn setDoubleAction(&self, doubleAction: Option<Sel>);
+        pub unsafe fn setDoubleAction(&self, doubleAction: OptionSel);
 
         #[method_id(@__retain_semantics Other backgroundColor)]
         pub unsafe fn backgroundColor(&self) -> Option<Id<NSColor, Shared>>;

@@ -49,10 +49,10 @@ extern_methods!(
         pub unsafe fn setURL(&self, URL: Option<&NSURL>);
 
         #[method(doubleAction)]
-        pub unsafe fn doubleAction(&self) -> Option<Sel>;
+        pub unsafe fn doubleAction(&self) -> OptionSel;
 
         #[method(setDoubleAction:)]
-        pub unsafe fn setDoubleAction(&self, doubleAction: Option<Sel>);
+        pub unsafe fn setDoubleAction(&self, doubleAction: OptionSel);
 
         #[method(pathStyle)]
         pub unsafe fn pathStyle(&self) -> NSPathStyle;

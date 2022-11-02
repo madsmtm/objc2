@@ -55,7 +55,7 @@ extern_methods!(
         pub unsafe fn selectorForCommand(
             &self,
             commandDescription: &NSScriptCommandDescription,
-        ) -> Option<Sel>;
+        ) -> OptionSel;
 
         #[method_id(@__retain_semantics Other typeForKey:)]
         pub unsafe fn typeForKey(&self, key: &NSString) -> Option<Id<NSString, Shared>>;

@@ -90,7 +90,7 @@ extern_methods!(
         pub unsafe fn alpha(&self) -> CGFloat;
 
         #[method(setAction:)]
-        pub unsafe fn setAction(&self, selector: Option<Sel>);
+        pub unsafe fn setAction(&self, selector: OptionSel);
 
         #[method(setTarget:)]
         pub unsafe fn setTarget(&self, target: Option<&Object>);

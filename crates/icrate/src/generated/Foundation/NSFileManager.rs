@@ -338,7 +338,7 @@ extern_methods!(
         pub unsafe fn fileExistsAtPath_isDirectory(
             &self,
             path: &NSString,
-            isDirectory: *mut bool,
+            isDirectory: *mut Bool,
         ) -> bool;
 
         #[method(isReadableFileAtPath:)]

@@ -116,9 +116,9 @@ extern_methods!(
         pub unsafe fn getFileSystemInfoForPath_isRemovable_isWritable_isUnmountable_description_type(
             &self,
             fullPath: &NSString,
-            removableFlag: *mut bool,
-            writableFlag: *mut bool,
-            unmountableFlag: *mut bool,
+            removableFlag: *mut Bool,
+            writableFlag: *mut Bool,
+            unmountableFlag: *mut Bool,
             description: *mut *mut NSString,
             fileSystemType: *mut *mut NSString,
         ) -> bool;

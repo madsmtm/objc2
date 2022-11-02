@@ -35,7 +35,7 @@ extern_methods!(
             selectionMode: NSToolbarItemGroupSelectionMode,
             labels: Option<&NSArray<NSString>>,
             target: Option<&Object>,
-            action: Option<Sel>,
+            action: OptionSel,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Other groupWithItemIdentifier:images:selectionMode:labels:target:action:)]
@@ -45,7 +45,7 @@ extern_methods!(
             selectionMode: NSToolbarItemGroupSelectionMode,
             labels: Option<&NSArray<NSString>>,
             target: Option<&Object>,
-            action: Option<Sel>,
+            action: OptionSel,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Other subitems)]
