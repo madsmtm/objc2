@@ -284,21 +284,20 @@ fn output_files(
     let mut tokens = String::new();
 
     for (name, _) in &declared {
-        writeln!(tokens, "pub(crate) mod {name};")?;
+        writeln!(tokens, "#[path = \"{name}.rs\"]")?;
+        writeln!(tokens, "mod __{name};")?;
     }
     writeln!(tokens, "")?;
-    writeln!(tokens, "mod __exported {{")?;
     for (name, declared_types) in declared {
         if !declared_types.is_empty() {
             let declared_types: Vec<_> = declared_types.into_iter().collect();
             writeln!(
                 tokens,
-                "    pub use super::{name}::{{{}}};",
+                "pub use self::__{name}::{{{}}};",
                 declared_types.join(",")
             )?;
         }
     }
-    writeln!(tokens, "}}")?;
 
     let output = if format_incrementally {
         run_rustfmt(tokens)

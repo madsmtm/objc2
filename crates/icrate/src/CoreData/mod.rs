@@ -1,5 +1,5 @@
 #[allow(unused_imports)]
 #[path = "../generated/CoreData/mod.rs"]
-pub(crate) mod generated;
+mod generated;
 
-pub use self::generated::__exported::*;
+pub use self::generated::*;
