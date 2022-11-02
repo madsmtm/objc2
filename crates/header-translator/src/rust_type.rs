@@ -534,16 +534,62 @@ impl RustType {
         this
     }
 
-    pub fn parse_typedef(ty: Type<'_>) -> Self {
-        let this = Self::parse(ty, false, Nullability::Unspecified);
+    pub fn parse_typedef(ty: Type<'_>) -> Option<Self> {
+        match ty.get_kind() {
+            // When we encounter a typedef declaration like this:
+            //     typedef NSString* NSAbc;
+            //
+            // We parse it as one of:
+            //     type NSAbc = NSString;
+            //     struct NSAbc(NSString);
+            //
+            // Instead of:
+            //     type NSAbc = *const NSString;
+            //
+            // Because that means we can later on use ordinary Id<...> handling.
+            TypeKind::ObjCObjectPointer => {
+                let ty = ty.get_pointee_type().expect("pointer type to have pointee");
+                let type_ = GenericType::parse_objc_pointer(ty);
 
-        this.visit_lifetime(|lifetime| {
-            if lifetime != Lifetime::Unspecified {
-                panic!("unexpected lifetime in typedef {this:?}");
+                match &*type_.name {
+                    "NSString" => {}
+                    "NSUnit" => {}        // TODO: Handle this differently
+                    "TodoProtocols" => {} // TODO
+                    _ => panic!("typedef declaration was not NSString: {type_:?}"),
+                }
+
+                if !type_.generics.is_empty() {
+                    panic!("typedef declaration generics not empty");
+                }
+
+                Some(Self::TypeDef { name: type_.name })
             }
-        });
+            TypeKind::Elaborated => {
+                let ty = ty.get_elaborated_type().expect("elaborated");
+                match ty.get_kind() {
+                    TypeKind::Record => {
+                        // TODO
+                        None
+                    }
+                    // Handled by Stmt::EnumDecl
+                    TypeKind::Enum => None,
+                    _ => panic!("unknown elaborated type {ty:?}"),
+                }
+            }
+            TypeKind::Typedef => {
+                let this = Self::parse(ty, false, Nullability::Unspecified);
 
-        this
+                this.visit_lifetime(|lifetime| {
+                    if lifetime != Lifetime::Unspecified {
+                        panic!("unexpected lifetime in typedef {this:?}");
+                    }
+                });
+
+                Some(this)
+            }
+            // TODO
+            _ => None,
+        }
     }
 
     pub fn parse_property(ty: Type<'_>, default_nullability: Nullability) -> Self {

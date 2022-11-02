@@ -1,14 +1,14 @@
 use std::collections::HashSet;
 use std::fmt;
 
-use clang::{Entity, EntityKind, EntityVisitResult, TypeKind};
+use clang::{Entity, EntityKind, EntityVisitResult};
 
 use crate::availability::Availability;
 use crate::config::{ClassData, Config};
 use crate::expr::Expr;
 use crate::method::Method;
 use crate::property::Property;
-use crate::rust_type::{GenericType, RustType, RustTypeReturn, RustTypeStatic};
+use crate::rust_type::{RustType, RustTypeReturn, RustTypeStatic};
 use crate::unexposed_macro::UnexposedMacro;
 
 #[derive(Debug, Clone)]
@@ -390,6 +390,7 @@ impl Stmt {
             EntityKind::TypedefDecl => {
                 let name = entity.get_name().expect("typedef name");
                 let mut struct_ = None;
+                let mut skip_struct = false;
 
                 entity.visit_children(|entity, _parent| {
                     match entity.get_kind() {
@@ -406,12 +407,14 @@ impl Stmt {
                                 .map(|data| data.skipped)
                                 .unwrap_or_default()
                             {
+                                skip_struct = true;
                                 return EntityVisitResult::Continue;
                             }
 
                             let struct_name = entity.get_name();
                             if struct_name.is_none()
                                 || struct_name
+                                    .as_deref()
                                     .map(|name| name.starts_with('_'))
                                     .unwrap_or(false)
                             {
@@ -434,89 +437,16 @@ impl Stmt {
                     return Some(struct_);
                 }
 
+                if skip_struct {
+                    return None;
+                }
+
                 let ty = entity
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
-                match ty.get_kind() {
-                    // Note: When we encounter a typedef declaration like this:
-                    //     typedef NSString* NSAbc;
-                    //
-                    // We parse it as one of:
-                    //     type NSAbc = NSString;
-                    //     struct NSAbc(NSString);
-                    //
-                    // Instead of:
-                    //     type NSAbc = *const NSString;
-                    //
-                    // Because that means we can use ordinary Id<...> handling.
-                    TypeKind::ObjCObjectPointer => {
-                        let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                        let type_ = GenericType::parse_objc_pointer(ty);
+                let ty = RustType::parse_typedef(ty);
 
-                        match &*type_.name {
-                            "NSString" => {}
-                            "NSUnit" => {}        // TODO: Handle this differently
-                            "TodoProtocols" => {} // TODO
-                            _ => panic!("typedef declaration was not NSString: {type_:?}"),
-                        }
-
-                        if !type_.generics.is_empty() {
-                            panic!("typedef declaration generics not empty");
-                        }
-
-                        Some(Self::AliasDecl {
-                            name,
-                            type_: RustType::TypeDef { name: type_.name },
-                        })
-                    }
-                    TypeKind::Typedef => {
-                        // println!(
-                        //     "typedef: {:?}, {:?}, {:#?}, {:#?}, {:#?}",
-                        //     entity.get_display_name(),
-                        //     entity.get_name(),
-                        //     entity.has_attributes(),
-                        //     entity.get_children(),
-                        //     ty,
-                        // );
-                        let type_ = RustType::parse_typedef(ty);
-                        Some(Self::AliasDecl { name, type_ })
-                    }
-                    TypeKind::Elaborated => {
-                        let ty = ty.get_elaborated_type().expect("elaborated");
-                        match ty.get_kind() {
-                            TypeKind::Enum => {
-                                // Handled below
-                                None
-                            }
-                            _ => {
-                                // println!(
-                                //     "elaborated: {:?}, {:?}, {:?}, {:#?}, {:#?}, {:?}, {:#?}",
-                                //     entity.get_kind(),
-                                //     entity.get_display_name(),
-                                //     entity.get_name(),
-                                //     entity.has_attributes(),
-                                //     entity.get_children(),
-                                //     ty.get_kind(),
-                                //     ty,
-                                // );
-                                None
-                            }
-                        }
-                    }
-                    _ => {
-                        // println!(
-                        //     "typedef2: {:?}, {:?}, {:?}, {:#?}, {:#?}, {:?}, {:#?}",
-                        //     entity.get_kind(),
-                        //     entity.get_display_name(),
-                        //     entity.get_name(),
-                        //     entity.has_attributes(),
-                        //     entity.get_children(),
-                        //     ty.get_kind(),
-                        //     ty,
-                        // );
-                        None
-                    }
-                }
+                ty.map(|type_| Self::AliasDecl { name, type_ })
             }
             EntityKind::StructDecl => {
                 if let Some(name) = entity.get_name() {
