@@ -7,6 +7,8 @@ pub type NSBackgroundActivityResult = NSInteger;
 pub const NSBackgroundActivityResultFinished: NSBackgroundActivityResult = 1;
 pub const NSBackgroundActivityResultDeferred: NSBackgroundActivityResult = 2;
 
+pub type NSBackgroundActivityCompletionHandler = TodoBlock;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSBackgroundActivityScheduler;

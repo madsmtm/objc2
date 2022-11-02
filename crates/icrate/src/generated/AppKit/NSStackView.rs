@@ -19,6 +19,8 @@ pub const NSStackViewDistributionFillProportionally: NSStackViewDistribution = 2
 pub const NSStackViewDistributionEqualSpacing: NSStackViewDistribution = 3;
 pub const NSStackViewDistributionEqualCentering: NSStackViewDistribution = 4;
 
+pub type NSStackViewVisibilityPriority = c_float;
+
 pub static NSStackViewVisibilityPriorityMustHold: NSStackViewVisibilityPriority = 1000;
 
 pub static NSStackViewVisibilityPriorityDetachOnlyIfNecessary: NSStackViewVisibilityPriority = 900;

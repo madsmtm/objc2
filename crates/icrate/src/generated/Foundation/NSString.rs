@@ -3,6 +3,8 @@
 use crate::common::*;
 use crate::Foundation::*;
 
+pub type unichar = c_ushort;
+
 pub type NSStringCompareOptions = NSUInteger;
 pub const NSCaseInsensitiveSearch: NSStringCompareOptions = 1;
 pub const NSLiteralSearch: NSStringCompareOptions = 2;

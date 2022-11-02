@@ -15,6 +15,8 @@ pub const NSAnimationBlocking: NSAnimationBlockingMode = 0;
 pub const NSAnimationNonblocking: NSAnimationBlockingMode = 1;
 pub const NSAnimationNonblockingThreaded: NSAnimationBlockingMode = 2;
 
+pub type NSAnimationProgress = c_float;
+
 extern "C" {
     pub static NSAnimationProgressMarkNotification: &'static NSNotificationName;
 }

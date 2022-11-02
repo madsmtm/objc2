@@ -17,6 +17,10 @@ pub type NSItemProviderWriting = NSObject;
 
 pub type NSItemProviderReading = NSObject;
 
+pub type NSItemProviderCompletionHandler = TodoBlock;
+
+pub type NSItemProviderLoadHandler = TodoBlock;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSItemProvider;

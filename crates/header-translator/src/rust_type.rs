@@ -296,6 +296,12 @@ pub enum RustType {
         element_type: Box<RustType>,
         num_elements: usize,
     },
+    Enum {
+        name: String,
+    },
+    Struct {
+        name: String,
+    },
 
     TypeDef {
         name: String,
@@ -475,6 +481,26 @@ impl RustType {
                     }
                 }
             }
+            Elaborated => {
+                let ty = ty.get_elaborated_type().expect("elaborated");
+                match ty.get_kind() {
+                    TypeKind::Record => {
+                        let name = ty
+                            .get_display_name()
+                            .trim_start_matches("struct ")
+                            .to_string();
+                        Self::Struct { name }
+                    }
+                    TypeKind::Enum => {
+                        let name = ty
+                            .get_display_name()
+                            .trim_start_matches("enum ")
+                            .to_string();
+                        Self::Enum { name }
+                    }
+                    _ => panic!("unknown elaborated type {ty:?}"),
+                }
+            }
             BlockPointer => Self::TypeDef {
                 name: "TodoBlock".to_string(),
             },
@@ -534,7 +560,7 @@ impl RustType {
         this
     }
 
-    pub fn parse_typedef(ty: Type<'_>) -> Option<Self> {
+    pub fn parse_typedef(ty: Type<'_>) -> Self {
         match ty.get_kind() {
             // When we encounter a typedef declaration like this:
             //     typedef NSString* NSAbc;
@@ -562,21 +588,9 @@ impl RustType {
                     panic!("typedef declaration generics not empty");
                 }
 
-                Some(Self::TypeDef { name: type_.name })
+                Self::TypeDef { name: type_.name }
             }
-            TypeKind::Elaborated => {
-                let ty = ty.get_elaborated_type().expect("elaborated");
-                match ty.get_kind() {
-                    TypeKind::Record => {
-                        // TODO
-                        None
-                    }
-                    // Handled by Stmt::EnumDecl
-                    TypeKind::Enum => None,
-                    _ => panic!("unknown elaborated type {ty:?}"),
-                }
-            }
-            TypeKind::Typedef => {
+            _ => {
                 let this = Self::parse(ty, false, Nullability::Unspecified);
 
                 this.visit_lifetime(|lifetime| {
@@ -585,10 +599,8 @@ impl RustType {
                     }
                 });
 
-                Some(this)
+                this
             }
-            // TODO
-            _ => None,
         }
     }
 
@@ -755,7 +767,7 @@ impl fmt::Display for RustType {
                 element_type,
                 num_elements,
             } => write!(f, "[{element_type}; {num_elements}]"),
-            TypeDef { name } => write!(f, "{name}"),
+            Enum { name } | Struct { name } | TypeDef { name } => write!(f, "{name}"),
         }
     }
 }

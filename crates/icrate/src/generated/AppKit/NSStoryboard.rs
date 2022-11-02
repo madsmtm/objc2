@@ -8,6 +8,8 @@ pub type NSStoryboardName = NSString;
 
 pub type NSStoryboardSceneIdentifier = NSString;
 
+pub type NSStoryboardControllerCreator = TodoBlock;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSStoryboard;

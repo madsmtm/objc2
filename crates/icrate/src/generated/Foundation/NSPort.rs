@@ -3,6 +3,8 @@
 use crate::common::*;
 use crate::Foundation::*;
 
+pub type NSSocketNativeHandle = c_int;
+
 extern "C" {
     pub static NSPortDidBecomeInvalidNotification: &'static NSNotificationName;
 }

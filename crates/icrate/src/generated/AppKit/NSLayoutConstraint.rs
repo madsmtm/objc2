@@ -4,6 +4,8 @@ use crate::common::*;
 use crate::AppKit::*;
 use crate::Foundation::*;
 
+pub type NSLayoutPriority = c_float;
+
 pub static NSLayoutPriorityRequired: NSLayoutPriority = 1000;
 
 pub static NSLayoutPriorityDefaultHigh: NSLayoutPriority = 750;

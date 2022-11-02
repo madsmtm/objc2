@@ -4,6 +4,12 @@ use crate::common::*;
 use crate::AppKit::*;
 use crate::Foundation::*;
 
+pub type NSTableViewDiffableDataSourceCellProvider = TodoBlock;
+
+pub type NSTableViewDiffableDataSourceRowProvider = TodoBlock;
+
+pub type NSTableViewDiffableDataSourceSectionHeaderViewProvider = TodoBlock;
+
 __inner_extern_class!(
     #[derive(Debug)]
     pub struct NSTableViewDiffableDataSource<

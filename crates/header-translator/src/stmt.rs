@@ -412,16 +412,16 @@ impl Stmt {
                             }
 
                             let struct_name = entity.get_name();
-                            if struct_name.is_none()
-                                || struct_name
-                                    .as_deref()
-                                    .map(|name| name.starts_with('_'))
-                                    .unwrap_or(false)
+                            if struct_name
+                                .map(|name| name.starts_with('_'))
+                                .unwrap_or(true)
                             {
                                 // If this struct doesn't have a name, or the
                                 // name is private, let's parse it with the
                                 // typedef name.
                                 struct_ = Some(parse_struct(&entity, name.clone()))
+                            } else {
+                                skip_struct = true;
                             }
                         }
                         EntityKind::ObjCClassRef
@@ -446,7 +446,31 @@ impl Stmt {
                     .expect("typedef underlying type");
                 let ty = RustType::parse_typedef(ty);
 
-                ty.map(|type_| Self::AliasDecl { name, type_ })
+                match ty {
+                    // Handled by Stmt::EnumDecl
+                    RustType::Enum { .. } => None,
+                    // Handled above and in Stmt::StructDecl
+                    // The rest is only `NSZone`
+                    RustType::Struct { name } => {
+                        assert_eq!(name, "_NSZone", "invalid struct in typedef");
+                        None
+                    }
+                    // Opaque structs
+                    RustType::Pointer {
+                        nullability,
+                        is_const,
+                        mut pointee,
+                    } if matches!(*pointee, RustType::Struct { .. }) => {
+                        *pointee = RustType::Void;
+                        let type_ = RustType::Pointer {
+                            nullability,
+                            is_const,
+                            pointee,
+                        };
+                        Some(Self::AliasDecl { name, type_ })
+                    }
+                    type_ => Some(Self::AliasDecl { name, type_ }),
+                }
             }
             EntityKind::StructDecl => {
                 if let Some(name) = entity.get_name() {

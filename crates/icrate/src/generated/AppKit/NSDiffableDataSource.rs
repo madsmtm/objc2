@@ -159,6 +159,10 @@ extern_methods!(
     }
 );
 
+pub type NSCollectionViewDiffableDataSourceItemProvider = TodoBlock;
+
+pub type NSCollectionViewDiffableDataSourceSupplementaryViewProvider = TodoBlock;
+
 __inner_extern_class!(
     #[derive(Debug)]
     pub struct NSCollectionViewDiffableDataSource<

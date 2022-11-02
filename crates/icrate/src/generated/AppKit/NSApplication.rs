@@ -4,6 +4,8 @@ use crate::common::*;
 use crate::AppKit::*;
 use crate::Foundation::*;
 
+pub type NSAppKitVersion = c_double;
+
 extern "C" {
     pub static NSAppKitVersionNumber: NSAppKitVersion;
 }
@@ -172,6 +174,8 @@ pub const NSApplicationOcclusionStateVisible: NSApplicationOcclusionState = 1 <<
 
 pub type NSWindowListOptions = NSInteger;
 pub const NSWindowListOrderedFrontToBack: NSWindowListOptions = 1 << 0;
+
+pub type NSModalSession = *mut c_void;
 
 extern "C" {
     pub static NSApp: Option<&'static NSApplication>;

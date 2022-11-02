@@ -2,7 +2,7 @@
 pub(crate) mod generated;
 
 pub use objc2::ffi::NSIntegerMax;
-pub use objc2::foundation::{CGFloat, CGPoint, CGRect, CGSize, NSTimeInterval, NSZone};
+pub use objc2::foundation::{CGFloat, CGPoint, CGRect, CGSize, NSZone};
 pub use objc2::ns_string;
 
 objc2::__inner_extern_class! {
@@ -92,9 +92,6 @@ impl std::fmt::Debug for NSProxy {
     }
 }
 
-// TODO
-pub type NSRangePointer = *const NSRange;
-
 struct_impl!(
     pub struct NSDecimal {
         // signed   int _exponent:8;
@@ -151,8 +148,9 @@ pub use self::generated::NSAppleEventDescriptor::{
     NSAppleEventSendWaitForReply,
 };
 pub use self::generated::NSAppleEventManager::{
-    NSAppleEventManager, NSAppleEventManagerWillProcessFirstEventNotification,
-    NSAppleEventTimeOutDefault, NSAppleEventTimeOutNone,
+    NSAppleEventManager, NSAppleEventManagerSuspensionID,
+    NSAppleEventManagerWillProcessFirstEventNotification, NSAppleEventTimeOutDefault,
+    NSAppleEventTimeOutNone,
 };
 pub use self::generated::NSAppleScript::{
     NSAppleScript, NSAppleScriptErrorAppName, NSAppleScriptErrorBriefMessage,
@@ -197,8 +195,9 @@ pub use self::generated::NSAttributedString::{
 };
 pub use self::generated::NSAutoreleasePool::NSAutoreleasePool;
 pub use self::generated::NSBackgroundActivityScheduler::{
-    NSBackgroundActivityResult, NSBackgroundActivityResultDeferred,
-    NSBackgroundActivityResultFinished, NSBackgroundActivityScheduler,
+    NSBackgroundActivityCompletionHandler, NSBackgroundActivityResult,
+    NSBackgroundActivityResultDeferred, NSBackgroundActivityResultFinished,
+    NSBackgroundActivityScheduler,
 };
 pub use self::generated::NSBundle::{
     NSBundle, NSBundleDidLoadNotification, NSBundleExecutableArchitectureARM64,
@@ -289,7 +288,7 @@ pub use self::generated::NSData::{
     NSDataWritingFileProtectionMask, NSDataWritingFileProtectionNone, NSDataWritingOptions,
     NSDataWritingWithoutOverwriting, NSMappedRead, NSMutableData, NSPurgeableData, NSUncachedRead,
 };
-pub use self::generated::NSDate::{NSDate, NSSystemClockDidChangeNotification};
+pub use self::generated::NSDate::{NSDate, NSSystemClockDidChangeNotification, NSTimeInterval};
 pub use self::generated::NSDateComponentsFormatter::{
     NSDateComponentsFormatter, NSDateComponentsFormatterUnitsStyle,
     NSDateComponentsFormatterUnitsStyleAbbreviated, NSDateComponentsFormatterUnitsStyleBrief,
@@ -357,7 +356,7 @@ pub use self::generated::NSException::{
     NSInvalidArgumentException, NSInvalidReceivePortException, NSInvalidSendPortException,
     NSMallocException, NSObjectInaccessibleException, NSObjectNotAvailableException,
     NSOldStyleException, NSPortReceiveException, NSPortSendException, NSPortTimeoutException,
-    NSRangeException,
+    NSRangeException, NSUncaughtExceptionHandler,
 };
 pub use self::generated::NSExpression::{
     NSAggregateExpressionType, NSAnyKeyExpressionType, NSBlockExpressionType,
@@ -440,8 +439,9 @@ pub use self::generated::NSGeometry::{
     NSAlignMinXInward, NSAlignMinXNearest, NSAlignMinXOutward, NSAlignMinYInward,
     NSAlignMinYNearest, NSAlignMinYOutward, NSAlignRectFlipped, NSAlignWidthInward,
     NSAlignWidthNearest, NSAlignWidthOutward, NSAlignmentOptions, NSEdgeInsets, NSEdgeInsetsZero,
-    NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint, NSRect, NSRectEdge, NSRectEdgeMaxX,
-    NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize, NSZeroPoint, NSZeroRect, NSZeroSize,
+    NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint, NSPointArray, NSPointPointer, NSRect,
+    NSRectArray, NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY,
+    NSRectPointer, NSSize, NSSizeArray, NSSizePointer, NSZeroPoint, NSZeroRect, NSZeroSize,
 };
 pub use self::generated::NSHTTPCookie::{
     NSHTTPCookie, NSHTTPCookieComment, NSHTTPCookieCommentURL, NSHTTPCookieDiscard,
@@ -481,9 +481,10 @@ pub use self::generated::NSInflectionRule::{NSInflectionRule, NSInflectionRuleEx
 pub use self::generated::NSInvocation::NSInvocation;
 pub use self::generated::NSItemProvider::{
     NSExtensionJavaScriptFinalizeArgumentKey, NSExtensionJavaScriptPreprocessingResultsKey,
-    NSItemProvider, NSItemProviderErrorCode, NSItemProviderErrorDomain,
-    NSItemProviderFileOptionOpenInPlace, NSItemProviderFileOptions,
-    NSItemProviderItemUnavailableError, NSItemProviderPreferredImageSizeKey, NSItemProviderReading,
+    NSItemProvider, NSItemProviderCompletionHandler, NSItemProviderErrorCode,
+    NSItemProviderErrorDomain, NSItemProviderFileOptionOpenInPlace, NSItemProviderFileOptions,
+    NSItemProviderItemUnavailableError, NSItemProviderLoadHandler,
+    NSItemProviderPreferredImageSizeKey, NSItemProviderReading,
     NSItemProviderRepresentationVisibility, NSItemProviderRepresentationVisibilityAll,
     NSItemProviderRepresentationVisibilityGroup, NSItemProviderRepresentationVisibilityOwnProcess,
     NSItemProviderRepresentationVisibilityTeam, NSItemProviderUnavailableCoercionError,
@@ -724,11 +725,12 @@ pub use self::generated::NSNumberFormatter::{
     NSNumberFormatterSpellOutStyle, NSNumberFormatterStyle,
 };
 pub use self::generated::NSObjCRuntime::{
-    NSComparisonResult, NSEnumerationConcurrent, NSEnumerationOptions, NSEnumerationReverse,
-    NSExceptionName, NSFoundationVersionNumber, NSNotFound, NSOrderedAscending,
-    NSOrderedDescending, NSOrderedSame, NSQualityOfService, NSQualityOfServiceBackground,
-    NSQualityOfServiceDefault, NSQualityOfServiceUserInitiated, NSQualityOfServiceUserInteractive,
-    NSQualityOfServiceUtility, NSRunLoopMode, NSSortConcurrent, NSSortOptions, NSSortStable,
+    NSComparator, NSComparisonResult, NSEnumerationConcurrent, NSEnumerationOptions,
+    NSEnumerationReverse, NSExceptionName, NSFoundationVersionNumber, NSNotFound,
+    NSOrderedAscending, NSOrderedDescending, NSOrderedSame, NSQualityOfService,
+    NSQualityOfServiceBackground, NSQualityOfServiceDefault, NSQualityOfServiceUserInitiated,
+    NSQualityOfServiceUserInteractive, NSQualityOfServiceUtility, NSRunLoopMode, NSSortConcurrent,
+    NSSortOptions, NSSortStable,
 };
 pub use self::generated::NSObject::{
     NSCoding, NSCopying, NSDiscardableContent, NSMutableCopying, NSSecureCoding,
@@ -789,7 +791,7 @@ pub use self::generated::NSPointerFunctions::{
 pub use self::generated::NSPort::{
     NSMachPort, NSMachPortDeallocateNone, NSMachPortDeallocateReceiveRight,
     NSMachPortDeallocateSendRight, NSMachPortDelegate, NSMachPortOptions, NSMessagePort, NSPort,
-    NSPortDelegate, NSPortDidBecomeInvalidNotification, NSSocketPort,
+    NSPortDelegate, NSPortDidBecomeInvalidNotification, NSSocketNativeHandle, NSSocketPort,
 };
 pub use self::generated::NSPortCoder::NSPortCoder;
 pub use self::generated::NSPortMessage::NSPortMessage;
@@ -817,8 +819,8 @@ pub use self::generated::NSProgress::{
     NSProgressFileOperationKindDownloading, NSProgressFileOperationKindDuplicating,
     NSProgressFileOperationKindKey, NSProgressFileOperationKindReceiving,
     NSProgressFileOperationKindUploading, NSProgressFileTotalCountKey, NSProgressFileURLKey,
-    NSProgressKind, NSProgressKindFile, NSProgressReporting, NSProgressThroughputKey,
-    NSProgressUserInfoKey,
+    NSProgressKind, NSProgressKindFile, NSProgressPublishingHandler, NSProgressReporting,
+    NSProgressThroughputKey, NSProgressUnpublishingHandler, NSProgressUserInfoKey,
 };
 pub use self::generated::NSPropertyList::{
     NSPropertyListBinaryFormat_v1_0, NSPropertyListFormat, NSPropertyListImmutable,
@@ -828,7 +830,7 @@ pub use self::generated::NSPropertyList::{
     NSPropertyListXMLFormat_v1_0,
 };
 pub use self::generated::NSProtocolChecker::NSProtocolChecker;
-pub use self::generated::NSRange::NSRange;
+pub use self::generated::NSRange::{NSRange, NSRangePointer};
 pub use self::generated::NSRegularExpression::{
     NSDataDetector, NSMatchingAnchored, NSMatchingCompleted, NSMatchingFlags, NSMatchingHitEnd,
     NSMatchingInternalError, NSMatchingOptions, NSMatchingProgress, NSMatchingReportCompletion,
@@ -909,7 +911,7 @@ pub use self::generated::NSStream::{
     NSStreamStatusReading, NSStreamStatusWriting,
 };
 pub use self::generated::NSString::{
-    NSASCIIStringEncoding, NSAnchoredSearch, NSBackwardsSearch, NSCaseInsensitiveSearch,
+    unichar, NSASCIIStringEncoding, NSAnchoredSearch, NSBackwardsSearch, NSCaseInsensitiveSearch,
     NSCharacterConversionException, NSConstantString, NSDiacriticInsensitiveSearch,
     NSForcedOrderingSearch, NSISO2022JPStringEncoding, NSISOLatin1StringEncoding,
     NSISOLatin2StringEncoding, NSJapaneseEUCStringEncoding, NSLiteralSearch,
@@ -1140,7 +1142,9 @@ pub use self::generated::NSUserNotification::{
     NSUserNotificationCenterDelegate, NSUserNotificationDefaultSoundName,
 };
 pub use self::generated::NSUserScriptTask::{
-    NSUserAppleScriptTask, NSUserAutomatorTask, NSUserScriptTask, NSUserUnixTask,
+    NSUserAppleScriptTask, NSUserAppleScriptTaskCompletionHandler, NSUserAutomatorTask,
+    NSUserAutomatorTaskCompletionHandler, NSUserScriptTask, NSUserScriptTaskCompletionHandler,
+    NSUserUnixTask, NSUserUnixTaskCompletionHandler,
 };
 pub use self::generated::NSValue::{NSNumber, NSValue};
 pub use self::generated::NSValueTransformer::{

@@ -3,6 +3,8 @@
 use crate::common::*;
 use crate::Foundation::*;
 
+pub type NSAppleEventManagerSuspensionID = *mut c_void;
+
 extern "C" {
     pub static NSAppleEventTimeOutDefault: c_double;
 }

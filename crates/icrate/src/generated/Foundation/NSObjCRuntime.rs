@@ -16,6 +16,8 @@ pub const NSOrderedAscending: NSComparisonResult = -1;
 pub const NSOrderedSame: NSComparisonResult = 0;
 pub const NSOrderedDescending: NSComparisonResult = 1;
 
+pub type NSComparator = TodoBlock;
+
 pub type NSEnumerationOptions = NSUInteger;
 pub const NSEnumerationConcurrent: NSEnumerationOptions = 1 << 0;
 pub const NSEnumerationReverse: NSEnumerationOptions = 1 << 1;

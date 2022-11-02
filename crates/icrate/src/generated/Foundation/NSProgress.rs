@@ -9,6 +9,10 @@ pub type NSProgressUserInfoKey = NSString;
 
 pub type NSProgressFileOperationKind = NSString;
 
+pub type NSProgressUnpublishingHandler = TodoBlock;
+
+pub type NSProgressPublishingHandler = TodoBlock;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSProgress;

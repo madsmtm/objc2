@@ -121,6 +121,8 @@ extern_methods!(
     }
 );
 
+pub type NSUncaughtExceptionHandler = TodoFunction;
+
 extern "C" {
     pub static NSAssertionHandlerKey: &'static NSString;
 }

@@ -75,6 +75,8 @@ extern_methods!(
     }
 );
 
+pub type NSCollectionViewCompositionalLayoutSectionProvider = TodoBlock;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSCollectionViewCompositionalLayout;
@@ -144,6 +146,8 @@ pub const NSCollectionLayoutSectionOrthogonalScrollingBehaviorGroupPaging:
     NSCollectionLayoutSectionOrthogonalScrollingBehavior = 4;
 pub const NSCollectionLayoutSectionOrthogonalScrollingBehaviorGroupPagingCentered:
     NSCollectionLayoutSectionOrthogonalScrollingBehavior = 5;
+
+pub type NSCollectionLayoutSectionVisibleItemsInvalidationHandler = TodoBlock;
 
 extern_class!(
     #[derive(Debug)]
@@ -313,6 +317,8 @@ extern_methods!(
         pub unsafe fn zIndex(&self) -> NSInteger;
     }
 );
+
+pub type NSCollectionLayoutGroupCustomItemProvider = TodoBlock;
 
 extern_class!(
     #[derive(Debug)]

@@ -515,7 +515,7 @@ mod __exported {
         NSAnimatablePropertyContainer, NSAnimatablePropertyKey, NSAnimation, NSAnimationBlocking,
         NSAnimationBlockingMode, NSAnimationCurve, NSAnimationDelegate, NSAnimationEaseIn,
         NSAnimationEaseInOut, NSAnimationEaseOut, NSAnimationLinear, NSAnimationNonblocking,
-        NSAnimationNonblockingThreaded, NSAnimationProgressMark,
+        NSAnimationNonblockingThreaded, NSAnimationProgress, NSAnimationProgressMark,
         NSAnimationProgressMarkNotification, NSAnimationTriggerOrderIn, NSAnimationTriggerOrderOut,
         NSViewAnimation, NSViewAnimationEffectKey, NSViewAnimationEffectName,
         NSViewAnimationEndFrameKey, NSViewAnimationFadeInEffect, NSViewAnimationFadeOutEffect,
@@ -534,30 +534,31 @@ mod __exported {
     pub use super::NSApplication::{
         NSAboutPanelOptionApplicationIcon, NSAboutPanelOptionApplicationName,
         NSAboutPanelOptionApplicationVersion, NSAboutPanelOptionCredits, NSAboutPanelOptionKey,
-        NSAboutPanelOptionVersion, NSApp, NSAppKitVersionNumber, NSAppKitVersionNumber10_0,
-        NSAppKitVersionNumber10_1, NSAppKitVersionNumber10_10, NSAppKitVersionNumber10_10_2,
-        NSAppKitVersionNumber10_10_3, NSAppKitVersionNumber10_10_4, NSAppKitVersionNumber10_10_5,
-        NSAppKitVersionNumber10_10_Max, NSAppKitVersionNumber10_11, NSAppKitVersionNumber10_11_1,
-        NSAppKitVersionNumber10_11_2, NSAppKitVersionNumber10_11_3, NSAppKitVersionNumber10_12,
-        NSAppKitVersionNumber10_12_1, NSAppKitVersionNumber10_12_2, NSAppKitVersionNumber10_13,
-        NSAppKitVersionNumber10_13_1, NSAppKitVersionNumber10_13_2, NSAppKitVersionNumber10_13_4,
-        NSAppKitVersionNumber10_14, NSAppKitVersionNumber10_14_1, NSAppKitVersionNumber10_14_2,
-        NSAppKitVersionNumber10_14_3, NSAppKitVersionNumber10_14_4, NSAppKitVersionNumber10_14_5,
-        NSAppKitVersionNumber10_15, NSAppKitVersionNumber10_15_1, NSAppKitVersionNumber10_15_2,
-        NSAppKitVersionNumber10_15_3, NSAppKitVersionNumber10_15_4, NSAppKitVersionNumber10_15_5,
-        NSAppKitVersionNumber10_15_6, NSAppKitVersionNumber10_2, NSAppKitVersionNumber10_2_3,
-        NSAppKitVersionNumber10_3, NSAppKitVersionNumber10_3_2, NSAppKitVersionNumber10_3_3,
-        NSAppKitVersionNumber10_3_5, NSAppKitVersionNumber10_3_7, NSAppKitVersionNumber10_3_9,
-        NSAppKitVersionNumber10_4, NSAppKitVersionNumber10_4_1, NSAppKitVersionNumber10_4_3,
-        NSAppKitVersionNumber10_4_4, NSAppKitVersionNumber10_4_7, NSAppKitVersionNumber10_5,
-        NSAppKitVersionNumber10_5_2, NSAppKitVersionNumber10_5_3, NSAppKitVersionNumber10_6,
-        NSAppKitVersionNumber10_7, NSAppKitVersionNumber10_7_2, NSAppKitVersionNumber10_7_3,
-        NSAppKitVersionNumber10_7_4, NSAppKitVersionNumber10_8, NSAppKitVersionNumber10_9,
-        NSAppKitVersionNumber11_0, NSAppKitVersionNumber11_1, NSAppKitVersionNumber11_2,
-        NSAppKitVersionNumber11_3, NSAppKitVersionNumber11_4, NSApplication, NSApplicationDelegate,
-        NSApplicationDelegateReply, NSApplicationDelegateReplyCancel,
-        NSApplicationDelegateReplyFailure, NSApplicationDelegateReplySuccess,
-        NSApplicationDidBecomeActiveNotification, NSApplicationDidChangeOcclusionStateNotification,
+        NSAboutPanelOptionVersion, NSApp, NSAppKitVersion, NSAppKitVersionNumber,
+        NSAppKitVersionNumber10_0, NSAppKitVersionNumber10_1, NSAppKitVersionNumber10_10,
+        NSAppKitVersionNumber10_10_2, NSAppKitVersionNumber10_10_3, NSAppKitVersionNumber10_10_4,
+        NSAppKitVersionNumber10_10_5, NSAppKitVersionNumber10_10_Max, NSAppKitVersionNumber10_11,
+        NSAppKitVersionNumber10_11_1, NSAppKitVersionNumber10_11_2, NSAppKitVersionNumber10_11_3,
+        NSAppKitVersionNumber10_12, NSAppKitVersionNumber10_12_1, NSAppKitVersionNumber10_12_2,
+        NSAppKitVersionNumber10_13, NSAppKitVersionNumber10_13_1, NSAppKitVersionNumber10_13_2,
+        NSAppKitVersionNumber10_13_4, NSAppKitVersionNumber10_14, NSAppKitVersionNumber10_14_1,
+        NSAppKitVersionNumber10_14_2, NSAppKitVersionNumber10_14_3, NSAppKitVersionNumber10_14_4,
+        NSAppKitVersionNumber10_14_5, NSAppKitVersionNumber10_15, NSAppKitVersionNumber10_15_1,
+        NSAppKitVersionNumber10_15_2, NSAppKitVersionNumber10_15_3, NSAppKitVersionNumber10_15_4,
+        NSAppKitVersionNumber10_15_5, NSAppKitVersionNumber10_15_6, NSAppKitVersionNumber10_2,
+        NSAppKitVersionNumber10_2_3, NSAppKitVersionNumber10_3, NSAppKitVersionNumber10_3_2,
+        NSAppKitVersionNumber10_3_3, NSAppKitVersionNumber10_3_5, NSAppKitVersionNumber10_3_7,
+        NSAppKitVersionNumber10_3_9, NSAppKitVersionNumber10_4, NSAppKitVersionNumber10_4_1,
+        NSAppKitVersionNumber10_4_3, NSAppKitVersionNumber10_4_4, NSAppKitVersionNumber10_4_7,
+        NSAppKitVersionNumber10_5, NSAppKitVersionNumber10_5_2, NSAppKitVersionNumber10_5_3,
+        NSAppKitVersionNumber10_6, NSAppKitVersionNumber10_7, NSAppKitVersionNumber10_7_2,
+        NSAppKitVersionNumber10_7_3, NSAppKitVersionNumber10_7_4, NSAppKitVersionNumber10_8,
+        NSAppKitVersionNumber10_9, NSAppKitVersionNumber11_0, NSAppKitVersionNumber11_1,
+        NSAppKitVersionNumber11_2, NSAppKitVersionNumber11_3, NSAppKitVersionNumber11_4,
+        NSApplication, NSApplicationDelegate, NSApplicationDelegateReply,
+        NSApplicationDelegateReplyCancel, NSApplicationDelegateReplyFailure,
+        NSApplicationDelegateReplySuccess, NSApplicationDidBecomeActiveNotification,
+        NSApplicationDidChangeOcclusionStateNotification,
         NSApplicationDidChangeScreenParametersNotification,
         NSApplicationDidFinishLaunchingNotification, NSApplicationDidHideNotification,
         NSApplicationDidResignActiveNotification, NSApplicationDidUnhideNotification,
@@ -581,8 +582,8 @@ mod __exported {
         NSApplicationWillTerminateNotification, NSApplicationWillUnhideNotification,
         NSApplicationWillUpdateNotification, NSCriticalRequest, NSEventTrackingRunLoopMode,
         NSInformationalRequest, NSModalPanelRunLoopMode, NSModalResponse, NSModalResponseAbort,
-        NSModalResponseContinue, NSModalResponseStop, NSPrintingCancelled, NSPrintingFailure,
-        NSPrintingReplyLater, NSPrintingSuccess, NSRemoteNotificationType,
+        NSModalResponseContinue, NSModalResponseStop, NSModalSession, NSPrintingCancelled,
+        NSPrintingFailure, NSPrintingReplyLater, NSPrintingSuccess, NSRemoteNotificationType,
         NSRemoteNotificationTypeAlert, NSRemoteNotificationTypeBadge, NSRemoteNotificationTypeNone,
         NSRemoteNotificationTypeSound, NSRequestUserAttentionType, NSRunAbortedResponse,
         NSRunContinuesResponse, NSRunStoppedResponse, NSServiceProviderName,
@@ -761,17 +762,20 @@ mod __exported {
         NSCollectionLayoutAnchor, NSCollectionLayoutBoundarySupplementaryItem,
         NSCollectionLayoutContainer, NSCollectionLayoutDecorationItem, NSCollectionLayoutDimension,
         NSCollectionLayoutEdgeSpacing, NSCollectionLayoutEnvironment, NSCollectionLayoutGroup,
-        NSCollectionLayoutGroupCustomItem, NSCollectionLayoutItem, NSCollectionLayoutSection,
+        NSCollectionLayoutGroupCustomItem, NSCollectionLayoutGroupCustomItemProvider,
+        NSCollectionLayoutItem, NSCollectionLayoutSection,
         NSCollectionLayoutSectionOrthogonalScrollingBehavior,
         NSCollectionLayoutSectionOrthogonalScrollingBehaviorContinuous,
         NSCollectionLayoutSectionOrthogonalScrollingBehaviorContinuousGroupLeadingBoundary,
         NSCollectionLayoutSectionOrthogonalScrollingBehaviorGroupPaging,
         NSCollectionLayoutSectionOrthogonalScrollingBehaviorGroupPagingCentered,
         NSCollectionLayoutSectionOrthogonalScrollingBehaviorNone,
-        NSCollectionLayoutSectionOrthogonalScrollingBehaviorPaging, NSCollectionLayoutSize,
+        NSCollectionLayoutSectionOrthogonalScrollingBehaviorPaging,
+        NSCollectionLayoutSectionVisibleItemsInvalidationHandler, NSCollectionLayoutSize,
         NSCollectionLayoutSpacing, NSCollectionLayoutSupplementaryItem,
         NSCollectionLayoutVisibleItem, NSCollectionViewCompositionalLayout,
-        NSCollectionViewCompositionalLayoutConfiguration, NSDirectionalEdgeInsets,
+        NSCollectionViewCompositionalLayoutConfiguration,
+        NSCollectionViewCompositionalLayoutSectionProvider, NSDirectionalEdgeInsets,
         NSDirectionalEdgeInsetsZero, NSDirectionalRectEdge, NSDirectionalRectEdgeAll,
         NSDirectionalRectEdgeBottom, NSDirectionalRectEdgeLeading, NSDirectionalRectEdgeNone,
         NSDirectionalRectEdgeTop, NSDirectionalRectEdgeTrailing, NSRectAlignment,
@@ -866,7 +870,8 @@ mod __exported {
         NSDictionaryController, NSDictionaryControllerKeyValuePair,
     };
     pub use super::NSDiffableDataSource::{
-        NSCollectionViewDiffableDataSource, NSDiffableDataSourceSnapshot,
+        NSCollectionViewDiffableDataSource, NSCollectionViewDiffableDataSourceItemProvider,
+        NSCollectionViewDiffableDataSourceSupplementaryViewProvider, NSDiffableDataSourceSnapshot,
     };
     pub use super::NSDockTile::{
         NSAppKitVersionNumberWithDockTilePlugInSupport, NSDockTile, NSDockTilePlugIn,
@@ -1004,7 +1009,7 @@ mod __exported {
         NSAntialiasThresholdChangedNotification, NSControlGlyph, NSFont,
         NSFontAntialiasedIntegerAdvancementsRenderingMode, NSFontAntialiasedRenderingMode,
         NSFontDefaultRenderingMode, NSFontIdentityMatrix, NSFontIntegerAdvancementsRenderingMode,
-        NSFontRenderingMode, NSFontSetChangedNotification, NSMultibyteGlyphPacking,
+        NSFontRenderingMode, NSFontSetChangedNotification, NSGlyph, NSMultibyteGlyphPacking,
         NSNativeShortGlyphPacking, NSNullGlyph,
     };
     pub use super::NSFontAssetRequest::{
@@ -1332,7 +1337,7 @@ mod __exported {
         NSLayoutFormatAlignAllTop, NSLayoutFormatAlignAllTrailing, NSLayoutFormatAlignmentMask,
         NSLayoutFormatDirectionLeadingToTrailing, NSLayoutFormatDirectionLeftToRight,
         NSLayoutFormatDirectionMask, NSLayoutFormatDirectionRightToLeft, NSLayoutFormatOptions,
-        NSLayoutPriorityDefaultHigh, NSLayoutPriorityDefaultLow,
+        NSLayoutPriority, NSLayoutPriorityDefaultHigh, NSLayoutPriorityDefaultLow,
         NSLayoutPriorityDragThatCanResizeWindow, NSLayoutPriorityDragThatCannotResizeWindow,
         NSLayoutPriorityFittingSizeCompression, NSLayoutPriorityRequired,
         NSLayoutPriorityWindowSizeStayPut, NSLayoutRelation, NSLayoutRelationEqual,
@@ -1756,8 +1761,9 @@ mod __exported {
         NSStackViewDistributionFillProportionally, NSStackViewDistributionGravityAreas,
         NSStackViewGravity, NSStackViewGravityBottom, NSStackViewGravityCenter,
         NSStackViewGravityLeading, NSStackViewGravityTop, NSStackViewGravityTrailing,
-        NSStackViewSpacingUseDefault, NSStackViewVisibilityPriorityDetachOnlyIfNecessary,
-        NSStackViewVisibilityPriorityMustHold, NSStackViewVisibilityPriorityNotVisible,
+        NSStackViewSpacingUseDefault, NSStackViewVisibilityPriority,
+        NSStackViewVisibilityPriorityDetachOnlyIfNecessary, NSStackViewVisibilityPriorityMustHold,
+        NSStackViewVisibilityPriorityNotVisible,
     };
     pub use super::NSStatusBar::{
         NSSquareStatusItemLength, NSStatusBar, NSVariableStatusItemLength,
@@ -1770,7 +1776,9 @@ mod __exported {
     pub use super::NSStepper::NSStepper;
     pub use super::NSStepperCell::NSStepperCell;
     pub use super::NSStepperTouchBarItem::NSStepperTouchBarItem;
-    pub use super::NSStoryboard::{NSStoryboard, NSStoryboardName, NSStoryboardSceneIdentifier};
+    pub use super::NSStoryboard::{
+        NSStoryboard, NSStoryboardControllerCreator, NSStoryboardName, NSStoryboardSceneIdentifier,
+    };
     pub use super::NSStoryboardSegue::{
         NSSeguePerforming, NSStoryboardSegue, NSStoryboardSegueIdentifier,
     };
@@ -1833,7 +1841,11 @@ mod __exported {
         NSTableViewStyleInset, NSTableViewStylePlain, NSTableViewStyleSourceList,
         NSTableViewUniformColumnAutoresizingStyle,
     };
-    pub use super::NSTableViewDiffableDataSource::NSTableViewDiffableDataSource;
+    pub use super::NSTableViewDiffableDataSource::{
+        NSTableViewDiffableDataSource, NSTableViewDiffableDataSourceCellProvider,
+        NSTableViewDiffableDataSourceRowProvider,
+        NSTableViewDiffableDataSourceSectionHeaderViewProvider,
+    };
     pub use super::NSTableViewRowAction::{
         NSTableViewRowAction, NSTableViewRowActionStyle, NSTableViewRowActionStyleDestructive,
         NSTableViewRowActionStyleRegular,
@@ -2049,8 +2061,8 @@ mod __exported {
     pub use super::NSTouchBarItem::{
         NSTouchBarItem, NSTouchBarItemIdentifier, NSTouchBarItemIdentifierFixedSpaceLarge,
         NSTouchBarItemIdentifierFixedSpaceSmall, NSTouchBarItemIdentifierFlexibleSpace,
-        NSTouchBarItemIdentifierOtherItemsProxy, NSTouchBarItemPriorityHigh,
-        NSTouchBarItemPriorityLow, NSTouchBarItemPriorityNormal,
+        NSTouchBarItemIdentifierOtherItemsProxy, NSTouchBarItemPriority,
+        NSTouchBarItemPriorityHigh, NSTouchBarItemPriorityLow, NSTouchBarItemPriorityNormal,
     };
     pub use super::NSTrackingArea::{
         NSTrackingActiveAlways, NSTrackingActiveInActiveApp, NSTrackingActiveInKeyWindow,

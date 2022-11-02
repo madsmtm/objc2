@@ -10,6 +10,8 @@ struct_impl!(
     }
 );
 
+pub type NSRangePointer = *mut NSRange;
+
 extern_methods!(
     /// NSValueRangeExtensions
     unsafe impl NSValue {

@@ -6,6 +6,8 @@ use crate::Foundation::*;
 
 pub type NSTouchBarItemIdentifier = NSString;
 
+pub type NSTouchBarItemPriority = c_float;
+
 pub static NSTouchBarItemPriorityHigh: NSTouchBarItemPriority = 1000;
 
 pub static NSTouchBarItemPriorityNormal: NSTouchBarItemPriority = 0;

@@ -225,6 +225,8 @@ extern "C" {
     pub static NSFontSetChangedNotification: &'static NSNotificationName;
 }
 
+pub type NSGlyph = c_uint;
+
 pub const NSControlGlyph: i32 = 0x00FFFFFF;
 pub const NSNullGlyph: i32 = 0x0;
 

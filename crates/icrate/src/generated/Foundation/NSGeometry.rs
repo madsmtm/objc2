@@ -5,9 +5,21 @@ use crate::Foundation::*;
 
 pub type NSPoint = CGPoint;
 
+pub type NSPointPointer = *mut NSPoint;
+
+pub type NSPointArray = *mut NSPoint;
+
 pub type NSSize = CGSize;
 
+pub type NSSizePointer = *mut NSSize;
+
+pub type NSSizeArray = *mut NSSize;
+
 pub type NSRect = CGRect;
+
+pub type NSRectPointer = *mut NSRect;
+
+pub type NSRectArray = *mut NSRect;
 
 pub type NSRectEdge = NSUInteger;
 pub const NSRectEdgeMinX: NSRectEdge = CGRectMinXEdge;

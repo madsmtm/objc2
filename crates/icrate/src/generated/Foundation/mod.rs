@@ -210,8 +210,9 @@ mod __exported {
         NSAppleEventSendQueueReply, NSAppleEventSendWaitForReply,
     };
     pub use super::NSAppleEventManager::{
-        NSAppleEventManager, NSAppleEventManagerWillProcessFirstEventNotification,
-        NSAppleEventTimeOutDefault, NSAppleEventTimeOutNone,
+        NSAppleEventManager, NSAppleEventManagerSuspensionID,
+        NSAppleEventManagerWillProcessFirstEventNotification, NSAppleEventTimeOutDefault,
+        NSAppleEventTimeOutNone,
     };
     pub use super::NSAppleScript::{
         NSAppleScript, NSAppleScriptErrorAppName, NSAppleScriptErrorBriefMessage,
@@ -257,8 +258,9 @@ mod __exported {
     };
     pub use super::NSAutoreleasePool::NSAutoreleasePool;
     pub use super::NSBackgroundActivityScheduler::{
-        NSBackgroundActivityResult, NSBackgroundActivityResultDeferred,
-        NSBackgroundActivityResultFinished, NSBackgroundActivityScheduler,
+        NSBackgroundActivityCompletionHandler, NSBackgroundActivityResult,
+        NSBackgroundActivityResultDeferred, NSBackgroundActivityResultFinished,
+        NSBackgroundActivityScheduler,
     };
     pub use super::NSBundle::{
         NSBundle, NSBundleDidLoadNotification, NSBundleExecutableArchitectureARM64,
@@ -353,7 +355,7 @@ mod __exported {
         NSDataWritingWithoutOverwriting, NSMappedRead, NSMutableData, NSPurgeableData,
         NSUncachedRead,
     };
-    pub use super::NSDate::{NSDate, NSSystemClockDidChangeNotification};
+    pub use super::NSDate::{NSDate, NSSystemClockDidChangeNotification, NSTimeInterval};
     pub use super::NSDateComponentsFormatter::{
         NSDateComponentsFormatter, NSDateComponentsFormatterUnitsStyle,
         NSDateComponentsFormatterUnitsStyleAbbreviated, NSDateComponentsFormatterUnitsStyleBrief,
@@ -424,7 +426,7 @@ mod __exported {
         NSInvalidArgumentException, NSInvalidReceivePortException, NSInvalidSendPortException,
         NSMallocException, NSObjectInaccessibleException, NSObjectNotAvailableException,
         NSOldStyleException, NSPortReceiveException, NSPortSendException, NSPortTimeoutException,
-        NSRangeException,
+        NSRangeException, NSUncaughtExceptionHandler,
     };
     pub use super::NSExpression::{
         NSAggregateExpressionType, NSAnyKeyExpressionType, NSBlockExpressionType,
@@ -510,8 +512,9 @@ mod __exported {
         NSAlignMinXInward, NSAlignMinXNearest, NSAlignMinXOutward, NSAlignMinYInward,
         NSAlignMinYNearest, NSAlignMinYOutward, NSAlignRectFlipped, NSAlignWidthInward,
         NSAlignWidthNearest, NSAlignWidthOutward, NSAlignmentOptions, NSEdgeInsets,
-        NSEdgeInsetsZero, NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint, NSRect,
-        NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize,
+        NSEdgeInsetsZero, NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint, NSPointArray,
+        NSPointPointer, NSRect, NSRectArray, NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY,
+        NSRectEdgeMinX, NSRectEdgeMinY, NSRectPointer, NSSize, NSSizeArray, NSSizePointer,
         NSZeroPoint, NSZeroRect, NSZeroSize,
     };
     pub use super::NSHTTPCookie::{
@@ -552,11 +555,12 @@ mod __exported {
     pub use super::NSInvocation::NSInvocation;
     pub use super::NSItemProvider::{
         NSExtensionJavaScriptFinalizeArgumentKey, NSExtensionJavaScriptPreprocessingResultsKey,
-        NSItemProvider, NSItemProviderErrorCode, NSItemProviderErrorDomain,
-        NSItemProviderFileOptionOpenInPlace, NSItemProviderFileOptions,
-        NSItemProviderItemUnavailableError, NSItemProviderPreferredImageSizeKey,
-        NSItemProviderReading, NSItemProviderRepresentationVisibility,
-        NSItemProviderRepresentationVisibilityAll, NSItemProviderRepresentationVisibilityGroup,
+        NSItemProvider, NSItemProviderCompletionHandler, NSItemProviderErrorCode,
+        NSItemProviderErrorDomain, NSItemProviderFileOptionOpenInPlace, NSItemProviderFileOptions,
+        NSItemProviderItemUnavailableError, NSItemProviderLoadHandler,
+        NSItemProviderPreferredImageSizeKey, NSItemProviderReading,
+        NSItemProviderRepresentationVisibility, NSItemProviderRepresentationVisibilityAll,
+        NSItemProviderRepresentationVisibilityGroup,
         NSItemProviderRepresentationVisibilityOwnProcess,
         NSItemProviderRepresentationVisibilityTeam, NSItemProviderUnavailableCoercionError,
         NSItemProviderUnexpectedValueClassError, NSItemProviderUnknownError, NSItemProviderWriting,
@@ -802,10 +806,10 @@ mod __exported {
         NSNumberFormatterSpellOutStyle, NSNumberFormatterStyle,
     };
     pub use super::NSObjCRuntime::{
-        NSComparisonResult, NSEnumerationConcurrent, NSEnumerationOptions, NSEnumerationReverse,
-        NSExceptionName, NSFoundationVersionNumber, NSNotFound, NSOrderedAscending,
-        NSOrderedDescending, NSOrderedSame, NSQualityOfService, NSQualityOfServiceBackground,
-        NSQualityOfServiceDefault, NSQualityOfServiceUserInitiated,
+        NSComparator, NSComparisonResult, NSEnumerationConcurrent, NSEnumerationOptions,
+        NSEnumerationReverse, NSExceptionName, NSFoundationVersionNumber, NSNotFound,
+        NSOrderedAscending, NSOrderedDescending, NSOrderedSame, NSQualityOfService,
+        NSQualityOfServiceBackground, NSQualityOfServiceDefault, NSQualityOfServiceUserInitiated,
         NSQualityOfServiceUserInteractive, NSQualityOfServiceUtility, NSRunLoopMode,
         NSSortConcurrent, NSSortOptions, NSSortStable,
     };
@@ -868,7 +872,8 @@ mod __exported {
     pub use super::NSPort::{
         NSMachPort, NSMachPortDeallocateNone, NSMachPortDeallocateReceiveRight,
         NSMachPortDeallocateSendRight, NSMachPortDelegate, NSMachPortOptions, NSMessagePort,
-        NSPort, NSPortDelegate, NSPortDidBecomeInvalidNotification, NSSocketPort,
+        NSPort, NSPortDelegate, NSPortDidBecomeInvalidNotification, NSSocketNativeHandle,
+        NSSocketPort,
     };
     pub use super::NSPortCoder::NSPortCoder;
     pub use super::NSPortMessage::NSPortMessage;
@@ -897,8 +902,8 @@ mod __exported {
         NSProgressFileOperationKindDownloading, NSProgressFileOperationKindDuplicating,
         NSProgressFileOperationKindKey, NSProgressFileOperationKindReceiving,
         NSProgressFileOperationKindUploading, NSProgressFileTotalCountKey, NSProgressFileURLKey,
-        NSProgressKind, NSProgressKindFile, NSProgressReporting, NSProgressThroughputKey,
-        NSProgressUserInfoKey,
+        NSProgressKind, NSProgressKindFile, NSProgressPublishingHandler, NSProgressReporting,
+        NSProgressThroughputKey, NSProgressUnpublishingHandler, NSProgressUserInfoKey,
     };
     pub use super::NSPropertyList::{
         NSPropertyListBinaryFormat_v1_0, NSPropertyListFormat, NSPropertyListImmutable,
@@ -908,7 +913,7 @@ mod __exported {
         NSPropertyListXMLFormat_v1_0,
     };
     pub use super::NSProtocolChecker::NSProtocolChecker;
-    pub use super::NSRange::NSRange;
+    pub use super::NSRange::{NSRange, NSRangePointer};
     pub use super::NSRegularExpression::{
         NSDataDetector, NSMatchingAnchored, NSMatchingCompleted, NSMatchingFlags, NSMatchingHitEnd,
         NSMatchingInternalError, NSMatchingOptions, NSMatchingProgress, NSMatchingReportCompletion,
@@ -990,11 +995,11 @@ mod __exported {
         NSStreamStatusOpen, NSStreamStatusOpening, NSStreamStatusReading, NSStreamStatusWriting,
     };
     pub use super::NSString::{
-        NSASCIIStringEncoding, NSAnchoredSearch, NSBackwardsSearch, NSCaseInsensitiveSearch,
-        NSCharacterConversionException, NSConstantString, NSDiacriticInsensitiveSearch,
-        NSForcedOrderingSearch, NSISO2022JPStringEncoding, NSISOLatin1StringEncoding,
-        NSISOLatin2StringEncoding, NSJapaneseEUCStringEncoding, NSLiteralSearch,
-        NSMacOSRomanStringEncoding, NSMutableString, NSNEXTSTEPStringEncoding,
+        unichar, NSASCIIStringEncoding, NSAnchoredSearch, NSBackwardsSearch,
+        NSCaseInsensitiveSearch, NSCharacterConversionException, NSConstantString,
+        NSDiacriticInsensitiveSearch, NSForcedOrderingSearch, NSISO2022JPStringEncoding,
+        NSISOLatin1StringEncoding, NSISOLatin2StringEncoding, NSJapaneseEUCStringEncoding,
+        NSLiteralSearch, NSMacOSRomanStringEncoding, NSMutableString, NSNEXTSTEPStringEncoding,
         NSNonLossyASCIIStringEncoding, NSNumericSearch, NSParseErrorException,
         NSProprietaryStringEncoding, NSRegularExpressionSearch, NSShiftJISStringEncoding,
         NSSimpleCString, NSString, NSStringCompareOptions, NSStringEncoding,
@@ -1231,7 +1236,9 @@ mod __exported {
         NSUserNotificationCenterDelegate, NSUserNotificationDefaultSoundName,
     };
     pub use super::NSUserScriptTask::{
-        NSUserAppleScriptTask, NSUserAutomatorTask, NSUserScriptTask, NSUserUnixTask,
+        NSUserAppleScriptTask, NSUserAppleScriptTaskCompletionHandler, NSUserAutomatorTask,
+        NSUserAutomatorTaskCompletionHandler, NSUserScriptTask, NSUserScriptTaskCompletionHandler,
+        NSUserUnixTask, NSUserUnixTaskCompletionHandler,
     };
     pub use super::NSValue::{NSNumber, NSValue};
     pub use super::NSValueTransformer::{

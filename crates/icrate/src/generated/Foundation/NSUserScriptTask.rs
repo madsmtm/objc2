@@ -3,6 +3,8 @@
 use crate::common::*;
 use crate::Foundation::*;
 
+pub type NSUserScriptTaskCompletionHandler = TodoBlock;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSUserScriptTask;
@@ -30,6 +32,8 @@ extern_methods!(
         );
     }
 );
+
+pub type NSUserUnixTaskCompletionHandler = TodoBlock;
 
 extern_class!(
     #[derive(Debug)]
@@ -69,6 +73,8 @@ extern_methods!(
     }
 );
 
+pub type NSUserAppleScriptTaskCompletionHandler = TodoBlock;
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSUserAppleScriptTask;
@@ -88,6 +94,8 @@ extern_methods!(
         );
     }
 );
+
+pub type NSUserAutomatorTaskCompletionHandler = TodoBlock;
 
 extern_class!(
     #[derive(Debug)]
