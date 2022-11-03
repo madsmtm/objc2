@@ -5,4 +5,80 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextInputClient = NSObject;
+extern_protocol!(
+    pub struct NSTextInputClient;
+
+    unsafe impl NSTextInputClient {
+        #[method(insertText:replacementRange:)]
+        pub unsafe fn insertText_replacementRange(
+            &self,
+            string: &Object,
+            replacementRange: NSRange,
+        );
+
+        #[method(doCommandBySelector:)]
+        pub unsafe fn doCommandBySelector(&self, selector: Sel);
+
+        #[method(setMarkedText:selectedRange:replacementRange:)]
+        pub unsafe fn setMarkedText_selectedRange_replacementRange(
+            &self,
+            string: &Object,
+            selectedRange: NSRange,
+            replacementRange: NSRange,
+        );
+
+        #[method(unmarkText)]
+        pub unsafe fn unmarkText(&self);
+
+        #[method(selectedRange)]
+        pub unsafe fn selectedRange(&self) -> NSRange;
+
+        #[method(markedRange)]
+        pub unsafe fn markedRange(&self) -> NSRange;
+
+        #[method(hasMarkedText)]
+        pub unsafe fn hasMarkedText(&self) -> bool;
+
+        #[method_id(@__retain_semantics Other attributedSubstringForProposedRange:actualRange:)]
+        pub unsafe fn attributedSubstringForProposedRange_actualRange(
+            &self,
+            range: NSRange,
+            actualRange: NSRangePointer,
+        ) -> Option<Id<NSAttributedString, Shared>>;
+
+        #[method_id(@__retain_semantics Other validAttributesForMarkedText)]
+        pub unsafe fn validAttributesForMarkedText(
+            &self,
+        ) -> Id<NSArray<NSAttributedStringKey>, Shared>;
+
+        #[method(firstRectForCharacterRange:actualRange:)]
+        pub unsafe fn firstRectForCharacterRange_actualRange(
+            &self,
+            range: NSRange,
+            actualRange: NSRangePointer,
+        ) -> NSRect;
+
+        #[method(characterIndexForPoint:)]
+        pub unsafe fn characterIndexForPoint(&self, point: NSPoint) -> NSUInteger;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other attributedString)]
+        pub unsafe fn attributedString(&self) -> Id<NSAttributedString, Shared>;
+
+        #[optional]
+        #[method(fractionOfDistanceThroughGlyphForPoint:)]
+        pub unsafe fn fractionOfDistanceThroughGlyphForPoint(&self, point: NSPoint) -> CGFloat;
+
+        #[optional]
+        #[method(baselineDeltaForCharacterAtIndex:)]
+        pub unsafe fn baselineDeltaForCharacterAtIndex(&self, anIndex: NSUInteger) -> CGFloat;
+
+        #[optional]
+        #[method(windowLevel)]
+        pub unsafe fn windowLevel(&self) -> NSInteger;
+
+        #[optional]
+        #[method(drawsVerticallyForCharacterAtIndex:)]
+        pub unsafe fn drawsVerticallyForCharacterAtIndex(&self, charIndex: NSUInteger) -> bool;
+    }
+);

@@ -5,9 +5,63 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSScrubberDataSource = NSObject;
+extern_protocol!(
+    pub struct NSScrubberDataSource;
 
-pub type NSScrubberDelegate = NSObject;
+    unsafe impl NSScrubberDataSource {
+        #[method(numberOfItemsForScrubber:)]
+        pub unsafe fn numberOfItemsForScrubber(&self, scrubber: &NSScrubber) -> NSInteger;
+
+        #[method_id(@__retain_semantics Other scrubber:viewForItemAtIndex:)]
+        pub unsafe fn scrubber_viewForItemAtIndex(
+            &self,
+            scrubber: &NSScrubber,
+            index: NSInteger,
+        ) -> Id<NSScrubberItemView, Shared>;
+    }
+);
+
+extern_protocol!(
+    pub struct NSScrubberDelegate;
+
+    unsafe impl NSScrubberDelegate {
+        #[optional]
+        #[method(scrubber:didSelectItemAtIndex:)]
+        pub unsafe fn scrubber_didSelectItemAtIndex(
+            &self,
+            scrubber: &NSScrubber,
+            selectedIndex: NSInteger,
+        );
+
+        #[optional]
+        #[method(scrubber:didHighlightItemAtIndex:)]
+        pub unsafe fn scrubber_didHighlightItemAtIndex(
+            &self,
+            scrubber: &NSScrubber,
+            highlightedIndex: NSInteger,
+        );
+
+        #[optional]
+        #[method(scrubber:didChangeVisibleRange:)]
+        pub unsafe fn scrubber_didChangeVisibleRange(
+            &self,
+            scrubber: &NSScrubber,
+            visibleRange: NSRange,
+        );
+
+        #[optional]
+        #[method(didBeginInteractingWithScrubber:)]
+        pub unsafe fn didBeginInteractingWithScrubber(&self, scrubber: &NSScrubber);
+
+        #[optional]
+        #[method(didFinishInteractingWithScrubber:)]
+        pub unsafe fn didFinishInteractingWithScrubber(&self, scrubber: &NSScrubber);
+
+        #[optional]
+        #[method(didCancelInteractingWithScrubber:)]
+        pub unsafe fn didCancelInteractingWithScrubber(&self, scrubber: &NSScrubber);
+    }
+);
 
 ns_enum!(
     #[underlying(NSInteger)]

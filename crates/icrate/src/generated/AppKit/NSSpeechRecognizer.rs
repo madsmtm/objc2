@@ -57,4 +57,16 @@ extern_methods!(
     }
 );
 
-pub type NSSpeechRecognizerDelegate = NSObject;
+extern_protocol!(
+    pub struct NSSpeechRecognizerDelegate;
+
+    unsafe impl NSSpeechRecognizerDelegate {
+        #[optional]
+        #[method(speechRecognizer:didRecognizeCommand:)]
+        pub unsafe fn speechRecognizer_didRecognizeCommand(
+            &self,
+            sender: &NSSpeechRecognizer,
+            command: &NSString,
+        );
+    }
+);

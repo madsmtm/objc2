@@ -5,7 +5,14 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSUserActivityRestoring = NSObject;
+extern_protocol!(
+    pub struct NSUserActivityRestoring;
+
+    unsafe impl NSUserActivityRestoring {
+        #[method(restoreUserActivityState:)]
+        pub unsafe fn restoreUserActivityState(&self, userActivity: &NSUserActivity);
+    }
+);
 
 extern_methods!(
     /// NSUserActivity

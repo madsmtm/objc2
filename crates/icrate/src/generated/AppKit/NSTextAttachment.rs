@@ -12,9 +12,61 @@ extern_enum!(
     }
 );
 
-pub type NSTextAttachmentContainer = NSObject;
+extern_protocol!(
+    pub struct NSTextAttachmentContainer;
 
-pub type NSTextAttachmentLayout = NSObject;
+    unsafe impl NSTextAttachmentContainer {
+        #[method_id(@__retain_semantics Other imageForBounds:textContainer:characterIndex:)]
+        pub unsafe fn imageForBounds_textContainer_characterIndex(
+            &self,
+            imageBounds: CGRect,
+            textContainer: Option<&NSTextContainer>,
+            charIndex: NSUInteger,
+        ) -> Option<Id<NSImage, Shared>>;
+
+        #[method(attachmentBoundsForTextContainer:proposedLineFragment:glyphPosition:characterIndex:)]
+        pub unsafe fn attachmentBoundsForTextContainer_proposedLineFragment_glyphPosition_characterIndex(
+            &self,
+            textContainer: Option<&NSTextContainer>,
+            lineFrag: CGRect,
+            position: CGPoint,
+            charIndex: NSUInteger,
+        ) -> CGRect;
+    }
+);
+
+extern_protocol!(
+    pub struct NSTextAttachmentLayout;
+
+    unsafe impl NSTextAttachmentLayout {
+        #[method_id(@__retain_semantics Other imageForBounds:attributes:location:textContainer:)]
+        pub unsafe fn imageForBounds_attributes_location_textContainer(
+            &self,
+            bounds: CGRect,
+            attributes: &NSDictionary<NSAttributedStringKey, Object>,
+            location: &NSTextLocation,
+            textContainer: Option<&NSTextContainer>,
+        ) -> Option<Id<NSImage, Shared>>;
+
+        #[method(attachmentBoundsForAttributes:location:textContainer:proposedLineFragment:position:)]
+        pub unsafe fn attachmentBoundsForAttributes_location_textContainer_proposedLineFragment_position(
+            &self,
+            attributes: &NSDictionary<NSAttributedStringKey, Object>,
+            location: &NSTextLocation,
+            textContainer: Option<&NSTextContainer>,
+            proposedLineFragment: CGRect,
+            position: CGPoint,
+        ) -> CGRect;
+
+        #[method_id(@__retain_semantics Other viewProviderForParentView:location:textContainer:)]
+        pub unsafe fn viewProviderForParentView_location_textContainer(
+            &self,
+            parentView: Option<&NSView>,
+            location: &NSTextLocation,
+            textContainer: Option<&NSTextContainer>,
+        ) -> Option<Id<NSTextAttachmentViewProvider, Shared>>;
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

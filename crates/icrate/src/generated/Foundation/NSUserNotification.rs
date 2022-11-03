@@ -224,4 +224,32 @@ extern_methods!(
     }
 );
 
-pub type NSUserNotificationCenterDelegate = NSObject;
+extern_protocol!(
+    pub struct NSUserNotificationCenterDelegate;
+
+    unsafe impl NSUserNotificationCenterDelegate {
+        #[optional]
+        #[method(userNotificationCenter:didDeliverNotification:)]
+        pub unsafe fn userNotificationCenter_didDeliverNotification(
+            &self,
+            center: &NSUserNotificationCenter,
+            notification: &NSUserNotification,
+        );
+
+        #[optional]
+        #[method(userNotificationCenter:didActivateNotification:)]
+        pub unsafe fn userNotificationCenter_didActivateNotification(
+            &self,
+            center: &NSUserNotificationCenter,
+            notification: &NSUserNotification,
+        );
+
+        #[optional]
+        #[method(userNotificationCenter:shouldPresentNotification:)]
+        pub unsafe fn userNotificationCenter_shouldPresentNotification(
+            &self,
+            center: &NSUserNotificationCenter,
+            notification: &NSUserNotification,
+        ) -> bool;
+    }
+);

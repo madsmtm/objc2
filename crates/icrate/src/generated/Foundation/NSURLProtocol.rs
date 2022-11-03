@@ -3,7 +3,61 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSURLProtocolClient = NSObject;
+extern_protocol!(
+    pub struct NSURLProtocolClient;
+
+    unsafe impl NSURLProtocolClient {
+        #[method(URLProtocol:wasRedirectedToRequest:redirectResponse:)]
+        pub unsafe fn URLProtocol_wasRedirectedToRequest_redirectResponse(
+            &self,
+            protocol: &NSURLProtocol,
+            request: &NSURLRequest,
+            redirectResponse: &NSURLResponse,
+        );
+
+        #[method(URLProtocol:cachedResponseIsValid:)]
+        pub unsafe fn URLProtocol_cachedResponseIsValid(
+            &self,
+            protocol: &NSURLProtocol,
+            cachedResponse: &NSCachedURLResponse,
+        );
+
+        #[method(URLProtocol:didReceiveResponse:cacheStoragePolicy:)]
+        pub unsafe fn URLProtocol_didReceiveResponse_cacheStoragePolicy(
+            &self,
+            protocol: &NSURLProtocol,
+            response: &NSURLResponse,
+            policy: NSURLCacheStoragePolicy,
+        );
+
+        #[method(URLProtocol:didLoadData:)]
+        pub unsafe fn URLProtocol_didLoadData(&self, protocol: &NSURLProtocol, data: &NSData);
+
+        #[method(URLProtocolDidFinishLoading:)]
+        pub unsafe fn URLProtocolDidFinishLoading(&self, protocol: &NSURLProtocol);
+
+        #[method(URLProtocol:didFailWithError:)]
+        pub unsafe fn URLProtocol_didFailWithError(
+            &self,
+            protocol: &NSURLProtocol,
+            error: &NSError,
+        );
+
+        #[method(URLProtocol:didReceiveAuthenticationChallenge:)]
+        pub unsafe fn URLProtocol_didReceiveAuthenticationChallenge(
+            &self,
+            protocol: &NSURLProtocol,
+            challenge: &NSURLAuthenticationChallenge,
+        );
+
+        #[method(URLProtocol:didCancelAuthenticationChallenge:)]
+        pub unsafe fn URLProtocol_didCancelAuthenticationChallenge(
+            &self,
+            protocol: &NSURLProtocol,
+            challenge: &NSURLAuthenticationChallenge,
+        );
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

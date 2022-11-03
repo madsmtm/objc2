@@ -353,7 +353,45 @@ extern_methods!(
     unsafe impl NSImage {}
 );
 
-pub type NSImageDelegate = NSObject;
+extern_protocol!(
+    pub struct NSImageDelegate;
+
+    unsafe impl NSImageDelegate {
+        #[optional]
+        #[method_id(@__retain_semantics Other imageDidNotDraw:inRect:)]
+        pub unsafe fn imageDidNotDraw_inRect(
+            &self,
+            sender: &NSImage,
+            rect: NSRect,
+        ) -> Option<Id<NSImage, Shared>>;
+
+        #[optional]
+        #[method(image:willLoadRepresentation:)]
+        pub unsafe fn image_willLoadRepresentation(&self, image: &NSImage, rep: &NSImageRep);
+
+        #[optional]
+        #[method(image:didLoadRepresentationHeader:)]
+        pub unsafe fn image_didLoadRepresentationHeader(&self, image: &NSImage, rep: &NSImageRep);
+
+        #[optional]
+        #[method(image:didLoadPartOfRepresentation:withValidRows:)]
+        pub unsafe fn image_didLoadPartOfRepresentation_withValidRows(
+            &self,
+            image: &NSImage,
+            rep: &NSImageRep,
+            rows: NSInteger,
+        );
+
+        #[optional]
+        #[method(image:didLoadRepresentation:withStatus:)]
+        pub unsafe fn image_didLoadRepresentation_withStatus(
+            &self,
+            image: &NSImage,
+            rep: &NSImageRep,
+            status: NSImageLoadStatus,
+        );
+    }
+);
 
 extern_methods!(
     /// NSBundleImageExtension

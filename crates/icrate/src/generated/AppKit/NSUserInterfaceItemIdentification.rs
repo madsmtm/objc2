@@ -7,4 +7,14 @@ use crate::Foundation::*;
 
 pub type NSUserInterfaceItemIdentifier = NSString;
 
-pub type NSUserInterfaceItemIdentification = NSObject;
+extern_protocol!(
+    pub struct NSUserInterfaceItemIdentification;
+
+    unsafe impl NSUserInterfaceItemIdentification {
+        #[method_id(@__retain_semantics Other identifier)]
+        pub unsafe fn identifier(&self) -> Option<Id<NSUserInterfaceItemIdentifier, Shared>>;
+
+        #[method(setIdentifier:)]
+        pub unsafe fn setIdentifier(&self, identifier: Option<&NSUserInterfaceItemIdentifier>);
+    }
+);

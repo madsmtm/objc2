@@ -35,7 +35,20 @@ extern_static!(
     NSPrintPanelAccessorySummaryItemDescriptionKey: &'static NSPrintPanelAccessorySummaryKey
 );
 
-pub type NSPrintPanelAccessorizing = NSObject;
+extern_protocol!(
+    pub struct NSPrintPanelAccessorizing;
+
+    unsafe impl NSPrintPanelAccessorizing {
+        #[method_id(@__retain_semantics Other localizedSummaryItems)]
+        pub unsafe fn localizedSummaryItems(
+            &self,
+        ) -> Id<NSArray<NSDictionary<NSPrintPanelAccessorySummaryKey, NSString>>, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other keyPathsForValuesAffectingPreview)]
+        pub unsafe fn keyPathsForValuesAffectingPreview(&self) -> Id<NSSet<NSString>, Shared>;
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

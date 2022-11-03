@@ -79,13 +79,64 @@ extern_methods!(
     }
 );
 
-pub type NSTextStorageDelegate = NSObject;
+extern_protocol!(
+    pub struct NSTextStorageDelegate;
+
+    unsafe impl NSTextStorageDelegate {
+        #[optional]
+        #[method(textStorage:willProcessEditing:range:changeInLength:)]
+        pub unsafe fn textStorage_willProcessEditing_range_changeInLength(
+            &self,
+            textStorage: &NSTextStorage,
+            editedMask: NSTextStorageEditActions,
+            editedRange: NSRange,
+            delta: NSInteger,
+        );
+
+        #[optional]
+        #[method(textStorage:didProcessEditing:range:changeInLength:)]
+        pub unsafe fn textStorage_didProcessEditing_range_changeInLength(
+            &self,
+            textStorage: &NSTextStorage,
+            editedMask: NSTextStorageEditActions,
+            editedRange: NSRange,
+            delta: NSInteger,
+        );
+    }
+);
 
 extern_static!(NSTextStorageWillProcessEditingNotification: &'static NSNotificationName);
 
 extern_static!(NSTextStorageDidProcessEditingNotification: &'static NSNotificationName);
 
-pub type NSTextStorageObserving = NSObject;
+extern_protocol!(
+    pub struct NSTextStorageObserving;
+
+    unsafe impl NSTextStorageObserving {
+        #[method_id(@__retain_semantics Other textStorage)]
+        pub unsafe fn textStorage(&self) -> Option<Id<NSTextStorage, Shared>>;
+
+        #[method(setTextStorage:)]
+        pub unsafe fn setTextStorage(&self, textStorage: Option<&NSTextStorage>);
+
+        #[method(processEditingForTextStorage:edited:range:changeInLength:invalidatedRange:)]
+        pub unsafe fn processEditingForTextStorage_edited_range_changeInLength_invalidatedRange(
+            &self,
+            textStorage: &NSTextStorage,
+            editMask: NSTextStorageEditActions,
+            newCharRange: NSRange,
+            delta: NSInteger,
+            invalidatedCharRange: NSRange,
+        );
+
+        #[method(performEditingTransactionForTextStorage:usingBlock:)]
+        pub unsafe fn performEditingTransactionForTextStorage_usingBlock(
+            &self,
+            textStorage: &NSTextStorage,
+            transaction: &Block<(), ()>,
+        );
+    }
+);
 
 pub type NSTextStorageEditedOptions = NSUInteger;
 

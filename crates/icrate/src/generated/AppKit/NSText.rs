@@ -315,7 +315,31 @@ extern_enum!(
     }
 );
 
-pub type NSTextDelegate = NSObject;
+extern_protocol!(
+    pub struct NSTextDelegate;
+
+    unsafe impl NSTextDelegate {
+        #[optional]
+        #[method(textShouldBeginEditing:)]
+        pub unsafe fn textShouldBeginEditing(&self, textObject: &NSText) -> bool;
+
+        #[optional]
+        #[method(textShouldEndEditing:)]
+        pub unsafe fn textShouldEndEditing(&self, textObject: &NSText) -> bool;
+
+        #[optional]
+        #[method(textDidBeginEditing:)]
+        pub unsafe fn textDidBeginEditing(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(textDidEndEditing:)]
+        pub unsafe fn textDidEndEditing(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(textDidChange:)]
+        pub unsafe fn textDidChange(&self, notification: &NSNotification);
+    }
+);
 
 extern_enum!(
     #[underlying(c_uint)]

@@ -65,11 +65,147 @@ extern_methods!(
     }
 );
 
-pub type NSURLConnectionDelegate = NSObject;
+extern_protocol!(
+    pub struct NSURLConnectionDelegate;
 
-pub type NSURLConnectionDataDelegate = NSObject;
+    unsafe impl NSURLConnectionDelegate {
+        #[optional]
+        #[method(connection:didFailWithError:)]
+        pub unsafe fn connection_didFailWithError(
+            &self,
+            connection: &NSURLConnection,
+            error: &NSError,
+        );
 
-pub type NSURLConnectionDownloadDelegate = NSObject;
+        #[optional]
+        #[method(connectionShouldUseCredentialStorage:)]
+        pub unsafe fn connectionShouldUseCredentialStorage(
+            &self,
+            connection: &NSURLConnection,
+        ) -> bool;
+
+        #[optional]
+        #[method(connection:willSendRequestForAuthenticationChallenge:)]
+        pub unsafe fn connection_willSendRequestForAuthenticationChallenge(
+            &self,
+            connection: &NSURLConnection,
+            challenge: &NSURLAuthenticationChallenge,
+        );
+
+        #[optional]
+        #[method(connection:canAuthenticateAgainstProtectionSpace:)]
+        pub unsafe fn connection_canAuthenticateAgainstProtectionSpace(
+            &self,
+            connection: &NSURLConnection,
+            protectionSpace: &NSURLProtectionSpace,
+        ) -> bool;
+
+        #[optional]
+        #[method(connection:didReceiveAuthenticationChallenge:)]
+        pub unsafe fn connection_didReceiveAuthenticationChallenge(
+            &self,
+            connection: &NSURLConnection,
+            challenge: &NSURLAuthenticationChallenge,
+        );
+
+        #[optional]
+        #[method(connection:didCancelAuthenticationChallenge:)]
+        pub unsafe fn connection_didCancelAuthenticationChallenge(
+            &self,
+            connection: &NSURLConnection,
+            challenge: &NSURLAuthenticationChallenge,
+        );
+    }
+);
+
+extern_protocol!(
+    pub struct NSURLConnectionDataDelegate;
+
+    unsafe impl NSURLConnectionDataDelegate {
+        #[optional]
+        #[method_id(@__retain_semantics Other connection:willSendRequest:redirectResponse:)]
+        pub unsafe fn connection_willSendRequest_redirectResponse(
+            &self,
+            connection: &NSURLConnection,
+            request: &NSURLRequest,
+            response: Option<&NSURLResponse>,
+        ) -> Option<Id<NSURLRequest, Shared>>;
+
+        #[optional]
+        #[method(connection:didReceiveResponse:)]
+        pub unsafe fn connection_didReceiveResponse(
+            &self,
+            connection: &NSURLConnection,
+            response: &NSURLResponse,
+        );
+
+        #[optional]
+        #[method(connection:didReceiveData:)]
+        pub unsafe fn connection_didReceiveData(&self, connection: &NSURLConnection, data: &NSData);
+
+        #[optional]
+        #[method_id(@__retain_semantics Other connection:needNewBodyStream:)]
+        pub unsafe fn connection_needNewBodyStream(
+            &self,
+            connection: &NSURLConnection,
+            request: &NSURLRequest,
+        ) -> Option<Id<NSInputStream, Shared>>;
+
+        #[optional]
+        #[method(connection:didSendBodyData:totalBytesWritten:totalBytesExpectedToWrite:)]
+        pub unsafe fn connection_didSendBodyData_totalBytesWritten_totalBytesExpectedToWrite(
+            &self,
+            connection: &NSURLConnection,
+            bytesWritten: NSInteger,
+            totalBytesWritten: NSInteger,
+            totalBytesExpectedToWrite: NSInteger,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other connection:willCacheResponse:)]
+        pub unsafe fn connection_willCacheResponse(
+            &self,
+            connection: &NSURLConnection,
+            cachedResponse: &NSCachedURLResponse,
+        ) -> Option<Id<NSCachedURLResponse, Shared>>;
+
+        #[optional]
+        #[method(connectionDidFinishLoading:)]
+        pub unsafe fn connectionDidFinishLoading(&self, connection: &NSURLConnection);
+    }
+);
+
+extern_protocol!(
+    pub struct NSURLConnectionDownloadDelegate;
+
+    unsafe impl NSURLConnectionDownloadDelegate {
+        #[optional]
+        #[method(connection:didWriteData:totalBytesWritten:expectedTotalBytes:)]
+        pub unsafe fn connection_didWriteData_totalBytesWritten_expectedTotalBytes(
+            &self,
+            connection: &NSURLConnection,
+            bytesWritten: c_longlong,
+            totalBytesWritten: c_longlong,
+            expectedTotalBytes: c_longlong,
+        );
+
+        #[optional]
+        #[method(connectionDidResumeDownloading:totalBytesWritten:expectedTotalBytes:)]
+        pub unsafe fn connectionDidResumeDownloading_totalBytesWritten_expectedTotalBytes(
+            &self,
+            connection: &NSURLConnection,
+            totalBytesWritten: c_longlong,
+            expectedTotalBytes: c_longlong,
+        );
+
+        #[method(connectionDidFinishDownloading:destinationURL:)]
+        pub unsafe fn connectionDidFinishDownloading_destinationURL(
+            &self,
+            connection: &NSURLConnection,
+            destinationURL: &NSURL,
+        );
+    }
+);
 
 extern_methods!(
     /// NSURLConnectionSynchronousLoading

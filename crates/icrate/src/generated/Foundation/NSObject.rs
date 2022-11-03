@@ -3,13 +3,47 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSCopying = NSObject;
+extern_protocol!(
+    pub struct NSCopying;
 
-pub type NSMutableCopying = NSObject;
+    unsafe impl NSCopying {
+        #[method_id(@__retain_semantics CopyOrMutCopy copyWithZone:)]
+        pub unsafe fn copyWithZone(&self, zone: *mut NSZone) -> Id<Object, Shared>;
+    }
+);
 
-pub type NSCoding = NSObject;
+extern_protocol!(
+    pub struct NSMutableCopying;
 
-pub type NSSecureCoding = NSObject;
+    unsafe impl NSMutableCopying {
+        #[method_id(@__retain_semantics CopyOrMutCopy mutableCopyWithZone:)]
+        pub unsafe fn mutableCopyWithZone(&self, zone: *mut NSZone) -> Id<Object, Shared>;
+    }
+);
+
+extern_protocol!(
+    pub struct NSCoding;
+
+    unsafe impl NSCoding {
+        #[method(encodeWithCoder:)]
+        pub unsafe fn encodeWithCoder(&self, coder: &NSCoder);
+
+        #[method_id(@__retain_semantics Init initWithCoder:)]
+        pub unsafe fn initWithCoder(
+            this: Option<Allocated<Self>>,
+            coder: &NSCoder,
+        ) -> Option<Id<Self, Shared>>;
+    }
+);
+
+extern_protocol!(
+    pub struct NSSecureCoding;
+
+    unsafe impl NSSecureCoding {
+        #[method(supportsSecureCoding)]
+        pub unsafe fn supportsSecureCoding() -> bool;
+    }
+);
 
 extern_methods!(
     /// NSCoderMethods
@@ -39,7 +73,23 @@ extern_methods!(
     }
 );
 
-pub type NSDiscardableContent = NSObject;
+extern_protocol!(
+    pub struct NSDiscardableContent;
+
+    unsafe impl NSDiscardableContent {
+        #[method(beginContentAccess)]
+        pub unsafe fn beginContentAccess(&self) -> bool;
+
+        #[method(endContentAccess)]
+        pub unsafe fn endContentAccess(&self);
+
+        #[method(discardContentIfPossible)]
+        pub unsafe fn discardContentIfPossible(&self);
+
+        #[method(isContentDiscarded)]
+        pub unsafe fn isContentDiscarded(&self) -> bool;
+    }
+);
 
 extern_methods!(
     /// NSDiscardableContentProxy

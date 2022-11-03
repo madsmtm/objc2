@@ -23,7 +23,18 @@ ns_enum!(
     }
 );
 
-pub type NSHapticFeedbackPerformer = NSObject;
+extern_protocol!(
+    pub struct NSHapticFeedbackPerformer;
+
+    unsafe impl NSHapticFeedbackPerformer {
+        #[method(performFeedbackPattern:performanceTime:)]
+        pub unsafe fn performFeedbackPattern_performanceTime(
+            &self,
+            pattern: NSHapticFeedbackPattern,
+            performanceTime: NSHapticFeedbackPerformanceTime,
+        );
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

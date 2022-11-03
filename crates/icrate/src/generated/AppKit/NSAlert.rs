@@ -115,7 +115,15 @@ extern_methods!(
     }
 );
 
-pub type NSAlertDelegate = NSObject;
+extern_protocol!(
+    pub struct NSAlertDelegate;
+
+    unsafe impl NSAlertDelegate {
+        #[optional]
+        #[method(alertShowHelp:)]
+        pub unsafe fn alertShowHelp(&self, alert: &NSAlert) -> bool;
+    }
+);
 
 extern_methods!(
     /// NSAlertDeprecated

@@ -5,7 +5,95 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTokenFieldDelegate = NSObject;
+extern_protocol!(
+    pub struct NSTokenFieldDelegate;
+
+    unsafe impl NSTokenFieldDelegate {
+        #[optional]
+        #[method_id(@__retain_semantics Other tokenField:completionsForSubstring:indexOfToken:indexOfSelectedItem:)]
+        pub unsafe fn tokenField_completionsForSubstring_indexOfToken_indexOfSelectedItem(
+            &self,
+            tokenField: &NSTokenField,
+            substring: &NSString,
+            tokenIndex: NSInteger,
+            selectedIndex: *mut NSInteger,
+        ) -> Option<Id<NSArray, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other tokenField:shouldAddObjects:atIndex:)]
+        pub unsafe fn tokenField_shouldAddObjects_atIndex(
+            &self,
+            tokenField: &NSTokenField,
+            tokens: &NSArray,
+            index: NSUInteger,
+        ) -> Id<NSArray, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other tokenField:displayStringForRepresentedObject:)]
+        pub unsafe fn tokenField_displayStringForRepresentedObject(
+            &self,
+            tokenField: &NSTokenField,
+            representedObject: &Object,
+        ) -> Option<Id<NSString, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other tokenField:editingStringForRepresentedObject:)]
+        pub unsafe fn tokenField_editingStringForRepresentedObject(
+            &self,
+            tokenField: &NSTokenField,
+            representedObject: &Object,
+        ) -> Option<Id<NSString, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other tokenField:representedObjectForEditingString:)]
+        pub unsafe fn tokenField_representedObjectForEditingString(
+            &self,
+            tokenField: &NSTokenField,
+            editingString: &NSString,
+        ) -> Option<Id<Object, Shared>>;
+
+        #[optional]
+        #[method(tokenField:writeRepresentedObjects:toPasteboard:)]
+        pub unsafe fn tokenField_writeRepresentedObjects_toPasteboard(
+            &self,
+            tokenField: &NSTokenField,
+            objects: &NSArray,
+            pboard: &NSPasteboard,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other tokenField:readFromPasteboard:)]
+        pub unsafe fn tokenField_readFromPasteboard(
+            &self,
+            tokenField: &NSTokenField,
+            pboard: &NSPasteboard,
+        ) -> Option<Id<NSArray, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other tokenField:menuForRepresentedObject:)]
+        pub unsafe fn tokenField_menuForRepresentedObject(
+            &self,
+            tokenField: &NSTokenField,
+            representedObject: &Object,
+        ) -> Option<Id<NSMenu, Shared>>;
+
+        #[optional]
+        #[method(tokenField:hasMenuForRepresentedObject:)]
+        pub unsafe fn tokenField_hasMenuForRepresentedObject(
+            &self,
+            tokenField: &NSTokenField,
+            representedObject: &Object,
+        ) -> bool;
+
+        #[optional]
+        #[method(tokenField:styleForRepresentedObject:)]
+        pub unsafe fn tokenField_styleForRepresentedObject(
+            &self,
+            tokenField: &NSTokenField,
+            representedObject: &Object,
+        ) -> NSTokenStyle;
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

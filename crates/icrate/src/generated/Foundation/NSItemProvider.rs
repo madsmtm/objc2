@@ -20,9 +20,55 @@ ns_options!(
     }
 );
 
-pub type NSItemProviderWriting = NSObject;
+extern_protocol!(
+    pub struct NSItemProviderWriting;
 
-pub type NSItemProviderReading = NSObject;
+    unsafe impl NSItemProviderWriting {
+        #[method_id(@__retain_semantics Other writableTypeIdentifiersForItemProvider)]
+        pub unsafe fn writableTypeIdentifiersForItemProvider() -> Id<NSArray<NSString>, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other writableTypeIdentifiersForItemProvider)]
+        pub unsafe fn writableTypeIdentifiersForItemProvider(
+            &self,
+        ) -> Id<NSArray<NSString>, Shared>;
+
+        #[optional]
+        #[method(itemProviderVisibilityForRepresentationWithTypeIdentifier:)]
+        pub unsafe fn itemProviderVisibilityForRepresentationWithTypeIdentifier(
+            typeIdentifier: &NSString,
+        ) -> NSItemProviderRepresentationVisibility;
+
+        #[optional]
+        #[method(itemProviderVisibilityForRepresentationWithTypeIdentifier:)]
+        pub unsafe fn itemProviderVisibilityForRepresentationWithTypeIdentifier(
+            &self,
+            typeIdentifier: &NSString,
+        ) -> NSItemProviderRepresentationVisibility;
+
+        #[method_id(@__retain_semantics Other loadDataWithTypeIdentifier:forItemProviderCompletionHandler:)]
+        pub unsafe fn loadDataWithTypeIdentifier_forItemProviderCompletionHandler(
+            &self,
+            typeIdentifier: &NSString,
+            completionHandler: &Block<(*mut NSData, *mut NSError), ()>,
+        ) -> Option<Id<NSProgress, Shared>>;
+    }
+);
+
+extern_protocol!(
+    pub struct NSItemProviderReading;
+
+    unsafe impl NSItemProviderReading {
+        #[method_id(@__retain_semantics Other readableTypeIdentifiersForItemProvider)]
+        pub unsafe fn readableTypeIdentifiersForItemProvider() -> Id<NSArray<NSString>, Shared>;
+
+        #[method_id(@__retain_semantics Other objectWithItemProviderData:typeIdentifier:error:)]
+        pub unsafe fn objectWithItemProviderData_typeIdentifier_error(
+            data: &NSData,
+            typeIdentifier: &NSString,
+        ) -> Result<Id<Self, Shared>, Id<NSError, Shared>>;
+    }
+);
 
 pub type NSItemProviderCompletionHandler = *mut Block<(*mut NSSecureCoding, *mut NSError), ()>;
 

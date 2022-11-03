@@ -13,9 +13,61 @@ extern_static!(NSComboBoxSelectionDidChangeNotification: &'static NSNotification
 
 extern_static!(NSComboBoxSelectionIsChangingNotification: &'static NSNotificationName);
 
-pub type NSComboBoxDataSource = NSObject;
+extern_protocol!(
+    pub struct NSComboBoxDataSource;
 
-pub type NSComboBoxDelegate = NSObject;
+    unsafe impl NSComboBoxDataSource {
+        #[optional]
+        #[method(numberOfItemsInComboBox:)]
+        pub unsafe fn numberOfItemsInComboBox(&self, comboBox: &NSComboBox) -> NSInteger;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other comboBox:objectValueForItemAtIndex:)]
+        pub unsafe fn comboBox_objectValueForItemAtIndex(
+            &self,
+            comboBox: &NSComboBox,
+            index: NSInteger,
+        ) -> Option<Id<Object, Shared>>;
+
+        #[optional]
+        #[method(comboBox:indexOfItemWithStringValue:)]
+        pub unsafe fn comboBox_indexOfItemWithStringValue(
+            &self,
+            comboBox: &NSComboBox,
+            string: &NSString,
+        ) -> NSUInteger;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other comboBox:completedString:)]
+        pub unsafe fn comboBox_completedString(
+            &self,
+            comboBox: &NSComboBox,
+            string: &NSString,
+        ) -> Option<Id<NSString, Shared>>;
+    }
+);
+
+extern_protocol!(
+    pub struct NSComboBoxDelegate;
+
+    unsafe impl NSComboBoxDelegate {
+        #[optional]
+        #[method(comboBoxWillPopUp:)]
+        pub unsafe fn comboBoxWillPopUp(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(comboBoxWillDismiss:)]
+        pub unsafe fn comboBoxWillDismiss(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(comboBoxSelectionDidChange:)]
+        pub unsafe fn comboBoxSelectionDidChange(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(comboBoxSelectionIsChanging:)]
+        pub unsafe fn comboBoxSelectionIsChanging(&self, notification: &NSNotification);
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

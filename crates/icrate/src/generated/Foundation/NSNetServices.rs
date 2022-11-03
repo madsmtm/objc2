@@ -183,6 +183,119 @@ extern_methods!(
     }
 );
 
-pub type NSNetServiceDelegate = NSObject;
+extern_protocol!(
+    pub struct NSNetServiceDelegate;
 
-pub type NSNetServiceBrowserDelegate = NSObject;
+    unsafe impl NSNetServiceDelegate {
+        #[optional]
+        #[method(netServiceWillPublish:)]
+        pub unsafe fn netServiceWillPublish(&self, sender: &NSNetService);
+
+        #[optional]
+        #[method(netServiceDidPublish:)]
+        pub unsafe fn netServiceDidPublish(&self, sender: &NSNetService);
+
+        #[optional]
+        #[method(netService:didNotPublish:)]
+        pub unsafe fn netService_didNotPublish(
+            &self,
+            sender: &NSNetService,
+            errorDict: &NSDictionary<NSString, NSNumber>,
+        );
+
+        #[optional]
+        #[method(netServiceWillResolve:)]
+        pub unsafe fn netServiceWillResolve(&self, sender: &NSNetService);
+
+        #[optional]
+        #[method(netServiceDidResolveAddress:)]
+        pub unsafe fn netServiceDidResolveAddress(&self, sender: &NSNetService);
+
+        #[optional]
+        #[method(netService:didNotResolve:)]
+        pub unsafe fn netService_didNotResolve(
+            &self,
+            sender: &NSNetService,
+            errorDict: &NSDictionary<NSString, NSNumber>,
+        );
+
+        #[optional]
+        #[method(netServiceDidStop:)]
+        pub unsafe fn netServiceDidStop(&self, sender: &NSNetService);
+
+        #[optional]
+        #[method(netService:didUpdateTXTRecordData:)]
+        pub unsafe fn netService_didUpdateTXTRecordData(
+            &self,
+            sender: &NSNetService,
+            data: &NSData,
+        );
+
+        #[optional]
+        #[method(netService:didAcceptConnectionWithInputStream:outputStream:)]
+        pub unsafe fn netService_didAcceptConnectionWithInputStream_outputStream(
+            &self,
+            sender: &NSNetService,
+            inputStream: &NSInputStream,
+            outputStream: &NSOutputStream,
+        );
+    }
+);
+
+extern_protocol!(
+    pub struct NSNetServiceBrowserDelegate;
+
+    unsafe impl NSNetServiceBrowserDelegate {
+        #[optional]
+        #[method(netServiceBrowserWillSearch:)]
+        pub unsafe fn netServiceBrowserWillSearch(&self, browser: &NSNetServiceBrowser);
+
+        #[optional]
+        #[method(netServiceBrowserDidStopSearch:)]
+        pub unsafe fn netServiceBrowserDidStopSearch(&self, browser: &NSNetServiceBrowser);
+
+        #[optional]
+        #[method(netServiceBrowser:didNotSearch:)]
+        pub unsafe fn netServiceBrowser_didNotSearch(
+            &self,
+            browser: &NSNetServiceBrowser,
+            errorDict: &NSDictionary<NSString, NSNumber>,
+        );
+
+        #[optional]
+        #[method(netServiceBrowser:didFindDomain:moreComing:)]
+        pub unsafe fn netServiceBrowser_didFindDomain_moreComing(
+            &self,
+            browser: &NSNetServiceBrowser,
+            domainString: &NSString,
+            moreComing: bool,
+        );
+
+        #[optional]
+        #[method(netServiceBrowser:didFindService:moreComing:)]
+        pub unsafe fn netServiceBrowser_didFindService_moreComing(
+            &self,
+            browser: &NSNetServiceBrowser,
+            service: &NSNetService,
+            moreComing: bool,
+        );
+
+        #[optional]
+        #[method(netServiceBrowser:didRemoveDomain:moreComing:)]
+        pub unsafe fn netServiceBrowser_didRemoveDomain_moreComing(
+            &self,
+            browser: &NSNetServiceBrowser,
+            domainString: &NSString,
+            moreComing: bool,
+        );
+
+        #[optional]
+        #[method(netServiceBrowser:didRemoveService:moreComing:)]
+        pub unsafe fn netServiceBrowser_didRemoveService_moreComing(
+            &self,
+            browser: &NSNetServiceBrowser,
+            service: &NSNetService,
+            moreComing: bool,
+        );
+    }
+);

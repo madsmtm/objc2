@@ -177,4 +177,36 @@ extern_methods!(
     }
 );
 
-pub type NSTabViewDelegate = NSObject;
+extern_protocol!(
+    pub struct NSTabViewDelegate;
+
+    unsafe impl NSTabViewDelegate {
+        #[optional]
+        #[method(tabView:shouldSelectTabViewItem:)]
+        pub unsafe fn tabView_shouldSelectTabViewItem(
+            &self,
+            tabView: &NSTabView,
+            tabViewItem: Option<&NSTabViewItem>,
+        ) -> bool;
+
+        #[optional]
+        #[method(tabView:willSelectTabViewItem:)]
+        pub unsafe fn tabView_willSelectTabViewItem(
+            &self,
+            tabView: &NSTabView,
+            tabViewItem: Option<&NSTabViewItem>,
+        );
+
+        #[optional]
+        #[method(tabView:didSelectTabViewItem:)]
+        pub unsafe fn tabView_didSelectTabViewItem(
+            &self,
+            tabView: &NSTabView,
+            tabViewItem: Option<&NSTabViewItem>,
+        );
+
+        #[optional]
+        #[method(tabViewDidChangeNumberOfTabViewItems:)]
+        pub unsafe fn tabViewDidChangeNumberOfTabViewItems(&self, tabView: &NSTabView);
+    }
+);

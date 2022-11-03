@@ -52,4 +52,106 @@ extern_methods!(
     }
 );
 
-pub type NSURLDownloadDelegate = NSObject;
+extern_protocol!(
+    pub struct NSURLDownloadDelegate;
+
+    unsafe impl NSURLDownloadDelegate {
+        #[optional]
+        #[method(downloadDidBegin:)]
+        pub unsafe fn downloadDidBegin(&self, download: &NSURLDownload);
+
+        #[optional]
+        #[method_id(@__retain_semantics Other download:willSendRequest:redirectResponse:)]
+        pub unsafe fn download_willSendRequest_redirectResponse(
+            &self,
+            download: &NSURLDownload,
+            request: &NSURLRequest,
+            redirectResponse: Option<&NSURLResponse>,
+        ) -> Option<Id<NSURLRequest, Shared>>;
+
+        #[optional]
+        #[method(download:canAuthenticateAgainstProtectionSpace:)]
+        pub unsafe fn download_canAuthenticateAgainstProtectionSpace(
+            &self,
+            connection: &NSURLDownload,
+            protectionSpace: &NSURLProtectionSpace,
+        ) -> bool;
+
+        #[optional]
+        #[method(download:didReceiveAuthenticationChallenge:)]
+        pub unsafe fn download_didReceiveAuthenticationChallenge(
+            &self,
+            download: &NSURLDownload,
+            challenge: &NSURLAuthenticationChallenge,
+        );
+
+        #[optional]
+        #[method(download:didCancelAuthenticationChallenge:)]
+        pub unsafe fn download_didCancelAuthenticationChallenge(
+            &self,
+            download: &NSURLDownload,
+            challenge: &NSURLAuthenticationChallenge,
+        );
+
+        #[optional]
+        #[method(downloadShouldUseCredentialStorage:)]
+        pub unsafe fn downloadShouldUseCredentialStorage(&self, download: &NSURLDownload) -> bool;
+
+        #[optional]
+        #[method(download:didReceiveResponse:)]
+        pub unsafe fn download_didReceiveResponse(
+            &self,
+            download: &NSURLDownload,
+            response: &NSURLResponse,
+        );
+
+        #[optional]
+        #[method(download:willResumeWithResponse:fromByte:)]
+        pub unsafe fn download_willResumeWithResponse_fromByte(
+            &self,
+            download: &NSURLDownload,
+            response: &NSURLResponse,
+            startingByte: c_longlong,
+        );
+
+        #[optional]
+        #[method(download:didReceiveDataOfLength:)]
+        pub unsafe fn download_didReceiveDataOfLength(
+            &self,
+            download: &NSURLDownload,
+            length: NSUInteger,
+        );
+
+        #[optional]
+        #[method(download:shouldDecodeSourceDataOfMIMEType:)]
+        pub unsafe fn download_shouldDecodeSourceDataOfMIMEType(
+            &self,
+            download: &NSURLDownload,
+            encodingType: &NSString,
+        ) -> bool;
+
+        #[optional]
+        #[method(download:decideDestinationWithSuggestedFilename:)]
+        pub unsafe fn download_decideDestinationWithSuggestedFilename(
+            &self,
+            download: &NSURLDownload,
+            filename: &NSString,
+        );
+
+        #[optional]
+        #[method(download:didCreateDestination:)]
+        pub unsafe fn download_didCreateDestination(
+            &self,
+            download: &NSURLDownload,
+            path: &NSString,
+        );
+
+        #[optional]
+        #[method(downloadDidFinish:)]
+        pub unsafe fn downloadDidFinish(&self, download: &NSURLDownload);
+
+        #[optional]
+        #[method(download:didFailWithError:)]
+        pub unsafe fn download_didFailWithError(&self, download: &NSURLDownload, error: &NSError);
+    }
+);

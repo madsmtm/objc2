@@ -143,7 +143,39 @@ extern_methods!(
     }
 );
 
-pub type NSAnimationDelegate = NSObject;
+extern_protocol!(
+    pub struct NSAnimationDelegate;
+
+    unsafe impl NSAnimationDelegate {
+        #[optional]
+        #[method(animationShouldStart:)]
+        pub unsafe fn animationShouldStart(&self, animation: &NSAnimation) -> bool;
+
+        #[optional]
+        #[method(animationDidStop:)]
+        pub unsafe fn animationDidStop(&self, animation: &NSAnimation);
+
+        #[optional]
+        #[method(animationDidEnd:)]
+        pub unsafe fn animationDidEnd(&self, animation: &NSAnimation);
+
+        #[optional]
+        #[method(animation:valueForProgress:)]
+        pub unsafe fn animation_valueForProgress(
+            &self,
+            animation: &NSAnimation,
+            progress: NSAnimationProgress,
+        ) -> c_float;
+
+        #[optional]
+        #[method(animation:didReachProgressMark:)]
+        pub unsafe fn animation_didReachProgressMark(
+            &self,
+            animation: &NSAnimation,
+            progress: NSAnimationProgress,
+        );
+    }
+);
 
 pub type NSViewAnimationKey = NSString;
 
@@ -193,7 +225,36 @@ extern_methods!(
 
 pub type NSAnimatablePropertyKey = NSString;
 
-pub type NSAnimatablePropertyContainer = NSObject;
+extern_protocol!(
+    pub struct NSAnimatablePropertyContainer;
+
+    unsafe impl NSAnimatablePropertyContainer {
+        #[method_id(@__retain_semantics Other animator)]
+        pub unsafe fn animator(&self) -> Id<Self, Shared>;
+
+        #[method_id(@__retain_semantics Other animations)]
+        pub unsafe fn animations(
+            &self,
+        ) -> Id<NSDictionary<NSAnimatablePropertyKey, Object>, Shared>;
+
+        #[method(setAnimations:)]
+        pub unsafe fn setAnimations(
+            &self,
+            animations: &NSDictionary<NSAnimatablePropertyKey, Object>,
+        );
+
+        #[method_id(@__retain_semantics Other animationForKey:)]
+        pub unsafe fn animationForKey(
+            &self,
+            key: &NSAnimatablePropertyKey,
+        ) -> Option<Id<Object, Shared>>;
+
+        #[method_id(@__retain_semantics Other defaultAnimationForKey:)]
+        pub unsafe fn defaultAnimationForKey(
+            key: &NSAnimatablePropertyKey,
+        ) -> Option<Id<Object, Shared>>;
+    }
+);
 
 extern_static!(NSAnimationTriggerOrderIn: &'static NSAnimatablePropertyKey);
 

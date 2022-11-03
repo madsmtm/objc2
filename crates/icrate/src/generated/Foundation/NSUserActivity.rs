@@ -163,4 +163,25 @@ extern_methods!(
 
 extern_static!(NSUserActivityTypeBrowsingWeb: &'static NSString);
 
-pub type NSUserActivityDelegate = NSObject;
+extern_protocol!(
+    pub struct NSUserActivityDelegate;
+
+    unsafe impl NSUserActivityDelegate {
+        #[optional]
+        #[method(userActivityWillSave:)]
+        pub unsafe fn userActivityWillSave(&self, userActivity: &NSUserActivity);
+
+        #[optional]
+        #[method(userActivityWasContinued:)]
+        pub unsafe fn userActivityWasContinued(&self, userActivity: &NSUserActivity);
+
+        #[optional]
+        #[method(userActivity:didReceiveInputStream:outputStream:)]
+        pub unsafe fn userActivity_didReceiveInputStream_outputStream(
+            &self,
+            userActivity: &NSUserActivity,
+            inputStream: &NSInputStream,
+            outputStream: &NSOutputStream,
+        );
+    }
+);

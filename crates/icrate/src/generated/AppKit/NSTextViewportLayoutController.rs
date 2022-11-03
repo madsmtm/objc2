@@ -5,7 +5,38 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextViewportLayoutControllerDelegate = NSObject;
+extern_protocol!(
+    pub struct NSTextViewportLayoutControllerDelegate;
+
+    unsafe impl NSTextViewportLayoutControllerDelegate {
+        #[method(viewportBoundsForTextViewportLayoutController:)]
+        pub unsafe fn viewportBoundsForTextViewportLayoutController(
+            &self,
+            textViewportLayoutController: &NSTextViewportLayoutController,
+        ) -> CGRect;
+
+        #[method(textViewportLayoutController:configureRenderingSurfaceForTextLayoutFragment:)]
+        pub unsafe fn textViewportLayoutController_configureRenderingSurfaceForTextLayoutFragment(
+            &self,
+            textViewportLayoutController: &NSTextViewportLayoutController,
+            textLayoutFragment: &NSTextLayoutFragment,
+        );
+
+        #[optional]
+        #[method(textViewportLayoutControllerWillLayout:)]
+        pub unsafe fn textViewportLayoutControllerWillLayout(
+            &self,
+            textViewportLayoutController: &NSTextViewportLayoutController,
+        );
+
+        #[optional]
+        #[method(textViewportLayoutControllerDidLayout:)]
+        pub unsafe fn textViewportLayoutControllerDidLayout(
+            &self,
+            textViewportLayoutController: &NSTextViewportLayoutController,
+        );
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

@@ -162,7 +162,44 @@ extern_methods!(
     }
 );
 
-pub type NSOpenSavePanelDelegate = NSObject;
+extern_protocol!(
+    pub struct NSOpenSavePanelDelegate;
+
+    unsafe impl NSOpenSavePanelDelegate {
+        #[optional]
+        #[method(panel:shouldEnableURL:)]
+        pub unsafe fn panel_shouldEnableURL(&self, sender: &Object, url: &NSURL) -> bool;
+
+        #[optional]
+        #[method(panel:validateURL:error:)]
+        pub unsafe fn panel_validateURL_error(
+            &self,
+            sender: &Object,
+            url: &NSURL,
+        ) -> Result<(), Id<NSError, Shared>>;
+
+        #[optional]
+        #[method(panel:didChangeToDirectoryURL:)]
+        pub unsafe fn panel_didChangeToDirectoryURL(&self, sender: &Object, url: Option<&NSURL>);
+
+        #[optional]
+        #[method_id(@__retain_semantics Other panel:userEnteredFilename:confirmed:)]
+        pub unsafe fn panel_userEnteredFilename_confirmed(
+            &self,
+            sender: &Object,
+            filename: &NSString,
+            okFlag: bool,
+        ) -> Option<Id<NSString, Shared>>;
+
+        #[optional]
+        #[method(panel:willExpand:)]
+        pub unsafe fn panel_willExpand(&self, sender: &Object, expanding: bool);
+
+        #[optional]
+        #[method(panelSelectionDidChange:)]
+        pub unsafe fn panelSelectionDidChange(&self, sender: Option<&Object>);
+    }
+);
 
 extern_methods!(
     /// NSSavePanelDelegateDeprecated

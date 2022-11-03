@@ -13,4 +13,14 @@ extern_static!(NSTextContentTypePassword: &'static NSTextContentType);
 
 extern_static!(NSTextContentTypeOneTimeCode: &'static NSTextContentType);
 
-pub type NSTextContent = NSObject;
+extern_protocol!(
+    pub struct NSTextContent;
+
+    unsafe impl NSTextContent {
+        #[method_id(@__retain_semantics Other contentType)]
+        pub unsafe fn contentType(&self) -> Option<Id<NSTextContentType, Shared>>;
+
+        #[method(setContentType:)]
+        pub unsafe fn setContentType(&self, contentType: Option<&NSTextContentType>);
+    }
+);

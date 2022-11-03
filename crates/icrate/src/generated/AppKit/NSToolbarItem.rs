@@ -155,7 +155,14 @@ extern_methods!(
     unsafe impl NSToolbarItem {}
 );
 
-pub type NSToolbarItemValidation = NSObject;
+extern_protocol!(
+    pub struct NSToolbarItemValidation;
+
+    unsafe impl NSToolbarItemValidation {
+        #[method(validateToolbarItem:)]
+        pub unsafe fn validateToolbarItem(&self, item: &NSToolbarItem) -> bool;
+    }
+);
 
 extern_methods!(
     /// NSToolbarItemValidation
@@ -165,7 +172,17 @@ extern_methods!(
     }
 );
 
-pub type NSCloudSharingValidation = NSObject;
+extern_protocol!(
+    pub struct NSCloudSharingValidation;
+
+    unsafe impl NSCloudSharingValidation {
+        #[method_id(@__retain_semantics Other cloudShareForUserInterfaceItem:)]
+        pub unsafe fn cloudShareForUserInterfaceItem(
+            &self,
+            item: &NSValidatedUserInterfaceItem,
+        ) -> Option<Id<CKShare, Shared>>;
+    }
+);
 
 extern_static!(NSToolbarSeparatorItemIdentifier: &'static NSToolbarItemIdentifier);
 

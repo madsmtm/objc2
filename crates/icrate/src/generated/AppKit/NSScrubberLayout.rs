@@ -107,7 +107,20 @@ extern_methods!(
     }
 );
 
-pub type NSScrubberFlowLayoutDelegate = NSObject;
+extern_protocol!(
+    pub struct NSScrubberFlowLayoutDelegate;
+
+    unsafe impl NSScrubberFlowLayoutDelegate {
+        #[optional]
+        #[method(scrubber:layout:sizeForItemAtIndex:)]
+        pub unsafe fn scrubber_layout_sizeForItemAtIndex(
+            &self,
+            scrubber: &NSScrubber,
+            layout: &NSScrubberFlowLayout,
+            itemIndex: NSInteger,
+        ) -> NSSize;
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

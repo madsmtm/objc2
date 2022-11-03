@@ -156,7 +156,27 @@ extern_methods!(
     }
 );
 
-pub type NSStackViewDelegate = NSObject;
+extern_protocol!(
+    pub struct NSStackViewDelegate;
+
+    unsafe impl NSStackViewDelegate {
+        #[optional]
+        #[method(stackView:willDetachViews:)]
+        pub unsafe fn stackView_willDetachViews(
+            &self,
+            stackView: &NSStackView,
+            views: &NSArray<NSView>,
+        );
+
+        #[optional]
+        #[method(stackView:didReattachViews:)]
+        pub unsafe fn stackView_didReattachViews(
+            &self,
+            stackView: &NSStackView,
+            views: &NSArray<NSView>,
+        );
+    }
+);
 
 extern_methods!(
     /// NSStackViewGravityAreas

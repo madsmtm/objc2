@@ -11,7 +11,26 @@ extern_static!(NSDecimalNumberUnderflowException: &'static NSExceptionName);
 
 extern_static!(NSDecimalNumberDivideByZeroException: &'static NSExceptionName);
 
-pub type NSDecimalNumberBehaviors = NSObject;
+extern_protocol!(
+    pub struct NSDecimalNumberBehaviors;
+
+    unsafe impl NSDecimalNumberBehaviors {
+        #[method(roundingMode)]
+        pub unsafe fn roundingMode(&self) -> NSRoundingMode;
+
+        #[method(scale)]
+        pub unsafe fn scale(&self) -> c_short;
+
+        #[method_id(@__retain_semantics Other exceptionDuringOperation:error:leftOperand:rightOperand:)]
+        pub unsafe fn exceptionDuringOperation_error_leftOperand_rightOperand(
+            &self,
+            operation: Sel,
+            error: NSCalculationError,
+            leftOperand: &NSDecimalNumber,
+            rightOperand: Option<&NSDecimalNumber>,
+        ) -> Option<Id<NSDecimalNumber, Shared>>;
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

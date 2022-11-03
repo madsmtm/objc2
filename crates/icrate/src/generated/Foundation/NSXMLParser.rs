@@ -114,7 +114,163 @@ extern_methods!(
     }
 );
 
-pub type NSXMLParserDelegate = NSObject;
+extern_protocol!(
+    pub struct NSXMLParserDelegate;
+
+    unsafe impl NSXMLParserDelegate {
+        #[optional]
+        #[method(parserDidStartDocument:)]
+        pub unsafe fn parserDidStartDocument(&self, parser: &NSXMLParser);
+
+        #[optional]
+        #[method(parserDidEndDocument:)]
+        pub unsafe fn parserDidEndDocument(&self, parser: &NSXMLParser);
+
+        #[optional]
+        #[method(parser:foundNotationDeclarationWithName:publicID:systemID:)]
+        pub unsafe fn parser_foundNotationDeclarationWithName_publicID_systemID(
+            &self,
+            parser: &NSXMLParser,
+            name: &NSString,
+            publicID: Option<&NSString>,
+            systemID: Option<&NSString>,
+        );
+
+        #[optional]
+        #[method(parser:foundUnparsedEntityDeclarationWithName:publicID:systemID:notationName:)]
+        pub unsafe fn parser_foundUnparsedEntityDeclarationWithName_publicID_systemID_notationName(
+            &self,
+            parser: &NSXMLParser,
+            name: &NSString,
+            publicID: Option<&NSString>,
+            systemID: Option<&NSString>,
+            notationName: Option<&NSString>,
+        );
+
+        #[optional]
+        #[method(parser:foundAttributeDeclarationWithName:forElement:type:defaultValue:)]
+        pub unsafe fn parser_foundAttributeDeclarationWithName_forElement_type_defaultValue(
+            &self,
+            parser: &NSXMLParser,
+            attributeName: &NSString,
+            elementName: &NSString,
+            type_: Option<&NSString>,
+            defaultValue: Option<&NSString>,
+        );
+
+        #[optional]
+        #[method(parser:foundElementDeclarationWithName:model:)]
+        pub unsafe fn parser_foundElementDeclarationWithName_model(
+            &self,
+            parser: &NSXMLParser,
+            elementName: &NSString,
+            model: &NSString,
+        );
+
+        #[optional]
+        #[method(parser:foundInternalEntityDeclarationWithName:value:)]
+        pub unsafe fn parser_foundInternalEntityDeclarationWithName_value(
+            &self,
+            parser: &NSXMLParser,
+            name: &NSString,
+            value: Option<&NSString>,
+        );
+
+        #[optional]
+        #[method(parser:foundExternalEntityDeclarationWithName:publicID:systemID:)]
+        pub unsafe fn parser_foundExternalEntityDeclarationWithName_publicID_systemID(
+            &self,
+            parser: &NSXMLParser,
+            name: &NSString,
+            publicID: Option<&NSString>,
+            systemID: Option<&NSString>,
+        );
+
+        #[optional]
+        #[method(parser:didStartElement:namespaceURI:qualifiedName:attributes:)]
+        pub unsafe fn parser_didStartElement_namespaceURI_qualifiedName_attributes(
+            &self,
+            parser: &NSXMLParser,
+            elementName: &NSString,
+            namespaceURI: Option<&NSString>,
+            qName: Option<&NSString>,
+            attributeDict: &NSDictionary<NSString, NSString>,
+        );
+
+        #[optional]
+        #[method(parser:didEndElement:namespaceURI:qualifiedName:)]
+        pub unsafe fn parser_didEndElement_namespaceURI_qualifiedName(
+            &self,
+            parser: &NSXMLParser,
+            elementName: &NSString,
+            namespaceURI: Option<&NSString>,
+            qName: Option<&NSString>,
+        );
+
+        #[optional]
+        #[method(parser:didStartMappingPrefix:toURI:)]
+        pub unsafe fn parser_didStartMappingPrefix_toURI(
+            &self,
+            parser: &NSXMLParser,
+            prefix: &NSString,
+            namespaceURI: &NSString,
+        );
+
+        #[optional]
+        #[method(parser:didEndMappingPrefix:)]
+        pub unsafe fn parser_didEndMappingPrefix(&self, parser: &NSXMLParser, prefix: &NSString);
+
+        #[optional]
+        #[method(parser:foundCharacters:)]
+        pub unsafe fn parser_foundCharacters(&self, parser: &NSXMLParser, string: &NSString);
+
+        #[optional]
+        #[method(parser:foundIgnorableWhitespace:)]
+        pub unsafe fn parser_foundIgnorableWhitespace(
+            &self,
+            parser: &NSXMLParser,
+            whitespaceString: &NSString,
+        );
+
+        #[optional]
+        #[method(parser:foundProcessingInstructionWithTarget:data:)]
+        pub unsafe fn parser_foundProcessingInstructionWithTarget_data(
+            &self,
+            parser: &NSXMLParser,
+            target: &NSString,
+            data: Option<&NSString>,
+        );
+
+        #[optional]
+        #[method(parser:foundComment:)]
+        pub unsafe fn parser_foundComment(&self, parser: &NSXMLParser, comment: &NSString);
+
+        #[optional]
+        #[method(parser:foundCDATA:)]
+        pub unsafe fn parser_foundCDATA(&self, parser: &NSXMLParser, CDATABlock: &NSData);
+
+        #[optional]
+        #[method_id(@__retain_semantics Other parser:resolveExternalEntityName:systemID:)]
+        pub unsafe fn parser_resolveExternalEntityName_systemID(
+            &self,
+            parser: &NSXMLParser,
+            name: &NSString,
+            systemID: Option<&NSString>,
+        ) -> Option<Id<NSData, Shared>>;
+
+        #[optional]
+        #[method(parser:parseErrorOccurred:)]
+        pub unsafe fn parser_parseErrorOccurred(&self, parser: &NSXMLParser, parseError: &NSError);
+
+        #[optional]
+        #[method(parser:validationErrorOccurred:)]
+        pub unsafe fn parser_validationErrorOccurred(
+            &self,
+            parser: &NSXMLParser,
+            validationError: &NSError,
+        );
+    }
+);
 
 extern_static!(NSXMLParserErrorDomain: &'static NSErrorDomain);
 

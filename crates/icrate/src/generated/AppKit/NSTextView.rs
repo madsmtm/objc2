@@ -955,7 +955,287 @@ extern_methods!(
     }
 );
 
-pub type NSTextViewDelegate = NSObject;
+extern_protocol!(
+    pub struct NSTextViewDelegate;
+
+    unsafe impl NSTextViewDelegate {
+        #[optional]
+        #[method(textView:clickedOnLink:atIndex:)]
+        pub unsafe fn textView_clickedOnLink_atIndex(
+            &self,
+            textView: &NSTextView,
+            link: &Object,
+            charIndex: NSUInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method(textView:clickedOnCell:inRect:atIndex:)]
+        pub unsafe fn textView_clickedOnCell_inRect_atIndex(
+            &self,
+            textView: &NSTextView,
+            cell: &NSTextAttachmentCell,
+            cellFrame: NSRect,
+            charIndex: NSUInteger,
+        );
+
+        #[optional]
+        #[method(textView:doubleClickedOnCell:inRect:atIndex:)]
+        pub unsafe fn textView_doubleClickedOnCell_inRect_atIndex(
+            &self,
+            textView: &NSTextView,
+            cell: &NSTextAttachmentCell,
+            cellFrame: NSRect,
+            charIndex: NSUInteger,
+        );
+
+        #[optional]
+        #[method(textView:draggedCell:inRect:event:atIndex:)]
+        pub unsafe fn textView_draggedCell_inRect_event_atIndex(
+            &self,
+            view: &NSTextView,
+            cell: &NSTextAttachmentCell,
+            rect: NSRect,
+            event: &NSEvent,
+            charIndex: NSUInteger,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other textView:writablePasteboardTypesForCell:atIndex:)]
+        pub unsafe fn textView_writablePasteboardTypesForCell_atIndex(
+            &self,
+            view: &NSTextView,
+            cell: &NSTextAttachmentCell,
+            charIndex: NSUInteger,
+        ) -> Id<NSArray<NSPasteboardType>, Shared>;
+
+        #[optional]
+        #[method(textView:writeCell:atIndex:toPasteboard:type:)]
+        pub unsafe fn textView_writeCell_atIndex_toPasteboard_type(
+            &self,
+            view: &NSTextView,
+            cell: &NSTextAttachmentCell,
+            charIndex: NSUInteger,
+            pboard: &NSPasteboard,
+            type_: &NSPasteboardType,
+        ) -> bool;
+
+        #[optional]
+        #[method(textView:willChangeSelectionFromCharacterRange:toCharacterRange:)]
+        pub unsafe fn textView_willChangeSelectionFromCharacterRange_toCharacterRange(
+            &self,
+            textView: &NSTextView,
+            oldSelectedCharRange: NSRange,
+            newSelectedCharRange: NSRange,
+        ) -> NSRange;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other textView:willChangeSelectionFromCharacterRanges:toCharacterRanges:)]
+        pub unsafe fn textView_willChangeSelectionFromCharacterRanges_toCharacterRanges(
+            &self,
+            textView: &NSTextView,
+            oldSelectedCharRanges: &NSArray<NSValue>,
+            newSelectedCharRanges: &NSArray<NSValue>,
+        ) -> Id<NSArray<NSValue>, Shared>;
+
+        #[optional]
+        #[method(textView:shouldChangeTextInRanges:replacementStrings:)]
+        pub unsafe fn textView_shouldChangeTextInRanges_replacementStrings(
+            &self,
+            textView: &NSTextView,
+            affectedRanges: &NSArray<NSValue>,
+            replacementStrings: Option<&NSArray<NSString>>,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other textView:shouldChangeTypingAttributes:toAttributes:)]
+        pub unsafe fn textView_shouldChangeTypingAttributes_toAttributes(
+            &self,
+            textView: &NSTextView,
+            oldTypingAttributes: &NSDictionary<NSString, Object>,
+            newTypingAttributes: &NSDictionary<NSAttributedStringKey, Object>,
+        ) -> Id<NSDictionary<NSAttributedStringKey, Object>, Shared>;
+
+        #[optional]
+        #[method(textViewDidChangeSelection:)]
+        pub unsafe fn textViewDidChangeSelection(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(textViewDidChangeTypingAttributes:)]
+        pub unsafe fn textViewDidChangeTypingAttributes(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method_id(@__retain_semantics Other textView:willDisplayToolTip:forCharacterAtIndex:)]
+        pub unsafe fn textView_willDisplayToolTip_forCharacterAtIndex(
+            &self,
+            textView: &NSTextView,
+            tooltip: &NSString,
+            characterIndex: NSUInteger,
+        ) -> Option<Id<NSString, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other textView:completions:forPartialWordRange:indexOfSelectedItem:)]
+        pub unsafe fn textView_completions_forPartialWordRange_indexOfSelectedItem(
+            &self,
+            textView: &NSTextView,
+            words: &NSArray<NSString>,
+            charRange: NSRange,
+            index: *mut NSInteger,
+        ) -> Id<NSArray<NSString>, Shared>;
+
+        #[optional]
+        #[method(textView:shouldChangeTextInRange:replacementString:)]
+        pub unsafe fn textView_shouldChangeTextInRange_replacementString(
+            &self,
+            textView: &NSTextView,
+            affectedCharRange: NSRange,
+            replacementString: Option<&NSString>,
+        ) -> bool;
+
+        #[optional]
+        #[method(textView:doCommandBySelector:)]
+        pub unsafe fn textView_doCommandBySelector(
+            &self,
+            textView: &NSTextView,
+            commandSelector: Sel,
+        ) -> bool;
+
+        #[optional]
+        #[method(textView:shouldSetSpellingState:range:)]
+        pub unsafe fn textView_shouldSetSpellingState_range(
+            &self,
+            textView: &NSTextView,
+            value: NSInteger,
+            affectedCharRange: NSRange,
+        ) -> NSInteger;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other textView:menu:forEvent:atIndex:)]
+        pub unsafe fn textView_menu_forEvent_atIndex(
+            &self,
+            view: &NSTextView,
+            menu: &NSMenu,
+            event: &NSEvent,
+            charIndex: NSUInteger,
+        ) -> Option<Id<NSMenu, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other textView:willCheckTextInRange:options:types:)]
+        pub unsafe fn textView_willCheckTextInRange_options_types(
+            &self,
+            view: &NSTextView,
+            range: NSRange,
+            options: &NSDictionary<NSTextCheckingOptionKey, Object>,
+            checkingTypes: NonNull<NSTextCheckingTypes>,
+        ) -> Id<NSDictionary<NSTextCheckingOptionKey, Object>, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other textView:didCheckTextInRange:types:options:results:orthography:wordCount:)]
+        pub unsafe fn textView_didCheckTextInRange_types_options_results_orthography_wordCount(
+            &self,
+            view: &NSTextView,
+            range: NSRange,
+            checkingTypes: NSTextCheckingTypes,
+            options: &NSDictionary<NSTextCheckingOptionKey, Object>,
+            results: &NSArray<NSTextCheckingResult>,
+            orthography: &NSOrthography,
+            wordCount: NSInteger,
+        ) -> Id<NSArray<NSTextCheckingResult>, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other textView:URLForContentsOfTextAttachment:atIndex:)]
+        pub unsafe fn textView_URLForContentsOfTextAttachment_atIndex(
+            &self,
+            textView: &NSTextView,
+            textAttachment: &NSTextAttachment,
+            charIndex: NSUInteger,
+        ) -> Option<Id<NSURL, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other textView:willShowSharingServicePicker:forItems:)]
+        pub unsafe fn textView_willShowSharingServicePicker_forItems(
+            &self,
+            textView: &NSTextView,
+            servicePicker: &NSSharingServicePicker,
+            items: &NSArray,
+        ) -> Option<Id<NSSharingServicePicker, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other undoManagerForTextView:)]
+        pub unsafe fn undoManagerForTextView(
+            &self,
+            view: &NSTextView,
+        ) -> Option<Id<NSUndoManager, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other textView:shouldUpdateTouchBarItemIdentifiers:)]
+        pub unsafe fn textView_shouldUpdateTouchBarItemIdentifiers(
+            &self,
+            textView: &NSTextView,
+            identifiers: &NSArray<NSTouchBarItemIdentifier>,
+        ) -> Id<NSArray<NSTouchBarItemIdentifier>, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other textView:candidatesForSelectedRange:)]
+        pub unsafe fn textView_candidatesForSelectedRange(
+            &self,
+            textView: &NSTextView,
+            selectedRange: NSRange,
+        ) -> Option<Id<NSArray, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other textView:candidates:forSelectedRange:)]
+        pub unsafe fn textView_candidates_forSelectedRange(
+            &self,
+            textView: &NSTextView,
+            candidates: &NSArray<NSTextCheckingResult>,
+            selectedRange: NSRange,
+        ) -> Id<NSArray<NSTextCheckingResult>, Shared>;
+
+        #[optional]
+        #[method(textView:shouldSelectCandidateAtIndex:)]
+        pub unsafe fn textView_shouldSelectCandidateAtIndex(
+            &self,
+            textView: &NSTextView,
+            index: NSUInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method(textView:clickedOnLink:)]
+        pub unsafe fn textView_clickedOnLink(
+            &self,
+            textView: &NSTextView,
+            link: Option<&Object>,
+        ) -> bool;
+
+        #[optional]
+        #[method(textView:clickedOnCell:inRect:)]
+        pub unsafe fn textView_clickedOnCell_inRect(
+            &self,
+            textView: &NSTextView,
+            cell: Option<&NSTextAttachmentCell>,
+            cellFrame: NSRect,
+        );
+
+        #[optional]
+        #[method(textView:doubleClickedOnCell:inRect:)]
+        pub unsafe fn textView_doubleClickedOnCell_inRect(
+            &self,
+            textView: &NSTextView,
+            cell: Option<&NSTextAttachmentCell>,
+            cellFrame: NSRect,
+        );
+
+        #[optional]
+        #[method(textView:draggedCell:inRect:event:)]
+        pub unsafe fn textView_draggedCell_inRect_event(
+            &self,
+            view: &NSTextView,
+            cell: Option<&NSTextAttachmentCell>,
+            rect: NSRect,
+            event: Option<&NSEvent>,
+        );
+    }
+);
 
 extern_static!(NSTouchBarItemIdentifierCharacterPicker: &'static NSTouchBarItemIdentifier);
 

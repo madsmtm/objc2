@@ -227,7 +227,14 @@ extern_methods!(
     }
 );
 
-pub type NSMenuItemValidation = NSObject;
+extern_protocol!(
+    pub struct NSMenuItemValidation;
+
+    unsafe impl NSMenuItemValidation {
+        #[method(validateMenuItem:)]
+        pub unsafe fn validateMenuItem(&self, menuItem: &NSMenuItem) -> bool;
+    }
+);
 
 extern_methods!(
     /// NSMenuValidation
@@ -237,7 +244,59 @@ extern_methods!(
     }
 );
 
-pub type NSMenuDelegate = NSObject;
+extern_protocol!(
+    pub struct NSMenuDelegate;
+
+    unsafe impl NSMenuDelegate {
+        #[optional]
+        #[method(menuNeedsUpdate:)]
+        pub unsafe fn menuNeedsUpdate(&self, menu: &NSMenu);
+
+        #[optional]
+        #[method(numberOfItemsInMenu:)]
+        pub unsafe fn numberOfItemsInMenu(&self, menu: &NSMenu) -> NSInteger;
+
+        #[optional]
+        #[method(menu:updateItem:atIndex:shouldCancel:)]
+        pub unsafe fn menu_updateItem_atIndex_shouldCancel(
+            &self,
+            menu: &NSMenu,
+            item: &NSMenuItem,
+            index: NSInteger,
+            shouldCancel: bool,
+        ) -> bool;
+
+        #[optional]
+        #[method(menuHasKeyEquivalent:forEvent:target:action:)]
+        pub unsafe fn menuHasKeyEquivalent_forEvent_target_action(
+            &self,
+            menu: &NSMenu,
+            event: &NSEvent,
+            target: NonNull<*mut Object>,
+            action: NonNull<OptionSel>,
+        ) -> bool;
+
+        #[optional]
+        #[method(menuWillOpen:)]
+        pub unsafe fn menuWillOpen(&self, menu: &NSMenu);
+
+        #[optional]
+        #[method(menuDidClose:)]
+        pub unsafe fn menuDidClose(&self, menu: &NSMenu);
+
+        #[optional]
+        #[method(menu:willHighlightItem:)]
+        pub unsafe fn menu_willHighlightItem(&self, menu: &NSMenu, item: Option<&NSMenuItem>);
+
+        #[optional]
+        #[method(confinementRectForMenu:onScreen:)]
+        pub unsafe fn confinementRectForMenu_onScreen(
+            &self,
+            menu: &NSMenu,
+            screen: Option<&NSScreen>,
+        ) -> NSRect;
+    }
+);
 
 ns_options!(
     #[underlying(NSUInteger)]

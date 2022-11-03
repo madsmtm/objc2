@@ -71,4 +71,60 @@ extern_methods!(
     }
 );
 
-pub type NSPageControllerDelegate = NSObject;
+extern_protocol!(
+    pub struct NSPageControllerDelegate;
+
+    unsafe impl NSPageControllerDelegate {
+        #[optional]
+        #[method_id(@__retain_semantics Other pageController:identifierForObject:)]
+        pub unsafe fn pageController_identifierForObject(
+            &self,
+            pageController: &NSPageController,
+            object: &Object,
+        ) -> Id<NSPageControllerObjectIdentifier, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other pageController:viewControllerForIdentifier:)]
+        pub unsafe fn pageController_viewControllerForIdentifier(
+            &self,
+            pageController: &NSPageController,
+            identifier: &NSPageControllerObjectIdentifier,
+        ) -> Id<NSViewController, Shared>;
+
+        #[optional]
+        #[method(pageController:frameForObject:)]
+        pub unsafe fn pageController_frameForObject(
+            &self,
+            pageController: &NSPageController,
+            object: Option<&Object>,
+        ) -> NSRect;
+
+        #[optional]
+        #[method(pageController:prepareViewController:withObject:)]
+        pub unsafe fn pageController_prepareViewController_withObject(
+            &self,
+            pageController: &NSPageController,
+            viewController: &NSViewController,
+            object: Option<&Object>,
+        );
+
+        #[optional]
+        #[method(pageController:didTransitionToObject:)]
+        pub unsafe fn pageController_didTransitionToObject(
+            &self,
+            pageController: &NSPageController,
+            object: &Object,
+        );
+
+        #[optional]
+        #[method(pageControllerWillStartLiveTransition:)]
+        pub unsafe fn pageControllerWillStartLiveTransition(
+            &self,
+            pageController: &NSPageController,
+        );
+
+        #[optional]
+        #[method(pageControllerDidEndLiveTransition:)]
+        pub unsafe fn pageControllerDidEndLiveTransition(&self, pageController: &NSPageController);
+    }
+);

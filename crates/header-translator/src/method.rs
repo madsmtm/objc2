@@ -373,6 +373,10 @@ impl<'tu> PartialMethod<'tu> {
 
 impl fmt::Display for Method {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if self.is_optional_protocol {
+            writeln!(f, "        #[optional]")?;
+        }
+
         if self.result_type.is_id() {
             writeln!(
                 f,

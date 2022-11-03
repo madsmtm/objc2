@@ -7,7 +7,19 @@ use crate::Foundation::*;
 
 pub type NSSearchFieldRecentsAutosaveName = NSString;
 
-pub type NSSearchFieldDelegate = NSObject;
+extern_protocol!(
+    pub struct NSSearchFieldDelegate;
+
+    unsafe impl NSSearchFieldDelegate {
+        #[optional]
+        #[method(searchFieldDidStartSearching:)]
+        pub unsafe fn searchFieldDidStartSearching(&self, sender: &NSSearchField);
+
+        #[optional]
+        #[method(searchFieldDidEndSearching:)]
+        pub unsafe fn searchFieldDidEndSearching(&self, sender: &NSSearchField);
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

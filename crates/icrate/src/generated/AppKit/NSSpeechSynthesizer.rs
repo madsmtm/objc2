@@ -200,7 +200,54 @@ extern_methods!(
     }
 );
 
-pub type NSSpeechSynthesizerDelegate = NSObject;
+extern_protocol!(
+    pub struct NSSpeechSynthesizerDelegate;
+
+    unsafe impl NSSpeechSynthesizerDelegate {
+        #[optional]
+        #[method(speechSynthesizer:didFinishSpeaking:)]
+        pub unsafe fn speechSynthesizer_didFinishSpeaking(
+            &self,
+            sender: &NSSpeechSynthesizer,
+            finishedSpeaking: bool,
+        );
+
+        #[optional]
+        #[method(speechSynthesizer:willSpeakWord:ofString:)]
+        pub unsafe fn speechSynthesizer_willSpeakWord_ofString(
+            &self,
+            sender: &NSSpeechSynthesizer,
+            characterRange: NSRange,
+            string: &NSString,
+        );
+
+        #[optional]
+        #[method(speechSynthesizer:willSpeakPhoneme:)]
+        pub unsafe fn speechSynthesizer_willSpeakPhoneme(
+            &self,
+            sender: &NSSpeechSynthesizer,
+            phonemeOpcode: c_short,
+        );
+
+        #[optional]
+        #[method(speechSynthesizer:didEncounterErrorAtIndex:ofString:message:)]
+        pub unsafe fn speechSynthesizer_didEncounterErrorAtIndex_ofString_message(
+            &self,
+            sender: &NSSpeechSynthesizer,
+            characterIndex: NSUInteger,
+            string: &NSString,
+            message: &NSString,
+        );
+
+        #[optional]
+        #[method(speechSynthesizer:didEncounterSyncMessage:)]
+        pub unsafe fn speechSynthesizer_didEncounterSyncMessage(
+            &self,
+            sender: &NSSpeechSynthesizer,
+            message: &NSString,
+        );
+    }
+);
 
 pub type NSSpeechMode = NSString;
 

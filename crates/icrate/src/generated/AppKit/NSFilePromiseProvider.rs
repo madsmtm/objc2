@@ -46,4 +46,30 @@ extern_methods!(
     }
 );
 
-pub type NSFilePromiseProviderDelegate = NSObject;
+extern_protocol!(
+    pub struct NSFilePromiseProviderDelegate;
+
+    unsafe impl NSFilePromiseProviderDelegate {
+        #[method_id(@__retain_semantics Other filePromiseProvider:fileNameForType:)]
+        pub unsafe fn filePromiseProvider_fileNameForType(
+            &self,
+            filePromiseProvider: &NSFilePromiseProvider,
+            fileType: &NSString,
+        ) -> Id<NSString, Shared>;
+
+        #[method(filePromiseProvider:writePromiseToURL:completionHandler:)]
+        pub unsafe fn filePromiseProvider_writePromiseToURL_completionHandler(
+            &self,
+            filePromiseProvider: &NSFilePromiseProvider,
+            url: &NSURL,
+            completionHandler: &Block<(*mut NSError,), ()>,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other operationQueueForFilePromiseProvider:)]
+        pub unsafe fn operationQueueForFilePromiseProvider(
+            &self,
+            filePromiseProvider: &NSFilePromiseProvider,
+        ) -> Id<NSOperationQueue, Shared>;
+    }
+);

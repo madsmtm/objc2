@@ -5,7 +5,14 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextLocation = NSObject;
+extern_protocol!(
+    pub struct NSTextLocation;
+
+    unsafe impl NSTextLocation {
+        #[method(compare:)]
+        pub unsafe fn compare(&self, location: &NSTextLocation) -> NSComparisonResult;
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

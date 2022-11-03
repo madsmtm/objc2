@@ -142,7 +142,71 @@ ns_enum!(
     }
 );
 
-pub type NSSharingServiceDelegate = NSObject;
+extern_protocol!(
+    pub struct NSSharingServiceDelegate;
+
+    unsafe impl NSSharingServiceDelegate {
+        #[optional]
+        #[method(sharingService:willShareItems:)]
+        pub unsafe fn sharingService_willShareItems(
+            &self,
+            sharingService: &NSSharingService,
+            items: &NSArray,
+        );
+
+        #[optional]
+        #[method(sharingService:didFailToShareItems:error:)]
+        pub unsafe fn sharingService_didFailToShareItems_error(
+            &self,
+            sharingService: &NSSharingService,
+            items: &NSArray,
+            error: &NSError,
+        );
+
+        #[optional]
+        #[method(sharingService:didShareItems:)]
+        pub unsafe fn sharingService_didShareItems(
+            &self,
+            sharingService: &NSSharingService,
+            items: &NSArray,
+        );
+
+        #[optional]
+        #[method(sharingService:sourceFrameOnScreenForShareItem:)]
+        pub unsafe fn sharingService_sourceFrameOnScreenForShareItem(
+            &self,
+            sharingService: &NSSharingService,
+            item: &Object,
+        ) -> NSRect;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other sharingService:transitionImageForShareItem:contentRect:)]
+        pub unsafe fn sharingService_transitionImageForShareItem_contentRect(
+            &self,
+            sharingService: &NSSharingService,
+            item: &Object,
+            contentRect: NonNull<NSRect>,
+        ) -> Option<Id<NSImage, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other sharingService:sourceWindowForShareItems:sharingContentScope:)]
+        pub unsafe fn sharingService_sourceWindowForShareItems_sharingContentScope(
+            &self,
+            sharingService: &NSSharingService,
+            items: &NSArray,
+            sharingContentScope: NonNull<NSSharingContentScope>,
+        ) -> Option<Id<NSWindow, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other anchoringViewForSharingService:showRelativeToRect:preferredEdge:)]
+        pub unsafe fn anchoringViewForSharingService_showRelativeToRect_preferredEdge(
+            &self,
+            sharingService: &NSSharingService,
+            positioningRect: NonNull<NSRect>,
+            preferredEdge: NonNull<NSRectEdge>,
+        ) -> Option<Id<NSView, Shared>>;
+    }
+);
 
 ns_options!(
     #[underlying(NSUInteger)]
@@ -155,7 +219,44 @@ ns_options!(
     }
 );
 
-pub type NSCloudSharingServiceDelegate = NSObject;
+extern_protocol!(
+    pub struct NSCloudSharingServiceDelegate;
+
+    unsafe impl NSCloudSharingServiceDelegate {
+        #[optional]
+        #[method(sharingService:didCompleteForItems:error:)]
+        pub unsafe fn sharingService_didCompleteForItems_error(
+            &self,
+            sharingService: &NSSharingService,
+            items: &NSArray,
+            error: Option<&NSError>,
+        );
+
+        #[optional]
+        #[method(optionsForSharingService:shareProvider:)]
+        pub unsafe fn optionsForSharingService_shareProvider(
+            &self,
+            cloudKitSharingService: &NSSharingService,
+            provider: &NSItemProvider,
+        ) -> NSCloudKitSharingServiceOptions;
+
+        #[optional]
+        #[method(sharingService:didSaveShare:)]
+        pub unsafe fn sharingService_didSaveShare(
+            &self,
+            sharingService: &NSSharingService,
+            share: &CKShare,
+        );
+
+        #[optional]
+        #[method(sharingService:didStopSharing:)]
+        pub unsafe fn sharingService_didStopSharing(
+            &self,
+            sharingService: &NSSharingService,
+            share: &CKShare,
+        );
+    }
+);
 
 extern_methods!(
     /// NSCloudKitSharing
@@ -214,4 +315,33 @@ extern_methods!(
     }
 );
 
-pub type NSSharingServicePickerDelegate = NSObject;
+extern_protocol!(
+    pub struct NSSharingServicePickerDelegate;
+
+    unsafe impl NSSharingServicePickerDelegate {
+        #[optional]
+        #[method_id(@__retain_semantics Other sharingServicePicker:sharingServicesForItems:proposedSharingServices:)]
+        pub unsafe fn sharingServicePicker_sharingServicesForItems_proposedSharingServices(
+            &self,
+            sharingServicePicker: &NSSharingServicePicker,
+            items: &NSArray,
+            proposedServices: &NSArray<NSSharingService>,
+        ) -> Id<NSArray<NSSharingService>, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other sharingServicePicker:delegateForSharingService:)]
+        pub unsafe fn sharingServicePicker_delegateForSharingService(
+            &self,
+            sharingServicePicker: &NSSharingServicePicker,
+            sharingService: &NSSharingService,
+        ) -> Option<Id<NSSharingServiceDelegate, Shared>>;
+
+        #[optional]
+        #[method(sharingServicePicker:didChooseSharingService:)]
+        pub unsafe fn sharingServicePicker_didChooseSharingService(
+            &self,
+            sharingServicePicker: &NSSharingServicePicker,
+            service: Option<&NSSharingService>,
+        );
+    }
+);

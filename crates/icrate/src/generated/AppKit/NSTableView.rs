@@ -642,7 +642,239 @@ extern_methods!(
     }
 );
 
-pub type NSTableViewDelegate = NSObject;
+extern_protocol!(
+    pub struct NSTableViewDelegate;
+
+    unsafe impl NSTableViewDelegate {
+        #[optional]
+        #[method_id(@__retain_semantics Other tableView:viewForTableColumn:row:)]
+        pub unsafe fn tableView_viewForTableColumn_row(
+            &self,
+            tableView: &NSTableView,
+            tableColumn: Option<&NSTableColumn>,
+            row: NSInteger,
+        ) -> Option<Id<NSView, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other tableView:rowViewForRow:)]
+        pub unsafe fn tableView_rowViewForRow(
+            &self,
+            tableView: &NSTableView,
+            row: NSInteger,
+        ) -> Option<Id<NSTableRowView, Shared>>;
+
+        #[optional]
+        #[method(tableView:didAddRowView:forRow:)]
+        pub unsafe fn tableView_didAddRowView_forRow(
+            &self,
+            tableView: &NSTableView,
+            rowView: &NSTableRowView,
+            row: NSInteger,
+        );
+
+        #[optional]
+        #[method(tableView:didRemoveRowView:forRow:)]
+        pub unsafe fn tableView_didRemoveRowView_forRow(
+            &self,
+            tableView: &NSTableView,
+            rowView: &NSTableRowView,
+            row: NSInteger,
+        );
+
+        #[optional]
+        #[method(tableView:willDisplayCell:forTableColumn:row:)]
+        pub unsafe fn tableView_willDisplayCell_forTableColumn_row(
+            &self,
+            tableView: &NSTableView,
+            cell: &Object,
+            tableColumn: Option<&NSTableColumn>,
+            row: NSInteger,
+        );
+
+        #[optional]
+        #[method(tableView:shouldEditTableColumn:row:)]
+        pub unsafe fn tableView_shouldEditTableColumn_row(
+            &self,
+            tableView: &NSTableView,
+            tableColumn: Option<&NSTableColumn>,
+            row: NSInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other tableView:toolTipForCell:rect:tableColumn:row:mouseLocation:)]
+        pub unsafe fn tableView_toolTipForCell_rect_tableColumn_row_mouseLocation(
+            &self,
+            tableView: &NSTableView,
+            cell: &NSCell,
+            rect: NSRectPointer,
+            tableColumn: Option<&NSTableColumn>,
+            row: NSInteger,
+            mouseLocation: NSPoint,
+        ) -> Id<NSString, Shared>;
+
+        #[optional]
+        #[method(tableView:shouldShowCellExpansionForTableColumn:row:)]
+        pub unsafe fn tableView_shouldShowCellExpansionForTableColumn_row(
+            &self,
+            tableView: &NSTableView,
+            tableColumn: Option<&NSTableColumn>,
+            row: NSInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method(tableView:shouldTrackCell:forTableColumn:row:)]
+        pub unsafe fn tableView_shouldTrackCell_forTableColumn_row(
+            &self,
+            tableView: &NSTableView,
+            cell: &NSCell,
+            tableColumn: Option<&NSTableColumn>,
+            row: NSInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other tableView:dataCellForTableColumn:row:)]
+        pub unsafe fn tableView_dataCellForTableColumn_row(
+            &self,
+            tableView: &NSTableView,
+            tableColumn: Option<&NSTableColumn>,
+            row: NSInteger,
+        ) -> Option<Id<NSCell, Shared>>;
+
+        #[optional]
+        #[method(selectionShouldChangeInTableView:)]
+        pub unsafe fn selectionShouldChangeInTableView(&self, tableView: &NSTableView) -> bool;
+
+        #[optional]
+        #[method(tableView:shouldSelectRow:)]
+        pub unsafe fn tableView_shouldSelectRow(
+            &self,
+            tableView: &NSTableView,
+            row: NSInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other tableView:selectionIndexesForProposedSelection:)]
+        pub unsafe fn tableView_selectionIndexesForProposedSelection(
+            &self,
+            tableView: &NSTableView,
+            proposedSelectionIndexes: &NSIndexSet,
+        ) -> Id<NSIndexSet, Shared>;
+
+        #[optional]
+        #[method(tableView:shouldSelectTableColumn:)]
+        pub unsafe fn tableView_shouldSelectTableColumn(
+            &self,
+            tableView: &NSTableView,
+            tableColumn: Option<&NSTableColumn>,
+        ) -> bool;
+
+        #[optional]
+        #[method(tableView:mouseDownInHeaderOfTableColumn:)]
+        pub unsafe fn tableView_mouseDownInHeaderOfTableColumn(
+            &self,
+            tableView: &NSTableView,
+            tableColumn: &NSTableColumn,
+        );
+
+        #[optional]
+        #[method(tableView:didClickTableColumn:)]
+        pub unsafe fn tableView_didClickTableColumn(
+            &self,
+            tableView: &NSTableView,
+            tableColumn: &NSTableColumn,
+        );
+
+        #[optional]
+        #[method(tableView:didDragTableColumn:)]
+        pub unsafe fn tableView_didDragTableColumn(
+            &self,
+            tableView: &NSTableView,
+            tableColumn: &NSTableColumn,
+        );
+
+        #[optional]
+        #[method(tableView:heightOfRow:)]
+        pub unsafe fn tableView_heightOfRow(
+            &self,
+            tableView: &NSTableView,
+            row: NSInteger,
+        ) -> CGFloat;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other tableView:typeSelectStringForTableColumn:row:)]
+        pub unsafe fn tableView_typeSelectStringForTableColumn_row(
+            &self,
+            tableView: &NSTableView,
+            tableColumn: Option<&NSTableColumn>,
+            row: NSInteger,
+        ) -> Option<Id<NSString, Shared>>;
+
+        #[optional]
+        #[method(tableView:nextTypeSelectMatchFromRow:toRow:forString:)]
+        pub unsafe fn tableView_nextTypeSelectMatchFromRow_toRow_forString(
+            &self,
+            tableView: &NSTableView,
+            startRow: NSInteger,
+            endRow: NSInteger,
+            searchString: &NSString,
+        ) -> NSInteger;
+
+        #[optional]
+        #[method(tableView:shouldTypeSelectForEvent:withCurrentSearchString:)]
+        pub unsafe fn tableView_shouldTypeSelectForEvent_withCurrentSearchString(
+            &self,
+            tableView: &NSTableView,
+            event: &NSEvent,
+            searchString: Option<&NSString>,
+        ) -> bool;
+
+        #[optional]
+        #[method(tableView:isGroupRow:)]
+        pub unsafe fn tableView_isGroupRow(&self, tableView: &NSTableView, row: NSInteger) -> bool;
+
+        #[optional]
+        #[method(tableView:sizeToFitWidthOfColumn:)]
+        pub unsafe fn tableView_sizeToFitWidthOfColumn(
+            &self,
+            tableView: &NSTableView,
+            column: NSInteger,
+        ) -> CGFloat;
+
+        #[optional]
+        #[method(tableView:shouldReorderColumn:toColumn:)]
+        pub unsafe fn tableView_shouldReorderColumn_toColumn(
+            &self,
+            tableView: &NSTableView,
+            columnIndex: NSInteger,
+            newColumnIndex: NSInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other tableView:rowActionsForRow:edge:)]
+        pub unsafe fn tableView_rowActionsForRow_edge(
+            &self,
+            tableView: &NSTableView,
+            row: NSInteger,
+            edge: NSTableRowActionEdge,
+        ) -> Id<NSArray<NSTableViewRowAction>, Shared>;
+
+        #[optional]
+        #[method(tableViewSelectionDidChange:)]
+        pub unsafe fn tableViewSelectionDidChange(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(tableViewColumnDidMove:)]
+        pub unsafe fn tableViewColumnDidMove(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(tableViewColumnDidResize:)]
+        pub unsafe fn tableViewColumnDidResize(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(tableViewSelectionIsChanging:)]
+        pub unsafe fn tableViewSelectionIsChanging(&self, notification: &NSNotification);
+    }
+);
 
 extern_static!(NSTableViewSelectionDidChangeNotification: &'static NSNotificationName);
 
@@ -654,7 +886,116 @@ extern_static!(NSTableViewSelectionIsChangingNotification: &'static NSNotificati
 
 extern_static!(NSTableViewRowViewKey: &'static NSUserInterfaceItemIdentifier);
 
-pub type NSTableViewDataSource = NSObject;
+extern_protocol!(
+    pub struct NSTableViewDataSource;
+
+    unsafe impl NSTableViewDataSource {
+        #[optional]
+        #[method(numberOfRowsInTableView:)]
+        pub unsafe fn numberOfRowsInTableView(&self, tableView: &NSTableView) -> NSInteger;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other tableView:objectValueForTableColumn:row:)]
+        pub unsafe fn tableView_objectValueForTableColumn_row(
+            &self,
+            tableView: &NSTableView,
+            tableColumn: Option<&NSTableColumn>,
+            row: NSInteger,
+        ) -> Option<Id<Object, Shared>>;
+
+        #[optional]
+        #[method(tableView:setObjectValue:forTableColumn:row:)]
+        pub unsafe fn tableView_setObjectValue_forTableColumn_row(
+            &self,
+            tableView: &NSTableView,
+            object: Option<&Object>,
+            tableColumn: Option<&NSTableColumn>,
+            row: NSInteger,
+        );
+
+        #[optional]
+        #[method(tableView:sortDescriptorsDidChange:)]
+        pub unsafe fn tableView_sortDescriptorsDidChange(
+            &self,
+            tableView: &NSTableView,
+            oldDescriptors: &NSArray<NSSortDescriptor>,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other tableView:pasteboardWriterForRow:)]
+        pub unsafe fn tableView_pasteboardWriterForRow(
+            &self,
+            tableView: &NSTableView,
+            row: NSInteger,
+        ) -> Option<Id<NSPasteboardWriting, Shared>>;
+
+        #[optional]
+        #[method(tableView:draggingSession:willBeginAtPoint:forRowIndexes:)]
+        pub unsafe fn tableView_draggingSession_willBeginAtPoint_forRowIndexes(
+            &self,
+            tableView: &NSTableView,
+            session: &NSDraggingSession,
+            screenPoint: NSPoint,
+            rowIndexes: &NSIndexSet,
+        );
+
+        #[optional]
+        #[method(tableView:draggingSession:endedAtPoint:operation:)]
+        pub unsafe fn tableView_draggingSession_endedAtPoint_operation(
+            &self,
+            tableView: &NSTableView,
+            session: &NSDraggingSession,
+            screenPoint: NSPoint,
+            operation: NSDragOperation,
+        );
+
+        #[optional]
+        #[method(tableView:updateDraggingItemsForDrag:)]
+        pub unsafe fn tableView_updateDraggingItemsForDrag(
+            &self,
+            tableView: &NSTableView,
+            draggingInfo: &NSDraggingInfo,
+        );
+
+        #[optional]
+        #[method(tableView:writeRowsWithIndexes:toPasteboard:)]
+        pub unsafe fn tableView_writeRowsWithIndexes_toPasteboard(
+            &self,
+            tableView: &NSTableView,
+            rowIndexes: &NSIndexSet,
+            pboard: &NSPasteboard,
+        ) -> bool;
+
+        #[optional]
+        #[method(tableView:validateDrop:proposedRow:proposedDropOperation:)]
+        pub unsafe fn tableView_validateDrop_proposedRow_proposedDropOperation(
+            &self,
+            tableView: &NSTableView,
+            info: &NSDraggingInfo,
+            row: NSInteger,
+            dropOperation: NSTableViewDropOperation,
+        ) -> NSDragOperation;
+
+        #[optional]
+        #[method(tableView:acceptDrop:row:dropOperation:)]
+        pub unsafe fn tableView_acceptDrop_row_dropOperation(
+            &self,
+            tableView: &NSTableView,
+            info: &NSDraggingInfo,
+            row: NSInteger,
+            dropOperation: NSTableViewDropOperation,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other tableView:namesOfPromisedFilesDroppedAtDestination:forDraggedRowsWithIndexes:)]
+        pub unsafe fn tableView_namesOfPromisedFilesDroppedAtDestination_forDraggedRowsWithIndexes(
+            &self,
+            tableView: &NSTableView,
+            dropDestination: &NSURL,
+            indexSet: &NSIndexSet,
+        ) -> Id<NSArray<NSString>, Shared>;
+    }
+);
 
 extern_methods!(
     /// NSTableViewDataSourceDeprecated

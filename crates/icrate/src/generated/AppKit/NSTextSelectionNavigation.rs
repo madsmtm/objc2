@@ -155,4 +155,84 @@ extern_methods!(
     }
 );
 
-pub type NSTextSelectionDataSource = NSObject;
+extern_protocol!(
+    pub struct NSTextSelectionDataSource;
+
+    unsafe impl NSTextSelectionDataSource {
+        #[method_id(@__retain_semantics Other documentRange)]
+        pub unsafe fn documentRange(&self) -> Id<NSTextRange, Shared>;
+
+        #[method(enumerateSubstringsFromLocation:options:usingBlock:)]
+        pub unsafe fn enumerateSubstringsFromLocation_options_usingBlock(
+            &self,
+            location: &NSTextLocation,
+            options: NSStringEnumerationOptions,
+            block: &Block<
+                (
+                    *mut NSString,
+                    NonNull<NSTextRange>,
+                    *mut NSTextRange,
+                    NonNull<Bool>,
+                ),
+                (),
+            >,
+        );
+
+        #[method_id(@__retain_semantics Other textRangeForSelectionGranularity:enclosingLocation:)]
+        pub unsafe fn textRangeForSelectionGranularity_enclosingLocation(
+            &self,
+            selectionGranularity: NSTextSelectionGranularity,
+            location: &NSTextLocation,
+        ) -> Option<Id<NSTextRange, Shared>>;
+
+        #[method_id(@__retain_semantics Other locationFromLocation:withOffset:)]
+        pub unsafe fn locationFromLocation_withOffset(
+            &self,
+            location: &NSTextLocation,
+            offset: NSInteger,
+        ) -> Option<Id<NSTextLocation, Shared>>;
+
+        #[method(offsetFromLocation:toLocation:)]
+        pub unsafe fn offsetFromLocation_toLocation(
+            &self,
+            from: &NSTextLocation,
+            to: &NSTextLocation,
+        ) -> NSInteger;
+
+        #[method(baseWritingDirectionAtLocation:)]
+        pub unsafe fn baseWritingDirectionAtLocation(
+            &self,
+            location: &NSTextLocation,
+        ) -> NSTextSelectionNavigationWritingDirection;
+
+        #[method(enumerateCaretOffsetsInLineFragmentAtLocation:usingBlock:)]
+        pub unsafe fn enumerateCaretOffsetsInLineFragmentAtLocation_usingBlock(
+            &self,
+            location: &NSTextLocation,
+            block: &Block<(CGFloat, NonNull<NSTextLocation>, Bool, NonNull<Bool>), ()>,
+        );
+
+        #[method_id(@__retain_semantics Other lineFragmentRangeForPoint:inContainerAtLocation:)]
+        pub unsafe fn lineFragmentRangeForPoint_inContainerAtLocation(
+            &self,
+            point: CGPoint,
+            location: &NSTextLocation,
+        ) -> Option<Id<NSTextRange, Shared>>;
+
+        #[optional]
+        #[method(enumerateContainerBoundariesFromLocation:reverse:usingBlock:)]
+        pub unsafe fn enumerateContainerBoundariesFromLocation_reverse_usingBlock(
+            &self,
+            location: &NSTextLocation,
+            reverse: bool,
+            block: &Block<(NonNull<NSTextLocation>, NonNull<Bool>), ()>,
+        );
+
+        #[optional]
+        #[method(textLayoutOrientationAtLocation:)]
+        pub unsafe fn textLayoutOrientationAtLocation(
+            &self,
+            location: &NSTextLocation,
+        ) -> NSTextSelectionNavigationLayoutOrientation;
+    }
+);

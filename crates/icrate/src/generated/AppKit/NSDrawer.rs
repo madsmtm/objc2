@@ -109,7 +109,43 @@ extern_methods!(
     }
 );
 
-pub type NSDrawerDelegate = NSObject;
+extern_protocol!(
+    pub struct NSDrawerDelegate;
+
+    unsafe impl NSDrawerDelegate {
+        #[optional]
+        #[method(drawerShouldOpen:)]
+        pub unsafe fn drawerShouldOpen(&self, sender: &NSDrawer) -> bool;
+
+        #[optional]
+        #[method(drawerShouldClose:)]
+        pub unsafe fn drawerShouldClose(&self, sender: &NSDrawer) -> bool;
+
+        #[optional]
+        #[method(drawerWillResizeContents:toSize:)]
+        pub unsafe fn drawerWillResizeContents_toSize(
+            &self,
+            sender: &NSDrawer,
+            contentSize: NSSize,
+        ) -> NSSize;
+
+        #[optional]
+        #[method(drawerWillOpen:)]
+        pub unsafe fn drawerWillOpen(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(drawerDidOpen:)]
+        pub unsafe fn drawerDidOpen(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(drawerWillClose:)]
+        pub unsafe fn drawerWillClose(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(drawerDidClose:)]
+        pub unsafe fn drawerDidClose(&self, notification: &NSNotification);
+    }
+);
 
 extern_static!(NSDrawerWillOpenNotification: &'static NSNotificationName);
 

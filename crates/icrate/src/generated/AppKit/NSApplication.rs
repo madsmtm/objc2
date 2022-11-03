@@ -542,7 +542,297 @@ ns_enum!(
     }
 );
 
-pub type NSApplicationDelegate = NSObject;
+extern_protocol!(
+    pub struct NSApplicationDelegate;
+
+    unsafe impl NSApplicationDelegate {
+        #[optional]
+        #[method(applicationShouldTerminate:)]
+        pub unsafe fn applicationShouldTerminate(
+            &self,
+            sender: &NSApplication,
+        ) -> NSApplicationTerminateReply;
+
+        #[optional]
+        #[method(application:openURLs:)]
+        pub unsafe fn application_openURLs(
+            &self,
+            application: &NSApplication,
+            urls: &NSArray<NSURL>,
+        );
+
+        #[optional]
+        #[method(application:openFile:)]
+        pub unsafe fn application_openFile(
+            &self,
+            sender: &NSApplication,
+            filename: &NSString,
+        ) -> bool;
+
+        #[optional]
+        #[method(application:openFiles:)]
+        pub unsafe fn application_openFiles(
+            &self,
+            sender: &NSApplication,
+            filenames: &NSArray<NSString>,
+        );
+
+        #[optional]
+        #[method(application:openTempFile:)]
+        pub unsafe fn application_openTempFile(
+            &self,
+            sender: &NSApplication,
+            filename: &NSString,
+        ) -> bool;
+
+        #[optional]
+        #[method(applicationShouldOpenUntitledFile:)]
+        pub unsafe fn applicationShouldOpenUntitledFile(&self, sender: &NSApplication) -> bool;
+
+        #[optional]
+        #[method(applicationOpenUntitledFile:)]
+        pub unsafe fn applicationOpenUntitledFile(&self, sender: &NSApplication) -> bool;
+
+        #[optional]
+        #[method(application:openFileWithoutUI:)]
+        pub unsafe fn application_openFileWithoutUI(
+            &self,
+            sender: &Object,
+            filename: &NSString,
+        ) -> bool;
+
+        #[optional]
+        #[method(application:printFile:)]
+        pub unsafe fn application_printFile(
+            &self,
+            sender: &NSApplication,
+            filename: &NSString,
+        ) -> bool;
+
+        #[optional]
+        #[method(application:printFiles:withSettings:showPrintPanels:)]
+        pub unsafe fn application_printFiles_withSettings_showPrintPanels(
+            &self,
+            application: &NSApplication,
+            fileNames: &NSArray<NSString>,
+            printSettings: &NSDictionary<NSPrintInfoAttributeKey, Object>,
+            showPrintPanels: bool,
+        ) -> NSApplicationPrintReply;
+
+        #[optional]
+        #[method(applicationShouldTerminateAfterLastWindowClosed:)]
+        pub unsafe fn applicationShouldTerminateAfterLastWindowClosed(
+            &self,
+            sender: &NSApplication,
+        ) -> bool;
+
+        #[optional]
+        #[method(applicationShouldHandleReopen:hasVisibleWindows:)]
+        pub unsafe fn applicationShouldHandleReopen_hasVisibleWindows(
+            &self,
+            sender: &NSApplication,
+            flag: bool,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other applicationDockMenu:)]
+        pub unsafe fn applicationDockMenu(
+            &self,
+            sender: &NSApplication,
+        ) -> Option<Id<NSMenu, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other application:willPresentError:)]
+        pub unsafe fn application_willPresentError(
+            &self,
+            application: &NSApplication,
+            error: &NSError,
+        ) -> Id<NSError, Shared>;
+
+        #[optional]
+        #[method(application:didRegisterForRemoteNotificationsWithDeviceToken:)]
+        pub unsafe fn application_didRegisterForRemoteNotificationsWithDeviceToken(
+            &self,
+            application: &NSApplication,
+            deviceToken: &NSData,
+        );
+
+        #[optional]
+        #[method(application:didFailToRegisterForRemoteNotificationsWithError:)]
+        pub unsafe fn application_didFailToRegisterForRemoteNotificationsWithError(
+            &self,
+            application: &NSApplication,
+            error: &NSError,
+        );
+
+        #[optional]
+        #[method(application:didReceiveRemoteNotification:)]
+        pub unsafe fn application_didReceiveRemoteNotification(
+            &self,
+            application: &NSApplication,
+            userInfo: &NSDictionary<NSString, Object>,
+        );
+
+        #[optional]
+        #[method(applicationSupportsSecureRestorableState:)]
+        pub unsafe fn applicationSupportsSecureRestorableState(&self, app: &NSApplication) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other application:handlerForIntent:)]
+        pub unsafe fn application_handlerForIntent(
+            &self,
+            application: &NSApplication,
+            intent: &INIntent,
+        ) -> Option<Id<Object, Shared>>;
+
+        #[optional]
+        #[method(application:willEncodeRestorableState:)]
+        pub unsafe fn application_willEncodeRestorableState(
+            &self,
+            app: &NSApplication,
+            coder: &NSCoder,
+        );
+
+        #[optional]
+        #[method(application:didDecodeRestorableState:)]
+        pub unsafe fn application_didDecodeRestorableState(
+            &self,
+            app: &NSApplication,
+            coder: &NSCoder,
+        );
+
+        #[optional]
+        #[method(application:willContinueUserActivityWithType:)]
+        pub unsafe fn application_willContinueUserActivityWithType(
+            &self,
+            application: &NSApplication,
+            userActivityType: &NSString,
+        ) -> bool;
+
+        #[optional]
+        #[method(application:continueUserActivity:restorationHandler:)]
+        pub unsafe fn application_continueUserActivity_restorationHandler(
+            &self,
+            application: &NSApplication,
+            userActivity: &NSUserActivity,
+            restorationHandler: &Block<(NonNull<NSArray<NSUserActivityRestoring>>,), ()>,
+        ) -> bool;
+
+        #[optional]
+        #[method(application:didFailToContinueUserActivityWithType:error:)]
+        pub unsafe fn application_didFailToContinueUserActivityWithType_error(
+            &self,
+            application: &NSApplication,
+            userActivityType: &NSString,
+            error: &NSError,
+        );
+
+        #[optional]
+        #[method(application:didUpdateUserActivity:)]
+        pub unsafe fn application_didUpdateUserActivity(
+            &self,
+            application: &NSApplication,
+            userActivity: &NSUserActivity,
+        );
+
+        #[optional]
+        #[method(application:userDidAcceptCloudKitShareWithMetadata:)]
+        pub unsafe fn application_userDidAcceptCloudKitShareWithMetadata(
+            &self,
+            application: &NSApplication,
+            metadata: &CKShareMetadata,
+        );
+
+        #[optional]
+        #[method(application:delegateHandlesKey:)]
+        pub unsafe fn application_delegateHandlesKey(
+            &self,
+            sender: &NSApplication,
+            key: &NSString,
+        ) -> bool;
+
+        #[optional]
+        #[method(applicationShouldAutomaticallyLocalizeKeyEquivalents:)]
+        pub unsafe fn applicationShouldAutomaticallyLocalizeKeyEquivalents(
+            &self,
+            application: &NSApplication,
+        ) -> bool;
+
+        #[optional]
+        #[method(applicationWillFinishLaunching:)]
+        pub unsafe fn applicationWillFinishLaunching(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(applicationDidFinishLaunching:)]
+        pub unsafe fn applicationDidFinishLaunching(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(applicationWillHide:)]
+        pub unsafe fn applicationWillHide(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(applicationDidHide:)]
+        pub unsafe fn applicationDidHide(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(applicationWillUnhide:)]
+        pub unsafe fn applicationWillUnhide(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(applicationDidUnhide:)]
+        pub unsafe fn applicationDidUnhide(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(applicationWillBecomeActive:)]
+        pub unsafe fn applicationWillBecomeActive(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(applicationDidBecomeActive:)]
+        pub unsafe fn applicationDidBecomeActive(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(applicationWillResignActive:)]
+        pub unsafe fn applicationWillResignActive(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(applicationDidResignActive:)]
+        pub unsafe fn applicationDidResignActive(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(applicationWillUpdate:)]
+        pub unsafe fn applicationWillUpdate(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(applicationDidUpdate:)]
+        pub unsafe fn applicationDidUpdate(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(applicationWillTerminate:)]
+        pub unsafe fn applicationWillTerminate(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(applicationDidChangeScreenParameters:)]
+        pub unsafe fn applicationDidChangeScreenParameters(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(applicationDidChangeOcclusionState:)]
+        pub unsafe fn applicationDidChangeOcclusionState(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(applicationProtectedDataWillBecomeUnavailable:)]
+        pub unsafe fn applicationProtectedDataWillBecomeUnavailable(
+            &self,
+            notification: &NSNotification,
+        );
+
+        #[optional]
+        #[method(applicationProtectedDataDidBecomeAvailable:)]
+        pub unsafe fn applicationProtectedDataDidBecomeAvailable(
+            &self,
+            notification: &NSNotification,
+        );
+    }
+);
 
 extern_methods!(
     /// NSServicesMenu
@@ -562,7 +852,23 @@ extern_methods!(
     }
 );
 
-pub type NSServicesMenuRequestor = NSObject;
+extern_protocol!(
+    pub struct NSServicesMenuRequestor;
+
+    unsafe impl NSServicesMenuRequestor {
+        #[optional]
+        #[method(writeSelectionToPasteboard:types:)]
+        pub unsafe fn writeSelectionToPasteboard_types(
+            &self,
+            pboard: &NSPasteboard,
+            types: &NSArray<NSPasteboardType>,
+        ) -> bool;
+
+        #[optional]
+        #[method(readSelectionFromPasteboard:)]
+        pub unsafe fn readSelectionFromPasteboard(&self, pboard: &NSPasteboard) -> bool;
+    }
+);
 
 extern_methods!(
     /// NSServicesHandling

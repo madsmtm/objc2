@@ -241,7 +241,15 @@ extern_methods!(
     }
 );
 
-pub type NSStreamDelegate = NSObject;
+extern_protocol!(
+    pub struct NSStreamDelegate;
+
+    unsafe impl NSStreamDelegate {
+        #[optional]
+        #[method(stream:handleEvent:)]
+        pub unsafe fn stream_handleEvent(&self, aStream: &NSStream, eventCode: NSStreamEvent);
+    }
+);
 
 extern_static!(NSStreamSocketSecurityLevelKey: &'static NSStreamPropertyKey);
 

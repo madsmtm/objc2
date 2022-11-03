@@ -218,7 +218,25 @@ extern_methods!(
     }
 );
 
-pub type NSViewControllerPresentationAnimator = NSObject;
+extern_protocol!(
+    pub struct NSViewControllerPresentationAnimator;
+
+    unsafe impl NSViewControllerPresentationAnimator {
+        #[method(animatePresentationOfViewController:fromViewController:)]
+        pub unsafe fn animatePresentationOfViewController_fromViewController(
+            &self,
+            viewController: &NSViewController,
+            fromViewController: &NSViewController,
+        );
+
+        #[method(animateDismissalOfViewController:fromViewController:)]
+        pub unsafe fn animateDismissalOfViewController_fromViewController(
+            &self,
+            viewController: &NSViewController,
+            fromViewController: &NSViewController,
+        );
+    }
+);
 
 extern_methods!(
     /// NSViewControllerStoryboardingMethods

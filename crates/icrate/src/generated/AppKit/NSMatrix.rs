@@ -394,4 +394,8 @@ extern_methods!(
     }
 );
 
-pub type NSMatrixDelegate = NSObject;
+extern_protocol!(
+    pub struct NSMatrixDelegate;
+
+    unsafe impl NSMatrixDelegate {}
+);

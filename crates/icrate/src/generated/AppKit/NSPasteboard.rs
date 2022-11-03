@@ -217,7 +217,22 @@ extern_methods!(
     }
 );
 
-pub type NSPasteboardTypeOwner = NSObject;
+extern_protocol!(
+    pub struct NSPasteboardTypeOwner;
+
+    unsafe impl NSPasteboardTypeOwner {
+        #[method(pasteboard:provideDataForType:)]
+        pub unsafe fn pasteboard_provideDataForType(
+            &self,
+            sender: &NSPasteboard,
+            type_: &NSPasteboardType,
+        );
+
+        #[optional]
+        #[method(pasteboardChangedOwner:)]
+        pub unsafe fn pasteboardChangedOwner(&self, sender: &NSPasteboard);
+    }
+);
 
 extern_methods!(
     /// NSPasteboardOwner
@@ -241,7 +256,31 @@ ns_options!(
     }
 );
 
-pub type NSPasteboardWriting = NSObject;
+extern_protocol!(
+    pub struct NSPasteboardWriting;
+
+    unsafe impl NSPasteboardWriting {
+        #[method_id(@__retain_semantics Other writableTypesForPasteboard:)]
+        pub unsafe fn writableTypesForPasteboard(
+            &self,
+            pasteboard: &NSPasteboard,
+        ) -> Id<NSArray<NSPasteboardType>, Shared>;
+
+        #[optional]
+        #[method(writingOptionsForType:pasteboard:)]
+        pub unsafe fn writingOptionsForType_pasteboard(
+            &self,
+            type_: &NSPasteboardType,
+            pasteboard: &NSPasteboard,
+        ) -> NSPasteboardWritingOptions;
+
+        #[method_id(@__retain_semantics Other pasteboardPropertyListForType:)]
+        pub unsafe fn pasteboardPropertyListForType(
+            &self,
+            type_: &NSPasteboardType,
+        ) -> Option<Id<Object, Shared>>;
+    }
+);
 
 ns_options!(
     #[underlying(NSUInteger)]
@@ -253,7 +292,31 @@ ns_options!(
     }
 );
 
-pub type NSPasteboardReading = NSObject;
+extern_protocol!(
+    pub struct NSPasteboardReading;
+
+    unsafe impl NSPasteboardReading {
+        #[method_id(@__retain_semantics Other readableTypesForPasteboard:)]
+        pub unsafe fn readableTypesForPasteboard(
+            pasteboard: &NSPasteboard,
+        ) -> Id<NSArray<NSPasteboardType>, Shared>;
+
+        #[optional]
+        #[method(readingOptionsForType:pasteboard:)]
+        pub unsafe fn readingOptionsForType_pasteboard(
+            type_: &NSPasteboardType,
+            pasteboard: &NSPasteboard,
+        ) -> NSPasteboardReadingOptions;
+
+        #[optional]
+        #[method_id(@__retain_semantics Init initWithPasteboardPropertyList:ofType:)]
+        pub unsafe fn initWithPasteboardPropertyList_ofType(
+            this: Option<Allocated<Self>>,
+            propertyList: &Object,
+            type_: &NSPasteboardType,
+        ) -> Option<Id<Self, Shared>>;
+    }
+);
 
 extern_methods!(
     /// NSPasteboardSupport

@@ -427,7 +427,293 @@ extern_methods!(
 
 extern_static!(NSBrowserColumnConfigurationDidChangeNotification: &'static NSNotificationName);
 
-pub type NSBrowserDelegate = NSObject;
+extern_protocol!(
+    pub struct NSBrowserDelegate;
+
+    unsafe impl NSBrowserDelegate {
+        #[optional]
+        #[method(browser:numberOfRowsInColumn:)]
+        pub unsafe fn browser_numberOfRowsInColumn(
+            &self,
+            sender: &NSBrowser,
+            column: NSInteger,
+        ) -> NSInteger;
+
+        #[optional]
+        #[method(browser:createRowsForColumn:inMatrix:)]
+        pub unsafe fn browser_createRowsForColumn_inMatrix(
+            &self,
+            sender: &NSBrowser,
+            column: NSInteger,
+            matrix: &NSMatrix,
+        );
+
+        #[optional]
+        #[method(browser:numberOfChildrenOfItem:)]
+        pub unsafe fn browser_numberOfChildrenOfItem(
+            &self,
+            browser: &NSBrowser,
+            item: Option<&Object>,
+        ) -> NSInteger;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other browser:child:ofItem:)]
+        pub unsafe fn browser_child_ofItem(
+            &self,
+            browser: &NSBrowser,
+            index: NSInteger,
+            item: Option<&Object>,
+        ) -> Id<Object, Shared>;
+
+        #[optional]
+        #[method(browser:isLeafItem:)]
+        pub unsafe fn browser_isLeafItem(&self, browser: &NSBrowser, item: Option<&Object>)
+            -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other browser:objectValueForItem:)]
+        pub unsafe fn browser_objectValueForItem(
+            &self,
+            browser: &NSBrowser,
+            item: Option<&Object>,
+        ) -> Option<Id<Object, Shared>>;
+
+        #[optional]
+        #[method(browser:heightOfRow:inColumn:)]
+        pub unsafe fn browser_heightOfRow_inColumn(
+            &self,
+            browser: &NSBrowser,
+            row: NSInteger,
+            columnIndex: NSInteger,
+        ) -> CGFloat;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other rootItemForBrowser:)]
+        pub unsafe fn rootItemForBrowser(&self, browser: &NSBrowser) -> Option<Id<Object, Shared>>;
+
+        #[optional]
+        #[method(browser:setObjectValue:forItem:)]
+        pub unsafe fn browser_setObjectValue_forItem(
+            &self,
+            browser: &NSBrowser,
+            object: Option<&Object>,
+            item: Option<&Object>,
+        );
+
+        #[optional]
+        #[method(browser:shouldEditItem:)]
+        pub unsafe fn browser_shouldEditItem(
+            &self,
+            browser: &NSBrowser,
+            item: Option<&Object>,
+        ) -> bool;
+
+        #[optional]
+        #[method(browser:willDisplayCell:atRow:column:)]
+        pub unsafe fn browser_willDisplayCell_atRow_column(
+            &self,
+            sender: &NSBrowser,
+            cell: &Object,
+            row: NSInteger,
+            column: NSInteger,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other browser:titleOfColumn:)]
+        pub unsafe fn browser_titleOfColumn(
+            &self,
+            sender: &NSBrowser,
+            column: NSInteger,
+        ) -> Option<Id<NSString, Shared>>;
+
+        #[optional]
+        #[method(browser:selectCellWithString:inColumn:)]
+        pub unsafe fn browser_selectCellWithString_inColumn(
+            &self,
+            sender: &NSBrowser,
+            title: &NSString,
+            column: NSInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method(browser:selectRow:inColumn:)]
+        pub unsafe fn browser_selectRow_inColumn(
+            &self,
+            sender: &NSBrowser,
+            row: NSInteger,
+            column: NSInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method(browser:isColumnValid:)]
+        pub unsafe fn browser_isColumnValid(&self, sender: &NSBrowser, column: NSInteger) -> bool;
+
+        #[optional]
+        #[method(browserWillScroll:)]
+        pub unsafe fn browserWillScroll(&self, sender: &NSBrowser);
+
+        #[optional]
+        #[method(browserDidScroll:)]
+        pub unsafe fn browserDidScroll(&self, sender: &NSBrowser);
+
+        #[optional]
+        #[method(browser:shouldSizeColumn:forUserResize:toWidth:)]
+        pub unsafe fn browser_shouldSizeColumn_forUserResize_toWidth(
+            &self,
+            browser: &NSBrowser,
+            columnIndex: NSInteger,
+            forUserResize: bool,
+            suggestedWidth: CGFloat,
+        ) -> CGFloat;
+
+        #[optional]
+        #[method(browser:sizeToFitWidthOfColumn:)]
+        pub unsafe fn browser_sizeToFitWidthOfColumn(
+            &self,
+            browser: &NSBrowser,
+            columnIndex: NSInteger,
+        ) -> CGFloat;
+
+        #[optional]
+        #[method(browserColumnConfigurationDidChange:)]
+        pub unsafe fn browserColumnConfigurationDidChange(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(browser:shouldShowCellExpansionForRow:column:)]
+        pub unsafe fn browser_shouldShowCellExpansionForRow_column(
+            &self,
+            browser: &NSBrowser,
+            row: NSInteger,
+            column: NSInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method(browser:writeRowsWithIndexes:inColumn:toPasteboard:)]
+        pub unsafe fn browser_writeRowsWithIndexes_inColumn_toPasteboard(
+            &self,
+            browser: &NSBrowser,
+            rowIndexes: &NSIndexSet,
+            column: NSInteger,
+            pasteboard: &NSPasteboard,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other browser:namesOfPromisedFilesDroppedAtDestination:forDraggedRowsWithIndexes:inColumn:)]
+        pub unsafe fn browser_namesOfPromisedFilesDroppedAtDestination_forDraggedRowsWithIndexes_inColumn(
+            &self,
+            browser: &NSBrowser,
+            dropDestination: &NSURL,
+            rowIndexes: &NSIndexSet,
+            column: NSInteger,
+        ) -> Id<NSArray<NSString>, Shared>;
+
+        #[optional]
+        #[method(browser:canDragRowsWithIndexes:inColumn:withEvent:)]
+        pub unsafe fn browser_canDragRowsWithIndexes_inColumn_withEvent(
+            &self,
+            browser: &NSBrowser,
+            rowIndexes: &NSIndexSet,
+            column: NSInteger,
+            event: &NSEvent,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other browser:draggingImageForRowsWithIndexes:inColumn:withEvent:offset:)]
+        pub unsafe fn browser_draggingImageForRowsWithIndexes_inColumn_withEvent_offset(
+            &self,
+            browser: &NSBrowser,
+            rowIndexes: &NSIndexSet,
+            column: NSInteger,
+            event: &NSEvent,
+            dragImageOffset: NSPointPointer,
+        ) -> Option<Id<NSImage, Shared>>;
+
+        #[optional]
+        #[method(browser:validateDrop:proposedRow:column:dropOperation:)]
+        pub unsafe fn browser_validateDrop_proposedRow_column_dropOperation(
+            &self,
+            browser: &NSBrowser,
+            info: &NSDraggingInfo,
+            row: NonNull<NSInteger>,
+            column: NonNull<NSInteger>,
+            dropOperation: NonNull<NSBrowserDropOperation>,
+        ) -> NSDragOperation;
+
+        #[optional]
+        #[method(browser:acceptDrop:atRow:column:dropOperation:)]
+        pub unsafe fn browser_acceptDrop_atRow_column_dropOperation(
+            &self,
+            browser: &NSBrowser,
+            info: &NSDraggingInfo,
+            row: NSInteger,
+            column: NSInteger,
+            dropOperation: NSBrowserDropOperation,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other browser:typeSelectStringForRow:inColumn:)]
+        pub unsafe fn browser_typeSelectStringForRow_inColumn(
+            &self,
+            browser: &NSBrowser,
+            row: NSInteger,
+            column: NSInteger,
+        ) -> Option<Id<NSString, Shared>>;
+
+        #[optional]
+        #[method(browser:shouldTypeSelectForEvent:withCurrentSearchString:)]
+        pub unsafe fn browser_shouldTypeSelectForEvent_withCurrentSearchString(
+            &self,
+            browser: &NSBrowser,
+            event: &NSEvent,
+            searchString: Option<&NSString>,
+        ) -> bool;
+
+        #[optional]
+        #[method(browser:nextTypeSelectMatchFromRow:toRow:inColumn:forString:)]
+        pub unsafe fn browser_nextTypeSelectMatchFromRow_toRow_inColumn_forString(
+            &self,
+            browser: &NSBrowser,
+            startRow: NSInteger,
+            endRow: NSInteger,
+            column: NSInteger,
+            searchString: Option<&NSString>,
+        ) -> NSInteger;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other browser:previewViewControllerForLeafItem:)]
+        pub unsafe fn browser_previewViewControllerForLeafItem(
+            &self,
+            browser: &NSBrowser,
+            item: &Object,
+        ) -> Option<Id<NSViewController, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other browser:headerViewControllerForItem:)]
+        pub unsafe fn browser_headerViewControllerForItem(
+            &self,
+            browser: &NSBrowser,
+            item: Option<&Object>,
+        ) -> Option<Id<NSViewController, Shared>>;
+
+        #[optional]
+        #[method(browser:didChangeLastColumn:toColumn:)]
+        pub unsafe fn browser_didChangeLastColumn_toColumn(
+            &self,
+            browser: &NSBrowser,
+            oldLastColumn: NSInteger,
+            column: NSInteger,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other browser:selectionIndexesForProposedSelection:inColumn:)]
+        pub unsafe fn browser_selectionIndexesForProposedSelection_inColumn(
+            &self,
+            browser: &NSBrowser,
+            proposedSelectionIndexes: &NSIndexSet,
+            column: NSInteger,
+        ) -> Id<NSIndexSet, Shared>;
+    }
+);
 
 extern_methods!(
     /// NSDeprecated

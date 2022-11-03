@@ -5,7 +5,31 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSUserInterfaceItemSearching = NSObject;
+extern_protocol!(
+    pub struct NSUserInterfaceItemSearching;
+
+    unsafe impl NSUserInterfaceItemSearching {
+        #[method(searchForItemsWithSearchString:resultLimit:matchedItemHandler:)]
+        pub unsafe fn searchForItemsWithSearchString_resultLimit_matchedItemHandler(
+            &self,
+            searchString: &NSString,
+            resultLimit: NSInteger,
+            handleMatchedItems: &Block<(NonNull<NSArray>,), ()>,
+        );
+
+        #[method_id(@__retain_semantics Other localizedTitlesForItem:)]
+        pub unsafe fn localizedTitlesForItem(&self, item: &Object)
+            -> Id<NSArray<NSString>, Shared>;
+
+        #[optional]
+        #[method(performActionForItem:)]
+        pub unsafe fn performActionForItem(&self, item: &Object);
+
+        #[optional]
+        #[method(showAllHelpTopicsForSearchString:)]
+        pub unsafe fn showAllHelpTopicsForSearchString(&self, searchString: &NSString);
+    }
+);
 
 extern_methods!(
     /// NSUserInterfaceItemSearching

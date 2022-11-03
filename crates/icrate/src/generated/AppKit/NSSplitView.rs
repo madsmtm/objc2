@@ -123,7 +123,105 @@ extern_methods!(
     }
 );
 
-pub type NSSplitViewDelegate = NSObject;
+extern_protocol!(
+    pub struct NSSplitViewDelegate;
+
+    unsafe impl NSSplitViewDelegate {
+        #[optional]
+        #[method(splitView:canCollapseSubview:)]
+        pub unsafe fn splitView_canCollapseSubview(
+            &self,
+            splitView: &NSSplitView,
+            subview: &NSView,
+        ) -> bool;
+
+        #[optional]
+        #[method(splitView:shouldCollapseSubview:forDoubleClickOnDividerAtIndex:)]
+        pub unsafe fn splitView_shouldCollapseSubview_forDoubleClickOnDividerAtIndex(
+            &self,
+            splitView: &NSSplitView,
+            subview: &NSView,
+            dividerIndex: NSInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method(splitView:constrainMinCoordinate:ofSubviewAt:)]
+        pub unsafe fn splitView_constrainMinCoordinate_ofSubviewAt(
+            &self,
+            splitView: &NSSplitView,
+            proposedMinimumPosition: CGFloat,
+            dividerIndex: NSInteger,
+        ) -> CGFloat;
+
+        #[optional]
+        #[method(splitView:constrainMaxCoordinate:ofSubviewAt:)]
+        pub unsafe fn splitView_constrainMaxCoordinate_ofSubviewAt(
+            &self,
+            splitView: &NSSplitView,
+            proposedMaximumPosition: CGFloat,
+            dividerIndex: NSInteger,
+        ) -> CGFloat;
+
+        #[optional]
+        #[method(splitView:constrainSplitPosition:ofSubviewAt:)]
+        pub unsafe fn splitView_constrainSplitPosition_ofSubviewAt(
+            &self,
+            splitView: &NSSplitView,
+            proposedPosition: CGFloat,
+            dividerIndex: NSInteger,
+        ) -> CGFloat;
+
+        #[optional]
+        #[method(splitView:resizeSubviewsWithOldSize:)]
+        pub unsafe fn splitView_resizeSubviewsWithOldSize(
+            &self,
+            splitView: &NSSplitView,
+            oldSize: NSSize,
+        );
+
+        #[optional]
+        #[method(splitView:shouldAdjustSizeOfSubview:)]
+        pub unsafe fn splitView_shouldAdjustSizeOfSubview(
+            &self,
+            splitView: &NSSplitView,
+            view: &NSView,
+        ) -> bool;
+
+        #[optional]
+        #[method(splitView:shouldHideDividerAtIndex:)]
+        pub unsafe fn splitView_shouldHideDividerAtIndex(
+            &self,
+            splitView: &NSSplitView,
+            dividerIndex: NSInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method(splitView:effectiveRect:forDrawnRect:ofDividerAtIndex:)]
+        pub unsafe fn splitView_effectiveRect_forDrawnRect_ofDividerAtIndex(
+            &self,
+            splitView: &NSSplitView,
+            proposedEffectiveRect: NSRect,
+            drawnRect: NSRect,
+            dividerIndex: NSInteger,
+        ) -> NSRect;
+
+        #[optional]
+        #[method(splitView:additionalEffectiveRectOfDividerAtIndex:)]
+        pub unsafe fn splitView_additionalEffectiveRectOfDividerAtIndex(
+            &self,
+            splitView: &NSSplitView,
+            dividerIndex: NSInteger,
+        ) -> NSRect;
+
+        #[optional]
+        #[method(splitViewWillResizeSubviews:)]
+        pub unsafe fn splitViewWillResizeSubviews(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(splitViewDidResizeSubviews:)]
+        pub unsafe fn splitViewDidResizeSubviews(&self, notification: &NSNotification);
+    }
+);
 
 extern_static!(NSSplitViewWillResizeSubviewsNotification: &'static NSNotificationName);
 

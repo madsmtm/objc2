@@ -765,25 +765,17 @@ impl fmt::Display for Stmt {
                 name,
                 availability: _,
                 protocols: _,
-                methods: _,
+                methods,
             } => {
-                // TODO
-
-                // quote! {
-                //     extern_protocol!(
-                //         #[derive(Debug)]
-                //         struct #name;
-                //
-                //         unsafe impl ProtocolType for #name {
-                //             type Super = todo!();
-                //         }
-                //     );
-                //
-                //     impl #name {
-                //         #(#methods)*
-                //     }
-                // }
-                writeln!(f, "pub type {name} = NSObject;")?;
+                writeln!(f, "extern_protocol!(")?;
+                writeln!(f, "    pub struct {name};")?;
+                writeln!(f, "")?;
+                writeln!(f, "    unsafe impl {name} {{")?;
+                for method in methods {
+                    writeln!(f, "{method}")?;
+                }
+                writeln!(f, "    }}")?;
+                writeln!(f, ");")?;
             }
             Self::StructDecl {
                 name,

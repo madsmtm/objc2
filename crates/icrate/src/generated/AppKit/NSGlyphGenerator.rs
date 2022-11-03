@@ -14,7 +14,34 @@ extern_enum!(
     }
 );
 
-pub type NSGlyphStorage = NSObject;
+extern_protocol!(
+    pub struct NSGlyphStorage;
+
+    unsafe impl NSGlyphStorage {
+        #[method(insertGlyphs:length:forStartingGlyphAtIndex:characterIndex:)]
+        pub unsafe fn insertGlyphs_length_forStartingGlyphAtIndex_characterIndex(
+            &self,
+            glyphs: NonNull<NSGlyph>,
+            length: NSUInteger,
+            glyphIndex: NSUInteger,
+            charIndex: NSUInteger,
+        );
+
+        #[method(setIntAttribute:value:forGlyphAtIndex:)]
+        pub unsafe fn setIntAttribute_value_forGlyphAtIndex(
+            &self,
+            attributeTag: NSInteger,
+            val: NSInteger,
+            glyphIndex: NSUInteger,
+        );
+
+        #[method_id(@__retain_semantics Other attributedString)]
+        pub unsafe fn attributedString(&self) -> Id<NSAttributedString, Shared>;
+
+        #[method(layoutOptions)]
+        pub unsafe fn layoutOptions(&self) -> NSUInteger;
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

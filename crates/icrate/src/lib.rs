@@ -16,6 +16,17 @@
 #[cfg(feature = "std")]
 extern crate std;
 
+macro_rules! extern_protocol {
+    (
+        $v:vis struct $name:ident;
+
+        $($rest:tt)*
+    ) => {
+        // TODO
+        $v type $name = NSObject;
+    };
+}
+
 macro_rules! extern_struct {
     (
         $v:vis struct $name:ident {

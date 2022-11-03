@@ -79,7 +79,15 @@ extern_methods!(
     }
 );
 
-pub type NSPortDelegate = NSObject;
+extern_protocol!(
+    pub struct NSPortDelegate;
+
+    unsafe impl NSPortDelegate {
+        #[optional]
+        #[method(handlePortMessage:)]
+        pub unsafe fn handlePortMessage(&self, message: &NSPortMessage);
+    }
+);
 
 ns_options!(
     #[underlying(NSUInteger)]
@@ -140,7 +148,15 @@ extern_methods!(
     }
 );
 
-pub type NSMachPortDelegate = NSObject;
+extern_protocol!(
+    pub struct NSMachPortDelegate;
+
+    unsafe impl NSMachPortDelegate {
+        #[optional]
+        #[method(handleMachMessage:)]
+        pub unsafe fn handleMachMessage(&self, msg: NonNull<c_void>);
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

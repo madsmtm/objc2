@@ -232,4 +232,36 @@ extern_methods!(
     }
 );
 
-pub type NSTextLayoutManagerDelegate = NSObject;
+extern_protocol!(
+    pub struct NSTextLayoutManagerDelegate;
+
+    unsafe impl NSTextLayoutManagerDelegate {
+        #[optional]
+        #[method_id(@__retain_semantics Other textLayoutManager:textLayoutFragmentForLocation:inTextElement:)]
+        pub unsafe fn textLayoutManager_textLayoutFragmentForLocation_inTextElement(
+            &self,
+            textLayoutManager: &NSTextLayoutManager,
+            location: &NSTextLocation,
+            textElement: &NSTextElement,
+        ) -> Id<NSTextLayoutFragment, Shared>;
+
+        #[optional]
+        #[method(textLayoutManager:shouldBreakLineBeforeLocation:hyphenating:)]
+        pub unsafe fn textLayoutManager_shouldBreakLineBeforeLocation_hyphenating(
+            &self,
+            textLayoutManager: &NSTextLayoutManager,
+            location: &NSTextLocation,
+            hyphenating: bool,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other textLayoutManager:renderingAttributesForLink:atLocation:defaultAttributes:)]
+        pub unsafe fn textLayoutManager_renderingAttributesForLink_atLocation_defaultAttributes(
+            &self,
+            textLayoutManager: &NSTextLayoutManager,
+            link: &Object,
+            location: &NSTextLocation,
+            renderingAttributes: &NSDictionary<NSAttributedStringKey, Object>,
+        ) -> Option<Id<NSDictionary<NSAttributedStringKey, Object>, Shared>>;
+    }
+);

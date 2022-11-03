@@ -153,7 +153,49 @@ extern_methods!(
     }
 );
 
-pub type NSToolbarDelegate = NSObject;
+extern_protocol!(
+    pub struct NSToolbarDelegate;
+
+    unsafe impl NSToolbarDelegate {
+        #[optional]
+        #[method_id(@__retain_semantics Other toolbar:itemForItemIdentifier:willBeInsertedIntoToolbar:)]
+        pub unsafe fn toolbar_itemForItemIdentifier_willBeInsertedIntoToolbar(
+            &self,
+            toolbar: &NSToolbar,
+            itemIdentifier: &NSToolbarItemIdentifier,
+            flag: bool,
+        ) -> Option<Id<NSToolbarItem, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other toolbarDefaultItemIdentifiers:)]
+        pub unsafe fn toolbarDefaultItemIdentifiers(
+            &self,
+            toolbar: &NSToolbar,
+        ) -> Id<NSArray<NSToolbarItemIdentifier>, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other toolbarAllowedItemIdentifiers:)]
+        pub unsafe fn toolbarAllowedItemIdentifiers(
+            &self,
+            toolbar: &NSToolbar,
+        ) -> Id<NSArray<NSToolbarItemIdentifier>, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other toolbarSelectableItemIdentifiers:)]
+        pub unsafe fn toolbarSelectableItemIdentifiers(
+            &self,
+            toolbar: &NSToolbar,
+        ) -> Id<NSArray<NSToolbarItemIdentifier>, Shared>;
+
+        #[optional]
+        #[method(toolbarWillAddItem:)]
+        pub unsafe fn toolbarWillAddItem(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(toolbarDidRemoveItem:)]
+        pub unsafe fn toolbarDidRemoveItem(&self, notification: &NSNotification);
+    }
+);
 
 extern_static!(NSToolbarWillAddItemNotification: &'static NSNotificationName);
 

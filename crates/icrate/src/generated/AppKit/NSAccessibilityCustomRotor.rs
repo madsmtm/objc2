@@ -191,4 +191,15 @@ extern_methods!(
     }
 );
 
-pub type NSAccessibilityCustomRotorItemSearchDelegate = NSObject;
+extern_protocol!(
+    pub struct NSAccessibilityCustomRotorItemSearchDelegate;
+
+    unsafe impl NSAccessibilityCustomRotorItemSearchDelegate {
+        #[method_id(@__retain_semantics Other rotor:resultForSearchParameters:)]
+        pub unsafe fn rotor_resultForSearchParameters(
+            &self,
+            rotor: &NSAccessibilityCustomRotor,
+            searchParameters: &NSAccessibilityCustomRotorSearchParameters,
+        ) -> Option<Id<NSAccessibilityCustomRotorItemResult, Shared>>;
+    }
+);

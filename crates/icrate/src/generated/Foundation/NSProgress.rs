@@ -220,7 +220,14 @@ extern_methods!(
     }
 );
 
-pub type NSProgressReporting = NSObject;
+extern_protocol!(
+    pub struct NSProgressReporting;
+
+    unsafe impl NSProgressReporting {
+        #[method_id(@__retain_semantics Other progress)]
+        pub unsafe fn progress(&self) -> Id<NSProgress, Shared>;
+    }
+);
 
 extern_static!(NSProgressEstimatedTimeRemainingKey: &'static NSProgressUserInfoKey);
 

@@ -76,4 +76,25 @@ extern_methods!(
     }
 );
 
-pub type NSUserInterfaceCompression = NSObject;
+extern_protocol!(
+    pub struct NSUserInterfaceCompression;
+
+    unsafe impl NSUserInterfaceCompression {
+        #[method(compressWithPrioritizedCompressionOptions:)]
+        pub unsafe fn compressWithPrioritizedCompressionOptions(
+            &self,
+            prioritizedOptions: &NSArray<NSUserInterfaceCompressionOptions>,
+        );
+
+        #[method(minimumSizeWithPrioritizedCompressionOptions:)]
+        pub unsafe fn minimumSizeWithPrioritizedCompressionOptions(
+            &self,
+            prioritizedOptions: &NSArray<NSUserInterfaceCompressionOptions>,
+        ) -> NSSize;
+
+        #[method_id(@__retain_semantics Other activeCompressionOptions)]
+        pub unsafe fn activeCompressionOptions(
+            &self,
+        ) -> Id<NSUserInterfaceCompressionOptions, Shared>;
+    }
+);

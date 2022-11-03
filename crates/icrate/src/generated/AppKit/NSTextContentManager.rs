@@ -13,7 +13,59 @@ ns_options!(
     }
 );
 
-pub type NSTextElementProvider = NSObject;
+extern_protocol!(
+    pub struct NSTextElementProvider;
+
+    unsafe impl NSTextElementProvider {
+        #[method_id(@__retain_semantics Other documentRange)]
+        pub unsafe fn documentRange(&self) -> Id<NSTextRange, Shared>;
+
+        #[method_id(@__retain_semantics Other enumerateTextElementsFromLocation:options:usingBlock:)]
+        pub unsafe fn enumerateTextElementsFromLocation_options_usingBlock(
+            &self,
+            textLocation: Option<&NSTextLocation>,
+            options: NSTextContentManagerEnumerationOptions,
+            block: &Block<(NonNull<NSTextElement>,), Bool>,
+        ) -> Option<Id<NSTextLocation, Shared>>;
+
+        #[method(replaceContentsInRange:withTextElements:)]
+        pub unsafe fn replaceContentsInRange_withTextElements(
+            &self,
+            range: &NSTextRange,
+            textElements: Option<&NSArray<NSTextElement>>,
+        );
+
+        #[method(synchronizeToBackingStore:)]
+        pub unsafe fn synchronizeToBackingStore(
+            &self,
+            completionHandler: Option<&Block<(*mut NSError,), ()>>,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other locationFromLocation:withOffset:)]
+        pub unsafe fn locationFromLocation_withOffset(
+            &self,
+            location: &NSTextLocation,
+            offset: NSInteger,
+        ) -> Option<Id<NSTextLocation, Shared>>;
+
+        #[optional]
+        #[method(offsetFromLocation:toLocation:)]
+        pub unsafe fn offsetFromLocation_toLocation(
+            &self,
+            from: &NSTextLocation,
+            to: &NSTextLocation,
+        ) -> NSInteger;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other adjustedRangeFromRange:forEditingTextSelection:)]
+        pub unsafe fn adjustedRangeFromRange_forEditingTextSelection(
+            &self,
+            textRange: &NSTextRange,
+            forEditingTextSelection: bool,
+        ) -> Option<Id<NSTextRange, Shared>>;
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -104,9 +156,42 @@ extern_methods!(
     }
 );
 
-pub type NSTextContentManagerDelegate = NSObject;
+extern_protocol!(
+    pub struct NSTextContentManagerDelegate;
 
-pub type NSTextContentStorageDelegate = NSObject;
+    unsafe impl NSTextContentManagerDelegate {
+        #[optional]
+        #[method_id(@__retain_semantics Other textContentManager:textElementAtLocation:)]
+        pub unsafe fn textContentManager_textElementAtLocation(
+            &self,
+            textContentManager: &NSTextContentManager,
+            location: &NSTextLocation,
+        ) -> Option<Id<NSTextElement, Shared>>;
+
+        #[optional]
+        #[method(textContentManager:shouldEnumerateTextElement:options:)]
+        pub unsafe fn textContentManager_shouldEnumerateTextElement_options(
+            &self,
+            textContentManager: &NSTextContentManager,
+            textElement: &NSTextElement,
+            options: NSTextContentManagerEnumerationOptions,
+        ) -> bool;
+    }
+);
+
+extern_protocol!(
+    pub struct NSTextContentStorageDelegate;
+
+    unsafe impl NSTextContentStorageDelegate {
+        #[optional]
+        #[method_id(@__retain_semantics Other textContentStorage:textParagraphWithRange:)]
+        pub unsafe fn textContentStorage_textParagraphWithRange(
+            &self,
+            textContentStorage: &NSTextContentStorage,
+            range: NSRange,
+        ) -> Option<Id<NSTextParagraph, Shared>>;
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

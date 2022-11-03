@@ -3,4 +3,11 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSExtensionRequestHandling = NSObject;
+extern_protocol!(
+    pub struct NSExtensionRequestHandling;
+
+    unsafe impl NSExtensionRequestHandling {
+        #[method(beginRequestWithExtensionContext:)]
+        pub unsafe fn beginRequestWithExtensionContext(&self, context: &NSExtensionContext);
+    }
+);

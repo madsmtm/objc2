@@ -149,7 +149,20 @@ extern_methods!(
     }
 );
 
-pub type NSDatePickerCellDelegate = NSObject;
+extern_protocol!(
+    pub struct NSDatePickerCellDelegate;
+
+    unsafe impl NSDatePickerCellDelegate {
+        #[optional]
+        #[method(datePickerCell:validateProposedDateValue:timeInterval:)]
+        pub unsafe fn datePickerCell_validateProposedDateValue_timeInterval(
+            &self,
+            datePickerCell: &NSDatePickerCell,
+            proposedDateValue: NonNull<NonNull<NSDate>>,
+            proposedTimeInterval: *mut NSTimeInterval,
+        );
+    }
+);
 
 extern_static!(
     NSTextFieldAndStepperDatePickerStyle: NSDatePickerStyle = NSDatePickerStyleTextFieldAndStepper

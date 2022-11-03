@@ -3,4 +3,123 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSFilePresenter = NSObject;
+extern_protocol!(
+    pub struct NSFilePresenter;
+
+    unsafe impl NSFilePresenter {
+        #[method_id(@__retain_semantics Other presentedItemURL)]
+        pub unsafe fn presentedItemURL(&self) -> Option<Id<NSURL, Shared>>;
+
+        #[method_id(@__retain_semantics Other presentedItemOperationQueue)]
+        pub unsafe fn presentedItemOperationQueue(&self) -> Id<NSOperationQueue, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other primaryPresentedItemURL)]
+        pub unsafe fn primaryPresentedItemURL(&self) -> Option<Id<NSURL, Shared>>;
+
+        #[optional]
+        #[method(relinquishPresentedItemToReader:)]
+        pub unsafe fn relinquishPresentedItemToReader(
+            &self,
+            reader: &Block<(*mut Block<(), ()>,), ()>,
+        );
+
+        #[optional]
+        #[method(relinquishPresentedItemToWriter:)]
+        pub unsafe fn relinquishPresentedItemToWriter(
+            &self,
+            writer: &Block<(*mut Block<(), ()>,), ()>,
+        );
+
+        #[optional]
+        #[method(savePresentedItemChangesWithCompletionHandler:)]
+        pub unsafe fn savePresentedItemChangesWithCompletionHandler(
+            &self,
+            completionHandler: &Block<(*mut NSError,), ()>,
+        );
+
+        #[optional]
+        #[method(accommodatePresentedItemDeletionWithCompletionHandler:)]
+        pub unsafe fn accommodatePresentedItemDeletionWithCompletionHandler(
+            &self,
+            completionHandler: &Block<(*mut NSError,), ()>,
+        );
+
+        #[optional]
+        #[method(presentedItemDidMoveToURL:)]
+        pub unsafe fn presentedItemDidMoveToURL(&self, newURL: &NSURL);
+
+        #[optional]
+        #[method(presentedItemDidChange)]
+        pub unsafe fn presentedItemDidChange(&self);
+
+        #[optional]
+        #[method(presentedItemDidChangeUbiquityAttributes:)]
+        pub unsafe fn presentedItemDidChangeUbiquityAttributes(
+            &self,
+            attributes: &NSSet<NSURLResourceKey>,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other observedPresentedItemUbiquityAttributes)]
+        pub unsafe fn observedPresentedItemUbiquityAttributes(
+            &self,
+        ) -> Id<NSSet<NSURLResourceKey>, Shared>;
+
+        #[optional]
+        #[method(presentedItemDidGainVersion:)]
+        pub unsafe fn presentedItemDidGainVersion(&self, version: &NSFileVersion);
+
+        #[optional]
+        #[method(presentedItemDidLoseVersion:)]
+        pub unsafe fn presentedItemDidLoseVersion(&self, version: &NSFileVersion);
+
+        #[optional]
+        #[method(presentedItemDidResolveConflictVersion:)]
+        pub unsafe fn presentedItemDidResolveConflictVersion(&self, version: &NSFileVersion);
+
+        #[optional]
+        #[method(accommodatePresentedSubitemDeletionAtURL:completionHandler:)]
+        pub unsafe fn accommodatePresentedSubitemDeletionAtURL_completionHandler(
+            &self,
+            url: &NSURL,
+            completionHandler: &Block<(*mut NSError,), ()>,
+        );
+
+        #[optional]
+        #[method(presentedSubitemDidAppearAtURL:)]
+        pub unsafe fn presentedSubitemDidAppearAtURL(&self, url: &NSURL);
+
+        #[optional]
+        #[method(presentedSubitemAtURL:didMoveToURL:)]
+        pub unsafe fn presentedSubitemAtURL_didMoveToURL(&self, oldURL: &NSURL, newURL: &NSURL);
+
+        #[optional]
+        #[method(presentedSubitemDidChangeAtURL:)]
+        pub unsafe fn presentedSubitemDidChangeAtURL(&self, url: &NSURL);
+
+        #[optional]
+        #[method(presentedSubitemAtURL:didGainVersion:)]
+        pub unsafe fn presentedSubitemAtURL_didGainVersion(
+            &self,
+            url: &NSURL,
+            version: &NSFileVersion,
+        );
+
+        #[optional]
+        #[method(presentedSubitemAtURL:didLoseVersion:)]
+        pub unsafe fn presentedSubitemAtURL_didLoseVersion(
+            &self,
+            url: &NSURL,
+            version: &NSFileVersion,
+        );
+
+        #[optional]
+        #[method(presentedSubitemAtURL:didResolveConflictVersion:)]
+        pub unsafe fn presentedSubitemAtURL_didResolveConflictVersion(
+            &self,
+            url: &NSURL,
+            version: &NSFileVersion,
+        );
+    }
+);

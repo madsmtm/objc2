@@ -134,7 +134,28 @@ extern_methods!(
     }
 );
 
-pub type NSMetadataQueryDelegate = NSObject;
+extern_protocol!(
+    pub struct NSMetadataQueryDelegate;
+
+    unsafe impl NSMetadataQueryDelegate {
+        #[optional]
+        #[method_id(@__retain_semantics Other metadataQuery:replacementObjectForResultObject:)]
+        pub unsafe fn metadataQuery_replacementObjectForResultObject(
+            &self,
+            query: &NSMetadataQuery,
+            result: &NSMetadataItem,
+        ) -> Id<Object, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other metadataQuery:replacementValueForAttribute:value:)]
+        pub unsafe fn metadataQuery_replacementValueForAttribute_value(
+            &self,
+            query: &NSMetadataQuery,
+            attrName: &NSString,
+            attrValue: &Object,
+        ) -> Id<Object, Shared>;
+    }
+);
 
 extern_static!(NSMetadataQueryDidStartGatheringNotification: &'static NSNotificationName);
 

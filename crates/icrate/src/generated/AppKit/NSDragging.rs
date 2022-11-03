@@ -57,11 +57,165 @@ ns_enum!(
     }
 );
 
-pub type NSDraggingInfo = NSObject;
+extern_protocol!(
+    pub struct NSDraggingInfo;
 
-pub type NSDraggingDestination = NSObject;
+    unsafe impl NSDraggingInfo {
+        #[method_id(@__retain_semantics Other draggingDestinationWindow)]
+        pub unsafe fn draggingDestinationWindow(&self) -> Option<Id<NSWindow, Shared>>;
 
-pub type NSDraggingSource = NSObject;
+        #[method(draggingSourceOperationMask)]
+        pub unsafe fn draggingSourceOperationMask(&self) -> NSDragOperation;
+
+        #[method(draggingLocation)]
+        pub unsafe fn draggingLocation(&self) -> NSPoint;
+
+        #[method(draggedImageLocation)]
+        pub unsafe fn draggedImageLocation(&self) -> NSPoint;
+
+        #[method_id(@__retain_semantics Other draggedImage)]
+        pub unsafe fn draggedImage(&self) -> Option<Id<NSImage, Shared>>;
+
+        #[method_id(@__retain_semantics Other draggingPasteboard)]
+        pub unsafe fn draggingPasteboard(&self) -> Id<NSPasteboard, Shared>;
+
+        #[method_id(@__retain_semantics Other draggingSource)]
+        pub unsafe fn draggingSource(&self) -> Option<Id<Object, Shared>>;
+
+        #[method(draggingSequenceNumber)]
+        pub unsafe fn draggingSequenceNumber(&self) -> NSInteger;
+
+        #[method(slideDraggedImageTo:)]
+        pub unsafe fn slideDraggedImageTo(&self, screenPoint: NSPoint);
+
+        #[method_id(@__retain_semantics Other namesOfPromisedFilesDroppedAtDestination:)]
+        pub unsafe fn namesOfPromisedFilesDroppedAtDestination(
+            &self,
+            dropDestination: &NSURL,
+        ) -> Option<Id<NSArray<NSString>, Shared>>;
+
+        #[method(draggingFormation)]
+        pub unsafe fn draggingFormation(&self) -> NSDraggingFormation;
+
+        #[method(setDraggingFormation:)]
+        pub unsafe fn setDraggingFormation(&self, draggingFormation: NSDraggingFormation);
+
+        #[method(animatesToDestination)]
+        pub unsafe fn animatesToDestination(&self) -> bool;
+
+        #[method(setAnimatesToDestination:)]
+        pub unsafe fn setAnimatesToDestination(&self, animatesToDestination: bool);
+
+        #[method(numberOfValidItemsForDrop)]
+        pub unsafe fn numberOfValidItemsForDrop(&self) -> NSInteger;
+
+        #[method(setNumberOfValidItemsForDrop:)]
+        pub unsafe fn setNumberOfValidItemsForDrop(&self, numberOfValidItemsForDrop: NSInteger);
+
+        #[method(enumerateDraggingItemsWithOptions:forView:classes:searchOptions:usingBlock:)]
+        pub unsafe fn enumerateDraggingItemsWithOptions_forView_classes_searchOptions_usingBlock(
+            &self,
+            enumOpts: NSDraggingItemEnumerationOptions,
+            view: Option<&NSView>,
+            classArray: &NSArray<TodoClass>,
+            searchOptions: &NSDictionary<NSPasteboardReadingOptionKey, Object>,
+            block: &Block<(NonNull<NSDraggingItem>, NSInteger, NonNull<Bool>), ()>,
+        );
+
+        #[method(springLoadingHighlight)]
+        pub unsafe fn springLoadingHighlight(&self) -> NSSpringLoadingHighlight;
+
+        #[method(resetSpringLoading)]
+        pub unsafe fn resetSpringLoading(&self);
+    }
+);
+
+extern_protocol!(
+    pub struct NSDraggingDestination;
+
+    unsafe impl NSDraggingDestination {
+        #[optional]
+        #[method(draggingEntered:)]
+        pub unsafe fn draggingEntered(&self, sender: &NSDraggingInfo) -> NSDragOperation;
+
+        #[optional]
+        #[method(draggingUpdated:)]
+        pub unsafe fn draggingUpdated(&self, sender: &NSDraggingInfo) -> NSDragOperation;
+
+        #[optional]
+        #[method(draggingExited:)]
+        pub unsafe fn draggingExited(&self, sender: Option<&NSDraggingInfo>);
+
+        #[optional]
+        #[method(prepareForDragOperation:)]
+        pub unsafe fn prepareForDragOperation(&self, sender: &NSDraggingInfo) -> bool;
+
+        #[optional]
+        #[method(performDragOperation:)]
+        pub unsafe fn performDragOperation(&self, sender: &NSDraggingInfo) -> bool;
+
+        #[optional]
+        #[method(concludeDragOperation:)]
+        pub unsafe fn concludeDragOperation(&self, sender: Option<&NSDraggingInfo>);
+
+        #[optional]
+        #[method(draggingEnded:)]
+        pub unsafe fn draggingEnded(&self, sender: &NSDraggingInfo);
+
+        #[optional]
+        #[method(wantsPeriodicDraggingUpdates)]
+        pub unsafe fn wantsPeriodicDraggingUpdates(&self) -> bool;
+
+        #[optional]
+        #[method(updateDraggingItemsForDrag:)]
+        pub unsafe fn updateDraggingItemsForDrag(&self, sender: Option<&NSDraggingInfo>);
+    }
+);
+
+extern_protocol!(
+    pub struct NSDraggingSource;
+
+    unsafe impl NSDraggingSource {
+        #[method(draggingSession:sourceOperationMaskForDraggingContext:)]
+        pub unsafe fn draggingSession_sourceOperationMaskForDraggingContext(
+            &self,
+            session: &NSDraggingSession,
+            context: NSDraggingContext,
+        ) -> NSDragOperation;
+
+        #[optional]
+        #[method(draggingSession:willBeginAtPoint:)]
+        pub unsafe fn draggingSession_willBeginAtPoint(
+            &self,
+            session: &NSDraggingSession,
+            screenPoint: NSPoint,
+        );
+
+        #[optional]
+        #[method(draggingSession:movedToPoint:)]
+        pub unsafe fn draggingSession_movedToPoint(
+            &self,
+            session: &NSDraggingSession,
+            screenPoint: NSPoint,
+        );
+
+        #[optional]
+        #[method(draggingSession:endedAtPoint:operation:)]
+        pub unsafe fn draggingSession_endedAtPoint_operation(
+            &self,
+            session: &NSDraggingSession,
+            screenPoint: NSPoint,
+            operation: NSDragOperation,
+        );
+
+        #[optional]
+        #[method(ignoreModifierKeysForDraggingSession:)]
+        pub unsafe fn ignoreModifierKeysForDraggingSession(
+            &self,
+            session: &NSDraggingSession,
+        ) -> bool;
+    }
+);
 
 ns_options!(
     #[underlying(NSUInteger)]
@@ -73,7 +227,43 @@ ns_options!(
     }
 );
 
-pub type NSSpringLoadingDestination = NSObject;
+extern_protocol!(
+    pub struct NSSpringLoadingDestination;
+
+    unsafe impl NSSpringLoadingDestination {
+        #[method(springLoadingActivated:draggingInfo:)]
+        pub unsafe fn springLoadingActivated_draggingInfo(
+            &self,
+            activated: bool,
+            draggingInfo: &NSDraggingInfo,
+        );
+
+        #[method(springLoadingHighlightChanged:)]
+        pub unsafe fn springLoadingHighlightChanged(&self, draggingInfo: &NSDraggingInfo);
+
+        #[optional]
+        #[method(springLoadingEntered:)]
+        pub unsafe fn springLoadingEntered(
+            &self,
+            draggingInfo: &NSDraggingInfo,
+        ) -> NSSpringLoadingOptions;
+
+        #[optional]
+        #[method(springLoadingUpdated:)]
+        pub unsafe fn springLoadingUpdated(
+            &self,
+            draggingInfo: &NSDraggingInfo,
+        ) -> NSSpringLoadingOptions;
+
+        #[optional]
+        #[method(springLoadingExited:)]
+        pub unsafe fn springLoadingExited(&self, draggingInfo: &NSDraggingInfo);
+
+        #[optional]
+        #[method(draggingEnded:)]
+        pub unsafe fn draggingEnded(&self, draggingInfo: &NSDraggingInfo);
+    }
+);
 
 extern_methods!(
     /// NSDraggingSourceDeprecated

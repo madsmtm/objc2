@@ -136,7 +136,58 @@ extern_methods!(
     }
 );
 
-pub type NSGestureRecognizerDelegate = NSObject;
+extern_protocol!(
+    pub struct NSGestureRecognizerDelegate;
+
+    unsafe impl NSGestureRecognizerDelegate {
+        #[optional]
+        #[method(gestureRecognizer:shouldAttemptToRecognizeWithEvent:)]
+        pub unsafe fn gestureRecognizer_shouldAttemptToRecognizeWithEvent(
+            &self,
+            gestureRecognizer: &NSGestureRecognizer,
+            event: &NSEvent,
+        ) -> bool;
+
+        #[optional]
+        #[method(gestureRecognizerShouldBegin:)]
+        pub unsafe fn gestureRecognizerShouldBegin(
+            &self,
+            gestureRecognizer: &NSGestureRecognizer,
+        ) -> bool;
+
+        #[optional]
+        #[method(gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:)]
+        pub unsafe fn gestureRecognizer_shouldRecognizeSimultaneouslyWithGestureRecognizer(
+            &self,
+            gestureRecognizer: &NSGestureRecognizer,
+            otherGestureRecognizer: &NSGestureRecognizer,
+        ) -> bool;
+
+        #[optional]
+        #[method(gestureRecognizer:shouldRequireFailureOfGestureRecognizer:)]
+        pub unsafe fn gestureRecognizer_shouldRequireFailureOfGestureRecognizer(
+            &self,
+            gestureRecognizer: &NSGestureRecognizer,
+            otherGestureRecognizer: &NSGestureRecognizer,
+        ) -> bool;
+
+        #[optional]
+        #[method(gestureRecognizer:shouldBeRequiredToFailByGestureRecognizer:)]
+        pub unsafe fn gestureRecognizer_shouldBeRequiredToFailByGestureRecognizer(
+            &self,
+            gestureRecognizer: &NSGestureRecognizer,
+            otherGestureRecognizer: &NSGestureRecognizer,
+        ) -> bool;
+
+        #[optional]
+        #[method(gestureRecognizer:shouldReceiveTouch:)]
+        pub unsafe fn gestureRecognizer_shouldReceiveTouch(
+            &self,
+            gestureRecognizer: &NSGestureRecognizer,
+            touch: &NSTouch,
+        ) -> bool;
+    }
+);
 
 extern_methods!(
     /// NSSubclassUse

@@ -3,7 +3,44 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSURLAuthenticationChallengeSender = NSObject;
+extern_protocol!(
+    pub struct NSURLAuthenticationChallengeSender;
+
+    unsafe impl NSURLAuthenticationChallengeSender {
+        #[method(useCredential:forAuthenticationChallenge:)]
+        pub unsafe fn useCredential_forAuthenticationChallenge(
+            &self,
+            credential: &NSURLCredential,
+            challenge: &NSURLAuthenticationChallenge,
+        );
+
+        #[method(continueWithoutCredentialForAuthenticationChallenge:)]
+        pub unsafe fn continueWithoutCredentialForAuthenticationChallenge(
+            &self,
+            challenge: &NSURLAuthenticationChallenge,
+        );
+
+        #[method(cancelAuthenticationChallenge:)]
+        pub unsafe fn cancelAuthenticationChallenge(
+            &self,
+            challenge: &NSURLAuthenticationChallenge,
+        );
+
+        #[optional]
+        #[method(performDefaultHandlingForAuthenticationChallenge:)]
+        pub unsafe fn performDefaultHandlingForAuthenticationChallenge(
+            &self,
+            challenge: &NSURLAuthenticationChallenge,
+        );
+
+        #[optional]
+        #[method(rejectProtectionSpaceAndContinueWithChallenge:)]
+        pub unsafe fn rejectProtectionSpaceAndContinueWithChallenge(
+            &self,
+            challenge: &NSURLAuthenticationChallenge,
+        );
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

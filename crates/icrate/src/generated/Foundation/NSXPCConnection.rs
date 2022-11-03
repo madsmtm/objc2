@@ -3,7 +3,27 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSXPCProxyCreating = NSObject;
+extern_protocol!(
+    pub struct NSXPCProxyCreating;
+
+    unsafe impl NSXPCProxyCreating {
+        #[method_id(@__retain_semantics Other remoteObjectProxy)]
+        pub unsafe fn remoteObjectProxy(&self) -> Id<Object, Shared>;
+
+        #[method_id(@__retain_semantics Other remoteObjectProxyWithErrorHandler:)]
+        pub unsafe fn remoteObjectProxyWithErrorHandler(
+            &self,
+            handler: &Block<(NonNull<NSError>,), ()>,
+        ) -> Id<Object, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other synchronousRemoteObjectProxyWithErrorHandler:)]
+        pub unsafe fn synchronousRemoteObjectProxyWithErrorHandler(
+            &self,
+            handler: &Block<(NonNull<NSError>,), ()>,
+        ) -> Id<Object, Shared>;
+    }
+);
 
 ns_options!(
     #[underlying(NSUInteger)]
@@ -156,7 +176,19 @@ extern_methods!(
     }
 );
 
-pub type NSXPCListenerDelegate = NSObject;
+extern_protocol!(
+    pub struct NSXPCListenerDelegate;
+
+    unsafe impl NSXPCListenerDelegate {
+        #[optional]
+        #[method(listener:shouldAcceptNewConnection:)]
+        pub unsafe fn listener_shouldAcceptNewConnection(
+            &self,
+            listener: &NSXPCListener,
+            newConnection: &NSXPCConnection,
+        ) -> bool;
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

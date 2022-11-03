@@ -5,7 +5,11 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSAlignmentFeedbackToken = NSObject;
+extern_protocol!(
+    pub struct NSAlignmentFeedbackToken;
+
+    unsafe impl NSAlignmentFeedbackToken {}
+);
 
 extern_class!(
     #[derive(Debug)]

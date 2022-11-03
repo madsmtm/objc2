@@ -720,7 +720,20 @@ extern_methods!(
     }
 );
 
-pub type NSViewLayerContentScaleDelegate = NSObject;
+extern_protocol!(
+    pub struct NSViewLayerContentScaleDelegate;
+
+    unsafe impl NSViewLayerContentScaleDelegate {
+        #[optional]
+        #[method(layer:shouldInheritContentsScale:fromWindow:)]
+        pub unsafe fn layer_shouldInheritContentsScale_fromWindow(
+            &self,
+            layer: &CALayer,
+            newScale: CGFloat,
+            window: &NSWindow,
+        ) -> bool;
+    }
+);
 
 extern_methods!(
     /// NSLayerDelegateContentsScaleUpdating
@@ -735,7 +748,20 @@ extern_methods!(
     }
 );
 
-pub type NSViewToolTipOwner = NSObject;
+extern_protocol!(
+    pub struct NSViewToolTipOwner;
+
+    unsafe impl NSViewToolTipOwner {
+        #[method_id(@__retain_semantics Other view:stringForToolTip:point:userData:)]
+        pub unsafe fn view_stringForToolTip_point_userData(
+            &self,
+            view: &NSView,
+            tag: NSToolTipTag,
+            point: NSPoint,
+            data: *mut c_void,
+        ) -> Id<NSString, Shared>;
+    }
+);
 
 extern_methods!(
     /// NSToolTipOwner

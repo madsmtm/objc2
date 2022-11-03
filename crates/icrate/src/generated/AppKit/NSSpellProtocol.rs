@@ -5,6 +5,20 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSChangeSpelling = NSObject;
+extern_protocol!(
+    pub struct NSChangeSpelling;
 
-pub type NSIgnoreMisspelledWords = NSObject;
+    unsafe impl NSChangeSpelling {
+        #[method(changeSpelling:)]
+        pub unsafe fn changeSpelling(&self, sender: Option<&Object>);
+    }
+);
+
+extern_protocol!(
+    pub struct NSIgnoreMisspelledWords;
+
+    unsafe impl NSIgnoreMisspelledWords {
+        #[method(ignoreSpelling:)]
+        pub unsafe fn ignoreSpelling(&self, sender: Option<&Object>);
+    }
+);

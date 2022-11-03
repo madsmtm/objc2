@@ -63,4 +63,20 @@ extern_methods!(
     }
 );
 
-pub type NSPasteboardItemDataProvider = NSObject;
+extern_protocol!(
+    pub struct NSPasteboardItemDataProvider;
+
+    unsafe impl NSPasteboardItemDataProvider {
+        #[method(pasteboard:item:provideDataForType:)]
+        pub unsafe fn pasteboard_item_provideDataForType(
+            &self,
+            pasteboard: Option<&NSPasteboard>,
+            item: &NSPasteboardItem,
+            type_: &NSPasteboardType,
+        );
+
+        #[optional]
+        #[method(pasteboardFinishedWithDataProvider:)]
+        pub unsafe fn pasteboardFinishedWithDataProvider(&self, pasteboard: &NSPasteboard);
+    }
+);

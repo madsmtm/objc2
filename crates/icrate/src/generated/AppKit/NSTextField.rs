@@ -194,7 +194,39 @@ extern_methods!(
     }
 );
 
-pub type NSTextFieldDelegate = NSObject;
+extern_protocol!(
+    pub struct NSTextFieldDelegate;
+
+    unsafe impl NSTextFieldDelegate {
+        #[optional]
+        #[method_id(@__retain_semantics Other textField:textView:candidatesForSelectedRange:)]
+        pub unsafe fn textField_textView_candidatesForSelectedRange(
+            &self,
+            textField: &NSTextField,
+            textView: &NSTextView,
+            selectedRange: NSRange,
+        ) -> Option<Id<NSArray, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other textField:textView:candidates:forSelectedRange:)]
+        pub unsafe fn textField_textView_candidates_forSelectedRange(
+            &self,
+            textField: &NSTextField,
+            textView: &NSTextView,
+            candidates: &NSArray<NSTextCheckingResult>,
+            selectedRange: NSRange,
+        ) -> Id<NSArray<NSTextCheckingResult>, Shared>;
+
+        #[optional]
+        #[method(textField:textView:shouldSelectCandidateAtIndex:)]
+        pub unsafe fn textField_textView_shouldSelectCandidateAtIndex(
+            &self,
+            textField: &NSTextField,
+            textView: &NSTextView,
+            index: NSUInteger,
+        ) -> bool;
+    }
+);
 
 extern_methods!(
     /// NSDeprecated

@@ -241,9 +241,76 @@ extern_methods!(
     }
 );
 
-pub type NSKeyedArchiverDelegate = NSObject;
+extern_protocol!(
+    pub struct NSKeyedArchiverDelegate;
 
-pub type NSKeyedUnarchiverDelegate = NSObject;
+    unsafe impl NSKeyedArchiverDelegate {
+        #[optional]
+        #[method_id(@__retain_semantics Other archiver:willEncodeObject:)]
+        pub unsafe fn archiver_willEncodeObject(
+            &self,
+            archiver: &NSKeyedArchiver,
+            object: &Object,
+        ) -> Option<Id<Object, Shared>>;
+
+        #[optional]
+        #[method(archiver:didEncodeObject:)]
+        pub unsafe fn archiver_didEncodeObject(
+            &self,
+            archiver: &NSKeyedArchiver,
+            object: Option<&Object>,
+        );
+
+        #[optional]
+        #[method(archiver:willReplaceObject:withObject:)]
+        pub unsafe fn archiver_willReplaceObject_withObject(
+            &self,
+            archiver: &NSKeyedArchiver,
+            object: Option<&Object>,
+            newObject: Option<&Object>,
+        );
+
+        #[optional]
+        #[method(archiverWillFinish:)]
+        pub unsafe fn archiverWillFinish(&self, archiver: &NSKeyedArchiver);
+
+        #[optional]
+        #[method(archiverDidFinish:)]
+        pub unsafe fn archiverDidFinish(&self, archiver: &NSKeyedArchiver);
+    }
+);
+
+extern_protocol!(
+    pub struct NSKeyedUnarchiverDelegate;
+
+    unsafe impl NSKeyedUnarchiverDelegate {
+        #[optional]
+        #[method(unarchiver:cannotDecodeObjectOfClassName:originalClasses:)]
+        pub unsafe fn unarchiver_cannotDecodeObjectOfClassName_originalClasses(
+            &self,
+            unarchiver: &NSKeyedUnarchiver,
+            name: &NSString,
+            classNames: &NSArray<NSString>,
+        ) -> Option<&'static Class>;
+
+        #[optional]
+        #[method(unarchiver:willReplaceObject:withObject:)]
+        pub unsafe fn unarchiver_willReplaceObject_withObject(
+            &self,
+            unarchiver: &NSKeyedUnarchiver,
+            object: &Object,
+            newObject: &Object,
+        );
+
+        #[optional]
+        #[method(unarchiverWillFinish:)]
+        pub unsafe fn unarchiverWillFinish(&self, unarchiver: &NSKeyedUnarchiver);
+
+        #[optional]
+        #[method(unarchiverDidFinish:)]
+        pub unsafe fn unarchiverDidFinish(&self, unarchiver: &NSKeyedUnarchiver);
+    }
+);
 
 extern_methods!(
     /// NSKeyedArchiverObjectSubstitution

@@ -89,7 +89,44 @@ extern_methods!(
     }
 );
 
-pub type NSCandidateListTouchBarItemDelegate = NSObject;
+extern_protocol!(
+    pub struct NSCandidateListTouchBarItemDelegate;
+
+    unsafe impl NSCandidateListTouchBarItemDelegate {
+        #[optional]
+        #[method(candidateListTouchBarItem:beginSelectingCandidateAtIndex:)]
+        pub unsafe fn candidateListTouchBarItem_beginSelectingCandidateAtIndex(
+            &self,
+            anItem: &NSCandidateListTouchBarItem,
+            index: NSInteger,
+        );
+
+        #[optional]
+        #[method(candidateListTouchBarItem:changeSelectionFromCandidateAtIndex:toIndex:)]
+        pub unsafe fn candidateListTouchBarItem_changeSelectionFromCandidateAtIndex_toIndex(
+            &self,
+            anItem: &NSCandidateListTouchBarItem,
+            previousIndex: NSInteger,
+            index: NSInteger,
+        );
+
+        #[optional]
+        #[method(candidateListTouchBarItem:endSelectingCandidateAtIndex:)]
+        pub unsafe fn candidateListTouchBarItem_endSelectingCandidateAtIndex(
+            &self,
+            anItem: &NSCandidateListTouchBarItem,
+            index: NSInteger,
+        );
+
+        #[optional]
+        #[method(candidateListTouchBarItem:changedCandidateListVisibility:)]
+        pub unsafe fn candidateListTouchBarItem_changedCandidateListVisibility(
+            &self,
+            anItem: &NSCandidateListTouchBarItem,
+            isVisible: bool,
+        );
+    }
+);
 
 extern_methods!(
     /// NSCandidateListTouchBarItem

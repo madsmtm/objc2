@@ -126,9 +126,42 @@ extern_methods!(
     }
 );
 
-pub type NSEditor = NSObject;
+extern_protocol!(
+    pub struct NSEditor;
 
-pub type NSEditorRegistration = NSObject;
+    unsafe impl NSEditor {
+        #[method(discardEditing)]
+        pub unsafe fn discardEditing(&self);
+
+        #[method(commitEditing)]
+        pub unsafe fn commitEditing(&self) -> bool;
+
+        #[method(commitEditingWithDelegate:didCommitSelector:contextInfo:)]
+        pub unsafe fn commitEditingWithDelegate_didCommitSelector_contextInfo(
+            &self,
+            delegate: Option<&Object>,
+            didCommitSelector: OptionSel,
+            contextInfo: *mut c_void,
+        );
+
+        #[method(commitEditingAndReturnError:)]
+        pub unsafe fn commitEditingAndReturnError(&self) -> Result<(), Id<NSError, Shared>>;
+    }
+);
+
+extern_protocol!(
+    pub struct NSEditorRegistration;
+
+    unsafe impl NSEditorRegistration {
+        #[optional]
+        #[method(objectDidBeginEditing:)]
+        pub unsafe fn objectDidBeginEditing(&self, editor: &NSEditor);
+
+        #[optional]
+        #[method(objectDidEndEditing:)]
+        pub unsafe fn objectDidEndEditing(&self, editor: &NSEditor);
+    }
+);
 
 extern_methods!(
     /// NSEditor

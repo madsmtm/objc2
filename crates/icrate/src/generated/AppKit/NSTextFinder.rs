@@ -116,6 +116,117 @@ extern_methods!(
     }
 );
 
-pub type NSTextFinderClient = NSObject;
+extern_protocol!(
+    pub struct NSTextFinderClient;
 
-pub type NSTextFinderBarContainer = NSObject;
+    unsafe impl NSTextFinderClient {
+        #[optional]
+        #[method(isSelectable)]
+        pub unsafe fn isSelectable(&self) -> bool;
+
+        #[optional]
+        #[method(allowsMultipleSelection)]
+        pub unsafe fn allowsMultipleSelection(&self) -> bool;
+
+        #[optional]
+        #[method(isEditable)]
+        pub unsafe fn isEditable(&self) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other string)]
+        pub unsafe fn string(&self) -> Id<NSString, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other stringAtIndex:effectiveRange:endsWithSearchBoundary:)]
+        pub unsafe fn stringAtIndex_effectiveRange_endsWithSearchBoundary(
+            &self,
+            characterIndex: NSUInteger,
+            outRange: NSRangePointer,
+            outFlag: NonNull<Bool>,
+        ) -> Id<NSString, Shared>;
+
+        #[optional]
+        #[method(stringLength)]
+        pub unsafe fn stringLength(&self) -> NSUInteger;
+
+        #[optional]
+        #[method(firstSelectedRange)]
+        pub unsafe fn firstSelectedRange(&self) -> NSRange;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other selectedRanges)]
+        pub unsafe fn selectedRanges(&self) -> Id<NSArray<NSValue>, Shared>;
+
+        #[optional]
+        #[method(setSelectedRanges:)]
+        pub unsafe fn setSelectedRanges(&self, selectedRanges: &NSArray<NSValue>);
+
+        #[optional]
+        #[method(scrollRangeToVisible:)]
+        pub unsafe fn scrollRangeToVisible(&self, range: NSRange);
+
+        #[optional]
+        #[method(shouldReplaceCharactersInRanges:withStrings:)]
+        pub unsafe fn shouldReplaceCharactersInRanges_withStrings(
+            &self,
+            ranges: &NSArray<NSValue>,
+            strings: &NSArray<NSString>,
+        ) -> bool;
+
+        #[optional]
+        #[method(replaceCharactersInRange:withString:)]
+        pub unsafe fn replaceCharactersInRange_withString(&self, range: NSRange, string: &NSString);
+
+        #[optional]
+        #[method(didReplaceCharacters)]
+        pub unsafe fn didReplaceCharacters(&self);
+
+        #[optional]
+        #[method_id(@__retain_semantics Other contentViewAtIndex:effectiveCharacterRange:)]
+        pub unsafe fn contentViewAtIndex_effectiveCharacterRange(
+            &self,
+            index: NSUInteger,
+            outRange: NSRangePointer,
+        ) -> Id<NSView, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other rectsForCharacterRange:)]
+        pub unsafe fn rectsForCharacterRange(
+            &self,
+            range: NSRange,
+        ) -> Option<Id<NSArray<NSValue>, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other visibleCharacterRanges)]
+        pub unsafe fn visibleCharacterRanges(&self) -> Id<NSArray<NSValue>, Shared>;
+
+        #[optional]
+        #[method(drawCharactersInRange:forContentView:)]
+        pub unsafe fn drawCharactersInRange_forContentView(&self, range: NSRange, view: &NSView);
+    }
+);
+
+extern_protocol!(
+    pub struct NSTextFinderBarContainer;
+
+    unsafe impl NSTextFinderBarContainer {
+        #[method_id(@__retain_semantics Other findBarView)]
+        pub unsafe fn findBarView(&self) -> Option<Id<NSView, Shared>>;
+
+        #[method(setFindBarView:)]
+        pub unsafe fn setFindBarView(&self, findBarView: Option<&NSView>);
+
+        #[method(isFindBarVisible)]
+        pub unsafe fn isFindBarVisible(&self) -> bool;
+
+        #[method(setFindBarVisible:)]
+        pub unsafe fn setFindBarVisible(&self, findBarVisible: bool);
+
+        #[method(findBarViewDidChangeHeight)]
+        pub unsafe fn findBarViewDidChangeHeight(&self);
+
+        #[optional]
+        #[method_id(@__retain_semantics Other contentView)]
+        pub unsafe fn contentView(&self) -> Option<Id<NSView, Shared>>;
+    }
+);

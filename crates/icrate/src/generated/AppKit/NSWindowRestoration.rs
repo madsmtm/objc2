@@ -5,7 +5,18 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSWindowRestoration = NSObject;
+extern_protocol!(
+    pub struct NSWindowRestoration;
+
+    unsafe impl NSWindowRestoration {
+        #[method(restoreWindowWithIdentifier:state:completionHandler:)]
+        pub unsafe fn restoreWindowWithIdentifier_state_completionHandler(
+            identifier: &NSUserInterfaceItemIdentifier,
+            state: &NSCoder,
+            completionHandler: &Block<(*mut NSWindow, *mut NSError), ()>,
+        );
+    }
+);
 
 extern_methods!(
     /// NSWindowRestoration

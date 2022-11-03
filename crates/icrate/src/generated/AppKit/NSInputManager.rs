@@ -5,7 +5,54 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTextInput = NSObject;
+extern_protocol!(
+    pub struct NSTextInput;
+
+    unsafe impl NSTextInput {
+        #[method(insertText:)]
+        pub unsafe fn insertText(&self, string: Option<&Object>);
+
+        #[method(doCommandBySelector:)]
+        pub unsafe fn doCommandBySelector(&self, selector: OptionSel);
+
+        #[method(setMarkedText:selectedRange:)]
+        pub unsafe fn setMarkedText_selectedRange(
+            &self,
+            string: Option<&Object>,
+            selRange: NSRange,
+        );
+
+        #[method(unmarkText)]
+        pub unsafe fn unmarkText(&self);
+
+        #[method(hasMarkedText)]
+        pub unsafe fn hasMarkedText(&self) -> bool;
+
+        #[method(conversationIdentifier)]
+        pub unsafe fn conversationIdentifier(&self) -> NSInteger;
+
+        #[method_id(@__retain_semantics Other attributedSubstringFromRange:)]
+        pub unsafe fn attributedSubstringFromRange(
+            &self,
+            range: NSRange,
+        ) -> Option<Id<NSAttributedString, Shared>>;
+
+        #[method(markedRange)]
+        pub unsafe fn markedRange(&self) -> NSRange;
+
+        #[method(selectedRange)]
+        pub unsafe fn selectedRange(&self) -> NSRange;
+
+        #[method(firstRectForCharacterRange:)]
+        pub unsafe fn firstRectForCharacterRange(&self, range: NSRange) -> NSRect;
+
+        #[method(characterIndexForPoint:)]
+        pub unsafe fn characterIndexForPoint(&self, point: NSPoint) -> NSUInteger;
+
+        #[method_id(@__retain_semantics Other validAttributesForMarkedText)]
+        pub unsafe fn validAttributesForMarkedText(&self) -> Option<Id<NSArray, Shared>>;
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

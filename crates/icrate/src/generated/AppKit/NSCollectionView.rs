@@ -42,9 +42,59 @@ ns_options!(
 
 pub type NSCollectionViewSupplementaryElementKind = NSString;
 
-pub type NSCollectionViewElement = NSObject;
+extern_protocol!(
+    pub struct NSCollectionViewElement;
 
-pub type NSCollectionViewSectionHeaderView = NSObject;
+    unsafe impl NSCollectionViewElement {
+        #[optional]
+        #[method(prepareForReuse)]
+        pub unsafe fn prepareForReuse(&self);
+
+        #[optional]
+        #[method(applyLayoutAttributes:)]
+        pub unsafe fn applyLayoutAttributes(
+            &self,
+            layoutAttributes: &NSCollectionViewLayoutAttributes,
+        );
+
+        #[optional]
+        #[method(willTransitionFromLayout:toLayout:)]
+        pub unsafe fn willTransitionFromLayout_toLayout(
+            &self,
+            oldLayout: &NSCollectionViewLayout,
+            newLayout: &NSCollectionViewLayout,
+        );
+
+        #[optional]
+        #[method(didTransitionFromLayout:toLayout:)]
+        pub unsafe fn didTransitionFromLayout_toLayout(
+            &self,
+            oldLayout: &NSCollectionViewLayout,
+            newLayout: &NSCollectionViewLayout,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other preferredLayoutAttributesFittingAttributes:)]
+        pub unsafe fn preferredLayoutAttributesFittingAttributes(
+            &self,
+            layoutAttributes: &NSCollectionViewLayoutAttributes,
+        ) -> Id<NSCollectionViewLayoutAttributes, Shared>;
+    }
+);
+
+extern_protocol!(
+    pub struct NSCollectionViewSectionHeaderView;
+
+    unsafe impl NSCollectionViewSectionHeaderView {
+        #[optional]
+        #[method_id(@__retain_semantics Other sectionCollapseButton)]
+        pub unsafe fn sectionCollapseButton(&self) -> Option<Id<NSButton, Shared>>;
+
+        #[optional]
+        #[method(setSectionCollapseButton:)]
+        pub unsafe fn setSectionCollapseButton(&self, sectionCollapseButton: Option<&NSButton>);
+    }
+);
 
 extern_class!(
     #[derive(Debug)]
@@ -404,11 +454,333 @@ extern_methods!(
     }
 );
 
-pub type NSCollectionViewDataSource = NSObject;
+extern_protocol!(
+    pub struct NSCollectionViewDataSource;
 
-pub type NSCollectionViewPrefetching = NSObject;
+    unsafe impl NSCollectionViewDataSource {
+        #[method(collectionView:numberOfItemsInSection:)]
+        pub unsafe fn collectionView_numberOfItemsInSection(
+            &self,
+            collectionView: &NSCollectionView,
+            section: NSInteger,
+        ) -> NSInteger;
 
-pub type NSCollectionViewDelegate = NSObject;
+        #[method_id(@__retain_semantics Other collectionView:itemForRepresentedObjectAtIndexPath:)]
+        pub unsafe fn collectionView_itemForRepresentedObjectAtIndexPath(
+            &self,
+            collectionView: &NSCollectionView,
+            indexPath: &NSIndexPath,
+        ) -> Id<NSCollectionViewItem, Shared>;
+
+        #[optional]
+        #[method(numberOfSectionsInCollectionView:)]
+        pub unsafe fn numberOfSectionsInCollectionView(
+            &self,
+            collectionView: &NSCollectionView,
+        ) -> NSInteger;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other collectionView:viewForSupplementaryElementOfKind:atIndexPath:)]
+        pub unsafe fn collectionView_viewForSupplementaryElementOfKind_atIndexPath(
+            &self,
+            collectionView: &NSCollectionView,
+            kind: &NSCollectionViewSupplementaryElementKind,
+            indexPath: &NSIndexPath,
+        ) -> Id<NSView, Shared>;
+    }
+);
+
+extern_protocol!(
+    pub struct NSCollectionViewPrefetching;
+
+    unsafe impl NSCollectionViewPrefetching {
+        #[method(collectionView:prefetchItemsAtIndexPaths:)]
+        pub unsafe fn collectionView_prefetchItemsAtIndexPaths(
+            &self,
+            collectionView: &NSCollectionView,
+            indexPaths: &NSArray<NSIndexPath>,
+        );
+
+        #[optional]
+        #[method(collectionView:cancelPrefetchingForItemsAtIndexPaths:)]
+        pub unsafe fn collectionView_cancelPrefetchingForItemsAtIndexPaths(
+            &self,
+            collectionView: &NSCollectionView,
+            indexPaths: &NSArray<NSIndexPath>,
+        );
+    }
+);
+
+extern_protocol!(
+    pub struct NSCollectionViewDelegate;
+
+    unsafe impl NSCollectionViewDelegate {
+        #[optional]
+        #[method(collectionView:canDragItemsAtIndexPaths:withEvent:)]
+        pub unsafe fn collectionView_canDragItemsAtIndexPaths_withEvent(
+            &self,
+            collectionView: &NSCollectionView,
+            indexPaths: &NSSet<NSIndexPath>,
+            event: &NSEvent,
+        ) -> bool;
+
+        #[optional]
+        #[method(collectionView:canDragItemsAtIndexes:withEvent:)]
+        pub unsafe fn collectionView_canDragItemsAtIndexes_withEvent(
+            &self,
+            collectionView: &NSCollectionView,
+            indexes: &NSIndexSet,
+            event: &NSEvent,
+        ) -> bool;
+
+        #[optional]
+        #[method(collectionView:writeItemsAtIndexPaths:toPasteboard:)]
+        pub unsafe fn collectionView_writeItemsAtIndexPaths_toPasteboard(
+            &self,
+            collectionView: &NSCollectionView,
+            indexPaths: &NSSet<NSIndexPath>,
+            pasteboard: &NSPasteboard,
+        ) -> bool;
+
+        #[optional]
+        #[method(collectionView:writeItemsAtIndexes:toPasteboard:)]
+        pub unsafe fn collectionView_writeItemsAtIndexes_toPasteboard(
+            &self,
+            collectionView: &NSCollectionView,
+            indexes: &NSIndexSet,
+            pasteboard: &NSPasteboard,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other collectionView:namesOfPromisedFilesDroppedAtDestination:forDraggedItemsAtIndexPaths:)]
+        pub unsafe fn collectionView_namesOfPromisedFilesDroppedAtDestination_forDraggedItemsAtIndexPaths(
+            &self,
+            collectionView: &NSCollectionView,
+            dropURL: &NSURL,
+            indexPaths: &NSSet<NSIndexPath>,
+        ) -> Id<NSArray<NSString>, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other collectionView:namesOfPromisedFilesDroppedAtDestination:forDraggedItemsAtIndexes:)]
+        pub unsafe fn collectionView_namesOfPromisedFilesDroppedAtDestination_forDraggedItemsAtIndexes(
+            &self,
+            collectionView: &NSCollectionView,
+            dropURL: &NSURL,
+            indexes: &NSIndexSet,
+        ) -> Id<NSArray<NSString>, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other collectionView:draggingImageForItemsAtIndexPaths:withEvent:offset:)]
+        pub unsafe fn collectionView_draggingImageForItemsAtIndexPaths_withEvent_offset(
+            &self,
+            collectionView: &NSCollectionView,
+            indexPaths: &NSSet<NSIndexPath>,
+            event: &NSEvent,
+            dragImageOffset: NSPointPointer,
+        ) -> Id<NSImage, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other collectionView:draggingImageForItemsAtIndexes:withEvent:offset:)]
+        pub unsafe fn collectionView_draggingImageForItemsAtIndexes_withEvent_offset(
+            &self,
+            collectionView: &NSCollectionView,
+            indexes: &NSIndexSet,
+            event: &NSEvent,
+            dragImageOffset: NSPointPointer,
+        ) -> Id<NSImage, Shared>;
+
+        #[optional]
+        #[method(collectionView:validateDrop:proposedIndexPath:dropOperation:)]
+        pub unsafe fn collectionView_validateDrop_proposedIndexPath_dropOperation(
+            &self,
+            collectionView: &NSCollectionView,
+            draggingInfo: &NSDraggingInfo,
+            proposedDropIndexPath: NonNull<NonNull<NSIndexPath>>,
+            proposedDropOperation: NonNull<NSCollectionViewDropOperation>,
+        ) -> NSDragOperation;
+
+        #[optional]
+        #[method(collectionView:validateDrop:proposedIndex:dropOperation:)]
+        pub unsafe fn collectionView_validateDrop_proposedIndex_dropOperation(
+            &self,
+            collectionView: &NSCollectionView,
+            draggingInfo: &NSDraggingInfo,
+            proposedDropIndex: NonNull<NSInteger>,
+            proposedDropOperation: NonNull<NSCollectionViewDropOperation>,
+        ) -> NSDragOperation;
+
+        #[optional]
+        #[method(collectionView:acceptDrop:indexPath:dropOperation:)]
+        pub unsafe fn collectionView_acceptDrop_indexPath_dropOperation(
+            &self,
+            collectionView: &NSCollectionView,
+            draggingInfo: &NSDraggingInfo,
+            indexPath: &NSIndexPath,
+            dropOperation: NSCollectionViewDropOperation,
+        ) -> bool;
+
+        #[optional]
+        #[method(collectionView:acceptDrop:index:dropOperation:)]
+        pub unsafe fn collectionView_acceptDrop_index_dropOperation(
+            &self,
+            collectionView: &NSCollectionView,
+            draggingInfo: &NSDraggingInfo,
+            index: NSInteger,
+            dropOperation: NSCollectionViewDropOperation,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other collectionView:pasteboardWriterForItemAtIndexPath:)]
+        pub unsafe fn collectionView_pasteboardWriterForItemAtIndexPath(
+            &self,
+            collectionView: &NSCollectionView,
+            indexPath: &NSIndexPath,
+        ) -> Option<Id<NSPasteboardWriting, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other collectionView:pasteboardWriterForItemAtIndex:)]
+        pub unsafe fn collectionView_pasteboardWriterForItemAtIndex(
+            &self,
+            collectionView: &NSCollectionView,
+            index: NSUInteger,
+        ) -> Option<Id<NSPasteboardWriting, Shared>>;
+
+        #[optional]
+        #[method(collectionView:draggingSession:willBeginAtPoint:forItemsAtIndexPaths:)]
+        pub unsafe fn collectionView_draggingSession_willBeginAtPoint_forItemsAtIndexPaths(
+            &self,
+            collectionView: &NSCollectionView,
+            session: &NSDraggingSession,
+            screenPoint: NSPoint,
+            indexPaths: &NSSet<NSIndexPath>,
+        );
+
+        #[optional]
+        #[method(collectionView:draggingSession:willBeginAtPoint:forItemsAtIndexes:)]
+        pub unsafe fn collectionView_draggingSession_willBeginAtPoint_forItemsAtIndexes(
+            &self,
+            collectionView: &NSCollectionView,
+            session: &NSDraggingSession,
+            screenPoint: NSPoint,
+            indexes: &NSIndexSet,
+        );
+
+        #[optional]
+        #[method(collectionView:draggingSession:endedAtPoint:dragOperation:)]
+        pub unsafe fn collectionView_draggingSession_endedAtPoint_dragOperation(
+            &self,
+            collectionView: &NSCollectionView,
+            session: &NSDraggingSession,
+            screenPoint: NSPoint,
+            operation: NSDragOperation,
+        );
+
+        #[optional]
+        #[method(collectionView:updateDraggingItemsForDrag:)]
+        pub unsafe fn collectionView_updateDraggingItemsForDrag(
+            &self,
+            collectionView: &NSCollectionView,
+            draggingInfo: &NSDraggingInfo,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other collectionView:shouldChangeItemsAtIndexPaths:toHighlightState:)]
+        pub unsafe fn collectionView_shouldChangeItemsAtIndexPaths_toHighlightState(
+            &self,
+            collectionView: &NSCollectionView,
+            indexPaths: &NSSet<NSIndexPath>,
+            highlightState: NSCollectionViewItemHighlightState,
+        ) -> Id<NSSet<NSIndexPath>, Shared>;
+
+        #[optional]
+        #[method(collectionView:didChangeItemsAtIndexPaths:toHighlightState:)]
+        pub unsafe fn collectionView_didChangeItemsAtIndexPaths_toHighlightState(
+            &self,
+            collectionView: &NSCollectionView,
+            indexPaths: &NSSet<NSIndexPath>,
+            highlightState: NSCollectionViewItemHighlightState,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other collectionView:shouldSelectItemsAtIndexPaths:)]
+        pub unsafe fn collectionView_shouldSelectItemsAtIndexPaths(
+            &self,
+            collectionView: &NSCollectionView,
+            indexPaths: &NSSet<NSIndexPath>,
+        ) -> Id<NSSet<NSIndexPath>, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other collectionView:shouldDeselectItemsAtIndexPaths:)]
+        pub unsafe fn collectionView_shouldDeselectItemsAtIndexPaths(
+            &self,
+            collectionView: &NSCollectionView,
+            indexPaths: &NSSet<NSIndexPath>,
+        ) -> Id<NSSet<NSIndexPath>, Shared>;
+
+        #[optional]
+        #[method(collectionView:didSelectItemsAtIndexPaths:)]
+        pub unsafe fn collectionView_didSelectItemsAtIndexPaths(
+            &self,
+            collectionView: &NSCollectionView,
+            indexPaths: &NSSet<NSIndexPath>,
+        );
+
+        #[optional]
+        #[method(collectionView:didDeselectItemsAtIndexPaths:)]
+        pub unsafe fn collectionView_didDeselectItemsAtIndexPaths(
+            &self,
+            collectionView: &NSCollectionView,
+            indexPaths: &NSSet<NSIndexPath>,
+        );
+
+        #[optional]
+        #[method(collectionView:willDisplayItem:forRepresentedObjectAtIndexPath:)]
+        pub unsafe fn collectionView_willDisplayItem_forRepresentedObjectAtIndexPath(
+            &self,
+            collectionView: &NSCollectionView,
+            item: &NSCollectionViewItem,
+            indexPath: &NSIndexPath,
+        );
+
+        #[optional]
+        #[method(collectionView:willDisplaySupplementaryView:forElementKind:atIndexPath:)]
+        pub unsafe fn collectionView_willDisplaySupplementaryView_forElementKind_atIndexPath(
+            &self,
+            collectionView: &NSCollectionView,
+            view: &NSView,
+            elementKind: &NSCollectionViewSupplementaryElementKind,
+            indexPath: &NSIndexPath,
+        );
+
+        #[optional]
+        #[method(collectionView:didEndDisplayingItem:forRepresentedObjectAtIndexPath:)]
+        pub unsafe fn collectionView_didEndDisplayingItem_forRepresentedObjectAtIndexPath(
+            &self,
+            collectionView: &NSCollectionView,
+            item: &NSCollectionViewItem,
+            indexPath: &NSIndexPath,
+        );
+
+        #[optional]
+        #[method(collectionView:didEndDisplayingSupplementaryView:forElementOfKind:atIndexPath:)]
+        pub unsafe fn collectionView_didEndDisplayingSupplementaryView_forElementOfKind_atIndexPath(
+            &self,
+            collectionView: &NSCollectionView,
+            view: &NSView,
+            elementKind: &NSCollectionViewSupplementaryElementKind,
+            indexPath: &NSIndexPath,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other collectionView:transitionLayoutForOldLayout:newLayout:)]
+        pub unsafe fn collectionView_transitionLayoutForOldLayout_newLayout(
+            &self,
+            collectionView: &NSCollectionView,
+            fromLayout: &NSCollectionViewLayout,
+            toLayout: &NSCollectionViewLayout,
+        ) -> Id<NSCollectionViewTransitionLayout, Shared>;
+    }
+);
 
 extern_methods!(
     /// NSCollectionViewAdditions

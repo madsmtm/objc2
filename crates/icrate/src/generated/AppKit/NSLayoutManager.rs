@@ -35,7 +35,14 @@ ns_options!(
     }
 );
 
-pub type NSTextLayoutOrientationProvider = NSObject;
+extern_protocol!(
+    pub struct NSTextLayoutOrientationProvider;
+
+    unsafe impl NSTextLayoutOrientationProvider {
+        #[method(layoutOrientation)]
+        pub unsafe fn layoutOrientation(&self) -> NSTextLayoutOrientation;
+    }
+);
 
 ns_enum!(
     #[underlying(NSInteger)]
@@ -752,7 +759,132 @@ extern_methods!(
     }
 );
 
-pub type NSLayoutManagerDelegate = NSObject;
+extern_protocol!(
+    pub struct NSLayoutManagerDelegate;
+
+    unsafe impl NSLayoutManagerDelegate {
+        #[optional]
+        #[method(layoutManager:shouldGenerateGlyphs:properties:characterIndexes:font:forGlyphRange:)]
+        pub unsafe fn layoutManager_shouldGenerateGlyphs_properties_characterIndexes_font_forGlyphRange(
+            &self,
+            layoutManager: &NSLayoutManager,
+            glyphs: NonNull<CGGlyph>,
+            props: NonNull<NSGlyphProperty>,
+            charIndexes: NonNull<NSUInteger>,
+            aFont: &NSFont,
+            glyphRange: NSRange,
+        ) -> NSUInteger;
+
+        #[optional]
+        #[method(layoutManager:lineSpacingAfterGlyphAtIndex:withProposedLineFragmentRect:)]
+        pub unsafe fn layoutManager_lineSpacingAfterGlyphAtIndex_withProposedLineFragmentRect(
+            &self,
+            layoutManager: &NSLayoutManager,
+            glyphIndex: NSUInteger,
+            rect: NSRect,
+        ) -> CGFloat;
+
+        #[optional]
+        #[method(layoutManager:paragraphSpacingBeforeGlyphAtIndex:withProposedLineFragmentRect:)]
+        pub unsafe fn layoutManager_paragraphSpacingBeforeGlyphAtIndex_withProposedLineFragmentRect(
+            &self,
+            layoutManager: &NSLayoutManager,
+            glyphIndex: NSUInteger,
+            rect: NSRect,
+        ) -> CGFloat;
+
+        #[optional]
+        #[method(layoutManager:paragraphSpacingAfterGlyphAtIndex:withProposedLineFragmentRect:)]
+        pub unsafe fn layoutManager_paragraphSpacingAfterGlyphAtIndex_withProposedLineFragmentRect(
+            &self,
+            layoutManager: &NSLayoutManager,
+            glyphIndex: NSUInteger,
+            rect: NSRect,
+        ) -> CGFloat;
+
+        #[optional]
+        #[method(layoutManager:shouldUseAction:forControlCharacterAtIndex:)]
+        pub unsafe fn layoutManager_shouldUseAction_forControlCharacterAtIndex(
+            &self,
+            layoutManager: &NSLayoutManager,
+            action: NSControlCharacterAction,
+            charIndex: NSUInteger,
+        ) -> NSControlCharacterAction;
+
+        #[optional]
+        #[method(layoutManager:shouldBreakLineByWordBeforeCharacterAtIndex:)]
+        pub unsafe fn layoutManager_shouldBreakLineByWordBeforeCharacterAtIndex(
+            &self,
+            layoutManager: &NSLayoutManager,
+            charIndex: NSUInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method(layoutManager:shouldBreakLineByHyphenatingBeforeCharacterAtIndex:)]
+        pub unsafe fn layoutManager_shouldBreakLineByHyphenatingBeforeCharacterAtIndex(
+            &self,
+            layoutManager: &NSLayoutManager,
+            charIndex: NSUInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method(layoutManager:boundingBoxForControlGlyphAtIndex:forTextContainer:proposedLineFragment:glyphPosition:characterIndex:)]
+        pub unsafe fn layoutManager_boundingBoxForControlGlyphAtIndex_forTextContainer_proposedLineFragment_glyphPosition_characterIndex(
+            &self,
+            layoutManager: &NSLayoutManager,
+            glyphIndex: NSUInteger,
+            textContainer: &NSTextContainer,
+            proposedRect: NSRect,
+            glyphPosition: NSPoint,
+            charIndex: NSUInteger,
+        ) -> NSRect;
+
+        #[optional]
+        #[method(layoutManager:shouldSetLineFragmentRect:lineFragmentUsedRect:baselineOffset:inTextContainer:forGlyphRange:)]
+        pub unsafe fn layoutManager_shouldSetLineFragmentRect_lineFragmentUsedRect_baselineOffset_inTextContainer_forGlyphRange(
+            &self,
+            layoutManager: &NSLayoutManager,
+            lineFragmentRect: NonNull<NSRect>,
+            lineFragmentUsedRect: NonNull<NSRect>,
+            baselineOffset: NonNull<CGFloat>,
+            textContainer: &NSTextContainer,
+            glyphRange: NSRange,
+        ) -> bool;
+
+        #[optional]
+        #[method(layoutManagerDidInvalidateLayout:)]
+        pub unsafe fn layoutManagerDidInvalidateLayout(&self, sender: &NSLayoutManager);
+
+        #[optional]
+        #[method(layoutManager:didCompleteLayoutForTextContainer:atEnd:)]
+        pub unsafe fn layoutManager_didCompleteLayoutForTextContainer_atEnd(
+            &self,
+            layoutManager: &NSLayoutManager,
+            textContainer: Option<&NSTextContainer>,
+            layoutFinishedFlag: bool,
+        );
+
+        #[optional]
+        #[method(layoutManager:textContainer:didChangeGeometryFromSize:)]
+        pub unsafe fn layoutManager_textContainer_didChangeGeometryFromSize(
+            &self,
+            layoutManager: &NSLayoutManager,
+            textContainer: &NSTextContainer,
+            oldSize: NSSize,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other layoutManager:shouldUseTemporaryAttributes:forDrawingToScreen:atCharacterIndex:effectiveRange:)]
+        pub unsafe fn layoutManager_shouldUseTemporaryAttributes_forDrawingToScreen_atCharacterIndex_effectiveRange(
+            &self,
+            layoutManager: &NSLayoutManager,
+            attrs: &NSDictionary<NSAttributedStringKey, Object>,
+            toScreen: bool,
+            charIndex: NSUInteger,
+            effectiveCharRange: NSRangePointer,
+        ) -> Option<Id<NSDictionary<NSAttributedStringKey, Object>, Shared>>;
+    }
+);
 
 extern_enum!(
     #[underlying(c_uint)]

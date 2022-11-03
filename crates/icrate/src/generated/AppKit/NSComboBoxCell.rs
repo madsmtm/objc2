@@ -126,4 +126,39 @@ extern_methods!(
     }
 );
 
-pub type NSComboBoxCellDataSource = NSObject;
+extern_protocol!(
+    pub struct NSComboBoxCellDataSource;
+
+    unsafe impl NSComboBoxCellDataSource {
+        #[optional]
+        #[method(numberOfItemsInComboBoxCell:)]
+        pub unsafe fn numberOfItemsInComboBoxCell(
+            &self,
+            comboBoxCell: &NSComboBoxCell,
+        ) -> NSInteger;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other comboBoxCell:objectValueForItemAtIndex:)]
+        pub unsafe fn comboBoxCell_objectValueForItemAtIndex(
+            &self,
+            comboBoxCell: &NSComboBoxCell,
+            index: NSInteger,
+        ) -> Id<Object, Shared>;
+
+        #[optional]
+        #[method(comboBoxCell:indexOfItemWithStringValue:)]
+        pub unsafe fn comboBoxCell_indexOfItemWithStringValue(
+            &self,
+            comboBoxCell: &NSComboBoxCell,
+            string: &NSString,
+        ) -> NSUInteger;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other comboBoxCell:completedString:)]
+        pub unsafe fn comboBoxCell_completedString(
+            &self,
+            comboBoxCell: &NSComboBoxCell,
+            uncompletedString: &NSString,
+        ) -> Option<Id<NSString, Shared>>;
+    }
+);

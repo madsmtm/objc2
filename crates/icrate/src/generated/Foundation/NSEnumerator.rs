@@ -12,7 +12,19 @@ extern_struct!(
     }
 );
 
-pub type NSFastEnumeration = NSObject;
+extern_protocol!(
+    pub struct NSFastEnumeration;
+
+    unsafe impl NSFastEnumeration {
+        #[method(countByEnumeratingWithState:objects:count:)]
+        pub unsafe fn countByEnumeratingWithState_objects_count(
+            &self,
+            state: NonNull<NSFastEnumerationState>,
+            buffer: NonNull<*mut Object>,
+            len: NSUInteger,
+        ) -> NSUInteger;
+    }
+);
 
 __inner_extern_class!(
     #[derive(Debug)]

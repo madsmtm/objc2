@@ -83,7 +83,23 @@ extern_methods!(
     }
 );
 
-pub type NSFetchedResultsSectionInfo = NSObject;
+extern_protocol!(
+    pub struct NSFetchedResultsSectionInfo;
+
+    unsafe impl NSFetchedResultsSectionInfo {
+        #[method_id(@__retain_semantics Other name)]
+        pub unsafe fn name(&self) -> Id<NSString, Shared>;
+
+        #[method_id(@__retain_semantics Other indexTitle)]
+        pub unsafe fn indexTitle(&self) -> Option<Id<NSString, Shared>>;
+
+        #[method(numberOfObjects)]
+        pub unsafe fn numberOfObjects(&self) -> NSUInteger;
+
+        #[method_id(@__retain_semantics Other objects)]
+        pub unsafe fn objects(&self) -> Option<Id<NSArray, Shared>>;
+    }
+);
 
 ns_enum!(
     #[underlying(NSUInteger)]
@@ -95,4 +111,61 @@ ns_enum!(
     }
 );
 
-pub type NSFetchedResultsControllerDelegate = NSObject;
+extern_protocol!(
+    pub struct NSFetchedResultsControllerDelegate;
+
+    unsafe impl NSFetchedResultsControllerDelegate {
+        #[optional]
+        #[method(controller:didChangeContentWithSnapshot:)]
+        pub unsafe fn controller_didChangeContentWithSnapshot(
+            &self,
+            controller: &NSFetchedResultsController,
+            snapshot: &NSDiffableDataSourceSnapshot<NSString, NSManagedObjectID>,
+        );
+
+        #[optional]
+        #[method(controller:didChangeContentWithDifference:)]
+        pub unsafe fn controller_didChangeContentWithDifference(
+            &self,
+            controller: &NSFetchedResultsController,
+            diff: &NSOrderedCollectionDifference<NSManagedObjectID>,
+        );
+
+        #[optional]
+        #[method(controller:didChangeObject:atIndexPath:forChangeType:newIndexPath:)]
+        pub unsafe fn controller_didChangeObject_atIndexPath_forChangeType_newIndexPath(
+            &self,
+            controller: &NSFetchedResultsController,
+            anObject: &Object,
+            indexPath: Option<&NSIndexPath>,
+            type_: NSFetchedResultsChangeType,
+            newIndexPath: Option<&NSIndexPath>,
+        );
+
+        #[optional]
+        #[method(controller:didChangeSection:atIndex:forChangeType:)]
+        pub unsafe fn controller_didChangeSection_atIndex_forChangeType(
+            &self,
+            controller: &NSFetchedResultsController,
+            sectionInfo: &NSFetchedResultsSectionInfo,
+            sectionIndex: NSUInteger,
+            type_: NSFetchedResultsChangeType,
+        );
+
+        #[optional]
+        #[method(controllerWillChangeContent:)]
+        pub unsafe fn controllerWillChangeContent(&self, controller: &NSFetchedResultsController);
+
+        #[optional]
+        #[method(controllerDidChangeContent:)]
+        pub unsafe fn controllerDidChangeContent(&self, controller: &NSFetchedResultsController);
+
+        #[optional]
+        #[method_id(@__retain_semantics Other controller:sectionIndexTitleForSectionName:)]
+        pub unsafe fn controller_sectionIndexTitleForSectionName(
+            &self,
+            controller: &NSFetchedResultsController,
+            sectionName: &NSString,
+        ) -> Option<Id<NSString, Shared>>;
+    }
+);

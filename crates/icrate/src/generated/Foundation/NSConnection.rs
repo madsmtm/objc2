@@ -175,7 +175,57 @@ extern_static!(NSConnectionReplyMode: &'static NSString);
 
 extern_static!(NSConnectionDidDieNotification: &'static NSString);
 
-pub type NSConnectionDelegate = NSObject;
+extern_protocol!(
+    pub struct NSConnectionDelegate;
+
+    unsafe impl NSConnectionDelegate {
+        #[optional]
+        #[method(makeNewConnection:sender:)]
+        pub unsafe fn makeNewConnection_sender(
+            &self,
+            conn: &NSConnection,
+            ancestor: &NSConnection,
+        ) -> bool;
+
+        #[optional]
+        #[method(connection:shouldMakeNewConnection:)]
+        pub unsafe fn connection_shouldMakeNewConnection(
+            &self,
+            ancestor: &NSConnection,
+            conn: &NSConnection,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other authenticationDataForComponents:)]
+        pub unsafe fn authenticationDataForComponents(
+            &self,
+            components: &NSArray,
+        ) -> Id<NSData, Shared>;
+
+        #[optional]
+        #[method(authenticateComponents:withData:)]
+        pub unsafe fn authenticateComponents_withData(
+            &self,
+            components: &NSArray,
+            signature: &NSData,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other createConversationForConnection:)]
+        pub unsafe fn createConversationForConnection(
+            &self,
+            conn: &NSConnection,
+        ) -> Id<Object, Shared>;
+
+        #[optional]
+        #[method(connection:handleRequest:)]
+        pub unsafe fn connection_handleRequest(
+            &self,
+            connection: &NSConnection,
+            doreq: &NSDistantObjectRequest,
+        ) -> bool;
+    }
+);
 
 extern_static!(NSFailedAuthenticationException: &'static NSString);
 

@@ -35,7 +35,34 @@ ns_enum!(
     }
 );
 
-pub type NSURLHandleClient = NSObject;
+extern_protocol!(
+    pub struct NSURLHandleClient;
+
+    unsafe impl NSURLHandleClient {
+        #[method(URLHandle:resourceDataDidBecomeAvailable:)]
+        pub unsafe fn URLHandle_resourceDataDidBecomeAvailable(
+            &self,
+            sender: Option<&NSURLHandle>,
+            newBytes: Option<&NSData>,
+        );
+
+        #[method(URLHandleResourceDidBeginLoading:)]
+        pub unsafe fn URLHandleResourceDidBeginLoading(&self, sender: Option<&NSURLHandle>);
+
+        #[method(URLHandleResourceDidFinishLoading:)]
+        pub unsafe fn URLHandleResourceDidFinishLoading(&self, sender: Option<&NSURLHandle>);
+
+        #[method(URLHandleResourceDidCancelLoading:)]
+        pub unsafe fn URLHandleResourceDidCancelLoading(&self, sender: Option<&NSURLHandle>);
+
+        #[method(URLHandle:resourceDidFailLoadingWithReason:)]
+        pub unsafe fn URLHandle_resourceDidFailLoadingWithReason(
+            &self,
+            sender: Option<&NSURLHandle>,
+            reason: Option<&NSString>,
+        );
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

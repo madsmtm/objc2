@@ -52,7 +52,65 @@ extern_methods!(
     }
 );
 
-pub type NSCollectionViewDelegateFlowLayout = NSObject;
+extern_protocol!(
+    pub struct NSCollectionViewDelegateFlowLayout;
+
+    unsafe impl NSCollectionViewDelegateFlowLayout {
+        #[optional]
+        #[method(collectionView:layout:sizeForItemAtIndexPath:)]
+        pub unsafe fn collectionView_layout_sizeForItemAtIndexPath(
+            &self,
+            collectionView: &NSCollectionView,
+            collectionViewLayout: &NSCollectionViewLayout,
+            indexPath: &NSIndexPath,
+        ) -> NSSize;
+
+        #[optional]
+        #[method(collectionView:layout:insetForSectionAtIndex:)]
+        pub unsafe fn collectionView_layout_insetForSectionAtIndex(
+            &self,
+            collectionView: &NSCollectionView,
+            collectionViewLayout: &NSCollectionViewLayout,
+            section: NSInteger,
+        ) -> NSEdgeInsets;
+
+        #[optional]
+        #[method(collectionView:layout:minimumLineSpacingForSectionAtIndex:)]
+        pub unsafe fn collectionView_layout_minimumLineSpacingForSectionAtIndex(
+            &self,
+            collectionView: &NSCollectionView,
+            collectionViewLayout: &NSCollectionViewLayout,
+            section: NSInteger,
+        ) -> CGFloat;
+
+        #[optional]
+        #[method(collectionView:layout:minimumInteritemSpacingForSectionAtIndex:)]
+        pub unsafe fn collectionView_layout_minimumInteritemSpacingForSectionAtIndex(
+            &self,
+            collectionView: &NSCollectionView,
+            collectionViewLayout: &NSCollectionViewLayout,
+            section: NSInteger,
+        ) -> CGFloat;
+
+        #[optional]
+        #[method(collectionView:layout:referenceSizeForHeaderInSection:)]
+        pub unsafe fn collectionView_layout_referenceSizeForHeaderInSection(
+            &self,
+            collectionView: &NSCollectionView,
+            collectionViewLayout: &NSCollectionViewLayout,
+            section: NSInteger,
+        ) -> NSSize;
+
+        #[optional]
+        #[method(collectionView:layout:referenceSizeForFooterInSection:)]
+        pub unsafe fn collectionView_layout_referenceSizeForFooterInSection(
+            &self,
+            collectionView: &NSCollectionView,
+            collectionViewLayout: &NSCollectionViewLayout,
+            section: NSInteger,
+        ) -> NSSize;
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

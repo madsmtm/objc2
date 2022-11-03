@@ -826,17 +826,280 @@ ns_enum!(
     }
 );
 
-pub type NSURLSessionDelegate = NSObject;
+extern_protocol!(
+    pub struct NSURLSessionDelegate;
 
-pub type NSURLSessionTaskDelegate = NSObject;
+    unsafe impl NSURLSessionDelegate {
+        #[optional]
+        #[method(URLSession:didBecomeInvalidWithError:)]
+        pub unsafe fn URLSession_didBecomeInvalidWithError(
+            &self,
+            session: &NSURLSession,
+            error: Option<&NSError>,
+        );
 
-pub type NSURLSessionDataDelegate = NSObject;
+        #[optional]
+        #[method(URLSession:didReceiveChallenge:completionHandler:)]
+        pub unsafe fn URLSession_didReceiveChallenge_completionHandler(
+            &self,
+            session: &NSURLSession,
+            challenge: &NSURLAuthenticationChallenge,
+            completionHandler: &Block<
+                (NSURLSessionAuthChallengeDisposition, *mut NSURLCredential),
+                (),
+            >,
+        );
 
-pub type NSURLSessionDownloadDelegate = NSObject;
+        #[optional]
+        #[method(URLSessionDidFinishEventsForBackgroundURLSession:)]
+        pub unsafe fn URLSessionDidFinishEventsForBackgroundURLSession(
+            &self,
+            session: &NSURLSession,
+        );
+    }
+);
 
-pub type NSURLSessionStreamDelegate = NSObject;
+extern_protocol!(
+    pub struct NSURLSessionTaskDelegate;
 
-pub type NSURLSessionWebSocketDelegate = NSObject;
+    unsafe impl NSURLSessionTaskDelegate {
+        #[optional]
+        #[method(URLSession:task:willBeginDelayedRequest:completionHandler:)]
+        pub unsafe fn URLSession_task_willBeginDelayedRequest_completionHandler(
+            &self,
+            session: &NSURLSession,
+            task: &NSURLSessionTask,
+            request: &NSURLRequest,
+            completionHandler: &Block<
+                (NSURLSessionDelayedRequestDisposition, *mut NSURLRequest),
+                (),
+            >,
+        );
+
+        #[optional]
+        #[method(URLSession:taskIsWaitingForConnectivity:)]
+        pub unsafe fn URLSession_taskIsWaitingForConnectivity(
+            &self,
+            session: &NSURLSession,
+            task: &NSURLSessionTask,
+        );
+
+        #[optional]
+        #[method(URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:)]
+        pub unsafe fn URLSession_task_willPerformHTTPRedirection_newRequest_completionHandler(
+            &self,
+            session: &NSURLSession,
+            task: &NSURLSessionTask,
+            response: &NSHTTPURLResponse,
+            request: &NSURLRequest,
+            completionHandler: &Block<(*mut NSURLRequest,), ()>,
+        );
+
+        #[optional]
+        #[method(URLSession:task:didReceiveChallenge:completionHandler:)]
+        pub unsafe fn URLSession_task_didReceiveChallenge_completionHandler(
+            &self,
+            session: &NSURLSession,
+            task: &NSURLSessionTask,
+            challenge: &NSURLAuthenticationChallenge,
+            completionHandler: &Block<
+                (NSURLSessionAuthChallengeDisposition, *mut NSURLCredential),
+                (),
+            >,
+        );
+
+        #[optional]
+        #[method(URLSession:task:needNewBodyStream:)]
+        pub unsafe fn URLSession_task_needNewBodyStream(
+            &self,
+            session: &NSURLSession,
+            task: &NSURLSessionTask,
+            completionHandler: &Block<(*mut NSInputStream,), ()>,
+        );
+
+        #[optional]
+        #[method(URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:)]
+        pub unsafe fn URLSession_task_didSendBodyData_totalBytesSent_totalBytesExpectedToSend(
+            &self,
+            session: &NSURLSession,
+            task: &NSURLSessionTask,
+            bytesSent: i64,
+            totalBytesSent: i64,
+            totalBytesExpectedToSend: i64,
+        );
+
+        #[optional]
+        #[method(URLSession:task:didFinishCollectingMetrics:)]
+        pub unsafe fn URLSession_task_didFinishCollectingMetrics(
+            &self,
+            session: &NSURLSession,
+            task: &NSURLSessionTask,
+            metrics: &NSURLSessionTaskMetrics,
+        );
+
+        #[optional]
+        #[method(URLSession:task:didCompleteWithError:)]
+        pub unsafe fn URLSession_task_didCompleteWithError(
+            &self,
+            session: &NSURLSession,
+            task: &NSURLSessionTask,
+            error: Option<&NSError>,
+        );
+    }
+);
+
+extern_protocol!(
+    pub struct NSURLSessionDataDelegate;
+
+    unsafe impl NSURLSessionDataDelegate {
+        #[optional]
+        #[method(URLSession:dataTask:didReceiveResponse:completionHandler:)]
+        pub unsafe fn URLSession_dataTask_didReceiveResponse_completionHandler(
+            &self,
+            session: &NSURLSession,
+            dataTask: &NSURLSessionDataTask,
+            response: &NSURLResponse,
+            completionHandler: &Block<(NSURLSessionResponseDisposition,), ()>,
+        );
+
+        #[optional]
+        #[method(URLSession:dataTask:didBecomeDownloadTask:)]
+        pub unsafe fn URLSession_dataTask_didBecomeDownloadTask(
+            &self,
+            session: &NSURLSession,
+            dataTask: &NSURLSessionDataTask,
+            downloadTask: &NSURLSessionDownloadTask,
+        );
+
+        #[optional]
+        #[method(URLSession:dataTask:didBecomeStreamTask:)]
+        pub unsafe fn URLSession_dataTask_didBecomeStreamTask(
+            &self,
+            session: &NSURLSession,
+            dataTask: &NSURLSessionDataTask,
+            streamTask: &NSURLSessionStreamTask,
+        );
+
+        #[optional]
+        #[method(URLSession:dataTask:didReceiveData:)]
+        pub unsafe fn URLSession_dataTask_didReceiveData(
+            &self,
+            session: &NSURLSession,
+            dataTask: &NSURLSessionDataTask,
+            data: &NSData,
+        );
+
+        #[optional]
+        #[method(URLSession:dataTask:willCacheResponse:completionHandler:)]
+        pub unsafe fn URLSession_dataTask_willCacheResponse_completionHandler(
+            &self,
+            session: &NSURLSession,
+            dataTask: &NSURLSessionDataTask,
+            proposedResponse: &NSCachedURLResponse,
+            completionHandler: &Block<(*mut NSCachedURLResponse,), ()>,
+        );
+    }
+);
+
+extern_protocol!(
+    pub struct NSURLSessionDownloadDelegate;
+
+    unsafe impl NSURLSessionDownloadDelegate {
+        #[method(URLSession:downloadTask:didFinishDownloadingToURL:)]
+        pub unsafe fn URLSession_downloadTask_didFinishDownloadingToURL(
+            &self,
+            session: &NSURLSession,
+            downloadTask: &NSURLSessionDownloadTask,
+            location: &NSURL,
+        );
+
+        #[optional]
+        #[method(URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:)]
+        pub unsafe fn URLSession_downloadTask_didWriteData_totalBytesWritten_totalBytesExpectedToWrite(
+            &self,
+            session: &NSURLSession,
+            downloadTask: &NSURLSessionDownloadTask,
+            bytesWritten: i64,
+            totalBytesWritten: i64,
+            totalBytesExpectedToWrite: i64,
+        );
+
+        #[optional]
+        #[method(URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:)]
+        pub unsafe fn URLSession_downloadTask_didResumeAtOffset_expectedTotalBytes(
+            &self,
+            session: &NSURLSession,
+            downloadTask: &NSURLSessionDownloadTask,
+            fileOffset: i64,
+            expectedTotalBytes: i64,
+        );
+    }
+);
+
+extern_protocol!(
+    pub struct NSURLSessionStreamDelegate;
+
+    unsafe impl NSURLSessionStreamDelegate {
+        #[optional]
+        #[method(URLSession:readClosedForStreamTask:)]
+        pub unsafe fn URLSession_readClosedForStreamTask(
+            &self,
+            session: &NSURLSession,
+            streamTask: &NSURLSessionStreamTask,
+        );
+
+        #[optional]
+        #[method(URLSession:writeClosedForStreamTask:)]
+        pub unsafe fn URLSession_writeClosedForStreamTask(
+            &self,
+            session: &NSURLSession,
+            streamTask: &NSURLSessionStreamTask,
+        );
+
+        #[optional]
+        #[method(URLSession:betterRouteDiscoveredForStreamTask:)]
+        pub unsafe fn URLSession_betterRouteDiscoveredForStreamTask(
+            &self,
+            session: &NSURLSession,
+            streamTask: &NSURLSessionStreamTask,
+        );
+
+        #[optional]
+        #[method(URLSession:streamTask:didBecomeInputStream:outputStream:)]
+        pub unsafe fn URLSession_streamTask_didBecomeInputStream_outputStream(
+            &self,
+            session: &NSURLSession,
+            streamTask: &NSURLSessionStreamTask,
+            inputStream: &NSInputStream,
+            outputStream: &NSOutputStream,
+        );
+    }
+);
+
+extern_protocol!(
+    pub struct NSURLSessionWebSocketDelegate;
+
+    unsafe impl NSURLSessionWebSocketDelegate {
+        #[optional]
+        #[method(URLSession:webSocketTask:didOpenWithProtocol:)]
+        pub unsafe fn URLSession_webSocketTask_didOpenWithProtocol(
+            &self,
+            session: &NSURLSession,
+            webSocketTask: &NSURLSessionWebSocketTask,
+            protocol: Option<&NSString>,
+        );
+
+        #[optional]
+        #[method(URLSession:webSocketTask:didCloseWithCode:reason:)]
+        pub unsafe fn URLSession_webSocketTask_didCloseWithCode_reason(
+            &self,
+            session: &NSURLSession,
+            webSocketTask: &NSURLSessionWebSocketTask,
+            closeCode: NSURLSessionWebSocketCloseCode,
+            reason: Option<&NSData>,
+        );
+    }
+);
 
 extern_static!(NSURLSessionDownloadTaskResumeData: &'static NSString);
 

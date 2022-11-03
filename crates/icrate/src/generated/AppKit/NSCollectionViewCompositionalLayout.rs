@@ -754,8 +754,77 @@ extern_methods!(
     }
 );
 
-pub type NSCollectionLayoutContainer = NSObject;
+extern_protocol!(
+    pub struct NSCollectionLayoutContainer;
 
-pub type NSCollectionLayoutEnvironment = NSObject;
+    unsafe impl NSCollectionLayoutContainer {
+        #[method(contentSize)]
+        pub unsafe fn contentSize(&self) -> NSSize;
 
-pub type NSCollectionLayoutVisibleItem = NSObject;
+        #[method(effectiveContentSize)]
+        pub unsafe fn effectiveContentSize(&self) -> NSSize;
+
+        #[method(contentInsets)]
+        pub unsafe fn contentInsets(&self) -> NSDirectionalEdgeInsets;
+
+        #[method(effectiveContentInsets)]
+        pub unsafe fn effectiveContentInsets(&self) -> NSDirectionalEdgeInsets;
+    }
+);
+
+extern_protocol!(
+    pub struct NSCollectionLayoutEnvironment;
+
+    unsafe impl NSCollectionLayoutEnvironment {
+        #[method_id(@__retain_semantics Other container)]
+        pub unsafe fn container(&self) -> Id<NSCollectionLayoutContainer, Shared>;
+    }
+);
+
+extern_protocol!(
+    pub struct NSCollectionLayoutVisibleItem;
+
+    unsafe impl NSCollectionLayoutVisibleItem {
+        #[method(alpha)]
+        pub unsafe fn alpha(&self) -> CGFloat;
+
+        #[method(setAlpha:)]
+        pub unsafe fn setAlpha(&self, alpha: CGFloat);
+
+        #[method(zIndex)]
+        pub unsafe fn zIndex(&self) -> NSInteger;
+
+        #[method(setZIndex:)]
+        pub unsafe fn setZIndex(&self, zIndex: NSInteger);
+
+        #[method(isHidden)]
+        pub unsafe fn isHidden(&self) -> bool;
+
+        #[method(setHidden:)]
+        pub unsafe fn setHidden(&self, hidden: bool);
+
+        #[method(center)]
+        pub unsafe fn center(&self) -> NSPoint;
+
+        #[method(setCenter:)]
+        pub unsafe fn setCenter(&self, center: NSPoint);
+
+        #[method_id(@__retain_semantics Other name)]
+        pub unsafe fn name(&self) -> Id<NSString, Shared>;
+
+        #[method_id(@__retain_semantics Other indexPath)]
+        pub unsafe fn indexPath(&self) -> Id<NSIndexPath, Shared>;
+
+        #[method(frame)]
+        pub unsafe fn frame(&self) -> NSRect;
+
+        #[method(bounds)]
+        pub unsafe fn bounds(&self) -> NSRect;
+
+        #[method(representedElementCategory)]
+        pub unsafe fn representedElementCategory(&self) -> NSCollectionElementCategory;
+
+        #[method_id(@__retain_semantics Other representedElementKind)]
+        pub unsafe fn representedElementKind(&self) -> Option<Id<NSString, Shared>>;
+    }
+);

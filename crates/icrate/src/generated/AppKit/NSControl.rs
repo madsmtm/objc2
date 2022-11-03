@@ -246,7 +246,85 @@ extern_methods!(
     }
 );
 
-pub type NSControlTextEditingDelegate = NSObject;
+extern_protocol!(
+    pub struct NSControlTextEditingDelegate;
+
+    unsafe impl NSControlTextEditingDelegate {
+        #[optional]
+        #[method(controlTextDidBeginEditing:)]
+        pub unsafe fn controlTextDidBeginEditing(&self, obj: &NSNotification);
+
+        #[optional]
+        #[method(controlTextDidEndEditing:)]
+        pub unsafe fn controlTextDidEndEditing(&self, obj: &NSNotification);
+
+        #[optional]
+        #[method(controlTextDidChange:)]
+        pub unsafe fn controlTextDidChange(&self, obj: &NSNotification);
+
+        #[optional]
+        #[method(control:textShouldBeginEditing:)]
+        pub unsafe fn control_textShouldBeginEditing(
+            &self,
+            control: &NSControl,
+            fieldEditor: &NSText,
+        ) -> bool;
+
+        #[optional]
+        #[method(control:textShouldEndEditing:)]
+        pub unsafe fn control_textShouldEndEditing(
+            &self,
+            control: &NSControl,
+            fieldEditor: &NSText,
+        ) -> bool;
+
+        #[optional]
+        #[method(control:didFailToFormatString:errorDescription:)]
+        pub unsafe fn control_didFailToFormatString_errorDescription(
+            &self,
+            control: &NSControl,
+            string: &NSString,
+            error: Option<&NSString>,
+        ) -> bool;
+
+        #[optional]
+        #[method(control:didFailToValidatePartialString:errorDescription:)]
+        pub unsafe fn control_didFailToValidatePartialString_errorDescription(
+            &self,
+            control: &NSControl,
+            string: &NSString,
+            error: Option<&NSString>,
+        );
+
+        #[optional]
+        #[method(control:isValidObject:)]
+        pub unsafe fn control_isValidObject(
+            &self,
+            control: &NSControl,
+            obj: Option<&Object>,
+        ) -> bool;
+
+        #[optional]
+        #[method(control:textView:doCommandBySelector:)]
+        pub unsafe fn control_textView_doCommandBySelector(
+            &self,
+            control: &NSControl,
+            textView: &NSTextView,
+            commandSelector: Sel,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other control:textView:completions:forPartialWordRange:indexOfSelectedItem:)]
+        pub unsafe fn control_textView_completions_forPartialWordRange_indexOfSelectedItem(
+            &self,
+            control: &NSControl,
+            textView: &NSTextView,
+            words: &NSArray<NSString>,
+            charRange: NSRange,
+            index: NonNull<NSInteger>,
+        ) -> Id<NSArray<NSString>, Shared>;
+    }
+);
 
 extern_static!(NSControlTextDidBeginEditingNotification: &'static NSNotificationName);
 

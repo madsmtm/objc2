@@ -3,7 +3,17 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSLocking = NSObject;
+extern_protocol!(
+    pub struct NSLocking;
+
+    unsafe impl NSLocking {
+        #[method(lock)]
+        pub unsafe fn lock(&self);
+
+        #[method(unlock)]
+        pub unsafe fn unlock(&self);
+    }
+);
 
 extern_class!(
     #[derive(Debug)]

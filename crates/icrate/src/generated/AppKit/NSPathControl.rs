@@ -97,7 +97,57 @@ extern_methods!(
     }
 );
 
-pub type NSPathControlDelegate = NSObject;
+extern_protocol!(
+    pub struct NSPathControlDelegate;
+
+    unsafe impl NSPathControlDelegate {
+        #[optional]
+        #[method(pathControl:shouldDragItem:withPasteboard:)]
+        pub unsafe fn pathControl_shouldDragItem_withPasteboard(
+            &self,
+            pathControl: &NSPathControl,
+            pathItem: &NSPathControlItem,
+            pasteboard: &NSPasteboard,
+        ) -> bool;
+
+        #[optional]
+        #[method(pathControl:shouldDragPathComponentCell:withPasteboard:)]
+        pub unsafe fn pathControl_shouldDragPathComponentCell_withPasteboard(
+            &self,
+            pathControl: &NSPathControl,
+            pathComponentCell: &NSPathComponentCell,
+            pasteboard: &NSPasteboard,
+        ) -> bool;
+
+        #[optional]
+        #[method(pathControl:validateDrop:)]
+        pub unsafe fn pathControl_validateDrop(
+            &self,
+            pathControl: &NSPathControl,
+            info: &NSDraggingInfo,
+        ) -> NSDragOperation;
+
+        #[optional]
+        #[method(pathControl:acceptDrop:)]
+        pub unsafe fn pathControl_acceptDrop(
+            &self,
+            pathControl: &NSPathControl,
+            info: &NSDraggingInfo,
+        ) -> bool;
+
+        #[optional]
+        #[method(pathControl:willDisplayOpenPanel:)]
+        pub unsafe fn pathControl_willDisplayOpenPanel(
+            &self,
+            pathControl: &NSPathControl,
+            openPanel: &NSOpenPanel,
+        );
+
+        #[optional]
+        #[method(pathControl:willPopUpMenu:)]
+        pub unsafe fn pathControl_willPopUpMenu(&self, pathControl: &NSPathControl, menu: &NSMenu);
+    }
+);
 
 extern_methods!(
     /// NSDeprecated

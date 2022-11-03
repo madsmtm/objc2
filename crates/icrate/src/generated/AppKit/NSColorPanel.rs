@@ -120,7 +120,14 @@ extern_methods!(
     }
 );
 
-pub type NSColorChanging = NSObject;
+extern_protocol!(
+    pub struct NSColorChanging;
+
+    unsafe impl NSColorChanging {
+        #[method(changeColor:)]
+        pub unsafe fn changeColor(&self, sender: Option<&NSColorPanel>);
+    }
+);
 
 extern_methods!(
     /// NSColorPanelResponderMethod

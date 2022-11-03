@@ -47,4 +47,15 @@ extern_methods!(
     }
 );
 
-pub type NSDockTilePlugIn = NSObject;
+extern_protocol!(
+    pub struct NSDockTilePlugIn;
+
+    unsafe impl NSDockTilePlugIn {
+        #[method(setDockTile:)]
+        pub unsafe fn setDockTile(&self, dockTile: Option<&NSDockTile>);
+
+        #[optional]
+        #[method_id(@__retain_semantics Other dockMenu)]
+        pub unsafe fn dockMenu(&self) -> Option<Id<NSMenu, Shared>>;
+    }
+);

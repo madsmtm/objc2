@@ -48,4 +48,32 @@ extern_methods!(
     }
 );
 
-pub type NSSeguePerforming = NSObject;
+extern_protocol!(
+    pub struct NSSeguePerforming;
+
+    unsafe impl NSSeguePerforming {
+        #[optional]
+        #[method(prepareForSegue:sender:)]
+        pub unsafe fn prepareForSegue_sender(
+            &self,
+            segue: &NSStoryboardSegue,
+            sender: Option<&Object>,
+        );
+
+        #[optional]
+        #[method(performSegueWithIdentifier:sender:)]
+        pub unsafe fn performSegueWithIdentifier_sender(
+            &self,
+            identifier: &NSStoryboardSegueIdentifier,
+            sender: Option<&Object>,
+        );
+
+        #[optional]
+        #[method(shouldPerformSegueWithIdentifier:sender:)]
+        pub unsafe fn shouldPerformSegueWithIdentifier_sender(
+            &self,
+            identifier: &NSStoryboardSegueIdentifier,
+            sender: Option<&Object>,
+        ) -> bool;
+    }
+);

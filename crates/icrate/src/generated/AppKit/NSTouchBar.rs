@@ -127,9 +127,28 @@ extern_methods!(
     }
 );
 
-pub type NSTouchBarDelegate = NSObject;
+extern_protocol!(
+    pub struct NSTouchBarDelegate;
 
-pub type NSTouchBarProvider = NSObject;
+    unsafe impl NSTouchBarDelegate {
+        #[optional]
+        #[method_id(@__retain_semantics Other touchBar:makeItemForIdentifier:)]
+        pub unsafe fn touchBar_makeItemForIdentifier(
+            &self,
+            touchBar: &NSTouchBar,
+            identifier: &NSTouchBarItemIdentifier,
+        ) -> Option<Id<NSTouchBarItem, Shared>>;
+    }
+);
+
+extern_protocol!(
+    pub struct NSTouchBarProvider;
+
+    unsafe impl NSTouchBarProvider {
+        #[method_id(@__retain_semantics Other touchBar)]
+        pub unsafe fn touchBar(&self) -> Option<Id<NSTouchBar, Shared>>;
+    }
+);
 
 extern_methods!(
     /// NSTouchBarProvider

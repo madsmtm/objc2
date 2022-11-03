@@ -78,4 +78,17 @@ extern_static!(NSAppearanceNameAccessibilityHighContrastVibrantLight: &'static N
 
 extern_static!(NSAppearanceNameAccessibilityHighContrastVibrantDark: &'static NSAppearanceName);
 
-pub type NSAppearanceCustomization = NSObject;
+extern_protocol!(
+    pub struct NSAppearanceCustomization;
+
+    unsafe impl NSAppearanceCustomization {
+        #[method_id(@__retain_semantics Other appearance)]
+        pub unsafe fn appearance(&self) -> Option<Id<NSAppearance, Shared>>;
+
+        #[method(setAppearance:)]
+        pub unsafe fn setAppearance(&self, appearance: Option<&NSAppearance>);
+
+        #[method_id(@__retain_semantics Other effectiveAppearance)]
+        pub unsafe fn effectiveAppearance(&self) -> Id<NSAppearance, Shared>;
+    }
+);

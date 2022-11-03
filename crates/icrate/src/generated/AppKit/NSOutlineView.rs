@@ -189,9 +189,443 @@ extern_methods!(
     }
 );
 
-pub type NSOutlineViewDataSource = NSObject;
+extern_protocol!(
+    pub struct NSOutlineViewDataSource;
 
-pub type NSOutlineViewDelegate = NSObject;
+    unsafe impl NSOutlineViewDataSource {
+        #[optional]
+        #[method(outlineView:numberOfChildrenOfItem:)]
+        pub unsafe fn outlineView_numberOfChildrenOfItem(
+            &self,
+            outlineView: &NSOutlineView,
+            item: Option<&Object>,
+        ) -> NSInteger;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other outlineView:child:ofItem:)]
+        pub unsafe fn outlineView_child_ofItem(
+            &self,
+            outlineView: &NSOutlineView,
+            index: NSInteger,
+            item: Option<&Object>,
+        ) -> Id<Object, Shared>;
+
+        #[optional]
+        #[method(outlineView:isItemExpandable:)]
+        pub unsafe fn outlineView_isItemExpandable(
+            &self,
+            outlineView: &NSOutlineView,
+            item: &Object,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other outlineView:objectValueForTableColumn:byItem:)]
+        pub unsafe fn outlineView_objectValueForTableColumn_byItem(
+            &self,
+            outlineView: &NSOutlineView,
+            tableColumn: Option<&NSTableColumn>,
+            item: Option<&Object>,
+        ) -> Option<Id<Object, Shared>>;
+
+        #[optional]
+        #[method(outlineView:setObjectValue:forTableColumn:byItem:)]
+        pub unsafe fn outlineView_setObjectValue_forTableColumn_byItem(
+            &self,
+            outlineView: &NSOutlineView,
+            object: Option<&Object>,
+            tableColumn: Option<&NSTableColumn>,
+            item: Option<&Object>,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other outlineView:itemForPersistentObject:)]
+        pub unsafe fn outlineView_itemForPersistentObject(
+            &self,
+            outlineView: &NSOutlineView,
+            object: &Object,
+        ) -> Option<Id<Object, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other outlineView:persistentObjectForItem:)]
+        pub unsafe fn outlineView_persistentObjectForItem(
+            &self,
+            outlineView: &NSOutlineView,
+            item: Option<&Object>,
+        ) -> Option<Id<Object, Shared>>;
+
+        #[optional]
+        #[method(outlineView:sortDescriptorsDidChange:)]
+        pub unsafe fn outlineView_sortDescriptorsDidChange(
+            &self,
+            outlineView: &NSOutlineView,
+            oldDescriptors: &NSArray<NSSortDescriptor>,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other outlineView:pasteboardWriterForItem:)]
+        pub unsafe fn outlineView_pasteboardWriterForItem(
+            &self,
+            outlineView: &NSOutlineView,
+            item: &Object,
+        ) -> Option<Id<NSPasteboardWriting, Shared>>;
+
+        #[optional]
+        #[method(outlineView:draggingSession:willBeginAtPoint:forItems:)]
+        pub unsafe fn outlineView_draggingSession_willBeginAtPoint_forItems(
+            &self,
+            outlineView: &NSOutlineView,
+            session: &NSDraggingSession,
+            screenPoint: NSPoint,
+            draggedItems: &NSArray,
+        );
+
+        #[optional]
+        #[method(outlineView:draggingSession:endedAtPoint:operation:)]
+        pub unsafe fn outlineView_draggingSession_endedAtPoint_operation(
+            &self,
+            outlineView: &NSOutlineView,
+            session: &NSDraggingSession,
+            screenPoint: NSPoint,
+            operation: NSDragOperation,
+        );
+
+        #[optional]
+        #[method(outlineView:writeItems:toPasteboard:)]
+        pub unsafe fn outlineView_writeItems_toPasteboard(
+            &self,
+            outlineView: &NSOutlineView,
+            items: &NSArray,
+            pasteboard: &NSPasteboard,
+        ) -> bool;
+
+        #[optional]
+        #[method(outlineView:updateDraggingItemsForDrag:)]
+        pub unsafe fn outlineView_updateDraggingItemsForDrag(
+            &self,
+            outlineView: &NSOutlineView,
+            draggingInfo: &NSDraggingInfo,
+        );
+
+        #[optional]
+        #[method(outlineView:validateDrop:proposedItem:proposedChildIndex:)]
+        pub unsafe fn outlineView_validateDrop_proposedItem_proposedChildIndex(
+            &self,
+            outlineView: &NSOutlineView,
+            info: &NSDraggingInfo,
+            item: Option<&Object>,
+            index: NSInteger,
+        ) -> NSDragOperation;
+
+        #[optional]
+        #[method(outlineView:acceptDrop:item:childIndex:)]
+        pub unsafe fn outlineView_acceptDrop_item_childIndex(
+            &self,
+            outlineView: &NSOutlineView,
+            info: &NSDraggingInfo,
+            item: Option<&Object>,
+            index: NSInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other outlineView:namesOfPromisedFilesDroppedAtDestination:forDraggedItems:)]
+        pub unsafe fn outlineView_namesOfPromisedFilesDroppedAtDestination_forDraggedItems(
+            &self,
+            outlineView: &NSOutlineView,
+            dropDestination: &NSURL,
+            items: &NSArray,
+        ) -> Id<NSArray<NSString>, Shared>;
+    }
+);
+
+extern_protocol!(
+    pub struct NSOutlineViewDelegate;
+
+    unsafe impl NSOutlineViewDelegate {
+        #[optional]
+        #[method_id(@__retain_semantics Other outlineView:viewForTableColumn:item:)]
+        pub unsafe fn outlineView_viewForTableColumn_item(
+            &self,
+            outlineView: &NSOutlineView,
+            tableColumn: Option<&NSTableColumn>,
+            item: &Object,
+        ) -> Option<Id<NSView, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other outlineView:rowViewForItem:)]
+        pub unsafe fn outlineView_rowViewForItem(
+            &self,
+            outlineView: &NSOutlineView,
+            item: &Object,
+        ) -> Option<Id<NSTableRowView, Shared>>;
+
+        #[optional]
+        #[method(outlineView:didAddRowView:forRow:)]
+        pub unsafe fn outlineView_didAddRowView_forRow(
+            &self,
+            outlineView: &NSOutlineView,
+            rowView: &NSTableRowView,
+            row: NSInteger,
+        );
+
+        #[optional]
+        #[method(outlineView:didRemoveRowView:forRow:)]
+        pub unsafe fn outlineView_didRemoveRowView_forRow(
+            &self,
+            outlineView: &NSOutlineView,
+            rowView: &NSTableRowView,
+            row: NSInteger,
+        );
+
+        #[optional]
+        #[method(outlineView:willDisplayCell:forTableColumn:item:)]
+        pub unsafe fn outlineView_willDisplayCell_forTableColumn_item(
+            &self,
+            outlineView: &NSOutlineView,
+            cell: &Object,
+            tableColumn: Option<&NSTableColumn>,
+            item: &Object,
+        );
+
+        #[optional]
+        #[method(outlineView:shouldEditTableColumn:item:)]
+        pub unsafe fn outlineView_shouldEditTableColumn_item(
+            &self,
+            outlineView: &NSOutlineView,
+            tableColumn: Option<&NSTableColumn>,
+            item: &Object,
+        ) -> bool;
+
+        #[optional]
+        #[method(selectionShouldChangeInOutlineView:)]
+        pub unsafe fn selectionShouldChangeInOutlineView(
+            &self,
+            outlineView: &NSOutlineView,
+        ) -> bool;
+
+        #[optional]
+        #[method(outlineView:shouldSelectItem:)]
+        pub unsafe fn outlineView_shouldSelectItem(
+            &self,
+            outlineView: &NSOutlineView,
+            item: &Object,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other outlineView:selectionIndexesForProposedSelection:)]
+        pub unsafe fn outlineView_selectionIndexesForProposedSelection(
+            &self,
+            outlineView: &NSOutlineView,
+            proposedSelectionIndexes: &NSIndexSet,
+        ) -> Id<NSIndexSet, Shared>;
+
+        #[optional]
+        #[method(outlineView:shouldSelectTableColumn:)]
+        pub unsafe fn outlineView_shouldSelectTableColumn(
+            &self,
+            outlineView: &NSOutlineView,
+            tableColumn: Option<&NSTableColumn>,
+        ) -> bool;
+
+        #[optional]
+        #[method(outlineView:mouseDownInHeaderOfTableColumn:)]
+        pub unsafe fn outlineView_mouseDownInHeaderOfTableColumn(
+            &self,
+            outlineView: &NSOutlineView,
+            tableColumn: &NSTableColumn,
+        );
+
+        #[optional]
+        #[method(outlineView:didClickTableColumn:)]
+        pub unsafe fn outlineView_didClickTableColumn(
+            &self,
+            outlineView: &NSOutlineView,
+            tableColumn: &NSTableColumn,
+        );
+
+        #[optional]
+        #[method(outlineView:didDragTableColumn:)]
+        pub unsafe fn outlineView_didDragTableColumn(
+            &self,
+            outlineView: &NSOutlineView,
+            tableColumn: &NSTableColumn,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other outlineView:toolTipForCell:rect:tableColumn:item:mouseLocation:)]
+        pub unsafe fn outlineView_toolTipForCell_rect_tableColumn_item_mouseLocation(
+            &self,
+            outlineView: &NSOutlineView,
+            cell: &NSCell,
+            rect: NSRectPointer,
+            tableColumn: Option<&NSTableColumn>,
+            item: &Object,
+            mouseLocation: NSPoint,
+        ) -> Id<NSString, Shared>;
+
+        #[optional]
+        #[method(outlineView:heightOfRowByItem:)]
+        pub unsafe fn outlineView_heightOfRowByItem(
+            &self,
+            outlineView: &NSOutlineView,
+            item: &Object,
+        ) -> CGFloat;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other outlineView:tintConfigurationForItem:)]
+        pub unsafe fn outlineView_tintConfigurationForItem(
+            &self,
+            outlineView: &NSOutlineView,
+            item: &Object,
+        ) -> Option<Id<NSTintConfiguration, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other outlineView:typeSelectStringForTableColumn:item:)]
+        pub unsafe fn outlineView_typeSelectStringForTableColumn_item(
+            &self,
+            outlineView: &NSOutlineView,
+            tableColumn: Option<&NSTableColumn>,
+            item: &Object,
+        ) -> Option<Id<NSString, Shared>>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other outlineView:nextTypeSelectMatchFromItem:toItem:forString:)]
+        pub unsafe fn outlineView_nextTypeSelectMatchFromItem_toItem_forString(
+            &self,
+            outlineView: &NSOutlineView,
+            startItem: &Object,
+            endItem: &Object,
+            searchString: &NSString,
+        ) -> Option<Id<Object, Shared>>;
+
+        #[optional]
+        #[method(outlineView:shouldTypeSelectForEvent:withCurrentSearchString:)]
+        pub unsafe fn outlineView_shouldTypeSelectForEvent_withCurrentSearchString(
+            &self,
+            outlineView: &NSOutlineView,
+            event: &NSEvent,
+            searchString: Option<&NSString>,
+        ) -> bool;
+
+        #[optional]
+        #[method(outlineView:shouldShowCellExpansionForTableColumn:item:)]
+        pub unsafe fn outlineView_shouldShowCellExpansionForTableColumn_item(
+            &self,
+            outlineView: &NSOutlineView,
+            tableColumn: Option<&NSTableColumn>,
+            item: &Object,
+        ) -> bool;
+
+        #[optional]
+        #[method(outlineView:shouldTrackCell:forTableColumn:item:)]
+        pub unsafe fn outlineView_shouldTrackCell_forTableColumn_item(
+            &self,
+            outlineView: &NSOutlineView,
+            cell: &NSCell,
+            tableColumn: Option<&NSTableColumn>,
+            item: &Object,
+        ) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other outlineView:dataCellForTableColumn:item:)]
+        pub unsafe fn outlineView_dataCellForTableColumn_item(
+            &self,
+            outlineView: &NSOutlineView,
+            tableColumn: Option<&NSTableColumn>,
+            item: &Object,
+        ) -> Option<Id<NSCell, Shared>>;
+
+        #[optional]
+        #[method(outlineView:isGroupItem:)]
+        pub unsafe fn outlineView_isGroupItem(
+            &self,
+            outlineView: &NSOutlineView,
+            item: &Object,
+        ) -> bool;
+
+        #[optional]
+        #[method(outlineView:shouldExpandItem:)]
+        pub unsafe fn outlineView_shouldExpandItem(
+            &self,
+            outlineView: &NSOutlineView,
+            item: &Object,
+        ) -> bool;
+
+        #[optional]
+        #[method(outlineView:shouldCollapseItem:)]
+        pub unsafe fn outlineView_shouldCollapseItem(
+            &self,
+            outlineView: &NSOutlineView,
+            item: &Object,
+        ) -> bool;
+
+        #[optional]
+        #[method(outlineView:willDisplayOutlineCell:forTableColumn:item:)]
+        pub unsafe fn outlineView_willDisplayOutlineCell_forTableColumn_item(
+            &self,
+            outlineView: &NSOutlineView,
+            cell: &Object,
+            tableColumn: Option<&NSTableColumn>,
+            item: &Object,
+        );
+
+        #[optional]
+        #[method(outlineView:sizeToFitWidthOfColumn:)]
+        pub unsafe fn outlineView_sizeToFitWidthOfColumn(
+            &self,
+            outlineView: &NSOutlineView,
+            column: NSInteger,
+        ) -> CGFloat;
+
+        #[optional]
+        #[method(outlineView:shouldReorderColumn:toColumn:)]
+        pub unsafe fn outlineView_shouldReorderColumn_toColumn(
+            &self,
+            outlineView: &NSOutlineView,
+            columnIndex: NSInteger,
+            newColumnIndex: NSInteger,
+        ) -> bool;
+
+        #[optional]
+        #[method(outlineView:shouldShowOutlineCellForItem:)]
+        pub unsafe fn outlineView_shouldShowOutlineCellForItem(
+            &self,
+            outlineView: &NSOutlineView,
+            item: &Object,
+        ) -> bool;
+
+        #[optional]
+        #[method(outlineViewSelectionDidChange:)]
+        pub unsafe fn outlineViewSelectionDidChange(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(outlineViewColumnDidMove:)]
+        pub unsafe fn outlineViewColumnDidMove(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(outlineViewColumnDidResize:)]
+        pub unsafe fn outlineViewColumnDidResize(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(outlineViewSelectionIsChanging:)]
+        pub unsafe fn outlineViewSelectionIsChanging(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(outlineViewItemWillExpand:)]
+        pub unsafe fn outlineViewItemWillExpand(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(outlineViewItemDidExpand:)]
+        pub unsafe fn outlineViewItemDidExpand(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(outlineViewItemWillCollapse:)]
+        pub unsafe fn outlineViewItemWillCollapse(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(outlineViewItemDidCollapse:)]
+        pub unsafe fn outlineViewItemDidCollapse(&self, notification: &NSNotification);
+    }
+);
 
 extern_static!(NSOutlineViewDisclosureButtonKey: &'static NSUserInterfaceItemIdentifier);
 

@@ -523,7 +523,159 @@ extern_methods!(
     }
 );
 
-pub type NSFileManagerDelegate = NSObject;
+extern_protocol!(
+    pub struct NSFileManagerDelegate;
+
+    unsafe impl NSFileManagerDelegate {
+        #[optional]
+        #[method(fileManager:shouldCopyItemAtPath:toPath:)]
+        pub unsafe fn fileManager_shouldCopyItemAtPath_toPath(
+            &self,
+            fileManager: &NSFileManager,
+            srcPath: &NSString,
+            dstPath: &NSString,
+        ) -> bool;
+
+        #[optional]
+        #[method(fileManager:shouldCopyItemAtURL:toURL:)]
+        pub unsafe fn fileManager_shouldCopyItemAtURL_toURL(
+            &self,
+            fileManager: &NSFileManager,
+            srcURL: &NSURL,
+            dstURL: &NSURL,
+        ) -> bool;
+
+        #[optional]
+        #[method(fileManager:shouldProceedAfterError:copyingItemAtPath:toPath:)]
+        pub unsafe fn fileManager_shouldProceedAfterError_copyingItemAtPath_toPath(
+            &self,
+            fileManager: &NSFileManager,
+            error: &NSError,
+            srcPath: &NSString,
+            dstPath: &NSString,
+        ) -> bool;
+
+        #[optional]
+        #[method(fileManager:shouldProceedAfterError:copyingItemAtURL:toURL:)]
+        pub unsafe fn fileManager_shouldProceedAfterError_copyingItemAtURL_toURL(
+            &self,
+            fileManager: &NSFileManager,
+            error: &NSError,
+            srcURL: &NSURL,
+            dstURL: &NSURL,
+        ) -> bool;
+
+        #[optional]
+        #[method(fileManager:shouldMoveItemAtPath:toPath:)]
+        pub unsafe fn fileManager_shouldMoveItemAtPath_toPath(
+            &self,
+            fileManager: &NSFileManager,
+            srcPath: &NSString,
+            dstPath: &NSString,
+        ) -> bool;
+
+        #[optional]
+        #[method(fileManager:shouldMoveItemAtURL:toURL:)]
+        pub unsafe fn fileManager_shouldMoveItemAtURL_toURL(
+            &self,
+            fileManager: &NSFileManager,
+            srcURL: &NSURL,
+            dstURL: &NSURL,
+        ) -> bool;
+
+        #[optional]
+        #[method(fileManager:shouldProceedAfterError:movingItemAtPath:toPath:)]
+        pub unsafe fn fileManager_shouldProceedAfterError_movingItemAtPath_toPath(
+            &self,
+            fileManager: &NSFileManager,
+            error: &NSError,
+            srcPath: &NSString,
+            dstPath: &NSString,
+        ) -> bool;
+
+        #[optional]
+        #[method(fileManager:shouldProceedAfterError:movingItemAtURL:toURL:)]
+        pub unsafe fn fileManager_shouldProceedAfterError_movingItemAtURL_toURL(
+            &self,
+            fileManager: &NSFileManager,
+            error: &NSError,
+            srcURL: &NSURL,
+            dstURL: &NSURL,
+        ) -> bool;
+
+        #[optional]
+        #[method(fileManager:shouldLinkItemAtPath:toPath:)]
+        pub unsafe fn fileManager_shouldLinkItemAtPath_toPath(
+            &self,
+            fileManager: &NSFileManager,
+            srcPath: &NSString,
+            dstPath: &NSString,
+        ) -> bool;
+
+        #[optional]
+        #[method(fileManager:shouldLinkItemAtURL:toURL:)]
+        pub unsafe fn fileManager_shouldLinkItemAtURL_toURL(
+            &self,
+            fileManager: &NSFileManager,
+            srcURL: &NSURL,
+            dstURL: &NSURL,
+        ) -> bool;
+
+        #[optional]
+        #[method(fileManager:shouldProceedAfterError:linkingItemAtPath:toPath:)]
+        pub unsafe fn fileManager_shouldProceedAfterError_linkingItemAtPath_toPath(
+            &self,
+            fileManager: &NSFileManager,
+            error: &NSError,
+            srcPath: &NSString,
+            dstPath: &NSString,
+        ) -> bool;
+
+        #[optional]
+        #[method(fileManager:shouldProceedAfterError:linkingItemAtURL:toURL:)]
+        pub unsafe fn fileManager_shouldProceedAfterError_linkingItemAtURL_toURL(
+            &self,
+            fileManager: &NSFileManager,
+            error: &NSError,
+            srcURL: &NSURL,
+            dstURL: &NSURL,
+        ) -> bool;
+
+        #[optional]
+        #[method(fileManager:shouldRemoveItemAtPath:)]
+        pub unsafe fn fileManager_shouldRemoveItemAtPath(
+            &self,
+            fileManager: &NSFileManager,
+            path: &NSString,
+        ) -> bool;
+
+        #[optional]
+        #[method(fileManager:shouldRemoveItemAtURL:)]
+        pub unsafe fn fileManager_shouldRemoveItemAtURL(
+            &self,
+            fileManager: &NSFileManager,
+            URL: &NSURL,
+        ) -> bool;
+
+        #[optional]
+        #[method(fileManager:shouldProceedAfterError:removingItemAtPath:)]
+        pub unsafe fn fileManager_shouldProceedAfterError_removingItemAtPath(
+            &self,
+            fileManager: &NSFileManager,
+            error: &NSError,
+            path: &NSString,
+        ) -> bool;
+
+        #[optional]
+        #[method(fileManager:shouldProceedAfterError:removingItemAtURL:)]
+        pub unsafe fn fileManager_shouldProceedAfterError_removingItemAtURL(
+            &self,
+            fileManager: &NSFileManager,
+            error: &NSError,
+            URL: &NSURL,
+        ) -> bool;
+    }
+);
 
 __inner_extern_class!(
     #[derive(Debug)]

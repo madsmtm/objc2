@@ -22,7 +22,20 @@ ns_options!(
     }
 );
 
-pub type NSFontChanging = NSObject;
+extern_protocol!(
+    pub struct NSFontChanging;
+
+    unsafe impl NSFontChanging {
+        #[optional]
+        #[method(changeFont:)]
+        pub unsafe fn changeFont(&self, sender: Option<&NSFontManager>);
+
+        #[optional]
+        #[method(validModesForFontPanel:)]
+        pub unsafe fn validModesForFontPanel(&self, fontPanel: &NSFontPanel)
+            -> NSFontPanelModeMask;
+    }
+);
 
 extern_methods!(
     /// NSFontPanelValidationAdditions

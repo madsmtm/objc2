@@ -205,6 +205,49 @@ extern_methods!(
     }
 );
 
-pub type NSRuleEditorDelegate = NSObject;
+extern_protocol!(
+    pub struct NSRuleEditorDelegate;
+
+    unsafe impl NSRuleEditorDelegate {
+        #[method(ruleEditor:numberOfChildrenForCriterion:withRowType:)]
+        pub unsafe fn ruleEditor_numberOfChildrenForCriterion_withRowType(
+            &self,
+            editor: &NSRuleEditor,
+            criterion: Option<&Object>,
+            rowType: NSRuleEditorRowType,
+        ) -> NSInteger;
+
+        #[method_id(@__retain_semantics Other ruleEditor:child:forCriterion:withRowType:)]
+        pub unsafe fn ruleEditor_child_forCriterion_withRowType(
+            &self,
+            editor: &NSRuleEditor,
+            index: NSInteger,
+            criterion: Option<&Object>,
+            rowType: NSRuleEditorRowType,
+        ) -> Id<Object, Shared>;
+
+        #[method_id(@__retain_semantics Other ruleEditor:displayValueForCriterion:inRow:)]
+        pub unsafe fn ruleEditor_displayValueForCriterion_inRow(
+            &self,
+            editor: &NSRuleEditor,
+            criterion: &Object,
+            row: NSInteger,
+        ) -> Id<Object, Shared>;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other ruleEditor:predicatePartsForCriterion:withDisplayValue:inRow:)]
+        pub unsafe fn ruleEditor_predicatePartsForCriterion_withDisplayValue_inRow(
+            &self,
+            editor: &NSRuleEditor,
+            criterion: &Object,
+            value: &Object,
+            row: NSInteger,
+        ) -> Option<Id<NSDictionary<NSRuleEditorPredicatePartKey, Object>, Shared>>;
+
+        #[optional]
+        #[method(ruleEditorRowsDidChange:)]
+        pub unsafe fn ruleEditorRowsDidChange(&self, notification: &NSNotification);
+    }
+);
 
 extern_static!(NSRuleEditorRowsDidChangeNotification: &'static NSNotificationName);

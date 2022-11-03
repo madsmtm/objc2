@@ -14,7 +14,11 @@ ns_options!(
     }
 );
 
-pub type NSFetchRequestResult = NSObject;
+extern_protocol!(
+    pub struct NSFetchRequestResult;
+
+    unsafe impl NSFetchRequestResult {}
+);
 
 extern_methods!(
     /// NSFetchedResultSupport

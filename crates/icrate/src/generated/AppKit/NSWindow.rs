@@ -1220,7 +1220,281 @@ extern_methods!(
     }
 );
 
-pub type NSWindowDelegate = NSObject;
+extern_protocol!(
+    pub struct NSWindowDelegate;
+
+    unsafe impl NSWindowDelegate {
+        #[optional]
+        #[method(windowShouldClose:)]
+        pub unsafe fn windowShouldClose(&self, sender: &NSWindow) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other windowWillReturnFieldEditor:toObject:)]
+        pub unsafe fn windowWillReturnFieldEditor_toObject(
+            &self,
+            sender: &NSWindow,
+            client: Option<&Object>,
+        ) -> Option<Id<Object, Shared>>;
+
+        #[optional]
+        #[method(windowWillResize:toSize:)]
+        pub unsafe fn windowWillResize_toSize(
+            &self,
+            sender: &NSWindow,
+            frameSize: NSSize,
+        ) -> NSSize;
+
+        #[optional]
+        #[method(windowWillUseStandardFrame:defaultFrame:)]
+        pub unsafe fn windowWillUseStandardFrame_defaultFrame(
+            &self,
+            window: &NSWindow,
+            newFrame: NSRect,
+        ) -> NSRect;
+
+        #[optional]
+        #[method(windowShouldZoom:toFrame:)]
+        pub unsafe fn windowShouldZoom_toFrame(&self, window: &NSWindow, newFrame: NSRect) -> bool;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other windowWillReturnUndoManager:)]
+        pub unsafe fn windowWillReturnUndoManager(
+            &self,
+            window: &NSWindow,
+        ) -> Option<Id<NSUndoManager, Shared>>;
+
+        #[optional]
+        #[method(window:willPositionSheet:usingRect:)]
+        pub unsafe fn window_willPositionSheet_usingRect(
+            &self,
+            window: &NSWindow,
+            sheet: &NSWindow,
+            rect: NSRect,
+        ) -> NSRect;
+
+        #[optional]
+        #[method(window:shouldPopUpDocumentPathMenu:)]
+        pub unsafe fn window_shouldPopUpDocumentPathMenu(
+            &self,
+            window: &NSWindow,
+            menu: &NSMenu,
+        ) -> bool;
+
+        #[optional]
+        #[method(window:shouldDragDocumentWithEvent:from:withPasteboard:)]
+        pub unsafe fn window_shouldDragDocumentWithEvent_from_withPasteboard(
+            &self,
+            window: &NSWindow,
+            event: &NSEvent,
+            dragImageLocation: NSPoint,
+            pasteboard: &NSPasteboard,
+        ) -> bool;
+
+        #[optional]
+        #[method(window:willUseFullScreenContentSize:)]
+        pub unsafe fn window_willUseFullScreenContentSize(
+            &self,
+            window: &NSWindow,
+            proposedSize: NSSize,
+        ) -> NSSize;
+
+        #[optional]
+        #[method(window:willUseFullScreenPresentationOptions:)]
+        pub unsafe fn window_willUseFullScreenPresentationOptions(
+            &self,
+            window: &NSWindow,
+            proposedOptions: NSApplicationPresentationOptions,
+        ) -> NSApplicationPresentationOptions;
+
+        #[optional]
+        #[method_id(@__retain_semantics Other customWindowsToEnterFullScreenForWindow:)]
+        pub unsafe fn customWindowsToEnterFullScreenForWindow(
+            &self,
+            window: &NSWindow,
+        ) -> Option<Id<NSArray<NSWindow>, Shared>>;
+
+        #[optional]
+        #[method(window:startCustomAnimationToEnterFullScreenWithDuration:)]
+        pub unsafe fn window_startCustomAnimationToEnterFullScreenWithDuration(
+            &self,
+            window: &NSWindow,
+            duration: NSTimeInterval,
+        );
+
+        #[optional]
+        #[method(windowDidFailToEnterFullScreen:)]
+        pub unsafe fn windowDidFailToEnterFullScreen(&self, window: &NSWindow);
+
+        #[optional]
+        #[method_id(@__retain_semantics Other customWindowsToExitFullScreenForWindow:)]
+        pub unsafe fn customWindowsToExitFullScreenForWindow(
+            &self,
+            window: &NSWindow,
+        ) -> Option<Id<NSArray<NSWindow>, Shared>>;
+
+        #[optional]
+        #[method(window:startCustomAnimationToExitFullScreenWithDuration:)]
+        pub unsafe fn window_startCustomAnimationToExitFullScreenWithDuration(
+            &self,
+            window: &NSWindow,
+            duration: NSTimeInterval,
+        );
+
+        #[optional]
+        #[method_id(@__retain_semantics Other customWindowsToEnterFullScreenForWindow:onScreen:)]
+        pub unsafe fn customWindowsToEnterFullScreenForWindow_onScreen(
+            &self,
+            window: &NSWindow,
+            screen: &NSScreen,
+        ) -> Option<Id<NSArray<NSWindow>, Shared>>;
+
+        #[optional]
+        #[method(window:startCustomAnimationToEnterFullScreenOnScreen:withDuration:)]
+        pub unsafe fn window_startCustomAnimationToEnterFullScreenOnScreen_withDuration(
+            &self,
+            window: &NSWindow,
+            screen: &NSScreen,
+            duration: NSTimeInterval,
+        );
+
+        #[optional]
+        #[method(windowDidFailToExitFullScreen:)]
+        pub unsafe fn windowDidFailToExitFullScreen(&self, window: &NSWindow);
+
+        #[optional]
+        #[method(window:willResizeForVersionBrowserWithMaxPreferredSize:maxAllowedSize:)]
+        pub unsafe fn window_willResizeForVersionBrowserWithMaxPreferredSize_maxAllowedSize(
+            &self,
+            window: &NSWindow,
+            maxPreferredFrameSize: NSSize,
+            maxAllowedFrameSize: NSSize,
+        ) -> NSSize;
+
+        #[optional]
+        #[method(window:willEncodeRestorableState:)]
+        pub unsafe fn window_willEncodeRestorableState(&self, window: &NSWindow, state: &NSCoder);
+
+        #[optional]
+        #[method(window:didDecodeRestorableState:)]
+        pub unsafe fn window_didDecodeRestorableState(&self, window: &NSWindow, state: &NSCoder);
+
+        #[optional]
+        #[method(windowDidResize:)]
+        pub unsafe fn windowDidResize(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidExpose:)]
+        pub unsafe fn windowDidExpose(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowWillMove:)]
+        pub unsafe fn windowWillMove(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidMove:)]
+        pub unsafe fn windowDidMove(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidBecomeKey:)]
+        pub unsafe fn windowDidBecomeKey(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidResignKey:)]
+        pub unsafe fn windowDidResignKey(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidBecomeMain:)]
+        pub unsafe fn windowDidBecomeMain(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidResignMain:)]
+        pub unsafe fn windowDidResignMain(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowWillClose:)]
+        pub unsafe fn windowWillClose(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowWillMiniaturize:)]
+        pub unsafe fn windowWillMiniaturize(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidMiniaturize:)]
+        pub unsafe fn windowDidMiniaturize(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidDeminiaturize:)]
+        pub unsafe fn windowDidDeminiaturize(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidUpdate:)]
+        pub unsafe fn windowDidUpdate(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidChangeScreen:)]
+        pub unsafe fn windowDidChangeScreen(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidChangeScreenProfile:)]
+        pub unsafe fn windowDidChangeScreenProfile(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidChangeBackingProperties:)]
+        pub unsafe fn windowDidChangeBackingProperties(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowWillBeginSheet:)]
+        pub unsafe fn windowWillBeginSheet(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidEndSheet:)]
+        pub unsafe fn windowDidEndSheet(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowWillStartLiveResize:)]
+        pub unsafe fn windowWillStartLiveResize(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidEndLiveResize:)]
+        pub unsafe fn windowDidEndLiveResize(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowWillEnterFullScreen:)]
+        pub unsafe fn windowWillEnterFullScreen(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidEnterFullScreen:)]
+        pub unsafe fn windowDidEnterFullScreen(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowWillExitFullScreen:)]
+        pub unsafe fn windowWillExitFullScreen(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidExitFullScreen:)]
+        pub unsafe fn windowDidExitFullScreen(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowWillEnterVersionBrowser:)]
+        pub unsafe fn windowWillEnterVersionBrowser(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidEnterVersionBrowser:)]
+        pub unsafe fn windowDidEnterVersionBrowser(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowWillExitVersionBrowser:)]
+        pub unsafe fn windowWillExitVersionBrowser(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidExitVersionBrowser:)]
+        pub unsafe fn windowDidExitVersionBrowser(&self, notification: &NSNotification);
+
+        #[optional]
+        #[method(windowDidChangeOcclusionState:)]
+        pub unsafe fn windowDidChangeOcclusionState(&self, notification: &NSNotification);
+    }
+);
 
 extern_static!(NSWindowDidBecomeKeyNotification: &'static NSNotificationName);
 

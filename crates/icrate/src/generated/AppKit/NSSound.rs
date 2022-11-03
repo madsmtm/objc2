@@ -138,7 +138,15 @@ extern_methods!(
     }
 );
 
-pub type NSSoundDelegate = NSObject;
+extern_protocol!(
+    pub struct NSSoundDelegate;
+
+    unsafe impl NSSoundDelegate {
+        #[optional]
+        #[method(sound:didFinishPlaying:)]
+        pub unsafe fn sound_didFinishPlaying(&self, sound: &NSSound, flag: bool);
+    }
+);
 
 extern_methods!(
     /// NSBundleSoundExtensions

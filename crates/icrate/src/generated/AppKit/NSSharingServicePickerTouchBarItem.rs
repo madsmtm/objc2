@@ -47,4 +47,14 @@ extern_methods!(
     }
 );
 
-pub type NSSharingServicePickerTouchBarItemDelegate = NSObject;
+extern_protocol!(
+    pub struct NSSharingServicePickerTouchBarItemDelegate;
+
+    unsafe impl NSSharingServicePickerTouchBarItemDelegate {
+        #[method_id(@__retain_semantics Other itemsForSharingServicePickerTouchBarItem:)]
+        pub unsafe fn itemsForSharingServicePickerTouchBarItem(
+            &self,
+            pickerTouchBarItem: &NSSharingServicePickerTouchBarItem,
+        ) -> Id<NSArray, Shared>;
+    }
+);

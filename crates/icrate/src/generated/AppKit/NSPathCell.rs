@@ -128,4 +128,20 @@ extern_methods!(
     }
 );
 
-pub type NSPathCellDelegate = NSObject;
+extern_protocol!(
+    pub struct NSPathCellDelegate;
+
+    unsafe impl NSPathCellDelegate {
+        #[optional]
+        #[method(pathCell:willDisplayOpenPanel:)]
+        pub unsafe fn pathCell_willDisplayOpenPanel(
+            &self,
+            pathCell: &NSPathCell,
+            openPanel: &NSOpenPanel,
+        );
+
+        #[optional]
+        #[method(pathCell:willPopUpMenu:)]
+        pub unsafe fn pathCell_willPopUpMenu(&self, pathCell: &NSPathCell, menu: &NSMenu);
+    }
+);

@@ -5,6 +5,24 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSValidatedUserInterfaceItem = NSObject;
+extern_protocol!(
+    pub struct NSValidatedUserInterfaceItem;
 
-pub type NSUserInterfaceValidations = NSObject;
+    unsafe impl NSValidatedUserInterfaceItem {
+        #[method(action)]
+        pub unsafe fn action(&self) -> OptionSel;
+
+        #[method(tag)]
+        pub unsafe fn tag(&self) -> NSInteger;
+    }
+);
+
+extern_protocol!(
+    pub struct NSUserInterfaceValidations;
+
+    unsafe impl NSUserInterfaceValidations {
+        #[method(validateUserInterfaceItem:)]
+        pub unsafe fn validateUserInterfaceItem(&self, item: &NSValidatedUserInterfaceItem)
+            -> bool;
+    }
+);
