@@ -82,7 +82,8 @@ extern_methods!(
     }
 );
 
-pub type NSCollectionViewCompositionalLayoutSectionProvider = TodoBlock;
+pub type NSCollectionViewCompositionalLayoutSectionProvider =
+    *mut Block<(NSInteger, NonNull<NSCollectionLayoutEnvironment>), *mut NSCollectionLayoutSection>;
 
 extern_class!(
     #[derive(Debug)]
@@ -152,7 +153,14 @@ ns_enum!(
     }
 );
 
-pub type NSCollectionLayoutSectionVisibleItemsInvalidationHandler = TodoBlock;
+pub type NSCollectionLayoutSectionVisibleItemsInvalidationHandler = *mut Block<
+    (
+        NonNull<NSArray<NSCollectionLayoutVisibleItem>>,
+        NSPoint,
+        NonNull<NSCollectionLayoutEnvironment>,
+    ),
+    (),
+>;
 
 extern_class!(
     #[derive(Debug)]
@@ -323,7 +331,10 @@ extern_methods!(
     }
 );
 
-pub type NSCollectionLayoutGroupCustomItemProvider = TodoBlock;
+pub type NSCollectionLayoutGroupCustomItemProvider = *mut Block<
+    (NonNull<NSCollectionLayoutEnvironment>,),
+    NonNull<NSArray<NSCollectionLayoutGroupCustomItem>>,
+>;
 
 extern_class!(
     #[derive(Debug)]

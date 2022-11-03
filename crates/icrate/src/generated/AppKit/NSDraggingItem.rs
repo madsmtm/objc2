@@ -86,10 +86,15 @@ extern_methods!(
         pub unsafe fn setDraggingFrame(&self, draggingFrame: NSRect);
 
         #[method(imageComponentsProvider)]
-        pub unsafe fn imageComponentsProvider(&self) -> TodoBlock;
+        pub unsafe fn imageComponentsProvider(
+            &self,
+        ) -> *mut Block<(), NonNull<NSArray<NSDraggingImageComponent>>>;
 
         #[method(setImageComponentsProvider:)]
-        pub unsafe fn setImageComponentsProvider(&self, imageComponentsProvider: TodoBlock);
+        pub unsafe fn setImageComponentsProvider(
+            &self,
+            imageComponentsProvider: Option<&Block<(), NonNull<NSArray<NSDraggingImageComponent>>>>,
+        );
 
         #[method(setDraggingFrame:contents:)]
         pub unsafe fn setDraggingFrame_contents(&self, frame: NSRect, contents: Option<&Object>);

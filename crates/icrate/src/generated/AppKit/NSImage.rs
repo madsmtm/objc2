@@ -118,7 +118,7 @@ extern_methods!(
         pub unsafe fn imageWithSize_flipped_drawingHandler(
             size: NSSize,
             drawingHandlerShouldBeCalledWithFlippedContext: bool,
-            drawingHandler: TodoBlock,
+            drawingHandler: &Block<(NSRect,), Bool>,
         ) -> Id<Self, Shared>;
 
         #[method(size)]

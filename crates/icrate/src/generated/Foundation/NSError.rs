@@ -100,11 +100,13 @@ extern_methods!(
         #[method(setUserInfoValueProviderForDomain:provider:)]
         pub unsafe fn setUserInfoValueProviderForDomain_provider(
             errorDomain: &NSErrorDomain,
-            provider: TodoBlock,
+            provider: Option<&Block<(NonNull<NSError>, NonNull<NSErrorUserInfoKey>), *mut Object>>,
         );
 
         #[method(userInfoValueProviderForDomain:)]
-        pub unsafe fn userInfoValueProviderForDomain(errorDomain: &NSErrorDomain) -> TodoBlock;
+        pub unsafe fn userInfoValueProviderForDomain(
+            errorDomain: &NSErrorDomain,
+        ) -> *mut Block<(NonNull<NSError>, NonNull<NSErrorUserInfoKey>), *mut Object>;
     }
 );
 

@@ -99,7 +99,14 @@ extern_methods!(
 
         #[method_id(@__retain_semantics Other expressionForBlock:arguments:)]
         pub unsafe fn expressionForBlock_arguments(
-            block: TodoBlock,
+            block: &Block<
+                (
+                    *mut Object,
+                    NonNull<NSArray<NSExpression>>,
+                    *mut NSMutableDictionary,
+                ),
+                NonNull<Object>,
+            >,
             arguments: Option<&NSArray<NSExpression>>,
         ) -> Id<NSExpression, Shared>;
 
@@ -162,7 +169,18 @@ extern_methods!(
         pub unsafe fn falseExpression(&self) -> Id<NSExpression, Shared>;
 
         #[method(expressionBlock)]
-        pub unsafe fn expressionBlock(&self) -> TodoBlock;
+        pub unsafe fn expressionBlock(
+            &self,
+        ) -> NonNull<
+            Block<
+                (
+                    *mut Object,
+                    NonNull<NSArray<NSExpression>>,
+                    *mut NSMutableDictionary,
+                ),
+                NonNull<Object>,
+            >,
+        >;
 
         #[method_id(@__retain_semantics Other expressionValueWithObject:context:)]
         pub unsafe fn expressionValueWithObject_context(

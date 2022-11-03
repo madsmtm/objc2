@@ -65,12 +65,18 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method(loadPersistentStoresWithCompletionHandler:)]
-        pub unsafe fn loadPersistentStoresWithCompletionHandler(&self, block: TodoBlock);
+        pub unsafe fn loadPersistentStoresWithCompletionHandler(
+            &self,
+            block: &Block<(NonNull<NSPersistentStoreDescription>, *mut NSError), ()>,
+        );
 
         #[method_id(@__retain_semantics New newBackgroundContext)]
         pub unsafe fn newBackgroundContext(&self) -> Id<NSManagedObjectContext, Shared>;
 
         #[method(performBackgroundTask:)]
-        pub unsafe fn performBackgroundTask(&self, block: TodoBlock);
+        pub unsafe fn performBackgroundTask(
+            &self,
+            block: &Block<(NonNull<NSManagedObjectContext>,), ()>,
+        );
     }
 );

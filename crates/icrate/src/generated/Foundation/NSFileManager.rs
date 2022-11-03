@@ -85,7 +85,7 @@ extern_methods!(
             &self,
             url: &NSURL,
             mask: NSFileManagerUnmountOptions,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSError,), ()>,
         );
 
         #[method_id(@__retain_semantics Other contentsOfDirectoryAtURL:includingPropertiesForKeys:options:error:)]
@@ -393,7 +393,7 @@ extern_methods!(
             url: &NSURL,
             keys: Option<&NSArray<NSURLResourceKey>>,
             mask: NSDirectoryEnumerationOptions,
-            handler: TodoBlock,
+            handler: Option<&Block<(NonNull<NSURL>, NonNull<NSError>), Bool>>,
         ) -> Option<Id<NSDirectoryEnumerator<NSURL>, Shared>>;
 
         #[method_id(@__retain_semantics Other subpathsAtPath:)]
@@ -476,7 +476,13 @@ extern_methods!(
         pub unsafe fn getFileProviderServicesForItemAtURL_completionHandler(
             &self,
             url: &NSURL,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<
+                (
+                    *mut NSDictionary<NSFileProviderServiceName, NSFileProviderService>,
+                    *mut NSError,
+                ),
+                (),
+            >,
         );
 
         #[method_id(@__retain_semantics Other containerURLForSecurityApplicationGroupIdentifier:)]
@@ -570,7 +576,7 @@ extern_methods!(
         #[method(getFileProviderConnectionWithCompletionHandler:)]
         pub unsafe fn getFileProviderConnectionWithCompletionHandler(
             &self,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSXPCConnection, *mut NSError), ()>,
         );
 
         #[method_id(@__retain_semantics Other name)]

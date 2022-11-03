@@ -100,7 +100,14 @@ extern_methods!(
             &self,
             enumerationRange: NSRange,
             opts: NSAttributedStringEnumerationOptions,
-            block: TodoBlock,
+            block: &Block<
+                (
+                    NonNull<NSDictionary<NSAttributedStringKey, Object>>,
+                    NSRange,
+                    NonNull<Bool>,
+                ),
+                (),
+            >,
         );
 
         #[method(enumerateAttribute:inRange:options:usingBlock:)]
@@ -109,7 +116,7 @@ extern_methods!(
             attrName: &NSAttributedStringKey,
             enumerationRange: NSRange,
             opts: NSAttributedStringEnumerationOptions,
-            block: TodoBlock,
+            block: &Block<(*mut Object, NSRange, NonNull<Bool>), ()>,
         );
     }
 );

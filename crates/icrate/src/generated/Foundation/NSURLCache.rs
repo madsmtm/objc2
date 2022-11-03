@@ -142,7 +142,7 @@ extern_methods!(
         pub unsafe fn getCachedResponseForDataTask_completionHandler(
             &self,
             dataTask: &NSURLSessionDataTask,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSCachedURLResponse,), ()>,
         );
 
         #[method(removeCachedResponseForDataTask:)]

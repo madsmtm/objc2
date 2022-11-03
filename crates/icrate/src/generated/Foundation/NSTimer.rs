@@ -50,14 +50,14 @@ extern_methods!(
         pub unsafe fn timerWithTimeInterval_repeats_block(
             interval: NSTimeInterval,
             repeats: bool,
-            block: TodoBlock,
+            block: &Block<(NonNull<NSTimer>,), ()>,
         ) -> Id<NSTimer, Shared>;
 
         #[method_id(@__retain_semantics Other scheduledTimerWithTimeInterval:repeats:block:)]
         pub unsafe fn scheduledTimerWithTimeInterval_repeats_block(
             interval: NSTimeInterval,
             repeats: bool,
-            block: TodoBlock,
+            block: &Block<(NonNull<NSTimer>,), ()>,
         ) -> Id<NSTimer, Shared>;
 
         #[method_id(@__retain_semantics Init initWithFireDate:interval:repeats:block:)]
@@ -66,7 +66,7 @@ extern_methods!(
             date: &NSDate,
             interval: NSTimeInterval,
             repeats: bool,
-            block: TodoBlock,
+            block: &Block<(NonNull<NSTimer>,), ()>,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init initWithFireDate:interval:target:selector:userInfo:repeats:)]

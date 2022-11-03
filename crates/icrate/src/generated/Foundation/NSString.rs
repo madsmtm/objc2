@@ -359,11 +359,14 @@ extern_methods!(
             &self,
             range: NSRange,
             opts: NSStringEnumerationOptions,
-            block: TodoBlock,
+            block: &Block<(*mut NSString, NSRange, NSRange, NonNull<Bool>), ()>,
         );
 
         #[method(enumerateLinesUsingBlock:)]
-        pub unsafe fn enumerateLinesUsingBlock(&self, block: TodoBlock);
+        pub unsafe fn enumerateLinesUsingBlock(
+            &self,
+            block: &Block<(NonNull<NSString>, NonNull<Bool>), ()>,
+        );
 
         #[method(UTF8String)]
         pub fn UTF8String(&self) -> *mut c_char;
@@ -541,7 +544,7 @@ extern_methods!(
             this: Option<Allocated<Self>>,
             chars: NonNull<unichar>,
             len: NSUInteger,
-            deallocator: TodoBlock,
+            deallocator: Option<&Block<(NonNull<unichar>, NSUInteger), ()>>,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init initWithCharacters:length:)]
@@ -593,7 +596,7 @@ extern_methods!(
             bytes: NonNull<c_void>,
             len: NSUInteger,
             encoding: NSStringEncoding,
-            deallocator: TodoBlock,
+            deallocator: Option<&Block<(NonNull<c_void>, NSUInteger), ()>>,
         ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Other string)]

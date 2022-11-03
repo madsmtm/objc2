@@ -85,7 +85,7 @@ extern_methods!(
             string: &NSString,
             options: NSMatchingOptions,
             range: NSRange,
-            block: TodoBlock,
+            block: &Block<(*mut NSTextCheckingResult, NSMatchingFlags, NonNull<Bool>), ()>,
         );
 
         #[method_id(@__retain_semantics Other matchesInString:options:range:)]

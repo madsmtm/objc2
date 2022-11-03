@@ -180,7 +180,7 @@ extern_methods!(
             unit: NSLinguisticTaggerUnit,
             scheme: &NSLinguisticTagScheme,
             options: NSLinguisticTaggerOptions,
-            block: TodoBlock,
+            block: &Block<(*mut NSLinguisticTag, NSRange, NonNull<Bool>), ()>,
         );
 
         #[method_id(@__retain_semantics Other tagAtIndex:unit:scheme:tokenRange:)]
@@ -208,7 +208,7 @@ extern_methods!(
             range: NSRange,
             tagScheme: &NSLinguisticTagScheme,
             opts: NSLinguisticTaggerOptions,
-            block: TodoBlock,
+            block: &Block<(*mut NSLinguisticTag, NSRange, NSRange, NonNull<Bool>), ()>,
         );
 
         #[method_id(@__retain_semantics Other tagAtIndex:scheme:tokenRange:sentenceRange:)]
@@ -264,7 +264,7 @@ extern_methods!(
             scheme: &NSLinguisticTagScheme,
             options: NSLinguisticTaggerOptions,
             orthography: Option<&NSOrthography>,
-            block: TodoBlock,
+            block: &Block<(*mut NSLinguisticTag, NSRange, NonNull<Bool>), ()>,
         );
 
         #[method_id(@__retain_semantics Other possibleTagsAtIndex:scheme:tokenRange:sentenceRange:scores:)]
@@ -299,7 +299,7 @@ extern_methods!(
             scheme: &NSLinguisticTagScheme,
             options: NSLinguisticTaggerOptions,
             orthography: Option<&NSOrthography>,
-            block: TodoBlock,
+            block: &Block<(*mut NSLinguisticTag, NSRange, NSRange, NonNull<Bool>), ()>,
         );
     }
 );

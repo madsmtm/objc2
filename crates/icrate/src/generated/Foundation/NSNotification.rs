@@ -120,7 +120,7 @@ extern_methods!(
             name: Option<&NSNotificationName>,
             obj: Option<&Object>,
             queue: Option<&NSOperationQueue>,
-            block: TodoBlock,
+            block: &Block<(NonNull<NSNotification>,), ()>,
         ) -> Id<NSObject, Shared>;
     }
 );

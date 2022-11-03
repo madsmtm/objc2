@@ -24,9 +24,16 @@ pub type NSItemProviderWriting = NSObject;
 
 pub type NSItemProviderReading = NSObject;
 
-pub type NSItemProviderCompletionHandler = TodoBlock;
+pub type NSItemProviderCompletionHandler = *mut Block<(*mut NSSecureCoding, *mut NSError), ()>;
 
-pub type NSItemProviderLoadHandler = TodoBlock;
+pub type NSItemProviderLoadHandler = *mut Block<
+    (
+        NSItemProviderCompletionHandler,
+        *const Class,
+        *mut NSDictionary,
+    ),
+    (),
+>;
 
 extern_class!(
     #[derive(Debug)]
@@ -47,7 +54,10 @@ extern_methods!(
             &self,
             typeIdentifier: &NSString,
             visibility: NSItemProviderRepresentationVisibility,
-            loadHandler: TodoBlock,
+            loadHandler: &Block<
+                (NonNull<Block<(*mut NSData, *mut NSError), ()>>,),
+                *mut NSProgress,
+            >,
         );
 
         #[method(registerFileRepresentationForTypeIdentifier:fileOptions:visibility:loadHandler:)]
@@ -56,7 +66,10 @@ extern_methods!(
             typeIdentifier: &NSString,
             fileOptions: NSItemProviderFileOptions,
             visibility: NSItemProviderRepresentationVisibility,
-            loadHandler: TodoBlock,
+            loadHandler: &Block<
+                (NonNull<Block<(*mut NSURL, Bool, *mut NSError), ()>>,),
+                *mut NSProgress,
+            >,
         );
 
         #[method_id(@__retain_semantics Other registeredTypeIdentifiers)]
@@ -82,21 +95,21 @@ extern_methods!(
         pub unsafe fn loadDataRepresentationForTypeIdentifier_completionHandler(
             &self,
             typeIdentifier: &NSString,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSData, *mut NSError), ()>,
         ) -> Id<NSProgress, Shared>;
 
         #[method_id(@__retain_semantics Other loadFileRepresentationForTypeIdentifier:completionHandler:)]
         pub unsafe fn loadFileRepresentationForTypeIdentifier_completionHandler(
             &self,
             typeIdentifier: &NSString,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSURL, *mut NSError), ()>,
         ) -> Id<NSProgress, Shared>;
 
         #[method_id(@__retain_semantics Other loadInPlaceFileRepresentationForTypeIdentifier:completionHandler:)]
         pub unsafe fn loadInPlaceFileRepresentationForTypeIdentifier_completionHandler(
             &self,
             typeIdentifier: &NSString,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSURL, Bool, *mut NSError), ()>,
         ) -> Id<NSProgress, Shared>;
 
         #[method_id(@__retain_semantics Other suggestedName)]

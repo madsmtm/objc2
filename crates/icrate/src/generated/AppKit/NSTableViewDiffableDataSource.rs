@@ -5,11 +5,21 @@ use crate::AppKit::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-pub type NSTableViewDiffableDataSourceCellProvider = TodoBlock;
+pub type NSTableViewDiffableDataSourceCellProvider = *mut Block<
+    (
+        NonNull<NSTableView>,
+        NonNull<NSTableColumn>,
+        NSInteger,
+        NonNull<Object>,
+    ),
+    NonNull<NSView>,
+>;
 
-pub type NSTableViewDiffableDataSourceRowProvider = TodoBlock;
+pub type NSTableViewDiffableDataSourceRowProvider =
+    *mut Block<(NonNull<NSTableView>, NSInteger, NonNull<Object>), NonNull<NSTableRowView>>;
 
-pub type NSTableViewDiffableDataSourceSectionHeaderViewProvider = TodoBlock;
+pub type NSTableViewDiffableDataSourceSectionHeaderViewProvider =
+    *mut Block<(NonNull<NSTableView>, NSInteger, NonNull<Object>), NonNull<NSView>>;
 
 __inner_extern_class!(
     #[derive(Debug)]
@@ -62,7 +72,7 @@ extern_methods!(
             &self,
             snapshot: &NSDiffableDataSourceSnapshot<SectionIdentifierType, ItemIdentifierType>,
             animatingDifferences: bool,
-            completion: TodoBlock,
+            completion: Option<&Block<(), ()>>,
         );
 
         #[method_id(@__retain_semantics Other itemIdentifierForRow:)]

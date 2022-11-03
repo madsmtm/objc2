@@ -75,26 +75,26 @@ extern_methods!(
         #[method_id(@__retain_semantics Other remoteObjectProxyWithErrorHandler:)]
         pub unsafe fn remoteObjectProxyWithErrorHandler(
             &self,
-            handler: TodoBlock,
+            handler: &Block<(NonNull<NSError>,), ()>,
         ) -> Id<Object, Shared>;
 
         #[method_id(@__retain_semantics Other synchronousRemoteObjectProxyWithErrorHandler:)]
         pub unsafe fn synchronousRemoteObjectProxyWithErrorHandler(
             &self,
-            handler: TodoBlock,
+            handler: &Block<(NonNull<NSError>,), ()>,
         ) -> Id<Object, Shared>;
 
         #[method(interruptionHandler)]
-        pub unsafe fn interruptionHandler(&self) -> TodoBlock;
+        pub unsafe fn interruptionHandler(&self) -> *mut Block<(), ()>;
 
         #[method(setInterruptionHandler:)]
-        pub unsafe fn setInterruptionHandler(&self, interruptionHandler: TodoBlock);
+        pub unsafe fn setInterruptionHandler(&self, interruptionHandler: Option<&Block<(), ()>>);
 
         #[method(invalidationHandler)]
-        pub unsafe fn invalidationHandler(&self) -> TodoBlock;
+        pub unsafe fn invalidationHandler(&self) -> *mut Block<(), ()>;
 
         #[method(setInvalidationHandler:)]
-        pub unsafe fn setInvalidationHandler(&self, invalidationHandler: TodoBlock);
+        pub unsafe fn setInvalidationHandler(&self, invalidationHandler: Option<&Block<(), ()>>);
 
         #[method(resume)]
         pub unsafe fn resume(&self);
@@ -109,7 +109,7 @@ extern_methods!(
         pub unsafe fn currentConnection() -> Option<Id<NSXPCConnection, Shared>>;
 
         #[method(scheduleSendBarrierBlock:)]
-        pub unsafe fn scheduleSendBarrierBlock(&self, block: TodoBlock);
+        pub unsafe fn scheduleSendBarrierBlock(&self, block: &Block<(), ()>);
     }
 );
 

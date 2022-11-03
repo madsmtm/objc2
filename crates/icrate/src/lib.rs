@@ -16,9 +16,6 @@
 #[cfg(feature = "std")]
 extern crate std;
 
-#[cfg(feature = "objective-c")]
-pub use objc2;
-
 macro_rules! extern_struct {
     (
         $v:vis struct $name:ident {
@@ -232,9 +229,11 @@ mod common {
         const ENCODING: objc2::Encoding = objc2::Encoding::Sel;
     }
 
+    #[cfg(feature = "blocks")]
+    pub(crate) use block2::Block;
+
     // TODO
     pub(crate) type Protocol = Object;
-    pub(crate) type TodoBlock = *const c_void;
     pub(crate) type TodoFunction = *const c_void;
     pub(crate) type TodoClass = Object;
     pub(crate) type TodoProtocols = Object;

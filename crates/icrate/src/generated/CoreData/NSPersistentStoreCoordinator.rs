@@ -152,7 +152,7 @@ extern_methods!(
         pub unsafe fn addPersistentStoreWithDescription_completionHandler(
             &self,
             storeDescription: &NSPersistentStoreDescription,
-            block: TodoBlock,
+            block: &Block<(NonNull<NSPersistentStoreDescription>, *mut NSError), ()>,
         );
 
         #[method(removePersistentStore:error:)]
@@ -254,10 +254,10 @@ extern_methods!(
         ) -> Result<(), Id<NSError, Shared>>;
 
         #[method(performBlock:)]
-        pub unsafe fn performBlock(&self, block: TodoBlock);
+        pub unsafe fn performBlock(&self, block: &Block<(), ()>);
 
         #[method(performBlockAndWait:)]
-        pub unsafe fn performBlockAndWait(&self, block: TodoBlock);
+        pub unsafe fn performBlockAndWait(&self, block: &Block<(), ()>);
 
         #[method_id(@__retain_semantics Other currentPersistentHistoryTokenFromStores:)]
         pub unsafe fn currentPersistentHistoryTokenFromStores(

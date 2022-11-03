@@ -171,7 +171,7 @@ extern_methods!(
             fromViewController: &NSViewController,
             toViewController: &NSViewController,
             options: NSViewControllerTransitionOptions,
-            completion: TodoBlock,
+            completion: Option<&Block<(), ()>>,
         );
     }
 );

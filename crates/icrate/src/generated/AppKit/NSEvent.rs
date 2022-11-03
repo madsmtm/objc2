@@ -553,7 +553,7 @@ extern_methods!(
             options: NSEventSwipeTrackingOptions,
             minDampenThreshold: CGFloat,
             maxDampenThreshold: CGFloat,
-            trackingHandler: TodoBlock,
+            trackingHandler: &Block<(CGFloat, NSEventPhase, Bool, NonNull<Bool>), ()>,
         );
 
         #[method(startPeriodicEventsAfterDelay:withPeriod:)]
@@ -636,13 +636,13 @@ extern_methods!(
         #[method_id(@__retain_semantics Other addGlobalMonitorForEventsMatchingMask:handler:)]
         pub unsafe fn addGlobalMonitorForEventsMatchingMask_handler(
             mask: NSEventMask,
-            block: TodoBlock,
+            block: &Block<(NonNull<NSEvent>,), ()>,
         ) -> Option<Id<Object, Shared>>;
 
         #[method_id(@__retain_semantics Other addLocalMonitorForEventsMatchingMask:handler:)]
         pub unsafe fn addLocalMonitorForEventsMatchingMask_handler(
             mask: NSEventMask,
-            block: TodoBlock,
+            block: &Block<(NonNull<NSEvent>,), *mut NSEvent>,
         ) -> Option<Id<Object, Shared>>;
 
         #[method(removeMonitor:)]

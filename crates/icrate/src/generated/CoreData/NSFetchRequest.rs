@@ -187,7 +187,8 @@ extern_methods!(
     }
 );
 
-pub type NSPersistentStoreAsynchronousFetchResultCompletionBlock = TodoBlock;
+pub type NSPersistentStoreAsynchronousFetchResultCompletionBlock =
+    *mut Block<(NonNull<NSAsynchronousFetchResult>,), ()>;
 
 __inner_extern_class!(
     #[derive(Debug)]
@@ -220,7 +221,7 @@ extern_methods!(
         pub unsafe fn initWithFetchRequest_completionBlock(
             this: Option<Allocated<Self>>,
             request: &NSFetchRequest<ResultType>,
-            blk: TodoBlock,
+            blk: Option<&Block<(NonNull<NSAsynchronousFetchResult<ResultType>>,), ()>>,
         ) -> Id<Self, Shared>;
     }
 );

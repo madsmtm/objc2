@@ -40,6 +40,9 @@ extern_methods!(
         pub unsafe fn progress(&self) -> Id<NSProgress, Shared>;
 
         #[method(downloadFontAssetsWithCompletionHandler:)]
-        pub unsafe fn downloadFontAssetsWithCompletionHandler(&self, completionHandler: TodoBlock);
+        pub unsafe fn downloadFontAssetsWithCompletionHandler(
+            &self,
+            completionHandler: &Block<(*mut NSError,), Bool>,
+        );
     }
 );

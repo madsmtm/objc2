@@ -64,10 +64,14 @@ extern_methods!(
         pub unsafe fn configureAsServer(&self);
 
         #[method(performInModes:block:)]
-        pub unsafe fn performInModes_block(&self, modes: &NSArray<NSRunLoopMode>, block: TodoBlock);
+        pub unsafe fn performInModes_block(
+            &self,
+            modes: &NSArray<NSRunLoopMode>,
+            block: &Block<(), ()>,
+        );
 
         #[method(performBlock:)]
-        pub unsafe fn performBlock(&self, block: TodoBlock);
+        pub unsafe fn performBlock(&self, block: &Block<(), ()>);
     }
 );
 

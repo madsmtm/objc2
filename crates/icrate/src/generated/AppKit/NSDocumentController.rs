@@ -79,14 +79,17 @@ extern_methods!(
         ) -> NSInteger;
 
         #[method(beginOpenPanelWithCompletionHandler:)]
-        pub unsafe fn beginOpenPanelWithCompletionHandler(&self, completionHandler: TodoBlock);
+        pub unsafe fn beginOpenPanelWithCompletionHandler(
+            &self,
+            completionHandler: &Block<(*mut NSArray<NSURL>,), ()>,
+        );
 
         #[method(beginOpenPanel:forTypes:completionHandler:)]
         pub unsafe fn beginOpenPanel_forTypes_completionHandler(
             &self,
             openPanel: &NSOpenPanel,
             inTypes: Option<&NSArray<NSString>>,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(NSInteger,), ()>,
         );
 
         #[method(openDocumentWithContentsOfURL:display:completionHandler:)]
@@ -94,7 +97,7 @@ extern_methods!(
             &self,
             url: &NSURL,
             displayDocument: bool,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSDocument, Bool, *mut NSError), ()>,
         );
 
         #[method_id(@__retain_semantics Other makeDocumentWithContentsOfURL:ofType:error:)]
@@ -110,7 +113,7 @@ extern_methods!(
             urlOrNil: Option<&NSURL>,
             contentsURL: &NSURL,
             displayDocument: bool,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSDocument, Bool, *mut NSError), ()>,
         );
 
         #[method_id(@__retain_semantics Other makeDocumentForURL:withContentsOfURL:ofType:error:)]

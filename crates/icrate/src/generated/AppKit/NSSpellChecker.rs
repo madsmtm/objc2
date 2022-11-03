@@ -124,7 +124,17 @@ extern_methods!(
             checkingTypes: NSTextCheckingTypes,
             options: Option<&NSDictionary<NSTextCheckingOptionKey, Object>>,
             tag: NSInteger,
-            completionHandler: TodoBlock,
+            completionHandler: Option<
+                &Block<
+                    (
+                        NSInteger,
+                        NonNull<NSArray<NSTextCheckingResult>>,
+                        NonNull<NSOrthography>,
+                        NSInteger,
+                    ),
+                    (),
+                >,
+            >,
         ) -> NSInteger;
 
         #[method(requestCandidatesForSelectedRange:inString:types:options:inSpellDocumentWithTag:completionHandler:)]
@@ -135,7 +145,9 @@ extern_methods!(
             checkingTypes: NSTextCheckingTypes,
             options: Option<&NSDictionary<NSTextCheckingOptionKey, Object>>,
             tag: NSInteger,
-            completionHandler: TodoBlock,
+            completionHandler: Option<
+                &Block<(NSInteger, NonNull<NSArray<NSTextCheckingResult>>), ()>,
+            >,
         ) -> NSInteger;
 
         #[method_id(@__retain_semantics Other menuForResult:string:options:atLocation:inView:)]
@@ -271,7 +283,7 @@ extern_methods!(
             alternativeStrings: &NSArray<NSString>,
             rectOfTypedString: NSRect,
             view: &NSView,
-            completionBlock: TodoBlock,
+            completionBlock: Option<&Block<(*mut NSString,), ()>>,
         );
 
         #[method(dismissCorrectionIndicatorForView:)]

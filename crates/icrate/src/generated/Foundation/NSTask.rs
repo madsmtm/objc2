@@ -95,10 +95,13 @@ extern_methods!(
         pub unsafe fn terminationReason(&self) -> NSTaskTerminationReason;
 
         #[method(terminationHandler)]
-        pub unsafe fn terminationHandler(&self) -> TodoBlock;
+        pub unsafe fn terminationHandler(&self) -> *mut Block<(NonNull<NSTask>,), ()>;
 
         #[method(setTerminationHandler:)]
-        pub unsafe fn setTerminationHandler(&self, terminationHandler: TodoBlock);
+        pub unsafe fn setTerminationHandler(
+            &self,
+            terminationHandler: Option<&Block<(NonNull<NSTask>,), ()>>,
+        );
 
         #[method(qualityOfService)]
         pub unsafe fn qualityOfService(&self) -> NSQualityOfService;
@@ -116,7 +119,7 @@ extern_methods!(
             url: &NSURL,
             arguments: &NSArray<NSString>,
             error: *mut *mut NSError,
-            terminationHandler: TodoBlock,
+            terminationHandler: Option<&Block<(NonNull<NSTask>,), ()>>,
         ) -> Option<Id<NSTask, Shared>>;
 
         #[method(waitUntilExit)]

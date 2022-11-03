@@ -151,11 +151,11 @@ extern_methods!(
         pub unsafe fn beginSheetModalForWindow_completionHandler(
             &self,
             window: &NSWindow,
-            handler: TodoBlock,
+            handler: &Block<(NSModalResponse,), ()>,
         );
 
         #[method(beginWithCompletionHandler:)]
-        pub unsafe fn beginWithCompletionHandler(&self, handler: TodoBlock);
+        pub unsafe fn beginWithCompletionHandler(&self, handler: &Block<(NSModalResponse,), ()>);
 
         #[method(runModal)]
         pub unsafe fn runModal(&self) -> NSModalResponse;

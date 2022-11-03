@@ -58,12 +58,16 @@ extern_methods!(
         );
 
         #[method(attributedStringForCandidate)]
-        pub unsafe fn attributedStringForCandidate(&self) -> TodoBlock;
+        pub unsafe fn attributedStringForCandidate(
+            &self,
+        ) -> *mut Block<(NonNull<CandidateType>, NSInteger), NonNull<NSAttributedString>>;
 
         #[method(setAttributedStringForCandidate:)]
         pub unsafe fn setAttributedStringForCandidate(
             &self,
-            attributedStringForCandidate: TodoBlock,
+            attributedStringForCandidate: Option<
+                &Block<(NonNull<CandidateType>, NSInteger), NonNull<NSAttributedString>>,
+            >,
         );
 
         #[method_id(@__retain_semantics Other candidates)]

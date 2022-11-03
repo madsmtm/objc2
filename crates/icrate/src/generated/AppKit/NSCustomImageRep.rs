@@ -21,11 +21,11 @@ extern_methods!(
             this: Option<Allocated<Self>>,
             size: NSSize,
             drawingHandlerShouldBeCalledWithFlippedContext: bool,
-            drawingHandler: TodoBlock,
+            drawingHandler: &Block<(NSRect,), Bool>,
         ) -> Id<Self, Shared>;
 
         #[method(drawingHandler)]
-        pub unsafe fn drawingHandler(&self) -> TodoBlock;
+        pub unsafe fn drawingHandler(&self) -> *mut Block<(NSRect,), Bool>;
 
         #[method_id(@__retain_semantics Init initWithDrawSelector:delegate:)]
         pub unsafe fn initWithDrawSelector_delegate(

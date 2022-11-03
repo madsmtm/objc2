@@ -65,7 +65,7 @@ extern_methods!(
 
         #[method_id(@__retain_semantics Other behaviorWithHandler:)]
         pub unsafe fn behaviorWithHandler(
-            handler: TodoBlock,
+            handler: &Block<(NonNull<NSSliderAccessory>,), ()>,
         ) -> Id<NSSliderAccessoryBehavior, Shared>;
 
         #[method(handleAction:)]

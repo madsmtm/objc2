@@ -966,7 +966,7 @@ extern_methods!(
             attrString: Option<&NSAttributedString>,
             targetRange: NSRange,
             options: Option<&NSDictionary<NSDefinitionOptionKey, Object>>,
-            originProvider: TodoBlock,
+            originProvider: Option<&Block<(NSRange,), NSPoint>>,
         );
     }
 );

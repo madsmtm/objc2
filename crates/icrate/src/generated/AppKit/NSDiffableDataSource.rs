@@ -160,9 +160,23 @@ extern_methods!(
     }
 );
 
-pub type NSCollectionViewDiffableDataSourceItemProvider = TodoBlock;
+pub type NSCollectionViewDiffableDataSourceItemProvider = *mut Block<
+    (
+        NonNull<NSCollectionView>,
+        NonNull<NSIndexPath>,
+        NonNull<ItemIdentifierType>,
+    ),
+    *mut NSCollectionViewItem,
+>;
 
-pub type NSCollectionViewDiffableDataSourceSupplementaryViewProvider = TodoBlock;
+pub type NSCollectionViewDiffableDataSourceSupplementaryViewProvider = *mut Block<
+    (
+        NonNull<NSCollectionView>,
+        NonNull<NSString>,
+        NonNull<NSIndexPath>,
+    ),
+    *mut NSView,
+>;
 
 __inner_extern_class!(
     #[derive(Debug)]

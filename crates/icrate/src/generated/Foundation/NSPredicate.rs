@@ -29,7 +29,9 @@ extern_methods!(
         pub unsafe fn predicateWithValue(value: bool) -> Id<NSPredicate, Shared>;
 
         #[method_id(@__retain_semantics Other predicateWithBlock:)]
-        pub unsafe fn predicateWithBlock(block: TodoBlock) -> Id<NSPredicate, Shared>;
+        pub unsafe fn predicateWithBlock(
+            block: &Block<(*mut Object, *mut NSDictionary<NSString, Object>), Bool>,
+        ) -> Id<NSPredicate, Shared>;
 
         #[method_id(@__retain_semantics Other predicateFormat)]
         pub unsafe fn predicateFormat(&self) -> Id<NSString, Shared>;

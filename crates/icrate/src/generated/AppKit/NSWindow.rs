@@ -862,14 +862,14 @@ extern_methods!(
         pub unsafe fn beginSheet_completionHandler(
             &self,
             sheetWindow: &NSWindow,
-            handler: TodoBlock,
+            handler: Option<&Block<(NSModalResponse,), ()>>,
         );
 
         #[method(beginCriticalSheet:completionHandler:)]
         pub unsafe fn beginCriticalSheet_completionHandler(
             &self,
             sheetWindow: &NSWindow,
-            handler: TodoBlock,
+            handler: Option<&Block<(NSModalResponse,), ()>>,
         );
 
         #[method(endSheet:)]
@@ -1109,7 +1109,7 @@ extern_methods!(
             mask: NSEventMask,
             timeout: NSTimeInterval,
             mode: &NSRunLoopMode,
-            trackingHandler: TodoBlock,
+            trackingHandler: &Block<(*mut NSEvent, NonNull<Bool>), ()>,
         );
 
         #[method_id(@__retain_semantics Other nextEventMatchingMask:)]

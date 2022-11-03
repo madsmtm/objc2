@@ -68,10 +68,10 @@ extern_methods!(
         pub unsafe fn setQueuePriority(&self, queuePriority: NSOperationQueuePriority);
 
         #[method(completionBlock)]
-        pub unsafe fn completionBlock(&self) -> TodoBlock;
+        pub unsafe fn completionBlock(&self) -> *mut Block<(), ()>;
 
         #[method(setCompletionBlock:)]
-        pub unsafe fn setCompletionBlock(&self, completionBlock: TodoBlock);
+        pub unsafe fn setCompletionBlock(&self, completionBlock: Option<&Block<(), ()>>);
 
         #[method(waitUntilFinished)]
         pub unsafe fn waitUntilFinished(&self);
@@ -108,10 +108,10 @@ extern_class!(
 extern_methods!(
     unsafe impl NSBlockOperation {
         #[method_id(@__retain_semantics Other blockOperationWithBlock:)]
-        pub unsafe fn blockOperationWithBlock(block: TodoBlock) -> Id<Self, Shared>;
+        pub unsafe fn blockOperationWithBlock(block: &Block<(), ()>) -> Id<Self, Shared>;
 
         #[method(addExecutionBlock:)]
-        pub unsafe fn addExecutionBlock(&self, block: TodoBlock);
+        pub unsafe fn addExecutionBlock(&self, block: &Block<(), ()>);
     }
 );
 
@@ -179,10 +179,10 @@ extern_methods!(
         );
 
         #[method(addOperationWithBlock:)]
-        pub unsafe fn addOperationWithBlock(&self, block: TodoBlock);
+        pub unsafe fn addOperationWithBlock(&self, block: &Block<(), ()>);
 
         #[method(addBarrierBlock:)]
-        pub unsafe fn addBarrierBlock(&self, barrier: TodoBlock);
+        pub unsafe fn addBarrierBlock(&self, barrier: &Block<(), ()>);
 
         #[method(maxConcurrentOperationCount)]
         pub unsafe fn maxConcurrentOperationCount(&self) -> NSInteger;

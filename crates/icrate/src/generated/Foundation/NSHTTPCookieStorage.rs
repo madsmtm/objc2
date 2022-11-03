@@ -85,7 +85,7 @@ extern_methods!(
         pub unsafe fn getCookiesForTask_completionHandler(
             &self,
             task: &NSURLSessionTask,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSArray<NSHTTPCookie>,), ()>,
         );
     }
 );

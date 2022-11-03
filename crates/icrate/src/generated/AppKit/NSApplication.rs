@@ -314,7 +314,7 @@ extern_methods!(
         pub unsafe fn enumerateWindowsWithOptions_usingBlock(
             &self,
             options: NSWindowListOptions,
-            block: TodoBlock,
+            block: &Block<(NonNull<NSWindow>, NonNull<Bool>), ()>,
         );
 
         #[method(preventWindowOrdering)]

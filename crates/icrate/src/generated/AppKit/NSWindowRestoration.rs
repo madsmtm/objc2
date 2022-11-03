@@ -20,7 +20,7 @@ extern_methods!(
             &self,
             identifier: &NSUserInterfaceItemIdentifier,
             state: &NSCoder,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSWindow, *mut NSError), ()>,
         ) -> bool;
     }
 );
@@ -98,7 +98,7 @@ extern_methods!(
             &self,
             identifier: &NSUserInterfaceItemIdentifier,
             state: &NSCoder,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSWindow, *mut NSError), ()>,
         );
 
         #[method(encodeRestorableStateWithCoder:)]

@@ -73,7 +73,7 @@ extern_methods!(
             &self,
             protectionSpace: &NSURLProtectionSpace,
             task: &NSURLSessionTask,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSDictionary<NSString, NSURLCredential>,), ()>,
         );
 
         #[method(setCredential:forProtectionSpace:task:)]
@@ -98,7 +98,7 @@ extern_methods!(
             &self,
             space: &NSURLProtectionSpace,
             task: &NSURLSessionTask,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSURLCredential,), ()>,
         );
 
         #[method(setDefaultCredential:forProtectionSpace:task:)]

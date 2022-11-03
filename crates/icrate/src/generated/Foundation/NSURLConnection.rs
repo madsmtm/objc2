@@ -89,7 +89,7 @@ extern_methods!(
         pub unsafe fn sendAsynchronousRequest_queue_completionHandler(
             request: &NSURLRequest,
             queue: &NSOperationQueue,
-            handler: TodoBlock,
+            handler: &Block<(*mut NSURLResponse, *mut NSData, *mut NSError), ()>,
         );
     }
 );

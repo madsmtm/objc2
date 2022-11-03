@@ -18,12 +18,12 @@ extern_methods!(
     unsafe impl NSAnimationContext {
         #[method(runAnimationGroup:completionHandler:)]
         pub unsafe fn runAnimationGroup_completionHandler(
-            changes: TodoBlock,
-            completionHandler: TodoBlock,
+            changes: &Block<(NonNull<NSAnimationContext>,), ()>,
+            completionHandler: Option<&Block<(), ()>>,
         );
 
         #[method(runAnimationGroup:)]
-        pub unsafe fn runAnimationGroup(changes: TodoBlock);
+        pub unsafe fn runAnimationGroup(changes: &Block<(NonNull<NSAnimationContext>,), ()>);
 
         #[method(beginGrouping)]
         pub unsafe fn beginGrouping();
@@ -47,10 +47,10 @@ extern_methods!(
         pub unsafe fn setTimingFunction(&self, timingFunction: Option<&CAMediaTimingFunction>);
 
         #[method(completionHandler)]
-        pub unsafe fn completionHandler(&self) -> TodoBlock;
+        pub unsafe fn completionHandler(&self) -> *mut Block<(), ()>;
 
         #[method(setCompletionHandler:)]
-        pub unsafe fn setCompletionHandler(&self, completionHandler: TodoBlock);
+        pub unsafe fn setCompletionHandler(&self, completionHandler: Option<&Block<(), ()>>);
 
         #[method(allowsImplicitAnimation)]
         pub unsafe fn allowsImplicitAnimation(&self) -> bool;

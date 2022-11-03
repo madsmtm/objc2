@@ -25,7 +25,7 @@ extern_methods!(
         #[method_id(@__retain_semantics Other stepperTouchBarItemWithIdentifier:drawingHandler:)]
         pub unsafe fn stepperTouchBarItemWithIdentifier_drawingHandler(
             identifier: &NSTouchBarItemIdentifier,
-            drawingHandler: TodoBlock,
+            drawingHandler: &Block<(NSRect, c_double), ()>,
         ) -> Id<Self, Shared>;
 
         #[method(maxValue)]

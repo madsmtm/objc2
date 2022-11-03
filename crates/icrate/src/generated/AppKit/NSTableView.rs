@@ -544,7 +544,10 @@ extern_methods!(
         ) -> Option<Id<NSView, Shared>>;
 
         #[method(enumerateAvailableRowViewsUsingBlock:)]
-        pub unsafe fn enumerateAvailableRowViewsUsingBlock(&self, handler: TodoBlock);
+        pub unsafe fn enumerateAvailableRowViewsUsingBlock(
+            &self,
+            handler: &Block<(NonNull<NSTableRowView>, NSInteger), ()>,
+        );
 
         #[method(floatsGroupRows)]
         pub unsafe fn floatsGroupRows(&self) -> bool;

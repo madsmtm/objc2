@@ -186,7 +186,7 @@ extern_methods!(
         pub unsafe fn reloadData(&self);
 
         #[method(performSequentialBatchUpdates:)]
-        pub unsafe fn performSequentialBatchUpdates(&self, updateBlock: TodoBlock);
+        pub unsafe fn performSequentialBatchUpdates(&self, updateBlock: &Block<(), ()>);
 
         #[method(insertItemsAtIndexes:)]
         pub unsafe fn insertItemsAtIndexes(&self, indexes: &NSIndexSet);

@@ -65,7 +65,10 @@ extern_methods!(
         #[method_id(@__retain_semantics Other differenceByTransformingChangesWithBlock:)]
         pub unsafe fn differenceByTransformingChangesWithBlock(
             &self,
-            block: TodoBlock,
+            block: &Block<
+                (NonNull<NSOrderedCollectionChange<ObjectType>>,),
+                NonNull<NSOrderedCollectionChange<Object>>,
+            >,
         ) -> Id<NSOrderedCollectionDifference<Object>, Shared>;
 
         #[method_id(@__retain_semantics Other inverseDifference)]

@@ -89,7 +89,7 @@ extern_methods!(
             &self,
             intents: &NSArray<NSFileAccessIntent>,
             queue: &NSOperationQueue,
-            accessor: TodoBlock,
+            accessor: &Block<(*mut NSError,), ()>,
         );
 
         #[method(coordinateReadingItemAtURL:options:error:byAccessor:)]
@@ -98,7 +98,7 @@ extern_methods!(
             url: &NSURL,
             options: NSFileCoordinatorReadingOptions,
             outError: *mut *mut NSError,
-            reader: TodoBlock,
+            reader: &Block<(NonNull<NSURL>,), ()>,
         );
 
         #[method(coordinateWritingItemAtURL:options:error:byAccessor:)]
@@ -107,7 +107,7 @@ extern_methods!(
             url: &NSURL,
             options: NSFileCoordinatorWritingOptions,
             outError: *mut *mut NSError,
-            writer: TodoBlock,
+            writer: &Block<(NonNull<NSURL>,), ()>,
         );
 
         #[method(coordinateReadingItemAtURL:options:writingItemAtURL:options:error:byAccessor:)]
@@ -118,7 +118,7 @@ extern_methods!(
             writingURL: &NSURL,
             writingOptions: NSFileCoordinatorWritingOptions,
             outError: *mut *mut NSError,
-            readerWriter: TodoBlock,
+            readerWriter: &Block<(NonNull<NSURL>, NonNull<NSURL>), ()>,
         );
 
         #[method(coordinateWritingItemAtURL:options:writingItemAtURL:options:error:byAccessor:)]
@@ -129,7 +129,7 @@ extern_methods!(
             url2: &NSURL,
             options2: NSFileCoordinatorWritingOptions,
             outError: *mut *mut NSError,
-            writer: TodoBlock,
+            writer: &Block<(NonNull<NSURL>, NonNull<NSURL>), ()>,
         );
 
         #[method(prepareForReadingItemsAtURLs:options:writingItemsAtURLs:options:error:byAccessor:)]
@@ -140,7 +140,7 @@ extern_methods!(
             writingURLs: &NSArray<NSURL>,
             writingOptions: NSFileCoordinatorWritingOptions,
             outError: *mut *mut NSError,
-            batchAccessor: TodoBlock,
+            batchAccessor: &Block<(NonNull<Block<(), ()>>,), ()>,
         );
 
         #[method(itemAtURL:willMoveToURL:)]

@@ -38,7 +38,7 @@ extern_methods!(
             &self,
             url: &NSURL,
             configuration: &NSWorkspaceOpenConfiguration,
-            completionHandler: TodoBlock,
+            completionHandler: Option<&Block<(*mut NSRunningApplication, *mut NSError), ()>>,
         );
 
         #[method(openURLs:withApplicationAtURL:configuration:completionHandler:)]
@@ -47,7 +47,7 @@ extern_methods!(
             urls: &NSArray<NSURL>,
             applicationURL: &NSURL,
             configuration: &NSWorkspaceOpenConfiguration,
-            completionHandler: TodoBlock,
+            completionHandler: Option<&Block<(*mut NSRunningApplication, *mut NSError), ()>>,
         );
 
         #[method(openApplicationAtURL:configuration:completionHandler:)]
@@ -55,7 +55,7 @@ extern_methods!(
             &self,
             applicationURL: &NSURL,
             configuration: &NSWorkspaceOpenConfiguration,
-            completionHandler: TodoBlock,
+            completionHandler: Option<&Block<(*mut NSRunningApplication, *mut NSError), ()>>,
         );
 
         #[method(selectFile:inFileViewerRootedAtPath:)]
@@ -104,14 +104,14 @@ extern_methods!(
         pub unsafe fn recycleURLs_completionHandler(
             &self,
             URLs: &NSArray<NSURL>,
-            handler: TodoBlock,
+            handler: Option<&Block<(NonNull<NSDictionary<NSURL, NSURL>>, *mut NSError), ()>>,
         );
 
         #[method(duplicateURLs:completionHandler:)]
         pub unsafe fn duplicateURLs_completionHandler(
             &self,
             URLs: &NSArray<NSURL>,
-            handler: TodoBlock,
+            handler: Option<&Block<(NonNull<NSDictionary<NSURL, NSURL>>, *mut NSError), ()>>,
         );
 
         #[method(getFileSystemInfoForPath:isRemovable:isWritable:isUnmountable:description:type:)]
@@ -166,7 +166,7 @@ extern_methods!(
             &self,
             applicationURL: &NSURL,
             url: &NSURL,
-            completionHandler: TodoBlock,
+            completionHandler: Option<&Block<(*mut NSError,), ()>>,
         );
 
         #[method(setDefaultApplicationAtURL:toOpenURLsWithScheme:completionHandler:)]
@@ -174,7 +174,7 @@ extern_methods!(
             &self,
             applicationURL: &NSURL,
             urlScheme: &NSString,
-            completionHandler: TodoBlock,
+            completionHandler: Option<&Block<(*mut NSError,), ()>>,
         );
 
         #[method(setDefaultApplicationAtURL:toOpenFileAtURL:completionHandler:)]
@@ -182,7 +182,7 @@ extern_methods!(
             &self,
             applicationURL: &NSURL,
             url: &NSURL,
-            completionHandler: TodoBlock,
+            completionHandler: Option<&Block<(*mut NSError,), ()>>,
         );
 
         #[method_id(@__retain_semantics Other URLForApplicationToOpenContentType:)]
@@ -202,7 +202,7 @@ extern_methods!(
             &self,
             applicationURL: &NSURL,
             contentType: &UTType,
-            completionHandler: TodoBlock,
+            completionHandler: Option<&Block<(*mut NSError,), ()>>,
         );
 
         #[method_id(@__retain_semantics Other frontmostApplication)]
@@ -372,7 +372,7 @@ extern_methods!(
         pub unsafe fn requestAuthorizationOfType_completionHandler(
             &self,
             type_: NSWorkspaceAuthorizationType,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSWorkspaceAuthorization, *mut NSError), ()>,
         );
     }
 );

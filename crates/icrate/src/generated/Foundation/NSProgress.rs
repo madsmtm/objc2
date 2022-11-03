@@ -9,9 +9,10 @@ pub type NSProgressUserInfoKey = NSString;
 
 pub type NSProgressFileOperationKind = NSString;
 
-pub type NSProgressUnpublishingHandler = TodoBlock;
+pub type NSProgressUnpublishingHandler = *mut Block<(), ()>;
 
-pub type NSProgressPublishingHandler = TodoBlock;
+pub type NSProgressPublishingHandler =
+    *mut Block<(NonNull<NSProgress>,), NSProgressUnpublishingHandler>;
 
 extern_class!(
     #[derive(Debug)]
@@ -54,7 +55,7 @@ extern_methods!(
         pub unsafe fn performAsCurrentWithPendingUnitCount_usingBlock(
             &self,
             unitCount: i64,
-            work: TodoBlock,
+            work: &Block<(), ()>,
         );
 
         #[method(resignCurrent)]
@@ -109,22 +110,22 @@ extern_methods!(
         pub unsafe fn isPaused(&self) -> bool;
 
         #[method(cancellationHandler)]
-        pub unsafe fn cancellationHandler(&self) -> TodoBlock;
+        pub unsafe fn cancellationHandler(&self) -> *mut Block<(), ()>;
 
         #[method(setCancellationHandler:)]
-        pub unsafe fn setCancellationHandler(&self, cancellationHandler: TodoBlock);
+        pub unsafe fn setCancellationHandler(&self, cancellationHandler: Option<&Block<(), ()>>);
 
         #[method(pausingHandler)]
-        pub unsafe fn pausingHandler(&self) -> TodoBlock;
+        pub unsafe fn pausingHandler(&self) -> *mut Block<(), ()>;
 
         #[method(setPausingHandler:)]
-        pub unsafe fn setPausingHandler(&self, pausingHandler: TodoBlock);
+        pub unsafe fn setPausingHandler(&self, pausingHandler: Option<&Block<(), ()>>);
 
         #[method(resumingHandler)]
-        pub unsafe fn resumingHandler(&self) -> TodoBlock;
+        pub unsafe fn resumingHandler(&self) -> *mut Block<(), ()>;
 
         #[method(setResumingHandler:)]
-        pub unsafe fn setResumingHandler(&self, resumingHandler: TodoBlock);
+        pub unsafe fn setResumingHandler(&self, resumingHandler: Option<&Block<(), ()>>);
 
         #[method(setUserInfoObject:forKey:)]
         pub unsafe fn setUserInfoObject_forKey(

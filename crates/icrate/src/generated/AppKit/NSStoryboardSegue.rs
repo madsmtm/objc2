@@ -23,7 +23,7 @@ extern_methods!(
             identifier: &NSStoryboardSegueIdentifier,
             sourceController: &Object,
             destinationController: &Object,
-            performHandler: TodoBlock,
+            performHandler: &Block<(), ()>,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init initWithIdentifier:source:destination:)]

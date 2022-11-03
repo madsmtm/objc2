@@ -11,7 +11,7 @@ ns_enum!(
     }
 );
 
-pub type NSBackgroundActivityCompletionHandler = TodoBlock;
+pub type NSBackgroundActivityCompletionHandler = *mut Block<(NSBackgroundActivityResult,), ()>;
 
 extern_class!(
     #[derive(Debug)]
@@ -58,7 +58,10 @@ extern_methods!(
         pub unsafe fn setTolerance(&self, tolerance: NSTimeInterval);
 
         #[method(scheduleWithBlock:)]
-        pub unsafe fn scheduleWithBlock(&self, block: TodoBlock);
+        pub unsafe fn scheduleWithBlock(
+            &self,
+            block: &Block<(NSBackgroundActivityCompletionHandler,), ()>,
+        );
 
         #[method(invalidate)]
         pub unsafe fn invalidate(&self);

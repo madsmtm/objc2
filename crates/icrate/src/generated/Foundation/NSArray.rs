@@ -191,13 +191,16 @@ extern_methods!(
         pub unsafe fn objectAtIndexedSubscript(&self, idx: NSUInteger) -> Id<ObjectType, Shared>;
 
         #[method(enumerateObjectsUsingBlock:)]
-        pub unsafe fn enumerateObjectsUsingBlock(&self, block: TodoBlock);
+        pub unsafe fn enumerateObjectsUsingBlock(
+            &self,
+            block: &Block<(NonNull<ObjectType>, NSUInteger, NonNull<Bool>), ()>,
+        );
 
         #[method(enumerateObjectsWithOptions:usingBlock:)]
         pub unsafe fn enumerateObjectsWithOptions_usingBlock(
             &self,
             opts: NSEnumerationOptions,
-            block: TodoBlock,
+            block: &Block<(NonNull<ObjectType>, NSUInteger, NonNull<Bool>), ()>,
         );
 
         #[method(enumerateObjectsAtIndexes:options:usingBlock:)]
@@ -205,17 +208,20 @@ extern_methods!(
             &self,
             s: &NSIndexSet,
             opts: NSEnumerationOptions,
-            block: TodoBlock,
+            block: &Block<(NonNull<ObjectType>, NSUInteger, NonNull<Bool>), ()>,
         );
 
         #[method(indexOfObjectPassingTest:)]
-        pub unsafe fn indexOfObjectPassingTest(&self, predicate: TodoBlock) -> NSUInteger;
+        pub unsafe fn indexOfObjectPassingTest(
+            &self,
+            predicate: &Block<(NonNull<ObjectType>, NSUInteger, NonNull<Bool>), Bool>,
+        ) -> NSUInteger;
 
         #[method(indexOfObjectWithOptions:passingTest:)]
         pub unsafe fn indexOfObjectWithOptions_passingTest(
             &self,
             opts: NSEnumerationOptions,
-            predicate: TodoBlock,
+            predicate: &Block<(NonNull<ObjectType>, NSUInteger, NonNull<Bool>), Bool>,
         ) -> NSUInteger;
 
         #[method(indexOfObjectAtIndexes:options:passingTest:)]
@@ -223,20 +229,20 @@ extern_methods!(
             &self,
             s: &NSIndexSet,
             opts: NSEnumerationOptions,
-            predicate: TodoBlock,
+            predicate: &Block<(NonNull<ObjectType>, NSUInteger, NonNull<Bool>), Bool>,
         ) -> NSUInteger;
 
         #[method_id(@__retain_semantics Other indexesOfObjectsPassingTest:)]
         pub unsafe fn indexesOfObjectsPassingTest(
             &self,
-            predicate: TodoBlock,
+            predicate: &Block<(NonNull<ObjectType>, NSUInteger, NonNull<Bool>), Bool>,
         ) -> Id<NSIndexSet, Shared>;
 
         #[method_id(@__retain_semantics Other indexesOfObjectsWithOptions:passingTest:)]
         pub unsafe fn indexesOfObjectsWithOptions_passingTest(
             &self,
             opts: NSEnumerationOptions,
-            predicate: TodoBlock,
+            predicate: &Block<(NonNull<ObjectType>, NSUInteger, NonNull<Bool>), Bool>,
         ) -> Id<NSIndexSet, Shared>;
 
         #[method_id(@__retain_semantics Other indexesOfObjectsAtIndexes:options:passingTest:)]
@@ -244,7 +250,7 @@ extern_methods!(
             &self,
             s: &NSIndexSet,
             opts: NSEnumerationOptions,
-            predicate: TodoBlock,
+            predicate: &Block<(NonNull<ObjectType>, NSUInteger, NonNull<Bool>), Bool>,
         ) -> Id<NSIndexSet, Shared>;
 
         #[method_id(@__retain_semantics Other sortedArrayUsingComparator:)]
@@ -323,7 +329,7 @@ extern_methods!(
             &self,
             other: &NSArray<ObjectType>,
             options: NSOrderedCollectionDifferenceCalculationOptions,
-            block: TodoBlock,
+            block: &Block<(NonNull<ObjectType>, NonNull<ObjectType>), Bool>,
         ) -> Id<NSOrderedCollectionDifference<ObjectType>, Shared>;
 
         #[method_id(@__retain_semantics Other differenceFromArray:withOptions:)]

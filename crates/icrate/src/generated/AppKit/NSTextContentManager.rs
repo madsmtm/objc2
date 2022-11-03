@@ -60,7 +60,10 @@ extern_methods!(
         );
 
         #[method(synchronizeTextLayoutManagers:)]
-        pub unsafe fn synchronizeTextLayoutManagers(&self, completionHandler: TodoBlock);
+        pub unsafe fn synchronizeTextLayoutManagers(
+            &self,
+            completionHandler: Option<&Block<(*mut NSError,), ()>>,
+        );
 
         #[method_id(@__retain_semantics Other textElementsForRange:)]
         pub unsafe fn textElementsForRange(
@@ -72,7 +75,7 @@ extern_methods!(
         pub unsafe fn hasEditingTransaction(&self) -> bool;
 
         #[method(performEditingTransactionUsingBlock:)]
-        pub unsafe fn performEditingTransactionUsingBlock(&self, transaction: TodoBlock);
+        pub unsafe fn performEditingTransactionUsingBlock(&self, transaction: &Block<(), ()>);
 
         #[method(recordEditActionInRange:newTextRange:)]
         pub unsafe fn recordEditActionInRange_newTextRange(

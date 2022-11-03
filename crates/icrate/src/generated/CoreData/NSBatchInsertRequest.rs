@@ -33,16 +33,26 @@ extern_methods!(
         );
 
         #[method(dictionaryHandler)]
-        pub unsafe fn dictionaryHandler(&self) -> TodoBlock;
+        pub unsafe fn dictionaryHandler(
+            &self,
+        ) -> *mut Block<(NonNull<NSMutableDictionary<NSString, Object>>,), Bool>;
 
         #[method(setDictionaryHandler:)]
-        pub unsafe fn setDictionaryHandler(&self, dictionaryHandler: TodoBlock);
+        pub unsafe fn setDictionaryHandler(
+            &self,
+            dictionaryHandler: Option<
+                &Block<(NonNull<NSMutableDictionary<NSString, Object>>,), Bool>,
+            >,
+        );
 
         #[method(managedObjectHandler)]
-        pub unsafe fn managedObjectHandler(&self) -> TodoBlock;
+        pub unsafe fn managedObjectHandler(&self) -> *mut Block<(NonNull<NSManagedObject>,), Bool>;
 
         #[method(setManagedObjectHandler:)]
-        pub unsafe fn setManagedObjectHandler(&self, managedObjectHandler: TodoBlock);
+        pub unsafe fn setManagedObjectHandler(
+            &self,
+            managedObjectHandler: Option<&Block<(NonNull<NSManagedObject>,), Bool>>,
+        );
 
         #[method(resultType)]
         pub unsafe fn resultType(&self) -> NSBatchInsertRequestResultType;
@@ -59,13 +69,13 @@ extern_methods!(
         #[method_id(@__retain_semantics Other batchInsertRequestWithEntityName:dictionaryHandler:)]
         pub unsafe fn batchInsertRequestWithEntityName_dictionaryHandler(
             entityName: &NSString,
-            handler: TodoBlock,
+            handler: &Block<(NonNull<NSMutableDictionary<NSString, Object>>,), Bool>,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Other batchInsertRequestWithEntityName:managedObjectHandler:)]
         pub unsafe fn batchInsertRequestWithEntityName_managedObjectHandler(
             entityName: &NSString,
-            handler: TodoBlock,
+            handler: &Block<(NonNull<NSManagedObject>,), Bool>,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init init)]
@@ -89,28 +99,28 @@ extern_methods!(
         pub unsafe fn initWithEntity_dictionaryHandler(
             this: Option<Allocated<Self>>,
             entity: &NSEntityDescription,
-            handler: TodoBlock,
+            handler: &Block<(NonNull<NSMutableDictionary<NSString, Object>>,), Bool>,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init initWithEntity:managedObjectHandler:)]
         pub unsafe fn initWithEntity_managedObjectHandler(
             this: Option<Allocated<Self>>,
             entity: &NSEntityDescription,
-            handler: TodoBlock,
+            handler: &Block<(NonNull<NSManagedObject>,), Bool>,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init initWithEntityName:dictionaryHandler:)]
         pub unsafe fn initWithEntityName_dictionaryHandler(
             this: Option<Allocated<Self>>,
             entityName: &NSString,
-            handler: TodoBlock,
+            handler: &Block<(NonNull<NSMutableDictionary<NSString, Object>>,), Bool>,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init initWithEntityName:managedObjectHandler:)]
         pub unsafe fn initWithEntityName_managedObjectHandler(
             this: Option<Allocated<Self>>,
             entityName: &NSString,
-            handler: TodoBlock,
+            handler: &Block<(NonNull<NSManagedObject>,), Bool>,
         ) -> Id<Self, Shared>;
     }
 );

@@ -500,7 +500,16 @@ extern_methods!(
         pub unsafe fn enumerateLineFragmentsForGlyphRange_usingBlock(
             &self,
             glyphRange: NSRange,
-            block: TodoBlock,
+            block: &Block<
+                (
+                    NSRect,
+                    NSRect,
+                    NonNull<NSTextContainer>,
+                    NSRange,
+                    NonNull<Bool>,
+                ),
+                (),
+            >,
         );
 
         #[method(enumerateEnclosingRectsForGlyphRange:withinSelectedGlyphRange:inTextContainer:usingBlock:)]
@@ -509,7 +518,7 @@ extern_methods!(
             glyphRange: NSRange,
             selectedRange: NSRange,
             textContainer: &NSTextContainer,
-            block: TodoBlock,
+            block: &Block<(NSRect, NonNull<Bool>), ()>,
         );
 
         #[method(drawBackgroundForGlyphRange:atPoint:)]

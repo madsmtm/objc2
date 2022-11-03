@@ -81,10 +81,10 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method(performBlock:)]
-        pub unsafe fn performBlock(&self, block: TodoBlock);
+        pub unsafe fn performBlock(&self, block: &Block<(), ()>);
 
         #[method(performBlockAndWait:)]
-        pub unsafe fn performBlockAndWait(&self, block: TodoBlock);
+        pub unsafe fn performBlockAndWait(&self, block: &Block<(), ()>);
 
         #[method_id(@__retain_semantics Other persistentStoreCoordinator)]
         pub unsafe fn persistentStoreCoordinator(

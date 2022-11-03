@@ -365,8 +365,8 @@ extern_methods!(
         #[method(performBatchUpdates:completionHandler:)]
         pub unsafe fn performBatchUpdates_completionHandler(
             &self,
-            updates: TodoBlock,
-            completionHandler: TodoBlock,
+            updates: Option<&Block<(), ()>>,
+            completionHandler: Option<&Block<(Bool,), ()>>,
         );
 
         #[method(toggleSectionCollapse:)]
@@ -442,7 +442,7 @@ extern_methods!(
         pub unsafe fn enumerateIndexPathsWithOptions_usingBlock(
             &self,
             opts: NSEnumerationOptions,
-            block: TodoBlock,
+            block: &Block<(NonNull<NSIndexPath>, NonNull<Bool>), ()>,
         );
     }
 );

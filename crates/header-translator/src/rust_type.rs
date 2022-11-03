@@ -113,7 +113,7 @@ fn parse_attributed<'a>(
     ty: Type<'a>,
     nullability: &mut Nullability,
     lifetime: &mut Lifetime,
-    kindof: Option<&mut bool>,
+    kindof: &mut bool,
     inside_partial_array: bool,
 ) -> Type<'a> {
     let mut modified_ty = ty.clone();
@@ -170,13 +170,6 @@ fn parse_attributed<'a>(
             }
         }
         _ => {}
-    }
-
-    if let Some(kindof) = kindof {
-        if let Some(rest) = name.strip_prefix("__kindof") {
-            name = rest.trim();
-            *kindof = true;
-        }
     }
 
     if ty.is_const_qualified() {
@@ -242,11 +235,18 @@ fn parse_attributed<'a>(
     }
 
     if name != modified_name {
-        let original_name = ty.get_display_name();
-        println!("attributes: {original_name:?} -> {name:?} != {modified_name:?}");
-        panic!(
-            "could not extract all attributes from attributed type. Inner: {ty:?}, {modified_ty:?}"
-        );
+        if let Some(rest) = name.strip_prefix("__kindof") {
+            name = rest.trim();
+            *kindof = true;
+        }
+
+        if name != modified_name {
+            let original_name = ty.get_display_name();
+            println!("attributes: {original_name:?} -> {name:?} != {modified_name:?}");
+            panic!(
+                "could not extract all attributes from attributed type. Inner: {ty:?}, {modified_ty:?}"
+            );
+        }
     }
 
     modified_ty
@@ -318,8 +318,11 @@ enum RustType {
         name: String,
     },
     Fn {
-        is_block: bool,
         is_variadic: bool,
+        arguments: Vec<Ty>,
+        result_type: Box<Ty>,
+    },
+    Block {
         arguments: Vec<Ty>,
         result_type: Box<Ty>,
     },
@@ -340,12 +343,13 @@ impl RustType {
 
         // println!("{:?}, {:?}", ty, ty.get_class_type());
 
+        let mut kindof = false;
         let mut lifetime = Lifetime::Unspecified;
         let ty = parse_attributed(
             ty,
             &mut nullability,
             &mut lifetime,
-            None,
+            &mut kindof,
             inside_partial_array,
         );
 
@@ -381,8 +385,6 @@ impl RustType {
             Pointer => {
                 let is_const = ty.is_const_qualified();
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                // Note: Can't handle const id pointers
-                // assert!(!ty.is_const_qualified(), "expected pointee to not be const");
                 let pointee = Self::parse(ty, is_consumed, Nullability::Unspecified, false);
                 Self::Pointer {
                     nullability,
@@ -390,16 +392,35 @@ impl RustType {
                     pointee: Box::new(pointee),
                 }
             }
+            BlockPointer => {
+                let is_const = ty.is_const_qualified();
+                let ty = ty.get_pointee_type().expect("pointer type to have pointee");
+                match Self::parse(ty, is_consumed, Nullability::Unspecified, false) {
+                    Self::Fn {
+                        is_variadic: false,
+                        mut arguments,
+                        mut result_type,
+                    } => {
+                        for arg in &mut arguments {
+                            arg.set_block();
+                        }
+                        result_type.set_block();
+                        Self::Pointer {
+                            nullability,
+                            is_const,
+                            pointee: Box::new(Self::Block {
+                                arguments,
+                                result_type,
+                            }),
+                        }
+                    }
+                    pointee => panic!("unexpected pointee in block: {pointee:?}"),
+                }
+            }
             ObjCObjectPointer => {
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
                 let mut kindof = false;
-                let ty = parse_attributed(
-                    ty,
-                    &mut nullability,
-                    &mut lifetime,
-                    Some(&mut kindof),
-                    false,
-                );
+                let ty = parse_attributed(ty, &mut nullability, &mut lifetime, &mut kindof, false);
                 let type_ = GenericType::parse_objc_pointer(ty);
 
                 Self::Id {
@@ -492,9 +513,6 @@ impl RustType {
                     _ => panic!("unknown elaborated type {ty:?}"),
                 }
             }
-            BlockPointer => Self::TypeDef {
-                name: "TodoBlock".to_string(),
-            },
             FunctionPrototype => {
                 let call_conv = ty.get_calling_convention().expect("fn calling convention");
                 assert_eq!(
@@ -514,7 +532,6 @@ impl RustType {
                 let result_type = Ty::parse_fn_result(result_type);
 
                 Self::Fn {
-                    is_block: false,
                     is_variadic: ty.is_variadic(),
                     arguments,
                     result_type: Box::new(result_type),
@@ -637,8 +654,6 @@ impl fmt::Display for RustType {
                 pointee,
             } => match &**pointee {
                 Self::Fn {
-                    // TODO
-                    is_block: _,
                     is_variadic,
                     arguments,
                     result_type,
@@ -689,6 +704,16 @@ impl fmt::Display for RustType {
             } => write!(f, "[{element_type}; {num_elements}]"),
             Enum { name } | Struct { name } | TypeDef { name } => write!(f, "{name}"),
             Self::Fn { .. } => write!(f, "TodoFunction"),
+            Block {
+                arguments,
+                result_type,
+            } => {
+                write!(f, "Block<(")?;
+                for arg in arguments {
+                    write!(f, "{arg}, ")?;
+                }
+                write!(f, "), {result_type}>")
+            }
         }
     }
 }
@@ -703,6 +728,8 @@ enum TyKind {
     InStructEnum,
     InFnArgument,
     InFnReturn,
+    InBlockArgument,
+    InBlockReturn,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -903,6 +930,14 @@ impl Ty {
         Self {
             ty,
             kind: TyKind::InFnReturn,
+        }
+    }
+
+    fn set_block(&mut self) {
+        self.kind = match self.kind {
+            TyKind::InFnArgument => TyKind::InBlockArgument,
+            TyKind::InFnReturn => TyKind::InBlockReturn,
+            _ => unreachable!("set block kind"),
         }
     }
 }
@@ -1124,38 +1159,45 @@ impl fmt::Display for Ty {
                     }
                 }
                 RustType::ObjcBool => write!(f, "bool"),
-                // TODO: Re-enable once we can support it
-                // ty @ RustType::Pointer {
-                //     nullability,
-                //     is_const: false,
-                //     pointee,
-                // } => match &**pointee {
-                //     RustType::Id {
-                //         type_: ty,
-                //         is_const: false,
-                //         lifetime: Lifetime::Autoreleasing,
-                //         nullability: inner_nullability,
-                //     } => {
-                //         let tokens = if *inner_nullability == Nullability::NonNull {
-                //             format!("Id<{ty}, Shared>")
-                //         } else {
-                //             format!("Option<Id<{ty}, Shared>>")
-                //         };
-                //         if *nullability == Nullability::NonNull {
-                //             write!(f, "&mut {tokens}")
-                //         } else {
-                //             write!(f, "Option<&mut {tokens}>")
-                //         }
-                //     }
-                //     RustType::Id { .. } => {
-                //         unreachable!("there should be no id with other values: {self:?}")
-                //     }
-                //     _ => write!(f, "{ty}"),
-                // },
+                ty @ RustType::Pointer {
+                    nullability,
+                    is_const: false,
+                    pointee,
+                } => match &**pointee {
+                    // TODO: Re-enable once we can support it
+                    // RustType::Id {
+                    //     type_: ty,
+                    //     is_const: false,
+                    //     lifetime: Lifetime::Autoreleasing,
+                    //     nullability: inner_nullability,
+                    // } => {
+                    //     let tokens = if *inner_nullability == Nullability::NonNull {
+                    //         format!("Id<{ty}, Shared>")
+                    //     } else {
+                    //         format!("Option<Id<{ty}, Shared>>")
+                    //     };
+                    //     if *nullability == Nullability::NonNull {
+                    //         write!(f, "&mut {tokens}")
+                    //     } else {
+                    //         write!(f, "Option<&mut {tokens}>")
+                    //     }
+                    // }
+                    // RustType::Id { .. } => {
+                    //     unreachable!("there should be no id with other values: {self:?}")
+                    // }
+                    block @ RustType::Block { .. } => {
+                        if *nullability == Nullability::NonNull {
+                            write!(f, "&{block}")
+                        } else {
+                            write!(f, "Option<&{block}>")
+                        }
+                    }
+                    _ => write!(f, "{ty}"),
+                },
                 ty => write!(f, "{ty}"),
             },
             TyKind::InStructEnum => write!(f, "{}", self.ty),
-            TyKind::InFnArgument => write!(f, "{}", self.ty),
+            TyKind::InFnArgument | TyKind::InBlockArgument => write!(f, "{}", self.ty),
             TyKind::InFnReturn => {
                 if let RustType::Void = &self.ty {
                     // Don't output anything
@@ -1164,6 +1206,10 @@ impl fmt::Display for Ty {
 
                 write!(f, " -> {}", self.ty)
             }
+            TyKind::InBlockReturn => match &self.ty {
+                RustType::Void => write!(f, "()"),
+                ty => write!(f, "{ty}"),
+            },
         }
     }
 }

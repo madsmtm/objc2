@@ -107,7 +107,7 @@ extern_methods!(
         pub unsafe fn beginSheetModalForWindow_completionHandler(
             &self,
             sheetWindow: &NSWindow,
-            handler: TodoBlock,
+            handler: Option<&Block<(NSModalResponse,), ()>>,
         );
 
         #[method_id(@__retain_semantics Other window)]

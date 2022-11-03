@@ -54,7 +54,7 @@ extern_methods!(
         #[method(deleteSpotlightIndexWithCompletionHandler:)]
         pub unsafe fn deleteSpotlightIndexWithCompletionHandler(
             &self,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSError,), ()>,
         );
 
         #[method_id(@__retain_semantics Other attributeSetForObject:)]
@@ -67,7 +67,7 @@ extern_methods!(
         pub unsafe fn searchableIndex_reindexAllSearchableItemsWithAcknowledgementHandler(
             &self,
             searchableIndex: &CSSearchableIndex,
-            acknowledgementHandler: TodoBlock,
+            acknowledgementHandler: &Block<(), ()>,
         );
 
         #[method(searchableIndex:reindexSearchableItemsWithIdentifiers:acknowledgementHandler:)]
@@ -75,7 +75,7 @@ extern_methods!(
             &self,
             searchableIndex: &CSSearchableIndex,
             identifiers: &NSArray<NSString>,
-            acknowledgementHandler: TodoBlock,
+            acknowledgementHandler: &Block<(), ()>,
         );
     }
 );

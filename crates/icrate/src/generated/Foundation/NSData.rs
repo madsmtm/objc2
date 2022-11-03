@@ -124,7 +124,10 @@ extern_methods!(
         ) -> NSRange;
 
         #[method(enumerateByteRangesUsingBlock:)]
-        pub unsafe fn enumerateByteRangesUsingBlock(&self, block: TodoBlock);
+        pub unsafe fn enumerateByteRangesUsingBlock(
+            &self,
+            block: &Block<(NonNull<c_void>, NSRange, NonNull<Bool>), ()>,
+        );
     }
 );
 
@@ -198,7 +201,7 @@ extern_methods!(
             this: Option<Allocated<Self>>,
             bytes: NonNull<c_void>,
             length: NSUInteger,
-            deallocator: TodoBlock,
+            deallocator: Option<&Block<(NonNull<c_void>, NSUInteger), ()>>,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init initWithContentsOfFile:options:error:)]

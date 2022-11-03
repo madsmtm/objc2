@@ -21,14 +21,18 @@ extern_methods!(
         pub unsafe fn completeRequestReturningItems_completionHandler(
             &self,
             items: Option<&NSArray>,
-            completionHandler: TodoBlock,
+            completionHandler: Option<&Block<(Bool,), ()>>,
         );
 
         #[method(cancelRequestWithError:)]
         pub unsafe fn cancelRequestWithError(&self, error: &NSError);
 
         #[method(openURL:completionHandler:)]
-        pub unsafe fn openURL_completionHandler(&self, URL: &NSURL, completionHandler: TodoBlock);
+        pub unsafe fn openURL_completionHandler(
+            &self,
+            URL: &NSURL,
+            completionHandler: Option<&Block<(Bool,), ()>>,
+        );
     }
 );
 

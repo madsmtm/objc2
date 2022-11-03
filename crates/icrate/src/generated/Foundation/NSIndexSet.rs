@@ -89,13 +89,16 @@ extern_methods!(
         pub unsafe fn intersectsIndexesInRange(&self, range: NSRange) -> bool;
 
         #[method(enumerateIndexesUsingBlock:)]
-        pub unsafe fn enumerateIndexesUsingBlock(&self, block: TodoBlock);
+        pub unsafe fn enumerateIndexesUsingBlock(
+            &self,
+            block: &Block<(NSUInteger, NonNull<Bool>), ()>,
+        );
 
         #[method(enumerateIndexesWithOptions:usingBlock:)]
         pub unsafe fn enumerateIndexesWithOptions_usingBlock(
             &self,
             opts: NSEnumerationOptions,
-            block: TodoBlock,
+            block: &Block<(NSUInteger, NonNull<Bool>), ()>,
         );
 
         #[method(enumerateIndexesInRange:options:usingBlock:)]
@@ -103,17 +106,20 @@ extern_methods!(
             &self,
             range: NSRange,
             opts: NSEnumerationOptions,
-            block: TodoBlock,
+            block: &Block<(NSUInteger, NonNull<Bool>), ()>,
         );
 
         #[method(indexPassingTest:)]
-        pub unsafe fn indexPassingTest(&self, predicate: TodoBlock) -> NSUInteger;
+        pub unsafe fn indexPassingTest(
+            &self,
+            predicate: &Block<(NSUInteger, NonNull<Bool>), Bool>,
+        ) -> NSUInteger;
 
         #[method(indexWithOptions:passingTest:)]
         pub unsafe fn indexWithOptions_passingTest(
             &self,
             opts: NSEnumerationOptions,
-            predicate: TodoBlock,
+            predicate: &Block<(NSUInteger, NonNull<Bool>), Bool>,
         ) -> NSUInteger;
 
         #[method(indexInRange:options:passingTest:)]
@@ -121,17 +127,20 @@ extern_methods!(
             &self,
             range: NSRange,
             opts: NSEnumerationOptions,
-            predicate: TodoBlock,
+            predicate: &Block<(NSUInteger, NonNull<Bool>), Bool>,
         ) -> NSUInteger;
 
         #[method_id(@__retain_semantics Other indexesPassingTest:)]
-        pub unsafe fn indexesPassingTest(&self, predicate: TodoBlock) -> Id<NSIndexSet, Shared>;
+        pub unsafe fn indexesPassingTest(
+            &self,
+            predicate: &Block<(NSUInteger, NonNull<Bool>), Bool>,
+        ) -> Id<NSIndexSet, Shared>;
 
         #[method_id(@__retain_semantics Other indexesWithOptions:passingTest:)]
         pub unsafe fn indexesWithOptions_passingTest(
             &self,
             opts: NSEnumerationOptions,
-            predicate: TodoBlock,
+            predicate: &Block<(NSUInteger, NonNull<Bool>), Bool>,
         ) -> Id<NSIndexSet, Shared>;
 
         #[method_id(@__retain_semantics Other indexesInRange:options:passingTest:)]
@@ -139,17 +148,17 @@ extern_methods!(
             &self,
             range: NSRange,
             opts: NSEnumerationOptions,
-            predicate: TodoBlock,
+            predicate: &Block<(NSUInteger, NonNull<Bool>), Bool>,
         ) -> Id<NSIndexSet, Shared>;
 
         #[method(enumerateRangesUsingBlock:)]
-        pub unsafe fn enumerateRangesUsingBlock(&self, block: TodoBlock);
+        pub unsafe fn enumerateRangesUsingBlock(&self, block: &Block<(NSRange, NonNull<Bool>), ()>);
 
         #[method(enumerateRangesWithOptions:usingBlock:)]
         pub unsafe fn enumerateRangesWithOptions_usingBlock(
             &self,
             opts: NSEnumerationOptions,
-            block: TodoBlock,
+            block: &Block<(NSRange, NonNull<Bool>), ()>,
         );
 
         #[method(enumerateRangesInRange:options:usingBlock:)]
@@ -157,7 +166,7 @@ extern_methods!(
             &self,
             range: NSRange,
             opts: NSEnumerationOptions,
-            block: TodoBlock,
+            block: &Block<(NSRange, NonNull<Bool>), ()>,
         );
     }
 );

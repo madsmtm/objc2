@@ -145,14 +145,14 @@ extern_methods!(
             &self,
             options: NSActivityOptions,
             reason: &NSString,
-            block: TodoBlock,
+            block: &Block<(), ()>,
         );
 
         #[method(performExpiringActivityWithReason:usingBlock:)]
         pub unsafe fn performExpiringActivityWithReason_usingBlock(
             &self,
             reason: &NSString,
-            block: TodoBlock,
+            block: &Block<(Bool,), ()>,
         );
     }
 );

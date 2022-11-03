@@ -117,13 +117,16 @@ extern_methods!(
         ) -> Option<Id<ObjectType, Shared>>;
 
         #[method(enumerateKeysAndObjectsUsingBlock:)]
-        pub unsafe fn enumerateKeysAndObjectsUsingBlock(&self, block: TodoBlock);
+        pub unsafe fn enumerateKeysAndObjectsUsingBlock(
+            &self,
+            block: &Block<(NonNull<KeyType>, NonNull<ObjectType>, NonNull<Bool>), ()>,
+        );
 
         #[method(enumerateKeysAndObjectsWithOptions:usingBlock:)]
         pub unsafe fn enumerateKeysAndObjectsWithOptions_usingBlock(
             &self,
             opts: NSEnumerationOptions,
-            block: TodoBlock,
+            block: &Block<(NonNull<KeyType>, NonNull<ObjectType>, NonNull<Bool>), ()>,
         );
 
         #[method_id(@__retain_semantics Other keysSortedByValueUsingComparator:)]
@@ -142,14 +145,14 @@ extern_methods!(
         #[method_id(@__retain_semantics Other keysOfEntriesPassingTest:)]
         pub unsafe fn keysOfEntriesPassingTest(
             &self,
-            predicate: TodoBlock,
+            predicate: &Block<(NonNull<KeyType>, NonNull<ObjectType>, NonNull<Bool>), Bool>,
         ) -> Id<NSSet<KeyType>, Shared>;
 
         #[method_id(@__retain_semantics Other keysOfEntriesWithOptions:passingTest:)]
         pub unsafe fn keysOfEntriesWithOptions_passingTest(
             &self,
             opts: NSEnumerationOptions,
-            predicate: TodoBlock,
+            predicate: &Block<(NonNull<KeyType>, NonNull<ObjectType>, NonNull<Bool>), Bool>,
         ) -> Id<NSSet<KeyType>, Shared>;
     }
 );

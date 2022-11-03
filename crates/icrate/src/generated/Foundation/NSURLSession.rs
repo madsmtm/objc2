@@ -53,16 +53,29 @@ extern_methods!(
         pub unsafe fn invalidateAndCancel(&self);
 
         #[method(resetWithCompletionHandler:)]
-        pub unsafe fn resetWithCompletionHandler(&self, completionHandler: TodoBlock);
+        pub unsafe fn resetWithCompletionHandler(&self, completionHandler: &Block<(), ()>);
 
         #[method(flushWithCompletionHandler:)]
-        pub unsafe fn flushWithCompletionHandler(&self, completionHandler: TodoBlock);
+        pub unsafe fn flushWithCompletionHandler(&self, completionHandler: &Block<(), ()>);
 
         #[method(getTasksWithCompletionHandler:)]
-        pub unsafe fn getTasksWithCompletionHandler(&self, completionHandler: TodoBlock);
+        pub unsafe fn getTasksWithCompletionHandler(
+            &self,
+            completionHandler: &Block<
+                (
+                    NonNull<NSArray<NSURLSessionDataTask>>,
+                    NonNull<NSArray<NSURLSessionUploadTask>>,
+                    NonNull<NSArray<NSURLSessionDownloadTask>>,
+                ),
+                (),
+            >,
+        );
 
         #[method(getAllTasksWithCompletionHandler:)]
-        pub unsafe fn getAllTasksWithCompletionHandler(&self, completionHandler: TodoBlock);
+        pub unsafe fn getAllTasksWithCompletionHandler(
+            &self,
+            completionHandler: &Block<(NonNull<NSArray<NSURLSessionTask>>,), ()>,
+        );
 
         #[method_id(@__retain_semantics Other dataTaskWithRequest:)]
         pub unsafe fn dataTaskWithRequest(
@@ -158,14 +171,14 @@ extern_methods!(
         pub unsafe fn dataTaskWithRequest_completionHandler(
             &self,
             request: &NSURLRequest,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSData, *mut NSURLResponse, *mut NSError), ()>,
         ) -> Id<NSURLSessionDataTask, Shared>;
 
         #[method_id(@__retain_semantics Other dataTaskWithURL:completionHandler:)]
         pub unsafe fn dataTaskWithURL_completionHandler(
             &self,
             url: &NSURL,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSData, *mut NSURLResponse, *mut NSError), ()>,
         ) -> Id<NSURLSessionDataTask, Shared>;
 
         #[method_id(@__retain_semantics Other uploadTaskWithRequest:fromFile:completionHandler:)]
@@ -173,7 +186,7 @@ extern_methods!(
             &self,
             request: &NSURLRequest,
             fileURL: &NSURL,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSData, *mut NSURLResponse, *mut NSError), ()>,
         ) -> Id<NSURLSessionUploadTask, Shared>;
 
         #[method_id(@__retain_semantics Other uploadTaskWithRequest:fromData:completionHandler:)]
@@ -181,28 +194,28 @@ extern_methods!(
             &self,
             request: &NSURLRequest,
             bodyData: Option<&NSData>,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSData, *mut NSURLResponse, *mut NSError), ()>,
         ) -> Id<NSURLSessionUploadTask, Shared>;
 
         #[method_id(@__retain_semantics Other downloadTaskWithRequest:completionHandler:)]
         pub unsafe fn downloadTaskWithRequest_completionHandler(
             &self,
             request: &NSURLRequest,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSURL, *mut NSURLResponse, *mut NSError), ()>,
         ) -> Id<NSURLSessionDownloadTask, Shared>;
 
         #[method_id(@__retain_semantics Other downloadTaskWithURL:completionHandler:)]
         pub unsafe fn downloadTaskWithURL_completionHandler(
             &self,
             url: &NSURL,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSURL, *mut NSURLResponse, *mut NSError), ()>,
         ) -> Id<NSURLSessionDownloadTask, Shared>;
 
         #[method_id(@__retain_semantics Other downloadTaskWithResumeData:completionHandler:)]
         pub unsafe fn downloadTaskWithResumeData_completionHandler(
             &self,
             resumeData: &NSData,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSURL, *mut NSURLResponse, *mut NSError), ()>,
         ) -> Id<NSURLSessionDownloadTask, Shared>;
     }
 );
@@ -382,7 +395,10 @@ extern_class!(
 extern_methods!(
     unsafe impl NSURLSessionDownloadTask {
         #[method(cancelByProducingResumeData:)]
-        pub unsafe fn cancelByProducingResumeData(&self, completionHandler: TodoBlock);
+        pub unsafe fn cancelByProducingResumeData(
+            &self,
+            completionHandler: &Block<(*mut NSData,), ()>,
+        );
 
         #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
@@ -409,7 +425,7 @@ extern_methods!(
             minBytes: NSUInteger,
             maxBytes: NSUInteger,
             timeout: NSTimeInterval,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSData, Bool, *mut NSError), ()>,
         );
 
         #[method(writeData:timeout:completionHandler:)]
@@ -417,7 +433,7 @@ extern_methods!(
             &self,
             data: &NSData,
             timeout: NSTimeInterval,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSError,), ()>,
         );
 
         #[method(captureStreams)]
@@ -525,14 +541,20 @@ extern_methods!(
         pub unsafe fn sendMessage_completionHandler(
             &self,
             message: &NSURLSessionWebSocketMessage,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSError,), ()>,
         );
 
         #[method(receiveMessageWithCompletionHandler:)]
-        pub unsafe fn receiveMessageWithCompletionHandler(&self, completionHandler: TodoBlock);
+        pub unsafe fn receiveMessageWithCompletionHandler(
+            &self,
+            completionHandler: &Block<(*mut NSURLSessionWebSocketMessage, *mut NSError), ()>,
+        );
 
         #[method(sendPingWithPongReceiveHandler:)]
-        pub unsafe fn sendPingWithPongReceiveHandler(&self, pongReceiveHandler: TodoBlock);
+        pub unsafe fn sendPingWithPongReceiveHandler(
+            &self,
+            pongReceiveHandler: &Block<(*mut NSError,), ()>,
+        );
 
         #[method(cancelWithCloseCode:reason:)]
         pub unsafe fn cancelWithCloseCode_reason(

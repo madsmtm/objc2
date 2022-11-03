@@ -31,7 +31,7 @@ extern_methods!(
         pub unsafe fn currentDrawingAppearance() -> Id<NSAppearance, Shared>;
 
         #[method(performAsCurrentDrawingAppearance:)]
-        pub unsafe fn performAsCurrentDrawingAppearance(&self, block: TodoBlock);
+        pub unsafe fn performAsCurrentDrawingAppearance(&self, block: &Block<(), ()>);
 
         #[method_id(@__retain_semantics Other appearanceNamed:)]
         pub unsafe fn appearanceNamed(name: &NSAppearanceName) -> Option<Id<NSAppearance, Shared>>;

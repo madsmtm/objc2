@@ -321,13 +321,13 @@ extern_methods!(
         #[method(beginAccessingResourcesWithCompletionHandler:)]
         pub unsafe fn beginAccessingResourcesWithCompletionHandler(
             &self,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSError,), ()>,
         );
 
         #[method(conditionallyBeginAccessingResourcesWithCompletionHandler:)]
         pub unsafe fn conditionallyBeginAccessingResourcesWithCompletionHandler(
             &self,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(Bool,), ()>,
         );
 
         #[method(endAccessingResources)]

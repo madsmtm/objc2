@@ -53,7 +53,7 @@ extern_methods!(
             view: Option<&NSView>,
             classArray: &NSArray<TodoClass>,
             searchOptions: &NSDictionary<NSPasteboardReadingOptionKey, Object>,
-            block: TodoBlock,
+            block: &Block<(NonNull<NSDraggingItem>, NSInteger, NonNull<Bool>), ()>,
         );
     }
 );

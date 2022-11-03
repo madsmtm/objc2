@@ -3,7 +3,7 @@
 use crate::common::*;
 use crate::Foundation::*;
 
-pub type NSUserScriptTaskCompletionHandler = TodoBlock;
+pub type NSUserScriptTaskCompletionHandler = *mut Block<(*mut NSError,), ()>;
 
 extern_class!(
     #[derive(Debug)]
@@ -33,7 +33,7 @@ extern_methods!(
     }
 );
 
-pub type NSUserUnixTaskCompletionHandler = TodoBlock;
+pub type NSUserUnixTaskCompletionHandler = *mut Block<(*mut NSError,), ()>;
 
 extern_class!(
     #[derive(Debug)]
@@ -73,7 +73,8 @@ extern_methods!(
     }
 );
 
-pub type NSUserAppleScriptTaskCompletionHandler = TodoBlock;
+pub type NSUserAppleScriptTaskCompletionHandler =
+    *mut Block<(*mut NSAppleEventDescriptor, *mut NSError), ()>;
 
 extern_class!(
     #[derive(Debug)]
@@ -95,7 +96,7 @@ extern_methods!(
     }
 );
 
-pub type NSUserAutomatorTaskCompletionHandler = TodoBlock;
+pub type NSUserAutomatorTaskCompletionHandler = *mut Block<(*mut Object, *mut NSError), ()>;
 
 extern_class!(
     #[derive(Debug)]

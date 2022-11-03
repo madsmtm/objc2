@@ -119,7 +119,7 @@ extern_methods!(
             title: &NSString,
             image: &NSImage,
             alternateImage: Option<&NSImage>,
-            block: TodoBlock,
+            block: &Block<(), ()>,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init init)]
@@ -163,7 +163,10 @@ extern_methods!(
         #[method(registerCloudKitShareWithPreparationHandler:)]
         pub unsafe fn registerCloudKitShareWithPreparationHandler(
             &self,
-            preparationHandler: TodoBlock,
+            preparationHandler: &Block<
+                (NonNull<Block<(*mut CKShare, *mut CKContainer, *mut NSError), ()>>,),
+                (),
+            >,
         );
 
         #[method(registerCloudKitShare:container:)]

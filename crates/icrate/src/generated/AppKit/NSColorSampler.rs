@@ -17,6 +17,9 @@ extern_class!(
 extern_methods!(
     unsafe impl NSColorSampler {
         #[method(showSamplerWithSelectionHandler:)]
-        pub unsafe fn showSamplerWithSelectionHandler(&self, selectionHandler: TodoBlock);
+        pub unsafe fn showSamplerWithSelectionHandler(
+            &self,
+            selectionHandler: &Block<(*mut NSColor,), ()>,
+        );
     }
 );

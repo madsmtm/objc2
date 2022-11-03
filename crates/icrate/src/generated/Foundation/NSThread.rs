@@ -18,7 +18,7 @@ extern_methods!(
         pub unsafe fn currentThread() -> Id<NSThread, Shared>;
 
         #[method(detachNewThreadWithBlock:)]
-        pub unsafe fn detachNewThreadWithBlock(block: TodoBlock);
+        pub unsafe fn detachNewThreadWithBlock(block: &Block<(), ()>);
 
         #[method(detachNewThreadSelector:toTarget:withObject:)]
         pub unsafe fn detachNewThreadSelector_toTarget_withObject(
@@ -89,7 +89,7 @@ extern_methods!(
         #[method_id(@__retain_semantics Init initWithBlock:)]
         pub unsafe fn initWithBlock(
             this: Option<Allocated<Self>>,
-            block: TodoBlock,
+            block: &Block<(), ()>,
         ) -> Id<Self, Shared>;
 
         #[method(isExecuting)]

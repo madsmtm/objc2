@@ -100,26 +100,29 @@ extern_methods!(
         ) -> Id<NSSet<ObjectType>, Shared>;
 
         #[method(enumerateObjectsUsingBlock:)]
-        pub unsafe fn enumerateObjectsUsingBlock(&self, block: TodoBlock);
+        pub unsafe fn enumerateObjectsUsingBlock(
+            &self,
+            block: &Block<(NonNull<ObjectType>, NonNull<Bool>), ()>,
+        );
 
         #[method(enumerateObjectsWithOptions:usingBlock:)]
         pub unsafe fn enumerateObjectsWithOptions_usingBlock(
             &self,
             opts: NSEnumerationOptions,
-            block: TodoBlock,
+            block: &Block<(NonNull<ObjectType>, NonNull<Bool>), ()>,
         );
 
         #[method_id(@__retain_semantics Other objectsPassingTest:)]
         pub unsafe fn objectsPassingTest(
             &self,
-            predicate: TodoBlock,
+            predicate: &Block<(NonNull<ObjectType>, NonNull<Bool>), Bool>,
         ) -> Id<NSSet<ObjectType>, Shared>;
 
         #[method_id(@__retain_semantics Other objectsWithOptions:passingTest:)]
         pub unsafe fn objectsWithOptions_passingTest(
             &self,
             opts: NSEnumerationOptions,
-            predicate: TodoBlock,
+            predicate: &Block<(NonNull<ObjectType>, NonNull<Bool>), Bool>,
         ) -> Id<NSSet<ObjectType>, Shared>;
     }
 );

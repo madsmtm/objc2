@@ -51,7 +51,7 @@ extern_methods!(
             &self,
             pdfInfo: &NSPDFInfo,
             docWindow: Option<&NSWindow>,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(NSInteger,), ()>,
         );
     }
 );

@@ -125,7 +125,7 @@ extern_methods!(
             &self,
             location: Option<&NSTextLocation>,
             options: NSTextLayoutFragmentEnumerationOptions,
-            block: TodoBlock,
+            block: &Block<(NonNull<NSTextLayoutFragment>,), Bool>,
         ) -> Option<Id<NSTextLocation, Shared>>;
 
         #[method_id(@__retain_semantics Other textSelections)]
@@ -148,7 +148,14 @@ extern_methods!(
             &self,
             location: &NSTextLocation,
             reverse: bool,
-            block: TodoBlock,
+            block: &Block<
+                (
+                    NonNull<NSTextLayoutManager>,
+                    NonNull<NSDictionary<NSAttributedStringKey, Object>>,
+                    NonNull<NSTextRange>,
+                ),
+                Bool,
+            >,
         );
 
         #[method(setRenderingAttributes:forTextRange:)]
@@ -177,12 +184,16 @@ extern_methods!(
         pub unsafe fn invalidateRenderingAttributesForTextRange(&self, textRange: &NSTextRange);
 
         #[method(renderingAttributesValidator)]
-        pub unsafe fn renderingAttributesValidator(&self) -> TodoBlock;
+        pub unsafe fn renderingAttributesValidator(
+            &self,
+        ) -> *mut Block<(NonNull<NSTextLayoutManager>, NonNull<NSTextLayoutFragment>), ()>;
 
         #[method(setRenderingAttributesValidator:)]
         pub unsafe fn setRenderingAttributesValidator(
             &self,
-            renderingAttributesValidator: TodoBlock,
+            renderingAttributesValidator: Option<
+                &Block<(NonNull<NSTextLayoutManager>, NonNull<NSTextLayoutFragment>), ()>,
+            >,
         );
 
         #[method_id(@__retain_semantics Other linkRenderingAttributes)]
@@ -202,7 +213,7 @@ extern_methods!(
             textRange: &NSTextRange,
             type_: NSTextLayoutManagerSegmentType,
             options: NSTextLayoutManagerSegmentOptions,
-            block: TodoBlock,
+            block: &Block<(*mut NSTextRange, CGRect, CGFloat, NonNull<NSTextContainer>), Bool>,
         );
 
         #[method(replaceContentsInRange:withTextElements:)]

@@ -99,13 +99,16 @@ extern_methods!(
         pub unsafe fn resultAtIndex(&self, idx: NSUInteger) -> Id<Object, Shared>;
 
         #[method(enumerateResultsUsingBlock:)]
-        pub unsafe fn enumerateResultsUsingBlock(&self, block: TodoBlock);
+        pub unsafe fn enumerateResultsUsingBlock(
+            &self,
+            block: &Block<(NonNull<Object>, NSUInteger, NonNull<Bool>), ()>,
+        );
 
         #[method(enumerateResultsWithOptions:usingBlock:)]
         pub unsafe fn enumerateResultsWithOptions_usingBlock(
             &self,
             opts: NSEnumerationOptions,
-            block: TodoBlock,
+            block: &Block<(NonNull<Object>, NSUInteger, NonNull<Bool>), ()>,
         );
 
         #[method_id(@__retain_semantics Other results)]

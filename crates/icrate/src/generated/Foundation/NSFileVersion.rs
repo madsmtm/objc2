@@ -44,7 +44,7 @@ extern_methods!(
         #[method(getNonlocalVersionsOfItemAtURL:completionHandler:)]
         pub unsafe fn getNonlocalVersionsOfItemAtURL_completionHandler(
             url: &NSURL,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSArray<NSFileVersion>, *mut NSError), ()>,
         );
 
         #[method_id(@__retain_semantics Other versionOfItemAtURL:forPersistentIdentifier:)]

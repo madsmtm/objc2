@@ -18,7 +18,7 @@ ns_closed_enum!(
     }
 );
 
-pub type NSComparator = TodoBlock;
+pub type NSComparator = *mut Block<(NonNull<Object>, NonNull<Object>), NSComparisonResult>;
 
 ns_options!(
     #[underlying(NSUInteger)]

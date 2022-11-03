@@ -28,7 +28,7 @@ extern_methods!(
         pub unsafe fn rowActionWithStyle_title_handler(
             style: NSTableViewRowActionStyle,
             title: &NSString,
-            handler: TodoBlock,
+            handler: &Block<(NonNull<NSTableViewRowAction>, NSInteger), ()>,
         ) -> Id<Self, Shared>;
 
         #[method(style)]

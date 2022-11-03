@@ -20,7 +20,7 @@ extern_methods!(
         pub unsafe fn initWithName_handler(
             this: Option<Allocated<Self>>,
             name: &NSString,
-            handler: TodoBlock,
+            handler: Option<&Block<(), Bool>>,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init initWithName:target:selector:)]
@@ -38,10 +38,10 @@ extern_methods!(
         pub unsafe fn setName(&self, name: &NSString);
 
         #[method(handler)]
-        pub unsafe fn handler(&self) -> TodoBlock;
+        pub unsafe fn handler(&self) -> *mut Block<(), Bool>;
 
         #[method(setHandler:)]
-        pub unsafe fn setHandler(&self, handler: TodoBlock);
+        pub unsafe fn setHandler(&self, handler: Option<&Block<(), Bool>>);
 
         #[method_id(@__retain_semantics Other target)]
         pub unsafe fn target(&self) -> Option<Id<NSObject, Shared>>;

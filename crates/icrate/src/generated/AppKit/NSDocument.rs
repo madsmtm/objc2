@@ -97,20 +97,23 @@ extern_methods!(
         pub unsafe fn performActivityWithSynchronousWaiting_usingBlock(
             &self,
             waitSynchronously: bool,
-            block: TodoBlock,
+            block: &Block<(NonNull<Block<(), ()>>,), ()>,
         );
 
         #[method(continueActivityUsingBlock:)]
-        pub unsafe fn continueActivityUsingBlock(&self, block: TodoBlock);
+        pub unsafe fn continueActivityUsingBlock(&self, block: &Block<(), ()>);
 
         #[method(continueAsynchronousWorkOnMainThreadUsingBlock:)]
-        pub unsafe fn continueAsynchronousWorkOnMainThreadUsingBlock(&self, block: TodoBlock);
+        pub unsafe fn continueAsynchronousWorkOnMainThreadUsingBlock(&self, block: &Block<(), ()>);
 
         #[method(performSynchronousFileAccessUsingBlock:)]
-        pub unsafe fn performSynchronousFileAccessUsingBlock(&self, block: TodoBlock);
+        pub unsafe fn performSynchronousFileAccessUsingBlock(&self, block: &Block<(), ()>);
 
         #[method(performAsynchronousFileAccessUsingBlock:)]
-        pub unsafe fn performAsynchronousFileAccessUsingBlock(&self, block: TodoBlock);
+        pub unsafe fn performAsynchronousFileAccessUsingBlock(
+            &self,
+            block: &Block<(NonNull<Block<(), ()>>,), ()>,
+        );
 
         #[method(revertDocumentToSaved:)]
         pub unsafe fn revertDocumentToSaved(&self, sender: Option<&Object>);
@@ -258,7 +261,7 @@ extern_methods!(
             url: &NSURL,
             typeName: &NSString,
             saveOperation: NSSaveOperationType,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSError,), ()>,
         );
 
         #[method(canAsynchronouslyWriteToURL:ofType:forSaveOperation:)]
@@ -291,7 +294,7 @@ extern_methods!(
         pub unsafe fn autosaveWithImplicitCancellability_completionHandler(
             &self,
             autosavingIsImplicitlyCancellable: bool,
-            completionHandler: TodoBlock,
+            completionHandler: &Block<(*mut NSError,), ()>,
         );
 
         #[method(autosavesInPlace)]
@@ -309,7 +312,7 @@ extern_methods!(
         #[method(stopBrowsingVersionsWithCompletionHandler:)]
         pub unsafe fn stopBrowsingVersionsWithCompletionHandler(
             &self,
-            completionHandler: TodoBlock,
+            completionHandler: Option<&Block<(), ()>>,
         );
 
         #[method(autosavesDrafts)]
@@ -361,10 +364,17 @@ extern_methods!(
         pub unsafe fn moveDocument(&self, sender: Option<&Object>);
 
         #[method(moveDocumentWithCompletionHandler:)]
-        pub unsafe fn moveDocumentWithCompletionHandler(&self, completionHandler: TodoBlock);
+        pub unsafe fn moveDocumentWithCompletionHandler(
+            &self,
+            completionHandler: Option<&Block<(Bool,), ()>>,
+        );
 
         #[method(moveToURL:completionHandler:)]
-        pub unsafe fn moveToURL_completionHandler(&self, url: &NSURL, completionHandler: TodoBlock);
+        pub unsafe fn moveToURL_completionHandler(
+            &self,
+            url: &NSURL,
+            completionHandler: Option<&Block<(*mut NSError,), ()>>,
+        );
 
         #[method(lockDocument:)]
         pub unsafe fn lockDocument(&self, sender: Option<&Object>);
@@ -373,16 +383,28 @@ extern_methods!(
         pub unsafe fn unlockDocument(&self, sender: Option<&Object>);
 
         #[method(lockDocumentWithCompletionHandler:)]
-        pub unsafe fn lockDocumentWithCompletionHandler(&self, completionHandler: TodoBlock);
+        pub unsafe fn lockDocumentWithCompletionHandler(
+            &self,
+            completionHandler: Option<&Block<(Bool,), ()>>,
+        );
 
         #[method(lockWithCompletionHandler:)]
-        pub unsafe fn lockWithCompletionHandler(&self, completionHandler: TodoBlock);
+        pub unsafe fn lockWithCompletionHandler(
+            &self,
+            completionHandler: Option<&Block<(*mut NSError,), ()>>,
+        );
 
         #[method(unlockDocumentWithCompletionHandler:)]
-        pub unsafe fn unlockDocumentWithCompletionHandler(&self, completionHandler: TodoBlock);
+        pub unsafe fn unlockDocumentWithCompletionHandler(
+            &self,
+            completionHandler: Option<&Block<(Bool,), ()>>,
+        );
 
         #[method(unlockWithCompletionHandler:)]
-        pub unsafe fn unlockWithCompletionHandler(&self, completionHandler: TodoBlock);
+        pub unsafe fn unlockWithCompletionHandler(
+            &self,
+            completionHandler: Option<&Block<(*mut NSError,), ()>>,
+        );
 
         #[method(isLocked)]
         pub unsafe fn isLocked(&self) -> bool;
@@ -452,7 +474,7 @@ extern_methods!(
         pub unsafe fn shareDocumentWithSharingService_completionHandler(
             &self,
             sharingService: &NSSharingService,
-            completionHandler: TodoBlock,
+            completionHandler: Option<&Block<(Bool,), ()>>,
         );
 
         #[method(prepareSharingServicePicker:)]

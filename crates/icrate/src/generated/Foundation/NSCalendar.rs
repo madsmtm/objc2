@@ -415,7 +415,7 @@ extern_methods!(
             start: &NSDate,
             comps: &NSDateComponents,
             opts: NSCalendarOptions,
-            block: TodoBlock,
+            block: &Block<(*mut NSDate, Bool, NonNull<Bool>), ()>,
         );
 
         #[method_id(@__retain_semantics Other nextDateAfterDate:matchingComponents:options:)]

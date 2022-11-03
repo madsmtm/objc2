@@ -96,7 +96,7 @@ extern_methods!(
         pub unsafe fn registerUndoWithTarget_handler(
             &self,
             target: &Object,
-            undoHandler: TodoBlock,
+            undoHandler: &Block<(NonNull<Object>,), ()>,
         );
 
         #[method(setActionIsDiscardable:)]

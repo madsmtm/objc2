@@ -31,7 +31,7 @@ extern_methods!(
             destinationDir: &NSURL,
             options: &NSDictionary,
             operationQueue: &NSOperationQueue,
-            reader: TodoBlock,
+            reader: &Block<(NonNull<NSURL>, *mut NSError), ()>,
         );
     }
 );
