@@ -16,7 +16,7 @@ extern_class!(
 extern_methods!(
     unsafe impl NSIncrementalStore {
         #[method(loadMetadata:)]
-        pub unsafe fn loadMetadata(&self, error: *mut *mut NSError) -> bool;
+        pub unsafe fn loadMetadata(&self) -> Result<(), Id<NSError, Shared>>;
 
         #[method_id(@__retain_semantics Other executeRequest:withContext:error:)]
         pub unsafe fn executeRequest_withContext_error(

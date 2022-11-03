@@ -688,6 +688,7 @@ pub struct Ty {
     ty: RustType,
     in_return: bool,
     in_static: bool,
+    result_wrapped: bool,
 }
 
 impl Ty {
@@ -695,6 +696,7 @@ impl Ty {
         ty: RustType::Void,
         in_return: true,
         in_static: false,
+        result_wrapped: false,
     };
 
     pub fn parse_method_argument(ty: Type<'_>, is_consumed: bool) -> Self {
@@ -722,6 +724,7 @@ impl Ty {
             ty,
             in_return: false,
             in_static: false,
+            result_wrapped: false,
         }
     }
 
@@ -738,6 +741,7 @@ impl Ty {
             ty,
             in_return: true,
             in_static: false,
+            result_wrapped: false,
         }
     }
 
@@ -796,6 +800,7 @@ impl Ty {
             ty,
             in_return: false,
             in_static: false,
+            result_wrapped: false,
         }
     }
 
@@ -812,6 +817,7 @@ impl Ty {
             ty,
             in_return: false,
             in_static: false,
+            result_wrapped: false,
         }
     }
 
@@ -828,6 +834,7 @@ impl Ty {
             ty,
             in_return: true,
             in_static: false,
+            result_wrapped: false,
         }
     }
 
@@ -844,6 +851,7 @@ impl Ty {
             ty,
             in_return: false,
             in_static: false,
+            result_wrapped: false,
         }
     }
 
@@ -858,6 +866,7 @@ impl Ty {
             ty,
             in_return: false,
             in_static: false,
+            result_wrapped: false,
         }
     }
 
@@ -874,91 +883,59 @@ impl Ty {
             ty,
             in_return: false,
             in_static: true,
+            result_wrapped: false,
         }
     }
 }
 
 impl Ty {
-    pub fn is_error_out(&self) -> bool {
+    pub fn argument_is_error_out(&self) -> bool {
         if let RustType::Pointer {
             nullability,
             is_const,
             pointee,
         } = &self.ty
         {
-            assert_eq!(
-                *nullability,
-                Nullability::Nullable,
-                "invalid error nullability {self:?}"
-            );
-            assert!(!is_const, "expected error not const {self:?}");
             if let RustType::Id {
-                type_,
-                is_const,
+                type_: ty,
+                is_const: id_is_const,
                 lifetime,
-                nullability,
+                nullability: id_nullability,
             } = &**pointee
             {
-                if type_.name != "NSError" {
+                if ty.name != "NSError" {
                     return false;
                 }
-                assert!(
-                    type_.generics.is_empty(),
-                    "expected error generics to be empty {self:?}"
-                );
                 assert_eq!(
                     *nullability,
                     Nullability::Nullable,
+                    "invalid error nullability {self:?}"
+                );
+                assert!(!is_const, "expected error not const {self:?}");
+
+                assert!(
+                    ty.generics.is_empty(),
+                    "expected error generics to be empty {self:?}"
+                );
+                assert_eq!(
+                    *id_nullability,
+                    Nullability::Nullable,
                     "invalid inner error nullability {self:?}"
                 );
-                assert!(!is_const, "expected inner error not const {self:?}");
+                assert!(!id_is_const, "expected inner error not const {self:?}");
                 assert_eq!(
                     *lifetime,
                     Lifetime::Unspecified,
                     "invalid error lifetime {self:?}"
                 );
-                true
-            } else {
-                panic!("invalid error parameter {self:?}")
+                return true;
             }
-        } else {
-            false
         }
+        false
     }
 
     pub fn is_id(&self) -> bool {
         matches!(self.ty, RustType::Id { .. })
-    }
-
-    pub fn as_error(&self) -> String {
-        match &self.ty {
-            RustType::Id {
-                type_,
-                lifetime: Lifetime::Unspecified,
-                is_const: false,
-                nullability: Nullability::Nullable,
-            } => {
-                // NULL -> error
-                format!(" -> Result<Id<{type_}, Shared>, Id<NSError, Shared>>")
-            }
-            RustType::ObjcBool => {
-                // NO -> error
-                format!(" -> Result<(), Id<NSError, Shared>>")
-            }
-            _ => panic!("unknown error result type {self:?}"),
-        }
-    }
-
-    pub fn is_alloc(&self) -> bool {
-        match &self.ty {
-            RustType::Id {
-                type_,
-                lifetime: Lifetime::Unspecified,
-                is_const: false,
-                nullability: Nullability::NonNull,
-            } => type_.name == "Self" && type_.generics.is_empty(),
-            _ => false,
-        }
     }
 
     pub fn typedef_type(mut self) -> Option<Self> {
@@ -983,6 +960,28 @@ impl Ty {
         }
     }
 
+    pub fn set_is_alloc(&mut self) {
+        match &mut self.ty {
+            RustType::Id {
+                type_: ty,
+                lifetime: Lifetime::Unspecified,
+                is_const: false,
+                nullability: Nullability::NonNull,
+            } if ty.name == "Self" && ty.generics.is_empty() => {
+                ty.name = "Allocated".into();
+                ty.generics = vec![GenericType {
+                    name: "Self".into(),
+                    generics: vec![],
+                }];
+            }
+            _ => panic!("invalid alloc return type {self:?}"),
+        }
+    }
+
+    pub fn set_is_error(&mut self) {
+        self.result_wrapped = true;
+    }
+
     /// Related result types
     /// https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types
     pub fn fix_related_result_type(&mut self, is_class: bool, selector: &str) {
@@ -1004,6 +1003,25 @@ impl Ty {
 impl fmt::Display for Ty {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.in_return {
+            if self.result_wrapped {
+                return match &self.ty {
+                    RustType::Id {
+                        type_: ty,
+                        lifetime: Lifetime::Unspecified,
+                        is_const: false,
+                        nullability: Nullability::Nullable,
+                    } => {
+                        // NULL -> error
+                        write!(f, " -> Result<Id<{ty}, Shared>, Id<NSError, Shared>>")
+                    }
+                    RustType::ObjcBool => {
+                        // NO -> error
+                        write!(f, " -> Result<(), Id<NSError, Shared>>")
+                    }
+                    _ => panic!("unknown error result type {self:?}"),
+                };
+            }
+
             if let RustType::Void = &self.ty {
                 // Don't output anything
                 return Ok(());

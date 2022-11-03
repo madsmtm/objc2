@@ -174,13 +174,13 @@ extern_methods!(
         ) -> Result<(), Id<NSError, Shared>>;
 
         #[method(validateForDelete:)]
-        pub unsafe fn validateForDelete(&self, error: *mut *mut NSError) -> bool;
+        pub unsafe fn validateForDelete(&self) -> Result<(), Id<NSError, Shared>>;
 
         #[method(validateForInsert:)]
-        pub unsafe fn validateForInsert(&self, error: *mut *mut NSError) -> bool;
+        pub unsafe fn validateForInsert(&self) -> Result<(), Id<NSError, Shared>>;
 
         #[method(validateForUpdate:)]
-        pub unsafe fn validateForUpdate(&self, error: *mut *mut NSError) -> bool;
+        pub unsafe fn validateForUpdate(&self) -> Result<(), Id<NSError, Shared>>;
 
         #[method(setObservationInfo:)]
         pub unsafe fn setObservationInfo(&self, inObservationInfo: *mut c_void);

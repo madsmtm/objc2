@@ -27,7 +27,7 @@ extern_methods!(
         ) -> Id<Self, Shared>;
 
         #[method(performFetch:)]
-        pub unsafe fn performFetch(&self, error: *mut *mut NSError) -> bool;
+        pub unsafe fn performFetch(&self) -> Result<(), Id<NSError, Shared>>;
 
         #[method_id(@__retain_semantics Other fetchRequest)]
         pub unsafe fn fetchRequest(&self) -> Id<NSFetchRequest<ResultType>, Shared>;

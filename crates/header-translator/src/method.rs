@@ -212,7 +212,7 @@ impl<'tu> PartialMethod<'tu> {
                 .expect("method availability"),
         );
 
-        let arguments: Vec<_> = entity
+        let mut arguments: Vec<_> = entity
             .get_arguments()
             .expect("method arguments")
             .into_iter()
@@ -254,6 +254,21 @@ impl<'tu> PartialMethod<'tu> {
             })
             .collect();
 
+        let is_error = if let Some((_, _, ty)) = arguments.last() {
+            ty.argument_is_error_out()
+        } else {
+            false
+        };
+
+        // TODO: Strip these from function name?
+        // selector.ends_with("error:")
+        // || selector.ends_with("AndReturnError:")
+        // || selector.ends_with("WithError:")
+
+        if is_error {
+            arguments.pop();
+        }
+
         if let Some(qualifiers) = entity.get_objc_qualifiers() {
             let qualifier = Qualifier::parse(qualifiers);
             panic!(
@@ -264,7 +279,16 @@ impl<'tu> PartialMethod<'tu> {
 
         let result_type = entity.get_result_type().expect("method return type");
         let mut result_type = Ty::parse_method_return(result_type);
+
         result_type.fix_related_result_type(is_class, &selector);
+
+        if is_class && MemoryManagement::is_alloc(&selector) {
+            result_type.set_is_alloc();
+        }
+
+        if is_error {
+            result_type.set_is_error();
+        }
 
         let mut designated_initializer = false;
         let mut consumes_self = false;
@@ -349,20 +373,6 @@ impl<'tu> PartialMethod<'tu> {
 
 impl fmt::Display for Method {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut arguments = self.arguments.clone();
-
-        let is_error =
-            if self.selector.ends_with("error:") || self.selector.ends_with("AndReturnError:") {
-                let (_, _, ty) = arguments.last().expect("arguments last");
-                ty.is_error_out()
-            } else {
-                false
-            };
-
-        if is_error {
-            arguments.pop();
-        }
-
         if self.result_type.is_id() {
             writeln!(
                 f,
@@ -386,26 +396,12 @@ impl fmt::Display for Method {
                 write!(f, "&self, ")?;
             }
         }
-        for (param, _qualifier, arg_ty) in arguments {
-            write!(f, "{}: {arg_ty},", handle_reserved(&param))?;
+        for (param, _qualifier, arg_ty) in &self.arguments {
+            write!(f, "{}: {arg_ty},", handle_reserved(param))?;
         }
         write!(f, ")")?;
 
-        if is_error {
-            writeln!(f, "{};", self.result_type.as_error())?;
-        } else {
-            if MemoryManagement::is_alloc(&self.selector) {
-                assert!(
-                    self.result_type.is_alloc(),
-                    "{:?}, {:?}",
-                    self.result_type,
-                    self.fn_name
-                );
-                writeln!(f, "-> Option<Allocated<Self>>;")?;
-            } else {
-                writeln!(f, "{};", self.result_type)?;
-            }
-        };
+        writeln!(f, "{};", self.result_type)?;
 
         Ok(())
     }

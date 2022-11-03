@@ -64,8 +64,7 @@ extern_methods!(
         #[method_id(@__retain_semantics Other execute:)]
         pub unsafe fn execute(
             &self,
-            error: *mut *mut NSError,
-        ) -> Option<Id<NSArray<ResultType>, Shared>>;
+        ) -> Result<Id<NSArray<ResultType>, Shared>, Id<NSError, Shared>>;
 
         #[method_id(@__retain_semantics Other entity)]
         pub unsafe fn entity(&self) -> Option<Id<NSEntityDescription, Shared>>;

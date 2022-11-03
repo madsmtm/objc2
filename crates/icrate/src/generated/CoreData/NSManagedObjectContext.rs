@@ -210,7 +210,7 @@ extern_methods!(
         pub unsafe fn rollback(&self);
 
         #[method(save:)]
-        pub unsafe fn save(&self, error: *mut *mut NSError) -> bool;
+        pub unsafe fn save(&self) -> Result<(), Id<NSError, Shared>>;
 
         #[method(refreshAllObjects)]
         pub unsafe fn refreshAllObjects(&self);

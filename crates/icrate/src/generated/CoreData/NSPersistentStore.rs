@@ -42,7 +42,7 @@ extern_methods!(
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 
         #[method(loadMetadata:)]
-        pub unsafe fn loadMetadata(&self, error: *mut *mut NSError) -> bool;
+        pub unsafe fn loadMetadata(&self) -> Result<(), Id<NSError, Shared>>;
 
         #[method_id(@__retain_semantics Other persistentStoreCoordinator)]
         pub unsafe fn persistentStoreCoordinator(
