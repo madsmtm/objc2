@@ -8,7 +8,7 @@ use crate::config::{ClassData, Config};
 use crate::expr::Expr;
 use crate::method::Method;
 use crate::property::Property;
-use crate::rust_type::{RustType, RustTypeReturn, RustTypeStatic};
+use crate::rust_type::Ty;
 use crate::unexposed_macro::UnexposedMacro;
 
 #[derive(Debug, Clone)]
@@ -199,7 +199,7 @@ pub enum Stmt {
     StructDecl {
         name: String,
         boxable: bool,
-        fields: Vec<(String, RustType)>,
+        fields: Vec<(String, Ty)>,
     },
     /// typedef NS_OPTIONS(type, name) {
     ///     variants*
@@ -218,7 +218,7 @@ pub enum Stmt {
     /// };
     EnumDecl {
         name: Option<String>,
-        ty: RustType,
+        ty: Ty,
         kind: Option<UnexposedMacro>,
         variants: Vec<(String, Expr)>,
     },
@@ -226,7 +226,7 @@ pub enum Stmt {
     /// extern const ty name;
     VarDecl {
         name: String,
-        ty: RustTypeStatic,
+        ty: Ty,
         value: Option<Expr>,
     },
     /// extern ret name(args*);
@@ -236,13 +236,13 @@ pub enum Stmt {
     /// }
     FnDecl {
         name: String,
-        arguments: Vec<(String, RustType)>,
-        result_type: RustTypeReturn,
+        arguments: Vec<(String, Ty)>,
+        result_type: Ty,
         // Some -> inline function.
         body: Option<()>,
     },
     /// typedef Type TypedefName;
-    AliasDecl { name: String, type_: RustType },
+    AliasDecl { name: String, ty: Ty },
 }
 
 fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
@@ -259,7 +259,7 @@ fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
             EntityKind::FieldDecl => {
                 let name = entity.get_name().expect("struct field name");
                 let ty = entity.get_type().expect("struct field type");
-                let ty = RustType::parse_struct_field(ty);
+                let ty = Ty::parse_struct_field(ty);
 
                 if entity.is_bit_field() {
                     println!("[UNSOUND] struct bitfield {name}: {entity:?}");
@@ -444,36 +444,9 @@ impl Stmt {
                 let ty = entity
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
-                let ty = RustType::parse_typedef(ty);
-
-                match ty {
-                    // Handled by Stmt::EnumDecl
-                    RustType::Enum { .. } => None,
-                    // Handled above and in Stmt::StructDecl
-                    // The rest is only `NSZone`
-                    RustType::Struct { name } => {
-                        assert_eq!(name, "_NSZone", "invalid struct in typedef");
-                        None
-                    }
-                    // Opaque structs
-                    RustType::Pointer {
-                        nullability,
-                        is_const,
-                        mut pointee,
-                    } if matches!(*pointee, RustType::Struct { .. }) => {
-                        *pointee = RustType::Void;
-                        let type_ = RustType::Pointer {
-                            nullability,
-                            is_const,
-                            pointee,
-                        };
-                        Some(Self::AliasDecl { name, type_ })
-                    }
-                    RustType::IncompleteArray { .. } => {
-                        unimplemented!("incomplete array in struct")
-                    }
-                    type_ => Some(Self::AliasDecl { name, type_ }),
-                }
+                Ty::parse_typedef(ty)
+                    .typedef_type()
+                    .map(|ty| Self::AliasDecl { name, ty })
             }
             EntityKind::StructDecl => {
                 if let Some(name) = entity.get_name() {
@@ -511,7 +484,7 @@ impl Stmt {
 
                 let ty = entity.get_enum_underlying_type().expect("enum type");
                 let is_signed = ty.is_signed_integer();
-                let ty = RustType::parse_enum(ty);
+                let ty = Ty::parse_enum(ty);
                 let mut kind = None;
                 let mut variants = Vec::new();
 
@@ -579,7 +552,7 @@ impl Stmt {
             EntityKind::VarDecl => {
                 let name = entity.get_name().expect("var decl name");
                 let ty = entity.get_type().expect("var type");
-                let ty = RustTypeStatic::parse(ty);
+                let ty = Ty::parse_static(ty);
                 let mut value = None;
 
                 entity.visit_children(|entity, _parent| {
@@ -623,7 +596,7 @@ impl Stmt {
                 }
 
                 let result_type = entity.get_result_type().expect("function result type");
-                let result_type = RustTypeReturn::parse(result_type);
+                let result_type = Ty::parse_function_return(result_type);
                 let mut arguments = Vec::new();
 
                 assert!(
@@ -643,7 +616,7 @@ impl Stmt {
                             // Could also be retrieved via. `get_arguments`
                             let name = entity.get_name().unwrap_or_else(|| "_".into());
                             let ty = entity.get_type().expect("function argument type");
-                            let ty = RustType::parse_argument(ty, false);
+                            let ty = Ty::parse_function_argument(ty);
                             arguments.push((name, ty))
                         }
                         _ => panic!("unknown function child in {name}: {entity:?}"),
@@ -707,7 +680,7 @@ impl fmt::Display for Stmt {
                     format!("<{}: Message>", generics.join(": Message,"))
                 };
 
-                let type_ = if generics.is_empty() {
+                let ty = if generics.is_empty() {
                     name.clone()
                 } else {
                     format!("{name}<{}>", generics.join(","))
@@ -737,16 +710,13 @@ impl fmt::Display for Stmt {
                     writeln!(f, "}}")?;
                 }
                 writeln!(f, "")?;
-                writeln!(
-                    f,
-                    "    unsafe impl{generic_params} ClassType for {type_} {{"
-                )?;
+                writeln!(f, "    unsafe impl{generic_params} ClassType for {ty} {{")?;
                 writeln!(f, "        type Super = {superclass_name};")?;
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
                 writeln!(f, "")?;
                 writeln!(f, "extern_methods!(")?;
-                writeln!(f, "    unsafe impl{generic_params} {type_} {{")?;
+                writeln!(f, "    unsafe impl{generic_params} {ty} {{")?;
                 for method in methods {
                     writeln!(f, "{method}")?;
                 }
@@ -767,7 +737,7 @@ impl fmt::Display for Stmt {
                     format!("<{}: Message>", generics.join(": Message,"))
                 };
 
-                let type_ = if generics.is_empty() {
+                let ty = if generics.is_empty() {
                     class_name.clone()
                 } else {
                     format!("{class_name}<{}>", generics.join(","))
@@ -777,7 +747,7 @@ impl fmt::Display for Stmt {
                 if let Some(name) = name {
                     writeln!(f, "    /// {name}")?;
                 }
-                writeln!(f, "    unsafe impl{generic_params} {type_} {{")?;
+                writeln!(f, "    unsafe impl{generic_params} {ty} {{")?;
                 for method in methods {
                     writeln!(f, "{method}")?;
                 }
@@ -895,8 +865,8 @@ impl fmt::Display for Stmt {
                 // writeln!(f, "    todo!()")?;
                 // writeln!(f, "}}")?;
             }
-            Self::AliasDecl { name, type_ } => {
-                writeln!(f, "pub type {name} = {type_};")?;
+            Self::AliasDecl { name, ty } => {
+                writeln!(f, "pub type {name} = {ty};")?;
             }
         };
         Ok(())

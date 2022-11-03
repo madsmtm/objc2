@@ -5,7 +5,7 @@ use clang::{Entity, EntityKind, EntityVisitResult, ObjCQualifiers};
 use crate::availability::Availability;
 use crate::config::MethodData;
 use crate::objc2_utils::in_selector_family;
-use crate::rust_type::{RustType, RustTypeReturn};
+use crate::rust_type::Ty;
 use crate::unexposed_macro::UnexposedMacro;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
@@ -129,15 +129,15 @@ impl MemoryManagement {
         }
     }
 
-    fn is_init(sel: &str) -> bool {
+    pub fn is_init(sel: &str) -> bool {
         in_selector_family(sel.as_bytes(), b"init")
     }
 
-    fn is_alloc(sel: &str) -> bool {
+    pub fn is_alloc(sel: &str) -> bool {
         in_selector_family(sel.as_bytes(), b"alloc")
     }
 
-    fn is_new(sel: &str) -> bool {
+    pub fn is_new(sel: &str) -> bool {
         in_selector_family(sel.as_bytes(), b"new")
     }
 }
@@ -152,8 +152,8 @@ pub struct Method {
     pub is_optional_protocol: bool,
     pub memory_management: MemoryManagement,
     pub designated_initializer: bool,
-    pub arguments: Vec<(String, Option<Qualifier>, RustType)>,
-    pub result_type: RustTypeReturn,
+    pub arguments: Vec<(String, Option<Qualifier>, Ty)>,
+    pub result_type: Ty,
     pub safe: bool,
 }
 
@@ -248,7 +248,7 @@ impl<'tu> PartialMethod<'tu> {
                 });
 
                 let ty = entity.get_type().expect("argument type");
-                let ty = RustType::parse_argument(ty, is_consumed);
+                let ty = Ty::parse_method_argument(ty, is_consumed);
 
                 (name, qualifier, ty)
             })
@@ -263,34 +263,8 @@ impl<'tu> PartialMethod<'tu> {
         }
 
         let result_type = entity.get_result_type().expect("method return type");
-        let result_type = match RustTypeReturn::parse(result_type) {
-            RustTypeReturn(RustType::Id {
-                mut type_,
-                is_const,
-                lifetime,
-                nullability,
-            }) => {
-                // Related result types
-                // https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types
-                if type_.name == "Object" {
-                    assert!(type_.generics.is_empty(), "Object return generics empty");
-                    if (is_class && MemoryManagement::is_new(&selector))
-                        || (is_class && MemoryManagement::is_alloc(&selector))
-                        || (!is_class && MemoryManagement::is_init(&selector))
-                        || (!is_class && selector == "self")
-                    {
-                        type_.name = "Self".into();
-                    }
-                }
-                RustTypeReturn(RustType::Id {
-                    type_,
-                    is_const,
-                    lifetime,
-                    nullability,
-                })
-            }
-            ty => ty,
-        };
+        let mut result_type = Ty::parse_method_return(result_type);
+        result_type.fix_related_result_type(is_class, &selector);
 
         let mut designated_initializer = false;
         let mut consumes_self = false;

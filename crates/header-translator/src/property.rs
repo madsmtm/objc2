@@ -5,7 +5,7 @@ use clang::{Entity, EntityKind, EntityVisitResult, Nullability, ObjCAttributes};
 use crate::availability::Availability;
 use crate::config::MethodData;
 use crate::method::{MemoryManagement, Method, Qualifier};
-use crate::rust_type::{RustType, RustTypeReturn};
+use crate::rust_type::Ty;
 use crate::unexposed_macro::UnexposedMacro;
 
 #[allow(dead_code)]
@@ -17,8 +17,8 @@ pub struct Property {
     availability: Availability,
     is_class: bool,
     is_optional_protocol: bool,
-    type_in: RustType,
-    type_out: RustType,
+    type_in: Ty,
+    type_out: Ty,
     safe: bool,
 }
 
@@ -89,11 +89,11 @@ impl PartialProperty<'_> {
             Nullability::Unspecified
         };
 
-        let type_in = RustType::parse_property(
+        let type_in = Ty::parse_property(
             entity.get_type().expect("property type"),
             Nullability::Unspecified,
         );
-        let type_out = RustType::parse_property(
+        let type_out = Ty::parse_property_return(
             entity.get_type().expect("property type"),
             default_nullability,
         );
@@ -158,7 +158,7 @@ impl fmt::Display for Property {
             memory_management: MemoryManagement::Normal,
             designated_initializer: false,
             arguments: Vec::new(),
-            result_type: RustTypeReturn::new(self.type_out.clone()),
+            result_type: self.type_out.clone(),
             safe: self.safe,
         };
         write!(f, "{method}")?;
@@ -173,7 +173,7 @@ impl fmt::Display for Property {
                 memory_management: MemoryManagement::Normal,
                 designated_initializer: false,
                 arguments: Vec::from([(self.name.clone(), None, self.type_in.clone())]),
-                result_type: RustTypeReturn::new(RustType::Void),
+                result_type: Ty::VOID_RESULT,
                 safe: self.safe,
             };
             write!(f, "{method}")?;

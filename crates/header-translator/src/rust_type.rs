@@ -2,6 +2,8 @@ use std::fmt;
 
 use clang::{Nullability, Type, TypeKind};
 
+use crate::method::MemoryManagement;
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct GenericType {
     pub name: String,
@@ -251,7 +253,7 @@ fn parse_attributed<'a>(
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum RustType {
+enum RustType {
     // Primitives
     Void,
     C99Bool,
@@ -322,53 +324,6 @@ pub enum RustType {
 }
 
 impl RustType {
-    pub fn is_error_out(&self) -> bool {
-        if let Self::Pointer {
-            nullability,
-            is_const,
-            pointee,
-        } = self
-        {
-            assert_eq!(
-                *nullability,
-                Nullability::Nullable,
-                "invalid error nullability {self:?}"
-            );
-            assert!(!is_const, "expected error not const {self:?}");
-            if let Self::Id {
-                type_,
-                is_const,
-                lifetime,
-                nullability,
-            } = &**pointee
-            {
-                if type_.name != "NSError" {
-                    return false;
-                }
-                assert!(
-                    type_.generics.is_empty(),
-                    "expected error generics to be empty {self:?}"
-                );
-                assert_eq!(
-                    *nullability,
-                    Nullability::Nullable,
-                    "invalid inner error nullability {self:?}"
-                );
-                assert!(!is_const, "expected inner error not const {self:?}");
-                assert_eq!(
-                    *lifetime,
-                    Lifetime::Unspecified,
-                    "invalid error lifetime {self:?}"
-                );
-                true
-            } else {
-                panic!("invalid error parameter {self:?}")
-            }
-        } else {
-            false
-        }
-    }
-
     fn parse(
         ty: Type<'_>,
         is_consumed: bool,
@@ -569,9 +524,7 @@ impl RustType {
             }
         }
     }
-}
 
-impl RustType {
     fn visit_lifetime(&self, mut f: impl FnMut(Lifetime)) {
         match self {
             Self::Id { lifetime, .. } => f(*lifetime),
@@ -580,108 +533,6 @@ impl RustType {
             Self::Array { element_type, .. } => element_type.visit_lifetime(f),
             _ => {}
         }
-    }
-
-    pub fn parse_argument(ty: Type<'_>, is_consumed: bool) -> Self {
-        let this = Self::parse(ty, is_consumed, Nullability::Unspecified, false);
-
-        match &this {
-            Self::Pointer { pointee, .. } => pointee.visit_lifetime(|lifetime| {
-                if lifetime != Lifetime::Autoreleasing && lifetime != Lifetime::Unspecified {
-                    panic!("unexpected lifetime {lifetime:?} in pointer argument {ty:?}");
-                }
-            }),
-            Self::IncompleteArray { pointee, .. } => pointee.visit_lifetime(|lifetime| {
-                if lifetime != Lifetime::Unretained && lifetime != Lifetime::Unspecified {
-                    panic!("unexpected lifetime {lifetime:?} in incomplete array argument {ty:?}");
-                }
-            }),
-            _ => this.visit_lifetime(|lifetime| {
-                if lifetime != Lifetime::Strong && lifetime != Lifetime::Unspecified {
-                    panic!("unexpected lifetime {lifetime:?} in argument {ty:?}");
-                }
-            }),
-        }
-
-        this
-    }
-
-    pub fn parse_typedef(ty: Type<'_>) -> Self {
-        match ty.get_kind() {
-            // When we encounter a typedef declaration like this:
-            //     typedef NSString* NSAbc;
-            //
-            // We parse it as one of:
-            //     type NSAbc = NSString;
-            //     struct NSAbc(NSString);
-            //
-            // Instead of:
-            //     type NSAbc = *const NSString;
-            //
-            // Because that means we can later on use ordinary Id<...> handling.
-            TypeKind::ObjCObjectPointer => {
-                let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                let type_ = GenericType::parse_objc_pointer(ty);
-
-                match &*type_.name {
-                    "NSString" => {}
-                    "NSUnit" => {}        // TODO: Handle this differently
-                    "TodoProtocols" => {} // TODO
-                    _ => panic!("typedef declaration was not NSString: {type_:?}"),
-                }
-
-                if !type_.generics.is_empty() {
-                    panic!("typedef declaration generics not empty");
-                }
-
-                Self::TypeDef { name: type_.name }
-            }
-            _ => {
-                let this = Self::parse(ty, false, Nullability::Unspecified, false);
-
-                this.visit_lifetime(|lifetime| {
-                    if lifetime != Lifetime::Unspecified {
-                        panic!("unexpected lifetime in typedef {this:?}");
-                    }
-                });
-
-                this
-            }
-        }
-    }
-
-    pub fn parse_property(ty: Type<'_>, default_nullability: Nullability) -> Self {
-        let this = Self::parse(ty, false, default_nullability, false);
-
-        this.visit_lifetime(|lifetime| {
-            if lifetime != Lifetime::Unspecified {
-                panic!("unexpected lifetime in property {this:?}");
-            }
-        });
-
-        this
-    }
-
-    pub fn parse_struct_field(ty: Type<'_>) -> Self {
-        let this = Self::parse(ty, false, Nullability::Unspecified, false);
-
-        this.visit_lifetime(|lifetime| {
-            if lifetime != Lifetime::Unspecified {
-                panic!("unexpected lifetime in struct field {this:?}");
-            }
-        });
-
-        this
-    }
-
-    pub fn parse_enum(ty: Type<'_>) -> Self {
-        let this = Self::parse(ty, false, Nullability::Unspecified, false);
-
-        this.visit_lifetime(|_lifetime| {
-            panic!("unexpected lifetime in enum {this:?}");
-        });
-
-        this
     }
 }
 
@@ -833,29 +684,254 @@ impl fmt::Display for RustType {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct RustTypeReturn(pub RustType);
+pub struct Ty {
+    ty: RustType,
+    in_return: bool,
+    in_static: bool,
+}
 
-impl RustTypeReturn {
-    pub fn is_id(&self) -> bool {
-        matches!(self.0, RustType::Id { .. })
+impl Ty {
+    pub const VOID_RESULT: Self = Self {
+        ty: RustType::Void,
+        in_return: true,
+        in_static: false,
+    };
+
+    pub fn parse_method_argument(ty: Type<'_>, is_consumed: bool) -> Self {
+        let ty = RustType::parse(ty, is_consumed, Nullability::Unspecified, false);
+
+        match &ty {
+            RustType::Pointer { pointee, .. } => pointee.visit_lifetime(|lifetime| {
+                if lifetime != Lifetime::Autoreleasing && lifetime != Lifetime::Unspecified {
+                    panic!("unexpected lifetime {lifetime:?} in pointer argument {ty:?}");
+                }
+            }),
+            RustType::IncompleteArray { pointee, .. } => pointee.visit_lifetime(|lifetime| {
+                if lifetime != Lifetime::Unretained && lifetime != Lifetime::Unspecified {
+                    panic!("unexpected lifetime {lifetime:?} in incomplete array argument {ty:?}");
+                }
+            }),
+            _ => ty.visit_lifetime(|lifetime| {
+                if lifetime != Lifetime::Strong && lifetime != Lifetime::Unspecified {
+                    panic!("unexpected lifetime {lifetime:?} in argument {ty:?}");
+                }
+            }),
+        }
+
+        Self {
+            ty,
+            in_return: false,
+            in_static: false,
+        }
     }
 
-    pub fn new(inner: RustType) -> Self {
-        inner.visit_lifetime(|lifetime| {
+    pub fn parse_method_return(ty: Type<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+
+        ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
-                panic!("unexpected lifetime in return {inner:?}");
+                panic!("unexpected lifetime in return {ty:?}");
             }
         });
 
-        Self(inner)
+        Self {
+            ty,
+            in_return: true,
+            in_static: false,
+        }
     }
 
-    pub fn parse(ty: Type<'_>) -> Self {
-        Self::new(RustType::parse(ty, false, Nullability::Unspecified, false))
+    pub fn parse_function_argument(ty: Type<'_>) -> Self {
+        Self::parse_method_argument(ty, false)
+    }
+
+    pub fn parse_function_return(ty: Type<'_>) -> Self {
+        Self::parse_method_return(ty)
+    }
+
+    pub fn parse_typedef(ty: Type<'_>) -> Self {
+        let ty = match ty.get_kind() {
+            // When we encounter a typedef declaration like this:
+            //     typedef NSString* NSAbc;
+            //
+            // We parse it as one of:
+            //     type NSAbc = NSString;
+            //     struct NSAbc(NSString);
+            //
+            // Instead of:
+            //     type NSAbc = *const NSString;
+            //
+            // Because that means we can later on use ordinary Id<...> handling.
+            TypeKind::ObjCObjectPointer => {
+                let ty = ty.get_pointee_type().expect("pointer type to have pointee");
+                let ty = GenericType::parse_objc_pointer(ty);
+
+                match &*ty.name {
+                    "NSString" => {}
+                    "NSUnit" => {}        // TODO: Handle this differently
+                    "TodoProtocols" => {} // TODO
+                    _ => panic!("typedef declaration was not NSString: {ty:?}"),
+                }
+
+                if !ty.generics.is_empty() {
+                    panic!("typedef declaration generics not empty");
+                }
+
+                RustType::TypeDef { name: ty.name }
+            }
+            _ => {
+                let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+
+                ty.visit_lifetime(|lifetime| {
+                    if lifetime != Lifetime::Unspecified {
+                        panic!("unexpected lifetime in typedef {ty:?}");
+                    }
+                });
+
+                ty
+            }
+        };
+
+        Self {
+            ty,
+            in_return: false,
+            in_static: false,
+        }
+    }
+
+    pub fn parse_property(ty: Type<'_>, default_nullability: Nullability) -> Self {
+        let ty = RustType::parse(ty, false, default_nullability, false);
+
+        ty.visit_lifetime(|lifetime| {
+            if lifetime != Lifetime::Unspecified {
+                panic!("unexpected lifetime in property {ty:?}");
+            }
+        });
+
+        Self {
+            ty,
+            in_return: false,
+            in_static: false,
+        }
+    }
+
+    pub fn parse_property_return(ty: Type<'_>, default_nullability: Nullability) -> Self {
+        let ty = RustType::parse(ty, false, default_nullability, false);
+
+        ty.visit_lifetime(|lifetime| {
+            if lifetime != Lifetime::Unspecified {
+                panic!("unexpected lifetime in property {ty:?}");
+            }
+        });
+
+        Self {
+            ty,
+            in_return: true,
+            in_static: false,
+        }
+    }
+
+    pub fn parse_struct_field(ty: Type<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+
+        ty.visit_lifetime(|lifetime| {
+            if lifetime != Lifetime::Unspecified {
+                panic!("unexpected lifetime in struct field {ty:?}");
+            }
+        });
+
+        Self {
+            ty,
+            in_return: false,
+            in_static: false,
+        }
+    }
+
+    pub fn parse_enum(ty: Type<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+
+        ty.visit_lifetime(|_lifetime| {
+            panic!("unexpected lifetime in enum {ty:?}");
+        });
+
+        Self {
+            ty,
+            in_return: false,
+            in_static: false,
+        }
+    }
+
+    pub fn parse_static(ty: Type<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+
+        ty.visit_lifetime(|lifetime| {
+            if lifetime != Lifetime::Strong && lifetime != Lifetime::Unspecified {
+                panic!("unexpected lifetime in var {ty:?}");
+            }
+        });
+
+        Self {
+            ty,
+            in_return: false,
+            in_static: true,
+        }
+    }
+}
+
+impl Ty {
+    pub fn is_error_out(&self) -> bool {
+        if let RustType::Pointer {
+            nullability,
+            is_const,
+            pointee,
+        } = &self.ty
+        {
+            assert_eq!(
+                *nullability,
+                Nullability::Nullable,
+                "invalid error nullability {self:?}"
+            );
+            assert!(!is_const, "expected error not const {self:?}");
+            if let RustType::Id {
+                type_,
+                is_const,
+                lifetime,
+                nullability,
+            } = &**pointee
+            {
+                if type_.name != "NSError" {
+                    return false;
+                }
+                assert!(
+                    type_.generics.is_empty(),
+                    "expected error generics to be empty {self:?}"
+                );
+                assert_eq!(
+                    *nullability,
+                    Nullability::Nullable,
+                    "invalid inner error nullability {self:?}"
+                );
+                assert!(!is_const, "expected inner error not const {self:?}");
+                assert_eq!(
+                    *lifetime,
+                    Lifetime::Unspecified,
+                    "invalid error lifetime {self:?}"
+                );
+                true
+            } else {
+                panic!("invalid error parameter {self:?}")
+            }
+        } else {
+            false
+        }
+    }
+
+    pub fn is_id(&self) -> bool {
+        matches!(self.ty, RustType::Id { .. })
     }
 
     pub fn as_error(&self) -> String {
-        match &self.0 {
+        match &self.ty {
             RustType::Id {
                 type_,
                 lifetime: Lifetime::Unspecified,
@@ -874,7 +950,7 @@ impl RustTypeReturn {
     }
 
     pub fn is_alloc(&self) -> bool {
-        match &self.0 {
+        match &self.ty {
             RustType::Id {
                 type_,
                 lifetime: Lifetime::Unspecified,
@@ -884,75 +960,101 @@ impl RustTypeReturn {
             _ => false,
         }
     }
+
+    pub fn typedef_type(mut self) -> Option<Self> {
+        match &mut self.ty {
+            // Handled by Stmt::EnumDecl
+            RustType::Enum { .. } => None,
+            // Handled above and in Stmt::StructDecl
+            // The rest is only `NSZone`
+            RustType::Struct { name } => {
+                assert_eq!(name, "_NSZone", "invalid struct in typedef");
+                None
+            }
+            // Opaque structs
+            RustType::Pointer { pointee, .. } if matches!(&**pointee, RustType::Struct { .. }) => {
+                **pointee = RustType::Void;
+                Some(self)
+            }
+            RustType::IncompleteArray { .. } => {
+                unimplemented!("incomplete array in struct")
+            }
+            _ => Some(self),
+        }
+    }
+
+    /// Related result types
+    /// https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types
+    pub fn fix_related_result_type(&mut self, is_class: bool, selector: &str) {
+        if let RustType::Id { type_, .. } = &mut self.ty {
+            if type_.name == "Object" {
+                assert!(type_.generics.is_empty(), "Object return generics empty");
+                if (is_class && MemoryManagement::is_new(&selector))
+                    || (is_class && MemoryManagement::is_alloc(&selector))
+                    || (!is_class && MemoryManagement::is_init(&selector))
+                    || (!is_class && selector == "self")
+                {
+                    type_.name = "Self".into();
+                }
+            }
+        }
+    }
 }
 
-impl fmt::Display for RustTypeReturn {
+impl fmt::Display for Ty {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match &self.0 {
-            RustType::Void => Ok(()),
-            RustType::Id {
-                type_,
+        if self.in_return {
+            if let RustType::Void = &self.ty {
+                // Don't output anything
+                return Ok(());
+            }
+
+            write!(f, " -> ")?;
+
+            if let RustType::Id {
+                type_: ty,
                 // Ignore
                 is_const: _,
                 // Ignore
                 lifetime: _,
                 nullability,
-            } => {
+            } = &self.ty
+            {
                 if *nullability == Nullability::NonNull {
-                    write!(f, " -> Id<{type_}, Shared>")
+                    return write!(f, "Id<{ty}, Shared>");
                 } else {
-                    write!(f, " -> Option<Id<{type_}, Shared>>")
+                    return write!(f, "Option<Id<{ty}, Shared>>");
                 }
             }
-            RustType::Class { nullability } => {
-                // SAFETY: TODO
+
+            if let RustType::Class { nullability } = &self.ty {
                 if *nullability == Nullability::NonNull {
-                    write!(f, "-> &'static Class")
+                    return write!(f, "&'static Class");
                 } else {
-                    write!(f, "-> Option<&'static Class>")
+                    return write!(f, "Option<&'static Class>");
                 }
             }
-            type_ => write!(f, " -> {type_}"),
         }
-    }
-}
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct RustTypeStatic {
-    inner: RustType,
-}
-
-impl RustTypeStatic {
-    pub fn parse(ty: Type<'_>) -> Self {
-        let inner = RustType::parse(ty, false, Nullability::Unspecified, false);
-
-        inner.visit_lifetime(|lifetime| {
-            if lifetime != Lifetime::Strong && lifetime != Lifetime::Unspecified {
-                panic!("unexpected lifetime in var {inner:?}");
-            }
-        });
-
-        Self { inner }
-    }
-}
-
-impl fmt::Display for RustTypeStatic {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match &self.inner {
-            RustType::Id {
-                type_,
-                is_const: false,
-                lifetime: Lifetime::Strong | Lifetime::Unspecified,
-                nullability,
-            } => {
-                if *nullability == Nullability::NonNull {
-                    write!(f, "&'static {type_}")
-                } else {
-                    write!(f, "Option<&'static {type_}>")
+        if self.in_static {
+            match &self.ty {
+                RustType::Id {
+                    type_: ty,
+                    is_const: false,
+                    lifetime: Lifetime::Strong | Lifetime::Unspecified,
+                    nullability,
+                } => {
+                    if *nullability == Nullability::NonNull {
+                        return write!(f, "&'static {ty}");
+                    } else {
+                        return write!(f, "Option<&'static {ty}>");
+                    }
                 }
+                ty @ RustType::Id { .. } => panic!("invalid static {ty:?}"),
+                _ => {}
             }
-            ty @ RustType::Id { .. } => panic!("invalid static {ty:?}"),
-            ty => write!(f, "{ty}"),
         }
+
+        write!(f, "{}", self.ty)
     }
 }
