@@ -9,6 +9,38 @@ pub type NSExceptionName = NSString;
 
 pub type NSRunLoopMode = NSString;
 
+extern_fn!(
+    pub unsafe fn NSStringFromSelector(aSelector: Sel) -> NonNull<NSString>;
+);
+
+extern_fn!(
+    pub unsafe fn NSSelectorFromString(aSelectorName: &NSString) -> Sel;
+);
+
+extern_fn!(
+    pub unsafe fn NSStringFromClass(aClass: &Class) -> NonNull<NSString>;
+);
+
+extern_fn!(
+    pub unsafe fn NSClassFromString(aClassName: &NSString) -> *const Class;
+);
+
+extern_fn!(
+    pub unsafe fn NSStringFromProtocol(proto: &Protocol) -> NonNull<NSString>;
+);
+
+extern_fn!(
+    pub unsafe fn NSProtocolFromString(namestr: &NSString) -> *mut Protocol;
+);
+
+extern_fn!(
+    pub unsafe fn NSGetSizeAndAlignment(
+        typePtr: NonNull<c_char>,
+        sizep: *mut NSUInteger,
+        alignp: *mut NSUInteger,
+    ) -> NonNull<c_char>;
+);
+
 ns_closed_enum!(
     #[underlying(NSInteger)]
     pub enum NSComparisonResult {

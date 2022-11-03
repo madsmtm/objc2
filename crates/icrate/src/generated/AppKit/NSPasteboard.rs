@@ -294,6 +294,23 @@ extern_methods!(
 
 extern_static!(NSFileContentsPboardType: &'static NSPasteboardType);
 
+extern_fn!(
+    pub unsafe fn NSCreateFilenamePboardType(fileType: &NSString) -> *mut NSPasteboardType;
+);
+
+extern_fn!(
+    pub unsafe fn NSCreateFileContentsPboardType(fileType: &NSString) -> *mut NSPasteboardType;
+);
+
+extern_fn!(
+    pub unsafe fn NSGetFileType(pboardType: &NSPasteboardType) -> *mut NSString;
+);
+
+extern_fn!(
+    pub unsafe fn NSGetFileTypes(pboardTypes: &NSArray<NSPasteboardType>)
+        -> *mut NSArray<NSString>;
+);
+
 extern_static!(NSStringPboardType: &'static NSPasteboardType);
 
 extern_static!(NSFilenamesPboardType: &'static NSPasteboardType);

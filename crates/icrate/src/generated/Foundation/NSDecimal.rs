@@ -23,3 +23,102 @@ ns_enum!(
         NSCalculationDivideByZero = 4,
     }
 );
+
+inline_fn!(
+    pub unsafe fn NSDecimalIsNotANumber(dcm: NonNull<NSDecimal>) -> Bool {
+        todo!()
+    }
+);
+
+extern_fn!(
+    pub unsafe fn NSDecimalCopy(destination: NonNull<NSDecimal>, source: NonNull<NSDecimal>);
+);
+
+extern_fn!(
+    pub unsafe fn NSDecimalCompact(number: NonNull<NSDecimal>);
+);
+
+extern_fn!(
+    pub unsafe fn NSDecimalCompare(
+        leftOperand: NonNull<NSDecimal>,
+        rightOperand: NonNull<NSDecimal>,
+    ) -> NSComparisonResult;
+);
+
+extern_fn!(
+    pub unsafe fn NSDecimalRound(
+        result: NonNull<NSDecimal>,
+        number: NonNull<NSDecimal>,
+        scale: NSInteger,
+        roundingMode: NSRoundingMode,
+    );
+);
+
+extern_fn!(
+    pub unsafe fn NSDecimalNormalize(
+        number1: NonNull<NSDecimal>,
+        number2: NonNull<NSDecimal>,
+        roundingMode: NSRoundingMode,
+    ) -> NSCalculationError;
+);
+
+extern_fn!(
+    pub unsafe fn NSDecimalAdd(
+        result: NonNull<NSDecimal>,
+        leftOperand: NonNull<NSDecimal>,
+        rightOperand: NonNull<NSDecimal>,
+        roundingMode: NSRoundingMode,
+    ) -> NSCalculationError;
+);
+
+extern_fn!(
+    pub unsafe fn NSDecimalSubtract(
+        result: NonNull<NSDecimal>,
+        leftOperand: NonNull<NSDecimal>,
+        rightOperand: NonNull<NSDecimal>,
+        roundingMode: NSRoundingMode,
+    ) -> NSCalculationError;
+);
+
+extern_fn!(
+    pub unsafe fn NSDecimalMultiply(
+        result: NonNull<NSDecimal>,
+        leftOperand: NonNull<NSDecimal>,
+        rightOperand: NonNull<NSDecimal>,
+        roundingMode: NSRoundingMode,
+    ) -> NSCalculationError;
+);
+
+extern_fn!(
+    pub unsafe fn NSDecimalDivide(
+        result: NonNull<NSDecimal>,
+        leftOperand: NonNull<NSDecimal>,
+        rightOperand: NonNull<NSDecimal>,
+        roundingMode: NSRoundingMode,
+    ) -> NSCalculationError;
+);
+
+extern_fn!(
+    pub unsafe fn NSDecimalPower(
+        result: NonNull<NSDecimal>,
+        number: NonNull<NSDecimal>,
+        power: NSUInteger,
+        roundingMode: NSRoundingMode,
+    ) -> NSCalculationError;
+);
+
+extern_fn!(
+    pub unsafe fn NSDecimalMultiplyByPowerOf10(
+        result: NonNull<NSDecimal>,
+        number: NonNull<NSDecimal>,
+        power: c_short,
+        roundingMode: NSRoundingMode,
+    ) -> NSCalculationError;
+);
+
+extern_fn!(
+    pub unsafe fn NSDecimalString(
+        dcm: NonNull<NSDecimal>,
+        locale: Option<&Object>,
+    ) -> NonNull<NSString>;
+);

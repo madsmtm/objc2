@@ -34,6 +34,12 @@ ns_options!(
     }
 );
 
+inline_fn!(
+    pub unsafe fn NSTouchTypeMaskFromType(type_: NSTouchType) -> NSTouchTypeMask {
+        todo!()
+    }
+);
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSTouch;

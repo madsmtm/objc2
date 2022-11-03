@@ -127,6 +127,90 @@ extern_struct!(
     }
 );
 
+extern_fn!(
+    pub unsafe fn NSFreeMapTable(table: &NSMapTable);
+);
+
+extern_fn!(
+    pub unsafe fn NSResetMapTable(table: &NSMapTable);
+);
+
+extern_fn!(
+    pub unsafe fn NSCompareMapTables(table1: &NSMapTable, table2: &NSMapTable) -> Bool;
+);
+
+extern_fn!(
+    pub unsafe fn NSCopyMapTableWithZone(
+        table: &NSMapTable,
+        zone: *mut NSZone,
+    ) -> NonNull<NSMapTable>;
+);
+
+extern_fn!(
+    pub unsafe fn NSMapMember(
+        table: &NSMapTable,
+        key: NonNull<c_void>,
+        originalKey: *mut *mut c_void,
+        value: *mut *mut c_void,
+    ) -> Bool;
+);
+
+extern_fn!(
+    pub unsafe fn NSMapGet(table: &NSMapTable, key: *mut c_void) -> *mut c_void;
+);
+
+extern_fn!(
+    pub unsafe fn NSMapInsert(table: &NSMapTable, key: *mut c_void, value: *mut c_void);
+);
+
+extern_fn!(
+    pub unsafe fn NSMapInsertKnownAbsent(table: &NSMapTable, key: *mut c_void, value: *mut c_void);
+);
+
+extern_fn!(
+    pub unsafe fn NSMapInsertIfAbsent(
+        table: &NSMapTable,
+        key: *mut c_void,
+        value: *mut c_void,
+    ) -> *mut c_void;
+);
+
+extern_fn!(
+    pub unsafe fn NSMapRemove(table: &NSMapTable, key: *mut c_void);
+);
+
+extern_fn!(
+    pub unsafe fn NSEnumerateMapTable(table: &NSMapTable) -> NSMapEnumerator;
+);
+
+extern_fn!(
+    pub unsafe fn NSNextMapEnumeratorPair(
+        enumerator: NonNull<NSMapEnumerator>,
+        key: *mut *mut c_void,
+        value: *mut *mut c_void,
+    ) -> Bool;
+);
+
+extern_fn!(
+    pub unsafe fn NSEndMapTableEnumeration(enumerator: NonNull<NSMapEnumerator>);
+);
+
+extern_fn!(
+    pub unsafe fn NSCountMapTable(table: &NSMapTable) -> NSUInteger;
+);
+
+extern_fn!(
+    pub unsafe fn NSStringFromMapTable(table: &NSMapTable) -> NonNull<NSString>;
+);
+
+extern_fn!(
+    pub unsafe fn NSAllMapTableKeys(table: &NSMapTable) -> NonNull<NSArray>;
+);
+
+extern_fn!(
+    pub unsafe fn NSAllMapTableValues(table: &NSMapTable) -> NonNull<NSArray>;
+);
+
 extern_struct!(
     pub struct NSMapTableKeyCallBacks {
         pub hash: Option<unsafe extern "C" fn(NonNull<NSMapTable>, NonNull<c_void>) -> NSUInteger>,
@@ -148,6 +232,23 @@ extern_struct!(
         pub describe:
             Option<unsafe extern "C" fn(NonNull<NSMapTable>, NonNull<c_void>) -> *mut NSString>,
     }
+);
+
+extern_fn!(
+    pub unsafe fn NSCreateMapTableWithZone(
+        keyCallBacks: NSMapTableKeyCallBacks,
+        valueCallBacks: NSMapTableValueCallBacks,
+        capacity: NSUInteger,
+        zone: *mut NSZone,
+    ) -> NonNull<NSMapTable>;
+);
+
+extern_fn!(
+    pub unsafe fn NSCreateMapTable(
+        keyCallBacks: NSMapTableKeyCallBacks,
+        valueCallBacks: NSMapTableValueCallBacks,
+        capacity: NSUInteger,
+    ) -> NonNull<NSMapTable>;
 );
 
 extern_static!(NSIntegerMapKeyCallBacks: NSMapTableKeyCallBacks);

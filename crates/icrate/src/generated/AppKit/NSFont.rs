@@ -247,6 +247,15 @@ ns_enum!(
     }
 );
 
+extern_fn!(
+    pub unsafe fn NSConvertGlyphsToPackedGlyphs(
+        glBuf: NonNull<NSGlyph>,
+        count: NSInteger,
+        packing: NSMultibyteGlyphPacking,
+        packedGlyphs: NonNull<c_char>,
+    ) -> NSInteger;
+);
+
 extern_methods!(
     /// NSFont_Deprecated
     unsafe impl NSFont {

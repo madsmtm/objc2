@@ -275,6 +275,10 @@ extern_methods!(
     }
 );
 
+extern_fn!(
+    pub unsafe fn NXReadNSObjectFromCoder(decoder: &NSCoder) -> *mut NSObject;
+);
+
 extern_methods!(
     /// NSTypedstreamCompatibility
     unsafe impl NSCoder {

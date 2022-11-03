@@ -16,6 +16,18 @@ ns_enum!(
     }
 );
 
+extern_fn!(
+    pub unsafe fn NSOpenGLSetOption(pname: NSOpenGLGlobalOption, param: GLint);
+);
+
+extern_fn!(
+    pub unsafe fn NSOpenGLGetOption(pname: NSOpenGLGlobalOption, param: NonNull<GLint>);
+);
+
+extern_fn!(
+    pub unsafe fn NSOpenGLGetVersion(major: *mut GLint, minor: *mut GLint);
+);
+
 extern_enum!(
     #[underlying(c_uint)]
     pub enum {

@@ -17,6 +17,13 @@ extern_enum!(
 
 pub type NSInterfaceStyle = NSUInteger;
 
+extern_fn!(
+    pub unsafe fn NSInterfaceStyleForKey(
+        key: Option<&NSString>,
+        responder: Option<&NSResponder>,
+    ) -> NSInterfaceStyle;
+);
+
 extern_methods!(
     /// NSInterfaceStyle
     unsafe impl NSResponder {

@@ -55,6 +55,10 @@ extern_static!(NSNoSelectionMarker: &'static Object);
 
 extern_static!(NSNotApplicableMarker: &'static Object);
 
+extern_fn!(
+    pub unsafe fn NSIsControllerMarker(object: Option<&Object>) -> Bool;
+);
+
 pub type NSBindingInfoKey = NSString;
 
 extern_static!(NSObservedObjectKey: &'static NSBindingInfoKey);

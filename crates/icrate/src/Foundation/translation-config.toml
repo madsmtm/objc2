@@ -196,6 +196,8 @@ skipped = true
 skipped = true
 [class.NSString.methods.initWithFormat_locale_arguments]
 skipped = true
+[fn.NSLogv]
+skipped = true
 
 # Wrong type compared to value
 [enum.anonymous.constants.NSWrapCalendarComponents]

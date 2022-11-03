@@ -6,7 +6,7 @@ use clang::{Entity, EntityKind, EntityVisitResult};
 use crate::availability::Availability;
 use crate::config::{ClassData, Config};
 use crate::expr::Expr;
-use crate::method::Method;
+use crate::method::{handle_reserved, Method};
 use crate::property::Property;
 use crate::rust_type::Ty;
 use crate::unexposed_macro::UnexposedMacro;
@@ -588,6 +588,15 @@ impl Stmt {
             EntityKind::FunctionDecl => {
                 let name = entity.get_name().expect("function name");
 
+                if config
+                    .fns
+                    .get(&name)
+                    .map(|data| data.skipped)
+                    .unwrap_or_default()
+                {
+                    return None;
+                }
+
                 if entity.is_variadic() {
                     println!("can't handle variadic function {name}");
                     return None;
@@ -834,34 +843,34 @@ impl fmt::Display for Stmt {
                 writeln!(f, "extern_static!({name}: {ty} = {expr});")?;
             }
             Self::FnDecl {
-                name: _,
-                arguments: _,
-                result_type: _,
+                name,
+                arguments,
+                result_type,
                 body: None,
             } => {
-                // TODO
-                // writeln!(f, r#"extern "C" {{"#)?;
-                // write!(f, "    fn {name}(")?;
-                // for (param, arg_ty) in arguments {
-                //     write!(f, "{}: {arg_ty},", handle_reserved(&param))?;
-                // }
-                // writeln!(f, "){result_type};")?;
-                // writeln!(f, "}}")?;
+                writeln!(f, "extern_fn!(")?;
+                write!(f, "    pub unsafe fn {name}(")?;
+                for (param, arg_ty) in arguments {
+                    write!(f, "{}: {arg_ty},", handle_reserved(&param))?;
+                }
+                writeln!(f, "){result_type};")?;
+                writeln!(f, ");")?;
             }
             Self::FnDecl {
-                name: _,
-                arguments: _,
-                result_type: _,
+                name,
+                arguments,
+                result_type,
                 body: Some(_body),
             } => {
-                // TODO
-                // write!(f, "unsafe fn {name}(")?;
-                // for (param, arg_ty) in arguments {
-                //     write!(f, "{}: {arg_ty},", handle_reserved(&param))?;
-                // }
-                // writeln!(f, "){result_type} {{")?;
-                // writeln!(f, "    todo!()")?;
-                // writeln!(f, "}}")?;
+                writeln!(f, "inline_fn!(")?;
+                write!(f, "    pub unsafe fn {name}(")?;
+                for (param, arg_ty) in arguments {
+                    write!(f, "{}: {arg_ty},", handle_reserved(&param))?;
+                }
+                writeln!(f, "){result_type} {{")?;
+                writeln!(f, "        todo!()")?;
+                writeln!(f, "    }}")?;
+                writeln!(f, ");")?;
             }
             Self::AliasDecl { name, ty } => {
                 writeln!(f, "pub type {name} = {ty};")?;

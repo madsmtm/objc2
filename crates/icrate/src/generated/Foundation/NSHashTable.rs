@@ -119,6 +119,69 @@ extern_struct!(
     }
 );
 
+extern_fn!(
+    pub unsafe fn NSFreeHashTable(table: &NSHashTable);
+);
+
+extern_fn!(
+    pub unsafe fn NSResetHashTable(table: &NSHashTable);
+);
+
+extern_fn!(
+    pub unsafe fn NSCompareHashTables(table1: &NSHashTable, table2: &NSHashTable) -> Bool;
+);
+
+extern_fn!(
+    pub unsafe fn NSCopyHashTableWithZone(
+        table: &NSHashTable,
+        zone: *mut NSZone,
+    ) -> NonNull<NSHashTable>;
+);
+
+extern_fn!(
+    pub unsafe fn NSHashGet(table: &NSHashTable, pointer: *mut c_void) -> NonNull<c_void>;
+);
+
+extern_fn!(
+    pub unsafe fn NSHashInsert(table: &NSHashTable, pointer: *mut c_void);
+);
+
+extern_fn!(
+    pub unsafe fn NSHashInsertKnownAbsent(table: &NSHashTable, pointer: *mut c_void);
+);
+
+extern_fn!(
+    pub unsafe fn NSHashInsertIfAbsent(table: &NSHashTable, pointer: *mut c_void) -> *mut c_void;
+);
+
+extern_fn!(
+    pub unsafe fn NSHashRemove(table: &NSHashTable, pointer: *mut c_void);
+);
+
+extern_fn!(
+    pub unsafe fn NSEnumerateHashTable(table: &NSHashTable) -> NSHashEnumerator;
+);
+
+extern_fn!(
+    pub unsafe fn NSNextHashEnumeratorItem(enumerator: NonNull<NSHashEnumerator>) -> *mut c_void;
+);
+
+extern_fn!(
+    pub unsafe fn NSEndHashTableEnumeration(enumerator: NonNull<NSHashEnumerator>);
+);
+
+extern_fn!(
+    pub unsafe fn NSCountHashTable(table: &NSHashTable) -> NSUInteger;
+);
+
+extern_fn!(
+    pub unsafe fn NSStringFromHashTable(table: &NSHashTable) -> NonNull<NSString>;
+);
+
+extern_fn!(
+    pub unsafe fn NSAllHashTableObjects(table: &NSHashTable) -> NonNull<NSArray>;
+);
+
 extern_struct!(
     pub struct NSHashTableCallBacks {
         pub hash: Option<unsafe extern "C" fn(NonNull<NSHashTable>, NonNull<c_void>) -> NSUInteger>,
@@ -130,6 +193,21 @@ extern_struct!(
         pub describe:
             Option<unsafe extern "C" fn(NonNull<NSHashTable>, NonNull<c_void>) -> *mut NSString>,
     }
+);
+
+extern_fn!(
+    pub unsafe fn NSCreateHashTableWithZone(
+        callBacks: NSHashTableCallBacks,
+        capacity: NSUInteger,
+        zone: *mut NSZone,
+    ) -> NonNull<NSHashTable>;
+);
+
+extern_fn!(
+    pub unsafe fn NSCreateHashTable(
+        callBacks: NSHashTableCallBacks,
+        capacity: NSUInteger,
+    ) -> NonNull<NSHashTable>;
 );
 
 extern_static!(NSIntegerHashCallBacks: NSHashTableCallBacks);

@@ -135,3 +135,65 @@ extern_methods!(
         ) -> bool;
     }
 );
+
+extern_fn!(
+    pub unsafe fn NSAccessibilityFrameInView(parentView: &NSView, frame: NSRect) -> NSRect;
+);
+
+extern_fn!(
+    pub unsafe fn NSAccessibilityPointInView(parentView: &NSView, point: NSPoint) -> NSPoint;
+);
+
+extern_fn!(
+    pub unsafe fn NSAccessibilitySetMayContainProtectedContent(flag: Bool) -> Bool;
+);
+
+extern_fn!(
+    pub unsafe fn NSAccessibilityRoleDescription(
+        role: &NSAccessibilityRole,
+        subrole: Option<&NSAccessibilitySubrole>,
+    ) -> *mut NSString;
+);
+
+extern_fn!(
+    pub unsafe fn NSAccessibilityRoleDescriptionForUIElement(element: &Object) -> *mut NSString;
+);
+
+extern_fn!(
+    pub unsafe fn NSAccessibilityActionDescription(
+        action: &NSAccessibilityActionName,
+    ) -> *mut NSString;
+);
+
+extern_fn!(
+    pub unsafe fn NSAccessibilityRaiseBadArgumentException(
+        element: Option<&Object>,
+        attribute: Option<&NSAccessibilityAttributeName>,
+        value: Option<&Object>,
+    );
+);
+
+extern_fn!(
+    pub unsafe fn NSAccessibilityUnignoredAncestor(element: &Object) -> *mut Object;
+);
+
+extern_fn!(
+    pub unsafe fn NSAccessibilityUnignoredDescendant(element: &Object) -> *mut Object;
+);
+
+extern_fn!(
+    pub unsafe fn NSAccessibilityUnignoredChildren(originalChildren: &NSArray) -> NonNull<NSArray>;
+);
+
+extern_fn!(
+    pub unsafe fn NSAccessibilityUnignoredChildrenForOnlyChild(
+        originalChild: &Object,
+    ) -> NonNull<NSArray>;
+);
+
+extern_fn!(
+    pub unsafe fn NSAccessibilityPostNotification(
+        element: &Object,
+        notification: &NSAccessibilityNotificationName,
+    );
+);

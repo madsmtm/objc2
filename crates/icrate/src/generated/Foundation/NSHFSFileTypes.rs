@@ -2,3 +2,15 @@
 //! DO NOT EDIT
 use crate::common::*;
 use crate::Foundation::*;
+
+extern_fn!(
+    pub unsafe fn NSFileTypeForHFSTypeCode(hfsFileTypeCode: OSType) -> *mut NSString;
+);
+
+extern_fn!(
+    pub unsafe fn NSHFSTypeCodeFromFileType(fileTypeString: Option<&NSString>) -> OSType;
+);
+
+extern_fn!(
+    pub unsafe fn NSHFSTypeOfFile(fullFilePath: Option<&NSString>) -> *mut NSString;
+);

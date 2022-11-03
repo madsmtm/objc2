@@ -20,6 +20,9 @@ pub struct Config {
     #[serde(rename = "enum")]
     #[serde(default)]
     pub enum_data: HashMap<String, EnumData>,
+    #[serde(rename = "fn")]
+    #[serde(default)]
+    pub fns: HashMap<String, FnData>,
     #[serde(default)]
     pub imports: Vec<String>,
 }
@@ -64,6 +67,8 @@ pub struct MethodData {
     pub skipped: bool,
     // TODO: mutating
 }
+
+type FnData = StructData;
 
 fn unsafe_default() -> bool {
     true

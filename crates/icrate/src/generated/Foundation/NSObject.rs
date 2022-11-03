@@ -48,3 +48,51 @@ extern_methods!(
         pub unsafe fn autoContentAccessingProxy(&self) -> Id<Object, Shared>;
     }
 );
+
+extern_fn!(
+    pub unsafe fn NSAllocateObject(
+        aClass: &Class,
+        extraBytes: NSUInteger,
+        zone: *mut NSZone,
+    ) -> NonNull<Object>;
+);
+
+extern_fn!(
+    pub unsafe fn NSDeallocateObject(object: &Object);
+);
+
+extern_fn!(
+    pub unsafe fn NSCopyObject(
+        object: &Object,
+        extraBytes: NSUInteger,
+        zone: *mut NSZone,
+    ) -> NonNull<Object>;
+);
+
+extern_fn!(
+    pub unsafe fn NSShouldRetainWithZone(anObject: &Object, requestedZone: *mut NSZone) -> Bool;
+);
+
+extern_fn!(
+    pub unsafe fn NSIncrementExtraRefCount(object: &Object);
+);
+
+extern_fn!(
+    pub unsafe fn NSDecrementExtraRefCountWasZero(object: &Object) -> Bool;
+);
+
+extern_fn!(
+    pub unsafe fn NSExtraRefCount(object: &Object) -> NSUInteger;
+);
+
+inline_fn!(
+    pub unsafe fn CFBridgingRetain(X: Option<&Object>) -> CFTypeRef {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn CFBridgingRelease(X: CFTypeRef) -> *mut Object {
+        todo!()
+    }
+);

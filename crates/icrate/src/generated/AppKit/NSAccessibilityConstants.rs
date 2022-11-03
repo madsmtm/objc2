@@ -835,6 +835,14 @@ extern_static!(NSAccessibilityPriorityKey: &'static NSAccessibilityNotificationU
 
 extern_static!(NSAccessibilityAnnouncementKey: &'static NSAccessibilityNotificationUserInfoKey);
 
+extern_fn!(
+    pub unsafe fn NSAccessibilityPostNotificationWithUserInfo(
+        element: &Object,
+        notification: &NSAccessibilityNotificationName,
+        userInfo: Option<&NSDictionary<NSAccessibilityNotificationUserInfoKey, Object>>,
+    );
+);
+
 ns_enum!(
     #[underlying(NSInteger)]
     pub enum NSAccessibilityPriorityLevel {

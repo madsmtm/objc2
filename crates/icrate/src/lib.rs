@@ -199,6 +199,24 @@ macro_rules! extern_static {
     };
 }
 
+macro_rules! extern_fn {
+    (
+        $v:vis unsafe fn $name:ident($($args:tt)*) $(-> $res:ty)?;
+    ) => {
+        extern "C" {
+            $v fn $name($($args)*) $(-> $res)?;
+        }
+    };
+}
+
+macro_rules! inline_fn {
+    (
+        $v:vis unsafe fn $name:ident($($args:tt)*) $(-> $res:ty)? $body:block
+    ) => {
+        // TODO
+    };
+}
+
 // Frameworks
 #[cfg(feature = "AppKit")]
 pub mod AppKit;

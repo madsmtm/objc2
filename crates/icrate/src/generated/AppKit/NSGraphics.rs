@@ -184,6 +184,40 @@ ns_enum!(
     }
 );
 
+extern_fn!(
+    pub unsafe fn NSBestDepth(
+        colorSpace: &NSColorSpaceName,
+        bps: NSInteger,
+        bpp: NSInteger,
+        planar: Bool,
+        exactMatch: *mut Bool,
+    ) -> NSWindowDepth;
+);
+
+extern_fn!(
+    pub unsafe fn NSPlanarFromDepth(depth: NSWindowDepth) -> Bool;
+);
+
+extern_fn!(
+    pub unsafe fn NSColorSpaceFromDepth(depth: NSWindowDepth) -> *mut NSColorSpaceName;
+);
+
+extern_fn!(
+    pub unsafe fn NSBitsPerSampleFromDepth(depth: NSWindowDepth) -> NSInteger;
+);
+
+extern_fn!(
+    pub unsafe fn NSBitsPerPixelFromDepth(depth: NSWindowDepth) -> NSInteger;
+);
+
+extern_fn!(
+    pub unsafe fn NSNumberOfColorComponents(colorSpaceName: &NSColorSpaceName) -> NSInteger;
+);
+
+extern_fn!(
+    pub unsafe fn NSAvailableWindowDepths() -> NonNull<NSWindowDepth>;
+);
+
 extern_static!(NSWhite: CGFloat);
 
 extern_static!(NSLightGray: CGFloat);
@@ -214,10 +248,219 @@ extern_static!(NSDeviceIsPrinter: &'static NSDeviceDescriptionKey);
 
 extern_static!(NSDeviceSize: &'static NSDeviceDescriptionKey);
 
+extern_fn!(
+    pub unsafe fn NSRectFill(rect: NSRect);
+);
+
+extern_fn!(
+    pub unsafe fn NSRectFillList(rects: NonNull<NSRect>, count: NSInteger);
+);
+
+extern_fn!(
+    pub unsafe fn NSRectFillListWithGrays(
+        rects: NonNull<NSRect>,
+        grays: NonNull<CGFloat>,
+        num: NSInteger,
+    );
+);
+
+extern_fn!(
+    pub unsafe fn NSRectFillListWithColors(
+        rects: NonNull<NSRect>,
+        colors: NonNull<NonNull<NSColor>>,
+        num: NSInteger,
+    );
+);
+
+extern_fn!(
+    pub unsafe fn NSRectFillUsingOperation(rect: NSRect, op: NSCompositingOperation);
+);
+
+extern_fn!(
+    pub unsafe fn NSRectFillListUsingOperation(
+        rects: NonNull<NSRect>,
+        count: NSInteger,
+        op: NSCompositingOperation,
+    );
+);
+
+extern_fn!(
+    pub unsafe fn NSRectFillListWithColorsUsingOperation(
+        rects: NonNull<NSRect>,
+        colors: NonNull<NonNull<NSColor>>,
+        num: NSInteger,
+        op: NSCompositingOperation,
+    );
+);
+
+extern_fn!(
+    pub unsafe fn NSFrameRect(rect: NSRect);
+);
+
+extern_fn!(
+    pub unsafe fn NSFrameRectWithWidth(rect: NSRect, frameWidth: CGFloat);
+);
+
+extern_fn!(
+    pub unsafe fn NSFrameRectWithWidthUsingOperation(
+        rect: NSRect,
+        frameWidth: CGFloat,
+        op: NSCompositingOperation,
+    );
+);
+
+extern_fn!(
+    pub unsafe fn NSRectClip(rect: NSRect);
+);
+
+extern_fn!(
+    pub unsafe fn NSRectClipList(rects: NonNull<NSRect>, count: NSInteger);
+);
+
+extern_fn!(
+    pub unsafe fn NSDrawTiledRects(
+        boundsRect: NSRect,
+        clipRect: NSRect,
+        sides: NonNull<NSRectEdge>,
+        grays: NonNull<CGFloat>,
+        count: NSInteger,
+    ) -> NSRect;
+);
+
+extern_fn!(
+    pub unsafe fn NSDrawGrayBezel(rect: NSRect, clipRect: NSRect);
+);
+
+extern_fn!(
+    pub unsafe fn NSDrawGroove(rect: NSRect, clipRect: NSRect);
+);
+
+extern_fn!(
+    pub unsafe fn NSDrawWhiteBezel(rect: NSRect, clipRect: NSRect);
+);
+
+extern_fn!(
+    pub unsafe fn NSDrawButton(rect: NSRect, clipRect: NSRect);
+);
+
+extern_fn!(
+    pub unsafe fn NSEraseRect(rect: NSRect);
+);
+
+extern_fn!(
+    pub unsafe fn NSReadPixel(passedPoint: NSPoint) -> *mut NSColor;
+);
+
+extern_fn!(
+    pub unsafe fn NSDrawBitmap(
+        rect: NSRect,
+        width: NSInteger,
+        height: NSInteger,
+        bps: NSInteger,
+        spp: NSInteger,
+        bpp: NSInteger,
+        bpr: NSInteger,
+        isPlanar: Bool,
+        hasAlpha: Bool,
+        colorSpaceName: &NSColorSpaceName,
+        data: [*const c_uchar; 5],
+    );
+);
+
+extern_fn!(
+    pub unsafe fn NSHighlightRect(rect: NSRect);
+);
+
+extern_fn!(
+    pub unsafe fn NSBeep();
+);
+
+extern_fn!(
+    pub unsafe fn NSGetWindowServerMemory(
+        context: NSInteger,
+        virtualMemory: NonNull<NSInteger>,
+        windowBackingMemory: NonNull<NSInteger>,
+        windowDumpString: NonNull<NonNull<NSString>>,
+    ) -> NSInteger;
+);
+
+extern_fn!(
+    pub unsafe fn NSDrawColorTiledRects(
+        boundsRect: NSRect,
+        clipRect: NSRect,
+        sides: NonNull<NSRectEdge>,
+        colors: NonNull<NonNull<NSColor>>,
+        count: NSInteger,
+    ) -> NSRect;
+);
+
+extern_fn!(
+    pub unsafe fn NSDrawDarkBezel(rect: NSRect, clipRect: NSRect);
+);
+
+extern_fn!(
+    pub unsafe fn NSDrawLightBezel(rect: NSRect, clipRect: NSRect);
+);
+
+extern_fn!(
+    pub unsafe fn NSDottedFrameRect(rect: NSRect);
+);
+
+extern_fn!(
+    pub unsafe fn NSDrawWindowBackground(rect: NSRect);
+);
+
+extern_fn!(
+    pub unsafe fn NSSetFocusRingStyle(placement: NSFocusRingPlacement);
+);
+
+extern_fn!(
+    pub unsafe fn NSDisableScreenUpdates();
+);
+
+extern_fn!(
+    pub unsafe fn NSEnableScreenUpdates();
+);
+
 ns_enum!(
     #[underlying(NSUInteger)]
     pub enum NSAnimationEffect {
         NSAnimationEffectDisappearingItemDefault = 0,
         NSAnimationEffectPoof = 10,
     }
+);
+
+extern_fn!(
+    pub unsafe fn NSShowAnimationEffect(
+        animationEffect: NSAnimationEffect,
+        centerLocation: NSPoint,
+        size: NSSize,
+        animationDelegate: Option<&Object>,
+        didEndSelector: OptionSel,
+        contextInfo: *mut c_void,
+    );
+);
+
+extern_fn!(
+    pub unsafe fn NSCountWindows(count: NonNull<NSInteger>);
+);
+
+extern_fn!(
+    pub unsafe fn NSWindowList(size: NSInteger, list: NonNull<NSInteger>);
+);
+
+extern_fn!(
+    pub unsafe fn NSCountWindowsForContext(context: NSInteger, count: NonNull<NSInteger>);
+);
+
+extern_fn!(
+    pub unsafe fn NSWindowListForContext(
+        context: NSInteger,
+        size: NSInteger,
+        list: NonNull<NSInteger>,
+    );
+);
+
+extern_fn!(
+    pub unsafe fn NSCopyBits(srcGState: NSInteger, srcRect: NSRect, destPoint: NSPoint);
 );

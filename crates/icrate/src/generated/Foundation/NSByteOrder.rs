@@ -9,6 +9,132 @@ extern_enum!(
     }
 );
 
+inline_fn!(
+    pub unsafe fn NSHostByteOrder() -> c_long {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapShort(inv: c_ushort) -> c_ushort {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapInt(inv: c_uint) -> c_uint {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapLong(inv: c_ulong) -> c_ulong {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapLongLong(inv: c_ulonglong) -> c_ulonglong {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapBigShortToHost(x: c_ushort) -> c_ushort {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapBigIntToHost(x: c_uint) -> c_uint {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapBigLongToHost(x: c_ulong) -> c_ulong {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapBigLongLongToHost(x: c_ulonglong) -> c_ulonglong {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapHostShortToBig(x: c_ushort) -> c_ushort {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapHostIntToBig(x: c_uint) -> c_uint {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapHostLongToBig(x: c_ulong) -> c_ulong {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapHostLongLongToBig(x: c_ulonglong) -> c_ulonglong {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapLittleShortToHost(x: c_ushort) -> c_ushort {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapLittleIntToHost(x: c_uint) -> c_uint {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapLittleLongToHost(x: c_ulong) -> c_ulong {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapLittleLongLongToHost(x: c_ulonglong) -> c_ulonglong {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapHostShortToLittle(x: c_ushort) -> c_ushort {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapHostIntToLittle(x: c_uint) -> c_uint {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapHostLongToLittle(x: c_ulong) -> c_ulong {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapHostLongLongToLittle(x: c_ulonglong) -> c_ulonglong {
+        todo!()
+    }
+);
+
 extern_struct!(
     pub struct NSSwappedFloat {
         pub v: c_uint,
@@ -18,5 +144,89 @@ extern_struct!(
 extern_struct!(
     pub struct NSSwappedDouble {
         pub v: c_ulonglong,
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSConvertHostFloatToSwapped(x: c_float) -> NSSwappedFloat {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSConvertSwappedFloatToHost(x: NSSwappedFloat) -> c_float {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSConvertHostDoubleToSwapped(x: c_double) -> NSSwappedDouble {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSConvertSwappedDoubleToHost(x: NSSwappedDouble) -> c_double {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapFloat(x: NSSwappedFloat) -> NSSwappedFloat {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapDouble(x: NSSwappedDouble) -> NSSwappedDouble {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapBigDoubleToHost(x: NSSwappedDouble) -> c_double {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapBigFloatToHost(x: NSSwappedFloat) -> c_float {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapHostDoubleToBig(x: c_double) -> NSSwappedDouble {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapHostFloatToBig(x: c_float) -> NSSwappedFloat {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapLittleDoubleToHost(x: NSSwappedDouble) -> c_double {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapLittleFloatToHost(x: NSSwappedFloat) -> c_float {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapHostDoubleToLittle(x: c_double) -> NSSwappedDouble {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSSwapHostFloatToLittle(x: c_float) -> NSSwappedFloat {
+        todo!()
     }
 );

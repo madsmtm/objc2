@@ -36,6 +36,10 @@ extern_methods!(
     }
 );
 
+extern_fn!(
+    pub unsafe fn NSReleaseAlertPanel(panel: Option<&Object>);
+);
+
 extern_enum!(
     #[underlying(c_int)]
     pub enum {

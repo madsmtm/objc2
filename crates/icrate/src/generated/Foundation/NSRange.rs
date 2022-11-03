@@ -12,6 +12,46 @@ extern_struct!(
 
 pub type NSRangePointer = *mut NSRange;
 
+inline_fn!(
+    pub unsafe fn NSMakeRange(loc: NSUInteger, len: NSUInteger) -> NSRange {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSMaxRange(range: NSRange) -> NSUInteger {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSLocationInRange(loc: NSUInteger, range: NSRange) -> Bool {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSEqualRanges(range1: NSRange, range2: NSRange) -> Bool {
+        todo!()
+    }
+);
+
+extern_fn!(
+    pub unsafe fn NSUnionRange(range1: NSRange, range2: NSRange) -> NSRange;
+);
+
+extern_fn!(
+    pub unsafe fn NSIntersectionRange(range1: NSRange, range2: NSRange) -> NSRange;
+);
+
+extern_fn!(
+    pub unsafe fn NSStringFromRange(range: NSRange) -> NonNull<NSString>;
+);
+
+extern_fn!(
+    pub unsafe fn NSRangeFromString(aString: &NSString) -> NSRange;
+);
+
 extern_methods!(
     /// NSValueRangeExtensions
     unsafe impl NSValue {

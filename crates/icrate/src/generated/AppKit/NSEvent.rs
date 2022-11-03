@@ -177,6 +177,12 @@ extern_static!(NSOtherMouseUpMask: NSEventMask = NSEventMaskOtherMouseUp);
 
 extern_static!(NSOtherMouseDraggedMask: NSEventMask = NSEventMaskOtherMouseDragged);
 
+inline_fn!(
+    pub unsafe fn NSEventMaskFromType(type_: NSEventType) -> NSEventMask {
+        todo!()
+    }
+);
+
 ns_options!(
     #[underlying(NSUInteger)]
     pub enum NSEventModifierFlags {

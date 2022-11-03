@@ -473,7 +473,7 @@ pub use self::__NSClassDescription::{
 };
 pub use self::__NSCoder::{
     NSCoder, NSDecodingFailurePolicy, NSDecodingFailurePolicyRaiseException,
-    NSDecodingFailurePolicySetErrorAndReturn,
+    NSDecodingFailurePolicySetErrorAndReturn, NXReadNSObjectFromCoder,
 };
 pub use self::__NSComparisonPredicate::{
     NSAllPredicateModifier, NSAnyPredicateModifier, NSBeginsWithPredicateOperatorType,
@@ -539,8 +539,11 @@ pub use self::__NSDateIntervalFormatter::{
 };
 pub use self::__NSDecimal::{
     NSCalculationDivideByZero, NSCalculationError, NSCalculationLossOfPrecision,
-    NSCalculationNoError, NSCalculationOverflow, NSCalculationUnderflow, NSRoundBankers,
-    NSRoundDown, NSRoundPlain, NSRoundUp, NSRoundingMode,
+    NSCalculationNoError, NSCalculationOverflow, NSCalculationUnderflow, NSDecimalAdd,
+    NSDecimalCompact, NSDecimalCompare, NSDecimalCopy, NSDecimalDivide, NSDecimalMultiply,
+    NSDecimalMultiplyByPowerOf10, NSDecimalNormalize, NSDecimalPower, NSDecimalRound,
+    NSDecimalString, NSDecimalSubtract, NSRoundBankers, NSRoundDown, NSRoundPlain, NSRoundUp,
+    NSRoundingMode,
 };
 pub use self::__NSDecimalNumber::{
     NSDecimalNumber, NSDecimalNumberBehaviors, NSDecimalNumberDivideByZeroException,
@@ -574,11 +577,12 @@ pub use self::__NSError::{
 };
 pub use self::__NSException::{
     NSAssertionHandler, NSAssertionHandlerKey, NSDestinationInvalidException, NSException,
-    NSGenericException, NSInconsistentArchiveException, NSInternalInconsistencyException,
-    NSInvalidArgumentException, NSInvalidReceivePortException, NSInvalidSendPortException,
-    NSMallocException, NSObjectInaccessibleException, NSObjectNotAvailableException,
-    NSOldStyleException, NSPortReceiveException, NSPortSendException, NSPortTimeoutException,
-    NSRangeException, NSUncaughtExceptionHandler,
+    NSGenericException, NSGetUncaughtExceptionHandler, NSInconsistentArchiveException,
+    NSInternalInconsistencyException, NSInvalidArgumentException, NSInvalidReceivePortException,
+    NSInvalidSendPortException, NSMallocException, NSObjectInaccessibleException,
+    NSObjectNotAvailableException, NSOldStyleException, NSPortReceiveException,
+    NSPortSendException, NSPortTimeoutException, NSRangeException, NSSetUncaughtExceptionHandler,
+    NSUncaughtExceptionHandler,
 };
 pub use self::__NSExpression::{
     NSAggregateExpressionType, NSAnyKeyExpressionType, NSBlockExpressionType,
@@ -660,10 +664,17 @@ pub use self::__NSGeometry::{
     NSAlignMaxXOutward, NSAlignMaxYInward, NSAlignMaxYNearest, NSAlignMaxYOutward,
     NSAlignMinXInward, NSAlignMinXNearest, NSAlignMinXOutward, NSAlignMinYInward,
     NSAlignMinYNearest, NSAlignMinYOutward, NSAlignRectFlipped, NSAlignWidthInward,
-    NSAlignWidthNearest, NSAlignWidthOutward, NSAlignmentOptions, NSEdgeInsets, NSEdgeInsetsZero,
-    NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint, NSPointArray, NSPointPointer, NSRect,
-    NSRectArray, NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY,
-    NSRectPointer, NSSize, NSSizeArray, NSSizePointer, NSZeroPoint, NSZeroRect, NSZeroSize,
+    NSAlignWidthNearest, NSAlignWidthOutward, NSAlignmentOptions, NSContainsRect, NSDivideRect,
+    NSEdgeInsets, NSEdgeInsetsEqual, NSEdgeInsetsZero, NSEqualPoints, NSEqualRects, NSEqualSizes,
+    NSInsetRect, NSIntegralRect, NSIntegralRectWithOptions, NSIntersectionRect, NSIntersectsRect,
+    NSIsEmptyRect, NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSMouseInRect, NSOffsetRect,
+    NSPoint, NSPointArray, NSPointFromString, NSPointInRect, NSPointPointer, NSRect, NSRectArray,
+    NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSRectFromString,
+    NSRectPointer, NSSize, NSSizeArray, NSSizeFromString, NSSizePointer, NSStringFromPoint,
+    NSStringFromRect, NSStringFromSize, NSUnionRect, NSZeroPoint, NSZeroRect, NSZeroSize,
+};
+pub use self::__NSHFSFileTypes::{
+    NSFileTypeForHFSTypeCode, NSHFSTypeCodeFromFileType, NSHFSTypeOfFile,
 };
 pub use self::__NSHTTPCookie::{
     NSHTTPCookie, NSHTTPCookieComment, NSHTTPCookieCommentURL, NSHTTPCookieDiscard,
@@ -679,12 +690,16 @@ pub use self::__NSHTTPCookieStorage::{
     NSHTTPCookieManagerCookiesChangedNotification, NSHTTPCookieStorage,
 };
 pub use self::__NSHashTable::{
-    NSHashEnumerator, NSHashTable, NSHashTableCallBacks, NSHashTableCopyIn,
+    NSAllHashTableObjects, NSCompareHashTables, NSCopyHashTableWithZone, NSCountHashTable,
+    NSCreateHashTable, NSCreateHashTableWithZone, NSEndHashTableEnumeration, NSEnumerateHashTable,
+    NSFreeHashTable, NSHashEnumerator, NSHashGet, NSHashInsert, NSHashInsertIfAbsent,
+    NSHashInsertKnownAbsent, NSHashRemove, NSHashTable, NSHashTableCallBacks, NSHashTableCopyIn,
     NSHashTableObjectPointerPersonality, NSHashTableOptions, NSHashTableStrongMemory,
     NSHashTableWeakMemory, NSHashTableZeroingWeakMemory, NSIntHashCallBacks,
-    NSIntegerHashCallBacks, NSNonOwnedPointerHashCallBacks, NSNonRetainedObjectHashCallBacks,
-    NSObjectHashCallBacks, NSOwnedObjectIdentityHashCallBacks, NSOwnedPointerHashCallBacks,
-    NSPointerToStructHashCallBacks,
+    NSIntegerHashCallBacks, NSNextHashEnumeratorItem, NSNonOwnedPointerHashCallBacks,
+    NSNonRetainedObjectHashCallBacks, NSObjectHashCallBacks, NSOwnedObjectIdentityHashCallBacks,
+    NSOwnedPointerHashCallBacks, NSPointerToStructHashCallBacks, NSResetHashTable,
+    NSStringFromHashTable,
 };
 pub use self::__NSHost::NSHost;
 pub use self::__NSISO8601DateFormatter::{
@@ -784,15 +799,18 @@ pub use self::__NSLocale::{
 };
 pub use self::__NSLock::{NSCondition, NSConditionLock, NSLock, NSLocking, NSRecursiveLock};
 pub use self::__NSMapTable::{
-    NSIntMapKeyCallBacks, NSIntMapValueCallBacks, NSIntegerMapKeyCallBacks,
-    NSIntegerMapValueCallBacks, NSMapEnumerator, NSMapTable, NSMapTableCopyIn,
-    NSMapTableKeyCallBacks, NSMapTableObjectPointerPersonality, NSMapTableOptions,
-    NSMapTableStrongMemory, NSMapTableValueCallBacks, NSMapTableWeakMemory,
-    NSMapTableZeroingWeakMemory, NSNonOwnedPointerMapKeyCallBacks,
+    NSAllMapTableKeys, NSAllMapTableValues, NSCompareMapTables, NSCopyMapTableWithZone,
+    NSCountMapTable, NSCreateMapTable, NSCreateMapTableWithZone, NSEndMapTableEnumeration,
+    NSEnumerateMapTable, NSFreeMapTable, NSIntMapKeyCallBacks, NSIntMapValueCallBacks,
+    NSIntegerMapKeyCallBacks, NSIntegerMapValueCallBacks, NSMapEnumerator, NSMapGet, NSMapInsert,
+    NSMapInsertIfAbsent, NSMapInsertKnownAbsent, NSMapMember, NSMapRemove, NSMapTable,
+    NSMapTableCopyIn, NSMapTableKeyCallBacks, NSMapTableObjectPointerPersonality,
+    NSMapTableOptions, NSMapTableStrongMemory, NSMapTableValueCallBacks, NSMapTableWeakMemory,
+    NSMapTableZeroingWeakMemory, NSNextMapEnumeratorPair, NSNonOwnedPointerMapKeyCallBacks,
     NSNonOwnedPointerMapValueCallBacks, NSNonOwnedPointerOrNullMapKeyCallBacks,
     NSNonRetainedObjectMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks,
     NSObjectMapKeyCallBacks, NSObjectMapValueCallBacks, NSOwnedPointerMapKeyCallBacks,
-    NSOwnedPointerMapValueCallBacks,
+    NSOwnedPointerMapValueCallBacks, NSResetMapTable, NSStringFromMapTable,
 };
 pub use self::__NSMassFormatter::{
     NSMassFormatter, NSMassFormatterUnit, NSMassFormatterUnitGram, NSMassFormatterUnitKilogram,
@@ -943,14 +961,18 @@ pub use self::__NSNumberFormatter::{
     NSNumberFormatterSpellOutStyle, NSNumberFormatterStyle,
 };
 pub use self::__NSObjCRuntime::{
-    NSComparator, NSComparisonResult, NSEnumerationConcurrent, NSEnumerationOptions,
-    NSEnumerationReverse, NSExceptionName, NSFoundationVersionNumber, NSOrderedAscending,
-    NSOrderedDescending, NSOrderedSame, NSQualityOfService, NSQualityOfServiceBackground,
+    NSClassFromString, NSComparator, NSComparisonResult, NSEnumerationConcurrent,
+    NSEnumerationOptions, NSEnumerationReverse, NSExceptionName, NSFoundationVersionNumber,
+    NSGetSizeAndAlignment, NSOrderedAscending, NSOrderedDescending, NSOrderedSame,
+    NSProtocolFromString, NSQualityOfService, NSQualityOfServiceBackground,
     NSQualityOfServiceDefault, NSQualityOfServiceUserInitiated, NSQualityOfServiceUserInteractive,
-    NSQualityOfServiceUtility, NSRunLoopMode, NSSortConcurrent, NSSortOptions, NSSortStable,
+    NSQualityOfServiceUtility, NSRunLoopMode, NSSelectorFromString, NSSortConcurrent,
+    NSSortOptions, NSSortStable, NSStringFromClass, NSStringFromProtocol, NSStringFromSelector,
 };
 pub use self::__NSObject::{
-    NSCoding, NSCopying, NSDiscardableContent, NSMutableCopying, NSSecureCoding,
+    NSAllocateObject, NSCoding, NSCopyObject, NSCopying, NSDeallocateObject,
+    NSDecrementExtraRefCountWasZero, NSDiscardableContent, NSExtraRefCount,
+    NSIncrementExtraRefCount, NSMutableCopying, NSSecureCoding, NSShouldRetainWithZone,
 };
 pub use self::__NSOperation::{
     NSBlockOperation, NSInvocationOperation, NSInvocationOperationCancelledException,
@@ -977,12 +999,13 @@ pub use self::__NSPathUtilities::{
     NSApplicationSupportDirectory, NSAutosavedInformationDirectory, NSCachesDirectory,
     NSCoreServiceDirectory, NSDemoApplicationDirectory, NSDesktopDirectory,
     NSDeveloperApplicationDirectory, NSDeveloperDirectory, NSDocumentDirectory,
-    NSDocumentationDirectory, NSDownloadsDirectory, NSInputMethodsDirectory,
-    NSItemReplacementDirectory, NSLibraryDirectory, NSLocalDomainMask, NSMoviesDirectory,
-    NSMusicDirectory, NSNetworkDomainMask, NSPicturesDirectory, NSPreferencePanesDirectory,
+    NSDocumentationDirectory, NSDownloadsDirectory, NSFullUserName, NSHomeDirectory,
+    NSHomeDirectoryForUser, NSInputMethodsDirectory, NSItemReplacementDirectory,
+    NSLibraryDirectory, NSLocalDomainMask, NSMoviesDirectory, NSMusicDirectory,
+    NSNetworkDomainMask, NSOpenStepRootDirectory, NSPicturesDirectory, NSPreferencePanesDirectory,
     NSPrinterDescriptionDirectory, NSSearchPathDirectory, NSSearchPathDomainMask,
-    NSSharedPublicDirectory, NSSystemDomainMask, NSTrashDirectory, NSUserDirectory,
-    NSUserDomainMask,
+    NSSearchPathForDirectoriesInDomains, NSSharedPublicDirectory, NSSystemDomainMask,
+    NSTemporaryDirectory, NSTrashDirectory, NSUserDirectory, NSUserDomainMask, NSUserName,
 };
 pub use self::__NSPersonNameComponents::NSPersonNameComponents;
 pub use self::__NSPersonNameComponentsFormatter::{
@@ -1047,7 +1070,10 @@ pub use self::__NSPropertyList::{
     NSPropertyListXMLFormat_v1_0,
 };
 pub use self::__NSProtocolChecker::NSProtocolChecker;
-pub use self::__NSRange::{NSRange, NSRangePointer};
+pub use self::__NSRange::{
+    NSIntersectionRange, NSRange, NSRangeFromString, NSRangePointer, NSStringFromRange,
+    NSUnionRange,
+};
 pub use self::__NSRegularExpression::{
     NSDataDetector, NSMatchingAnchored, NSMatchingCompleted, NSMatchingFlags, NSMatchingHitEnd,
     NSMatchingInternalError, NSMatchingOptions, NSMatchingProgress, NSMatchingReportCompletion,
@@ -1456,7 +1482,13 @@ pub use self::__NSXPCConnection::{
     NSXPCCoder, NSXPCConnection, NSXPCConnectionOptions, NSXPCConnectionPrivileged, NSXPCInterface,
     NSXPCListener, NSXPCListenerDelegate, NSXPCListenerEndpoint, NSXPCProxyCreating,
 };
-pub use self::__NSZone::{NSCollectorDisabledOption, NSScannedOption};
+pub use self::__NSZone::{
+    NSAllocateCollectable, NSAllocateMemoryPages, NSCollectorDisabledOption, NSCopyMemoryPages,
+    NSCreateZone, NSDeallocateMemoryPages, NSDefaultMallocZone, NSLogPageSize, NSPageSize,
+    NSRealMemoryAvailable, NSReallocateCollectable, NSRecycleZone, NSRoundDownToMultipleOfPageSize,
+    NSRoundUpToMultipleOfPageSize, NSScannedOption, NSSetZoneName, NSZoneCalloc, NSZoneFree,
+    NSZoneFromPointer, NSZoneMalloc, NSZoneName, NSZoneRealloc,
+};
 pub use self::__NSURL::{
     NSFileSecurity, NSThumbnail1024x1024SizeKey, NSURLAddedToDirectoryDateKey,
     NSURLApplicationIsScriptableKey, NSURLAttributeModificationDateKey,

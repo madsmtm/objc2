@@ -720,11 +720,13 @@ impl fmt::Display for RustType {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 enum TyKind {
-    InReturn,
-    InReturnWithError,
+    InMethodReturn,
+    InFnDeclReturn,
+    InMethodReturnWithError,
     InStatic,
     InTypedef,
-    InArgument,
+    InMethodArgument,
+    InFnDeclArgument,
     InStructEnum,
     InFnArgument,
     InFnReturn,
@@ -741,7 +743,7 @@ pub struct Ty {
 impl Ty {
     pub const VOID_RESULT: Self = Self {
         ty: RustType::Void,
-        kind: TyKind::InReturn,
+        kind: TyKind::InMethodReturn,
     };
 
     pub fn parse_method_argument(ty: Type<'_>, is_consumed: bool) -> Self {
@@ -767,7 +769,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::InArgument,
+            kind: TyKind::InMethodArgument,
         }
     }
 
@@ -782,16 +784,20 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::InReturn,
+            kind: TyKind::InMethodReturn,
         }
     }
 
     pub fn parse_function_argument(ty: Type<'_>) -> Self {
-        Self::parse_method_argument(ty, false)
+        let mut this = Self::parse_method_argument(ty, false);
+        this.kind = TyKind::InFnDeclArgument;
+        this
     }
 
     pub fn parse_function_return(ty: Type<'_>) -> Self {
-        Self::parse_method_return(ty)
+        let mut this = Self::parse_method_return(ty);
+        this.kind = TyKind::InFnDeclReturn;
+        this
     }
 
     pub fn parse_typedef(ty: Type<'_>) -> Option<Self> {
@@ -841,7 +847,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::InArgument,
+            kind: TyKind::InMethodArgument,
         }
     }
 
@@ -856,7 +862,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::InReturn,
+            kind: TyKind::InMethodReturn,
         }
     }
 
@@ -1011,8 +1017,8 @@ impl Ty {
     }
 
     pub fn set_is_error(&mut self) {
-        assert_eq!(self.kind, TyKind::InReturn);
-        self.kind = TyKind::InReturnWithError;
+        assert_eq!(self.kind, TyKind::InMethodReturn);
+        self.kind = TyKind::InMethodReturnWithError;
     }
 
     /// Related result types
@@ -1036,7 +1042,7 @@ impl Ty {
 impl fmt::Display for Ty {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self.kind {
-            TyKind::InReturn => {
+            TyKind::InMethodReturn => {
                 if let RustType::Void = &self.ty {
                     // Don't output anything
                     return Ok(());
@@ -1070,7 +1076,7 @@ impl fmt::Display for Ty {
                     ty => write!(f, "{ty}"),
                 }
             }
-            TyKind::InReturnWithError => match &self.ty {
+            TyKind::InMethodReturnWithError => match &self.ty {
                 RustType::Id {
                     type_: ty,
                     lifetime: Lifetime::Unspecified,
@@ -1136,13 +1142,11 @@ impl fmt::Display for Ty {
                 }
                 ty => write!(f, "{ty}"),
             },
-            TyKind::InArgument => match &self.ty {
+            TyKind::InMethodArgument | TyKind::InFnDeclArgument => match &self.ty {
                 RustType::Id {
                     type_: ty,
-                    // Ignore
-                    is_const: _,
-                    // Ignore
-                    lifetime: _,
+                    is_const: false,
+                    lifetime: Lifetime::Unspecified | Lifetime::Strong,
                     nullability,
                 } => {
                     if *nullability == Nullability::NonNull {
@@ -1158,7 +1162,7 @@ impl fmt::Display for Ty {
                         write!(f, "Option<&Class>")
                     }
                 }
-                RustType::ObjcBool => write!(f, "bool"),
+                RustType::ObjcBool if self.kind == TyKind::InMethodArgument => write!(f, "bool"),
                 ty @ RustType::Pointer {
                     nullability,
                     is_const: false,
@@ -1170,7 +1174,7 @@ impl fmt::Display for Ty {
                     //     is_const: false,
                     //     lifetime: Lifetime::Autoreleasing,
                     //     nullability: inner_nullability,
-                    // } => {
+                    // } if self.kind == TyKind::InMethodArgument => {
                     //     let tokens = if *inner_nullability == Nullability::NonNull {
                     //         format!("Id<{ty}, Shared>")
                     //     } else {
@@ -1198,7 +1202,7 @@ impl fmt::Display for Ty {
             },
             TyKind::InStructEnum => write!(f, "{}", self.ty),
             TyKind::InFnArgument | TyKind::InBlockArgument => write!(f, "{}", self.ty),
-            TyKind::InFnReturn => {
+            TyKind::InFnDeclReturn | TyKind::InFnReturn => {
                 if let RustType::Void = &self.ty {
                     // Don't output anything
                     return Ok(());

@@ -686,6 +686,37 @@ extern_methods!(
     }
 );
 
+extern_fn!(
+    pub unsafe fn NSDrawThreePartImage(
+        frame: NSRect,
+        startCap: Option<&NSImage>,
+        centerFill: Option<&NSImage>,
+        endCap: Option<&NSImage>,
+        vertical: Bool,
+        op: NSCompositingOperation,
+        alphaFraction: CGFloat,
+        flipped: Bool,
+    );
+);
+
+extern_fn!(
+    pub unsafe fn NSDrawNinePartImage(
+        frame: NSRect,
+        topLeftCorner: Option<&NSImage>,
+        topEdgeFill: Option<&NSImage>,
+        topRightCorner: Option<&NSImage>,
+        leftEdgeFill: Option<&NSImage>,
+        centerFill: Option<&NSImage>,
+        rightEdgeFill: Option<&NSImage>,
+        bottomLeftCorner: Option<&NSImage>,
+        bottomEdgeFill: Option<&NSImage>,
+        bottomRightCorner: Option<&NSImage>,
+        op: NSCompositingOperation,
+        alphaFraction: CGFloat,
+        flipped: Bool,
+    );
+);
+
 extern_methods!(
     /// NSDeprecated
     unsafe impl NSCell {

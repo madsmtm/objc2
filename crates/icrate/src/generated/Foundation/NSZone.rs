@@ -3,10 +3,122 @@
 use crate::common::*;
 use crate::Foundation::*;
 
+extern_fn!(
+    pub unsafe fn NSDefaultMallocZone() -> NonNull<NSZone>;
+);
+
+extern_fn!(
+    pub unsafe fn NSCreateZone(
+        startSize: NSUInteger,
+        granularity: NSUInteger,
+        canFree: Bool,
+    ) -> NonNull<NSZone>;
+);
+
+extern_fn!(
+    pub unsafe fn NSRecycleZone(zone: NonNull<NSZone>);
+);
+
+extern_fn!(
+    pub unsafe fn NSSetZoneName(zone: *mut NSZone, name: &NSString);
+);
+
+extern_fn!(
+    pub unsafe fn NSZoneName(zone: *mut NSZone) -> NonNull<NSString>;
+);
+
+extern_fn!(
+    pub unsafe fn NSZoneFromPointer(ptr: NonNull<c_void>) -> *mut NSZone;
+);
+
+extern_fn!(
+    pub unsafe fn NSZoneMalloc(zone: *mut NSZone, size: NSUInteger) -> NonNull<c_void>;
+);
+
+extern_fn!(
+    pub unsafe fn NSZoneCalloc(
+        zone: *mut NSZone,
+        numElems: NSUInteger,
+        byteSize: NSUInteger,
+    ) -> NonNull<c_void>;
+);
+
+extern_fn!(
+    pub unsafe fn NSZoneRealloc(
+        zone: *mut NSZone,
+        ptr: *mut c_void,
+        size: NSUInteger,
+    ) -> NonNull<c_void>;
+);
+
+extern_fn!(
+    pub unsafe fn NSZoneFree(zone: *mut NSZone, ptr: NonNull<c_void>);
+);
+
 ns_enum!(
     #[underlying(NSUInteger)]
     pub enum {
         NSScannedOption = 1<<0,
         NSCollectorDisabledOption = 1<<1,
     }
+);
+
+extern_fn!(
+    pub unsafe fn NSAllocateCollectable(size: NSUInteger, options: NSUInteger) -> NonNull<c_void>;
+);
+
+extern_fn!(
+    pub unsafe fn NSReallocateCollectable(
+        ptr: *mut c_void,
+        size: NSUInteger,
+        options: NSUInteger,
+    ) -> NonNull<c_void>;
+);
+
+inline_fn!(
+    pub unsafe fn NSMakeCollectable(cf: CFTypeRef) -> *mut Object {
+        todo!()
+    }
+);
+
+inline_fn!(
+    pub unsafe fn NSMakeCollectable(cf: CFTypeRef) -> *mut Object {
+        todo!()
+    }
+);
+
+extern_fn!(
+    pub unsafe fn NSPageSize() -> NSUInteger;
+);
+
+extern_fn!(
+    pub unsafe fn NSLogPageSize() -> NSUInteger;
+);
+
+extern_fn!(
+    pub unsafe fn NSRoundUpToMultipleOfPageSize(bytes: NSUInteger) -> NSUInteger;
+);
+
+extern_fn!(
+    pub unsafe fn NSRoundDownToMultipleOfPageSize(bytes: NSUInteger) -> NSUInteger;
+);
+
+extern_fn!(
+    pub unsafe fn NSAllocateMemoryPages(bytes: NSUInteger) -> NonNull<c_void>;
+);
+
+extern_fn!(
+    pub unsafe fn NSDeallocateMemoryPages(ptr: NonNull<c_void>, bytes: NSUInteger);
+);
+
+extern_fn!(
+    pub unsafe fn NSCopyMemoryPages(
+        source: NonNull<c_void>,
+        dest: NonNull<c_void>,
+        bytes: NSUInteger,
+    );
+);
+
+extern_fn!(
+    pub unsafe fn NSRealMemoryAvailable() -> NSUInteger;
 );

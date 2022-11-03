@@ -46,6 +46,17 @@ ns_enum!(
     }
 );
 
+inline_fn!(
+    pub unsafe fn NSDirectionalEdgeInsetsMake(
+        top: CGFloat,
+        leading: CGFloat,
+        bottom: CGFloat,
+        trailing: CGFloat,
+    ) -> NSDirectionalEdgeInsets {
+        todo!()
+    }
+);
+
 extern_class!(
     #[derive(Debug)]
     pub struct NSCollectionViewCompositionalLayoutConfiguration;

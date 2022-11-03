@@ -86,6 +86,30 @@ extern_methods!(
     }
 );
 
+extern_fn!(
+    pub unsafe fn NSUserName() -> NonNull<NSString>;
+);
+
+extern_fn!(
+    pub unsafe fn NSFullUserName() -> NonNull<NSString>;
+);
+
+extern_fn!(
+    pub unsafe fn NSHomeDirectory() -> NonNull<NSString>;
+);
+
+extern_fn!(
+    pub unsafe fn NSHomeDirectoryForUser(userName: Option<&NSString>) -> *mut NSString;
+);
+
+extern_fn!(
+    pub unsafe fn NSTemporaryDirectory() -> NonNull<NSString>;
+);
+
+extern_fn!(
+    pub unsafe fn NSOpenStepRootDirectory() -> NonNull<NSString>;
+);
+
 ns_enum!(
     #[underlying(NSUInteger)]
     pub enum NSSearchPathDirectory {
@@ -128,4 +152,12 @@ ns_options!(
         NSSystemDomainMask = 8,
         NSAllDomainsMask = 0x0ffff,
     }
+);
+
+extern_fn!(
+    pub unsafe fn NSSearchPathForDirectoriesInDomains(
+        directory: NSSearchPathDirectory,
+        domainMask: NSSearchPathDomainMask,
+        expandTilde: Bool,
+    ) -> NonNull<NSArray<NSString>>;
 );

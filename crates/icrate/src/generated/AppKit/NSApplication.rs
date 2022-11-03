@@ -650,7 +650,42 @@ extern_methods!(
     }
 );
 
+extern_fn!(
+    pub unsafe fn NSApplicationMain(argc: c_int, argv: NonNull<NonNull<c_char>>) -> c_int;
+);
+
+extern_fn!(
+    pub unsafe fn NSApplicationLoad() -> Bool;
+);
+
+extern_fn!(
+    pub unsafe fn NSShowsServicesMenuItem(itemName: &NSString) -> Bool;
+);
+
+extern_fn!(
+    pub unsafe fn NSSetShowsServicesMenuItem(itemName: &NSString, enabled: Bool) -> NSInteger;
+);
+
+extern_fn!(
+    pub unsafe fn NSUpdateDynamicServices();
+);
+
+extern_fn!(
+    pub unsafe fn NSPerformService(itemName: &NSString, pboard: Option<&NSPasteboard>) -> Bool;
+);
+
 pub type NSServiceProviderName = NSString;
+
+extern_fn!(
+    pub unsafe fn NSRegisterServicesProvider(
+        provider: Option<&Object>,
+        name: &NSServiceProviderName,
+    );
+);
+
+extern_fn!(
+    pub unsafe fn NSUnregisterServicesProvider(name: &NSServiceProviderName);
+);
 
 extern_static!(NSApplicationDidBecomeActiveNotification: &'static NSNotificationName);
 
