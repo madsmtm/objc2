@@ -536,6 +536,9 @@ impl RustType {
     }
 }
 
+/// This is sound to output in (almost, c_void is not a valid return type) any
+/// context. `Ty` is then used to change these types into something nicer when
+/// requires.
 impl fmt::Display for RustType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         use RustType::*;
@@ -569,24 +572,25 @@ impl fmt::Display for RustType {
 
             // Objective-C
             Id {
-                type_,
-                // Ignore
-                is_const: _,
+                type_: ty,
+                is_const,
                 // Ignore
                 lifetime: _,
                 nullability,
             } => {
                 if *nullability == Nullability::NonNull {
-                    write!(f, "&{type_}")
+                    write!(f, "NonNull<{ty}>")
+                } else if *is_const {
+                    write!(f, "*const {ty}")
                 } else {
-                    write!(f, "Option<&{type_}>")
+                    write!(f, "*mut {ty}")
                 }
             }
             Class { nullability } => {
                 if *nullability == Nullability::NonNull {
-                    write!(f, "&Class")
+                    write!(f, "NonNull<Class>")
                 } else {
-                    write!(f, "Option<&Class>")
+                    write!(f, "*const Class")
                 }
             }
             Sel { nullability } => {
@@ -596,7 +600,7 @@ impl fmt::Display for RustType {
                     write!(f, "OptionSel")
                 }
             }
-            ObjcBool => write!(f, "bool"),
+            ObjcBool => write!(f, "Bool"),
 
             // Others
             Pointer {
@@ -608,72 +612,15 @@ impl fmt::Display for RustType {
                 nullability,
                 is_const,
                 pointee,
-            } => match &**pointee {
-                // Self::Id {
-                //     type_,
-                //     is_const: false,
-                //     lifetime: Lifetime::Autoreleasing,
-                //     nullability: inner_nullability,
-                // } => {
-                //     let tokens = format!("Id<{type_}, Shared>");
-                //     let tokens = if *inner_nullability == Nullability::NonNull {
-                //         tokens
-                //     } else {
-                //         format!("Option<{tokens}>")
-                //     };
-                //
-                //     let tokens = if *is_const {
-                //         format!("&{tokens}")
-                //     } else {
-                //         format!("&mut {tokens}")
-                //     };
-                //     if *nullability == Nullability::NonNull {
-                //         write!(f, "{tokens}")
-                //     } else {
-                //         write!(f, "Option<{tokens}>")
-                //     }
-                // }
-                Self::Id {
-                    type_: tokens,
-                    is_const: false,
-                    lifetime: _,
-                    nullability: inner_nullability,
-                } => {
-                    let tokens = if *inner_nullability == Nullability::NonNull {
-                        format!("NonNull<{tokens}>")
-                    } else {
-                        format!("*mut {tokens}")
-                    };
-                    if *nullability == Nullability::NonNull {
-                        write!(f, "NonNull<{tokens}>")
-                    } else if *is_const {
-                        write!(f, "*const {tokens}")
-                    } else {
-                        write!(f, "*mut {tokens}")
-                    }
+            } => {
+                if *nullability == Nullability::NonNull {
+                    write!(f, "NonNull<{pointee}>")
+                } else if *is_const {
+                    write!(f, "*const {pointee}")
+                } else {
+                    write!(f, "*mut {pointee}")
                 }
-                Self::Id { .. } => {
-                    unreachable!("there should be no id with other values: {self:?}")
-                }
-                Self::ObjcBool => {
-                    if *nullability == Nullability::NonNull {
-                        write!(f, "NonNull<Bool>")
-                    } else if *is_const {
-                        write!(f, "*const Bool")
-                    } else {
-                        write!(f, "*mut Bool")
-                    }
-                }
-                pointee => {
-                    if *nullability == Nullability::NonNull {
-                        write!(f, "NonNull<{pointee}>")
-                    } else if *is_const {
-                        write!(f, "*const {pointee}")
-                    } else {
-                        write!(f, "*mut {pointee}")
-                    }
-                }
-            },
+            }
             Array {
                 element_type,
                 num_elements,
@@ -689,7 +636,8 @@ enum TyKind {
     InReturnWithError,
     InStatic,
     InTypedef,
-    Normal,
+    InArgument,
+    InStructEnum,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -727,7 +675,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::Normal,
+            kind: TyKind::InArgument,
         }
     }
 
@@ -801,7 +749,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::Normal,
+            kind: TyKind::InArgument,
         }
     }
 
@@ -831,7 +779,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::Normal,
+            kind: TyKind::InStructEnum,
         }
     }
 
@@ -844,7 +792,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::Normal,
+            kind: TyKind::InStructEnum,
         }
     }
 
@@ -988,27 +936,26 @@ impl fmt::Display for Ty {
                             write!(f, "Option<&'static Class>")
                         }
                     }
+                    RustType::ObjcBool => write!(f, "bool"),
                     ty => write!(f, "{ty}"),
                 }
             }
-            TyKind::InReturnWithError => {
-                match &self.ty {
-                    RustType::Id {
-                        type_: ty,
-                        lifetime: Lifetime::Unspecified,
-                        is_const: false,
-                        nullability: Nullability::Nullable,
-                    } => {
-                        // NULL -> error
-                        write!(f, " -> Result<Id<{ty}, Shared>, Id<NSError, Shared>>")
-                    }
-                    RustType::ObjcBool => {
-                        // NO -> error
-                        write!(f, " -> Result<(), Id<NSError, Shared>>")
-                    }
-                    _ => panic!("unknown error result type {self:?}"),
+            TyKind::InReturnWithError => match &self.ty {
+                RustType::Id {
+                    type_: ty,
+                    lifetime: Lifetime::Unspecified,
+                    is_const: false,
+                    nullability: Nullability::Nullable,
+                } => {
+                    // NULL -> error
+                    write!(f, " -> Result<Id<{ty}, Shared>, Id<NSError, Shared>>")
                 }
-            }
+                RustType::ObjcBool => {
+                    // NO -> error
+                    write!(f, " -> Result<(), Id<NSError, Shared>>")
+                }
+                _ => panic!("unknown error result type {self:?}"),
+            },
             TyKind::InStatic => match &self.ty {
                 RustType::Id {
                     type_: ty,
@@ -1059,7 +1006,60 @@ impl fmt::Display for Ty {
                 }
                 ty => write!(f, "{ty}"),
             },
-            TyKind::Normal => write!(f, "{}", self.ty),
+            TyKind::InArgument => match &self.ty {
+                RustType::Id {
+                    type_: ty,
+                    // Ignore
+                    is_const: _,
+                    // Ignore
+                    lifetime: _,
+                    nullability,
+                } => {
+                    if *nullability == Nullability::NonNull {
+                        write!(f, "&{ty}")
+                    } else {
+                        write!(f, "Option<&{ty}>")
+                    }
+                }
+                RustType::Class { nullability } => {
+                    if *nullability == Nullability::NonNull {
+                        write!(f, "&Class")
+                    } else {
+                        write!(f, "Option<&Class>")
+                    }
+                }
+                RustType::ObjcBool => write!(f, "bool"),
+                // TODO: Re-enable once we can support it
+                // ty @ RustType::Pointer {
+                //     nullability,
+                //     is_const: false,
+                //     pointee,
+                // } => match &**pointee {
+                //     RustType::Id {
+                //         type_: ty,
+                //         is_const: false,
+                //         lifetime: Lifetime::Autoreleasing,
+                //         nullability: inner_nullability,
+                //     } => {
+                //         let tokens = if *inner_nullability == Nullability::NonNull {
+                //             format!("Id<{ty}, Shared>")
+                //         } else {
+                //             format!("Option<Id<{ty}, Shared>>")
+                //         };
+                //         if *nullability == Nullability::NonNull {
+                //             write!(f, "&mut {tokens}")
+                //         } else {
+                //             write!(f, "Option<&mut {tokens}>")
+                //         }
+                //     }
+                //     RustType::Id { .. } => {
+                //         unreachable!("there should be no id with other values: {self:?}")
+                //     }
+                //     _ => write!(f, "{ty}"),
+                // },
+                ty => write!(f, "{ty}"),
+            },
+            TyKind::InStructEnum => write!(f, "{}", self.ty),
         }
     }
 }
