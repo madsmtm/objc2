@@ -684,19 +684,24 @@ impl fmt::Display for RustType {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+enum TyKind {
+    InReturn,
+    InReturnWithError,
+    InStatic,
+    InTypedef,
+    Normal,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Ty {
     ty: RustType,
-    in_return: bool,
-    in_static: bool,
-    result_wrapped: bool,
+    kind: TyKind,
 }
 
 impl Ty {
     pub const VOID_RESULT: Self = Self {
         ty: RustType::Void,
-        in_return: true,
-        in_static: false,
-        result_wrapped: false,
+        kind: TyKind::InReturn,
     };
 
     pub fn parse_method_argument(ty: Type<'_>, is_consumed: bool) -> Self {
@@ -722,9 +727,7 @@ impl Ty {
 
         Self {
             ty,
-            in_return: false,
-            in_static: false,
-            result_wrapped: false,
+            kind: TyKind::Normal,
         }
     }
 
@@ -739,9 +742,7 @@ impl Ty {
 
         Self {
             ty,
-            in_return: true,
-            in_static: false,
-            result_wrapped: false,
+            kind: TyKind::InReturn,
         }
     }
 
@@ -753,54 +754,39 @@ impl Ty {
         Self::parse_method_return(ty)
     }
 
-    pub fn parse_typedef(ty: Type<'_>) -> Self {
-        let ty = match ty.get_kind() {
-            // When we encounter a typedef declaration like this:
-            //     typedef NSString* NSAbc;
-            //
-            // We parse it as one of:
-            //     type NSAbc = NSString;
-            //     struct NSAbc(NSString);
-            //
-            // Instead of:
-            //     type NSAbc = *const NSString;
-            //
-            // Because that means we can later on use ordinary Id<...> handling.
-            TypeKind::ObjCObjectPointer => {
-                let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                let ty = GenericType::parse_objc_pointer(ty);
+    pub fn parse_typedef(ty: Type<'_>) -> Option<Self> {
+        let mut ty = RustType::parse(ty, false, Nullability::Unspecified, false);
 
-                match &*ty.name {
-                    "NSString" => {}
-                    "NSUnit" => {}        // TODO: Handle this differently
-                    "TodoProtocols" => {} // TODO
-                    _ => panic!("typedef declaration was not NSString: {ty:?}"),
-                }
-
-                if !ty.generics.is_empty() {
-                    panic!("typedef declaration generics not empty");
-                }
-
-                RustType::TypeDef { name: ty.name }
+        ty.visit_lifetime(|lifetime| {
+            if lifetime != Lifetime::Unspecified {
+                panic!("unexpected lifetime in typedef {ty:?}");
             }
-            _ => {
-                let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+        });
 
-                ty.visit_lifetime(|lifetime| {
-                    if lifetime != Lifetime::Unspecified {
-                        panic!("unexpected lifetime in typedef {ty:?}");
-                    }
-                });
-
-                ty
+        match &mut ty {
+            // Handled by Stmt::EnumDecl
+            RustType::Enum { .. } => None,
+            // Handled above and in Stmt::StructDecl
+            // The rest is only `NSZone`
+            RustType::Struct { name } => {
+                assert_eq!(name, "_NSZone", "invalid struct in typedef");
+                None
             }
-        };
-
-        Self {
-            ty,
-            in_return: false,
-            in_static: false,
-            result_wrapped: false,
+            // Opaque structs
+            RustType::Pointer { pointee, .. } if matches!(&**pointee, RustType::Struct { .. }) => {
+                **pointee = RustType::Void;
+                Some(Self {
+                    ty,
+                    kind: TyKind::InTypedef,
+                })
+            }
+            RustType::IncompleteArray { .. } => {
+                unimplemented!("incomplete array in struct")
+            }
+            _ => Some(Self {
+                ty,
+                kind: TyKind::InTypedef,
+            }),
         }
     }
 
@@ -815,9 +801,7 @@ impl Ty {
 
         Self {
             ty,
-            in_return: false,
-            in_static: false,
-            result_wrapped: false,
+            kind: TyKind::Normal,
         }
     }
 
@@ -832,9 +816,7 @@ impl Ty {
 
         Self {
             ty,
-            in_return: true,
-            in_static: false,
-            result_wrapped: false,
+            kind: TyKind::InReturn,
         }
     }
 
@@ -849,9 +831,7 @@ impl Ty {
 
         Self {
             ty,
-            in_return: false,
-            in_static: false,
-            result_wrapped: false,
+            kind: TyKind::Normal,
         }
     }
 
@@ -864,9 +844,7 @@ impl Ty {
 
         Self {
             ty,
-            in_return: false,
-            in_static: false,
-            result_wrapped: false,
+            kind: TyKind::Normal,
         }
     }
 
@@ -881,9 +859,7 @@ impl Ty {
 
         Self {
             ty,
-            in_return: false,
-            in_static: true,
-            result_wrapped: false,
+            kind: TyKind::InStatic,
         }
     }
 }
@@ -938,28 +914,6 @@ impl Ty {
         matches!(self.ty, RustType::Id { .. })
     }
 
-    pub fn typedef_type(mut self) -> Option<Self> {
-        match &mut self.ty {
-            // Handled by Stmt::EnumDecl
-            RustType::Enum { .. } => None,
-            // Handled above and in Stmt::StructDecl
-            // The rest is only `NSZone`
-            RustType::Struct { name } => {
-                assert_eq!(name, "_NSZone", "invalid struct in typedef");
-                None
-            }
-            // Opaque structs
-            RustType::Pointer { pointee, .. } if matches!(&**pointee, RustType::Struct { .. }) => {
-                **pointee = RustType::Void;
-                Some(self)
-            }
-            RustType::IncompleteArray { .. } => {
-                unimplemented!("incomplete array in struct")
-            }
-            _ => Some(self),
-        }
-    }
-
     pub fn set_is_alloc(&mut self) {
         match &mut self.ty {
             RustType::Id {
@@ -979,7 +933,8 @@ impl Ty {
     }
 
     pub fn set_is_error(&mut self) {
-        self.result_wrapped = true;
+        assert_eq!(self.kind, TyKind::InReturn);
+        self.kind = TyKind::InReturnWithError;
     }
 
     /// Related result types
@@ -1002,9 +957,42 @@ impl Ty {
 
 impl fmt::Display for Ty {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if self.in_return {
-            if self.result_wrapped {
-                return match &self.ty {
+        match &self.kind {
+            TyKind::InReturn => {
+                if let RustType::Void = &self.ty {
+                    // Don't output anything
+                    return Ok(());
+                }
+
+                write!(f, " -> ")?;
+
+                match &self.ty {
+                    RustType::Id {
+                        type_: ty,
+                        // Ignore
+                        is_const: _,
+                        // Ignore
+                        lifetime: _,
+                        nullability,
+                    } => {
+                        if *nullability == Nullability::NonNull {
+                            write!(f, "Id<{ty}, Shared>")
+                        } else {
+                            write!(f, "Option<Id<{ty}, Shared>>")
+                        }
+                    }
+                    RustType::Class { nullability } => {
+                        if *nullability == Nullability::NonNull {
+                            write!(f, "&'static Class")
+                        } else {
+                            write!(f, "Option<&'static Class>")
+                        }
+                    }
+                    ty => write!(f, "{ty}"),
+                }
+            }
+            TyKind::InReturnWithError => {
+                match &self.ty {
                     RustType::Id {
                         type_: ty,
                         lifetime: Lifetime::Unspecified,
@@ -1019,43 +1007,9 @@ impl fmt::Display for Ty {
                         write!(f, " -> Result<(), Id<NSError, Shared>>")
                     }
                     _ => panic!("unknown error result type {self:?}"),
-                };
-            }
-
-            if let RustType::Void = &self.ty {
-                // Don't output anything
-                return Ok(());
-            }
-
-            write!(f, " -> ")?;
-
-            if let RustType::Id {
-                type_: ty,
-                // Ignore
-                is_const: _,
-                // Ignore
-                lifetime: _,
-                nullability,
-            } = &self.ty
-            {
-                if *nullability == Nullability::NonNull {
-                    return write!(f, "Id<{ty}, Shared>");
-                } else {
-                    return write!(f, "Option<Id<{ty}, Shared>>");
                 }
             }
-
-            if let RustType::Class { nullability } = &self.ty {
-                if *nullability == Nullability::NonNull {
-                    return write!(f, "&'static Class");
-                } else {
-                    return write!(f, "Option<&'static Class>");
-                }
-            }
-        }
-
-        if self.in_static {
-            match &self.ty {
+            TyKind::InStatic => match &self.ty {
                 RustType::Id {
                     type_: ty,
                     is_const: false,
@@ -1063,16 +1017,49 @@ impl fmt::Display for Ty {
                     nullability,
                 } => {
                     if *nullability == Nullability::NonNull {
-                        return write!(f, "&'static {ty}");
+                        write!(f, "&'static {ty}")
                     } else {
-                        return write!(f, "Option<&'static {ty}>");
+                        write!(f, "Option<&'static {ty}>")
                     }
                 }
                 ty @ RustType::Id { .. } => panic!("invalid static {ty:?}"),
-                _ => {}
-            }
-        }
+                ty => write!(f, "{ty}"),
+            },
+            TyKind::InTypedef => match &self.ty {
+                // When we encounter a typedef declaration like this:
+                //     typedef NSString* NSAbc;
+                //
+                // We parse it as one of:
+                //     type NSAbc = NSString;
+                //     struct NSAbc(NSString);
+                //
+                // Instead of:
+                //     type NSAbc = *const NSString;
+                //
+                // Because that means we can use ordinary Id<NSAbc> elsewhere.
+                RustType::Id {
+                    type_: ty,
+                    is_const: _,
+                    lifetime: _,
+                    nullability,
+                } => {
+                    match &*ty.name {
+                        "NSString" => {}
+                        "NSUnit" => {}        // TODO: Handle this differently
+                        "TodoProtocols" => {} // TODO
+                        _ => panic!("typedef declaration was not NSString: {ty:?}"),
+                    }
 
-        write!(f, "{}", self.ty)
+                    if !ty.generics.is_empty() {
+                        panic!("typedef declaration generics not empty");
+                    }
+
+                    assert_ne!(*nullability, Nullability::NonNull);
+                    write!(f, "{ty}")
+                }
+                ty => write!(f, "{ty}"),
+            },
+            TyKind::Normal => write!(f, "{}", self.ty),
+        }
     }
 }

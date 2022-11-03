@@ -444,9 +444,7 @@ impl Stmt {
                 let ty = entity
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
-                Ty::parse_typedef(ty)
-                    .typedef_type()
-                    .map(|ty| Self::AliasDecl { name, ty })
+                Ty::parse_typedef(ty).map(|ty| Self::AliasDecl { name, ty })
             }
             EntityKind::StructDecl => {
                 if let Some(name) = entity.get_name() {
