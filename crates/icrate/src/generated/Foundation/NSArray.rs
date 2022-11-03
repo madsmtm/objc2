@@ -139,14 +139,22 @@ extern_methods!(
         #[method_id(@__retain_semantics Other sortedArrayUsingFunction:context:)]
         pub unsafe fn sortedArrayUsingFunction_context(
             &self,
-            comparator: NonNull<TodoFunction>,
+            comparator: unsafe extern "C" fn(
+                NonNull<ObjectType>,
+                NonNull<ObjectType>,
+                *mut c_void,
+            ) -> NSInteger,
             context: *mut c_void,
         ) -> Id<NSArray<ObjectType>, Shared>;
 
         #[method_id(@__retain_semantics Other sortedArrayUsingFunction:context:hint:)]
         pub unsafe fn sortedArrayUsingFunction_context_hint(
             &self,
-            comparator: NonNull<TodoFunction>,
+            comparator: unsafe extern "C" fn(
+                NonNull<ObjectType>,
+                NonNull<ObjectType>,
+                *mut c_void,
+            ) -> NSInteger,
             context: *mut c_void,
             hint: Option<&NSData>,
         ) -> Id<NSArray<ObjectType>, Shared>;
@@ -490,7 +498,11 @@ extern_methods!(
         #[method(sortUsingFunction:context:)]
         pub unsafe fn sortUsingFunction_context(
             &self,
-            compare: NonNull<TodoFunction>,
+            compare: unsafe extern "C" fn(
+                NonNull<ObjectType>,
+                NonNull<ObjectType>,
+                *mut c_void,
+            ) -> NSInteger,
             context: *mut c_void,
         );
 

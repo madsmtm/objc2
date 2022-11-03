@@ -121,11 +121,14 @@ extern_struct!(
 
 extern_struct!(
     pub struct NSHashTableCallBacks {
-        pub hash: *mut TodoFunction,
-        pub isEqual: *mut TodoFunction,
-        pub retain: *mut TodoFunction,
-        pub release: *mut TodoFunction,
-        pub describe: *mut TodoFunction,
+        pub hash: Option<unsafe extern "C" fn(NonNull<NSHashTable>, NonNull<c_void>) -> NSUInteger>,
+        pub isEqual: Option<
+            unsafe extern "C" fn(NonNull<NSHashTable>, NonNull<c_void>, NonNull<c_void>) -> Bool,
+        >,
+        pub retain: Option<unsafe extern "C" fn(NonNull<NSHashTable>, NonNull<c_void>)>,
+        pub release: Option<unsafe extern "C" fn(NonNull<NSHashTable>, NonNull<c_void>)>,
+        pub describe:
+            Option<unsafe extern "C" fn(NonNull<NSHashTable>, NonNull<c_void>) -> *mut NSString>,
     }
 );
 

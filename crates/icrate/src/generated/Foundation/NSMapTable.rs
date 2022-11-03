@@ -129,20 +129,24 @@ extern_struct!(
 
 extern_struct!(
     pub struct NSMapTableKeyCallBacks {
-        pub hash: *mut TodoFunction,
-        pub isEqual: *mut TodoFunction,
-        pub retain: *mut TodoFunction,
-        pub release: *mut TodoFunction,
-        pub describe: *mut TodoFunction,
+        pub hash: Option<unsafe extern "C" fn(NonNull<NSMapTable>, NonNull<c_void>) -> NSUInteger>,
+        pub isEqual: Option<
+            unsafe extern "C" fn(NonNull<NSMapTable>, NonNull<c_void>, NonNull<c_void>) -> Bool,
+        >,
+        pub retain: Option<unsafe extern "C" fn(NonNull<NSMapTable>, NonNull<c_void>)>,
+        pub release: Option<unsafe extern "C" fn(NonNull<NSMapTable>, NonNull<c_void>)>,
+        pub describe:
+            Option<unsafe extern "C" fn(NonNull<NSMapTable>, NonNull<c_void>) -> *mut NSString>,
         pub notAKeyMarker: *mut c_void,
     }
 );
 
 extern_struct!(
     pub struct NSMapTableValueCallBacks {
-        pub retain: *mut TodoFunction,
-        pub release: *mut TodoFunction,
-        pub describe: *mut TodoFunction,
+        pub retain: Option<unsafe extern "C" fn(NonNull<NSMapTable>, NonNull<c_void>)>,
+        pub release: Option<unsafe extern "C" fn(NonNull<NSMapTable>, NonNull<c_void>)>,
+        pub describe:
+            Option<unsafe extern "C" fn(NonNull<NSMapTable>, NonNull<c_void>) -> *mut NSString>,
     }
 );
 

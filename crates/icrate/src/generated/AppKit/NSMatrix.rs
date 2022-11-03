@@ -95,7 +95,11 @@ extern_methods!(
         #[method(sortUsingFunction:context:)]
         pub unsafe fn sortUsingFunction_context(
             &self,
-            compare: NonNull<TodoFunction>,
+            compare: unsafe extern "C" fn(
+                NonNull<Object>,
+                NonNull<Object>,
+                *mut c_void,
+            ) -> NSInteger,
             context: *mut c_void,
         );
 

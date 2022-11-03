@@ -147,7 +147,11 @@ extern_methods!(
         #[method(sortSubviewsUsingFunction:context:)]
         pub unsafe fn sortSubviewsUsingFunction_context(
             &self,
-            compare: NonNull<TodoFunction>,
+            compare: unsafe extern "C" fn(
+                NonNull<NSView>,
+                NonNull<NSView>,
+                *mut c_void,
+            ) -> NSComparisonResult,
             context: *mut c_void,
         );
 

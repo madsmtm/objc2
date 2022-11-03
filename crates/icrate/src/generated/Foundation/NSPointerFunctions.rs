@@ -45,40 +45,114 @@ extern_methods!(
         ) -> Id<NSPointerFunctions, Shared>;
 
         #[method(hashFunction)]
-        pub unsafe fn hashFunction(&self) -> *mut TodoFunction;
+        pub unsafe fn hashFunction(
+            &self,
+        ) -> Option<
+            unsafe extern "C" fn(
+                NonNull<c_void>,
+                Option<unsafe extern "C" fn(NonNull<c_void>) -> NSUInteger>,
+            ) -> NSUInteger,
+        >;
 
         #[method(setHashFunction:)]
-        pub unsafe fn setHashFunction(&self, hashFunction: *mut TodoFunction);
+        pub unsafe fn setHashFunction(
+            &self,
+            hashFunction: Option<
+                unsafe extern "C" fn(
+                    NonNull<c_void>,
+                    Option<unsafe extern "C" fn(NonNull<c_void>) -> NSUInteger>,
+                ) -> NSUInteger,
+            >,
+        );
 
         #[method(isEqualFunction)]
-        pub unsafe fn isEqualFunction(&self) -> *mut TodoFunction;
+        pub unsafe fn isEqualFunction(
+            &self,
+        ) -> Option<
+            unsafe extern "C" fn(
+                NonNull<c_void>,
+                NonNull<c_void>,
+                Option<unsafe extern "C" fn(NonNull<c_void>) -> NSUInteger>,
+            ) -> Bool,
+        >;
 
         #[method(setIsEqualFunction:)]
-        pub unsafe fn setIsEqualFunction(&self, isEqualFunction: *mut TodoFunction);
+        pub unsafe fn setIsEqualFunction(
+            &self,
+            isEqualFunction: Option<
+                unsafe extern "C" fn(
+                    NonNull<c_void>,
+                    NonNull<c_void>,
+                    Option<unsafe extern "C" fn(NonNull<c_void>) -> NSUInteger>,
+                ) -> Bool,
+            >,
+        );
 
         #[method(sizeFunction)]
-        pub unsafe fn sizeFunction(&self) -> *mut TodoFunction;
+        pub unsafe fn sizeFunction(
+            &self,
+        ) -> Option<unsafe extern "C" fn(NonNull<c_void>) -> NSUInteger>;
 
         #[method(setSizeFunction:)]
-        pub unsafe fn setSizeFunction(&self, sizeFunction: *mut TodoFunction);
+        pub unsafe fn setSizeFunction(
+            &self,
+            sizeFunction: Option<unsafe extern "C" fn(NonNull<c_void>) -> NSUInteger>,
+        );
 
         #[method(descriptionFunction)]
-        pub unsafe fn descriptionFunction(&self) -> *mut TodoFunction;
+        pub unsafe fn descriptionFunction(
+            &self,
+        ) -> Option<unsafe extern "C" fn(NonNull<c_void>) -> *mut NSString>;
 
         #[method(setDescriptionFunction:)]
-        pub unsafe fn setDescriptionFunction(&self, descriptionFunction: *mut TodoFunction);
+        pub unsafe fn setDescriptionFunction(
+            &self,
+            descriptionFunction: Option<unsafe extern "C" fn(NonNull<c_void>) -> *mut NSString>,
+        );
 
         #[method(relinquishFunction)]
-        pub unsafe fn relinquishFunction(&self) -> *mut TodoFunction;
+        pub unsafe fn relinquishFunction(
+            &self,
+        ) -> Option<
+            unsafe extern "C" fn(
+                NonNull<c_void>,
+                Option<unsafe extern "C" fn(NonNull<c_void>) -> NSUInteger>,
+            ),
+        >;
 
         #[method(setRelinquishFunction:)]
-        pub unsafe fn setRelinquishFunction(&self, relinquishFunction: *mut TodoFunction);
+        pub unsafe fn setRelinquishFunction(
+            &self,
+            relinquishFunction: Option<
+                unsafe extern "C" fn(
+                    NonNull<c_void>,
+                    Option<unsafe extern "C" fn(NonNull<c_void>) -> NSUInteger>,
+                ),
+            >,
+        );
 
         #[method(acquireFunction)]
-        pub unsafe fn acquireFunction(&self) -> *mut TodoFunction;
+        pub unsafe fn acquireFunction(
+            &self,
+        ) -> Option<
+            unsafe extern "C" fn(
+                NonNull<c_void>,
+                Option<unsafe extern "C" fn(NonNull<c_void>) -> NSUInteger>,
+                Bool,
+            ) -> NonNull<c_void>,
+        >;
 
         #[method(setAcquireFunction:)]
-        pub unsafe fn setAcquireFunction(&self, acquireFunction: *mut TodoFunction);
+        pub unsafe fn setAcquireFunction(
+            &self,
+            acquireFunction: Option<
+                unsafe extern "C" fn(
+                    NonNull<c_void>,
+                    Option<unsafe extern "C" fn(NonNull<c_void>) -> NSUInteger>,
+                    Bool,
+                ) -> NonNull<c_void>,
+            >,
+        );
 
         #[method(usesStrongWriteBarrier)]
         pub unsafe fn usesStrongWriteBarrier(&self) -> bool;

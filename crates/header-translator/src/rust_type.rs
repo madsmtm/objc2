@@ -1,6 +1,6 @@
 use std::fmt;
 
-use clang::{Nullability, Type, TypeKind};
+use clang::{CallingConvention, Nullability, Type, TypeKind};
 
 use crate::method::MemoryManagement;
 
@@ -317,6 +317,12 @@ enum RustType {
     Struct {
         name: String,
     },
+    Fn {
+        is_block: bool,
+        is_variadic: bool,
+        arguments: Vec<Ty>,
+        result_type: Box<Ty>,
+    },
 
     TypeDef {
         name: String,
@@ -489,9 +495,31 @@ impl RustType {
             BlockPointer => Self::TypeDef {
                 name: "TodoBlock".to_string(),
             },
-            FunctionPrototype => Self::TypeDef {
-                name: "TodoFunction".to_string(),
-            },
+            FunctionPrototype => {
+                let call_conv = ty.get_calling_convention().expect("fn calling convention");
+                assert_eq!(
+                    call_conv,
+                    CallingConvention::Cdecl,
+                    "fn calling convention is C"
+                );
+
+                let arguments = ty
+                    .get_argument_types()
+                    .expect("fn type to have argument types")
+                    .into_iter()
+                    .map(Ty::parse_fn_argument)
+                    .collect();
+
+                let result_type = ty.get_result_type().expect("fn type to have result type");
+                let result_type = Ty::parse_fn_result(result_type);
+
+                Self::Fn {
+                    is_block: false,
+                    is_variadic: ty.is_variadic(),
+                    arguments,
+                    result_type: Box::new(result_type),
+                }
+            }
             IncompleteArray => {
                 let is_const = ty.is_const_qualified();
                 let ty = ty
@@ -607,8 +635,42 @@ impl fmt::Display for RustType {
                 nullability,
                 is_const,
                 pointee,
-            }
-            | IncompleteArray {
+            } => match &**pointee {
+                Self::Fn {
+                    // TODO
+                    is_block: _,
+                    is_variadic,
+                    arguments,
+                    result_type,
+                } => {
+                    if *nullability != Nullability::NonNull {
+                        write!(f, "Option<")?;
+                    }
+                    write!(f, "unsafe extern \"C\" fn(")?;
+                    for arg in arguments {
+                        write!(f, "{arg},")?;
+                    }
+                    if *is_variadic {
+                        write!(f, "...")?;
+                    }
+                    write!(f, "){result_type}")?;
+
+                    if *nullability != Nullability::NonNull {
+                        write!(f, ">")?;
+                    }
+                    Ok(())
+                }
+                pointee => {
+                    if *nullability == Nullability::NonNull {
+                        write!(f, "NonNull<{pointee}>")
+                    } else if *is_const {
+                        write!(f, "*const {pointee}")
+                    } else {
+                        write!(f, "*mut {pointee}")
+                    }
+                }
+            },
+            IncompleteArray {
                 nullability,
                 is_const,
                 pointee,
@@ -626,6 +688,7 @@ impl fmt::Display for RustType {
                 num_elements,
             } => write!(f, "[{element_type}; {num_elements}]"),
             Enum { name } | Struct { name } | TypeDef { name } => write!(f, "{name}"),
+            Self::Fn { .. } => write!(f, "TodoFunction"),
         }
     }
 }
@@ -638,6 +701,8 @@ enum TyKind {
     InTypedef,
     InArgument,
     InStructEnum,
+    InFnArgument,
+    InFnReturn,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -808,6 +873,36 @@ impl Ty {
         Self {
             ty,
             kind: TyKind::InStatic,
+        }
+    }
+
+    fn parse_fn_argument(ty: Type<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+
+        ty.visit_lifetime(|lifetime| {
+            if lifetime != Lifetime::Strong {
+                panic!("unexpected lifetime {lifetime:?} in fn argument {ty:?}");
+            }
+        });
+
+        Self {
+            ty,
+            kind: TyKind::InFnArgument,
+        }
+    }
+
+    fn parse_fn_result(ty: Type<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+
+        ty.visit_lifetime(|lifetime| {
+            if lifetime != Lifetime::Unspecified {
+                panic!("unexpected lifetime {lifetime:?} in fn result {ty:?}");
+            }
+        });
+
+        Self {
+            ty,
+            kind: TyKind::InFnReturn,
         }
     }
 }
@@ -1060,6 +1155,15 @@ impl fmt::Display for Ty {
                 ty => write!(f, "{ty}"),
             },
             TyKind::InStructEnum => write!(f, "{}", self.ty),
+            TyKind::InFnArgument => write!(f, "{}", self.ty),
+            TyKind::InFnReturn => {
+                if let RustType::Void = &self.ty {
+                    // Don't output anything
+                    return Ok(());
+                }
+
+                write!(f, " -> {}", self.ty)
+            }
         }
     }
 }
