@@ -469,6 +469,9 @@ impl Stmt {
                         };
                         Some(Self::AliasDecl { name, type_ })
                     }
+                    RustType::IncompleteArray { .. } => {
+                        unimplemented!("incomplete array in struct")
+                    }
                     type_ => Some(Self::AliasDecl { name, type_ }),
                 }
             }

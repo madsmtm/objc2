@@ -31,7 +31,7 @@ extern_methods!(
         #[method_id(@__retain_semantics Init initWithObjects:count:)]
         pub unsafe fn initWithObjects_count(
             this: Option<Allocated<Self>>,
-            objects: TodoArray,
+            objects: *mut NonNull<ObjectType>,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
 
@@ -47,7 +47,7 @@ extern_methods!(
     /// NSExtendedOrderedSet
     unsafe impl<ObjectType: Message> NSOrderedSet<ObjectType> {
         #[method(getObjects:range:)]
-        pub unsafe fn getObjects_range(&self, objects: TodoArray, range: NSRange);
+        pub unsafe fn getObjects_range(&self, objects: *mut NonNull<ObjectType>, range: NSRange);
 
         #[method_id(@__retain_semantics Other objectsAtIndexes:)]
         pub unsafe fn objectsAtIndexes(
@@ -203,7 +203,7 @@ extern_methods!(
 
         #[method_id(@__retain_semantics Other orderedSetWithObjects:count:)]
         pub unsafe fn orderedSetWithObjects_count(
-            objects: TodoArray,
+            objects: NonNull<NonNull<ObjectType>>,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
 
@@ -377,7 +377,7 @@ extern_methods!(
         pub unsafe fn addObject(&self, object: &ObjectType);
 
         #[method(addObjects:count:)]
-        pub unsafe fn addObjects_count(&self, objects: TodoArray, count: NSUInteger);
+        pub unsafe fn addObjects_count(&self, objects: *mut NonNull<ObjectType>, count: NSUInteger);
 
         #[method(addObjectsFromArray:)]
         pub unsafe fn addObjectsFromArray(&self, array: &NSArray<ObjectType>);
@@ -409,7 +409,7 @@ extern_methods!(
         pub unsafe fn replaceObjectsInRange_withObjects_count(
             &self,
             range: NSRange,
-            objects: TodoArray,
+            objects: *mut NonNull<ObjectType>,
             count: NSUInteger,
         );
 

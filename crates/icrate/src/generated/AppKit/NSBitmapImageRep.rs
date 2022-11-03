@@ -259,10 +259,10 @@ extern_methods!(
         pub unsafe fn colorAtX_y(&self, x: NSInteger, y: NSInteger) -> Option<Id<NSColor, Shared>>;
 
         #[method(getPixel:atX:y:)]
-        pub unsafe fn getPixel_atX_y(&self, p: TodoArray, x: NSInteger, y: NSInteger);
+        pub unsafe fn getPixel_atX_y(&self, p: NonNull<NSUInteger>, x: NSInteger, y: NSInteger);
 
         #[method(setPixel:atX:y:)]
-        pub unsafe fn setPixel_atX_y(&self, p: TodoArray, x: NSInteger, y: NSInteger);
+        pub unsafe fn setPixel_atX_y(&self, p: NonNull<NSUInteger>, x: NSInteger, y: NSInteger);
 
         #[method(CGImage)]
         pub unsafe fn CGImage(&self) -> CGImageRef;

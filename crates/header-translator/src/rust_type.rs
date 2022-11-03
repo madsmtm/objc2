@@ -36,7 +36,7 @@ impl GenericType {
                     .get_objc_type_arguments()
                     .into_iter()
                     .map(|param| {
-                        match RustType::parse(param, false, Nullability::Unspecified) {
+                        match RustType::parse(param, false, Nullability::Unspecified, false) {
                             RustType::Id {
                                 type_,
                                 is_const: _,
@@ -112,6 +112,7 @@ fn parse_attributed<'a>(
     nullability: &mut Nullability,
     lifetime: &mut Lifetime,
     kindof: Option<&mut bool>,
+    inside_partial_array: bool,
 ) -> Type<'a> {
     let mut modified_ty = ty.clone();
     while modified_ty.get_kind() == TypeKind::Attributed {
@@ -183,6 +184,13 @@ fn parse_attributed<'a>(
         if !modified_ty.is_const_qualified() {
             // TODO: Fix this
             println!("unnecessarily stripped const");
+        }
+    }
+
+    if inside_partial_array {
+        if let Some(rest) = name.strip_prefix("__unsafe_unretained") {
+            *lifetime = Lifetime::Unretained;
+            name = rest.trim();
         }
     }
 
@@ -292,6 +300,11 @@ pub enum RustType {
         is_const: bool,
         pointee: Box<RustType>,
     },
+    IncompleteArray {
+        nullability: Nullability,
+        is_const: bool,
+        pointee: Box<RustType>,
+    },
     Array {
         element_type: Box<RustType>,
         num_elements: usize,
@@ -356,13 +369,24 @@ impl RustType {
         }
     }
 
-    fn parse(ty: Type<'_>, is_consumed: bool, mut nullability: Nullability) -> Self {
+    fn parse(
+        ty: Type<'_>,
+        is_consumed: bool,
+        mut nullability: Nullability,
+        inside_partial_array: bool,
+    ) -> Self {
         use TypeKind::*;
 
         // println!("{:?}, {:?}", ty, ty.get_class_type());
 
         let mut lifetime = Lifetime::Unspecified;
-        let ty = parse_attributed(ty, &mut nullability, &mut lifetime, None);
+        let ty = parse_attributed(
+            ty,
+            &mut nullability,
+            &mut lifetime,
+            None,
+            inside_partial_array,
+        );
 
         // println!("{:?}: {:?}", ty.get_kind(), ty.get_display_name());
 
@@ -398,7 +422,7 @@ impl RustType {
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
                 // Note: Can't handle const id pointers
                 // assert!(!ty.is_const_qualified(), "expected pointee to not be const");
-                let pointee = Self::parse(ty, is_consumed, Nullability::Unspecified);
+                let pointee = Self::parse(ty, is_consumed, Nullability::Unspecified, false);
                 Self::Pointer {
                     nullability,
                     is_const,
@@ -408,7 +432,13 @@ impl RustType {
             ObjCObjectPointer => {
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
                 let mut kindof = false;
-                let ty = parse_attributed(ty, &mut nullability, &mut lifetime, Some(&mut kindof));
+                let ty = parse_attributed(
+                    ty,
+                    &mut nullability,
+                    &mut lifetime,
+                    Some(&mut kindof),
+                    false,
+                );
                 let type_ = GenericType::parse_objc_pointer(ty);
 
                 Self::Id {
@@ -507,14 +537,24 @@ impl RustType {
             FunctionPrototype => Self::TypeDef {
                 name: "TodoFunction".to_string(),
             },
-            IncompleteArray => Self::TypeDef {
-                name: "TodoArray".to_string(),
-            },
+            IncompleteArray => {
+                let is_const = ty.is_const_qualified();
+                let ty = ty
+                    .get_element_type()
+                    .expect("incomplete array to have element type");
+                let pointee = Self::parse(ty, is_consumed, Nullability::Unspecified, true);
+                Self::IncompleteArray {
+                    nullability,
+                    is_const,
+                    pointee: Box::new(pointee),
+                }
+            }
             ConstantArray => {
                 let element_type = Self::parse(
                     ty.get_element_type().expect("array to have element type"),
                     is_consumed,
                     Nullability::Unspecified,
+                    false,
                 );
                 let num_elements = ty
                     .get_size()
@@ -536,18 +576,24 @@ impl RustType {
         match self {
             Self::Id { lifetime, .. } => f(*lifetime),
             Self::Pointer { pointee, .. } => pointee.visit_lifetime(f),
+            Self::IncompleteArray { pointee, .. } => pointee.visit_lifetime(f),
             Self::Array { element_type, .. } => element_type.visit_lifetime(f),
             _ => {}
         }
     }
 
     pub fn parse_argument(ty: Type<'_>, is_consumed: bool) -> Self {
-        let this = Self::parse(ty, is_consumed, Nullability::Unspecified);
+        let this = Self::parse(ty, is_consumed, Nullability::Unspecified, false);
 
         match &this {
             Self::Pointer { pointee, .. } => pointee.visit_lifetime(|lifetime| {
                 if lifetime != Lifetime::Autoreleasing && lifetime != Lifetime::Unspecified {
                     panic!("unexpected lifetime {lifetime:?} in pointer argument {ty:?}");
+                }
+            }),
+            Self::IncompleteArray { pointee, .. } => pointee.visit_lifetime(|lifetime| {
+                if lifetime != Lifetime::Unretained && lifetime != Lifetime::Unspecified {
+                    panic!("unexpected lifetime {lifetime:?} in incomplete array argument {ty:?}");
                 }
             }),
             _ => this.visit_lifetime(|lifetime| {
@@ -591,7 +637,7 @@ impl RustType {
                 Self::TypeDef { name: type_.name }
             }
             _ => {
-                let this = Self::parse(ty, false, Nullability::Unspecified);
+                let this = Self::parse(ty, false, Nullability::Unspecified, false);
 
                 this.visit_lifetime(|lifetime| {
                     if lifetime != Lifetime::Unspecified {
@@ -605,7 +651,7 @@ impl RustType {
     }
 
     pub fn parse_property(ty: Type<'_>, default_nullability: Nullability) -> Self {
-        let this = Self::parse(ty, false, default_nullability);
+        let this = Self::parse(ty, false, default_nullability, false);
 
         this.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -617,7 +663,7 @@ impl RustType {
     }
 
     pub fn parse_struct_field(ty: Type<'_>) -> Self {
-        let this = Self::parse(ty, false, Nullability::Unspecified);
+        let this = Self::parse(ty, false, Nullability::Unspecified, false);
 
         this.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -629,7 +675,7 @@ impl RustType {
     }
 
     pub fn parse_enum(ty: Type<'_>) -> Self {
-        let this = Self::parse(ty, false, Nullability::Unspecified);
+        let this = Self::parse(ty, false, Nullability::Unspecified, false);
 
         this.visit_lifetime(|_lifetime| {
             panic!("unexpected lifetime in enum {this:?}");
@@ -703,6 +749,11 @@ impl fmt::Display for RustType {
 
             // Others
             Pointer {
+                nullability,
+                is_const,
+                pointee,
+            }
+            | IncompleteArray {
                 nullability,
                 is_const,
                 pointee,
@@ -800,7 +851,7 @@ impl RustTypeReturn {
     }
 
     pub fn parse(ty: Type<'_>) -> Self {
-        Self::new(RustType::parse(ty, false, Nullability::Unspecified))
+        Self::new(RustType::parse(ty, false, Nullability::Unspecified, false))
     }
 
     pub fn as_error(&self) -> String {
@@ -873,7 +924,7 @@ pub struct RustTypeStatic {
 
 impl RustTypeStatic {
     pub fn parse(ty: Type<'_>) -> Self {
-        let inner = RustType::parse(ty, false, Nullability::Unspecified);
+        let inner = RustType::parse(ty, false, Nullability::Unspecified, false);
 
         inner.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Strong && lifetime != Lifetime::Unspecified {

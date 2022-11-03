@@ -28,7 +28,7 @@ extern_methods!(
         #[method_id(@__retain_semantics Init initWithObjects:count:)]
         pub unsafe fn initWithObjects_count(
             this: Option<Allocated<Self>>,
-            objects: TodoArray,
+            objects: *mut NonNull<ObjectType>,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
 
@@ -92,7 +92,11 @@ extern_methods!(
         ) -> Option<Id<ObjectType, Shared>>;
 
         #[method(getObjects:range:)]
-        pub unsafe fn getObjects_range(&self, objects: TodoArray, range: NSRange);
+        pub unsafe fn getObjects_range(
+            &self,
+            objects: NonNull<NonNull<ObjectType>>,
+            range: NSRange,
+        );
 
         #[method(indexOfObject:)]
         pub unsafe fn indexOfObject(&self, anObject: &ObjectType) -> NSUInteger;
@@ -270,7 +274,7 @@ extern_methods!(
 
         #[method_id(@__retain_semantics Other arrayWithObjects:count:)]
         pub unsafe fn arrayWithObjects_count(
-            objects: TodoArray,
+            objects: NonNull<NonNull<ObjectType>>,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
 
@@ -339,7 +343,7 @@ extern_methods!(
     /// NSDeprecated
     unsafe impl<ObjectType: Message> NSArray<ObjectType> {
         #[method(getObjects:)]
-        pub unsafe fn getObjects(&self, objects: TodoArray);
+        pub unsafe fn getObjects(&self, objects: NonNull<NonNull<ObjectType>>);
 
         #[method_id(@__retain_semantics Other arrayWithContentsOfFile:)]
         pub unsafe fn arrayWithContentsOfFile(

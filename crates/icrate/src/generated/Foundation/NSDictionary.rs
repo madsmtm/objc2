@@ -32,8 +32,8 @@ extern_methods!(
         #[method_id(@__retain_semantics Init initWithObjects:forKeys:count:)]
         pub unsafe fn initWithObjects_forKeys_count(
             this: Option<Allocated<Self>>,
-            objects: TodoArray,
-            keys: TodoArray,
+            objects: *mut NonNull<ObjectType>,
+            keys: *mut NonNull<NSCopying>,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
 
@@ -105,8 +105,8 @@ extern_methods!(
         #[method(getObjects:andKeys:count:)]
         pub unsafe fn getObjects_andKeys_count(
             &self,
-            objects: TodoArray,
-            keys: TodoArray,
+            objects: *mut NonNull<ObjectType>,
+            keys: *mut NonNull<KeyType>,
             count: NSUInteger,
         );
 
@@ -158,7 +158,11 @@ extern_methods!(
     /// NSDeprecated
     unsafe impl<KeyType: Message, ObjectType: Message> NSDictionary<KeyType, ObjectType> {
         #[method(getObjects:andKeys:)]
-        pub unsafe fn getObjects_andKeys(&self, objects: TodoArray, keys: TodoArray);
+        pub unsafe fn getObjects_andKeys(
+            &self,
+            objects: *mut NonNull<ObjectType>,
+            keys: *mut NonNull<KeyType>,
+        );
 
         #[method_id(@__retain_semantics Other dictionaryWithContentsOfFile:)]
         pub unsafe fn dictionaryWithContentsOfFile(
@@ -208,8 +212,8 @@ extern_methods!(
 
         #[method_id(@__retain_semantics Other dictionaryWithObjects:forKeys:count:)]
         pub unsafe fn dictionaryWithObjects_forKeys_count(
-            objects: TodoArray,
-            keys: TodoArray,
+            objects: *mut NonNull<ObjectType>,
+            keys: *mut NonNull<NSCopying>,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
 
@@ -363,7 +367,7 @@ extern_methods!(
         pub unsafe fn countByEnumeratingWithState_objects_count(
             &self,
             state: NonNull<NSFastEnumerationState>,
-            buffer: TodoArray,
+            buffer: NonNull<*mut K>,
             len: NSUInteger,
         ) -> NSUInteger;
     }

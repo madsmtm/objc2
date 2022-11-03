@@ -19,14 +19,14 @@ extern_methods!(
 
         #[method_id(@__retain_semantics Other indexPathWithIndexes:length:)]
         pub unsafe fn indexPathWithIndexes_length(
-            indexes: TodoArray,
+            indexes: *mut NSUInteger,
             length: NSUInteger,
         ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Init initWithIndexes:length:)]
         pub unsafe fn initWithIndexes_length(
             this: Option<Allocated<Self>>,
-            indexes: TodoArray,
+            indexes: *mut NSUInteger,
             length: NSUInteger,
         ) -> Id<Self, Shared>;
 

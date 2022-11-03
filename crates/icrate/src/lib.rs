@@ -236,7 +236,6 @@ mod common {
     pub(crate) type Protocol = Object;
     pub(crate) type TodoBlock = *const c_void;
     pub(crate) type TodoFunction = *const c_void;
-    pub(crate) type TodoArray = *const c_void;
     pub(crate) type TodoClass = Object;
     pub(crate) type TodoProtocols = Object;
 

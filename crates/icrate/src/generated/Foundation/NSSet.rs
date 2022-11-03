@@ -31,7 +31,7 @@ extern_methods!(
         #[method_id(@__retain_semantics Init initWithObjects:count:)]
         pub unsafe fn initWithObjects_count(
             this: Option<Allocated<Self>>,
-            objects: TodoArray,
+            objects: *mut NonNull<ObjectType>,
             cnt: NSUInteger,
         ) -> Id<Self, Shared>;
 
@@ -134,8 +134,10 @@ extern_methods!(
         pub unsafe fn setWithObject(object: &ObjectType) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Other setWithObjects:count:)]
-        pub unsafe fn setWithObjects_count(objects: TodoArray, cnt: NSUInteger)
-            -> Id<Self, Shared>;
+        pub unsafe fn setWithObjects_count(
+            objects: NonNull<NonNull<ObjectType>>,
+            cnt: NSUInteger,
+        ) -> Id<Self, Shared>;
 
         #[method_id(@__retain_semantics Other setWithSet:)]
         pub unsafe fn setWithSet(set: &NSSet<ObjectType>) -> Id<Self, Shared>;
