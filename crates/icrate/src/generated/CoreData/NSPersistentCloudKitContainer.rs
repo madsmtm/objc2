@@ -30,30 +30,6 @@ extern_methods!(
             options: NSPersistentCloudKitContainerSchemaInitializationOptions,
         ) -> Result<(), Id<NSError, Shared>>;
 
-        #[method_id(@__retain_semantics Other recordForManagedObjectID:)]
-        pub unsafe fn recordForManagedObjectID(
-            &self,
-            managedObjectID: &NSManagedObjectID,
-        ) -> Option<Id<CKRecord, Shared>>;
-
-        #[method_id(@__retain_semantics Other recordsForManagedObjectIDs:)]
-        pub unsafe fn recordsForManagedObjectIDs(
-            &self,
-            managedObjectIDs: &NSArray<NSManagedObjectID>,
-        ) -> Id<NSDictionary<NSManagedObjectID, CKRecord>, Shared>;
-
-        #[method_id(@__retain_semantics Other recordIDForManagedObjectID:)]
-        pub unsafe fn recordIDForManagedObjectID(
-            &self,
-            managedObjectID: &NSManagedObjectID,
-        ) -> Option<Id<CKRecordID, Shared>>;
-
-        #[method_id(@__retain_semantics Other recordIDsForManagedObjectIDs:)]
-        pub unsafe fn recordIDsForManagedObjectIDs(
-            &self,
-            managedObjectIDs: &NSArray<NSManagedObjectID>,
-        ) -> Id<NSDictionary<NSManagedObjectID, CKRecordID>, Shared>;
-
         #[method(canUpdateRecordForManagedObjectWithID:)]
         pub unsafe fn canUpdateRecordForManagedObjectWithID(
             &self,

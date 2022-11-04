@@ -176,27 +176,23 @@ pub use self::__NSManagedObject::{
     NSSnapshotEventUndoUpdate,
 };
 pub use self::__NSManagedObjectContext::{
-    NSConfinementConcurrencyType, NSDeletedObjectIDsKey, NSDeletedObjectsKey, NSErrorMergePolicy,
+    NSConfinementConcurrencyType, NSDeletedObjectIDsKey, NSDeletedObjectsKey,
     NSInsertedObjectIDsKey, NSInsertedObjectsKey, NSInvalidatedAllObjectsKey,
     NSInvalidatedObjectIDsKey, NSInvalidatedObjectsKey, NSMainQueueConcurrencyType,
     NSManagedObjectContext, NSManagedObjectContextConcurrencyType,
     NSManagedObjectContextDidMergeChangesObjectIDsNotification,
     NSManagedObjectContextDidSaveNotification, NSManagedObjectContextDidSaveObjectIDsNotification,
     NSManagedObjectContextObjectsDidChangeNotification, NSManagedObjectContextQueryGenerationKey,
-    NSManagedObjectContextWillSaveNotification, NSMergeByPropertyObjectTrumpMergePolicy,
-    NSMergeByPropertyStoreTrumpMergePolicy, NSOverwriteMergePolicy, NSPrivateQueueConcurrencyType,
-    NSRefreshedObjectIDsKey, NSRefreshedObjectsKey, NSRollbackMergePolicy, NSUpdatedObjectIDsKey,
-    NSUpdatedObjectsKey,
+    NSManagedObjectContextWillSaveNotification, NSPrivateQueueConcurrencyType,
+    NSRefreshedObjectIDsKey, NSRefreshedObjectsKey, NSUpdatedObjectIDsKey, NSUpdatedObjectsKey,
 };
 pub use self::__NSManagedObjectID::NSManagedObjectID;
 pub use self::__NSManagedObjectModel::NSManagedObjectModel;
 pub use self::__NSMappingModel::NSMappingModel;
 pub use self::__NSMergePolicy::{
-    NSConstraintConflict, NSErrorMergePolicy, NSErrorMergePolicyType,
-    NSMergeByPropertyObjectTrumpMergePolicy, NSMergeByPropertyObjectTrumpMergePolicyType,
-    NSMergeByPropertyStoreTrumpMergePolicy, NSMergeByPropertyStoreTrumpMergePolicyType,
-    NSMergeConflict, NSMergePolicy, NSMergePolicyType, NSOverwriteMergePolicy,
-    NSOverwriteMergePolicyType, NSRollbackMergePolicy, NSRollbackMergePolicyType,
+    NSConstraintConflict, NSErrorMergePolicyType, NSMergeByPropertyObjectTrumpMergePolicyType,
+    NSMergeByPropertyStoreTrumpMergePolicyType, NSMergeConflict, NSMergePolicy, NSMergePolicyType,
+    NSOverwriteMergePolicyType, NSRollbackMergePolicyType,
 };
 pub use self::__NSMigrationManager::NSMigrationManager;
 pub use self::__NSPersistentCloudKitContainer::{

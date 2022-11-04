@@ -56,26 +56,5 @@ extern_methods!(
             &self,
             completionHandler: &Block<(*mut NSError,), ()>,
         );
-
-        #[method_id(@__retain_semantics Other attributeSetForObject:)]
-        pub unsafe fn attributeSetForObject(
-            &self,
-            object: &NSManagedObject,
-        ) -> Option<Id<CSSearchableItemAttributeSet, Shared>>;
-
-        #[method(searchableIndex:reindexAllSearchableItemsWithAcknowledgementHandler:)]
-        pub unsafe fn searchableIndex_reindexAllSearchableItemsWithAcknowledgementHandler(
-            &self,
-            searchableIndex: &CSSearchableIndex,
-            acknowledgementHandler: &Block<(), ()>,
-        );
-
-        #[method(searchableIndex:reindexSearchableItemsWithIdentifiers:acknowledgementHandler:)]
-        pub unsafe fn searchableIndex_reindexSearchableItemsWithIdentifiers_acknowledgementHandler(
-            &self,
-            searchableIndex: &CSSearchableIndex,
-            identifiers: &NSArray<NSString>,
-            acknowledgementHandler: &Block<(), ()>,
-        );
     }
 );

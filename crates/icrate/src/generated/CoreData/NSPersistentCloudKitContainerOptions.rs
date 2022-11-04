@@ -18,12 +18,6 @@ extern_methods!(
         #[method_id(@__retain_semantics Other containerIdentifier)]
         pub unsafe fn containerIdentifier(&self) -> Id<NSString, Shared>;
 
-        #[method(databaseScope)]
-        pub unsafe fn databaseScope(&self) -> CKDatabaseScope;
-
-        #[method(setDatabaseScope:)]
-        pub unsafe fn setDatabaseScope(&self, databaseScope: CKDatabaseScope);
-
         #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 

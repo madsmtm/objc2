@@ -3,3 +3,32 @@ imports = ["CoreData", "Foundation"]
 # Has `error:` parameter, but returns NSInteger (where 0 means error)
 [class.NSManagedObjectContext.methods]
 countForFetchRequest_error = { skipped = true }
+
+# Defined in multiple files
+[static.NSErrorMergePolicy]
+skipped = true
+[static.NSMergeByPropertyObjectTrumpMergePolicy]
+skipped = true
+[static.NSMergeByPropertyStoreTrumpMergePolicy]
+skipped = true
+[static.NSOverwriteMergePolicy]
+skipped = true
+[static.NSRollbackMergePolicy]
+skipped = true
+
+# Both instance and class methods
+[class.NSManagedObject.methods.entity]
+skipped = true
+
+# References classes from other frameworks
+[class.NSCoreDataCoreSpotlightDelegate.methods]
+attributeSetForObject = { skipped = true }
+searchableIndex_reindexAllSearchableItemsWithAcknowledgementHandler = { skipped = true }
+searchableIndex_reindexSearchableItemsWithIdentifiers_acknowledgementHandler = { skipped = true }
+[class.NSPersistentCloudKitContainer.methods]
+recordForManagedObjectID = { skipped = true }
+recordsForManagedObjectIDs = { skipped = true }
+recordIDForManagedObjectID = { skipped = true }
+recordIDsForManagedObjectIDs = { skipped = true }
+[class.NSPersistentCloudKitContainerOptions.properties.databaseScope]
+skipped = true

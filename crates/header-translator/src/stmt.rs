@@ -549,6 +549,16 @@ impl Stmt {
             }
             EntityKind::VarDecl => {
                 let name = entity.get_name().expect("var decl name");
+
+                if config
+                    .statics
+                    .get(&name)
+                    .map(|data| data.skipped)
+                    .unwrap_or_default()
+                {
+                    return None;
+                }
+
                 let ty = entity.get_type().expect("var type");
                 let ty = Ty::parse_static(ty);
                 let mut value = None;

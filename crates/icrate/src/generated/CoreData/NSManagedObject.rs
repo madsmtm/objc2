@@ -30,9 +30,6 @@ extern_methods!(
         #[method(contextShouldIgnoreUnmodeledPropertyChanges)]
         pub unsafe fn contextShouldIgnoreUnmodeledPropertyChanges() -> bool;
 
-        #[method_id(@__retain_semantics Other entity)]
-        pub unsafe fn entity() -> Id<NSEntityDescription, Shared>;
-
         #[method_id(@__retain_semantics Other fetchRequest)]
         pub unsafe fn fetchRequest() -> Id<NSFetchRequest, Shared>;
 

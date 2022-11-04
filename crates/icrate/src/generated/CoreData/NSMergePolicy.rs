@@ -4,16 +4,6 @@ use crate::common::*;
 use crate::CoreData::*;
 use crate::Foundation::*;
 
-extern_static!(NSErrorMergePolicy: &'static Object);
-
-extern_static!(NSMergeByPropertyStoreTrumpMergePolicy: &'static Object);
-
-extern_static!(NSMergeByPropertyObjectTrumpMergePolicy: &'static Object);
-
-extern_static!(NSOverwriteMergePolicy: &'static Object);
-
-extern_static!(NSRollbackMergePolicy: &'static Object);
-
 ns_enum!(
     #[underlying(NSUInteger)]
     pub enum NSMergePolicyType {

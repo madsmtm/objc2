@@ -23,6 +23,9 @@ pub struct Config {
     #[serde(rename = "fn")]
     #[serde(default)]
     pub fns: HashMap<String, FnData>,
+    #[serde(rename = "static")]
+    #[serde(default)]
+    pub statics: HashMap<String, StaticData>,
     #[serde(default)]
     pub imports: Vec<String>,
 }
@@ -68,7 +71,9 @@ pub struct MethodData {
     // TODO: mutating
 }
 
-type FnData = StructData;
+// TODO
+pub type FnData = StructData;
+pub type StaticData = StructData;
 
 fn unsafe_default() -> bool {
     true
