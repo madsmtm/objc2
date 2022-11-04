@@ -95,9 +95,6 @@ extern_methods!(
         #[method(bottomMargin)]
         pub unsafe fn bottomMargin(&self) -> CGFloat;
 
-        #[method(drawAtPoint:inContext:)]
-        pub unsafe fn drawAtPoint_inContext(&self, point: CGPoint, context: CGContextRef);
-
         #[method_id(@__retain_semantics Other textAttachmentViewProviders)]
         pub unsafe fn textAttachmentViewProviders(
             &self,

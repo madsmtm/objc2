@@ -281,21 +281,6 @@ extern_methods!(
             accessibilityDescription: Option<&NSString>,
         );
 
-        #[method_id(@__retain_semantics Init initWithCGImage:size:)]
-        pub unsafe fn initWithCGImage_size(
-            this: Option<Allocated<Self>>,
-            cgImage: CGImageRef,
-            size: NSSize,
-        ) -> Id<Self, Shared>;
-
-        #[method(CGImageForProposedRect:context:hints:)]
-        pub unsafe fn CGImageForProposedRect_context_hints(
-            &self,
-            proposedDestRect: *mut NSRect,
-            referenceContext: Option<&NSGraphicsContext>,
-            hints: Option<&NSDictionary<NSImageHintKey, Object>>,
-        ) -> CGImageRef;
-
         #[method_id(@__retain_semantics Other bestRepresentationForRect:context:hints:)]
         pub unsafe fn bestRepresentationForRect_context_hints(
             &self,
@@ -429,12 +414,6 @@ extern_methods!(
 
         #[method_id(@__retain_semantics Other imagePasteboardTypes)]
         pub unsafe fn imagePasteboardTypes() -> Id<NSArray<NSPasteboardType>, Shared>;
-
-        #[method_id(@__retain_semantics Init initWithIconRef:)]
-        pub unsafe fn initWithIconRef(
-            this: Option<Allocated<Self>>,
-            iconRef: IconRef,
-        ) -> Id<Self, Shared>;
 
         #[method(setFlipped:)]
         pub unsafe fn setFlipped(&self, flag: bool);

@@ -160,15 +160,6 @@ extern_methods!(
     }
 );
 
-pub type NSCollectionViewDiffableDataSourceItemProvider = *mut Block<
-    (
-        NonNull<NSCollectionView>,
-        NonNull<NSIndexPath>,
-        NonNull<ItemIdentifierType>,
-    ),
-    *mut NSCollectionViewItem,
->;
-
 pub type NSCollectionViewDiffableDataSourceSupplementaryViewProvider = *mut Block<
     (
         NonNull<NSCollectionView>,
@@ -199,13 +190,6 @@ extern_methods!(
     unsafe impl<SectionIdentifierType: Message, ItemIdentifierType: Message>
         NSCollectionViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType>
     {
-        #[method_id(@__retain_semantics Init initWithCollectionView:itemProvider:)]
-        pub unsafe fn initWithCollectionView_itemProvider(
-            this: Option<Allocated<Self>>,
-            collectionView: &NSCollectionView,
-            itemProvider: NSCollectionViewDiffableDataSourceItemProvider,
-        ) -> Id<Self, Shared>;
-
         #[method_id(@__retain_semantics Init init)]
         pub unsafe fn init(this: Option<Allocated<Self>>) -> Id<Self, Shared>;
 

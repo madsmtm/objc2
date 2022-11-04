@@ -520,12 +520,6 @@ extern_methods!(
         #[method(drawSwatchInRect:)]
         pub unsafe fn drawSwatchInRect(&self, rect: NSRect);
 
-        #[method_id(@__retain_semantics Other colorWithCGColor:)]
-        pub unsafe fn colorWithCGColor(cgColor: CGColorRef) -> Option<Id<NSColor, Shared>>;
-
-        #[method(CGColor)]
-        pub unsafe fn CGColor(&self) -> CGColorRef;
-
         #[method(ignoresAlpha)]
         pub unsafe fn ignoresAlpha() -> bool;
 
@@ -596,21 +590,7 @@ extern_methods!(
 
 extern_methods!(
     /// NSQuartzCoreAdditions
-    unsafe impl NSColor {
-        #[method_id(@__retain_semantics Other colorWithCIColor:)]
-        pub unsafe fn colorWithCIColor(color: &CIColor) -> Id<NSColor, Shared>;
-    }
-);
-
-extern_methods!(
-    /// NSAppKitAdditions
-    unsafe impl CIColor {
-        #[method_id(@__retain_semantics Init initWithColor:)]
-        pub unsafe fn initWithColor(
-            this: Option<Allocated<Self>>,
-            color: &NSColor,
-        ) -> Option<Id<Self, Shared>>;
-    }
+    unsafe impl NSColor {}
 );
 
 extern_methods!(

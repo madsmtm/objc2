@@ -83,9 +83,6 @@ extern_methods!(
             fullPaths: &NSArray<NSString>,
         ) -> Option<Id<NSImage, Shared>>;
 
-        #[method_id(@__retain_semantics Other iconForContentType:)]
-        pub unsafe fn iconForContentType(&self, contentType: &UTType) -> Id<NSImage, Shared>;
-
         #[method(setIcon:forFile:options:)]
         pub unsafe fn setIcon_forFile_options(
             &self,
@@ -185,26 +182,6 @@ extern_methods!(
             completionHandler: Option<&Block<(*mut NSError,), ()>>,
         );
 
-        #[method_id(@__retain_semantics Other URLForApplicationToOpenContentType:)]
-        pub unsafe fn URLForApplicationToOpenContentType(
-            &self,
-            contentType: &UTType,
-        ) -> Option<Id<NSURL, Shared>>;
-
-        #[method_id(@__retain_semantics Other URLsForApplicationsToOpenContentType:)]
-        pub unsafe fn URLsForApplicationsToOpenContentType(
-            &self,
-            contentType: &UTType,
-        ) -> Id<NSArray<NSURL>, Shared>;
-
-        #[method(setDefaultApplicationAtURL:toOpenContentType:completionHandler:)]
-        pub unsafe fn setDefaultApplicationAtURL_toOpenContentType_completionHandler(
-            &self,
-            applicationURL: &NSURL,
-            contentType: &UTType,
-            completionHandler: Option<&Block<(*mut NSError,), ()>>,
-        );
-
         #[method_id(@__retain_semantics Other frontmostApplication)]
         pub unsafe fn frontmostApplication(&self) -> Option<Id<NSRunningApplication, Shared>>;
 
@@ -295,12 +272,6 @@ extern_methods!(
 
         #[method(setAppleEvent:)]
         pub unsafe fn setAppleEvent(&self, appleEvent: Option<&NSAppleEventDescriptor>);
-
-        #[method(architecture)]
-        pub unsafe fn architecture(&self) -> cpu_type_t;
-
-        #[method(setArchitecture:)]
-        pub unsafe fn setArchitecture(&self, architecture: cpu_type_t);
 
         #[method(requiresUniversalLinks)]
         pub unsafe fn requiresUniversalLinks(&self) -> bool;

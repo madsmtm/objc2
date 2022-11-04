@@ -444,12 +444,6 @@ extern_methods!(
         #[method_id(@__retain_semantics Other eventWithEventRef:)]
         pub unsafe fn eventWithEventRef(eventRef: NonNull<c_void>) -> Option<Id<NSEvent, Shared>>;
 
-        #[method(CGEvent)]
-        pub unsafe fn CGEvent(&self) -> CGEventRef;
-
-        #[method_id(@__retain_semantics Other eventWithCGEvent:)]
-        pub unsafe fn eventWithCGEvent(cgEvent: CGEventRef) -> Option<Id<NSEvent, Shared>>;
-
         #[method(isMouseCoalescingEnabled)]
         pub unsafe fn isMouseCoalescingEnabled() -> bool;
 

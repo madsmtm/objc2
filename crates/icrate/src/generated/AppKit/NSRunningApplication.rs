@@ -63,9 +63,6 @@ extern_methods!(
         #[method_id(@__retain_semantics Other executableURL)]
         pub unsafe fn executableURL(&self) -> Option<Id<NSURL, Shared>>;
 
-        #[method(processIdentifier)]
-        pub unsafe fn processIdentifier(&self) -> pid_t;
-
         #[method_id(@__retain_semantics Other launchDate)]
         pub unsafe fn launchDate(&self) -> Option<Id<NSDate, Shared>>;
 
@@ -94,11 +91,6 @@ extern_methods!(
         pub unsafe fn runningApplicationsWithBundleIdentifier(
             bundleIdentifier: &NSString,
         ) -> Id<NSArray<NSRunningApplication>, Shared>;
-
-        #[method_id(@__retain_semantics Other runningApplicationWithProcessIdentifier:)]
-        pub unsafe fn runningApplicationWithProcessIdentifier(
-            pid: pid_t,
-        ) -> Option<Id<Self, Shared>>;
 
         #[method_id(@__retain_semantics Other currentApplication)]
         pub unsafe fn currentApplication() -> Id<NSRunningApplication, Shared>;

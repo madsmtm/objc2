@@ -260,23 +260,7 @@ extern_protocol!(
 
 extern_methods!(
     /// NSCloudKitSharing
-    unsafe impl NSItemProvider {
-        #[method(registerCloudKitShareWithPreparationHandler:)]
-        pub unsafe fn registerCloudKitShareWithPreparationHandler(
-            &self,
-            preparationHandler: &Block<
-                (NonNull<Block<(*mut CKShare, *mut CKContainer, *mut NSError), ()>>,),
-                (),
-            >,
-        );
-
-        #[method(registerCloudKitShare:container:)]
-        pub unsafe fn registerCloudKitShare_container(
-            &self,
-            share: &CKShare,
-            container: &CKContainer,
-        );
-    }
+    unsafe impl NSItemProvider {}
 );
 
 extern_class!(

@@ -40,12 +40,6 @@ extern_methods!(
         #[method(setDuration:)]
         pub unsafe fn setDuration(&self, duration: NSTimeInterval);
 
-        #[method_id(@__retain_semantics Other timingFunction)]
-        pub unsafe fn timingFunction(&self) -> Option<Id<CAMediaTimingFunction, Shared>>;
-
-        #[method(setTimingFunction:)]
-        pub unsafe fn setTimingFunction(&self, timingFunction: Option<&CAMediaTimingFunction>);
-
         #[method(completionHandler)]
         pub unsafe fn completionHandler(&self) -> *mut Block<(), ()>;
 

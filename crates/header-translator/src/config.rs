@@ -26,6 +26,9 @@ pub struct Config {
     #[serde(rename = "static")]
     #[serde(default)]
     pub statics: HashMap<String, StaticData>,
+    #[serde(rename = "typedef")]
+    #[serde(default)]
+    pub typedef_data: HashMap<String, TypedefData>,
     #[serde(default)]
     pub imports: Vec<String>,
 }
@@ -74,6 +77,7 @@ pub struct MethodData {
 // TODO
 pub type FnData = StructData;
 pub type StaticData = StructData;
+pub type TypedefData = StructData;
 
 fn unsafe_default() -> bool {
     true

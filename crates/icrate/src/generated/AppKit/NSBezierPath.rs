@@ -297,17 +297,6 @@ extern_methods!(
             radius: CGFloat,
         );
 
-        #[method(appendBezierPathWithCGGlyph:inFont:)]
-        pub unsafe fn appendBezierPathWithCGGlyph_inFont(&self, glyph: CGGlyph, font: &NSFont);
-
-        #[method(appendBezierPathWithCGGlyphs:count:inFont:)]
-        pub unsafe fn appendBezierPathWithCGGlyphs_count_inFont(
-            &self,
-            glyphs: NonNull<CGGlyph>,
-            count: NSInteger,
-            font: &NSFont,
-        );
-
         #[method(appendBezierPathWithRoundedRect:xRadius:yRadius:)]
         pub unsafe fn appendBezierPathWithRoundedRect_xRadius_yRadius(
             &self,

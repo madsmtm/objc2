@@ -507,9 +507,6 @@ extern_methods!(
         #[method(removeTrackingRect:)]
         pub unsafe fn removeTrackingRect(&self, tag: NSTrackingRectTag);
 
-        #[method_id(@__retain_semantics Other makeBackingLayer)]
-        pub unsafe fn makeBackingLayer(&self) -> Id<CALayer, Shared>;
-
         #[method(layerContentsRedrawPolicy)]
         pub unsafe fn layerContentsRedrawPolicy(&self) -> NSViewLayerContentsRedrawPolicy;
 
@@ -533,12 +530,6 @@ extern_methods!(
 
         #[method(setWantsLayer:)]
         pub unsafe fn setWantsLayer(&self, wantsLayer: bool);
-
-        #[method_id(@__retain_semantics Other layer)]
-        pub unsafe fn layer(&self) -> Option<Id<CALayer, Shared>>;
-
-        #[method(setLayer:)]
-        pub unsafe fn setLayer(&self, layer: Option<&CALayer>);
 
         #[method(wantsUpdateLayer)]
         pub unsafe fn wantsUpdateLayer(&self) -> bool;
@@ -575,24 +566,6 @@ extern_methods!(
 
         #[method(setLayerUsesCoreImageFilters:)]
         pub unsafe fn setLayerUsesCoreImageFilters(&self, layerUsesCoreImageFilters: bool);
-
-        #[method_id(@__retain_semantics Other backgroundFilters)]
-        pub unsafe fn backgroundFilters(&self) -> Id<NSArray<CIFilter>, Shared>;
-
-        #[method(setBackgroundFilters:)]
-        pub unsafe fn setBackgroundFilters(&self, backgroundFilters: &NSArray<CIFilter>);
-
-        #[method_id(@__retain_semantics Other compositingFilter)]
-        pub unsafe fn compositingFilter(&self) -> Option<Id<CIFilter, Shared>>;
-
-        #[method(setCompositingFilter:)]
-        pub unsafe fn setCompositingFilter(&self, compositingFilter: Option<&CIFilter>);
-
-        #[method_id(@__retain_semantics Other contentFilters)]
-        pub unsafe fn contentFilters(&self) -> Id<NSArray<CIFilter>, Shared>;
-
-        #[method(setContentFilters:)]
-        pub unsafe fn setContentFilters(&self, contentFilters: &NSArray<CIFilter>);
 
         #[method_id(@__retain_semantics Other shadow)]
         pub unsafe fn shadow(&self) -> Option<Id<NSShadow, Shared>>;
@@ -737,15 +710,7 @@ extern_protocol!(
 
 extern_methods!(
     /// NSLayerDelegateContentsScaleUpdating
-    unsafe impl NSObject {
-        #[method(layer:shouldInheritContentsScale:fromWindow:)]
-        pub unsafe fn layer_shouldInheritContentsScale_fromWindow(
-            &self,
-            layer: &CALayer,
-            newScale: CGFloat,
-            window: &NSWindow,
-        ) -> bool;
-    }
+    unsafe impl NSObject {}
 );
 
 extern_protocol!(

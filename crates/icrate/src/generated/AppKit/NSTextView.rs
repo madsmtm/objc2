@@ -871,12 +871,6 @@ extern_methods!(
         #[method(toggleQuickLookPreviewPanel:)]
         pub unsafe fn toggleQuickLookPreviewPanel(&self, sender: Option<&Object>);
 
-        #[method_id(@__retain_semantics Other quickLookPreviewableItemsInRanges:)]
-        pub unsafe fn quickLookPreviewableItemsInRanges(
-            &self,
-            ranges: &NSArray<NSValue>,
-        ) -> Id<NSArray<QLPreviewItem>, Shared>;
-
         #[method(updateQuickLookPreviewPanel)]
         pub unsafe fn updateQuickLookPreviewPanel(&self);
     }

@@ -52,9 +52,6 @@ extern_methods!(
         #[method(glyphOrigin)]
         pub unsafe fn glyphOrigin(&self) -> CGPoint;
 
-        #[method(drawAtPoint:inContext:)]
-        pub unsafe fn drawAtPoint_inContext(&self, point: CGPoint, context: CGContextRef);
-
         #[method(locationForCharacterAtIndex:)]
         pub unsafe fn locationForCharacterAtIndex(&self, index: NSInteger) -> CGPoint;
 

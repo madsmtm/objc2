@@ -972,7 +972,6 @@ pub use self::__NSButtonCell::{
     NSThickSquareBezelStyle, NSThickerSquareBezelStyle, NSToggleButton,
 };
 pub use self::__NSButtonTouchBarItem::NSButtonTouchBarItem;
-pub use self::__NSCIImageRep::NSCIImageRep;
 pub use self::__NSCachedImageRep::NSCachedImageRep;
 pub use self::__NSCandidateListTouchBarItem::{
     NSCandidateListTouchBarItem, NSCandidateListTouchBarItemDelegate,
@@ -1128,7 +1127,7 @@ pub use self::__NSDictionaryController::{
     NSDictionaryController, NSDictionaryControllerKeyValuePair,
 };
 pub use self::__NSDiffableDataSource::{
-    NSCollectionViewDiffableDataSource, NSCollectionViewDiffableDataSourceItemProvider,
+    NSCollectionViewDiffableDataSource,
     NSCollectionViewDiffableDataSourceSupplementaryViewProvider, NSDiffableDataSourceSnapshot,
 };
 pub use self::__NSDockTile::{
@@ -1642,7 +1641,7 @@ pub use self::__NSOpenGL::{
     NSOpenGLCPReclaimResources, NSOpenGLCPStateValidation, NSOpenGLCPSurfaceBackingSize,
     NSOpenGLCPSurfaceOpacity, NSOpenGLCPSurfaceOrder, NSOpenGLCPSurfaceSurfaceVolatile,
     NSOpenGLCPSwapInterval, NSOpenGLCPSwapRectangle, NSOpenGLCPSwapRectangleEnable,
-    NSOpenGLContext, NSOpenGLContextParameter, NSOpenGLContextParameterCurrentRendererID,
+    NSOpenGLContextParameter, NSOpenGLContextParameterCurrentRendererID,
     NSOpenGLContextParameterGPUFragmentProcessing, NSOpenGLContextParameterGPUVertexProcessing,
     NSOpenGLContextParameterHasDrawable, NSOpenGLContextParameterMPSwapsInFlight,
     NSOpenGLContextParameterRasterizationEnable, NSOpenGLContextParameterReclaimResources,
@@ -1651,23 +1650,21 @@ pub use self::__NSOpenGL::{
     NSOpenGLContextParameterSurfaceSurfaceVolatile, NSOpenGLContextParameterSwapInterval,
     NSOpenGLContextParameterSwapRectangle, NSOpenGLContextParameterSwapRectangleEnable,
     NSOpenGLGOClearFormatCache, NSOpenGLGOFormatCacheSize, NSOpenGLGOResetLibrary,
-    NSOpenGLGORetainRenderers, NSOpenGLGOUseBuildCache, NSOpenGLGetOption, NSOpenGLGetVersion,
-    NSOpenGLGlobalOption, NSOpenGLPFAAccelerated, NSOpenGLPFAAcceleratedCompute,
-    NSOpenGLPFAAccumSize, NSOpenGLPFAAllRenderers, NSOpenGLPFAAllowOfflineRenderers,
-    NSOpenGLPFAAlphaSize, NSOpenGLPFAAuxBuffers, NSOpenGLPFAAuxDepthStencil,
-    NSOpenGLPFABackingStore, NSOpenGLPFAClosestPolicy, NSOpenGLPFAColorFloat, NSOpenGLPFAColorSize,
-    NSOpenGLPFACompliant, NSOpenGLPFADepthSize, NSOpenGLPFADoubleBuffer, NSOpenGLPFAFullScreen,
-    NSOpenGLPFAMPSafe, NSOpenGLPFAMaximumPolicy, NSOpenGLPFAMinimumPolicy, NSOpenGLPFAMultiScreen,
+    NSOpenGLGORetainRenderers, NSOpenGLGOUseBuildCache, NSOpenGLGlobalOption,
+    NSOpenGLPFAAccelerated, NSOpenGLPFAAcceleratedCompute, NSOpenGLPFAAccumSize,
+    NSOpenGLPFAAllRenderers, NSOpenGLPFAAllowOfflineRenderers, NSOpenGLPFAAlphaSize,
+    NSOpenGLPFAAuxBuffers, NSOpenGLPFAAuxDepthStencil, NSOpenGLPFABackingStore,
+    NSOpenGLPFAClosestPolicy, NSOpenGLPFAColorFloat, NSOpenGLPFAColorSize, NSOpenGLPFACompliant,
+    NSOpenGLPFADepthSize, NSOpenGLPFADoubleBuffer, NSOpenGLPFAFullScreen, NSOpenGLPFAMPSafe,
+    NSOpenGLPFAMaximumPolicy, NSOpenGLPFAMinimumPolicy, NSOpenGLPFAMultiScreen,
     NSOpenGLPFAMultisample, NSOpenGLPFANoRecovery, NSOpenGLPFAOffScreen, NSOpenGLPFAOpenGLProfile,
     NSOpenGLPFAPixelBuffer, NSOpenGLPFARemotePixelBuffer, NSOpenGLPFARendererID, NSOpenGLPFARobust,
     NSOpenGLPFASampleAlpha, NSOpenGLPFASampleBuffers, NSOpenGLPFASamples, NSOpenGLPFAScreenMask,
     NSOpenGLPFASingleRenderer, NSOpenGLPFAStencilSize, NSOpenGLPFAStereo, NSOpenGLPFASupersample,
-    NSOpenGLPFATripleBuffer, NSOpenGLPFAVirtualScreenCount, NSOpenGLPFAWindow, NSOpenGLPixelBuffer,
-    NSOpenGLPixelFormat, NSOpenGLPixelFormatAttribute, NSOpenGLProfileVersion3_2Core,
-    NSOpenGLProfileVersion4_1Core, NSOpenGLProfileVersionLegacy, NSOpenGLSetOption,
+    NSOpenGLPFATripleBuffer, NSOpenGLPFAVirtualScreenCount, NSOpenGLPFAWindow,
+    NSOpenGLPixelFormatAttribute, NSOpenGLProfileVersion3_2Core, NSOpenGLProfileVersion4_1Core,
+    NSOpenGLProfileVersionLegacy,
 };
-pub use self::__NSOpenGLLayer::NSOpenGLLayer;
-pub use self::__NSOpenGLView::NSOpenGLView;
 pub use self::__NSOpenPanel::NSOpenPanel;
 pub use self::__NSOutlineView::{
     NSOutlineView, NSOutlineViewColumnDidMoveNotification,
@@ -1693,8 +1690,8 @@ pub use self::__NSPageController::{
 pub use self::__NSPageLayout::NSPageLayout;
 pub use self::__NSPanGestureRecognizer::NSPanGestureRecognizer;
 pub use self::__NSPanel::{
-    NSAlertAlternateReturn, NSAlertDefaultReturn, NSAlertErrorReturn, NSAlertOtherReturn,
-    NSCancelButton, NSOKButton, NSPanel, NSReleaseAlertPanel,
+    NSAlertAlternateReturn, NSAlertDefaultReturn, NSAlertErrorReturn, NSAlertOtherReturn, NSPanel,
+    NSReleaseAlertPanel,
 };
 pub use self::__NSParagraphStyle::{
     NSCenterTabStopType, NSDecimalTabStopType, NSLeftTabStopType, NSLineBreakByCharWrapping,
@@ -1826,10 +1823,7 @@ pub use self::__NSRunningApplication::{
     NSApplicationActivationPolicyAccessory, NSApplicationActivationPolicyProhibited,
     NSApplicationActivationPolicyRegular, NSRunningApplication,
 };
-pub use self::__NSSavePanel::{
-    NSFileHandlingPanelCancelButton, NSFileHandlingPanelOKButton, NSOpenSavePanelDelegate,
-    NSSavePanel,
-};
+pub use self::__NSSavePanel::{NSOpenSavePanelDelegate, NSSavePanel};
 pub use self::__NSScreen::{NSScreen, NSScreenColorSpaceDidChangeNotification};
 pub use self::__NSScrollView::{
     NSScrollElasticity, NSScrollElasticityAllowed, NSScrollElasticityAutomatic,

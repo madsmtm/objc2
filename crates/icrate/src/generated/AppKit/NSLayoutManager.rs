@@ -232,28 +232,8 @@ extern_methods!(
             container: &NSTextContainer,
         );
 
-        #[method(setGlyphs:properties:characterIndexes:font:forGlyphRange:)]
-        pub unsafe fn setGlyphs_properties_characterIndexes_font_forGlyphRange(
-            &self,
-            glyphs: NonNull<CGGlyph>,
-            props: NonNull<NSGlyphProperty>,
-            charIndexes: NonNull<NSUInteger>,
-            aFont: &NSFont,
-            glyphRange: NSRange,
-        );
-
         #[method(numberOfGlyphs)]
         pub unsafe fn numberOfGlyphs(&self) -> NSUInteger;
-
-        #[method(CGGlyphAtIndex:isValidIndex:)]
-        pub unsafe fn CGGlyphAtIndex_isValidIndex(
-            &self,
-            glyphIndex: NSUInteger,
-            isValidIndex: *mut Bool,
-        ) -> CGGlyph;
-
-        #[method(CGGlyphAtIndex:)]
-        pub unsafe fn CGGlyphAtIndex(&self, glyphIndex: NSUInteger) -> CGGlyph;
 
         #[method(isValidGlyphIndex:)]
         pub unsafe fn isValidGlyphIndex(&self, glyphIndex: NSUInteger) -> bool;
@@ -266,16 +246,6 @@ extern_methods!(
 
         #[method(glyphIndexForCharacterAtIndex:)]
         pub unsafe fn glyphIndexForCharacterAtIndex(&self, charIndex: NSUInteger) -> NSUInteger;
-
-        #[method(getGlyphsInRange:glyphs:properties:characterIndexes:bidiLevels:)]
-        pub unsafe fn getGlyphsInRange_glyphs_properties_characterIndexes_bidiLevels(
-            &self,
-            glyphRange: NSRange,
-            glyphBuffer: *mut CGGlyph,
-            props: *mut NSGlyphProperty,
-            charIndexBuffer: *mut NSUInteger,
-            bidiLevelBuffer: *mut c_uchar,
-        ) -> NSUInteger;
 
         #[method(setTextContainer:forGlyphRange:)]
         pub unsafe fn setTextContainer_forGlyphRange(
@@ -463,14 +433,6 @@ extern_methods!(
             container: &NSTextContainer,
         ) -> NSRange;
 
-        #[method(glyphIndexForPoint:inTextContainer:fractionOfDistanceThroughGlyph:)]
-        pub unsafe fn glyphIndexForPoint_inTextContainer_fractionOfDistanceThroughGlyph(
-            &self,
-            point: NSPoint,
-            container: &NSTextContainer,
-            partialFraction: *mut CGFloat,
-        ) -> NSUInteger;
-
         #[method(glyphIndexForPoint:inTextContainer:)]
         pub unsafe fn glyphIndexForPoint_inTextContainer(
             &self,
@@ -540,18 +502,6 @@ extern_methods!(
             &self,
             glyphsToShow: NSRange,
             origin: NSPoint,
-        );
-
-        #[method(showCGGlyphs:positions:count:font:textMatrix:attributes:inContext:)]
-        pub unsafe fn showCGGlyphs_positions_count_font_textMatrix_attributes_inContext(
-            &self,
-            glyphs: NonNull<CGGlyph>,
-            positions: NonNull<CGPoint>,
-            glyphCount: NSInteger,
-            font: &NSFont,
-            textMatrix: CGAffineTransform,
-            attributes: &NSDictionary<NSAttributedStringKey, Object>,
-            CGContext: CGContextRef,
         );
 
         #[method(fillBackgroundRectArray:count:forCharacterRange:color:)]
@@ -1064,18 +1014,6 @@ extern_methods!(
             font: &NSFont,
             color: &NSColor,
             printingAdjustment: NSSize,
-        );
-
-        #[method(showCGGlyphs:positions:count:font:matrix:attributes:inContext:)]
-        pub unsafe fn showCGGlyphs_positions_count_font_matrix_attributes_inContext(
-            &self,
-            glyphs: NonNull<CGGlyph>,
-            positions: NonNull<NSPoint>,
-            glyphCount: NSUInteger,
-            font: &NSFont,
-            textMatrix: &NSAffineTransform,
-            attributes: &NSDictionary<NSAttributedStringKey, Object>,
-            graphicsContext: &NSGraphicsContext,
         );
 
         #[method(hyphenationFactor)]

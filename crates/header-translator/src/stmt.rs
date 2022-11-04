@@ -441,6 +441,15 @@ impl Stmt {
                     return None;
                 }
 
+                if config
+                    .typedef_data
+                    .get(&name)
+                    .map(|data| data.skipped)
+                    .unwrap_or_default()
+                {
+                    return None;
+                }
+
                 let ty = entity
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");

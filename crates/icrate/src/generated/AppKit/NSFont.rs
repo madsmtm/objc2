@@ -180,28 +180,6 @@ extern_methods!(
         #[method(isFixedPitch)]
         pub unsafe fn isFixedPitch(&self) -> bool;
 
-        #[method(boundingRectForCGGlyph:)]
-        pub unsafe fn boundingRectForCGGlyph(&self, glyph: CGGlyph) -> NSRect;
-
-        #[method(advancementForCGGlyph:)]
-        pub unsafe fn advancementForCGGlyph(&self, glyph: CGGlyph) -> NSSize;
-
-        #[method(getBoundingRects:forCGGlyphs:count:)]
-        pub unsafe fn getBoundingRects_forCGGlyphs_count(
-            &self,
-            bounds: NSRectArray,
-            glyphs: NonNull<CGGlyph>,
-            glyphCount: NSUInteger,
-        );
-
-        #[method(getAdvancements:forCGGlyphs:count:)]
-        pub unsafe fn getAdvancements_forCGGlyphs_count(
-            &self,
-            advancements: NSSizeArray,
-            glyphs: NonNull<CGGlyph>,
-            glyphCount: NSUInteger,
-        );
-
         #[method(set)]
         pub unsafe fn set(&self);
 

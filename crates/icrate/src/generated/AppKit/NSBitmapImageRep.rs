@@ -136,18 +136,6 @@ extern_methods!(
             pBits: NSInteger,
         ) -> Option<Id<Self, Shared>>;
 
-        #[method_id(@__retain_semantics Init initWithCGImage:)]
-        pub unsafe fn initWithCGImage(
-            this: Option<Allocated<Self>>,
-            cgImage: CGImageRef,
-        ) -> Id<Self, Shared>;
-
-        #[method_id(@__retain_semantics Init initWithCIImage:)]
-        pub unsafe fn initWithCIImage(
-            this: Option<Allocated<Self>>,
-            ciImage: &CIImage,
-        ) -> Id<Self, Shared>;
-
         #[method_id(@__retain_semantics Other imageRepsWithData:)]
         pub unsafe fn imageRepsWithData(data: &NSData) -> Id<NSArray<NSImageRep>, Shared>;
 
@@ -263,9 +251,6 @@ extern_methods!(
 
         #[method(setPixel:atX:y:)]
         pub unsafe fn setPixel_atX_y(&self, p: NonNull<NSUInteger>, x: NSInteger, y: NSInteger);
-
-        #[method(CGImage)]
-        pub unsafe fn CGImage(&self) -> CGImageRef;
 
         #[method_id(@__retain_semantics Other colorSpace)]
         pub unsafe fn colorSpace(&self) -> Id<NSColorSpace, Shared>;

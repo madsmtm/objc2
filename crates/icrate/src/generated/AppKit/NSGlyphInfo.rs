@@ -16,16 +16,6 @@ extern_class!(
 
 extern_methods!(
     unsafe impl NSGlyphInfo {
-        #[method_id(@__retain_semantics Other glyphInfoWithCGGlyph:forFont:baseString:)]
-        pub unsafe fn glyphInfoWithCGGlyph_forFont_baseString(
-            glyph: CGGlyph,
-            font: &NSFont,
-            string: &NSString,
-        ) -> Option<Id<NSGlyphInfo, Shared>>;
-
-        #[method(glyphID)]
-        pub unsafe fn glyphID(&self) -> CGGlyph;
-
         #[method_id(@__retain_semantics Other baseString)]
         pub unsafe fn baseString(&self) -> Id<NSString, Shared>;
     }

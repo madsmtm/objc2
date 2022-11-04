@@ -205,6 +205,19 @@ macro_rules! extern_static {
             pub static $name: $ty;
         }
     };
+    // Floats in statics are broken
+    ($name:ident: NSAppKitVersion = $($value:tt)*) => {
+        pub static $name: NSAppKitVersion = $($value)* as _;
+    };
+    ($name:ident: NSLayoutPriority = $($value:tt)*) => {
+        pub static $name: NSLayoutPriority = $($value)* as _;
+    };
+    ($name:ident: NSStackViewVisibilityPriority = $($value:tt)*) => {
+        pub static $name: NSStackViewVisibilityPriority = $($value)* as _;
+    };
+    ($name:ident: NSTouchBarItemPriority = $($value:tt)*) => {
+        pub static $name: NSTouchBarItemPriority = $($value)* as _;
+    };
     ($name:ident: $ty:ty = $value:expr) => {
         pub static $name: $ty = $value;
     };
@@ -253,6 +266,7 @@ mod common {
     };
 
     // TODO
+    #[repr(C)]
     pub struct OptionSel(*const objc2::ffi::objc_selector);
     unsafe impl objc2::Encode for OptionSel {
         const ENCODING: objc2::Encoding = objc2::Encoding::Sel;

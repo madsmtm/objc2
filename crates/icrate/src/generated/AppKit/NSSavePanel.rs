@@ -8,8 +8,6 @@ use crate::Foundation::*;
 extern_enum!(
     #[underlying(c_uint)]
     pub enum {
-        NSFileHandlingPanelCancelButton = NSModalResponseCancel,
-        NSFileHandlingPanelOKButton = NSModalResponseOK,
     }
 );
 
@@ -35,12 +33,6 @@ extern_methods!(
 
         #[method(setDirectoryURL:)]
         pub unsafe fn setDirectoryURL(&self, directoryURL: Option<&NSURL>);
-
-        #[method_id(@__retain_semantics Other allowedContentTypes)]
-        pub unsafe fn allowedContentTypes(&self) -> Id<NSArray<UTType>, Shared>;
-
-        #[method(setAllowedContentTypes:)]
-        pub unsafe fn setAllowedContentTypes(&self, allowedContentTypes: &NSArray<UTType>);
 
         #[method(allowsOtherFileTypes)]
         pub unsafe fn allowsOtherFileTypes(&self) -> bool;

@@ -55,12 +55,6 @@ extern_methods!(
             bitmapRep: &NSBitmapImageRep,
         ) -> Option<Id<NSGraphicsContext, Shared>>;
 
-        #[method_id(@__retain_semantics Other graphicsContextWithCGContext:flipped:)]
-        pub unsafe fn graphicsContextWithCGContext_flipped(
-            graphicsPort: CGContextRef,
-            initialFlippedState: bool,
-        ) -> Id<NSGraphicsContext, Shared>;
-
         #[method_id(@__retain_semantics Other currentContext)]
         pub unsafe fn currentContext() -> Option<Id<NSGraphicsContext, Shared>>;
 
@@ -80,9 +74,6 @@ extern_methods!(
 
         #[method(flushGraphics)]
         pub unsafe fn flushGraphics(&self);
-
-        #[method(CGContext)]
-        pub unsafe fn CGContext(&self) -> CGContextRef;
 
         #[method(isFlipped)]
         pub unsafe fn isFlipped(&self) -> bool;
@@ -126,10 +117,7 @@ extern_methods!(
 
 extern_methods!(
     /// NSQuartzCoreAdditions
-    unsafe impl NSGraphicsContext {
-        #[method_id(@__retain_semantics Other CIContext)]
-        pub unsafe fn CIContext(&self) -> Option<Id<CIContext, Shared>>;
-    }
+    unsafe impl NSGraphicsContext {}
 );
 
 extern_methods!(

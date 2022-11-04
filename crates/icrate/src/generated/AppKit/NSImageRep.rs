@@ -185,14 +185,6 @@ extern_methods!(
         pub unsafe fn imageRepWithPasteboard(
             pasteboard: &NSPasteboard,
         ) -> Option<Id<NSImageRep, Shared>>;
-
-        #[method(CGImageForProposedRect:context:hints:)]
-        pub unsafe fn CGImageForProposedRect_context_hints(
-            &self,
-            proposedDestRect: *mut NSRect,
-            context: Option<&NSGraphicsContext>,
-            hints: Option<&NSDictionary<NSImageHintKey, Object>>,
-        ) -> CGImageRef;
     }
 );
 

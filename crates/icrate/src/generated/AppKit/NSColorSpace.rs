@@ -48,15 +48,6 @@ extern_methods!(
         #[method(colorSyncProfile)]
         pub unsafe fn colorSyncProfile(&self) -> *mut c_void;
 
-        #[method_id(@__retain_semantics Init initWithCGColorSpace:)]
-        pub unsafe fn initWithCGColorSpace(
-            this: Option<Allocated<Self>>,
-            cgColorSpace: CGColorSpaceRef,
-        ) -> Option<Id<Self, Shared>>;
-
-        #[method(CGColorSpace)]
-        pub unsafe fn CGColorSpace(&self) -> CGColorSpaceRef;
-
         #[method(numberOfColorComponents)]
         pub unsafe fn numberOfColorComponents(&self) -> NSInteger;
 
