@@ -70,6 +70,55 @@ macro_rules! __strip_custom_attributes {
     };
 }
 
+/// Parse the given attributes, and gate the output on any `cfg` attributes
+/// that were present in the set.
+///
+/// This is implemented as a tt-muncher, taking the following arguments:
+/// - The attributes to be processed
+/// - The output that the `cfg` attributes will be attached to
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extract_and_apply_cfg_attributes {
+    // Base case
+    {
+        @() // No attributes left to process
+        @($($output:tt)*)
+    } => {
+        $($output)*
+    };
+    // `cfg` attribute
+    {
+        @(
+            #[cfg $($args:tt)*]
+            $($m_rest:tt)*
+        )
+        @($($output:tt)*)
+    } => {
+        // Apply the attribute and continue
+        #[cfg $($args)*]
+        {
+            $crate::__extract_and_apply_cfg_attributes! {
+                @($($m_rest)*)
+                @($($output)*)
+            }
+        }
+    };
+    // Other attributes
+    {
+        @(
+            #[$($m_ignored:tt)*]
+            $($m_rest:tt)*
+        )
+        @($($output:tt)*)
+    } => {
+        // Simply ignore the attribute, and continue parsing the rest
+        $crate::__extract_and_apply_cfg_attributes! {
+            @($($m_rest)*)
+            @($($output)*)
+        }
+    };
+}
+
 /// Extract a `#[method(...)]` or `#[method_id(...)]` attribute and send
 /// it to another macro.
 ///

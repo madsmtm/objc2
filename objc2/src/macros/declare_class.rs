@@ -512,41 +512,46 @@ macro_rules! __declare_class_methods {
     (
         @register_out($builder:ident)
 
-        $(#[$m:meta])*
+        $(#[$($m:tt)*])*
         unsafe impl Protocol<$protocol:ident> for $for:ty {
             $($methods:tt)*
         }
 
         $($rest:tt)*
     ) => {
-        // Implement protocol
-        #[allow(unused_mut)]
-        let mut protocol_builder = $builder.__add_protocol_methods(
-            $crate::runtime::Protocol::get(stringify!($protocol)).unwrap_or_else(|| {
-                $crate::__macro_helpers::panic!(
-                    "could not find protocol {}",
-                    $crate::__macro_helpers::stringify!($protocol),
-                )
-            })
-        );
+        $crate::__extract_and_apply_cfg_attributes! {
+            @($(#[$($m)*])*)
+            @(
+                // Implement protocol
+                #[allow(unused_mut)]
+                let mut protocol_builder = $builder.__add_protocol_methods(
+                    $crate::runtime::Protocol::get(stringify!($protocol)).unwrap_or_else(|| {
+                        $crate::__macro_helpers::panic!(
+                            "could not find protocol {}",
+                            $crate::__macro_helpers::stringify!($protocol),
+                        )
+                    })
+                );
 
-        // In case the user's function is marked `deprecated`
-        #[allow(deprecated)]
-        // In case the user did not specify any methods
-        #[allow(unused_unsafe)]
-        // SAFETY: Upheld by caller
-        unsafe {
-            $crate::__declare_class_rewrite_methods! {
-                @($crate::__declare_class_register_out)
-                @(protocol_builder)
+                // In case the user's function is marked `deprecated`
+                #[allow(deprecated)]
+                // In case the user did not specify any methods
+                #[allow(unused_unsafe)]
+                // SAFETY: Upheld by caller
+                unsafe {
+                    $crate::__declare_class_rewrite_methods! {
+                        @($crate::__declare_class_register_out)
+                        @(protocol_builder)
 
-                $($methods)*
-            }
+                        $($methods)*
+                    }
+                }
+
+                // Finished declaring protocol; get error message if any
+                #[allow(clippy::drop_ref)]
+                drop(protocol_builder);
+            )
         }
-
-        // Finished declaring protocol; get error message if any
-        #[allow(clippy::drop_ref)]
-        drop(protocol_builder);
 
         $crate::__declare_class_methods!(
             @register_out($builder)
@@ -557,25 +562,30 @@ macro_rules! __declare_class_methods {
     (
         @register_out($builder:ident)
 
-        $(#[$m:meta])*
+        $(#[$($m:tt)*])*
         unsafe impl $for:ty {
             $($methods:tt)*
         }
 
         $($rest:tt)*
     ) => {
-        // In case the user's function is marked `deprecated`
-        #[allow(deprecated)]
-        // In case the user did not specify any methods
-        #[allow(unused_unsafe)]
-        // SAFETY: Upheld by caller
-        unsafe {
-            $crate::__declare_class_rewrite_methods! {
-                @($crate::__declare_class_register_out)
-                @($builder)
+        $crate::__extract_and_apply_cfg_attributes! {
+            @($(#[$($m)*])*)
+            @(
+                // In case the user's function is marked `deprecated`
+                #[allow(deprecated)]
+                // In case the user did not specify any methods
+                #[allow(unused_unsafe)]
+                // SAFETY: Upheld by caller
+                unsafe {
+                    $crate::__declare_class_rewrite_methods! {
+                        @($crate::__declare_class_register_out)
+                        @($builder)
 
-                $($methods)*
-            }
+                        $($methods)*
+                    }
+                }
+            )
         }
 
         $crate::__declare_class_methods!(
@@ -828,21 +838,26 @@ macro_rules! __declare_class_register_out {
         @($($args_start:tt)*)
         @($($args_rest:tt)*)
     } => {
-        $builder.add_class_method(
-            $crate::__extract_custom_attributes! {
-                @($(#[$($m)*])*)
-                @($crate::__declare_class_register_out)
-                @(
-                    @call_sel
-                    // Macro will add:
-                    // @(method attribute)
-                )
-                @()
-            },
-            Self::$name as $crate::__fn_ptr! {
-                @($($qualifiers)*) $($args_start)* $($args_rest)*
-            },
-        );
+        $crate::__extract_and_apply_cfg_attributes! {
+            @($(#[$($m)*])*)
+            @(
+                $builder.add_class_method(
+                    $crate::__extract_custom_attributes! {
+                        @($(#[$($m)*])*)
+                        @($crate::__declare_class_register_out)
+                        @(
+                            @call_sel
+                            // Macro will add:
+                            // @(method attribute)
+                        )
+                        @()
+                    },
+                    Self::$name as $crate::__fn_ptr! {
+                        @($($qualifiers)*) $($args_start)* $($args_rest)*
+                    },
+                );
+            )
+        }
     };
 
     // Instance method
@@ -857,21 +872,26 @@ macro_rules! __declare_class_register_out {
         @($($args_start:tt)*)
         @($($args_rest:tt)*)
     } => {
-        $builder.add_method(
-            $crate::__extract_custom_attributes! {
-                @($(#[$($m)*])*)
-                @($crate::__declare_class_register_out)
-                @(
-                    @call_sel
-                    // Macro will add:
-                    // @(method attribute)
-                )
-                @()
-            },
-            Self::$name as $crate::__fn_ptr! {
-                @($($qualifiers)*) $($args_start)* $($args_rest)*
-            },
-        );
+        $crate::__extract_and_apply_cfg_attributes! {
+            @($(#[$($m)*])*)
+            @(
+                $builder.add_method(
+                    $crate::__extract_custom_attributes! {
+                        @($(#[$($m)*])*)
+                        @($crate::__declare_class_register_out)
+                        @(
+                            @call_sel
+                            // Macro will add:
+                            // @(method attribute)
+                        )
+                        @()
+                    },
+                    Self::$name as $crate::__fn_ptr! {
+                        @($($qualifiers)*) $($args_start)* $($args_rest)*
+                    },
+                );
+            )
+        }
     };
 
     {
