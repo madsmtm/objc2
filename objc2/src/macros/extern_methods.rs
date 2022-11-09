@@ -20,6 +20,11 @@
 /// or `#[method_id(my:selector:)]` attribute. The `method` attribute maps to
 /// a call to [`msg_send!`], while the `method_id` maps to [`msg_send_id!`].
 ///
+/// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
+/// `deprecated` and so on is supported. However, note that `cfg_attr` may not
+/// work correctly, due to implementation difficulty - if you have a concrete
+/// use-case, please [open an issue], then we can discuss it.
+///
 /// The name of the function doesn't matter for out purposes, but is of course
 /// what the user will use to access the functionality.
 ///
@@ -28,6 +33,7 @@
 ///
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
+/// [open an issue]: https://github.com/madsmtm/objc2/issues/new
 ///
 ///
 /// # Safety
@@ -322,65 +328,86 @@ macro_rules! __inner_extern_methods {
         @($($args_start:tt)*)
         @($($args_rest:tt)*)
     } => {
-        $crate::__attribute_helper! {
-            @strip_sel
-            $(@[$($m)*])*
-            ($($function_start)* {
+        $crate::__strip_custom_attributes! {
+            @($(#[$($m)*])*)
+            @($($function_start)* {
                 #[allow(unused_unsafe)]
                 unsafe {
-                    $crate::__attribute_helper! {
-                        @extract_sel
-                        ($crate::__inner_extern_methods)
-                        ($(#[$($m)*])*)
-                        @unsafe_method_body
-                        @($($kind)*)
-                        @($($args_start)*)
-                        @($($args_rest)*)
-
-                        // Will add
-                        // @(sel)
-                        // @(output macro)
+                    $crate::__extract_custom_attributes! {
+                        @($(#[$($m)*])*)
+                        @($crate::__inner_extern_methods)
+                        @(
+                            @unsafe_method_body
+                            @($($kind)*)
+                            @($($args_start)*)
+                            @($($args_rest)*)
+                            // Macro will add:
+                            // @(method attribute)
+                        )
+                        @()
                     }
                 }
             })
+            @()
         }
     };
 
     {
         @unsafe_method_body
+        @($kind:ident)
+        @($($args_start:tt)*)
+        @($($args_rest:tt)*)
+        @(#[method($($sel:tt)*)])
+    } => {
+        $crate::__collect_msg_send! {
+            $crate::msg_send;
+            $crate::__inner_extern_methods!(
+                @get_receiver
+                @($kind)
+                @($($args_start)*)
+            );
+            ($($sel)*);
+            ($($args_rest)*);
+        }
+    };
+    {
+        @unsafe_method_body
+        @($kind:ident)
+        @($($args_start:tt)*)
+        @($($args_rest:tt)*)
+        @(#[method_id($($sel:tt)*)])
+    } => {
+        $crate::__collect_msg_send! {
+            $crate::msg_send_id;
+            $crate::__inner_extern_methods!(
+                @get_receiver
+                @($kind)
+                @($($args_start)*)
+            );
+            ($($sel)*);
+            ($($args_rest)*);
+        }
+    };
+
+    {
+        @get_receiver
         @(instance_method)
         @(
             $self_or_this:ident: $self_or_this_ty:ty,
             _: $sel_ty:ty,
         )
-        @($($args_rest:tt)*)
-        @($($sel:tt)*)
-        @($macro:ident)
     } => {
-        $crate::__collect_msg_send! {
-            $crate::$macro;
-            $self_or_this;
-            ($($sel)*);
-            ($($args_rest)*);
-        }
+        $self_or_this
     };
     {
-        @unsafe_method_body
+        @get_receiver
         @(class_method)
         @(
             _: $cls_ty:ty,
             _: $sel_ty:ty,
         )
-        @($($args_rest:tt)*)
-        @($($sel:tt)*)
-        @($macro:ident)
     } => {
-        $crate::__collect_msg_send! {
-            $crate::$macro;
-            Self::class();
-            ($($sel)*);
-            ($($args_rest)*);
-        }
+        Self::class()
     };
 }
 

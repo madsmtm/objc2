@@ -49,7 +49,13 @@
 /// will be registered as a class method.
 ///
 /// The desired selector can be specified using the `#[method(my:selector:)]`
-/// attribute, similar to the [`extern_methods!`] macro.
+/// attribute, similar to the [`extern_methods!`] macro (`method_id` is not
+/// yet supported, see [#282]).
+///
+/// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
+/// `deprecated` and so on is supported. However, note that `cfg_attr` may not
+/// work correctly, due to implementation difficulty - if you have a concrete
+/// use-case, please [open an issue], then we can discuss it.
 ///
 /// A transformation step is performed on the functions (to make them have the
 /// correct ABI) and hence they shouldn't really be called manually. (You
@@ -63,6 +69,8 @@
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// [`extern_methods!`]: crate::extern_methods
+/// [#282]: https://github.com/madsmtm/objc2/issues/282
+/// [open an issue]: https://github.com/madsmtm/objc2/issues/new
 /// [`msg_send!`]: crate::msg_send
 /// [`runtime::Bool`]: crate::runtime::Bool
 ///
@@ -74,6 +82,9 @@
 ///
 /// The methods work exactly as normal, they're only put "under" the protocol
 /// definition to make things easier to read.
+///
+/// Putting attributes on the `impl` item such as `cfg`, `allow`, `doc`,
+/// `deprecated` and so on is supported.
 ///
 ///
 /// # Panics
@@ -429,7 +440,7 @@ macro_rules! declare_class {
                 // Note: ARC does this automatically, so most Objective-C code
                 // in the wild don't contain this; but we don't have ARC, so
                 // we must do this.
-                unsafe { msg_send![super(self), dealloc] }
+                unsafe { $crate::msg_send![super(self), dealloc] }
             }
         }
 
@@ -512,38 +523,46 @@ macro_rules! __declare_class_methods {
     (
         @register_out($builder:ident)
 
-        $(#[$m:meta])*
+        $(#[$($m:tt)*])*
         unsafe impl Protocol<$protocol:ident> for $for:ty {
             $($methods:tt)*
         }
 
         $($rest:tt)*
     ) => {
-        // Implement protocol
-        #[allow(unused_mut)]
-        let mut protocol_builder = $builder.__add_protocol_methods(
-            $crate::runtime::Protocol::get(stringify!($protocol)).unwrap_or_else(|| {
-                $crate::__macro_helpers::panic!(
-                    "could not find protocol {}",
-                    $crate::__macro_helpers::stringify!($protocol),
-                )
-            })
-        );
+        $crate::__extract_and_apply_cfg_attributes! {
+            @($(#[$($m)*])*)
+            @(
+                // Implement protocol
+                #[allow(unused_mut)]
+                let mut protocol_builder = $builder.__add_protocol_methods(
+                    $crate::runtime::Protocol::get(stringify!($protocol)).unwrap_or_else(|| {
+                        $crate::__macro_helpers::panic!(
+                            "could not find protocol {}",
+                            $crate::__macro_helpers::stringify!($protocol),
+                        )
+                    })
+                );
 
-        // SAFETY: Upheld by caller
-        #[allow(unused_unsafe)]
-        unsafe {
-            $crate::__declare_class_rewrite_methods! {
-                @($crate::__declare_class_register_out)
-                @(protocol_builder)
+                // In case the user's function is marked `deprecated`
+                #[allow(deprecated)]
+                // In case the user did not specify any methods
+                #[allow(unused_unsafe)]
+                // SAFETY: Upheld by caller
+                unsafe {
+                    $crate::__declare_class_rewrite_methods! {
+                        @($crate::__declare_class_register_out)
+                        @(protocol_builder)
 
-                $($methods)*
-            }
+                        $($methods)*
+                    }
+                }
+
+                // Finished declaring protocol; get error message if any
+                #[allow(clippy::drop_ref)]
+                drop(protocol_builder);
+            )
         }
-
-        // Finished declaring protocol; get error message if any
-        #[allow(clippy::drop_ref)]
-        drop(protocol_builder);
 
         $crate::__declare_class_methods!(
             @register_out($builder)
@@ -554,22 +573,30 @@ macro_rules! __declare_class_methods {
     (
         @register_out($builder:ident)
 
-        $(#[$m:meta])*
+        $(#[$($m:tt)*])*
         unsafe impl $for:ty {
             $($methods:tt)*
         }
 
         $($rest:tt)*
     ) => {
-        // SAFETY: Upheld by caller
-        #[allow(unused_unsafe)]
-        unsafe {
-            $crate::__declare_class_rewrite_methods! {
-                @($crate::__declare_class_register_out)
-                @($builder)
+        $crate::__extract_and_apply_cfg_attributes! {
+            @($(#[$($m)*])*)
+            @(
+                // In case the user's function is marked `deprecated`
+                #[allow(deprecated)]
+                // In case the user did not specify any methods
+                #[allow(unused_unsafe)]
+                // SAFETY: Upheld by caller
+                unsafe {
+                    $crate::__declare_class_rewrite_methods! {
+                        @($crate::__declare_class_register_out)
+                        @($builder)
 
-                $($methods)*
-            }
+                        $($methods)*
+                    }
+                }
+            )
         }
 
         $crate::__declare_class_methods!(
@@ -700,13 +727,13 @@ macro_rules! __declare_class_method_out {
         @($($args_converted:tt)*)
         @($($body_prefix:tt)*)
     } => {
-        $crate::__attribute_helper! {
-            @strip_sel
-            $(@[$($m)*])*
-            ($($qualifiers)* fn $name($($args_start)* $($args_converted)*) {
+        $crate::__strip_custom_attributes! {
+            @($(#[$($m)*])*)
+            @($($qualifiers)* fn $name($($args_start)* $($args_converted)*) {
                 $($body_prefix)*
                 $($body)*
             })
+            @()
         }
     };
 
@@ -723,13 +750,13 @@ macro_rules! __declare_class_method_out {
         @($($args_converted:tt)*)
         @($($body_prefix:tt)*)
     } => {
-        $crate::__attribute_helper! {
-            @strip_sel
-            $(@[$($m)*])*
-            ($($qualifiers)* fn $name($($args_start)* $($args_converted)*) -> <$ret as $crate::encode::EncodeConvert>::__Inner {
+        $crate::__strip_custom_attributes! {
+            @($(#[$($m)*])*)
+            @($($qualifiers)* fn $name($($args_start)* $($args_converted)*) -> <$ret as $crate::encode::EncodeConvert>::__Inner {
                 $($body_prefix)*
                 <$ret as $crate::encode::EncodeConvert>::__into_inner($($body)*)
             })
+            @()
         }
     };
 }
@@ -822,21 +849,26 @@ macro_rules! __declare_class_register_out {
         @($($args_start:tt)*)
         @($($args_rest:tt)*)
     } => {
-        $builder.add_class_method(
-            $crate::__attribute_helper! {
-                @extract_sel
-                ($crate::__declare_class_register_out)
-                ($(#[$($m)*])*)
-                @call_sel
-
-                // Will add
-                // @(sel)
-                // @(output macro)
-            },
-            Self::$name as $crate::__fn_ptr! {
-                @($($qualifiers)*) $($args_start)* $($args_rest)*
-            },
-        );
+        $crate::__extract_and_apply_cfg_attributes! {
+            @($(#[$($m)*])*)
+            @(
+                $builder.add_class_method(
+                    $crate::__extract_custom_attributes! {
+                        @($(#[$($m)*])*)
+                        @($crate::__declare_class_register_out)
+                        @(
+                            @call_sel
+                            // Macro will add:
+                            // @(method attribute)
+                        )
+                        @()
+                    },
+                    Self::$name as $crate::__fn_ptr! {
+                        @($($qualifiers)*) $($args_start)* $($args_rest)*
+                    },
+                );
+            )
+        }
     };
 
     // Instance method
@@ -851,35 +883,38 @@ macro_rules! __declare_class_register_out {
         @($($args_start:tt)*)
         @($($args_rest:tt)*)
     } => {
-        $builder.add_method(
-            $crate::__attribute_helper! {
-                @extract_sel
-                ($crate::__declare_class_register_out)
-                ($(#[$($m)*])*)
-                @call_sel
-
-                // Will add
-                // @(sel)
-                // @(output macro)
-            },
-            Self::$name as $crate::__fn_ptr! {
-                @($($qualifiers)*) $($args_start)* $($args_rest)*
-            },
-        );
+        $crate::__extract_and_apply_cfg_attributes! {
+            @($(#[$($m)*])*)
+            @(
+                $builder.add_method(
+                    $crate::__extract_custom_attributes! {
+                        @($(#[$($m)*])*)
+                        @($crate::__declare_class_register_out)
+                        @(
+                            @call_sel
+                            // Macro will add:
+                            // @(method attribute)
+                        )
+                        @()
+                    },
+                    Self::$name as $crate::__fn_ptr! {
+                        @($($qualifiers)*) $($args_start)* $($args_rest)*
+                    },
+                );
+            )
+        }
     };
 
     {
         @call_sel
-        @($($sel:tt)*)
-        @(msg_send)
+        @(#[method($($sel:tt)*)])
     } => {
         $crate::sel!($($sel)*)
     };
 
     {
         @call_sel
-        @($($sel:tt)*)
-        @(msg_send_id)
+        @(#[method_id($($sel:tt)*)])
     } => {
         compile_error!("`#[method_id(...)]` is not supported in `declare_class!` yet");
     };

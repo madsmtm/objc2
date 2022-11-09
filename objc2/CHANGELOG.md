@@ -48,6 +48,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 * Fixed duplicate selector extraction in `extern_methods!`.
+* Fixed using `deprecated` attributes in `declare_class!`.
+* Fixed `cfg` attributes on methods and implementations in `declare_class!`.
 
 
 ## 0.3.0-beta.3 - 2022-09-01
