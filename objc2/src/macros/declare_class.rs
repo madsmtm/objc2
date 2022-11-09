@@ -530,8 +530,11 @@ macro_rules! __declare_class_methods {
             })
         );
 
-        // SAFETY: Upheld by caller
+        // In case the user's function is marked `deprecated`
+        #[allow(deprecated)]
+        // In case the user did not specify any methods
         #[allow(unused_unsafe)]
+        // SAFETY: Upheld by caller
         unsafe {
             $crate::__declare_class_rewrite_methods! {
                 @($crate::__declare_class_register_out)
@@ -561,8 +564,11 @@ macro_rules! __declare_class_methods {
 
         $($rest:tt)*
     ) => {
-        // SAFETY: Upheld by caller
+        // In case the user's function is marked `deprecated`
+        #[allow(deprecated)]
+        // In case the user did not specify any methods
         #[allow(unused_unsafe)]
+        // SAFETY: Upheld by caller
         unsafe {
             $crate::__declare_class_rewrite_methods! {
                 @($crate::__declare_class_register_out)
