@@ -1,0 +1,228 @@
+error[E0277]: the trait bound `&objc2::runtime::Object: MaybeUnwrap` is not satisfied
+ --> ui/msg_send_id_invalid_return.rs
+  |
+  |     let _: &Object = unsafe { msg_send_id![cls, new] };
+  |                               ^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap` is not implemented for `&objc2::runtime::Object`
+  |
+  = help: the following other types implement trait `MaybeUnwrap`:
+            Allocated<T>
+            Id<T, O>
+            Option<Allocated<T>>
+            Option<Id<T, O>>
+note: required by a bound in `send_message_id`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+  |
+  |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+  |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `send_message_id`
+  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
+ --> ui/msg_send_id_invalid_return.rs
+  |
+  |     let _: Id<Class, Shared> = unsafe { msg_send_id![cls, new] };
+  |                                         -------------^^^------
+  |                                         |            |
+  |                                         |            the trait `Message` is not implemented for `objc2::runtime::Class`
+  |                                         required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `Message`:
+            Exception
+            NSArray<T, O>
+            NSAttributedString
+            NSBundle
+            NSData
+            NSDictionary<K, V>
+            NSError
+            NSException
+          and $N others
+  = note: required for `RetainSemantics<1>` to implement `MsgSendId<&objc2::runtime::Class, Id<objc2::runtime::Class, Shared>>`
+
+error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
+ --> ui/msg_send_id_invalid_return.rs
+  |
+  |     let _: Option<Id<Class, Shared>> = unsafe { msg_send_id![cls, new] };
+  |                                                 -------------^^^------
+  |                                                 |            |
+  |                                                 |            the trait `Message` is not implemented for `objc2::runtime::Class`
+  |                                                 required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `Message`:
+            Exception
+            NSArray<T, O>
+            NSAttributedString
+            NSBundle
+            NSData
+            NSDictionary<K, V>
+            NSError
+            NSException
+          and $N others
+  = note: required for `RetainSemantics<1>` to implement `MsgSendId<&objc2::runtime::Class, Id<objc2::runtime::Class, Shared>>`
+
+error[E0277]: the trait bound `&objc2::runtime::Object: MaybeUnwrap` is not satisfied
+ --> ui/msg_send_id_invalid_return.rs
+  |
+  |     let _: &Object = unsafe { msg_send_id![cls, alloc] };
+  |                               ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap` is not implemented for `&objc2::runtime::Object`
+  |
+  = help: the following other types implement trait `MaybeUnwrap`:
+            Allocated<T>
+            Id<T, O>
+            Option<Allocated<T>>
+            Option<Id<T, O>>
+note: required by a bound in `send_message_id`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+  |
+  |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+  |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `send_message_id`
+  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
+ --> ui/msg_send_id_invalid_return.rs
+  |
+  |     let _: Allocated<Class> = unsafe { msg_send_id![cls, alloc] };
+  |                                        -------------^^^--------
+  |                                        |            |
+  |                                        |            the trait `Message` is not implemented for `objc2::runtime::Class`
+  |                                        required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `Message`:
+            Exception
+            NSArray<T, O>
+            NSAttributedString
+            NSBundle
+            NSData
+            NSDictionary<K, V>
+            NSError
+            NSException
+          and $N others
+  = note: required for `RetainSemantics<2>` to implement `MsgSendId<&objc2::runtime::Class, Allocated<objc2::runtime::Class>>`
+
+error[E0271]: type mismatch resolving `<Id<objc2::runtime::Object, Shared> as MaybeUnwrap>::Input == Allocated<_>`
+ --> ui/msg_send_id_invalid_return.rs
+  |
+  |     let _: Id<Object, Shared> = unsafe { msg_send_id![cls, alloc] };
+  |                                          ^^^^^^^^^^^^^^^^^^^^^^^^ expected struct `Allocated`, found struct `Id`
+  |
+  = note: expected struct `Allocated<_>`
+             found struct `Id<objc2::runtime::Object, Shared>`
+note: required by a bound in `send_message_id`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+  |
+  |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+  |                                                                   ^^^^^^^^^ required by this bound in `send_message_id`
+  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0271]: type mismatch resolving `<Id<Allocated<objc2::runtime::Object>, Shared> as MaybeUnwrap>::Input == Allocated<_>`
+ --> ui/msg_send_id_invalid_return.rs
+  |
+  |     let _: Id<Allocated<Object>, Shared> = unsafe { msg_send_id![cls, alloc] };
+  |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^ expected struct `Allocated`, found struct `Id`
+  |
+  = note: expected struct `Allocated<_>`
+             found struct `Id<Allocated<objc2::runtime::Object>, Shared>`
+note: required by a bound in `send_message_id`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+  |
+  |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+  |                                                                   ^^^^^^^^^ required by this bound in `send_message_id`
+  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `&objc2::runtime::Object: MaybeUnwrap` is not satisfied
+ --> ui/msg_send_id_invalid_return.rs
+  |
+  |     let _: &Object = unsafe { msg_send_id![obj, init] };
+  |                               ^^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap` is not implemented for `&objc2::runtime::Object`
+  |
+  = help: the following other types implement trait `MaybeUnwrap`:
+            Allocated<T>
+            Id<T, O>
+            Option<Allocated<T>>
+            Option<Id<T, O>>
+note: required by a bound in `send_message_id`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+  |
+  |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+  |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `send_message_id`
+  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0271]: type mismatch resolving `<Id<objc2::runtime::Class, Shared> as MaybeUnwrap>::Input == Id<objc2::runtime::Object, _>`
+ --> ui/msg_send_id_invalid_return.rs
+  |
+  |     let _: Id<Class, Shared> = unsafe { msg_send_id![obj, init] };
+  |                                         ^^^^^^^^^^^^^^^^^^^^^^^ expected struct `objc2::runtime::Object`, found struct `objc2::runtime::Class`
+  |
+  = note: expected struct `Id<objc2::runtime::Object, _>`
+             found struct `Id<objc2::runtime::Class, Shared>`
+note: required by a bound in `send_message_id`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+  |
+  |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+  |                                                                   ^^^^^^^^^ required by this bound in `send_message_id`
+  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0271]: type mismatch resolving `<Id<NSObject, Shared> as MaybeUnwrap>::Input == Id<objc2::runtime::Object, _>`
+ --> ui/msg_send_id_invalid_return.rs
+  |
+  |     let _: Id<NSObject, Shared> = unsafe { msg_send_id![obj, init] };
+  |                                            ^^^^^^^^^^^^^^^^^^^^^^^ expected struct `objc2::runtime::Object`, found struct `NSObject`
+  |
+  = note: expected struct `Id<objc2::runtime::Object, _>`
+             found struct `Id<NSObject, Shared>`
+note: required by a bound in `send_message_id`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+  |
+  |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+  |                                                                   ^^^^^^^^^ required by this bound in `send_message_id`
+  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `&objc2::runtime::Object: MaybeUnwrap` is not satisfied
+ --> ui/msg_send_id_invalid_return.rs
+  |
+  |     let _: &Object = unsafe { msg_send_id![obj, copy] };
+  |                               ^^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap` is not implemented for `&objc2::runtime::Object`
+  |
+  = help: the following other types implement trait `MaybeUnwrap`:
+            Allocated<T>
+            Id<T, O>
+            Option<Allocated<T>>
+            Option<Id<T, O>>
+note: required by a bound in `send_message_id`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+  |
+  |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+  |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `send_message_id`
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `&objc2::runtime::Object: MaybeUnwrap` is not satisfied
+ --> ui/msg_send_id_invalid_return.rs
+  |
+  |     let _: &Object = unsafe { msg_send_id![obj, description] };
+  |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap` is not implemented for `&objc2::runtime::Object`
+  |
+  = help: the following other types implement trait `MaybeUnwrap`:
+            Allocated<T>
+            Id<T, O>
+            Option<Allocated<T>>
+            Option<Id<T, O>>
+note: required by a bound in `send_message_id`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+  |
+  |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+  |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `send_message_id`
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Option<&objc2::runtime::Object>: MaybeUnwrap` is not satisfied
+ --> ui/msg_send_id_invalid_return.rs
+  |
+  |     let _: Option<&Object> = unsafe { msg_send_id![obj, description] };
+  |                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap` is not implemented for `Option<&objc2::runtime::Object>`
+  |
+  = help: the following other types implement trait `MaybeUnwrap`:
+            Option<Allocated<T>>
+            Option<Id<T, O>>
+note: required by a bound in `send_message_id`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+  |
+  |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+  |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `send_message_id`
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)

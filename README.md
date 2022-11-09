@@ -1,6 +1,6 @@
 # [![Rust + \[Obj-C\]](assets/logo-small.png)](https://github.com/madsmtm/objc2) <br> Objective-C in Rust
 
-[![License](https://badgen.net/badge/license/MIT/blue)](../LICENSE.txt)
+[![License](https://badgen.net/badge/license/MIT/blue)](./LICENSE.txt)
 [![CI](https://github.com/madsmtm/objc2/actions/workflows/ci.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/ci.yml)
 
 # DISCLAIMER! These crates are work in progress, and should not be used in production environments. Use the battle-tested `objc` family instead!
@@ -25,11 +25,11 @@ separate crate to help people cutting down on unneeded dependencies.
 [`objc-sys`] and [`block-sys`] contain raw bindings to the underlying C
 runtime libraries.
 
-[`objc2`]: ./objc2
-[`block2`]: ./block2
-[`objc2-encode`]: ./objc2-encode
-[`objc-sys`]: ./objc-sys
-[`block-sys`]: ./block-sys
+[`objc2`]: ./crates/objc2
+[`block2`]: ./crates/block2
+[`objc2-encode`]: ./crates/objc2-encode
+[`objc-sys`]: ./crates/objc-sys
+[`block-sys`]: ./crates/block-sys
 
 
 ## Migrating from original crates
@@ -49,7 +49,7 @@ objc = { package = "objc2", version = "0.2.7" }
 
 Afterwards, you can upgrade to the next release, in this case
 `v0.3.0-alpha.0`, and make the required changes to your code (the
-[changelog](objc/CHANGELOG.m) contains recommendations for this). And so on,
+[changelog](crates/objc2/CHANGELOG.md) contains recommendations for this). And so on,
 with every following release.
 
 

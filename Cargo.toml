@@ -1,15 +1,7 @@
 [workspace]
 members = [
-    "objc2",
-    "objc-sys",
-    "objc2-encode",
-    "objc2-proc-macros",
-    "block2",
-    "block-sys",
-    "tests",
-    "test-assembly",
-    "test-assembly/crates/*",
-    "test-ui",
+    "crates/*",
+    "crates/test-assembly/crates/*",
 ]
 resolver = "2"
 
