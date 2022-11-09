@@ -700,13 +700,13 @@ macro_rules! __declare_class_method_out {
         @($($args_converted:tt)*)
         @($($body_prefix:tt)*)
     } => {
-        $crate::__attribute_helper! {
-            @strip_sel
-            $(@[$($m)*])*
-            ($($qualifiers)* fn $name($($args_start)* $($args_converted)*) {
+        $crate::__strip_custom_attributes! {
+            @($(#[$($m)*])*)
+            @($($qualifiers)* fn $name($($args_start)* $($args_converted)*) {
                 $($body_prefix)*
                 $($body)*
             })
+            @()
         }
     };
 
@@ -723,13 +723,13 @@ macro_rules! __declare_class_method_out {
         @($($args_converted:tt)*)
         @($($body_prefix:tt)*)
     } => {
-        $crate::__attribute_helper! {
-            @strip_sel
-            $(@[$($m)*])*
-            ($($qualifiers)* fn $name($($args_start)* $($args_converted)*) -> <$ret as $crate::encode::EncodeConvert>::__Inner {
+        $crate::__strip_custom_attributes! {
+            @($(#[$($m)*])*)
+            @($($qualifiers)* fn $name($($args_start)* $($args_converted)*) -> <$ret as $crate::encode::EncodeConvert>::__Inner {
                 $($body_prefix)*
                 <$ret as $crate::encode::EncodeConvert>::__into_inner($($body)*)
             })
+            @()
         }
     };
 }
@@ -823,15 +823,15 @@ macro_rules! __declare_class_register_out {
         @($($args_rest:tt)*)
     } => {
         $builder.add_class_method(
-            $crate::__attribute_helper! {
-                @extract_sel
-                ($crate::__declare_class_register_out)
-                ($(#[$($m)*])*)
-                @call_sel
-
-                // Will add
-                // @(sel)
-                // @(output macro)
+            $crate::__extract_custom_attributes! {
+                @($(#[$($m)*])*)
+                @($crate::__declare_class_register_out)
+                @(
+                    @call_sel
+                    // Macro will add:
+                    // @(method attribute)
+                )
+                @()
             },
             Self::$name as $crate::__fn_ptr! {
                 @($($qualifiers)*) $($args_start)* $($args_rest)*
@@ -852,15 +852,15 @@ macro_rules! __declare_class_register_out {
         @($($args_rest:tt)*)
     } => {
         $builder.add_method(
-            $crate::__attribute_helper! {
-                @extract_sel
-                ($crate::__declare_class_register_out)
-                ($(#[$($m)*])*)
-                @call_sel
-
-                // Will add
-                // @(sel)
-                // @(output macro)
+            $crate::__extract_custom_attributes! {
+                @($(#[$($m)*])*)
+                @($crate::__declare_class_register_out)
+                @(
+                    @call_sel
+                    // Macro will add:
+                    // @(method attribute)
+                )
+                @()
             },
             Self::$name as $crate::__fn_ptr! {
                 @($($qualifiers)*) $($args_start)* $($args_rest)*
@@ -870,16 +870,14 @@ macro_rules! __declare_class_register_out {
 
     {
         @call_sel
-        @($($sel:tt)*)
-        @(msg_send)
+        @(#[method($($sel:tt)*)])
     } => {
         $crate::sel!($($sel)*)
     };
 
     {
         @call_sel
-        @($($sel:tt)*)
-        @(msg_send_id)
+        @(#[method_id($($sel:tt)*)])
     } => {
         compile_error!("`#[method_id(...)]` is not supported in `declare_class!` yet");
     };

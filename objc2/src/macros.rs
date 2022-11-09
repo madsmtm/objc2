@@ -1,3 +1,4 @@
+mod __attribute_helpers;
 mod __msg_send_parse;
 mod __rewrite_self_arg;
 mod declare_class;

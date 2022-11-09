@@ -19,9 +19,26 @@ extern_methods!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method(b)]
+        #[method_id(b)]
         #[method_id(b)]
         fn b();
+    }
+);
+
+extern_methods!(
+    unsafe impl MyObject {
+        #[method(c)]
+        #[method_id(c)]
+        fn c();
+    }
+);
+
+
+extern_methods!(
+    unsafe impl MyObject {
+        #[method_id(d)]
+        #[method(d)]
+        fn d();
     }
 );
 

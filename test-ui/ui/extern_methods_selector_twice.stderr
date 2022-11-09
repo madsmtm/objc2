@@ -1,4 +1,4 @@
-error: Cannot not specify a selector twice!
+error: cannot specify the `method`/`method_id` attribute twice!
  --> ui/extern_methods_selector_twice.rs
   |
   | / extern_methods!(
@@ -10,18 +10,46 @@ error: Cannot not specify a selector twice!
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__attribute_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extract_custom_attributes` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: Cannot not specify a selector twice!
+error: cannot specify the `method`/`method_id` attribute twice!
  --> ui/extern_methods_selector_twice.rs
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(b)]
+  | |         #[method_id(b)]
   | |         #[method_id(b)]
   | |         fn b();
   | |     }
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__attribute_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extract_custom_attributes` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: cannot specify the `method`/`method_id` attribute twice!
+ --> ui/extern_methods_selector_twice.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method(c)]
+  | |         #[method_id(c)]
+  | |         fn c();
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extract_custom_attributes` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: cannot specify the `method`/`method_id` attribute twice!
+ --> ui/extern_methods_selector_twice.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method_id(d)]
+  | |         #[method(d)]
+  | |         fn d();
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extract_custom_attributes` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
