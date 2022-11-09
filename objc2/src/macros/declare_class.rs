@@ -49,7 +49,13 @@
 /// will be registered as a class method.
 ///
 /// The desired selector can be specified using the `#[method(my:selector:)]`
-/// attribute, similar to the [`extern_methods!`] macro.
+/// attribute, similar to the [`extern_methods!`] macro (`method_id` is not
+/// yet supported, see [#282]).
+///
+/// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
+/// `deprecated` and so on is supported. However, note that `cfg_attr` may not
+/// work correctly, due to implementation difficulty - if you have a concrete
+/// use-case, please [open an issue], then we can discuss it.
 ///
 /// A transformation step is performed on the functions (to make them have the
 /// correct ABI) and hence they shouldn't really be called manually. (You
@@ -63,6 +69,8 @@
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// [`extern_methods!`]: crate::extern_methods
+/// [#282]: https://github.com/madsmtm/objc2/issues/282
+/// [open an issue]: https://github.com/madsmtm/objc2/issues/new
 /// [`msg_send!`]: crate::msg_send
 /// [`runtime::Bool`]: crate::runtime::Bool
 ///
@@ -74,6 +82,9 @@
 ///
 /// The methods work exactly as normal, they're only put "under" the protocol
 /// definition to make things easier to read.
+///
+/// Putting attributes on the `impl` item such as `cfg`, `allow`, `doc`,
+/// `deprecated` and so on is supported.
 ///
 ///
 /// # Panics

@@ -20,6 +20,11 @@
 /// or `#[method_id(my:selector:)]` attribute. The `method` attribute maps to
 /// a call to [`msg_send!`], while the `method_id` maps to [`msg_send_id!`].
 ///
+/// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
+/// `deprecated` and so on is supported. However, note that `cfg_attr` may not
+/// work correctly, due to implementation difficulty - if you have a concrete
+/// use-case, please [open an issue], then we can discuss it.
+///
 /// The name of the function doesn't matter for out purposes, but is of course
 /// what the user will use to access the functionality.
 ///
@@ -28,6 +33,7 @@
 ///
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
+/// [open an issue]: https://github.com/madsmtm/objc2/issues/new
 ///
 ///
 /// # Safety
