@@ -172,4 +172,28 @@ mod tests {
         assert_eq!(enc1, enc2);
         assert_ne!(enc1, enc3);
     }
+
+    #[test]
+    fn ne_struct_with_without_fields() {
+        let enc1 = EncodingBox::Struct("test".to_string(), Some(vec![EncodingBox::Char]));
+        let enc2 = EncodingBox::Struct("test".to_string(), None);
+        const ENC3A: Encoding = Encoding::Struct("test", &[Encoding::Char]);
+        assert_ne!(enc1, enc2);
+        assert!(ENC3A.equivalent_to_box(&enc1));
+        assert!(!ENC3A.equivalent_to_box(&enc2));
+
+        let enc1 = EncodingBox::Pointer(Box::new(enc1));
+        let enc2 = EncodingBox::Pointer(Box::new(enc2));
+        const ENC3B: Encoding = Encoding::Pointer(&ENC3A);
+        assert_ne!(enc1, enc2);
+        assert!(ENC3B.equivalent_to_box(&enc1));
+        assert!(!ENC3B.equivalent_to_box(&enc2));
+
+        let enc1 = EncodingBox::Pointer(Box::new(enc1));
+        let enc2 = EncodingBox::Pointer(Box::new(enc2));
+        const ENC3C: Encoding = Encoding::Pointer(&ENC3B);
+        assert_ne!(enc1, enc2);
+        assert!(ENC3C.equivalent_to_box(&enc1));
+        assert!(ENC3C.equivalent_to_box(&enc2), "now they're equivalent");
+    }
 }

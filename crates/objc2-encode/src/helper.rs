@@ -90,7 +90,14 @@ pub(crate) fn compare_encodings<E1: EncodingType, E2: EncodingType>(
                     (Some(type1), Some(type2)) => {
                         compare_encodings(type1, level1, type2, level2, include_all)
                     }
-                    _ => true, // TODO
+                    // The type-encoding of a bitfield is always either
+                    // available, or it is not (depends on platform); so if it
+                    // was available in one, but not the other, we should
+                    // compare the encodings unequal.
+                    //
+                    // However, since bitfield types are not really supported
+                    // ATM, we'll do the opposite, and compare them equal.
+                    _ => true,
                 }
         }
         (Indirection(kind1, t1, level1), Indirection(kind2, t2, level2)) => {
@@ -115,7 +122,14 @@ pub(crate) fn compare_encodings<E1: EncodingType, E2: EncodingType>(
                         }
                         true
                     }
-                    _ => false, // TODO
+                    // A bit unsure about this one, but the "safe" default
+                    // here is just to say that one container with items do
+                    // not compare equal to another container without items.
+                    //
+                    // Note that this may be confusing, since a `Pointer` to
+                    // the two containers might suddenly start comparing
+                    // equal, but
+                    _ => false,
                 }
         }
         (_, _) => false,
