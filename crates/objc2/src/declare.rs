@@ -116,6 +116,7 @@ mod declare_class_tests;
 mod ivar;
 mod ivar_drop;
 mod ivar_forwarding_impls;
+mod private_ivar;
 
 use alloc::format;
 use alloc::string::ToString;
@@ -133,8 +134,9 @@ use crate::sel;
 use crate::verify::verify_method_signature;
 use crate::Message;
 
-pub use ivar::{InnerIvarType, Ivar, IvarType};
-pub use ivar_drop::IvarDrop;
+pub use self::ivar::{InnerIvarType, Ivar, IvarType};
+pub use self::ivar_drop::IvarDrop;
+pub use self::private_ivar::PrivateIvar;
 
 pub(crate) mod private {
     pub trait Sealed {}
