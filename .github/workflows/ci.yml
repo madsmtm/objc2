@@ -326,7 +326,10 @@ jobs:
 
     - name: Install Cargo Dinghy
       if: matrix.dinghy && steps.extern-cache.outputs.cache-hit != 'true'
-      run: cargo install cargo-dinghy --version=^0.6.0 --root=$HOME/extern --target=x86_64-apple-darwin
+      run: |
+        export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
+
+        cargo install cargo-dinghy --version=^0.6.0 --root=$HOME/extern --target=$HOST_TARGET
 
     - name: Launch XCode Simulator and prepare Dinghy
       if: matrix.dinghy
@@ -346,7 +349,10 @@ jobs:
 
     - name: Install Cargo Fuzz
       if: matrix.fuzz && steps.extern-cache.outputs.cache-hit != 'true'
-      run: cargo install cargo-fuzz --version=^0.11.1 --root=$HOME/extern
+      run: |
+        export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
+
+        cargo install cargo-fuzz --version=^0.11.1 --root=$HOME/extern --target=$HOST_TARGET
 
     - name: Lint
       # Temporarily allow `clippy::let_unit_value`
