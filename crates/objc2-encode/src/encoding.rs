@@ -252,38 +252,6 @@ fn equivalent_to(enc1: &Encoding, enc2: &Encoding, level: NestingLevel) -> bool 
     }
 }
 
-fn display_fmt(this: &Encoding, f: &mut fmt::Formatter<'_>, level: NestingLevel) -> fmt::Result {
-    use Helper::*;
-    match Helper::new(this) {
-        Primitive(primitive) => f.write_str(primitive.to_str()),
-        BitField(b, _type) => {
-            // TODO: Use the type on GNUStep (nesting level?)
-            write!(f, "b{b}")
-        }
-        Indirection(kind, t) => {
-            write!(f, "{}", kind.prefix())?;
-            display_fmt(t, f, level.indirection(kind))
-        }
-        Array(len, item) => {
-            write!(f, "[")?;
-            write!(f, "{len}")?;
-            display_fmt(item, f, level.array())?;
-            write!(f, "]")
-        }
-        Container(kind, name, fields) => {
-            write!(f, "{}", kind.start())?;
-            write!(f, "{name}")?;
-            if let Some(level) = level.container() {
-                write!(f, "=")?;
-                for field in fields {
-                    display_fmt(field, f, level)?;
-                }
-            }
-            write!(f, "{}", kind.end())
-        }
-    }
-}
-
 /// Formats this [`Encoding`] in a similar way that the `@encode` directive
 /// would ordinarily do.
 ///
@@ -292,7 +260,7 @@ fn display_fmt(this: &Encoding, f: &mut fmt::Formatter<'_>, level: NestingLevel)
 /// Objective-C compilers.
 impl fmt::Display for Encoding {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        display_fmt(self, f, NestingLevel::new())
+        Helper::new(self).display_fmt(f, NestingLevel::new())
     }
 }
 

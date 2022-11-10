@@ -1,4 +1,8 @@
+use core::fmt;
+use core::write;
+
 use crate::Encoding;
+use crate::EncodingBox;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub(crate) enum NestingLevel {
@@ -156,18 +160,22 @@ impl ContainerKind {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-#[non_exhaustive]
-pub(crate) enum Helper<'a> {
-    Primitive(Primitive),
-    BitField(u8, &'a Encoding),
-    Indirection(IndirectionKind, &'a Encoding),
-    Array(usize, &'a Encoding),
-    Container(ContainerKind, &'a str, &'a [Encoding]),
+pub(crate) trait EncodingType: Sized {
+    fn helper(&self) -> Helper<'_, Self>;
 }
 
-impl<'a> Helper<'a> {
-    pub(crate) const fn new(encoding: &'a Encoding) -> Self {
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[non_exhaustive]
+pub(crate) enum Helper<'a, E = Encoding> {
+    Primitive(Primitive),
+    BitField(u8, &'a E),
+    Indirection(IndirectionKind, &'a E),
+    Array(usize, &'a E),
+    Container(ContainerKind, &'a str, &'a [E]),
+}
+
+impl Helper<'_> {
+    pub(crate) const fn new(encoding: &Encoding) -> Self {
         use Encoding::*;
         match encoding {
             Char => Self::Primitive(Primitive::Char),
@@ -201,5 +209,92 @@ impl<'a> Helper<'a> {
             Struct(name, fields) => Self::Container(ContainerKind::Struct, name, fields),
             Union(name, members) => Self::Container(ContainerKind::Union, name, members),
         }
+    }
+}
+
+impl<'a> Helper<'a, EncodingBox> {
+    pub(crate) fn from_box(encoding: &'a EncodingBox) -> Self {
+        use EncodingBox::*;
+        match encoding {
+            Char => Self::Primitive(Primitive::Char),
+            Short => Self::Primitive(Primitive::Short),
+            Int => Self::Primitive(Primitive::Int),
+            Long => Self::Primitive(Primitive::Long),
+            LongLong => Self::Primitive(Primitive::LongLong),
+            UChar => Self::Primitive(Primitive::UChar),
+            UShort => Self::Primitive(Primitive::UShort),
+            UInt => Self::Primitive(Primitive::UInt),
+            ULong => Self::Primitive(Primitive::ULong),
+            ULongLong => Self::Primitive(Primitive::ULongLong),
+            Float => Self::Primitive(Primitive::Float),
+            Double => Self::Primitive(Primitive::Double),
+            LongDouble => Self::Primitive(Primitive::LongDouble),
+            FloatComplex => Self::Primitive(Primitive::FloatComplex),
+            DoubleComplex => Self::Primitive(Primitive::DoubleComplex),
+            LongDoubleComplex => Self::Primitive(Primitive::LongDoubleComplex),
+            Bool => Self::Primitive(Primitive::Bool),
+            Void => Self::Primitive(Primitive::Void),
+            String => Self::Primitive(Primitive::String),
+            Object => Self::Primitive(Primitive::Object),
+            Block => Self::Primitive(Primitive::Block),
+            Class => Self::Primitive(Primitive::Class),
+            Sel => Self::Primitive(Primitive::Sel),
+            Unknown => Self::Primitive(Primitive::Unknown),
+            BitField(b, t) => Self::BitField(*b, &**t),
+            Pointer(t) => Self::Indirection(IndirectionKind::Pointer, &**t),
+            Atomic(t) => Self::Indirection(IndirectionKind::Atomic, &**t),
+            Array(len, item) => Self::Array(*len, &**item),
+            Struct(name, fields) => Self::Container(ContainerKind::Struct, name, fields),
+            Union(name, members) => Self::Container(ContainerKind::Union, name, members),
+        }
+    }
+}
+
+impl<'a, E: EncodingType> Helper<'a, E> {
+    pub(crate) fn display_fmt(
+        &self,
+        f: &mut fmt::Formatter<'_>,
+        level: NestingLevel,
+    ) -> fmt::Result {
+        match self {
+            Self::Primitive(primitive) => f.write_str(primitive.to_str()),
+            Self::BitField(b, _type) => {
+                // TODO: Use the type on GNUStep (nesting level?)
+                write!(f, "b{b}")
+            }
+            Self::Indirection(kind, t) => {
+                write!(f, "{}", kind.prefix())?;
+                t.helper().display_fmt(f, level.indirection(*kind))
+            }
+            Self::Array(len, item) => {
+                write!(f, "[")?;
+                write!(f, "{len}")?;
+                item.helper().display_fmt(f, level.array())?;
+                write!(f, "]")
+            }
+            Self::Container(kind, name, fields) => {
+                write!(f, "{}", kind.start())?;
+                write!(f, "{name}")?;
+                if let Some(level) = level.container() {
+                    write!(f, "=")?;
+                    for field in *fields {
+                        field.helper().display_fmt(f, level)?;
+                    }
+                }
+                write!(f, "{}", kind.end())
+            }
+        }
+    }
+}
+
+impl EncodingType for Encoding {
+    fn helper(&self) -> Helper<'_, Self> {
+        Helper::new(self)
+    }
+}
+
+impl EncodingType for EncodingBox {
+    fn helper(&self) -> Helper<'_, Self> {
+        Helper::from_box(self)
     }
 }
