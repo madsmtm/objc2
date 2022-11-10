@@ -400,7 +400,7 @@ jobs:
         # `max_total_time`, to get more determinism.
         for target in $($HOME/extern/bin/cargo-fuzz list)
         do
-          $HOME/extern/bin/cargo-fuzz run $target ${{ env.ARGS }} -- -runs=100000 -timeout=2
+          $HOME/extern/bin/cargo-fuzz run $target ${{ env.ARGS }} -- -runs=10000 -timeout=2 -jobs=10
         done
 
         # Check if the fuzzer encountered something that should be added to
