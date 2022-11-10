@@ -24,6 +24,7 @@ macro_rules! extern_protocol {
         // SAFETY: TODO
         unsafe impl ProtocolType for $for {
             const NAME: &'static str = $crate::__select_name!($name; $($name_const)?);
+            const __INNER: () = ();
         }
 
         const _: () = {

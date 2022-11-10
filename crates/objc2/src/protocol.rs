@@ -10,9 +10,8 @@ use crate::Message;
 ///
 /// # Safety
 ///
-/// Same as [`ClassType`], TODO.
-///
-/// [`ClassType`]: crate::ClassType
+/// This is meant to be a sealed trait, and should not be implemented outside
+/// of the `extern_protocol!` macro.
 pub unsafe trait ProtocolType: Message {
     /// The name of the Objective-C protocol that this type represents.
     const NAME: &'static str;
@@ -37,6 +36,9 @@ pub unsafe trait ProtocolType: Message {
     fn protocol() -> Option<&'static Protocol> {
         Protocol::get(Self::NAME)
     }
+
+    #[doc(hidden)]
+    const __INNER: ();
 }
 
 /// TODO

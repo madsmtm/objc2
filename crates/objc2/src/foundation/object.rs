@@ -39,6 +39,8 @@ unsafe impl ProtocolType for NSObject {
     fn protocol() -> Option<&'static Protocol> {
         Some(Protocol::get(<Self as ProtocolType>::NAME).expect("could not find NSObject protocol"))
     }
+
+    const __INNER: () = ();
 }
 
 extern_methods!(
