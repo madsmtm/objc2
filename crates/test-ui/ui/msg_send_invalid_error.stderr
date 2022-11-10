@@ -1,0 +1,97 @@
+error[E0308]: mismatched types
+ --> ui/msg_send_invalid_error.rs
+  |
+  |     let _: () = unsafe { msg_send![obj, a: _] };
+  |                          ^^^^^^^^^^^^^^^^^^^^ expected `()`, found enum `Result`
+  |
+  = note: expected unit type `()`
+                  found enum `Result<(), Id<_, Shared>>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+ --> ui/msg_send_invalid_error.rs
+  |
+  |     let _: Result<i32, _> = unsafe { msg_send![obj, b: _] };
+  |                                      ^^^^^^^^^^^^^^^^^^^^ expected `i32`, found `()`
+  |
+  = note: expected enum `Result<i32, _>`
+             found enum `Result<(), Id<_, Shared>>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: try wrapping the expression in `Err`
+  --> $WORKSPACE/crates/objc2/src/macros.rs
+   |
+   |         Err(result)
+   |         ++++      +
+
+error[E0308]: mismatched types
+ --> ui/msg_send_invalid_error.rs
+  |
+  |     let _: Result<(), i32> = unsafe { msg_send![obj, c: _] };
+  |                                       ^^^^^^^^^^^^^^^^^^^^ expected `i32`, found struct `Id`
+  |
+  = note: expected enum `Result<_, i32>`
+             found enum `Result<_, Id<_, Shared>>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `i32: Message` is not satisfied
+ --> ui/msg_send_invalid_error.rs
+  |
+  |     let _: Result<(), Id<i32, Shared>> = unsafe { msg_send![obj, d: _] };
+  |                                                   ^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `i32`
+  |
+  = help: the following other types implement trait `Message`:
+            Exception
+            NSArray<T, O>
+            NSAttributedString
+            NSBundle
+            NSData
+            NSDictionary<K, V>
+            NSError
+            NSException
+          and $N others
+note: required by a bound in `__send_message_error`
+ --> $WORKSPACE/crates/objc2/src/message/mod.rs
+  |
+  |         E: Message,
+  |            ^^^^^^^ required by this bound in `__send_message_error`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+ --> ui/msg_send_invalid_error.rs
+  |
+  |     let _: () = unsafe { msg_send![obj, e: obj, f: _] };
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found enum `Result`
+  |
+  = note: expected unit type `()`
+                  found enum `Result<(), Id<_, Shared>>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+ --> ui/msg_send_invalid_error.rs
+  |
+  |     let _: () = unsafe { msg_send![super(obj), g: _] };
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found enum `Result`
+  |
+  = note: expected unit type `()`
+                  found enum `Result<(), Id<_, Shared>>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+ --> ui/msg_send_invalid_error.rs
+  |
+  |     let _: () = unsafe { msg_send![super(obj, NSString::class()), h: _] };
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found enum `Result`
+  |
+  = note: expected unit type `()`
+                  found enum `Result<(), Id<_, Shared>>`
+  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+ --> ui/msg_send_invalid_error.rs
+  |
+  |     let _: () = unsafe { msg_send_id![obj, i: _] };
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found enum `Result`
+  |
+  = note: expected unit type `()`
+                  found enum `Result<Id<_, _>, Id<_, Shared>>`
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
