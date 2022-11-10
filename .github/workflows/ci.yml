@@ -151,7 +151,7 @@ jobs:
       CXXFLAGS: ${{ matrix.cflags }}
       ASMFLAGS: ${{ matrix.cflags }}
       LDFLAGS: ${{ matrix.cflags }}
-      ARGS: --no-default-features --features std --features ${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
+      ARGS: --no-default-features --features=std,${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
       # Use --no-fail-fast, except with dinghy
       TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
       SOME_FEATURES: ${{ matrix.features || 'malloc,block,exception,foundation' }}
@@ -193,16 +193,6 @@ jobs:
           ~/extern/sdk
         # Change this key if we start caching more things
         key: ${{ matrix.name }}-extern-v4
-
-    - name: Cache fuzzing dir
-      id: fuzz-cache
-      uses: actions/cache@v2
-      with:
-        path: |
-          fuzz/artifacts/
-          fuzz/corpus/
-        # Change this key if we start caching more things
-        key: ${{ matrix.name }}-fuzz-v1
 
     - name: Setup environment
       # These add to PATH-like variables, so they can always be set
@@ -397,11 +387,19 @@ jobs:
     - name: Run fuzzing
       if: ${{ matrix.fuzz }}
       run: |
-        # Run each target for 5 seconds, and timeout after 2 seconds
+        # Run each target for 100000 runs (approx. 5 seconds), and timeout
+        # after 2 seconds.
+        #
+        # We specify the number of runs explicitly instead of using
+        # `max_total_time`, to get more determinism.
         for target in $($HOME/extern/bin/cargo-fuzz list)
         do
-          $HOME/extern/bin/cargo-fuzz run $target -- -max_total_time=5 -timeout=2
+          $HOME/extern/bin/cargo-fuzz run $target ${{ env.ARGS }} -- -runs=100000 -timeout=2
         done
+
+        # Check if the fuzzer encountered something that should be added to
+        # the corpus.
+        git diff --exit-code fuzz/
 
     - name: Run benchmarks
       # Difficult to install Valgrind on macOS
