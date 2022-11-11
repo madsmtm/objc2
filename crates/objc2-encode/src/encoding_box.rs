@@ -196,4 +196,21 @@ mod tests {
         assert!(ENC3C.equivalent_to_box(&enc1));
         assert!(ENC3C.equivalent_to_box(&enc2), "now they're equivalent");
     }
+
+    #[test]
+    fn parse_atomic_struct() {
+        let expected = EncodingBox::Atomic(Box::new(EncodingBox::Atomic(Box::new(
+            EncodingBox::Struct("a".into(), Some(Vec::new())),
+        ))));
+        let actual = EncodingBox::from_str("AA{a=}").unwrap();
+        assert_eq!(expected, actual);
+        assert_eq!(expected.to_string(), "AA{a}");
+
+        let expected = EncodingBox::Atomic(Box::new(EncodingBox::Atomic(Box::new(
+            EncodingBox::Struct("a".into(), None),
+        ))));
+        let actual = EncodingBox::from_str("AA{a}").unwrap();
+        assert_eq!(expected, actual);
+        assert_eq!(expected.to_string(), "AA{a}");
+    }
 }

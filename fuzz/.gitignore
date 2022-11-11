@@ -1,2 +1,4 @@
 target/
 artifacts/
+# This grows very quickly, and doesn't really need to be in-tree
+corpus/encoding_parse/
