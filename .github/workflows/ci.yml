@@ -83,11 +83,14 @@ jobs:
             target: x86_64-unknown-linux-gnu
             runtime: gnustep-2-0
             libobjc2: "2.0"
-          - name: Test GNUStep with libobjc2 v2.1
+          - name: Test GNUStep with libobjc2 v2.1 on nightly
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
+            rust:
+              toolchain: nightly
             runtime: gnustep-2-1
             libobjc2: "2.1"
+            fuzz: true
           - name: Test GNUStep 32bit
             os: ubuntu-latest
             target: i686-unknown-linux-gnu
@@ -148,7 +151,7 @@ jobs:
       CXXFLAGS: ${{ matrix.cflags }}
       ASMFLAGS: ${{ matrix.cflags }}
       LDFLAGS: ${{ matrix.cflags }}
-      ARGS: --no-default-features --features std --features ${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
+      ARGS: --no-default-features --features=std,${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
       # Use --no-fail-fast, except with dinghy
       TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
       SOME_FEATURES: ${{ matrix.features || 'malloc,block,exception,foundation' }}
@@ -177,6 +180,7 @@ jobs:
         # So instead we just place the final outputs in ~/extern, and cache
         # them there:
         # - bin/cargo-dinghy
+        # - bin/cargo-fuzz
         # - lib/libobjc.so
         # - lib/libgnustep-base.so
         # - include/Foundation/*
@@ -188,7 +192,7 @@ jobs:
           ~/extern/include
           ~/extern/sdk
         # Change this key if we start caching more things
-        key: ${{ matrix.name }}-extern-v3
+        key: ${{ matrix.name }}-extern-v4
 
     - name: Setup environment
       # These add to PATH-like variables, so they can always be set
@@ -196,6 +200,7 @@ jobs:
         mkdir -p $HOME/extern/bin
         mkdir -p $HOME/extern/lib
         mkdir -p $HOME/extern/include
+        mkdir -p $HOME/extern/fuzz
         echo "PATH=$HOME/extern/bin:$PATH" >> $GITHUB_ENV
         echo "LIBRARY_PATH=$HOME/extern/lib:$LIBRARY_PATH" >> $GITHUB_ENV
         echo "LD_LIBRARY_PATH=$HOME/extern/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
@@ -304,7 +309,9 @@ jobs:
     - name: Cache Rust Target
       uses: actions/cache@v2
       with:
-        path: target/
+        path: |
+          target/
+          fuzz/target/
         key: rust-${{ matrix.name }}-${{ hashFiles('**/Cargo.toml') }}
 
     - name: Install Rust toolchain
@@ -319,7 +326,10 @@ jobs:
 
     - name: Install Cargo Dinghy
       if: matrix.dinghy && steps.extern-cache.outputs.cache-hit != 'true'
-      run: cargo install cargo-dinghy --version=^0.6.0 --root=$HOME/extern --target=x86_64-apple-darwin
+      run: |
+        export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
+
+        cargo install cargo-dinghy --version=^0.6.0 --root=$HOME/extern --target=$HOST_TARGET
 
     - name: Launch XCode Simulator and prepare Dinghy
       if: matrix.dinghy
@@ -336,6 +346,13 @@ jobs:
 
         # Export variable
         echo "CMD=$HOME/extern/bin/cargo-dinghy -d=$SIM_ID" >> $GITHUB_ENV
+
+    - name: Install Cargo Fuzz
+      if: matrix.fuzz && steps.extern-cache.outputs.cache-hit != 'true'
+      run: |
+        export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
+
+        cargo install cargo-fuzz --version=^0.11.1 --root=$HOME/extern --target=$HOST_TARGET
 
     - name: Lint
       # Temporarily allow `clippy::let_unit_value`
@@ -372,6 +389,23 @@ jobs:
       env:
         # Allow warnings
         RUSTFLAGS: "-C debuginfo=0"
+
+    - name: Run fuzzing
+      if: ${{ matrix.fuzz }}
+      run: |
+        # Run each target for 100000 runs (approx. 5 seconds), and timeout
+        # after 2 seconds.
+        #
+        # We specify the number of runs explicitly instead of using
+        # `max_total_time`, to get more determinism.
+        for target in $($HOME/extern/bin/cargo-fuzz list)
+        do
+          $HOME/extern/bin/cargo-fuzz run $target ${{ env.ARGS }} -- -runs=10000 -timeout=2 -jobs=10
+        done
+
+        # Check if the fuzzer encountered something that should be added to
+        # the corpus.
+        git diff --exit-code fuzz/
 
     - name: Run benchmarks
       # Difficult to install Valgrind on macOS

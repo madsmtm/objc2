@@ -4,6 +4,7 @@ use core::ffi::c_void;
 use core::fmt;
 use core::panic::RefUnwindSafe;
 use core::panic::UnwindSafe;
+#[cfg(feature = "apple")]
 use core::ptr::NonNull;
 use core::slice;
 use core::str;
@@ -132,6 +133,7 @@ extern_methods!(
         /// if performance is not an issue.
         #[doc(alias = "CFStringGetCStringPtr")]
         #[allow(unused)]
+        #[cfg(feature = "apple")]
         // TODO: Finish this
         fn as_str_wip(&self) -> Option<&str> {
             type CFStringEncoding = u32;
@@ -160,6 +162,7 @@ extern_methods!(
         ///
         /// [UTF-16]: https://en.wikipedia.org/wiki/UTF-16
         #[allow(unused)]
+        #[cfg(feature = "apple")]
         // TODO: Finish this
         fn as_utf16(&self) -> Option<&[u16]> {
             extern "C" {
