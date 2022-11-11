@@ -40,7 +40,10 @@ use crate::Message;
 /// extern_protocol!(
 ///     struct MyProtocol;
 ///
-///     unsafe impl ProtocolType for MyProtocol {}
+///     unsafe impl ProtocolType for MyProtocol {
+///         #[method(aMethod)]
+///         fn a_method(&self);
+///     }
 /// );
 ///
 /// let protocol = MyProtocol::protocol();

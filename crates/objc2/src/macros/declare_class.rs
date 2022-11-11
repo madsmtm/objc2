@@ -861,7 +861,9 @@ macro_rules! __declare_class_register_out {
                             @call_sel
                             // Macro will add:
                             // @(method attribute)
+                            // @(optional attribute)
                         )
+                        @()
                         @()
                     },
                     Self::$name as $crate::__fn_ptr! {
@@ -895,7 +897,9 @@ macro_rules! __declare_class_register_out {
                             @call_sel
                             // Macro will add:
                             // @(method attribute)
+                            // @(optional attribute)
                         )
+                        @()
                         @()
                     },
                     Self::$name as $crate::__fn_ptr! {
@@ -909,15 +913,25 @@ macro_rules! __declare_class_register_out {
     {
         @call_sel
         @(#[method($($sel:tt)*)])
+        @()
     } => {
         $crate::sel!($($sel)*)
     };
 
     {
         @call_sel
-        @(#[method_id($($sel:tt)*)])
+        @(#[method($($sel:tt)*)])
+        @($($m_optional:tt)*)
     } => {
-        compile_error!("`#[method_id(...)]` is not supported in `declare_class!` yet");
+        compile_error!("`#[optional]` is only supported in `extern_protocol!`")
+    };
+
+    {
+        @call_sel
+        @(#[method_id($($sel:tt)*)])
+        @($($m_optional:tt)*)
+    } => {
+        compile_error!("`#[method_id(...)]` is not supported in `declare_class!` yet")
     };
 }
 

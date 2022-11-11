@@ -1,0 +1,55 @@
+error: `#[optional]` is only supported in `extern_protocol!`
+ --> ui/wrong_optional.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method(a)]
+  | |         /// Doc comment
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__inner_extern_methods` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[optional]` is only supported in `extern_protocol!`
+ --> ui/wrong_optional.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         /// Doc comment
+  | |         #[optional]
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__inner_extern_methods` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[optional]` is only supported in `extern_protocol!`
+ --> ui/wrong_optional.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject {}
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[method_id(...)]` is not supported in `declare_class!` yet
+ --> ui/wrong_optional.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject {}
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -343,7 +343,9 @@ macro_rules! __inner_extern_methods {
                             @($($args_rest)*)
                             // Macro will add:
                             // @(method attribute)
+                            // @(optional attribute)
                         )
+                        @()
                         @()
                     }
                 }
@@ -358,6 +360,7 @@ macro_rules! __inner_extern_methods {
         @($($args_start:tt)*)
         @($($args_rest:tt)*)
         @(#[method($($sel:tt)*)])
+        @() // No `optional`
     } => {
         $crate::__collect_msg_send! {
             $crate::msg_send;
@@ -376,6 +379,7 @@ macro_rules! __inner_extern_methods {
         @($($args_start:tt)*)
         @($($args_rest:tt)*)
         @(#[method_id($($sel:tt)*)])
+        @() // No `optional`
     } => {
         $crate::__collect_msg_send! {
             $crate::msg_send_id;
@@ -387,6 +391,16 @@ macro_rules! __inner_extern_methods {
             ($($sel)*);
             ($($args_rest)*);
         }
+    };
+    {
+        @unsafe_method_body
+        @($kind:ident)
+        @($($args_start:tt)*)
+        @($($args_rest:tt)*)
+        @($($m_method:tt)*)
+        @($($m_optional:tt)*)
+    } => {
+        compile_error!("`#[optional]` is only supported in `extern_protocol!`")
     };
 
     {
