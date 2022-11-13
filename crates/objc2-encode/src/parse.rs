@@ -16,7 +16,7 @@ pub(crate) const fn verify_name(name: &str) -> bool {
         return true;
     }
 
-    if bytes.len() == 0 {
+    if bytes.is_empty() {
         return false;
     }
 
@@ -267,9 +267,7 @@ impl Parser<'_> {
 
         // Parse name until hits `=`
         let has_items = loop {
-            let b = self
-                .try_peek()
-                .ok_or_else(|| ErrorKind::WrongEndContainer(kind))?;
+            let b = self.try_peek().ok_or(ErrorKind::WrongEndContainer(kind))?;
             if b == b'=' {
                 break true;
             } else if b == kind.end_byte() {
@@ -290,9 +288,7 @@ impl Parser<'_> {
             let mut items = Vec::new();
             // Parse items until hits end
             loop {
-                let b = self
-                    .try_peek()
-                    .ok_or_else(|| ErrorKind::WrongEndContainer(kind))?;
+                let b = self.try_peek().ok_or(ErrorKind::WrongEndContainer(kind))?;
                 if b == kind.end_byte() {
                     self.advance();
                     break;

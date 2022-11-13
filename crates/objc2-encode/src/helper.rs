@@ -385,9 +385,9 @@ impl<'a> Helper<'a, EncodingBox> {
             Sel => Self::Primitive(Primitive::Sel),
             Unknown => Self::Primitive(Primitive::Unknown),
             BitField(b, t) => Self::BitField(*b, t.as_deref(), level.bitfield()),
-            Pointer(t) => Self::Indirection(IndirectionKind::Pointer, &t, level.pointer()),
-            Atomic(t) => Self::Indirection(IndirectionKind::Atomic, &t, level.atomic()),
-            Array(len, item) => Self::Array(*len, &item, level.array()),
+            Pointer(t) => Self::Indirection(IndirectionKind::Pointer, t, level.pointer()),
+            Atomic(t) => Self::Indirection(IndirectionKind::Atomic, t, level.atomic()),
+            Array(len, item) => Self::Array(*len, item, level.array()),
             Struct(name, fields) => {
                 if !verify_name(name) {
                     panic!("Struct name was not a valid identifier");
