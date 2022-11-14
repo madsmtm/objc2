@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added `EncodingBox` for dynamically creating encodings on the heap.
 
+### Changed
+* **BREAKING**: Verify that the name in `Encoding::Struct` and
+  `Encoding::Union` is a valid C identifier.
+
 
 ## 2.0.0-pre.2 - 2022-08-28
 

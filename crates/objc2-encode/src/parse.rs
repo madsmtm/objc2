@@ -4,6 +4,29 @@
 use crate::helper::{Helper, NestingLevel};
 use crate::Encoding;
 
+/// Check whether a struct or union name is a valid identifier
+pub(crate) const fn verify_name(name: &str) -> bool {
+    let bytes = name.as_bytes();
+
+    if let b"?" = bytes {
+        return true;
+    }
+
+    if bytes.len() == 0 {
+        return false;
+    }
+
+    let mut i = 0;
+    while i < bytes.len() {
+        let byte = bytes[i];
+        if !(byte.is_ascii_alphanumeric() || byte == b'_') {
+            return false;
+        }
+        i += 1;
+    }
+    true
+}
+
 pub(crate) const QUALIFIERS: &[char] = &[
     'r', // const
     'n', // in

@@ -418,11 +418,6 @@ mod tests {
             !"{SomeStruct=}";
         }
 
-        fn struct_unicode() {
-            Encoding::Struct("☃", &[Encoding::Char]);
-            "{☃=c}";
-        }
-
         fn pointer_struct() {
             Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int]));
             !Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char]));
@@ -519,5 +514,28 @@ mod tests {
             );
             "{abc=^[8B](def=@?)^^b255?}";
         }
+
+        fn identifier() {
+            Encoding::Struct("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", &[]);
+            "{_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789=}";
+        }
+    }
+
+    #[test]
+    #[should_panic = "Struct name was not a valid identifier"]
+    fn struct_empty() {
+        let _ = Encoding::Struct("", &[]).to_string();
+    }
+
+    #[test]
+    #[should_panic = "Struct name was not a valid identifier"]
+    fn struct_unicode() {
+        let _ = Encoding::Struct("☃", &[Encoding::Char]).to_string();
+    }
+
+    #[test]
+    #[should_panic = "Union name was not a valid identifier"]
+    fn union_invalid_identifier() {
+        let _ = Encoding::Union("a-b", &[Encoding::Char]).equivalent_to_str("(☃=c)");
     }
 }

@@ -1,6 +1,7 @@
 use core::fmt;
 use core::write;
 
+use crate::parse::verify_name;
 use crate::Encoding;
 use crate::EncodingBox;
 
@@ -252,8 +253,18 @@ impl Helper<'_> {
             Pointer(t) => Self::Indirection(IndirectionKind::Pointer, t),
             Atomic(t) => Self::Indirection(IndirectionKind::Atomic, t),
             Array(len, item) => Self::Array(*len, item),
-            Struct(name, fields) => Self::Container(ContainerKind::Struct, name, fields),
-            Union(name, members) => Self::Container(ContainerKind::Union, name, members),
+            Struct(name, fields) => {
+                if !verify_name(name) {
+                    panic!("Struct name was not a valid identifier");
+                }
+                Self::Container(ContainerKind::Struct, name, fields)
+            }
+            Union(name, members) => {
+                if !verify_name(name) {
+                    panic!("Union name was not a valid identifier");
+                }
+                Self::Container(ContainerKind::Union, name, members)
+            }
         }
     }
 }
@@ -290,8 +301,18 @@ impl<'a> Helper<'a, EncodingBox> {
             Pointer(t) => Self::Indirection(IndirectionKind::Pointer, &**t),
             Atomic(t) => Self::Indirection(IndirectionKind::Atomic, &**t),
             Array(len, item) => Self::Array(*len, &**item),
-            Struct(name, fields) => Self::Container(ContainerKind::Struct, name, fields),
-            Union(name, members) => Self::Container(ContainerKind::Union, name, members),
+            Struct(name, fields) => {
+                if !verify_name(name) {
+                    panic!("Struct name was not a valid identifier");
+                }
+                Self::Container(ContainerKind::Struct, name, fields)
+            }
+            Union(name, members) => {
+                if !verify_name(name) {
+                    panic!("Union name was not a valid identifier");
+                }
+                Self::Container(ContainerKind::Union, name, members)
+            }
         }
     }
 }
