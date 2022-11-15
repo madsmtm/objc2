@@ -34,7 +34,7 @@ use crate::Message;
 ///
 /// Use the [`extern_protocol!`] macro to implement this trait for a type.
 ///
-/// ```ignore
+/// ```no_run
 /// use objc2::{extern_protocol, ProtocolType};
 ///
 /// extern_protocol!(
