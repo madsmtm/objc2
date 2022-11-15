@@ -1032,7 +1032,7 @@ mod tests {
             assert!(<u32>::ENCODING.equivalent_to_str(&method.return_type()));
             assert!(Sel::ENCODING.equivalent_to_str(&method.argument_type(1).unwrap()));
 
-            assert!(cls.instance_methods().into_iter().any(|m| *m == method));
+            assert!(cls.instance_methods().iter().any(|m| *m == method));
         }
     }
 
@@ -1050,7 +1050,7 @@ mod tests {
             assert!(cls
                 .metaclass()
                 .instance_methods()
-                .into_iter()
+                .iter()
                 .any(|m| *m == method));
         }
     }

@@ -113,14 +113,13 @@ impl EncodingBox {
     ///
     /// [`from_str`][Self::from_str] is simpler, use that instead if you can.
     pub fn from_start_of_str(s: &mut &str) -> Result<Self, ParseError> {
-        let mut parser = Parser::new(*s);
+        let mut parser = Parser::new(s);
         parser.strip_leading_qualifiers();
 
         match parser.parse_encoding() {
-            Err(err) => return Err(ParseError::new(parser, err)),
+            Err(err) => Err(ParseError::new(parser, err)),
             Ok(encoding) => {
                 let remaining = parser.remaining();
-                drop(parser);
                 *s = remaining;
 
                 Ok(encoding)

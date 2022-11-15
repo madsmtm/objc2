@@ -28,15 +28,11 @@ fn throw_catch_raise_catch() {
     assert_retain_count(&exc, 2);
 
     // TODO: Investigate this!
-    let extra_retain = if cfg!(all(
+    let extra_retain = usize::from(cfg!(all(
         feature = "apple",
         target_os = "macos",
         target_arch = "x86"
-    )) {
-        1
-    } else {
-        0
-    };
+    )));
 
     let exc = autoreleasepool(|_| {
         let exc = NSException::into_exception(exc);

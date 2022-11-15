@@ -22,15 +22,12 @@ impl<'a> MethodEncodingIter<'a> {
         &mut self,
     ) -> Result<(EncodingBox, Option<isize>), EncodingParseError> {
         // TODO: Verify stack layout
-        self.next()
-            .ok_or_else(|| EncodingParseError::MissingReturn)?
+        self.next().ok_or(EncodingParseError::MissingReturn)?
     }
 
     pub(crate) fn verify_receiver(&mut self) -> Result<(), EncodingParseError> {
         // TODO: Verify stack layout
-        let (enc, _stack_layout) = self
-            .next()
-            .ok_or_else(|| EncodingParseError::MissingReceiver)??;
+        let (enc, _stack_layout) = self.next().ok_or(EncodingParseError::MissingReceiver)??;
         if !Encoding::Object.equivalent_to_box(&enc) {
             return Err(EncodingParseError::InvalidReceiver(enc));
         }
@@ -38,9 +35,7 @@ impl<'a> MethodEncodingIter<'a> {
     }
 
     pub(crate) fn verify_sel(&mut self) -> Result<(), EncodingParseError> {
-        let (enc, _stack_layout) = self
-            .next()
-            .ok_or_else(|| EncodingParseError::MissingSel)??;
+        let (enc, _stack_layout) = self.next().ok_or(EncodingParseError::MissingSel)??;
         if !Encoding::Sel.equivalent_to_box(&enc) {
             return Err(EncodingParseError::InvalidSel(enc));
         }

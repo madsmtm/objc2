@@ -744,10 +744,7 @@ mod tests {
     fn test_in_all_classes() {
         fn is_present(cls: *const Class) -> bool {
             // Check whether the class is present in Class::classes()
-            Class::classes()
-                .into_iter()
-                .find(|&item| ptr::eq(cls, *item))
-                .is_some()
+            Class::classes().iter().any(|item| ptr::eq(cls, *item))
         }
 
         let superclass = test_utils::custom_class();
