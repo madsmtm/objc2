@@ -13,6 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Verify that the name in `Encoding::Struct` and
   `Encoding::Union` is a valid C identifier.
 
+### Removed
+* **BREAKING**: `Encoding` no longer implements `Copy`, though it is still
+  `Clone`.
+
 
 ## 2.0.0-pre.2 - 2022-08-28
 

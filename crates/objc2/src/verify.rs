@@ -120,10 +120,12 @@ where
         return Err(Inner::MismatchedArgumentsCount(expected, actual).into());
     }
 
-    for (i, actual) in self_and_cmd.iter().chain(args).copied().enumerate() {
+    for (i, actual) in self_and_cmd.iter().chain(args).enumerate() {
         let expected = method.argument_type(i).unwrap();
         if !actual.equivalent_to_str(&*expected) {
-            return Err(Inner::MismatchedArgument(i, MallocEncoding(expected), actual).into());
+            return Err(
+                Inner::MismatchedArgument(i, MallocEncoding(expected), actual.clone()).into(),
+            );
         }
     }
 
