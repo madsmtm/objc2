@@ -41,19 +41,19 @@ pub(crate) const fn static_int_str_array<const RES: usize>(mut n: u128) -> [u8; 
 pub(crate) const fn static_encoding_str_len(encoding: &Encoding, level: NestingLevel) -> usize {
     use Helper::*;
 
-    match Helper::new(encoding) {
+    match Helper::new(encoding, level) {
         Primitive(primitive) => primitive.to_str().len(),
-        BitField(b, _type) => {
+        BitField(b, _type, _level) => {
             // TODO: Use the type on GNUStep (nesting level?)
             1 + static_int_str_len(b as u128)
         }
-        Indirection(kind, t) => 1 + static_encoding_str_len(t, level.indirection(kind)),
-        Array(len, item) => {
-            1 + static_int_str_len(len as u128) + static_encoding_str_len(item, level.array()) + 1
+        Indirection(_kind, t, level) => 1 + static_encoding_str_len(t, level),
+        Array(len, item, level) => {
+            1 + static_int_str_len(len as u128) + static_encoding_str_len(item, level) + 1
         }
-        Container(_, name, items) => {
+        Container(_, name, items, level) => {
             let mut res = 1 + name.len();
-            if let Some(level) = level.container() {
+            if let Some(items) = items {
                 res += 1;
                 let mut i = 0;
                 while i < items.len() {
@@ -75,7 +75,7 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
     let mut res: [u8; LEN] = [0; LEN];
     let mut res_i = 0;
 
-    match Helper::new(encoding) {
+    match Helper::new(encoding, level) {
         Primitive(primitive) => {
             let s = primitive.to_str().as_bytes();
             let mut i = 0;
@@ -84,7 +84,7 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 i += 1;
             }
         }
-        BitField(b, _type) => {
+        BitField(b, _type, _level) => {
             // TODO: Use the type on GNUStep (nesting level?)
             res[res_i] = b'b';
             res_i += 1;
@@ -98,20 +98,20 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 i += 1;
             }
         }
-        Indirection(kind, t) => {
+        Indirection(kind, t, level) => {
             res[res_i] = kind.prefix_byte();
             res_i += 1;
 
             let mut i = 0;
             // We use LEN even though it creates an oversized array
-            let arr = static_encoding_str_array::<LEN>(t, level.indirection(kind));
-            while i < static_encoding_str_len(t, level.indirection(kind)) {
+            let arr = static_encoding_str_array::<LEN>(t, level);
+            while i < static_encoding_str_len(t, level) {
                 res[res_i] = arr[i];
                 res_i += 1;
                 i += 1;
             }
         }
-        Array(len, item) => {
+        Array(len, item, level) => {
             let mut res_i = 0;
 
             res[res_i] = b'[';
@@ -128,8 +128,8 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
 
             let mut i = 0;
             // We use LEN even though it creates an oversized array
-            let arr = static_encoding_str_array::<LEN>(item, level.array());
-            while i < static_encoding_str_len(item, level.array()) {
+            let arr = static_encoding_str_array::<LEN>(item, level);
+            while i < static_encoding_str_len(item, level) {
                 res[res_i] = arr[i];
                 res_i += 1;
                 i += 1;
@@ -137,7 +137,7 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
 
             res[res_i] = b']';
         }
-        Container(kind, name, items) => {
+        Container(kind, name, items, level) => {
             let mut res_i = 0;
 
             res[res_i] = kind.start_byte();
@@ -151,7 +151,7 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 name_i += 1;
             }
 
-            if let Some(level) = level.container() {
+            if let Some(items) = items {
                 res[res_i] = b'=';
                 res_i += 1;
 

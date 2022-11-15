@@ -1,7 +1,8 @@
 use core::fmt;
 
-use crate::helper::{Helper, NestingLevel};
-use crate::parse;
+use crate::helper::{compare_encodings, Helper, NestingLevel};
+use crate::parse::Parser;
+use crate::EncodingBox;
 
 /// An Objective-C type-encoding.
 ///
@@ -33,7 +34,8 @@ use crate::parse;
 /// use objc2_encode::Encoding;
 /// assert!(Encoding::Array(10, &Encoding::FloatComplex).equivalent_to_str("[10jf]"));
 /// ```
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+// Not `Copy`, since this may one day contain `Box`
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 // See <https://en.cppreference.com/w/c/language/type>
 #[non_exhaustive] // Maybe we're missing some encodings?
 pub enum Encoding {
@@ -169,16 +171,21 @@ impl Encoding {
 
     /// Check if one encoding is equivalent to another.
     ///
-    /// Currently, equivalence testing requires that the encodings are equal,
-    /// except for qualifiers. This may be changed in the future to e.g.
-    /// ignore struct names, to allow structs behind multiple pointers to be
-    /// considered equivalent, or similar changes that may be required because
-    /// of limitations in Objective-C compiler implementations.
+    /// Currently, equivalence testing mostly requires that the encodings are
+    /// equal, except for:
+    /// - Any leading qualifiers that the encoding may have.
+    /// - Structs or unions behind multiple pointers are considered
+    ///   equivalent, since Objective-C compilers strip this information to
+    ///   avoid unnecessary nesting.
+    ///
+    /// The comparison may be changed in the future to e.g. ignore struct
+    /// names or similar changes that may be required because of limitations
+    /// in Objective-C compiler implementations.
     ///
     /// For example, you should not rely on two equivalent encodings to have
     /// the same size or ABI - that is provided on a best-effort basis.
     pub fn equivalent_to(&self, other: &Self) -> bool {
-        equivalent_to(self, other, NestingLevel::new())
+        compare_encodings(self, NestingLevel::new(), other, NestingLevel::new(), false)
     }
 
     /// Check if an encoding is equivalent to the given string representation.
@@ -186,101 +193,27 @@ impl Encoding {
     /// See [`Encoding::equivalent_to`] for details about the meaning of
     /// "equivalence".
     pub fn equivalent_to_str(&self, s: &str) -> bool {
-        // if the given encoding can be successfully removed from the start
-        // and an empty string remains, they were fully equivalent!
-        if let Some(res) = self.equivalent_to_start_of_str(s) {
-            res.is_empty()
+        let mut parser = Parser::new(s);
+
+        parser.strip_leading_qualifiers();
+
+        // TODO: Allow missing/"?" names in structs and unions?
+
+        if let Some(()) = parser.expect_encoding(self, NestingLevel::new()) {
+            // if the given encoding can be successfully removed from the
+            // start and an empty string remains, they were fully equivalent!
+            parser.is_empty()
         } else {
             false
         }
     }
 
-    /// Check if an encoding is equivalent to the start of the given string
-    /// representation.
-    ///
-    /// If it is equivalent, the remaining part of the string is returned.
-    /// Otherwise this returns [`None`].
+    /// Check if an encoding is equivalent to a boxed encoding.
     ///
     /// See [`Encoding::equivalent_to`] for details about the meaning of
     /// "equivalence".
-    pub fn equivalent_to_start_of_str<'a>(&self, s: &'a str) -> Option<&'a str> {
-        // strip leading qualifiers
-        let s = s.trim_start_matches(parse::QUALIFIERS);
-
-        // TODO: Allow missing/"?" names in structs and unions?
-
-        parse::rm_enc_prefix(s, self, NestingLevel::new())
-    }
-}
-
-fn equivalent_to(enc1: &Encoding, enc2: &Encoding, level: NestingLevel) -> bool {
-    // Note: Ideally `Block` and sequence of `Object, Unknown` in struct
-    // should compare equal, but we don't bother since in practice a plain
-    // `Unknown` will never appear.
-    use Helper::*;
-    match (Helper::new(enc1), Helper::new(enc2)) {
-        (Primitive(p1), Primitive(p2)) => p1 == p2,
-        (BitField(b1, type1), BitField(b2, type2)) => {
-            b1 == b2 && equivalent_to(type1, type2, level.bitfield())
-        }
-        (Indirection(kind1, t1), Indirection(kind2, t2)) => {
-            kind1 == kind2 && equivalent_to(t1, t2, level.indirection(kind1))
-        }
-        (Array(len1, item1), Array(len2, item2)) => {
-            len1 == len2 && equivalent_to(item1, item2, level.array())
-        }
-        (Container(kind1, name1, fields1), Container(kind2, name2, fields2)) => {
-            if kind1 != kind2 {
-                return false;
-            }
-            if name1 != name2 {
-                return false;
-            }
-            if let Some(level) = level.container() {
-                if fields1.len() != fields2.len() {
-                    return false;
-                }
-                for (field1, field2) in fields1.iter().zip(fields2.iter()) {
-                    if !equivalent_to(field1, field2, level) {
-                        return false;
-                    }
-                }
-            }
-            true
-        }
-        (_, _) => false,
-    }
-}
-
-fn display_fmt(this: &Encoding, f: &mut fmt::Formatter<'_>, level: NestingLevel) -> fmt::Result {
-    use Helper::*;
-    match Helper::new(this) {
-        Primitive(primitive) => f.write_str(primitive.to_str()),
-        BitField(b, _type) => {
-            // TODO: Use the type on GNUStep (nesting level?)
-            write!(f, "b{b}")
-        }
-        Indirection(kind, t) => {
-            write!(f, "{}", kind.prefix())?;
-            display_fmt(t, f, level.indirection(kind))
-        }
-        Array(len, item) => {
-            write!(f, "[")?;
-            write!(f, "{len}")?;
-            display_fmt(item, f, level.array())?;
-            write!(f, "]")
-        }
-        Container(kind, name, fields) => {
-            write!(f, "{}", kind.start())?;
-            write!(f, "{name}")?;
-            if let Some(level) = level.container() {
-                write!(f, "=")?;
-                for field in fields {
-                    display_fmt(field, f, level)?;
-                }
-            }
-            write!(f, "{}", kind.end())
-        }
+    pub fn equivalent_to_box(&self, other: &EncodingBox) -> bool {
+        compare_encodings(self, NestingLevel::new(), other, NestingLevel::new(), false)
     }
 }
 
@@ -292,16 +225,18 @@ fn display_fmt(this: &Encoding, f: &mut fmt::Formatter<'_>, level: NestingLevel)
 /// Objective-C compilers.
 impl fmt::Display for Encoding {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        display_fmt(self, f, NestingLevel::new())
+        write!(f, "{}", Helper::new(self, NestingLevel::new()))
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::Encoding;
+    use super::*;
     use crate::helper::NestingLevel;
     use crate::static_str::{static_encoding_str_array, static_encoding_str_len};
     use alloc::string::ToString;
+    use alloc::vec;
+    use core::str::FromStr;
 
     fn send_sync<T: Send + Sync>() {}
 
@@ -347,37 +282,47 @@ mod tests {
                 const E: Encoding = $encoding;
 
                 // Check PartialEq
-                assert_eq!(E, E);
+                assert_eq!(E, E, "equal");
 
                 // Check Display
-                assert_eq!(E.to_string(), $string);
+                assert_eq!(E.to_string(), $string, "equal to string");
+
+                // Check encoding box
+                let boxed = EncodingBox::from_str($string).expect("parse");
+                assert_eq!(boxed.to_string(), $string, "parsed");
 
                 // Check equivalence comparisons
-                assert!(E.equivalent_to(&E));
-                assert!(E.equivalent_to_str($string));
-                assert_eq!(E.equivalent_to_start_of_str(concat!($string, "xyz")), Some("xyz"));
+                assert!(E.equivalent_to(&E), "equivalent self");
+                assert!(E.equivalent_to_str($string), "equivalent self string");
+                assert!(E.equivalent_to_box(&boxed), "equivalent self boxed");
                 $(
-                    assert!(E.equivalent_to(&$equivalent_encoding));
-                    assert!(E.equivalent_to_str(&$equivalent_encoding.to_string()));
+                    assert!(E.equivalent_to(&$equivalent_encoding), "equivalent encoding");
+                    assert!(E.equivalent_to_str(&$equivalent_encoding.to_string()), "equivalent encoding string");
+                    let boxed = EncodingBox::from_str(&$equivalent_encoding.to_string()).expect("parse equivalent encoding");
+                    assert!(E.equivalent_to_box(&boxed), "equivalent encoding boxed");
                 )*
                 $(
-                    assert!(E.equivalent_to_str($equivalent_string));
+                    assert!(E.equivalent_to_str($equivalent_string), "equivalent string");
+                    let boxed = EncodingBox::from_str($equivalent_string).expect("parse equivalent string");
+                    assert!(E.equivalent_to_box(&boxed), "equivalent string boxed");
                 )*
 
                 // Negative checks
                 $(
-                    assert_ne!(E, $not_encoding);
-                    assert!(!E.equivalent_to(&$not_encoding));
-                    assert!(!E.equivalent_to_str(&$not_encoding.to_string()));
+                    assert_ne!(E, $not_encoding, "not equal");
+                    assert!(!E.equivalent_to(&$not_encoding), "not equivalent encoding");
+                    assert!(!E.equivalent_to_str(&$not_encoding.to_string()), "not equivalent encoding string");
+                    let boxed = EncodingBox::from_str(&$not_encoding.to_string()).expect("parse not equivalent encoding");
+                    assert!(!E.equivalent_to_box(&boxed), "not equivalent boxed");
                 )*
                 $(
-                    assert!(!E.equivalent_to_str(&$not_string));
+                    assert!(!E.equivalent_to_str(&$not_string), "not equivalent string");
                 )*
 
                 // Check static str
                 const STATIC_ENCODING_DATA: [u8; static_encoding_str_len(&E, NestingLevel::new())] = static_encoding_str_array(&E, NestingLevel::new());
                 const STATIC_ENCODING_STR: &str = unsafe { core::str::from_utf8_unchecked(&STATIC_ENCODING_DATA) };
-                assert_eq!(STATIC_ENCODING_STR, $string);
+                assert_eq!(STATIC_ENCODING_STR, $string, "static");
             }
         )+};
     }
@@ -421,13 +366,6 @@ mod tests {
             Encoding::Unknown;
             !Encoding::Block;
             "?";
-        }
-
-        // Note: A raw `?` cannot happen in practice, since functions can only
-        // be accessed through pointers, and that will yield `^?`
-        fn object_unknown_in_struct() {
-            Encoding::Struct("S", &[Encoding::Block, Encoding::Object, Encoding::Unknown]);
-            "{S=@?@?}";
         }
 
         fn double() {
@@ -487,11 +425,6 @@ mod tests {
             !"{SomeStruct=ci";
             !"{SomeStruct}";
             !"{SomeStruct=}";
-        }
-
-        fn struct_unicode() {
-            Encoding::Struct("☃", &[Encoding::Char]);
-            "{☃=c}";
         }
 
         fn pointer_struct() {
@@ -590,5 +523,47 @@ mod tests {
             );
             "{abc=^[8B](def=@?)^^b255?}";
         }
+
+        fn identifier() {
+            Encoding::Struct("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", &[]);
+            "{_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789=}";
+        }
+    }
+
+    #[test]
+    #[should_panic = "Struct name was not a valid identifier"]
+    fn struct_empty() {
+        let _ = Encoding::Struct("", &[]).to_string();
+    }
+
+    #[test]
+    #[should_panic = "Struct name was not a valid identifier"]
+    fn struct_unicode() {
+        let _ = Encoding::Struct("☃", &[Encoding::Char]).to_string();
+    }
+
+    #[test]
+    #[should_panic = "Union name was not a valid identifier"]
+    fn union_invalid_identifier() {
+        let _ = Encoding::Union("a-b", &[Encoding::Char]).equivalent_to_str("(☃=c)");
+    }
+
+    // Note: A raw `?` cannot happen in practice, since functions can only
+    // be accessed through pointers, and that will yield `^?`
+    #[test]
+    fn object_unknown_in_struct() {
+        let enc = Encoding::Struct("S", &[Encoding::Block, Encoding::Object, Encoding::Unknown]);
+        let s = "{S=@?@?}";
+
+        assert_eq!(&enc.to_string(), s);
+
+        let parsed = EncodingBox::from_str(s).unwrap();
+        let expected = EncodingBox::Struct(
+            "S".to_string(),
+            Some(vec![EncodingBox::Block, EncodingBox::Block]),
+        );
+        assert_eq!(parsed, expected);
+
+        assert!(!enc.equivalent_to_box(&expected));
     }
 }

@@ -22,6 +22,9 @@ gnustep-1-9 = ["gnustep-1-8", "objc2/gnustep-1-9"]
 gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0"]
 gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1"]
 
+[workspace]
+members = ["."]
+
 [[bin]]
 name = "class"
 path = "fuzz_targets/class.rs"
@@ -34,5 +37,8 @@ path = "fuzz_targets/sel.rs"
 test = false
 doc = false
 
-[workspace]
-members = ["."]
+[[bin]]
+name = "encoding_parse"
+path = "fuzz_targets/encoding_parse.rs"
+test = false
+doc = false

@@ -106,6 +106,7 @@ extern crate alloc;
 pub mod __bool;
 mod encode;
 mod encoding;
+mod encoding_box;
 mod helper;
 mod parse;
 
@@ -115,3 +116,5 @@ mod static_str;
 
 pub use self::encode::{Encode, EncodeArguments, EncodeConvert, RefEncode};
 pub use self::encoding::Encoding;
+pub use self::encoding_box::EncodingBox;
+pub use self::parse::ParseError;

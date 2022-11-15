@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Added `EncodingBox` for dynamically parsing encodings and creating them on
+  the heap.
+* Added `ParseError`, a custom type that represents errors during encoding
+  parsing.
+* Added `Encoding::equivalent_to_box` for comparing `Encoding` and
+  `EncodingBox`.
+
+### Changed
+* **BREAKING**: Verify that the name in `Encoding::Struct` and
+  `Encoding::Union` is a valid C identifier.
+
+### Removed
+* **BREAKING**: `Encoding` no longer implements `Copy`, though it is still
+  `Clone`.
+* **BREAKING**: Removed `Encoding::equivalent_to_start_of_str`, since it
+  wasn't really useful.
+
+
 ## 2.0.0-pre.2 - 2022-08-28
 
 ### Added
