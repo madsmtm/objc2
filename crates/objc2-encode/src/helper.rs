@@ -232,7 +232,16 @@ impl ContainerKind {
     }
 }
 
-pub(crate) trait EncodingType: Sized {
+impl fmt::Display for ContainerKind {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Struct => write!(f, "struct"),
+            Self::Union => write!(f, "union"),
+        }
+    }
+}
+
+pub(crate) trait EncodingType: Sized + fmt::Debug {
     fn helper(&self, level: NestingLevel) -> Helper<'_, Self>;
 }
 

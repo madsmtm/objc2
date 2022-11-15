@@ -7,7 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
-* Added `EncodingBox` for dynamically creating encodings on the heap.
+* Added `EncodingBox` for dynamically parsing encodings and creating them on
+  the heap.
+* Added `ParseError`, a custom type that represents errors during encoding
+  parsing.
+* Added `Encoding::equivalent_to_box` for comparing `Encoding` and
+  `EncodingBox`.
 
 ### Changed
 * **BREAKING**: Verify that the name in `Encoding::Struct` and

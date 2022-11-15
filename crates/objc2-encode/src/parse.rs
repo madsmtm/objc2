@@ -1,8 +1,12 @@
 //! Parsing encodings from their string representation.
 #![deny(unsafe_code)]
+use alloc::boxed::Box;
+use alloc::string::{String, ToString};
+use alloc::vec::Vec;
+use core::fmt;
 
-use crate::helper::{ContainerKind, Helper, IndirectionKind, NestingLevel, Primitive};
-use crate::Encoding;
+use crate::helper::{ContainerKind, Helper, NestingLevel};
+use crate::{Encoding, EncodingBox};
 
 /// Check whether a struct or union name is a valid identifier
 pub(crate) const fn verify_name(name: &str) -> bool {
@@ -27,6 +31,36 @@ pub(crate) const fn verify_name(name: &str) -> bool {
     true
 }
 
+/// The error that was encountered while parsing the encoding.
+#[derive(Debug, PartialEq, Eq, Hash)]
+pub struct ParseError {
+    kind: ErrorKind,
+    data: String,
+    split_point: usize,
+}
+
+impl ParseError {
+    pub(crate) fn new(parser: Parser<'_>, kind: ErrorKind) -> Self {
+        Self {
+            kind,
+            data: parser.data.to_string(),
+            split_point: parser.split_point,
+        }
+    }
+}
+
+impl fmt::Display for ParseError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "failed parsing encoding: {} at byte-index {} in {:?}",
+            self.kind, self.split_point, self.data,
+        )
+    }
+}
+
+impl std::error::Error for ParseError {}
+
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub(crate) enum ErrorKind {
     UnexpectedEnd,
@@ -34,8 +68,36 @@ pub(crate) enum ErrorKind {
     UnknownAfterComplex(u8),
     ExpectedInteger,
     IntegerTooLarge,
+    WrongEndArray,
     WrongEndContainer(ContainerKind),
     InvalidIdentifier(ContainerKind),
+    NotAllConsumed,
+}
+
+impl fmt::Display for ErrorKind {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::UnexpectedEnd => write!(f, "unexpected end"),
+            Self::Unknown(b) => {
+                write!(f, "unknown encoding character {}", *b as char)
+            }
+            Self::UnknownAfterComplex(b) => {
+                write!(f, "unknown encoding character {} after complex", *b as char,)
+            }
+            Self::ExpectedInteger => write!(f, "expected integer"),
+            Self::IntegerTooLarge => write!(f, "integer too large"),
+            Self::WrongEndArray => write!(f, "expected array to be closed"),
+            Self::WrongEndContainer(kind) => {
+                write!(f, "expected {} to be closed", kind)
+            }
+            Self::InvalidIdentifier(kind) => {
+                write!(f, "got invalid identifier in {}", kind)
+            }
+            Self::NotAllConsumed => {
+                write!(f, "remaining contents after parsing")
+            }
+        }
+    }
 }
 
 type Result<T, E = ErrorKind> = core::result::Result<T, E>;
@@ -79,6 +141,14 @@ impl<'a> Parser<'a> {
 
     pub(crate) fn is_empty(&self) -> bool {
         self.try_peek().is_none()
+    }
+
+    pub(crate) fn expect_empty(&self) -> Result<()> {
+        if self.is_empty() {
+            Ok(())
+        } else {
+            Err(ErrorKind::NotAllConsumed)
+        }
     }
 }
 
@@ -191,33 +261,22 @@ impl Parser<'_> {
     }
 }
 
-#[allow(unused)]
-enum EncodingToken<'a> {
-    Primitive(Primitive),
-    BitFieldStart(u8),
-    Indirection(IndirectionKind),
-    ArrayStart(usize),
-    ArrayEnd,
-    ContainerStart(ContainerKind, &'a str),
-    ContainerSeparator,
-    ContainerEnd(ContainerKind),
-}
-
 impl Parser<'_> {
-    fn parse_container_name(&mut self, kind: ContainerKind) -> Result<&str> {
+    fn parse_container(&mut self, kind: ContainerKind) -> Result<(&str, Option<Vec<EncodingBox>>)> {
         let old_split_point = self.split_point;
 
         // Parse name until hits `=`
-        loop {
+        let has_items = loop {
             let b = self
                 .try_peek()
                 .ok_or_else(|| ErrorKind::WrongEndContainer(kind))?;
-            if b == b'=' || b == kind.end_byte() {
-                break;
-            } else {
-                self.advance();
+            if b == b'=' {
+                break true;
+            } else if b == kind.end_byte() {
+                break false;
             }
-        }
+            self.advance();
+        };
 
         let s = &self.data[old_split_point..self.split_point];
 
@@ -225,78 +284,105 @@ impl Parser<'_> {
             return Err(ErrorKind::InvalidIdentifier(kind));
         }
 
-        Ok(s)
+        self.advance();
+
+        if has_items {
+            let mut items = Vec::new();
+            // Parse items until hits end
+            loop {
+                let b = self
+                    .try_peek()
+                    .ok_or_else(|| ErrorKind::WrongEndContainer(kind))?;
+                if b == kind.end_byte() {
+                    self.advance();
+                    break;
+                } else {
+                    // Wasn't the end, so try to extract one more encoding
+                    items.push(self.parse_encoding()?);
+                }
+            }
+            Ok((s, Some(items)))
+        } else {
+            Ok((s, None))
+        }
     }
 
-    #[allow(dead_code)]
-    fn parse_token(&mut self) -> Result<Option<EncodingToken<'_>>> {
+    pub(crate) fn parse_encoding(&mut self) -> Result<EncodingBox> {
+        self.try_parse_encoding()
+            .and_then(|res| res.ok_or(ErrorKind::UnexpectedEnd))
+    }
+
+    fn try_parse_encoding(&mut self) -> Result<Option<EncodingBox>> {
         Ok(if let Some(b) = self.try_peek() {
             self.advance();
-            Some(self.parse_token_inner(b)?)
+            Some(self.parse_encoding_inner(b)?)
         } else {
             None
         })
     }
 
-    fn parse_token_inner(&mut self, b: u8) -> Result<EncodingToken<'_>> {
-        let prim = EncodingToken::Primitive;
-
+    fn parse_encoding_inner(&mut self, b: u8) -> Result<EncodingBox> {
         Ok(match b {
-            b'c' => prim(Primitive::Char),
-            b's' => prim(Primitive::Short),
-            b'i' => prim(Primitive::Int),
-            b'l' => prim(Primitive::Long),
-            b'q' => prim(Primitive::LongLong),
-            b'C' => prim(Primitive::UChar),
-            b'S' => prim(Primitive::UShort),
-            b'I' => prim(Primitive::UInt),
-            b'L' => prim(Primitive::ULong),
-            b'Q' => prim(Primitive::ULongLong),
-            b'f' => prim(Primitive::Float),
-            b'd' => prim(Primitive::Double),
-            b'D' => prim(Primitive::LongDouble),
-            b'j' => prim({
+            b'c' => EncodingBox::Char,
+            b's' => EncodingBox::Short,
+            b'i' => EncodingBox::Int,
+            b'l' => EncodingBox::Long,
+            b'q' => EncodingBox::LongLong,
+            b'C' => EncodingBox::UChar,
+            b'S' => EncodingBox::UShort,
+            b'I' => EncodingBox::UInt,
+            b'L' => EncodingBox::ULong,
+            b'Q' => EncodingBox::ULongLong,
+            b'f' => EncodingBox::Float,
+            b'd' => EncodingBox::Double,
+            b'D' => EncodingBox::LongDouble,
+            b'j' => {
                 let res = match self.peek()? {
-                    b'f' => Primitive::FloatComplex,
-                    b'd' => Primitive::DoubleComplex,
-                    b'D' => Primitive::LongDoubleComplex,
+                    b'f' => EncodingBox::FloatComplex,
+                    b'd' => EncodingBox::DoubleComplex,
+                    b'D' => EncodingBox::LongDoubleComplex,
                     b => return Err(ErrorKind::UnknownAfterComplex(b)),
                 };
                 self.advance();
                 res
-            }),
-            b'B' => prim(Primitive::Bool),
-            b'v' => prim(Primitive::Void),
-            b'*' => prim(Primitive::String),
-            b'@' => prim(match self.try_peek() {
+            }
+            b'B' => EncodingBox::Bool,
+            b'v' => EncodingBox::Void,
+            b'*' => EncodingBox::String,
+            b'@' => match self.try_peek() {
                 // Special handling for blocks
                 Some(b'?') => {
                     self.advance();
-                    Primitive::Block
+                    EncodingBox::Block
                 }
-                _ => Primitive::Object,
-            }),
-            b'#' => prim(Primitive::Class),
-            b':' => prim(Primitive::Sel),
-            b'?' => prim(Primitive::Unknown),
-            b'b' => EncodingToken::BitFieldStart(self.parse_u8()?),
-            b'^' => EncodingToken::Indirection(IndirectionKind::Pointer),
-            b'A' => EncodingToken::Indirection(IndirectionKind::Atomic),
-            b'[' => EncodingToken::ArrayStart(self.parse_usize()?),
-            b']' => EncodingToken::ArrayEnd,
+                _ => EncodingBox::Object,
+            },
+            b'#' => EncodingBox::Class,
+            b':' => EncodingBox::Sel,
+            b'?' => EncodingBox::Unknown,
+
+            b'b' => {
+                // TODO: Parse type here on GNUStep
+                EncodingBox::BitField(self.parse_u8()?, None)
+            }
+            b'^' => EncodingBox::Pointer(Box::new(self.parse_encoding()?)),
+            b'A' => EncodingBox::Atomic(Box::new(self.parse_encoding()?)),
+            b'[' => {
+                let len = self.parse_usize()?;
+                let item = self.parse_encoding()?;
+                self.expect_byte(b']').ok_or(ErrorKind::WrongEndArray)?;
+                EncodingBox::Array(len, Box::new(item))
+            }
             b'{' => {
                 let kind = ContainerKind::Struct;
-                let name = self.parse_container_name(kind)?;
-                EncodingToken::ContainerStart(kind, name)
+                let (name, items) = self.parse_container(kind)?;
+                EncodingBox::Struct(name.to_string(), items)
             }
             b'(' => {
                 let kind = ContainerKind::Union;
-                let name = self.parse_container_name(kind)?;
-                EncodingToken::ContainerStart(kind, name)
+                let (name, items) = self.parse_container(kind)?;
+                EncodingBox::Union(name.to_string(), items)
             }
-            b'=' => EncodingToken::ContainerSeparator,
-            b'}' => EncodingToken::ContainerEnd(ContainerKind::Struct),
-            b')' => EncodingToken::ContainerEnd(ContainerKind::Union),
             b => return Err(ErrorKind::Unknown(b)),
         })
     }
@@ -305,21 +391,27 @@ impl Parser<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use alloc::vec;
 
     #[test]
-    fn parse_container_name() {
+    fn parse_container() {
         const KIND: ContainerKind = ContainerKind::Struct;
 
-        fn assert_name(enc: &str, expected: Result<&str>) {
+        fn assert_name(enc: &str, expected: Result<(&str, Option<Vec<EncodingBox>>)>) {
             let mut parser = Parser::new(enc);
-            assert_eq!(parser.parse_container_name(KIND), expected);
+            assert_eq!(parser.parse_container(KIND), expected);
         }
 
-        assert_name("abc=def", Ok("abc"));
-        assert_name("_=.a'", Ok("_"));
-        assert_name("abc}def", Ok("abc"));
-        assert_name("=def", Err(ErrorKind::InvalidIdentifier(KIND)));
-        assert_name(".=def", Err(ErrorKind::InvalidIdentifier(KIND)));
+        assert_name("abc=}", Ok(("abc", Some(vec![]))));
+        assert_name(
+            "abc=ii}",
+            Ok(("abc", Some(vec![EncodingBox::Int, EncodingBox::Int]))),
+        );
+        assert_name("_=}.a'", Ok(("_", Some(vec![]))));
+        assert_name("abc}def", Ok(("abc", None)));
+        assert_name("=def}", Err(ErrorKind::InvalidIdentifier(KIND)));
+        assert_name(".=def}", Err(ErrorKind::InvalidIdentifier(KIND)));
+        assert_name("}xyz", Err(ErrorKind::InvalidIdentifier(KIND)));
         assert_name("", Err(ErrorKind::WrongEndContainer(KIND)));
         assert_name("abc", Err(ErrorKind::WrongEndContainer(KIND)));
         assert_name("abc)def", Err(ErrorKind::WrongEndContainer(KIND)));

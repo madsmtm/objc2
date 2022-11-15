@@ -2,8 +2,10 @@ use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::vec::Vec;
 use core::fmt;
+use core::str::FromStr;
 
 use crate::helper::{compare_encodings, Helper, NestingLevel};
+use crate::parse::{ParseError, Parser};
 use crate::Encoding;
 
 /// The boxed version of [`Encoding`].
@@ -121,6 +123,20 @@ impl PartialEq<Encoding> for EncodingBox {
 impl PartialEq<EncodingBox> for Encoding {
     fn eq(&self, other: &EncodingBox) -> bool {
         other.eq(self)
+    }
+}
+
+impl FromStr for EncodingBox {
+    type Err = ParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut parser = Parser::new(s);
+        parser.strip_leading_qualifiers();
+
+        parser
+            .parse_encoding()
+            .and_then(|enc| parser.expect_empty().map(|()| enc))
+            .map_err(|err| ParseError::new(parser, err))
     }
 }
 
