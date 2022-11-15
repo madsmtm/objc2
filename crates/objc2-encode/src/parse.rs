@@ -117,6 +117,10 @@ impl<'a> Parser<'a> {
         }
     }
 
+    pub(crate) fn remaining(&self) -> &'a str {
+        &self.data[self.split_point..]
+    }
+
     fn peek(&self) -> Result<u8> {
         self.try_peek().ok_or(ErrorKind::UnexpectedEnd)
     }

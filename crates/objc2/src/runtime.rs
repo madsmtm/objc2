@@ -19,6 +19,9 @@ use std::os::raw::c_char;
 #[cfg(feature = "malloc")]
 use std::os::raw::c_uint;
 
+mod method_encoding_iter;
+
+use self::method_encoding_iter::MethodEncodingIter;
 use crate::encode::{Encode, Encoding, RefEncode};
 use crate::ffi;
 #[cfg(feature = "malloc")]
@@ -332,8 +335,31 @@ impl Method {
         }
     }
 
-    // method_getTypeEncoding, efficient version of:
-    // -> return_type() + sum(argument_type(i) for i in arguments_count())
+    /// An iterator over the method's types.
+    ///
+    /// It is approximately equivalent to:
+    ///
+    /// ```ignore
+    /// let types = method.types();
+    /// assert_eq!(types.next()?, method.return_type());
+    /// for i in 0..method.arguments_count() {
+    ///    assert_eq!(types.next()?, method.argument_type(i)?);
+    /// }
+    /// assert!(types.next().is_none());
+    /// ```
+    #[doc(alias = "method_getTypeEncoding")]
+    pub(crate) fn types(&self) -> MethodEncodingIter<'_> {
+        // SAFETY: The method pointer is valid and non-null
+        let cstr = unsafe { ffi::method_getTypeEncoding(self.as_ptr()) };
+        if cstr.is_null() {
+            panic!("method type encoding was NULL");
+        }
+        // SAFETY: `method_getTypeEncoding` returns a C-string, and we just
+        // checked that it is non-null.
+        let encoding = unsafe { CStr::from_ptr(cstr) };
+        let s = str::from_utf8(encoding.to_bytes()).expect("method type encoding to be UTF-8");
+        MethodEncodingIter::new(s)
+    }
 
     /// Returns the number of arguments accepted by self.
     pub fn arguments_count(&self) -> usize {

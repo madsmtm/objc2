@@ -105,6 +105,28 @@ impl EncodingBox {
         Encoding::ULongLong => Self::ULongLong,
         _ => unreachable!(),
     };
+
+    /// Parse and comsume an encoding from the start of a string.
+    ///
+    /// This is can be used to parse concatenated encodings, such as those
+    /// returned by `method_getTypeEncoding`.
+    ///
+    /// [`from_str`][Self::from_str] is simpler, use that instead if you can.
+    pub fn from_start_of_str(s: &mut &str) -> Result<Self, ParseError> {
+        let mut parser = Parser::new(*s);
+        parser.strip_leading_qualifiers();
+
+        match parser.parse_encoding() {
+            Err(err) => return Err(ParseError::new(parser, err)),
+            Ok(encoding) => {
+                let remaining = parser.remaining();
+                drop(parser);
+                *s = remaining;
+
+                Ok(encoding)
+            }
+        }
+    }
 }
 
 /// Same formatting as [`Encoding`]'s `Display` implementation.
@@ -212,5 +234,20 @@ mod tests {
         let actual = EncodingBox::from_str("AA{a}").unwrap();
         assert_eq!(expected, actual);
         assert_eq!(expected.to_string(), "AA{a}");
+    }
+
+    #[test]
+    fn parse_part_of_string() {
+        let mut s = "{a}c";
+
+        let expected = EncodingBox::Struct("a".into(), None);
+        let actual = EncodingBox::from_start_of_str(&mut s).unwrap();
+        assert_eq!(expected, actual);
+
+        let expected = EncodingBox::Char;
+        let actual = EncodingBox::from_start_of_str(&mut s).unwrap();
+        assert_eq!(expected, actual);
+
+        assert_eq!(s, "");
     }
 }
