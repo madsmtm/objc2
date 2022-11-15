@@ -699,7 +699,7 @@ mod tests {
     #[test]
     #[cfg_attr(
         feature = "verify_message",
-        should_panic = "declared invalid method -[TestClassBuilderInvalidMethod foo]: expected return to have type code I, but found i"
+        should_panic = "declared invalid method -[TestClassBuilderInvalidMethod foo]: expected return to have type code 'I', but found 'i'"
     )]
     fn invalid_method() {
         let cls = test_utils::custom_class();
@@ -717,7 +717,7 @@ mod tests {
     #[test]
     #[cfg_attr(
         feature = "verify_message",
-        should_panic = "declared invalid method +[TestClassBuilderInvalidClassMethod classFoo]: expected return to have type code I, but found i"
+        should_panic = "declared invalid method +[TestClassBuilderInvalidClassMethod classFoo]: expected return to have type code 'I', but found 'i'"
     )]
     fn invalid_class_method() {
         let cls = test_utils::custom_class();
@@ -851,7 +851,7 @@ mod tests {
     #[test]
     #[cfg_attr(
         feature = "verify_message",
-        should_panic = "declared invalid method -[TestDeclareClassInvalidMethod description]: expected return to have type code @, but found v"
+        should_panic = "declared invalid method -[TestDeclareClassInvalidMethod description]: expected return to have type code '@', but found 'v'"
     )]
     fn test_declare_class_invalid_method() {
         declare_class!(

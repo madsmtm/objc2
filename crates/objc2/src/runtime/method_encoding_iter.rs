@@ -6,7 +6,7 @@ use core::num::ParseIntError;
 use core::str;
 use std::error::Error;
 
-use crate::encode::{EncodingBox, ParseError};
+use crate::encode::{Encoding, EncodingBox, ParseError};
 
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) struct MethodEncodingIter<'a> {
@@ -16,6 +16,35 @@ pub(crate) struct MethodEncodingIter<'a> {
 impl<'a> MethodEncodingIter<'a> {
     pub(crate) fn new(s: &'a str) -> Self {
         Self { s }
+    }
+
+    pub(crate) fn extract_return(
+        &mut self,
+    ) -> Result<(EncodingBox, Option<isize>), EncodingParseError> {
+        // TODO: Verify stack layout
+        self.next()
+            .ok_or_else(|| EncodingParseError::MissingReturn)?
+    }
+
+    pub(crate) fn verify_receiver(&mut self) -> Result<(), EncodingParseError> {
+        // TODO: Verify stack layout
+        let (enc, _stack_layout) = self
+            .next()
+            .ok_or_else(|| EncodingParseError::MissingReceiver)??;
+        if !Encoding::Object.equivalent_to_box(&enc) {
+            return Err(EncodingParseError::InvalidReceiver(enc));
+        }
+        Ok(())
+    }
+
+    pub(crate) fn verify_sel(&mut self) -> Result<(), EncodingParseError> {
+        let (enc, _stack_layout) = self
+            .next()
+            .ok_or_else(|| EncodingParseError::MissingSel)??;
+        if !Encoding::Sel.equivalent_to_box(&enc) {
+            return Err(EncodingParseError::InvalidSel(enc));
+        }
+        Ok(())
     }
 
     fn extract_encoding(&mut self) -> Result<(EncodingBox, Option<isize>), EncodingParseError> {
@@ -58,6 +87,11 @@ fn parse_stack_layout(s: &mut &str) -> Result<Option<isize>, ParseIntError> {
 pub(crate) enum EncodingParseError {
     ParseError(ParseError),
     InvalidStackLayoutInteger,
+    MissingReturn,
+    MissingReceiver,
+    MissingSel,
+    InvalidReceiver(EncodingBox),
+    InvalidSel(EncodingBox),
 }
 
 impl From<ParseError> for EncodingParseError {
@@ -74,12 +108,22 @@ impl From<ParseIntError> for EncodingParseError {
 
 impl fmt::Display for EncodingParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if !matches!(self, Self::ParseError(_)) {
+            write!(f, "failed parsing encoding: ")?
+        }
+
         match self {
             Self::ParseError(e) => write!(f, "{e}")?,
-            Self::InvalidStackLayoutInteger => write!(
-                f,
-                "failed parsing encoding: invalid integer for stack layout"
-            )?,
+            Self::InvalidStackLayoutInteger => write!(f, "invalid integer for stack layout")?,
+            Self::MissingReturn => write!(f, "return type must be present")?,
+            Self::MissingReceiver => write!(f, "receiver type must be present")?,
+            Self::MissingSel => write!(f, "selector type must be present")?,
+            Self::InvalidReceiver(enc) => {
+                write!(f, "receiver encoding must be '@', but it was '{enc}'")?
+            }
+            Self::InvalidSel(enc) => {
+                write!(f, "selector encoding must be '@', but it was '{enc}'")?
+            }
         }
         write!(f, ". This is likely a bug, please report it!")
     }

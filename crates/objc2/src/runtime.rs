@@ -21,15 +21,10 @@ use std::os::raw::c_uint;
 
 mod method_encoding_iter;
 
-use self::method_encoding_iter::MethodEncodingIter;
-use crate::encode::{Encode, Encoding, RefEncode};
+pub(crate) use self::method_encoding_iter::{EncodingParseError, MethodEncodingIter};
+use crate::encode::{Encode, EncodeArguments, EncodeConvert, Encoding, RefEncode};
 use crate::ffi;
-#[cfg(feature = "malloc")]
-use crate::{
-    encode::{EncodeArguments, EncodeConvert},
-    verify::{verify_method_signature, Inner},
-    VerificationError,
-};
+use crate::verify::{verify_method_signature, Inner, VerificationError};
 
 #[doc(inline)]
 pub use crate::encode::__bool::Bool;
@@ -584,7 +579,6 @@ impl Class {
     /// let result = cls.verify_sel::<(&Class,), bool>(sel);
     /// assert!(result.is_ok());
     /// ```
-    #[cfg(feature = "malloc")]
     pub fn verify_sel<A, R>(&self, sel: Sel) -> Result<(), VerificationError>
     where
         A: EncodeArguments,

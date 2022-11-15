@@ -199,7 +199,6 @@ pub use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
 pub use crate::class_type::ClassType;
 pub use crate::message::{Message, MessageArguments, MessageReceiver};
-#[cfg(feature = "malloc")]
 pub use crate::verify::VerificationError;
 
 #[cfg(feature = "objc2-proc-macros")]
@@ -228,7 +227,6 @@ pub mod rc;
 pub mod runtime;
 #[cfg(test)]
 mod test_utils;
-#[cfg(feature = "malloc")]
 mod verify;
 
 /// Hacky way to make GNUStep link properly to Foundation while testing.
