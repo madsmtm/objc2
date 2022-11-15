@@ -30,7 +30,7 @@ unsafe fn conditional_try<R: EncodeConvert>(f: impl FnOnce() -> R) -> R {
     f()
 }
 
-#[cfg(feature = "verify_message")]
+#[cfg(debug_assertions)]
 #[track_caller]
 fn panic_verify(cls: &Class, sel: Sel, err: crate::VerificationError) -> ! {
     panic!(
@@ -177,8 +177,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         R: EncodeConvert,
     {
         let this = self.__as_raw_receiver();
-        // TODO: Always enable this when `debug_assertions` are on.
-        #[cfg(feature = "verify_message")]
+        #[cfg(debug_assertions)]
         {
             // SAFETY: Caller ensures only valid or NULL pointers.
             let this = unsafe { this.as_ref() };
@@ -225,7 +224,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         R: EncodeConvert,
     {
         let this = self.__as_raw_receiver();
-        #[cfg(feature = "verify_message")]
+        #[cfg(debug_assertions)]
         {
             if this.is_null() {
                 panic!("messsaging {:?} to nil", sel);
@@ -581,10 +580,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(
-        feature = "verify_message",
-        should_panic = "messsaging description to nil"
-    )]
+    #[cfg_attr(debug_assertions, should_panic = "messsaging description to nil")]
     fn test_send_message_nil() {
         use crate::rc::Shared;
 

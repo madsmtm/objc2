@@ -1,16 +1,16 @@
-#[cfg(feature = "verify_message")]
+#[cfg(all(debug_assertions, feature = "verify"))]
 use alloc::vec::Vec;
 use core::ptr;
-#[cfg(feature = "verify_message")]
+#[cfg(all(debug_assertions, feature = "verify"))]
 use std::collections::HashSet;
 
 use crate::declare::ClassBuilder;
-#[cfg(feature = "verify_message")]
+#[cfg(all(debug_assertions, feature = "verify"))]
 use crate::declare::MethodImplementation;
 use crate::encode::Encode;
 use crate::message::__TupleExtender;
 use crate::rc::{Allocated, Id, Ownership, Shared};
-#[cfg(feature = "verify_message")]
+#[cfg(all(debug_assertions, feature = "verify"))]
 use crate::runtime::MethodDescription;
 use crate::runtime::{Class, Object, Protocol, Sel};
 use crate::{Message, MessageArguments, MessageReceiver};
@@ -478,7 +478,7 @@ impl ModuleInfo {
 
 impl ClassBuilder {
     #[doc(hidden)]
-    #[cfg(feature = "verify_message")]
+    #[cfg(all(debug_assertions, feature = "verify"))]
     pub fn __add_protocol_methods<'a, 'b>(
         &'a mut self,
         protocol: &'b Protocol,
@@ -497,7 +497,7 @@ impl ClassBuilder {
     }
 
     #[doc(hidden)]
-    #[cfg(not(feature = "verify_message"))]
+    #[cfg(not(all(debug_assertions, feature = "verify")))]
     #[inline]
     pub fn __add_protocol_methods(&mut self, protocol: &Protocol) -> &mut Self {
         self.add_protocol(protocol);
@@ -509,7 +509,7 @@ impl ClassBuilder {
 /// - Only methods on the protocol are overriden.
 /// - TODO: The methods have the correct signature.
 /// - All required methods are overridden.
-#[cfg(feature = "verify_message")]
+#[cfg(all(debug_assertions, feature = "verify"))]
 pub struct ClassProtocolMethodsBuilder<'a, 'b> {
     builder: &'a mut ClassBuilder,
     protocol: &'b Protocol,
@@ -521,7 +521,7 @@ pub struct ClassProtocolMethodsBuilder<'a, 'b> {
     registered_class_methods: HashSet<Sel>,
 }
 
-#[cfg(feature = "verify_message")]
+#[cfg(all(debug_assertions, feature = "verify"))]
 impl ClassProtocolMethodsBuilder<'_, '_> {
     #[inline]
     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
@@ -579,7 +579,7 @@ impl ClassProtocolMethodsBuilder<'_, '_> {
     }
 }
 
-#[cfg(feature = "verify_message")]
+#[cfg(all(debug_assertions, feature = "verify"))]
 impl Drop for ClassProtocolMethodsBuilder<'_, '_> {
     fn drop(&mut self) {
         for desc in &self.required_instance_methods {
@@ -778,7 +778,7 @@ mod tests {
 
     #[test]
     #[should_panic = "unexpected NULL newMethodOnInstance; receiver was NULL"]
-    #[cfg(not(feature = "verify_message"))] // Does NULL receiver checks
+    #[cfg(not(debug_assertions))] // Does NULL receiver checks
     fn test_new_any_with_null_receiver() {
         let obj: *const NSObject = ptr::null();
         let _obj: Id<Object, Shared> = unsafe { msg_send_id![obj, newMethodOnInstance] };
@@ -801,7 +801,7 @@ mod tests {
 
     #[test]
     #[should_panic = "failed allocating object"]
-    #[cfg(not(feature = "verify_message"))] // Does NULL receiver checks
+    #[cfg(not(debug_assertions))] // Does NULL receiver checks
     fn test_init_with_null_receiver() {
         let obj: Option<Allocated<RcTestObject>> = None;
         let _obj: Id<RcTestObject, Owned> = unsafe { msg_send_id![obj, init] };
@@ -823,7 +823,7 @@ mod tests {
 
     #[test]
     #[should_panic = "unexpected NULL description; receiver was NULL"]
-    #[cfg(not(feature = "verify_message"))] // Does NULL receiver checks
+    #[cfg(not(debug_assertions))] // Does NULL receiver checks
     fn test_normal_with_null_receiver() {
         let obj: *const NSObject = ptr::null();
         let _obj: Id<NSString, Shared> = unsafe { msg_send_id![obj, description] };

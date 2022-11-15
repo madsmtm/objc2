@@ -1,72 +1,37 @@
 use core::fmt;
-use core::hash::{Hash, Hasher};
-use malloc_buf::Malloc;
+use core::hash::Hash;
 use std::error::Error;
 
-use crate::encode::{Encode, EncodeArguments, EncodeConvert, Encoding};
-use crate::runtime::{Method, Object, Sel};
-
-/// Workaround for `Malloc<str>` not implementing common traits
-#[derive(Debug)]
-pub(crate) struct MallocEncoding(Malloc<str>);
-
-// SAFETY: `char*` strings can safely be free'd on other threads.
-unsafe impl Send for MallocEncoding {}
-unsafe impl Sync for MallocEncoding {}
-
-impl PartialEq for MallocEncoding {
-    fn eq(&self, other: &Self) -> bool {
-        *self.0 == *other.0
-    }
-}
-
-impl Eq for MallocEncoding {}
-
-impl Hash for MallocEncoding {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        Hash::hash(&*self.0, state)
-    }
-}
-
-impl fmt::Display for MallocEncoding {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(&*self.0, f)
-    }
-}
+use crate::encode::{Encode, EncodeArguments, EncodeConvert, Encoding, EncodingBox};
+use crate::runtime::{EncodingParseError, Method};
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub(crate) enum Inner {
     MethodNotFound,
-    MismatchedReturn(MallocEncoding, Encoding),
+    EncodingParseError(EncodingParseError),
+    MismatchedReturn(EncodingBox, Encoding),
     MismatchedArgumentsCount(usize, usize),
-    MismatchedArgument(usize, MallocEncoding, Encoding),
+    MismatchedArgument(usize, EncodingBox, Encoding),
 }
 
 impl fmt::Display for Inner {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::MethodNotFound => {
-                write!(f, "method not found")
-            }
+            Self::MethodNotFound => write!(f, "method not found"),
+            Self::EncodingParseError(e) => write!(f, "{e}"),
             Self::MismatchedReturn(expected, actual) => {
                 write!(
                     f,
-                    "expected return to have type code {}, but found {}",
-                    expected, actual
+                    "expected return to have type code '{expected}', but found '{actual}'",
                 )
             }
             Self::MismatchedArgumentsCount(expected, actual) => {
-                write!(
-                    f,
-                    "expected {} arguments, but {} were given",
-                    expected, actual
-                )
+                write!(f, "expected {expected} arguments, but {actual} were given",)
             }
             Self::MismatchedArgument(i, expected, actual) => {
                 write!(
                     f,
-                    "expected argument at index {} to have type code {}, but found {}",
-                    i, expected, actual
+                    "expected argument at index {i} to have type code '{expected}', but found '{actual}'",
                 )
             }
         }
@@ -81,9 +46,15 @@ impl fmt::Display for Inner {
 /// This implements [`Error`], and a description of the error can be retrieved
 /// using [`fmt::Display`].
 ///
-/// [`Class::verify_sel`]: crate::Class::verify_sel
+/// [`Class::verify_sel`]: crate::runtime::Class::verify_sel
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub struct VerificationError(Inner);
+
+impl From<EncodingParseError> for VerificationError {
+    fn from(e: EncodingParseError) -> Self {
+        Self(Inner::EncodingParseError(e))
+    }
+}
 
 impl From<Inner> for VerificationError {
     fn from(inner: Inner) -> Self {
@@ -105,28 +76,35 @@ where
     A: EncodeArguments,
     R: EncodeConvert,
 {
+    let mut iter = method.types();
+
+    // TODO: Verify stack layout
+    let (expected, _stack_layout) = iter.extract_return()?;
     let actual = R::__Inner::ENCODING;
-    let expected = method.return_type();
-    if !actual.equivalent_to_str(&*expected) {
-        return Err(Inner::MismatchedReturn(MallocEncoding(expected), actual).into());
+    if !actual.equivalent_to_box(&expected) {
+        return Err(Inner::MismatchedReturn(expected, actual).into());
     }
 
-    let self_and_cmd = [<*mut Object>::ENCODING, Sel::ENCODING];
-    let args = A::ENCODINGS;
+    iter.verify_receiver()?;
+    iter.verify_sel()?;
 
-    let actual = self_and_cmd.len() + args.len();
-    let expected = method.arguments_count();
-    if actual != expected {
-        return Err(Inner::MismatchedArgumentsCount(expected, actual).into());
-    }
+    let actual_count = A::ENCODINGS.len();
 
-    for (i, actual) in self_and_cmd.iter().chain(args).enumerate() {
-        let expected = method.argument_type(i).unwrap();
-        if !actual.equivalent_to_str(&*expected) {
-            return Err(
-                Inner::MismatchedArgument(i, MallocEncoding(expected), actual.clone()).into(),
-            );
+    for (i, actual) in A::ENCODINGS.iter().enumerate() {
+        if let Some(res) = iter.next() {
+            // TODO: Verify stack layout
+            let (expected, _stack_layout) = res?;
+            if !actual.equivalent_to_box(&expected) {
+                return Err(Inner::MismatchedArgument(i, expected, actual.clone()).into());
+            }
+        } else {
+            return Err(Inner::MismatchedArgumentsCount(i, actual_count).into());
         }
+    }
+
+    let remaining = iter.count();
+    if remaining != 0 {
+        return Err(Inner::MismatchedArgumentsCount(actual_count + remaining, actual_count).into());
     }
 
     Ok(())
@@ -135,6 +113,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::runtime::Sel;
     use crate::sel;
     use crate::test_utils;
     use alloc::string::ToString;
@@ -165,22 +144,22 @@ mod tests {
         let err = cls.verify_sel::<(u32,), u64>(sel!(setFoo:)).unwrap_err();
         assert_eq!(
             err.to_string(),
-            "expected return to have type code v, but found Q"
+            "expected return to have type code 'v', but found 'Q'"
         );
 
         // Too many arguments
         let err = cls.verify_sel::<(u32, i8), ()>(sel!(setFoo:)).unwrap_err();
-        assert_eq!(err.to_string(), "expected 3 arguments, but 4 were given");
+        assert_eq!(err.to_string(), "expected 1 arguments, but 2 were given");
 
         // Too few arguments
         let err = cls.verify_sel::<(), ()>(sel!(setFoo:)).unwrap_err();
-        assert_eq!(err.to_string(), "expected 3 arguments, but 2 were given");
+        assert_eq!(err.to_string(), "expected 1 arguments, but 0 were given");
 
         // Incorrect argument type
         let err = cls.verify_sel::<(Sel,), ()>(sel!(setFoo:)).unwrap_err();
         assert_eq!(
             err.to_string(),
-            "expected argument at index 2 to have type code I, but found :"
+            "expected argument at index 0 to have type code 'I', but found ':'"
         );
 
         // Metaclass
@@ -188,19 +167,19 @@ mod tests {
         let err = metaclass
             .verify_sel::<(i32, i32, i32), i32>(sel!(addNumber:toNumber:))
             .unwrap_err();
-        assert_eq!(err.to_string(), "expected 4 arguments, but 5 were given");
+        assert_eq!(err.to_string(), "expected 2 arguments, but 3 were given");
     }
 
     #[test]
-    #[cfg(feature = "verify_message")]
-    #[should_panic = "invalid message send to -[CustomObject foo]: expected return to have type code I, but found i"]
+    #[cfg(debug_assertions)]
+    #[should_panic = "invalid message send to -[CustomObject foo]: expected return to have type code 'I', but found 'i'"]
     fn test_send_message_verified() {
         let obj = test_utils::custom_object();
         let _: i32 = unsafe { crate::msg_send![&obj, foo] };
     }
 
     #[test]
-    #[cfg(feature = "verify_message")]
+    #[cfg(debug_assertions)]
     #[should_panic = "invalid message send to +[CustomObject abcDef]: method not found"]
     fn test_send_message_verified_to_class() {
         let cls = test_utils::custom_class();

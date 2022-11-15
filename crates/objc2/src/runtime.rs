@@ -19,14 +19,12 @@ use std::os::raw::c_char;
 #[cfg(feature = "malloc")]
 use std::os::raw::c_uint;
 
-use crate::encode::{Encode, Encoding, RefEncode};
+mod method_encoding_iter;
+
+pub(crate) use self::method_encoding_iter::{EncodingParseError, MethodEncodingIter};
+use crate::encode::{Encode, EncodeArguments, EncodeConvert, Encoding, RefEncode};
 use crate::ffi;
-#[cfg(feature = "malloc")]
-use crate::{
-    encode::{EncodeArguments, EncodeConvert},
-    verify::{verify_method_signature, Inner},
-    VerificationError,
-};
+use crate::verify::{verify_method_signature, Inner, VerificationError};
 
 #[doc(inline)]
 pub use crate::encode::__bool::Bool;
@@ -332,8 +330,31 @@ impl Method {
         }
     }
 
-    // method_getTypeEncoding, efficient version of:
-    // -> return_type() + sum(argument_type(i) for i in arguments_count())
+    /// An iterator over the method's types.
+    ///
+    /// It is approximately equivalent to:
+    ///
+    /// ```ignore
+    /// let types = method.types();
+    /// assert_eq!(types.next()?, method.return_type());
+    /// for i in 0..method.arguments_count() {
+    ///    assert_eq!(types.next()?, method.argument_type(i)?);
+    /// }
+    /// assert!(types.next().is_none());
+    /// ```
+    #[doc(alias = "method_getTypeEncoding")]
+    pub(crate) fn types(&self) -> MethodEncodingIter<'_> {
+        // SAFETY: The method pointer is valid and non-null
+        let cstr = unsafe { ffi::method_getTypeEncoding(self.as_ptr()) };
+        if cstr.is_null() {
+            panic!("method type encoding was NULL");
+        }
+        // SAFETY: `method_getTypeEncoding` returns a C-string, and we just
+        // checked that it is non-null.
+        let encoding = unsafe { CStr::from_ptr(cstr) };
+        let s = str::from_utf8(encoding.to_bytes()).expect("method type encoding to be UTF-8");
+        MethodEncodingIter::new(s)
+    }
 
     /// Returns the number of arguments accepted by self.
     pub fn arguments_count(&self) -> usize {
@@ -387,18 +408,46 @@ impl Class {
         unsafe { ffi::objc_getClassList(ptr::null_mut(), 0) as usize }
     }
 
+    /// # Safety
+    ///
+    /// 1. The class pointer must be valid.
+    /// 2. The string is unbounded, so the caller must bound it.
+    pub(crate) unsafe fn name_raw<'a>(ptr: *const ffi::objc_class) -> &'a str {
+        // SAFETY: Caller ensures that the pointer is valid
+        let name = unsafe { ffi::class_getName(ptr) };
+        if name.is_null() {
+            panic!("class name was NULL");
+        }
+        // SAFETY: We've checked that the pointer is not NULL, and
+        // `class_getName` is guaranteed to return a valid C-string.
+        //
+        // That the result is properly bounded is checked by the caller.
+        let name = unsafe { CStr::from_ptr(name) };
+        str::from_utf8(name.to_bytes()).unwrap()
+    }
+
     /// Returns the name of the class.
     pub fn name(&self) -> &str {
-        let name = unsafe { CStr::from_ptr(ffi::class_getName(self.as_ptr())) };
-        str::from_utf8(name.to_bytes()).unwrap()
+        // SAFETY: The pointer is valid, and the return is properly bounded
+        unsafe { Self::name_raw(self.as_ptr()) }
+    }
+
+    /// # Safety
+    ///
+    /// 1. The class pointer must be valid.
+    /// 2. The caller must bound the lifetime of the returned class.
+    pub(crate) unsafe fn superclass_raw<'a>(ptr: *const ffi::objc_class) -> Option<&'a Class> {
+        // SAFETY: Caller ensures that the pointer is valid
+        let superclass = unsafe { ffi::class_getSuperclass(ptr) };
+        let superclass: *const Class = superclass.cast();
+        // SAFETY: The result is properly bounded by the caller.
+        unsafe { superclass.as_ref() }
     }
 
     /// Returns the superclass of self, or [`None`] if self is a root class.
     pub fn superclass(&self) -> Option<&Class> {
-        unsafe {
-            let superclass = ffi::class_getSuperclass(self.as_ptr());
-            superclass.cast::<Class>().as_ref()
-        }
+        // SAFETY: The pointer is valid, and the return is properly bounded
+        unsafe { Self::superclass_raw(self.as_ptr()) }
     }
 
     /// Returns the metaclass of self.
@@ -558,7 +607,6 @@ impl Class {
     /// let result = cls.verify_sel::<(&Class,), bool>(sel);
     /// assert!(result.is_ok());
     /// ```
-    #[cfg(feature = "malloc")]
     pub fn verify_sel<A, R>(&self, sel: Sel) -> Result<(), VerificationError>
     where
         A: EncodeArguments,
@@ -984,7 +1032,7 @@ mod tests {
             assert!(<u32>::ENCODING.equivalent_to_str(&method.return_type()));
             assert!(Sel::ENCODING.equivalent_to_str(&method.argument_type(1).unwrap()));
 
-            assert!(cls.instance_methods().into_iter().any(|m| *m == method));
+            assert!(cls.instance_methods().iter().any(|m| *m == method));
         }
     }
 
@@ -1002,7 +1050,7 @@ mod tests {
             assert!(cls
                 .metaclass()
                 .instance_methods()
-                .into_iter()
+                .iter()
                 .any(|m| *m == method));
         }
     }

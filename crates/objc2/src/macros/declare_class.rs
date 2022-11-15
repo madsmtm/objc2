@@ -93,10 +93,11 @@
 /// as if:
 /// - A class with the name specified with `const NAME` already exists.
 /// - One of the
-/// - The `verify_message` feature is enabled, and an overriden method's
-///   signature is not equal to the superclass'.
-/// - The `verify_message` feature is enabled, and the required protocol
-///   methods are not implemented.
+/// - Debug assertions are enabled, and an overriden method's signature is not
+///   equal to the one on the superclass.
+/// - The `verify` feature and debug assertions are enabled, and the required
+///   protocol methods are not implemented.
+/// - And possibly more similar cases.
 ///
 ///
 /// # Safety

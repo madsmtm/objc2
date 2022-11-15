@@ -53,11 +53,7 @@ fn test_retain_autoreleased() {
         // the autoreleased value!
         let expected = if cfg!(feature = "gnustep-1-7") {
             1
-        } else if cfg!(any(
-            debug_assertions,
-            feature = "exception",
-            feature = "verify_message"
-        )) {
+        } else if cfg!(any(debug_assertions, feature = "exception")) {
             2
         } else {
             1
