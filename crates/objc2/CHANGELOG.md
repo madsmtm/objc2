@@ -31,6 +31,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   in methods declared with `extern_methods!`, and let that be the `NSError**`
   parameter.
 * Added `#[method_id(...)]` attribute to `extern_methods!`.
+* Added `"verify"` feature as a replacement for the `"verify_message"`
+  feature.
 
 ### Changed
 * Allow other types than `&Class` as the receiver in `msg_send_id!` methods
@@ -38,18 +40,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Changed the `Allocated` struct to be used as `Allocated<T>`
   instead of `Id<Allocated<T>, O>`.
 * Verify the message signature of overriden methods when declaring classes if
-  the `verify_message` feature is enabled.
+  the `verify` feature is enabled.
 * Verify in `declare_class!` that protocols are implemented correctly.
 * **BREAKING**: Changed the name of the attribute macro in `extern_methods`
   from `#[sel(...)]` to `#[method(...)]`.
 * **BREAKING**: Changed `extern_methods!` and `declare_class!` such that
   associated functions whoose first parameter is called `this`, is treated as
   instance methods instead of class methods.
+* **BREAKING**: Message verification is now enabled by default. Your message
+  sends might panic with `debug_assertions` enabled if they are detected to
+  be invalid. Test your code to see if that is the case!
 
 ### Fixed
 * Fixed duplicate selector extraction in `extern_methods!`.
 * Fixed using `deprecated` attributes in `declare_class!`.
 * Fixed `cfg` attributes on methods and implementations in `declare_class!`.
+
+### Removed
+* **BREAKING**: Removed `"verify_message"` feature. It has been mostly
+  replaced by `debug_assertions` and the `"verify"` feature.
 
 
 ## 0.3.0-beta.3 - 2022-09-01

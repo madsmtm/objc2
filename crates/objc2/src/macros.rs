@@ -713,9 +713,8 @@ macro_rules! __class_inner {
 /// throws an exception. Exceptions may still cause UB until
 /// `extern "C-unwind"` is stable, see [RFC-2945].
 ///
-/// Panics if the `"verify_message"` feature is enabled and the Objective-C
-/// method's argument's encoding does not match the encoding of the given
-/// arguments. This is highly recommended to enable while testing!
+/// Panics if `debug_assertions` are enabled and the Objective-C method's
+/// encoding does not match the encoding of the given arguments and return.
 ///
 /// And panics if the `NSError**` handling functionality described above is
 /// used, and the error object was unexpectedly `NULL`.

@@ -408,18 +408,46 @@ impl Class {
         unsafe { ffi::objc_getClassList(ptr::null_mut(), 0) as usize }
     }
 
+    /// # Safety
+    ///
+    /// 1. The class pointer must be valid.
+    /// 2. The string is unbounded, so the caller must bound it.
+    pub(crate) unsafe fn name_raw<'a>(ptr: *const ffi::objc_class) -> &'a str {
+        // SAFETY: Caller ensures that the pointer is valid
+        let name = unsafe { ffi::class_getName(ptr) };
+        if name.is_null() {
+            panic!("class name was NULL");
+        }
+        // SAFETY: We've checked that the pointer is not NULL, and
+        // `class_getName` is guaranteed to return a valid C-string.
+        //
+        // That the result is properly bounded is checked by the caller.
+        let name = unsafe { CStr::from_ptr(name) };
+        str::from_utf8(name.to_bytes()).unwrap()
+    }
+
     /// Returns the name of the class.
     pub fn name(&self) -> &str {
-        let name = unsafe { CStr::from_ptr(ffi::class_getName(self.as_ptr())) };
-        str::from_utf8(name.to_bytes()).unwrap()
+        // SAFETY: The pointer is valid, and the return is properly bounded
+        unsafe { Self::name_raw(self.as_ptr()) }
+    }
+
+    /// # Safety
+    ///
+    /// 1. The class pointer must be valid.
+    /// 2. The caller must bound the lifetime of the returned class.
+    pub(crate) unsafe fn superclass_raw<'a>(ptr: *const ffi::objc_class) -> Option<&'a Class> {
+        // SAFETY: Caller ensures that the pointer is valid
+        let superclass = unsafe { ffi::class_getSuperclass(ptr) };
+        let superclass: *const Class = superclass.cast();
+        // SAFETY: The result is properly bounded by the caller.
+        unsafe { superclass.as_ref() }
     }
 
     /// Returns the superclass of self, or [`None`] if self is a root class.
     pub fn superclass(&self) -> Option<&Class> {
-        unsafe {
-            let superclass = ffi::class_getSuperclass(self.as_ptr());
-            superclass.cast::<Class>().as_ref()
-        }
+        // SAFETY: The pointer is valid, and the return is properly bounded
+        unsafe { Self::superclass_raw(self.as_ptr()) }
     }
 
     /// Returns the metaclass of self.

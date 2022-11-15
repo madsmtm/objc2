@@ -103,22 +103,15 @@
 //! (some Rust types have the same Objective-C encoding, but are not
 //! equivalent), but it gets us much closer to it!
 //!
-//! To use this functionality, enable the `"verify_message"` cargo feature
-//! while debugging. With this feature enabled, encodings are checked every
-//! time you send a message, and the message send will panic if they are not
+//! When `debug_assertions` are enabled we check the encoding every time you
+//! send a message, and the message send will panic if they are not
 //! equivalent.
 //!
 //! To take the example above, if we changed the `hash` method's return type
-//! as in the following example, it panics when the feature is enabled:
+//! as in the following example, it'll panic if debug assertions are enabled:
 //!
-#![cfg_attr(
-    all(feature = "apple", feature = "verify_message"),
-    doc = "```should_panic"
-)]
-#![cfg_attr(
-    not(all(feature = "apple", feature = "verify_message")),
-    doc = "```no_run"
-)]
+#![cfg_attr(all(feature = "apple", debug_assertions), doc = "```should_panic")]
+#![cfg_attr(not(all(feature = "apple", debug_assertions)), doc = "```no_run")]
 //! # use objc2::{class, msg_send, msg_send_id};
 //! # use objc2::rc::{Id, Owned};
 //! # use objc2::runtime::Object;
@@ -128,7 +121,12 @@
 //! #
 //! // Wrong return type - this is UB!
 //! let hash1: f32 = unsafe { msg_send![&obj1, hash] };
+//! #
+//! # panic!("does not panic in release mode for some reason, so for testing we make it!");
 //! ```
+//!
+//! This library contains further such debug checks, most of which are enabled
+//! by default. To enable all of them, use the `"verify"` cargo feature.
 //!
 //! [`objc2-encode`]: objc2_encode
 //! [`Box`]: std::boxed::Box

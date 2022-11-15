@@ -359,11 +359,7 @@ mod tests {
     // Work around https://github.com/rust-lang/rust-clippy/issues/9737:
     const IF_AUTORELEASE_NOT_SKIPPED: usize = if cfg!(feature = "gnustep-1-7") {
         1
-    } else if cfg!(any(
-        debug_assertions,
-        feature = "exception",
-        feature = "verify_message"
-    )) {
+    } else if cfg!(any(debug_assertions, feature = "exception")) {
         2
     } else {
         1

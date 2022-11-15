@@ -129,8 +129,6 @@ use crate::encode::{Encode, EncodeArguments, Encoding, RefEncode};
 use crate::ffi;
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
 use crate::sel;
-#[cfg(feature = "verify_message")]
-use crate::verify::verify_method_signature;
 use crate::Message;
 
 pub use ivar::{InnerIvarType, Ivar, IvarType};
@@ -260,9 +258,9 @@ fn log2_align_of<T>() -> u8 {
 /// before registering it.
 #[derive(Debug)]
 pub struct ClassBuilder {
-    // Note: Don't ever construct a &mut Class, since it is possible to get
-    // this pointer using `Class::classes`!
-    cls: NonNull<Class>,
+    // Note: Don't ever construct a &mut objc_class, since it is possible to
+    // get this pointer using `Class::classes`!
+    cls: NonNull<ffi::objc_class>,
 }
 
 #[doc(hidden)]
@@ -285,30 +283,27 @@ unsafe impl Sync for ClassBuilder {}
 
 impl ClassBuilder {
     fn as_mut_ptr(&mut self) -> *mut ffi::objc_class {
-        self.cls.as_ptr().cast()
+        self.cls.as_ptr()
     }
 
-    #[cfg(feature = "verify_message")]
+    #[allow(unused)]
     fn superclass(&self) -> Option<&Class> {
-        // SAFETY: Unsure if this is safe to do before the class is finalized,
-        // but since we only do it when `verify_message` is enabled, it should
-        // be fine.
-        let cls = unsafe { self.cls.as_ref() };
-        cls.superclass()
+        // SAFETY: Though the class is not finalized, `class_getSuperclass` is
+        // still safe to call.
+        unsafe { Class::superclass_raw(self.cls.as_ptr()) }
     }
 
-    #[cfg(feature = "verify_message")]
+    #[allow(unused)]
     fn name(&self) -> &str {
         // SAFETY: Same as `superclass`
-        let cls = unsafe { self.cls.as_ref() };
-        cls.name()
+        unsafe { Class::name_raw(self.cls.as_ptr()) }
     }
 
     fn with_superclass(name: &str, superclass: Option<&Class>) -> Option<Self> {
         let name = CString::new(name).unwrap();
         let super_ptr = superclass.map_or(ptr::null(), |c| c).cast();
         let cls = unsafe { ffi::objc_allocateClassPair(super_ptr, name.as_ptr(), 0) };
-        NonNull::new(cls.cast()).map(|cls| Self { cls })
+        NonNull::new(cls).map(|cls| Self { cls })
     }
 
     /// Constructs a [`ClassBuilder`] with the given name and superclass.
@@ -352,9 +347,8 @@ impl ClassBuilder {
     /// name already exists).
     ///
     /// May also panic if the method was detected to be invalid in some way;
-    /// for example with the `verify_message` feature enabled, if the method
-    /// is overriding another method, we verify that their encodings are
-    /// equal.
+    /// for example if `debug_assertions` are enabled and the method is
+    /// overriding another method, we verify that their encodings are equal.
     ///
     ///
     /// # Safety
@@ -379,18 +373,12 @@ impl ClassBuilder {
 
         // Verify that, if the method is present on the superclass, that the
         // encoding is correct.
-        #[cfg(feature = "verify_message")]
-        {
-            if let Some(superclass) = self.superclass() {
-                if let Some(method) = superclass.instance_method(sel) {
-                    if let Err(err) = verify_method_signature::<F::Args, F::Ret>(method) {
-                        panic!(
-                            "declared invalid method -[{} {:?}]: {}",
-                            self.name(),
-                            sel,
-                            err
-                        )
-                    }
+        #[cfg(debug_assertions)]
+        if let Some(superclass) = self.superclass() {
+            if let Some(method) = superclass.instance_method(sel) {
+                if let Err(err) = crate::verify::verify_method_signature::<F::Args, F::Ret>(method)
+                {
+                    panic!("declared invalid method -[{} {sel:?}]: {err}", self.name())
                 }
             }
         }
@@ -416,13 +404,7 @@ impl ClassBuilder {
     ///
     /// # Panics
     ///
-    /// Panics if the method wasn't sucessfully added (e.g. a method with that
-    /// name already exists).
-    ///
-    /// May also panic if the method was detected to be invalid in some way;
-    /// for example with the `verify_message` feature enabled, if the method
-    /// is overriding another method, we verify that their encodings are
-    /// equal.
+    /// Panics in the same cases as [`add_method`][Self::add_method].
     ///
     ///
     /// # Safety
@@ -446,18 +428,12 @@ impl ClassBuilder {
 
         // Verify that, if the method is present on the superclass, that the
         // encoding is correct.
-        #[cfg(feature = "verify_message")]
-        {
-            if let Some(superclass) = self.superclass() {
-                if let Some(method) = superclass.class_method(sel) {
-                    if let Err(err) = verify_method_signature::<F::Args, F::Ret>(method) {
-                        panic!(
-                            "declared invalid method +[{} {:?}]: {}",
-                            self.name(),
-                            sel,
-                            err
-                        )
-                    }
+        #[cfg(debug_assertions)]
+        if let Some(superclass) = self.superclass() {
+            if let Some(method) = superclass.class_method(sel) {
+                if let Err(err) = crate::verify::verify_method_signature::<F::Args, F::Ret>(method)
+                {
+                    panic!("declared invalid method +[{} {sel:?}]: {err}", self.name())
                 }
             }
         }
@@ -538,7 +514,7 @@ impl ClassBuilder {
         // Forget self, otherwise the class will be disposed in drop
         let mut this = ManuallyDrop::new(self);
         unsafe { ffi::objc_registerClassPair(this.as_mut_ptr()) };
-        unsafe { this.cls.as_ref() }
+        unsafe { this.cls.cast::<Class>().as_ref() }
     }
 }
 
@@ -698,7 +674,7 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        feature = "verify_message",
+        debug_assertions,
         should_panic = "declared invalid method -[TestClassBuilderInvalidMethod foo]: expected return to have type code 'I', but found 'i'"
     )]
     fn invalid_method() {
@@ -716,7 +692,7 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        feature = "verify_message",
+        debug_assertions,
         should_panic = "declared invalid method +[TestClassBuilderInvalidClassMethod classFoo]: expected return to have type code 'I', but found 'i'"
     )]
     fn invalid_class_method() {
@@ -779,9 +755,9 @@ mod tests {
 
         if cfg!(all(feature = "apple", target_arch = "x86_64")) {
             // It is IMO a bug that it is present here!
-            assert!(is_present(builder.cls.as_ptr()));
+            assert!(is_present(builder.cls.as_ptr().cast()));
         } else {
-            assert!(!is_present(builder.cls.as_ptr()));
+            assert!(!is_present(builder.cls.as_ptr().cast()));
         }
 
         let cls = builder.register();
@@ -850,7 +826,7 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        feature = "verify_message",
+        debug_assertions,
         should_panic = "declared invalid method -[TestDeclareClassInvalidMethod description]: expected return to have type code '@', but found 'v'"
     )]
     fn test_declare_class_invalid_method() {
@@ -874,7 +850,7 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        feature = "verify_message",
+        all(debug_assertions, feature = "verify"),
         should_panic = "must implement required protocol method -[NSCopying copyWithZone:]"
     )]
     fn test_declare_class_missing_protocol_method() {
@@ -895,7 +871,7 @@ mod tests {
     }
 
     #[test]
-    // #[cfg_attr(feature = "verify_message", should_panic = "...")]
+    // #[cfg_attr(all(debug_assertions, feature = "verify"), should_panic = "...")]
     fn test_declare_class_invalid_protocol_method() {
         declare_class!(
             struct Custom {}
@@ -918,8 +894,10 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "verify_message")]
-    #[should_panic = "failed overriding protocol method -[NSCopying someOtherMethod]: method not found"]
+    #[cfg_attr(
+        all(debug_assertions, feature = "verify"),
+        should_panic = "failed overriding protocol method -[NSCopying someOtherMethod]: method not found"
+    )]
     fn test_declare_class_extra_protocol_method() {
         declare_class!(
             struct Custom {}

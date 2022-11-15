@@ -34,9 +34,8 @@ exception = ["objc-sys/unstable-exception"]
 # Wrap every `objc2::msg_send` call in a `@try/@catch` block
 catch-all = ["exception"]
 
-# Verify type encodings on every message send
-# Only intended to be used while debugging!
-verify_message = ["malloc"] # TODO: Remove malloc feature here
+# Enable all verification steps when debug assertions are enabled.
+verify = ["malloc"]
 
 # Expose features that require linking to `libc::free`.
 #

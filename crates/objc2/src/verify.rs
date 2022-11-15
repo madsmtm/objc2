@@ -171,7 +171,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "verify_message")]
+    #[cfg(debug_assertions)]
     #[should_panic = "invalid message send to -[CustomObject foo]: expected return to have type code 'I', but found 'i'"]
     fn test_send_message_verified() {
         let obj = test_utils::custom_object();
@@ -179,7 +179,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "verify_message")]
+    #[cfg(debug_assertions)]
     #[should_panic = "invalid message send to +[CustomObject abcDef]: method not found"]
     fn test_send_message_verified_to_class() {
         let cls = test_utils::custom_class();
