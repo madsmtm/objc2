@@ -187,25 +187,29 @@ macro_rules! extern_class {
 #[macro_export]
 macro_rules! __impl_as_ref_borrow {
     {
-        impl ($($t:tt)*) for $for:ty;
+        impl ($($t:tt)*) for $for:ty {
+            fn as_ref($($self:tt)*) $ref:block
+            fn as_mut($($self_mut:tt)*) $mut:block
+        }
+
+        @()
     } => {};
     {
-        impl ($($t:tt)*) for $for:ty; $item:ty, $($tail:ty,)*
+        impl ($($t:tt)*) for $for:ty {
+            fn as_ref($($self:tt)*) $ref:block
+            fn as_mut($($self_mut:tt)*) $mut:block
+        }
+
+        @($item:ty, $($tail:ty,)*)
     } => {
         impl<$($t)*> $crate::__macro_helpers::AsRef<$item> for $for {
             #[inline]
-            fn as_ref(&self) -> &$item {
-                // Triggers Deref coercion depending on return type
-                &*self
-            }
+            fn as_ref($($self)*) -> &$item $ref
         }
 
         impl<$($t)*> $crate::__macro_helpers::AsMut<$item> for $for {
             #[inline]
-            fn as_mut(&mut self) -> &mut $item {
-                // Triggers DerefMut coercion depending on return type
-                &mut *self
-            }
+            fn as_mut($($self_mut)*) -> &mut $item $mut
         }
 
         // Borrow and BorrowMut are correct, since subclasses behaves
@@ -216,22 +220,21 @@ macro_rules! __impl_as_ref_borrow {
 
         impl<$($t)*> $crate::__macro_helpers::Borrow<$item> for $for {
             #[inline]
-            fn borrow(&self) -> &$item {
-                // Triggers Deref coercion depending on return type
-                &*self
-            }
+            fn borrow($($self)*) -> &$item $ref
         }
 
         impl<$($t)*> $crate::__macro_helpers::BorrowMut<$item> for $for {
             #[inline]
-            fn borrow_mut(&mut self) -> &mut $item {
-                // Triggers Deref coercion depending on return type
-                &mut *self
-            }
+            fn borrow_mut($($self_mut)*) -> &mut $item $mut
         }
 
         $crate::__impl_as_ref_borrow! {
-            impl ($($t)*) for $for; $($tail,)*
+            impl ($($t)*) for $for {
+                fn as_ref($($self)*) $ref
+                fn as_mut($($self_mut)*) $mut
+            }
+
+            @($($tail,)*)
         }
     };
 }
@@ -388,7 +391,18 @@ macro_rules! __inner_extern_class {
         }
 
         $crate::__impl_as_ref_borrow! {
-            impl ($($t)*) for $for; $superclass, $($inheritance_rest,)*
+            impl ($($t)*) for $for {
+                fn as_ref(&self) {
+                    // Triggers Deref coercion depending on return type
+                    &*self
+                }
+                fn as_mut(&mut self) {
+                    // Triggers Deref coercion depending on return type
+                    &mut *self
+                }
+            }
+
+            @($superclass, $($inheritance_rest,)*)
         }
     };
 }

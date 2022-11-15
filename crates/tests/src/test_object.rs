@@ -10,9 +10,14 @@ use objc2::{class, msg_send, msg_send_id};
 use objc2::{extern_protocol, ClassType, ConformsTo, Encoding, Message, ProtocolType, RefEncode};
 
 extern_protocol!(
+    #[derive(Debug, PartialEq, Eq, Hash)]
     struct MyTestProtocol;
 
     unsafe impl ProtocolType for MyTestProtocol {
+        type Parent = NSObject;
+
+        const NAME: &'static str = "MyTestProtocol";
+
         #[method(a)]
         fn a(&self) -> c_int;
 
@@ -47,7 +52,29 @@ extern_protocol!(
     }
 );
 
-unsafe impl ConformsTo<NSObject> for MyTestProtocol {}
+extern_protocol!(
+    struct MyTestProtocol2;
+
+    unsafe impl ProtocolType for MyTestProtocol2 {
+        const NAME: &'static str = "MyTestProtocol2";
+    }
+);
+
+extern_protocol!(
+    struct MyTestProtocol3;
+
+    #[conforms_to(NSObject)]
+    unsafe impl ProtocolType for MyTestProtocol3 {
+        type Parent = MyTestProtocol;
+    }
+);
+
+extern_protocol!(
+    struct MyTestProtocol4;
+
+    #[conforms_to(MyTestProtocol3, MyTestProtocol2, NSObject)]
+    unsafe impl ProtocolType for MyTestProtocol4 {}
+);
 
 #[repr(C)]
 struct MyTestObject {
@@ -291,4 +318,8 @@ fn test_protocol() {
     // TODO: assert_eq!(MyTestObject::f(), 6);
     assert_eq!(proto.g().as_i32(), 7);
     // TODO: assert_eq!(MyTestObject::h().as_i32(), 8);
+
+    // Check that dereferencing to `NSObject` works
+    let obj: &NSObject = &proto;
+    assert_eq!(obj, &**proto);
 }

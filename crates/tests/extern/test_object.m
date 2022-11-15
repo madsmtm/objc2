@@ -13,6 +13,15 @@
 + (id) h;
 @end
 
+@protocol MyTestProtocol2
+@end
+
+@protocol MyTestProtocol3 <MyTestProtocol>
+@end
+
+@protocol MyTestProtocol4 <MyTestProtocol3, MyTestProtocol2>
+@end
+
 @interface MyTestObject: NSObject <MyTestProtocol> {
     int var1;
     BOOL var2;
