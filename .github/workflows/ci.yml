@@ -310,6 +310,7 @@ jobs:
         key: cargo-${{ matrix.name }}-${{ hashFiles('**/Cargo.toml') }}
 
     - name: Cache Rust Target
+      if: ${{ !contains(matrix.rust.toolchain, 'nightly') }}
       uses: actions/cache@v3
       with:
         path: |
