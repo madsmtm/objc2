@@ -3,8 +3,8 @@ use core::hash;
 
 use super::NSString;
 use crate::rc::{DefaultId, Id, Owned, Shared};
-use crate::runtime::{Class, Object};
-use crate::{ClassType, __inner_extern_class, class, extern_methods, msg_send_id};
+use crate::runtime::{Class, Object, Protocol};
+use crate::{ClassType, ProtocolType, __inner_extern_class, class, extern_methods, msg_send_id};
 
 __inner_extern_class! {
     @__inner
@@ -31,6 +31,16 @@ unsafe impl ClassType for NSObject {
     fn as_super_mut(&mut self) -> &mut Self::Super {
         &mut self.__inner
     }
+}
+
+unsafe impl ProtocolType for NSObject {
+    const NAME: &'static str = "NSObject";
+
+    fn protocol() -> Option<&'static Protocol> {
+        Some(Protocol::get(<Self as ProtocolType>::NAME).expect("could not find NSObject protocol"))
+    }
+
+    const __INNER: () = ();
 }
 
 extern_methods!(

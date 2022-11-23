@@ -33,6 +33,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `#[method_id(...)]` attribute to `extern_methods!`.
 * Added `"verify"` feature as a replacement for the `"verify_message"`
   feature.
+* Added `extern_protocol!` macro and `ProtocolType` trait.
+* Added `ConformsTo` trait for marking that a type conforms to a specific
+  protocol.
 
 ### Changed
 * Allow other types than `&Class` as the receiver in `msg_send_id!` methods
@@ -50,6 +53,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Message verification is now enabled by default. Your message
   sends might panic with `debug_assertions` enabled if they are detected to
   be invalid. Test your code to see if that is the case!
+* **BREAKING**: `declare_class!` uses `ConformsTo<...>` instead of the
+  temporary `Protocol<...>` syntax.
 
 ### Fixed
 * Fixed duplicate selector extraction in `extern_methods!`.

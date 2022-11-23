@@ -8,7 +8,7 @@ use core::ptr::NonNull;
 use super::AutoreleasePool;
 use super::{Owned, Ownership, Shared};
 use crate::ffi;
-use crate::{ClassType, Message};
+use crate::{ClassType, ConformsTo, Message, ProtocolType};
 
 /// An pointer for Objective-C reference counted objects.
 ///
@@ -233,7 +233,8 @@ impl<T: Message, O: Ownership> Id<T, O> {
     ///
     /// This is equivalent to a `cast` between two pointers.
     ///
-    /// See [`Id::into_super`] for a safe alternative.
+    /// See [`Id::into_super`] and [`Id::into_protocol`] for safe
+    /// alternatives.
     ///
     /// This is common to do when you know that an object is a subclass of
     /// a specific class (e.g. casting an instance of `NSString` to `NSObject`
@@ -608,7 +609,7 @@ impl<T: ClassType + 'static, O: Ownership> Id<T, O>
 where
     T::Super: 'static,
 {
-    /// Convert the object into it's superclass.
+    /// Convert the object into its superclass.
     #[inline]
     pub fn into_super(this: Self) -> Id<T::Super, O> {
         // SAFETY:
@@ -616,6 +617,23 @@ where
         // - Both types are `'static` (this could maybe be relaxed a bit, but
         //   let's just be on the safe side)!
         unsafe { Self::cast::<T::Super>(this) }
+    }
+}
+
+impl<T: Message, O: Ownership> Id<T, O> {
+    /// Convert the object into an object representing the specified protocol.
+    #[inline]
+    pub fn into_protocol<P>(this: Self) -> Id<P, O>
+    where
+        P: ProtocolType + 'static,
+        T: ConformsTo<P> + 'static,
+    {
+        // SAFETY:
+        // - The type can be represented as the casted-to type, since
+        //   `T: ConformsTo` guarantees that it implements the protocol.
+        // - Both types are `'static` (this could maybe be relaxed a bit, but
+        //   let's just be on the safe side)!
+        unsafe { Self::cast::<P>(this) }
     }
 }
 

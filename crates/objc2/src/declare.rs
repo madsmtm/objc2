@@ -635,7 +635,19 @@ mod tests {
     use super::*;
     use crate::foundation::{NSObject, NSZone};
     use crate::test_utils;
-    use crate::{declare_class, msg_send, ClassType};
+    use crate::{declare_class, extern_protocol, msg_send, ClassType, ConformsTo, ProtocolType};
+
+    extern_protocol!(
+        struct NSCopyingObject;
+
+        unsafe impl ProtocolType for NSCopyingObject {
+            const NAME: &'static str = "NSCopying";
+
+            #[allow(unused)]
+            #[method(copyWithZone:)]
+            fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self;
+        }
+    );
 
     #[test]
     fn test_classbuilder_duplicate() {
@@ -795,8 +807,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic = "could not find protocol NotAProtocolName"]
-    fn test_declare_class_protocol_not_found() {
+    fn test_declare_class_protocol() {
         declare_class!(
             struct Custom {}
 
@@ -805,20 +816,17 @@ mod tests {
                 const NAME: &'static str = "TestDeclareClassProtocolNotFound";
             }
 
-            // Implementing this should work
-            unsafe impl Protocol<NSCopying> for Custom {
+            unsafe impl ConformsTo<NSCopyingObject> for Custom {
                 #[method(copyWithZone:)]
                 #[allow(unreachable_code)]
                 fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
                     unimplemented!()
                 }
             }
-
-            // But this should fail
-            unsafe impl Protocol<NotAProtocolName> for Custom {}
         );
 
-        let _cls = Custom::class();
+        let cls = Custom::class();
+        assert!(cls.conforms_to(NSCopyingObject::protocol().unwrap()));
     }
 
     #[test]
@@ -859,7 +867,7 @@ mod tests {
                 const NAME: &'static str = "TestDeclareClassMissingProtocolMethod";
             }
 
-            unsafe impl Protocol<NSCopying> for Custom {
+            unsafe impl ConformsTo<NSCopyingObject> for Custom {
                 // Missing required method
             }
         );
@@ -878,7 +886,7 @@ mod tests {
                 const NAME: &'static str = "TestDeclareClassInvalidProtocolMethod";
             }
 
-            unsafe impl Protocol<NSCopying> for Custom {
+            unsafe impl ConformsTo<NSCopyingObject> for Custom {
                 // Override with a bad return type
                 #[method(copyWithZone:)]
                 fn copy_with_zone(&self, _zone: *const NSZone) -> u8 {
@@ -904,7 +912,7 @@ mod tests {
                 const NAME: &'static str = "TestDeclareClassExtraProtocolMethod";
             }
 
-            unsafe impl Protocol<NSCopying> for Custom {
+            unsafe impl ConformsTo<NSCopyingObject> for Custom {
                 #[method(copyWithZone:)]
                 #[allow(unreachable_code)]
                 fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {

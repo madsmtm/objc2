@@ -5,7 +5,6 @@ use core::ptr;
 use std::collections::HashSet;
 
 use crate::declare::ClassBuilder;
-#[cfg(all(debug_assertions, feature = "verify"))]
 use crate::declare::MethodImplementation;
 use crate::encode::Encode;
 use crate::message::__TupleExtender;
@@ -478,30 +477,43 @@ impl ModuleInfo {
 
 impl ClassBuilder {
     #[doc(hidden)]
-    #[cfg(all(debug_assertions, feature = "verify"))]
     pub fn __add_protocol_methods<'a, 'b>(
         &'a mut self,
-        protocol: &'b Protocol,
+        protocol: Option<&'b Protocol>,
     ) -> ClassProtocolMethodsBuilder<'a, 'b> {
-        self.add_protocol(protocol);
-        ClassProtocolMethodsBuilder {
-            builder: self,
-            protocol,
-            required_instance_methods: protocol.method_descriptions(true),
-            optional_instance_methods: protocol.method_descriptions(false),
-            registered_instance_methods: HashSet::new(),
-            required_class_methods: protocol.class_method_descriptions(true),
-            optional_class_methods: protocol.class_method_descriptions(false),
-            registered_class_methods: HashSet::new(),
+        if let Some(protocol) = protocol {
+            self.add_protocol(protocol);
         }
-    }
 
-    #[doc(hidden)]
-    #[cfg(not(all(debug_assertions, feature = "verify")))]
-    #[inline]
-    pub fn __add_protocol_methods(&mut self, protocol: &Protocol) -> &mut Self {
-        self.add_protocol(protocol);
-        self
+        #[cfg(all(debug_assertions, feature = "verify"))]
+        {
+            ClassProtocolMethodsBuilder {
+                builder: self,
+                protocol,
+                required_instance_methods: protocol
+                    .map(|p| p.method_descriptions(true))
+                    .unwrap_or_default(),
+                optional_instance_methods: protocol
+                    .map(|p| p.method_descriptions(false))
+                    .unwrap_or_default(),
+                registered_instance_methods: HashSet::new(),
+                required_class_methods: protocol
+                    .map(|p| p.class_method_descriptions(true))
+                    .unwrap_or_default(),
+                optional_class_methods: protocol
+                    .map(|p| p.class_method_descriptions(false))
+                    .unwrap_or_default(),
+                registered_class_methods: HashSet::new(),
+            }
+        }
+
+        #[cfg(not(all(debug_assertions, feature = "verify")))]
+        {
+            ClassProtocolMethodsBuilder {
+                builder: self,
+                protocol,
+            }
+        }
     }
 }
 
@@ -509,19 +521,24 @@ impl ClassBuilder {
 /// - Only methods on the protocol are overriden.
 /// - TODO: The methods have the correct signature.
 /// - All required methods are overridden.
-#[cfg(all(debug_assertions, feature = "verify"))]
 pub struct ClassProtocolMethodsBuilder<'a, 'b> {
     builder: &'a mut ClassBuilder,
-    protocol: &'b Protocol,
+    #[allow(unused)]
+    protocol: Option<&'b Protocol>,
+    #[cfg(all(debug_assertions, feature = "verify"))]
     required_instance_methods: Vec<MethodDescription>,
+    #[cfg(all(debug_assertions, feature = "verify"))]
     optional_instance_methods: Vec<MethodDescription>,
+    #[cfg(all(debug_assertions, feature = "verify"))]
     registered_instance_methods: HashSet<Sel>,
+    #[cfg(all(debug_assertions, feature = "verify"))]
     required_class_methods: Vec<MethodDescription>,
+    #[cfg(all(debug_assertions, feature = "verify"))]
     optional_class_methods: Vec<MethodDescription>,
+    #[cfg(all(debug_assertions, feature = "verify"))]
     registered_class_methods: HashSet<Sel>,
 }
 
-#[cfg(all(debug_assertions, feature = "verify"))]
 impl ClassProtocolMethodsBuilder<'_, '_> {
     #[inline]
     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
@@ -529,23 +546,27 @@ impl ClassProtocolMethodsBuilder<'_, '_> {
         T: Message + ?Sized,
         F: MethodImplementation<Callee = T>,
     {
-        let _types = self
-            .required_instance_methods
-            .iter()
-            .chain(&self.optional_instance_methods)
-            .find(|desc| desc.sel == sel)
-            .map(|desc| desc.types)
-            .unwrap_or_else(|| {
-                panic!(
-                    "failed overriding protocol method -[{} {:?}]: method not found",
-                    self.protocol.name(),
-                    sel
-                )
-            });
+        #[cfg(all(debug_assertions, feature = "verify"))]
+        if let Some(protocol) = self.protocol {
+            let _types = self
+                .required_instance_methods
+                .iter()
+                .chain(&self.optional_instance_methods)
+                .find(|desc| desc.sel == sel)
+                .map(|desc| desc.types)
+                .unwrap_or_else(|| {
+                    panic!(
+                        "failed overriding protocol method -[{} {:?}]: method not found",
+                        protocol.name(),
+                        sel
+                    )
+                });
+        }
 
         // SAFETY: Checked by caller
         unsafe { self.builder.add_method(sel, func) };
 
+        #[cfg(all(debug_assertions, feature = "verify"))]
         if !self.registered_instance_methods.insert(sel) {
             unreachable!("already added")
         }
@@ -556,49 +577,56 @@ impl ClassProtocolMethodsBuilder<'_, '_> {
     where
         F: MethodImplementation<Callee = Class>,
     {
-        let _types = self
-            .required_class_methods
-            .iter()
-            .chain(&self.optional_class_methods)
-            .find(|desc| desc.sel == sel)
-            .map(|desc| desc.types)
-            .unwrap_or_else(|| {
-                panic!(
-                    "failed overriding protocol method +[{} {:?}]: method not found",
-                    self.protocol.name(),
-                    sel
-                )
-            });
+        #[cfg(all(debug_assertions, feature = "verify"))]
+        if let Some(protocol) = self.protocol {
+            let _types = self
+                .required_class_methods
+                .iter()
+                .chain(&self.optional_class_methods)
+                .find(|desc| desc.sel == sel)
+                .map(|desc| desc.types)
+                .unwrap_or_else(|| {
+                    panic!(
+                        "failed overriding protocol method +[{} {:?}]: method not found",
+                        protocol.name(),
+                        sel
+                    )
+                });
+        }
 
         // SAFETY: Checked by caller
         unsafe { self.builder.add_class_method(sel, func) };
 
+        #[cfg(all(debug_assertions, feature = "verify"))]
         if !self.registered_class_methods.insert(sel) {
             unreachable!("already added")
         }
     }
-}
 
-#[cfg(all(debug_assertions, feature = "verify"))]
-impl Drop for ClassProtocolMethodsBuilder<'_, '_> {
-    fn drop(&mut self) {
-        for desc in &self.required_instance_methods {
-            if !self.registered_instance_methods.contains(&desc.sel) {
-                panic!(
-                    "must implement required protocol method -[{} {:?}]",
-                    self.protocol.name(),
-                    desc.sel
-                )
+    pub fn __finish(self) {
+        #[cfg(all(debug_assertions, feature = "verify"))]
+        if let Some(protocol) = self.protocol {
+            for desc in &self.required_instance_methods {
+                if !self.registered_instance_methods.contains(&desc.sel) {
+                    panic!(
+                        "must implement required protocol method -[{} {:?}]",
+                        protocol.name(),
+                        desc.sel
+                    )
+                }
             }
         }
 
-        for desc in &self.required_class_methods {
-            if !self.registered_class_methods.contains(&desc.sel) {
-                panic!(
-                    "must implement required protocol method +[{} {:?}]",
-                    self.protocol.name(),
-                    desc.sel
-                )
+        #[cfg(all(debug_assertions, feature = "verify"))]
+        if let Some(protocol) = self.protocol {
+            for desc in &self.required_class_methods {
+                if !self.registered_class_methods.contains(&desc.sel) {
+                    panic!(
+                        "must implement required protocol method +[{} {:?}]",
+                        protocol.name(),
+                        desc.sel
+                    )
+                }
             }
         }
     }

@@ -115,10 +115,10 @@
 /// no safe-guards here; you can easily write `i8`, but if Objective-C thinks
 /// it's an `u32`, it will cause UB when called!
 ///
-/// `unsafe impl Protocol<P> for T { ... }` requires that all required methods
-/// of the specified protocol is implemented, and that any extra requirements
-/// (implicit or explicit) that the protocol has are upheld. The methods in
-/// this definition has the same safety requirements as above.
+/// `unsafe impl ConformsTo<P> for T { ... }` requires that all required
+/// methods of the specified protocol is implemented, and that any extra
+/// requirements (implicit or explicit) that the protocol has are upheld. The
+/// methods in this definition has the same safety requirements as above.
 ///
 /// [`MaybeUninit::zeroed`]: core::mem::MaybeUninit::zeroed
 ///
@@ -133,10 +133,29 @@
 /// use objc2::declare::{Ivar, IvarDrop};
 /// use objc2::rc::{Id, Owned, Shared};
 /// use objc2::foundation::{NSCopying, NSObject, NSString, NSZone};
-/// use objc2::{declare_class, msg_send, msg_send_id, ns_string, ClassType};
+/// use objc2::{
+///     declare_class, extern_protocol, msg_send, msg_send_id, ns_string,
+///     ClassType, ConformsTo, ProtocolType,
+/// };
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+///
+/// // Declare the NSCopying protocol so that we can implement it (since
+/// // NSCopying is a trait currently).
+/// //
+/// // TODO: Remove the need for this!
+/// extern_protocol!(
+///     struct NSCopyingObject;
+///
+///     unsafe impl ProtocolType for NSCopyingObject {
+///         const NAME: &'static str = "NSCopying";
+///
+///         #[method(copyWithZone:)]
+///         fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self;
+///     }
+/// );
+///
 ///
 /// declare_class!(
 ///     struct MyCustomObject {
@@ -196,7 +215,7 @@
 ///         }
 ///     }
 ///
-///     unsafe impl Protocol<NSCopying> for MyCustomObject {
+///     unsafe impl ConformsTo<NSCopyingObject> for MyCustomObject {
 ///         #[method(copyWithZone:)]
 ///         fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
 ///             let mut obj = Self::new(*self.foo);
@@ -374,10 +393,10 @@ macro_rules! declare_class {
 
                 REGISTER_CLASS.call_once(|| {
                     let superclass = <$superclass as $crate::ClassType>::class();
-                    let mut builder = $crate::declare::ClassBuilder::new(Self::NAME, superclass).unwrap_or_else(|| {
+                    let mut builder = $crate::declare::ClassBuilder::new(<Self as ClassType>::NAME, superclass).unwrap_or_else(|| {
                         $crate::__macro_helpers::panic!(
                             "could not create new class {}. Perhaps a class with that name already exists?",
-                            Self::NAME,
+                            <Self as ClassType>::NAME,
                         )
                     });
 
@@ -408,7 +427,7 @@ macro_rules! declare_class {
                 });
 
                 // We just registered the class, so it should be available
-                $crate::runtime::Class::get(Self::NAME).unwrap()
+                $crate::runtime::Class::get(<Self as ClassType>::NAME).unwrap()
             }
 
             #[inline]
@@ -473,12 +492,16 @@ macro_rules! __declare_class_methods {
         @method_out
 
         $(#[$m:meta])*
-        unsafe impl Protocol<$protocol:ident> for $for:ty {
+        unsafe impl ConformsTo<$protocol:ty> for $for:ty {
             $($methods:tt)*
         }
 
         $($rest:tt)*
     ) => {
+        // SAFETY: Upheld by caller
+        $(#[$m])*
+        unsafe impl ConformsTo<$protocol> for $for {}
+
         $(#[$m])*
         impl $for {
             $crate::__declare_class_rewrite_methods! {
@@ -525,7 +548,7 @@ macro_rules! __declare_class_methods {
         @register_out($builder:ident)
 
         $(#[$($m:tt)*])*
-        unsafe impl Protocol<$protocol:ident> for $for:ty {
+        unsafe impl ConformsTo<$protocol:ty> for $for:ty {
             $($methods:tt)*
         }
 
@@ -537,12 +560,7 @@ macro_rules! __declare_class_methods {
                 // Implement protocol
                 #[allow(unused_mut)]
                 let mut protocol_builder = $builder.__add_protocol_methods(
-                    $crate::runtime::Protocol::get(stringify!($protocol)).unwrap_or_else(|| {
-                        $crate::__macro_helpers::panic!(
-                            "could not find protocol {}",
-                            $crate::__macro_helpers::stringify!($protocol),
-                        )
-                    })
+                    <$protocol as $crate::ProtocolType>::protocol()
                 );
 
                 // In case the user's function is marked `deprecated`
@@ -560,8 +578,7 @@ macro_rules! __declare_class_methods {
                 }
 
                 // Finished declaring protocol; get error message if any
-                #[allow(clippy::drop_ref)]
-                drop(protocol_builder);
+                protocol_builder.__finish();
             )
         }
 
@@ -861,7 +878,9 @@ macro_rules! __declare_class_register_out {
                             @call_sel
                             // Macro will add:
                             // @(method attribute)
+                            // @(optional attribute)
                         )
+                        @()
                         @()
                     },
                     Self::$name as $crate::__fn_ptr! {
@@ -895,7 +914,9 @@ macro_rules! __declare_class_register_out {
                             @call_sel
                             // Macro will add:
                             // @(method attribute)
+                            // @(optional attribute)
                         )
+                        @()
                         @()
                     },
                     Self::$name as $crate::__fn_ptr! {
@@ -909,15 +930,25 @@ macro_rules! __declare_class_register_out {
     {
         @call_sel
         @(#[method($($sel:tt)*)])
+        @()
     } => {
         $crate::sel!($($sel)*)
     };
 
     {
         @call_sel
-        @(#[method_id($($sel:tt)*)])
+        @(#[method($($sel:tt)*)])
+        @($($m_optional:tt)*)
     } => {
-        compile_error!("`#[method_id(...)]` is not supported in `declare_class!` yet");
+        compile_error!("`#[optional]` is only supported in `extern_protocol!`")
+    };
+
+    {
+        @call_sel
+        @(#[method_id($($sel:tt)*)])
+        @($($m_optional:tt)*)
+    } => {
+        compile_error!("`#[method_id(...)]` is not supported in `declare_class!` yet")
     };
 }
 

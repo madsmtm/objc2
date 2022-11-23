@@ -1,0 +1,55 @@
+error: class methods are not supported in `extern_protocol!`
+ --> ui/extern_protocol_class_method.rs
+  |
+  | / extern_protocol!(
+  | |     pub struct MyProtocol;
+  | |
+  | |     unsafe impl ProtocolType for MyProtocol {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extern_protocol_method_out` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: class methods are not supported in `extern_protocol!`
+ --> ui/extern_protocol_class_method.rs
+  |
+  | / extern_protocol!(
+  | |     pub struct MyProtocol;
+  | |
+  | |     unsafe impl ProtocolType for MyProtocol {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extern_protocol_method_out` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: class methods are not supported in `extern_protocol!`
+ --> ui/extern_protocol_class_method.rs
+  |
+  | / extern_protocol!(
+  | |     pub struct MyProtocol;
+  | |
+  | |     unsafe impl ProtocolType for MyProtocol {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extern_protocol_method_out` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: class methods are not supported in `extern_protocol!`
+ --> ui/extern_protocol_class_method.rs
+  |
+  | / extern_protocol!(
+  | |     pub struct MyProtocol;
+  | |
+  | |     unsafe impl ProtocolType for MyProtocol {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extern_protocol_method_out` which comes from the expansion of the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)

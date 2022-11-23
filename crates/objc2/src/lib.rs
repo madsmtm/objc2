@@ -197,6 +197,7 @@ pub use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
 pub use crate::class_type::ClassType;
 pub use crate::message::{Message, MessageArguments, MessageReceiver};
+pub use crate::protocol::{ConformsTo, ProtocolType};
 pub use crate::verify::VerificationError;
 
 #[cfg(feature = "objc2-proc-macros")]
@@ -221,6 +222,7 @@ pub mod exception;
 pub mod foundation;
 mod macros;
 mod message;
+mod protocol;
 pub mod rc;
 pub mod runtime;
 #[cfg(test)]
