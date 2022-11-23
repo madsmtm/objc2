@@ -82,7 +82,7 @@ macro_rules! extern_protocol {
             }
         }
 
-        $crate::__extern_protocol_conforms_to! {
+        $crate::__extern_protocol_impl_conforms_to! {
             @(dyn $for)
             @($($conforms_to $($conforms_to_rest)*)?)
         }
@@ -94,14 +94,20 @@ macro_rules! extern_protocol {
             const __INNER: () = ();
         }
 
-        unsafe impl $name for $crate::ProtocolObject<dyn $for> {}
+        unsafe impl $crate::ConformsTo<dyn $for> for $crate::ProtocolObject<dyn $for> {}
+
+        $crate::__extern_protocol_impl_protocol! {
+            @($name)
+            @($($conforms_to $($conforms_to_rest)*)?)
+            @($crate::ConformsTo<dyn $for>)
+        }
     }
 }
 
 /// tt-munch each inherited protocol.
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __extern_protocol_conforms_to {
+macro_rules! __extern_protocol_impl_conforms_to {
     // Base case
     (
         @($for:ty)
@@ -130,11 +136,36 @@ macro_rules! __extern_protocol_conforms_to {
         // SAFETY: Caller ensures that the protocol actually conforms to
         // these protocols.
         unsafe impl $crate::ConformsTo<dyn $protocol> for $crate::ProtocolObject<$for> {}
-        unsafe impl $protocol for $crate::ProtocolObject<$for> {}
 
-        $crate::__extern_protocol_conforms_to! {
+        $crate::__extern_protocol_impl_conforms_to! {
             @($for)
             @($($rest)*)
+        }
+    };
+}
+
+/// unsafe impl<P: ConformsTo<dyn Name>> Name for P {}
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_protocol_impl_protocol {
+    // Base case
+    (
+        @($name:ty)
+        @()
+        @($($bound:tt)*)
+    ) => {
+        unsafe impl<P: $($bound)*> $name for P {}
+    };
+
+    (
+        @($name:ty)
+        @($protocol:ident $($rest:tt)*)
+        @($($bound:tt)*)
+    ) => {
+        $crate::__extern_protocol_impl_protocol!{
+            @($name)
+            @($($rest)*)
+            @($($bound)* + $crate::ConformsTo<dyn $protocol>)
         }
     };
 }
