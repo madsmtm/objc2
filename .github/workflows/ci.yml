@@ -25,7 +25,7 @@ jobs:
     name: Check formatting
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Check formatting
       run: cargo fmt -- --check
 
@@ -79,7 +79,8 @@ jobs:
             runtime: gnustep-1-9
             libobjc2: "1.9"
           - name: Test GNUStep with libobjc2 v2.0
-            os: ubuntu-latest
+            # Fails for some reason on Ubuntu 22
+            os: ubuntu-20.04
             target: x86_64-unknown-linux-gnu
             runtime: gnustep-2-0
             libobjc2: "2.0"
@@ -92,7 +93,9 @@ jobs:
             libobjc2: "2.1"
             fuzz: true
           - name: Test GNUStep 32bit
-            os: ubuntu-latest
+            # Ubuntu 22 image doesn't have the required C++ libraries
+            # installed for 32-bit
+            os: ubuntu-20.04
             target: i686-unknown-linux-gnu
             cflags: -m32
             configureflags: --target=x86-pc-linux-gnu
@@ -162,11 +165,11 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Cache external dependencies
       id: extern-cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         # We could have just cached build-files, and then rerun the build tool
         # every time, letting it figure out what's changed. However, this has
@@ -297,7 +300,7 @@ jobs:
         ls -al $HOME/extern/*
 
     - name: Cache Cargo
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           ~/.cargo/bin/
@@ -307,7 +310,8 @@ jobs:
         key: cargo-${{ matrix.name }}-${{ hashFiles('**/Cargo.toml') }}
 
     - name: Cache Rust Target
-      uses: actions/cache@v2
+      if: ${{ !contains(matrix.rust.toolchain, 'nightly') }}
+      uses: actions/cache@v3
       with:
         path: |
           target/
