@@ -784,7 +784,7 @@ mod tests {
         extern "C" fn my_fn3(x: &u8) -> &u8 {
             x
         }
-        extern "C" fn my_fn4<'a, 'b>(x: &'a u8, _y: &'b i32) -> &'a u8 {
+        extern "C" fn my_fn4<'a>(x: &'a u8, _y: &i32) -> &'a u8 {
             x
         }
 
