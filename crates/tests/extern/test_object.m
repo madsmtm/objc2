@@ -1,6 +1,19 @@
 #include <Foundation/NSObject.h>
+#include <Foundation/NSValue.h>
 
-@interface MyTestObject: NSObject <NSObject> {
+@protocol MyTestProtocol <NSObject>
+- (int) a;
++ (int) b;
+- (id) c;
++ (id) d;
+@optional
+- (int) e;
++ (int) f;
+- (id) g;
++ (id) h;
+@end
+
+@interface MyTestObject: NSObject <MyTestProtocol> {
     int var1;
     BOOL var2;
     id var3;
@@ -56,5 +69,30 @@
 
 - (void) setVar3: (id) obj {
     var3 = obj;
+}
+
+- (int) a {
+    return 1;
+}
++ (int) b {
+    return 2;
+}
+- (id) c {
+    return @3;
+}
++ (id) d {
+    return @4;
+}
+- (int) e {
+    return 5;
+}
++ (int) f {
+    return 6;
+}
+- (id) g {
+    return @7;
+}
++ (id) h {
+    return @8;
 }
 @end

@@ -1,13 +1,53 @@
 use core::mem::{size_of, ManuallyDrop};
 use std::os::raw::c_int;
 
-use objc2::foundation::NSObject;
-use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
+use objc2::foundation::{NSNumber, NSObject};
+use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned, Shared};
 use objc2::runtime::{Bool, Class, Object, Protocol};
 #[cfg(feature = "malloc")]
 use objc2::sel;
 use objc2::{class, msg_send, msg_send_id};
-use objc2::{ClassType, Encoding, Message, RefEncode};
+use objc2::{extern_protocol, ClassType, ConformsTo, Encoding, Message, ProtocolType, RefEncode};
+
+extern_protocol!(
+    struct MyTestProtocol;
+
+    unsafe impl ProtocolType for MyTestProtocol {
+        #[method(a)]
+        fn a(&self) -> c_int;
+
+        // TODO
+        // #[method(b)]
+        // fn b() -> c_int;
+
+        #[method_id(c)]
+        fn c(&self) -> Id<NSNumber, Shared>;
+
+        // TODO
+        // #[method_id(d)]
+        // fn d() -> Id<NSNumber, Shared>;
+
+        #[method(e)]
+        #[optional]
+        fn e(&self) -> c_int;
+
+        // TODO
+        // #[method(f)]
+        // #[optional]
+        // fn f() -> c_int;
+
+        #[optional]
+        #[method_id(g)]
+        fn g(&self) -> Id<NSNumber, Shared>;
+
+        // TODO
+        // #[optional]
+        // #[method_id(h)]
+        // fn h() -> Id<NSNumber, Shared>;
+    }
+);
+
+unsafe impl ConformsTo<NSObject> for MyTestProtocol {}
 
 #[repr(C)]
 struct MyTestObject {
@@ -36,6 +76,9 @@ unsafe impl ClassType for MyTestObject {
         &mut self.inner
     }
 }
+
+unsafe impl ConformsTo<NSObject> for MyTestObject {}
+unsafe impl ConformsTo<MyTestProtocol> for MyTestObject {}
 
 impl MyTestObject {
     fn new() -> Id<Self, Owned> {
@@ -122,6 +165,23 @@ macro_rules! assert_in {
         );
     }};
 }
+#[cfg(feature = "malloc")]
+macro_rules! assert_not_in {
+    ($item:expr, $lst:expr) => {{
+        let mut found = false;
+        for &x in $lst.iter() {
+            if x == $item {
+                found = true;
+            }
+        }
+        assert!(
+            !found,
+            "Found {} in {}",
+            stringify!($item),
+            stringify!($lst),
+        );
+    }};
+}
 
 #[test]
 fn test_class() {
@@ -157,7 +217,13 @@ fn test_class() {
     assert!(cls.conforms_to(protocol));
     assert!(!cls.conforms_to(Protocol::get("NSCopying").unwrap()));
     #[cfg(feature = "malloc")]
-    assert_in!(protocol, cls.adopted_protocols());
+    {
+        assert_not_in!(protocol, cls.adopted_protocols());
+        assert_in!(
+            Protocol::get("MyTestProtocol").unwrap(),
+            cls.adopted_protocols()
+        );
+    }
 
     #[cfg(feature = "malloc")]
     {
@@ -211,4 +277,18 @@ fn test_object() {
     assert_ne!(*obj.var3_ivar(), obj2);
     assert_eq!(obj.var3(), obj3);
     assert_eq!(*obj.var3_ivar(), obj3);
+}
+
+#[test]
+fn test_protocol() {
+    let obj = MyTestObject::new();
+    let proto: Id<MyTestProtocol, _> = Id::into_protocol(obj);
+    assert_eq!(proto.a(), 1);
+    // TODO: assert_eq!(MyTestObject::b(), 2);
+    assert_eq!(proto.c().as_i32(), 3);
+    // TODO: assert_eq!(MyTestObject::d().as_i32(), 4);
+    assert_eq!(proto.e(), 5);
+    // TODO: assert_eq!(MyTestObject::f(), 6);
+    assert_eq!(proto.g().as_i32(), 7);
+    // TODO: assert_eq!(MyTestObject::h().as_i32(), 8);
 }
