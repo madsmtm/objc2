@@ -94,8 +94,6 @@ macro_rules! extern_protocol {
             const __INNER: () = ();
         }
 
-        unsafe impl $crate::ConformsTo<dyn $for> for $crate::ProtocolObject<dyn $for> {}
-
         $crate::__extern_protocol_impl_protocol! {
             @($name)
             @($($conforms_to $($conforms_to_rest)*)?)

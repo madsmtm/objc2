@@ -155,12 +155,13 @@ pub unsafe trait ConformsTo<P: ?Sized + ProtocolType>: Message {
     }
 }
 
-// unsafe impl<P: ProtocolType> ConformsTo<P> for P {
-//     fn as_protocol(&self) -> &ProtocolObject<P> {
-//         self
-//     }
-//
-//     fn as_protocol_mut(&mut self) -> &mut ProtocolObject<P> {
-//         self
-//     }
-// }
+// SAFETY: Trivial
+unsafe impl<P: ?Sized + ProtocolType> ConformsTo<P> for ProtocolObject<P> {
+    fn as_protocol(&self) -> &ProtocolObject<P> {
+        self
+    }
+
+    fn as_protocol_mut(&mut self) -> &mut ProtocolObject<P> {
+        self
+    }
+}
