@@ -3,15 +3,33 @@ error: unexpected end of macro invocation
   |
   |     sel!();
   |     ^^^^^^ missing tokens in macro arguments
+  |
+note: while trying to match `alloc`
+ --> $WORKSPACE/crates/objc2/src/macros.rs
+  |
+  |     (alloc) => ({
+  |      ^^^^^
 
 error: unexpected end of macro invocation
  --> ui/invalid_sel.rs
   |
   |     sel!(a: b);
   |              ^ missing tokens in macro arguments
+  |
+note: while trying to match `:`
+ --> $WORKSPACE/crates/objc2/src/macros.rs
+  |
+  |     ($first:ident $(: $($rest:ident :)*)?) => ({
+  |                                     ^
 
 error: unexpected end of macro invocation
  --> ui/invalid_sel.rs
   |
   |     sel!(a: b: c);
   |                 ^ missing tokens in macro arguments
+  |
+note: while trying to match `:`
+ --> $WORKSPACE/crates/objc2/src/macros.rs
+  |
+  |     ($first:ident $(: $($rest:ident :)*)?) => ({
+  |                                     ^

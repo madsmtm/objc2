@@ -3,12 +3,24 @@ error: unexpected end of macro invocation
   |
   |     let _: () = unsafe { msg_send![obj] };
   |                                       ^ missing tokens in macro arguments
+  |
+note: while trying to match `,`
+ --> $WORKSPACE/crates/objc2/src/macros.rs
+  |
+  |     [$obj:expr, $($selector_and_arguments:tt)+] => {
+  |               ^
 
 error: unexpected end of macro invocation
  --> ui/invalid_msg_send.rs
   |
   |     let _: () = unsafe { msg_send![obj,] };
   |                                        ^ missing tokens in macro arguments
+  |
+note: while trying to match meta-variable `$selector_and_arguments:tt`
+ --> $WORKSPACE/crates/objc2/src/macros.rs
+  |
+  |     [$obj:expr, $($selector_and_arguments:tt)+] => {
+  |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 error: no rules expected the token `)`
  --> ui/invalid_msg_send.rs
@@ -16,6 +28,11 @@ error: no rules expected the token `)`
   |     let _: () = unsafe { msg_send![obj, a:] };
   |                          ^^^^^^^^^^^^^^^^^^ no rules expected this token in macro call
   |
+note: while trying to match `_`
+ --> $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs
+  |
+  |         @($selector:ident: _ $(,)?)
+  |                            ^
   = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: no rules expected the token `)`
@@ -24,6 +41,11 @@ error: no rules expected the token `)`
   |     let _: () = unsafe { msg_send![obj, a: b c] };
   |                          ^^^^^^^^^^^^^^^^^^^^^^ no rules expected this token in macro call
   |
+note: while trying to match `:`
+ --> $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs
+  |
+  |         @($($selector:ident : $argument:expr)*)
+  |                             ^
   = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: no rules expected the token `a`
@@ -32,6 +54,11 @@ error: no rules expected the token `a`
   |     let _: () = unsafe { msg_send![obj, a: b, c d] };
   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^ no rules expected this token in macro call
   |
+note: while trying to match `)`
+ --> $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs
+  |
+  |         @()
+  |           ^
   = note: this error originates in the macro `$crate::__msg_send_parse` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: no rules expected the token `,`
@@ -39,12 +66,24 @@ error: no rules expected the token `,`
   |
   |     let _: () = unsafe { msg_send![obj, a: b c: d,] };
   |                                                  ^ no rules expected this token in macro call
+  |
+note: while trying to match `)`
+ --> $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs
+  |
+  |         @($($selector:ident : $argument:expr)*)
+  |                                               ^
 
 error: no rules expected the token `b`
  --> ui/invalid_msg_send.rs
   |
   |     let _: Result<(), Id<Object, Shared>> = unsafe { msg_send![obj, a: _, b: _] };
   |                                                                           ^ no rules expected this token in macro call
+  |
+note: while trying to match `)`
+ --> $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs
+  |
+  |         @($selector:ident: _ $(,)?)
+  |                                   ^
 
 error[E0412]: cannot find type `c` in this scope
  --> ui/invalid_msg_send.rs
