@@ -5,13 +5,46 @@ use crate::Message;
 
 /// Marks types that represent specific protocols.
 ///
-/// TODO.
+/// This is the protocol equivalent of [`ClassType`].
+///
+/// This is implemented automatically by the [`extern_protocol!`] macro.
+///
+/// [`ClassType`]: crate::ClassType
+/// [`extern_protocol!`]: crate::extern_protocol
 ///
 ///
 /// # Safety
 ///
 /// This is meant to be a sealed trait, and should not be implemented outside
-/// of the `extern_protocol!` macro.
+/// of the [`extern_protocol!`] macro.
+///
+///
+/// # Examples
+///
+/// Use the trait to access the [`Protocol`] of different objects.
+///
+/// ```
+/// # #[cfg(feature = "gnustep-1-7")]
+/// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+/// use objc2::ProtocolType;
+/// use objc2::foundation::NSObject;
+/// // Get a protocol object representing `NSObject`
+/// let protocol = NSObject::protocol();
+/// ```
+///
+/// Use the [`extern_protocol!`] macro to implement this trait for a type.
+///
+/// ```ignore
+/// use objc2::{extern_protocol, ProtocolType};
+///
+/// extern_protocol!(
+///     struct MyProtocol;
+///
+///     unsafe impl ProtocolType for MyProtocol {}
+/// );
+///
+/// let protocol = MyProtocol::protocol();
+/// ```
 pub unsafe trait ProtocolType: Message {
     /// The name of the Objective-C protocol that this type represents.
     const NAME: &'static str;
@@ -41,19 +74,27 @@ pub unsafe trait ProtocolType: Message {
     const __INNER: ();
 }
 
-/// TODO
+/// Marks that a type conforms to a specific protocol.
 ///
-/// [conforming-to-protocol]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithProtocols/WorkingwithProtocols.html#//apple_ref/doc/uid/TP40011210-CH11-SW3
+/// This can be implemented both for types representing classes and types
+/// representing protocols.
+///
+/// See [Apple's documentation on conforming to protocols][conform] for more
+/// information.
+///
+/// [conform]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithProtocols/WorkingwithProtocols.html#//apple_ref/doc/uid/TP40011210-CH11-SW3
+///
 ///
 /// # Safety
 ///
-/// TODO
-pub unsafe trait ConformsTo<P: ProtocolType> {
+/// The object must actually conform to the specified protocol.
+pub unsafe trait ConformsTo<P: ProtocolType>: Message {
     /// Get an immutable reference to a type representing the protocol.
     fn as_protocol(&self) -> &P {
         let ptr: NonNull<Self> = NonNull::from(self);
         let ptr: NonNull<P> = ptr.cast();
-        // SAFETY: TODO
+        // SAFETY: Implementer ensures that the object conforms to the
+        // protocol; so converting the reference here is safe.
         unsafe { ptr.as_ref() }
     }
 
@@ -61,7 +102,11 @@ pub unsafe trait ConformsTo<P: ProtocolType> {
     fn as_protocol_mut(&mut self) -> &mut P {
         let ptr: NonNull<Self> = NonNull::from(self);
         let mut ptr: NonNull<P> = ptr.cast();
-        // SAFETY: TODO
+        // SAFETY: Same as `as_protocol`.
+        //
+        // Since the reference came from a mutable reference to start with,
+        // returning a mutable reference here is safe (the lifetime of the
+        // returned reference is bound to the input).
         unsafe { ptr.as_mut() }
     }
 }
