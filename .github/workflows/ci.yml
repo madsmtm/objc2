@@ -169,7 +169,7 @@ jobs:
 
     - name: Cache external dependencies
       id: extern-cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         # We could have just cached build-files, and then rerun the build tool
         # every time, letting it figure out what's changed. However, this has
@@ -300,7 +300,7 @@ jobs:
         ls -al $HOME/extern/*
 
     - name: Cache Cargo
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           ~/.cargo/bin/
@@ -310,7 +310,7 @@ jobs:
         key: cargo-${{ matrix.name }}-${{ hashFiles('**/Cargo.toml') }}
 
     - name: Cache Rust Target
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           target/
