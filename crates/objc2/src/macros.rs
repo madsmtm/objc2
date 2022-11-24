@@ -1130,6 +1130,16 @@ macro_rules! __msg_send_id_helper {
     {
         @($fn:ident)
         @($obj:expr)
+        @(dealloc)
+        @()
+    } => {{
+        $crate::__macro_helpers::compile_error!(
+            "msg_send_id![obj, dealloc] is not supported. Drop an `Id` instead"
+        )
+    }};
+    {
+        @($fn:ident)
+        @($obj:expr)
         @($sel_first:ident $(: $($sel_rest:ident :)*)?)
         @($($argument:expr,)*)
     } => ({
