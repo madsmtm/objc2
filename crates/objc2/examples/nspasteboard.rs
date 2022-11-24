@@ -2,7 +2,7 @@
 //!
 //! Works on macOS 10.7+
 #![deny(unsafe_op_in_unsafe_fn)]
-#![cfg_attr(not(all(feature = "apple", target_os = "macos")), allow(unused))]
+#![cfg_attr(not(target_os = "macos"), allow(unused))]
 
 use std::mem::ManuallyDrop;
 
@@ -14,14 +14,14 @@ use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 type NSPasteboardType = NSString;
 type NSPasteboardReadingOptionKey = NSString;
 
-#[cfg(all(feature = "apple", target_os = "macos"))]
+#[cfg(target_os = "macos")]
 #[link(name = "AppKit", kind = "framework")]
 extern "C" {
     /// <https://developer.apple.com/documentation/appkit/nspasteboardtypestring?language=objc>
     static NSPasteboardTypeString: Option<&'static NSPasteboardType>;
 }
 
-#[cfg(all(feature = "apple", target_os = "macos"))]
+#[cfg(target_os = "macos")]
 extern_class!(
     /// <https://developer.apple.com/documentation/appkit/nspasteboard?language=objc>
     pub struct NSPasteboard;
@@ -32,7 +32,7 @@ extern_class!(
     }
 );
 
-#[cfg(all(feature = "apple", target_os = "macos"))]
+#[cfg(target_os = "macos")]
 impl NSPasteboard {
     /// We return a `Shared` `Id` because `general` can easily be called
     /// again, and it would return the same object, resulting in two aliasing
@@ -123,7 +123,7 @@ impl NSPasteboard {
     }
 }
 
-#[cfg(all(feature = "apple", target_os = "macos"))]
+#[cfg(target_os = "macos")]
 fn main() {
     let pasteboard = NSPasteboard::general();
     let impl_1 = pasteboard.text_impl_1();
@@ -138,7 +138,7 @@ fn main() {
     assert_eq!(s, pasteboard.text_impl_1());
 }
 
-#[cfg(not(all(feature = "apple", target_os = "macos")))]
+#[cfg(not(target_os = "macos"))]
 fn main() {
     panic!("this example only works on macOS");
 }

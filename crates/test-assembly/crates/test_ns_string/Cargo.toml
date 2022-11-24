@@ -8,10 +8,10 @@ publish = false
 path = "lib.rs"
 
 [dependencies]
-objc2 = { path = "../../../objc2", default-features = false, features = ["foundation"] }
+objc2 = { path = "../../../objc2", default-features = false }
 
 [features]
-default = ["apple", "std"]
+default = ["apple", "std", "foundation"]
 std = ["objc2/std"]
 # Runtime
 apple = ["objc2/apple"]
@@ -21,5 +21,7 @@ gnustep-1-9 = ["gnustep-1-8", "objc2/gnustep-1-9"]
 gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0"]
 gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1"]
 
+foundation = ["objc2/foundation"]
+
 # Hack
-assembly-features = []
+assembly-features = ["foundation"]

@@ -23,7 +23,7 @@ use std::{env, path::Path};
 ///
 /// In short, it's not ultra important, but enables some optimizations if this
 /// is specified.
-type Version = Option<String>;
+type Version = String;
 
 // For clang "-fobjc-runtime" support
 #[allow(clippy::upper_case_acronyms)]
@@ -32,6 +32,7 @@ enum AppleRuntime {
     IOS(Version),
     TvOS(Version),
     WatchOS(Version),
+    Unknown,
     // BridgeOS,
 }
 use AppleRuntime::*;
@@ -100,21 +101,19 @@ fn main() {
     }
 
     let runtime = match (apple, gnustep, objfw) {
-        (true, false, false) => {
-            Apple(match &*target_os {
-                "macos" => MacOS(Some(
-                    get_env("MACOSX_DEPLOYMENT_TARGET").unwrap_or_else(|| "10.7".into()),
-                )),
-                "ios" => IOS(Some(
-                    get_env("IPHONEOS_DEPLOYMENT_TARGET").unwrap_or_else(|| "7.0".into()),
-                )),
-                "tvos" => TvOS(get_env("TVOS_DEPLOYMENT_TARGET")),
-                "watchos" => WatchOS(get_env("WATCHOS_DEPLOYMENT_TARGET")),
-                // Choose a sensible default for other platforms that
-                // specified `apple`; this is likely not going to work anyhow
-                _ => MacOS(None),
-            })
-        }
+        // Same logic as in https://github.com/rust-lang/rust/blob/1.63.0/compiler/rustc_target/src/spec/apple_base.rs
+        (true, false, false) => Apple(match &*target_os {
+            "macos" if target_arch == "aarch64" => {
+                MacOS(get_env("MACOSX_DEPLOYMENT_TARGET").unwrap_or_else(|| "11.0".into()))
+            }
+            "macos" => MacOS(get_env("MACOSX_DEPLOYMENT_TARGET").unwrap_or_else(|| "10.7".into())),
+            "ios" => IOS(get_env("IPHONEOS_DEPLOYMENT_TARGET").unwrap_or_else(|| "7.0".into())),
+            "tvos" => TvOS(get_env("TVOS_DEPLOYMENT_TARGET").unwrap_or_else(|| "7.0".into())),
+            "watchos" => {
+                WatchOS(get_env("WATCHOS_DEPLOYMENT_TARGET").unwrap_or_else(|| "5.0".into()))
+            }
+            _ => Unknown,
+        }),
         (false, true, false) => {
             // Choose defaults when generating docs
             if cfg!(feature = "unstable-docsrs") {
@@ -168,25 +167,19 @@ fn main() {
 
     let clang_runtime = match &runtime {
         Apple(runtime) => {
-            // The fragile runtime is expected on i686-apple-darwin, see:
-            // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/Driver/ToolChains/Darwin.h#L228-L231
-            // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/Driver/ToolChains/Clang.cpp#L3639-L3640
-            let clang_runtime_str = match (runtime, &*target_arch) {
-                (MacOS(_), "x86") => "macosx-fragile",
-                (MacOS(_), _) => "macosx",
-                (IOS(_), _) => "ios",
-                (WatchOS(_), _) => "watchos",
+            match (runtime, &*target_arch) {
+                // The fragile runtime is expected on i686-apple-darwin, see:
+                // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/Driver/ToolChains/Darwin.h#L228-L231
+                // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/Driver/ToolChains/Clang.cpp#L3639-L3640
+                (MacOS(version), "x86") => format!("macosx-fragile-{version}"),
+                (MacOS(version), _) => format!("macosx-{version}"),
+                (IOS(version), _) => format!("ios-{version}"),
+                (WatchOS(version), _) => format!("watchos-{version}"),
                 // tvOS doesn't have its own -fobjc-runtime string
-                (TvOS(_), _) => "ios",
-            };
-            match runtime {
-                MacOS(version) | IOS(version) | WatchOS(version) | TvOS(version) => {
-                    if let Some(version) = version {
-                        format!("{clang_runtime_str}-{version}")
-                    } else {
-                        clang_runtime_str.into()
-                    }
-                }
+                (TvOS(version), _) => format!("ios-{version}"),
+                // Choose a sensible default for other platforms that
+                // specified `apple`; this is likely not going to work anyhow
+                (Unknown, _) => "macosx".into(),
             }
         }
         // Default in clang is 1.6

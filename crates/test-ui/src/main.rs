@@ -11,16 +11,10 @@
 //!
 //! Also, they're slower than most tests.
 
-#[cfg(feature = "run")]
 fn main() {
     let t = trybuild::TestCases::new();
     let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("ui")
         .join("*.rs");
     t.compile_fail(path);
-}
-
-#[cfg(not(feature = "run"))]
-fn main() {
-    panic!("`run` feature must be enabled");
 }

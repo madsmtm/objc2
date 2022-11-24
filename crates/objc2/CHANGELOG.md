@@ -55,6 +55,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   be invalid. Test your code to see if that is the case!
 * **BREAKING**: `declare_class!` uses `ConformsTo<...>` instead of the
   temporary `Protocol<...>` syntax.
+* Require implementors of `Message` to support weak references.
 
 ### Fixed
 * Fixed duplicate selector extraction in `extern_methods!`.

@@ -1,15 +1,15 @@
-#![cfg_attr(not(all(feature = "apple", target_os = "macos")), allow(unused))]
+#![cfg_attr(not(target_os = "macos"), allow(unused))]
 use objc2::declare::{Ivar, IvarDrop};
 use objc2::foundation::{NSCopying, NSObject, NSString};
 use objc2::rc::{Id, Shared};
 use objc2::runtime::Object;
 use objc2::{declare_class, extern_class, msg_send, msg_send_id, ns_string, ClassType};
 
-#[cfg(all(feature = "apple", target_os = "macos"))]
+#[cfg(target_os = "macos")]
 #[link(name = "AppKit", kind = "framework")]
 extern "C" {}
 
-#[cfg(all(feature = "apple", target_os = "macos"))]
+#[cfg(target_os = "macos")]
 extern_class!(
     #[derive(Debug)]
     struct NSResponder;
@@ -19,7 +19,7 @@ extern_class!(
     }
 );
 
-#[cfg(all(feature = "apple", target_os = "macos"))]
+#[cfg(target_os = "macos")]
 declare_class!(
     #[derive(Debug)]
     struct CustomAppDelegate {
@@ -85,14 +85,14 @@ declare_class!(
     }
 );
 
-#[cfg(all(feature = "apple", target_os = "macos"))]
+#[cfg(target_os = "macos")]
 impl CustomAppDelegate {
     pub fn new(ivar: u8, another_ivar: bool) -> Id<Self, Shared> {
         unsafe { msg_send_id![Self::alloc(), initWith: ivar, another: another_ivar] }
     }
 }
 
-#[cfg(all(feature = "apple", target_os = "macos"))]
+#[cfg(target_os = "macos")]
 fn main() {
     let delegate = CustomAppDelegate::new(42, true);
 
@@ -105,7 +105,7 @@ fn main() {
     println!("{:?}", delegate.maybe_id_ivar);
 }
 
-#[cfg(not(all(feature = "apple", target_os = "macos")))]
+#[cfg(not(target_os = "macos"))]
 fn main() {
     panic!("This example uses AppKit, which is only present on macOS");
 }

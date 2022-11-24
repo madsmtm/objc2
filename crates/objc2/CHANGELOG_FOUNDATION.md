@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Added `NSString::write_to_file`.
+* Added `NSLock` class and `NSLocking` protocol.
+
+### Fixed
+* Fixed `NSZone` not being `#[repr(C)]`.
+
+
 ## objc2 0.3.0-beta.3 - 2022-09-01
 
 ### Added
@@ -21,8 +29,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `NSString::concat` and `NSString::join_path`.
 * Added `CGSize`, `CGPoint` and `CGRect` (just aliases to equivalent
   `NS`-types, but helps readability).
-* Added `NSString::write_to_file`.
-* Added `NSLock` class and `NSLocking` protocol.
 
 ### Changed
 * **BREAKING**: `NSSize::new` no longer requires it's arguments to be

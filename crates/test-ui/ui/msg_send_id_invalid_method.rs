@@ -11,6 +11,7 @@ fn main() {
     unsafe { msg_send_id![object, retain] };
     unsafe { msg_send_id![object, release] };
     unsafe { msg_send_id![object, autorelease] };
+    unsafe { msg_send_id![object, dealloc] };
     unsafe {
         msg_send_id![
             object,

@@ -73,6 +73,9 @@ use self::platform::{send_super_unverified, send_unverified};
 ///   [`objc_msgSend`] or similar.
 /// - Must respond to the standard memory management `retain`, `release` and
 ///   `autorelease` messages.
+/// - Must support weak references. TODO: Make a new trait for this, for
+///   example `NSTextView` only supports weak references on macOS 10.12 or
+///   above.
 ///
 /// [`objc_msgSend`]: https://developer.apple.com/documentation/objectivec/1456712-objc_msgsend
 ///
