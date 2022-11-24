@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `NSString::write_to_file`.
 * Added `NSLock` class and `NSLocking` protocol.
 
+### Fixed
+* Fixed `NSZone` not being `#[repr(C)]`.
+
 
 ## objc2 0.3.0-beta.3 - 2022-09-01
 

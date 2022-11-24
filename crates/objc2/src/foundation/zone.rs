@@ -13,6 +13,7 @@ use crate::{Encoding, RefEncode};
 /// `allocWithZone:`.
 ///
 /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nszone?language=objc).
+#[repr(C)]
 pub struct NSZone {
     // Use `objc_object` to mark the types as !Send, !Sync and UnsafeCell.
     //
