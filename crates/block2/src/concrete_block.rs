@@ -186,15 +186,27 @@ where
 
 impl<A, R, F> ConcreteBlock<A, R, F> {
     // TODO: Use new ABI with BLOCK_HAS_SIGNATURE
-    const FLAGS: ffi::block_flags = ffi::BLOCK_HAS_COPY_DISPOSE;
+    const FLAGS: ffi::block_flags = if mem::needs_drop::<Self>() {
+        ffi::BLOCK_HAS_COPY_DISPOSE
+    } else {
+        0
+    };
 
     const DESCRIPTOR: ffi::Block_descriptor = ffi::Block_descriptor {
         header: ffi::Block_descriptor_header {
             reserved: 0,
             size: mem::size_of::<Self>() as c_ulong,
         },
-        copy: Some(block_context_copy::<Self>),
-        dispose: Some(block_context_dispose::<Self>),
+        copy: if mem::needs_drop::<Self>() {
+            Some(block_context_copy::<Self>)
+        } else {
+            None
+        },
+        dispose: if mem::needs_drop::<Self>() {
+            Some(block_context_dispose::<Self>)
+        } else {
+            None
+        },
     };
 
     /// Constructs a `ConcreteBlock` with the given invoke function and closure.
