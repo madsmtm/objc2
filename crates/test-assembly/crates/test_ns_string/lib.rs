@@ -1,4 +1,6 @@
 //! Test the output of the `ns_string!` macro.
+#![cfg(feature = "foundation")]
+
 use objc2::foundation::NSString;
 use objc2::ns_string;
 

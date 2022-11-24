@@ -1,5 +1,4 @@
-use objc2::foundation::NSString;
-use objc2::runtime::{Class, Object};
+use objc2::runtime::Object;
 use objc2::{class, msg_send, sel};
 
 #[cfg(feature = "gnustep-1-7")]
@@ -25,7 +24,11 @@ fn use_sel() {
 }
 
 #[allow(unused)]
-fn test_msg_send_comma_handling(obj: &NSString, superclass: &Class) {
+#[cfg(feature = "foundation")]
+fn test_msg_send_comma_handling(
+    obj: &objc2::foundation::NSString,
+    superclass: &objc2::runtime::Class,
+) {
     unsafe {
         let _: () = msg_send![obj, a];
         let _: () = msg_send![obj, a,];

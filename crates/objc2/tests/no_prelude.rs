@@ -95,6 +95,7 @@ pub fn test_class() {
     let _class = new_objc2::class!(NSObject);
 }
 
+#[cfg(feature = "foundation")]
 pub fn test_msg_send(obj: &new_objc2::foundation::NSString) {
     let superclass = obj.class().superclass().unwrap();
     let _: () = unsafe { new_objc2::msg_send![obj, a] };

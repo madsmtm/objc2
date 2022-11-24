@@ -8,7 +8,9 @@ repository = "https://github.com/madsmtm/objc2"
 license = "MIT"
 
 [features]
-default = ["apple", "std"]
+# UI tests don't work without `foundation` feature, but we have no way of
+# specifying that, as trybuild doesn't take any arguments
+default = ["apple", "std", "objc2/foundation"]
 std = ["block2/std", "objc2/std"]
 
 apple = ["block2/apple", "objc2/apple"]
@@ -23,7 +25,7 @@ run = ["trybuild"]
 [dependencies]
 trybuild = { version = "1.0.63", optional = true }
 block2 = { path = "../block2", default-features = false }
-objc2 = { path = "../objc2", default-features = false, features = ["foundation"] }
+objc2 = { path = "../objc2", default-features = false }
 
 [[bin]]
 name = "test-ui"
