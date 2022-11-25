@@ -49,74 +49,19 @@ fn main() {
             })
         });
 
-    let mut result: BTreeMap<String, BTreeMap<String, RustFile>> = configs
-        .iter()
-        .map(|(library, _)| (library.clone(), BTreeMap::new()))
-        .collect();
+    let mut final_result = None;
 
     // TODO: Compare SDKs
     for sdk in sdks {
         println!("status: parsing {:?}...", sdk.platform);
-
-        let mut preprocessing = true;
-
-        parse_and_visit_stmts(&index, &sdk, |library, file_name, entity| {
-            if let Some(config) = configs.get(library) {
-                let files = result.get_mut(library).expect("files");
-                match entity.get_kind() {
-                    EntityKind::InclusionDirective if preprocessing => {
-                        // println!("{library}/{file_name}.h: {entity:?}");
-                        // If umbrella header
-                        let name = entity.get_name().expect("inclusion name");
-                        let mut iter = name.split('/');
-                        let framework = iter.next().expect("inclusion name has framework");
-                        if framework == library {
-                            let included = iter
-                                .next()
-                                .expect("inclusion name has file")
-                                .strip_suffix(".h")
-                                .expect("inclusion name file is header")
-                                .to_string();
-                            if iter.count() != 0 {
-                                panic!("invalid inclusion of {name:?}");
-                            }
-
-                            // If inclusion is not umbrella header
-                            if included != library {
-                                // The file is often included twice, even
-                                // within the same file, so insertion can fail
-                                files.entry(included).or_insert_with(RustFile::new);
-                            }
-                        }
-                    }
-                    EntityKind::MacroExpansion if preprocessing => {}
-                    EntityKind::MacroDefinition if preprocessing => {
-                        // let name = entity.get_name().expect("macro def name");
-                        // entity.is_function_like_macro();
-                        // println!("macrodef in {library}/{file_name}.h: {}", name);
-                    }
-                    _ => {
-                        if preprocessing {
-                            println!("status: preprocessed {:?}...", sdk.platform);
-                        }
-                        preprocessing = false;
-                        // No more includes / macro expansions after this line
-                        let file = files.get_mut(file_name).expect("file");
-                        if let Some(stmt) = Stmt::parse(&entity, &config) {
-                            if sdk.platform == Platform::MacOsX {
-                                file.add_stmt(stmt);
-                            }
-                        }
-                    }
-                }
-            } else {
-                // println!("library not found {library}");
-            }
-        });
+        let result = parse_sdk(&index, &sdk, &configs);
+        if sdk.platform == Platform::MacOsX {
+            final_result = Some(result);
+        }
         println!("status: done parsing {:?}", sdk.platform);
     }
 
-    for (library, files) in result {
+    for (library, files) in final_result.expect("got a result") {
         println!("status: writing framework {library}...");
         let output_path = crate_src.join("generated").join(&library);
         let config = configs.get(&library).expect("configs get library");
@@ -154,6 +99,73 @@ fn load_configs(crate_src: &Path) -> BTreeMap<String, Config> {
             }
         })
         .collect()
+}
+
+fn parse_sdk(
+    index: &Index<'_>,
+    sdk: &SdkPath,
+    configs: &BTreeMap<String, Config>,
+) -> BTreeMap<String, BTreeMap<String, RustFile>> {
+    let mut result: BTreeMap<_, _> = configs
+        .iter()
+        .map(|(library, _)| (library.clone(), BTreeMap::new()))
+        .collect();
+
+    let mut preprocessing = true;
+
+    parse_and_visit_stmts(index, sdk, |library, file_name, entity| {
+        if let Some(config) = configs.get(library) {
+            let files = result.get_mut(library).expect("files");
+            match entity.get_kind() {
+                EntityKind::InclusionDirective if preprocessing => {
+                    // println!("{library}/{file_name}.h: {entity:?}");
+                    // If umbrella header
+                    let name = entity.get_name().expect("inclusion name");
+                    let mut iter = name.split('/');
+                    let framework = iter.next().expect("inclusion name has framework");
+                    if framework == library {
+                        let included = iter
+                            .next()
+                            .expect("inclusion name has file")
+                            .strip_suffix(".h")
+                            .expect("inclusion name file is header")
+                            .to_string();
+                        if iter.count() != 0 {
+                            panic!("invalid inclusion of {name:?}");
+                        }
+
+                        // If inclusion is not umbrella header
+                        if included != library {
+                            // The file is often included twice, even
+                            // within the same file, so insertion can fail
+                            files.entry(included).or_insert_with(RustFile::new);
+                        }
+                    }
+                }
+                EntityKind::MacroExpansion if preprocessing => {}
+                EntityKind::MacroDefinition if preprocessing => {
+                    // let name = entity.get_name().expect("macro def name");
+                    // entity.is_function_like_macro();
+                    // println!("macrodef in {library}/{file_name}.h: {}", name);
+                }
+                _ => {
+                    if preprocessing {
+                        println!("status: preprocessed {:?}...", sdk.platform);
+                    }
+                    preprocessing = false;
+                    // No more includes / macro expansions after this line
+                    let file = files.get_mut(file_name).expect("file");
+                    if let Some(stmt) = Stmt::parse(&entity, &config) {
+                        file.add_stmt(stmt);
+                    }
+                }
+            }
+        } else {
+            // println!("library not found {library}");
+        }
+    });
+
+    result
 }
 
 fn parse_and_visit_stmts(
