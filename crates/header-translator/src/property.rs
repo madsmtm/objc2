@@ -9,7 +9,7 @@ use crate::rust_type::Ty;
 use crate::unexposed_macro::UnexposedMacro;
 
 #[allow(dead_code)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Property {
     name: String,
     getter_name: String,

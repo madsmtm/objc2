@@ -1,15 +1,13 @@
 use clang::PlatformAvailability;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Availability {
     #[allow(dead_code)]
-    inner: Vec<PlatformAvailability>,
+    inner: Vec<()>,
 }
 
 impl Availability {
-    pub fn parse(availability: Vec<PlatformAvailability>) -> Self {
-        Self {
-            inner: availability,
-        }
+    pub fn parse(_availability: Vec<PlatformAvailability>) -> Self {
+        Self { inner: Vec::new() }
     }
 }

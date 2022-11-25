@@ -11,7 +11,7 @@ use crate::property::Property;
 use crate::rust_type::Ty;
 use crate::unexposed_macro::UnexposedMacro;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum MethodOrProperty {
     Method(Method),
     Property(Property),
@@ -154,7 +154,7 @@ fn parse_objc_decl(
     (protocols, methods)
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Stmt {
     /// @interface name: superclass <protocols*>
     ClassDecl {
@@ -682,6 +682,34 @@ impl Stmt {
             _ => {
                 panic!("Unknown: {:?}", entity)
             }
+        }
+    }
+
+    pub fn compare(&self, other: &Self) {
+        if self != other {
+            match (&self, &other) {
+                (
+                    Self::ClassDecl {
+                        methods: self_methods,
+                        ..
+                    },
+                    Self::ClassDecl {
+                        methods: other_methods,
+                        ..
+                    },
+                ) => {
+                    super::compare_vec(
+                        &self_methods,
+                        &other_methods,
+                        |_i, self_method, other_method| {
+                            assert_eq!(self_method, other_method, "methods were not equal");
+                        },
+                    );
+                }
+                _ => {}
+            }
+
+            panic!("statements were not equal:\n{self:#?}\n{other:#?}");
         }
     }
 }

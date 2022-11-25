@@ -7,7 +7,7 @@ use std::path::{Path, PathBuf};
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
 use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index};
 
-use header_translator::{run_cargo_fmt, run_rustfmt, Config, RustFile, Stmt};
+use header_translator::{compare_btree, run_cargo_fmt, run_rustfmt, Config, RustFile, Stmt};
 
 const FORMAT_INCREMENTALLY: bool = false;
 
@@ -30,33 +30,75 @@ fn main() {
             .expect("must specify developer directory as first argument"),
     ));
 
-    let sdks = developer_dir
+    let sdks: Vec<_> = developer_dir
         .platforms()
         .expect("developer dir platforms")
         .into_iter()
-        .filter_map(|platform| {
-            matches!(&*platform, Platform::MacOsX | Platform::IPhoneOs).then(|| {
-                let sdks: Vec<_> = platform
-                    .find_sdks::<SimpleSdk>()
-                    .expect("platform sdks")
-                    .into_iter()
-                    .filter(|sdk| !sdk.is_symlink() && sdk.platform() == &*platform)
-                    .collect();
-                if sdks.len() != 1 {
-                    panic!("found multiple sdks {sdks:?} in {:?}", &*platform);
-                }
-                sdks[0].sdk_path()
-            })
-        });
+        .map(|platform| {
+            let sdks: Vec<_> = platform
+                .find_sdks::<SimpleSdk>()
+                .expect("platform sdks")
+                .into_iter()
+                .filter(|sdk| !sdk.is_symlink() && sdk.platform() == &*platform)
+                .collect();
+            if sdks.len() != 1 {
+                panic!("found multiple sdks {sdks:?} in {:?}", &*platform);
+            }
+            sdks[0].sdk_path()
+        })
+        .collect();
+
+    assert_eq!(sdks.len(), 8, "should have one of each platform: {sdks:?}");
 
     let mut final_result = None;
 
-    // TODO: Compare SDKs
+    // TODO: Compare between SDKs
     for sdk in sdks {
         println!("status: parsing {:?}...", sdk.platform);
-        let result = parse_sdk(&index, &sdk, &configs);
+        // These are found using the `get_llvm_targets.fish` helper script
+        let llvm_targets: &[_] = match &sdk.platform {
+            Platform::MacOsX => &[
+                "x86_64-apple-macosx10.7.0",
+                // "arm64-apple-macosx11.0.0",
+                // "i686-apple-macosx10.7.0",
+            ],
+            Platform::IPhoneOs => &[
+                // "arm64-apple-ios7.0.0",
+                // "armv7-apple-ios7.0.0",
+                // "armv7s-apple-ios",
+                // "arm64-apple-ios14.0-macabi",
+                // "x86_64-apple-ios13.0-macabi",
+            ],
+            // Platform::IPhoneSimulator => &[
+            //     "arm64-apple-ios7.0.0-simulator",
+            //     "x86_64-apple-ios7.0.0-simulator",
+            //     "i386-apple-ios7.0.0-simulator",
+            // ],
+            // Platform::AppleTvOs => &["arm64-apple-tvos", "x86_64-apple-tvos"],
+            // Platform::WatchOs => &["arm64_32-apple-watchos", "armv7k-apple-watchos"],
+            // Platform::WatchSimulator => &[
+            //     "arm64-apple-watchos5.0.0-simulator",
+            //     "x86_64-apple-watchos5.0.0-simulator",
+            // ],
+            _ => continue,
+        };
+
+        let mut result = None;
+
+        for llvm_target in llvm_targets {
+            println!("status:     parsing llvm target {llvm_target:?}...");
+            let curr_result = parse_sdk(&index, &sdk, llvm_target, &configs);
+            println!("status:     done parsing llvm target {llvm_target:?}");
+
+            if let Some(prev_result) = &result {
+                compare_results(prev_result, &curr_result);
+            } else {
+                result = Some(curr_result);
+            }
+        }
+
         if sdk.platform == Platform::MacOsX {
-            final_result = Some(result);
+            final_result = result;
         }
         println!("status: done parsing {:?}", sdk.platform);
     }
@@ -104,6 +146,7 @@ fn load_configs(crate_src: &Path) -> BTreeMap<String, Config> {
 fn parse_sdk(
     index: &Index<'_>,
     sdk: &SdkPath,
+    llvm_target: &str,
     configs: &BTreeMap<String, Config>,
 ) -> BTreeMap<String, BTreeMap<String, RustFile>> {
     let mut result: BTreeMap<_, _> = configs
@@ -113,7 +156,7 @@ fn parse_sdk(
 
     let mut preprocessing = true;
 
-    parse_and_visit_stmts(index, sdk, |library, file_name, entity| {
+    parse_and_visit_stmts(index, sdk, llvm_target, |library, file_name, entity| {
         if let Some(config) = configs.get(library) {
             let files = result.get_mut(library).expect("files");
             match entity.get_kind() {
@@ -171,13 +214,10 @@ fn parse_sdk(
 fn parse_and_visit_stmts(
     index: &Index<'_>,
     sdk: &SdkPath,
+    llvm_target: &str,
     mut f: impl FnMut(&str, &str, Entity<'_>),
 ) {
-    let (target, version_min) = match &sdk.platform {
-        Platform::MacOsX => ("--target=x86_64-apple-macos", "-mmacosx-version-min=10.7"),
-        Platform::IPhoneOs => ("--target=arm64-apple-ios", "-miphoneos-version-min=7.0"),
-        _ => todo!(),
-    };
+    let target = format!("--target={llvm_target}");
 
     let tu = index
         .parser(&Path::new(env!("CARGO_MANIFEST_DIR")).join("framework-includes.h"))
@@ -193,7 +233,7 @@ fn parse_and_visit_stmts(
         .arguments(&[
             "-x",
             "objective-c",
-            target,
+            &target,
             "-Wall",
             "-Wextra",
             "-fobjc-arc",
@@ -201,7 +241,6 @@ fn parse_and_visit_stmts(
             "-fobjc-abi-version=2", // 3??
             // "-fparse-all-comments",
             "-fapinotes",
-            version_min,
             "-isysroot",
             sdk.path.to_str().unwrap(),
         ])
@@ -265,6 +304,21 @@ fn parse_and_visit_stmts(
         }
         EntityVisitResult::Continue
     });
+}
+
+fn compare_results(
+    data1: &BTreeMap<String, BTreeMap<String, RustFile>>,
+    data2: &BTreeMap<String, BTreeMap<String, RustFile>>,
+) {
+    compare_btree(data1, data2, |libary_name, library1, library2| {
+        compare_btree(library1, library2, |name, file1, file2| {
+            println!("comparing {libary_name}/{name}");
+            file1.compare(file2);
+        })
+    });
+
+    // Extra check in case our comparison above was not exaustive
+    assert_eq!(data1, data2);
 }
 
 fn output_files(

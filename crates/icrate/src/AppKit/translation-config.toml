@@ -175,3 +175,15 @@ NSFileHandlingPanelOKButton = { skipped = true }
 skipped = true
 [class.CIColor]
 skipped = true
+
+# Different definitions depending on target
+[enum.NSImageResizingMode]
+skipped = true
+[enum.NSTextAlignment]
+skipped = true
+
+# Different definitions depending on deplyment target
+[class.NSLayoutAnchor]
+skipped = true
+[class.NSPopover]
+skipped = true

@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 use std::fmt::{Display, Write};
 use std::path::Path;
 use std::process::{Command, Stdio};
@@ -16,7 +16,7 @@ mod unexposed_macro;
 pub use self::config::Config;
 pub use self::stmt::Stmt;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct RustFile {
     declared_types: HashSet<String>,
     stmts: Vec<Stmt>,
@@ -86,6 +86,41 @@ impl RustFile {
         }
 
         (self.declared_types, tokens)
+    }
+
+    pub fn compare(&self, other: &Self) {
+        compare_vec(&self.stmts, &other.stmts, |_i, self_stmt, other_stmt| {
+            self_stmt.compare(other_stmt);
+        });
+    }
+}
+
+pub fn compare_btree<T>(
+    data1: &BTreeMap<String, T>,
+    data2: &BTreeMap<String, T>,
+    f: impl Fn(&str, &T, &T),
+) {
+    for (key1, item1) in data1 {
+        let item2 = data2
+            .get(key1)
+            .unwrap_or_else(|| panic!("did not find key {key1} in data2"));
+        f(&key1, item1, item2);
+    }
+    assert_eq!(data1.len(), data2.len(), "too few items in first map");
+}
+
+pub fn compare_vec<T: core::fmt::Debug>(data1: &Vec<T>, data2: &Vec<T>, f: impl Fn(usize, &T, &T)) {
+    let mut iter2 = data1.iter();
+    for (i, item1) in data2.iter().enumerate() {
+        if let Some(item2) = iter2.next() {
+            f(i, item1, item2);
+        } else {
+            panic!("no more statements in second vec at index {i}");
+        }
+    }
+    let remaining: Vec<_> = iter2.collect();
+    if remaining.len() != 0 {
+        panic!("remaining statements in second vec: {remaining:#?}");
     }
 }
 

@@ -143,7 +143,7 @@ impl MemoryManagement {
 }
 
 #[allow(dead_code)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Method {
     pub selector: String,
     pub fn_name: String,
