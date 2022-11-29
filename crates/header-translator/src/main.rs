@@ -83,7 +83,7 @@ fn main() -> Result<(), BoxError> {
         error!("should have one of each platform: {sdks:?}");
     }
 
-    let mut libraries = None;
+    let mut libraries = BTreeMap::new();
 
     // TODO: Compare between SDKs
     for sdk in sdks {
@@ -95,7 +95,7 @@ fn main() -> Result<(), BoxError> {
                 // "i686-apple-macosx10.12.0",
             ],
             Platform::IPhoneOs => &[
-                // "arm64-apple-ios10.0.0",
+                "arm64-apple-ios10.0.0",
                 // "armv7s-apple-ios10.0.0",
                 // "arm64-apple-ios14.0-macabi",
                 // "x86_64-apple-ios13.0-macabi",
@@ -128,12 +128,28 @@ fn main() -> Result<(), BoxError> {
             }
         }
 
-        if sdk.platform == Platform::MacOsX {
-            libraries = result;
+        let result = result.unwrap();
+
+        // Hacky way to support UIKit
+        match sdk.platform {
+            Platform::MacOsX => {
+                for (name, library) in result {
+                    if library.data.macos.is_some() {
+                        libraries.insert(name, library);
+                    }
+                }
+            }
+            Platform::IPhoneOs => {
+                for (name, library) in result {
+                    if library.data.macos.is_none() {
+                        libraries.insert(name, library);
+                    }
+                }
+            }
+            _ => {}
         }
     }
 
-    let mut libraries = libraries.expect("got a result");
     let span = info_span!("analyzing").entered();
     for (name, library) in &mut libraries {
         let _span = debug_span!("library", name).entered();
@@ -333,7 +349,7 @@ fn get_translation_unit<'i: 'tu, 'tu>(
         .include_attributed_types(true)
         .visit_implicit_attributes(true)
         // .ignore_non_errors_from_included_files(true)
-        .retain_excluded_conditional_blocks(true)
+        // .retain_excluded_conditional_blocks(true)
         .arguments(&[
             "-x",
             "objective-c",
@@ -463,7 +479,10 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
     writer(&mut ci, config, "FRAMEWORKS_IOS_10", |lib| {
         // HACK: We can't test iOS frameworks with the `"all"` feature, as
         // that enables `objc2-app-kit` as well.
-        matches!(&*lib.krate, "objc2-foundation" | "objc2-metal")
+        matches!(
+            &*lib.krate,
+            "objc2-foundation" | "objc2-metal" | "objc2-ui-kit"
+        )
     })?;
     writer(&mut ci, config, "FRAMEWORKS_GNUSTEP", |lib| {
         lib.gnustep

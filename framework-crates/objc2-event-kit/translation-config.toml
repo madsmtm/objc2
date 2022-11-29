@@ -7,6 +7,9 @@ ios = "4.0"
 watchos = "2.0"
 visionos = "1.0"
 
+# CF_RETURNS_NOT_RETAINED
+class.EKParticipant.methods."ABRecordWithAddressBook:".skipped = true
+
 # Needs `CGColorRef`
 class.EKCalendar.methods.CGColor.skipped = true
 class.EKCalendar.methods."setCGColor:".skipped = true

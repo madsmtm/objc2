@@ -125,6 +125,9 @@ impl MethodModifiers {
             EntityKind::VisibilityAttr => {
                 // TODO: Handle these visibility attributes
             }
+            EntityKind::AnnotateAttr => {
+                // TODO: `UI_APPEARANCE_SELECTOR`
+            }
             _ => error!("unknown"),
         });
 

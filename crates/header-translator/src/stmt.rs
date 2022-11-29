@@ -4,7 +4,6 @@ use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::fmt;
 use std::iter;
-use std::mem;
 
 use clang::{Entity, EntityKind, EntityVisitResult};
 
@@ -581,7 +580,10 @@ fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
                 error!(?attr, "unknown attribute");
             }
         }
-        EntityKind::ObjCClassRef | EntityKind::TypeRef | EntityKind::ObjCProtocolRef => {}
+        EntityKind::ObjCClassRef
+        | EntityKind::TypeRef
+        | EntityKind::ObjCProtocolRef
+        | EntityKind::ParmDecl => {}
         EntityKind::NSConsumed => {
             error!("found NSConsumed, which requires manual handling");
         }
@@ -1568,7 +1570,7 @@ impl Stmt {
 
     pub fn fmt<'a>(&'a self, config: &'a Config) -> impl fmt::Display + 'a {
         FormatterFn(move |f| {
-            let _span = debug_span!("stmt", discriminant = ?mem::discriminant(self)).entered();
+            let _span = debug_span!("stmt", provided_item = ?self.provided_item()).entered();
 
             struct GenericTyHelper<'a>(&'a [String]);
 
@@ -1933,9 +1935,11 @@ impl Stmt {
                             ("Foundation", "NSMutableCopying") => ("?Sized + IsIdCloneable", None),
                             // TODO: Do we need further tweaks to this?
                             ("Foundation", "NSFastEnumeration") => ("?Sized", None),
-                            // AppKit fixes. TODO: Should we add more bounds here?
+                            // AppKit/UIKit fixes. TODO: Should we add more bounds here?
                             ("AppKit", "NSCollectionViewDataSource") => ("?Sized", None),
+                            ("UIKit", "UICollectionViewDataSource") => ("?Sized + Message", None),
                             ("AppKit", "NSTableViewDataSource") => ("?Sized", None),
+                            ("UIKit", "UITableViewDataSource") => ("?Sized + Message", None),
                             _ => {
                                 error!(
                                     ?protocol,

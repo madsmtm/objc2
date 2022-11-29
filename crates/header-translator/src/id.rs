@@ -122,10 +122,7 @@ impl Location {
                 Some(krate.to_string())
             }
         } else {
-            debug!(
-                library = self.library,
-                "tried to get feature name of unknown library"
-            );
+            debug!(?self, "tried to get feature name of unknown library");
             None
         }
     }
