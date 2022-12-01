@@ -1,0 +1,75 @@
+[package]
+name = "icrate"
+version = "0.0.1"
+authors = ["Mads Marquart <mads@marquart.dk>"]
+edition = "2021"
+
+description = "Bindings to Apple's frameworks"
+keywords = ["macos", "ios", "cocoa", "apple", "framework"]
+categories = [
+    "accessibility",
+    "api-bindings",
+    "development-tools::ffi",
+    "external-ffi-bindings",
+    "os::macos-apis",
+]
+readme = "README.md"
+repository = "https://github.com/madsmtm/objc2"
+documentation = "https://docs.rs/icrate/"
+license = "MIT"
+
+[dependencies]
+objc2 = { path = "../objc2", version = "=0.3.0-beta.3", default-features = false, optional = true }
+block2 = { path = "../block2", version = "=0.2.0-alpha.6", default-features = false, optional = true }
+
+[package.metadata.docs.rs]
+default-target = "x86_64-apple-darwin"
+all-features = true
+
+targets = [
+    # MacOS
+    "x86_64-apple-darwin",
+    "aarch64-apple-darwin",
+    # "i686-apple-darwin",
+    # iOS
+    "aarch64-apple-ios",
+    "x86_64-apple-ios",
+    # "armv7-apple-ios",
+    # "i386-apple-ios",
+    # GNUStep
+    "x86_64-unknown-linux-gnu",
+    "i686-unknown-linux-gnu",
+    # Windows
+    "x86_64-pc-windows-msvc",
+]
+
+[features]
+default = ["std", "apple"]
+
+# Currently not possible to turn off, put here for forwards compatibility.
+std = ["alloc", "objc2?/std", "block2?/std"]
+alloc = ["objc2?/alloc", "block2?/alloc"]
+
+# Runtime selection. See `objc-sys` for details.
+apple = ["objc2?/apple", "block2?/apple"]
+gnustep-1-7 = ["objc2?/gnustep-1-7", "block2?/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "objc2?/gnustep-1-8", "block2?/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "objc2?/gnustep-1-9", "block2?/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "objc2?/gnustep-2-0", "block2?/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "objc2?/gnustep-2-1", "block2?/gnustep-2-1"]
+
+# Expose features that requires Objective-C.
+objective-c = ["objc2"]
+
+# Expose features that requires creating blocks.
+blocks = ["objc2?/block", "block2"]
+
+# For better documentation on docs.rs
+unstable-docsrs = []
+
+# Frameworks
+
+AppKit = ["Foundation", "CoreData"]
+AuthenticationServices = ["Foundation"]
+CoreData = ["Foundation"]
+Foundation = ["objective-c", "blocks", "objc2/foundation"]
