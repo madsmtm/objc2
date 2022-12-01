@@ -1,4 +1,5 @@
 mod fixes;
+#[path = "../generated/Foundation/mod.rs"]
 mod generated;
 
 pub use self::fixes::*;

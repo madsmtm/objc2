@@ -1,6 +1,0 @@
-# These can be generated automatically using `header-translator`, so we won't
-# include them since they'll very quickly clobber up our `git` repo.
-#
-# By using symlinks, it's possible to store the generated artifacts in another
-# repository if desired.
-generated
