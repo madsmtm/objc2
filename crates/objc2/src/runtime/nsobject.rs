@@ -74,7 +74,7 @@ extern_methods!(
         pub fn new() -> Id<Self, Owned>;
 
         #[method(isKindOfClass:)]
-        fn is_kind_of_inner(&self, cls: &Class) -> bool;
+        pub(crate) fn is_kind_of_inner(&self, cls: &Class) -> bool;
 
         #[method(isEqual:)]
         fn is_equal(&self, other: &Self) -> bool;
