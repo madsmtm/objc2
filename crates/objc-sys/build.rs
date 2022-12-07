@@ -211,8 +211,7 @@ fn main() {
     //
     // TODO: -fobjc-weak ?
     let mut cc_args = format!(
-        "-fobjc-arc -fobjc-arc-exceptions -fobjc-exceptions -fobjc-runtime={}",
-        clang_runtime
+        "-fobjc-arc -fobjc-arc-exceptions -fobjc-exceptions -fobjc-runtime={clang_runtime}"
     );
 
     if let Runtime::ObjFW(_) = &runtime {

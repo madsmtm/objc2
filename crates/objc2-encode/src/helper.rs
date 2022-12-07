@@ -275,7 +275,7 @@ impl<E: EncodingType> fmt::Display for Helper<'_, E> {
             Self::Primitive(primitive) => write!(f, "{}", primitive.to_str()),
             Self::BitField(b, _type, _level) => {
                 // TODO: Use the type on GNUStep (nesting level?)
-                write!(f, "b{}", b)
+                write!(f, "b{b}")
             }
             Self::Indirection(kind, t, level) => {
                 write!(f, "{}{}", kind.prefix(), t.helper(*level))
@@ -285,7 +285,7 @@ impl<E: EncodingType> fmt::Display for Helper<'_, E> {
             }
             Self::Container(kind, name, items, level) => {
                 write!(f, "{}", kind.start())?;
-                write!(f, "{}", name)?;
+                write!(f, "{name}")?;
                 if let Some(items) = items {
                     write!(f, "=")?;
                     for item in *items {
