@@ -22,7 +22,7 @@ use std::os::raw::c_uint;
 mod method_encoding_iter;
 
 pub(crate) use self::method_encoding_iter::{EncodingParseError, MethodEncodingIter};
-use crate::encode::{Encode, EncodeArguments, EncodeConvert, Encoding, RefEncode};
+use crate::encode::{Encode, EncodeArguments, EncodeConvert, Encoding, OptionEncode, RefEncode};
 use crate::ffi;
 use crate::verify::{verify_method_signature, Inner, VerificationError};
 
@@ -224,6 +224,8 @@ impl hash::Hash for Sel {
 unsafe impl Encode for Sel {
     const ENCODING: Encoding = Encoding::Sel;
 }
+
+unsafe impl OptionEncode for Sel {}
 
 // RefEncode is not implemented for Sel, because there is literally no API
 // that takes &Sel, but the user could easily get confused and accidentally
@@ -1183,6 +1185,7 @@ mod tests {
         assert_enc::<*mut Object>("@");
         assert_enc::<&Class>("#");
         assert_enc::<Sel>(":");
+        assert_enc::<Option<Sel>>(":");
         assert_enc::<Imp>("^?");
         assert_enc::<Option<Imp>>("^?");
         assert_enc::<&Protocol>("@");

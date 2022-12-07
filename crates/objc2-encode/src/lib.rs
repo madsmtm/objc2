@@ -114,7 +114,7 @@ mod parse;
 #[allow(dead_code)]
 mod static_str;
 
-pub use self::encode::{Encode, EncodeArguments, EncodeConvert, RefEncode};
+pub use self::encode::{Encode, EncodeArguments, EncodeConvert, OptionEncode, RefEncode};
 pub use self::encoding::Encoding;
 pub use self::encoding_box::EncodingBox;
 pub use self::parse::ParseError;

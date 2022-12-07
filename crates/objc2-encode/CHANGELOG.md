@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Encoding::equivalent_to_box` for comparing `Encoding` and
   `EncodingBox`.
 * Implemented `Encode` and `RefEncode` for `NonNull<c_void>`.
+* Added `OptionEncode` to help with implementing `Encode` and `RefEncode` for
+  `Option`.
 
 ### Changed
 * **BREAKING**: Verify that the name in `Encoding::Struct` and

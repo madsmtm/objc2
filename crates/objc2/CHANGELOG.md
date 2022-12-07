@@ -36,6 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `extern_protocol!` macro and `ProtocolType` trait.
 * Added `ConformsTo` trait for marking that a type conforms to a specific
   protocol.
+* Added `Encode` impl for `Option<Sel>`.
 
 ### Changed
 * Allow other types than `&Class` as the receiver in `msg_send_id!` methods
