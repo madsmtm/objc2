@@ -173,9 +173,9 @@ macro_rules! extern_class {
 
         const _: () = {
             if $crate::__macro_helpers::size_of::<$name>() != 0 {
-                panic!(concat!(
+                $crate::__macro_helpers::panic!($crate::__macro_helpers::concat!(
                     "the struct ",
-                    stringify!($name),
+                    $crate::__macro_helpers::stringify!($name),
                     " is not zero-sized!",
                 ))
             }
@@ -270,7 +270,7 @@ macro_rules! __inner_extern_class {
 
         unsafe impl<$($t_for $(: $b_for)?),*> ClassType for $for {
             type Super = $superclass;
-            const NAME: &'static str = $crate::__select_name!($name; $($name_const)?);
+            const NAME: &'static $crate::__macro_helpers::str = $crate::__select_name!($name; $($name_const)?);
 
             #[inline]
             fn class() -> &'static $crate::runtime::Class {
