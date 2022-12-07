@@ -96,30 +96,6 @@ iai = { version = "0.1", git = "https://github.com/madsmtm/iai", branch = "callg
 name = "autorelease"
 harness = false
 
-[[example]]
-name = "basic_usage"
-required-features = ["foundation"]
-
-[[example]]
-name = "class_with_lifetime"
-required-features = ["foundation"]
-
-[[example]]
-name = "delegate"
-required-features = ["apple", "foundation"]
-
-[[example]]
-name = "introspection"
-required-features = ["foundation"]
-
-[[example]]
-name = "speech_synthesis"
-required-features = ["apple", "foundation"]
-
-[[example]]
-name = "nspasteboard"
-required-features = ["apple", "foundation"]
-
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
 features = ["exception", "malloc", "block", "uuid", "unstable-docsrs"]

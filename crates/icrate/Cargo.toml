@@ -43,6 +43,22 @@ targets = [
     "x86_64-pc-windows-msvc",
 ]
 
+[[example]]
+name = "basic_usage"
+required-features = ["Foundation"]
+
+[[example]]
+name = "delegate"
+required-features = ["apple", "Foundation"]
+
+[[example]]
+name = "speech_synthesis"
+required-features = ["apple", "Foundation"]
+
+[[example]]
+name = "nspasteboard"
+required-features = ["apple", "Foundation"]
+
 [features]
 default = ["std", "apple"]
 

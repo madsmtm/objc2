@@ -6,10 +6,10 @@
 
 use std::mem::ManuallyDrop;
 
-use objc2::foundation::{NSArray, NSDictionary, NSInteger, NSObject, NSString};
-use objc2::rc::{Id, Shared};
-use objc2::runtime::{Class, Object};
-use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+use icrate::objc2::rc::{Id, Shared};
+use icrate::objc2::runtime::{Class, Object};
+use icrate::objc2::{extern_class, msg_send, msg_send_id, ClassType};
+use icrate::Foundation::{NSArray, NSDictionary, NSInteger, NSObject, NSString};
 
 type NSPasteboardType = NSString;
 type NSPasteboardReadingOptionKey = NSString;
