@@ -756,9 +756,7 @@ pub(crate) fn ivar_offset(cls: &Class, name: &str, expected: &Encoding) -> isize
             let encoding = ivar.type_encoding();
             assert!(
                 expected.equivalent_to_str(encoding),
-                "wrong encoding. Tried to retrieve ivar with encoding {}, but the encoding of the given type was {}",
-                encoding,
-                expected,
+                "wrong encoding. Tried to retrieve ivar with encoding {encoding}, but the encoding of the given type was {expected}",
             );
             ivar.offset()
         }

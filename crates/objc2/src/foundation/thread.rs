@@ -221,9 +221,7 @@ mod tests {
         ];
         assert!(
             expected.contains(&actual),
-            "Expected one of {:?}, got {:?}",
-            expected,
-            actual,
+            "Expected one of {expected:?}, got {actual:?}",
         );
 
         // SAFETY: We don't use the marker for anything other than its Debug

@@ -88,10 +88,10 @@ impl fmt::Display for ErrorKind {
             Self::IntegerTooLarge => write!(f, "integer too large"),
             Self::WrongEndArray => write!(f, "expected array to be closed"),
             Self::WrongEndContainer(kind) => {
-                write!(f, "expected {} to be closed", kind)
+                write!(f, "expected {kind} to be closed")
             }
             Self::InvalidIdentifier(kind) => {
-                write!(f, "got invalid identifier in {}", kind)
+                write!(f, "got invalid identifier in {kind}")
             }
             Self::NotAllConsumed => {
                 write!(f, "remaining contents after parsing")

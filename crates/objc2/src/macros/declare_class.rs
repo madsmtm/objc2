@@ -350,7 +350,7 @@ macro_rules! declare_class {
 
             unsafe impl $crate::declare::IvarType for $ivar {
                 type Type = $ivar_ty;
-                const NAME: &'static str = stringify!($ivar);
+                const NAME: &'static $crate::__macro_helpers::str = stringify!($ivar);
             }
         )*
 
@@ -383,13 +383,11 @@ macro_rules! declare_class {
         // Creation
         unsafe impl ClassType for $for {
             type Super = $superclass;
-            const NAME: &'static str = $crate::__select_name!($name; $($name_const)?);
+            const NAME: &'static $crate::__macro_helpers::str = $crate::__select_name!($name; $($name_const)?);
 
             fn class() -> &'static $crate::runtime::Class {
                 // TODO: Use `core::cell::LazyCell`
-                use $crate::__macro_helpers::Once;
-
-                static REGISTER_CLASS: Once = Once::new();
+                static REGISTER_CLASS: $crate::__macro_helpers::Once = $crate::__macro_helpers::Once::new();
 
                 REGISTER_CLASS.call_once(|| {
                     let superclass = <$superclass as $crate::ClassType>::class();

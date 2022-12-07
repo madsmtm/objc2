@@ -216,7 +216,7 @@ macro_rules! __extern_protocol_inner {
         // SAFETY: The specified name is ensured by caller to be a protocol,
         // and is correctly defined.
         unsafe impl ProtocolType for $for {
-            const NAME: &'static str = $name_const;
+            const NAME: &'static $crate::__macro_helpers::str = $name_const;
             const __INNER: () = ();
         }
 
@@ -247,9 +247,9 @@ macro_rules! __extern_protocol_inner {
 
         const _: () = {
             if $crate::__macro_helpers::size_of::<$name>() != 0 {
-                panic!(concat!(
+                $crate::__macro_helpers::panic!($crate::__macro_helpers::concat!(
                     "the struct ",
-                    stringify!($name),
+                    $crate::__macro_helpers::stringify!($name),
                     " is not zero-sized!",
                 ))
             }

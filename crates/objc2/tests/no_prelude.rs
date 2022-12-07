@@ -9,6 +9,8 @@
 
 extern crate objc2 as new_objc2;
 
+use new_objc2::{ClassType, ProtocolType};
+
 #[cfg(feature = "gnustep-1-7")]
 #[test]
 fn ensure_linkage() {
@@ -86,6 +88,46 @@ type ExactSizeIterator = BogusType;
 type SliceConcatExt = BogusType;
 type ToString = BogusType;
 
+// Test begin below this line
+
+new_objc2::declare_class!(
+    pub struct CustomObject {}
+
+    unsafe impl ClassType for CustomObject {
+        type Super = new_objc2::foundation::NSObject;
+    }
+
+    unsafe impl CustomObject {
+        #[method(a)]
+        fn _a() {}
+    }
+);
+
+new_objc2::extern_methods!(
+    unsafe impl CustomObject {
+        #[method(a)]
+        pub fn a();
+    }
+);
+
+new_objc2::extern_class!(
+    struct NSObject2;
+
+    unsafe impl ClassType for NSObject2 {
+        type Super = new_objc2::foundation::NSObject;
+        const NAME: &'static str = "NSObject";
+    }
+);
+
+new_objc2::extern_protocol!(
+    struct CustomProtocol;
+
+    unsafe impl ProtocolType for CustomProtocol {
+        #[method(b)]
+        fn b(&self);
+    }
+);
+
 pub fn test_selector() {
     let _sel = new_objc2::sel!(abc);
     let _sel = new_objc2::sel!(abc:def:);
@@ -95,8 +137,7 @@ pub fn test_class() {
     let _class = new_objc2::class!(NSObject);
 }
 
-#[cfg(feature = "foundation")]
-pub fn test_msg_send(obj: &new_objc2::foundation::NSString) {
+pub fn test_msg_send(obj: &CustomObject) {
     let superclass = obj.class().superclass().unwrap();
     let _: () = unsafe { new_objc2::msg_send![obj, a] };
     let _: () = unsafe { new_objc2::msg_send![obj, a: obj, b: obj] };
