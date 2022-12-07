@@ -1,4 +1,4 @@
-use objc2::foundation::NSString;
+use icrate::Foundation::NSString;
 use objc2::ns_string;
 
 fn main() {

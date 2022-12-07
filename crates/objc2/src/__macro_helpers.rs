@@ -637,15 +637,13 @@ mod tests {
     use super::*;
 
     use alloc::string::ToString;
-    use alloc::vec;
     use core::ptr;
 
     #[cfg(feature = "objc2-proc-macros")]
     use crate::__hash_idents;
-    use crate::foundation::{NSDictionary, NSString, NSValue};
     use crate::rc::{Owned, RcTestObject, Shared, ThreadTestData};
     use crate::runtime::{NSObject, NSZone, Object};
-    use crate::{class, msg_send_id, ns_string, ClassType};
+    use crate::{class, msg_send_id, ClassType};
 
     #[test]
     fn test_new() {
@@ -672,16 +670,15 @@ mod tests {
         let mut expected = ThreadTestData::current();
 
         let object_class = RcTestObject::class();
-        let key = ns_string!("");
+        let key: Id<Object, Shared> = unsafe { msg_send_id![class!(NSString), new] };
         let contents_value: *const Object = ptr::null();
-        let properties: Id<NSDictionary<NSString, Object>, _> =
-            NSDictionary::from_keys_and_objects::<NSString>(&[], vec![]);
+        let properties: Id<Object, Shared> = unsafe { msg_send_id![class!(NSDictionary), new] };
 
         let _obj: Option<Id<Object, Shared>> = unsafe {
             msg_send_id![
                 NSObject::class(),
                 newScriptingObjectOfClass: object_class,
-                forValueForKey: key,
+                forValueForKey: &*key,
                 withContentsValue: contents_value,
                 properties: &*properties,
             ]
@@ -787,7 +784,7 @@ mod tests {
     // GNUStep instead returns an invalid instance that panics on accesses
     #[cfg_attr(feature = "gnustep-1-7", ignore)]
     fn new_nsvalue_fails() {
-        let _val: Id<NSValue, Shared> = unsafe { msg_send_id![NSValue::class(), new] };
+        let _val: Id<Object, Shared> = unsafe { msg_send_id![class!(NSValue), new] };
     }
 
     #[test]
@@ -854,7 +851,7 @@ mod tests {
     #[cfg(not(debug_assertions))] // Does NULL receiver checks
     fn test_normal_with_null_receiver() {
         let obj: *const NSObject = ptr::null();
-        let _obj: Id<NSString, Shared> = unsafe { msg_send_id![obj, description] };
+        let _obj: Id<Object, Shared> = unsafe { msg_send_id![obj, description] };
     }
 
     #[test]

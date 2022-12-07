@@ -1,5 +1,13 @@
-use objc2::runtime::Object;
-use objc2::{class, msg_send, sel};
+use objc2::runtime::{Class, NSObject, Object};
+use objc2::{class, declare_class, msg_send, sel, ClassType};
+
+declare_class!(
+    struct MyObject {}
+
+    unsafe impl ClassType for MyObject {
+        type Super = NSObject;
+    }
+);
 
 #[cfg(feature = "gnustep-1-7")]
 #[test]
@@ -24,11 +32,7 @@ fn use_sel() {
 }
 
 #[allow(unused)]
-#[cfg(feature = "foundation")]
-fn test_msg_send_comma_handling(
-    obj: &objc2::foundation::NSString,
-    superclass: &objc2::runtime::Class,
-) {
+fn test_msg_send_comma_handling(obj: &MyObject, superclass: &Class) {
     unsafe {
         let _: () = msg_send![obj, a];
         let _: () = msg_send![obj, a,];
