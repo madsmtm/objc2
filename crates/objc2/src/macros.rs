@@ -1048,7 +1048,7 @@ macro_rules! msg_send_bool {
 /// use objc2::ffi::NSUInteger;
 /// use objc2::rc::{Id, Shared};
 /// use objc2::runtime::Object;
-// Allocate new object
+/// // Allocate new object
 /// let obj = unsafe { msg_send_id![class!(NSObject), alloc] };
 /// // Consume the allocated object, return initialized object
 /// let obj: Id<Object, Shared> = unsafe { msg_send_id![obj, init] };

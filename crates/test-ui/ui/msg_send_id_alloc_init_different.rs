@@ -1,8 +1,7 @@
 //! Ensure that `init` returns the same type as given from `alloc`.
-use objc2::foundation::NSObject;
 use objc2::{class, msg_send_id};
 use objc2::rc::{Allocated, Id, Shared};
-use objc2::runtime::Object;
+use objc2::runtime::{Object, NSObject};
 
 fn main() {
     let cls = class!(NSObject);

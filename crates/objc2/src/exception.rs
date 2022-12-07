@@ -255,7 +255,8 @@ mod tests {
     use alloc::string::ToString;
 
     use super::*;
-    use crate::{class, msg_send_id};
+    use crate::runtime::NSObject;
+    use crate::{msg_send_id, ClassType};
 
     #[test]
     fn test_catch() {
@@ -289,7 +290,7 @@ mod tests {
 
     #[test]
     fn test_throw_catch_object() {
-        let obj: Id<Exception, Shared> = unsafe { msg_send_id![class!(NSObject), new] };
+        let obj: Id<Exception, Shared> = unsafe { msg_send_id![NSObject::class(), new] };
         // TODO: Investigate why this is required on GNUStep!
         let _obj2 = obj.clone();
         let ptr: *const Exception = &*obj;

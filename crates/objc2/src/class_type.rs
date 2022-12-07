@@ -37,7 +37,7 @@ use crate::Message;
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 /// use objc2::ClassType;
-/// use objc2::foundation::NSObject;
+/// use objc2::runtime::NSObject;
 /// // Get a class object representing `NSObject`
 /// let cls = <NSObject as ClassType>::class(); // Or just `NSObject::class()`
 /// ```

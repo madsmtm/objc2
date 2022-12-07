@@ -4,8 +4,8 @@
 //! Also test that `NSValue` is not Send nor Sync, because its contained value
 //! might not be.
 
-use objc2::foundation::{NSObject, NSValue};
-use objc2::runtime::Object;
+use objc2::foundation::NSValue;
+use objc2::runtime::{Object, NSObject};
 
 fn needs_sync<T: ?Sized + Sync>() {}
 fn needs_send<T: ?Sized + Send>() {}

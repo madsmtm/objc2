@@ -14,13 +14,12 @@ provides ready-made bindings for the `Foundation` framework in particular.
 ## Example
 
 ```rust
-use objc2::{class, msg_send, msg_send_id};
+use objc2::{msg_send, msg_send_id, ClassType};
 use objc2::ffi::NSUInteger;
 use objc2::rc::{Id, Owned};
-use objc2::runtime::Object;
+use objc2::runtime::NSObject;
 
-let cls = class!(NSObject);
-let obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new] };
+let obj: Id<NSObject, Owned> = unsafe { msg_send_id![NSObject::class(), new] };
 
 let hash: NSUInteger = unsafe { msg_send![&obj, hash] };
 println!("NSObject hash: {}", hash);

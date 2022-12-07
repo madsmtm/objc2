@@ -1,5 +1,5 @@
 use objc2::{extern_class, extern_methods, declare_class, ClassType};
-use objc2::foundation::NSObject;
+use objc2::runtime::NSObject;
 use objc2::rc::{Id, Owned};
 
 extern_class!(

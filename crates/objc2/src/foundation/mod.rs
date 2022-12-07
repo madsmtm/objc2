@@ -72,7 +72,6 @@ pub use self::mutable_dictionary::NSMutableDictionary;
 pub use self::mutable_set::NSMutableSet;
 pub use self::mutable_string::NSMutableString;
 pub use self::number::NSNumber;
-pub use self::object::NSObject;
 pub use self::process_info::NSProcessInfo;
 pub use self::range::NSRange;
 pub use self::set::NSSet;
@@ -82,6 +81,7 @@ pub use self::thread::{is_main_thread, is_multi_threaded, MainThreadMarker, NSTh
 pub use self::uuid::NSUUID;
 pub use self::value::NSValue;
 pub use self::zone::NSZone;
+pub use crate::runtime::NSObject;
 
 // Available under Foundation, so makes sense here as well:
 // https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
@@ -128,7 +128,6 @@ mod mutable_dictionary;
 mod mutable_set;
 mod mutable_string;
 mod number;
-mod object;
 mod process_info;
 mod range;
 mod set;

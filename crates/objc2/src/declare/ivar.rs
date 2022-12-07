@@ -351,8 +351,8 @@ mod tests {
     use std::sync::atomic::{AtomicBool, Ordering};
 
     use super::*;
-    use crate::foundation::NSObject;
     use crate::rc::{Id, Owned};
+    use crate::runtime::NSObject;
     use crate::{declare_class, msg_send, msg_send_id, test_utils, ClassType, MessageReceiver};
 
     struct TestIvar;

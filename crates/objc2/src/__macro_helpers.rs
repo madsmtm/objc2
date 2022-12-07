@@ -642,9 +642,9 @@ mod tests {
 
     #[cfg(feature = "objc2-proc-macros")]
     use crate::__hash_idents;
-    use crate::foundation::{NSDictionary, NSObject, NSString, NSValue, NSZone};
+    use crate::foundation::{NSDictionary, NSString, NSValue, NSZone};
     use crate::rc::{Owned, RcTestObject, Shared, ThreadTestData};
-    use crate::runtime::Object;
+    use crate::runtime::{NSObject, Object};
     use crate::{class, msg_send_id, ns_string, ClassType};
 
     #[test]

@@ -1,10 +1,10 @@
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use crate::ffi;
 #[cfg(feature = "gnustep-1-7")]
-use crate::Encode;
-use crate::{Encoding, RefEncode};
+use crate::encode::Encode;
+use crate::encode::{Encoding, RefEncode};
+use crate::ffi;
 
 /// A type used to identify and manage memory zones.
 ///
@@ -67,9 +67,9 @@ mod tests {
     use core::ptr;
 
     use super::*;
-    use crate::foundation::NSObject;
     use crate::msg_send_id;
     use crate::rc::Allocated;
+    use crate::runtime::NSObject;
     use crate::ClassType;
 
     #[test]
