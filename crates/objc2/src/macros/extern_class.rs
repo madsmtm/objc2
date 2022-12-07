@@ -116,7 +116,7 @@
 /// );
 /// ```
 ///
-/// See the source code of `objc2::foundation` in general for more examples.
+/// See the source code of `icrate` for many more examples.
 #[doc(alias = "@interface")]
 #[macro_export]
 macro_rules! extern_class {

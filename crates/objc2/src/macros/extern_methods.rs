@@ -49,88 +49,57 @@
 ///
 /// # Examples
 ///
-/// Let's create a quick interface to the [`NSCalendar`] class:
-///
-/// [`NSCalendar`]: https://developer.apple.com/documentation/foundation/nscalendar?language=objc
+/// Let's create a quick custom class:
 ///
 /// ```
-/// use objc2::foundation::{NSError, NSObject, NSRange, NSString, NSUInteger};
+/// use objc2::encode::{Encode, Encoding};
+/// use objc2::ffi::NSUInteger;
 /// use objc2::rc::{Allocated, Id, Shared};
-/// use objc2::runtime::Object;
-/// use objc2::{extern_class, extern_methods, msg_send_id, Encode, Encoding, ClassType};
+/// use objc2::runtime::NSObject;
+/// use objc2::{declare_class, extern_methods, ClassType};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 ///
-/// extern_class!(
-///     #[derive(PartialEq, Eq, Hash)]
-///     pub struct NSCalendar;
+/// // Shim
+/// type NSError = NSObject;
 ///
-///     unsafe impl ClassType for NSCalendar {
+/// declare_class!(
+///     pub struct MyObject {}
+///
+///     unsafe impl ClassType for MyObject {
 ///         type Super = NSObject;
+///     }
+///
+///     unsafe impl MyObject {
+///         // ... Assume we've implemented all the methods used below
 ///     }
 /// );
 ///
-/// pub type NSCalendarIdentifier = NSString;
-///
-/// #[repr(usize)] // NSUInteger
-/// pub enum NSCalendarUnit {
-///     Hour = 32,
-///     Minute = 64,
-///     Second = 128,
-///     // TODO: More units
-/// }
-///
-/// unsafe impl Encode for NSCalendarUnit {
-///     const ENCODING: Encoding = usize::ENCODING;
-/// }
-///
 /// extern_methods!(
 ///     /// Creation methods.
-///     unsafe impl NSCalendar {
-///         #[method_id(currentCalendar)]
-///         pub fn current() -> Id<Self, Shared>;
+///     unsafe impl MyObject {
+///         #[method_id(new)]
+///         pub fn new() -> Id<Self, Shared>;
 ///
-///         #[method_id(initWithCalendarIdentifier:)]
-///         pub fn init(
-///             this: Option<Allocated<Self>>,
-///             identifier: &NSCalendarIdentifier,
-///         ) -> Id<Self, Shared>;
+///         #[method_id(initWithVal:)]
+///         // Arbitary self types are not stable, but we can work around it
+///         // with the special name `this`.
+///         pub fn init(this: Option<Allocated<Self>>, val: usize) -> Id<Self, Shared>;
 ///     }
 ///
-///     /// Accessor methods.
-///     // SAFETY: `first_weekday` is correctly defined
-///     unsafe impl NSCalendar {
-///         #[method(firstWeekday)]
-///         pub fn first_weekday(&self) -> NSUInteger;
+///     /// Instance accessor methods.
+///     unsafe impl MyObject {
+///         #[method(foo)]
+///         pub fn foo(&self) -> NSUInteger;
 ///
-///         #[method_id(amSymbol)]
-///         pub fn am_symbol(&self) -> Id<NSString, Shared>;
+///         #[method_id(fooObject)]
+///         pub fn foo_object(&self) -> Id<NSObject, Shared>;
 ///
-///         #[method(date:matchesComponents:)]
-///         // `unsafe` because we don't have definitions for `NSDate` and
-///         // `NSDateComponents` yet, so the user must ensure that is what's
-///         // passed.
-///         pub unsafe fn date_matches(&self, date: &NSObject, components: &NSObject) -> bool;
-///
-///         #[method(minimumRangeOfUnit:)]
-///         pub fn min_range(&self, unit: NSCalendarUnit) -> NSRange;
-///
-///         #[method(maximumRangeOfUnit:)]
-///         // Arbitary self types are not stable, but we can work around it
-///         // with the special name `this`. In this case, it is `unsafe`
-///         // because the self type is a pointer instead of a reference.
-///         pub unsafe fn max_range(this: *const Self, unit: NSCalendarUnit) -> NSRange;
-///
-///         // From `NSKeyValueCoding`
-///         #[method(validateValue:forKey:error:)]
-///         pub unsafe fn validate_value_for_key(
-///             &self,
-///             value: &mut *mut Object,
-///             key: &NSString,
-///             // Since the selector specifies one more argument than we
-///             // have, the return type is assumed to be `Result`.
-///         ) -> Result<(), Id<NSError, Shared>>;
+///         #[method(withError:)]
+///         // Since the selector specifies one more argument than we
+///         // have, the return type is assumed to be `Result`.
+///         pub fn with_error(&self) -> Result<(), Id<NSError, Shared>>;
 ///     }
 /// );
 /// ```
@@ -138,83 +107,62 @@
 /// The `extern_methods!` declaration then becomes:
 ///
 /// ```
-/// # use objc2::foundation::{NSError, NSObject, NSRange, NSString, NSUInteger};
+/// # use objc2::encode::{Encode, Encoding};
+/// # use objc2::ffi::NSUInteger;
 /// # use objc2::rc::{Allocated, Id, Shared};
-/// # use objc2::runtime::Object;
-/// # use objc2::{extern_class, extern_methods, msg_send_id, Encode, Encoding, ClassType};
+/// # use objc2::runtime::NSObject;
+/// # use objc2::{declare_class, extern_methods, ClassType};
 /// #
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 /// #
-/// # extern_class!(
-/// #     #[derive(PartialEq, Eq, Hash)]
-/// #     pub struct NSCalendar;
+/// # // Shim
+/// # type NSError = NSObject;
 /// #
-/// #     unsafe impl ClassType for NSCalendar {
+/// # declare_class!(
+/// #     pub struct MyObject {}
+/// #
+/// #     unsafe impl ClassType for MyObject {
 /// #         type Super = NSObject;
+/// #     }
+/// #
+/// #     unsafe impl MyObject {
+/// #         // ... Assume we've implemented all the methods used below
 /// #     }
 /// # );
 /// #
-/// # pub type NSCalendarIdentifier = NSString;
-/// #
-/// # #[repr(usize)] // NSUInteger
-/// # pub enum NSCalendarUnit {
-/// #     Hour = 32,
-/// #     Minute = 64,
-/// #     Second = 128,
-/// #     // TODO: More units
-/// # }
-/// #
-/// # unsafe impl Encode for NSCalendarUnit {
-/// #     const ENCODING: Encoding = usize::ENCODING;
-/// # }
-/// #
-/// # use objc2::msg_send;
+/// use objc2::{msg_send, msg_send_id};
+///
 /// /// Creation methods.
-/// impl NSCalendar {
-///     pub fn current() -> Id<Self, Shared> {
-///         unsafe { msg_send_id![Self::class(), currentCalendar] }
+/// impl MyObject {
+///     pub fn new() -> Id<Self, Shared> {
+///          unsafe { msg_send_id![Self::class(), new] }
 ///     }
 ///
-///     pub fn init(
-///         this: Option<Allocated<Self>>,
-///         identifier: &NSCalendarIdentifier,
-///     ) -> Id<Self, Shared> {
-///         unsafe { msg_send_id![this, initWithCalendarIdentifier: identifier] }
+///     pub fn init(this: Option<Allocated<Self>>, val: usize) -> Id<Self, Shared> {
+///         unsafe { msg_send_id![this, initWithVal: val] }
 ///     }
 /// }
 ///
-/// /// Accessor methods.
-/// impl NSCalendar {
-///     pub fn first_weekday(&self) -> NSUInteger {
-///         unsafe { msg_send![self, firstWeekday] }
+/// /// Instance accessor methods.
+/// impl MyObject {
+///     pub fn foo(&self) -> NSUInteger {
+///         unsafe { msg_send![self, foo] }
 ///     }
 ///
-///     pub fn am_symbol(&self) -> Id<NSString, Shared> {
-///         unsafe { msg_send_id![self, amSymbol] }
+///     pub fn foo_object(&self) -> Id<NSObject, Shared> {
+///         unsafe { msg_send_id![self, fooObject] }
 ///     }
 ///
-///     pub unsafe fn date_matches(&self, date: &NSObject, components: &NSObject) -> bool {
-///         unsafe { msg_send![self, date: date, matchesComponents: components] }
+///     // Since the selector specifies one more argument than we
+///     // have, the return type is assumed to be `Result`.
+///     pub fn with_error(&self) -> Result<(), Id<NSError, Shared>> {
+///         unsafe { msg_send![self, withError: _] }
 ///     }
-///
-///     pub fn min_range(&self, unit: NSCalendarUnit) -> NSRange {
-///         unsafe { msg_send![self, minimumRangeOfUnit: unit] }
-///     }
-///
-///     pub fn max_range(this: *const Self, unit: NSCalendarUnit) -> NSRange {
-///         unsafe { msg_send![this, maximumRangeOfUnit: unit] }
-///     }
-///
-///     pub unsafe fn validate_value_for_key(
-///         &self,
-///         value: &mut *mut Object,
-///         key: &NSString,
-///     ) -> Result<(), Id<NSError, Shared>> {
-///        unsafe { msg_send![self, validateValue: value, forKey: key, error: _] }
-///    }
 /// }
 /// ```
+///
+/// See the source code of `icrate` for many more examples.
 #[macro_export]
 macro_rules! extern_methods {
     (

@@ -73,8 +73,8 @@
 //! other type, and this would trigger undefined behaviour!
 //!
 //! Making the ergonomics better is something that is currently being worked
-//! on, the [`foundation`] module contains more ergonomic usage of at
-//! least parts of the `Foundation` framework.
+//! on, see the `icrate` crate for much more ergonomic usage of the built-in
+//! frameworks like `Foundation`, `AppKit`, `UIKit` and so on.
 //!
 //! Anyhow, all of this `unsafe` nicely leads us to another feature that this
 //! crate has:
@@ -83,7 +83,6 @@
 //! [`runtime::Object`]: crate::runtime::Object
 //! [`rc::Owned`]: crate::rc::Owned
 //! [`rc::Id`]: crate::rc::Id
-//! [`foundation`]: crate::foundation
 //!
 //!
 //! ## Encodings and message type verification

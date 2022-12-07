@@ -15,11 +15,11 @@ __inner_extern_class! {
     /// This represents both the [`NSObject` class][cls] and the [`NSObject`
     /// protocol][proto].
     ///
-    /// To properly use this, you must either enable the `"foundation"`
-    /// feature, or link a framework/library where the `NSObject` symbol is
-    /// available.
+    /// To properly use this, you must either use the `icrate` crate with the
+    /// `"Foundation"` feature, or manually link a framework/library where the
+    /// `NSObject` class symbol is available.
     ///
-    /// This is exported under `objc2::foundation::NSObject`, you probably
+    /// This is exported under `icrate::Foundation::NSObject`, you probably
     /// want to use that path instead.
     ///
     /// [cls]: https://developer.apple.com/documentation/objectivec/nsobject?language=objc
