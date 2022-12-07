@@ -39,6 +39,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Encode` impl for `Option<Sel>`.
 * Added `objc2::runtime::NSObject` - before, this was only available under
   `objc2::foundation::NSObject`.
+* Added `objc2::runtime::NSZone` - before, this was only available under
+  `objc2::foundation::NSZone`.
 
 ### Changed
 * Allow other types than `&Class` as the receiver in `msg_send_id!` methods

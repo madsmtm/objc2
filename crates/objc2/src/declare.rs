@@ -632,7 +632,7 @@ impl ProtocolBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::foundation::{NSObject, NSZone};
+    use crate::runtime::{NSObject, NSZone};
     use crate::test_utils;
     use crate::{declare_class, extern_protocol, msg_send, ClassType, ConformsTo, ProtocolType};
 

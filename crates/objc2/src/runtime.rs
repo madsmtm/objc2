@@ -23,6 +23,7 @@ use std::os::raw::c_uint;
 pub mod __nsstring;
 mod method_encoding_iter;
 mod nsobject;
+mod nszone;
 
 pub(crate) use self::method_encoding_iter::{EncodingParseError, MethodEncodingIter};
 use crate::encode::{Encode, EncodeArguments, EncodeConvert, Encoding, OptionEncode, RefEncode};
@@ -30,6 +31,7 @@ use crate::ffi;
 use crate::verify::{verify_method_signature, Inner, VerificationError};
 
 pub use self::nsobject::NSObject;
+pub use self::nszone::NSZone;
 #[doc(inline)]
 pub use crate::encode::__bool::Bool;
 

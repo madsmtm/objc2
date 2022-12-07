@@ -80,8 +80,7 @@ pub use self::thread::{is_main_thread, is_multi_threaded, MainThreadMarker, NSTh
 #[cfg(not(macos_10_7))] // Temporary
 pub use self::uuid::NSUUID;
 pub use self::value::NSValue;
-pub use self::zone::NSZone;
-pub use crate::runtime::NSObject;
+pub use crate::runtime::{NSObject, NSZone};
 
 // Available under Foundation, so makes sense here as well:
 // https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
@@ -137,7 +136,6 @@ mod thread;
 #[cfg(not(macos_10_7))]
 mod uuid;
 mod value;
-mod zone;
 
 #[cfg(test)]
 mod tests {

@@ -3,8 +3,7 @@ use core::mem::ManuallyDrop;
 use core::ptr;
 
 use super::{Id, Owned};
-use crate::foundation::NSZone;
-use crate::runtime::NSObject;
+use crate::runtime::{NSObject, NSZone};
 use crate::{declare_class, msg_send, msg_send_id, ClassType};
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
