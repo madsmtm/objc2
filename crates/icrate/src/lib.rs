@@ -15,6 +15,9 @@
 #[cfg(feature = "std")]
 extern crate std;
 
+#[cfg(feature = "objective-c")]
+pub extern crate objc2;
+
 mod common;
 #[macro_use]
 mod macros;
