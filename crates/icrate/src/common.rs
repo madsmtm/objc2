@@ -19,15 +19,6 @@ pub(crate) use objc2::runtime::{Bool, Class, Object, Sel};
 #[cfg(feature = "objective-c")]
 pub(crate) use objc2::{__inner_extern_class, extern_class, extern_methods, ClassType, Message};
 
-// TODO
-#[cfg(feature = "objective-c")]
-#[repr(C)]
-pub struct OptionSel(*const objc2::ffi::objc_selector);
-#[cfg(feature = "objective-c")]
-unsafe impl objc2::Encode for OptionSel {
-    const ENCODING: objc2::Encoding = objc2::Encoding::Sel;
-}
-
 #[cfg(feature = "blocks")]
 pub(crate) use block2::Block;
 

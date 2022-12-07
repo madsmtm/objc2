@@ -1,5 +1,5 @@
 use core::ffi::c_void;
-use core::mem::{ManuallyDrop, MaybeUninit};
+use core::mem::{self, ManuallyDrop, MaybeUninit};
 use core::num::{
     NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroIsize, NonZeroU16, NonZeroU32,
     NonZeroU64, NonZeroU8, NonZeroUsize, Wrapping,
@@ -148,6 +148,66 @@ pub unsafe trait RefEncode {
     const ENCODING_REF: Encoding;
 }
 
+/// A helper trait for types that are encodable inside an [`Option`].
+///
+/// See [the nomicon][nomicon-nullable] for details on which types uphold this
+/// promise.
+///
+/// This is used to work around, which would normally prevent from
+/// implementing [`Encode`]/[`RefEncode`] for `Option<CustomType>`.
+///
+/// [nomicon-nullable]: https://doc.rust-lang.org/nightly/nomicon/ffi.html#the-nullable-pointer-optimization
+///
+///
+/// # Safety
+///
+/// You must ensure that the implemented type `T` has the same layout as
+/// `Option<T>`.
+///
+///
+/// # Examples
+///
+/// ```
+/// use objc2_encode::{Encode, Encoding, OptionEncode};
+/// use core::ptr::NonNull;
+/// use core::ffi::c_void;
+///
+/// #[repr(transparent)]
+/// struct MyBlockType(NonNull<c_void>);
+///
+/// // SAFETY: `MyBlockType` is meant to represent a pointer to a block
+/// unsafe impl Encode for MyBlockType {
+///     const ENCODING: Encoding = Encoding::Block;
+/// }
+///
+/// // SAFETY: `MyBlockType` is `repr(transparent)` over `NonNull`, which
+/// // means that `Option<MyBlockType>` has the same layout.
+/// unsafe impl OptionEncode for MyBlockType {}
+///
+/// assert_eq!(<Option<MyBlockType>>::ENCODING, MyBlockType::ENCODING);
+/// ```
+pub unsafe trait OptionEncode {}
+
+// SAFETY: Implementor of `OptionEncode` guarantees this impl is sound
+unsafe impl<T: Encode + OptionEncode> Encode for Option<T> {
+    const ENCODING: Encoding = {
+        if mem::size_of::<T>() != mem::size_of::<Option<T>>() {
+            panic!("invalid OptionEncode + Encode implementation");
+        }
+        T::ENCODING
+    };
+}
+
+// SAFETY: Implementor of `OptionEncode` guarantees this impl is sound
+unsafe impl<T: RefEncode + OptionEncode> RefEncode for Option<T> {
+    const ENCODING_REF: Encoding = {
+        if mem::size_of::<T>() != mem::size_of::<Option<T>>() {
+            panic!("invalid OptionEncode + RefEncode implementation");
+        }
+        T::ENCODING_REF
+    };
+}
+
 // TODO: Implement for `PhantomData` and `PhantomPinned`?
 
 /// Simple helper for implementing [`Encode`].
@@ -255,17 +315,12 @@ macro_rules! encode_impls_nonzero {
             const ENCODING: Encoding = <$type>::ENCODING;
         }
 
-        unsafe impl Encode for Option<$nonzero> {
-            const ENCODING: Encoding = <$type>::ENCODING;
-        }
-
         unsafe impl RefEncode for $nonzero {
             const ENCODING_REF: Encoding = <$type>::ENCODING_REF;
         }
 
-        unsafe impl RefEncode for Option<$nonzero> {
-            const ENCODING_REF: Encoding = <$type>::ENCODING_REF;
-        }
+        // SAFETY: nonzero types have a NUL niche that is exploited by Option
+        unsafe impl OptionEncode for $nonzero {}
     )*);
 }
 
@@ -368,6 +423,7 @@ unsafe impl Encode for NonNull<c_void> {
 unsafe impl RefEncode for NonNull<c_void> {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
+unsafe impl OptionEncode for NonNull<c_void> {}
 
 unsafe impl<T: Encode, const LENGTH: usize> Encode for [T; LENGTH] {
     const ENCODING: Encoding = Encoding::Array(LENGTH, &T::ENCODING);
@@ -396,7 +452,7 @@ encode_impls_transparent! {
     ManuallyDrop<T: ?Sized>,
 
     // The fact that this has `repr(no_niche)` has no effect on us, since we
-    // don't implement `Encode` generically over `Option`.
+    // don't unconditionally implement `Encode` generically over `Option`.
     // (e.g. an `Option<UnsafeCell<&u8>>` impl is not available).
     // The inner field is not public, so may not be stable.
     // TODO: UnsafeCell<T>,
@@ -450,18 +506,6 @@ macro_rules! encode_pointer_impls {
         unsafe impl<T: RefEncode + ?Sized> $x for NonNull<T> {
             const $c: Encoding = $e;
         }
-
-        unsafe impl<'a, T: RefEncode + ?Sized> $x for Option<&'a T> {
-            const $c: Encoding = $e;
-        }
-
-        unsafe impl<'a, T: RefEncode + ?Sized> $x for Option<&'a mut T> {
-            const $c: Encoding = $e;
-        }
-
-        unsafe impl<T: RefEncode + ?Sized> $x for Option<NonNull<T>> {
-            const $c: Encoding = $e;
-        }
     );
 }
 
@@ -486,6 +530,11 @@ encode_pointer_impls!(
     }
 );
 
+// SAFETY: References and `NonNull` have a NULL niche
+unsafe impl<'a, T: RefEncode + ?Sized> OptionEncode for &'a T {}
+unsafe impl<'a, T: RefEncode + ?Sized> OptionEncode for &'a mut T {}
+unsafe impl<T: RefEncode + ?Sized> OptionEncode for NonNull<T> {}
+
 /// Helper for implementing [`Encode`]/[`RefEncode`] for function pointers
 /// whoose arguments implement [`Encode`].
 ///
@@ -508,13 +557,8 @@ macro_rules! encode_fn_pointer_impl {
         unsafe impl<Ret: Encode, $($Arg: Encode),*> RefEncode for $FnTy {
             const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
         }
-
-        unsafe impl<Ret: Encode, $($Arg: Encode),*> Encode for Option<$FnTy> {
-            const ENCODING: Encoding = Encoding::Pointer(&Encoding::Unknown);
-        }
-        unsafe impl<Ret: Encode, $($Arg: Encode),*> RefEncode for Option<$FnTy> {
-            const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
-        }
+        // SAFETY: Function pointers have a NULL niche
+        unsafe impl<Ret: Encode, $($Arg: Encode),*> OptionEncode for $FnTy {}
     };
     (# $abi:literal; $($Arg: ident),+) => {
         // Normal functions

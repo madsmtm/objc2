@@ -19,9 +19,6 @@ mod common;
 #[macro_use]
 mod macros;
 
-#[cfg(feature = "objective-c")]
-pub use common::OptionSel;
-
 // Frameworks
 #[cfg(feature = "AppKit")]
 pub mod AppKit;

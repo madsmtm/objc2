@@ -1,0 +1,7 @@
+error[E0080]: evaluation of constant value failed
+ --> ui/invalid_option_encode_impl.rs
+  |
+  |         panic!("todo");
+  |         ^^^^^^^^^^^^^^ the evaluated program panicked at 'todo', $DIR/ui/invalid_option_encode_impl.rs:24:9
+  |
+  = note: this error originates in the macro `$crate::panic::panic_2021` which comes from the expansion of the macro `panic` (in Nightly builds, run with -Z macro-backtrace for more info)
