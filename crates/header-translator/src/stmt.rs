@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::collections::HashSet;
 use std::fmt;
 
@@ -23,6 +24,21 @@ impl fmt::Display for MethodOrProperty {
             Self::Method(method) => write!(f, "{method}"),
             Self::Property(property) => write!(f, "{property}"),
         }
+    }
+}
+
+#[derive(serde::Deserialize, Debug, Clone, PartialEq, Eq)]
+pub struct Derives(Cow<'static, str>);
+
+impl Default for Derives {
+    fn default() -> Self {
+        Derives("Debug, PartialEq, Eq, Hash".into())
+    }
+}
+
+impl fmt::Display for Derives {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "#[derive({})]", self.0)
     }
 }
 
@@ -179,6 +195,7 @@ pub enum Stmt {
         superclass: Option<GenericType>,
         protocols: Vec<String>,
         methods: Vec<MethodOrProperty>,
+        derives: Derives,
     },
     /// @interface class_name (name) <protocols*>
     CategoryDecl {
@@ -348,6 +365,9 @@ impl Stmt {
                     superclass,
                     protocols,
                     methods,
+                    derives: class_data
+                        .map(|data| data.derives.clone())
+                        .unwrap_or_default(),
                 })
             }
             EntityKind::ObjCCategoryDecl => {
@@ -784,6 +804,7 @@ impl fmt::Display for Stmt {
                 superclass,
                 protocols: _,
                 methods,
+                derives,
             } => {
                 let default_superclass = GenericType {
                     name: "Object".into(),
@@ -800,7 +821,7 @@ impl fmt::Display for Stmt {
                 };
 
                 writeln!(f, "{macro_name}!(")?;
-                writeln!(f, "    #[derive(Debug)]")?;
+                writeln!(f, "    {}", derives)?;
                 write!(f, "    pub struct ")?;
                 if ty.generics.is_empty() {
                     write!(f, "{}", ty.name)?;

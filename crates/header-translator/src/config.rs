@@ -5,6 +5,8 @@ use std::path::Path;
 
 use serde::Deserialize;
 
+use crate::stmt::Derives;
+
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
@@ -45,6 +47,8 @@ pub struct ClassData {
     pub methods: HashMap<String, MethodData>,
     #[serde(default)]
     pub properties: HashMap<String, MethodData>,
+    #[serde(default)]
+    pub derives: Derives,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
