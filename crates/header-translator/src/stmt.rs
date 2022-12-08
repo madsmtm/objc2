@@ -124,9 +124,8 @@ fn parse_objc_decl(
                     methods.push(MethodOrProperty::Property(property));
                 }
             }
-            EntityKind::VisibilityAttr if superclass.is_some() => {
-                // NS_CLASS_AVAILABLE_MAC??
-                println!("TODO: VisibilityAttr")
+            EntityKind::VisibilityAttr => {
+                // Already exposed as entity.get_visibility()
             }
             EntityKind::TypeRef if superclass.is_some() => {
                 // TODO
@@ -311,6 +310,12 @@ impl Stmt {
                     Some(&mut generics),
                     class_data,
                 );
+
+                if let Some(new_name) =
+                    class_data.and_then(|data| data.new_superclass_name.as_ref())
+                {
+                    superclass = Some(Some(new_name.clone()));
+                }
 
                 let superclass = superclass.expect("no superclass found");
 
@@ -579,6 +584,7 @@ impl Stmt {
                                 panic!("unexpected attribute: {macro_:?}");
                             }
                         }
+                        EntityKind::VisibilityAttr => {}
                         EntityKind::ObjCClassRef => {}
                         EntityKind::TypeRef => {}
                         _ if entity.is_expression() => {
@@ -588,7 +594,7 @@ impl Stmt {
                                 panic!("got variable value twice")
                             }
                         }
-                        _ => panic!("unknown typedef child in {name}: {entity:?}"),
+                        _ => panic!("unknown vardecl child in {name}: {entity:?}"),
                     };
                     EntityVisitResult::Continue
                 });

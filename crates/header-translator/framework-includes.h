@@ -7,3 +7,5 @@
 #if TARGET_OS_OSX
 #import <AppKit/AppKit.h>
 #endif
+
+#import <AuthenticationServices/AuthenticationServices.h>

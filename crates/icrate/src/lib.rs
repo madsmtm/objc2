@@ -244,6 +244,8 @@ macro_rules! inline_fn {
 // Frameworks
 #[cfg(feature = "AppKit")]
 pub mod AppKit;
+#[cfg(feature = "AuthenticationServices")]
+pub mod AuthenticationServices;
 #[cfg(feature = "CoreData")]
 pub mod CoreData;
 #[cfg(feature = "Foundation")]
