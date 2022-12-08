@@ -39,7 +39,8 @@ fn main() {
 
     let index = Index::new(&clang, true, true);
 
-    let _config = dbg!(Config::from_file(Path::new("icrate/src/AppKit.toml")).unwrap());
+    let _config =
+        dbg!(Config::from_file(Path::new("icrate/src/AppKit/translation-config.toml")).unwrap());
 
     let _module_path = framework_path.join("module.map");
 
@@ -154,7 +155,10 @@ fn main() {
 
     let output_path = Path::new("icrate/src/generated/Foundation");
 
-    let config = dbg!(Config::from_file(Path::new("icrate/src/Foundation.toml")).unwrap());
+    let config = dbg!(Config::from_file(Path::new(
+        "icrate/src/Foundation/translation-config.toml"
+    ))
+    .unwrap());
 
     let mut declared: Vec<(Ident, HashSet<String>)> = Vec::new();
 
