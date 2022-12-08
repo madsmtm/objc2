@@ -27,7 +27,7 @@ uuid = { version = "1.1.2", optional = true, default-features = false }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
-all-features = true
+features = ["block", "objective-c", "uuid", "unstable-all-frameworks", "unstable-docsrs"]
 
 targets = [
     # MacOS
@@ -81,7 +81,7 @@ gnustep-2-1 = ["gnustep-2-0", "objc2?/gnustep-2-1", "block2?/gnustep-2-1"]
 objective-c = ["objc2"]
 
 # Expose features that requires creating blocks.
-blocks = ["objc2?/block", "block2"]
+block = ["objc2?/block", "block2"]
 
 # For better documentation on docs.rs
 unstable-docsrs = []
@@ -91,4 +91,5 @@ unstable-docsrs = []
 AppKit = ["Foundation", "CoreData"]
 AuthenticationServices = ["Foundation"]
 CoreData = ["Foundation"]
-Foundation = ["objective-c", "blocks"]
+Foundation = ["objective-c", "block"]
+unstable-all-frameworks = ["AppKit", "AuthenticationServices", "CoreData", "Foundation"]

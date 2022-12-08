@@ -19,7 +19,7 @@ pub(crate) use objc2::runtime::{Bool, Class, Object, Sel};
 #[cfg(feature = "objective-c")]
 pub(crate) use objc2::{__inner_extern_class, extern_class, extern_methods, ClassType, Message};
 
-#[cfg(feature = "blocks")]
+#[cfg(feature = "block")]
 pub(crate) use block2::Block;
 
 // TODO
