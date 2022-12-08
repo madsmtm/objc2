@@ -397,7 +397,7 @@ mod tests {
         static HAS_RUN_DEALLOC: AtomicBool = AtomicBool::new(false);
 
         declare_class!(
-            #[derive(Debug, PartialEq)]
+            #[derive(Debug, PartialEq, Eq)]
             struct CustomDrop {
                 ivar: u8,
             }

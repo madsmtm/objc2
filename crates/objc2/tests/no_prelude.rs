@@ -11,6 +11,10 @@ extern crate objc2 as new_objc2;
 
 use new_objc2::{ClassType, ProtocolType};
 
+#[cfg_attr(feature = "apple", link(name = "Foundation", kind = "framework"))]
+#[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-base", kind = "dylib"))]
+extern "C" {}
+
 #[cfg(feature = "gnustep-1-7")]
 #[test]
 fn ensure_linkage() {

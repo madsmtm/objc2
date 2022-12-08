@@ -1,6 +1,6 @@
 use super::{NSObject, NSString};
-use crate::rc::{Id, Owned, Shared};
-use crate::{extern_class, extern_methods, extern_protocol, ClassType, ConformsTo, ProtocolType};
+use objc2::rc::{Id, Owned, Shared};
+use objc2::{extern_class, extern_methods, extern_protocol, ClassType, ConformsTo, ProtocolType};
 
 // TODO: Proper Send/Sync impls here
 

@@ -22,6 +22,9 @@ license = "MIT"
 objc2 = { path = "../objc2", version = "=0.3.0-beta.3", default-features = false, optional = true }
 block2 = { path = "../block2", version = "=0.2.0-alpha.6", default-features = false, optional = true }
 
+# Provide methods to convert between `uuid::Uuid` and `icrate::Foundation::NSUUID`
+uuid = { version = "1.1.2", optional = true, default-features = false }
+
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
 all-features = true
@@ -88,4 +91,4 @@ unstable-docsrs = []
 AppKit = ["Foundation", "CoreData"]
 AuthenticationServices = ["Foundation"]
 CoreData = ["Foundation"]
-Foundation = ["objective-c", "blocks", "objc2/foundation"]
+Foundation = ["objective-c", "blocks"]

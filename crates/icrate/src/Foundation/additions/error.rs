@@ -2,9 +2,9 @@ use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{NSCopying, NSDictionary, NSObject, NSString};
-use crate::ffi::NSInteger;
-use crate::rc::{Id, Shared};
-use crate::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::ffi::NSInteger;
+use objc2::rc::{Id, Shared};
+use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// Information about an error condition including a domain, a

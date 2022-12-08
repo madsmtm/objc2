@@ -12,6 +12,9 @@
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/icrate/0.0.1")]
 
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
 #[cfg(feature = "std")]
 extern crate std;
 

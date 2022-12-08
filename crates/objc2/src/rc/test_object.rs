@@ -6,28 +6,30 @@ use super::{Id, Owned};
 use crate::runtime::{NSObject, NSZone};
 use crate::{declare_class, msg_send, msg_send_id, ClassType};
 
+// TODO: Put tests that use this in another crate
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub(crate) struct ThreadTestData {
-    pub(crate) alloc: usize,
-    pub(crate) dealloc: usize,
-    pub(crate) init: usize,
-    pub(crate) retain: usize,
-    pub(crate) copy: usize,
-    pub(crate) mutable_copy: usize,
-    pub(crate) release: usize,
-    pub(crate) autorelease: usize,
-    pub(crate) try_retain: usize,
-    pub(crate) try_retain_fail: usize,
+#[doc(hidden)]
+pub struct __ThreadTestData {
+    pub alloc: usize,
+    pub dealloc: usize,
+    pub init: usize,
+    pub retain: usize,
+    pub copy: usize,
+    pub mutable_copy: usize,
+    pub release: usize,
+    pub autorelease: usize,
+    pub try_retain: usize,
+    pub try_retain_fail: usize,
 }
 
-impl ThreadTestData {
+impl __ThreadTestData {
     /// Get the amount of method calls performed on the current thread.
-    pub(crate) fn current() -> ThreadTestData {
+    pub fn current() -> __ThreadTestData {
         TEST_DATA.with(|data| data.borrow().clone())
     }
 
     #[track_caller]
-    pub(crate) fn assert_current(&self) {
+    pub fn assert_current(&self) {
         let current = Self::current();
         let mut expected = self.clone();
         if cfg!(feature = "gnustep-1-7") {
@@ -44,20 +46,21 @@ impl ThreadTestData {
 }
 
 std::thread_local! {
-    pub(crate) static TEST_DATA: RefCell<ThreadTestData> = RefCell::new(Default::default());
+    static TEST_DATA: RefCell<__ThreadTestData> = RefCell::new(Default::default());
 }
 
 declare_class!(
     /// A helper object that counts how many times various reference-counting
     /// primitives are called.
-    #[derive(Debug, PartialEq)]
-    pub(crate) struct RcTestObject {}
+    #[derive(Debug, PartialEq, Eq)]
+    #[doc(hidden)]
+    pub struct __RcTestObject {}
 
-    unsafe impl ClassType for RcTestObject {
+    unsafe impl ClassType for __RcTestObject {
         type Super = NSObject;
     }
 
-    unsafe impl RcTestObject {
+    unsafe impl __RcTestObject {
         #[method(newReturningNull)]
         fn new_returning_null() -> *mut Self {
             ptr::null_mut()
@@ -163,10 +166,10 @@ declare_class!(
         }
 
         #[method(boolAndShouldError:error:)]
-        fn class_error_bool(should_error: bool, err: Option<&mut *mut RcTestObject>) -> bool {
+        fn class_error_bool(should_error: bool, err: Option<&mut *mut __RcTestObject>) -> bool {
             if should_error {
                 if let Some(err) = err {
-                    *err = RcTestObject::new().autorelease_inner();
+                    *err = __RcTestObject::new().autorelease_inner();
                 }
                 false
             } else {
@@ -178,11 +181,11 @@ declare_class!(
         fn instance_error_bool(
             &self,
             should_error: bool,
-            err: Option<&mut *mut RcTestObject>,
+            err: Option<&mut *mut __RcTestObject>,
         ) -> bool {
             if should_error {
                 if let Some(err) = err {
-                    *err = RcTestObject::new().autorelease_inner();
+                    *err = __RcTestObject::new().autorelease_inner();
                 }
                 false
             } else {
@@ -193,15 +196,15 @@ declare_class!(
         #[method(idAndShouldError:error:)]
         fn class_error_id(
             should_error: bool,
-            err: Option<&mut *mut RcTestObject>,
-        ) -> *mut RcTestObject {
+            err: Option<&mut *mut __RcTestObject>,
+        ) -> *mut __RcTestObject {
             if should_error {
                 if let Some(err) = err {
-                    *err = RcTestObject::new().autorelease_inner();
+                    *err = __RcTestObject::new().autorelease_inner();
                 }
                 ptr::null_mut()
             } else {
-                RcTestObject::new().autorelease_return()
+                __RcTestObject::new().autorelease_return()
             }
         }
 
@@ -209,23 +212,23 @@ declare_class!(
         fn instance_error_id(
             self: &Self,
             should_error: bool,
-            err: Option<&mut *mut RcTestObject>,
-        ) -> *mut RcTestObject {
+            err: Option<&mut *mut __RcTestObject>,
+        ) -> *mut __RcTestObject {
             if should_error {
                 if let Some(err) = err {
-                    *err = RcTestObject::new().autorelease_inner();
+                    *err = __RcTestObject::new().autorelease_inner();
                 }
                 ptr::null_mut()
             } else {
-                RcTestObject::new().autorelease_return()
+                __RcTestObject::new().autorelease_return()
             }
         }
 
         #[method(newAndShouldError:error:)]
-        fn new_error(should_error: bool, err: Option<&mut *mut RcTestObject>) -> *mut Self {
+        fn new_error(should_error: bool, err: Option<&mut *mut __RcTestObject>) -> *mut Self {
             if should_error {
                 if let Some(err) = err {
-                    *err = RcTestObject::new().autorelease_inner();
+                    *err = __RcTestObject::new().autorelease_inner();
                 }
                 ptr::null_mut()
             } else {
@@ -234,10 +237,10 @@ declare_class!(
         }
 
         #[method(allocAndShouldError:error:)]
-        fn alloc_error(should_error: bool, err: Option<&mut *mut RcTestObject>) -> *mut Self {
+        fn alloc_error(should_error: bool, err: Option<&mut *mut __RcTestObject>) -> *mut Self {
             if should_error {
                 if let Some(err) = err {
-                    *err = RcTestObject::new().autorelease_inner();
+                    *err = __RcTestObject::new().autorelease_inner();
                 }
                 ptr::null_mut()
             } else {
@@ -249,11 +252,11 @@ declare_class!(
         fn init_error(
             this: &mut Self,
             should_error: bool,
-            err: Option<&mut *mut RcTestObject>,
+            err: Option<&mut *mut __RcTestObject>,
         ) -> *mut Self {
             if should_error {
                 if let Some(err) = err {
-                    *err = RcTestObject::new().autorelease_inner();
+                    *err = __RcTestObject::new().autorelease_inner();
                 }
                 let _: () = unsafe { msg_send![this, release] };
                 ptr::null_mut()
@@ -264,28 +267,30 @@ declare_class!(
     }
 );
 
-unsafe impl Send for RcTestObject {}
-unsafe impl Sync for RcTestObject {}
+unsafe impl Send for __RcTestObject {}
+unsafe impl Sync for __RcTestObject {}
 
-impl RcTestObject {
-    pub(crate) fn new() -> Id<Self, Owned> {
+impl __RcTestObject {
+    #[doc(hidden)]
+    pub fn new() -> Id<Self, Owned> {
         // Use msg_send! - msg_send_id! is tested elsewhere!
         unsafe { Id::new(msg_send![Self::class(), new]) }.unwrap()
     }
 }
 
 declare_class!(
-    #[derive(Debug, PartialEq)]
-    pub(crate) struct RcTestObjectSubclass {}
+    #[derive(Debug, PartialEq, Eq)]
+    struct RcTestObjectSubclass {}
 
     unsafe impl ClassType for RcTestObjectSubclass {
         #[inherits(NSObject)]
-        type Super = RcTestObject;
+        type Super = __RcTestObject;
     }
 );
 
+#[cfg_attr(not(test), allow(unused))]
 impl RcTestObjectSubclass {
-    pub(crate) fn new() -> Id<Self, Owned> {
+    fn new() -> Id<Self, Owned> {
         unsafe { msg_send_id![Self::class(), new] }
     }
 }
@@ -297,13 +302,13 @@ mod tests {
 
     #[test]
     fn ensure_declared_name() {
-        assert_eq!(RcTestObject::class().name(), RcTestObject::NAME);
+        assert_eq!(__RcTestObject::class().name(), __RcTestObject::NAME);
     }
 
     macro_rules! test_error_bool {
         ($expected:expr, $($obj:tt)*) => {
             // Succeeds
-            let res: Result<(), Id<RcTestObject, Shared>> = unsafe {
+            let res: Result<(), Id<__RcTestObject, Shared>> = unsafe {
                 msg_send![$($obj)*, boolAndShouldError: false, error: _]
             };
             assert_eq!(res, Ok(()));
@@ -312,7 +317,7 @@ mod tests {
             // Errors
             let res = autoreleasepool(|_pool| {
                 // `Ok` type is inferred to be `()`
-                let res: Id<RcTestObject, Shared> = unsafe {
+                let res: Id<__RcTestObject, Shared> = unsafe {
                     msg_send![$($obj)*, boolAndShouldError: true, error: _]
                 }.expect_err("not err");
                 $expected.alloc += 1;
@@ -334,12 +339,12 @@ mod tests {
 
     #[test]
     fn test_error_bool() {
-        let mut expected = ThreadTestData::current();
+        let mut expected = __ThreadTestData::current();
 
-        let cls = RcTestObject::class();
+        let cls = __RcTestObject::class();
         test_error_bool!(expected, cls);
 
-        let obj = RcTestObject::new();
+        let obj = __RcTestObject::new();
         expected.alloc += 1;
         expected.init += 1;
         test_error_bool!(expected, &obj);
@@ -350,7 +355,7 @@ mod tests {
         test_error_bool!(expected, &obj);
         test_error_bool!(expected, super(&obj));
         test_error_bool!(expected, super(&obj, RcTestObjectSubclass::class()));
-        test_error_bool!(expected, super(&obj, RcTestObject::class()));
+        test_error_bool!(expected, super(&obj, __RcTestObject::class()));
     }
 
     // This is imperfect, but will do for now.
@@ -369,7 +374,7 @@ mod tests {
         ($expected:expr, $if_autorelease_not_skipped:expr, $sel:ident, $($obj:tt)*) => {
             // Succeeds
             let res = autoreleasepool(|_pool| {
-                let res: Result<Id<RcTestObject, Owned>, Id<RcTestObject, Shared>> = unsafe {
+                let res: Result<Id<__RcTestObject, Owned>, Id<__RcTestObject, Shared>> = unsafe {
                     msg_send_id![$($obj)*, $sel: false, error: _]
                 };
                 let res = res.expect("not ok");
@@ -390,7 +395,7 @@ mod tests {
 
             // Errors
             let res = autoreleasepool(|_pool| {
-                let res: Result<Id<RcTestObject, Owned>, Id<RcTestObject, Shared>> = unsafe {
+                let res: Result<Id<__RcTestObject, Owned>, Id<__RcTestObject, Shared>> = unsafe {
                     msg_send_id![$($obj)*, $sel: true, error: _]
                 };
                 $expected.alloc += 1;
@@ -412,13 +417,13 @@ mod tests {
 
     #[test]
     fn test_error_id() {
-        let mut expected = ThreadTestData::current();
+        let mut expected = __ThreadTestData::current();
 
-        let cls = RcTestObject::class();
+        let cls = __RcTestObject::class();
         test_error_id!(expected, IF_AUTORELEASE_NOT_SKIPPED, idAndShouldError, cls);
         test_error_id!(expected, 0, newAndShouldError, cls);
 
-        let obj = RcTestObject::new();
+        let obj = __RcTestObject::new();
         expected.alloc += 1;
         expected.init += 1;
         test_error_id!(expected, IF_AUTORELEASE_NOT_SKIPPED, idAndShouldError, &obj);
@@ -430,17 +435,17 @@ mod tests {
             expected.alloc += 1;
             expected.release += 1;
             expected.dealloc += 1;
-            RcTestObject::alloc()
+            __RcTestObject::alloc()
         });
     }
 
     #[test]
     fn test_error_alloc() {
-        let mut expected = ThreadTestData::current();
+        let mut expected = __ThreadTestData::current();
 
         // Succeeds
-        let res: Result<Allocated<RcTestObject>, Id<RcTestObject, Shared>> =
-            unsafe { msg_send_id![RcTestObject::class(), allocAndShouldError: false, error: _] };
+        let res: Result<Allocated<__RcTestObject>, Id<__RcTestObject, Shared>> =
+            unsafe { msg_send_id![__RcTestObject::class(), allocAndShouldError: false, error: _] };
         let res = res.expect("not ok");
         expected.alloc += 1;
         expected.assert_current();
@@ -452,8 +457,9 @@ mod tests {
 
         // Errors
         let res = autoreleasepool(|_pool| {
-            let res: Result<Allocated<RcTestObject>, Id<RcTestObject, Shared>> =
-                unsafe { msg_send_id![RcTestObject::class(), allocAndShouldError: true, error: _] };
+            let res: Result<Allocated<__RcTestObject>, Id<__RcTestObject, Shared>> = unsafe {
+                msg_send_id![__RcTestObject::class(), allocAndShouldError: true, error: _]
+            };
             expected.alloc += 1;
             expected.init += 1;
             expected.autorelease += 1;

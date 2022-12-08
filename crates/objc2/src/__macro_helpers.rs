@@ -641,7 +641,7 @@ mod tests {
 
     #[cfg(feature = "objc2-proc-macros")]
     use crate::__hash_idents;
-    use crate::rc::{Owned, RcTestObject, Shared, ThreadTestData};
+    use crate::rc::{Owned, Shared, __RcTestObject, __ThreadTestData};
     use crate::runtime::{NSObject, NSZone, Object};
     use crate::{class, msg_send_id, ClassType};
 
@@ -653,8 +653,8 @@ mod tests {
 
     #[test]
     fn test_new_not_on_class() {
-        let mut expected = ThreadTestData::current();
-        let obj = RcTestObject::new();
+        let mut expected = __ThreadTestData::current();
+        let obj = __RcTestObject::new();
 
         let _obj: Id<Object, Shared> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
         let _obj: Option<Id<Object, Shared>> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
@@ -667,9 +667,9 @@ mod tests {
     // newScriptingObjectOfClass only available on macOS
     #[cfg_attr(not(all(feature = "apple", target_os = "macos")), ignore)]
     fn test_new_with_args() {
-        let mut expected = ThreadTestData::current();
+        let mut expected = __ThreadTestData::current();
 
-        let object_class = RcTestObject::class();
+        let object_class = __RcTestObject::class();
         let key: Id<Object, Shared> = unsafe { msg_send_id![class!(NSString), new] };
         let contents_value: *const Object = ptr::null();
         let properties: Id<Object, Shared> = unsafe { msg_send_id![class!(NSDictionary), new] };
@@ -690,10 +690,10 @@ mod tests {
 
     #[test]
     fn test_macro_alloc() {
-        let mut expected = ThreadTestData::current();
-        let cls = RcTestObject::class();
+        let mut expected = __ThreadTestData::current();
+        let cls = __RcTestObject::class();
 
-        let obj: Allocated<RcTestObject> = unsafe { msg_send_id![cls, alloc] };
+        let obj: Allocated<__RcTestObject> = unsafe { msg_send_id![cls, alloc] };
         expected.alloc += 1;
         expected.assert_current();
 
@@ -705,42 +705,42 @@ mod tests {
 
     #[test]
     fn test_alloc_with_zone() {
-        let mut expected = ThreadTestData::current();
-        let cls = RcTestObject::class();
+        let mut expected = __ThreadTestData::current();
+        let cls = __RcTestObject::class();
 
         let zone: *const NSZone = ptr::null();
-        let _obj: Allocated<RcTestObject> = unsafe { msg_send_id![cls, allocWithZone: zone] };
+        let _obj: Allocated<__RcTestObject> = unsafe { msg_send_id![cls, allocWithZone: zone] };
         expected.alloc += 1;
         expected.assert_current();
     }
 
     #[test]
     fn test_macro_init() {
-        let mut expected = ThreadTestData::current();
-        let cls = RcTestObject::class();
+        let mut expected = __ThreadTestData::current();
+        let cls = __RcTestObject::class();
 
-        let obj: Option<Allocated<RcTestObject>> = unsafe { msg_send_id![cls, alloc] };
+        let obj: Option<Allocated<__RcTestObject>> = unsafe { msg_send_id![cls, alloc] };
         expected.alloc += 1;
         // Don't check allocation error
-        let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![obj, init] };
+        let _obj: Id<__RcTestObject, Shared> = unsafe { msg_send_id![obj, init] };
         expected.init += 1;
         expected.assert_current();
 
-        let obj: Option<Allocated<RcTestObject>> = unsafe { msg_send_id![cls, alloc] };
+        let obj: Option<Allocated<__RcTestObject>> = unsafe { msg_send_id![cls, alloc] };
         expected.alloc += 1;
         // Check allocation error before init
         let obj = obj.unwrap();
-        let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![Some(obj), init] };
+        let _obj: Id<__RcTestObject, Shared> = unsafe { msg_send_id![Some(obj), init] };
         expected.init += 1;
         expected.assert_current();
     }
 
     #[test]
     fn test_macro() {
-        let mut expected = ThreadTestData::current();
-        let cls = RcTestObject::class();
+        let mut expected = __ThreadTestData::current();
+        let cls = __RcTestObject::class();
         crate::rc::autoreleasepool(|_| {
-            let _obj: Id<RcTestObject, Owned> = unsafe { msg_send_id![cls, new] };
+            let _obj: Id<__RcTestObject, Owned> = unsafe { msg_send_id![cls, new] };
             expected.alloc += 1;
             expected.init += 1;
             expected.assert_current();
@@ -749,28 +749,28 @@ mod tests {
             expected.alloc += 1;
             expected.assert_current();
 
-            let obj: Id<RcTestObject, Owned> = unsafe { msg_send_id![obj, init] };
+            let obj: Id<__RcTestObject, Owned> = unsafe { msg_send_id![obj, init] };
             expected.init += 1;
             expected.assert_current();
 
-            let _copy: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, copy] };
+            let _copy: Id<__RcTestObject, Shared> = unsafe { msg_send_id![&obj, copy] };
             expected.copy += 1;
             expected.alloc += 1;
             expected.init += 1;
             expected.assert_current();
 
-            let _mutable_copy: Id<RcTestObject, Shared> =
+            let _mutable_copy: Id<__RcTestObject, Shared> =
                 unsafe { msg_send_id![&obj, mutableCopy] };
             expected.mutable_copy += 1;
             expected.alloc += 1;
             expected.init += 1;
             expected.assert_current();
 
-            let _self: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, self] };
+            let _self: Id<__RcTestObject, Shared> = unsafe { msg_send_id![&obj, self] };
             expected.retain += 1;
             expected.assert_current();
 
-            let _desc: Option<Id<RcTestObject, Shared>> =
+            let _desc: Option<Id<__RcTestObject, Shared>> =
                 unsafe { msg_send_id![&obj, description] };
             expected.assert_current();
         });
@@ -788,16 +788,16 @@ mod tests {
     }
 
     #[test]
-    #[should_panic = "failed creating new instance using +[RcTestObject newReturningNull]"]
+    #[should_panic = "failed creating new instance using +[__RcTestObject newReturningNull]"]
     fn test_new_with_null() {
-        let _obj: Id<RcTestObject, Owned> =
-            unsafe { msg_send_id![RcTestObject::class(), newReturningNull] };
+        let _obj: Id<__RcTestObject, Owned> =
+            unsafe { msg_send_id![__RcTestObject::class(), newReturningNull] };
     }
 
     #[test]
-    #[should_panic = "unexpected NULL returned from -[RcTestObject newMethodOnInstanceNull]"]
+    #[should_panic = "unexpected NULL returned from -[__RcTestObject newMethodOnInstanceNull]"]
     fn test_new_any_with_null() {
-        let obj = RcTestObject::new();
+        let obj = __RcTestObject::new();
         let _obj: Id<Object, Shared> = unsafe { msg_send_id![&obj, newMethodOnInstanceNull] };
     }
 
@@ -810,40 +810,40 @@ mod tests {
     }
 
     #[test]
-    #[should_panic = "failed allocating with +[RcTestObject allocReturningNull]"]
+    #[should_panic = "failed allocating with +[__RcTestObject allocReturningNull]"]
     fn test_alloc_with_null() {
-        let _obj: Allocated<RcTestObject> =
-            unsafe { msg_send_id![RcTestObject::class(), allocReturningNull] };
+        let _obj: Allocated<__RcTestObject> =
+            unsafe { msg_send_id![__RcTestObject::class(), allocReturningNull] };
     }
 
     #[test]
     #[should_panic = "failed initializing object with -initReturningNull"]
     fn test_init_with_null() {
-        let obj: Option<Allocated<RcTestObject>> =
-            unsafe { msg_send_id![RcTestObject::class(), alloc] };
-        let _obj: Id<RcTestObject, Owned> = unsafe { msg_send_id![obj, initReturningNull] };
+        let obj: Option<Allocated<__RcTestObject>> =
+            unsafe { msg_send_id![__RcTestObject::class(), alloc] };
+        let _obj: Id<__RcTestObject, Owned> = unsafe { msg_send_id![obj, initReturningNull] };
     }
 
     #[test]
     #[should_panic = "failed allocating object"]
     #[cfg(not(debug_assertions))] // Does NULL receiver checks
     fn test_init_with_null_receiver() {
-        let obj: Option<Allocated<RcTestObject>> = None;
-        let _obj: Id<RcTestObject, Owned> = unsafe { msg_send_id![obj, init] };
+        let obj: Option<Allocated<__RcTestObject>> = None;
+        let _obj: Id<__RcTestObject, Owned> = unsafe { msg_send_id![obj, init] };
     }
 
     #[test]
     #[should_panic = "failed copying object"]
     fn test_copy_with_null() {
-        let obj = Id::into_shared(RcTestObject::new());
-        let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, copyReturningNull] };
+        let obj = Id::into_shared(__RcTestObject::new());
+        let _obj: Id<__RcTestObject, Shared> = unsafe { msg_send_id![&obj, copyReturningNull] };
     }
 
     #[test]
-    #[should_panic = "unexpected NULL returned from -[RcTestObject methodReturningNull]"]
+    #[should_panic = "unexpected NULL returned from -[__RcTestObject methodReturningNull]"]
     fn test_normal_with_null() {
-        let obj = Id::into_shared(RcTestObject::new());
-        let _obj: Id<RcTestObject, Shared> = unsafe { msg_send_id![&obj, methodReturningNull] };
+        let obj = Id::into_shared(__RcTestObject::new());
+        let _obj: Id<__RcTestObject, Shared> = unsafe { msg_send_id![&obj, methodReturningNull] };
     }
 
     #[test]

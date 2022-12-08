@@ -3,8 +3,8 @@ use core::marker::PhantomData;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{NSObject, NSString};
-use crate::rc::{Id, Shared};
-use crate::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::rc::{Id, Shared};
+use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// A thread of execution.
@@ -106,9 +106,9 @@ fn make_multithreaded() {
 /// Use when designing APIs that are only safe to use on the main thread:
 ///
 /// ```no_run
-/// use objc2::foundation::MainThreadMarker;
-/// use objc2::runtime::Object;
-/// use objc2::msg_send;
+/// use icrate::Foundation::MainThreadMarker;
+/// use icrate::objc2::runtime::Object;
+/// use icrate::objc2::msg_send;
 /// # let obj = 0 as *const Object;
 ///
 /// // This action requires the main thread, so we take a marker as parameter.

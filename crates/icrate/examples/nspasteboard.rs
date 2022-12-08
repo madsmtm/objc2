@@ -63,7 +63,7 @@ impl NSPasteboard {
     /// <https://developer.apple.com/documentation/appkit/nspasteboard/1524454-readobjectsforclasses?language=objc>
     pub fn text_impl_2(&self) -> Id<NSString, Shared> {
         // The NSPasteboard API is a bit weird, it requires you to pass
-        // classes as objects, which `objc2::foundation::NSArray` was not
+        // classes as objects, which `icrate::Foundation::NSArray` was not
         // really made for - so we convert the class to an `Object` type
         // instead. Also, we wrap it in `ManuallyDrop` because I'm not sure
         // how classes handle `release` calls?

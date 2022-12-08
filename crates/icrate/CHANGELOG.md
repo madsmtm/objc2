@@ -1,22 +1,27 @@
 # Changelog
 
-Changes to the `objc2::foundation` module will be documented in this file.
-This previously existed as a separate crate `objc2_foundation`, hence the
-separation.
+Changes to `icrate` will be documented in this file.
+
+This previously existed as a separate crate `objc2_foundation`, later it was
+integrated into `objc2::foundation`, and later again split out - hence the
+confusing versioning.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased - YYYY-MM-DD
+## icrate Unreleased - YYYY-MM-DD
 
 ### Added
 * Added `NSString::write_to_file`.
 * Added `NSLock` class and `NSLocking` protocol.
 
+### Changed
+* **BREAKING**: Moved from `objc2::foundation` into `icrate::Foundation`.
+
 ### Fixed
 * Fixed `NSZone` not being `#[repr(C)]`.
 
 
-## objc2 0.3.0-beta.3 - 2022-09-01
+## objc2::foundation 0.3.0-beta.3 - 2022-09-01
 
 ### Added
 * Added `NSSet`.
@@ -36,7 +41,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   binding to requires a non-negative size.
 
 
-## objc2 0.3.0-beta.2 - 2022-08-28
+## objc2::foundation 0.3.0-beta.2 - 2022-08-28
 
 ### Added
 * Added `NSNumber`.

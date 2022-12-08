@@ -2,8 +2,8 @@ use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{NSCopying, NSDictionary, NSObject, NSString};
-use crate::rc::{Id, Shared};
-use crate::{extern_class, extern_methods, ClassType};
+use objc2::rc::{Id, Shared};
+use objc2::{extern_class, extern_methods, ClassType};
 
 extern_class!(
     /// A representation of the code and resources stored in a bundle

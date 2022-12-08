@@ -3,10 +3,10 @@ use core::hint::unreachable_unchecked;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use super::{NSCopying, NSDictionary, NSObject, NSString};
-use crate::exception::Exception;
-use crate::rc::{Id, Shared};
-use crate::runtime::Object;
-use crate::{extern_class, extern_methods, msg_send_id, sel, ClassType};
+use objc2::exception::Exception;
+use objc2::rc::{Id, Shared};
+use objc2::runtime::Object;
+use objc2::{extern_class, extern_methods, msg_send_id, sel, ClassType};
 
 extern_class!(
     /// A special condition that interrupts the normal flow of program

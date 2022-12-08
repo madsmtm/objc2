@@ -4,9 +4,9 @@ use core::ptr;
 use core::slice;
 use std::os::raw::c_ulong;
 
-use crate::rc::{Id, Owned};
-use crate::runtime::Object;
-use crate::{msg_send, Encode, Encoding, Message, RefEncode};
+use objc2::rc::{Id, Owned};
+use objc2::runtime::Object;
+use objc2::{msg_send, Encode, Encoding, Message, RefEncode};
 
 // TODO: https://doc.rust-lang.org/stable/reference/trait-bounds.html#lifetime-bounds
 pub struct NSEnumerator<'a, T: Message> {
@@ -168,7 +168,7 @@ impl<'a, C: NSFastEnumeration + ?Sized> Iterator for NSFastEnumerator<'a, C> {
 #[cfg(test)]
 mod tests {
     use super::NSFastEnumeration;
-    use crate::foundation::{NSArray, NSNumber};
+    use crate::Foundation::{NSArray, NSNumber};
 
     #[test]
     fn test_enumerator() {

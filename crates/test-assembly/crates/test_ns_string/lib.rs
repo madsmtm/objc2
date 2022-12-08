@@ -1,7 +1,7 @@
 //! Test the output of the `ns_string!` macro.
 #![cfg(feature = "Foundation")]
 
-use icrate::Foundation::ns_string;
+use icrate::ns_string;
 use icrate::Foundation::NSString;
 
 // Temporary to allow testing putting string references in statics.
@@ -10,14 +10,14 @@ use icrate::Foundation::NSString;
 #[no_mangle]
 static EMPTY: &NSString = {
     const INPUT: &[u8] = b"";
-    icrate::objc2::__ns_string_inner!(@inner INPUT);
+    icrate::__ns_string_inner!(@inner INPUT);
     CFSTRING.as_nsstring_const()
 };
 #[cfg(feature = "apple")]
 #[no_mangle]
 static XYZ: &NSString = {
     const INPUT: &[u8] = b"xyz";
-    icrate::objc2::__ns_string_inner!(@inner INPUT);
+    icrate::__ns_string_inner!(@inner INPUT);
     CFSTRING.as_nsstring_const()
 };
 

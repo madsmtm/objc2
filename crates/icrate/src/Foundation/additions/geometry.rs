@@ -1,4 +1,4 @@
-use crate::{Encode, Encoding, RefEncode};
+use objc2::encode::{Encode, Encoding, RefEncode};
 
 #[cfg(target_pointer_width = "64")]
 type InnerFloat = f64;
@@ -73,7 +73,7 @@ impl CGPoint {
     /// # Examples
     ///
     /// ```
-    /// use objc2::foundation::CGPoint;
+    /// use icrate::Foundation::CGPoint;
     /// assert_eq!(CGPoint::new(10.0, -2.3), CGPoint { x: 10.0, y: -2.3 });
     /// ```
     #[inline]
@@ -89,7 +89,7 @@ impl CGPoint {
     /// # Examples
     ///
     /// ```
-    /// use objc2::foundation::CGPoint;
+    /// use icrate::Foundation::CGPoint;
     /// assert_eq!(CGPoint::ZERO, CGPoint { x: 0.0, y: 0.0 });
     /// ```
     #[doc(alias = "NSZeroPoint")]
@@ -134,7 +134,7 @@ impl CGSize {
     /// # Examples
     ///
     /// ```
-    /// use objc2::foundation::CGSize;
+    /// use icrate::Foundation::CGSize;
     /// let size = CGSize::new(10.0, 2.3);
     /// assert_eq!(size.width, 10.0);
     /// assert_eq!(size.height, 2.3);
@@ -143,7 +143,7 @@ impl CGSize {
     /// Negative values are allowed (though often undesired).
     ///
     /// ```
-    /// use objc2::foundation::CGSize;
+    /// use icrate::Foundation::CGSize;
     /// let size = CGSize::new(-1.0, 0.0);
     /// assert_eq!(size.width, -1.0);
     /// ```
@@ -168,7 +168,7 @@ impl CGSize {
     /// # Examples
     ///
     /// ```
-    /// use objc2::foundation::CGSize;
+    /// use icrate::Foundation::CGSize;
     /// assert_eq!(CGSize::new(-1.0, 1.0).abs(), CGSize::new(1.0, 1.0));
     /// ```
     #[inline]
@@ -182,7 +182,7 @@ impl CGSize {
     /// # Examples
     ///
     /// ```
-    /// use objc2::foundation::CGSize;
+    /// use icrate::Foundation::CGSize;
     /// assert_eq!(CGSize::ZERO, CGSize { width: 0.0, height: 0.0 });
     /// ```
     #[doc(alias = "NSZeroSize")]
@@ -229,7 +229,7 @@ impl CGRect {
     /// # Examples
     ///
     /// ```
-    /// use objc2::foundation::{CGPoint, CGRect, CGSize};
+    /// use icrate::Foundation::{CGPoint, CGRect, CGSize};
     /// let origin = CGPoint::new(10.0, -2.3);
     /// let size = CGSize::new(5.0, 0.0);
     /// let rect = CGRect::new(origin, size);
@@ -254,7 +254,7 @@ impl CGRect {
     /// # Examples
     ///
     /// ```
-    /// use objc2::foundation::{CGPoint, CGRect, CGSize};
+    /// use icrate::Foundation::{CGPoint, CGRect, CGSize};
     /// let origin = CGPoint::new(1.0, 1.0);
     /// let size = CGSize::new(-5.0, -2.0);
     /// let rect = CGRect::new(origin, size);
@@ -308,7 +308,7 @@ impl CGRect {
     /// # Examples
     ///
     /// ```
-    /// use objc2::foundation::{CGPoint, CGRect, CGSize};
+    /// use icrate::Foundation::{CGPoint, CGRect, CGSize};
     /// assert!(CGRect::ZERO.is_empty());
     /// let point = CGPoint::new(1.0, 2.0);
     /// assert!(CGRect::new(point, CGSize::ZERO).is_empty());
@@ -391,7 +391,7 @@ mod tests {
     #[test]
     #[cfg(any(all(feature = "apple", target_os = "macos"), feature = "gnustep-1-7"))] // or macabi
     fn test_partial_eq() {
-        use crate::runtime::Bool;
+        use objc2::runtime::Bool;
 
         // Note: No need to use "C-unwind"
         extern "C" {

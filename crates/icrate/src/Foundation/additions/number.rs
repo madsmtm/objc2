@@ -9,8 +9,8 @@ use std::os::raw::{
 use super::{
     CGFloat, NSComparisonResult, NSCopying, NSInteger, NSObject, NSString, NSUInteger, NSValue,
 };
-use crate::rc::{Id, Shared};
-use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType, Encoding};
+use objc2::rc::{Id, Shared};
+use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType, Encoding};
 
 extern_class!(
     /// An object wrapper for primitive scalars.
@@ -167,9 +167,9 @@ impl NSNumber {
     /// number properties.
     ///
     /// ```
-    /// use objc2::Encoding;
-    /// use objc2::foundation::NSNumber;
-    /// use objc2::rc::{Id, Shared};
+    /// use icrate::Foundation::NSNumber;
+    /// use icrate::objc2::Encoding;
+    /// use icrate::objc2::rc::{Id, Shared};
     ///
     /// // Note: `bool` would convert to either `Signed` or `Unsigned`,
     /// // depending on platform

@@ -6,8 +6,8 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr;
 
 use super::{NSArray, NSCopying, NSDictionary, NSFastEnumeration, NSObject};
-use crate::rc::{DefaultId, Id, Owned, Shared};
-use crate::{ClassType, __inner_extern_class, extern_methods, msg_send_id, Message};
+use objc2::rc::{DefaultId, Id, Owned, Shared};
+use objc2::{ClassType, __inner_extern_class, extern_methods, msg_send_id, Message};
 
 __inner_extern_class!(
     /// A mutable collection of objects associated with unique keys.
@@ -46,7 +46,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableDictionary, NSObject, NSString};
+        /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -67,7 +67,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableDictionary, NSNumber, NSObject};
+        /// use icrate::Foundation::{NSMutableDictionary, NSNumber, NSObject};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         /// let dict = NSMutableDictionary::from_keys_and_objects(
@@ -93,8 +93,8 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableDictionary, NSObject, NSString};
-        /// use objc2::ns_string;
+        /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
+        /// use icrate::ns_string;
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -114,7 +114,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableDictionary, NSObject, NSString};
+        /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -148,7 +148,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableDictionary, NSObject, NSString};
+        /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -176,8 +176,8 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableDictionary, NSObject, NSString};
-        /// use objc2::ns_string;
+        /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
+        /// use icrate::ns_string;
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -203,7 +203,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableDictionary, NSObject, NSString};
+        /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -222,7 +222,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableDictionary, NSObject, NSString};
+        /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -276,10 +276,8 @@ mod tests {
     use super::*;
     use alloc::vec;
 
-    use crate::{
-        foundation::{NSNumber, NSString},
-        rc::{RcTestObject, ThreadTestData},
-    };
+    use crate::Foundation::{NSNumber, NSString};
+    use objc2::rc::{__RcTestObject, __ThreadTestData};
 
     fn sample_dict() -> Id<NSMutableDictionary<NSNumber, NSObject>, Owned> {
         NSMutableDictionary::from_keys_and_objects(
@@ -326,10 +324,10 @@ mod tests {
     #[test]
     fn test_insert_retain_release() {
         let mut dict = NSMutableDictionary::new();
-        dict.insert(NSNumber::new_i32(1), RcTestObject::new());
-        let mut expected = ThreadTestData::current();
+        dict.insert(NSNumber::new_i32(1), __RcTestObject::new());
+        let mut expected = __ThreadTestData::current();
 
-        let old = dict.insert(NSNumber::new_i32(1), RcTestObject::new());
+        let old = dict.insert(NSNumber::new_i32(1), __RcTestObject::new());
         expected.alloc += 1;
         expected.init += 1;
         expected.retain += 2;
@@ -366,9 +364,9 @@ mod tests {
     fn test_remove_clear_release_dealloc() {
         let mut dict = NSMutableDictionary::new();
         for i in 0..4 {
-            dict.insert(NSNumber::new_i32(i), RcTestObject::new());
+            dict.insert(NSNumber::new_i32(i), __RcTestObject::new());
         }
-        let mut expected = ThreadTestData::current();
+        let mut expected = __ThreadTestData::current();
 
         let _obj = dict.remove(&NSNumber::new_i32(1));
         expected.retain += 1;

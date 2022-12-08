@@ -19,8 +19,8 @@
 //! call a method on them using the [`msg_send!`] family of macros.
 //!
 //! [pull requests]: https://github.com/madsmtm/objc2/pulls
-//! [`Message`]: crate::Message
-//! [`msg_send!`]: crate::msg_send
+//! [`Message`]: crate::objc2::Message
+//! [`msg_send!`]: crate::objc2::msg_send
 //!
 //!
 //! # Use of `Deref`
@@ -43,9 +43,9 @@
 //! conversion, that is a possibility too.
 //!
 //! [`Deref`]: std::ops::Deref
-//! [`ClassType`]: crate::ClassType
+//! [`ClassType`]: crate::objc2::ClassType
 //! [anti-pattern-deref]: https://rust-unofficial.github.io/patterns/anti_patterns/deref.html
-//! [`Id::into_super`]: crate::rc::Id::into_super
+//! [`Id::into_super`]: objc2::rc::Id::into_super
 
 // TODO: Remove these
 #![allow(missing_docs)]
@@ -80,18 +80,18 @@ pub use self::thread::{is_main_thread, is_multi_threaded, MainThreadMarker, NSTh
 #[cfg(not(macos_10_7))] // Temporary
 pub use self::uuid::NSUUID;
 pub use self::value::NSValue;
-pub use crate::runtime::{NSObject, NSZone};
+pub use objc2::runtime::{NSObject, NSZone};
 
 // Available under Foundation, so makes sense here as well:
 // https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
 #[doc(no_inline)]
-pub use crate::ffi::{NSInteger, NSUInteger};
+pub use objc2::ffi::{NSInteger, NSUInteger};
 
 /// A value indicating that a requested item couldn’t be found or doesn’t exist.
 ///
 /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsnotfound?language=objc).
 #[allow(non_upper_case_globals)]
-pub const NSNotFound: NSInteger = crate::ffi::NSIntegerMax;
+pub const NSNotFound: NSInteger = objc2::ffi::NSIntegerMax;
 
 /// A number of seconds.
 ///
@@ -142,7 +142,7 @@ mod tests {
     use core::panic::{RefUnwindSafe, UnwindSafe};
 
     use super::*;
-    use crate::rc::{Id, Owned, Shared};
+    use objc2::rc::{Id, Owned, Shared};
 
     // We expect most Foundation types to be UnwindSafe and RefUnwindSafe,
     // since they follow Rust's usual mutability rules (&T = immutable).

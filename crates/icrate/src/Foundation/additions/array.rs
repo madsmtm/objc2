@@ -8,9 +8,9 @@ use super::{
     NSCopying, NSEnumerator, NSFastEnumeration, NSFastEnumerator, NSMutableArray, NSMutableCopying,
     NSObject, NSRange,
 };
-use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use crate::runtime::Object;
-use crate::{ClassType, Message, __inner_extern_class, extern_methods, msg_send, msg_send_id};
+use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
+use objc2::runtime::Object;
+use objc2::{ClassType, Message, __inner_extern_class, extern_methods, msg_send, msg_send_id};
 
 __inner_extern_class!(
     /// An immutable ordered collection of objects.
@@ -306,8 +306,8 @@ mod tests {
     use alloc::vec::Vec;
 
     use super::*;
-    use crate::foundation::{NSNumber, NSString};
-    use crate::rc::{RcTestObject, ThreadTestData};
+    use crate::Foundation::{NSNumber, NSString};
+    use objc2::rc::{__RcTestObject, __ThreadTestData};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
         let mut vec = Vec::with_capacity(len);
@@ -377,8 +377,8 @@ mod tests {
 
     #[test]
     fn test_retains_stored() {
-        let obj = Id::into_shared(RcTestObject::new());
-        let mut expected = ThreadTestData::current();
+        let obj = Id::into_shared(__RcTestObject::new());
+        let mut expected = __ThreadTestData::current();
 
         let input = [obj.clone(), obj.clone()];
         expected.retain += 2;
@@ -417,9 +417,9 @@ mod tests {
 
     #[test]
     fn test_nscopying_uses_retain() {
-        let obj = Id::into_shared(RcTestObject::new());
+        let obj = Id::into_shared(__RcTestObject::new());
         let array = NSArray::from_slice(&[obj]);
-        let mut expected = ThreadTestData::current();
+        let mut expected = __ThreadTestData::current();
 
         let _copy = array.copy();
         expected.assert_current();
@@ -435,9 +435,9 @@ mod tests {
         ignore = "this works differently on different framework versions"
     )]
     fn test_iter_no_retain() {
-        let obj = Id::into_shared(RcTestObject::new());
+        let obj = Id::into_shared(__RcTestObject::new());
         let array = NSArray::from_slice(&[obj]);
-        let mut expected = ThreadTestData::current();
+        let mut expected = __ThreadTestData::current();
 
         let iter = array.iter();
         expected.retain += 0;

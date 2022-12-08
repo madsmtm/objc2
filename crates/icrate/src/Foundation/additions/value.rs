@@ -9,8 +9,8 @@ use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
 use super::{NSCopying, NSObject, NSPoint, NSRange, NSRect, NSSize};
-use crate::rc::{Id, Shared};
-use crate::{extern_class, extern_methods, msg_send, msg_send_id, ClassType, Encode};
+use objc2::rc::{Id, Shared};
+use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType, Encode};
 
 extern_class!(
     /// A container wrapping any encodable type as an Obective-C object.
@@ -58,7 +58,7 @@ extern_methods!(
         /// Create an `NSValue` containing an [`NSPoint`][super::NSPoint].
         ///
         /// ```
-        /// use objc2::foundation::{NSPoint, NSValue};
+        /// use icrate::Foundation::{NSPoint, NSValue};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         /// let val = NSValue::new::<NSPoint>(NSPoint::new(1.0, 1.0));
@@ -108,7 +108,7 @@ extern_methods!(
         /// ```
         /// use std::ffi::c_void;
         /// use std::ptr;
-        /// use objc2::foundation::NSValue;
+        /// use icrate::Foundation::NSValue;
         ///
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
@@ -237,7 +237,7 @@ mod tests {
     use core::{ptr, slice};
 
     use super::*;
-    use crate::rc::{RcTestObject, ThreadTestData};
+    use objc2::rc::{__RcTestObject, __ThreadTestData};
 
     #[test]
     fn basic() {
@@ -247,13 +247,16 @@ mod tests {
 
     #[test]
     fn does_not_retain() {
-        let obj = RcTestObject::new();
-        let expected = ThreadTestData::current();
+        let obj = __RcTestObject::new();
+        let expected = __ThreadTestData::current();
 
-        let val = NSValue::new::<*const RcTestObject>(&*obj);
+        let val = NSValue::new::<*const __RcTestObject>(&*obj);
         expected.assert_current();
 
-        assert!(ptr::eq(unsafe { val.get::<*const RcTestObject>() }, &*obj));
+        assert!(ptr::eq(
+            unsafe { val.get::<*const __RcTestObject>() },
+            &*obj
+        ));
         expected.assert_current();
 
         let _clone = val.clone();

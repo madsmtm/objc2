@@ -4,8 +4,8 @@ use core::marker::PhantomData;
 
 use super::set::with_objects;
 use super::{NSCopying, NSFastEnumeration, NSFastEnumerator, NSMutableCopying, NSObject, NSSet};
-use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use crate::{ClassType, Message, __inner_extern_class, extern_methods};
+use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
+use objc2::{ClassType, Message, __inner_extern_class, extern_methods};
 
 __inner_extern_class!(
     /// A growable unordered collection of unique objects.
@@ -38,7 +38,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableSet, NSString};
+        /// use icrate::Foundation::{NSMutableSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -54,7 +54,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableSet, NSString};
+        /// use icrate::Foundation::{NSMutableSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -73,7 +73,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableSet, NSString};
+        /// use icrate::Foundation::{NSMutableSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -91,7 +91,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableSet, NSMutableString};
+        /// use icrate::Foundation::{NSMutableSet, NSMutableString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -117,7 +117,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableSet, NSString};
+        /// use icrate::Foundation::{NSMutableSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -148,7 +148,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableSet, NSString};
+        /// use icrate::Foundation::{NSMutableSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -180,8 +180,8 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableSet, NSString};
-        /// use objc2::ns_string;
+        /// use icrate::Foundation::{NSMutableSet, NSString};
+        /// use icrate::ns_string;
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -258,9 +258,9 @@ mod tests {
     use alloc::vec;
 
     use super::*;
-    use crate::foundation::{NSMutableString, NSString};
     use crate::ns_string;
-    use crate::rc::{RcTestObject, ThreadTestData};
+    use crate::Foundation::{NSMutableString, NSString};
+    use objc2::rc::{__RcTestObject, __ThreadTestData};
 
     #[test]
     fn test_insert() {
@@ -332,9 +332,9 @@ mod tests {
     #[test]
     fn test_insert_retain_release() {
         let mut set = NSMutableSet::new();
-        let obj1 = RcTestObject::new();
-        let obj2 = RcTestObject::new();
-        let mut expected = ThreadTestData::current();
+        let obj1 = __RcTestObject::new();
+        let obj2 = __RcTestObject::new();
+        let mut expected = __ThreadTestData::current();
 
         set.insert(obj1);
         expected.retain += 1;
@@ -354,9 +354,9 @@ mod tests {
     fn test_clear_release_dealloc() {
         let mut set = NSMutableSet::new();
         for _ in 0..4 {
-            set.insert(RcTestObject::new());
+            set.insert(__RcTestObject::new());
         }
-        let mut expected = ThreadTestData::current();
+        let mut expected = __ThreadTestData::current();
 
         set.clear();
         expected.release += 4;

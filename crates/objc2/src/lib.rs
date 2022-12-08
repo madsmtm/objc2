@@ -217,8 +217,6 @@ mod cache;
 mod class_type;
 pub mod declare;
 pub mod exception;
-#[cfg(feature = "foundation")]
-pub mod foundation;
 mod macros;
 mod message;
 mod protocol;
@@ -227,6 +225,11 @@ pub mod runtime;
 #[cfg(test)]
 mod test_utils;
 mod verify;
+
+#[cfg(test)]
+#[cfg_attr(feature = "apple", link(name = "Foundation", kind = "framework"))]
+#[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-base", kind = "dylib"))]
+extern "C" {}
 
 /// Hacky way to make GNUStep link properly to Foundation while testing.
 ///

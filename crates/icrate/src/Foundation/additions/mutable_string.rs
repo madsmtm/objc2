@@ -4,8 +4,8 @@ use core::ops::AddAssign;
 use core::str;
 
 use super::{NSCopying, NSMutableCopying, NSObject, NSString};
-use crate::rc::{DefaultId, Id, Owned, Shared};
-use crate::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::rc::{DefaultId, Id, Owned, Shared};
+use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// A dynamic plain-text Unicode string object.

@@ -66,6 +66,11 @@
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 ///
+/// // Link to the Foundation framework
+/// #[cfg_attr(feature = "apple", link(name = "Foundation", kind = "framework"))]
+/// #[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-base", kind = "dylib"))]
+/// extern "C" {}
+///
 /// extern_class!(
 ///     /// An example description.
 ///     #[derive(PartialEq, Eq, Hash)] // Uses the superclass' implementation

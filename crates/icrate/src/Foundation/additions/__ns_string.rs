@@ -17,9 +17,9 @@ use core::mem::ManuallyDrop;
 use core::ptr;
 use core::sync::atomic::{AtomicPtr, Ordering};
 
-use crate::foundation::NSString;
-use crate::rc::Id;
-use crate::runtime::Class;
+use crate::Foundation::NSString;
+use objc2::rc::Id;
+use objc2::runtime::Class;
 
 // This is defined in CoreFoundation, but we don't emit a link attribute
 // here because it is already linked via Foundation.
@@ -239,7 +239,7 @@ impl CachedNSString {
     }
 }
 
-/// Creates an [`NSString`][`crate::foundation::NSString`] from a static string.
+/// Creates an [`NSString`][`crate::Foundation::NSString`] from a static string.
 ///
 /// Note: This works by placing statics in special sections, which may not
 /// work completely reliably yet, see [#258]; until then, you should be
@@ -254,8 +254,8 @@ impl CachedNSString {
 /// the argument, and produces a `&'static NSString`:
 ///
 /// ```
-/// use objc2::ns_string;
-/// use objc2::foundation::NSString;
+/// use icrate::ns_string;
+/// use icrate::Foundation::NSString;
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 /// let hello: &'static NSString = ns_string!("hello");
@@ -274,7 +274,7 @@ impl CachedNSString {
 /// string to the most efficient encoding, you don't have to do anything!
 ///
 /// ```
-/// # use objc2::ns_string;
+/// # use icrate::ns_string;
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 /// let hello_ru = ns_string!("Привет");
@@ -292,7 +292,7 @@ impl CachedNSString {
 /// expect:
 ///
 /// ```
-/// # use objc2::ns_string;
+/// # use icrate::ns_string;
 /// # #[cfg(feature = "gnustep-1-7")]
 /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 /// let example = ns_string!("example\0");
@@ -312,8 +312,8 @@ impl CachedNSString {
 /// Because of that, this should be preferred over [`NSString::from_str`]
 /// where possible.
 ///
-/// [`NSString::from_str`]: crate::foundation::NSString::from_str
-#[cfg(feature = "foundation")] // For auto_doc_cfg
+/// [`NSString::from_str`]: crate::Foundation::NSString::from_str
+#[cfg(feature = "Foundation")] // For auto_doc_cfg
 #[macro_export]
 macro_rules! ns_string {
     ($s:expr) => {{
@@ -362,7 +362,7 @@ macro_rules! __ns_string_inner {
         // The full UTF-16 contents along with the written length.
         const UTF16_FULL: (&[u16; $inp.len()], usize) = {
             let mut out = [0u16; $inp.len()];
-            let mut iter = $crate::foundation::__ns_string::EncodeUtf16Iter::new($inp);
+            let mut iter = $crate::Foundation::__ns_string::EncodeUtf16Iter::new($inp);
             let mut written = 0;
 
             while let Some((state, chars)) = iter.next() {
@@ -403,17 +403,17 @@ macro_rules! __ns_string_inner {
         // The section is the same as what clang sets, see:
         // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CodeGenModule.cpp#L5243
         #[link_section = "__DATA,__cfstring"]
-        static CFSTRING: $crate::foundation::__ns_string::CFConstString = unsafe {
-            if $crate::foundation::__ns_string::is_ascii_no_nul($inp) {
+        static CFSTRING: $crate::Foundation::__ns_string::CFConstString = unsafe {
+            if $crate::Foundation::__ns_string::is_ascii_no_nul($inp) {
                 // This is technically an optimization (UTF-16 strings are
                 // always valid), but it's a fairly important one!
-                $crate::foundation::__ns_string::CFConstString::new_ascii(
-                    &$crate::foundation::__ns_string::__CFConstantStringClassReference,
+                $crate::Foundation::__ns_string::CFConstString::new_ascii(
+                    &$crate::Foundation::__ns_string::__CFConstantStringClassReference,
                     &ASCII,
                 )
             } else {
-                $crate::foundation::__ns_string::CFConstString::new_utf16(
-                    &$crate::foundation::__ns_string::__CFConstantStringClassReference,
+                $crate::Foundation::__ns_string::CFConstString::new_utf16(
+                    &$crate::Foundation::__ns_string::__CFConstantStringClassReference,
                     &UTF16,
                 )
             }
@@ -426,7 +426,7 @@ macro_rules! __ns_string_inner {
 #[macro_export]
 macro_rules! __ns_string_inner {
     ($inp:ident) => {{
-        use $crate::foundation::__ns_string::CachedNSString;
+        use $crate::Foundation::__ns_string::CachedNSString;
         static CACHED_NSSTRING: CachedNSString = CachedNSString::new();
         CACHED_NSSTRING.get($inp)
     }};

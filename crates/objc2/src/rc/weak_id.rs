@@ -150,13 +150,13 @@ impl<T: Message> TryFrom<WeakId<T>> for Id<T, Shared> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::rc::{RcTestObject, ThreadTestData};
+    use crate::rc::{__RcTestObject, __ThreadTestData};
     use crate::runtime::Object;
 
     #[test]
     fn test_weak() {
-        let obj: Id<_, Shared> = RcTestObject::new().into();
-        let mut expected = ThreadTestData::current();
+        let obj: Id<_, Shared> = __RcTestObject::new().into();
+        let mut expected = __ThreadTestData::current();
 
         let weak = WeakId::new(&obj);
         expected.assert_current();
@@ -184,8 +184,8 @@ mod tests {
 
     #[test]
     fn test_weak_clone() {
-        let obj: Id<_, Shared> = RcTestObject::new().into();
-        let mut expected = ThreadTestData::current();
+        let obj: Id<_, Shared> = __RcTestObject::new().into();
+        let mut expected = __ThreadTestData::current();
 
         let weak = WeakId::new(&obj);
         expected.assert_current();

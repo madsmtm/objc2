@@ -7,8 +7,8 @@ use super::{
     NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSFastEnumerator, NSMutableCopying,
     NSMutableSet, NSObject,
 };
-use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use crate::{ClassType, Message, __inner_extern_class, extern_methods, msg_send, msg_send_id};
+use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
+use objc2::{ClassType, Message, __inner_extern_class, extern_methods, msg_send, msg_send_id};
 
 __inner_extern_class!(
     /// An immutable unordered collection of unique objects.
@@ -58,7 +58,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSSet, NSString};
+        /// use icrate::Foundation::{NSSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -78,7 +78,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSSet, NSString};
+        /// use icrate::Foundation::{NSSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -99,7 +99,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSSet, NSString};
+        /// use icrate::Foundation::{NSSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -116,7 +116,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSSet, NSString};
+        /// use icrate::Foundation::{NSSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -133,7 +133,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSSet, NSString};
+        /// use icrate::Foundation::{NSSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -151,7 +151,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSSet, NSString};
+        /// use icrate::Foundation::{NSSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -174,7 +174,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSMutableString, NSSet};
+        /// use icrate::Foundation::{NSMutableString, NSSet};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -200,7 +200,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSSet, NSString};
+        /// use icrate::Foundation::{NSSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -223,7 +223,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSNumber, NSSet, NSString};
+        /// use icrate::Foundation::{NSNumber, NSSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -250,8 +250,8 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSSet, NSString};
-        /// use objc2::ns_string;
+        /// use icrate::Foundation::{NSSet, NSString};
+        /// use icrate::ns_string;
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -269,8 +269,8 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSSet, NSString};
-        /// use objc2::ns_string;
+        /// use icrate::Foundation::{NSSet, NSString};
+        /// use icrate::ns_string;
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -289,7 +289,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSSet, NSString};
+        /// use icrate::Foundation::{NSSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -309,7 +309,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSSet, NSString};
+        /// use icrate::Foundation::{NSSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -331,7 +331,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use objc2::foundation::{NSSet, NSString};
+        /// use icrate::Foundation::{NSSet, NSString};
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
@@ -400,9 +400,9 @@ mod tests {
     use alloc::vec;
 
     use super::*;
-    use crate::foundation::{NSMutableString, NSNumber, NSString};
     use crate::ns_string;
-    use crate::rc::{RcTestObject, ThreadTestData};
+    use crate::Foundation::{NSMutableString, NSNumber, NSString};
+    use objc2::rc::{__RcTestObject, __ThreadTestData};
 
     #[test]
     fn test_new() {
@@ -604,8 +604,8 @@ mod tests {
 
     #[test]
     fn test_retains_stored() {
-        let obj = Id::into_shared(RcTestObject::new());
-        let mut expected = ThreadTestData::current();
+        let obj = Id::into_shared(__RcTestObject::new());
+        let mut expected = __ThreadTestData::current();
 
         let input = [obj.clone(), obj.clone()];
         expected.retain += 2;
@@ -639,9 +639,9 @@ mod tests {
 
     #[test]
     fn test_nscopying_uses_retain() {
-        let obj = Id::into_shared(RcTestObject::new());
+        let obj = Id::into_shared(__RcTestObject::new());
         let set = NSSet::from_slice(&[obj]);
-        let mut expected = ThreadTestData::current();
+        let mut expected = __ThreadTestData::current();
 
         let _copy = set.copy();
         expected.assert_current();
@@ -657,9 +657,9 @@ mod tests {
         ignore = "this works differently on different framework versions"
     )]
     fn test_iter_no_retain() {
-        let obj = Id::into_shared(RcTestObject::new());
+        let obj = Id::into_shared(__RcTestObject::new());
         let set = NSSet::from_slice(&[obj]);
-        let mut expected = ThreadTestData::current();
+        let mut expected = __ThreadTestData::current();
 
         let iter = set.iter();
         expected.retain += 0;

@@ -1,7 +1,6 @@
 # Changelog
 
-Notable changes to this crate will be documented in this file. See the
-`CHANGELOG_FOUNDATION.md` file for changes to the `objc2::foundation` module!
+Notable changes to this crate will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
@@ -61,6 +60,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: `declare_class!` uses `ConformsTo<...>` instead of the
   temporary `Protocol<...>` syntax.
 * Require implementors of `Message` to support weak references.
+* **BREAKING**: Moved `objc2::foundation` into `icrate::Foundation`.
+* **BREAKING**: Moved `objc2::ns_string` into `icrate::ns_string`.
 
 ### Fixed
 * Fixed duplicate selector extraction in `extern_methods!`.

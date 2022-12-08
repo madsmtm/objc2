@@ -1,6 +1,16 @@
 use objc2::runtime::{Class, NSObject, Object};
 use objc2::{class, declare_class, msg_send, sel, ClassType};
 
+#[cfg_attr(feature = "apple", link(name = "Foundation", kind = "framework"))]
+#[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-base", kind = "dylib"))]
+extern "C" {}
+
+#[cfg(feature = "gnustep-1-7")]
+#[test]
+fn ensure_linkage() {
+    unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+}
+
 declare_class!(
     struct MyObject {}
 
@@ -8,12 +18,6 @@ declare_class!(
         type Super = NSObject;
     }
 );
-
-#[cfg(feature = "gnustep-1-7")]
-#[test]
-fn ensure_linkage() {
-    unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
-}
 
 #[test]
 fn use_class_and_msg_send() {

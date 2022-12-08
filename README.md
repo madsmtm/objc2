@@ -135,7 +135,7 @@ fork [here][origin-issue-101]:
 - [`objc_id`](https://github.com/SSheldon/rust-objc-id)
   - Moved to `objc2::rc`.
 - [`objc-foundation`](https://github.com/SSheldon/rust-objc-foundation)
-  - Moved to `objc2::foundation`.
+  - Moved to `icrate::Foundation`.
 - [`block`](https://github.com/SSheldon/rust-block)
   - Renamed to `block2`.
 

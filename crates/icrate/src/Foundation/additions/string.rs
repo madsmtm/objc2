@@ -13,10 +13,10 @@ use core::str;
 use std::os::raw::c_char;
 
 use super::{NSComparisonResult, NSCopying, NSError, NSMutableCopying, NSMutableString, NSObject};
-use crate::rc::{autoreleasepool, AutoreleasePool, DefaultId, Id, Shared};
-use crate::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
-use crate::runtime::{Class, Object};
-use crate::{extern_class, extern_methods, msg_send, ClassType};
+use objc2::rc::{autoreleasepool, AutoreleasePool, DefaultId, Id, Shared};
+use objc2::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
+use objc2::runtime::{Class, Object};
+use objc2::{extern_class, extern_methods, msg_send, ClassType};
 
 extern_class!(
     /// An immutable, plain-text Unicode string object.
@@ -62,7 +62,7 @@ extern_methods!(
         /// ```
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
-        /// use objc2::ns_string;
+        /// use icrate::ns_string;
         /// let error_tag = ns_string!("Error: ");
         /// let error_string = ns_string!("premature end of file.");
         /// let error_message = error_tag.concat(error_string);
@@ -89,7 +89,7 @@ extern_methods!(
         /// ```
         /// # #[cfg(feature = "gnustep-1-7")]
         /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
-        /// use objc2::ns_string;
+        /// use icrate::ns_string;
         ///
         /// let extension = ns_string!("scratch.tiff");
         /// assert_eq!(&*ns_string!("/tmp").join_path(extension), ns_string!("/tmp/scratch.tiff"));

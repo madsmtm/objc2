@@ -10,8 +10,8 @@ use super::{
     NSArray, NSComparisonResult, NSCopying, NSFastEnumeration, NSFastEnumerator, NSMutableCopying,
     NSObject,
 };
-use crate::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use crate::{ClassType, Message, __inner_extern_class, extern_methods, msg_send};
+use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
+use objc2::{ClassType, Message, __inner_extern_class, extern_methods, msg_send};
 
 __inner_extern_class!(
     /// A growable ordered collection of objects.
@@ -245,15 +245,15 @@ mod tests {
     use alloc::vec;
 
     use super::*;
-    use crate::foundation::NSString;
-    use crate::rc::{autoreleasepool, RcTestObject, ThreadTestData};
+    use crate::Foundation::NSString;
+    use objc2::rc::{__RcTestObject, __ThreadTestData, autoreleasepool};
 
     #[test]
     fn test_adding() {
         let mut array = NSMutableArray::new();
-        let obj1 = RcTestObject::new();
-        let obj2 = RcTestObject::new();
-        let mut expected = ThreadTestData::current();
+        let obj1 = __RcTestObject::new();
+        let obj2 = __RcTestObject::new();
+        let mut expected = __ThreadTestData::current();
 
         array.push(obj1);
         expected.retain += 1;
@@ -272,10 +272,10 @@ mod tests {
     #[test]
     fn test_replace() {
         let mut array = NSMutableArray::new();
-        let obj1 = RcTestObject::new();
-        let obj2 = RcTestObject::new();
+        let obj1 = __RcTestObject::new();
+        let obj2 = __RcTestObject::new();
         array.push(obj1);
-        let mut expected = ThreadTestData::current();
+        let mut expected = __ThreadTestData::current();
 
         let old_obj = array.replace(0, obj2);
         expected.retain += 2;
@@ -288,9 +288,9 @@ mod tests {
     fn test_remove() {
         let mut array = NSMutableArray::new();
         for _ in 0..4 {
-            array.push(RcTestObject::new());
+            array.push(__RcTestObject::new());
         }
-        let mut expected = ThreadTestData::current();
+        let mut expected = __ThreadTestData::current();
 
         let _obj = array.remove(1);
         expected.retain += 1;

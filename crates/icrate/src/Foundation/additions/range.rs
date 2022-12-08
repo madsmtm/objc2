@@ -1,7 +1,7 @@
 use core::ops::Range;
 
 use super::NSUInteger;
-use crate::{Encode, Encoding, RefEncode};
+use objc2::encode::{Encode, Encoding, RefEncode};
 
 /// TODO.
 ///
@@ -22,7 +22,7 @@ impl NSRange {
     /// # Examples
     ///
     /// ```
-    /// use objc2::foundation::NSRange;
+    /// use icrate::Foundation::NSRange;
     /// assert_eq!(NSRange::new(3, 2), NSRange::from(3..5));
     /// ```
     #[inline]
@@ -37,7 +37,7 @@ impl NSRange {
     /// # Examples
     ///
     /// ```
-    /// use objc2::foundation::NSRange;
+    /// use icrate::Foundation::NSRange;
     ///
     /// assert!(!NSRange::from(3..5).is_empty());
     /// assert!( NSRange::from(3..3).is_empty());
@@ -52,7 +52,7 @@ impl NSRange {
     /// # Examples
     ///
     /// ```
-    /// use objc2::foundation::NSRange;
+    /// use icrate::Foundation::NSRange;
     ///
     /// assert!(!NSRange::from(3..5).contains(2));
     /// assert!( NSRange::from(3..5).contains(3));

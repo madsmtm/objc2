@@ -7,9 +7,9 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::slice::{self, SliceIndex};
 
 use super::{NSCopying, NSMutableCopying, NSMutableData, NSObject};
-use crate::rc::{DefaultId, Id, Shared};
-use crate::runtime::{Class, Object};
-use crate::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::rc::{DefaultId, Id, Shared};
+use objc2::runtime::{Class, Object};
+use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
 
 extern_class!(
     /// A static byte buffer in memory.
@@ -53,7 +53,7 @@ extern_methods!(
             //
             // NSMutableData does not have this problem.
             #[cfg(feature = "gnustep-1-7")]
-            let cls = crate::class!(NSDataWithDeallocatorBlock);
+            let cls = objc2::class!(NSDataWithDeallocatorBlock);
             #[cfg(not(feature = "gnustep-1-7"))]
             let cls = Self::class();
 

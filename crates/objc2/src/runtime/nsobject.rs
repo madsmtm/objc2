@@ -178,7 +178,7 @@ mod tests {
     use super::*;
     use alloc::format;
 
-    use crate::rc::RcTestObject;
+    use crate::rc::__RcTestObject;
 
     #[test]
     fn test_deref() {
@@ -247,10 +247,10 @@ mod tests {
     fn test_is_kind_of() {
         let obj = NSObject::new();
         assert!(obj.is_kind_of::<NSObject>());
-        assert!(!obj.is_kind_of::<RcTestObject>());
+        assert!(!obj.is_kind_of::<__RcTestObject>());
 
-        let obj = RcTestObject::new();
+        let obj = __RcTestObject::new();
         assert!(obj.is_kind_of::<NSObject>());
-        assert!(obj.is_kind_of::<RcTestObject>());
+        assert!(obj.is_kind_of::<__RcTestObject>());
     }
 }

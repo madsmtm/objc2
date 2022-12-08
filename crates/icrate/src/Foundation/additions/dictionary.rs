@@ -7,8 +7,8 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr;
 
 use super::{NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSObject};
-use crate::rc::{DefaultId, Id, Owned, Shared, SliceId};
-use crate::{ClassType, __inner_extern_class, extern_methods, msg_send, msg_send_id, Message};
+use objc2::rc::{DefaultId, Id, Owned, Shared, SliceId};
+use objc2::{ClassType, __inner_extern_class, extern_methods, msg_send, msg_send_id, Message};
 
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
@@ -162,8 +162,8 @@ mod tests {
     use alloc::vec;
 
     use super::*;
-    use crate::foundation::NSString;
-    use crate::rc::autoreleasepool;
+    use crate::Foundation::NSString;
+    use objc2::rc::autoreleasepool;
 
     fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>, Shared> {
         let string = NSString::from_str(key);

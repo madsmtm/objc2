@@ -12,9 +12,10 @@
 use std::thread;
 use std::time::Duration;
 
+use icrate::ns_string;
 use icrate::objc2::rc::{Id, Owned};
 use icrate::objc2::{extern_class, msg_send, msg_send_id, ClassType};
-use icrate::Foundation::{ns_string, NSObject, NSString};
+use icrate::Foundation::{NSObject, NSString};
 
 #[cfg(target_os = "macos")]
 mod appkit {

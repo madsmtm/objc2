@@ -4,9 +4,9 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use super::{
     NSCopying, NSDictionary, NSMutableAttributedString, NSMutableCopying, NSObject, NSString,
 };
-use crate::rc::{Allocated, DefaultId, Id, Shared};
-use crate::runtime::Object;
-use crate::{extern_class, extern_methods, ClassType};
+use objc2::rc::{Allocated, DefaultId, Id, Shared};
+use objc2::runtime::Object;
+use objc2::{extern_class, extern_methods, ClassType};
 
 extern_class!(
     /// A string that has associated attributes for portions of its text.
@@ -150,7 +150,7 @@ mod tests {
     use alloc::{format, vec};
 
     use super::*;
-    use crate::rc::{autoreleasepool, Owned};
+    use objc2::rc::{autoreleasepool, Owned};
 
     #[test]
     fn test_new() {
