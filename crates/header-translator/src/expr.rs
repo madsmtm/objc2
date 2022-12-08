@@ -108,6 +108,7 @@ impl Expr {
             .trim_start_matches("(NSBezelStyle)")
             .trim_start_matches("(NSEventSubtype)")
             .trim_start_matches("(NSWindowButton)")
+            .trim_start_matches("(NSExpressionType)")
             .to_string();
 
         // Trim unnecessary parentheses

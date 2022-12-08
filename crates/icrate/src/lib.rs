@@ -49,6 +49,8 @@ macro_rules! struct_impl {
 // Frameworks
 #[cfg(feature = "AppKit")]
 pub mod AppKit;
+#[cfg(feature = "CoreData")]
+pub mod CoreData;
 #[cfg(feature = "Foundation")]
 pub mod Foundation;
 

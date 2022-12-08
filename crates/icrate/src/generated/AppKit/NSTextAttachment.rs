@@ -2,6 +2,7 @@
 //! DO NOT EDIT
 use crate::common::*;
 use crate::AppKit::*;
+use crate::CoreData::*;
 use crate::Foundation::*;
 
 pub const NSAttachmentCharacter: c_uint = 0xFFFC;

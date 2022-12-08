@@ -2,6 +2,7 @@
 //! DO NOT EDIT
 use crate::common::*;
 use crate::AppKit::*;
+use crate::CoreData::*;
 use crate::Foundation::*;
 
 pub const NSShowControlGlyphs: c_uint = 1 << 0;

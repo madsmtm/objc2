@@ -1,4 +1,4 @@
-imports = ["Foundation", "AppKit"]
+imports = ["AppKit", "CoreData", "Foundation"]
 
 # These return `oneway void`, which is a bit tricky to handle.
 [class.NSPasteboard.methods.releaseGlobally]

@@ -1,0 +1,5 @@
+imports = ["CoreData", "Foundation"]
+
+# Has `error:` parameter, but returns NSInteger (where 0 means error)
+[class.NSManagedObjectContext.methods]
+countForFetchRequest_error = { skipped = true }
