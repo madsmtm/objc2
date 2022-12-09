@@ -36,8 +36,8 @@ impl RustFile {
 
     pub fn add_stmt(&mut self, stmt: Stmt) {
         match &stmt {
-            Stmt::ClassDecl { name, .. } => {
-                self.declared_types.insert(name.clone());
+            Stmt::ClassDecl { ty, .. } => {
+                self.declared_types.insert(ty.name.clone());
             }
             Stmt::CategoryDecl { .. } => {}
             Stmt::ProtocolDecl { name, .. } => {

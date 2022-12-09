@@ -8,7 +8,7 @@ use crate::config::{ClassData, Config};
 use crate::expr::Expr;
 use crate::method::{handle_reserved, Method};
 use crate::property::Property;
-use crate::rust_type::Ty;
+use crate::rust_type::{GenericType, Ty};
 use crate::unexposed_macro::UnexposedMacro;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -32,8 +32,8 @@ impl fmt::Display for MethodOrProperty {
 /// - `EntityKind::ObjCCategoryDecl`
 fn parse_objc_decl(
     entity: &Entity<'_>,
-    mut superclass: Option<&mut Option<Option<String>>>,
-    mut generics: Option<&mut Vec<String>>,
+    mut superclass: Option<&mut Option<Option<GenericType>>>,
+    mut generics: Option<&mut Vec<GenericType>>,
     data: Option<&ClassData>,
 ) -> (Vec<String>, Vec<MethodOrProperty>) {
     let mut protocols = Vec::new();
@@ -53,7 +53,12 @@ fn parse_objc_decl(
             }
             EntityKind::ObjCSuperClassRef => {
                 if let Some(superclass) = &mut superclass {
-                    **superclass = Some(Some(entity.get_name().expect("superclass name")));
+                    let name = entity.get_name().expect("superclass name");
+                    **superclass = Some(Some(GenericType {
+                        name,
+                        // TODO: Superclass generics
+                        generics: Vec::new(),
+                    }));
                 } else {
                     panic!("unsupported superclass {entity:?}");
                 }
@@ -74,7 +79,10 @@ fn parse_objc_decl(
                     // TODO: Generics with bounds (like NSMeasurement<UnitType: NSUnit *>)
                     // let ty = entity.get_type().expect("template type");
                     let name = entity.get_display_name().expect("template name");
-                    generics.push(name);
+                    generics.push(GenericType {
+                        name,
+                        generics: Vec::new(),
+                    });
                 } else {
                     panic!("unsupported generics {entity:?}");
                 }
@@ -158,21 +166,18 @@ fn parse_objc_decl(
 pub enum Stmt {
     /// @interface name: superclass <protocols*>
     ClassDecl {
-        name: String,
+        ty: GenericType,
         availability: Availability,
-        // TODO: Generics
-        superclass: Option<String>,
-        generics: Vec<String>,
+        superclass: Option<GenericType>,
         protocols: Vec<String>,
         methods: Vec<MethodOrProperty>,
     },
     /// @interface class_name (name) <protocols*>
     CategoryDecl {
-        class_name: String,
+        class_ty: GenericType,
         availability: Availability,
         /// Some categories don't have a name. Example: NSClipView
         name: Option<String>,
-        generics: Vec<String>,
         /// I don't quite know what this means?
         protocols: Vec<String>,
         methods: Vec<MethodOrProperty>,
@@ -314,16 +319,25 @@ impl Stmt {
                 if let Some(new_name) =
                     class_data.and_then(|data| data.new_superclass_name.as_ref())
                 {
-                    superclass = Some(Some(new_name.clone()));
+                    match &mut superclass {
+                        Some(Some(GenericType { name, .. })) => {
+                            *name = new_name.clone();
+                        }
+                        _ => {
+                            superclass = Some(Some(GenericType {
+                                name: new_name.clone(),
+                                generics: Vec::new(),
+                            }))
+                        }
+                    }
                 }
 
                 let superclass = superclass.expect("no superclass found");
 
                 Some(Self::ClassDecl {
-                    name,
+                    ty: GenericType { name, generics },
                     availability,
                     superclass,
-                    generics,
                     protocols,
                     methods,
                 })
@@ -355,16 +369,18 @@ impl Stmt {
                     return None;
                 }
 
-                let mut generics = Vec::new();
+                let mut class_generics = Vec::new();
 
                 let (protocols, methods) =
-                    parse_objc_decl(&entity, None, Some(&mut generics), class_data);
+                    parse_objc_decl(&entity, None, Some(&mut class_generics), class_data);
 
                 Some(Self::CategoryDecl {
-                    class_name,
+                    class_ty: GenericType {
+                        name: class_name,
+                        generics: class_generics,
+                    },
                     availability,
                     name,
-                    generics,
                     protocols,
                     methods,
                 })
@@ -716,41 +732,61 @@ impl Stmt {
 
 impl fmt::Display for Stmt {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        struct GenericTyHelper<'a>(&'a GenericType);
+
+        impl fmt::Display for GenericTyHelper<'_> {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                write!(f, "{}", self.0.name)?;
+                if !self.0.generics.is_empty() {
+                    write!(f, "<")?;
+                    for generic in &self.0.generics {
+                        write!(f, "{generic}, ")?;
+                    }
+                    for generic in &self.0.generics {
+                        write!(f, "{generic}Ownership, ")?;
+                    }
+                    write!(f, ">")?;
+                }
+                Ok(())
+            }
+        }
+
+        struct GenericParamsHelper<'a>(&'a [GenericType]);
+
+        impl fmt::Display for GenericParamsHelper<'_> {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                if !self.0.is_empty() {
+                    write!(f, "<")?;
+                    for generic in self.0 {
+                        write!(f, "{generic}: Message, ")?;
+                    }
+                    for generic in self.0 {
+                        write!(f, "{generic}Ownership: Ownership, ")?;
+                    }
+                    write!(f, ">")?;
+                }
+                Ok(())
+            }
+        }
+
         match self {
             Self::ClassDecl {
-                name,
+                ty,
                 availability: _,
                 superclass,
-                generics,
                 protocols: _,
                 methods,
             } => {
-                let struct_generic = if generics.is_empty() {
-                    name.clone()
-                } else {
-                    format!(
-                        "{name}<{}: Message = Object>",
-                        generics.join(": Message = Object,")
-                    )
+                let generic_params = GenericParamsHelper(&ty.generics);
+                let default_superclass = GenericType {
+                    name: "Object".into(),
+                    generics: Vec::new(),
                 };
-
-                let generic_params = if generics.is_empty() {
-                    String::new()
-                } else {
-                    format!("<{}: Message>", generics.join(": Message,"))
-                };
-
-                let ty = if generics.is_empty() {
-                    name.clone()
-                } else {
-                    format!("{name}<{}>", generics.join(","))
-                };
-
-                let superclass_name = superclass.as_deref().unwrap_or("Object");
+                let superclass = superclass.as_ref().unwrap_or_else(|| &default_superclass);
 
                 // TODO: Use ty.get_objc_protocol_declarations()
 
-                let macro_name = if generics.is_empty() {
+                let macro_name = if ty.generics.is_empty() {
                     "extern_class"
                 } else {
                     "__inner_extern_class"
@@ -758,25 +794,48 @@ impl fmt::Display for Stmt {
 
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    #[derive(Debug)]")?;
-                write!(f, "    pub struct {struct_generic}")?;
-                if generics.is_empty() {
+                write!(f, "    pub struct ")?;
+                if ty.generics.is_empty() {
+                    write!(f, "{}", ty.name)?;
+                } else {
+                    write!(f, "{}<", ty.name)?;
+                    for generic in &ty.generics {
+                        write!(f, "{generic}: Message = Object, ")?;
+                    }
+                    for generic in &ty.generics {
+                        write!(f, "{generic}Ownership: Ownership = Shared, ")?;
+                    }
+                    write!(f, ">")?;
+                };
+                if ty.generics.is_empty() {
                     writeln!(f, ";")?;
                 } else {
                     writeln!(f, " {{")?;
-                    for (i, generic) in generics.iter().enumerate() {
+                    for (i, generic) in ty.generics.iter().enumerate() {
                         // Invariant over the generic (for now)
-                        writeln!(f, "_inner{i}: PhantomData<*mut {generic}>,")?;
+                        writeln!(
+                            f,
+                            "_inner{i}: PhantomData<*mut ({generic}, {generic}Ownership)>,"
+                        )?;
                     }
                     writeln!(f, "}}")?;
                 }
                 writeln!(f, "")?;
-                writeln!(f, "    unsafe impl{generic_params} ClassType for {ty} {{")?;
-                writeln!(f, "        type Super = {superclass_name};")?;
+                writeln!(
+                    f,
+                    "    unsafe impl{generic_params} ClassType for {} {{",
+                    GenericTyHelper(&ty)
+                )?;
+                writeln!(f, "        type Super = {superclass};")?;
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
                 writeln!(f, "")?;
                 writeln!(f, "extern_methods!(")?;
-                writeln!(f, "    unsafe impl{generic_params} {ty} {{")?;
+                writeln!(
+                    f,
+                    "    unsafe impl{generic_params} {} {{",
+                    GenericTyHelper(&ty)
+                )?;
                 for method in methods {
                     writeln!(f, "{method}")?;
                 }
@@ -784,30 +843,22 @@ impl fmt::Display for Stmt {
                 writeln!(f, ");")?;
             }
             Self::CategoryDecl {
-                class_name,
+                class_ty,
                 availability: _,
                 name,
-                generics,
                 protocols: _,
                 methods,
             } => {
-                let generic_params = if generics.is_empty() {
-                    String::new()
-                } else {
-                    format!("<{}: Message>", generics.join(": Message,"))
-                };
-
-                let ty = if generics.is_empty() {
-                    class_name.clone()
-                } else {
-                    format!("{class_name}<{}>", generics.join(","))
-                };
-
                 writeln!(f, "extern_methods!(")?;
                 if let Some(name) = name {
                     writeln!(f, "    /// {name}")?;
                 }
-                writeln!(f, "    unsafe impl{generic_params} {ty} {{")?;
+                writeln!(
+                    f,
+                    "    unsafe impl{} {} {{",
+                    GenericParamsHelper(&class_ty.generics),
+                    GenericTyHelper(&class_ty)
+                )?;
                 for method in methods {
                     writeln!(f, "{method}")?;
                 }

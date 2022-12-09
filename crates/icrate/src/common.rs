@@ -13,7 +13,7 @@ pub(crate) use std::ffi::{
 #[cfg(feature = "objective-c")]
 pub(crate) use objc2::ffi::{NSInteger, NSUInteger};
 #[cfg(feature = "objective-c")]
-pub(crate) use objc2::rc::{Allocated, Id, Shared};
+pub(crate) use objc2::rc::{Allocated, Id, Ownership, Shared};
 #[cfg(feature = "objective-c")]
 pub(crate) use objc2::runtime::{Bool, Class, Object, Sel};
 #[cfg(feature = "objective-c")]
