@@ -56,7 +56,7 @@ fn parse_objc_decl(
                     let name = entity.get_name().expect("superclass name");
                     **superclass = Some(Some(GenericType {
                         name,
-                        // TODO: Superclass generics
+                        // These are filled out in EntityKind::TypeRef
                         generics: Vec::new(),
                     }));
                 } else {
@@ -135,8 +135,16 @@ fn parse_objc_decl(
             EntityKind::VisibilityAttr => {
                 // Already exposed as entity.get_visibility()
             }
-            EntityKind::TypeRef if superclass.is_some() => {
-                // TODO
+            EntityKind::TypeRef => {
+                let name = entity.get_name().expect("typeref name");
+                if let Some(Some(Some(GenericType { generics, .. }))) = &mut superclass {
+                    generics.push(GenericType {
+                        name,
+                        generics: Vec::new(),
+                    });
+                } else {
+                    panic!("unsupported typeref {entity:?}");
+                }
             }
             EntityKind::ObjCException if superclass.is_some() => {
                 // Maybe useful for knowing when to implement `Error` for the type
@@ -777,7 +785,6 @@ impl fmt::Display for Stmt {
                 protocols: _,
                 methods,
             } => {
-                let generic_params = GenericParamsHelper(&ty.generics);
                 let default_superclass = GenericType {
                     name: "Object".into(),
                     generics: Vec::new(),
@@ -823,17 +830,19 @@ impl fmt::Display for Stmt {
                 writeln!(f, "")?;
                 writeln!(
                     f,
-                    "    unsafe impl{generic_params} ClassType for {} {{",
+                    "    unsafe impl{} ClassType for {} {{",
+                    GenericParamsHelper(&ty.generics),
                     GenericTyHelper(&ty)
                 )?;
-                writeln!(f, "        type Super = {superclass};")?;
+                writeln!(f, "        type Super = {};", GenericTyHelper(&superclass))?;
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
                 writeln!(f, "")?;
                 writeln!(f, "extern_methods!(")?;
                 writeln!(
                     f,
-                    "    unsafe impl{generic_params} {} {{",
+                    "    unsafe impl{} {} {{",
+                    GenericParamsHelper(&ty.generics),
                     GenericTyHelper(&ty)
                 )?;
                 for method in methods {
