@@ -212,6 +212,18 @@ skipped = true
 initWithContentsOfURL_error = { skipped = true }
 dictionaryWithContentsOfURL_error = { skipped = true }
 
+# Protocol class methods (currently unsupported)
+[protocol.NSItemProviderWriting.properties.writableTypeIdentifiersForItemProvider]
+skipped = true
+[protocol.NSItemProviderWriting.methods.itemProviderVisibilityForRepresentationWithTypeIdentifier]
+skipped = true
+[protocol.NSItemProviderReading.properties.readableTypeIdentifiersForItemProvider]
+skipped = true
+[protocol.NSItemProviderReading.methods.objectWithItemProviderData_typeIdentifier_error]
+skipped = true
+[protocol.NSSecureCoding.properties.supportsSecureCoding]
+skipped = true
+
 # Overridden fmt::Debug because we're missing https://github.com/madsmtm/objc2/issues/267
 [class.NSAttributedString]
 derives = "PartialEq, Eq, Hash"

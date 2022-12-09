@@ -904,7 +904,7 @@ impl fmt::Display for Stmt {
                 writeln!(f, "extern_protocol!(")?;
                 writeln!(f, "    pub struct {name};")?;
                 writeln!(f, "")?;
-                writeln!(f, "    unsafe impl {name} {{")?;
+                writeln!(f, "    unsafe impl ProtocolType for {name} {{")?;
                 for method in methods {
                     writeln!(f, "{method}")?;
                 }
