@@ -162,7 +162,7 @@ macro_rules! extern_methods {
     (
         $(
             $(#[$impl_m:meta])*
-            unsafe impl<$($t:ident $(: $b:ident $(+ $rest:ident)*)?),*> $type:ty {
+            unsafe impl<$($t:ident $(: $b:ident $(+ $rest:ident)*)?),* $(,)?> $type:ty {
                 $($methods:tt)*
             }
         )+

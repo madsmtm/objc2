@@ -12,6 +12,7 @@
 #![allow(non_snake_case)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/icrate/0.0.1")]
+#![recursion_limit = "256"]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
