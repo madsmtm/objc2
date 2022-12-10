@@ -7,7 +7,9 @@ use std::path::{Path, PathBuf};
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
 use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index};
 
-use header_translator::{compare_btree, run_cargo_fmt, run_rustfmt, Config, RustFile, Stmt};
+use header_translator::{
+    compare_btree, run_cargo_fmt, run_rustfmt, Config, RustFile, Stmt, FILE_PRELUDE,
+};
 
 const FORMAT_INCREMENTALLY: bool = false;
 
@@ -348,6 +350,8 @@ fn output_files(
         .collect();
 
     let mut tokens = String::new();
+    writeln!(tokens, "{}", FILE_PRELUDE)?;
+    writeln!(tokens, "#![allow(unused_imports)]")?;
 
     for (name, _) in &declared {
         writeln!(tokens, "#[path = \"{name}.rs\"]")?;
