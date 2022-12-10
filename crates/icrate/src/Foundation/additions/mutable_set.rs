@@ -5,7 +5,7 @@ use objc2::{extern_methods, ClassType, Message};
 
 use super::set::with_objects;
 use crate::Foundation::{
-    NSCopying, NSFastEnumeration, NSFastEnumerator, NSMutableCopying, NSMutableSet, NSSet,
+    NSCopying, NSFastEnumeration2, NSFastEnumerator2, NSMutableCopying, NSMutableSet, NSSet,
 };
 
 extern_methods!(
@@ -163,13 +163,13 @@ impl<T: Message> alloc::borrow::ToOwned for NSMutableSet<T, Shared> {
     }
 }
 
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSMutableSet<T, O> {
+unsafe impl<T: Message, O: Ownership> NSFastEnumeration2 for NSMutableSet<T, O> {
     type Item = T;
 }
 
 impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSMutableSet<T, O> {
     type Item = &'a T;
-    type IntoIter = NSFastEnumerator<'a, NSMutableSet<T, O>>;
+    type IntoIter = NSFastEnumerator2<'a, NSMutableSet<T, O>>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.iter_fast()

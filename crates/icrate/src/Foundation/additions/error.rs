@@ -5,8 +5,7 @@ use objc2::rc::{Id, Shared};
 use objc2::ClassType;
 
 use crate::Foundation::{
-    NSCopying, NSDictionary, NSError, NSErrorDomain, NSErrorUserInfoKey, NSInteger,
-    NSLocalizedDescriptionKey, NSString,
+    NSCopying, NSError, NSErrorDomain, NSErrorUserInfoKey, NSInteger, NSLocalizedDescriptionKey,
 };
 
 // SAFETY: Error objects are immutable data containers.

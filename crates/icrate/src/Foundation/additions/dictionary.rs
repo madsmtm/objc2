@@ -6,7 +6,7 @@ use core::ops::Index;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 
-use crate::Foundation::{NSCopying, NSDictionary, NSEnumerator, NSFastEnumeration, NSObject};
+use crate::Foundation::{NSCopying, NSDictionary, NSEnumerator2, NSFastEnumeration2};
 use objc2::rc::{DefaultId, Id, Owned, Shared, SliceId};
 use objc2::{extern_methods, msg_send, msg_send_id, ClassType, Message};
 
@@ -72,18 +72,18 @@ extern_methods!(
         }
 
         #[doc(alias = "keyEnumerator")]
-        pub fn iter_keys(&self) -> NSEnumerator<'_, K> {
+        pub fn iter_keys(&self) -> NSEnumerator2<'_, K> {
             unsafe {
                 let result = msg_send![self, keyEnumerator];
-                NSEnumerator::from_ptr(result)
+                NSEnumerator2::from_ptr(result)
             }
         }
 
         #[doc(alias = "objectEnumerator")]
-        pub fn iter_values(&self) -> NSEnumerator<'_, V> {
+        pub fn iter_values(&self) -> NSEnumerator2<'_, V> {
             unsafe {
                 let result = msg_send![self, objectEnumerator];
-                NSEnumerator::from_ptr(result)
+                NSEnumerator2::from_ptr(result)
             }
         }
 
@@ -115,7 +115,7 @@ impl<K: Message, V: Message> DefaultId for NSDictionary<K, V> {
     }
 }
 
-unsafe impl<K: Message, V: Message> NSFastEnumeration for NSDictionary<K, V> {
+unsafe impl<K: Message, V: Message> NSFastEnumeration2 for NSDictionary<K, V> {
     type Item = K;
 }
 

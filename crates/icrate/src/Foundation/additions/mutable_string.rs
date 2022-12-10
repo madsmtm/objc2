@@ -4,9 +4,9 @@ use core::ops::AddAssign;
 use core::str;
 
 use objc2::rc::{DefaultId, Id, Owned, Shared};
-use objc2::{extern_methods, msg_send_id, ClassType};
+use objc2::{extern_methods, ClassType};
 
-use crate::Foundation::{NSCopying, NSMutableCopying, NSMutableString, NSObject, NSString};
+use crate::Foundation::{NSCopying, NSMutableCopying, NSMutableString, NSString};
 
 extern_methods!(
     /// Creating mutable strings.

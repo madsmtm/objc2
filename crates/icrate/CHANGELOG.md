@@ -63,6 +63,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - `process_info` -> `processInfo`
 * **BREAKING**: Make `NSComparisonResult` work like all other enums.
 * **BREAKING**: Changed `NSDictionary` to be `Shared` by default.
+* **BREAKING** (TEMPORARY): Renamed `NSEnumerator`, `NSFastEnumeration` and
+  `NSFastEnumerator` until the story around them are properly figured out.
 
 ### Fixed
 * Fixed `NSZone` not being `#[repr(C)]`.

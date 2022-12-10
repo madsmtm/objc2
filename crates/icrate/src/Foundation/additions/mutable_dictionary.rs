@@ -5,7 +5,9 @@ use core::ptr;
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::{extern_methods, msg_send_id, ClassType, Message};
 
-use crate::Foundation::{NSArray, NSCopying, NSDictionary, NSFastEnumeration, NSMutableDictionary};
+use crate::Foundation::{
+    NSArray, NSCopying, NSDictionary, NSFastEnumeration2, NSMutableDictionary,
+};
 
 extern_methods!(
     unsafe impl<K: Message, V: Message> NSMutableDictionary<K, V> {
@@ -168,7 +170,7 @@ extern_methods!(
     }
 );
 
-unsafe impl<K: Message, V: Message> NSFastEnumeration for NSMutableDictionary<K, V> {
+unsafe impl<K: Message, V: Message> NSFastEnumeration2 for NSMutableDictionary<K, V> {
     type Item = K;
 }
 

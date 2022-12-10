@@ -1,17 +1,15 @@
 use alloc::string::ToString;
-use core::ffi::c_void;
 use core::fmt;
 use core::mem::MaybeUninit;
 use core::ptr::NonNull;
 use core::str;
 use std::ffi::{CStr, CString};
-use std::os::raw::c_char;
 
 use objc2::encode::Encode;
 use objc2::rc::{Id, Shared};
 use objc2::ClassType;
 
-use crate::Foundation::{NSCopying, NSObject, NSPoint, NSRange, NSRect, NSSize, NSValue};
+use crate::Foundation::{NSCopying, NSPoint, NSRange, NSRect, NSSize, NSValue};
 
 // We can't implement any auto traits for NSValue, since it can contain an
 // arbitary object!

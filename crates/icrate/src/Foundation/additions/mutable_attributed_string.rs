@@ -2,7 +2,7 @@ use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::{extern_methods, msg_send_id, ClassType};
 
 use crate::Foundation::{
-    NSAttributedString, NSCopying, NSMutableAttributedString, NSMutableCopying, NSObject, NSString,
+    NSAttributedString, NSCopying, NSMutableAttributedString, NSMutableCopying, NSString,
 };
 
 extern_methods!(

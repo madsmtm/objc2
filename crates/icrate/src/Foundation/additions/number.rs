@@ -16,7 +16,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use objc2::encode::Encoding;
 use objc2::rc::{Id, Shared};
 
-use crate::Foundation::{CGFloat, NSCopying, NSNumber, NSString};
+use crate::Foundation::{CGFloat, NSCopying, NSNumber};
 
 // SAFETY: `NSNumber` is just a wrapper around an integer/float/bool, and it
 // is immutable.

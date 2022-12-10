@@ -1,6 +1,6 @@
 pub use self::comparison_result::NSComparisonResult;
 pub use self::copying::{NSCopying, NSMutableCopying};
-pub use self::enumerator::{NSEnumerator, NSFastEnumeration, NSFastEnumerator};
+pub use self::enumerator::{NSEnumerator2, NSFastEnumeration2, NSFastEnumerator2};
 pub use self::geometry::{CGFloat, CGPoint, CGRect, CGSize};
 pub use self::range::NSRange;
 pub use self::thread::{is_main_thread, is_multi_threaded, MainThreadMarker};
@@ -80,8 +80,8 @@ mod tests {
         assert_auto_traits::<Id<NSSet<NSString, Shared>, Owned>>();
         assert_auto_traits::<Id<NSSet<NSString, Owned>, Owned>>();
         // TODO: Figure out if Send + Sync is safe?
-        // assert_auto_traits::<NSEnumerator<NSString>>();
-        // assert_auto_traits::<NSFastEnumerator<NSArray<NSString, Shared>>>();
+        // assert_auto_traits::<NSEnumerator2<NSString>>();
+        // assert_auto_traits::<NSFastEnumerator2<NSArray<NSString, Shared>>>();
         assert_auto_traits::<NSError>();
         assert_auto_traits::<NSException>();
         assert_auto_traits::<CGFloat>();

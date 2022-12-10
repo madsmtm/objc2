@@ -6,7 +6,7 @@ use objc2::{extern_methods, ClassType};
 
 use crate::Foundation::{
     NSAttributedString, NSAttributedStringKey, NSCopying, NSDictionary, NSMutableAttributedString,
-    NSMutableCopying, NSObject, NSString,
+    NSMutableCopying, NSString,
 };
 
 // SAFETY: `NSAttributedString` is immutable and `NSMutableAttributedString`

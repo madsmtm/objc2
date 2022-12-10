@@ -9,17 +9,17 @@ use objc2::runtime::Object;
 use objc2::{msg_send, Encode, Encoding, Message, RefEncode};
 
 // TODO: https://doc.rust-lang.org/stable/reference/trait-bounds.html#lifetime-bounds
-pub struct NSEnumerator<'a, T: Message> {
+pub struct NSEnumerator2<'a, T: Message> {
     id: Id<Object, Owned>,
     item: PhantomData<&'a T>,
 }
 
-impl<'a, T: Message> NSEnumerator<'a, T> {
+impl<'a, T: Message> NSEnumerator2<'a, T> {
     /// TODO
     ///
     /// # Safety
     ///
-    /// The object pointer must be a valid `NSEnumerator` with `Owned`
+    /// The object pointer must be a valid `NSEnumerator2` with `Owned`
     /// ownership.
     pub unsafe fn from_ptr(ptr: *mut Object) -> Self {
         Self {
@@ -29,7 +29,7 @@ impl<'a, T: Message> NSEnumerator<'a, T> {
     }
 }
 
-impl<'a, T: Message> Iterator for NSEnumerator<'a, T> {
+impl<'a, T: Message> Iterator for NSEnumerator2<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<&'a T> {
@@ -37,11 +37,11 @@ impl<'a, T: Message> Iterator for NSEnumerator<'a, T> {
     }
 }
 
-pub unsafe trait NSFastEnumeration: Message {
+pub unsafe trait NSFastEnumeration2: Message {
     type Item: Message;
 
-    fn iter_fast(&self) -> NSFastEnumerator<'_, Self> {
-        NSFastEnumerator::new(self)
+    fn iter_fast(&self) -> NSFastEnumerator2<'_, Self> {
+        NSFastEnumerator2::new(self)
     }
 }
 
@@ -69,7 +69,7 @@ unsafe impl<T: Message> RefEncode for NSFastEnumerationState<T> {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
-fn enumerate<'a, 'b: 'a, C: NSFastEnumeration + ?Sized>(
+fn enumerate<'a, 'b: 'a, C: NSFastEnumeration2 + ?Sized>(
     object: &'b C,
     state: &mut NSFastEnumerationState<C::Item>,
     buf: &'a mut [*const C::Item],
@@ -94,7 +94,7 @@ fn enumerate<'a, 'b: 'a, C: NSFastEnumeration + ?Sized>(
 
 const FAST_ENUM_BUF_SIZE: usize = 16;
 
-pub struct NSFastEnumerator<'a, C: 'a + NSFastEnumeration + ?Sized> {
+pub struct NSFastEnumerator2<'a, C: 'a + NSFastEnumeration2 + ?Sized> {
     object: &'a C,
 
     ptr: *const *const C::Item,
@@ -104,7 +104,7 @@ pub struct NSFastEnumerator<'a, C: 'a + NSFastEnumeration + ?Sized> {
     buf: [*const C::Item; FAST_ENUM_BUF_SIZE],
 }
 
-impl<'a, C: NSFastEnumeration + ?Sized> NSFastEnumerator<'a, C> {
+impl<'a, C: NSFastEnumeration2 + ?Sized> NSFastEnumerator2<'a, C> {
     fn new(object: &'a C) -> Self {
         Self {
             object,
@@ -149,7 +149,7 @@ impl<'a, C: NSFastEnumeration + ?Sized> NSFastEnumerator<'a, C> {
     }
 }
 
-impl<'a, C: NSFastEnumeration + ?Sized> Iterator for NSFastEnumerator<'a, C> {
+impl<'a, C: NSFastEnumeration2 + ?Sized> Iterator for NSFastEnumerator2<'a, C> {
     type Item = &'a C::Item;
 
     fn next(&mut self) -> Option<&'a C::Item> {

@@ -5,12 +5,12 @@ use core::ops::{Index, IndexMut};
 use core::ptr::NonNull;
 
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use objc2::{extern_methods, msg_send, ClassType, Message};
+use objc2::{extern_methods, ClassType, Message};
 
 use super::array::with_objects;
 use crate::Foundation::{
-    NSArray, NSComparisonResult, NSCopying, NSFastEnumeration, NSFastEnumerator, NSInteger,
-    NSMutableArray, NSMutableCopying, NSObject,
+    NSArray, NSComparisonResult, NSCopying, NSFastEnumeration2, NSFastEnumerator2, NSInteger,
+    NSMutableArray, NSMutableCopying,
 };
 
 extern_methods!(
@@ -149,13 +149,13 @@ impl<T: Message> alloc::borrow::ToOwned for NSMutableArray<T, Shared> {
     }
 }
 
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSMutableArray<T, O> {
+unsafe impl<T: Message, O: Ownership> NSFastEnumeration2 for NSMutableArray<T, O> {
     type Item = T;
 }
 
 impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSMutableArray<T, O> {
     type Item = &'a T;
-    type IntoIter = NSFastEnumerator<'a, NSMutableArray<T, O>>;
+    type IntoIter = NSFastEnumerator2<'a, NSMutableArray<T, O>>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.iter_fast()

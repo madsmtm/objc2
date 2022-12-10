@@ -17,9 +17,7 @@ use objc2::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
 use objc2::runtime::{Class, Object};
 use objc2::{msg_send, ClassType};
 
-use crate::Foundation::{
-    NSComparisonResult, NSCopying, NSMutableCopying, NSMutableString, NSString,
-};
+use crate::Foundation::{NSCopying, NSMutableCopying, NSMutableString, NSString};
 
 // SAFETY: `NSString` is immutable and `NSMutableString` can only be mutated
 // from `&mut` methods.

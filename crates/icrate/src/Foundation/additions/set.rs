@@ -6,8 +6,8 @@ use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use objc2::{extern_methods, msg_send, msg_send_id, ClassType, Message};
 
 use crate::Foundation::{
-    NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSFastEnumerator, NSMutableCopying,
-    NSMutableSet, NSObject, NSSet,
+    NSArray, NSCopying, NSEnumerator2, NSFastEnumeration2, NSFastEnumerator2, NSMutableCopying,
+    NSMutableSet, NSSet,
 };
 
 // SAFETY: Same as NSArray<T, O>
@@ -134,10 +134,10 @@ extern_methods!(
         /// }
         /// ```
         #[doc(alias = "objectEnumerator")]
-        pub fn iter(&self) -> NSEnumerator<'_, T> {
+        pub fn iter(&self) -> NSEnumerator2<'_, T> {
             unsafe {
                 let result = msg_send![self, objectEnumerator];
-                NSEnumerator::from_ptr(result)
+                NSEnumerator2::from_ptr(result)
             }
         }
 
@@ -321,13 +321,13 @@ impl<T: Message> alloc::borrow::ToOwned for NSSet<T, Shared> {
     }
 }
 
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSSet<T, O> {
+unsafe impl<T: Message, O: Ownership> NSFastEnumeration2 for NSSet<T, O> {
     type Item = T;
 }
 
 impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSSet<T, O> {
     type Item = &'a T;
-    type IntoIter = NSFastEnumerator<'a, NSSet<T, O>>;
+    type IntoIter = NSFastEnumerator2<'a, NSSet<T, O>>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.iter_fast()
