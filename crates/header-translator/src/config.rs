@@ -107,6 +107,14 @@ impl Config {
     pub fn from_file(file: &Path) -> Result<Self> {
         let s = fs::read_to_string(file)?;
 
-        Ok(toml::from_str(&s)?)
+        let mut res: Self = toml::from_str(&s)?;
+
+        // Ignore categories on NSObject for now
+        res.class_data
+            .entry("NSObject".to_string())
+            .or_default()
+            .skipped = true;
+
+        Ok(res)
     }
 }
