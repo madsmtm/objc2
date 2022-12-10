@@ -642,7 +642,7 @@ impl fmt::Display for RustType {
                 if *nullability == Nullability::NonNull {
                     write!(f, "Sel")
                 } else {
-                    write!(f, "OptionSel")
+                    write!(f, "Option<Sel>")
                 }
             }
             ObjcBool => write!(f, "Bool"),
