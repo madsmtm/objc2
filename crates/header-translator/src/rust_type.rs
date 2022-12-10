@@ -79,7 +79,13 @@ impl GenericType {
 
 impl fmt::Display for GenericType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.name)?;
+        // TODO: Handle this better!
+        match &*self.name {
+            "NSCopying" => write!(f, "Object")?,
+            "NSMutableCopying" => write!(f, "Object")?,
+            name => write!(f, "{name}")?,
+        }
+
         if !self.generics.is_empty() {
             write!(f, "<")?;
             for generic in &self.generics {

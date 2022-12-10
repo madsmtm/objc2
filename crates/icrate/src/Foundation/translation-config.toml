@@ -211,6 +211,12 @@ skipped = true
 [enum.NSComparisonResult]
 skipped = true
 
+# We do a custom implementation of these
+[protocol.NSCopying]
+skipped = true
+[protocol.NSMutableCopying]
+skipped = true
+
 # Overridden fmt::Debug because we're missing https://github.com/madsmtm/objc2/issues/267
 # See fixes/debug.rs
 [class.NSAttributedString]
