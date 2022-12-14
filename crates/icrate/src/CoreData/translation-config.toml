@@ -33,3 +33,5 @@ recordIDsForManagedObjectIDs = { skipped = true }
 [class.NSPersistentCloudKitContainerOptions.methods]
 databaseScope = { skipped = true }
 setDatabaseScope = { skipped = true }
+[protocol.NSFetchedResultsControllerDelegate.methods]
+controller_didChangeContentWithSnapshot = { skipped = true }
