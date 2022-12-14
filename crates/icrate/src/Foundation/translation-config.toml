@@ -273,6 +273,27 @@ skipped = true
 [class.NSValue.methods.new]
 skipped = true
 
+# Returns `NSMyType<T, Shared>` instead of `Self` or `NSMyType<T, O>`
+# See fixes/generic_return.rs
+[class.NSArray.methods.initWithContentsOfURL_error]
+skipped = true
+[class.NSArray.methods.initWithContentsOfFile]
+skipped = true
+[class.NSArray.methods.initWithContentsOfURL]
+skipped = true
+[class.NSMutableArray.methods.initWithContentsOfFile]
+skipped = true
+[class.NSMutableArray.methods.initWithContentsOfURL]
+skipped = true
+[class.NSDictionary.methods.initWithContentsOfFile]
+skipped = true
+[class.NSDictionary.methods.initWithContentsOfURL]
+skipped = true
+[class.NSMutableDictionary.methods.initWithContentsOfFile]
+skipped = true
+[class.NSMutableDictionary.methods.initWithContentsOfURL]
+skipped = true
+
 # Manually found to be safe
 [class.NSString.methods.init]
 unsafe = false

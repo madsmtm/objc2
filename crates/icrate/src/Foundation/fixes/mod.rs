@@ -7,6 +7,7 @@ mod __NSNotFound;
 #[path = "NSProxy.rs"]
 mod __NSProxy;
 mod debug;
+mod generic_return;
 
 pub use self::__NSDecimal::NSDecimal;
 pub use self::__NSNotFound::NSNotFound;
