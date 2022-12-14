@@ -133,6 +133,8 @@ impl PartialProperty<'_> {
         let qualifier = entity.get_objc_qualifiers().map(Qualifier::parse);
         assert_eq!(qualifier, None, "properties do not support qualifiers");
 
+        assert!(!data.mutating, "`mutating` unsupported on properties");
+
         Some(Property {
             name,
             getter_name,
@@ -160,6 +162,7 @@ impl fmt::Display for Property {
             arguments: Vec::new(),
             result_type: self.type_out.clone(),
             safe: self.safe,
+            mutating: false,
         };
         write!(f, "{method}")?;
         if let Some(setter_name) = &self.setter_name {
@@ -175,6 +178,7 @@ impl fmt::Display for Property {
                 arguments: Vec::from([(self.name.clone(), None, self.type_in.clone())]),
                 result_type: Ty::VOID_RESULT,
                 safe: self.safe,
+                mutating: false,
             };
             write!(f, "{method}")?;
         }

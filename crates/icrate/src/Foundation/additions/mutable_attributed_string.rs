@@ -24,20 +24,6 @@ extern_methods!(
             unsafe { msg_send_id![Self::alloc(), initWithAttributedString: attributed_string] }
         }
     }
-
-    /// Modifying the attributed string.
-    unsafe impl NSMutableAttributedString {
-        // TODO
-        // - mutableString
-        // - replaceCharactersInRange:withString:
-        // - setAttributes:range:
-
-        /// Replaces the entire attributed string.
-        #[doc(alias = "setAttributedString:")]
-        pub fn replace(&mut self, s: &NSAttributedString) {
-            unsafe { self.setAttributedString(s) }
-        }
-    }
 );
 
 impl DefaultId for NSMutableAttributedString {

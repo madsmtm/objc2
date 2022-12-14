@@ -25,27 +25,6 @@ extern_methods!(
             }
         }
     }
-
-    /// Mutating strings.
-    unsafe impl NSMutableString {
-        /// Appends the given [`NSString`] onto the end of this.
-        #[doc(alias = "appendString:")]
-        // SAFETY: The string is not nil
-        #[method(appendString:)]
-        pub fn push_nsstring(&mut self, nsstring: &NSString);
-
-        /// Replaces the entire string.
-        #[doc(alias = "setString:")]
-        // SAFETY: The string is not nil
-        #[method(setString:)]
-        pub fn replace(&mut self, nsstring: &NSString);
-
-        // TODO:
-        // - deleteCharactersInRange:
-        // - replaceCharactersInRange:withString:
-        // - insertString:atIndex:
-        // Figure out how these work on character boundaries
-    }
 );
 
 impl DefaultId for NSMutableString {
@@ -76,7 +55,7 @@ impl alloc::borrow::ToOwned for NSMutableString {
 impl AddAssign<&NSString> for NSMutableString {
     #[inline]
     fn add_assign(&mut self, other: &NSString) {
-        self.push_nsstring(other)
+        self.appendString(other)
     }
 }
 
@@ -125,7 +104,7 @@ impl Ord for NSMutableString {
 impl fmt::Write for NSMutableString {
     fn write_str(&mut self, s: &str) -> Result<(), fmt::Error> {
         let nsstring = NSString::from_str(s);
-        self.push_nsstring(&nsstring);
+        self.appendString(&nsstring);
         Ok(())
     }
 }
@@ -159,17 +138,17 @@ mod tests {
     }
 
     #[test]
-    fn test_push_nsstring() {
+    fn test_append() {
         let mut s = NSMutableString::from_str("abc");
-        s.push_nsstring(&NSString::from_str("def"));
+        s.appendString(&NSString::from_str("def"));
         *s += &NSString::from_str("ghi");
         assert_eq!(&s.to_string(), "abcdefghi");
     }
 
     #[test]
-    fn test_replace() {
+    fn test_set() {
         let mut s = NSMutableString::from_str("abc");
-        s.replace(&NSString::from_str("def"));
+        s.setString(&NSString::from_str("def"));
         assert_eq!(&s.to_string(), "def");
     }
 

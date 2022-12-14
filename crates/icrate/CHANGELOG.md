@@ -32,6 +32,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - `init_with_string` -> `initWithString`
     - `new_with_attributes` -> `unsafe new_with_attributes`
     - `len_utf16` -> `length`
+  - `NSMutableAttributedString`
+    - `replace` -> `setAttributedString`
   - `NSBundle`
     - `main` -> `mainBundle`
     - `info` -> `infoDictionary`

@@ -321,12 +321,12 @@ unsafe = false
 unsafe = false
 [class.NSMutableString.methods.stringWithCapacity]
 unsafe = false
-# [class.NSMutableString.methods.appendString]
-# unsafe = false
-# mutable = true
-# [class.NSMutableString.methods.setString]
-# unsafe = false
-# mutable = true
+[class.NSMutableString.methods.appendString]
+unsafe = false
+mutating = true
+[class.NSMutableString.methods.setString]
+unsafe = false
+mutating = true
 [class.NSAttributedString.methods.initWithString]
 unsafe = false
 [class.NSAttributedString.methods.initWithAttributedString]
@@ -358,10 +358,13 @@ unsafe = false
 unsafe = false
 [class.NSMutableDictionary.methods.setDictionary]
 unsafe = false
+mutating = true
 [class.NSMutableDictionary.methods.removeObjectForKey]
 unsafe = false
+mutating = true
 [class.NSMutableDictionary.methods.removeAllObjects]
 unsafe = false
+mutating = true
 [class.NSError.properties.domain]
 unsafe = false
 [class.NSError.properties.code]
@@ -382,11 +385,12 @@ unsafe = false
 unsafe = false
 [class.NSLock.properties.setName]
 unsafe = false
-# [class.NSMutableAttributedString.methods.setAttributedString]
-# unsafe = false
-# mutable = true
+[class.NSMutableAttributedString.methods.setAttributedString]
+unsafe = false
+mutating = true
 [class.NSMutableData.properties.mutableBytes]
 unsafe = false
+# mutating = true
 [class.NSMutableData.properties.length]
 skipped = true
 [class.NSMutableData.methods.dataWithCapacity]
@@ -473,10 +477,23 @@ unsafe = false
 unsafe = false
 [class.NSMutableArray.methods.removeAllObjects]
 unsafe = false
-# addObject, removeObjectAtIndex, ... = mutable
+mutating = true
+[class.NSMutableArray.methods.addObject]
+mutating = true
+[class.NSMutableArray.methods.insertObject_atIndex]
+mutating = true
+[class.NSMutableArray.methods.replaceObjectAtIndex_withObject]
+mutating = true
+[class.NSMutableArray.methods.removeObjectAtIndex]
+mutating = true
+[class.NSMutableArray.methods.removeLastObject]
+mutating = true
+[class.NSMutableArray.methods.sortUsingFunction_context]
+mutating = true
 [class.NSSet.properties.count]
 unsafe = false
 [class.NSMutableSet.methods.removeAllObjects]
 unsafe = false
-# [class.NSMutableSet.methods.addObject]
-# mutable = true
+mutating = true
+[class.NSMutableSet.methods.addObject]
+mutating = true

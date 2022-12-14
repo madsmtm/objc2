@@ -155,6 +155,7 @@ pub struct Method {
     pub arguments: Vec<(String, Option<Qualifier>, Ty)>,
     pub result_type: Ty,
     pub safe: bool,
+    pub mutating: bool,
 }
 
 impl Method {
@@ -356,6 +357,10 @@ impl<'tu> PartialMethod<'tu> {
             memory_management.verify_sel(&selector);
         }
 
+        if data.mutating && (is_class || MemoryManagement::is_init(&selector)) {
+            panic!("invalid mutating method {}", fn_name);
+        }
+
         Some(Method {
             selector,
             fn_name,
@@ -367,6 +372,7 @@ impl<'tu> PartialMethod<'tu> {
             arguments,
             result_type,
             safe: !data.unsafe_,
+            mutating: data.mutating,
         })
     }
 }
@@ -397,7 +403,11 @@ impl fmt::Display for Method {
             if MemoryManagement::is_init(&self.selector) {
                 write!(f, "this: Option<Allocated<Self>>, ")?;
             } else {
-                write!(f, "&self, ")?;
+                if self.mutating {
+                    write!(f, "&mut self, ")?;
+                } else {
+                    write!(f, "&self, ")?;
+                }
             }
         }
         for (param, _qualifier, arg_ty) in &self.arguments {
