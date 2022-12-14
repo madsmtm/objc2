@@ -40,10 +40,11 @@ impl RustFile {
             Stmt::ClassDecl { ty, .. } => {
                 self.declared_types.insert(ty.name.clone());
             }
-            Stmt::CategoryDecl { .. } => {}
+            Stmt::Methods { .. } => {}
             Stmt::ProtocolDecl { name, .. } => {
                 self.declared_types.insert(name.clone());
             }
+            Stmt::ProtocolImpl { .. } => {}
             Stmt::StructDecl { name, .. } => {
                 self.declared_types.insert(name.clone());
             }

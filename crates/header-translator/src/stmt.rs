@@ -1,6 +1,7 @@
 use std::borrow::Cow;
 use std::collections::HashSet;
 use std::fmt;
+use std::iter;
 
 use clang::{Entity, EntityKind, EntityVisitResult};
 
@@ -189,30 +190,39 @@ fn parse_objc_decl(
 #[derive(Debug, Clone, PartialEq)]
 pub enum Stmt {
     /// @interface name: superclass <protocols*>
+    /// ->
+    /// extern_class!
     ClassDecl {
         ty: GenericType,
         availability: Availability,
         superclass: Option<GenericType>,
-        protocols: Vec<String>,
-        methods: Vec<MethodOrProperty>,
         derives: Derives,
     },
     /// @interface class_name (name) <protocols*>
-    CategoryDecl {
-        class_ty: GenericType,
+    /// ->
+    /// extern_methods!
+    Methods {
+        ty: GenericType,
         availability: Availability,
-        /// Some categories don't have a name. Example: NSClipView
-        name: Option<String>,
-        /// I don't quite know what this means?
-        protocols: Vec<String>,
         methods: Vec<MethodOrProperty>,
+        /// For the categories that have a name (though some don't, see NSClipView)
+        category_name: Option<String>,
     },
     /// @protocol name <protocols*>
+    /// ->
+    /// extern_protocol!
     ProtocolDecl {
         name: String,
         availability: Availability,
         protocols: Vec<String>,
         methods: Vec<MethodOrProperty>,
+    },
+    /// @interface ty: _ <protocols*>
+    /// @interface ty (_) <protocols*>
+    ProtocolImpl {
+        ty: GenericType,
+        availability: Availability,
+        protocol: String,
     },
     /// struct name {
     ///     fields*
@@ -341,6 +351,8 @@ impl Stmt {
                     class_data,
                 );
 
+                let ty = GenericType { name, generics };
+
                 if let Some(new_name) =
                     class_data.and_then(|data| data.new_superclass_name.as_ref())
                 {
@@ -359,16 +371,26 @@ impl Stmt {
 
                 let superclass = superclass.expect("no superclass found");
 
-                vec![Self::ClassDecl {
-                    ty: GenericType { name, generics },
-                    availability,
+                iter::once(Self::ClassDecl {
+                    ty: ty.clone(),
+                    availability: availability.clone(),
                     superclass,
-                    protocols,
-                    methods,
                     derives: class_data
                         .map(|data| data.derives.clone())
                         .unwrap_or_default(),
-                }]
+                })
+                .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
+                    ty: ty.clone(),
+                    availability: availability.clone(),
+                    protocol,
+                }))
+                .chain(iter::once(Self::Methods {
+                    ty: ty.clone(),
+                    availability: availability.clone(),
+                    methods,
+                    category_name: None,
+                }))
+                .collect()
             }
             EntityKind::ObjCCategoryDecl => {
                 let name = entity.get_name();
@@ -402,16 +424,24 @@ impl Stmt {
                 let (protocols, methods) =
                     parse_objc_decl(&entity, None, Some(&mut class_generics), class_data);
 
-                vec![Self::CategoryDecl {
-                    class_ty: GenericType {
-                        name: class_name,
-                        generics: class_generics,
-                    },
-                    availability,
-                    name,
-                    protocols,
+                let ty = GenericType {
+                    name: class_name,
+                    generics: class_generics,
+                };
+
+                iter::once(Self::Methods {
+                    ty: ty.clone(),
+                    availability: availability.clone(),
                     methods,
-                }]
+                    category_name: name,
+                })
+                .into_iter()
+                .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
+                    ty: ty.clone(),
+                    availability: availability.clone(),
+                    protocol,
+                }))
+                .collect()
             }
             EntityKind::ObjCProtocolDecl => {
                 let name = entity.get_name().expect("protocol name");
@@ -737,11 +767,11 @@ impl Stmt {
         if self != other {
             match (&self, &other) {
                 (
-                    Self::ClassDecl {
+                    Self::Methods {
                         methods: self_methods,
                         ..
                     },
-                    Self::ClassDecl {
+                    Self::Methods {
                         methods: other_methods,
                         ..
                     },
@@ -806,8 +836,6 @@ impl fmt::Display for Stmt {
                 ty,
                 availability: _,
                 superclass,
-                protocols: _,
-                methods,
                 derives,
             } => {
                 let default_superclass = GenericType {
@@ -863,8 +891,17 @@ impl fmt::Display for Stmt {
                 writeln!(f, "        type Super = {};", GenericTyHelper(&superclass))?;
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
-                writeln!(f, "")?;
+            }
+            Self::Methods {
+                ty,
+                availability: _,
+                methods,
+                category_name,
+            } => {
                 writeln!(f, "extern_methods!(")?;
+                if let Some(category_name) = category_name {
+                    writeln!(f, "    /// {category_name}")?;
+                }
                 writeln!(
                     f,
                     "    unsafe impl{} {} {{",
@@ -877,28 +914,12 @@ impl fmt::Display for Stmt {
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
             }
-            Self::CategoryDecl {
-                class_ty,
+            Self::ProtocolImpl {
+                ty: _,
                 availability: _,
-                name,
-                protocols: _,
-                methods,
+                protocol: _,
             } => {
-                writeln!(f, "extern_methods!(")?;
-                if let Some(name) = name {
-                    writeln!(f, "    /// {name}")?;
-                }
-                writeln!(
-                    f,
-                    "    unsafe impl{} {} {{",
-                    GenericParamsHelper(&class_ty.generics),
-                    GenericTyHelper(&class_ty)
-                )?;
-                for method in methods {
-                    writeln!(f, "{method}")?;
-                }
-                writeln!(f, "    }}")?;
-                writeln!(f, ");")?;
+                // TODO
             }
             Self::ProtocolDecl {
                 name,
