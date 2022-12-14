@@ -30,11 +30,6 @@ extern_methods!(
 
     /// Mutation methods
     unsafe impl NSMutableData {
-        /// Expands with zeroes, or truncates the buffer.
-        #[doc(alias = "setLength:")]
-        #[method(setLength:)]
-        pub fn set_len(&mut self, len: usize);
-
         #[doc(alias = "mutableBytes")]
         pub fn bytes_mut(&mut self) -> &mut [u8] {
             let ptr = self.mutableBytes();
@@ -205,11 +200,11 @@ mod tests {
     #[test]
     fn test_set_len() {
         let mut data = NSMutableData::with_bytes(&[7, 16]);
-        data.set_len(4);
+        data.setLength(4);
         assert_eq!(data.len(), 4);
         assert_eq!(data.bytes(), [7, 16, 0, 0]);
 
-        data.set_len(1);
+        data.setLength(1);
         assert_eq!(data.len(), 1);
         assert_eq!(data.bytes(), [7]);
     }

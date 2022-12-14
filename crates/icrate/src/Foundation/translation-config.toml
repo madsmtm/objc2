@@ -8,7 +8,7 @@ awakeAfterUsingCoder = { skipped = true }
 # Uses NS_RELEASES_ARGUMENT and NS_RETURNS_RETAINED
 unarchiver_didDecodeObject = { skipped = true }
 
-[class.NSBlockOperation.properties]
+[class.NSBlockOperation.methods]
 # Uses `NSArray<void (^)(void)>`, which is difficult to handle
 executionBlocks = { skipped = true }
 
@@ -54,11 +54,13 @@ skipped = true
 skipped = true
 [class.NSKeyedUnarchiver.methods.classForClassName]
 skipped = true
-[class.NSThread.properties.threadPriority]
+[class.NSThread.methods.threadPriority]
 skipped = true
-[class.NSThread.properties.isMainThread]
+[class.NSThread.methods.setThreadPriority]
 skipped = true
-[class.NSDate.properties.timeIntervalSinceReferenceDate]
+[class.NSThread.methods.isMainThread]
+skipped = true
+[class.NSDate.methods.timeIntervalSinceReferenceDate]
 skipped = true
 
 # Root class
@@ -90,7 +92,6 @@ descriptorForKeyword = { skipped = true }
 removeDescriptorWithKeyword = { skipped = true }
 keywordForDescriptorAtIndex = { skipped = true }
 coerceToDescriptorType = { skipped = true }
-[class.NSAppleEventDescriptor.properties]
 aeDesc = { skipped = true }
 descriptorType = { skipped = true }
 eventClass = { skipped = true }
@@ -101,7 +102,9 @@ transactionID = { skipped = true }
 setEventHandler_andSelector_forEventClass_andEventID = { skipped = true }
 removeEventHandlerForEventClass_andEventID = { skipped = true }
 dispatchRawAppleEvent_withRawReply_handlerRefCon = { skipped = true }
-[class.NSOperationQueue.properties.underlyingQueue]
+[class.NSOperationQueue.methods.underlyingQueue]
+skipped = true
+[class.NSOperationQueue.methods.setUnderlyingQueue]
 skipped = true
 [class.NSRunLoop.methods.getCFRunLoop]
 skipped = true
@@ -110,19 +113,23 @@ initWithIdentity_certificates_persistence = { skipped = true }
 credentialWithIdentity_certificates_persistence = { skipped = true }
 initWithTrust = { skipped = true }
 credentialForTrust = { skipped = true }
-[class.NSURLCredential.properties.identity]
+[class.NSURLCredential.methods.identity]
 skipped = true
-[class.NSURLProtectionSpace.properties.serverTrust]
+[class.NSURLProtectionSpace.methods.serverTrust]
 skipped = true
-[class.NSURLSessionConfiguration.properties]
+[class.NSURLSessionConfiguration.methods]
 TLSMinimumSupportedProtocol = { skipped = true }
+setTLSMinimumSupportedProtocol = { skipped = true }
 TLSMaximumSupportedProtocol = { skipped = true }
+setTLSMaximumSupportedProtocol = { skipped = true }
 TLSMinimumSupportedProtocolVersion = { skipped = true }
+setTLSMinimumSupportedProtocolVersion = { skipped = true }
 TLSMaximumSupportedProtocolVersion = { skipped = true }
+setTLSMaximumSupportedProtocolVersion = { skipped = true }
 [class.NSUUID.methods]
 initWithUUIDBytes = { skipped = true }
 getUUIDBytes = { skipped = true }
-[class.NSXPCConnection.properties]
+[class.NSXPCConnection.methods]
 auditSessionIdentifier = { skipped = true }
 processIdentifier = { skipped = true }
 effectiveUserIdentifier = { skipped = true }
@@ -185,7 +192,9 @@ skipped = true
 skipped = true
 
 # Uses NSImage, which is only available in AppKit
-[class.NSUserNotification.properties.contentImage]
+[class.NSUserNotification.methods.contentImage]
+skipped = true
+[class.NSUserNotification.methods.setContentImage]
 skipped = true
 
 # Has the wrong generic parameter
@@ -194,15 +203,15 @@ initWithContentsOfURL_error = { skipped = true }
 dictionaryWithContentsOfURL_error = { skipped = true }
 
 # Protocol class methods (currently unsupported)
-[protocol.NSItemProviderWriting.properties.writableTypeIdentifiersForItemProvider]
+[protocol.NSItemProviderWriting.methods.writableTypeIdentifiersForItemProvider]
 skipped = true
 [protocol.NSItemProviderWriting.methods.itemProviderVisibilityForRepresentationWithTypeIdentifier]
 skipped = true
-[protocol.NSItemProviderReading.properties.readableTypeIdentifiersForItemProvider]
+[protocol.NSItemProviderReading.methods.readableTypeIdentifiersForItemProvider]
 skipped = true
 [protocol.NSItemProviderReading.methods.objectWithItemProviderData_typeIdentifier_error]
 skipped = true
-[protocol.NSSecureCoding.properties.supportsSecureCoding]
+[protocol.NSSecureCoding.methods.supportsSecureCoding]
 skipped = true
 
 # Custom implementation for now
@@ -309,9 +318,9 @@ unsafe = false # The other string is non-null, and won't be retained
 unsafe = false
 [class.NSString.methods.lengthOfBytesUsingEncoding]
 unsafe = false # Assuming `NSStringEncoding` can be made safe
-[class.NSString.properties.length]
+[class.NSString.methods.length]
 unsafe = false
-[class.NSString.properties.UTF8String]
+[class.NSString.methods.UTF8String]
 unsafe = false # Safe to call, but the returned pointer may not be safe to use
 [class.NSString.methods.initWithString]
 unsafe = false
@@ -331,30 +340,30 @@ mutating = true
 unsafe = false
 [class.NSAttributedString.methods.initWithAttributedString]
 unsafe = false
-[class.NSAttributedString.properties.string]
+[class.NSAttributedString.methods.string]
 unsafe = false
-[class.NSAttributedString.properties.length]
+[class.NSAttributedString.methods.length]
 unsafe = false
 [class.NSBundle.methods.mainBundle]
 unsafe = false
-[class.NSBundle.properties.infoDictionary]
+[class.NSBundle.methods.infoDictionary]
 unsafe = false
-[class.NSData.properties.length]
+[class.NSData.methods.length]
 unsafe = false
-[class.NSData.properties.bytes]
+[class.NSData.methods.bytes]
 skipped = true
 unsafe = false
 [class.NSData.methods.initWithData]
 unsafe = false
 [class.NSData.methods.dataWithData]
 unsafe = false
-[class.NSDictionary.properties.count]
+[class.NSDictionary.methods.count]
 unsafe = false
 [class.NSDictionary.methods.objectForKey]
 unsafe = false
-[class.NSDictionary.properties.allKeys]
+[class.NSDictionary.methods.allKeys]
 unsafe = false
-[class.NSDictionary.properties.allValues]
+[class.NSDictionary.methods.allValues]
 unsafe = false
 [class.NSMutableDictionary.methods.setDictionary]
 unsafe = false
@@ -365,39 +374,42 @@ mutating = true
 [class.NSMutableDictionary.methods.removeAllObjects]
 unsafe = false
 mutating = true
-[class.NSError.properties.domain]
+[class.NSError.methods.domain]
 unsafe = false
-[class.NSError.properties.code]
+[class.NSError.methods.code]
 unsafe = false
-[class.NSError.properties.userInfo]
+[class.NSError.methods.userInfo]
 unsafe = false
-[class.NSError.properties.localizedDescription]
+[class.NSError.methods.localizedDescription]
 unsafe = false
 [class.NSException.methods.raise]
 skipped = true
-[class.NSException.properties.name]
+[class.NSException.methods.name]
 unsafe = false
-[class.NSException.properties.reason]
+[class.NSException.methods.reason]
 unsafe = false
-[class.NSException.properties.userInfo]
+[class.NSException.methods.userInfo]
 unsafe = false
-[class.NSLock.properties.name]
+[class.NSLock.methods.name]
 unsafe = false
-[class.NSLock.properties.setName]
+[class.NSLock.methods.setName]
 unsafe = false
 [class.NSMutableAttributedString.methods.setAttributedString]
 unsafe = false
 mutating = true
-[class.NSMutableData.properties.mutableBytes]
+[class.NSMutableData.methods.mutableBytes]
 unsafe = false
-# mutating = true
-[class.NSMutableData.properties.length]
+mutating = true
+[class.NSMutableData.methods.length]
 skipped = true
+[class.NSMutableData.methods.setLength]
+unsafe = false
+mutating = true
 [class.NSMutableData.methods.dataWithCapacity]
 unsafe = false
 [class.NSMutableData.methods.initWithCapacity]
 unsafe = false
-[class.NSValue.properties.objCType]
+[class.NSValue.methods.objCType]
 unsafe = false
 [class.NSValue.methods.isEqualToValue]
 unsafe = false
@@ -434,7 +446,6 @@ numberWithInteger = { unsafe = false }
 numberWithUnsignedInteger = { unsafe = false }
 compare = { unsafe = false }
 isEqualToNumber = { unsafe = false }
-[class.NSNumber.properties]
 charValue = { unsafe = false }
 unsignedCharValue = { unsafe = false }
 shortValue = { unsafe = false }
@@ -457,23 +468,23 @@ unsafe = false
 unsafe = false
 [class.NSUUID.methods.initWithUUIDString]
 unsafe = false
-[class.NSUUID.properties.UUIDString]
+[class.NSUUID.methods.UUIDString]
 unsafe = false
-[class.NSThread.properties.currentThread]
+[class.NSThread.methods.currentThread]
 unsafe = false
-[class.NSThread.properties.mainThread]
+[class.NSThread.methods.mainThread]
 unsafe = false
-# [class.NSThread.properties.isMainThread]
+# [class.NSThread.methods.isMainThread]
 # unsafe = false
-[class.NSThread.properties.name]
+[class.NSThread.methods.name]
 unsafe = false
 [class.NSThread.methods.isMultiThreaded]
 unsafe = false
-[class.NSProcessInfo.properties.processInfo]
+[class.NSProcessInfo.methods.processInfo]
 unsafe = false
-# [class.NSProcessInfo.properties.processName]
+# [class.NSProcessInfo.methods.processName]
 # unsafe = false
-[class.NSArray.properties.count]
+[class.NSArray.methods.count]
 unsafe = false
 [class.NSMutableArray.methods.removeAllObjects]
 unsafe = false
@@ -490,7 +501,7 @@ mutating = true
 mutating = true
 [class.NSMutableArray.methods.sortUsingFunction_context]
 mutating = true
-[class.NSSet.properties.count]
+[class.NSSet.methods.count]
 unsafe = false
 [class.NSMutableSet.methods.removeAllObjects]
 unsafe = false

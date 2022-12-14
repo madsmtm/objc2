@@ -46,8 +46,6 @@ pub struct ClassData {
     #[serde(default)]
     pub methods: HashMap<String, MethodData>,
     #[serde(default)]
-    pub properties: HashMap<String, MethodData>,
-    #[serde(default)]
     pub derives: Derives,
 }
 

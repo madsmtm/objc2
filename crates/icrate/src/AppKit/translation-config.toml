@@ -22,36 +22,42 @@ skipped = true
 [protocol.NSAccessibilityElement]
 skipped = true
 
-# Both instance and class methods
-[class.NSCursor.methods.pop]
-skipped = true
+# Both property and method
 [class.NSDrawer.methods.open]
 skipped = true
 [class.NSDrawer.methods.close]
 skipped = true
-[class.NSEvent.properties.modifierFlags]
-skipped = true
 [class.NSFormCell.methods.titleWidth]
 skipped = true
-[class.NSGestureRecognizer.properties.state]
+[class.NSSliderCell.methods.drawKnob]
+skipped = true
+[class.NSWorkspace.methods.noteFileSystemChanged]
+skipped = true
+
+# Duplicated method
+[class.NSSlider.methods.isVertical]
+skipped = true
+[class.NSSliderCell.methods.isVertical]
+skipped = true
+[class.NSGestureRecognizer.methods.state]
+skipped = true
+
+# Both instance and class methods
+[class.NSCursor.methods.pop]
+skipped = true
+[class.NSEvent.methods.modifierFlags]
 skipped = true
 [class.NSGraphicsContext.methods.saveGraphicsState]
 skipped = true
 [class.NSGraphicsContext.methods.restoreGraphicsState]
 skipped = true
-[class.NSSlider.properties.vertical]
-skipped = true
-[class.NSSliderCell.methods.drawKnob]
-skipped = true
-[class.NSSliderCell.properties.vertical]
-skipped = true
-[class.NSWorkspace.methods.noteFileSystemChanged]
-skipped = true
 [class.NSBundle.methods.loadNibFile_externalNameTable_withZone]
 skipped = true
 
 # Uses stuff from different frameworks / system libraries
-[class.NSAnimationContext.properties.timingFunction]
+[class.NSAnimationContext.methods.timingFunction]
+skipped = true
+[class.NSAnimationContext.methods.setTimingFunction]
 skipped = true
 [class.NSBezierPath.methods.appendBezierPathWithCGGlyph_inFont]
 skipped = true
@@ -61,9 +67,9 @@ skipped = true
 skipped = true
 [class.NSBitmapImageRep.methods.initWithCIImage]
 skipped = true
-[class.NSBitmapImageRep.properties.CGImage]
+[class.NSBitmapImageRep.methods.CGImage]
 skipped = true
-[class.NSColor.properties.CGColor]
+[class.NSColor.methods.CGColor]
 skipped = true
 [class.NSColor.methods.colorWithCGColor]
 skipped = true
@@ -71,11 +77,11 @@ skipped = true
 skipped = true
 [class.NSColorSpace.methods.initWithCGColorSpace]
 skipped = true
-[class.NSColorSpace.properties.CGColorSpace]
+[class.NSColorSpace.methods.CGColorSpace]
 skipped = true
 [class.NSCIImageRep]
 skipped = true
-[class.NSEvent.properties.CGEvent]
+[class.NSEvent.methods.CGEvent]
 skipped = true
 [class.NSEvent.methods.eventWithCGEvent]
 skipped = true
@@ -86,13 +92,13 @@ getBoundingRects_forCGGlyphs_count = { skipped = true }
 getAdvancements_forCGGlyphs_count = { skipped = true }
 [class.NSGlyphInfo.methods.glyphInfoWithCGGlyph_forFont_baseString]
 skipped = true
-[class.NSGlyphInfo.properties.glyphID]
+[class.NSGlyphInfo.methods.glyphID]
 skipped = true
 [class.NSGraphicsContext.methods.graphicsContextWithCGContext_flipped]
 skipped = true
-[class.NSGraphicsContext.properties.CGContext]
+[class.NSGraphicsContext.methods.CGContext]
 skipped = true
-[class.NSGraphicsContext.properties.CIContext]
+[class.NSGraphicsContext.methods.CIContext]
 skipped = true
 [class.NSImage.methods]
 initWithCGImage_size = { skipped = true }
@@ -140,18 +146,23 @@ skipped = true
 skipped = true
 [class.NSTextView.methods.quickLookPreviewableItemsInRanges]
 skipped = true
-[class.NSRunningApplication.properties.processIdentifier]
+[class.NSRunningApplication.methods.processIdentifier]
 skipped = true
 [class.NSRunningApplication.methods.runningApplicationWithProcessIdentifier]
 skipped = true
-[class.NSSavePanel.properties.allowedContentTypes]
+[class.NSSavePanel.methods.allowedContentTypes]
 skipped = true
-[class.NSView.properties]
-layer = { skipped = true }
-backgroundFilters = { skipped = true }
-compositingFilter = { skipped = true }
-contentFilters = { skipped = true }
+[class.NSSavePanel.methods.setAllowedContentTypes]
+skipped = true
 [class.NSView.methods]
+layer = { skipped = true }
+setLayer = { skipped = true }
+backgroundFilters = { skipped = true }
+setBackgroundFilters = { skipped = true }
+compositingFilter = { skipped = true }
+setCompositingFilter = { skipped = true }
+contentFilters = { skipped = true }
+setContentFilters = { skipped = true }
 makeBackingLayer = { skipped = true }
 [class.NSObject.methods]
 layer_shouldInheritContentsScale_fromWindow = { skipped = true }
@@ -160,7 +171,9 @@ iconForContentType = { skipped = true }
 URLForApplicationToOpenContentType = { skipped = true }
 URLsForApplicationsToOpenContentType = { skipped = true }
 setDefaultApplicationAtURL_toOpenContentType_completionHandler = { skipped = true }
-[class.NSWorkspaceOpenConfiguration.properties.architecture]
+[class.NSWorkspaceOpenConfiguration.methods.architecture]
+skipped = true
+[class.NSWorkspaceOpenConfiguration.methods.setArchitecture]
 skipped = true
 
 # Wrong type for enum

@@ -54,6 +54,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `NSMutableData`
     - `from_data` -> `dataWithData`
     - `with_capacity` -> `dataWithCapacity`
+    - `set_len` -> `setLength`
   - `NSUUID`
     - `new_v4` -> `UUID`
     - `string` -> `UUIDString`

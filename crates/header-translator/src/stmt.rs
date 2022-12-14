@@ -9,24 +9,8 @@ use crate::availability::Availability;
 use crate::config::{ClassData, Config};
 use crate::expr::Expr;
 use crate::method::{handle_reserved, Method};
-use crate::property::Property;
 use crate::rust_type::{GenericType, Ty};
 use crate::unexposed_macro::UnexposedMacro;
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum MethodOrProperty {
-    Method(Method),
-    Property(Property),
-}
-
-impl fmt::Display for MethodOrProperty {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Method(method) => write!(f, "{method}"),
-            Self::Property(property) => write!(f, "{property}"),
-        }
-    }
-}
 
 #[derive(serde::Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Derives(Cow<'static, str>);
@@ -52,7 +36,7 @@ fn parse_objc_decl(
     mut superclass: Option<&mut Option<Option<GenericType>>>,
     mut generics: Option<&mut Vec<GenericType>>,
     data: Option<&ClassData>,
-) -> (Vec<String>, Vec<MethodOrProperty>) {
+) -> (Vec<String>, Vec<Method>) {
     let mut protocols = Vec::new();
     let mut methods = Vec::new();
 
@@ -120,20 +104,12 @@ fn parse_objc_decl(
                         })
                         .unwrap_or_default();
                     if let Some(method) = partial.parse(data) {
-                        methods.push(MethodOrProperty::Method(method));
+                        methods.push(method);
                     }
                 }
             }
             EntityKind::ObjCPropertyDecl => {
-                let partial = Property::partial(entity);
-                let data = data
-                    .map(|data| {
-                        data.properties
-                            .get(&partial.name)
-                            .copied()
-                            .unwrap_or_default()
-                    })
-                    .unwrap_or_default();
+                let partial = Method::partial_property(entity);
 
                 assert!(
                     properties.insert((partial.is_class, partial.getter_name.clone())),
@@ -145,8 +121,26 @@ fn parse_objc_decl(
                         "already exisiting property"
                     );
                 }
-                if let Some(property) = partial.parse(data) {
-                    methods.push(MethodOrProperty::Property(property));
+
+                let getter_data = data
+                    .map(|data| {
+                        data.methods
+                            .get(&partial.getter_name)
+                            .copied()
+                            .unwrap_or_default()
+                    })
+                    .unwrap_or_default();
+                let setter_data = partial.setter_name.as_ref().map(|setter_name| {
+                    data.map(|data| data.methods.get(setter_name).copied().unwrap_or_default())
+                        .unwrap_or_default()
+                });
+
+                let (getter, setter) = partial.parse(getter_data, setter_data);
+                if let Some(getter) = getter {
+                    methods.push(getter);
+                }
+                if let Some(setter) = setter {
+                    methods.push(setter);
                 }
             }
             EntityKind::VisibilityAttr => {
@@ -204,7 +198,7 @@ pub enum Stmt {
     Methods {
         ty: GenericType,
         availability: Availability,
-        methods: Vec<MethodOrProperty>,
+        methods: Vec<Method>,
         /// For the categories that have a name (though some don't, see NSClipView)
         category_name: Option<String>,
     },
@@ -215,7 +209,7 @@ pub enum Stmt {
         name: String,
         availability: Availability,
         protocols: Vec<String>,
-        methods: Vec<MethodOrProperty>,
+        methods: Vec<Method>,
     },
     /// @interface ty: _ <protocols*>
     /// @interface ty (_) <protocols*>

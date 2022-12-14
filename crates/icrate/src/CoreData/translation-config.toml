@@ -30,5 +30,6 @@ recordForManagedObjectID = { skipped = true }
 recordsForManagedObjectIDs = { skipped = true }
 recordIDForManagedObjectID = { skipped = true }
 recordIDsForManagedObjectIDs = { skipped = true }
-[class.NSPersistentCloudKitContainerOptions.properties.databaseScope]
-skipped = true
+[class.NSPersistentCloudKitContainerOptions.methods]
+databaseScope = { skipped = true }
+setDatabaseScope = { skipped = true }

@@ -5,6 +5,7 @@ use clang::{Entity, EntityKind, EntityVisitResult, ObjCQualifiers};
 use crate::availability::Availability;
 use crate::config::MethodData;
 use crate::objc2_utils::in_selector_family;
+use crate::property::PartialProperty;
 use crate::rust_type::Ty;
 use crate::unexposed_macro::UnexposedMacro;
 
@@ -176,6 +177,27 @@ impl Method {
             selector,
             is_class,
             fn_name,
+        }
+    }
+
+    /// Takes `EntityKind::ObjCPropertyDecl`.
+    pub fn partial_property(entity: Entity<'_>) -> PartialProperty<'_> {
+        let attributes = entity.get_objc_attributes();
+        let has_setter = attributes.map(|a| !a.readonly).unwrap_or(true);
+
+        PartialProperty {
+            entity,
+            name: entity.get_display_name().expect("property getter name"),
+            getter_name: entity.get_objc_getter_name().expect("property getter name"),
+            setter_name: has_setter.then(|| {
+                entity
+                    .get_objc_setter_name()
+                    .expect("property setter name")
+                    .trim_end_matches(|c| c == ':')
+                    .to_string()
+            }),
+            is_class: attributes.map(|a| a.class).unwrap_or(false),
+            attributes,
         }
     }
 }
