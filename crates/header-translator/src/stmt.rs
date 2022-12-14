@@ -312,17 +312,17 @@ fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
 }
 
 impl Stmt {
-    pub fn parse(entity: &Entity<'_>, config: &Config) -> Option<Self> {
+    pub fn parse(entity: &Entity<'_>, config: &Config) -> Vec<Self> {
         match entity.get_kind() {
             // These are inconsequential for us, since we resolve imports differently
-            EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef => None,
+            EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef => vec![],
             EntityKind::ObjCInterfaceDecl => {
                 // entity.get_mangled_objc_names()
                 let name = entity.get_name().expect("class name");
                 let class_data = config.class_data.get(&name);
 
                 if class_data.map(|data| data.skipped).unwrap_or_default() {
-                    return None;
+                    return vec![];
                 }
 
                 let availability = Availability::parse(
@@ -359,7 +359,7 @@ impl Stmt {
 
                 let superclass = superclass.expect("no superclass found");
 
-                Some(Self::ClassDecl {
+                vec![Self::ClassDecl {
                     ty: GenericType { name, generics },
                     availability,
                     superclass,
@@ -368,7 +368,7 @@ impl Stmt {
                     derives: class_data
                         .map(|data| data.derives.clone())
                         .unwrap_or_default(),
-                })
+                }]
             }
             EntityKind::ObjCCategoryDecl => {
                 let name = entity.get_name();
@@ -394,7 +394,7 @@ impl Stmt {
                 let class_data = config.class_data.get(&class_name);
 
                 if class_data.map(|data| data.skipped).unwrap_or_default() {
-                    return None;
+                    return vec![];
                 }
 
                 let mut class_generics = Vec::new();
@@ -402,7 +402,7 @@ impl Stmt {
                 let (protocols, methods) =
                     parse_objc_decl(&entity, None, Some(&mut class_generics), class_data);
 
-                Some(Self::CategoryDecl {
+                vec![Self::CategoryDecl {
                     class_ty: GenericType {
                         name: class_name,
                         generics: class_generics,
@@ -411,14 +411,14 @@ impl Stmt {
                     name,
                     protocols,
                     methods,
-                })
+                }]
             }
             EntityKind::ObjCProtocolDecl => {
                 let name = entity.get_name().expect("protocol name");
                 let protocol_data = config.protocol_data.get(&name);
 
                 if protocol_data.map(|data| data.skipped).unwrap_or_default() {
-                    return None;
+                    return vec![];
                 }
 
                 let availability = Availability::parse(
@@ -429,12 +429,12 @@ impl Stmt {
 
                 let (protocols, methods) = parse_objc_decl(&entity, None, None, protocol_data);
 
-                Some(Self::ProtocolDecl {
+                vec![Self::ProtocolDecl {
                     name,
                     availability,
                     protocols,
                     methods,
-                })
+                }]
             }
             EntityKind::TypedefDecl => {
                 let name = entity.get_name().expect("typedef name");
@@ -483,11 +483,11 @@ impl Stmt {
                 });
 
                 if let Some(struct_) = struct_ {
-                    return Some(struct_);
+                    return vec![struct_];
                 }
 
                 if skip_struct {
-                    return None;
+                    return vec![];
                 }
 
                 if config
@@ -496,13 +496,17 @@ impl Stmt {
                     .map(|data| data.skipped)
                     .unwrap_or_default()
                 {
-                    return None;
+                    return vec![];
                 }
 
                 let ty = entity
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
-                Ty::parse_typedef(ty).map(|ty| Self::AliasDecl { name, ty })
+                if let Some(ty) = Ty::parse_typedef(ty) {
+                    vec![Self::AliasDecl { name, ty }]
+                } else {
+                    vec![]
+                }
             }
             EntityKind::StructDecl => {
                 if let Some(name) = entity.get_name() {
@@ -512,19 +516,19 @@ impl Stmt {
                         .map(|data| data.skipped)
                         .unwrap_or_default()
                     {
-                        return None;
+                        return vec![];
                     }
                     if !name.starts_with('_') {
-                        return Some(parse_struct(entity, name));
+                        return vec![parse_struct(entity, name)];
                     }
                 }
-                None
+                vec![]
             }
             EntityKind::EnumDecl => {
                 // Enum declarations show up twice for some reason, but
                 // luckily this flag is set on the least descriptive entity.
                 if !entity.is_definition() {
-                    return None;
+                    return vec![];
                 }
 
                 let name = entity.get_name();
@@ -535,7 +539,7 @@ impl Stmt {
                     .cloned()
                     .unwrap_or_default();
                 if data.skipped {
-                    return None;
+                    return vec![];
                 }
 
                 let ty = entity.get_enum_underlying_type().expect("enum type");
@@ -598,12 +602,12 @@ impl Stmt {
                     EntityVisitResult::Continue
                 });
 
-                Some(Self::EnumDecl {
+                vec![Self::EnumDecl {
                     name,
                     ty,
                     kind,
                     variants,
-                })
+                }]
             }
             EntityKind::VarDecl => {
                 let name = entity.get_name().expect("var decl name");
@@ -614,7 +618,7 @@ impl Stmt {
                     .map(|data| data.skipped)
                     .unwrap_or_default()
                 {
-                    return None;
+                    return vec![];
                 }
 
                 let ty = entity.get_type().expect("var type");
@@ -647,12 +651,12 @@ impl Stmt {
                     Some(Some(expr)) => Some(expr),
                     Some(None) => {
                         println!("skipped static {name}");
-                        return None;
+                        return vec![];
                     }
                     None => None,
                 };
 
-                Some(Self::VarDecl { name, ty, value })
+                vec![Self::VarDecl { name, ty, value }]
             }
             EntityKind::FunctionDecl => {
                 let name = entity.get_name().expect("function name");
@@ -663,12 +667,12 @@ impl Stmt {
                     .map(|data| data.skipped)
                     .unwrap_or_default()
                 {
-                    return None;
+                    return vec![];
                 }
 
                 if entity.is_variadic() {
                     println!("can't handle variadic function {name}");
-                    return None;
+                    return vec![];
                 }
 
                 let result_type = entity.get_result_type().expect("function result type");
@@ -706,12 +710,12 @@ impl Stmt {
                     None
                 };
 
-                Some(Self::FnDecl {
+                vec![Self::FnDecl {
                     name,
                     arguments,
                     result_type,
                     body,
-                })
+                }]
             }
             EntityKind::UnionDecl => {
                 // println!(
@@ -721,7 +725,7 @@ impl Stmt {
                 //     entity.has_attributes(),
                 //     entity.get_children(),
                 // );
-                None
+                vec![]
             }
             _ => {
                 panic!("Unknown: {:?}", entity)

@@ -200,7 +200,7 @@ fn parse_sdk(
                     preprocessing = false;
                     // No more includes / macro expansions after this line
                     let file = files.get_mut(file_name).expect("file");
-                    if let Some(stmt) = Stmt::parse(&entity, &config) {
+                    for stmt in Stmt::parse(&entity, &config) {
                         file.add_stmt(stmt);
                     }
                 }
