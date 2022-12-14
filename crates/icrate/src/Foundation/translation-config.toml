@@ -463,7 +463,7 @@ unsafe = false
 # unsafe = false
 [class.NSThread.properties.name]
 unsafe = false
-[class.NSThread.properties.isMultiThreaded]
+[class.NSThread.methods.isMultiThreaded]
 unsafe = false
 [class.NSProcessInfo.properties.processInfo]
 unsafe = false

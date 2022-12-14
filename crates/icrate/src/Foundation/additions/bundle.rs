@@ -14,10 +14,9 @@ impl RefUnwindSafe for NSBundle {}
 
 impl NSBundle {
     pub fn name(&self) -> Option<Id<NSString, Shared>> {
+        let info = self.infoDictionary()?;
         // TODO: Use ns_string!
-        let name = self
-            .infoDictionary()?
-            .get(&NSString::from_str("CFBundleName"))?;
+        let name = info.get(&NSString::from_str("CFBundleName"))?;
         let ptr: *const Object = name;
         let ptr: *const NSString = ptr.cast();
         // SAFETY: TODO
