@@ -36,9 +36,9 @@ mod tests {
     fn try_running_functions() {
         // This is mostly empty since cargo doesn't bundle the application
         // before executing.
-        let bundle = NSBundle::main();
+        let bundle = NSBundle::mainBundle();
         println!("{bundle:?}");
-        assert_eq!(format!("{:?}", bundle.info()), "{}");
+        assert_eq!(format!("{:?}", bundle.infoDictionary()), "{}");
         assert_eq!(bundle.name(), None);
     }
 }

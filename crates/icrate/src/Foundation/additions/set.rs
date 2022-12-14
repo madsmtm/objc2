@@ -357,7 +357,7 @@ mod tests {
 
     use super::*;
     use crate::ns_string;
-    use crate::Foundation::{NSMutableString, NSNumber, NSString};
+    use crate::Foundation::{NSMutableString, NSNumber, NSObject, NSString};
     use objc2::rc::{__RcTestObject, __ThreadTestData};
 
     #[test]
@@ -524,12 +524,12 @@ mod tests {
 
         let mut vec = NSSet::into_vec(set);
         for str in vec.iter_mut() {
-            str.push_nsstring(ns_string!(" times zero is zero"));
+            str.appendString(ns_string!(" times zero is zero"));
         }
 
         assert_eq!(vec.len(), 3);
         let suffix = ns_string!("zero");
-        assert!(vec.iter().all(|str| str.has_suffix(suffix)));
+        assert!(vec.iter().all(|str| str.hasSuffix(suffix)));
     }
 
     #[test]

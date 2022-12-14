@@ -140,9 +140,10 @@ mod tests {
     use alloc::format;
     use alloc::vec;
 
-    use super::*;
-    use crate::Foundation::NSString;
     use objc2::rc::autoreleasepool;
+
+    use super::*;
+    use crate::Foundation::{NSObject, NSString};
 
     fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>, Shared> {
         let string = NSString::from_str(key);
@@ -218,7 +219,7 @@ mod tests {
     fn test_arrays() {
         let dict = sample_dict("abcd");
 
-        let keys = dict.keys_array();
+        let keys = dict.allKeys();
         assert_eq!(keys.len(), 1);
         autoreleasepool(|pool| {
             assert_eq!(keys[0].as_str(pool), "abcd");

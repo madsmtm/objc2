@@ -227,7 +227,7 @@ mod tests {
         let mut set = NSMutableSet::from_slice(&strs);
         assert_eq!(set.len(), 3);
 
-        set.clear();
+        set.removeAllObjects();
         assert!(set.is_empty());
     }
 
@@ -242,12 +242,12 @@ mod tests {
 
         let mut vec = NSMutableSet::into_vec(set);
         for str in vec.iter_mut() {
-            str.push_nsstring(ns_string!(" times zero is zero"));
+            str.appendString(ns_string!(" times zero is zero"));
         }
 
         assert_eq!(vec.len(), 3);
         let suffix = ns_string!("zero");
-        assert!(vec.iter().all(|str| str.has_suffix(suffix)));
+        assert!(vec.iter().all(|str| str.hasSuffix(suffix)));
     }
 
     #[test]
@@ -298,7 +298,7 @@ mod tests {
         }
         let mut expected = __ThreadTestData::current();
 
-        set.clear();
+        set.removeAllObjects();
         expected.release += 4;
         expected.dealloc += 4;
         expected.assert_current();

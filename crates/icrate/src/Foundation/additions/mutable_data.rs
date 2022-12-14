@@ -190,7 +190,10 @@ impl<'a> IntoIterator for &'a mut NSMutableData {
 #[cfg(test)]
 mod tests {
     use super::*;
+
     use objc2::runtime::Object;
+
+    use crate::Foundation::NSObject;
 
     #[test]
     fn test_bytes_mut() {
@@ -244,7 +247,7 @@ mod tests {
 
     #[test]
     fn test_with_capacity() {
-        let mut data = NSMutableData::dataWithCapacity(5);
+        let mut data = NSMutableData::dataWithCapacity(5).unwrap();
         assert_eq!(data.bytes(), &[]);
         data.extend_from_slice(&[1, 2, 3, 4, 5]);
         assert_eq!(data.bytes(), &[1, 2, 3, 4, 5]);

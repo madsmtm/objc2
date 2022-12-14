@@ -133,7 +133,7 @@ mod tests {
     #[test]
     fn test_from_nsstring() {
         let s = NSString::from_str("abc");
-        let s = NSMutableString::from_nsstring(&s);
+        let s = NSMutableString::stringFromString(&s);
         assert_eq!(&s.to_string(), "abc");
     }
 
@@ -154,7 +154,7 @@ mod tests {
 
     #[test]
     fn test_with_capacity() {
-        let mut s = NSMutableString::with_capacity(3);
+        let mut s = NSMutableString::stringWithCapacity(3);
         *s += &NSString::from_str("abc");
         *s += &NSString::from_str("def");
         assert_eq!(&s.to_string(), "abcdef");

@@ -79,8 +79,10 @@ mod tests {
     use alloc::string::ToString;
     use alloc::{format, vec};
 
-    use super::*;
     use objc2::rc::{autoreleasepool, Owned};
+
+    use super::*;
+    use crate::Foundation::NSObject;
 
     #[test]
     fn test_new() {
