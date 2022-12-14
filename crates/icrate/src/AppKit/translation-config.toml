@@ -187,3 +187,13 @@ skipped = true
 skipped = true
 [class.NSPopover]
 skipped = true
+
+# Protocol class methods (currently unsupported)
+[protocol.NSAnimatablePropertyContainer.methods.defaultAnimationForKey]
+skipped = true
+[protocol.NSPasteboardReading.methods.readableTypesForPasteboard]
+skipped = true
+[protocol.NSPasteboardReading.methods.readingOptionsForType_pasteboard]
+skipped = true
+[protocol.NSWindowRestoration.methods.restoreWindowWithIdentifier_state_completionHandler]
+skipped = true
