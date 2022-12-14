@@ -846,6 +846,7 @@ impl fmt::Display for Stmt {
                             "_inner{i}: PhantomData<*mut ({generic}, {generic}Ownership)>,"
                         )?;
                     }
+                    writeln!(f, "notunwindsafe: PhantomData<&'static mut ()>,")?;
                     writeln!(f, "}}")?;
                 }
                 writeln!(f, "")?;
