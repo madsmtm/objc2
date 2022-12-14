@@ -1,40 +1,10 @@
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use super::{NSCopying, NSObject, NSString};
 use objc2::rc::{DefaultId, Id, Shared};
-use objc2::{extern_class, extern_methods, msg_send_id, ClassType, Encode, Encoding, RefEncode};
+use objc2::ClassType;
 
-extern_class!(
-    /// A universally unique value.
-    ///
-    /// Can be used to identify types, interfaces, and other items.
-    ///
-    /// Conversion methods to/from UUIDs from the `uuid` crate can be
-    /// enabled with the `uuid` crate feature.
-    ///
-    /// macOS: This is only available on 10.8 and above.
-    ///
-    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsuuid?language=objc).
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSUUID;
-
-    unsafe impl ClassType for NSUUID {
-        type Super = NSObject;
-    }
-);
-
-/// The headers describe `initWithUUIDBytes:` and `getUUIDBytes:` as
-/// taking `uuid_t`, but something fishy is going on, in reality they
-/// expect a reference to these!
-///
-/// Hence we create this newtype to change the encoding.
-#[repr(transparent)]
-struct UuidBytes([u8; 16]);
-
-unsafe impl RefEncode for UuidBytes {
-    const ENCODING_REF: Encoding = Encoding::Array(16, &u8::ENCODING);
-}
+use crate::Foundation::{NSCopying, NSString, UuidBytes, NSUUID};
 
 // SAFETY: `NSUUID` is immutable.
 unsafe impl Sync for NSUUID {}
@@ -43,49 +13,38 @@ unsafe impl Send for NSUUID {}
 impl UnwindSafe for NSUUID {}
 impl RefUnwindSafe for NSUUID {}
 
-extern_methods!(
-    unsafe impl NSUUID {
-        #[method_id(new)]
-        pub fn new_v4() -> Id<Self, Shared>;
-
-        /// The 'nil UUID'.
-        pub fn nil() -> Id<Self, Shared> {
-            Self::from_bytes([0; 16])
-        }
-
-        pub fn from_bytes(bytes: [u8; 16]) -> Id<Self, Shared> {
-            let bytes = UuidBytes(bytes);
-            unsafe { msg_send_id![Self::alloc(), initWithUUIDBytes: &bytes] }
-        }
-
-        pub fn from_string(string: &NSString) -> Option<Id<Self, Shared>> {
-            unsafe { msg_send_id![Self::alloc(), initWithUUIDString: string] }
-        }
-
-        #[method(getUUIDBytes:)]
-        fn get_bytes_raw(&self, bytes: &mut UuidBytes);
-
-        pub fn as_bytes(&self) -> [u8; 16] {
-            let mut bytes = UuidBytes([0; 16]);
-            self.get_bytes_raw(&mut bytes);
-            bytes.0
-        }
-
-        #[method_id(UUIDString)]
-        pub fn string(&self) -> Id<NSString, Shared>;
+impl NSUUID {
+    /// The 'nil UUID'.
+    pub fn nil() -> Id<Self, Shared> {
+        Self::from_bytes([0; 16])
     }
-);
+
+    pub fn from_bytes(bytes: [u8; 16]) -> Id<Self, Shared> {
+        let bytes = UuidBytes(bytes);
+        Self::initWithUUIDBytes(Self::alloc(), &bytes)
+    }
+
+    pub fn from_string(string: &NSString) -> Option<Id<Self, Shared>> {
+        Self::initWithUUIDString(Self::alloc(), string)
+    }
+
+    pub fn as_bytes(&self) -> [u8; 16] {
+        let mut bytes = UuidBytes([0; 16]);
+        self.getUUIDBytes(&mut bytes);
+        bytes.0
+    }
+}
 
 impl fmt::Display for NSUUID {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(&self.string(), f)
+        fmt::Display::fmt(&self.UUIDString(), f)
     }
 }
 
 impl fmt::Debug for NSUUID {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // The `uuid` crate does `Debug` and `Display` equally, and so do we
-        fmt::Display::fmt(&self.string(), f)
+        fmt::Display::fmt(&self.UUIDString(), f)
     }
 }
 
@@ -144,8 +103,8 @@ mod tests {
 
     #[test]
     fn test_new() {
-        let uuid1 = NSUUID::new_v4();
-        let uuid2 = NSUUID::new_v4();
+        let uuid1 = NSUUID::UUID();
+        let uuid2 = NSUUID::UUID();
         assert_ne!(uuid1, uuid2, "Statistically very unlikely");
     }
 
@@ -173,7 +132,7 @@ mod tests {
     #[cfg(feature = "uuid")]
     #[test]
     fn test_convert_roundtrip() {
-        let nsuuid1 = NSUUID::new_v4();
+        let nsuuid1 = NSUUID::UUID();
         let uuid = nsuuid1.as_uuid();
         let nsuuid2 = NSUUID::from_uuid(uuid);
         assert_eq!(nsuuid1, nsuuid2);

@@ -1,22 +1,9 @@
-use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use super::{NSCopying, NSDictionary, NSObject, NSString};
 use objc2::rc::{Id, Shared};
-use objc2::{extern_class, extern_methods, ClassType};
+use objc2::runtime::Object;
 
-extern_class!(
-    /// A representation of the code and resources stored in a bundle
-    /// directory on disk.
-    ///
-    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsbundle?language=objc).
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSBundle;
-
-    unsafe impl ClassType for NSBundle {
-        type Super = NSObject;
-    }
-);
+use crate::Foundation::{NSBundle, NSCopying, NSString};
 
 // SAFETY: Bundles are documented as thread-safe.
 unsafe impl Sync for NSBundle {}
@@ -25,33 +12,17 @@ unsafe impl Send for NSBundle {}
 impl UnwindSafe for NSBundle {}
 impl RefUnwindSafe for NSBundle {}
 
-extern_methods!(
-    unsafe impl NSBundle {
-        #[method_id(mainBundle)]
-        pub fn main() -> Id<Self, Shared>;
-
-        #[method_id(infoDictionary)]
-        pub fn info(&self) -> Id<NSDictionary<NSString, NSObject>, Shared>;
-
-        pub fn name(&self) -> Option<Id<NSString, Shared>> {
-            // TODO: Use ns_string!
-            self.info()
-                .get(&NSString::from_str("CFBundleName"))
-                .map(|name| {
-                    let ptr: *const NSObject = name;
-                    let ptr: *const NSString = ptr.cast();
-                    // SAFETY: TODO
-                    let name = unsafe { ptr.as_ref().unwrap_unchecked() };
-                    name.copy()
-                })
-        }
-    }
-);
-
-impl fmt::Debug for NSBundle {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // Delegate to NSObject
-        (**self).fmt(f)
+impl NSBundle {
+    pub fn name(&self) -> Option<Id<NSString, Shared>> {
+        // TODO: Use ns_string!
+        let name = self
+            .infoDictionary()?
+            .get(&NSString::from_str("CFBundleName"))?;
+        let ptr: *const Object = name;
+        let ptr: *const NSString = ptr.cast();
+        // SAFETY: TODO
+        let name = unsafe { ptr.as_ref().unwrap_unchecked() };
+        Some(name.copy())
     }
 }
 

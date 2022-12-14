@@ -2,21 +2,11 @@ use core::fmt;
 use core::marker::PhantomData;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use super::{NSObject, NSString};
+use objc2::extern_methods;
 use objc2::rc::{Id, Shared};
-use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::ClassType;
 
-extern_class!(
-    /// A thread of execution.
-    ///
-    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsthread?language=objc).
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSThread;
-
-    unsafe impl ClassType for NSThread {
-        type Super = NSObject;
-    }
-);
+use crate::Foundation::NSThread;
 
 unsafe impl Send for NSThread {}
 unsafe impl Sync for NSThread {}
@@ -26,56 +16,19 @@ impl RefUnwindSafe for NSThread {}
 
 extern_methods!(
     unsafe impl NSThread {
-        /// Returns the [`NSThread`] object representing the current thread.
-        #[method_id(currentThread)]
-        pub fn current() -> Id<Self, Shared>;
-
-        /// Returns the [`NSThread`] object representing the main thread.
-        pub fn main() -> Id<NSThread, Shared> {
-            // The main thread static may not have been initialized
-            // This can at least fail in GNUStep!
-            let obj: Option<_> = unsafe { msg_send_id![Self::class(), mainThread] };
-            obj.expect("Could not retrieve main thread.")
-        }
-
-        /// Returns `true` if the thread is the main thread.
-        #[method(isMainThread)]
-        pub fn is_main(&self) -> bool;
-
-        /// The name of the thread.
-        #[method_id(name)]
-        pub fn name(&self) -> Option<Id<NSString, Shared>>;
-
         #[method_id(new)]
         unsafe fn new() -> Id<Self, Shared>;
-
-        #[method(start)]
-        unsafe fn start(&self);
-
-        #[method(isMainThread)]
-        fn is_current_main() -> bool;
-
-        #[method(isMultiThreaded)]
-        fn is_global_multi() -> bool;
     }
 );
 
-impl fmt::Debug for NSThread {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // Use -[NSThread description] since that includes the thread number
-        let obj: &NSObject = self;
-        fmt::Debug::fmt(obj, f)
-    }
-}
-
 /// Whether the application is multithreaded according to Cocoa.
 pub fn is_multi_threaded() -> bool {
-    NSThread::is_global_multi()
+    NSThread::isMultiThreaded()
 }
 
 /// Whether the current thread is the main thread.
 pub fn is_main_thread() -> bool {
-    NSThread::is_current_main()
+    NSThread::class_isMainThread()
 }
 
 #[allow(unused)]
@@ -173,25 +126,26 @@ mod tests {
         ignore = "Retrieving main thread is weirdly broken, only works with --test-threads=1"
     )]
     fn test_main_thread() {
-        let current = NSThread::current();
-        let main = NSThread::main();
+        let current = NSThread::currentThread();
+        let main = NSThread::mainThread();
 
-        assert!(main.is_main());
+        assert!(main.isMainThread());
 
         if main == current {
-            assert!(current.is_main());
+            assert!(current.isMainThread());
             assert!(is_main_thread());
         } else {
-            assert!(!current.is_main());
+            assert!(!current.isMainThread());
             assert!(!is_main_thread());
         }
     }
 
     #[test]
     fn test_not_main_thread() {
-        let res = std::thread::spawn(|| (is_main_thread(), NSThread::current().is_main()))
-            .join()
-            .unwrap();
+        let res =
+            std::thread::spawn(|| (is_main_thread(), NSThread::currentThread().isMainThread()))
+                .join()
+                .unwrap();
         assert_eq!(res, (false, false));
     }
 
@@ -208,7 +162,7 @@ mod tests {
         ignore = "Retrieving main thread is weirdly broken, only works with --test-threads=1"
     )]
     fn test_debug() {
-        let thread = NSThread::main();
+        let thread = NSThread::mainThread();
 
         let actual = format!("{thread:?}");
         let expected = [

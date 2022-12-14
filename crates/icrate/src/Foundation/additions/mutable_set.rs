@@ -1,35 +1,12 @@
 use alloc::vec::Vec;
-use core::fmt;
-use core::marker::PhantomData;
+
+use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
+use objc2::{extern_methods, ClassType, Message};
 
 use super::set::with_objects;
-use super::{NSCopying, NSFastEnumeration, NSFastEnumerator, NSMutableCopying, NSObject, NSSet};
-use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use objc2::{ClassType, Message, __inner_extern_class, extern_methods};
-
-__inner_extern_class!(
-    /// A growable unordered collection of unique objects.
-    ///
-    /// See the documentation for [`NSSet`] and/or [Apple's
-    /// documentation][apple-doc] for more information.
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsmutableset?language=objc
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSMutableSet<T: Message, O: Ownership = Owned> {
-        p: PhantomData<*mut ()>,
-    }
-
-    unsafe impl<T: Message, O: Ownership> ClassType for NSMutableSet<T, O> {
-        #[inherits(NSObject)]
-        type Super = NSSet<T, O>;
-    }
-);
-
-// SAFETY: Same as NSSet<T, O>
-unsafe impl<T: Message + Sync + Send> Sync for NSMutableSet<T, Shared> {}
-unsafe impl<T: Message + Sync + Send> Send for NSMutableSet<T, Shared> {}
-unsafe impl<T: Message + Sync> Sync for NSMutableSet<T, Owned> {}
-unsafe impl<T: Message + Send> Send for NSMutableSet<T, Owned> {}
+use crate::Foundation::{
+    NSCopying, NSFastEnumeration, NSFastEnumerator, NSMutableCopying, NSMutableSet, NSSet,
+};
 
 extern_methods!(
     unsafe impl<T: Message, O: Ownership> NSMutableSet<T, O> {
@@ -63,22 +40,6 @@ extern_methods!(
             // sets are always unique.
             unsafe { with_objects(vec.as_slice_ref()) }
         }
-
-        /// Clears the set, removing all values.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icrate::Foundation::{NSMutableSet, NSString};
-        ///
-        /// let mut set = NSMutableSet::new();
-        /// set.insert(NSString::from_str("one"));
-        /// set.clear();
-        /// assert!(set.is_empty());
-        /// ```
-        #[doc(alias = "removeAllObjects")]
-        #[method(removeAllObjects)]
-        pub fn clear(&mut self);
 
         /// Returns a [`Vec`] containing the set's elements, consuming the set.
         ///
@@ -229,13 +190,6 @@ impl<T: Message, O: Ownership> DefaultId for NSMutableSet<T, O> {
     #[inline]
     fn default_id() -> Id<Self, Self::Ownership> {
         Self::new()
-    }
-}
-
-impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for NSMutableSet<T, O> {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&**self, f)
     }
 }
 

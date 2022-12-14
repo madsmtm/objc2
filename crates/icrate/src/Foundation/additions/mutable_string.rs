@@ -3,22 +3,10 @@ use core::fmt;
 use core::ops::AddAssign;
 use core::str;
 
-use super::{NSCopying, NSMutableCopying, NSObject, NSString};
 use objc2::rc::{DefaultId, Id, Owned, Shared};
-use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::{extern_methods, msg_send_id, ClassType};
 
-extern_class!(
-    /// A dynamic plain-text Unicode string object.
-    ///
-    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutablestring?language=objc).
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSMutableString;
-
-    unsafe impl ClassType for NSMutableString {
-        #[inherits(NSObject)]
-        type Super = NSString;
-    }
-);
+use crate::Foundation::{NSCopying, NSMutableCopying, NSMutableString, NSObject, NSString};
 
 extern_methods!(
     /// Creating mutable strings.
@@ -35,17 +23,6 @@ extern_methods!(
                 let obj = super::string::from_str(Self::class(), string);
                 Id::new(obj.cast()).unwrap()
             }
-        }
-
-        /// Creates a new [`NSMutableString`] from the given [`NSString`].
-        #[doc(alias = "initWithString:")]
-        pub fn from_nsstring(string: &NSString) -> Id<Self, Owned> {
-            unsafe { msg_send_id![Self::alloc(), initWithString: string] }
-        }
-
-        #[doc(alias = "initWithCapacity:")]
-        pub fn with_capacity(capacity: usize) -> Id<Self, Owned> {
-            unsafe { msg_send_id![Self::alloc(), initWithCapacity: capacity] }
         }
     }
 
@@ -157,13 +134,6 @@ impl fmt::Display for NSMutableString {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(&**self, f)
-    }
-}
-
-impl fmt::Debug for NSMutableString {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&**self, f)
     }
 }
 

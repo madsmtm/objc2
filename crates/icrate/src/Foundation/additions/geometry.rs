@@ -343,36 +343,10 @@ impl CGRect {
     // TODO: NSWidth / CGRectGetWidth (standardized)
 }
 
-/// A point in a Cartesian coordinate system.
-///
-/// This is just a convenience alias for [`CGPoint`]. For ease of use, it is
-/// available on all platforms, though in practice it is only useful on macOS.
-///
-/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nspoint?language=objc).
-pub type NSPoint = CGPoint;
-
-/// A two-dimensional size.
-///
-/// This is just a convenience alias for [`CGSize`]. For ease of use, it is
-/// available on all platforms, though in practice it is only useful on macOS.
-///
-/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nssize?language=objc).
-pub type NSSize = CGSize;
-
-/// A rectangle.
-///
-/// This is just a convenience alias for [`CGRect`]. For ease of use, it is
-/// available on all platforms, though in practice it is only useful on macOS.
-///
-/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsrect?language=objc).
-pub type NSRect = CGRect;
-
-// TODO: struct NSEdgeInsets
-// TODO: enum NSRectEdge
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::Foundation::{NSPoint, NSRect, NSSize};
 
     #[test]
     fn test_cgsize_new() {

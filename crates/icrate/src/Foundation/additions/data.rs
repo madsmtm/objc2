@@ -6,24 +6,11 @@ use core::ops::Index;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::slice::{self, SliceIndex};
 
-use super::{NSCopying, NSMutableCopying, NSMutableData, NSObject};
 use objc2::rc::{DefaultId, Id, Shared};
 use objc2::runtime::{Class, Object};
-use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::{extern_methods, msg_send_id, ClassType};
 
-extern_class!(
-    /// A static byte buffer in memory.
-    ///
-    /// This is similar to a [`slice`][`prim@slice`] of [`u8`].
-    ///
-    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsdata?language=objc).
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSData;
-
-    unsafe impl ClassType for NSData {
-        type Super = NSObject;
-    }
-);
+use crate::Foundation::{NSCopying, NSData, NSMutableCopying, NSMutableData};
 
 // SAFETY: `NSData` is immutable and `NSMutableData` can only be mutated from
 // `&mut` methods.
@@ -63,9 +50,9 @@ extern_methods!(
 
     /// Accessor methods.
     unsafe impl NSData {
-        #[method(length)]
-        #[doc(alias = "length")]
-        pub fn len(&self) -> usize;
+        pub fn len(&self) -> usize {
+            self.length()
+        }
 
         pub fn is_empty(&self) -> bool {
             self.len() == 0

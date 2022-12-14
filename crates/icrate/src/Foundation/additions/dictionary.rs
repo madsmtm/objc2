@@ -1,43 +1,32 @@
 use alloc::vec::Vec;
 use core::cmp::min;
 use core::fmt;
-use core::marker::PhantomData;
+use core::mem;
 use core::ops::Index;
 use core::panic::{RefUnwindSafe, UnwindSafe};
-use core::ptr;
+use core::ptr::{self, NonNull};
 
-use super::{NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSObject};
+use crate::Foundation::{NSCopying, NSDictionary, NSEnumerator, NSFastEnumeration, NSObject};
 use objc2::rc::{DefaultId, Id, Owned, Shared, SliceId};
-use objc2::{ClassType, __inner_extern_class, extern_methods, msg_send, msg_send_id, Message};
-
-__inner_extern_class!(
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSDictionary<K: Message, V: Message> {
-        key: PhantomData<Id<K, Shared>>,
-        obj: PhantomData<Id<V, Owned>>,
-    }
-
-    unsafe impl<K: Message, V: Message> ClassType for NSDictionary<K, V> {
-        type Super = NSObject;
-    }
-);
+use objc2::{extern_methods, msg_send, msg_send_id, ClassType, Message};
 
 // TODO: SAFETY
 // Approximately same as `NSArray<T, Shared>`
-unsafe impl<K: Message + Sync + Send, V: Message + Sync> Sync for NSDictionary<K, V> {}
-unsafe impl<K: Message + Sync + Send, V: Message + Send> Send for NSDictionary<K, V> {}
+unsafe impl<K: Message + Sync + Send, V: Message + Sync + Send> Sync for NSDictionary<K, V> {}
+unsafe impl<K: Message + Sync + Send, V: Message + Sync + Send> Send for NSDictionary<K, V> {}
 
 // Approximately same as `NSArray<T, Shared>`
-impl<K: Message + UnwindSafe, V: Message + UnwindSafe> UnwindSafe for NSDictionary<K, V> {}
+impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> UnwindSafe for NSDictionary<K, V> {}
 impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> RefUnwindSafe for NSDictionary<K, V> {}
+
 extern_methods!(
     unsafe impl<K: Message, V: Message> NSDictionary<K, V> {
         #[method_id(new)]
         pub fn new() -> Id<Self, Shared>;
 
-        #[doc(alias = "count")]
-        #[method(count)]
-        pub fn len(&self) -> usize;
+        pub fn len(&self) -> usize {
+            self.count()
+        }
 
         pub fn is_empty(&self) -> bool {
             self.len() == 0
@@ -47,42 +36,39 @@ extern_methods!(
         #[method(objectForKey:)]
         pub fn get(&self, key: &K) -> Option<&V>;
 
-        #[method(getObjects:andKeys:)]
-        unsafe fn get_objects_and_keys(&self, objects: *mut &V, keys: *mut &K);
-
         #[doc(alias = "getObjects:andKeys:")]
         pub fn keys(&self) -> Vec<&K> {
             let len = self.len();
-            let mut keys = Vec::with_capacity(len);
+            let mut keys: Vec<NonNull<K>> = Vec::with_capacity(len);
             unsafe {
-                self.get_objects_and_keys(ptr::null_mut(), keys.as_mut_ptr());
+                self.getObjects_andKeys(ptr::null_mut(), keys.as_mut_ptr());
                 keys.set_len(len);
+                mem::transmute(keys)
             }
-            keys
         }
 
         #[doc(alias = "getObjects:andKeys:")]
         pub fn values(&self) -> Vec<&V> {
             let len = self.len();
-            let mut vals = Vec::with_capacity(len);
+            let mut vals: Vec<NonNull<V>> = Vec::with_capacity(len);
             unsafe {
-                self.get_objects_and_keys(vals.as_mut_ptr(), ptr::null_mut());
+                self.getObjects_andKeys(vals.as_mut_ptr(), ptr::null_mut());
                 vals.set_len(len);
+                mem::transmute(vals)
             }
-            vals
         }
 
         #[doc(alias = "getObjects:andKeys:")]
         pub fn keys_and_objects(&self) -> (Vec<&K>, Vec<&V>) {
             let len = self.len();
-            let mut keys = Vec::with_capacity(len);
-            let mut objs = Vec::with_capacity(len);
+            let mut keys: Vec<NonNull<K>> = Vec::with_capacity(len);
+            let mut objs: Vec<NonNull<V>> = Vec::with_capacity(len);
             unsafe {
-                self.get_objects_and_keys(objs.as_mut_ptr(), keys.as_mut_ptr());
+                self.getObjects_andKeys(objs.as_mut_ptr(), keys.as_mut_ptr());
                 keys.set_len(len);
                 objs.set_len(len);
+                (mem::transmute(keys), mem::transmute(objs))
             }
-            (keys, objs)
         }
 
         #[doc(alias = "keyEnumerator")]
@@ -101,9 +87,6 @@ extern_methods!(
             }
         }
 
-        #[method_id(allKeys)]
-        pub fn keys_array(&self) -> Id<NSArray<K, Shared>, Shared>;
-
         pub fn from_keys_and_objects<T>(keys: &[&T], vals: Vec<Id<V, Owned>>) -> Id<Self, Shared>
         where
             T: NSCopying<Output = K>,
@@ -119,10 +102,6 @@ extern_methods!(
                     count: count,
                 ]
             }
-        }
-
-        pub fn into_values_array(dict: Id<Self, Owned>) -> Id<NSArray<V, Owned>, Shared> {
-            unsafe { msg_send_id![&dict, allValues] }
         }
     }
 );

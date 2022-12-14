@@ -167,7 +167,8 @@ impl<'a, C: NSFastEnumeration + ?Sized> Iterator for NSFastEnumerator<'a, C> {
 
 #[cfg(test)]
 mod tests {
-    use super::NSFastEnumeration;
+    use super::*;
+
     use crate::Foundation::{NSArray, NSNumber};
 
     #[test]

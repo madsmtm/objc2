@@ -1,31 +1,14 @@
 use alloc::vec::Vec;
 use core::fmt;
-use core::marker::PhantomData;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use super::{
-    NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSFastEnumerator, NSMutableCopying,
-    NSMutableSet, NSObject,
-};
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use objc2::{ClassType, Message, __inner_extern_class, extern_methods, msg_send, msg_send_id};
+use objc2::{extern_methods, msg_send, msg_send_id, ClassType, Message};
 
-__inner_extern_class!(
-    /// An immutable unordered collection of unique objects.
-    ///
-    /// See [Apple's documentation][apple-doc].
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsset?language=objc
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSSet<T: Message, O: Ownership = Shared> {
-        item: PhantomData<Id<T, O>>,
-        notunwindsafe: PhantomData<&'static mut ()>,
-    }
-
-    unsafe impl<T: Message, O: Ownership> ClassType for NSSet<T, O> {
-        type Super = NSObject;
-    }
-);
+use crate::Foundation::{
+    NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSFastEnumerator, NSMutableCopying,
+    NSMutableSet, NSObject, NSSet,
+};
 
 // SAFETY: Same as NSArray<T, O>
 unsafe impl<T: Message + Sync + Send> Sync for NSSet<T, Shared> {}
@@ -102,8 +85,9 @@ extern_methods!(
         /// assert_eq!(set.len(), 3);
         /// ```
         #[doc(alias = "count")]
-        #[method(count)]
-        pub fn len(&self) -> usize;
+        pub fn len(&self) -> usize {
+            self.count()
+        }
 
         /// Returns `true` if the set contains no elements.
         ///
@@ -215,12 +199,11 @@ extern_methods!(
         /// assert_eq!(set.to_array().len(), 3);
         /// assert!(set.to_array().iter().all(|i| nums.contains(&i.as_i32())));
         /// ```
-        // SAFETY:
-        // We only define this method for sets with shared elements
-        // because we can't return copies of owned elements.
-        #[method_id(allObjects)]
         #[doc(alias = "allObjects")]
-        pub fn to_array(&self) -> Id<NSArray<T, Shared>, Shared>;
+        pub fn to_array(&self) -> Id<NSArray<T, Shared>, Shared> {
+            // SAFETY: The set's elements are shared
+            unsafe { self.allObjects() }
+        }
     }
 
     // We're explicit about `T` being `PartialEq` for these methods because the
@@ -240,8 +223,9 @@ extern_methods!(
         /// assert!(set.contains(ns_string!("one")));
         /// ```
         #[doc(alias = "containsObject:")]
-        #[method(containsObject:)]
-        pub fn contains(&self, value: &T) -> bool;
+        pub fn contains(&self, value: &T) -> bool {
+            unsafe { self.containsObject(value) }
+        }
 
         /// Returns a reference to the value in the set, if any, that is equal
         /// to the given value.

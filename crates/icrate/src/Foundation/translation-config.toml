@@ -8,25 +8,6 @@ awakeAfterUsingCoder = { skipped = true }
 # Uses NS_RELEASES_ARGUMENT and NS_RETURNS_RETAINED
 unarchiver_didDecodeObject = { skipped = true }
 
-[class.NSString.methods]
-new = { unsafe = false }
-# Assuming that (non-)nullability is properly set
-stringByAppendingString = { unsafe = false }
-stringByAppendingPathComponent = { unsafe = false }
-# Assuming `NSStringEncoding` can be made safe
-lengthOfBytesUsingEncoding = { unsafe = false }
-
-[class.NSString.properties]
-length = { unsafe = false }
-# Safe to call, but the returned pointer may not be safe to use
-UTF8String = { unsafe = false }
-
-[class.NSMutableString.methods]
-new = { unsafe = false }
-initWithString = { unsafe = false }
-# "appendString:" = { unsafe = false, mutable = true }
-# "setString:" = { unsafe = false, mutable = true }
-
 [class.NSBlockOperation.properties]
 # Uses `NSArray<void (^)(void)>`, which is difficult to handle
 executionBlocks = { skipped = true }
@@ -224,7 +205,14 @@ skipped = true
 [protocol.NSSecureCoding.properties.supportsSecureCoding]
 skipped = true
 
+# Custom implementation for now
+[struct.NSRange]
+skipped = true
+[enum.NSComparisonResult]
+skipped = true
+
 # Overridden fmt::Debug because we're missing https://github.com/madsmtm/objc2/issues/267
+# See fixes/debug.rs
 [class.NSAttributedString]
 derives = "PartialEq, Eq, Hash"
 [class.NSBundle]
@@ -265,7 +253,203 @@ derives = "PartialEq, Eq, Hash"
 derives = "PartialEq, Eq, Hash"
 
 # Overridden because whether or not it is Eq depends on the inner value
-[class.NSNumber]
-derives = "Hash"
 [class.NSValue]
 derives = "Hash"
+[class.NSNumber]
+derives = "Hash"
+[class.NSDecimalNumber]
+derives = "Debug, PartialEq, Hash"
+
+# Returns `nil` on Apple and GNUStep throws an exception on all other messages
+# to this invalid instance.
+[class.NSValue.methods.init]
+skipped = true
+[class.NSValue.methods.new]
+skipped = true
+
+# Manually found to be safe
+[class.NSString.methods.init]
+unsafe = false
+[class.NSString.methods.compare]
+unsafe = false
+[class.NSString.methods.hasPrefix]
+unsafe = false
+[class.NSString.methods.hasSuffix]
+unsafe = false
+[class.NSString.methods.stringByAppendingString]
+unsafe = false # The other string is non-null, and won't be retained
+[class.NSString.methods.stringByAppendingPathComponent]
+unsafe = false
+[class.NSString.methods.lengthOfBytesUsingEncoding]
+unsafe = false # Assuming `NSStringEncoding` can be made safe
+[class.NSString.properties.length]
+unsafe = false
+[class.NSString.properties.UTF8String]
+unsafe = false # Safe to call, but the returned pointer may not be safe to use
+[class.NSString.methods.initWithString]
+unsafe = false
+[class.NSString.methods.stringWithString]
+unsafe = false
+[class.NSMutableString.methods.initWithCapacity]
+unsafe = false
+[class.NSMutableString.methods.stringWithCapacity]
+unsafe = false
+# [class.NSMutableString.methods.appendString]
+# unsafe = false
+# mutable = true
+# [class.NSMutableString.methods.setString]
+# unsafe = false
+# mutable = true
+[class.NSAttributedString.methods.initWithString]
+unsafe = false
+[class.NSAttributedString.methods.initWithAttributedString]
+unsafe = false
+[class.NSAttributedString.properties.string]
+unsafe = false
+[class.NSAttributedString.properties.length]
+unsafe = false
+[class.NSBundle.methods.mainBundle]
+unsafe = false
+[class.NSBundle.properties.infoDictionary]
+unsafe = false
+[class.NSData.properties.length]
+unsafe = false
+[class.NSData.properties.bytes]
+skipped = true
+unsafe = false
+[class.NSData.methods.initWithData]
+unsafe = false
+[class.NSData.methods.dataWithData]
+unsafe = false
+[class.NSDictionary.properties.count]
+unsafe = false
+[class.NSDictionary.methods.objectForKey]
+unsafe = false
+[class.NSDictionary.properties.allKeys]
+unsafe = false
+[class.NSDictionary.properties.allValues]
+unsafe = false
+[class.NSMutableDictionary.methods.setDictionary]
+unsafe = false
+[class.NSMutableDictionary.methods.removeObjectForKey]
+unsafe = false
+[class.NSMutableDictionary.methods.removeAllObjects]
+unsafe = false
+[class.NSError.properties.domain]
+unsafe = false
+[class.NSError.properties.code]
+unsafe = false
+[class.NSError.properties.userInfo]
+unsafe = false
+[class.NSError.properties.localizedDescription]
+unsafe = false
+[class.NSException.methods.raise]
+skipped = true
+[class.NSException.properties.name]
+unsafe = false
+[class.NSException.properties.reason]
+unsafe = false
+[class.NSException.properties.userInfo]
+unsafe = false
+[class.NSLock.properties.name]
+unsafe = false
+[class.NSLock.properties.setName]
+unsafe = false
+# [class.NSMutableAttributedString.methods.setAttributedString]
+# unsafe = false
+# mutable = true
+[class.NSMutableData.properties.mutableBytes]
+unsafe = false
+[class.NSMutableData.properties.length]
+skipped = true
+[class.NSMutableData.methods.dataWithCapacity]
+unsafe = false
+[class.NSMutableData.methods.initWithCapacity]
+unsafe = false
+[class.NSValue.properties.objCType]
+unsafe = false
+[class.NSValue.methods.isEqualToValue]
+unsafe = false
+[class.NSNumber.methods]
+initWithChar = { unsafe = false }
+initWithUnsignedChar = { unsafe = false }
+initWithShort = { unsafe = false }
+initWithUnsignedShort = { unsafe = false }
+initWithInt = { unsafe = false }
+initWithUnsignedInt = { unsafe = false }
+initWithLong = { unsafe = false }
+initWithUnsignedLong = { unsafe = false }
+initWithLongLong = { unsafe = false }
+initWithUnsignedLongLong = { unsafe = false }
+initWithFloat = { unsafe = false }
+initWithDouble = { unsafe = false }
+initWithBool = { unsafe = false }
+initWithInteger = { unsafe = false }
+initWithUnsignedInteger = { unsafe = false }
+numberWithChar = { unsafe = false }
+numberWithUnsignedChar = { unsafe = false }
+numberWithShort = { unsafe = false }
+numberWithUnsignedShort = { unsafe = false }
+numberWithInt = { unsafe = false }
+numberWithUnsignedInt = { unsafe = false }
+numberWithLong = { unsafe = false }
+numberWithUnsignedLong = { unsafe = false }
+numberWithLongLong = { unsafe = false }
+numberWithUnsignedLongLong = { unsafe = false }
+numberWithFloat = { unsafe = false }
+numberWithDouble = { unsafe = false }
+numberWithBool = { unsafe = false }
+numberWithInteger = { unsafe = false }
+numberWithUnsignedInteger = { unsafe = false }
+compare = { unsafe = false }
+isEqualToNumber = { unsafe = false }
+[class.NSNumber.properties]
+charValue = { unsafe = false }
+unsignedCharValue = { unsafe = false }
+shortValue = { unsafe = false }
+unsignedShortValue = { unsafe = false }
+intValue = { unsafe = false }
+unsignedIntValue = { unsafe = false }
+longValue = { unsafe = false }
+unsignedLongValue = { unsafe = false }
+longLongValue = { unsafe = false }
+unsignedLongLongValue = { unsafe = false }
+floatValue = { unsafe = false }
+doubleValue = { unsafe = false }
+boolValue = { unsafe = false }
+integerValue = { unsafe = false }
+unsignedIntegerValue = { unsafe = false }
+stringValue = { unsafe = false }
+[class.NSUUID.methods.UUID]
+unsafe = false
+[class.NSUUID.methods.init]
+unsafe = false
+[class.NSUUID.methods.initWithUUIDString]
+unsafe = false
+[class.NSUUID.properties.UUIDString]
+unsafe = false
+[class.NSThread.properties.currentThread]
+unsafe = false
+[class.NSThread.properties.mainThread]
+unsafe = false
+# [class.NSThread.properties.isMainThread]
+# unsafe = false
+[class.NSThread.properties.name]
+unsafe = false
+[class.NSThread.properties.isMultiThreaded]
+unsafe = false
+[class.NSProcessInfo.properties.processInfo]
+unsafe = false
+# [class.NSProcessInfo.properties.processName]
+# unsafe = false
+[class.NSArray.properties.count]
+unsafe = false
+[class.NSMutableArray.methods.removeAllObjects]
+unsafe = false
+# addObject, removeObjectAtIndex, ... = mutable
+[class.NSSet.properties.count]
+unsafe = false
+[class.NSMutableSet.methods.removeAllObjects]
+unsafe = false
+# [class.NSMutableSet.methods.addObject]
+# mutable = true

@@ -1,105 +1,10 @@
-//! Bindings to the `Foundation` framework.
-//!
-//! This is the [`std`] equivalent for Objective-C, containing essential data
-//! types, collections, and operating-system services.
-//!
-//! See [Apple's documentation](https://developer.apple.com/documentation/foundation?language=objc).
-//!
-//!
-//! ## Philosophy
-//!
-//! The `Foundation` framework is _huge_! If we aspired to map every API it
-//! exposes (a lot of it is just helper methods to make Objective-C more
-//! ergonomic), this library would never be finished. Instead, our focus lies
-//! on conversion methods, to allow easily using them from Rust.
-//!
-//! If you find some API that an object doesn't expose (but should), we gladly
-//! accept [pull requests]. If it is something that is out of scope, these
-//! objects implement the [`Message`] trait, so you can always just manually
-//! call a method on them using the [`msg_send!`] family of macros.
-//!
-//! [pull requests]: https://github.com/madsmtm/objc2/pulls
-//! [`Message`]: crate::objc2::Message
-//! [`msg_send!`]: crate::objc2::msg_send
-//!
-//!
-//! # Use of `Deref`
-//!
-//! `icrate` uses the [`Deref`] trait in a bit special way: All objects deref
-//! to their superclasses. For example, `NSMutableArray` derefs to `NSArray`,
-//! which in turn derefs to `NSObject`.
-//!
-//! Note that this is explicitly recommended against in [the
-//! documentation][`Deref`] and [the Rust Design patterns
-//! book][anti-pattern-deref] (see those links for details).
-//!
-//! Due to Objective-C objects only ever being accessible behind pointers in
-//! the first place, the problems stated there are less severe, and having the
-//! implementation just means that everything is much nicer when you actually
-//! want to use the objects!
-//!
-//! All objects also implement [`AsRef`] and [`AsMut`] to their superclass,
-//! and can be used in [`Id::into_super`], so if you favour explicit
-//! conversion, that is a possibility too.
-//!
-//! [`Deref`]: std::ops::Deref
-//! [`ClassType`]: crate::objc2::ClassType
-//! [anti-pattern-deref]: https://rust-unofficial.github.io/patterns/anti_patterns/deref.html
-//! [`Id::into_super`]: objc2::rc::Id::into_super
-
-// TODO: Remove these
-#![allow(missing_docs)]
-#![allow(clippy::missing_safety_doc)]
-
-use std::os::raw::c_double;
-
-pub use self::array::NSArray;
-pub use self::attributed_string::{NSAttributedString, NSAttributedStringKey};
-pub use self::bundle::NSBundle;
 pub use self::comparison_result::NSComparisonResult;
 pub use self::copying::{NSCopying, NSMutableCopying};
-pub use self::data::NSData;
-pub use self::dictionary::NSDictionary;
 pub use self::enumerator::{NSEnumerator, NSFastEnumeration, NSFastEnumerator};
-pub use self::error::{NSError, NSErrorDomain, NSErrorUserInfoKey};
-pub use self::exception::NSException;
-pub use self::geometry::{CGFloat, CGPoint, CGRect, CGSize, NSPoint, NSRect, NSSize};
-pub use self::lock::{NSLock, NSLocking};
-pub use self::mutable_array::NSMutableArray;
-pub use self::mutable_attributed_string::NSMutableAttributedString;
-pub use self::mutable_data::NSMutableData;
-pub use self::mutable_dictionary::NSMutableDictionary;
-pub use self::mutable_set::NSMutableSet;
-pub use self::mutable_string::NSMutableString;
-pub use self::number::NSNumber;
-pub use self::process_info::NSProcessInfo;
+pub use self::geometry::{CGFloat, CGPoint, CGRect, CGSize};
 pub use self::range::NSRange;
-pub use self::set::NSSet;
-pub use self::string::NSString;
-pub use self::thread::{is_main_thread, is_multi_threaded, MainThreadMarker, NSThread};
-#[cfg(not(macos_10_7))] // Temporary
-pub use self::uuid::NSUUID;
-pub use self::value::NSValue;
-pub use objc2::runtime::{NSObject, NSZone};
+pub use self::thread::{is_main_thread, is_multi_threaded, MainThreadMarker};
 
-// Available under Foundation, so makes sense here as well:
-// https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
-#[doc(no_inline)]
-pub use objc2::ffi::{NSInteger, NSUInteger};
-
-/// A value indicating that a requested item couldn’t be found or doesn’t exist.
-///
-/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsnotfound?language=objc).
-#[allow(non_upper_case_globals)]
-pub const NSNotFound: NSInteger = objc2::ffi::NSIntegerMax;
-
-/// A number of seconds.
-///
-/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nstimeinterval?language=objc).
-pub type NSTimeInterval = c_double;
-
-#[doc(hidden)]
-pub mod __ns_string;
 mod array;
 mod attributed_string;
 mod bundle;
@@ -124,8 +29,6 @@ mod range;
 mod set;
 mod string;
 mod thread;
-// Temporarily disable testing UUID on macOS 10.7 until
-#[cfg(not(macos_10_7))]
 mod uuid;
 mod value;
 
@@ -133,7 +36,7 @@ mod value;
 mod tests {
     use core::panic::{RefUnwindSafe, UnwindSafe};
 
-    use super::*;
+    use crate::Foundation::*;
     use objc2::rc::{Id, Owned, Shared};
 
     // We expect most Foundation types to be UnwindSafe and RefUnwindSafe,

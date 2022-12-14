@@ -1,50 +1,22 @@
+//! Note that due to limitations in Objective-C type encodings, it is not
+//! possible to distinguish between an `NSNumber` created from [`bool`],
+//! and one created from an [`i8`]/[`u8`]. You should use the getter
+//! methods that fit your use-case instead!
+//!
+//! This does not implement [`Eq`] nor [`Ord`], since it may contain a
+//! floating point value. Beware that the implementation of [`PartialEq`]
+//! and [`PartialOrd`] does not properly handle NaNs either. Compare
+//! [`NSNumber::encoding`] with [`Encoding::Float`] or
+//! [`Encoding::Double`], and use [`NSNumber::as_f32`] or
+//! [`NSNumber::as_f64`] to get the desired floating point value directly.
 use core::cmp::Ordering;
 use core::fmt;
-use core::hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
-use std::os::raw::{
-    c_char, c_double, c_float, c_int, c_longlong, c_short, c_uchar, c_uint, c_ulonglong, c_ushort,
-};
 
-use super::{
-    CGFloat, NSComparisonResult, NSCopying, NSInteger, NSObject, NSString, NSUInteger, NSValue,
-};
+use objc2::encode::Encoding;
 use objc2::rc::{Id, Shared};
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType, Encoding};
 
-extern_class!(
-    /// An object wrapper for primitive scalars.
-    ///
-    /// This is the Objective-C equivalant of a Rust enum containing the
-    /// common scalar types `i8`, `u8`, `i16`, `u16`, `i32`, `u32`, `i64`,
-    /// `u64`, `f32`, `f64` and the two C types `c_long` and `c_ulong`.
-    ///
-    /// All accessor methods are safe, though they may return unexpected
-    /// results if the number was not created from said type. Consult [Apple's
-    /// documentation][apple-doc] for details.
-    ///
-    /// Note that due to limitations in Objective-C type encodings, it is not
-    /// possible to distinguish between an `NSNumber` created from [`bool`],
-    /// and one created from an [`i8`]/[`u8`]. You should use the getter
-    /// methods that fit your use-case instead!
-    ///
-    /// This does not implement [`Eq`] nor [`Ord`], since it may contain a
-    /// floating point value. Beware that the implementation of [`PartialEq`]
-    /// and [`PartialOrd`] does not properly handle NaNs either. Compare
-    /// [`NSNumber::encoding`] with [`Encoding::Float`] or
-    /// [`Encoding::Double`], and use [`NSNumber::as_f32`] or
-    /// [`NSNumber::as_f64`] to get the desired floating point value directly.
-    ///
-    /// See [Apple's documentation][apple-doc] for more information.
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsnumber?language=objc
-    pub struct NSNumber;
-
-    unsafe impl ClassType for NSNumber {
-        #[inherits(NSObject)]
-        type Super = NSValue;
-    }
-);
+use crate::Foundation::{CGFloat, NSCopying, NSNumber, NSString};
 
 // SAFETY: `NSNumber` is just a wrapper around an integer/float/bool, and it
 // is immutable.
@@ -57,14 +29,11 @@ impl RefUnwindSafe for NSNumber {}
 macro_rules! def_new_fn {
     {$(
         $(#[$($m:meta)*])*
-        ($fn_name:ident($fn_inp:ty); $method_name:ident: $method_inp:ty),
+        ($fn_name:ident($fn_inp:ty); $method_name:ident),
     )*} => {$(
         $(#[$($m)*])*
         pub fn $fn_name(val: $fn_inp) -> Id<Self, Shared> {
-            let val = val as $method_inp;
-            unsafe {
-                msg_send_id![Self::class(), $method_name: val]
-            }
+            Self::$method_name(val as _)
         }
     )*}
 }
@@ -72,19 +41,19 @@ macro_rules! def_new_fn {
 /// Creation methods.
 impl NSNumber {
     def_new_fn! {
-        (new_bool(bool); numberWithBool: bool),
-        (new_i8(i8); numberWithChar: c_char),
-        (new_u8(u8); numberWithUnsignedChar: c_uchar),
-        (new_i16(i16); numberWithShort: c_short),
-        (new_u16(u16); numberWithUnsignedShort: c_ushort),
-        (new_i32(i32); numberWithInt: c_int),
-        (new_u32(u32); numberWithUnsignedInt: c_uint),
-        (new_i64(i64); numberWithLongLong: c_longlong),
-        (new_u64(u64); numberWithUnsignedLongLong: c_ulonglong),
-        (new_isize(isize); numberWithInteger: NSInteger),
-        (new_usize(usize); numberWithUnsignedInteger: NSUInteger),
-        (new_f32(f32); numberWithFloat: c_float),
-        (new_f64(f64); numberWithDouble: c_double),
+        (new_bool(bool); numberWithBool),
+        (new_i8(i8); numberWithChar),
+        (new_u8(u8); numberWithUnsignedChar),
+        (new_i16(i16); numberWithShort),
+        (new_u16(u16); numberWithUnsignedShort),
+        (new_i32(i32); numberWithInt),
+        (new_u32(u32); numberWithUnsignedInt),
+        (new_i64(i64); numberWithLongLong),
+        (new_u64(u64); numberWithUnsignedLongLong),
+        (new_isize(isize); numberWithInteger),
+        (new_usize(usize); numberWithUnsignedInteger),
+        (new_f32(f32); numberWithFloat),
+        (new_f64(f64); numberWithDouble),
     }
 
     #[inline]
@@ -103,12 +72,11 @@ impl NSNumber {
 macro_rules! def_get_fn {
     {$(
         $(#[$($m:meta)*])*
-        ($fn_name:ident -> $fn_ret:ty; $method_name:ident -> $method_ret:ty),
+        ($fn_name:ident -> $fn_ret:ty; $method_name:ident),
     )*} => {$(
         $(#[$($m)*])*
         pub fn $fn_name(&self) -> $fn_ret {
-            let ret: $method_ret = unsafe { msg_send![self, $method_name] };
-            ret as $fn_ret
+            self.$method_name() as _
         }
     )*}
 }
@@ -116,20 +84,19 @@ macro_rules! def_get_fn {
 /// Getter methods.
 impl NSNumber {
     def_get_fn! {
-        (as_bool -> bool; boolValue -> bool),
-        (as_i8 -> i8; charValue -> c_char),
-        (as_u8 -> u8; unsignedCharValue -> c_uchar),
-        (as_i16 -> i16; shortValue -> c_short),
-        (as_u16 -> u16; unsignedShortValue -> c_ushort),
-        (as_i32 -> i32; intValue -> c_int),
-        (as_u32 -> u32; unsignedIntValue -> c_uint),
-        // TODO: Getter methods for `long` and `unsigned long`
-        (as_i64 -> i64; longLongValue -> c_longlong),
-        (as_u64 -> u64; unsignedLongLongValue -> c_ulonglong),
-        (as_isize -> isize; integerValue -> NSInteger),
-        (as_usize -> usize; unsignedIntegerValue -> NSUInteger),
-        (as_f32 -> f32; floatValue -> c_float),
-        (as_f64 -> f64; doubleValue -> c_double),
+        (as_bool -> bool; boolValue),
+        (as_i8 -> i8; charValue),
+        (as_u8 -> u8; unsignedCharValue),
+        (as_i16 -> i16; shortValue),
+        (as_u16 -> u16; unsignedShortValue),
+        (as_i32 -> i32; intValue),
+        (as_u32 -> u32; unsignedIntValue),
+        (as_i64 -> i64; longLongValue),
+        (as_u64 -> u64; unsignedLongLongValue),
+        (as_isize -> isize; integerValue),
+        (as_usize -> usize; unsignedIntegerValue),
+        (as_f32 -> f32; floatValue),
+        (as_f64 -> f64; doubleValue),
     }
 
     #[inline]
@@ -236,19 +203,6 @@ impl NSNumber {
     }
 }
 
-extern_methods!(
-    unsafe impl NSNumber {
-        #[method(compare:)]
-        fn compare(&self, other: &Self) -> NSComparisonResult;
-
-        #[method(isEqualToNumber:)]
-        fn is_equal_to_number(&self, other: &Self) -> bool;
-
-        #[method_id(stringValue)]
-        fn string(&self) -> Id<NSString, Shared>;
-    }
-);
-
 unsafe impl NSCopying for NSNumber {
     type Ownership = Shared;
     type Output = NSNumber;
@@ -267,14 +221,7 @@ impl PartialEq for NSNumber {
     #[doc(alias = "isEqualToNumber:")]
     fn eq(&self, other: &Self) -> bool {
         // Use isEqualToNumber: instaed of isEqual: since it is faster
-        self.is_equal_to_number(other)
-    }
-}
-
-impl hash::Hash for NSNumber {
-    fn hash<H: hash::Hasher>(&self, state: &mut H) {
-        // Delegate to NSObject
-        (***self).hash(state)
+        self.isEqualToNumber(other)
     }
 }
 
@@ -290,15 +237,7 @@ impl PartialOrd for NSNumber {
 
 impl fmt::Display for NSNumber {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(&self.string(), f)
-    }
-}
-
-impl fmt::Debug for NSNumber {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // Delegate to -[NSObject description]
-        // (happens to return the same as -[NSNumber stringValue])
-        fmt::Debug::fmt(&***self, f)
+        fmt::Display::fmt(&self.stringValue(), f)
     }
 }
 

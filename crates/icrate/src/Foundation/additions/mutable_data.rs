@@ -1,32 +1,16 @@
 #[cfg(feature = "block")]
 use alloc::vec::Vec;
 use core::ffi::c_void;
-use core::fmt;
 use core::ops::{Index, IndexMut, Range};
+use core::ptr::NonNull;
 use core::slice::{self, SliceIndex};
 use std::io;
 
-use super::data::with_slice;
-use super::{NSCopying, NSData, NSMutableCopying, NSObject, NSRange};
 use objc2::rc::{DefaultId, Id, Owned, Shared};
-use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::{extern_methods, ClassType};
 
-extern_class!(
-    /// A dynamic byte buffer in memory.
-    ///
-    /// This is the Objective-C equivalent of a [`Vec`] containing [`u8`].
-    ///
-    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutabledata?language=objc).
-    ///
-    /// [`Vec`]: std::vec::Vec
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSMutableData;
-
-    unsafe impl ClassType for NSMutableData {
-        #[inherits(NSObject)]
-        type Super = NSData;
-    }
-);
+use super::data::with_slice;
+use crate::Foundation::{NSCopying, NSData, NSMutableCopying, NSMutableData, NSObject, NSRange};
 
 extern_methods!(
     /// Creation methods
@@ -42,19 +26,6 @@ extern_methods!(
         pub fn from_vec(bytes: Vec<u8>) -> Id<Self, Owned> {
             unsafe { Id::from_shared(Id::cast(super::data::with_vec(Self::class(), bytes))) }
         }
-
-        // TODO: Use malloc_buf/mbox and `initWithBytesNoCopy:...`?
-
-        #[doc(alias = "initWithData:")]
-        pub fn from_data(data: &NSData) -> Id<Self, Owned> {
-            // Not provided on NSData, one should just use NSData::copy or similar
-            unsafe { msg_send_id![Self::alloc(), initWithData: data] }
-        }
-
-        #[doc(alias = "initWithCapacity:")]
-        pub fn with_capacity(capacity: usize) -> Id<Self, Owned> {
-            unsafe { msg_send_id![Self::alloc(), initWithCapacity: capacity] }
-        }
     }
 
     /// Mutation methods
@@ -64,44 +35,31 @@ extern_methods!(
         #[method(setLength:)]
         pub fn set_len(&mut self, len: usize);
 
-        #[method(mutableBytes)]
-        fn bytes_mut_raw(&mut self) -> *mut c_void;
-
         #[doc(alias = "mutableBytes")]
         pub fn bytes_mut(&mut self) -> &mut [u8] {
-            let ptr = self.bytes_mut_raw();
-            let ptr: *mut u8 = ptr.cast();
-            // The bytes pointer may be null for length zero
-            if ptr.is_null() {
-                &mut []
-            } else {
-                unsafe { slice::from_raw_parts_mut(ptr, self.len()) }
-            }
+            let ptr = self.mutableBytes();
+            let ptr: *mut u8 = ptr.as_ptr().cast();
+            unsafe { slice::from_raw_parts_mut(ptr, self.len()) }
         }
-
-        #[method(appendBytes:length:)]
-        unsafe fn append_raw(&mut self, ptr: *const c_void, len: usize);
 
         #[doc(alias = "appendBytes:length:")]
         pub fn extend_from_slice(&mut self, bytes: &[u8]) {
-            let bytes_ptr: *const c_void = bytes.as_ptr().cast();
-            unsafe { self.append_raw(bytes_ptr, bytes.len()) }
+            let bytes_ptr: NonNull<c_void> =
+                NonNull::new(bytes.as_ptr() as *mut u8).unwrap().cast();
+            unsafe { self.appendBytes_length(bytes_ptr, bytes.len()) }
         }
 
         pub fn push(&mut self, byte: u8) {
             self.extend_from_slice(&[byte])
         }
 
-        #[method(replaceBytesInRange:withBytes:length:)]
-        unsafe fn replace_raw(&mut self, range: NSRange, ptr: *const c_void, len: usize);
-
         #[doc(alias = "replaceBytesInRange:withBytes:length:")]
         pub fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
             let range = NSRange::from(range);
             // No need to verify the length of the range here,
             // `replaceBytesInRange:` just zero-fills if out of bounds.
-            let ptr: *const c_void = bytes.as_ptr().cast();
-            unsafe { self.replace_raw(range, ptr, bytes.len()) }
+            let ptr = bytes.as_ptr() as *mut c_void;
+            unsafe { self.replaceBytesInRange_withBytes_length(range, ptr, bytes.len()) }
         }
 
         pub fn set_bytes(&mut self, bytes: &[u8]) {
@@ -211,13 +169,6 @@ impl DefaultId for NSMutableData {
     }
 }
 
-impl fmt::Debug for NSMutableData {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&**self, f)
-    }
-}
-
 impl<'a> IntoIterator for &'a NSMutableData {
     type Item = &'a u8;
     type IntoIter = core::slice::Iter<'a, u8>;
@@ -287,13 +238,13 @@ mod tests {
     #[test]
     fn test_from_data() {
         let data = NSData::with_bytes(&[1, 2]);
-        let mut_data = NSMutableData::from_data(&data);
+        let mut_data = NSMutableData::dataWithData(&data);
         assert_eq!(&*data, &**mut_data);
     }
 
     #[test]
     fn test_with_capacity() {
-        let mut data = NSMutableData::with_capacity(5);
+        let mut data = NSMutableData::dataWithCapacity(5);
         assert_eq!(data.bytes(), &[]);
         data.extend_from_slice(&[1, 2, 3, 4, 5]);
         assert_eq!(data.bytes(), &[1, 2, 3, 4, 5]);

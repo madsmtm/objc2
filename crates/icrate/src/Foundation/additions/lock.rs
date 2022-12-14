@@ -1,29 +1,10 @@
-use super::{NSObject, NSString};
-use objc2::rc::{Id, Owned, Shared};
-use objc2::{extern_class, extern_methods, extern_protocol, ClassType, ConformsTo, ProtocolType};
+use objc2::rc::{Id, Owned};
+use objc2::ClassType;
+use objc2::{extern_methods, ConformsTo};
+
+use crate::Foundation::{NSLock, NSLocking};
 
 // TODO: Proper Send/Sync impls here
-
-extern_protocol!(
-    pub struct NSLocking;
-
-    unsafe impl ProtocolType for NSLocking {
-        #[method(lock)]
-        pub unsafe fn lock(&self);
-
-        #[method(unlock)]
-        pub unsafe fn unlock(&self);
-    }
-);
-
-extern_class!(
-    #[derive(Debug)]
-    pub struct NSLock;
-
-    unsafe impl ClassType for NSLock {
-        type Super = NSObject;
-    }
-);
 
 unsafe impl ConformsTo<NSLocking> for NSLock {}
 
@@ -31,15 +12,6 @@ extern_methods!(
     unsafe impl NSLock {
         #[method_id(new)]
         pub fn new() -> Id<Self, Owned>;
-
-        #[method(tryLock)]
-        pub unsafe fn try_lock(&self) -> bool;
-
-        #[method_id(name)]
-        pub fn name(&self) -> Option<Id<NSString, Shared>>;
-
-        #[method(setName:)]
-        pub fn set_name(&mut self, name: Option<&NSString>);
     }
 );
 
@@ -53,9 +25,9 @@ mod tests {
         let locking: &NSLocking = lock.as_protocol();
         unsafe {
             locking.lock();
-            assert!(!lock.try_lock());
+            assert!(!lock.tryLock());
             locking.unlock();
-            assert!(lock.try_lock());
+            assert!(lock.tryLock());
             locking.unlock();
         }
     }
