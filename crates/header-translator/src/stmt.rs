@@ -347,32 +347,18 @@ impl Stmt {
 
                 let ty = GenericType { name, generics };
 
-                if let Some(new_name) =
-                    class_data.and_then(|data| data.new_superclass_name.as_ref())
-                {
-                    match &mut superclass {
-                        Some(Some(GenericType { name, .. })) => {
-                            *name = new_name.clone();
-                        }
-                        _ => {
-                            superclass = Some(Some(GenericType {
-                                name: new_name.clone(),
-                                generics: Vec::new(),
-                            }))
-                        }
-                    }
-                }
-
-                let superclass = superclass.expect("no superclass found");
-
-                iter::once(Self::ClassDecl {
+                (!class_data
+                    .map(|data| data.definition_skipped)
+                    .unwrap_or_default())
+                .then(|| Self::ClassDecl {
                     ty: ty.clone(),
                     availability: availability.clone(),
-                    superclass,
+                    superclass: superclass.expect("no superclass found"),
                     derives: class_data
                         .map(|data| data.derives.clone())
                         .unwrap_or_default(),
                 })
+                .into_iter()
                 .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
                     ty: ty.clone(),
                     availability: availability.clone(),

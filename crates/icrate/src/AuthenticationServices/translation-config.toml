@@ -8,13 +8,13 @@ skipped = true
 [typedef.ASImage]
 skipped = true
 
-# It is a bit difficult to extract the original typedef name from the
-# superclass name, so let's just overwrite it here.
+# The original superclass typedef is a bit difficult to extract from the
+# superclass name, so let's just overwrite it.
 [class.ASCredentialProviderViewController]
-superclass-name = "ASViewController"
+definition-skipped = true
 [class.ASAccountAuthenticationModificationViewController]
-superclass-name = "ASViewController"
+definition-skipped = true
 
-# Specifies UIControl or NSControl conditionally
+# Specifies superclass as UIControl or NSControl conditionally
 [class.ASAuthorizationAppleIDButton]
-superclass-name = "ASControl"
+definition-skipped = true

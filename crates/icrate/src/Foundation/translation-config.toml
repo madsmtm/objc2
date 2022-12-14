@@ -65,7 +65,10 @@ skipped = true
 
 # Root class
 [class.NSProxy]
-skipped = true
+definition-skipped = true
+[class.NSProxy.methods]
+alloc = { skipped = true }
+allocWithZone = { skipped = true }
 
 # Contains bitfields
 [struct.NSDecimal]

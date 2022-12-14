@@ -1,3 +1,5 @@
+use objc2::{extern_class, ClassType};
+
 use crate::Foundation::NSObject;
 
 // TODO: UIViewController on iOS, NSViewController on macOS
@@ -9,3 +11,30 @@ pub type ASImage = NSObject;
 
 // TODO: UIControl on iOS, NSControl on macOS
 pub(crate) type ASControl = NSObject;
+
+extern_class!(
+    #[derive(Debug, PartialEq, Eq, Hash)]
+    pub struct ASCredentialProviderViewController;
+
+    unsafe impl ClassType for ASCredentialProviderViewController {
+        type Super = ASViewController;
+    }
+);
+
+extern_class!(
+    #[derive(Debug, PartialEq, Eq, Hash)]
+    pub struct ASAccountAuthenticationModificationViewController;
+
+    unsafe impl ClassType for ASAccountAuthenticationModificationViewController {
+        type Super = ASViewController;
+    }
+);
+
+extern_class!(
+    #[derive(Debug, PartialEq, Eq, Hash)]
+    pub struct ASAuthorizationAppleIDButton;
+
+    unsafe impl ClassType for ASAuthorizationAppleIDButton {
+        type Super = ASControl;
+    }
+);

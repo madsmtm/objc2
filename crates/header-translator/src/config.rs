@@ -40,9 +40,9 @@ pub struct Config {
 pub struct ClassData {
     #[serde(default)]
     pub skipped: bool,
-    #[serde(rename = "superclass-name")]
+    #[serde(rename = "definition-skipped")]
     #[serde(default)]
-    pub new_superclass_name: Option<String>,
+    pub definition_skipped: bool,
     #[serde(default)]
     pub methods: HashMap<String, MethodData>,
     #[serde(default)]
