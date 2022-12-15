@@ -11,7 +11,7 @@ use tracing_subscriber::registry::Registry;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 
-use header_translator::{compare_btree, run_cargo_fmt, Config, File, Library, Stmt};
+use header_translator::{run_cargo_fmt, Config, File, Output, Stmt};
 
 fn main() {
     // use tracing_subscriber::fmt;
@@ -104,14 +104,18 @@ fn main() {
             _ => continue,
         };
 
-        let mut result = None;
+        let mut result: Option<Output> = None;
 
         for llvm_target in llvm_targets {
             let _span = info_span!("parsing", platform = ?sdk.platform, llvm_target).entered();
             let curr_result = parse_sdk(&index, &sdk, llvm_target, &configs);
 
             if let Some(prev_result) = &result {
-                compare_results(prev_result, &curr_result);
+                let _span = info_span!("comparing results").entered();
+                prev_result.compare(&curr_result);
+
+                // Extra check in case our comparison above was not exaustive
+                assert_eq!(*prev_result, curr_result);
             } else {
                 result = Some(curr_result);
             }
@@ -122,7 +126,7 @@ fn main() {
         }
     }
 
-    for (library_name, files) in final_result.expect("got a result") {
+    for (library_name, files) in final_result.expect("got a result").libraries {
         let _span = info_span!("writing", library_name).entered();
         let output_path = crate_src.join("generated").join(&library_name);
         files.output(&output_path).unwrap();
@@ -165,16 +169,13 @@ fn parse_sdk(
     sdk: &SdkPath,
     llvm_target: &str,
     configs: &BTreeMap<String, Config>,
-) -> BTreeMap<String, Library> {
+) -> Output {
     let tu = get_translation_unit(index, sdk, llvm_target);
 
     let framework_dir = sdk.path.join("System/Library/Frameworks");
 
     let mut preprocessing = true;
-    let mut result: BTreeMap<_, _> = configs
-        .iter()
-        .map(|(name, _)| (name.clone(), Library::new()))
-        .collect();
+    let mut result = Output::from_configs(configs.keys());
 
     let mut library_span = None;
     let mut library_span_name = String::new();
@@ -200,7 +201,7 @@ fn parse_sdk(
             }
 
             if let Some(config) = configs.get(&library_name) {
-                let library = result.get_mut(&library_name).expect("library");
+                let library = result.libraries.get_mut(&library_name).expect("library");
                 match entity.get_kind() {
                     EntityKind::InclusionDirective if preprocessing => {
                         let name = entity.get_name().expect("inclusion name");
@@ -348,15 +349,4 @@ pub fn extract_framework_name(
         }
     }
     None
-}
-
-fn compare_results(data1: &BTreeMap<String, Library>, data2: &BTreeMap<String, Library>) {
-    let _span = info_span!("comparing results").entered();
-    compare_btree(data1, data2, |libary_name, library1, library2| {
-        let _span = debug_span!("library", libary_name).entered();
-        library1.compare(library2);
-    });
-
-    // Extra check in case our comparison above was not exaustive
-    assert_eq!(data1, data2);
 }

@@ -14,6 +14,7 @@ mod file;
 mod library;
 mod method;
 mod objc2_utils;
+mod output;
 mod property;
 mod rust_type;
 mod stmt;
@@ -22,6 +23,7 @@ mod unexposed_macro;
 pub use self::config::Config;
 pub use self::file::File;
 pub use self::library::Library;
+pub use self::output::Output;
 pub use self::stmt::Stmt;
 
 pub fn compare_btree<T>(
