@@ -8,7 +8,7 @@ use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
 use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index};
 
 use header_translator::{
-    compare_btree, run_cargo_fmt, run_rustfmt, Config, RustFile, Stmt, FILE_PRELUDE,
+    compare_btree, run_cargo_fmt, run_rustfmt, Config, File, Stmt, FILE_PRELUDE,
 };
 
 const FORMAT_INCREMENTALLY: bool = false;
@@ -108,8 +108,7 @@ fn main() {
     for (library, files) in final_result.expect("got a result") {
         println!("status: writing framework {library}...");
         let output_path = crate_src.join("generated").join(&library);
-        let config = configs.get(&library).expect("configs get library");
-        output_files(&output_path, files, FORMAT_INCREMENTALLY, config).unwrap();
+        output_files(&output_path, files, FORMAT_INCREMENTALLY).unwrap();
         println!("status: written framework {library}");
     }
 
@@ -150,7 +149,7 @@ fn parse_sdk(
     sdk: &SdkPath,
     llvm_target: &str,
     configs: &BTreeMap<String, Config>,
-) -> BTreeMap<String, BTreeMap<String, RustFile>> {
+) -> BTreeMap<String, BTreeMap<String, File>> {
     let mut result: BTreeMap<_, _> = configs
         .iter()
         .map(|(library, _)| (library.clone(), BTreeMap::new()))
@@ -183,7 +182,7 @@ fn parse_sdk(
                         if included != library {
                             // The file is often included twice, even
                             // within the same file, so insertion can fail
-                            files.entry(included).or_insert_with(RustFile::new);
+                            files.entry(included).or_insert_with(|| File::new(&config));
                         }
                     }
                 }
@@ -251,10 +250,10 @@ fn parse_and_visit_stmts(
 
     println!("status: initialized translation unit {:?}", sdk.platform);
 
-    dbg!(&tu);
-    dbg!(tu.get_target());
-    dbg!(tu.get_memory_usage());
-    dbg!(tu.get_diagnostics());
+    // dbg!(&tu);
+    // dbg!(tu.get_target());
+    // dbg!(tu.get_memory_usage());
+    // dbg!(tu.get_diagnostics());
 
     // let dbg_file = |file: File<'_>| {
     //     dbg!(
@@ -273,9 +272,6 @@ fn parse_and_visit_stmts(
     // dbg_file(cursor_file);
 
     let entity = tu.get_entity();
-
-    dbg!(&entity);
-    dbg!(entity.get_availability());
 
     let framework_dir = sdk.path.join("System/Library/Frameworks");
     entity.visit_children(|entity, _parent| {
@@ -309,8 +305,8 @@ fn parse_and_visit_stmts(
 }
 
 fn compare_results(
-    data1: &BTreeMap<String, BTreeMap<String, RustFile>>,
-    data2: &BTreeMap<String, BTreeMap<String, RustFile>>,
+    data1: &BTreeMap<String, BTreeMap<String, File>>,
+    data2: &BTreeMap<String, BTreeMap<String, File>>,
 ) {
     compare_btree(data1, data2, |libary_name, library1, library2| {
         compare_btree(library1, library2, |name, file1, file2| {
@@ -325,42 +321,35 @@ fn compare_results(
 
 fn output_files(
     output_path: &Path,
-    files: impl IntoIterator<Item = (String, RustFile)>,
+    files: BTreeMap<String, File>,
     format_incrementally: bool,
-    config: &Config,
 ) -> fmt::Result {
-    let declared: Vec<_> = files
-        .into_iter()
-        .map(|(name, file)| {
-            let (declared_types, tokens) = file.finish(config);
+    for (name, file) in &files {
+        let mut path = output_path.join(&name);
+        path.set_extension("rs");
 
-            let mut path = output_path.join(&name);
-            path.set_extension("rs");
+        let output = if format_incrementally {
+            run_rustfmt(file)
+        } else {
+            file.to_string().into()
+        };
 
-            let output = if format_incrementally {
-                run_rustfmt(tokens)
-            } else {
-                tokens.into()
-            };
-
-            fs::write(&path, output).unwrap();
-
-            (name, declared_types)
-        })
-        .collect();
+        fs::write(&path, output).unwrap();
+    }
 
     let mut tokens = String::new();
     writeln!(tokens, "{}", FILE_PRELUDE)?;
     writeln!(tokens, "#![allow(unused_imports)]")?;
 
-    for (name, _) in &declared {
+    for (name, _) in &files {
         writeln!(tokens, "#[path = \"{name}.rs\"]")?;
         writeln!(tokens, "mod __{name};")?;
     }
     writeln!(tokens, "")?;
-    for (name, declared_types) in declared {
+    for (name, file) in &files {
+        let declared_types = file.declared_types();
+        let declared_types: Vec<_> = declared_types.collect();
         if !declared_types.is_empty() {
-            let declared_types: Vec<_> = declared_types.into_iter().collect();
             writeln!(
                 tokens,
                 "pub use self::__{name}::{{{}}};",
