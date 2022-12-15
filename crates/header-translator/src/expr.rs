@@ -4,6 +4,7 @@ use std::fmt::Write;
 use clang::token::TokenKind;
 use clang::{Entity, EntityKind, EntityVisitResult};
 
+use crate::immediate_children;
 use crate::unexposed_macro::UnexposedMacro;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -34,22 +35,19 @@ impl Expr {
 
         let mut res = None;
 
-        entity.visit_children(|entity, _parent| {
-            match entity.get_kind() {
-                EntityKind::UnexposedAttr => {
-                    if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                        panic!("parsed macro in expr: {macro_:?}, {entity:?}");
-                    }
-                }
-                _ => {
-                    if res.is_none() {
-                        res = Self::parse(&entity, &declaration_references);
-                    } else {
-                        panic!("found multiple expressions where one was expected");
-                    }
+        immediate_children(entity, |entity, _span| match entity.get_kind() {
+            EntityKind::UnexposedAttr => {
+                if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                    panic!("parsed macro in expr: {macro_:?}, {entity:?}");
                 }
             }
-            EntityVisitResult::Continue
+            _ => {
+                if res.is_none() {
+                    res = Self::parse(&entity, &declaration_references);
+                } else {
+                    panic!("found multiple expressions where one was expected");
+                }
+            }
         });
 
         res

@@ -1,11 +1,12 @@
 use std::fmt;
 
-use clang::{Entity, EntityKind, EntityVisitResult, ObjCQualifiers};
+use clang::{Entity, EntityKind, ObjCQualifiers};
 use tracing::span::EnteredSpan;
 use tracing::{debug_span, error, warn};
 
 use crate::availability::Availability;
 use crate::config::MethodData;
+use crate::immediate_children;
 use crate::objc2_utils::in_selector_family;
 use crate::property::PartialProperty;
 use crate::rust_type::Ty;
@@ -255,31 +256,27 @@ impl<'tu> PartialMethod<'tu> {
                 let qualifier = entity.get_objc_qualifiers().map(Qualifier::parse);
                 let mut is_consumed = false;
 
-                entity.visit_children(|entity, _parent| {
-                    let _span = debug_span!("child", ?entity).entered();
-                    match entity.get_kind() {
-                        EntityKind::ObjCClassRef
-                        | EntityKind::ObjCProtocolRef
-                        | EntityKind::TypeRef
-                        | EntityKind::ParmDecl => {
-                            // Ignore
+                immediate_children(&entity, |entity, _span| match entity.get_kind() {
+                    EntityKind::ObjCClassRef
+                    | EntityKind::ObjCProtocolRef
+                    | EntityKind::TypeRef
+                    | EntityKind::ParmDecl => {
+                        // Ignore
+                    }
+                    EntityKind::NSConsumed => {
+                        if is_consumed {
+                            error!("got NSConsumed twice");
                         }
-                        EntityKind::NSConsumed => {
-                            if is_consumed {
-                                error!("got NSConsumed twice");
-                            }
-                            is_consumed = true;
+                        is_consumed = true;
+                    }
+                    EntityKind::UnexposedAttr => {
+                        if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                            warn!(?macro_, "unknown macro");
                         }
-                        EntityKind::UnexposedAttr => {
-                            if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                                warn!(?macro_, "unknown macro");
-                            }
-                        }
-                        // For some reason we recurse into array types
-                        EntityKind::IntegerLiteral => {}
-                        _ => warn!("unknown"),
-                    };
-                    EntityVisitResult::Continue
+                    }
+                    // For some reason we recurse into array types
+                    EntityKind::IntegerLiteral => {}
+                    _ => warn!("unknown"),
                 });
 
                 let ty = entity.get_type().expect("argument type");
@@ -326,54 +323,50 @@ impl<'tu> PartialMethod<'tu> {
         let mut consumes_self = false;
         let mut memory_management = MemoryManagement::Normal;
 
-        entity.visit_children(|entity, _parent| {
-            let _span = debug_span!("child", ?entity).entered();
-            match entity.get_kind() {
-                EntityKind::ObjCClassRef
-                | EntityKind::ObjCProtocolRef
-                | EntityKind::TypeRef
-                | EntityKind::ParmDecl => {
-                    // Ignore
-                }
-                EntityKind::ObjCDesignatedInitializer => {
-                    if designated_initializer {
-                        error!("encountered ObjCDesignatedInitializer twice");
-                    }
-                    designated_initializer = true;
-                }
-                EntityKind::NSConsumesSelf => {
-                    consumes_self = true;
-                }
-                EntityKind::NSReturnsRetained => {
-                    if memory_management != MemoryManagement::Normal {
-                        error!("got unexpected NSReturnsRetained")
-                    }
-                    memory_management = MemoryManagement::ReturnsRetained;
-                }
-                EntityKind::ObjCReturnsInnerPointer => {
-                    if memory_management != MemoryManagement::Normal {
-                        error!("got unexpected ObjCReturnsInnerPointer")
-                    }
-                    memory_management = MemoryManagement::ReturnsInnerPointer;
-                }
-                EntityKind::NSConsumed => {
-                    // Handled inside arguments
-                }
-                EntityKind::IbActionAttr => {
-                    // TODO: What is this?
-                }
-                EntityKind::ObjCRequiresSuper => {
-                    // TODO: Can we use this for something?
-                    // <https://clang.llvm.org/docs/AttributeReference.html#objc-requires-super>
-                }
-                EntityKind::UnexposedAttr => {
-                    if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                        warn!(?macro_, "unknown macro");
-                    }
-                }
-                _ => warn!("unknown"),
+        immediate_children(&entity, |entity, _span| match entity.get_kind() {
+            EntityKind::ObjCClassRef
+            | EntityKind::ObjCProtocolRef
+            | EntityKind::TypeRef
+            | EntityKind::ParmDecl => {
+                // Ignore
             }
-            EntityVisitResult::Continue
+            EntityKind::ObjCDesignatedInitializer => {
+                if designated_initializer {
+                    error!("encountered ObjCDesignatedInitializer twice");
+                }
+                designated_initializer = true;
+            }
+            EntityKind::NSConsumesSelf => {
+                consumes_self = true;
+            }
+            EntityKind::NSReturnsRetained => {
+                if memory_management != MemoryManagement::Normal {
+                    error!("got unexpected NSReturnsRetained")
+                }
+                memory_management = MemoryManagement::ReturnsRetained;
+            }
+            EntityKind::ObjCReturnsInnerPointer => {
+                if memory_management != MemoryManagement::Normal {
+                    error!("got unexpected ObjCReturnsInnerPointer")
+                }
+                memory_management = MemoryManagement::ReturnsInnerPointer;
+            }
+            EntityKind::NSConsumed => {
+                // Handled inside arguments
+            }
+            EntityKind::IbActionAttr => {
+                // TODO: What is this?
+            }
+            EntityKind::ObjCRequiresSuper => {
+                // TODO: Can we use this for something?
+                // <https://clang.llvm.org/docs/AttributeReference.html#objc-requires-super>
+            }
+            EntityKind::UnexposedAttr => {
+                if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                    warn!(?macro_, "unknown macro");
+                }
+            }
+            _ => warn!("unknown"),
         });
 
         if consumes_self {

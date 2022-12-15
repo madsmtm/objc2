@@ -1,9 +1,10 @@
-use clang::{Entity, EntityKind, EntityVisitResult, Nullability, ObjCAttributes};
+use clang::{Entity, EntityKind, Nullability, ObjCAttributes};
 use tracing::span::EnteredSpan;
-use tracing::{debug_span, error, warn};
+use tracing::{error, warn};
 
 use crate::availability::Availability;
 use crate::config::MethodData;
+use crate::immediate_children;
 use crate::method::{MemoryManagement, Method, Qualifier};
 use crate::rust_type::Ty;
 use crate::unexposed_macro::UnexposedMacro;
@@ -54,35 +55,31 @@ impl PartialProperty<'_> {
 
         let mut memory_management = MemoryManagement::Normal;
 
-        entity.visit_children(|entity, _parent| {
-            let _span = debug_span!("child", ?entity).entered();
-            match entity.get_kind() {
-                EntityKind::ObjCClassRef
-                | EntityKind::ObjCProtocolRef
-                | EntityKind::TypeRef
-                | EntityKind::ParmDecl => {
-                    // Ignore
+        immediate_children(&entity, |entity, _span| match entity.get_kind() {
+            EntityKind::ObjCClassRef
+            | EntityKind::ObjCProtocolRef
+            | EntityKind::TypeRef
+            | EntityKind::ParmDecl => {
+                // Ignore
+            }
+            EntityKind::ObjCReturnsInnerPointer => {
+                if memory_management != MemoryManagement::Normal {
+                    error!(?memory_management, "unexpected ObjCReturnsInnerPointer")
                 }
-                EntityKind::ObjCReturnsInnerPointer => {
-                    if memory_management != MemoryManagement::Normal {
-                        error!(?memory_management, "unexpected ObjCReturnsInnerPointer")
-                    }
-                    memory_management = MemoryManagement::ReturnsInnerPointer;
+                memory_management = MemoryManagement::ReturnsInnerPointer;
+            }
+            EntityKind::ObjCInstanceMethodDecl => {
+                warn!("method in property");
+            }
+            EntityKind::IbOutletAttr => {
+                // TODO: What is this?
+            }
+            EntityKind::UnexposedAttr => {
+                if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                    warn!(?macro_, "unknown macro");
                 }
-                EntityKind::ObjCInstanceMethodDecl => {
-                    warn!("method in property");
-                }
-                EntityKind::IbOutletAttr => {
-                    // TODO: What is this?
-                }
-                EntityKind::UnexposedAttr => {
-                    if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                        warn!(?macro_, "unknown macro");
-                    }
-                }
-                _ => warn!("unknown"),
-            };
-            EntityVisitResult::Continue
+            }
+            _ => warn!("unknown"),
         });
 
         let qualifier = entity.get_objc_qualifiers().map(Qualifier::parse);

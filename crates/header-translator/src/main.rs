@@ -4,34 +4,35 @@ use std::path::{Path, PathBuf};
 
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
 use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index, TranslationUnit};
-use tracing::{debug_span, info, info_span, trace, trace_span, Level};
-use tracing_subscriber::filter::{filter_fn, LevelFilter};
-use tracing_subscriber::fmt;
+use tracing::{debug_span, info, info_span, trace, trace_span};
+use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::layer::{Layer, SubscriberExt};
 use tracing_subscriber::registry::Registry;
 use tracing_subscriber::util::SubscriberInitExt;
+use tracing_tree::HierarchicalLayer;
 
 use header_translator::{compare_btree, run_cargo_fmt, Config, File, Library, Stmt};
 
 fn main() {
+    // use tracing_subscriber::fmt;
     Registry::default()
+        // .with(
+        //     fmt::Layer::default()
+        //         .compact()
+        //         .without_time()
+        //         .with_target(false)
+        //         .with_span_events(fmt::format::FmtSpan::ACTIVE)
+        //         .with_filter(LevelFilter::INFO)
+        //         .with_filter(tracing_subscriber::filter::filter_fn(|metadata| {
+        //             metadata.is_span() && metadata.level() == &tracing::Level::INFO
+        //         })),
+        // )
         .with(
-            fmt::Layer::default()
-                .compact()
-                .without_time()
-                .with_target(false)
-                .with_span_events(fmt::format::FmtSpan::ACTIVE)
-                .with_filter(LevelFilter::INFO)
-                .with_filter(filter_fn(|metadata| {
-                    metadata.is_span() && metadata.level() == &Level::INFO
-                })),
-        )
-        .with(
-            fmt::Layer::default()
-                .compact()
-                .without_time()
-                .with_target(false)
-                .with_filter(LevelFilter::DEBUG),
+            HierarchicalLayer::new(2)
+                .with_targets(false)
+                .with_indent_lines(true)
+                // Note: Change this to DEBUG if you want to see more info
+                .with_filter(LevelFilter::INFO),
         )
         .init();
 
@@ -175,10 +176,29 @@ fn parse_sdk(
         .map(|(name, _)| (name.clone(), Library::new()))
         .collect();
 
+    let mut library_span = None;
+    let mut library_span_name = String::new();
+    let mut file_span = None;
+    let mut file_span_name = String::new();
+
     tu.get_entity().visit_children(|entity, _parent| {
         let _span = trace_span!("entity", ?entity).entered();
         if let Some((library_name, file_name)) = extract_framework_name(&entity, &framework_dir) {
-            let _span = debug_span!("file", file = ?(&library_name, &file_name)).entered();
+            if library_span_name != library_name {
+                library_span.take();
+                file_span.take();
+                file_span_name = String::new();
+
+                library_span_name = library_name.clone();
+                library_span = Some(debug_span!("library", name = library_name).entered());
+            }
+            if file_span_name != file_name {
+                file_span.take();
+
+                file_span_name = file_name.clone();
+                file_span = Some(debug_span!("file", name = file_name).entered());
+            }
+
             if let Some(config) = configs.get(&library_name) {
                 let library = result.get_mut(&library_name).expect("library");
                 match entity.get_kind() {

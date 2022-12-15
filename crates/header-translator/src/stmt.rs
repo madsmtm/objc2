@@ -10,6 +10,7 @@ use tracing::{debug, debug_span, error, warn};
 use crate::availability::Availability;
 use crate::config::{ClassData, Config};
 use crate::expr::Expr;
+use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
 use crate::rust_type::{GenericType, Ty};
 use crate::unexposed_macro::UnexposedMacro;
@@ -33,21 +34,18 @@ fn parse_superclass<'ty>(entity: &Entity<'ty>) -> Option<(Entity<'ty>, GenericTy
     let mut superclass = None;
     let mut generics = Vec::new();
 
-    entity.visit_children(|entity, _parent| {
-        match entity.get_kind() {
-            EntityKind::ObjCSuperClassRef => {
-                superclass = Some(entity);
-            }
-            EntityKind::TypeRef => {
-                let name = entity.get_name().expect("typeref name");
-                generics.push(GenericType {
-                    name,
-                    generics: Vec::new(),
-                });
-            }
-            _ => {}
+    immediate_children(entity, |entity, _span| match entity.get_kind() {
+        EntityKind::ObjCSuperClassRef => {
+            superclass = Some(entity);
         }
-        EntityVisitResult::Continue
+        EntityKind::TypeRef => {
+            let name = entity.get_name().expect("typeref name");
+            generics.push(GenericType {
+                name,
+                generics: Vec::new(),
+            });
+        }
+        _ => {}
     });
 
     superclass.map(|entity| {
@@ -80,108 +78,104 @@ fn parse_objc_decl<'ty>(
     // compiler from them, we can skip them
     let mut properties = HashSet::new();
 
-    entity.visit_children(|entity, _parent| {
-        let span = debug_span!("child", ?entity).entered();
-        match entity.get_kind() {
-            EntityKind::ObjCExplicitProtocolImpl if generics.is_none() && !superclass => {
-                // TODO NS_PROTOCOL_REQUIRES_EXPLICIT_IMPLEMENTATION
+    immediate_children(entity, |entity, span| match entity.get_kind() {
+        EntityKind::ObjCExplicitProtocolImpl if generics.is_none() && !superclass => {
+            // TODO NS_PROTOCOL_REQUIRES_EXPLICIT_IMPLEMENTATION
+        }
+        EntityKind::ObjCIvarDecl if superclass => {
+            // Explicitly ignored
+        }
+        EntityKind::ObjCSuperClassRef | EntityKind::TypeRef if superclass => {
+            // Parsed in parse_superclass
+        }
+        EntityKind::ObjCRootClass => {
+            debug!("parsing root class");
+        }
+        EntityKind::ObjCClassRef if generics.is_some() => {
+            // debug!("ObjCClassRef: {:?}", entity.get_display_name());
+        }
+        EntityKind::TemplateTypeParameter => {
+            if let Some(generics) = &mut generics {
+                // TODO: Generics with bounds (like NSMeasurement<UnitType: NSUnit *>)
+                // let ty = entity.get_type().expect("template type");
+                let name = entity.get_display_name().expect("template name");
+                generics.push(GenericType {
+                    name,
+                    generics: Vec::new(),
+                });
+            } else {
+                error!("unsupported generics");
             }
-            EntityKind::ObjCIvarDecl if superclass => {
-                // Explicitly ignored
-            }
-            EntityKind::ObjCSuperClassRef | EntityKind::TypeRef if superclass => {
-                // Parsed in parse_superclass
-            }
-            EntityKind::ObjCRootClass => {
-                debug!("parsing root class");
-            }
-            EntityKind::ObjCClassRef if generics.is_some() => {
-                // debug!("ObjCClassRef: {:?}", entity.get_display_name());
-            }
-            EntityKind::TemplateTypeParameter => {
-                if let Some(generics) = &mut generics {
-                    // TODO: Generics with bounds (like NSMeasurement<UnitType: NSUnit *>)
-                    // let ty = entity.get_type().expect("template type");
-                    let name = entity.get_display_name().expect("template name");
-                    generics.push(GenericType {
-                        name,
-                        generics: Vec::new(),
-                    });
-                } else {
-                    error!("unsupported generics");
-                }
-            }
-            EntityKind::ObjCProtocolRef => {
-                protocols.push(entity.get_name().expect("protocolref to have name"));
-            }
-            EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
-                drop(span);
-                let partial = Method::partial(entity);
+        }
+        EntityKind::ObjCProtocolRef => {
+            protocols.push(entity.get_name().expect("protocolref to have name"));
+        }
+        EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
+            drop(span);
+            let partial = Method::partial(entity);
 
-                if !properties.remove(&(partial.is_class, partial.fn_name.clone())) {
-                    let data = data
-                        .map(|data| {
-                            data.methods
-                                .get(&partial.fn_name)
-                                .copied()
-                                .unwrap_or_default()
-                        })
-                        .unwrap_or_default();
-                    if let Some(method) = partial.parse(data) {
-                        methods.push(method);
-                    }
-                }
-            }
-            EntityKind::ObjCPropertyDecl => {
-                drop(span);
-                let partial = Method::partial_property(entity);
-
-                assert!(
-                    properties.insert((partial.is_class, partial.getter_name.clone())),
-                    "already exisiting property"
-                );
-                if let Some(setter_name) = partial.setter_name.clone() {
-                    assert!(
-                        properties.insert((partial.is_class, setter_name)),
-                        "already exisiting property"
-                    );
-                }
-
-                let getter_data = data
+            if !properties.remove(&(partial.is_class, partial.fn_name.clone())) {
+                let data = data
                     .map(|data| {
                         data.methods
-                            .get(&partial.getter_name)
+                            .get(&partial.fn_name)
                             .copied()
                             .unwrap_or_default()
                     })
                     .unwrap_or_default();
-                let setter_data = partial.setter_name.as_ref().map(|setter_name| {
-                    data.map(|data| data.methods.get(setter_name).copied().unwrap_or_default())
-                        .unwrap_or_default()
-                });
+                if let Some(method) = partial.parse(data) {
+                    methods.push(method);
+                }
+            }
+        }
+        EntityKind::ObjCPropertyDecl => {
+            drop(span);
+            let partial = Method::partial_property(entity);
 
-                let (getter, setter) = partial.parse(getter_data, setter_data);
-                if let Some(getter) = getter {
-                    methods.push(getter);
-                }
-                if let Some(setter) = setter {
-                    methods.push(setter);
-                }
+            assert!(
+                properties.insert((partial.is_class, partial.getter_name.clone())),
+                "already exisiting property"
+            );
+            if let Some(setter_name) = partial.setter_name.clone() {
+                assert!(
+                    properties.insert((partial.is_class, setter_name)),
+                    "already exisiting property"
+                );
             }
-            EntityKind::VisibilityAttr => {
-                // Already exposed as entity.get_visibility()
+
+            let getter_data = data
+                .map(|data| {
+                    data.methods
+                        .get(&partial.getter_name)
+                        .copied()
+                        .unwrap_or_default()
+                })
+                .unwrap_or_default();
+            let setter_data = partial.setter_name.as_ref().map(|setter_name| {
+                data.map(|data| data.methods.get(setter_name).copied().unwrap_or_default())
+                    .unwrap_or_default()
+            });
+
+            let (getter, setter) = partial.parse(getter_data, setter_data);
+            if let Some(getter) = getter {
+                methods.push(getter);
             }
-            EntityKind::ObjCException if superclass => {
-                // Maybe useful for knowing when to implement `Error` for the type
+            if let Some(setter) = setter {
+                methods.push(setter);
             }
-            EntityKind::UnexposedAttr => {
-                if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                    warn!(?macro_, "unknown macro");
-                }
+        }
+        EntityKind::VisibilityAttr => {
+            // Already exposed as entity.get_visibility()
+        }
+        EntityKind::ObjCException if superclass => {
+            // Maybe useful for knowing when to implement `Error` for the type
+        }
+        EntityKind::UnexposedAttr => {
+            if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                warn!(?macro_, "unknown macro");
             }
-            _ => warn!("unknown"),
-        };
-        EntityVisitResult::Continue
+        }
+        _ => warn!("unknown"),
     });
 
     if !properties.is_empty() {
@@ -300,34 +294,30 @@ fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
     let mut boxable = false;
     let mut fields = Vec::new();
 
-    entity.visit_children(|entity, _parent| {
-        let span = debug_span!("child", ?entity).entered();
-        match entity.get_kind() {
-            EntityKind::UnexposedAttr => {
-                if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                    warn!(?macro_, "unknown macro");
-                }
+    immediate_children(entity, |entity, span| match entity.get_kind() {
+        EntityKind::UnexposedAttr => {
+            if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                warn!(?macro_, "unknown macro");
             }
-            EntityKind::FieldDecl => {
-                drop(span);
-                let name = entity.get_name().expect("struct field name");
-                let _span = debug_span!("field", name).entered();
-
-                let ty = entity.get_type().expect("struct field type");
-                let ty = Ty::parse_struct_field(ty);
-
-                if entity.is_bit_field() {
-                    error!("unsound struct bitfield");
-                }
-
-                fields.push((name, ty))
-            }
-            EntityKind::ObjCBoxable => {
-                boxable = true;
-            }
-            _ => warn!("unknown"),
         }
-        EntityVisitResult::Continue
+        EntityKind::FieldDecl => {
+            drop(span);
+            let name = entity.get_name().expect("struct field name");
+            let _span = debug_span!("field", name).entered();
+
+            let ty = entity.get_type().expect("struct field type");
+            let ty = Ty::parse_struct_field(ty);
+
+            if entity.is_bit_field() {
+                error!("unsound struct bitfield");
+            }
+
+            fields.push((name, ty))
+        }
+        EntityKind::ObjCBoxable => {
+            boxable = true;
+        }
+        _ => warn!("unknown"),
     });
 
     Stmt::StructDecl {
@@ -339,8 +329,12 @@ fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
 
 impl Stmt {
     pub fn parse(entity: &Entity<'_>, config: &Config) -> Vec<Self> {
-        let _span =
-            debug_span!("stmt", kind = ?entity.get_kind(), name = entity.get_name()).entered();
+        let _span = debug_span!(
+            "stmt",
+            kind = ?entity.get_kind(),
+            dbg = entity.get_name(),
+        )
+        .entered();
 
         match entity.get_kind() {
             // These are inconsequential for us, since we resolve imports differently
@@ -480,45 +474,42 @@ impl Stmt {
                 let mut struct_ = None;
                 let mut skip_struct = false;
 
-                entity.visit_children(|entity, _parent| {
-                    match entity.get_kind() {
-                        // TODO: Parse NS_TYPED_EXTENSIBLE_ENUM vs. NS_TYPED_ENUM
-                        EntityKind::UnexposedAttr => {
-                            if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                                panic!("unexpected attribute: {macro_:?}");
-                            }
+                immediate_children(entity, |entity, _span| match entity.get_kind() {
+                    // TODO: Parse NS_TYPED_EXTENSIBLE_ENUM vs. NS_TYPED_ENUM
+                    EntityKind::UnexposedAttr => {
+                        if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                            panic!("unexpected attribute: {macro_:?}");
                         }
-                        EntityKind::StructDecl => {
-                            if config
-                                .struct_data
-                                .get(&name)
-                                .map(|data| data.skipped)
-                                .unwrap_or_default()
-                            {
-                                skip_struct = true;
-                                return EntityVisitResult::Continue;
-                            }
+                    }
+                    EntityKind::StructDecl => {
+                        if config
+                            .struct_data
+                            .get(&name)
+                            .map(|data| data.skipped)
+                            .unwrap_or_default()
+                        {
+                            skip_struct = true;
+                            return;
+                        }
 
-                            let struct_name = entity.get_name();
-                            if struct_name
-                                .map(|name| name.starts_with('_'))
-                                .unwrap_or(true)
-                            {
-                                // If this struct doesn't have a name, or the
-                                // name is private, let's parse it with the
-                                // typedef name.
-                                struct_ = Some(parse_struct(&entity, name.clone()))
-                            } else {
-                                skip_struct = true;
-                            }
+                        let struct_name = entity.get_name();
+                        if struct_name
+                            .map(|name| name.starts_with('_'))
+                            .unwrap_or(true)
+                        {
+                            // If this struct doesn't have a name, or the
+                            // name is private, let's parse it with the
+                            // typedef name.
+                            struct_ = Some(parse_struct(&entity, name.clone()))
+                        } else {
+                            skip_struct = true;
                         }
-                        EntityKind::ObjCClassRef
-                        | EntityKind::ObjCProtocolRef
-                        | EntityKind::TypeRef
-                        | EntityKind::ParmDecl => {}
-                        _ => panic!("unknown typedef child in {name}: {entity:?}"),
-                    };
-                    EntityVisitResult::Continue
+                    }
+                    EntityKind::ObjCClassRef
+                    | EntityKind::ObjCProtocolRef
+                    | EntityKind::TypeRef
+                    | EntityKind::ParmDecl => {}
+                    _ => warn!("unknown"),
                 });
 
                 if let Some(struct_) = struct_ {
@@ -587,58 +578,52 @@ impl Stmt {
                 let mut kind = None;
                 let mut variants = Vec::new();
 
-                entity.visit_children(|entity, _parent| {
-                    match entity.get_kind() {
-                        EntityKind::EnumConstantDecl => {
-                            let name = entity.get_name().expect("enum constant name");
+                immediate_children(entity, |entity, _span| match entity.get_kind() {
+                    EntityKind::EnumConstantDecl => {
+                        let name = entity.get_name().expect("enum constant name");
 
-                            if data
-                                .constants
-                                .get(&name)
-                                .map(|data| data.skipped)
-                                .unwrap_or_default()
-                            {
-                                return EntityVisitResult::Continue;
-                            }
+                        if data
+                            .constants
+                            .get(&name)
+                            .map(|data| data.skipped)
+                            .unwrap_or_default()
+                        {
+                            return;
+                        }
 
-                            let val = Expr::from_val(
-                                entity
-                                    .get_enum_constant_value()
-                                    .expect("enum constant value"),
-                                is_signed,
-                            );
-                            let expr = if data.use_value {
-                                val
-                            } else {
-                                Expr::parse_enum_constant(&entity).unwrap_or(val)
-                            };
-                            variants.push((name, expr));
-                        }
-                        EntityKind::UnexposedAttr => {
-                            if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                                if let Some(kind) = &kind {
-                                    assert_eq!(
-                                        kind, &macro_,
-                                        "got differing enum kinds in {name:?}"
-                                    );
-                                } else {
-                                    kind = Some(macro_);
-                                }
-                            }
-                        }
-                        EntityKind::FlagEnum => {
-                            let macro_ = UnexposedMacro::Options;
+                        let val = Expr::from_val(
+                            entity
+                                .get_enum_constant_value()
+                                .expect("enum constant value"),
+                            is_signed,
+                        );
+                        let expr = if data.use_value {
+                            val
+                        } else {
+                            Expr::parse_enum_constant(&entity).unwrap_or(val)
+                        };
+                        variants.push((name, expr));
+                    }
+                    EntityKind::UnexposedAttr => {
+                        if let Some(macro_) = UnexposedMacro::parse(&entity) {
                             if let Some(kind) = &kind {
                                 assert_eq!(kind, &macro_, "got differing enum kinds in {name:?}");
                             } else {
                                 kind = Some(macro_);
                             }
                         }
-                        _ => {
-                            panic!("unknown enum child {entity:?} in {name:?}");
+                    }
+                    EntityKind::FlagEnum => {
+                        let macro_ = UnexposedMacro::Options;
+                        if let Some(kind) = &kind {
+                            assert_eq!(kind, &macro_, "got differing enum kinds in {name:?}");
+                        } else {
+                            kind = Some(macro_);
                         }
                     }
-                    EntityVisitResult::Continue
+                    _ => {
+                        panic!("unknown enum child {entity:?} in {name:?}");
+                    }
                 });
 
                 vec![Self::EnumDecl {
@@ -664,26 +649,23 @@ impl Stmt {
                 let ty = Ty::parse_static(ty);
                 let mut value = None;
 
-                entity.visit_children(|entity, _parent| {
-                    match entity.get_kind() {
-                        EntityKind::UnexposedAttr => {
-                            if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                                panic!("unexpected attribute: {macro_:?}");
-                            }
+                immediate_children(entity, |entity, _span| match entity.get_kind() {
+                    EntityKind::UnexposedAttr => {
+                        if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                            panic!("unexpected attribute: {macro_:?}");
                         }
-                        EntityKind::VisibilityAttr => {}
-                        EntityKind::ObjCClassRef => {}
-                        EntityKind::TypeRef => {}
-                        _ if entity.is_expression() => {
-                            if value.is_none() {
-                                value = Some(Expr::parse_var(&entity));
-                            } else {
-                                panic!("got variable value twice")
-                            }
+                    }
+                    EntityKind::VisibilityAttr => {}
+                    EntityKind::ObjCClassRef => {}
+                    EntityKind::TypeRef => {}
+                    _ if entity.is_expression() => {
+                        if value.is_none() {
+                            value = Some(Expr::parse_var(&entity));
+                        } else {
+                            panic!("got variable value twice")
                         }
-                        _ => panic!("unknown vardecl child in {name}: {entity:?}"),
-                    };
-                    EntityVisitResult::Continue
+                    }
+                    _ => panic!("unknown vardecl child in {name}: {entity:?}"),
                 });
 
                 let value = match value {
@@ -722,25 +704,21 @@ impl Stmt {
                     warn!("unexpected static method");
                 }
 
-                entity.visit_children(|entity, _parent| {
-                    let _span = debug_span!("child", ?entity).entered();
-                    match entity.get_kind() {
-                        EntityKind::UnexposedAttr => {
-                            if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                                warn!(?macro_, "unknown macro");
-                            }
+                immediate_children(entity, |entity, _span| match entity.get_kind() {
+                    EntityKind::UnexposedAttr => {
+                        if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                            warn!(?macro_, "unknown macro");
                         }
-                        EntityKind::ObjCClassRef | EntityKind::TypeRef => {}
-                        EntityKind::ParmDecl => {
-                            // Could also be retrieved via. `get_arguments`
-                            let name = entity.get_name().unwrap_or_else(|| "_".into());
-                            let ty = entity.get_type().expect("function argument type");
-                            let ty = Ty::parse_function_argument(ty);
-                            arguments.push((name, ty))
-                        }
-                        _ => warn!("unknown"),
-                    };
-                    EntityVisitResult::Continue
+                    }
+                    EntityKind::ObjCClassRef | EntityKind::TypeRef => {}
+                    EntityKind::ParmDecl => {
+                        // Could also be retrieved via. `get_arguments`
+                        let name = entity.get_name().unwrap_or_else(|| "_".into());
+                        let ty = entity.get_type().expect("function argument type");
+                        let ty = Ty::parse_function_argument(ty);
+                        arguments.push((name, ty))
+                    }
+                    _ => warn!("unknown"),
                 });
 
                 let body = if entity.is_inline_function() {
