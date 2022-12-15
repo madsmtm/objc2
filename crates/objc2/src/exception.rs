@@ -19,6 +19,7 @@
 // TODO: Test this with panic=abort, and ensure that the code-size is
 // reasonable in that case.
 
+use crate::alloc::borrow::ToOwned;
 #[cfg(feature = "exception")]
 use core::ffi::c_void;
 use core::fmt;
@@ -29,16 +30,15 @@ use core::panic::RefUnwindSafe;
 use core::panic::UnwindSafe;
 #[cfg(feature = "exception")]
 use core::ptr;
-use objc2_encode::Encoding;
-use objc2_encode::RefEncode;
 use std::error::Error;
 
+use crate::encode::{Encoding, RefEncode};
 #[cfg(feature = "exception")]
 use crate::ffi;
-#[cfg(feature = "exception")]
-use crate::rc::{Id, Shared};
-use crate::runtime::Object;
-use crate::Message;
+use crate::rc::{autoreleasepool, Id, Shared};
+use crate::runtime::__nsstring::nsstring_to_str;
+use crate::runtime::{Class, NSObject, Object};
+use crate::{extern_methods, sel, Message};
 
 /// An Objective-C exception.
 ///
@@ -72,6 +72,34 @@ impl AsRef<Object> for Exception {
     }
 }
 
+impl Exception {
+    fn is_nsexception(&self) -> Option<bool> {
+        if self.class().responds_to(sel!(isKindOfClass:)) {
+            // SAFETY: We only use `isKindOfClass:` on NSObject
+            let obj: *const Exception = self;
+            let obj = unsafe { obj.cast::<NSObject>().as_ref().unwrap() };
+            // Get class dynamically instead of with `class!` macro
+            Some(obj.is_kind_of_inner(Class::get("NSException")?))
+        } else {
+            Some(false)
+        }
+    }
+}
+
+extern_methods!(
+    unsafe impl Exception {
+        // Only safe on NSException
+        // Returns NSString
+        #[method_id(name)]
+        unsafe fn name(&self) -> Option<Id<NSObject, Shared>>;
+
+        // Only safe on NSException
+        // Returns NSString
+        #[method_id(reason)]
+        unsafe fn reason(&self) -> Option<Id<NSObject, Shared>>;
+    }
+);
+
 // Note: We can't implement `Send` nor `Sync` since the exception could be
 // anything!
 
@@ -79,37 +107,52 @@ impl fmt::Debug for Exception {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "exception ")?;
 
-        // Attempt to present a somewhat usable error message if the
-        // `foundation` feature is enabled
-        #[cfg(feature = "foundation")]
-        if crate::foundation::NSException::is_nsexception(self) {
-            // SAFETY: Just checked that object is an NSException
-            let obj: *const Self = self;
-            let obj = unsafe {
-                obj.cast::<crate::foundation::NSException>()
-                    .as_ref()
-                    .unwrap()
-            };
-            return write!(f, "{obj:?}");
-        }
+        // Attempt to present a somewhat usable error message if the exception
+        // is an instance of NSException.
+        if let Some(true) = self.is_nsexception() {
+            let (name, reason) = autoreleasepool(|pool| {
+                // SAFETY: Just checked that object is an NSException
+                let (name, reason) = unsafe { (self.name(), self.reason()) };
 
-        // Fall back to `Object` Debug
-        write!(f, "{:?}", self.0)
+                // SAFETY: `name` and `reason` are guaranteed to be NSString.
+                let name = name
+                    .as_deref()
+                    .map(|name| unsafe { nsstring_to_str(name, pool).to_owned() });
+                let reason = reason
+                    .as_deref()
+                    .map(|reason| unsafe { nsstring_to_str(reason, pool).to_owned() });
+                (name, reason)
+            });
+
+            let obj: &Object = self.as_ref();
+            write!(f, "{obj:?} '{}'", name.unwrap_or_default())?;
+            if let Some(reason) = reason {
+                write!(f, " reason:{reason}")?;
+            } else {
+                write!(f, " reason:(NULL)")?;
+            }
+            Ok(())
+        } else {
+            // Fall back to `Object` Debug
+            write!(f, "{:?}", self.0)
+        }
     }
 }
 
 impl fmt::Display for Exception {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        #[cfg(feature = "foundation")]
-        if crate::foundation::NSException::is_nsexception(self) {
-            // SAFETY: Just checked that object is an NSException
-            let obj: *const Self = self;
-            let obj = unsafe {
-                obj.cast::<crate::foundation::NSException>()
-                    .as_ref()
-                    .unwrap()
-            };
-            if let Some(reason) = obj.reason() {
+        if let Some(true) = self.is_nsexception() {
+            let reason = autoreleasepool(|pool| {
+                // SAFETY: Just checked that object is an NSException
+                let reason = unsafe { self.reason() };
+
+                // SAFETY: `reason` is guaranteed to be NSString.
+                reason
+                    .as_deref()
+                    .map(|reason| unsafe { nsstring_to_str(reason, pool).to_owned() })
+            });
+
+            if let Some(reason) = reason {
                 return write!(f, "{reason}");
             }
         }
@@ -255,7 +298,8 @@ mod tests {
     use alloc::string::ToString;
 
     use super::*;
-    use crate::{class, msg_send_id};
+    use crate::runtime::NSObject;
+    use crate::{msg_send_id, ClassType};
 
     #[test]
     fn test_catch() {
@@ -289,7 +333,7 @@ mod tests {
 
     #[test]
     fn test_throw_catch_object() {
-        let obj: Id<Exception, Shared> = unsafe { msg_send_id![class!(NSObject), new] };
+        let obj: Id<Exception, Shared> = unsafe { msg_send_id![NSObject::class(), new] };
         // TODO: Investigate why this is required on GNUStep!
         let _obj2 = obj.clone();
         let ptr: *const Exception = &*obj;

@@ -1,13 +1,29 @@
+use alloc::borrow::ToOwned;
 use core::fmt;
 use core::hash;
 
-use super::NSString;
-use crate::rc::{DefaultId, Id, Owned, Shared};
+use crate::rc::{autoreleasepool, DefaultId, Id, Owned, Shared};
+use crate::runtime::__nsstring::nsstring_to_str;
 use crate::runtime::{Class, Object, Protocol};
-use crate::{ClassType, ProtocolType, __inner_extern_class, class, extern_methods, msg_send_id};
+use crate::{ClassType, ProtocolType, __inner_extern_class, extern_methods, msg_send_id};
 
 __inner_extern_class! {
     @__inner
+
+    /// The root class of most Objective-C class hierarchies.
+    ///
+    /// This represents both the [`NSObject` class][cls] and the [`NSObject`
+    /// protocol][proto].
+    ///
+    /// To properly use this, you must either enable the `"foundation"`
+    /// feature, or link a framework/library where the `NSObject` symbol is
+    /// available.
+    ///
+    /// This is exported under `objc2::foundation::NSObject`, you probably
+    /// want to use that path instead.
+    ///
+    /// [cls]: https://developer.apple.com/documentation/objectivec/nsobject?language=objc
+    /// [proto]: https://developer.apple.com/documentation/objectivec/1418956-nsobject?language=objc
     pub struct (NSObject) {}
 
     unsafe impl () for NSObject {
@@ -21,7 +37,15 @@ unsafe impl ClassType for NSObject {
 
     #[inline]
     fn class() -> &'static Class {
-        class!(NSObject)
+        #[cfg(not(all(feature = "unstable-static-class", not(feature = "apple"))))]
+        {
+            crate::class!(NSObject)
+        }
+        // Fix for `unstable-static-class` not working on GNUStep
+        #[cfg(all(feature = "unstable-static-class", not(feature = "apple")))]
+        {
+            Class::get("NSObject").unwrap()
+        }
     }
 
     fn as_super(&self) -> &Self::Super {
@@ -45,11 +69,12 @@ unsafe impl ProtocolType for NSObject {
 
 extern_methods!(
     unsafe impl NSObject {
+        /// Create a new empty `NSObject`.
         #[method_id(new)]
         pub fn new() -> Id<Self, Owned>;
 
         #[method(isKindOfClass:)]
-        fn is_kind_of_inner(&self, cls: &Class) -> bool;
+        pub(crate) fn is_kind_of_inner(&self, cls: &Class) -> bool;
 
         #[method(isEqual:)]
         fn is_equal(&self, other: &Self) -> bool;
@@ -114,11 +139,22 @@ impl fmt::Debug for NSObject {
     #[doc(alias = "debugDescription")]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Get description
-        let description: Option<Id<NSString, Shared>> = unsafe { msg_send_id![self, description] };
+        let description: Option<Id<NSObject, Shared>> = unsafe { msg_send_id![self, description] };
 
         match description {
-            // Attempt to format with description
-            Some(description) => fmt::Display::fmt(&description, f),
+            // Attempt to format description string
+            Some(description) => {
+                let s = autoreleasepool(|pool| {
+                    // SAFETY: `description` selector is guaranteed to always
+                    // return an instance of `NSString`.
+                    let s = unsafe { nsstring_to_str(&description, pool) };
+                    // The call to `to_owned` is unfortunate, but is required
+                    // to work around `f` not being `AutoreleaseSafe`.
+                    // TODO: Fix this!
+                    s.to_owned()
+                });
+                fmt::Display::fmt(&s, f)
+            }
             // If description was `NULL`, use `Object`'s `Debug` impl instead
             None => {
                 let obj: &Object = self;
@@ -141,6 +177,8 @@ impl DefaultId for NSObject {
 mod tests {
     use super::*;
     use alloc::format;
+
+    use crate::rc::RcTestObject;
 
     #[test]
     fn test_deref() {
@@ -209,6 +247,10 @@ mod tests {
     fn test_is_kind_of() {
         let obj = NSObject::new();
         assert!(obj.is_kind_of::<NSObject>());
-        assert!(!obj.is_kind_of::<NSString>());
+        assert!(!obj.is_kind_of::<RcTestObject>());
+
+        let obj = RcTestObject::new();
+        assert!(obj.is_kind_of::<NSObject>());
+        assert!(obj.is_kind_of::<RcTestObject>());
     }
 }

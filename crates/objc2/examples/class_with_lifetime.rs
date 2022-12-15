@@ -7,9 +7,8 @@ use std::marker::PhantomData;
 use std::sync::Once;
 
 use objc2::declare::{ClassBuilder, Ivar, IvarType};
-use objc2::foundation::NSObject;
 use objc2::rc::{Id, Owned};
-use objc2::runtime::{Class, Object, Sel};
+use objc2::runtime::{Class, NSObject, Sel};
 use objc2::{msg_send, msg_send_id, sel};
 use objc2::{ClassType, Encoding, Message, RefEncode};
 
@@ -39,7 +38,7 @@ pub struct MyObject<'a> {
 }
 
 unsafe impl RefEncode for MyObject<'_> {
-    const ENCODING_REF: Encoding = Object::ENCODING_REF;
+    const ENCODING_REF: Encoding = NSObject::ENCODING_REF;
 }
 
 unsafe impl Message for MyObject<'_> {}

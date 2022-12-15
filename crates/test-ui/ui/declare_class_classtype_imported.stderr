@@ -9,11 +9,3 @@ note: while trying to match `ClassType`
   |
   |         unsafe impl ClassType for $for:ty {
   |                     ^^^^^^^^^
-
-warning: unused import: `objc2::foundation::NSObject`
- --> ui/declare_class_classtype_imported.rs
-  |
-  | use objc2::foundation::NSObject;
-  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  |
-  = note: `#[warn(unused_imports)]` on by default

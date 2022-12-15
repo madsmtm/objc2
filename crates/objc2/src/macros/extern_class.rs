@@ -51,7 +51,7 @@
 /// standard memory management messages (this is upheld if [`NSObject`] is
 /// part of its inheritance chain).
 ///
-/// [`NSObject`]: crate::foundation::NSObject
+/// [`NSObject`]: crate::runtime::NSObject
 ///
 ///
 /// # Examples
@@ -59,7 +59,7 @@
 /// Create a new type to represent the `NSFormatter` class.
 ///
 /// ```
-/// use objc2::foundation::NSObject;
+/// use objc2::runtime::NSObject;
 /// use objc2::rc::{Id, Shared};
 /// use objc2::{ClassType, extern_class, msg_send_id};
 /// #
@@ -92,7 +92,7 @@
 /// declared previously to specify as its superclass.
 ///
 /// ```
-/// use objc2::foundation::NSObject;
+/// use objc2::runtime::NSObject;
 /// use objc2::{extern_class, ClassType};
 /// #
 /// # extern_class!(

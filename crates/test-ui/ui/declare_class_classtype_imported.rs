@@ -1,5 +1,6 @@
 use objc2::declare_class;
-use objc2::foundation::NSObject;
+#[allow(unused_imports)]
+use objc2::runtime::NSObject;
 
 declare_class!(
     struct CustomObject {}

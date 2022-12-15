@@ -1,5 +1,4 @@
-use objc2::foundation::NSObject;
-use objc2::runtime::Class;
+use objc2::runtime::{Class, NSObject};
 use objc2::{sel, ClassType, Encode};
 
 fn main() {

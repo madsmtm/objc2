@@ -1,6 +1,6 @@
 #![deny(deprecated)]
-use crate::foundation::NSObject;
 use crate::rc::{Id, Owned};
+use crate::runtime::NSObject;
 use crate::{declare_class, extern_methods, sel, ClassType};
 
 // Test that adding the `deprecated` attribute does not mean that warnings

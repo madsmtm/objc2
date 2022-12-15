@@ -1,9 +1,9 @@
 use core::mem::{size_of, ManuallyDrop};
 use std::os::raw::c_int;
 
-use objc2::foundation::{NSNumber, NSObject};
+use objc2::foundation::NSNumber;
 use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned, Shared};
-use objc2::runtime::{Bool, Class, Object, Protocol};
+use objc2::runtime::{Bool, Class, NSObject, Object, Protocol};
 #[cfg(feature = "malloc")]
 use objc2::sel;
 use objc2::{class, msg_send, msg_send_id};

@@ -6,19 +6,17 @@ use core::panic::RefUnwindSafe;
 use core::panic::UnwindSafe;
 #[cfg(feature = "apple")]
 use core::ptr::NonNull;
+#[cfg(feature = "apple")]
 use core::slice;
 use core::str;
+#[cfg(feature = "apple")]
 use std::os::raw::c_char;
 
 use super::{NSComparisonResult, NSCopying, NSError, NSMutableCopying, NSMutableString, NSObject};
 use crate::rc::{autoreleasepool, AutoreleasePool, DefaultId, Id, Shared};
+use crate::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
 use crate::runtime::{Class, Object};
 use crate::{extern_class, extern_methods, msg_send, ClassType};
-
-#[cfg(feature = "apple")]
-const UTF8_ENCODING: usize = 4;
-#[cfg(feature = "gnustep-1-7")]
-const UTF8_ENCODING: i32 = 4;
 
 extern_class!(
     /// An immutable, plain-text Unicode string object.
@@ -109,7 +107,8 @@ extern_methods!(
         #[doc(alias = "lengthOfBytesUsingEncoding")]
         #[doc(alias = "lengthOfBytesUsingEncoding:")]
         pub fn len(&self) -> usize {
-            unsafe { msg_send![self, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
+            // SAFETY: This is an instance of `NSString`
+            unsafe { nsstring_len(self) }
         }
 
         /// The number of UTF-16 code units in the string.
@@ -179,44 +178,8 @@ extern_methods!(
         /// TODO: Further explain this.
         #[doc(alias = "UTF8String")]
         pub fn as_str<'r, 's: 'r, 'p: 'r>(&'s self, pool: &'p AutoreleasePool) -> &'r str {
-            // NOTE: Please keep up to date with `objc2::exception`!
-
-            // This is necessary until `auto` types stabilizes.
-            pool.__verify_is_inner();
-
-            // The documentation on `UTF8String` is a bit sparse, but with
-            // educated guesses and testing I've determined that NSString stores
-            // a pointer to the string data, sometimes with an UTF-8 encoding,
-            // (usual for ascii data), sometimes in other encodings (UTF-16?).
-            //
-            // `UTF8String` then checks the internal encoding:
-            // - If the data is UTF-8 encoded, it returns the internal pointer.
-            // - If the data is in another encoding, it creates a new allocation,
-            //   writes the UTF-8 representation of the string into it,
-            //   autoreleases the allocation and returns a pointer to it.
-            //
-            // So the lifetime of the returned pointer is either the same as the
-            // NSString OR the lifetime of the innermost @autoreleasepool.
-            //
-            // https://developer.apple.com/documentation/foundation/nsstring/1411189-utf8string?language=objc
-            let bytes: *const c_char = unsafe { msg_send![self, UTF8String] };
-            let bytes: *const u8 = bytes.cast();
-            let len = self.len();
-
-            // SAFETY:
-            // The held AutoreleasePool is the innermost, and the reference is
-            // constrained both by the pool and the NSString.
-            //
-            // `len` is the length of the string in the UTF-8 encoding.
-            //
-            // `bytes` is a null-terminated C string (with length = len + 1), so
-            // it is never a NULL pointer.
-            let bytes: &'r [u8] = unsafe { slice::from_raw_parts(bytes, len) };
-
-            // TODO: Always UTF-8, so should we use `from_utf8_unchecked`?
-            str::from_utf8(bytes).unwrap()
-
-            // NOTE: Please keep up to date with `objc2::exception`!
+            // SAFETY: This is an instance of `NSString`
+            unsafe { nsstring_to_str(self, pool) }
         }
 
         // TODO: Allow usecases where the NUL byte from `UTF8String` is kept?

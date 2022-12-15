@@ -209,8 +209,8 @@ unsafe fn box_unreachable() -> ! {
 mod tests {
     use super::*;
     use crate::declare::{Ivar, IvarType};
-    use crate::foundation::NSObject;
     use crate::rc::{Allocated, Owned, RcTestObject, Shared, ThreadTestData};
+    use crate::runtime::NSObject;
     use crate::runtime::Object;
     use crate::{declare_class, msg_send, msg_send_id, ClassType};
 

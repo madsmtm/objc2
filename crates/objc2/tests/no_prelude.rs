@@ -94,7 +94,7 @@ new_objc2::declare_class!(
     pub struct CustomObject {}
 
     unsafe impl ClassType for CustomObject {
-        type Super = new_objc2::foundation::NSObject;
+        type Super = new_objc2::runtime::NSObject;
     }
 
     unsafe impl CustomObject {
@@ -114,7 +114,7 @@ new_objc2::extern_class!(
     struct NSObject2;
 
     unsafe impl ClassType for NSObject2 {
-        type Super = new_objc2::foundation::NSObject;
+        type Super = new_objc2::runtime::NSObject;
         const NAME: &'static str = "NSObject";
     }
 );

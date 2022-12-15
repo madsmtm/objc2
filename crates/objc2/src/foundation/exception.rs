@@ -101,7 +101,7 @@ extern_methods!(
             unsafe { Id::cast(this) }
         }
 
-        pub(crate) fn is_nsexception(obj: &Exception) -> bool {
+        fn is_nsexception(obj: &Exception) -> bool {
             if obj.class().responds_to(sel!(isKindOfClass:)) {
                 // SAFETY: We only use `isKindOfClass:` on NSObject
                 let obj: *const Exception = obj;
@@ -182,8 +182,15 @@ mod tests {
             "def".into()
         };
 
-        let exc: &NSObject = &exc;
-        assert_eq!(format!("{exc:?}"), description);
+        let obj: &NSObject = &exc;
+        assert_eq!(format!("{obj:?}"), description);
+
+        let exc = NSException::into_exception(exc);
+
+        // Test `Debug` impl of Exception
+        assert_eq!(format!("{exc:?}"), format!("exception {debug}"));
+        // Test `Display` impl of Exception
+        assert_eq!(format!("{exc}"), "def");
     }
 
     #[test]

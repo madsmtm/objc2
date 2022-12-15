@@ -16,9 +16,8 @@
 //!
 //! ```
 //! use objc2::declare::ClassBuilder;
-//! use objc2::foundation::NSObject;
 //! use objc2::rc::{Id, Owned};
-//! use objc2::runtime::{Class, Object, Sel};
+//! use objc2::runtime::{Class, Object, NSObject, Sel};
 //! use objc2::{sel, msg_send, msg_send_id, ClassType};
 //! # #[cfg(feature = "gnustep-1-7")]
 //! # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
@@ -633,7 +632,7 @@ impl ProtocolBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::foundation::{NSObject, NSZone};
+    use crate::runtime::{NSObject, NSZone};
     use crate::test_utils;
     use crate::{declare_class, extern_protocol, msg_send, ClassType, ConformsTo, ProtocolType};
 
