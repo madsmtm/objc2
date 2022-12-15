@@ -1,17 +1,11 @@
 use std::collections::BTreeMap;
-use std::fmt::{self, Write};
-use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
 
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
-use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index};
+use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index, TranslationUnit};
 
-use header_translator::{
-    compare_btree, run_cargo_fmt, run_rustfmt, Config, File, Stmt, FILE_PRELUDE,
-};
-
-const FORMAT_INCREMENTALLY: bool = false;
+use header_translator::{compare_btree, run_cargo_fmt, Config, File, Library, Stmt};
 
 fn main() {
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
@@ -108,14 +102,12 @@ fn main() {
     for (library, files) in final_result.expect("got a result") {
         println!("status: writing framework {library}...");
         let output_path = crate_src.join("generated").join(&library);
-        output_files(&output_path, files, FORMAT_INCREMENTALLY).unwrap();
+        files.output(&output_path).unwrap();
         println!("status: written framework {library}");
     }
 
-    if !FORMAT_INCREMENTALLY {
-        println!("status: formatting");
-        run_cargo_fmt("icrate");
-    }
+    println!("status: formatting");
+    run_cargo_fmt("icrate");
 }
 
 fn load_configs(crate_src: &Path) -> BTreeMap<String, Config> {
@@ -149,75 +141,84 @@ fn parse_sdk(
     sdk: &SdkPath,
     llvm_target: &str,
     configs: &BTreeMap<String, Config>,
-) -> BTreeMap<String, BTreeMap<String, File>> {
-    let mut result: BTreeMap<_, _> = configs
-        .iter()
-        .map(|(library, _)| (library.clone(), BTreeMap::new()))
-        .collect();
+) -> BTreeMap<String, Library> {
+    let tu = get_translation_unit(index, sdk, llvm_target);
+    println!("status: initialized translation unit {:?}", sdk.platform);
+
+    let framework_dir = sdk.path.join("System/Library/Frameworks");
 
     let mut preprocessing = true;
+    let mut result: BTreeMap<_, _> = configs
+        .iter()
+        .map(|(name, _)| (name.clone(), Library::new()))
+        .collect();
 
-    parse_and_visit_stmts(index, sdk, llvm_target, |library, file_name, entity| {
-        if let Some(config) = configs.get(library) {
-            let files = result.get_mut(library).expect("files");
-            match entity.get_kind() {
-                EntityKind::InclusionDirective if preprocessing => {
-                    // println!("{library}/{file_name}.h: {entity:?}");
-                    // If umbrella header
-                    let name = entity.get_name().expect("inclusion name");
-                    let mut iter = name.split('/');
-                    let framework = iter.next().expect("inclusion name has framework");
-                    if framework == library {
-                        let included = iter
-                            .next()
-                            .expect("inclusion name has file")
-                            .strip_suffix(".h")
-                            .expect("inclusion name file is header")
-                            .to_string();
-                        if iter.count() != 0 {
-                            panic!("invalid inclusion of {name:?}");
-                        }
+    tu.get_entity().visit_children(|entity, _parent| {
+        if let Some((library_name, file_name)) = extract_framework_name(&entity, &framework_dir) {
+            if let Some(config) = configs.get(&library_name) {
+                let library = result.get_mut(&library_name).expect("library");
+                match entity.get_kind() {
+                    EntityKind::InclusionDirective if preprocessing => {
+                        // println!("{library_name}/{file_name}.h: {entity:?}");
+                        // If umbrella header
+                        let name = entity.get_name().expect("inclusion name");
+                        let mut iter = name.split('/');
+                        let framework = iter.next().expect("inclusion name has framework");
+                        if framework == library_name {
+                            let included = iter
+                                .next()
+                                .expect("inclusion name has file")
+                                .strip_suffix(".h")
+                                .expect("inclusion name file is header")
+                                .to_string();
+                            if iter.count() != 0 {
+                                panic!("invalid inclusion of {name:?}");
+                            }
 
-                        // If inclusion is not umbrella header
-                        if included != library {
-                            // The file is often included twice, even
-                            // within the same file, so insertion can fail
-                            files.entry(included).or_insert_with(|| File::new(&config));
+                            // If inclusion is not umbrella header
+                            if included != library_name {
+                                // The file is often included twice, even
+                                // within the same file, so insertion can fail
+                                library
+                                    .files
+                                    .entry(included)
+                                    .or_insert_with(|| File::new(&config));
+                            }
+                        }
+                    }
+                    EntityKind::MacroExpansion if preprocessing => {}
+                    EntityKind::MacroDefinition if preprocessing => {
+                        // let name = entity.get_name().expect("macro def name");
+                        // entity.is_function_like_macro();
+                        // println!("macrodef in {library_name}/{file_name}.h: {}", name);
+                    }
+                    _ => {
+                        if preprocessing {
+                            println!("status: preprocessed {:?}...", sdk.platform);
+                        }
+                        preprocessing = false;
+                        // No more includes / macro expansions after this line
+                        let file = library.files.get_mut(&file_name).expect("file");
+                        for stmt in Stmt::parse(&entity, &config) {
+                            file.add_stmt(stmt);
                         }
                     }
                 }
-                EntityKind::MacroExpansion if preprocessing => {}
-                EntityKind::MacroDefinition if preprocessing => {
-                    // let name = entity.get_name().expect("macro def name");
-                    // entity.is_function_like_macro();
-                    // println!("macrodef in {library}/{file_name}.h: {}", name);
-                }
-                _ => {
-                    if preprocessing {
-                        println!("status: preprocessed {:?}...", sdk.platform);
-                    }
-                    preprocessing = false;
-                    // No more includes / macro expansions after this line
-                    let file = files.get_mut(file_name).expect("file");
-                    for stmt in Stmt::parse(&entity, &config) {
-                        file.add_stmt(stmt);
-                    }
-                }
+            } else {
+                // println!("library not found {library_name}");
             }
-        } else {
-            // println!("library not found {library}");
         }
+        EntityVisitResult::Continue
     });
 
     result
 }
 
-fn parse_and_visit_stmts(
-    index: &Index<'_>,
+fn get_translation_unit<'i: 'tu, 'tu>(
+    index: &'i Index<'tu>,
     sdk: &SdkPath,
     llvm_target: &str,
-    mut f: impl FnMut(&str, &str, Entity<'_>),
-) {
+) -> TranslationUnit<'tu> {
     let target = format!("--target={llvm_target}");
 
     let tu = index
@@ -248,8 +249,6 @@ fn parse_and_visit_stmts(
         .parse()
         .unwrap();
 
-    println!("status: initialized translation unit {:?}", sdk.platform);
-
     // dbg!(&tu);
     // dbg!(tu.get_target());
     // dbg!(tu.get_memory_usage());
@@ -271,101 +270,48 @@ fn parse_and_visit_stmts(
     // let cursor_file = tu.get_file(&dir.join("NSCursor.h")).unwrap();
     // dbg_file(cursor_file);
 
-    let entity = tu.get_entity();
-
-    let framework_dir = sdk.path.join("System/Library/Frameworks");
-    entity.visit_children(|entity, _parent| {
-        if let Some(location) = entity.get_location() {
-            if let Some(file) = location.get_file_location().file {
-                let path = file.get_path();
-                if let Ok(path) = path.strip_prefix(&framework_dir) {
-                    let mut components = path.components();
-                    let library = components
-                        .next()
-                        .expect("components next")
-                        .as_os_str()
-                        .to_str()
-                        .expect("component to_str")
-                        .strip_suffix(".framework")
-                        .expect("framework fileending");
-
-                    let path = components.as_path();
-                    let name = path
-                        .file_stem()
-                        .expect("path file stem")
-                        .to_string_lossy()
-                        .to_owned();
-
-                    f(&library, &name, entity);
-                }
-            }
-        }
-        EntityVisitResult::Continue
-    });
+    tu
 }
 
-fn compare_results(
-    data1: &BTreeMap<String, BTreeMap<String, File>>,
-    data2: &BTreeMap<String, BTreeMap<String, File>>,
-) {
+pub fn extract_framework_name(
+    entity: &Entity<'_>,
+    framework_dir: &Path,
+) -> Option<(String, String)> {
+    if let Some(location) = entity.get_location() {
+        if let Some(file) = location.get_file_location().file {
+            let path = file.get_path();
+            if let Ok(path) = path.strip_prefix(&framework_dir) {
+                let mut components = path.components();
+                let library_name = components
+                    .next()
+                    .expect("components next")
+                    .as_os_str()
+                    .to_str()
+                    .expect("component to_str")
+                    .strip_suffix(".framework")
+                    .expect("framework fileending")
+                    .to_string();
+
+                let path = components.as_path();
+                let file_name = path
+                    .file_stem()
+                    .expect("path file stem")
+                    .to_string_lossy()
+                    .to_string();
+
+                return Some((library_name, file_name));
+            }
+        }
+    }
+    None
+}
+
+fn compare_results(data1: &BTreeMap<String, Library>, data2: &BTreeMap<String, Library>) {
     compare_btree(data1, data2, |libary_name, library1, library2| {
-        compare_btree(library1, library2, |name, file1, file2| {
-            println!("comparing {libary_name}/{name}");
-            file1.compare(file2);
-        })
+        println!("comparing {libary_name}");
+        library1.compare(library2);
     });
 
     // Extra check in case our comparison above was not exaustive
     assert_eq!(data1, data2);
-}
-
-fn output_files(
-    output_path: &Path,
-    files: BTreeMap<String, File>,
-    format_incrementally: bool,
-) -> fmt::Result {
-    for (name, file) in &files {
-        let mut path = output_path.join(&name);
-        path.set_extension("rs");
-
-        let output = if format_incrementally {
-            run_rustfmt(file)
-        } else {
-            file.to_string().into()
-        };
-
-        fs::write(&path, output).unwrap();
-    }
-
-    let mut tokens = String::new();
-    writeln!(tokens, "{}", FILE_PRELUDE)?;
-    writeln!(tokens, "#![allow(unused_imports)]")?;
-
-    for (name, _) in &files {
-        writeln!(tokens, "#[path = \"{name}.rs\"]")?;
-        writeln!(tokens, "mod __{name};")?;
-    }
-    writeln!(tokens, "")?;
-    for (name, file) in &files {
-        let declared_types = file.declared_types();
-        let declared_types: Vec<_> = declared_types.collect();
-        if !declared_types.is_empty() {
-            writeln!(
-                tokens,
-                "pub use self::__{name}::{{{}}};",
-                declared_types.join(",")
-            )?;
-        }
-    }
-
-    let output = if format_incrementally {
-        run_rustfmt(tokens)
-    } else {
-        tokens.into()
-    };
-
-    // truncate if the file exists
-    fs::write(output_path.join("mod.rs"), output).unwrap();
-
-    Ok(())
 }
