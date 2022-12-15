@@ -401,6 +401,18 @@ impl<'tu> PartialMethod<'tu> {
     }
 }
 
+impl Method {
+    pub(crate) fn emit_on_subclasses(&self) -> bool {
+        if self.is_class {
+            self.result_type.is_instancetype()
+                && !matches!(&*self.selector, "new" | "supportsSecureCoding")
+        } else {
+            self.memory_management == MemoryManagement::Init
+                && !matches!(&*self.selector, "init" | "initWithCoder:")
+        }
+    }
+}
+
 impl fmt::Display for Method {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let _span = debug_span!("method", self.fn_name).entered();

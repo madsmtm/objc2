@@ -1012,7 +1012,7 @@ impl Ty {
                 type_: ty,
                 lifetime: Lifetime::Unspecified,
                 is_const: false,
-                nullability: Nullability::NonNull,
+                nullability: _,
             } if ty.name == "Self" && ty.generics.is_empty() => {
                 ty.name = "Allocated".into();
                 ty.generics = vec![GenericType {
@@ -1020,13 +1020,20 @@ impl Ty {
                     generics: vec![],
                 }];
             }
-            _ => panic!("invalid alloc return type {self:?}"),
+            _ => error!(?self, "invalid alloc return type"),
         }
     }
 
     pub fn set_is_error(&mut self) {
         assert_eq!(self.kind, TyKind::InMethodReturn);
         self.kind = TyKind::InMethodReturnWithError;
+    }
+
+    pub fn is_instancetype(&self) -> bool {
+        matches!(&self.ty, RustType::Id {
+            type_: ty,
+            ..
+        } if ty.name == "Self" && ty.generics.is_empty())
     }
 
     /// Related result types

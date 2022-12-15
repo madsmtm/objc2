@@ -1,4 +1,5 @@
 use clang::{Entity, EntityKind};
+use tracing::warn;
 
 /// Parts of `EntityKind::UnexposedAttr` that we can easily parse.
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -30,8 +31,14 @@ impl UnexposedMacro {
             | "NS_AVAILABLE"
             | "NS_OPENGL_DEPRECATED"
             | "NS_OPENGL_CLASS_DEPRECATED"
-            | "NS_OPENGL_ENUM_DEPRECATED" => None,
-            name => panic!("unknown unexposed macro name {name}"),
+            | "NS_OPENGL_ENUM_DEPRECATED"
+            | "OBJC_AVAILABLE"
+            | "OBJC_SWIFT_UNAVAILABLE"
+            | "OBJC_DEPRECATED" => None,
+            name => {
+                warn!(name, "unknown unexposed macro");
+                None
+            }
         }
     }
 

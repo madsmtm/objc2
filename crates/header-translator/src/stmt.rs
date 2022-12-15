@@ -1,5 +1,5 @@
 use std::borrow::Cow;
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 use std::fmt;
 use std::iter;
 use std::mem;
@@ -360,26 +360,43 @@ impl Stmt {
 
                 let ty = GenericType { name, generics };
 
+                let mut superclass_entity = entity.clone();
+                let mut superclasses = vec![];
+                let mut superclass_methods = BTreeMap::new();
+
+                while let Some((next_entity, superclass)) = parse_superclass(&superclass_entity) {
+                    // TODO: Avoid redoing all this work!
+                    if superclass_entity != *entity {
+                        let class_data = config.class_data.get(&superclass.name);
+                        let mut _generics = Vec::new();
+                        let (_protocols, methods) = parse_objc_decl(
+                            &superclass_entity,
+                            true,
+                            Some(&mut _generics),
+                            class_data,
+                        );
+                        for method in methods
+                            .into_iter()
+                            .filter(|method| method.emit_on_subclasses())
+                        {
+                            superclass_methods.insert(method.fn_name.clone(), method);
+                        }
+                    }
+
+                    superclass_entity = next_entity;
+                    superclasses.push(superclass);
+                }
+
                 (!class_data
                     .map(|data| data.definition_skipped)
                     .unwrap_or_default())
-                .then(|| {
-                    let mut current_entity = entity.clone();
-                    let mut superclasses = vec![];
-
-                    while let Some((entity, superclass)) = parse_superclass(&current_entity) {
-                        current_entity = entity;
-                        superclasses.push(superclass);
-                    }
-
-                    Self::ClassDecl {
-                        ty: ty.clone(),
-                        availability: availability.clone(),
-                        superclasses,
-                        derives: class_data
-                            .map(|data| data.derives.clone())
-                            .unwrap_or_default(),
-                    }
+                .then(|| Self::ClassDecl {
+                    ty: ty.clone(),
+                    availability: availability.clone(),
+                    superclasses,
+                    derives: class_data
+                        .map(|data| data.derives.clone())
+                        .unwrap_or_default(),
                 })
                 .into_iter()
                 .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
@@ -392,6 +409,12 @@ impl Stmt {
                     availability: availability.clone(),
                     methods,
                     category_name: None,
+                }))
+                .chain((!superclass_methods.is_empty()).then(|| Self::Methods {
+                    ty: ty.clone(),
+                    availability: availability.clone(),
+                    methods: superclass_methods.into_values().collect(),
+                    category_name: Some("Methods declared on superclasses".to_string()),
                 }))
                 .collect()
             }
