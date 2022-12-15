@@ -27,13 +27,47 @@ impl fmt::Display for Derives {
     }
 }
 
+fn parse_superclass<'ty>(entity: &Entity<'ty>) -> Option<(Entity<'ty>, GenericType)> {
+    let mut superclass = None;
+    let mut generics = Vec::new();
+
+    entity.visit_children(|entity, _parent| {
+        match entity.get_kind() {
+            EntityKind::ObjCSuperClassRef => {
+                superclass = Some(entity);
+            }
+            EntityKind::TypeRef => {
+                let name = entity.get_name().expect("typeref name");
+                generics.push(GenericType {
+                    name,
+                    generics: Vec::new(),
+                });
+            }
+            _ => {}
+        }
+        EntityVisitResult::Continue
+    });
+
+    superclass.map(|entity| {
+        (
+            entity
+                .get_reference()
+                .expect("ObjCSuperClassRef to reference entity"),
+            GenericType {
+                name: entity.get_name().expect("superclass name"),
+                generics,
+            },
+        )
+    })
+}
+
 /// Takes one of:
 /// - `EntityKind::ObjCInterfaceDecl`
 /// - `EntityKind::ObjCProtocolDecl`
 /// - `EntityKind::ObjCCategoryDecl`
-fn parse_objc_decl(
-    entity: &Entity<'_>,
-    mut superclass: Option<&mut Option<Option<GenericType>>>,
+fn parse_objc_decl<'ty>(
+    entity: &Entity<'ty>,
+    superclass: bool,
     mut generics: Option<&mut Vec<GenericType>>,
     data: Option<&ClassData>,
 ) -> (Vec<String>, Vec<Method>) {
@@ -46,31 +80,17 @@ fn parse_objc_decl(
 
     entity.visit_children(|entity, _parent| {
         match entity.get_kind() {
-            EntityKind::ObjCExplicitProtocolImpl if generics.is_none() && superclass.is_none() => {
+            EntityKind::ObjCExplicitProtocolImpl if generics.is_none() && !superclass => {
                 // TODO NS_PROTOCOL_REQUIRES_EXPLICIT_IMPLEMENTATION
             }
-            EntityKind::ObjCIvarDecl if superclass.is_some() => {
+            EntityKind::ObjCIvarDecl if superclass => {
                 // Explicitly ignored
             }
-            EntityKind::ObjCSuperClassRef => {
-                if let Some(superclass) = &mut superclass {
-                    let name = entity.get_name().expect("superclass name");
-                    **superclass = Some(Some(GenericType {
-                        name,
-                        // These are filled out in EntityKind::TypeRef
-                        generics: Vec::new(),
-                    }));
-                } else {
-                    panic!("unsupported superclass {entity:?}");
-                }
+            EntityKind::ObjCSuperClassRef | EntityKind::TypeRef if superclass => {
+                // Parsed in parse_superclass
             }
             EntityKind::ObjCRootClass => {
-                if let Some(superclass) = &mut superclass {
-                    // TODO: Maybe just skip root classes entirely?
-                    **superclass = Some(None);
-                } else {
-                    panic!("unsupported root class {entity:?}");
-                }
+                println!("parsing root class {entity:?}");
             }
             EntityKind::ObjCClassRef if generics.is_some() => {
                 // println!("ObjCClassRef: {:?}", entity.get_display_name());
@@ -146,18 +166,7 @@ fn parse_objc_decl(
             EntityKind::VisibilityAttr => {
                 // Already exposed as entity.get_visibility()
             }
-            EntityKind::TypeRef => {
-                let name = entity.get_name().expect("typeref name");
-                if let Some(Some(Some(GenericType { generics, .. }))) = &mut superclass {
-                    generics.push(GenericType {
-                        name,
-                        generics: Vec::new(),
-                    });
-                } else {
-                    panic!("unsupported typeref {entity:?}");
-                }
-            }
-            EntityKind::ObjCException if superclass.is_some() => {
+            EntityKind::ObjCException if superclass => {
                 // Maybe useful for knowing when to implement `Error` for the type
             }
             EntityKind::UnexposedAttr => {
@@ -189,7 +198,7 @@ pub enum Stmt {
     ClassDecl {
         ty: GenericType,
         availability: Availability,
-        superclass: Option<GenericType>,
+        superclasses: Vec<GenericType>,
         derives: Derives,
     },
     /// @interface class_name (name) <protocols*>
@@ -335,28 +344,33 @@ impl Stmt {
                         .expect("class availability"),
                 );
                 // println!("Availability: {:?}", entity.get_platform_availability());
-                let mut superclass = None;
                 let mut generics = Vec::new();
 
-                let (protocols, methods) = parse_objc_decl(
-                    &entity,
-                    Some(&mut superclass),
-                    Some(&mut generics),
-                    class_data,
-                );
+                let (protocols, methods) =
+                    parse_objc_decl(&entity, true, Some(&mut generics), class_data);
 
                 let ty = GenericType { name, generics };
 
                 (!class_data
                     .map(|data| data.definition_skipped)
                     .unwrap_or_default())
-                .then(|| Self::ClassDecl {
-                    ty: ty.clone(),
-                    availability: availability.clone(),
-                    superclass: superclass.expect("no superclass found"),
-                    derives: class_data
-                        .map(|data| data.derives.clone())
-                        .unwrap_or_default(),
+                .then(|| {
+                    let mut current_entity = entity.clone();
+                    let mut superclasses = vec![];
+
+                    while let Some((entity, superclass)) = parse_superclass(&current_entity) {
+                        current_entity = entity;
+                        superclasses.push(superclass);
+                    }
+
+                    Self::ClassDecl {
+                        ty: ty.clone(),
+                        availability: availability.clone(),
+                        superclasses,
+                        derives: class_data
+                            .map(|data| data.derives.clone())
+                            .unwrap_or_default(),
+                    }
                 })
                 .into_iter()
                 .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
@@ -402,7 +416,7 @@ impl Stmt {
                 let mut class_generics = Vec::new();
 
                 let (protocols, methods) =
-                    parse_objc_decl(&entity, None, Some(&mut class_generics), class_data);
+                    parse_objc_decl(&entity, false, Some(&mut class_generics), class_data);
 
                 let ty = GenericType {
                     name: class_name,
@@ -437,7 +451,7 @@ impl Stmt {
                         .expect("protocol availability"),
                 );
 
-                let (protocols, methods) = parse_objc_decl(&entity, None, None, protocol_data);
+                let (protocols, methods) = parse_objc_decl(&entity, false, None, protocol_data);
 
                 vec![Self::ProtocolDecl {
                     name,
@@ -815,15 +829,9 @@ impl fmt::Display for Stmt {
             Self::ClassDecl {
                 ty,
                 availability: _,
-                superclass,
+                superclasses,
                 derives,
             } => {
-                let default_superclass = GenericType {
-                    name: "Object".into(),
-                    generics: Vec::new(),
-                };
-                let superclass = superclass.as_ref().unwrap_or_else(|| &default_superclass);
-
                 // TODO: Use ty.get_objc_protocol_declarations()
 
                 let macro_name = if ty.generics.is_empty() {
@@ -868,6 +876,21 @@ impl fmt::Display for Stmt {
                     GenericParamsHelper(&ty.generics),
                     GenericTyHelper(&ty)
                 )?;
+                let (superclass, rest) = superclasses.split_at(1);
+                let superclass = superclass.get(0).expect("must have a least one superclass");
+                if !rest.is_empty() {
+                    write!(f, "    #[inherits(")?;
+                    let mut iter = rest.iter();
+                    // Using generics in here is not technically correct, but
+                    // should work for our use-cases.
+                    if let Some(superclass) = iter.next() {
+                        write!(f, "{}", GenericTyHelper(superclass))?;
+                    }
+                    for superclass in iter {
+                        write!(f, ", {}", GenericTyHelper(superclass))?;
+                    }
+                    writeln!(f, ")]")?;
+                }
                 writeln!(f, "        type Super = {};", GenericTyHelper(&superclass))?;
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
