@@ -155,7 +155,6 @@ pub struct Method {
     pub is_class: bool,
     pub is_optional_protocol: bool,
     pub memory_management: MemoryManagement,
-    pub designated_initializer: bool,
     pub arguments: Vec<(String, Option<Qualifier>, Ty)>,
     pub result_type: Ty,
     pub safe: bool,
@@ -222,7 +221,7 @@ pub struct PartialMethod<'tu> {
 }
 
 impl<'tu> PartialMethod<'tu> {
-    pub fn parse(self, data: MethodData) -> Option<Method> {
+    pub fn parse(self, data: MethodData) -> Option<(bool, Method)> {
         let Self {
             entity,
             selector,
@@ -385,19 +384,21 @@ impl<'tu> PartialMethod<'tu> {
             error!("invalid mutating method");
         }
 
-        Some(Method {
-            selector,
-            fn_name,
-            availability,
-            is_class,
-            is_optional_protocol: entity.is_objc_optional(),
-            memory_management,
+        Some((
             designated_initializer,
-            arguments,
-            result_type,
-            safe: !data.unsafe_,
-            mutating: data.mutating,
-        })
+            Method {
+                selector,
+                fn_name,
+                availability,
+                is_class,
+                is_optional_protocol: entity.is_objc_optional(),
+                memory_management,
+                arguments,
+                result_type,
+                safe: !data.unsafe_,
+                mutating: data.mutating,
+            },
+        ))
     }
 }
 
