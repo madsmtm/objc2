@@ -8,7 +8,6 @@ mod __NSNotFound;
 mod __NSProxy;
 mod debug;
 mod generic_return;
-mod init;
 
 pub use self::__NSDecimal::NSDecimal;
 pub use self::__NSNotFound::NSNotFound;

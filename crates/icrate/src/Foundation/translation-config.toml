@@ -229,6 +229,21 @@ skipped = true
 [protocol.NSMutableCopying]
 skipped = true
 
+# Our implementation of superclass methods currently place them in the wrong
+# module, so we do this hack for now.
+[class.NSMutableAttributedString.methods]
+initWithURL_options_documentAttributes_error = { skipped = true }
+initWithData_options_documentAttributes_error = { skipped = true }
+initWithRTF_documentAttributes = { skipped = true }
+initWithRTFD_documentAttributes = { skipped = true }
+initWithHTML_documentAttributes = { skipped = true }
+initWithHTML_baseURL_documentAttributes = { skipped = true }
+initWithDocFormat_documentAttributes = { skipped = true }
+initWithHTML_options_documentAttributes = { skipped = true }
+initWithRTFDFileWrapper_documentAttributes = { skipped = true }
+initWithURL_documentAttributes = { skipped = true }
+initWithPath_documentAttributes = { skipped = true }
+
 # Overridden fmt::Debug because we're missing https://github.com/madsmtm/objc2/issues/267
 # See fixes/debug.rs
 [class.NSAttributedString]

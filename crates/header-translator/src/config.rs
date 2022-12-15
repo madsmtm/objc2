@@ -49,6 +49,13 @@ pub struct ClassData {
     pub derives: Derives,
 }
 
+impl ClassData {
+    pub fn get_method_data(this: Option<&Self>, name: &str) -> MethodData {
+        this.map(|data| data.methods.get(name).copied().unwrap_or_default())
+            .unwrap_or_default()
+    }
+}
+
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct StructData {

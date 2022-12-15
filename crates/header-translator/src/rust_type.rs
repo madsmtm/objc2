@@ -5,7 +5,7 @@ use tracing::{debug_span, error, warn};
 
 use crate::method::MemoryManagement;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct GenericType {
     pub name: String,
     pub generics: Vec<GenericType>,

@@ -11,7 +11,7 @@ use tracing_subscriber::registry::Registry;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 
-use header_translator::{run_cargo_fmt, Config, File, Output, Stmt};
+use header_translator::{run_cargo_fmt, Cache, Config, File, Output, Stmt};
 
 fn main() {
     // use tracing_subscriber::fmt;
@@ -126,7 +126,13 @@ fn main() {
         }
     }
 
-    for (library_name, files) in final_result.expect("got a result").libraries {
+    let mut final_result = final_result.expect("got a result");
+    let span = info_span!("analyzing").entered();
+    let cache = Cache::new(&final_result);
+    cache.update(&mut final_result, &configs);
+    drop(span);
+
+    for (library_name, files) in final_result.libraries {
         let _span = info_span!("writing", library_name).entered();
         let output_path = crate_src.join("generated").join(&library_name);
         files.output(&output_path).unwrap();

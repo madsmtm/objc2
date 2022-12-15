@@ -209,6 +209,17 @@ impl Method {
             _span,
         }
     }
+
+    pub fn update(mut self, data: MethodData) -> Option<Self> {
+        if data.skipped {
+            return None;
+        }
+
+        self.mutating = data.mutating;
+        self.safe = !data.unsafe_;
+
+        Some(self)
+    }
 }
 
 #[derive(Debug)]
@@ -404,9 +415,11 @@ impl<'tu> PartialMethod<'tu> {
 
 impl Method {
     pub(crate) fn emit_on_subclasses(&self) -> bool {
+        if !self.result_type.is_instancetype() {
+            return false;
+        }
         if self.is_class {
-            self.result_type.is_instancetype()
-                && !matches!(&*self.selector, "new" | "supportsSecureCoding")
+            !matches!(&*self.selector, "new" | "supportsSecureCoding")
         } else {
             self.memory_management == MemoryManagement::Init
                 && !matches!(&*self.selector, "init" | "initWithCoder:")

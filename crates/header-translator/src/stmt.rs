@@ -1,5 +1,5 @@
 use std::borrow::Cow;
-use std::collections::{BTreeMap, HashSet};
+use std::collections::HashSet;
 use std::fmt;
 use std::iter;
 use std::mem;
@@ -116,14 +116,7 @@ fn parse_objc_decl<'ty>(
             let partial = Method::partial(entity);
 
             if !properties.remove(&(partial.is_class, partial.fn_name.clone())) {
-                let data = data
-                    .map(|data| {
-                        data.methods
-                            .get(&partial.fn_name)
-                            .copied()
-                            .unwrap_or_default()
-                    })
-                    .unwrap_or_default();
+                let data = ClassData::get_method_data(data, &partial.fn_name);
                 if let Some((designated_initializer, method)) = partial.parse(data) {
                     if designated_initializer {
                         designated_initializers.push(method.fn_name.clone());
@@ -147,18 +140,11 @@ fn parse_objc_decl<'ty>(
                 );
             }
 
-            let getter_data = data
-                .map(|data| {
-                    data.methods
-                        .get(&partial.getter_name)
-                        .copied()
-                        .unwrap_or_default()
-                })
-                .unwrap_or_default();
-            let setter_data = partial.setter_name.as_ref().map(|setter_name| {
-                data.map(|data| data.methods.get(setter_name).copied().unwrap_or_default())
-                    .unwrap_or_default()
-            });
+            let getter_data = ClassData::get_method_data(data, &partial.getter_name);
+            let setter_data = partial
+                .setter_name
+                .as_ref()
+                .map(|setter_name| ClassData::get_method_data(data, setter_name));
 
             let (getter, setter) = partial.parse(getter_data, setter_data);
             if let Some(getter) = getter {
@@ -218,6 +204,7 @@ pub enum Stmt {
         methods: Vec<Method>,
         /// For the categories that have a name (though some don't, see NSClipView)
         category_name: Option<String>,
+        description: Option<String>,
     },
     /// @protocol name <protocols*>
     /// ->
@@ -367,27 +354,8 @@ impl Stmt {
 
                 let mut superclass_entity = entity.clone();
                 let mut superclasses = vec![];
-                let mut superclass_methods = BTreeMap::new();
 
                 while let Some((next_entity, superclass)) = parse_superclass(&superclass_entity) {
-                    // TODO: Avoid redoing all this work!
-                    if superclass_entity != *entity {
-                        let class_data = config.class_data.get(&superclass.name);
-                        let mut _generics = Vec::new();
-                        let (_protocols, methods, _designated_initializers) = parse_objc_decl(
-                            &superclass_entity,
-                            true,
-                            Some(&mut _generics),
-                            class_data,
-                        );
-                        for method in methods
-                            .into_iter()
-                            .filter(|method| method.emit_on_subclasses())
-                        {
-                            superclass_methods.insert(method.fn_name.clone(), method);
-                        }
-                    }
-
                     superclass_entity = next_entity;
                     superclasses.push(superclass);
                 }
@@ -415,12 +383,7 @@ impl Stmt {
                     availability: availability.clone(),
                     methods,
                     category_name: None,
-                }))
-                .chain((!superclass_methods.is_empty()).then(|| Self::Methods {
-                    ty: ty.clone(),
-                    availability: availability.clone(),
-                    methods: superclass_methods.into_values().collect(),
-                    category_name: Some("Methods declared on superclasses".to_string()),
+                    description: None,
                 }))
                 .collect()
             }
@@ -473,6 +436,7 @@ impl Stmt {
                     availability: availability.clone(),
                     methods,
                     category_name: name,
+                    description: None,
                 })
                 .into_iter()
                 .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
@@ -941,8 +905,15 @@ impl fmt::Display for Stmt {
                 availability: _,
                 methods,
                 category_name,
+                description,
             } => {
                 writeln!(f, "extern_methods!(")?;
+                if let Some(description) = description {
+                    writeln!(f, "    /// {description}")?;
+                    if category_name.is_some() {
+                        writeln!(f, "    ///")?;
+                    }
+                }
                 if let Some(category_name) = category_name {
                     writeln!(f, "    /// {category_name}")?;
                 }

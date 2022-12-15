@@ -11,7 +11,7 @@ pub(crate) const FILE_PRELUDE: &str = r#"//! This file has been automatically ge
 #[derive(Debug, PartialEq)]
 pub struct File {
     imports: Vec<String>,
-    stmts: Vec<Stmt>,
+    pub(crate) stmts: Vec<Stmt>,
 }
 
 impl File {

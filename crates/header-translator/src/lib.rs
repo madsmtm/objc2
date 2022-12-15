@@ -8,6 +8,7 @@ use tracing::debug_span;
 use tracing::span::EnteredSpan;
 
 mod availability;
+mod cache;
 mod config;
 mod expr;
 mod file;
@@ -20,6 +21,7 @@ mod rust_type;
 mod stmt;
 mod unexposed_macro;
 
+pub use self::cache::Cache;
 pub use self::config::Config;
 pub use self::file::File;
 pub use self::library::Library;
