@@ -4,17 +4,42 @@ use std::path::{Path, PathBuf};
 
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
 use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index, TranslationUnit};
+use tracing::{debug_span, info, info_span, trace, trace_span, Level};
+use tracing_subscriber::filter::{filter_fn, LevelFilter};
+use tracing_subscriber::fmt;
+use tracing_subscriber::layer::{Layer, SubscriberExt};
+use tracing_subscriber::registry::Registry;
+use tracing_subscriber::util::SubscriberInitExt;
 
 use header_translator::{compare_btree, run_cargo_fmt, Config, File, Library, Stmt};
 
 fn main() {
+    Registry::default()
+        .with(
+            fmt::Layer::default()
+                .compact()
+                .without_time()
+                .with_target(false)
+                .with_span_events(fmt::format::FmtSpan::ACTIVE)
+                .with_filter(LevelFilter::INFO)
+                .with_filter(filter_fn(|metadata| {
+                    metadata.is_span() && metadata.level() == &Level::INFO
+                })),
+        )
+        .with(
+            fmt::Layer::default()
+                .compact()
+                .without_time()
+                .with_target(false)
+                .with_filter(LevelFilter::DEBUG),
+        )
+        .init();
+
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
     let workspace_dir = manifest_dir.parent().unwrap();
     let crate_src = workspace_dir.join("icrate/src");
 
-    println!("status: loading configs...");
     let configs = load_configs(&crate_src);
-    println!("status: loaded {} configs", configs.len());
 
     let clang = Clang::new().unwrap();
     let index = Index::new(&clang, true, true);
@@ -50,7 +75,6 @@ fn main() {
 
     // TODO: Compare between SDKs
     for sdk in sdks {
-        println!("status: parsing {:?}...", sdk.platform);
         // These are found using the `get_llvm_targets.fish` helper script
         let llvm_targets: &[_] = match &sdk.platform {
             Platform::MacOsX => &[
@@ -82,9 +106,8 @@ fn main() {
         let mut result = None;
 
         for llvm_target in llvm_targets {
-            println!("status:     parsing llvm target {llvm_target:?}...");
+            let _span = info_span!("parsing", platform = ?sdk.platform, llvm_target).entered();
             let curr_result = parse_sdk(&index, &sdk, llvm_target, &configs);
-            println!("status:     done parsing llvm target {llvm_target:?}");
 
             if let Some(prev_result) = &result {
                 compare_results(prev_result, &curr_result);
@@ -96,21 +119,21 @@ fn main() {
         if sdk.platform == Platform::MacOsX {
             final_result = result;
         }
-        println!("status: done parsing {:?}", sdk.platform);
     }
 
-    for (library, files) in final_result.expect("got a result") {
-        println!("status: writing framework {library}...");
-        let output_path = crate_src.join("generated").join(&library);
+    for (library_name, files) in final_result.expect("got a result") {
+        let _span = info_span!("writing", library_name).entered();
+        let output_path = crate_src.join("generated").join(&library_name);
         files.output(&output_path).unwrap();
-        println!("status: written framework {library}");
     }
 
-    println!("status: formatting");
+    let _span = info_span!("formatting").entered();
     run_cargo_fmt("icrate");
 }
 
 fn load_configs(crate_src: &Path) -> BTreeMap<String, Config> {
+    let _span = info_span!("loading configs").entered();
+
     crate_src
         .read_dir()
         .expect("read_dir")
@@ -143,7 +166,6 @@ fn parse_sdk(
     configs: &BTreeMap<String, Config>,
 ) -> BTreeMap<String, Library> {
     let tu = get_translation_unit(index, sdk, llvm_target);
-    println!("status: initialized translation unit {:?}", sdk.platform);
 
     let framework_dir = sdk.path.join("System/Library/Frameworks");
 
@@ -154,13 +176,13 @@ fn parse_sdk(
         .collect();
 
     tu.get_entity().visit_children(|entity, _parent| {
+        let _span = trace_span!("entity", ?entity).entered();
         if let Some((library_name, file_name)) = extract_framework_name(&entity, &framework_dir) {
+            let _span = debug_span!("file", file = ?(&library_name, &file_name)).entered();
             if let Some(config) = configs.get(&library_name) {
                 let library = result.get_mut(&library_name).expect("library");
                 match entity.get_kind() {
                     EntityKind::InclusionDirective if preprocessing => {
-                        // println!("{library_name}/{file_name}.h: {entity:?}");
-                        // If umbrella header
                         let name = entity.get_name().expect("inclusion name");
                         let mut iter = name.split('/');
                         let framework = iter.next().expect("inclusion name has framework");
@@ -190,11 +212,11 @@ fn parse_sdk(
                     EntityKind::MacroDefinition if preprocessing => {
                         // let name = entity.get_name().expect("macro def name");
                         // entity.is_function_like_macro();
-                        // println!("macrodef in {library_name}/{file_name}.h: {}", name);
+                        // trace!("macrodef", name);
                     }
                     _ => {
                         if preprocessing {
-                            println!("status: preprocessed {:?}...", sdk.platform);
+                            info!("done preprocessing");
                         }
                         preprocessing = false;
                         // No more includes / macro expansions after this line
@@ -205,7 +227,7 @@ fn parse_sdk(
                     }
                 }
             } else {
-                // println!("library not found {library_name}");
+                trace!("library not found");
             }
         }
         EntityVisitResult::Continue
@@ -219,6 +241,8 @@ fn get_translation_unit<'i: 'tu, 'tu>(
     sdk: &SdkPath,
     llvm_target: &str,
 ) -> TranslationUnit<'tu> {
+    let _span = info_span!("initializing translation unit").entered();
+
     let target = format!("--target={llvm_target}");
 
     let tu = index
@@ -307,8 +331,9 @@ pub fn extract_framework_name(
 }
 
 fn compare_results(data1: &BTreeMap<String, Library>, data2: &BTreeMap<String, Library>) {
+    let _span = info_span!("comparing results").entered();
     compare_btree(data1, data2, |libary_name, library1, library2| {
-        println!("comparing {libary_name}");
+        let _span = debug_span!("library", libary_name).entered();
         library1.compare(library2);
     });
 

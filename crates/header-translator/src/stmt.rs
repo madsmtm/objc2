@@ -2,8 +2,10 @@ use std::borrow::Cow;
 use std::collections::HashSet;
 use std::fmt;
 use std::iter;
+use std::mem;
 
 use clang::{Entity, EntityKind, EntityVisitResult};
+use tracing::{debug, debug_span, error, warn};
 
 use crate::availability::Availability;
 use crate::config::{ClassData, Config};
@@ -79,6 +81,7 @@ fn parse_objc_decl<'ty>(
     let mut properties = HashSet::new();
 
     entity.visit_children(|entity, _parent| {
+        let span = debug_span!("child", ?entity).entered();
         match entity.get_kind() {
             EntityKind::ObjCExplicitProtocolImpl if generics.is_none() && !superclass => {
                 // TODO NS_PROTOCOL_REQUIRES_EXPLICIT_IMPLEMENTATION
@@ -90,10 +93,10 @@ fn parse_objc_decl<'ty>(
                 // Parsed in parse_superclass
             }
             EntityKind::ObjCRootClass => {
-                println!("parsing root class {entity:?}");
+                debug!("parsing root class");
             }
             EntityKind::ObjCClassRef if generics.is_some() => {
-                // println!("ObjCClassRef: {:?}", entity.get_display_name());
+                // debug!("ObjCClassRef: {:?}", entity.get_display_name());
             }
             EntityKind::TemplateTypeParameter => {
                 if let Some(generics) = &mut generics {
@@ -105,13 +108,14 @@ fn parse_objc_decl<'ty>(
                         generics: Vec::new(),
                     });
                 } else {
-                    panic!("unsupported generics {entity:?}");
+                    error!("unsupported generics");
                 }
             }
             EntityKind::ObjCProtocolRef => {
                 protocols.push(entity.get_name().expect("protocolref to have name"));
             }
             EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
+                drop(span);
                 let partial = Method::partial(entity);
 
                 if !properties.remove(&(partial.is_class, partial.fn_name.clone())) {
@@ -129,6 +133,7 @@ fn parse_objc_decl<'ty>(
                 }
             }
             EntityKind::ObjCPropertyDecl => {
+                drop(span);
                 let partial = Method::partial_property(entity);
 
                 assert!(
@@ -171,10 +176,10 @@ fn parse_objc_decl<'ty>(
             }
             EntityKind::UnexposedAttr => {
                 if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                    println!("objc decl {entity:?}: {macro_:?}");
+                    warn!(?macro_, "unknown macro");
                 }
             }
-            _ => panic!("unknown objc decl child {entity:?}"),
+            _ => warn!("unknown"),
         };
         EntityVisitResult::Continue
     });
@@ -183,7 +188,11 @@ fn parse_objc_decl<'ty>(
         if properties == HashSet::from([(false, "setDisplayName".to_owned())]) {
             // TODO
         } else {
-            panic!("did not properly add methods to properties:\n{methods:?}\n{properties:?}");
+            error!(
+                ?methods,
+                ?properties,
+                "did not properly add methods to properties"
+            );
         }
     }
 
@@ -292,19 +301,23 @@ fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
     let mut fields = Vec::new();
 
     entity.visit_children(|entity, _parent| {
+        let span = debug_span!("child", ?entity).entered();
         match entity.get_kind() {
             EntityKind::UnexposedAttr => {
                 if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                    panic!("unexpected attribute: {macro_:?}");
+                    warn!(?macro_, "unknown macro");
                 }
             }
             EntityKind::FieldDecl => {
+                drop(span);
                 let name = entity.get_name().expect("struct field name");
+                let _span = debug_span!("field", name).entered();
+
                 let ty = entity.get_type().expect("struct field type");
                 let ty = Ty::parse_struct_field(ty);
 
                 if entity.is_bit_field() {
-                    println!("[UNSOUND] struct bitfield {name}: {entity:?}");
+                    error!("unsound struct bitfield");
                 }
 
                 fields.push((name, ty))
@@ -312,7 +325,7 @@ fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
             EntityKind::ObjCBoxable => {
                 boxable = true;
             }
-            _ => panic!("unknown struct field {entity:?}"),
+            _ => warn!("unknown"),
         }
         EntityVisitResult::Continue
     });
@@ -326,6 +339,9 @@ fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
 
 impl Stmt {
     pub fn parse(entity: &Entity<'_>, config: &Config) -> Vec<Self> {
+        let _span =
+            debug_span!("stmt", kind = ?entity.get_kind(), name = entity.get_name()).entered();
+
         match entity.get_kind() {
             // These are inconsequential for us, since we resolve imports differently
             EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef => vec![],
@@ -343,7 +359,6 @@ impl Stmt {
                         .get_platform_availability()
                         .expect("class availability"),
                 );
-                // println!("Availability: {:?}", entity.get_platform_availability());
                 let mut generics = Vec::new();
 
                 let (protocols, methods) =
@@ -674,7 +689,7 @@ impl Stmt {
                 let value = match value {
                     Some(Some(expr)) => Some(expr),
                     Some(None) => {
-                        println!("skipped static {name}");
+                        warn!("skipped static");
                         return vec![];
                     }
                     None => None,
@@ -695,7 +710,7 @@ impl Stmt {
                 }
 
                 if entity.is_variadic() {
-                    println!("can't handle variadic function {name}");
+                    warn!("can't handle variadic function");
                     return vec![];
                 }
 
@@ -703,16 +718,16 @@ impl Stmt {
                 let result_type = Ty::parse_function_return(result_type);
                 let mut arguments = Vec::new();
 
-                assert!(
-                    !entity.is_static_method(),
-                    "unexpected static method {name}"
-                );
+                if entity.is_static_method() {
+                    warn!("unexpected static method");
+                }
 
                 entity.visit_children(|entity, _parent| {
+                    let _span = debug_span!("child", ?entity).entered();
                     match entity.get_kind() {
                         EntityKind::UnexposedAttr => {
                             if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                                panic!("unexpected function attribute: {macro_:?}");
+                                warn!(?macro_, "unknown macro");
                             }
                         }
                         EntityKind::ObjCClassRef | EntityKind::TypeRef => {}
@@ -723,7 +738,7 @@ impl Stmt {
                             let ty = Ty::parse_function_argument(ty);
                             arguments.push((name, ty))
                         }
-                        _ => panic!("unknown function child in {name}: {entity:?}"),
+                        _ => warn!("unknown"),
                     };
                     EntityVisitResult::Continue
                 });
@@ -742,7 +757,7 @@ impl Stmt {
                 }]
             }
             EntityKind::UnionDecl => {
-                // println!(
+                // debug!(
                 //     "union: {:?}, {:?}, {:#?}, {:#?}",
                 //     entity.get_display_name(),
                 //     entity.get_name(),
@@ -773,7 +788,8 @@ impl Stmt {
                     super::compare_vec(
                         &self_methods,
                         &other_methods,
-                        |_i, self_method, other_method| {
+                        |i, self_method, other_method| {
+                            let _span = debug_span!("method", i).entered();
                             assert_eq!(self_method, other_method, "methods were not equal");
                         },
                     );
@@ -788,6 +804,8 @@ impl Stmt {
 
 impl fmt::Display for Stmt {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let _span = debug_span!("stmt", discriminant = ?mem::discriminant(self)).entered();
+
         struct GenericTyHelper<'a>(&'a GenericType);
 
         impl fmt::Display for GenericTyHelper<'_> {

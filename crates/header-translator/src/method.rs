@@ -1,6 +1,8 @@
 use std::fmt;
 
 use clang::{Entity, EntityKind, EntityVisitResult, ObjCQualifiers};
+use tracing::span::EnteredSpan;
+use tracing::{debug_span, error, warn};
 
 use crate::availability::Availability;
 use crate::config::MethodData;
@@ -166,6 +168,8 @@ impl Method {
         let selector = entity.get_name().expect("method selector");
         let fn_name = selector.trim_end_matches(|c| c == ':').replace(':', "_");
 
+        let _span = debug_span!("method", fn_name).entered();
+
         let is_class = match entity.get_kind() {
             EntityKind::ObjCInstanceMethodDecl => false,
             EntityKind::ObjCClassMethodDecl => true,
@@ -177,6 +181,7 @@ impl Method {
             selector,
             is_class,
             fn_name,
+            _span,
         }
     }
 
@@ -185,9 +190,12 @@ impl Method {
         let attributes = entity.get_objc_attributes();
         let has_setter = attributes.map(|a| !a.readonly).unwrap_or(true);
 
+        let name = entity.get_display_name().expect("property name");
+        let _span = debug_span!("property", name).entered();
+
         PartialProperty {
             entity,
-            name: entity.get_display_name().expect("property getter name"),
+            name,
             getter_name: entity.get_objc_getter_name().expect("property getter name"),
             setter_name: has_setter.then(|| {
                 entity
@@ -198,16 +206,18 @@ impl Method {
             }),
             is_class: attributes.map(|a| a.class).unwrap_or(false),
             attributes,
+            _span,
         }
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PartialMethod<'tu> {
     entity: Entity<'tu>,
     selector: String,
     pub is_class: bool,
     pub fn_name: String,
+    _span: EnteredSpan,
 }
 
 impl<'tu> PartialMethod<'tu> {
@@ -217,15 +227,15 @@ impl<'tu> PartialMethod<'tu> {
             selector,
             is_class,
             fn_name,
+            _span,
         } = self;
 
-        // println!("Method {:?}", selector);
         if data.skipped {
             return None;
         }
 
         if entity.is_variadic() {
-            println!("Can't handle variadic method {}", selector);
+            warn!("Can't handle variadic method");
             return None;
         }
 
@@ -241,10 +251,12 @@ impl<'tu> PartialMethod<'tu> {
             .into_iter()
             .map(|entity| {
                 let name = entity.get_name().expect("arg display name");
+                let _span = debug_span!("method argument", name).entered();
                 let qualifier = entity.get_objc_qualifiers().map(Qualifier::parse);
                 let mut is_consumed = false;
 
                 entity.visit_children(|entity, _parent| {
+                    let _span = debug_span!("child", ?entity).entered();
                     match entity.get_kind() {
                         EntityKind::ObjCClassRef
                         | EntityKind::ObjCProtocolRef
@@ -254,18 +266,18 @@ impl<'tu> PartialMethod<'tu> {
                         }
                         EntityKind::NSConsumed => {
                             if is_consumed {
-                                panic!("got NSConsumed twice");
+                                error!("got NSConsumed twice");
                             }
                             is_consumed = true;
                         }
                         EntityKind::UnexposedAttr => {
                             if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                                println!("method argument {fn_name}/{name}: {macro_:?}");
+                                warn!(?macro_, "unknown macro");
                             }
                         }
                         // For some reason we recurse into array types
                         EntityKind::IntegerLiteral => {}
-                        _ => panic!("Unknown method argument child: {:?}, {:?}", entity, _parent),
+                        _ => warn!("unknown"),
                     };
                     EntityVisitResult::Continue
                 });
@@ -294,10 +306,7 @@ impl<'tu> PartialMethod<'tu> {
 
         if let Some(qualifiers) = entity.get_objc_qualifiers() {
             let qualifier = Qualifier::parse(qualifiers);
-            panic!(
-                "unexpected qualifier `{:?}` on return type: {:?}",
-                qualifier, entity
-            );
+            error!(?qualifier, "unexpected qualifier on return type");
         }
 
         let result_type = entity.get_result_type().expect("method return type");
@@ -318,6 +327,7 @@ impl<'tu> PartialMethod<'tu> {
         let mut memory_management = MemoryManagement::Normal;
 
         entity.visit_children(|entity, _parent| {
+            let _span = debug_span!("child", ?entity).entered();
             match entity.get_kind() {
                 EntityKind::ObjCClassRef
                 | EntityKind::ObjCProtocolRef
@@ -327,7 +337,7 @@ impl<'tu> PartialMethod<'tu> {
                 }
                 EntityKind::ObjCDesignatedInitializer => {
                     if designated_initializer {
-                        panic!("encountered ObjCDesignatedInitializer twice");
+                        error!("encountered ObjCDesignatedInitializer twice");
                     }
                     designated_initializer = true;
                 }
@@ -336,13 +346,13 @@ impl<'tu> PartialMethod<'tu> {
                 }
                 EntityKind::NSReturnsRetained => {
                     if memory_management != MemoryManagement::Normal {
-                        panic!("got unexpected NSReturnsRetained")
+                        error!("got unexpected NSReturnsRetained")
                     }
                     memory_management = MemoryManagement::ReturnsRetained;
                 }
                 EntityKind::ObjCReturnsInnerPointer => {
                     if memory_management != MemoryManagement::Normal {
-                        panic!("got unexpected ObjCReturnsInnerPointer")
+                        error!("got unexpected ObjCReturnsInnerPointer")
                     }
                     memory_management = MemoryManagement::ReturnsInnerPointer;
                 }
@@ -358,18 +368,17 @@ impl<'tu> PartialMethod<'tu> {
                 }
                 EntityKind::UnexposedAttr => {
                     if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                        println!("method {fn_name}: {macro_:?}");
+                        warn!(?macro_, "unknown macro");
                     }
                 }
-                _ => panic!("Unknown method child: {:?}, {:?}", entity, _parent),
-            };
-            // TODO: Verify that Continue is good enough
+                _ => warn!("unknown"),
+            }
             EntityVisitResult::Continue
         });
 
         if consumes_self {
             if memory_management != MemoryManagement::ReturnsRetained {
-                panic!("got NSConsumesSelf without NSReturnsRetained");
+                error!("got NSConsumesSelf without NSReturnsRetained");
             }
             memory_management = MemoryManagement::Init;
         }
@@ -380,7 +389,7 @@ impl<'tu> PartialMethod<'tu> {
         }
 
         if data.mutating && (is_class || MemoryManagement::is_init(&selector)) {
-            panic!("invalid mutating method {}", fn_name);
+            error!("invalid mutating method");
         }
 
         Some(Method {
@@ -401,6 +410,8 @@ impl<'tu> PartialMethod<'tu> {
 
 impl fmt::Display for Method {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let _span = debug_span!("method", self.fn_name).entered();
+
         if self.is_optional_protocol {
             writeln!(f, "        #[optional]")?;
         }

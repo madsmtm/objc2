@@ -1,6 +1,7 @@
 use std::fmt;
 
 use clang::{CallingConvention, Nullability, Type, TypeKind};
+use tracing::{debug_span, error, warn};
 
 use crate::method::MemoryManagement;
 
@@ -124,7 +125,7 @@ fn parse_attributed<'a>(
 ) -> Type<'a> {
     let mut modified_ty = ty.clone();
     while modified_ty.get_kind() == TypeKind::Attributed {
-        // println!("{ty:?}, {modified_ty:?}");
+        // debug!("{ty:?}, {modified_ty:?}");
         modified_ty = modified_ty
             .get_modified_type()
             .expect("attributed type to have modified type");
@@ -184,7 +185,7 @@ fn parse_attributed<'a>(
         }
         if !modified_ty.is_const_qualified() {
             // TODO: Fix this
-            println!("unnecessarily stripped const");
+            warn!("unnecessarily stripped const");
         }
     }
 
@@ -248,7 +249,7 @@ fn parse_attributed<'a>(
 
         if name != modified_name {
             let original_name = ty.get_display_name();
-            println!("attributes: {original_name:?} -> {name:?} != {modified_name:?}");
+            error!("attributes: {original_name:?} -> {name:?} != {modified_name:?}");
             panic!(
                 "could not extract all attributes from attributed type. Inner: {ty:?}, {modified_ty:?}"
             );
@@ -345,9 +346,9 @@ impl RustType {
         mut nullability: Nullability,
         inside_partial_array: bool,
     ) -> Self {
-        use TypeKind::*;
+        let _span = debug_span!("ty", ?ty);
 
-        // println!("{:?}, {:?}", ty, ty.get_class_type());
+        // debug!("{:?}, {:?}", ty, ty.get_class_type());
 
         let mut kindof = false;
         let mut lifetime = Lifetime::Unspecified;
@@ -359,8 +360,9 @@ impl RustType {
             inside_partial_array,
         );
 
-        // println!("{:?}: {:?}", ty.get_kind(), ty.get_display_name());
+        // debug!("{:?}: {:?}", ty.get_kind(), ty.get_display_name());
 
+        use TypeKind::*;
         match ty.get_kind() {
             Void => Self::Void,
             Bool => Self::C99Bool,

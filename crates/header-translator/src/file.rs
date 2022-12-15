@@ -1,5 +1,7 @@
 use std::fmt;
 
+use tracing::debug_span;
+
 use crate::config::Config;
 use crate::stmt::Stmt;
 
@@ -50,7 +52,8 @@ impl File {
     }
 
     pub fn compare(&self, other: &Self) {
-        super::compare_vec(&self.stmts, &other.stmts, |_i, self_stmt, other_stmt| {
+        super::compare_vec(&self.stmts, &other.stmts, |i, self_stmt, other_stmt| {
+            let _span = debug_span!("stmt", i).entered();
             self_stmt.compare(other_stmt);
         });
     }
