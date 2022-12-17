@@ -409,7 +409,7 @@ pub struct Block_byref_extended {
     pub layout: *const c_char,
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 mod tests {
     use super::*;
     use core::ptr;
