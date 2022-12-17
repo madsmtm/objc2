@@ -369,6 +369,11 @@ jobs:
     - name: Build
       run: $CMD build ${{ env.ARGS }}
 
+    - name: Build objc-sys/block-sys with no_std
+      run: |
+        $CMD build ${{ env.ARGS }} --no-default-features -p objc-sys
+        $CMD build ${{ env.ARGS }} --no-default-features -p block-sys
+
     - name: Check documentation
       run: $CMD doc ${{ env.ARGS }} --no-deps --document-private-items
 

@@ -24,6 +24,9 @@
 #![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg, doc_cfg_hide))]
 #![cfg_attr(feature = "unstable-docsrs", doc(cfg_hide(doc)))]
 
+#[cfg(feature = "std")]
+extern crate std;
+
 // Ensure linkage actually happens
 #[cfg(feature = "gnustep-1-7")]
 extern crate objc_sys as _;
