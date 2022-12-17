@@ -29,6 +29,9 @@
 #![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg, doc_cfg_hide))]
 #![cfg_attr(feature = "unstable-docsrs", doc(cfg_hide(doc)))]
 
+#[cfg(feature = "std")]
+extern crate std;
+
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]
 extern "C" {}
