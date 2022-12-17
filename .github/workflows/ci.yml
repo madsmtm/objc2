@@ -156,6 +156,7 @@ jobs:
       CXXFLAGS: ${{ matrix.cflags }}
       ASMFLAGS: ${{ matrix.cflags }}
       LDFLAGS: ${{ matrix.cflags }}
+      NDF_ARGS: --no-default-features --features=${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
       ARGS: --no-default-features --features=std,${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
       # Use --no-fail-fast, except with dinghy
       TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
@@ -371,8 +372,8 @@ jobs:
 
     - name: Build objc-sys/block-sys with no_std
       run: |
-        $CMD build ${{ env.ARGS }} --no-default-features -p objc-sys
-        $CMD build ${{ env.ARGS }} --no-default-features -p block-sys
+        $CMD build ${{ env.NDF_ARGS }} -p objc-sys 
+        $CMD build ${{ env.NDF_ARGS }} -p block-sys
 
     - name: Check documentation
       run: $CMD doc ${{ env.ARGS }} --no-deps --document-private-items
