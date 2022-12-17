@@ -1,4 +1,4 @@
-use std::os::raw::c_char;
+use core::ffi::c_char;
 
 use crate::{OpaqueData, BOOL};
 

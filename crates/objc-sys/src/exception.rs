@@ -2,11 +2,11 @@
 //! Apple: `objc-exception.h`
 //! GNUStep: `eh_personality.c`, which is a bit brittle to rely on, but I
 //!   think it's fine...
-use core::ffi::c_void;
 #[cfg(any(doc, apple_new))]
-use std::os::raw::c_int;
+use core::ffi::c_int;
 #[cfg(feature = "unstable-exception")]
-use std::os::raw::c_uchar;
+use core::ffi::c_uchar;
+use core::ffi::c_void;
 
 #[cfg(any(doc, apple_new))]
 use crate::objc_class;

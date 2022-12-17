@@ -1,4 +1,4 @@
-use std::os::raw::{c_char, c_int, c_uint};
+use core::ffi::{c_char, c_int, c_uint};
 
 #[cfg(any(doc, not(objfw)))]
 use crate::{objc_ivar, objc_method, objc_object, objc_property, objc_property_attribute_t};

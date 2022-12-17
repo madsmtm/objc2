@@ -1,9 +1,9 @@
-use core::ffi::c_void;
 #[cfg(any(doc, not(objfw)))]
-use std::os::raw::c_char;
-use std::os::raw::c_int;
+use core::ffi::c_char;
+use core::ffi::c_int;
 #[cfg(any(doc, apple))]
-use std::os::raw::c_uint;
+use core::ffi::c_uint;
+use core::ffi::c_void;
 
 #[cfg(any(doc, not(objfw)))]
 use crate::{objc_AssociationPolicy, BOOL};

@@ -29,7 +29,6 @@ build = "build.rs"
 # correct feature flag is not specified.
 default = ["std", "apple"]
 
-# Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc"]
 alloc = []
 

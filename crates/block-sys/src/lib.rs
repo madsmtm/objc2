@@ -24,11 +24,6 @@
 #![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg, doc_cfg_hide))]
 #![cfg_attr(feature = "unstable-docsrs", doc(cfg_hide(doc)))]
 
-extern crate std;
-
-#[cfg(not(feature = "std"))]
-compile_error!("The `std` feature currently must be enabled.");
-
 // Ensure linkage actually happens
 #[cfg(feature = "gnustep-1-7")]
 extern crate objc_sys as _;
@@ -38,9 +33,8 @@ extern crate objc_sys as _;
 extern "C" {}
 
 use core::cell::UnsafeCell;
-use core::ffi::c_void;
+use core::ffi::{c_char, c_ulong, c_void};
 use core::marker::{PhantomData, PhantomPinned};
-use std::os::raw::{c_char, c_ulong};
 
 #[repr(C)]
 pub struct Class {

@@ -45,7 +45,7 @@ mod inner {
 mod inner {
     // windows && !32bit-MinGW
     #[cfg(all(windows, not(all(target_pointer_width = "64", target_env = "gnu"))))]
-    pub(crate) type BOOL = std::os::raw::c_int;
+    pub(crate) type BOOL = core::ffi::c_int;
 
     // The inverse
     #[cfg(not(all(windows, not(all(target_pointer_width = "64", target_env = "gnu")))))]

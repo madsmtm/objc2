@@ -29,14 +29,6 @@
 #![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg, doc_cfg_hide))]
 #![cfg_attr(feature = "unstable-docsrs", doc(cfg_hide(doc)))]
 
-// TODO: Remove this and add "no-std" category to Cargo.toml
-// Requires a better solution for C-types in `no_std` crates.
-// See https://github.com/japaric/cty/issues/14.
-extern crate std;
-
-#[cfg(not(feature = "std"))]
-compile_error!("The `std` feature currently must be enabled.");
-
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]
 extern "C" {}

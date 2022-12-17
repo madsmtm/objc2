@@ -1,7 +1,7 @@
 //! Various common #defines and enum constants.
 
 #[cfg(any(doc, apple))]
-use std::os::raw::c_int;
+use core::ffi::c_int;
 
 use crate::{id, objc_class, BOOL};
 
