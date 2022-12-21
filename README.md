@@ -12,8 +12,9 @@ appreciated!
 ## Crate overview
 
 The core crate is [`objc2`], which contains everything you need to interface
-with Objective-C. It also provides safe abstraction over (parts of) the
-Foundation Framework, since that is used in almost all Objective-C code.
+with Objective-C. [`icrate`] then use that to provide a safe abstraction over
+(parts of) the Foundation Framework, since that is used in almost all
+Objective-C code.
 
 [`block2`] has a bit of a weird position in all of this: Apple's C language
 extension of blocks is _technically_ not limited to being used in Objective-C,
@@ -21,11 +22,12 @@ though in practice that's the only place it's used, so it makes sense to
 develop these together.
 
 [`objc2-encode`] is really just a part of `objc2`, it mostly exists as a
-separate crate to help people cutting down on unneeded dependencies.
+separate crate to help users of it cutting down on unneeded dependencies.
 [`objc-sys`] and [`block-sys`] contain raw bindings to the underlying C
 runtime libraries.
 
 [`objc2`]: ./crates/objc2
+[`icrate`]: ./crates/icrate
 [`block2`]: ./crates/block2
 [`objc2-encode`]: ./crates/objc2-encode
 [`objc-sys`]: ./crates/objc-sys
@@ -49,8 +51,8 @@ objc = { package = "objc2", version = "0.2.7" }
 
 Afterwards, you can upgrade to the next release, in this case
 `v0.3.0-alpha.0`, and make the required changes to your code (the
-[changelog](crates/objc2/CHANGELOG.md) contains recommendations for this). And so on,
-with every following release.
+[changelog](crates/objc2/CHANGELOG.md) contains recommendations for this). And
+so on, with every following release.
 
 
 ## Goals
