@@ -4,7 +4,7 @@ error[E0308]: mismatched types
   |     let _: Allocated<Object> = unsafe { msg_send_id![obj, alloc] };
   |                                         -------------^^^--------
   |                                         |            |
-  |                                         |            expected struct `objc2::runtime::Class`, found struct `objc2::runtime::Object`
+  |                                         |            expected struct `Class`, found struct `Object`
   |                                         arguments to this function are incorrect
   |
   = note: expected reference `&objc2::runtime::Class`
@@ -21,7 +21,7 @@ error[E0308]: mismatched types
   |     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, init] };
   |                                          -------------^^^-------
   |                                          |            |
-  |                                          |            expected enum `Option`, found `&objc2::runtime::Object`
+  |                                          |            expected enum `Option`, found `&Object`
   |                                          arguments to this function are incorrect
   |
   = note:   expected enum `Option<Allocated<_>>`
@@ -38,7 +38,7 @@ error[E0308]: mismatched types
   |     let _: Id<Object, Shared> = unsafe { msg_send_id![cls, init] };
   |                                          -------------^^^-------
   |                                          |            |
-  |                                          |            expected enum `Option`, found `&objc2::runtime::Class`
+  |                                          |            expected enum `Option`, found `&Class`
   |                                          arguments to this function are incorrect
   |
   = note:   expected enum `Option<Allocated<_>>`
