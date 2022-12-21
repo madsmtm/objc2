@@ -2,7 +2,7 @@
 #![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg))]
 #![warn(elided_lifetimes_in_paths)]
 #![deny(non_ascii_idents)]
-#![warn(unreachable_pub)]
+// #![warn(unreachable_pub)]
 #![deny(unsafe_op_in_unsafe_fn)]
 #![warn(clippy::cargo)]
 #![warn(clippy::ptr_as_ptr)]
