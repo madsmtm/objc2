@@ -183,8 +183,7 @@ compile_error!("The `std` feature currently must be enabled.");
 extern crate alloc;
 extern crate std;
 
-// The example uses NSObject without doing the __gnustep_hack
-#[cfg(all(feature = "apple", doctest))]
+#[cfg(doctest)]
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
@@ -226,35 +225,7 @@ pub mod runtime;
 mod test_utils;
 mod verify;
 
-#[cfg(test)]
+// Link to Foundation to make NSObject work
 #[cfg_attr(feature = "apple", link(name = "Foundation", kind = "framework"))]
 #[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-base", kind = "dylib"))]
 extern "C" {}
-
-/// Hacky way to make GNUStep link properly to Foundation while testing.
-///
-/// This is a temporary solution to make our CI work for now!
-#[doc(hidden)]
-#[cfg(feature = "gnustep-1-7")]
-pub mod __gnustep_hack {
-    use super::runtime::Class;
-
-    extern "C" {
-        // The linking changed in libobjc2 v2.0
-        #[cfg_attr(feature = "gnustep-2-0", link_name = "._OBJC_CLASS_NSObject")]
-        #[cfg_attr(not(feature = "gnustep-2-0"), link_name = "_OBJC_CLASS_NSObject")]
-        static OBJC_CLASS_NSObject: Class;
-        // Others:
-        // __objc_class_name_NSObject
-        // _OBJC_CLASS_REF_NSObject
-    }
-
-    pub unsafe fn get_class_to_force_linkage() -> &'static Class {
-        unsafe { core::ptr::read_volatile(&&OBJC_CLASS_NSObject) }
-    }
-
-    #[test]
-    fn ensure_linkage() {
-        unsafe { get_class_to_force_linkage() };
-    }
-}

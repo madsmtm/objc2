@@ -57,9 +57,6 @@
 /// use objc2::rc::{Allocated, Id, Shared};
 /// use objc2::runtime::NSObject;
 /// use objc2::{declare_class, extern_methods, ClassType};
-/// #
-/// # #[cfg(feature = "gnustep-1-7")]
-/// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 ///
 /// // Shim
 /// type NSError = NSObject;
@@ -112,9 +109,6 @@
 /// # use objc2::rc::{Allocated, Id, Shared};
 /// # use objc2::runtime::NSObject;
 /// # use objc2::{declare_class, extern_methods, ClassType};
-/// #
-/// # #[cfg(feature = "gnustep-1-7")]
-/// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 /// #
 /// # // Shim
 /// # type NSError = NSObject;

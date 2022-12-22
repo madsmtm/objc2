@@ -98,14 +98,6 @@ pub const NSNotFound: NSInteger = objc2::ffi::NSIntegerMax;
 /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nstimeinterval?language=objc).
 pub type NSTimeInterval = c_double;
 
-#[cfg(feature = "apple")]
-#[link(name = "Foundation", kind = "framework")]
-extern "C" {}
-
-#[cfg(feature = "gnustep-1-7")]
-#[link(name = "gnustep-base", kind = "dylib")]
-extern "C" {}
-
 #[doc(hidden)]
 pub mod __ns_string;
 mod array;

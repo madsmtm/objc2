@@ -256,8 +256,7 @@ impl CachedNSString {
 /// ```
 /// use icrate::ns_string;
 /// use icrate::Foundation::NSString;
-/// # #[cfg(feature = "gnustep-1-7")]
-/// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+///
 /// let hello: &'static NSString = ns_string!("hello");
 /// assert_eq!(hello.to_string(), "hello");
 ///
@@ -275,8 +274,6 @@ impl CachedNSString {
 ///
 /// ```
 /// # use icrate::ns_string;
-/// # #[cfg(feature = "gnustep-1-7")]
-/// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 /// let hello_ru = ns_string!("Привет");
 /// assert_eq!(hello_ru.to_string(), "Привет");
 /// ```
@@ -293,8 +290,6 @@ impl CachedNSString {
 ///
 /// ```
 /// # use icrate::ns_string;
-/// # #[cfg(feature = "gnustep-1-7")]
-/// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 /// let example = ns_string!("example\0");
 /// assert_eq!(example.to_string(), "example\0");
 ///

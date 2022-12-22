@@ -39,8 +39,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSMutableSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let set = NSMutableSet::<NSString>::new();
         /// ```
@@ -55,8 +53,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSMutableSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let strs = ["one", "two", "three"].map(NSString::from_str).to_vec();
         /// let set = NSMutableSet::from_vec(strs);
@@ -74,8 +70,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSMutableSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let mut set = NSMutableSet::new();
         /// set.insert(NSString::from_str("one"));
@@ -92,8 +86,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSMutableSet, NSMutableString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let strs = vec![
         ///     NSMutableString::from_str("one"),
@@ -118,8 +110,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSMutableSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let strs = ["one", "two", "three"].map(NSString::from_str);
         /// let set = NSMutableSet::from_slice(&strs);
@@ -149,8 +139,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSMutableSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let mut set = NSMutableSet::new();
         ///
@@ -182,8 +170,6 @@ extern_methods!(
         /// ```
         /// use icrate::Foundation::{NSMutableSet, NSString};
         /// use icrate::ns_string;
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let mut set = NSMutableSet::new();
         ///

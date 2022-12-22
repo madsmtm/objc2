@@ -488,9 +488,6 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// use objc2::declare::ClassBuilder;
     /// use objc2::rc::{Id, Owned};
     /// use objc2::runtime::{Class, Object, Sel};
-    /// #
-    /// # #[cfg(feature = "gnustep-1-7")]
-    /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
     ///
     /// let mut builder = ClassBuilder::new("ExampleObject", class!(NSObject)).unwrap();
     ///

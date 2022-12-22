@@ -15,9 +15,8 @@ __inner_extern_class! {
     /// This represents both the [`NSObject` class][cls] and the [`NSObject`
     /// protocol][proto].
     ///
-    /// To properly use this, you must either use the `icrate` crate with the
-    /// `"Foundation"` feature, or manually link a framework/library where the
-    /// `NSObject` class symbol is available.
+    /// Since this class is only available with the `Foundation` framework,
+    /// this crate links to it for you.
     ///
     /// This is exported under `icrate::Foundation::NSObject`, you probably
     /// want to use that path instead.
@@ -37,14 +36,23 @@ unsafe impl ClassType for NSObject {
 
     #[inline]
     fn class() -> &'static Class {
-        #[cfg(not(all(feature = "unstable-static-class", not(feature = "apple"))))]
+        #[cfg(feature = "apple")]
         {
             crate::class!(NSObject)
         }
-        // Fix for `unstable-static-class` not working on GNUStep
-        #[cfg(all(feature = "unstable-static-class", not(feature = "apple")))]
+        #[cfg(feature = "gnustep-1-7")]
         {
-            Class::get("NSObject").unwrap()
+            extern "C" {
+                // The linking changed in libobjc2 v2.0
+                #[cfg_attr(feature = "gnustep-2-0", link_name = "._OBJC_CLASS_NSObject")]
+                #[cfg_attr(not(feature = "gnustep-2-0"), link_name = "_OBJC_CLASS_NSObject")]
+                static OBJC_CLASS_NSObject: Class;
+                // Others:
+                // __objc_class_name_NSObject
+                // _OBJC_CLASS_REF_NSObject
+            }
+
+            unsafe { &OBJC_CLASS_NSObject }
         }
     }
 

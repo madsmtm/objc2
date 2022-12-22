@@ -60,8 +60,6 @@ extern_methods!(
         /// # Example
         ///
         /// ```
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         /// use icrate::ns_string;
         /// let error_tag = ns_string!("Error: ");
         /// let error_string = ns_string!("premature end of file.");
@@ -87,8 +85,6 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         /// use icrate::ns_string;
         ///
         /// let extension = ns_string!("scratch.tiff");

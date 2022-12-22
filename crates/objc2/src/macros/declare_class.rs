@@ -137,9 +137,6 @@
 ///     declare_class, extern_protocol, msg_send, msg_send_id, ClassType,
 ///     ConformsTo, ProtocolType,
 /// };
-/// #
-/// # #[cfg(feature = "gnustep-1-7")]
-/// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 ///
 /// // Declare the NSCopying protocol so that we can implement it (since
 /// // NSCopying is a trait currently).

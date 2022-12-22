@@ -59,8 +59,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSPoint, NSValue};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         /// let val = NSValue::new::<NSPoint>(NSPoint::new(1.0, 1.0));
         /// ```
         pub fn new<T: 'static + Copy + Encode>(value: T) -> Id<Self, Shared> {
@@ -110,8 +108,6 @@ extern_methods!(
         /// use std::ptr;
         /// use icrate::Foundation::NSValue;
         ///
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         /// let val = NSValue::new::<*const c_void>(ptr::null());
         /// // SAFETY: The value was just created with a pointer
         /// let res = unsafe { val.get::<*const c_void>() };

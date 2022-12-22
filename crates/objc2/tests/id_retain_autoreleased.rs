@@ -4,16 +4,6 @@ use objc2::msg_send;
 use objc2::rc::{autoreleasepool, Id, Shared};
 use objc2::runtime::NSObject;
 
-#[cfg_attr(feature = "apple", link(name = "Foundation", kind = "framework"))]
-#[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-base", kind = "dylib"))]
-extern "C" {}
-
-#[cfg(feature = "gnustep-1-7")]
-#[test]
-fn ensure_linkage() {
-    unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
-}
-
 fn retain_count(obj: &NSObject) -> usize {
     unsafe { msg_send![obj, retainCount] }
 }

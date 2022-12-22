@@ -59,8 +59,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let set = NSSet::<NSString>::new();
         /// ```
@@ -79,8 +77,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let strs = ["one", "two", "three"].map(NSString::from_str).to_vec();
         /// let set = NSSet::from_vec(strs);
@@ -100,8 +96,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let strs = ["one", "two", "three"].map(NSString::from_str);
         /// let set = NSSet::from_slice(&strs);
@@ -117,8 +111,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let set = NSSet::<NSString>::new();
         /// assert!(set.is_empty());
@@ -134,8 +126,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let strs = ["one", "two", "three"].map(NSString::from_str);
         /// let set = NSSet::from_slice(&strs);
@@ -152,8 +142,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let strs = ["one", "two", "three"].map(NSString::from_str);
         /// let set = NSSet::from_slice(&strs);
@@ -175,8 +163,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSMutableString, NSSet};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let strs = vec![
         ///     NSMutableString::from_str("one"),
@@ -201,8 +187,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let strs = ["one", "two", "three"].map(NSString::from_str);
         /// let set = NSSet::from_slice(&strs);
@@ -224,8 +208,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSNumber, NSSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let nums = [1, 2, 3];
         /// let set = NSSet::from_slice(&nums.map(NSNumber::new_i32));
@@ -252,8 +234,6 @@ extern_methods!(
         /// ```
         /// use icrate::Foundation::{NSSet, NSString};
         /// use icrate::ns_string;
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let strs = ["one", "two", "three"].map(NSString::from_str);
         /// let set = NSSet::from_slice(&strs);
@@ -271,8 +251,6 @@ extern_methods!(
         /// ```
         /// use icrate::Foundation::{NSSet, NSString};
         /// use icrate::ns_string;
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let strs = ["one", "two", "three"].map(NSString::from_str);
         /// let set = NSSet::from_slice(&strs);
@@ -290,8 +268,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let set1 = NSSet::from_slice(&["one", "two"].map(NSString::from_str));
         /// let set2 = NSSet::from_slice(&["one", "two", "three"].map(NSString::from_str));
@@ -310,8 +286,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let set1 = NSSet::from_slice(&["one", "two"].map(NSString::from_str));
         /// let set2 = NSSet::from_slice(&["one", "two", "three"].map(NSString::from_str));
@@ -332,8 +306,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSSet, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let set1 = NSSet::from_slice(&["one", "two"].map(NSString::from_str));
         /// let set2 = NSSet::from_slice(&["one", "two", "three"].map(NSString::from_str));

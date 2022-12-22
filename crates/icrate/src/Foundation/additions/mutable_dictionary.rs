@@ -47,8 +47,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let dict = NSMutableDictionary::<NSString, NSObject>::new();
         /// ```
@@ -68,8 +66,7 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSMutableDictionary, NSNumber, NSObject};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
+        ///
         /// let dict = NSMutableDictionary::from_keys_and_objects(
         ///    &[
         ///        &*NSNumber::new_i32(1),
@@ -95,8 +92,6 @@ extern_methods!(
         /// ```
         /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
         /// use icrate::ns_string;
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let mut dict = NSMutableDictionary::new();
         /// dict.insert(NSString::from_str("one"), NSObject::new());
@@ -115,8 +110,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let mut dict = NSMutableDictionary::new();
         /// dict.insert(NSString::from_str("one"), NSObject::new());
@@ -149,8 +142,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let mut dict = NSMutableDictionary::new();
         /// dict.insert(NSString::from_str("one"), NSObject::new());
@@ -178,8 +169,6 @@ extern_methods!(
         /// ```
         /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
         /// use icrate::ns_string;
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let mut dict = NSMutableDictionary::new();
         /// dict.insert(NSString::from_str("one"), NSObject::new());
@@ -204,8 +193,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let mut dict = NSMutableDictionary::new();
         /// dict.insert(NSString::from_str("one"), NSObject::new());
@@ -223,8 +210,6 @@ extern_methods!(
         ///
         /// ```
         /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
-        /// # #[cfg(feature = "gnustep-1-7")]
-        /// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
         ///
         /// let mut dict = NSMutableDictionary::new();
         /// dict.insert(NSString::from_str("one"), NSObject::new());
