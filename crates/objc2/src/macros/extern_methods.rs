@@ -130,7 +130,7 @@
 /// /// Creation methods.
 /// impl MyObject {
 ///     pub fn new() -> Id<Self, Shared> {
-///          unsafe { msg_send_id![Self::class(), new] }
+///         unsafe { msg_send_id![Self::class(), new] }
 ///     }
 ///
 ///     pub fn init(this: Option<Allocated<Self>>, val: usize) -> Id<Self, Shared> {

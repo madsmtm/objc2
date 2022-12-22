@@ -25,9 +25,9 @@
 //!
 //! # Use of `Deref`
 //!
-//! `objc2::foundation` uses the [`Deref`] trait in a bit special way: All
-//! objects deref to their superclasses. For example, `NSMutableArray` derefs
-//! to `NSArray`, which in turn derefs to `NSObject`.
+//! `icrate` uses the [`Deref`] trait in a bit special way: All objects deref
+//! to their superclasses. For example, `NSMutableArray` derefs to `NSArray`,
+//! which in turn derefs to `NSObject`.
 //!
 //! Note that this is explicitly recommended against in [the
 //! documentation][`Deref`] and [the Rust Design patterns
