@@ -1,5 +1,6 @@
 use alloc::string::ToString;
 use core::fmt;
+use core::hash;
 use core::mem::MaybeUninit;
 use core::ptr::NonNull;
 use core::str;
@@ -158,6 +159,13 @@ impl alloc::borrow::ToOwned for NSValue {
     type Owned = Id<NSValue, Shared>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
+    }
+}
+
+impl hash::Hash for NSValue {
+    #[inline]
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+        (**self).hash(state)
     }
 }
 

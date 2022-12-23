@@ -109,7 +109,7 @@ impl Cache {
             let config = configs.get(name).expect("configs get library");
             for (name, file) in &mut library.files {
                 let _span = debug_span!("file", name).entered();
-                self.update_file(file, &config);
+                self.update_file(file, config);
             }
         }
     }
@@ -176,7 +176,7 @@ impl Cache {
                     self.update_methods(methods, &ty.name);
                 }
                 Stmt::ProtocolDecl { name, methods, .. } => {
-                    self.update_methods(methods, &name);
+                    self.update_methods(methods, name);
                 }
                 _ => {}
             }

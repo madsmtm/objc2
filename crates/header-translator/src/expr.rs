@@ -15,9 +15,9 @@ pub struct Expr {
 impl Expr {
     pub fn from_val((signed, unsigned): (i64, u64), is_signed: bool) -> Self {
         let s = if is_signed {
-            format!("{}", signed)
+            format!("{signed}")
         } else {
-            format!("{}", unsigned)
+            format!("{unsigned}")
         };
         Expr { s }
     }
@@ -74,22 +74,22 @@ impl Expr {
                     if declaration_references.contains(&ident) {
                         // TODO: Handle these specially when we need to
                     }
-                    write!(s, "{}", ident).unwrap();
+                    write!(s, "{ident}").unwrap();
                 }
                 (TokenKind::Literal, lit) => {
                     let lit = lit
                         .trim_end_matches("UL")
-                        .trim_end_matches("L")
-                        .trim_end_matches("u")
-                        .trim_end_matches("U");
+                        .trim_end_matches('L')
+                        .trim_end_matches('u')
+                        .trim_end_matches('U');
                     let lit = lit.replace("0X", "0x");
-                    write!(s, "{}", lit).unwrap();
+                    write!(s, "{lit}").unwrap();
                 }
                 (TokenKind::Punctuation, punct) => {
                     match &*punct {
                         // These have the same semantics in C and Rust
                         "(" | ")" | "<<" | "-" | "+" | "|" | "&" | "^" => {
-                            write!(s, "{}", punct).unwrap()
+                            write!(s, "{punct}").unwrap()
                         }
                         // Bitwise not
                         "~" => write!(s, "!").unwrap(),
@@ -114,7 +114,7 @@ impl Expr {
             && s.ends_with(')')
             && s.chars().filter(|&c| c == '(' || c == ')').count() == 2
         {
-            s = s.trim_start_matches("(").trim_end_matches(")").to_string();
+            s = s.trim_start_matches('(').trim_end_matches(')').to_string();
         }
 
         Some(Self { s })

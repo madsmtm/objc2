@@ -1,3 +1,4 @@
+#![allow(clippy::bool_to_int_with_if)]
 use crate::common::*;
 use crate::AppKit::NSResponder;
 use crate::Foundation::NSObject;

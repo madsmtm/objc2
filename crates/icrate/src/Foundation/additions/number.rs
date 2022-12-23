@@ -11,6 +11,7 @@
 //! [`NSNumber::as_f64`] to get the desired floating point value directly.
 use core::cmp::Ordering;
 use core::fmt;
+use core::hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::encode::Encoding;
@@ -212,6 +213,13 @@ impl alloc::borrow::ToOwned for NSNumber {
     type Owned = Id<NSNumber, Shared>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
+    }
+}
+
+impl hash::Hash for NSNumber {
+    #[inline]
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+        (**self).hash(state)
     }
 }
 

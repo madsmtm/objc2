@@ -86,7 +86,7 @@ impl GenericType {
                                 generics: Vec::new(),
                             },
                             param => {
-                                panic!("invalid generic parameter {:?} in {:?}", param, ty)
+                                panic!("invalid generic parameter {param:?} in {ty:?}")
                             }
                         }
                     })
@@ -157,7 +157,7 @@ fn parse_attributed<'a>(
     kindof: &mut bool,
     inside_partial_array: bool,
 ) -> Type<'a> {
-    let mut modified_ty = ty.clone();
+    let mut modified_ty = ty;
     while modified_ty.get_kind() == TypeKind::Attributed {
         // debug!("{ty:?}, {modified_ty:?}");
         modified_ty = modified_ty
@@ -180,9 +180,9 @@ fn parse_attributed<'a>(
 
     match modified_ty.get_kind() {
         TypeKind::ConstantArray => {
-            let (res, _) = name.split_once("[").expect("array to end with [");
+            let (res, _) = name.split_once('[').expect("array to end with [");
             name = res.trim();
-            let (res, _) = modified_name.split_once("[").expect("array to end with [");
+            let (res, _) = modified_name.split_once('[').expect("array to end with [");
             modified_name = res.trim();
         }
         TypeKind::IncompleteArray => {
@@ -381,7 +381,7 @@ impl RustType {
         mut nullability: Nullability,
         inside_partial_array: bool,
     ) -> Self {
-        let _span = debug_span!("ty", ?ty);
+        let _span = debug_span!("ty", ?ty, is_consumed);
 
         // debug!("{:?}, {:?}", ty, ty.get_class_type());
 
@@ -612,7 +612,7 @@ impl RustType {
                 }
             }
             _ => {
-                panic!("Unsupported type: {:?}", ty)
+                panic!("Unsupported type: {ty:?}")
             }
         }
     }
@@ -768,19 +768,19 @@ impl fmt::Display for RustType {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 enum TyKind {
-    InMethodReturn,
-    InFnDeclReturn,
-    InMethodReturnWithError,
-    InStatic,
-    InTypedef,
-    InMethodArgument,
-    InFnDeclArgument,
-    InStruct,
-    InEnum,
-    InFnArgument,
-    InFnReturn,
-    InBlockArgument,
-    InBlockReturn,
+    MethodReturn,
+    FnDeclReturn,
+    MethodReturnWithError,
+    Static,
+    Typedef,
+    MethodArgument,
+    FnDeclArgument,
+    Struct,
+    Enum,
+    FnArgument,
+    FnReturn,
+    BlockArgument,
+    BlockReturn,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -792,7 +792,7 @@ pub struct Ty {
 impl Ty {
     pub const VOID_RESULT: Self = Self {
         ty: RustType::Void,
-        kind: TyKind::InMethodReturn,
+        kind: TyKind::MethodReturn,
     };
 
     pub fn parse_method_argument(ty: Type<'_>, is_consumed: bool) -> Self {
@@ -818,7 +818,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::InMethodArgument,
+            kind: TyKind::MethodArgument,
         }
     }
 
@@ -833,19 +833,19 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::InMethodReturn,
+            kind: TyKind::MethodReturn,
         }
     }
 
     pub fn parse_function_argument(ty: Type<'_>) -> Self {
         let mut this = Self::parse_method_argument(ty, false);
-        this.kind = TyKind::InFnDeclArgument;
+        this.kind = TyKind::FnDeclArgument;
         this
     }
 
     pub fn parse_function_return(ty: Type<'_>) -> Self {
         let mut this = Self::parse_method_return(ty);
-        this.kind = TyKind::InFnDeclReturn;
+        this.kind = TyKind::FnDeclReturn;
         this
     }
 
@@ -872,7 +872,7 @@ impl Ty {
                 **pointee = RustType::Void;
                 Some(Self {
                     ty,
-                    kind: TyKind::InTypedef,
+                    kind: TyKind::Typedef,
                 })
             }
             RustType::IncompleteArray { .. } => {
@@ -880,7 +880,7 @@ impl Ty {
             }
             _ => Some(Self {
                 ty,
-                kind: TyKind::InTypedef,
+                kind: TyKind::Typedef,
             }),
         }
     }
@@ -896,7 +896,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::InMethodArgument,
+            kind: TyKind::MethodArgument,
         }
     }
 
@@ -911,7 +911,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::InMethodReturn,
+            kind: TyKind::MethodReturn,
         }
     }
 
@@ -926,7 +926,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::InStruct,
+            kind: TyKind::Struct,
         }
     }
 
@@ -939,7 +939,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::InEnum,
+            kind: TyKind::Enum,
         }
     }
 
@@ -954,7 +954,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::InStatic,
+            kind: TyKind::Static,
         }
     }
 
@@ -969,7 +969,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::InFnArgument,
+            kind: TyKind::FnArgument,
         }
     }
 
@@ -984,14 +984,14 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::InFnReturn,
+            kind: TyKind::FnReturn,
         }
     }
 
     fn set_block(&mut self) {
         self.kind = match self.kind {
-            TyKind::InFnArgument => TyKind::InBlockArgument,
-            TyKind::InFnReturn => TyKind::InBlockReturn,
+            TyKind::FnArgument => TyKind::BlockArgument,
+            TyKind::FnReturn => TyKind::BlockReturn,
             _ => unreachable!("set block kind"),
         }
     }
@@ -999,7 +999,7 @@ impl Ty {
     pub(crate) fn set_ownership(&mut self, mut get_ownership: impl FnMut(&str) -> Ownership) {
         assert!(matches!(
             self.kind,
-            TyKind::InMethodReturn | TyKind::InMethodReturnWithError
+            TyKind::MethodReturn | TyKind::MethodReturnWithError
         ));
         if let RustType::Id {
             type_: ty,
@@ -1084,8 +1084,8 @@ impl Ty {
     }
 
     pub fn set_is_error(&mut self) {
-        assert_eq!(self.kind, TyKind::InMethodReturn);
-        self.kind = TyKind::InMethodReturnWithError;
+        assert_eq!(self.kind, TyKind::MethodReturn);
+        self.kind = TyKind::MethodReturnWithError;
     }
 
     pub fn is_instancetype(&self) -> bool {
@@ -1096,16 +1096,18 @@ impl Ty {
     }
 
     /// Related result types
-    /// https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types
+    /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types>
     pub fn fix_related_result_type(&mut self, is_class: bool, selector: &str) {
         if let RustType::Id { type_, .. } = &mut self.ty {
             if type_.name == "Object" {
                 assert!(type_.generics.is_empty(), "Object return generics empty");
-                if (is_class && MemoryManagement::is_new(&selector))
-                    || (is_class && MemoryManagement::is_alloc(&selector))
-                    || (!is_class && MemoryManagement::is_init(&selector))
-                    || (!is_class && selector == "self")
-                {
+                let is_related = if is_class {
+                    MemoryManagement::is_new(selector) || MemoryManagement::is_alloc(selector)
+                } else {
+                    MemoryManagement::is_init(selector) || selector == "self"
+                };
+
+                if is_related {
                     type_.name = "Self".into();
                 }
             }
@@ -1116,7 +1118,7 @@ impl Ty {
 impl fmt::Display for Ty {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self.kind {
-            TyKind::InMethodReturn => {
+            TyKind::MethodReturn => {
                 if let RustType::Void = &self.ty {
                     // Don't output anything
                     return Ok(());
@@ -1151,7 +1153,7 @@ impl fmt::Display for Ty {
                     ty => write!(f, "{ty}"),
                 }
             }
-            TyKind::InMethodReturnWithError => match &self.ty {
+            TyKind::MethodReturnWithError => match &self.ty {
                 RustType::Id {
                     type_: ty,
                     lifetime: Lifetime::Unspecified,
@@ -1168,7 +1170,7 @@ impl fmt::Display for Ty {
                 }
                 _ => panic!("unknown error result type {self:?}"),
             },
-            TyKind::InStatic => match &self.ty {
+            TyKind::Static => match &self.ty {
                 RustType::Id {
                     type_: ty,
                     is_const: false,
@@ -1185,7 +1187,7 @@ impl fmt::Display for Ty {
                 ty @ RustType::Id { .. } => panic!("invalid static {ty:?}"),
                 ty => write!(f, "{ty}"),
             },
-            TyKind::InTypedef => match &self.ty {
+            TyKind::Typedef => match &self.ty {
                 // When we encounter a typedef declaration like this:
                 //     typedef NSString* NSAbc;
                 //
@@ -1220,7 +1222,7 @@ impl fmt::Display for Ty {
                 }
                 ty => write!(f, "{ty}"),
             },
-            TyKind::InMethodArgument | TyKind::InFnDeclArgument => match &self.ty {
+            TyKind::MethodArgument | TyKind::FnDeclArgument => match &self.ty {
                 RustType::Id {
                     type_: ty,
                     is_const: false,
@@ -1241,7 +1243,7 @@ impl fmt::Display for Ty {
                         write!(f, "Option<&Class>")
                     }
                 }
-                RustType::ObjcBool if self.kind == TyKind::InMethodArgument => write!(f, "bool"),
+                RustType::ObjcBool if self.kind == TyKind::MethodArgument => write!(f, "bool"),
                 ty @ RustType::Pointer {
                     nullability,
                     is_const: false,
@@ -1254,7 +1256,7 @@ impl fmt::Display for Ty {
                     //     lifetime: Lifetime::Autoreleasing,
                     //     nullability: inner_nullability,
                     //     ownership: Ownership::Shared,
-                    // } if self.kind == TyKind::InMethodArgument => {
+                    // } if self.kind == TyKind::MethodArgument => {
                     //     let tokens = if *inner_nullability == Nullability::NonNull {
                     //         format!("Id<{ty}, Shared>")
                     //     } else {
@@ -1280,16 +1282,16 @@ impl fmt::Display for Ty {
                 },
                 ty => write!(f, "{ty}"),
             },
-            TyKind::InStruct => match &self.ty {
+            TyKind::Struct => match &self.ty {
                 RustType::Array {
                     element_type,
                     num_elements,
                 } => write!(f, "[{element_type}; {num_elements}]"),
                 ty => write!(f, "{ty}"),
             },
-            TyKind::InEnum => write!(f, "{}", self.ty),
-            TyKind::InFnArgument | TyKind::InBlockArgument => write!(f, "{}", self.ty),
-            TyKind::InFnDeclReturn | TyKind::InFnReturn => {
+            TyKind::Enum => write!(f, "{}", self.ty),
+            TyKind::FnArgument | TyKind::BlockArgument => write!(f, "{}", self.ty),
+            TyKind::FnDeclReturn | TyKind::FnReturn => {
                 if let RustType::Void = &self.ty {
                     // Don't output anything
                     return Ok(());
@@ -1297,7 +1299,7 @@ impl fmt::Display for Ty {
 
                 write!(f, " -> {}", self.ty)
             }
-            TyKind::InBlockReturn => match &self.ty {
+            TyKind::BlockReturn => match &self.ty {
                 RustType::Void => write!(f, "()"),
                 ty => write!(f, "{ty}"),
             },

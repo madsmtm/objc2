@@ -8,7 +8,7 @@ use tracing::debug_span;
 
 use crate::file::{File, FILE_PRELUDE};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Default)]
 pub struct Library {
     pub files: BTreeMap<String, File>,
 }
@@ -22,7 +22,7 @@ impl Library {
 
     pub fn output(&self, path: &Path) -> io::Result<()> {
         for (name, file) in &self.files {
-            let mut path = path.join(&name);
+            let mut path = path.join(name);
             path.set_extension("rs");
             fs::write(&path, file.to_string())?;
         }
@@ -46,12 +46,12 @@ impl fmt::Display for Library {
         writeln!(f, "{FILE_PRELUDE}")?;
         writeln!(f, "#![allow(unused_imports)]")?;
 
-        for (name, _) in &self.files {
+        for name in self.files.keys() {
             writeln!(f, "#[path = \"{name}.rs\"]")?;
             writeln!(f, "mod __{name};")?;
         }
 
-        writeln!(f, "")?;
+        writeln!(f)?;
 
         for (name, file) in &self.files {
             let mut iter = file.declared_types();

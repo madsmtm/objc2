@@ -10,6 +10,9 @@
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
 #![allow(non_snake_case)]
+#![allow(clippy::too_many_arguments)]
+#![allow(clippy::type_complexity)]
+#![allow(clippy::identity_op)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/icrate/0.0.1")]
 #![recursion_limit = "512"]

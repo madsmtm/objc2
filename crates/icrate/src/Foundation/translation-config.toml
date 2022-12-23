@@ -293,9 +293,9 @@ derives = "PartialEq, Eq, Hash"
 
 # Overridden because whether or not it is Eq depends on the inner value
 [class.NSValue]
-derives = "Hash"
+derives = ""
 [class.NSNumber]
-derives = "Hash"
+derives = ""
 [class.NSDecimalNumber]
 derives = "Debug, PartialEq, Hash"
 

@@ -28,15 +28,15 @@ impl File {
             .filter_map(|stmt| match stmt {
                 Stmt::ClassDecl { ty, .. } => Some(&*ty.name),
                 Stmt::Methods { .. } => None,
-                Stmt::ProtocolDecl { name, .. } => Some(&*name),
+                Stmt::ProtocolDecl { name, .. } => Some(name),
                 Stmt::ProtocolImpl { .. } => None,
-                Stmt::StructDecl { name, .. } => Some(&*name),
+                Stmt::StructDecl { name, .. } => Some(name),
                 Stmt::EnumDecl { name, .. } => name.as_deref(),
-                Stmt::VarDecl { name, .. } => Some(&*name),
-                Stmt::FnDecl { name, body, .. } if body.is_none() => Some(&*name),
+                Stmt::VarDecl { name, .. } => Some(name),
+                Stmt::FnDecl { name, body, .. } if body.is_none() => Some(name),
                 // TODO
                 Stmt::FnDecl { .. } => None,
-                Stmt::AliasDecl { name, .. } => Some(&*name),
+                Stmt::AliasDecl { name, .. } => Some(name),
             })
             .chain(self.stmts.iter().flat_map(|stmt| {
                 if let Stmt::EnumDecl { variants, .. } = stmt {
@@ -52,7 +52,7 @@ impl File {
     }
 
     pub fn compare(&self, other: &Self) {
-        super::compare_vec(&self.stmts, &other.stmts, |i, self_stmt, other_stmt| {
+        super::compare_slice(&self.stmts, &other.stmts, |i, self_stmt, other_stmt| {
             let _span = debug_span!("stmt", i).entered();
             self_stmt.compare(other_stmt);
         });
@@ -68,7 +68,7 @@ impl fmt::Display for File {
             writeln!(f, "use crate::{import}::*;")?;
         }
 
-        writeln!(f, "")?;
+        writeln!(f)?;
 
         for stmt in &self.stmts {
             writeln!(f, "{stmt}")?;

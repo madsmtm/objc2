@@ -93,7 +93,7 @@ impl MemoryManagement {
     fn verify_sel(self, sel: &str) {
         let bytes = sel.as_bytes();
         if in_selector_family(bytes, b"init") {
-            assert!(self == Self::Init, "{:?} did not match {}", self, sel);
+            assert!(self == Self::Init, "{self:?} did not match {sel}");
         } else if in_selector_family(bytes, b"new")
             || in_selector_family(bytes, b"alloc")
             || in_selector_family(bytes, b"copy")
@@ -101,15 +101,13 @@ impl MemoryManagement {
         {
             assert!(
                 self == Self::ReturnsRetained,
-                "{:?} did not match {}",
-                self,
-                sel
+                "{self:?} did not match {sel}"
             );
         } else {
             if self == Self::ReturnsInnerPointer {
                 return;
             }
-            assert!(self == Self::Normal, "{:?} did not match {}", self, sel);
+            assert!(self == Self::Normal, "{self:?} did not match {sel}");
         }
     }
 
@@ -454,12 +452,10 @@ impl fmt::Display for Method {
         if !self.is_class {
             if MemoryManagement::is_init(&self.selector) {
                 write!(f, "this: Option<Allocated<Self>>, ")?;
+            } else if self.mutating {
+                write!(f, "&mut self, ")?;
             } else {
-                if self.mutating {
-                    write!(f, "&mut self, ")?;
-                } else {
-                    write!(f, "&self, ")?;
-                }
+                write!(f, "&self, ")?;
             }
         }
         for (param, _qualifier, arg_ty) in &self.arguments {

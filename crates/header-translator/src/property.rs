@@ -120,7 +120,7 @@ impl PartialProperty<'_> {
                 Some(Method {
                     selector: setter_name.clone() + ":",
                     fn_name: setter_name,
-                    availability: availability.clone(),
+                    availability,
                     is_class,
                     is_optional_protocol: entity.is_objc_optional(),
                     memory_management,

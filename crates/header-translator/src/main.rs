@@ -47,8 +47,7 @@ fn main() {
 
     let developer_dir = DeveloperDirectory::from(PathBuf::from(
         std::env::args_os()
-            .skip(1)
-            .next()
+            .nth(1)
             .expect("must specify developer directory as first argument"),
     ));
 
@@ -231,7 +230,7 @@ fn parse_sdk(
                                 library
                                     .files
                                     .entry(included)
-                                    .or_insert_with(|| File::new(&config));
+                                    .or_insert_with(|| File::new(config));
                             }
                         }
                     }
@@ -248,7 +247,7 @@ fn parse_sdk(
                         preprocessing = false;
                         // No more includes / macro expansions after this line
                         let file = library.files.get_mut(&file_name).expect("file");
-                        for stmt in Stmt::parse(&entity, &config) {
+                        for stmt in Stmt::parse(&entity, config) {
                             file.add_stmt(stmt);
                         }
                     }
@@ -331,7 +330,7 @@ pub fn extract_framework_name(
     if let Some(location) = entity.get_location() {
         if let Some(file) = location.get_file_location().file {
             let path = file.get_path();
-            if let Ok(path) = path.strip_prefix(&framework_dir) {
+            if let Ok(path) = path.strip_prefix(framework_dir) {
                 let mut components = path.components();
                 let library_name = components
                     .next()

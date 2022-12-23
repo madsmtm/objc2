@@ -26,7 +26,10 @@ impl Default for Derives {
 
 impl fmt::Display for Derives {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "#[derive({})]", self.0)
+        if !self.0.is_empty() {
+            write!(f, "#[derive({})]", self.0)?;
+        }
+        Ok(())
     }
 }
 
@@ -65,8 +68,8 @@ fn parse_superclass<'ty>(entity: &Entity<'ty>) -> Option<(Entity<'ty>, GenericTy
 /// - `EntityKind::ObjCInterfaceDecl`
 /// - `EntityKind::ObjCProtocolDecl`
 /// - `EntityKind::ObjCCategoryDecl`
-fn parse_objc_decl<'ty>(
-    entity: &Entity<'ty>,
+fn parse_objc_decl(
+    entity: &Entity<'_>,
     superclass: bool,
     mut generics: Option<&mut Vec<GenericType>>,
     data: Option<&ClassData>,
@@ -349,11 +352,11 @@ impl Stmt {
                 let mut generics = Vec::new();
 
                 let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(&entity, true, Some(&mut generics), class_data);
+                    parse_objc_decl(entity, true, Some(&mut generics), class_data);
 
                 let ty = GenericType { name, generics };
 
-                let mut superclass_entity = entity.clone();
+                let mut superclass_entity = *entity;
                 let mut superclasses = vec![];
 
                 while let Some((next_entity, superclass)) = parse_superclass(&superclass_entity) {
@@ -421,7 +424,7 @@ impl Stmt {
                 let mut class_generics = Vec::new();
 
                 let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(&entity, false, Some(&mut class_generics), class_data);
+                    parse_objc_decl(entity, false, Some(&mut class_generics), class_data);
 
                 if !designated_initializers.is_empty() {
                     warn!(
@@ -465,7 +468,7 @@ impl Stmt {
                 );
 
                 let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(&entity, false, None, protocol_data);
+                    parse_objc_decl(entity, false, None, protocol_data);
 
                 if !designated_initializers.is_empty() {
                     warn!(
@@ -757,34 +760,32 @@ impl Stmt {
                 vec![]
             }
             _ => {
-                panic!("Unknown: {:?}", entity)
+                panic!("Unknown: {entity:?}")
             }
         }
     }
 
     pub fn compare(&self, other: &Self) {
         if self != other {
-            match (&self, &other) {
-                (
-                    Self::Methods {
-                        methods: self_methods,
-                        ..
+            if let (
+                Self::Methods {
+                    methods: self_methods,
+                    ..
+                },
+                Self::Methods {
+                    methods: other_methods,
+                    ..
+                },
+            ) = (&self, &other)
+            {
+                super::compare_slice(
+                    self_methods,
+                    other_methods,
+                    |i, self_method, other_method| {
+                        let _span = debug_span!("method", i).entered();
+                        assert_eq!(self_method, other_method, "methods were not equal");
                     },
-                    Self::Methods {
-                        methods: other_methods,
-                        ..
-                    },
-                ) => {
-                    super::compare_vec(
-                        &self_methods,
-                        &other_methods,
-                        |i, self_method, other_method| {
-                            let _span = debug_span!("method", i).entered();
-                            assert_eq!(self_method, other_method, "methods were not equal");
-                        },
-                    );
-                }
-                _ => {}
+                );
             }
 
             panic!("statements were not equal:\n{self:#?}\n{other:#?}");
@@ -851,7 +852,7 @@ impl fmt::Display for Stmt {
                 };
 
                 writeln!(f, "{macro_name}!(")?;
-                writeln!(f, "    {}", derives)?;
+                writeln!(f, "    {derives}")?;
                 write!(f, "    pub struct ")?;
                 if ty.generics.is_empty() {
                     write!(f, "{}", ty.name)?;
@@ -879,12 +880,12 @@ impl fmt::Display for Stmt {
                     writeln!(f, "notunwindsafe: PhantomData<&'static mut ()>,")?;
                     writeln!(f, "}}")?;
                 }
-                writeln!(f, "")?;
+                writeln!(f)?;
                 writeln!(
                     f,
                     "    unsafe impl{} ClassType for {} {{",
                     GenericParamsHelper(&ty.generics),
-                    GenericTyHelper(&ty)
+                    GenericTyHelper(ty)
                 )?;
                 let (superclass, rest) = superclasses.split_at(1);
                 let superclass = superclass.get(0).expect("must have a least one superclass");
@@ -901,7 +902,7 @@ impl fmt::Display for Stmt {
                     }
                     writeln!(f, ")]")?;
                 }
-                writeln!(f, "        type Super = {};", GenericTyHelper(&superclass))?;
+                writeln!(f, "        type Super = {};", GenericTyHelper(superclass))?;
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
             }
@@ -926,7 +927,7 @@ impl fmt::Display for Stmt {
                     f,
                     "    unsafe impl{} {} {{",
                     GenericParamsHelper(&ty.generics),
-                    GenericTyHelper(&ty)
+                    GenericTyHelper(ty)
                 )?;
                 for method in methods {
                     writeln!(f, "{method}")?;
@@ -949,7 +950,7 @@ impl fmt::Display for Stmt {
             } => {
                 writeln!(f, "extern_protocol!(")?;
                 writeln!(f, "    pub struct {name};")?;
-                writeln!(f, "")?;
+                writeln!(f)?;
                 writeln!(f, "    unsafe impl ProtocolType for {name} {{")?;
                 for method in methods {
                     writeln!(f, "{method}")?;
@@ -987,7 +988,7 @@ impl fmt::Display for Stmt {
                     Some(UnexposedMacro::ClosedEnum) => "ns_closed_enum",
                     Some(UnexposedMacro::ErrorEnum) => "ns_error_enum",
                 };
-                writeln!(f, "{}!(", macro_name)?;
+                writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    #[underlying({ty})]")?;
                 write!(f, "    pub enum ",)?;
                 if let Some(name) = name {
@@ -1023,7 +1024,7 @@ impl fmt::Display for Stmt {
                 writeln!(f, "extern_fn!(")?;
                 write!(f, "    pub unsafe fn {name}(")?;
                 for (param, arg_ty) in arguments {
-                    write!(f, "{}: {arg_ty},", handle_reserved(&param))?;
+                    write!(f, "{}: {arg_ty},", handle_reserved(param))?;
                 }
                 writeln!(f, "){result_type};")?;
                 writeln!(f, ");")?;
@@ -1037,7 +1038,7 @@ impl fmt::Display for Stmt {
                 writeln!(f, "inline_fn!(")?;
                 write!(f, "    pub unsafe fn {name}(")?;
                 for (param, arg_ty) in arguments {
-                    write!(f, "{}: {arg_ty},", handle_reserved(&param))?;
+                    write!(f, "{}: {arg_ty},", handle_reserved(param))?;
                 }
                 writeln!(f, "){result_type} {{")?;
                 writeln!(f, "        todo!()")?;
