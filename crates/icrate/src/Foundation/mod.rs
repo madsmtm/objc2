@@ -76,6 +76,7 @@
 //! # Rust vs. Objective-C types
 //!
 //! | Objective-C | (approximately) equivalent Rust |
+//! | --- | --- |
 //! | `NSData` | `Box<[u8]>` |
 //! | `NSMutableData` | `Vec<u8>` |
 //! | `NSString` | `Box<str>` |
