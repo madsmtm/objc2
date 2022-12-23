@@ -6,5 +6,5 @@ mod generated;
 pub use self::fixes::*;
 pub use self::generated::*;
 
-#[link(name = "CoreData", kind = "framework")]
+#[cfg_attr(feature = "apple", link(name = "CoreData", kind = "framework"))]
 extern "C" {}

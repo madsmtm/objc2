@@ -160,7 +160,15 @@ jobs:
       # Use --no-fail-fast, except with dinghy
       TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
       SOME_FEATURES: ${{ matrix.features || 'malloc,block,exception,Foundation' }}
-      FEATURES: ${{ matrix.features || 'malloc,block,exception,unstable-all-frameworks,catch-all,verify,uuid' }}
+      FEATURES: >-
+        ${{
+          matrix.features || format(
+            'malloc,block,exception,catch-all,verify,uuid,{0}',
+            contains(matrix.target, 'darwin') && 'unstable-macos-frameworks'
+              || contains(matrix.target, 'ios') && 'unstable-ios-frameworks'
+              || matrix.target == 'x86_64-unknown-linux-gnu' && 'unstable-gnustep-frameworks' || ''
+          )
+        }}
       UNSTABLE_FEATURES: ${{ matrix.unstable-features || 'unstable-autoreleasesafe,unstable-c-unwind' }}
       CMD: cargo
 
@@ -199,7 +207,7 @@ jobs:
           ~/extern/include
           ~/extern/sdk
         # Change this key if we start caching more things
-        key: ${{ matrix.name }}-extern-v4
+        key: ${{ matrix.name }}-extern-v5
 
     - name: Setup environment
       # These add to PATH-like variables, so they can always be set
@@ -293,13 +301,23 @@ jobs:
         ../configure --prefix=$HOME/extern --with-library-combo=ng-gnu-gnu
         make install
 
-    - name: Install GNUStep-Base
+    - name: Install GNUStep base library
       if: contains(matrix.runtime, 'gnustep') && steps.extern-cache.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/gnustep/libs-base/archive/refs/tags/base-1_28_0.tar.gz
         tar -xzf base-1_28_0.tar.gz
         cd libs-base-base-1_28_0
         ./configure --prefix=$HOME/extern --disable-tls --disable-xslt ${{ matrix.platform.configureflags }}
+        make install
+        ls -al $HOME/extern/*
+
+    - name: Install GNUStep GUI
+      if: matrix.target == 'x86_64-unknown-linux-gnu' && steps.extern-cache.outputs.cache-hit != 'true'
+      run: |
+        wget https://github.com/gnustep/libs-gui/archive/refs/tags/gui-0_29_0.tar.gz
+        tar -xzf gui-0_29_0.tar.gz
+        cd libs-gui-gui-0_29_0
+        ./configure --prefix=$HOME/extern --disable-jpeg ${{ matrix.platform.configureflags }}
         make install
         ls -al $HOME/extern/*
 
