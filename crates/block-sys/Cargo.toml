@@ -1,6 +1,6 @@
 [package]
 name = "block-sys"
-version = "0.1.0-beta.1" # Remember to update html_root_url in lib.rs
+version = "0.1.0-beta.2" # Remember to update html_root_url in lib.rs
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 

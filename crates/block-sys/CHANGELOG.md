@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.1.0-beta.2 - 2022-12-24
+
+### Changed
+* Updated `objc-sys` to `v0.2.0-beta.3`.
+
+
 ## 0.1.0-beta.1 - 2022-08-28
 
 ### Fixed
