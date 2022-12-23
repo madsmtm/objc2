@@ -4,3 +4,6 @@ mod generated;
 
 pub use self::fixes::*;
 pub use self::generated::*;
+
+#[link(name = "AppKit", kind = "framework")]
+extern "C" {}
