@@ -444,9 +444,11 @@ jobs:
       # Not using --all-features because that would enable e.g. gnustep
       run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features=${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }}
 
+      # TODO: Re-enable this on Foundation once we do some form of
+      # availability checking.
     - name: Test static class and selectors
       if: ${{ !matrix.dinghy && (matrix.runtime || 'apple') == 'apple' }}
-      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features=Foundation,unstable-static-sel,unstable-static-class
+      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features=unstable-static-sel,unstable-static-class
 
     - name: Run assembly tests
       if: ${{ !contains(matrix.runtime, 'compiler-rt') }}
