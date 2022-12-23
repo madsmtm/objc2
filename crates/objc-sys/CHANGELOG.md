@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.2.0-beta.3 - 2022-12-24
+
 ### Fixed
 * Fixed minimum deployment target on macOS Aarch64.
 

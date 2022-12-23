@@ -62,6 +62,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Require implementors of `Message` to support weak references.
 * **BREAKING**: Moved `objc2::foundation` into `icrate::Foundation`.
 * **BREAKING**: Moved `objc2::ns_string` into `icrate::ns_string`.
+* Updated `ffi` module to `objc-sys v0.2.0-beta.3`.
 
 ### Fixed
 * Fixed duplicate selector extraction in `extern_methods!`.

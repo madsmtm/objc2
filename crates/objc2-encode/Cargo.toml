@@ -39,7 +39,7 @@ gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1"]
 [dependencies]
 # TODO: Remove this dependency when we can select `macabi` targets separately
 # from other targets without using a build script
-objc-sys = { path = "../objc-sys", version = "=0.2.0-beta.2", default-features = false }
+objc-sys = { path = "../objc-sys", version = "=0.2.0-beta.3", default-features = false }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
