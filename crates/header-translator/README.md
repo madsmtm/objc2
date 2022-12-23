@@ -3,7 +3,7 @@
 For use in making `icrate`.
 
 ```console
-cargo run --bin header-translator -- /Applications/Xcode.app/Contents/Developer
+cargo run --features=run --bin header-translator -- /Applications/Xcode.app/Contents/Developer
 ```
 
 ## SDKs
