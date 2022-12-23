@@ -1,7 +1,7 @@
 use core::mem::{size_of, ManuallyDrop};
 use std::os::raw::c_int;
 
-use objc2::foundation::NSNumber;
+use icrate::Foundation::NSNumber;
 use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned, Shared};
 use objc2::runtime::{Bool, Class, NSObject, Object, Protocol};
 #[cfg(feature = "malloc")]

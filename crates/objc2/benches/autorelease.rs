@@ -7,12 +7,7 @@ use objc2::{class, msg_send, sel};
 
 const BYTES: &[u8] = &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-fn empty() {
-    #[cfg(feature = "gnustep-1-7")]
-    unsafe {
-        objc2::__gnustep_hack::get_class_to_force_linkage()
-    };
-}
+fn empty() {}
 
 fn pool_cleanup() {
     autoreleasepool(|_| {})

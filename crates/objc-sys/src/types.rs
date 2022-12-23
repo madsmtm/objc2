@@ -155,7 +155,7 @@ pub type NSInteger = isize;
 /// use objc_sys::NSUInteger;
 /// // Or:
 /// // use objc2::ffi::NSUInteger;
-/// // use objc2::foundation::NSUInteger;
+/// // use icrate::Foundation::NSUInteger;
 /// extern "C" {
 ///     fn some_external_function() -> NSUInteger;
 /// }

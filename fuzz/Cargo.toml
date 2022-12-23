@@ -9,7 +9,7 @@ cargo-fuzz = true
 
 [dependencies]
 libfuzzer-sys = "0.4"
-objc2 = { path = "../crates/objc2", features = ["foundation"], default-features = false }
+objc2 = { path = "../crates/objc2", default-features = false }
 
 [features]
 default = ["apple", "std"]

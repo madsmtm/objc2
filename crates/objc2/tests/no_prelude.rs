@@ -11,12 +11,6 @@ extern crate objc2 as new_objc2;
 
 use new_objc2::{ClassType, ProtocolType};
 
-#[cfg(feature = "gnustep-1-7")]
-#[test]
-fn ensure_linkage() {
-    unsafe { new_objc2::__gnustep_hack::get_class_to_force_linkage() };
-}
-
 mod core {}
 mod std {}
 mod libc {}

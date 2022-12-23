@@ -1,6 +1,6 @@
 //! Test that the lifetime of `NSString::as_str` is bound to the pool.
 
-use objc2::foundation::NSString;
+use icrate::Foundation::NSString;
 use objc2::rc::autoreleasepool;
 
 fn main() {

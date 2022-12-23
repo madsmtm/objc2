@@ -693,7 +693,7 @@ macro_rules! __class_inner {
 ///
 /// In particular, you can make the last argument the special marker `_`, and
 /// then the macro will return a `Result<(), Id<E, Shared>>` (where you must
-/// specify `E` yourself, usually you'd use [`foundation::NSError`]).
+/// specify `E` yourself, usually you'd use `icrate::Foundation::NSError`).
 ///
 /// At runtime, a temporary error variable is created on the stack and sent as
 /// the last parameter. If the message send then returns `NO`/`false` (or in
@@ -705,7 +705,6 @@ macro_rules! __class_inner {
 ///
 /// [cocoa-error]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ErrorHandlingCocoa/ErrorHandling/ErrorHandling.html
 /// [swift-error]: https://developer.apple.com/documentation/swift/about-imported-cocoa-error-parameters
-/// [`foundation::NSError`]: crate::foundation::NSError
 ///
 ///
 /// # Panics
@@ -782,11 +781,19 @@ macro_rules! __class_inner {
 ///
 /// ```no_run
 /// use objc2::msg_send;
-/// # use objc2::ns_string;
-/// # use objc2::foundation::{NSString as MyObject};
+/// # use objc2::runtime::NSObject;
+/// # use objc2::{declare_class, ClassType};
+/// #
+/// # declare_class!(
+/// #     struct MyObject {}
+/// #
+/// #     unsafe impl ClassType for MyObject {
+/// #         type Super = NSObject;
+/// #     }
+/// # );
 ///
 /// let obj: &MyObject; // Some object that implements ClassType
-/// # obj = ns_string!("");
+/// # obj = todo!();
 /// let _: () = unsafe { msg_send![super(obj), someMethod] };
 /// ```
 ///
@@ -1006,9 +1013,8 @@ macro_rules! msg_send_bool {
 ///
 /// In particular, you can make the last argument the special marker `_`, and
 /// then the macro will return a `Result<Id<T, O>, Id<E, Shared>>` (where you
-/// must specify `E` yourself, usually you'd use [`foundation::NSError`]).
-///
-/// [`foundation::NSError`]: crate::foundation::NSError
+/// must specify `E` yourself, usually you'd use
+/// `icrate::Foundation::NSError`).
 ///
 ///
 /// # Panics

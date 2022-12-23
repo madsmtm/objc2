@@ -168,9 +168,6 @@ pub unsafe trait IvarType {
 /// ```
 /// use objc2::declare::{Ivar, IvarType};
 /// use objc2::runtime::Object;
-/// #
-/// # #[cfg(feature = "gnustep-1-7")]
-/// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 ///
 /// // Declare ivar with given type and name
 /// struct MyCustomIvar;
@@ -397,7 +394,7 @@ mod tests {
         static HAS_RUN_DEALLOC: AtomicBool = AtomicBool::new(false);
 
         declare_class!(
-            #[derive(Debug, PartialEq)]
+            #[derive(Debug, PartialEq, Eq)]
             struct CustomDrop {
                 ivar: u8,
             }

@@ -1,7 +1,7 @@
 use alloc::format;
 
+use icrate::Foundation::{NSArray, NSException, NSString};
 use objc2::exception::{catch, throw};
-use objc2::foundation::{NSArray, NSException, NSString};
 use objc2::msg_send;
 use objc2::rc::{autoreleasepool, Id, Shared};
 use objc2::runtime::Object;

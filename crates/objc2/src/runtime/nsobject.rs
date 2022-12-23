@@ -15,11 +15,10 @@ __inner_extern_class! {
     /// This represents both the [`NSObject` class][cls] and the [`NSObject`
     /// protocol][proto].
     ///
-    /// To properly use this, you must either enable the `"foundation"`
-    /// feature, or link a framework/library where the `NSObject` symbol is
-    /// available.
+    /// Since this class is only available with the `Foundation` framework,
+    /// this crate links to it for you.
     ///
-    /// This is exported under `objc2::foundation::NSObject`, you probably
+    /// This is exported under `icrate::Foundation::NSObject`, you probably
     /// want to use that path instead.
     ///
     /// [cls]: https://developer.apple.com/documentation/objectivec/nsobject?language=objc
@@ -37,14 +36,23 @@ unsafe impl ClassType for NSObject {
 
     #[inline]
     fn class() -> &'static Class {
-        #[cfg(not(all(feature = "unstable-static-class", not(feature = "apple"))))]
+        #[cfg(feature = "apple")]
         {
             crate::class!(NSObject)
         }
-        // Fix for `unstable-static-class` not working on GNUStep
-        #[cfg(all(feature = "unstable-static-class", not(feature = "apple")))]
+        #[cfg(feature = "gnustep-1-7")]
         {
-            Class::get("NSObject").unwrap()
+            extern "C" {
+                // The linking changed in libobjc2 v2.0
+                #[cfg_attr(feature = "gnustep-2-0", link_name = "._OBJC_CLASS_NSObject")]
+                #[cfg_attr(not(feature = "gnustep-2-0"), link_name = "_OBJC_CLASS_NSObject")]
+                static OBJC_CLASS_NSObject: Class;
+                // Others:
+                // __objc_class_name_NSObject
+                // _OBJC_CLASS_REF_NSObject
+            }
+
+            unsafe { &OBJC_CLASS_NSObject }
         }
     }
 
@@ -178,7 +186,7 @@ mod tests {
     use super::*;
     use alloc::format;
 
-    use crate::rc::RcTestObject;
+    use crate::rc::__RcTestObject;
 
     #[test]
     fn test_deref() {
@@ -247,10 +255,10 @@ mod tests {
     fn test_is_kind_of() {
         let obj = NSObject::new();
         assert!(obj.is_kind_of::<NSObject>());
-        assert!(!obj.is_kind_of::<RcTestObject>());
+        assert!(!obj.is_kind_of::<__RcTestObject>());
 
-        let obj = RcTestObject::new();
+        let obj = __RcTestObject::new();
         assert!(obj.is_kind_of::<NSObject>());
-        assert!(obj.is_kind_of::<RcTestObject>());
+        assert!(obj.is_kind_of::<__RcTestObject>());
     }
 }

@@ -19,14 +19,11 @@ license = "MIT"
 # NOTE: 'unstable' features are _not_ considered part of the SemVer contract,
 # and may be removed in a minor release.
 [features]
-default = ["std", "apple", "foundation"]
+default = ["std", "apple"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "objc2-encode/std", "objc-sys/std", "block2?/std"]
 alloc = ["objc2-encode/alloc", "objc-sys/alloc", "block2?/alloc"]
-
-# Enable the `objc2::foundation` submodule. It is enabled by default.
-foundation = []
 
 # Enables `objc2::exception::throw` and `objc2::exception::catch`
 exception = ["objc-sys/unstable-exception"]
@@ -86,39 +83,12 @@ objc2-encode = { path = "../objc2-encode", version = "=2.0.0-pre.2", default-fea
 objc2-proc-macros = { path = "../objc2-proc-macros", version = "0.1.0", optional = true }
 block2 = { path = "../block2", version = "=0.2.0-alpha.6", default-features = false, optional = true }
 
-# Provide methods to convert between `uuid::Uuid` and `objc2::foundation::NSUUID`
-uuid = { version = "1.1.2", optional = true, default-features = false }
-
 [dev-dependencies]
 iai = { version = "0.1", git = "https://github.com/madsmtm/iai", branch = "callgrind" }
 
 [[bench]]
 name = "autorelease"
 harness = false
-
-[[example]]
-name = "basic_usage"
-required-features = ["foundation"]
-
-[[example]]
-name = "class_with_lifetime"
-required-features = ["foundation"]
-
-[[example]]
-name = "delegate"
-required-features = ["apple", "foundation"]
-
-[[example]]
-name = "introspection"
-required-features = ["foundation"]
-
-[[example]]
-name = "speech_synthesis"
-required-features = ["apple", "foundation"]
-
-[[example]]
-name = "nspasteboard"
-required-features = ["apple", "foundation"]
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"

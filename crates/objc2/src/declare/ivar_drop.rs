@@ -209,7 +209,7 @@ unsafe fn box_unreachable() -> ! {
 mod tests {
     use super::*;
     use crate::declare::{Ivar, IvarType};
-    use crate::rc::{Allocated, Owned, RcTestObject, Shared, ThreadTestData};
+    use crate::rc::{Allocated, Owned, Shared, __RcTestObject, __ThreadTestData};
     use crate::runtime::NSObject;
     use crate::runtime::Object;
     use crate::{declare_class, msg_send, msg_send_id, ClassType};
@@ -239,12 +239,12 @@ mod tests {
     }
 
     declare_class!(
-        #[derive(Debug, PartialEq)]
+        #[derive(Debug, PartialEq, Eq)]
         struct IvarTester {
-            ivar1: IvarDrop<Id<RcTestObject, Shared>>,
-            ivar2: IvarDrop<Option<Id<RcTestObject, Owned>>>,
-            ivar3: IvarDrop<Box<Id<RcTestObject, Owned>>>,
-            ivar4: IvarDrop<Option<Box<Id<RcTestObject, Owned>>>>,
+            ivar1: IvarDrop<Id<__RcTestObject, Shared>>,
+            ivar2: IvarDrop<Option<Id<__RcTestObject, Owned>>>,
+            ivar3: IvarDrop<Box<Id<__RcTestObject, Owned>>>,
+            ivar4: IvarDrop<Option<Box<Id<__RcTestObject, Owned>>>>,
         }
 
         unsafe impl ClassType for IvarTester {
@@ -256,10 +256,10 @@ mod tests {
             fn init(&mut self) -> Option<&mut Self> {
                 let this: Option<&mut Self> = unsafe { msg_send![super(self), init] };
                 this.map(|this| {
-                    Ivar::write(&mut this.ivar1, Id::into_shared(RcTestObject::new()));
-                    *this.ivar2 = Some(RcTestObject::new());
-                    Ivar::write(&mut this.ivar3, Box::new(RcTestObject::new()));
-                    *this.ivar4 = Some(Box::new(RcTestObject::new()));
+                    Ivar::write(&mut this.ivar1, Id::into_shared(__RcTestObject::new()));
+                    *this.ivar2 = Some(__RcTestObject::new());
+                    Ivar::write(&mut this.ivar3, Box::new(__RcTestObject::new()));
+                    *this.ivar4 = Some(Box::new(__RcTestObject::new()));
                     this
                 })
             }
@@ -276,7 +276,7 @@ mod tests {
 
     #[test]
     fn test_alloc_dealloc() {
-        let expected = ThreadTestData::current();
+        let expected = __ThreadTestData::current();
 
         let obj: Allocated<IvarTester> = unsafe { msg_send_id![IvarTester::class(), alloc] };
         expected.assert_current();
@@ -287,7 +287,7 @@ mod tests {
 
     #[test]
     fn test_init_drop() {
-        let mut expected = ThreadTestData::current();
+        let mut expected = __ThreadTestData::current();
 
         let mut obj: Id<IvarTester, Owned> = unsafe { msg_send_id![IvarTester::class(), new] };
         expected.alloc += 4;
@@ -326,6 +326,6 @@ mod tests {
         let mut obj: Id<IvarTester, Owned> =
             unsafe { msg_send_id![IvarTester::alloc(), initInvalid] };
 
-        *obj.ivar1 = RcTestObject::new().into();
+        *obj.ivar1 = __RcTestObject::new().into();
     }
 }

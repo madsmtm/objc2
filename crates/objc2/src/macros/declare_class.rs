@@ -132,14 +132,11 @@
 /// use std::os::raw::c_int;
 /// use objc2::declare::{Ivar, IvarDrop};
 /// use objc2::rc::{Id, Owned, Shared};
-/// use objc2::foundation::{NSCopying, NSObject, NSString, NSZone};
+/// use objc2::runtime::{NSObject, NSZone};
 /// use objc2::{
-///     declare_class, extern_protocol, msg_send, msg_send_id, ns_string,
-///     ClassType, ConformsTo, ProtocolType,
+///     declare_class, extern_protocol, msg_send, msg_send_id, ClassType,
+///     ConformsTo, ProtocolType,
 /// };
-/// #
-/// # #[cfg(feature = "gnustep-1-7")]
-/// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 ///
 /// // Declare the NSCopying protocol so that we can implement it (since
 /// // NSCopying is a trait currently).
@@ -161,7 +158,7 @@
 ///     struct MyCustomObject {
 ///         foo: u8,
 ///         pub bar: c_int,
-///         string: IvarDrop<Id<NSString, Shared>>,
+///         object: IvarDrop<Id<NSObject, Shared>>,
 ///     }
 ///
 ///     unsafe impl ClassType for MyCustomObject {
@@ -177,9 +174,6 @@
 ///                 msg_send![super(this), init]
 ///             };
 ///
-///             // TODO: `ns_string` can't be used inside closures.
-///             let s = ns_string!("abc");
-///
 ///             this.map(|this| {
 ///                 // Initialize instance variables
 ///
@@ -191,7 +185,7 @@
 ///
 ///                 // For others like `&u8`, `Box<T>` or `Id<T, O>`, we have
 ///                 // to initialize them with `Ivar::write`:
-///                 Ivar::write(&mut this.string, s.copy());
+///                 Ivar::write(&mut this.object, Id::into_shared(NSObject::new()));
 ///
 ///                 // All the instance variables have been initialized; our
 ///                 // initializer is sound
@@ -204,9 +198,9 @@
 ///             *self.foo
 ///         }
 ///
-///         #[method(string)]
-///         fn __get_string(&self) -> *mut NSString {
-///             Id::autorelease_return((*self.string).copy())
+///         #[method(object)]
+///         fn __get_object(&self) -> *mut NSObject {
+///             Id::autorelease_return(self.object.clone())
 ///         }
 ///
 ///         #[method(myClassMethod)]
@@ -234,8 +228,8 @@
 ///         unsafe { msg_send![self, foo] }
 ///     }
 ///
-///     pub fn get_string(&self) -> Id<NSString, Shared> {
-///         unsafe { msg_send_id![self, string] }
+///     pub fn get_object(&self) -> Id<NSObject, Shared> {
+///         unsafe { msg_send_id![self, object] }
 ///     }
 ///
 ///     pub fn my_class_method() -> bool {
@@ -243,20 +237,23 @@
 ///     }
 /// }
 ///
-/// unsafe impl NSCopying for MyCustomObject {
-///     type Ownership = Owned;
-///     type Output = Self;
-/// }
+/// // unsafe impl icrate::Foundation::NSCopying for MyCustomObject {
+/// //     type Ownership = Owned;
+/// //     type Output = Self;
+/// // }
 ///
 /// fn main() {
 ///     let obj = MyCustomObject::new(3);
 ///     assert_eq!(*obj.foo, 3);
 ///     assert_eq!(*obj.bar, 42);
-///     assert_eq!(*obj.string, NSString::from_str("abc"));
+///     assert!(obj.object.is_kind_of::<NSObject>());
 ///
-///     let obj = obj.copy();
+///     let obj: Id<MyCustomObject, Shared> = unsafe {
+///          msg_send_id![&obj, copy]
+///     }; // Or obj.copy() with `icrate`
+///
 ///     assert_eq!(obj.get_foo(), 3);
-///     assert_eq!(obj.get_string(), NSString::from_str("abc"));
+///     assert!(obj.get_object().is_kind_of::<NSObject>());
 ///
 ///     assert!(MyCustomObject::my_class_method());
 /// }
@@ -274,7 +271,7 @@
 ///
 /// - (instancetype)initWithFoo:(uint8_t)foo;
 /// - (uint8_t)foo;
-/// - (NSString*)string;
+/// - (NSObject*)object;
 /// + (BOOL)myClassMethod;
 ///
 /// @end
@@ -283,7 +280,7 @@
 /// @implementation MyCustomObject {
 ///     // Private ivar
 ///     uint8_t foo;
-///     NSString* _Nonnull string;
+///     NSObject* _Nonnull object;
 /// }
 ///
 /// - (instancetype)initWithFoo:(uint8_t)foo_arg {
@@ -291,7 +288,7 @@
 ///     if (self) {
 ///         self->foo = foo_arg;
 ///         self->bar = 42;
-///         self->string = @"abc";
+///         self->object = [NSObject new];
 ///     }
 ///     return self;
 /// }
@@ -300,8 +297,8 @@
 ///     return self->foo; // Or just `foo`
 /// }
 ///
-/// - (NSString*)string {
-///     return self->string;
+/// - (NSObject*)object {
+///     return self->object;
 /// }
 ///
 /// + (BOOL)myClassMethod {
@@ -313,7 +310,6 @@
 /// - (id)copyWithZone:(NSZone *)_zone {
 ///     MyCustomObject* obj = [[MyCustomObject alloc] initWithFoo: self->foo];
 ///     obj->bar = self->bar;
-///     obj->string = self->string;
 ///     return obj;
 /// }
 ///

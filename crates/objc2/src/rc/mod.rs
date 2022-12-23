@@ -61,20 +61,16 @@ mod id;
 mod id_forwarding_impls;
 mod id_traits;
 mod ownership;
-mod weak_id;
-
-#[cfg(test)]
 mod test_object;
+mod weak_id;
 
 pub use self::allocated::Allocated;
 pub use self::autorelease::{autoreleasepool, AutoreleasePool, AutoreleaseSafe};
 pub use self::id::Id;
 pub use self::id_traits::{DefaultId, SliceId, SliceIdMut};
 pub use self::ownership::{Owned, Ownership, Shared};
+pub use self::test_object::{__RcTestObject, __ThreadTestData};
 pub use self::weak_id::WeakId;
-
-#[cfg(test)]
-pub(crate) use self::test_object::{RcTestObject, ThreadTestData};
 
 #[cfg(test)]
 mod tests {

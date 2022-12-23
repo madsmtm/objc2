@@ -62,9 +62,6 @@
 /// use objc2::runtime::NSObject;
 /// use objc2::rc::{Id, Shared};
 /// use objc2::{ClassType, extern_class, msg_send_id};
-/// #
-/// # #[cfg(feature = "gnustep-1-7")]
-/// # unsafe { objc2::__gnustep_hack::get_class_to_force_linkage() };
 ///
 /// extern_class!(
 ///     /// An example description.
@@ -116,7 +113,7 @@
 /// );
 /// ```
 ///
-/// See the source code of `objc2::foundation` in general for more examples.
+/// See the source code of `icrate` for many more examples.
 #[doc(alias = "@interface")]
 #[macro_export]
 macro_rules! extern_class {

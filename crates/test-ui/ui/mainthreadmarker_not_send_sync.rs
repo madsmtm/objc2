@@ -1,5 +1,5 @@
 //! Test that MainThreadMarker is neither Send nor Sync.
-use objc2::foundation::MainThreadMarker;
+use icrate::Foundation::MainThreadMarker;
 
 fn needs_sync<T: Sync>() {}
 fn needs_send<T: Send>() {}

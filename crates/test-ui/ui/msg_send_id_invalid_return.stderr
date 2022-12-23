@@ -27,14 +27,9 @@ error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
   |
   = help: the following other types implement trait `Message`:
             Exception
-            NSArray<T, O>
-            NSAttributedString
-            NSBundle
-            NSData
-            NSDictionary<K, V>
-            NSError
-            NSException
-          and $N others
+            NSObject
+            __RcTestObject
+            objc2::runtime::Object
   = note: required for `RetainSemantics<1>` to implement `MsgSendId<&objc2::runtime::Class, Id<objc2::runtime::Class, Shared>>`
 
 error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
@@ -48,14 +43,9 @@ error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
   |
   = help: the following other types implement trait `Message`:
             Exception
-            NSArray<T, O>
-            NSAttributedString
-            NSBundle
-            NSData
-            NSDictionary<K, V>
-            NSError
-            NSException
-          and $N others
+            NSObject
+            __RcTestObject
+            objc2::runtime::Object
   = note: required for `RetainSemantics<1>` to implement `MsgSendId<&objc2::runtime::Class, Id<objc2::runtime::Class, Shared>>`
 
 error[E0277]: the trait bound `&objc2::runtime::Object: MaybeUnwrap` is not satisfied
@@ -87,14 +77,9 @@ error[E0277]: the trait bound `objc2::runtime::Class: Message` is not satisfied
   |
   = help: the following other types implement trait `Message`:
             Exception
-            NSArray<T, O>
-            NSAttributedString
-            NSBundle
-            NSData
-            NSDictionary<K, V>
-            NSError
-            NSException
-          and $N others
+            NSObject
+            __RcTestObject
+            objc2::runtime::Object
   = note: required for `RetainSemantics<2>` to implement `MsgSendId<&objc2::runtime::Class, Allocated<objc2::runtime::Class>>`
 
 error[E0271]: type mismatch resolving `<Id<objc2::runtime::Object, Shared> as MaybeUnwrap>::Input == Allocated<_>`
