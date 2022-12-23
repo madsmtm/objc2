@@ -749,7 +749,7 @@ impl fmt::Display for RustType {
             Array {
                 element_type,
                 num_elements,
-            } => write!(f, "[{element_type}; {num_elements}]"),
+            } => write!(f, "ArrayUnknownABI<[{element_type}; {num_elements}]>"),
             Enum { name } | Struct { name } | TypeDef { name } => write!(f, "{name}"),
             Self::Fn { .. } => write!(f, "TodoFunction"),
             Block {
@@ -775,7 +775,8 @@ enum TyKind {
     InTypedef,
     InMethodArgument,
     InFnDeclArgument,
-    InStructEnum,
+    InStruct,
+    InEnum,
     InFnArgument,
     InFnReturn,
     InBlockArgument,
@@ -925,7 +926,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::InStructEnum,
+            kind: TyKind::InStruct,
         }
     }
 
@@ -938,7 +939,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::InStructEnum,
+            kind: TyKind::InEnum,
         }
     }
 
@@ -1279,7 +1280,14 @@ impl fmt::Display for Ty {
                 },
                 ty => write!(f, "{ty}"),
             },
-            TyKind::InStructEnum => write!(f, "{}", self.ty),
+            TyKind::InStruct => match &self.ty {
+                RustType::Array {
+                    element_type,
+                    num_elements,
+                } => write!(f, "[{element_type}; {num_elements}]"),
+                ty => write!(f, "{ty}"),
+            },
+            TyKind::InEnum => write!(f, "{}", self.ty),
             TyKind::InFnArgument | TyKind::InBlockArgument => write!(f, "{}", self.ty),
             TyKind::InFnDeclReturn | TyKind::InFnReturn => {
                 if let RustType::Void = &self.ty {

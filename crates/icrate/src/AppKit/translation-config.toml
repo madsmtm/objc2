@@ -235,3 +235,9 @@ skipped = true
 skipped = true
 [protocol.NSWindowRestoration.methods.restoreWindowWithIdentifier_state_completionHandler]
 skipped = true
+
+# I'm unsure of the ABI of the array this takes
+[fn.NSDrawBitmap]
+skipped = true
+[class.NSView.methods.getRectsExposedDuringLiveResize_count]
+skipped = true
