@@ -6,6 +6,27 @@ use tracing::{debug_span, error, warn};
 use crate::method::MemoryManagement;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub enum Ownership {
+    Owned,
+    Shared,
+}
+
+impl Default for Ownership {
+    fn default() -> Self {
+        Ownership::Shared
+    }
+}
+
+impl fmt::Display for Ownership {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Owned => write!(f, "Owned"),
+            Self::Shared => write!(f, "Shared"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct GenericType {
     pub name: String,
     pub generics: Vec<GenericType>,
@@ -45,6 +66,7 @@ impl GenericType {
                                 is_const: _,
                                 lifetime: _,
                                 nullability: _,
+                                ownership: _,
                             } => type_,
                             // TODO: Handle this better
                             RustType::Class { nullability: _ } => Self {
@@ -294,6 +316,7 @@ enum RustType {
         is_const: bool,
         lifetime: Lifetime,
         nullability: Nullability,
+        ownership: Ownership,
     },
     Class {
         nullability: Nullability,
@@ -387,6 +410,7 @@ impl RustType {
                 is_const: ty.is_const_qualified(),
                 lifetime,
                 nullability,
+                ownership: Ownership::Shared,
             },
             ObjCClass => Self::Class { nullability },
             ObjCSel => Self::Sel { nullability },
@@ -436,6 +460,7 @@ impl RustType {
                     is_const: ty.is_const_qualified(),
                     lifetime,
                     nullability,
+                    ownership: Ownership::Shared,
                 }
             }
             Typedef => {
@@ -474,6 +499,7 @@ impl RustType {
                         is_const: ty.is_const_qualified(),
                         lifetime,
                         nullability,
+                        ownership: Ownership::Shared,
                     },
                     _ => {
                         let ty = ty.get_canonical_type();
@@ -494,6 +520,7 @@ impl RustType {
                                     is_const: ty.is_const_qualified(),
                                     lifetime,
                                     nullability,
+                                    ownership: Ownership::Shared,
                                 }
                             }
                             _ => Self::TypeDef { name: typedef_name },
@@ -630,6 +657,7 @@ impl fmt::Display for RustType {
                 // Ignore
                 lifetime: _,
                 nullability,
+                ownership: _,
             } => {
                 if *nullability == Nullability::NonNull {
                     write!(f, "NonNull<{ty}>")
@@ -969,6 +997,7 @@ impl Ty {
                 is_const: id_is_const,
                 lifetime,
                 nullability: id_nullability,
+                ownership,
             } = &**pointee
             {
                 if ty.name != "NSError" {
@@ -996,6 +1025,7 @@ impl Ty {
                     Lifetime::Unspecified,
                     "invalid error lifetime {self:?}"
                 );
+                assert_eq!(*ownership, Ownership::Shared, "errors cannot be owned");
                 return true;
             }
         }
@@ -1013,6 +1043,7 @@ impl Ty {
                 lifetime: Lifetime::Unspecified,
                 is_const: false,
                 nullability: _,
+                ownership: Ownership::Shared,
             } if ty.name == "Self" && ty.generics.is_empty() => {
                 ty.name = "Allocated".into();
                 ty.generics = vec![GenericType {
@@ -1073,11 +1104,12 @@ impl fmt::Display for Ty {
                         // Ignore
                         lifetime: _,
                         nullability,
+                        ownership,
                     } => {
                         if *nullability == Nullability::NonNull {
-                            write!(f, "Id<{ty}, Shared>")
+                            write!(f, "Id<{ty}, {ownership}>")
                         } else {
-                            write!(f, "Option<Id<{ty}, Shared>>")
+                            write!(f, "Option<Id<{ty}, {ownership}>>")
                         }
                     }
                     RustType::Class { nullability } => {
@@ -1097,9 +1129,10 @@ impl fmt::Display for Ty {
                     lifetime: Lifetime::Unspecified,
                     is_const: false,
                     nullability: Nullability::Nullable,
+                    ownership,
                 } => {
                     // NULL -> error
-                    write!(f, " -> Result<Id<{ty}, Shared>, Id<NSError, Shared>>")
+                    write!(f, " -> Result<Id<{ty}, {ownership}>, Id<NSError, Shared>>")
                 }
                 RustType::ObjcBool => {
                     // NO -> error
@@ -1113,6 +1146,7 @@ impl fmt::Display for Ty {
                     is_const: false,
                     lifetime: Lifetime::Strong | Lifetime::Unspecified,
                     nullability,
+                    ownership: Ownership::Shared,
                 } => {
                     if *nullability == Nullability::NonNull {
                         write!(f, "&'static {ty}")
@@ -1140,6 +1174,7 @@ impl fmt::Display for Ty {
                     is_const: _,
                     lifetime: _,
                     nullability,
+                    ownership: Ownership::Shared,
                 } => {
                     match &*ty.name {
                         "NSString" => {}
@@ -1163,6 +1198,7 @@ impl fmt::Display for Ty {
                     is_const: false,
                     lifetime: Lifetime::Unspecified | Lifetime::Strong,
                     nullability,
+                    ownership: Ownership::Shared,
                 } => {
                     if *nullability == Nullability::NonNull {
                         write!(f, "&{ty}")
@@ -1189,6 +1225,7 @@ impl fmt::Display for Ty {
                     //     is_const: false,
                     //     lifetime: Lifetime::Autoreleasing,
                     //     nullability: inner_nullability,
+                    //     ownership: Ownership::Shared,
                     // } if self.kind == TyKind::InMethodArgument => {
                     //     let tokens = if *inner_nullability == Nullability::NonNull {
                     //         format!("Id<{ty}, Shared>")
