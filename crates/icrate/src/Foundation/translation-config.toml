@@ -462,6 +462,7 @@ mutating = true
 [class.NSMutableData.methods.mutableBytes]
 unsafe = false
 mutating = true
+skipped = true # Wrong type on GNUStep
 [class.NSMutableData.methods.length]
 skipped = true
 [class.NSMutableData.methods.setLength]

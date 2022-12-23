@@ -32,9 +32,13 @@ extern_methods!(
     unsafe impl NSMutableData {
         #[doc(alias = "mutableBytes")]
         pub fn bytes_mut(&mut self) -> &mut [u8] {
-            let ptr = self.mutableBytes();
-            let ptr: *mut u8 = ptr.as_ptr().cast();
-            unsafe { slice::from_raw_parts_mut(ptr, self.len()) }
+            if let Some(ptr) = self.mutableBytes() {
+                let ptr: *mut u8 = ptr.as_ptr().cast();
+                unsafe { slice::from_raw_parts_mut(ptr, self.len()) }
+            } else {
+                // The bytes pointer may be null for length zero on GNUStep
+                &mut []
+            }
         }
 
         #[doc(alias = "appendBytes:length:")]
