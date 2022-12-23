@@ -92,13 +92,19 @@ macro_rules! ns_enum {
     (
         #[underlying($ty:ty)]
         $v:vis enum $($name:ident)? {
-            $($field:ident = $value:expr),* $(,)?
+            $(
+                $(#[$m:meta])*
+                $field:ident = $value:expr
+            ),* $(,)?
         }
     ) => {
         extern_enum! {
             #[underlying($ty)]
             $v enum $($name)? {
-                $($field = $value),*
+                $(
+                    $(#[$m])*
+                    $field = $value
+                ),*
             }
         }
     };

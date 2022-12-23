@@ -175,6 +175,31 @@ setDefaultApplicationAtURL_toOpenContentType_completionHandler = { skipped = tru
 skipped = true
 [class.NSWorkspaceOpenConfiguration.methods.setArchitecture]
 skipped = true
+[protocol.NSApplicationDelegate.methods]
+application_handlerForIntent = { skipped = true }
+application_userDidAcceptCloudKitShareWithMetadata = { skipped = true }
+[protocol.NSLayoutManagerDelegate.methods]
+layoutManager_shouldGenerateGlyphs_properties_characterIndexes_font_forGlyphRange = { skipped = true }
+[protocol.NSCloudSharingServiceDelegate.methods]
+sharingService_didSaveShare = { skipped = true }
+sharingService_didStopSharing = { skipped = true }
+[protocol.NSCloudSharingValidation]
+skipped = true
+[protocol.NSViewLayerContentScaleDelegate]
+skipped = true
+
+# Uses a pointer to SEL, which doesn't implement Encode yet
+[protocol.NSMenuDelegate.methods]
+menuHasKeyEquivalent_forEvent_target_action = { skipped = true }
+
+# These subclass a generic struct, and hence the type parameter defaults to
+# `Object`, which is not PartialEq, Eq nor Hash.
+[class.NSLayoutXAxisAnchor]
+derives = "Debug"
+[class.NSLayoutYAxisAnchor]
+derives = "Debug"
+[class.NSLayoutDimension]
+derives = "Debug"
 
 # Wrong type for enum
 [enum.anonymous.constants]
@@ -197,9 +222,9 @@ skipped = true
 
 # Different definitions depending on deplyment target
 [class.NSLayoutAnchor]
-skipped = true
+definition-skipped = true
 [class.NSPopover]
-skipped = true
+definition-skipped = true
 
 # Protocol class methods (currently unsupported)
 [protocol.NSAnimatablePropertyContainer.methods.defaultAnimationForKey]
