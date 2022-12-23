@@ -12,8 +12,9 @@ build = "build.rs"
 [features]
 default = ["apple", "std"]
 std = ["block2/std", "objc2/std", "icrate/std"]
-exception = ["objc2/exception"]
+exception = ["objc2/exception", "Foundation"]
 catch-all = ["objc2/catch-all", "exception"]
+Foundation = ["icrate/Foundation"]
 
 apple = ["block2/apple", "objc2/apple", "icrate/apple"]
 gnustep-1-7 = ["block2/gnustep-1-7", "objc2/gnustep-1-7", "icrate/gnustep-1-7"]
@@ -29,7 +30,7 @@ block2 = { path = "../block2", default-features = false }
 block-sys = { path = "../block-sys", default-features = false }
 objc-sys = { path = "../objc-sys", default-features = false }
 objc2 = { path = "../objc2", default-features = false }
-icrate = { path = "../icrate", default-features = false, features = ["Foundation"] }
+icrate = { path = "../icrate", default-features = false }
 
 [build-dependencies]
 cc = "1.0"
