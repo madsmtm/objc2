@@ -403,14 +403,7 @@ mod tests {
     #[test]
     #[cfg(any(all(feature = "apple", target_os = "macos"), feature = "gnustep-1-7"))] // or macabi
     fn test_partial_eq() {
-        use objc2::runtime::Bool;
-
-        // Note: No need to use "C-unwind"
-        extern "C" {
-            fn NSEqualPoints(a: NSPoint, b: NSPoint) -> Bool;
-            fn NSEqualSizes(a: NSSize, b: NSSize) -> Bool;
-            fn NSEqualRects(a: NSRect, b: NSRect) -> Bool;
-        }
+        use crate::Foundation::{NSEqualPoints, NSEqualRects, NSEqualSizes};
 
         // We assume that comparisons handle e.g. `x` and `y` in the same way,
         // therefore we just set the coordinates / dimensions to the same.
