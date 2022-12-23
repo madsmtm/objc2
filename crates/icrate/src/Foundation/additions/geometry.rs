@@ -1,4 +1,5 @@
 use objc2::encode::{Encode, Encoding, RefEncode};
+use objc2::ffi::NSUInteger;
 
 #[cfg(target_pointer_width = "64")]
 type InnerFloat = f64;
@@ -343,10 +344,47 @@ impl CGRect {
     // TODO: NSWidth / CGRectGetWidth (standardized)
 }
 
+/// A point in a Cartesian coordinate system.
+///
+/// This is just a convenience alias for [`CGPoint`]. For ease of use, it is
+/// available on all platforms, though in practice it is only useful on macOS.
+///
+/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nspoint?language=objc).
+pub type NSPoint = CGPoint;
+
+/// A two-dimensional size.
+///
+/// This is just a convenience alias for [`CGSize`]. For ease of use, it is
+/// available on all platforms, though in practice it is only useful on macOS.
+///
+/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nssize?language=objc).
+pub type NSSize = CGSize;
+
+/// A rectangle.
+///
+/// This is just a convenience alias for [`CGRect`]. For ease of use, it is
+/// available on all platforms, though in practice it is only useful on macOS.
+///
+/// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsrect?language=objc).
+pub type NSRect = CGRect;
+
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSRectEdge {
+        NSRectEdgeMinX = 0,
+        NSRectEdgeMinY = 1,
+        NSRectEdgeMaxX = 2,
+        NSRectEdgeMaxY = 3,
+        NSMinXEdge = NSRectEdgeMinX,
+        NSMinYEdge = NSRectEdgeMinY,
+        NSMaxXEdge = NSRectEdgeMaxX,
+        NSMaxYEdge = NSRectEdgeMaxY,
+    }
+);
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Foundation::{NSPoint, NSRect, NSSize};
 
     #[test]
     fn test_cgsize_new() {

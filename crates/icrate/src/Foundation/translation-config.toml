@@ -151,8 +151,6 @@ use-value = true
 use-value = true
 [enum.NSDateFormatterStyle]
 use-value = true
-[enum.NSRectEdge]
-use-value = true
 [enum.NSISO8601DateFormatOptions]
 use-value = true
 [enum.NSLocaleLanguageDirection]
@@ -221,6 +219,38 @@ skipped = true
 [struct.NSRange]
 skipped = true
 [enum.NSComparisonResult]
+skipped = true
+
+# Different definitions on 32-bit
+[typedef.NSPoint]
+skipped = true
+[struct.NSPoint]
+skipped = true
+[typedef.NSSize]
+skipped = true
+[struct.NSSize]
+skipped = true
+[typedef.NSRect]
+skipped = true
+[struct.NSRect]
+skipped = true
+[enum.NSRectEdge]
+skipped = true
+[enum.anonymous.constants.NSRectEdgeMinX]
+skipped = true
+[enum.anonymous.constants.NSRectEdgeMinY]
+skipped = true
+[enum.anonymous.constants.NSRectEdgeMaxX]
+skipped = true
+[enum.anonymous.constants.NSRectEdgeMaxY]
+skipped = true
+[enum.anonymous.constants.NSMinXEdge]
+skipped = true
+[enum.anonymous.constants.NSMinYEdge]
+skipped = true
+[enum.anonymous.constants.NSMaxXEdge]
+skipped = true
+[enum.anonymous.constants.NSMaxYEdge]
 skipped = true
 
 # We do a custom implementation of these

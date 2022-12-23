@@ -3,7 +3,10 @@
 pub use self::comparison_result::NSComparisonResult;
 pub use self::copying::{NSCopying, NSMutableCopying};
 pub use self::enumerator::{NSEnumerator2, NSFastEnumeration2, NSFastEnumerator2};
-pub use self::geometry::{CGFloat, CGPoint, CGRect, CGSize};
+pub use self::geometry::{
+    CGFloat, CGPoint, CGRect, CGSize, NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint,
+    NSRect, NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize,
+};
 pub use self::range::NSRange;
 pub use self::thread::{is_main_thread, is_multi_threaded, MainThreadMarker};
 

@@ -645,6 +645,10 @@ impl Stmt {
                     }
                 });
 
+                if name.is_none() && variants.is_empty() {
+                    return vec![];
+                }
+
                 vec![Self::EnumDecl {
                     name,
                     ty,
