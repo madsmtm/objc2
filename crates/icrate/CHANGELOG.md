@@ -16,6 +16,60 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 * **BREAKING**: Moved from `objc2::foundation` into `icrate::Foundation`.
+* **BREAKING**: Changed the following methods:
+  - `NSString`
+    - `concat` -> `stringByAppendingString`
+    - `join_path` -> `stringByAppendingPathComponent`
+    - `has_prefix` -> `hasPrefix`
+    - `has_suffix` -> `hasSuffix`
+  - `NSMutableString`
+    - `from_nsstring` -> `stringWithString`
+    - `with_capacity` -> `stringWithCapacity`
+    - `push_nsstring` -> `appendString`
+    - `replace` -> `setString`
+  - `NSAttributedString`
+    - `init_with_attributes` -> `unsafe initWithString_attributes`
+    - `init_with_string` -> `initWithString`
+    - `new_with_attributes` -> `unsafe new_with_attributes`
+    - `len_utf16` -> `length`
+  - `NSMutableAttributedString`
+    - `replace` -> `setAttributedString`
+  - `NSBundle`
+    - `main` -> `mainBundle`
+    - `info` -> `infoDictionary`
+  - `NSDictionary`
+    - `keys_array` -> `allKeys`
+    - `into_values_array` -> `allValues`
+  - `NSMutableDictionary`
+    - `clear` -> `removeAllObjects`
+  - `NSMutableArray`
+    - `clear` -> `removeAllObjects`
+  - `NSMutableSet`
+    - `clear` -> `removeAllObjects`
+  - `NSError`
+    - `user_info` -> `userInfo`
+    - `localized_description` -> `localizedDescription`
+  - `NSException`
+    - `user_info` -> `userInfo`
+  - `NSMutableData`
+    - `from_data` -> `dataWithData`
+    - `with_capacity` -> `dataWithCapacity`
+    - `set_len` -> `setLength`
+  - `NSUUID`
+    - `new_v4` -> `UUID`
+    - `string` -> `UUIDString`
+  - `NSThread`
+    - `current` -> `currentThread`
+    - `main` -> `mainThread`
+    - `is_main` -> `isMainThread`
+  - `NSProcessInfo`
+    - `process_info` -> `processInfo`
+* **BREAKING**: Make `NSComparisonResult` work like all other enums.
+* **BREAKING**: Changed `NSDictionary` to be `Shared` by default.
+* **BREAKING** (TEMPORARY): Renamed `NSEnumerator`, `NSFastEnumeration` and
+  `NSFastEnumerator` until the story around them are properly figured out.
+* **BREAKING**: Make `NSArray::objects_in_range` return an `Option` (it was
+  unsound before).
 
 ### Fixed
 * Fixed `NSZone` not being `#[repr(C)]`.

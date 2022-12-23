@@ -1,0 +1,32 @@
+[package]
+name = "header-translator"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+repository = "https://github.com/madsmtm/objc2"
+license = "Zlib OR Apache-2.0 OR MIT"
+
+[features]
+run = [
+    "clang",
+    "toml",
+    "serde",
+    "apple-sdk",
+    "tracing",
+    "tracing-subscriber",
+    "tracing-tree",
+]
+
+[dependencies]
+clang = { version = "2.0", features = ["runtime", "clang_10_0"], optional = true }
+toml = { version = "0.5.9", optional = true }
+serde = { version = "1.0.144", features = ["derive"], optional = true }
+apple-sdk = { version = "0.2.0", default-features = false, optional = true }
+tracing = { version = "0.1.37", default-features = false, features = ["std"], optional = true }
+tracing-subscriber = { version = "0.3.16", features = ["fmt"], optional = true }
+tracing-tree = { git = "https://github.com/madsmtm/tracing-tree.git", optional = true }
+
+[[bin]]
+name = "header-translator"
+required-features = ["run"]

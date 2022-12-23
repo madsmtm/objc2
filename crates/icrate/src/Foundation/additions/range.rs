@@ -1,7 +1,8 @@
 use core::ops::Range;
 
-use super::NSUInteger;
 use objc2::encode::{Encode, Encoding, RefEncode};
+
+use crate::Foundation::NSUInteger;
 
 /// TODO.
 ///

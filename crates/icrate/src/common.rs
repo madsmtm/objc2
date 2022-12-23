@@ -11,13 +11,16 @@ pub(crate) use std::ffi::{
 };
 
 #[cfg(feature = "objective-c")]
-pub(crate) use objc2::ffi::{NSInteger, NSUInteger};
+pub(crate) use objc2::ffi::{NSInteger, NSIntegerMax, NSUInteger, NSUIntegerMax};
 #[cfg(feature = "objective-c")]
-pub(crate) use objc2::rc::{Allocated, Id, Shared};
+pub(crate) use objc2::rc::{Allocated, Id, Owned, Ownership, Shared};
 #[cfg(feature = "objective-c")]
 pub(crate) use objc2::runtime::{Bool, Class, Object, Sel};
 #[cfg(feature = "objective-c")]
-pub(crate) use objc2::{__inner_extern_class, extern_class, extern_methods, ClassType, Message};
+pub(crate) use objc2::{
+    __inner_extern_class, extern_class, extern_methods, extern_protocol, ClassType, Message,
+    ProtocolType,
+};
 
 #[cfg(feature = "block")]
 pub(crate) use block2::Block;

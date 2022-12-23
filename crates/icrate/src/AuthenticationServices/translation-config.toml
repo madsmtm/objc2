@@ -1,0 +1,20 @@
+imports = ["AuthenticationServices", "Foundation"]
+
+# Uses a bit of complex feature testing setup, see ASFoundation.h
+[typedef.ASPresentationAnchor]
+skipped = true
+[typedef.ASViewController]
+skipped = true
+[typedef.ASImage]
+skipped = true
+
+# The original superclass typedef is a bit difficult to extract from the
+# superclass name, so let's just overwrite it.
+[class.ASCredentialProviderViewController]
+definition-skipped = true
+[class.ASAccountAuthenticationModificationViewController]
+definition-skipped = true
+
+# Specifies superclass as UIControl or NSControl conditionally
+[class.ASAuthorizationAppleIDButton]
+definition-skipped = true

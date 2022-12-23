@@ -1,193 +1,154 @@
 use alloc::string::ToString;
-use core::ffi::c_void;
 use core::fmt;
 use core::hash;
 use core::mem::MaybeUninit;
 use core::ptr::NonNull;
 use core::str;
 use std::ffi::{CStr, CString};
-use std::os::raw::c_char;
 
-use super::{NSCopying, NSObject, NSPoint, NSRange, NSRect, NSSize};
+use objc2::encode::Encode;
 use objc2::rc::{Id, Shared};
-use objc2::{extern_class, extern_methods, msg_send, msg_send_id, ClassType, Encode};
+use objc2::ClassType;
 
-extern_class!(
-    /// A container wrapping any encodable type as an Obective-C object.
-    ///
-    /// Since Objective-C collections like [`NSArray`] can only contain
-    /// objects, it is common to wrap pointers or structures like [`NSRange`].
-    ///
-    /// Note that creating `NSValue`s is not `unsafe`, but almost all usage of
-    /// it is, since we cannot guarantee that the type that was used to
-    /// construct it is the same as the expected output type.
-    ///
-    /// See also the [`NSNumber`] subclass for when you want to wrap numbers.
-    ///
-    /// See [Apple's documentation][apple-doc] for more information.
-    ///
-    /// [`NSArray`]: super::NSArray
-    /// [`NSRange`]: super::NSRange
-    /// [`NSNumber`]: super::NSNumber
-    /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsnumber?language=objc
-    pub struct NSValue;
-
-    unsafe impl ClassType for NSValue {
-        type Super = NSObject;
-    }
-);
+use crate::Foundation::{NSCopying, NSPoint, NSRange, NSRect, NSSize, NSValue};
 
 // We can't implement any auto traits for NSValue, since it can contain an
 // arbitary object!
 
-extern_methods!(
-    /// Creation methods.
-    unsafe impl NSValue {
-        // Default / empty new is not provided because `-init` returns `nil` on
-        // Apple and GNUStep throws an exception on all other messages to this
-        // invalid instance.
+/// Creation methods.
+impl NSValue {
+    /// Create a new `NSValue` containing the given type.
+    ///
+    /// Be careful when using this since you may accidentally pass a reference
+    /// when you wanted to pass a concrete type instead.
+    ///
+    ///
+    /// # Examples
+    ///
+    /// Create an `NSValue` containing an [`NSPoint`].
+    ///
+    /// ```
+    /// use icrate::Foundation::{NSPoint, NSValue};
+    ///
+    /// let val = NSValue::new::<NSPoint>(NSPoint::new(1.0, 1.0));
+    /// ```
+    ///
+    /// [`NSPoint`]: crate::Foundation::NSPoint
+    pub fn new<T: 'static + Copy + Encode>(value: T) -> Id<Self, Shared> {
+        let bytes: NonNull<T> = NonNull::from(&value);
+        let encoding = CString::new(T::ENCODING.to_string()).unwrap();
+        unsafe {
+            Self::initWithBytes_objCType(
+                Self::alloc(),
+                bytes.cast(),
+                NonNull::new(encoding.as_ptr() as *mut _).unwrap(),
+            )
+        }
+    }
+}
 
-        /// Create a new `NSValue` containing the given type.
-        ///
-        /// Be careful when using this since you may accidentally pass a reference
-        /// when you wanted to pass a concrete type instead.
-        ///
-        ///
-        /// # Examples
-        ///
-        /// Create an `NSValue` containing an [`NSPoint`][super::NSPoint].
-        ///
-        /// ```
-        /// use icrate::Foundation::{NSPoint, NSValue};
-        /// let val = NSValue::new::<NSPoint>(NSPoint::new(1.0, 1.0));
-        /// ```
-        pub fn new<T: 'static + Copy + Encode>(value: T) -> Id<Self, Shared> {
-            let bytes: *const T = &value;
-            let bytes: *const c_void = bytes.cast();
-            let encoding = CString::new(T::ENCODING.to_string()).unwrap();
-            unsafe {
-                msg_send_id![
-                    Self::alloc(),
-                    initWithBytes: bytes,
-                    objCType: encoding.as_ptr(),
-                ]
-            }
+/// Getter methods.
+impl NSValue {
+    /// Retrieve the data contained in the `NSValue`.
+    ///
+    /// Note that this is broken on GNUStep for some types, see
+    /// [gnustep/libs-base#216].
+    ///
+    /// [gnustep/libs-base#216]: https://github.com/gnustep/libs-base/pull/216
+    ///
+    ///
+    /// # Safety
+    ///
+    /// The type of `T` must be what the NSValue actually stores, and any
+    /// safety invariants that the value has must be upheld.
+    ///
+    /// Note that it may be, but is not always, enough to simply check whether
+    /// [`contains_encoding`] returns `true`. For example, `NonNull<T>` have
+    /// the same encoding as `*const T`, but `NonNull<T>` is clearly not
+    /// safe to return from this function even if you've checked the encoding
+    /// beforehand.
+    ///
+    /// [`contains_encoding`]: Self::contains_encoding
+    ///
+    ///
+    /// # Examples
+    ///
+    /// Store a pointer in `NSValue`, and retrieve it again afterwards.
+    ///
+    /// ```
+    /// use std::ffi::c_void;
+    /// use std::ptr;
+    /// use icrate::Foundation::NSValue;
+    ///
+    /// let val = NSValue::new::<*const c_void>(ptr::null());
+    /// // SAFETY: The value was just created with a pointer
+    /// let res = unsafe { val.get::<*const c_void>() };
+    /// assert!(res.is_null());
+    /// ```
+    pub unsafe fn get<T: 'static + Copy + Encode>(&self) -> T {
+        debug_assert!(
+        self.contains_encoding::<T>(),
+        "wrong encoding. NSValue tried to return something with encoding {}, but the encoding of the given type was {}",
+        self.encoding().unwrap_or("(NULL)"),
+        T::ENCODING,
+    );
+        let mut value = MaybeUninit::<T>::uninit();
+        let ptr: NonNull<T> = NonNull::new(value.as_mut_ptr()).unwrap();
+        unsafe { self.getValue(ptr.cast()) };
+        // SAFETY: We know that `getValue:` initialized the value, and user
+        // ensures that it is safe to access.
+        unsafe { value.assume_init() }
+    }
+
+    pub fn get_range(&self) -> Option<NSRange> {
+        if self.contains_encoding::<NSRange>() {
+            // SAFETY: We just checked that this contains an NSRange
+            Some(unsafe { self.rangeValue() })
+        } else {
+            None
         }
     }
 
-    /// Getter methods.
-    unsafe impl NSValue {
-        /// Retrieve the data contained in the `NSValue`.
-        ///
-        /// Note that this is broken on GNUStep for some types, see
-        /// [gnustep/libs-base#216].
-        ///
-        /// [gnustep/libs-base#216]: https://github.com/gnustep/libs-base/pull/216
-        ///
-        ///
-        /// # Safety
-        ///
-        /// The type of `T` must be what the NSValue actually stores, and any
-        /// safety invariants that the value has must be upheld.
-        ///
-        /// Note that it may be, but is not always, enough to simply check whether
-        /// [`contains_encoding`] returns `true`. For example, `NonNull<T>` have
-        /// the same encoding as `*const T`, but `NonNull<T>` is clearly not
-        /// safe to return from this function even if you've checked the encoding
-        /// beforehand.
-        ///
-        /// [`contains_encoding`]: Self::contains_encoding
-        ///
-        ///
-        /// # Examples
-        ///
-        /// Store a pointer in `NSValue`, and retrieve it again afterwards.
-        ///
-        /// ```
-        /// use std::ffi::c_void;
-        /// use std::ptr;
-        /// use icrate::Foundation::NSValue;
-        ///
-        /// let val = NSValue::new::<*const c_void>(ptr::null());
-        /// // SAFETY: The value was just created with a pointer
-        /// let res = unsafe { val.get::<*const c_void>() };
-        /// assert!(res.is_null());
-        /// ```
-        pub unsafe fn get<T: 'static + Copy + Encode>(&self) -> T {
-            debug_assert!(
-            self.contains_encoding::<T>(),
-            "wrong encoding. NSValue tried to return something with encoding {}, but the encoding of the given type was {}",
-            self.encoding().unwrap_or("(NULL)"),
-            T::ENCODING,
-        );
-            let mut value = MaybeUninit::<T>::uninit();
-            let ptr: *mut c_void = value.as_mut_ptr().cast();
-            let _: () = unsafe { msg_send![self, getValue: ptr] };
-            // SAFETY: We know that `getValue:` initialized the value, and user
-            // ensures that it is safe to access.
-            unsafe { value.assume_init() }
+    pub fn get_point(&self) -> Option<NSPoint> {
+        if self.contains_encoding::<NSPoint>() {
+            // SAFETY: We just checked that this contains an NSPoint
+            //
+            // Note: The documentation says that `pointValue`, `sizeValue` and
+            // `rectValue` is only available on macOS, but turns out that they
+            // are actually available everywhere!
+            Some(unsafe { self.pointValue() })
+        } else {
+            None
         }
-
-        pub fn get_range(&self) -> Option<NSRange> {
-            if self.contains_encoding::<NSRange>() {
-                // SAFETY: We just checked that this contains an NSRange
-                Some(unsafe { msg_send![self, rangeValue] })
-            } else {
-                None
-            }
-        }
-
-        pub fn get_point(&self) -> Option<NSPoint> {
-            if self.contains_encoding::<NSPoint>() {
-                // SAFETY: We just checked that this contains an NSPoint
-                //
-                // Note: The documentation says that `pointValue`, `sizeValue` and
-                // `rectValue` is only available on macOS, but turns out that they
-                // are actually available everywhere!
-                let res = unsafe { msg_send![self, pointValue] };
-                Some(res)
-            } else {
-                None
-            }
-        }
-
-        pub fn get_size(&self) -> Option<NSSize> {
-            if self.contains_encoding::<NSSize>() {
-                // SAFETY: We just checked that this contains an NSSize
-                let res = unsafe { msg_send![self, sizeValue] };
-                Some(res)
-            } else {
-                None
-            }
-        }
-
-        pub fn get_rect(&self) -> Option<NSRect> {
-            if self.contains_encoding::<NSRect>() {
-                // SAFETY: We just checked that this contains an NSRect
-                let res = unsafe { msg_send![self, rectValue] };
-                Some(res)
-            } else {
-                None
-            }
-        }
-
-        pub fn encoding(&self) -> Option<&str> {
-            let result: Option<NonNull<c_char>> = unsafe { msg_send![self, objCType] };
-            result.map(|s| unsafe { CStr::from_ptr(s.as_ptr()) }.to_str().unwrap())
-        }
-
-        pub fn contains_encoding<T: 'static + Copy + Encode>(&self) -> bool {
-            if let Some(encoding) = self.encoding() {
-                T::ENCODING.equivalent_to_str(encoding)
-            } else {
-                panic!("missing NSValue encoding");
-            }
-        }
-
-        #[method(isEqualToValue:)]
-        fn is_equal_to_value(&self, other: &Self) -> bool;
     }
-);
+
+    pub fn get_size(&self) -> Option<NSSize> {
+        if self.contains_encoding::<NSSize>() {
+            // SAFETY: We just checked that this contains an NSSize
+            Some(unsafe { self.sizeValue() })
+        } else {
+            None
+        }
+    }
+
+    pub fn get_rect(&self) -> Option<NSRect> {
+        if self.contains_encoding::<NSRect>() {
+            // SAFETY: We just checked that this contains an NSRect
+            Some(unsafe { self.rectValue() })
+        } else {
+            None
+        }
+    }
+
+    pub fn encoding(&self) -> Option<&str> {
+        let ptr = self.objCType().as_ptr();
+        Some(unsafe { CStr::from_ptr(ptr) }.to_str().unwrap())
+    }
+
+    pub fn contains_encoding<T: 'static + Copy + Encode>(&self) -> bool {
+        T::ENCODING.equivalent_to_str(self.encoding().unwrap())
+    }
+}
 
 unsafe impl NSCopying for NSValue {
     type Ownership = Shared;
@@ -201,18 +162,18 @@ impl alloc::borrow::ToOwned for NSValue {
     }
 }
 
+impl hash::Hash for NSValue {
+    #[inline]
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+        (**self).hash(state)
+    }
+}
+
 impl PartialEq for NSValue {
     #[doc(alias = "isEqualToValue:")]
     fn eq(&self, other: &Self) -> bool {
         // Use isEqualToValue: instaed of isEqual: since it is faster
-        self.is_equal_to_value(other)
-    }
-}
-
-impl hash::Hash for NSValue {
-    fn hash<H: hash::Hasher>(&self, state: &mut H) {
-        // Delegate to NSObject
-        (**self).hash(state)
+        self.isEqualToValue(other)
     }
 }
 
@@ -231,6 +192,7 @@ impl fmt::Debug for NSValue {
 mod tests {
     use alloc::format;
     use core::{ptr, slice};
+    use std::ffi::c_char;
 
     use super::*;
     use objc2::rc::{__RcTestObject, __ThreadTestData};

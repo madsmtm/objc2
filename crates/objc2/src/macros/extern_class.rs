@@ -242,12 +242,12 @@ macro_rules! __inner_extern_class {
     // TODO: Expose this variant of the macro.
     (
         $(#[$m:meta])*
-        $v:vis struct $name:ident<$($t_struct:ident $(: $b_struct:ident $(= $default:ty)?)?),*> {
+        $v:vis struct $name:ident<$($t_struct:ident $(: $b_struct:ident $(= $default:ty)?)?),* $(,)?> {
             $($field_vis:vis $field:ident: $field_ty:ty,)*
         }
 
-        unsafe impl<$($t_for:ident $(: $b_for:ident)?),*> ClassType for $for:ty {
-            $(#[inherits($($inheritance_rest:ty),+)])?
+        unsafe impl<$($t_for:ident $(: $b_for:ident)?),* $(,)?> ClassType for $for:ty {
+            $(#[inherits($($inheritance_rest:ty),+ $(,)?)])?
             type Super = $superclass:ty;
 
             $(const NAME: &'static str = $name_const:literal;)?

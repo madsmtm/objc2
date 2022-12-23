@@ -1,0 +1,247 @@
+imports = ["AppKit", "CoreData", "Foundation"]
+
+# These return `oneway void`, which is a bit tricky to handle.
+[class.NSPasteboard.methods.releaseGlobally]
+skipped = true
+[class.NSView.methods.releaseGState]
+skipped = true
+
+# Works weirdly since it's defined both as a property, and as a method.
+[class.NSDocument.methods.setDisplayName]
+skipped = true
+
+# Typedef that uses a generic from a class
+[typedef.NSCollectionViewDiffableDataSourceItemProvider]
+skipped = true
+[class.NSCollectionViewDiffableDataSource.methods.initWithCollectionView_itemProvider]
+skipped = true
+
+# Both protocols and classes
+[protocol.NSTextAttachmentCell]
+skipped = true
+[protocol.NSAccessibilityElement]
+skipped = true
+
+# Both property and method
+[class.NSDrawer.methods.open]
+skipped = true
+[class.NSDrawer.methods.close]
+skipped = true
+[class.NSFormCell.methods.titleWidth]
+skipped = true
+[class.NSSliderCell.methods.drawKnob]
+skipped = true
+[class.NSWorkspace.methods.noteFileSystemChanged]
+skipped = true
+
+# Duplicated method
+[class.NSSlider.methods.isVertical]
+skipped = true
+[class.NSSliderCell.methods.isVertical]
+skipped = true
+[class.NSGestureRecognizer.methods.state]
+skipped = true
+
+# Both instance and class methods
+[class.NSCursor.methods.pop]
+skipped = true
+[class.NSEvent.methods.modifierFlags]
+skipped = true
+[class.NSGraphicsContext.methods.saveGraphicsState]
+skipped = true
+[class.NSGraphicsContext.methods.restoreGraphicsState]
+skipped = true
+[class.NSBundle.methods.loadNibFile_externalNameTable_withZone]
+skipped = true
+
+# Uses stuff from different frameworks / system libraries
+[class.NSAnimationContext.methods.timingFunction]
+skipped = true
+[class.NSAnimationContext.methods.setTimingFunction]
+skipped = true
+[class.NSBezierPath.methods.appendBezierPathWithCGGlyph_inFont]
+skipped = true
+[class.NSBezierPath.methods.appendBezierPathWithCGGlyphs_count_inFont]
+skipped = true
+[class.NSBitmapImageRep.methods.initWithCGImage]
+skipped = true
+[class.NSBitmapImageRep.methods.initWithCIImage]
+skipped = true
+[class.NSBitmapImageRep.methods.CGImage]
+skipped = true
+[class.NSColor.methods.CGColor]
+skipped = true
+[class.NSColor.methods.colorWithCGColor]
+skipped = true
+[class.NSColor.methods.colorWithCIColor]
+skipped = true
+[class.NSColorSpace.methods.initWithCGColorSpace]
+skipped = true
+[class.NSColorSpace.methods.CGColorSpace]
+skipped = true
+[class.NSCIImageRep]
+skipped = true
+[class.NSEvent.methods.CGEvent]
+skipped = true
+[class.NSEvent.methods.eventWithCGEvent]
+skipped = true
+[class.NSFont.methods]
+boundingRectForCGGlyph = { skipped = true }
+advancementForCGGlyph = { skipped = true }
+getBoundingRects_forCGGlyphs_count = { skipped = true }
+getAdvancements_forCGGlyphs_count = { skipped = true }
+[class.NSGlyphInfo.methods.glyphInfoWithCGGlyph_forFont_baseString]
+skipped = true
+[class.NSGlyphInfo.methods.glyphID]
+skipped = true
+[class.NSGraphicsContext.methods.graphicsContextWithCGContext_flipped]
+skipped = true
+[class.NSGraphicsContext.methods.CGContext]
+skipped = true
+[class.NSGraphicsContext.methods.CIContext]
+skipped = true
+[class.NSImage.methods]
+initWithCGImage_size = { skipped = true }
+CGImageForProposedRect_context_hints = { skipped = true }
+initWithIconRef = { skipped = true }
+[class.NSImageRep.methods.CGImageForProposedRect_context_hints]
+skipped = true
+[class.NSItemProvider.methods.registerCloudKitShareWithPreparationHandler]
+skipped = true
+[class.NSItemProvider.methods.registerCloudKitShare_container]
+skipped = true
+[class.NSLayoutManager.methods]
+setGlyphs_properties_characterIndexes_font_forGlyphRange = { skipped = true }
+CGGlyphAtIndex_isValidIndex = { skipped = true }
+CGGlyphAtIndex = { skipped = true }
+getGlyphsInRange_glyphs_properties_characterIndexes_bidiLevels = { skipped = true }
+glyphIndexForPoint_inTextContainer_fractionOfDistanceThroughGlyph = { skipped = true }
+showCGGlyphs_positions_count_font_textMatrix_attributes_inContext = { skipped = true }
+showCGGlyphs_positions_count_font_matrix_attributes_inContext = { skipped = true }
+[class.NSLayoutManagerDelegate.methods.layoutManager_shouldGenerateGlyphs_properties_characterIndexes_font_forGlyphRange]
+skipped = true
+[class.NSMovie.methods.initWithMovie]
+skipped = true
+[class.NSMovie.methods.QTMovie]
+skipped = true
+[class.NSOpenGLContext]
+skipped = true
+[class.NSOpenGLLayer]
+skipped = true
+[class.NSOpenGLPixelFormat]
+skipped = true
+[class.NSOpenGLPixelBuffer]
+skipped = true
+[class.NSOpenGLView]
+skipped = true
+[fn.NSOpenGLSetOption]
+skipped = true
+[fn.NSOpenGLGetOption]
+skipped = true
+[fn.NSOpenGLGetVersion]
+skipped = true
+[class.NSTextLayoutFragment.methods.drawAtPoint_inContext]
+skipped = true
+[class.NSTextLineFragment.methods.drawAtPoint_inContext]
+skipped = true
+[class.NSTextView.methods.quickLookPreviewableItemsInRanges]
+skipped = true
+[class.NSRunningApplication.methods.processIdentifier]
+skipped = true
+[class.NSRunningApplication.methods.runningApplicationWithProcessIdentifier]
+skipped = true
+[class.NSSavePanel.methods.allowedContentTypes]
+skipped = true
+[class.NSSavePanel.methods.setAllowedContentTypes]
+skipped = true
+[class.NSView.methods]
+layer = { skipped = true }
+setLayer = { skipped = true }
+backgroundFilters = { skipped = true }
+setBackgroundFilters = { skipped = true }
+compositingFilter = { skipped = true }
+setCompositingFilter = { skipped = true }
+contentFilters = { skipped = true }
+setContentFilters = { skipped = true }
+makeBackingLayer = { skipped = true }
+[class.NSObject.methods]
+layer_shouldInheritContentsScale_fromWindow = { skipped = true }
+[class.NSWorkspace.methods]
+iconForContentType = { skipped = true }
+URLForApplicationToOpenContentType = { skipped = true }
+URLsForApplicationsToOpenContentType = { skipped = true }
+setDefaultApplicationAtURL_toOpenContentType_completionHandler = { skipped = true }
+[class.NSWorkspaceOpenConfiguration.methods.architecture]
+skipped = true
+[class.NSWorkspaceOpenConfiguration.methods.setArchitecture]
+skipped = true
+[protocol.NSApplicationDelegate.methods]
+application_handlerForIntent = { skipped = true }
+application_userDidAcceptCloudKitShareWithMetadata = { skipped = true }
+[protocol.NSLayoutManagerDelegate.methods]
+layoutManager_shouldGenerateGlyphs_properties_characterIndexes_font_forGlyphRange = { skipped = true }
+[protocol.NSCloudSharingServiceDelegate.methods]
+sharingService_didSaveShare = { skipped = true }
+sharingService_didStopSharing = { skipped = true }
+[protocol.NSCloudSharingValidation]
+skipped = true
+[protocol.NSViewLayerContentScaleDelegate]
+skipped = true
+
+# Uses a pointer to SEL, which doesn't implement Encode yet
+[protocol.NSMenuDelegate.methods]
+menuHasKeyEquivalent_forEvent_target_action = { skipped = true }
+
+# These subclass a generic struct, and hence the type parameter defaults to
+# `Object`, which is not PartialEq, Eq nor Hash.
+[class.NSLayoutXAxisAnchor]
+derives = "Debug"
+[class.NSLayoutYAxisAnchor]
+derives = "Debug"
+[class.NSLayoutDimension]
+derives = "Debug"
+
+# Wrong type for enum
+[enum.anonymous.constants]
+NSOKButton = { skipped = true }
+NSCancelButton = { skipped = true }
+NSFileHandlingPanelCancelButton = { skipped = true }
+NSFileHandlingPanelOKButton = { skipped = true }
+
+# Categories for classes defined in other frameworks
+[class.CIImage]
+skipped = true
+[class.CIColor]
+skipped = true
+
+# Different definitions depending on target
+[enum.NSImageResizingMode]
+skipped = true
+[enum.NSTextAlignment]
+skipped = true
+
+# Different definitions depending on deployment target
+[class.NSLayoutAnchor]
+definition-skipped = true
+[class.NSPopover]
+definition-skipped = true
+[class.NSPopover.methods]
+appearance = { skipped = true }
+setAppearance = { skipped = true }
+effectiveAppearance = { skipped = true }
+
+# Protocol class methods (currently unsupported)
+[protocol.NSAnimatablePropertyContainer.methods.defaultAnimationForKey]
+skipped = true
+[protocol.NSPasteboardReading.methods.readableTypesForPasteboard]
+skipped = true
+[protocol.NSPasteboardReading.methods.readingOptionsForType_pasteboard]
+skipped = true
+[protocol.NSWindowRestoration.methods.restoreWindowWithIdentifier_state_completionHandler]
+skipped = true
+
+# I'm unsure of the ABI of the array this takes
+[fn.NSDrawBitmap]
+skipped = true
+[class.NSView.methods.getRectsExposedDuringLiveResize_count]
+skipped = true

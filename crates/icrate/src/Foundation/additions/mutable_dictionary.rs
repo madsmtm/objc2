@@ -1,43 +1,13 @@
 use alloc::vec::Vec;
-use core::fmt;
-use core::marker::PhantomData;
 use core::ops::{Index, IndexMut};
-use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr;
 
-use super::{NSArray, NSCopying, NSDictionary, NSFastEnumeration, NSObject};
 use objc2::rc::{DefaultId, Id, Owned, Shared};
-use objc2::{ClassType, __inner_extern_class, extern_methods, msg_send_id, Message};
+use objc2::{extern_methods, msg_send_id, ClassType, Message};
 
-__inner_extern_class!(
-    /// A mutable collection of objects associated with unique keys.
-    ///
-    /// See the documentation for [`NSDictionary`] and/or [Apple's
-    /// documentation][apple-doc] for more information.
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsmutabledictionary?language=objc
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSMutableDictionary<K: Message, V: Message> {
-        key: PhantomData<Id<K, Shared>>,
-        obj: PhantomData<Id<V, Owned>>,
-    }
-
-    unsafe impl<K: Message, V: Message> ClassType for NSMutableDictionary<K, V> {
-        #[inherits(NSObject)]
-        type Super = NSDictionary<K, V>;
-    }
-);
-
-// Same as `NSDictionary<K, V>`
-unsafe impl<K: Message + Sync + Send, V: Message + Sync> Sync for NSMutableDictionary<K, V> {}
-unsafe impl<K: Message + Sync + Send, V: Message + Send> Send for NSMutableDictionary<K, V> {}
-
-// Same as `NSDictionary<K, V>`
-impl<K: Message + UnwindSafe, V: Message + UnwindSafe> UnwindSafe for NSMutableDictionary<K, V> {}
-impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> RefUnwindSafe
-    for NSMutableDictionary<K, V>
-{
-}
+use crate::Foundation::{
+    NSArray, NSCopying, NSDictionary, NSFastEnumeration2, NSMutableDictionary,
+};
 
 extern_methods!(
     unsafe impl<K: Message, V: Message> NSMutableDictionary<K, V> {
@@ -55,9 +25,6 @@ extern_methods!(
         // `Id<Self, Owned>`
         #[method_id(new)]
         pub fn new() -> Id<Self, Owned>;
-
-        #[method(setDictionary:)]
-        fn set_dictionary(&mut self, dict: &NSDictionary<K, V>);
 
         /// Creates an [`NSMutableDictionary`] from a slice of keys and a
         /// vector of values.
@@ -81,7 +48,7 @@ extern_methods!(
             T: NSCopying<Output = K>,
         {
             let mut dict = NSMutableDictionary::new();
-            dict.set_dictionary(&*NSDictionary::from_keys_and_objects(keys, vals));
+            dict.setDictionary(&*NSDictionary::from_keys_and_objects(keys, vals));
             dict
         }
 
@@ -158,9 +125,6 @@ extern_methods!(
             obj
         }
 
-        #[method(removeObjectForKey:)]
-        fn remove_object_for_key(&mut self, key: &K);
-
         /// Removes a key from the dictionary, returning the value at the key
         /// if the key was previously in the dictionary.
         ///
@@ -183,25 +147,9 @@ extern_methods!(
             let obj = self.get(key).map(|obj| unsafe {
                 Id::retain_autoreleased(obj as *const V as *mut V).unwrap_unchecked()
             });
-            self.remove_object_for_key(key);
+            self.removeObjectForKey(key);
             obj
         }
-
-        /// Clears the dictionary, removing all key-value pairs.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
-        ///
-        /// let mut dict = NSMutableDictionary::new();
-        /// dict.insert(NSString::from_str("one"), NSObject::new());
-        /// dict.clear();
-        /// assert!(dict.is_empty());
-        /// ```
-        #[doc(alias = "removeAllObjects")]
-        #[method(removeAllObjects)]
-        pub fn clear(&mut self);
 
         /// Returns an [`NSArray`] containing the dictionary's values,
         /// consuming the dictionary.
@@ -222,7 +170,7 @@ extern_methods!(
     }
 );
 
-unsafe impl<K: Message, V: Message> NSFastEnumeration for NSMutableDictionary<K, V> {
+unsafe impl<K: Message, V: Message> NSFastEnumeration2 for NSMutableDictionary<K, V> {
     type Item = K;
 }
 
@@ -249,19 +197,12 @@ impl<K: Message, V: Message> DefaultId for NSMutableDictionary<K, V> {
     }
 }
 
-impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug for NSMutableDictionary<K, V> {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&**self, f)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use alloc::vec;
 
-    use crate::Foundation::{NSNumber, NSString};
+    use crate::Foundation::{NSNumber, NSObject, NSString};
     use objc2::rc::{__RcTestObject, __ThreadTestData};
 
     fn sample_dict() -> Id<NSMutableDictionary<NSNumber, NSObject>, Owned> {
@@ -341,7 +282,7 @@ mod tests {
         let mut dict = sample_dict();
         assert_eq!(dict.len(), 3);
 
-        dict.clear();
+        dict.removeAllObjects();
         assert!(dict.is_empty());
     }
 
@@ -365,7 +306,7 @@ mod tests {
         expected.assert_current();
         assert_eq!(dict.len(), 2);
 
-        dict.clear();
+        dict.removeAllObjects();
         expected.release += 2;
         expected.dealloc += 2;
         expected.assert_current();

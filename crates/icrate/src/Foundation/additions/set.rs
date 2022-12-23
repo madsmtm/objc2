@@ -1,31 +1,14 @@
 use alloc::vec::Vec;
 use core::fmt;
-use core::marker::PhantomData;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use super::{
-    NSArray, NSCopying, NSEnumerator, NSFastEnumeration, NSFastEnumerator, NSMutableCopying,
-    NSMutableSet, NSObject,
-};
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use objc2::{ClassType, Message, __inner_extern_class, extern_methods, msg_send, msg_send_id};
+use objc2::{extern_methods, msg_send, msg_send_id, ClassType, Message};
 
-__inner_extern_class!(
-    /// An immutable unordered collection of unique objects.
-    ///
-    /// See [Apple's documentation][apple-doc].
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsset?language=objc
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSSet<T: Message, O: Ownership = Shared> {
-        item: PhantomData<Id<T, O>>,
-        notunwindsafe: PhantomData<&'static mut ()>,
-    }
-
-    unsafe impl<T: Message, O: Ownership> ClassType for NSSet<T, O> {
-        type Super = NSObject;
-    }
-);
+use crate::Foundation::{
+    NSArray, NSCopying, NSEnumerator2, NSFastEnumeration2, NSFastEnumerator2, NSMutableCopying,
+    NSMutableSet, NSSet,
+};
 
 // SAFETY: Same as NSArray<T, O>
 unsafe impl<T: Message + Sync + Send> Sync for NSSet<T, Shared> {}
@@ -33,10 +16,19 @@ unsafe impl<T: Message + Sync + Send> Send for NSSet<T, Shared> {}
 unsafe impl<T: Message + Sync> Sync for NSSet<T, Owned> {}
 unsafe impl<T: Message + Send> Send for NSSet<T, Owned> {}
 
+unsafe impl<T: Message + Sync + Send> Sync for NSMutableSet<T, Shared> {}
+unsafe impl<T: Message + Sync + Send> Send for NSMutableSet<T, Shared> {}
+unsafe impl<T: Message + Sync> Sync for NSMutableSet<T, Owned> {}
+unsafe impl<T: Message + Send> Send for NSMutableSet<T, Owned> {}
+
 // SAFETY: Same as NSArray<T, O>
 impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSSet<T, O> {}
 impl<T: Message + RefUnwindSafe> UnwindSafe for NSSet<T, Shared> {}
 impl<T: Message + UnwindSafe> UnwindSafe for NSSet<T, Owned> {}
+
+impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSMutableSet<T, O> {}
+impl<T: Message + RefUnwindSafe> UnwindSafe for NSMutableSet<T, Shared> {}
+impl<T: Message + UnwindSafe> UnwindSafe for NSMutableSet<T, Owned> {}
 
 #[track_caller]
 pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: ClassType, O: Ownership>(
@@ -102,8 +94,9 @@ extern_methods!(
         /// assert_eq!(set.len(), 3);
         /// ```
         #[doc(alias = "count")]
-        #[method(count)]
-        pub fn len(&self) -> usize;
+        pub fn len(&self) -> usize {
+            self.count()
+        }
 
         /// Returns `true` if the set contains no elements.
         ///
@@ -150,10 +143,10 @@ extern_methods!(
         /// }
         /// ```
         #[doc(alias = "objectEnumerator")]
-        pub fn iter(&self) -> NSEnumerator<'_, T> {
+        pub fn iter(&self) -> NSEnumerator2<'_, T> {
             unsafe {
                 let result = msg_send![self, objectEnumerator];
-                NSEnumerator::from_ptr(result)
+                NSEnumerator2::from_ptr(result)
             }
         }
 
@@ -215,12 +208,11 @@ extern_methods!(
         /// assert_eq!(set.to_array().len(), 3);
         /// assert!(set.to_array().iter().all(|i| nums.contains(&i.as_i32())));
         /// ```
-        // SAFETY:
-        // We only define this method for sets with shared elements
-        // because we can't return copies of owned elements.
-        #[method_id(allObjects)]
         #[doc(alias = "allObjects")]
-        pub fn to_array(&self) -> Id<NSArray<T, Shared>, Shared>;
+        pub fn to_array(&self) -> Id<NSArray<T, Shared>, Shared> {
+            // SAFETY: The set's elements are shared
+            unsafe { self.allObjects() }
+        }
     }
 
     // We're explicit about `T` being `PartialEq` for these methods because the
@@ -240,8 +232,9 @@ extern_methods!(
         /// assert!(set.contains(ns_string!("one")));
         /// ```
         #[doc(alias = "containsObject:")]
-        #[method(containsObject:)]
-        pub fn contains(&self, value: &T) -> bool;
+        pub fn contains(&self, value: &T) -> bool {
+            unsafe { self.containsObject(value) }
+        }
 
         /// Returns a reference to the value in the set, if any, that is equal
         /// to the given value.
@@ -337,13 +330,13 @@ impl<T: Message> alloc::borrow::ToOwned for NSSet<T, Shared> {
     }
 }
 
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSSet<T, O> {
+unsafe impl<T: Message, O: Ownership> NSFastEnumeration2 for NSSet<T, O> {
     type Item = T;
 }
 
 impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSSet<T, O> {
     type Item = &'a T;
-    type IntoIter = NSFastEnumerator<'a, NSSet<T, O>>;
+    type IntoIter = NSFastEnumerator2<'a, NSSet<T, O>>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.iter_fast()
@@ -373,7 +366,7 @@ mod tests {
 
     use super::*;
     use crate::ns_string;
-    use crate::Foundation::{NSMutableString, NSNumber, NSString};
+    use crate::Foundation::{NSMutableString, NSNumber, NSObject, NSString};
     use objc2::rc::{__RcTestObject, __ThreadTestData};
 
     #[test]
@@ -540,12 +533,12 @@ mod tests {
 
         let mut vec = NSSet::into_vec(set);
         for str in vec.iter_mut() {
-            str.push_nsstring(ns_string!(" times zero is zero"));
+            str.appendString(ns_string!(" times zero is zero"));
         }
 
         assert_eq!(vec.len(), 3);
         let suffix = ns_string!("zero");
-        assert!(vec.iter().all(|str| str.has_suffix(suffix)));
+        assert!(vec.iter().all(|str| str.hasSuffix(suffix)));
     }
 
     #[test]

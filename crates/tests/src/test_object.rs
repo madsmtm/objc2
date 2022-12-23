@@ -1,8 +1,11 @@
 use core::mem::{size_of, ManuallyDrop};
 use std::os::raw::c_int;
 
+#[cfg(feature = "Foundation")]
 use icrate::Foundation::NSNumber;
-use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned, Shared};
+#[cfg(feature = "Foundation")]
+use objc2::rc::Shared;
+use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
 use objc2::runtime::{Bool, Class, NSObject, Object, Protocol};
 #[cfg(feature = "malloc")]
 use objc2::sel;
@@ -25,6 +28,7 @@ extern_protocol!(
         // #[method(b)]
         // fn b() -> c_int;
 
+        #[cfg(feature = "Foundation")]
         #[method_id(c)]
         fn c(&self) -> Id<NSNumber, Shared>;
 
@@ -41,6 +45,7 @@ extern_protocol!(
         // #[optional]
         // fn f() -> c_int;
 
+        #[cfg(feature = "Foundation")]
         #[optional]
         #[method_id(g)]
         fn g(&self) -> Id<NSNumber, Shared>;
@@ -312,10 +317,12 @@ fn test_protocol() {
     let proto: Id<MyTestProtocol, _> = Id::into_protocol(obj);
     assert_eq!(proto.a(), 1);
     // TODO: assert_eq!(MyTestObject::b(), 2);
+    #[cfg(feature = "Foundation")]
     assert_eq!(proto.c().as_i32(), 3);
     // TODO: assert_eq!(MyTestObject::d().as_i32(), 4);
     assert_eq!(proto.e(), 5);
     // TODO: assert_eq!(MyTestObject::f(), 6);
+    #[cfg(feature = "Foundation")]
     assert_eq!(proto.g().as_i32(), 7);
     // TODO: assert_eq!(MyTestObject::h().as_i32(), 8);
 

@@ -3,22 +3,10 @@ use core::fmt;
 use core::ops::AddAssign;
 use core::str;
 
-use super::{NSCopying, NSMutableCopying, NSObject, NSString};
 use objc2::rc::{DefaultId, Id, Owned, Shared};
-use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::{extern_methods, ClassType};
 
-extern_class!(
-    /// A dynamic plain-text Unicode string object.
-    ///
-    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutablestring?language=objc).
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSMutableString;
-
-    unsafe impl ClassType for NSMutableString {
-        #[inherits(NSObject)]
-        type Super = NSString;
-    }
-);
+use crate::Foundation::{NSCopying, NSMutableCopying, NSMutableString, NSString};
 
 extern_methods!(
     /// Creating mutable strings.
@@ -36,38 +24,6 @@ extern_methods!(
                 Id::new(obj.cast()).unwrap()
             }
         }
-
-        /// Creates a new [`NSMutableString`] from the given [`NSString`].
-        #[doc(alias = "initWithString:")]
-        pub fn from_nsstring(string: &NSString) -> Id<Self, Owned> {
-            unsafe { msg_send_id![Self::alloc(), initWithString: string] }
-        }
-
-        #[doc(alias = "initWithCapacity:")]
-        pub fn with_capacity(capacity: usize) -> Id<Self, Owned> {
-            unsafe { msg_send_id![Self::alloc(), initWithCapacity: capacity] }
-        }
-    }
-
-    /// Mutating strings.
-    unsafe impl NSMutableString {
-        /// Appends the given [`NSString`] onto the end of this.
-        #[doc(alias = "appendString:")]
-        // SAFETY: The string is not nil
-        #[method(appendString:)]
-        pub fn push_nsstring(&mut self, nsstring: &NSString);
-
-        /// Replaces the entire string.
-        #[doc(alias = "setString:")]
-        // SAFETY: The string is not nil
-        #[method(setString:)]
-        pub fn replace(&mut self, nsstring: &NSString);
-
-        // TODO:
-        // - deleteCharactersInRange:
-        // - replaceCharactersInRange:withString:
-        // - insertString:atIndex:
-        // Figure out how these work on character boundaries
     }
 );
 
@@ -99,7 +55,7 @@ impl alloc::borrow::ToOwned for NSMutableString {
 impl AddAssign<&NSString> for NSMutableString {
     #[inline]
     fn add_assign(&mut self, other: &NSString) {
-        self.push_nsstring(other)
+        self.appendString(other)
     }
 }
 
@@ -148,7 +104,7 @@ impl Ord for NSMutableString {
 impl fmt::Write for NSMutableString {
     fn write_str(&mut self, s: &str) -> Result<(), fmt::Error> {
         let nsstring = NSString::from_str(s);
-        self.push_nsstring(&nsstring);
+        self.appendString(&nsstring);
         Ok(())
     }
 }
@@ -157,13 +113,6 @@ impl fmt::Display for NSMutableString {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(&**self, f)
-    }
-}
-
-impl fmt::Debug for NSMutableString {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&**self, f)
     }
 }
 
@@ -184,28 +133,28 @@ mod tests {
     #[test]
     fn test_from_nsstring() {
         let s = NSString::from_str("abc");
-        let s = NSMutableString::from_nsstring(&s);
+        let s = NSMutableString::stringWithString(&s);
         assert_eq!(&s.to_string(), "abc");
     }
 
     #[test]
-    fn test_push_nsstring() {
+    fn test_append() {
         let mut s = NSMutableString::from_str("abc");
-        s.push_nsstring(&NSString::from_str("def"));
+        s.appendString(&NSString::from_str("def"));
         *s += &NSString::from_str("ghi");
         assert_eq!(&s.to_string(), "abcdefghi");
     }
 
     #[test]
-    fn test_replace() {
+    fn test_set() {
         let mut s = NSMutableString::from_str("abc");
-        s.replace(&NSString::from_str("def"));
+        s.setString(&NSString::from_str("def"));
         assert_eq!(&s.to_string(), "def");
     }
 
     #[test]
     fn test_with_capacity() {
-        let mut s = NSMutableString::with_capacity(3);
+        let mut s = NSMutableString::stringWithCapacity(3);
         *s += &NSString::from_str("abc");
         *s += &NSString::from_str("def");
         assert_eq!(&s.to_string(), "abcdef");

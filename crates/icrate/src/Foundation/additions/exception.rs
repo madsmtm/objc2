@@ -2,29 +2,14 @@ use core::fmt;
 use core::hint::unreachable_unchecked;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use super::{NSCopying, NSDictionary, NSObject, NSString};
 use objc2::exception::Exception;
 use objc2::rc::{Id, Shared};
 use objc2::runtime::Object;
-use objc2::{extern_class, extern_methods, msg_send_id, sel, ClassType};
+use objc2::{extern_methods, msg_send_id, sel, ClassType};
 
-extern_class!(
-    /// A special condition that interrupts the normal flow of program
-    /// execution.
-    ///
-    /// Exceptions can be thrown and caught using the `objc2::exception`
-    /// module.
-    ///
-    /// See also [Apple's documentation][doc].
-    ///
-    /// [doc]: https://developer.apple.com/documentation/foundation/nsexception?language=objc
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSException;
-
-    unsafe impl ClassType for NSException {
-        type Super = NSObject;
-    }
-);
+use crate::Foundation::{
+    NSCopying, NSDictionary, NSException, NSExceptionName, NSObject, NSString,
+};
 
 // SAFETY: Exception objects are immutable data containers, and documented as
 // thread safe.
@@ -34,7 +19,6 @@ unsafe impl Send for NSException {}
 impl UnwindSafe for NSException {}
 impl RefUnwindSafe for NSException {}
 
-type NSExceptionName = NSString;
 extern_methods!(
     unsafe impl NSException {
         /// Create a new [`NSException`] object.
@@ -76,24 +60,6 @@ extern_methods!(
             // unexpected happened.
             unsafe { unreachable_unchecked() }
         }
-
-        /// A that uniquely identifies the type of exception.
-        ///
-        /// See [Apple's documentation][doc] for some of the different values this
-        /// can take.
-        ///
-        /// [doc]: https://developer.apple.com/documentation/foundation/nsexceptionname?language=objc
-        #[method_id(name)]
-        // Nullability not documented, but a name is expected in most places.
-        pub fn name(&self) -> Id<NSExceptionName, Shared>;
-
-        /// A human-readable message summarizing the reason for the exception.
-        #[method_id(reason)]
-        pub fn reason(&self) -> Option<Id<NSString, Shared>>;
-
-        /// Application-specific data pertaining to the exception.
-        #[method_id(userInfo)]
-        pub fn user_info(&self) -> Option<Id<NSDictionary<Object, Object>, Shared>>;
 
         /// Convert this into an [`Exception`] object.
         pub fn into_exception(this: Id<Self, Shared>) -> Id<Exception, Shared> {
@@ -171,7 +137,7 @@ mod tests {
 
         assert_eq!(exc.name(), NSString::from_str("abc"));
         assert_eq!(exc.reason().unwrap(), NSString::from_str("def"));
-        assert!(exc.user_info().is_none());
+        assert!(exc.userInfo().is_none());
 
         let debug = format!("<NSException: {exc:p}> 'abc' reason:def");
         assert_eq!(format!("{exc:?}"), debug);

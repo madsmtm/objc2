@@ -1,43 +1,17 @@
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::ffi::c_void;
-use core::fmt;
-use core::marker::PhantomData;
 use core::ops::{Index, IndexMut};
+use core::ptr::NonNull;
+
+use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
+use objc2::{extern_methods, ClassType, Message};
 
 use super::array::with_objects;
-use super::{
-    NSArray, NSComparisonResult, NSCopying, NSFastEnumeration, NSFastEnumerator, NSMutableCopying,
-    NSObject,
+use crate::Foundation::{
+    NSArray, NSComparisonResult, NSCopying, NSFastEnumeration2, NSFastEnumerator2, NSInteger,
+    NSMutableArray, NSMutableCopying,
 };
-use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use objc2::{ClassType, Message, __inner_extern_class, extern_methods, msg_send};
-
-__inner_extern_class!(
-    /// A growable ordered collection of objects.
-    ///
-    /// See the documentation for [`NSArray`] and/or [Apple's
-    /// documentation][apple-doc] for more information.
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsmutablearray?language=objc
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSMutableArray<T: Message, O: Ownership = Owned> {
-        p: PhantomData<*mut ()>,
-    }
-
-    unsafe impl<T: Message, O: Ownership> ClassType for NSMutableArray<T, O> {
-        #[inherits(NSObject)]
-        type Super = NSArray<T, O>;
-    }
-);
-
-// SAFETY: Same as NSArray<T, O>
-//
-// Put here because rustdoc doesn't show these otherwise
-unsafe impl<T: Message + Sync + Send> Sync for NSMutableArray<T, Shared> {}
-unsafe impl<T: Message + Sync + Send> Send for NSMutableArray<T, Shared> {}
-unsafe impl<T: Message + Sync> Sync for NSMutableArray<T, Owned> {}
-unsafe impl<T: Message + Send> Send for NSMutableArray<T, Owned> {}
 
 extern_methods!(
     /// Generic creation methods.
@@ -67,8 +41,8 @@ extern_methods!(
     unsafe impl<T: Message, O: Ownership> NSMutableArray<T, O> {
         #[doc(alias = "addObject:")]
         pub fn push(&mut self, obj: Id<T, O>) {
-            // SAFETY: The object is not nil
-            unsafe { msg_send![self, addObject: &*obj] }
+            // SAFETY: The object has correct ownership.
+            unsafe { self.addObject(&obj) }
         }
 
         #[doc(alias = "insertObject:atIndex:")]
@@ -76,9 +50,9 @@ extern_methods!(
             // TODO: Replace this check with catching the thrown NSRangeException
             let len = self.len();
             if index < len {
-                // SAFETY: The object is not nil and the index is checked to be in
-                // bounds.
-                unsafe { msg_send![self, insertObject: &*obj, atIndex: index] }
+                // SAFETY: The object has correct ownership, and the index is
+                // checked to be in bounds.
+                unsafe { self.insertObject_atIndex(&obj, index) }
             } else {
                 panic!(
                     "insertion index (is {}) should be <= len (is {})",
@@ -93,18 +67,10 @@ extern_methods!(
                 let obj = self.get(index).unwrap();
                 Id::retain_autoreleased(obj as *const T as *mut T).unwrap_unchecked()
             };
-            unsafe {
-                let _: () = msg_send![
-                    self,
-                    replaceObjectAtIndex: index,
-                    withObject: &*obj,
-                ];
-            }
+            // SAFETY: The object has correct ownership.
+            unsafe { self.replaceObjectAtIndex_withObject(index, &obj) };
             old_obj
         }
-
-        #[method(removeObjectAtIndex:)]
-        unsafe fn remove_at(&mut self, index: usize);
 
         #[doc(alias = "removeObjectAtIndex:")]
         pub fn remove(&mut self, index: usize) -> Id<T, O> {
@@ -113,12 +79,10 @@ extern_methods!(
             } else {
                 panic!("removal index should be < len");
             };
-            unsafe { self.remove_at(index) };
+            // SAFETY: The index is checked to be in bounds.
+            unsafe { self.removeObjectAtIndex(index) };
             obj
         }
-
-        #[method(removeLastObject)]
-        unsafe fn remove_last(&mut self);
 
         #[doc(alias = "removeLastObject")]
         pub fn pop(&mut self) -> Option<Id<T, O>> {
@@ -126,44 +90,39 @@ extern_methods!(
                 .map(|obj| unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() })
                 .map(|obj| {
                     // SAFETY: `Self::last` just checked that there is an object
-                    unsafe { self.remove_last() };
+                    unsafe { self.removeLastObject() };
                     obj
                 })
         }
 
-        #[doc(alias = "removeAllObjects")]
-        #[method(removeAllObjects)]
-        pub fn clear(&mut self);
-
         #[doc(alias = "sortUsingFunction:context:")]
         pub fn sort_by<F: FnMut(&T, &T) -> Ordering>(&mut self, compare: F) {
             // TODO: "C-unwind"
-            extern "C" fn compare_with_closure<U, F: FnMut(&U, &U) -> Ordering>(
-                obj1: &U,
-                obj2: &U,
+            unsafe extern "C" fn compare_with_closure<U, F: FnMut(&U, &U) -> Ordering>(
+                obj1: NonNull<U>,
+                obj2: NonNull<U>,
                 context: *mut c_void,
-            ) -> NSComparisonResult {
+            ) -> NSInteger {
+                let context: *mut F = context.cast();
                 // Bring back a reference to the closure.
                 // Guaranteed to be unique, we gave `sortUsingFunction` unique is
                 // ownership, and that method only runs one function at a time.
-                let closure: &mut F = unsafe { context.cast::<F>().as_mut().unwrap_unchecked() };
+                let closure: &mut F = unsafe { context.as_mut().unwrap_unchecked() };
 
-                NSComparisonResult::from((*closure)(obj1, obj2))
+                // SAFETY: The objects are guaranteed to be valid
+                let (obj1, obj2) = unsafe { (obj1.as_ref(), obj2.as_ref()) };
+
+                NSComparisonResult::from((*closure)(obj1, obj2)) as _
             }
 
-            // We can't name the actual lifetimes in use here, so use `_`.
-            // See also https://github.com/rust-lang/rust/issues/56105
-            let f: extern "C" fn(_, _, *mut c_void) -> NSComparisonResult =
-                compare_with_closure::<T, F>;
+            // Create function pointer
+            let f: unsafe extern "C" fn(_, _, _) -> _ = compare_with_closure::<T, F>;
 
             // Grab a type-erased pointer to the closure (a pointer to stack).
             let mut closure = compare;
             let context: *mut F = &mut closure;
-            let context: *mut c_void = context.cast();
 
-            unsafe {
-                let _: () = msg_send![self, sortUsingFunction: f, context: context];
-            }
+            unsafe { self.sortUsingFunction_context(f, context.cast()) };
             // Keep the closure alive until the function has run.
             drop(closure);
         }
@@ -190,13 +149,13 @@ impl<T: Message> alloc::borrow::ToOwned for NSMutableArray<T, Shared> {
     }
 }
 
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSMutableArray<T, O> {
+unsafe impl<T: Message, O: Ownership> NSFastEnumeration2 for NSMutableArray<T, O> {
     type Item = T;
 }
 
 impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSMutableArray<T, O> {
     type Item = &'a T;
-    type IntoIter = NSFastEnumerator<'a, NSMutableArray<T, O>>;
+    type IntoIter = NSFastEnumerator2<'a, NSMutableArray<T, O>>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.iter_fast()
@@ -230,13 +189,6 @@ impl<T: Message, O: Ownership> DefaultId for NSMutableArray<T, O> {
     #[inline]
     fn default_id() -> Id<Self, Self::Ownership> {
         Self::new()
-    }
-}
-
-impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for NSMutableArray<T, O> {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&**self, f)
     }
 }
 
@@ -304,7 +256,7 @@ mod tests {
         expected.assert_current();
         assert_eq!(array.len(), 2);
 
-        array.clear();
+        array.removeAllObjects();
         expected.release += 2;
         expected.dealloc += 2;
         expected.assert_current();

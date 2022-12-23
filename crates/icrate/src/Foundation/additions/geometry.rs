@@ -1,4 +1,5 @@
 use objc2::encode::{Encode, Encoding, RefEncode};
+use objc2::ffi::NSUInteger;
 
 #[cfg(target_pointer_width = "64")]
 type InnerFloat = f64;
@@ -367,8 +368,19 @@ pub type NSSize = CGSize;
 /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsrect?language=objc).
 pub type NSRect = CGRect;
 
-// TODO: struct NSEdgeInsets
-// TODO: enum NSRectEdge
+ns_enum!(
+    #[underlying(NSUInteger)]
+    pub enum NSRectEdge {
+        NSRectEdgeMinX = 0,
+        NSRectEdgeMinY = 1,
+        NSRectEdgeMaxX = 2,
+        NSRectEdgeMaxY = 3,
+        NSMinXEdge = NSRectEdgeMinX,
+        NSMinYEdge = NSRectEdgeMinY,
+        NSMaxXEdge = NSRectEdgeMaxX,
+        NSMaxYEdge = NSRectEdgeMaxY,
+    }
+);
 
 #[cfg(test)]
 mod tests {
@@ -391,14 +403,7 @@ mod tests {
     #[test]
     #[cfg(any(all(feature = "apple", target_os = "macos"), feature = "gnustep-1-7"))] // or macabi
     fn test_partial_eq() {
-        use objc2::runtime::Bool;
-
-        // Note: No need to use "C-unwind"
-        extern "C" {
-            fn NSEqualPoints(a: NSPoint, b: NSPoint) -> Bool;
-            fn NSEqualSizes(a: NSSize, b: NSSize) -> Bool;
-            fn NSEqualRects(a: NSRect, b: NSRect) -> Bool;
-        }
+        use crate::Foundation::{NSEqualPoints, NSEqualRects, NSEqualSizes};
 
         // We assume that comparisons handle e.g. `x` and `y` in the same way,
         // therefore we just set the coordinates / dimensions to the same.

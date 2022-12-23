@@ -1,21 +1,9 @@
-use core::fmt;
-
-use super::{NSAttributedString, NSCopying, NSMutableCopying, NSObject, NSString};
 use objc2::rc::{DefaultId, Id, Owned, Shared};
-use objc2::{extern_class, extern_methods, msg_send_id, ClassType};
+use objc2::{extern_methods, msg_send_id, ClassType};
 
-extern_class!(
-    /// A mutable string that has associated attributes.
-    ///
-    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsmutableattributedstring?language=objc).
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSMutableAttributedString;
-
-    unsafe impl ClassType for NSMutableAttributedString {
-        #[inherits(NSObject)]
-        type Super = NSAttributedString;
-    }
-);
+use crate::Foundation::{
+    NSAttributedString, NSCopying, NSMutableAttributedString, NSMutableCopying, NSString,
+};
 
 extern_methods!(
     /// Creating mutable attributed strings.
@@ -35,19 +23,6 @@ extern_methods!(
         pub fn from_attributed_nsstring(attributed_string: &NSAttributedString) -> Id<Self, Owned> {
             unsafe { msg_send_id![Self::alloc(), initWithAttributedString: attributed_string] }
         }
-    }
-
-    /// Modifying the attributed string.
-    unsafe impl NSMutableAttributedString {
-        // TODO
-        // - mutableString
-        // - replaceCharactersInRange:withString:
-        // - setAttributes:range:
-
-        /// Replaces the entire attributed string.
-        #[doc(alias = "setAttributedString:")]
-        #[method(setAttributedString:)]
-        pub fn replace(&mut self, attributed_string: &NSAttributedString);
     }
 );
 
@@ -73,12 +48,6 @@ impl alloc::borrow::ToOwned for NSMutableAttributedString {
     type Owned = Id<NSMutableAttributedString, Owned>;
     fn to_owned(&self) -> Self::Owned {
         self.mutable_copy()
-    }
-}
-
-impl fmt::Debug for NSMutableAttributedString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&**self, f)
     }
 }
 

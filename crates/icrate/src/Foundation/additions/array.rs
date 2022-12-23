@@ -1,77 +1,38 @@
 use alloc::vec::Vec;
 use core::fmt;
-use core::marker::PhantomData;
+use core::mem;
 use core::ops::{Index, IndexMut, Range};
 use core::panic::{RefUnwindSafe, UnwindSafe};
+use core::ptr::NonNull;
 
-use super::{
-    NSCopying, NSEnumerator, NSFastEnumeration, NSFastEnumerator, NSMutableArray, NSMutableCopying,
-    NSObject, NSRange,
-};
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use objc2::runtime::Object;
-use objc2::{ClassType, Message, __inner_extern_class, extern_methods, msg_send, msg_send_id};
+use objc2::{extern_methods, msg_send, msg_send_id, ClassType, Message};
 
-__inner_extern_class!(
-    /// An immutable ordered collection of objects.
-    ///
-    /// This is the Objective-C equivalent of a "boxed slice" (`Box<[T]>`),
-    /// so effectively a `Vec<T>` where you can't change the number of
-    /// elements.
-    ///
-    /// The type of the contained objects is described by the generic
-    /// parameter `T`, and the ownership of the objects is described with the
-    /// generic parameter `O`.
-    ///
-    ///
-    /// # Ownership
-    ///
-    /// While `NSArray` _itself_ is immutable, i.e. the number of objects it
-    /// contains can't change, it is still possible to modify the contained
-    /// objects themselves, if you know you're the sole owner of them -
-    /// quite similar to how you can modify elements in `Box<[T]>`.
-    ///
-    /// To mutate the contained objects the ownership must be `O = Owned`. A
-    /// summary of what the different "types" of arrays allow you to do can be
-    /// found below. `Array` refers to either `NSArray` or `NSMutableArray`.
-    /// - `Id<NSMutableArray<T, Owned>, Owned>`: Allows you to mutate the
-    ///   objects, and the array itself.
-    /// - `Id<NSMutableArray<T, Shared>, Owned>`: Allows you to mutate the
-    ///   array itself, but not it's contents.
-    /// - `Id<NSArray<T, Owned>, Owned>`: Allows you to mutate the objects,
-    ///   but not the array itself.
-    /// - `Id<NSArray<T, Shared>, Owned>`: Effectively the same as the below.
-    /// - `Id<Array<T, Shared>, Shared>`: Allows you to copy the array, but
-    ///   does not allow you to modify it in any way.
-    /// - `Id<Array<T, Owned>, Shared>`: Pretty useless compared to the
-    ///   others, avoid this.
-    ///
-    /// See [Apple's documentation][apple-doc].
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsarray?language=objc
-    // `T: PartialEq` bound correct because `NSArray` does deep (instead of
-    // shallow) equality comparisons.
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSArray<T: Message, O: Ownership = Shared> {
-        item: PhantomData<Id<T, O>>,
-        notunwindsafe: PhantomData<&'static mut ()>,
-    }
+use crate::Foundation::{
+    NSArray, NSCopying, NSEnumerator2, NSFastEnumeration2, NSFastEnumerator2, NSMutableArray,
+    NSMutableCopying, NSRange,
+};
 
-    unsafe impl<T: Message, O: Ownership> ClassType for NSArray<T, O> {
-        type Super = NSObject;
-    }
-);
-
-// SAFETY: Same as Id<T, O> (which is what NSArray effectively stores).
+// SAFETY: Same as Id<T, O> (what NSArray and NSMutableArray effectively store).
 unsafe impl<T: Message + Sync + Send> Sync for NSArray<T, Shared> {}
 unsafe impl<T: Message + Sync + Send> Send for NSArray<T, Shared> {}
 unsafe impl<T: Message + Sync> Sync for NSArray<T, Owned> {}
 unsafe impl<T: Message + Send> Send for NSArray<T, Owned> {}
 
+unsafe impl<T: Message + Sync + Send> Sync for NSMutableArray<T, Shared> {}
+unsafe impl<T: Message + Sync + Send> Send for NSMutableArray<T, Shared> {}
+unsafe impl<T: Message + Sync> Sync for NSMutableArray<T, Owned> {}
+unsafe impl<T: Message + Send> Send for NSMutableArray<T, Owned> {}
+
 // Also same as Id<T, O>
 impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSArray<T, O> {}
 impl<T: Message + RefUnwindSafe> UnwindSafe for NSArray<T, Shared> {}
 impl<T: Message + UnwindSafe> UnwindSafe for NSArray<T, Owned> {}
+
+impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSMutableArray<T, O> {}
+impl<T: Message + RefUnwindSafe> UnwindSafe for NSMutableArray<T, Shared> {}
+impl<T: Message + UnwindSafe> UnwindSafe for NSMutableArray<T, Owned> {}
 
 #[track_caller]
 pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: ClassType, O: Ownership>(
@@ -133,8 +94,9 @@ extern_methods!(
     /// Generic accessor methods.
     unsafe impl<T: Message, O: Ownership> NSArray<T, O> {
         #[doc(alias = "count")]
-        #[method(count)]
-        pub fn len(&self) -> usize;
+        pub fn len(&self) -> usize {
+            self.count()
+        }
 
         pub fn is_empty(&self) -> bool {
             self.len() == 0
@@ -163,28 +125,34 @@ extern_methods!(
         pub fn last(&self) -> Option<&T>;
 
         #[doc(alias = "objectEnumerator")]
-        pub fn iter(&self) -> NSEnumerator<'_, T> {
+        pub fn iter(&self) -> NSEnumerator2<'_, T> {
             unsafe {
                 let result: *mut Object = msg_send![self, objectEnumerator];
-                NSEnumerator::from_ptr(result)
+                NSEnumerator2::from_ptr(result)
             }
         }
 
-        #[method(getObjects:range:)]
-        unsafe fn get_objects(&self, ptr: *mut &T, range: NSRange);
-
-        pub fn objects_in_range(&self, range: Range<usize>) -> Vec<&T> {
+        unsafe fn objects_in_range_unchecked(&self, range: Range<usize>) -> Vec<&T> {
             let range = NSRange::from(range);
-            let mut vec = Vec::with_capacity(range.length);
+            let mut vec: Vec<NonNull<T>> = Vec::with_capacity(range.length);
             unsafe {
-                self.get_objects(vec.as_mut_ptr(), range);
+                self.getObjects_range(NonNull::new(vec.as_mut_ptr()).unwrap(), range);
                 vec.set_len(range.length);
+                mem::transmute(vec)
             }
-            vec
+        }
+
+        pub fn objects_in_range(&self, range: Range<usize>) -> Option<Vec<&T>> {
+            if range.end > self.len() {
+                return None;
+            }
+            // SAFETY: Just checked that the range is in bounds
+            Some(unsafe { self.objects_in_range_unchecked(range) })
         }
 
         pub fn to_vec(&self) -> Vec<&T> {
-            self.objects_in_range(0..self.len())
+            // SAFETY: The range is know to be in bounds
+            unsafe { self.objects_in_range_unchecked(0..self.len()) }
         }
 
         // TODO: Take Id<Self, Self::ItemOwnership> ?
@@ -257,13 +225,13 @@ impl<T: Message> alloc::borrow::ToOwned for NSArray<T, Shared> {
     }
 }
 
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSArray<T, O> {
+unsafe impl<T: Message, O: Ownership> NSFastEnumeration2 for NSArray<T, O> {
     type Item = T;
 }
 
 impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSArray<T, O> {
     type Item = &'a T;
-    type IntoIter = NSFastEnumerator<'a, NSArray<T, O>>;
+    type IntoIter = NSFastEnumerator2<'a, NSArray<T, O>>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.iter_fast()
@@ -306,7 +274,7 @@ mod tests {
     use alloc::vec::Vec;
 
     use super::*;
-    use crate::Foundation::{NSNumber, NSString};
+    use crate::Foundation::{NSNumber, NSObject, NSString};
     use objc2::rc::{__RcTestObject, __ThreadTestData};
 
     fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
@@ -467,15 +435,15 @@ mod tests {
     fn test_objects_in_range() {
         let array = sample_array(4);
 
-        let middle_objs = array.objects_in_range(1..3);
+        let middle_objs = array.objects_in_range(1..3).unwrap();
         assert_eq!(middle_objs.len(), 2);
         assert_eq!(middle_objs[0], array.get(1).unwrap());
         assert_eq!(middle_objs[1], array.get(2).unwrap());
 
-        let empty_objs = array.objects_in_range(1..1);
+        let empty_objs = array.objects_in_range(1..1).unwrap();
         assert!(empty_objs.is_empty());
 
-        let all_objs = array.objects_in_range(0..4);
+        let all_objs = array.objects_in_range(0..4).unwrap();
         assert_eq!(all_objs.len(), 4);
     }
 

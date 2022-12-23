@@ -1,35 +1,12 @@
 use alloc::vec::Vec;
-use core::fmt;
-use core::marker::PhantomData;
+
+use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
+use objc2::{extern_methods, ClassType, Message};
 
 use super::set::with_objects;
-use super::{NSCopying, NSFastEnumeration, NSFastEnumerator, NSMutableCopying, NSObject, NSSet};
-use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use objc2::{ClassType, Message, __inner_extern_class, extern_methods};
-
-__inner_extern_class!(
-    /// A growable unordered collection of unique objects.
-    ///
-    /// See the documentation for [`NSSet`] and/or [Apple's
-    /// documentation][apple-doc] for more information.
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsmutableset?language=objc
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSMutableSet<T: Message, O: Ownership = Owned> {
-        p: PhantomData<*mut ()>,
-    }
-
-    unsafe impl<T: Message, O: Ownership> ClassType for NSMutableSet<T, O> {
-        #[inherits(NSObject)]
-        type Super = NSSet<T, O>;
-    }
-);
-
-// SAFETY: Same as NSSet<T, O>
-unsafe impl<T: Message + Sync + Send> Sync for NSMutableSet<T, Shared> {}
-unsafe impl<T: Message + Sync + Send> Send for NSMutableSet<T, Shared> {}
-unsafe impl<T: Message + Sync> Sync for NSMutableSet<T, Owned> {}
-unsafe impl<T: Message + Send> Send for NSMutableSet<T, Owned> {}
+use crate::Foundation::{
+    NSCopying, NSFastEnumeration2, NSFastEnumerator2, NSMutableCopying, NSMutableSet, NSSet,
+};
 
 extern_methods!(
     unsafe impl<T: Message, O: Ownership> NSMutableSet<T, O> {
@@ -63,22 +40,6 @@ extern_methods!(
             // sets are always unique.
             unsafe { with_objects(vec.as_slice_ref()) }
         }
-
-        /// Clears the set, removing all values.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icrate::Foundation::{NSMutableSet, NSString};
-        ///
-        /// let mut set = NSMutableSet::new();
-        /// set.insert(NSString::from_str("one"));
-        /// set.clear();
-        /// assert!(set.is_empty());
-        /// ```
-        #[doc(alias = "removeAllObjects")]
-        #[method(removeAllObjects)]
-        pub fn clear(&mut self);
 
         /// Returns a [`Vec`] containing the set's elements, consuming the set.
         ///
@@ -202,13 +163,13 @@ impl<T: Message> alloc::borrow::ToOwned for NSMutableSet<T, Shared> {
     }
 }
 
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration for NSMutableSet<T, O> {
+unsafe impl<T: Message, O: Ownership> NSFastEnumeration2 for NSMutableSet<T, O> {
     type Item = T;
 }
 
 impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSMutableSet<T, O> {
     type Item = &'a T;
-    type IntoIter = NSFastEnumerator<'a, NSMutableSet<T, O>>;
+    type IntoIter = NSFastEnumerator2<'a, NSMutableSet<T, O>>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.iter_fast()
@@ -229,13 +190,6 @@ impl<T: Message, O: Ownership> DefaultId for NSMutableSet<T, O> {
     #[inline]
     fn default_id() -> Id<Self, Self::Ownership> {
         Self::new()
-    }
-}
-
-impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for NSMutableSet<T, O> {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&**self, f)
     }
 }
 
@@ -273,7 +227,7 @@ mod tests {
         let mut set = NSMutableSet::from_slice(&strs);
         assert_eq!(set.len(), 3);
 
-        set.clear();
+        set.removeAllObjects();
         assert!(set.is_empty());
     }
 
@@ -288,12 +242,12 @@ mod tests {
 
         let mut vec = NSMutableSet::into_vec(set);
         for str in vec.iter_mut() {
-            str.push_nsstring(ns_string!(" times zero is zero"));
+            str.appendString(ns_string!(" times zero is zero"));
         }
 
         assert_eq!(vec.len(), 3);
         let suffix = ns_string!("zero");
-        assert!(vec.iter().all(|str| str.has_suffix(suffix)));
+        assert!(vec.iter().all(|str| str.hasSuffix(suffix)));
     }
 
     #[test]
@@ -344,7 +298,7 @@ mod tests {
         }
         let mut expected = __ThreadTestData::current();
 
-        set.clear();
+        set.removeAllObjects();
         expected.release += 4;
         expected.dealloc += 4;
         expected.assert_current();

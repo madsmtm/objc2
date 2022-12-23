@@ -14,7 +14,7 @@ get_ascii:
 .LBB0_1:
 	lea	rdi, [rip + .Lanon.[ID].0]
 	mov	esi, 3
-	call	qword ptr [rip + SYM(icrate::Foundation::additions::string::NSString::from_str::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(icrate::Foundation::additions::string::<impl icrate::Foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@GOTPCREL]
 	mov	rcx, rax
 	xchg	qword ptr [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0], rcx
 	pop	rcx
@@ -36,7 +36,7 @@ get_utf16:
 .LBB1_1:
 	lea	rdi, [rip + .Lanon.[ID].1]
 	mov	esi, 5
-	call	qword ptr [rip + SYM(icrate::Foundation::additions::string::NSString::from_str::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(icrate::Foundation::additions::string::<impl icrate::Foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@GOTPCREL]
 	mov	rcx, rax
 	xchg	qword ptr [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0], rcx
 	pop	rcx
@@ -58,7 +58,7 @@ get_with_nul:
 .LBB2_1:
 	lea	rdi, [rip + .Lanon.[ID].2]
 	mov	esi, 6
-	call	qword ptr [rip + SYM(icrate::Foundation::additions::string::NSString::from_str::GENERATED_ID, 0)@GOTPCREL]
+	call	qword ptr [rip + SYM(icrate::Foundation::additions::string::<impl icrate::Foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@GOTPCREL]
 	mov	rcx, rax
 	xchg	qword ptr [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0], rcx
 	pop	rcx

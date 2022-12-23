@@ -1,33 +1,13 @@
-use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use super::{
-    NSCopying, NSDictionary, NSMutableAttributedString, NSMutableCopying, NSObject, NSString,
-};
-use objc2::rc::{Allocated, DefaultId, Id, Shared};
+use objc2::rc::{DefaultId, Id, Shared};
 use objc2::runtime::Object;
-use objc2::{extern_class, extern_methods, ClassType};
+use objc2::{extern_methods, ClassType};
 
-extern_class!(
-    /// A string that has associated attributes for portions of its text.
-    ///
-    /// Examples of attributes could be: Visual style, hyperlinks, or
-    /// accessibility data.
-    ///
-    /// Conceptually, each UTF-16 code unit in an attributed string has its
-    /// own collection of attributes - most often though
-    ///
-    /// Only the most basic functionality is defined here, the `AppKit`
-    /// framework contains most of the extension methods.
-    ///
-    /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsattributedstring?language=objc).
-    #[derive(PartialEq, Eq, Hash)]
-    pub struct NSAttributedString;
-
-    unsafe impl ClassType for NSAttributedString {
-        type Super = NSObject;
-    }
-);
+use crate::Foundation::{
+    NSAttributedString, NSAttributedStringKey, NSCopying, NSDictionary, NSMutableAttributedString,
+    NSMutableCopying, NSString,
+};
 
 // SAFETY: `NSAttributedString` is immutable and `NSMutableAttributedString`
 // can only be mutated from `&mut` methods.
@@ -38,9 +18,6 @@ unsafe impl Send for NSAttributedString {}
 impl UnwindSafe for NSAttributedString {}
 impl RefUnwindSafe for NSAttributedString {}
 
-/// Attributes that you can apply to text in an attributed string.
-pub type NSAttributedStringKey = NSString;
-
 extern_methods!(
     /// Creating attributed strings.
     unsafe impl NSAttributedString {
@@ -48,66 +25,27 @@ extern_methods!(
         #[method_id(new)]
         pub fn new() -> Id<Self, Shared>;
 
-        #[method_id(initWithString:attributes:)]
-        fn init_with_attributes(
-            this: Option<Allocated<Self>>,
-            string: &NSString,
-            attributes: &NSDictionary<NSAttributedStringKey, Object>,
-        ) -> Id<Self, Shared>;
-
-        #[method_id(initWithString:)]
-        fn init_with_string(this: Option<Allocated<Self>>, string: &NSString) -> Id<Self, Shared>;
-
         /// Creates a new attributed string from the given string and attributes.
         ///
         /// The attributes are associated with every UTF-16 code unit in the
         /// string.
+        ///
+        /// # Safety
+        ///
+        /// The attributes must be valid.
         #[doc(alias = "initWithString:")]
-        pub fn new_with_attributes(
+        pub unsafe fn new_with_attributes(
             string: &NSString,
-            // TODO: Mutability of the dictionary should be (Shared, Shared)
             attributes: &NSDictionary<NSAttributedStringKey, Object>,
         ) -> Id<Self, Shared> {
-            Self::init_with_attributes(Self::alloc(), string, attributes)
+            unsafe { Self::initWithString_attributes(Self::alloc(), string, Some(attributes)) }
         }
 
         /// Creates a new attributed string without any attributes.
         #[doc(alias = "initWithString:")]
         pub fn from_nsstring(string: &NSString) -> Id<Self, Shared> {
-            Self::init_with_string(Self::alloc(), string)
+            Self::initWithString(Self::alloc(), string)
         }
-    }
-
-    /// Querying.
-    unsafe impl NSAttributedString {
-        // TODO: Lifetimes?
-        #[method_id(string)]
-        pub fn string(&self) -> Id<NSString, Shared>;
-
-        /// Alias for `self.string().len_utf16()`.
-        #[doc(alias = "length")]
-        #[method(length)]
-        pub fn len_utf16(&self) -> usize;
-
-        // /// TODO
-        // ///
-        // /// See [Apple's documentation on Effective and Maximal Ranges][doc].
-        // ///
-        // /// [doc]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/AttributedStrings/Tasks/AccessingAttrs.html#//apple_ref/doc/uid/20000161-SW2
-        // #[doc(alias = "attributesAtIndex:effectiveRange:")]
-        // pub fn attributes_in_effective_range(
-        //     &self,
-        //     index: usize,
-        //     range: Range<usize>,
-        // ) -> Id<Self, Shared> {
-        //     let range = NSRange::from(range);
-        //     todo!()
-        // }
-        //
-        // attributesAtIndex:longestEffectiveRange:inRange:
-
-        // TODO: attributedSubstringFromRange:
-        // TODO: enumerateAttributesInRange:options:usingBlock:
     }
 );
 
@@ -136,21 +74,15 @@ impl alloc::borrow::ToOwned for NSAttributedString {
     }
 }
 
-impl fmt::Debug for NSAttributedString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // Use -[NSAttributedString description] since it is pretty good
-        let obj: &NSObject = self;
-        fmt::Debug::fmt(obj, f)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use alloc::string::ToString;
     use alloc::{format, vec};
 
-    use super::*;
     use objc2::rc::{autoreleasepool, Owned};
+
+    use super::*;
+    use crate::Foundation::NSObject;
 
     #[test]
     fn test_new() {
@@ -200,10 +132,12 @@ mod tests {
 
         let obj: Id<Object, Owned> = unsafe { Id::cast(NSObject::new()) };
         let ptr: *const Object = &*obj;
-        let s = NSAttributedString::new_with_attributes(
-            &NSString::from_str("abc"),
-            &NSDictionary::from_keys_and_objects(&[&*NSString::from_str("test")], vec![obj]),
-        );
+        let s = unsafe {
+            NSAttributedString::new_with_attributes(
+                &NSString::from_str("abc"),
+                &NSDictionary::from_keys_and_objects(&[&*NSString::from_str("test")], vec![obj]),
+            )
+        };
         let expected = if cfg!(feature = "gnustep-1-7") {
             format!("abc{{test = \"<NSObject: {ptr:?}>\"; }}")
         } else {
