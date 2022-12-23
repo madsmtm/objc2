@@ -43,18 +43,22 @@ jobs:
           - name: Test macOS 11
             os: macos-11
             target: x86_64-apple-darwin
+            frameworks: macos-11
           - name: Test macOS 12
             os: macos-12
             target: x86_64-apple-darwin
+            frameworks: macos-12
           - name: Build macOS AArch64
             os: macos-latest
             target: aarch64-apple-darwin
             test-args: --no-run
+            frameworks: macos-11
           - name: Test macOS old SDK
             os: macos-latest
             target: x86_64-apple-darwin
             # Oldest macOS version we support
             sdk: "10.7"
+            frameworks: macos-10-7
           - name: Test macOS nightly (w. ui tests)
             os: macos-latest
             target: x86_64-apple-darwin
@@ -62,6 +66,7 @@ jobs:
               toolchain: nightly
             # Run UI tests on nightly to help find regressions
             ui: true
+            frameworks: macos-11
           - name: Build macOS 32bit
             os: macos-latest
             target: i686-apple-darwin
@@ -75,17 +80,20 @@ jobs:
             test-args: --no-run
             # Newest SDK that supports 32-bit
             sdk: "10.13"
+            frameworks: macos-10-13
           - name: Test GNUStep with libobjc2 v1.9
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             runtime: gnustep-1-9
             libobjc2: "1.9"
+            frameworks: gnustep
           - name: Test GNUStep with libobjc2 v2.0
             # Fails for some reason on Ubuntu 22
             os: ubuntu-20.04
             target: x86_64-unknown-linux-gnu
             runtime: gnustep-2-0
             libobjc2: "2.0"
+            frameworks: gnustep
           - name: Test GNUStep with libobjc2 v2.1 on nightly
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
@@ -94,6 +102,7 @@ jobs:
             runtime: gnustep-2-1
             libobjc2: "2.1"
             fuzz: true
+            frameworks: gnustep
           - name: Test GNUStep 32bit
             # Ubuntu 22 image doesn't have the required C++ libraries
             # installed for 32-bit
@@ -103,18 +112,22 @@ jobs:
             configureflags: --target=x86-pc-linux-gnu
             runtime: gnustep-1-9
             libobjc2: "1.9"
+            frameworks: gnustep-32bit
           - name: Test iOS simulator x86 64bit
             os: macos-11
             target: x86_64-apple-ios
             dinghy: true
+            frameworks: ios
           - name: Build iOS simulator ARM64
             os: macos-latest
             target: aarch64-apple-ios-sim
             test-args: --no-run
+            frameworks: ios
           - name: Build iOS ARM64
             os: macos-latest
             target: aarch64-apple-ios
             test-args: --no-run
+            frameworks: ios
           - name: Build iOS ARMv7
             os: macos-latest
             target: armv7-apple-ios
@@ -124,6 +137,7 @@ jobs:
               components: clippy, rust-src
             args: -Zbuild-std -Zdoctest-xcompile
             test-args: --no-run
+            frameworks: ios
           - name: Build iOS ARMv7s
             os: macos-latest
             target: armv7s-apple-ios
@@ -133,6 +147,7 @@ jobs:
               components: clippy, rust-src
             args: -Zbuild-std -Zdoctest-xcompile
             test-args: --no-run
+            frameworks: ios
           - name: Build iOS 32bit x86
             os: macos-latest
             target: i386-apple-ios
@@ -142,6 +157,7 @@ jobs:
               components: clippy, rust-src
             args: -Zbuild-std -Zdoctest-xcompile
             test-args: --no-run
+            frameworks: ios
           - name: Test Compiler-RT
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
@@ -149,6 +165,7 @@ jobs:
             args: -p block-sys -p block2
             features: ' '
             unstable-features: ' '
+            frameworks: none
 
     env:
       CARGO_BUILD_TARGET: ${{ matrix.target }}
@@ -163,10 +180,8 @@ jobs:
       FEATURES: >-
         ${{
           matrix.features || format(
-            'malloc,block,exception,catch-all,verify,uuid,{0}',
-            contains(matrix.target, 'darwin') && 'unstable-macos-frameworks'
-              || contains(matrix.target, 'ios') && 'unstable-ios-frameworks'
-              || matrix.target == 'x86_64-unknown-linux-gnu' && 'unstable-gnustep-frameworks' || ''
+            'malloc,block,exception,catch-all,verify,uuid,unstable-frameworks-{0}',
+            matrix.frameworks
           )
         }}
       UNSTABLE_FEATURES: ${{ matrix.unstable-features || 'unstable-autoreleasesafe,unstable-c-unwind' }}

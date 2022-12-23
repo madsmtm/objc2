@@ -27,7 +27,7 @@ uuid = { version = "1.1.2", optional = true, default-features = false }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
-features = ["block", "objective-c", "uuid", "unstable-all-frameworks", "unstable-docsrs"]
+features = ["block", "objective-c", "uuid", "unstable-frameworks-all", "unstable-docsrs"]
 
 targets = [
     # MacOS
@@ -93,7 +93,12 @@ AuthenticationServices = ["Foundation"]
 CoreData = ["Foundation"]
 Foundation = ["objective-c", "block"]
 
-unstable-all-frameworks = ["unstable-ios-frameworks", "unstable-macos-frameworks"]
-unstable-gnustep-frameworks = ["AppKit", "Foundation"]
-unstable-ios-frameworks = ["AuthenticationServices", "CoreData", "Foundation"]
-unstable-macos-frameworks = ["AppKit", "AuthenticationServices", "CoreData", "Foundation"]
+# Helps with CI
+unstable-frameworks-all = ["AppKit", "AuthenticationServices", "CoreData", "Foundation"]
+unstable-frameworks-gnustep = ["AppKit", "Foundation"]
+unstable-frameworks-gnustep-32bit = ["Foundation"]
+unstable-frameworks-ios = ["AuthenticationServices", "CoreData", "Foundation"]
+unstable-frameworks-macos-10-7 = ["AppKit", "CoreData", "Foundation"]
+unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7"]
+unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices"]
+unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
