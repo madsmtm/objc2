@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use std::io;
 use std::path::{Path, PathBuf};
 
@@ -187,6 +187,8 @@ fn parse_sdk(
     let mut file_span = None;
     let mut file_span_name = String::new();
 
+    let mut macro_invocations = HashMap::new();
+
     tu.get_entity().visit_children(|entity, _parent| {
         let _span = trace_span!("entity", ?entity).entered();
         if let Some((library_name, file_name)) = extract_framework_name(&entity, &framework_dir) {
@@ -234,7 +236,11 @@ fn parse_sdk(
                             }
                         }
                     }
-                    EntityKind::MacroExpansion if preprocessing => {}
+                    EntityKind::MacroExpansion if preprocessing => {
+                        let name = entity.get_name().expect("macro name");
+                        let location = entity.get_location().expect("macro location");
+                        macro_invocations.insert(location.get_spelling_location(), name);
+                    }
                     EntityKind::MacroDefinition if preprocessing => {
                         // let name = entity.get_name().expect("macro def name");
                         // entity.is_function_like_macro();
@@ -247,7 +253,7 @@ fn parse_sdk(
                         preprocessing = false;
                         // No more includes / macro expansions after this line
                         let file = library.files.get_mut(&file_name).expect("file");
-                        for stmt in Stmt::parse(&entity, config) {
+                        for stmt in Stmt::parse(&entity, config, &macro_invocations) {
                             file.add_stmt(stmt);
                         }
                     }

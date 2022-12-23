@@ -187,7 +187,12 @@ impl Cache {
         // Fix up a few typedef + enum declarations
         let mut iter = mem::take(&mut file.stmts).into_iter().peekable();
         while let Some(stmt) = iter.next() {
-            if let Stmt::AliasDecl { name, ty } = &stmt {
+            if let Stmt::AliasDecl {
+                name,
+                ty,
+                kind: None,
+            } = &stmt
+            {
                 if let Some(Stmt::EnumDecl {
                     name: enum_name,
                     ty: enum_ty,

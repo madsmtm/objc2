@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+
+use clang::source::Location;
 use clang::{Entity, EntityKind};
 use tracing::warn;
 
@@ -8,6 +11,9 @@ pub enum UnexposedMacro {
     Options,
     ClosedEnum,
     ErrorEnum,
+    TypedEnum,
+    TypedExtensibleEnum,
+    BridgedTypedef,
 }
 
 impl UnexposedMacro {
@@ -17,6 +23,9 @@ impl UnexposedMacro {
             "NS_OPTIONS" => Some(Self::Options),
             "NS_CLOSED_ENUM" => Some(Self::ClosedEnum),
             "NS_ERROR_ENUM" => Some(Self::ErrorEnum),
+            "NS_TYPED_ENUM" => Some(Self::TypedEnum),
+            "NS_TYPED_EXTENSIBLE_ENUM" => Some(Self::TypedExtensibleEnum),
+            "NS_SWIFT_BRIDGED_TYPEDEF" => Some(Self::BridgedTypedef),
             // TODO
             "NS_FORMAT_FUNCTION" => None,
             "NS_FORMAT_ARGUMENT" => None,
@@ -34,7 +43,8 @@ impl UnexposedMacro {
             | "NS_OPENGL_ENUM_DEPRECATED"
             | "OBJC_AVAILABLE"
             | "OBJC_SWIFT_UNAVAILABLE"
-            | "OBJC_DEPRECATED" => None,
+            | "OBJC_DEPRECATED"
+            | "APPKIT_API_UNAVAILABLE_BEGIN_MACCATALYST" => None,
             name => {
                 warn!(name, "unknown unexposed macro");
                 None
@@ -43,7 +53,19 @@ impl UnexposedMacro {
     }
 
     pub fn parse(entity: &Entity<'_>) -> Option<Self> {
+        Self::parse_plus_macros(entity, &HashMap::new())
+    }
+
+    pub fn parse_plus_macros(
+        entity: &Entity<'_>,
+        macro_invocations: &HashMap<Location<'_>, String>,
+    ) -> Option<Self> {
         let location = entity.get_location().expect("unexposed attr location");
+
+        if let Some(macro_name) = macro_invocations.get(&location.get_spelling_location()) {
+            return Self::from_name(&macro_name);
+        }
+
         if let Some(parsed) = location.get_entity() {
             match parsed.get_kind() {
                 EntityKind::MacroExpansion => {
@@ -55,8 +77,6 @@ impl UnexposedMacro {
                 _ => None,
             }
         } else {
-            // File-global macros like APPKIT_API_UNAVAILABLE_BEGIN_MACCATALYST
-            // are not findable with this approach
             None
         }
     }

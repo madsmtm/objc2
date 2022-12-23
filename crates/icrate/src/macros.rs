@@ -1,5 +1,20 @@
 #![allow(unused_macros)]
 
+macro_rules! impl_encode {
+    ($name:ident = $encoding:expr;) => {
+        #[cfg(feature = "objective-c")]
+        unsafe impl objc2::Encode for $name {
+            const ENCODING: objc2::Encoding = $encoding;
+        }
+
+        #[cfg(feature = "objective-c")]
+        unsafe impl objc2::RefEncode for $name {
+            const ENCODING_REF: objc2::Encoding =
+                objc2::Encoding::Pointer(&<Self as objc2::Encode>::ENCODING);
+        }
+    };
+}
+
 macro_rules! extern_struct {
     (
         $v:vis struct $name:ident {
@@ -12,17 +27,11 @@ macro_rules! extern_struct {
             $($field_v $field: $ty,)*
         }
 
-        #[cfg(feature = "objective-c")]
-        unsafe impl objc2::Encode for $name {
-            const ENCODING: objc2::Encoding = objc2::Encoding::Struct(
+        impl_encode! {
+            $name = objc2::Encoding::Struct(
                 stringify!($name),
                 &[$(<$ty as objc2::Encode>::ENCODING),*],
             );
-        }
-
-        #[cfg(feature = "objective-c")]
-        unsafe impl objc2::RefEncode for $name {
-            const ENCODING_REF: objc2::Encoding = objc2::Encoding::Pointer(&<Self as objc2::Encode>::ENCODING);
         }
     };
 }
@@ -175,6 +184,20 @@ macro_rules! ns_error_enum {
                 $($field = $value),*
             }
         }
+    };
+}
+
+macro_rules! typed_enum {
+    ($v:vis type $name:ident = $ty:ty $(;)?) => {
+        // TODO
+        pub type $name = $ty;
+    };
+}
+
+macro_rules! typed_extensible_enum {
+    ($v:vis type $name:ident = $ty:ty $(;)?) => {
+        // TODO
+        pub type $name = $ty;
     };
 }
 

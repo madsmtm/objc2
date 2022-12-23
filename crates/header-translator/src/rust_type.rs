@@ -1117,6 +1117,14 @@ impl Ty {
             }
         }
     }
+
+    pub fn is_nsstring(&self) -> bool {
+        if let RustType::Id { type_: ty, .. } = &self.ty {
+            ty.name == "NSString"
+        } else {
+            false
+        }
+    }
 }
 
 impl fmt::Display for Ty {

@@ -1,9 +1,10 @@
 use std::borrow::Cow;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::iter;
 use std::mem;
 
+use clang::source::Location;
 use clang::{Entity, EntityKind, EntityVisitResult};
 use tracing::{debug, debug_span, error, warn};
 
@@ -283,7 +284,11 @@ pub enum Stmt {
         body: Option<()>,
     },
     /// typedef Type TypedefName;
-    AliasDecl { name: String, ty: Ty },
+    AliasDecl {
+        name: String,
+        ty: Ty,
+        kind: Option<UnexposedMacro>,
+    },
 }
 
 fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
@@ -324,7 +329,11 @@ fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
 }
 
 impl Stmt {
-    pub fn parse(entity: &Entity<'_>, config: &Config) -> Vec<Self> {
+    pub fn parse(
+        entity: &Entity<'_>,
+        config: &Config,
+        macro_invocations: &HashMap<Location<'_>, String>,
+    ) -> Vec<Self> {
         let _span = debug_span!(
             "stmt",
             kind = ?entity.get_kind(),
@@ -493,12 +502,17 @@ impl Stmt {
                 let name = entity.get_name().expect("typedef name");
                 let mut struct_ = None;
                 let mut skip_struct = false;
+                let mut kind = None;
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
-                    // TODO: Parse NS_TYPED_EXTENSIBLE_ENUM vs. NS_TYPED_ENUM
                     EntityKind::UnexposedAttr => {
-                        if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                            panic!("unexpected attribute: {macro_:?}");
+                        if let Some(macro_) =
+                            UnexposedMacro::parse_plus_macros(&entity, macro_invocations)
+                        {
+                            if kind.is_some() {
+                                panic!("got multiple unexposed macros {kind:?}, {macro_:?}");
+                            }
+                            kind = Some(macro_);
                         }
                     }
                     EntityKind::StructDecl => {
@@ -533,6 +547,7 @@ impl Stmt {
                 });
 
                 if let Some(struct_) = struct_ {
+                    assert_eq!(kind, None, "should not have parsed anything");
                     return vec![struct_];
                 }
 
@@ -553,7 +568,7 @@ impl Stmt {
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
                 if let Some(ty) = Ty::parse_typedef(ty) {
-                    vec![Self::AliasDecl { name, ty }]
+                    vec![Self::AliasDecl { name, ty, kind }]
                 } else {
                     vec![]
                 }
@@ -1000,6 +1015,7 @@ impl fmt::Display for Stmt {
                     Some(UnexposedMacro::Options) => "ns_options",
                     Some(UnexposedMacro::ClosedEnum) => "ns_closed_enum",
                     Some(UnexposedMacro::ErrorEnum) => "ns_error_enum",
+                    _ => panic!("invalid enum kind"),
                 };
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    #[underlying({ty})]")?;
@@ -1058,8 +1074,21 @@ impl fmt::Display for Stmt {
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
             }
-            Self::AliasDecl { name, ty } => {
-                writeln!(f, "pub type {name} = {ty};")?;
+            Self::AliasDecl { name, ty, kind } => {
+                match kind {
+                    Some(UnexposedMacro::TypedEnum) => {
+                        writeln!(f, "typed_enum!(pub type {name} = {ty};);")?;
+                    }
+                    Some(UnexposedMacro::TypedExtensibleEnum) => {
+                        writeln!(f, "typed_extensible_enum!(pub type {name} = {ty};);")?;
+                    }
+                    None | Some(UnexposedMacro::BridgedTypedef) => {
+                        // "bridged" typedefs should just use a normal type
+                        // alias.
+                        writeln!(f, "pub type {name} = {ty};")?;
+                    }
+                    kind => panic!("invalid alias kind {kind:?} for {ty:?}"),
+                }
             }
         };
         Ok(())
