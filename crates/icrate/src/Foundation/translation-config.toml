@@ -354,6 +354,10 @@ unsafe = false
 unsafe = false
 [class.NSMutableString.methods.stringWithCapacity]
 unsafe = false
+[class.NSMutableString.methods.initWithString]
+unsafe = false
+[class.NSMutableString.methods.stringWithString]
+unsafe = false
 [class.NSMutableString.methods.appendString]
 unsafe = false
 mutating = true
@@ -363,6 +367,10 @@ mutating = true
 [class.NSAttributedString.methods.initWithString]
 unsafe = false
 [class.NSAttributedString.methods.initWithAttributedString]
+unsafe = false
+[class.NSMutableAttributedString.methods.initWithString]
+unsafe = false
+[class.NSMutableAttributedString.methods.initWithAttributedString]
 unsafe = false
 [class.NSAttributedString.methods.string]
 unsafe = false
@@ -432,6 +440,8 @@ mutating = true
 [class.NSMutableData.methods.dataWithCapacity]
 unsafe = false
 [class.NSMutableData.methods.initWithCapacity]
+unsafe = false
+[class.NSMutableData.methods.dataWithData]
 unsafe = false
 [class.NSValue.methods.objCType]
 unsafe = false
@@ -506,8 +516,8 @@ unsafe = false
 unsafe = false
 [class.NSProcessInfo.methods.processInfo]
 unsafe = false
-# [class.NSProcessInfo.methods.processName]
-# unsafe = false
+[class.NSProcessInfo.methods.processName]
+unsafe = false
 [class.NSArray.methods.count]
 unsafe = false
 [class.NSMutableArray.methods.removeAllObjects]

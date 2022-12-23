@@ -6,7 +6,9 @@ use core::ops::Index;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 
-use crate::Foundation::{NSCopying, NSDictionary, NSEnumerator2, NSFastEnumeration2};
+use crate::Foundation::{
+    NSCopying, NSDictionary, NSEnumerator2, NSFastEnumeration2, NSMutableDictionary,
+};
 use objc2::rc::{DefaultId, Id, Owned, Shared, SliceId};
 use objc2::{extern_methods, msg_send, msg_send_id, ClassType, Message};
 
@@ -15,9 +17,18 @@ use objc2::{extern_methods, msg_send, msg_send_id, ClassType, Message};
 unsafe impl<K: Message + Sync + Send, V: Message + Sync + Send> Sync for NSDictionary<K, V> {}
 unsafe impl<K: Message + Sync + Send, V: Message + Sync + Send> Send for NSDictionary<K, V> {}
 
+unsafe impl<K: Message + Sync + Send, V: Message + Sync + Send> Sync for NSMutableDictionary<K, V> {}
+unsafe impl<K: Message + Sync + Send, V: Message + Sync + Send> Send for NSMutableDictionary<K, V> {}
+
 // Approximately same as `NSArray<T, Shared>`
 impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> UnwindSafe for NSDictionary<K, V> {}
 impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> RefUnwindSafe for NSDictionary<K, V> {}
+
+impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> UnwindSafe
+    for NSMutableDictionary<K, V>
+{
+}
+// impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> RefUnwindSafe for NSMutableDictionary<K, V> {}
 
 extern_methods!(
     unsafe impl<K: Message, V: Message> NSDictionary<K, V> {

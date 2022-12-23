@@ -11,17 +11,10 @@ unsafe impl Sync for NSProcessInfo {}
 impl UnwindSafe for NSProcessInfo {}
 impl RefUnwindSafe for NSProcessInfo {}
 
-// TODO: Remove this
-impl NSProcessInfo {
-    pub fn process_name(&self) -> objc2::rc::Id<crate::Foundation::NSString, objc2::rc::Shared> {
-        unsafe { self.processName() }
-    }
-}
-
 impl fmt::Debug for NSProcessInfo {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("NSProcessInfo")
-            .field("processName", &self.process_name())
+            .field("processName", &self.processName())
             .finish_non_exhaustive()
     }
 }
@@ -36,8 +29,8 @@ mod tests {
     fn test_debug() {
         let info = NSProcessInfo::processInfo();
         let expected = format!(
-            "NSProcessInfo {{ process_name: {:?}, .. }}",
-            info.process_name()
+            "NSProcessInfo {{ processName: {:?}, .. }}",
+            info.processName()
         );
         assert_eq!(format!("{info:?}"), expected);
     }

@@ -133,7 +133,7 @@ mod tests {
     #[test]
     fn test_from_nsstring() {
         let s = NSString::from_str("abc");
-        let s = NSMutableString::stringFromString(&s);
+        let s = NSMutableString::stringWithString(&s);
         assert_eq!(&s.to_string(), "abc");
     }
 

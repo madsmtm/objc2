@@ -20,10 +20,19 @@ unsafe impl<T: Message + Sync + Send> Send for NSArray<T, Shared> {}
 unsafe impl<T: Message + Sync> Sync for NSArray<T, Owned> {}
 unsafe impl<T: Message + Send> Send for NSArray<T, Owned> {}
 
+unsafe impl<T: Message + Sync + Send> Sync for NSMutableArray<T, Shared> {}
+unsafe impl<T: Message + Sync + Send> Send for NSMutableArray<T, Shared> {}
+unsafe impl<T: Message + Sync> Sync for NSMutableArray<T, Owned> {}
+unsafe impl<T: Message + Send> Send for NSMutableArray<T, Owned> {}
+
 // Also same as Id<T, O>
 impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSArray<T, O> {}
 impl<T: Message + RefUnwindSafe> UnwindSafe for NSArray<T, Shared> {}
 impl<T: Message + UnwindSafe> UnwindSafe for NSArray<T, Owned> {}
+
+impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSMutableArray<T, O> {}
+impl<T: Message + RefUnwindSafe> UnwindSafe for NSMutableArray<T, Shared> {}
+impl<T: Message + UnwindSafe> UnwindSafe for NSMutableArray<T, Owned> {}
 
 #[track_caller]
 pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: ClassType, O: Ownership>(

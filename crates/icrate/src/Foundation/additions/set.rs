@@ -16,10 +16,19 @@ unsafe impl<T: Message + Sync + Send> Send for NSSet<T, Shared> {}
 unsafe impl<T: Message + Sync> Sync for NSSet<T, Owned> {}
 unsafe impl<T: Message + Send> Send for NSSet<T, Owned> {}
 
+unsafe impl<T: Message + Sync + Send> Sync for NSMutableSet<T, Shared> {}
+unsafe impl<T: Message + Sync + Send> Send for NSMutableSet<T, Shared> {}
+unsafe impl<T: Message + Sync> Sync for NSMutableSet<T, Owned> {}
+unsafe impl<T: Message + Send> Send for NSMutableSet<T, Owned> {}
+
 // SAFETY: Same as NSArray<T, O>
 impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSSet<T, O> {}
 impl<T: Message + RefUnwindSafe> UnwindSafe for NSSet<T, Shared> {}
 impl<T: Message + UnwindSafe> UnwindSafe for NSSet<T, Owned> {}
+
+impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSMutableSet<T, O> {}
+impl<T: Message + RefUnwindSafe> UnwindSafe for NSMutableSet<T, Shared> {}
+impl<T: Message + UnwindSafe> UnwindSafe for NSMutableSet<T, Owned> {}
 
 #[track_caller]
 pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: ClassType, O: Ownership>(

@@ -132,10 +132,12 @@ mod tests {
 
         let obj: Id<Object, Owned> = unsafe { Id::cast(NSObject::new()) };
         let ptr: *const Object = &*obj;
-        let s = NSAttributedString::new_with_attributes(
-            &NSString::from_str("abc"),
-            &NSDictionary::from_keys_and_objects(&[&*NSString::from_str("test")], vec![obj]),
-        );
+        let s = unsafe {
+            NSAttributedString::new_with_attributes(
+                &NSString::from_str("abc"),
+                &NSDictionary::from_keys_and_objects(&[&*NSString::from_str("test")], vec![obj]),
+            )
+        };
         let expected = if cfg!(feature = "gnustep-1-7") {
             format!("abc{{test = \"<NSObject: {ptr:?}>\"; }}")
         } else {

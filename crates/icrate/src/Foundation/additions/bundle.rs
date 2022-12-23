@@ -38,7 +38,7 @@ mod tests {
         // before executing.
         let bundle = NSBundle::mainBundle();
         println!("{bundle:?}");
-        assert_eq!(format!("{:?}", bundle.infoDictionary()), "{}");
+        assert_eq!(format!("{:?}", bundle.infoDictionary().unwrap()), "{}");
         assert_eq!(bundle.name(), None);
     }
 }

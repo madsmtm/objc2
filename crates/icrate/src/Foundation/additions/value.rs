@@ -28,7 +28,7 @@ impl NSValue {
     ///
     /// ```
     /// use icrate::Foundation::{NSPoint, NSValue};
-    /// 
+    ///
     /// let val = NSValue::new::<NSPoint>(NSPoint::new(1.0, 1.0));
     /// ```
     ///
