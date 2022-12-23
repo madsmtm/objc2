@@ -132,7 +132,7 @@ extern_methods!(
             }
         }
 
-        pub fn objects_in_range(&self, range: Range<usize>) -> Vec<&T> {
+        unsafe fn objects_in_range_unchecked(&self, range: Range<usize>) -> Vec<&T> {
             let range = NSRange::from(range);
             let mut vec: Vec<NonNull<T>> = Vec::with_capacity(range.length);
             unsafe {
@@ -142,8 +142,17 @@ extern_methods!(
             }
         }
 
+        pub fn objects_in_range(&self, range: Range<usize>) -> Option<Vec<&T>> {
+            if range.end > self.len() {
+                return None;
+            }
+            // SAFETY: Just checked that the range is in bounds
+            Some(unsafe { self.objects_in_range_unchecked(range) })
+        }
+
         pub fn to_vec(&self) -> Vec<&T> {
-            self.objects_in_range(0..self.len())
+            // SAFETY: The range is know to be in bounds
+            unsafe { self.objects_in_range_unchecked(0..self.len()) }
         }
 
         // TODO: Take Id<Self, Self::ItemOwnership> ?
@@ -426,15 +435,15 @@ mod tests {
     fn test_objects_in_range() {
         let array = sample_array(4);
 
-        let middle_objs = array.objects_in_range(1..3);
+        let middle_objs = array.objects_in_range(1..3).unwrap();
         assert_eq!(middle_objs.len(), 2);
         assert_eq!(middle_objs[0], array.get(1).unwrap());
         assert_eq!(middle_objs[1], array.get(2).unwrap());
 
-        let empty_objs = array.objects_in_range(1..1);
+        let empty_objs = array.objects_in_range(1..1).unwrap();
         assert!(empty_objs.is_empty());
 
-        let all_objs = array.objects_in_range(0..4);
+        let all_objs = array.objects_in_range(0..4).unwrap();
         assert_eq!(all_objs.len(), 4);
     }
 

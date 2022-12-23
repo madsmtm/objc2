@@ -68,6 +68,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Changed `NSDictionary` to be `Shared` by default.
 * **BREAKING** (TEMPORARY): Renamed `NSEnumerator`, `NSFastEnumeration` and
   `NSFastEnumerator` until the story around them are properly figured out.
+* **BREAKING**: Make `NSArray::objects_in_range` return an `Option` (it was
+  unsound before).
 
 ### Fixed
 * Fixed `NSZone` not being `#[repr(C)]`.
