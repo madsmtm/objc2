@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.3.0-beta.4 - 2022-12-24
+
 ### Added
 * Allow directly specifying class name in `extern_class!` macro.
 * Added `ClassType::alloc`.
