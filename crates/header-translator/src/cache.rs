@@ -1,4 +1,5 @@
 use std::collections::BTreeMap;
+use std::mem;
 
 use tracing::{debug_span, warn};
 
@@ -182,6 +183,27 @@ impl Cache {
             }
         }
         file.stmts.extend(new_stmts);
+
+        // Fix up a few typedef + enum declarations
+        let mut iter = mem::take(&mut file.stmts).into_iter().peekable();
+        while let Some(stmt) = iter.next() {
+            if let Stmt::AliasDecl { name, ty } = &stmt {
+                if let Some(Stmt::EnumDecl {
+                    name: enum_name,
+                    ty: enum_ty,
+                    ..
+                }) = iter.peek_mut()
+                {
+                    if enum_ty.is_typedef_to(&name) {
+                        *enum_name = Some(name.clone());
+                        *enum_ty = ty.clone();
+                        // Skip adding the now-redundant alias to the list of statements
+                        continue;
+                    }
+                }
+            }
+            file.stmts.push(stmt);
+        }
     }
 
     fn update_methods(&self, methods: &mut [Method], self_means: &str) {

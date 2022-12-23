@@ -198,6 +198,10 @@ skipped = true
 [class.NSUserNotification.methods.setContentImage]
 skipped = true
 
+# Outlier that really should have been part of the original enum
+[enum.anonymous.constants.NSProprietaryStringEncoding]
+skipped = true
+
 # Has the wrong generic parameter
 [class.NSDictionary.methods]
 initWithContentsOfURL_error = { skipped = true }

@@ -1095,6 +1095,10 @@ impl Ty {
         } if ty.name == "Self" && ty.generics.is_empty())
     }
 
+    pub fn is_typedef_to(&self, s: &str) -> bool {
+        matches!(&self.ty, RustType::TypeDef { name } if name == s)
+    }
+
     /// Related result types
     /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types>
     pub fn fix_related_result_type(&mut self, is_class: bool, selector: &str) {
