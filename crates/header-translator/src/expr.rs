@@ -13,8 +13,19 @@ pub struct Expr {
 }
 
 impl Expr {
-    pub fn from_val((signed, unsigned): (i64, u64), is_signed: bool) -> Self {
-        let s = if is_signed {
+    pub fn from_val((signed, unsigned): (i64, u64), is_signed: bool, pointer_width: usize) -> Self {
+        let (signed_max, unsigned_max) = match pointer_width {
+            64 => (i64::MAX, u64::MAX),
+            32 => (i32::MAX as i64, u32::MAX as u64),
+            16 => (i16::MAX as i64, u16::MAX as u64),
+            pw => panic!("unhandled pointer width {pw}"),
+        };
+
+        let s = if unsigned == unsigned_max {
+            "NSUIntegerMax".to_string()
+        } else if signed == signed_max {
+            "NSIntegerMax".to_string()
+        } else if is_signed {
             format!("{signed}")
         } else {
             format!("{unsigned}")

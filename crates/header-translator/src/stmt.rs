@@ -606,11 +606,15 @@ impl Stmt {
                             return;
                         }
 
+                        let pointer_width =
+                            entity.get_translation_unit().get_target().pointer_width;
+
                         let val = Expr::from_val(
                             entity
                                 .get_enum_constant_value()
                                 .expect("enum constant value"),
                             is_signed,
+                            pointer_width,
                         );
                         let expr = if data.use_value {
                             val
