@@ -364,35 +364,40 @@ impl Stmt {
                     superclasses.push(superclass);
                 }
 
-                (!class_data
-                    .map(|data| data.definition_skipped)
-                    .unwrap_or_default())
-                .then(|| Self::ClassDecl {
-                    ty: ty.clone(),
-                    availability: availability.clone(),
-                    superclasses,
-                    designated_initializers,
-                    derives: class_data
-                        .map(|data| data.derives.clone())
-                        .unwrap_or_default(),
-                    ownership: class_data
-                        .map(|data| data.ownership.clone())
-                        .unwrap_or_default(),
-                })
-                .into_iter()
-                .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
-                    ty: ty.clone(),
-                    availability: availability.clone(),
-                    protocol,
-                }))
-                .chain(iter::once(Self::Methods {
+                let methods = Self::Methods {
                     ty: ty.clone(),
                     availability: availability.clone(),
                     methods,
                     category_name: None,
                     description: None,
-                }))
-                .collect()
+                };
+
+                if !class_data
+                    .map(|data| data.definition_skipped)
+                    .unwrap_or_default()
+                {
+                    iter::once(Self::ClassDecl {
+                        ty: ty.clone(),
+                        availability: availability.clone(),
+                        superclasses,
+                        designated_initializers,
+                        derives: class_data
+                            .map(|data| data.derives.clone())
+                            .unwrap_or_default(),
+                        ownership: class_data
+                            .map(|data| data.ownership.clone())
+                            .unwrap_or_default(),
+                    })
+                    .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
+                        ty: ty.clone(),
+                        availability: availability.clone(),
+                        protocol,
+                    }))
+                    .chain(iter::once(methods))
+                    .collect()
+                } else {
+                    vec![methods]
+                }
             }
             EntityKind::ObjCCategoryDecl => {
                 let name = entity.get_name();

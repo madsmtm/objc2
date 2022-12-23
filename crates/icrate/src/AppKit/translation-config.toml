@@ -220,11 +220,15 @@ skipped = true
 [enum.NSTextAlignment]
 skipped = true
 
-# Different definitions depending on deplyment target
+# Different definitions depending on deployment target
 [class.NSLayoutAnchor]
 definition-skipped = true
 [class.NSPopover]
 definition-skipped = true
+[class.NSPopover.methods]
+appearance = { skipped = true }
+setAppearance = { skipped = true }
+effectiveAppearance = { skipped = true }
 
 # Protocol class methods (currently unsupported)
 [protocol.NSAnimatablePropertyContainer.methods.defaultAnimationForKey]

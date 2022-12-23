@@ -10,7 +10,7 @@ Rust bindings to Apple's frameworks.
 These are automatically generated from the SDKs in Xcode 14.0.1 (will be periodically updated).
 
 Currently supports:
-- macOS: `10.7-12.3` (WIP)
+- macOS: `10.7-12.3`
 - iOS/iPadOS: `7.0-16.0` (WIP)
 - tvOS: `9.0-16.0` (WIP)
 - watchOS: `1.0-9.0` (WIP)
