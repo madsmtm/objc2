@@ -34,7 +34,7 @@ gnustep-2-0 = ["gnustep-1-9", "block-sys/gnustep-2-0", "objc2-encode/gnustep-2-0
 gnustep-2-1 = ["gnustep-2-0", "block-sys/gnustep-2-1", "objc2-encode/gnustep-2-1"]
 
 [dependencies]
-objc2-encode = { path = "../objc2-encode", version = "=2.0.0-pre.2", default-features = false }
+objc2-encode = { path = "../objc2-encode", version = "=2.0.0-pre.3", default-features = false }
 block-sys = { path = "../block-sys", version = "=0.1.0-beta.1", default-features = false }
 
 [package.metadata.docs.rs]
