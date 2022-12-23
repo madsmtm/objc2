@@ -22,9 +22,9 @@ impl Expr {
         };
 
         let s = if unsigned == unsigned_max {
-            "NSUIntegerMax".to_string()
+            "NSUIntegerMax as _".to_string()
         } else if signed == signed_max {
-            "NSIntegerMax".to_string()
+            "NSIntegerMax as _".to_string()
         } else if is_signed {
             format!("{signed}")
         } else {
