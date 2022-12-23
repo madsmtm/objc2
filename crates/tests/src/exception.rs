@@ -48,7 +48,7 @@ fn throw_catch_raise_catch() {
 
     assert_eq!(exc.name(), name);
     assert_eq!(exc.reason().unwrap(), reason);
-    assert!(exc.user_info().is_none());
+    assert!(exc.userInfo().is_none());
 }
 
 #[test]
@@ -143,7 +143,7 @@ fn catch_actual() {
     let exc = NSException::from_exception(exc).unwrap();
     assert_eq!(exc.name(), NSString::from_str(name));
     assert_eq!(exc.reason().unwrap(), NSString::from_str(reason));
-    let user_info = exc.user_info();
+    let user_info = exc.userInfo();
     if cfg!(feature = "gnustep-1-7") {
         let user_info = user_info.unwrap();
         assert_eq!(user_info.len(), 3);
