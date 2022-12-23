@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.2.0-alpha.7 - 2022-12-24
+
 ### Changed
 * Improve efficiency when a block doesn't need to be destroyed.
 * **BREAKING**: Updated `objc2-encode` to `v2.0.0-pre.3`.
@@ -23,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   subtrait of `EncodeArguments`.
 * **BREAKING**: Cleaned up `IntoConcreteBlock` trait, it is now sealed and the
   associated output type has been renamed to `Output`.
+
 
 ## 0.2.0-alpha.5 - 2022-07-19
 
