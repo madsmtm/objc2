@@ -12,7 +12,7 @@ use crate::config::{ClassData, Config};
 use crate::expr::Expr;
 use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
-use crate::rust_type::{GenericType, Ty};
+use crate::rust_type::{GenericType, Ownership, Ty};
 use crate::unexposed_macro::UnexposedMacro;
 
 #[derive(serde::Deserialize, Debug, Clone, PartialEq, Eq)]
@@ -194,6 +194,7 @@ pub enum Stmt {
         superclasses: Vec<GenericType>,
         designated_initializers: Vec<String>,
         derives: Derives,
+        ownership: Ownership,
     },
     /// @interface class_name (name) <protocols*>
     /// ->
@@ -370,6 +371,9 @@ impl Stmt {
                     designated_initializers,
                     derives: class_data
                         .map(|data| data.derives.clone())
+                        .unwrap_or_default(),
+                    ownership: class_data
+                        .map(|data| data.ownership.clone())
                         .unwrap_or_default(),
                 })
                 .into_iter()
@@ -836,6 +840,7 @@ impl fmt::Display for Stmt {
                 superclasses,
                 designated_initializers: _,
                 derives,
+                ownership: _,
             } => {
                 // TODO: Use ty.get_objc_protocol_declarations()
 

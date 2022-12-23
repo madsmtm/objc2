@@ -1,14 +1,26 @@
 use std::fmt;
 
 use clang::{CallingConvention, Nullability, Type, TypeKind};
+use serde::Deserialize;
 use tracing::{debug_span, error, warn};
 
 use crate::method::MemoryManagement;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[serde(from = "bool")]
 pub enum Ownership {
     Owned,
     Shared,
+}
+
+impl From<bool> for Ownership {
+    fn from(b: bool) -> Self {
+        if b {
+            Self::Owned
+        } else {
+            Self::Shared
+        }
+    }
 }
 
 impl Default for Ownership {
@@ -980,6 +992,21 @@ impl Ty {
             TyKind::InFnArgument => TyKind::InBlockArgument,
             TyKind::InFnReturn => TyKind::InBlockReturn,
             _ => unreachable!("set block kind"),
+        }
+    }
+
+    pub(crate) fn set_ownership(&mut self, mut get_ownership: impl FnMut(&str) -> Ownership) {
+        assert!(matches!(
+            self.kind,
+            TyKind::InMethodReturn | TyKind::InMethodReturnWithError
+        ));
+        if let RustType::Id {
+            type_: ty,
+            ownership,
+            ..
+        } = &mut self.ty
+        {
+            *ownership = get_ownership(&ty.name);
         }
     }
 }
