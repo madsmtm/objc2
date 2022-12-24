@@ -2,7 +2,7 @@ use core::fmt;
 use core::hash::Hash;
 use std::error::Error;
 
-use crate::encode::{Encode, EncodeArguments, EncodeConvert, Encoding, EncodingBox};
+use crate::encode::{Encoding, EncodingBox};
 use crate::runtime::{EncodingParseError, Method};
 
 #[derive(Debug, PartialEq, Eq, Hash)]
@@ -71,26 +71,25 @@ impl fmt::Display for VerificationError {
 
 impl Error for VerificationError {}
 
-pub(crate) fn verify_method_signature<A, R>(method: &Method) -> Result<(), VerificationError>
-where
-    A: EncodeArguments,
-    R: EncodeConvert,
-{
+pub(crate) fn verify_method_signature(
+    method: &Method,
+    args: &[Encoding],
+    ret: &Encoding,
+) -> Result<(), VerificationError> {
     let mut iter = method.types();
 
     // TODO: Verify stack layout
     let (expected, _stack_layout) = iter.extract_return()?;
-    let actual = R::__Inner::ENCODING;
-    if !actual.equivalent_to_box(&expected) {
-        return Err(Inner::MismatchedReturn(expected, actual).into());
+    if !ret.equivalent_to_box(&expected) {
+        return Err(Inner::MismatchedReturn(expected, ret.clone()).into());
     }
 
     iter.verify_receiver()?;
     iter.verify_sel()?;
 
-    let actual_count = A::ENCODINGS.len();
+    let actual_count = args.len();
 
-    for (i, actual) in A::ENCODINGS.iter().enumerate() {
+    for (i, actual) in args.iter().enumerate() {
         if let Some(res) = iter.next() {
             // TODO: Verify stack layout
             let (expected, _stack_layout) = res?;

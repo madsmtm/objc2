@@ -357,15 +357,17 @@ impl ClassBuilder {
         T: Message + ?Sized,
         F: MethodImplementation<Callee = T>,
     {
-        let encs = F::Args::ENCODINGS;
+        let enc_args = F::Args::ENCODINGS;
+        let enc_ret = F::Ret::ENCODING;
+
         let sel_args = count_args(sel);
         assert_eq!(
             sel_args,
-            encs.len(),
+            enc_args.len(),
             "Selector {:?} accepts {} arguments, but function accepts {}",
             sel,
             sel_args,
-            encs.len(),
+            enc_args.len(),
         );
 
         // Verify that, if the method is present on the superclass, that the
@@ -373,14 +375,14 @@ impl ClassBuilder {
         #[cfg(debug_assertions)]
         if let Some(superclass) = self.superclass() {
             if let Some(method) = superclass.instance_method(sel) {
-                if let Err(err) = crate::verify::verify_method_signature::<F::Args, F::Ret>(method)
+                if let Err(err) = crate::verify::verify_method_signature(method, enc_args, &enc_ret)
                 {
                     panic!("declared invalid method -[{} {sel:?}]: {err}", self.name())
                 }
             }
         }
 
-        let types = method_type_encoding(&F::Ret::ENCODING, encs);
+        let types = method_type_encoding(&enc_ret, enc_args);
         let success = Bool::from_raw(unsafe {
             ffi::class_addMethod(
                 self.as_mut_ptr(),
@@ -412,15 +414,17 @@ impl ClassBuilder {
     where
         F: MethodImplementation<Callee = Class>,
     {
-        let encs = F::Args::ENCODINGS;
+        let enc_args = F::Args::ENCODINGS;
+        let enc_ret = F::Ret::ENCODING;
+
         let sel_args = count_args(sel);
         assert_eq!(
             sel_args,
-            encs.len(),
+            enc_args.len(),
             "Selector {:?} accepts {} arguments, but function accepts {}",
             sel,
             sel_args,
-            encs.len(),
+            enc_args.len(),
         );
 
         // Verify that, if the method is present on the superclass, that the
@@ -428,14 +432,14 @@ impl ClassBuilder {
         #[cfg(debug_assertions)]
         if let Some(superclass) = self.superclass() {
             if let Some(method) = superclass.class_method(sel) {
-                if let Err(err) = crate::verify::verify_method_signature::<F::Args, F::Ret>(method)
+                if let Err(err) = crate::verify::verify_method_signature(method, enc_args, &enc_ret)
                 {
                     panic!("declared invalid method +[{} {sel:?}]: {err}", self.name())
                 }
             }
         }
 
-        let types = method_type_encoding(&F::Ret::ENCODING, encs);
+        let types = method_type_encoding(&enc_ret, enc_args);
         let success = Bool::from_raw(unsafe {
             ffi::class_addMethod(
                 self.metaclass_mut(),

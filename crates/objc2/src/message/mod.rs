@@ -30,15 +30,48 @@ unsafe fn conditional_try<R: EncodeConvert>(f: impl FnOnce() -> R) -> R {
     f()
 }
 
+/// Help with monomorphizing in `icrate`
+#[cfg(debug_assertions)]
+#[track_caller]
+fn msg_send_check(
+    obj: Option<&Object>,
+    sel: Sel,
+    args: &[crate::encode::Encoding],
+    ret: &crate::encode::Encoding,
+) {
+    use crate::verify::{verify_method_signature, Inner, VerificationError};
+
+    let cls = if let Some(obj) = obj {
+        obj.class()
+    } else {
+        panic_null(sel)
+    };
+
+    let err = if let Some(method) = cls.instance_method(sel) {
+        if let Err(err) = verify_method_signature(method, args, ret) {
+            err
+        } else {
+            return;
+        }
+    } else {
+        VerificationError::from(Inner::MethodNotFound)
+    };
+
+    panic_verify(cls, sel, err);
+}
+
+#[cfg(debug_assertions)]
+#[track_caller]
+fn panic_null(sel: Sel) -> ! {
+    panic!("messsaging {sel:?} to nil")
+}
+
 #[cfg(debug_assertions)]
 #[track_caller]
 fn panic_verify(cls: &Class, sel: Sel, err: crate::VerificationError) -> ! {
     panic!(
-        "invalid message send to {}[{:?} {:?}]: {}",
+        "invalid message send to {}[{cls:?} {sel:?}]: {err}",
         if cls.is_metaclass() { "+" } else { "-" },
-        cls,
-        sel,
-        err
     )
 }
 
@@ -183,16 +216,8 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         #[cfg(debug_assertions)]
         {
             // SAFETY: Caller ensures only valid or NULL pointers.
-            let this = unsafe { this.as_ref() };
-            let cls = if let Some(this) = this {
-                this.class()
-            } else {
-                panic!("messsaging {:?} to nil", sel);
-            };
-
-            if let Err(err) = cls.verify_sel::<A, R>(sel) {
-                panic_verify(cls, sel, err);
-            }
+            let obj = unsafe { this.as_ref() };
+            msg_send_check(obj, sel, A::ENCODINGS, &R::__Inner::ENCODING);
         }
         unsafe { EncodeConvert::__from_inner(send_unverified(this, sel, args)) }
     }
@@ -230,7 +255,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         #[cfg(debug_assertions)]
         {
             if this.is_null() {
-                panic!("messsaging {:?} to nil", sel);
+                panic_null(sel);
             }
             if let Err(err) = superclass.verify_sel::<A, R>(sel) {
                 panic_verify(superclass, sel, err);
