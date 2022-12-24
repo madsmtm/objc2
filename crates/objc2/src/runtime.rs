@@ -619,7 +619,7 @@ impl Class {
         R: EncodeConvert,
     {
         let method = self.instance_method(sel).ok_or(Inner::MethodNotFound)?;
-        verify_method_signature::<A, R>(method)
+        verify_method_signature(method, A::ENCODINGS, &R::__Inner::ENCODING)
     }
 }
 

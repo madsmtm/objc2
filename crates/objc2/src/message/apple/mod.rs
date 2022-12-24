@@ -1,4 +1,3 @@
-use super::conditional_try;
 use crate::encode::Encode;
 use crate::ffi;
 use crate::runtime::{Class, Imp, Object, Sel};
@@ -33,7 +32,7 @@ where
     R: Encode,
 {
     let msg_send_fn = R::MSG_SEND;
-    unsafe { conditional_try(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
+    unsafe { conditional_try!(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
 }
 
 #[inline]
@@ -57,5 +56,5 @@ where
     let receiver = receiver.cast();
 
     let msg_send_fn = R::MSG_SEND_SUPER;
-    unsafe { conditional_try(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
+    unsafe { conditional_try!(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
 }

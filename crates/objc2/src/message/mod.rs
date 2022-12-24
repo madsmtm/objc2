@@ -7,38 +7,78 @@ use crate::rc::{Id, Owned, Ownership, Shared};
 use crate::runtime::{Class, Imp, Object, Sel};
 use crate::ClassType;
 
-#[cfg(feature = "catch-all")]
-#[track_caller]
-unsafe fn conditional_try<R: EncodeConvert>(f: impl FnOnce() -> R) -> R {
-    let f = core::panic::AssertUnwindSafe(f);
-    match unsafe { crate::exception::catch(f) } {
-        Ok(r) => r,
-        Err(exception) => {
-            if let Some(exception) = exception {
-                panic!("uncaught {:?}", exception)
-            } else {
-                panic!("uncaught exception nil")
-            }
-        }
-    }
+/// Wrap the given closure in `exception::catch` if the `catch-all` feature is
+/// enabled.
+///
+/// This is a macro to help with monomorphization when the feature is
+/// disabled, as well as improving the final stack trace (`#[track_caller]`
+/// doesn't really work on closures).
+#[cfg(not(feature = "catch-all"))]
+macro_rules! conditional_try {
+    (|| $expr:expr) => {
+        $expr
+    };
 }
 
-#[cfg(not(feature = "catch-all"))]
-#[inline]
+#[cfg(feature = "catch-all")]
+macro_rules! conditional_try {
+    (|| $expr:expr) => {{
+        let f = core::panic::AssertUnwindSafe(|| $expr);
+        match crate::exception::catch(f) {
+            Ok(r) => r,
+            Err(exception) => {
+                if let Some(exception) = exception {
+                    panic!("uncaught {exception:?}")
+                } else {
+                    panic!("uncaught exception nil")
+                }
+            }
+        }
+    }};
+}
+
+/// Help with monomorphizing in `icrate`
+#[cfg(debug_assertions)]
 #[track_caller]
-unsafe fn conditional_try<R: EncodeConvert>(f: impl FnOnce() -> R) -> R {
-    f()
+fn msg_send_check(
+    obj: Option<&Object>,
+    sel: Sel,
+    args: &[crate::encode::Encoding],
+    ret: &crate::encode::Encoding,
+) {
+    use crate::verify::{verify_method_signature, Inner, VerificationError};
+
+    let cls = if let Some(obj) = obj {
+        obj.class()
+    } else {
+        panic_null(sel)
+    };
+
+    let err = if let Some(method) = cls.instance_method(sel) {
+        if let Err(err) = verify_method_signature(method, args, ret) {
+            err
+        } else {
+            return;
+        }
+    } else {
+        VerificationError::from(Inner::MethodNotFound)
+    };
+
+    panic_verify(cls, sel, err);
+}
+
+#[cfg(debug_assertions)]
+#[track_caller]
+fn panic_null(sel: Sel) -> ! {
+    panic!("messsaging {sel:?} to nil")
 }
 
 #[cfg(debug_assertions)]
 #[track_caller]
 fn panic_verify(cls: &Class, sel: Sel, err: crate::VerificationError) -> ! {
     panic!(
-        "invalid message send to {}[{:?} {:?}]: {}",
+        "invalid message send to {}[{cls:?} {sel:?}]: {err}",
         if cls.is_metaclass() { "+" } else { "-" },
-        cls,
-        sel,
-        err
     )
 }
 
@@ -183,16 +223,8 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         #[cfg(debug_assertions)]
         {
             // SAFETY: Caller ensures only valid or NULL pointers.
-            let this = unsafe { this.as_ref() };
-            let cls = if let Some(this) = this {
-                this.class()
-            } else {
-                panic!("messsaging {:?} to nil", sel);
-            };
-
-            if let Err(err) = cls.verify_sel::<A, R>(sel) {
-                panic_verify(cls, sel, err);
-            }
+            let obj = unsafe { this.as_ref() };
+            msg_send_check(obj, sel, A::ENCODINGS, &R::__Inner::ENCODING);
         }
         unsafe { EncodeConvert::__from_inner(send_unverified(this, sel, args)) }
     }
@@ -230,7 +262,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         #[cfg(debug_assertions)]
         {
             if this.is_null() {
-                panic!("messsaging {:?} to nil", sel);
+                panic_null(sel);
             }
             if let Err(err) = superclass.verify_sel::<A, R>(sel) {
                 panic_verify(superclass, sel, err);
