@@ -706,6 +706,9 @@ impl Protocol {
                 &mut count,
             )
         };
+        if descriptions.is_null() {
+            return Vec::new();
+        }
         let descriptions = unsafe { Malloc::from_array(descriptions, count as usize) };
         descriptions
             .iter()
