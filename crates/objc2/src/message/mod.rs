@@ -7,27 +7,34 @@ use crate::rc::{Id, Owned, Ownership, Shared};
 use crate::runtime::{Class, Imp, Object, Sel};
 use crate::ClassType;
 
-#[cfg(feature = "catch-all")]
-#[track_caller]
-unsafe fn conditional_try<R: EncodeConvert>(f: impl FnOnce() -> R) -> R {
-    let f = core::panic::AssertUnwindSafe(f);
-    match unsafe { crate::exception::catch(f) } {
-        Ok(r) => r,
-        Err(exception) => {
-            if let Some(exception) = exception {
-                panic!("uncaught {:?}", exception)
-            } else {
-                panic!("uncaught exception nil")
-            }
-        }
-    }
+/// Wrap the given closure in `exception::catch` if the `catch-all` feature is
+/// enabled.
+///
+/// This is a macro to help with monomorphization when the feature is
+/// disabled, as well as improving the final stack trace (`#[track_caller]`
+/// doesn't really work on closures).
+#[cfg(not(feature = "catch-all"))]
+macro_rules! conditional_try {
+    (|| $expr:expr) => {
+        $expr
+    };
 }
 
-#[cfg(not(feature = "catch-all"))]
-#[inline]
-#[track_caller]
-unsafe fn conditional_try<R: EncodeConvert>(f: impl FnOnce() -> R) -> R {
-    f()
+#[cfg(feature = "catch-all")]
+macro_rules! conditional_try {
+    (|| $expr:expr) => {{
+        let f = core::panic::AssertUnwindSafe(|| $expr);
+        match crate::exception::catch(f) {
+            Ok(r) => r,
+            Err(exception) => {
+                if let Some(exception) = exception {
+                    panic!("uncaught {exception:?}")
+                } else {
+                    panic!("uncaught exception nil")
+                }
+            }
+        }
+    }};
 }
 
 /// Help with monomorphizing in `icrate`
