@@ -2,7 +2,7 @@
 name = "objc-sys"
 # Remember to update `html_root_url` in lib.rs, the `links` key, and the
 # exception function name.
-version = "0.2.0-beta.2"
+version = "0.2.0-beta.3"
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 

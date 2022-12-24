@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.3.0-beta.4 - 2022-12-24
+
 ### Added
 * Allow directly specifying class name in `extern_class!` macro.
 * Added `ClassType::alloc`.
@@ -62,6 +65,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Require implementors of `Message` to support weak references.
 * **BREAKING**: Moved `objc2::foundation` into `icrate::Foundation`.
 * **BREAKING**: Moved `objc2::ns_string` into `icrate::ns_string`.
+* Updated `ffi` module to `objc-sys v0.2.0-beta.3`.
+* **BREAKING**: Updated `encode` module `objc2-encode v2.0.0-pre.3`.
 
 ### Fixed
 * Fixed duplicate selector extraction in `extern_methods!`.

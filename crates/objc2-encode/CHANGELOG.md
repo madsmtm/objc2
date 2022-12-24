@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 2.0.0-pre.3 - 2022-12-24
+
 ### Added
 * Added `EncodingBox` for dynamically parsing encodings and creating them on
   the heap.
