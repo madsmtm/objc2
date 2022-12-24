@@ -327,7 +327,7 @@ jobs:
         ls -al $HOME/extern/*
 
     - name: Install GNUStep GUI
-      if: matrix.target == 'x86_64-unknown-linux-gnu' && steps.extern-cache.outputs.cache-hit != 'true'
+      if: contains(matrix.runtime, 'gnustep') && matrix.target == 'x86_64-unknown-linux-gnu' && steps.extern-cache.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/gnustep/libs-gui/archive/refs/tags/gui-0_29_0.tar.gz
         tar -xzf gui-0_29_0.tar.gz
