@@ -8,8 +8,8 @@ use crate::config::{ClassData, Config};
 use crate::file::File;
 use crate::method::Method;
 use crate::output::Output;
-use crate::rust_type::{GenericType, Ownership};
-use crate::stmt::Stmt;
+use crate::rust_type::Ownership;
+use crate::stmt::{ClassDefReference, Stmt};
 
 #[derive(Debug, PartialEq, Clone)]
 struct MethodCache {
@@ -37,7 +37,7 @@ impl ClassCache {
 /// A helper struct for doing global analysis on the output.
 #[derive(Debug, PartialEq, Clone)]
 pub struct Cache {
-    classes: BTreeMap<GenericType, ClassCache>,
+    classes: BTreeMap<ClassDefReference, ClassCache>,
     ownership_map: BTreeMap<String, Ownership>,
 }
 
@@ -70,7 +70,7 @@ impl Cache {
         }
     }
 
-    fn cache_stmt(stmt: &Stmt) -> Option<(&GenericType, MethodCache)> {
+    fn cache_stmt(stmt: &Stmt) -> Option<(&ClassDefReference, MethodCache)> {
         if let Stmt::Methods {
             ty,
             availability,
@@ -79,7 +79,7 @@ impl Cache {
             description,
         } = stmt
         {
-            let _span = debug_span!("Stmt::Methods", %ty).entered();
+            let _span = debug_span!("Stmt::Methods", ?ty).entered();
             let methods: Vec<Method> = methods
                 .iter()
                 .filter(|method| method.emit_on_subclasses())
@@ -122,7 +122,7 @@ impl Cache {
                 Stmt::ClassDecl {
                     ty, superclasses, ..
                 } => {
-                    let _span = debug_span!("Stmt::ClassDecl", %ty).entered();
+                    let _span = debug_span!("Stmt::ClassDecl", ?ty).entered();
                     let data = config.class_data.get(&ty.name);
 
                     // Used for duplicate checking (sometimes the subclass

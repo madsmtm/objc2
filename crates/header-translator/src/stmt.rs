@@ -13,7 +13,7 @@ use crate::config::{ClassData, Config};
 use crate::expr::Expr;
 use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
-use crate::rust_type::{GenericType, Ownership, Ty};
+use crate::rust_type::{Ownership, Ty};
 use crate::unexposed_macro::UnexposedMacro;
 
 #[derive(serde::Deserialize, Debug, Clone, PartialEq, Eq)]
@@ -34,7 +34,19 @@ impl fmt::Display for Derives {
     }
 }
 
-fn parse_superclass<'ty>(entity: &Entity<'ty>) -> Option<(Entity<'ty>, GenericType)> {
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct ClassDefReference {
+    pub name: String,
+    pub generics: Vec<String>,
+}
+
+impl ClassDefReference {
+    pub fn new(name: String, generics: Vec<String>) -> Self {
+        Self { name, generics }
+    }
+}
+
+fn parse_superclass<'ty>(entity: &Entity<'ty>) -> Option<(Entity<'ty>, ClassDefReference)> {
     let mut superclass = None;
     let mut generics = Vec::new();
 
@@ -44,10 +56,7 @@ fn parse_superclass<'ty>(entity: &Entity<'ty>) -> Option<(Entity<'ty>, GenericTy
         }
         EntityKind::TypeRef => {
             let name = entity.get_name().expect("typeref name");
-            generics.push(GenericType {
-                name,
-                generics: Vec::new(),
-            });
+            generics.push(name);
         }
         _ => {}
     });
@@ -57,10 +66,7 @@ fn parse_superclass<'ty>(entity: &Entity<'ty>) -> Option<(Entity<'ty>, GenericTy
             entity
                 .get_reference()
                 .expect("ObjCSuperClassRef to reference entity"),
-            GenericType {
-                name: entity.get_name().expect("superclass name"),
-                generics,
-            },
+            ClassDefReference::new(entity.get_name().expect("superclass name"), generics),
         )
     })
 }
@@ -72,7 +78,7 @@ fn parse_superclass<'ty>(entity: &Entity<'ty>) -> Option<(Entity<'ty>, GenericTy
 fn parse_objc_decl(
     entity: &Entity<'_>,
     superclass: bool,
-    mut generics: Option<&mut Vec<GenericType>>,
+    mut generics: Option<&mut Vec<String>>,
     data: Option<&ClassData>,
 ) -> (Vec<String>, Vec<Method>, Vec<String>) {
     let mut protocols = Vec::new();
@@ -104,10 +110,7 @@ fn parse_objc_decl(
                 // TODO: Generics with bounds (like NSMeasurement<UnitType: NSUnit *>)
                 // let ty = entity.get_type().expect("template type");
                 let name = entity.get_display_name().expect("template name");
-                generics.push(GenericType {
-                    name,
-                    generics: Vec::new(),
-                });
+                generics.push(name);
             } else {
                 error!("unsupported generics");
             }
@@ -193,9 +196,9 @@ pub enum Stmt {
     /// ->
     /// extern_class!
     ClassDecl {
-        ty: GenericType,
+        ty: ClassDefReference,
         availability: Availability,
-        superclasses: Vec<GenericType>,
+        superclasses: Vec<ClassDefReference>,
         designated_initializers: Vec<String>,
         derives: Derives,
         ownership: Ownership,
@@ -204,7 +207,7 @@ pub enum Stmt {
     /// ->
     /// extern_methods!
     Methods {
-        ty: GenericType,
+        ty: ClassDefReference,
         availability: Availability,
         methods: Vec<Method>,
         /// For the categories that have a name (though some don't, see NSClipView)
@@ -223,7 +226,7 @@ pub enum Stmt {
     /// @interface ty: _ <protocols*>
     /// @interface ty (_) <protocols*>
     ProtocolImpl {
-        ty: GenericType,
+        ty: ClassDefReference,
         availability: Availability,
         protocol: String,
     },
@@ -363,7 +366,7 @@ impl Stmt {
                 let (protocols, methods, designated_initializers) =
                     parse_objc_decl(entity, true, Some(&mut generics), class_data);
 
-                let ty = GenericType { name, generics };
+                let ty = ClassDefReference::new(name, generics);
 
                 let mut superclass_entity = *entity;
                 let mut superclasses = vec![];
@@ -447,10 +450,7 @@ impl Stmt {
                     )
                 }
 
-                let ty = GenericType {
-                    name: class_name,
-                    generics: class_generics,
-                };
+                let ty = ClassDefReference::new(class_name, class_generics);
 
                 iter::once(Self::Methods {
                     ty: ty.clone(),
@@ -824,7 +824,7 @@ impl fmt::Display for Stmt {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let _span = debug_span!("stmt", discriminant = ?mem::discriminant(self)).entered();
 
-        struct GenericTyHelper<'a>(&'a GenericType);
+        struct GenericTyHelper<'a>(&'a ClassDefReference);
 
         impl fmt::Display for GenericTyHelper<'_> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -843,7 +843,7 @@ impl fmt::Display for Stmt {
             }
         }
 
-        struct GenericParamsHelper<'a>(&'a [GenericType]);
+        struct GenericParamsHelper<'a>(&'a [String]);
 
         impl fmt::Display for GenericParamsHelper<'_> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

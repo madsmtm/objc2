@@ -39,25 +39,76 @@ impl fmt::Display for Ownership {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct GenericType {
-    pub name: String,
-    pub generics: Vec<GenericType>,
+enum IdType {
+    Class { name: String, generics: Vec<Self> },
+    ProtocolObject { name: String },
+    TypeDef { name: String },
+    GenericParam { name: String },
+    Object,
+    Allocated,
+    Self_,
+    // TODO: Handle these better
+    TodoClass,
+    TodoProtocols,
 }
 
-impl GenericType {
-    pub fn parse_objc_pointer(ty: Type<'_>) -> Self {
+impl IdType {
+    fn name(&self) -> &str {
+        match &self {
+            Self::Class { name, generics: _ } => &name,
+            // TODO: Handle this better!
+            Self::ProtocolObject { name } => match &**name {
+                "NSCopying" | "NSMutableCopying" => "Object",
+                name => name,
+            },
+            Self::TypeDef { name } => &name,
+            Self::GenericParam { name } => &name,
+            Self::Object => "Object",
+            Self::Allocated => "Allocated",
+            Self::Self_ => "Self",
+            Self::TodoClass => "TodoClass",
+            Self::TodoProtocols => "TodoProtocols",
+        }
+    }
+
+    fn parse_objc_pointer(ty: Type<'_>) -> Self {
+        let generics: Vec<_> = ty
+            .get_objc_type_arguments()
+            .into_iter()
+            .map(|param| {
+                match RustType::parse(param, false, Nullability::Unspecified, false) {
+                    RustType::Id {
+                        ty,
+                        is_const: _,
+                        lifetime: _,
+                        nullability: _,
+                        ownership: _,
+                    } => ty,
+                    // TODO: Handle this better
+                    RustType::Class { nullability: _ } => Self::TodoClass,
+                    param => {
+                        panic!("invalid generic parameter {param:?} in {ty:?}")
+                    }
+                }
+            })
+            .collect();
+
+        let protocols: Vec<_> = ty
+            .get_objc_protocol_declarations()
+            .into_iter()
+            .map(|entity| entity.get_display_name().expect("protocol name"))
+            .collect();
+
         match ty.get_kind() {
             TypeKind::ObjCInterface => {
-                let generics = ty.get_objc_type_arguments();
                 if !generics.is_empty() {
                     panic!("generics not empty: {ty:?}, {generics:?}");
                 }
-                let protocols = ty.get_objc_protocol_declarations();
                 if !protocols.is_empty() {
                     panic!("protocols not empty: {ty:?}, {protocols:?}");
                 }
                 let name = ty.get_display_name();
-                Self {
+                Self::Class {
                     name,
                     generics: Vec::new(),
                 }
@@ -66,68 +117,54 @@ impl GenericType {
                 let base_ty = ty
                     .get_objc_object_base_type()
                     .expect("object to have base type");
-                let mut name = base_ty.get_display_name();
+                let name = base_ty.get_display_name();
 
-                let generics: Vec<_> = ty
-                    .get_objc_type_arguments()
-                    .into_iter()
-                    .map(|param| {
-                        match RustType::parse(param, false, Nullability::Unspecified, false) {
-                            RustType::Id {
-                                type_,
-                                is_const: _,
-                                lifetime: _,
-                                nullability: _,
-                                ownership: _,
-                            } => type_,
-                            // TODO: Handle this better
-                            RustType::Class { nullability: _ } => Self {
-                                name: "TodoClass".to_string(),
-                                generics: Vec::new(),
-                            },
-                            param => {
-                                panic!("invalid generic parameter {param:?} in {ty:?}")
-                            }
+                match base_ty.get_kind() {
+                    TypeKind::ObjCId => {
+                        assert_eq!(name, "id");
+
+                        if !generics.is_empty() {
+                            panic!("generics not empty: {ty:?}, {generics:?}");
                         }
-                    })
-                    .collect();
 
-                let protocols: Vec<_> = ty
-                    .get_objc_protocol_declarations()
-                    .into_iter()
-                    .map(|entity| entity.get_display_name().expect("protocol name"))
-                    .collect();
-                if !protocols.is_empty() {
-                    if name == "id" && generics.is_empty() && protocols.len() == 1 {
-                        name = protocols[0].clone();
-                    } else {
-                        name = "TodoProtocols".to_string();
+                        match &*protocols {
+                            [] => Self::Object,
+                            [protocol_name] => Self::ProtocolObject {
+                                name: protocol_name.clone(),
+                            },
+                            _ => Self::TodoProtocols,
+                        }
                     }
+                    TypeKind::ObjCInterface => {
+                        if !protocols.is_empty() {
+                            Self::TodoProtocols
+                        } else {
+                            Self::Class { name, generics }
+                        }
+                    }
+                    TypeKind::ObjCClass => Self::TodoClass,
+                    kind => panic!("unknown ObjCObject kind {ty:?}, {kind:?}"),
                 }
-
-                Self { name, generics }
             }
             _ => panic!("pointee was neither objcinterface nor objcobject: {ty:?}"),
         }
     }
 }
 
-impl fmt::Display for GenericType {
+impl fmt::Display for IdType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // TODO: Handle this better!
-        match &*self.name {
-            "NSCopying" => write!(f, "Object")?,
-            "NSMutableCopying" => write!(f, "Object")?,
-            name => write!(f, "{name}")?,
+        write!(f, "{}", self.name())?;
+
+        if let Self::Class { generics, .. } = &self {
+            if !generics.is_empty() {
+                write!(f, "<")?;
+                for generic in generics {
+                    write!(f, "{generic},")?;
+                }
+                write!(f, ">")?;
+            }
         }
 
-        if !self.generics.is_empty() {
-            write!(f, "<")?;
-            for generic in &self.generics {
-                write!(f, "{generic},")?;
-            }
-            write!(f, ">")?;
-        }
         Ok(())
     }
 }
@@ -349,7 +386,7 @@ enum RustType {
 
     // Objective-C
     Id {
-        type_: GenericType,
+        ty: IdType,
         is_const: bool,
         lifetime: Lifetime,
         nullability: Nullability,
@@ -442,10 +479,7 @@ impl RustType {
             Float => Self::Float,
             Double => Self::Double,
             ObjCId => Self::Id {
-                type_: GenericType {
-                    name: "Object".to_string(),
-                    generics: Vec::new(),
-                },
+                ty: IdType::Object,
                 is_const: ty.is_const_qualified(),
                 lifetime,
                 nullability,
@@ -492,10 +526,9 @@ impl RustType {
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
                 let mut kindof = false;
                 let ty = parse_attributed(ty, &mut nullability, &mut lifetime, &mut kindof, false);
-                let type_ = GenericType::parse_objc_pointer(ty);
 
                 Self::Id {
-                    type_,
+                    ty: IdType::parse_objc_pointer(ty),
                     is_const: ty.is_const_qualified(),
                     lifetime,
                     nullability,
@@ -531,10 +564,7 @@ impl RustType {
                     "Float96" => panic!("can't handle 96 bit 68881 float"),
 
                     "instancetype" => Self::Id {
-                        type_: GenericType {
-                            name: "Self".to_string(),
-                            generics: Vec::new(),
-                        },
+                        ty: IdType::Self_,
                         is_const: ty.is_const_qualified(),
                         lifetime,
                         nullability,
@@ -546,17 +576,20 @@ impl RustType {
                             ObjCObjectPointer => {
                                 let ty =
                                     ty.get_pointee_type().expect("pointer type to have pointee");
-                                let type_ = GenericType::parse_objc_pointer(ty);
-                                if !type_.generics.is_empty() {
-                                    panic!("typedef generics not empty");
-                                }
+                                let is_const = ty.is_const_qualified();
+
+                                let ty = match IdType::parse_objc_pointer(ty) {
+                                    IdType::Class { generics, .. } => {
+                                        assert!(generics.is_empty(), "typedef generics not empty");
+                                        IdType::TypeDef { name: typedef_name }
+                                    }
+                                    IdType::Object => IdType::GenericParam { name: typedef_name },
+                                    _ => IdType::TypeDef { name: typedef_name },
+                                };
 
                                 Self::Id {
-                                    type_: GenericType {
-                                        name: typedef_name,
-                                        generics: Vec::new(),
-                                    },
-                                    is_const: ty.is_const_qualified(),
+                                    ty,
+                                    is_const,
                                     lifetime,
                                     nullability,
                                     ownership: Ownership::Shared,
@@ -691,7 +724,7 @@ impl fmt::Display for RustType {
 
             // Objective-C
             Id {
-                type_: ty,
+                ty,
                 is_const,
                 // Ignore
                 lifetime: _,
@@ -1028,13 +1061,8 @@ impl Ty {
             self.kind,
             TyKind::MethodReturn | TyKind::MethodReturnWithError
         ));
-        if let RustType::Id {
-            type_: ty,
-            ownership,
-            ..
-        } = &mut self.ty
-        {
-            *ownership = get_ownership(&ty.name);
+        if let RustType::Id { ty, ownership, .. } = &mut self.ty {
+            *ownership = get_ownership(ty.name());
         }
     }
 }
@@ -1048,14 +1076,14 @@ impl Ty {
         } = &self.ty
         {
             if let RustType::Id {
-                type_: ty,
+                ty: IdType::Class { name, generics },
                 is_const: id_is_const,
                 lifetime,
                 nullability: id_nullability,
                 ownership,
             } = &**pointee
             {
-                if ty.name != "NSError" {
+                if name != "NSError" {
                     return false;
                 }
                 assert_eq!(
@@ -1066,7 +1094,7 @@ impl Ty {
                 assert!(!is_const, "expected error not const {self:?}");
 
                 assert!(
-                    ty.generics.is_empty(),
+                    generics.is_empty(),
                     "expected error generics to be empty {self:?}"
                 );
                 assert_eq!(
@@ -1094,17 +1122,13 @@ impl Ty {
     pub fn set_is_alloc(&mut self) {
         match &mut self.ty {
             RustType::Id {
-                type_: ty,
+                ty: ty @ IdType::Self_,
                 lifetime: Lifetime::Unspecified,
                 is_const: false,
                 nullability: _,
                 ownership: Ownership::Shared,
-            } if ty.name == "Self" && ty.generics.is_empty() => {
-                ty.name = "Allocated".into();
-                ty.generics = vec![GenericType {
-                    name: "Self".into(),
-                    generics: vec![],
-                }];
+            } => {
+                *ty = IdType::Allocated;
             }
             _ => error!(?self, "invalid alloc return type"),
         }
@@ -1116,10 +1140,13 @@ impl Ty {
     }
 
     pub fn is_instancetype(&self) -> bool {
-        matches!(&self.ty, RustType::Id {
-            type_: ty,
-            ..
-        } if ty.name == "Self" && ty.generics.is_empty())
+        matches!(
+            &self.ty,
+            RustType::Id {
+                ty: IdType::Self_,
+                ..
+            }
+        )
     }
 
     pub fn is_typedef_to(&self, s: &str) -> bool {
@@ -1129,25 +1156,30 @@ impl Ty {
     /// Related result types
     /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types>
     pub fn fix_related_result_type(&mut self, is_class: bool, selector: &str) {
-        if let RustType::Id { type_, .. } = &mut self.ty {
-            if type_.name == "Object" {
-                assert!(type_.generics.is_empty(), "Object return generics empty");
-                let is_related = if is_class {
-                    MemoryManagement::is_new(selector) || MemoryManagement::is_alloc(selector)
-                } else {
-                    MemoryManagement::is_init(selector) || selector == "self"
-                };
+        if let RustType::Id {
+            ty: ty @ IdType::Object,
+            ..
+        } = &mut self.ty
+        {
+            let is_related = if is_class {
+                MemoryManagement::is_new(selector) || MemoryManagement::is_alloc(selector)
+            } else {
+                MemoryManagement::is_init(selector) || selector == "self"
+            };
 
-                if is_related {
-                    type_.name = "Self".into();
-                }
+            if is_related {
+                *ty = IdType::Self_;
             }
         }
     }
 
     pub fn is_nsstring(&self) -> bool {
-        if let RustType::Id { type_: ty, .. } = &self.ty {
-            ty.name == "NSString"
+        if let RustType::Id {
+            ty: IdType::Class { name, .. },
+            ..
+        } = &self.ty
+        {
+            name == "NSString"
         } else {
             false
         }
@@ -1167,7 +1199,7 @@ impl fmt::Display for Ty {
 
                 match &self.ty {
                     RustType::Id {
-                        type_: ty,
+                        ty,
                         // Ignore
                         is_const: _,
                         // Ignore
@@ -1194,7 +1226,7 @@ impl fmt::Display for Ty {
             }
             TyKind::MethodReturnWithError => match &self.ty {
                 RustType::Id {
-                    type_: ty,
+                    ty,
                     lifetime: Lifetime::Unspecified,
                     is_const: false,
                     nullability: Nullability::Nullable,
@@ -1211,7 +1243,7 @@ impl fmt::Display for Ty {
             },
             TyKind::Static => match &self.ty {
                 RustType::Id {
-                    type_: ty,
+                    ty,
                     is_const: false,
                     lifetime: Lifetime::Strong | Lifetime::Unspecified,
                     nullability,
@@ -1239,31 +1271,24 @@ impl fmt::Display for Ty {
                 //
                 // Because that means we can use ordinary Id<NSAbc> elsewhere.
                 RustType::Id {
-                    type_: ty,
+                    ty: ty @ IdType::Class { name, generics },
                     is_const: _,
                     lifetime: _,
-                    nullability,
+                    nullability: Nullability::Nullable | Nullability::Unspecified,
                     ownership: Ownership::Shared,
-                } => {
-                    match &*ty.name {
-                        "NSString" => {}
-                        "NSUnit" => {}        // TODO: Handle this differently
-                        "TodoProtocols" => {} // TODO
-                        _ => panic!("typedef declaration was not NSString: {ty:?}"),
-                    }
-
-                    if !ty.generics.is_empty() {
-                        panic!("typedef declaration generics not empty");
-                    }
-
-                    assert_ne!(*nullability, Nullability::NonNull);
-                    write!(f, "{ty}")
+                } if name == "NSString" && generics.is_empty() => write!(f, "{ty}"),
+                RustType::Id {
+                    ty: ty @ IdType::TodoProtocols,
+                    ..
+                } => write!(f, "{ty}"),
+                ty @ RustType::Id { .. } => {
+                    panic!("typedef declaration was not NSString: {ty:?}");
                 }
                 ty => write!(f, "{ty}"),
             },
             TyKind::MethodArgument | TyKind::FnDeclArgument => match &self.ty {
                 RustType::Id {
-                    type_: ty,
+                    ty,
                     is_const: false,
                     lifetime: Lifetime::Unspecified | Lifetime::Strong,
                     nullability,
@@ -1290,7 +1315,7 @@ impl fmt::Display for Ty {
                 } => match &**pointee {
                     // TODO: Re-enable once we can support it
                     // RustType::Id {
-                    //     type_: ty,
+                    //     ty,
                     //     is_const: false,
                     //     lifetime: Lifetime::Autoreleasing,
                     //     nullability: inner_nullability,
