@@ -14,7 +14,7 @@ impl RefUnwindSafe for NSBundle {}
 impl NSBundle {
     #[cfg(feature = "Foundation_NSString")]
     #[cfg(feature = "Foundation_NSDictionary")]
-    pub fn name(&self) -> Option<Id<Foundation::NSString, Shared>> {
+    pub fn name(&self) -> Option<Id<Foundation::NSString>> {
         use Foundation::{NSCopying, NSString};
 
         let info = self.infoDictionary()?;

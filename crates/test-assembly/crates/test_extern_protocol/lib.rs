@@ -2,7 +2,7 @@
 #![cfg(feature = "apple")]
 use core::mem::ManuallyDrop;
 
-use objc2::rc::{Id, Shared};
+use objc2::rc::Id;
 use objc2::runtime::Protocol;
 use objc2::{extern_protocol, ProtocolObject, ProtocolType};
 
@@ -27,7 +27,7 @@ fn dyn_call(obj: &ProtocolObject<dyn MyProtocol>) {
 }
 
 #[no_mangle]
-fn dyn_consume(obj: ManuallyDrop<Id<ProtocolObject<dyn MyProtocol>, Shared>>) {
+fn dyn_consume(obj: ManuallyDrop<Id<ProtocolObject<dyn MyProtocol>>>) {
     obj.aMethod();
     // Use ManuallyDrop to prevent trying to handle the case where `aMethod`
     // unwinds.

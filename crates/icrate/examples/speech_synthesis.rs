@@ -19,7 +19,6 @@ use icrate::Foundation::{NSObject, NSString};
 
 #[cfg(target_os = "macos")]
 mod appkit {
-    use icrate::objc2::rc::Shared;
     use icrate::Foundation::NSCopying;
 
     use super::*;
@@ -75,7 +74,7 @@ mod appkit {
     pub struct Utterance {
         rate: f32,
         volume: f32,
-        string: Id<NSString, Shared>,
+        string: Id<NSString>,
     }
 
     impl Utterance {

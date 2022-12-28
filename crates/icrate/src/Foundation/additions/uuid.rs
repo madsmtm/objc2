@@ -16,7 +16,7 @@ impl RefUnwindSafe for NSUUID {}
 
 impl NSUUID {
     /// The 'nil UUID'.
-    pub fn nil() -> Id<Self, Shared> {
+    pub fn nil() -> Id<Self> {
         Self::from_bytes([0; 16])
     }
 
@@ -36,13 +36,13 @@ impl NSUUID {
     /// let obj = NSUUID::from_bytes(uuid.into_bytes());
     /// assert_eq!(obj.as_bytes(), uuid.into_bytes());
     /// ```
-    pub fn from_bytes(bytes: [u8; 16]) -> Id<Self, Shared> {
+    pub fn from_bytes(bytes: [u8; 16]) -> Id<Self> {
         let bytes = UuidBytes(bytes);
         Self::initWithUUIDBytes(Self::alloc(), &bytes)
     }
 
     #[cfg(feature = "Foundation_NSString")]
-    pub fn from_string(string: &Foundation::NSString) -> Option<Id<Self, Shared>> {
+    pub fn from_string(string: &Foundation::NSString) -> Option<Id<Self>> {
         Self::initWithUUIDString(Self::alloc(), string)
     }
 

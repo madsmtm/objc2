@@ -8,7 +8,7 @@ use crate::declare::ClassBuilder;
 use crate::declare::MethodImplementation;
 use crate::encode::Encode;
 use crate::message::__TupleExtender;
-use crate::rc::{Allocated, Id, Ownership, Shared};
+use crate::rc::{Allocated, Id, Ownership};
 #[cfg(all(debug_assertions, feature = "verify"))]
 use crate::runtime::MethodDescription;
 use crate::runtime::{Class, Object, Protocol, Sel};
@@ -116,7 +116,7 @@ pub trait MsgSendId<T, U> {
     /// `send_message_id` with that, and return an error if one occurred.
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id_error<A, E>(obj: T, sel: Sel, args: A) -> Result<U, Id<E, Shared>>
+    unsafe fn send_message_id_error<A, E>(obj: T, sel: Sel, args: A) -> Result<U, Id<E>>
     where
         *mut *mut E: Encode,
         A: __TupleExtender<*mut *mut E>,
@@ -158,7 +158,7 @@ pub trait MsgSendId<T, U> {
 // And intentionally not inlined, for much the same reason.
 #[cold]
 #[track_caller]
-unsafe fn encountered_error<E: Message>(err: *mut E) -> Id<E, Shared> {
+unsafe fn encountered_error<E: Message>(err: *mut E) -> Id<E> {
     // SAFETY: Ensured by caller
     unsafe { Id::retain(err) }.expect("error parameter should be set if the method returns NULL")
 }
@@ -639,14 +639,14 @@ mod tests {
 
     #[cfg(feature = "objc2-proc-macros")]
     use crate::__hash_idents;
-    use crate::rc::{Owned, Shared, __RcTestObject, __ThreadTestData};
+    use crate::rc::{__RcTestObject, __ThreadTestData};
     use crate::runtime::{NSObject, NSZone, Object};
     use crate::{class, msg_send_id, ClassType};
 
     #[test]
     fn test_new() {
-        let _obj: Id<Object, Shared> = unsafe { msg_send_id![NSObject::class(), new] };
-        let _obj: Option<Id<Object, Shared>> = unsafe { msg_send_id![NSObject::class(), new] };
+        let _obj: Id<Object> = unsafe { msg_send_id![NSObject::class(), new] };
+        let _obj: Option<Id<Object>> = unsafe { msg_send_id![NSObject::class(), new] };
     }
 
     #[test]
@@ -654,8 +654,8 @@ mod tests {
         let mut expected = __ThreadTestData::current();
         let obj = __RcTestObject::new();
 
-        let _obj: Id<Object, Shared> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
-        let _obj: Option<Id<Object, Shared>> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
+        let _obj: Id<Object> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
+        let _obj: Option<Id<Object>> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
         expected.alloc += 3;
         expected.init += 3;
         expected.assert_current();
@@ -668,11 +668,11 @@ mod tests {
         let mut expected = __ThreadTestData::current();
 
         let object_class = __RcTestObject::class();
-        let key: Id<Object, Shared> = unsafe { msg_send_id![class!(NSString), new] };
+        let key: Id<Object> = unsafe { msg_send_id![class!(NSString), new] };
         let contents_value: *const Object = ptr::null();
-        let properties: Id<Object, Shared> = unsafe { msg_send_id![class!(NSDictionary), new] };
+        let properties: Id<Object> = unsafe { msg_send_id![class!(NSDictionary), new] };
 
-        let _obj: Option<Id<Object, Shared>> = unsafe {
+        let _obj: Option<Id<Object>> = unsafe {
             msg_send_id![
                 NSObject::class(),
                 newScriptingObjectOfClass: object_class,
@@ -720,7 +720,7 @@ mod tests {
         let obj: Option<Allocated<__RcTestObject>> = unsafe { msg_send_id![cls, alloc] };
         expected.alloc += 1;
         // Don't check allocation error
-        let _obj: Id<__RcTestObject, Shared> = unsafe { msg_send_id![obj, init] };
+        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![obj, init] };
         expected.init += 1;
         expected.assert_current();
 
@@ -728,7 +728,7 @@ mod tests {
         expected.alloc += 1;
         // Check allocation error before init
         let obj = obj.unwrap();
-        let _obj: Id<__RcTestObject, Shared> = unsafe { msg_send_id![Some(obj), init] };
+        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![Some(obj), init] };
         expected.init += 1;
         expected.assert_current();
     }
@@ -738,7 +738,7 @@ mod tests {
         let mut expected = __ThreadTestData::current();
         let cls = __RcTestObject::class();
         crate::rc::autoreleasepool(|_| {
-            let _obj: Id<__RcTestObject, Owned> = unsafe { msg_send_id![cls, new] };
+            let _obj: Id<__RcTestObject> = unsafe { msg_send_id![cls, new] };
             expected.alloc += 1;
             expected.init += 1;
             expected.assert_current();
@@ -747,29 +747,27 @@ mod tests {
             expected.alloc += 1;
             expected.assert_current();
 
-            let obj: Id<__RcTestObject, Owned> = unsafe { msg_send_id![obj, init] };
+            let obj: Id<__RcTestObject> = unsafe { msg_send_id![obj, init] };
             expected.init += 1;
             expected.assert_current();
 
-            let _copy: Id<__RcTestObject, Shared> = unsafe { msg_send_id![&obj, copy] };
+            let _copy: Id<__RcTestObject> = unsafe { msg_send_id![&obj, copy] };
             expected.copy += 1;
             expected.alloc += 1;
             expected.init += 1;
             expected.assert_current();
 
-            let _mutable_copy: Id<__RcTestObject, Shared> =
-                unsafe { msg_send_id![&obj, mutableCopy] };
+            let _mutable_copy: Id<__RcTestObject> = unsafe { msg_send_id![&obj, mutableCopy] };
             expected.mutable_copy += 1;
             expected.alloc += 1;
             expected.init += 1;
             expected.assert_current();
 
-            let _self: Id<__RcTestObject, Shared> = unsafe { msg_send_id![&obj, self] };
+            let _self: Id<__RcTestObject> = unsafe { msg_send_id![&obj, self] };
             expected.retain += 1;
             expected.assert_current();
 
-            let _desc: Option<Id<__RcTestObject, Shared>> =
-                unsafe { msg_send_id![&obj, description] };
+            let _desc: Option<Id<__RcTestObject>> = unsafe { msg_send_id![&obj, description] };
             expected.assert_current();
         });
         expected.release += 5;
@@ -782,13 +780,13 @@ mod tests {
     // GNUStep instead returns an invalid instance that panics on accesses
     #[cfg_attr(feature = "gnustep-1-7", ignore)]
     fn new_nsvalue_fails() {
-        let _val: Id<Object, Shared> = unsafe { msg_send_id![class!(NSValue), new] };
+        let _val: Id<Object> = unsafe { msg_send_id![class!(NSValue), new] };
     }
 
     #[test]
     #[should_panic = "failed creating new instance using +[__RcTestObject newReturningNull]"]
     fn test_new_with_null() {
-        let _obj: Id<__RcTestObject, Owned> =
+        let _obj: Id<__RcTestObject> =
             unsafe { msg_send_id![__RcTestObject::class(), newReturningNull] };
     }
 
@@ -796,7 +794,7 @@ mod tests {
     #[should_panic = "unexpected NULL returned from -[__RcTestObject newMethodOnInstanceNull]"]
     fn test_new_any_with_null() {
         let obj = __RcTestObject::new();
-        let _obj: Id<Object, Shared> = unsafe { msg_send_id![&obj, newMethodOnInstanceNull] };
+        let _obj: Id<Object> = unsafe { msg_send_id![&obj, newMethodOnInstanceNull] };
     }
 
     #[test]
@@ -804,7 +802,7 @@ mod tests {
     #[cfg(not(debug_assertions))] // Does NULL receiver checks
     fn test_new_any_with_null_receiver() {
         let obj: *const NSObject = ptr::null();
-        let _obj: Id<Object, Shared> = unsafe { msg_send_id![obj, newMethodOnInstance] };
+        let _obj: Id<Object> = unsafe { msg_send_id![obj, newMethodOnInstance] };
     }
 
     #[test]
@@ -819,7 +817,7 @@ mod tests {
     fn test_init_with_null() {
         let obj: Option<Allocated<__RcTestObject>> =
             unsafe { msg_send_id![__RcTestObject::class(), alloc] };
-        let _obj: Id<__RcTestObject, Owned> = unsafe { msg_send_id![obj, initReturningNull] };
+        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![obj, initReturningNull] };
     }
 
     #[test]
@@ -827,28 +825,28 @@ mod tests {
     #[cfg(not(debug_assertions))] // Does NULL receiver checks
     fn test_init_with_null_receiver() {
         let obj: Option<Allocated<__RcTestObject>> = None;
-        let _obj: Id<__RcTestObject, Owned> = unsafe { msg_send_id![obj, init] };
+        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![obj, init] };
     }
 
     #[test]
     #[should_panic = "failed copying object"]
     fn test_copy_with_null() {
         let obj = Id::into_shared(__RcTestObject::new());
-        let _obj: Id<__RcTestObject, Shared> = unsafe { msg_send_id![&obj, copyReturningNull] };
+        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![&obj, copyReturningNull] };
     }
 
     #[test]
     #[should_panic = "unexpected NULL returned from -[__RcTestObject methodReturningNull]"]
     fn test_normal_with_null() {
         let obj = Id::into_shared(__RcTestObject::new());
-        let _obj: Id<__RcTestObject, Shared> = unsafe { msg_send_id![&obj, methodReturningNull] };
+        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![&obj, methodReturningNull] };
     }
 
     #[test]
     #[should_panic = "unexpected NULL returned from -[__RcTestObject aMethod:]"]
     fn test_normal_with_param_and_null() {
         let obj = Id::into_shared(__RcTestObject::new());
-        let _obj: Id<__RcTestObject, Shared> = unsafe { msg_send_id![&obj, aMethod: false] };
+        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![&obj, aMethod: false] };
     }
 
     #[test]
@@ -856,7 +854,7 @@ mod tests {
     #[cfg(not(debug_assertions))] // Does NULL receiver checks
     fn test_normal_with_null_receiver() {
         let obj: *const NSObject = ptr::null();
-        let _obj: Id<Object, Shared> = unsafe { msg_send_id![obj, description] };
+        let _obj: Id<Object> = unsafe { msg_send_id![obj, description] };
     }
 
     #[test]
@@ -970,7 +968,7 @@ mod tests {
         #[test]
         fn test_macro_still_works() {
             let cls = class!(NSObject);
-            let _obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new] };
+            let _obj: Id<Object> = unsafe { msg_send_id![cls, new] };
         }
     }
 

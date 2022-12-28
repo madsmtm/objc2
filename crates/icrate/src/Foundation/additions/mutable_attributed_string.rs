@@ -1,5 +1,5 @@
 #![cfg(feature = "Foundation_NSMutableAttributedString")]
-use objc2::rc::{DefaultId, Id, Owned, Shared};
+use objc2::rc::{DefaultId, Id, Owned};
 use objc2::{extern_methods, msg_send_id, ClassType};
 
 use crate::Foundation::{self, NSAttributedString, NSMutableAttributedString};

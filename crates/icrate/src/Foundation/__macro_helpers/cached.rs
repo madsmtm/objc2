@@ -2,7 +2,7 @@ use core::mem::ManuallyDrop;
 use core::ptr;
 use core::sync::atomic::{AtomicPtr, Ordering};
 
-use objc2::rc::{Id, Shared};
+use objc2::rc::Id;
 use objc2::Message;
 
 /// Allows storing an `Id` in a static and lazily loading it.
@@ -23,7 +23,7 @@ impl<T: Message> CachedId<T> {
     /// Returns the cached object. If no object is yet cached, creates one
     /// from the given closure and stores it.
     #[inline]
-    pub fn get(&self, f: impl FnOnce() -> Id<T, Shared>) -> &'static T {
+    pub fn get(&self, f: impl FnOnce() -> Id<T>) -> &'static T {
         // TODO: Investigate if we can use weaker orderings.
         let ptr = self.ptr.load(Ordering::SeqCst);
         // SAFETY: The pointer is either NULL, or has been created below.

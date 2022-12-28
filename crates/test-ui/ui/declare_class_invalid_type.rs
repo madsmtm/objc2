@@ -1,5 +1,5 @@
-use objc2::rc::{Id, Shared};
 use objc2::{declare_class, ClassType};
+use objc2::rc::Id;
 use objc2::runtime::NSObject;
 
 declare_class!(
@@ -12,7 +12,7 @@ declare_class!(
 
     unsafe impl CustomObject {
         #[method(test1)]
-        fn test1() -> Id<Self, Shared> {
+        fn test1() -> Id<Self> {
             unimplemented!()
         }
 

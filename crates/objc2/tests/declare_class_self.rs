@@ -2,7 +2,7 @@
 //! and hence we _must_ implement things by changing the generated method, we
 //! can't just create an internal helper function (since we can't name the
 //! types of such a function)!
-use objc2::rc::{Allocated, Id, Shared};
+use objc2::rc::{Allocated, Id};
 use objc2::runtime::NSObject;
 use objc2::{declare_class, ClassType};
 
@@ -33,7 +33,7 @@ declare_class!(
         fn init(
             _this: Allocated<<Self as GetSameType>::SameType>,
             _param: <*const Self as GetSameType>::SameType,
-        ) -> Id<<Self as GetSameType>::SameType, Shared> {
+        ) -> Id<<Self as GetSameType>::SameType> {
             unimplemented!()
         }
 
@@ -44,7 +44,7 @@ declare_class!(
 
         #[method_id(test4)]
         #[allow(unused_parens)]
-        fn test4(_this: &<(Self) as GetSameType>::SameType) -> Id<get_self!(), Shared> {
+        fn test4(_this: &<(Self) as GetSameType>::SameType) -> Id<get_self!()> {
             unimplemented!()
         }
     }

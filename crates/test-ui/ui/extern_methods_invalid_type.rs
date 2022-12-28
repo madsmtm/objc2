@@ -1,6 +1,6 @@
 use objc2::{extern_class, extern_methods, ClassType};
+use objc2::rc::Id;
 use objc2::runtime::NSObject;
-use objc2::rc::{Id, Owned, Shared};
 
 extern_class!(
     pub struct MyObject;
@@ -13,7 +13,7 @@ extern_class!(
 extern_methods!(
     unsafe impl MyObject {
         #[method(a)]
-        fn a(&self) -> Id<Self, Owned>;
+        fn a(&self) -> Id<Self>;
     }
 );
 
@@ -27,21 +27,21 @@ extern_methods!(
 extern_methods!(
     unsafe impl MyObject {
         #[method_id(init)]
-        fn init(&mut self) -> Option<Id<Self, Owned>>;
+        fn init(&mut self) -> Option<Id<Self>>;
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
         #[method(error:)]
-        fn error(arg: i32) -> Result<(), Id<NSObject, Shared>>;
+        fn error(arg: i32) -> Result<(), Id<NSObject>>;
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
         #[method_id(error:)]
-        fn error_id(arg: i32) -> Result<Id<Self, Owned>, Id<NSObject, Shared>>;
+        fn error_id(arg: i32) -> Result<Id<Self>, Id<NSObject>>;
     }
 );
 

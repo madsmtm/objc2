@@ -24,14 +24,14 @@ extern_methods!(
     /// Creation methods.
     unsafe impl NSData {
         #[method_id(new)]
-        pub fn new() -> Id<Self, Shared>;
+        pub fn new() -> Id<Self>;
 
-        pub fn with_bytes(bytes: &[u8]) -> Id<Self, Shared> {
+        pub fn with_bytes(bytes: &[u8]) -> Id<Self> {
             unsafe { Id::cast(with_slice(Self::class(), bytes)) }
         }
 
         #[cfg(feature = "block")]
-        pub fn from_vec(bytes: Vec<u8>) -> Id<Self, Shared> {
+        pub fn from_vec(bytes: Vec<u8>) -> Id<Self> {
             // GNUStep's NSData `initWithBytesNoCopy:length:deallocator:` has a
             // bug; it forgets to assign the input buffer and length to the
             // instance before it swizzles to NSDataWithDeallocatorBlock.
@@ -119,7 +119,7 @@ impl<'a> IntoIterator for &'a NSData {
     }
 }
 
-pub(crate) unsafe fn with_slice(cls: &Class, bytes: &[u8]) -> Id<Object, Shared> {
+pub(crate) unsafe fn with_slice(cls: &Class, bytes: &[u8]) -> Id<Object> {
     let bytes_ptr: *const c_void = bytes.as_ptr().cast();
     unsafe {
         msg_send_id![
@@ -131,7 +131,7 @@ pub(crate) unsafe fn with_slice(cls: &Class, bytes: &[u8]) -> Id<Object, Shared>
 }
 
 #[cfg(feature = "block")]
-pub(crate) unsafe fn with_vec(cls: &Class, bytes: Vec<u8>) -> Id<Object, Shared> {
+pub(crate) unsafe fn with_vec(cls: &Class, bytes: Vec<u8>) -> Id<Object> {
     use core::mem::ManuallyDrop;
 
     use block2::{Block, ConcreteBlock};

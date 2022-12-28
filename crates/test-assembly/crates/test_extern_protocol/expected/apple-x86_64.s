@@ -15,7 +15,7 @@ _get_protocol:
 _dyn_call:
 	push	rbp
 	mov	rbp, rsp
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_016b57e4e6a36961]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_36d5bd8a3470dcf9]
 	pop	rbp
 	jmp	_objc_msgSend
 
@@ -27,7 +27,7 @@ _dyn_consume:
 	push	rbx
 	push	rax
 	mov	rbx, rdi
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_016b57e4e6a36961]
+	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_36d5bd8a3470dcf9]
 	call	_objc_msgSend
 	mov	rdi, rbx
 	add	rsp, 8
@@ -40,20 +40,20 @@ l_anon.[ID].0:
 	.ascii	"MyProtocol"
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_016b57e4e6a36961
+	.globl	L_OBJC_IMAGE_INFO_36d5bd8a3470dcf9
 	.p2align	2
-L_OBJC_IMAGE_INFO_016b57e4e6a36961:
+L_OBJC_IMAGE_INFO_36d5bd8a3470dcf9:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_016b57e4e6a36961
-L_OBJC_METH_VAR_NAME_016b57e4e6a36961:
+	.globl	L_OBJC_METH_VAR_NAME_36d5bd8a3470dcf9
+L_OBJC_METH_VAR_NAME_36d5bd8a3470dcf9:
 	.asciz	"aMethod"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_016b57e4e6a36961
+	.globl	L_OBJC_SELECTOR_REFERENCES_36d5bd8a3470dcf9
 	.p2align	3
-L_OBJC_SELECTOR_REFERENCES_016b57e4e6a36961:
-	.quad	L_OBJC_METH_VAR_NAME_016b57e4e6a36961
+L_OBJC_SELECTOR_REFERENCES_36d5bd8a3470dcf9:
+	.quad	L_OBJC_METH_VAR_NAME_36d5bd8a3470dcf9
 
 .subsections_via_symbols

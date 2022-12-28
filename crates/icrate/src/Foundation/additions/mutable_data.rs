@@ -7,7 +7,7 @@ use core::ptr::NonNull;
 use core::slice::{self, SliceIndex};
 use std::io;
 
-use objc2::rc::{DefaultId, Id, Owned, Shared};
+use objc2::rc::{DefaultId, Id, Owned};
 use objc2::{extern_methods, ClassType};
 
 use super::data::with_slice;

@@ -118,12 +118,12 @@ pub unsafe trait ImplementedBy<P: ?Sized + Message> {
 ///
 /// ```rust,ignore
 /// use objc2::ProtocolObject;
-/// use objc2::rc::{Id, Shared};
+/// use objc2::rc::Id;
 ///
-/// let obj: Id<MyObject, Shared>;
+/// let obj: Id<MyObject>;
 /// # obj = unimplemented!();
 /// let obj: &ProtocolObject<dyn MyProtocol> = ProtocolObject::from_ref(&*obj);
-/// let obj: Id<ProtocolObject<dyn MyProtocol>, Shared> = ProtocolObject::from_id(obj);
+/// let obj: Id<ProtocolObject<dyn MyProtocol>> = ProtocolObject::from_id(obj);
 /// ```
 #[doc(alias = "id")]
 #[repr(C)]

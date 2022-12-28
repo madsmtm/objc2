@@ -16,7 +16,7 @@ impl RefUnwindSafe for NSThread {}
 extern_methods!(
     unsafe impl NSThread {
         #[method_id(new)]
-        unsafe fn new() -> Id<Self, Shared>;
+        unsafe fn new() -> Id<Self>;
     }
 );
 

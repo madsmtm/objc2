@@ -33,7 +33,7 @@ impl NSValue {
     /// ```
     ///
     /// [`NSPoint`]: crate::Foundation::NSPoint
-    pub fn new<T: 'static + Copy + Encode>(value: T) -> Id<Self, Shared> {
+    pub fn new<T: 'static + Copy + Encode>(value: T) -> Id<Self> {
         let bytes: NonNull<T> = NonNull::from(&value);
         let encoding = CString::new(T::ENCODING.to_string()).unwrap();
         unsafe {

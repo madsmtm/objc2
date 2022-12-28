@@ -1,10 +1,10 @@
 #![cfg(feature = "Foundation_NSDictionary")]
 #![cfg(feature = "Foundation_NSString")]
-use objc2::rc::{autoreleasepool, Id, Shared};
+use objc2::rc::{autoreleasepool, Id};
 
 use icrate::Foundation::{NSDictionary, NSObject, NSString};
 
-fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>, Shared> {
+fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>> {
     let string = NSString::from_str(key);
     let obj = NSObject::new();
     NSDictionary::from_keys_and_objects(&[&*string], vec![obj])

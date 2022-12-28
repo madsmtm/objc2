@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Changed
+* Made the default ownership in `Id` be `Shared`. This means that you can now
+  write `Id<NSString>`, and it'll mean `Id<NSString, Shared>`.
+
 
 ## 0.3.0-beta.5 - 2023-02-07
 

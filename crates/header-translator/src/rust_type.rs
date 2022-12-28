@@ -170,15 +170,6 @@ impl From<bool> for Ownership {
     }
 }
 
-impl fmt::Display for Ownership {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Owned => write!(f, "Owned"),
-            Self::Shared => write!(f, "Shared"),
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 enum TypeParams {
     Empty,
@@ -234,14 +225,14 @@ impl IdType {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 match self.0 {
                     IdType::Class {
-                        ownership: Some(ownership),
+                        ownership: Some(Ownership::Owned),
                         ..
                     }
                     | IdType::Self_ {
-                        ownership: Some(ownership),
-                    } => write!(f, "{ownership}"),
-                    IdType::GenericParam { name } => write!(f, "{name}Ownership"),
-                    _ => write!(f, "{}", Ownership::Shared),
+                        ownership: Some(Ownership::Owned),
+                    } => write!(f, ", Owned"),
+                    IdType::GenericParam { name } => write!(f, ", {name}Ownership"),
+                    _ => Ok(()),
                 }
             }
         }
@@ -1598,9 +1589,9 @@ impl fmt::Display for Ty {
                         nullability,
                     } => {
                         if *nullability == Nullability::NonNull {
-                            write!(f, "Id<{ty}, {}>", ty.ownership())
+                            write!(f, "Id<{ty}{}>", ty.ownership())
                         } else {
-                            write!(f, "Option<Id<{ty}, {}>>", ty.ownership())
+                            write!(f, "Option<Id<{ty}{}>>", ty.ownership())
                         }
                     }
                     Inner::Class { nullability } => {
@@ -1627,7 +1618,7 @@ impl fmt::Display for Ty {
                     // NULL -> error
                     write!(
                         f,
-                        " -> Result<Id<{ty}, {}>, Id<{}, Shared>>",
+                        " -> Result<Id<{ty}{}>, Id<{}>>",
                         ty.ownership(),
                         ItemIdentifier::nserror().path(),
                     )
@@ -1636,7 +1627,7 @@ impl fmt::Display for Ty {
                     // NO -> error
                     write!(
                         f,
-                        " -> Result<(), Id<{}, Shared>>",
+                        " -> Result<(), Id<{}>>",
                         ItemIdentifier::nserror().path()
                     )
                 }
@@ -1733,9 +1724,9 @@ impl fmt::Display for Ty {
                         nullability: inner_nullability,
                     } if self.kind == TyKind::MethodArgument => {
                         let tokens = if *inner_nullability == Nullability::NonNull {
-                            format!("Id<{ty}, Shared>")
+                            format!("Id<{ty}>")
                         } else {
-                            format!("Option<Id<{ty}, Shared>>")
+                            format!("Option<Id<{ty}>>")
                         };
                         if *nullability == Nullability::NonNull {
                             write!(f, "&mut {tokens}")

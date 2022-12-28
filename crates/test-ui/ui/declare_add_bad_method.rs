@@ -1,5 +1,5 @@
 use objc2::declare::ClassBuilder;
-use objc2::rc::{Allocated, Id, Shared};
+use objc2::rc::{Allocated, Id};
 use objc2::runtime::{Sel, NSObject};
 use objc2::{sel, ClassType};
 
@@ -24,7 +24,7 @@ fn main() {
         builder.add_method(sel!(foo), foo as fn(_, _) -> _);
     }
     unsafe {
-        fn foo(_obj: &NSObject, _sel: Sel) -> Id<NSObject, Shared> {
+        fn foo(_obj: &NSObject, _sel: Sel) -> Id<NSObject> {
             unimplemented!()
         }
         builder.add_method(sel!(foo), foo as fn(_, _) -> _);

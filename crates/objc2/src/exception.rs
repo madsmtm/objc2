@@ -35,7 +35,7 @@ use std::error::Error;
 use crate::encode::{Encoding, RefEncode};
 #[cfg(feature = "exception")]
 use crate::ffi;
-use crate::rc::{autoreleasepool, Id, Shared};
+use crate::rc::{autoreleasepool, Id};
 use crate::runtime::__nsstring::nsstring_to_str;
 use crate::runtime::{Class, NSObject, NSObjectProtocol, Object};
 use crate::{extern_methods, sel, Message};
@@ -91,12 +91,12 @@ extern_methods!(
         // Only safe on NSException
         // Returns NSString
         #[method_id(name)]
-        unsafe fn name(&self) -> Option<Id<NSObject, Shared>>;
+        unsafe fn name(&self) -> Option<Id<NSObject>>;
 
         // Only safe on NSException
         // Returns NSString
         #[method_id(reason)]
-        unsafe fn reason(&self) -> Option<Id<NSObject, Shared>>;
+        unsafe fn reason(&self) -> Option<Id<NSObject>>;
     }
 );
 
@@ -185,7 +185,7 @@ impl RefUnwindSafe for Exception {}
 /// [RFC-2945]: https://rust-lang.github.io/rfcs/2945-c-unwind-abi.html
 #[inline]
 #[cfg(feature = "exception")] // For consistency, not strictly required
-pub unsafe fn throw(exception: Id<Exception, Shared>) -> ! {
+pub unsafe fn throw(exception: Id<Exception>) -> ! {
     let ptr = exception.0.as_ptr() as *mut ffi::objc_object;
     // SAFETY: Object is valid and non-null (nil exceptions are not valid in
     // the old runtime).
@@ -193,7 +193,7 @@ pub unsafe fn throw(exception: Id<Exception, Shared>) -> ! {
 }
 
 #[cfg(feature = "exception")]
-unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception, Shared>>> {
+unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception>>> {
     #[cfg(not(feature = "unstable-c-unwind"))]
     let f = {
         extern "C" fn try_objc_execute_closure<F>(closure: &mut Option<F>)
@@ -280,7 +280,7 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception,
 #[cfg(feature = "exception")]
 pub unsafe fn catch<R>(
     closure: impl FnOnce() -> R + UnwindSafe,
-) -> Result<R, Option<Id<Exception, Shared>>> {
+) -> Result<R, Option<Id<Exception>>> {
     let mut value = None;
     let value_ref = &mut value;
     let closure = move || {
@@ -333,7 +333,7 @@ mod tests {
 
     #[test]
     fn test_throw_catch_object() {
-        let obj: Id<Exception, Shared> = unsafe { msg_send_id![NSObject::class(), new] };
+        let obj: Id<Exception> = unsafe { msg_send_id![NSObject::class(), new] };
         // TODO: Investigate why this is required on GNUStep!
         let _obj2 = obj.clone();
         let ptr: *const Exception = &*obj;

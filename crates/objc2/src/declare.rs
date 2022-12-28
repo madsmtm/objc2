@@ -96,14 +96,14 @@
 //! // with `std::sync::Once` or the `once_cell` crate.
 //! let cls = register_class();
 //!
-//! let obj: Id<Object, Owned> = unsafe {
+//! let mut obj: Id<Object, Owned> = unsafe {
 //!     msg_send_id![cls, withNumber: 42u32]
 //! };
 //!
 //! let n: u32 = unsafe { msg_send![&obj, number] };
 //! assert_eq!(n, 42);
 //!
-//! let _: () = unsafe { msg_send![&obj, setNumber: 12u32] };
+//! let _: () = unsafe { msg_send![&mut obj, setNumber: 12u32] };
 //! let n: u32 = unsafe { msg_send![&obj, number] };
 //! assert_eq!(n, 12);
 //! ```
@@ -692,7 +692,7 @@ impl ProtocolBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::rc::{Id, Shared};
+    use crate::rc::Id;
     use crate::runtime::{NSObject, NSZone};
     use crate::test_utils;
     use crate::{declare_class, extern_protocol, msg_send, ClassType, ProtocolType};
@@ -701,7 +701,7 @@ mod tests {
         #[allow(clippy::missing_safety_doc)]
         unsafe trait NSCopying {
             #[method_id(copyWithZone:)]
-            fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self, Shared>;
+            fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self>;
         }
 
         unsafe impl ProtocolType for dyn NSCopying {
@@ -878,7 +878,7 @@ mod tests {
 
             unsafe impl NSCopying for Custom {
                 #[method_id(copyWithZone:)]
-                fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self, Shared> {
+                fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self> {
                     unimplemented!()
                 }
             }
@@ -973,7 +973,7 @@ mod tests {
 
             unsafe impl NSCopying for Custom {
                 #[method_id(copyWithZone:)]
-                fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self, Shared> {
+                fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self> {
                     unimplemented!()
                 }
 

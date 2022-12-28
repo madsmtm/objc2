@@ -1,7 +1,12 @@
-error[E0282]: type annotations needed
+error[E0282]: type annotations needed for `Result<Id<T>, Id<NSError>>`
  --> ui/msg_send_underspecified_error2.rs
   |
-  |     let _: Result<Id<_, Shared>, Id<NSError, Shared>> = unsafe { msg_send_id![obj, a: _] };
-  |                                                                  ^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type of the type parameter `T` declared on the trait `MsgSendId`
+  |     let _: Result<Id<_>, Id<NSError>> = unsafe { msg_send_id![obj, a: _] };
+  |                                                  ^^^^^^^^^^^^^^^^^^^^^^^
   |
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider giving `result` an explicit type, where the placeholders `_` are specified
+ --> $WORKSPACE/crates/objc2/src/macros.rs
+  |
+  |         let result: Result<Id<T>, Id<NSError>>;
+  |                   ++++++++++++++++++++++++++++

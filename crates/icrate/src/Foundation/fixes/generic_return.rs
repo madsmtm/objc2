@@ -12,7 +12,7 @@ extern_methods!(
         pub unsafe fn initWithContentsOfURL_error(
             this: Option<Allocated<Self>>,
             url: &Foundation::NSURL,
-        ) -> Result<Id<Self, Shared>, Id<Foundation::NSError, Shared>>;
+        ) -> Result<Id<Self>, Id<Foundation::NSError>>;
     }
 );
 
@@ -27,14 +27,14 @@ extern_methods!(
         pub unsafe fn initWithContentsOfFile(
             this: Option<Allocated<Self>>,
             path: &Foundation::NSString,
-        ) -> Option<Id<Self, Shared>>;
+        ) -> Option<Id<Self>>;
 
         #[cfg(feature = "Foundation_NSURL")]
         #[method_id(initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
             this: Option<Allocated<Self>>,
             url: &Foundation::NSURL,
-        ) -> Option<Id<Self, Shared>>;
+        ) -> Option<Id<Self>>;
     }
 );
 
@@ -49,14 +49,14 @@ extern_methods!(
         pub unsafe fn initWithContentsOfFile(
             this: Option<Allocated<Self>>,
             path: &Foundation::NSString,
-        ) -> Option<Id<Self, Shared>>;
+        ) -> Option<Id<Self>>;
 
         #[cfg(feature = "Foundation_NSURL")]
         #[method_id(initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
             this: Option<Allocated<Self>>,
             url: &Foundation::NSURL,
-        ) -> Option<Id<Self, Shared>>;
+        ) -> Option<Id<Self>>;
     }
 );
 
@@ -75,14 +75,14 @@ extern_methods!(
         pub unsafe fn initWithContentsOfFile(
             this: Option<Allocated<Self>>,
             path: &Foundation::NSString,
-        ) -> Option<Id<Self, Shared>>;
+        ) -> Option<Id<Self>>;
 
         #[cfg(feature = "Foundation_NSURL")]
         #[method_id(initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
             this: Option<Allocated<Self>>,
             url: &Foundation::NSURL,
-        ) -> Option<Id<Self, Shared>>;
+        ) -> Option<Id<Self>>;
     }
 );
 
@@ -102,13 +102,13 @@ extern_methods!(
         pub unsafe fn initWithContentsOfFile(
             this: Option<Allocated<Self>>,
             path: &Foundation::NSString,
-        ) -> Option<Id<Self, Shared>>;
+        ) -> Option<Id<Self>>;
 
         #[cfg(feature = "Foundation_NSURL")]
         #[method_id(initWithContentsOfURL:)]
         pub unsafe fn initWithContentsOfURL(
             this: Option<Allocated<Self>>,
             url: &Foundation::NSURL,
-        ) -> Option<Id<Self, Shared>>;
+        ) -> Option<Id<Self>>;
     }
 );

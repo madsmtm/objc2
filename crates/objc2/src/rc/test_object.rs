@@ -312,7 +312,7 @@ impl RcTestObjectSubclass {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::rc::{autoreleasepool, Allocated, Shared};
+    use crate::rc::{autoreleasepool, Allocated};
 
     #[test]
     fn ensure_declared_name() {
@@ -322,7 +322,7 @@ mod tests {
     macro_rules! test_error_bool {
         ($expected:expr, $($obj:tt)*) => {
             // Succeeds
-            let res: Result<(), Id<__RcTestObject, Shared>> = unsafe {
+            let res: Result<(), Id<__RcTestObject>> = unsafe {
                 msg_send![$($obj)*, boolAndShouldError: false, error: _]
             };
             assert_eq!(res, Ok(()));
@@ -331,7 +331,7 @@ mod tests {
             // Errors
             let res = autoreleasepool(|_pool| {
                 // `Ok` type is inferred to be `()`
-                let res: Id<__RcTestObject, Shared> = unsafe {
+                let res: Id<__RcTestObject> = unsafe {
                     msg_send![$($obj)*, boolAndShouldError: true, error: _]
                 }.expect_err("not err");
                 $expected.alloc += 1;
@@ -392,7 +392,7 @@ mod tests {
         ($expected:expr, $if_autorelease_not_skipped:expr, $sel:ident, $($obj:tt)*) => {
             // Succeeds
             let res = autoreleasepool(|_pool| {
-                let res: Result<Id<__RcTestObject, Owned>, Id<__RcTestObject, Shared>> = unsafe {
+                let res: Result<Id<__RcTestObject, Owned>, Id<__RcTestObject>> = unsafe {
                     msg_send_id![$($obj)*, $sel: false, error: _]
                 };
                 let res = res.expect("not ok");
@@ -413,7 +413,7 @@ mod tests {
 
             // Errors
             let res = autoreleasepool(|_pool| {
-                let res: Result<Id<__RcTestObject, Owned>, Id<__RcTestObject, Shared>> = unsafe {
+                let res: Result<Id<__RcTestObject, Owned>, Id<__RcTestObject>> = unsafe {
                     msg_send_id![$($obj)*, $sel: true, error: _]
                 };
                 $expected.alloc += 1;
@@ -462,7 +462,7 @@ mod tests {
         let mut expected = __ThreadTestData::current();
 
         // Succeeds
-        let res: Result<Allocated<__RcTestObject>, Id<__RcTestObject, Shared>> =
+        let res: Result<Allocated<__RcTestObject>, Id<__RcTestObject>> =
             unsafe { msg_send_id![__RcTestObject::class(), allocAndShouldError: false, error: _] };
         let res = res.expect("not ok");
         expected.alloc += 1;
@@ -475,7 +475,7 @@ mod tests {
 
         // Errors
         let res = autoreleasepool(|_pool| {
-            let res: Result<Allocated<__RcTestObject>, Id<__RcTestObject, Shared>> = unsafe {
+            let res: Result<Allocated<__RcTestObject>, Id<__RcTestObject>> = unsafe {
                 msg_send_id![__RcTestObject::class(), allocAndShouldError: true, error: _]
             };
             expected.alloc += 1;

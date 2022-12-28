@@ -60,7 +60,7 @@
 /// ```
 /// use objc2::encode::{Encode, Encoding};
 /// use objc2::ffi::NSUInteger;
-/// use objc2::rc::{Allocated, Id, Shared};
+/// use objc2::rc::{Allocated, Id};
 /// use objc2::runtime::NSObject;
 /// use objc2::{declare_class, extern_methods, ClassType};
 ///
@@ -84,12 +84,12 @@
 ///     /// Creation methods.
 ///     unsafe impl MyObject {
 ///         #[method_id(new)]
-///         pub fn new() -> Id<Self, Shared>;
+///         pub fn new() -> Id<Self>;
 ///
 ///         #[method_id(initWithVal:)]
 ///         // Arbitary self types are not stable, but we can work around it
 ///         // with the special name `this`.
-///         pub fn init(this: Option<Allocated<Self>>, val: usize) -> Id<Self, Shared>;
+///         pub fn init(this: Option<Allocated<Self>>, val: usize) -> Id<Self>;
 ///     }
 ///
 ///     /// Instance accessor methods.
@@ -98,12 +98,12 @@
 ///         pub fn foo(&self) -> NSUInteger;
 ///
 ///         #[method_id(fooObject)]
-///         pub fn foo_object(&self) -> Id<NSObject, Shared>;
+///         pub fn foo_object(&self) -> Id<NSObject>;
 ///
 ///         #[method(withError:_)]
 ///         // Since the selector specifies "_", the return type is assumed to
 ///         // be `Result`.
-///         pub fn with_error(&self) -> Result<(), Id<NSError, Shared>>;
+///         pub fn with_error(&self) -> Result<(), Id<NSError>>;
 ///     }
 /// );
 /// ```
@@ -113,7 +113,7 @@
 /// ```
 /// # use objc2::encode::{Encode, Encoding};
 /// # use objc2::ffi::NSUInteger;
-/// # use objc2::rc::{Allocated, Id, Shared};
+/// # use objc2::rc::{Allocated, Id};
 /// # use objc2::runtime::NSObject;
 /// # use objc2::{declare_class, extern_methods, ClassType};
 /// #
@@ -137,11 +137,11 @@
 ///
 /// /// Creation methods.
 /// impl MyObject {
-///     pub fn new() -> Id<Self, Shared> {
+///     pub fn new() -> Id<Self> {
 ///         unsafe { msg_send_id![Self::class(), new] }
 ///     }
 ///
-///     pub fn init(this: Option<Allocated<Self>>, val: usize) -> Id<Self, Shared> {
+///     pub fn init(this: Option<Allocated<Self>>, val: usize) -> Id<Self> {
 ///         unsafe { msg_send_id![this, initWithVal: val] }
 ///     }
 /// }
@@ -152,13 +152,13 @@
 ///         unsafe { msg_send![self, foo] }
 ///     }
 ///
-///     pub fn foo_object(&self) -> Id<NSObject, Shared> {
+///     pub fn foo_object(&self) -> Id<NSObject> {
 ///         unsafe { msg_send_id![self, fooObject] }
 ///     }
 ///
 ///     // Since the selector specifies one more argument than we
 ///     // have, the return type is assumed to be `Result`.
-///     pub fn with_error(&self) -> Result<(), Id<NSError, Shared>> {
+///     pub fn with_error(&self) -> Result<(), Id<NSError>> {
 ///         unsafe { msg_send![self, withError: _] }
 ///     }
 /// }

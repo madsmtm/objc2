@@ -318,7 +318,7 @@ mod tests {
 
     use super::*;
     use crate::declare::{IvarBool, IvarEncode};
-    use crate::rc::{Id, Owned};
+    use crate::rc::Id;
     use crate::runtime::NSObject;
     use crate::{declare_class, msg_send, msg_send_id, test_utils, ClassType, MessageReceiver};
 
@@ -384,7 +384,7 @@ mod tests {
             }
         }
 
-        let _: Id<CustomDrop, Owned> = unsafe { msg_send_id![CustomDrop::class(), new] };
+        let _: Id<CustomDrop> = unsafe { msg_send_id![CustomDrop::class(), new] };
 
         assert!(HAS_RUN_DEALLOC.load(Ordering::Relaxed));
     }

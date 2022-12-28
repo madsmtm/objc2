@@ -1,6 +1,6 @@
 use objc2::{extern_class, extern_methods, declare_class, ClassType};
 use objc2::runtime::NSObject;
-use objc2::rc::{Id, Owned};
+use objc2::rc::Id;
 
 extern_class!(
     pub struct MyObject;
@@ -24,7 +24,7 @@ extern_methods!(
         /// Doc comment
         #[optional]
         #[method_id(b)]
-        fn b(&self) -> Id<Self, Owned>;
+        fn b(&self) -> Id<Self>;
     }
 );
 
@@ -56,7 +56,7 @@ declare_class!(
         #[optional]
         /// Doc comment
         #[method_id(d)]
-        fn d(&self) -> Id<Self, Owned> {
+        fn d(&self) -> Id<Self> {
             unimplemented!()
         }
     }

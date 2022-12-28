@@ -1,8 +1,8 @@
 error[E0282]: type annotations needed
  --> ui/msg_send_underspecified_error.rs
   |
-  |     let _: Result<Id<NSString, Shared>, Id<_, Shared>> = unsafe { msg_send_id![obj, d: _] };
-  |                                                                   ^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type of the type parameter `E` declared on the associated function `send_message_id_error`
+  |     let _: Result<Id<NSString>, Id<_>> = unsafe { msg_send_id![obj, d: _] };
+  |                                                   ^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type of the type parameter `E` declared on the associated function `send_message_id_error`
   |
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
@@ -45,8 +45,8 @@ note: required by a bound in `send_message_id_error`
 error[E0283]: type annotations needed
  --> ui/msg_send_underspecified_error.rs
   |
-  |     let _: Result<Id<NSString, Shared>, _> = unsafe { msg_send_id![obj, c: _] };
-  |                                                       ^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type for raw pointer `*mut _`
+  |     let _: Result<Id<NSString>, _> = unsafe { msg_send_id![obj, c: _] };
+  |                                               ^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type for raw pointer `*mut _`
   |
   = note: multiple `impl`s satisfying `*mut _: RefEncode` found in the `objc2` crate:
           - impl RefEncode for *mut c_void;
@@ -63,8 +63,8 @@ note: required by a bound in `send_message_id_error`
 error[E0283]: type annotations needed
  --> ui/msg_send_underspecified_error.rs
   |
-  |     let _: Result<Id<NSString, Shared>, Id<_, Shared>> = unsafe { msg_send_id![obj, d: _] };
-  |                                                                   ^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type for raw pointer `*mut _`
+  |     let _: Result<Id<NSString>, Id<_>> = unsafe { msg_send_id![obj, d: _] };
+  |                                                   ^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type for raw pointer `*mut _`
   |
   = note: multiple `impl`s satisfying `*mut _: RefEncode` found in the `objc2` crate:
           - impl RefEncode for *mut c_void;

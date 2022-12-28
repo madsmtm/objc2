@@ -1,4 +1,4 @@
-error[E0271]: type mismatch resolving `<Id<NSObject, Shared> as MaybeUnwrap>::Input == Id<CustomObject, _>`
+error[E0271]: type mismatch resolving `<Id<NSObject> as MaybeUnwrap>::Input == Id<CustomObject, _>`
  --> ui/declare_class_invalid_type2.rs
   |
   | / declare_class!(
@@ -8,11 +8,11 @@ error[E0271]: type mismatch resolving `<Id<NSObject, Shared> as MaybeUnwrap>::In
 ... |
   | |     }
   | | );
-  | |_^ expected `Id<CustomObject, _>`, found `Id<NSObject, Shared>`
+  | |_^ expected `Id<CustomObject, _>`, found `Id<NSObject>`
   |
   = note: expected struct `Id<CustomObject, _>`
              found struct `Id<NSObject, Shared>`
-  = note: required for `RetainSemantics<3>` to implement `MessageRecieveId<Allocated<CustomObject>, Id<NSObject, Shared>>`
+  = note: required for `RetainSemantics<3>` to implement `MessageRecieveId<Allocated<CustomObject>, Id<NSObject>>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `i32: MaybeOptionId` is not satisfied

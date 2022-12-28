@@ -6,7 +6,7 @@ use crate::encode::__unstable::{
     EncodeArguments, EncodeConvertArgument, EncodeConvertReturn, EncodeReturn,
 };
 use crate::encode::{Encode, RefEncode};
-use crate::rc::{Id, Owned, Ownership, Shared};
+use crate::rc::{Id, Owned, Ownership};
 use crate::runtime::{Class, Imp, Object, Sel};
 use crate::ClassType;
 
@@ -298,7 +298,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     #[inline]
     #[track_caller]
     #[doc(hidden)]
-    unsafe fn __send_message_error<A, E>(self, sel: Sel, args: A) -> Result<(), Id<E, Shared>>
+    unsafe fn __send_message_error<A, E>(self, sel: Sel, args: A) -> Result<(), Id<E>>
     where
         *mut *mut E: Encode,
         A: __TupleExtender<*mut *mut E>,
@@ -323,7 +323,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         superclass: &Class,
         sel: Sel,
         args: A,
-    ) -> Result<(), Id<E, Shared>>
+    ) -> Result<(), Id<E>>
     where
         *mut *mut E: Encode,
         A: __TupleExtender<*mut *mut E>,
@@ -343,11 +343,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     #[inline]
     #[track_caller]
     #[doc(hidden)]
-    unsafe fn __send_super_message_static_error<A, E>(
-        self,
-        sel: Sel,
-        args: A,
-    ) -> Result<(), Id<E, Shared>>
+    unsafe fn __send_super_message_static_error<A, E>(self, sel: Sel, args: A) -> Result<(), Id<E>>
     where
         Self::__Inner: ClassType,
         <Self::__Inner as ClassType>::Super: ClassType,
@@ -369,7 +365,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
 
 #[cold]
 #[track_caller]
-unsafe fn encountered_error<E: Message>(err: *mut E) -> Id<E, Shared> {
+unsafe fn encountered_error<E: Message>(err: *mut E) -> Id<E> {
     // SAFETY: Ensured by caller
     unsafe { Id::retain(err) }.expect("error parameter should be set if the method returns NO")
 }
@@ -701,12 +697,10 @@ mod tests {
     #[test]
     #[cfg_attr(debug_assertions, should_panic = "messsaging description to nil")]
     fn test_send_message_nil() {
-        use crate::rc::Shared;
-
         let nil: *mut Object = ::core::ptr::null_mut();
 
         // This result should not be relied on
-        let result: Option<Id<Object, Shared>> = unsafe { msg_send_id![nil, description] };
+        let result: Option<Id<Object>> = unsafe { msg_send_id![nil, description] };
         assert!(result.is_none());
 
         // This result should not be relied on
@@ -723,12 +717,12 @@ mod tests {
         assert_eq!(result, 0.0);
 
         // This result should not be relied on
-        let result: Option<Id<Object, Shared>> =
+        let result: Option<Id<Object>> =
             unsafe { msg_send_id![nil, multiple: 1u32, arguments: 2i8] };
         assert!(result.is_none());
 
         // This result should not be relied on
-        let result: Option<Id<Object, Shared>> = unsafe { msg_send_id![None, init] };
+        let result: Option<Id<Object>> = unsafe { msg_send_id![None, init] };
         assert!(result.is_none());
     }
 

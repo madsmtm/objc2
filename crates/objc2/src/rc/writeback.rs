@@ -57,7 +57,7 @@ impl<T: Message + 'static, O: Ownership> EncodeConvertArgument for &mut Id<T, O>
     unsafe fn __process_after_message_send((ptr, old): Self::__StoredBeforeMessage) {
         // In terms of provenance, we roughly just want to do the following:
         // ```
-        // fn do(value: &mut Id<T, Shared>) {
+        // fn do(value: &mut Id<T>) {
         //     let old = value.clone();
         //     msg_send![... value ...];
         //     let _ = value.clone();
