@@ -85,7 +85,7 @@ type ToString = BogusType;
 // Test begin below this line
 
 new_objc2::declare_class!(
-    pub struct CustomObject {}
+    pub struct CustomObject;
 
     unsafe impl ClassType for CustomObject {
         type Super = new_objc2::runtime::NSObject;

@@ -464,6 +464,33 @@ macro_rules! declare_class {
             $($methods)*
         );
     };
+    {
+        $(#[$m:meta])*
+        $v:vis struct $name:ident;
+
+        unsafe impl ClassType for $for:ty {
+            $(#[inherits($($inheritance_rest:ty),+)])?
+            type Super = $superclass:ty;
+
+            $(const NAME: &'static str = $name_const:literal;)?
+        }
+
+        $($methods:tt)*
+    } => {
+        $crate::declare_class! {
+            $(#[$m])*
+            $v struct $name {}
+
+            unsafe impl ClassType for $for {
+                $(#[inherits($($inheritance_rest),+)])?
+                type Super = $superclass;
+
+                $(const NAME: &'static str = $name_const;)?
+            }
+
+            $($methods)*
+        }
+    };
 }
 
 #[doc(hidden)]

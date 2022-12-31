@@ -29,7 +29,7 @@ extern_methods!(
 );
 
 declare_class!(
-    struct CustomObject {}
+    struct CustomObject;
 
     unsafe impl ClassType for CustomObject {
         type Super = NSObject;
