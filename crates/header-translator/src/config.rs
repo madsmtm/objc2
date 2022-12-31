@@ -32,7 +32,14 @@ pub struct Config {
     #[serde(rename = "typedef")]
     #[serde(default)]
     pub typedef_data: HashMap<String, TypedefData>,
+    #[serde(rename = "library")]
     #[serde(default)]
+    pub libraries: HashMap<String, LibraryData>,
+}
+
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct LibraryData {
     pub imports: Vec<String>,
 }
 
@@ -122,14 +129,6 @@ impl Config {
     pub fn from_file(file: &Path) -> Result<Self> {
         let s = fs::read_to_string(file)?;
 
-        let mut res: Self = toml::from_str(&s)?;
-
-        // Ignore categories on NSObject for now
-        res.class_data
-            .entry("NSObject".to_string())
-            .or_default()
-            .skipped = true;
-
-        Ok(res)
+        Ok(toml::from_str(&s)?)
     }
 }

@@ -15,9 +15,14 @@ pub struct File {
 }
 
 impl File {
-    pub fn new(config: &Config) -> Self {
+    pub fn new(library_name: &str, config: &Config) -> Self {
         Self {
-            imports: config.imports.clone(),
+            imports: config
+                .libraries
+                .get(library_name)
+                .expect("library exists on config")
+                .imports
+                .clone(),
             stmts: Vec::new(),
         }
     }

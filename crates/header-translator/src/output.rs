@@ -10,7 +10,7 @@ pub struct Output {
 }
 
 impl Output {
-    pub fn from_configs(libraries: impl IntoIterator<Item = impl Into<String>>) -> Self {
+    pub fn from_libraries(libraries: impl IntoIterator<Item = impl Into<String>>) -> Self {
         let libraries = libraries
             .into_iter()
             .map(|name| (name.into(), Library::new()))
