@@ -6,6 +6,7 @@ use tracing::{debug_span, error, warn};
 
 use crate::availability::Availability;
 use crate::config::MethodData;
+use crate::context::Context;
 use crate::immediate_children;
 use crate::objc2_utils::in_selector_family;
 use crate::property::PartialProperty;
@@ -230,7 +231,7 @@ pub struct PartialMethod<'tu> {
 }
 
 impl<'tu> PartialMethod<'tu> {
-    pub fn parse(self, data: MethodData) -> Option<(bool, Method)> {
+    pub fn parse(self, data: MethodData, context: &Context<'_>) -> Option<(bool, Method)> {
         let Self {
             entity,
             selector,
@@ -288,7 +289,7 @@ impl<'tu> PartialMethod<'tu> {
                 });
 
                 let ty = entity.get_type().expect("argument type");
-                let ty = Ty::parse_method_argument(ty, is_consumed);
+                let ty = Ty::parse_method_argument(ty, is_consumed, context);
 
                 (name, qualifier, ty)
             })
@@ -315,7 +316,7 @@ impl<'tu> PartialMethod<'tu> {
         }
 
         let result_type = entity.get_result_type().expect("method return type");
-        let mut result_type = Ty::parse_method_return(result_type);
+        let mut result_type = Ty::parse_method_return(result_type, context);
 
         result_type.fix_related_result_type(is_class, &selector);
 

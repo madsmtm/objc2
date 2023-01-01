@@ -80,6 +80,7 @@ fn parse_objc_decl(
     superclass: bool,
     mut generics: Option<&mut Vec<String>>,
     data: Option<&ClassData>,
+    context: &Context<'_>,
 ) -> (Vec<String>, Vec<Method>, Vec<String>) {
     let mut protocols = Vec::new();
     let mut methods = Vec::new();
@@ -124,7 +125,7 @@ fn parse_objc_decl(
 
             if !properties.remove(&(partial.is_class, partial.fn_name.clone())) {
                 let data = ClassData::get_method_data(data, &partial.fn_name);
-                if let Some((designated_initializer, method)) = partial.parse(data) {
+                if let Some((designated_initializer, method)) = partial.parse(data, context) {
                     if designated_initializer {
                         designated_initializers.push(method.fn_name.clone());
                     }
@@ -153,7 +154,7 @@ fn parse_objc_decl(
                 .as_ref()
                 .map(|setter_name| ClassData::get_method_data(data, setter_name));
 
-            let (getter, setter) = partial.parse(getter_data, setter_data);
+            let (getter, setter) = partial.parse(getter_data, setter_data, context);
             if let Some(getter) = getter {
                 methods.push(getter);
             }
@@ -294,7 +295,7 @@ pub enum Stmt {
     },
 }
 
-fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
+fn parse_struct(entity: &Entity<'_>, name: String, context: &Context<'_>) -> Stmt {
     let mut boxable = false;
     let mut fields = Vec::new();
 
@@ -310,7 +311,7 @@ fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
             let _span = debug_span!("field", name).entered();
 
             let ty = entity.get_type().expect("struct field type");
-            let ty = Ty::parse_struct_field(ty);
+            let ty = Ty::parse_struct_field(ty, context);
 
             if entity.is_bit_field() {
                 error!("unsound struct bitfield");
@@ -360,7 +361,7 @@ impl Stmt {
                 let mut generics = Vec::new();
 
                 let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(entity, true, Some(&mut generics), class_data);
+                    parse_objc_decl(entity, true, Some(&mut generics), class_data, context);
 
                 let ty = ClassDefReference::new(name, generics);
 
@@ -436,8 +437,13 @@ impl Stmt {
 
                 let mut class_generics = Vec::new();
 
-                let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(entity, false, Some(&mut class_generics), class_data);
+                let (protocols, methods, designated_initializers) = parse_objc_decl(
+                    entity,
+                    false,
+                    Some(&mut class_generics),
+                    class_data,
+                    context,
+                );
 
                 if !designated_initializers.is_empty() {
                     warn!(
@@ -477,7 +483,7 @@ impl Stmt {
                 );
 
                 let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(entity, false, None, protocol_data);
+                    parse_objc_decl(entity, false, None, protocol_data, context);
 
                 if !designated_initializers.is_empty() {
                     warn!(
@@ -527,7 +533,7 @@ impl Stmt {
                             // If this struct doesn't have a name, or the
                             // name is private, let's parse it with the
                             // typedef name.
-                            struct_ = Some(parse_struct(&entity, name.clone()))
+                            struct_ = Some(parse_struct(&entity, name.clone(), context))
                         } else {
                             skip_struct = true;
                         }
@@ -560,7 +566,7 @@ impl Stmt {
                 let ty = entity
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
-                if let Some(ty) = Ty::parse_typedef(ty) {
+                if let Some(ty) = Ty::parse_typedef(ty, context) {
                     vec![Self::AliasDecl { name, ty, kind }]
                 } else {
                     vec![]
@@ -577,7 +583,7 @@ impl Stmt {
                         return vec![];
                     }
                     if !name.starts_with('_') {
-                        return vec![parse_struct(entity, name)];
+                        return vec![parse_struct(entity, name, context)];
                     }
                 }
                 vec![]
@@ -602,7 +608,7 @@ impl Stmt {
 
                 let ty = entity.get_enum_underlying_type().expect("enum type");
                 let is_signed = ty.is_signed_integer();
-                let ty = Ty::parse_enum(ty);
+                let ty = Ty::parse_enum(ty, context);
                 let mut kind = None;
                 let mut variants = Vec::new();
 
@@ -682,7 +688,7 @@ impl Stmt {
                 }
 
                 let ty = entity.get_type().expect("var type");
-                let ty = Ty::parse_static(ty);
+                let ty = Ty::parse_static(ty, context);
                 let mut value = None;
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
@@ -733,7 +739,7 @@ impl Stmt {
                 }
 
                 let result_type = entity.get_result_type().expect("function result type");
-                let result_type = Ty::parse_function_return(result_type);
+                let result_type = Ty::parse_function_return(result_type, context);
                 let mut arguments = Vec::new();
 
                 if entity.is_static_method() {
@@ -751,7 +757,7 @@ impl Stmt {
                         // Could also be retrieved via. `get_arguments`
                         let name = entity.get_name().unwrap_or_else(|| "_".into());
                         let ty = entity.get_type().expect("function argument type");
-                        let ty = Ty::parse_function_argument(ty);
+                        let ty = Ty::parse_function_argument(ty, context);
                         arguments.push((name, ty))
                     }
                     _ => warn!("unknown"),

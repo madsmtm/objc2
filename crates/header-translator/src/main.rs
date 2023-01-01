@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
-use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index, TranslationUnit};
+use clang::{Clang, EntityKind, EntityVisitResult, Index, TranslationUnit};
 use tracing::{debug_span, info, info_span, trace, trace_span};
 use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::layer::{Layer, SubscriberExt};
@@ -148,8 +148,6 @@ fn load_config(manifest_dir: &Path) -> Config {
 fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Config) -> Output {
     let tu = get_translation_unit(index, sdk, llvm_target);
 
-    let framework_dir = sdk.path.join("System/Library/Frameworks");
-
     let mut preprocessing = true;
     let mut result = Output::from_libraries(config.libraries.keys());
 
@@ -158,11 +156,11 @@ fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Confi
     let mut file_span = None;
     let mut file_span_name = String::new();
 
-    let mut context = Context::new(config);
+    let mut context = Context::new(config, sdk);
 
     tu.get_entity().visit_children(|entity, _parent| {
         let _span = trace_span!("entity", ?entity).entered();
-        if let Some((library_name, file_name)) = extract_framework_name(&entity, &framework_dir) {
+        if let Some((library_name, file_name)) = context.get_library_and_file_name(&entity) {
             if library_span_name != library_name {
                 library_span.take();
                 file_span.take();
@@ -299,37 +297,4 @@ fn get_translation_unit<'i: 'tu, 'tu>(
     // dbg_file(cursor_file);
 
     tu
-}
-
-pub fn extract_framework_name(
-    entity: &Entity<'_>,
-    framework_dir: &Path,
-) -> Option<(String, String)> {
-    if let Some(location) = entity.get_location() {
-        if let Some(file) = location.get_file_location().file {
-            let path = file.get_path();
-            if let Ok(path) = path.strip_prefix(framework_dir) {
-                let mut components = path.components();
-                let library_name = components
-                    .next()
-                    .expect("components next")
-                    .as_os_str()
-                    .to_str()
-                    .expect("component to_str")
-                    .strip_suffix(".framework")
-                    .expect("framework fileending")
-                    .to_string();
-
-                let path = components.as_path();
-                let file_name = path
-                    .file_stem()
-                    .expect("path file stem")
-                    .to_string_lossy()
-                    .to_string();
-
-                return Some((library_name, file_name));
-            }
-        }
-    }
-    None
 }

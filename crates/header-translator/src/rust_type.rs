@@ -4,6 +4,7 @@ use clang::{CallingConvention, Nullability, Type, TypeKind};
 use serde::Deserialize;
 use tracing::{debug_span, error, warn};
 
+use crate::context::Context;
 use crate::method::MemoryManagement;
 
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -40,11 +41,24 @@ impl fmt::Display for Ownership {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 enum IdType {
-    Class { name: String, generics: Vec<Self> },
-    ProtocolObject { name: String },
-    TypeDef { name: String },
-    GenericParam { name: String },
-    Object,
+    Class {
+        library: String,
+        name: String,
+        generics: Vec<Self>,
+    },
+    ProtocolObject {
+        library: String,
+        name: String,
+    },
+    TypeDef {
+        library: String,
+        name: String,
+    },
+    GenericParam {
+        name: String,
+    },
+    AnyProtocol,
+    AnyObject,
     Allocated,
     Self_,
     // TODO: Handle these better
@@ -55,15 +69,12 @@ enum IdType {
 impl IdType {
     fn name(&self) -> &str {
         match &self {
-            Self::Class { name, generics: _ } => &name,
-            // TODO: Handle this better!
-            Self::ProtocolObject { name } => match &**name {
-                "NSCopying" | "NSMutableCopying" => "Object",
-                name => name,
-            },
-            Self::TypeDef { name } => &name,
+            Self::Class { name, .. } => &name,
+            Self::ProtocolObject { name, .. } => &name,
+            Self::TypeDef { name, .. } => &name,
             Self::GenericParam { name } => &name,
-            Self::Object => "Object",
+            Self::AnyProtocol => "Protocol",
+            Self::AnyObject => "Object",
             Self::Allocated => "Allocated",
             Self::Self_ => "Self",
             Self::TodoClass => "TodoClass",
@@ -71,12 +82,21 @@ impl IdType {
         }
     }
 
-    fn parse_objc_pointer(ty: Type<'_>) -> Self {
+    fn library(&self) -> Option<&str> {
+        match &self {
+            Self::Class { library, .. } => Some(&library),
+            Self::ProtocolObject { library, .. } => Some(&library),
+            Self::TypeDef { library, .. } => Some(&library),
+            _ => None,
+        }
+    }
+
+    fn parse_objc_pointer(ty: Type<'_>, context: &Context<'_>) -> Self {
         let generics: Vec<_> = ty
             .get_objc_type_arguments()
             .into_iter()
             .map(|param| {
-                match RustType::parse(param, false, Nullability::Unspecified, false) {
+                match RustType::parse(param, false, Nullability::Unspecified, false, context) {
                     RustType::Id {
                         ty,
                         is_const: _,
@@ -96,7 +116,15 @@ impl IdType {
         let protocols: Vec<_> = ty
             .get_objc_protocol_declarations()
             .into_iter()
-            .map(|entity| entity.get_display_name().expect("protocol name"))
+            .map(|entity| {
+                (
+                    context
+                        .get_library_and_file_name(&entity)
+                        .expect("protocol library")
+                        .0,
+                    entity.get_display_name().expect("protocol name"),
+                )
+            })
             .collect();
 
         match ty.get_kind() {
@@ -108,9 +136,20 @@ impl IdType {
                     panic!("protocols not empty: {ty:?}, {protocols:?}");
                 }
                 let name = ty.get_display_name();
-                Self::Class {
-                    name,
-                    generics: Vec::new(),
+
+                if name == "Protocol" {
+                    Self::AnyProtocol
+                } else {
+                    let (library, _) = context
+                        .get_library_and_file_name(
+                            &ty.get_declaration().expect("ObjCInterface declaration"),
+                        )
+                        .expect("ObjCInterface declaration library");
+                    Self::Class {
+                        library,
+                        name,
+                        generics: Vec::new(),
+                    }
                 }
             }
             TypeKind::ObjCObject => {
@@ -128,8 +167,16 @@ impl IdType {
                         }
 
                         match &*protocols {
-                            [] => Self::Object,
-                            [protocol_name] => Self::ProtocolObject {
+                            [] => Self::AnyObject,
+                            // TODO: Handle this better
+                            [(_, protocol_name)]
+                                if protocol_name == "NSCopying"
+                                    || protocol_name == "NSMutableCopying" =>
+                            {
+                                Self::AnyObject
+                            }
+                            [(library_name, protocol_name)] => Self::ProtocolObject {
+                                library: library_name.clone(),
                                 name: protocol_name.clone(),
                             },
                             _ => Self::TodoProtocols,
@@ -139,7 +186,18 @@ impl IdType {
                         if !protocols.is_empty() {
                             Self::TodoProtocols
                         } else {
-                            Self::Class { name, generics }
+                            let (library, _) = context
+                                .get_library_and_file_name(
+                                    &base_ty
+                                        .get_declaration()
+                                        .expect("ObjCObject -> ObjCInterface declaration"),
+                                )
+                                .expect("ObjCObject -> ObjCInterface declaration library");
+                            Self::Class {
+                                library,
+                                name,
+                                generics,
+                            }
                         }
                     }
                     TypeKind::ObjCClass => Self::TodoClass,
@@ -442,6 +500,7 @@ impl RustType {
         is_consumed: bool,
         mut nullability: Nullability,
         inside_partial_array: bool,
+        context: &Context<'_>,
     ) -> Self {
         let _span = debug_span!("ty", ?ty, is_consumed);
 
@@ -479,7 +538,7 @@ impl RustType {
             Float => Self::Float,
             Double => Self::Double,
             ObjCId => Self::Id {
-                ty: IdType::Object,
+                ty: IdType::AnyObject,
                 is_const: ty.is_const_qualified(),
                 lifetime,
                 nullability,
@@ -490,7 +549,8 @@ impl RustType {
             Pointer => {
                 let is_const = ty.is_const_qualified();
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                let pointee = Self::parse(ty, is_consumed, Nullability::Unspecified, false);
+                let pointee =
+                    Self::parse(ty, is_consumed, Nullability::Unspecified, false, context);
                 Self::Pointer {
                     nullability,
                     is_const,
@@ -500,7 +560,7 @@ impl RustType {
             BlockPointer => {
                 let is_const = ty.is_const_qualified();
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                match Self::parse(ty, is_consumed, Nullability::Unspecified, false) {
+                match Self::parse(ty, is_consumed, Nullability::Unspecified, false, context) {
                     Self::Fn {
                         is_variadic: false,
                         mut arguments,
@@ -528,7 +588,7 @@ impl RustType {
                 let ty = parse_attributed(ty, &mut nullability, &mut lifetime, &mut kindof, false);
 
                 Self::Id {
-                    ty: IdType::parse_objc_pointer(ty),
+                    ty: IdType::parse_objc_pointer(ty, context),
                     is_const: ty.is_const_qualified(),
                     lifetime,
                     nullability,
@@ -578,13 +638,28 @@ impl RustType {
                                     ty.get_pointee_type().expect("pointer type to have pointee");
                                 let is_const = ty.is_const_qualified();
 
-                                let ty = match IdType::parse_objc_pointer(ty) {
-                                    IdType::Class { generics, .. } => {
-                                        assert!(generics.is_empty(), "typedef generics not empty");
-                                        IdType::TypeDef { name: typedef_name }
+                                let parsed = IdType::parse_objc_pointer(ty, context);
+
+                                if let IdType::Class { generics, .. } = &parsed {
+                                    assert!(generics.is_empty(), "typedef generics not empty");
+                                }
+
+                                let ty = if let IdType::AnyObject
+                                | IdType::ProtocolObject { .. }
+                                | IdType::TodoProtocols = parsed
+                                {
+                                    IdType::GenericParam { name: typedef_name }
+                                } else {
+                                    let (library, _) = context
+                                        .get_library_and_file_name(
+                                            &ty.get_declaration()
+                                                .expect("ObjCObjectPointer declaration"),
+                                        )
+                                        .expect("ObjCObjectPointer library");
+                                    IdType::TypeDef {
+                                        library,
+                                        name: typedef_name,
                                     }
-                                    IdType::Object => IdType::GenericParam { name: typedef_name },
-                                    _ => IdType::TypeDef { name: typedef_name },
                                 };
 
                                 Self::Id {
@@ -632,11 +707,11 @@ impl RustType {
                     .get_argument_types()
                     .expect("fn type to have argument types")
                     .into_iter()
-                    .map(Ty::parse_fn_argument)
+                    .map(|ty| Ty::parse_fn_argument(ty, context))
                     .collect();
 
                 let result_type = ty.get_result_type().expect("fn type to have result type");
-                let result_type = Ty::parse_fn_result(result_type);
+                let result_type = Ty::parse_fn_result(result_type, context);
 
                 Self::Fn {
                     is_variadic: ty.is_variadic(),
@@ -649,7 +724,7 @@ impl RustType {
                 let ty = ty
                     .get_element_type()
                     .expect("incomplete array to have element type");
-                let pointee = Self::parse(ty, is_consumed, Nullability::Unspecified, true);
+                let pointee = Self::parse(ty, is_consumed, Nullability::Unspecified, true, context);
                 Self::IncompleteArray {
                     nullability,
                     is_const,
@@ -662,6 +737,7 @@ impl RustType {
                     is_consumed,
                     Nullability::Unspecified,
                     false,
+                    context,
                 );
                 let num_elements = ty
                     .get_size()
@@ -855,8 +931,8 @@ impl Ty {
         kind: TyKind::MethodReturn,
     };
 
-    pub fn parse_method_argument(ty: Type<'_>, is_consumed: bool) -> Self {
-        let ty = RustType::parse(ty, is_consumed, Nullability::Unspecified, false);
+    pub fn parse_method_argument(ty: Type<'_>, is_consumed: bool, context: &Context<'_>) -> Self {
+        let ty = RustType::parse(ty, is_consumed, Nullability::Unspecified, false, context);
 
         match &ty {
             RustType::Pointer { pointee, .. } => pointee.visit_lifetime(|lifetime| {
@@ -882,8 +958,8 @@ impl Ty {
         }
     }
 
-    pub fn parse_method_return(ty: Type<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+    pub fn parse_method_return(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -897,20 +973,20 @@ impl Ty {
         }
     }
 
-    pub fn parse_function_argument(ty: Type<'_>) -> Self {
-        let mut this = Self::parse_method_argument(ty, false);
+    pub fn parse_function_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let mut this = Self::parse_method_argument(ty, false, context);
         this.kind = TyKind::FnDeclArgument;
         this
     }
 
-    pub fn parse_function_return(ty: Type<'_>) -> Self {
-        let mut this = Self::parse_method_return(ty);
+    pub fn parse_function_return(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let mut this = Self::parse_method_return(ty, context);
         this.kind = TyKind::FnDeclReturn;
         this
     }
 
-    pub fn parse_typedef(ty: Type<'_>) -> Option<Self> {
-        let mut ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+    pub fn parse_typedef(ty: Type<'_>, context: &Context<'_>) -> Option<Self> {
+        let mut ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -945,8 +1021,12 @@ impl Ty {
         }
     }
 
-    pub fn parse_property(ty: Type<'_>, default_nullability: Nullability) -> Self {
-        let ty = RustType::parse(ty, false, default_nullability, false);
+    pub fn parse_property(
+        ty: Type<'_>,
+        default_nullability: Nullability,
+        context: &Context<'_>,
+    ) -> Self {
+        let ty = RustType::parse(ty, false, default_nullability, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -960,8 +1040,12 @@ impl Ty {
         }
     }
 
-    pub fn parse_property_return(ty: Type<'_>, default_nullability: Nullability) -> Self {
-        let ty = RustType::parse(ty, false, default_nullability, false);
+    pub fn parse_property_return(
+        ty: Type<'_>,
+        default_nullability: Nullability,
+        context: &Context<'_>,
+    ) -> Self {
+        let ty = RustType::parse(ty, false, default_nullability, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -975,8 +1059,8 @@ impl Ty {
         }
     }
 
-    pub fn parse_struct_field(ty: Type<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+    pub fn parse_struct_field(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -990,8 +1074,8 @@ impl Ty {
         }
     }
 
-    pub fn parse_enum(ty: Type<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+    pub fn parse_enum(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
 
         ty.visit_lifetime(|_lifetime| {
             panic!("unexpected lifetime in enum {ty:?}");
@@ -1003,8 +1087,8 @@ impl Ty {
         }
     }
 
-    pub fn parse_static(ty: Type<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+    pub fn parse_static(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Strong && lifetime != Lifetime::Unspecified {
@@ -1018,8 +1102,8 @@ impl Ty {
         }
     }
 
-    fn parse_fn_argument(ty: Type<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+    fn parse_fn_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Strong {
@@ -1033,8 +1117,8 @@ impl Ty {
         }
     }
 
-    fn parse_fn_result(ty: Type<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+    fn parse_fn_result(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1076,7 +1160,12 @@ impl Ty {
         } = &self.ty
         {
             if let RustType::Id {
-                ty: IdType::Class { name, generics },
+                ty:
+                    IdType::Class {
+                        library,
+                        name,
+                        generics,
+                    },
                 is_const: id_is_const,
                 lifetime,
                 nullability: id_nullability,
@@ -1086,6 +1175,7 @@ impl Ty {
                 if name != "NSError" {
                     return false;
                 }
+                assert_eq!(*library, "Foundation", "invalid error library {self:?}");
                 assert_eq!(
                     *nullability,
                     Nullability::Nullable,
@@ -1157,7 +1247,7 @@ impl Ty {
     /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types>
     pub fn fix_related_result_type(&mut self, is_class: bool, selector: &str) {
         if let RustType::Id {
-            ty: ty @ IdType::Object,
+            ty: ty @ IdType::AnyObject,
             ..
         } = &mut self.ty
         {
@@ -1271,12 +1361,19 @@ impl fmt::Display for Ty {
                 //
                 // Because that means we can use ordinary Id<NSAbc> elsewhere.
                 RustType::Id {
-                    ty: ty @ IdType::Class { name, generics },
+                    ty:
+                        ty @ IdType::Class {
+                            library,
+                            name,
+                            generics,
+                        },
                     is_const: _,
                     lifetime: _,
                     nullability: Nullability::Nullable | Nullability::Unspecified,
                     ownership: Ownership::Shared,
-                } if name == "NSString" && generics.is_empty() => write!(f, "{ty}"),
+                } if library == "Foundation" && name == "NSString" && generics.is_empty() => {
+                    write!(f, "{ty}")
+                }
                 RustType::Id {
                     ty: ty @ IdType::TodoProtocols,
                     ..

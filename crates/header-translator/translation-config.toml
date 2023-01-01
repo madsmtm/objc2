@@ -99,6 +99,8 @@ allocWithZone = { skipped = true }
 # Ignore categories on NSObject for now
 [class.NSObject]
 skipped = true
+[protocol.NSObject]
+skipped = true
 
 # Contains bitfields
 [struct.NSDecimal]
