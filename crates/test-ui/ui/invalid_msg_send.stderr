@@ -48,18 +48,17 @@ note: while trying to match `:`
   |                             ^
   = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: no rules expected the token `a`
+error: no rules expected the token `d`
  --> ui/invalid_msg_send.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: b, c d] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^ no rules expected this token in macro call
+  |                                                 ^ no rules expected this token in macro call
   |
-note: while trying to match `)`
+note: while trying to match `:`
  --> $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs
   |
-  |         @()
-  |           ^
-  = note: this error originates in the macro `$crate::__msg_send_parse` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  |         @($selector:ident: _ $(,)?)
+  |                          ^
 
 error: no rules expected the token `,`
  --> ui/invalid_msg_send.rs

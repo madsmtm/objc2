@@ -6,7 +6,7 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |
   = help: within `objc2::runtime::Object`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
   = note: required because it appears within the type `objc_object`
-  = note: required because it appears within the type `objc2::runtime::Object`
+  = note: required because it appears within the type `Object`
 note: required by a bound in `needs_sync`
  --> ui/object_not_send_sync.rs
   |
@@ -24,7 +24,7 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   = note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
   = note: required because it appears within the type `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
   = note: required because it appears within the type `objc_object`
-  = note: required because it appears within the type `objc2::runtime::Object`
+  = note: required because it appears within the type `Object`
 note: required by a bound in `needs_send`
  --> ui/object_not_send_sync.rs
   |
@@ -39,7 +39,7 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |
   = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
   = note: required because it appears within the type `objc_object`
-  = note: required because it appears within the type `objc2::runtime::Object`
+  = note: required because it appears within the type `Object`
   = note: required because it appears within the type `NSObject`
 note: required by a bound in `needs_sync`
  --> ui/object_not_send_sync.rs
@@ -58,7 +58,7 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   = note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
   = note: required because it appears within the type `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
   = note: required because it appears within the type `objc_object`
-  = note: required because it appears within the type `objc2::runtime::Object`
+  = note: required because it appears within the type `Object`
   = note: required because it appears within the type `NSObject`
 note: required by a bound in `needs_send`
  --> ui/object_not_send_sync.rs
@@ -74,7 +74,7 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |
   = help: within `NSValue`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
   = note: required because it appears within the type `objc_object`
-  = note: required because it appears within the type `objc2::runtime::Object`
+  = note: required because it appears within the type `Object`
   = note: required because it appears within the type `NSObject`
   = note: required because it appears within the type `NSValue`
 note: required by a bound in `needs_sync`
@@ -94,7 +94,7 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   = note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
   = note: required because it appears within the type `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
   = note: required because it appears within the type `objc_object`
-  = note: required because it appears within the type `objc2::runtime::Object`
+  = note: required because it appears within the type `Object`
   = note: required because it appears within the type `NSObject`
   = note: required because it appears within the type `NSValue`
 note: required by a bound in `needs_send`
