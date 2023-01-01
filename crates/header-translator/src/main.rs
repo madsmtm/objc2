@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
@@ -10,7 +9,7 @@ use tracing_subscriber::registry::Registry;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 
-use header_translator::{run_cargo_fmt, Cache, Config, File, Output, Stmt};
+use header_translator::{run_cargo_fmt, Cache, Config, Context, File, Output, Stmt};
 
 fn main() {
     // use tracing_subscriber::fmt;
@@ -159,7 +158,7 @@ fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Confi
     let mut file_span = None;
     let mut file_span_name = String::new();
 
-    let mut macro_invocations = HashMap::new();
+    let mut context = Context::new(config);
 
     tu.get_entity().visit_children(|entity, _parent| {
         let _span = trace_span!("entity", ?entity).entered();
@@ -203,14 +202,16 @@ fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Confi
                                 library
                                     .files
                                     .entry(included)
-                                    .or_insert_with(|| File::new(&library_name, config));
+                                    .or_insert_with(|| File::new(&library_name, &context));
                             }
                         }
                     }
                     EntityKind::MacroExpansion if preprocessing => {
                         let name = entity.get_name().expect("macro name");
                         let location = entity.get_location().expect("macro location");
-                        macro_invocations.insert(location.get_spelling_location(), name);
+                        context
+                            .macro_invocations
+                            .insert(location.get_spelling_location(), name);
                     }
                     EntityKind::MacroDefinition if preprocessing => {
                         // let name = entity.get_name().expect("macro def name");
@@ -224,7 +225,7 @@ fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Confi
                         preprocessing = false;
                         // No more includes / macro expansions after this line
                         let file = library.files.get_mut(&file_name).expect("file");
-                        for stmt in Stmt::parse(&entity, config, &macro_invocations) {
+                        for stmt in Stmt::parse(&entity, &context) {
                             file.add_stmt(stmt);
                         }
                     }

@@ -1,15 +1,15 @@
 use std::borrow::Cow;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::fmt;
 use std::iter;
 use std::mem;
 
-use clang::source::Location;
 use clang::{Entity, EntityKind, EntityVisitResult};
 use tracing::{debug, debug_span, error, warn};
 
 use crate::availability::Availability;
-use crate::config::{ClassData, Config};
+use crate::config::ClassData;
+use crate::context::Context;
 use crate::expr::Expr;
 use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
@@ -332,11 +332,7 @@ fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
 }
 
 impl Stmt {
-    pub fn parse(
-        entity: &Entity<'_>,
-        config: &Config,
-        macro_invocations: &HashMap<Location<'_>, String>,
-    ) -> Vec<Self> {
+    pub fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Vec<Self> {
         let _span = debug_span!(
             "stmt",
             kind = ?entity.get_kind(),
@@ -350,7 +346,7 @@ impl Stmt {
             EntityKind::ObjCInterfaceDecl => {
                 // entity.get_mangled_objc_names()
                 let name = entity.get_name().expect("class name");
-                let class_data = config.class_data.get(&name);
+                let class_data = context.class_data.get(&name);
 
                 if class_data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -432,7 +428,7 @@ impl Stmt {
                     }
                 });
                 let class_name = class_name.expect("could not find category class");
-                let class_data = config.class_data.get(&class_name);
+                let class_data = context.class_data.get(&class_name);
 
                 if class_data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -468,7 +464,7 @@ impl Stmt {
             }
             EntityKind::ObjCProtocolDecl => {
                 let name = entity.get_name().expect("protocol name");
-                let protocol_data = config.protocol_data.get(&name);
+                let protocol_data = context.protocol_data.get(&name);
 
                 if protocol_data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -505,9 +501,7 @@ impl Stmt {
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
-                        if let Some(macro_) =
-                            UnexposedMacro::parse_plus_macros(&entity, macro_invocations)
-                        {
+                        if let Some(macro_) = UnexposedMacro::parse_plus_macros(&entity, context) {
                             if kind.is_some() {
                                 panic!("got multiple unexposed macros {kind:?}, {macro_:?}");
                             }
@@ -515,7 +509,7 @@ impl Stmt {
                         }
                     }
                     EntityKind::StructDecl => {
-                        if config
+                        if context
                             .struct_data
                             .get(&name)
                             .map(|data| data.skipped)
@@ -554,7 +548,7 @@ impl Stmt {
                     return vec![];
                 }
 
-                if config
+                if context
                     .typedef_data
                     .get(&name)
                     .map(|data| data.skipped)
@@ -574,7 +568,7 @@ impl Stmt {
             }
             EntityKind::StructDecl => {
                 if let Some(name) = entity.get_name() {
-                    if config
+                    if context
                         .struct_data
                         .get(&name)
                         .map(|data| data.skipped)
@@ -597,7 +591,7 @@ impl Stmt {
 
                 let name = entity.get_name();
 
-                let data = config
+                let data = context
                     .enum_data
                     .get(name.as_deref().unwrap_or("anonymous"))
                     .cloned()
@@ -678,7 +672,7 @@ impl Stmt {
             EntityKind::VarDecl => {
                 let name = entity.get_name().expect("var decl name");
 
-                if config
+                if context
                     .statics
                     .get(&name)
                     .map(|data| data.skipped)
@@ -724,7 +718,7 @@ impl Stmt {
             EntityKind::FunctionDecl => {
                 let name = entity.get_name().expect("function name");
 
-                if config
+                if context
                     .fns
                     .get(&name)
                     .map(|data| data.skipped)
