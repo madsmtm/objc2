@@ -159,6 +159,7 @@
 /// See the source code of `icrate` for many more examples.
 #[macro_export]
 macro_rules! extern_methods {
+    // Generic impls
     (
         $(
             $(#[$impl_m:meta])*
@@ -170,13 +171,14 @@ macro_rules! extern_methods {
         $(
             $(#[$impl_m])*
             impl<$($t $(: $b $(+ $rest)*)?),*> $type {
-                $crate::__inner_extern_methods! {
-                    @rewrite_methods
+                $crate::__extern_methods_rewrite_methods! {
                     $($methods)*
                 }
             }
         )+
     };
+
+    // Non-generic impls
     (
         $(
             $(#[$impl_m:meta])*
@@ -188,8 +190,7 @@ macro_rules! extern_methods {
         $(
             $(#[$impl_m])*
             impl $type {
-                $crate::__inner_extern_methods! {
-                    @rewrite_methods
+                $crate::__extern_methods_rewrite_methods! {
                     $($methods)*
                 }
             }
@@ -199,11 +200,12 @@ macro_rules! extern_methods {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __inner_extern_methods {
-    {@rewrite_methods} => {};
+macro_rules! __extern_methods_rewrite_methods {
+    // Base case
+    {} => {};
+
+    // Unsafe variant
     {
-        @rewrite_methods
-        // Unsafe variant
         $(#[$($m:tt)*])*
         $v:vis unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)?;
 
@@ -211,9 +213,8 @@ macro_rules! __inner_extern_methods {
     } => {
         // Detect instance vs. class method.
         $crate::__rewrite_self_arg! {
-            ($crate::__inner_extern_methods)
+            ($crate::__extern_methods_method_out)
             ($($args)*)
-            @method_out
             @($(#[$($m)*])*)
             @($v unsafe fn $name($($args)*) $(-> $ret)?)
             // Will add @(kind)
@@ -221,49 +222,49 @@ macro_rules! __inner_extern_methods {
             // Will add @(args_rest)
         }
 
-        $crate::__inner_extern_methods! {
-            @rewrite_methods
+        $crate::__extern_methods_rewrite_methods! {
             $($rest)*
         }
     };
+
+    // Safe variant
     {
-        @rewrite_methods
-        // Safe variant
         $(#[$($m:tt)*])*
         $v:vis fn $name:ident($($args:tt)*) $(-> $ret:ty)?;
 
         $($rest:tt)*
     } => {
         $crate::__rewrite_self_arg! {
-            ($crate::__inner_extern_methods)
+            ($crate::__extern_methods_method_out)
             ($($args)*)
-            @method_out
             @($(#[$($m)*])*)
             @($v fn $name($($args)*) $(-> $ret)?)
         }
 
-        $crate::__inner_extern_methods! {
-            @rewrite_methods
+        $crate::__extern_methods_rewrite_methods! {
             $($rest)*
         }
     };
+
+    // Other items that people might want to put here (e.g. functions with a
+    // body).
     {
-        @rewrite_methods
-        // Other items that people might want to put here (e.g. functions with
-        // a body).
         $associated_item:item
 
         $($rest:tt)*
     } => {
         $associated_item
 
-        $crate::__inner_extern_methods! {
-            @rewrite_methods
+        $crate::__extern_methods_rewrite_methods! {
             $($rest)*
         }
     };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_methods_method_out {
     {
-        @method_out
         @($(#[$($m:tt)*])*)
         @($($function_start:tt)*)
         @($($kind:tt)*)
@@ -277,9 +278,8 @@ macro_rules! __inner_extern_methods {
                 unsafe {
                     $crate::__extract_custom_attributes! {
                         @($(#[$($m)*])*)
-                        @($crate::__inner_extern_methods)
+                        @($crate::__extern_methods_unsafe_method_body)
                         @(
-                            @unsafe_method_body
                             @($($kind)*)
                             @($($args_start)*)
                             @($($args_rest)*)
@@ -295,9 +295,13 @@ macro_rules! __inner_extern_methods {
             @()
         }
     };
+}
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_methods_unsafe_method_body {
+    // #[method(...)]
     {
-        @unsafe_method_body
         @($kind:ident)
         @($($args_start:tt)*)
         @($($args_rest:tt)*)
@@ -306,8 +310,7 @@ macro_rules! __inner_extern_methods {
     } => {
         $crate::__collect_msg_send! {
             $crate::msg_send;
-            $crate::__inner_extern_methods!(
-                @get_receiver
+            $crate::__extern_methods_get_receiver!(
                 @($kind)
                 @($($args_start)*)
             );
@@ -315,8 +318,9 @@ macro_rules! __inner_extern_methods {
             ($($args_rest)*);
         }
     };
+
+    // #[method_id(...)]
     {
-        @unsafe_method_body
         @($kind:ident)
         @($($args_start:tt)*)
         @($($args_rest:tt)*)
@@ -325,8 +329,7 @@ macro_rules! __inner_extern_methods {
     } => {
         $crate::__collect_msg_send! {
             $crate::msg_send_id;
-            $crate::__inner_extern_methods!(
-                @get_receiver
+            $crate::__extern_methods_get_receiver!(
                 @($kind)
                 @($($args_start)*)
             );
@@ -334,8 +337,9 @@ macro_rules! __inner_extern_methods {
             ($($args_rest)*);
         }
     };
+
+    // #[optional]
     {
-        @unsafe_method_body
         @($kind:ident)
         @($($args_start:tt)*)
         @($($args_rest:tt)*)
@@ -344,9 +348,12 @@ macro_rules! __inner_extern_methods {
     } => {
         compile_error!("`#[optional]` is only supported in `extern_protocol!`")
     };
+}
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_methods_get_receiver {
     {
-        @get_receiver
         @(instance_method)
         @(
             $self_or_this:ident: $self_or_this_ty:ty,
@@ -355,8 +362,8 @@ macro_rules! __inner_extern_methods {
     } => {
         $self_or_this
     };
+
     {
-        @get_receiver
         @(class_method)
         @(
             _: $cls_ty:ty,
