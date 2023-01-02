@@ -434,15 +434,18 @@ impl fmt::Display for Method {
             writeln!(f, "        #[optional]")?;
         }
 
+        let error_trailing = if self.result_type.is_error() { "_" } else { "" };
+
         if self.result_type.is_id() {
             writeln!(
                 f,
-                "        #[method_id(@__retain_semantics {} {})]",
+                "        #[method_id(@__retain_semantics {} {}{})]",
                 MemoryManagement::get_memory_management_name(&self.selector),
-                self.selector
+                self.selector,
+                error_trailing,
             )?;
         } else {
-            writeln!(f, "        #[method({})]", self.selector)?;
+            writeln!(f, "        #[method({}{})]", self.selector, error_trailing)?;
         };
 
         write!(f, "        pub ")?;

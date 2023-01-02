@@ -10,7 +10,7 @@ extern_methods!(
     unsafe impl<ObjectType: Message, ObjectTypeOwnership: Ownership>
         NSArray<ObjectType, ObjectTypeOwnership>
     {
-        #[method_id(initWithContentsOfURL:error:)]
+        #[method_id(initWithContentsOfURL:error:_)]
         pub unsafe fn initWithContentsOfURL_error(
             this: Option<Allocated<Self>>,
             url: &NSURL,

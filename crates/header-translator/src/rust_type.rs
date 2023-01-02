@@ -1259,6 +1259,14 @@ impl Ty {
         self.kind = TyKind::MethodReturnWithError;
     }
 
+    pub fn is_error(&self) -> bool {
+        match &self.kind {
+            TyKind::MethodReturn => false,
+            TyKind::MethodReturnWithError => true,
+            _ => panic!("invalid is_error usage"),
+        }
+    }
+
     pub fn is_instancetype(&self) -> bool {
         matches!(
             &self.ty,

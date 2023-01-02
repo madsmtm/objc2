@@ -20,6 +20,12 @@
 /// or `#[method_id(my:selector:)]` attribute. The `method` attribute maps to
 /// a call to [`msg_send!`], while the `method_id` maps to [`msg_send_id!`].
 ///
+/// If the attribute ends with "_", as in `#[method(my:error:_)]` or
+/// `#[method_id(my:error:_)]`, the method is assumed to take an
+/// implicit `NSError**` parameter, which is automatically converted to a
+/// [`Result`]. See the error section in [`msg_send!`] and [`msg_send_id!`]
+/// for details.
+///
 /// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
 /// `deprecated` and so on is supported. However, note that `cfg_attr` may not
 /// work correctly, due to implementation difficulty - if you have a concrete
@@ -93,9 +99,9 @@
 ///         #[method_id(fooObject)]
 ///         pub fn foo_object(&self) -> Id<NSObject, Shared>;
 ///
-///         #[method(withError:)]
-///         // Since the selector specifies one more argument than we
-///         // have, the return type is assumed to be `Result`.
+///         #[method(withError:_)]
+///         // Since the selector specifies "_", the return type is assumed to
+///         // be `Result`.
 ///         pub fn with_error(&self) -> Result<(), Id<NSError, Shared>>;
 ///     }
 /// );
@@ -399,11 +405,11 @@ macro_rules! __collect_msg_send {
         $macro![$obj, $($output)+]
     }};
 
-    // Allow trailing `sel:` without a corresponding argument (for errors)
+    // Allow trailing `sel:_` without a corresponding argument (for errors)
     (
         $macro:path;
         $obj:expr;
-        ($(@__retain_semantics $retain_semantics:ident )? $sel:ident:);
+        ($(@__retain_semantics $retain_semantics:ident )? $sel:ident: _);
         ($(,)?);
         $($output:tt)*
     ) => {
