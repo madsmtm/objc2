@@ -4,7 +4,6 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::extern_methods;
 use objc2::rc::{Id, Shared};
-use objc2::ClassType;
 
 use crate::Foundation::NSThread;
 

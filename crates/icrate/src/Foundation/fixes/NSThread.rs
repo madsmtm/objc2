@@ -1,4 +1,4 @@
-use objc2::{extern_methods, ClassType};
+use objc2::extern_methods;
 
 use crate::Foundation::NSThread;
 

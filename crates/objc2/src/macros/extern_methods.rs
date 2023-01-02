@@ -370,7 +370,7 @@ macro_rules! __extern_methods_get_receiver {
             _: $sel_ty:ty,
         )
     } => {
-        Self::class()
+        <Self as $crate::ClassType>::class()
     };
 }
 

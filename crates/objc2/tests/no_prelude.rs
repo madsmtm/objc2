@@ -97,12 +97,20 @@ new_objc2::declare_class!(
     }
 );
 
-new_objc2::extern_methods!(
-    unsafe impl CustomObject {
-        #[method(a)]
-        pub fn a();
-    }
-);
+// Ensure that extern_methods! works without the ClassType trait in scope
+mod test_extern_methods {
+    use super::{new_objc2, CustomObject};
+
+    new_objc2::extern_methods!(
+        unsafe impl CustomObject {
+            #[method(a)]
+            pub fn a();
+
+            #[method(b)]
+            pub fn b(&self);
+        }
+    );
+}
 
 new_objc2::extern_class!(
     struct NSObject2;
@@ -117,8 +125,8 @@ new_objc2::extern_protocol!(
     struct CustomProtocol;
 
     unsafe impl ProtocolType for CustomProtocol {
-        #[method(b)]
-        fn b(&self);
+        #[method(c)]
+        fn c(&self);
     }
 );
 

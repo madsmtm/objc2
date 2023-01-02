@@ -3,7 +3,7 @@ use core::ops::{Index, IndexMut};
 use core::ptr;
 
 use objc2::rc::{DefaultId, Id, Owned, Shared};
-use objc2::{extern_methods, msg_send_id, ClassType, Message};
+use objc2::{extern_methods, msg_send_id, Message};
 
 use crate::Foundation::{
     NSArray, NSCopying, NSDictionary, NSFastEnumeration2, NSMutableDictionary,

@@ -1,6 +1,5 @@
 //! Test that msg_send! error handling works correctly.
-use objc2::{msg_send, msg_send_id};
-use objc2::ClassType;
+use objc2::{ClassType, msg_send, msg_send_id};
 use objc2::rc::{Id, Shared};
 use icrate::Foundation::NSString;
 
