@@ -54,7 +54,7 @@ declare_class!(
     /// primitives are called.
     #[derive(Debug, PartialEq, Eq)]
     #[doc(hidden)]
-    pub struct __RcTestObject {}
+    pub struct __RcTestObject;
 
     unsafe impl ClassType for __RcTestObject {
         type Super = NSObject;
@@ -280,7 +280,7 @@ impl __RcTestObject {
 
 declare_class!(
     #[derive(Debug, PartialEq, Eq)]
-    struct RcTestObjectSubclass {}
+    struct RcTestObjectSubclass;
 
     unsafe impl ClassType for RcTestObjectSubclass {
         #[inherits(NSObject)]

@@ -3,7 +3,7 @@ use objc2::declare_class;
 use objc2::runtime::NSObject;
 
 declare_class!(
-    struct CustomObject {}
+    struct CustomObject;
 
     unsafe impl objc2::ClassType for CustomObject {
         type Super = NSObject;

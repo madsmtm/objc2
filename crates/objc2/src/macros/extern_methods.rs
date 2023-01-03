@@ -62,7 +62,7 @@
 /// type NSError = NSObject;
 ///
 /// declare_class!(
-///     pub struct MyObject {}
+///     pub struct MyObject;
 ///
 ///     unsafe impl ClassType for MyObject {
 ///         type Super = NSObject;
@@ -114,7 +114,7 @@
 /// # type NSError = NSObject;
 /// #
 /// # declare_class!(
-/// #     pub struct MyObject {}
+/// #     pub struct MyObject;
 /// #
 /// #     unsafe impl ClassType for MyObject {
 /// #         type Super = NSObject;

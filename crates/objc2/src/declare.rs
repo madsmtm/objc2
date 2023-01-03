@@ -785,7 +785,7 @@ mod tests {
     #[should_panic = "could not create new class TestDeclareClassDuplicate. Perhaps a class with that name already exists?"]
     fn test_declare_class_duplicate() {
         declare_class!(
-            struct Custom1 {}
+            struct Custom1;
 
             unsafe impl ClassType for Custom1 {
                 type Super = NSObject;
@@ -794,7 +794,7 @@ mod tests {
         );
 
         declare_class!(
-            struct Custom2 {}
+            struct Custom2;
 
             unsafe impl ClassType for Custom2 {
                 type Super = NSObject;
@@ -810,7 +810,7 @@ mod tests {
     #[test]
     fn test_declare_class_protocol() {
         declare_class!(
-            struct Custom {}
+            struct Custom;
 
             unsafe impl ClassType for Custom {
                 type Super = NSObject;
@@ -837,7 +837,7 @@ mod tests {
     )]
     fn test_declare_class_invalid_method() {
         declare_class!(
-            struct Custom {}
+            struct Custom;
 
             unsafe impl ClassType for Custom {
                 type Super = NSObject;
@@ -861,7 +861,7 @@ mod tests {
     )]
     fn test_declare_class_missing_protocol_method() {
         declare_class!(
-            struct Custom {}
+            struct Custom;
 
             unsafe impl ClassType for Custom {
                 type Super = NSObject;
@@ -880,7 +880,7 @@ mod tests {
     // #[cfg_attr(all(debug_assertions, feature = "verify"), should_panic = "...")]
     fn test_declare_class_invalid_protocol_method() {
         declare_class!(
-            struct Custom {}
+            struct Custom;
 
             unsafe impl ClassType for Custom {
                 type Super = NSObject;
@@ -906,7 +906,7 @@ mod tests {
     )]
     fn test_declare_class_extra_protocol_method() {
         declare_class!(
-            struct Custom {}
+            struct Custom;
 
             unsafe impl ClassType for Custom {
                 type Super = NSObject;

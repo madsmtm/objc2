@@ -785,7 +785,7 @@ macro_rules! __class_inner {
 /// # use objc2::{declare_class, ClassType};
 /// #
 /// # declare_class!(
-/// #     struct MyObject {}
+/// #     struct MyObject;
 /// #
 /// #     unsafe impl ClassType for MyObject {
 /// #         type Super = NSObject;

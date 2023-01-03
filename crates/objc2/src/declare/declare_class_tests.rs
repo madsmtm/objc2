@@ -35,7 +35,7 @@ fn test_deprecated() {
 // We use `debug_assertions` here just because it's something that we know
 // our CI already tests.
 declare_class!(
-    struct DeclareClassCfg {}
+    struct DeclareClassCfg;
 
     unsafe impl ClassType for DeclareClassCfg {
         type Super = NSObject;
