@@ -142,6 +142,9 @@ jobs:
   test:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
+    needs:
+    - fmt
+    - lint
 
     strategy:
       # MacOS instances are rate-limited, which means that whenever we can
@@ -513,8 +516,11 @@ jobs:
       run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features=unstable-static-sel,unstable-static-class
 
   ui:
-    name: Test UI
+    name: Compiler UI
     runs-on: macos-latest
+    needs:
+    - fmt
+    - lint
 
     steps:
     - uses: actions/checkout@v3
@@ -545,6 +551,9 @@ jobs:
   assembly:
     name: Assembly tests
     runs-on: ubuntu-latest
+    needs:
+    - fmt
+    - lint
 
     steps:
     - uses: actions/checkout@v3
@@ -584,6 +593,9 @@ jobs:
   test-ios:
     name: Test on iOS simulator w. dinghy
     runs-on: macos-11
+    needs:
+    - fmt
+    - lint
 
     steps:
     - uses: actions/checkout@v3
