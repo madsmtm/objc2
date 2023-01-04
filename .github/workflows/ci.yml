@@ -42,6 +42,10 @@ env:
   #
   # To help find regressions, we explicitly _don't_ pin the version here!
   CURRENT_NIGHTLY: nightly
+  # Various features that we'd usually want to test with
+  #
+  # Note: The `exception` feature is not enabled here, since it requires
+  # compiling C code, even if just running a `check`/`clippy` build.
   INTERESTING_FEATURES: malloc,block,verify,uuid
 
 jobs:
@@ -88,7 +92,7 @@ jobs:
             $PUBLIC_CRATES
             --no-default-features --features=std
             --features=gnustep-1-9
-            --features=$INTERESTING_FEATURES,catch-all,exception
+            --features=$INTERESTING_FEATURES,catch-all
             --features=unstable-frameworks-gnustep
         - name: header-translator
           target: x86_64-unknown-linux-gnu
@@ -216,11 +220,6 @@ jobs:
           runtime: gnustep-1-9
           libobjc2: "1.9"
           frameworks: gnustep-32bit
-        - name: Test iOS simulator x86 64bit
-          os: macos-11
-          target: x86_64-apple-ios
-          dinghy: true
-          frameworks: ios
         - name: Build iOS simulator ARM64
           os: macos-latest
           target: aarch64-apple-ios-sim
@@ -277,8 +276,7 @@ jobs:
       ASMFLAGS: ${{ matrix.cflags }}
       LDFLAGS: ${{ matrix.cflags }}
       ARGS: --no-default-features --features=std,${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
-      # Use --no-fail-fast, except with dinghy
-      TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
+      TESTARGS: --no-fail-fast ${{ matrix.test-args }}
       SOME_FEATURES: ${{ matrix.features || 'malloc,block,exception,Foundation' }}
       FEATURES: >-
         ${{
@@ -305,12 +303,9 @@ jobs:
         #
         # - GNUStep-Base ./configure invalidates the cache, which makes it
         #   very hard to know when to rebuild and when not to.
-        # - We don't want to rebuild cargo-dinghy every time the ~/.cargo
-        #   folder is invalidated.
         #
         # So instead we just place the final outputs in ~/extern, and cache
         # them there:
-        # - bin/cargo-dinghy
         # - bin/cargo-fuzz
         # - lib/libobjc.so
         # - lib/libgnustep-base.so
@@ -458,29 +453,6 @@ jobs:
         # Allows installing for a different base target
         target: ${{ matrix.rust.target || matrix.target }}
 
-    - name: Install Cargo Dinghy
-      if: matrix.dinghy && steps.extern-cache.outputs.cache-hit != 'true'
-      run: |
-        export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
-
-        cargo install cargo-dinghy --version=^0.6.0 --root=$HOME/extern --target=$HOST_TARGET
-
-    - name: Launch XCode Simulator and prepare Dinghy
-      if: matrix.dinghy
-      # Note that we're not testing all configurations with dinghy, since that
-      # takes a very long time to run, and hence impedes general development.
-      run: |
-        # Get system info
-        xcrun simctl list runtimes
-
-        # Launch the simulator
-        RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
-        SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
-        xcrun simctl boot $SIM_ID
-
-        # Export variable
-        echo "CMD=$HOME/extern/bin/cargo-dinghy -d=$SIM_ID" >> $GITHUB_ENV
-
     - name: Install Cargo Fuzz
       if: matrix.fuzz && steps.extern-cache.outputs.cache-hit != 'true'
       run: |
@@ -489,25 +461,21 @@ jobs:
         cargo install cargo-fuzz --version=^0.11.1 --root=$HOME/extern --target=$HOST_TARGET
 
     - name: Build
-      run: $CMD build ${{ env.ARGS }}
+      run: cargo build ${{ env.ARGS }}
 
     - name: Test without features
-      if: ${{ !matrix.dinghy }}
       run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }}
 
     - name: Test with some features
-      if: ${{ !matrix.dinghy }}
       run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --tests --features=${{ env.SOME_FEATURES }}
 
     - name: Test with features
-      run: $CMD test ${{ env.ARGS }} ${{ env.TESTARGS }} --features=${{ env.FEATURES }}
+      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features=${{ env.FEATURES }}
 
     - name: Test in release mode without features
-      if: ${{ !matrix.dinghy }}
       run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --release
 
     - name: Test in release mode with features
-      if: ${{ !matrix.dinghy }}
       run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features=${{ env.FEATURES }} --release
 
     - name: Run fuzzing
@@ -534,14 +502,14 @@ jobs:
       run: cargo bench ${{ env.ARGS }} ${{ env.TESTARGS }}
 
     - name: Test with unstable features
-      if: ${{ !matrix.dinghy && matrix.rust.toolchain == 'nightly' }}
+      if: ${{ matrix.rust.toolchain == 'nightly' }}
       # Not using --all-features because that would enable e.g. gnustep
       run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features=${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }}
 
       # TODO: Re-enable this on Foundation once we do some form of
       # availability checking.
     - name: Test static class and selectors
-      if: ${{ !matrix.dinghy && (matrix.runtime || 'apple') == 'apple' }}
+      if: ${{ (matrix.runtime || 'apple') == 'apple' }}
       run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features=unstable-static-sel,unstable-static-class
 
   ui:
@@ -612,3 +580,59 @@ jobs:
 
     - name: Run assembly tests
       run: ./helper-scripts/run-assembly-tests.sh
+
+  test-ios:
+    name: Test on iOS simulator w. dinghy
+    runs-on: macos-11
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
+        target: x86_64-apple-ios
+
+    - name: Cache Cargo
+      id: cargo-cache
+      uses: actions/cache@v3
+      with:
+        # https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+        # Change this key if we update the required cargo-dinghy version
+        key: cargo-test-ios-${{ hashFiles('**/Cargo.lock') }}-v0-6-0
+
+    - name: Install cargo-dinghy
+      # This is cached in `~/.cargo/bin`
+      if: ${{ steps.cargo-cache.outputs.cache-hit != 'true' }}
+      run: cargo install cargo-dinghy --version=^0.6.0
+
+    - name: Launch XCode Simulator and prepare Dinghy
+      # Note that we're not testing all configurations with dinghy, since that
+      # takes a very long time to run, and hence impedes general development.
+      run: |
+        # Get system info
+        xcrun simctl list runtimes
+
+        # Launch the simulator
+        RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
+        SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
+        xcrun simctl boot $SIM_ID
+
+        # Export simulator ID
+        echo "SIM_ID=$SIM_ID" >> $GITHUB_ENV
+
+    - name: Test
+      run: >-
+        cargo-dinghy --device=$SIM_ID test
+        --features=$INTERESTING_FEATURES,catch-all
+        --features=unstable-frameworks-ios
