@@ -63,7 +63,7 @@ impl UnexposedMacro {
         let location = entity.get_location().expect("unexposed attr location");
 
         if let Some(macro_name) = macro_invocations.get(&location.get_spelling_location()) {
-            return Self::from_name(&macro_name);
+            return Self::from_name(macro_name);
         }
 
         if let Some(parsed) = location.get_entity() {

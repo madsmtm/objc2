@@ -40,7 +40,7 @@ fn main() {
     #[cfg(feature = "malloc")]
     {
         let hash_return = method.return_type();
-        println!("-[NSObject hash] return type: {:?}", hash_return);
+        println!("-[NSObject hash] return type: {hash_return:?}");
         assert!(usize::ENCODING.equivalent_to_str(&hash_return));
     }
 

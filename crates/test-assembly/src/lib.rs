@@ -171,7 +171,7 @@ fn demangle_assembly(assembly: &str) -> String {
     // Find all identifiers, and attempt to demangle them
     let assembly = RE_SYMBOL.replace_all(assembly, |caps: &Captures| {
         let symbol = caps.get(0).unwrap().as_str();
-        match rustc_demangle::try_demangle(&symbol) {
+        match rustc_demangle::try_demangle(symbol) {
             Ok(s) => {
                 let s = s.to_string();
                 let s = RE_CRATE_ID.replace_all(&s, "[CRATE_ID]");
@@ -181,13 +181,13 @@ fn demangle_assembly(assembly: &str) -> String {
                     .or_insert_with(|| vec![symbol.to_string()]);
                 let unique_identifier = list_for_this_symbol
                     .iter()
-                    .position(|x| x == &symbol)
+                    .position(|x| x == symbol)
                     .unwrap_or_else(|| {
                         list_for_this_symbol.push(symbol.to_string());
                         list_for_this_symbol.len() - 1
                     });
 
-                format!("SYM({}, {})", s, unique_identifier)
+                format!("SYM({s}, {unique_identifier})")
             }
             Err(_) => symbol.to_string(),
         }
@@ -242,7 +242,7 @@ SYM(test_msg_send_static_sel[CRATE_ID]::handle_with_sel::NAME_DATA, 0):
     .asciz  "someSelector"
         "#;
         let output = demangle_assembly(before);
-        assert_eq!(output, after, "Got {}", output);
+        assert_eq!(output, after, "Got {output}");
 
         let before = r#"
 _get_ascii:
@@ -302,7 +302,7 @@ Lloh5:
     .loh AdrpAdd    Lloh4, Lloh5
         "#;
         let output = demangle_assembly(before);
-        assert_eq!(output, after, "Got {}", output);
+        assert_eq!(output, after, "Got {output}");
 
         let before = r#"
     bl  __ZN120_$LT$objc2..__macro_helpers..RetainSemantics$LT$_$C$_$C$_$C$_$GT$$u20$as$u20$objc2..__macro_helpers..MsgSendIdFailed$GT$6failed17h6e2744dc261913f0E
@@ -311,7 +311,7 @@ Lloh5:
     bl  SYM(<objc2::__macro_helpers::RetainSemantics<_,_,_,_> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
         "#;
         let output = demangle_assembly(before);
-        assert_eq!(output, after, "Got {}", output);
+        assert_eq!(output, after, "Got {output}");
 
         let before = r#"
     .section    .bss._RNvNvCseMIdOpHE7C6_14test_ns_string9get_utf1615CACHED_NSSTRING.0,"aw",@nobits
@@ -320,7 +320,7 @@ Lloh5:
     .section    .bss.SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0,"aw",@nobits
         "#;
         let output = demangle_assembly(before);
-        assert_eq!(output, after, "Got {}", output);
+        assert_eq!(output, after, "Got {output}");
 
         let before = r#"
     lea rdx, [rip + l_anon.a9da382cd71626477b56696a19e9dcbe.1]
@@ -333,7 +333,7 @@ l_anon.7ff1dd02f36078179aa2659299baa0de.0:
 l_anon.[ID].0:
         "#;
         let output = demangle_assembly(before);
-        assert_eq!(output, after, "Got {}", output);
+        assert_eq!(output, after, "Got {output}");
 
         let before = r#"
 .LBB1_1:
@@ -346,6 +346,6 @@ l_anon.[ID].0:
     mov rdi, rbx
         "#;
         let output = demangle_assembly(before);
-        assert_eq!(output, after, "Got {}", output);
+        assert_eq!(output, after, "Got {output}");
     }
 }

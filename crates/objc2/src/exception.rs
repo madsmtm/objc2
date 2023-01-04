@@ -341,10 +341,7 @@ mod tests {
         let result = unsafe { catch(|| throw(obj)) };
         let obj = result.unwrap_err().unwrap();
 
-        assert_eq!(
-            format!("{:?}", obj),
-            format!("exception <NSObject: {:p}>", ptr)
-        );
+        assert_eq!(format!("{obj:?}"), format!("exception <NSObject: {ptr:p}>"));
 
         assert!(ptr::eq(&*obj, ptr));
     }

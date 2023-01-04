@@ -13,32 +13,125 @@ permissions:
   contents: read
 
 env:
+  # Disable incremental compilation
+  CARGO_BUILD_INCREMENTAL: false
+  # Set prettier + more verbose terminal output
   CARGO_TERM_COLOR: always
-  RUST_BACKTRACE: 1
-  # Faster compilation and error on warnings
-  RUSTFLAGS: "-C debuginfo=0 -D warnings"
-  RUSTDOCFLAGS: "-D warnings"
   CARGO_TERM_VERBOSE: true
+  RUST_BACKTRACE: 1
+  # Faster compilation, error on warnings and only document current crate
+  RUSTFLAGS: "--codegen=debuginfo=0 --deny=warnings"
+  RUSTDOCFLAGS: "--deny=warnings"
+  # Minimum deployment target
   MACOSX_DEPLOYMENT_TARGET: 10.7
   IPHONEOS_DEPLOYMENT_TARGET: 7.0
   # We only support compiling Objective-C code with clang
   CC: clang
   CXX: clang++
 
+  # Crates that we want to run `rustdoc` and `clippy` on
+  PUBLIC_CRATES: >-
+    --package=objc2-proc-macros
+    --package=objc-sys
+    --package=objc2-encode
+    --package=block-sys
+    --package=block2
+    --package=objc2
+    --package=icrate
+  # The current nightly Rust version that the CI uses
+  CURRENT_NIGHTLY: nightly-2023-01-03
+  INTERESTING_FEATURES: malloc,block,verify,uuid
+
 jobs:
   fmt:
     name: Check formatting
     runs-on: ubuntu-latest
 
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: cargo fmt
+      # This runs on the entire repository, including submodules
+      run: cargo fmt -- --check
+
+  lint:
+    name: Lint ${{ matrix.name }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      # These jobs are "cheap" to run, will likely run in parallel anyhow, and
+      # it can be useful to know exactly which parts failed.
+      fail-fast: false
+      matrix:
+        include:
+        - name: macOS 64bit
+          target: aarch64-apple-darwin
+          args: >-
+            $PUBLIC_CRATES
+            --features=$INTERESTING_FEATURES
+            --features=unstable-frameworks-macos-12
+        - name: iOS 32bit
+          target: armv7-apple-ios
+          host-target: x86_64-apple-darwin
+          args: >-
+            -Zbuild-std
+            $PUBLIC_CRATES
+            --features=$INTERESTING_FEATURES
+            --features=unstable-frameworks-ios
+        - name: GNUStep + exceptions
+          target: x86_64-unknown-linux-gnu
+          args: >-
+            $PUBLIC_CRATES
+            --no-default-features --features=std
+            --features=gnustep-1-9
+            --features=$INTERESTING_FEATURES,catch-all,exception
+            --features=unstable-frameworks-gnustep
+        - name: header-translator
+          target: x86_64-unknown-linux-gnu
+          args: >-
+            -pheader-translator
+            --features=run
+        - name: test-assembly
+          target: x86_64-unknown-linux-gnu
+          args: >-
+            -ptest-assembly
+            --features=run
+
     env:
-      CARGO_BUILD_INCREMENTAL: false
+      CARGO_BUILD_TARGET: ${{ matrix.target }}
 
     steps:
     - uses: actions/checkout@v3
       with:
         submodules: true
-    - name: Check formatting
-      run: cargo fmt -- --check
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ env.CURRENT_NIGHTLY }}
+        profile: minimal
+        override: true
+        components: clippy ${{ matrix.host-target && ', rust-src' }}
+        target: ${{ matrix.host-target || matrix.target }}
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        # https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+        key: cargo-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: cargo doc
+      run: cargo doc --no-deps --document-private-items ${{ matrix.args }}
+
+    - name: cargo clippy
+      run: cargo clippy --all-targets ${{ matrix.args }}
 
   test:
     name: ${{ matrix.name }}
@@ -83,7 +176,7 @@ jobs:
           rust:
             toolchain: nightly
             target: x86_64-apple-darwin
-            components: clippy, rust-src
+            components: rust-src
           args: -Zbuild-std -Zdoctest-xcompile
           # 32-bit support was removed in 10.15, so we can't test the
           # binary, only build it
@@ -144,7 +237,7 @@ jobs:
           rust:
             toolchain: nightly
             target: x86_64-apple-darwin
-            components: clippy, rust-src
+            components: rust-src
           args: -Zbuild-std -Zdoctest-xcompile
           test-args: --no-run
           frameworks: ios
@@ -154,7 +247,7 @@ jobs:
           rust:
             toolchain: nightly
             target: x86_64-apple-darwin
-            components: clippy, rust-src
+            components: rust-src
           args: -Zbuild-std -Zdoctest-xcompile
           test-args: --no-run
           frameworks: ios
@@ -164,7 +257,7 @@ jobs:
           rust:
             toolchain: nightly
             target: x86_64-apple-darwin
-            components: clippy, rust-src
+            components: rust-src
           args: -Zbuild-std -Zdoctest-xcompile
           test-args: --no-run
           frameworks: ios
@@ -178,7 +271,6 @@ jobs:
           frameworks: none
 
     env:
-      CARGO_BUILD_INCREMENTAL: false
       CARGO_BUILD_TARGET: ${{ matrix.target }}
       CFLAGS: ${{ matrix.cflags }}
       CXXFLAGS: ${{ matrix.cflags }}
@@ -362,7 +454,7 @@ jobs:
         toolchain: ${{ matrix.rust.toolchain || 'stable' }}
         profile: minimal
         override: true
-        components: ${{ matrix.rust.components || 'clippy' }}
+        components: ${{ matrix.rust.components }}
         # Allows installing for a different base target
         target: ${{ matrix.rust.target || matrix.target }}
 
@@ -396,15 +488,8 @@ jobs:
 
         cargo install cargo-fuzz --version=^0.11.1 --root=$HOME/extern --target=$HOST_TARGET
 
-    - name: Lint
-      # Temporarily allow `clippy::let_unit_value`
-      run: cargo clippy ${{ env.ARGS }} --all-targets -- --deny warnings --allow clippy::let_unit_value
-
     - name: Build
       run: $CMD build ${{ env.ARGS }}
-
-    - name: Check documentation
-      run: $CMD doc ${{ env.ARGS }} --no-deps --document-private-items
 
     - name: Test without features
       if: ${{ !matrix.dinghy }}

@@ -278,7 +278,7 @@ fn get_translation_unit<'i: 'tu, 'tu>(
     let target = format!("--target={llvm_target}");
 
     let tu = index
-        .parser(&Path::new(env!("CARGO_MANIFEST_DIR")).join("framework-includes.h"))
+        .parser(Path::new(env!("CARGO_MANIFEST_DIR")).join("framework-includes.h"))
         .detailed_preprocessing_record(true)
         .incomplete(true)
         .skip_function_bodies(true)
