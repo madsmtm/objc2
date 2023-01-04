@@ -339,12 +339,13 @@ jobs:
     - name: Cache Cargo
       uses: actions/cache@v3
       with:
+        # https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
         path: |
           ~/.cargo/bin/
           ~/.cargo/registry/index/
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
-        key: cargo-${{ matrix.name }}-${{ hashFiles('**/Cargo.toml') }}
+        key: cargo-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Cache Rust Target
       if: ${{ !contains(matrix.rust.toolchain, 'nightly') }}
@@ -353,7 +354,7 @@ jobs:
         path: |
           target/
           fuzz/target/
-        key: rust-${{ matrix.name }}-${{ hashFiles('**/Cargo.toml') }}
+        key: rust-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Install Rust toolchain
       uses: actions-rs/toolchain@v1
