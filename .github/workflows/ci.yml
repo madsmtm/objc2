@@ -2,10 +2,15 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches:
+    - master
   pull_request:
   schedule:
-    - cron: '0 9 * * MON'
+  # Every monday at 09:00 in the morning
+  - cron: '0 9 * * MON'
+
+permissions:
+  contents: read
 
 env:
   CARGO_TERM_COLOR: always
@@ -45,132 +50,132 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - name: Test macOS 11
-            os: macos-11
+        - name: Test macOS 11
+          os: macos-11
+          target: x86_64-apple-darwin
+          frameworks: macos-11
+        - name: Test macOS 12
+          os: macos-12
+          target: x86_64-apple-darwin
+          frameworks: macos-12
+        - name: Build macOS AArch64
+          os: macos-latest
+          target: aarch64-apple-darwin
+          test-args: --no-run
+          frameworks: macos-11
+        - name: Test macOS old SDK
+          os: macos-latest
+          target: x86_64-apple-darwin
+          # Oldest macOS version we support
+          sdk: "10.7"
+          frameworks: macos-10-7
+        - name: Test macOS nightly (w. ui tests)
+          os: macos-latest
+          target: x86_64-apple-darwin
+          rust:
+            toolchain: nightly
+          # Run UI tests on nightly to help find regressions
+          ui: true
+          frameworks: macos-11
+        - name: Build macOS 32bit
+          os: macos-latest
+          target: i686-apple-darwin
+          rust:
+            toolchain: nightly
             target: x86_64-apple-darwin
-            frameworks: macos-11
-          - name: Test macOS 12
-            os: macos-12
+            components: clippy, rust-src
+          args: -Zbuild-std -Zdoctest-xcompile
+          # 32-bit support was removed in 10.15, so we can't test the
+          # binary, only build it
+          test-args: --no-run
+          # Newest SDK that supports 32-bit
+          sdk: "10.13"
+          frameworks: macos-10-13
+        - name: Test GNUStep with libobjc2 v1.9
+          os: ubuntu-latest
+          target: x86_64-unknown-linux-gnu
+          runtime: gnustep-1-9
+          libobjc2: "1.9"
+          frameworks: gnustep
+        - name: Test GNUStep with libobjc2 v2.0
+          # Fails for some reason on Ubuntu 22
+          os: ubuntu-20.04
+          target: x86_64-unknown-linux-gnu
+          runtime: gnustep-2-0
+          libobjc2: "2.0"
+          frameworks: gnustep
+        - name: Test GNUStep with libobjc2 v2.1 on nightly
+          os: ubuntu-latest
+          target: x86_64-unknown-linux-gnu
+          rust:
+            toolchain: nightly
+          runtime: gnustep-2-1
+          libobjc2: "2.1"
+          fuzz: true
+          frameworks: gnustep
+        - name: Test GNUStep 32bit
+          # Ubuntu 22 image doesn't have the required C++ libraries
+          # installed for 32-bit
+          os: ubuntu-20.04
+          target: i686-unknown-linux-gnu
+          cflags: -m32
+          configureflags: --target=x86-pc-linux-gnu
+          runtime: gnustep-1-9
+          libobjc2: "1.9"
+          frameworks: gnustep-32bit
+        - name: Test iOS simulator x86 64bit
+          os: macos-11
+          target: x86_64-apple-ios
+          dinghy: true
+          frameworks: ios
+        - name: Build iOS simulator ARM64
+          os: macos-latest
+          target: aarch64-apple-ios-sim
+          test-args: --no-run
+          frameworks: ios
+        - name: Build iOS ARM64
+          os: macos-latest
+          target: aarch64-apple-ios
+          test-args: --no-run
+          frameworks: ios
+        - name: Build iOS ARMv7
+          os: macos-latest
+          target: armv7-apple-ios
+          rust:
+            toolchain: nightly
             target: x86_64-apple-darwin
-            frameworks: macos-12
-          - name: Build macOS AArch64
-            os: macos-latest
-            target: aarch64-apple-darwin
-            test-args: --no-run
-            frameworks: macos-11
-          - name: Test macOS old SDK
-            os: macos-latest
+            components: clippy, rust-src
+          args: -Zbuild-std -Zdoctest-xcompile
+          test-args: --no-run
+          frameworks: ios
+        - name: Build iOS ARMv7s
+          os: macos-latest
+          target: armv7s-apple-ios
+          rust:
+            toolchain: nightly
             target: x86_64-apple-darwin
-            # Oldest macOS version we support
-            sdk: "10.7"
-            frameworks: macos-10-7
-          - name: Test macOS nightly (w. ui tests)
-            os: macos-latest
+            components: clippy, rust-src
+          args: -Zbuild-std -Zdoctest-xcompile
+          test-args: --no-run
+          frameworks: ios
+        - name: Build iOS 32bit x86
+          os: macos-latest
+          target: i386-apple-ios
+          rust:
+            toolchain: nightly
             target: x86_64-apple-darwin
-            rust:
-              toolchain: nightly
-            # Run UI tests on nightly to help find regressions
-            ui: true
-            frameworks: macos-11
-          - name: Build macOS 32bit
-            os: macos-latest
-            target: i686-apple-darwin
-            rust:
-              toolchain: nightly
-              target: x86_64-apple-darwin
-              components: clippy, rust-src
-            args: -Zbuild-std -Zdoctest-xcompile
-            # 32-bit support was removed in 10.15, so we can't test the
-            # binary, only build it
-            test-args: --no-run
-            # Newest SDK that supports 32-bit
-            sdk: "10.13"
-            frameworks: macos-10-13
-          - name: Test GNUStep with libobjc2 v1.9
-            os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            runtime: gnustep-1-9
-            libobjc2: "1.9"
-            frameworks: gnustep
-          - name: Test GNUStep with libobjc2 v2.0
-            # Fails for some reason on Ubuntu 22
-            os: ubuntu-20.04
-            target: x86_64-unknown-linux-gnu
-            runtime: gnustep-2-0
-            libobjc2: "2.0"
-            frameworks: gnustep
-          - name: Test GNUStep with libobjc2 v2.1 on nightly
-            os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            rust:
-              toolchain: nightly
-            runtime: gnustep-2-1
-            libobjc2: "2.1"
-            fuzz: true
-            frameworks: gnustep
-          - name: Test GNUStep 32bit
-            # Ubuntu 22 image doesn't have the required C++ libraries
-            # installed for 32-bit
-            os: ubuntu-20.04
-            target: i686-unknown-linux-gnu
-            cflags: -m32
-            configureflags: --target=x86-pc-linux-gnu
-            runtime: gnustep-1-9
-            libobjc2: "1.9"
-            frameworks: gnustep-32bit
-          - name: Test iOS simulator x86 64bit
-            os: macos-11
-            target: x86_64-apple-ios
-            dinghy: true
-            frameworks: ios
-          - name: Build iOS simulator ARM64
-            os: macos-latest
-            target: aarch64-apple-ios-sim
-            test-args: --no-run
-            frameworks: ios
-          - name: Build iOS ARM64
-            os: macos-latest
-            target: aarch64-apple-ios
-            test-args: --no-run
-            frameworks: ios
-          - name: Build iOS ARMv7
-            os: macos-latest
-            target: armv7-apple-ios
-            rust:
-              toolchain: nightly
-              target: x86_64-apple-darwin
-              components: clippy, rust-src
-            args: -Zbuild-std -Zdoctest-xcompile
-            test-args: --no-run
-            frameworks: ios
-          - name: Build iOS ARMv7s
-            os: macos-latest
-            target: armv7s-apple-ios
-            rust:
-              toolchain: nightly
-              target: x86_64-apple-darwin
-              components: clippy, rust-src
-            args: -Zbuild-std -Zdoctest-xcompile
-            test-args: --no-run
-            frameworks: ios
-          - name: Build iOS 32bit x86
-            os: macos-latest
-            target: i386-apple-ios
-            rust:
-              toolchain: nightly
-              target: x86_64-apple-darwin
-              components: clippy, rust-src
-            args: -Zbuild-std -Zdoctest-xcompile
-            test-args: --no-run
-            frameworks: ios
-          - name: Test Compiler-RT
-            os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            runtime: compiler-rt
-            args: -p block-sys -p block2
-            features: ' '
-            unstable-features: ' '
-            frameworks: none
+            components: clippy, rust-src
+          args: -Zbuild-std -Zdoctest-xcompile
+          test-args: --no-run
+          frameworks: ios
+        - name: Test Compiler-RT
+          os: ubuntu-latest
+          target: x86_64-unknown-linux-gnu
+          runtime: compiler-rt
+          args: -p block-sys -p block2
+          features: ' '
+          unstable-features: ' '
+          frameworks: none
 
     env:
       CARGO_BUILD_INCREMENTAL: false
