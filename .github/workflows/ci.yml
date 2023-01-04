@@ -24,6 +24,10 @@ jobs:
   fmt:
     name: Check formatting
     runs-on: ubuntu-latest
+
+    env:
+      CARGO_BUILD_INCREMENTAL: false
+
     steps:
     - uses: actions/checkout@v3
       with:
@@ -33,6 +37,7 @@ jobs:
 
   test:
     name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
 
     strategy:
       # MacOS instances are rate-limited, which means that whenever we can
@@ -168,6 +173,7 @@ jobs:
             frameworks: none
 
     env:
+      CARGO_BUILD_INCREMENTAL: false
       CARGO_BUILD_TARGET: ${{ matrix.target }}
       CFLAGS: ${{ matrix.cflags }}
       CXXFLAGS: ${{ matrix.cflags }}
@@ -186,8 +192,6 @@ jobs:
         }}
       UNSTABLE_FEATURES: ${{ matrix.unstable-features || 'unstable-autoreleasesafe,unstable-c-unwind' }}
       CMD: cargo
-
-    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v3
@@ -346,15 +350,6 @@ jobs:
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
         key: cargo-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
-
-    - name: Cache Rust Target
-      if: ${{ !contains(matrix.rust.toolchain, 'nightly') }}
-      uses: actions/cache@v3
-      with:
-        path: |
-          target/
-          fuzz/target/
-        key: rust-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Install Rust toolchain
       uses: actions-rs/toolchain@v1
