@@ -544,14 +544,6 @@ jobs:
       if: ${{ !matrix.dinghy && (matrix.runtime || 'apple') == 'apple' }}
       run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features=unstable-static-sel,unstable-static-class
 
-    - name: Run assembly tests
-      if: ${{ !contains(matrix.runtime, 'compiler-rt') }}
-      shell: bash
-      run:
-        export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
-
-        cargo run --target=$HOST_TARGET --features=run --bin test-assembly -- ${{ env.ARGS }}
-
   ui:
     name: Test UI
     runs-on: macos-latest
@@ -581,3 +573,42 @@ jobs:
 
     - name: Run UI tests
       run: cargo run --features=run --bin test-ui
+
+  assembly:
+    name: Assembly tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ env.CURRENT_NIGHTLY }}
+        profile: minimal
+        override: true
+        components: rust-src
+
+    - name: Install remaining targets
+      run: >-
+        rustup target add
+        x86_64-apple-darwin
+        aarch64-apple-darwin
+        x86_64-unknown-linux-gnu
+        i686-unknown-linux-gnu
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        # https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+        key: cargo-assembly-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Run assembly tests
+      run: ./helper-scripts/run-assembly-tests.sh
