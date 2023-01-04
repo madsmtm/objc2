@@ -38,8 +38,10 @@ env:
     --package=block2
     --package=objc2
     --package=icrate
-  # The current nightly Rust version that the CI uses
-  CURRENT_NIGHTLY: nightly-2023-01-03
+  # The current nightly Rust version that our CI uses
+  #
+  # To help find regressions, we explicitly _don't_ pin the version here!
+  CURRENT_NIGHTLY: nightly
   INTERESTING_FEATURES: malloc,block,verify,uuid
 
 jobs:
@@ -162,13 +164,11 @@ jobs:
           # Oldest macOS version we support
           sdk: "10.7"
           frameworks: macos-10-7
-        - name: Test macOS nightly (w. ui tests)
+        - name: Test macOS nightly
           os: macos-latest
           target: x86_64-apple-darwin
           rust:
             toolchain: nightly
-          # Run UI tests on nightly to help find regressions
-          ui: true
           frameworks: macos-11
         - name: Build macOS 32bit
           os: macos-latest
@@ -510,13 +510,6 @@ jobs:
       if: ${{ !matrix.dinghy }}
       run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features=${{ env.FEATURES }} --release
 
-    - name: Run UI tests
-      if: ${{ matrix.ui }}
-      run: cargo run --features=run --bin test-ui
-      env:
-        # Allow warnings
-        RUSTFLAGS: "-C debuginfo=0"
-
     - name: Run fuzzing
       if: ${{ matrix.fuzz }}
       run: |
@@ -558,3 +551,33 @@ jobs:
         export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
 
         cargo run --target=$HOST_TARGET --features=run --bin test-assembly -- ${{ env.ARGS }}
+
+  ui:
+    name: Test UI
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ env.CURRENT_NIGHTLY }}
+        profile: minimal
+        override: true
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        # https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+        key: cargo-ui-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Run UI tests
+      run: cargo run --features=run --bin test-ui
