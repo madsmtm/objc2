@@ -29,22 +29,25 @@ impl UnexposedMacro {
             // TODO
             "NS_FORMAT_FUNCTION" => None,
             "NS_FORMAT_ARGUMENT" => None,
-            // Uninteresting, their data is already exposed elsewhere
+            // Availability attributes - their data is already exposed.
             "API_AVAILABLE"
             | "API_UNAVAILABLE"
             | "API_DEPRECATED"
             | "API_DEPRECATED_WITH_REPLACEMENT"
-            | "NS_SWIFT_UNAVAILABLE"
-            | "NS_SWIFT_NAME"
             | "NS_CLASS_AVAILABLE_MAC"
             | "NS_AVAILABLE"
             | "NS_OPENGL_DEPRECATED"
             | "NS_OPENGL_CLASS_DEPRECATED"
             | "NS_OPENGL_ENUM_DEPRECATED"
             | "OBJC_AVAILABLE"
-            | "OBJC_SWIFT_UNAVAILABLE"
             | "OBJC_DEPRECATED"
             | "APPKIT_API_UNAVAILABLE_BEGIN_MACCATALYST" => None,
+            // Might be interesting in the future
+            "NS_SWIFT_NAME"
+            | "NS_SWIFT_ASYNC_NAME"
+            | "NS_SWIFT_ASYNC_THROWS_ON_FALSE"
+            | "NS_SWIFT_UNAVAILABLE"
+            | "OBJC_SWIFT_UNAVAILABLE" => None,
             name => {
                 warn!(name, "unknown unexposed macro");
                 None
