@@ -1,12 +1,15 @@
 name: CI
 
 on:
+  # Every PR
+  pull_request:
+  # Once merged into `master`, and on `ci-full` to enable testing a full run
   push:
     branches:
     - master
-  pull_request:
-  schedule:
+    - ci-full
   # Every monday at 09:00 in the morning
+  schedule:
   - cron: '0 9 * * MON'
 
 permissions:
@@ -56,6 +59,11 @@ env:
     ~/.cargo/registry/index/
     ~/.cargo/registry/cache/
     ~/.cargo/git/db/
+  # Only enable time-consuming checks when about to do a new release
+  #
+  # This condition is duplicated a few places, since there's no good way to
+  # deduplicate information in GitHub Actions...
+  FULL: ${{ (github.ref_name == 'new-versions' || github.ref_name == 'ci-full') && true || '' }}
 
 jobs:
   fmt:
@@ -207,10 +215,50 @@ jobs:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Run assembly tests
+    - name: Run macOS x86_64 assembly tests
+      run: cargo run --features=run --bin=test-assembly -- --target=x86_64-apple-darwin
+
+    - name: Run all assembly tests
+      if: ${{ env.FULL }}
       run: ./helper-scripts/run-assembly-tests.sh
 
+  test-macos:
+    name: Test macOS 12
+    runs-on: macos-12
+    needs:
+    - fmt
+    - lint
+
+    env:
+      ARGS: --no-default-features --features=std,apple
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CARGO_CACHE_PATH }}
+        key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Test without features
+      run: cargo test $ARGS
+
+    - name: Test all frameworks
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,unstable-frameworks-macos-12
+
   test-apple:
+    # if: ${{ env.FULL }}
+    if: ${{ github.ref_name == 'new-versions' || github.ref_name == 'ci-full' }}
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os || 'macos-latest' }}
     needs:
@@ -226,9 +274,6 @@ jobs:
         - name: Test macOS 11
           os: macos-11
           frameworks: macos-11
-        - name: Test macOS 12
-          os: macos-12
-          frameworks: macos-12
         - name: Build macOS AArch64
           target: aarch64-apple-darwin
           frameworks: macos-11
@@ -328,14 +373,16 @@ jobs:
     - name: Test without features
       run: cargo test $ARGS
 
-    - name: Test with features
+    - name: Test Foundation
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,Foundation
+
+    - name: Test all frameworks
       run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,unstable-frameworks-${{ matrix.frameworks }}
 
     - name: Test in release mode
       run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation --release
 
     - name: Test with unstable features
-      if: ${{ matrix.nightly }}
       run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation,$UNSTABLE_FEATURES
 
     # TODO: Re-enable this on Foundation once we do some form of
@@ -344,6 +391,8 @@ jobs:
       run: cargo test $ARGS --features=unstable-static-sel,unstable-static-class
 
   test-ios:
+    # if: ${{ env.FULL }}
+    if: ${{ github.ref_name == 'new-versions' || github.ref_name == 'ci-full' }}
     name: Test on iOS simulator w. dinghy
     runs-on: macos-11
     needs:
@@ -588,11 +637,16 @@ jobs:
       if: ${{ matrix.fuzz && steps.fuzz-cache.outputs.cache-hit != 'true' }}
       run: cargo install cargo-fuzz --version=^0.11.1
 
-    - name: Test
+    - name: Test Foundation
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation
+
+    - name: Test all frameworks
+      if: ${{ env.FULL }}
       run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,unstable-frameworks-${{ matrix.frameworks }}
 
     - name: Test in release mode
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation --release
+      if: ${{ env.FULL }}
+      run: cargo test $ARGS --features=Foundation --release
 
     - name: Run fuzzing
       if: ${{ matrix.fuzz }}
@@ -617,7 +671,7 @@ jobs:
       run: cargo bench $ARGS
 
     - name: Test with unstable features
-      if: ${{ matrix.nightly }}
+      if: ${{ env.FULL && matrix.nightly }}
       run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation,$UNSTABLE_FEATURES
 
   test-compiler-rt:
