@@ -1,5 +1,4 @@
 use objc2::rc::{Id, Owned};
-use objc2::ClassType;
 use objc2::{extern_methods, ConformsTo};
 
 use crate::Foundation::{NSLock, NSLocking};

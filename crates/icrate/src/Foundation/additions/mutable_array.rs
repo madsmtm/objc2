@@ -5,7 +5,7 @@ use core::ops::{Index, IndexMut};
 use core::ptr::NonNull;
 
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use objc2::{extern_methods, ClassType, Message};
+use objc2::{extern_methods, Message};
 
 use super::array::with_objects;
 use crate::Foundation::{

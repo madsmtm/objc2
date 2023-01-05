@@ -6,8 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Changed
+* **BREAKING**: Using the automatic `NSError**`-to-`Result` functionality in
+  `extern_methods!` now requires a trailing underscore (so now it's
+  `#[method(myMethod:error:_)]` instead of `#[method(myMethod:error:)]`).
+
 ### Fixed
 * Allow empty structs in `declare_class!` macro.
+* Allow using `extern_methods!` without the `ClassType` trait in scope.
 
 
 ## 0.3.0-beta.4 - 2022-12-24

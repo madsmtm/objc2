@@ -1,7 +1,7 @@
 use alloc::vec::Vec;
 
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use objc2::{extern_methods, ClassType, Message};
+use objc2::{extern_methods, Message};
 
 use super::set::with_objects;
 use crate::Foundation::{
