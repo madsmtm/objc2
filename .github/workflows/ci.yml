@@ -1,171 +1,523 @@
 name: CI
 
 on:
-  push:
-    branches: [master]
+  # Every PR
   pull_request:
+  # Once merged into `master`, and on `ci-full` to enable testing a full run
+  push:
+    branches:
+    - master
+    - ci-full
+  # Every monday at 09:00 in the morning
   schedule:
-    - cron: '0 9 * * MON'
+  - cron: '0 9 * * MON'
+
+permissions:
+  contents: read
 
 env:
+  # Disable incremental compilation
+  CARGO_BUILD_INCREMENTAL: false
+  # Set prettier + more verbose terminal output
   CARGO_TERM_COLOR: always
-  RUST_BACKTRACE: 1
-  # Faster compilation and error on warnings
-  RUSTFLAGS: "-C debuginfo=0 -D warnings"
-  RUSTDOCFLAGS: "-D warnings"
   CARGO_TERM_VERBOSE: true
+  RUST_BACKTRACE: 1
+  # Faster compilation, error on warnings and only document current crate
+  RUSTFLAGS: "--codegen=debuginfo=0 --deny=warnings"
+  RUSTDOCFLAGS: "--deny=warnings"
+  # Minimum deployment target
   MACOSX_DEPLOYMENT_TARGET: 10.7
   IPHONEOS_DEPLOYMENT_TARGET: 7.0
   # We only support compiling Objective-C code with clang
   CC: clang
   CXX: clang++
 
+  # Crates that we want to run `rustdoc` and `clippy` on
+  PUBLIC_CRATES: >-
+    --package=objc2-proc-macros
+    --package=objc-sys
+    --package=objc2-encode
+    --package=block-sys
+    --package=block2
+    --package=objc2
+    --package=icrate
+  # The current nightly Rust version that our CI uses
+  #
+  # To help find regressions, we explicitly _don't_ pin the version here!
+  CURRENT_NIGHTLY: nightly
+  # Various features that we'd usually want to test with
+  #
+  # Note: The `exception` feature is not enabled here, since it requires
+  # compiling C code, even if just running a `check`/`clippy` build.
+  INTERESTING_FEATURES: malloc,block,verify,uuid
+  UNSTABLE_FEATURES: unstable-autoreleasesafe,unstable-c-unwind
+  # Required when we want to use a different runtime than the default `apple`
+  OTHER_RUNTIME: --no-default-features --features=std
+  # https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
+  # Note: We don't cache `~/.cargo/bin`, that is done when needed instead.
+  CARGO_CACHE_PATH: |
+    ~/.cargo/registry/index/
+    ~/.cargo/registry/cache/
+    ~/.cargo/git/db/
+  # Only enable time-consuming checks when about to do a new release
+  #
+  # This condition is duplicated a few places, since there's no good way to
+  # deduplicate information in GitHub Actions...
+  FULL: ${{ (github.ref_name == 'new-versions' || github.ref_name == 'ci-full') && true || '' }}
+
 jobs:
   fmt:
     name: Check formatting
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v3
       with:
         submodules: true
-    - name: Check formatting
+
+    - name: Use system Rust
+      run: cargo --version
+
+    - name: cargo fmt
+      # This runs on the entire repository, including submodules
       run: cargo fmt -- --check
 
-  test:
+  lint:
+    name: Lint ${{ matrix.name }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      # These jobs are "cheap" to run, will likely run in parallel anyhow, and
+      # it can be useful to know exactly which parts failed.
+      fail-fast: false
+      matrix:
+        include:
+        - name: macOS 64bit
+          target: aarch64-apple-darwin
+          args: >-
+            $PUBLIC_CRATES
+            --features=$INTERESTING_FEATURES
+            --features=unstable-frameworks-macos-12
+        - name: iOS 32bit
+          target: armv7-apple-ios
+          build-std: true
+          args: >-
+            -Zbuild-std
+            $PUBLIC_CRATES
+            --features=$INTERESTING_FEATURES
+            --features=unstable-frameworks-ios
+        - name: GNUStep + exceptions
+          target: x86_64-unknown-linux-gnu
+          args: >-
+            $PUBLIC_CRATES
+            $OTHER_RUNTIME --features=gnustep-1-9
+            --features=$INTERESTING_FEATURES,catch-all
+            --features=unstable-frameworks-gnustep
+        - name: header-translator
+          target: x86_64-unknown-linux-gnu
+          args: >-
+            -pheader-translator
+            --features=run
+        - name: test-assembly
+          target: x86_64-unknown-linux-gnu
+          args: >-
+            -ptest-assembly
+            --features=run
+
+    env:
+      CARGO_BUILD_TARGET: ${{ matrix.target }}
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ env.CURRENT_NIGHTLY }}
+        profile: minimal
+        override: true
+        components: clippy ${{ matrix.build-std && ', rust-src' || '' }}
+        target: ${{ (!matrix.build-std) && matrix.target || null }}
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CARGO_CACHE_PATH }}
+        key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: cargo doc
+      run: cargo doc --no-deps --document-private-items ${{ matrix.args }}
+
+    - name: cargo clippy
+      run: cargo clippy --all-targets ${{ matrix.args }}
+
+  ui:
+    name: Compiler UI
+    runs-on: macos-latest
+    needs:
+    - fmt
+    - lint
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ env.CURRENT_NIGHTLY }}
+        profile: minimal
+        override: true
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CARGO_CACHE_PATH }}
+        key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Run UI tests
+      run: cargo run --features=run --bin=test-ui
+
+  assembly:
+    name: Assembly tests
+    runs-on: ubuntu-latest
+    needs:
+    - fmt
+    - lint
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ env.CURRENT_NIGHTLY }}
+        profile: minimal
+        override: true
+        components: rust-src
+
+    - name: Install remaining targets
+      run: >-
+        rustup target add
+        x86_64-apple-darwin
+        aarch64-apple-darwin
+        x86_64-unknown-linux-gnu
+        i686-unknown-linux-gnu
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CARGO_CACHE_PATH }}
+        key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Run macOS x86_64 assembly tests
+      run: cargo run --features=run --bin=test-assembly -- --target=x86_64-apple-darwin
+
+    - name: Run all assembly tests
+      if: ${{ env.FULL }}
+      run: ./helper-scripts/run-assembly-tests.sh
+
+  header-translator:
+    name: Verify header translator output
+    runs-on: macos-12
+    needs:
+    - fmt
+    - lint
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Use system Rust
+      run: cargo --version
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CARGO_CACHE_PATH }}
+        key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Run header translator
+      run: cargo run --features=run --bin=header-translator -- /Applications/Xcode.app/Contents/Developer
+
+    - name: Verify that no files changed
+      run: git diff --exit-code --submodule=diff
+
+  test-macos:
+    name: Test macOS 12
+    runs-on: macos-12
+    needs:
+    - fmt
+    # Currently the slowest check, so let's get it started as soon as possible
+    # - lint
+
+    env:
+      ARGS: --no-default-features --features=std,apple
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CARGO_CACHE_PATH }}
+        key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Test without features
+      run: cargo test $ARGS
+
+    - name: Test all frameworks
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,unstable-frameworks-macos-12
+
+  test-apple:
+    # if: ${{ env.FULL }}
+    if: ${{ github.ref_name == 'new-versions' || github.ref_name == 'ci-full' }}
     name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os || 'macos-latest' }}
+    needs:
+    - fmt
+    - lint
 
     strategy:
       # MacOS instances are rate-limited, which means that whenever we can
-      # avoid do some work, we should!
+      # avoid doing work, we should!
       fail-fast: true
       matrix:
         include:
-          - name: Test macOS 11
-            os: macos-11
-            target: x86_64-apple-darwin
-            frameworks: macos-11
-          - name: Test macOS 12
-            os: macos-12
-            target: x86_64-apple-darwin
-            frameworks: macos-12
-          - name: Build macOS AArch64
-            os: macos-latest
-            target: aarch64-apple-darwin
-            test-args: --no-run
-            frameworks: macos-11
-          - name: Test macOS old SDK
-            os: macos-latest
-            target: x86_64-apple-darwin
-            # Oldest macOS version we support
-            sdk: "10.7"
-            frameworks: macos-10-7
-          - name: Test macOS nightly (w. ui tests)
-            os: macos-latest
-            target: x86_64-apple-darwin
-            rust:
-              toolchain: nightly
-            # Run UI tests on nightly to help find regressions
-            ui: true
-            frameworks: macos-11
-          - name: Build macOS 32bit
-            os: macos-latest
-            target: i686-apple-darwin
-            rust:
-              toolchain: nightly
-              target: x86_64-apple-darwin
-              components: clippy, rust-src
-            args: -Zbuild-std -Zdoctest-xcompile
-            # 32-bit support was removed in 10.15, so we can't test the
-            # binary, only build it
-            test-args: --no-run
-            # Newest SDK that supports 32-bit
-            sdk: "10.13"
-            frameworks: macos-10-13
-          - name: Test GNUStep with libobjc2 v1.9
-            os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            runtime: gnustep-1-9
-            libobjc2: "1.9"
-            frameworks: gnustep
-          - name: Test GNUStep with libobjc2 v2.0
-            # Fails for some reason on Ubuntu 22
-            os: ubuntu-20.04
-            target: x86_64-unknown-linux-gnu
-            runtime: gnustep-2-0
-            libobjc2: "2.0"
-            frameworks: gnustep
-          - name: Test GNUStep with libobjc2 v2.1 on nightly
-            os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            rust:
-              toolchain: nightly
-            runtime: gnustep-2-1
-            libobjc2: "2.1"
-            fuzz: true
-            frameworks: gnustep
-          - name: Test GNUStep 32bit
-            # Ubuntu 22 image doesn't have the required C++ libraries
-            # installed for 32-bit
-            os: ubuntu-20.04
-            target: i686-unknown-linux-gnu
-            cflags: -m32
-            configureflags: --target=x86-pc-linux-gnu
-            runtime: gnustep-1-9
-            libobjc2: "1.9"
-            frameworks: gnustep-32bit
-          - name: Test iOS simulator x86 64bit
-            os: macos-11
-            target: x86_64-apple-ios
-            dinghy: true
-            frameworks: ios
-          - name: Build iOS simulator ARM64
-            os: macos-latest
-            target: aarch64-apple-ios-sim
-            test-args: --no-run
-            frameworks: ios
-          - name: Build iOS ARM64
-            os: macos-latest
-            target: aarch64-apple-ios
-            test-args: --no-run
-            frameworks: ios
-          - name: Build iOS ARMv7
-            os: macos-latest
-            target: armv7-apple-ios
-            rust:
-              toolchain: nightly
-              target: x86_64-apple-darwin
-              components: clippy, rust-src
-            args: -Zbuild-std -Zdoctest-xcompile
-            test-args: --no-run
-            frameworks: ios
-          - name: Build iOS ARMv7s
-            os: macos-latest
-            target: armv7s-apple-ios
-            rust:
-              toolchain: nightly
-              target: x86_64-apple-darwin
-              components: clippy, rust-src
-            args: -Zbuild-std -Zdoctest-xcompile
-            test-args: --no-run
-            frameworks: ios
-          - name: Build iOS 32bit x86
-            os: macos-latest
-            target: i386-apple-ios
-            rust:
-              toolchain: nightly
-              target: x86_64-apple-darwin
-              components: clippy, rust-src
-            args: -Zbuild-std -Zdoctest-xcompile
-            test-args: --no-run
-            frameworks: ios
-          - name: Test Compiler-RT
-            os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            runtime: compiler-rt
-            args: -p block-sys -p block2
-            features: ' '
-            unstable-features: ' '
-            frameworks: none
+        - name: Test macOS 11
+          os: macos-11
+          frameworks: macos-11
+        - name: Build macOS AArch64
+          target: aarch64-apple-darwin
+          frameworks: macos-11
+        - name: Test macOS old SDK
+          # Oldest macOS version we support
+          sdk: "10.7"
+          frameworks: macos-10-7
+        - name: Test macOS nightly
+          nightly: true
+          frameworks: macos-11
+        - name: Build macOS 32bit
+          target: i686-apple-darwin
+          nightly: true
+          build-std: true
+          # Newest SDK that supports 32-bit
+          sdk: "10.13"
+          frameworks: macos-10-13
+        - name: Build iOS simulator ARM64
+          target: aarch64-apple-ios-sim
+          frameworks: ios
+        - name: Build iOS ARM64
+          target: aarch64-apple-ios
+          frameworks: ios
+        - name: Build iOS ARMv7
+          target: armv7-apple-ios
+          nightly: true
+          build-std: true
+          frameworks: ios
+        - name: Build iOS ARMv7s
+          target: armv7s-apple-ios
+          nightly: true
+          build-std: true
+          frameworks: ios
+        - name: Build iOS 32bit x86
+          target: i386-apple-ios
+          nightly: true
+          build-std: true
+          frameworks: ios
+
+    env:
+      CARGO_BUILD_TARGET: ${{ matrix.target || 'x86_64-apple-darwin' }}
+      # Modern macOS can only run the target that they're built for.
+      # So we pass `--no-run` when building for other targets.
+      ARGS: >-
+        --no-default-features --features=std,apple
+        ${{ matrix.build-std && '-Zbuild-std -Zdoctest-xcompile' }}
+        ${{ matrix.target && '--no-run' }}
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ matrix.nightly && env.CURRENT_NIGHTLY || 'stable' }}
+        profile: minimal
+        override: true
+        components: ${{ matrix.build-std && 'rust-src' }}
+        target: ${{ (!matrix.build-std) && matrix.target || null }}
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CARGO_CACHE_PATH }}
+        key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Cache SDK
+      id: sdk-cache
+      if: matrix.sdk
+      uses: actions/cache@v3
+      with:
+        path: ~/sdk
+        key: sdk-test-apple-${{ matrix.name }}
+
+    - name: Download different macOS SDK
+      if: matrix.sdk && steps.sdk-cache.outputs.cache-hit != 'true'
+      # macOS SDKs:
+      # - https://github.com/alexey-lysiuk/macos-sdk
+      # - https://github.com/phracker/MacOSX-SDKs
+      # - https://github.com/hexops/sdk-macos-12.0
+      #
+      # iOS SDKs:
+      # - https://github.com/xybp888/iOS-SDKs
+      # - https://github.com/theos/sdks
+      run: |
+        wget https://github.com/alexey-lysiuk/macos-sdk/releases/download/${{ matrix.sdk }}/MacOSX${{ matrix.sdk }}.tar.bz2
+        tar -xyf MacOSX${{ matrix.sdk }}.tar.bz2
+        mv MacOSX${{ matrix.sdk }}.sdk $HOME/sdk
+
+    - name: Setup SDK environment
+      if: matrix.sdk
+      # This changes a variable, so is only set when a custom SDK is used
+      run: echo "SDKROOT=$HOME/sdk" >> $GITHUB_ENV
+
+    - name: Test without features
+      run: cargo test $ARGS
+
+    - name: Test Foundation
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,Foundation
+
+    - name: Test all frameworks
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,unstable-frameworks-${{ matrix.frameworks }}
+
+    - name: Test in release mode
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation --release
+
+    - name: Test with unstable features
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation,$UNSTABLE_FEATURES
+
+    # TODO: Re-enable this on Foundation once we do some form of
+    # availability checking.
+    - name: Test static class and selectors
+      run: cargo test $ARGS --features=unstable-static-sel,unstable-static-class
+
+  test-ios:
+    # if: ${{ env.FULL }}
+    if: ${{ github.ref_name == 'new-versions' || github.ref_name == 'ci-full' }}
+    name: Test on iOS simulator w. dinghy
+    runs-on: macos-11
+    needs:
+    - fmt
+    - lint
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
+        target: x86_64-apple-ios
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CARGO_CACHE_PATH }}
+        key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Cache cargo-dinghy
+      id: dinghy-cache
+      uses: actions/cache@v3
+      with:
+        path: ~/.cargo/bin/cargo-dinghy
+        # Change this key if we update the required cargo-dinghy version
+        key: cargo-dinghy-${{ github.job }}-${{ matrix.name }}-v0-6-0
+
+    - name: Install cargo-dinghy
+      if: ${{ steps.dinghy-cache.outputs.cache-hit != 'true' }}
+      run: cargo install cargo-dinghy --version=^0.6.0
+
+    - name: Launch XCode Simulator and prepare Dinghy
+      # Note that we're not testing all configurations with dinghy, since that
+      # takes a very long time to run, and hence impedes general development.
+      run: |
+        # Get system info
+        xcrun simctl list runtimes
+
+        # Launch the simulator
+        RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
+        SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
+        xcrun simctl boot $SIM_ID
+
+        # Export simulator ID
+        echo "SIM_ID=$SIM_ID" >> $GITHUB_ENV
+
+    - name: Test
+      run: >-
+        cargo-dinghy --device=$SIM_ID test
+        --features=$INTERESTING_FEATURES,catch-all
+        --features=unstable-frameworks-ios
+
+  test-gnustep:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
+    needs:
+    - fmt
+    - lint
+
+    strategy:
+      matrix:
+        include:
+        - name: Test GNUStep with libobjc2 v1.9
+          target: x86_64-unknown-linux-gnu
+          runtime: gnustep-1-9
+          libobjc2: "1.9"
+          frameworks: gnustep
+        - name: Test GNUStep with libobjc2 v2.0
+          # Fails for some reason on Ubuntu 22
+          os: ubuntu-20.04
+          target: x86_64-unknown-linux-gnu
+          runtime: gnustep-2-0
+          libobjc2: "2.0"
+          frameworks: gnustep
+        - name: Test GNUStep with libobjc2 v2.1 on nightly
+          target: x86_64-unknown-linux-gnu
+          nightly: true
+          runtime: gnustep-2-1
+          libobjc2: "2.1"
+          fuzz: true
+          frameworks: gnustep
+        - name: Test GNUStep 32bit
+          # Ubuntu 22 image doesn't have the required C++ libraries
+          # installed for 32-bit
+          os: ubuntu-20.04
+          target: i686-unknown-linux-gnu
+          cflags: -m32
+          configureflags: --target=x86-pc-linux-gnu
+          runtime: gnustep-1-9
+          libobjc2: "1.9"
+          frameworks: gnustep-32bit
 
     env:
       CARGO_BUILD_TARGET: ${{ matrix.target }}
@@ -173,21 +525,7 @@ jobs:
       CXXFLAGS: ${{ matrix.cflags }}
       ASMFLAGS: ${{ matrix.cflags }}
       LDFLAGS: ${{ matrix.cflags }}
-      ARGS: --no-default-features --features=std,${{ matrix.runtime || 'apple' }} ${{ matrix.args }}
-      # Use --no-fail-fast, except with dinghy
-      TESTARGS: ${{ matrix.dinghy && ' ' || '--no-fail-fast' }} ${{ matrix.test-args }}
-      SOME_FEATURES: ${{ matrix.features || 'malloc,block,exception,Foundation' }}
-      FEATURES: >-
-        ${{
-          matrix.features || format(
-            'malloc,block,exception,catch-all,verify,uuid,unstable-frameworks-{0}',
-            matrix.frameworks
-          )
-        }}
-      UNSTABLE_FEATURES: ${{ matrix.unstable-features || 'unstable-autoreleasesafe,unstable-c-unwind' }}
-      CMD: cargo
-
-    runs-on: ${{ matrix.os }}
+      ARGS: --no-default-features --features=std,${{ matrix.runtime }}
 
     steps:
     - uses: actions/checkout@v3
@@ -200,29 +538,22 @@ jobs:
       with:
         # We could have just cached build-files, and then rerun the build tool
         # every time, letting it figure out what's changed. However, this has
-        # several problems:
-        #
-        # - GNUStep-Base ./configure invalidates the cache, which makes it
-        #   very hard to know when to rebuild and when not to.
-        # - We don't want to rebuild cargo-dinghy every time the ~/.cargo
-        #   folder is invalidated.
+        # the problem that GNUStep-Base ./configure invalidates the cache,
+        # which makes it very hard to know when to rebuild and when not to.
         #
         # So instead we just place the final outputs in ~/extern, and cache
         # them there:
-        # - bin/cargo-dinghy
-        # - bin/cargo-fuzz
+        # - bin/*
         # - lib/libobjc.so
         # - lib/libgnustep-base.so
         # - include/Foundation/*
         # - include/objc/*
-        # - sdk/...
         path: |
           ~/extern/bin
           ~/extern/lib
           ~/extern/include
-          ~/extern/sdk
         # Change this key if we start caching more things
-        key: ${{ matrix.name }}-extern-v5
+        key: extern-${{ github.job }}-${{ matrix.name }}-v1
 
     - name: Setup environment
       # These add to PATH-like variables, so they can always be set
@@ -230,7 +561,6 @@ jobs:
         mkdir -p $HOME/extern/bin
         mkdir -p $HOME/extern/lib
         mkdir -p $HOME/extern/include
-        mkdir -p $HOME/extern/fuzz
         echo "PATH=$HOME/extern/bin:$PATH" >> $GITHUB_ENV
         echo "LIBRARY_PATH=$HOME/extern/lib:$LIBRARY_PATH" >> $GITHUB_ENV
         echo "LD_LIBRARY_PATH=$HOME/extern/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
@@ -238,23 +568,10 @@ jobs:
         # Debug print these
         ls -al $HOME/extern/*
 
-    - name: Setup SDK environment
-      if: matrix.sdk
-      # This changes a variable, so is only set when a custom SDK is used
-      run: |
-        echo "SDKROOT=$HOME/extern/sdk" >> $GITHUB_ENV
-        # Temporary
-        echo "RUSTFLAGS=$RUSTFLAGS --cfg=macos_10_7" >> $GITHUB_ENV
-
-    - name: Install Clang & Valgrind
-      if: contains(matrix.os, 'ubuntu')
+    - name: Install Clang + Valgrind
       run: |
         sudo apt-get update
         sudo apt-get -y install clang valgrind
-
-    - name: Install libBlocksRuntime
-      if: contains(matrix.runtime, 'compiler-rt')
-      run: sudo apt-get -y install libblocksruntime-dev
 
     - name: Install cross compilation tools
       if: matrix.target == 'i686-unknown-linux-gnu'
@@ -265,27 +582,12 @@ jobs:
           libc6-dev:i386 libstdc++-10-dev:i386 libffi-dev:i386 \
           libxml2-dev:i386 libicu-dev:i386
 
-    - name: Download different macOS SDK
-      if: matrix.sdk && steps.extern-cache.outputs.cache-hit != 'true'
-      # macOS SDKs:
-      # - https://github.com/alexey-lysiuk/macos-sdk
-      # - https://github.com/phracker/MacOSX-SDKs
-      # - https://github.com/hexops/sdk-macos-12.0
-      #
-      # iOS SDKs:
-      # - https://github.com/xybp888/iOS-SDKs
-      # - https://github.com/theos/sdks
-      run: |
-        wget https://github.com/alexey-lysiuk/macos-sdk/releases/download/${{ matrix.sdk }}/MacOSX${{ matrix.sdk }}.tar.bz2
-        tar -xyf MacOSX${{ matrix.sdk }}.tar.bz2
-        mv MacOSX${{ matrix.sdk }}.sdk $HOME/extern/sdk
-
     - name: Install Make and Cmake
-      if: contains(matrix.runtime, 'gnustep') && steps.extern-cache.outputs.cache-hit != 'true'
+      if: steps.extern-cache.outputs.cache-hit != 'true'
       run: sudo apt-get -y install make cmake
 
     - name: Install GNUStep libobjc2
-      if: matrix.libobjc2 && steps.extern-cache.outputs.cache-hit != 'true'
+      if: steps.extern-cache.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/gnustep/libobjc2/archive/refs/tags/v${{ matrix.libobjc2 }}.tar.gz
         tar -xzf v${{ matrix.libobjc2 }}.tar.gz
@@ -307,7 +609,7 @@ jobs:
         make install
 
     - name: Install GNUStep make
-      if: contains(matrix.runtime, 'gnustep') && steps.extern-cache.outputs.cache-hit != 'true'
+      if: steps.extern-cache.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/gnustep/tools-make/archive/refs/tags/make-2_9_0.tar.gz
         tar -xzf make-2_9_0.tar.gz
@@ -317,119 +619,62 @@ jobs:
         make install
 
     - name: Install GNUStep base library
-      if: contains(matrix.runtime, 'gnustep') && steps.extern-cache.outputs.cache-hit != 'true'
+      if: steps.extern-cache.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/gnustep/libs-base/archive/refs/tags/base-1_28_0.tar.gz
         tar -xzf base-1_28_0.tar.gz
         cd libs-base-base-1_28_0
-        ./configure --prefix=$HOME/extern --disable-tls --disable-xslt ${{ matrix.platform.configureflags }}
+        ./configure --prefix=$HOME/extern --disable-tls --disable-xslt ${{ matrix.configureflags }}
         make install
         ls -al $HOME/extern/*
 
     - name: Install GNUStep GUI
-      if: contains(matrix.runtime, 'gnustep') && matrix.target == 'x86_64-unknown-linux-gnu' && steps.extern-cache.outputs.cache-hit != 'true'
+      if: matrix.target == 'x86_64-unknown-linux-gnu' && steps.extern-cache.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/gnustep/libs-gui/archive/refs/tags/gui-0_29_0.tar.gz
         tar -xzf gui-0_29_0.tar.gz
         cd libs-gui-gui-0_29_0
-        ./configure --prefix=$HOME/extern --disable-jpeg ${{ matrix.platform.configureflags }}
+        ./configure --prefix=$HOME/extern --disable-jpeg ${{ matrix.configureflags }}
         make install
         ls -al $HOME/extern/*
-
-    - name: Cache Cargo
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cargo/bin/
-          ~/.cargo/registry/index/
-          ~/.cargo/registry/cache/
-          ~/.cargo/git/db/
-        key: cargo-${{ matrix.name }}-${{ hashFiles('**/Cargo.toml') }}
-
-    - name: Cache Rust Target
-      if: ${{ !contains(matrix.rust.toolchain, 'nightly') }}
-      uses: actions/cache@v3
-      with:
-        path: |
-          target/
-          fuzz/target/
-        key: rust-${{ matrix.name }}-${{ hashFiles('**/Cargo.toml') }}
 
     - name: Install Rust toolchain
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: ${{ matrix.rust.toolchain || 'stable' }}
+        toolchain: ${{ matrix.nightly && env.CURRENT_NIGHTLY || 'stable' }}
         profile: minimal
         override: true
-        components: ${{ matrix.rust.components || 'clippy' }}
-        # Allows installing for a different base target
-        target: ${{ matrix.rust.target || matrix.target }}
+        target: ${{ matrix.target }}
 
-    - name: Install Cargo Dinghy
-      if: matrix.dinghy && steps.extern-cache.outputs.cache-hit != 'true'
-      run: |
-        export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CARGO_CACHE_PATH }}
+        key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
-        cargo install cargo-dinghy --version=^0.6.0 --root=$HOME/extern --target=$HOST_TARGET
+    - name: Cache cargo-fuzz
+      if: ${{ matrix.fuzz }}
+      id: fuzz-cache
+      uses: actions/cache@v3
+      with:
+        path: ~/.cargo/bin/cargo-fuzz
+        # Change this key if we update the required cargo-fuzz version
+        key: cargo-fuzz-${{ github.job }}-${{ matrix.name }}-v0-11-1
 
-    - name: Launch XCode Simulator and prepare Dinghy
-      if: matrix.dinghy
-      # Note that we're not testing all configurations with dinghy, since that
-      # takes a very long time to run, and hence impedes general development.
-      run: |
-        # Get system info
-        xcrun simctl list runtimes
+    - name: Install cargo-fuzz
+      if: ${{ matrix.fuzz && steps.fuzz-cache.outputs.cache-hit != 'true' }}
+      run: cargo install cargo-fuzz --version=^0.11.1
 
-        # Launch the simulator
-        RUNTIME_ID=$(xcrun simctl list runtimes | grep iOS | cut -d ' ' -f 7 | tail -1)
-        SIM_ID=$(xcrun simctl create My-iphone7 com.apple.CoreSimulator.SimDeviceType.iPhone-7 $RUNTIME_ID)
-        xcrun simctl boot $SIM_ID
+    - name: Test Foundation
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation
 
-        # Export variable
-        echo "CMD=$HOME/extern/bin/cargo-dinghy -d=$SIM_ID" >> $GITHUB_ENV
+    - name: Test all frameworks
+      if: ${{ env.FULL }}
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,unstable-frameworks-${{ matrix.frameworks }}
 
-    - name: Install Cargo Fuzz
-      if: matrix.fuzz && steps.extern-cache.outputs.cache-hit != 'true'
-      run: |
-        export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
-
-        cargo install cargo-fuzz --version=^0.11.1 --root=$HOME/extern --target=$HOST_TARGET
-
-    - name: Lint
-      # Temporarily allow `clippy::let_unit_value`
-      run: cargo clippy ${{ env.ARGS }} --all-targets -- --deny warnings --allow clippy::let_unit_value
-
-    - name: Build
-      run: $CMD build ${{ env.ARGS }}
-
-    - name: Check documentation
-      run: $CMD doc ${{ env.ARGS }} --no-deps --document-private-items
-
-    - name: Test without features
-      if: ${{ !matrix.dinghy }}
-      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }}
-
-    - name: Test with some features
-      if: ${{ !matrix.dinghy }}
-      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --tests --features=${{ env.SOME_FEATURES }}
-
-    - name: Test with features
-      run: $CMD test ${{ env.ARGS }} ${{ env.TESTARGS }} --features=${{ env.FEATURES }}
-
-    - name: Test in release mode without features
-      if: ${{ !matrix.dinghy }}
-      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --release
-
-    - name: Test in release mode with features
-      if: ${{ !matrix.dinghy }}
-      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features=${{ env.FEATURES }} --release
-
-    - name: Run UI tests
-      if: ${{ matrix.ui }}
-      run: cargo run --features=run --bin test-ui
-      env:
-        # Allow warnings
-        RUSTFLAGS: "-C debuginfo=0"
+    - name: Test in release mode
+      if: ${{ env.FULL }}
+      run: cargo test $ARGS --features=Foundation --release
 
     - name: Run fuzzing
       if: ${{ matrix.fuzz }}
@@ -439,36 +684,58 @@ jobs:
         #
         # We specify the number of runs explicitly instead of using
         # `max_total_time`, to get more determinism.
-        for target in $($HOME/extern/bin/cargo-fuzz list)
+        for target in $(cargo-fuzz list)
         do
-          $HOME/extern/bin/cargo-fuzz run $target ${{ env.ARGS }} -- -runs=10000 -timeout=2 -jobs=10
+          cargo-fuzz run $target $ARGS -- -runs=10000 -timeout=2 -jobs=10
         done
 
         # Check if the fuzzer encountered something that should be added to
         # the corpus.
-        git diff --exit-code fuzz/
+        git diff --exit-code
 
     - name: Run benchmarks
       # Difficult to install Valgrind on macOS
       # See https://github.com/LouisBrunner/valgrind-macos
-      if: contains(matrix.os, 'ubuntu')
-      run: cargo bench ${{ env.ARGS }} ${{ env.TESTARGS }}
+      run: cargo bench $ARGS
 
     - name: Test with unstable features
-      if: ${{ !matrix.dinghy && matrix.rust.toolchain == 'nightly' }}
-      # Not using --all-features because that would enable e.g. gnustep
-      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features=${{ env.FEATURES }},${{ env.UNSTABLE_FEATURES }}
+      if: ${{ env.FULL && matrix.nightly }}
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation,$UNSTABLE_FEATURES
 
-      # TODO: Re-enable this on Foundation once we do some form of
-      # availability checking.
-    - name: Test static class and selectors
-      if: ${{ !matrix.dinghy && (matrix.runtime || 'apple') == 'apple' }}
-      run: cargo test ${{ env.ARGS }} ${{ env.TESTARGS }} --features=unstable-static-sel,unstable-static-class
+  test-compiler-rt:
+    name: Test Compiler-RT
+    runs-on: ubuntu-latest
+    needs:
+    - fmt
+    - lint
 
-    - name: Run assembly tests
-      if: ${{ !contains(matrix.runtime, 'compiler-rt') }}
-      shell: bash
-      run:
-        export HOST_TARGET=$(rustc -vV | grep host | cut -f2 -d' ')
+    env:
+      # `compiler-rt` is only relevant for these crates
+      PUBLIC_CRATES: >-
+        --package=block-sys
+        --package=block2
 
-        cargo run --target=$HOST_TARGET --features=run --bin test-assembly -- ${{ env.ARGS }}
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Use system Rust
+      run: cargo --version
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CARGO_CACHE_PATH }}
+        key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Install clang + libBlocksRuntime
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install clang libblocksruntime-dev
+
+    - name: Test
+      run: cargo test $PUBLIC_CRATES $OTHER_RUNTIME --features=compiler-rt
+
+    - name: Test in release mode
+      run: cargo test $PUBLIC_CRATES $OTHER_RUNTIME --features=compiler-rt --release

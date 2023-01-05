@@ -158,8 +158,7 @@ fn parse_attributed<'a>(
     inside_partial_array: bool,
 ) -> Type<'a> {
     let mut modified_ty = ty;
-    while modified_ty.get_kind() == TypeKind::Attributed {
-        // debug!("{ty:?}, {modified_ty:?}");
+    while let TypeKind::Attributed = modified_ty.get_kind() {
         modified_ty = modified_ty
             .get_modified_type()
             .expect("attributed type to have modified type");
@@ -293,6 +292,32 @@ fn parse_attributed<'a>(
     modified_ty
 }
 
+/// Strip macros from unexposed type.
+///
+/// These appear in newer clang versions.
+/// We should be able to extract data from the following macros if desired:
+/// - NS_SWIFT_NAME
+/// - NS_SWIFT_UNAVAILABLE
+/// - NS_REFINED_FOR_SWIFT
+fn parse_unexposed<'a>(ty: Type<'a>, nullability: &mut Nullability) -> Type<'a> {
+    let mut modified_ty = ty;
+    while let TypeKind::Unexposed = modified_ty.get_kind() {
+        modified_ty = modified_ty
+            .get_modified_type()
+            .expect("attributed type to have modified type");
+    }
+
+    if modified_ty == ty {
+        return ty;
+    }
+
+    if let Some(new @ (Nullability::NonNull | Nullability::Nullable)) = ty.get_nullability() {
+        *nullability = new;
+    }
+
+    modified_ty
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 enum RustType {
     // Primitives
@@ -394,6 +419,8 @@ impl RustType {
             &mut kindof,
             inside_partial_array,
         );
+
+        let ty = parse_unexposed(ty, &mut nullability);
 
         // debug!("{:?}: {:?}", ty.get_kind(), ty.get_display_name());
 

@@ -31,3 +31,28 @@ manpage for [`git-submodule`] for further details on how submodules work.
 [`madsmtm/icrate-generated`]: https://github.com/madsmtm/icrate-generated
 [submodule-docs]: https://git-scm.com/docs/gitsubmodules
 [`git-submodule`]: https://git-scm.com/docs/git-submodule
+
+
+## Release checklist
+
+Copy and fill out the following checklist into the release PR:
+
+```markdown
+- [ ] The branch is named `new-versions`, such that the full CI will run.
+- [ ] Changelogs changes have only been made under the `Unreleased` header.
+- [ ] The version are bumped in the following order:
+    - `objc2-proc-macros`
+    - `objc-sys`
+    - `objc2-encode`
+    - `block-sys`
+    - `block2`
+    - `objc2`
+    - `icrate`
+- Local tests have been run (see `helper-scripts/test-local.fish`):
+    - [ ] macOS 10.14.6 32bit
+    - [ ] iOS 9.3.6, 1st generation iPad Mini
+- [ ] Any errors that emerge have been fixed in other PRs.
+
+Post merge:
+- [ ] A tag is created on the merge commit for each new version.
+```

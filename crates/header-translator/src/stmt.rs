@@ -459,7 +459,6 @@ impl Stmt {
                     category_name: name,
                     description: None,
                 })
-                .into_iter()
                 .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
                     ty: ty.clone(),
                     availability: availability.clone(),

@@ -103,9 +103,9 @@ fn raise_catch() {
 
     let obj = res.unwrap_err().unwrap();
 
-    assert_eq!(format!("{}", obj), "def");
+    assert_eq!(format!("{obj}"), "def");
     assert_eq!(
-        format!("{:?}", obj),
+        format!("{obj:?}"),
         format!("exception <NSException: {:p}> 'abc' reason:def", &*obj)
     );
 }
