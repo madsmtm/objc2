@@ -40,16 +40,20 @@ impl fmt::Display for Ownership {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+enum TypeParams {
+    Empty,
+    // TODO: Ensure in the type-system that these are never empty
+    Generics(Vec<IdType>),
+    Protocols(Vec<(String, String)>),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 enum IdType {
     Class {
         library: String,
         name: String,
-        generics: Vec<Self>,
+        params: TypeParams,
         ownership: Option<Ownership>,
-    },
-    ProtocolObject {
-        library: String,
-        name: String,
     },
     TypeDef {
         library: String,
@@ -58,30 +62,35 @@ enum IdType {
     GenericParam {
         name: String,
     },
+    AnyObject {
+        protocols: Vec<(String, String)>,
+    },
     AnyProtocol,
-    AnyObject,
+    AnyClass,
     Allocated,
     Self_ {
         ownership: Option<Ownership>,
     },
-    // TODO: Handle these better
-    TodoClass,
-    TodoProtocols,
 }
 
 impl IdType {
     fn name(&self) -> &str {
         match self {
             Self::Class { name, .. } => name,
-            Self::ProtocolObject { name, .. } => name,
+            Self::AnyObject { protocols } => match &**protocols {
+                [] => "Object",
+                [(_, name)] if name == "NSCopying" || name == "NSMutableCopying" => "Object",
+                [(_, name)] => name,
+                // TODO: Handle this better
+                _ => "TodoProtocols",
+            },
             Self::TypeDef { name, .. } => name,
             Self::GenericParam { name } => name,
             Self::AnyProtocol => "Protocol",
-            Self::AnyObject => "Object",
+            // TODO: Handle this better
+            Self::AnyClass => "TodoClass",
             Self::Allocated => "Allocated",
             Self::Self_ { .. } => "Self",
-            Self::TodoClass => "TodoClass",
-            Self::TodoProtocols => "TodoProtocols",
         }
     }
 
@@ -89,7 +98,11 @@ impl IdType {
     fn library(&self) -> Option<&str> {
         match self {
             Self::Class { library, .. } => Some(library),
-            Self::ProtocolObject { library, .. } => Some(library),
+            Self::AnyObject { protocols } => match &**protocols {
+                [(_, name)] if name == "NSCopying" || name == "NSMutableCopying" => None,
+                [(library, _)] => Some(library),
+                _ => None,
+            },
             Self::TypeDef { library, .. } => Some(library),
             _ => None,
         }
@@ -121,8 +134,7 @@ impl IdType {
                         lifetime: _,
                         nullability: _,
                     } => ty,
-                    // TODO: Handle this better
-                    RustType::Class { nullability: _ } => Self::TodoClass,
+                    RustType::Class { nullability: _ } => Self::AnyClass,
                     param => {
                         panic!("invalid generic parameter {param:?} in {ty:?}")
                     }
@@ -165,7 +177,7 @@ impl IdType {
                     Self::Class {
                         library,
                         name,
-                        generics: Vec::new(),
+                        params: TypeParams::Empty,
                         ownership: None,
                     }
                 }
@@ -184,42 +196,37 @@ impl IdType {
                             panic!("generics not empty: {ty:?}, {generics:?}");
                         }
 
-                        match &*protocols {
-                            [] => Self::AnyObject,
-                            // TODO: Handle this better
-                            [(_, protocol_name)]
-                                if protocol_name == "NSCopying"
-                                    || protocol_name == "NSMutableCopying" =>
-                            {
-                                Self::AnyObject
-                            }
-                            [(library_name, protocol_name)] => Self::ProtocolObject {
-                                library: library_name.clone(),
-                                name: protocol_name.clone(),
-                            },
-                            _ => Self::TodoProtocols,
-                        }
+                        Self::AnyObject { protocols }
                     }
                     TypeKind::ObjCInterface => {
-                        if !protocols.is_empty() {
-                            Self::TodoProtocols
-                        } else {
-                            let (library, _) = context
-                                .get_library_and_file_name(
-                                    &base_ty
-                                        .get_declaration()
-                                        .expect("ObjCObject -> ObjCInterface declaration"),
-                                )
-                                .expect("ObjCObject -> ObjCInterface declaration library");
-                            Self::Class {
-                                library,
-                                name,
-                                generics,
-                                ownership: None,
-                            }
+                        let (library, _) = context
+                            .get_library_and_file_name(
+                                &base_ty
+                                    .get_declaration()
+                                    .expect("ObjCObject -> ObjCInterface declaration"),
+                            )
+                            .expect("ObjCObject -> ObjCInterface declaration library");
+
+                        if !generics.is_empty() && !protocols.is_empty() {
+                            panic!("got object with both protocols and generics: {name:?}, {protocols:?}, {generics:?}");
+                        }
+
+                        if generics.is_empty() && protocols.is_empty() {
+                            panic!("got object with empty protocols and generics: {name:?}");
+                        }
+
+                        Self::Class {
+                            library,
+                            name,
+                            params: if protocols.is_empty() {
+                                TypeParams::Generics(generics)
+                            } else {
+                                TypeParams::Protocols(protocols)
+                            },
+                            ownership: None,
                         }
                     }
-                    TypeKind::ObjCClass => Self::TodoClass,
+                    TypeKind::ObjCClass => Self::AnyClass,
                     kind => panic!("unknown ObjCObject kind {ty:?}, {kind:?}"),
                 }
             }
@@ -232,14 +239,16 @@ impl fmt::Display for IdType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.name())?;
 
-        if let Self::Class { generics, .. } = &self {
-            if !generics.is_empty() {
-                write!(f, "<")?;
-                for generic in generics {
-                    write!(f, "{generic},")?;
-                }
-                write!(f, ">")?;
+        if let Self::Class {
+            params: TypeParams::Generics(generics),
+            ..
+        } = &self
+        {
+            write!(f, "<")?;
+            for generic in generics {
+                write!(f, "{generic},")?;
             }
+            write!(f, ">")?;
         }
 
         Ok(())
@@ -556,7 +565,7 @@ impl RustType {
             Float => Self::Float,
             Double => Self::Double,
             ObjCId => Self::Id {
-                ty: IdType::AnyObject,
+                ty: IdType::AnyObject { protocols: vec![] },
                 is_const: ty.is_const_qualified(),
                 lifetime,
                 nullability,
@@ -655,14 +664,15 @@ impl RustType {
 
                                 let parsed = IdType::parse_objc_pointer(ty, context);
 
-                                if let IdType::Class { generics, .. } = &parsed {
-                                    assert!(generics.is_empty(), "typedef generics not empty");
+                                if let IdType::Class {
+                                    params: TypeParams::Generics(_) | TypeParams::Protocols(_),
+                                    ..
+                                } = &parsed
+                                {
+                                    panic!("typedef params not empty");
                                 }
 
-                                let ty = if let IdType::AnyObject
-                                | IdType::ProtocolObject { .. }
-                                | IdType::TodoProtocols = parsed
-                                {
+                                let ty = if let IdType::AnyObject { .. } = parsed {
                                     IdType::GenericParam { name: typedef_name }
                                 } else {
                                     let (library, _) = context
@@ -1187,7 +1197,7 @@ impl Ty {
                     IdType::Class {
                         library,
                         name,
-                        generics,
+                        params: TypeParams::Empty,
                         ownership: None,
                     },
                 is_const: id_is_const,
@@ -1206,10 +1216,6 @@ impl Ty {
                 );
                 assert!(!is_const, "expected error not const {self:?}");
 
-                assert!(
-                    generics.is_empty(),
-                    "expected error generics to be empty {self:?}"
-                );
                 assert_eq!(
                     *id_nullability,
                     Nullability::Nullable,
@@ -1268,7 +1274,7 @@ impl Ty {
     /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types>
     pub fn fix_related_result_type(&mut self, is_class: bool, selector: &str) {
         if let RustType::Id {
-            ty: ty @ IdType::AnyObject,
+            ty: ty @ IdType::AnyObject { .. },
             ..
         } = &mut self.ty
         {
@@ -1279,6 +1285,13 @@ impl Ty {
             };
 
             if is_related {
+                if let IdType::AnyObject { protocols } = &ty {
+                    if !protocols.is_empty() {
+                        warn!(?ty, "related result type with protocols");
+                        return;
+                    }
+                }
+
                 *ty = IdType::Self_ { ownership: None };
             }
         }
@@ -1387,17 +1400,17 @@ impl fmt::Display for Ty {
                         ty @ IdType::Class {
                             library,
                             name,
-                            generics,
+                            params: TypeParams::Empty,
                             ownership: None,
                         },
                     is_const: _,
                     lifetime: _,
                     nullability: Nullability::Nullable | Nullability::Unspecified,
-                } if library == "Foundation" && name == "NSString" && generics.is_empty() => {
+                } if library == "Foundation" && name == "NSString" => {
                     write!(f, "{ty}")
                 }
                 RustType::Id {
-                    ty: ty @ IdType::TodoProtocols,
+                    ty: ty @ IdType::AnyObject { .. },
                     ..
                 } => write!(f, "{ty}"),
                 ty @ RustType::Id { .. } => {
