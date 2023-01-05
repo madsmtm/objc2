@@ -8,8 +8,8 @@ use crate::config::{ClassData, Config};
 use crate::file::File;
 use crate::method::Method;
 use crate::output::Output;
-use crate::rust_type::{GenericType, Ownership};
-use crate::stmt::Stmt;
+use crate::rust_type::Ownership;
+use crate::stmt::{ClassDefReference, Stmt};
 
 #[derive(Debug, PartialEq, Clone)]
 struct MethodCache {
@@ -36,13 +36,14 @@ impl ClassCache {
 
 /// A helper struct for doing global analysis on the output.
 #[derive(Debug, PartialEq, Clone)]
-pub struct Cache {
-    classes: BTreeMap<GenericType, ClassCache>,
+pub struct Cache<'a> {
+    classes: BTreeMap<ClassDefReference, ClassCache>,
     ownership_map: BTreeMap<String, Ownership>,
+    config: &'a Config,
 }
 
-impl Cache {
-    pub fn new(output: &Output) -> Self {
+impl<'a> Cache<'a> {
+    pub fn new(output: &Output, config: &'a Config) -> Self {
         let mut classes: BTreeMap<_, ClassCache> = BTreeMap::new();
         let mut ownership_map: BTreeMap<_, Ownership> = BTreeMap::new();
 
@@ -67,10 +68,11 @@ impl Cache {
         Self {
             classes,
             ownership_map,
+            config,
         }
     }
 
-    fn cache_stmt(stmt: &Stmt) -> Option<(&GenericType, MethodCache)> {
+    fn cache_stmt(stmt: &Stmt) -> Option<(&ClassDefReference, MethodCache)> {
         if let Stmt::Methods {
             ty,
             availability,
@@ -79,7 +81,7 @@ impl Cache {
             description,
         } = stmt
         {
-            let _span = debug_span!("Stmt::Methods", %ty).entered();
+            let _span = debug_span!("Stmt::Methods", ?ty).entered();
             let methods: Vec<Method> = methods
                 .iter()
                 .filter(|method| method.emit_on_subclasses())
@@ -104,26 +106,25 @@ impl Cache {
         }
     }
 
-    pub fn update(&self, output: &mut Output, configs: &BTreeMap<String, Config>) {
+    pub fn update(&self, output: &mut Output) {
         for (name, library) in &mut output.libraries {
             let _span = debug_span!("library", name).entered();
-            let config = configs.get(name).expect("configs get library");
             for (name, file) in &mut library.files {
                 let _span = debug_span!("file", name).entered();
-                self.update_file(file, config);
+                self.update_file(file);
             }
         }
     }
 
-    fn update_file(&self, file: &mut File, config: &Config) {
+    fn update_file(&self, file: &mut File) {
         let mut new_stmts = Vec::new();
         for stmt in &mut file.stmts {
             match stmt {
                 Stmt::ClassDecl {
                     ty, superclasses, ..
                 } => {
-                    let _span = debug_span!("Stmt::ClassDecl", %ty).entered();
-                    let data = config.class_data.get(&ty.name);
+                    let _span = debug_span!("Stmt::ClassDecl", ?ty).entered();
+                    let data = self.config.class_data.get(&ty.name);
 
                     // Used for duplicate checking (sometimes the subclass
                     // defines the same method that the superclass did).

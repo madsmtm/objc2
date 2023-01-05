@@ -1,8 +1,8 @@
-use std::collections::HashMap;
-
-use clang::source::Location;
+use clang::source::SourceLocation;
 use clang::{Entity, EntityKind};
 use tracing::warn;
+
+use crate::context::Context;
 
 /// Parts of `EntityKind::UnexposedAttr` that we can easily parse.
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -56,19 +56,24 @@ impl UnexposedMacro {
     }
 
     pub fn parse(entity: &Entity<'_>) -> Option<Self> {
-        Self::parse_plus_macros(entity, &HashMap::new())
+        let location = entity.get_location().expect("unexposed attr location");
+        Self::parse_location(location)
     }
 
-    pub fn parse_plus_macros(
-        entity: &Entity<'_>,
-        macro_invocations: &HashMap<Location<'_>, String>,
-    ) -> Option<Self> {
+    pub fn parse_plus_macros(entity: &Entity<'_>, context: &Context<'_>) -> Option<Self> {
         let location = entity.get_location().expect("unexposed attr location");
 
-        if let Some(macro_name) = macro_invocations.get(&location.get_spelling_location()) {
+        if let Some(macro_name) = context
+            .macro_invocations
+            .get(&location.get_spelling_location())
+        {
             return Self::from_name(macro_name);
         }
 
+        Self::parse_location(location)
+    }
+
+    fn parse_location(location: SourceLocation<'_>) -> Option<Self> {
         if let Some(parsed) = location.get_entity() {
             match parsed.get_kind() {
                 EntityKind::MacroExpansion => {

@@ -1,9 +1,7 @@
-use std::collections::{BTreeMap, HashMap};
-use std::io;
 use std::path::{Path, PathBuf};
 
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
-use clang::{Clang, Entity, EntityKind, EntityVisitResult, Index, TranslationUnit};
+use clang::{Clang, EntityKind, EntityVisitResult, Index, TranslationUnit};
 use tracing::{debug_span, info, info_span, trace, trace_span};
 use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::layer::{Layer, SubscriberExt};
@@ -11,7 +9,7 @@ use tracing_subscriber::registry::Registry;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 
-use header_translator::{run_cargo_fmt, Cache, Config, File, Output, Stmt};
+use header_translator::{run_cargo_fmt, Cache, Config, Context, File, Output, Stmt};
 
 fn main() {
     // use tracing_subscriber::fmt;
@@ -40,7 +38,7 @@ fn main() {
     let workspace_dir = manifest_dir.parent().unwrap();
     let crate_src = workspace_dir.join("icrate/src");
 
-    let configs = load_configs(&crate_src);
+    let config = load_config(manifest_dir);
 
     let clang = Clang::new().unwrap();
     let index = Index::new(&clang, true, true);
@@ -107,7 +105,7 @@ fn main() {
 
         for llvm_target in llvm_targets {
             let _span = info_span!("parsing", platform = ?sdk.platform, llvm_target).entered();
-            let curr_result = parse_sdk(&index, &sdk, llvm_target, &configs);
+            let curr_result = parse_sdk(&index, &sdk, llvm_target, &config);
 
             if let Some(prev_result) = &result {
                 let _span = info_span!("comparing results").entered();
@@ -127,8 +125,8 @@ fn main() {
 
     let mut final_result = final_result.expect("got a result");
     let span = info_span!("analyzing").entered();
-    let cache = Cache::new(&final_result);
-    cache.update(&mut final_result, &configs);
+    let cache = Cache::new(&final_result, &config);
+    cache.update(&mut final_result);
     drop(span);
 
     for (library_name, files) in final_result.libraries {
@@ -141,57 +139,28 @@ fn main() {
     run_cargo_fmt("icrate");
 }
 
-fn load_configs(crate_src: &Path) -> BTreeMap<String, Config> {
-    let _span = info_span!("loading configs").entered();
+fn load_config(manifest_dir: &Path) -> Config {
+    let _span = info_span!("loading config").entered();
 
-    crate_src
-        .read_dir()
-        .expect("read_dir")
-        .filter_map(|dir| {
-            let dir = dir.expect("dir");
-            if !dir.file_type().expect("file type").is_dir() {
-                return None;
-            }
-            let path = dir.path();
-            let file = path.join("translation-config.toml");
-            match Config::from_file(&file) {
-                Ok(config) => Some((
-                    path.file_name()
-                        .expect("framework name")
-                        .to_string_lossy()
-                        .to_string(),
-                    config,
-                )),
-                Err(err) if err.kind() == io::ErrorKind::NotFound => None,
-                Err(err) => panic!("{file:?}: {err}"),
-            }
-        })
-        .collect()
+    Config::from_file(&manifest_dir.join("translation-config.toml")).expect("read config")
 }
 
-fn parse_sdk(
-    index: &Index<'_>,
-    sdk: &SdkPath,
-    llvm_target: &str,
-    configs: &BTreeMap<String, Config>,
-) -> Output {
+fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Config) -> Output {
     let tu = get_translation_unit(index, sdk, llvm_target);
 
-    let framework_dir = sdk.path.join("System/Library/Frameworks");
-
     let mut preprocessing = true;
-    let mut result = Output::from_configs(configs.keys());
+    let mut result = Output::from_libraries(config.libraries.keys());
 
     let mut library_span = None;
     let mut library_span_name = String::new();
     let mut file_span = None;
     let mut file_span_name = String::new();
 
-    let mut macro_invocations = HashMap::new();
+    let mut context = Context::new(config, sdk);
 
     tu.get_entity().visit_children(|entity, _parent| {
         let _span = trace_span!("entity", ?entity).entered();
-        if let Some((library_name, file_name)) = extract_framework_name(&entity, &framework_dir) {
+        if let Some((library_name, file_name)) = context.get_library_and_file_name(&entity) {
             if library_span_name != library_name {
                 library_span.take();
                 file_span.take();
@@ -207,8 +176,7 @@ fn parse_sdk(
                 file_span = Some(debug_span!("file", name = file_name).entered());
             }
 
-            if let Some(config) = configs.get(&library_name) {
-                let library = result.libraries.get_mut(&library_name).expect("library");
+            if let Some(library) = result.libraries.get_mut(&library_name) {
                 match entity.get_kind() {
                     EntityKind::InclusionDirective if preprocessing => {
                         let name = entity.get_name().expect("inclusion name");
@@ -232,14 +200,16 @@ fn parse_sdk(
                                 library
                                     .files
                                     .entry(included)
-                                    .or_insert_with(|| File::new(config));
+                                    .or_insert_with(|| File::new(&library_name, &context));
                             }
                         }
                     }
                     EntityKind::MacroExpansion if preprocessing => {
                         let name = entity.get_name().expect("macro name");
                         let location = entity.get_location().expect("macro location");
-                        macro_invocations.insert(location.get_spelling_location(), name);
+                        context
+                            .macro_invocations
+                            .insert(location.get_spelling_location(), name);
                     }
                     EntityKind::MacroDefinition if preprocessing => {
                         // let name = entity.get_name().expect("macro def name");
@@ -253,7 +223,7 @@ fn parse_sdk(
                         preprocessing = false;
                         // No more includes / macro expansions after this line
                         let file = library.files.get_mut(&file_name).expect("file");
-                        for stmt in Stmt::parse(&entity, config, &macro_invocations) {
+                        for stmt in Stmt::parse(&entity, &context) {
                             file.add_stmt(stmt);
                         }
                     }
@@ -327,37 +297,4 @@ fn get_translation_unit<'i: 'tu, 'tu>(
     // dbg_file(cursor_file);
 
     tu
-}
-
-pub fn extract_framework_name(
-    entity: &Entity<'_>,
-    framework_dir: &Path,
-) -> Option<(String, String)> {
-    if let Some(location) = entity.get_location() {
-        if let Some(file) = location.get_file_location().file {
-            let path = file.get_path();
-            if let Ok(path) = path.strip_prefix(framework_dir) {
-                let mut components = path.components();
-                let library_name = components
-                    .next()
-                    .expect("components next")
-                    .as_os_str()
-                    .to_str()
-                    .expect("component to_str")
-                    .strip_suffix(".framework")
-                    .expect("framework fileending")
-                    .to_string();
-
-                let path = components.as_path();
-                let file_name = path
-                    .file_stem()
-                    .expect("path file stem")
-                    .to_string_lossy()
-                    .to_string();
-
-                return Some((library_name, file_name));
-            }
-        }
-    }
-    None
 }

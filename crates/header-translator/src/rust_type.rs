@@ -1,9 +1,10 @@
 use std::fmt;
 
-use clang::{CallingConvention, Nullability, Type, TypeKind};
+use clang::{CallingConvention, EntityKind, Nullability, Type, TypeKind};
 use serde::Deserialize;
 use tracing::{debug_span, error, warn};
 
+use crate::context::Context;
 use crate::method::MemoryManagement;
 
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -39,95 +40,223 @@ impl fmt::Display for Ownership {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct GenericType {
-    pub name: String,
-    pub generics: Vec<GenericType>,
+enum TypeParams {
+    Empty,
+    // TODO: Ensure in the type-system that these are never empty
+    Generics(Vec<IdType>),
+    Protocols(Vec<(String, String)>),
 }
 
-impl GenericType {
-    pub fn parse_objc_pointer(ty: Type<'_>) -> Self {
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+enum IdType {
+    Class {
+        library: String,
+        name: String,
+        params: TypeParams,
+        ownership: Option<Ownership>,
+    },
+    TypeDef {
+        library: String,
+        name: String,
+    },
+    GenericParam {
+        name: String,
+    },
+    AnyObject {
+        protocols: Vec<(String, String)>,
+    },
+    AnyProtocol,
+    AnyClass {
+        protocols: Vec<(String, String)>,
+    },
+    Allocated,
+    Self_ {
+        ownership: Option<Ownership>,
+    },
+}
+
+impl IdType {
+    fn name(&self) -> &str {
+        match self {
+            Self::Class { name, .. } => name,
+            Self::AnyObject { protocols } => match &**protocols {
+                [] => "Object",
+                [(_, name)] if name == "NSCopying" || name == "NSMutableCopying" => "Object",
+                [(_, name)] => name,
+                // TODO: Handle this better
+                _ => "TodoProtocols",
+            },
+            Self::TypeDef { name, .. } => name,
+            Self::GenericParam { name } => name,
+            Self::AnyProtocol => "Protocol",
+            // TODO: Handle this better
+            Self::AnyClass { .. } => "TodoClass",
+            Self::Allocated => "Allocated",
+            Self::Self_ { .. } => "Self",
+        }
+    }
+
+    #[allow(dead_code)]
+    fn library(&self) -> Option<&str> {
+        match self {
+            Self::Class { library, .. } => Some(library),
+            Self::AnyObject { protocols } => match &**protocols {
+                [(_, name)] if name == "NSCopying" || name == "NSMutableCopying" => None,
+                [(library, _)] => Some(library),
+                _ => None,
+            },
+            Self::TypeDef { library, .. } => Some(library),
+            _ => None,
+        }
+    }
+
+    fn ownership(&self) -> Ownership {
+        match self {
+            Self::Class {
+                ownership: Some(ownership),
+                ..
+            }
+            | Self::Self_ {
+                ownership: Some(ownership),
+                ..
+            } => ownership.clone(),
+            _ => Ownership::Shared,
+        }
+    }
+
+    fn parse_objc_pointer(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let generics: Vec<_> = ty
+            .get_objc_type_arguments()
+            .into_iter()
+            .map(|param| {
+                match RustType::parse(param, false, Nullability::Unspecified, false, context) {
+                    RustType::Id {
+                        ty,
+                        is_const: _,
+                        lifetime: _,
+                        nullability: _,
+                    } => ty,
+                    RustType::Class { nullability: _ } => Self::AnyClass { protocols: vec![] },
+                    param => {
+                        panic!("invalid generic parameter {param:?} in {ty:?}")
+                    }
+                }
+            })
+            .collect();
+
+        let protocols: Vec<_> = ty
+            .get_objc_protocol_declarations()
+            .into_iter()
+            .map(|entity| {
+                (
+                    context
+                        .get_library_and_file_name(&entity)
+                        .expect("protocol library")
+                        .0,
+                    entity.get_display_name().expect("protocol name"),
+                )
+            })
+            .collect();
+
         match ty.get_kind() {
             TypeKind::ObjCInterface => {
-                let generics = ty.get_objc_type_arguments();
                 if !generics.is_empty() {
                     panic!("generics not empty: {ty:?}, {generics:?}");
                 }
-                let protocols = ty.get_objc_protocol_declarations();
                 if !protocols.is_empty() {
                     panic!("protocols not empty: {ty:?}, {protocols:?}");
                 }
                 let name = ty.get_display_name();
-                Self {
-                    name,
-                    generics: Vec::new(),
+
+                if name == "Protocol" {
+                    Self::AnyProtocol
+                } else {
+                    let (library, _) = context
+                        .get_library_and_file_name(
+                            &ty.get_declaration().expect("ObjCInterface declaration"),
+                        )
+                        .expect("ObjCInterface declaration library");
+                    Self::Class {
+                        library,
+                        name,
+                        params: TypeParams::Empty,
+                        ownership: None,
+                    }
                 }
             }
             TypeKind::ObjCObject => {
                 let base_ty = ty
                     .get_objc_object_base_type()
                     .expect("object to have base type");
-                let mut name = base_ty.get_display_name();
+                let name = base_ty.get_display_name();
 
-                let generics: Vec<_> = ty
-                    .get_objc_type_arguments()
-                    .into_iter()
-                    .map(|param| {
-                        match RustType::parse(param, false, Nullability::Unspecified, false) {
-                            RustType::Id {
-                                type_,
-                                is_const: _,
-                                lifetime: _,
-                                nullability: _,
-                                ownership: _,
-                            } => type_,
-                            // TODO: Handle this better
-                            RustType::Class { nullability: _ } => Self {
-                                name: "TodoClass".to_string(),
-                                generics: Vec::new(),
-                            },
-                            param => {
-                                panic!("invalid generic parameter {param:?} in {ty:?}")
-                            }
+                match base_ty.get_kind() {
+                    TypeKind::ObjCId => {
+                        assert_eq!(name, "id");
+
+                        if !generics.is_empty() {
+                            panic!("generics not empty: {ty:?}, {generics:?}");
                         }
-                    })
-                    .collect();
 
-                let protocols: Vec<_> = ty
-                    .get_objc_protocol_declarations()
-                    .into_iter()
-                    .map(|entity| entity.get_display_name().expect("protocol name"))
-                    .collect();
-                if !protocols.is_empty() {
-                    if name == "id" && generics.is_empty() && protocols.len() == 1 {
-                        name = protocols[0].clone();
-                    } else {
-                        name = "TodoProtocols".to_string();
+                        Self::AnyObject { protocols }
                     }
-                }
+                    TypeKind::ObjCInterface => {
+                        let (library, _) = context
+                            .get_library_and_file_name(
+                                &base_ty
+                                    .get_declaration()
+                                    .expect("ObjCObject -> ObjCInterface declaration"),
+                            )
+                            .expect("ObjCObject -> ObjCInterface declaration library");
 
-                Self { name, generics }
+                        if !generics.is_empty() && !protocols.is_empty() {
+                            panic!("got object with both protocols and generics: {name:?}, {protocols:?}, {generics:?}");
+                        }
+
+                        if generics.is_empty() && protocols.is_empty() {
+                            panic!("got object with empty protocols and generics: {name:?}");
+                        }
+
+                        Self::Class {
+                            library,
+                            name,
+                            params: if protocols.is_empty() {
+                                TypeParams::Generics(generics)
+                            } else {
+                                TypeParams::Protocols(protocols)
+                            },
+                            ownership: None,
+                        }
+                    }
+                    TypeKind::ObjCClass => {
+                        assert!(generics.is_empty(), "ObjCClass with generics");
+
+                        Self::AnyClass { protocols }
+                    }
+                    kind => panic!("unknown ObjCObject kind {ty:?}, {kind:?}"),
+                }
             }
             _ => panic!("pointee was neither objcinterface nor objcobject: {ty:?}"),
         }
     }
 }
 
-impl fmt::Display for GenericType {
+impl fmt::Display for IdType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // TODO: Handle this better!
-        match &*self.name {
-            "NSCopying" => write!(f, "Object")?,
-            "NSMutableCopying" => write!(f, "Object")?,
-            name => write!(f, "{name}")?,
-        }
+        write!(f, "{}", self.name())?;
 
-        if !self.generics.is_empty() {
+        if let Self::Class {
+            params: TypeParams::Generics(generics),
+            ..
+        } = &self
+        {
             write!(f, "<")?;
-            for generic in &self.generics {
+            for generic in generics {
                 write!(f, "{generic},")?;
             }
             write!(f, ">")?;
         }
+
         Ok(())
     }
 }
@@ -349,11 +478,10 @@ enum RustType {
 
     // Objective-C
     Id {
-        type_: GenericType,
+        ty: IdType,
         is_const: bool,
         lifetime: Lifetime,
         nullability: Nullability,
-        ownership: Ownership,
     },
     Class {
         nullability: Nullability,
@@ -405,6 +533,7 @@ impl RustType {
         is_consumed: bool,
         mut nullability: Nullability,
         inside_partial_array: bool,
+        context: &Context<'_>,
     ) -> Self {
         let _span = debug_span!("ty", ?ty, is_consumed);
 
@@ -442,21 +571,18 @@ impl RustType {
             Float => Self::Float,
             Double => Self::Double,
             ObjCId => Self::Id {
-                type_: GenericType {
-                    name: "Object".to_string(),
-                    generics: Vec::new(),
-                },
+                ty: IdType::AnyObject { protocols: vec![] },
                 is_const: ty.is_const_qualified(),
                 lifetime,
                 nullability,
-                ownership: Ownership::Shared,
             },
             ObjCClass => Self::Class { nullability },
             ObjCSel => Self::Sel { nullability },
             Pointer => {
                 let is_const = ty.is_const_qualified();
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                let pointee = Self::parse(ty, is_consumed, Nullability::Unspecified, false);
+                let pointee =
+                    Self::parse(ty, is_consumed, Nullability::Unspecified, false, context);
                 Self::Pointer {
                     nullability,
                     is_const,
@@ -466,7 +592,7 @@ impl RustType {
             BlockPointer => {
                 let is_const = ty.is_const_qualified();
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                match Self::parse(ty, is_consumed, Nullability::Unspecified, false) {
+                match Self::parse(ty, is_consumed, Nullability::Unspecified, false, context) {
                     Self::Fn {
                         is_variadic: false,
                         mut arguments,
@@ -492,14 +618,12 @@ impl RustType {
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
                 let mut kindof = false;
                 let ty = parse_attributed(ty, &mut nullability, &mut lifetime, &mut kindof, false);
-                let type_ = GenericType::parse_objc_pointer(ty);
 
                 Self::Id {
-                    type_,
+                    ty: IdType::parse_objc_pointer(ty, context),
                     is_const: ty.is_const_qualified(),
                     lifetime,
                     nullability,
-                    ownership: Ownership::Shared,
                 }
             }
             Typedef => {
@@ -531,35 +655,46 @@ impl RustType {
                     "Float96" => panic!("can't handle 96 bit 68881 float"),
 
                     "instancetype" => Self::Id {
-                        type_: GenericType {
-                            name: "Self".to_string(),
-                            generics: Vec::new(),
-                        },
+                        ty: IdType::Self_ { ownership: None },
                         is_const: ty.is_const_qualified(),
                         lifetime,
                         nullability,
-                        ownership: Ownership::Shared,
                     },
                     _ => {
+                        let declaration = ty.get_declaration();
                         let ty = ty.get_canonical_type();
                         match ty.get_kind() {
                             ObjCObjectPointer => {
                                 let ty =
                                     ty.get_pointee_type().expect("pointer type to have pointee");
-                                let type_ = GenericType::parse_objc_pointer(ty);
-                                if !type_.generics.is_empty() {
-                                    panic!("typedef generics not empty");
-                                }
+                                let declaration =
+                                    declaration.expect("typedef ObjCObjectPointer declaration");
+                                let is_const = ty.is_const_qualified();
+
+                                assert!(
+                                    ty.get_objc_type_arguments().is_empty(),
+                                    "typedef generics not empty"
+                                );
+
+                                let ty = if let EntityKind::TemplateTypeParameter =
+                                    declaration.get_kind()
+                                {
+                                    IdType::GenericParam { name: typedef_name }
+                                } else {
+                                    let (library, _) = context
+                                        .get_library_and_file_name(&declaration)
+                                        .expect("ObjCObjectPointer library");
+                                    IdType::TypeDef {
+                                        library,
+                                        name: typedef_name,
+                                    }
+                                };
 
                                 Self::Id {
-                                    type_: GenericType {
-                                        name: typedef_name,
-                                        generics: Vec::new(),
-                                    },
-                                    is_const: ty.is_const_qualified(),
+                                    ty,
+                                    is_const,
                                     lifetime,
                                     nullability,
-                                    ownership: Ownership::Shared,
                                 }
                             }
                             _ => Self::TypeDef { name: typedef_name },
@@ -599,11 +734,11 @@ impl RustType {
                     .get_argument_types()
                     .expect("fn type to have argument types")
                     .into_iter()
-                    .map(Ty::parse_fn_argument)
+                    .map(|ty| Ty::parse_fn_argument(ty, context))
                     .collect();
 
                 let result_type = ty.get_result_type().expect("fn type to have result type");
-                let result_type = Ty::parse_fn_result(result_type);
+                let result_type = Ty::parse_fn_result(result_type, context);
 
                 Self::Fn {
                     is_variadic: ty.is_variadic(),
@@ -616,7 +751,7 @@ impl RustType {
                 let ty = ty
                     .get_element_type()
                     .expect("incomplete array to have element type");
-                let pointee = Self::parse(ty, is_consumed, Nullability::Unspecified, true);
+                let pointee = Self::parse(ty, is_consumed, Nullability::Unspecified, true, context);
                 Self::IncompleteArray {
                     nullability,
                     is_const,
@@ -629,6 +764,7 @@ impl RustType {
                     is_consumed,
                     Nullability::Unspecified,
                     false,
+                    context,
                 );
                 let num_elements = ty
                     .get_size()
@@ -691,12 +827,11 @@ impl fmt::Display for RustType {
 
             // Objective-C
             Id {
-                type_: ty,
+                ty,
                 is_const,
                 // Ignore
                 lifetime: _,
                 nullability,
-                ownership: _,
             } => {
                 if *nullability == Nullability::NonNull {
                     write!(f, "NonNull<{ty}>")
@@ -822,8 +957,8 @@ impl Ty {
         kind: TyKind::MethodReturn,
     };
 
-    pub fn parse_method_argument(ty: Type<'_>, is_consumed: bool) -> Self {
-        let ty = RustType::parse(ty, is_consumed, Nullability::Unspecified, false);
+    pub fn parse_method_argument(ty: Type<'_>, is_consumed: bool, context: &Context<'_>) -> Self {
+        let ty = RustType::parse(ty, is_consumed, Nullability::Unspecified, false, context);
 
         match &ty {
             RustType::Pointer { pointee, .. } => pointee.visit_lifetime(|lifetime| {
@@ -849,8 +984,8 @@ impl Ty {
         }
     }
 
-    pub fn parse_method_return(ty: Type<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+    pub fn parse_method_return(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -864,20 +999,20 @@ impl Ty {
         }
     }
 
-    pub fn parse_function_argument(ty: Type<'_>) -> Self {
-        let mut this = Self::parse_method_argument(ty, false);
+    pub fn parse_function_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let mut this = Self::parse_method_argument(ty, false, context);
         this.kind = TyKind::FnDeclArgument;
         this
     }
 
-    pub fn parse_function_return(ty: Type<'_>) -> Self {
-        let mut this = Self::parse_method_return(ty);
+    pub fn parse_function_return(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let mut this = Self::parse_method_return(ty, context);
         this.kind = TyKind::FnDeclReturn;
         this
     }
 
-    pub fn parse_typedef(ty: Type<'_>) -> Option<Self> {
-        let mut ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+    pub fn parse_typedef(ty: Type<'_>, context: &Context<'_>) -> Option<Self> {
+        let mut ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -912,8 +1047,12 @@ impl Ty {
         }
     }
 
-    pub fn parse_property(ty: Type<'_>, default_nullability: Nullability) -> Self {
-        let ty = RustType::parse(ty, false, default_nullability, false);
+    pub fn parse_property(
+        ty: Type<'_>,
+        default_nullability: Nullability,
+        context: &Context<'_>,
+    ) -> Self {
+        let ty = RustType::parse(ty, false, default_nullability, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -927,8 +1066,12 @@ impl Ty {
         }
     }
 
-    pub fn parse_property_return(ty: Type<'_>, default_nullability: Nullability) -> Self {
-        let ty = RustType::parse(ty, false, default_nullability, false);
+    pub fn parse_property_return(
+        ty: Type<'_>,
+        default_nullability: Nullability,
+        context: &Context<'_>,
+    ) -> Self {
+        let ty = RustType::parse(ty, false, default_nullability, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -942,8 +1085,8 @@ impl Ty {
         }
     }
 
-    pub fn parse_struct_field(ty: Type<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+    pub fn parse_struct_field(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -957,8 +1100,8 @@ impl Ty {
         }
     }
 
-    pub fn parse_enum(ty: Type<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+    pub fn parse_enum(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
 
         ty.visit_lifetime(|_lifetime| {
             panic!("unexpected lifetime in enum {ty:?}");
@@ -970,8 +1113,8 @@ impl Ty {
         }
     }
 
-    pub fn parse_static(ty: Type<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+    pub fn parse_static(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Strong && lifetime != Lifetime::Unspecified {
@@ -985,8 +1128,8 @@ impl Ty {
         }
     }
 
-    fn parse_fn_argument(ty: Type<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+    fn parse_fn_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Strong {
@@ -1000,8 +1143,8 @@ impl Ty {
         }
     }
 
-    fn parse_fn_result(ty: Type<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false);
+    fn parse_fn_result(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1028,13 +1171,18 @@ impl Ty {
             self.kind,
             TyKind::MethodReturn | TyKind::MethodReturnWithError
         ));
-        if let RustType::Id {
-            type_: ty,
-            ownership,
-            ..
-        } = &mut self.ty
-        {
-            *ownership = get_ownership(&ty.name);
+        if let RustType::Id { ty, .. } = &mut self.ty {
+            match ty {
+                IdType::Class {
+                    ownership, name, ..
+                } => {
+                    *ownership = Some(get_ownership(name));
+                }
+                IdType::Self_ { ownership } => {
+                    *ownership = Some(get_ownership("Self"));
+                }
+                _ => {}
+            }
         }
     }
 }
@@ -1048,16 +1196,22 @@ impl Ty {
         } = &self.ty
         {
             if let RustType::Id {
-                type_: ty,
+                ty:
+                    IdType::Class {
+                        library,
+                        name,
+                        params: TypeParams::Empty,
+                        ownership: None,
+                    },
                 is_const: id_is_const,
                 lifetime,
                 nullability: id_nullability,
-                ownership,
             } = &**pointee
             {
-                if ty.name != "NSError" {
+                if name != "NSError" {
                     return false;
                 }
+                assert_eq!(*library, "Foundation", "invalid error library {self:?}");
                 assert_eq!(
                     *nullability,
                     Nullability::Nullable,
@@ -1065,10 +1219,6 @@ impl Ty {
                 );
                 assert!(!is_const, "expected error not const {self:?}");
 
-                assert!(
-                    ty.generics.is_empty(),
-                    "expected error generics to be empty {self:?}"
-                );
                 assert_eq!(
                     *id_nullability,
                     Nullability::Nullable,
@@ -1080,7 +1230,6 @@ impl Ty {
                     Lifetime::Unspecified,
                     "invalid error lifetime {self:?}"
                 );
-                assert_eq!(*ownership, Ownership::Shared, "errors cannot be owned");
                 return true;
             }
         }
@@ -1094,17 +1243,12 @@ impl Ty {
     pub fn set_is_alloc(&mut self) {
         match &mut self.ty {
             RustType::Id {
-                type_: ty,
+                ty: ty @ IdType::Self_ { ownership: None },
                 lifetime: Lifetime::Unspecified,
                 is_const: false,
                 nullability: _,
-                ownership: Ownership::Shared,
-            } if ty.name == "Self" && ty.generics.is_empty() => {
-                ty.name = "Allocated".into();
-                ty.generics = vec![GenericType {
-                    name: "Self".into(),
-                    generics: vec![],
-                }];
+            } => {
+                *ty = IdType::Allocated;
             }
             _ => error!(?self, "invalid alloc return type"),
         }
@@ -1116,10 +1260,13 @@ impl Ty {
     }
 
     pub fn is_instancetype(&self) -> bool {
-        matches!(&self.ty, RustType::Id {
-            type_: ty,
-            ..
-        } if ty.name == "Self" && ty.generics.is_empty())
+        matches!(
+            &self.ty,
+            RustType::Id {
+                ty: IdType::Self_ { .. },
+                ..
+            }
+        )
     }
 
     pub fn is_typedef_to(&self, s: &str) -> bool {
@@ -1129,25 +1276,37 @@ impl Ty {
     /// Related result types
     /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types>
     pub fn fix_related_result_type(&mut self, is_class: bool, selector: &str) {
-        if let RustType::Id { type_, .. } = &mut self.ty {
-            if type_.name == "Object" {
-                assert!(type_.generics.is_empty(), "Object return generics empty");
-                let is_related = if is_class {
-                    MemoryManagement::is_new(selector) || MemoryManagement::is_alloc(selector)
-                } else {
-                    MemoryManagement::is_init(selector) || selector == "self"
-                };
+        if let RustType::Id {
+            ty: ty @ IdType::AnyObject { .. },
+            ..
+        } = &mut self.ty
+        {
+            let is_related = if is_class {
+                MemoryManagement::is_new(selector) || MemoryManagement::is_alloc(selector)
+            } else {
+                MemoryManagement::is_init(selector) || selector == "self"
+            };
 
-                if is_related {
-                    type_.name = "Self".into();
+            if is_related {
+                if let IdType::AnyObject { protocols } = &ty {
+                    if !protocols.is_empty() {
+                        warn!(?ty, "related result type with protocols");
+                        return;
+                    }
                 }
+
+                *ty = IdType::Self_ { ownership: None };
             }
         }
     }
 
     pub fn is_nsstring(&self) -> bool {
-        if let RustType::Id { type_: ty, .. } = &self.ty {
-            ty.name == "NSString"
+        if let RustType::Id {
+            ty: IdType::Class { name, .. },
+            ..
+        } = &self.ty
+        {
+            name == "NSString"
         } else {
             false
         }
@@ -1167,18 +1326,17 @@ impl fmt::Display for Ty {
 
                 match &self.ty {
                     RustType::Id {
-                        type_: ty,
+                        ty,
                         // Ignore
                         is_const: _,
                         // Ignore
                         lifetime: _,
                         nullability,
-                        ownership,
                     } => {
                         if *nullability == Nullability::NonNull {
-                            write!(f, "Id<{ty}, {ownership}>")
+                            write!(f, "Id<{ty}, {}>", ty.ownership())
                         } else {
-                            write!(f, "Option<Id<{ty}, {ownership}>>")
+                            write!(f, "Option<Id<{ty}, {}>>", ty.ownership())
                         }
                     }
                     RustType::Class { nullability } => {
@@ -1194,14 +1352,17 @@ impl fmt::Display for Ty {
             }
             TyKind::MethodReturnWithError => match &self.ty {
                 RustType::Id {
-                    type_: ty,
+                    ty,
                     lifetime: Lifetime::Unspecified,
                     is_const: false,
                     nullability: Nullability::Nullable,
-                    ownership,
                 } => {
                     // NULL -> error
-                    write!(f, " -> Result<Id<{ty}, {ownership}>, Id<NSError, Shared>>")
+                    write!(
+                        f,
+                        " -> Result<Id<{ty}, {}>, Id<NSError, Shared>>",
+                        ty.ownership()
+                    )
                 }
                 RustType::ObjcBool => {
                     // NO -> error
@@ -1211,11 +1372,10 @@ impl fmt::Display for Ty {
             },
             TyKind::Static => match &self.ty {
                 RustType::Id {
-                    type_: ty,
+                    ty,
                     is_const: false,
                     lifetime: Lifetime::Strong | Lifetime::Unspecified,
                     nullability,
-                    ownership: Ownership::Shared,
                 } => {
                     if *nullability == Nullability::NonNull {
                         write!(f, "&'static {ty}")
@@ -1239,35 +1399,34 @@ impl fmt::Display for Ty {
                 //
                 // Because that means we can use ordinary Id<NSAbc> elsewhere.
                 RustType::Id {
-                    type_: ty,
+                    ty:
+                        ty @ IdType::Class {
+                            library,
+                            name,
+                            params: TypeParams::Empty,
+                            ownership: None,
+                        },
                     is_const: _,
                     lifetime: _,
-                    nullability,
-                    ownership: Ownership::Shared,
-                } => {
-                    match &*ty.name {
-                        "NSString" => {}
-                        "NSUnit" => {}        // TODO: Handle this differently
-                        "TodoProtocols" => {} // TODO
-                        _ => panic!("typedef declaration was not NSString: {ty:?}"),
-                    }
-
-                    if !ty.generics.is_empty() {
-                        panic!("typedef declaration generics not empty");
-                    }
-
-                    assert_ne!(*nullability, Nullability::NonNull);
+                    nullability: Nullability::Nullable | Nullability::Unspecified,
+                } if library == "Foundation" && name == "NSString" => {
                     write!(f, "{ty}")
+                }
+                RustType::Id {
+                    ty: ty @ IdType::AnyObject { .. },
+                    ..
+                } => write!(f, "{ty}"),
+                ty @ RustType::Id { .. } => {
+                    panic!("typedef declaration was not NSString: {ty:?}");
                 }
                 ty => write!(f, "{ty}"),
             },
             TyKind::MethodArgument | TyKind::FnDeclArgument => match &self.ty {
                 RustType::Id {
-                    type_: ty,
+                    ty,
                     is_const: false,
                     lifetime: Lifetime::Unspecified | Lifetime::Strong,
                     nullability,
-                    ownership: Ownership::Shared,
                 } => {
                     if *nullability == Nullability::NonNull {
                         write!(f, "&{ty}")
@@ -1290,11 +1449,10 @@ impl fmt::Display for Ty {
                 } => match &**pointee {
                     // TODO: Re-enable once we can support it
                     // RustType::Id {
-                    //     type_: ty,
+                    //     ty,
                     //     is_const: false,
                     //     lifetime: Lifetime::Autoreleasing,
                     //     nullability: inner_nullability,
-                    //     ownership: Ownership::Shared,
                     // } if self.kind == TyKind::MethodArgument => {
                     //     let tokens = if *inner_nullability == Nullability::NonNull {
                     //         format!("Id<{ty}, Shared>")

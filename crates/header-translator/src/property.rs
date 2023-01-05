@@ -4,6 +4,7 @@ use tracing::{error, warn};
 
 use crate::availability::Availability;
 use crate::config::MethodData;
+use crate::context::Context;
 use crate::immediate_children;
 use crate::method::{MemoryManagement, Method, Qualifier};
 use crate::rust_type::Ty;
@@ -25,6 +26,7 @@ impl PartialProperty<'_> {
         self,
         getter_data: MethodData,
         setter_data: Option<MethodData>,
+        context: &Context<'_>,
     ) -> (Option<Method>, Option<Method>) {
         let Self {
             entity,
@@ -91,6 +93,7 @@ impl PartialProperty<'_> {
             let ty = Ty::parse_property_return(
                 entity.get_type().expect("property type"),
                 default_nullability,
+                context,
             );
 
             Some(Method {
@@ -115,6 +118,7 @@ impl PartialProperty<'_> {
                 let ty = Ty::parse_property(
                     entity.get_type().expect("property type"),
                     Nullability::Unspecified,
+                    context,
                 );
 
                 Some(Method {

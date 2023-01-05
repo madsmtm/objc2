@@ -11,6 +11,8 @@ use tracing::span::EnteredSpan;
 mod availability;
 mod cache;
 mod config;
+mod context;
+mod data;
 mod expr;
 mod file;
 mod library;
@@ -24,6 +26,7 @@ mod unexposed_macro;
 
 pub use self::cache::Cache;
 pub use self::config::Config;
+pub use self::context::Context;
 pub use self::file::File;
 pub use self::library::Library;
 pub use self::output::Output;

@@ -1,19 +1,19 @@
 use std::borrow::Cow;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::fmt;
 use std::iter;
 use std::mem;
 
-use clang::source::Location;
 use clang::{Entity, EntityKind, EntityVisitResult};
 use tracing::{debug, debug_span, error, warn};
 
 use crate::availability::Availability;
-use crate::config::{ClassData, Config};
+use crate::config::ClassData;
+use crate::context::Context;
 use crate::expr::Expr;
 use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
-use crate::rust_type::{GenericType, Ownership, Ty};
+use crate::rust_type::{Ownership, Ty};
 use crate::unexposed_macro::UnexposedMacro;
 
 #[derive(serde::Deserialize, Debug, Clone, PartialEq, Eq)]
@@ -34,7 +34,19 @@ impl fmt::Display for Derives {
     }
 }
 
-fn parse_superclass<'ty>(entity: &Entity<'ty>) -> Option<(Entity<'ty>, GenericType)> {
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct ClassDefReference {
+    pub name: String,
+    pub generics: Vec<String>,
+}
+
+impl ClassDefReference {
+    pub fn new(name: String, generics: Vec<String>) -> Self {
+        Self { name, generics }
+    }
+}
+
+fn parse_superclass<'ty>(entity: &Entity<'ty>) -> Option<(Entity<'ty>, ClassDefReference)> {
     let mut superclass = None;
     let mut generics = Vec::new();
 
@@ -44,10 +56,7 @@ fn parse_superclass<'ty>(entity: &Entity<'ty>) -> Option<(Entity<'ty>, GenericTy
         }
         EntityKind::TypeRef => {
             let name = entity.get_name().expect("typeref name");
-            generics.push(GenericType {
-                name,
-                generics: Vec::new(),
-            });
+            generics.push(name);
         }
         _ => {}
     });
@@ -57,10 +66,7 @@ fn parse_superclass<'ty>(entity: &Entity<'ty>) -> Option<(Entity<'ty>, GenericTy
             entity
                 .get_reference()
                 .expect("ObjCSuperClassRef to reference entity"),
-            GenericType {
-                name: entity.get_name().expect("superclass name"),
-                generics,
-            },
+            ClassDefReference::new(entity.get_name().expect("superclass name"), generics),
         )
     })
 }
@@ -72,8 +78,9 @@ fn parse_superclass<'ty>(entity: &Entity<'ty>) -> Option<(Entity<'ty>, GenericTy
 fn parse_objc_decl(
     entity: &Entity<'_>,
     superclass: bool,
-    mut generics: Option<&mut Vec<GenericType>>,
+    mut generics: Option<&mut Vec<String>>,
     data: Option<&ClassData>,
+    context: &Context<'_>,
 ) -> (Vec<String>, Vec<Method>, Vec<String>) {
     let mut protocols = Vec::new();
     let mut methods = Vec::new();
@@ -104,10 +111,7 @@ fn parse_objc_decl(
                 // TODO: Generics with bounds (like NSMeasurement<UnitType: NSUnit *>)
                 // let ty = entity.get_type().expect("template type");
                 let name = entity.get_display_name().expect("template name");
-                generics.push(GenericType {
-                    name,
-                    generics: Vec::new(),
-                });
+                generics.push(name);
             } else {
                 error!("unsupported generics");
             }
@@ -121,7 +125,7 @@ fn parse_objc_decl(
 
             if !properties.remove(&(partial.is_class, partial.fn_name.clone())) {
                 let data = ClassData::get_method_data(data, &partial.fn_name);
-                if let Some((designated_initializer, method)) = partial.parse(data) {
+                if let Some((designated_initializer, method)) = partial.parse(data, context) {
                     if designated_initializer {
                         designated_initializers.push(method.fn_name.clone());
                     }
@@ -150,7 +154,7 @@ fn parse_objc_decl(
                 .as_ref()
                 .map(|setter_name| ClassData::get_method_data(data, setter_name));
 
-            let (getter, setter) = partial.parse(getter_data, setter_data);
+            let (getter, setter) = partial.parse(getter_data, setter_data, context);
             if let Some(getter) = getter {
                 methods.push(getter);
             }
@@ -193,9 +197,9 @@ pub enum Stmt {
     /// ->
     /// extern_class!
     ClassDecl {
-        ty: GenericType,
+        ty: ClassDefReference,
         availability: Availability,
-        superclasses: Vec<GenericType>,
+        superclasses: Vec<ClassDefReference>,
         designated_initializers: Vec<String>,
         derives: Derives,
         ownership: Ownership,
@@ -204,7 +208,7 @@ pub enum Stmt {
     /// ->
     /// extern_methods!
     Methods {
-        ty: GenericType,
+        ty: ClassDefReference,
         availability: Availability,
         methods: Vec<Method>,
         /// For the categories that have a name (though some don't, see NSClipView)
@@ -223,7 +227,7 @@ pub enum Stmt {
     /// @interface ty: _ <protocols*>
     /// @interface ty (_) <protocols*>
     ProtocolImpl {
-        ty: GenericType,
+        ty: ClassDefReference,
         availability: Availability,
         protocol: String,
     },
@@ -291,7 +295,7 @@ pub enum Stmt {
     },
 }
 
-fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
+fn parse_struct(entity: &Entity<'_>, name: String, context: &Context<'_>) -> Stmt {
     let mut boxable = false;
     let mut fields = Vec::new();
 
@@ -307,7 +311,7 @@ fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
             let _span = debug_span!("field", name).entered();
 
             let ty = entity.get_type().expect("struct field type");
-            let ty = Ty::parse_struct_field(ty);
+            let ty = Ty::parse_struct_field(ty, context);
 
             if entity.is_bit_field() {
                 error!("unsound struct bitfield");
@@ -329,11 +333,7 @@ fn parse_struct(entity: &Entity<'_>, name: String) -> Stmt {
 }
 
 impl Stmt {
-    pub fn parse(
-        entity: &Entity<'_>,
-        config: &Config,
-        macro_invocations: &HashMap<Location<'_>, String>,
-    ) -> Vec<Self> {
+    pub fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Vec<Self> {
         let _span = debug_span!(
             "stmt",
             kind = ?entity.get_kind(),
@@ -347,7 +347,7 @@ impl Stmt {
             EntityKind::ObjCInterfaceDecl => {
                 // entity.get_mangled_objc_names()
                 let name = entity.get_name().expect("class name");
-                let class_data = config.class_data.get(&name);
+                let class_data = context.class_data.get(&name);
 
                 if class_data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -361,9 +361,9 @@ impl Stmt {
                 let mut generics = Vec::new();
 
                 let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(entity, true, Some(&mut generics), class_data);
+                    parse_objc_decl(entity, true, Some(&mut generics), class_data, context);
 
-                let ty = GenericType { name, generics };
+                let ty = ClassDefReference::new(name, generics);
 
                 let mut superclass_entity = *entity;
                 let mut superclasses = vec![];
@@ -429,7 +429,7 @@ impl Stmt {
                     }
                 });
                 let class_name = class_name.expect("could not find category class");
-                let class_data = config.class_data.get(&class_name);
+                let class_data = context.class_data.get(&class_name);
 
                 if class_data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -437,8 +437,13 @@ impl Stmt {
 
                 let mut class_generics = Vec::new();
 
-                let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(entity, false, Some(&mut class_generics), class_data);
+                let (protocols, methods, designated_initializers) = parse_objc_decl(
+                    entity,
+                    false,
+                    Some(&mut class_generics),
+                    class_data,
+                    context,
+                );
 
                 if !designated_initializers.is_empty() {
                     warn!(
@@ -447,10 +452,7 @@ impl Stmt {
                     )
                 }
 
-                let ty = GenericType {
-                    name: class_name,
-                    generics: class_generics,
-                };
+                let ty = ClassDefReference::new(class_name, class_generics);
 
                 iter::once(Self::Methods {
                     ty: ty.clone(),
@@ -468,7 +470,7 @@ impl Stmt {
             }
             EntityKind::ObjCProtocolDecl => {
                 let name = entity.get_name().expect("protocol name");
-                let protocol_data = config.protocol_data.get(&name);
+                let protocol_data = context.protocol_data.get(&name);
 
                 if protocol_data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -481,7 +483,7 @@ impl Stmt {
                 );
 
                 let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(entity, false, None, protocol_data);
+                    parse_objc_decl(entity, false, None, protocol_data, context);
 
                 if !designated_initializers.is_empty() {
                     warn!(
@@ -505,9 +507,7 @@ impl Stmt {
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
-                        if let Some(macro_) =
-                            UnexposedMacro::parse_plus_macros(&entity, macro_invocations)
-                        {
+                        if let Some(macro_) = UnexposedMacro::parse_plus_macros(&entity, context) {
                             if kind.is_some() {
                                 panic!("got multiple unexposed macros {kind:?}, {macro_:?}");
                             }
@@ -515,7 +515,7 @@ impl Stmt {
                         }
                     }
                     EntityKind::StructDecl => {
-                        if config
+                        if context
                             .struct_data
                             .get(&name)
                             .map(|data| data.skipped)
@@ -533,7 +533,7 @@ impl Stmt {
                             // If this struct doesn't have a name, or the
                             // name is private, let's parse it with the
                             // typedef name.
-                            struct_ = Some(parse_struct(&entity, name.clone()))
+                            struct_ = Some(parse_struct(&entity, name.clone(), context))
                         } else {
                             skip_struct = true;
                         }
@@ -554,7 +554,7 @@ impl Stmt {
                     return vec![];
                 }
 
-                if config
+                if context
                     .typedef_data
                     .get(&name)
                     .map(|data| data.skipped)
@@ -566,7 +566,7 @@ impl Stmt {
                 let ty = entity
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
-                if let Some(ty) = Ty::parse_typedef(ty) {
+                if let Some(ty) = Ty::parse_typedef(ty, context) {
                     vec![Self::AliasDecl { name, ty, kind }]
                 } else {
                     vec![]
@@ -574,7 +574,7 @@ impl Stmt {
             }
             EntityKind::StructDecl => {
                 if let Some(name) = entity.get_name() {
-                    if config
+                    if context
                         .struct_data
                         .get(&name)
                         .map(|data| data.skipped)
@@ -583,7 +583,7 @@ impl Stmt {
                         return vec![];
                     }
                     if !name.starts_with('_') {
-                        return vec![parse_struct(entity, name)];
+                        return vec![parse_struct(entity, name, context)];
                     }
                 }
                 vec![]
@@ -597,7 +597,7 @@ impl Stmt {
 
                 let name = entity.get_name();
 
-                let data = config
+                let data = context
                     .enum_data
                     .get(name.as_deref().unwrap_or("anonymous"))
                     .cloned()
@@ -608,7 +608,7 @@ impl Stmt {
 
                 let ty = entity.get_enum_underlying_type().expect("enum type");
                 let is_signed = ty.is_signed_integer();
-                let ty = Ty::parse_enum(ty);
+                let ty = Ty::parse_enum(ty, context);
                 let mut kind = None;
                 let mut variants = Vec::new();
 
@@ -678,7 +678,7 @@ impl Stmt {
             EntityKind::VarDecl => {
                 let name = entity.get_name().expect("var decl name");
 
-                if config
+                if context
                     .statics
                     .get(&name)
                     .map(|data| data.skipped)
@@ -688,7 +688,7 @@ impl Stmt {
                 }
 
                 let ty = entity.get_type().expect("var type");
-                let ty = Ty::parse_static(ty);
+                let ty = Ty::parse_static(ty, context);
                 let mut value = None;
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
@@ -724,7 +724,7 @@ impl Stmt {
             EntityKind::FunctionDecl => {
                 let name = entity.get_name().expect("function name");
 
-                if config
+                if context
                     .fns
                     .get(&name)
                     .map(|data| data.skipped)
@@ -739,7 +739,7 @@ impl Stmt {
                 }
 
                 let result_type = entity.get_result_type().expect("function result type");
-                let result_type = Ty::parse_function_return(result_type);
+                let result_type = Ty::parse_function_return(result_type, context);
                 let mut arguments = Vec::new();
 
                 if entity.is_static_method() {
@@ -757,7 +757,7 @@ impl Stmt {
                         // Could also be retrieved via. `get_arguments`
                         let name = entity.get_name().unwrap_or_else(|| "_".into());
                         let ty = entity.get_type().expect("function argument type");
-                        let ty = Ty::parse_function_argument(ty);
+                        let ty = Ty::parse_function_argument(ty, context);
                         arguments.push((name, ty))
                     }
                     _ => warn!("unknown"),
@@ -824,7 +824,7 @@ impl fmt::Display for Stmt {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let _span = debug_span!("stmt", discriminant = ?mem::discriminant(self)).entered();
 
-        struct GenericTyHelper<'a>(&'a GenericType);
+        struct GenericTyHelper<'a>(&'a ClassDefReference);
 
         impl fmt::Display for GenericTyHelper<'_> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -843,7 +843,7 @@ impl fmt::Display for Stmt {
             }
         }
 
-        struct GenericParamsHelper<'a>(&'a [GenericType]);
+        struct GenericParamsHelper<'a>(&'a [String]);
 
         impl fmt::Display for GenericParamsHelper<'_> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
