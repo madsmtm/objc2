@@ -66,7 +66,9 @@ enum IdType {
         protocols: Vec<(String, String)>,
     },
     AnyProtocol,
-    AnyClass,
+    AnyClass {
+        protocols: Vec<(String, String)>,
+    },
     Allocated,
     Self_ {
         ownership: Option<Ownership>,
@@ -88,7 +90,7 @@ impl IdType {
             Self::GenericParam { name } => name,
             Self::AnyProtocol => "Protocol",
             // TODO: Handle this better
-            Self::AnyClass => "TodoClass",
+            Self::AnyClass { .. } => "TodoClass",
             Self::Allocated => "Allocated",
             Self::Self_ { .. } => "Self",
         }
@@ -134,7 +136,7 @@ impl IdType {
                         lifetime: _,
                         nullability: _,
                     } => ty,
-                    RustType::Class { nullability: _ } => Self::AnyClass,
+                    RustType::Class { nullability: _ } => Self::AnyClass { protocols: vec![] },
                     param => {
                         panic!("invalid generic parameter {param:?} in {ty:?}")
                     }
@@ -226,7 +228,11 @@ impl IdType {
                             ownership: None,
                         }
                     }
-                    TypeKind::ObjCClass => Self::AnyClass,
+                    TypeKind::ObjCClass => {
+                        assert!(generics.is_empty(), "ObjCClass with generics");
+
+                        Self::AnyClass { protocols }
+                    }
                     kind => panic!("unknown ObjCObject kind {ty:?}, {kind:?}"),
                 }
             }
