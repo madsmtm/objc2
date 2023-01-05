@@ -45,6 +45,7 @@ enum IdType {
         library: String,
         name: String,
         generics: Vec<Self>,
+        ownership: Option<Ownership>,
     },
     ProtocolObject {
         library: String,
@@ -60,7 +61,9 @@ enum IdType {
     AnyProtocol,
     AnyObject,
     Allocated,
-    Self_,
+    Self_ {
+        ownership: Option<Ownership>,
+    },
     // TODO: Handle these better
     TodoClass,
     TodoProtocols,
@@ -68,7 +71,7 @@ enum IdType {
 
 impl IdType {
     fn name(&self) -> &str {
-        match &self {
+        match self {
             Self::Class { name, .. } => &name,
             Self::ProtocolObject { name, .. } => &name,
             Self::TypeDef { name, .. } => &name,
@@ -76,18 +79,32 @@ impl IdType {
             Self::AnyProtocol => "Protocol",
             Self::AnyObject => "Object",
             Self::Allocated => "Allocated",
-            Self::Self_ => "Self",
+            Self::Self_ { .. } => "Self",
             Self::TodoClass => "TodoClass",
             Self::TodoProtocols => "TodoProtocols",
         }
     }
 
     fn library(&self) -> Option<&str> {
-        match &self {
+        match self {
             Self::Class { library, .. } => Some(&library),
             Self::ProtocolObject { library, .. } => Some(&library),
             Self::TypeDef { library, .. } => Some(&library),
             _ => None,
+        }
+    }
+
+    fn ownership(&self) -> Ownership {
+        match self {
+            Self::Class {
+                ownership: Some(ownership),
+                ..
+            }
+            | Self::Self_ {
+                ownership: Some(ownership),
+                ..
+            } => ownership.clone(),
+            _ => Ownership::Shared,
         }
     }
 
@@ -102,7 +119,6 @@ impl IdType {
                         is_const: _,
                         lifetime: _,
                         nullability: _,
-                        ownership: _,
                     } => ty,
                     // TODO: Handle this better
                     RustType::Class { nullability: _ } => Self::TodoClass,
@@ -149,6 +165,7 @@ impl IdType {
                         library,
                         name,
                         generics: Vec::new(),
+                        ownership: None,
                     }
                 }
             }
@@ -197,6 +214,7 @@ impl IdType {
                                 library,
                                 name,
                                 generics,
+                                ownership: None,
                             }
                         }
                     }
@@ -448,7 +466,6 @@ enum RustType {
         is_const: bool,
         lifetime: Lifetime,
         nullability: Nullability,
-        ownership: Ownership,
     },
     Class {
         nullability: Nullability,
@@ -542,7 +559,6 @@ impl RustType {
                 is_const: ty.is_const_qualified(),
                 lifetime,
                 nullability,
-                ownership: Ownership::Shared,
             },
             ObjCClass => Self::Class { nullability },
             ObjCSel => Self::Sel { nullability },
@@ -592,7 +608,6 @@ impl RustType {
                     is_const: ty.is_const_qualified(),
                     lifetime,
                     nullability,
-                    ownership: Ownership::Shared,
                 }
             }
             Typedef => {
@@ -624,11 +639,10 @@ impl RustType {
                     "Float96" => panic!("can't handle 96 bit 68881 float"),
 
                     "instancetype" => Self::Id {
-                        ty: IdType::Self_,
+                        ty: IdType::Self_ { ownership: None },
                         is_const: ty.is_const_qualified(),
                         lifetime,
                         nullability,
-                        ownership: Ownership::Shared,
                     },
                     _ => {
                         let ty = ty.get_canonical_type();
@@ -667,7 +681,6 @@ impl RustType {
                                     is_const,
                                     lifetime,
                                     nullability,
-                                    ownership: Ownership::Shared,
                                 }
                             }
                             _ => Self::TypeDef { name: typedef_name },
@@ -805,7 +818,6 @@ impl fmt::Display for RustType {
                 // Ignore
                 lifetime: _,
                 nullability,
-                ownership: _,
             } => {
                 if *nullability == Nullability::NonNull {
                     write!(f, "NonNull<{ty}>")
@@ -1145,8 +1157,18 @@ impl Ty {
             self.kind,
             TyKind::MethodReturn | TyKind::MethodReturnWithError
         ));
-        if let RustType::Id { ty, ownership, .. } = &mut self.ty {
-            *ownership = get_ownership(ty.name());
+        if let RustType::Id { ty, .. } = &mut self.ty {
+            match ty {
+                IdType::Class {
+                    ownership, name, ..
+                } => {
+                    *ownership = Some(get_ownership(name));
+                }
+                IdType::Self_ { ownership } => {
+                    *ownership = Some(get_ownership("Self"));
+                }
+                _ => {}
+            }
         }
     }
 }
@@ -1165,11 +1187,11 @@ impl Ty {
                         library,
                         name,
                         generics,
+                        ownership: None,
                     },
                 is_const: id_is_const,
                 lifetime,
                 nullability: id_nullability,
-                ownership,
             } = &**pointee
             {
                 if name != "NSError" {
@@ -1198,7 +1220,6 @@ impl Ty {
                     Lifetime::Unspecified,
                     "invalid error lifetime {self:?}"
                 );
-                assert_eq!(*ownership, Ownership::Shared, "errors cannot be owned");
                 return true;
             }
         }
@@ -1212,11 +1233,10 @@ impl Ty {
     pub fn set_is_alloc(&mut self) {
         match &mut self.ty {
             RustType::Id {
-                ty: ty @ IdType::Self_,
+                ty: ty @ IdType::Self_ { ownership: None },
                 lifetime: Lifetime::Unspecified,
                 is_const: false,
                 nullability: _,
-                ownership: Ownership::Shared,
             } => {
                 *ty = IdType::Allocated;
             }
@@ -1233,7 +1253,7 @@ impl Ty {
         matches!(
             &self.ty,
             RustType::Id {
-                ty: IdType::Self_,
+                ty: IdType::Self_ { .. },
                 ..
             }
         )
@@ -1258,7 +1278,7 @@ impl Ty {
             };
 
             if is_related {
-                *ty = IdType::Self_;
+                *ty = IdType::Self_ { ownership: None };
             }
         }
     }
@@ -1295,12 +1315,11 @@ impl fmt::Display for Ty {
                         // Ignore
                         lifetime: _,
                         nullability,
-                        ownership,
                     } => {
                         if *nullability == Nullability::NonNull {
-                            write!(f, "Id<{ty}, {ownership}>")
+                            write!(f, "Id<{ty}, {}>", ty.ownership())
                         } else {
-                            write!(f, "Option<Id<{ty}, {ownership}>>")
+                            write!(f, "Option<Id<{ty}, {}>>", ty.ownership())
                         }
                     }
                     RustType::Class { nullability } => {
@@ -1320,10 +1339,13 @@ impl fmt::Display for Ty {
                     lifetime: Lifetime::Unspecified,
                     is_const: false,
                     nullability: Nullability::Nullable,
-                    ownership,
                 } => {
                     // NULL -> error
-                    write!(f, " -> Result<Id<{ty}, {ownership}>, Id<NSError, Shared>>")
+                    write!(
+                        f,
+                        " -> Result<Id<{ty}, {}>, Id<NSError, Shared>>",
+                        ty.ownership()
+                    )
                 }
                 RustType::ObjcBool => {
                     // NO -> error
@@ -1337,7 +1359,6 @@ impl fmt::Display for Ty {
                     is_const: false,
                     lifetime: Lifetime::Strong | Lifetime::Unspecified,
                     nullability,
-                    ownership: Ownership::Shared,
                 } => {
                     if *nullability == Nullability::NonNull {
                         write!(f, "&'static {ty}")
@@ -1366,11 +1387,11 @@ impl fmt::Display for Ty {
                             library,
                             name,
                             generics,
+                            ownership: None,
                         },
                     is_const: _,
                     lifetime: _,
                     nullability: Nullability::Nullable | Nullability::Unspecified,
-                    ownership: Ownership::Shared,
                 } if library == "Foundation" && name == "NSString" && generics.is_empty() => {
                     write!(f, "{ty}")
                 }
@@ -1389,7 +1410,6 @@ impl fmt::Display for Ty {
                     is_const: false,
                     lifetime: Lifetime::Unspecified | Lifetime::Strong,
                     nullability,
-                    ownership: Ownership::Shared,
                 } => {
                     if *nullability == Nullability::NonNull {
                         write!(f, "&{ty}")
@@ -1416,7 +1436,6 @@ impl fmt::Display for Ty {
                     //     is_const: false,
                     //     lifetime: Lifetime::Autoreleasing,
                     //     nullability: inner_nullability,
-                    //     ownership: Ownership::Shared,
                     // } if self.kind == TyKind::MethodArgument => {
                     //     let tokens = if *inner_nullability == Nullability::NonNull {
                     //         format!("Id<{ty}, Shared>")
