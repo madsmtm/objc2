@@ -38,7 +38,7 @@ fn main() {
     let workspace_dir = manifest_dir.parent().unwrap();
     let crate_src = workspace_dir.join("icrate/src");
 
-    let config = load_config(&manifest_dir);
+    let config = load_config(manifest_dir);
 
     let clang = Clang::new().unwrap();
     let index = Index::new(&clang, true, true);

@@ -44,7 +44,7 @@ impl ops::Deref for Context<'_> {
     type Target = Config;
 
     fn deref(&self) -> &Self::Target {
-        &self.config
+        self.config
     }
 }
 

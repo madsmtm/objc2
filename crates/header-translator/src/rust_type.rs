@@ -72,10 +72,10 @@ enum IdType {
 impl IdType {
     fn name(&self) -> &str {
         match self {
-            Self::Class { name, .. } => &name,
-            Self::ProtocolObject { name, .. } => &name,
-            Self::TypeDef { name, .. } => &name,
-            Self::GenericParam { name } => &name,
+            Self::Class { name, .. } => name,
+            Self::ProtocolObject { name, .. } => name,
+            Self::TypeDef { name, .. } => name,
+            Self::GenericParam { name } => name,
             Self::AnyProtocol => "Protocol",
             Self::AnyObject => "Object",
             Self::Allocated => "Allocated",
@@ -85,11 +85,12 @@ impl IdType {
         }
     }
 
+    #[allow(dead_code)]
     fn library(&self) -> Option<&str> {
         match self {
-            Self::Class { library, .. } => Some(&library),
-            Self::ProtocolObject { library, .. } => Some(&library),
-            Self::TypeDef { library, .. } => Some(&library),
+            Self::Class { library, .. } => Some(library),
+            Self::ProtocolObject { library, .. } => Some(library),
+            Self::TypeDef { library, .. } => Some(library),
             _ => None,
         }
     }
