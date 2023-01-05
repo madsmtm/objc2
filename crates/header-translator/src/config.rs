@@ -5,6 +5,7 @@ use std::path::Path;
 
 use serde::Deserialize;
 
+use crate::data;
 use crate::rust_type::Ownership;
 use crate::stmt::Derives;
 
@@ -129,6 +130,10 @@ impl Config {
     pub fn from_file(file: &Path) -> Result<Self> {
         let s = fs::read_to_string(file)?;
 
-        Ok(toml::from_str(&s)?)
+        let mut this = toml::from_str(&s)?;
+
+        data::apply_tweaks(&mut this);
+
+        Ok(this)
     }
 }

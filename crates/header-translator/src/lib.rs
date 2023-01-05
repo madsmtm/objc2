@@ -11,6 +11,7 @@ use tracing::span::EnteredSpan;
 mod availability;
 mod cache;
 mod config;
+mod data;
 mod expr;
 mod file;
 mod library;
