@@ -179,7 +179,7 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Run UI tests
-      run: cargo run --features=run --bin test-ui
+      run: cargo run --features=run --bin=test-ui
 
   assembly:
     name: Assembly tests
@@ -221,6 +221,33 @@ jobs:
     - name: Run all assembly tests
       if: ${{ env.FULL }}
       run: ./helper-scripts/run-assembly-tests.sh
+
+  header-translator:
+    name: Verify header translator output
+    runs-on: macos-12
+    needs:
+    - fmt
+    - lint
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Use system Rust
+      run: cargo --version
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CARGO_CACHE_PATH }}
+        key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Run header translator
+      run: cargo run --features=run --bin=header-translator -- /Applications/Xcode.app/Contents/Developer
+
+    - name: Verify that no files changed
+      run: git diff --exit-code --submodule=diff
 
   test-macos:
     name: Test macOS 12
@@ -664,7 +691,7 @@ jobs:
 
         # Check if the fuzzer encountered something that should be added to
         # the corpus.
-        git diff --exit-code fuzz/
+        git diff --exit-code
 
     - name: Run benchmarks
       # Difficult to install Valgrind on macOS
