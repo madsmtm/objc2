@@ -227,7 +227,8 @@ jobs:
     runs-on: macos-12
     needs:
     - fmt
-    - lint
+    # Currently the slowest check, so let's get it started as soon as possible
+    # - lint
 
     env:
       ARGS: --no-default-features --features=std,apple
