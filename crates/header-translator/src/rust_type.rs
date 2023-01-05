@@ -1,6 +1,6 @@
 use std::fmt;
 
-use clang::{CallingConvention, Nullability, Type, TypeKind};
+use clang::{CallingConvention, EntityKind, Nullability, Type, TypeKind};
 use serde::Deserialize;
 use tracing::{debug_span, error, warn};
 
@@ -655,31 +655,28 @@ impl RustType {
                         nullability,
                     },
                     _ => {
+                        let declaration = ty.get_declaration();
                         let ty = ty.get_canonical_type();
                         match ty.get_kind() {
                             ObjCObjectPointer => {
                                 let ty =
                                     ty.get_pointee_type().expect("pointer type to have pointee");
+                                let declaration =
+                                    declaration.expect("typedef ObjCObjectPointer declaration");
                                 let is_const = ty.is_const_qualified();
 
-                                let parsed = IdType::parse_objc_pointer(ty, context);
+                                assert!(
+                                    ty.get_objc_type_arguments().is_empty(),
+                                    "typedef generics not empty"
+                                );
 
-                                if let IdType::Class {
-                                    params: TypeParams::Generics(_) | TypeParams::Protocols(_),
-                                    ..
-                                } = &parsed
+                                let ty = if let EntityKind::TemplateTypeParameter =
+                                    declaration.get_kind()
                                 {
-                                    panic!("typedef params not empty");
-                                }
-
-                                let ty = if let IdType::AnyObject { .. } = parsed {
                                     IdType::GenericParam { name: typedef_name }
                                 } else {
                                     let (library, _) = context
-                                        .get_library_and_file_name(
-                                            &ty.get_declaration()
-                                                .expect("ObjCObjectPointer declaration"),
-                                        )
+                                        .get_library_and_file_name(&declaration)
                                         .expect("ObjCObjectPointer library");
                                     IdType::TypeDef {
                                         library,
