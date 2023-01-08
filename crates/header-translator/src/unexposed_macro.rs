@@ -14,18 +14,24 @@ pub enum UnexposedMacro {
     TypedEnum,
     TypedExtensibleEnum,
     BridgedTypedef,
+    Bridged,
+    BridgedMutable,
 }
 
 impl UnexposedMacro {
     fn from_name(s: &str) -> Option<Self> {
         match s {
-            "NS_ENUM" => Some(Self::Enum),
-            "NS_OPTIONS" => Some(Self::Options),
-            "NS_CLOSED_ENUM" => Some(Self::ClosedEnum),
+            "NS_ENUM" | "CF_ENUM" => Some(Self::Enum),
+            "NS_OPTIONS" | "CF_OPTIONS" => Some(Self::Options),
+            "NS_CLOSED_ENUM" | "CF_CLOSED_ENUM" => Some(Self::ClosedEnum),
             "NS_ERROR_ENUM" => Some(Self::ErrorEnum),
-            "NS_TYPED_ENUM" => Some(Self::TypedEnum),
-            "NS_TYPED_EXTENSIBLE_ENUM" => Some(Self::TypedExtensibleEnum),
-            "NS_SWIFT_BRIDGED_TYPEDEF" => Some(Self::BridgedTypedef),
+            "NS_TYPED_ENUM" | "CF_TYPED_ENUM" => Some(Self::TypedEnum),
+            "NS_TYPED_EXTENSIBLE_ENUM" | "CF_TYPED_EXTENSIBLE_ENUM" => {
+                Some(Self::TypedExtensibleEnum)
+            }
+            "NS_SWIFT_BRIDGED_TYPEDEF" | "CF_SWIFT_BRIDGED_TYPEDEF" => Some(Self::BridgedTypedef),
+            "CF_BRIDGED_TYPE" => Some(Self::Bridged),
+            "CF_BRIDGED_MUTABLE_TYPE" => Some(Self::BridgedMutable),
             // TODO
             "NS_FORMAT_FUNCTION" => None,
             "NS_FORMAT_ARGUMENT" => None,
@@ -41,12 +47,16 @@ impl UnexposedMacro {
             | "NS_OPENGL_ENUM_DEPRECATED"
             | "OBJC_AVAILABLE"
             | "OBJC_DEPRECATED"
-            | "APPKIT_API_UNAVAILABLE_BEGIN_MACCATALYST" => None,
+            | "APPKIT_API_UNAVAILABLE_BEGIN_MACCATALYST"
+            | "CG_AVAILABLE_STARTING"
+            | "CG_AVAILABLE_BUT_DEPRECATED" => None,
             // Might be interesting in the future
             "NS_SWIFT_NAME"
+            | "CF_SWIFT_NAME"
             | "NS_SWIFT_ASYNC_NAME"
             | "NS_SWIFT_ASYNC_THROWS_ON_FALSE"
             | "NS_SWIFT_UNAVAILABLE"
+            | "CF_SWIFT_UNAVAILABLE"
             | "OBJC_SWIFT_UNAVAILABLE" => None,
             name => {
                 warn!(name, "unknown unexposed macro");

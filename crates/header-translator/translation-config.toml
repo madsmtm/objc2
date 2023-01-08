@@ -102,6 +102,10 @@ skipped = true
 [protocol.NSObject]
 skipped = true
 
+# Defined in `objc2` instead
+[typedef.NSZone]
+skipped = true
+
 # Contains bitfields
 [struct.NSDecimal]
 skipped = true
