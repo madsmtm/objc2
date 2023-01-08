@@ -113,6 +113,17 @@ so on, with every following release.
 [#32]: https://github.com/madsmtm/objc2/issues/32
 
 
+## Minimum Supported Rust Version (MSRV)
+
+The _currently_ minimum supported Rust version is `1.60`; this is _not_
+defined by policy, though, so it may change in at any time in a patch
+release.
+
+Help us define a policy over in [#203].
+
+[#203]: https://github.com/madsmtm/objc2/issues/203
+
+
 ## License
 
 This project is licensed under the MIT license, see [`LICENSE.txt`].

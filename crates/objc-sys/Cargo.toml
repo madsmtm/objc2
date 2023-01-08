@@ -5,6 +5,7 @@ name = "objc-sys"
 version = "0.2.0-beta.3"
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
+rust-version = "1.60"
 
 description = "Raw bindings to the Objective-C runtime and ABI"
 keywords = ["objective-c", "macos", "ios", "objc_msgSend", "sys"]
