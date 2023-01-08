@@ -92,7 +92,7 @@ harness = false
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
-features = ["exception", "malloc", "block", "uuid", "unstable-docsrs"]
+features = ["exception", "malloc", "block", "unstable-docsrs"]
 
 targets = [
     # MacOS

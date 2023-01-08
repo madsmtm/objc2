@@ -39,8 +39,8 @@ Copy and fill out the following checklist into the release PR:
 
 ```markdown
 - [ ] The branch is named `new-versions`, such that the full CI will run.
-- [ ] Changelogs changes have only been made under the `Unreleased` header.
-- [ ] The version are bumped in the following order:
+- [ ] Changelogs have only been modified under the `Unreleased` header.
+- [ ] Version numbers are bumped in the following order:
     - `objc2-proc-macros`
     - `objc-sys`
     - `objc2-encode`

@@ -54,7 +54,7 @@ env:
   # Required when we want to use a different runtime than the default `apple`
   OTHER_RUNTIME: --no-default-features --features=std
   # https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
-  # Note: We don't cache `~/.cargo/bin`, that is done when needed instead.
+  # Note: We don't cache `~/.cargo/bin`, that is done separately when needed.
   CARGO_CACHE_PATH: |
     ~/.cargo/registry/index/
     ~/.cargo/registry/cache/
@@ -62,7 +62,7 @@ env:
   # Only enable time-consuming checks when about to do a new release
   #
   # This condition is duplicated a few places, since there's no good way to
-  # deduplicate information in GitHub Actions...
+  # deduplicate such information in GitHub Actions...
   FULL: ${{ (github.ref_name == 'new-versions' || github.ref_name == 'ci-full') && true || '' }}
 
 jobs:
