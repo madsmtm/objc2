@@ -153,6 +153,39 @@ jobs:
     - name: cargo clippy
       run: cargo clippy --all-targets ${{ matrix.args }}
 
+  msrv:
+    name: Check MSRV
+    runs-on: ubuntu-latest
+
+    env:
+      CARGO_BUILD_TARGET: x86_64-apple-darwin
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: '1.60'
+        profile: minimal
+        override: true
+        target: x86_64-apple-darwin
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CARGO_CACHE_PATH }}
+        key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: cargo check
+      run: >-
+        cargo check
+        $PUBLIC_CRATES
+        --features=$INTERESTING_FEATURES
+        --features=unstable-frameworks-macos-12
+
   ui:
     name: Compiler UI
     runs-on: macos-latest
