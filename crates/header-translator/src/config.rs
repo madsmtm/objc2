@@ -99,8 +99,26 @@ pub struct MethodData {
     pub mutating: bool,
 }
 
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct FnData {
+    #[serde(default)]
+    pub skipped: bool,
+    #[serde(rename = "unsafe")]
+    #[serde(default = "unsafe_default")]
+    pub unsafe_: bool,
+}
+
+impl Default for FnData {
+    fn default() -> Self {
+        Self {
+            skipped: skipped_default(),
+            unsafe_: unsafe_default(),
+        }
+    }
+}
+
 // TODO
-pub type FnData = StructData;
 pub type StaticData = StructData;
 pub type TypedefData = StructData;
 

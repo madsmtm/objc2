@@ -286,6 +286,7 @@ pub enum Stmt {
         result_type: Ty,
         // Some -> inline function.
         body: Option<()>,
+        safe: bool,
     },
     /// typedef Type TypedefName;
     AliasDecl {
@@ -735,12 +736,9 @@ impl Stmt {
             EntityKind::FunctionDecl => {
                 let name = entity.get_name().expect("function name");
 
-                if context
-                    .fns
-                    .get(&name)
-                    .map(|data| data.skipped)
-                    .unwrap_or_default()
-                {
+                let data = context.fns.get(&name).cloned().unwrap_or_default();
+
+                if data.skipped {
                     return vec![];
                 }
 
@@ -788,6 +786,7 @@ impl Stmt {
                     arguments,
                     result_type,
                     body,
+                    safe: !data.unsafe_,
                 }]
             }
             EntityKind::UnionDecl => {
@@ -1062,9 +1061,12 @@ impl fmt::Display for Stmt {
                 arguments,
                 result_type,
                 body: None,
+                safe,
             } => {
+                let unsafe_ = if *safe { "" } else { " unsafe" };
+
                 writeln!(f, "extern_fn!(")?;
-                write!(f, "    pub unsafe fn {name}(")?;
+                write!(f, "    pub{unsafe_} fn {name}(")?;
                 for (param, arg_ty) in arguments {
                     write!(f, "{}: {arg_ty},", handle_reserved(param))?;
                 }
@@ -1076,9 +1078,12 @@ impl fmt::Display for Stmt {
                 arguments,
                 result_type,
                 body: Some(_body),
+                safe,
             } => {
+                let unsafe_ = if *safe { "" } else { " unsafe" };
+
                 writeln!(f, "inline_fn!(")?;
-                write!(f, "    pub unsafe fn {name}(")?;
+                write!(f, "    pub{unsafe_} fn {name}(")?;
                 for (param, arg_ty) in arguments {
                     write!(f, "{}: {arg_ty},", handle_reserved(param))?;
                 }

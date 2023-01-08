@@ -26,6 +26,9 @@ data! {
         // The method `mutateUnchecked` takes &mut self, but is not safe.
         mut -mutateUnchecked;
     }
+
+    // Declare the function "foo" as safe
+    unsafe fn foo;
 }
 ```
 

@@ -233,6 +233,19 @@ macro_rules! extern_fn {
             $v fn $name($($args)*) $(-> $res)?;
         }
     };
+    (
+        $v:vis fn $name:ident($($arg:ident: $arg_ty:ty),* $(,)?) $(-> $res:ty)?;
+    ) => {
+        #[inline]
+        $v extern "C" fn $name($($arg: $arg_ty),*) $(-> $res)? {
+            extern "C" {
+                fn $name($($arg: $arg_ty),*) $(-> $res)?;
+            }
+            unsafe {
+                $name($($arg),*)
+            }
+        }
+    };
 }
 
 macro_rules! inline_fn {

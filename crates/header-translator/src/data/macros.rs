@@ -97,6 +97,23 @@ macro_rules! __data_inner {
             $($rest)*
         }
     };
+    // Function
+    (
+        @($config:expr)
+
+        unsafe fn $function:ident;
+
+        $($rest:tt)*
+    ) => {
+        let mut data = $config.fns.entry(stringify!($function).to_string()).or_default();
+
+        data.unsafe_ = false;
+
+        __data_inner! {
+            @($config)
+            $($rest)*
+        }
+    }
 }
 
 macro_rules! __data_methods {
