@@ -5,7 +5,7 @@ pub(crate) use core::ffi::c_void;
 pub(crate) use core::marker::PhantomData;
 pub(crate) use core::ptr::NonNull;
 #[cfg(feature = "std")]
-pub(crate) use std::ffi::{
+pub(crate) use std::os::raw::{
     c_char, c_double, c_float, c_int, c_long, c_longlong, c_schar, c_short, c_uchar, c_uint,
     c_ulong, c_ulonglong, c_ushort,
 };

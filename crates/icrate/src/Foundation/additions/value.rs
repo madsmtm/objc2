@@ -192,7 +192,7 @@ impl fmt::Debug for NSValue {
 mod tests {
     use alloc::format;
     use core::{ptr, slice};
-    use std::ffi::c_char;
+    use std::os::raw::c_char;
 
     use super::*;
     use objc2::rc::{__RcTestObject, __ThreadTestData};
