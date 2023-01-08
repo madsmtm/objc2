@@ -3,6 +3,9 @@
 [library.Foundation]
 imports = ["Foundation"]
 
+[library.QuartzCore]
+imports = ["CoreAnimation", "Foundation"]
+
 [library.CoreData]
 imports = ["CoreData", "Foundation"]
 
@@ -100,6 +103,10 @@ allocWithZone = { skipped = true }
 [class.NSObject]
 skipped = true
 [protocol.NSObject]
+skipped = true
+
+# Defined in `objc2` instead
+[typedef.NSZone]
 skipped = true
 
 # Contains bitfields
@@ -538,6 +545,60 @@ databaseScope = { skipped = true }
 setDatabaseScope = { skipped = true }
 [protocol.NSFetchedResultsControllerDelegate.methods]
 controller_didChangeContentWithSnapshot = { skipped = true }
+[class.CAKeyframeAnimation.methods]
+path = { skipped = true }
+setPath = { skipped = true }
+[class.CAShapeLayer.methods]
+path = { skipped = true }
+setPath = { skipped = true }
+fillColor = { skipped = true }
+setFillColor = { skipped = true }
+strokeColor = { skipped = true }
+setStrokeColor = { skipped = true }
+[class.CAEmitterCell.methods]
+color = { skipped = true }
+setColor = { skipped = true }
+[class.CALayer.methods]
+affineTransform = { skipped = true }
+setAffineTransform = { skipped = true }
+drawInContext = { skipped = true }
+renderInContext = { skipped = true }
+backgroundColor = { skipped = true }
+setBackgroundColor = { skipped = true }
+borderColor = { skipped = true }
+setBorderColor = { skipped = true }
+shadowColor = { skipped = true }
+setShadowColor = { skipped = true }
+shadowPath = { skipped = true }
+setShadowPath = { skipped = true }
+[protocol.CALayerDelegate.methods]
+drawLayer_inContext = { skipped = true }
+[protocol.CAMetalDrawable]
+skipped = true
+[class.CAMetalLayer]
+skipped = true
+[class.CAOpenGLLayer]
+skipped = true
+[class.CARenderer.methods]
+rendererWithMTLTexture_options = { skipped = true }
+setDestination = { skipped = true }
+beginFrameAtTime_timeStamp = { skipped = true }
+[class.CARemoteLayerClient.methods]
+initWithServerPort = { skipped = true }
+[class.CARemoteLayerServer.methods]
+serverPort = { skipped = true }
+[class.CAReplicatorLayer.methods]
+instanceColor = { skipped = true }
+setInstanceColor = { skipped = true }
+[class.CATextLayer.methods]
+font = { skipped = true }
+setFont = { skipped = true }
+foregroundColor = { skipped = true }
+setForegroundColor = { skipped = true }
+[fn.CATransform3DMakeAffineTransform]
+skipped = true
+[fn.CATransform3DGetAffineTransform]
+skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]
@@ -585,6 +646,8 @@ effectiveAppearance = { skipped = true }
 [fn.NSDrawBitmap]
 skipped = true
 [class.NSView.methods.getRectsExposedDuringLiveResize_count]
+skipped = true
+[class.CAMediaTimingFunction.methods.getControlPointAtIndex_values]
 skipped = true
 
 # Overridden fmt::Debug because we're missing https://github.com/madsmtm/objc2/issues/267
@@ -675,3 +738,8 @@ skipped = true
 # Wrong type on GNUStep
 [class.NSMutableData.methods.mutableBytes]
 skipped = true
+
+# Selector contains multiple colons after each other, like `::::`
+[class.CAMediaTimingFunction.methods]
+functionWithControlPoints = { skipped = true }
+initWithControlPoints = { skipped = true }

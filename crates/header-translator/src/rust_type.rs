@@ -475,6 +475,8 @@ enum RustType {
     U32,
     I64,
     U64,
+    ISize,
+    USize,
 
     // Objective-C
     Id {
@@ -639,6 +641,8 @@ impl RustType {
                     "uint32_t" => Self::U32,
                     "int64_t" => Self::I64,
                     "uint64_t" => Self::U64,
+                    "ssize_t" => Self::ISize,
+                    "size_t" => Self::USize,
 
                     // MacTypes.h
                     "UInt8" => Self::U8,
@@ -793,14 +797,14 @@ impl RustType {
 
 /// This is sound to output in (almost, c_void is not a valid return type) any
 /// context. `Ty` is then used to change these types into something nicer when
-/// requires.
+/// required.
 impl fmt::Display for RustType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         use RustType::*;
         match self {
             // Primitives
             Void => write!(f, "c_void"),
-            C99Bool => panic!("C99's bool is unsupported"), // write!(f, "bool")
+            C99Bool => write!(f, "bool"),
             Char => write!(f, "c_char"),
             SChar => write!(f, "c_schar"),
             UChar => write!(f, "c_uchar"),
@@ -824,6 +828,10 @@ impl fmt::Display for RustType {
             U32 => write!(f, "u32"),
             I64 => write!(f, "i64"),
             U64 => write!(f, "u64"),
+            // TODO: Use core::ffi::c_ssize_t
+            ISize => write!(f, "isize"),
+            // TODO: Use core::ffi::c_size_t
+            USize => write!(f, "usize"),
 
             // Objective-C
             Id {
@@ -1011,7 +1019,7 @@ impl Ty {
         this
     }
 
-    pub fn parse_typedef(ty: Type<'_>, context: &Context<'_>) -> Option<Self> {
+    pub fn parse_typedef(ty: Type<'_>, typedef_name: &str, context: &Context<'_>) -> Option<Self> {
         let mut ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
 
         ty.visit_lifetime(|lifetime| {
@@ -1024,9 +1032,9 @@ impl Ty {
             // Handled by Stmt::EnumDecl
             RustType::Enum { .. } => None,
             // Handled above and in Stmt::StructDecl
-            // The rest is only `NSZone`
-            RustType::Struct { name } => {
-                assert_eq!(name, "_NSZone", "invalid struct in typedef");
+            RustType::Struct { name } if name == typedef_name => None,
+            RustType::Struct { name } if name == typedef_name => {
+                warn!(name, "invalid struct in typedef");
                 None
             }
             // Opaque structs
@@ -1354,6 +1362,9 @@ impl fmt::Display for Ty {
                             write!(f, "Option<&'static Class>")
                         }
                     }
+                    RustType::C99Bool => {
+                        panic!("C99's bool as Objective-C method return is unsupported")
+                    }
                     RustType::ObjcBool => write!(f, "bool"),
                     ty => write!(f, "{ty}"),
                 }
@@ -1448,6 +1459,9 @@ impl fmt::Display for Ty {
                     } else {
                         write!(f, "Option<&Class>")
                     }
+                }
+                RustType::C99Bool if self.kind == TyKind::MethodArgument => {
+                    panic!("C99's bool as Objective-C method argument is unsupported")
                 }
                 RustType::ObjcBool if self.kind == TyKind::MethodArgument => write!(f, "bool"),
                 ty @ RustType::Pointer {

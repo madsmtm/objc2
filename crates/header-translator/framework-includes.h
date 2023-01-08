@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import <QuartzCore/CoreAnimation.h>
+
 #import <CoreData/CoreData.h>
 
 #if TARGET_OS_OSX

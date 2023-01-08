@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## icrate Unreleased - YYYY-MM-DD
 
+### Added
+* Added the `CoreAnimation` framework.
+
 
 ## icrate 0.0.1 - 2022-12-24
 

@@ -286,6 +286,7 @@ pub enum Stmt {
         result_type: Ty,
         // Some -> inline function.
         body: Option<()>,
+        safe: bool,
     },
     /// typedef Type TypedefName;
     AliasDecl {
@@ -295,7 +296,7 @@ pub enum Stmt {
     },
 }
 
-fn parse_struct(entity: &Entity<'_>, name: String, context: &Context<'_>) -> Stmt {
+fn parse_struct(entity: &Entity<'_>, context: &Context<'_>) -> (bool, Vec<(String, Ty)>) {
     let mut boxable = false;
     let mut fields = Vec::new();
 
@@ -325,11 +326,7 @@ fn parse_struct(entity: &Entity<'_>, name: String, context: &Context<'_>) -> Stm
         _ => warn!("unknown"),
     });
 
-    Stmt::StructDecl {
-        name,
-        boxable,
-        fields,
-    }
+    (boxable, fields)
 }
 
 impl Stmt {
@@ -533,7 +530,7 @@ impl Stmt {
                             // If this struct doesn't have a name, or the
                             // name is private, let's parse it with the
                             // typedef name.
-                            struct_ = Some(parse_struct(&entity, name.clone(), context))
+                            struct_ = Some(parse_struct(&entity, context))
                         } else {
                             skip_struct = true;
                         }
@@ -545,9 +542,13 @@ impl Stmt {
                     _ => warn!("unknown"),
                 });
 
-                if let Some(struct_) = struct_ {
-                    assert_eq!(kind, None, "should not have parsed anything");
-                    return vec![struct_];
+                if let Some((boxable, fields)) = struct_ {
+                    assert_eq!(kind, None, "should not have parsed a kind");
+                    return vec![Stmt::StructDecl {
+                        name,
+                        boxable,
+                        fields,
+                    }];
                 }
 
                 if skip_struct {
@@ -566,7 +567,7 @@ impl Stmt {
                 let ty = entity
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
-                if let Some(ty) = Ty::parse_typedef(ty, context) {
+                if let Some(ty) = Ty::parse_typedef(ty, &name, context) {
                     vec![Self::AliasDecl { name, ty, kind }]
                 } else {
                     vec![]
@@ -582,8 +583,19 @@ impl Stmt {
                     {
                         return vec![];
                     }
+
+                    // See https://github.com/rust-lang/rust-bindgen/blob/95fd17b874910184cc0fcd33b287fa4e205d9d7a/bindgen/ir/comp.rs#L1392-L1408
+                    if !entity.is_definition() {
+                        return vec![];
+                    }
+
                     if !name.starts_with('_') {
-                        return vec![parse_struct(entity, name, context)];
+                        let (boxable, fields) = parse_struct(entity, context);
+                        return vec![Stmt::StructDecl {
+                            name,
+                            boxable,
+                            fields,
+                        }];
                     }
                 }
                 vec![]
@@ -724,12 +736,9 @@ impl Stmt {
             EntityKind::FunctionDecl => {
                 let name = entity.get_name().expect("function name");
 
-                if context
-                    .fns
-                    .get(&name)
-                    .map(|data| data.skipped)
-                    .unwrap_or_default()
-                {
+                let data = context.fns.get(&name).cloned().unwrap_or_default();
+
+                if data.skipped {
                     return vec![];
                 }
 
@@ -760,6 +769,9 @@ impl Stmt {
                         let ty = Ty::parse_function_argument(ty, context);
                         arguments.push((name, ty))
                     }
+                    EntityKind::VisibilityAttr => {
+                        // CG_EXTERN or UIKIT_EXTERN
+                    }
                     _ => warn!("unknown"),
                 });
 
@@ -774,6 +786,7 @@ impl Stmt {
                     arguments,
                     result_type,
                     body,
+                    safe: !data.unsafe_,
                 }]
             }
             EntityKind::UnionDecl => {
@@ -1048,9 +1061,12 @@ impl fmt::Display for Stmt {
                 arguments,
                 result_type,
                 body: None,
+                safe,
             } => {
+                let unsafe_ = if *safe { "" } else { " unsafe" };
+
                 writeln!(f, "extern_fn!(")?;
-                write!(f, "    pub unsafe fn {name}(")?;
+                write!(f, "    pub{unsafe_} fn {name}(")?;
                 for (param, arg_ty) in arguments {
                     write!(f, "{}: {arg_ty},", handle_reserved(param))?;
                 }
@@ -1062,9 +1078,12 @@ impl fmt::Display for Stmt {
                 arguments,
                 result_type,
                 body: Some(_body),
+                safe,
             } => {
+                let unsafe_ = if *safe { "" } else { " unsafe" };
+
                 writeln!(f, "inline_fn!(")?;
-                write!(f, "    pub unsafe fn {name}(")?;
+                write!(f, "    pub{unsafe_} fn {name}(")?;
                 for (param, arg_ty) in arguments {
                     write!(f, "{}: {arg_ty},", handle_reserved(param))?;
                 }
