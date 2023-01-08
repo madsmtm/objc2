@@ -6,6 +6,7 @@ mod macros;
 data! {
     mod AppKit;
     mod AuthenticationServices;
+    mod CoreAnimation;
     mod CoreData;
     mod Foundation;
 }

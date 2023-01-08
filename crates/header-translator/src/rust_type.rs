@@ -475,6 +475,8 @@ enum RustType {
     U32,
     I64,
     U64,
+    ISize,
+    USize,
 
     // Objective-C
     Id {
@@ -639,6 +641,8 @@ impl RustType {
                     "uint32_t" => Self::U32,
                     "int64_t" => Self::I64,
                     "uint64_t" => Self::U64,
+                    "ssize_t" => Self::ISize,
+                    "size_t" => Self::USize,
 
                     // MacTypes.h
                     "UInt8" => Self::U8,
@@ -824,6 +828,10 @@ impl fmt::Display for RustType {
             U32 => write!(f, "u32"),
             I64 => write!(f, "i64"),
             U64 => write!(f, "u64"),
+            // TODO: Use core::ffi::c_ssize_t
+            ISize => write!(f, "isize"),
+            // TODO: Use core::ffi::c_size_t
+            USize => write!(f, "usize"),
 
             // Objective-C
             Id {
