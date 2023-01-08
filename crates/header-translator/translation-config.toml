@@ -743,3 +743,12 @@ skipped = true
 [class.CAMediaTimingFunction.methods]
 functionWithControlPoints = { skipped = true }
 initWithControlPoints = { skipped = true }
+
+[class.ASAuthorizationProviderExtensionLoginConfiguration.methods]
+setCustomAssertionRequestBodyClaims_returningError = { skipped = true }
+setCustomAssertionRequestHeaderClaims_returningError = { skipped = true }
+setCustomLoginRequestBodyClaims_returningError = { skipped = true }
+setCustomLoginRequestHeaderClaims_returningError = { skipped = true }
+
+[class.ASAuthorizationProviderExtensionLoginManager.methods]
+saveLoginConfiguration_error = { skipped = true }
