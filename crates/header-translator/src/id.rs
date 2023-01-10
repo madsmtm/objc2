@@ -39,6 +39,14 @@ impl<N> ItemIdentifier<N> {
             file_name,
         }
     }
+
+    pub fn with_new_path<R>(self, other: &ItemIdentifier<R>) -> Self {
+        Self {
+            name: self.name,
+            library: other.library.clone(),
+            file_name: other.file_name.clone(),
+        }
+    }
 }
 
 impl ItemIdentifier {
@@ -85,6 +93,38 @@ impl ItemIdentifier {
         }
 
         (!self.is_system()).then(|| ItemIdentifierFeature(self))
+    }
+
+    pub fn path(&self) -> impl fmt::Display + '_ {
+        struct ItemIdentifierPath<'a>(&'a ItemIdentifier);
+
+        impl fmt::Display for ItemIdentifierPath<'_> {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                if self.0.is_system() {
+                    write!(f, "{}", self.0.name)
+                } else {
+                    write!(f, "{}::{}", self.0.library, self.0.name)
+                }
+            }
+        }
+
+        ItemIdentifierPath(self)
+    }
+
+    pub fn path_in_relation_to<'a, T>(&'a self, other: &'a ItemIdentifier<T>) -> impl fmt::Display + 'a {
+        struct ItemIdentifierPathInRelationTo<'a, T>(&'a ItemIdentifier, &'a ItemIdentifier<T>);
+
+        impl<T> fmt::Display for ItemIdentifierPathInRelationTo<'_, T> {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                if self.1.file_name == self.0.file_name {
+                    write!(f, "{}", self.0.name)
+                } else {
+                    write!(f, "{}", self.0.path())
+                }
+            }
+        }
+
+        ItemIdentifierPathInRelationTo(self, other)
     }
 }
 

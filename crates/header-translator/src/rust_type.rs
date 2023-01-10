@@ -402,7 +402,7 @@ impl fmt::Display for IdType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Class { id, params, .. } => {
-                write!(f, "{}", id.name)?;
+                write!(f, "{}", id.path())?;
                 if let TypeParams::Generics(generics) = params {
                     write!(f, "<")?;
                     for generic in generics {
@@ -417,11 +417,11 @@ impl fmt::Display for IdType {
                 [id] if id.name == "NSCopying" || id.name == "NSMutableCopying" => {
                     write!(f, "Object")
                 }
-                [id] => write!(f, "{}", id.name),
+                [id] => write!(f, "{}", id.path()),
                 // TODO: Handle this better
                 _ => write!(f, "TodoProtocols"),
             },
-            Self::TypeDef { id, .. } => write!(f, "{}", id.name),
+            Self::TypeDef { id, .. } => write!(f, "{}", id.path()),
             Self::GenericParam { name } => write!(f, "{name}"),
             Self::AnyProtocol => write!(f, "Protocol"),
             // TODO: Handle this better

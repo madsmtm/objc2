@@ -890,11 +890,9 @@ impl fmt::Display for Stmt {
 
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    {derives}")?;
-                write!(f, "    pub struct ")?;
-                if generics.is_empty() {
-                    write!(f, "{}", id.name)?;
-                } else {
-                    write!(f, "{}<", id.name)?;
+                write!(f, "    pub struct {}", id.name)?;
+                if !generics.is_empty() {
+                    write!(f, "<")?;
                     for generic in generics {
                         write!(f, "{generic}: Message = Object, ")?;
                     }
@@ -934,17 +932,17 @@ impl fmt::Display for Stmt {
                     // Using generics in here is not technically correct, but
                     // should work for our use-cases.
                     if let Some((superclass, generics)) = iter.next() {
-                        write!(f, "{}{}", superclass.name, GenericTyHelper(&generics))?;
+                        write!(f, "{}{}", superclass.path_in_relation_to(&id), GenericTyHelper(&generics))?;
                     }
                     for (superclass, generics) in iter {
-                        write!(f, ", {}{}", superclass.name, GenericTyHelper(&generics))?;
+                        write!(f, ", {}{}", superclass.path_in_relation_to(&id), GenericTyHelper(&generics))?;
                     }
                     writeln!(f, ")]")?;
                 }
                 writeln!(
                     f,
                     "        type Super = {}{};",
-                    superclass.name,
+                    superclass.path_in_relation_to(&id),
                     GenericTyHelper(&generics)
                 )?;
                 writeln!(f, "    }}")?;
@@ -976,8 +974,8 @@ impl fmt::Display for Stmt {
                     f,
                     "    unsafe impl{} {}{} {{",
                     GenericParamsHelper(&generics),
-                    cls.name,
-                    GenericTyHelper(&generics)
+                    cls.path_in_relation_to(category),
+                    GenericTyHelper(&generics),
                 )?;
                 for method in methods {
                     // Use a set to deduplicate features, and to have them in

@@ -94,12 +94,13 @@ impl<'a> Cache<'a> {
             if description.is_some() {
                 warn!(description, "description was set");
             }
+            let category = category.clone().with_new_path(&cls);
             Some((
                 cls,
                 MethodCache {
                     availability: availability.clone(),
                     methods,
-                    category: category.clone(),
+                    category,
                 },
             ))
         } else {
