@@ -13,6 +13,7 @@
 #![allow(clippy::too_many_arguments)]
 #![allow(clippy::type_complexity)]
 #![allow(clippy::identity_op)]
+#![allow(clippy::missing_safety_doc)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/icrate/0.0.1")]
 #![recursion_limit = "512"]

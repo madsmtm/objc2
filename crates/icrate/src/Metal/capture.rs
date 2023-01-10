@@ -6,7 +6,7 @@ use crate::Metal;
 impl Metal::MTLCaptureDescriptor {
     #[doc(alias = "setCaptureObject")]
     pub fn set_capture_device(&self, device: &Metal::MTLDevice) {
-        unsafe { self.setCaptureObject(Some(&device)) }
+        unsafe { self.setCaptureObject(Some(device)) }
     }
 
     #[doc(alias = "setCaptureObject")]
