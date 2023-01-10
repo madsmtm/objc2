@@ -11,6 +11,7 @@ use crate::availability::Availability;
 use crate::config::ClassData;
 use crate::context::Context;
 use crate::expr::Expr;
+use crate::id::ItemIdentifier;
 use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
 use crate::rust_type::{Ownership, Ty};
@@ -34,33 +35,20 @@ impl fmt::Display for Derives {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct ClassDefReference {
-    pub library: String,
-    pub name: String,
-    pub generics: Vec<String>,
-}
-
-impl ClassDefReference {
-    pub fn new(library: String, name: String, generics: Vec<String>) -> Self {
-        Self {
-            library,
-            name,
-            generics,
-        }
-    }
-}
-
 fn parse_superclass<'ty>(
     entity: &Entity<'ty>,
     context: &Context<'_>,
-) -> Option<(Entity<'ty>, ClassDefReference)> {
+) -> Option<(Entity<'ty>, ItemIdentifier, Vec<String>)> {
     let mut superclass = None;
     let mut generics = Vec::new();
 
     immediate_children(entity, |entity, _span| match entity.get_kind() {
         EntityKind::ObjCSuperClassRef => {
-            superclass = Some(entity);
+            superclass = Some(
+                entity
+                    .get_reference()
+                    .expect("ObjCSuperClassRef to reference entity"),
+            );
         }
         EntityKind::TypeRef => {
             let name = entity.get_name().expect("typeref name");
@@ -69,22 +57,7 @@ fn parse_superclass<'ty>(
         _ => {}
     });
 
-    superclass.map(|entity| {
-        let reference = entity
-            .get_reference()
-            .expect("ObjCSuperClassRef to reference entity");
-        let (library, _) = context
-            .get_library_and_file_name(&reference)
-            .expect("superclass library");
-        (
-            reference,
-            ClassDefReference::new(
-                library,
-                entity.get_name().expect("superclass name"),
-                generics,
-            ),
-        )
-    })
+    superclass.map(|entity| (entity, ItemIdentifier::new(&entity, context), generics))
 }
 
 /// Takes one of:
@@ -97,7 +70,7 @@ fn parse_objc_decl(
     mut generics: Option<&mut Vec<String>>,
     data: Option<&ClassData>,
     context: &Context<'_>,
-) -> (Vec<String>, Vec<Method>, Vec<String>) {
+) -> (Vec<ItemIdentifier>, Vec<Method>, Vec<String>) {
     let mut protocols = Vec::new();
     let mut methods = Vec::new();
     let mut designated_initializers = Vec::new();
@@ -126,14 +99,14 @@ fn parse_objc_decl(
             if let Some(generics) = &mut generics {
                 // TODO: Generics with bounds (like NSMeasurement<UnitType: NSUnit *>)
                 // let ty = entity.get_type().expect("template type");
-                let name = entity.get_display_name().expect("template name");
+                let name = entity.get_name().expect("template name");
                 generics.push(name);
             } else {
                 error!("unsupported generics");
             }
         }
         EntityKind::ObjCProtocolRef => {
-            protocols.push(entity.get_name().expect("protocolref to have name"));
+            protocols.push(ItemIdentifier::new(&entity, context));
         }
         EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
             drop(span);
@@ -204,9 +177,10 @@ pub enum Stmt {
     /// ->
     /// extern_class!
     ClassDecl {
-        ty: ClassDefReference,
+        id: ItemIdentifier,
+        generics: Vec<String>,
         availability: Availability,
-        superclasses: Vec<ClassDefReference>,
+        superclasses: Vec<(ItemIdentifier, Vec<String>)>,
         designated_initializers: Vec<String>,
         derives: Derives,
         ownership: Ownership,
@@ -215,29 +189,31 @@ pub enum Stmt {
     /// ->
     /// extern_methods!
     Methods {
-        ty: ClassDefReference,
-        availability: Availability,
-        superclasses: Vec<ClassDefReference>,
-        methods: Vec<Method>,
+        cls: ItemIdentifier,
+        generics: Vec<String>,
         /// For the categories that have a name (though some don't, see NSClipView)
-        category_name: Option<String>,
+        category: ItemIdentifier<Option<String>>,
+        availability: Availability,
+        superclasses: Vec<(ItemIdentifier, Vec<String>)>,
+        methods: Vec<Method>,
         description: Option<String>,
     },
     /// @protocol name <protocols*>
     /// ->
     /// extern_protocol!
     ProtocolDecl {
-        name: String,
+        id: ItemIdentifier,
         availability: Availability,
-        protocols: Vec<String>,
+        protocols: Vec<ItemIdentifier>,
         methods: Vec<Method>,
     },
     /// @interface ty: _ <protocols*>
     /// @interface ty (_) <protocols*>
     ProtocolImpl {
-        ty: ClassDefReference,
+        cls: ItemIdentifier,
+        protocol: ItemIdentifier,
+        generics: Vec<String>,
         availability: Availability,
-        protocol: String,
     },
     /// struct name {
     ///     fields*
@@ -251,7 +227,7 @@ pub enum Stmt {
     ///     fields*
     /// } name;
     StructDecl {
-        name: String,
+        id: ItemIdentifier,
         boxable: bool,
         fields: Vec<(String, Ty)>,
     },
@@ -271,7 +247,7 @@ pub enum Stmt {
     ///     variants*
     /// };
     EnumDecl {
-        name: Option<String>,
+        id: ItemIdentifier<Option<String>>,
         ty: Ty,
         kind: Option<UnexposedMacro>,
         variants: Vec<(String, Expr)>,
@@ -279,7 +255,7 @@ pub enum Stmt {
     /// static const ty name = expr;
     /// extern const ty name;
     VarDecl {
-        name: String,
+        id: ItemIdentifier,
         ty: Ty,
         value: Option<Expr>,
     },
@@ -289,7 +265,7 @@ pub enum Stmt {
     ///     body
     /// }
     FnDecl {
-        name: String,
+        id: ItemIdentifier,
         arguments: Vec<(String, Ty)>,
         result_type: Ty,
         // Some -> inline function.
@@ -298,7 +274,7 @@ pub enum Stmt {
     },
     /// typedef Type TypedefName;
     AliasDecl {
-        name: String,
+        id: ItemIdentifier,
         ty: Ty,
         kind: Option<UnexposedMacro>,
     },
@@ -352,10 +328,10 @@ impl Stmt {
             EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef => vec![],
             EntityKind::ObjCInterfaceDecl => {
                 // entity.get_mangled_objc_names()
-                let name = entity.get_name().expect("class name");
-                let class_data = context.class_data.get(&name);
+                let id = ItemIdentifier::new(&entity, context);
+                let data = context.class_data.get(&id.name);
 
-                if class_data.map(|data| data.skipped).unwrap_or_default() {
+                if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
                 }
 
@@ -367,52 +343,43 @@ impl Stmt {
                 let mut generics = Vec::new();
 
                 let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(entity, true, Some(&mut generics), class_data, context);
-
-                let (library, _) = context
-                    .get_library_and_file_name(entity)
-                    .expect("category library");
-                let ty = ClassDefReference::new(library, name, generics);
+                    parse_objc_decl(entity, true, Some(&mut generics), data, context);
 
                 let mut superclass_entity = *entity;
                 let mut superclasses = vec![];
 
-                while let Some((next_entity, superclass)) =
+                while let Some((next_entity, superclass, generics)) =
                     parse_superclass(&superclass_entity, context)
                 {
                     superclass_entity = next_entity;
-                    superclasses.push(superclass);
+                    superclasses.push((superclass, generics));
                 }
 
                 let methods = Self::Methods {
-                    ty: ty.clone(),
+                    cls: id.clone(),
+                    generics: generics.clone(),
+                    category: ItemIdentifier::with_name(None, &entity, context),
                     availability: availability.clone(),
                     superclasses: superclasses.clone(),
                     methods,
-                    category_name: None,
                     description: None,
                 };
 
-                if !class_data
-                    .map(|data| data.definition_skipped)
-                    .unwrap_or_default()
-                {
+                if !data.map(|data| data.definition_skipped).unwrap_or_default() {
                     iter::once(Self::ClassDecl {
-                        ty: ty.clone(),
+                        id: id.clone(),
+                        generics: generics.clone(),
                         availability: availability.clone(),
                         superclasses,
                         designated_initializers,
-                        derives: class_data
-                            .map(|data| data.derives.clone())
-                            .unwrap_or_default(),
-                        ownership: class_data
-                            .map(|data| data.ownership.clone())
-                            .unwrap_or_default(),
+                        derives: data.map(|data| data.derives.clone()).unwrap_or_default(),
+                        ownership: data.map(|data| data.ownership.clone()).unwrap_or_default(),
                     })
                     .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
-                        ty: ty.clone(),
-                        availability: availability.clone(),
+                        cls: id.clone(),
                         protocol,
+                        generics: generics.clone(),
+                        availability: availability.clone(),
                     }))
                     .chain(iter::once(methods))
                     .collect()
@@ -421,41 +388,39 @@ impl Stmt {
                 }
             }
             EntityKind::ObjCCategoryDecl => {
-                let name = entity.get_name();
+                let category = ItemIdentifier::new_optional(&entity, context);
                 let availability = Availability::parse(
                     entity
                         .get_platform_availability()
                         .expect("category availability"),
                 );
 
-                let mut class_name = None;
+                let mut cls = None;
                 entity.visit_children(|entity, _parent| {
                     if entity.get_kind() == EntityKind::ObjCClassRef {
-                        if class_name.is_some() {
+                        if cls.is_some() {
                             panic!("could not find unique category class")
                         }
-                        class_name = Some(entity.get_name().expect("class name"));
+                        let definition = entity
+                            .get_definition()
+                            .expect("category class ref definition");
+                        cls = Some(ItemIdentifier::new(&definition, context));
                         EntityVisitResult::Break
                     } else {
                         EntityVisitResult::Continue
                     }
                 });
-                let class_name = class_name.expect("could not find category class");
-                let class_data = context.class_data.get(&class_name);
+                let cls = cls.expect("could not find category class");
+                let data = context.class_data.get(&cls.name);
 
-                if class_data.map(|data| data.skipped).unwrap_or_default() {
+                if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
                 }
 
-                let mut class_generics = Vec::new();
+                let mut generics = Vec::new();
 
-                let (protocols, methods, designated_initializers) = parse_objc_decl(
-                    entity,
-                    false,
-                    Some(&mut class_generics),
-                    class_data,
-                    context,
-                );
+                let (protocols, methods, designated_initializers) =
+                    parse_objc_decl(entity, false, Some(&mut generics), data, context);
 
                 if !designated_initializers.is_empty() {
                     warn!(
@@ -464,41 +429,38 @@ impl Stmt {
                     )
                 }
 
-                let (library, _) = context
-                    .get_library_and_file_name(entity)
-                    .expect("category library");
-                let ty = ClassDefReference::new(library, class_name, class_generics);
-
                 let mut superclass_entity = *entity;
                 let mut superclasses = vec![];
 
-                while let Some((next_entity, superclass)) =
+                while let Some((next_entity, superclass, generics)) =
                     parse_superclass(&superclass_entity, context)
                 {
                     superclass_entity = next_entity;
-                    superclasses.push(superclass);
+                    superclasses.push((superclass, generics));
                 }
 
                 iter::once(Self::Methods {
-                    ty: ty.clone(),
+                    cls: cls.clone(),
+                    generics: generics.clone(),
+                    category,
                     availability: availability.clone(),
                     superclasses,
                     methods,
-                    category_name: name,
                     description: None,
                 })
                 .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
-                    ty: ty.clone(),
+                    cls: cls.clone(),
+                    generics: generics.clone(),
                     availability: availability.clone(),
                     protocol,
                 }))
                 .collect()
             }
             EntityKind::ObjCProtocolDecl => {
-                let name = entity.get_name().expect("protocol name");
-                let protocol_data = context.protocol_data.get(&name);
+                let id = ItemIdentifier::new(&entity, context);
+                let data = context.protocol_data.get(&id.name);
 
-                if protocol_data.map(|data| data.skipped).unwrap_or_default() {
+                if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
                 }
 
@@ -509,7 +471,7 @@ impl Stmt {
                 );
 
                 let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(entity, false, None, protocol_data, context);
+                    parse_objc_decl(entity, false, None, data, context);
 
                 if !designated_initializers.is_empty() {
                     warn!(
@@ -519,14 +481,14 @@ impl Stmt {
                 }
 
                 vec![Self::ProtocolDecl {
-                    name,
+                    id,
                     availability,
                     protocols,
                     methods,
                 }]
             }
             EntityKind::TypedefDecl => {
-                let name = entity.get_name().expect("typedef name");
+                let id = ItemIdentifier::new(&entity, context);
                 let mut struct_ = None;
                 let mut skip_struct = false;
                 let mut kind = None;
@@ -543,7 +505,7 @@ impl Stmt {
                     EntityKind::StructDecl => {
                         if context
                             .struct_data
-                            .get(&name)
+                            .get(&id.name)
                             .map(|data| data.skipped)
                             .unwrap_or_default()
                         {
@@ -573,8 +535,8 @@ impl Stmt {
 
                 if let Some((boxable, fields)) = struct_ {
                     assert_eq!(kind, None, "should not have parsed a kind");
-                    return vec![Stmt::StructDecl {
-                        name,
+                    return vec![Self::StructDecl {
+                        id,
                         boxable,
                         fields,
                     }];
@@ -586,7 +548,7 @@ impl Stmt {
 
                 if context
                     .typedef_data
-                    .get(&name)
+                    .get(&id.name)
                     .map(|data| data.skipped)
                     .unwrap_or_default()
                 {
@@ -596,17 +558,19 @@ impl Stmt {
                 let ty = entity
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
-                if let Some(ty) = Ty::parse_typedef(ty, &name, context) {
-                    vec![Self::AliasDecl { name, ty, kind }]
+                if let Some(ty) = Ty::parse_typedef(ty, &id.name, context) {
+                    vec![Self::AliasDecl { id, ty, kind }]
                 } else {
                     vec![]
                 }
             }
             EntityKind::StructDecl => {
                 if let Some(name) = entity.get_name() {
+                    let id = ItemIdentifier::with_name(name, &entity, context);
+
                     if context
                         .struct_data
-                        .get(&name)
+                        .get(&id.name)
                         .map(|data| data.skipped)
                         .unwrap_or_default()
                     {
@@ -618,10 +582,10 @@ impl Stmt {
                         return vec![];
                     }
 
-                    if !name.starts_with('_') {
+                    if !id.name.starts_with('_') {
                         let (boxable, fields) = parse_struct(entity, context);
-                        return vec![Stmt::StructDecl {
-                            name,
+                        return vec![Self::StructDecl {
+                            id,
                             boxable,
                             fields,
                         }];
@@ -636,11 +600,11 @@ impl Stmt {
                     return vec![];
                 }
 
-                let name = entity.get_name();
+                let id = ItemIdentifier::new_optional(&entity, context);
 
                 let data = context
                     .enum_data
-                    .get(name.as_deref().unwrap_or("anonymous"))
+                    .get(id.name.as_deref().unwrap_or("anonymous"))
                     .cloned()
                     .unwrap_or_default();
                 if data.skipped {
@@ -686,7 +650,7 @@ impl Stmt {
                     EntityKind::UnexposedAttr => {
                         if let Some(macro_) = UnexposedMacro::parse(&entity) {
                             if let Some(kind) = &kind {
-                                assert_eq!(kind, &macro_, "got differing enum kinds in {name:?}");
+                                assert_eq!(kind, &macro_, "got differing enum kinds in {id:?}");
                             } else {
                                 kind = Some(macro_);
                             }
@@ -695,7 +659,7 @@ impl Stmt {
                     EntityKind::FlagEnum => {
                         let macro_ = UnexposedMacro::Options;
                         if let Some(kind) = &kind {
-                            assert_eq!(kind, &macro_, "got differing enum kinds in {name:?}");
+                            assert_eq!(kind, &macro_, "got differing enum kinds in {id:?}");
                         } else {
                             kind = Some(macro_);
                         }
@@ -706,23 +670,23 @@ impl Stmt {
                     _ => error!("unknown"),
                 });
 
-                if name.is_none() && variants.is_empty() {
+                if id.name.is_none() && variants.is_empty() {
                     return vec![];
                 }
 
                 vec![Self::EnumDecl {
-                    name,
+                    id,
                     ty,
                     kind,
                     variants,
                 }]
             }
             EntityKind::VarDecl => {
-                let name = entity.get_name().expect("var decl name");
+                let id = ItemIdentifier::new(&entity, context);
 
                 if context
                     .statics
-                    .get(&name)
+                    .get(&id.name)
                     .map(|data| data.skipped)
                     .unwrap_or_default()
                 {
@@ -749,7 +713,7 @@ impl Stmt {
                             panic!("got variable value twice")
                         }
                     }
-                    _ => panic!("unknown vardecl child in {name}: {entity:?}"),
+                    _ => panic!("unknown vardecl child in {id:?}: {entity:?}"),
                 });
 
                 let value = match value {
@@ -761,12 +725,12 @@ impl Stmt {
                     None => None,
                 };
 
-                vec![Self::VarDecl { name, ty, value }]
+                vec![Self::VarDecl { id, ty, value }]
             }
             EntityKind::FunctionDecl => {
-                let name = entity.get_name().expect("function name");
+                let id = ItemIdentifier::new(&entity, context);
 
-                let data = context.fns.get(&name).cloned().unwrap_or_default();
+                let data = context.fns.get(&id.name).cloned().unwrap_or_default();
 
                 if data.skipped {
                     return vec![];
@@ -814,7 +778,7 @@ impl Stmt {
                 };
 
                 vec![Self::FnDecl {
-                    name,
+                    id,
                     arguments,
                     result_type,
                     body,
@@ -822,8 +786,9 @@ impl Stmt {
                 }]
             }
             EntityKind::UnionDecl => {
+                let id = ItemIdentifier::new_optional(&entity, context);
                 error!(
-                    name = ?entity.get_name(),
+                    ?id,
                     has_attributes = ?entity.has_attributes(),
                     children = ?entity.get_children(),
                     "union",
@@ -869,17 +834,16 @@ impl fmt::Display for Stmt {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let _span = debug_span!("stmt", discriminant = ?mem::discriminant(self)).entered();
 
-        struct GenericTyHelper<'a>(&'a ClassDefReference);
+        struct GenericTyHelper<'a>(&'a [String]);
 
         impl fmt::Display for GenericTyHelper<'_> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                write!(f, "{}", self.0.name)?;
-                if !self.0.generics.is_empty() {
+                if !self.0.is_empty() {
                     write!(f, "<")?;
-                    for generic in &self.0.generics {
+                    for generic in self.0 {
                         write!(f, "{generic}, ")?;
                     }
-                    for generic in &self.0.generics {
+                    for generic in self.0 {
                         write!(f, "{generic}Ownership, ")?;
                     }
                     write!(f, ">")?;
@@ -908,7 +872,8 @@ impl fmt::Display for Stmt {
 
         match self {
             Self::ClassDecl {
-                ty,
+                id,
+                generics,
                 availability: _,
                 superclasses,
                 designated_initializers: _,
@@ -917,7 +882,7 @@ impl fmt::Display for Stmt {
             } => {
                 // TODO: Use ty.get_objc_protocol_declarations()
 
-                let macro_name = if ty.generics.is_empty() {
+                let macro_name = if generics.is_empty() {
                     "extern_class"
                 } else {
                     "__inner_extern_class"
@@ -926,23 +891,23 @@ impl fmt::Display for Stmt {
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    {derives}")?;
                 write!(f, "    pub struct ")?;
-                if ty.generics.is_empty() {
-                    write!(f, "{}", ty.name)?;
+                if generics.is_empty() {
+                    write!(f, "{}", id.name)?;
                 } else {
-                    write!(f, "{}<", ty.name)?;
-                    for generic in &ty.generics {
+                    write!(f, "{}<", id.name)?;
+                    for generic in generics {
                         write!(f, "{generic}: Message = Object, ")?;
                     }
-                    for generic in &ty.generics {
+                    for generic in generics {
                         write!(f, "{generic}Ownership: Ownership = Shared, ")?;
                     }
                     write!(f, ">")?;
                 };
-                if ty.generics.is_empty() {
+                if generics.is_empty() {
                     writeln!(f, ";")?;
                 } else {
                     writeln!(f, " {{")?;
-                    for (i, generic) in ty.generics.iter().enumerate() {
+                    for (i, generic) in generics.iter().enumerate() {
                         // Invariant over the generic (for now)
                         writeln!(
                             f,
@@ -955,69 +920,84 @@ impl fmt::Display for Stmt {
                 writeln!(f)?;
                 writeln!(
                     f,
-                    "    unsafe impl{} ClassType for {} {{",
-                    GenericParamsHelper(&ty.generics),
-                    GenericTyHelper(ty)
+                    "    unsafe impl{} ClassType for {}{} {{",
+                    GenericParamsHelper(&generics),
+                    id.name,
+                    GenericTyHelper(&generics),
                 )?;
                 let (superclass, rest) = superclasses.split_at(1);
-                let superclass = superclass.get(0).expect("must have a least one superclass");
+                let (superclass, generics) =
+                    superclass.get(0).expect("must have a least one superclass");
                 if !rest.is_empty() {
                     write!(f, "    #[inherits(")?;
                     let mut iter = rest.iter();
                     // Using generics in here is not technically correct, but
                     // should work for our use-cases.
-                    if let Some(superclass) = iter.next() {
-                        write!(f, "{}", GenericTyHelper(superclass))?;
+                    if let Some((superclass, generics)) = iter.next() {
+                        write!(f, "{}{}", superclass.name, GenericTyHelper(&generics))?;
                     }
-                    for superclass in iter {
-                        write!(f, ", {}", GenericTyHelper(superclass))?;
+                    for (superclass, generics) in iter {
+                        write!(f, ", {}{}", superclass.name, GenericTyHelper(&generics))?;
                     }
                     writeln!(f, ")]")?;
                 }
-                writeln!(f, "        type Super = {};", GenericTyHelper(superclass))?;
+                writeln!(
+                    f,
+                    "        type Super = {}{};",
+                    superclass.name,
+                    GenericTyHelper(&generics)
+                )?;
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
             }
             Self::Methods {
-                ty,
+                cls,
+                generics,
+                category,
                 availability: _,
                 superclasses,
                 methods,
-                category_name,
                 description,
             } => {
                 writeln!(f, "extern_methods!(")?;
                 if let Some(description) = description {
                     writeln!(f, "    /// {description}")?;
-                    if category_name.is_some() {
+                    if category.name.is_some() {
                         writeln!(f, "    ///")?;
                     }
                 }
-                if let Some(category_name) = category_name {
+                if let Some(category_name) = &category.name {
                     writeln!(f, "    /// {category_name}")?;
                 }
-                writeln!(f, "    #[cfg(feature = \"{}_{}\")]", ty.library, ty.name)?;
+                if let Some(feature) = cls.feature() {
+                    writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
+                }
                 writeln!(
                     f,
-                    "    unsafe impl{} {} {{",
-                    GenericParamsHelper(&ty.generics),
-                    GenericTyHelper(ty)
+                    "    unsafe impl{} {}{} {{",
+                    GenericParamsHelper(&generics),
+                    cls.name,
+                    GenericTyHelper(&generics)
                 )?;
                 for method in methods {
-                    // Use a set to deduplicate features, and to have them in a consistent order
+                    // Use a set to deduplicate features, and to have them in
+                    // a consistent order
                     let mut features = BTreeSet::new();
-                    method.visit_required_features(|library, item| {
-                        if ty.library == library && ty.name == item {
-                            // The feature is guaranteed enabled if the class itself is enabled
+                    method.visit_required_types(|item| {
+                        if cls.library == item.library && cls.name == item.name {
+                            // The feature is guaranteed enabled if the class
+                            // itself is enabled.
                             return;
                         }
-                        for superclass in superclasses {
-                            if superclass.library == library && superclass.name == item {
-                                // Same for superclasses
+                        for (superclass, _) in superclasses {
+                            if superclass.library == item.library && superclass.name == item.name {
+                                // Same for superclasses.
                                 return;
                             }
                         }
-                        features.insert(format!("feature = \"{library}_{item}\""));
+                        if let Some(feature) = item.feature() {
+                            features.insert(format!("feature = \"{feature}\""));
+                        }
                     });
                     match features.len() {
                         0 => {}
@@ -1043,22 +1023,23 @@ impl fmt::Display for Stmt {
                 writeln!(f, ");")?;
             }
             Self::ProtocolImpl {
-                ty: _,
-                availability: _,
+                cls: _,
+                generics: _,
                 protocol: _,
+                availability: _,
             } => {
                 // TODO
             }
             Self::ProtocolDecl {
-                name,
+                id,
                 availability: _,
                 protocols: _,
                 methods,
             } => {
                 writeln!(f, "extern_protocol!(")?;
-                writeln!(f, "    pub struct {name};")?;
+                writeln!(f, "    pub struct {};", id.name)?;
                 writeln!(f)?;
-                writeln!(f, "    unsafe impl ProtocolType for {name} {{")?;
+                writeln!(f, "    unsafe impl ProtocolType for {} {{", id.name)?;
                 for method in methods {
                     writeln!(f, "{method}")?;
                 }
@@ -1066,12 +1047,12 @@ impl fmt::Display for Stmt {
                 writeln!(f, ");")?;
             }
             Self::StructDecl {
-                name,
+                id,
                 boxable: _,
                 fields,
             } => {
                 writeln!(f, "extern_struct!(")?;
-                writeln!(f, "    pub struct {name} {{")?;
+                writeln!(f, "    pub struct {} {{", id.name)?;
                 for (name, ty) in fields {
                     write!(f, "        ")?;
                     if !name.starts_with('_') {
@@ -1083,7 +1064,7 @@ impl fmt::Display for Stmt {
                 writeln!(f, ");")?;
             }
             Self::EnumDecl {
-                name,
+                id,
                 ty,
                 kind,
                 variants,
@@ -1099,7 +1080,7 @@ impl fmt::Display for Stmt {
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    #[underlying({ty})]")?;
                 write!(f, "    pub enum ",)?;
-                if let Some(name) = name {
+                if let Some(name) = &id.name {
                     write!(f, "{name} ")?;
                 }
                 writeln!(f, "{{")?;
@@ -1110,21 +1091,21 @@ impl fmt::Display for Stmt {
                 writeln!(f, ");")?;
             }
             Self::VarDecl {
-                name,
+                id,
                 ty,
                 value: None,
             } => {
-                writeln!(f, "extern_static!({name}: {ty});")?;
+                writeln!(f, "extern_static!({}: {ty});", id.name)?;
             }
             Self::VarDecl {
-                name,
+                id,
                 ty,
                 value: Some(expr),
             } => {
-                writeln!(f, "extern_static!({name}: {ty} = {expr});")?;
+                writeln!(f, "extern_static!({}: {ty} = {expr});", id.name)?;
             }
             Self::FnDecl {
-                name,
+                id,
                 arguments,
                 result_type,
                 body: None,
@@ -1133,7 +1114,7 @@ impl fmt::Display for Stmt {
                 let unsafe_ = if *safe { "" } else { " unsafe" };
 
                 writeln!(f, "extern_fn!(")?;
-                write!(f, "    pub{unsafe_} fn {name}(")?;
+                write!(f, "    pub{unsafe_} fn {}(", id.name)?;
                 for (param, arg_ty) in arguments {
                     write!(f, "{}: {arg_ty},", handle_reserved(param))?;
                 }
@@ -1141,7 +1122,7 @@ impl fmt::Display for Stmt {
                 writeln!(f, ");")?;
             }
             Self::FnDecl {
-                name,
+                id,
                 arguments,
                 result_type,
                 body: Some(_body),
@@ -1150,7 +1131,7 @@ impl fmt::Display for Stmt {
                 let unsafe_ = if *safe { "" } else { " unsafe" };
 
                 writeln!(f, "inline_fn!(")?;
-                write!(f, "    pub{unsafe_} fn {name}(")?;
+                write!(f, "    pub{unsafe_} fn {}(", id.name)?;
                 for (param, arg_ty) in arguments {
                     write!(f, "{}: {arg_ty},", handle_reserved(param))?;
                 }
@@ -1159,18 +1140,18 @@ impl fmt::Display for Stmt {
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
             }
-            Self::AliasDecl { name, ty, kind } => {
+            Self::AliasDecl { id, ty, kind } => {
                 match kind {
                     Some(UnexposedMacro::TypedEnum) => {
-                        writeln!(f, "typed_enum!(pub type {name} = {ty};);")?;
+                        writeln!(f, "typed_enum!(pub type {} = {ty};);", id.name)?;
                     }
                     Some(UnexposedMacro::TypedExtensibleEnum) => {
-                        writeln!(f, "typed_extensible_enum!(pub type {name} = {ty};);")?;
+                        writeln!(f, "typed_extensible_enum!(pub type {} = {ty};);", id.name)?;
                     }
                     None | Some(UnexposedMacro::BridgedTypedef) => {
                         // "bridged" typedefs should just use a normal type
                         // alias.
-                        writeln!(f, "pub type {name} = {ty};")?;
+                        writeln!(f, "pub type {} = {ty};", id.name)?;
                     }
                     kind => panic!("invalid alias kind {kind:?} for {ty:?}"),
                 }

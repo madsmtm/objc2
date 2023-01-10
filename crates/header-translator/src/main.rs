@@ -200,7 +200,7 @@ fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Confi
 
     tu.get_entity().visit_children(|entity, _parent| {
         let _span = trace_span!("entity", ?entity).entered();
-        if let Some((library_name, file_name)) = context.get_library_and_file_name(&entity) {
+        if let Some((library_name, Some(file_name))) = context.get_library_and_file_name(&entity) {
             if library_span_name != library_name {
                 library_span.take();
                 file_span.take();

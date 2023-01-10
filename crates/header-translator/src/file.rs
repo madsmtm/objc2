@@ -29,17 +29,17 @@ impl File {
         self.stmts
             .iter()
             .filter_map(|stmt| match stmt {
-                Stmt::ClassDecl { ty, .. } => Some(&*ty.name),
+                Stmt::ClassDecl { id, .. } => Some(&*id.name),
                 Stmt::Methods { .. } => None,
-                Stmt::ProtocolDecl { name, .. } => Some(name),
+                Stmt::ProtocolDecl { id, .. } => Some(&*id.name),
                 Stmt::ProtocolImpl { .. } => None,
-                Stmt::StructDecl { name, .. } => Some(name),
-                Stmt::EnumDecl { name, .. } => name.as_deref(),
-                Stmt::VarDecl { name, .. } => Some(name),
-                Stmt::FnDecl { name, body, .. } if body.is_none() => Some(name),
+                Stmt::StructDecl { id, .. } => Some(&*id.name),
+                Stmt::EnumDecl { id, .. } => id.name.as_deref(),
+                Stmt::VarDecl { id, .. } => Some(&*id.name),
+                Stmt::FnDecl { id, body, .. } if body.is_none() => Some(&id.name),
                 // TODO
                 Stmt::FnDecl { .. } => None,
-                Stmt::AliasDecl { name, .. } => Some(name),
+                Stmt::AliasDecl { id, .. } => Some(&*id.name),
             })
             .chain(self.stmts.iter().flat_map(|stmt| {
                 if let Stmt::EnumDecl { variants, .. } = stmt {

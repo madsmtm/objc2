@@ -6,6 +6,7 @@ use proc_macro2::{TokenStream, TokenTree};
 use serde::Deserialize;
 
 use crate::context::Context;
+use crate::id::ItemIdentifier;
 use crate::method::MemoryManagement;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -188,30 +189,28 @@ enum TypeParams {
     Empty,
     // TODO: Ensure in the type-system that these are never empty
     Generics(Vec<IdType>),
-    Protocols(Vec<(String, String)>),
+    Protocols(Vec<ItemIdentifier>),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 enum IdType {
     Class {
-        library: String,
-        name: String,
+        id: ItemIdentifier,
         params: TypeParams,
         ownership: Option<Ownership>,
     },
     TypeDef {
-        library: String,
-        name: String,
+        id: ItemIdentifier,
     },
     GenericParam {
         name: String,
     },
     AnyObject {
-        protocols: Vec<(String, String)>,
+        protocols: Vec<ItemIdentifier>,
     },
     AnyProtocol,
     AnyClass {
-        protocols: Vec<(String, String)>,
+        protocols: Vec<ItemIdentifier>,
     },
     Allocated,
     Self_ {
@@ -220,35 +219,15 @@ enum IdType {
 }
 
 impl IdType {
-    fn name(&self) -> &str {
+    fn id(&self) -> Option<&ItemIdentifier> {
         match self {
-            Self::Class { name, .. } => name,
+            Self::Class { id, .. } => Some(id),
             Self::AnyObject { protocols } => match &**protocols {
-                [] => "Object",
-                [(_, name)] if name == "NSCopying" || name == "NSMutableCopying" => "Object",
-                [(_, name)] => name,
-                // TODO: Handle this better
-                _ => "TodoProtocols",
-            },
-            Self::TypeDef { name, .. } => name,
-            Self::GenericParam { name } => name,
-            Self::AnyProtocol => "Protocol",
-            // TODO: Handle this better
-            Self::AnyClass { .. } => "TodoClass",
-            Self::Allocated => "Allocated",
-            Self::Self_ { .. } => "Self",
-        }
-    }
-
-    fn library(&self) -> Option<&str> {
-        match self {
-            Self::Class { library, .. } => Some(library),
-            Self::AnyObject { protocols } => match &**protocols {
-                [(_, name)] if name == "NSCopying" || name == "NSMutableCopying" => None,
-                [(library, _)] => Some(library),
+                [id] if id.name == "NSCopying" || id.name == "NSMutableCopying" => None,
+                [id] => Some(id),
                 _ => None,
             },
-            Self::TypeDef { library, .. } => Some(library),
+            Self::TypeDef { id, .. } => Some(id),
             _ => None,
         }
     }
@@ -306,15 +285,7 @@ impl IdType {
         let protocols: Vec<_> = ty
             .get_objc_protocol_declarations()
             .into_iter()
-            .map(|entity| {
-                (
-                    context
-                        .get_library_and_file_name(&entity)
-                        .expect("protocol library")
-                        .0,
-                    entity.get_display_name().expect("protocol name"),
-                )
-            })
+            .map(|entity| ItemIdentifier::new(&entity, context))
             .collect();
 
         match ty.get_kind() {
@@ -339,14 +310,11 @@ impl IdType {
                 if name == "Protocol" {
                     Self::AnyProtocol
                 } else {
-                    let (library, _) = context
-                        .get_library_and_file_name(
-                            &ty.get_declaration().expect("ObjCInterface declaration"),
-                        )
-                        .expect("ObjCInterface declaration library");
+                    let declaration = ty.get_declaration().expect("ObjCInterface declaration");
+                    let id = ItemIdentifier::new(&declaration, context);
+                    assert_eq!(id.name, name);
                     Self::Class {
-                        library,
-                        name,
+                        id,
                         params: TypeParams::Empty,
                         ownership: None,
                     }
@@ -373,13 +341,11 @@ impl IdType {
                         Self::AnyObject { protocols }
                     }
                     TypeKind::ObjCInterface => {
-                        let (library, _) = context
-                            .get_library_and_file_name(
-                                &base_ty
-                                    .get_declaration()
-                                    .expect("ObjCObject -> ObjCInterface declaration"),
-                            )
-                            .expect("ObjCObject -> ObjCInterface declaration library");
+                        let declaration = base_ty
+                            .get_declaration()
+                            .expect("ObjCObject -> ObjCInterface declaration");
+                        let id = ItemIdentifier::new(&declaration, context);
+                        assert_eq!(id.name, name);
 
                         if !generics.is_empty() && !protocols.is_empty() {
                             panic!("got object with both protocols and generics: {name:?}, {protocols:?}, {generics:?}");
@@ -394,8 +360,7 @@ impl IdType {
                         parser.set_inner_pointer();
 
                         Self::Class {
-                            library,
-                            name,
+                            id,
                             params: if protocols.is_empty() {
                                 TypeParams::Generics(generics)
                             } else {
@@ -416,12 +381,9 @@ impl IdType {
         }
     }
 
-    fn visit_required_features(&self, f: &mut impl FnMut(&str, &str)) {
-        if let Some(library) = self.library() {
-            let name = self.name();
-            if library != "Foundation" && name != "NSObject" {
-                f(&library, name);
-            }
+    fn visit_required_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
+        if let Some(id) = self.id() {
+            f(&id);
         }
 
         if let Self::Class {
@@ -430,7 +392,7 @@ impl IdType {
         } = self
         {
             for generic in generics {
-                generic.visit_required_features(f);
+                generic.visit_required_types(f);
             }
         }
     }
@@ -438,21 +400,35 @@ impl IdType {
 
 impl fmt::Display for IdType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.name())?;
-
-        if let Self::Class {
-            params: TypeParams::Generics(generics),
-            ..
-        } = &self
-        {
-            write!(f, "<")?;
-            for generic in generics {
-                write!(f, "{generic},")?;
+        match self {
+            Self::Class { id, params, .. } => {
+                write!(f, "{}", id.name)?;
+                if let TypeParams::Generics(generics) = params {
+                    write!(f, "<")?;
+                    for generic in generics {
+                        write!(f, "{generic},")?;
+                    }
+                    write!(f, ">")?;
+                }
+                Ok(())
             }
-            write!(f, ">")?;
+            Self::AnyObject { protocols } => match &**protocols {
+                [] => write!(f, "Object"),
+                [id] if id.name == "NSCopying" || id.name == "NSMutableCopying" => {
+                    write!(f, "Object")
+                }
+                [id] => write!(f, "{}", id.name),
+                // TODO: Handle this better
+                _ => write!(f, "TodoProtocols"),
+            },
+            Self::TypeDef { id, .. } => write!(f, "{}", id.name),
+            Self::GenericParam { name } => write!(f, "{name}"),
+            Self::AnyProtocol => write!(f, "Protocol"),
+            // TODO: Handle this better
+            Self::AnyClass { .. } => write!(f, "TodoClass"),
+            Self::Allocated => write!(f, "Allocated"),
+            Self::Self_ { .. } => write!(f, "Self"),
         }
-
-        Ok(())
     }
 }
 
@@ -569,10 +545,10 @@ enum Inner {
         num_elements: usize,
     },
     Enum {
-        name: String,
+        id: ItemIdentifier,
     },
     Struct {
-        name: String,
+        id: ItemIdentifier,
     },
     Fn {
         is_variadic: bool,
@@ -585,7 +561,7 @@ enum Inner {
     },
 
     TypeDef {
-        name: String,
+        id: ItemIdentifier,
     },
 }
 
@@ -901,12 +877,8 @@ impl Inner {
                                         context,
                                     );
 
-                                    let (library, _) = context
-                                        .get_library_and_file_name(&declaration)
-                                        .expect("ObjCObjectPointer library");
                                     IdType::TypeDef {
-                                        library,
-                                        name: typedef_name,
+                                        id: ItemIdentifier::new(&declaration, context),
                                     }
                                 };
 
@@ -917,7 +889,16 @@ impl Inner {
                                     nullability,
                                 }
                             }
-                            _ => Self::TypeDef { name: typedef_name },
+                            _ => {
+                                let declaration = declaration.expect("typedef declaration");
+                                Self::TypeDef {
+                                    id: ItemIdentifier::with_name(
+                                        typedef_name,
+                                        &declaration,
+                                        context,
+                                    ),
+                                }
+                            }
                         }
                     }
                 }
@@ -926,18 +907,24 @@ impl Inner {
                 let ty = ty.get_elaborated_type().expect("elaborated");
                 match ty.get_kind() {
                     TypeKind::Record => {
+                        let declaration = ty.get_declaration().expect("record declaration");
                         let name = ty
                             .get_display_name()
                             .trim_start_matches("struct ")
                             .to_string();
-                        Self::Struct { name }
+                        Self::Struct {
+                            id: ItemIdentifier::with_name(name, &declaration, context),
+                        }
                     }
                     TypeKind::Enum => {
+                        let declaration = ty.get_declaration().expect("enum declaration");
                         let name = ty
                             .get_display_name()
                             .trim_start_matches("enum ")
                             .to_string();
-                        Self::Enum { name }
+                        Self::Enum {
+                            id: ItemIdentifier::with_name(name, &declaration, context),
+                        }
                     }
                     _ => panic!("unknown elaborated type {ty:?}"),
                 }
@@ -1023,12 +1010,12 @@ impl Inner {
         }
     }
 
-    fn visit_required_features(&self, f: &mut impl FnMut(&str, &str)) {
+    fn visit_required_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
         match self {
             // Objective-C
             Self::Id { ty, .. } => {
                 // f("objc2");
-                ty.visit_required_features(f);
+                ty.visit_required_types(f);
             }
             Self::Class { .. } | Self::Sel { .. } | Self::ObjcBool => {
                 // f("objc2");
@@ -1036,13 +1023,13 @@ impl Inner {
 
             // Others
             Self::Pointer { pointee, .. } | Self::IncompleteArray { pointee, .. } => {
-                pointee.visit_required_features(f);
+                pointee.visit_required_types(f);
             }
             Self::Array { element_type, .. } => {
-                element_type.visit_required_features(f);
+                element_type.visit_required_types(f);
             }
             // TODO
-            // Enum { name } | Struct { name } | TypeDef { name } => {
+            // Enum { id } | Struct { id } | TypeDef { id } => {
             //
             // }
             Self::Fn {
@@ -1057,9 +1044,9 @@ impl Inner {
                 // TODO if block
                 // f("block2");
                 for arg in arguments {
-                    arg.visit_required_features(f);
+                    arg.visit_required_types(f);
                 }
-                result_type.visit_required_features(f);
+                result_type.visit_required_types(f);
             }
             _ => {}
         }
@@ -1196,7 +1183,7 @@ impl fmt::Display for Inner {
                 element_type,
                 num_elements,
             } => write!(f, "ArrayUnknownABI<[{element_type}; {num_elements}]>"),
-            Enum { name } | Struct { name } | TypeDef { name } => write!(f, "{name}"),
+            Enum { id } | Struct { id } | TypeDef { id } => write!(f, "{}", id.name),
             Self::Fn { .. } => write!(f, "TodoFunction"),
             Self::Block {
                 arguments,
@@ -1308,9 +1295,9 @@ impl Ty {
             // Handled by Stmt::EnumDecl
             Inner::Enum { .. } => None,
             // Handled above and in Stmt::StructDecl
-            Inner::Struct { name } if name == typedef_name => None,
-            Inner::Struct { name } if name != typedef_name => {
-                warn!(name, "invalid struct in typedef");
+            Inner::Struct { id } if id.name == typedef_name => None,
+            Inner::Struct { id } if id.name != typedef_name => {
+                warn!(?id, "invalid struct in typedef");
                 None
             }
             // Opaque structs
@@ -1446,10 +1433,8 @@ impl Ty {
         assert!(matches!(self.kind, TyKind::MethodReturn { .. }));
         if let Inner::Id { ty, .. } = &mut self.ty {
             match ty {
-                IdType::Class {
-                    ownership, name, ..
-                } => {
-                    *ownership = Some(get_ownership(name));
+                IdType::Class { id, ownership, .. } => {
+                    *ownership = Some(get_ownership(&id.name));
                 }
                 IdType::Self_ { ownership } => {
                     *ownership = Some(get_ownership("Self"));
@@ -1459,13 +1444,13 @@ impl Ty {
         }
     }
 
-    pub fn visit_required_features(&self, f: &mut impl FnMut(&str, &str)) {
+    pub fn visit_required_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
         match &self.kind {
-            TyKind::MethodReturn { with_error: true } => f("Foundation", "NSError"),
+            TyKind::MethodReturn { with_error: true } => f(&ItemIdentifier::nserror()),
             _ => {}
         }
 
-        self.ty.visit_required_features(f);
+        self.ty.visit_required_types(f);
     }
 }
 
@@ -1480,8 +1465,7 @@ impl Ty {
             if let Inner::Id {
                 ty:
                     IdType::Class {
-                        library,
-                        name,
+                        id,
                         params: TypeParams::Empty,
                         ownership: None,
                     },
@@ -1490,10 +1474,9 @@ impl Ty {
                 nullability: id_nullability,
             } = &**pointee
             {
-                if name != "NSError" {
+                if !id.is_nserror() {
                     return false;
                 }
-                assert_eq!(*library, "Foundation", "invalid error library {self:?}");
                 assert_eq!(
                     *nullability,
                     Nullability::Nullable,
@@ -1563,7 +1546,7 @@ impl Ty {
     }
 
     pub fn is_typedef_to(&self, s: &str) -> bool {
-        matches!(&self.ty, Inner::TypeDef { name } if name == s)
+        matches!(&self.ty, Inner::TypeDef { id } if id.name == s)
     }
 
     /// Related result types
@@ -1595,11 +1578,11 @@ impl Ty {
 
     pub fn is_nsstring(&self) -> bool {
         if let Inner::Id {
-            ty: IdType::Class { name, .. },
+            ty: IdType::Class { id, .. },
             ..
         } = &self.ty
         {
-            name == "NSString"
+            id.name == "NSString"
         } else {
             false
         }
@@ -1699,15 +1682,14 @@ impl fmt::Display for Ty {
                 Inner::Id {
                     ty:
                         ty @ IdType::Class {
-                            library,
-                            name,
+                            id,
                             params: TypeParams::Empty,
                             ownership: None,
                         },
                     is_const: _,
                     lifetime: _,
                     nullability: Nullability::Nullable | Nullability::Unspecified,
-                } if library == "Foundation" && name == "NSString" => {
+                } if id.is_nsstring() => {
                     write!(f, "{ty}")
                 }
                 Inner::Id {

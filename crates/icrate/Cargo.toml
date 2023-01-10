@@ -621,7 +621,9 @@ AppKit_NSTextParagraph = [
 AppKit_NSTextRange = []
 AppKit_NSTextSelection = []
 AppKit_NSTextSelectionNavigation = []
-AppKit_NSTextStorage = []
+AppKit_NSTextStorage = [
+    "Foundation_NSMutableAttributedString",
+]
 AppKit_NSTextTab = []
 AppKit_NSTextTable = [
     "AppKit_NSTextBlock",
@@ -977,7 +979,9 @@ AppKit_all = [
     "AppKit_NSWorkspaceOpenConfiguration",
 ]
 AuthenticationServices_ASAccountAuthenticationModificationController = []
-AuthenticationServices_ASAccountAuthenticationModificationExtensionContext = []
+AuthenticationServices_ASAccountAuthenticationModificationExtensionContext = [
+    "Foundation_NSExtensionContext",
+]
 AuthenticationServices_ASAccountAuthenticationModificationReplacePasswordWithSignInWithAppleRequest = [
     "AuthenticationServices_ASAccountAuthenticationModificationRequest",
 ]
@@ -1030,7 +1034,9 @@ AuthenticationServices_ASAuthorizationSingleSignOnRequest = [
 ]
 AuthenticationServices_ASCredentialIdentityStore = []
 AuthenticationServices_ASCredentialIdentityStoreState = []
-AuthenticationServices_ASCredentialProviderExtensionContext = []
+AuthenticationServices_ASCredentialProviderExtensionContext = [
+    "Foundation_NSExtensionContext",
+]
 AuthenticationServices_ASCredentialServiceIdentifier = []
 AuthenticationServices_ASPasswordCredential = []
 AuthenticationServices_ASPasswordCredentialIdentity = []
@@ -1127,7 +1133,9 @@ CoreData_NSFetchIndexElementDescription = []
 CoreData_NSFetchRequest = [
     "CoreData_NSPersistentStoreRequest",
 ]
-CoreData_NSFetchRequestExpression = []
+CoreData_NSFetchRequestExpression = [
+    "Foundation_NSExpression",
+]
 CoreData_NSFetchedPropertyDescription = [
     "CoreData_NSPropertyDescription",
 ]
@@ -1244,58 +1252,106 @@ Foundation_NSAffineTransform = []
 Foundation_NSAppleEventDescriptor = []
 Foundation_NSAppleEventManager = []
 Foundation_NSAppleScript = []
-Foundation_NSArchiver = []
+Foundation_NSArchiver = [
+    "Foundation_NSCoder",
+]
 Foundation_NSArray = []
 Foundation_NSAssertionHandler = []
 Foundation_NSAttributedString = []
 Foundation_NSAttributedStringMarkdownParsingOptions = []
 Foundation_NSAutoreleasePool = []
 Foundation_NSBackgroundActivityScheduler = []
-Foundation_NSBlockOperation = []
+Foundation_NSBlockOperation = [
+    "Foundation_NSOperation",
+]
 Foundation_NSBundle = []
 Foundation_NSBundleResourceRequest = []
-Foundation_NSByteCountFormatter = []
+Foundation_NSByteCountFormatter = [
+    "Foundation_NSFormatter",
+]
 Foundation_NSCache = []
 Foundation_NSCachedURLResponse = []
 Foundation_NSCalendar = []
-Foundation_NSCalendarDate = []
+Foundation_NSCalendarDate = [
+    "Foundation_NSDate",
+]
 Foundation_NSCharacterSet = []
 Foundation_NSClassDescription = []
-Foundation_NSCloneCommand = []
-Foundation_NSCloseCommand = []
+Foundation_NSCloneCommand = [
+    "Foundation_NSScriptCommand",
+]
+Foundation_NSCloseCommand = [
+    "Foundation_NSScriptCommand",
+]
 Foundation_NSCoder = []
-Foundation_NSComparisonPredicate = []
-Foundation_NSCompoundPredicate = []
+Foundation_NSComparisonPredicate = [
+    "Foundation_NSPredicate",
+]
+Foundation_NSCompoundPredicate = [
+    "Foundation_NSPredicate",
+]
 Foundation_NSCondition = []
 Foundation_NSConditionLock = []
 Foundation_NSConnection = []
-Foundation_NSConstantString = []
-Foundation_NSCountCommand = []
-Foundation_NSCountedSet = []
-Foundation_NSCreateCommand = []
+Foundation_NSConstantString = [
+    "Foundation_NSSimpleCString",
+]
+Foundation_NSCountCommand = [
+    "Foundation_NSScriptCommand",
+]
+Foundation_NSCountedSet = [
+    "Foundation_NSMutableSet",
+]
+Foundation_NSCreateCommand = [
+    "Foundation_NSScriptCommand",
+]
 Foundation_NSData = []
-Foundation_NSDataDetector = []
+Foundation_NSDataDetector = [
+    "Foundation_NSRegularExpression",
+]
 Foundation_NSDate = []
 Foundation_NSDateComponents = []
-Foundation_NSDateComponentsFormatter = []
-Foundation_NSDateFormatter = []
+Foundation_NSDateComponentsFormatter = [
+    "Foundation_NSFormatter",
+]
+Foundation_NSDateFormatter = [
+    "Foundation_NSFormatter",
+]
 Foundation_NSDateInterval = []
-Foundation_NSDateIntervalFormatter = []
-Foundation_NSDecimalNumber = []
+Foundation_NSDateIntervalFormatter = [
+    "Foundation_NSFormatter",
+]
+Foundation_NSDecimalNumber = [
+    "Foundation_NSNumber",
+]
 Foundation_NSDecimalNumberHandler = []
-Foundation_NSDeleteCommand = []
+Foundation_NSDeleteCommand = [
+    "Foundation_NSScriptCommand",
+]
 Foundation_NSDictionary = []
-Foundation_NSDimension = []
-Foundation_NSDirectoryEnumerator = []
-Foundation_NSDistantObject = []
+Foundation_NSDimension = [
+    "Foundation_NSUnit",
+]
+Foundation_NSDirectoryEnumerator = [
+    "Foundation_NSEnumerator",
+]
+Foundation_NSDistantObject = [
+    "Foundation_NSProxy",
+]
 Foundation_NSDistantObjectRequest = []
 Foundation_NSDistributedLock = []
-Foundation_NSDistributedNotificationCenter = []
-Foundation_NSEnergyFormatter = []
+Foundation_NSDistributedNotificationCenter = [
+    "Foundation_NSNotificationCenter",
+]
+Foundation_NSEnergyFormatter = [
+    "Foundation_NSFormatter",
+]
 Foundation_NSEnumerator = []
 Foundation_NSError = []
 Foundation_NSException = []
-Foundation_NSExistsCommand = []
+Foundation_NSExistsCommand = [
+    "Foundation_NSScriptCommand",
+]
 Foundation_NSExpression = []
 Foundation_NSExtensionContext = []
 Foundation_NSExtensionItem = []
@@ -1309,81 +1365,153 @@ Foundation_NSFileVersion = []
 Foundation_NSFileWrapper = []
 Foundation_NSFormatter = []
 Foundation_NSGarbageCollector = []
-Foundation_NSGetCommand = []
+Foundation_NSGetCommand = [
+    "Foundation_NSScriptCommand",
+]
 Foundation_NSHTTPCookie = []
 Foundation_NSHTTPCookieStorage = []
-Foundation_NSHTTPURLResponse = []
+Foundation_NSHTTPURLResponse = [
+    "Foundation_NSURLResponse",
+]
 Foundation_NSHashTable = []
 Foundation_NSHost = []
-Foundation_NSISO8601DateFormatter = []
+Foundation_NSISO8601DateFormatter = [
+    "Foundation_NSFormatter",
+]
 Foundation_NSIndexPath = []
 Foundation_NSIndexSet = []
-Foundation_NSIndexSpecifier = []
+Foundation_NSIndexSpecifier = [
+    "Foundation_NSScriptObjectSpecifier",
+]
 Foundation_NSInflectionRule = []
-Foundation_NSInflectionRuleExplicit = []
-Foundation_NSInputStream = []
+Foundation_NSInflectionRuleExplicit = [
+    "Foundation_NSInflectionRule",
+]
+Foundation_NSInputStream = [
+    "Foundation_NSStream",
+]
 Foundation_NSInvocation = []
-Foundation_NSInvocationOperation = []
+Foundation_NSInvocationOperation = [
+    "Foundation_NSOperation",
+]
 Foundation_NSItemProvider = []
 Foundation_NSJSONSerialization = []
-Foundation_NSKeyedArchiver = []
-Foundation_NSKeyedUnarchiver = []
-Foundation_NSLengthFormatter = []
+Foundation_NSKeyedArchiver = [
+    "Foundation_NSCoder",
+]
+Foundation_NSKeyedUnarchiver = [
+    "Foundation_NSCoder",
+]
+Foundation_NSLengthFormatter = [
+    "Foundation_NSFormatter",
+]
 Foundation_NSLinguisticTagger = []
-Foundation_NSListFormatter = []
+Foundation_NSListFormatter = [
+    "Foundation_NSFormatter",
+]
 Foundation_NSLocale = []
 Foundation_NSLock = []
-Foundation_NSLogicalTest = []
-Foundation_NSMachBootstrapServer = []
-Foundation_NSMachPort = []
+Foundation_NSLogicalTest = [
+    "Foundation_NSScriptWhoseTest",
+]
+Foundation_NSMachBootstrapServer = [
+    "Foundation_NSPortNameServer",
+]
+Foundation_NSMachPort = [
+    "Foundation_NSPort",
+]
 Foundation_NSMapTable = []
-Foundation_NSMassFormatter = []
+Foundation_NSMassFormatter = [
+    "Foundation_NSFormatter",
+]
 Foundation_NSMeasurement = []
-Foundation_NSMeasurementFormatter = []
-Foundation_NSMessagePort = []
-Foundation_NSMessagePortNameServer = []
+Foundation_NSMeasurementFormatter = [
+    "Foundation_NSFormatter",
+]
+Foundation_NSMessagePort = [
+    "Foundation_NSPort",
+]
+Foundation_NSMessagePortNameServer = [
+    "Foundation_NSPortNameServer",
+]
 Foundation_NSMetadataItem = []
 Foundation_NSMetadataQuery = []
 Foundation_NSMetadataQueryAttributeValueTuple = []
 Foundation_NSMetadataQueryResultGroup = []
 Foundation_NSMethodSignature = []
-Foundation_NSMiddleSpecifier = []
+Foundation_NSMiddleSpecifier = [
+    "Foundation_NSScriptObjectSpecifier",
+]
 Foundation_NSMorphology = []
 Foundation_NSMorphologyCustomPronoun = []
-Foundation_NSMoveCommand = []
-Foundation_NSMutableArray = []
-Foundation_NSMutableAttributedString = []
-Foundation_NSMutableCharacterSet = []
-Foundation_NSMutableData = []
-Foundation_NSMutableDictionary = []
-Foundation_NSMutableIndexSet = []
-Foundation_NSMutableOrderedSet = []
-Foundation_NSMutableSet = []
-Foundation_NSMutableString = []
-Foundation_NSMutableURLRequest = []
-Foundation_NSNameSpecifier = []
+Foundation_NSMoveCommand = [
+    "Foundation_NSScriptCommand",
+]
+Foundation_NSMutableArray = [
+    "Foundation_NSArray",
+]
+Foundation_NSMutableAttributedString = [
+    "Foundation_NSAttributedString",
+]
+Foundation_NSMutableCharacterSet = [
+    "Foundation_NSCharacterSet",
+]
+Foundation_NSMutableData = [
+    "Foundation_NSData",
+]
+Foundation_NSMutableDictionary = [
+    "Foundation_NSDictionary",
+]
+Foundation_NSMutableIndexSet = [
+    "Foundation_NSIndexSet",
+]
+Foundation_NSMutableOrderedSet = [
+    "Foundation_NSOrderedSet",
+]
+Foundation_NSMutableSet = [
+    "Foundation_NSSet",
+]
+Foundation_NSMutableString = [
+    "Foundation_NSString",
+]
+Foundation_NSMutableURLRequest = [
+    "Foundation_NSURLRequest",
+]
+Foundation_NSNameSpecifier = [
+    "Foundation_NSScriptObjectSpecifier",
+]
 Foundation_NSNetService = []
 Foundation_NSNetServiceBrowser = []
 Foundation_NSNotification = []
 Foundation_NSNotificationCenter = []
 Foundation_NSNotificationQueue = []
 Foundation_NSNull = []
-Foundation_NSNumber = []
-Foundation_NSNumberFormatter = []
+Foundation_NSNumber = [
+    "Foundation_NSValue",
+]
+Foundation_NSNumberFormatter = [
+    "Foundation_NSFormatter",
+]
 Foundation_NSOperation = []
 Foundation_NSOperationQueue = []
 Foundation_NSOrderedCollectionChange = []
 Foundation_NSOrderedCollectionDifference = []
 Foundation_NSOrderedSet = []
 Foundation_NSOrthography = []
-Foundation_NSOutputStream = []
+Foundation_NSOutputStream = [
+    "Foundation_NSStream",
+]
 Foundation_NSPersonNameComponents = []
-Foundation_NSPersonNameComponentsFormatter = []
+Foundation_NSPersonNameComponentsFormatter = [
+    "Foundation_NSFormatter",
+]
 Foundation_NSPipe = []
 Foundation_NSPointerArray = []
 Foundation_NSPointerFunctions = []
 Foundation_NSPort = []
-Foundation_NSPortCoder = []
+Foundation_NSPortCoder = [
+    "Foundation_NSCoder",
+]
 Foundation_NSPortMessage = []
 Foundation_NSPortNameServer = []
 Foundation_NSPositionalSpecifier = []
@@ -1392,19 +1520,37 @@ Foundation_NSPresentationIntent = []
 Foundation_NSProcessInfo = []
 Foundation_NSProgress = []
 Foundation_NSPropertyListSerialization = []
-Foundation_NSPropertySpecifier = []
-Foundation_NSProtocolChecker = []
-Foundation_NSPurgeableData = []
-Foundation_NSQuitCommand = []
-Foundation_NSRandomSpecifier = []
-Foundation_NSRangeSpecifier = []
+Foundation_NSPropertySpecifier = [
+    "Foundation_NSScriptObjectSpecifier",
+]
+Foundation_NSProtocolChecker = [
+    "Foundation_NSProxy",
+]
+Foundation_NSPurgeableData = [
+    "Foundation_NSMutableData",
+]
+Foundation_NSQuitCommand = [
+    "Foundation_NSScriptCommand",
+]
+Foundation_NSRandomSpecifier = [
+    "Foundation_NSScriptObjectSpecifier",
+]
+Foundation_NSRangeSpecifier = [
+    "Foundation_NSScriptObjectSpecifier",
+]
 Foundation_NSRecursiveLock = []
 Foundation_NSRegularExpression = []
-Foundation_NSRelativeDateTimeFormatter = []
-Foundation_NSRelativeSpecifier = []
+Foundation_NSRelativeDateTimeFormatter = [
+    "Foundation_NSFormatter",
+]
+Foundation_NSRelativeSpecifier = [
+    "Foundation_NSScriptObjectSpecifier",
+]
 Foundation_NSRunLoop = []
 Foundation_NSScanner = []
-Foundation_NSScriptClassDescription = []
+Foundation_NSScriptClassDescription = [
+    "Foundation_NSClassDescription",
+]
 Foundation_NSScriptCoercionHandler = []
 Foundation_NSScriptCommand = []
 Foundation_NSScriptCommandDescription = []
@@ -1412,14 +1558,26 @@ Foundation_NSScriptExecutionContext = []
 Foundation_NSScriptObjectSpecifier = []
 Foundation_NSScriptSuiteRegistry = []
 Foundation_NSScriptWhoseTest = []
-Foundation_NSSecureUnarchiveFromDataTransformer = []
+Foundation_NSSecureUnarchiveFromDataTransformer = [
+    "Foundation_NSValueTransformer",
+]
 Foundation_NSSet = []
-Foundation_NSSetCommand = []
-Foundation_NSSimpleCString = []
-Foundation_NSSocketPort = []
-Foundation_NSSocketPortNameServer = []
+Foundation_NSSetCommand = [
+    "Foundation_NSScriptCommand",
+]
+Foundation_NSSimpleCString = [
+    "Foundation_NSString",
+]
+Foundation_NSSocketPort = [
+    "Foundation_NSPort",
+]
+Foundation_NSSocketPortNameServer = [
+    "Foundation_NSPortNameServer",
+]
 Foundation_NSSortDescriptor = []
-Foundation_NSSpecifierTest = []
+Foundation_NSSpecifierTest = [
+    "Foundation_NSScriptWhoseTest",
+]
 Foundation_NSSpellServer = []
 Foundation_NSStream = []
 Foundation_NSString = []
@@ -1444,64 +1602,142 @@ Foundation_NSURLRequest = []
 Foundation_NSURLResponse = []
 Foundation_NSURLSession = []
 Foundation_NSURLSessionConfiguration = []
-Foundation_NSURLSessionDataTask = []
-Foundation_NSURLSessionDownloadTask = []
-Foundation_NSURLSessionStreamTask = []
+Foundation_NSURLSessionDataTask = [
+    "Foundation_NSURLSessionTask",
+]
+Foundation_NSURLSessionDownloadTask = [
+    "Foundation_NSURLSessionTask",
+]
+Foundation_NSURLSessionStreamTask = [
+    "Foundation_NSURLSessionTask",
+]
 Foundation_NSURLSessionTask = []
 Foundation_NSURLSessionTaskMetrics = []
 Foundation_NSURLSessionTaskTransactionMetrics = []
-Foundation_NSURLSessionUploadTask = []
+Foundation_NSURLSessionUploadTask = [
+    "Foundation_NSURLSessionDataTask",
+]
 Foundation_NSURLSessionWebSocketMessage = []
-Foundation_NSURLSessionWebSocketTask = []
+Foundation_NSURLSessionWebSocketTask = [
+    "Foundation_NSURLSessionTask",
+]
 Foundation_NSUUID = []
 Foundation_NSUbiquitousKeyValueStore = []
-Foundation_NSUnarchiver = []
+Foundation_NSUnarchiver = [
+    "Foundation_NSCoder",
+]
 Foundation_NSUndoManager = []
-Foundation_NSUniqueIDSpecifier = []
+Foundation_NSUniqueIDSpecifier = [
+    "Foundation_NSScriptObjectSpecifier",
+]
 Foundation_NSUnit = []
-Foundation_NSUnitAcceleration = []
-Foundation_NSUnitAngle = []
-Foundation_NSUnitArea = []
-Foundation_NSUnitConcentrationMass = []
+Foundation_NSUnitAcceleration = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitAngle = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitArea = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitConcentrationMass = [
+    "Foundation_NSDimension",
+]
 Foundation_NSUnitConverter = []
-Foundation_NSUnitConverterLinear = []
-Foundation_NSUnitDispersion = []
-Foundation_NSUnitDuration = []
-Foundation_NSUnitElectricCharge = []
-Foundation_NSUnitElectricCurrent = []
-Foundation_NSUnitElectricPotentialDifference = []
-Foundation_NSUnitElectricResistance = []
-Foundation_NSUnitEnergy = []
-Foundation_NSUnitFrequency = []
-Foundation_NSUnitFuelEfficiency = []
-Foundation_NSUnitIlluminance = []
-Foundation_NSUnitInformationStorage = []
-Foundation_NSUnitLength = []
-Foundation_NSUnitMass = []
-Foundation_NSUnitPower = []
-Foundation_NSUnitPressure = []
-Foundation_NSUnitSpeed = []
-Foundation_NSUnitTemperature = []
-Foundation_NSUnitVolume = []
+Foundation_NSUnitConverterLinear = [
+    "Foundation_NSUnitConverter",
+]
+Foundation_NSUnitDispersion = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitDuration = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitElectricCharge = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitElectricCurrent = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitElectricPotentialDifference = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitElectricResistance = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitEnergy = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitFrequency = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitFuelEfficiency = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitIlluminance = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitInformationStorage = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitLength = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitMass = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitPower = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitPressure = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitSpeed = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitTemperature = [
+    "Foundation_NSDimension",
+]
+Foundation_NSUnitVolume = [
+    "Foundation_NSDimension",
+]
 Foundation_NSUserActivity = []
-Foundation_NSUserAppleScriptTask = []
-Foundation_NSUserAutomatorTask = []
+Foundation_NSUserAppleScriptTask = [
+    "Foundation_NSUserScriptTask",
+]
+Foundation_NSUserAutomatorTask = [
+    "Foundation_NSUserScriptTask",
+]
 Foundation_NSUserDefaults = []
 Foundation_NSUserNotification = []
 Foundation_NSUserNotificationAction = []
 Foundation_NSUserNotificationCenter = []
 Foundation_NSUserScriptTask = []
-Foundation_NSUserUnixTask = []
+Foundation_NSUserUnixTask = [
+    "Foundation_NSUserScriptTask",
+]
 Foundation_NSValue = []
 Foundation_NSValueTransformer = []
-Foundation_NSWhoseSpecifier = []
-Foundation_NSXMLDTD = []
-Foundation_NSXMLDTDNode = []
-Foundation_NSXMLDocument = []
-Foundation_NSXMLElement = []
+Foundation_NSWhoseSpecifier = [
+    "Foundation_NSScriptObjectSpecifier",
+]
+Foundation_NSXMLDTD = [
+    "Foundation_NSXMLNode",
+]
+Foundation_NSXMLDTDNode = [
+    "Foundation_NSXMLNode",
+]
+Foundation_NSXMLDocument = [
+    "Foundation_NSXMLNode",
+]
+Foundation_NSXMLElement = [
+    "Foundation_NSXMLNode",
+]
 Foundation_NSXMLNode = []
 Foundation_NSXMLParser = []
-Foundation_NSXPCCoder = []
+Foundation_NSXPCCoder = [
+    "Foundation_NSCoder",
+]
 Foundation_NSXPCConnection = []
 Foundation_NSXPCInterface = []
 Foundation_NSXPCListener = []

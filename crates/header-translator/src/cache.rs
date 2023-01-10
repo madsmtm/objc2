@@ -4,16 +4,17 @@ use std::mem;
 use crate::availability::Availability;
 use crate::config::{ClassData, Config};
 use crate::file::File;
+use crate::id::ItemIdentifier;
 use crate::method::Method;
 use crate::output::Output;
 use crate::rust_type::Ownership;
-use crate::stmt::{ClassDefReference, Stmt};
+use crate::stmt::Stmt;
 
 #[derive(Debug, PartialEq, Clone)]
 struct MethodCache {
     availability: Availability,
     methods: Vec<Method>,
-    category_name: Option<String>,
+    category: ItemIdentifier<Option<String>>,
 }
 
 #[derive(Debug, PartialEq, Clone, Default)]
@@ -35,7 +36,7 @@ impl ClassCache {
 /// A helper struct for doing global analysis on the output.
 #[derive(Debug, PartialEq, Clone)]
 pub struct Cache<'a> {
-    classes: BTreeMap<ClassDefReference, ClassCache>,
+    classes: BTreeMap<ItemIdentifier, ClassCache>,
     ownership_map: BTreeMap<String, Ownership>,
     config: &'a Config,
 }
@@ -50,13 +51,13 @@ impl<'a> Cache<'a> {
             for (name, file) in &library.files {
                 let _span = debug_span!("file", name).entered();
                 for stmt in &file.stmts {
-                    if let Some((ty, method_cache)) = Self::cache_stmt(stmt) {
-                        let cache = classes.entry(ty.clone()).or_default();
+                    if let Some((cls, method_cache)) = Self::cache_stmt(stmt) {
+                        let cache = classes.entry(cls.clone()).or_default();
                         cache.to_emit.push(method_cache);
                     }
-                    if let Stmt::ClassDecl { ty, ownership, .. } = stmt {
+                    if let Stmt::ClassDecl { id, ownership, .. } = stmt {
                         if *ownership != Ownership::default() {
-                            ownership_map.insert(ty.name.clone(), ownership.clone());
+                            ownership_map.insert(id.name.clone(), ownership.clone());
                         }
                     }
                 }
@@ -70,17 +71,18 @@ impl<'a> Cache<'a> {
         }
     }
 
-    fn cache_stmt(stmt: &Stmt) -> Option<(&ClassDefReference, MethodCache)> {
+    fn cache_stmt(stmt: &Stmt) -> Option<(&ItemIdentifier, MethodCache)> {
         if let Stmt::Methods {
-            ty,
+            cls,
+            generics: _,
+            category,
             availability,
             superclasses: _,
             methods,
-            category_name,
             description,
         } = stmt
         {
-            let _span = debug_span!("Stmt::Methods", ?ty).entered();
+            let _span = debug_span!("Stmt::Methods", ?cls).entered();
             let methods: Vec<Method> = methods
                 .iter()
                 .filter(|method| method.emit_on_subclasses())
@@ -93,11 +95,11 @@ impl<'a> Cache<'a> {
                 warn!(description, "description was set");
             }
             Some((
-                ty,
+                cls,
                 MethodCache {
                     availability: availability.clone(),
                     methods,
-                    category_name: category_name.clone(),
+                    category: category.clone(),
                 },
             ))
         } else {
@@ -120,22 +122,25 @@ impl<'a> Cache<'a> {
         for stmt in &mut file.stmts {
             match stmt {
                 Stmt::ClassDecl {
-                    ty, superclasses, ..
+                    id,
+                    generics,
+                    superclasses,
+                    ..
                 } => {
-                    let _span = debug_span!("Stmt::ClassDecl", ?ty).entered();
-                    let data = self.config.class_data.get(&ty.name);
+                    let _span = debug_span!("Stmt::ClassDecl", ?id).entered();
+                    let data = self.config.class_data.get(&id.name);
 
                     // Used for duplicate checking (sometimes the subclass
                     // defines the same method that the superclass did).
                     let mut seen_methods: Vec<_> = self
                         .classes
-                        .get(ty)
+                        .get(id)
                         .map(|cache| cache.all_methods_data())
                         .into_iter()
                         .flatten()
                         .collect();
 
-                    for superclass in &*superclasses {
+                    for (superclass, _) in &*superclasses {
                         if let Some(cache) = self.classes.get(superclass) {
                             new_stmts.extend(cache.to_emit.iter().filter_map(|cache| {
                                 let mut methods: Vec<_> = cache
@@ -155,14 +160,15 @@ impl<'a> Cache<'a> {
                                     return None;
                                 }
 
-                                self.update_methods(&mut methods, &ty.name);
+                                self.update_methods(&mut methods, &id.name);
 
                                 Some(Stmt::Methods {
-                                    ty: ty.clone(),
+                                    cls: id.clone(),
+                                    generics: generics.clone(),
+                                    category: cache.category.clone(),
                                     availability: cache.availability.clone(),
                                     superclasses: superclasses.clone(),
                                     methods,
-                                    category_name: cache.category_name.clone(),
                                     description: Some(format!(
                                         "Methods declared on superclass `{}`",
                                         superclass.name
@@ -174,11 +180,11 @@ impl<'a> Cache<'a> {
                         }
                     }
                 }
-                Stmt::Methods { ty, methods, .. } => {
-                    self.update_methods(methods, &ty.name);
+                Stmt::Methods { cls, methods, .. } => {
+                    self.update_methods(methods, &cls.name);
                 }
-                Stmt::ProtocolDecl { name, methods, .. } => {
-                    self.update_methods(methods, name);
+                Stmt::ProtocolDecl { id, methods, .. } => {
+                    self.update_methods(methods, &id.name);
                 }
                 _ => {}
             }
@@ -188,20 +194,15 @@ impl<'a> Cache<'a> {
         // Fix up a few typedef + enum declarations
         let mut iter = mem::take(&mut file.stmts).into_iter().peekable();
         while let Some(stmt) = iter.next() {
-            if let Stmt::AliasDecl {
-                name,
-                ty,
-                kind: None,
-            } = &stmt
-            {
+            if let Stmt::AliasDecl { id, ty, kind: None } = &stmt {
                 if let Some(Stmt::EnumDecl {
-                    name: enum_name,
+                    id: enum_id,
                     ty: enum_ty,
                     ..
                 }) = iter.peek_mut()
                 {
-                    if enum_ty.is_typedef_to(name) {
-                        *enum_name = Some(name.clone());
+                    if enum_ty.is_typedef_to(&id.name) {
+                        *enum_id = id.clone().to_some();
                         *enum_ty = ty.clone();
                         // Skip adding the now-redundant alias to the list of statements
                         continue;

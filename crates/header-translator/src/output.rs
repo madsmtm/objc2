@@ -43,26 +43,27 @@ impl Output {
                 for stmt in &file.stmts {
                     match stmt {
                         Stmt::ClassDecl {
-                            ty, superclasses, ..
+                            id, superclasses, ..
                         } => {
-                            let feature = format!("{}_{}", ty.library, ty.name);
-                            // Only require the first superclass as feature,
-                            // since the rest will be enabled transitively.
-                            if let Some(superclass) = superclasses.first() {
-                                let superclass_features = (superclass.library != "Foundation"
-                                    && superclass.name != "NSObject")
-                                    .then(|| format!("{}_{}", superclass.library, superclass.name))
-                                    .into_iter()
-                                    .collect::<Vec<_>>();
-                                if let Some(existing) =
-                                    features.insert(feature.clone(), superclass_features)
-                                {
-                                    error!(?existing, "duplicate feature");
+                            if let Some(feature) = id.feature() {
+                                // Only require the first superclass as feature,
+                                // since the rest will be enabled transitively.
+                                if let Some((superclass, _)) = superclasses.first() {
+                                    let superclass_features: Vec<_> = superclass
+                                        .feature()
+                                        .map(|f| f.to_string())
+                                        .into_iter()
+                                        .collect();
+                                    if let Some(existing) =
+                                        features.insert(feature.to_string(), superclass_features)
+                                    {
+                                        error!(?existing, "duplicate feature");
+                                    }
                                 }
-                            }
 
-                            if !library_features.insert(feature) {
-                                error!("duplicate feature");
+                                if !library_features.insert(feature.to_string()) {
+                                    error!("duplicate feature");
+                                }
                             }
                         }
                         _ => {}
