@@ -4,6 +4,7 @@
 imports = ["Foundation"]
 
 [library.QuartzCore]
+name = "CoreAnimation"
 imports = ["CoreAnimation", "Foundation"]
 
 [library.Metal]

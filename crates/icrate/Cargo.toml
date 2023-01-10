@@ -97,7 +97,7 @@ unstable-private = []
 
 AppKit = ["Foundation", "CoreData"]
 AuthenticationServices = ["Foundation"]
-CoreAnimation = ["Foundation", "QuartzCore_all"]
+CoreAnimation = ["Foundation", "CoreAnimation_all"]
 CoreData = ["Foundation"]
 Foundation = ["objective-c", "block"]
 Metal = ["Foundation"]
@@ -106,8 +106,8 @@ Metal = ["Foundation"]
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-12"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["AuthenticationServices_all", "CoreData_all", "QuartzCore_all", "Foundation_all", "Metal_all"]
-unstable-frameworks-macos-10-7 = ["AppKit_all", "QuartzCore_all", "CoreData_all", "Foundation_all"]
+unstable-frameworks-ios = ["AuthenticationServices_all", "CoreData_all", "CoreAnimation_all", "Foundation_all", "Metal_all"]
+unstable-frameworks-macos-10-7 = ["AppKit_all", "CoreAnimation_all", "CoreData_all", "Foundation_all"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
@@ -1085,6 +1085,90 @@ AuthenticationServices_all = [
     "AuthenticationServices_ASWebAuthenticationSession",
     "AuthenticationServices_ASWebAuthenticationSessionRequest",
     "AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionManager",
+]
+CoreAnimation_CAAnimation = []
+CoreAnimation_CAAnimationGroup = [
+    "CoreAnimation_CAAnimation",
+]
+CoreAnimation_CABasicAnimation = [
+    "CoreAnimation_CAPropertyAnimation",
+]
+CoreAnimation_CAConstraint = []
+CoreAnimation_CAConstraintLayoutManager = []
+CoreAnimation_CADisplayLink = []
+CoreAnimation_CAEDRMetadata = []
+CoreAnimation_CAEmitterCell = []
+CoreAnimation_CAEmitterLayer = [
+    "CoreAnimation_CALayer",
+]
+CoreAnimation_CAGradientLayer = [
+    "CoreAnimation_CALayer",
+]
+CoreAnimation_CAKeyframeAnimation = [
+    "CoreAnimation_CAPropertyAnimation",
+]
+CoreAnimation_CALayer = []
+CoreAnimation_CAMediaTimingFunction = []
+CoreAnimation_CAPropertyAnimation = [
+    "CoreAnimation_CAAnimation",
+]
+CoreAnimation_CARemoteLayerClient = []
+CoreAnimation_CARemoteLayerServer = []
+CoreAnimation_CARenderer = []
+CoreAnimation_CAReplicatorLayer = [
+    "CoreAnimation_CALayer",
+]
+CoreAnimation_CAScrollLayer = [
+    "CoreAnimation_CALayer",
+]
+CoreAnimation_CAShapeLayer = [
+    "CoreAnimation_CALayer",
+]
+CoreAnimation_CASpringAnimation = [
+    "CoreAnimation_CABasicAnimation",
+]
+CoreAnimation_CATextLayer = [
+    "CoreAnimation_CALayer",
+]
+CoreAnimation_CATiledLayer = [
+    "CoreAnimation_CALayer",
+]
+CoreAnimation_CATransaction = []
+CoreAnimation_CATransformLayer = [
+    "CoreAnimation_CALayer",
+]
+CoreAnimation_CATransition = [
+    "CoreAnimation_CAAnimation",
+]
+CoreAnimation_CAValueFunction = []
+CoreAnimation_all = [
+    "CoreAnimation_CAAnimation",
+    "CoreAnimation_CAAnimationGroup",
+    "CoreAnimation_CABasicAnimation",
+    "CoreAnimation_CAConstraint",
+    "CoreAnimation_CAConstraintLayoutManager",
+    "CoreAnimation_CADisplayLink",
+    "CoreAnimation_CAEDRMetadata",
+    "CoreAnimation_CAEmitterCell",
+    "CoreAnimation_CAEmitterLayer",
+    "CoreAnimation_CAGradientLayer",
+    "CoreAnimation_CAKeyframeAnimation",
+    "CoreAnimation_CALayer",
+    "CoreAnimation_CAMediaTimingFunction",
+    "CoreAnimation_CAPropertyAnimation",
+    "CoreAnimation_CARemoteLayerClient",
+    "CoreAnimation_CARemoteLayerServer",
+    "CoreAnimation_CARenderer",
+    "CoreAnimation_CAReplicatorLayer",
+    "CoreAnimation_CAScrollLayer",
+    "CoreAnimation_CAShapeLayer",
+    "CoreAnimation_CASpringAnimation",
+    "CoreAnimation_CATextLayer",
+    "CoreAnimation_CATiledLayer",
+    "CoreAnimation_CATransaction",
+    "CoreAnimation_CATransformLayer",
+    "CoreAnimation_CATransition",
+    "CoreAnimation_CAValueFunction",
 ]
 CoreData_NSAsynchronousFetchRequest = [
     "CoreData_NSPersistentStoreRequest",
@@ -2217,88 +2301,4 @@ Metal_all = [
     "Metal_MTLVertexBufferLayoutDescriptorArray",
     "Metal_MTLVertexDescriptor",
     "Metal_MTLVisibleFunctionTableDescriptor",
-]
-QuartzCore_CAAnimation = []
-QuartzCore_CAAnimationGroup = [
-    "QuartzCore_CAAnimation",
-]
-QuartzCore_CABasicAnimation = [
-    "QuartzCore_CAPropertyAnimation",
-]
-QuartzCore_CAConstraint = []
-QuartzCore_CAConstraintLayoutManager = []
-QuartzCore_CADisplayLink = []
-QuartzCore_CAEDRMetadata = []
-QuartzCore_CAEmitterCell = []
-QuartzCore_CAEmitterLayer = [
-    "QuartzCore_CALayer",
-]
-QuartzCore_CAGradientLayer = [
-    "QuartzCore_CALayer",
-]
-QuartzCore_CAKeyframeAnimation = [
-    "QuartzCore_CAPropertyAnimation",
-]
-QuartzCore_CALayer = []
-QuartzCore_CAMediaTimingFunction = []
-QuartzCore_CAPropertyAnimation = [
-    "QuartzCore_CAAnimation",
-]
-QuartzCore_CARemoteLayerClient = []
-QuartzCore_CARemoteLayerServer = []
-QuartzCore_CARenderer = []
-QuartzCore_CAReplicatorLayer = [
-    "QuartzCore_CALayer",
-]
-QuartzCore_CAScrollLayer = [
-    "QuartzCore_CALayer",
-]
-QuartzCore_CAShapeLayer = [
-    "QuartzCore_CALayer",
-]
-QuartzCore_CASpringAnimation = [
-    "QuartzCore_CABasicAnimation",
-]
-QuartzCore_CATextLayer = [
-    "QuartzCore_CALayer",
-]
-QuartzCore_CATiledLayer = [
-    "QuartzCore_CALayer",
-]
-QuartzCore_CATransaction = []
-QuartzCore_CATransformLayer = [
-    "QuartzCore_CALayer",
-]
-QuartzCore_CATransition = [
-    "QuartzCore_CAAnimation",
-]
-QuartzCore_CAValueFunction = []
-QuartzCore_all = [
-    "QuartzCore_CAAnimation",
-    "QuartzCore_CAAnimationGroup",
-    "QuartzCore_CABasicAnimation",
-    "QuartzCore_CAConstraint",
-    "QuartzCore_CAConstraintLayoutManager",
-    "QuartzCore_CADisplayLink",
-    "QuartzCore_CAEDRMetadata",
-    "QuartzCore_CAEmitterCell",
-    "QuartzCore_CAEmitterLayer",
-    "QuartzCore_CAGradientLayer",
-    "QuartzCore_CAKeyframeAnimation",
-    "QuartzCore_CALayer",
-    "QuartzCore_CAMediaTimingFunction",
-    "QuartzCore_CAPropertyAnimation",
-    "QuartzCore_CARemoteLayerClient",
-    "QuartzCore_CARemoteLayerServer",
-    "QuartzCore_CARenderer",
-    "QuartzCore_CAReplicatorLayer",
-    "QuartzCore_CAScrollLayer",
-    "QuartzCore_CAShapeLayer",
-    "QuartzCore_CASpringAnimation",
-    "QuartzCore_CATextLayer",
-    "QuartzCore_CATiledLayer",
-    "QuartzCore_CATransaction",
-    "QuartzCore_CATransformLayer",
-    "QuartzCore_CATransition",
-    "QuartzCore_CAValueFunction",
 ]

@@ -932,10 +932,20 @@ impl fmt::Display for Stmt {
                     // Using generics in here is not technically correct, but
                     // should work for our use-cases.
                     if let Some((superclass, generics)) = iter.next() {
-                        write!(f, "{}{}", superclass.path_in_relation_to(&id), GenericTyHelper(&generics))?;
+                        write!(
+                            f,
+                            "{}{}",
+                            superclass.path_in_relation_to(&id),
+                            GenericTyHelper(&generics)
+                        )?;
                     }
                     for (superclass, generics) in iter {
-                        write!(f, ", {}{}", superclass.path_in_relation_to(&id), GenericTyHelper(&generics))?;
+                        write!(
+                            f,
+                            ", {}{}",
+                            superclass.path_in_relation_to(&id),
+                            GenericTyHelper(&generics)
+                        )?;
                     }
                     writeln!(f, ")]")?;
                 }

@@ -29,7 +29,7 @@ impl Output {
         );
     }
 
-    pub fn cargo_features(&self, _config: &Config) -> BTreeMap<String, Vec<String>> {
+    pub fn cargo_features(&self, config: &Config) -> BTreeMap<String, Vec<String>> {
         let mut features = BTreeMap::new();
 
         // for (_, library) in &config.libraries {
@@ -72,7 +72,7 @@ impl Output {
             }
 
             let _ = features.insert(
-                format!("{library_name}_all"),
+                format!("{}_all", config.get_library_alias(library_name.clone())),
                 library_features.into_iter().collect::<Vec<_>>(),
             );
         }

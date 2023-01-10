@@ -17,12 +17,13 @@ pub struct ItemIdentifier<N = String> {
 
 impl<N> ItemIdentifier<N> {
     pub fn with_name(name: N, entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        let (library, file_name) = context
+        let (library_name, file_name) = context
             .get_library_and_file_name(entity)
             .expect("ItemIdentifier get library and file");
+
         Self {
             name,
-            library,
+            library: context.get_library_alias(library_name),
             file_name,
         }
     }
@@ -111,7 +112,10 @@ impl ItemIdentifier {
         ItemIdentifierPath(self)
     }
 
-    pub fn path_in_relation_to<'a, T>(&'a self, other: &'a ItemIdentifier<T>) -> impl fmt::Display + 'a {
+    pub fn path_in_relation_to<'a, T>(
+        &'a self,
+        other: &'a ItemIdentifier<T>,
+    ) -> impl fmt::Display + 'a {
         struct ItemIdentifierPathInRelationTo<'a, T>(&'a ItemIdentifier, &'a ItemIdentifier<T>);
 
         impl<T> fmt::Display for ItemIdentifierPathInRelationTo<'_, T> {
