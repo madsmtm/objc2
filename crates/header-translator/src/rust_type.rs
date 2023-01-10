@@ -422,7 +422,11 @@ impl IdType {
             f(&library, self.name());
         }
 
-        if let Self::Class { generics, .. } = self {
+        if let Self::Class {
+            params: TypeParams::Generics(generics),
+            ..
+        } = self
+        {
             for generic in generics {
                 generic.visit_required_features(f);
             }
