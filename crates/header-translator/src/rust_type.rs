@@ -254,18 +254,26 @@ impl IdType {
         }
     }
 
-    fn ownership(&self) -> Ownership {
-        match self {
-            Self::Class {
-                ownership: Some(ownership),
-                ..
+    fn ownership(&self) -> impl fmt::Display + '_ {
+        struct IdTypeOwnership<'a>(&'a IdType);
+
+        impl fmt::Display for IdTypeOwnership<'_> {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                match self.0 {
+                    IdType::Class {
+                        ownership: Some(ownership),
+                        ..
+                    }
+                    | IdType::Self_ {
+                        ownership: Some(ownership),
+                    } => write!(f, "{ownership}"),
+                    IdType::GenericParam { name } => write!(f, "{name}Ownership"),
+                    _ => write!(f, "{}", Ownership::Shared),
+                }
             }
-            | Self::Self_ {
-                ownership: Some(ownership),
-                ..
-            } => ownership.clone(),
-            _ => Ownership::Shared,
         }
+
+        IdTypeOwnership(self)
     }
 
     fn parse_objc_pointer(
