@@ -1640,13 +1640,18 @@ impl fmt::Display for Ty {
                     // NULL -> error
                     write!(
                         f,
-                        " -> Result<Id<{ty}, {}>, Id<NSError, Shared>>",
-                        ty.ownership()
+                        " -> Result<Id<{ty}, {}>, Id<{}, Shared>>",
+                        ty.ownership(),
+                        ItemIdentifier::nserror().path(),
                     )
                 }
                 Inner::ObjcBool => {
                     // NO -> error
-                    write!(f, " -> Result<(), Id<NSError, Shared>>")
+                    write!(
+                        f,
+                        " -> Result<(), Id<{}, Shared>>",
+                        ItemIdentifier::nserror().path()
+                    )
                 }
                 _ => panic!("unknown error result type {self:?}"),
             },
