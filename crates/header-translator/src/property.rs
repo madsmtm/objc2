@@ -1,6 +1,5 @@
 use clang::{Entity, EntityKind, ObjCAttributes};
 use tracing::span::EnteredSpan;
-use tracing::{error, warn};
 
 use crate::availability::Availability;
 use crate::config::MethodData;
@@ -79,7 +78,7 @@ impl PartialProperty<'_> {
                     warn!(?macro_, "unknown macro");
                 }
             }
-            _ => warn!("unknown"),
+            _ => error!("unknown"),
         });
 
         let qualifier = entity.get_objc_qualifiers().map(Qualifier::parse);

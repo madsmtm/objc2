@@ -1,8 +1,6 @@
 use std::collections::BTreeMap;
 use std::mem;
 
-use tracing::{debug_span, warn};
-
 use crate::availability::Availability;
 use crate::config::{ClassData, Config};
 use crate::file::File;

@@ -1,12 +1,15 @@
 #![cfg(feature = "run")]
 #![recursion_limit = "256"]
+
+#[macro_use]
+extern crate tracing;
+
 use std::collections::BTreeMap;
 use std::fmt;
 use std::path::Path;
 use std::process::{Command, Stdio};
 
 use clang::{Entity, EntityVisitResult};
-use tracing::debug_span;
 use tracing::span::EnteredSpan;
 
 mod availability;

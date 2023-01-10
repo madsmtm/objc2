@@ -2,7 +2,6 @@ use std::fmt;
 
 use clang::{CallingConvention, EntityKind, Nullability, Type, TypeKind};
 use serde::Deserialize;
-use tracing::{debug_span, error, warn};
 
 use crate::context::Context;
 use crate::method::MemoryManagement;

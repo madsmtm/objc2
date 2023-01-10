@@ -4,8 +4,6 @@ use std::fs;
 use std::io;
 use std::path::Path;
 
-use tracing::debug_span;
-
 use crate::file::{File, FILE_PRELUDE};
 
 #[derive(Debug, PartialEq, Default)]

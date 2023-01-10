@@ -1,7 +1,5 @@
 use std::collections::BTreeMap;
 
-use tracing::debug_span;
-
 use crate::library::Library;
 
 #[derive(Debug, PartialEq)]
