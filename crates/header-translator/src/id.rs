@@ -4,6 +4,22 @@ use clang::Entity;
 
 use crate::context::Context;
 
+pub trait ToOptionString {
+    fn to_option(&self) -> Option<&str>;
+}
+
+impl ToOptionString for String {
+    fn to_option(&self) -> Option<&str> {
+        Some(self)
+    }
+}
+
+impl ToOptionString for Option<String> {
+    fn to_option(&self) -> Option<&str> {
+        self.as_deref()
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct ItemIdentifier<N = String> {
     /// Names in Objective-C are global, so this is always enough to uniquely
@@ -15,11 +31,22 @@ pub struct ItemIdentifier<N = String> {
     pub file_name: Option<String>,
 }
 
-impl<N> ItemIdentifier<N> {
+impl<N: ToOptionString> ItemIdentifier<N> {
     pub fn with_name(name: N, entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        let (library_name, file_name) = context
+        let (mut library_name, mut file_name) = context
             .get_library_and_file_name(entity)
             .expect("ItemIdentifier get library and file");
+
+        // TODO: Get rid of this hack
+        if library_name == "CoreGraphics" {
+            match name.to_option() {
+                Some("CGFloat" | "CGPoint" | "CGRect" | "CGSize") => {
+                    library_name = "Foundation".to_string();
+                    file_name = Some("NSGeometry".to_string());
+                }
+                _ => {}
+            }
+        }
 
         Self {
             name,
@@ -28,7 +55,7 @@ impl<N> ItemIdentifier<N> {
         }
     }
 
-    fn map_name<R>(self, f: impl FnOnce(N) -> R) -> ItemIdentifier<R> {
+    fn map_name<R: ToOptionString>(self, f: impl FnOnce(N) -> R) -> ItemIdentifier<R> {
         let Self {
             name,
             library,
@@ -41,7 +68,7 @@ impl<N> ItemIdentifier<N> {
         }
     }
 
-    pub fn with_new_path<R>(self, other: &ItemIdentifier<R>) -> Self {
+    pub fn with_new_path<R: ToOptionString>(self, other: &ItemIdentifier<R>) -> Self {
         Self {
             name: self.name,
             library: other.library.clone(),
@@ -112,7 +139,7 @@ impl ItemIdentifier {
         ItemIdentifierPath(self)
     }
 
-    pub fn path_in_relation_to<'a, T>(
+    pub fn path_in_relation_to<'a, T: ToOptionString>(
         &'a self,
         other: &'a ItemIdentifier<T>,
     ) -> impl fmt::Display + 'a {
