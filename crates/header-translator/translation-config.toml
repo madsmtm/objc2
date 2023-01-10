@@ -6,6 +6,9 @@ imports = ["Foundation"]
 [library.QuartzCore]
 imports = ["CoreAnimation", "Foundation"]
 
+[library.Metal]
+imports = ["Metal", "Foundation"]
+
 [library.CoreData]
 imports = ["CoreData", "Foundation"]
 
@@ -39,6 +42,8 @@ getInputStream_outputStream = { skipped = true }
 [class.NSPropertyListSerialization.methods]
 dataFromPropertyList_format_errorDescription = { skipped = true }
 propertyListFromData_mutabilityOption_format_errorDescription = { skipped = true }
+[fn.MTLCopyAllDevicesWithObserver]
+skipped = true
 
 # Has `error:` parameter, but returns NSInteger (where 0 means error)
 [class.NSJSONSerialization.methods.writeJSONObject_toStream_options_error]
@@ -356,10 +361,6 @@ skipped = true
 [static.NSRollbackMergePolicy]
 skipped = true
 
-# Works weirdly since it's defined both as a property, and as a method.
-[class.NSDocument.methods.setDisplayName]
-skipped = true
-
 # These return `oneway void`, which is a bit tricky to handle.
 [class.NSPasteboard.methods.releaseGlobally]
 skipped = true
@@ -389,6 +390,8 @@ skipped = true
 skipped = true
 [class.NSWorkspace.methods.noteFileSystemChanged]
 skipped = true
+[class.NSDocument.methods.setDisplayName]
+skipped = true
 
 # Duplicated method
 [class.NSSlider.methods.isVertical]
@@ -396,6 +399,12 @@ skipped = true
 [class.NSSliderCell.methods.isVertical]
 skipped = true
 [class.NSGestureRecognizer.methods.state]
+skipped = true
+
+# Duplicated property
+[class.MTLRasterizationRateLayerDescriptor.methods.sampleCount]
+skipped = true
+[class.MTLRasterizationRateLayerDescriptor.methods.setSampleCount]
 skipped = true
 
 # Uses stuff from different frameworks / system libraries
@@ -599,6 +608,16 @@ setForegroundColor = { skipped = true }
 skipped = true
 [fn.CATransform3DGetAffineTransform]
 skipped = true
+[class.MTLSharedEventListener.methods.initWithDispatchQueue]
+skipped = true
+[class.MTLSharedEventListener.methods.dispatchQueue]
+skipped = true
+[protocol.MTLDevice.methods.newLibraryWithData_error]
+skipped = true
+[protocol.MTLDevice.methods.newTextureWithDescriptor_iosurface_plane]
+skipped = true
+[protocol.MTLTexture.methods.iosurface]
+skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]
@@ -743,3 +762,18 @@ skipped = true
 [class.CAMediaTimingFunction.methods]
 functionWithControlPoints = { skipped = true }
 initWithControlPoints = { skipped = true }
+
+# Uses __autoreleasing in a typedef, which I'm unsure how to handle
+[typedef.MTLAutoreleasedArgument]
+skipped = true
+[protocol.MTLFunction.methods.newArgumentEncoderWithBufferIndex_reflection]
+skipped = true
+[typedef.MTLAutoreleasedRenderPipelineReflection]
+skipped = true
+[typedef.MTLAutoreleasedComputePipelineReflection]
+skipped = true
+[protocol.MTLDevice.methods]
+newRenderPipelineStateWithDescriptor_options_reflection_error = { skipped = true }
+newComputePipelineStateWithFunction_options_reflection_error = { skipped = true }
+newComputePipelineStateWithDescriptor_options_reflection_error = { skipped = true }
+newRenderPipelineStateWithTileDescriptor_options_reflection_error = { skipped = true }

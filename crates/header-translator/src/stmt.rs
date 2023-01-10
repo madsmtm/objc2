@@ -137,17 +137,6 @@ fn parse_objc_decl(
             drop(span);
             let partial = Method::partial_property(entity);
 
-            assert!(
-                properties.insert((partial.is_class, partial.getter_name.clone())),
-                "already exisiting property"
-            );
-            if let Some(setter_name) = partial.setter_name.clone() {
-                assert!(
-                    properties.insert((partial.is_class, setter_name)),
-                    "already exisiting property"
-                );
-            }
-
             let getter_data = ClassData::get_method_data(data, &partial.getter_name);
             let setter_data = partial
                 .setter_name
@@ -156,9 +145,15 @@ fn parse_objc_decl(
 
             let (getter, setter) = partial.parse(getter_data, setter_data, context);
             if let Some(getter) = getter {
+                if !properties.insert((getter.is_class, getter.fn_name.clone())) {
+                    error!(?setter, "already exisiting property");
+                }
                 methods.push(getter);
             }
             if let Some(setter) = setter {
+                if !properties.insert((setter.is_class, setter.fn_name.clone())) {
+                    error!(?setter, "already exisiting property");
+                }
                 methods.push(setter);
             }
         }
@@ -177,15 +172,11 @@ fn parse_objc_decl(
     });
 
     if !properties.is_empty() {
-        if properties == HashSet::from([(false, "setDisplayName".to_owned())]) {
-            // TODO
-        } else {
-            error!(
-                ?methods,
-                ?properties,
-                "did not properly add methods to properties"
-            );
-        }
+        error!(
+            ?methods,
+            ?properties,
+            "did not properly add methods to properties"
+        );
     }
 
     (protocols, methods, designated_initializers)
@@ -671,9 +662,10 @@ impl Stmt {
                             kind = Some(macro_);
                         }
                     }
-                    _ => {
-                        panic!("unknown enum child {entity:?} in {name:?}");
+                    EntityKind::VisibilityAttr => {
+                        // Already exposed as entity.get_visibility()
                     }
+                    _ => warn!("unknown"),
                 });
 
                 if name.is_none() && variants.is_empty() {

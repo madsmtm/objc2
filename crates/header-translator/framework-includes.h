@@ -17,3 +17,5 @@
 #endif
 
 #import <AuthenticationServices/AuthenticationServices.h>
+
+#import <Metal/Metal.h>

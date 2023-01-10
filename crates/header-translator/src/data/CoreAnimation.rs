@@ -230,4 +230,8 @@ data! {
     unsafe fn CATransform3DMakeAffineTransform;
     unsafe fn CATransform3DIsAffine;
     unsafe fn CATransform3DGetAffineTransform;
+
+    class CAMetalLayer {
+        // TODO
+    }
 }

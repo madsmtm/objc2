@@ -306,6 +306,87 @@ fn parse_attributed<'a>(
         name.trim()
     }
 
+    let parse_const = |name: &mut &str| {
+        if ty.is_const_qualified() {
+            if let Some(rest) = name.strip_suffix("const") {
+                *name = rest.trim();
+            }
+            if !modified_ty.is_const_qualified() {
+                // TODO: Fix this
+                warn!("unnecessarily stripped const");
+            }
+        }
+    };
+
+    fn parse_lifetime<'a>(
+        name: &mut &'a str,
+        modified_name: &'a str,
+        lifetime: &mut Lifetime,
+        prefix: bool,
+    ) {
+        let strip_method = if prefix {
+            str::strip_prefix
+        } else {
+            str::strip_suffix
+        };
+
+        let mut strip_lifetime = |stripped: &'static str| {
+            // If the string is present in the name, and _not_ in the modified
+            // name, then naturally we should strip it so that they match.
+            if let Some(rest) = strip_method(name, stripped) {
+                if strip_method(modified_name, stripped).is_none() {
+                    *name = rest.trim();
+                    return true;
+                }
+            }
+
+            false
+        };
+
+        if strip_lifetime("__unsafe_unretained") {
+            *lifetime = Lifetime::Unretained;
+        } else if strip_lifetime("__strong") {
+            *lifetime = Lifetime::Strong;
+        } else if strip_lifetime("__weak") {
+            *lifetime = Lifetime::Weak;
+        } else if strip_lifetime("__autoreleasing") {
+            *lifetime = Lifetime::Autoreleasing;
+        }
+    }
+
+    let parse_nullability = |name: &mut &str, nullability: &mut Nullability| {
+        if let Some(rest) = name.strip_suffix("_Nullable") {
+            assert_eq!(
+                ty.get_nullability(),
+                Some(Nullability::Nullable),
+                "nullable"
+            );
+            *nullability = Nullability::Nullable;
+            *name = rest.trim();
+        } else if let Some(rest) = name.strip_suffix("_Nonnull") {
+            assert_eq!(ty.get_nullability(), Some(Nullability::NonNull), "nonnull");
+            *nullability = match nullability {
+                Nullability::Nullable => Nullability::Nullable,
+                _ => Nullability::NonNull,
+            };
+            *name = rest.trim();
+        } else if let Some(rest) = name.strip_suffix("_Null_unspecified") {
+            assert_eq!(
+                ty.get_nullability(),
+                Some(Nullability::Unspecified),
+                "unspecified"
+            );
+            // Do nothing
+            *name = rest.trim();
+        } else {
+            assert_eq!(
+                ty.get_nullability(),
+                None,
+                "expected no nullability attribute on {name:?}"
+            );
+        }
+    };
+
     match modified_ty.get_kind() {
         TypeKind::ConstantArray => {
             let (res, _) = name.split_once('[').expect("array to end with [");
@@ -341,67 +422,13 @@ fn parse_attributed<'a>(
         _ => {}
     }
 
-    if ty.is_const_qualified() {
-        if let Some(rest) = name.strip_suffix("const") {
-            name = rest.trim();
-        }
-        if !modified_ty.is_const_qualified() {
-            // TODO: Fix this
-            warn!("unnecessarily stripped const");
-        }
-    }
-
+    parse_const(&mut name);
     if inside_partial_array {
-        if let Some(rest) = name.strip_prefix("__unsafe_unretained") {
-            *lifetime = Lifetime::Unretained;
-            name = rest.trim();
-        }
+        parse_lifetime(&mut name, modified_name, lifetime, true);
     }
-
-    if let Some(rest) = name.strip_suffix("__unsafe_unretained") {
-        *lifetime = Lifetime::Unretained;
-        name = rest.trim();
-    } else if let Some(rest) = name.strip_suffix("__strong") {
-        *lifetime = Lifetime::Strong;
-        name = rest.trim();
-    } else if let Some(rest) = name.strip_suffix("__weak") {
-        *lifetime = Lifetime::Weak;
-        name = rest.trim();
-    } else if let Some(rest) = name.strip_suffix("__autoreleasing") {
-        *lifetime = Lifetime::Autoreleasing;
-        name = rest.trim();
-    }
-
-    if let Some(rest) = name.strip_suffix("_Nullable") {
-        assert_eq!(
-            ty.get_nullability(),
-            Some(Nullability::Nullable),
-            "nullable"
-        );
-        *nullability = Nullability::Nullable;
-        name = rest.trim();
-    } else if let Some(rest) = name.strip_suffix("_Nonnull") {
-        assert_eq!(ty.get_nullability(), Some(Nullability::NonNull), "nonnull");
-        *nullability = match nullability {
-            Nullability::Nullable => Nullability::Nullable,
-            _ => Nullability::NonNull,
-        };
-        name = rest.trim();
-    } else if let Some(rest) = name.strip_suffix("_Null_unspecified") {
-        assert_eq!(
-            ty.get_nullability(),
-            Some(Nullability::Unspecified),
-            "unspecified"
-        );
-        // Do nothing
-        name = rest.trim();
-    } else {
-        assert_eq!(
-            ty.get_nullability(),
-            None,
-            "expected no nullability attribute on {name:?}"
-        );
-    }
+    parse_lifetime(&mut name, modified_name, lifetime, false);
+    parse_nullability(&mut name, nullability);
+    parse_lifetime(&mut name, modified_name, lifetime, false);
 
     if name != modified_name {
         if let Some(rest) = name.strip_prefix("__kindof") {
@@ -1233,9 +1260,8 @@ impl Ty {
                     "invalid inner error nullability {self:?}"
                 );
                 assert!(!id_is_const, "expected inner error not const {self:?}");
-                assert_eq!(
-                    *lifetime,
-                    Lifetime::Unspecified,
+                assert!(
+                    matches!(lifetime, Lifetime::Unspecified | Lifetime::Autoreleasing),
                     "invalid error lifetime {self:?}"
                 );
                 return true;

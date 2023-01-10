@@ -41,3 +41,5 @@ pub mod CoreAnimation;
 pub mod CoreData;
 #[cfg(feature = "Foundation")]
 pub mod Foundation;
+#[cfg(feature = "Metal")]
+pub mod Metal;

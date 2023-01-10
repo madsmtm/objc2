@@ -85,6 +85,7 @@ macro_rules! __data_inner {
 
         $($rest:tt)*
     ) => {
+        #[allow(unused_mut)]
         let mut data = $config.protocol_data.entry(stringify!($protocol).to_string()).or_default();
 
         __data_methods! {
@@ -105,6 +106,7 @@ macro_rules! __data_inner {
 
         $($rest:tt)*
     ) => {
+        #[allow(unused_mut)]
         let mut data = $config.fns.entry(stringify!($function).to_string()).or_default();
 
         data.unsafe_ = false;
