@@ -74,6 +74,7 @@ impl<'a> Cache<'a> {
         if let Stmt::Methods {
             ty,
             availability,
+            superclasses: _,
             methods,
             category_name,
             description,
@@ -134,7 +135,7 @@ impl<'a> Cache<'a> {
                         .flatten()
                         .collect();
 
-                    for superclass in superclasses {
+                    for superclass in &*superclasses {
                         if let Some(cache) = self.classes.get(superclass) {
                             new_stmts.extend(cache.to_emit.iter().filter_map(|cache| {
                                 let mut methods: Vec<_> = cache
@@ -159,6 +160,7 @@ impl<'a> Cache<'a> {
                                 Some(Stmt::Methods {
                                     ty: ty.clone(),
                                     availability: cache.availability.clone(),
+                                    superclasses: superclasses.clone(),
                                     methods,
                                     category_name: cache.category_name.clone(),
                                     description: Some(format!(

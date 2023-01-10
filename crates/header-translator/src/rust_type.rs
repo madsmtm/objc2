@@ -416,6 +416,18 @@ impl IdType {
             _ => panic!("pointee was neither objcinterface nor objcobject: {ty:?}"),
         }
     }
+
+    fn visit_required_features(&self, f: &mut impl FnMut(&str, &str)) {
+        if let Some(library) = self.library() {
+            f(&library, self.name());
+        }
+
+        if let Self::Class { generics, .. } = self {
+            for generic in generics {
+                generic.visit_required_features(f);
+            }
+        }
+    }
 }
 
 impl fmt::Display for IdType {
@@ -1004,6 +1016,48 @@ impl Inner {
             _ => {}
         }
     }
+
+    fn visit_required_features(&self, f: &mut impl FnMut(&str, &str)) {
+        match self {
+            // Objective-C
+            Self::Id { ty, .. } => {
+                // f("objc2");
+                ty.visit_required_features(f);
+            }
+            Self::Class { .. } | Self::Sel { .. } | Self::ObjcBool => {
+                // f("objc2");
+            }
+
+            // Others
+            Self::Pointer { pointee, .. } | Self::IncompleteArray { pointee, .. } => {
+                pointee.visit_required_features(f);
+            }
+            Self::Array { element_type, .. } => {
+                element_type.visit_required_features(f);
+            }
+            // TODO
+            // Enum { name } | Struct { name } | TypeDef { name } => {
+            //
+            // }
+            Self::Fn {
+                arguments,
+                result_type,
+                ..
+            }
+            | Self::Block {
+                arguments,
+                result_type,
+            } => {
+                // TODO if block
+                // f("block2");
+                for arg in arguments {
+                    arg.visit_required_features(f);
+                }
+                result_type.visit_required_features(f);
+            }
+            _ => {}
+        }
+    }
 }
 
 /// This is sound to output in (almost, c_void is not a valid return type) any
@@ -1397,6 +1451,15 @@ impl Ty {
                 _ => {}
             }
         }
+    }
+
+    pub fn visit_required_features(&self, f: &mut impl FnMut(&str, &str)) {
+        match &self.kind {
+            TyKind::MethodReturn { with_error: true } => f("Foundation", "NSError"),
+            _ => {}
+        }
+
+        self.ty.visit_required_features(f);
     }
 }
 

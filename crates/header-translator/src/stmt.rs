@@ -1,4 +1,5 @@
 use std::borrow::Cow;
+use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::fmt;
 use std::iter;
@@ -35,17 +36,25 @@ impl fmt::Display for Derives {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct ClassDefReference {
+    pub library: String,
     pub name: String,
     pub generics: Vec<String>,
 }
 
 impl ClassDefReference {
-    pub fn new(name: String, generics: Vec<String>) -> Self {
-        Self { name, generics }
+    pub fn new(library: String, name: String, generics: Vec<String>) -> Self {
+        Self {
+            library,
+            name,
+            generics,
+        }
     }
 }
 
-fn parse_superclass<'ty>(entity: &Entity<'ty>) -> Option<(Entity<'ty>, ClassDefReference)> {
+fn parse_superclass<'ty>(
+    entity: &Entity<'ty>,
+    context: &Context<'_>,
+) -> Option<(Entity<'ty>, ClassDefReference)> {
     let mut superclass = None;
     let mut generics = Vec::new();
 
@@ -61,11 +70,19 @@ fn parse_superclass<'ty>(entity: &Entity<'ty>) -> Option<(Entity<'ty>, ClassDefR
     });
 
     superclass.map(|entity| {
+        let reference = entity
+            .get_reference()
+            .expect("ObjCSuperClassRef to reference entity");
+        let (library, _) = context
+            .get_library_and_file_name(&reference)
+            .expect("superclass library");
         (
-            entity
-                .get_reference()
-                .expect("ObjCSuperClassRef to reference entity"),
-            ClassDefReference::new(entity.get_name().expect("superclass name"), generics),
+            reference,
+            ClassDefReference::new(
+                library,
+                entity.get_name().expect("superclass name"),
+                generics,
+            ),
         )
     })
 }
@@ -200,6 +217,7 @@ pub enum Stmt {
     Methods {
         ty: ClassDefReference,
         availability: Availability,
+        superclasses: Vec<ClassDefReference>,
         methods: Vec<Method>,
         /// For the categories that have a name (though some don't, see NSClipView)
         category_name: Option<String>,
@@ -351,12 +369,17 @@ impl Stmt {
                 let (protocols, methods, designated_initializers) =
                     parse_objc_decl(entity, true, Some(&mut generics), class_data, context);
 
-                let ty = ClassDefReference::new(name, generics);
+                let (library, _) = context
+                    .get_library_and_file_name(entity)
+                    .expect("category library");
+                let ty = ClassDefReference::new(library, name, generics);
 
                 let mut superclass_entity = *entity;
                 let mut superclasses = vec![];
 
-                while let Some((next_entity, superclass)) = parse_superclass(&superclass_entity) {
+                while let Some((next_entity, superclass)) =
+                    parse_superclass(&superclass_entity, context)
+                {
                     superclass_entity = next_entity;
                     superclasses.push(superclass);
                 }
@@ -364,6 +387,7 @@ impl Stmt {
                 let methods = Self::Methods {
                     ty: ty.clone(),
                     availability: availability.clone(),
+                    superclasses: superclasses.clone(),
                     methods,
                     category_name: None,
                     description: None,
@@ -440,11 +464,25 @@ impl Stmt {
                     )
                 }
 
-                let ty = ClassDefReference::new(class_name, class_generics);
+                let (library, _) = context
+                    .get_library_and_file_name(entity)
+                    .expect("category library");
+                let ty = ClassDefReference::new(library, class_name, class_generics);
+
+                let mut superclass_entity = *entity;
+                let mut superclasses = vec![];
+
+                while let Some((next_entity, superclass)) =
+                    parse_superclass(&superclass_entity, context)
+                {
+                    superclass_entity = next_entity;
+                    superclasses.push(superclass);
+                }
 
                 iter::once(Self::Methods {
                     ty: ty.clone(),
                     availability: availability.clone(),
+                    superclasses,
                     methods,
                     category_name: name,
                     description: None,
@@ -943,6 +981,7 @@ impl fmt::Display for Stmt {
             Self::Methods {
                 ty,
                 availability: _,
+                superclasses,
                 methods,
                 category_name,
                 description,
@@ -957,6 +996,7 @@ impl fmt::Display for Stmt {
                 if let Some(category_name) = category_name {
                     writeln!(f, "    /// {category_name}")?;
                 }
+                writeln!(f, "    #[cfg(feature = \"{}_{}\")]", ty.library, ty.name)?;
                 writeln!(
                     f,
                     "    unsafe impl{} {} {{",
@@ -964,6 +1004,39 @@ impl fmt::Display for Stmt {
                     GenericTyHelper(ty)
                 )?;
                 for method in methods {
+                    // Use a set to deduplicate features, and to have them in a consistent order
+                    let mut features = BTreeSet::new();
+                    method.visit_required_features(|library, item| {
+                        if ty.library == library && ty.name == item {
+                            // The feature is guaranteed enabled if the class itself is enabled
+                            return;
+                        }
+                        for superclass in superclasses {
+                            if superclass.library == library && superclass.name == item {
+                                // Same for superclasses
+                                return;
+                            }
+                        }
+                        features.insert(format!("feature = \"{library}_{item}\""));
+                    });
+                    match features.len() {
+                        0 => {}
+                        1 => {
+                            writeln!(f, "        #[cfg({})]", features.first().unwrap())?;
+                        }
+                        _ => {
+                            writeln!(
+                                f,
+                                "        #[cfg(all({}))]",
+                                features
+                                    .iter()
+                                    .map(|s| &**s)
+                                    .collect::<Vec<&str>>()
+                                    .join(",")
+                            )?;
+                        }
+                    }
+
                     writeln!(f, "{method}")?;
                 }
                 writeln!(f, "    }}")?;

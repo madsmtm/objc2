@@ -218,6 +218,14 @@ impl Method {
 
         Some(self)
     }
+
+    pub fn visit_required_features(&self, mut f: impl FnMut(&str, &str)) {
+        for (_, _, arg) in &self.arguments {
+            arg.visit_required_features(&mut f);
+        }
+
+        self.result_type.visit_required_features(&mut f);
+    }
 }
 
 #[derive(Debug)]
