@@ -240,7 +240,6 @@ impl IdType {
         }
     }
 
-    #[allow(dead_code)]
     fn library(&self) -> Option<&str> {
         match self {
             Self::Class { library, .. } => Some(library),
@@ -419,7 +418,10 @@ impl IdType {
 
     fn visit_required_features(&self, f: &mut impl FnMut(&str, &str)) {
         if let Some(library) = self.library() {
-            f(&library, self.name());
+            let name = self.name();
+            if library != "Foundation" && name != "NSObject" {
+                f(&library, name);
+            }
         }
 
         if let Self::Class {

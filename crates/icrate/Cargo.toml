@@ -113,7 +113,6 @@ unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "Authenticati
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
 
 # Temporary fixes until we can autogenerate these
-Foundation_NSObject = []
 Foundation_NSProxy = []
 AuthenticationServices_ASCredentialProviderViewController = []
 AuthenticationServices_ASAccountAuthenticationModificationViewController = []
@@ -126,51 +125,27 @@ AppKit_NSPopover = []
 AppKit_NSATSTypesetter = [
     "AppKit_NSTypesetter",
 ]
-AppKit_NSAccessibilityCustomAction = [
-    "Foundation_NSObject",
-]
-AppKit_NSAccessibilityCustomRotor = [
-    "Foundation_NSObject",
-]
-AppKit_NSAccessibilityCustomRotorItemResult = [
-    "Foundation_NSObject",
-]
-AppKit_NSAccessibilityCustomRotorSearchParameters = [
-    "Foundation_NSObject",
-]
-AppKit_NSAccessibilityElement = [
-    "Foundation_NSObject",
-]
+AppKit_NSAccessibilityCustomAction = []
+AppKit_NSAccessibilityCustomRotor = []
+AppKit_NSAccessibilityCustomRotorItemResult = []
+AppKit_NSAccessibilityCustomRotorSearchParameters = []
+AppKit_NSAccessibilityElement = []
 AppKit_NSActionCell = [
     "AppKit_NSCell",
 ]
-AppKit_NSAlert = [
-    "Foundation_NSObject",
-]
-AppKit_NSAlignmentFeedbackFilter = [
-    "Foundation_NSObject",
-]
-AppKit_NSAnimation = [
-    "Foundation_NSObject",
-]
-AppKit_NSAnimationContext = [
-    "Foundation_NSObject",
-]
-AppKit_NSAppearance = [
-    "Foundation_NSObject",
-]
+AppKit_NSAlert = []
+AppKit_NSAlignmentFeedbackFilter = []
+AppKit_NSAnimation = []
+AppKit_NSAnimationContext = []
+AppKit_NSAppearance = []
 AppKit_NSApplication = [
     "AppKit_NSResponder",
 ]
 AppKit_NSArrayController = [
     "AppKit_NSObjectController",
 ]
-AppKit_NSBezierPath = [
-    "Foundation_NSObject",
-]
-AppKit_NSBindingSelectionMarker = [
-    "Foundation_NSObject",
-]
+AppKit_NSBezierPath = []
+AppKit_NSBindingSelectionMarker = []
 AppKit_NSBitmapImageRep = [
     "AppKit_NSImageRep",
 ]
@@ -198,48 +173,30 @@ AppKit_NSCachedImageRep = [
 AppKit_NSCandidateListTouchBarItem = [
     "AppKit_NSTouchBarItem",
 ]
-AppKit_NSCell = [
-    "Foundation_NSObject",
-]
+AppKit_NSCell = []
 AppKit_NSClickGestureRecognizer = [
     "AppKit_NSGestureRecognizer",
 ]
 AppKit_NSClipView = [
     "AppKit_NSView",
 ]
-AppKit_NSCollectionLayoutAnchor = [
-    "Foundation_NSObject",
-]
+AppKit_NSCollectionLayoutAnchor = []
 AppKit_NSCollectionLayoutBoundarySupplementaryItem = [
     "AppKit_NSCollectionLayoutSupplementaryItem",
 ]
 AppKit_NSCollectionLayoutDecorationItem = [
     "AppKit_NSCollectionLayoutItem",
 ]
-AppKit_NSCollectionLayoutDimension = [
-    "Foundation_NSObject",
-]
-AppKit_NSCollectionLayoutEdgeSpacing = [
-    "Foundation_NSObject",
-]
+AppKit_NSCollectionLayoutDimension = []
+AppKit_NSCollectionLayoutEdgeSpacing = []
 AppKit_NSCollectionLayoutGroup = [
     "AppKit_NSCollectionLayoutItem",
 ]
-AppKit_NSCollectionLayoutGroupCustomItem = [
-    "Foundation_NSObject",
-]
-AppKit_NSCollectionLayoutItem = [
-    "Foundation_NSObject",
-]
-AppKit_NSCollectionLayoutSection = [
-    "Foundation_NSObject",
-]
-AppKit_NSCollectionLayoutSize = [
-    "Foundation_NSObject",
-]
-AppKit_NSCollectionLayoutSpacing = [
-    "Foundation_NSObject",
-]
+AppKit_NSCollectionLayoutGroupCustomItem = []
+AppKit_NSCollectionLayoutItem = []
+AppKit_NSCollectionLayoutSection = []
+AppKit_NSCollectionLayoutSize = []
+AppKit_NSCollectionLayoutSpacing = []
 AppKit_NSCollectionLayoutSupplementaryItem = [
     "AppKit_NSCollectionLayoutItem",
 ]
@@ -249,12 +206,8 @@ AppKit_NSCollectionView = [
 AppKit_NSCollectionViewCompositionalLayout = [
     "AppKit_NSCollectionViewLayout",
 ]
-AppKit_NSCollectionViewCompositionalLayoutConfiguration = [
-    "Foundation_NSObject",
-]
-AppKit_NSCollectionViewDiffableDataSource = [
-    "Foundation_NSObject",
-]
+AppKit_NSCollectionViewCompositionalLayoutConfiguration = []
+AppKit_NSCollectionViewDiffableDataSource = []
 AppKit_NSCollectionViewFlowLayout = [
     "AppKit_NSCollectionViewLayout",
 ]
@@ -267,42 +220,24 @@ AppKit_NSCollectionViewGridLayout = [
 AppKit_NSCollectionViewItem = [
     "AppKit_NSViewController",
 ]
-AppKit_NSCollectionViewLayout = [
-    "Foundation_NSObject",
-]
-AppKit_NSCollectionViewLayoutAttributes = [
-    "Foundation_NSObject",
-]
-AppKit_NSCollectionViewLayoutInvalidationContext = [
-    "Foundation_NSObject",
-]
+AppKit_NSCollectionViewLayout = []
+AppKit_NSCollectionViewLayoutAttributes = []
+AppKit_NSCollectionViewLayoutInvalidationContext = []
 AppKit_NSCollectionViewTransitionLayout = [
     "AppKit_NSCollectionViewLayout",
 ]
-AppKit_NSCollectionViewUpdateItem = [
-    "Foundation_NSObject",
-]
-AppKit_NSColor = [
-    "Foundation_NSObject",
-]
-AppKit_NSColorList = [
-    "Foundation_NSObject",
-]
+AppKit_NSCollectionViewUpdateItem = []
+AppKit_NSColor = []
+AppKit_NSColorList = []
 AppKit_NSColorPanel = [
     "AppKit_NSPanel",
 ]
-AppKit_NSColorPicker = [
-    "Foundation_NSObject",
-]
+AppKit_NSColorPicker = []
 AppKit_NSColorPickerTouchBarItem = [
     "AppKit_NSTouchBarItem",
 ]
-AppKit_NSColorSampler = [
-    "Foundation_NSObject",
-]
-AppKit_NSColorSpace = [
-    "Foundation_NSObject",
-]
+AppKit_NSColorSampler = []
+AppKit_NSColorSpace = []
 AppKit_NSColorWell = [
     "AppKit_NSControl",
 ]
@@ -315,21 +250,15 @@ AppKit_NSComboBoxCell = [
 AppKit_NSControl = [
     "AppKit_NSView",
 ]
-AppKit_NSController = [
-    "Foundation_NSObject",
-]
-AppKit_NSCursor = [
-    "Foundation_NSObject",
-]
+AppKit_NSController = []
+AppKit_NSCursor = []
 AppKit_NSCustomImageRep = [
     "AppKit_NSImageRep",
 ]
 AppKit_NSCustomTouchBarItem = [
     "AppKit_NSTouchBarItem",
 ]
-AppKit_NSDataAsset = [
-    "Foundation_NSObject",
-]
+AppKit_NSDataAsset = []
 AppKit_NSDatePicker = [
     "AppKit_NSControl",
 ]
@@ -339,60 +268,28 @@ AppKit_NSDatePickerCell = [
 AppKit_NSDictionaryController = [
     "AppKit_NSArrayController",
 ]
-AppKit_NSDictionaryControllerKeyValuePair = [
-    "Foundation_NSObject",
-]
-AppKit_NSDiffableDataSourceSnapshot = [
-    "Foundation_NSObject",
-]
-AppKit_NSDockTile = [
-    "Foundation_NSObject",
-]
-AppKit_NSDocument = [
-    "Foundation_NSObject",
-]
-AppKit_NSDocumentController = [
-    "Foundation_NSObject",
-]
-AppKit_NSDraggingImageComponent = [
-    "Foundation_NSObject",
-]
-AppKit_NSDraggingItem = [
-    "Foundation_NSObject",
-]
-AppKit_NSDraggingSession = [
-    "Foundation_NSObject",
-]
+AppKit_NSDictionaryControllerKeyValuePair = []
+AppKit_NSDiffableDataSourceSnapshot = []
+AppKit_NSDockTile = []
+AppKit_NSDocument = []
+AppKit_NSDocumentController = []
+AppKit_NSDraggingImageComponent = []
+AppKit_NSDraggingItem = []
+AppKit_NSDraggingSession = []
 AppKit_NSDrawer = [
     "AppKit_NSResponder",
 ]
 AppKit_NSEPSImageRep = [
     "AppKit_NSImageRep",
 ]
-AppKit_NSEvent = [
-    "Foundation_NSObject",
-]
-AppKit_NSFilePromiseProvider = [
-    "Foundation_NSObject",
-]
-AppKit_NSFilePromiseReceiver = [
-    "Foundation_NSObject",
-]
-AppKit_NSFont = [
-    "Foundation_NSObject",
-]
-AppKit_NSFontAssetRequest = [
-    "Foundation_NSObject",
-]
-AppKit_NSFontCollection = [
-    "Foundation_NSObject",
-]
-AppKit_NSFontDescriptor = [
-    "Foundation_NSObject",
-]
-AppKit_NSFontManager = [
-    "Foundation_NSObject",
-]
+AppKit_NSEvent = []
+AppKit_NSFilePromiseProvider = []
+AppKit_NSFilePromiseReceiver = []
+AppKit_NSFont = []
+AppKit_NSFontAssetRequest = []
+AppKit_NSFontCollection = []
+AppKit_NSFontDescriptor = []
+AppKit_NSFontManager = []
 AppKit_NSFontPanel = [
     "AppKit_NSPanel",
 ]
@@ -402,75 +299,39 @@ AppKit_NSForm = [
 AppKit_NSFormCell = [
     "AppKit_NSActionCell",
 ]
-AppKit_NSGestureRecognizer = [
-    "Foundation_NSObject",
-]
-AppKit_NSGlyphGenerator = [
-    "Foundation_NSObject",
-]
-AppKit_NSGlyphInfo = [
-    "Foundation_NSObject",
-]
-AppKit_NSGradient = [
-    "Foundation_NSObject",
-]
-AppKit_NSGraphicsContext = [
-    "Foundation_NSObject",
-]
-AppKit_NSGridCell = [
-    "Foundation_NSObject",
-]
-AppKit_NSGridColumn = [
-    "Foundation_NSObject",
-]
-AppKit_NSGridRow = [
-    "Foundation_NSObject",
-]
+AppKit_NSGestureRecognizer = []
+AppKit_NSGlyphGenerator = []
+AppKit_NSGlyphInfo = []
+AppKit_NSGradient = []
+AppKit_NSGraphicsContext = []
+AppKit_NSGridCell = []
+AppKit_NSGridColumn = []
+AppKit_NSGridRow = []
 AppKit_NSGridView = [
     "AppKit_NSView",
 ]
 AppKit_NSGroupTouchBarItem = [
     "AppKit_NSTouchBarItem",
 ]
-AppKit_NSHapticFeedbackManager = [
-    "Foundation_NSObject",
-]
-AppKit_NSHelpManager = [
-    "Foundation_NSObject",
-]
-AppKit_NSImage = [
-    "Foundation_NSObject",
-]
+AppKit_NSHapticFeedbackManager = []
+AppKit_NSHelpManager = []
+AppKit_NSImage = []
 AppKit_NSImageCell = [
     "AppKit_NSCell",
 ]
-AppKit_NSImageRep = [
-    "Foundation_NSObject",
-]
-AppKit_NSImageSymbolConfiguration = [
-    "Foundation_NSObject",
-]
+AppKit_NSImageRep = []
+AppKit_NSImageSymbolConfiguration = []
 AppKit_NSImageView = [
     "AppKit_NSControl",
 ]
-AppKit_NSInputManager = [
-    "Foundation_NSObject",
-]
-AppKit_NSInputServer = [
-    "Foundation_NSObject",
-]
-AppKit_NSLayoutConstraint = [
-    "Foundation_NSObject",
-]
+AppKit_NSInputManager = []
+AppKit_NSInputServer = []
+AppKit_NSLayoutConstraint = []
 AppKit_NSLayoutDimension = [
     "AppKit_NSLayoutAnchor",
 ]
-AppKit_NSLayoutGuide = [
-    "Foundation_NSObject",
-]
-AppKit_NSLayoutManager = [
-    "Foundation_NSObject",
-]
+AppKit_NSLayoutGuide = []
+AppKit_NSLayoutManager = []
 AppKit_NSLayoutXAxisAnchor = [
     "AppKit_NSLayoutAnchor",
 ]
@@ -489,33 +350,23 @@ AppKit_NSMagnificationGestureRecognizer = [
 AppKit_NSMatrix = [
     "AppKit_NSControl",
 ]
-AppKit_NSMediaLibraryBrowserController = [
-    "Foundation_NSObject",
-]
-AppKit_NSMenu = [
-    "Foundation_NSObject",
-]
-AppKit_NSMenuItem = [
-    "Foundation_NSObject",
-]
+AppKit_NSMediaLibraryBrowserController = []
+AppKit_NSMenu = []
+AppKit_NSMenuItem = []
 AppKit_NSMenuItemCell = [
     "AppKit_NSButtonCell",
 ]
 AppKit_NSMenuToolbarItem = [
     "AppKit_NSToolbarItem",
 ]
-AppKit_NSMovie = [
-    "Foundation_NSObject",
-]
+AppKit_NSMovie = []
 AppKit_NSMutableFontCollection = [
     "AppKit_NSFontCollection",
 ]
 AppKit_NSMutableParagraphStyle = [
     "AppKit_NSParagraphStyle",
 ]
-AppKit_NSNib = [
-    "Foundation_NSObject",
-]
+AppKit_NSNib = []
 AppKit_NSObjectController = [
     "AppKit_NSController",
 ]
@@ -528,36 +379,24 @@ AppKit_NSOutlineView = [
 AppKit_NSPDFImageRep = [
     "AppKit_NSImageRep",
 ]
-AppKit_NSPDFInfo = [
-    "Foundation_NSObject",
-]
-AppKit_NSPDFPanel = [
-    "Foundation_NSObject",
-]
+AppKit_NSPDFInfo = []
+AppKit_NSPDFPanel = []
 AppKit_NSPICTImageRep = [
     "AppKit_NSImageRep",
 ]
 AppKit_NSPageController = [
     "AppKit_NSViewController",
 ]
-AppKit_NSPageLayout = [
-    "Foundation_NSObject",
-]
+AppKit_NSPageLayout = []
 AppKit_NSPanGestureRecognizer = [
     "AppKit_NSGestureRecognizer",
 ]
 AppKit_NSPanel = [
     "AppKit_NSWindow",
 ]
-AppKit_NSParagraphStyle = [
-    "Foundation_NSObject",
-]
-AppKit_NSPasteboard = [
-    "Foundation_NSObject",
-]
-AppKit_NSPasteboardItem = [
-    "Foundation_NSObject",
-]
+AppKit_NSParagraphStyle = []
+AppKit_NSPasteboard = []
+AppKit_NSPasteboardItem = []
 AppKit_NSPathCell = [
     "AppKit_NSActionCell",
 ]
@@ -567,9 +406,7 @@ AppKit_NSPathComponentCell = [
 AppKit_NSPathControl = [
     "AppKit_NSControl",
 ]
-AppKit_NSPathControlItem = [
-    "Foundation_NSObject",
-]
+AppKit_NSPathControlItem = []
 AppKit_NSPersistentDocument = [
     "AppKit_NSDocument",
 ]
@@ -588,54 +425,34 @@ AppKit_NSPopoverTouchBarItem = [
 AppKit_NSPredicateEditor = [
     "AppKit_NSRuleEditor",
 ]
-AppKit_NSPredicateEditorRowTemplate = [
-    "Foundation_NSObject",
-]
+AppKit_NSPredicateEditorRowTemplate = []
 AppKit_NSPressGestureRecognizer = [
     "AppKit_NSGestureRecognizer",
 ]
-AppKit_NSPressureConfiguration = [
-    "Foundation_NSObject",
-]
-AppKit_NSPrintInfo = [
-    "Foundation_NSObject",
-]
-AppKit_NSPrintOperation = [
-    "Foundation_NSObject",
-]
-AppKit_NSPrintPanel = [
-    "Foundation_NSObject",
-]
-AppKit_NSPrinter = [
-    "Foundation_NSObject",
-]
+AppKit_NSPressureConfiguration = []
+AppKit_NSPrintInfo = []
+AppKit_NSPrintOperation = []
+AppKit_NSPrintPanel = []
+AppKit_NSPrinter = []
 AppKit_NSProgressIndicator = [
     "AppKit_NSView",
 ]
-AppKit_NSResponder = [
-    "Foundation_NSObject",
-]
+AppKit_NSResponder = []
 AppKit_NSRotationGestureRecognizer = [
     "AppKit_NSGestureRecognizer",
 ]
 AppKit_NSRuleEditor = [
     "AppKit_NSControl",
 ]
-AppKit_NSRulerMarker = [
-    "Foundation_NSObject",
-]
+AppKit_NSRulerMarker = []
 AppKit_NSRulerView = [
     "AppKit_NSView",
 ]
-AppKit_NSRunningApplication = [
-    "Foundation_NSObject",
-]
+AppKit_NSRunningApplication = []
 AppKit_NSSavePanel = [
     "AppKit_NSPanel",
 ]
-AppKit_NSScreen = [
-    "Foundation_NSObject",
-]
+AppKit_NSScreen = []
 AppKit_NSScrollView = [
     "AppKit_NSView",
 ]
@@ -657,18 +474,12 @@ AppKit_NSScrubberImageItemView = [
 AppKit_NSScrubberItemView = [
     "AppKit_NSScrubberArrangedView",
 ]
-AppKit_NSScrubberLayout = [
-    "Foundation_NSObject",
-]
-AppKit_NSScrubberLayoutAttributes = [
-    "Foundation_NSObject",
-]
+AppKit_NSScrubberLayout = []
+AppKit_NSScrubberLayoutAttributes = []
 AppKit_NSScrubberProportionalLayout = [
     "AppKit_NSScrubberLayout",
 ]
-AppKit_NSScrubberSelectionStyle = [
-    "Foundation_NSObject",
-]
+AppKit_NSScrubberSelectionStyle = []
 AppKit_NSScrubberSelectionView = [
     "AppKit_NSScrubberArrangedView",
 ]
@@ -696,15 +507,9 @@ AppKit_NSSegmentedCell = [
 AppKit_NSSegmentedControl = [
     "AppKit_NSControl",
 ]
-AppKit_NSShadow = [
-    "Foundation_NSObject",
-]
-AppKit_NSSharingService = [
-    "Foundation_NSObject",
-]
-AppKit_NSSharingServicePicker = [
-    "Foundation_NSObject",
-]
+AppKit_NSShadow = []
+AppKit_NSSharingService = []
+AppKit_NSSharingServicePicker = []
 AppKit_NSSharingServicePickerToolbarItem = [
     "AppKit_NSToolbarItem",
 ]
@@ -714,51 +519,33 @@ AppKit_NSSharingServicePickerTouchBarItem = [
 AppKit_NSSlider = [
     "AppKit_NSControl",
 ]
-AppKit_NSSliderAccessory = [
-    "Foundation_NSObject",
-]
-AppKit_NSSliderAccessoryBehavior = [
-    "Foundation_NSObject",
-]
+AppKit_NSSliderAccessory = []
+AppKit_NSSliderAccessoryBehavior = []
 AppKit_NSSliderCell = [
     "AppKit_NSActionCell",
 ]
 AppKit_NSSliderTouchBarItem = [
     "AppKit_NSTouchBarItem",
 ]
-AppKit_NSSound = [
-    "Foundation_NSObject",
-]
-AppKit_NSSpeechRecognizer = [
-    "Foundation_NSObject",
-]
-AppKit_NSSpeechSynthesizer = [
-    "Foundation_NSObject",
-]
-AppKit_NSSpellChecker = [
-    "Foundation_NSObject",
-]
+AppKit_NSSound = []
+AppKit_NSSpeechRecognizer = []
+AppKit_NSSpeechSynthesizer = []
+AppKit_NSSpellChecker = []
 AppKit_NSSplitView = [
     "AppKit_NSView",
 ]
 AppKit_NSSplitViewController = [
     "AppKit_NSViewController",
 ]
-AppKit_NSSplitViewItem = [
-    "Foundation_NSObject",
-]
+AppKit_NSSplitViewItem = []
 AppKit_NSStackView = [
     "AppKit_NSView",
 ]
-AppKit_NSStatusBar = [
-    "Foundation_NSObject",
-]
+AppKit_NSStatusBar = []
 AppKit_NSStatusBarButton = [
     "AppKit_NSButton",
 ]
-AppKit_NSStatusItem = [
-    "Foundation_NSObject",
-]
+AppKit_NSStatusItem = []
 AppKit_NSStepper = [
     "AppKit_NSControl",
 ]
@@ -768,15 +555,9 @@ AppKit_NSStepperCell = [
 AppKit_NSStepperTouchBarItem = [
     "AppKit_NSTouchBarItem",
 ]
-AppKit_NSStoryboard = [
-    "Foundation_NSObject",
-]
-AppKit_NSStoryboardSegue = [
-    "Foundation_NSObject",
-]
-AppKit_NSStringDrawingContext = [
-    "Foundation_NSObject",
-]
+AppKit_NSStoryboard = []
+AppKit_NSStoryboardSegue = []
+AppKit_NSStringDrawingContext = []
 AppKit_NSSwitch = [
     "AppKit_NSControl",
 ]
@@ -786,15 +567,11 @@ AppKit_NSTabView = [
 AppKit_NSTabViewController = [
     "AppKit_NSViewController",
 ]
-AppKit_NSTabViewItem = [
-    "Foundation_NSObject",
-]
+AppKit_NSTabViewItem = []
 AppKit_NSTableCellView = [
     "AppKit_NSView",
 ]
-AppKit_NSTableColumn = [
-    "Foundation_NSObject",
-]
+AppKit_NSTableColumn = []
 AppKit_NSTableHeaderCell = [
     "AppKit_NSTextFieldCell",
 ]
@@ -807,87 +584,45 @@ AppKit_NSTableRowView = [
 AppKit_NSTableView = [
     "AppKit_NSControl",
 ]
-AppKit_NSTableViewDiffableDataSource = [
-    "Foundation_NSObject",
-]
-AppKit_NSTableViewRowAction = [
-    "Foundation_NSObject",
-]
+AppKit_NSTableViewDiffableDataSource = []
+AppKit_NSTableViewRowAction = []
 AppKit_NSText = [
     "AppKit_NSView",
 ]
-AppKit_NSTextAlternatives = [
-    "Foundation_NSObject",
-]
-AppKit_NSTextAttachment = [
-    "Foundation_NSObject",
-]
+AppKit_NSTextAlternatives = []
+AppKit_NSTextAttachment = []
 AppKit_NSTextAttachmentCell = [
     "AppKit_NSCell",
 ]
-AppKit_NSTextAttachmentViewProvider = [
-    "Foundation_NSObject",
-]
-AppKit_NSTextBlock = [
-    "Foundation_NSObject",
-]
-AppKit_NSTextCheckingController = [
-    "Foundation_NSObject",
-]
-AppKit_NSTextContainer = [
-    "Foundation_NSObject",
-]
-AppKit_NSTextContentManager = [
-    "Foundation_NSObject",
-]
+AppKit_NSTextAttachmentViewProvider = []
+AppKit_NSTextBlock = []
+AppKit_NSTextCheckingController = []
+AppKit_NSTextContainer = []
+AppKit_NSTextContentManager = []
 AppKit_NSTextContentStorage = [
     "AppKit_NSTextContentManager",
 ]
-AppKit_NSTextElement = [
-    "Foundation_NSObject",
-]
+AppKit_NSTextElement = []
 AppKit_NSTextField = [
     "AppKit_NSControl",
 ]
 AppKit_NSTextFieldCell = [
     "AppKit_NSActionCell",
 ]
-AppKit_NSTextFinder = [
-    "Foundation_NSObject",
-]
-AppKit_NSTextInputContext = [
-    "Foundation_NSObject",
-]
-AppKit_NSTextLayoutFragment = [
-    "Foundation_NSObject",
-]
-AppKit_NSTextLayoutManager = [
-    "Foundation_NSObject",
-]
-AppKit_NSTextLineFragment = [
-    "Foundation_NSObject",
-]
-AppKit_NSTextList = [
-    "Foundation_NSObject",
-]
+AppKit_NSTextFinder = []
+AppKit_NSTextInputContext = []
+AppKit_NSTextLayoutFragment = []
+AppKit_NSTextLayoutManager = []
+AppKit_NSTextLineFragment = []
+AppKit_NSTextList = []
 AppKit_NSTextParagraph = [
     "AppKit_NSTextElement",
 ]
-AppKit_NSTextRange = [
-    "Foundation_NSObject",
-]
-AppKit_NSTextSelection = [
-    "Foundation_NSObject",
-]
-AppKit_NSTextSelectionNavigation = [
-    "Foundation_NSObject",
-]
-AppKit_NSTextStorage = [
-    "Foundation_NSMutableAttributedString",
-]
-AppKit_NSTextTab = [
-    "Foundation_NSObject",
-]
+AppKit_NSTextRange = []
+AppKit_NSTextSelection = []
+AppKit_NSTextSelectionNavigation = []
+AppKit_NSTextStorage = []
+AppKit_NSTextTab = []
 AppKit_NSTextTable = [
     "AppKit_NSTextBlock",
 ]
@@ -897,12 +632,8 @@ AppKit_NSTextTableBlock = [
 AppKit_NSTextView = [
     "AppKit_NSText",
 ]
-AppKit_NSTextViewportLayoutController = [
-    "Foundation_NSObject",
-]
-AppKit_NSTintConfiguration = [
-    "Foundation_NSObject",
-]
+AppKit_NSTextViewportLayoutController = []
+AppKit_NSTintConfiguration = []
 AppKit_NSTitlebarAccessoryViewController = [
     "AppKit_NSViewController",
 ]
@@ -912,45 +643,27 @@ AppKit_NSTokenField = [
 AppKit_NSTokenFieldCell = [
     "AppKit_NSTextFieldCell",
 ]
-AppKit_NSToolbar = [
-    "Foundation_NSObject",
-]
-AppKit_NSToolbarItem = [
-    "Foundation_NSObject",
-]
+AppKit_NSToolbar = []
+AppKit_NSToolbarItem = []
 AppKit_NSToolbarItemGroup = [
     "AppKit_NSToolbarItem",
 ]
-AppKit_NSTouch = [
-    "Foundation_NSObject",
-]
-AppKit_NSTouchBar = [
-    "Foundation_NSObject",
-]
-AppKit_NSTouchBarItem = [
-    "Foundation_NSObject",
-]
-AppKit_NSTrackingArea = [
-    "Foundation_NSObject",
-]
+AppKit_NSTouch = []
+AppKit_NSTouchBar = []
+AppKit_NSTouchBarItem = []
+AppKit_NSTrackingArea = []
 AppKit_NSTrackingSeparatorToolbarItem = [
     "AppKit_NSToolbarItem",
 ]
 AppKit_NSTreeController = [
     "AppKit_NSObjectController",
 ]
-AppKit_NSTreeNode = [
-    "Foundation_NSObject",
-]
-AppKit_NSTypesetter = [
-    "Foundation_NSObject",
-]
+AppKit_NSTreeNode = []
+AppKit_NSTypesetter = []
 AppKit_NSUserDefaultsController = [
     "AppKit_NSController",
 ]
-AppKit_NSUserInterfaceCompressionOptions = [
-    "Foundation_NSObject",
-]
+AppKit_NSUserInterfaceCompressionOptions = []
 AppKit_NSView = [
     "AppKit_NSResponder",
 ]
@@ -969,144 +682,72 @@ AppKit_NSWindow = [
 AppKit_NSWindowController = [
     "AppKit_NSResponder",
 ]
-AppKit_NSWindowTab = [
-    "Foundation_NSObject",
-]
-AppKit_NSWindowTabGroup = [
-    "Foundation_NSObject",
-]
-AppKit_NSWorkspace = [
-    "Foundation_NSObject",
-]
-AppKit_NSWorkspaceAuthorization = [
-    "Foundation_NSObject",
-]
-AppKit_NSWorkspaceOpenConfiguration = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASAccountAuthenticationModificationController = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASAccountAuthenticationModificationExtensionContext = [
-    "Foundation_NSExtensionContext",
-]
+AppKit_NSWindowTab = []
+AppKit_NSWindowTabGroup = []
+AppKit_NSWorkspace = []
+AppKit_NSWorkspaceAuthorization = []
+AppKit_NSWorkspaceOpenConfiguration = []
+AuthenticationServices_ASAccountAuthenticationModificationController = []
+AuthenticationServices_ASAccountAuthenticationModificationExtensionContext = []
 AuthenticationServices_ASAccountAuthenticationModificationReplacePasswordWithSignInWithAppleRequest = [
     "AuthenticationServices_ASAccountAuthenticationModificationRequest",
 ]
-AuthenticationServices_ASAccountAuthenticationModificationRequest = [
-    "Foundation_NSObject",
-]
+AuthenticationServices_ASAccountAuthenticationModificationRequest = []
 AuthenticationServices_ASAccountAuthenticationModificationUpgradePasswordToStrongPasswordRequest = [
     "AuthenticationServices_ASAccountAuthenticationModificationRequest",
 ]
-AuthenticationServices_ASAuthorization = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASAuthorizationAppleIDCredential = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASAuthorizationAppleIDProvider = [
-    "Foundation_NSObject",
-]
+AuthenticationServices_ASAuthorization = []
+AuthenticationServices_ASAuthorizationAppleIDCredential = []
+AuthenticationServices_ASAuthorizationAppleIDProvider = []
 AuthenticationServices_ASAuthorizationAppleIDRequest = [
     "AuthenticationServices_ASAuthorizationOpenIDRequest",
 ]
-AuthenticationServices_ASAuthorizationController = [
-    "Foundation_NSObject",
-]
+AuthenticationServices_ASAuthorizationController = []
 AuthenticationServices_ASAuthorizationOpenIDRequest = [
     "AuthenticationServices_ASAuthorizationRequest",
 ]
-AuthenticationServices_ASAuthorizationPasswordProvider = [
-    "Foundation_NSObject",
-]
+AuthenticationServices_ASAuthorizationPasswordProvider = []
 AuthenticationServices_ASAuthorizationPasswordRequest = [
     "AuthenticationServices_ASAuthorizationRequest",
 ]
-AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialAssertion = [
-    "Foundation_NSObject",
-]
+AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialAssertion = []
 AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialAssertionRequest = [
     "AuthenticationServices_ASAuthorizationRequest",
 ]
-AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialDescriptor = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialProvider = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialRegistration = [
-    "Foundation_NSObject",
-]
+AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialDescriptor = []
+AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialProvider = []
+AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialRegistration = []
 AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest = [
     "AuthenticationServices_ASAuthorizationRequest",
 ]
-AuthenticationServices_ASAuthorizationProviderExtensionAuthorizationRequest = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASAuthorizationProviderExtensionAuthorizationResult = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASAuthorizationPublicKeyCredentialParameters = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASAuthorizationRequest = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialAssertion = [
-    "Foundation_NSObject",
-]
+AuthenticationServices_ASAuthorizationProviderExtensionAuthorizationRequest = []
+AuthenticationServices_ASAuthorizationProviderExtensionAuthorizationResult = []
+AuthenticationServices_ASAuthorizationPublicKeyCredentialParameters = []
+AuthenticationServices_ASAuthorizationRequest = []
+AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialAssertion = []
 AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialAssertionRequest = [
     "AuthenticationServices_ASAuthorizationRequest",
 ]
-AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialProvider = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialRegistration = [
-    "Foundation_NSObject",
-]
+AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor = []
+AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialProvider = []
+AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialRegistration = []
 AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialRegistrationRequest = [
     "AuthenticationServices_ASAuthorizationRequest",
 ]
-AuthenticationServices_ASAuthorizationSingleSignOnCredential = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASAuthorizationSingleSignOnProvider = [
-    "Foundation_NSObject",
-]
+AuthenticationServices_ASAuthorizationSingleSignOnCredential = []
+AuthenticationServices_ASAuthorizationSingleSignOnProvider = []
 AuthenticationServices_ASAuthorizationSingleSignOnRequest = [
     "AuthenticationServices_ASAuthorizationOpenIDRequest",
 ]
-AuthenticationServices_ASCredentialIdentityStore = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASCredentialIdentityStoreState = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASCredentialProviderExtensionContext = [
-    "Foundation_NSExtensionContext",
-]
-AuthenticationServices_ASCredentialServiceIdentifier = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASPasswordCredential = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASPasswordCredentialIdentity = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASWebAuthenticationSession = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASWebAuthenticationSessionRequest = [
-    "Foundation_NSObject",
-]
-AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionManager = [
-    "Foundation_NSObject",
-]
+AuthenticationServices_ASCredentialIdentityStore = []
+AuthenticationServices_ASCredentialIdentityStoreState = []
+AuthenticationServices_ASCredentialProviderExtensionContext = []
+AuthenticationServices_ASCredentialServiceIdentifier = []
+AuthenticationServices_ASPasswordCredential = []
+AuthenticationServices_ASPasswordCredentialIdentity = []
+AuthenticationServices_ASWebAuthenticationSession = []
+AuthenticationServices_ASWebAuthenticationSessionRequest = []
+AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionManager = []
 CoreData_NSAsynchronousFetchRequest = [
     "CoreData_NSPersistentStoreRequest",
 ]
@@ -1116,9 +757,7 @@ CoreData_NSAsynchronousFetchResult = [
 CoreData_NSAtomicStore = [
     "CoreData_NSPersistentStore",
 ]
-CoreData_NSAtomicStoreCacheNode = [
-    "Foundation_NSObject",
-]
+CoreData_NSAtomicStoreCacheNode = []
 CoreData_NSAttributeDescription = [
     "CoreData_NSPropertyDescription",
 ]
@@ -1140,948 +779,348 @@ CoreData_NSBatchUpdateRequest = [
 CoreData_NSBatchUpdateResult = [
     "CoreData_NSPersistentStoreResult",
 ]
-CoreData_NSConstraintConflict = [
-    "Foundation_NSObject",
-]
-CoreData_NSCoreDataCoreSpotlightDelegate = [
-    "Foundation_NSObject",
-]
+CoreData_NSConstraintConflict = []
+CoreData_NSCoreDataCoreSpotlightDelegate = []
 CoreData_NSDerivedAttributeDescription = [
     "CoreData_NSAttributeDescription",
 ]
-CoreData_NSEntityDescription = [
-    "Foundation_NSObject",
-]
-CoreData_NSEntityMapping = [
-    "Foundation_NSObject",
-]
-CoreData_NSEntityMigrationPolicy = [
-    "Foundation_NSObject",
-]
+CoreData_NSEntityDescription = []
+CoreData_NSEntityMapping = []
+CoreData_NSEntityMigrationPolicy = []
 CoreData_NSExpressionDescription = [
     "CoreData_NSPropertyDescription",
 ]
-CoreData_NSFetchIndexDescription = [
-    "Foundation_NSObject",
-]
-CoreData_NSFetchIndexElementDescription = [
-    "Foundation_NSObject",
-]
+CoreData_NSFetchIndexDescription = []
+CoreData_NSFetchIndexElementDescription = []
 CoreData_NSFetchRequest = [
     "CoreData_NSPersistentStoreRequest",
 ]
-CoreData_NSFetchRequestExpression = [
-    "Foundation_NSExpression",
-]
+CoreData_NSFetchRequestExpression = []
 CoreData_NSFetchedPropertyDescription = [
     "CoreData_NSPropertyDescription",
 ]
-CoreData_NSFetchedResultsController = [
-    "Foundation_NSObject",
-]
+CoreData_NSFetchedResultsController = []
 CoreData_NSIncrementalStore = [
     "CoreData_NSPersistentStore",
 ]
-CoreData_NSIncrementalStoreNode = [
-    "Foundation_NSObject",
-]
-CoreData_NSManagedObject = [
-    "Foundation_NSObject",
-]
-CoreData_NSManagedObjectContext = [
-    "Foundation_NSObject",
-]
-CoreData_NSManagedObjectID = [
-    "Foundation_NSObject",
-]
-CoreData_NSManagedObjectModel = [
-    "Foundation_NSObject",
-]
-CoreData_NSMappingModel = [
-    "Foundation_NSObject",
-]
-CoreData_NSMergeConflict = [
-    "Foundation_NSObject",
-]
-CoreData_NSMergePolicy = [
-    "Foundation_NSObject",
-]
-CoreData_NSMigrationManager = [
-    "Foundation_NSObject",
-]
+CoreData_NSIncrementalStoreNode = []
+CoreData_NSManagedObject = []
+CoreData_NSManagedObjectContext = []
+CoreData_NSManagedObjectID = []
+CoreData_NSManagedObjectModel = []
+CoreData_NSMappingModel = []
+CoreData_NSMergeConflict = []
+CoreData_NSMergePolicy = []
+CoreData_NSMigrationManager = []
 CoreData_NSPersistentCloudKitContainer = [
     "CoreData_NSPersistentContainer",
 ]
-CoreData_NSPersistentCloudKitContainerEvent = [
-    "Foundation_NSObject",
-]
+CoreData_NSPersistentCloudKitContainerEvent = []
 CoreData_NSPersistentCloudKitContainerEventRequest = [
     "CoreData_NSPersistentStoreRequest",
 ]
 CoreData_NSPersistentCloudKitContainerEventResult = [
     "CoreData_NSPersistentStoreResult",
 ]
-CoreData_NSPersistentCloudKitContainerOptions = [
-    "Foundation_NSObject",
-]
-CoreData_NSPersistentContainer = [
-    "Foundation_NSObject",
-]
-CoreData_NSPersistentHistoryChange = [
-    "Foundation_NSObject",
-]
+CoreData_NSPersistentCloudKitContainerOptions = []
+CoreData_NSPersistentContainer = []
+CoreData_NSPersistentHistoryChange = []
 CoreData_NSPersistentHistoryChangeRequest = [
     "CoreData_NSPersistentStoreRequest",
 ]
 CoreData_NSPersistentHistoryResult = [
     "CoreData_NSPersistentStoreResult",
 ]
-CoreData_NSPersistentHistoryToken = [
-    "Foundation_NSObject",
-]
-CoreData_NSPersistentHistoryTransaction = [
-    "Foundation_NSObject",
-]
-CoreData_NSPersistentStore = [
-    "Foundation_NSObject",
-]
+CoreData_NSPersistentHistoryToken = []
+CoreData_NSPersistentHistoryTransaction = []
+CoreData_NSPersistentStore = []
 CoreData_NSPersistentStoreAsynchronousResult = [
     "CoreData_NSPersistentStoreResult",
 ]
-CoreData_NSPersistentStoreCoordinator = [
-    "Foundation_NSObject",
-]
-CoreData_NSPersistentStoreDescription = [
-    "Foundation_NSObject",
-]
-CoreData_NSPersistentStoreRequest = [
-    "Foundation_NSObject",
-]
-CoreData_NSPersistentStoreResult = [
-    "Foundation_NSObject",
-]
-CoreData_NSPropertyDescription = [
-    "Foundation_NSObject",
-]
-CoreData_NSPropertyMapping = [
-    "Foundation_NSObject",
-]
-CoreData_NSQueryGenerationToken = [
-    "Foundation_NSObject",
-]
+CoreData_NSPersistentStoreCoordinator = []
+CoreData_NSPersistentStoreDescription = []
+CoreData_NSPersistentStoreRequest = []
+CoreData_NSPersistentStoreResult = []
+CoreData_NSPropertyDescription = []
+CoreData_NSPropertyMapping = []
+CoreData_NSQueryGenerationToken = []
 CoreData_NSRelationshipDescription = [
     "CoreData_NSPropertyDescription",
 ]
 CoreData_NSSaveChangesRequest = [
     "CoreData_NSPersistentStoreRequest",
 ]
-Foundation_NSAffineTransform = [
-    "Foundation_NSObject",
-]
-Foundation_NSAppleEventDescriptor = [
-    "Foundation_NSObject",
-]
-Foundation_NSAppleEventManager = [
-    "Foundation_NSObject",
-]
-Foundation_NSAppleScript = [
-    "Foundation_NSObject",
-]
-Foundation_NSArchiver = [
-    "Foundation_NSCoder",
-]
-Foundation_NSArray = [
-    "Foundation_NSObject",
-]
-Foundation_NSAssertionHandler = [
-    "Foundation_NSObject",
-]
-Foundation_NSAttributedString = [
-    "Foundation_NSObject",
-]
-Foundation_NSAttributedStringMarkdownParsingOptions = [
-    "Foundation_NSObject",
-]
-Foundation_NSAutoreleasePool = [
-    "Foundation_NSObject",
-]
-Foundation_NSBackgroundActivityScheduler = [
-    "Foundation_NSObject",
-]
-Foundation_NSBlockOperation = [
-    "Foundation_NSOperation",
-]
-Foundation_NSBundle = [
-    "Foundation_NSObject",
-]
-Foundation_NSBundleResourceRequest = [
-    "Foundation_NSObject",
-]
-Foundation_NSByteCountFormatter = [
-    "Foundation_NSFormatter",
-]
-Foundation_NSCache = [
-    "Foundation_NSObject",
-]
-Foundation_NSCachedURLResponse = [
-    "Foundation_NSObject",
-]
-Foundation_NSCalendar = [
-    "Foundation_NSObject",
-]
-Foundation_NSCalendarDate = [
-    "Foundation_NSDate",
-]
-Foundation_NSCharacterSet = [
-    "Foundation_NSObject",
-]
-Foundation_NSClassDescription = [
-    "Foundation_NSObject",
-]
-Foundation_NSCloneCommand = [
-    "Foundation_NSScriptCommand",
-]
-Foundation_NSCloseCommand = [
-    "Foundation_NSScriptCommand",
-]
-Foundation_NSCoder = [
-    "Foundation_NSObject",
-]
-Foundation_NSComparisonPredicate = [
-    "Foundation_NSPredicate",
-]
-Foundation_NSCompoundPredicate = [
-    "Foundation_NSPredicate",
-]
-Foundation_NSCondition = [
-    "Foundation_NSObject",
-]
-Foundation_NSConditionLock = [
-    "Foundation_NSObject",
-]
-Foundation_NSConnection = [
-    "Foundation_NSObject",
-]
-Foundation_NSConstantString = [
-    "Foundation_NSSimpleCString",
-]
-Foundation_NSCountCommand = [
-    "Foundation_NSScriptCommand",
-]
-Foundation_NSCountedSet = [
-    "Foundation_NSMutableSet",
-]
-Foundation_NSCreateCommand = [
-    "Foundation_NSScriptCommand",
-]
-Foundation_NSData = [
-    "Foundation_NSObject",
-]
-Foundation_NSDataDetector = [
-    "Foundation_NSRegularExpression",
-]
-Foundation_NSDate = [
-    "Foundation_NSObject",
-]
-Foundation_NSDateComponents = [
-    "Foundation_NSObject",
-]
-Foundation_NSDateComponentsFormatter = [
-    "Foundation_NSFormatter",
-]
-Foundation_NSDateFormatter = [
-    "Foundation_NSFormatter",
-]
-Foundation_NSDateInterval = [
-    "Foundation_NSObject",
-]
-Foundation_NSDateIntervalFormatter = [
-    "Foundation_NSFormatter",
-]
-Foundation_NSDecimalNumber = [
-    "Foundation_NSNumber",
-]
-Foundation_NSDecimalNumberHandler = [
-    "Foundation_NSObject",
-]
-Foundation_NSDeleteCommand = [
-    "Foundation_NSScriptCommand",
-]
-Foundation_NSDictionary = [
-    "Foundation_NSObject",
-]
-Foundation_NSDimension = [
-    "Foundation_NSUnit",
-]
-Foundation_NSDirectoryEnumerator = [
-    "Foundation_NSEnumerator",
-]
-Foundation_NSDistantObject = [
-    "Foundation_NSProxy",
-]
-Foundation_NSDistantObjectRequest = [
-    "Foundation_NSObject",
-]
-Foundation_NSDistributedLock = [
-    "Foundation_NSObject",
-]
-Foundation_NSDistributedNotificationCenter = [
-    "Foundation_NSNotificationCenter",
-]
-Foundation_NSEnergyFormatter = [
-    "Foundation_NSFormatter",
-]
-Foundation_NSEnumerator = [
-    "Foundation_NSObject",
-]
-Foundation_NSError = [
-    "Foundation_NSObject",
-]
-Foundation_NSException = [
-    "Foundation_NSObject",
-]
-Foundation_NSExistsCommand = [
-    "Foundation_NSScriptCommand",
-]
-Foundation_NSExpression = [
-    "Foundation_NSObject",
-]
-Foundation_NSExtensionContext = [
-    "Foundation_NSObject",
-]
-Foundation_NSExtensionItem = [
-    "Foundation_NSObject",
-]
-Foundation_NSFileAccessIntent = [
-    "Foundation_NSObject",
-]
-Foundation_NSFileCoordinator = [
-    "Foundation_NSObject",
-]
-Foundation_NSFileHandle = [
-    "Foundation_NSObject",
-]
-Foundation_NSFileManager = [
-    "Foundation_NSObject",
-]
-Foundation_NSFileProviderService = [
-    "Foundation_NSObject",
-]
-Foundation_NSFileSecurity = [
-    "Foundation_NSObject",
-]
-Foundation_NSFileVersion = [
-    "Foundation_NSObject",
-]
-Foundation_NSFileWrapper = [
-    "Foundation_NSObject",
-]
-Foundation_NSFormatter = [
-    "Foundation_NSObject",
-]
-Foundation_NSGarbageCollector = [
-    "Foundation_NSObject",
-]
-Foundation_NSGetCommand = [
-    "Foundation_NSScriptCommand",
-]
-Foundation_NSHTTPCookie = [
-    "Foundation_NSObject",
-]
-Foundation_NSHTTPCookieStorage = [
-    "Foundation_NSObject",
-]
-Foundation_NSHTTPURLResponse = [
-    "Foundation_NSURLResponse",
-]
-Foundation_NSHashTable = [
-    "Foundation_NSObject",
-]
-Foundation_NSHost = [
-    "Foundation_NSObject",
-]
-Foundation_NSISO8601DateFormatter = [
-    "Foundation_NSFormatter",
-]
-Foundation_NSIndexPath = [
-    "Foundation_NSObject",
-]
-Foundation_NSIndexSet = [
-    "Foundation_NSObject",
-]
-Foundation_NSIndexSpecifier = [
-    "Foundation_NSScriptObjectSpecifier",
-]
-Foundation_NSInflectionRule = [
-    "Foundation_NSObject",
-]
-Foundation_NSInflectionRuleExplicit = [
-    "Foundation_NSInflectionRule",
-]
-Foundation_NSInputStream = [
-    "Foundation_NSStream",
-]
-Foundation_NSInvocation = [
-    "Foundation_NSObject",
-]
-Foundation_NSInvocationOperation = [
-    "Foundation_NSOperation",
-]
-Foundation_NSItemProvider = [
-    "Foundation_NSObject",
-]
-Foundation_NSJSONSerialization = [
-    "Foundation_NSObject",
-]
-Foundation_NSKeyedArchiver = [
-    "Foundation_NSCoder",
-]
-Foundation_NSKeyedUnarchiver = [
-    "Foundation_NSCoder",
-]
-Foundation_NSLengthFormatter = [
-    "Foundation_NSFormatter",
-]
-Foundation_NSLinguisticTagger = [
-    "Foundation_NSObject",
-]
-Foundation_NSListFormatter = [
-    "Foundation_NSFormatter",
-]
-Foundation_NSLocale = [
-    "Foundation_NSObject",
-]
-Foundation_NSLock = [
-    "Foundation_NSObject",
-]
-Foundation_NSLogicalTest = [
-    "Foundation_NSScriptWhoseTest",
-]
-Foundation_NSMachBootstrapServer = [
-    "Foundation_NSPortNameServer",
-]
-Foundation_NSMachPort = [
-    "Foundation_NSPort",
-]
-Foundation_NSMapTable = [
-    "Foundation_NSObject",
-]
-Foundation_NSMassFormatter = [
-    "Foundation_NSFormatter",
-]
-Foundation_NSMeasurement = [
-    "Foundation_NSObject",
-]
-Foundation_NSMeasurementFormatter = [
-    "Foundation_NSFormatter",
-]
-Foundation_NSMessagePort = [
-    "Foundation_NSPort",
-]
-Foundation_NSMessagePortNameServer = [
-    "Foundation_NSPortNameServer",
-]
-Foundation_NSMetadataItem = [
-    "Foundation_NSObject",
-]
-Foundation_NSMetadataQuery = [
-    "Foundation_NSObject",
-]
-Foundation_NSMetadataQueryAttributeValueTuple = [
-    "Foundation_NSObject",
-]
-Foundation_NSMetadataQueryResultGroup = [
-    "Foundation_NSObject",
-]
-Foundation_NSMethodSignature = [
-    "Foundation_NSObject",
-]
-Foundation_NSMiddleSpecifier = [
-    "Foundation_NSScriptObjectSpecifier",
-]
-Foundation_NSMorphology = [
-    "Foundation_NSObject",
-]
-Foundation_NSMorphologyCustomPronoun = [
-    "Foundation_NSObject",
-]
-Foundation_NSMoveCommand = [
-    "Foundation_NSScriptCommand",
-]
-Foundation_NSMutableArray = [
-    "Foundation_NSArray",
-]
-Foundation_NSMutableAttributedString = [
-    "Foundation_NSAttributedString",
-]
-Foundation_NSMutableCharacterSet = [
-    "Foundation_NSCharacterSet",
-]
-Foundation_NSMutableData = [
-    "Foundation_NSData",
-]
-Foundation_NSMutableDictionary = [
-    "Foundation_NSDictionary",
-]
-Foundation_NSMutableIndexSet = [
-    "Foundation_NSIndexSet",
-]
-Foundation_NSMutableOrderedSet = [
-    "Foundation_NSOrderedSet",
-]
-Foundation_NSMutableSet = [
-    "Foundation_NSSet",
-]
-Foundation_NSMutableString = [
-    "Foundation_NSString",
-]
-Foundation_NSMutableURLRequest = [
-    "Foundation_NSURLRequest",
-]
-Foundation_NSNameSpecifier = [
-    "Foundation_NSScriptObjectSpecifier",
-]
-Foundation_NSNetService = [
-    "Foundation_NSObject",
-]
-Foundation_NSNetServiceBrowser = [
-    "Foundation_NSObject",
-]
-Foundation_NSNotification = [
-    "Foundation_NSObject",
-]
-Foundation_NSNotificationCenter = [
-    "Foundation_NSObject",
-]
-Foundation_NSNotificationQueue = [
-    "Foundation_NSObject",
-]
-Foundation_NSNull = [
-    "Foundation_NSObject",
-]
-Foundation_NSNumber = [
-    "Foundation_NSValue",
-]
-Foundation_NSNumberFormatter = [
-    "Foundation_NSFormatter",
-]
-Foundation_NSOperation = [
-    "Foundation_NSObject",
-]
-Foundation_NSOperationQueue = [
-    "Foundation_NSObject",
-]
-Foundation_NSOrderedCollectionChange = [
-    "Foundation_NSObject",
-]
-Foundation_NSOrderedCollectionDifference = [
-    "Foundation_NSObject",
-]
-Foundation_NSOrderedSet = [
-    "Foundation_NSObject",
-]
-Foundation_NSOrthography = [
-    "Foundation_NSObject",
-]
-Foundation_NSOutputStream = [
-    "Foundation_NSStream",
-]
-Foundation_NSPersonNameComponents = [
-    "Foundation_NSObject",
-]
-Foundation_NSPersonNameComponentsFormatter = [
-    "Foundation_NSFormatter",
-]
-Foundation_NSPipe = [
-    "Foundation_NSObject",
-]
-Foundation_NSPointerArray = [
-    "Foundation_NSObject",
-]
-Foundation_NSPointerFunctions = [
-    "Foundation_NSObject",
-]
-Foundation_NSPort = [
-    "Foundation_NSObject",
-]
-Foundation_NSPortCoder = [
-    "Foundation_NSCoder",
-]
-Foundation_NSPortMessage = [
-    "Foundation_NSObject",
-]
-Foundation_NSPortNameServer = [
-    "Foundation_NSObject",
-]
-Foundation_NSPositionalSpecifier = [
-    "Foundation_NSObject",
-]
-Foundation_NSPredicate = [
-    "Foundation_NSObject",
-]
-Foundation_NSPresentationIntent = [
-    "Foundation_NSObject",
-]
-Foundation_NSProcessInfo = [
-    "Foundation_NSObject",
-]
-Foundation_NSProgress = [
-    "Foundation_NSObject",
-]
-Foundation_NSPropertyListSerialization = [
-    "Foundation_NSObject",
-]
-Foundation_NSPropertySpecifier = [
-    "Foundation_NSScriptObjectSpecifier",
-]
-Foundation_NSProtocolChecker = [
-    "Foundation_NSProxy",
-]
-Foundation_NSPurgeableData = [
-    "Foundation_NSMutableData",
-]
-Foundation_NSQuitCommand = [
-    "Foundation_NSScriptCommand",
-]
-Foundation_NSRandomSpecifier = [
-    "Foundation_NSScriptObjectSpecifier",
-]
-Foundation_NSRangeSpecifier = [
-    "Foundation_NSScriptObjectSpecifier",
-]
-Foundation_NSRecursiveLock = [
-    "Foundation_NSObject",
-]
-Foundation_NSRegularExpression = [
-    "Foundation_NSObject",
-]
-Foundation_NSRelativeDateTimeFormatter = [
-    "Foundation_NSFormatter",
-]
-Foundation_NSRelativeSpecifier = [
-    "Foundation_NSScriptObjectSpecifier",
-]
-Foundation_NSRunLoop = [
-    "Foundation_NSObject",
-]
-Foundation_NSScanner = [
-    "Foundation_NSObject",
-]
-Foundation_NSScriptClassDescription = [
-    "Foundation_NSClassDescription",
-]
-Foundation_NSScriptCoercionHandler = [
-    "Foundation_NSObject",
-]
-Foundation_NSScriptCommand = [
-    "Foundation_NSObject",
-]
-Foundation_NSScriptCommandDescription = [
-    "Foundation_NSObject",
-]
-Foundation_NSScriptExecutionContext = [
-    "Foundation_NSObject",
-]
-Foundation_NSScriptObjectSpecifier = [
-    "Foundation_NSObject",
-]
-Foundation_NSScriptSuiteRegistry = [
-    "Foundation_NSObject",
-]
-Foundation_NSScriptWhoseTest = [
-    "Foundation_NSObject",
-]
-Foundation_NSSecureUnarchiveFromDataTransformer = [
-    "Foundation_NSValueTransformer",
-]
-Foundation_NSSet = [
-    "Foundation_NSObject",
-]
-Foundation_NSSetCommand = [
-    "Foundation_NSScriptCommand",
-]
-Foundation_NSSimpleCString = [
-    "Foundation_NSString",
-]
-Foundation_NSSocketPort = [
-    "Foundation_NSPort",
-]
-Foundation_NSSocketPortNameServer = [
-    "Foundation_NSPortNameServer",
-]
-Foundation_NSSortDescriptor = [
-    "Foundation_NSObject",
-]
-Foundation_NSSpecifierTest = [
-    "Foundation_NSScriptWhoseTest",
-]
-Foundation_NSSpellServer = [
-    "Foundation_NSObject",
-]
-Foundation_NSStream = [
-    "Foundation_NSObject",
-]
-Foundation_NSString = [
-    "Foundation_NSObject",
-]
-Foundation_NSTask = [
-    "Foundation_NSObject",
-]
-Foundation_NSTextCheckingResult = [
-    "Foundation_NSObject",
-]
-Foundation_NSThread = [
-    "Foundation_NSObject",
-]
-Foundation_NSTimeZone = [
-    "Foundation_NSObject",
-]
-Foundation_NSTimer = [
-    "Foundation_NSObject",
-]
-Foundation_NSURL = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLAuthenticationChallenge = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLCache = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLComponents = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLConnection = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLCredential = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLCredentialStorage = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLDownload = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLHandle = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLProtectionSpace = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLProtocol = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLQueryItem = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLRequest = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLResponse = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLSession = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLSessionConfiguration = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLSessionDataTask = [
-    "Foundation_NSURLSessionTask",
-]
-Foundation_NSURLSessionDownloadTask = [
-    "Foundation_NSURLSessionTask",
-]
-Foundation_NSURLSessionStreamTask = [
-    "Foundation_NSURLSessionTask",
-]
-Foundation_NSURLSessionTask = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLSessionTaskMetrics = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLSessionTaskTransactionMetrics = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLSessionUploadTask = [
-    "Foundation_NSURLSessionDataTask",
-]
-Foundation_NSURLSessionWebSocketMessage = [
-    "Foundation_NSObject",
-]
-Foundation_NSURLSessionWebSocketTask = [
-    "Foundation_NSURLSessionTask",
-]
-Foundation_NSUUID = [
-    "Foundation_NSObject",
-]
-Foundation_NSUbiquitousKeyValueStore = [
-    "Foundation_NSObject",
-]
-Foundation_NSUnarchiver = [
-    "Foundation_NSCoder",
-]
-Foundation_NSUndoManager = [
-    "Foundation_NSObject",
-]
-Foundation_NSUniqueIDSpecifier = [
-    "Foundation_NSScriptObjectSpecifier",
-]
-Foundation_NSUnit = [
-    "Foundation_NSObject",
-]
-Foundation_NSUnitAcceleration = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitAngle = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitArea = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitConcentrationMass = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitConverter = [
-    "Foundation_NSObject",
-]
-Foundation_NSUnitConverterLinear = [
-    "Foundation_NSUnitConverter",
-]
-Foundation_NSUnitDispersion = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitDuration = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitElectricCharge = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitElectricCurrent = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitElectricPotentialDifference = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitElectricResistance = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitEnergy = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitFrequency = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitFuelEfficiency = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitIlluminance = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitInformationStorage = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitLength = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitMass = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitPower = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitPressure = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitSpeed = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitTemperature = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUnitVolume = [
-    "Foundation_NSDimension",
-]
-Foundation_NSUserActivity = [
-    "Foundation_NSObject",
-]
-Foundation_NSUserAppleScriptTask = [
-    "Foundation_NSUserScriptTask",
-]
-Foundation_NSUserAutomatorTask = [
-    "Foundation_NSUserScriptTask",
-]
-Foundation_NSUserDefaults = [
-    "Foundation_NSObject",
-]
-Foundation_NSUserNotification = [
-    "Foundation_NSObject",
-]
-Foundation_NSUserNotificationAction = [
-    "Foundation_NSObject",
-]
-Foundation_NSUserNotificationCenter = [
-    "Foundation_NSObject",
-]
-Foundation_NSUserScriptTask = [
-    "Foundation_NSObject",
-]
-Foundation_NSUserUnixTask = [
-    "Foundation_NSUserScriptTask",
-]
-Foundation_NSValue = [
-    "Foundation_NSObject",
-]
-Foundation_NSValueTransformer = [
-    "Foundation_NSObject",
-]
-Foundation_NSWhoseSpecifier = [
-    "Foundation_NSScriptObjectSpecifier",
-]
-Foundation_NSXMLDTD = [
-    "Foundation_NSXMLNode",
-]
-Foundation_NSXMLDTDNode = [
-    "Foundation_NSXMLNode",
-]
-Foundation_NSXMLDocument = [
-    "Foundation_NSXMLNode",
-]
-Foundation_NSXMLElement = [
-    "Foundation_NSXMLNode",
-]
-Foundation_NSXMLNode = [
-    "Foundation_NSObject",
-]
-Foundation_NSXMLParser = [
-    "Foundation_NSObject",
-]
-Foundation_NSXPCCoder = [
-    "Foundation_NSCoder",
-]
-Foundation_NSXPCConnection = [
-    "Foundation_NSObject",
-]
-Foundation_NSXPCInterface = [
-    "Foundation_NSObject",
-]
-Foundation_NSXPCListener = [
-    "Foundation_NSObject",
-]
-Foundation_NSXPCListenerEndpoint = [
-    "Foundation_NSObject",
-]
+Foundation_NSAffineTransform = []
+Foundation_NSAppleEventDescriptor = []
+Foundation_NSAppleEventManager = []
+Foundation_NSAppleScript = []
+Foundation_NSArchiver = []
+Foundation_NSArray = []
+Foundation_NSAssertionHandler = []
+Foundation_NSAttributedString = []
+Foundation_NSAttributedStringMarkdownParsingOptions = []
+Foundation_NSAutoreleasePool = []
+Foundation_NSBackgroundActivityScheduler = []
+Foundation_NSBlockOperation = []
+Foundation_NSBundle = []
+Foundation_NSBundleResourceRequest = []
+Foundation_NSByteCountFormatter = []
+Foundation_NSCache = []
+Foundation_NSCachedURLResponse = []
+Foundation_NSCalendar = []
+Foundation_NSCalendarDate = []
+Foundation_NSCharacterSet = []
+Foundation_NSClassDescription = []
+Foundation_NSCloneCommand = []
+Foundation_NSCloseCommand = []
+Foundation_NSCoder = []
+Foundation_NSComparisonPredicate = []
+Foundation_NSCompoundPredicate = []
+Foundation_NSCondition = []
+Foundation_NSConditionLock = []
+Foundation_NSConnection = []
+Foundation_NSConstantString = []
+Foundation_NSCountCommand = []
+Foundation_NSCountedSet = []
+Foundation_NSCreateCommand = []
+Foundation_NSData = []
+Foundation_NSDataDetector = []
+Foundation_NSDate = []
+Foundation_NSDateComponents = []
+Foundation_NSDateComponentsFormatter = []
+Foundation_NSDateFormatter = []
+Foundation_NSDateInterval = []
+Foundation_NSDateIntervalFormatter = []
+Foundation_NSDecimalNumber = []
+Foundation_NSDecimalNumberHandler = []
+Foundation_NSDeleteCommand = []
+Foundation_NSDictionary = []
+Foundation_NSDimension = []
+Foundation_NSDirectoryEnumerator = []
+Foundation_NSDistantObject = []
+Foundation_NSDistantObjectRequest = []
+Foundation_NSDistributedLock = []
+Foundation_NSDistributedNotificationCenter = []
+Foundation_NSEnergyFormatter = []
+Foundation_NSEnumerator = []
+Foundation_NSError = []
+Foundation_NSException = []
+Foundation_NSExistsCommand = []
+Foundation_NSExpression = []
+Foundation_NSExtensionContext = []
+Foundation_NSExtensionItem = []
+Foundation_NSFileAccessIntent = []
+Foundation_NSFileCoordinator = []
+Foundation_NSFileHandle = []
+Foundation_NSFileManager = []
+Foundation_NSFileProviderService = []
+Foundation_NSFileSecurity = []
+Foundation_NSFileVersion = []
+Foundation_NSFileWrapper = []
+Foundation_NSFormatter = []
+Foundation_NSGarbageCollector = []
+Foundation_NSGetCommand = []
+Foundation_NSHTTPCookie = []
+Foundation_NSHTTPCookieStorage = []
+Foundation_NSHTTPURLResponse = []
+Foundation_NSHashTable = []
+Foundation_NSHost = []
+Foundation_NSISO8601DateFormatter = []
+Foundation_NSIndexPath = []
+Foundation_NSIndexSet = []
+Foundation_NSIndexSpecifier = []
+Foundation_NSInflectionRule = []
+Foundation_NSInflectionRuleExplicit = []
+Foundation_NSInputStream = []
+Foundation_NSInvocation = []
+Foundation_NSInvocationOperation = []
+Foundation_NSItemProvider = []
+Foundation_NSJSONSerialization = []
+Foundation_NSKeyedArchiver = []
+Foundation_NSKeyedUnarchiver = []
+Foundation_NSLengthFormatter = []
+Foundation_NSLinguisticTagger = []
+Foundation_NSListFormatter = []
+Foundation_NSLocale = []
+Foundation_NSLock = []
+Foundation_NSLogicalTest = []
+Foundation_NSMachBootstrapServer = []
+Foundation_NSMachPort = []
+Foundation_NSMapTable = []
+Foundation_NSMassFormatter = []
+Foundation_NSMeasurement = []
+Foundation_NSMeasurementFormatter = []
+Foundation_NSMessagePort = []
+Foundation_NSMessagePortNameServer = []
+Foundation_NSMetadataItem = []
+Foundation_NSMetadataQuery = []
+Foundation_NSMetadataQueryAttributeValueTuple = []
+Foundation_NSMetadataQueryResultGroup = []
+Foundation_NSMethodSignature = []
+Foundation_NSMiddleSpecifier = []
+Foundation_NSMorphology = []
+Foundation_NSMorphologyCustomPronoun = []
+Foundation_NSMoveCommand = []
+Foundation_NSMutableArray = []
+Foundation_NSMutableAttributedString = []
+Foundation_NSMutableCharacterSet = []
+Foundation_NSMutableData = []
+Foundation_NSMutableDictionary = []
+Foundation_NSMutableIndexSet = []
+Foundation_NSMutableOrderedSet = []
+Foundation_NSMutableSet = []
+Foundation_NSMutableString = []
+Foundation_NSMutableURLRequest = []
+Foundation_NSNameSpecifier = []
+Foundation_NSNetService = []
+Foundation_NSNetServiceBrowser = []
+Foundation_NSNotification = []
+Foundation_NSNotificationCenter = []
+Foundation_NSNotificationQueue = []
+Foundation_NSNull = []
+Foundation_NSNumber = []
+Foundation_NSNumberFormatter = []
+Foundation_NSOperation = []
+Foundation_NSOperationQueue = []
+Foundation_NSOrderedCollectionChange = []
+Foundation_NSOrderedCollectionDifference = []
+Foundation_NSOrderedSet = []
+Foundation_NSOrthography = []
+Foundation_NSOutputStream = []
+Foundation_NSPersonNameComponents = []
+Foundation_NSPersonNameComponentsFormatter = []
+Foundation_NSPipe = []
+Foundation_NSPointerArray = []
+Foundation_NSPointerFunctions = []
+Foundation_NSPort = []
+Foundation_NSPortCoder = []
+Foundation_NSPortMessage = []
+Foundation_NSPortNameServer = []
+Foundation_NSPositionalSpecifier = []
+Foundation_NSPredicate = []
+Foundation_NSPresentationIntent = []
+Foundation_NSProcessInfo = []
+Foundation_NSProgress = []
+Foundation_NSPropertyListSerialization = []
+Foundation_NSPropertySpecifier = []
+Foundation_NSProtocolChecker = []
+Foundation_NSPurgeableData = []
+Foundation_NSQuitCommand = []
+Foundation_NSRandomSpecifier = []
+Foundation_NSRangeSpecifier = []
+Foundation_NSRecursiveLock = []
+Foundation_NSRegularExpression = []
+Foundation_NSRelativeDateTimeFormatter = []
+Foundation_NSRelativeSpecifier = []
+Foundation_NSRunLoop = []
+Foundation_NSScanner = []
+Foundation_NSScriptClassDescription = []
+Foundation_NSScriptCoercionHandler = []
+Foundation_NSScriptCommand = []
+Foundation_NSScriptCommandDescription = []
+Foundation_NSScriptExecutionContext = []
+Foundation_NSScriptObjectSpecifier = []
+Foundation_NSScriptSuiteRegistry = []
+Foundation_NSScriptWhoseTest = []
+Foundation_NSSecureUnarchiveFromDataTransformer = []
+Foundation_NSSet = []
+Foundation_NSSetCommand = []
+Foundation_NSSimpleCString = []
+Foundation_NSSocketPort = []
+Foundation_NSSocketPortNameServer = []
+Foundation_NSSortDescriptor = []
+Foundation_NSSpecifierTest = []
+Foundation_NSSpellServer = []
+Foundation_NSStream = []
+Foundation_NSString = []
+Foundation_NSTask = []
+Foundation_NSTextCheckingResult = []
+Foundation_NSThread = []
+Foundation_NSTimeZone = []
+Foundation_NSTimer = []
+Foundation_NSURL = []
+Foundation_NSURLAuthenticationChallenge = []
+Foundation_NSURLCache = []
+Foundation_NSURLComponents = []
+Foundation_NSURLConnection = []
+Foundation_NSURLCredential = []
+Foundation_NSURLCredentialStorage = []
+Foundation_NSURLDownload = []
+Foundation_NSURLHandle = []
+Foundation_NSURLProtectionSpace = []
+Foundation_NSURLProtocol = []
+Foundation_NSURLQueryItem = []
+Foundation_NSURLRequest = []
+Foundation_NSURLResponse = []
+Foundation_NSURLSession = []
+Foundation_NSURLSessionConfiguration = []
+Foundation_NSURLSessionDataTask = []
+Foundation_NSURLSessionDownloadTask = []
+Foundation_NSURLSessionStreamTask = []
+Foundation_NSURLSessionTask = []
+Foundation_NSURLSessionTaskMetrics = []
+Foundation_NSURLSessionTaskTransactionMetrics = []
+Foundation_NSURLSessionUploadTask = []
+Foundation_NSURLSessionWebSocketMessage = []
+Foundation_NSURLSessionWebSocketTask = []
+Foundation_NSUUID = []
+Foundation_NSUbiquitousKeyValueStore = []
+Foundation_NSUnarchiver = []
+Foundation_NSUndoManager = []
+Foundation_NSUniqueIDSpecifier = []
+Foundation_NSUnit = []
+Foundation_NSUnitAcceleration = []
+Foundation_NSUnitAngle = []
+Foundation_NSUnitArea = []
+Foundation_NSUnitConcentrationMass = []
+Foundation_NSUnitConverter = []
+Foundation_NSUnitConverterLinear = []
+Foundation_NSUnitDispersion = []
+Foundation_NSUnitDuration = []
+Foundation_NSUnitElectricCharge = []
+Foundation_NSUnitElectricCurrent = []
+Foundation_NSUnitElectricPotentialDifference = []
+Foundation_NSUnitElectricResistance = []
+Foundation_NSUnitEnergy = []
+Foundation_NSUnitFrequency = []
+Foundation_NSUnitFuelEfficiency = []
+Foundation_NSUnitIlluminance = []
+Foundation_NSUnitInformationStorage = []
+Foundation_NSUnitLength = []
+Foundation_NSUnitMass = []
+Foundation_NSUnitPower = []
+Foundation_NSUnitPressure = []
+Foundation_NSUnitSpeed = []
+Foundation_NSUnitTemperature = []
+Foundation_NSUnitVolume = []
+Foundation_NSUserActivity = []
+Foundation_NSUserAppleScriptTask = []
+Foundation_NSUserAutomatorTask = []
+Foundation_NSUserDefaults = []
+Foundation_NSUserNotification = []
+Foundation_NSUserNotificationAction = []
+Foundation_NSUserNotificationCenter = []
+Foundation_NSUserScriptTask = []
+Foundation_NSUserUnixTask = []
+Foundation_NSValue = []
+Foundation_NSValueTransformer = []
+Foundation_NSWhoseSpecifier = []
+Foundation_NSXMLDTD = []
+Foundation_NSXMLDTDNode = []
+Foundation_NSXMLDocument = []
+Foundation_NSXMLElement = []
+Foundation_NSXMLNode = []
+Foundation_NSXMLParser = []
+Foundation_NSXPCCoder = []
+Foundation_NSXPCConnection = []
+Foundation_NSXPCInterface = []
+Foundation_NSXPCListener = []
+Foundation_NSXPCListenerEndpoint = []
 Metal_MTLAccelerationStructureBoundingBoxGeometryDescriptor = [
     "Metal_MTLAccelerationStructureGeometryDescriptor",
 ]
-Metal_MTLAccelerationStructureDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLAccelerationStructureGeometryDescriptor = [
-    "Foundation_NSObject",
-]
+Metal_MTLAccelerationStructureDescriptor = []
+Metal_MTLAccelerationStructureGeometryDescriptor = []
 Metal_MTLAccelerationStructureMotionBoundingBoxGeometryDescriptor = [
     "Metal_MTLAccelerationStructureGeometryDescriptor",
 ]
@@ -2091,279 +1130,121 @@ Metal_MTLAccelerationStructureMotionTriangleGeometryDescriptor = [
 Metal_MTLAccelerationStructureTriangleGeometryDescriptor = [
     "Metal_MTLAccelerationStructureGeometryDescriptor",
 ]
-Metal_MTLArgument = [
-    "Foundation_NSObject",
-]
-Metal_MTLArgumentDescriptor = [
-    "Foundation_NSObject",
-]
+Metal_MTLArgument = []
+Metal_MTLArgumentDescriptor = []
 Metal_MTLArrayType = [
     "Metal_MTLType",
 ]
-Metal_MTLAttribute = [
-    "Foundation_NSObject",
-]
-Metal_MTLAttributeDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLAttributeDescriptorArray = [
-    "Foundation_NSObject",
-]
-Metal_MTLBinaryArchiveDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLBlitPassDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLBlitPassSampleBufferAttachmentDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLBlitPassSampleBufferAttachmentDescriptorArray = [
-    "Foundation_NSObject",
-]
-Metal_MTLBufferLayoutDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLBufferLayoutDescriptorArray = [
-    "Foundation_NSObject",
-]
-Metal_MTLCaptureDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLCaptureManager = [
-    "Foundation_NSObject",
-]
-Metal_MTLCommandBufferDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLCompileOptions = [
-    "Foundation_NSObject",
-]
-Metal_MTLComputePassDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLComputePassSampleBufferAttachmentDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLComputePassSampleBufferAttachmentDescriptorArray = [
-    "Foundation_NSObject",
-]
-Metal_MTLComputePipelineDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLComputePipelineReflection = [
-    "Foundation_NSObject",
-]
-Metal_MTLCounterSampleBufferDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLDepthStencilDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLFunctionConstant = [
-    "Foundation_NSObject",
-]
-Metal_MTLFunctionConstantValues = [
-    "Foundation_NSObject",
-]
-Metal_MTLFunctionDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLFunctionStitchingAttributeAlwaysInline = [
-    "Foundation_NSObject",
-]
-Metal_MTLFunctionStitchingFunctionNode = [
-    "Foundation_NSObject",
-]
-Metal_MTLFunctionStitchingGraph = [
-    "Foundation_NSObject",
-]
-Metal_MTLFunctionStitchingInputNode = [
-    "Foundation_NSObject",
-]
-Metal_MTLHeapDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLIndirectCommandBufferDescriptor = [
-    "Foundation_NSObject",
-]
+Metal_MTLAttribute = []
+Metal_MTLAttributeDescriptor = []
+Metal_MTLAttributeDescriptorArray = []
+Metal_MTLBinaryArchiveDescriptor = []
+Metal_MTLBlitPassDescriptor = []
+Metal_MTLBlitPassSampleBufferAttachmentDescriptor = []
+Metal_MTLBlitPassSampleBufferAttachmentDescriptorArray = []
+Metal_MTLBufferLayoutDescriptor = []
+Metal_MTLBufferLayoutDescriptorArray = []
+Metal_MTLCaptureDescriptor = []
+Metal_MTLCaptureManager = []
+Metal_MTLCommandBufferDescriptor = []
+Metal_MTLCompileOptions = []
+Metal_MTLComputePassDescriptor = []
+Metal_MTLComputePassSampleBufferAttachmentDescriptor = []
+Metal_MTLComputePassSampleBufferAttachmentDescriptorArray = []
+Metal_MTLComputePipelineDescriptor = []
+Metal_MTLComputePipelineReflection = []
+Metal_MTLCounterSampleBufferDescriptor = []
+Metal_MTLDepthStencilDescriptor = []
+Metal_MTLFunctionConstant = []
+Metal_MTLFunctionConstantValues = []
+Metal_MTLFunctionDescriptor = []
+Metal_MTLFunctionStitchingAttributeAlwaysInline = []
+Metal_MTLFunctionStitchingFunctionNode = []
+Metal_MTLFunctionStitchingGraph = []
+Metal_MTLFunctionStitchingInputNode = []
+Metal_MTLHeapDescriptor = []
+Metal_MTLIndirectCommandBufferDescriptor = []
 Metal_MTLInstanceAccelerationStructureDescriptor = [
     "Metal_MTLAccelerationStructureDescriptor",
 ]
 Metal_MTLIntersectionFunctionDescriptor = [
     "Metal_MTLFunctionDescriptor",
 ]
-Metal_MTLIntersectionFunctionTableDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLLinkedFunctions = [
-    "Foundation_NSObject",
-]
-Metal_MTLMotionKeyframeData = [
-    "Foundation_NSObject",
-]
-Metal_MTLPipelineBufferDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLPipelineBufferDescriptorArray = [
-    "Foundation_NSObject",
-]
+Metal_MTLIntersectionFunctionTableDescriptor = []
+Metal_MTLLinkedFunctions = []
+Metal_MTLMotionKeyframeData = []
+Metal_MTLPipelineBufferDescriptor = []
+Metal_MTLPipelineBufferDescriptorArray = []
 Metal_MTLPointerType = [
     "Metal_MTLType",
 ]
 Metal_MTLPrimitiveAccelerationStructureDescriptor = [
     "Metal_MTLAccelerationStructureDescriptor",
 ]
-Metal_MTLRasterizationRateLayerArray = [
-    "Foundation_NSObject",
-]
-Metal_MTLRasterizationRateLayerDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLRasterizationRateMapDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLRasterizationRateSampleArray = [
-    "Foundation_NSObject",
-]
-Metal_MTLRenderPassAttachmentDescriptor = [
-    "Foundation_NSObject",
-]
+Metal_MTLRasterizationRateLayerArray = []
+Metal_MTLRasterizationRateLayerDescriptor = []
+Metal_MTLRasterizationRateMapDescriptor = []
+Metal_MTLRasterizationRateSampleArray = []
+Metal_MTLRenderPassAttachmentDescriptor = []
 Metal_MTLRenderPassColorAttachmentDescriptor = [
     "Metal_MTLRenderPassAttachmentDescriptor",
 ]
-Metal_MTLRenderPassColorAttachmentDescriptorArray = [
-    "Foundation_NSObject",
-]
+Metal_MTLRenderPassColorAttachmentDescriptorArray = []
 Metal_MTLRenderPassDepthAttachmentDescriptor = [
     "Metal_MTLRenderPassAttachmentDescriptor",
 ]
-Metal_MTLRenderPassDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLRenderPassSampleBufferAttachmentDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLRenderPassSampleBufferAttachmentDescriptorArray = [
-    "Foundation_NSObject",
-]
+Metal_MTLRenderPassDescriptor = []
+Metal_MTLRenderPassSampleBufferAttachmentDescriptor = []
+Metal_MTLRenderPassSampleBufferAttachmentDescriptorArray = []
 Metal_MTLRenderPassStencilAttachmentDescriptor = [
     "Metal_MTLRenderPassAttachmentDescriptor",
 ]
-Metal_MTLRenderPipelineColorAttachmentDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLRenderPipelineColorAttachmentDescriptorArray = [
-    "Foundation_NSObject",
-]
-Metal_MTLRenderPipelineDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLRenderPipelineFunctionsDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLRenderPipelineReflection = [
-    "Foundation_NSObject",
-]
-Metal_MTLResourceStatePassDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLResourceStatePassSampleBufferAttachmentDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLResourceStatePassSampleBufferAttachmentDescriptorArray = [
-    "Foundation_NSObject",
-]
-Metal_MTLSamplerDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLSharedEventHandle = [
-    "Foundation_NSObject",
-]
-Metal_MTLSharedEventListener = [
-    "Foundation_NSObject",
-]
-Metal_MTLSharedTextureHandle = [
-    "Foundation_NSObject",
-]
-Metal_MTLStageInputOutputDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLStencilDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLStitchedLibraryDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLStructMember = [
-    "Foundation_NSObject",
-]
+Metal_MTLRenderPipelineColorAttachmentDescriptor = []
+Metal_MTLRenderPipelineColorAttachmentDescriptorArray = []
+Metal_MTLRenderPipelineDescriptor = []
+Metal_MTLRenderPipelineFunctionsDescriptor = []
+Metal_MTLRenderPipelineReflection = []
+Metal_MTLResourceStatePassDescriptor = []
+Metal_MTLResourceStatePassSampleBufferAttachmentDescriptor = []
+Metal_MTLResourceStatePassSampleBufferAttachmentDescriptorArray = []
+Metal_MTLSamplerDescriptor = []
+Metal_MTLSharedEventHandle = []
+Metal_MTLSharedEventListener = []
+Metal_MTLSharedTextureHandle = []
+Metal_MTLStageInputOutputDescriptor = []
+Metal_MTLStencilDescriptor = []
+Metal_MTLStitchedLibraryDescriptor = []
+Metal_MTLStructMember = []
 Metal_MTLStructType = [
     "Metal_MTLType",
 ]
-Metal_MTLTextureDescriptor = [
-    "Foundation_NSObject",
-]
+Metal_MTLTextureDescriptor = []
 Metal_MTLTextureReferenceType = [
     "Metal_MTLType",
 ]
-Metal_MTLTileRenderPipelineColorAttachmentDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLTileRenderPipelineColorAttachmentDescriptorArray = [
-    "Foundation_NSObject",
-]
-Metal_MTLTileRenderPipelineDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLType = [
-    "Foundation_NSObject",
-]
-Metal_MTLVertexAttribute = [
-    "Foundation_NSObject",
-]
-Metal_MTLVertexAttributeDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLVertexAttributeDescriptorArray = [
-    "Foundation_NSObject",
-]
-Metal_MTLVertexBufferLayoutDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLVertexBufferLayoutDescriptorArray = [
-    "Foundation_NSObject",
-]
-Metal_MTLVertexDescriptor = [
-    "Foundation_NSObject",
-]
-Metal_MTLVisibleFunctionTableDescriptor = [
-    "Foundation_NSObject",
-]
-QuartzCore_CAAnimation = [
-    "Foundation_NSObject",
-]
+Metal_MTLTileRenderPipelineColorAttachmentDescriptor = []
+Metal_MTLTileRenderPipelineColorAttachmentDescriptorArray = []
+Metal_MTLTileRenderPipelineDescriptor = []
+Metal_MTLType = []
+Metal_MTLVertexAttribute = []
+Metal_MTLVertexAttributeDescriptor = []
+Metal_MTLVertexAttributeDescriptorArray = []
+Metal_MTLVertexBufferLayoutDescriptor = []
+Metal_MTLVertexBufferLayoutDescriptorArray = []
+Metal_MTLVertexDescriptor = []
+Metal_MTLVisibleFunctionTableDescriptor = []
+QuartzCore_CAAnimation = []
 QuartzCore_CAAnimationGroup = [
     "QuartzCore_CAAnimation",
 ]
 QuartzCore_CABasicAnimation = [
     "QuartzCore_CAPropertyAnimation",
 ]
-QuartzCore_CAConstraint = [
-    "Foundation_NSObject",
-]
-QuartzCore_CAConstraintLayoutManager = [
-    "Foundation_NSObject",
-]
-QuartzCore_CADisplayLink = [
-    "Foundation_NSObject",
-]
-QuartzCore_CAEDRMetadata = [
-    "Foundation_NSObject",
-]
-QuartzCore_CAEmitterCell = [
-    "Foundation_NSObject",
-]
+QuartzCore_CAConstraint = []
+QuartzCore_CAConstraintLayoutManager = []
+QuartzCore_CADisplayLink = []
+QuartzCore_CAEDRMetadata = []
+QuartzCore_CAEmitterCell = []
 QuartzCore_CAEmitterLayer = [
     "QuartzCore_CALayer",
 ]
@@ -2373,24 +1254,14 @@ QuartzCore_CAGradientLayer = [
 QuartzCore_CAKeyframeAnimation = [
     "QuartzCore_CAPropertyAnimation",
 ]
-QuartzCore_CALayer = [
-    "Foundation_NSObject",
-]
-QuartzCore_CAMediaTimingFunction = [
-    "Foundation_NSObject",
-]
+QuartzCore_CALayer = []
+QuartzCore_CAMediaTimingFunction = []
 QuartzCore_CAPropertyAnimation = [
     "QuartzCore_CAAnimation",
 ]
-QuartzCore_CARemoteLayerClient = [
-    "Foundation_NSObject",
-]
-QuartzCore_CARemoteLayerServer = [
-    "Foundation_NSObject",
-]
-QuartzCore_CARenderer = [
-    "Foundation_NSObject",
-]
+QuartzCore_CARemoteLayerClient = []
+QuartzCore_CARemoteLayerServer = []
+QuartzCore_CARenderer = []
 QuartzCore_CAReplicatorLayer = [
     "QuartzCore_CALayer",
 ]
@@ -2409,15 +1280,11 @@ QuartzCore_CATextLayer = [
 QuartzCore_CATiledLayer = [
     "QuartzCore_CALayer",
 ]
-QuartzCore_CATransaction = [
-    "Foundation_NSObject",
-]
+QuartzCore_CATransaction = []
 QuartzCore_CATransformLayer = [
     "QuartzCore_CALayer",
 ]
 QuartzCore_CATransition = [
     "QuartzCore_CAAnimation",
 ]
-QuartzCore_CAValueFunction = [
-    "Foundation_NSObject",
-]
+QuartzCore_CAValueFunction = []

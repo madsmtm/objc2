@@ -47,8 +47,13 @@ impl Output {
                             // since the rest will be enabled transitively.
                             if let Some(superclass) = superclasses.first() {
                                 let feature = format!("{}_{}", ty.library, ty.name);
-                                let superclass_feature = format!("{}_{}", superclass.library, superclass.name);
-                                if let Some(existing) = features.insert(feature, vec![superclass_feature]) {
+                                let superclass_features = (superclass.library != "Foundation" && superclass.name != "NSObject")
+                                    .then(|| format!("{}_{}", superclass.library, superclass.name))
+                                    .into_iter()
+                                    .collect::<Vec<_>>();
+                                if let Some(existing) =
+                                    features.insert(feature, superclass_features)
+                                {
                                     error!(?existing, "duplicate feature");
                                 }
                             }
