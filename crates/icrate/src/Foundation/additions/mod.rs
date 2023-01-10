@@ -1,5 +1,3 @@
-#![allow(clippy::missing_safety_doc)]
-
 pub use self::comparison_result::NSComparisonResult;
 pub use self::copying::{NSCopying, NSMutableCopying};
 pub use self::enumerator::{NSEnumerator2, NSFastEnumeration2, NSFastEnumerator2};

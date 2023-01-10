@@ -9,4 +9,5 @@ data! {
     mod CoreAnimation;
     mod CoreData;
     mod Foundation;
+    mod Metal;
 }

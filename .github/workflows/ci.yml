@@ -49,7 +49,7 @@ env:
   #
   # Note: The `exception` feature is not enabled here, since it requires
   # compiling C code, even if just running a `check`/`clippy` build.
-  INTERESTING_FEATURES: malloc,block,verify,uuid
+  INTERESTING_FEATURES: malloc,block,verify,uuid,unstable-private
   UNSTABLE_FEATURES: unstable-autoreleasesafe,unstable-c-unwind
   # Required when we want to use a different runtime than the default `apple`
   OTHER_RUNTIME: --no-default-features --features=std

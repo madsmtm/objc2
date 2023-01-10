@@ -28,7 +28,7 @@ uuid = { version = "1.1.2", optional = true, default-features = false }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
-features = ["block", "objective-c", "uuid", "unstable-frameworks-all", "unstable-docsrs"]
+features = ["block", "objective-c", "uuid", "unstable-frameworks-all", "unstable-private", "unstable-docsrs"]
 
 targets = [
     # MacOS
@@ -87,6 +87,12 @@ block = ["objc2?/block", "block2"]
 # For better documentation on docs.rs
 unstable-docsrs = []
 
+# Private framework functionality
+#
+# These functions/methods are all marked `unsafe`, since they may not always
+# exist.
+unstable-private = []
+
 # Frameworks
 
 AppKit = ["Foundation", "CoreData"]
@@ -94,13 +100,14 @@ AuthenticationServices = ["Foundation"]
 CoreAnimation = ["Foundation"]
 CoreData = ["Foundation"]
 Foundation = ["objective-c", "block"]
+Metal = ["Foundation"]
 
 # Helps with CI
-unstable-frameworks-all = ["AppKit", "AuthenticationServices", "CoreData", "Foundation"]
+unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-12"]
 unstable-frameworks-gnustep = ["AppKit", "Foundation"]
 unstable-frameworks-gnustep-32bit = ["Foundation"]
-unstable-frameworks-ios = ["AuthenticationServices", "CoreData", "CoreAnimation", "Foundation"]
+unstable-frameworks-ios = ["AuthenticationServices", "CoreData", "CoreAnimation", "Foundation", "Metal"]
 unstable-frameworks-macos-10-7 = ["AppKit", "CoreAnimation", "CoreData", "Foundation"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7"]
-unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices"]
+unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices", "Metal"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]

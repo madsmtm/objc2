@@ -25,7 +25,7 @@ impl UnexposedMacro {
             "NS_OPTIONS" | "CF_OPTIONS" => Some(Self::Options),
             "NS_CLOSED_ENUM" | "CF_CLOSED_ENUM" => Some(Self::ClosedEnum),
             "NS_ERROR_ENUM" => Some(Self::ErrorEnum),
-            "NS_TYPED_ENUM" | "CF_TYPED_ENUM" => Some(Self::TypedEnum),
+            "NS_TYPED_ENUM" | "NS_STRING_ENUM" | "CF_TYPED_ENUM" => Some(Self::TypedEnum),
             "NS_TYPED_EXTENSIBLE_ENUM" | "CF_TYPED_EXTENSIBLE_ENUM" => {
                 Some(Self::TypedExtensibleEnum)
             }
