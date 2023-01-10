@@ -219,7 +219,8 @@ enum IdType {
 }
 
 impl IdType {
-    fn id(&self) -> Option<&ItemIdentifier> {
+    #[allow(dead_code)]
+    fn _id(&self) -> Option<&ItemIdentifier> {
         match self {
             Self::Class { id, .. } => Some(id),
             Self::AnyObject { protocols } => match &**protocols {
@@ -382,17 +383,17 @@ impl IdType {
     }
 
     fn visit_required_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
-        if let Some(id) = self.id() {
-            f(&id);
-        }
+        // TODO
+        // if let Some(id) = self.id() {
+        //     f(&id);
+        // }
 
-        if let Self::Class {
-            params: TypeParams::Generics(generics),
-            ..
-        } = self
-        {
-            for generic in generics {
-                generic.visit_required_types(f);
+        if let Self::Class { id, params, .. } = self {
+            f(&id);
+            if let TypeParams::Generics(generics) = params {
+                for generic in generics {
+                    generic.visit_required_types(f);
+                }
             }
         }
     }
