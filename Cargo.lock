@@ -119,6 +119,7 @@ version = "0.1.0"
 dependencies = [
  "apple-sdk",
  "clang",
+ "proc-macro2",
  "serde",
  "toml",
  "tracing",

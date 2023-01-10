@@ -1,6 +1,5 @@
 use clang::source::SourceLocation;
 use clang::{Entity, EntityKind};
-use tracing::warn;
 
 use crate::context::Context;
 

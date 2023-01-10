@@ -1,6 +1,5 @@
-use clang::{Entity, EntityKind, Nullability, ObjCAttributes};
+use clang::{Entity, EntityKind, ObjCAttributes};
 use tracing::span::EnteredSpan;
-use tracing::{error, warn};
 
 use crate::availability::Availability;
 use crate::config::MethodData;
@@ -38,22 +37,20 @@ impl PartialProperty<'_> {
             _span,
         } = self;
 
+        // Early return if both getter and setter are skipped
+        //
+        // To reduce warnings.
+        if getter_data.skipped && setter_data.map(|data| data.skipped).unwrap_or(true) {
+            return (None, None);
+        }
+
         let availability = Availability::parse(
             entity
                 .get_platform_availability()
                 .expect("method availability"),
         );
 
-        // `@property(copy)` for some reason returns nonnull?
-        //
-        // Swift signifies that they use forced unwrapping here, perhaps
-        // because they know that it can fail (e.g. in OOM situations), but
-        // is very unlikely to?
-        let default_nullability = if attributes.map(|a| a.copy).unwrap_or(false) {
-            Nullability::NonNull
-        } else {
-            Nullability::Unspecified
-        };
+        let is_copy = attributes.map(|a| a.copy).unwrap_or(false);
 
         let mut memory_management = MemoryManagement::Normal;
 
@@ -81,7 +78,7 @@ impl PartialProperty<'_> {
                     warn!(?macro_, "unknown macro");
                 }
             }
-            _ => warn!("unknown"),
+            _ => error!("unknown"),
         });
 
         let qualifier = entity.get_objc_qualifiers().map(Qualifier::parse);
@@ -92,7 +89,7 @@ impl PartialProperty<'_> {
         let getter = if !getter_data.skipped {
             let ty = Ty::parse_property_return(
                 entity.get_type().expect("property type"),
-                default_nullability,
+                is_copy,
                 context,
             );
 
@@ -115,11 +112,8 @@ impl PartialProperty<'_> {
         let setter = if let Some(setter_name) = setter_name {
             let setter_data = setter_data.expect("setter_data must be present if setter_name was");
             if !setter_data.skipped {
-                let ty = Ty::parse_property(
-                    entity.get_type().expect("property type"),
-                    Nullability::Unspecified,
-                    context,
-                );
+                let ty =
+                    Ty::parse_property(entity.get_type().expect("property type"), is_copy, context);
 
                 Some(Method {
                     selector: setter_name.clone() + ":",

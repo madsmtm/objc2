@@ -2,7 +2,6 @@ use std::fmt;
 
 use clang::{Entity, EntityKind, ObjCQualifiers};
 use tracing::span::EnteredSpan;
-use tracing::{debug_span, error, warn};
 
 use crate::availability::Availability;
 use crate::config::MethodData;
@@ -245,7 +244,7 @@ impl<'tu> PartialMethod<'tu> {
         }
 
         if entity.is_variadic() {
-            warn!("Can't handle variadic method");
+            warn!("can't handle variadic method");
             return None;
         }
 
@@ -285,7 +284,7 @@ impl<'tu> PartialMethod<'tu> {
                     }
                     // For some reason we recurse into array types
                     EntityKind::IntegerLiteral => {}
-                    _ => warn!("unknown"),
+                    _ => error!("unknown"),
                 });
 
                 let ty = entity.get_type().expect("argument type");
@@ -370,12 +369,15 @@ impl<'tu> PartialMethod<'tu> {
                 // TODO: Can we use this for something?
                 // <https://clang.llvm.org/docs/AttributeReference.html#objc-requires-super>
             }
+            EntityKind::WarnUnusedResultAttr => {
+                // TODO: Emit `#[must_use]` on this
+            }
             EntityKind::UnexposedAttr => {
                 if let Some(macro_) = UnexposedMacro::parse(&entity) {
                     warn!(?macro_, "unknown macro");
                 }
             }
-            _ => warn!("unknown"),
+            _ => error!("unknown"),
         });
 
         if consumes_self {

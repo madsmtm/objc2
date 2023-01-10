@@ -1,7 +1,5 @@
 use std::fmt;
 
-use tracing::debug_span;
-
 use crate::context::Context;
 use crate::stmt::Stmt;
 

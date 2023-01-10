@@ -5,7 +5,6 @@ use std::iter;
 use std::mem;
 
 use clang::{Entity, EntityKind, EntityVisitResult};
-use tracing::{debug, debug_span, error, warn};
 
 use crate::availability::Availability;
 use crate::config::ClassData;
@@ -94,7 +93,7 @@ fn parse_objc_decl(
         EntityKind::ObjCExplicitProtocolImpl if generics.is_none() && !superclass => {
             // TODO NS_PROTOCOL_REQUIRES_EXPLICIT_IMPLEMENTATION
         }
-        EntityKind::ObjCIvarDecl if superclass => {
+        EntityKind::ObjCIvarDecl | EntityKind::StructDecl | EntityKind::UnionDecl if superclass => {
             // Explicitly ignored
         }
         EntityKind::ObjCSuperClassRef | EntityKind::TypeRef if superclass => {
@@ -168,7 +167,7 @@ fn parse_objc_decl(
                 warn!(?macro_, "unknown macro");
             }
         }
-        _ => warn!("unknown"),
+        _ => error!("unknown"),
     });
 
     if !properties.is_empty() {
@@ -315,7 +314,7 @@ fn parse_struct(entity: &Entity<'_>, context: &Context<'_>) -> (bool, Vec<(Strin
             boxable = true;
         }
         EntityKind::UnionDecl => error!("can't handle unions in structs yet"),
-        _ => warn!("unknown"),
+        _ => error!("unknown"),
     });
 
     (boxable, fields)
@@ -531,7 +530,7 @@ impl Stmt {
                     | EntityKind::ObjCProtocolRef
                     | EntityKind::TypeRef
                     | EntityKind::ParmDecl => {}
-                    _ => warn!("unknown"),
+                    _ => error!("unknown"),
                 });
 
                 if let Some((boxable, fields)) = struct_ {
@@ -666,7 +665,7 @@ impl Stmt {
                     EntityKind::VisibilityAttr => {
                         // Already exposed as entity.get_visibility()
                     }
-                    _ => warn!("unknown"),
+                    _ => error!("unknown"),
                 });
 
                 if name.is_none() && variants.is_empty() {
@@ -754,7 +753,9 @@ impl Stmt {
                             warn!(?macro_, "unknown macro");
                         }
                     }
-                    EntityKind::ObjCClassRef | EntityKind::TypeRef => {}
+                    EntityKind::ObjCClassRef
+                    | EntityKind::TypeRef
+                    | EntityKind::ObjCProtocolRef => {}
                     EntityKind::ParmDecl => {
                         // Could also be retrieved via. `get_arguments`
                         let name = entity.get_name().unwrap_or_else(|| "_".into());
@@ -765,7 +766,7 @@ impl Stmt {
                     EntityKind::VisibilityAttr => {
                         // CG_EXTERN or UIKIT_EXTERN
                     }
-                    _ => warn!("unknown"),
+                    _ => error!("unknown"),
                 });
 
                 let body = if entity.is_inline_function() {

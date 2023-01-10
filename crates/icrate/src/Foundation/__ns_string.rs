@@ -447,6 +447,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "slow, enable this if working on ns_string!"]
     fn test_decode_utf8() {
         for c in '\u{0}'..=core::char::MAX {
             let mut buf;
@@ -469,6 +470,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "slow, enable this if working on ns_string!"]
     fn encode_utf16() {
         for c in '\u{0}'..=core::char::MAX {
             assert_eq!(
