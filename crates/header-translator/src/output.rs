@@ -1,8 +1,8 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
+use crate::config::Config;
 use crate::library::Library;
 use crate::stmt::Stmt;
-use crate::config::Config;
 
 #[derive(Debug, PartialEq)]
 pub struct Output {
@@ -36,32 +36,44 @@ impl Output {
         //
         // }
 
-        for (_, library) in &self.libraries {
+        for (library_name, library) in &self.libraries {
+            let mut library_features = BTreeSet::new();
+
             for (_, file) in &library.files {
                 for stmt in &file.stmts {
                     match stmt {
                         Stmt::ClassDecl {
                             ty, superclasses, ..
                         } => {
+                            let feature = format!("{}_{}", ty.library, ty.name);
                             // Only require the first superclass as feature,
                             // since the rest will be enabled transitively.
                             if let Some(superclass) = superclasses.first() {
-                                let feature = format!("{}_{}", ty.library, ty.name);
-                                let superclass_features = (superclass.library != "Foundation" && superclass.name != "NSObject")
+                                let superclass_features = (superclass.library != "Foundation"
+                                    && superclass.name != "NSObject")
                                     .then(|| format!("{}_{}", superclass.library, superclass.name))
                                     .into_iter()
                                     .collect::<Vec<_>>();
                                 if let Some(existing) =
-                                    features.insert(feature, superclass_features)
+                                    features.insert(feature.clone(), superclass_features)
                                 {
                                     error!(?existing, "duplicate feature");
                                 }
+                            }
+
+                            if !library_features.insert(feature) {
+                                error!("duplicate feature");
                             }
                         }
                         _ => {}
                     }
                 }
             }
+
+            let _ = features.insert(
+                format!("{library_name}_all"),
+                library_features.into_iter().collect::<Vec<_>>(),
+            );
         }
 
         features
