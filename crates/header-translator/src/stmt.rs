@@ -93,7 +93,7 @@ fn parse_objc_decl(
         EntityKind::ObjCExplicitProtocolImpl if generics.is_none() && !superclass => {
             // TODO NS_PROTOCOL_REQUIRES_EXPLICIT_IMPLEMENTATION
         }
-        EntityKind::ObjCIvarDecl if superclass => {
+        EntityKind::ObjCIvarDecl | EntityKind::StructDecl | EntityKind::UnionDecl if superclass => {
             // Explicitly ignored
         }
         EntityKind::ObjCSuperClassRef | EntityKind::TypeRef if superclass => {

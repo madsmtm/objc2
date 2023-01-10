@@ -369,6 +369,9 @@ impl<'tu> PartialMethod<'tu> {
                 // TODO: Can we use this for something?
                 // <https://clang.llvm.org/docs/AttributeReference.html#objc-requires-super>
             }
+            EntityKind::WarnUnusedResultAttr => {
+                // TODO: Emit `#[must_use]` on this
+            }
             EntityKind::UnexposedAttr => {
                 if let Some(macro_) = UnexposedMacro::parse(&entity) {
                     warn!(?macro_, "unknown macro");
