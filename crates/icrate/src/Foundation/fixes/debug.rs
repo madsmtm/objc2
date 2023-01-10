@@ -1,78 +1,85 @@
 use core::fmt;
 
-use objc2::rc::Ownership;
-use objc2::Message;
+use crate::common::*;
+use crate::Foundation;
 
-use crate::Foundation::{
-    NSAttributedString, NSBundle, NSMutableArray, NSMutableAttributedString, NSMutableData,
-    NSMutableDictionary, NSMutableSet, NSMutableString, NSNumber, NSObject, NSThread,
-};
-
-impl fmt::Debug for NSAttributedString {
+#[cfg(feature = "Foundation_NSAttributedString")]
+impl fmt::Debug for Foundation::NSAttributedString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Use -[NSAttributedString description] since it is pretty good
-        let obj: &NSObject = self;
+        let obj: &Foundation::NSObject = self;
         fmt::Debug::fmt(obj, f)
     }
 }
 
-impl fmt::Debug for NSBundle {
+#[cfg(feature = "Foundation_NSBundle")]
+impl fmt::Debug for Foundation::NSBundle {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Delegate to NSObject
         (**self).fmt(f)
     }
 }
 
-impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for NSMutableArray<T, O> {
+#[cfg(feature = "Foundation_NSMutableArray")]
+impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for Foundation::NSMutableArray<T, O> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)
     }
 }
 
-impl fmt::Debug for NSMutableAttributedString {
+#[cfg(feature = "Foundation_NSMutableAttributedString")]
+impl fmt::Debug for Foundation::NSMutableAttributedString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)
     }
 }
 
-impl fmt::Debug for NSMutableData {
+#[cfg(feature = "Foundation_NSMutableData")]
+impl fmt::Debug for Foundation::NSMutableData {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)
     }
 }
 
-impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug for NSMutableDictionary<K, V> {
+#[cfg(feature = "Foundation_NSMutableDictionary")]
+impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug
+    for Foundation::NSMutableDictionary<K, V>
+{
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)
     }
 }
 
-impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for NSMutableSet<T, O> {
+#[cfg(feature = "Foundation_NSMutableSet")]
+impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for Foundation::NSMutableSet<T, O> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)
     }
 }
 
-impl fmt::Debug for NSMutableString {
+#[cfg(feature = "Foundation_NSMutableString")]
+impl fmt::Debug for Foundation::NSMutableString {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)
     }
 }
 
-impl fmt::Debug for NSThread {
+#[cfg(feature = "Foundation_NSThread")]
+impl fmt::Debug for Foundation::NSThread {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Use -[NSThread description] since that includes the thread number
-        let obj: &NSObject = self;
+        let obj: &Foundation::NSObject = self;
         fmt::Debug::fmt(obj, f)
     }
 }
 
-impl fmt::Debug for NSNumber {
+#[cfg(feature = "Foundation_NSNumber")]
+impl fmt::Debug for Foundation::NSNumber {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Delegate to -[NSObject description]
         // (happens to return the same as -[NSNumber stringValue])

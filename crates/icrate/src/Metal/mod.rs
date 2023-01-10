@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 mod capture;
 mod device;
 mod fixes;

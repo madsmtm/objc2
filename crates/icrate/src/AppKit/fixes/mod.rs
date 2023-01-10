@@ -1,7 +1,6 @@
 #![allow(clippy::bool_to_int_with_if)]
 use crate::common::*;
-use crate::AppKit::NSResponder;
-use crate::Foundation::NSObject;
+use crate::AppKit;
 
 /// (!TARGET_CPU_X86_64 || (TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST))
 ///
@@ -35,7 +34,7 @@ extern_class!(
 
     unsafe impl ClassType for NSPopover {
         #[inherits(NSObject)]
-        type Super = NSResponder;
+        type Super = AppKit::NSResponder;
     }
 );
 

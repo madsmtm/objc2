@@ -9,8 +9,10 @@ fn slice_to_ptr_count<T>(slice: &[T]) -> (NonNull<T>, usize) {
     (ptr, slice.len())
 }
 
+#[cfg(feature = "Metal_MTLRenderCommandEncoder")]
 impl Metal::MTLRenderCommandEncoder {
     // TODO: Safety
+    #[cfg(feature = "Metal_MTLViewport")]
     pub unsafe fn setViewports(&self, viewports: &[Metal::MTLViewport]) {
         let (ptr, count) = slice_to_ptr_count(viewports);
         unsafe { self.setViewports_count(ptr, count) }

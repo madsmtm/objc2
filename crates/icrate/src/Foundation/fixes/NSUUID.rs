@@ -1,8 +1,7 @@
 use objc2::encode::{Encode, Encoding, RefEncode};
-use objc2::extern_methods;
-use objc2::rc::{Allocated, Id, Shared};
 
-use crate::Foundation::NSUUID;
+use crate::common::*;
+use crate::Foundation;
 
 /// The headers describe `initWithUUIDBytes:` and `getUUIDBytes:` as
 /// taking `uuid_t`, but something fishy is going on, in reality they
@@ -17,7 +16,8 @@ unsafe impl RefEncode for UuidBytes {
 }
 
 extern_methods!(
-    unsafe impl NSUUID {
+    #[cfg(feature = "Foundation_NSUUID")]
+    unsafe impl Foundation::NSUUID {
         #[method_id(initWithUUIDBytes:)]
         pub(crate) fn initWithUUIDBytes(
             this: Option<Allocated<Self>>,

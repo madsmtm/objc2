@@ -1,6 +1,4 @@
-use objc2::{extern_class, ClassType};
-
-use crate::Foundation::NSObject;
+use crate::common::*;
 
 // TODO: UIViewController on iOS, NSViewController on macOS
 pub type ASViewController = NSObject;
