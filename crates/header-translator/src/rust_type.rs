@@ -132,11 +132,13 @@ impl IdType {
                 match RustType::parse(param, false, Nullability::Unspecified, false, context) {
                     RustType::Id {
                         ty,
-                        is_const: _,
-                        lifetime: _,
-                        nullability: _,
+                        is_const: false,
+                        lifetime: Lifetime::Unspecified,
+                        nullability: Nullability::Unspecified,
                     } => ty,
-                    RustType::Class { nullability: _ } => Self::AnyClass { protocols: vec![] },
+                    RustType::Class {
+                        nullability: Nullability::Unspecified,
+                    } => Self::AnyClass { protocols: vec![] },
                     param => {
                         panic!("invalid generic parameter {param:?} in {ty:?}")
                     }
@@ -285,7 +287,7 @@ fn parse_attributed<'a>(
     lifetime: &mut Lifetime,
     kindof: &mut bool,
     inside_partial_array: bool,
-) -> Type<'a> {
+) -> (Type<'a>, bool) {
     let mut modified_ty = ty;
     while let TypeKind::Attributed = modified_ty.get_kind() {
         modified_ty = modified_ty
@@ -294,7 +296,7 @@ fn parse_attributed<'a>(
     }
 
     if modified_ty == ty {
-        return ty;
+        return (ty, ty.is_const_qualified());
     }
 
     let mut name = &*ty.get_display_name();
@@ -307,14 +309,23 @@ fn parse_attributed<'a>(
     }
 
     let parse_const = |name: &mut &str| {
-        if ty.is_const_qualified() {
-            if let Some(rest) = name.strip_suffix("const") {
-                *name = rest.trim();
+        if let Some(rest) = name.strip_suffix("const") {
+            *name = rest.trim();
+
+            if !ty.is_const_qualified() || modified_ty.is_const_qualified() {
+                warn!(?modified_ty, "unnecessarily stripped const");
             }
-            if !modified_ty.is_const_qualified() {
-                // TODO: Fix this
-                warn!("unnecessarily stripped const");
+            true
+        } else {
+            if ty.is_const_qualified() {
+                warn!(
+                    ?modified_ty,
+                    "type was const but that could not be stripped"
+                );
             }
+            // Some type kinds have `const` directly on them, instead of
+            // storing it inside `Attributed`.
+            modified_ty.is_const_qualified()
         }
     };
 
@@ -422,7 +433,7 @@ fn parse_attributed<'a>(
         _ => {}
     }
 
-    parse_const(&mut name);
+    let is_const = parse_const(&mut name);
     if inside_partial_array {
         parse_lifetime(&mut name, modified_name, lifetime, true);
     }
@@ -445,7 +456,7 @@ fn parse_attributed<'a>(
         }
     }
 
-    modified_ty
+    (modified_ty, is_const)
 }
 
 /// Strip macros from unexposed type.
@@ -564,13 +575,11 @@ impl RustType {
         inside_partial_array: bool,
         context: &Context<'_>,
     ) -> Self {
-        let _span = debug_span!("ty", ?ty, is_consumed);
-
-        // debug!("{:?}, {:?}", ty, ty.get_class_type());
+        let _span = debug_span!("ty", ?ty, is_consumed, ?nullability,).entered();
 
         let mut kindof = false;
         let mut lifetime = Lifetime::Unspecified;
-        let ty = parse_attributed(
+        let (ty, is_const) = parse_attributed(
             ty,
             &mut nullability,
             &mut lifetime,
@@ -580,7 +589,15 @@ impl RustType {
 
         let ty = parse_unexposed(ty, &mut nullability);
 
-        // debug!("{:?}: {:?}", ty.get_kind(), ty.get_display_name());
+        let _span = debug_span!(
+            "ty after attributed",
+            ?ty,
+            ?nullability,
+            ?lifetime,
+            ?kindof,
+            ?is_const,
+        )
+        .entered();
 
         use TypeKind::*;
         match ty.get_kind() {
@@ -601,14 +618,13 @@ impl RustType {
             Double => Self::Double,
             ObjCId => Self::Id {
                 ty: IdType::AnyObject { protocols: vec![] },
-                is_const: ty.is_const_qualified(),
+                is_const,
                 lifetime,
                 nullability,
             },
             ObjCClass => Self::Class { nullability },
             ObjCSel => Self::Sel { nullability },
             Pointer => {
-                let is_const = ty.is_const_qualified();
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
                 let pointee =
                     Self::parse(ty, is_consumed, Nullability::Unspecified, false, context);
@@ -619,7 +635,6 @@ impl RustType {
                 }
             }
             BlockPointer => {
-                let is_const = ty.is_const_qualified();
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
                 match Self::parse(ty, is_consumed, Nullability::Unspecified, false, context) {
                     Self::Fn {
@@ -646,11 +661,16 @@ impl RustType {
             ObjCObjectPointer => {
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
                 let mut kindof = false;
-                let ty = parse_attributed(ty, &mut nullability, &mut lifetime, &mut kindof, false);
+                let (ty, pointee_is_const) =
+                    parse_attributed(ty, &mut nullability, &mut lifetime, &mut kindof, false);
+
+                if !is_const && pointee_is_const {
+                    warn!(?ty, "pointee was const while ObjCObjectPointer was not");
+                }
 
                 Self::Id {
                     ty: IdType::parse_objc_pointer(ty, context),
-                    is_const: ty.is_const_qualified(),
+                    is_const,
                     lifetime,
                     nullability,
                 }
@@ -687,7 +707,7 @@ impl RustType {
 
                     "instancetype" => Self::Id {
                         ty: IdType::Self_ { ownership: None },
-                        is_const: ty.is_const_qualified(),
+                        is_const,
                         lifetime,
                         nullability,
                     },
@@ -700,7 +720,10 @@ impl RustType {
                                     ty.get_pointee_type().expect("pointer type to have pointee");
                                 let declaration =
                                     declaration.expect("typedef ObjCObjectPointer declaration");
-                                let is_const = ty.is_const_qualified();
+
+                                if !is_const && ty.is_const_qualified() {
+                                    warn!(?ty, "pointee was const while ObjCObjectPointer was not");
+                                }
 
                                 assert!(
                                     ty.get_objc_type_arguments().is_empty(),
@@ -778,7 +801,6 @@ impl RustType {
                 }
             }
             IncompleteArray => {
-                let is_const = ty.is_const_qualified();
                 let ty = ty
                     .get_element_type()
                     .expect("incomplete array to have element type");
@@ -1418,7 +1440,9 @@ impl fmt::Display for Ty {
             TyKind::Static => match &self.ty {
                 RustType::Id {
                     ty,
-                    is_const: false,
+                    // `const` is irrelevant in statics since they're always
+                    // constant.
+                    is_const: _,
                     lifetime: Lifetime::Strong | Lifetime::Unspecified,
                     nullability,
                 } => {
