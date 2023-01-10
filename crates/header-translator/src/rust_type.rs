@@ -287,14 +287,14 @@ impl IdType {
             .get_objc_type_arguments()
             .into_iter()
             .map(
-                |param| match RustType::parse(param, Lifetime::Unspecified, context) {
-                    RustType::Id {
+                |param| match Inner::parse(param, Lifetime::Unspecified, context) {
+                    Inner::Id {
                         ty,
                         is_const: false,
                         lifetime: Lifetime::Unspecified,
                         nullability: Nullability::Unspecified,
                     } => ty,
-                    RustType::Class {
+                    Inner::Class {
                         nullability: Nullability::Unspecified,
                     } => Self::AnyClass { protocols: vec![] },
                     param => {
@@ -490,7 +490,7 @@ fn check_nullability(ty: &Type<'_>, new: Option<Nullability>) -> Nullability {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-enum RustType {
+enum Inner {
     // Primitives
     Void,
     C99Bool,
@@ -539,15 +539,15 @@ enum RustType {
     Pointer {
         nullability: Nullability,
         is_const: bool,
-        pointee: Box<RustType>,
+        pointee: Box<Inner>,
     },
     IncompleteArray {
         nullability: Nullability,
         is_const: bool,
-        pointee: Box<RustType>,
+        pointee: Box<Inner>,
     },
     Array {
-        element_type: Box<RustType>,
+        element_type: Box<Inner>,
         num_elements: usize,
     },
     Enum {
@@ -558,12 +558,12 @@ enum RustType {
     },
     Fn {
         is_variadic: bool,
-        arguments: Vec<RustType>,
-        result_type: Box<RustType>,
+        arguments: Vec<Inner>,
+        result_type: Box<Inner>,
     },
     Block {
-        arguments: Vec<RustType>,
-        result_type: Box<RustType>,
+        arguments: Vec<Inner>,
+        result_type: Box<Inner>,
     },
 
     TypeDef {
@@ -571,7 +571,7 @@ enum RustType {
     },
 }
 
-impl RustType {
+impl Inner {
     fn parse(ty: Type<'_>, mut lifetime: Lifetime, context: &Context<'_>) -> Self {
         let _span = debug_span!("ty", ?ty, ?lifetime).entered();
 
@@ -913,11 +913,11 @@ impl RustType {
                     .get_argument_types()
                     .expect("fn type to have argument types")
                     .into_iter()
-                    .map(|ty| RustType::parse(ty, Lifetime::Unspecified, context))
+                    .map(|ty| Inner::parse(ty, Lifetime::Unspecified, context))
                     .collect();
 
                 let result_type = ty.get_result_type().expect("fn type to have result type");
-                let result_type = RustType::parse(result_type, Lifetime::Unspecified, context);
+                let result_type = Inner::parse(result_type, Lifetime::Unspecified, context);
 
                 Self::Fn {
                     is_variadic: ty.is_variadic(),
@@ -982,9 +982,9 @@ impl RustType {
 /// This is sound to output in (almost, c_void is not a valid return type) any
 /// context. `Ty` is then used to change these types into something nicer when
 /// required.
-impl fmt::Display for RustType {
+impl fmt::Display for Inner {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use RustType::*;
+        use Inner::*;
         match self {
             // Primitives
             Void => write!(f, "c_void"),
@@ -1144,26 +1144,26 @@ enum TyKind {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Ty {
-    ty: RustType,
+    ty: Inner,
     kind: TyKind,
 }
 
 impl Ty {
     pub const VOID_RESULT: Self = Self {
-        ty: RustType::Void,
+        ty: Inner::Void,
         kind: TyKind::MethodReturn { with_error: false },
     };
 
     pub fn parse_method_argument(ty: Type<'_>, is_consumed: bool, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, Lifetime::Unspecified, context);
+        let ty = Inner::parse(ty, Lifetime::Unspecified, context);
 
         match &ty {
-            RustType::Pointer { pointee, .. } => pointee.visit_lifetime(|lifetime| {
+            Inner::Pointer { pointee, .. } => pointee.visit_lifetime(|lifetime| {
                 if lifetime != Lifetime::Autoreleasing {
                     error!(?ty, "unexpected lifetime in pointer argument");
                 }
             }),
-            RustType::IncompleteArray { pointee, .. } => pointee.visit_lifetime(|lifetime| {
+            Inner::IncompleteArray { pointee, .. } => pointee.visit_lifetime(|lifetime| {
                 if lifetime != Lifetime::Unretained {
                     error!(?ty, "unexpected lifetime in incomplete array argument");
                 }
@@ -1182,7 +1182,7 @@ impl Ty {
     }
 
     pub fn parse_method_return(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, Lifetime::Unspecified, context);
+        let ty = Inner::parse(ty, Lifetime::Unspecified, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1209,7 +1209,7 @@ impl Ty {
     }
 
     pub fn parse_typedef(ty: Type<'_>, typedef_name: &str, context: &Context<'_>) -> Option<Self> {
-        let mut ty = RustType::parse(ty, Lifetime::Unspecified, context);
+        let mut ty = Inner::parse(ty, Lifetime::Unspecified, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1219,22 +1219,22 @@ impl Ty {
 
         match &mut ty {
             // Handled by Stmt::EnumDecl
-            RustType::Enum { .. } => None,
+            Inner::Enum { .. } => None,
             // Handled above and in Stmt::StructDecl
-            RustType::Struct { name } if name == typedef_name => None,
-            RustType::Struct { name } if name != typedef_name => {
+            Inner::Struct { name } if name == typedef_name => None,
+            Inner::Struct { name } if name != typedef_name => {
                 warn!(name, "invalid struct in typedef");
                 None
             }
             // Opaque structs
-            RustType::Pointer { pointee, .. } if matches!(&**pointee, RustType::Struct { .. }) => {
-                **pointee = RustType::Void;
+            Inner::Pointer { pointee, .. } if matches!(&**pointee, Inner::Struct { .. }) => {
+                **pointee = Inner::Void;
                 Some(Self {
                     ty,
                     kind: TyKind::Typedef,
                 })
             }
-            RustType::IncompleteArray { .. } => {
+            Inner::IncompleteArray { .. } => {
                 unimplemented!("incomplete array in struct")
             }
             _ => Some(Self {
@@ -1250,7 +1250,7 @@ impl Ty {
         _is_copy: bool,
         context: &Context<'_>,
     ) -> Self {
-        let ty = RustType::parse(ty, Lifetime::Unspecified, context);
+        let ty = Inner::parse(ty, Lifetime::Unspecified, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1265,7 +1265,7 @@ impl Ty {
     }
 
     pub fn parse_property_return(ty: Type<'_>, is_copy: bool, context: &Context<'_>) -> Self {
-        let mut ty = RustType::parse(ty, Lifetime::Unspecified, context);
+        let mut ty = Inner::parse(ty, Lifetime::Unspecified, context);
 
         // `@property(copy)` is expected to always return a nonnull instance
         // (e.g. for strings it returns the empty string, while
@@ -1285,12 +1285,12 @@ impl Ty {
         // return type as `Id`.
         if is_copy {
             match &mut ty {
-                RustType::Id { nullability, .. } => {
+                Inner::Id { nullability, .. } => {
                     if *nullability == Nullability::Unspecified {
                         *nullability = Nullability::NonNull;
                     }
                 }
-                RustType::Pointer {
+                Inner::Pointer {
                     nullability: Nullability::Nullable | Nullability::NonNull,
                     ..
                 } => {
@@ -1313,7 +1313,7 @@ impl Ty {
     }
 
     pub fn parse_struct_field(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, Lifetime::Unspecified, context);
+        let ty = Inner::parse(ty, Lifetime::Unspecified, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unretained {
@@ -1328,7 +1328,7 @@ impl Ty {
     }
 
     pub fn parse_enum(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, Lifetime::Unspecified, context);
+        let ty = Inner::parse(ty, Lifetime::Unspecified, context);
 
         ty.visit_lifetime(|_lifetime| {
             error!(?ty, "unexpected lifetime in enum");
@@ -1341,7 +1341,7 @@ impl Ty {
     }
 
     pub fn parse_static(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, Lifetime::Unspecified, context);
+        let ty = Inner::parse(ty, Lifetime::Unspecified, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Strong && lifetime != Lifetime::Unspecified {
@@ -1357,7 +1357,7 @@ impl Ty {
 
     pub(crate) fn set_ownership(&mut self, mut get_ownership: impl FnMut(&str) -> Ownership) {
         assert!(matches!(self.kind, TyKind::MethodReturn { .. }));
-        if let RustType::Id { ty, .. } = &mut self.ty {
+        if let Inner::Id { ty, .. } = &mut self.ty {
             match ty {
                 IdType::Class {
                     ownership, name, ..
@@ -1375,13 +1375,13 @@ impl Ty {
 
 impl Ty {
     pub fn argument_is_error_out(&self) -> bool {
-        if let RustType::Pointer {
+        if let Inner::Pointer {
             nullability,
             is_const,
             pointee,
         } = &self.ty
         {
-            if let RustType::Id {
+            if let Inner::Id {
                 ty:
                     IdType::Class {
                         library,
@@ -1423,12 +1423,12 @@ impl Ty {
     }
 
     pub fn is_id(&self) -> bool {
-        matches!(self.ty, RustType::Id { .. })
+        matches!(self.ty, Inner::Id { .. })
     }
 
     pub fn set_is_alloc(&mut self) {
         match &mut self.ty {
-            RustType::Id {
+            Inner::Id {
                 ty: ty @ IdType::Self_ { ownership: None },
                 lifetime: Lifetime::Unspecified,
                 is_const: false,
@@ -1459,7 +1459,7 @@ impl Ty {
     pub fn is_instancetype(&self) -> bool {
         matches!(
             &self.ty,
-            RustType::Id {
+            Inner::Id {
                 ty: IdType::Self_ { .. },
                 ..
             }
@@ -1467,13 +1467,13 @@ impl Ty {
     }
 
     pub fn is_typedef_to(&self, s: &str) -> bool {
-        matches!(&self.ty, RustType::TypeDef { name } if name == s)
+        matches!(&self.ty, Inner::TypeDef { name } if name == s)
     }
 
     /// Related result types
     /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types>
     pub fn fix_related_result_type(&mut self, is_class: bool, selector: &str) {
-        if let RustType::Id {
+        if let Inner::Id {
             ty: ty @ IdType::AnyObject { .. },
             ..
         } = &mut self.ty
@@ -1498,7 +1498,7 @@ impl Ty {
     }
 
     pub fn is_nsstring(&self) -> bool {
-        if let RustType::Id {
+        if let Inner::Id {
             ty: IdType::Class { name, .. },
             ..
         } = &self.ty
@@ -1514,7 +1514,7 @@ impl fmt::Display for Ty {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self.kind {
             TyKind::MethodReturn { with_error: false } => {
-                if let RustType::Void = &self.ty {
+                if let Inner::Void = &self.ty {
                     // Don't output anything
                     return Ok(());
                 }
@@ -1522,7 +1522,7 @@ impl fmt::Display for Ty {
                 write!(f, " -> ")?;
 
                 match &self.ty {
-                    RustType::Id {
+                    Inner::Id {
                         ty,
                         // Ignore
                         is_const: _,
@@ -1536,22 +1536,22 @@ impl fmt::Display for Ty {
                             write!(f, "Option<Id<{ty}, {}>>", ty.ownership())
                         }
                     }
-                    RustType::Class { nullability } => {
+                    Inner::Class { nullability } => {
                         if *nullability == Nullability::NonNull {
                             write!(f, "&'static Class")
                         } else {
                             write!(f, "Option<&'static Class>")
                         }
                     }
-                    RustType::C99Bool => {
+                    Inner::C99Bool => {
                         panic!("C99's bool as Objective-C method return is unsupported")
                     }
-                    RustType::ObjcBool => write!(f, "bool"),
+                    Inner::ObjcBool => write!(f, "bool"),
                     ty => write!(f, "{ty}"),
                 }
             }
             TyKind::MethodReturn { with_error: true } => match &self.ty {
-                RustType::Id {
+                Inner::Id {
                     ty,
                     lifetime: Lifetime::Unspecified,
                     is_const: false,
@@ -1564,14 +1564,14 @@ impl fmt::Display for Ty {
                         ty.ownership()
                     )
                 }
-                RustType::ObjcBool => {
+                Inner::ObjcBool => {
                     // NO -> error
                     write!(f, " -> Result<(), Id<NSError, Shared>>")
                 }
                 _ => panic!("unknown error result type {self:?}"),
             },
             TyKind::Static => match &self.ty {
-                RustType::Id {
+                Inner::Id {
                     ty,
                     // `const` is irrelevant in statics since they're always
                     // constant.
@@ -1585,7 +1585,7 @@ impl fmt::Display for Ty {
                         write!(f, "Option<&'static {ty}>")
                     }
                 }
-                ty @ RustType::Id { .. } => panic!("invalid static {ty:?}"),
+                ty @ Inner::Id { .. } => panic!("invalid static {ty:?}"),
                 ty => write!(f, "{ty}"),
             },
             TyKind::Typedef => match &self.ty {
@@ -1600,7 +1600,7 @@ impl fmt::Display for Ty {
                 //     type NSAbc = *const NSString;
                 //
                 // Because that means we can use ordinary Id<NSAbc> elsewhere.
-                RustType::Id {
+                Inner::Id {
                     ty:
                         ty @ IdType::Class {
                             library,
@@ -1614,17 +1614,17 @@ impl fmt::Display for Ty {
                 } if library == "Foundation" && name == "NSString" => {
                     write!(f, "{ty}")
                 }
-                RustType::Id {
+                Inner::Id {
                     ty: ty @ IdType::AnyObject { .. },
                     ..
                 } => write!(f, "{ty}"),
-                ty @ RustType::Id { .. } => {
+                ty @ Inner::Id { .. } => {
                     panic!("typedef declaration was not NSString: {ty:?}");
                 }
                 ty => write!(f, "{ty}"),
             },
             TyKind::MethodArgument { is_consumed: _ } | TyKind::FnArgument => match &self.ty {
-                RustType::Id {
+                Inner::Id {
                     ty,
                     is_const: false,
                     lifetime: Lifetime::Unspecified | Lifetime::Strong,
@@ -1636,28 +1636,26 @@ impl fmt::Display for Ty {
                         write!(f, "Option<&{ty}>")
                     }
                 }
-                RustType::Class { nullability } => {
+                Inner::Class { nullability } => {
                     if *nullability == Nullability::NonNull {
                         write!(f, "&Class")
                     } else {
                         write!(f, "Option<&Class>")
                     }
                 }
-                RustType::C99Bool if self.kind == TyKind::MethodArgument { is_consumed: false } => {
+                Inner::C99Bool if self.kind == TyKind::MethodArgument { is_consumed: false } => {
                     panic!("C99's bool as Objective-C method argument is unsupported")
                 }
-                RustType::ObjcBool
-                    if self.kind == TyKind::MethodArgument { is_consumed: false } =>
-                {
+                Inner::ObjcBool if self.kind == TyKind::MethodArgument { is_consumed: false } => {
                     write!(f, "bool")
                 }
-                ty @ RustType::Pointer {
+                ty @ Inner::Pointer {
                     nullability,
                     is_const: false,
                     pointee,
                 } => match &**pointee {
                     // TODO: Re-enable once we can support it
-                    // RustType::Id {
+                    // Inner::Id {
                     //     ty,
                     //     is_const: false,
                     //     lifetime: Lifetime::Autoreleasing,
@@ -1674,10 +1672,10 @@ impl fmt::Display for Ty {
                     //         write!(f, "Option<&mut {tokens}>")
                     //     }
                     // }
-                    // RustType::Id { .. } => {
+                    // Inner::Id { .. } => {
                     //     unreachable!("there should be no id with other values: {self:?}")
                     // }
-                    block @ RustType::Block { .. } => {
+                    block @ Inner::Block { .. } => {
                         if *nullability == Nullability::NonNull {
                             write!(f, "&{block}")
                         } else {
@@ -1689,7 +1687,7 @@ impl fmt::Display for Ty {
                 ty => write!(f, "{ty}"),
             },
             TyKind::Struct => match &self.ty {
-                RustType::Array {
+                Inner::Array {
                     element_type,
                     num_elements,
                 } => write!(f, "[{element_type}; {num_elements}]"),
@@ -1697,7 +1695,7 @@ impl fmt::Display for Ty {
             },
             TyKind::Enum => write!(f, "{}", self.ty),
             TyKind::FnReturn => {
-                if let RustType::Void = &self.ty {
+                if let Inner::Void = &self.ty {
                     // Don't output anything
                     return Ok(());
                 }
