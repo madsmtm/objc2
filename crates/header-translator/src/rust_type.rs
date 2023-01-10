@@ -1184,7 +1184,7 @@ impl fmt::Display for Inner {
                 element_type,
                 num_elements,
             } => write!(f, "ArrayUnknownABI<[{element_type}; {num_elements}]>"),
-            Enum { id } | Struct { id } | TypeDef { id } => write!(f, "{}", id.name),
+            Enum { id } | Struct { id } | TypeDef { id } => write!(f, "{}", id.path()),
             Self::Fn { .. } => write!(f, "TodoFunction"),
             Self::Block {
                 arguments,
@@ -1583,7 +1583,7 @@ impl Ty {
             ..
         } = &self.ty
         {
-            id.name == "NSString"
+            id.is_nsstring()
         } else {
             false
         }
