@@ -128,7 +128,7 @@ impl IdType {
         let generics: Vec<_> = ty
             .get_objc_type_arguments()
             .into_iter()
-            .map(|param| match RustType::parse(param, false, context) {
+            .map(|param| match RustType::parse(param, context) {
                 RustType::Id {
                     ty,
                     is_const: false,
@@ -564,8 +564,8 @@ enum RustType {
 }
 
 impl RustType {
-    fn parse(ty: Type<'_>, is_consumed: bool, context: &Context<'_>) -> Self {
-        let _span = debug_span!("ty", ?ty, is_consumed).entered();
+    fn parse(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let _span = debug_span!("ty", ?ty).entered();
 
         let mut nullability = Nullability::Unspecified;
         let mut kindof = false;
@@ -611,7 +611,7 @@ impl RustType {
             ObjCSel => Self::Sel { nullability },
             Pointer => {
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                let pointee = Self::parse(ty, is_consumed, context);
+                let pointee = Self::parse(ty, context);
                 Self::Pointer {
                     nullability,
                     is_const,
@@ -620,7 +620,7 @@ impl RustType {
             }
             BlockPointer => {
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                match Self::parse(ty, is_consumed, context) {
+                match Self::parse(ty, context) {
                     Self::Fn {
                         is_variadic: false,
                         mut arguments,
@@ -788,7 +788,7 @@ impl RustType {
                 let ty = ty
                     .get_element_type()
                     .expect("incomplete array to have element type");
-                let pointee = Self::parse(ty, is_consumed, context);
+                let pointee = Self::parse(ty, context);
                 Self::IncompleteArray {
                     nullability,
                     is_const,
@@ -798,7 +798,6 @@ impl RustType {
             ConstantArray => {
                 let element_type = Self::parse(
                     ty.get_element_type().expect("array to have element type"),
-                    is_consumed,
                     context,
                 );
                 let num_elements = ty
@@ -974,7 +973,7 @@ enum TyKind {
     MethodReturnWithError,
     Static,
     Typedef,
-    MethodArgument,
+    MethodArgument { is_consumed: bool },
     FnDeclArgument,
     Struct,
     Enum,
@@ -997,7 +996,7 @@ impl Ty {
     };
 
     pub fn parse_method_argument(ty: Type<'_>, is_consumed: bool, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, is_consumed, context);
+        let ty = RustType::parse(ty, context);
 
         match &ty {
             RustType::Pointer { pointee, .. } => pointee.visit_lifetime(|lifetime| {
@@ -1019,12 +1018,12 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::MethodArgument,
+            kind: TyKind::MethodArgument { is_consumed },
         }
     }
 
     pub fn parse_method_return(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, false, context);
+        let ty = RustType::parse(ty, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1051,7 +1050,7 @@ impl Ty {
     }
 
     pub fn parse_typedef(ty: Type<'_>, typedef_name: &str, context: &Context<'_>) -> Option<Self> {
-        let mut ty = RustType::parse(ty, false, context);
+        let mut ty = RustType::parse(ty, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1092,7 +1091,7 @@ impl Ty {
         _is_copy: bool,
         context: &Context<'_>,
     ) -> Self {
-        let ty = RustType::parse(ty, false, context);
+        let ty = RustType::parse(ty, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1102,12 +1101,12 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::MethodArgument,
+            kind: TyKind::MethodArgument { is_consumed: false },
         }
     }
 
     pub fn parse_property_return(ty: Type<'_>, is_copy: bool, context: &Context<'_>) -> Self {
-        let mut ty = RustType::parse(ty, false, context);
+        let mut ty = RustType::parse(ty, context);
 
         // `@property(copy)` is expected to always return a nonnull instance
         // (e.g. for strings it returns the empty string, while
@@ -1155,7 +1154,7 @@ impl Ty {
     }
 
     pub fn parse_struct_field(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, false, context);
+        let ty = RustType::parse(ty, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1170,7 +1169,7 @@ impl Ty {
     }
 
     pub fn parse_enum(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, false, context);
+        let ty = RustType::parse(ty, context);
 
         ty.visit_lifetime(|_lifetime| {
             panic!("unexpected lifetime in enum {ty:?}");
@@ -1183,7 +1182,7 @@ impl Ty {
     }
 
     pub fn parse_static(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, false, context);
+        let ty = RustType::parse(ty, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Strong && lifetime != Lifetime::Unspecified {
@@ -1198,7 +1197,7 @@ impl Ty {
     }
 
     fn parse_fn_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, false, context);
+        let ty = RustType::parse(ty, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Strong {
@@ -1213,7 +1212,7 @@ impl Ty {
     }
 
     fn parse_fn_result(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, false, context);
+        let ty = RustType::parse(ty, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1502,7 +1501,7 @@ impl fmt::Display for Ty {
                 }
                 ty => write!(f, "{ty}"),
             },
-            TyKind::MethodArgument | TyKind::FnDeclArgument => match &self.ty {
+            TyKind::MethodArgument { is_consumed: _ } | TyKind::FnDeclArgument => match &self.ty {
                 RustType::Id {
                     ty,
                     is_const: false,
@@ -1522,10 +1521,14 @@ impl fmt::Display for Ty {
                         write!(f, "Option<&Class>")
                     }
                 }
-                RustType::C99Bool if self.kind == TyKind::MethodArgument => {
+                RustType::C99Bool if self.kind == TyKind::MethodArgument { is_consumed: false } => {
                     panic!("C99's bool as Objective-C method argument is unsupported")
                 }
-                RustType::ObjcBool if self.kind == TyKind::MethodArgument => write!(f, "bool"),
+                RustType::ObjcBool
+                    if self.kind == TyKind::MethodArgument { is_consumed: false } =>
+                {
+                    write!(f, "bool")
+                }
                 ty @ RustType::Pointer {
                     nullability,
                     is_const: false,
