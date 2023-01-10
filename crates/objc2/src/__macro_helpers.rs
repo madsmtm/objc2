@@ -311,6 +311,10 @@ impl<T: ?Sized> MaybeUnwrap for Allocated<T> {
 
 // Note: It would have been much easier to do this kind of thing using
 // closures, but then `track_caller` doesn't work properly!
+//
+// Also note: This behavior (that #[method_id(...)] always unwraps instead of
+// using `unwrap_unchecked`) is relied upon by `header-translator` for
+// soundness, see e.g. `parse_property_return`.
 pub trait MsgSendIdFailed<'a> {
     type Args;
 
