@@ -38,6 +38,13 @@ impl PartialProperty<'_> {
             _span,
         } = self;
 
+        // Early return if both getter and setter are skipped
+        //
+        // To reduce warnings.
+        if getter_data.skipped && setter_data.map(|data| data.skipped).unwrap_or(true) {
+            return (None, None);
+        }
+
         let availability = Availability::parse(
             entity
                 .get_platform_availability()
