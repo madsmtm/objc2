@@ -128,8 +128,8 @@ impl IdType {
         let generics: Vec<_> = ty
             .get_objc_type_arguments()
             .into_iter()
-            .map(|param| {
-                match RustType::parse(param, false, Nullability::Unspecified, false, context) {
+            .map(
+                |param| match RustType::parse(param, false, Nullability::Unspecified, context) {
                     RustType::Id {
                         ty,
                         is_const: false,
@@ -142,8 +142,8 @@ impl IdType {
                     param => {
                         panic!("invalid generic parameter {param:?} in {ty:?}")
                     }
-                }
-            })
+                },
+            )
             .collect();
 
         let protocols: Vec<_> = ty
@@ -286,7 +286,6 @@ fn parse_attributed<'a>(
     nullability: &mut Nullability,
     lifetime: &mut Lifetime,
     kindof: &mut bool,
-    inside_partial_array: bool,
 ) -> (Type<'a>, bool) {
     let mut modified_ty = ty;
     while let TypeKind::Attributed = modified_ty.get_kind() {
@@ -298,6 +297,8 @@ fn parse_attributed<'a>(
     if modified_ty == ty {
         return (ty, ty.is_const_qualified());
     }
+
+    let _span = debug_span!("parse_attributed", ?modified_ty).entered();
 
     let mut name = &*ty.get_display_name();
     let mut modified_name = &*modified_ty.get_display_name();
@@ -434,9 +435,6 @@ fn parse_attributed<'a>(
     }
 
     let is_const = parse_const(&mut name);
-    if inside_partial_array {
-        parse_lifetime(&mut name, modified_name, lifetime, true);
-    }
     parse_lifetime(&mut name, modified_name, lifetime, false);
     parse_nullability(&mut name, nullability);
     parse_lifetime(&mut name, modified_name, lifetime, false);
@@ -572,20 +570,13 @@ impl RustType {
         ty: Type<'_>,
         is_consumed: bool,
         mut nullability: Nullability,
-        inside_partial_array: bool,
         context: &Context<'_>,
     ) -> Self {
         let _span = debug_span!("ty", ?ty, is_consumed, ?nullability,).entered();
 
         let mut kindof = false;
         let mut lifetime = Lifetime::Unspecified;
-        let (ty, is_const) = parse_attributed(
-            ty,
-            &mut nullability,
-            &mut lifetime,
-            &mut kindof,
-            inside_partial_array,
-        );
+        let (ty, is_const) = parse_attributed(ty, &mut nullability, &mut lifetime, &mut kindof);
 
         let ty = parse_unexposed(ty, &mut nullability);
 
@@ -626,8 +617,7 @@ impl RustType {
             ObjCSel => Self::Sel { nullability },
             Pointer => {
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                let pointee =
-                    Self::parse(ty, is_consumed, Nullability::Unspecified, false, context);
+                let pointee = Self::parse(ty, is_consumed, Nullability::Unspecified, context);
                 Self::Pointer {
                     nullability,
                     is_const,
@@ -636,7 +626,7 @@ impl RustType {
             }
             BlockPointer => {
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
-                match Self::parse(ty, is_consumed, Nullability::Unspecified, false, context) {
+                match Self::parse(ty, is_consumed, Nullability::Unspecified, context) {
                     Self::Fn {
                         is_variadic: false,
                         mut arguments,
@@ -662,7 +652,7 @@ impl RustType {
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
                 let mut kindof = false;
                 let (ty, pointee_is_const) =
-                    parse_attributed(ty, &mut nullability, &mut lifetime, &mut kindof, false);
+                    parse_attributed(ty, &mut nullability, &mut lifetime, &mut kindof);
 
                 if !is_const && pointee_is_const {
                     warn!(?ty, "pointee was const while ObjCObjectPointer was not");
@@ -804,7 +794,7 @@ impl RustType {
                 let ty = ty
                     .get_element_type()
                     .expect("incomplete array to have element type");
-                let pointee = Self::parse(ty, is_consumed, Nullability::Unspecified, true, context);
+                let pointee = Self::parse(ty, is_consumed, Nullability::Unspecified, context);
                 Self::IncompleteArray {
                     nullability,
                     is_const,
@@ -816,7 +806,6 @@ impl RustType {
                     ty.get_element_type().expect("array to have element type"),
                     is_consumed,
                     Nullability::Unspecified,
-                    false,
                     context,
                 );
                 let num_elements = ty
@@ -1015,7 +1004,7 @@ impl Ty {
     };
 
     pub fn parse_method_argument(ty: Type<'_>, is_consumed: bool, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, is_consumed, Nullability::Unspecified, false, context);
+        let ty = RustType::parse(ty, is_consumed, Nullability::Unspecified, context);
 
         match &ty {
             RustType::Pointer { pointee, .. } => pointee.visit_lifetime(|lifetime| {
@@ -1042,7 +1031,7 @@ impl Ty {
     }
 
     pub fn parse_method_return(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1069,7 +1058,7 @@ impl Ty {
     }
 
     pub fn parse_typedef(ty: Type<'_>, typedef_name: &str, context: &Context<'_>) -> Option<Self> {
-        let mut ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
+        let mut ty = RustType::parse(ty, false, Nullability::Unspecified, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1109,7 +1098,7 @@ impl Ty {
         default_nullability: Nullability,
         context: &Context<'_>,
     ) -> Self {
-        let ty = RustType::parse(ty, false, default_nullability, false, context);
+        let ty = RustType::parse(ty, false, default_nullability, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1128,7 +1117,7 @@ impl Ty {
         default_nullability: Nullability,
         context: &Context<'_>,
     ) -> Self {
-        let ty = RustType::parse(ty, false, default_nullability, false, context);
+        let ty = RustType::parse(ty, false, default_nullability, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1143,7 +1132,7 @@ impl Ty {
     }
 
     pub fn parse_struct_field(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1158,7 +1147,7 @@ impl Ty {
     }
 
     pub fn parse_enum(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, context);
 
         ty.visit_lifetime(|_lifetime| {
             panic!("unexpected lifetime in enum {ty:?}");
@@ -1171,7 +1160,7 @@ impl Ty {
     }
 
     pub fn parse_static(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Strong && lifetime != Lifetime::Unspecified {
@@ -1186,7 +1175,7 @@ impl Ty {
     }
 
     fn parse_fn_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Strong {
@@ -1201,7 +1190,7 @@ impl Ty {
     }
 
     fn parse_fn_result(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, false, Nullability::Unspecified, false, context);
+        let ty = RustType::parse(ty, false, Nullability::Unspecified, context);
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
