@@ -550,12 +550,12 @@ enum RustType {
     },
     Fn {
         is_variadic: bool,
-        arguments: Vec<Ty>,
-        result_type: Box<Ty>,
+        arguments: Vec<RustType>,
+        result_type: Box<RustType>,
     },
     Block {
-        arguments: Vec<Ty>,
-        result_type: Box<Ty>,
+        arguments: Vec<RustType>,
+        result_type: Box<RustType>,
     },
 
     TypeDef {
@@ -691,22 +691,16 @@ impl RustType {
                 match Self::parse(ty, Lifetime::Unspecified, context) {
                     Self::Fn {
                         is_variadic: false,
-                        mut arguments,
-                        mut result_type,
-                    } => {
-                        for arg in &mut arguments {
-                            arg.set_block();
-                        }
-                        result_type.set_block();
-                        Self::Pointer {
-                            nullability,
-                            is_const,
-                            pointee: Box::new(Self::Block {
-                                arguments,
-                                result_type,
-                            }),
-                        }
-                    }
+                        arguments,
+                        result_type,
+                    } => Self::Pointer {
+                        nullability,
+                        is_const,
+                        pointee: Box::new(Self::Block {
+                            arguments,
+                            result_type,
+                        }),
+                    },
                     pointee => panic!("unexpected pointee in block: {pointee:?}"),
                 }
             }
@@ -911,11 +905,11 @@ impl RustType {
                     .get_argument_types()
                     .expect("fn type to have argument types")
                     .into_iter()
-                    .map(|ty| Ty::parse_fn_argument(ty, context))
+                    .map(|ty| RustType::parse(ty, Lifetime::Unspecified, context))
                     .collect();
 
                 let result_type = ty.get_result_type().expect("fn type to have result type");
-                let result_type = Ty::parse_fn_result(result_type, context);
+                let result_type = RustType::parse(result_type, Lifetime::Unspecified, context);
 
                 Self::Fn {
                     is_variadic: ty.is_variadic(),
@@ -1068,8 +1062,13 @@ impl fmt::Display for RustType {
                     if *is_variadic {
                         write!(f, "...")?;
                     }
-                    write!(f, "){result_type}")?;
-
+                    write!(f, ")")?;
+                    match &**result_type {
+                        Self::Void => {
+                            // Don't output anything
+                        }
+                        ty => write!(f, " -> {ty}")?,
+                    }
                     if *nullability != Nullability::NonNull {
                         write!(f, ">")?;
                     }
@@ -1104,7 +1103,7 @@ impl fmt::Display for RustType {
             } => write!(f, "ArrayUnknownABI<[{element_type}; {num_elements}]>"),
             Enum { name } | Struct { name } | TypeDef { name } => write!(f, "{name}"),
             Self::Fn { .. } => write!(f, "TodoFunction"),
-            Block {
+            Self::Block {
                 arguments,
                 result_type,
             } => {
@@ -1112,7 +1111,12 @@ impl fmt::Display for RustType {
                 for arg in arguments {
                     write!(f, "{arg}, ")?;
                 }
-                write!(f, "), {result_type}>")
+                write!(f, "), ")?;
+                match &**result_type {
+                    Self::Void => write!(f, "()")?,
+                    ty => write!(f, "{ty}")?,
+                }
+                write!(f, ">")
             }
         }
     }
@@ -1120,19 +1124,14 @@ impl fmt::Display for RustType {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 enum TyKind {
-    MethodReturn,
-    FnDeclReturn,
-    MethodReturnWithError,
+    MethodReturn { with_error: bool },
+    FnReturn,
     Static,
     Typedef,
     MethodArgument { is_consumed: bool },
-    FnDeclArgument,
+    FnArgument,
     Struct,
     Enum,
-    FnArgument,
-    FnReturn,
-    BlockArgument,
-    BlockReturn,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -1144,7 +1143,7 @@ pub struct Ty {
 impl Ty {
     pub const VOID_RESULT: Self = Self {
         ty: RustType::Void,
-        kind: TyKind::MethodReturn,
+        kind: TyKind::MethodReturn { with_error: false },
     };
 
     pub fn parse_method_argument(ty: Type<'_>, is_consumed: bool, context: &Context<'_>) -> Self {
@@ -1185,19 +1184,19 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::MethodReturn,
+            kind: TyKind::MethodReturn { with_error: false },
         }
     }
 
     pub fn parse_function_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
         let mut this = Self::parse_method_argument(ty, false, context);
-        this.kind = TyKind::FnDeclArgument;
+        this.kind = TyKind::FnArgument;
         this
     }
 
     pub fn parse_function_return(ty: Type<'_>, context: &Context<'_>) -> Self {
         let mut this = Self::parse_method_return(ty, context);
-        this.kind = TyKind::FnDeclReturn;
+        this.kind = TyKind::FnReturn;
         this
     }
 
@@ -1301,7 +1300,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::MethodReturn,
+            kind: TyKind::MethodReturn { with_error: false },
         }
     }
 
@@ -1348,49 +1347,8 @@ impl Ty {
         }
     }
 
-    fn parse_fn_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, Lifetime::Unspecified, context);
-
-        ty.visit_lifetime(|lifetime| {
-            if lifetime != Lifetime::Strong {
-                error!(?ty, "unexpected lifetime in fn argument");
-            }
-        });
-
-        Self {
-            ty,
-            kind: TyKind::FnArgument,
-        }
-    }
-
-    fn parse_fn_result(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = RustType::parse(ty, Lifetime::Unspecified, context);
-
-        ty.visit_lifetime(|lifetime| {
-            if lifetime != Lifetime::Unspecified {
-                error!(?ty, "unexpected lifetime in fn result");
-            }
-        });
-
-        Self {
-            ty,
-            kind: TyKind::FnReturn,
-        }
-    }
-
-    fn set_block(&mut self) {
-        self.kind = match self.kind {
-            TyKind::FnArgument => TyKind::BlockArgument,
-            TyKind::FnReturn => TyKind::BlockReturn,
-            _ => unreachable!("set block kind"),
-        }
-    }
-
     pub(crate) fn set_ownership(&mut self, mut get_ownership: impl FnMut(&str) -> Ownership) {
-        assert!(matches!(
-            self.kind,
-            TyKind::MethodReturn | TyKind::MethodReturnWithError
-        ));
+        assert!(matches!(self.kind, TyKind::MethodReturn { .. }));
         if let RustType::Id { ty, .. } = &mut self.ty {
             match ty {
                 IdType::Class {
@@ -1475,15 +1433,18 @@ impl Ty {
     }
 
     pub fn set_is_error(&mut self) {
-        assert_eq!(self.kind, TyKind::MethodReturn);
-        self.kind = TyKind::MethodReturnWithError;
+        if let TyKind::MethodReturn { with_error } = &mut self.kind {
+            *with_error = true;
+        } else {
+            panic!("invalid set_is_error usage");
+        }
     }
 
     pub fn is_error(&self) -> bool {
-        match &self.kind {
-            TyKind::MethodReturn => false,
-            TyKind::MethodReturnWithError => true,
-            _ => panic!("invalid is_error usage"),
+        if let TyKind::MethodReturn { with_error } = &self.kind {
+            *with_error
+        } else {
+            panic!("invalid set_is_error usage");
         }
     }
 
@@ -1544,7 +1505,7 @@ impl Ty {
 impl fmt::Display for Ty {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self.kind {
-            TyKind::MethodReturn => {
+            TyKind::MethodReturn { with_error: false } => {
                 if let RustType::Void = &self.ty {
                     // Don't output anything
                     return Ok(());
@@ -1581,7 +1542,7 @@ impl fmt::Display for Ty {
                     ty => write!(f, "{ty}"),
                 }
             }
-            TyKind::MethodReturnWithError => match &self.ty {
+            TyKind::MethodReturn { with_error: true } => match &self.ty {
                 RustType::Id {
                     ty,
                     lifetime: Lifetime::Unspecified,
@@ -1654,7 +1615,7 @@ impl fmt::Display for Ty {
                 }
                 ty => write!(f, "{ty}"),
             },
-            TyKind::MethodArgument { is_consumed: _ } | TyKind::FnDeclArgument => match &self.ty {
+            TyKind::MethodArgument { is_consumed: _ } | TyKind::FnArgument => match &self.ty {
                 RustType::Id {
                     ty,
                     is_const: false,
@@ -1727,8 +1688,7 @@ impl fmt::Display for Ty {
                 ty => write!(f, "{ty}"),
             },
             TyKind::Enum => write!(f, "{}", self.ty),
-            TyKind::FnArgument | TyKind::BlockArgument => write!(f, "{}", self.ty),
-            TyKind::FnDeclReturn | TyKind::FnReturn => {
+            TyKind::FnReturn => {
                 if let RustType::Void = &self.ty {
                     // Don't output anything
                     return Ok(());
@@ -1736,10 +1696,6 @@ impl fmt::Display for Ty {
 
                 write!(f, " -> {}", self.ty)
             }
-            TyKind::BlockReturn => match &self.ty {
-                RustType::Void => write!(f, "()"),
-                ty => write!(f, "{ty}"),
-            },
         }
     }
 }
