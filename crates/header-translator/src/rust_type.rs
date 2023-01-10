@@ -54,16 +54,16 @@ impl<'a, 'b> AttributeParser<'a, 'b> {
     }
 
     /// Parse an incomplete array like:
-    /// id<MTLFunctionHandle>  _Nullable const  _Nonnull __unsafe_unretained[]
+    /// `id<MTLFunctionHandle>  _Nullable const  _Nonnull __unsafe_unretained[]`
     /// By removing the ending `[]`.
     fn set_incomplete_array(&mut self) {
         self.map(|s| s.strip_suffix("[]").expect("array to end with []").trim());
     }
 
     /// Parse a function pointer like:
-    /// "void (^ _Nonnull __strong)(...)"
+    /// `void (^ _Nonnull __strong)(...)`
     /// By extracting the inner data to:
-    /// "^ _Nonnull __strong"
+    /// `^ _Nonnull __strong`
     fn set_fn_ptr(&mut self) {
         self.map(|s| {
             let (_, s) = s.split_once('(').expect("fn to have begin parenthesis");
@@ -73,7 +73,7 @@ impl<'a, 'b> AttributeParser<'a, 'b> {
     }
 
     fn set_inner_pointer(&mut self) {
-        if let Some(rest) = self.name.strip_suffix("*") {
+        if let Some(rest) = self.name.strip_suffix('*') {
             self.name = rest.trim();
         } else {
             error!(?self, "expected pointer to have star");
@@ -143,10 +143,8 @@ impl AttributeParser<'_, '_> {
 
 impl Drop for AttributeParser<'_, '_> {
     fn drop(&mut self) {
-        if !std::thread::panicking() {
-            if self.name != self.expected_name {
-                error!(?self, "could not extract all attributes");
-            }
+        if !std::thread::panicking() && self.name != self.expected_name {
+            error!(?self, "could not extract all attributes");
         }
     }
 }
@@ -328,7 +326,7 @@ impl IdType {
                 }
                 let name = ty.get_display_name();
 
-                let mut parser = AttributeParser::new(&pointer_name, &name);
+                let mut parser = AttributeParser::new(pointer_name, &name);
 
                 *is_kindof = parser.is_kindof(ParsePosition::Prefix);
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
@@ -364,7 +362,7 @@ impl IdType {
                     TypeKind::ObjCId => {
                         assert_eq!(name, "id");
 
-                        let mut parser = AttributeParser::new(&pointer_name, &pointee_name);
+                        let mut parser = AttributeParser::new(pointer_name, &pointee_name);
                         lifetime.update(parser.lifetime(ParsePosition::Prefix));
 
                         if !generics.is_empty() {
@@ -390,7 +388,7 @@ impl IdType {
                             panic!("got object with empty protocols and generics: {name:?}");
                         }
 
-                        let mut parser = AttributeParser::new(&pointer_name, &pointee_name);
+                        let mut parser = AttributeParser::new(pointer_name, &pointee_name);
                         lifetime.update(parser.lifetime(ParsePosition::Prefix));
                         parser.set_inner_pointer();
 
@@ -576,7 +574,7 @@ impl Inner {
         let _span = debug_span!("ty", ?ty, ?lifetime).entered();
 
         let attributed_ty = ty;
-        let mut ty = attributed_ty.clone();
+        let mut ty = attributed_ty;
         while let TypeKind::Attributed = ty.get_kind() {
             ty = ty
                 .get_modified_type()
@@ -727,7 +725,7 @@ impl Inner {
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
 
                 let attributed_ty = ty;
-                let mut ty = attributed_ty.clone();
+                let mut ty = attributed_ty;
                 while let TypeKind::Attributed = ty.get_kind() {
                     ty = ty
                         .get_modified_type()
