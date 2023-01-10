@@ -68,7 +68,7 @@ impl fmt::Display for File {
 
         writeln!(f, "use crate::common::*;")?;
         for import in &self.imports {
-            writeln!(f, "use crate::{import};")?;
+            writeln!(f, "use crate::{import}::*;")?;
         }
 
         writeln!(f)?;

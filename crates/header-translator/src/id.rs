@@ -128,11 +128,12 @@ impl ItemIdentifier {
 
         impl fmt::Display for ItemIdentifierPath<'_> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                if self.0.is_system() {
-                    write!(f, "{}", self.0.name)
-                } else {
-                    write!(f, "{}::{}", self.0.library, self.0.name)
-                }
+                write!(f, "{}", self.0.name)
+                // if self.0.is_system() {
+                //     write!(f, "{}", self.0.name)
+                // } else {
+                //     write!(f, "{}::{}", self.0.library, self.0.name)
+                // }
             }
         }
 
