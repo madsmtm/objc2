@@ -1,6 +1,8 @@
 use std::fmt;
+use std::str::FromStr;
 
 use clang::{CallingConvention, EntityKind, Nullability, Type, TypeKind};
+use proc_macro2::{TokenStream, TokenTree};
 use serde::Deserialize;
 
 use crate::context::Context;
@@ -583,23 +585,24 @@ impl Inner {
 
         let _span = debug_span!("ty2", ?ty).entered();
 
-        // Strip macros from unexposed type.
-        //
-        // These appear in newer clang versions.
-        // We should be able to extract data from the following macros if desired:
-        // - NS_SWIFT_NAME
-        // - NS_SWIFT_UNAVAILABLE
-        // - NS_REFINED_FOR_SWIFT
-        while let TypeKind::Unexposed = ty.get_kind() {
+        let mut attributed_name = attributed_ty.get_display_name();
+        let mut name = ty.get_display_name();
+
+        let unexposed_nullability = if let TypeKind::Unexposed = ty.get_kind() {
+            let nullability = ty.get_nullability();
+            attributed_name = parse_unexposed_tokens(&attributed_name);
+            // Also parse the expected name to ensure that the formatting that
+            // TokenStream does is the same on both.
+            name = parse_unexposed_tokens(&name);
             ty = ty
                 .get_modified_type()
                 .expect("attributed type to have modified type");
-        }
+            nullability
+        } else {
+            None
+        };
 
         let _span = debug_span!("ty3", ?ty).entered();
-
-        let attibuted_name = attributed_ty.get_display_name();
-        let name = ty.get_display_name();
 
         let get_is_const = |new: bool| {
             if new {
@@ -637,14 +640,17 @@ impl Inner {
             Float => Self::Float,
             Double => Self::Double,
             ObjCId => {
-                let mut parser = AttributeParser::new(&attibuted_name, "id");
+                let mut parser = AttributeParser::new(&attributed_name, "id");
 
                 lifetime.update(parser.lifetime(ParsePosition::Prefix));
 
                 let is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
-                let nullability =
-                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix));
+                let nullability = if let Some(nullability) = unexposed_nullability {
+                    nullability
+                } else {
+                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
+                };
 
                 Self::Id {
                     ty: IdType::AnyObject { protocols: vec![] },
@@ -654,28 +660,37 @@ impl Inner {
                 }
             }
             ObjCClass => {
-                let mut parser = AttributeParser::new(&attibuted_name, &name);
+                let mut parser = AttributeParser::new(&attributed_name, &name);
                 let _lifetime = parser.lifetime(ParsePosition::Suffix);
-                let nullability =
-                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix));
+                let nullability = if let Some(nullability) = unexposed_nullability {
+                    nullability
+                } else {
+                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
+                };
                 Self::Class { nullability }
             }
             ObjCSel => {
-                let mut parser = AttributeParser::new(&attibuted_name, &name);
-                let nullability =
-                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix));
+                let mut parser = AttributeParser::new(&attributed_name, &name);
+                let nullability = if let Some(nullability) = unexposed_nullability {
+                    nullability
+                } else {
+                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
+                };
                 Self::Sel { nullability }
             }
             Pointer => {
-                let mut parser = AttributeParser::new(&attibuted_name, &name);
+                let mut parser = AttributeParser::new(&attributed_name, &name);
                 let pointee = ty.get_pointee_type().expect("pointer to have pointee");
                 if let TypeKind::FunctionPrototype = pointee.get_kind() {
                     parser.set_fn_ptr();
                 }
 
                 let is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
-                let nullability =
-                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix));
+                let nullability = if let Some(nullability) = unexposed_nullability {
+                    nullability
+                } else {
+                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
+                };
 
                 let pointee = Self::parse(pointee, Lifetime::Unspecified, context);
                 Self::Pointer {
@@ -685,13 +700,16 @@ impl Inner {
                 }
             }
             BlockPointer => {
-                let mut parser = AttributeParser::new(&attibuted_name, &name);
+                let mut parser = AttributeParser::new(&attributed_name, &name);
                 parser.set_fn_ptr();
 
                 let is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
-                let nullability =
-                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix));
+                let nullability = if let Some(nullability) = unexposed_nullability {
+                    nullability
+                } else {
+                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
+                };
 
                 let ty = ty.get_pointee_type().expect("pointer type to have pointee");
                 match Self::parse(ty, Lifetime::Unspecified, context) {
@@ -711,13 +729,17 @@ impl Inner {
                 }
             }
             ObjCObjectPointer => {
-                let mut parser = AttributeParser::new(&attibuted_name, &name);
+                let mut parser = AttributeParser::new(&attributed_name, &name);
                 let is_kindof = parser.is_kindof(ParsePosition::Prefix);
 
                 let is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
-                let mut nullability =
-                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix));
+                let mut nullability = if let Some(nullability) = unexposed_nullability {
+                    nullability
+                } else {
+                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
+                };
+
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
                 drop(parser);
 
@@ -768,15 +790,18 @@ impl Inner {
             Typedef => {
                 let typedef_name = ty.get_typedef_name().expect("typedef has name");
 
-                let mut parser = AttributeParser::new(&attibuted_name, &typedef_name);
+                let mut parser = AttributeParser::new(&attributed_name, &typedef_name);
                 let mut is_kindof = parser.is_kindof(ParsePosition::Prefix);
                 let is_const1 = parser.is_const(ParsePosition::Prefix);
                 lifetime.update(parser.lifetime(ParsePosition::Prefix));
 
                 let is_const2 = parser.is_const(ParsePosition::Suffix);
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
-                let nullability =
-                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix));
+                let nullability = if let Some(nullability) = unexposed_nullability {
+                    nullability
+                } else {
+                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
+                };
                 drop(parser);
 
                 let is_const = if is_const1 || is_const2 {
@@ -924,13 +949,16 @@ impl Inner {
                 }
             }
             IncompleteArray => {
-                let mut parser = AttributeParser::new(&attibuted_name, &name);
+                let mut parser = AttributeParser::new(&attributed_name, &name);
                 parser.set_incomplete_array();
 
                 let is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
-                let nullability =
-                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix));
+                let nullability = if let Some(nullability) = unexposed_nullability {
+                    nullability
+                } else {
+                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
+                };
 
                 let ty = ty
                     .get_element_type()
@@ -944,11 +972,14 @@ impl Inner {
                 }
             }
             ConstantArray => {
-                let mut parser = AttributeParser::new(&attibuted_name, &name);
+                let mut parser = AttributeParser::new(&attributed_name, &name);
                 parser.set_constant_array();
                 let _is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
-                let _nullability =
-                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix));
+                let _nullability = if let Some(nullability) = unexposed_nullability {
+                    nullability
+                } else {
+                    check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
+                };
 
                 let element = ty.get_element_type().expect("array to have element type");
                 let element_type = Self::parse(element, lifetime, context);
@@ -960,9 +991,7 @@ impl Inner {
                     num_elements,
                 }
             }
-            _ => {
-                panic!("Unsupported type: {ty:?}")
-            }
+            _ => panic!("unsupported type: {ty:?}"),
         }
     }
 
@@ -1701,5 +1730,73 @@ impl fmt::Display for Ty {
                 write!(f, " -> {}", self.ty)
             }
         }
+    }
+}
+
+/// Strip macros from unexposed types.
+///
+/// These appear in newer clang versions.
+/// We should be able to extract data from the following macros if desired:
+/// - NS_SWIFT_NAME
+/// - NS_SWIFT_UNAVAILABLE
+/// - NS_REFINED_FOR_SWIFT
+/// - ...
+fn parse_unexposed_tokens(s: &str) -> String {
+    let tokens = TokenStream::from_str(s).expect("parse attributed name");
+    let mut iter = tokens.into_iter().peekable();
+    if let Some(TokenTree::Ident(ident)) = iter.peek() {
+        let ident = ident.to_string();
+        match &*ident {
+            "NS_RETURNS_INNER_POINTER" | "NS_REFINED_FOR_SWIFT" => {
+                iter.next();
+            }
+            "API_AVAILABLE"
+            | "API_UNAVAILABLE"
+            | "NS_SWIFT_NAME"
+            | "API_DEPRECATED"
+            | "API_DEPRECATED_WITH_REPLACEMENT" => {
+                iter.next();
+                if let Some(TokenTree::Group(_)) = iter.peek() {
+                    iter.next();
+                }
+            }
+            _ => {}
+        }
+    }
+    TokenStream::from_iter(iter).to_string()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_unexposed_tokens() {
+        fn check(inp: &str, expected: &str) {
+            assert_eq!(parse_unexposed_tokens(inp), expected);
+        }
+
+        check("NS_RETURNS_INNER_POINTER const char *", "const char *");
+        check(
+            "API_UNAVAILABLE(macos) NSString *const __strong",
+            "NSString * const __strong",
+        );
+        check("NS_REFINED_FOR_SWIFT NSNumber *", "NSNumber *");
+        check(
+            "API_AVAILABLE(macos(10.9)) const NSProgressUserInfoKey __strong",
+            "const NSProgressUserInfoKey __strong",
+        );
+        check(
+            "NS_SWIFT_NAME(replacementIndex) const NSAttributedStringKey __strong",
+            "const NSAttributedStringKey __strong",
+        );
+        check(
+            "API_DEPRECATED(\"\", macos(10.0, 10.5)) NSString *const __strong",
+            "NSString * const __strong",
+        );
+        check(
+            "API_DEPRECATED_WITH_REPLACEMENT(\"@\\\"com.adobe.encapsulated-postscript\\\"\", macos(10.0,10.14)) NSPasteboardType __strong",
+            "NSPasteboardType __strong",
+        );
     }
 }

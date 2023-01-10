@@ -9,7 +9,7 @@ You can also view it as that, over time, we need to _decrease_ the amount of stu
 
 ## Example
 
-```rust
+```rust , ignore
 data! {
     // Everywhere that the class is returned, it is as
     // `Id<MyMutableClass, Owned>`.
