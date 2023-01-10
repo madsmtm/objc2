@@ -777,3 +777,9 @@ newRenderPipelineStateWithDescriptor_options_reflection_error = { skipped = true
 newComputePipelineStateWithFunction_options_reflection_error = { skipped = true }
 newComputePipelineStateWithDescriptor_options_reflection_error = { skipped = true }
 newRenderPipelineStateWithTileDescriptor_options_reflection_error = { skipped = true }
+
+# Uses unions internally
+[struct.MTLPackedFloat3]
+skipped = true
+[fn.MTLPackedFloat3Make]
+skipped = true

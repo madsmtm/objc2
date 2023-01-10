@@ -314,6 +314,7 @@ fn parse_struct(entity: &Entity<'_>, context: &Context<'_>) -> (bool, Vec<(Strin
         EntityKind::ObjCBoxable => {
             boxable = true;
         }
+        EntityKind::UnionDecl => error!("can't handle unions in structs yet"),
         _ => warn!("unknown"),
     });
 
@@ -782,17 +783,17 @@ impl Stmt {
                 }]
             }
             EntityKind::UnionDecl => {
-                // debug!(
-                //     "union: {:?}, {:?}, {:#?}, {:#?}",
-                //     entity.get_display_name(),
-                //     entity.get_name(),
-                //     entity.has_attributes(),
-                //     entity.get_children(),
-                // );
+                error!(
+                    name = ?entity.get_name(),
+                    has_attributes = ?entity.has_attributes(),
+                    children = ?entity.get_children(),
+                    "union",
+                );
                 vec![]
             }
             _ => {
-                panic!("Unknown: {entity:?}")
+                error!("unknown");
+                vec![]
             }
         }
     }
