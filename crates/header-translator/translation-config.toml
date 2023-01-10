@@ -783,9 +783,3 @@ newRenderPipelineStateWithTileDescriptor_options_reflection_error = { skipped = 
 skipped = true
 [fn.MTLPackedFloat3Make]
 skipped = true
-
-# Uses __unsafe_unretained on a generic which is weirdly printed by clang.
-#
-# Also, supporting "NSGenericFastEnumeraiton" manually is desired anyhow.
-[class.NSDictionary.methods.countByEnumeratingWithState_objects_count]
-skipped = true
