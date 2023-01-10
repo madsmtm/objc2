@@ -37,7 +37,8 @@ impl Output {
         // }
 
         for (library_name, library) in &self.libraries {
-            let mut library_features = BTreeSet::new();
+            let library_alias = config.get_library_alias(library_name.clone());
+            let mut library_features = BTreeSet::from([library_alias.clone()]);
 
             for (_, file) in &library.files {
                 for stmt in &file.stmts {
@@ -72,7 +73,7 @@ impl Output {
             }
 
             let _ = features.insert(
-                format!("{}_all", config.get_library_alias(library_name.clone())),
+                format!("{}_all", library_alias),
                 library_features.into_iter().collect::<Vec<_>>(),
             );
         }

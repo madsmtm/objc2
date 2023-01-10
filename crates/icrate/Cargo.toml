@@ -690,6 +690,7 @@ AppKit_NSWorkspace = []
 AppKit_NSWorkspaceAuthorization = []
 AppKit_NSWorkspaceOpenConfiguration = []
 AppKit_all = [
+    "AppKit",
     "AppKit_NSATSTypesetter",
     "AppKit_NSAccessibilityCustomAction",
     "AppKit_NSAccessibilityCustomRotor",
@@ -1044,6 +1045,7 @@ AuthenticationServices_ASWebAuthenticationSession = []
 AuthenticationServices_ASWebAuthenticationSessionRequest = []
 AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionManager = []
 AuthenticationServices_all = [
+    "AuthenticationServices",
     "AuthenticationServices_ASAccountAuthenticationModificationController",
     "AuthenticationServices_ASAccountAuthenticationModificationExtensionContext",
     "AuthenticationServices_ASAccountAuthenticationModificationReplacePasswordWithSignInWithAppleRequest",
@@ -1142,6 +1144,7 @@ CoreAnimation_CATransition = [
 ]
 CoreAnimation_CAValueFunction = []
 CoreAnimation_all = [
+    "CoreAnimation",
     "CoreAnimation_CAAnimation",
     "CoreAnimation_CAAnimationGroup",
     "CoreAnimation_CABasicAnimation",
@@ -1275,6 +1278,7 @@ CoreData_NSSaveChangesRequest = [
     "CoreData_NSPersistentStoreRequest",
 ]
 CoreData_all = [
+    "CoreData",
     "CoreData_NSAsynchronousFetchRequest",
     "CoreData_NSAsynchronousFetchResult",
     "CoreData_NSAtomicStore",
@@ -1827,6 +1831,7 @@ Foundation_NSXPCInterface = []
 Foundation_NSXPCListener = []
 Foundation_NSXPCListenerEndpoint = []
 Foundation_all = [
+    "Foundation",
     "Foundation_NSAffineTransform",
     "Foundation_NSAppleEventDescriptor",
     "Foundation_NSAppleEventManager",
@@ -2212,6 +2217,7 @@ Metal_MTLVertexBufferLayoutDescriptorArray = []
 Metal_MTLVertexDescriptor = []
 Metal_MTLVisibleFunctionTableDescriptor = []
 Metal_all = [
+    "Metal",
     "Metal_MTLAccelerationStructureBoundingBoxGeometryDescriptor",
     "Metal_MTLAccelerationStructureDescriptor",
     "Metal_MTLAccelerationStructureGeometryDescriptor",
