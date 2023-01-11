@@ -1,6 +1,7 @@
 use crate::common::*;
 use crate::Metal;
 
+#[allow(dead_code)]
 fn slice_to_ptr_count<T>(slice: &[T]) -> (NonNull<T>, usize) {
     let ptr: *const T = slice.as_ptr();
     let ptr: *mut T = ptr as *mut T;

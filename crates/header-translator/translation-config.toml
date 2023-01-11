@@ -379,6 +379,13 @@ skipped = true
 skipped = true
 [protocol.NSAccessibilityElement]
 skipped = true
+# Uses the above protocols
+[protocol.NSAccessibilityElementLoading.methods.accessibilityElementWithToken]
+skipped = true
+[protocol.NSAccessibility.methods.accessibilityChildrenInNavigationOrder]
+skipped = true
+[protocol.NSAccessibility.methods.setAccessibilityChildrenInNavigationOrder]
+skipped = true
 
 # Both property and method
 [class.NSDrawer.methods.open]
