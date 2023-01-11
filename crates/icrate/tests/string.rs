@@ -1,7 +1,7 @@
 #![cfg(feature = "Foundation_NSString")]
 use std::ptr;
 
-use objc2::rc::{autoreleasepool, Id};
+use objc2::rc::autoreleasepool;
 
 use icrate::Foundation::{self, NSString};
 
@@ -72,6 +72,7 @@ fn test_interior_nul() {
 #[test]
 #[cfg(feature = "Foundation_NSMutableString")]
 fn test_copy() {
+    use objc2::rc::Id;
     use Foundation::{NSCopying, NSMutableCopying};
 
     let s1 = NSString::from_str("abc");

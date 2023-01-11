@@ -60,6 +60,7 @@ fn test_keys_and_objects() {
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSEnumerator")]
 fn test_iter_keys() {
     let dict = sample_dict("abcd");
     assert_eq!(dict.iter_keys().count(), 1);
@@ -69,12 +70,14 @@ fn test_iter_keys() {
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSEnumerator")]
 fn test_iter_values() {
     let dict = sample_dict("abcd");
     assert_eq!(dict.iter_values().count(), 1);
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSArray")]
 fn test_arrays() {
     let dict = sample_dict("abcd");
 
@@ -89,6 +92,7 @@ fn test_arrays() {
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSEnumerator")]
 fn test_debug() {
     let key = NSString::from_str("a");
     // TODO: Fix this

@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 #![cfg(feature = "Foundation")]
 use icrate::Foundation;
 

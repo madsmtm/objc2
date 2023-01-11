@@ -96,9 +96,6 @@ impl ToOwned for Foundation::NSMutableData {
 // Errors
 
 #[cfg(feature = "Foundation_NSError")]
-impl std::error::Error for Foundation::NSError {}
-
-#[cfg(feature = "Foundation_NSError")]
 unsafe impl NSCopying for Foundation::NSError {
     type Ownership = Shared;
     type Output = Self;

@@ -13,12 +13,12 @@ use core::str;
 #[cfg(feature = "apple")]
 use std::os::raw::c_char;
 
+use objc2::msg_send;
 use objc2::rc::{autoreleasepool, AutoreleasePool, DefaultId, Id, Shared};
 use objc2::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
-use objc2::runtime::{Class, Object};
-use objc2::{msg_send, ClassType};
 
-use crate::Foundation::{NSCopying, NSMutableCopying, NSMutableString, NSString};
+use crate::common::*;
+use crate::Foundation::{self, NSString};
 
 // SAFETY: `NSString` is immutable and `NSMutableString` can only be mutated
 // from `&mut` methods.

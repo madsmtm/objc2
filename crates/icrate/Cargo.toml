@@ -113,6 +113,14 @@ Foundation = [
     "objective-c",
     "block",
     "Foundation_NSProxy",
+    # Temporary, since some structs and statics use these
+    "Foundation_NSString",
+    "Foundation_NSError",
+    "Foundation_NSDictionary",
+    "Foundation_NSAppleEventDescriptor",
+    "Foundation_NSHashTable",
+    "Foundation_NSMapTable",
+    "Foundation_NSProgress",
 ]
 Metal = ["Foundation"]
 
