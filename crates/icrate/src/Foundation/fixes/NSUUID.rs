@@ -1,3 +1,4 @@
+#![cfg(feature = "Foundation_NSUUID")]
 use objc2::encode::{Encode, Encoding, RefEncode};
 
 use crate::common::*;
@@ -16,7 +17,6 @@ unsafe impl RefEncode for UuidBytes {
 }
 
 extern_methods!(
-    #[cfg(feature = "Foundation_NSUUID")]
     unsafe impl Foundation::NSUUID {
         #[method_id(initWithUUIDBytes:)]
         pub(crate) fn initWithUUIDBytes(

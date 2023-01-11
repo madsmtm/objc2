@@ -1,3 +1,4 @@
+#![cfg(feature = "Foundation_NSAttributedString")]
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::rc::{DefaultId, Id, Shared};

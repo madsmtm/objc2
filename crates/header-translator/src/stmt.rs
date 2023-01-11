@@ -831,6 +831,9 @@ impl Stmt {
 
     pub fn visit_required_types(&self, mut f: impl FnMut(&ItemIdentifier)) {
         match self {
+            Stmt::ClassDecl { id, .. } => {
+                f(&id);
+            }
             Stmt::FnDecl {
                 arguments,
                 result_type,
@@ -921,8 +924,6 @@ impl fmt::Display for Stmt {
                 derives,
                 ownership: _,
             } => {
-                // TODO: Use ty.get_objc_protocol_declarations()
-
                 let macro_name = if generics.is_empty() {
                     "extern_class"
                 } else {
@@ -931,6 +932,9 @@ impl fmt::Display for Stmt {
 
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    {derives}")?;
+                if let Some(feature) = id.feature() {
+                    writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
+                }
                 write!(f, "    pub struct {}", id.name)?;
                 if !generics.is_empty() {
                     write!(f, "<")?;
@@ -956,7 +960,12 @@ impl fmt::Display for Stmt {
                     writeln!(f, "notunwindsafe: PhantomData<&'static mut ()>,")?;
                     writeln!(f, "}}")?;
                 }
+
                 writeln!(f)?;
+
+                if let Some(feature) = id.feature() {
+                    writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
+                }
                 writeln!(
                     f,
                     "    unsafe impl{} ClassType for {}{} {{",

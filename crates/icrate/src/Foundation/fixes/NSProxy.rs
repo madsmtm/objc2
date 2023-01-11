@@ -1,3 +1,4 @@
+#![cfg(feature = "Foundation_NSProxy")]
 use core::fmt;
 use core::hash;
 

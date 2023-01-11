@@ -13,5 +13,7 @@ mod gnustep;
 
 pub use self::__NSDecimal::NSDecimal;
 pub use self::__NSNotFound::NSNotFound;
+#[cfg(feature = "Foundation_NSProxy")]
 pub use self::__NSProxy::NSProxy;
+#[cfg(feature = "Foundation_NSUUID")]
 pub(crate) use self::NSUUID::UuidBytes;

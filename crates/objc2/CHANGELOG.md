@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Support `#[cfg(...)]` attributes in `extern_class!` macro.
+
 ### Changed
 * **BREAKING**: Using the automatic `NSError**`-to-`Result` functionality in
   `extern_methods!` now requires a trailing underscore (so now it's
