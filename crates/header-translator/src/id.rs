@@ -39,12 +39,9 @@ impl<N: ToOptionString> ItemIdentifier<N> {
 
         // TODO: Get rid of this hack
         if library_name == "CoreGraphics" {
-            match name.to_option() {
-                Some("CGFloat" | "CGPoint" | "CGRect" | "CGSize") => {
-                    library_name = "Foundation".to_string();
-                    file_name = Some("NSGeometry".to_string());
-                }
-                _ => {}
+            if let Some("CGFloat" | "CGPoint" | "CGRect" | "CGSize") = name.to_option() {
+                library_name = "Foundation".to_string();
+                file_name = Some("NSGeometry".to_string());
             }
         }
 
@@ -84,7 +81,7 @@ impl ItemIdentifier {
     }
 
     pub fn to_some(self) -> ItemIdentifier<Option<String>> {
-        self.map_name(|s| Some(s))
+        self.map_name(Some)
     }
 
     pub fn is_system(&self) -> bool {
@@ -120,7 +117,7 @@ impl ItemIdentifier {
             }
         }
 
-        (!self.is_system()).then(|| ItemIdentifierFeature(self))
+        (!self.is_system()).then_some(ItemIdentifierFeature(self))
     }
 
     pub fn path(&self) -> impl fmt::Display + '_ {

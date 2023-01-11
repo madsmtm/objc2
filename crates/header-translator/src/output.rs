@@ -40,8 +40,9 @@ impl Output {
             let library_alias = config.get_library_alias(library_name.clone());
             let mut library_features = BTreeSet::from([library_alias.clone()]);
 
-            for (_, file) in &library.files {
+            for file in library.files.values() {
                 for stmt in &file.stmts {
+                    #[allow(clippy::single_match)] // There will be others
                     match stmt {
                         Stmt::ClassDecl {
                             id, superclasses, ..
@@ -73,7 +74,7 @@ impl Output {
             }
 
             let _ = features.insert(
-                format!("{}_all", library_alias),
+                format!("{library_alias}_all"),
                 library_features.into_iter().collect::<Vec<_>>(),
             );
         }

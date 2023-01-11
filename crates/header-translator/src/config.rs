@@ -50,7 +50,7 @@ impl Config {
                 }
                 None
             })
-            .unwrap_or_else(|| library_name)
+            .unwrap_or(library_name)
     }
 }
 

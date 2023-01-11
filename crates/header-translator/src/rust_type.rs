@@ -389,7 +389,7 @@ impl IdType {
         // }
 
         if let Self::Class { id, params, .. } = self {
-            f(&id);
+            f(id);
             if let TypeParams::Generics(generics) = params {
                 for generic in generics {
                     generic.visit_required_types(f);
@@ -1446,9 +1446,8 @@ impl Ty {
     }
 
     pub fn visit_required_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
-        match &self.kind {
-            TyKind::MethodReturn { with_error: true } => f(&ItemIdentifier::nserror()),
-            _ => {}
+        if let TyKind::MethodReturn { with_error: true } = &self.kind {
+            f(&ItemIdentifier::nserror());
         }
 
         self.ty.visit_required_types(f);

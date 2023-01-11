@@ -328,7 +328,7 @@ impl Stmt {
             EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef => vec![],
             EntityKind::ObjCInterfaceDecl => {
                 // entity.get_mangled_objc_names()
-                let id = ItemIdentifier::new(&entity, context);
+                let id = ItemIdentifier::new(entity, context);
                 let data = context.class_data.get(&id.name);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
@@ -358,7 +358,7 @@ impl Stmt {
                 let methods = Self::Methods {
                     cls: id.clone(),
                     generics: generics.clone(),
-                    category: ItemIdentifier::with_name(None, &entity, context),
+                    category: ItemIdentifier::with_name(None, entity, context),
                     availability: availability.clone(),
                     superclasses: superclasses.clone(),
                     methods,
@@ -388,7 +388,7 @@ impl Stmt {
                 }
             }
             EntityKind::ObjCCategoryDecl => {
-                let category = ItemIdentifier::new_optional(&entity, context);
+                let category = ItemIdentifier::new_optional(entity, context);
                 let availability = Availability::parse(
                     entity
                         .get_platform_availability()
@@ -457,7 +457,7 @@ impl Stmt {
                 .collect()
             }
             EntityKind::ObjCProtocolDecl => {
-                let id = ItemIdentifier::new(&entity, context);
+                let id = ItemIdentifier::new(entity, context);
                 let data = context.protocol_data.get(&id.name);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
@@ -488,7 +488,7 @@ impl Stmt {
                 }]
             }
             EntityKind::TypedefDecl => {
-                let id = ItemIdentifier::new(&entity, context);
+                let id = ItemIdentifier::new(entity, context);
                 let mut struct_ = None;
                 let mut skip_struct = false;
                 let mut kind = None;
@@ -566,7 +566,7 @@ impl Stmt {
             }
             EntityKind::StructDecl => {
                 if let Some(name) = entity.get_name() {
-                    let id = ItemIdentifier::with_name(name, &entity, context);
+                    let id = ItemIdentifier::with_name(name, entity, context);
 
                     if context
                         .struct_data
@@ -600,7 +600,7 @@ impl Stmt {
                     return vec![];
                 }
 
-                let id = ItemIdentifier::new_optional(&entity, context);
+                let id = ItemIdentifier::new_optional(entity, context);
 
                 let data = context
                     .enum_data
@@ -682,7 +682,7 @@ impl Stmt {
                 }]
             }
             EntityKind::VarDecl => {
-                let id = ItemIdentifier::new(&entity, context);
+                let id = ItemIdentifier::new(entity, context);
 
                 if context
                     .statics
@@ -728,7 +728,7 @@ impl Stmt {
                 vec![Self::VarDecl { id, ty, value }]
             }
             EntityKind::FunctionDecl => {
-                let id = ItemIdentifier::new(&entity, context);
+                let id = ItemIdentifier::new(entity, context);
 
                 let data = context.fns.get(&id.name).cloned().unwrap_or_default();
 
@@ -786,7 +786,7 @@ impl Stmt {
                 }]
             }
             EntityKind::UnionDecl => {
-                let id = ItemIdentifier::new_optional(&entity, context);
+                let id = ItemIdentifier::new_optional(entity, context);
                 error!(
                     ?id,
                     has_attributes = ?entity.has_attributes(),
@@ -832,7 +832,7 @@ impl Stmt {
     pub fn visit_required_types(&self, mut f: impl FnMut(&ItemIdentifier)) {
         match self {
             Stmt::ClassDecl { id, .. } => {
-                f(&id);
+                f(id);
             }
             Stmt::FnDecl {
                 arguments,
@@ -969,9 +969,9 @@ impl fmt::Display for Stmt {
                 writeln!(
                     f,
                     "    unsafe impl{} ClassType for {}{} {{",
-                    GenericParamsHelper(&generics),
+                    GenericParamsHelper(generics),
                     id.name,
-                    GenericTyHelper(&generics),
+                    GenericTyHelper(generics),
                 )?;
                 let (superclass, rest) = superclasses.split_at(1);
                 let (superclass, generics) =
@@ -985,16 +985,16 @@ impl fmt::Display for Stmt {
                         write!(
                             f,
                             "{}{}",
-                            superclass.path_in_relation_to(&id),
-                            GenericTyHelper(&generics)
+                            superclass.path_in_relation_to(id),
+                            GenericTyHelper(generics)
                         )?;
                     }
                     for (superclass, generics) in iter {
                         write!(
                             f,
                             ", {}{}",
-                            superclass.path_in_relation_to(&id),
-                            GenericTyHelper(&generics)
+                            superclass.path_in_relation_to(id),
+                            GenericTyHelper(generics)
                         )?;
                     }
                     writeln!(f, ")]")?;
@@ -1002,8 +1002,8 @@ impl fmt::Display for Stmt {
                 writeln!(
                     f,
                     "        type Super = {}{};",
-                    superclass.path_in_relation_to(&id),
-                    GenericTyHelper(&generics)
+                    superclass.path_in_relation_to(id),
+                    GenericTyHelper(generics)
                 )?;
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
@@ -1033,9 +1033,9 @@ impl fmt::Display for Stmt {
                 writeln!(
                     f,
                     "    unsafe impl{} {}{} {{",
-                    GenericParamsHelper(&generics),
+                    GenericParamsHelper(generics),
                     cls.path_in_relation_to(category),
-                    GenericTyHelper(&generics),
+                    GenericTyHelper(generics),
                 )?;
                 for method in methods {
                     // Use a set to deduplicate features, and to have them in
