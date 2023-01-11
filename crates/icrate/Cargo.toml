@@ -49,19 +49,39 @@ targets = [
 
 [[example]]
 name = "basic_usage"
-required-features = ["Foundation"]
+required-features = [
+    "Foundation",
+    "Foundation_NSArray",
+    "Foundation_NSDictionary",
+    "Foundation_NSEnumerator",
+]
 
 [[example]]
 name = "delegate"
-required-features = ["apple", "Foundation"]
+required-features = [
+    "apple",
+    "Foundation",
+    "Foundation_NSString",
+    "AppKit_NSResponder",
+]
 
 [[example]]
 name = "speech_synthesis"
-required-features = ["apple", "Foundation"]
+required-features = [
+    "apple",
+    "Foundation",
+    "Foundation_NSString",
+]
 
 [[example]]
 name = "nspasteboard"
-required-features = ["apple", "Foundation"]
+required-features = [
+    "apple",
+    "Foundation",
+    "Foundation_NSArray",
+    "Foundation_NSDictionary",
+    "Foundation_NSString",
+]
 
 [features]
 default = ["std", "apple"]

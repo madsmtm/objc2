@@ -111,6 +111,7 @@ fn test_retains_stored() {
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSMutableArray")]
 fn test_nscopying_uses_retain() {
     use icrate::Foundation::{NSCopying, NSMutableCopying};
 
@@ -153,6 +154,7 @@ fn test_iter_no_retain() {
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSEnumerator")]
 fn test_iter() {
     let array = sample_array(4);
 
