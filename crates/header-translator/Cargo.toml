@@ -17,6 +17,10 @@ run = [
     "tracing-subscriber",
     "tracing-tree",
 ]
+run-icrate-check = [
+    "toml",
+    "serde",
+]
 
 [dependencies]
 clang = { version = "2.0", features = ["runtime", "clang_10_0"], optional = true }
@@ -31,3 +35,7 @@ proc-macro2 = "1.0.49"
 [[bin]]
 name = "header-translator"
 required-features = ["run"]
+
+[[bin]]
+name = "check_icrate_features"
+required-features = ["run-icrate-check"]

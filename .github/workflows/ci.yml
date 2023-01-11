@@ -282,6 +282,30 @@ jobs:
     - name: Verify that no files changed
       run: git diff --exit-code --submodule=diff
 
+  check-icrate-features:
+    name: Check icrate features
+    runs-on: macos-12
+    needs:
+    - fmt
+    - lint
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Use system Rust
+      run: cargo --version
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CARGO_CACHE_PATH }}
+        key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Check `icrate` with each feature enabled separately
+      run: cargo run --bin=check_icrate_features --features=run-icrate-check
+
   test-macos:
     name: Test macOS 12
     runs-on: macos-12
