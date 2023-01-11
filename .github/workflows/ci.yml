@@ -283,6 +283,9 @@ jobs:
       run: git diff --exit-code --submodule=diff
 
   check-icrate-features:
+    # if: ${{ env.FULL }}
+    # This will take ~40 minutes
+    if: ${{ github.ref_name == 'new-versions' || github.ref_name == 'ci-full' }}
     name: Check icrate features
     runs-on: macos-12
     needs:
