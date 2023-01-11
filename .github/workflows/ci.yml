@@ -471,6 +471,7 @@ jobs:
       run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation_all --release
 
     - name: Test with unstable features
+      if: ${{ matrix.nightly }}
       run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation_all,$UNSTABLE_FEATURES
 
     # TODO: Re-enable this on Foundation once we do some form of
