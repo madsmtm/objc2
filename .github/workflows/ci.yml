@@ -262,6 +262,9 @@ jobs:
     - fmt
     - lint
 
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
+
     steps:
     - uses: actions/checkout@v3
       with:
@@ -277,7 +280,7 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Run header translator
-      run: cargo run --features=run --bin=header-translator -- /Applications/Xcode.app/Contents/Developer
+      run: cargo run --features=run --bin=header-translator
 
     - name: Verify that no files changed
       run: git diff --exit-code --submodule=diff
