@@ -9,10 +9,7 @@ use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use objc2::{extern_methods, Message};
 
 use super::array::with_objects;
-use crate::Foundation::{
-    NSArray, NSComparisonResult, NSCopying, NSFastEnumeration2, NSFastEnumerator2, NSInteger,
-    NSMutableArray, NSMutableCopying,
-};
+use crate::Foundation::{self, NSArray, NSComparisonResult, NSInteger, NSMutableArray};
 
 extern_methods!(
     /// Generic creation methods.
@@ -130,15 +127,16 @@ extern_methods!(
     }
 );
 
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration2 for NSMutableArray<T, O> {
+unsafe impl<T: Message, O: Ownership> Foundation::NSFastEnumeration2 for NSMutableArray<T, O> {
     type Item = T;
 }
 
 impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSMutableArray<T, O> {
     type Item = &'a T;
-    type IntoIter = NSFastEnumerator2<'a, NSMutableArray<T, O>>;
+    type IntoIter = Foundation::NSFastEnumerator2<'a, NSMutableArray<T, O>>;
 
     fn into_iter(self) -> Self::IntoIter {
+        use Foundation::NSFastEnumeration2;
         self.iter_fast()
     }
 }

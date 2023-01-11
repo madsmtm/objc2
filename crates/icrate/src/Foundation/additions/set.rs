@@ -6,10 +6,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use objc2::{extern_methods, msg_send, msg_send_id, ClassType, Message};
 
-use crate::Foundation::{
-    NSArray, NSCopying, NSEnumerator2, NSFastEnumeration2, NSFastEnumerator2, NSMutableCopying,
-    NSMutableSet, NSSet,
-};
+use crate::Foundation::{self, NSSet};
 
 // SAFETY: Same as NSArray<T, O>
 unsafe impl<T: Message + Sync + Send> Sync for NSSet<T, Shared> {}
@@ -17,19 +14,26 @@ unsafe impl<T: Message + Sync + Send> Send for NSSet<T, Shared> {}
 unsafe impl<T: Message + Sync> Sync for NSSet<T, Owned> {}
 unsafe impl<T: Message + Send> Send for NSSet<T, Owned> {}
 
-unsafe impl<T: Message + Sync + Send> Sync for NSMutableSet<T, Shared> {}
-unsafe impl<T: Message + Sync + Send> Send for NSMutableSet<T, Shared> {}
-unsafe impl<T: Message + Sync> Sync for NSMutableSet<T, Owned> {}
-unsafe impl<T: Message + Send> Send for NSMutableSet<T, Owned> {}
+#[cfg(feature = "Foundation_NSMutableSet")]
+unsafe impl<T: Message + Sync + Send> Sync for Foundation::NSMutableSet<T, Shared> {}
+#[cfg(feature = "Foundation_NSMutableSet")]
+unsafe impl<T: Message + Sync + Send> Send for Foundation::NSMutableSet<T, Shared> {}
+#[cfg(feature = "Foundation_NSMutableSet")]
+unsafe impl<T: Message + Sync> Sync for Foundation::NSMutableSet<T, Owned> {}
+#[cfg(feature = "Foundation_NSMutableSet")]
+unsafe impl<T: Message + Send> Send for Foundation::NSMutableSet<T, Owned> {}
 
 // SAFETY: Same as NSArray<T, O>
 impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSSet<T, O> {}
 impl<T: Message + RefUnwindSafe> UnwindSafe for NSSet<T, Shared> {}
 impl<T: Message + UnwindSafe> UnwindSafe for NSSet<T, Owned> {}
 
-impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSMutableSet<T, O> {}
-impl<T: Message + RefUnwindSafe> UnwindSafe for NSMutableSet<T, Shared> {}
-impl<T: Message + UnwindSafe> UnwindSafe for NSMutableSet<T, Owned> {}
+#[cfg(feature = "Foundation_NSMutableSet")]
+impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for Foundation::NSMutableSet<T, O> {}
+#[cfg(feature = "Foundation_NSMutableSet")]
+impl<T: Message + RefUnwindSafe> UnwindSafe for Foundation::NSMutableSet<T, Shared> {}
+#[cfg(feature = "Foundation_NSMutableSet")]
+impl<T: Message + UnwindSafe> UnwindSafe for Foundation::NSMutableSet<T, Owned> {}
 
 #[track_caller]
 pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: ClassType, O: Ownership>(
@@ -144,10 +148,11 @@ extern_methods!(
         /// }
         /// ```
         #[doc(alias = "objectEnumerator")]
-        pub fn iter(&self) -> NSEnumerator2<'_, T> {
+        #[cfg(feature = "Foundation_NSEnumerator")]
+        pub fn iter(&self) -> Foundation::NSEnumerator2<'_, T> {
             unsafe {
                 let result = msg_send![self, objectEnumerator];
-                NSEnumerator2::from_ptr(result)
+                Foundation::NSEnumerator2::from_ptr(result)
             }
         }
 
@@ -198,6 +203,8 @@ extern_methods!(
         /// Returns an [`NSArray`] containing the set's elements, or an empty
         /// array if the set is empty.
         ///
+        /// [`NSArray`]: crate::Foundation::NSArray
+        ///
         /// # Examples
         ///
         /// ```
@@ -210,7 +217,8 @@ extern_methods!(
         /// assert!(set.to_array().iter().all(|i| nums.contains(&i.as_i32())));
         /// ```
         #[doc(alias = "allObjects")]
-        pub fn to_array(&self) -> Id<NSArray<T, Shared>, Shared> {
+        #[cfg(feature = "Foundation_NSArray")]
+        pub fn to_array(&self) -> Id<Foundation::NSArray<T, Shared>, Shared> {
             // SAFETY: The set's elements are shared
             unsafe { self.allObjects() }
         }
@@ -315,15 +323,16 @@ extern_methods!(
     }
 );
 
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration2 for NSSet<T, O> {
+unsafe impl<T: Message, O: Ownership> Foundation::NSFastEnumeration2 for NSSet<T, O> {
     type Item = T;
 }
 
 impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSSet<T, O> {
     type Item = &'a T;
-    type IntoIter = NSFastEnumerator2<'a, NSSet<T, O>>;
+    type IntoIter = Foundation::NSFastEnumerator2<'a, NSSet<T, O>>;
 
     fn into_iter(self) -> Self::IntoIter {
+        use Foundation::NSFastEnumeration2;
         self.iter_fast()
     }
 }
@@ -337,9 +346,11 @@ impl<T: Message, O: Ownership> DefaultId for NSSet<T, O> {
     }
 }
 
+#[cfg(feature = "Foundation_NSEnumerator")]
 impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for NSSet<T, O> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        use Foundation::NSFastEnumeration2;
         f.debug_set().entries(self.iter_fast()).finish()
     }
 }

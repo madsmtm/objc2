@@ -11,7 +11,7 @@ use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::{extern_methods, ClassType};
 
 use super::data::with_slice;
-use crate::Foundation::{NSCopying, NSData, NSMutableCopying, NSMutableData, NSRange};
+use crate::Foundation::{NSMutableData, NSRange};
 
 extern_methods!(
     /// Creation methods

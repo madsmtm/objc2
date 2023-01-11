@@ -4,10 +4,10 @@ use core::fmt;
 use core::ops::AddAssign;
 use core::str;
 
-use objc2::rc::{DefaultId, Id, Owned, Shared};
-use objc2::{extern_methods, ClassType};
+use objc2::rc::DefaultId;
 
-use crate::Foundation::{NSCopying, NSMutableCopying, NSMutableString, NSString};
+use crate::common::*;
+use crate::Foundation::{NSMutableString, NSString};
 
 extern_methods!(
     /// Creating mutable strings.

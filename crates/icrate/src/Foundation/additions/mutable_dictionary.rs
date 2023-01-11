@@ -3,12 +3,11 @@ use alloc::vec::Vec;
 use core::ops::{Index, IndexMut};
 use core::ptr;
 
-use objc2::rc::{DefaultId, Id, Owned, Shared};
-use objc2::{extern_methods, msg_send_id, Message};
+use objc2::msg_send_id;
+use objc2::rc::DefaultId;
 
-use crate::Foundation::{
-    NSArray, NSCopying, NSDictionary, NSFastEnumeration2, NSMutableDictionary,
-};
+use crate::common::*;
+use crate::Foundation::{self, NSDictionary, NSMutableDictionary};
 
 extern_methods!(
     unsafe impl<K: Message, V: Message> NSMutableDictionary<K, V> {
@@ -46,7 +45,7 @@ extern_methods!(
         /// ```
         pub fn from_keys_and_objects<T>(keys: &[&T], vals: Vec<Id<V, Owned>>) -> Id<Self, Owned>
         where
-            T: NSCopying<Output = K>,
+            T: Foundation::NSCopying<Output = K>,
         {
             let mut dict = NSMutableDictionary::new();
             dict.setDictionary(&*NSDictionary::from_keys_and_objects(keys, vals));
@@ -155,6 +154,9 @@ extern_methods!(
         /// Returns an [`NSArray`] containing the dictionary's values,
         /// consuming the dictionary.
         ///
+        /// [`NSArray`]: crate::Foundation::NSArray
+        ///
+        ///
         /// # Examples
         ///
         /// ```
@@ -165,13 +167,16 @@ extern_methods!(
         /// let array = NSMutableDictionary::into_values_array(dict);
         /// println!("{:?}", array);
         /// ```
-        pub fn into_values_array(dict: Id<Self, Owned>) -> Id<NSArray<V, Owned>, Shared> {
+        #[cfg(feature = "Foundation_NSArray")]
+        pub fn into_values_array(
+            dict: Id<Self, Owned>,
+        ) -> Id<Foundation::NSArray<V, Owned>, Shared> {
             unsafe { msg_send_id![&dict, allValues] }
         }
     }
 );
 
-unsafe impl<K: Message, V: Message> NSFastEnumeration2 for NSMutableDictionary<K, V> {
+unsafe impl<K: Message, V: Message> Foundation::NSFastEnumeration2 for NSMutableDictionary<K, V> {
     type Item = K;
 }
 

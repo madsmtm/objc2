@@ -147,13 +147,15 @@ Foundation = [
     "block",
     "Foundation_NSProxy",
     # Temporary, since some structs and statics use these
-    "Foundation_NSString",
     "Foundation_NSError",
-    "Foundation_NSDictionary",
     "Foundation_NSAppleEventDescriptor",
     "Foundation_NSHashTable",
     "Foundation_NSMapTable",
     "Foundation_NSProgress",
+    # Some fmt::Debug impls require these
+    "Foundation_NSString",
+    "Foundation_NSDictionary",
+    "Foundation_NSEnumerator",
 ]
 Metal = [
     "Foundation",

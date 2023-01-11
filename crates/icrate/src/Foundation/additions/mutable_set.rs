@@ -1,13 +1,11 @@
 #![cfg(feature = "Foundation_NSMutableSet")]
 use alloc::vec::Vec;
 
-use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use objc2::{extern_methods, Message};
+use objc2::rc::{DefaultId, SliceId};
 
 use super::set::with_objects;
-use crate::Foundation::{
-    NSCopying, NSFastEnumeration2, NSFastEnumerator2, NSMutableCopying, NSMutableSet, NSSet,
-};
+use crate::common::*;
+use crate::Foundation::{self, NSMutableSet};
 
 extern_methods!(
     unsafe impl<T: Message, O: Ownership> NSMutableSet<T, O> {
@@ -148,15 +146,16 @@ extern_methods!(
     }
 );
 
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration2 for NSMutableSet<T, O> {
+unsafe impl<T: Message, O: Ownership> Foundation::NSFastEnumeration2 for NSMutableSet<T, O> {
     type Item = T;
 }
 
 impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSMutableSet<T, O> {
     type Item = &'a T;
-    type IntoIter = NSFastEnumerator2<'a, NSMutableSet<T, O>>;
+    type IntoIter = Foundation::NSFastEnumerator2<'a, NSMutableSet<T, O>>;
 
     fn into_iter(self) -> Self::IntoIter {
+        use Foundation::NSFastEnumeration2;
         self.iter_fast()
     }
 }
