@@ -95,11 +95,25 @@ unstable-private = []
 
 # Frameworks
 
-AppKit = ["Foundation", "CoreData"]
-AuthenticationServices = ["Foundation"]
+AppKit = [
+    "Foundation",
+    "CoreData",
+    "AppKit_NSLayoutAnchor",
+    "AppKit_NSPopover",
+]
+AuthenticationServices = [
+    "Foundation",
+    "AuthenticationServices_ASCredentialProviderViewController",
+    "AuthenticationServices_ASAccountAuthenticationModificationViewController",
+    "AuthenticationServices_ASAuthorizationAppleIDButton",
+]
 CoreAnimation = ["Foundation", "CoreAnimation_all"]
 CoreData = ["Foundation"]
-Foundation = ["objective-c", "block"]
+Foundation = [
+    "objective-c",
+    "block",
+    "Foundation_NSProxy",
+]
 Metal = ["Foundation"]
 
 # Helps with CI

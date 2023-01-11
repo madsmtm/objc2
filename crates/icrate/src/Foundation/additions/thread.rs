@@ -1,10 +1,9 @@
+#![cfg(feature = "Foundation_NSThread")]
 use core::fmt;
 use core::marker::PhantomData;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::extern_methods;
-use objc2::rc::{Id, Shared};
-
+use crate::common::*;
 use crate::Foundation::NSThread;
 
 unsafe impl Send for NSThread {}
@@ -21,16 +20,19 @@ extern_methods!(
 );
 
 /// Whether the application is multithreaded according to Cocoa.
+#[cfg(feature = "Foundation_NSThread")]
 pub fn is_multi_threaded() -> bool {
     NSThread::isMultiThreaded()
 }
 
 /// Whether the current thread is the main thread.
+#[cfg(feature = "Foundation_NSThread")]
 pub fn is_main_thread() -> bool {
     NSThread::class_isMainThread()
 }
 
 #[allow(unused)]
+#[cfg(feature = "Foundation_NSThread")]
 fn make_multithreaded() {
     let thread = unsafe { NSThread::new() };
     unsafe { thread.start() };
@@ -85,8 +87,9 @@ impl MainThreadMarker {
     /// Construct a new [`MainThreadMarker`].
     ///
     /// Returns [`None`] if the current thread was not the main thread.
+    #[cfg(feature = "Foundation_NSThread")]
     pub fn new() -> Option<Self> {
-        if is_main_thread() {
+        if NSThread::class_isMainThread() {
             // SAFETY: We just checked that we are running on the main thread.
             Some(unsafe { Self::new_unchecked() })
         } else {
@@ -109,77 +112,5 @@ impl MainThreadMarker {
 impl fmt::Debug for MainThreadMarker {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_tuple("MainThreadMarker").finish()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use alloc::format;
-    use core::panic::{RefUnwindSafe, UnwindSafe};
-
-    use super::*;
-
-    #[test]
-    #[cfg_attr(
-        feature = "gnustep-1-7",
-        ignore = "Retrieving main thread is weirdly broken, only works with --test-threads=1"
-    )]
-    fn test_main_thread() {
-        let current = NSThread::currentThread();
-        let main = NSThread::mainThread();
-
-        assert!(main.isMainThread());
-
-        if main == current {
-            assert!(current.isMainThread());
-            assert!(is_main_thread());
-        } else {
-            assert!(!current.isMainThread());
-            assert!(!is_main_thread());
-        }
-    }
-
-    #[test]
-    fn test_not_main_thread() {
-        let res =
-            std::thread::spawn(|| (is_main_thread(), NSThread::currentThread().isMainThread()))
-                .join()
-                .unwrap();
-        assert_eq!(res, (false, false));
-    }
-
-    #[test]
-    fn test_main_thread_auto_traits() {
-        fn assert_traits<T: Unpin + UnwindSafe + RefUnwindSafe + Sized>() {}
-
-        assert_traits::<MainThreadMarker>()
-    }
-
-    #[test]
-    #[cfg_attr(
-        feature = "gnustep-1-7",
-        ignore = "Retrieving main thread is weirdly broken, only works with --test-threads=1"
-    )]
-    fn test_debug() {
-        let thread = NSThread::mainThread();
-
-        let actual = format!("{thread:?}");
-        let expected = [
-            // macOS 11
-            format!("<NSThread: {thread:p}>{{number = 1, name = (null)}}"),
-            format!("<NSThread: {thread:p}>{{number = 1, name = main}}"),
-            // macOS 12
-            format!("<_NSMainThread: {thread:p}>{{number = 1, name = (null)}}"),
-            format!("<_NSMainThread: {thread:p}>{{number = 1, name = main}}"),
-        ];
-        assert!(
-            expected.contains(&actual),
-            "Expected one of {expected:?}, got {actual:?}",
-        );
-
-        // SAFETY: We don't use the marker for anything other than its Debug
-        // impl, so this test doesn't actually need to run on the main thread!
-        let marker = unsafe { MainThreadMarker::new_unchecked() };
-        assert_eq!(format!("{marker:?}"), "MainThreadMarker");
     }
 }

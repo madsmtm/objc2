@@ -6,6 +6,7 @@ mod __NSDecimal;
 mod __NSNotFound;
 #[path = "NSProxy.rs"]
 mod __NSProxy;
+mod copy;
 mod debug;
 mod generic_return;
 mod gnustep;

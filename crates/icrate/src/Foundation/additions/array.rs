@@ -1,3 +1,4 @@
+#![cfg(feature = "Foundation_NSArray")]
 use alloc::vec::Vec;
 use core::fmt;
 use core::mem;
@@ -9,10 +10,7 @@ use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use objc2::runtime::Object;
 use objc2::{extern_methods, msg_send, msg_send_id, ClassType, Message};
 
-use crate::Foundation::{
-    NSArray, NSCopying, NSEnumerator2, NSFastEnumeration2, NSFastEnumerator2, NSMutableArray,
-    NSMutableCopying, NSRange,
-};
+use crate::Foundation::{self, NSArray};
 
 // SAFETY: Same as Id<T, O> (what NSArray and NSMutableArray effectively store).
 unsafe impl<T: Message + Sync + Send> Sync for NSArray<T, Shared> {}
@@ -20,19 +18,26 @@ unsafe impl<T: Message + Sync + Send> Send for NSArray<T, Shared> {}
 unsafe impl<T: Message + Sync> Sync for NSArray<T, Owned> {}
 unsafe impl<T: Message + Send> Send for NSArray<T, Owned> {}
 
-unsafe impl<T: Message + Sync + Send> Sync for NSMutableArray<T, Shared> {}
-unsafe impl<T: Message + Sync + Send> Send for NSMutableArray<T, Shared> {}
-unsafe impl<T: Message + Sync> Sync for NSMutableArray<T, Owned> {}
-unsafe impl<T: Message + Send> Send for NSMutableArray<T, Owned> {}
+#[cfg(feature = "Foundation_NSMutableArray")]
+unsafe impl<T: Message + Sync + Send> Sync for Foundation::NSMutableArray<T, Shared> {}
+#[cfg(feature = "Foundation_NSMutableArray")]
+unsafe impl<T: Message + Sync + Send> Send for Foundation::NSMutableArray<T, Shared> {}
+#[cfg(feature = "Foundation_NSMutableArray")]
+unsafe impl<T: Message + Sync> Sync for Foundation::NSMutableArray<T, Owned> {}
+#[cfg(feature = "Foundation_NSMutableArray")]
+unsafe impl<T: Message + Send> Send for Foundation::NSMutableArray<T, Owned> {}
 
 // Also same as Id<T, O>
 impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSArray<T, O> {}
 impl<T: Message + RefUnwindSafe> UnwindSafe for NSArray<T, Shared> {}
 impl<T: Message + UnwindSafe> UnwindSafe for NSArray<T, Owned> {}
 
-impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSMutableArray<T, O> {}
-impl<T: Message + RefUnwindSafe> UnwindSafe for NSMutableArray<T, Shared> {}
-impl<T: Message + UnwindSafe> UnwindSafe for NSMutableArray<T, Owned> {}
+#[cfg(feature = "Foundation_NSMutableArray")]
+impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for Foundation::NSMutableArray<T, O> {}
+#[cfg(feature = "Foundation_NSMutableArray")]
+impl<T: Message + RefUnwindSafe> UnwindSafe for Foundation::NSMutableArray<T, Shared> {}
+#[cfg(feature = "Foundation_NSMutableArray")]
+impl<T: Message + UnwindSafe> UnwindSafe for Foundation::NSMutableArray<T, Owned> {}
 
 #[track_caller]
 pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: ClassType, O: Ownership>(
@@ -125,15 +130,16 @@ extern_methods!(
         pub fn last(&self) -> Option<&T>;
 
         #[doc(alias = "objectEnumerator")]
-        pub fn iter(&self) -> NSEnumerator2<'_, T> {
+        #[cfg(feature = "Foundation_NSEnumerator")]
+        pub fn iter(&self) -> Foundation::NSEnumerator2<'_, T> {
             unsafe {
                 let result: *mut Object = msg_send![self, objectEnumerator];
-                NSEnumerator2::from_ptr(result)
+                Foundation::NSEnumerator2::from_ptr(result)
             }
         }
 
         unsafe fn objects_in_range_unchecked(&self, range: Range<usize>) -> Vec<&T> {
-            let range = NSRange::from(range);
+            let range = Foundation::NSRange::from(range);
             let mut vec: Vec<NonNull<T>> = Vec::with_capacity(range.length);
             unsafe {
                 self.getObjects_range(NonNull::new(vec.as_mut_ptr()).unwrap(), range);
@@ -205,35 +211,16 @@ extern_methods!(
     }
 );
 
-/// This is implemented as a shallow copy.
-///
-/// As such, it is only possible when the array's contents are `Shared`.
-unsafe impl<T: Message> NSCopying for NSArray<T, Shared> {
-    type Ownership = Shared;
-    type Output = NSArray<T, Shared>;
-}
-
-/// This is implemented as a shallow copy.
-unsafe impl<T: Message> NSMutableCopying for NSArray<T, Shared> {
-    type Output = NSMutableArray<T, Shared>;
-}
-
-impl<T: Message> alloc::borrow::ToOwned for NSArray<T, Shared> {
-    type Owned = Id<NSArray<T, Shared>, Shared>;
-    fn to_owned(&self) -> Self::Owned {
-        self.copy()
-    }
-}
-
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration2 for NSArray<T, O> {
+unsafe impl<T: Message, O: Ownership> Foundation::NSFastEnumeration2 for NSArray<T, O> {
     type Item = T;
 }
 
 impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSArray<T, O> {
     type Item = &'a T;
-    type IntoIter = NSFastEnumerator2<'a, NSArray<T, O>>;
+    type IntoIter = Foundation::NSFastEnumerator2<'a, NSArray<T, O>>;
 
     fn into_iter(self) -> Self::IntoIter {
+        use Foundation::NSFastEnumeration2;
         self.iter_fast()
     }
 }
@@ -264,209 +251,7 @@ impl<T: Message, O: Ownership> DefaultId for NSArray<T, O> {
 impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for NSArray<T, O> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        use Foundation::NSFastEnumeration2;
         f.debug_list().entries(self.iter_fast()).finish()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use alloc::format;
-    use alloc::vec::Vec;
-
-    use super::*;
-    use crate::Foundation::{NSNumber, NSObject, NSString};
-    use objc2::rc::{__RcTestObject, __ThreadTestData};
-
-    fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
-        let mut vec = Vec::with_capacity(len);
-        for _ in 0..len {
-            vec.push(NSObject::new());
-        }
-        NSArray::from_vec(vec)
-    }
-
-    fn sample_number_array(len: u8) -> Id<NSArray<NSNumber, Shared>, Shared> {
-        let mut vec = Vec::with_capacity(len as usize);
-        for i in 0..len {
-            vec.push(NSNumber::new_u8(i));
-        }
-        NSArray::from_vec(vec)
-    }
-
-    #[test]
-    fn test_two_empty() {
-        let _empty_array1 = NSArray::<NSObject>::new();
-        let _empty_array2 = NSArray::<NSObject>::new();
-    }
-
-    #[test]
-    fn test_len() {
-        let empty_array = NSArray::<NSObject>::new();
-        assert_eq!(empty_array.len(), 0);
-
-        let array = sample_array(4);
-        assert_eq!(array.len(), 4);
-    }
-
-    #[test]
-    fn test_equality() {
-        let array1 = sample_array(3);
-        let array2 = sample_array(3);
-        assert_ne!(array1, array2);
-
-        let array1 = sample_number_array(3);
-        let array2 = sample_number_array(3);
-        assert_eq!(array1, array2);
-
-        let array1 = sample_number_array(3);
-        let array2 = sample_number_array(4);
-        assert_ne!(array1, array2);
-    }
-
-    #[test]
-    fn test_debug() {
-        let obj = sample_number_array(0);
-        assert_eq!(format!("{obj:?}"), "[]");
-        let obj = sample_number_array(3);
-        assert_eq!(format!("{obj:?}"), "[0, 1, 2]");
-    }
-
-    #[test]
-    fn test_get() {
-        let array = sample_array(4);
-        assert_ne!(array.get(0), array.get(3));
-        assert_eq!(array.first(), array.get(0));
-        assert_eq!(array.last(), array.get(3));
-
-        let empty_array = <NSArray<NSObject>>::new();
-        assert!(empty_array.first().is_none());
-        assert!(empty_array.last().is_none());
-    }
-
-    #[test]
-    fn test_retains_stored() {
-        let obj = Id::into_shared(__RcTestObject::new());
-        let mut expected = __ThreadTestData::current();
-
-        let input = [obj.clone(), obj.clone()];
-        expected.retain += 2;
-        expected.assert_current();
-
-        let array = NSArray::from_slice(&input);
-        expected.retain += 2;
-        expected.assert_current();
-
-        let _obj = array.first().unwrap();
-        expected.assert_current();
-
-        drop(array);
-        expected.release += 2;
-        expected.assert_current();
-
-        let array = NSArray::from_vec(Vec::from(input));
-        expected.retain += 2;
-        expected.release += 2;
-        expected.assert_current();
-
-        let _obj = array.get(0).unwrap();
-        let _obj = array.get(1).unwrap();
-        assert!(array.get(2).is_none());
-        expected.assert_current();
-
-        drop(array);
-        expected.release += 2;
-        expected.assert_current();
-
-        drop(obj);
-        expected.release += 1;
-        expected.dealloc += 1;
-        expected.assert_current();
-    }
-
-    #[test]
-    fn test_nscopying_uses_retain() {
-        let obj = Id::into_shared(__RcTestObject::new());
-        let array = NSArray::from_slice(&[obj]);
-        let mut expected = __ThreadTestData::current();
-
-        let _copy = array.copy();
-        expected.assert_current();
-
-        let _copy = array.mutable_copy();
-        expected.retain += 1;
-        expected.assert_current();
-    }
-
-    #[test]
-    #[cfg_attr(
-        feature = "apple",
-        ignore = "this works differently on different framework versions"
-    )]
-    fn test_iter_no_retain() {
-        let obj = Id::into_shared(__RcTestObject::new());
-        let array = NSArray::from_slice(&[obj]);
-        let mut expected = __ThreadTestData::current();
-
-        let iter = array.iter();
-        expected.retain += 0;
-        expected.assert_current();
-
-        assert_eq!(iter.count(), 1);
-        expected.autorelease += 0;
-        expected.assert_current();
-
-        let iter = array.iter_fast();
-        assert_eq!(iter.count(), 1);
-        expected.assert_current();
-    }
-
-    #[test]
-    fn test_iter() {
-        let array = sample_array(4);
-
-        assert_eq!(array.iter().count(), 4);
-        assert!(array
-            .iter()
-            .enumerate()
-            .all(|(i, obj)| Some(obj) == array.get(i)));
-    }
-
-    #[test]
-    fn test_objects_in_range() {
-        let array = sample_array(4);
-
-        let middle_objs = array.objects_in_range(1..3).unwrap();
-        assert_eq!(middle_objs.len(), 2);
-        assert_eq!(middle_objs[0], array.get(1).unwrap());
-        assert_eq!(middle_objs[1], array.get(2).unwrap());
-
-        let empty_objs = array.objects_in_range(1..1).unwrap();
-        assert!(empty_objs.is_empty());
-
-        let all_objs = array.objects_in_range(0..4).unwrap();
-        assert_eq!(all_objs.len(), 4);
-    }
-
-    #[test]
-    fn test_into_vec() {
-        let array = sample_array(4);
-
-        let vec = NSArray::into_vec(array);
-        assert_eq!(vec.len(), 4);
-    }
-
-    #[test]
-    fn test_generic_ownership_traits() {
-        fn assert_partialeq<T: PartialEq>() {}
-
-        assert_partialeq::<NSArray<NSString, Shared>>();
-        assert_partialeq::<NSArray<NSString, Owned>>();
-
-        fn test_ownership_implies_partialeq<O: Ownership>() {
-            assert_partialeq::<NSArray<NSString, O>>();
-        }
-
-        test_ownership_implies_partialeq::<Shared>();
-        test_ownership_implies_partialeq::<Owned>();
     }
 }

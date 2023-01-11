@@ -1,10 +1,11 @@
+#![cfg(feature = "Foundation_NSUUID")]
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::rc::{DefaultId, Id, Shared};
-use objc2::ClassType;
+use objc2::rc::DefaultId;
 
-use crate::Foundation::{NSCopying, NSString, UuidBytes, NSUUID};
+use crate::common::*;
+use crate::Foundation::{self, UuidBytes, NSUUID};
 
 // SAFETY: `NSUUID` is immutable.
 unsafe impl Sync for NSUUID {}
@@ -24,7 +25,8 @@ impl NSUUID {
         Self::initWithUUIDBytes(Self::alloc(), &bytes)
     }
 
-    pub fn from_string(string: &NSString) -> Option<Id<Self, Shared>> {
+    #[cfg(feature = "Foundation_NSString")]
+    pub fn from_string(string: &Foundation::NSString) -> Option<Id<Self, Shared>> {
         Self::initWithUUIDString(Self::alloc(), string)
     }
 
@@ -35,12 +37,14 @@ impl NSUUID {
     }
 }
 
+#[cfg(feature = "Foundation_NSString")]
 impl fmt::Display for NSUUID {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(&self.UUIDString(), f)
     }
 }
 
+#[cfg(feature = "Foundation_NSString")]
 impl fmt::Debug for NSUUID {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // The `uuid` crate does `Debug` and `Display` equally, and so do we
@@ -80,61 +84,5 @@ impl DefaultId for NSUUID {
     type Ownership = Shared;
     fn default_id() -> Id<Self, Self::Ownership> {
         Self::nil()
-    }
-}
-
-unsafe impl NSCopying for NSUUID {
-    type Ownership = Shared;
-    type Output = NSUUID;
-}
-
-impl alloc::borrow::ToOwned for NSUUID {
-    type Owned = Id<NSUUID, Shared>;
-    fn to_owned(&self) -> Self::Owned {
-        self.copy()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use alloc::format;
-
-    use super::*;
-
-    #[test]
-    fn test_new() {
-        let uuid1 = NSUUID::UUID();
-        let uuid2 = NSUUID::UUID();
-        assert_ne!(uuid1, uuid2, "Statistically very unlikely");
-    }
-
-    #[test]
-    fn test_bytes() {
-        let uuid = NSUUID::from_bytes([10; 16]);
-        assert_eq!(uuid.as_bytes(), [10; 16]);
-    }
-
-    #[test]
-    fn display_debug() {
-        let uuid = NSUUID::from_bytes([10; 16]);
-        let expected = "0A0A0A0A-0A0A-0A0A-0A0A-0A0A0A0A0A0A";
-        assert_eq!(format!("{uuid}"), expected);
-        assert_eq!(format!("{uuid:?}"), expected);
-    }
-
-    // #[test]
-    // fn test_compare() {
-    //     let uuid1 = NSUUID::from_bytes([10; 16]);
-    //     let uuid2 = NSUUID::from_bytes([9; 16]);
-    //     assert!(uuid1 > uuid2);
-    // }
-
-    #[cfg(feature = "uuid")]
-    #[test]
-    fn test_convert_roundtrip() {
-        let nsuuid1 = NSUUID::UUID();
-        let uuid = nsuuid1.as_uuid();
-        let nsuuid2 = NSUUID::from_uuid(uuid);
-        assert_eq!(nsuuid1, nsuuid2);
     }
 }

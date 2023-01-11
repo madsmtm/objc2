@@ -1,3 +1,4 @@
+#![cfg(feature = "Foundation_NSMutableArray")]
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::ffi::c_void;
@@ -129,26 +130,6 @@ extern_methods!(
     }
 );
 
-// Copying only possible when ItemOwnership = Shared
-
-/// This is implemented as a shallow copy.
-unsafe impl<T: Message> NSCopying for NSMutableArray<T, Shared> {
-    type Ownership = Shared;
-    type Output = NSArray<T, Shared>;
-}
-
-/// This is implemented as a shallow copy.
-unsafe impl<T: Message> NSMutableCopying for NSMutableArray<T, Shared> {
-    type Output = NSMutableArray<T, Shared>;
-}
-
-impl<T: Message> alloc::borrow::ToOwned for NSMutableArray<T, Shared> {
-    type Owned = Id<NSMutableArray<T, Shared>, Owned>;
-    fn to_owned(&self) -> Self::Owned {
-        self.mutable_copy()
-    }
-}
-
 unsafe impl<T: Message, O: Ownership> NSFastEnumeration2 for NSMutableArray<T, O> {
     type Item = T;
 }
@@ -189,89 +170,5 @@ impl<T: Message, O: Ownership> DefaultId for NSMutableArray<T, O> {
     #[inline]
     fn default_id() -> Id<Self, Self::Ownership> {
         Self::new()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use alloc::vec;
-
-    use super::*;
-    use crate::Foundation::NSString;
-    use objc2::rc::{__RcTestObject, __ThreadTestData, autoreleasepool};
-
-    #[test]
-    fn test_adding() {
-        let mut array = NSMutableArray::new();
-        let obj1 = __RcTestObject::new();
-        let obj2 = __RcTestObject::new();
-        let mut expected = __ThreadTestData::current();
-
-        array.push(obj1);
-        expected.retain += 1;
-        expected.release += 1;
-        expected.assert_current();
-        assert_eq!(array.len(), 1);
-        assert_eq!(array.get(0), array.get(0));
-
-        array.insert(0, obj2);
-        expected.retain += 1;
-        expected.release += 1;
-        expected.assert_current();
-        assert_eq!(array.len(), 2);
-    }
-
-    #[test]
-    fn test_replace() {
-        let mut array = NSMutableArray::new();
-        let obj1 = __RcTestObject::new();
-        let obj2 = __RcTestObject::new();
-        array.push(obj1);
-        let mut expected = __ThreadTestData::current();
-
-        let old_obj = array.replace(0, obj2);
-        expected.retain += 2;
-        expected.release += 2;
-        expected.assert_current();
-        assert_ne!(&*old_obj, array.get(0).unwrap());
-    }
-
-    #[test]
-    fn test_remove() {
-        let mut array = NSMutableArray::new();
-        for _ in 0..4 {
-            array.push(__RcTestObject::new());
-        }
-        let mut expected = __ThreadTestData::current();
-
-        let _obj = array.remove(1);
-        expected.retain += 1;
-        expected.release += 1;
-        expected.assert_current();
-        assert_eq!(array.len(), 3);
-
-        let _obj = array.pop();
-        expected.retain += 1;
-        expected.release += 1;
-        expected.assert_current();
-        assert_eq!(array.len(), 2);
-
-        array.removeAllObjects();
-        expected.release += 2;
-        expected.dealloc += 2;
-        expected.assert_current();
-        assert_eq!(array.len(), 0);
-    }
-
-    #[test]
-    fn test_sort() {
-        let strings = vec![NSString::from_str("hello"), NSString::from_str("hi")];
-        let mut strings = NSMutableArray::from_vec(strings);
-
-        autoreleasepool(|pool| {
-            strings.sort_by(|s1, s2| s1.as_str(pool).len().cmp(&s2.as_str(pool).len()));
-            assert_eq!(strings[0].as_str(pool), "hi");
-            assert_eq!(strings[1].as_str(pool), "hello");
-        });
     }
 }
