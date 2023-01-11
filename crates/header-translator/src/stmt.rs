@@ -1099,6 +1099,31 @@ impl fmt::Display for Stmt {
                 writeln!(f)?;
                 writeln!(f, "    unsafe impl ProtocolType for {} {{", id.name)?;
                 for method in methods {
+                    // Use a set to deduplicate features, and to have them in
+                    // a consistent order
+                    let mut features = BTreeSet::new();
+                    method.visit_required_types(|item| {
+                        if let Some(feature) = item.feature() {
+                            features.insert(format!("feature = \"{feature}\""));
+                        }
+                    });
+                    match features.len() {
+                        0 => {}
+                        1 => {
+                            writeln!(f, "        #[cfg({})]", features.first().unwrap())?;
+                        }
+                        _ => {
+                            writeln!(
+                                f,
+                                "        #[cfg(all({}))]",
+                                features
+                                    .iter()
+                                    .map(|s| &**s)
+                                    .collect::<Vec<&str>>()
+                                    .join(",")
+                            )?;
+                        }
+                    }
                     writeln!(f, "{method}")?;
                 }
                 writeln!(f, "    }}")?;
