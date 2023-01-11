@@ -35,7 +35,10 @@ impl<N: ToOptionString> ItemIdentifier<N> {
     pub fn with_name(name: N, entity: &Entity<'_>, context: &Context<'_>) -> Self {
         let (mut library_name, mut file_name) = context
             .get_library_and_file_name(entity)
-            .expect("ItemIdentifier get library and file");
+            .unwrap_or_else(|| {
+                warn!(?entity, "ItemIdentifier from unknown header");
+                ("Unknown".to_string(), None)
+            });
 
         // TODO: Get rid of this hack
         if library_name == "CoreGraphics" {

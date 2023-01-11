@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Added the `CoreAnimation` framework.
+* Updated the SDK version from XCode `14.0.1` to `14.2`.
+  - See differences [here](https://sdk.news/macOS-13.0/).
 
 
 ## icrate 0.0.1 - 2022-12-24
