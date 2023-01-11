@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 use std::fs;
 use std::io;
@@ -52,13 +52,41 @@ impl fmt::Display for Library {
         writeln!(f)?;
 
         for (name, file) in &self.files {
-            let mut iter = file.declared_types();
-            if let Some(item) = iter.next() {
-                writeln!(f, "pub use self::__{name}::{{{item}")?;
-                for item in iter {
-                    writeln!(f, ", {item}")?;
+            for stmt in &file.stmts {
+                let mut iter = stmt.declared_types();
+                if let Some(item) = iter.next() {
+                    // Use a set to deduplicate features, and to have them in
+                    // a consistent order
+                    let mut features = BTreeSet::new();
+                    stmt.visit_required_types(|item| {
+                        if let Some(feature) = item.feature() {
+                            features.insert(format!("feature = \"{feature}\""));
+                        }
+                    });
+                    match features.len() {
+                        0 => {}
+                        1 => {
+                            writeln!(f, "#[cfg({})]", features.first().unwrap())?;
+                        }
+                        _ => {
+                            writeln!(
+                                f,
+                                "#[cfg(all({}))]",
+                                features
+                                    .iter()
+                                    .map(|s| &**s)
+                                    .collect::<Vec<&str>>()
+                                    .join(",")
+                            )?;
+                        }
+                    }
+
+                    writeln!(f, "pub use self::__{name}::{{{item}")?;
+                    for item in iter {
+                        writeln!(f, ", {item}")?;
+                    }
+                    writeln!(f, "}};")?;
                 }
-                writeln!(f, "}};")?;
             }
         }
 

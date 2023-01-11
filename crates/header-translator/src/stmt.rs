@@ -828,6 +828,47 @@ impl Stmt {
             panic!("statements were not equal:\n{self:#?}\n{other:#?}");
         }
     }
+
+    pub fn visit_required_types(&self, mut f: impl FnMut(&ItemIdentifier)) {
+        match self {
+            Stmt::FnDecl {
+                arguments,
+                result_type,
+                ..
+            } => {
+                for (_, arg) in arguments {
+                    arg.visit_required_types(&mut f);
+                }
+
+                result_type.visit_required_types(&mut f);
+            }
+            _ => {}
+        }
+    }
+
+    pub(crate) fn declared_types(&self) -> impl Iterator<Item = &str> {
+        match self {
+            Stmt::ClassDecl { id, .. } => Some(&*id.name),
+            Stmt::Methods { .. } => None,
+            Stmt::ProtocolDecl { id, .. } => Some(&*id.name),
+            Stmt::ProtocolImpl { .. } => None,
+            Stmt::StructDecl { id, .. } => Some(&*id.name),
+            Stmt::EnumDecl { id, .. } => id.name.as_deref(),
+            Stmt::VarDecl { id, .. } => Some(&*id.name),
+            Stmt::FnDecl { id, body, .. } if body.is_none() => Some(&*id.name),
+            // TODO
+            Stmt::FnDecl { .. } => None,
+            Stmt::AliasDecl { id, .. } => Some(&*id.name),
+        }
+        .into_iter()
+        .chain({
+            if let Stmt::EnumDecl { variants, .. } = self {
+                variants.iter().map(|(name, _)| &**name).collect()
+            } else {
+                vec![]
+            }
+        })
+    }
 }
 
 impl fmt::Display for Stmt {
@@ -1116,36 +1157,58 @@ impl fmt::Display for Stmt {
                 id,
                 arguments,
                 result_type,
-                body: None,
+                body,
                 safe,
             } => {
+                // Use a set to deduplicate features, and to have them in
+                // a consistent order
+                let mut features = BTreeSet::new();
+                self.visit_required_types(|item| {
+                    if let Some(feature) = item.feature() {
+                        features.insert(format!("feature = \"{feature}\""));
+                    }
+                });
+
+                if body.is_some() {
+                    writeln!(f, "inline_fn!(")?;
+                } else {
+                    writeln!(f, "extern_fn!(")?;
+                }
+
+                match features.len() {
+                    0 => {}
+                    1 => {
+                        writeln!(f, "    #[cfg({})]", features.first().unwrap())?;
+                    }
+                    _ => {
+                        writeln!(
+                            f,
+                            "    #[cfg(all({}))]",
+                            features
+                                .iter()
+                                .map(|s| &**s)
+                                .collect::<Vec<&str>>()
+                                .join(",")
+                        )?;
+                    }
+                }
+
                 let unsafe_ = if *safe { "" } else { " unsafe" };
 
-                writeln!(f, "extern_fn!(")?;
                 write!(f, "    pub{unsafe_} fn {}(", id.name)?;
                 for (param, arg_ty) in arguments {
                     write!(f, "{}: {arg_ty},", handle_reserved(param))?;
                 }
-                writeln!(f, "){result_type};")?;
-                writeln!(f, ");")?;
-            }
-            Self::FnDecl {
-                id,
-                arguments,
-                result_type,
-                body: Some(_body),
-                safe,
-            } => {
-                let unsafe_ = if *safe { "" } else { " unsafe" };
+                write!(f, "){result_type}")?;
 
-                writeln!(f, "inline_fn!(")?;
-                write!(f, "    pub{unsafe_} fn {}(", id.name)?;
-                for (param, arg_ty) in arguments {
-                    write!(f, "{}: {arg_ty},", handle_reserved(param))?;
+                if body.is_some() {
+                    writeln!(f, "{{")?;
+                    writeln!(f, "        todo!()")?;
+                    writeln!(f, "    }}")?;
+                } else {
+                    writeln!(f, ";")?;
                 }
-                writeln!(f, "){result_type} {{")?;
-                writeln!(f, "        todo!()")?;
-                writeln!(f, "    }}")?;
+
                 writeln!(f, ");")?;
             }
             Self::AliasDecl { id, ty, kind } => {
