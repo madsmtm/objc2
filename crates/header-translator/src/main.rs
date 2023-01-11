@@ -135,6 +135,7 @@ fn main() -> Result<(), BoxError> {
     for (library_name, files) in &final_result.libraries {
         let _span = info_span!("writing", library_name).entered();
         let output_path = crate_src.join("generated").join(library_name);
+        std::fs::create_dir_all(&output_path)?;
         files.output(&output_path).unwrap();
     }
 
