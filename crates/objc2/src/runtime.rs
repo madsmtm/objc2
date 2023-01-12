@@ -197,6 +197,14 @@ impl Sel {
         let name = unsafe { CStr::from_ptr(ptr) };
         str::from_utf8(name.to_bytes()).unwrap()
     }
+
+    pub(crate) fn number_of_arguments(self) -> usize {
+        self.name()
+            .as_bytes()
+            .iter()
+            .filter(|&&b| b == b':')
+            .count()
+    }
 }
 
 // `ffi::sel_isEqual` is just pointer comparison on Apple (the documentation

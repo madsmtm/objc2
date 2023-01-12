@@ -229,10 +229,6 @@ method_decl_impl!(A, B, C, D, E, F, G, H, I, J);
 method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K);
 method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
 
-fn count_args(sel: Sel) -> usize {
-    sel.name().chars().filter(|&c| c == ':').count()
-}
-
 fn method_type_encoding(ret: &Encoding, args: &[Encoding]) -> CString {
     // First two arguments are always self and the selector
     let mut types = format!("{ret}{}{}", <*mut Object>::ENCODING, Sel::ENCODING);
@@ -360,7 +356,7 @@ impl ClassBuilder {
         let enc_args = F::Args::ENCODINGS;
         let enc_ret = F::Ret::ENCODING;
 
-        let sel_args = count_args(sel);
+        let sel_args = sel.number_of_arguments();
         assert_eq!(
             sel_args,
             enc_args.len(),
@@ -417,7 +413,7 @@ impl ClassBuilder {
         let enc_args = F::Args::ENCODINGS;
         let enc_ret = F::Ret::ENCODING;
 
-        let sel_args = count_args(sel);
+        let sel_args = sel.number_of_arguments();
         assert_eq!(
             sel_args,
             enc_args.len(),
@@ -575,7 +571,7 @@ impl ProtocolBuilder {
         Ret: Encode,
     {
         let encs = Args::ENCODINGS;
-        let sel_args = count_args(sel);
+        let sel_args = sel.number_of_arguments();
         assert_eq!(
             sel_args,
             encs.len(),

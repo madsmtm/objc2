@@ -106,6 +106,11 @@ pub(crate) fn verify_method_signature(
         return Err(Inner::MismatchedArgumentsCount(actual_count + remaining, actual_count).into());
     }
 
+    let expected_count = method.name().number_of_arguments();
+    if expected_count != actual_count {
+        return Err(Inner::MismatchedArgumentsCount(expected_count, actual_count).into());
+    }
+
     Ok(())
 }
 
