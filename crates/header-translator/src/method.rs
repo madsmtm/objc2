@@ -465,7 +465,8 @@ impl fmt::Display for Method {
             }
         }
         for (param, _qualifier, arg_ty) in &self.arguments {
-            write!(f, "{}: {arg_ty},", handle_reserved(param))?;
+            let param = heck::ToSnakeCase::to_snake_case(param.as_str());
+            write!(f, "{}: {arg_ty},", handle_reserved(param.as_str()))?;
         }
         write!(f, ")")?;
 

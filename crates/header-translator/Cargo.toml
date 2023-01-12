@@ -8,15 +8,7 @@ repository = "https://github.com/madsmtm/objc2"
 license = "Zlib OR Apache-2.0 OR MIT"
 
 [features]
-run = [
-    "clang",
-    "toml",
-    "serde",
-    "apple-sdk",
-    "tracing",
-    "tracing-subscriber",
-    "tracing-tree",
-]
+run = ["clang", "toml", "serde", "apple-sdk", "tracing", "tracing-subscriber", "tracing-tree"]
 
 [dependencies]
 clang = { version = "2.0", features = ["runtime", "clang_10_0"], optional = true }
@@ -27,6 +19,7 @@ tracing = { version = "0.1.37", default-features = false, features = ["std"], op
 tracing-subscriber = { version = "0.3.16", features = ["fmt"], optional = true }
 tracing-tree = { git = "https://github.com/madsmtm/tracing-tree.git", optional = true }
 proc-macro2 = "1.0.49"
+heck = "0.4.0"
 
 [[bin]]
 name = "header-translator"

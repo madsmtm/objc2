@@ -1062,7 +1062,8 @@ impl fmt::Display for Stmt {
                 writeln!(f, "extern_fn!(")?;
                 write!(f, "    pub{unsafe_} fn {name}(")?;
                 for (param, arg_ty) in arguments {
-                    write!(f, "{}: {arg_ty},", handle_reserved(param))?;
+                    let param = heck::ToSnakeCase::to_snake_case(param.as_str());
+                    write!(f, "{}: {arg_ty},", handle_reserved(param.as_str()))?;
                 }
                 writeln!(f, "){result_type};")?;
                 writeln!(f, ");")?;
