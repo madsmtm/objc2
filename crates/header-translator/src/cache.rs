@@ -29,7 +29,7 @@ impl ClassCache {
     fn all_methods_data(&self) -> impl Iterator<Item = (bool, &str)> {
         self.to_emit
             .iter()
-            .flat_map(|cache| cache.methods.iter().map(|m| (m.is_class, &*m.selector)))
+            .flat_map(|cache| cache.methods.iter().map(|m| m.id()))
     }
 }
 
@@ -147,9 +147,7 @@ impl<'a> Cache<'a> {
                                 let mut methods: Vec<_> = cache
                                     .methods
                                     .iter()
-                                    .filter(|method| {
-                                        !seen_methods.contains(&(method.is_class, &method.selector))
-                                    })
+                                    .filter(|method| !seen_methods.contains(&method.id()))
                                     .filter_map(|method| {
                                         method.clone().update(ClassData::get_method_data(
                                             data,

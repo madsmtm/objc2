@@ -1,6 +1,6 @@
 use std::fmt;
 
-use clang::{Entity, EntityKind, ObjCQualifiers};
+use clang::{Entity, EntityKind, ObjCAttributes, ObjCQualifiers};
 use tracing::span::EnteredSpan;
 
 use crate::availability::Availability;
@@ -9,7 +9,6 @@ use crate::context::Context;
 use crate::id::ItemIdentifier;
 use crate::immediate_children;
 use crate::objc2_utils::in_selector_family;
-use crate::property::PartialProperty;
 use crate::rust_type::Ty;
 use crate::unexposed_macro::UnexposedMacro;
 
@@ -148,19 +147,24 @@ impl MemoryManagement {
 #[allow(dead_code)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Method {
-    pub selector: String,
+    selector: String,
     pub fn_name: String,
-    pub availability: Availability,
+    availability: Availability,
     pub is_class: bool,
-    pub is_optional_protocol: bool,
-    pub memory_management: MemoryManagement,
-    pub arguments: Vec<(String, Option<Qualifier>, Ty)>,
+    is_optional_protocol: bool,
+    memory_management: MemoryManagement,
+    arguments: Vec<(String, Option<Qualifier>, Ty)>,
     pub result_type: Ty,
-    pub safe: bool,
-    pub mutating: bool,
+    safe: bool,
+    mutating: bool,
 }
 
 impl Method {
+    /// Value that uniquely identifies the method in a class.
+    pub fn id(&self) -> (bool, &str) {
+        (self.is_class, &self.selector)
+    }
+
     /// Takes one of `EntityKind::ObjCInstanceMethodDecl` or
     /// `EntityKind::ObjCClassMethodDecl`.
     pub fn partial(entity: Entity<'_>) -> PartialMethod<'_> {
@@ -420,6 +424,135 @@ impl<'tu> PartialMethod<'tu> {
                 mutating: data.mutating,
             },
         ))
+    }
+}
+
+#[derive(Debug)]
+pub struct PartialProperty<'tu> {
+    pub entity: Entity<'tu>,
+    pub name: String,
+    pub getter_name: String,
+    pub setter_name: Option<String>,
+    pub is_class: bool,
+    pub attributes: Option<ObjCAttributes>,
+    pub _span: EnteredSpan,
+}
+
+impl PartialProperty<'_> {
+    pub fn parse(
+        self,
+        getter_data: MethodData,
+        setter_data: Option<MethodData>,
+        context: &Context<'_>,
+    ) -> (Option<Method>, Option<Method>) {
+        let Self {
+            entity,
+            name,
+            getter_name,
+            setter_name,
+            is_class,
+            attributes,
+            _span,
+        } = self;
+
+        // Early return if both getter and setter are skipped
+        //
+        // To reduce warnings.
+        if getter_data.skipped && setter_data.map(|data| data.skipped).unwrap_or(true) {
+            return (None, None);
+        }
+
+        let availability = Availability::parse(
+            entity
+                .get_platform_availability()
+                .expect("method availability"),
+        );
+
+        let is_copy = attributes.map(|a| a.copy).unwrap_or(false);
+
+        let mut memory_management = MemoryManagement::Normal;
+
+        immediate_children(&entity, |entity, _span| match entity.get_kind() {
+            EntityKind::ObjCClassRef
+            | EntityKind::ObjCProtocolRef
+            | EntityKind::TypeRef
+            | EntityKind::ParmDecl => {
+                // Ignore
+            }
+            EntityKind::ObjCReturnsInnerPointer => {
+                if memory_management != MemoryManagement::Normal {
+                    error!(?memory_management, "unexpected ObjCReturnsInnerPointer")
+                }
+                memory_management = MemoryManagement::ReturnsInnerPointer;
+            }
+            EntityKind::ObjCInstanceMethodDecl => {
+                warn!("method in property");
+            }
+            EntityKind::IbOutletAttr => {
+                // TODO: What is this?
+            }
+            EntityKind::UnexposedAttr => {
+                if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                    warn!(?macro_, "unknown macro");
+                }
+            }
+            _ => error!("unknown"),
+        });
+
+        let qualifier = entity.get_objc_qualifiers().map(Qualifier::parse);
+        if qualifier.is_some() {
+            error!("properties do not support qualifiers");
+        }
+
+        let getter = if !getter_data.skipped {
+            let ty = Ty::parse_property_return(
+                entity.get_type().expect("property type"),
+                is_copy,
+                context,
+            );
+
+            Some(Method {
+                selector: getter_name.clone(),
+                fn_name: getter_name,
+                availability: availability.clone(),
+                is_class,
+                is_optional_protocol: entity.is_objc_optional(),
+                memory_management,
+                arguments: Vec::new(),
+                result_type: ty,
+                safe: !getter_data.unsafe_,
+                mutating: getter_data.mutating,
+            })
+        } else {
+            None
+        };
+
+        let setter = if let Some(setter_name) = setter_name {
+            let setter_data = setter_data.expect("setter_data must be present if setter_name was");
+            if !setter_data.skipped {
+                let ty =
+                    Ty::parse_property(entity.get_type().expect("property type"), is_copy, context);
+
+                Some(Method {
+                    selector: setter_name.clone() + ":",
+                    fn_name: setter_name,
+                    availability,
+                    is_class,
+                    is_optional_protocol: entity.is_objc_optional(),
+                    memory_management,
+                    arguments: vec![(name, None, ty)],
+                    result_type: Ty::VOID_RESULT,
+                    safe: !setter_data.unsafe_,
+                    mutating: setter_data.mutating,
+                })
+            } else {
+                None
+            }
+        } else {
+            None
+        };
+
+        (getter, setter)
     }
 }
 
