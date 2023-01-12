@@ -1243,12 +1243,12 @@ mod tests {
         let res: i32 = unsafe {
             MessageReceiver::send_message(class, sel!(test::test::), (1i32, 2i32, 3i32, 4i32))
         };
-        assert_eq!(res, 1 + 2 + 3 + 4);
+        assert_eq!(res, 10);
 
         let obj = test_utils::custom_object();
         let res: i32 = unsafe {
             MessageReceiver::send_message(&obj, sel!(test::test::), (1i32, 2i32, 3i32, 4i32))
         };
-        assert_eq!(res, 1 * 2 * 3 * 4);
+        assert_eq!(res, 24);
     }
 }

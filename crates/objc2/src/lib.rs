@@ -207,7 +207,9 @@ pub use objc2_proc_macros::__hash_idents;
 #[macro_export]
 macro_rules! __hash_idents {
     // Noop; used to make our other macros a bit easier to read
-    ($($x:tt)*) => {$($x)*};
+    ($($x:tt)*) => {
+        ()
+    };
 }
 
 #[doc(hidden)]

@@ -8,7 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Support `#[cfg(...)]` attributes in `extern_class!` macro.
-* Added support for selectors similar to `abc::def:` in the `sel!` macro.
+* Added support for selectors with multiple colons like `abc::` in the `sel!`,
+  `extern_class!`, `extern_protocol!` and `declare_class!` macros.
 
 ### Changed
 * **BREAKING**: Using the automatic `NSError**`-to-`Result` functionality in

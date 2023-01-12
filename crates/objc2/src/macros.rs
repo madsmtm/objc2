@@ -219,15 +219,17 @@ macro_rules! sel {
     ($($sel:ident :)*) => ({
         $crate::__sel_inner!(
             $crate::__sel_data!($($sel :)*),
-            $crate::__hash_idents!($($sel)*)
+            $crate::__hash_idents!($($sel :)*)
         )
     });
     ($($sel:tt)*) => {
-        $crate::__sel_helper! {
-            @()
-            @()
-            $($sel)*
-        }
+        $crate::__sel_inner!(
+            $crate::__sel_helper! {
+                @()
+                $($sel)*
+            },
+            $crate::__hash_idents!($($sel)*)
+        )
     };
 }
 
@@ -240,35 +242,27 @@ macro_rules! __sel_helper {
     // Base-case
     {
         @($($parsed_sel:tt)*)
-        @($($parsed_idents:tt)*)
     } => ({
-        $crate::__sel_inner!(
-            $crate::__sel_data!($($parsed_sel)*),
-            $crate::__hash_idents!($($parsed_idents)*)
-        )
+        $crate::__sel_data!($($parsed_sel)*)
     });
     // Parse identitifer + colon token
     {
         @($($parsed_sel:tt)*)
-        @($($parsed_idents:tt)*)
         $($ident:ident)? : $($rest:tt)*
     } => {
         $crate::__sel_helper! {
             @($($parsed_sel)* $($ident)? :)
-            @($($parsed_idents)* $($ident)?)
             $($rest)*
         }
     };
     // Parse identitifer + path separator token
     {
         @($($parsed_sel:tt)*)
-        @($($parsed_idents:tt)*)
         $($ident:ident)? :: $($rest:tt)*
     } => {
         $crate::__sel_helper! {
             // Notice space between these
             @($($parsed_sel)* $($ident)? : :)
-            @($($parsed_idents)* $($ident)?)
             $($rest)*
         }
     };
@@ -1222,12 +1216,12 @@ macro_rules! __msg_send_id_helper {
         @($fn:ident)
         @($obj:expr)
         @($retain_semantics:ident)
-        @($sel_first:ident $(: $($sel_rest:ident :)*)?)
+        @($($selector:tt)*)
         @($($argument:expr,)*)
     } => ({
         <$crate::__macro_helpers::$retain_semantics as $crate::__macro_helpers::MsgSendId<_, _>>::$fn::<_, _>(
             $obj,
-            $crate::sel!($sel_first $(: $($sel_rest :)*)?),
+            $crate::sel!($($selector)*),
             ($($argument,)*),
         )
     });
@@ -1235,11 +1229,13 @@ macro_rules! __msg_send_id_helper {
         @($fn:ident)
         @($obj:expr)
         @()
-        @($sel_first:ident $(: $($sel_rest:ident :)*)?)
+        @($($selector:tt)*)
         @($($argument:expr,)*)
     } => ({
         // Don't use `sel!`, otherwise we'd end up with defining this data twice.
-        const __SELECTOR_DATA: &$crate::__macro_helpers::str = $crate::__sel_data!($sel_first $(: $($sel_rest :)*)?);
+        const __SELECTOR_DATA: &$crate::__macro_helpers::str = $crate::__sel_data!(
+            $($selector)*
+        );
         let result;
         result = <$crate::__macro_helpers::RetainSemantics<{
             $crate::__macro_helpers::retain_semantics(__SELECTOR_DATA)
@@ -1247,7 +1243,7 @@ macro_rules! __msg_send_id_helper {
             $obj,
             $crate::__sel_inner!(
                 __SELECTOR_DATA,
-                $crate::__hash_idents!($sel_first $($($sel_rest)*)?)
+                $crate::__hash_idents!($($selector)*)
             ),
             ($($argument,)*),
         );

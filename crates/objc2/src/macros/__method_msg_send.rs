@@ -1,4 +1,7 @@
 /// Forward selector and arguments to `MessageReceiver::send_message[_error]`.
+///
+/// Note: We can't forward to `msg_send!` since that doesn't support selectors
+/// with space between.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __method_msg_send {
@@ -22,7 +25,7 @@ macro_rules! __method_msg_send {
     // Parse each argument-selector pair
     (
         ($receiver:expr)
-        ($sel:ident : $($sel_rest:tt)*)
+        ($($sel:ident)? : $($sel_rest:tt)*)
         ($arg:ident : $_arg_ty:ty $(, $($args_rest:tt)*)?)
 
         ($($sel_parsed:tt)*)
@@ -33,8 +36,26 @@ macro_rules! __method_msg_send {
             ($($sel_rest)*)
             ($($($args_rest)*)?)
 
-            ($($sel_parsed)* $sel :)
+            ($($sel_parsed)* $($sel)? :)
             ($($arg_parsed)* $arg,)
+        }
+    };
+    // Handle path separator token
+    (
+        ($receiver:expr)
+        ($($sel:ident)? :: $($sel_rest:tt)*)
+        ($arg1:ident : $_arg_ty1:ty, $arg2:ident : $_arg_ty2:ty $(, $($args_rest:tt)*)?)
+
+        ($($sel_parsed:tt)*)
+        ($($arg_parsed:tt)*)
+    ) => {
+        $crate::__method_msg_send! {
+            ($receiver)
+            ($($sel_rest)*)
+            ($($($args_rest)*)?)
+
+            ($($sel_parsed)* $($sel)? : :)
+            ($($arg_parsed)* $arg1, $arg2,)
         }
     };
 
@@ -152,7 +173,7 @@ macro_rules! __method_msg_send_id {
     // Parse each argument-selector pair
     (
         ($receiver:expr)
-        ($sel:ident : $($sel_rest:tt)*)
+        ($($sel:ident)? : $($sel_rest:tt)*)
         ($arg:ident : $_arg_ty:ty $(, $($args_rest:tt)*)?)
 
         ($($sel_parsed:tt)*)
@@ -164,8 +185,28 @@ macro_rules! __method_msg_send_id {
             ($($sel_rest)*)
             ($($($args_rest)*)?)
 
-            ($($sel_parsed)* $sel :)
+            ($($sel_parsed)* $($sel)? :)
             ($($arg_parsed)* $arg,)
+            ($($retain_semantics)?)
+        }
+    };
+    // Handle path separator token
+    (
+        ($receiver:expr)
+        ($($sel:ident)? :: $($sel_rest:tt)*)
+        ($arg1:ident : $_arg_ty1:ty, $arg2:ident : $_arg_ty2:ty $(, $($args_rest:tt)*)?)
+
+        ($($sel_parsed:tt)*)
+        ($($arg_parsed:tt)*)
+        ($($retain_semantics:ident)?)
+    ) => {
+        $crate::__method_msg_send_id! {
+            ($receiver)
+            ($($sel_rest)*)
+            ($($($args_rest)*)?)
+
+            ($($sel_parsed)* $($sel)? : :)
+            ($($arg_parsed)* $arg1, $arg2,)
             ($($retain_semantics)?)
         }
     };
