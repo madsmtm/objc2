@@ -1,0 +1,244 @@
+/// Forward selector and arguments to `MessageReceiver::send_message[_error]`.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __method_msg_send {
+    // Selector with no arguments
+    (
+        ($receiver:expr)
+        ($sel:ident)
+        ()
+
+        ()
+        ()
+    ) => {
+        $crate::__msg_send_helper! {
+            @(send_message)
+            @($receiver)
+            @($sel)
+            @()
+        }
+    };
+
+    // Parse each argument-selector pair
+    (
+        ($receiver:expr)
+        ($sel:ident : $($sel_rest:tt)*)
+        ($arg:ident : $_arg_ty:ty $(, $($args_rest:tt)*)?)
+
+        ($($sel_parsed:tt)*)
+        ($($arg_parsed:tt)*)
+    ) => {
+        $crate::__method_msg_send! {
+            ($receiver)
+            ($($sel_rest)*)
+            ($($($args_rest)*)?)
+
+            ($($sel_parsed)* $sel :)
+            ($($arg_parsed)* $arg,)
+        }
+    };
+
+    // Normal return
+    (
+        ($receiver:expr)
+        ()
+        ()
+
+        // Notice the "+" here; we must make sure we actually _did_ parse
+        // a selector, and haven't just gotten an empty `#[method()]`.
+        ($($sel_parsed:tt)+)
+        ($($arg_parsed:tt)*)
+    ) => {
+        $crate::__msg_send_helper! {
+            @(send_message)
+            @($receiver)
+            @($($sel_parsed)*)
+            @($($arg_parsed)*)
+        }
+    };
+
+    // Error return
+    (
+        ($receiver:expr)
+        // `sel:_` without a corresponding argument
+        ($sel:ident : _)
+        ()
+
+        ($($sel_parsed:tt)*)
+        ($($arg_parsed:tt)*)
+    ) => {
+        $crate::__msg_send_helper! {
+            // Use error method
+            @(__send_message_error)
+            @($receiver)
+            @($($sel_parsed)* $sel :)
+            @($($arg_parsed)*)
+        }
+    };
+
+    // Variadic method
+    (
+        ($receiver:expr)
+        ($($sel:ident : _)?)
+        ($($arg:ident :)? ...)
+
+        ($($sel_parsed:tt)*)
+        ($($arg_parsed:tt)*)
+    ) => ({
+        $crate::__macro_helpers::compile_error!(
+            "variadic methods are not yet supported"
+        )
+    });
+
+    // Mismatched selector/argument
+    (
+        ($receiver:expr)
+        ($($sel_rest:tt)*)
+        ($($args_rest:tt)*)
+
+        ($($sel_parsed:tt)*)
+        ($($arg_parsed:tt)*)
+    ) => ({
+        $crate::__macro_helpers::compile_error!(
+            "number of arguments in function and selector did not match"
+        )
+    });
+}
+
+/// Same as `__method_msg_send`, just for `msg_send_id!`.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __method_msg_send_id {
+    // Selector with no arguments
+    (
+        ($receiver:expr)
+        ($(@__retain_semantics $retain_semantics:ident)? $sel:ident)
+        ()
+
+        ()
+        ()
+        ()
+    ) => {
+        $crate::__msg_send_id_helper! {
+            @(send_message_id)
+            @($receiver)
+            @($($retain_semantics)?)
+            @($sel)
+            @()
+        }
+    };
+
+    // Parse retain semantics
+    (
+        ($receiver:expr)
+        (@__retain_semantics $retain_semantics:ident $($sel_rest:tt)*)
+        ($($args_rest:tt)*)
+
+        ($($sel_parsed:tt)*)
+        ($($arg_parsed:tt)*)
+        ()
+    ) => {
+        $crate::__method_msg_send_id! {
+            ($receiver)
+            ($($sel_rest)*)
+            ($($args_rest)*)
+
+            ($($sel_parsed)*)
+            ($($arg_parsed)*)
+            ($retain_semantics)
+        }
+    };
+
+    // Parse each argument-selector pair
+    (
+        ($receiver:expr)
+        ($sel:ident : $($sel_rest:tt)*)
+        ($arg:ident : $_arg_ty:ty $(, $($args_rest:tt)*)?)
+
+        ($($sel_parsed:tt)*)
+        ($($arg_parsed:tt)*)
+        ($($retain_semantics:ident)?)
+    ) => {
+        $crate::__method_msg_send_id! {
+            ($receiver)
+            ($($sel_rest)*)
+            ($($($args_rest)*)?)
+
+            ($($sel_parsed)* $sel :)
+            ($($arg_parsed)* $arg,)
+            ($($retain_semantics)?)
+        }
+    };
+
+    // Normal return
+    (
+        ($receiver:expr)
+        ()
+        ()
+
+        // Notice the "+" here; we must make sure we actually _did_ parse
+        // a selector, and haven't just gotten an empty `#[method()]`.
+        ($($sel_parsed:tt)+)
+        ($($arg_parsed:tt)*)
+        ($($retain_semantics:ident)?)
+    ) => {
+        $crate::__msg_send_id_helper! {
+            @(send_message_id)
+            @($receiver)
+            @($($retain_semantics)?)
+            @($($sel_parsed)*)
+            @($($arg_parsed)*)
+        }
+    };
+
+    // Error return
+    (
+        ($receiver:expr)
+        // `sel:_` without a corresponding argument
+        ($sel:ident : _)
+        ()
+
+        ($($sel_parsed:tt)*)
+        ($($arg_parsed:tt)*)
+        ($($retain_semantics:ident)?)
+    ) => {
+        $crate::__msg_send_id_helper! {
+            // Use error method
+            @(send_message_id_error)
+            @($receiver)
+            @($($retain_semantics)?)
+            @($($sel_parsed)* $sel :)
+            @($($arg_parsed)*)
+        }
+    };
+
+    // Variadic method
+    (
+        ($receiver:expr)
+        ($($sel:ident : _)?)
+        ($($arg:ident :)? ...)
+
+        ($($sel_parsed:tt)*)
+        ($($arg_parsed:tt)*)
+        ($($retain_semantics:ident)?)
+    ) => ({
+        $crate::__macro_helpers::compile_error!(
+            "variadic methods are not yet supported"
+        )
+    });
+
+    // Mismatched selector/argument
+    (
+        ($receiver:expr)
+        ($($sel_rest:tt)*)
+        ($($args_rest:tt)*)
+
+        ($($sel_parsed:tt)*)
+        ($($arg_parsed:tt)*)
+        ($($retain_semantics:ident)?)
+    ) => ({
+        $crate::__macro_helpers::compile_error!(
+            "number of arguments in function and selector did not match"
+        )
+    });
+}

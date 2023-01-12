@@ -1,4 +1,4 @@
-error: Number of arguments in function and selector did not match!
+error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
   | / extern_methods!(
@@ -9,9 +9,9 @@ error: Number of arguments in function and selector did not match!
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: Number of arguments in function and selector did not match!
+error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
   | / extern_methods!(
@@ -22,9 +22,9 @@ error: Number of arguments in function and selector did not match!
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: Number of arguments in function and selector did not match!
+error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
   | / extern_methods!(
@@ -35,9 +35,9 @@ error: Number of arguments in function and selector did not match!
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: Number of arguments in function and selector did not match!
+error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
   | / extern_methods!(
@@ -48,9 +48,9 @@ error: Number of arguments in function and selector did not match!
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: Number of arguments in function and selector did not match!
+error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
   | / extern_methods!(
@@ -61,9 +61,9 @@ error: Number of arguments in function and selector did not match!
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: Number of arguments in function and selector did not match!
+error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
   | / extern_methods!(
@@ -74,9 +74,9 @@ error: Number of arguments in function and selector did not match!
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: Number of arguments in function and selector did not match!
+error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
   | / extern_methods!(
@@ -87,9 +87,9 @@ error: Number of arguments in function and selector did not match!
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: Number of arguments in function and selector did not match!
+error: number of arguments in function and selector did not match
  --> ui/extern_methods_wrong_arguments.rs
   |
   | / extern_methods!(
@@ -100,4 +100,4 @@ error: Number of arguments in function and selector did not match!
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__collect_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

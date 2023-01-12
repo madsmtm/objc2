@@ -1,4 +1,5 @@
 mod __attribute_helpers;
+mod __method_msg_send;
 mod __msg_send_parse;
 mod __rewrite_self_arg;
 mod declare_class;
@@ -1154,20 +1155,6 @@ macro_rules! msg_send_id {
         result = <$crate::__macro_helpers::Init as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
         result
     });
-    [$obj:expr, @__retain_semantics $retain_semantics:ident $($selector_and_arguments:tt)+] => {
-        $crate::__msg_send_parse! {
-            ($crate::__msg_send_id_helper)
-            @(send_message_id_error)
-            @()
-            @()
-            @($($selector_and_arguments)+)
-            @(send_message_id)
-
-            @($obj)
-            @($retain_semantics)
-        }
-        // compile_error!(stringify!($($selector_and_arguments)*))
-    };
     [$obj:expr, $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
             ($crate::__msg_send_id_helper)

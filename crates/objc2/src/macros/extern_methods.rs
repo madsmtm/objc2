@@ -286,8 +286,10 @@ macro_rules! __extern_methods_method_out {
                         @($(#[$($m)*])*)
                         @($crate::__extern_methods_unsafe_method_body)
                         @(
-                            @($($kind)*)
-                            @($($args_start)*)
+                            @($crate::__extern_methods_get_receiver!(
+                                @($($kind)*)
+                                @($($args_start)*)
+                            ))
                             @($($args_rest)*)
                             // Macro will add:
                             // @(method attribute)
@@ -308,46 +310,42 @@ macro_rules! __extern_methods_method_out {
 macro_rules! __extern_methods_unsafe_method_body {
     // #[method(...)]
     {
-        @($kind:ident)
-        @($($args_start:tt)*)
+        @($receiver:expr)
         @($($args_rest:tt)*)
         @(#[method($($sel:tt)*)])
         @() // No `optional`
     } => {
-        $crate::__collect_msg_send! {
-            $crate::msg_send;
-            $crate::__extern_methods_get_receiver!(
-                @($kind)
-                @($($args_start)*)
-            );
-            ($($sel)*);
-            ($($args_rest)*);
+        $crate::__method_msg_send! {
+            ($receiver)
+            ($($sel)*)
+            ($($args_rest)*)
+
+            ()
+            ()
         }
     };
 
     // #[method_id(...)]
     {
-        @($kind:ident)
-        @($($args_start:tt)*)
+        @($receiver:expr)
         @($($args_rest:tt)*)
         @(#[method_id($($sel:tt)*)])
         @() // No `optional`
     } => {
-        $crate::__collect_msg_send! {
-            $crate::msg_send_id;
-            $crate::__extern_methods_get_receiver!(
-                @($kind)
-                @($($args_start)*)
-            );
-            ($($sel)*);
-            ($($args_rest)*);
+        $crate::__method_msg_send_id! {
+            ($receiver)
+            ($($sel)*)
+            ($($args_rest)*)
+
+            ()
+            ()
+            ()
         }
     };
 
     // #[optional]
     {
-        @($kind:ident)
-        @($($args_start:tt)*)
+        @($receiver:expr)
         @($($args_rest:tt)*)
         @($($m_method:tt)*)
         @($($m_optional:tt)*)
@@ -378,69 +376,4 @@ macro_rules! __extern_methods_get_receiver {
     } => {
         <Self as $crate::ClassType>::class()
     };
-}
-
-/// Zip selector and arguments, and forward to macro.
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __collect_msg_send {
-    // Selector with no arguments
-    (
-        $macro:path;
-        $obj:expr;
-        ($(@__retain_semantics $retain_semantics:ident )? $sel:ident);
-        ();
-    ) => {{
-        $macro![$obj, $(@__retain_semantics $retain_semantics )? $sel]
-    }};
-
-    // Base case
-    (
-        $macro:path;
-        $obj:expr;
-        ();
-        ();
-        $($output:tt)+
-    ) => {{
-        $macro![$obj, $($output)+]
-    }};
-
-    // Allow trailing `sel:_` without a corresponding argument (for errors)
-    (
-        $macro:path;
-        $obj:expr;
-        ($(@__retain_semantics $retain_semantics:ident )? $sel:ident: _);
-        ($(,)?);
-        $($output:tt)*
-    ) => {
-        $crate::__collect_msg_send! {
-            $macro;
-            $obj;
-            ();
-            ();
-            $($output)* $(@__retain_semantics $retain_semantics )? $sel: _,
-        }
-    };
-
-    // tt-munch each argument
-    (
-        $macro:path;
-        $obj:expr;
-        ($(@__retain_semantics $retain_semantics:ident )? $sel:ident : $($sel_rest:tt)*);
-        ($arg:ident: $arg_ty:ty $(, $($args_rest:tt)*)?);
-        $($output:tt)*
-    ) => {
-        $crate::__collect_msg_send! {
-            $macro;
-            $obj;
-            ($($sel_rest)*);
-            ($($($args_rest)*)?);
-            $($output)* $(@__retain_semantics $retain_semantics )? $sel: $arg,
-        }
-    };
-
-    // If couldn't zip selector and arguments, show useful error message
-    ($($_any:tt)*) => {{
-        compile_error!("Number of arguments in function and selector did not match!")
-    }};
 }

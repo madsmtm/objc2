@@ -361,30 +361,38 @@ macro_rules! __extern_protocol_method_out {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __extern_protocol_method_body {
+    // #[method(...)]
     {
-        @($($receiver:tt)*)
+        @($receiver:expr)
         @($($args_rest:tt)*)
         @(#[method($($sel:tt)*)])
         @($($m_optional:tt)*)
     } => {
-        $crate::__collect_msg_send! {
-            $crate::msg_send;
-            $($receiver)*;
-            ($($sel)*);
-            ($($args_rest)*);
+        $crate::__method_msg_send! {
+            ($receiver)
+            ($($sel)*)
+            ($($args_rest)*)
+
+            ()
+            ()
         }
     };
+
+    // #[method_id(...)]
     {
-        @($($receiver:tt)*)
+        @($receiver:expr)
         @($($args_rest:tt)*)
         @(#[method_id($($sel:tt)*)])
         @($($m_optional:tt)*)
     } => {
-        $crate::__collect_msg_send! {
-            $crate::msg_send_id;
-            $($receiver)*;
-            ($($sel)*);
-            ($($args_rest)*);
+        $crate::__method_msg_send_id! {
+            ($receiver)
+            ($($sel)*)
+            ($($args_rest)*)
+
+            ()
+            ()
+            ()
         }
     };
 }
