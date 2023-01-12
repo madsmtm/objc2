@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
 use clang::{Clang, EntityKind, EntityVisitResult, Index, TranslationUnit};
-use tracing::{debug_span, info, info_span, trace, trace_span};
+use tracing::{debug_span, error, info, info_span, trace, trace_span};
 use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::layer::{Layer, SubscriberExt};
 use tracing_subscriber::registry::Registry;
@@ -36,6 +36,7 @@ fn main() -> Result<(), BoxError> {
                 .with_filter(LevelFilter::INFO),
         )
         .init();
+    let _span = info_span!("running").entered();
 
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
     let workspace_dir = manifest_dir.parent().unwrap();
@@ -46,11 +47,11 @@ fn main() -> Result<(), BoxError> {
     let clang = Clang::new()?;
     let index = Index::new(&clang, true, true);
 
-    let developer_dir = DeveloperDirectory::from(PathBuf::from(
-        std::env::args_os()
-            .nth(1)
-            .expect("must specify developer directory as first argument"),
-    ));
+    let developer_dir = if let Some(path) = std::env::args_os().nth(1) {
+        DeveloperDirectory::from(PathBuf::from(path))
+    } else {
+        DeveloperDirectory::from_xcode_select()?
+    };
 
     let sdks: Vec<_> = developer_dir
         .platforms()
@@ -70,7 +71,9 @@ fn main() -> Result<(), BoxError> {
         })
         .collect();
 
-    assert_eq!(sdks.len(), 8, "should have one of each platform: {sdks:?}");
+    if sdks.len() != 8 {
+        error!("should have one of each platform: {sdks:?}");
+    }
 
     let mut final_result = None;
 

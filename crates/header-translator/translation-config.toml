@@ -230,6 +230,10 @@ skipped = true
 skipped = true
 [class.NSString.methods.initWithFormat_locale_arguments]
 skipped = true
+[class.NSString.methods.initWithValidatedFormat_validFormatSpecifiers_arguments_error]
+skipped = true
+[class.NSString.methods.initWithValidatedFormat_validFormatSpecifiers_locale_arguments_error]
+skipped = true
 [fn.NSLogv]
 skipped = true
 
@@ -626,6 +630,10 @@ skipped = true
 skipped = true
 [protocol.MTLTexture.methods.iosurface]
 skipped = true
+[class.ASAuthorizationProviderExtensionLoginManager.methods]
+saveCertificate_keyType = { skipped = true }
+copyKeyForKeyType = { skipped = true }
+copyIdentityForKeyType = { skipped = true }
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]
@@ -785,6 +793,7 @@ newRenderPipelineStateWithDescriptor_options_reflection_error = { skipped = true
 newComputePipelineStateWithFunction_options_reflection_error = { skipped = true }
 newComputePipelineStateWithDescriptor_options_reflection_error = { skipped = true }
 newRenderPipelineStateWithTileDescriptor_options_reflection_error = { skipped = true }
+newRenderPipelineStateWithMeshDescriptor_options_reflection_error = { skipped = true }
 
 # Uses unions internally
 [struct.MTLPackedFloat3]

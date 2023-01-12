@@ -309,6 +309,9 @@ AppKit_NSComboBox = [
 AppKit_NSComboBoxCell = [
     "AppKit_NSTextFieldCell",
 ]
+AppKit_NSComboButton = [
+    "AppKit_NSControl",
+]
 AppKit_NSControl = [
     "AppKit_NSView",
 ]
@@ -492,6 +495,7 @@ AppKit_NSPressGestureRecognizer = [
     "AppKit_NSGestureRecognizer",
 ]
 AppKit_NSPressureConfiguration = []
+AppKit_NSPreviewRepresentingActivityItem = []
 AppKit_NSPrintInfo = []
 AppKit_NSPrintOperation = []
 AppKit_NSPrintPanel = []
@@ -677,6 +681,9 @@ AppKit_NSTextLayoutFragment = []
 AppKit_NSTextLayoutManager = []
 AppKit_NSTextLineFragment = []
 AppKit_NSTextList = []
+AppKit_NSTextListElement = [
+    "AppKit_NSTextParagraph",
+]
 AppKit_NSTextParagraph = [
     "AppKit_NSTextElement",
 ]
@@ -816,6 +823,7 @@ AppKit_all = [
     "AppKit_NSColorWell",
     "AppKit_NSComboBox",
     "AppKit_NSComboBoxCell",
+    "AppKit_NSComboButton",
     "AppKit_NSControl",
     "AppKit_NSController",
     "AppKit_NSCursor",
@@ -911,6 +919,7 @@ AppKit_all = [
     "AppKit_NSPredicateEditorRowTemplate",
     "AppKit_NSPressGestureRecognizer",
     "AppKit_NSPressureConfiguration",
+    "AppKit_NSPreviewRepresentingActivityItem",
     "AppKit_NSPrintInfo",
     "AppKit_NSPrintOperation",
     "AppKit_NSPrintPanel",
@@ -1002,6 +1011,7 @@ AppKit_all = [
     "AppKit_NSTextLayoutManager",
     "AppKit_NSTextLineFragment",
     "AppKit_NSTextList",
+    "AppKit_NSTextListElement",
     "AppKit_NSTextParagraph",
     "AppKit_NSTextRange",
     "AppKit_NSTextSelection",
@@ -1078,6 +1088,9 @@ AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialRegistrationReq
 ]
 AuthenticationServices_ASAuthorizationProviderExtensionAuthorizationRequest = []
 AuthenticationServices_ASAuthorizationProviderExtensionAuthorizationResult = []
+AuthenticationServices_ASAuthorizationProviderExtensionKerberosMapping = []
+AuthenticationServices_ASAuthorizationProviderExtensionLoginConfiguration = []
+AuthenticationServices_ASAuthorizationProviderExtensionLoginManager = []
 AuthenticationServices_ASAuthorizationPublicKeyCredentialParameters = []
 AuthenticationServices_ASAuthorizationRequest = []
 AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialAssertion = []
@@ -1129,6 +1142,9 @@ AuthenticationServices_all = [
     "AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest",
     "AuthenticationServices_ASAuthorizationProviderExtensionAuthorizationRequest",
     "AuthenticationServices_ASAuthorizationProviderExtensionAuthorizationResult",
+    "AuthenticationServices_ASAuthorizationProviderExtensionKerberosMapping",
+    "AuthenticationServices_ASAuthorizationProviderExtensionLoginConfiguration",
+    "AuthenticationServices_ASAuthorizationProviderExtensionLoginManager",
     "AuthenticationServices_ASAuthorizationPublicKeyCredentialParameters",
     "AuthenticationServices_ASAuthorizationRequest",
     "AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialAssertion",
@@ -1409,6 +1425,7 @@ Foundation_NSArray = []
 Foundation_NSAssertionHandler = []
 Foundation_NSAttributedString = []
 Foundation_NSAttributedStringMarkdownParsingOptions = []
+Foundation_NSAttributedStringMarkdownSourcePosition = []
 Foundation_NSAutoreleasePool = []
 Foundation_NSBackgroundActivityScheduler = []
 Foundation_NSBlockOperation = [
@@ -1903,6 +1920,7 @@ Foundation_all = [
     "Foundation_NSAssertionHandler",
     "Foundation_NSAttributedString",
     "Foundation_NSAttributedStringMarkdownParsingOptions",
+    "Foundation_NSAttributedStringMarkdownSourcePosition",
     "Foundation_NSAutoreleasePool",
     "Foundation_NSBackgroundActivityScheduler",
     "Foundation_NSBlockOperation",
@@ -2172,6 +2190,9 @@ Metal_MTLAccelerationStructureMotionBoundingBoxGeometryDescriptor = [
 Metal_MTLAccelerationStructureMotionTriangleGeometryDescriptor = [
     "Metal_MTLAccelerationStructureGeometryDescriptor",
 ]
+Metal_MTLAccelerationStructurePassDescriptor = []
+Metal_MTLAccelerationStructurePassSampleBufferAttachmentDescriptor = []
+Metal_MTLAccelerationStructurePassSampleBufferAttachmentDescriptorArray = []
 Metal_MTLAccelerationStructureTriangleGeometryDescriptor = [
     "Metal_MTLAccelerationStructureGeometryDescriptor",
 ]
@@ -2208,6 +2229,7 @@ Metal_MTLFunctionStitchingFunctionNode = []
 Metal_MTLFunctionStitchingGraph = []
 Metal_MTLFunctionStitchingInputNode = []
 Metal_MTLHeapDescriptor = []
+Metal_MTLIOCommandQueueDescriptor = []
 Metal_MTLIndirectCommandBufferDescriptor = []
 Metal_MTLInstanceAccelerationStructureDescriptor = [
     "Metal_MTLAccelerationStructureDescriptor",
@@ -2217,6 +2239,7 @@ Metal_MTLIntersectionFunctionDescriptor = [
 ]
 Metal_MTLIntersectionFunctionTableDescriptor = []
 Metal_MTLLinkedFunctions = []
+Metal_MTLMeshRenderPipelineDescriptor = []
 Metal_MTLMotionKeyframeData = []
 Metal_MTLPipelineBufferDescriptor = []
 Metal_MTLPipelineBufferDescriptorArray = []
@@ -2285,6 +2308,9 @@ Metal_all = [
     "Metal_MTLAccelerationStructureGeometryDescriptor",
     "Metal_MTLAccelerationStructureMotionBoundingBoxGeometryDescriptor",
     "Metal_MTLAccelerationStructureMotionTriangleGeometryDescriptor",
+    "Metal_MTLAccelerationStructurePassDescriptor",
+    "Metal_MTLAccelerationStructurePassSampleBufferAttachmentDescriptor",
+    "Metal_MTLAccelerationStructurePassSampleBufferAttachmentDescriptorArray",
     "Metal_MTLAccelerationStructureTriangleGeometryDescriptor",
     "Metal_MTLArgument",
     "Metal_MTLArgumentDescriptor",
@@ -2317,11 +2343,13 @@ Metal_all = [
     "Metal_MTLFunctionStitchingGraph",
     "Metal_MTLFunctionStitchingInputNode",
     "Metal_MTLHeapDescriptor",
+    "Metal_MTLIOCommandQueueDescriptor",
     "Metal_MTLIndirectCommandBufferDescriptor",
     "Metal_MTLInstanceAccelerationStructureDescriptor",
     "Metal_MTLIntersectionFunctionDescriptor",
     "Metal_MTLIntersectionFunctionTableDescriptor",
     "Metal_MTLLinkedFunctions",
+    "Metal_MTLMeshRenderPipelineDescriptor",
     "Metal_MTLMotionKeyframeData",
     "Metal_MTLPipelineBufferDescriptor",
     "Metal_MTLPipelineBufferDescriptorArray",

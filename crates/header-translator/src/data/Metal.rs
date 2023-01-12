@@ -10,13 +10,12 @@ data! {
         unsafe -setGeometryDescriptors;
     }
 
-    // TODO macOS 13
-    // class MTLAccelerationStructureGeometryDescriptor {
-    //     unsafe -setPrimitiveDataBuffer;
-    //     unsafe -setPrimitiveDataStride;
-    //     unsafe -setPrimitiveDataElementSize;
-    //     unsafe -setIntersectionFunctionTableOffset;
-    // }
+    class MTLAccelerationStructureGeometryDescriptor {
+        unsafe -setPrimitiveDataBuffer;
+        unsafe -setPrimitiveDataStride;
+        unsafe -setPrimitiveDataElementSize;
+        unsafe -setIntersectionFunctionTableOffset;
+    }
 
     class MTLAccelerationStructureTriangleGeometryDescriptor {
         unsafe +descriptor;
@@ -110,8 +109,7 @@ data! {
         unsafe -removeAllDebugMarkers;
         unsafe -remoteStorageBuffer;
         unsafe -newRemoteBufferViewForDevice;
-        // TODO macOS 13
-        // unsafe -gpuAddress;
+        unsafe -gpuAddress;
     }
 
     class MTLCaptureDescriptor {

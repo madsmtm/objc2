@@ -11,7 +11,7 @@ pub(crate) use std::os::raw::{
 };
 
 #[cfg(feature = "objective-c")]
-pub(crate) use objc2::ffi::{NSInteger, NSIntegerMax, NSUInteger, NSUIntegerMax};
+pub(crate) use objc2::ffi::{NSInteger, NSIntegerMax, NSUInteger, NSUIntegerMax, IMP};
 #[cfg(feature = "objective-c")]
 pub(crate) use objc2::rc::{Allocated, Id, Owned, Ownership, Shared};
 #[cfg(feature = "objective-c")]

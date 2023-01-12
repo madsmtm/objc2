@@ -25,6 +25,7 @@ impl<'a> Context<'a> {
             include_dir: sdk.path.join("usr/include"),
             system_headers: HashSet::from([
                 Path::new("MacTypes.h"),
+                Path::new("objc/objc.h"),
                 Path::new("objc/NSObject.h"),
                 Path::new("objc/NSObjCRuntime.h"),
             ]),
