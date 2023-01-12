@@ -4,11 +4,12 @@ error: unexpected end of macro invocation
   |     sel!();
   |     ^^^^^^ missing tokens in macro arguments
   |
-note: while trying to match `alloc`
+note: while trying to match meta-variable `$first:ident`
  --> $WORKSPACE/crates/objc2/src/macros.rs
   |
-  |     (alloc) => ({
-  |      ^^^^^
+  |     ($first:ident $(: $($($rest:ident)? :)*)?) => {
+  |      ^^^^^^^^^^^^
+  = note: this error originates in the macro `sel` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: unexpected end of macro invocation
  --> ui/invalid_sel.rs
@@ -19,8 +20,8 @@ error: unexpected end of macro invocation
 note: while trying to match `:`
  --> $WORKSPACE/crates/objc2/src/macros.rs
   |
-  |     ($first:ident $(: $($rest:ident :)*)?) => ({
-  |                                     ^
+  |         $($ident:ident)? : $($rest:tt)*
+  |                          ^
 
 error: unexpected end of macro invocation
  --> ui/invalid_sel.rs
@@ -31,5 +32,5 @@ error: unexpected end of macro invocation
 note: while trying to match `:`
  --> $WORKSPACE/crates/objc2/src/macros.rs
   |
-  |     ($first:ident $(: $($rest:ident :)*)?) => ({
-  |                                     ^
+  |         $($ident:ident)? : $($rest:tt)*
+  |                          ^

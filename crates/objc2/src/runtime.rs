@@ -983,6 +983,7 @@ mod tests {
 
     use super::*;
     use crate::test_utils;
+    use crate::MessageReceiver;
     use crate::{msg_send, sel};
 
     #[test]
@@ -999,6 +1000,14 @@ mod tests {
         test_sel!("abc:", abc:);
         test_sel!("abc:def:", abc:def:);
         test_sel!("abc:def:ghi:", abc:def:ghi:);
+        test_sel!("functionWithControlPoints::::", functionWithControlPoints::::);
+        test_sel!("initWithControlPoints::::", initWithControlPoints::::);
+        test_sel!("setFloatValue::", setFloatValue::);
+        test_sel!("isSupported::", isSupported::);
+        test_sel!("addEventListener:::", addEventListener:::);
+        test_sel!("test::arg::", test::arg::);
+        test_sel!("test::::with::spaces::", test : :: : with : : spaces : :);
+        test_sel!("a::b:", a::b:);
     }
 
     #[test]
@@ -1007,6 +1016,8 @@ mod tests {
         assert_eq!(sel.name(), "");
         let sel = Sel::register(":");
         assert_eq!(sel.name(), ":");
+        let sel = Sel::register("::");
+        assert_eq!(sel.name(), "::");
     }
 
     #[test]
@@ -1071,6 +1082,7 @@ mod tests {
 
         assert!(cls.responds_to(sel!(foo)));
         assert!(cls.responds_to(sel!(setBar:)));
+        assert!(cls.responds_to(sel!(test::test::)));
         assert!(!cls.responds_to(sel!(abc)));
         assert!(!cls.responds_to(sel!(addNumber:toNumber:)));
 
@@ -1080,6 +1092,7 @@ mod tests {
         // The metaclass of a root class is a subclass of the root class
         assert_eq!(metaclass.superclass().unwrap(), cls);
         assert!(metaclass.responds_to(sel!(addNumber:toNumber:)));
+        assert!(metaclass.responds_to(sel!(test::test::)));
         // TODO: This is unexpected!
         assert!(metaclass.responds_to(sel!(foo)));
 
@@ -1222,5 +1235,20 @@ mod tests {
             format!("{:?}", &*object),
             format!("<CustomObject: {:p}>", &*object)
         );
+    }
+
+    #[test]
+    fn test_multiple_colon() {
+        let class = test_utils::custom_class();
+        let res: i32 = unsafe {
+            MessageReceiver::send_message(class, sel!(test::test::), (1i32, 2i32, 3i32, 4i32))
+        };
+        assert_eq!(res, 1 + 2 + 3 + 4);
+
+        let obj = test_utils::custom_object();
+        let res: i32 = unsafe {
+            MessageReceiver::send_message(&obj, sel!(test::test::), (1i32, 2i32, 3i32, 4i32))
+        };
+        assert_eq!(res, 1 * 2 * 3 * 4);
     }
 }

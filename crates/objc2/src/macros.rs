@@ -166,6 +166,19 @@ macro_rules! __class_inner {
 /// let sel = sel!(aSelector:withoutTrailingColon);
 /// ```
 ///
+/// A selector with internal colons:
+///
+/// ```
+/// # use objc2::sel;
+/// let sel = sel!(sel::with:::multiple:internal::::colons:::);
+///
+/// // Yes, that is possible! The following Objective-C would work:
+/// //
+/// // @interface MyThing: NSObject
+/// // + (void)test:(int)a :(int)b arg:(int)c :(int)d;
+/// // @end
+/// ```
+///
 /// Unsupported usage that you may run into when using macros - fails to
 /// compile when the `"unstable-static-sel"` feature is enabled.
 ///
@@ -196,21 +209,77 @@ macro_rules! sel {
     (new) => ({
         $crate::__macro_helpers::new_sel()
     });
-    ($first:ident $(: $($rest:ident :)*)?) => ({
+    ($sel:ident) => ({
         $crate::__sel_inner!(
-            $crate::__sel_data!($first $(: $($rest :)*)?),
-            $crate::__hash_idents!($first $($($rest)*)?)
+            $crate::__sel_data!($sel),
+            $crate::__hash_idents!($sel)
         )
     });
+    ($($sel:ident :)*) => ({
+        $crate::__sel_inner!(
+            $crate::__sel_data!($($sel :)*),
+            $crate::__hash_idents!($($sel)*)
+        )
+    });
+    ($($sel:tt)*) => {
+        $crate::__sel_helper! {
+            @()
+            @()
+            $($sel)*
+        }
+    };
+}
+
+/// Handle selectors with internal colons.
+///
+/// Required since `::` is a different token than `:`.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __sel_helper {
+    // Base-case
+    {
+        @($($parsed_sel:tt)*)
+        @($($parsed_idents:tt)*)
+    } => ({
+        $crate::__sel_inner!(
+            $crate::__sel_data!($($parsed_sel)*),
+            $crate::__hash_idents!($($parsed_idents)*)
+        )
+    });
+    // Parse identitifer + colon token
+    {
+        @($($parsed_sel:tt)*)
+        @($($parsed_idents:tt)*)
+        $($ident:ident)? : $($rest:tt)*
+    } => {
+        $crate::__sel_helper! {
+            @($($parsed_sel)* $($ident)? :)
+            @($($parsed_idents)* $($ident)?)
+            $($rest)*
+        }
+    };
+    // Parse identitifer + path separator token
+    {
+        @($($parsed_sel:tt)*)
+        @($($parsed_idents:tt)*)
+        $($ident:ident)? :: $($rest:tt)*
+    } => {
+        $crate::__sel_helper! {
+            // Notice space between these
+            @($($parsed_sel)* $($ident)? : :)
+            @($($parsed_idents)* $($ident)?)
+            $($rest)*
+        }
+    };
 }
 
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __sel_data {
-    ($first:ident $(: $($rest:ident :)*)?) => {
+    ($first:ident $(: $($($rest:ident)? :)*)?) => {
         $crate::__macro_helpers::concat!(
             $crate::__macro_helpers::stringify!($first),
-            $(':', $($crate::__macro_helpers::stringify!($rest), ':',)*)?
+            $(':', $($($crate::__macro_helpers::stringify!($rest),)? ':',)*)?
             '\0',
         )
     };
