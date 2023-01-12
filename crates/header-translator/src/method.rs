@@ -6,6 +6,7 @@ use tracing::span::EnteredSpan;
 use crate::availability::Availability;
 use crate::config::MethodData;
 use crate::context::Context;
+use crate::id::ItemIdentifier;
 use crate::immediate_children;
 use crate::objc2_utils::in_selector_family;
 use crate::property::PartialProperty;
@@ -217,6 +218,14 @@ impl Method {
         self.safe = !data.unsafe_;
 
         Some(self)
+    }
+
+    pub fn visit_required_types(&self, mut f: impl FnMut(&ItemIdentifier)) {
+        for (_, _, arg) in &self.arguments {
+            arg.visit_required_types(&mut f);
+        }
+
+        self.result_type.visit_required_types(&mut f);
     }
 }
 

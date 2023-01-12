@@ -1,3 +1,4 @@
+#![cfg(feature = "Foundation_NSString")]
 //! Macro for making a static NSString.
 //!
 //! This basically does what clang does, see:
@@ -308,7 +309,7 @@ impl CachedNSString {
 /// where possible.
 ///
 /// [`NSString::from_str`]: crate::Foundation::NSString::from_str
-#[cfg(feature = "Foundation")] // For auto_doc_cfg
+#[cfg(feature = "Foundation_NSString")] // For auto_doc_cfg
 #[macro_export]
 macro_rules! ns_string {
     ($s:expr) => {{

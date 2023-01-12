@@ -3,22 +3,12 @@ use icrate::ns_string;
 use icrate::objc2::declare::{Ivar, IvarDrop};
 use icrate::objc2::rc::{Id, Shared};
 use icrate::objc2::runtime::Object;
-use icrate::objc2::{declare_class, extern_class, msg_send, msg_send_id, ClassType};
+use icrate::objc2::{declare_class, msg_send, msg_send_id, ClassType};
 use icrate::Foundation::{NSCopying, NSObject, NSString};
 
 #[cfg(target_os = "macos")]
 #[link(name = "AppKit", kind = "framework")]
 extern "C" {}
-
-#[cfg(target_os = "macos")]
-extern_class!(
-    #[derive(Debug)]
-    struct NSResponder;
-
-    unsafe impl ClassType for NSResponder {
-        type Super = NSObject;
-    }
-);
 
 #[cfg(target_os = "macos")]
 declare_class!(
@@ -34,7 +24,7 @@ declare_class!(
 
     unsafe impl ClassType for CustomAppDelegate {
         #[inherits(NSObject)]
-        type Super = NSResponder;
+        type Super = icrate::AppKit::NSResponder;
         const NAME: &'static str = "MyCustomAppDelegate";
     }
 

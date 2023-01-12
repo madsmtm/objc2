@@ -8,8 +8,12 @@ use crate::immediate_children;
 use crate::unexposed_macro::UnexposedMacro;
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct Expr {
-    s: String,
+pub enum Expr {
+    NSUIntegerMax,
+    NSIntegerMax,
+    Signed(i64),
+    Unsigned(u64),
+    String(String),
 }
 
 impl Expr {
@@ -21,16 +25,15 @@ impl Expr {
             pw => panic!("unhandled pointer width {pw}"),
         };
 
-        let s = if unsigned == unsigned_max {
-            "NSUIntegerMax as _".to_string()
+        if unsigned == unsigned_max {
+            Expr::NSUIntegerMax
         } else if signed == signed_max {
-            "NSIntegerMax as _".to_string()
+            Expr::NSIntegerMax
         } else if is_signed {
-            format!("{signed}")
+            Expr::Signed(signed)
         } else {
-            format!("{unsigned}")
-        };
-        Expr { s }
+            Expr::Unsigned(unsigned)
+        }
     }
 
     pub fn parse_enum_constant(entity: &Entity<'_>) -> Option<Self> {
@@ -128,12 +131,18 @@ impl Expr {
             s = s.trim_start_matches('(').trim_end_matches(')').to_string();
         }
 
-        Some(Self { s })
+        Some(Self::String(s))
     }
 }
 
 impl fmt::Display for Expr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.s)
+        match self {
+            Self::NSUIntegerMax => write!(f, "NSUIntegerMax as _"),
+            Self::NSIntegerMax => write!(f, "NSIntegerMax as _"),
+            Self::Signed(signed) => write!(f, "{signed}"),
+            Self::Unsigned(unsigned) => write!(f, "{unsigned}"),
+            Self::String(s) => write!(f, "{s}"),
+        }
     }
 }

@@ -1,15 +1,13 @@
+#![cfg(feature = "Foundation_NSException")]
 use core::fmt;
 use core::hint::unreachable_unchecked;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::exception::Exception;
-use objc2::rc::{Id, Shared};
-use objc2::runtime::Object;
-use objc2::{extern_methods, msg_send_id, sel, ClassType};
+use objc2::{msg_send_id, sel};
 
-use crate::Foundation::{
-    NSCopying, NSDictionary, NSException, NSExceptionName, NSObject, NSString,
-};
+use crate::common::*;
+use crate::Foundation::{self, NSException, NSExceptionName, NSObject};
 
 // SAFETY: Exception objects are immutable data containers, and documented as
 // thread safe.
@@ -25,10 +23,12 @@ extern_methods!(
         ///
         /// Returns `None` if the exception couldn't be created (example: If the
         /// process is out of memory).
+        #[cfg(feature = "Foundation_NSString")]
+        #[cfg(feature = "Foundation_NSDictionary")]
         pub fn new(
             name: &NSExceptionName,
-            reason: Option<&NSString>,
-            user_info: Option<&NSDictionary<Object, Object>>,
+            reason: Option<&Foundation::NSString>,
+            user_info: Option<&Foundation::NSDictionary<Object, Object>>,
         ) -> Option<Id<Self, Shared>> {
             unsafe {
                 msg_send_id![
@@ -95,18 +95,7 @@ extern_methods!(
     }
 );
 
-unsafe impl NSCopying for NSException {
-    type Ownership = Shared;
-    type Output = NSException;
-}
-
-impl alloc::borrow::ToOwned for NSException {
-    type Owned = Id<NSException, Shared>;
-    fn to_owned(&self) -> Self::Owned {
-        self.copy()
-    }
-}
-
+#[cfg(feature = "Foundation_NSString")]
 impl fmt::Debug for NSException {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let obj: &Object = self.as_ref();
@@ -118,59 +107,4 @@ impl fmt::Debug for NSException {
         }
         Ok(())
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use alloc::format;
-
-    use super::*;
-
-    #[test]
-    fn create_and_query() {
-        let exc = NSException::new(
-            &NSString::from_str("abc"),
-            Some(&NSString::from_str("def")),
-            None,
-        )
-        .unwrap();
-
-        assert_eq!(exc.name(), NSString::from_str("abc"));
-        assert_eq!(exc.reason().unwrap(), NSString::from_str("def"));
-        assert!(exc.userInfo().is_none());
-
-        let debug = format!("<NSException: {exc:p}> 'abc' reason:def");
-        assert_eq!(format!("{exc:?}"), debug);
-
-        let description = if cfg!(feature = "gnustep-1-7") {
-            format!("<NSException: {exc:p}> NAME:abc REASON:def")
-        } else {
-            "def".into()
-        };
-
-        let obj: &NSObject = &exc;
-        assert_eq!(format!("{obj:?}"), description);
-
-        let exc = NSException::into_exception(exc);
-
-        // Test `Debug` impl of Exception
-        assert_eq!(format!("{exc:?}"), format!("exception {debug}"));
-        // Test `Display` impl of Exception
-        assert_eq!(format!("{exc}"), "def");
-    }
-
-    #[test]
-    #[should_panic = "'abc' reason:def"]
-    fn unwrap() {
-        let exc = NSException::new(
-            &NSString::from_str("abc"),
-            Some(&NSString::from_str("def")),
-            None,
-        )
-        .unwrap();
-
-        let _: () = Err(exc).unwrap();
-    }
-
-    // Further tests in `tests::exception`
 }

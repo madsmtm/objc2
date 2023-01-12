@@ -1,9 +1,9 @@
-use objc2::extern_methods;
-
-use crate::Foundation::NSThread;
+use crate::common::*;
+use crate::Foundation;
 
 extern_methods!(
-    unsafe impl NSThread {
+    #[cfg(feature = "Foundation_NSThread")]
+    unsafe impl Foundation::NSThread {
         /// Returns `true` if the thread is the main thread.
         #[method(isMainThread)]
         pub fn isMainThread(&self) -> bool;

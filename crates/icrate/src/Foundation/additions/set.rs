@@ -1,3 +1,4 @@
+#![cfg(feature = "Foundation_NSSet")]
 use alloc::vec::Vec;
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
@@ -5,10 +6,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
 use objc2::{extern_methods, msg_send, msg_send_id, ClassType, Message};
 
-use crate::Foundation::{
-    NSArray, NSCopying, NSEnumerator2, NSFastEnumeration2, NSFastEnumerator2, NSMutableCopying,
-    NSMutableSet, NSSet,
-};
+use crate::Foundation::{self, NSSet};
 
 // SAFETY: Same as NSArray<T, O>
 unsafe impl<T: Message + Sync + Send> Sync for NSSet<T, Shared> {}
@@ -16,19 +14,26 @@ unsafe impl<T: Message + Sync + Send> Send for NSSet<T, Shared> {}
 unsafe impl<T: Message + Sync> Sync for NSSet<T, Owned> {}
 unsafe impl<T: Message + Send> Send for NSSet<T, Owned> {}
 
-unsafe impl<T: Message + Sync + Send> Sync for NSMutableSet<T, Shared> {}
-unsafe impl<T: Message + Sync + Send> Send for NSMutableSet<T, Shared> {}
-unsafe impl<T: Message + Sync> Sync for NSMutableSet<T, Owned> {}
-unsafe impl<T: Message + Send> Send for NSMutableSet<T, Owned> {}
+#[cfg(feature = "Foundation_NSMutableSet")]
+unsafe impl<T: Message + Sync + Send> Sync for Foundation::NSMutableSet<T, Shared> {}
+#[cfg(feature = "Foundation_NSMutableSet")]
+unsafe impl<T: Message + Sync + Send> Send for Foundation::NSMutableSet<T, Shared> {}
+#[cfg(feature = "Foundation_NSMutableSet")]
+unsafe impl<T: Message + Sync> Sync for Foundation::NSMutableSet<T, Owned> {}
+#[cfg(feature = "Foundation_NSMutableSet")]
+unsafe impl<T: Message + Send> Send for Foundation::NSMutableSet<T, Owned> {}
 
 // SAFETY: Same as NSArray<T, O>
 impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSSet<T, O> {}
 impl<T: Message + RefUnwindSafe> UnwindSafe for NSSet<T, Shared> {}
 impl<T: Message + UnwindSafe> UnwindSafe for NSSet<T, Owned> {}
 
-impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for NSMutableSet<T, O> {}
-impl<T: Message + RefUnwindSafe> UnwindSafe for NSMutableSet<T, Shared> {}
-impl<T: Message + UnwindSafe> UnwindSafe for NSMutableSet<T, Owned> {}
+#[cfg(feature = "Foundation_NSMutableSet")]
+impl<T: Message + RefUnwindSafe, O: Ownership> RefUnwindSafe for Foundation::NSMutableSet<T, O> {}
+#[cfg(feature = "Foundation_NSMutableSet")]
+impl<T: Message + RefUnwindSafe> UnwindSafe for Foundation::NSMutableSet<T, Shared> {}
+#[cfg(feature = "Foundation_NSMutableSet")]
+impl<T: Message + UnwindSafe> UnwindSafe for Foundation::NSMutableSet<T, Owned> {}
 
 #[track_caller]
 pub(crate) unsafe fn with_objects<T: Message + ?Sized, R: ClassType, O: Ownership>(
@@ -143,10 +148,11 @@ extern_methods!(
         /// }
         /// ```
         #[doc(alias = "objectEnumerator")]
-        pub fn iter(&self) -> NSEnumerator2<'_, T> {
+        #[cfg(feature = "Foundation_NSEnumerator")]
+        pub fn iter(&self) -> Foundation::NSEnumerator2<'_, T> {
             unsafe {
                 let result = msg_send![self, objectEnumerator];
-                NSEnumerator2::from_ptr(result)
+                Foundation::NSEnumerator2::from_ptr(result)
             }
         }
 
@@ -197,6 +203,8 @@ extern_methods!(
         /// Returns an [`NSArray`] containing the set's elements, or an empty
         /// array if the set is empty.
         ///
+        /// [`NSArray`]: crate::Foundation::NSArray
+        ///
         /// # Examples
         ///
         /// ```
@@ -209,7 +217,8 @@ extern_methods!(
         /// assert!(set.to_array().iter().all(|i| nums.contains(&i.as_i32())));
         /// ```
         #[doc(alias = "allObjects")]
-        pub fn to_array(&self) -> Id<NSArray<T, Shared>, Shared> {
+        #[cfg(feature = "Foundation_NSArray")]
+        pub fn to_array(&self) -> Id<Foundation::NSArray<T, Shared>, Shared> {
             // SAFETY: The set's elements are shared
             unsafe { self.allObjects() }
         }
@@ -314,31 +323,16 @@ extern_methods!(
     }
 );
 
-unsafe impl<T: Message> NSCopying for NSSet<T, Shared> {
-    type Ownership = Shared;
-    type Output = NSSet<T, Shared>;
-}
-
-unsafe impl<T: Message> NSMutableCopying for NSSet<T, Shared> {
-    type Output = NSMutableSet<T, Shared>;
-}
-
-impl<T: Message> alloc::borrow::ToOwned for NSSet<T, Shared> {
-    type Owned = Id<NSSet<T, Shared>, Shared>;
-    fn to_owned(&self) -> Self::Owned {
-        self.copy()
-    }
-}
-
-unsafe impl<T: Message, O: Ownership> NSFastEnumeration2 for NSSet<T, O> {
+unsafe impl<T: Message, O: Ownership> Foundation::NSFastEnumeration2 for NSSet<T, O> {
     type Item = T;
 }
 
 impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSSet<T, O> {
     type Item = &'a T;
-    type IntoIter = NSFastEnumerator2<'a, NSSet<T, O>>;
+    type IntoIter = Foundation::NSFastEnumerator2<'a, NSSet<T, O>>;
 
     fn into_iter(self) -> Self::IntoIter {
+        use Foundation::NSFastEnumeration2;
         self.iter_fast()
     }
 }
@@ -352,290 +346,11 @@ impl<T: Message, O: Ownership> DefaultId for NSSet<T, O> {
     }
 }
 
+#[cfg(feature = "Foundation_NSEnumerator")]
 impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for NSSet<T, O> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        use Foundation::NSFastEnumeration2;
         f.debug_set().entries(self.iter_fast()).finish()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use alloc::format;
-    use alloc::vec;
-
-    use super::*;
-    use crate::ns_string;
-    use crate::Foundation::{NSMutableString, NSNumber, NSObject, NSString};
-    use objc2::rc::{__RcTestObject, __ThreadTestData};
-
-    #[test]
-    fn test_new() {
-        let set = NSSet::<NSString>::new();
-        assert!(set.is_empty());
-    }
-
-    #[test]
-    fn test_from_vec() {
-        let set = NSSet::<NSString>::from_vec(Vec::new());
-        assert!(set.is_empty());
-
-        let strs = ["one", "two", "three"].map(NSString::from_str);
-        let set = NSSet::from_vec(strs.to_vec());
-        assert!(strs.into_iter().all(|s| set.contains(&s)));
-
-        let nums = [1, 2, 3].map(NSNumber::new_i32);
-        let set = NSSet::from_vec(nums.to_vec());
-        assert!(nums.into_iter().all(|n| set.contains(&n)));
-    }
-
-    #[test]
-    fn test_from_slice() {
-        let set = NSSet::<NSString>::from_slice(&[]);
-        assert!(set.is_empty());
-
-        let strs = ["one", "two", "three"].map(NSString::from_str);
-        let set = NSSet::from_slice(&strs);
-        assert!(strs.into_iter().all(|s| set.contains(&s)));
-
-        let nums = [1, 2, 3].map(NSNumber::new_i32);
-        let set = NSSet::from_slice(&nums);
-        assert!(nums.into_iter().all(|n| set.contains(&n)));
-    }
-
-    #[test]
-    fn test_len() {
-        let set = NSSet::<NSString>::new();
-        assert!(set.is_empty());
-
-        let set = NSSet::from_slice(&["one", "two", "two"].map(NSString::from_str));
-        assert_eq!(set.len(), 2);
-
-        let set = NSSet::from_vec(vec![NSObject::new(), NSObject::new(), NSObject::new()]);
-        assert_eq!(set.len(), 3);
-    }
-
-    #[test]
-    fn test_get() {
-        let set = NSSet::<NSString>::new();
-        assert!(set.get(ns_string!("one")).is_none());
-
-        let set = NSSet::from_slice(&["one", "two", "two"].map(NSString::from_str));
-        assert!(set.get(ns_string!("two")).is_some());
-        assert!(set.get(ns_string!("three")).is_none());
-    }
-
-    #[test]
-    fn test_get_return_lifetime() {
-        let set = NSSet::from_slice(&["one", "two", "two"].map(NSString::from_str));
-
-        let res = {
-            let value = NSString::from_str("one");
-            set.get(&value)
-        };
-
-        assert_eq!(res, Some(ns_string!("one")));
-    }
-
-    #[test]
-    fn test_get_any() {
-        let set = NSSet::<NSString>::new();
-        assert!(set.get_any().is_none());
-
-        let strs = ["one", "two", "three"].map(NSString::from_str);
-        let set = NSSet::from_slice(&strs);
-        let any = set.get_any().unwrap();
-        assert!(any == &*strs[0] || any == &*strs[1] || any == &*strs[2]);
-    }
-
-    #[test]
-    fn test_contains() {
-        let set = NSSet::<NSString>::new();
-        assert!(!set.contains(ns_string!("one")));
-
-        let set = NSSet::from_slice(&["one", "two", "two"].map(NSString::from_str));
-        assert!(set.contains(ns_string!("one")));
-        assert!(!set.contains(ns_string!("three")));
-    }
-
-    #[test]
-    fn test_is_subset() {
-        let set1 = NSSet::from_slice(&["one", "two"].map(NSString::from_str));
-        let set2 = NSSet::from_slice(&["one", "two", "three"].map(NSString::from_str));
-
-        assert!(set1.is_subset(&set2));
-        assert!(!set2.is_subset(&set1));
-    }
-
-    #[test]
-    fn test_is_superset() {
-        let set1 = NSSet::from_slice(&["one", "two"].map(NSString::from_str));
-        let set2 = NSSet::from_slice(&["one", "two", "three"].map(NSString::from_str));
-
-        assert!(!set1.is_superset(&set2));
-        assert!(set2.is_superset(&set1));
-    }
-
-    #[test]
-    fn test_is_disjoint() {
-        let set1 = NSSet::from_slice(&["one", "two"].map(NSString::from_str));
-        let set2 = NSSet::from_slice(&["one", "two", "three"].map(NSString::from_str));
-        let set3 = NSSet::from_slice(&["four", "five", "six"].map(NSString::from_str));
-
-        assert!(!set1.is_disjoint(&set2));
-        assert!(set1.is_disjoint(&set3));
-        assert!(set2.is_disjoint(&set3));
-    }
-
-    #[test]
-    fn test_to_array() {
-        let nums = [1, 2, 3];
-        let set = NSSet::from_slice(&nums.map(NSNumber::new_i32));
-
-        assert_eq!(set.to_array().len(), 3);
-        assert!(set.to_array().iter().all(|i| nums.contains(&i.as_i32())));
-    }
-
-    #[test]
-    fn test_iter() {
-        let nums = [1, 2, 3];
-        let set = NSSet::from_slice(&nums.map(NSNumber::new_i32));
-
-        assert_eq!(set.iter().count(), 3);
-        assert!(set.iter().all(|i| nums.contains(&i.as_i32())));
-    }
-
-    #[test]
-    fn test_iter_fast() {
-        let nums = [1, 2, 3];
-        let set = NSSet::from_slice(&nums.map(NSNumber::new_i32));
-
-        assert_eq!(set.iter_fast().count(), 3);
-        assert!(set.iter_fast().all(|i| nums.contains(&i.as_i32())));
-    }
-
-    #[test]
-    fn test_into_iter() {
-        let nums = [1, 2, 3];
-        let set = NSSet::from_slice(&nums.map(NSNumber::new_i32));
-
-        assert!(set.into_iter().all(|i| nums.contains(&i.as_i32())));
-    }
-
-    #[test]
-    fn test_into_vec() {
-        let strs = vec![
-            NSMutableString::from_str("one"),
-            NSMutableString::from_str("two"),
-            NSMutableString::from_str("three"),
-        ];
-        let set = NSSet::from_vec(strs);
-
-        let mut vec = NSSet::into_vec(set);
-        for str in vec.iter_mut() {
-            str.appendString(ns_string!(" times zero is zero"));
-        }
-
-        assert_eq!(vec.len(), 3);
-        let suffix = ns_string!("zero");
-        assert!(vec.iter().all(|str| str.hasSuffix(suffix)));
-    }
-
-    #[test]
-    fn test_equality() {
-        let set1 = NSSet::<NSString>::new();
-        let set2 = NSSet::<NSString>::new();
-        assert_eq!(set1, set2);
-    }
-
-    #[test]
-    fn test_copy() {
-        let set1 = NSSet::from_slice(&["one", "two", "three"].map(NSString::from_str));
-        let set2 = set1.copy();
-        assert_eq!(set1, set2);
-    }
-
-    #[test]
-    fn test_debug() {
-        let set = NSSet::<NSString>::new();
-        assert_eq!(format!("{set:?}"), "{}");
-
-        let set = NSSet::from_slice(&["one", "two"].map(NSString::from_str));
-        assert!(matches!(
-            format!("{set:?}").as_str(),
-            "{\"one\", \"two\"}" | "{\"two\", \"one\"}"
-        ));
-    }
-
-    #[test]
-    fn test_retains_stored() {
-        let obj = Id::into_shared(__RcTestObject::new());
-        let mut expected = __ThreadTestData::current();
-
-        let input = [obj.clone(), obj.clone()];
-        expected.retain += 2;
-        expected.assert_current();
-
-        let set = NSSet::from_slice(&input);
-        expected.retain += 1;
-        expected.assert_current();
-
-        let _obj = set.get_any().unwrap();
-        expected.assert_current();
-
-        drop(set);
-        expected.release += 1;
-        expected.assert_current();
-
-        let set = NSSet::from_vec(Vec::from(input));
-        expected.retain += 1;
-        expected.release += 2;
-        expected.assert_current();
-
-        drop(set);
-        expected.release += 1;
-        expected.assert_current();
-
-        drop(obj);
-        expected.release += 1;
-        expected.dealloc += 1;
-        expected.assert_current();
-    }
-
-    #[test]
-    fn test_nscopying_uses_retain() {
-        let obj = Id::into_shared(__RcTestObject::new());
-        let set = NSSet::from_slice(&[obj]);
-        let mut expected = __ThreadTestData::current();
-
-        let _copy = set.copy();
-        expected.assert_current();
-
-        let _copy = set.mutable_copy();
-        expected.retain += 1;
-        expected.assert_current();
-    }
-
-    #[test]
-    #[cfg_attr(
-        feature = "apple",
-        ignore = "this works differently on different framework versions"
-    )]
-    fn test_iter_no_retain() {
-        let obj = Id::into_shared(__RcTestObject::new());
-        let set = NSSet::from_slice(&[obj]);
-        let mut expected = __ThreadTestData::current();
-
-        let iter = set.iter();
-        expected.retain += 0;
-        expected.assert_current();
-
-        assert_eq!(iter.count(), 1);
-        expected.autorelease += 0;
-        expected.assert_current();
-
-        let iter = set.iter_fast();
-        assert_eq!(iter.count(), 1);
-        expected.assert_current();
     }
 }

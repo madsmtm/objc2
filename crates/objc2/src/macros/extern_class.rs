@@ -40,6 +40,10 @@
 /// The macro allows specifying fields on the struct, but _only_ zero-sized
 /// types like [`PhantomData`] and [`declare::Ivar`] are allowed here!
 ///
+/// You may add a `#[cfg(...)]` attribute to the class and `ClassType` impl,
+/// and then it will work as expected. Only `#[cfg(...)]` attributes are
+/// supported on the `ClassType` impl!
+///
 /// [rustfmt-macros]: https://github.com/rust-lang/rustfmt/discussions/5437
 /// [`PhantomData`]: core::marker::PhantomData
 /// [`declare::Ivar`]: crate::declare::Ivar
@@ -121,6 +125,7 @@ macro_rules! extern_class {
         $(#[$m:meta])*
         $v:vis struct $name:ident;
 
+        $(#[$impl_m:meta])*
         unsafe impl ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
@@ -133,6 +138,7 @@ macro_rules! extern_class {
             $(#[$m])*
             $v struct $name {}
 
+            $(#[$impl_m])*
             unsafe impl ClassType for $for {
                 $(#[inherits($($inheritance_rest),+)])?
                 type Super = $superclass;
@@ -147,6 +153,7 @@ macro_rules! extern_class {
             $($field_vis:vis $field:ident: $field_ty:ty,)*
         }
 
+        $(#[$impl_m:meta])*
         unsafe impl ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
@@ -160,6 +167,7 @@ macro_rules! extern_class {
                 $($field_vis $field: $field_ty,)*
             }
 
+            $(#[$impl_m])*
             unsafe impl<> ClassType for $for {
                 $(#[inherits($($inheritance_rest),+)])?
                 type Super = $superclass;
@@ -168,6 +176,7 @@ macro_rules! extern_class {
             }
         );
 
+        $(#[$impl_m])*
         const _: () = {
             if $crate::__macro_helpers::size_of::<$name>() != 0 {
                 $crate::__macro_helpers::panic!($crate::__macro_helpers::concat!(
@@ -246,6 +255,7 @@ macro_rules! __inner_extern_class {
             $($field_vis:vis $field:ident: $field_ty:ty,)*
         }
 
+        $(#[$impl_m:meta])*
         unsafe impl<$($t_for:ident $(: $b_for:ident)?),* $(,)?> ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+ $(,)?)])?
             type Super = $superclass:ty;
@@ -260,11 +270,13 @@ macro_rules! __inner_extern_class {
                 $($field_vis $field: $field_ty,)*
             }
 
+            $(#[$impl_m])*
             unsafe impl ($($t_for $(: $b_for)?),*) for $for {
                 INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::Object];
             }
         }
 
+        $(#[$impl_m])*
         unsafe impl<$($t_for $(: $b_for)?),*> ClassType for $for {
             type Super = $superclass;
             const NAME: &'static $crate::__macro_helpers::str = $crate::__select_name!($name; $($name_const)?);
@@ -296,6 +308,7 @@ macro_rules! __inner_extern_class {
             $($field_vis:vis $field:ident: $field_ty:ty,)*
         }
 
+        $(#[$impl_m:meta])*
         unsafe impl ($($t:tt)*) for $for:ty {
             INHERITS = [$superclass:ty $(, $inheritance_rest:ty)*];
         }
@@ -315,6 +328,7 @@ macro_rules! __inner_extern_class {
         //   that it actually inherits said object.
         // - The rest of the struct's fields are ZSTs, so they don't influence
         //   the layout.
+        $(#[$impl_m])*
         unsafe impl<$($t)*> $crate::RefEncode for $for {
             const ENCODING_REF: $crate::Encoding
                 = <$superclass as $crate::RefEncode>::ENCODING_REF;
@@ -326,6 +340,7 @@ macro_rules! __inner_extern_class {
         //
         // That the object must work with standard memory management is upheld
         // by the caller.
+        $(#[$impl_m])*
         unsafe impl<$($t)*> $crate::Message for $for {}
 
         // SAFETY: An instance can always be _used_ in exactly the same way as
@@ -346,6 +361,7 @@ macro_rules! __inner_extern_class {
         // Note that you can easily have two different variables pointing to
         // the same object, `x: &T` and `y: &T::Target`, and this would be
         // perfectly safe!
+        $(#[$impl_m])*
         impl<$($t)*> $crate::__macro_helpers::Deref for $for {
             type Target = $superclass;
 
@@ -366,6 +382,7 @@ macro_rules! __inner_extern_class {
         // But `&mut NSMutableString` -> `&mut NSString` safe, since the
         // `NSCopying` implementation of `NSMutableString` is used, and that
         // is guaranteed to return a different object.
+        $(#[$impl_m])*
         impl<$($t)*> $crate::__macro_helpers::DerefMut for $for {
             #[inline]
             fn deref_mut(&mut self) -> &mut Self::Target {
@@ -373,6 +390,7 @@ macro_rules! __inner_extern_class {
             }
         }
 
+        $(#[$impl_m])*
         impl<$($t)*> $crate::__macro_helpers::AsRef<Self> for $for {
             #[inline]
             fn as_ref(&self) -> &Self {
@@ -380,6 +398,7 @@ macro_rules! __inner_extern_class {
             }
         }
 
+        $(#[$impl_m])*
         impl<$($t)*> $crate::__macro_helpers::AsMut<Self> for $for {
             #[inline]
             fn as_mut(&mut self) -> &mut Self {
@@ -387,6 +406,8 @@ macro_rules! __inner_extern_class {
             }
         }
 
+        // Assume the meta attributes are all `cfg` attributes
+        $(#[$impl_m])*
         $crate::__impl_as_ref_borrow! {
             impl ($($t)*) for $for {
                 fn as_ref(&self) {

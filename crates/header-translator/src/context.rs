@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::ops;
 use std::path::{Path, PathBuf};
 
@@ -12,7 +12,8 @@ pub struct Context<'a> {
     config: &'a Config,
     pub macro_invocations: HashMap<Location<'a>, String>,
     framework_dir: PathBuf,
-    nsobject_dir: PathBuf,
+    include_dir: PathBuf,
+    system_headers: HashSet<&'static Path>,
 }
 
 impl<'a> Context<'a> {
@@ -21,18 +22,28 @@ impl<'a> Context<'a> {
             config,
             macro_invocations: Default::default(),
             framework_dir: sdk.path.join("System/Library/Frameworks"),
-            nsobject_dir: sdk.path.join("usr/include/objc/NSObject.h"),
+            include_dir: sdk.path.join("usr/include"),
+            system_headers: HashSet::from([
+                Path::new("MacTypes.h"),
+                Path::new("objc/NSObject.h"),
+                Path::new("objc/NSObjCRuntime.h"),
+            ]),
         }
     }
 
-    pub fn get_library_and_file_name(&self, entity: &Entity<'_>) -> Option<(String, String)> {
+    pub fn get_library_and_file_name(
+        &self,
+        entity: &Entity<'_>,
+    ) -> Option<(String, Option<String>)> {
         if let Some(location) = entity.get_location() {
             if let Some(file) = location.get_file_location().file {
                 let path = file.get_path();
                 if let Ok(path) = path.strip_prefix(&self.framework_dir) {
                     return Some(split_path(path));
-                } else if path == self.nsobject_dir {
-                    return Some(("Foundation".to_string(), "NSObject".to_string()));
+                } else if let Ok(path) = path.strip_prefix(&self.include_dir) {
+                    if self.system_headers.contains(path) {
+                        return Some(("System".to_string(), None));
+                    }
                 }
             }
         }
@@ -48,7 +59,7 @@ impl ops::Deref for Context<'_> {
     }
 }
 
-fn split_path(path: &Path) -> (String, String) {
+fn split_path(path: &Path) -> (String, Option<String>) {
     let mut components = path.components();
     let library_name = components
         .next()
@@ -67,5 +78,5 @@ fn split_path(path: &Path) -> (String, String) {
         .to_string_lossy()
         .to_string();
 
-    (library_name, file_name)
+    (library_name, Some(file_name))
 }

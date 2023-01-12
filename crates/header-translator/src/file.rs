@@ -25,31 +25,6 @@ impl File {
         }
     }
 
-    pub(crate) fn declared_types(&self) -> impl Iterator<Item = &str> {
-        self.stmts
-            .iter()
-            .filter_map(|stmt| match stmt {
-                Stmt::ClassDecl { ty, .. } => Some(&*ty.name),
-                Stmt::Methods { .. } => None,
-                Stmt::ProtocolDecl { name, .. } => Some(name),
-                Stmt::ProtocolImpl { .. } => None,
-                Stmt::StructDecl { name, .. } => Some(name),
-                Stmt::EnumDecl { name, .. } => name.as_deref(),
-                Stmt::VarDecl { name, .. } => Some(name),
-                Stmt::FnDecl { name, body, .. } if body.is_none() => Some(name),
-                // TODO
-                Stmt::FnDecl { .. } => None,
-                Stmt::AliasDecl { name, .. } => Some(name),
-            })
-            .chain(self.stmts.iter().flat_map(|stmt| {
-                if let Stmt::EnumDecl { variants, .. } = stmt {
-                    variants.iter().map(|(name, _)| &**name).collect()
-                } else {
-                    vec![]
-                }
-            }))
-    }
-
     pub fn add_stmt(&mut self, stmt: Stmt) {
         self.stmts.push(stmt);
     }

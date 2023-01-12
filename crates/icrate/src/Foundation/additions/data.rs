@@ -1,16 +1,16 @@
+#![cfg(feature = "Foundation_NSData")]
 #[cfg(feature = "block")]
 use alloc::vec::Vec;
-use core::ffi::c_void;
 use core::fmt;
 use core::ops::Index;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::slice::{self, SliceIndex};
 
-use objc2::rc::{DefaultId, Id, Shared};
-use objc2::runtime::{Class, Object};
-use objc2::{extern_methods, msg_send_id, ClassType};
+use objc2::msg_send_id;
+use objc2::rc::DefaultId;
 
-use crate::Foundation::{NSCopying, NSData, NSMutableCopying, NSMutableData};
+use crate::common::*;
+use crate::Foundation::{self, NSData};
 
 // SAFETY: `NSData` is immutable and `NSMutableData` can only be mutated from
 // `&mut` methods.
@@ -73,22 +73,6 @@ extern_methods!(
         }
     }
 );
-
-unsafe impl NSCopying for NSData {
-    type Ownership = Shared;
-    type Output = NSData;
-}
-
-unsafe impl NSMutableCopying for NSData {
-    type Output = NSMutableData;
-}
-
-impl alloc::borrow::ToOwned for NSData {
-    type Owned = Id<NSData, Shared>;
-    fn to_owned(&self) -> Self::Owned {
-        self.copy()
-    }
-}
 
 impl AsRef<[u8]> for NSData {
     fn as_ref(&self) -> &[u8] {
@@ -171,44 +155,5 @@ pub(crate) unsafe fn with_vec(cls: &Class, bytes: Vec<u8>) -> Id<Object, Shared>
             length: bytes.len(),
             deallocator: dealloc,
         ]
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use alloc::format;
-    #[cfg(feature = "block")]
-    use alloc::vec;
-
-    #[test]
-    fn test_bytes() {
-        let bytes = [3, 7, 16, 52, 112, 19];
-        let data = NSData::with_bytes(&bytes);
-        assert_eq!(data.len(), bytes.len());
-        assert_eq!(data.bytes(), bytes);
-    }
-
-    #[test]
-    fn test_no_bytes() {
-        let data = NSData::new();
-        assert!(Some(data.bytes()).is_some());
-    }
-
-    #[cfg(feature = "block")]
-    #[test]
-    fn test_from_vec() {
-        let bytes = vec![3, 7, 16];
-        let bytes_ptr = bytes.as_ptr();
-
-        let data = NSData::from_vec(bytes);
-        assert_eq!(data.bytes().as_ptr(), bytes_ptr);
-    }
-
-    #[test]
-    fn test_debug() {
-        let bytes = [3, 7, 16, 52, 112, 19];
-        let data = NSData::with_bytes(&bytes);
-        assert_eq!(format!("{data:?}"), "[3, 7, 16, 52, 112, 19]");
     }
 }

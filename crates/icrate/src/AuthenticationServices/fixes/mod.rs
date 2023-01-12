@@ -1,6 +1,4 @@
-use objc2::{extern_class, ClassType};
-
-use crate::Foundation::NSObject;
+use crate::common::*;
 
 // TODO: UIViewController on iOS, NSViewController on macOS
 pub type ASViewController = NSObject;
@@ -10,12 +8,15 @@ pub type ASPresentationAnchor = NSObject;
 pub type ASImage = NSObject;
 
 // TODO: UIControl on iOS, NSControl on macOS
-pub(crate) type ASControl = NSObject;
+#[cfg(feature = "AuthenticationServices_ASAuthorizationAppleIDButton")]
+type ASControl = NSObject;
 
 extern_class!(
     #[derive(Debug, PartialEq, Eq, Hash)]
+    #[cfg(feature = "AuthenticationServices_ASCredentialProviderViewController")]
     pub struct ASCredentialProviderViewController;
 
+    #[cfg(feature = "AuthenticationServices_ASCredentialProviderViewController")]
     unsafe impl ClassType for ASCredentialProviderViewController {
         type Super = ASViewController;
     }
@@ -23,8 +24,10 @@ extern_class!(
 
 extern_class!(
     #[derive(Debug, PartialEq, Eq, Hash)]
+    #[cfg(feature = "AuthenticationServices_ASAccountAuthenticationModificationViewController")]
     pub struct ASAccountAuthenticationModificationViewController;
 
+    #[cfg(feature = "AuthenticationServices_ASAccountAuthenticationModificationViewController")]
     unsafe impl ClassType for ASAccountAuthenticationModificationViewController {
         type Super = ASViewController;
     }
@@ -32,8 +35,10 @@ extern_class!(
 
 extern_class!(
     #[derive(Debug, PartialEq, Eq, Hash)]
+    #[cfg(feature = "AuthenticationServices_ASAuthorizationAppleIDButton")]
     pub struct ASAuthorizationAppleIDButton;
 
+    #[cfg(feature = "AuthenticationServices_ASAuthorizationAppleIDButton")]
     unsafe impl ClassType for ASAuthorizationAppleIDButton {
         type Super = ASControl;
     }

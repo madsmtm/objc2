@@ -1,5 +1,5 @@
 //! Test the output of the `ns_string!` macro.
-#![cfg(feature = "Foundation")]
+#![cfg(feature = "Foundation_NSString")]
 
 use icrate::ns_string;
 use icrate::Foundation::NSString;

@@ -1,3 +1,4 @@
+#![cfg(feature = "Foundation_NSDictionary")]
 use alloc::vec::Vec;
 use core::cmp::min;
 use core::fmt;
@@ -6,26 +7,35 @@ use core::ops::Index;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 
-use crate::Foundation::{
-    NSCopying, NSDictionary, NSEnumerator2, NSFastEnumeration2, NSMutableDictionary,
-};
-use objc2::rc::{DefaultId, Id, Owned, Shared, SliceId};
-use objc2::{extern_methods, msg_send, msg_send_id, ClassType, Message};
+use objc2::rc::{DefaultId, SliceId};
+use objc2::{msg_send, msg_send_id};
+
+use crate::common::*;
+use crate::Foundation::{self, NSDictionary};
 
 // TODO: SAFETY
 // Approximately same as `NSArray<T, Shared>`
 unsafe impl<K: Message + Sync + Send, V: Message + Sync + Send> Sync for NSDictionary<K, V> {}
 unsafe impl<K: Message + Sync + Send, V: Message + Sync + Send> Send for NSDictionary<K, V> {}
 
-unsafe impl<K: Message + Sync + Send, V: Message + Sync + Send> Sync for NSMutableDictionary<K, V> {}
-unsafe impl<K: Message + Sync + Send, V: Message + Sync + Send> Send for NSMutableDictionary<K, V> {}
+#[cfg(feature = "Foundation_NSMutableDictionary")]
+unsafe impl<K: Message + Sync + Send, V: Message + Sync + Send> Sync
+    for Foundation::NSMutableDictionary<K, V>
+{
+}
+#[cfg(feature = "Foundation_NSMutableDictionary")]
+unsafe impl<K: Message + Sync + Send, V: Message + Sync + Send> Send
+    for Foundation::NSMutableDictionary<K, V>
+{
+}
 
 // Approximately same as `NSArray<T, Shared>`
 impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> UnwindSafe for NSDictionary<K, V> {}
 impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> RefUnwindSafe for NSDictionary<K, V> {}
 
+#[cfg(feature = "Foundation_NSMutableDictionary")]
 impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> UnwindSafe
-    for NSMutableDictionary<K, V>
+    for Foundation::NSMutableDictionary<K, V>
 {
 }
 // impl<K: Message + RefUnwindSafe, V: Message + RefUnwindSafe> RefUnwindSafe for NSMutableDictionary<K, V> {}
@@ -83,24 +93,26 @@ extern_methods!(
         }
 
         #[doc(alias = "keyEnumerator")]
-        pub fn iter_keys(&self) -> NSEnumerator2<'_, K> {
+        #[cfg(feature = "Foundation_NSEnumerator")]
+        pub fn iter_keys(&self) -> Foundation::NSEnumerator2<'_, K> {
             unsafe {
                 let result = msg_send![self, keyEnumerator];
-                NSEnumerator2::from_ptr(result)
+                Foundation::NSEnumerator2::from_ptr(result)
             }
         }
 
         #[doc(alias = "objectEnumerator")]
-        pub fn iter_values(&self) -> NSEnumerator2<'_, V> {
+        #[cfg(feature = "Foundation_NSEnumerator")]
+        pub fn iter_values(&self) -> Foundation::NSEnumerator2<'_, V> {
             unsafe {
                 let result = msg_send![self, objectEnumerator];
-                NSEnumerator2::from_ptr(result)
+                Foundation::NSEnumerator2::from_ptr(result)
             }
         }
 
         pub fn from_keys_and_objects<T>(keys: &[&T], vals: Vec<Id<V, Owned>>) -> Id<Self, Shared>
         where
-            T: NSCopying<Output = K>,
+            T: Foundation::NSCopying<Output = K>,
         {
             let vals = vals.as_slice_ref();
 
@@ -126,7 +138,7 @@ impl<K: Message, V: Message> DefaultId for NSDictionary<K, V> {
     }
 }
 
-unsafe impl<K: Message, V: Message> NSFastEnumeration2 for NSDictionary<K, V> {
+unsafe impl<K: Message, V: Message> Foundation::NSFastEnumeration2 for NSDictionary<K, V> {
     type Item = K;
 }
 
@@ -138,114 +150,11 @@ impl<'a, K: Message, V: Message> Index<&'a K> for NSDictionary<K, V> {
     }
 }
 
+#[cfg(feature = "Foundation_NSEnumerator")]
 impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug for NSDictionary<K, V> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let iter = self.iter_keys().zip(self.iter_values());
         f.debug_map().entries(iter).finish()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use alloc::format;
-    use alloc::vec;
-
-    use objc2::rc::autoreleasepool;
-
-    use super::*;
-    use crate::Foundation::{NSObject, NSString};
-
-    fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>, Shared> {
-        let string = NSString::from_str(key);
-        let obj = NSObject::new();
-        NSDictionary::from_keys_and_objects(&[&*string], vec![obj])
-    }
-
-    #[test]
-    fn test_len() {
-        let dict = sample_dict("abcd");
-        assert_eq!(dict.len(), 1);
-    }
-
-    #[test]
-    fn test_get() {
-        let dict = sample_dict("abcd");
-
-        let string = NSString::from_str("abcd");
-        assert!(dict.get(&string).is_some());
-
-        let string = NSString::from_str("abcde");
-        assert!(dict.get(&string).is_none());
-    }
-
-    #[test]
-    fn test_keys() {
-        let dict = sample_dict("abcd");
-        let keys = dict.keys();
-
-        assert_eq!(keys.len(), 1);
-        autoreleasepool(|pool| {
-            assert_eq!(keys[0].as_str(pool), "abcd");
-        });
-    }
-
-    #[test]
-    fn test_values() {
-        let dict = sample_dict("abcd");
-        let vals = dict.values();
-
-        assert_eq!(vals.len(), 1);
-    }
-
-    #[test]
-    fn test_keys_and_objects() {
-        let dict = sample_dict("abcd");
-        let (keys, objs) = dict.keys_and_objects();
-
-        assert_eq!(keys.len(), 1);
-        assert_eq!(objs.len(), 1);
-        autoreleasepool(|pool| {
-            assert_eq!(keys[0].as_str(pool), "abcd");
-        });
-        assert_eq!(objs[0], dict.get(keys[0]).unwrap());
-    }
-
-    #[test]
-    fn test_iter_keys() {
-        let dict = sample_dict("abcd");
-        assert_eq!(dict.iter_keys().count(), 1);
-        autoreleasepool(|pool| {
-            assert_eq!(dict.iter_keys().next().unwrap().as_str(pool), "abcd");
-        });
-    }
-
-    #[test]
-    fn test_iter_values() {
-        let dict = sample_dict("abcd");
-        assert_eq!(dict.iter_values().count(), 1);
-    }
-
-    #[test]
-    fn test_arrays() {
-        let dict = sample_dict("abcd");
-
-        let keys = dict.allKeys();
-        assert_eq!(keys.len(), 1);
-        autoreleasepool(|pool| {
-            assert_eq!(keys[0].as_str(pool), "abcd");
-        });
-
-        // let objs = NSDictionary::into_values_array(dict);
-        // assert_eq!(objs.len(), 1);
-    }
-
-    #[test]
-    fn test_debug() {
-        let key = NSString::from_str("a");
-        // TODO: Fix this
-        let val = unsafe { Id::from_shared(NSString::from_str("b")) };
-        let dict = NSDictionary::from_keys_and_objects(&[&*key], vec![val]);
-        assert_eq!(format!("{dict:?}"), r#"{"a": "b"}"#);
     }
 }

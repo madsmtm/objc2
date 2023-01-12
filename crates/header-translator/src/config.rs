@@ -38,9 +38,26 @@ pub struct Config {
     pub libraries: HashMap<String, LibraryData>,
 }
 
+impl Config {
+    pub fn get_library_alias(&self, library_name: String) -> String {
+        self.libraries
+            .iter()
+            .find_map(|(n, data)| {
+                if let Some(name) = &data.name {
+                    if n == &library_name {
+                        return Some(name.clone());
+                    }
+                }
+                None
+            })
+            .unwrap_or(library_name)
+    }
+}
+
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct LibraryData {
+    pub name: Option<String>,
     pub imports: Vec<String>,
 }
 

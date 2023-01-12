@@ -1,7 +1,5 @@
 #![allow(clippy::bool_to_int_with_if)]
 use crate::common::*;
-use crate::AppKit::NSResponder;
-use crate::Foundation::NSObject;
 
 /// (!TARGET_CPU_X86_64 || (TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST))
 ///
@@ -30,22 +28,26 @@ ns_enum!(
 );
 
 extern_class!(
+    #[cfg(feature = "AppKit_NSPopover")]
     #[derive(Debug, PartialEq, Eq, Hash)]
     pub struct NSPopover;
 
+    #[cfg(feature = "AppKit_NSPopover")]
     unsafe impl ClassType for NSPopover {
         #[inherits(NSObject)]
-        type Super = NSResponder;
+        type Super = crate::AppKit::NSResponder;
     }
 );
 
 __inner_extern_class!(
+    #[cfg(feature = "AppKit_NSLayoutAnchor")]
     #[derive(Debug, PartialEq, Eq, Hash)]
     pub struct NSLayoutAnchor<AnchorType: Message = Object, AnchorTypeOwnership: Ownership = Shared> {
         _inner0: PhantomData<*mut (AnchorType, AnchorTypeOwnership)>,
         notunwindsafe: PhantomData<&'static mut ()>,
     }
 
+    #[cfg(feature = "AppKit_NSLayoutAnchor")]
     unsafe impl<AnchorType: Message, AnchorTypeOwnership: Ownership> ClassType
         for NSLayoutAnchor<AnchorType, AnchorTypeOwnership>
     {

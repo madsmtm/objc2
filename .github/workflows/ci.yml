@@ -282,6 +282,33 @@ jobs:
     - name: Verify that no files changed
       run: git diff --exit-code --submodule=diff
 
+  check-icrate-features:
+    # if: ${{ env.FULL }}
+    # This will take ~40 minutes
+    if: ${{ github.ref_name == 'new-versions' || github.ref_name == 'ci-full' }}
+    name: Check icrate features
+    runs-on: macos-12
+    needs:
+    - fmt
+    - lint
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Use system Rust
+      run: cargo --version
+
+    - name: Cache Cargo
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CARGO_CACHE_PATH }}
+        key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Check `icrate` with each feature enabled separately
+      run: cargo run --bin=check_icrate_features --features=run-icrate-check
+
   test-macos:
     name: Test macOS 12
     runs-on: macos-12
@@ -435,16 +462,17 @@ jobs:
       run: cargo test $ARGS
 
     - name: Test Foundation
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,Foundation
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,Foundation_all
 
     - name: Test all frameworks
       run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,unstable-frameworks-${{ matrix.frameworks }}
 
     - name: Test in release mode
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation --release
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation_all --release
 
     - name: Test with unstable features
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation,$UNSTABLE_FEATURES
+      if: ${{ matrix.nightly }}
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation_all,$UNSTABLE_FEATURES
 
     # TODO: Re-enable this on Foundation once we do some form of
     # availability checking.

@@ -1,9 +1,8 @@
+#![cfg(feature = "Foundation_NSMutableAttributedString")]
 use objc2::rc::{DefaultId, Id, Owned, Shared};
 use objc2::{extern_methods, msg_send_id, ClassType};
 
-use crate::Foundation::{
-    NSAttributedString, NSCopying, NSMutableAttributedString, NSMutableCopying, NSString,
-};
+use crate::Foundation::{self, NSAttributedString, NSMutableAttributedString};
 
 extern_methods!(
     /// Creating mutable attributed strings.
@@ -15,7 +14,8 @@ extern_methods!(
         // TODO: new_with_attributes
 
         #[doc(alias = "initWithString:")]
-        pub fn from_nsstring(string: &NSString) -> Id<Self, Owned> {
+        #[cfg(feature = "Foundation_NSString")]
+        pub fn from_nsstring(string: &Foundation::NSString) -> Id<Self, Owned> {
             unsafe { msg_send_id![Self::alloc(), initWithString: string] }
         }
 
@@ -32,46 +32,5 @@ impl DefaultId for NSMutableAttributedString {
     #[inline]
     fn default_id() -> Id<Self, Self::Ownership> {
         Self::new()
-    }
-}
-
-unsafe impl NSCopying for NSMutableAttributedString {
-    type Ownership = Shared;
-    type Output = NSAttributedString;
-}
-
-unsafe impl NSMutableCopying for NSMutableAttributedString {
-    type Output = NSMutableAttributedString;
-}
-
-impl alloc::borrow::ToOwned for NSMutableAttributedString {
-    type Owned = Id<NSMutableAttributedString, Owned>;
-    fn to_owned(&self) -> Self::Owned {
-        self.mutable_copy()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use alloc::string::ToString;
-
-    use super::*;
-
-    #[test]
-    fn test_new() {
-        let s = NSAttributedString::new();
-        assert_eq!(&s.string().to_string(), "");
-    }
-
-    #[test]
-    fn test_copy() {
-        let s1 = NSMutableAttributedString::from_nsstring(&NSString::from_str("abc"));
-        let s2 = s1.copy();
-        assert_ne!(Id::as_ptr(&s1).cast(), Id::as_ptr(&s2));
-        assert!(s2.is_kind_of::<NSAttributedString>());
-
-        let s3 = s1.mutable_copy();
-        assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3));
-        assert!(s3.is_kind_of::<NSMutableAttributedString>());
     }
 }

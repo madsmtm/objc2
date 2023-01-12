@@ -103,6 +103,7 @@
 //! # Feature flags
 //!
 //! `"uuid"` -> Enables conversion methods between `NSUUID` and `uuid::Uuid`.
+#![allow(unused_imports)]
 
 #[doc(hidden)]
 pub mod __ns_string;

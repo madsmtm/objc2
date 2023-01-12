@@ -1,12 +1,9 @@
-use core::ffi::c_void;
-use core::ptr::NonNull;
-
-use objc2::extern_methods;
-
-use crate::Foundation::NSMutableData;
+use crate::common::*;
+use crate::Foundation;
 
 extern_methods!(
-    unsafe impl NSMutableData {
+    #[cfg(feature = "Foundation_NSMutableData")]
+    unsafe impl Foundation::NSMutableData {
         #[method(mutableBytes)]
         pub fn mutableBytes(&mut self) -> Option<NonNull<c_void>>;
     }

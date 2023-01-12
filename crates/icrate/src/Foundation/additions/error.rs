@@ -1,3 +1,4 @@
+#![cfg(feature = "Foundation_NSError")]
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
@@ -5,7 +6,7 @@ use objc2::rc::{Id, Shared};
 use objc2::ClassType;
 
 use crate::Foundation::{
-    NSCopying, NSError, NSErrorDomain, NSErrorUserInfoKey, NSInteger, NSLocalizedDescriptionKey,
+    self, NSError, NSErrorDomain, NSErrorUserInfoKey, NSInteger, NSLocalizedDescriptionKey,
 };
 
 // SAFETY: Error objects are immutable data containers.
@@ -34,6 +35,14 @@ impl NSError {
     }
 }
 
+#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "Foundation_NSDictionary")]
+#[cfg(feature = "Foundation_NSEnumerator")]
+impl std::error::Error for Foundation::NSError {}
+
+#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "Foundation_NSDictionary")]
+#[cfg(feature = "Foundation_NSEnumerator")]
 impl fmt::Debug for NSError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("NSError")
@@ -44,47 +53,9 @@ impl fmt::Debug for NSError {
     }
 }
 
+#[cfg(feature = "Foundation_NSString")]
 impl fmt::Display for NSError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.localizedDescription())
-    }
-}
-
-impl std::error::Error for NSError {}
-
-unsafe impl NSCopying for NSError {
-    type Ownership = Shared;
-    type Output = Self;
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use alloc::format;
-
-    use crate::ns_string;
-
-    #[test]
-    fn custom_domain() {
-        let error = NSError::new(42, ns_string!("MyDomain"));
-        assert_eq!(error.code(), 42);
-        assert_eq!(&*error.domain(), ns_string!("MyDomain"));
-        let expected = if cfg!(feature = "apple") {
-            "The operation couldn’t be completed. (MyDomain error 42.)"
-        } else {
-            "MyDomain 42"
-        };
-        assert_eq!(format!("{error}"), expected);
-    }
-
-    #[test]
-    fn basic() {
-        let error = NSError::new(-999, ns_string!("NSURLErrorDomain"));
-        let expected = if cfg!(feature = "apple") {
-            "The operation couldn’t be completed. (NSURLErrorDomain error -999.)"
-        } else {
-            "NSURLErrorDomain -999"
-        };
-        assert_eq!(format!("{error}"), expected);
     }
 }

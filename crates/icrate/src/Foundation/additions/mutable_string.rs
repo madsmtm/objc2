@@ -1,12 +1,13 @@
+#![cfg(feature = "Foundation_NSMutableString")]
 use core::cmp;
 use core::fmt;
 use core::ops::AddAssign;
 use core::str;
 
-use objc2::rc::{DefaultId, Id, Owned, Shared};
-use objc2::{extern_methods, ClassType};
+use objc2::rc::DefaultId;
 
-use crate::Foundation::{NSCopying, NSMutableCopying, NSMutableString, NSString};
+use crate::common::*;
+use crate::Foundation::{NSMutableString, NSString};
 
 extern_methods!(
     /// Creating mutable strings.
@@ -33,22 +34,6 @@ impl DefaultId for NSMutableString {
     #[inline]
     fn default_id() -> Id<Self, Self::Ownership> {
         Self::new()
-    }
-}
-
-unsafe impl NSCopying for NSMutableString {
-    type Ownership = Shared;
-    type Output = NSString;
-}
-
-unsafe impl NSMutableCopying for NSMutableString {
-    type Output = NSMutableString;
-}
-
-impl alloc::borrow::ToOwned for NSMutableString {
-    type Owned = Id<NSMutableString, Owned>;
-    fn to_owned(&self) -> Self::Owned {
-        self.mutable_copy()
     }
 }
 
@@ -113,62 +98,5 @@ impl fmt::Display for NSMutableString {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(&**self, f)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use alloc::format;
-    use alloc::string::ToString;
-
-    use super::*;
-
-    #[test]
-    fn display_debug() {
-        let s = NSMutableString::from_str("test\"123");
-        assert_eq!(format!("{s}"), "test\"123");
-        assert_eq!(format!("{s:?}"), r#""test\"123""#);
-    }
-
-    #[test]
-    fn test_from_nsstring() {
-        let s = NSString::from_str("abc");
-        let s = NSMutableString::stringWithString(&s);
-        assert_eq!(&s.to_string(), "abc");
-    }
-
-    #[test]
-    fn test_append() {
-        let mut s = NSMutableString::from_str("abc");
-        s.appendString(&NSString::from_str("def"));
-        *s += &NSString::from_str("ghi");
-        assert_eq!(&s.to_string(), "abcdefghi");
-    }
-
-    #[test]
-    fn test_set() {
-        let mut s = NSMutableString::from_str("abc");
-        s.setString(&NSString::from_str("def"));
-        assert_eq!(&s.to_string(), "def");
-    }
-
-    #[test]
-    fn test_with_capacity() {
-        let mut s = NSMutableString::stringWithCapacity(3);
-        *s += &NSString::from_str("abc");
-        *s += &NSString::from_str("def");
-        assert_eq!(&s.to_string(), "abcdef");
-    }
-
-    #[test]
-    fn test_copy() {
-        let s1 = NSMutableString::from_str("abc");
-        let s2 = s1.copy();
-        assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s2).cast());
-        assert!(s2.is_kind_of::<NSString>());
-
-        let s3 = s1.mutable_copy();
-        assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3));
-        assert!(s3.is_kind_of::<NSMutableString>());
     }
 }
