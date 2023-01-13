@@ -1,4 +1,8 @@
-# Various fixes that we need to do because our translation is imperfect.
+### Various fixes that we need to do because our translation is imperfect.
+
+###
+### Libraries
+###
 
 [library.Foundation]
 imports = ["Foundation"]
@@ -19,18 +23,21 @@ imports = ["AppKit", "CoreData", "Foundation"]
 [library.AuthenticationServices]
 imports = ["AuthenticationServices", "Foundation"]
 
-# Uses NS_REPLACES_RECEIVER
-[class.NSObject.methods.awakeAfterUsingCoder]
-skipped = true
+###
+### Attributes that change a function/method's calling convention.
+###
+### The following should be handled automatically:
+### - `ns_returns_not_retained` / `cf_returns_not_retained` / `os_returns_not_retained`
+### - `ns_returns_retained` / `cf_returns_retained` / `os_returns_retained`
+### - `objc_returns_inner_pointer`
+###
+### The rest are only very rarely used in Apple's frameworks, so while we
+### _could_ handle them too, I think it's easier to just do it manually.
+###
+### See https://clang.llvm.org/docs/AttributeReference.html
+###
 
-# In all of Apple's frameworks, this is literally the entire list of functions
-# that use `ns_consumed`, `cf_consumed` or `os_consumed`.
-#
-# (+ a few methods from DriverKit.framework and Kernel.framework, but those
-# are written in C++, so we're not going to ever handle them anyhow).
-#
-# So while we _could_ handle it in general, I think it's safe to
-# say that it'll just be more of a hazzle than a real help.
+# `ns_consumed`, `cf_consumed` and `os_consumed`
 [fn.CFAutorelease]
 skipped = true
 [fn.CFBridgingRelease]
@@ -61,10 +68,69 @@ skipped = true
 skipped = true
 [fn.CVBufferRelease]
 skipped = true
-# Also uses NS_RETURNS_RETAINED
 [protocol.NSKeyedUnarchiverDelegate.methods.unarchiver_didDecodeObject]
 skipped = true
+# + a few methods from DriverKit.framework and Kernel.framework, but those
+# are written in C++, so we're not going to ever handle them anyhow.
 
+# `ns_consumes_self` and `os_consumes_this`
+[class.NSObject.methods.awakeAfterUsingCoder]
+skipped = true
+
+# `ns_returns_autoreleased`
+# Not ever used
+
+# `objc_method_family`
+[class.ABNewPersonViewController.methods.newPersonViewDelegate]
+skipped = true
+
+# `objc_ownership` in .apinotes
+[class.NSBundle.methods.loadNibNamed_owner_topLevelObjects]
+skipped = true
+[class.NSNib.methods.instantiateWithOwner_topLevelObjects]
+skipped = true
+
+# Return type `oneway void`
+[class.NSObject.methods.release]
+skipped = true
+[class.NSPasteboard.methods.releaseGlobally]
+skipped = true
+[class.NSView.methods.releaseGState]
+skipped = true
+# + some more in IMServicePlugIn.framework
+
+###
+### Lifetime annotations that we don't handle yet.
+###
+
+# Uses `SomeObject * __strong *`, which is unsupported
+[class.NSNetService.methods.getInputStream_outputStream]
+skipped = true
+[class.NSPropertyListSerialization.methods]
+dataFromPropertyList_format_errorDescription = { skipped = true }
+propertyListFromData_mutabilityOption_format_errorDescription = { skipped = true }
+[fn.MTLCopyAllDevicesWithObserver]
+skipped = true
+
+# Uses `__autoreleasing` in a typedef, which I'm unsure how to handle
+[typedef.MTLAutoreleasedArgument]
+skipped = true
+[protocol.MTLFunction.methods.newArgumentEncoderWithBufferIndex_reflection]
+skipped = true
+[typedef.MTLAutoreleasedRenderPipelineReflection]
+skipped = true
+[typedef.MTLAutoreleasedComputePipelineReflection]
+skipped = true
+[protocol.MTLDevice.methods]
+newRenderPipelineStateWithDescriptor_options_reflection_error = { skipped = true }
+newComputePipelineStateWithFunction_options_reflection_error = { skipped = true }
+newComputePipelineStateWithDescriptor_options_reflection_error = { skipped = true }
+newRenderPipelineStateWithTileDescriptor_options_reflection_error = { skipped = true }
+newRenderPipelineStateWithMeshDescriptor_options_reflection_error = { skipped = true }
+
+###
+### Others
+###
 
 [class.NSBlockOperation.methods]
 # Uses `NSArray<void (^)(void)>`, which is difficult to handle
@@ -75,15 +141,6 @@ executionBlocks = { skipped = true }
 registerObjectOfClass_visibility_loadHandler = { skipped = true }
 canLoadObjectOfClass = { skipped = true }
 loadObjectOfClass_completionHandler = { skipped = true }
-
-# These use `SomeObject * __strong *`, which is unsupported
-[class.NSNetService.methods]
-getInputStream_outputStream = { skipped = true }
-[class.NSPropertyListSerialization.methods]
-dataFromPropertyList_format_errorDescription = { skipped = true }
-propertyListFromData_mutabilityOption_format_errorDescription = { skipped = true }
-[fn.MTLCopyAllDevicesWithObserver]
-skipped = true
 
 # Has `error:` parameter, but returns NSInteger (where 0 means error)
 [class.NSJSONSerialization.methods.writeJSONObject_toStream_options_error]
@@ -403,12 +460,6 @@ skipped = true
 [static.NSOverwriteMergePolicy]
 skipped = true
 [static.NSRollbackMergePolicy]
-skipped = true
-
-# These return `oneway void`, which is a bit tricky to handle.
-[class.NSPasteboard.methods.releaseGlobally]
-skipped = true
-[class.NSView.methods.releaseGState]
 skipped = true
 
 # Typedef that uses a generic from a class
@@ -812,22 +863,6 @@ skipped = true
 # Wrong type on GNUStep
 [class.NSMutableData.methods.mutableBytes]
 skipped = true
-
-# Uses __autoreleasing in a typedef, which I'm unsure how to handle
-[typedef.MTLAutoreleasedArgument]
-skipped = true
-[protocol.MTLFunction.methods.newArgumentEncoderWithBufferIndex_reflection]
-skipped = true
-[typedef.MTLAutoreleasedRenderPipelineReflection]
-skipped = true
-[typedef.MTLAutoreleasedComputePipelineReflection]
-skipped = true
-[protocol.MTLDevice.methods]
-newRenderPipelineStateWithDescriptor_options_reflection_error = { skipped = true }
-newComputePipelineStateWithFunction_options_reflection_error = { skipped = true }
-newComputePipelineStateWithDescriptor_options_reflection_error = { skipped = true }
-newRenderPipelineStateWithTileDescriptor_options_reflection_error = { skipped = true }
-newRenderPipelineStateWithMeshDescriptor_options_reflection_error = { skipped = true }
 
 # Uses unions internally
 [struct.MTLPackedFloat3]

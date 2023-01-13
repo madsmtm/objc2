@@ -356,11 +356,17 @@ impl<'tu> PartialMethod<'tu> {
             EntityKind::NSConsumesSelf => {
                 consumes_self = true;
             }
+            EntityKind::NSReturnsAutoreleased => {
+                error!("found NSReturnsAutoreleased, which requires manual handling");
+            }
             EntityKind::NSReturnsRetained => {
                 if memory_management != MemoryManagement::Normal {
                     error!("got unexpected NSReturnsRetained")
                 }
                 memory_management = MemoryManagement::ReturnsRetained;
+            }
+            EntityKind::NSReturnsNotRetained => {
+                error!("found NSReturnsNotRetained, which is not yet supported");
             }
             EntityKind::ObjCReturnsInnerPointer => {
                 if memory_management != MemoryManagement::Normal {
