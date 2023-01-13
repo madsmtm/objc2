@@ -774,11 +774,6 @@ skipped = true
 [class.NSMutableData.methods.mutableBytes]
 skipped = true
 
-# Selector contains multiple colons after each other, like `::::`
-[class.CAMediaTimingFunction.methods]
-functionWithControlPoints = { skipped = true }
-initWithControlPoints = { skipped = true }
-
 # Uses __autoreleasing in a typedef, which I'm unsure how to handle
 [typedef.MTLAutoreleasedArgument]
 skipped = true

@@ -1,5 +1,7 @@
 #![deny(deprecated)]
-use crate::rc::{Id, Owned};
+use core::ptr;
+
+use crate::rc::{Id, Owned, Shared};
 use crate::runtime::NSObject;
 use crate::{declare_class, extern_methods, sel, ClassType};
 
@@ -172,4 +174,75 @@ fn test_method_that_is_never_available() {
     let metacls = cls.metaclass();
     assert!(!cls.responds_to(sel!(never)));
     assert!(!metacls.responds_to(sel!(never)));
+}
+
+declare_class!(
+    struct TestMultipleColonSelector;
+
+    unsafe impl ClassType for TestMultipleColonSelector {
+        type Super = NSObject;
+    }
+
+    unsafe impl TestMultipleColonSelector {
+        #[method(test::arg3:)]
+        fn _test_class(arg1: i32, arg2: i32, arg3: i32) -> i32 {
+            arg1 + arg2 + arg3
+        }
+
+        #[method(test::arg3:)]
+        fn _test_instance(&self, arg1: i32, arg2: i32, arg3: i32) -> i32 {
+            arg1 * arg2 * arg3
+        }
+
+        #[method(test::error:)]
+        fn _test_error(&self, _arg1: i32, _arg2: i32, _arg3: *mut *mut NSObject) -> bool {
+            true
+        }
+
+        #[method(test:::withObject:)]
+        fn _test_object(
+            &self,
+            _arg1: i32,
+            _arg2: i32,
+            _arg3: i32,
+            _obj: *const Self,
+        ) -> *const Self {
+            ptr::null()
+        }
+    }
+);
+
+extern_methods!(
+    unsafe impl TestMultipleColonSelector {
+        #[method_id(new)]
+        fn new() -> Id<Self, Owned>;
+
+        #[method(test::arg3:)]
+        fn test_class(arg1: i32, arg2: i32, arg3: i32) -> i32;
+
+        #[method(test::arg3:)]
+        fn test_instance(&self, arg1: i32, arg2: i32, arg3: i32) -> i32;
+
+        #[method(test::error:_)]
+        fn test_error(&self, arg1: i32, arg2: i32) -> Result<(), Id<NSObject, Shared>>;
+
+        #[method_id(test:::withObject:)]
+        fn test_object(
+            &self,
+            arg1: i32,
+            arg2: i32,
+            arg3: i32,
+            obj: *const Self,
+        ) -> Option<Id<Self, Shared>>;
+    }
+);
+
+#[test]
+fn test_multiple_colon_selector() {
+    assert_eq!(TestMultipleColonSelector::test_class(2, 3, 4), 9);
+
+    let obj = TestMultipleColonSelector::new();
+    assert_eq!(obj.test_instance(1, 2, 3), 6);
+    assert!(obj.test_error(1, 2).is_ok());
+    assert!(obj.test_object(1, 2, 3, ptr::null()).is_none());
 }

@@ -1,10 +1,10 @@
 error: number of arguments in function and selector did not match
- --> ui/extern_methods_wrong_arguments_error.rs
+ --> ui/extern_methods_bad_selector.rs
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(too:few:_)]
-  | |         fn class_too_few() -> Result<(), Id<NSObject, Shared>>;
+  | |         #[method()]
+  | |         fn no_selector_class();
   | |     }
   | | );
   | |_^
@@ -12,12 +12,25 @@ error: number of arguments in function and selector did not match
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: number of arguments in function and selector did not match
- --> ui/extern_methods_wrong_arguments_error.rs
+ --> ui/extern_methods_bad_selector.rs
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(tooMany:_)]
-  | |         fn class_too_many(arg: i32) -> Result<(), Id<NSObject, Shared>>;
+  | |         #[method_id()]
+  | |         fn no_selector_id_self(&self);
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__method_msg_send_id` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: number of arguments in function and selector did not match
+ --> ui/extern_methods_bad_selector.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method(_)]
+  | |         fn underscore(&self);
   | |     }
   | | );
   | |_^
@@ -25,25 +38,12 @@ error: number of arguments in function and selector did not match
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: number of arguments in function and selector did not match
- --> ui/extern_methods_wrong_arguments_error.rs
+ --> ui/extern_methods_bad_selector.rs
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
-  | |         #[method(too:few:_)]
-  | |         fn too_few(&self) -> Result<(), Id<NSObject, Shared>>;
-  | |     }
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: number of arguments in function and selector did not match
- --> ui/extern_methods_wrong_arguments_error.rs
-  |
-  | / extern_methods!(
-  | |     unsafe impl MyObject {
-  | |         #[method(tooMany:_)]
-  | |         fn too_many(&self, arg: i32) -> Result<(), Id<NSObject, Shared>>;
+  | |         #[method(ab:c)]
+  | |         fn missing_colon(&self);
   | |     }
   | | );
   | |_^

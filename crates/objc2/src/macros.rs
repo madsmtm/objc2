@@ -1,4 +1,5 @@
 mod __attribute_helpers;
+mod __method_msg_send;
 mod __msg_send_parse;
 mod __rewrite_self_arg;
 mod declare_class;
@@ -166,6 +167,19 @@ macro_rules! __class_inner {
 /// let sel = sel!(aSelector:withoutTrailingColon);
 /// ```
 ///
+/// A selector with internal colons:
+///
+/// ```
+/// # use objc2::sel;
+/// let sel = sel!(sel::with:::multiple:internal::::colons:::);
+///
+/// // Yes, that is possible! The following Objective-C would work:
+/// //
+/// // @interface MyThing: NSObject
+/// // + (void)test:(int)a :(int)b arg:(int)c :(int)d;
+/// // @end
+/// ```
+///
 /// Unsupported usage that you may run into when using macros - fails to
 /// compile when the `"unstable-static-sel"` feature is enabled.
 ///
@@ -196,21 +210,71 @@ macro_rules! sel {
     (new) => ({
         $crate::__macro_helpers::new_sel()
     });
-    ($first:ident $(: $($rest:ident :)*)?) => ({
+    ($sel:ident) => ({
         $crate::__sel_inner!(
-            $crate::__sel_data!($first $(: $($rest :)*)?),
-            $crate::__hash_idents!($first $($($rest)*)?)
+            $crate::__sel_data!($sel),
+            $crate::__hash_idents!($sel)
         )
     });
+    ($($sel:ident :)*) => ({
+        $crate::__sel_inner!(
+            $crate::__sel_data!($($sel :)*),
+            $crate::__hash_idents!($($sel :)*)
+        )
+    });
+    ($($sel:tt)*) => {
+        $crate::__sel_inner!(
+            $crate::__sel_helper! {
+                @()
+                $($sel)*
+            },
+            $crate::__hash_idents!($($sel)*)
+        )
+    };
+}
+
+/// Handle selectors with internal colons.
+///
+/// Required since `::` is a different token than `:`.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __sel_helper {
+    // Base-case
+    {
+        @($($parsed_sel:tt)*)
+    } => ({
+        $crate::__sel_data!($($parsed_sel)*)
+    });
+    // Parse identitifer + colon token
+    {
+        @($($parsed_sel:tt)*)
+        $($ident:ident)? : $($rest:tt)*
+    } => {
+        $crate::__sel_helper! {
+            @($($parsed_sel)* $($ident)? :)
+            $($rest)*
+        }
+    };
+    // Parse identitifer + path separator token
+    {
+        @($($parsed_sel:tt)*)
+        $($ident:ident)? :: $($rest:tt)*
+    } => {
+        $crate::__sel_helper! {
+            // Notice space between these
+            @($($parsed_sel)* $($ident)? : :)
+            $($rest)*
+        }
+    };
 }
 
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __sel_data {
-    ($first:ident $(: $($rest:ident :)*)?) => {
+    ($first:ident $(: $($($rest:ident)? :)*)?) => {
         $crate::__macro_helpers::concat!(
             $crate::__macro_helpers::stringify!($first),
-            $(':', $($crate::__macro_helpers::stringify!($rest), ':',)*)?
+            $(':', $($($crate::__macro_helpers::stringify!($rest),)? ':',)*)?
             '\0',
         )
     };
@@ -1085,20 +1149,6 @@ macro_rules! msg_send_id {
         result = <$crate::__macro_helpers::Init as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
         result
     });
-    [$obj:expr, @__retain_semantics $retain_semantics:ident $($selector_and_arguments:tt)+] => {
-        $crate::__msg_send_parse! {
-            ($crate::__msg_send_id_helper)
-            @(send_message_id_error)
-            @()
-            @()
-            @($($selector_and_arguments)+)
-            @(send_message_id)
-
-            @($obj)
-            @($retain_semantics)
-        }
-        // compile_error!(stringify!($($selector_and_arguments)*))
-    };
     [$obj:expr, $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
             ($crate::__msg_send_id_helper)
@@ -1166,12 +1216,12 @@ macro_rules! __msg_send_id_helper {
         @($fn:ident)
         @($obj:expr)
         @($retain_semantics:ident)
-        @($sel_first:ident $(: $($sel_rest:ident :)*)?)
+        @($($selector:tt)*)
         @($($argument:expr,)*)
     } => ({
         <$crate::__macro_helpers::$retain_semantics as $crate::__macro_helpers::MsgSendId<_, _>>::$fn::<_, _>(
             $obj,
-            $crate::sel!($sel_first $(: $($sel_rest :)*)?),
+            $crate::sel!($($selector)*),
             ($($argument,)*),
         )
     });
@@ -1179,11 +1229,13 @@ macro_rules! __msg_send_id_helper {
         @($fn:ident)
         @($obj:expr)
         @()
-        @($sel_first:ident $(: $($sel_rest:ident :)*)?)
+        @($($selector:tt)*)
         @($($argument:expr,)*)
     } => ({
         // Don't use `sel!`, otherwise we'd end up with defining this data twice.
-        const __SELECTOR_DATA: &$crate::__macro_helpers::str = $crate::__sel_data!($sel_first $(: $($sel_rest :)*)?);
+        const __SELECTOR_DATA: &$crate::__macro_helpers::str = $crate::__sel_data!(
+            $($selector)*
+        );
         let result;
         result = <$crate::__macro_helpers::RetainSemantics<{
             $crate::__macro_helpers::retain_semantics(__SELECTOR_DATA)
@@ -1191,7 +1243,7 @@ macro_rules! __msg_send_id_helper {
             $obj,
             $crate::__sel_inner!(
                 __SELECTOR_DATA,
-                $crate::__hash_idents!($sel_first $($($sel_rest)*)?)
+                $crate::__hash_idents!($($selector)*)
             ),
             ($($argument,)*),
         );

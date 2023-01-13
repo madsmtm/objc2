@@ -24,27 +24,19 @@ use proc_macro::Literal;
 use proc_macro::TokenStream;
 use proc_macro::TokenTree;
 
-/// Quick n' dirty way to extract the idents given by the `sel!` macro.
+/// Extract all identifiers in the given tokenstream.
 fn get_idents(input: TokenStream) -> impl Iterator<Item = Ident> {
     input.into_iter().flat_map(|token| {
-        if let TokenTree::Group(group) = token {
-            group
-                .stream()
-                .into_iter()
-                .map(|token| {
-                    if let TokenTree::Ident(ident) = token {
-                        ident
-                    } else {
-                        panic!("Expected ident, got {token:?}")
-                    }
-                })
-                .collect::<Vec<_>>()
-                .into_iter()
-        } else if let TokenTree::Ident(ident) = token {
-            vec![ident].into_iter()
-        } else {
-            panic!("Expected group or ident, got {token:?}")
+        match token {
+            TokenTree::Group(group) => get_idents(group.stream()).collect::<Vec<_>>(),
+            TokenTree::Ident(ident) => {
+                vec![ident]
+            }
+            TokenTree::Punct(_) | TokenTree::Literal(_) => {
+                vec![]
+            }
         }
+        .into_iter()
     })
 }
 

@@ -860,12 +860,14 @@ mod tests {
 
     #[test]
     fn test_in_selector_family() {
+        #[track_caller]
         fn assert_in_family(selector: &str, family: &str) {
             assert!(in_selector_family(selector.as_bytes(), family.as_bytes()));
             let selector = selector.to_string() + "\0";
             assert!(in_selector_family(selector.as_bytes(), family.as_bytes()));
         }
 
+        #[track_caller]
         fn assert_not_in_family(selector: &str, family: &str) {
             assert!(!in_selector_family(selector.as_bytes(), family.as_bytes()));
             let selector = selector.to_string() + "\0";
@@ -946,6 +948,13 @@ mod tests {
         assert_not_in_family("a", "");
         assert_in_family("_A", "");
         assert_in_family("A", "");
+
+        // Double-colon selectors
+        assert_in_family("abc::abc::", "abc");
+        assert_in_family("abc:::", "abc");
+        assert_in_family("abcDef::xyz:", "abc");
+        // Invalid selector (probably)
+        assert_not_in_family("::abc:", "abc");
     }
 
     mod test_trait_disambugated {

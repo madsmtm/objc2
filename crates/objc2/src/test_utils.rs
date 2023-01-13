@@ -154,6 +154,28 @@ pub(crate) fn custom_class() -> &'static Class {
             fst + snd
         }
 
+        extern "C" fn custom_obj_multiple_colon(
+            _obj: &Object,
+            _cmd: Sel,
+            arg1: i32,
+            arg2: i32,
+            arg3: i32,
+            arg4: i32,
+        ) -> i32 {
+            arg1 * arg2 * arg3 * arg4
+        }
+
+        extern "C" fn custom_obj_multiple_colon_class(
+            _cls: &Class,
+            _cmd: Sel,
+            arg1: i32,
+            arg2: i32,
+            arg3: i32,
+            arg4: i32,
+        ) -> i32 {
+            arg1 + arg2 + arg3 + arg4
+        }
+
         unsafe {
             let release: unsafe extern "C" fn(_, _) = custom_obj_release;
             builder.add_method(sel!(release), release);
@@ -174,6 +196,11 @@ pub(crate) fn custom_class() -> &'static Class {
             let protocol_class_method: extern "C" fn(_, _, _, _) -> _ =
                 custom_obj_add_number_to_number;
             builder.add_class_method(sel!(addNumber:toNumber:), protocol_class_method);
+
+            let f: extern "C" fn(_, _, _, _, _, _) -> _ = custom_obj_multiple_colon;
+            builder.add_method(sel!(test::test::), f);
+            let f: extern "C" fn(_, _, _, _, _, _) -> _ = custom_obj_multiple_colon_class;
+            builder.add_class_method(sel!(test::test::), f);
         }
 
         builder.register();
