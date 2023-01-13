@@ -9,20 +9,10 @@ use crate::context::Context;
 use crate::id::ItemIdentifier;
 use crate::immediate_children;
 use crate::objc2_utils::in_selector_family;
-use crate::rust_type::Ty;
+use crate::rust_type::{MethodArgumentQualifier, Ty};
 use crate::unexposed_macro::UnexposedMacro;
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
-pub enum Qualifier {
-    In,
-    Inout,
-    Out,
-    Bycopy,
-    Byref,
-    Oneway,
-}
-
-impl Qualifier {
+impl MethodArgumentQualifier {
     pub fn parse(qualifiers: ObjCQualifiers) -> Self {
         match qualifiers {
             ObjCQualifiers {
@@ -49,31 +39,7 @@ impl Qualifier {
                 byref: false,
                 oneway: false,
             } => Self::Out,
-            ObjCQualifiers {
-                in_: false,
-                inout: false,
-                out: false,
-                bycopy: true,
-                byref: false,
-                oneway: false,
-            } => Self::Bycopy,
-            ObjCQualifiers {
-                in_: false,
-                inout: false,
-                out: false,
-                bycopy: false,
-                byref: true,
-                oneway: false,
-            } => Self::Byref,
-            ObjCQualifiers {
-                in_: false,
-                inout: false,
-                out: false,
-                bycopy: false,
-                byref: false,
-                oneway: true,
-            } => Self::Oneway,
-            _ => unreachable!("invalid qualifiers: {:?}", qualifiers),
+            qualifiers => unreachable!("unsupported qualifiers {qualifiers:?}"),
         }
     }
 }
@@ -153,7 +119,7 @@ pub struct Method {
     pub is_class: bool,
     is_optional_protocol: bool,
     memory_management: MemoryManagement,
-    arguments: Vec<(String, Option<Qualifier>, Ty)>,
+    arguments: Vec<(String, Ty)>,
     pub result_type: Ty,
     safe: bool,
     mutating: bool,
@@ -225,7 +191,7 @@ impl Method {
     }
 
     pub fn visit_required_types(&self, mut f: impl FnMut(&ItemIdentifier)) {
-        for (_, _, arg) in &self.arguments {
+        for (_, arg) in &self.arguments {
             arg.visit_required_types(&mut f);
         }
 
@@ -274,7 +240,9 @@ impl<'tu> PartialMethod<'tu> {
             .map(|entity| {
                 let name = entity.get_name().expect("arg display name");
                 let _span = debug_span!("method argument", name).entered();
-                let qualifier = entity.get_objc_qualifiers().map(Qualifier::parse);
+                let qualifier = entity
+                    .get_objc_qualifiers()
+                    .map(MethodArgumentQualifier::parse);
 
                 immediate_children(&entity, |entity, _span| match entity.get_kind() {
                     EntityKind::ObjCClassRef
@@ -297,13 +265,13 @@ impl<'tu> PartialMethod<'tu> {
                 });
 
                 let ty = entity.get_type().expect("argument type");
-                let ty = Ty::parse_method_argument(ty, context);
+                let ty = Ty::parse_method_argument(ty, qualifier, context);
 
-                (name, qualifier, ty)
+                (name, ty)
             })
             .collect();
 
-        let is_error = if let Some((_, _, ty)) = arguments.last() {
+        let is_error = if let Some((_, ty)) = arguments.last() {
             ty.argument_is_error_out()
         } else {
             false
@@ -319,8 +287,7 @@ impl<'tu> PartialMethod<'tu> {
         }
 
         if let Some(qualifiers) = entity.get_objc_qualifiers() {
-            let qualifier = Qualifier::parse(qualifiers);
-            error!(?qualifier, "unexpected qualifier on return type");
+            error!(?qualifiers, "unsupported qualifiers on return type");
         }
 
         let result_type = entity.get_result_type().expect("method return type");
@@ -498,9 +465,8 @@ impl PartialProperty<'_> {
             _ => error!("unknown"),
         });
 
-        let qualifier = entity.get_objc_qualifiers().map(Qualifier::parse);
-        if qualifier.is_some() {
-            error!("properties do not support qualifiers");
+        if let Some(qualifiers) = entity.get_objc_qualifiers() {
+            error!(?qualifiers, "properties do not support qualifiers");
         }
 
         let getter = if !getter_data.skipped {
@@ -539,7 +505,7 @@ impl PartialProperty<'_> {
                     is_class,
                     is_optional_protocol: entity.is_objc_optional(),
                     memory_management,
-                    arguments: vec![(name, None, ty)],
+                    arguments: vec![(name, ty)],
                     result_type: Ty::VOID_RESULT,
                     safe: !setter_data.unsafe_,
                     mutating: setter_data.mutating,
@@ -605,7 +571,7 @@ impl fmt::Display for Method {
                 write!(f, "&self, ")?;
             }
         }
-        for (param, _qualifier, arg_ty) in &self.arguments {
+        for (param, arg_ty) in &self.arguments {
             write!(f, "{}: {arg_ty},", handle_reserved(param))?;
         }
         write!(f, ")")?;

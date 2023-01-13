@@ -1200,6 +1200,13 @@ impl fmt::Display for Inner {
     }
 }
 
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub enum MethodArgumentQualifier {
+    In,
+    Inout,
+    Out,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 enum TyKind {
     MethodReturn { with_error: bool },
@@ -1224,7 +1231,11 @@ impl Ty {
         kind: TyKind::MethodReturn { with_error: false },
     };
 
-    pub fn parse_method_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
+    pub fn parse_method_argument(
+        ty: Type<'_>,
+        _qualifier: Option<MethodArgumentQualifier>,
+        context: &Context<'_>,
+    ) -> Self {
         let ty = Inner::parse(ty, Lifetime::Unspecified, context);
 
         match &ty {
@@ -1244,6 +1255,8 @@ impl Ty {
                 }
             }),
         }
+
+        // TODO: Is the qualifier useful for anything?
 
         Self {
             ty,
@@ -1267,7 +1280,7 @@ impl Ty {
     }
 
     pub fn parse_function_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let mut this = Self::parse_method_argument(ty, context);
+        let mut this = Self::parse_method_argument(ty, None, context);
         this.kind = TyKind::FnArgument;
         this
     }
