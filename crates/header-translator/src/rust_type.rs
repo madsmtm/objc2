@@ -7,7 +7,6 @@ use serde::Deserialize;
 
 use crate::context::Context;
 use crate::id::ItemIdentifier;
-use crate::method::MemoryManagement;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 enum ParsePosition {
@@ -207,7 +206,6 @@ enum IdType {
     AnyClass {
         protocols: Vec<ItemIdentifier>,
     },
-    Allocated,
     Self_ {
         ownership: Option<Ownership>,
     },
@@ -422,7 +420,6 @@ impl fmt::Display for IdType {
             Self::AnyProtocol => write!(f, "Protocol"),
             // TODO: Handle this better
             Self::AnyClass { .. } => write!(f, "TodoClass"),
-            Self::Allocated => write!(f, "Allocated"),
             Self::Self_ { .. } => write!(f, "Self"),
         }
     }
@@ -1513,20 +1510,6 @@ impl Ty {
         matches!(self.ty, Inner::Id { .. })
     }
 
-    pub fn set_is_alloc(&mut self) {
-        match &mut self.ty {
-            Inner::Id {
-                ty: ty @ IdType::Self_ { ownership: None },
-                lifetime: Lifetime::Unspecified,
-                is_const: false,
-                nullability: _,
-            } => {
-                *ty = IdType::Allocated;
-            }
-            _ => error!(?self, "invalid alloc return type"),
-        }
-    }
-
     pub fn set_is_error(&mut self) {
         if let TyKind::MethodReturn { with_error } = &mut self.kind {
             *with_error = true;
@@ -1557,30 +1540,20 @@ impl Ty {
         matches!(&self.ty, Inner::TypeDef { id } if id.name == s)
     }
 
-    /// Related result types
-    /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types>
-    pub fn fix_related_result_type(&mut self, is_class: bool, selector: &str) {
-        if let Inner::Id {
-            ty: ty @ IdType::AnyObject { .. },
-            ..
-        } = &mut self.ty
-        {
-            let is_related = if is_class {
-                MemoryManagement::is_new(selector) || MemoryManagement::is_alloc(selector)
-            } else {
-                MemoryManagement::is_init(selector) || selector == "self"
-            };
-
-            if is_related {
-                if let IdType::AnyObject { protocols } = &ty {
-                    if !protocols.is_empty() {
-                        warn!(?ty, "related result type with protocols");
-                        return;
-                    }
+    pub fn try_fix_related_result_type(&mut self) {
+        if let Inner::Id { ty, .. } = &mut self.ty {
+            if let IdType::AnyObject { protocols } = &ty {
+                if !protocols.is_empty() {
+                    warn!(?ty, "related result type with protocols");
+                    return;
                 }
 
                 *ty = IdType::Self_ { ownership: None };
+            } else {
+                // Only fix if the type is `id`
             }
+        } else {
+            panic!("tried to fix related result type on non-id type")
         }
     }
 

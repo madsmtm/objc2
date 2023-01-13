@@ -44,69 +44,179 @@ impl MethodArgumentQualifier {
     }
 }
 
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, Default)]
+struct MethodModifiers {
+    designated_initializer: bool,
+    returns_inner_pointer: bool,
+    consumes_self: bool,
+    returns_retained: bool,
+    returns_not_retained: bool,
+}
+
+impl MethodModifiers {
+    fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Self {
+        let mut this = Self::default();
+
+        immediate_children(&entity, |entity, _span| match entity.get_kind() {
+            EntityKind::UnexposedAttr => {
+                if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                    match attr {
+                        UnexposedAttr::ReturnsRetained => {
+                            this.returns_retained = true;
+                        }
+                        UnexposedAttr::ReturnsNotRetained => {
+                            this.returns_not_retained = true;
+                        }
+                        attr => error!(?attr, "unknown attribute"),
+                    }
+                }
+            }
+            EntityKind::ObjCDesignatedInitializer => {
+                this.designated_initializer = true;
+            }
+            EntityKind::ObjCReturnsInnerPointer => {
+                this.returns_inner_pointer = true;
+            }
+            EntityKind::NSConsumesSelf => {
+                this.consumes_self = true;
+            }
+            EntityKind::NSReturnsAutoreleased => {
+                error!("found NSReturnsAutoreleased, which requires manual handling");
+            }
+            EntityKind::NSReturnsRetained => {
+                this.returns_retained = true;
+            }
+            EntityKind::NSReturnsNotRetained => {
+                this.returns_not_retained = true;
+            }
+            EntityKind::ObjCRequiresSuper => {
+                // TODO: Can we use this for something?
+                // <https://clang.llvm.org/docs/AttributeReference.html#objc-requires-super>
+            }
+            EntityKind::WarnUnusedResultAttr => {
+                // TODO: Emit `#[must_use]` on this
+            }
+            EntityKind::ObjCClassRef
+            | EntityKind::ObjCProtocolRef
+            | EntityKind::TypeRef
+            | EntityKind::ParmDecl => {
+                // Ignore
+            }
+            EntityKind::IbActionAttr | EntityKind::IbOutletAttr => {
+                // TODO: Do we want to do something special here?
+            }
+            EntityKind::ObjCInstanceMethodDecl => {
+                warn!("method inside property/method");
+            }
+            _ => error!("unknown"),
+        });
+
+        this
+    }
+}
+
+/// The retain semantics calling convention for a method.
+///
+/// This also encodes the "method family" that a method belongs to.
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum MemoryManagement {
-    /// Consumes self and returns retained pointer
-    Init,
-    ReturnsRetained,
-    ReturnsInnerPointer,
+    IdCopyOrMutCopy,
+    IdNew,
+    IdInit,
+    IdOther,
+    // TODO:
+    // IdReturnsRetained,
+    // IdReturnsNotRetained,
     Normal,
+    ReturnsInnerPointer,
 }
 
 impl MemoryManagement {
-    /// Verifies that the selector and the memory management rules match up
-    /// in a way that we can just use `msg_send_id!`.
-    fn verify_sel(self, sel: &str) {
-        let bytes = sel.as_bytes();
-        if in_selector_family(bytes, b"init") {
-            assert!(self == Self::Init, "{self:?} did not match {sel}");
-        } else if in_selector_family(bytes, b"new")
-            || in_selector_family(bytes, b"alloc")
-            || in_selector_family(bytes, b"copy")
-            || in_selector_family(bytes, b"mutableCopy")
-        {
-            assert!(
-                self == Self::ReturnsRetained,
-                "{self:?} did not match {sel}"
-            );
-        } else {
-            if self == Self::ReturnsInnerPointer {
-                return;
-            }
-            assert!(self == Self::Normal, "{self:?} did not match {sel}");
-        }
-    }
+    /// The calling convention depends solely on these arguments.
+    ///
+    /// See <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#method-families>
+    fn new(is_class: bool, selector: &str, result_type: &Ty, modifiers: MethodModifiers) -> Self {
+        // The method has been checked already to not have a
+        // `objc_method_family` attribute.
 
-    /// Matches `objc2::__macro_helpers::retain_semantics`.
-    fn get_memory_management_name(sel: &str) -> &'static str {
-        let bytes = sel.as_bytes();
-        match (
-            in_selector_family(bytes, b"new"),
+        // If:
+        // > its selector falls into the corresponding selector family
+        let bytes = selector.as_bytes();
+        let id_type = match (
             in_selector_family(bytes, b"alloc"),
-            in_selector_family(bytes, b"init"),
             in_selector_family(bytes, b"copy"),
             in_selector_family(bytes, b"mutableCopy"),
+            in_selector_family(bytes, b"new"),
+            in_selector_family(bytes, b"init"),
         ) {
-            (true, false, false, false, false) => "New",
-            (false, true, false, false, false) => "Alloc",
-            (false, false, true, false, false) => "Init",
-            (false, false, false, true, false) => "CopyOrMutCopy",
-            (false, false, false, false, true) => "CopyOrMutCopy",
-            (false, false, false, false, false) => "Other",
+            (true, false, false, false, false) => {
+                // It's not really worth the effort to support these, since
+                // they're only defined on `NSObject` and `NSProxy`, and we
+                // have it in `ClassType` anyhow.
+                error!("the `alloc` method-family requires manual handling");
+                Self::IdOther
+            }
+            (false, true, false, false, false) => Self::IdCopyOrMutCopy,
+            (false, false, true, false, false) => Self::IdCopyOrMutCopy,
+            (false, false, false, true, false) => Self::IdNew,
+            (false, false, false, false, true) => Self::IdInit,
+            (false, false, false, false, false) => Self::IdOther,
             _ => unreachable!(),
+        };
+
+        // And if:
+        // > its signature obeys the added restrictions of the method family.
+        //
+        // Which is just:
+        // > must return a retainable object pointer
+        if result_type.is_id() {
+            // We also check that the correct modifier flags were set for the
+            // given method family.
+            match (
+                modifiers.returns_inner_pointer,
+                modifiers.consumes_self,
+                modifiers.returns_retained,
+                modifiers.returns_not_retained,
+                id_type,
+            ) {
+                (false, false, true, false, Self::IdCopyOrMutCopy) => Self::IdCopyOrMutCopy,
+                (false, false, true, false, Self::IdNew) => Self::IdNew,
+                // For the `init` family there's another restriction:
+                // > must be instance methods
+                //
+                // Note: There's some extra restrictions about a program being
+                // "ill-formed" if it contains certain selectors with `init`
+                // methods that are not correct super/subclasses, but we don't
+                // need to handle that since the header would fail to compile
+                // in `clang` if that was the case.
+                (false, true, true, false, Self::IdInit) => {
+                    if is_class {
+                        Self::IdOther
+                    } else {
+                        Self::IdInit
+                    }
+                }
+                (false, false, false, false, Self::IdOther) => Self::IdOther,
+                data => {
+                    error!(?data, "invalid MemoryManagement id attributes");
+                    Self::IdOther
+                }
+            }
+        } else {
+            match (
+                modifiers.returns_inner_pointer,
+                modifiers.consumes_self,
+                modifiers.returns_retained,
+                modifiers.returns_not_retained,
+            ) {
+                (false, false, false, false) => Self::Normal,
+                (true, false, false, false) => Self::ReturnsInnerPointer,
+                data => {
+                    error!(?data, "invalid MemoryManagement attributes");
+                    Self::Normal
+                }
+            }
         }
-    }
-
-    pub fn is_init(sel: &str) -> bool {
-        in_selector_family(sel.as_bytes(), b"init")
-    }
-
-    pub fn is_alloc(sel: &str) -> bool {
-        in_selector_family(sel.as_bytes(), b"alloc")
-    }
-
-    pub fn is_new(sel: &str) -> bool {
-        in_selector_family(sel.as_bytes(), b"new")
     }
 }
 
@@ -233,6 +343,8 @@ impl<'tu> PartialMethod<'tu> {
                 .expect("method availability"),
         );
 
+        let modifiers = MethodModifiers::parse(&entity, context);
+
         let mut arguments: Vec<_> = entity
             .get_arguments()
             .expect("method arguments")
@@ -293,90 +405,26 @@ impl<'tu> PartialMethod<'tu> {
         let result_type = entity.get_result_type().expect("method return type");
         let mut result_type = Ty::parse_method_return(result_type, context);
 
-        result_type.fix_related_result_type(is_class, &selector);
+        let memory_management = MemoryManagement::new(is_class, &selector, &result_type, modifiers);
 
-        if is_class && MemoryManagement::is_alloc(&selector) {
-            result_type.set_is_alloc();
+        // Related result types.
+        // <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types>
+        let is_related = if is_class {
+            matches!(memory_management, MemoryManagement::IdNew)
+        } else {
+            matches!(memory_management, MemoryManagement::IdInit) || selector == "self"
+        };
+
+        if is_related {
+            result_type.try_fix_related_result_type();
         }
 
         if is_error {
             result_type.set_is_error();
         }
 
-        let mut designated_initializer = false;
-        let mut consumes_self = false;
-        let mut memory_management = MemoryManagement::Normal;
-
-        immediate_children(&entity, |entity, _span| match entity.get_kind() {
-            EntityKind::ObjCClassRef
-            | EntityKind::ObjCProtocolRef
-            | EntityKind::TypeRef
-            | EntityKind::ParmDecl => {
-                // Ignore
-            }
-            EntityKind::ObjCDesignatedInitializer => {
-                if designated_initializer {
-                    error!("encountered ObjCDesignatedInitializer twice");
-                }
-                designated_initializer = true;
-            }
-            EntityKind::NSConsumesSelf => {
-                consumes_self = true;
-            }
-            EntityKind::NSReturnsAutoreleased => {
-                error!("found NSReturnsAutoreleased, which requires manual handling");
-            }
-            EntityKind::NSReturnsRetained => {
-                if memory_management != MemoryManagement::Normal {
-                    error!("got unexpected NSReturnsRetained")
-                }
-                memory_management = MemoryManagement::ReturnsRetained;
-            }
-            EntityKind::NSReturnsNotRetained => {
-                error!("found NSReturnsNotRetained, which is not yet supported");
-            }
-            EntityKind::ObjCReturnsInnerPointer => {
-                if memory_management != MemoryManagement::Normal {
-                    error!("got unexpected ObjCReturnsInnerPointer")
-                }
-                memory_management = MemoryManagement::ReturnsInnerPointer;
-            }
-            EntityKind::IbActionAttr => {
-                // TODO: What is this?
-            }
-            EntityKind::ObjCRequiresSuper => {
-                // TODO: Can we use this for something?
-                // <https://clang.llvm.org/docs/AttributeReference.html#objc-requires-super>
-            }
-            EntityKind::WarnUnusedResultAttr => {
-                // TODO: Emit `#[must_use]` on this
-            }
-            EntityKind::UnexposedAttr => {
-                if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                    error!(?attr, "unknown attribute");
-                }
-            }
-            _ => error!("unknown"),
-        });
-
-        if consumes_self {
-            if memory_management != MemoryManagement::ReturnsRetained {
-                error!("got NSConsumesSelf without NSReturnsRetained");
-            }
-            memory_management = MemoryManagement::Init;
-        }
-
-        // Verify that memory management is as expected
-        if result_type.is_id() {
-            memory_management.verify_sel(&selector);
-        }
-
-        if data.mutating && (is_class || MemoryManagement::is_init(&selector)) {
-            error!("invalid mutating method");
-        }
-
         Some((
-            designated_initializer,
+            modifiers.designated_initializer,
             Method {
                 selector,
                 fn_name,
@@ -434,36 +482,9 @@ impl PartialProperty<'_> {
                 .expect("method availability"),
         );
 
+        let modifiers = MethodModifiers::parse(&entity, context);
+
         let is_copy = attributes.map(|a| a.copy).unwrap_or(false);
-
-        let mut memory_management = MemoryManagement::Normal;
-
-        immediate_children(&entity, |entity, _span| match entity.get_kind() {
-            EntityKind::ObjCClassRef
-            | EntityKind::ObjCProtocolRef
-            | EntityKind::TypeRef
-            | EntityKind::ParmDecl => {
-                // Ignore
-            }
-            EntityKind::ObjCReturnsInnerPointer => {
-                if memory_management != MemoryManagement::Normal {
-                    error!(?memory_management, "unexpected ObjCReturnsInnerPointer")
-                }
-                memory_management = MemoryManagement::ReturnsInnerPointer;
-            }
-            EntityKind::ObjCInstanceMethodDecl => {
-                warn!("method in property");
-            }
-            EntityKind::IbOutletAttr => {
-                // TODO: What is this?
-            }
-            EntityKind::UnexposedAttr => {
-                if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                    error!(?attr, "unknown attribute");
-                }
-            }
-            _ => error!("unknown"),
-        });
 
         if let Some(qualifiers) = entity.get_objc_qualifiers() {
             error!(?qualifiers, "properties do not support qualifiers");
@@ -475,6 +496,8 @@ impl PartialProperty<'_> {
                 is_copy,
                 context,
             );
+
+            let memory_management = MemoryManagement::new(is_class, &getter_name, &ty, modifiers);
 
             Some(Method {
                 selector: getter_name.clone(),
@@ -498,8 +521,12 @@ impl PartialProperty<'_> {
                 let ty =
                     Ty::parse_property(entity.get_type().expect("property type"), is_copy, context);
 
+                let selector = setter_name.clone() + ":";
+                let memory_management =
+                    MemoryManagement::new(is_class, &selector, &Ty::VOID_RESULT, modifiers);
+
                 Some(Method {
-                    selector: setter_name.clone() + ":",
+                    selector,
                     fn_name: setter_name,
                     availability,
                     is_class,
@@ -529,7 +556,7 @@ impl Method {
         if self.is_class {
             !matches!(&*self.selector, "new" | "supportsSecureCoding")
         } else {
-            self.memory_management == MemoryManagement::Init
+            self.memory_management == MemoryManagement::IdInit
                 && !matches!(&*self.selector, "init" | "initWithCoder:")
         }
     }
@@ -539,43 +566,65 @@ impl fmt::Display for Method {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let _span = debug_span!("method", self.fn_name).entered();
 
+        //
+        // Attributes
+        //
+
         if self.is_optional_protocol {
             writeln!(f, "        #[optional]")?;
         }
 
-        let error_trailing = if self.result_type.is_error() { "_" } else { "" };
-
-        if self.result_type.is_id() {
-            writeln!(
-                f,
-                "        #[method_id(@__retain_semantics {} {}{})]",
-                MemoryManagement::get_memory_management_name(&self.selector),
-                self.selector,
-                error_trailing,
-            )?;
-        } else {
-            writeln!(f, "        #[method({}{})]", self.selector, error_trailing)?;
+        let id_mm_name = match &self.memory_management {
+            MemoryManagement::IdCopyOrMutCopy => Some("CopyOrMutCopy"),
+            MemoryManagement::IdNew => Some("New"),
+            MemoryManagement::IdInit => Some("Init"),
+            MemoryManagement::IdOther => Some("Other"),
+            MemoryManagement::Normal | MemoryManagement::ReturnsInnerPointer => None,
         };
+        if let Some(id_mm_name) = id_mm_name {
+            write!(f, "        #[method_id(@__retain_semantics {id_mm_name} ")?;
+        } else {
+            write!(f, "        #[method(")?;
+        }
+        let error_trailing = if self.result_type.is_error() { "_" } else { "" };
+        writeln!(f, "{}{})]", self.selector, error_trailing)?;
+
+        //
+        // Signature
+        //
 
         write!(f, "        pub ")?;
         if !self.safe {
             write!(f, "unsafe ")?;
         }
         write!(f, "fn {}(", handle_reserved(&self.fn_name))?;
-        if !self.is_class {
-            if MemoryManagement::is_init(&self.selector) {
-                write!(f, "this: Option<Allocated<Self>>, ")?;
-            } else if self.mutating {
+
+        // Receiver
+        if let MemoryManagement::IdInit = self.memory_management {
+            if self.mutating {
+                error!("invalid mutating method");
+            }
+            write!(f, "this: Option<Allocated<Self>>, ")?;
+        } else if self.is_class {
+            if self.mutating {
+                error!("invalid mutating method");
+            }
+            // Insert nothing; a class method is assumed
+        } else {
+            if self.mutating {
                 write!(f, "&mut self, ")?;
             } else {
                 write!(f, "&self, ")?;
             }
         }
+
+        // Arguments
         for (param, arg_ty) in &self.arguments {
             write!(f, "{}: {arg_ty},", handle_reserved(param))?;
         }
         write!(f, ")")?;
 
+        // Result
         writeln!(f, "{};", self.result_type)?;
 
         Ok(())
