@@ -152,10 +152,11 @@ impl Drop for AttributeParser<'_, '_> {
     }
 }
 
-#[derive(Deserialize, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord, Default)]
 #[serde(from = "bool")]
 pub enum Ownership {
     Owned,
+    #[default]
     Shared,
 }
 
@@ -166,12 +167,6 @@ impl From<bool> for Ownership {
         } else {
             Self::Shared
         }
-    }
-}
-
-impl Default for Ownership {
-    fn default() -> Self {
-        Ownership::Shared
     }
 }
 
