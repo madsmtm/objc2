@@ -40,6 +40,26 @@ macro_rules! extern_enum {
     (
         #[underlying($ty:ty)]
         $(#[$m:meta])*
+        $v:vis enum __anonymous__ {
+            $(
+                $(#[$field_m:meta])*
+                $field:ident = $value:expr
+            ),* $(,)?
+        }
+    ) => {
+        extern_enum! {
+            @__inner
+            @($v)
+            @($ty)
+            @($(
+                $(#[$field_m])*
+                $field = $value,
+            )*)
+        }
+    };
+    (
+        #[underlying($ty:ty)]
+        $(#[$m:meta])*
         $v:vis enum $name:ident {
             $(
                 $(#[$field_m:meta])*
@@ -55,26 +75,6 @@ macro_rules! extern_enum {
             @__inner
             @($v)
             @($name)
-            @($(
-                $(#[$field_m])*
-                $field = $value,
-            )*)
-        }
-    };
-    (
-        #[underlying($ty:ty)]
-        $(#[$m:meta])*
-        $v:vis enum {
-            $(
-                $(#[$field_m:meta])*
-                $field:ident = $value:expr
-            ),* $(,)?
-        }
-    ) => {
-        extern_enum! {
-            @__inner
-            @($v)
-            @($ty)
             @($(
                 $(#[$field_m])*
                 $field = $value,

@@ -1199,11 +1199,11 @@ impl fmt::Display for Stmt {
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    #[underlying({ty})]")?;
                 write!(f, "{availability}")?;
-                write!(f, "    pub enum ",)?;
-                if let Some(name) = &id.name {
-                    write!(f, "{name} ")?;
-                }
-                writeln!(f, "{{")?;
+                writeln!(
+                    f,
+                    "    pub enum {} {{",
+                    id.name.as_deref().unwrap_or("__anonymous__")
+                )?;
                 for (name, availability, expr) in variants {
                     write!(f, "{availability}")?;
                     writeln!(f, "        {name} = {expr},")?;
