@@ -10,7 +10,7 @@ use crate::id::ItemIdentifier;
 use crate::immediate_children;
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::{MethodArgumentQualifier, Ty};
-use crate::unexposed_macro::UnexposedMacro;
+use crate::unexposed_attr::UnexposedAttr;
 
 impl MethodArgumentQualifier {
     pub fn parse(qualifiers: ObjCQualifiers) -> Self {
@@ -255,8 +255,8 @@ impl<'tu> PartialMethod<'tu> {
                         error!("found NSConsumed, which requires manual handling");
                     }
                     EntityKind::UnexposedAttr => {
-                        if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                            warn!(?macro_, "unknown macro");
+                        if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                            error!(?attr, "unknown attribute");
                         }
                     }
                     // For some reason we recurse into array types
@@ -352,8 +352,8 @@ impl<'tu> PartialMethod<'tu> {
                 // TODO: Emit `#[must_use]` on this
             }
             EntityKind::UnexposedAttr => {
-                if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                    warn!(?macro_, "unknown macro");
+                if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                    error!(?attr, "unknown attribute");
                 }
             }
             _ => error!("unknown"),
@@ -458,8 +458,8 @@ impl PartialProperty<'_> {
                 // TODO: What is this?
             }
             EntityKind::UnexposedAttr => {
-                if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                    warn!(?macro_, "unknown macro");
+                if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                    error!(?attr, "unknown attribute");
                 }
             }
             _ => error!("unknown"),

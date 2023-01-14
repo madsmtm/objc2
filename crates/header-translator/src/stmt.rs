@@ -15,7 +15,7 @@ use crate::id::ItemIdentifier;
 use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
 use crate::rust_type::{Ownership, Ty};
-use crate::unexposed_macro::UnexposedMacro;
+use crate::unexposed_attr::UnexposedAttr;
 
 #[derive(serde::Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Derives(Cow<'static, str>);
@@ -153,8 +153,8 @@ fn parse_objc_decl(
             // Maybe useful for knowing when to implement `Error` for the type
         }
         EntityKind::UnexposedAttr => {
-            if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                warn!(?macro_, "unknown macro");
+            if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                error!(?attr, "unknown attribute");
             }
         }
         _ => error!("unknown"),
@@ -249,7 +249,7 @@ pub enum Stmt {
     EnumDecl {
         id: ItemIdentifier<Option<String>>,
         ty: Ty,
-        kind: Option<UnexposedMacro>,
+        kind: Option<UnexposedAttr>,
         variants: Vec<(String, Expr)>,
     },
     /// static const ty name = expr;
@@ -276,7 +276,7 @@ pub enum Stmt {
     AliasDecl {
         id: ItemIdentifier,
         ty: Ty,
-        kind: Option<UnexposedMacro>,
+        kind: Option<UnexposedAttr>,
     },
 }
 
@@ -286,8 +286,8 @@ fn parse_struct(entity: &Entity<'_>, context: &Context<'_>) -> (bool, Vec<(Strin
 
     immediate_children(entity, |entity, span| match entity.get_kind() {
         EntityKind::UnexposedAttr => {
-            if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                warn!(?macro_, "unknown macro");
+            if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                error!(?attr, "unknown attribute");
             }
         }
         EntityKind::FieldDecl => {
@@ -314,11 +314,11 @@ fn parse_struct(entity: &Entity<'_>, context: &Context<'_>) -> (bool, Vec<(Strin
     (boxable, fields)
 }
 
-fn parse_fn_param_children(entity: &Entity<'_>) {
+fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
     immediate_children(entity, |entity, _span| match entity.get_kind() {
         EntityKind::UnexposedAttr => {
-            if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                warn!(?macro_, "unknown macro");
+            if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                error!(?attr, "unknown attribute");
             }
         }
         EntityKind::ObjCClassRef | EntityKind::TypeRef | EntityKind::ObjCProtocolRef => {}
@@ -510,11 +510,11 @@ impl Stmt {
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
-                        if let Some(macro_) = UnexposedMacro::parse_plus_macros(&entity, context) {
+                        if let Some(attr) = UnexposedAttr::parse(&entity, context) {
                             if kind.is_some() {
-                                panic!("got multiple unexposed macros {kind:?}, {macro_:?}");
+                                panic!("got multiple unexposed attributes {kind:?}, {attr:?}");
                             }
-                            kind = Some(macro_);
+                            kind = Some(attr);
                         }
                     }
                     EntityKind::StructDecl => {
@@ -658,21 +658,21 @@ impl Stmt {
                         let expr = if data.use_value {
                             val
                         } else {
-                            Expr::parse_enum_constant(&entity).unwrap_or(val)
+                            Expr::parse_enum_constant(&entity, context).unwrap_or(val)
                         };
                         variants.push((name, expr));
                     }
                     EntityKind::UnexposedAttr => {
-                        if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                        if let Some(attr) = UnexposedAttr::parse(&entity, context) {
                             if let Some(kind) = &kind {
-                                assert_eq!(kind, &macro_, "got differing enum kinds in {id:?}");
+                                assert_eq!(kind, &attr, "got differing enum kinds in {id:?}");
                             } else {
-                                kind = Some(macro_);
+                                kind = Some(attr);
                             }
                         }
                     }
                     EntityKind::FlagEnum => {
-                        let macro_ = UnexposedMacro::Options;
+                        let macro_ = UnexposedAttr::Options;
                         if let Some(kind) = &kind {
                             assert_eq!(kind, &macro_, "got differing enum kinds in {id:?}");
                         } else {
@@ -714,8 +714,8 @@ impl Stmt {
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
-                        if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                            panic!("unexpected attribute: {macro_:?}");
+                        if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                            error!(?attr, "unknown attribute");
                         }
                     }
                     EntityKind::VisibilityAttr => {}
@@ -766,15 +766,15 @@ impl Stmt {
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
-                        if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                            warn!(?macro_, "unknown macro");
+                        if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                            error!(?attr, "unknown attribute");
                         }
                     }
                     EntityKind::ObjCClassRef
                     | EntityKind::TypeRef
                     | EntityKind::ObjCProtocolRef => {}
                     EntityKind::ParmDecl => {
-                        parse_fn_param_children(&entity);
+                        parse_fn_param_children(&entity, context);
                         // Could also be retrieved via. `get_arguments`
                         let name = entity.get_name().unwrap_or_else(|| "_".into());
                         let ty = entity.get_type().expect("function argument type");
@@ -1170,10 +1170,10 @@ impl fmt::Display for Stmt {
             } => {
                 let macro_name = match kind {
                     None => "extern_enum",
-                    Some(UnexposedMacro::Enum) => "ns_enum",
-                    Some(UnexposedMacro::Options) => "ns_options",
-                    Some(UnexposedMacro::ClosedEnum) => "ns_closed_enum",
-                    Some(UnexposedMacro::ErrorEnum) => "ns_error_enum",
+                    Some(UnexposedAttr::Enum) => "ns_enum",
+                    Some(UnexposedAttr::Options) => "ns_options",
+                    Some(UnexposedAttr::ClosedEnum) => "ns_closed_enum",
+                    Some(UnexposedAttr::ErrorEnum) => "ns_error_enum",
                     _ => panic!("invalid enum kind"),
                 };
                 writeln!(f, "{macro_name}!(")?;
@@ -1263,13 +1263,13 @@ impl fmt::Display for Stmt {
             }
             Self::AliasDecl { id, ty, kind } => {
                 match kind {
-                    Some(UnexposedMacro::TypedEnum) => {
+                    Some(UnexposedAttr::TypedEnum) => {
                         writeln!(f, "typed_enum!(pub type {} = {ty};);", id.name)?;
                     }
-                    Some(UnexposedMacro::TypedExtensibleEnum) => {
+                    Some(UnexposedAttr::TypedExtensibleEnum) => {
                         writeln!(f, "typed_extensible_enum!(pub type {} = {ty};);", id.name)?;
                     }
-                    None | Some(UnexposedMacro::BridgedTypedef) => {
+                    None | Some(UnexposedAttr::BridgedTypedef) => {
                         // "bridged" typedefs should just use a normal type
                         // alias.
                         writeln!(f, "pub type {} = {ty};", id.name)?;

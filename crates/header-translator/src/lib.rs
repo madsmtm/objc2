@@ -26,7 +26,7 @@ mod objc2_utils;
 mod output;
 mod rust_type;
 mod stmt;
-mod unexposed_macro;
+mod unexposed_attr;
 
 pub use self::cache::Cache;
 pub use self::config::Config;
