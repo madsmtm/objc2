@@ -1206,7 +1206,7 @@ enum TyKind {
     FnReturn,
     Static,
     Typedef,
-    MethodArgument { is_consumed: bool },
+    MethodArgument,
     FnArgument,
     Struct,
     Enum,
@@ -1224,7 +1224,7 @@ impl Ty {
         kind: TyKind::MethodReturn { with_error: false },
     };
 
-    pub fn parse_method_argument(ty: Type<'_>, is_consumed: bool, context: &Context<'_>) -> Self {
+    pub fn parse_method_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
         let ty = Inner::parse(ty, Lifetime::Unspecified, context);
 
         match &ty {
@@ -1247,7 +1247,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::MethodArgument { is_consumed },
+            kind: TyKind::MethodArgument,
         }
     }
 
@@ -1267,7 +1267,7 @@ impl Ty {
     }
 
     pub fn parse_function_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let mut this = Self::parse_method_argument(ty, false, context);
+        let mut this = Self::parse_method_argument(ty, context);
         this.kind = TyKind::FnArgument;
         this
     }
@@ -1330,7 +1330,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::MethodArgument { is_consumed: false },
+            kind: TyKind::MethodArgument,
         }
     }
 
@@ -1701,7 +1701,7 @@ impl fmt::Display for Ty {
                 }
                 ty => write!(f, "{ty}"),
             },
-            TyKind::MethodArgument { is_consumed: _ } | TyKind::FnArgument => match &self.ty {
+            TyKind::MethodArgument | TyKind::FnArgument => match &self.ty {
                 Inner::Id {
                     ty,
                     is_const: false,
@@ -1721,10 +1721,10 @@ impl fmt::Display for Ty {
                         write!(f, "Option<&Class>")
                     }
                 }
-                Inner::C99Bool if self.kind == TyKind::MethodArgument { is_consumed: false } => {
+                Inner::C99Bool if self.kind == TyKind::MethodArgument => {
                     panic!("C99's bool as Objective-C method argument is unsupported")
                 }
-                Inner::ObjcBool if self.kind == TyKind::MethodArgument { is_consumed: false } => {
+                Inner::ObjcBool if self.kind == TyKind::MethodArgument => {
                     write!(f, "bool")
                 }
                 ty @ Inner::Pointer {

@@ -314,6 +314,21 @@ fn parse_struct(entity: &Entity<'_>, context: &Context<'_>) -> (bool, Vec<(Strin
     (boxable, fields)
 }
 
+fn parse_fn_param_children(entity: &Entity<'_>) {
+    immediate_children(entity, |entity, _span| match entity.get_kind() {
+        EntityKind::UnexposedAttr => {
+            if let Some(macro_) = UnexposedMacro::parse(&entity) {
+                warn!(?macro_, "unknown macro");
+            }
+        }
+        EntityKind::ObjCClassRef | EntityKind::TypeRef | EntityKind::ObjCProtocolRef => {}
+        EntityKind::NSConsumed => {
+            error!("found NSConsumed, which requires manual handling");
+        }
+        kind => error!(?kind, "unknown"),
+    });
+}
+
 impl Stmt {
     pub fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Vec<Self> {
         let _span = debug_span!(
@@ -759,6 +774,7 @@ impl Stmt {
                     | EntityKind::TypeRef
                     | EntityKind::ObjCProtocolRef => {}
                     EntityKind::ParmDecl => {
+                        parse_fn_param_children(&entity);
                         // Could also be retrieved via. `get_arguments`
                         let name = entity.get_name().unwrap_or_else(|| "_".into());
                         let ty = entity.get_type().expect("function argument type");

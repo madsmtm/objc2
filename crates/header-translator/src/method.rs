@@ -275,7 +275,6 @@ impl<'tu> PartialMethod<'tu> {
                 let name = entity.get_name().expect("arg display name");
                 let _span = debug_span!("method argument", name).entered();
                 let qualifier = entity.get_objc_qualifiers().map(Qualifier::parse);
-                let mut is_consumed = false;
 
                 immediate_children(&entity, |entity, _span| match entity.get_kind() {
                     EntityKind::ObjCClassRef
@@ -285,10 +284,7 @@ impl<'tu> PartialMethod<'tu> {
                         // Ignore
                     }
                     EntityKind::NSConsumed => {
-                        if is_consumed {
-                            error!("got NSConsumed twice");
-                        }
-                        is_consumed = true;
+                        error!("found NSConsumed, which requires manual handling");
                     }
                     EntityKind::UnexposedAttr => {
                         if let Some(macro_) = UnexposedMacro::parse(&entity) {
@@ -301,7 +297,7 @@ impl<'tu> PartialMethod<'tu> {
                 });
 
                 let ty = entity.get_type().expect("argument type");
-                let ty = Ty::parse_method_argument(ty, is_consumed, context);
+                let ty = Ty::parse_method_argument(ty, context);
 
                 (name, qualifier, ty)
             })
@@ -371,9 +367,6 @@ impl<'tu> PartialMethod<'tu> {
                     error!("got unexpected ObjCReturnsInnerPointer")
                 }
                 memory_management = MemoryManagement::ReturnsInnerPointer;
-            }
-            EntityKind::NSConsumed => {
-                // Handled inside arguments
             }
             EntityKind::IbActionAttr => {
                 // TODO: What is this?

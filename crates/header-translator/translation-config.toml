@@ -23,9 +23,48 @@ imports = ["AuthenticationServices", "Foundation"]
 [class.NSObject.methods.awakeAfterUsingCoder]
 skipped = true
 
-[protocol.NSKeyedUnarchiverDelegate.methods]
-# Uses NS_RELEASES_ARGUMENT and NS_RETURNS_RETAINED
-unarchiver_didDecodeObject = { skipped = true }
+# In all of Apple's frameworks, this is literally the entire list of functions
+# that use `ns_consumed`, `cf_consumed` or `os_consumed`.
+#
+# (+ a few methods from DriverKit.framework and Kernel.framework, but those
+# are written in C++, so we're not going to ever handle them anyhow).
+#
+# So while we _could_ handle it in general, I think it's safe to
+# say that it'll just be more of a hazzle than a real help.
+[fn.CFAutorelease]
+skipped = true
+[fn.CFBridgingRelease]
+skipped = true
+[fn.NSMakeCollectable]
+skipped = true
+[fn.NSFreeMapTable]
+skipped = true
+[fn.IOServiceGetMatchingService]
+skipped = true
+[fn.IOServiceGetMatchingServices]
+skipped = true
+[fn.IOServiceAddMatchingNotification]
+skipped = true
+[fn.CVOpenGLBufferRelease]
+skipped = true
+[fn.CVDisplayLinkRelease]
+skipped = true
+[fn.CVOpenGLBufferPoolRelease]
+skipped = true
+[fn.CVOpenGLTextureRelease]
+skipped = true
+[fn.CVPixelBufferPoolRelease]
+skipped = true
+[fn.CVPixelBufferRelease]
+skipped = true
+[fn.CVOpenGLTextureCacheRelease]
+skipped = true
+[fn.CVBufferRelease]
+skipped = true
+# Also uses NS_RETURNS_RETAINED
+[protocol.NSKeyedUnarchiverDelegate.methods.unarchiver_didDecodeObject]
+skipped = true
+
 
 [class.NSBlockOperation.methods]
 # Uses `NSArray<void (^)(void)>`, which is difficult to handle
