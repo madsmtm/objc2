@@ -101,11 +101,12 @@
 #![allow(unused_imports)]
 
 #[doc(hidden)]
-pub mod __ns_string;
+pub mod __macro_helpers;
 mod additions;
 mod fixes;
 #[path = "../generated/Foundation/mod.rs"]
 mod generated;
+mod macros;
 
 pub use self::additions::*;
 pub use self::fixes::*;
