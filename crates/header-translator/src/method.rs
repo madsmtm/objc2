@@ -46,11 +46,11 @@ impl MethodArgumentQualifier {
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, Default)]
 struct MethodModifiers {
-    designated_initializer: bool,
     returns_inner_pointer: bool,
     consumes_self: bool,
     returns_retained: bool,
     returns_not_retained: bool,
+    designated_initializer: bool,
 }
 
 impl MethodModifiers {
@@ -71,9 +71,6 @@ impl MethodModifiers {
                     }
                 }
             }
-            EntityKind::ObjCDesignatedInitializer => {
-                this.designated_initializer = true;
-            }
             EntityKind::ObjCReturnsInnerPointer => {
                 this.returns_inner_pointer = true;
             }
@@ -88,6 +85,9 @@ impl MethodModifiers {
             }
             EntityKind::NSReturnsNotRetained => {
                 this.returns_not_retained = true;
+            }
+            EntityKind::ObjCDesignatedInitializer => {
+                this.designated_initializer = true;
             }
             EntityKind::ObjCRequiresSuper => {
                 // TODO: Can we use this for something?
@@ -128,7 +128,6 @@ pub enum MemoryManagement {
     // IdReturnsRetained,
     // IdReturnsNotRetained,
     Normal,
-    ReturnsInnerPointer,
 }
 
 impl MemoryManagement {
@@ -177,10 +176,11 @@ impl MemoryManagement {
                 modifiers.consumes_self,
                 modifiers.returns_retained,
                 modifiers.returns_not_retained,
+                modifiers.designated_initializer,
                 id_type,
             ) {
-                (false, false, true, false, Self::IdCopyOrMutCopy) => Self::IdCopyOrMutCopy,
-                (false, false, true, false, Self::IdNew) => Self::IdNew,
+                (false, false, true, false, false, Self::IdCopyOrMutCopy) => Self::IdCopyOrMutCopy,
+                (false, false, true, false, false, Self::IdNew) => Self::IdNew,
                 // For the `init` family there's another restriction:
                 // > must be instance methods
                 //
@@ -189,33 +189,33 @@ impl MemoryManagement {
                 // methods that are not correct super/subclasses, but we don't
                 // need to handle that since the header would fail to compile
                 // in `clang` if that was the case.
-                (false, true, true, false, Self::IdInit) => {
+                (false, true, true, false, _, Self::IdInit) => {
                     if is_class {
                         Self::IdOther
                     } else {
                         Self::IdInit
                     }
                 }
-                (false, false, false, false, Self::IdOther) => Self::IdOther,
+                (false, false, false, false, false, Self::IdOther) => Self::IdOther,
                 data => {
                     error!(?data, "invalid MemoryManagement id attributes");
                     Self::IdOther
                 }
             }
+        } else if let MethodModifiers {
+            designated_initializer: false,
+            // TODO: Maybe we can use this to emit things with lifetime of:
+            // `'self + 'autoreleasepool`
+            returns_inner_pointer: _,
+            consumes_self: false,
+            returns_retained: false,
+            returns_not_retained: false,
+        } = modifiers
+        {
+            Self::Normal
         } else {
-            match (
-                modifiers.returns_inner_pointer,
-                modifiers.consumes_self,
-                modifiers.returns_retained,
-                modifiers.returns_not_retained,
-            ) {
-                (false, false, false, false) => Self::Normal,
-                (true, false, false, false) => Self::ReturnsInnerPointer,
-                data => {
-                    error!(?data, "invalid MemoryManagement attributes");
-                    Self::Normal
-                }
-            }
+            error!(?modifiers, "invalid MemoryManagement attributes");
+            Self::Normal
         }
     }
 }
@@ -579,7 +579,7 @@ impl fmt::Display for Method {
             MemoryManagement::IdNew => Some("New"),
             MemoryManagement::IdInit => Some("Init"),
             MemoryManagement::IdOther => Some("Other"),
-            MemoryManagement::Normal | MemoryManagement::ReturnsInnerPointer => None,
+            MemoryManagement::Normal => None,
         };
         if let Some(id_mm_name) = id_mm_name {
             write!(f, "        #[method_id(@__retain_semantics {id_mm_name} ")?;

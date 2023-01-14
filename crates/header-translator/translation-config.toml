@@ -29,7 +29,6 @@ imports = ["AuthenticationServices", "Foundation"]
 ### The following should be handled automatically:
 ### - `ns_returns_not_retained` / `cf_returns_not_retained` / `os_returns_not_retained`
 ### - `ns_returns_retained` / `cf_returns_retained` / `os_returns_retained`
-### - `objc_returns_inner_pointer`
 ###
 ### The rest are only very rarely used in Apple's frameworks, so while we
 ### _could_ handle them too, I think it's easier to just do it manually.
