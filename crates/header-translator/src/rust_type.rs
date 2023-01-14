@@ -7,7 +7,6 @@ use serde::Deserialize;
 
 use crate::context::Context;
 use crate::id::ItemIdentifier;
-use crate::method::MemoryManagement;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 enum ParsePosition {
@@ -207,7 +206,6 @@ enum IdType {
     AnyClass {
         protocols: Vec<ItemIdentifier>,
     },
-    Allocated,
     Self_ {
         ownership: Option<Ownership>,
     },
@@ -422,7 +420,6 @@ impl fmt::Display for IdType {
             Self::AnyProtocol => write!(f, "Protocol"),
             // TODO: Handle this better
             Self::AnyClass { .. } => write!(f, "TodoClass"),
-            Self::Allocated => write!(f, "Allocated"),
             Self::Self_ { .. } => write!(f, "Self"),
         }
     }
@@ -1200,13 +1197,20 @@ impl fmt::Display for Inner {
     }
 }
 
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub enum MethodArgumentQualifier {
+    In,
+    Inout,
+    Out,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 enum TyKind {
     MethodReturn { with_error: bool },
     FnReturn,
     Static,
     Typedef,
-    MethodArgument { is_consumed: bool },
+    MethodArgument,
     FnArgument,
     Struct,
     Enum,
@@ -1224,7 +1228,11 @@ impl Ty {
         kind: TyKind::MethodReturn { with_error: false },
     };
 
-    pub fn parse_method_argument(ty: Type<'_>, is_consumed: bool, context: &Context<'_>) -> Self {
+    pub fn parse_method_argument(
+        ty: Type<'_>,
+        _qualifier: Option<MethodArgumentQualifier>,
+        context: &Context<'_>,
+    ) -> Self {
         let ty = Inner::parse(ty, Lifetime::Unspecified, context);
 
         match &ty {
@@ -1245,9 +1253,11 @@ impl Ty {
             }),
         }
 
+        // TODO: Is the qualifier useful for anything?
+
         Self {
             ty,
-            kind: TyKind::MethodArgument { is_consumed },
+            kind: TyKind::MethodArgument,
         }
     }
 
@@ -1267,7 +1277,7 @@ impl Ty {
     }
 
     pub fn parse_function_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let mut this = Self::parse_method_argument(ty, false, context);
+        let mut this = Self::parse_method_argument(ty, None, context);
         this.kind = TyKind::FnArgument;
         this
     }
@@ -1330,7 +1340,7 @@ impl Ty {
 
         Self {
             ty,
-            kind: TyKind::MethodArgument { is_consumed: false },
+            kind: TyKind::MethodArgument,
         }
     }
 
@@ -1500,20 +1510,6 @@ impl Ty {
         matches!(self.ty, Inner::Id { .. })
     }
 
-    pub fn set_is_alloc(&mut self) {
-        match &mut self.ty {
-            Inner::Id {
-                ty: ty @ IdType::Self_ { ownership: None },
-                lifetime: Lifetime::Unspecified,
-                is_const: false,
-                nullability: _,
-            } => {
-                *ty = IdType::Allocated;
-            }
-            _ => error!(?self, "invalid alloc return type"),
-        }
-    }
-
     pub fn set_is_error(&mut self) {
         if let TyKind::MethodReturn { with_error } = &mut self.kind {
             *with_error = true;
@@ -1544,30 +1540,20 @@ impl Ty {
         matches!(&self.ty, Inner::TypeDef { id } if id.name == s)
     }
 
-    /// Related result types
-    /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#related-result-types>
-    pub fn fix_related_result_type(&mut self, is_class: bool, selector: &str) {
-        if let Inner::Id {
-            ty: ty @ IdType::AnyObject { .. },
-            ..
-        } = &mut self.ty
-        {
-            let is_related = if is_class {
-                MemoryManagement::is_new(selector) || MemoryManagement::is_alloc(selector)
-            } else {
-                MemoryManagement::is_init(selector) || selector == "self"
-            };
-
-            if is_related {
-                if let IdType::AnyObject { protocols } = &ty {
-                    if !protocols.is_empty() {
-                        warn!(?ty, "related result type with protocols");
-                        return;
-                    }
+    pub fn try_fix_related_result_type(&mut self) {
+        if let Inner::Id { ty, .. } = &mut self.ty {
+            if let IdType::AnyObject { protocols } = &ty {
+                if !protocols.is_empty() {
+                    warn!(?ty, "related result type with protocols");
+                    return;
                 }
 
                 *ty = IdType::Self_ { ownership: None };
+            } else {
+                // Only fix if the type is `id`
             }
+        } else {
+            panic!("tried to fix related result type on non-id type")
         }
     }
 
@@ -1701,7 +1687,7 @@ impl fmt::Display for Ty {
                 }
                 ty => write!(f, "{ty}"),
             },
-            TyKind::MethodArgument { is_consumed: _ } | TyKind::FnArgument => match &self.ty {
+            TyKind::MethodArgument | TyKind::FnArgument => match &self.ty {
                 Inner::Id {
                     ty,
                     is_const: false,
@@ -1721,10 +1707,10 @@ impl fmt::Display for Ty {
                         write!(f, "Option<&Class>")
                     }
                 }
-                Inner::C99Bool if self.kind == TyKind::MethodArgument { is_consumed: false } => {
+                Inner::C99Bool if self.kind == TyKind::MethodArgument => {
                     panic!("C99's bool as Objective-C method argument is unsupported")
                 }
-                Inner::ObjcBool if self.kind == TyKind::MethodArgument { is_consumed: false } => {
+                Inner::ObjcBool if self.kind == TyKind::MethodArgument => {
                     write!(f, "bool")
                 }
                 ty @ Inner::Pointer {

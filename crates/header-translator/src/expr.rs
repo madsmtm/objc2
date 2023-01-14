@@ -4,8 +4,9 @@ use std::fmt::Write;
 use clang::token::TokenKind;
 use clang::{Entity, EntityKind, EntityVisitResult};
 
+use crate::context::Context;
 use crate::immediate_children;
-use crate::unexposed_macro::UnexposedMacro;
+use crate::unexposed_attr::UnexposedAttr;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Expr {
@@ -36,7 +37,7 @@ impl Expr {
         }
     }
 
-    pub fn parse_enum_constant(entity: &Entity<'_>) -> Option<Self> {
+    pub fn parse_enum_constant(entity: &Entity<'_>, context: &Context<'_>) -> Option<Self> {
         let mut declaration_references = Vec::new();
 
         entity.visit_children(|entity, _parent| {
@@ -51,8 +52,8 @@ impl Expr {
 
         immediate_children(entity, |entity, _span| match entity.get_kind() {
             EntityKind::UnexposedAttr => {
-                if let Some(macro_) = UnexposedMacro::parse(&entity) {
-                    panic!("parsed macro in expr: {macro_:?}, {entity:?}");
+                if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                    error!(?attr, "unknown attribute");
                 }
             }
             _ => {
