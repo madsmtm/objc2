@@ -39,31 +39,46 @@ macro_rules! extern_struct {
 macro_rules! extern_enum {
     (
         #[underlying($ty:ty)]
+        $(#[$m:meta])*
         $v:vis enum $name:ident {
-            $($field:ident = $value:expr),* $(,)?
+            $(
+                $(#[$field_m:meta])*
+                $field:ident = $value:expr
+            ),* $(,)?
         }
     ) => {
         // TODO: Improve type-safety
+        $(#[$m])*
         $v type $name = $ty;
 
         extern_enum! {
             @__inner
             @($v)
             @($name)
-            @($($field = $value,)*)
+            @($(
+                $(#[$field_m])*
+                $field = $value,
+            )*)
         }
     };
     (
         #[underlying($ty:ty)]
+        $(#[$m:meta])*
         $v:vis enum {
-            $($field:ident = $value:expr),* $(,)?
+            $(
+                $(#[$field_m:meta])*
+                $field:ident = $value:expr
+            ),* $(,)?
         }
     ) => {
         extern_enum! {
             @__inner
             @($v)
             @($ty)
-            @($($field = $value,)*)
+            @($(
+                $(#[$field_m])*
+                $field = $value,
+            )*)
         }
     };
 
@@ -81,10 +96,13 @@ macro_rules! extern_enum {
         @($v:vis)
         @($ty:ty)
         @(
+            $(#[$field_m:meta])*
             $field:ident = $value:expr,
+
             $($rest:tt)*
         )
     ) => {
+        $(#[$field_m])*
         $v const $field: $ty = $value;
 
         extern_enum! {
@@ -100,18 +118,20 @@ macro_rules! extern_enum {
 macro_rules! ns_enum {
     (
         #[underlying($ty:ty)]
+        $(#[$m:meta])*
         $v:vis enum $($name:ident)? {
             $(
-                $(#[$m:meta])*
+                $(#[$field_m:meta])*
                 $field:ident = $value:expr
             ),* $(,)?
         }
     ) => {
         extern_enum! {
             #[underlying($ty)]
+            $(#[$m])*
             $v enum $($name)? {
                 $(
-                    $(#[$m])*
+                    $(#[$field_m])*
                     $field = $value
                 ),*
             }
@@ -123,15 +143,23 @@ macro_rules! ns_enum {
 macro_rules! ns_options {
     (
         #[underlying($ty:ty)]
+        $(#[$m:meta])*
         $v:vis enum $name:ident {
-            $($field:ident = $value:expr),* $(,)?
+            $(
+                $(#[$field_m:meta])*
+                $field:ident = $value:expr
+            ),* $(,)?
         }
     ) => {
         // TODO: Handle this differently (e.g. as `bitflags`)
         extern_enum! {
             #[underlying($ty)]
+            $(#[$m])*
             $v enum $name {
-                $($field = $value),*
+                $(
+                    $(#[$field_m])*
+                    $field = $value
+                ),*
             }
         }
     };
@@ -141,29 +169,45 @@ macro_rules! ns_options {
 macro_rules! ns_closed_enum {
     (
         #[underlying(NSUInteger)]
+        $(#[$m:meta])*
         $v:vis enum $name:ident {
-            $($field:ident = $value:expr),* $(,)?
+            $(
+                $(#[$field_m:meta])*
+                $field:ident = $value:expr
+            ),* $(,)?
         }
     ) => {
         // TODO: Handle this differently
         extern_enum! {
             #[underlying(NSUInteger)]
+            $(#[$m])*
             $v enum $name {
-                $($field = $value),*
+                $(
+                    $(#[$field_m])*
+                    $field = $value
+                ),*
             }
         }
     };
     (
         #[underlying(NSInteger)]
+        $(#[$m:meta])*
         $v:vis enum $name:ident {
-            $($field:ident = $value:expr),* $(,)?
+            $(
+                $(#[$field_m:meta])*
+                $field:ident = $value:expr
+            ),* $(,)?
         }
     ) => {
         // TODO: Handle this differently
         extern_enum! {
             #[underlying(NSInteger)]
+            $(#[$m])*
             $v enum $name {
-                $($field = $value),*
+                $(
+                    $(#[$field_m])*
+                    $field = $value
+                ),*
             }
         }
     };
@@ -173,15 +217,23 @@ macro_rules! ns_closed_enum {
 macro_rules! ns_error_enum {
     (
         #[underlying(NSInteger)]
+        $(#[$m:meta])*
         $v:vis enum $($name:ident)? {
-            $($field:ident = $value:expr),* $(,)?
+            $(
+                $(#[$field_m:meta])*
+                $field:ident = $value:expr
+            ),* $(,)?
         }
     ) => {
         // TODO: Handle this differently
         extern_enum! {
             #[underlying(NSInteger)]
+            $(#[$m])*
             $v enum $($name)? {
-                $($field = $value),*
+                $(
+                    $(#[$field_m])*
+                    $field = $value
+                ),*
             }
         }
     };

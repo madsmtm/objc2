@@ -228,6 +228,7 @@ pub enum Stmt {
     /// } name;
     StructDecl {
         id: ItemIdentifier,
+        availability: Availability,
         boxable: bool,
         fields: Vec<(String, Ty)>,
     },
@@ -248,14 +249,16 @@ pub enum Stmt {
     /// };
     EnumDecl {
         id: ItemIdentifier<Option<String>>,
+        availability: Availability,
         ty: Ty,
         kind: Option<UnexposedAttr>,
-        variants: Vec<(String, Expr)>,
+        variants: Vec<(String, Availability, Expr)>,
     },
     /// static const ty name = expr;
     /// extern const ty name;
     VarDecl {
         id: ItemIdentifier,
+        availability: Availability,
         ty: Ty,
         value: Option<Expr>,
     },
@@ -266,6 +269,7 @@ pub enum Stmt {
     /// }
     FnDecl {
         id: ItemIdentifier,
+        availability: Availability,
         arguments: Vec<(String, Ty)>,
         result_type: Ty,
         // Some -> inline function.
@@ -275,6 +279,7 @@ pub enum Stmt {
     /// typedef Type TypedefName;
     AliasDecl {
         id: ItemIdentifier,
+        availability: Availability,
         ty: Ty,
         kind: Option<UnexposedAttr>,
     },
@@ -350,11 +355,7 @@ impl Stmt {
                     return vec![];
                 }
 
-                let availability = Availability::parse(
-                    entity
-                        .get_platform_availability()
-                        .expect("class availability"),
-                );
+                let availability = Availability::parse(entity, context);
                 let mut generics = Vec::new();
 
                 let (protocols, methods, designated_initializers) =
@@ -404,11 +405,7 @@ impl Stmt {
             }
             EntityKind::ObjCCategoryDecl => {
                 let category = ItemIdentifier::new_optional(entity, context);
-                let availability = Availability::parse(
-                    entity
-                        .get_platform_availability()
-                        .expect("category availability"),
-                );
+                let availability = Availability::parse(entity, context);
 
                 let mut cls = None;
                 entity.visit_children(|entity, _parent| {
@@ -479,11 +476,7 @@ impl Stmt {
                     return vec![];
                 }
 
-                let availability = Availability::parse(
-                    entity
-                        .get_platform_availability()
-                        .expect("protocol availability"),
-                );
+                let availability = Availability::parse(entity, context);
 
                 let (protocols, methods, designated_initializers) =
                     parse_objc_decl(entity, false, None, data, context);
@@ -504,6 +497,7 @@ impl Stmt {
             }
             EntityKind::TypedefDecl => {
                 let id = ItemIdentifier::new(entity, context);
+                let availability = Availability::parse(entity, context);
                 let mut struct_ = None;
                 let mut skip_struct = false;
                 let mut kind = None;
@@ -552,6 +546,7 @@ impl Stmt {
                     assert_eq!(kind, None, "should not have parsed a kind");
                     return vec![Self::StructDecl {
                         id,
+                        availability,
                         boxable,
                         fields,
                     }];
@@ -574,13 +569,19 @@ impl Stmt {
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
                 if let Some(ty) = Ty::parse_typedef(ty, &id.name, context) {
-                    vec![Self::AliasDecl { id, ty, kind }]
+                    vec![Self::AliasDecl {
+                        id,
+                        availability,
+                        ty,
+                        kind,
+                    }]
                 } else {
                     vec![]
                 }
             }
             EntityKind::StructDecl => {
                 if let Some(name) = entity.get_name() {
+                    let availability = Availability::parse(entity, context);
                     let id = ItemIdentifier::with_name(name, entity, context);
 
                     if context
@@ -601,6 +602,7 @@ impl Stmt {
                         let (boxable, fields) = parse_struct(entity, context);
                         return vec![Self::StructDecl {
                             id,
+                            availability,
                             boxable,
                             fields,
                         }];
@@ -626,6 +628,8 @@ impl Stmt {
                     return vec![];
                 }
 
+                let availability = Availability::parse(entity, context);
+
                 let ty = entity.get_enum_underlying_type().expect("enum type");
                 let is_signed = ty.is_signed_integer();
                 let ty = Ty::parse_enum(ty, context);
@@ -635,6 +639,7 @@ impl Stmt {
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::EnumConstantDecl => {
                         let name = entity.get_name().expect("enum constant name");
+                        let availability = Availability::parse(&entity, context);
 
                         if data
                             .constants
@@ -660,7 +665,7 @@ impl Stmt {
                         } else {
                             Expr::parse_enum_constant(&entity, context).unwrap_or(val)
                         };
-                        variants.push((name, expr));
+                        variants.push((name, availability, expr));
                     }
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
@@ -691,6 +696,7 @@ impl Stmt {
 
                 vec![Self::EnumDecl {
                     id,
+                    availability,
                     ty,
                     kind,
                     variants,
@@ -708,6 +714,7 @@ impl Stmt {
                     return vec![];
                 }
 
+                let availability = Availability::parse(entity, context);
                 let ty = entity.get_type().expect("var type");
                 let ty = Ty::parse_static(ty, context);
                 let mut value = None;
@@ -740,7 +747,12 @@ impl Stmt {
                     None => None,
                 };
 
-                vec![Self::VarDecl { id, ty, value }]
+                vec![Self::VarDecl {
+                    id,
+                    availability,
+                    ty,
+                    value,
+                }]
             }
             EntityKind::FunctionDecl => {
                 let id = ItemIdentifier::new(entity, context);
@@ -756,6 +768,7 @@ impl Stmt {
                     return vec![];
                 }
 
+                let availability = Availability::parse(entity, context);
                 let result_type = entity.get_result_type().expect("function result type");
                 let result_type = Ty::parse_function_return(result_type, context);
                 let mut arguments = Vec::new();
@@ -795,6 +808,7 @@ impl Stmt {
 
                 vec![Self::FnDecl {
                     id,
+                    availability,
                     arguments,
                     result_type,
                     body,
@@ -882,7 +896,7 @@ impl Stmt {
         .into_iter()
         .chain({
             if let Stmt::EnumDecl { variants, .. } = self {
-                variants.iter().map(|(name, _)| &**name).collect()
+                variants.iter().map(|(name, _, _)| &**name).collect()
             } else {
                 vec![]
             }
@@ -934,7 +948,7 @@ impl fmt::Display for Stmt {
             Self::ClassDecl {
                 id,
                 generics,
-                availability: _,
+                availability,
                 superclasses,
                 designated_initializers: _,
                 derives,
@@ -951,6 +965,7 @@ impl fmt::Display for Stmt {
                 if let Some(feature) = id.feature() {
                     writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
                 }
+                write!(f, "{availability}")?;
                 write!(f, "    pub struct {}", id.name)?;
                 if !generics.is_empty() {
                     write!(f, "<")?;
@@ -1028,6 +1043,7 @@ impl fmt::Display for Stmt {
                 cls,
                 generics,
                 category,
+                // TODO: Output `#[deprecated]` only on categories
                 availability: _,
                 superclasses,
                 methods,
@@ -1106,11 +1122,12 @@ impl fmt::Display for Stmt {
             }
             Self::ProtocolDecl {
                 id,
-                availability: _,
+                availability,
                 protocols: _,
                 methods,
             } => {
                 writeln!(f, "extern_protocol!(")?;
+                write!(f, "{availability}")?;
                 writeln!(f, "    pub struct {};", id.name)?;
                 writeln!(f)?;
                 writeln!(f, "    unsafe impl ProtocolType for {} {{", id.name)?;
@@ -1147,10 +1164,12 @@ impl fmt::Display for Stmt {
             }
             Self::StructDecl {
                 id,
+                availability,
                 boxable: _,
                 fields,
             } => {
                 writeln!(f, "extern_struct!(")?;
+                write!(f, "{availability}")?;
                 writeln!(f, "    pub struct {} {{", id.name)?;
                 for (name, ty) in fields {
                     write!(f, "        ")?;
@@ -1164,6 +1183,7 @@ impl fmt::Display for Stmt {
             }
             Self::EnumDecl {
                 id,
+                availability,
                 ty,
                 kind,
                 variants,
@@ -1178,12 +1198,14 @@ impl fmt::Display for Stmt {
                 };
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    #[underlying({ty})]")?;
+                write!(f, "{availability}")?;
                 write!(f, "    pub enum ",)?;
                 if let Some(name) = &id.name {
                     write!(f, "{name} ")?;
                 }
                 writeln!(f, "{{")?;
-                for (name, expr) in variants {
+                for (name, availability, expr) in variants {
+                    write!(f, "{availability}")?;
                     writeln!(f, "        {name} = {expr},")?;
                 }
                 writeln!(f, "    }}")?;
@@ -1191,6 +1213,7 @@ impl fmt::Display for Stmt {
             }
             Self::VarDecl {
                 id,
+                availability: _,
                 ty,
                 value: None,
             } => {
@@ -1198,6 +1221,7 @@ impl fmt::Display for Stmt {
             }
             Self::VarDecl {
                 id,
+                availability: _,
                 ty,
                 value: Some(expr),
             } => {
@@ -1205,6 +1229,7 @@ impl fmt::Display for Stmt {
             }
             Self::FnDecl {
                 id,
+                availability,
                 arguments,
                 result_type,
                 body,
@@ -1245,6 +1270,7 @@ impl fmt::Display for Stmt {
 
                 let unsafe_ = if *safe { "" } else { " unsafe" };
 
+                write!(f, "{availability}")?;
                 write!(f, "    pub{unsafe_} fn {}(", id.name)?;
                 for (param, arg_ty) in arguments {
                     write!(f, "{}: {arg_ty},", handle_reserved(param))?;
@@ -1261,7 +1287,12 @@ impl fmt::Display for Stmt {
 
                 writeln!(f, ");")?;
             }
-            Self::AliasDecl { id, ty, kind } => {
+            Self::AliasDecl {
+                id,
+                availability: _,
+                ty,
+                kind,
+            } => {
                 match kind {
                     Some(UnexposedAttr::TypedEnum) => {
                         writeln!(f, "typed_enum!(pub type {} = {ty};);", id.name)?;

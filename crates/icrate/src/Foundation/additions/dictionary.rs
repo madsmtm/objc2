@@ -62,6 +62,7 @@ extern_methods!(
             let len = self.len();
             let mut keys: Vec<NonNull<K>> = Vec::with_capacity(len);
             unsafe {
+                #[allow(deprecated)]
                 self.getObjects_andKeys(ptr::null_mut(), keys.as_mut_ptr());
                 keys.set_len(len);
                 mem::transmute(keys)
@@ -73,6 +74,7 @@ extern_methods!(
             let len = self.len();
             let mut vals: Vec<NonNull<V>> = Vec::with_capacity(len);
             unsafe {
+                #[allow(deprecated)]
                 self.getObjects_andKeys(vals.as_mut_ptr(), ptr::null_mut());
                 vals.set_len(len);
                 mem::transmute(vals)
@@ -85,6 +87,7 @@ extern_methods!(
             let mut keys: Vec<NonNull<K>> = Vec::with_capacity(len);
             let mut objs: Vec<NonNull<V>> = Vec::with_capacity(len);
             unsafe {
+                #[allow(deprecated)]
                 self.getObjects_andKeys(objs.as_mut_ptr(), keys.as_mut_ptr());
                 keys.set_len(len);
                 objs.set_len(len);

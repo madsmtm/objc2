@@ -337,11 +337,7 @@ impl<'tu> PartialMethod<'tu> {
             return None;
         }
 
-        let availability = Availability::parse(
-            entity
-                .get_platform_availability()
-                .expect("method availability"),
-        );
+        let availability = Availability::parse(&entity, context);
 
         let modifiers = MethodModifiers::parse(&entity, context);
 
@@ -476,11 +472,7 @@ impl PartialProperty<'_> {
             return (None, None);
         }
 
-        let availability = Availability::parse(
-            entity
-                .get_platform_availability()
-                .expect("method availability"),
-        );
+        let availability = Availability::parse(&entity, context);
 
         let modifiers = MethodModifiers::parse(&entity, context);
 
@@ -569,6 +561,8 @@ impl fmt::Display for Method {
         //
         // Attributes
         //
+
+        write!(f, "{}", self.availability)?;
 
         if self.is_optional_protocol {
             writeln!(f, "        #[optional]")?;
