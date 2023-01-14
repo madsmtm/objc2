@@ -1,4 +1,4 @@
-error[E0271]: type mismatch resolving `<Id<objc2::runtime::Object, Shared> as MaybeUnwrap>::Input == Id<NSObject, _>`
+error[E0271]: type mismatch resolving `<Id<Object, Shared> as MaybeUnwrap>::Input == Id<NSObject, _>`
  --> ui/msg_send_id_alloc_init_different.rs
   |
   |     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, init] };
