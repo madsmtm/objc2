@@ -516,6 +516,8 @@ skipped = true
 skipped = true
 
 # Uses stuff from different frameworks / system libraries
+[fn.CFBridgingRetain]
+skipped = true
 [class.NSAnimationContext.methods.timingFunction]
 skipped = true
 [class.NSAnimationContext.methods.setTimingFunction]
