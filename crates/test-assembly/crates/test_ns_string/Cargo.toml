@@ -26,4 +26,4 @@ Foundation = ["icrate/Foundation"]
 Foundation_NSString = ["icrate/Foundation_NSString"]
 
 # Hack
-assembly-features = ["Foundation", "Foundation_NSString"]
+assembly-features = ["Foundation", "Foundation_NSString", "icrate/unstable-static-nsstring"]

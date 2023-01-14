@@ -14,12 +14,8 @@
 //! See also the following crates that implement UTF-16 conversion:
 //! `utf16_lit`, `windows`, `const_utf16`, `wide-literals`, ...
 use core::ffi::c_void;
-use core::mem::ManuallyDrop;
-use core::ptr;
-use core::sync::atomic::{AtomicPtr, Ordering};
 
 use crate::Foundation::NSString;
-use objc2::rc::Id;
 use objc2::runtime::Class;
 
 // This is defined in CoreFoundation, but we don't emit a link attribute
@@ -101,7 +97,8 @@ impl CFConstString {
     }
 
     // This is deliberately not `const` to prevent the result from being used
-    // in other statics, since not all platforms support that (yet).
+    // in other statics, since that is only possible if the
+    // `unstable-static-nsstring` feature is enabled.
     #[inline]
     pub fn as_nsstring(&self) -> &NSString {
         self.as_nsstring_const()
@@ -203,39 +200,6 @@ const fn decode_utf8(s: &[u8], i: usize) -> (usize, u32) {
         0b1000_0000..=0b1011_1111 | 0b1111_1000..=0b1111_1111 => {
             panic!("Encountered invalid bytes")
         }
-    }
-}
-
-/// Allows storing a [`NSString`] in a static and lazily loading it.
-pub struct CachedNSString {
-    ptr: AtomicPtr<NSString>,
-}
-
-impl CachedNSString {
-    /// Constructs a new [`CachedNSString`].
-    pub const fn new() -> Self {
-        Self {
-            ptr: AtomicPtr::new(ptr::null_mut()),
-        }
-    }
-
-    /// Returns the cached NSString. If no string is yet cached, creates one
-    /// with the given name and stores it.
-    #[inline]
-    pub fn get(&self, s: &str) -> &'static NSString {
-        // TODO: Investigate if we can use weaker orderings.
-        let ptr = self.ptr.load(Ordering::SeqCst);
-        // SAFETY: The pointer is either NULL, or has been created below.
-        unsafe { ptr.as_ref() }.unwrap_or_else(|| {
-            // "Forget" about releasing the string, effectively promoting it
-            // to a static.
-            let s = ManuallyDrop::new(NSString::from_str(s));
-            let ptr = Id::as_ptr(&s);
-            self.ptr.store(ptr as *mut NSString, Ordering::SeqCst);
-            // SAFETY: The pointer is valid, and will always be valid, since
-            // we haven't released it.
-            unsafe { ptr.as_ref().unwrap_unchecked() }
-        })
     }
 }
 

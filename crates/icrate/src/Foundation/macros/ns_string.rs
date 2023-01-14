@@ -1,17 +1,39 @@
 #![cfg(feature = "Foundation_NSString")]
-/// Creates an [`NSString`][`crate::Foundation::NSString`] from a static string.
+/// Create a [`NSString`] from a static [`str`].
 ///
-/// Note: This works by placing statics in special sections, which may not
-/// work completely reliably yet, see [#258]; until then, you should be
-/// careful about using this in libraries intended for others to consume.
+/// Equivalent to the [boxed C-strings] `@"string"` syntax in Objective-C.
+///
+/// [`NSString`]: crate::Foundation::NSString
+/// [boxed C-strings]: https://clang.llvm.org/docs/ObjectiveCLiterals.html#boxed-c-strings
+///
+///
+/// # Specification
+///
+/// The macro takes any expression that evaluates to a `const` `&str`, and
+/// produces a `&'static NSString`.
+///
+/// The returned string's encoding is not guaranteed to be UTF-8.
+///
+/// Strings containing ASCII NUL is allowed, the NUL is preserved as one would
+/// expect.
+///
+///
+/// # Cargo features
+///
+/// If the experimental `"unstable-static-nsstring"` feature is enabled, this
+/// will emit statics placed in special sections that will be replaced by dyld
+/// when the program starts up - which will in turn will cause the runtime
+/// cost of this macro to be completely non-existant!
+///
+/// However, it is known to not be completely reliable yet, see [#258] for
+/// details.
 ///
 /// [#258]: https://github.com/madsmtm/objc2/issues/258
 ///
 ///
 /// # Examples
 ///
-/// This macro takes a either a `"string"` literal or `const` string slice as
-/// the argument, and produces a `&'static NSString`:
+/// Creating a static `NSString`.
 ///
 /// ```
 /// use icrate::ns_string;
@@ -19,18 +41,17 @@
 ///
 /// let hello: &'static NSString = ns_string!("hello");
 /// assert_eq!(hello.to_string(), "hello");
-///
-/// const WORLD: &str = "world";
-/// let world = ns_string!(WORLD);
-/// assert_eq!(world.to_string(), WORLD);
 /// ```
 ///
+/// Creating a `NSString` from a `const` `&str`.
 ///
-/// # Unicode Strings
+/// ```
+/// # use icrate::ns_string;
+/// const EXAMPLE: &str = "example";
+/// assert_eq!(ns_string!(EXAMPLE).to_string(), EXAMPLE);
+/// ```
 ///
-/// An NSString can contain strings with many different encodings, including
-/// ASCII, UTF-8, UTF-16, and so on. This macro automatically converts your
-/// string to the most efficient encoding, you don't have to do anything!
+/// Creating unicode strings.
 ///
 /// ```
 /// # use icrate::ns_string;
@@ -38,36 +59,13 @@
 /// assert_eq!(hello_ru.to_string(), "Привет");
 /// ```
 ///
-/// Note that because this is implemented with `const` evaluation, massive
-/// strings can increase compile time, and may even hit the `const` evaluation
-/// limit.
-///
-///
-/// # NUL handling
-///
-/// Strings containing ASCII NUL is allowed, the NUL is preserved as one would
-/// expect:
+/// Creating a string containing a NUL byte:
 ///
 /// ```
 /// # use icrate::ns_string;
-/// let example = ns_string!("example\0");
-/// assert_eq!(example.to_string(), "example\0");
-///
-/// let example = ns_string!("exa\0mple");
-/// assert_eq!(example.to_string(), "exa\0mple");
+/// assert_eq!(ns_string!("example\0").to_string(), "example\0");
+/// assert_eq!(ns_string!("exa\0mple").to_string(), "exa\0mple");
 /// ```
-///
-///
-/// # Runtime Cost
-///
-/// None.
-///
-/// The result is equivalent to `@"string"` syntax in Objective-C.
-///
-/// Because of that, this should be preferred over [`NSString::from_str`]
-/// where possible.
-///
-/// [`NSString::from_str`]: crate::Foundation::NSString::from_str
 #[cfg(feature = "Foundation_NSString")] // For auto_doc_cfg
 #[macro_export]
 macro_rules! ns_string {
@@ -79,7 +77,7 @@ macro_rules! ns_string {
 }
 
 #[doc(hidden)]
-#[cfg(feature = "apple")]
+#[cfg(all(feature = "apple", feature = "unstable-static-nsstring"))]
 #[macro_export]
 macro_rules! __ns_string_inner {
     ($inp:ident) => {{
@@ -177,12 +175,13 @@ macro_rules! __ns_string_inner {
 }
 
 #[doc(hidden)]
-#[cfg(not(feature = "apple"))]
+#[cfg(not(all(feature = "apple", feature = "unstable-static-nsstring")))]
 #[macro_export]
 macro_rules! __ns_string_inner {
     ($inp:ident) => {{
-        use $crate::Foundation::__macro_helpers::CachedNSString;
-        static CACHED_NSSTRING: CachedNSString = CachedNSString::new();
-        CACHED_NSSTRING.get($inp)
+        static CACHED_NSSTRING: $crate::Foundation::__macro_helpers::CachedId<
+            $crate::Foundation::NSString,
+        > = $crate::Foundation::__macro_helpers::CachedId::new();
+        CACHED_NSSTRING.get(|| $crate::Foundation::NSString::from_str($inp))
     }};
 }

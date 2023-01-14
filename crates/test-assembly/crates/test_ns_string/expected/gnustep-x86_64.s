@@ -66,30 +66,18 @@ get_with_nul:
 .Lfunc_end2:
 	.size	get_with_nul, .Lfunc_end2-get_with_nul
 
-	.type	.Lanon.[ID].0,@object
-	.section	.rodata..Lanon.[ID].0,"a",@progbits
-.Lanon.[ID].0:
-	.ascii	"abc"
-	.size	.Lanon.[ID].0, 3
-
-	.type	.Lanon.[ID].1,@object
-	.section	.rodata..Lanon.[ID].1,"a",@progbits
-.Lanon.[ID].1:
-	.ascii	"\303\241b\304\207"
-	.size	.Lanon.[ID].1, 5
-
-	.type	.Lanon.[ID].2,@object
-	.section	.rodata..Lanon.[ID].2,"a",@progbits
-.Lanon.[ID].2:
-	.asciz	"a\000b\000c"
-	.size	.Lanon.[ID].2, 6
-
 	.type	SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0,@object
 	.section	.bss.SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0,"aw",@nobits
 	.p2align	3
 SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0:
 	.quad	0
 	.size	SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0, 8
+
+	.type	.Lanon.[ID].0,@object
+	.section	.rodata..Lanon.[ID].0,"a",@progbits
+.Lanon.[ID].0:
+	.ascii	"abc"
+	.size	.Lanon.[ID].0, 3
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0,@object
 	.section	.bss.SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0,"aw",@nobits
@@ -98,11 +86,23 @@ SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0:
 	.quad	0
 	.size	SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0, 8
 
+	.type	.Lanon.[ID].1,@object
+	.section	.rodata..Lanon.[ID].1,"a",@progbits
+.Lanon.[ID].1:
+	.ascii	"\303\241b\304\207"
+	.size	.Lanon.[ID].1, 5
+
 	.type	SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0,@object
 	.section	.bss.SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0,"aw",@nobits
 	.p2align	3
 SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0:
 	.quad	0
 	.size	SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0, 8
+
+	.type	.Lanon.[ID].2,@object
+	.section	.rodata..Lanon.[ID].2,"a",@progbits
+.Lanon.[ID].2:
+	.asciz	"a\000b\000c"
+	.size	.Lanon.[ID].2, 6
 
 	.section	".note.GNU-stack","",@progbits
