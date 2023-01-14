@@ -57,7 +57,7 @@ impl MethodModifiers {
     fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Self {
         let mut this = Self::default();
 
-        immediate_children(&entity, |entity, _span| match entity.get_kind() {
+        immediate_children(entity, |entity, _span| match entity.get_kind() {
             EntityKind::UnexposedAttr => {
                 if let Some(attr) = UnexposedAttr::parse(&entity, context) {
                     match attr {
@@ -610,12 +610,10 @@ impl fmt::Display for Method {
                 error!("invalid mutating method");
             }
             // Insert nothing; a class method is assumed
+        } else if self.mutating {
+            write!(f, "&mut self, ")?;
         } else {
-            if self.mutating {
-                write!(f, "&mut self, ")?;
-            } else {
-                write!(f, "&self, ")?;
-            }
+            write!(f, "&self, ")?;
         }
 
         // Arguments
