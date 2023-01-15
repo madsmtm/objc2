@@ -228,6 +228,10 @@ method_decl_impl!(A, B, C, D, E, F, G, H, I);
 method_decl_impl!(A, B, C, D, E, F, G, H, I, J);
 method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K);
 method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
+method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M);
+method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N);
+method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O);
+method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P);
 
 fn method_type_encoding(ret: &Encoding, args: &[Encoding]) -> CString {
     // First two arguments are always self and the selector
