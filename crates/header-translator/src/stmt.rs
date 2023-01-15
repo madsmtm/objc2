@@ -1273,7 +1273,8 @@ impl fmt::Display for Stmt {
                 write!(f, "{availability}")?;
                 write!(f, "    pub{unsafe_} fn {}(", id.name)?;
                 for (param, arg_ty) in arguments {
-                    write!(f, "{}: {arg_ty},", handle_reserved(param))?;
+                    let param = handle_reserved(&crate::to_snake_case(param));
+                    write!(f, "{param}: {arg_ty},")?;
                 }
                 write!(f, "){result_type}")?;
 

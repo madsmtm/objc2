@@ -612,7 +612,8 @@ impl fmt::Display for Method {
 
         // Arguments
         for (param, arg_ty) in &self.arguments {
-            write!(f, "{}: {arg_ty},", handle_reserved(param))?;
+            let param = handle_reserved(&crate::to_snake_case(param));
+            write!(f, "{param}: {arg_ty},")?;
         }
         write!(f, ")")?;
 
