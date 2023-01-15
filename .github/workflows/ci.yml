@@ -42,9 +42,7 @@ env:
     --package=objc2
     --package=icrate
   # The current nightly Rust version that our CI uses
-  #
-  # To help find regressions, we explicitly _don't_ pin the version here!
-  CURRENT_NIGHTLY: nightly
+  CURRENT_NIGHTLY: nightly-2023-01-15
   # Various features that we'd usually want to test with
   #
   # Note: The `exception` feature is not enabled here, since it requires
