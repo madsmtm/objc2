@@ -28,7 +28,7 @@ pub fn is_multi_threaded() -> bool {
 /// Whether the current thread is the main thread.
 #[cfg(feature = "Foundation_NSThread")]
 pub fn is_main_thread() -> bool {
-    NSThread::class_isMainThread()
+    NSThread::isMainThread_class()
 }
 
 #[allow(unused)]
@@ -89,7 +89,7 @@ impl MainThreadMarker {
     /// Returns [`None`] if the current thread was not the main thread.
     #[cfg(feature = "Foundation_NSThread")]
     pub fn new() -> Option<Self> {
-        if NSThread::class_isMainThread() {
+        if NSThread::isMainThread_class() {
             // SAFETY: We just checked that we are running on the main thread.
             Some(unsafe { Self::new_unchecked() })
         } else {

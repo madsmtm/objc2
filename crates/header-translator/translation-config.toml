@@ -163,46 +163,6 @@ countForFetchRequest_error = { skipped = true }
 [class.NSBundle.methods.localizedAttributedStringForKey_value_table]
 skipped = true
 
-# Both instance and class methods
-[class.NSUnarchiver.methods.decodeClassName_asClassName]
-skipped = true
-[class.NSUnarchiver.methods.classNameDecodedForArchiveClassName]
-skipped = true
-[class.NSAutoreleasePool.methods.addObject]
-skipped = true
-[class.NSBundle.methods.pathForResource_ofType_inDirectory]
-skipped = true
-[class.NSBundle.methods.pathsForResourcesOfType_inDirectory]
-skipped = true
-[class.NSKeyedArchiver.methods.setClassName_forClass]
-skipped = true
-[class.NSKeyedArchiver.methods.classNameForClass]
-skipped = true
-[class.NSKeyedUnarchiver.methods.setClass_forClassName]
-skipped = true
-[class.NSKeyedUnarchiver.methods.classForClassName]
-skipped = true
-[class.NSThread.methods.threadPriority]
-skipped = true
-[class.NSThread.methods.setThreadPriority]
-skipped = true
-[class.NSThread.methods.isMainThread]
-skipped = true
-[class.NSDate.methods.timeIntervalSinceReferenceDate]
-skipped = true
-[class.NSManagedObject.methods.entity]
-skipped = true
-[class.NSCursor.methods.pop]
-skipped = true
-[class.NSEvent.methods.modifierFlags]
-skipped = true
-[class.NSGraphicsContext.methods.saveGraphicsState]
-skipped = true
-[class.NSGraphicsContext.methods.restoreGraphicsState]
-skipped = true
-[class.NSBundle.methods.loadNibFile_externalNameTable_withZone]
-skipped = true
-
 # Root class
 [class.NSProxy]
 definition-skipped = true

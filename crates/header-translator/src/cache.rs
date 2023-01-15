@@ -131,8 +131,23 @@ impl<'a> Cache<'a> {
                     for method in methods.iter_mut() {
                         let key = (id.clone(), method.fn_name.clone());
                         if let Some(other) = names.get_mut(&key) {
-                            other.fn_name = other.selector.replace(':', "_");
-                            method.fn_name = method.selector.replace(':', "_");
+                            match (method.is_class, other.is_class) {
+                                // Assume that the methods clashed because one
+                                // of them was a class method
+                                (true, false) => {
+                                    method.fn_name += "_class";
+                                }
+                                (false, true) => {
+                                    other.fn_name += "_class";
+                                }
+                                // Otherwise assume that they clashed because
+                                // one of them were `myMethod:`, while the
+                                // other were `myMethod`.
+                                (true, true) | (false, false) => {
+                                    other.fn_name = other.selector.replace(':', "_");
+                                    method.fn_name = method.selector.replace(':', "_");
+                                }
+                            }
                         } else {
                             names.insert(key, method);
                         }
