@@ -3,6 +3,7 @@ use std::ptr;
 
 use objc2::rc::autoreleasepool;
 
+use icrate::ns_string;
 use icrate::Foundation::{self, NSString};
 
 #[test]
@@ -207,4 +208,48 @@ fn test_append() {
         NSString::from_str("").stringByAppendingPathComponent(&extension),
         NSString::from_str("scratch.tiff")
     );
+}
+
+#[test]
+fn test_macro() {
+    macro_rules! test {
+        ($($s:expr,)+) => {$({
+            let s1 = ns_string!($s);
+            let s2 = NSString::from_str($s);
+
+            assert_eq!(s1, s1);
+            assert_eq!(s1, &*s2);
+
+            assert_eq!(s1.to_string(), $s);
+            assert_eq!(s2.to_string(), $s);
+        })+};
+    }
+
+    test! {
+        "",
+        "asdf",
+        "🦀",
+        "🏳️‍🌈",
+        "𝄞music",
+        "abcd【e】fg",
+        "abcd⒠fg",
+        "ääääh",
+        "lööps, bröther?",
+        "\u{fffd} \u{fffd} \u{fffd}",
+        "讓每個人都能打造出。",
+        "\0",
+        "\0\x01\x02\x03\x04\x05\x06\x07\x08\x09",
+        // "\u{feff}", // TODO
+        include_str!("string.rs"),
+    }
+}
+
+#[test]
+fn test_macro_in_unsafe() {
+    // Test that the `unused_unsafe` lint doesn't trigger
+    let s = unsafe {
+        let s: *const NSString = ns_string!("abc");
+        &*s
+    };
+    assert_eq!(s.to_string(), "abc");
 }

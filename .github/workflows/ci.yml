@@ -481,12 +481,13 @@ jobs:
         cargo test $ARGS $PUBLIC_CRATES -ptests
         --features=$INTERESTING_FEATURES,catch-all,Foundation_all,$UNSTABLE_FEATURES
 
-    # TODO: Re-enable this on Foundation once we do some form of
+    # TODO: Re-enable this on all of Foundation once we do some form of
     # availability checking.
     - name: Test static class and selectors
       run: >-
         cargo test $ARGS $PUBLIC_CRATES -ptests
-        --features=unstable-static-sel,unstable-static-class
+        --features=unstable-static-sel,unstable-static-class,unstable-static-nsstring
+        --features=Foundation,Foundation_NSString
 
   test-ios:
     # if: ${{ env.FULL }}

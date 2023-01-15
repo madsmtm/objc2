@@ -110,6 +110,12 @@ unstable-docsrs = []
 # exist.
 unstable-private = []
 
+# Make the `ns_string!` macro create the string statically.
+#
+# Please test it, and report any issues you may find:
+# https://github.com/madsmtm/objc2/issues/new
+unstable-static-nsstring = []
+
 # Frameworks
 
 AppKit = [
