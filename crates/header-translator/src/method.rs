@@ -223,7 +223,7 @@ impl MemoryManagement {
 #[allow(dead_code)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Method {
-    selector: String,
+    pub selector: String,
     pub fn_name: String,
     availability: Availability,
     pub is_class: bool,

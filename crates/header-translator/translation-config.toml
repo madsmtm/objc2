@@ -488,16 +488,6 @@ skipped = true
 skipped = true
 
 # Both property and method
-[class.NSDrawer.methods.open]
-skipped = true
-[class.NSDrawer.methods.close]
-skipped = true
-[class.NSFormCell.methods.titleWidth]
-skipped = true
-[class.NSSliderCell.methods.drawKnob]
-skipped = true
-[class.NSWorkspace.methods.noteFileSystemChanged]
-skipped = true
 [class.NSDocument.methods.setDisplayName]
 skipped = true
 
