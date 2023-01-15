@@ -65,3 +65,55 @@ fn test_debug() {
     let marker = unsafe { MainThreadMarker::new_unchecked() };
     assert_eq!(format!("{marker:?}"), "MainThreadMarker");
 }
+
+#[test]
+#[cfg(feature = "dispatch")]
+fn test_main_thread_bound_traits() {
+    use icrate::Foundation::MainThreadBound;
+
+    struct Foo(*const ());
+
+    fn assert_send_sync<T: Send + Sync>() {}
+
+    assert_send_sync::<MainThreadBound<MainThreadMarker>>();
+    assert_send_sync::<MainThreadBound<Foo>>();
+
+    fn foo<T>() {
+        assert_send_sync::<MainThreadBound<T>>();
+    }
+
+    foo::<()>();
+}
+
+#[test]
+#[cfg(feature = "dispatch")]
+fn test_main_thread_bound_into_inner() {
+    use core::cell::Cell;
+    use icrate::Foundation::MainThreadBound;
+
+    // SAFETY: For testing only
+    let mtm = unsafe { MainThreadMarker::new_unchecked() };
+
+    struct Foo<'a> {
+        is_dropped: &'a Cell<bool>,
+    }
+
+    impl Drop for Foo<'_> {
+        fn drop(&mut self) {
+            self.is_dropped.set(true);
+        }
+    }
+
+    let is_dropped = Cell::new(false);
+    let foo = Foo {
+        is_dropped: &is_dropped,
+    };
+    let foo = MainThreadBound::new(foo, mtm);
+    assert!(!is_dropped.get());
+
+    let foo = foo.into_inner(mtm);
+    assert!(!is_dropped.get());
+
+    drop(foo);
+    assert!(is_dropped.get());
+}
