@@ -4,7 +4,6 @@ use std::io;
 use std::path::Path;
 use std::path::PathBuf;
 
-#[cfg(feature = "run")]
 pub fn get_runtime() -> String {
     use regex::Regex;
     let re = Regex::new(r"--features[= ]+(([a-z0-9_-]+,?)+)").unwrap();
@@ -24,11 +23,6 @@ pub fn get_runtime() -> String {
         .unwrap_or("apple")
         .to_string();
     result
-}
-
-#[cfg(not(feature = "run"))]
-pub fn get_runtime() -> String {
-    panic!("`run` feature must be enabled")
 }
 
 fn strip_lines(data: &str, starts_with: &str) -> String {
@@ -104,7 +98,6 @@ pub fn read_assembly<P: AsRef<Path>>(path: P, package_path: &Path) -> io::Result
     Ok(s)
 }
 
-#[cfg(feature = "run")]
 pub fn get_artifact(result_stream: &[u8], package: &str) -> PathBuf {
     use cargo_metadata::Message;
     Message::parse_stream(result_stream)
@@ -128,13 +121,7 @@ pub fn get_artifact(result_stream: &[u8], package: &str) -> PathBuf {
         .into_std_path_buf()
 }
 
-#[cfg(not(feature = "run"))]
-pub fn get_artifact(_result_stream: &[u8], _package: &str) -> PathBuf {
-    panic!("`run` feature must be enabled")
-}
-
 /// VERY BRITTLE!
-#[cfg(feature = "run")]
 fn demangle_assembly(assembly: &str) -> String {
     use std::collections::HashMap;
 
@@ -196,14 +183,8 @@ fn demangle_assembly(assembly: &str) -> String {
     RE_ANON.replace_all(&assembly, "anon.[ID].").to_string()
 }
 
-#[cfg(not(feature = "run"))]
-fn demangle_assembly(_s: &str) -> String {
-    panic!("`run` feature must be enabled")
-}
-
 #[cfg(test)]
 mod tests {
-    #[cfg(feature = "run")]
     #[test]
     fn test_demangle() {
         use super::*;

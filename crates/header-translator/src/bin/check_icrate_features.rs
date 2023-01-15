@@ -1,9 +1,4 @@
-//! # Utility for testing `icrate`'s feature set
-//!
-//! Run using:
-//! ```sh
-//! cargo run --bin=check_icrate_features --features=run
-//! ```
+//! Utility for testing `icrate`'s feature set
 use std::collections::BTreeMap;
 use std::error::Error;
 use std::fs;
