@@ -1784,7 +1784,7 @@ fn parse_unexposed_tokens(s: &str) -> String {
     if let Some(TokenTree::Ident(ident)) = iter.peek() {
         let ident = ident.to_string();
         match &*ident {
-            "NS_RETURNS_INNER_POINTER" | "NS_REFINED_FOR_SWIFT" => {
+            "NS_RETURNS_INNER_POINTER" | "NS_REFINED_FOR_SWIFT" | "NS_SWIFT_UI_ACTOR" => {
                 iter.next();
             }
             "API_AVAILABLE"
