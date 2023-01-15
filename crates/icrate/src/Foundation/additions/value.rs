@@ -93,7 +93,10 @@ impl NSValue {
     );
         let mut value = MaybeUninit::<T>::uninit();
         let ptr: NonNull<T> = NonNull::new(value.as_mut_ptr()).unwrap();
-        unsafe { self.getValue(ptr.cast()) };
+        #[allow(deprecated)]
+        unsafe {
+            self.getValue(ptr.cast())
+        };
         // SAFETY: We know that `getValue:` initialized the value, and user
         // ensures that it is safe to access.
         unsafe { value.assume_init() }

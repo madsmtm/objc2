@@ -231,11 +231,19 @@ impl<'a> Cache<'a> {
         // Fix up a few typedef + enum declarations
         let mut iter = mem::take(&mut file.stmts).into_iter().peekable();
         while let Some(stmt) = iter.next() {
-            if let Stmt::AliasDecl { id, ty, kind: None } = &stmt {
+            if let Stmt::AliasDecl {
+                id,
+                availability: _,
+                ty,
+                kind: None,
+            } = &stmt
+            {
                 if let Some(Stmt::EnumDecl {
                     id: enum_id,
+                    availability: _,
                     ty: enum_ty,
-                    ..
+                    kind: _,
+                    variants: _,
                 }) = iter.peek_mut()
                 {
                     if enum_ty.is_typedef_to(&id.name) {

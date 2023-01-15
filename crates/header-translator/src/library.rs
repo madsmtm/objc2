@@ -43,6 +43,7 @@ impl fmt::Display for Library {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(f, "{FILE_PRELUDE}")?;
         writeln!(f, "#![allow(unused_imports)]")?;
+        writeln!(f, "#![allow(deprecated)]")?;
 
         for name in self.files.keys() {
             writeln!(f, "#[path = \"{name}.rs\"]")?;
