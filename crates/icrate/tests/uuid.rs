@@ -29,12 +29,3 @@ fn display_debug() {
 //     let uuid2 = NSUUID::from_bytes([9; 16]);
 //     assert!(uuid1 > uuid2);
 // }
-
-#[cfg(feature = "uuid")]
-#[test]
-fn test_convert_roundtrip() {
-    let nsuuid1 = NSUUID::UUID();
-    let uuid = nsuuid1.as_uuid();
-    let nsuuid2 = NSUUID::from_uuid(uuid);
-    assert_eq!(nsuuid1, nsuuid2);
-}

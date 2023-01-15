@@ -98,11 +98,6 @@
 //! | `NSEnumerator<T, Shared>` | `impl Iterator<Arc<T>>` |
 //! | `NSEnumerator<T, Owned>` | `impl Iterator<T>` |
 //! | `@protocol NSCopying` | `trait Clone` |
-//!
-//!
-//! # Feature flags
-//!
-//! `"uuid"` -> Enables conversion methods between `NSUUID` and `uuid::Uuid`.
 #![allow(unused_imports)]
 
 #[doc(hidden)]
