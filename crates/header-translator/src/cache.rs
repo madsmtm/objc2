@@ -119,6 +119,44 @@ impl<'a> Cache<'a> {
     }
 
     fn update_file(&self, file: &mut File) {
+        // disambiguate duplicate names
+        // NOTE: this only works within single files
+        let mut names = BTreeMap::<(ItemIdentifier, String), &mut Method>::new();
+        for stmt in file.stmts.iter_mut() {
+            match stmt {
+                Stmt::Methods {
+                    cls: id, methods, ..
+                }
+                | Stmt::ProtocolDecl { id, methods, .. } => {
+                    for method in methods.iter_mut() {
+                        let key = (id.clone(), method.fn_name.clone());
+                        if let Some(other) = names.get_mut(&key) {
+                            match (method.is_class, other.is_class) {
+                                // Assume that the methods clashed because one
+                                // of them was a class method
+                                (true, false) => {
+                                    method.fn_name += "_class";
+                                }
+                                (false, true) => {
+                                    other.fn_name += "_class";
+                                }
+                                // Otherwise assume that they clashed because
+                                // one of them were `myMethod:`, while the
+                                // other were `myMethod`.
+                                (true, true) | (false, false) => {
+                                    other.fn_name = other.selector.replace(':', "_");
+                                    method.fn_name = method.selector.replace(':', "_");
+                                }
+                            }
+                        } else {
+                            names.insert(key, method);
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+
         let mut new_stmts = Vec::new();
         for stmt in &mut file.stmts {
             match stmt {

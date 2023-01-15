@@ -223,7 +223,7 @@ impl MemoryManagement {
 #[allow(dead_code)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Method {
-    selector: String,
+    pub selector: String,
     pub fn_name: String,
     availability: Availability,
     pub is_class: bool,
@@ -629,11 +629,17 @@ impl fmt::Display for Method {
     }
 }
 
-pub(crate) fn handle_reserved(s: &str) -> &str {
-    match s {
-        "type" => "type_",
-        "trait" => "trait_",
-        "abstract" => "abstract_",
-        s => s,
+pub(crate) fn handle_reserved(name: &str) -> String {
+    // try to parse name as an identifier
+    if let Ok(ident) = syn::parse_str::<syn::Ident>(name) {
+        ident.to_string()
+    }
+    // try to parse as a raw identifier (NOTE: does not handle `self` or `super`)
+    else if let Ok(ident) = syn::parse_str::<syn::Ident>(&format!("r#{name}")) {
+        ident.to_string()
+    }
+    // translate whatever remains unchanged (needed for, e.g., `_`)
+    else {
+        name.into()
     }
 }

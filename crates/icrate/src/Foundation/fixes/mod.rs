@@ -1,4 +1,3 @@
-mod NSThread;
 mod NSUUID;
 #[path = "NSDecimal.rs"]
 mod __NSDecimal;
