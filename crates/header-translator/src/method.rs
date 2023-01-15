@@ -636,7 +636,6 @@ pub(crate) fn handle_reserved(name: &str) -> String {
     }
     // try to parse as a raw identifier (NOTE: does not handle `self` or `super`)
     else if let Ok(ident) = syn::parse_str::<syn::Ident>(&format!("r#{name}")) {
-        warn!("parsing \"{name}\" as a raw identifier");
         ident.to_string()
     }
     // translate whatever remains unchanged (needed for, e.g., `_`)
