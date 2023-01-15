@@ -121,6 +121,7 @@ dependencies = [
  "clang",
  "proc-macro2",
  "serde",
+ "syn",
  "toml",
  "tracing",
  "tracing-subscriber",
