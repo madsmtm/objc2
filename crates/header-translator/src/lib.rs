@@ -117,3 +117,12 @@ fn immediate_children<'tu>(
         EntityVisitResult::Continue
     });
 }
+
+pub(crate) fn to_snake_case(input: impl AsRef<str>) -> String {
+    let input = input.as_ref();
+    if input == "_" {
+        String::from("_")
+    } else {
+        heck::ToSnakeCase::to_snake_case(input)
+    }
+}
