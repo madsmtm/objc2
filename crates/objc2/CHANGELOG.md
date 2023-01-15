@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `extern_class!`, `extern_protocol!` and `declare_class!` macros.
 * Added ability to use `#[method_id(mySelector:)]` inside `declare_class!`,
   just like you would do in `extern_methods!`.
+* Added 16-fold impls for `EncodeArguments`, `MessageArguments`, and `MethodImplementation`.
 
 ### Changed
 * **BREAKING**: Using the automatic `NSError**`-to-`Result` functionality in
