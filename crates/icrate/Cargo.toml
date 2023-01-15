@@ -166,13 +166,19 @@ Metal = [
     "Metal_MTLRenderPipelineReflection",
     "Metal_MTLComputePipelineReflection",
 ]
+WebKit = [
+    "AppKit",
+    "Foundation",
+    # Temporary, since some structs and statics use these
+    "Foundation_NSAttributedString",
+]
 
 # Helps with CI
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-12"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["AuthenticationServices_all", "CoreData_all", "CoreAnimation_all", "Foundation_all", "Metal_all"]
-unstable-frameworks-macos-10-7 = ["AppKit_all", "CoreAnimation_all", "CoreData_all", "Foundation_all"]
+unstable-frameworks-ios = ["AuthenticationServices_all", "CoreData_all", "CoreAnimation_all", "Foundation_all", "Metal_all", "WebKit_all"]
+unstable-frameworks-macos-10-7 = ["AppKit_all", "CoreAnimation_all", "CoreData_all", "Foundation_all", "WebKit_all"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
@@ -2400,4 +2406,541 @@ Metal_all = [
     "Metal_MTLVertexBufferLayoutDescriptorArray",
     "Metal_MTLVertexDescriptor",
     "Metal_MTLVisibleFunctionTableDescriptor",
+]
+WebKit_DOMAbstractView = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMAttr = [
+    "WebKit_DOMNode",
+]
+WebKit_DOMBlob = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMCDATASection = [
+    "WebKit_DOMText",
+]
+WebKit_DOMCSSCharsetRule = [
+    "WebKit_DOMCSSRule",
+]
+WebKit_DOMCSSFontFaceRule = [
+    "WebKit_DOMCSSRule",
+]
+WebKit_DOMCSSImportRule = [
+    "WebKit_DOMCSSRule",
+]
+WebKit_DOMCSSMediaRule = [
+    "WebKit_DOMCSSRule",
+]
+WebKit_DOMCSSPageRule = [
+    "WebKit_DOMCSSRule",
+]
+WebKit_DOMCSSPrimitiveValue = [
+    "WebKit_DOMCSSValue",
+]
+WebKit_DOMCSSRule = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMCSSRuleList = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMCSSStyleDeclaration = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMCSSStyleRule = [
+    "WebKit_DOMCSSRule",
+]
+WebKit_DOMCSSStyleSheet = [
+    "WebKit_DOMStyleSheet",
+]
+WebKit_DOMCSSUnknownRule = [
+    "WebKit_DOMCSSRule",
+]
+WebKit_DOMCSSValue = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMCSSValueList = [
+    "WebKit_DOMCSSValue",
+]
+WebKit_DOMCharacterData = [
+    "WebKit_DOMNode",
+]
+WebKit_DOMComment = [
+    "WebKit_DOMCharacterData",
+]
+WebKit_DOMCounter = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMDocument = [
+    "WebKit_DOMNode",
+]
+WebKit_DOMDocumentFragment = [
+    "WebKit_DOMNode",
+]
+WebKit_DOMDocumentType = [
+    "WebKit_DOMNode",
+]
+WebKit_DOMElement = [
+    "WebKit_DOMNode",
+]
+WebKit_DOMEntity = [
+    "WebKit_DOMNode",
+]
+WebKit_DOMEntityReference = [
+    "WebKit_DOMNode",
+]
+WebKit_DOMEvent = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMFile = [
+    "WebKit_DOMBlob",
+]
+WebKit_DOMFileList = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMHTMLAnchorElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLAppletElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLAreaElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLBRElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLBaseElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLBaseFontElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLBodyElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLButtonElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLCollection = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMHTMLDListElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLDirectoryElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLDivElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLDocument = [
+    "WebKit_DOMDocument",
+]
+WebKit_DOMHTMLElement = [
+    "WebKit_DOMElement",
+]
+WebKit_DOMHTMLEmbedElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLFieldSetElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLFontElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLFormElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLFrameElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLFrameSetElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLHRElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLHeadElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLHeadingElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLHtmlElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLIFrameElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLImageElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLInputElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLLIElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLLabelElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLLegendElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLLinkElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLMapElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLMarqueeElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLMenuElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLMetaElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLModElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLOListElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLObjectElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLOptGroupElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLOptionElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLOptionsCollection = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMHTMLParagraphElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLParamElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLPreElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLQuoteElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLScriptElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLSelectElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLStyleElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLTableCaptionElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLTableCellElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLTableColElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLTableElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLTableRowElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLTableSectionElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLTextAreaElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLTitleElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMHTMLUListElement = [
+    "WebKit_DOMHTMLElement",
+]
+WebKit_DOMImplementation = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMKeyboardEvent = [
+    "WebKit_DOMUIEvent",
+]
+WebKit_DOMMediaList = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMMouseEvent = [
+    "WebKit_DOMUIEvent",
+]
+WebKit_DOMMutationEvent = [
+    "WebKit_DOMEvent",
+]
+WebKit_DOMNamedNodeMap = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMNode = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMNodeIterator = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMNodeList = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMObject = [
+    "WebKit_WebScriptObject",
+]
+WebKit_DOMOverflowEvent = [
+    "WebKit_DOMEvent",
+]
+WebKit_DOMProcessingInstruction = [
+    "WebKit_DOMCharacterData",
+]
+WebKit_DOMProgressEvent = [
+    "WebKit_DOMEvent",
+]
+WebKit_DOMRGBColor = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMRange = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMRect = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMStyleSheet = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMStyleSheetList = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMText = [
+    "WebKit_DOMCharacterData",
+]
+WebKit_DOMTreeWalker = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMUIEvent = [
+    "WebKit_DOMEvent",
+]
+WebKit_DOMWheelEvent = [
+    "WebKit_DOMMouseEvent",
+]
+WebKit_DOMXPathExpression = [
+    "WebKit_DOMObject",
+]
+WebKit_DOMXPathResult = [
+    "WebKit_DOMObject",
+]
+WebKit_WKBackForwardList = []
+WebKit_WKBackForwardListItem = []
+WebKit_WKContentRuleList = []
+WebKit_WKContentRuleListStore = []
+WebKit_WKContentWorld = []
+WebKit_WKDownload = []
+WebKit_WKFindConfiguration = []
+WebKit_WKFindResult = []
+WebKit_WKFrameInfo = []
+WebKit_WKHTTPCookieStore = []
+WebKit_WKNavigation = []
+WebKit_WKNavigationAction = []
+WebKit_WKNavigationResponse = []
+WebKit_WKOpenPanelParameters = []
+WebKit_WKPDFConfiguration = []
+WebKit_WKPreferences = []
+WebKit_WKProcessPool = []
+WebKit_WKScriptMessage = []
+WebKit_WKSecurityOrigin = []
+WebKit_WKSnapshotConfiguration = []
+WebKit_WKUserContentController = []
+WebKit_WKUserScript = []
+WebKit_WKWebView = [
+    "AppKit_NSView",
+]
+WebKit_WKWebViewConfiguration = []
+WebKit_WKWebpagePreferences = []
+WebKit_WKWebsiteDataRecord = []
+WebKit_WKWebsiteDataStore = []
+WebKit_WKWindowFeatures = []
+WebKit_WebArchive = []
+WebKit_WebBackForwardList = []
+WebKit_WebDataSource = []
+WebKit_WebDownload = [
+    "Foundation_NSURLDownload",
+]
+WebKit_WebFrame = []
+WebKit_WebFrameView = [
+    "AppKit_NSView",
+]
+WebKit_WebHistory = []
+WebKit_WebHistoryItem = []
+WebKit_WebPreferences = []
+WebKit_WebResource = []
+WebKit_WebScriptObject = []
+WebKit_WebUndefined = []
+WebKit_WebView = [
+    "AppKit_NSView",
+]
+WebKit_all = [
+    "WebKit",
+    "WebKit_DOMAbstractView",
+    "WebKit_DOMAttr",
+    "WebKit_DOMBlob",
+    "WebKit_DOMCDATASection",
+    "WebKit_DOMCSSCharsetRule",
+    "WebKit_DOMCSSFontFaceRule",
+    "WebKit_DOMCSSImportRule",
+    "WebKit_DOMCSSMediaRule",
+    "WebKit_DOMCSSPageRule",
+    "WebKit_DOMCSSPrimitiveValue",
+    "WebKit_DOMCSSRule",
+    "WebKit_DOMCSSRuleList",
+    "WebKit_DOMCSSStyleDeclaration",
+    "WebKit_DOMCSSStyleRule",
+    "WebKit_DOMCSSStyleSheet",
+    "WebKit_DOMCSSUnknownRule",
+    "WebKit_DOMCSSValue",
+    "WebKit_DOMCSSValueList",
+    "WebKit_DOMCharacterData",
+    "WebKit_DOMComment",
+    "WebKit_DOMCounter",
+    "WebKit_DOMDocument",
+    "WebKit_DOMDocumentFragment",
+    "WebKit_DOMDocumentType",
+    "WebKit_DOMElement",
+    "WebKit_DOMEntity",
+    "WebKit_DOMEntityReference",
+    "WebKit_DOMEvent",
+    "WebKit_DOMFile",
+    "WebKit_DOMFileList",
+    "WebKit_DOMHTMLAnchorElement",
+    "WebKit_DOMHTMLAppletElement",
+    "WebKit_DOMHTMLAreaElement",
+    "WebKit_DOMHTMLBRElement",
+    "WebKit_DOMHTMLBaseElement",
+    "WebKit_DOMHTMLBaseFontElement",
+    "WebKit_DOMHTMLBodyElement",
+    "WebKit_DOMHTMLButtonElement",
+    "WebKit_DOMHTMLCollection",
+    "WebKit_DOMHTMLDListElement",
+    "WebKit_DOMHTMLDirectoryElement",
+    "WebKit_DOMHTMLDivElement",
+    "WebKit_DOMHTMLDocument",
+    "WebKit_DOMHTMLElement",
+    "WebKit_DOMHTMLEmbedElement",
+    "WebKit_DOMHTMLFieldSetElement",
+    "WebKit_DOMHTMLFontElement",
+    "WebKit_DOMHTMLFormElement",
+    "WebKit_DOMHTMLFrameElement",
+    "WebKit_DOMHTMLFrameSetElement",
+    "WebKit_DOMHTMLHRElement",
+    "WebKit_DOMHTMLHeadElement",
+    "WebKit_DOMHTMLHeadingElement",
+    "WebKit_DOMHTMLHtmlElement",
+    "WebKit_DOMHTMLIFrameElement",
+    "WebKit_DOMHTMLImageElement",
+    "WebKit_DOMHTMLInputElement",
+    "WebKit_DOMHTMLLIElement",
+    "WebKit_DOMHTMLLabelElement",
+    "WebKit_DOMHTMLLegendElement",
+    "WebKit_DOMHTMLLinkElement",
+    "WebKit_DOMHTMLMapElement",
+    "WebKit_DOMHTMLMarqueeElement",
+    "WebKit_DOMHTMLMenuElement",
+    "WebKit_DOMHTMLMetaElement",
+    "WebKit_DOMHTMLModElement",
+    "WebKit_DOMHTMLOListElement",
+    "WebKit_DOMHTMLObjectElement",
+    "WebKit_DOMHTMLOptGroupElement",
+    "WebKit_DOMHTMLOptionElement",
+    "WebKit_DOMHTMLOptionsCollection",
+    "WebKit_DOMHTMLParagraphElement",
+    "WebKit_DOMHTMLParamElement",
+    "WebKit_DOMHTMLPreElement",
+    "WebKit_DOMHTMLQuoteElement",
+    "WebKit_DOMHTMLScriptElement",
+    "WebKit_DOMHTMLSelectElement",
+    "WebKit_DOMHTMLStyleElement",
+    "WebKit_DOMHTMLTableCaptionElement",
+    "WebKit_DOMHTMLTableCellElement",
+    "WebKit_DOMHTMLTableColElement",
+    "WebKit_DOMHTMLTableElement",
+    "WebKit_DOMHTMLTableRowElement",
+    "WebKit_DOMHTMLTableSectionElement",
+    "WebKit_DOMHTMLTextAreaElement",
+    "WebKit_DOMHTMLTitleElement",
+    "WebKit_DOMHTMLUListElement",
+    "WebKit_DOMImplementation",
+    "WebKit_DOMKeyboardEvent",
+    "WebKit_DOMMediaList",
+    "WebKit_DOMMouseEvent",
+    "WebKit_DOMMutationEvent",
+    "WebKit_DOMNamedNodeMap",
+    "WebKit_DOMNode",
+    "WebKit_DOMNodeIterator",
+    "WebKit_DOMNodeList",
+    "WebKit_DOMObject",
+    "WebKit_DOMOverflowEvent",
+    "WebKit_DOMProcessingInstruction",
+    "WebKit_DOMProgressEvent",
+    "WebKit_DOMRGBColor",
+    "WebKit_DOMRange",
+    "WebKit_DOMRect",
+    "WebKit_DOMStyleSheet",
+    "WebKit_DOMStyleSheetList",
+    "WebKit_DOMText",
+    "WebKit_DOMTreeWalker",
+    "WebKit_DOMUIEvent",
+    "WebKit_DOMWheelEvent",
+    "WebKit_DOMXPathExpression",
+    "WebKit_DOMXPathResult",
+    "WebKit_WKBackForwardList",
+    "WebKit_WKBackForwardListItem",
+    "WebKit_WKContentRuleList",
+    "WebKit_WKContentRuleListStore",
+    "WebKit_WKContentWorld",
+    "WebKit_WKDownload",
+    "WebKit_WKFindConfiguration",
+    "WebKit_WKFindResult",
+    "WebKit_WKFrameInfo",
+    "WebKit_WKHTTPCookieStore",
+    "WebKit_WKNavigation",
+    "WebKit_WKNavigationAction",
+    "WebKit_WKNavigationResponse",
+    "WebKit_WKOpenPanelParameters",
+    "WebKit_WKPDFConfiguration",
+    "WebKit_WKPreferences",
+    "WebKit_WKProcessPool",
+    "WebKit_WKScriptMessage",
+    "WebKit_WKSecurityOrigin",
+    "WebKit_WKSnapshotConfiguration",
+    "WebKit_WKUserContentController",
+    "WebKit_WKUserScript",
+    "WebKit_WKWebView",
+    "WebKit_WKWebViewConfiguration",
+    "WebKit_WKWebpagePreferences",
+    "WebKit_WKWebsiteDataRecord",
+    "WebKit_WKWebsiteDataStore",
+    "WebKit_WKWindowFeatures",
+    "WebKit_WebArchive",
+    "WebKit_WebBackForwardList",
+    "WebKit_WebDataSource",
+    "WebKit_WebDownload",
+    "WebKit_WebFrame",
+    "WebKit_WebFrameView",
+    "WebKit_WebHistory",
+    "WebKit_WebHistoryItem",
+    "WebKit_WebPreferences",
+    "WebKit_WebResource",
+    "WebKit_WebScriptObject",
+    "WebKit_WebUndefined",
+    "WebKit_WebView",
 ]

@@ -19,3 +19,5 @@
 #import <AuthenticationServices/AuthenticationServices.h>
 
 #import <Metal/Metal.h>
+
+#import <WebKit/WebKit.h>

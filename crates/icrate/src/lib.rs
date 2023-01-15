@@ -44,3 +44,5 @@ pub mod CoreData;
 pub mod Foundation;
 #[cfg(feature = "Metal")]
 pub mod Metal;
+#[cfg(feature = "WebKit")]
+pub mod WebKit;

@@ -23,6 +23,9 @@ imports = ["AppKit", "CoreData", "Foundation"]
 [library.AuthenticationServices]
 imports = ["AuthenticationServices", "Foundation"]
 
+[library.WebKit]
+imports = ["WebKit", "AppKit", "Foundation"]
+
 ###
 ### Attributes that change a function/method's calling convention.
 ###
@@ -336,6 +339,8 @@ skipped = true
 [protocol.NSPasteboardReading.methods.readingOptionsForType_pasteboard]
 skipped = true
 [protocol.NSWindowRestoration.methods.restoreWindowWithIdentifier_state_completionHandler]
+skipped = true
+[protocol.WebPlugInViewFactory.methods.plugInViewWithArguments]
 skipped = true
 
 # Custom implementation for now
@@ -827,3 +832,19 @@ skipped = true
 skipped = true
 [fn.MTLPackedFloat3Make]
 skipped = true
+
+# Needs `JSGlobalContextRef` from JavaScriptCore
+[class.WebFrame.methods.globalContext]
+skipped = true
+# Needs `JSObjectRef` from JavaScriptCore
+[class.WebScriptObject.methods.JSObject]
+skipped = true
+
+# error: translator assertion failure: invalid error nullability (left: Unspecified) (Right: Nullable)
+[class.WebHistory.methods]
+loadFromURL_error = { skipped = true }
+saveToURL_error = { skipped = true }
+
+[class.WKWebView.methods]
+# uses `SecTrustRef` from Security.framework (not yet translated)
+serverTrust = { skipped = true }
