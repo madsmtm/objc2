@@ -27,7 +27,7 @@ run-icrate-check = [
 clang = { version = "2.0", features = ["runtime", "clang_10_0"], optional = true }
 toml = { version = "0.5.9", optional = true }
 serde = { version = "1.0.144", features = ["derive"], optional = true }
-apple-sdk = { version = "0.2.0", default-features = false, optional = true }
+apple-sdk = { version = "0.4.0", default-features = false, optional = true }
 tracing = { version = "0.1.37", default-features = false, features = ["std"], optional = true }
 tracing-subscriber = { version = "0.3.16", features = ["fmt"], optional = true }
 tracing-tree = { git = "https://github.com/madsmtm/tracing-tree.git", optional = true }
