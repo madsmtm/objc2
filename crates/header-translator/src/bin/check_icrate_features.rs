@@ -31,10 +31,9 @@ const POPULAR_FEATURES: &[&str] = &[
 
 fn get_pairs<'a>(items: &'a [&'a str]) -> impl Iterator<Item = (&'a str, &'a str)> + 'a {
     items
-        .into_iter()
+        .iter()
         .enumerate()
-        .map(|(i, &item1)| items[i..].into_iter().map(move |&item2| (item1, item2)))
-        .flatten()
+        .flat_map(|(i, &item1)| items[i..].iter().map(move |&item2| (item1, item2)))
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -49,6 +48,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let feature_sets = get_pairs(POPULAR_FEATURES)
         .map(|(feature1, feature2)| vec![feature1, feature2])
         .chain(features.keys().filter_map(|feature| {
+            #[allow(clippy::if_same_then_else)]
             if feature.contains("gnustep") {
                 // Skip GNUStep-related features
                 None
