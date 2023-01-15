@@ -20,6 +20,22 @@ impl NSUUID {
         Self::from_bytes([0; 16])
     }
 
+    /// Create a new `NSUUID` from the given bytes.
+    ///
+    ///
+    /// # Example
+    ///
+    /// Create a new `NSUUID` from the `uuid` crate.
+    ///
+    /// ```ignore
+    /// use uuid::Uuid;
+    /// use icrate::Foundation::NSUUID;
+    ///
+    /// let uuid: Uuid;
+    /// # uuid = todo!();
+    /// let obj = NSUUID::from_bytes(uuid.into_bytes());
+    /// assert_eq!(obj.as_bytes(), uuid.into_bytes());
+    /// ```
     pub fn from_bytes(bytes: [u8; 16]) -> Id<Self, Shared> {
         let bytes = UuidBytes(bytes);
         Self::initWithUUIDBytes(Self::alloc(), &bytes)
@@ -67,18 +83,6 @@ impl fmt::Debug for NSUUID {
 //         res.into()
 //     }
 // }
-
-/// Conversion methods to/from `uuid` crate.
-#[cfg(feature = "uuid")]
-impl NSUUID {
-    pub fn from_uuid(uuid: uuid::Uuid) -> Id<Self, Shared> {
-        Self::from_bytes(uuid.into_bytes())
-    }
-
-    pub fn as_uuid(&self) -> uuid::Uuid {
-        uuid::Uuid::from_bytes(self.as_bytes())
-    }
-}
 
 impl DefaultId for NSUUID {
     type Ownership = Shared;

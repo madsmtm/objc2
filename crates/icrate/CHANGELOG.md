@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Updated the SDK version from XCode `14.0.1` to `14.2`.
   - See differences [here](https://sdk.news/macOS-13.0/).
 
+### Removed
+* **BREAKING**: The optional `uuid` integration, since one might want to use
+  `icrate` internally in that crate in the future, and that would break.
+
 
 ## icrate 0.0.1 - 2022-12-24
 
