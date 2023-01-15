@@ -33,14 +33,16 @@ env:
   CXX: clang++
 
   # Crates that we want to run `rustdoc` and `clippy` on
+  #
+  # This excludes `header-translator`, `test-assembly`, `tests` and `test-ui`.
   PUBLIC_CRATES: >-
-    --package=objc2-proc-macros
-    --package=objc-sys
-    --package=objc2-encode
     --package=block-sys
     --package=block2
-    --package=objc2
     --package=icrate
+    --package=objc-sys
+    --package=objc2
+    --package=objc2-encode
+    --package=objc2-proc-macros
   # The current nightly Rust version that our CI uses
   CURRENT_NIGHTLY: nightly-2023-01-15
   # Various features that we'd usually want to test with
@@ -113,14 +115,10 @@ jobs:
             --features=unstable-frameworks-gnustep
         - name: header-translator
           target: x86_64-unknown-linux-gnu
-          args: >-
-            -pheader-translator
-            --features=run
+          args: -pheader-translator
         - name: test-assembly
           target: x86_64-unknown-linux-gnu
-          args: >-
-            -ptest-assembly
-            --features=run
+          args: -ptest-assembly
 
     env:
       CARGO_BUILD_TARGET: ${{ matrix.target }}
@@ -247,7 +245,7 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Run macOS x86_64 assembly tests
-      run: cargo run --features=run --bin=test-assembly -- --target=x86_64-apple-darwin
+      run: cargo run --bin=test-assembly -- --target=x86_64-apple-darwin
 
     - name: Run all assembly tests
       if: ${{ env.FULL }}
@@ -278,7 +276,7 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Run header translator
-      run: cargo run --features=run --bin=header-translator
+      run: cargo run --bin=header-translator
 
     - name: Verify that no files changed
       run: git diff --exit-code --submodule=diff
@@ -308,7 +306,7 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Check `icrate` with each feature enabled separately
-      run: cargo run --bin=check_icrate_features --features=run-icrate-check
+      run: cargo run --bin=check_icrate_features
 
   test-macos:
     name: Test macOS 12
@@ -340,10 +338,10 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Test without features
-      run: cargo test $ARGS
+      run: cargo test $ARGS $PUBLIC_CRATES -ptests
 
     - name: Test all frameworks
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,unstable-frameworks-macos-12
+      run: cargo test $ARGS $PUBLIC_CRATES -ptests --features=$INTERESTING_FEATURES,unstable-frameworks-macos-12
 
   test-apple:
     # if: ${{ env.FULL }}
@@ -460,25 +458,35 @@ jobs:
       run: echo "SDKROOT=$HOME/sdk" >> $GITHUB_ENV
 
     - name: Test without features
-      run: cargo test $ARGS
+      run: cargo test $ARGS $PUBLIC_CRATES -ptests
 
     - name: Test Foundation
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,Foundation_all
+      run: >-
+        cargo test $ARGS $PUBLIC_CRATES -ptests
+        --features=$INTERESTING_FEATURES,Foundation_all
 
     - name: Test all frameworks
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,unstable-frameworks-${{ matrix.frameworks }}
+      run: >-
+        cargo test $ARGS $PUBLIC_CRATES -ptests
+        --features=$INTERESTING_FEATURES,catch-all,unstable-frameworks-${{ matrix.frameworks }}
 
     - name: Test in release mode
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation_all --release
+      run: >-
+        cargo test $ARGS $PUBLIC_CRATES -ptests
+        --features=$INTERESTING_FEATURES,catch-all,Foundation_all --release
 
     - name: Test with unstable features
       if: ${{ matrix.nightly }}
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation_all,$UNSTABLE_FEATURES
+      run: >-
+        cargo test $ARGS $PUBLIC_CRATES -ptests
+        --features=$INTERESTING_FEATURES,catch-all,Foundation_all,$UNSTABLE_FEATURES
 
     # TODO: Re-enable this on Foundation once we do some form of
     # availability checking.
     - name: Test static class and selectors
-      run: cargo test $ARGS --features=unstable-static-sel,unstable-static-class
+      run: >-
+        cargo test $ARGS $PUBLIC_CRATES -ptests
+        --features=unstable-static-sel,unstable-static-class
 
   test-ios:
     # if: ${{ env.FULL }}
@@ -538,6 +546,7 @@ jobs:
     - name: Test
       run: >-
         cargo-dinghy --device=$SIM_ID test
+        $PUBLIC_CRATES -ptests
         --features=$INTERESTING_FEATURES,catch-all
         --features=unstable-frameworks-ios
 
