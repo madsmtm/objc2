@@ -924,4 +924,50 @@ mod tests {
 
         let _cls = Custom::class();
     }
+
+    // Proof-of-concept how we could make declare_class! accept generic.
+    #[test]
+    fn test_generic() {
+        struct GenericDeclareClass<T>(T);
+
+        unsafe impl<T> RefEncode for GenericDeclareClass<T> {
+            const ENCODING_REF: Encoding = Encoding::Object;
+        }
+        unsafe impl<T> Message for GenericDeclareClass<T> {}
+
+        unsafe impl<T> ClassType for GenericDeclareClass<T> {
+            type Super = NSObject;
+            const NAME: &'static str = "GenericDeclareClass";
+
+            #[inline]
+            fn as_super(&self) -> &Self::Super {
+                unimplemented!()
+            }
+
+            #[inline]
+            fn as_super_mut(&mut self) -> &mut Self::Super {
+                unimplemented!()
+            }
+
+            fn class() -> &'static Class {
+                let superclass = NSObject::class();
+                let mut builder = ClassBuilder::new(Self::NAME, superclass).unwrap();
+
+                unsafe {
+                    builder.add_method(
+                        sel!(generic),
+                        <GenericDeclareClass<T>>::generic as unsafe extern "C" fn(_, _),
+                    );
+                }
+
+                builder.register()
+            }
+        }
+
+        impl<T> GenericDeclareClass<T> {
+            extern "C" fn generic(&self, _cmd: Sel) {}
+        }
+
+        let _ = GenericDeclareClass::<()>::class();
+    }
 }

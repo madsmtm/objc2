@@ -412,10 +412,10 @@ macro_rules! declare_class {
                     }
 
                     // Implement protocols and methods
-                    $crate::__declare_class_methods!(
-                        @register_out(builder)
+                    $crate::__declare_class_register_methods! {
+                        @(builder)
                         $($methods)*
-                    );
+                    }
 
                     let _cls = builder.register();
                 });
@@ -459,36 +459,23 @@ macro_rules! declare_class {
         }
 
         // Methods
-        $crate::__declare_class_methods!(
-            @method_out
+        $crate::__declare_class_methods! {
             $($methods)*
-        );
+        }
     };
+
+    // Allow declaring class with no instance variables
     {
         $(#[$m:meta])*
         $v:vis struct $name:ident;
 
-        unsafe impl ClassType for $for:ty {
-            $(#[inherits($($inheritance_rest:ty),+)])?
-            type Super = $superclass:ty;
-
-            $(const NAME: &'static str = $name_const:literal;)?
-        }
-
-        $($methods:tt)*
+        $($rest:tt)*
     } => {
         $crate::declare_class! {
             $(#[$m])*
             $v struct $name {}
 
-            unsafe impl ClassType for $for {
-                $(#[inherits($($inheritance_rest),+)])?
-                type Super = $superclass;
-
-                $(const NAME: &'static str = $name_const;)?
-            }
-
-            $($methods)*
+            $($rest)*
         }
     };
 }
@@ -507,11 +494,10 @@ macro_rules! __select_name {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __declare_class_methods {
-    (@method_out) => {};
+    // Base-case
+    () => {};
     // With protocol
     (
-        @method_out
-
         $(#[$m:meta])*
         unsafe impl ConformsTo<$protocol:ty> for $for:ty {
             $($methods:tt)*
@@ -532,15 +518,12 @@ macro_rules! __declare_class_methods {
             }
         }
 
-        $crate::__declare_class_methods!(
-            @method_out
+        $crate::__declare_class_methods!{
             $($rest)*
-        );
+        }
     };
     // Without protocol
     (
-        @method_out
-
         $(#[$m:meta])*
         unsafe impl $for:ty {
             $($methods:tt)*
@@ -557,16 +540,20 @@ macro_rules! __declare_class_methods {
             }
         }
 
-        $crate::__declare_class_methods!(
-            @method_out
+        $crate::__declare_class_methods! {
             $($rest)*
-        );
+        }
     };
+}
 
-    (@register_out($builder:ident)) => {};
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_register_methods {
+    // Base-case
+    (@($builder:ident)) => {};
     // With protocol
     (
-        @register_out($builder:ident)
+        @($builder:ident)
 
         $(#[$($m:tt)*])*
         unsafe impl ConformsTo<$protocol:ty> for $for:ty {
@@ -603,14 +590,14 @@ macro_rules! __declare_class_methods {
             )
         }
 
-        $crate::__declare_class_methods!(
-            @register_out($builder)
+        $crate::__declare_class_register_methods! {
+            @($builder)
             $($rest)*
-        );
+        }
     };
     // Without protocol
     (
-        @register_out($builder:ident)
+        @($builder:ident)
 
         $(#[$($m:tt)*])*
         unsafe impl $for:ty {
@@ -638,10 +625,10 @@ macro_rules! __declare_class_methods {
             )
         }
 
-        $crate::__declare_class_methods!(
-            @register_out($builder)
+        $crate::__declare_class_register_methods! {
+            @($builder)
             $($rest)*
-        );
+        }
     };
 }
 
@@ -649,13 +636,13 @@ macro_rules! __declare_class_methods {
 #[macro_export]
 macro_rules! __declare_class_rewrite_methods {
     {
-        @($($macro:tt)*)
+        @($out_macro:path)
         @($($macro_arguments:tt)*)
     } => {};
 
     // Unsafe variant
     {
-        @($($macro:tt)*)
+        @($out_macro:path)
         @($($macro_arguments:tt)*)
 
         $(#[$($m:tt)*])*
@@ -664,7 +651,7 @@ macro_rules! __declare_class_rewrite_methods {
         $($rest:tt)*
     } => {
         $crate::__rewrite_self_arg! {
-            ($($macro)*)
+            ($out_macro)
             ($($args)*)
 
             // Split the function into parts, and send the arguments down to
@@ -681,7 +668,7 @@ macro_rules! __declare_class_rewrite_methods {
         }
 
         $crate::__declare_class_rewrite_methods! {
-            @($($macro)*)
+            @($out_macro)
             @($($macro_arguments)*)
 
             $($rest)*
@@ -690,7 +677,7 @@ macro_rules! __declare_class_rewrite_methods {
 
     // Safe variant
     {
-        @($($macro:tt)*)
+        @($out_macro:path)
         @($($macro_arguments:tt)*)
 
         $(#[$($m:tt)*])*
@@ -699,7 +686,7 @@ macro_rules! __declare_class_rewrite_methods {
         $($rest:tt)*
     } => {
         $crate::__rewrite_self_arg! {
-            ($($macro)*)
+            ($out_macro)
             ($($args)*)
 
             @($($macro_arguments)*)
@@ -713,7 +700,7 @@ macro_rules! __declare_class_rewrite_methods {
         }
 
         $crate::__declare_class_rewrite_methods! {
-            @($($macro)*)
+            @($out_macro)
             @($($macro_arguments)*)
 
             $($rest)*
