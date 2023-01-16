@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Support `#[cfg(...)]` attributes in `extern_class!` macro.
 * Added support for selectors with multiple colons like `abc::` in the `sel!`,
   `extern_class!`, `extern_protocol!` and `declare_class!` macros.
+* Added ability to use `#[method_id(mySelector:)]` inside `declare_class!`,
+  just like you would do in `extern_methods!`.
 
 ### Changed
 * **BREAKING**: Using the automatic `NSError**`-to-`Result` functionality in

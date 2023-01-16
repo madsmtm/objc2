@@ -12,20 +12,6 @@ error: must specify the desired selector using `#[method(...)]` or `#[method_id(
   |
   = note: this error originates in the macro `$crate::__extract_custom_attributes_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: `#[method_id(...)]` is not supported in `declare_class!` yet
- --> ui/declare_class_invalid_syntax.rs
-  |
-  | / declare_class!(
-  | |     struct CustomObject;
-  | |
-  | |     unsafe impl ClassType for CustomObject {
-... |
-  | |     }
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
 error: expected expression, found `}`
  --> ui/declare_class_invalid_syntax.rs
   |
@@ -76,6 +62,76 @@ note: while trying to match meta-variable `$body:block`
   |         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
   |                                                     ^^^^^^^^^^^
 
+error: `#[method_id(alloc)]` is not supported. Use `#[method(alloc)]` and do the memory management yourself
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__get_method_id_sel` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[method_id(retain)]` is not supported. Use `#[method(retain)]` and do the memory management yourself
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__get_method_id_sel` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[method_id(release)]` is not supported. Use `#[method(release)]` and do the memory management yourself
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__get_method_id_sel` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[method_id(autorelease)]` is not supported. Use `#[method(autorelease)]` and do the memory management yourself
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__get_method_id_sel` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[method_id(dealloc)]` is not supported. Add an instance variable with a `Drop` impl to the class instead
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__get_method_id_sel` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
 error: must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`
  --> ui/declare_class_invalid_syntax.rs
   |
@@ -89,6 +145,20 @@ error: must specify the desired selector using `#[method(...)]` or `#[method_id(
   | |_^
   |
   = note: this error originates in the macro `$crate::__extract_custom_attributes_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[method_id(...)]` must have a return type
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: no rules expected the token `(`
  --> ui/declare_class_invalid_syntax.rs
@@ -150,3 +220,22 @@ error[E0599]: no function or associated item named `test_self` found for struct 
   | |     }
   | | );
   | |_- function or associated item `test_self` not found for this struct
+
+error[E0277]: the trait bound `RetainSemantics<2>: MessageRecieveId<&objc2::runtime::Class, Id<CustomObject, Shared>>` is not satisfied
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `MessageRecieveId<&objc2::runtime::Class, Id<CustomObject, Shared>>` is not implemented for `RetainSemantics<2>`
+  |
+  = help: the following other types implement trait `MessageRecieveId<Receiver, Ret>`:
+            <RetainSemantics<1> as MessageRecieveId<Receiver, Ret>>
+            <RetainSemantics<3> as MessageRecieveId<Allocated<T>, Ret>>
+            <RetainSemantics<4> as MessageRecieveId<Receiver, Ret>>
+            <RetainSemantics<5> as MessageRecieveId<Receiver, Ret>>
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

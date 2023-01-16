@@ -2,8 +2,9 @@
 ///
 /// Will add:
 /// ```ignore
-/// (builder method)
-/// (receiver)
+/// (builder_method:ident)
+/// (receiver:expr)
+/// (receiver_ty:ty)
 /// (args_prefix*)
 /// (args_rest*)
 /// ```
@@ -44,6 +45,7 @@ macro_rules! __rewrite_self_arg_inner {
 
             (add_method)
             ($self)
+            (&Self)
             (
                 &$self,
                 _: $crate::runtime::Sel,
@@ -63,6 +65,7 @@ macro_rules! __rewrite_self_arg_inner {
 
             (add_method)
             ($self)
+            (&mut Self)
             (
                 &mut $self,
                 _: $crate::runtime::Sel,
@@ -82,6 +85,7 @@ macro_rules! __rewrite_self_arg_inner {
 
             (add_method)
             ($self)
+            ($self_ty)
             (
                 $self: $self_ty,
                 _: $crate::runtime::Sel,
@@ -101,6 +105,7 @@ macro_rules! __rewrite_self_arg_inner {
 
             (add_method)
             ($self)
+            ($self_ty)
             (
                 $mut $self: $self_ty,
                 _: $crate::runtime::Sel,
@@ -124,6 +129,7 @@ macro_rules! __rewrite_self_arg_inner {
 
             (add_method)
             ($this)
+            ($this_ty)
             (
                 $mut $this: $this_ty,
                 _: $crate::runtime::Sel,
@@ -143,6 +149,7 @@ macro_rules! __rewrite_self_arg_inner {
 
             (add_method)
             ($this)
+            ($this_ty)
             (
                 $this: $this_ty,
                 _: $crate::runtime::Sel,
@@ -162,6 +169,7 @@ macro_rules! __rewrite_self_arg_inner {
 
             (add_method)
             ($this)
+            ($this_ty)
             (
                 $mut $this: $this_ty,
                 _: $crate::runtime::Sel,
@@ -181,6 +189,7 @@ macro_rules! __rewrite_self_arg_inner {
 
             (add_method)
             ($this)
+            ($this_ty)
             (
                 $this: $this_ty,
                 _: $crate::runtime::Sel,
@@ -202,6 +211,7 @@ macro_rules! __rewrite_self_arg_inner {
 
             (add_class_method)
             (<Self as $crate::ClassType>::class())
+            (&$crate::runtime::Class)
             (
                 _: &$crate::runtime::Class,
                 _: $crate::runtime::Sel,

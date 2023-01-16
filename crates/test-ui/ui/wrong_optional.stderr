@@ -30,9 +30,9 @@ error: `#[optional]` is only supported in `extern_protocol!`
  --> ui/wrong_optional.rs
   |
   | / declare_class!(
-  | |     struct CustomObject;
+  | |     struct CustomObject1;
   | |
-  | |     unsafe impl ClassType for CustomObject {
+  | |     unsafe impl ClassType for CustomObject1 {
 ... |
   | |     }
   | | );
@@ -40,13 +40,13 @@ error: `#[optional]` is only supported in `extern_protocol!`
   |
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: `#[method_id(...)]` is not supported in `declare_class!` yet
+error: `#[optional]` is only supported in `extern_protocol!`
  --> ui/wrong_optional.rs
   |
   | / declare_class!(
-  | |     struct CustomObject;
+  | |     struct CustomObject2;
   | |
-  | |     unsafe impl ClassType for CustomObject {
+  | |     unsafe impl ClassType for CustomObject2 {
 ... |
   | |     }
   | | );

@@ -1,4 +1,4 @@
-#![deny(deprecated)]
+#![deny(deprecated, unreachable_code)]
 use core::ptr;
 
 use crate::rc::{Id, Owned, Shared};
@@ -199,15 +199,15 @@ declare_class!(
             true
         }
 
-        #[method(test:::withObject:)]
+        #[method_id(test:::withObject:)]
         fn _test_object(
             &self,
             _arg1: i32,
             _arg2: i32,
             _arg3: i32,
             _obj: *const Self,
-        ) -> *const Self {
-            ptr::null()
+        ) -> Option<Id<Self, Owned>> {
+            None
         }
     }
 );
@@ -290,6 +290,16 @@ declare_class!(
         fn takes_returns_bool_instance(&self, b: bool) -> bool {
             b
         }
+
+        #[method_id(idTakesBool:)]
+        fn id_takes_bool(_b: bool) -> Option<Id<Self, Owned>> {
+            None
+        }
+
+        #[method_id(idTakesBoolInstance:)]
+        fn id_takes_bool_instance(&self, _b: bool) -> Option<Id<Self, Owned>> {
+            None
+        }
     }
 );
 
@@ -324,6 +334,16 @@ declare_class!(
 
         #[method(unreachableClassVoid)]
         fn unreachable_class_void() {
+            unreachable!()
+        }
+
+        #[method_id(unreachableId)]
+        fn unreachable_id(&self) -> Id<Self, Owned> {
+            unreachable!()
+        }
+
+        #[method_id(unreachableClassId)]
+        fn unreachable_class_id() -> Id<Self, Owned> {
             unreachable!()
         }
     }

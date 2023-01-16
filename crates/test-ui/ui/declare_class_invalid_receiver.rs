@@ -1,4 +1,4 @@
-use objc2::rc::{Id, Shared};
+use objc2::rc::{Allocated, Id, Shared};
 use objc2::{declare_class, ClassType};
 use objc2::runtime::NSObject;
 
@@ -22,6 +22,35 @@ declare_class!(
 
         #[method(test3)]
         fn test3(this: Self) {
+            unimplemented!()
+        }
+    }
+
+    unsafe impl CustomObject {
+        #[method_id(test4)]
+        fn test4(self: Box<Self>) -> Id<Self, Shared> {
+            unimplemented!()
+        }
+
+        #[method_id(test5)]
+        fn test5(this: Id<Self, Shared>) -> Id<Self, Shared> {
+            unimplemented!()
+        }
+
+        #[method_id(test6)]
+        fn test6(this: Self) -> Id<Self, Shared> {
+            unimplemented!()
+        }
+    }
+
+    unsafe impl CustomObject {
+        #[method_id(test7)]
+        fn test7(this: Allocated<Self>) -> Id<Self, Shared> {
+            unimplemented!()
+        }
+
+        #[method_id(initTest8)]
+        fn test8(&self) -> Id<Self, Shared> {
             unimplemented!()
         }
     }

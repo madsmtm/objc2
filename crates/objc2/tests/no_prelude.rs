@@ -94,6 +94,11 @@ new_objc2::declare_class!(
     unsafe impl CustomObject {
         #[method(a)]
         fn _a() {}
+
+        #[method_id(b)]
+        fn _b() -> new_objc2::rc::Id<CustomObject, new_objc2::rc::Shared> {
+            ::core::unimplemented!()
+        }
     }
 );
 

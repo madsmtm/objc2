@@ -280,6 +280,7 @@ macro_rules! __extern_methods_method_out {
 
         ($__builder_method:ident)
         ($receiver:expr)
+        ($__receiver_ty:ty)
         ($($__args_prefix:tt)*)
         ($($args_rest:tt)*)
 
@@ -309,6 +310,7 @@ macro_rules! __extern_methods_method_out {
 
         ($__builder_method:ident)
         ($receiver:expr)
+        ($__receiver_ty:ty)
         ($($__args_prefix:tt)*)
         ($($args_rest:tt)*)
 
@@ -339,6 +341,7 @@ macro_rules! __extern_methods_method_out {
 
         ($__builder_method:ident)
         ($receiver:expr)
+        ($__receiver_ty:ty)
         ($($__args_prefix:tt)*)
         ($($args_rest:tt)*)
 

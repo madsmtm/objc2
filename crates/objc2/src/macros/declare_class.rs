@@ -49,8 +49,12 @@
 /// will be registered as a class method.
 ///
 /// The desired selector can be specified using the `#[method(my:selector:)]`
-/// attribute, similar to the [`extern_methods!`] macro (`method_id` is not
-/// yet supported, see [#282]).
+/// or `#[method_id(my:selector:)]` attribute, similar to the
+/// [`extern_methods!`] macro.
+///
+/// If the `#[method_id(...)]` attribute is used, the return type must be
+/// `Option<Id<T, O>>` or `Id<T, O>`. Additionally, if the selector is in the
+/// "init"-family, the "self"/"this" argument must be `Allocated<Self>`.
 ///
 /// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
 /// `deprecated` and so on is supported. However, note that `cfg_attr` may not
@@ -69,7 +73,6 @@
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// [`extern_methods!`]: crate::extern_methods
-/// [#282]: https://github.com/madsmtm/objc2/issues/282
 /// [open an issue]: https://github.com/madsmtm/objc2/issues/new
 /// [`msg_send!`]: crate::msg_send
 /// [`runtime::Bool`]: crate::runtime::Bool
@@ -198,9 +201,9 @@
 ///             *self.foo
 ///         }
 ///
-///         #[method(object)]
-///         fn __get_object(&self) -> *mut NSObject {
-///             Id::autorelease_return(self.object.clone())
+///         #[method_id(object)]
+///         fn __get_object(&self) -> Id<NSObject, Shared> {
+///             self.object.clone()
 ///         }
 ///
 ///         #[method(myClassMethod)]
@@ -731,6 +734,7 @@ macro_rules! __declare_class_method_out {
 
         ($builder_method:ident)
         ($receiver:expr)
+        ($receiver_ty:ty)
         ($($args_prefix:tt)*)
         ($($args_rest:tt)*)
 
@@ -752,6 +756,7 @@ macro_rules! __declare_class_method_out {
 
             ($builder_method)
             ($receiver)
+            ($receiver_ty)
             ($($args_prefix)*)
 
             ($($m_method)*)
@@ -845,17 +850,19 @@ macro_rules! __declare_class_rewrite_args {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __declare_class_method_out_inner {
+    // #[method(...)]
     {
         ($($qualifiers:tt)*)
         ($name:ident)
-        ()
+        ($($ret:ty)?)
         ($body:block)
 
         ($__builder_method:ident)
         ($__receiver:expr)
+        ($__receiver_ty:ty)
         ($($args_prefix:tt)*)
 
-        ($($__m_method:tt)*)
+        (#[method($($__sel:tt)*)])
         ($($__m_optional:tt)*)
         ($($m_checked:tt)*)
 
@@ -866,11 +873,15 @@ macro_rules! __declare_class_method_out_inner {
         $($qualifiers)* extern "C" fn $name(
             $($args_prefix)*
             $($args_converted)*
-        ) {
+        ) $(-> <$ret as $crate::encode::EncodeConvert>::__Inner)? {
             $($body_prefix)*
-            $body
+            $crate::__convert_result! {
+                $body $(; $ret)?
+            }
         }
     };
+
+    // #[method_id(...)]
     {
         ($($qualifiers:tt)*)
         ($name:ident)
@@ -879,9 +890,10 @@ macro_rules! __declare_class_method_out_inner {
 
         ($__builder_method:ident)
         ($__receiver:expr)
+        ($receiver_ty:ty)
         ($($args_prefix:tt)*)
 
-        ($($__m_method:tt)*)
+        (#[method_id($($sel:tt)*)])
         ($($__m_optional:tt)*)
         ($($m_checked:tt)*)
 
@@ -892,18 +904,68 @@ macro_rules! __declare_class_method_out_inner {
         $($qualifiers)* extern "C" fn $name(
             $($args_prefix)*
             $($args_converted)*
-        ) -> <$ret as $crate::encode::EncodeConvert>::__Inner {
+        ) -> $crate::declare::__IdReturnValue {
             $($body_prefix)*
+
             let __objc2_result = $body;
+
             #[allow(unreachable_code)]
-            <$ret as $crate::encode::EncodeConvert>::__into_inner(__objc2_result)
+            <$crate::__macro_helpers::RetainSemantics<{
+                $crate::__macro_helpers::retain_semantics(
+                    $crate::__sel_helper! {
+                        @()
+                        $($sel)*
+                    }
+                )
+            }> as $crate::__macro_helpers::MessageRecieveId<
+                $receiver_ty,
+                $ret,
+            >>::into_return(__objc2_result)
+        }
+    };
+
+    {
+        ($($qualifiers:tt)*)
+        ($name:ident)
+        ()
+        ($body:block)
+
+        ($__builder_method:ident)
+        ($__receiver:expr)
+        ($__receiver_ty:ty)
+        ($($args_prefix:tt)*)
+
+        (#[method_id($($sel:tt)*)])
+        ($($__m_optional:tt)*)
+        ($($m_checked:tt)*)
+
+        ($($args_converted:tt)*)
+        ($($body_prefix:tt)*)
+    } => {
+        $($m_checked)*
+        $($qualifiers)* extern "C" fn $name() {
+            compile_error!("`#[method_id(...)]` must have a return type")
         }
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
+macro_rules! __convert_result {
+    ($body:block) => {
+        $body
+    };
+    ($body:block; $ret:ty) => {
+        let __objc2_result = $body;
+        #[allow(unreachable_code)]
+        <$ret as $crate::encode::EncodeConvert>::__into_inner(__objc2_result)
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
 macro_rules! __declare_class_register_out {
+    // #[method(...)]
     {
         ($builder:ident)
         ($($qualifiers:tt)*)
@@ -913,6 +975,7 @@ macro_rules! __declare_class_register_out {
 
         ($builder_method:ident)
         ($__receiver:expr)
+        ($__receiver_ty:ty)
         ($($__args_prefix:tt)*)
         ($($args_rest:tt)*)
 
@@ -935,6 +998,7 @@ macro_rules! __declare_class_register_out {
         }
     };
 
+    // #[method_id(...)]
     {
         ($builder:ident)
         ($($qualifiers:tt)*)
@@ -944,33 +1008,86 @@ macro_rules! __declare_class_register_out {
 
         ($builder_method:ident)
         ($__receiver:expr)
+        ($__receiver_ty:ty)
         ($($__args_prefix:tt)*)
         ($($args_rest:tt)*)
 
-        (#[method($($sel:tt)*)])
+        (#[method_id($($sel:tt)*)])
+        () // No optional
+        ($($m_checked:tt)*)
+    } => {
+        $crate::__extract_and_apply_cfg_attributes! {
+            @($($m_checked)*)
+            @(
+                $builder.$builder_method(
+                    $crate::__get_method_id_sel!($($sel)*),
+                    Self::$name as $crate::__fn_ptr! {
+                        ($($qualifiers)*)
+                        (_, _,)
+                        $($args_rest)*
+                    },
+                );
+            )
+        }
+    };
+
+    // #[optional]
+    {
+        ($builder:ident)
+        ($($qualifiers:tt)*)
+        ($name:ident)
+        ($($__ret:ty)?)
+        ($__body:block)
+
+        ($builder_method:ident)
+        ($__receiver:expr)
+        ($__receiver_ty:ty)
+        ($($__args_prefix:tt)*)
+        ($($args_rest:tt)*)
+
+        ($($m_method:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
         compile_error!("`#[optional]` is only supported in `extern_protocol!`")
     };
+}
 
-    {
-        ($builder:ident)
-        ($($qualifiers:tt)*)
-        ($name:ident)
-        ($($__ret:ty)?)
-        ($__body:block)
-
-        ($builder_method:ident)
-        ($__receiver:expr)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
-
-        (#[method_id($($sel:tt)*)])
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
-    } => {
-        compile_error!("`#[method_id(...)]` is not supported in `declare_class!` yet")
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __get_method_id_sel {
+    (alloc) => {
+        compile_error!(concat!(
+            "`#[method_id(alloc)]` is not supported. ",
+            "Use `#[method(alloc)]` and do the memory management yourself",
+        ))
+    };
+    (retain) => {
+        compile_error!(concat!(
+            "`#[method_id(retain)]` is not supported. ",
+            "Use `#[method(retain)]` and do the memory management yourself",
+        ))
+    };
+    (release) => {
+        compile_error!(concat!(
+            "`#[method_id(release)]` is not supported. ",
+            "Use `#[method(release)]` and do the memory management yourself",
+        ))
+    };
+    (autorelease) => {
+        compile_error!(concat!(
+            "`#[method_id(autorelease)]` is not supported. ",
+            "Use `#[method(autorelease)]` and do the memory management yourself",
+        ))
+    };
+    (dealloc) => {
+        compile_error!(concat!(
+            "`#[method_id(dealloc)]` is not supported. ",
+            "Add an instance variable with a `Drop` impl to the class instead",
+        ))
+    };
+    ($($t:tt)*) => {
+        $crate::sel!($($t)*)
     };
 }
 

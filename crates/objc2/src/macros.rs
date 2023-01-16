@@ -245,6 +245,15 @@ macro_rules! __sel_helper {
     } => ({
         $crate::__sel_data!($($parsed_sel)*)
     });
+    // Single identifier
+    {
+        @()
+        $ident:ident
+    } => {
+        $crate::__sel_helper! {
+            @($ident)
+        }
+    };
     // Parse identitifer + colon token
     {
         @($($parsed_sel:tt)*)

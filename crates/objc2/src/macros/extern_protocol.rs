@@ -320,6 +320,7 @@ macro_rules! __extern_protocol_method_out {
 
         (add_method)
         ($receiver:expr)
+        ($__receiver_ty:ty)
         ($($__args_prefix:tt)*)
         ($($args_rest:tt)*)
 
@@ -349,6 +350,7 @@ macro_rules! __extern_protocol_method_out {
 
         (add_method)
         ($receiver:expr)
+        ($__receiver_ty:ty)
         ($($__args_prefix:tt)*)
         ($($args_rest:tt)*)
 
@@ -379,6 +381,7 @@ macro_rules! __extern_protocol_method_out {
 
         (add_class_method)
         ($receiver:expr)
+        ($__receiver_ty:ty)
         ($($__args_prefix:tt)*)
         ($($args_rest:tt)*)
 
