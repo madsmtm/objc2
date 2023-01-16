@@ -68,7 +68,7 @@
 ///
 /// If the `#[method_id(...)]` attribute is used, the return type must be
 /// `Option<Id<T, O>>` or `Id<T, O>`. Additionally, if the selector is in the
-/// "init"-family, the "self"/"this" argument must be `Allocated<Self>`.
+/// "init"-family, the `self`/`this` argument must be `Allocated<Self>`.
 ///
 /// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
 /// `deprecated` and so on is supported. However, note that `cfg_attr` may not
@@ -232,11 +232,11 @@
 ///     }
 ///
 ///     unsafe impl NSCopying for MyCustomObject {
-///         #[method(copyWithZone:)]
-///         fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
+///         #[method_id(copyWithZone:)]
+///         fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self, Owned> {
 ///             let mut obj = Self::new(*self.foo);
 ///             *obj.bar = *self.bar;
-///             obj.autorelease_return()
+///             obj
 ///         }
 ///
 ///         // If we have tried to add other methods here, or had forgotten
