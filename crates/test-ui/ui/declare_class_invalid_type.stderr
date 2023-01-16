@@ -1,0 +1,119 @@
+error[E0277]: the trait bound `Id<CustomObject, Shared>: Encode` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `Id<CustomObject, Shared>`
+  |
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            ()
+            *const T
+            *const c_void
+            *mut T
+            *mut c_void
+            AtomicI16
+          and $N others
+  = note: required for `Id<CustomObject, Shared>` to implement `encode::encode::convert_private::Sealed`
+note: required by a bound in `EncodeConvert`
+ --> $WORKSPACE/crates/objc2-encode/src/encode.rs
+  |
+  | pub trait EncodeConvert: convert_private::Sealed {
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `EncodeConvert`
+  = note: this error originates in the macro `$crate::__declare_class_method_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Vec<()>: Encode` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `Vec<()>`
+  |
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            ()
+            *const T
+            *const c_void
+            *mut T
+            *mut c_void
+            AtomicI16
+          and $N others
+  = note: required for `Vec<()>` to implement `encode::encode::convert_private::Sealed`
+note: required by a bound in `EncodeConvert`
+ --> $WORKSPACE/crates/objc2-encode/src/encode.rs
+  |
+  | pub trait EncodeConvert: convert_private::Sealed {
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `EncodeConvert`
+  = note: this error originates in the macro `$crate::__declare_class_method_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Box<u32>: Encode` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `Box<u32>`
+  |
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            ()
+            *const T
+            *const c_void
+            *mut T
+            *mut c_void
+            AtomicI16
+          and $N others
+  = note: required for `Box<u32>` to implement `encode::encode::convert_private::Sealed`
+note: required by a bound in `EncodeConvert`
+ --> $WORKSPACE/crates/objc2-encode/src/encode.rs
+  |
+  | pub trait EncodeConvert: convert_private::Sealed {
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `EncodeConvert`
+  = note: this error originates in the macro `$crate::__fn_args` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `CustomObject: Encode` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `CustomObject`
+  |
+  = help: the following other types implement trait `Encode`:
+            &'a T
+            &'a mut T
+            ()
+            *const T
+            *const c_void
+            *mut T
+            *mut c_void
+            AtomicI16
+          and $N others
+  = note: required for `CustomObject` to implement `encode::encode::convert_private::Sealed`
+note: required by a bound in `EncodeConvert`
+ --> $WORKSPACE/crates/objc2-encode/src/encode.rs
+  |
+  | pub trait EncodeConvert: convert_private::Sealed {
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `EncodeConvert`
+  = note: this error originates in the macro `$crate::__fn_args` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

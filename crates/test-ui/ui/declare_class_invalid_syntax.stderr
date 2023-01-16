@@ -1,0 +1,138 @@
+error: must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extract_custom_attributes` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: `#[method_id(...)]` is not supported in `declare_class!` yet
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: expected expression, found `}`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |         }
+  |         ^ expected expression
+
+error: no rules expected the token `(`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |         fn test_pattern((a, b): (u32, i32)) {
+  |                         ^ no rules expected this token in macro call
+  |
+  = note: while trying to match sequence start
+
+error: unexpected end of macro invocation
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |         fn test_self(self) {
+  |                          ^ missing tokens in macro arguments
+  |
+note: while trying to match `:`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |         $param:ident : $param_ty:ty $(, $($rest:tt)*)?
+  |                      ^
+
+error: no rules expected the token `pub`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |         pub fn test_pub() {}
+  |         ^^^ no rules expected this token in macro call
+  |
+note: while trying to match `unsafe`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |         unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+  |         ^^^^^^
+
+error: no rules expected the token `;`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |         fn test_no_body(&self);
+  |                               ^ no rules expected this token in macro call
+  |
+note: while trying to match meta-variable `$body:block`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+  |                                                     ^^^^^^^^^^^
+
+error: no rules expected the token `(`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |         fn test_pattern((a, b): (u32, i32)) {
+  |                         ^ no rules expected this token in macro call
+  |
+note: while trying to match `_`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |         (_ : $param_ty:ty, $($rest:tt)*)
+  |          ^
+
+error: no rules expected the token `,`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ no rules expected this token in macro call
+  |
+note: while trying to match `:`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |         ($param:ident : $param_ty:ty, $($rest:tt)*)
+  |                       ^
+  = note: this error originates in the macro `$crate::__declare_class_method_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: no function or associated item named `test_pattern` found for struct `CustomObject` in the current scope
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |         fn test_pattern((a, b): (u32, i32)) {
+  | |            ^^^^^^^^^^^^ function or associated item not found in `CustomObject`
+... |
+  | |     }
+  | | );
+  | |_- function or associated item `test_pattern` not found for this struct
+
+error[E0599]: no function or associated item named `test_self` found for struct `CustomObject` in the current scope
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |         fn test_self(self) {
+  | |            ^^^^^^^^^ function or associated item not found in `CustomObject`
+... |
+  | |     }
+  | | );
+  | |_- function or associated item `test_self` not found for this struct
