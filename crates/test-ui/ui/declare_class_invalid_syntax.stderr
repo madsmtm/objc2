@@ -10,7 +10,7 @@ error: must specify the desired selector using `#[method(...)]` or `#[method_id(
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__extract_custom_attributes` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extract_custom_attributes_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: `#[method_id(...)]` is not supported in `declare_class!` yet
  --> ui/declare_class_invalid_syntax.rs
@@ -76,6 +76,20 @@ note: while trying to match meta-variable `$body:block`
   |         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
   |                                                     ^^^^^^^^^^^
 
+error: must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extract_custom_attributes_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
 error: no rules expected the token `(`
  --> ui/declare_class_invalid_syntax.rs
   |
@@ -85,10 +99,10 @@ error: no rules expected the token `(`
 note: while trying to match `_`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |         (_ : $param_ty:ty, $($rest:tt)*)
+  |         (_ : $param_ty:ty $(, $($rest_args:tt)*)?)
   |          ^
 
-error: no rules expected the token `,`
+error: no rules expected the token `)`
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
@@ -103,7 +117,7 @@ error: no rules expected the token `,`
 note: while trying to match `:`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |         ($param:ident : $param_ty:ty, $($rest:tt)*)
+  |         ($param:ident : $param_ty:ty $(, $($rest_args:tt)*)?)
   |                       ^
   = note: this error originates in the macro `$crate::__declare_class_method_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 

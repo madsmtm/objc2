@@ -10,7 +10,7 @@ error: `#[optional]` is only supported in `extern_protocol!`
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__extern_methods_unsafe_method_body` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extern_methods_method_out` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: `#[optional]` is only supported in `extern_protocol!`
  --> ui/wrong_optional.rs
@@ -24,7 +24,7 @@ error: `#[optional]` is only supported in `extern_protocol!`
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__extern_methods_unsafe_method_body` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extern_methods_method_out` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: `#[optional]` is only supported in `extern_protocol!`
  --> ui/wrong_optional.rs

@@ -297,3 +297,39 @@ declare_class!(
 fn test_all_the_bool() {
     let _ = DeclareClassAllTheBool::class();
 }
+
+declare_class!(
+    struct DeclareClassUnreachable;
+
+    unsafe impl ClassType for DeclareClassUnreachable {
+        type Super = NSObject;
+    }
+
+    // Ensure none of these warn
+    unsafe impl DeclareClassUnreachable {
+        #[method(unreachable)]
+        fn unreachable(&self) -> bool {
+            unreachable!()
+        }
+
+        #[method(unreachableClass)]
+        fn unreachable_class() -> bool {
+            unreachable!()
+        }
+
+        #[method(unreachableVoid)]
+        fn unreachable_void(&self) {
+            unreachable!()
+        }
+
+        #[method(unreachableClassVoid)]
+        fn unreachable_class_void() {
+            unreachable!()
+        }
+    }
+);
+
+#[test]
+fn test_unreachable() {
+    let _ = DeclareClassUnreachable::class();
+}

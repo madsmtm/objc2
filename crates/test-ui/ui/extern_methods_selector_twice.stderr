@@ -10,7 +10,7 @@ error: cannot specify the `method`/`method_id` attribute twice
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__extract_custom_attributes` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extract_custom_attributes_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: cannot specify the `method`/`method_id` attribute twice
  --> ui/extern_methods_selector_twice.rs
@@ -24,7 +24,7 @@ error: cannot specify the `method`/`method_id` attribute twice
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__extract_custom_attributes` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extract_custom_attributes_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: cannot specify the `method`/`method_id` attribute twice
  --> ui/extern_methods_selector_twice.rs
@@ -38,7 +38,7 @@ error: cannot specify the `method`/`method_id` attribute twice
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__extract_custom_attributes` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extract_custom_attributes_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: cannot specify the `method`/`method_id` attribute twice
  --> ui/extern_methods_selector_twice.rs
@@ -52,4 +52,4 @@ error: cannot specify the `method`/`method_id` attribute twice
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__extract_custom_attributes` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__extract_custom_attributes_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
