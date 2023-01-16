@@ -246,3 +246,54 @@ fn test_multiple_colon_selector() {
     assert!(obj.test_error(1, 2).is_ok());
     assert!(obj.test_object(1, 2, 3, ptr::null()).is_none());
 }
+
+declare_class!(
+    struct DeclareClassAllTheBool;
+
+    unsafe impl ClassType for DeclareClassAllTheBool {
+        type Super = NSObject;
+    }
+
+    unsafe impl DeclareClassAllTheBool {
+        #[method(returnsBool)]
+        fn returns_bool() -> bool {
+            true
+        }
+
+        #[method(returnsBoolInstance)]
+        fn returns_bool_instance(&self) -> bool {
+            true
+        }
+
+        #[method(takesBool:andMut:andUnderscore:)]
+        fn takes_bool(a: bool, mut b: bool, _: bool) -> bool {
+            if b {
+                b = a;
+            }
+            b
+        }
+
+        #[method(takesBoolInstance:andMut:andUnderscore:)]
+        fn takes_bool_instance(&self, a: bool, mut b: bool, _: bool) -> bool {
+            if b {
+                b = a;
+            }
+            b
+        }
+
+        #[method(takesReturnsBool:)]
+        fn takes_returns_bool(b: bool) -> bool {
+            b
+        }
+
+        #[method(takesReturnsBoolInstance:)]
+        fn takes_returns_bool_instance(&self, b: bool) -> bool {
+            b
+        }
+    }
+);
+
+#[test]
+fn test_all_the_bool() {
+    let _ = DeclareClassAllTheBool::class();
+}

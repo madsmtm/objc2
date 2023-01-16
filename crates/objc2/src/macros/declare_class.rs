@@ -793,7 +793,7 @@ macro_rules! __fn_args {
     // Ignore `_`
     {
         ($out_macro:path)
-        (_: $param_ty:ty, $($rest:tt)*)
+        (_ : $param_ty:ty, $($rest:tt)*)
         ($($args_converted:tt)*)
         ($($body_prefix:tt)*)
         $($macro_args:tt)*
@@ -801,7 +801,7 @@ macro_rules! __fn_args {
         $crate::__fn_args! {
             ($out_macro)
             ($($rest)*)
-            ($($args_converted)* _: $param_ty,)
+            ($($args_converted)* _ : <$param_ty as $crate::encode::EncodeConvert>::__Inner,)
             ($($body_prefix)*)
             $($macro_args)*
         }
@@ -809,7 +809,7 @@ macro_rules! __fn_args {
     // Convert mut
     {
         ($out_macro:path)
-        (mut $param:ident: $param_ty:ty, $($rest:tt)*)
+        (mut $param:ident : $param_ty:ty, $($rest:tt)*)
         ($($args_converted:tt)*)
         ($($body_prefix:tt)*)
         $($macro_args:tt)*
@@ -817,7 +817,7 @@ macro_rules! __fn_args {
         $crate::__fn_args! {
             ($out_macro)
             ($($rest)*)
-            ($($args_converted)* $param: <$param_ty as $crate::encode::EncodeConvert>::__Inner,)
+            ($($args_converted)* $param : <$param_ty as $crate::encode::EncodeConvert>::__Inner,)
             (
                 $($body_prefix)*
                 let mut $param = <$param_ty as $crate::encode::EncodeConvert>::__from_inner($param);
@@ -828,7 +828,7 @@ macro_rules! __fn_args {
     // Convert
     {
         ($out_macro:path)
-        ($param:ident: $param_ty:ty, $($rest:tt)*)
+        ($param:ident : $param_ty:ty, $($rest:tt)*)
         ($($args_converted:tt)*)
         ($($body_prefix:tt)*)
         $($macro_args:tt)*
@@ -836,7 +836,7 @@ macro_rules! __fn_args {
         $crate::__fn_args! {
             ($out_macro)
             ($($rest)*)
-            ($($args_converted)* $param: <$param_ty as $crate::encode::EncodeConvert>::__Inner,)
+            ($($args_converted)* $param : <$param_ty as $crate::encode::EncodeConvert>::__Inner,)
             (
                 $($body_prefix)*
                 let $param = <$param_ty as $crate::encode::EncodeConvert>::__from_inner($param);
@@ -892,7 +892,9 @@ macro_rules! __declare_class_register_out {
                         @()
                     },
                     Self::$name as $crate::__fn_ptr! {
-                        @($($qualifiers)*) $($args_start)* $($args_rest)*
+                        @($($qualifiers)*)
+                        @(_, _,)
+                        $($args_rest)*
                     },
                 );
             )
@@ -928,7 +930,9 @@ macro_rules! __declare_class_register_out {
                         @()
                     },
                     Self::$name as $crate::__fn_ptr! {
-                        @($($qualifiers)*) $($args_start)* $($args_rest)*
+                        @($($qualifiers)*)
+                        @(_, _,)
+                        $($args_rest)*
                     },
                 );
             )
@@ -966,9 +970,42 @@ macro_rules! __declare_class_register_out {
 macro_rules! __fn_ptr {
     (
         @($($qualifiers:tt)*)
-        $($(mut)? $($param:ident)? $(_)?: $param_ty:ty),* $(,)?
+        @($($output:tt)*)
+        $(,)?
     ) => {
-        $($qualifiers)* fn($($crate::__fn_ptr!(@__to_anonymous $param_ty)),*) -> _
+        $($qualifiers)* fn($($output)*) -> _
     };
-    (@__to_anonymous $param_ty:ty) => { _ }
+    (
+        @($($qualifiers:tt)*)
+        @($($output:tt)*)
+        _ : $param_ty:ty $(, $($rest:tt)*)?
+    ) => {
+        $crate::__fn_ptr! {
+            @($($qualifiers)*)
+            @($($output)* _,)
+            $($($rest)*)?
+        }
+    };
+    (
+        @($($qualifiers:tt)*)
+        @($($output:tt)*)
+        mut $param:ident : $param_ty:ty $(, $($rest:tt)*)?
+    ) => {
+        $crate::__fn_ptr! {
+            @($($qualifiers)*)
+            @($($output)* _,)
+            $($($rest)*)?
+        }
+    };
+    (
+        @($($qualifiers:tt)*)
+        @($($output:tt)*)
+        $param:ident : $param_ty:ty $(, $($rest:tt)*)?
+    ) => {
+        $crate::__fn_ptr! {
+            @($($qualifiers)*)
+            @($($output)* _,)
+            $($($rest)*)?
+        }
+    };
 }
