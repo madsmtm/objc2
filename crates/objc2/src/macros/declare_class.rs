@@ -403,10 +403,36 @@ macro_rules! declare_class {
                     if false $(
                         || <<$ivar as $crate::declare::IvarType>::Type as $crate::declare::InnerIvarType>::__MAY_DROP
                     )* {
+                        // See the following links for more details:
+                        // - <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#dealloc>
+                        // - <https://developer.apple.com/documentation/objectivec/nsobject/1571947-dealloc>
+                        // - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html#//apple_ref/doc/uid/20000994-SW2>
+                        unsafe extern "C" fn dealloc(this: &mut $for, _cmd: $crate::runtime::Sel) {
+                            // We deallocate each ivar individually instead of
+                            // using e.g. `drop_in_place(this)`, since if the
+                            // type is subclassing another, the type will
+                            // deallocate the superclass' instance variables
+                            // as well!
+                            $(
+                                let ptr: *mut $crate::declare::Ivar<$ivar> = &mut this.$ivar;
+                                // SAFETY: The ivar is valid, and since this
+                                // is the `dealloc` method, we know the ivars
+                                // are never going to be touched again.
+                                unsafe { $crate::__macro_helpers::drop_in_place(ptr) };
+                            )*
+
+                            // Invoke the super class' `dealloc` method.
+                            //
+                            // Note: ARC does this automatically, which means
+                            // most Objective-C code in the wild don't contain
+                            // this; but we _are_ ARC, so we must do this.
+                            unsafe { $crate::msg_send![super(this), dealloc] }
+                        }
+
                         unsafe {
                             builder.add_method(
                                 $crate::sel!(dealloc),
-                                Self::__objc2_dealloc as unsafe extern "C" fn(_, _),
+                                dealloc as unsafe extern "C" fn(_, _),
                             );
                         }
                     }
@@ -432,29 +458,6 @@ macro_rules! declare_class {
             #[inline]
             fn as_super_mut(&mut self) -> &mut Self::Super {
                 &mut self.__inner
-            }
-        }
-
-        impl $for {
-            // See the following links for more details:
-            // - <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#dealloc>
-            // - <https://developer.apple.com/documentation/objectivec/nsobject/1571947-dealloc>
-            // - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html#//apple_ref/doc/uid/20000994-SW2>
-            unsafe extern "C" fn __objc2_dealloc(&mut self, _cmd: $crate::runtime::Sel) {
-                $(
-                    let ptr: *mut $crate::declare::Ivar<$ivar> = &mut self.$ivar;
-                    // SAFETY: The ivar is valid, and since this is the
-                    // `dealloc` method, we know the ivars are never going to
-                    // be touched again.
-                    unsafe { $crate::__macro_helpers::drop_in_place(ptr) };
-                )*
-
-                // Invoke the super class' `dealloc` method.
-                //
-                // Note: ARC does this automatically, so most Objective-C code
-                // in the wild don't contain this; but we don't have ARC, so
-                // we must do this.
-                unsafe { $crate::msg_send![super(self), dealloc] }
             }
         }
 
