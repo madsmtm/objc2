@@ -664,7 +664,7 @@ mod args_private {
 /// Types that represent an ordered group of function arguments, where each
 /// argument has an Objective-C type-encoding, or can be converted from one.
 ///
-/// This is implemented for tuples of up to 12 arguments, where each argument
+/// This is implemented for tuples of up to 16 arguments, where each argument
 /// implements [`EncodeConvert`]. It is primarily used to make generic code
 /// a bit easier.
 ///
@@ -712,6 +712,10 @@ encode_args_impl!(A, B, C, D, E, F, G, H, I);
 encode_args_impl!(A, B, C, D, E, F, G, H, I, J);
 encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K);
 encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
+encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M);
+encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N);
+encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O);
+encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P);
 
 #[cfg(test)]
 mod tests {

@@ -467,7 +467,7 @@ unsafe impl<'a> MessageReceiver for &'a Class {
 
 /// Types that may be used as the arguments of an Objective-C message.
 ///
-/// This is implemented for tuples of up to 12 arguments, where each argument
+/// This is implemented for tuples of up to 16 arguments, where each argument
 /// implements [`Encode`][crate::Encode] (or can be converted from one).
 ///
 ///
@@ -564,6 +564,72 @@ message_args_impl!(
     j: J,
     k: K,
     l: L
+);
+message_args_impl!(
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    f: F,
+    g: G,
+    h: H,
+    i: I,
+    j: J,
+    k: K,
+    l: L,
+    m: M
+);
+message_args_impl!(
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    f: F,
+    g: G,
+    h: H,
+    i: I,
+    j: J,
+    k: K,
+    l: L,
+    m: M,
+    n: N
+);
+message_args_impl!(
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    f: F,
+    g: G,
+    h: H,
+    i: I,
+    j: J,
+    k: K,
+    l: L,
+    m: M,
+    n: N,
+    o: O
+);
+message_args_impl!(
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    f: F,
+    g: G,
+    h: H,
+    i: I,
+    j: J,
+    k: K,
+    l: L,
+    m: M,
+    n: N,
+    o: O,
+    p: P
 );
 
 #[cfg(test)]

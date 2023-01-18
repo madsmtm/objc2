@@ -263,6 +263,10 @@ method_decl_impl!(A, B, C, D, E, F, G, H, I);
 method_decl_impl!(A, B, C, D, E, F, G, H, I, J);
 method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K);
 method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
+method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M);
+method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N);
+method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O);
+method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P);
 
 /// Helper type for implementing `MethodImplementation` with a receiver of
 /// `Allocated<T>`, without exposing that implementation to users.

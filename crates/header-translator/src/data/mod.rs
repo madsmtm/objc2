@@ -10,4 +10,5 @@ data! {
     mod CoreData;
     mod Foundation;
     mod Metal;
+    mod WebKit;
 }
