@@ -315,9 +315,13 @@ fn get_translation_unit<'i: 'tu, 'tu>(
             "-fobjc-arc-exceptions",
             "-fobjc-abi-version=2", // 3??
             // "-fparse-all-comments",
+            // TODO: "-fretain-comments-from-system-headers"
             "-fapinotes",
             "-isysroot",
             sdk.path.to_str().unwrap(),
+            // See ClangImporter.cpp and Foundation/NSObjCRuntime.h
+            "-D",
+            "__SWIFT_ATTR_SUPPORTS_SENDABLE_DECLS=1",
         ])
         .parse()
         .unwrap();

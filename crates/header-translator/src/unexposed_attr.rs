@@ -78,13 +78,17 @@ impl UnexposedAttr {
             | "NS_SWIFT_UNAVAILABLE_FROM_ASYNC"
             | "NS_SWIFT_DISABLE_ASYNC"
             | "NS_SWIFT_UI_ACTOR"
+            | "NS_SWIFT_SENDABLE"
+            | "NS_SWIFT_NONSENDABLE"
+            | "NS_SWIFT_NONISOLATED"
+            | "NS_HEADER_AUDIT_BEGIN"
             | "NS_REFINED_FOR_SWIFT"
             | "CF_REFINED_FOR_SWIFT"
             | "NS_SWIFT_UNAVAILABLE"
             | "CF_SWIFT_UNAVAILABLE"
             | "OBJC_SWIFT_UNAVAILABLE" => None,
             name => {
-                error!(name, "unknown unexposed macro");
+                error!(name, "unknown unexposed attribute");
                 None
             }
         }
