@@ -105,6 +105,7 @@ pub const fn retain_semantics(selector: &str) -> u8 {
 }
 
 pub trait MsgSendId<T, U> {
+    #[track_caller]
     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
         obj: T,
         sel: Sel,
@@ -164,7 +165,6 @@ unsafe fn encountered_error<E: Message>(err: *mut E) -> Id<E, Shared> {
 
 impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O>> for New {
     #[inline]
-    #[track_caller]
     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U, O>>>(
         obj: T,
         sel: Sel,
@@ -184,7 +184,6 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O
 
 impl<T: ?Sized + Message> MsgSendId<&'_ Class, Allocated<T>> for Alloc {
     #[inline]
-    #[track_caller]
     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Allocated<T>>>(
         cls: &Class,
         sel: Sel,
@@ -200,7 +199,6 @@ impl<T: ?Sized + Message> MsgSendId<&'_ Class, Allocated<T>> for Alloc {
 
 impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Allocated<T>>, Id<T, O>> for Init {
     #[inline]
-    #[track_caller]
     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<T, O>>>(
         obj: Option<Allocated<T>>,
         sel: Sel,
@@ -224,7 +222,6 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O
     for CopyOrMutCopy
 {
     #[inline]
-    #[track_caller]
     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U, O>>>(
         obj: T,
         sel: Sel,
@@ -241,7 +238,6 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O
 
 impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>> for Other {
     #[inline]
-    #[track_caller]
     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U, O>>>(
         obj: T,
         sel: Sel,
@@ -265,6 +261,7 @@ impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>> for Ot
 
 pub trait MaybeUnwrap {
     type Input;
+    #[track_caller]
     fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Self::Input>, args: F::Args) -> Self;
 }
 
@@ -272,7 +269,6 @@ impl<T: ?Sized, O: Ownership> MaybeUnwrap for Option<Id<T, O>> {
     type Input = Id<T, O>;
 
     #[inline]
-    #[track_caller]
     fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Id<T, O>>, _args: F::Args) -> Self {
         obj
     }
@@ -282,7 +278,6 @@ impl<T: ?Sized, O: Ownership> MaybeUnwrap for Id<T, O> {
     type Input = Id<T, O>;
 
     #[inline]
-    #[track_caller]
     fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Id<T, O>>, args: F::Args) -> Self {
         match obj {
             Some(obj) => obj,
@@ -295,7 +290,6 @@ impl<T: ?Sized> MaybeUnwrap for Option<Allocated<T>> {
     type Input = Allocated<T>;
 
     #[inline]
-    #[track_caller]
     fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Allocated<T>>, _args: F::Args) -> Self {
         obj
     }
@@ -305,7 +299,6 @@ impl<T: ?Sized> MaybeUnwrap for Allocated<T> {
     type Input = Allocated<T>;
 
     #[inline]
-    #[track_caller]
     fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Allocated<T>>, args: F::Args) -> Self {
         match obj {
             Some(obj) => obj,
@@ -323,6 +316,7 @@ impl<T: ?Sized> MaybeUnwrap for Allocated<T> {
 pub trait MsgSendIdFailed<'a> {
     type Args;
 
+    #[track_caller]
     fn failed(args: Self::Args) -> !;
 }
 
@@ -330,7 +324,6 @@ impl<'a> MsgSendIdFailed<'a> for New {
     type Args = (Option<&'a Object>, Sel);
 
     #[cold]
-    #[track_caller]
     fn failed((obj, sel): Self::Args) -> ! {
         if let Some(obj) = obj {
             let cls = obj.class();
@@ -353,7 +346,6 @@ impl<'a> MsgSendIdFailed<'a> for Alloc {
     type Args = (&'a Class, Sel);
 
     #[cold]
-    #[track_caller]
     fn failed((cls, sel): Self::Args) -> ! {
         if sel == alloc_sel() {
             panic!("failed allocating {:?}", cls)
@@ -367,7 +359,6 @@ impl MsgSendIdFailed<'_> for Init {
     type Args = (*const Object, Sel);
 
     #[cold]
-    #[track_caller]
     fn failed((ptr, sel): Self::Args) -> ! {
         if ptr.is_null() {
             panic!("failed allocating object")
@@ -387,7 +378,6 @@ impl MsgSendIdFailed<'_> for CopyOrMutCopy {
     type Args = ();
 
     #[cold]
-    #[track_caller]
     fn failed(_: Self::Args) -> ! {
         panic!("failed copying object")
     }
@@ -397,7 +387,6 @@ impl<'a> MsgSendIdFailed<'a> for Other {
     type Args = (Option<&'a Object>, Sel);
 
     #[cold]
-    #[track_caller]
     fn failed((obj, sel): Self::Args) -> ! {
         if let Some(obj) = obj {
             let cls = obj.class();
