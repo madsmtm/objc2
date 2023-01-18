@@ -26,6 +26,9 @@ imports = ["AuthenticationServices", "Foundation"]
 [library.BackgroundAssets]
 imports = ["BackgroundAssets", "Foundation"]
 
+[library.BackgroundTasks]
+imports = ["BackgroundTasks", "Foundation"]
+
 [library.WebKit]
 imports = ["WebKit", "AppKit", "Foundation"]
 
@@ -690,6 +693,9 @@ skipped = true
 saveCertificate_keyType = { skipped = true }
 copyKeyForKeyType = { skipped = true }
 copyIdentityForKeyType = { skipped = true }
+[class.BGTaskScheduler.methods]
+# Needs `dispatch_queue_t`
+registerForTaskWithIdentifier_usingQueue_launchHandler = { skipped = true }
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]

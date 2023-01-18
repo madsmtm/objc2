@@ -141,6 +141,7 @@ AuthenticationServices = [
     "Foundation_NSURL",
 ]
 BackgroundAssets = ["Foundation"]
+BackgroundTasks = ["Foundation"]
 CoreAnimation = ["Foundation"]
 CoreData = [
     "Foundation",
@@ -179,12 +180,12 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["AuthenticationServices_all", "BackgroundAssets_all", "CoreData_all", "CoreAnimation_all", "Foundation_all", "Metal_all", "WebKit_all"]
+unstable-frameworks-ios = ["AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "CoreData_all", "CoreAnimation_all", "Foundation_all", "Metal_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["AppKit_all", "CoreAnimation_all", "CoreData_all", "Foundation_all", "WebKit_all"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
-unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all"]
+unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all"]
 
 # Temporary fixes until we can autogenerate these
 Foundation_NSProxy = []
@@ -1190,6 +1191,31 @@ BackgroundAssets_all = [
     "BackgroundAssets_BADownload",
     "BackgroundAssets_BADownloadManager",
     "BackgroundAssets_BAURLDownload",
+]
+BackgroundTasks_BGAppRefreshTask = [
+    "BackgroundTasks_BGTask",
+]
+BackgroundTasks_BGAppRefreshTaskRequest = [
+    "BackgroundTasks_BGTaskRequest",
+]
+BackgroundTasks_BGProcessingTask = [
+    "BackgroundTasks_BGTask",
+]
+BackgroundTasks_BGProcessingTaskRequest = [
+    "BackgroundTasks_BGTaskRequest",
+]
+BackgroundTasks_BGTask = []
+BackgroundTasks_BGTaskRequest = []
+BackgroundTasks_BGTaskScheduler = []
+BackgroundTasks_all = [
+    "BackgroundTasks",
+    "BackgroundTasks_BGAppRefreshTask",
+    "BackgroundTasks_BGAppRefreshTaskRequest",
+    "BackgroundTasks_BGProcessingTask",
+    "BackgroundTasks_BGProcessingTaskRequest",
+    "BackgroundTasks_BGTask",
+    "BackgroundTasks_BGTaskRequest",
+    "BackgroundTasks_BGTaskScheduler",
 ]
 CoreAnimation_CAAnimation = []
 CoreAnimation_CAAnimationGroup = [

@@ -38,6 +38,8 @@ pub mod AppKit;
 pub mod AuthenticationServices;
 #[cfg(feature = "BackgroundAssets")]
 pub mod BackgroundAssets;
+#[cfg(feature = "BackgroundTasks")]
+pub mod BackgroundTasks;
 #[cfg(feature = "CoreAnimation")]
 pub mod CoreAnimation;
 #[cfg(feature = "CoreData")]

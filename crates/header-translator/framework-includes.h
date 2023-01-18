@@ -22,4 +22,6 @@
 
 #import <BackgroundAssets/BackgroundAssets.h>
 
+#import <BackgroundTasks/BackgroundTasks.h>
+
 #import <WebKit/WebKit.h>
