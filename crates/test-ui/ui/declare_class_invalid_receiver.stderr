@@ -1,0 +1,299 @@
+error[E0277]: the trait bound `extern "C" fn(Box<CustomObject>, objc2::runtime::Sel): MethodImplementation` is not satisfied
+ --> ui/declare_class_invalid_receiver.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_the trait `MethodImplementation` is not implemented for `extern "C" fn(Box<CustomObject>, objc2::runtime::Sel)`
+  |   required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `MethodImplementation`:
+            extern "C" fn(&'a T, objc2::runtime::Sel) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E, F) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E, F, G) -> R
+          and $N others
+note: required by a bound in `ClassBuilder::add_method`
+ --> $WORKSPACE/crates/objc2/src/declare.rs
+  |
+  |         F: MethodImplementation<Callee = T>,
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `extern "C" fn(Id<CustomObject, Shared>, objc2::runtime::Sel): MethodImplementation` is not satisfied
+ --> ui/declare_class_invalid_receiver.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_the trait `MethodImplementation` is not implemented for `extern "C" fn(Id<CustomObject, Shared>, objc2::runtime::Sel)`
+  |   required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `MethodImplementation`:
+            extern "C" fn(&'a T, objc2::runtime::Sel) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E, F) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E, F, G) -> R
+          and $N others
+note: required by a bound in `ClassBuilder::add_method`
+ --> $WORKSPACE/crates/objc2/src/declare.rs
+  |
+  |         F: MethodImplementation<Callee = T>,
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `extern "C" fn(CustomObject, objc2::runtime::Sel): MethodImplementation` is not satisfied
+ --> ui/declare_class_invalid_receiver.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_the trait `MethodImplementation` is not implemented for `extern "C" fn(CustomObject, objc2::runtime::Sel)`
+  |   required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `MethodImplementation`:
+            extern "C" fn(&'a T, objc2::runtime::Sel) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E, F) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E, F, G) -> R
+          and $N others
+note: required by a bound in `ClassBuilder::add_method`
+ --> $WORKSPACE/crates/objc2/src/declare.rs
+  |
+  |         F: MethodImplementation<Callee = T>,
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `extern "C" fn(Box<CustomObject>, objc2::runtime::Sel) -> __IdReturnValue: MethodImplementation` is not satisfied
+ --> ui/declare_class_invalid_receiver.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_the trait `MethodImplementation` is not implemented for `extern "C" fn(Box<CustomObject>, objc2::runtime::Sel) -> __IdReturnValue`
+  |   required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `MethodImplementation`:
+            extern "C" fn(&'a T, objc2::runtime::Sel) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E, F) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E, F, G) -> R
+          and $N others
+note: required by a bound in `ClassBuilder::add_method`
+ --> $WORKSPACE/crates/objc2/src/declare.rs
+  |
+  |         F: MethodImplementation<Callee = T>,
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `extern "C" fn(Id<CustomObject, Shared>, objc2::runtime::Sel) -> __IdReturnValue: MethodImplementation` is not satisfied
+ --> ui/declare_class_invalid_receiver.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_the trait `MethodImplementation` is not implemented for `extern "C" fn(Id<CustomObject, Shared>, objc2::runtime::Sel) -> __IdReturnValue`
+  |   required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `MethodImplementation`:
+            extern "C" fn(&'a T, objc2::runtime::Sel) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E, F) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E, F, G) -> R
+          and $N others
+note: required by a bound in `ClassBuilder::add_method`
+ --> $WORKSPACE/crates/objc2/src/declare.rs
+  |
+  |         F: MethodImplementation<Callee = T>,
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `extern "C" fn(CustomObject, objc2::runtime::Sel) -> __IdReturnValue: MethodImplementation` is not satisfied
+ --> ui/declare_class_invalid_receiver.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_the trait `MethodImplementation` is not implemented for `extern "C" fn(CustomObject, objc2::runtime::Sel) -> __IdReturnValue`
+  |   required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `MethodImplementation`:
+            extern "C" fn(&'a T, objc2::runtime::Sel) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E, F) -> R
+            extern "C" fn(&'a T, objc2::runtime::Sel, A, B, C, D, E, F, G) -> R
+          and $N others
+note: required by a bound in `ClassBuilder::add_method`
+ --> $WORKSPACE/crates/objc2/src/declare.rs
+  |
+  |         F: MethodImplementation<Callee = T>,
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisfied
+ --> ui/declare_class_invalid_receiver.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `Box<CustomObject>`
+  |
+  = help: the following other types implement trait `MessageReceiver`:
+            &'a Id<T, O>
+            &'a T
+            &'a mut Id<T, objc2::rc::Owned>
+            &'a mut T
+            &'a objc2::runtime::Class
+            *const T
+            *const objc2::runtime::Class
+            *mut T
+          and $N others
+  = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<Box<CustomObject>, Id<CustomObject, Shared>>`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Id<CustomObject, Shared>: MessageReceiver` is not satisfied
+ --> ui/declare_class_invalid_receiver.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `Id<CustomObject, Shared>`
+  |
+  = help: the following other types implement trait `MessageReceiver`:
+            &'a Id<T, O>
+            &'a mut Id<T, objc2::rc::Owned>
+  = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<Id<CustomObject, Shared>, Id<CustomObject, Shared>>`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
+ --> ui/declare_class_invalid_receiver.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `CustomObject`
+  |
+  = help: the following other types implement trait `MessageReceiver`:
+            &'a Id<T, O>
+            &'a T
+            &'a mut Id<T, objc2::rc::Owned>
+            &'a mut T
+            &'a objc2::runtime::Class
+            *const T
+            *const objc2::runtime::Class
+            *mut T
+          and $N others
+  = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<CustomObject, Id<CustomObject, Shared>>`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not satisfied
+ --> ui/declare_class_invalid_receiver.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `Allocated<CustomObject>`
+  |
+  = help: the following other types implement trait `MessageReceiver`:
+            &'a Id<T, O>
+            &'a T
+            &'a mut Id<T, objc2::rc::Owned>
+            &'a mut T
+            &'a objc2::runtime::Class
+            *const T
+            *const objc2::runtime::Class
+            *mut T
+          and $N others
+  = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<Allocated<CustomObject>, Id<CustomObject, Shared>>`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `RetainSemantics<3>: MessageRecieveId<&CustomObject, Id<CustomObject, Shared>>` is not satisfied
+ --> ui/declare_class_invalid_receiver.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `MessageRecieveId<&CustomObject, Id<CustomObject, Shared>>` is not implemented for `RetainSemantics<3>`
+  |
+  = help: the trait `MessageRecieveId<Allocated<T>, Ret>` is implemented for `RetainSemantics<3>`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

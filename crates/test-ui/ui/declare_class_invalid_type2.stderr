@@ -1,0 +1,34 @@
+error[E0271]: type mismatch resolving `<Id<NSObject, Shared> as MaybeUnwrap>::Input == Id<CustomObject, _>`
+ --> ui/declare_class_invalid_type2.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ expected struct `CustomObject`, found struct `NSObject`
+  |
+  = note: expected struct `Id<CustomObject, _>`
+             found struct `Id<NSObject, Shared>`
+  = note: required for `RetainSemantics<3>` to implement `MessageRecieveId<Allocated<CustomObject>, Id<NSObject, Shared>>`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `i32: MaybeOptionId` is not satisfied
+ --> ui/declare_class_invalid_type2.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `MaybeOptionId` is not implemented for `i32`
+  |
+  = help: the following other types implement trait `MaybeOptionId`:
+            Id<T, O>
+            Option<Id<T, O>>
+  = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<&CustomObject, i32>`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

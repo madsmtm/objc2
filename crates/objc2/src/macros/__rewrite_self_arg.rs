@@ -1,19 +1,29 @@
+/// Detect instance vs. class method.
+///
+/// Will add:
+/// ```ignore
+/// (builder_method:ident)
+/// (receiver:expr)
+/// (receiver_ty:ty)
+/// (args_prefix*)
+/// (args_rest*)
+/// ```
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __rewrite_self_arg {
     {
-        ($out_macro:path)
         ($($args:tt)*)
 
+        ($out_macro:path)
         $($macro_args:tt)*
     } => {
         $crate::__rewrite_self_arg_inner! {
-            ($out_macro)
             // Duplicate args out so that we can match on `self`, while still
             // using it as a function argument
             ($($args)*)
             ($($args)*)
 
+            ($out_macro)
             $($macro_args)*
         }
     };
@@ -24,71 +34,83 @@ macro_rules! __rewrite_self_arg {
 macro_rules! __rewrite_self_arg_inner {
     // Instance method
     {
-        ($out_macro:path)
-        (&self $($__rest_args:tt)*)
-        (&$self:ident $(, $($rest:tt)*)?)
+        (&self $($__args_rest:tt)*)
+        (&$self:ident $(, $($args_rest:tt)*)?)
 
+        ($out_macro:path)
         $($macro_args:tt)*
     } => {
         $out_macro! {
             $($macro_args)*
-            @(instance_method)
-            @(
-                $self: &Self,
+
+            (add_method)
+            ($self)
+            (&Self)
+            (
+                &$self,
                 _: $crate::runtime::Sel,
             )
-            @($($($rest)*)?)
+            ($($($args_rest)*)?)
         }
     };
     {
-        ($out_macro:path)
-        (&mut self $($__rest_args:tt)*)
-        (&mut $self:ident $(, $($rest:tt)*)?)
+        (&mut self $($__args_rest:tt)*)
+        (&mut $self:ident $(, $($args_rest:tt)*)?)
 
+        ($out_macro:path)
         $($macro_args:tt)*
     } => {
         $out_macro! {
             $($macro_args)*
-            @(instance_method)
-            @(
-                $self: &mut Self,
+
+            (add_method)
+            ($self)
+            (&mut Self)
+            (
+                &mut $self,
                 _: $crate::runtime::Sel,
             )
-            @($($($rest)*)?)
+            ($($($args_rest)*)?)
         }
     };
     {
-        ($out_macro:path)
-        (self: $__self_ty:ty $(, $($__rest_args:tt)*)?)
-        ($self:ident: $self_ty:ty $(, $($rest:tt)*)?)
+        (self: $__self_ty:ty $(, $($__args_rest:tt)*)?)
+        ($self:ident: $self_ty:ty $(, $($args_rest:tt)*)?)
 
+        ($out_macro:path)
         $($macro_args:tt)*
     } => {
         $out_macro! {
             $($macro_args)*
-            @(instance_method)
-            @(
+
+            (add_method)
+            ($self)
+            ($self_ty)
+            (
                 $self: $self_ty,
                 _: $crate::runtime::Sel,
             )
-            @($($($rest)*)?)
+            ($($($args_rest)*)?)
         }
     };
     {
-        ($out_macro:path)
-        (mut self: $__self_ty:ty $(, $($__rest_args:tt)*)?)
-        (mut $self:ident: $self_ty:ty $(, $($rest:tt)*)?)
+        (mut self: $__self_ty:ty $(, $($__args_rest:tt)*)?)
+        ($mut:ident $self:ident: $self_ty:ty $(, $($args_rest:tt)*)?)
 
+        ($out_macro:path)
         $($macro_args:tt)*
     } => {
         $out_macro! {
             $($macro_args)*
-            @(instance_method)
-            @(
-                mut $self: $self_ty,
+
+            (add_method)
+            ($self)
+            ($self_ty)
+            (
+                $mut $self: $self_ty,
                 _: $crate::runtime::Sel,
             )
-            @($($($rest)*)?)
+            ($($($args_rest)*)?)
         }
     };
 
@@ -96,90 +118,105 @@ macro_rules! __rewrite_self_arg_inner {
     // Workaround for arbitary self types being unstable
     // https://doc.rust-lang.org/nightly/unstable-book/language-features/arbitrary-self-types.html
     {
-        ($out_macro:path)
-        (mut this: $__self_ty:ty $(, $($__rest_args:tt)*)?)
-        (mut $this:ident: $this_ty:ty $(, $($rest:tt)*)?)
+        (mut this: $__self_ty:ty $(, $($__args_rest:tt)*)?)
+        ($mut:ident $this:ident: $this_ty:ty $(, $($args_rest:tt)*)?)
 
+        ($out_macro:path)
         $($macro_args:tt)*
     } => {
         $out_macro! {
             $($macro_args)*
-            @(instance_method)
-            @(
-                mut $this: $this_ty,
+
+            (add_method)
+            ($this)
+            ($this_ty)
+            (
+                $mut $this: $this_ty,
                 _: $crate::runtime::Sel,
             )
-            @($($($rest)*)?)
+            ($($($args_rest)*)?)
         }
     };
     {
-        ($out_macro:path)
-        (this: $__self_ty:ty $(, $($__rest_args:tt)*)?)
-        ($this:ident: $this_ty:ty $(, $($rest:tt)*)?)
+        (this: $__self_ty:ty $(, $($__args_rest:tt)*)?)
+        ($this:ident: $this_ty:ty $(, $($args_rest:tt)*)?)
 
+        ($out_macro:path)
         $($macro_args:tt)*
     } => {
         $out_macro! {
             $($macro_args)*
-            @(instance_method)
-            @(
+
+            (add_method)
+            ($this)
+            ($this_ty)
+            (
                 $this: $this_ty,
                 _: $crate::runtime::Sel,
             )
-            @($($($rest)*)?)
+            ($($($args_rest)*)?)
         }
     };
     {
-        ($out_macro:path)
-        (mut _this: $__self_ty:ty $(, $($__rest_args:tt)*)?)
-        (mut $this:ident: $this_ty:ty $(, $($rest:tt)*)?)
+        (mut _this: $__self_ty:ty $(, $($__args_rest:tt)*)?)
+        ($mut:ident $this:ident: $this_ty:ty $(, $($args_rest:tt)*)?)
 
+        ($out_macro:path)
         $($macro_args:tt)*
     } => {
         $out_macro! {
             $($macro_args)*
-            @(instance_method)
-            @(
-                mut $this: $this_ty,
+
+            (add_method)
+            ($this)
+            ($this_ty)
+            (
+                $mut $this: $this_ty,
                 _: $crate::runtime::Sel,
             )
-            @($($($rest)*)?)
+            ($($($args_rest)*)?)
         }
     };
     {
-        ($out_macro:path)
-        (_this: $__self_ty:ty $(, $($__rest_args:tt)*)?)
-        ($this:ident: $this_ty:ty $(, $($rest:tt)*)?)
+        (_this: $__self_ty:ty $(, $($__args_rest:tt)*)?)
+        ($this:ident: $this_ty:ty $(, $($args_rest:tt)*)?)
 
+        ($out_macro:path)
         $($macro_args:tt)*
     } => {
         $out_macro! {
             $($macro_args)*
-            @(instance_method)
-            @(
+
+            (add_method)
+            ($this)
+            ($this_ty)
+            (
                 $this: $this_ty,
                 _: $crate::runtime::Sel,
             )
-            @($($($rest)*)?)
+            ($($($args_rest)*)?)
         }
     };
 
     // Class method
     {
-        ($out_macro:path)
         ($($__args:tt)*)
-        ($($args:tt)*)
+        ($($args_rest:tt)*)
 
+        ($out_macro:path)
         $($macro_args:tt)*
     } => {
         $out_macro! {
             $($macro_args)*
-            @(class_method)
-            @(
+
+            (add_class_method)
+            (<Self as $crate::ClassType>::class())
+            (&$crate::runtime::Class)
+            (
                 _: &$crate::runtime::Class,
                 _: $crate::runtime::Sel,
             )
-            @($($args)*)
+            ($($args_rest)*)
         }
     };
 }

@@ -29,22 +29,34 @@ extern_methods!(
 );
 
 declare_class!(
-    struct CustomObject;
+    struct CustomObject1;
 
-    unsafe impl ClassType for CustomObject {
+    unsafe impl ClassType for CustomObject1 {
         type Super = NSObject;
     }
 
-    unsafe impl CustomObject {
+    unsafe impl CustomObject1 {
         #[method(c)]
         #[optional]
         /// Doc comment
         fn c(&self) {}
+    }
+);
 
+declare_class!(
+    struct CustomObject2;
+
+    unsafe impl ClassType for CustomObject2 {
+        type Super = NSObject;
+    }
+
+    unsafe impl CustomObject2 {
         #[optional]
         /// Doc comment
         #[method_id(d)]
-        fn d(&self) {}
+        fn d(&self) -> Id<Self, Owned> {
+            unimplemented!()
+        }
     }
 );
 

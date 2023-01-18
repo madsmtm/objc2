@@ -1,5 +1,5 @@
 use objc2::{extern_protocol, ProtocolType};
-// use objc2::rc::{Id, Owned};
+use objc2::rc::{Id, Owned};
 
 extern_protocol!(
     pub struct MyProtocol;

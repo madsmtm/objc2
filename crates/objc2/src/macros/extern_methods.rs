@@ -217,15 +217,15 @@ macro_rules! __extern_methods_rewrite_methods {
 
         $($rest:tt)*
     } => {
-        // Detect instance vs. class method.
         $crate::__rewrite_self_arg! {
-            ($crate::__extern_methods_method_out)
             ($($args)*)
-            @($(#[$($m)*])*)
-            @($v unsafe fn $name($($args)*) $(-> $ret)?)
-            // Will add @(kind)
-            // Will add @(args_start)
-            // Will add @(args_rest)
+
+            ($crate::__extract_custom_attributes)
+            ($(#[$($m)*])*)
+            ($name)
+
+            ($crate::__extern_methods_method_out)
+            ($v unsafe fn $name($($args)*) $(-> $ret)?)
         }
 
         $crate::__extern_methods_rewrite_methods! {
@@ -241,10 +241,14 @@ macro_rules! __extern_methods_rewrite_methods {
         $($rest:tt)*
     } => {
         $crate::__rewrite_self_arg! {
-            ($crate::__extern_methods_method_out)
             ($($args)*)
-            @($(#[$($m)*])*)
-            @($v fn $name($($args)*) $(-> $ret)?)
+
+            ($crate::__extract_custom_attributes)
+            ($(#[$($m)*])*)
+            ($name)
+
+            ($crate::__extern_methods_method_out)
+            ($v fn $name($($args)*) $(-> $ret)?)
         }
 
         $crate::__extern_methods_rewrite_methods! {
@@ -270,110 +274,84 @@ macro_rules! __extern_methods_rewrite_methods {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __extern_methods_method_out {
-    {
-        @($(#[$($m:tt)*])*)
-        @($($function_start:tt)*)
-        @($($kind:tt)*)
-        @($($args_start:tt)*)
-        @($($args_rest:tt)*)
-    } => {
-        $crate::__strip_custom_attributes! {
-            @($(#[$($m)*])*)
-            @($($function_start)* {
-                #[allow(unused_unsafe)]
-                unsafe {
-                    $crate::__extract_custom_attributes! {
-                        @($(#[$($m)*])*)
-                        @($crate::__extern_methods_unsafe_method_body)
-                        @(
-                            @($crate::__extern_methods_get_receiver!(
-                                @($($kind)*)
-                                @($($args_start)*)
-                            ))
-                            @($($args_rest)*)
-                            // Macro will add:
-                            // @(method attribute)
-                            // @(optional attribute)
-                        )
-                        @()
-                        @()
-                    }
-                }
-            })
-            @()
-        }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __extern_methods_unsafe_method_body {
     // #[method(...)]
     {
-        @($receiver:expr)
-        @($($args_rest:tt)*)
-        @(#[method($($sel:tt)*)])
-        @() // No `optional`
-    } => {
-        $crate::__method_msg_send! {
-            ($receiver)
-            ($($sel)*)
-            ($($args_rest)*)
+        ($($function_start:tt)*)
 
-            ()
-            ()
+        ($__builder_method:ident)
+        ($receiver:expr)
+        ($__receiver_ty:ty)
+        ($($__args_prefix:tt)*)
+        ($($args_rest:tt)*)
+
+        (#[method($($sel:tt)*)])
+        () // No `optional`
+        ($($m_checked:tt)*)
+    } => {
+        $($m_checked)*
+        $($function_start)* {
+            #[allow(unused_unsafe)]
+            unsafe {
+                $crate::__method_msg_send! {
+                    ($receiver)
+                    ($($sel)*)
+                    ($($args_rest)*)
+
+                    ()
+                    ()
+                }
+            }
         }
     };
 
     // #[method_id(...)]
     {
-        @($receiver:expr)
-        @($($args_rest:tt)*)
-        @(#[method_id($($sel:tt)*)])
-        @() // No `optional`
-    } => {
-        $crate::__method_msg_send_id! {
-            ($receiver)
-            ($($sel)*)
-            ($($args_rest)*)
+        ($($function_start:tt)*)
 
-            ()
-            ()
-            ()
+        ($__builder_method:ident)
+        ($receiver:expr)
+        ($__receiver_ty:ty)
+        ($($__args_prefix:tt)*)
+        ($($args_rest:tt)*)
+
+        (#[method_id($($sel:tt)*)])
+        () // No `optional`
+        ($($m_checked:tt)*)
+    } => {
+        $($m_checked)*
+        $($function_start)* {
+            #[allow(unused_unsafe)]
+            unsafe {
+                $crate::__method_msg_send_id! {
+                    ($receiver)
+                    ($($sel)*)
+                    ($($args_rest)*)
+
+                    ()
+                    ()
+                    ()
+                }
+            }
         }
     };
 
     // #[optional]
     {
-        @($receiver:expr)
-        @($($args_rest:tt)*)
-        @($($m_method:tt)*)
-        @($($m_optional:tt)*)
-    } => {
-        compile_error!("`#[optional]` is only supported in `extern_protocol!`")
-    };
-}
+        ($($function_start:tt)*)
 
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __extern_methods_get_receiver {
-    {
-        @(instance_method)
-        @(
-            $self_or_this:ident: $self_or_this_ty:ty,
-            _: $sel_ty:ty,
-        )
-    } => {
-        $self_or_this
-    };
+        ($__builder_method:ident)
+        ($receiver:expr)
+        ($__receiver_ty:ty)
+        ($($__args_prefix:tt)*)
+        ($($args_rest:tt)*)
 
-    {
-        @(class_method)
-        @(
-            _: $cls_ty:ty,
-            _: $sel_ty:ty,
-        )
+        ($($m_method:tt)*)
+        ($($m_optional:tt)*)
+        ($($m_checked:tt)*)
     } => {
-        <Self as $crate::ClassType>::class()
+        $($m_checked)*
+        $($function_start)* {
+            compile_error!("`#[optional]` is only supported in `extern_protocol!`")
+        }
     };
 }

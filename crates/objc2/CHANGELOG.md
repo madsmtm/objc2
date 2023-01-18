@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Support `#[cfg(...)]` attributes in `extern_class!` macro.
 * Added support for selectors with multiple colons like `abc::` in the `sel!`,
   `extern_class!`, `extern_protocol!` and `declare_class!` macros.
+* Added ability to use `#[method_id(mySelector:)]` inside `declare_class!`,
+  just like you would do in `extern_methods!`.
 
 ### Changed
 * **BREAKING**: Using the automatic `NSError**`-to-`Result` functionality in
@@ -19,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 * Allow empty structs in `declare_class!` macro.
 * Allow using `extern_methods!` without the `ClassType` trait in scope.
+* Fixed a few small issues with `declare_class!`.
 
 
 ## 0.3.0-beta.4 - 2022-12-24

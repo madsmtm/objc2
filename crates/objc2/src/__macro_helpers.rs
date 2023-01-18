@@ -30,6 +30,10 @@ pub use core::{compile_error, concat, panic, stringify};
 // TODO: Use `core::cell::LazyCell`
 pub use std::sync::Once;
 
+mod declare_class;
+
+pub use self::declare_class::{MaybeOptionId, MessageRecieveId};
+
 // Common selectors.
 //
 // These are put here to deduplicate the cached selector, and when using
@@ -848,6 +852,13 @@ mod tests {
     fn test_normal_with_null() {
         let obj = Id::into_shared(__RcTestObject::new());
         let _obj: Id<__RcTestObject, Shared> = unsafe { msg_send_id![&obj, methodReturningNull] };
+    }
+
+    #[test]
+    #[should_panic = "unexpected NULL returned from -[__RcTestObject aMethod:]"]
+    fn test_normal_with_param_and_null() {
+        let obj = Id::into_shared(__RcTestObject::new());
+        let _obj: Id<__RcTestObject, Shared> = unsafe { msg_send_id![&obj, aMethod: false] };
     }
 
     #[test]

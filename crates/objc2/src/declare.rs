@@ -124,6 +124,7 @@ use std::ffi::CString;
 
 use crate::encode::{Encode, EncodeArguments, Encoding, RefEncode};
 use crate::ffi;
+use crate::rc::Allocated;
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
 use crate::sel;
 use crate::Message;
@@ -196,6 +197,37 @@ macro_rules! method_decl_impl {
             }
         }
     };
+    (@<> Allocated<T>, $f:ty, $($t:ident),*) => {
+        #[doc(hidden)]
+        impl<T, $($t),*> private::Sealed for $f
+        where
+            T: Message + ?Sized,
+            $($t: Encode,)*
+        {}
+
+        #[doc(hidden)]
+        impl<T, $($t),*> MethodImplementation for $f
+        where
+            T: Message + ?Sized,
+            $($t: Encode,)*
+        {
+            type Callee = T;
+            type Ret = __IdReturnValue;
+            type Args = ($($t,)*);
+
+            fn __imp(self) -> Imp {
+                // SAFETY: `Allocated<T>` is the same as `NonNull<T>`, except
+                // with the assumption of a +1 calling convention.
+                //
+                // The calling convention is ensured to be upheld by having
+                // `__IdReturnValue` in the type, since that type is private
+                // and hence only internal macros like `#[method_id]` will be
+                // able to produce it (and that, in turn, only allows it if
+                // the selector is `init` as checked by `MessageRecieveId`).
+                unsafe { mem::transmute(self) }
+            }
+        }
+    };
     (# $abi:literal; $($t:ident),*) => {
         method_decl_impl!(@<'a> T, R, extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(@<'a> T, R, extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
@@ -207,6 +239,9 @@ macro_rules! method_decl_impl {
         method_decl_impl!(@<'a> Class, R, extern $abi fn(&'a Class, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(@<> Class, R, unsafe extern $abi fn(*const Class, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(@<'a> Class, R, unsafe extern $abi fn(&'a Class, Sel $(, $t)*) -> R, $($t),*);
+
+        method_decl_impl!(@<> Allocated<T>, extern $abi fn(Allocated<T>, Sel $(, $t)*) -> __IdReturnValue, $($t),*);
+        method_decl_impl!(@<> Allocated<T>, unsafe extern $abi fn(Allocated<T>, Sel $(, $t)*) -> __IdReturnValue, $($t),*);
     };
     ($($t:ident),*) => {
         method_decl_impl!(# "C"; $($t),*);
@@ -228,6 +263,17 @@ method_decl_impl!(A, B, C, D, E, F, G, H, I);
 method_decl_impl!(A, B, C, D, E, F, G, H, I, J);
 method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K);
 method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
+
+/// Helper type for implementing `MethodImplementation` with a receiver of
+/// `Allocated<T>`, without exposing that implementation to users.
+#[doc(hidden)]
+#[repr(transparent)]
+pub struct __IdReturnValue(pub(crate) *mut Object);
+
+// SAFETY: `__IdReturnValue` is `#[repr(transparent)]`
+unsafe impl Encode for __IdReturnValue {
+    const ENCODING: Encoding = <*mut Object>::ENCODING;
+}
 
 fn method_type_encoding(ret: &Encoding, args: &[Encoding]) -> CString {
     // First two arguments are always self and the selector
@@ -630,6 +676,7 @@ impl ProtocolBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::rc::{Id, Shared};
     use crate::runtime::{NSObject, NSZone};
     use crate::test_utils;
     use crate::{declare_class, extern_protocol, msg_send, ClassType, ConformsTo, ProtocolType};
@@ -641,8 +688,8 @@ mod tests {
             const NAME: &'static str = "NSCopying";
 
             #[allow(unused)]
-            #[method(copyWithZone:)]
-            fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self;
+            #[method_id(copyWithZone:)]
+            fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self, Shared>;
         }
     );
 
@@ -814,9 +861,8 @@ mod tests {
             }
 
             unsafe impl ConformsTo<NSCopyingObject> for Custom {
-                #[method(copyWithZone:)]
-                #[allow(unreachable_code)]
-                fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
+                #[method_id(copyWithZone:)]
+                fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self, Shared> {
                     unimplemented!()
                 }
             }
@@ -910,9 +956,8 @@ mod tests {
             }
 
             unsafe impl ConformsTo<NSCopyingObject> for Custom {
-                #[method(copyWithZone:)]
-                #[allow(unreachable_code)]
-                fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
+                #[method_id(copyWithZone:)]
+                fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self, Shared> {
                     unimplemented!()
                 }
 
@@ -923,5 +968,51 @@ mod tests {
         );
 
         let _cls = Custom::class();
+    }
+
+    // Proof-of-concept how we could make declare_class! accept generic.
+    #[test]
+    fn test_generic() {
+        struct GenericDeclareClass<T>(T);
+
+        unsafe impl<T> RefEncode for GenericDeclareClass<T> {
+            const ENCODING_REF: Encoding = Encoding::Object;
+        }
+        unsafe impl<T> Message for GenericDeclareClass<T> {}
+
+        unsafe impl<T> ClassType for GenericDeclareClass<T> {
+            type Super = NSObject;
+            const NAME: &'static str = "GenericDeclareClass";
+
+            #[inline]
+            fn as_super(&self) -> &Self::Super {
+                unimplemented!()
+            }
+
+            #[inline]
+            fn as_super_mut(&mut self) -> &mut Self::Super {
+                unimplemented!()
+            }
+
+            fn class() -> &'static Class {
+                let superclass = NSObject::class();
+                let mut builder = ClassBuilder::new(Self::NAME, superclass).unwrap();
+
+                unsafe {
+                    builder.add_method(
+                        sel!(generic),
+                        <GenericDeclareClass<T>>::generic as unsafe extern "C" fn(_, _),
+                    );
+                }
+
+                builder.register()
+            }
+        }
+
+        impl<T> GenericDeclareClass<T> {
+            extern "C" fn generic(&self, _cmd: Sel) {}
+        }
+
+        let _ = GenericDeclareClass::<()>::class();
     }
 }

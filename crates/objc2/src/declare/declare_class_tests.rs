@@ -1,4 +1,4 @@
-#![deny(deprecated)]
+#![deny(deprecated, unreachable_code)]
 use core::ptr;
 
 use crate::rc::{Id, Owned, Shared};
@@ -199,15 +199,15 @@ declare_class!(
             true
         }
 
-        #[method(test:::withObject:)]
+        #[method_id(test:::withObject:)]
         fn _test_object(
             &self,
             _arg1: i32,
             _arg2: i32,
             _arg3: i32,
             _obj: *const Self,
-        ) -> *const Self {
-            ptr::null()
+        ) -> Option<Id<Self, Owned>> {
+            None
         }
     }
 );
@@ -245,4 +245,111 @@ fn test_multiple_colon_selector() {
     assert_eq!(obj.test_instance(1, 2, 3), 6);
     assert!(obj.test_error(1, 2).is_ok());
     assert!(obj.test_object(1, 2, 3, ptr::null()).is_none());
+}
+
+declare_class!(
+    struct DeclareClassAllTheBool;
+
+    unsafe impl ClassType for DeclareClassAllTheBool {
+        type Super = NSObject;
+    }
+
+    unsafe impl DeclareClassAllTheBool {
+        #[method(returnsBool)]
+        fn returns_bool() -> bool {
+            true
+        }
+
+        #[method(returnsBoolInstance)]
+        fn returns_bool_instance(&self) -> bool {
+            true
+        }
+
+        #[method(takesBool:andMut:andUnderscore:)]
+        fn takes_bool(a: bool, mut b: bool, _: bool) -> bool {
+            if b {
+                b = a;
+            }
+            b
+        }
+
+        #[method(takesBoolInstance:andMut:andUnderscore:)]
+        fn takes_bool_instance(&self, a: bool, mut b: bool, _: bool) -> bool {
+            if b {
+                b = a;
+            }
+            b
+        }
+
+        #[method(takesReturnsBool:)]
+        fn takes_returns_bool(b: bool) -> bool {
+            b
+        }
+
+        #[method(takesReturnsBoolInstance:)]
+        fn takes_returns_bool_instance(&self, b: bool) -> bool {
+            b
+        }
+
+        #[method_id(idTakesBool:)]
+        fn id_takes_bool(_b: bool) -> Option<Id<Self, Owned>> {
+            None
+        }
+
+        #[method_id(idTakesBoolInstance:)]
+        fn id_takes_bool_instance(&self, _b: bool) -> Option<Id<Self, Owned>> {
+            None
+        }
+    }
+);
+
+#[test]
+fn test_all_the_bool() {
+    let _ = DeclareClassAllTheBool::class();
+}
+
+declare_class!(
+    struct DeclareClassUnreachable;
+
+    unsafe impl ClassType for DeclareClassUnreachable {
+        type Super = NSObject;
+    }
+
+    // Ensure none of these warn
+    unsafe impl DeclareClassUnreachable {
+        #[method(unreachable)]
+        fn unreachable(&self) -> bool {
+            unreachable!()
+        }
+
+        #[method(unreachableClass)]
+        fn unreachable_class() -> bool {
+            unreachable!()
+        }
+
+        #[method(unreachableVoid)]
+        fn unreachable_void(&self) {
+            unreachable!()
+        }
+
+        #[method(unreachableClassVoid)]
+        fn unreachable_class_void() {
+            unreachable!()
+        }
+
+        #[method_id(unreachableId)]
+        fn unreachable_id(&self) -> Id<Self, Owned> {
+            unreachable!()
+        }
+
+        #[method_id(unreachableClassId)]
+        fn unreachable_class_id() -> Id<Self, Owned> {
+            unreachable!()
+        }
+    }
+);
+
+#[test]
+fn test_unreachable() {
+    let _ = DeclareClassUnreachable::class();
 }

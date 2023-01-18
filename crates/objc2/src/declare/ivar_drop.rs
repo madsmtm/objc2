@@ -274,6 +274,28 @@ mod tests {
         }
     );
 
+    declare_class!(
+        #[derive(Debug, PartialEq, Eq)]
+        struct IvarTesterSubclass {
+            ivar5: IvarDrop<Id<__RcTestObject, Shared>>,
+        }
+
+        unsafe impl ClassType for IvarTesterSubclass {
+            type Super = IvarTester;
+        }
+
+        unsafe impl IvarTesterSubclass {
+            #[method(init)]
+            fn init(&mut self) -> Option<&mut Self> {
+                let this: Option<&mut Self> = unsafe { msg_send![super(self), init] };
+                this.map(|this| {
+                    Ivar::write(&mut this.ivar5, Id::into_shared(__RcTestObject::new()));
+                    this
+                })
+            }
+        }
+    );
+
     #[test]
     fn test_alloc_dealloc() {
         let expected = __ThreadTestData::current();
@@ -307,6 +329,22 @@ mod tests {
         drop(obj);
         expected.release += 3;
         expected.dealloc += 3;
+        expected.assert_current();
+    }
+
+    #[test]
+    fn test_subclass() {
+        let mut expected = __ThreadTestData::current();
+
+        let obj: Id<IvarTesterSubclass, Owned> =
+            unsafe { msg_send_id![IvarTesterSubclass::class(), new] };
+        expected.alloc += 5;
+        expected.init += 5;
+        expected.assert_current();
+
+        drop(obj);
+        expected.release += 5;
+        expected.dealloc += 5;
         expected.assert_current();
     }
 

@@ -3,7 +3,7 @@ use core::marker::PhantomData;
 use core::mem::ManuallyDrop;
 use core::ops::{Deref, DerefMut};
 use core::panic::{RefUnwindSafe, UnwindSafe};
-use core::ptr::NonNull;
+use core::ptr::{self, NonNull};
 
 use super::AutoreleasePool;
 use super::{Owned, Ownership, Shared};
@@ -456,6 +456,21 @@ impl<T: Message, O: Ownership> Id<T, O> {
         res
     }
 
+    #[inline]
+    pub(crate) fn autorelease_return_option(this: Option<Self>) -> *mut T {
+        let ptr: *mut T = this
+            .map(|this| ManuallyDrop::new(this).ptr.as_ptr())
+            .unwrap_or_else(ptr::null_mut);
+
+        // SAFETY: Same as `autorelease_inner`, this is just an optimization.
+        let res: *mut T = unsafe { ffi::objc_autoreleaseReturnValue(ptr.cast()) }.cast();
+        debug_assert_eq!(
+            res, ptr,
+            "objc_autoreleaseReturnValue did not return the same pointer"
+        );
+        res
+    }
+
     /// Autoreleases and prepares the [`Id`] to be returned to Objective-C.
     ///
     /// The object is not immediately released, but will be when the innermost
@@ -510,15 +525,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     #[inline]
     pub fn autorelease_return(self) -> *mut T {
         // See `autorelease_inner` for why this is an inherent method
-
-        let ptr = ManuallyDrop::new(self).ptr.as_ptr();
-        // SAFETY: Same as `autorelease_inner`, this is just an optimization.
-        let res: *mut T = unsafe { ffi::objc_autoreleaseReturnValue(ptr.cast()) }.cast();
-        debug_assert_eq!(
-            res, ptr,
-            "objc_autoreleaseReturnValue did not return the same pointer"
-        );
-        res
+        Self::autorelease_return_option(Some(self))
     }
 }
 
