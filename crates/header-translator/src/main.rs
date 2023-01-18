@@ -44,6 +44,9 @@ fn main() -> Result<(), BoxError> {
 
     let config = load_config(manifest_dir);
 
+    clang_sys::load()?;
+    info!(clang_version = clang::get_version());
+
     let clang = Clang::new()?;
     let index = Index::new(&clang, true, true);
 
