@@ -140,6 +140,7 @@ AuthenticationServices = [
     # Temporary, since some structs and statics use these
     "Foundation_NSURL",
 ]
+BackgroundAssets = ["Foundation"]
 CoreAnimation = ["Foundation"]
 CoreData = [
     "Foundation",
@@ -175,14 +176,15 @@ WebKit = [
 ]
 
 # Helps with CI
-unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-12"]
+unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["AuthenticationServices_all", "CoreData_all", "CoreAnimation_all", "Foundation_all", "Metal_all", "WebKit_all"]
+unstable-frameworks-ios = ["AuthenticationServices_all", "BackgroundAssets_all", "CoreData_all", "CoreAnimation_all", "Foundation_all", "Metal_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["AppKit_all", "CoreAnimation_all", "CoreData_all", "Foundation_all", "WebKit_all"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
+unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all"]
 
 # Temporary fixes until we can autogenerate these
 Foundation_NSProxy = []
@@ -1175,6 +1177,19 @@ AuthenticationServices_all = [
     "AuthenticationServices_ASWebAuthenticationSession",
     "AuthenticationServices_ASWebAuthenticationSessionRequest",
     "AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionManager",
+]
+BackgroundAssets_BAAppExtensionInfo = []
+BackgroundAssets_BADownload = []
+BackgroundAssets_BADownloadManager = []
+BackgroundAssets_BAURLDownload = [
+    "BackgroundAssets_BADownload",
+]
+BackgroundAssets_all = [
+    "BackgroundAssets",
+    "BackgroundAssets_BAAppExtensionInfo",
+    "BackgroundAssets_BADownload",
+    "BackgroundAssets_BADownloadManager",
+    "BackgroundAssets_BAURLDownload",
 ]
 CoreAnimation_CAAnimation = []
 CoreAnimation_CAAnimationGroup = [
