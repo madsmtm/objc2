@@ -7,6 +7,9 @@ pub use self::geometry::{
 };
 pub use self::range::NSRange;
 #[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "dispatch")]
+pub use self::thread::MainThreadBound;
+#[cfg(feature = "Foundation_NSThread")]
 pub use self::thread::{is_main_thread, is_multi_threaded, MainThreadMarker};
 
 mod array;
