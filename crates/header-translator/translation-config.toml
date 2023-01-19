@@ -17,6 +17,9 @@ imports = ["Metal", "Foundation"]
 [library.CoreData]
 imports = ["CoreData", "Foundation"]
 
+[library.Accessibility]
+imports = ["Accessibility", "Foundation"]
+
 [library.AppKit]
 imports = ["AppKit", "CoreData", "Foundation"]
 
@@ -696,6 +699,12 @@ copyIdentityForKeyType = { skipped = true }
 [class.BGTaskScheduler.methods]
 # Needs `dispatch_queue_t`
 registerForTaskWithIdentifier_usingQueue_launchHandler = { skipped = true }
+[class.AXBrailleMap.methods.presentImage]
+# Needs `CGImageRef`
+skipped = true
+[fn.AXNameFromColor]
+# Needs `CGColorRef`
+skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]

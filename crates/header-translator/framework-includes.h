@@ -12,6 +12,8 @@
 
 #import <CoreData/CoreData.h>
 
+#import <Accessibility/Accessibility.h>
+
 #if TARGET_OS_OSX
 #import <AppKit/AppKit.h>
 #endif
