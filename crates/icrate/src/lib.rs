@@ -36,6 +36,8 @@ mod macros;
 pub mod AppKit;
 #[cfg(feature = "AuthenticationServices")]
 pub mod AuthenticationServices;
+#[cfg(feature = "BackgroundAssets")]
+pub mod BackgroundAssets;
 #[cfg(feature = "CoreAnimation")]
 pub mod CoreAnimation;
 #[cfg(feature = "CoreData")]

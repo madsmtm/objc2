@@ -20,4 +20,6 @@
 
 #import <Metal/Metal.h>
 
+#import <BackgroundAssets/BackgroundAssets.h>
+
 #import <WebKit/WebKit.h>

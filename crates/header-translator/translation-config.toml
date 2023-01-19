@@ -23,6 +23,9 @@ imports = ["AppKit", "CoreData", "Foundation"]
 [library.AuthenticationServices]
 imports = ["AuthenticationServices", "Foundation"]
 
+[library.BackgroundAssets]
+imports = ["BackgroundAssets", "Foundation"]
+
 [library.WebKit]
 imports = ["WebKit", "AppKit", "Foundation"]
 
