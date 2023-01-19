@@ -4,6 +4,7 @@
 mod macros;
 
 data! {
+    mod Accessibility;
     mod AppKit;
     mod AuthenticationServices;
     mod BackgroundAssets;

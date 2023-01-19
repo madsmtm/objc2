@@ -32,6 +32,8 @@ mod common;
 mod macros;
 
 // Frameworks
+#[cfg(feature = "Accessibility")]
+pub mod Accessibility;
 #[cfg(feature = "AppKit")]
 pub mod AppKit;
 #[cfg(feature = "AuthenticationServices")]
