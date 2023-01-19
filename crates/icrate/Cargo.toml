@@ -69,6 +69,12 @@ required-features = [
     "unstable-example-nspasteboard"
 ]
 
+[[example]]
+name = "browser"
+required-features = [
+    "unstable-example-browser"
+]
+
 [features]
 default = ["std", "apple"]
 
@@ -131,6 +137,26 @@ unstable-example-nspasteboard = [
     "Foundation_NSArray",
     "Foundation_NSDictionary",
     "Foundation_NSString",
+]
+unstable-example-browser = [
+    "apple",
+    "AppKit",
+    "AppKit_NSButton",
+    "AppKit_NSColor",
+    "AppKit_NSMenu",
+    "AppKit_NSMenuItem",
+    "AppKit_NSStackView",
+    "AppKit_NSTextAttachmentCell",
+    "AppKit_NSTextField",
+    "AppKit_NSTextView",
+    "AppKit_NSWindow",
+    "Foundation",
+    "Foundation_NSString",
+    "Foundation_NSURL",
+    "Foundation_NSURLRequest",
+    "WebKit",
+    "WebKit_WKNavigation",
+    "WebKit_WKWebView",
 ]
 
 # Frameworks
@@ -236,7 +262,7 @@ unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "StoreKit_all", "unstable-example-delegate", "unstable-example-nspasteboard", "unstable-example-speech_synthesis"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameController_all", "GameKit_all", "LocalAuthentication_all", "LocalAuthenticationEmbeddedUI_all", "MapKit_all", "MetalKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "DeviceCheck_all", "FileProvider_all", "FileProviderUI_all", "LinkPresentation_all", "Metal_all", "SoundAnalysis_all", "Speech_all", "UniformTypeIdentifiers_all", "UserNotifications_all"]
-unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all", "LocalAuthenticationEmbeddedUI_all", "MailKit_all", "WebKit_all"]
+unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all", "LocalAuthenticationEmbeddedUI_all", "MailKit_all", "WebKit_all", "unstable-example-browser"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "CallKit_all", "ExtensionKit_all", "IdentityLookup_all", "MetalFX_all"]
 
 # Temporary fixes until we can autogenerate these
