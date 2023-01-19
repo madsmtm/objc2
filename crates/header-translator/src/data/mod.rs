@@ -7,6 +7,7 @@ data! {
     mod AppKit;
     mod AuthenticationServices;
     mod BackgroundAssets;
+    mod BackgroundTasks;
     mod CoreAnimation;
     mod CoreData;
     mod Foundation;
