@@ -6,14 +6,14 @@ use icrate::Foundation::NSString;
 
 // Temporary to allow testing putting string references in statics.
 // This doesn't yet compile on other platforms, but could in the future!
-#[cfg(feature = "apple")]
+#[cfg(all(feature = "apple", feature = "assembly-features"))]
 #[no_mangle]
 static EMPTY: &NSString = {
     const INPUT: &[u8] = b"";
     icrate::__ns_string_inner!(@inner INPUT);
     CFSTRING.as_nsstring_const()
 };
-#[cfg(feature = "apple")]
+#[cfg(all(feature = "apple", feature = "assembly-features"))]
 #[no_mangle]
 static XYZ: &NSString = {
     const INPUT: &[u8] = b"xyz";
