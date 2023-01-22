@@ -35,6 +35,9 @@ imports = ["BackgroundTasks", "Foundation"]
 [library.ClassKit]
 imports = ["ClassKit", "Foundation"]
 
+[library.CloudKit]
+imports = ["CloudKit", "Foundation"]
+
 [library.Contacts]
 imports = ["Contacts", "Foundation"]
 

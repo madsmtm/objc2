@@ -144,6 +144,7 @@ AuthenticationServices = [
 BackgroundAssets = ["Foundation"]
 BackgroundTasks = ["Foundation"]
 ClassKit = ["Foundation"]
+CloudKit = ["Foundation"]
 Contacts = ["Foundation"]
 CoreAnimation = ["Foundation"]
 CoreData = [
@@ -183,9 +184,9 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "Foundation_all", "Metal_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "Foundation_all", "Metal_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "CoreAnimation_all", "CoreData_all", "Foundation_all", "WebKit_all"]
-unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "Contacts_all"]
+unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "CloudKit_all", "Contacts_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "ClassKit_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all"]
@@ -1275,6 +1276,175 @@ ClassKit_all = [
     "ClassKit_CLSProgressReportingCapability",
     "ClassKit_CLSQuantityItem",
     "ClassKit_CLSScoreItem",
+]
+CloudKit_CKAcceptSharesOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKAllowedSharingOptions = []
+CloudKit_CKAsset = []
+CloudKit_CKContainer = []
+CloudKit_CKDatabase = []
+CloudKit_CKDatabaseNotification = [
+    "CloudKit_CKNotification",
+]
+CloudKit_CKDatabaseOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKDatabaseSubscription = [
+    "CloudKit_CKSubscription",
+]
+CloudKit_CKDiscoverAllUserIdentitiesOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKDiscoverUserIdentitiesOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKFetchDatabaseChangesOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKFetchNotificationChangesOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKFetchRecordChangesOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKFetchRecordZoneChangesConfiguration = []
+CloudKit_CKFetchRecordZoneChangesOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKFetchRecordZoneChangesOptions = []
+CloudKit_CKFetchRecordZonesOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKFetchRecordsOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKFetchShareMetadataOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKFetchShareParticipantsOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKFetchSubscriptionsOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKFetchWebAuthTokenOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKLocationSortDescriptor = [
+    "Foundation_NSSortDescriptor",
+]
+CloudKit_CKMarkNotificationsReadOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKModifyBadgeOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKModifyRecordZonesOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKModifyRecordsOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKModifySubscriptionsOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKNotification = []
+CloudKit_CKNotificationID = []
+CloudKit_CKNotificationInfo = []
+CloudKit_CKOperation = [
+    "Foundation_NSOperation",
+]
+CloudKit_CKOperationConfiguration = []
+CloudKit_CKOperationGroup = []
+CloudKit_CKQuery = []
+CloudKit_CKQueryCursor = []
+CloudKit_CKQueryNotification = [
+    "CloudKit_CKNotification",
+]
+CloudKit_CKQueryOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKQuerySubscription = [
+    "CloudKit_CKSubscription",
+]
+CloudKit_CKRecord = []
+CloudKit_CKRecordID = []
+CloudKit_CKRecordZone = []
+CloudKit_CKRecordZoneID = []
+CloudKit_CKRecordZoneNotification = [
+    "CloudKit_CKNotification",
+]
+CloudKit_CKRecordZoneSubscription = [
+    "CloudKit_CKSubscription",
+]
+CloudKit_CKReference = []
+CloudKit_CKServerChangeToken = []
+CloudKit_CKShare = [
+    "CloudKit_CKRecord",
+]
+CloudKit_CKShareMetadata = []
+CloudKit_CKShareParticipant = []
+CloudKit_CKSubscription = []
+CloudKit_CKSystemSharingUIObserver = []
+CloudKit_CKUserIdentity = []
+CloudKit_CKUserIdentityLookupInfo = []
+CloudKit_all = [
+    "CloudKit",
+    "CloudKit_CKAcceptSharesOperation",
+    "CloudKit_CKAllowedSharingOptions",
+    "CloudKit_CKAsset",
+    "CloudKit_CKContainer",
+    "CloudKit_CKDatabase",
+    "CloudKit_CKDatabaseNotification",
+    "CloudKit_CKDatabaseOperation",
+    "CloudKit_CKDatabaseSubscription",
+    "CloudKit_CKDiscoverAllUserIdentitiesOperation",
+    "CloudKit_CKDiscoverUserIdentitiesOperation",
+    "CloudKit_CKFetchDatabaseChangesOperation",
+    "CloudKit_CKFetchNotificationChangesOperation",
+    "CloudKit_CKFetchRecordChangesOperation",
+    "CloudKit_CKFetchRecordZoneChangesConfiguration",
+    "CloudKit_CKFetchRecordZoneChangesOperation",
+    "CloudKit_CKFetchRecordZoneChangesOptions",
+    "CloudKit_CKFetchRecordZonesOperation",
+    "CloudKit_CKFetchRecordsOperation",
+    "CloudKit_CKFetchShareMetadataOperation",
+    "CloudKit_CKFetchShareParticipantsOperation",
+    "CloudKit_CKFetchSubscriptionsOperation",
+    "CloudKit_CKFetchWebAuthTokenOperation",
+    "CloudKit_CKLocationSortDescriptor",
+    "CloudKit_CKMarkNotificationsReadOperation",
+    "CloudKit_CKModifyBadgeOperation",
+    "CloudKit_CKModifyRecordZonesOperation",
+    "CloudKit_CKModifyRecordsOperation",
+    "CloudKit_CKModifySubscriptionsOperation",
+    "CloudKit_CKNotification",
+    "CloudKit_CKNotificationID",
+    "CloudKit_CKNotificationInfo",
+    "CloudKit_CKOperation",
+    "CloudKit_CKOperationConfiguration",
+    "CloudKit_CKOperationGroup",
+    "CloudKit_CKQuery",
+    "CloudKit_CKQueryCursor",
+    "CloudKit_CKQueryNotification",
+    "CloudKit_CKQueryOperation",
+    "CloudKit_CKQuerySubscription",
+    "CloudKit_CKRecord",
+    "CloudKit_CKRecordID",
+    "CloudKit_CKRecordZone",
+    "CloudKit_CKRecordZoneID",
+    "CloudKit_CKRecordZoneNotification",
+    "CloudKit_CKRecordZoneSubscription",
+    "CloudKit_CKReference",
+    "CloudKit_CKServerChangeToken",
+    "CloudKit_CKShare",
+    "CloudKit_CKShareMetadata",
+    "CloudKit_CKShareParticipant",
+    "CloudKit_CKSubscription",
+    "CloudKit_CKSystemSharingUIObserver",
+    "CloudKit_CKUserIdentity",
+    "CloudKit_CKUserIdentityLookupInfo",
 ]
 Contacts_CNChangeHistoryAddContactEvent = [
     "Contacts_CNChangeHistoryEvent",

@@ -10,6 +10,7 @@ data! {
     mod BackgroundAssets;
     mod BackgroundTasks;
     mod ClassKit;
+    mod CloudKit;
     mod Contacts;
     mod CoreAnimation;
     mod CoreData;

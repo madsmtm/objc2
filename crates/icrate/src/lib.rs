@@ -44,6 +44,8 @@ pub mod BackgroundAssets;
 pub mod BackgroundTasks;
 #[cfg(feature = "ClassKit")]
 pub mod ClassKit;
+#[cfg(feature = "CloudKit")]
+pub mod CloudKit;
 #[cfg(feature = "Contacts")]
 pub mod Contacts;
 #[cfg(feature = "CoreAnimation")]
