@@ -17,6 +17,7 @@ data! {
     mod EventKit;
     mod ExceptionHandling;
     mod Foundation;
+    mod GameKit;
     mod Metal;
     mod WebKit;
 }

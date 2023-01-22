@@ -169,6 +169,7 @@ Foundation = [
     "Foundation_NSDictionary",
     "Foundation_NSEnumerator",
 ]
+GameKit = ["AppKit", "Foundation"]
 Metal = [
     "Foundation",
     # Temporary, since some structs and statics use these
@@ -186,9 +187,9 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "EventKit_all", "Foundation_all", "Metal_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "EventKit_all", "Foundation_all", "GameKit_all", "Metal_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "CoreAnimation_all", "CoreData_all", "ExceptionHandling_all", "Foundation_all", "WebKit_all"]
-unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "CloudKit_all", "Contacts_all", "EventKit_all"]
+unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "CloudKit_all", "Contacts_all", "EventKit_all", "GameKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "ClassKit_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all"]
@@ -2629,6 +2630,113 @@ Foundation_all = [
     "Foundation_NSXPCInterface",
     "Foundation_NSXPCListener",
     "Foundation_NSXPCListenerEndpoint",
+]
+GameKit_GKAccessPoint = []
+GameKit_GKAchievement = []
+GameKit_GKAchievementChallenge = [
+    "GameKit_GKChallenge",
+]
+GameKit_GKAchievementDescription = []
+GameKit_GKAchievementViewController = [
+    "GameKit_GKGameCenterViewController",
+]
+GameKit_GKBasePlayer = []
+GameKit_GKChallenge = []
+GameKit_GKChallengeEventHandler = []
+GameKit_GKChallengesViewController = [
+    "AppKit_NSViewController",
+]
+GameKit_GKCloudPlayer = [
+    "GameKit_GKBasePlayer",
+]
+GameKit_GKDialogController = [
+    "AppKit_NSResponder",
+]
+GameKit_GKFriendRequestComposeViewController = [
+    "AppKit_NSViewController",
+]
+GameKit_GKGameCenterViewController = [
+    "AppKit_NSViewController",
+]
+GameKit_GKGameSession = []
+GameKit_GKInvite = []
+GameKit_GKLeaderboard = []
+GameKit_GKLeaderboardEntry = []
+GameKit_GKLeaderboardScore = []
+GameKit_GKLeaderboardSet = []
+GameKit_GKLeaderboardViewController = [
+    "GameKit_GKGameCenterViewController",
+]
+GameKit_GKLocalPlayer = [
+    "GameKit_GKPlayer",
+]
+GameKit_GKMatch = []
+GameKit_GKMatchRequest = []
+GameKit_GKMatchmaker = []
+GameKit_GKMatchmakerViewController = [
+    "AppKit_NSViewController",
+]
+GameKit_GKNotificationBanner = []
+GameKit_GKPlayer = [
+    "GameKit_GKBasePlayer",
+]
+GameKit_GKSavedGame = []
+GameKit_GKScore = []
+GameKit_GKScoreChallenge = [
+    "GameKit_GKChallenge",
+]
+GameKit_GKSession = []
+GameKit_GKTurnBasedEventHandler = []
+GameKit_GKTurnBasedExchange = []
+GameKit_GKTurnBasedExchangeReply = []
+GameKit_GKTurnBasedMatch = []
+GameKit_GKTurnBasedMatchmakerViewController = [
+    "AppKit_NSViewController",
+]
+GameKit_GKTurnBasedParticipant = []
+GameKit_GKVoiceChat = []
+GameKit_GKVoiceChatService = []
+GameKit_all = [
+    "GameKit",
+    "GameKit_GKAccessPoint",
+    "GameKit_GKAchievement",
+    "GameKit_GKAchievementChallenge",
+    "GameKit_GKAchievementDescription",
+    "GameKit_GKAchievementViewController",
+    "GameKit_GKBasePlayer",
+    "GameKit_GKChallenge",
+    "GameKit_GKChallengeEventHandler",
+    "GameKit_GKChallengesViewController",
+    "GameKit_GKCloudPlayer",
+    "GameKit_GKDialogController",
+    "GameKit_GKFriendRequestComposeViewController",
+    "GameKit_GKGameCenterViewController",
+    "GameKit_GKGameSession",
+    "GameKit_GKInvite",
+    "GameKit_GKLeaderboard",
+    "GameKit_GKLeaderboardEntry",
+    "GameKit_GKLeaderboardScore",
+    "GameKit_GKLeaderboardSet",
+    "GameKit_GKLeaderboardViewController",
+    "GameKit_GKLocalPlayer",
+    "GameKit_GKMatch",
+    "GameKit_GKMatchRequest",
+    "GameKit_GKMatchmaker",
+    "GameKit_GKMatchmakerViewController",
+    "GameKit_GKNotificationBanner",
+    "GameKit_GKPlayer",
+    "GameKit_GKSavedGame",
+    "GameKit_GKScore",
+    "GameKit_GKScoreChallenge",
+    "GameKit_GKSession",
+    "GameKit_GKTurnBasedEventHandler",
+    "GameKit_GKTurnBasedExchange",
+    "GameKit_GKTurnBasedExchangeReply",
+    "GameKit_GKTurnBasedMatch",
+    "GameKit_GKTurnBasedMatchmakerViewController",
+    "GameKit_GKTurnBasedParticipant",
+    "GameKit_GKVoiceChat",
+    "GameKit_GKVoiceChatService",
 ]
 Metal_MTLAccelerationStructureBoundingBoxGeometryDescriptor = [
     "Metal_MTLAccelerationStructureGeometryDescriptor",

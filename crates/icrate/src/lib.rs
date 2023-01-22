@@ -58,6 +58,8 @@ pub mod EventKit;
 pub mod ExceptionHandling;
 #[cfg(feature = "Foundation")]
 pub mod Foundation;
+#[cfg(feature = "GameKit")]
+pub mod GameKit;
 #[cfg(feature = "Metal")]
 pub mod Metal;
 #[cfg(feature = "WebKit")]

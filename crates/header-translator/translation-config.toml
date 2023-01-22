@@ -47,6 +47,9 @@ imports = ["EventKit", "AppKit", "Foundation"]
 [library.ExceptionHandling]
 imports = ["ExceptionHandling", "Foundation"]
 
+[library.GameKit]
+imports = ["GameKit", "AppKit", "Foundation"]
+
 [library.WebKit]
 imports = ["WebKit", "AppKit", "Foundation"]
 
@@ -876,6 +879,11 @@ skipped = true
 [fn.MTLPackedFloat3Make]
 skipped = true
 
+# Needs `JSContext` from JavaScriptCore
+[class.WebFrame.methods.javaScriptContext]
+skipped = true
+[protocol.WebFrameLoadDelegate.methods.webView_didCreateJavaScriptContext_forFrame]
+skipped = true
 # Needs `JSGlobalContextRef` from JavaScriptCore
 [class.WebFrame.methods.globalContext]
 skipped = true
@@ -884,6 +892,13 @@ skipped = true
 skipped = true
 
 # error: translator assertion failure: invalid error nullability (left: Unspecified) (Right: Nullable)
+[class.GKSession.methods]
+acceptConnectionFromPeer_error = { skipped = true }
+sendData_toPeers_withDataMode_error = { skipped = true }
+sendDataToAllPeers_withDataMode_error = { skipped = true }
+[class.GKVoiceChatService.methods]
+acceptCallID_error = { skipped = true }
+startVoiceChatWithParticipantID_error = { skipped = true }
 [class.WebHistory.methods]
 loadFromURL_error = { skipped = true }
 saveToURL_error = { skipped = true }

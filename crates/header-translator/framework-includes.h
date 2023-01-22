@@ -36,4 +36,6 @@
 
 #import <ExceptionHandling/ExceptionHandling.h>
 
+#import <GameKit/GameKit.h>
+
 #import <WebKit/WebKit.h>
