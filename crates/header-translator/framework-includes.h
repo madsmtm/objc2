@@ -28,4 +28,6 @@
 
 #import <ClassKit/ClassKit.h>
 
+#import <Contacts/Contacts.h>
+
 #import <WebKit/WebKit.h>

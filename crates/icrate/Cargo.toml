@@ -144,6 +144,7 @@ AuthenticationServices = [
 BackgroundAssets = ["Foundation"]
 BackgroundTasks = ["Foundation"]
 ClassKit = ["Foundation"]
+Contacts = ["Foundation"]
 CoreAnimation = ["Foundation"]
 CoreData = [
     "Foundation",
@@ -182,9 +183,9 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CoreData_all", "CoreAnimation_all", "Foundation_all", "Metal_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "Foundation_all", "Metal_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "CoreAnimation_all", "CoreData_all", "Foundation_all", "WebKit_all"]
-unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7"]
+unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "Contacts_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "ClassKit_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all"]
@@ -1274,6 +1275,115 @@ ClassKit_all = [
     "ClassKit_CLSProgressReportingCapability",
     "ClassKit_CLSQuantityItem",
     "ClassKit_CLSScoreItem",
+]
+Contacts_CNChangeHistoryAddContactEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryAddGroupEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryAddMemberToGroupEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryAddSubgroupToGroupEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryDeleteContactEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryDeleteGroupEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryDropEverythingEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryEvent = []
+Contacts_CNChangeHistoryFetchRequest = [
+    "Contacts_CNFetchRequest",
+]
+Contacts_CNChangeHistoryRemoveMemberFromGroupEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryRemoveSubgroupFromGroupEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryUpdateContactEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryUpdateGroupEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNContact = []
+Contacts_CNContactFetchRequest = [
+    "Contacts_CNFetchRequest",
+]
+Contacts_CNContactFormatter = [
+    "Foundation_NSFormatter",
+]
+Contacts_CNContactProperty = []
+Contacts_CNContactRelation = []
+Contacts_CNContactStore = []
+Contacts_CNContactVCardSerialization = []
+Contacts_CNContactsUserDefaults = []
+Contacts_CNContainer = []
+Contacts_CNFetchRequest = []
+Contacts_CNFetchResult = []
+Contacts_CNGroup = []
+Contacts_CNInstantMessageAddress = []
+Contacts_CNLabeledValue = []
+Contacts_CNMutableContact = [
+    "Contacts_CNContact",
+]
+Contacts_CNMutableGroup = [
+    "Contacts_CNGroup",
+]
+Contacts_CNMutablePostalAddress = [
+    "Contacts_CNPostalAddress",
+]
+Contacts_CNPhoneNumber = []
+Contacts_CNPostalAddress = []
+Contacts_CNPostalAddressFormatter = [
+    "Foundation_NSFormatter",
+]
+Contacts_CNSaveRequest = []
+Contacts_CNSocialProfile = []
+Contacts_all = [
+    "Contacts",
+    "Contacts_CNChangeHistoryAddContactEvent",
+    "Contacts_CNChangeHistoryAddGroupEvent",
+    "Contacts_CNChangeHistoryAddMemberToGroupEvent",
+    "Contacts_CNChangeHistoryAddSubgroupToGroupEvent",
+    "Contacts_CNChangeHistoryDeleteContactEvent",
+    "Contacts_CNChangeHistoryDeleteGroupEvent",
+    "Contacts_CNChangeHistoryDropEverythingEvent",
+    "Contacts_CNChangeHistoryEvent",
+    "Contacts_CNChangeHistoryFetchRequest",
+    "Contacts_CNChangeHistoryRemoveMemberFromGroupEvent",
+    "Contacts_CNChangeHistoryRemoveSubgroupFromGroupEvent",
+    "Contacts_CNChangeHistoryUpdateContactEvent",
+    "Contacts_CNChangeHistoryUpdateGroupEvent",
+    "Contacts_CNContact",
+    "Contacts_CNContactFetchRequest",
+    "Contacts_CNContactFormatter",
+    "Contacts_CNContactProperty",
+    "Contacts_CNContactRelation",
+    "Contacts_CNContactStore",
+    "Contacts_CNContactVCardSerialization",
+    "Contacts_CNContactsUserDefaults",
+    "Contacts_CNContainer",
+    "Contacts_CNFetchRequest",
+    "Contacts_CNFetchResult",
+    "Contacts_CNGroup",
+    "Contacts_CNInstantMessageAddress",
+    "Contacts_CNLabeledValue",
+    "Contacts_CNMutableContact",
+    "Contacts_CNMutableGroup",
+    "Contacts_CNMutablePostalAddress",
+    "Contacts_CNPhoneNumber",
+    "Contacts_CNPostalAddress",
+    "Contacts_CNPostalAddressFormatter",
+    "Contacts_CNSaveRequest",
+    "Contacts_CNSocialProfile",
 ]
 CoreAnimation_CAAnimation = []
 CoreAnimation_CAAnimationGroup = [
