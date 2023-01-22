@@ -50,6 +50,9 @@ imports = ["ExceptionHandling", "Foundation"]
 [library.GameKit]
 imports = ["GameKit", "AppKit", "Foundation"]
 
+[library.InputMethodKit]
+imports = ["InputMethodKit", "AppKit", "Foundation"]
+
 [library.WebKit]
 imports = ["WebKit", "AppKit", "Foundation"]
 
@@ -733,6 +736,10 @@ skipped = true
 [class.EKCalendar.methods]
 CGColor = { skipped = true }
 setCGColor = { skipped = true }
+# Needs `TISInputSourceRef` from Carbon (HIToolbox)
+[class.IMKCandidates.methods]
+setSelectionKeysKeylayout = { skipped = true }
+selectionKeysKeylayout = { skipped = true }
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]
@@ -906,3 +913,19 @@ saveToURL_error = { skipped = true }
 [class.WKWebView.methods]
 # uses `SecTrustRef` from Security.framework (not yet translated)
 serverTrust = { skipped = true }
+
+# error: translator assertion failure: (left `"NSString"`) (right `"const NSString"`)
+[static.kIMKCommandClientName]
+skipped = true
+[static.kIMKCommandMenuItemName]
+skipped = true
+[static.IMKCandidatesOpacityAttributeName]
+skipped = true
+[static.IMKCandidatesSendServerKeyEventFirst]
+skipped = true
+[static.IMKControllerClass]
+skipped = true
+[static.IMKDelegateClass]
+skipped = true
+[static.IMKModeDictionary]
+skipped = true

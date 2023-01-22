@@ -60,6 +60,8 @@ pub mod ExceptionHandling;
 pub mod Foundation;
 #[cfg(feature = "GameKit")]
 pub mod GameKit;
+#[cfg(feature = "InputMethodKit")]
+pub mod InputMethodKit;
 #[cfg(feature = "Metal")]
 pub mod Metal;
 #[cfg(feature = "WebKit")]

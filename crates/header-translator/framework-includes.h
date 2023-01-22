@@ -38,4 +38,6 @@
 
 #import <GameKit/GameKit.h>
 
+#import <InputMethodKit/InputMethodKit.h>
+
 #import <WebKit/WebKit.h>
