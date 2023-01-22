@@ -44,6 +44,9 @@ imports = ["Contacts", "Foundation"]
 [library.EventKit]
 imports = ["EventKit", "AppKit", "Foundation"]
 
+[library.ExceptionHandling]
+imports = ["ExceptionHandling", "Foundation"]
+
 [library.WebKit]
 imports = ["WebKit", "AppKit", "Foundation"]
 

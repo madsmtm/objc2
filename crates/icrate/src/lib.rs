@@ -54,6 +54,8 @@ pub mod CoreAnimation;
 pub mod CoreData;
 #[cfg(feature = "EventKit")]
 pub mod EventKit;
+#[cfg(feature = "ExceptionHandling")]
+pub mod ExceptionHandling;
 #[cfg(feature = "Foundation")]
 pub mod Foundation;
 #[cfg(feature = "Metal")]

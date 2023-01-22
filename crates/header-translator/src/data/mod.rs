@@ -15,6 +15,7 @@ data! {
     mod CoreAnimation;
     mod CoreData;
     mod EventKit;
+    mod ExceptionHandling;
     mod Foundation;
     mod Metal;
     mod WebKit;

@@ -34,4 +34,6 @@
 
 #import <EventKit/EventKit.h>
 
+#import <ExceptionHandling/ExceptionHandling.h>
+
 #import <WebKit/WebKit.h>

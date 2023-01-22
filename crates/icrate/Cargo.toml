@@ -153,6 +153,7 @@ CoreData = [
     "CoreData_NSAsynchronousFetchResult",
 ]
 EventKit = ["AppKit", "Foundation"]
+ExceptionHandling = ["Foundation"]
 Foundation = [
     "objective-c",
     "block",
@@ -186,7 +187,7 @@ unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
 unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "EventKit_all", "Foundation_all", "Metal_all", "WebKit_all"]
-unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "CoreAnimation_all", "CoreData_all", "Foundation_all", "WebKit_all"]
+unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "CoreAnimation_all", "CoreData_all", "ExceptionHandling_all", "Foundation_all", "WebKit_all"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "CloudKit_all", "Contacts_all", "EventKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "ClassKit_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
@@ -1858,6 +1859,11 @@ EventKit_all = [
     "EventKit_EKVirtualConferenceProvider",
     "EventKit_EKVirtualConferenceRoomTypeDescriptor",
     "EventKit_EKVirtualConferenceURLDescriptor",
+]
+ExceptionHandling_NSExceptionHandler = []
+ExceptionHandling_all = [
+    "ExceptionHandling",
+    "ExceptionHandling_NSExceptionHandler",
 ]
 Foundation_NSAffineTransform = []
 Foundation_NSAppleEventDescriptor = []
