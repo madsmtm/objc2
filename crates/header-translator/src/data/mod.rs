@@ -9,6 +9,7 @@ data! {
     mod AuthenticationServices;
     mod BackgroundAssets;
     mod BackgroundTasks;
+    mod ClassKit;
     mod CoreAnimation;
     mod CoreData;
     mod Foundation;

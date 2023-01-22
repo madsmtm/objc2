@@ -32,6 +32,9 @@ imports = ["BackgroundAssets", "Foundation"]
 [library.BackgroundTasks]
 imports = ["BackgroundTasks", "Foundation"]
 
+[library.ClassKit]
+imports = ["ClassKit", "Foundation"]
+
 [library.WebKit]
 imports = ["WebKit", "AppKit", "Foundation"]
 
@@ -704,6 +707,12 @@ registerForTaskWithIdentifier_usingQueue_launchHandler = { skipped = true }
 skipped = true
 [fn.AXNameFromColor]
 # Needs `CGColorRef`
+skipped = true
+[class.CLSContext.methods.thumbnail]
+# Needs `CGImageRef`
+skipped = true
+[class.CLSContext.methods.setThumbnail]
+# Needs `CGImageRef`
 skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet

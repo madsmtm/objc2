@@ -26,4 +26,6 @@
 
 #import <BackgroundTasks/BackgroundTasks.h>
 
+#import <ClassKit/ClassKit.h>
+
 #import <WebKit/WebKit.h>

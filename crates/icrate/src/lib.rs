@@ -42,6 +42,8 @@ pub mod AuthenticationServices;
 pub mod BackgroundAssets;
 #[cfg(feature = "BackgroundTasks")]
 pub mod BackgroundTasks;
+#[cfg(feature = "ClassKit")]
+pub mod ClassKit;
 #[cfg(feature = "CoreAnimation")]
 pub mod CoreAnimation;
 #[cfg(feature = "CoreData")]

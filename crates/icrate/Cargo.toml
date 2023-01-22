@@ -143,6 +143,7 @@ AuthenticationServices = [
 ]
 BackgroundAssets = ["Foundation"]
 BackgroundTasks = ["Foundation"]
+ClassKit = ["Foundation"]
 CoreAnimation = ["Foundation"]
 CoreData = [
     "Foundation",
@@ -181,10 +182,10 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "CoreData_all", "CoreAnimation_all", "Foundation_all", "Metal_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CoreData_all", "CoreAnimation_all", "Foundation_all", "Metal_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "CoreAnimation_all", "CoreData_all", "Foundation_all", "WebKit_all"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7"]
-unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "Metal_all"]
+unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "ClassKit_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all"]
 
@@ -1238,6 +1239,41 @@ BackgroundTasks_all = [
     "BackgroundTasks_BGTask",
     "BackgroundTasks_BGTaskRequest",
     "BackgroundTasks_BGTaskScheduler",
+]
+ClassKit_CLSActivity = [
+    "ClassKit_CLSObject",
+]
+ClassKit_CLSActivityItem = [
+    "ClassKit_CLSObject",
+]
+ClassKit_CLSBinaryItem = [
+    "ClassKit_CLSActivityItem",
+]
+ClassKit_CLSContext = [
+    "ClassKit_CLSObject",
+]
+ClassKit_CLSDataStore = []
+ClassKit_CLSObject = []
+ClassKit_CLSProgressReportingCapability = [
+    "ClassKit_CLSObject",
+]
+ClassKit_CLSQuantityItem = [
+    "ClassKit_CLSActivityItem",
+]
+ClassKit_CLSScoreItem = [
+    "ClassKit_CLSActivityItem",
+]
+ClassKit_all = [
+    "ClassKit",
+    "ClassKit_CLSActivity",
+    "ClassKit_CLSActivityItem",
+    "ClassKit_CLSBinaryItem",
+    "ClassKit_CLSContext",
+    "ClassKit_CLSDataStore",
+    "ClassKit_CLSObject",
+    "ClassKit_CLSProgressReportingCapability",
+    "ClassKit_CLSQuantityItem",
+    "ClassKit_CLSScoreItem",
 ]
 CoreAnimation_CAAnimation = []
 CoreAnimation_CAAnimationGroup = [
