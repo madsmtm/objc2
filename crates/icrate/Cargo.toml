@@ -152,6 +152,7 @@ CoreData = [
     # Temporary, since some structs and statics use these
     "CoreData_NSAsynchronousFetchResult",
 ]
+EventKit = ["AppKit", "Foundation"]
 Foundation = [
     "objective-c",
     "block",
@@ -184,9 +185,9 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "Foundation_all", "Metal_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "EventKit_all", "Foundation_all", "Metal_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "CoreAnimation_all", "CoreData_all", "Foundation_all", "WebKit_all"]
-unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "CloudKit_all", "Contacts_all"]
+unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "CloudKit_all", "Contacts_all", "EventKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "ClassKit_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all"]
@@ -1802,6 +1803,61 @@ CoreData_all = [
     "CoreData_NSQueryGenerationToken",
     "CoreData_NSRelationshipDescription",
     "CoreData_NSSaveChangesRequest",
+]
+EventKit_EKAlarm = [
+    "EventKit_EKObject",
+]
+EventKit_EKCalendar = [
+    "EventKit_EKObject",
+]
+EventKit_EKCalendarItem = [
+    "EventKit_EKObject",
+]
+EventKit_EKEvent = [
+    "EventKit_EKCalendarItem",
+]
+EventKit_EKEventStore = []
+EventKit_EKObject = []
+EventKit_EKParticipant = [
+    "EventKit_EKObject",
+]
+EventKit_EKRecurrenceDayOfWeek = []
+EventKit_EKRecurrenceEnd = []
+EventKit_EKRecurrenceRule = [
+    "EventKit_EKObject",
+]
+EventKit_EKReminder = [
+    "EventKit_EKCalendarItem",
+]
+EventKit_EKSource = [
+    "EventKit_EKObject",
+]
+EventKit_EKStructuredLocation = [
+    "EventKit_EKObject",
+]
+EventKit_EKVirtualConferenceDescriptor = []
+EventKit_EKVirtualConferenceProvider = []
+EventKit_EKVirtualConferenceRoomTypeDescriptor = []
+EventKit_EKVirtualConferenceURLDescriptor = []
+EventKit_all = [
+    "EventKit",
+    "EventKit_EKAlarm",
+    "EventKit_EKCalendar",
+    "EventKit_EKCalendarItem",
+    "EventKit_EKEvent",
+    "EventKit_EKEventStore",
+    "EventKit_EKObject",
+    "EventKit_EKParticipant",
+    "EventKit_EKRecurrenceDayOfWeek",
+    "EventKit_EKRecurrenceEnd",
+    "EventKit_EKRecurrenceRule",
+    "EventKit_EKReminder",
+    "EventKit_EKSource",
+    "EventKit_EKStructuredLocation",
+    "EventKit_EKVirtualConferenceDescriptor",
+    "EventKit_EKVirtualConferenceProvider",
+    "EventKit_EKVirtualConferenceRoomTypeDescriptor",
+    "EventKit_EKVirtualConferenceURLDescriptor",
 ]
 Foundation_NSAffineTransform = []
 Foundation_NSAppleEventDescriptor = []

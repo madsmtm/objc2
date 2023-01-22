@@ -41,6 +41,9 @@ imports = ["CloudKit", "Foundation"]
 [library.Contacts]
 imports = ["Contacts", "Foundation"]
 
+[library.EventKit]
+imports = ["EventKit", "AppKit", "Foundation"]
+
 [library.WebKit]
 imports = ["WebKit", "AppKit", "Foundation"]
 
@@ -720,6 +723,10 @@ skipped = true
 [class.CLSContext.methods.setThumbnail]
 # Needs `CGImageRef`
 skipped = true
+# Needs `CGColorRef`
+[class.EKCalendar.methods]
+CGColor = { skipped = true }
+setCGColor = { skipped = true }
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]

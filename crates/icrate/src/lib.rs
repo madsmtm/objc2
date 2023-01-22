@@ -52,6 +52,8 @@ pub mod Contacts;
 pub mod CoreAnimation;
 #[cfg(feature = "CoreData")]
 pub mod CoreData;
+#[cfg(feature = "EventKit")]
+pub mod EventKit;
 #[cfg(feature = "Foundation")]
 pub mod Foundation;
 #[cfg(feature = "Metal")]

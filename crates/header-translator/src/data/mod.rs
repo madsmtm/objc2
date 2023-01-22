@@ -14,6 +14,7 @@ data! {
     mod Contacts;
     mod CoreAnimation;
     mod CoreData;
+    mod EventKit;
     mod Foundation;
     mod Metal;
     mod WebKit;

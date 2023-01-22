@@ -32,4 +32,6 @@
 
 #import <Contacts/Contacts.h>
 
+#import <EventKit/EventKit.h>
+
 #import <WebKit/WebKit.h>
