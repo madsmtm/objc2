@@ -50,6 +50,8 @@ pub mod Automator;
 pub mod BackgroundAssets;
 #[cfg(feature = "BackgroundTasks")]
 pub mod BackgroundTasks;
+#[cfg(feature = "BusinessChat")]
+pub mod BusinessChat;
 #[cfg(feature = "ClassKit")]
 pub mod ClassKit;
 #[cfg(feature = "CloudKit")]

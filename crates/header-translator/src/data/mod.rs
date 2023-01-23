@@ -13,6 +13,7 @@ data! {
     mod AuthenticationServices;
     mod BackgroundAssets;
     mod BackgroundTasks;
+    mod BusinessChat;
     mod ClassKit;
     mod CloudKit;
     mod Contacts;

@@ -31,6 +31,9 @@ imports = ["BackgroundAssets", "Foundation"]
 [library.BackgroundTasks]
 imports = ["BackgroundTasks", "Foundation"]
 
+[library.BusinessChat]
+imports = ["BusinessChat", "AppKit", "Foundation"]
+
 [library.ClassKit]
 imports = ["ClassKit", "Foundation"]
 

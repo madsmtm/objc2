@@ -26,6 +26,8 @@
 
 #import <BackgroundTasks/BackgroundTasks.h>
 
+#import <BusinessChat/BusinessChat.h>
+
 #import <ClassKit/ClassKit.h>
 
 #import <CloudKit/CloudKit.h>
