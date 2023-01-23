@@ -1,50 +1,51 @@
 //! # Objective-C interface and runtime bindings
 //!
-//! Objective-C is[^note] the standard programming language on Apple platforms
-//! like macOS, iOS, iPadOS, tvOS and watchOS. It is an object-oriented
-//! language centered around "sending messages" to its instances - this can
-//! for the most part be viewed as a simple method call.
+//! Objective-C was the standard programming language on Apple platforms like
+//! macOS, iOS, iPadOS, tvOS and watchOS. It is an object-oriented language
+//! centered around "sending messages" to its instances - this can for the
+//! most part be viewed as a simple method call.
 //!
-//! Most of the core libraries and frameworks that are in use on Apple systems
-//! are written in Objective-C, and hence we would like the ability to
-//! interract with these using Rust; this crate enables you to do that, in
-//! as safe a manner as possible.
+//! It has since been superseded by Swift, but most of the core libraries and
+//! frameworks that are in use on Apple systems are still written in
+//! Objective-C, and hence we would like the ability to interract with these
+//! using Rust. This crate enables you to do that, in as safe a manner as
+//! possible.
 //!
-//! [^note]: Yes, I know, "was", Swift now exists. All the existing frameworks
-//!   are written in Objective-C though, so the point still holds.
+//! See [the document on "Layered Safety"][layered-safety] for a bit of an
+//! introduction to how the safety in this crate works, and see [`icrate`] for
+//! higher-level bindings to Apple's frameworks.
+//!
+//! [layered-safety]: https://github.com/madsmtm/objc2/blob/master/LAYERED_SAFETY.md
+//! [`icrate`]: https://docs.rs/icrate/latest/icrate/
 //!
 //!
 //! ## Basic usage
 //!
 //! This example illustrates major parts of the functionality in this crate:
 //!
-//! First, we get a reference to the `NSObject`'s [`runtime::Class`] using the
-//! [`class!`] macro.
-//! Next, we creates a new [`runtime::Object`] pointer, and ensure it is
-//! deallocated after we've used it by putting it into an [`rc::Owned`]
+//! First, we allocate a new [`NSObject`] using [`ClassType::alloc`].
+//! Next, we initialize this object. It is ensured to be deallocated using
 //! [`rc::Id`].
 //! Now we're free to send messages to the object to our hearts desire using
 //! the [`msg_send!`] or [`msg_send_id!`] macros (depending on the return type
 //! of the method).
-//! Finally, the `Id<Object, _>` goes out of scope, and the object is released
-//! and deallocated.
+//! Finally, the `Id` goes out of scope, and the object is released and
+//! deallocated.
 //!
 #![cfg_attr(feature = "apple", doc = "```")]
 #![cfg_attr(not(feature = "apple"), doc = "```no_run")]
-//! use objc2::{class, msg_send, msg_send_id};
+//! use objc2::{msg_send, msg_send_id, ClassType};
 //! use objc2::ffi::NSUInteger;
 //! use objc2::rc::{Id, Owned, Shared};
-//! use objc2::runtime::Object;
-//!
-//! let cls = class!(NSObject);
+//! use objc2::runtime::{NSObject, NSObjectProtocol};
 //!
 //! // Creation
 //!
-//! let obj1: Id<Object, Owned> = unsafe { msg_send_id![cls, new] };
-//! let obj2: Id<Object, Owned> = unsafe {
-//!     // Equivalent to using `new`
-//!     msg_send_id![msg_send_id![cls, alloc], init]
+//! let obj1: Id<NSObject, Owned> = unsafe {
+//!     msg_send_id![NSObject::alloc(), init]
 //! };
+//! // Or we can simply do
+//! let obj2 = NSObject::new();
 //!
 //! // Usage
 //!
@@ -52,36 +53,34 @@
 //! let hash2: NSUInteger = unsafe { msg_send![&obj2, hash] };
 //! assert_ne!(hash1, hash2);
 //!
-//! let is_kind: bool = unsafe { msg_send![&obj1, isKindOfClass: cls] };
+//! let is_kind: bool = unsafe {
+//!     msg_send![&obj1, isKindOfClass: NSObject::class()]
+//! };
 //! assert!(is_kind);
 //!
 //! // We're going to create a new reference to the first object, so
 //! // relinquish mutable ownership.
-//! let obj1: Id<Object, Shared> = obj1.into();
-//! let obj1_self: Id<Object, Shared> = unsafe { msg_send_id![&obj1, self] };
-//! let is_equal: bool = unsafe { msg_send![&obj1, isEqual: &*obj1_self] };
-//! assert!(is_equal);
+//! let obj1: Id<NSObject, Shared> = obj1.into();
+//! let obj1_self: Id<NSObject, Shared> = unsafe { msg_send_id![&obj1, self] };
+//! assert_eq!(obj1, obj1_self);
 //!
 //! // Deallocation on drop
 //! ```
 //!
-//! Note that this very simple example contains **a lot** of `unsafe` (which
+//! Note that this very simple example contains a lot of `unsafe` (which
 //! should all ideally be justified with a `// SAFETY` comment). This is
 //! required because our compiler can verify very little about the Objective-C
 //! invocation, including all argument and return types used in [`msg_send!`];
 //! we could have just as easily accidentally made `hash` an `f32`, or any
 //! other type, and this would trigger undefined behaviour!
 //!
-//! Making the ergonomics better is something that is currently being worked
-//! on, see the `icrate` crate for much more ergonomic usage of the built-in
+//! See the `icrate` crate for much more ergonomic usage of the system
 //! frameworks like `Foundation`, `AppKit`, `UIKit` and so on.
 //!
 //! Anyhow, all of this `unsafe` nicely leads us to another feature that this
 //! crate has:
 //!
-//! [`runtime::Class`]: crate::runtime::Class
-//! [`runtime::Object`]: crate::runtime::Object
-//! [`rc::Owned`]: crate::rc::Owned
+//! [`NSObject`]: crate::runtime::NSObject
 //! [`rc::Id`]: crate::rc::Id
 //!
 //!
@@ -89,18 +88,20 @@
 //!
 //! The Objective-C runtime includes encodings for each method that describe
 //! the argument and return types. See the [`objc2-encode`] crate for the
-//! full overview of what this is (its types are re-exported in this crate).
+//! full overview of what this is (it is re-exported in this crate under the
+//! [`encode`] module).
 //!
 //! The important part is: To make message sending safer, all arguments and
 //! return values for messages must implement [`Encode`]. This allows the Rust
-//! compiler to prevent you from passing e.g. a [`Box`] into Objective-C,
-//! which would both be UB and leak the box.
+//! compiler to prevent you from passing e.g. a [`Vec`] into Objective-C,
+//! which would both be UB and leak the vector.
 //!
 //! Furthermore, we can take advantage of the encodings provided by the
 //! runtime to verify that the types used in Rust actually match the types
 //! encoded for the method. This is not a perfect solution for ensuring safety
 //! (some Rust types have the same Objective-C encoding, but are not
-//! equivalent), but it gets us much closer to it!
+//! equivalent, such as `&T` and `*const T`), but it gets us much closer to
+//! it!
 //!
 //! When `debug_assertions` are enabled we check the encoding every time you
 //! send a message, and the message send will panic if they are not
@@ -111,24 +112,22 @@
 //!
 #![cfg_attr(all(feature = "apple", debug_assertions), doc = "```should_panic")]
 #![cfg_attr(not(all(feature = "apple", debug_assertions)), doc = "```no_run")]
-//! # use objc2::{class, msg_send, msg_send_id};
-//! # use objc2::rc::{Id, Owned};
-//! # use objc2::runtime::Object;
+//! # use objc2::{msg_send, ClassType};
+//! # use objc2::runtime::NSObject;
 //! #
-//! # let cls = class!(NSObject);
-//! # let obj1: Id<Object, Owned> = unsafe { msg_send_id![cls, new] };
+//! # let obj1 = NSObject::new();
 //! #
 //! // Wrong return type - this is UB!
 //! let hash1: f32 = unsafe { msg_send![&obj1, hash] };
 //! #
-//! # panic!("does not panic in release mode for some reason, so for testing we make it!");
+//! # panic!("does not panic in release mode, so for testing we make it!");
 //! ```
 //!
 //! This library contains further such debug checks, most of which are enabled
 //! by default. To enable all of them, use the `"verify"` cargo feature.
 //!
 //! [`objc2-encode`]: objc2_encode
-//! [`Box`]: std::boxed::Box
+//! [`Vec`]: std::vec::Vec
 //!
 //!
 //! ## Crate features

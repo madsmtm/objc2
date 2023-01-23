@@ -44,6 +44,9 @@ ref that is ever referenced from the `HEAD` branch in this repository, is
 reachable from the `HEAD` branch that repository. This will probably mean
 you'll have to rebase more often.
 
+If you're confused about this, don't worry too much about it, if you enable
+"Allow edits by maintainers" we can fix it for you.
+
 
 ## Release checklist
 
