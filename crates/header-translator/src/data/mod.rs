@@ -14,6 +14,7 @@ data! {
     mod BackgroundAssets;
     mod BackgroundTasks;
     mod BusinessChat;
+    mod CallKit;
     mod ClassKit;
     mod CloudKit;
     mod Contacts;

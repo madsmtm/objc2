@@ -34,6 +34,9 @@ imports = ["BackgroundTasks", "Foundation"]
 [library.BusinessChat]
 imports = ["BusinessChat", "AppKit", "Foundation"]
 
+[library.CallKit]
+imports = ["CallKit", "Foundation"]
+
 [library.ClassKit]
 imports = ["ClassKit", "Foundation"]
 
@@ -824,6 +827,13 @@ setColorspace = { skipped = true }
 initWithComponent = { skipped = true }
 componentInstance = { skipped = true }
 [class.OSALanguageInstance.methods.componentInstance]
+skipped = true
+# Needs `dispatch_queue_t`
+[class.CXCallController.methods.initWithQueue]
+skipped = true
+[class.CXCallObserver.methods.setDelegate_queue]
+skipped = true
+[class.CXProvider.methods.setDelegate_queue]
 skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet

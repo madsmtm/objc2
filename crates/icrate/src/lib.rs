@@ -52,6 +52,8 @@ pub mod BackgroundAssets;
 pub mod BackgroundTasks;
 #[cfg(feature = "BusinessChat")]
 pub mod BusinessChat;
+#[cfg(feature = "CallKit")]
+pub mod CallKit;
 #[cfg(feature = "ClassKit")]
 pub mod ClassKit;
 #[cfg(feature = "CloudKit")]

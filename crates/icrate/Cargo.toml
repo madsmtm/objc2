@@ -148,6 +148,7 @@ Automator = ["AppKit", "Foundation", "OSAKit"]
 BackgroundAssets = ["Foundation"]
 BackgroundTasks = ["Foundation"]
 BusinessChat = ["AppKit", "Foundation"]
+CallKit = ["Foundation"]
 ClassKit = ["Foundation"]
 CloudKit = ["CoreLocation", "Foundation"]
 Contacts = ["Foundation"]
@@ -198,12 +199,12 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "EventKit_all", "Foundation_all", "GameKit_all", "MapKit_all", "Metal_all", "MetalKit_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "EventKit_all", "Foundation_all", "GameKit_all", "MapKit_all", "Metal_all", "MetalKit_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "WebKit_all"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "GameKit_all", "MapKit_all", "MetalKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
-unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "MetalFX_all"]
+unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "CallKit_all", "MetalFX_all"]
 
 # Temporary fixes until we can autogenerate these
 Foundation_NSProxy = []
@@ -1314,6 +1315,67 @@ BusinessChat_all = [
     "BusinessChat",
     "BusinessChat_BCChatAction",
     "BusinessChat_BCChatButton",
+]
+CallKit_CXAction = []
+CallKit_CXAnswerCallAction = [
+    "CallKit_CXCallAction",
+]
+CallKit_CXCall = []
+CallKit_CXCallAction = [
+    "CallKit_CXAction",
+]
+CallKit_CXCallController = []
+CallKit_CXCallDirectoryExtensionContext = [
+    "Foundation_NSExtensionContext",
+]
+CallKit_CXCallDirectoryManager = []
+CallKit_CXCallDirectoryProvider = []
+CallKit_CXCallObserver = []
+CallKit_CXCallUpdate = []
+CallKit_CXEndCallAction = [
+    "CallKit_CXCallAction",
+]
+CallKit_CXHandle = []
+CallKit_CXPlayDTMFCallAction = [
+    "CallKit_CXCallAction",
+]
+CallKit_CXProvider = []
+CallKit_CXProviderConfiguration = []
+CallKit_CXSetGroupCallAction = [
+    "CallKit_CXCallAction",
+]
+CallKit_CXSetHeldCallAction = [
+    "CallKit_CXCallAction",
+]
+CallKit_CXSetMutedCallAction = [
+    "CallKit_CXCallAction",
+]
+CallKit_CXStartCallAction = [
+    "CallKit_CXCallAction",
+]
+CallKit_CXTransaction = []
+CallKit_all = [
+    "CallKit",
+    "CallKit_CXAction",
+    "CallKit_CXAnswerCallAction",
+    "CallKit_CXCall",
+    "CallKit_CXCallAction",
+    "CallKit_CXCallController",
+    "CallKit_CXCallDirectoryExtensionContext",
+    "CallKit_CXCallDirectoryManager",
+    "CallKit_CXCallDirectoryProvider",
+    "CallKit_CXCallObserver",
+    "CallKit_CXCallUpdate",
+    "CallKit_CXEndCallAction",
+    "CallKit_CXHandle",
+    "CallKit_CXPlayDTMFCallAction",
+    "CallKit_CXProvider",
+    "CallKit_CXProviderConfiguration",
+    "CallKit_CXSetGroupCallAction",
+    "CallKit_CXSetHeldCallAction",
+    "CallKit_CXSetMutedCallAction",
+    "CallKit_CXStartCallAction",
+    "CallKit_CXTransaction",
 ]
 ClassKit_CLSActivity = [
     "ClassKit_CLSObject",
