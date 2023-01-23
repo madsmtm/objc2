@@ -164,6 +164,7 @@ DeviceCheck = ["Foundation"]
 EventKit = ["AppKit", "CoreLocation", "Foundation", "MapKit"]
 ExceptionHandling = ["Foundation"]
 ExtensionKit = ["AppKit", "Foundation"]
+ExternalAccessory = ["Foundation"]
 Foundation = [
     "objective-c",
     "block",
@@ -202,9 +203,9 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "Foundation_all", "GameKit_all", "MapKit_all", "Metal_all", "MetalKit_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "Foundation_all", "GameKit_all", "MapKit_all", "Metal_all", "MetalKit_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "WebKit_all"]
-unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "GameKit_all", "MapKit_all", "MetalKit_all"]
+unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameKit_all", "MapKit_all", "MetalKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "DeviceCheck_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "CallKit_all", "ExtensionKit_all", "MetalFX_all"]
@@ -2088,6 +2089,19 @@ ExtensionKit_all = [
     "ExtensionKit",
     "ExtensionKit_EXAppExtensionBrowserViewController",
     "ExtensionKit_EXHostViewController",
+]
+ExternalAccessory_EAAccessory = []
+ExternalAccessory_EAAccessoryManager = []
+ExternalAccessory_EASession = []
+ExternalAccessory_EAWiFiUnconfiguredAccessory = []
+ExternalAccessory_EAWiFiUnconfiguredAccessoryBrowser = []
+ExternalAccessory_all = [
+    "ExternalAccessory",
+    "ExternalAccessory_EAAccessory",
+    "ExternalAccessory_EAAccessoryManager",
+    "ExternalAccessory_EASession",
+    "ExternalAccessory_EAWiFiUnconfiguredAccessory",
+    "ExternalAccessory_EAWiFiUnconfiguredAccessoryBrowser",
 ]
 Foundation_NSAffineTransform = []
 Foundation_NSAppleEventDescriptor = []

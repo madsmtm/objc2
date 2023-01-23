@@ -67,6 +67,9 @@ imports = ["ExceptionHandling", "Foundation"]
 [library.ExtensionKit]
 imports = ["ExtensionKit", "AppKit", "Foundation"]
 
+[library.ExternalAccessory]
+imports = ["ExternalAccessory", "Foundation"]
+
 [library.Foundation]
 imports = ["Foundation"]
 
@@ -843,6 +846,9 @@ skipped = true
 [class.CXCallObserver.methods.setDelegate_queue]
 skipped = true
 [class.CXProvider.methods.setDelegate_queue]
+skipped = true
+# Needs `dispatch_queue_t`
+[class.EAWiFiUnconfiguredAccessoryBrowser.methods.initWithDelegate_queue]
 skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet

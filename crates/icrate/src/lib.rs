@@ -76,6 +76,8 @@ pub mod EventKit;
 pub mod ExceptionHandling;
 #[cfg(feature = "ExtensionKit")]
 pub mod ExtensionKit;
+#[cfg(feature = "ExternalAccessory")]
+pub mod ExternalAccessory;
 #[cfg(feature = "Foundation")]
 pub mod Foundation;
 #[cfg(feature = "GameKit")]

@@ -50,6 +50,8 @@
 
 #import <ExtensionKit/ExtensionKit.h>
 
+#import <ExternalAccessory/ExternalAccessory.h>
+
 #import <Foundation/Foundation.h>
 
 #import <GameKit/GameKit.h>
