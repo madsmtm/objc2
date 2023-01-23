@@ -8,6 +8,7 @@ data! {
     mod AdServices;
     mod AdSupport;
     mod AppKit;
+    mod AutomaticAssessmentConfiguration;
     mod AuthenticationServices;
     mod BackgroundAssets;
     mod BackgroundTasks;

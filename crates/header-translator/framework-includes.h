@@ -18,6 +18,8 @@
 
 #import <AuthenticationServices/AuthenticationServices.h>
 
+#import <AutomaticAssessmentConfiguration/AutomaticAssessmentConfiguration.h>
+
 #import <BackgroundAssets/BackgroundAssets.h>
 
 #import <BackgroundTasks/BackgroundTasks.h>

@@ -19,6 +19,9 @@ imports = ["AppKit", "CoreData", "Foundation"]
 [library.AuthenticationServices]
 imports = ["AuthenticationServices", "Foundation"]
 
+[library.AutomaticAssessmentConfiguration]
+imports = ["AutomaticAssessmentConfiguration", "Foundation"]
+
 [library.BackgroundAssets]
 imports = ["BackgroundAssets", "Foundation"]
 

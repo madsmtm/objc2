@@ -143,6 +143,7 @@ AuthenticationServices = [
     # Temporary, since some structs and statics use these
     "Foundation_NSURL",
 ]
+AutomaticAssessmentConfiguration = ["Foundation"]
 BackgroundAssets = ["Foundation"]
 BackgroundTasks = ["Foundation"]
 ClassKit = ["Foundation"]
@@ -194,10 +195,10 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "EventKit_all", "Foundation_all", "GameKit_all", "MapKit_all", "Metal_all", "MetalKit_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "EventKit_all", "Foundation_all", "GameKit_all", "MapKit_all", "Metal_all", "MetalKit_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "WebKit_all"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "CloudKit_all", "Contacts_all", "EventKit_all", "GameKit_all", "MapKit_all", "MetalKit_all"]
-unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "ClassKit_all", "Metal_all"]
+unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "MetalFX_all"]
 
@@ -1223,6 +1224,17 @@ AuthenticationServices_all = [
     "AuthenticationServices_ASWebAuthenticationSession",
     "AuthenticationServices_ASWebAuthenticationSessionRequest",
     "AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionManager",
+]
+AutomaticAssessmentConfiguration_AEAssessmentApplication = []
+AutomaticAssessmentConfiguration_AEAssessmentConfiguration = []
+AutomaticAssessmentConfiguration_AEAssessmentParticipantConfiguration = []
+AutomaticAssessmentConfiguration_AEAssessmentSession = []
+AutomaticAssessmentConfiguration_all = [
+    "AutomaticAssessmentConfiguration",
+    "AutomaticAssessmentConfiguration_AEAssessmentApplication",
+    "AutomaticAssessmentConfiguration_AEAssessmentConfiguration",
+    "AutomaticAssessmentConfiguration_AEAssessmentParticipantConfiguration",
+    "AutomaticAssessmentConfiguration_AEAssessmentSession",
 ]
 BackgroundAssets_BAAppExtensionInfo = []
 BackgroundAssets_BADownload = []

@@ -42,6 +42,8 @@ pub mod AdSupport;
 pub mod AppKit;
 #[cfg(feature = "AuthenticationServices")]
 pub mod AuthenticationServices;
+#[cfg(feature = "AutomaticAssessmentConfiguration")]
+pub mod AutomaticAssessmentConfiguration;
 #[cfg(feature = "BackgroundAssets")]
 pub mod BackgroundAssets;
 #[cfg(feature = "BackgroundTasks")]
