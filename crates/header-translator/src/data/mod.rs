@@ -30,6 +30,7 @@ data! {
     mod FileProvider;
     mod FileProviderUI;
     mod Foundation;
+    mod GameController;
     mod GameKit;
     mod InputMethodKit;
     mod MapKit;

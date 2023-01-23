@@ -84,6 +84,8 @@ pub mod FileProvider;
 pub mod FileProviderUI;
 #[cfg(feature = "Foundation")]
 pub mod Foundation;
+#[cfg(feature = "GameController")]
+pub mod GameController;
 #[cfg(feature = "GameKit")]
 pub mod GameKit;
 #[cfg(feature = "InputMethodKit")]

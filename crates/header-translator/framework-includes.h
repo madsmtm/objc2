@@ -58,6 +58,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import <GameController/GameController.h>
+
 #import <GameKit/GameKit.h>
 
 #import <InputMethodKit/InputMethodKit.h>

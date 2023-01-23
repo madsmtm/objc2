@@ -79,6 +79,9 @@ imports = ["FileProviderUI", "AppKit", "FileProvider", "Foundation"]
 [library.Foundation]
 imports = ["Foundation"]
 
+[library.GameController]
+imports = ["GameController", "AppKit", "Foundation"]
+
 [library.GameKit]
 imports = ["GameKit", "AppKit", "Foundation"]
 
@@ -860,6 +863,17 @@ skipped = true
 # Needs `dispatch_queue_t`
 [class.EAWiFiUnconfiguredAccessoryBrowser.methods.initWithDelegate_queue]
 skipped = true
+# Needs `dispatch_queue_t`
+[protocol.GCDevice.methods.handlerQueue]
+skipped = true
+[protocol.GCDevice.methods.setHandlerQueue]
+skipped = true
+# Needs `CFIndex` (fixed locally for now)
+[typedef.GCKeyCode]
+skipped = true
+# Needs `IOHIDDeviceRef` from IOKit
+[class.GCController.methods.supportsHIDDevice]
+skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]
@@ -1075,4 +1089,83 @@ skipped = true
 [static.MKAnnotationViewZPriorityDefaultUnselected]
 skipped = true
 [static.MKAnnotationViewZPriorityMin]
+skipped = true
+
+# tries to parse these as `pub type <name> = *const NSString`; fix manually for now
+[typedef.GCInputElementName]
+skipped = true
+[typedef.GCInputButtonName]
+skipped = true
+[typedef.GCInputAxisName]
+skipped = true
+[typedef.GCInputSwitchName]
+skipped = true
+[typedef.GCInputDirectionPadName]
+skipped = true
+# corresponding constants which we want to treat as (nonnull); fix manually for now
+[static.GCInputButtonA]
+skipped = true
+[static.GCInputButtonB]
+skipped = true
+[static.GCInputButtonX]
+skipped = true
+[static.GCInputButtonY]
+skipped = true
+[static.GCInputDirectionPad]
+skipped = true
+[static.GCInputLeftThumbstick]
+skipped = true
+[static.GCInputRightThumbstick]
+skipped = true
+[static.GCInputLeftShoulder]
+skipped = true
+[static.GCInputRightShoulder]
+skipped = true
+[static.GCInputLeftTrigger]
+skipped = true
+[static.GCInputRightTrigger]
+skipped = true
+[static.GCInputLeftThumbstickButton]
+skipped = true
+[static.GCInputRightThumbstickButton]
+skipped = true
+[static.GCInputButtonHome]
+skipped = true
+[static.GCInputButtonMenu]
+skipped = true
+[static.GCInputButtonOptions]
+skipped = true
+[static.GCInputButtonShare]
+skipped = true
+[static.GCInputXboxPaddleOne]
+skipped = true
+[static.GCInputXboxPaddleTwo]
+skipped = true
+[static.GCInputXboxPaddleThree]
+skipped = true
+[static.GCInputXboxPaddleFour]
+skipped = true
+[static.GCInputDualShockTouchpadOne]
+skipped = true
+[static.GCInputDualShockTouchpadTwo]
+skipped = true
+[static.GCInputDualShockTouchpadButton]
+skipped = true
+[static.GCInputSteeringWheel]
+skipped = true
+[static.GCInputShifter]
+skipped = true
+[static.GCInputPedalAccelerator]
+skipped = true
+[static.GCInputPedalBrake]
+skipped = true
+[static.GCInputPedalClutch]
+skipped = true
+[static.GCInputLeftPaddle]
+skipped = true
+[static.GCInputRightPaddle]
+skipped = true
+
+# tries to derive with `PartialEq` which fails because of `Bool` fields; manually define for now
+[struct.GCExtendedGamepadSnapshotData]
 skipped = true

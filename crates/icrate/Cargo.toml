@@ -182,6 +182,7 @@ Foundation = [
     "Foundation_NSDictionary",
     "Foundation_NSEnumerator",
 ]
+GameController = ["AppKit", "Foundation"]
 GameKit = ["AppKit", "Foundation"]
 InputMethodKit = ["AppKit", "Foundation"]
 MapKit = ["AppKit", "Contacts", "CoreLocation", "Foundation"]
@@ -205,9 +206,9 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameKit_all", "MapKit_all", "Metal_all", "MetalKit_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameController_all", "GameKit_all", "MapKit_all", "Metal_all", "MetalKit_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "WebKit_all"]
-unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameKit_all", "MapKit_all", "MetalKit_all"]
+unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameController_all", "GameKit_all", "MapKit_all", "MetalKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "DeviceCheck_all", "FileProvider_all", "FileProviderUI_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "CallKit_all", "ExtensionKit_all", "MetalFX_all"]
@@ -2895,6 +2896,119 @@ Foundation_all = [
     "Foundation_NSXPCInterface",
     "Foundation_NSXPCListener",
     "Foundation_NSXPCListenerEndpoint",
+]
+GameController_GCColor = []
+GameController_GCController = []
+GameController_GCControllerAxisInput = [
+    "GameController_GCControllerElement",
+]
+GameController_GCControllerButtonInput = [
+    "GameController_GCControllerElement",
+]
+GameController_GCControllerDirectionPad = [
+    "GameController_GCControllerElement",
+]
+GameController_GCControllerElement = []
+GameController_GCControllerTouchpad = [
+    "GameController_GCControllerElement",
+]
+GameController_GCDeviceBattery = []
+GameController_GCDeviceCursor = [
+    "GameController_GCControllerDirectionPad",
+]
+GameController_GCDeviceHaptics = []
+GameController_GCDeviceLight = []
+GameController_GCDirectionalGamepad = [
+    "GameController_GCMicroGamepad",
+]
+GameController_GCDualSenseAdaptiveTrigger = [
+    "GameController_GCControllerButtonInput",
+]
+GameController_GCDualSenseGamepad = [
+    "GameController_GCExtendedGamepad",
+]
+GameController_GCDualShockGamepad = [
+    "GameController_GCExtendedGamepad",
+]
+GameController_GCEventViewController = [
+    "AppKit_NSViewController",
+]
+GameController_GCExtendedGamepad = [
+    "GameController_GCPhysicalInputProfile",
+]
+GameController_GCExtendedGamepadSnapshot = [
+    "GameController_GCExtendedGamepad",
+]
+GameController_GCGamepad = [
+    "GameController_GCPhysicalInputProfile",
+]
+GameController_GCGamepadSnapshot = [
+    "GameController_GCGamepad",
+]
+GameController_GCGearShifterElement = []
+GameController_GCKeyboard = []
+GameController_GCKeyboardInput = [
+    "GameController_GCPhysicalInputProfile",
+]
+GameController_GCMicroGamepad = [
+    "GameController_GCPhysicalInputProfile",
+]
+GameController_GCMicroGamepadSnapshot = [
+    "GameController_GCMicroGamepad",
+]
+GameController_GCMotion = []
+GameController_GCMouse = []
+GameController_GCMouseInput = [
+    "GameController_GCPhysicalInputProfile",
+]
+GameController_GCPhysicalInputElementCollection = []
+GameController_GCPhysicalInputProfile = []
+GameController_GCRacingWheel = []
+GameController_GCRacingWheelInput = [
+    "GameController_GCRacingWheelInputState",
+]
+GameController_GCRacingWheelInputState = []
+GameController_GCSteeringWheelElement = []
+GameController_GCXboxGamepad = [
+    "GameController_GCExtendedGamepad",
+]
+GameController_all = [
+    "GameController",
+    "GameController_GCColor",
+    "GameController_GCController",
+    "GameController_GCControllerAxisInput",
+    "GameController_GCControllerButtonInput",
+    "GameController_GCControllerDirectionPad",
+    "GameController_GCControllerElement",
+    "GameController_GCControllerTouchpad",
+    "GameController_GCDeviceBattery",
+    "GameController_GCDeviceCursor",
+    "GameController_GCDeviceHaptics",
+    "GameController_GCDeviceLight",
+    "GameController_GCDirectionalGamepad",
+    "GameController_GCDualSenseAdaptiveTrigger",
+    "GameController_GCDualSenseGamepad",
+    "GameController_GCDualShockGamepad",
+    "GameController_GCEventViewController",
+    "GameController_GCExtendedGamepad",
+    "GameController_GCExtendedGamepadSnapshot",
+    "GameController_GCGamepad",
+    "GameController_GCGamepadSnapshot",
+    "GameController_GCGearShifterElement",
+    "GameController_GCKeyboard",
+    "GameController_GCKeyboardInput",
+    "GameController_GCMicroGamepad",
+    "GameController_GCMicroGamepadSnapshot",
+    "GameController_GCMotion",
+    "GameController_GCMouse",
+    "GameController_GCMouseInput",
+    "GameController_GCPhysicalInputElementCollection",
+    "GameController_GCPhysicalInputProfile",
+    "GameController_GCRacingWheel",
+    "GameController_GCRacingWheelInput",
+    "GameController_GCRacingWheelInputState",
+    "GameController_GCSteeringWheelElement",
+    "GameController_GCXboxGamepad",
 ]
 GameKit_GKAccessPoint = []
 GameKit_GKAchievement = []
