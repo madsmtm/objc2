@@ -68,6 +68,8 @@ pub mod CoreData;
 pub mod CoreLocation;
 #[cfg(feature = "DataDetection")]
 pub mod DataDetection;
+#[cfg(feature = "DeviceCheck")]
+pub mod DeviceCheck;
 #[cfg(feature = "EventKit")]
 pub mod EventKit;
 #[cfg(feature = "ExceptionHandling")]

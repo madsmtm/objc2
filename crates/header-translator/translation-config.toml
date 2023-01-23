@@ -55,6 +55,9 @@ imports = ["CoreLocation", "Contacts", "Foundation"]
 [library.DataDetection]
 imports = ["DataDetection", "Foundation"]
 
+[library.DeviceCheck]
+imports = ["DeviceCheck", "Foundation"]
+
 [library.EventKit]
 imports = ["EventKit", "AppKit", "CoreLocation", "Foundation", "MapKit"]
 

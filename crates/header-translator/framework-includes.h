@@ -42,6 +42,8 @@
 
 #import <DataDetection/DataDetection.h>
 
+#import <DeviceCheck/DeviceCheck.h>
+
 #import <EventKit/EventKit.h>
 
 #import <ExceptionHandling/ExceptionHandling.h>

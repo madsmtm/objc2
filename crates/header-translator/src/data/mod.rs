@@ -22,6 +22,7 @@ data! {
     mod CoreData;
     mod CoreLocation;
     mod DataDetection;
+    mod DeviceCheck;
     mod EventKit;
     mod ExceptionHandling;
     mod Foundation;
