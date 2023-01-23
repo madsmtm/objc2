@@ -74,6 +74,8 @@ pub mod DeviceCheck;
 pub mod EventKit;
 #[cfg(feature = "ExceptionHandling")]
 pub mod ExceptionHandling;
+#[cfg(feature = "ExtensionKit")]
+pub mod ExtensionKit;
 #[cfg(feature = "Foundation")]
 pub mod Foundation;
 #[cfg(feature = "GameKit")]

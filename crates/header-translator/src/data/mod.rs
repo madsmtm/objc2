@@ -25,6 +25,7 @@ data! {
     mod DeviceCheck;
     mod EventKit;
     mod ExceptionHandling;
+    mod ExtensionKit;
     mod Foundation;
     mod GameKit;
     mod InputMethodKit;

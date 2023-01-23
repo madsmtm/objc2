@@ -48,6 +48,8 @@
 
 #import <ExceptionHandling/ExceptionHandling.h>
 
+#import <ExtensionKit/ExtensionKit.h>
+
 #import <Foundation/Foundation.h>
 
 #import <GameKit/GameKit.h>

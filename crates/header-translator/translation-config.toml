@@ -64,6 +64,9 @@ imports = ["EventKit", "AppKit", "CoreLocation", "Foundation", "MapKit"]
 [library.ExceptionHandling]
 imports = ["ExceptionHandling", "Foundation"]
 
+[library.ExtensionKit]
+imports = ["ExtensionKit", "AppKit", "Foundation"]
+
 [library.Foundation]
 imports = ["Foundation"]
 
