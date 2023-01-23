@@ -17,12 +17,14 @@ macro_rules! impl_encode {
 
 macro_rules! extern_struct {
     (
+        $(#[$m:meta])*
         $v:vis struct $name:ident {
             $($field_v:vis $field:ident: $ty:ty),* $(,)?
         }
     ) => {
         #[repr(C)]
         #[derive(Clone, Copy, Debug, PartialEq)]
+        $(#[$m])*
         $v struct $name {
             $($field_v $field: $ty,)*
         }
