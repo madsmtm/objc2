@@ -45,7 +45,7 @@ imports = ["Contacts", "Foundation"]
 imports = ["CoreLocation", "Contacts", "Foundation"]
 
 [library.EventKit]
-imports = ["EventKit", "AppKit", "CoreLocation", "Foundation"]
+imports = ["EventKit", "AppKit", "CoreLocation", "Foundation", "MapKit"]
 
 [library.ExceptionHandling]
 imports = ["ExceptionHandling", "Foundation"]
@@ -55,6 +55,9 @@ imports = ["GameKit", "AppKit", "Foundation"]
 
 [library.InputMethodKit]
 imports = ["InputMethodKit", "AppKit", "Foundation"]
+
+[library.MapKit]
+imports = ["MapKit", "AppKit", "Contacts", "CoreLocation", "Foundation"]
 
 [library.WebKit]
 imports = ["WebKit", "AppKit", "Foundation"]
@@ -743,6 +746,34 @@ setCGColor = { skipped = true }
 [class.IMKCandidates.methods]
 setSelectionKeysKeylayout = { skipped = true }
 selectionKeysKeylayout = { skipped = true }
+# Needs `CGRectEdge`
+[fn.MKMapRectDivide]
+skipped = true
+[class.MKMapSnapshotter.methods]
+# Needs `dispatch_queue_t`
+startWithQueue_completionHandler = { skipped = true }
+[class.MKOverlayPathRenderer.methods]
+# Needs `CGLineJoin`
+lineJoin = { skipped = true }
+setLineJoin = { skipped = true }
+# Needs `CGLineCap`
+lineCap = { skipped = true }
+setLineCap = { skipped = true }
+# Needs `CGPathRef`
+path = { skipped = true }
+setPath = { skipped = true }
+# Needs `CGContextRef`
+applyStrokePropertiesToContext_atZoomScale = { skipped = true }
+applyFillPropertiesToContext_atZoomScale = { skipped = true }
+# Needs `CGPathRef` and `CGContextRef`
+strokePath_inContext = { skipped = true }
+fillPath_inContext = { skipped = true }
+[class.MKOverlayRenderer.methods]
+# Needs `CGContextRef`
+drawMapRect_zoomScale_inContext = { skipped = true }
+# Needs `CGBlendMode`
+blendMode = { skipped = true }
+setBlendMode = { skipped = true }
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]
@@ -937,3 +968,19 @@ skipped = true
 [class.CLLocation.methods]
 getDistanceFrom = { skipped = true }
 distanceFromLocation = { skipped = true }
+
+# error: expected `f32`, found integer (NOTE: generated statics need a trailing `.`; fix manually for now)
+[static.MKFeatureDisplayPriorityRequired]
+skipped = true
+[static.MKFeatureDisplayPriorityDefaultHigh]
+skipped = true
+[static.MKFeatureDisplayPriorityDefaultLow]
+skipped = true
+[static.MKAnnotationViewZPriorityMax]
+skipped = true
+[static.MKAnnotationViewZPriorityDefaultSelected]
+skipped = true
+[static.MKAnnotationViewZPriorityDefaultUnselected]
+skipped = true
+[static.MKAnnotationViewZPriorityMin]
+skipped = true

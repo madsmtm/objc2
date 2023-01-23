@@ -20,6 +20,7 @@ data! {
     mod Foundation;
     mod GameKit;
     mod InputMethodKit;
+    mod MapKit;
     mod Metal;
     mod WebKit;
 }

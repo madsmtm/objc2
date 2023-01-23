@@ -42,4 +42,6 @@
 
 #import <InputMethodKit/InputMethodKit.h>
 
+#import <MapKit/MapKit.h>
+
 #import <WebKit/WebKit.h>

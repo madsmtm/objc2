@@ -153,7 +153,7 @@ CoreData = [
     "CoreData_NSAsynchronousFetchResult",
 ]
 CoreLocation = ["Contacts", "Foundation"]
-EventKit = ["AppKit", "CoreLocation", "Foundation"]
+EventKit = ["AppKit", "CoreLocation", "Foundation", "MapKit"]
 ExceptionHandling = ["Foundation"]
 Foundation = [
     "objective-c",
@@ -172,6 +172,7 @@ Foundation = [
 ]
 GameKit = ["AppKit", "Foundation"]
 InputMethodKit = ["AppKit", "Foundation"]
+MapKit = ["AppKit", "Contacts", "CoreLocation", "Foundation"]
 Metal = [
     "Foundation",
     # Temporary, since some structs and statics use these
@@ -189,9 +190,9 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "EventKit_all", "Foundation_all", "GameKit_all", "Metal_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "EventKit_all", "Foundation_all", "GameKit_all", "MapKit_all", "Metal_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "WebKit_all"]
-unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "CloudKit_all", "Contacts_all", "EventKit_all", "GameKit_all"]
+unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "CloudKit_all", "Contacts_all", "EventKit_all", "GameKit_all", "MapKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "ClassKit_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all"]
@@ -2783,6 +2784,195 @@ InputMethodKit_all = [
     "InputMethodKit_IMKCandidates",
     "InputMethodKit_IMKInputController",
     "InputMethodKit_IMKServer",
+]
+MapKit_MKAnnotationView = [
+    "AppKit_NSView",
+]
+MapKit_MKCircle = [
+    "MapKit_MKShape",
+]
+MapKit_MKCircleRenderer = [
+    "MapKit_MKOverlayPathRenderer",
+]
+MapKit_MKClusterAnnotation = []
+MapKit_MKCompassButton = [
+    "AppKit_NSView",
+]
+MapKit_MKDirections = []
+MapKit_MKDirectionsRequest = []
+MapKit_MKDirectionsResponse = []
+MapKit_MKDistanceFormatter = [
+    "Foundation_NSFormatter",
+]
+MapKit_MKETAResponse = []
+MapKit_MKGeoJSONDecoder = []
+MapKit_MKGeoJSONFeature = []
+MapKit_MKGeodesicPolyline = [
+    "MapKit_MKPolyline",
+]
+MapKit_MKGradientPolylineRenderer = [
+    "MapKit_MKPolylineRenderer",
+]
+MapKit_MKHybridMapConfiguration = [
+    "MapKit_MKMapConfiguration",
+]
+MapKit_MKImageryMapConfiguration = [
+    "MapKit_MKMapConfiguration",
+]
+MapKit_MKLocalPointsOfInterestRequest = []
+MapKit_MKLocalSearch = []
+MapKit_MKLocalSearchCompleter = []
+MapKit_MKLocalSearchCompletion = []
+MapKit_MKLocalSearchRequest = []
+MapKit_MKLocalSearchResponse = []
+MapKit_MKLookAroundScene = []
+MapKit_MKLookAroundSceneRequest = []
+MapKit_MKLookAroundSnapshot = []
+MapKit_MKLookAroundSnapshotOptions = []
+MapKit_MKLookAroundSnapshotter = []
+MapKit_MKLookAroundViewController = [
+    "AppKit_NSViewController",
+]
+MapKit_MKMapCamera = []
+MapKit_MKMapCameraBoundary = []
+MapKit_MKMapCameraZoomRange = []
+MapKit_MKMapConfiguration = []
+MapKit_MKMapItem = []
+MapKit_MKMapSnapshot = []
+MapKit_MKMapSnapshotOptions = []
+MapKit_MKMapSnapshotter = []
+MapKit_MKMapView = [
+    "AppKit_NSView",
+]
+MapKit_MKMarkerAnnotationView = [
+    "MapKit_MKAnnotationView",
+]
+MapKit_MKMultiPoint = [
+    "MapKit_MKShape",
+]
+MapKit_MKMultiPolygon = [
+    "MapKit_MKShape",
+]
+MapKit_MKMultiPolygonRenderer = [
+    "MapKit_MKOverlayPathRenderer",
+]
+MapKit_MKMultiPolyline = [
+    "MapKit_MKShape",
+]
+MapKit_MKMultiPolylineRenderer = [
+    "MapKit_MKOverlayPathRenderer",
+]
+MapKit_MKOverlayPathRenderer = [
+    "MapKit_MKOverlayRenderer",
+]
+MapKit_MKOverlayRenderer = []
+MapKit_MKPinAnnotationView = [
+    "MapKit_MKAnnotationView",
+]
+MapKit_MKPitchControl = [
+    "AppKit_NSView",
+]
+MapKit_MKPlacemark = [
+    "CoreLocation_CLPlacemark",
+]
+MapKit_MKPointAnnotation = [
+    "MapKit_MKShape",
+]
+MapKit_MKPointOfInterestFilter = []
+MapKit_MKPolygon = [
+    "MapKit_MKMultiPoint",
+]
+MapKit_MKPolygonRenderer = [
+    "MapKit_MKOverlayPathRenderer",
+]
+MapKit_MKPolyline = [
+    "MapKit_MKMultiPoint",
+]
+MapKit_MKPolylineRenderer = [
+    "MapKit_MKOverlayPathRenderer",
+]
+MapKit_MKRoute = []
+MapKit_MKRouteStep = []
+MapKit_MKShape = []
+MapKit_MKStandardMapConfiguration = [
+    "MapKit_MKMapConfiguration",
+]
+MapKit_MKTileOverlay = []
+MapKit_MKTileOverlayRenderer = [
+    "MapKit_MKOverlayRenderer",
+]
+MapKit_MKUserLocation = []
+MapKit_MKUserLocationView = [
+    "MapKit_MKAnnotationView",
+]
+MapKit_MKZoomControl = [
+    "AppKit_NSView",
+]
+MapKit_all = [
+    "MapKit",
+    "MapKit_MKAnnotationView",
+    "MapKit_MKCircle",
+    "MapKit_MKCircleRenderer",
+    "MapKit_MKClusterAnnotation",
+    "MapKit_MKCompassButton",
+    "MapKit_MKDirections",
+    "MapKit_MKDirectionsRequest",
+    "MapKit_MKDirectionsResponse",
+    "MapKit_MKDistanceFormatter",
+    "MapKit_MKETAResponse",
+    "MapKit_MKGeoJSONDecoder",
+    "MapKit_MKGeoJSONFeature",
+    "MapKit_MKGeodesicPolyline",
+    "MapKit_MKGradientPolylineRenderer",
+    "MapKit_MKHybridMapConfiguration",
+    "MapKit_MKImageryMapConfiguration",
+    "MapKit_MKLocalPointsOfInterestRequest",
+    "MapKit_MKLocalSearch",
+    "MapKit_MKLocalSearchCompleter",
+    "MapKit_MKLocalSearchCompletion",
+    "MapKit_MKLocalSearchRequest",
+    "MapKit_MKLocalSearchResponse",
+    "MapKit_MKLookAroundScene",
+    "MapKit_MKLookAroundSceneRequest",
+    "MapKit_MKLookAroundSnapshot",
+    "MapKit_MKLookAroundSnapshotOptions",
+    "MapKit_MKLookAroundSnapshotter",
+    "MapKit_MKLookAroundViewController",
+    "MapKit_MKMapCamera",
+    "MapKit_MKMapCameraBoundary",
+    "MapKit_MKMapCameraZoomRange",
+    "MapKit_MKMapConfiguration",
+    "MapKit_MKMapItem",
+    "MapKit_MKMapSnapshot",
+    "MapKit_MKMapSnapshotOptions",
+    "MapKit_MKMapSnapshotter",
+    "MapKit_MKMapView",
+    "MapKit_MKMarkerAnnotationView",
+    "MapKit_MKMultiPoint",
+    "MapKit_MKMultiPolygon",
+    "MapKit_MKMultiPolygonRenderer",
+    "MapKit_MKMultiPolyline",
+    "MapKit_MKMultiPolylineRenderer",
+    "MapKit_MKOverlayPathRenderer",
+    "MapKit_MKOverlayRenderer",
+    "MapKit_MKPinAnnotationView",
+    "MapKit_MKPitchControl",
+    "MapKit_MKPlacemark",
+    "MapKit_MKPointAnnotation",
+    "MapKit_MKPointOfInterestFilter",
+    "MapKit_MKPolygon",
+    "MapKit_MKPolygonRenderer",
+    "MapKit_MKPolyline",
+    "MapKit_MKPolylineRenderer",
+    "MapKit_MKRoute",
+    "MapKit_MKRouteStep",
+    "MapKit_MKShape",
+    "MapKit_MKStandardMapConfiguration",
+    "MapKit_MKTileOverlay",
+    "MapKit_MKTileOverlayRenderer",
+    "MapKit_MKUserLocation",
+    "MapKit_MKUserLocationView",
+    "MapKit_MKZoomControl",
 ]
 Metal_MTLAccelerationStructureBoundingBoxGeometryDescriptor = [
     "Metal_MTLAccelerationStructureGeometryDescriptor",

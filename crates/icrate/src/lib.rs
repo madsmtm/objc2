@@ -64,6 +64,8 @@ pub mod Foundation;
 pub mod GameKit;
 #[cfg(feature = "InputMethodKit")]
 pub mod InputMethodKit;
+#[cfg(feature = "MapKit")]
+pub mod MapKit;
 #[cfg(feature = "Metal")]
 pub mod Metal;
 #[cfg(feature = "WebKit")]
