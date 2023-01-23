@@ -144,6 +144,7 @@ AuthenticationServices = [
     "Foundation_NSURL",
 ]
 AutomaticAssessmentConfiguration = ["Foundation"]
+Automator = ["AppKit", "Foundation", "OSAKit"]
 BackgroundAssets = ["Foundation"]
 BackgroundTasks = ["Foundation"]
 ClassKit = ["Foundation"]
@@ -184,6 +185,7 @@ Metal = [
 ]
 MetalFX = ["Metal"]
 MetalKit = ["AppKit", "Foundation", "Metal"]
+OSAKit = ["AppKit", "Foundation"]
 WebKit = [
     "AppKit",
     "Foundation",
@@ -196,7 +198,7 @@ unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
 unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "EventKit_all", "Foundation_all", "GameKit_all", "MapKit_all", "Metal_all", "MetalKit_all", "WebKit_all"]
-unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "WebKit_all"]
+unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "WebKit_all"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "CloudKit_all", "Contacts_all", "EventKit_all", "GameKit_all", "MapKit_all", "MetalKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
@@ -1235,6 +1237,35 @@ AutomaticAssessmentConfiguration_all = [
     "AutomaticAssessmentConfiguration_AEAssessmentConfiguration",
     "AutomaticAssessmentConfiguration_AEAssessmentParticipantConfiguration",
     "AutomaticAssessmentConfiguration_AEAssessmentSession",
+]
+Automator_AMAction = []
+Automator_AMAppleScriptAction = [
+    "Automator_AMBundleAction",
+]
+Automator_AMBundleAction = [
+    "Automator_AMAction",
+]
+Automator_AMShellScriptAction = [
+    "Automator_AMBundleAction",
+]
+Automator_AMWorkflow = []
+Automator_AMWorkflowController = [
+    "AppKit_NSController",
+]
+Automator_AMWorkflowView = [
+    "AppKit_NSView",
+]
+Automator_AMWorkspace = []
+Automator_all = [
+    "Automator",
+    "Automator_AMAction",
+    "Automator_AMAppleScriptAction",
+    "Automator_AMBundleAction",
+    "Automator_AMShellScriptAction",
+    "Automator_AMWorkflow",
+    "Automator_AMWorkflowController",
+    "Automator_AMWorkflowView",
+    "Automator_AMWorkspace",
 ]
 BackgroundAssets_BAAppExtensionInfo = []
 BackgroundAssets_BADownload = []
@@ -3242,6 +3273,23 @@ Metal_all = [
     "Metal_MTLVertexBufferLayoutDescriptorArray",
     "Metal_MTLVertexDescriptor",
     "Metal_MTLVisibleFunctionTableDescriptor",
+]
+OSAKit_OSALanguage = []
+OSAKit_OSALanguageInstance = []
+OSAKit_OSAScript = []
+OSAKit_OSAScriptController = [
+    "AppKit_NSController",
+]
+OSAKit_OSAScriptView = [
+    "AppKit_NSTextView",
+]
+OSAKit_all = [
+    "OSAKit",
+    "OSAKit_OSALanguage",
+    "OSAKit_OSALanguageInstance",
+    "OSAKit_OSAScript",
+    "OSAKit_OSAScriptController",
+    "OSAKit_OSAScriptView",
 ]
 WebKit_DOMAbstractView = [
     "WebKit_DOMObject",

@@ -6,15 +6,17 @@
 
 #include <TargetConditionals.h>
 
+#if TARGET_OS_OSX
+#import <AppKit/AppKit.h>
+#import <Automator/Automator.h>
+#import <OSAKit/OSAKit.h>
+#endif
+
 #import <Accessibility/Accessibility.h>
 
 #import <AdServices/AdServices.h>
 
 #import <AdSupport/AdSupport.h>
-
-#if TARGET_OS_OSX
-#import <AppKit/AppKit.h>
-#endif
 
 #import <AuthenticationServices/AuthenticationServices.h>
 

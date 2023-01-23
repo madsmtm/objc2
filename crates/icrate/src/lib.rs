@@ -44,6 +44,8 @@ pub mod AppKit;
 pub mod AuthenticationServices;
 #[cfg(feature = "AutomaticAssessmentConfiguration")]
 pub mod AutomaticAssessmentConfiguration;
+#[cfg(feature = "Automator")]
+pub mod Automator;
 #[cfg(feature = "BackgroundAssets")]
 pub mod BackgroundAssets;
 #[cfg(feature = "BackgroundTasks")]
@@ -78,5 +80,7 @@ pub mod Metal;
 pub mod MetalFX;
 #[cfg(feature = "MetalKit")]
 pub mod MetalKit;
+#[cfg(feature = "OSAKit")]
+pub mod OSAKit;
 #[cfg(feature = "WebKit")]
 pub mod WebKit;

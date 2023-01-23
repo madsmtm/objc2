@@ -22,6 +22,9 @@ imports = ["AuthenticationServices", "Foundation"]
 [library.AutomaticAssessmentConfiguration]
 imports = ["AutomaticAssessmentConfiguration", "Foundation"]
 
+[library.Automator]
+imports = ["Automator", "AppKit", "Foundation", "OSAKit"]
+
 [library.BackgroundAssets]
 imports = ["BackgroundAssets", "Foundation"]
 
@@ -69,6 +72,9 @@ imports = ["MetalFX", "Metal"]
 
 [library.MetalKit]
 imports = ["MetalKit", "AppKit", "Foundation", "Metal"]
+
+[library.OSAKit]
+imports = ["OSAKit", "AppKit", "Foundation"]
 
 [library.QuartzCore]
 name = "CoreAnimation"
@@ -810,6 +816,12 @@ currentDrawable = { skipped = true }
 # Needs `CGColorSpaceRef`
 colorspace = { skipped = true }
 setColorspace = { skipped = true }
+# Needs `Component` from Core Services / Carbon Core / Component Manager
+[class.OSALanguage.methods]
+initWithComponent = { skipped = true }
+componentInstance = { skipped = true }
+[class.OSALanguageInstance.methods.componentInstance]
+skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]
@@ -979,6 +991,8 @@ startVoiceChatWithParticipantID_error = { skipped = true }
 [class.WebHistory.methods]
 loadFromURL_error = { skipped = true }
 saveToURL_error = { skipped = true }
+[class.AMWorkspace.methods.runWorkflowAtPath_withInput_error]
+skipped = true
 
 # error: unknown error result type
 [class.MTKTextureLoader.methods.newTexturesWithContentsOfURLs_options_error]

@@ -9,6 +9,7 @@ data! {
     mod AdSupport;
     mod AppKit;
     mod AutomaticAssessmentConfiguration;
+    mod Automator;
     mod AuthenticationServices;
     mod BackgroundAssets;
     mod BackgroundTasks;
@@ -27,5 +28,6 @@ data! {
     mod Metal;
     mod MetalFX;
     mod MetalKit;
+    mod OSAKit;
     mod WebKit;
 }
