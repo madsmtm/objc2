@@ -1675,7 +1675,7 @@ impl fmt::Display for Ty {
                     is_const: _,
                     lifetime: _,
                     nullability: Nullability::Nullable | Nullability::Unspecified,
-                } if id.is_nsstring() => {
+                } if id.is_nsstring() || id.is_nsdata() => {
                     write!(f, "{ty}")
                 }
                 Inner::Id {
