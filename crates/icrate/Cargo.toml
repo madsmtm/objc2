@@ -144,7 +144,7 @@ AuthenticationServices = [
 BackgroundAssets = ["Foundation"]
 BackgroundTasks = ["Foundation"]
 ClassKit = ["Foundation"]
-CloudKit = ["Foundation"]
+CloudKit = ["CoreLocation", "Foundation"]
 Contacts = ["Foundation"]
 CoreAnimation = ["Foundation"]
 CoreData = [
@@ -152,7 +152,8 @@ CoreData = [
     # Temporary, since some structs and statics use these
     "CoreData_NSAsynchronousFetchResult",
 ]
-EventKit = ["AppKit", "Foundation"]
+CoreLocation = ["Contacts", "Foundation"]
+EventKit = ["AppKit", "CoreLocation", "Foundation"]
 ExceptionHandling = ["Foundation"]
 Foundation = [
     "objective-c",
@@ -188,8 +189,8 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "EventKit_all", "Foundation_all", "GameKit_all", "Metal_all", "WebKit_all"]
-unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "CoreAnimation_all", "CoreData_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "EventKit_all", "Foundation_all", "GameKit_all", "Metal_all", "WebKit_all"]
+unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "WebKit_all"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "CloudKit_all", "Contacts_all", "EventKit_all", "GameKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "ClassKit_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
@@ -1806,6 +1807,39 @@ CoreData_all = [
     "CoreData_NSQueryGenerationToken",
     "CoreData_NSRelationshipDescription",
     "CoreData_NSSaveChangesRequest",
+]
+CoreLocation_CLBeacon = []
+CoreLocation_CLBeaconIdentityConstraint = []
+CoreLocation_CLBeaconRegion = [
+    "CoreLocation_CLRegion",
+]
+CoreLocation_CLCircularRegion = [
+    "CoreLocation_CLRegion",
+]
+CoreLocation_CLFloor = []
+CoreLocation_CLGeocoder = []
+CoreLocation_CLHeading = []
+CoreLocation_CLLocation = []
+CoreLocation_CLLocationManager = []
+CoreLocation_CLLocationSourceInformation = []
+CoreLocation_CLPlacemark = []
+CoreLocation_CLRegion = []
+CoreLocation_CLVisit = []
+CoreLocation_all = [
+    "CoreLocation",
+    "CoreLocation_CLBeacon",
+    "CoreLocation_CLBeaconIdentityConstraint",
+    "CoreLocation_CLBeaconRegion",
+    "CoreLocation_CLCircularRegion",
+    "CoreLocation_CLFloor",
+    "CoreLocation_CLGeocoder",
+    "CoreLocation_CLHeading",
+    "CoreLocation_CLLocation",
+    "CoreLocation_CLLocationManager",
+    "CoreLocation_CLLocationSourceInformation",
+    "CoreLocation_CLPlacemark",
+    "CoreLocation_CLRegion",
+    "CoreLocation_CLVisit",
 ]
 EventKit_EKAlarm = [
     "EventKit_EKObject",

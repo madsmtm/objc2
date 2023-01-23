@@ -14,6 +14,7 @@ data! {
     mod Contacts;
     mod CoreAnimation;
     mod CoreData;
+    mod CoreLocation;
     mod EventKit;
     mod ExceptionHandling;
     mod Foundation;

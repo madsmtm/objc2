@@ -32,6 +32,8 @@
 
 #import <Contacts/Contacts.h>
 
+#import <CoreLocation/CoreLocation.h>
+
 #import <EventKit/EventKit.h>
 
 #import <ExceptionHandling/ExceptionHandling.h>

@@ -36,13 +36,16 @@ imports = ["BackgroundTasks", "Foundation"]
 imports = ["ClassKit", "Foundation"]
 
 [library.CloudKit]
-imports = ["CloudKit", "Foundation"]
+imports = ["CloudKit", "CoreLocation", "Foundation"]
 
 [library.Contacts]
 imports = ["Contacts", "Foundation"]
 
+[library.CoreLocation]
+imports = ["CoreLocation", "Contacts", "Foundation"]
+
 [library.EventKit]
-imports = ["EventKit", "AppKit", "Foundation"]
+imports = ["EventKit", "AppKit", "CoreLocation", "Foundation"]
 
 [library.ExceptionHandling]
 imports = ["ExceptionHandling", "Foundation"]
@@ -929,3 +932,8 @@ skipped = true
 skipped = true
 [static.IMKModeDictionary]
 skipped = true
+
+# error: translator assertion failure: (left `"CLLocation"`) (right `"const CLLocation"`)
+[class.CLLocation.methods]
+getDistanceFrom = { skipped = true }
+distanceFromLocation = { skipped = true }
