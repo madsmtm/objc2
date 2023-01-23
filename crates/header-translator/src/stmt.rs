@@ -1176,6 +1176,7 @@ impl fmt::Display for Stmt {
                     if !name.starts_with('_') {
                         write!(f, "pub ")?;
                     }
+                    let name = handle_reserved(name);
                     writeln!(f, "{name}: {ty},")?;
                 }
                 writeln!(f, "    }}")?;
