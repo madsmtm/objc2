@@ -4,19 +4,6 @@
 ### Libraries
 ###
 
-[library.Foundation]
-imports = ["Foundation"]
-
-[library.QuartzCore]
-name = "CoreAnimation"
-imports = ["CoreAnimation", "Foundation"]
-
-[library.Metal]
-imports = ["Metal", "Foundation"]
-
-[library.CoreData]
-imports = ["CoreData", "Foundation"]
-
 [library.Accessibility]
 imports = ["Accessibility", "Foundation"]
 
@@ -41,6 +28,9 @@ imports = ["CloudKit", "CoreLocation", "Foundation"]
 [library.Contacts]
 imports = ["Contacts", "Foundation"]
 
+[library.CoreData]
+imports = ["CoreData", "Foundation"]
+
 [library.CoreLocation]
 imports = ["CoreLocation", "Contacts", "Foundation"]
 
@@ -49,6 +39,9 @@ imports = ["EventKit", "AppKit", "CoreLocation", "Foundation", "MapKit"]
 
 [library.ExceptionHandling]
 imports = ["ExceptionHandling", "Foundation"]
+
+[library.Foundation]
+imports = ["Foundation"]
 
 [library.GameKit]
 imports = ["GameKit", "AppKit", "Foundation"]
@@ -59,11 +52,18 @@ imports = ["InputMethodKit", "AppKit", "Foundation"]
 [library.MapKit]
 imports = ["MapKit", "AppKit", "Contacts", "CoreLocation", "Foundation"]
 
+[library.Metal]
+imports = ["Metal", "Foundation"]
+
 [library.MetalFX]
 imports = ["MetalFX", "Metal"]
 
 [library.MetalKit]
 imports = ["MetalKit", "AppKit", "Foundation", "Metal"]
+
+[library.QuartzCore]
+name = "CoreAnimation"
+imports = ["CoreAnimation", "Foundation"]
 
 [library.WebKit]
 imports = ["WebKit", "AppKit", "Foundation"]

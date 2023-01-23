@@ -6,12 +6,6 @@
 
 #include <TargetConditionals.h>
 
-#import <Foundation/Foundation.h>
-
-#import <QuartzCore/CoreAnimation.h>
-
-#import <CoreData/CoreData.h>
-
 #import <Accessibility/Accessibility.h>
 
 #if TARGET_OS_OSX
@@ -19,8 +13,6 @@
 #endif
 
 #import <AuthenticationServices/AuthenticationServices.h>
-
-#import <Metal/Metal.h>
 
 #import <BackgroundAssets/BackgroundAssets.h>
 
@@ -32,11 +24,15 @@
 
 #import <Contacts/Contacts.h>
 
+#import <CoreData/CoreData.h>
+
 #import <CoreLocation/CoreLocation.h>
 
 #import <EventKit/EventKit.h>
 
 #import <ExceptionHandling/ExceptionHandling.h>
+
+#import <Foundation/Foundation.h>
 
 #import <GameKit/GameKit.h>
 
@@ -44,8 +40,12 @@
 
 #import <MapKit/MapKit.h>
 
+#import <Metal/Metal.h>
+
 #import <MetalFX/MetalFX.h>
 
 #import <MetalKit/MetalKit.h>
+
+#import <QuartzCore/CoreAnimation.h>
 
 #import <WebKit/WebKit.h>
