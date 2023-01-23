@@ -78,6 +78,10 @@ pub mod ExceptionHandling;
 pub mod ExtensionKit;
 #[cfg(feature = "ExternalAccessory")]
 pub mod ExternalAccessory;
+#[cfg(feature = "FileProvider")]
+pub mod FileProvider;
+#[cfg(feature = "FileProviderUI")]
+pub mod FileProviderUI;
 #[cfg(feature = "Foundation")]
 pub mod Foundation;
 #[cfg(feature = "GameKit")]

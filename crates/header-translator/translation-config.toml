@@ -70,6 +70,12 @@ imports = ["ExtensionKit", "AppKit", "Foundation"]
 [library.ExternalAccessory]
 imports = ["ExternalAccessory", "Foundation"]
 
+[library.FileProvider]
+imports = ["FileProvider", "AppKit", "Foundation"]
+
+[library.FileProviderUI]
+imports = ["FileProviderUI", "AppKit", "FileProvider", "Foundation"]
+
 [library.Foundation]
 imports = ["Foundation"]
 
@@ -543,6 +549,10 @@ skipped = true
 [class.MTLRasterizationRateLayerDescriptor.methods.sampleCount]
 skipped = true
 [class.MTLRasterizationRateLayerDescriptor.methods.setSampleCount]
+skipped = true
+
+# Duplicated type? `typedef id<NSFileProviderItem> NSFileProviderItem`
+[typedef.NSFileProviderItem]
 skipped = true
 
 # Uses stuff from different frameworks / system libraries

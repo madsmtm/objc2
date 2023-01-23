@@ -52,6 +52,10 @@
 
 #import <ExternalAccessory/ExternalAccessory.h>
 
+#import <FileProvider/FileProvider.h>
+
+#import <FileProviderUI/FileProviderUI.h>
+
 #import <Foundation/Foundation.h>
 
 #import <GameKit/GameKit.h>

@@ -27,6 +27,8 @@ data! {
     mod ExceptionHandling;
     mod ExtensionKit;
     mod ExternalAccessory;
+    mod FileProvider;
+    mod FileProviderUI;
     mod Foundation;
     mod GameKit;
     mod InputMethodKit;
