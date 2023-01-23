@@ -21,6 +21,7 @@ data! {
     mod CoreAnimation;
     mod CoreData;
     mod CoreLocation;
+    mod DataDetection;
     mod EventKit;
     mod ExceptionHandling;
     mod Foundation;

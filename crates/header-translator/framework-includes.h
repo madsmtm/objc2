@@ -40,6 +40,8 @@
 
 #import <CoreLocation/CoreLocation.h>
 
+#import <DataDetection/DataDetection.h>
+
 #import <EventKit/EventKit.h>
 
 #import <ExceptionHandling/ExceptionHandling.h>

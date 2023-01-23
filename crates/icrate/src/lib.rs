@@ -66,6 +66,8 @@ pub mod CoreAnimation;
 pub mod CoreData;
 #[cfg(feature = "CoreLocation")]
 pub mod CoreLocation;
+#[cfg(feature = "DataDetection")]
+pub mod DataDetection;
 #[cfg(feature = "EventKit")]
 pub mod EventKit;
 #[cfg(feature = "ExceptionHandling")]
