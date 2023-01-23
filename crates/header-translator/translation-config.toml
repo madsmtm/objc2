@@ -59,6 +59,9 @@ imports = ["InputMethodKit", "AppKit", "Foundation"]
 [library.MapKit]
 imports = ["MapKit", "AppKit", "Contacts", "CoreLocation", "Foundation"]
 
+[library.MetalKit]
+imports = ["MetalKit", "AppKit", "Foundation", "Metal"]
+
 [library.WebKit]
 imports = ["WebKit", "AppKit", "Foundation"]
 
@@ -774,6 +777,27 @@ drawMapRect_zoomScale_inContext = { skipped = true }
 # Needs `CGBlendMode`
 blendMode = { skipped = true }
 setBlendMode = { skipped = true }
+[class.MTKMeshBuffer.methods]
+# Needs `MDLMeshBufferZone` from ModelIO framework
+zone = { skipped = true }
+# Needs `MDLMeshBufferType` from ModelIO framework
+type = { skipped = true }
+# Needs `MDLVertexFormat` from ModelIO framework
+[fn.MTKModelIOVertexFormatFromMetal]
+skipped = true
+[fn.MTKMetalVertexFormatFromModelIO]
+skipped = true
+# Needs `CGImageRef`
+[class.MTKTextureLoader.methods.newTextureWithCGImage_options_completionHandler]
+skipped = true
+[class.MTKTextureLoader.methods.newTextureWithCGImage_options_error]
+skipped = true
+[class.MTKView.methods]
+# Needs `CAMetalDrawable`
+currentDrawable = { skipped = true }
+# Needs `CGColorSpaceRef`
+colorspace = { skipped = true }
+setColorspace = { skipped = true }
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]
@@ -943,6 +967,10 @@ startVoiceChatWithParticipantID_error = { skipped = true }
 [class.WebHistory.methods]
 loadFromURL_error = { skipped = true }
 saveToURL_error = { skipped = true }
+
+# error: unknown error result type
+[class.MTKTextureLoader.methods.newTexturesWithContentsOfURLs_options_error]
+skipped = true
 
 [class.WKWebView.methods]
 # uses `SecTrustRef` from Security.framework (not yet translated)

@@ -179,6 +179,7 @@ Metal = [
     "Metal_MTLRenderPipelineReflection",
     "Metal_MTLComputePipelineReflection",
 ]
+MetalKit = ["AppKit", "Foundation", "Metal"]
 WebKit = [
     "AppKit",
     "Foundation",
@@ -190,9 +191,9 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "EventKit_all", "Foundation_all", "GameKit_all", "MapKit_all", "Metal_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "EventKit_all", "Foundation_all", "GameKit_all", "MapKit_all", "Metal_all", "MetalKit_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "WebKit_all"]
-unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "CloudKit_all", "Contacts_all", "EventKit_all", "GameKit_all", "MapKit_all"]
+unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "CloudKit_all", "Contacts_all", "EventKit_all", "GameKit_all", "MapKit_all", "MetalKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "ClassKit_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all"]
@@ -2973,6 +2974,23 @@ MapKit_all = [
     "MapKit_MKUserLocation",
     "MapKit_MKUserLocationView",
     "MapKit_MKZoomControl",
+]
+MetalKit_MTKMesh = []
+MetalKit_MTKMeshBuffer = []
+MetalKit_MTKMeshBufferAllocator = []
+MetalKit_MTKSubmesh = []
+MetalKit_MTKTextureLoader = []
+MetalKit_MTKView = [
+    "AppKit_NSView",
+]
+MetalKit_all = [
+    "MetalKit",
+    "MetalKit_MTKMesh",
+    "MetalKit_MTKMeshBuffer",
+    "MetalKit_MTKMeshBufferAllocator",
+    "MetalKit_MTKSubmesh",
+    "MetalKit_MTKTextureLoader",
+    "MetalKit_MTKView",
 ]
 Metal_MTLAccelerationStructureBoundingBoxGeometryDescriptor = [
     "Metal_MTLAccelerationStructureGeometryDescriptor",
