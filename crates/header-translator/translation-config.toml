@@ -59,6 +59,9 @@ imports = ["InputMethodKit", "AppKit", "Foundation"]
 [library.MapKit]
 imports = ["MapKit", "AppKit", "Contacts", "CoreLocation", "Foundation"]
 
+[library.MetalFX]
+imports = ["MetalFX", "Metal"]
+
 [library.MetalKit]
 imports = ["MetalKit", "AppKit", "Foundation", "Metal"]
 

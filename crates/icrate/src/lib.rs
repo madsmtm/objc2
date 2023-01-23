@@ -68,6 +68,8 @@ pub mod InputMethodKit;
 pub mod MapKit;
 #[cfg(feature = "Metal")]
 pub mod Metal;
+#[cfg(feature = "MetalFX")]
+pub mod MetalFX;
 #[cfg(feature = "MetalKit")]
 pub mod MetalKit;
 #[cfg(feature = "WebKit")]

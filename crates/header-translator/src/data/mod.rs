@@ -22,6 +22,7 @@ data! {
     mod InputMethodKit;
     mod MapKit;
     mod Metal;
+    mod MetalFX;
     mod MetalKit;
     mod WebKit;
 }

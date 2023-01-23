@@ -179,6 +179,7 @@ Metal = [
     "Metal_MTLRenderPipelineReflection",
     "Metal_MTLComputePipelineReflection",
 ]
+MetalFX = ["Metal"]
 MetalKit = ["AppKit", "Foundation", "Metal"]
 WebKit = [
     "AppKit",
@@ -196,7 +197,7 @@ unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "CoreAnimat
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "CloudKit_all", "Contacts_all", "EventKit_all", "GameKit_all", "MapKit_all", "MetalKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "ClassKit_all", "Metal_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
-unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all"]
+unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "MetalFX_all"]
 
 # Temporary fixes until we can autogenerate these
 Foundation_NSProxy = []
@@ -2974,6 +2975,13 @@ MapKit_all = [
     "MapKit_MKUserLocation",
     "MapKit_MKUserLocationView",
     "MapKit_MKZoomControl",
+]
+MetalFX_MTLFXSpatialScalerDescriptor = []
+MetalFX_MTLFXTemporalScalerDescriptor = []
+MetalFX_all = [
+    "MetalFX",
+    "MetalFX_MTLFXSpatialScalerDescriptor",
+    "MetalFX_MTLFXTemporalScalerDescriptor",
 ]
 MetalKit_MTKMesh = []
 MetalKit_MTKMeshBuffer = []

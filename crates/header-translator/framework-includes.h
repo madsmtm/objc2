@@ -44,6 +44,8 @@
 
 #import <MapKit/MapKit.h>
 
+#import <MetalFX/MetalFX.h>
+
 #import <MetalKit/MetalKit.h>
 
 #import <WebKit/WebKit.h>
