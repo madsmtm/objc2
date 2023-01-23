@@ -7,6 +7,12 @@
 [library.Accessibility]
 imports = ["Accessibility", "Foundation"]
 
+[library.AdServices]
+imports = ["AdServices", "Foundation"]
+
+[library.AdSupport]
+imports = ["AdSupport", "Foundation"]
+
 [library.AppKit]
 imports = ["AppKit", "CoreData", "Foundation"]
 

@@ -8,6 +8,10 @@
 
 #import <Accessibility/Accessibility.h>
 
+#import <AdServices/AdServices.h>
+
+#import <AdSupport/AdSupport.h>
+
 #if TARGET_OS_OSX
 #import <AppKit/AppKit.h>
 #endif

@@ -5,6 +5,8 @@ mod macros;
 
 data! {
     mod Accessibility;
+    mod AdServices;
+    mod AdSupport;
     mod AppKit;
     mod AuthenticationServices;
     mod BackgroundAssets;

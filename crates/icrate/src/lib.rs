@@ -34,6 +34,10 @@ mod macros;
 // Frameworks
 #[cfg(feature = "Accessibility")]
 pub mod Accessibility;
+#[cfg(feature = "AdServices")]
+pub mod AdServices;
+#[cfg(feature = "AdSupport")]
+pub mod AdSupport;
 #[cfg(feature = "AppKit")]
 pub mod AppKit;
 #[cfg(feature = "AuthenticationServices")]
