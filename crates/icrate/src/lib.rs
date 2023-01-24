@@ -94,6 +94,10 @@ pub mod IdentityLookup;
 pub mod InputMethodKit;
 #[cfg(feature = "LinkPresentation")]
 pub mod LinkPresentation;
+#[cfg(feature = "LocalAuthentication")]
+pub mod LocalAuthentication;
+#[cfg(feature = "LocalAuthenticationEmbeddedUI")]
+pub mod LocalAuthenticationEmbeddedUI;
 #[cfg(feature = "MapKit")]
 pub mod MapKit;
 #[cfg(feature = "Metal")]

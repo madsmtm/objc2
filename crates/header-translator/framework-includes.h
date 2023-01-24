@@ -68,6 +68,10 @@
 
 #import <LinkPresentation/LinkPresentation.h>
 
+#import <LocalAuthentication/LocalAuthentication.h>
+
+#import <LocalAuthenticationEmbeddedUI/LocalAuthenticationEmbeddedUI.h>
+
 #import <MapKit/MapKit.h>
 
 #import <Metal/Metal.h>

@@ -186,6 +186,8 @@ GameController = ["AppKit", "Foundation"]
 GameKit = ["AppKit", "Foundation"]
 IdentityLookup = ["Foundation"]
 InputMethodKit = ["AppKit", "Foundation"]
+LocalAuthentication = ["Foundation"]
+LocalAuthenticationEmbeddedUI = ["AppKit", "Foundation", "LocalAuthentication"]
 LinkPresentation = ["AppKit", "Foundation"]
 MapKit = ["AppKit", "Contacts", "CoreLocation", "Foundation"]
 Metal = [
@@ -213,11 +215,11 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameController_all", "GameKit_all", "IdentityLookup_all", "LinkPresentation_all", "MapKit_all", "Metal_all", "MetalKit_all", "SoundAnalysis_all", "Speech_all", "StoreKit_all", "UniformTypeIdentifiers_all", "UserNotifications_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameController_all", "GameKit_all", "IdentityLookup_all", "LocalAuthentication_all", "LinkPresentation_all", "MapKit_all", "Metal_all", "MetalKit_all", "SoundAnalysis_all", "Speech_all", "StoreKit_all", "UniformTypeIdentifiers_all", "UserNotifications_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "StoreKit_all", "WebKit_all"]
-unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameController_all", "GameKit_all", "MapKit_all", "MetalKit_all"]
+unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameController_all", "GameKit_all", "LocalAuthentication_all", "LocalAuthenticationEmbeddedUI_all", "MapKit_all", "MetalKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "DeviceCheck_all", "FileProvider_all", "FileProviderUI_all", "LinkPresentation_all", "Metal_all", "SoundAnalysis_all", "Speech_all", "UniformTypeIdentifiers_all", "UserNotifications_all"]
-unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all"]
+unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all", "LocalAuthenticationEmbeddedUI_all"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "CallKit_all", "ExtensionKit_all", "IdentityLookup_all", "MetalFX_all"]
 
 # Temporary fixes until we can autogenerate these
@@ -3186,6 +3188,36 @@ LinkPresentation_all = [
     "LinkPresentation_LPLinkMetadata",
     "LinkPresentation_LPLinkView",
     "LinkPresentation_LPMetadataProvider",
+]
+LocalAuthenticationEmbeddedUI_LAAuthenticationView = [
+    "AppKit_NSView",
+]
+LocalAuthenticationEmbeddedUI_all = [
+    "LocalAuthenticationEmbeddedUI",
+    "LocalAuthenticationEmbeddedUI_LAAuthenticationView",
+]
+LocalAuthentication_LAAuthenticationRequirement = []
+LocalAuthentication_LABiometryFallbackRequirement = []
+LocalAuthentication_LAContext = []
+LocalAuthentication_LAPersistedRight = [
+    "LocalAuthentication_LARight",
+]
+LocalAuthentication_LAPrivateKey = []
+LocalAuthentication_LAPublicKey = []
+LocalAuthentication_LARight = []
+LocalAuthentication_LARightStore = []
+LocalAuthentication_LASecret = []
+LocalAuthentication_all = [
+    "LocalAuthentication",
+    "LocalAuthentication_LAAuthenticationRequirement",
+    "LocalAuthentication_LABiometryFallbackRequirement",
+    "LocalAuthentication_LAContext",
+    "LocalAuthentication_LAPersistedRight",
+    "LocalAuthentication_LAPrivateKey",
+    "LocalAuthentication_LAPublicKey",
+    "LocalAuthentication_LARight",
+    "LocalAuthentication_LARightStore",
+    "LocalAuthentication_LASecret",
 ]
 MapKit_MKAnnotationView = [
     "AppKit_NSView",

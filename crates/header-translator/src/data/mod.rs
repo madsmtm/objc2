@@ -34,6 +34,8 @@ data! {
     mod GameKit;
     mod IdentityLookup;
     mod InputMethodKit;
+    mod LocalAuthentication;
+    mod LocalAuthenticationEmbeddedUI;
     mod LinkPresentation;
     mod MapKit;
     mod Metal;
