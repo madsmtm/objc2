@@ -107,6 +107,9 @@ imports = ["OSAKit", "AppKit", "Foundation"]
 name = "CoreAnimation"
 imports = ["CoreAnimation", "Foundation"]
 
+[library.StoreKit]
+imports = ["StoreKit", "AppKit", "Foundation"]
+
 [library.WebKit]
 imports = ["WebKit", "AppKit", "Foundation"]
 

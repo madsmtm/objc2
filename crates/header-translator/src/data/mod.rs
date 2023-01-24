@@ -38,5 +38,6 @@ data! {
     mod MetalFX;
     mod MetalKit;
     mod OSAKit;
+    mod StoreKit;
     mod WebKit;
 }

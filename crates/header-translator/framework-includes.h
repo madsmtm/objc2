@@ -74,4 +74,6 @@
 
 #import <QuartzCore/CoreAnimation.h>
 
+#import <StoreKit/StoreKit.h>
+
 #import <WebKit/WebKit.h>

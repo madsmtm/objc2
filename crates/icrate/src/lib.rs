@@ -100,5 +100,7 @@ pub mod MetalFX;
 pub mod MetalKit;
 #[cfg(feature = "OSAKit")]
 pub mod OSAKit;
+#[cfg(feature = "StoreKit")]
+pub mod StoreKit;
 #[cfg(feature = "WebKit")]
 pub mod WebKit;
