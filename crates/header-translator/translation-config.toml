@@ -110,6 +110,9 @@ imports = ["CoreAnimation", "Foundation"]
 [library.StoreKit]
 imports = ["StoreKit", "AppKit", "Foundation"]
 
+[library.UserNotifications]
+imports = ["UserNotifications", "CoreLocation", "Foundation"]
+
 [library.WebKit]
 imports = ["WebKit", "AppKit", "Foundation"]
 

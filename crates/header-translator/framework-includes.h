@@ -76,4 +76,6 @@
 
 #import <StoreKit/StoreKit.h>
 
+#import <UserNotifications/UserNotifications.h>
+
 #import <WebKit/WebKit.h>

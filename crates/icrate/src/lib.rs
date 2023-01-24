@@ -102,5 +102,7 @@ pub mod MetalKit;
 pub mod OSAKit;
 #[cfg(feature = "StoreKit")]
 pub mod StoreKit;
+#[cfg(feature = "UserNotifications")]
+pub mod UserNotifications;
 #[cfg(feature = "WebKit")]
 pub mod WebKit;

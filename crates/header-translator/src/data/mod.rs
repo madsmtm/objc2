@@ -39,5 +39,6 @@ data! {
     mod MetalKit;
     mod OSAKit;
     mod StoreKit;
+    mod UserNotifications;
     mod WebKit;
 }
