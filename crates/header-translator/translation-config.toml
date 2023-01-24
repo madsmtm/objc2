@@ -107,6 +107,9 @@ imports = ["OSAKit", "AppKit", "Foundation"]
 name = "CoreAnimation"
 imports = ["CoreAnimation", "Foundation"]
 
+[library.Speech]
+imports = ["Speech", "Foundation"]
+
 [library.StoreKit]
 imports = ["StoreKit", "AppKit", "Foundation"]
 
@@ -851,6 +854,9 @@ skipped = true
 # Needs `IOHIDDeviceRef` from IOKit
 [class.GCController.methods.supportsHIDDevice]
 skipped = true
+# Needs `CMSampleBufferRef` from CoreMedia
+[class.SFSpeechAudioBufferRecognitionRequest.methods]
+appendAudioSampleBuffer = { skipped = true }
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]

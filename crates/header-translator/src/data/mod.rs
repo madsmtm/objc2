@@ -38,6 +38,7 @@ data! {
     mod MetalFX;
     mod MetalKit;
     mod OSAKit;
+    mod Speech;
     mod StoreKit;
     mod UserNotifications;
     mod WebKit;

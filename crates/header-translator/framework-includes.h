@@ -74,6 +74,8 @@
 
 #import <QuartzCore/CoreAnimation.h>
 
+#import <Speech/Speech.h>
+
 #import <StoreKit/StoreKit.h>
 
 #import <UserNotifications/UserNotifications.h>
