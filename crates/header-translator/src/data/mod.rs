@@ -37,6 +37,7 @@ data! {
     mod LocalAuthentication;
     mod LocalAuthenticationEmbeddedUI;
     mod LinkPresentation;
+    mod MailKit;
     mod MapKit;
     mod Metal;
     mod MetalFX;

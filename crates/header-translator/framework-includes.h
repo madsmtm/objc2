@@ -9,6 +9,7 @@
 #if TARGET_OS_OSX
 #import <AppKit/AppKit.h>
 #import <Automator/Automator.h>
+#import <MailKit/MailKit.h>
 #import <OSAKit/OSAKit.h>
 #endif
 

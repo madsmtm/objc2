@@ -189,6 +189,7 @@ InputMethodKit = ["AppKit", "Foundation"]
 LocalAuthentication = ["Foundation"]
 LocalAuthenticationEmbeddedUI = ["AppKit", "Foundation", "LocalAuthentication"]
 LinkPresentation = ["AppKit", "Foundation"]
+MailKit = ["AppKit", "Foundation"]
 MapKit = ["AppKit", "Contacts", "CoreLocation", "Foundation"]
 Metal = [
     "Foundation",
@@ -219,7 +220,7 @@ unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "StoreKit_all", "WebKit_all"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameController_all", "GameKit_all", "LocalAuthentication_all", "LocalAuthenticationEmbeddedUI_all", "MapKit_all", "MetalKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "DeviceCheck_all", "FileProvider_all", "FileProviderUI_all", "LinkPresentation_all", "Metal_all", "SoundAnalysis_all", "Speech_all", "UniformTypeIdentifiers_all", "UserNotifications_all"]
-unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all", "LocalAuthenticationEmbeddedUI_all"]
+unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all", "LocalAuthenticationEmbeddedUI_all", "MailKit_all"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "CallKit_all", "ExtensionKit_all", "IdentityLookup_all", "MetalFX_all"]
 
 # Temporary fixes until we can autogenerate these
@@ -3218,6 +3219,43 @@ LocalAuthentication_all = [
     "LocalAuthentication_LARight",
     "LocalAuthentication_LARightStore",
     "LocalAuthentication_LASecret",
+]
+MailKit_MEAddressAnnotation = []
+MailKit_MEComposeContext = []
+MailKit_MEComposeSession = []
+MailKit_MEDecodedMessage = []
+MailKit_MEDecodedMessageBanner = []
+MailKit_MEEmailAddress = []
+MailKit_MEEncodedOutgoingMessage = []
+MailKit_MEExtensionManager = []
+MailKit_MEExtensionViewController = [
+    "AppKit_NSViewController",
+]
+MailKit_MEMessage = []
+MailKit_MEMessageAction = []
+MailKit_MEMessageActionDecision = []
+MailKit_MEMessageEncodingResult = []
+MailKit_MEMessageSecurityInformation = []
+MailKit_MEMessageSigner = []
+MailKit_MEOutgoingMessageEncodingStatus = []
+MailKit_all = [
+    "MailKit",
+    "MailKit_MEAddressAnnotation",
+    "MailKit_MEComposeContext",
+    "MailKit_MEComposeSession",
+    "MailKit_MEDecodedMessage",
+    "MailKit_MEDecodedMessageBanner",
+    "MailKit_MEEmailAddress",
+    "MailKit_MEEncodedOutgoingMessage",
+    "MailKit_MEExtensionManager",
+    "MailKit_MEExtensionViewController",
+    "MailKit_MEMessage",
+    "MailKit_MEMessageAction",
+    "MailKit_MEMessageActionDecision",
+    "MailKit_MEMessageEncodingResult",
+    "MailKit_MEMessageSecurityInformation",
+    "MailKit_MEMessageSigner",
+    "MailKit_MEOutgoingMessageEncodingStatus",
 ]
 MapKit_MKAnnotationView = [
     "AppKit_NSView",

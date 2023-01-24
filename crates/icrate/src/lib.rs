@@ -98,6 +98,8 @@ pub mod LinkPresentation;
 pub mod LocalAuthentication;
 #[cfg(feature = "LocalAuthenticationEmbeddedUI")]
 pub mod LocalAuthenticationEmbeddedUI;
+#[cfg(feature = "MailKit")]
+pub mod MailKit;
 #[cfg(feature = "MapKit")]
 pub mod MapKit;
 #[cfg(feature = "Metal")]
