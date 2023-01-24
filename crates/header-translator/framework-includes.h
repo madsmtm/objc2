@@ -62,6 +62,8 @@
 
 #import <GameKit/GameKit.h>
 
+#import <IdentityLookup/IdentityLookup.h>
+
 #import <InputMethodKit/InputMethodKit.h>
 
 #import <MapKit/MapKit.h>

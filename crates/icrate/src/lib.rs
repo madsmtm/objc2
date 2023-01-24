@@ -88,6 +88,8 @@ pub mod Foundation;
 pub mod GameController;
 #[cfg(feature = "GameKit")]
 pub mod GameKit;
+#[cfg(feature = "IdentityLookup")]
+pub mod IdentityLookup;
 #[cfg(feature = "InputMethodKit")]
 pub mod InputMethodKit;
 #[cfg(feature = "MapKit")]
