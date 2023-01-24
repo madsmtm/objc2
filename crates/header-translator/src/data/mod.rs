@@ -38,6 +38,7 @@ data! {
     mod MetalFX;
     mod MetalKit;
     mod OSAKit;
+    mod SoundAnalysis;
     mod Speech;
     mod StoreKit;
     mod UniformTypeIdentifiers;

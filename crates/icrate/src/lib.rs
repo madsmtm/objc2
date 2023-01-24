@@ -100,6 +100,8 @@ pub mod MetalFX;
 pub mod MetalKit;
 #[cfg(feature = "OSAKit")]
 pub mod OSAKit;
+#[cfg(feature = "SoundAnalysis")]
+pub mod SoundAnalysis;
 #[cfg(feature = "Speech")]
 pub mod Speech;
 #[cfg(feature = "StoreKit")]

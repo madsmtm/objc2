@@ -107,6 +107,9 @@ imports = ["OSAKit", "AppKit", "Foundation"]
 name = "CoreAnimation"
 imports = ["CoreAnimation", "Foundation"]
 
+[library.SoundAnalysis]
+imports = ["SoundAnalysis", "Foundation"]
+
 [library.Speech]
 imports = ["Speech", "Foundation"]
 
@@ -860,6 +863,18 @@ skipped = true
 # Needs `CMSampleBufferRef` from CoreMedia
 [class.SFSpeechAudioBufferRecognitionRequest.methods]
 appendAudioSampleBuffer = { skipped = true }
+# Needs `CMTimeRange`
+[class.SNTimeDurationConstraint.methods.durationRange]
+skipped = true
+[class.SNTimeDurationConstraint.methods.initWithDurationRange]
+skipped = true
+[class.SNClassificationResult.methods.timeRange]
+skipped = true
+# NEeds `CMTime`
+[class.SNClassifySoundRequest.methods.setWindowDuration]
+skipped = true
+[class.SNClassifySoundRequest.methods.windowDuration]
+skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]
