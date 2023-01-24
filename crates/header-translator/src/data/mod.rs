@@ -34,6 +34,7 @@ data! {
     mod GameKit;
     mod IdentityLookup;
     mod InputMethodKit;
+    mod LinkPresentation;
     mod MapKit;
     mod Metal;
     mod MetalFX;

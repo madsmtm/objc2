@@ -91,6 +91,9 @@ imports = ["IdentityLookup", "Foundation"]
 [library.InputMethodKit]
 imports = ["InputMethodKit", "AppKit", "Foundation"]
 
+[library.LinkPresentation]
+imports = ["LinkPresentation", "AppKit", "Foundation"]
+
 [library.MapKit]
 imports = ["MapKit", "AppKit", "Contacts", "CoreLocation", "Foundation"]
 

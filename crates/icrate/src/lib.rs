@@ -92,6 +92,8 @@ pub mod GameKit;
 pub mod IdentityLookup;
 #[cfg(feature = "InputMethodKit")]
 pub mod InputMethodKit;
+#[cfg(feature = "LinkPresentation")]
+pub mod LinkPresentation;
 #[cfg(feature = "MapKit")]
 pub mod MapKit;
 #[cfg(feature = "Metal")]

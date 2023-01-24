@@ -66,6 +66,8 @@
 
 #import <InputMethodKit/InputMethodKit.h>
 
+#import <LinkPresentation/LinkPresentation.h>
+
 #import <MapKit/MapKit.h>
 
 #import <Metal/Metal.h>
