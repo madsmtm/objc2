@@ -40,6 +40,7 @@ data! {
     mod OSAKit;
     mod Speech;
     mod StoreKit;
+    mod UniformTypeIdentifiers;
     mod UserNotifications;
     mod WebKit;
 }

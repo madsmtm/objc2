@@ -71,7 +71,7 @@ imports = ["ExtensionKit", "AppKit", "Foundation"]
 imports = ["ExternalAccessory", "Foundation"]
 
 [library.FileProvider]
-imports = ["FileProvider", "AppKit", "Foundation"]
+imports = ["FileProvider", "AppKit", "Foundation", "UniformTypeIdentifiers"]
 
 [library.FileProviderUI]
 imports = ["FileProviderUI", "AppKit", "FileProvider", "Foundation"]
@@ -112,6 +112,9 @@ imports = ["Speech", "Foundation"]
 
 [library.StoreKit]
 imports = ["StoreKit", "AppKit", "Foundation"]
+
+[library.UniformTypeIdentifiers]
+imports = ["UniformTypeIdentifiers", "Foundation"]
 
 [library.UserNotifications]
 imports = ["UserNotifications", "CoreLocation", "Foundation"]

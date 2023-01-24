@@ -104,6 +104,8 @@ pub mod OSAKit;
 pub mod Speech;
 #[cfg(feature = "StoreKit")]
 pub mod StoreKit;
+#[cfg(feature = "UniformTypeIdentifiers")]
+pub mod UniformTypeIdentifiers;
 #[cfg(feature = "UserNotifications")]
 pub mod UserNotifications;
 #[cfg(feature = "WebKit")]

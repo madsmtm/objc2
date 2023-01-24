@@ -78,6 +78,8 @@
 
 #import <StoreKit/StoreKit.h>
 
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+
 #import <UserNotifications/UserNotifications.h>
 
 #import <WebKit/WebKit.h>
