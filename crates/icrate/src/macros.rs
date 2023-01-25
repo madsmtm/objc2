@@ -17,6 +17,7 @@ macro_rules! impl_encode {
 
 macro_rules! extern_struct {
     (
+        #[struct_name($struct_name:literal)]
         $(#[$m:meta])*
         $v:vis struct $name:ident {
             $($field_v:vis $field:ident: $ty:ty),* $(,)?
@@ -31,7 +32,7 @@ macro_rules! extern_struct {
 
         impl_encode! {
             $name = objc2::Encoding::Struct(
-                stringify!($name),
+                $struct_name,
                 &[$(<$ty as objc2::Encode>::ENCODING),*],
             );
         }
