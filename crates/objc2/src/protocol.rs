@@ -1,7 +1,50 @@
+use core::marker::PhantomData;
 use core::ptr::NonNull;
 
-use crate::runtime::Protocol;
+use crate::encode::{Encoding, RefEncode};
+use crate::runtime::{Object, Protocol};
 use crate::Message;
+
+/// TODO
+#[repr(C)]
+pub struct ProtocolObject<P: ?Sized + ProtocolType> {
+    inner: Object,
+    p: PhantomData<P>,
+}
+
+unsafe impl<P: ?Sized + ProtocolType> RefEncode for ProtocolObject<P> {
+    const ENCODING_REF: Encoding = Object::ENCODING_REF;
+}
+
+unsafe impl<P: ?Sized + ProtocolType> Message for ProtocolObject<P> {}
+
+// TODO: Implement Hash, Eq, PartialEq, Debug
+
+impl<P, T> AsRef<ProtocolObject<P>> for ProtocolObject<T>
+where
+    P: ?Sized + ProtocolType,
+    T: ?Sized + ProtocolType,
+    Self: ConformsTo<P>,
+{
+    #[inline]
+    fn as_ref(&self) -> &ProtocolObject<P> {
+        self.as_protocol()
+    }
+}
+
+impl<P, T> AsMut<ProtocolObject<P>> for ProtocolObject<T>
+where
+    P: ?Sized + ProtocolType,
+    T: ?Sized + ProtocolType,
+    Self: ConformsTo<P>,
+{
+    #[inline]
+    fn as_mut(&mut self) -> &mut ProtocolObject<P> {
+        self.as_protocol_mut()
+    }
+}
+
+// TODO: Maybe iplement Borrow + BorrowMut?
 
 /// Marks types that represent specific protocols.
 ///
@@ -36,17 +79,17 @@ use crate::Message;
 /// use objc2::{extern_protocol, ProtocolType};
 ///
 /// extern_protocol!(
-///     struct MyProtocol;
-///
-///     unsafe impl ProtocolType for MyProtocol {
+///     unsafe trait MyProtocol {
 ///         #[method(aMethod)]
 ///         fn a_method(&self);
 ///     }
+///
+///     unsafe impl ProtocolType for dyn MyProtocol {}
 /// );
 ///
-/// let protocol = MyProtocol::protocol();
+/// let protocol = <dyn MyProtocol>::protocol();
 /// ```
-pub unsafe trait ProtocolType: Message {
+pub unsafe trait ProtocolType {
     /// The name of the Objective-C protocol that this type represents.
     const NAME: &'static str;
 
@@ -89,20 +132,20 @@ pub unsafe trait ProtocolType: Message {
 /// # Safety
 ///
 /// The object must actually conform to the specified protocol.
-pub unsafe trait ConformsTo<P: ProtocolType>: Message {
+pub unsafe trait ConformsTo<P: ?Sized + ProtocolType>: Message {
     /// Get an immutable reference to a type representing the protocol.
-    fn as_protocol(&self) -> &P {
+    fn as_protocol(&self) -> &ProtocolObject<P> {
         let ptr: NonNull<Self> = NonNull::from(self);
-        let ptr: NonNull<P> = ptr.cast();
+        let ptr: NonNull<ProtocolObject<P>> = ptr.cast();
         // SAFETY: Implementer ensures that the object conforms to the
         // protocol; so converting the reference here is safe.
         unsafe { ptr.as_ref() }
     }
 
     /// Get a mutable reference to a type representing the protocol.
-    fn as_protocol_mut(&mut self) -> &mut P {
+    fn as_protocol_mut(&mut self) -> &mut ProtocolObject<P> {
         let ptr: NonNull<Self> = NonNull::from(self);
-        let mut ptr: NonNull<P> = ptr.cast();
+        let mut ptr: NonNull<ProtocolObject<P>> = ptr.cast();
         // SAFETY: Same as `as_protocol`.
         //
         // Since the reference came from a mutable reference to start with,
@@ -112,13 +155,12 @@ pub unsafe trait ConformsTo<P: ProtocolType>: Message {
     }
 }
 
-// SAFETY: Trivial
-unsafe impl<P: ProtocolType> ConformsTo<P> for P {
-    fn as_protocol(&self) -> &P {
-        self
-    }
-
-    fn as_protocol_mut(&mut self) -> &mut P {
-        self
-    }
-}
+// unsafe impl<P: ProtocolType> ConformsTo<P> for P {
+//     fn as_protocol(&self) -> &ProtocolObject<P> {
+//         self
+//     }
+//
+//     fn as_protocol_mut(&mut self) -> &mut ProtocolObject<P> {
+//         self
+//     }
+// }

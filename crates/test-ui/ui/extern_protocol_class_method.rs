@@ -2,9 +2,7 @@ use objc2::{extern_protocol, ProtocolType};
 use objc2::rc::{Id, Owned};
 
 extern_protocol!(
-    pub struct MyProtocol;
-
-    unsafe impl ProtocolType for MyProtocol {
+    pub unsafe trait MyProtocol {
         #[method(a)]
         /// Doc comment
         #[optional]
@@ -23,6 +21,8 @@ extern_protocol!(
         /// Doc comment
         fn d(arg: i32) -> Id<Self, Owned>;
     }
+
+    unsafe impl ProtocolType for dyn MyProtocol {}
 );
 
 fn main() {}

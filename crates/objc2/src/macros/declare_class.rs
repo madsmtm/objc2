@@ -146,13 +146,13 @@
 /// //
 /// // TODO: Remove the need for this!
 /// extern_protocol!(
-///     struct NSCopyingObject;
-///
-///     unsafe impl ProtocolType for NSCopyingObject {
-///         const NAME: &'static str = "NSCopying";
-///
+///     unsafe trait NSCopyingObject {
 ///         #[method(copyWithZone:)]
 ///         fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self;
+///     }
+///
+///     unsafe impl ProtocolType for dyn NSCopyingObject {
+///         const NAME: &'static str = "NSCopying";
 ///     }
 /// );
 ///
@@ -212,7 +212,7 @@
 ///         }
 ///     }
 ///
-///     unsafe impl ConformsTo<NSCopyingObject> for MyCustomObject {
+///     unsafe impl ConformsTo<dyn NSCopyingObject> for MyCustomObject {
 ///         #[method(copyWithZone:)]
 ///         fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
 ///             let mut obj = Self::new(*self.foo);

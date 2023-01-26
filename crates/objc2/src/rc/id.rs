@@ -8,7 +8,7 @@ use core::ptr::{self, NonNull};
 use super::AutoreleasePool;
 use super::{Owned, Ownership, Shared};
 use crate::ffi;
-use crate::{ClassType, ConformsTo, Message, ProtocolType};
+use crate::{ClassType, ConformsTo, Message, ProtocolObject, ProtocolType};
 
 /// An pointer for Objective-C reference counted objects.
 ///
@@ -627,9 +627,9 @@ where
 impl<T: Message, O: Ownership> Id<T, O> {
     /// Convert the object into an object representing the specified protocol.
     #[inline]
-    pub fn into_protocol<P>(this: Self) -> Id<P, O>
+    pub fn into_protocol<P>(this: Self) -> Id<ProtocolObject<P>, O>
     where
-        P: ProtocolType + 'static,
+        P: ?Sized + ProtocolType + 'static,
         T: ConformsTo<P> + 'static,
     {
         // SAFETY:
@@ -637,7 +637,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
         //   `T: ConformsTo` guarantees that it implements the protocol.
         // - Both types are `'static` (this could maybe be relaxed a bit, but
         //   let's just be on the safe side)!
-        unsafe { Self::cast::<P>(this) }
+        unsafe { Self::cast::<ProtocolObject<P>>(this) }
     }
 }
 

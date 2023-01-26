@@ -10,17 +10,22 @@ use objc2::runtime::{Bool, Class, NSObject, Object, Protocol};
 #[cfg(feature = "malloc")]
 use objc2::sel;
 use objc2::{class, msg_send, msg_send_id};
-use objc2::{extern_protocol, ClassType, ConformsTo, Encoding, Message, ProtocolType, RefEncode};
+use objc2::{
+    extern_protocol, ClassType, ConformsTo, Encoding, Message, ProtocolObject, ProtocolType,
+    RefEncode,
+};
+
+// TODO: Fix this
+extern_protocol!(
+    unsafe trait NSObjectProtocol {}
+
+    unsafe impl ProtocolType for dyn NSObjectProtocol {
+        const NAME: &'static str = "NSObject";
+    }
+);
 
 extern_protocol!(
-    #[derive(Debug, PartialEq, Eq, Hash)]
-    struct MyTestProtocol;
-
-    unsafe impl ProtocolType for MyTestProtocol {
-        type Parent = NSObject;
-
-        const NAME: &'static str = "MyTestProtocol";
-
+    unsafe trait MyTestProtocol: NSObjectProtocol {
         #[method(a)]
         fn a(&self) -> c_int;
 
@@ -55,30 +60,33 @@ extern_protocol!(
         // #[method_id(h)]
         // fn h() -> Id<NSNumber, Shared>;
     }
+
+    unsafe impl ProtocolType for dyn MyTestProtocol {
+        const NAME: &'static str = "MyTestProtocol";
+    }
 );
 
 extern_protocol!(
-    struct MyTestProtocol2;
+    unsafe trait MyTestProtocol2 {}
 
-    unsafe impl ProtocolType for MyTestProtocol2 {
+    unsafe impl ProtocolType for dyn MyTestProtocol2 {
         const NAME: &'static str = "MyTestProtocol2";
     }
 );
 
 extern_protocol!(
-    struct MyTestProtocol3;
+    unsafe trait MyTestProtocol3: MyTestProtocol + NSObjectProtocol {}
 
-    #[conforms_to(NSObject)]
-    unsafe impl ProtocolType for MyTestProtocol3 {
-        type Parent = MyTestProtocol;
-    }
+    unsafe impl ProtocolType for dyn MyTestProtocol3 {}
 );
 
 extern_protocol!(
-    struct MyTestProtocol4;
+    unsafe trait MyTestProtocol4:
+        MyTestProtocol + MyTestProtocol3 + MyTestProtocol2 + NSObjectProtocol
+    {
+    }
 
-    #[conforms_to(MyTestProtocol3, MyTestProtocol2, NSObject)]
-    unsafe impl ProtocolType for MyTestProtocol4 {}
+    unsafe impl ProtocolType for dyn MyTestProtocol4 {}
 );
 
 #[repr(C)]
@@ -110,7 +118,7 @@ unsafe impl ClassType for MyTestObject {
 }
 
 unsafe impl ConformsTo<NSObject> for MyTestObject {}
-unsafe impl ConformsTo<MyTestProtocol> for MyTestObject {}
+unsafe impl ConformsTo<dyn MyTestProtocol> for MyTestObject {}
 
 impl MyTestObject {
     fn new() -> Id<Self, Owned> {
@@ -314,7 +322,7 @@ fn test_object() {
 #[test]
 fn test_protocol() {
     let obj = MyTestObject::new();
-    let proto: Id<MyTestProtocol, _> = Id::into_protocol(obj);
+    let proto: Id<ProtocolObject<dyn MyTestProtocol>, _> = Id::into_protocol(obj);
     assert_eq!(proto.a(), 1);
     // TODO: assert_eq!(MyTestObject::b(), 2);
     #[cfg(feature = "Foundation_all")]
@@ -326,7 +334,7 @@ fn test_protocol() {
     assert_eq!(proto.g().as_i32(), 7);
     // TODO: assert_eq!(MyTestObject::h().as_i32(), 8);
 
-    // Check that dereferencing to `NSObject` works
-    let obj: &NSObject = &proto;
-    assert_eq!(obj, &**proto);
+    // Check that transforming to `NSObject` works
+    let _obj: &ProtocolObject<dyn NSObjectProtocol> = proto.as_protocol();
+    // assert_eq!(obj, &**proto);
 }
