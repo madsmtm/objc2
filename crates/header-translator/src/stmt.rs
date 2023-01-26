@@ -268,7 +268,7 @@ pub enum Stmt {
         id: ItemIdentifier,
         // internal objc struct name (before typedef). shows up in encoding
         // and is used in message verification.
-        struct_name: String,
+        encoding_name: Option<String>,
         availability: Availability,
         boxable: bool,
         fields: Vec<(String, Ty)>,
@@ -579,7 +579,7 @@ impl Stmt {
                 let id = ItemIdentifier::new(entity, context);
                 let availability = Availability::parse(entity, context);
                 let mut struct_ = None;
-                let mut struct_name = "?".to_string();
+                let mut encoding_name = "?".to_string();
                 let mut skip_struct = false;
                 let mut kind = None;
 
@@ -606,10 +606,10 @@ impl Stmt {
                         if let Some(name) = entity.get_name() {
                             // if the struct has a name use it
                             // otherwise it will be the default "?"
-                            struct_name = name;
+                            encoding_name = name;
                         }
 
-                        if struct_name == "?" || struct_name.starts_with('_') {
+                        if encoding_name == "?" || encoding_name.starts_with('_') {
                             // If this struct doesn't have a name, or the
                             // name is private, let's parse it with the
                             // typedef name.
@@ -629,7 +629,7 @@ impl Stmt {
                     assert_eq!(kind, None, "should not have parsed a kind");
                     return vec![Self::StructDecl {
                         id,
-                        struct_name,
+                        encoding_name: Some(encoding_name),
                         availability,
                         boxable,
                         fields,
@@ -684,10 +684,9 @@ impl Stmt {
 
                     if !id.name.starts_with('_') {
                         let (boxable, fields) = parse_struct(entity, context);
-                        let struct_name = id.name.clone();
                         return vec![Self::StructDecl {
                             id,
-                            struct_name,
+                            encoding_name: None,
                             availability,
                             boxable,
                             fields,
@@ -1287,14 +1286,16 @@ impl fmt::Display for Stmt {
             }
             Self::StructDecl {
                 id,
-                struct_name,
+                encoding_name,
                 availability,
                 boxable: _,
                 fields,
             } => {
                 writeln!(f, "extern_struct!(")?;
+                if let Some(encoding_name) = encoding_name {
+                    writeln!(f, "    #[encoding_name({encoding_name:?})]")?;
+                }
                 write!(f, "{availability}")?;
-                writeln!(f, "    #[struct_name(\"{struct_name}\")]")?;
                 writeln!(f, "    pub struct {} {{", id.name)?;
                 for (name, ty) in fields {
                     write!(f, "        ")?;
