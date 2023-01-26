@@ -233,6 +233,7 @@ pub struct Method {
     pub result_type: Ty,
     safe: bool,
     mutating: bool,
+    is_protocol: bool,
 }
 
 impl Method {
@@ -319,7 +320,12 @@ pub struct PartialMethod<'tu> {
 }
 
 impl<'tu> PartialMethod<'tu> {
-    pub fn parse(self, data: MethodData, context: &Context<'_>) -> Option<(bool, Method)> {
+    pub fn parse(
+        self,
+        data: MethodData,
+        is_protocol: bool,
+        context: &Context<'_>,
+    ) -> Option<(bool, Method)> {
         let Self {
             entity,
             selector,
@@ -432,6 +438,7 @@ impl<'tu> PartialMethod<'tu> {
                 result_type,
                 safe: !data.unsafe_,
                 mutating: data.mutating,
+                is_protocol,
             },
         ))
     }
@@ -453,6 +460,7 @@ impl PartialProperty<'_> {
         self,
         getter_data: MethodData,
         setter_data: Option<MethodData>,
+        is_protocol: bool,
         context: &Context<'_>,
     ) -> (Option<Method>, Option<Method>) {
         let Self {
@@ -502,6 +510,7 @@ impl PartialProperty<'_> {
                 result_type: ty,
                 safe: !getter_data.unsafe_,
                 mutating: getter_data.mutating,
+                is_protocol,
             })
         } else {
             None
@@ -528,6 +537,7 @@ impl PartialProperty<'_> {
                     result_type: Ty::VOID_RESULT,
                     safe: !setter_data.unsafe_,
                     mutating: setter_data.mutating,
+                    is_protocol,
                 })
             } else {
                 None
@@ -587,7 +597,11 @@ impl fmt::Display for Method {
         // Signature
         //
 
-        write!(f, "        pub ")?;
+        write!(f, "        ")?;
+        if !self.is_protocol {
+            write!(f, "pub ")?;
+        }
+
         if !self.safe {
             write!(f, "unsafe ")?;
         }

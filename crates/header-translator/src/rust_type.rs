@@ -408,10 +408,11 @@ impl fmt::Display for IdType {
             }
             Self::AnyObject { protocols } => match &**protocols {
                 [] => write!(f, "Object"),
+                [id] if id.is_nsobject() => write!(f, "{}", id.path()),
                 [id] if id.name == "NSCopying" || id.name == "NSMutableCopying" => {
                     write!(f, "Object")
                 }
-                [id] => write!(f, "{}", id.path()),
+                [id] => write!(f, "ProtocolObject<dyn {}>", id.path()),
                 // TODO: Handle this better
                 _ => write!(f, "TodoProtocols"),
             },

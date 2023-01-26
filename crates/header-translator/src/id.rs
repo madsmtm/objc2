@@ -91,9 +91,9 @@ impl ItemIdentifier {
         self.library == "System"
     }
 
-    // pub fn is_nsobject(&self) -> bool {
-    //     self.library == "System" && self.name == "NSObject"
-    // }
+    pub fn is_nsobject(&self) -> bool {
+        self.library == "System" && self.name == "NSObject"
+    }
 
     pub fn is_nserror(&self) -> bool {
         self.library == "Foundation" && self.name == "NSError"

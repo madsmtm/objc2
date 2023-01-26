@@ -106,7 +106,12 @@ fn parse_objc_decl(
             }
         }
         EntityKind::ObjCProtocolRef => {
-            protocols.push(ItemIdentifier::new(&entity, context));
+            protocols.push(ItemIdentifier::new(
+                &entity
+                    .get_reference()
+                    .expect("ObjCProtocolRef to reference entity"),
+                context,
+            ));
         }
         EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
             drop(span);
@@ -114,7 +119,9 @@ fn parse_objc_decl(
 
             if !properties.remove(&(partial.is_class, partial.fn_name.clone())) {
                 let data = ClassData::get_method_data(data, &partial.fn_name);
-                if let Some((designated_initializer, method)) = partial.parse(data, context) {
+                if let Some((designated_initializer, method)) =
+                    partial.parse(data, generics.is_none(), context)
+                {
                     if designated_initializer {
                         designated_initializers.push(method.fn_name.clone());
                     }
@@ -132,7 +139,8 @@ fn parse_objc_decl(
                 .as_ref()
                 .map(|setter_name| ClassData::get_method_data(data, setter_name));
 
-            let (getter, setter) = partial.parse(getter_data, setter_data, context);
+            let (getter, setter) =
+                partial.parse(getter_data, setter_data, generics.is_none(), context);
             if let Some(getter) = getter {
                 if !properties.insert((getter.is_class, getter.fn_name.clone())) {
                     error!(?setter, "already exisiting property");
@@ -1123,14 +1131,29 @@ impl fmt::Display for Stmt {
             Self::ProtocolDecl {
                 id,
                 availability,
-                protocols: _,
+                protocols,
                 methods,
             } => {
                 writeln!(f, "extern_protocol!(")?;
                 write!(f, "{availability}")?;
-                writeln!(f, "    pub struct {};", id.name)?;
-                writeln!(f)?;
-                writeln!(f, "    unsafe impl ProtocolType for {} {{", id.name)?;
+
+                write!(f, "    pub unsafe trait {}", id.name)?;
+                if !protocols.is_empty() {
+                    for (i, protocol) in protocols.iter().enumerate() {
+                        if i == 0 {
+                            write!(f, ": ")?;
+                        } else {
+                            write!(f, "+ ")?;
+                        }
+                        if protocol.is_nsobject() {
+                            write!(f, "NSObjectProtocol")?;
+                        } else {
+                            write!(f, "{}", protocol.path())?;
+                        }
+                    }
+                }
+                writeln!(f, " {{")?;
+
                 for method in methods {
                     // Use a set to deduplicate features, and to have them in
                     // a consistent order
@@ -1160,6 +1183,8 @@ impl fmt::Display for Stmt {
                     writeln!(f, "{method}")?;
                 }
                 writeln!(f, "    }}")?;
+                writeln!(f)?;
+                writeln!(f, "    unsafe impl ProtocolType for dyn {} {{}}", id.name)?;
                 writeln!(f, ");")?;
             }
             Self::StructDecl {
