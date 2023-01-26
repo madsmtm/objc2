@@ -1,9 +1,13 @@
+use alloc::borrow::ToOwned;
+use core::fmt;
+use core::hash;
 use core::marker::PhantomData;
 use core::ptr::NonNull;
 
 use crate::encode::{Encoding, RefEncode};
-use crate::rc::{Id, Ownership};
-use crate::runtime::{Object, Protocol};
+use crate::rc::{autoreleasepool, Id, Ownership};
+use crate::runtime::__nsstring::nsstring_to_str;
+use crate::runtime::{NSObjectProtocol, Object, Protocol};
 use crate::Message;
 
 /// Marks types that represent specific protocols.
@@ -167,7 +171,49 @@ impl<P: ?Sized + ProtocolType> ProtocolObject<P> {
     }
 }
 
-// TODO: Implement Hash, Eq, PartialEq, Debug
+impl<P: ?Sized + ProtocolType + NSObjectProtocol> PartialEq for ProtocolObject<P> {
+    #[inline]
+    #[doc(alias = "isEqual:")]
+    fn eq(&self, other: &Self) -> bool {
+        self.__isEqual(other)
+    }
+}
+
+impl<P: ?Sized + ProtocolType + NSObjectProtocol> Eq for ProtocolObject<P> {}
+
+impl<P: ?Sized + ProtocolType + NSObjectProtocol> hash::Hash for ProtocolObject<P> {
+    #[inline]
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+        self.__hash().hash(state);
+    }
+}
+
+impl<P: ?Sized + ProtocolType + NSObjectProtocol> fmt::Debug for ProtocolObject<P> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let description = self.__description();
+
+        match description {
+            // Attempt to format description string
+            Some(description) => {
+                let s = autoreleasepool(|pool| {
+                    // SAFETY: `description` selector is guaranteed to always
+                    // return an instance of `NSString`.
+                    let s = unsafe { nsstring_to_str(&description, pool) };
+                    // The call to `to_owned` is unfortunate, but is required
+                    // to work around `f` not being `AutoreleaseSafe`.
+                    // TODO: Fix this!
+                    s.to_owned()
+                });
+                fmt::Display::fmt(&s, f)
+            }
+            // If description was `NULL`, use `Object`'s `Debug` impl instead
+            None => {
+                let obj: &Object = &self.inner;
+                fmt::Debug::fmt(obj, f)
+            }
+        }
+    }
+}
 
 impl<P, T> AsRef<ProtocolObject<T>> for ProtocolObject<P>
 where
@@ -195,6 +241,8 @@ where
 
 #[cfg(test)]
 mod tests {
+    use alloc::format;
+
     use super::*;
     use crate::rc::Owned;
     use crate::runtime::{NSObject, NSObjectProtocol};
@@ -249,6 +297,7 @@ mod tests {
     );
 
     declare_class!(
+        #[derive(Debug, PartialEq, Eq, Hash)]
         struct DummyClass;
 
         unsafe impl ClassType for DummyClass {
@@ -333,5 +382,32 @@ mod tests {
 
         let _foobar: &mut ProtocolObject<dyn FooBar> = ProtocolObject::from_mut(&mut *obj);
         let _foobar: Id<ProtocolObject<dyn FooBar>, _> = ProtocolObject::from_id(obj);
+    }
+
+    #[test]
+    fn test_traits() {
+        use core::hash::Hasher;
+        use std::collections::hash_map::DefaultHasher;
+        use std::hash::Hash;
+
+        let obj = DummyClass::new();
+        let obj2 = DummyClass::new();
+
+        let foobar: &ProtocolObject<dyn FooBar> = ProtocolObject::from_ref(&*obj);
+        let foobar2: &ProtocolObject<dyn FooBar> = ProtocolObject::from_ref(&*obj2);
+
+        assert_eq!(
+            format!("{obj:?}"),
+            format!("DummyClass {{ __inner: {foobar:?} }}")
+        );
+        assert_eq!(obj == obj2, foobar == foobar2);
+
+        let mut hashstate_a = DefaultHasher::new();
+        let mut hashstate_b = DefaultHasher::new();
+
+        obj.hash(&mut hashstate_a);
+        foobar.hash(&mut hashstate_b);
+
+        assert_eq!(hashstate_a.finish(), hashstate_b.finish());
     }
 }

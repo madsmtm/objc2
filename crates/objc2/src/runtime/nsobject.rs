@@ -1,9 +1,7 @@
-use alloc::borrow::ToOwned;
 use core::fmt;
 use core::hash;
 
-use crate::rc::{autoreleasepool, DefaultId, Id, Owned, Shared};
-use crate::runtime::__nsstring::nsstring_to_str;
+use crate::rc::{DefaultId, Id, Owned, Shared};
 use crate::runtime::{Class, Object, Protocol};
 use crate::{
     msg_send, ClassType, ProtocolObject, ProtocolType, __inner_extern_class, extern_methods,
@@ -204,28 +202,8 @@ impl fmt::Debug for NSObject {
     #[doc(alias = "description")]
     #[doc(alias = "debugDescription")]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let description = self.__description();
-
-        match description {
-            // Attempt to format description string
-            Some(description) => {
-                let s = autoreleasepool(|pool| {
-                    // SAFETY: `description` selector is guaranteed to always
-                    // return an instance of `NSString`.
-                    let s = unsafe { nsstring_to_str(&description, pool) };
-                    // The call to `to_owned` is unfortunate, but is required
-                    // to work around `f` not being `AutoreleaseSafe`.
-                    // TODO: Fix this!
-                    s.to_owned()
-                });
-                fmt::Display::fmt(&s, f)
-            }
-            // If description was `NULL`, use `Object`'s `Debug` impl instead
-            None => {
-                let obj: &Object = self;
-                fmt::Debug::fmt(obj, f)
-            }
-        }
+        let obj: &ProtocolObject<NSObject> = ProtocolObject::from_ref(self);
+        obj.fmt(f)
     }
 }
 

@@ -27,6 +27,7 @@ extern_protocol!(
 );
 
 declare_class!(
+    #[derive(Debug, PartialEq, Eq, Hash)]
     struct DummyClass;
 
     unsafe impl ClassType for DummyClass {
