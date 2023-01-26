@@ -161,11 +161,11 @@ macro_rules! __extern_protocol_rewrite_methods {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __extern_protocol_method_out {
-    // #[method(...)]
+    // Instance #[method(...)]
     {
         ($($function_start:tt)*)
 
-        ($__builder_method:ident)
+        (add_method)
         ($receiver:expr)
         ($__receiver_ty:ty)
         ($($__args_prefix:tt)*)
@@ -178,7 +178,8 @@ macro_rules! __extern_protocol_method_out {
         $($m_checked)*
         $($function_start)*
         where
-            Self: $crate::__macro_helpers::Sized + $crate::ClassType {
+            Self: $crate::__macro_helpers::Sized + $crate::Message
+        {
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send! {
@@ -193,11 +194,11 @@ macro_rules! __extern_protocol_method_out {
         }
     };
 
-    // #[method_id(...)]
+    // Instance #[method_id(...)]
     {
         ($($function_start:tt)*)
 
-        ($__builder_method:ident)
+        (add_method)
         ($receiver:expr)
         ($__receiver_ty:ty)
         ($($__args_prefix:tt)*)
@@ -210,7 +211,75 @@ macro_rules! __extern_protocol_method_out {
         $($m_checked)*
         $($function_start)*
         where
-            Self: $crate::__macro_helpers::Sized + $crate::ClassType {
+            Self: $crate::__macro_helpers::Sized + $crate::Message
+        {
+            #[allow(unused_unsafe)]
+            unsafe {
+                $crate::__method_msg_send_id! {
+                    ($receiver)
+                    ($($sel)*)
+                    ($($args_rest)*)
+
+                    ()
+                    ()
+                    ()
+                }
+            }
+        }
+    };
+
+    // Class #[method(...)]
+    {
+        ($($function_start:tt)*)
+
+        (add_class_method)
+        ($receiver:expr)
+        ($__receiver_ty:ty)
+        ($($__args_prefix:tt)*)
+        ($($args_rest:tt)*)
+
+        (#[method($($sel:tt)*)])
+        ($($m_optional:tt)*)
+        ($($m_checked:tt)*)
+    } => {
+        $($m_checked)*
+        $($function_start)*
+        where
+            Self: $crate::__macro_helpers::Sized + $crate::ClassType
+        {
+            #[allow(unused_unsafe)]
+            unsafe {
+                $crate::__method_msg_send! {
+                    ($receiver)
+                    ($($sel)*)
+                    ($($args_rest)*)
+
+                    ()
+                    ()
+                }
+            }
+        }
+    };
+
+    // Class #[method_id(...)]
+    {
+        ($($function_start:tt)*)
+
+        (add_class_method)
+        ($receiver:expr)
+        ($__receiver_ty:ty)
+        ($($__args_prefix:tt)*)
+        ($($args_rest:tt)*)
+
+        (#[method_id($($sel:tt)*)])
+        ($($m_optional:tt)*)
+        ($($m_checked:tt)*)
+    } => {
+        $($m_checked)*
+        $($function_start)*
+        where
+            Self: $crate::__macro_helpers::Sized + $crate::ClassType
+        {
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send_id! {
