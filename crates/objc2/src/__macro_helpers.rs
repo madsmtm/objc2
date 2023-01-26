@@ -21,6 +21,7 @@ pub use crate::cache::CachedSel;
 pub use core::borrow::{Borrow, BorrowMut};
 pub use core::cell::UnsafeCell;
 pub use core::convert::{AsMut, AsRef};
+pub use core::marker::Sized;
 pub use core::mem::size_of;
 pub use core::ops::{Deref, DerefMut};
 pub use core::option::Option::{self, None, Some};

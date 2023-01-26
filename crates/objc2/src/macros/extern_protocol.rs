@@ -190,7 +190,7 @@ macro_rules! __extern_protocol_rewrite_methods {
             ($name)
 
             ($crate::__extern_protocol_method_out)
-            ($v unsafe fn $name($($args)*) $(-> $ret)? where Self: Sized + $crate::Message)
+            ($v unsafe fn $name($($args)*) $(-> $ret)?)
         }
 
         $crate::__extern_protocol_rewrite_methods! {
@@ -213,7 +213,7 @@ macro_rules! __extern_protocol_rewrite_methods {
             ($name)
 
             ($crate::__extern_protocol_method_out)
-            ($v fn $name($($args)*) $(-> $ret)? where Self: Sized + $crate::Message)
+            ($v fn $name($($args)*) $(-> $ret)?)
         }
 
         $crate::__extern_protocol_rewrite_methods! {
@@ -229,7 +229,7 @@ macro_rules! __extern_protocol_method_out {
     {
         ($($function_start:tt)*)
 
-        (add_method)
+        ($__builder_method:ident)
         ($receiver:expr)
         ($__receiver_ty:ty)
         ($($__args_prefix:tt)*)
@@ -240,7 +240,9 @@ macro_rules! __extern_protocol_method_out {
         ($($m_checked:tt)*)
     } => {
         $($m_checked)*
-        $($function_start)* {
+        $($function_start)*
+        where
+            Self: $crate::__macro_helpers::Sized + $crate::ClassType {
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send! {
@@ -259,7 +261,7 @@ macro_rules! __extern_protocol_method_out {
     {
         ($($function_start:tt)*)
 
-        (add_method)
+        ($__builder_method:ident)
         ($receiver:expr)
         ($__receiver_ty:ty)
         ($($__args_prefix:tt)*)
@@ -270,7 +272,9 @@ macro_rules! __extern_protocol_method_out {
         ($($m_checked:tt)*)
     } => {
         $($m_checked)*
-        $($function_start)* {
+        $($function_start)*
+        where
+            Self: $crate::__macro_helpers::Sized + $crate::ClassType {
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send_id! {
@@ -283,26 +287,6 @@ macro_rules! __extern_protocol_method_out {
                     ()
                 }
             }
-        }
-    };
-
-    // Class method
-    {
-        ($($function_start:tt)*)
-
-        (add_class_method)
-        ($receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
-
-        ($($m_method:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
-    } => {
-        $($m_checked)*
-        $($function_start)* {
-            compile_error!("class methods are not supported in `extern_protocol!`")
         }
     };
 }

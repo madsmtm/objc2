@@ -29,36 +29,34 @@ extern_protocol!(
         #[method(a)]
         fn a(&self) -> c_int;
 
-        // TODO
-        // #[method(b)]
-        // fn b() -> c_int;
+        #[method(b)]
+        fn b() -> c_int;
 
         #[cfg(feature = "Foundation_all")]
         #[method_id(c)]
         fn c(&self) -> Id<NSNumber, Shared>;
 
-        // TODO
-        // #[method_id(d)]
-        // fn d() -> Id<NSNumber, Shared>;
+        #[cfg(feature = "Foundation_all")]
+        #[method_id(d)]
+        fn d() -> Id<NSNumber, Shared>;
 
         #[method(e)]
         #[optional]
         fn e(&self) -> c_int;
 
-        // TODO
-        // #[method(f)]
-        // #[optional]
-        // fn f() -> c_int;
+        #[method(f)]
+        #[optional]
+        fn f() -> c_int;
 
         #[cfg(feature = "Foundation_all")]
         #[optional]
         #[method_id(g)]
         fn g(&self) -> Id<NSNumber, Shared>;
 
-        // TODO
-        // #[optional]
-        // #[method_id(h)]
-        // fn h() -> Id<NSNumber, Shared>;
+        #[cfg(feature = "Foundation_all")]
+        #[optional]
+        #[method_id(h)]
+        fn h() -> Id<NSNumber, Shared>;
     }
 
     unsafe impl ProtocolType for dyn MyTestProtocol {
@@ -118,6 +116,7 @@ unsafe impl ClassType for MyTestObject {
 }
 
 unsafe impl ConformsTo<NSObject> for MyTestObject {}
+unsafe impl ConformsTo<dyn NSObjectProtocol> for MyTestObject {}
 unsafe impl ConformsTo<dyn MyTestProtocol> for MyTestObject {}
 
 impl MyTestObject {
@@ -324,15 +323,17 @@ fn test_protocol() {
     let obj = MyTestObject::new();
     let proto: Id<ProtocolObject<dyn MyTestProtocol>, _> = Id::into_protocol(obj);
     assert_eq!(proto.a(), 1);
-    // TODO: assert_eq!(MyTestObject::b(), 2);
+    assert_eq!(MyTestObject::b(), 2);
     #[cfg(feature = "Foundation_all")]
     assert_eq!(proto.c().as_i32(), 3);
-    // TODO: assert_eq!(MyTestObject::d().as_i32(), 4);
+    #[cfg(feature = "Foundation_all")]
+    assert_eq!(MyTestObject::d().as_i32(), 4);
     assert_eq!(proto.e(), 5);
-    // TODO: assert_eq!(MyTestObject::f(), 6);
+    assert_eq!(MyTestObject::f(), 6);
     #[cfg(feature = "Foundation_all")]
     assert_eq!(proto.g().as_i32(), 7);
-    // TODO: assert_eq!(MyTestObject::h().as_i32(), 8);
+    #[cfg(feature = "Foundation_all")]
+    assert_eq!(MyTestObject::h().as_i32(), 8);
 
     // Check that transforming to `NSObject` works
     let _obj: &ProtocolObject<dyn NSObjectProtocol> = proto.as_protocol();
