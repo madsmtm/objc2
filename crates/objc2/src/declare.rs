@@ -683,7 +683,7 @@ mod tests {
     use crate::rc::{Id, Shared};
     use crate::runtime::{NSObject, NSZone};
     use crate::test_utils;
-    use crate::{declare_class, extern_protocol, msg_send, ClassType, ConformsTo, ProtocolType};
+    use crate::{declare_class, extern_protocol, msg_send, ClassType, ProtocolType};
 
     extern_protocol!(
         unsafe trait NSCopying {
@@ -863,7 +863,7 @@ mod tests {
                 const NAME: &'static str = "TestDeclareClassProtocolNotFound";
             }
 
-            unsafe impl ConformsTo<dyn NSCopying> for Custom {
+            unsafe impl NSCopying for Custom {
                 #[method_id(copyWithZone:)]
                 fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self, Shared> {
                     unimplemented!()
@@ -913,7 +913,7 @@ mod tests {
                 const NAME: &'static str = "TestDeclareClassMissingProtocolMethod";
             }
 
-            unsafe impl ConformsTo<dyn NSCopying> for Custom {
+            unsafe impl NSCopying for Custom {
                 // Missing required method
             }
         );
@@ -932,7 +932,7 @@ mod tests {
                 const NAME: &'static str = "TestDeclareClassInvalidProtocolMethod";
             }
 
-            unsafe impl ConformsTo<dyn NSCopying> for Custom {
+            unsafe impl NSCopying for Custom {
                 // Override with a bad return type
                 #[method(copyWithZone:)]
                 fn copy_with_zone(&self, _zone: *const NSZone) -> u8 {
@@ -958,7 +958,7 @@ mod tests {
                 const NAME: &'static str = "TestDeclareClassExtraProtocolMethod";
             }
 
-            unsafe impl ConformsTo<dyn NSCopying> for Custom {
+            unsafe impl NSCopying for Custom {
                 #[method_id(copyWithZone:)]
                 fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self, Shared> {
                     unimplemented!()

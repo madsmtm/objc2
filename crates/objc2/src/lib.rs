@@ -195,7 +195,7 @@ pub use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
 pub use crate::class_type::ClassType;
 pub use crate::message::{Message, MessageArguments, MessageReceiver};
-pub use crate::protocol::{ConformsTo, ProtocolObject, ProtocolType};
+pub use crate::protocol::{ImplementedBy, ProtocolObject, ProtocolType};
 pub use crate::verify::VerificationError;
 
 #[cfg(feature = "objc2-proc-macros")]

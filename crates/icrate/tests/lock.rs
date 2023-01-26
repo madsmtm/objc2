@@ -1,6 +1,4 @@
 #![cfg(feature = "Foundation_NSLock")]
-use objc2::ConformsTo;
-
 use icrate::Foundation::{NSLock, NSLocking};
 
 #[test]

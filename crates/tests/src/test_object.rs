@@ -11,8 +11,7 @@ use objc2::runtime::{Bool, Class, NSObject, Object, Protocol};
 use objc2::sel;
 use objc2::{class, msg_send, msg_send_id};
 use objc2::{
-    extern_protocol, ClassType, ConformsTo, Encoding, Message, ProtocolObject, ProtocolType,
-    RefEncode,
+    extern_protocol, ClassType, Encoding, Message, ProtocolObject, ProtocolType, RefEncode,
 };
 
 // TODO: Fix this
@@ -115,9 +114,9 @@ unsafe impl ClassType for MyTestObject {
     }
 }
 
-unsafe impl ConformsTo<NSObject> for MyTestObject {}
-unsafe impl ConformsTo<dyn NSObjectProtocol> for MyTestObject {}
-unsafe impl ConformsTo<dyn MyTestProtocol> for MyTestObject {}
+// unsafe impl ConformsTo<NSObject> for MyTestObject {}
+unsafe impl NSObjectProtocol for MyTestObject {}
+unsafe impl MyTestProtocol for MyTestObject {}
 
 impl MyTestObject {
     fn new() -> Id<Self, Owned> {
@@ -321,7 +320,7 @@ fn test_object() {
 #[test]
 fn test_protocol() {
     let obj = MyTestObject::new();
-    let proto: Id<ProtocolObject<dyn MyTestProtocol>, _> = Id::into_protocol(obj);
+    let proto: Id<ProtocolObject<dyn MyTestProtocol>, _> = ProtocolObject::from_id(obj);
     assert_eq!(proto.a(), 1);
     assert_eq!(MyTestObject::b(), 2);
     #[cfg(feature = "Foundation_all")]
@@ -336,6 +335,6 @@ fn test_protocol() {
     assert_eq!(MyTestObject::h().as_i32(), 8);
 
     // Check that transforming to `NSObject` works
-    let _obj: &ProtocolObject<dyn NSObjectProtocol> = proto.as_protocol();
+    let _obj: &ProtocolObject<dyn NSObjectProtocol> = ProtocolObject::from_ref(&*proto);
     // assert_eq!(obj, &**proto);
 }

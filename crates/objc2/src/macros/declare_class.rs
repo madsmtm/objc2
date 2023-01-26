@@ -118,10 +118,10 @@
 /// no safe-guards here; you can easily write `i8`, but if Objective-C thinks
 /// it's an `u32`, it will cause UB when called!
 ///
-/// `unsafe impl ConformsTo<P> for T { ... }` requires that all required
-/// methods of the specified protocol is implemented, and that any extra
-/// requirements (implicit or explicit) that the protocol has are upheld. The
-/// methods in this definition has the same safety requirements as above.
+/// `unsafe impl P for T { ... }` requires that all required methods of the
+/// specified protocol is implemented, and that any extra requirements
+/// (implicit or explicit) that the protocol has are upheld. The methods in
+/// this definition has the same safety requirements as above.
 ///
 /// [`MaybeUninit::zeroed`]: core::mem::MaybeUninit::zeroed
 ///
@@ -138,7 +138,7 @@
 /// use objc2::runtime::{NSObject, NSZone};
 /// use objc2::{
 ///     declare_class, extern_protocol, msg_send, msg_send_id, ClassType,
-///     ConformsTo, ProtocolType,
+///     ProtocolType,
 /// };
 ///
 /// // Declare the NSCopying protocol so that we can implement it (since
@@ -146,12 +146,12 @@
 /// //
 /// // TODO: Remove the need for this!
 /// extern_protocol!(
-///     unsafe trait NSCopyingObject {
+///     unsafe trait NSCopying {
 ///         #[method(copyWithZone:)]
 ///         fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self;
 ///     }
 ///
-///     unsafe impl ProtocolType for dyn NSCopyingObject {
+///     unsafe impl ProtocolType for dyn NSCopying {
 ///         const NAME: &'static str = "NSCopying";
 ///     }
 /// );
@@ -212,7 +212,7 @@
 ///         }
 ///     }
 ///
-///     unsafe impl ConformsTo<dyn NSCopyingObject> for MyCustomObject {
+///     unsafe impl NSCopying for MyCustomObject {
 ///         #[method(copyWithZone:)]
 ///         fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self {
 ///             let mut obj = Self::new(*self.foo);
@@ -508,7 +508,7 @@ macro_rules! __declare_class_methods {
     // With protocol
     (
         $(#[$m:meta])*
-        unsafe impl ConformsTo<$protocol:ty> for $for:ty {
+        unsafe impl $protocol:ident for $for:ty {
             $($methods:tt)*
         }
 
@@ -516,7 +516,7 @@ macro_rules! __declare_class_methods {
     ) => {
         // SAFETY: Upheld by caller
         $(#[$m])*
-        unsafe impl ConformsTo<$protocol> for $for {}
+        unsafe impl $protocol for $for {}
 
         $(#[$m])*
         impl $for {
@@ -570,7 +570,7 @@ macro_rules! __declare_class_register_methods {
         ($builder:ident)
 
         $(#[$($m:tt)*])*
-        unsafe impl ConformsTo<$protocol:ty> for $for:ty {
+        unsafe impl $protocol:ident for $for:ty {
             $($methods:tt)*
         }
 
@@ -582,7 +582,7 @@ macro_rules! __declare_class_register_methods {
                 // Implement protocol
                 #[allow(unused_mut)]
                 let mut __objc2_protocol_builder = $builder.__add_protocol_methods(
-                    <$protocol as $crate::ProtocolType>::protocol()
+                    <dyn $protocol as $crate::ProtocolType>::protocol()
                 );
 
                 // In case the user's function is marked `deprecated`

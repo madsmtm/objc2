@@ -8,7 +8,7 @@ use core::ptr::{self, NonNull};
 use super::AutoreleasePool;
 use super::{Owned, Ownership, Shared};
 use crate::ffi;
-use crate::{ClassType, ConformsTo, Message, ProtocolObject, ProtocolType};
+use crate::Message;
 
 /// An pointer for Objective-C reference counted objects.
 ///
@@ -233,7 +233,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     ///
     /// This is equivalent to a `cast` between two pointers.
     ///
-    /// See [`Id::into_super`] and [`Id::into_protocol`] for safe
+    /// See [`Id::into_super`] and [`ProtocolObject::from_id`] for safe
     /// alternatives.
     ///
     /// This is common to do when you know that an object is a subclass of
@@ -244,6 +244,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// assumes no specific class.
     ///
     /// [`Object`]: crate::runtime::Object
+    /// [`ProtocolObject::from_id`]: crate::ProtocolObject::from_id
     ///
     ///
     /// # Safety
@@ -606,38 +607,6 @@ impl<T: Message> Id<T, Shared> {
         let ptr = self.autorelease_inner();
         // SAFETY: The pointer is valid as a reference
         unsafe { pool.ptr_as_ref(ptr) }
-    }
-}
-
-impl<T: ClassType + 'static, O: Ownership> Id<T, O>
-where
-    T::Super: 'static,
-{
-    /// Convert the object into its superclass.
-    #[inline]
-    pub fn into_super(this: Self) -> Id<T::Super, O> {
-        // SAFETY:
-        // - The casted-to type is a superclass of the type.
-        // - Both types are `'static` (this could maybe be relaxed a bit, but
-        //   let's just be on the safe side)!
-        unsafe { Self::cast::<T::Super>(this) }
-    }
-}
-
-impl<T: Message, O: Ownership> Id<T, O> {
-    /// Convert the object into an object representing the specified protocol.
-    #[inline]
-    pub fn into_protocol<P>(this: Self) -> Id<ProtocolObject<P>, O>
-    where
-        P: ?Sized + ProtocolType + 'static,
-        T: ConformsTo<P> + 'static,
-    {
-        // SAFETY:
-        // - The type can be represented as the casted-to type, since
-        //   `T: ConformsTo` guarantees that it implements the protocol.
-        // - Both types are `'static` (this could maybe be relaxed a bit, but
-        //   let's just be on the safe side)!
-        unsafe { Self::cast::<ProtocolObject<P>>(this) }
     }
 }
 
