@@ -197,7 +197,7 @@ where
 mod tests {
     use super::*;
     use crate::rc::Owned;
-    use crate::runtime::NSObject;
+    use crate::runtime::{NSObject, NSObjectProtocol};
     use crate::{declare_class, extern_methods, extern_protocol, ClassType};
 
     extern_protocol!(
@@ -213,7 +213,7 @@ mod tests {
     );
 
     extern_protocol!(
-        unsafe trait Bar {
+        unsafe trait Bar: NSObjectProtocol {
             #[method(bar)]
             fn bar_class();
 
@@ -264,6 +264,7 @@ mod tests {
         }
     );
 
+    unsafe impl NSObjectProtocol for DummyClass {}
     unsafe impl Foo for DummyClass {}
     unsafe impl Bar for DummyClass {}
     unsafe impl FooBar for DummyClass {}
@@ -272,10 +273,19 @@ mod tests {
     #[test]
     /// The out-commented ones here are tested in `test-ui/ui/protocol.rs`
     fn impl_traits() {
+        fn impl_nsobject<T: NSObjectProtocol>() {}
         fn impl_foo<T: Foo>() {}
         fn impl_bar<T: Bar>() {}
         fn impl_foobar<T: FooBar>() {}
         fn impl_foofoobar<T: FooFooBar>() {}
+
+        impl_nsobject::<NSObject>();
+        impl_nsobject::<ProtocolObject<NSObject>>();
+        // impl_nsobject::<ProtocolObject<dyn Foo>>();
+        impl_nsobject::<ProtocolObject<dyn Bar>>();
+        impl_nsobject::<ProtocolObject<dyn FooBar>>();
+        impl_nsobject::<ProtocolObject<dyn FooFooBar>>();
+        impl_nsobject::<DummyClass>();
 
         impl_foo::<ProtocolObject<dyn Foo>>();
         // impl_foo::<ProtocolObject<dyn Bar>>();
@@ -310,11 +320,16 @@ mod tests {
 
         let _bar: &ProtocolObject<dyn Bar> = ProtocolObject::from_ref(foobar);
         let bar: &ProtocolObject<dyn Bar> = ProtocolObject::from_ref(&*obj);
-        let _bar: &ProtocolObject<dyn Bar> = ProtocolObject::from_ref(bar);
+        let bar: &ProtocolObject<dyn Bar> = ProtocolObject::from_ref(bar);
 
         let _foo: &ProtocolObject<dyn Foo> = ProtocolObject::from_ref(foobar);
         let foo: &ProtocolObject<dyn Foo> = ProtocolObject::from_ref(&*obj);
         let _foo: &ProtocolObject<dyn Foo> = ProtocolObject::from_ref(foo);
+
+        let _nsobject: &ProtocolObject<NSObject> = ProtocolObject::from_ref(foobar);
+        let _nsobject: &ProtocolObject<NSObject> = ProtocolObject::from_ref(bar);
+        let nsobject: &ProtocolObject<NSObject> = ProtocolObject::from_ref(&*obj);
+        let _nsobject: &ProtocolObject<NSObject> = ProtocolObject::from_ref(nsobject);
 
         let _foobar: &mut ProtocolObject<dyn FooBar> = ProtocolObject::from_mut(&mut *obj);
         let _foobar: Id<ProtocolObject<dyn FooBar>, _> = ProtocolObject::from_id(obj);

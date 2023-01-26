@@ -74,7 +74,7 @@ fn test_interior_nul() {
 #[cfg(feature = "Foundation_NSMutableString")]
 fn test_copy() {
     use objc2::rc::Id;
-    use Foundation::{NSCopying, NSMutableCopying};
+    use Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
 
     let s1 = NSString::from_str("abc");
     let s2 = s1.copy();

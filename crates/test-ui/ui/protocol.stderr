@@ -1,3 +1,20 @@
+error[E0277]: the trait bound `dyn Foo: NSObjectProtocol` is not satisfied
+ --> ui/protocol.rs
+  |
+  |     impl_nsobject::<ProtocolObject<dyn Foo>>();
+  |                     ^^^^^^^^^^^^^^^^^^^^^^^ the trait `NSObjectProtocol` is not implemented for `dyn Foo`
+  |
+  = help: the following other types implement trait `NSObjectProtocol`:
+            DummyClass
+            NSObject
+            ProtocolObject<T>
+  = note: required for `ProtocolObject<dyn Foo>` to implement `NSObjectProtocol`
+note: required by a bound in `impl_nsobject`
+ --> ui/protocol.rs
+  |
+  |     fn impl_nsobject<T: NSObjectProtocol>() {}
+  |                         ^^^^^^^^^^^^^^^^ required by this bound in `impl_nsobject`
+
 error[E0277]: the trait bound `dyn Bar: Foo` is not satisfied
  --> ui/protocol.rs
   |
@@ -36,7 +53,7 @@ note: required for `ProtocolObject<dyn Foo>` to implement `Bar`
  --> ui/protocol.rs
   |
   | / extern_protocol!(
-  | |     unsafe trait Bar {}
+  | |     unsafe trait Bar: NSObjectProtocol {}
   | |
   | |     unsafe impl ProtocolType for dyn Bar {}
   | | );

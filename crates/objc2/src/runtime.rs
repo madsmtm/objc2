@@ -30,7 +30,7 @@ use crate::encode::{Encode, EncodeArguments, EncodeConvert, Encoding, OptionEnco
 use crate::ffi;
 use crate::verify::{verify_method_signature, Inner, VerificationError};
 
-pub use self::nsobject::NSObject;
+pub use self::nsobject::{NSObject, NSObjectProtocol};
 pub use self::nszone::NSZone;
 #[doc(inline)]
 pub use crate::encode::__bool::Bool;

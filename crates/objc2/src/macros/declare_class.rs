@@ -135,7 +135,7 @@
 /// use std::os::raw::c_int;
 /// use objc2::declare::{Ivar, IvarDrop};
 /// use objc2::rc::{Id, Owned, Shared};
-/// use objc2::runtime::{NSObject, NSZone};
+/// use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
 /// use objc2::{
 ///     declare_class, extern_protocol, msg_send, msg_send_id, ClassType,
 ///     ProtocolType,

@@ -30,7 +30,7 @@ fn test_from_nsstring() {
 #[test]
 #[cfg(feature = "Foundation_NSMutableAttributedString")]
 fn test_copy() {
-    use Foundation::{NSCopying, NSMutableCopying};
+    use Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
 
     let s1 = NSAttributedString::from_nsstring(&NSString::from_str("abc"));
     let s2 = s1.copy();
@@ -84,7 +84,7 @@ fn test_new_mutable() {
 #[test]
 #[cfg(feature = "Foundation_NSMutableAttributedString")]
 fn test_copy_mutable() {
-    use Foundation::{NSCopying, NSMutableCopying};
+    use Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
 
     let s1 = Foundation::NSMutableAttributedString::from_nsstring(&NSString::from_str("abc"));
     let s2 = s1.copy();

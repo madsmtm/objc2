@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
+* Added `NSObjectProtocol` trait for allowing `ProtocolObject` to implement
+  `Debug`, `Hash`, `PartialEq` and `Eq`.
 * Support `#[cfg(...)]` attributes in `extern_class!` macro.
 * Added support for selectors with multiple colons like `abc::` in the `sel!`,
   `extern_class!`, `extern_protocol!` and `declare_class!` macros.
@@ -18,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Using the automatic `NSError**`-to-`Result` functionality in
   `extern_methods!` now requires a trailing underscore (so now it's
   `#[method(myMethod:error:_)]` instead of `#[method(myMethod:error:)]`).
+* **BREAKING**: Moved `NSObject::is_kind_of` to the new `NSObjectProtocol`.
 
 ### Fixed
 * Allow empty structs in `declare_class!` macro.

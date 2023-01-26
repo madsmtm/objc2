@@ -1,6 +1,6 @@
 //! The negative cases of protocol.rs `impl_traits`
 use objc2::{ClassType, declare_class, extern_protocol, ProtocolObject, ProtocolType};
-use objc2::runtime::NSObject;
+use objc2::runtime::{NSObjectProtocol, NSObject};
 
 extern_protocol!(
     unsafe trait Foo {}
@@ -9,7 +9,7 @@ extern_protocol!(
 );
 
 extern_protocol!(
-    unsafe trait Bar {}
+    unsafe trait Bar: NSObjectProtocol {}
 
     unsafe impl ProtocolType for dyn Bar {}
 );
@@ -34,16 +34,26 @@ declare_class!(
     }
 );
 
+unsafe impl NSObjectProtocol for DummyClass {}
 unsafe impl Foo for DummyClass {}
 unsafe impl Bar for DummyClass {}
 unsafe impl FooBar for DummyClass {}
 // unsafe impl FooFooBar for DummyClass {}
 
 fn main() {
+    fn impl_nsobject<T: NSObjectProtocol>() {}
     fn impl_foo<T: Foo>() {}
     fn impl_bar<T: Bar>() {}
     fn impl_foobar<T: FooBar>() {}
     fn impl_foofoobar<T: FooFooBar>() {}
+
+    impl_nsobject::<NSObject>();
+    impl_nsobject::<ProtocolObject<NSObject>>();
+    impl_nsobject::<ProtocolObject<dyn Foo>>();
+    impl_nsobject::<ProtocolObject<dyn Bar>>();
+    impl_nsobject::<ProtocolObject<dyn FooBar>>();
+    impl_nsobject::<ProtocolObject<dyn FooFooBar>>();
+    impl_nsobject::<DummyClass>();
 
     impl_foo::<ProtocolObject<dyn Foo>>();
     impl_foo::<ProtocolObject<dyn Bar>>();

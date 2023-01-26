@@ -37,7 +37,7 @@ use crate::encode::{Encoding, RefEncode};
 use crate::ffi;
 use crate::rc::{autoreleasepool, Id, Shared};
 use crate::runtime::__nsstring::nsstring_to_str;
-use crate::runtime::{Class, NSObject, Object};
+use crate::runtime::{Class, NSObject, NSObjectProtocol, Object};
 use crate::{extern_methods, sel, Message};
 
 /// An Objective-C exception.
@@ -79,7 +79,7 @@ impl Exception {
             let obj: *const Exception = self;
             let obj = unsafe { obj.cast::<NSObject>().as_ref().unwrap() };
             // Get class dynamically instead of with `class!` macro
-            Some(obj.is_kind_of_inner(Class::get("NSException")?))
+            Some(obj.__isKindOfClass(Class::get("NSException")?))
         } else {
             Some(false)
         }

@@ -5,24 +5,26 @@ use core::hash;
 use crate::rc::{autoreleasepool, DefaultId, Id, Owned, Shared};
 use crate::runtime::__nsstring::nsstring_to_str;
 use crate::runtime::{Class, Object, Protocol};
-use crate::{ClassType, ProtocolType, __inner_extern_class, extern_methods, msg_send_id};
+use crate::{
+    msg_send, ClassType, ProtocolObject, ProtocolType, __inner_extern_class, extern_methods,
+    msg_send_id, ImplementedBy, Message,
+};
 
 __inner_extern_class! {
     @__inner
 
     /// The root class of most Objective-C class hierarchies.
     ///
-    /// This represents both the [`NSObject` class][cls] and the [`NSObject`
-    /// protocol][proto].
+    /// This represents the [`NSObject` class][cls]. The name "NSObject" also
+    /// refers to a protocol, see [`NSObjectProtocol`] for that.
     ///
     /// Since this class is only available with the `Foundation` framework,
-    /// this crate links to it for you.
+    /// `objc2` links to it for you.
     ///
     /// This is exported under `icrate::Foundation::NSObject`, you probably
     /// want to use that path instead.
     ///
     /// [cls]: https://developer.apple.com/documentation/objectivec/nsobject?language=objc
-    /// [proto]: https://developer.apple.com/documentation/objectivec/1418956-nsobject?language=objc
     pub struct (NSObject) {}
 
     unsafe impl () for NSObject {
@@ -65,6 +67,83 @@ unsafe impl ClassType for NSObject {
     }
 }
 
+/// The methods that are fundamental to most Objective-C objects.
+///
+/// This represents the [`NSObject` protocol][proto].
+///
+/// You should rarely need to use this for anything other than as a trait
+/// bound in [`extern_protocol!`], to allow your protocol to implement `Debug`
+/// `Hash`, `PartialEq` and `Eq`.
+///
+/// This trait is exported under `icrate::Foundation::NSObjectProtocol`, you
+/// probably want to use that path instead.
+///
+/// [proto]: https://developer.apple.com/documentation/objectivec/1418956-nsobject?language=objc
+/// [`extern_protocol!`]: crate::extern_protocol!
+#[allow(non_snake_case)]
+pub unsafe trait NSObjectProtocol {
+    #[doc(hidden)]
+    fn __isEqual(&self, other: &Self) -> bool
+    where
+        Self: Sized + Message,
+    {
+        unsafe { msg_send![self, isEqual: other] }
+    }
+
+    #[doc(hidden)]
+    fn __hash(&self) -> usize
+    where
+        Self: Sized + Message,
+    {
+        unsafe { msg_send![self, hash] }
+    }
+
+    #[doc(hidden)]
+    fn __description(&self) -> Option<Id<NSObject, Shared>>
+    where
+        Self: Sized + Message,
+    {
+        unsafe { msg_send_id![self, description] }
+    }
+
+    #[doc(hidden)]
+    fn __isKindOfClass(&self, cls: &Class) -> bool
+    where
+        Self: Sized + Message,
+    {
+        unsafe { msg_send![self, isKindOfClass: cls] }
+    }
+
+    /// Check if the object is an instance of the class, or one of it's
+    /// subclasses.
+    ///
+    /// See [Apple's documentation][apple-doc] for more details on what you
+    /// may (and what you may not) do with this information.
+    ///
+    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418511-iskindofclass
+    #[doc(alias = "isKindOfClass")]
+    fn is_kind_of<T: ClassType>(&self) -> bool
+    where
+        Self: Sized + Message,
+    {
+        self.__isKindOfClass(T::class())
+    }
+
+    // Note: We don't provide a method to convert `NSObject` to `T` based on
+    // `is_kind_of`, since that is not possible to do in general!
+    //
+    // For example, something may have a return type of `NSString`, while
+    // behind the scenes they really return `NSMutableString` and expect it to
+    // not be modified.
+}
+
+unsafe impl NSObjectProtocol for NSObject {}
+
+unsafe impl<T> NSObjectProtocol for ProtocolObject<T> where
+    T: ?Sized + ProtocolType + NSObjectProtocol
+{
+}
+
 unsafe impl ProtocolType for NSObject {
     const NAME: &'static str = "NSObject";
 
@@ -75,39 +154,18 @@ unsafe impl ProtocolType for NSObject {
     const __INNER: () = ();
 }
 
+unsafe impl<T> ImplementedBy<T> for NSObject
+where
+    T: ?Sized + Message + NSObjectProtocol,
+{
+    const __INNER: () = ();
+}
+
 extern_methods!(
     unsafe impl NSObject {
         /// Create a new empty `NSObject`.
         #[method_id(new)]
         pub fn new() -> Id<Self, Owned>;
-
-        #[method(isKindOfClass:)]
-        pub(crate) fn is_kind_of_inner(&self, cls: &Class) -> bool;
-
-        #[method(isEqual:)]
-        fn is_equal(&self, other: &Self) -> bool;
-
-        #[method(hash)]
-        fn hash_code(&self) -> usize;
-
-        /// Check if the object is an instance of the class, or one of it's
-        /// subclasses.
-        ///
-        /// See [Apple's documentation][apple-doc] for more details on what you
-        /// may (and what you may not) do with this information.
-        ///
-        /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418511-iskindofclass
-        #[doc(alias = "isKindOfClass:")]
-        pub fn is_kind_of<T: ClassType>(&self) -> bool {
-            self.is_kind_of_inner(T::class())
-        }
-
-        // Note: We don't provide a method to convert `NSObject` to `T` based on
-        // `is_kind_of`, since that is not possible to do in general!
-        //
-        // For example, something may have a return type of `NSString`, while
-        // behind the scenes they really return `NSMutableString` and expect it to
-        // not be modified.
     }
 );
 
@@ -122,7 +180,7 @@ impl PartialEq for NSObject {
     #[inline]
     #[doc(alias = "isEqual:")]
     fn eq(&self, other: &Self) -> bool {
-        self.is_equal(other)
+        self.__isEqual(other)
     }
 }
 
@@ -138,7 +196,7 @@ impl Eq for NSObject {}
 impl hash::Hash for NSObject {
     #[inline]
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
-        self.hash_code().hash(state);
+        self.__hash().hash(state);
     }
 }
 
@@ -146,8 +204,7 @@ impl fmt::Debug for NSObject {
     #[doc(alias = "description")]
     #[doc(alias = "debugDescription")]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // Get description
-        let description: Option<Id<NSObject, Shared>> = unsafe { msg_send_id![self, description] };
+        let description = self.__description();
 
         match description {
             // Attempt to format description string
