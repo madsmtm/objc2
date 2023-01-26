@@ -686,6 +686,7 @@ mod tests {
     use crate::{declare_class, extern_protocol, msg_send, ClassType, ProtocolType};
 
     extern_protocol!(
+        #[allow(clippy::missing_safety_doc)]
         unsafe trait NSCopying {
             #[method_id(copyWithZone:)]
             fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self, Shared>;

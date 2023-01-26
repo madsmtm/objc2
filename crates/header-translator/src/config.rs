@@ -42,8 +42,7 @@ impl Config {
     pub fn replace_protocol_name(&self, name: String) -> String {
         self.protocol_data
             .get(&name)
-            .map(|data| data.renamed.clone())
-            .flatten()
+            .and_then(|data| data.renamed.clone())
             .unwrap_or(name)
     }
 

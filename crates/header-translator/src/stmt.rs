@@ -405,7 +405,7 @@ impl Stmt {
                 );
 
                 let mut protocols = Default::default();
-                parse_protocols(&entity, &mut protocols, context);
+                parse_protocols(entity, &mut protocols, context);
 
                 let skipped_protocols = data
                     .map(|data| data.skipped_protocols.clone())
@@ -482,8 +482,7 @@ impl Stmt {
 
                 if let Some(category_name) = &category.name {
                     let category_data = data
-                        .map(|data| data.categories.get(category_name))
-                        .flatten()
+                        .and_then(|data| data.categories.get(category_name))
                         .cloned()
                         .unwrap_or_default();
 
@@ -552,8 +551,7 @@ impl Stmt {
                     false,
                     None,
                     |name| {
-                        data.map(|data| data.methods.get(name))
-                            .flatten()
+                        data.and_then(|data| data.methods.get(name))
                             .copied()
                             .unwrap_or_default()
                     },

@@ -127,6 +127,7 @@ new_objc2::extern_class!(
 );
 
 new_objc2::extern_protocol!(
+    #[allow(clippy::missing_safety_doc)]
     unsafe trait CustomProtocol {
         #[method(c)]
         fn c(&self);

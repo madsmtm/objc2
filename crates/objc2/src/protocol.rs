@@ -240,6 +240,7 @@ where
 // TODO: Maybe iplement Borrow + BorrowMut?
 
 #[cfg(test)]
+#[allow(clippy::missing_safety_doc)]
 mod tests {
     use alloc::format;
 
