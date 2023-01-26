@@ -1123,10 +1123,28 @@ impl fmt::Display for Stmt {
             Self::ProtocolImpl {
                 cls: _,
                 generics: _,
-                protocol: _,
+                protocol,
+                availability: _,
+            } if protocol.name == "NSCopying" || protocol.name == "NSMutableCopying" => {
+                // TODO
+            }
+            Self::ProtocolImpl {
+                cls,
+                generics,
+                protocol,
                 availability: _,
             } => {
-                // TODO
+                if let Some(feature) = cls.feature() {
+                    writeln!(f, "#[cfg(feature = \"{feature}\")]")?;
+                }
+                writeln!(
+                    f,
+                    "unsafe impl{} {} for {}{} {{}}",
+                    GenericParamsHelper(generics),
+                    protocol.path_in_relation_to(cls),
+                    cls.path(),
+                    GenericTyHelper(generics),
+                )?;
             }
             Self::ProtocolDecl {
                 id,

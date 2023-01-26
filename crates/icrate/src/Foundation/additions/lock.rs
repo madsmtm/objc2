@@ -1,10 +1,8 @@
 #![cfg(feature = "Foundation_NSLock")]
 use crate::common::*;
-use crate::Foundation::{NSLock, NSLocking};
+use crate::Foundation::NSLock;
 
 // TODO: Proper Send/Sync impls here
-
-unsafe impl NSLocking for NSLock {}
 
 extern_methods!(
     unsafe impl NSLock {
