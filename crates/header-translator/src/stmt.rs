@@ -437,6 +437,18 @@ impl Stmt {
                     return vec![];
                 }
 
+                if let Some(category_name) = &category.name {
+                    let category_data = data
+                        .map(|data| data.categories.get(category_name))
+                        .flatten()
+                        .cloned()
+                        .unwrap_or_default();
+
+                    if category_data.skipped {
+                        return vec![];
+                    }
+                }
+
                 let mut generics = Vec::new();
 
                 let (protocols, methods, designated_initializers) =

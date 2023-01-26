@@ -72,6 +72,8 @@ pub struct ClassData {
     #[serde(default)]
     pub methods: HashMap<String, MethodData>,
     #[serde(default)]
+    pub categories: HashMap<String, CategoryData>,
+    #[serde(default)]
     pub derives: Derives,
     #[serde(rename = "owned")]
     #[serde(default)]
@@ -83,6 +85,13 @@ impl ClassData {
         this.map(|data| data.methods.get(name).copied().unwrap_or_default())
             .unwrap_or_default()
     }
+}
+
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct CategoryData {
+    #[serde(default)]
+    pub skipped: bool,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

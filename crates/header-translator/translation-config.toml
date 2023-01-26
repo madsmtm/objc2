@@ -1147,3 +1147,8 @@ skipped = true
 # tries to derive with `PartialEq` which fails because of `Bool` fields; manually define for now
 [struct.GCExtendedGamepadSnapshotData]
 skipped = true
+
+# This duplicates the method and protocol. The added type information is not
+# enough to make it safe anyhow, we need to do manual work here anyhow.
+[class.NSDictionary.categories.NSGenericFastEnumeration]
+skipped = true
