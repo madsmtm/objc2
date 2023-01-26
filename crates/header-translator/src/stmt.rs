@@ -35,6 +35,28 @@ impl fmt::Display for Derives {
     }
 }
 
+/// Find all protocols, protocol's protocols and superclass' protocols.
+fn parse_protocols(entity: &Entity<'_>, protocols: &mut BTreeSet<ItemIdentifier>, context: &Context<'_>) {
+    immediate_children(entity, |entity, _span| match entity.get_kind() {
+        EntityKind::ObjCProtocolRef => {
+            let entity = entity
+                .get_reference()
+                .expect("ObjCProtocolRef to reference entity");
+            if protocols.insert(ItemIdentifier::new(&entity, context)) {
+                // Only recurse if we haven't already seen this protocol
+                parse_protocols(&entity, protocols, context);
+            }
+        }
+        EntityKind::ObjCSuperClassRef => {
+            let entity = entity
+                .get_reference()
+                .expect("ObjCSuperClassRef to reference entity");
+            parse_protocols(&entity, protocols, context);
+        }
+        _ => {}
+    });
+}
+
 fn parse_superclass<'ty>(
     entity: &Entity<'ty>,
     context: &Context<'_>,
@@ -70,8 +92,8 @@ fn parse_objc_decl(
     mut generics: Option<&mut Vec<String>>,
     data: Option<&ClassData>,
     context: &Context<'_>,
-) -> (Vec<ItemIdentifier>, Vec<Method>, Vec<String>) {
-    let mut protocols = Vec::new();
+) -> (BTreeSet<ItemIdentifier>, Vec<Method>, Vec<String>) {
+    let mut protocols = BTreeSet::new();
     let mut methods = Vec::new();
     let mut designated_initializers = Vec::new();
 
@@ -106,12 +128,10 @@ fn parse_objc_decl(
             }
         }
         EntityKind::ObjCProtocolRef => {
-            protocols.push(ItemIdentifier::new(
-                &entity
-                    .get_reference()
-                    .expect("ObjCProtocolRef to reference entity"),
-                context,
-            ));
+            let entity = entity
+                .get_reference()
+                .expect("ObjCProtocolRef to reference entity");
+            protocols.insert(ItemIdentifier::new(&entity, context));
         }
         EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
             drop(span);
@@ -212,7 +232,7 @@ pub enum Stmt {
     ProtocolDecl {
         id: ItemIdentifier,
         availability: Availability,
-        protocols: Vec<ItemIdentifier>,
+        protocols: BTreeSet<ItemIdentifier>,
         methods: Vec<Method>,
     },
     /// @interface ty: _ <protocols*>
@@ -366,8 +386,11 @@ impl Stmt {
                 let availability = Availability::parse(entity, context);
                 let mut generics = Vec::new();
 
-                let (protocols, methods, designated_initializers) =
+                let (_, methods, designated_initializers) =
                     parse_objc_decl(entity, true, Some(&mut generics), data, context);
+
+                let mut protocols = Default::default();
+                parse_protocols(&entity, &mut protocols, context);
 
                 let mut superclass_entity = *entity;
                 let mut superclasses = vec![];
@@ -1149,14 +1172,13 @@ impl fmt::Display for Stmt {
                 if let Some(feature) = cls.feature() {
                     writeln!(f, "#[cfg(feature = \"{feature}\")]")?;
                 }
-                writeln!(
-                    f,
-                    "unsafe impl{} {} for {}{} {{}}",
-                    GenericParamsHelper(generics),
-                    protocol.path_in_relation_to(cls),
-                    cls.path(),
-                    GenericTyHelper(generics),
-                )?;
+                writeln!(f, "unsafe impl{} ", GenericParamsHelper(generics),)?;
+                if protocol.is_nsobject() {
+                    write!(f, "NSObjectProtocol")?;
+                } else {
+                    write!(f, "{}", protocol.path_in_relation_to(cls))?;
+                }
+                writeln!(f, " for {}{} {{}}", cls.path(), GenericTyHelper(generics),)?;
             }
             Self::ProtocolDecl {
                 id,
