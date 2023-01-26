@@ -507,6 +507,10 @@ renamed = "NSTextAttachmentCellProtocol"
 [protocol.NSAccessibilityElement]
 renamed = "NSAccessibilityElementProtocol"
 
+# Protocol that has a typedef defined for it for ease of use
+[protocol.NSFileProviderItem]
+renamed = "NSFileProviderItemProtocol"
+
 # Both property and method
 [class.NSDocument.methods.setDisplayName]
 skipped = true
@@ -523,10 +527,6 @@ skipped = true
 [class.MTLRasterizationRateLayerDescriptor.methods.sampleCount]
 skipped = true
 [class.MTLRasterizationRateLayerDescriptor.methods.setSampleCount]
-skipped = true
-
-# Duplicated type? `typedef id<NSFileProviderItem> NSFileProviderItem`
-[typedef.NSFileProviderItem]
 skipped = true
 
 # Uses stuff from different frameworks / system libraries
