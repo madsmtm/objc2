@@ -407,6 +407,11 @@ impl Stmt {
                 let mut protocols = Default::default();
                 parse_protocols(&entity, &mut protocols, context);
 
+                let skipped_protocols = data
+                    .map(|data| data.skipped_protocols.clone())
+                    .unwrap_or_default();
+                protocols.retain(|protocol| !skipped_protocols.contains(&protocol.name));
+
                 let mut superclass_entity = *entity;
                 let mut superclasses = vec![];
 

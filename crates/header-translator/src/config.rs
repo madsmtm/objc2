@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::io::Result;
 use std::path::Path;
@@ -86,6 +86,9 @@ pub struct ClassData {
     #[serde(rename = "owned")]
     #[serde(default)]
     pub ownership: Ownership,
+    #[serde(rename = "skipped-protocols")]
+    #[serde(default)]
+    pub skipped_protocols: HashSet<String>,
 }
 
 impl ClassData {
