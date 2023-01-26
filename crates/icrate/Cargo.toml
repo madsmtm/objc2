@@ -120,6 +120,8 @@ unstable-static-nsstring = []
 # Frameworks
 
 Accessibility = ["Foundation"]
+AdServices = ["Foundation"]
+AdSupport = ["Foundation"]
 AppKit = [
     "Foundation",
     "CoreData",
@@ -141,14 +143,30 @@ AuthenticationServices = [
     # Temporary, since some structs and statics use these
     "Foundation_NSURL",
 ]
+AutomaticAssessmentConfiguration = ["Foundation"]
+Automator = ["AppKit", "Foundation", "OSAKit"]
 BackgroundAssets = ["Foundation"]
 BackgroundTasks = ["Foundation"]
+BusinessChat = ["AppKit", "Foundation"]
+CallKit = ["Foundation"]
+ClassKit = ["Foundation"]
+CloudKit = ["CoreLocation", "Foundation"]
+Contacts = ["Foundation"]
 CoreAnimation = ["Foundation"]
 CoreData = [
     "Foundation",
     # Temporary, since some structs and statics use these
     "CoreData_NSAsynchronousFetchResult",
 ]
+CoreLocation = ["Contacts", "Foundation"]
+DataDetection = ["Foundation"]
+DeviceCheck = ["Foundation"]
+EventKit = ["AppKit", "CoreLocation", "Foundation", "MapKit"]
+ExceptionHandling = ["Foundation"]
+ExtensionKit = ["AppKit", "Foundation"]
+ExternalAccessory = ["Foundation"]
+FileProvider = ["AppKit", "Foundation"]
+FileProviderUI = ["AppKit", "FileProvider", "Foundation"]
 Foundation = [
     "objective-c",
     "block",
@@ -164,12 +182,19 @@ Foundation = [
     "Foundation_NSDictionary",
     "Foundation_NSEnumerator",
 ]
+GameController = ["AppKit", "Foundation"]
+GameKit = ["AppKit", "Foundation"]
+InputMethodKit = ["AppKit", "Foundation"]
+MapKit = ["AppKit", "Contacts", "CoreLocation", "Foundation"]
 Metal = [
     "Foundation",
     # Temporary, since some structs and statics use these
     "Metal_MTLRenderPipelineReflection",
     "Metal_MTLComputePipelineReflection",
 ]
+MetalFX = ["Metal"]
+MetalKit = ["AppKit", "Foundation", "Metal"]
+OSAKit = ["AppKit", "Foundation"]
 WebKit = [
     "AppKit",
     "Foundation",
@@ -181,12 +206,12 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AuthenticationServices_all", "BackgroundAssets_all", "BackgroundTasks_all", "CoreData_all", "CoreAnimation_all", "Foundation_all", "Metal_all", "WebKit_all"]
-unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "CoreAnimation_all", "CoreData_all", "Foundation_all", "WebKit_all"]
-unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7"]
-unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AuthenticationServices_all", "Metal_all"]
-unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11"]
-unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameController_all", "GameKit_all", "MapKit_all", "Metal_all", "MetalKit_all", "WebKit_all"]
+unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "WebKit_all"]
+unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameController_all", "GameKit_all", "MapKit_all", "MetalKit_all"]
+unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "DeviceCheck_all", "FileProvider_all", "FileProviderUI_all", "Metal_all"]
+unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all"]
+unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "CallKit_all", "ExtensionKit_all", "MetalFX_all"]
 
 # Temporary fixes until we can autogenerate these
 Foundation_NSProxy = []
@@ -218,6 +243,16 @@ Accessibility_all = [
     "Accessibility_AXDataSeriesDescriptor",
     "Accessibility_AXLiveAudioGraph",
     "Accessibility_AXNumericDataAxisDescriptor",
+]
+AdServices_AAAttribution = []
+AdServices_all = [
+    "AdServices",
+    "AdServices_AAAttribution",
+]
+AdSupport_ASIdentifierManager = []
+AdSupport_all = [
+    "AdSupport",
+    "AdSupport_ASIdentifierManager",
 ]
 AppKit_NSATSTypesetter = [
     "AppKit_NSTypesetter",
@@ -1201,6 +1236,46 @@ AuthenticationServices_all = [
     "AuthenticationServices_ASWebAuthenticationSessionRequest",
     "AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionManager",
 ]
+AutomaticAssessmentConfiguration_AEAssessmentApplication = []
+AutomaticAssessmentConfiguration_AEAssessmentConfiguration = []
+AutomaticAssessmentConfiguration_AEAssessmentParticipantConfiguration = []
+AutomaticAssessmentConfiguration_AEAssessmentSession = []
+AutomaticAssessmentConfiguration_all = [
+    "AutomaticAssessmentConfiguration",
+    "AutomaticAssessmentConfiguration_AEAssessmentApplication",
+    "AutomaticAssessmentConfiguration_AEAssessmentConfiguration",
+    "AutomaticAssessmentConfiguration_AEAssessmentParticipantConfiguration",
+    "AutomaticAssessmentConfiguration_AEAssessmentSession",
+]
+Automator_AMAction = []
+Automator_AMAppleScriptAction = [
+    "Automator_AMBundleAction",
+]
+Automator_AMBundleAction = [
+    "Automator_AMAction",
+]
+Automator_AMShellScriptAction = [
+    "Automator_AMBundleAction",
+]
+Automator_AMWorkflow = []
+Automator_AMWorkflowController = [
+    "AppKit_NSController",
+]
+Automator_AMWorkflowView = [
+    "AppKit_NSView",
+]
+Automator_AMWorkspace = []
+Automator_all = [
+    "Automator",
+    "Automator_AMAction",
+    "Automator_AMAppleScriptAction",
+    "Automator_AMBundleAction",
+    "Automator_AMShellScriptAction",
+    "Automator_AMWorkflow",
+    "Automator_AMWorkflowController",
+    "Automator_AMWorkflowView",
+    "Automator_AMWorkspace",
+]
 BackgroundAssets_BAAppExtensionInfo = []
 BackgroundAssets_BADownload = []
 BackgroundAssets_BADownloadManager = []
@@ -1238,6 +1313,389 @@ BackgroundTasks_all = [
     "BackgroundTasks_BGTask",
     "BackgroundTasks_BGTaskRequest",
     "BackgroundTasks_BGTaskScheduler",
+]
+BusinessChat_BCChatAction = []
+BusinessChat_BCChatButton = [
+    "AppKit_NSControl",
+]
+BusinessChat_all = [
+    "BusinessChat",
+    "BusinessChat_BCChatAction",
+    "BusinessChat_BCChatButton",
+]
+CallKit_CXAction = []
+CallKit_CXAnswerCallAction = [
+    "CallKit_CXCallAction",
+]
+CallKit_CXCall = []
+CallKit_CXCallAction = [
+    "CallKit_CXAction",
+]
+CallKit_CXCallController = []
+CallKit_CXCallDirectoryExtensionContext = [
+    "Foundation_NSExtensionContext",
+]
+CallKit_CXCallDirectoryManager = []
+CallKit_CXCallDirectoryProvider = []
+CallKit_CXCallObserver = []
+CallKit_CXCallUpdate = []
+CallKit_CXEndCallAction = [
+    "CallKit_CXCallAction",
+]
+CallKit_CXHandle = []
+CallKit_CXPlayDTMFCallAction = [
+    "CallKit_CXCallAction",
+]
+CallKit_CXProvider = []
+CallKit_CXProviderConfiguration = []
+CallKit_CXSetGroupCallAction = [
+    "CallKit_CXCallAction",
+]
+CallKit_CXSetHeldCallAction = [
+    "CallKit_CXCallAction",
+]
+CallKit_CXSetMutedCallAction = [
+    "CallKit_CXCallAction",
+]
+CallKit_CXStartCallAction = [
+    "CallKit_CXCallAction",
+]
+CallKit_CXTransaction = []
+CallKit_all = [
+    "CallKit",
+    "CallKit_CXAction",
+    "CallKit_CXAnswerCallAction",
+    "CallKit_CXCall",
+    "CallKit_CXCallAction",
+    "CallKit_CXCallController",
+    "CallKit_CXCallDirectoryExtensionContext",
+    "CallKit_CXCallDirectoryManager",
+    "CallKit_CXCallDirectoryProvider",
+    "CallKit_CXCallObserver",
+    "CallKit_CXCallUpdate",
+    "CallKit_CXEndCallAction",
+    "CallKit_CXHandle",
+    "CallKit_CXPlayDTMFCallAction",
+    "CallKit_CXProvider",
+    "CallKit_CXProviderConfiguration",
+    "CallKit_CXSetGroupCallAction",
+    "CallKit_CXSetHeldCallAction",
+    "CallKit_CXSetMutedCallAction",
+    "CallKit_CXStartCallAction",
+    "CallKit_CXTransaction",
+]
+ClassKit_CLSActivity = [
+    "ClassKit_CLSObject",
+]
+ClassKit_CLSActivityItem = [
+    "ClassKit_CLSObject",
+]
+ClassKit_CLSBinaryItem = [
+    "ClassKit_CLSActivityItem",
+]
+ClassKit_CLSContext = [
+    "ClassKit_CLSObject",
+]
+ClassKit_CLSDataStore = []
+ClassKit_CLSObject = []
+ClassKit_CLSProgressReportingCapability = [
+    "ClassKit_CLSObject",
+]
+ClassKit_CLSQuantityItem = [
+    "ClassKit_CLSActivityItem",
+]
+ClassKit_CLSScoreItem = [
+    "ClassKit_CLSActivityItem",
+]
+ClassKit_all = [
+    "ClassKit",
+    "ClassKit_CLSActivity",
+    "ClassKit_CLSActivityItem",
+    "ClassKit_CLSBinaryItem",
+    "ClassKit_CLSContext",
+    "ClassKit_CLSDataStore",
+    "ClassKit_CLSObject",
+    "ClassKit_CLSProgressReportingCapability",
+    "ClassKit_CLSQuantityItem",
+    "ClassKit_CLSScoreItem",
+]
+CloudKit_CKAcceptSharesOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKAllowedSharingOptions = []
+CloudKit_CKAsset = []
+CloudKit_CKContainer = []
+CloudKit_CKDatabase = []
+CloudKit_CKDatabaseNotification = [
+    "CloudKit_CKNotification",
+]
+CloudKit_CKDatabaseOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKDatabaseSubscription = [
+    "CloudKit_CKSubscription",
+]
+CloudKit_CKDiscoverAllUserIdentitiesOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKDiscoverUserIdentitiesOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKFetchDatabaseChangesOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKFetchNotificationChangesOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKFetchRecordChangesOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKFetchRecordZoneChangesConfiguration = []
+CloudKit_CKFetchRecordZoneChangesOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKFetchRecordZoneChangesOptions = []
+CloudKit_CKFetchRecordZonesOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKFetchRecordsOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKFetchShareMetadataOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKFetchShareParticipantsOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKFetchSubscriptionsOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKFetchWebAuthTokenOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKLocationSortDescriptor = [
+    "Foundation_NSSortDescriptor",
+]
+CloudKit_CKMarkNotificationsReadOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKModifyBadgeOperation = [
+    "CloudKit_CKOperation",
+]
+CloudKit_CKModifyRecordZonesOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKModifyRecordsOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKModifySubscriptionsOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKNotification = []
+CloudKit_CKNotificationID = []
+CloudKit_CKNotificationInfo = []
+CloudKit_CKOperation = [
+    "Foundation_NSOperation",
+]
+CloudKit_CKOperationConfiguration = []
+CloudKit_CKOperationGroup = []
+CloudKit_CKQuery = []
+CloudKit_CKQueryCursor = []
+CloudKit_CKQueryNotification = [
+    "CloudKit_CKNotification",
+]
+CloudKit_CKQueryOperation = [
+    "CloudKit_CKDatabaseOperation",
+]
+CloudKit_CKQuerySubscription = [
+    "CloudKit_CKSubscription",
+]
+CloudKit_CKRecord = []
+CloudKit_CKRecordID = []
+CloudKit_CKRecordZone = []
+CloudKit_CKRecordZoneID = []
+CloudKit_CKRecordZoneNotification = [
+    "CloudKit_CKNotification",
+]
+CloudKit_CKRecordZoneSubscription = [
+    "CloudKit_CKSubscription",
+]
+CloudKit_CKReference = []
+CloudKit_CKServerChangeToken = []
+CloudKit_CKShare = [
+    "CloudKit_CKRecord",
+]
+CloudKit_CKShareMetadata = []
+CloudKit_CKShareParticipant = []
+CloudKit_CKSubscription = []
+CloudKit_CKSystemSharingUIObserver = []
+CloudKit_CKUserIdentity = []
+CloudKit_CKUserIdentityLookupInfo = []
+CloudKit_all = [
+    "CloudKit",
+    "CloudKit_CKAcceptSharesOperation",
+    "CloudKit_CKAllowedSharingOptions",
+    "CloudKit_CKAsset",
+    "CloudKit_CKContainer",
+    "CloudKit_CKDatabase",
+    "CloudKit_CKDatabaseNotification",
+    "CloudKit_CKDatabaseOperation",
+    "CloudKit_CKDatabaseSubscription",
+    "CloudKit_CKDiscoverAllUserIdentitiesOperation",
+    "CloudKit_CKDiscoverUserIdentitiesOperation",
+    "CloudKit_CKFetchDatabaseChangesOperation",
+    "CloudKit_CKFetchNotificationChangesOperation",
+    "CloudKit_CKFetchRecordChangesOperation",
+    "CloudKit_CKFetchRecordZoneChangesConfiguration",
+    "CloudKit_CKFetchRecordZoneChangesOperation",
+    "CloudKit_CKFetchRecordZoneChangesOptions",
+    "CloudKit_CKFetchRecordZonesOperation",
+    "CloudKit_CKFetchRecordsOperation",
+    "CloudKit_CKFetchShareMetadataOperation",
+    "CloudKit_CKFetchShareParticipantsOperation",
+    "CloudKit_CKFetchSubscriptionsOperation",
+    "CloudKit_CKFetchWebAuthTokenOperation",
+    "CloudKit_CKLocationSortDescriptor",
+    "CloudKit_CKMarkNotificationsReadOperation",
+    "CloudKit_CKModifyBadgeOperation",
+    "CloudKit_CKModifyRecordZonesOperation",
+    "CloudKit_CKModifyRecordsOperation",
+    "CloudKit_CKModifySubscriptionsOperation",
+    "CloudKit_CKNotification",
+    "CloudKit_CKNotificationID",
+    "CloudKit_CKNotificationInfo",
+    "CloudKit_CKOperation",
+    "CloudKit_CKOperationConfiguration",
+    "CloudKit_CKOperationGroup",
+    "CloudKit_CKQuery",
+    "CloudKit_CKQueryCursor",
+    "CloudKit_CKQueryNotification",
+    "CloudKit_CKQueryOperation",
+    "CloudKit_CKQuerySubscription",
+    "CloudKit_CKRecord",
+    "CloudKit_CKRecordID",
+    "CloudKit_CKRecordZone",
+    "CloudKit_CKRecordZoneID",
+    "CloudKit_CKRecordZoneNotification",
+    "CloudKit_CKRecordZoneSubscription",
+    "CloudKit_CKReference",
+    "CloudKit_CKServerChangeToken",
+    "CloudKit_CKShare",
+    "CloudKit_CKShareMetadata",
+    "CloudKit_CKShareParticipant",
+    "CloudKit_CKSubscription",
+    "CloudKit_CKSystemSharingUIObserver",
+    "CloudKit_CKUserIdentity",
+    "CloudKit_CKUserIdentityLookupInfo",
+]
+Contacts_CNChangeHistoryAddContactEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryAddGroupEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryAddMemberToGroupEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryAddSubgroupToGroupEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryDeleteContactEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryDeleteGroupEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryDropEverythingEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryEvent = []
+Contacts_CNChangeHistoryFetchRequest = [
+    "Contacts_CNFetchRequest",
+]
+Contacts_CNChangeHistoryRemoveMemberFromGroupEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryRemoveSubgroupFromGroupEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryUpdateContactEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNChangeHistoryUpdateGroupEvent = [
+    "Contacts_CNChangeHistoryEvent",
+]
+Contacts_CNContact = []
+Contacts_CNContactFetchRequest = [
+    "Contacts_CNFetchRequest",
+]
+Contacts_CNContactFormatter = [
+    "Foundation_NSFormatter",
+]
+Contacts_CNContactProperty = []
+Contacts_CNContactRelation = []
+Contacts_CNContactStore = []
+Contacts_CNContactVCardSerialization = []
+Contacts_CNContactsUserDefaults = []
+Contacts_CNContainer = []
+Contacts_CNFetchRequest = []
+Contacts_CNFetchResult = []
+Contacts_CNGroup = []
+Contacts_CNInstantMessageAddress = []
+Contacts_CNLabeledValue = []
+Contacts_CNMutableContact = [
+    "Contacts_CNContact",
+]
+Contacts_CNMutableGroup = [
+    "Contacts_CNGroup",
+]
+Contacts_CNMutablePostalAddress = [
+    "Contacts_CNPostalAddress",
+]
+Contacts_CNPhoneNumber = []
+Contacts_CNPostalAddress = []
+Contacts_CNPostalAddressFormatter = [
+    "Foundation_NSFormatter",
+]
+Contacts_CNSaveRequest = []
+Contacts_CNSocialProfile = []
+Contacts_all = [
+    "Contacts",
+    "Contacts_CNChangeHistoryAddContactEvent",
+    "Contacts_CNChangeHistoryAddGroupEvent",
+    "Contacts_CNChangeHistoryAddMemberToGroupEvent",
+    "Contacts_CNChangeHistoryAddSubgroupToGroupEvent",
+    "Contacts_CNChangeHistoryDeleteContactEvent",
+    "Contacts_CNChangeHistoryDeleteGroupEvent",
+    "Contacts_CNChangeHistoryDropEverythingEvent",
+    "Contacts_CNChangeHistoryEvent",
+    "Contacts_CNChangeHistoryFetchRequest",
+    "Contacts_CNChangeHistoryRemoveMemberFromGroupEvent",
+    "Contacts_CNChangeHistoryRemoveSubgroupFromGroupEvent",
+    "Contacts_CNChangeHistoryUpdateContactEvent",
+    "Contacts_CNChangeHistoryUpdateGroupEvent",
+    "Contacts_CNContact",
+    "Contacts_CNContactFetchRequest",
+    "Contacts_CNContactFormatter",
+    "Contacts_CNContactProperty",
+    "Contacts_CNContactRelation",
+    "Contacts_CNContactStore",
+    "Contacts_CNContactVCardSerialization",
+    "Contacts_CNContactsUserDefaults",
+    "Contacts_CNContainer",
+    "Contacts_CNFetchRequest",
+    "Contacts_CNFetchResult",
+    "Contacts_CNGroup",
+    "Contacts_CNInstantMessageAddress",
+    "Contacts_CNLabeledValue",
+    "Contacts_CNMutableContact",
+    "Contacts_CNMutableGroup",
+    "Contacts_CNMutablePostalAddress",
+    "Contacts_CNPhoneNumber",
+    "Contacts_CNPostalAddress",
+    "Contacts_CNPostalAddressFormatter",
+    "Contacts_CNSaveRequest",
+    "Contacts_CNSocialProfile",
 ]
 CoreAnimation_CAAnimation = []
 CoreAnimation_CAAnimationGroup = [
@@ -1486,6 +1944,193 @@ CoreData_all = [
     "CoreData_NSQueryGenerationToken",
     "CoreData_NSRelationshipDescription",
     "CoreData_NSSaveChangesRequest",
+]
+CoreLocation_CLBeacon = []
+CoreLocation_CLBeaconIdentityConstraint = []
+CoreLocation_CLBeaconRegion = [
+    "CoreLocation_CLRegion",
+]
+CoreLocation_CLCircularRegion = [
+    "CoreLocation_CLRegion",
+]
+CoreLocation_CLFloor = []
+CoreLocation_CLGeocoder = []
+CoreLocation_CLHeading = []
+CoreLocation_CLLocation = []
+CoreLocation_CLLocationManager = []
+CoreLocation_CLLocationSourceInformation = []
+CoreLocation_CLPlacemark = []
+CoreLocation_CLRegion = []
+CoreLocation_CLVisit = []
+CoreLocation_all = [
+    "CoreLocation",
+    "CoreLocation_CLBeacon",
+    "CoreLocation_CLBeaconIdentityConstraint",
+    "CoreLocation_CLBeaconRegion",
+    "CoreLocation_CLCircularRegion",
+    "CoreLocation_CLFloor",
+    "CoreLocation_CLGeocoder",
+    "CoreLocation_CLHeading",
+    "CoreLocation_CLLocation",
+    "CoreLocation_CLLocationManager",
+    "CoreLocation_CLLocationSourceInformation",
+    "CoreLocation_CLPlacemark",
+    "CoreLocation_CLRegion",
+    "CoreLocation_CLVisit",
+]
+DataDetection_DDMatch = []
+DataDetection_DDMatchCalendarEvent = [
+    "DataDetection_DDMatch",
+]
+DataDetection_DDMatchEmailAddress = [
+    "DataDetection_DDMatch",
+]
+DataDetection_DDMatchFlightNumber = [
+    "DataDetection_DDMatch",
+]
+DataDetection_DDMatchLink = [
+    "DataDetection_DDMatch",
+]
+DataDetection_DDMatchMoneyAmount = [
+    "DataDetection_DDMatch",
+]
+DataDetection_DDMatchPhoneNumber = [
+    "DataDetection_DDMatch",
+]
+DataDetection_DDMatchPostalAddress = [
+    "DataDetection_DDMatch",
+]
+DataDetection_DDMatchShipmentTrackingNumber = [
+    "DataDetection_DDMatch",
+]
+DataDetection_all = [
+    "DataDetection",
+    "DataDetection_DDMatch",
+    "DataDetection_DDMatchCalendarEvent",
+    "DataDetection_DDMatchEmailAddress",
+    "DataDetection_DDMatchFlightNumber",
+    "DataDetection_DDMatchLink",
+    "DataDetection_DDMatchMoneyAmount",
+    "DataDetection_DDMatchPhoneNumber",
+    "DataDetection_DDMatchPostalAddress",
+    "DataDetection_DDMatchShipmentTrackingNumber",
+]
+DeviceCheck_DCAppAttestService = []
+DeviceCheck_DCDevice = []
+DeviceCheck_all = [
+    "DeviceCheck",
+    "DeviceCheck_DCAppAttestService",
+    "DeviceCheck_DCDevice",
+]
+EventKit_EKAlarm = [
+    "EventKit_EKObject",
+]
+EventKit_EKCalendar = [
+    "EventKit_EKObject",
+]
+EventKit_EKCalendarItem = [
+    "EventKit_EKObject",
+]
+EventKit_EKEvent = [
+    "EventKit_EKCalendarItem",
+]
+EventKit_EKEventStore = []
+EventKit_EKObject = []
+EventKit_EKParticipant = [
+    "EventKit_EKObject",
+]
+EventKit_EKRecurrenceDayOfWeek = []
+EventKit_EKRecurrenceEnd = []
+EventKit_EKRecurrenceRule = [
+    "EventKit_EKObject",
+]
+EventKit_EKReminder = [
+    "EventKit_EKCalendarItem",
+]
+EventKit_EKSource = [
+    "EventKit_EKObject",
+]
+EventKit_EKStructuredLocation = [
+    "EventKit_EKObject",
+]
+EventKit_EKVirtualConferenceDescriptor = []
+EventKit_EKVirtualConferenceProvider = []
+EventKit_EKVirtualConferenceRoomTypeDescriptor = []
+EventKit_EKVirtualConferenceURLDescriptor = []
+EventKit_all = [
+    "EventKit",
+    "EventKit_EKAlarm",
+    "EventKit_EKCalendar",
+    "EventKit_EKCalendarItem",
+    "EventKit_EKEvent",
+    "EventKit_EKEventStore",
+    "EventKit_EKObject",
+    "EventKit_EKParticipant",
+    "EventKit_EKRecurrenceDayOfWeek",
+    "EventKit_EKRecurrenceEnd",
+    "EventKit_EKRecurrenceRule",
+    "EventKit_EKReminder",
+    "EventKit_EKSource",
+    "EventKit_EKStructuredLocation",
+    "EventKit_EKVirtualConferenceDescriptor",
+    "EventKit_EKVirtualConferenceProvider",
+    "EventKit_EKVirtualConferenceRoomTypeDescriptor",
+    "EventKit_EKVirtualConferenceURLDescriptor",
+]
+ExceptionHandling_NSExceptionHandler = []
+ExceptionHandling_all = [
+    "ExceptionHandling",
+    "ExceptionHandling_NSExceptionHandler",
+]
+ExtensionKit_EXAppExtensionBrowserViewController = [
+    "AppKit_NSViewController",
+]
+ExtensionKit_EXHostViewController = [
+    "AppKit_NSViewController",
+]
+ExtensionKit_all = [
+    "ExtensionKit",
+    "ExtensionKit_EXAppExtensionBrowserViewController",
+    "ExtensionKit_EXHostViewController",
+]
+ExternalAccessory_EAAccessory = []
+ExternalAccessory_EAAccessoryManager = []
+ExternalAccessory_EASession = []
+ExternalAccessory_EAWiFiUnconfiguredAccessory = []
+ExternalAccessory_EAWiFiUnconfiguredAccessoryBrowser = []
+ExternalAccessory_all = [
+    "ExternalAccessory",
+    "ExternalAccessory_EAAccessory",
+    "ExternalAccessory_EAAccessoryManager",
+    "ExternalAccessory_EASession",
+    "ExternalAccessory_EAWiFiUnconfiguredAccessory",
+    "ExternalAccessory_EAWiFiUnconfiguredAccessoryBrowser",
+]
+FileProviderUI_FPUIActionExtensionContext = [
+    "Foundation_NSExtensionContext",
+]
+FileProviderUI_FPUIActionExtensionViewController = [
+    "AppKit_NSViewController",
+]
+FileProviderUI_all = [
+    "FileProviderUI",
+    "FileProviderUI_FPUIActionExtensionContext",
+    "FileProviderUI_FPUIActionExtensionViewController",
+]
+FileProvider_NSFileProviderDomain = []
+FileProvider_NSFileProviderDomainVersion = []
+FileProvider_NSFileProviderExtension = []
+FileProvider_NSFileProviderItemVersion = []
+FileProvider_NSFileProviderManager = []
+FileProvider_NSFileProviderRequest = []
+FileProvider_all = [
+    "FileProvider",
+    "FileProvider_NSFileProviderDomain",
+    "FileProvider_NSFileProviderDomainVersion",
+    "FileProvider_NSFileProviderExtension",
+    "FileProvider_NSFileProviderItemVersion",
+    "FileProvider_NSFileProviderManager",
+    "FileProvider_NSFileProviderRequest",
 ]
 Foundation_NSAffineTransform = []
 Foundation_NSAppleEventDescriptor = []
@@ -2252,6 +2897,450 @@ Foundation_all = [
     "Foundation_NSXPCListener",
     "Foundation_NSXPCListenerEndpoint",
 ]
+GameController_GCColor = []
+GameController_GCController = []
+GameController_GCControllerAxisInput = [
+    "GameController_GCControllerElement",
+]
+GameController_GCControllerButtonInput = [
+    "GameController_GCControllerElement",
+]
+GameController_GCControllerDirectionPad = [
+    "GameController_GCControllerElement",
+]
+GameController_GCControllerElement = []
+GameController_GCControllerTouchpad = [
+    "GameController_GCControllerElement",
+]
+GameController_GCDeviceBattery = []
+GameController_GCDeviceCursor = [
+    "GameController_GCControllerDirectionPad",
+]
+GameController_GCDeviceHaptics = []
+GameController_GCDeviceLight = []
+GameController_GCDirectionalGamepad = [
+    "GameController_GCMicroGamepad",
+]
+GameController_GCDualSenseAdaptiveTrigger = [
+    "GameController_GCControllerButtonInput",
+]
+GameController_GCDualSenseGamepad = [
+    "GameController_GCExtendedGamepad",
+]
+GameController_GCDualShockGamepad = [
+    "GameController_GCExtendedGamepad",
+]
+GameController_GCEventViewController = [
+    "AppKit_NSViewController",
+]
+GameController_GCExtendedGamepad = [
+    "GameController_GCPhysicalInputProfile",
+]
+GameController_GCExtendedGamepadSnapshot = [
+    "GameController_GCExtendedGamepad",
+]
+GameController_GCGamepad = [
+    "GameController_GCPhysicalInputProfile",
+]
+GameController_GCGamepadSnapshot = [
+    "GameController_GCGamepad",
+]
+GameController_GCGearShifterElement = []
+GameController_GCKeyboard = []
+GameController_GCKeyboardInput = [
+    "GameController_GCPhysicalInputProfile",
+]
+GameController_GCMicroGamepad = [
+    "GameController_GCPhysicalInputProfile",
+]
+GameController_GCMicroGamepadSnapshot = [
+    "GameController_GCMicroGamepad",
+]
+GameController_GCMotion = []
+GameController_GCMouse = []
+GameController_GCMouseInput = [
+    "GameController_GCPhysicalInputProfile",
+]
+GameController_GCPhysicalInputElementCollection = []
+GameController_GCPhysicalInputProfile = []
+GameController_GCRacingWheel = []
+GameController_GCRacingWheelInput = [
+    "GameController_GCRacingWheelInputState",
+]
+GameController_GCRacingWheelInputState = []
+GameController_GCSteeringWheelElement = []
+GameController_GCXboxGamepad = [
+    "GameController_GCExtendedGamepad",
+]
+GameController_all = [
+    "GameController",
+    "GameController_GCColor",
+    "GameController_GCController",
+    "GameController_GCControllerAxisInput",
+    "GameController_GCControllerButtonInput",
+    "GameController_GCControllerDirectionPad",
+    "GameController_GCControllerElement",
+    "GameController_GCControllerTouchpad",
+    "GameController_GCDeviceBattery",
+    "GameController_GCDeviceCursor",
+    "GameController_GCDeviceHaptics",
+    "GameController_GCDeviceLight",
+    "GameController_GCDirectionalGamepad",
+    "GameController_GCDualSenseAdaptiveTrigger",
+    "GameController_GCDualSenseGamepad",
+    "GameController_GCDualShockGamepad",
+    "GameController_GCEventViewController",
+    "GameController_GCExtendedGamepad",
+    "GameController_GCExtendedGamepadSnapshot",
+    "GameController_GCGamepad",
+    "GameController_GCGamepadSnapshot",
+    "GameController_GCGearShifterElement",
+    "GameController_GCKeyboard",
+    "GameController_GCKeyboardInput",
+    "GameController_GCMicroGamepad",
+    "GameController_GCMicroGamepadSnapshot",
+    "GameController_GCMotion",
+    "GameController_GCMouse",
+    "GameController_GCMouseInput",
+    "GameController_GCPhysicalInputElementCollection",
+    "GameController_GCPhysicalInputProfile",
+    "GameController_GCRacingWheel",
+    "GameController_GCRacingWheelInput",
+    "GameController_GCRacingWheelInputState",
+    "GameController_GCSteeringWheelElement",
+    "GameController_GCXboxGamepad",
+]
+GameKit_GKAccessPoint = []
+GameKit_GKAchievement = []
+GameKit_GKAchievementChallenge = [
+    "GameKit_GKChallenge",
+]
+GameKit_GKAchievementDescription = []
+GameKit_GKAchievementViewController = [
+    "GameKit_GKGameCenterViewController",
+]
+GameKit_GKBasePlayer = []
+GameKit_GKChallenge = []
+GameKit_GKChallengeEventHandler = []
+GameKit_GKChallengesViewController = [
+    "AppKit_NSViewController",
+]
+GameKit_GKCloudPlayer = [
+    "GameKit_GKBasePlayer",
+]
+GameKit_GKDialogController = [
+    "AppKit_NSResponder",
+]
+GameKit_GKFriendRequestComposeViewController = [
+    "AppKit_NSViewController",
+]
+GameKit_GKGameCenterViewController = [
+    "AppKit_NSViewController",
+]
+GameKit_GKGameSession = []
+GameKit_GKInvite = []
+GameKit_GKLeaderboard = []
+GameKit_GKLeaderboardEntry = []
+GameKit_GKLeaderboardScore = []
+GameKit_GKLeaderboardSet = []
+GameKit_GKLeaderboardViewController = [
+    "GameKit_GKGameCenterViewController",
+]
+GameKit_GKLocalPlayer = [
+    "GameKit_GKPlayer",
+]
+GameKit_GKMatch = []
+GameKit_GKMatchRequest = []
+GameKit_GKMatchmaker = []
+GameKit_GKMatchmakerViewController = [
+    "AppKit_NSViewController",
+]
+GameKit_GKNotificationBanner = []
+GameKit_GKPlayer = [
+    "GameKit_GKBasePlayer",
+]
+GameKit_GKSavedGame = []
+GameKit_GKScore = []
+GameKit_GKScoreChallenge = [
+    "GameKit_GKChallenge",
+]
+GameKit_GKSession = []
+GameKit_GKTurnBasedEventHandler = []
+GameKit_GKTurnBasedExchange = []
+GameKit_GKTurnBasedExchangeReply = []
+GameKit_GKTurnBasedMatch = []
+GameKit_GKTurnBasedMatchmakerViewController = [
+    "AppKit_NSViewController",
+]
+GameKit_GKTurnBasedParticipant = []
+GameKit_GKVoiceChat = []
+GameKit_GKVoiceChatService = []
+GameKit_all = [
+    "GameKit",
+    "GameKit_GKAccessPoint",
+    "GameKit_GKAchievement",
+    "GameKit_GKAchievementChallenge",
+    "GameKit_GKAchievementDescription",
+    "GameKit_GKAchievementViewController",
+    "GameKit_GKBasePlayer",
+    "GameKit_GKChallenge",
+    "GameKit_GKChallengeEventHandler",
+    "GameKit_GKChallengesViewController",
+    "GameKit_GKCloudPlayer",
+    "GameKit_GKDialogController",
+    "GameKit_GKFriendRequestComposeViewController",
+    "GameKit_GKGameCenterViewController",
+    "GameKit_GKGameSession",
+    "GameKit_GKInvite",
+    "GameKit_GKLeaderboard",
+    "GameKit_GKLeaderboardEntry",
+    "GameKit_GKLeaderboardScore",
+    "GameKit_GKLeaderboardSet",
+    "GameKit_GKLeaderboardViewController",
+    "GameKit_GKLocalPlayer",
+    "GameKit_GKMatch",
+    "GameKit_GKMatchRequest",
+    "GameKit_GKMatchmaker",
+    "GameKit_GKMatchmakerViewController",
+    "GameKit_GKNotificationBanner",
+    "GameKit_GKPlayer",
+    "GameKit_GKSavedGame",
+    "GameKit_GKScore",
+    "GameKit_GKScoreChallenge",
+    "GameKit_GKSession",
+    "GameKit_GKTurnBasedEventHandler",
+    "GameKit_GKTurnBasedExchange",
+    "GameKit_GKTurnBasedExchangeReply",
+    "GameKit_GKTurnBasedMatch",
+    "GameKit_GKTurnBasedMatchmakerViewController",
+    "GameKit_GKTurnBasedParticipant",
+    "GameKit_GKVoiceChat",
+    "GameKit_GKVoiceChatService",
+]
+InputMethodKit_IMKCandidates = [
+    "AppKit_NSResponder",
+]
+InputMethodKit_IMKInputController = []
+InputMethodKit_IMKServer = []
+InputMethodKit_all = [
+    "InputMethodKit",
+    "InputMethodKit_IMKCandidates",
+    "InputMethodKit_IMKInputController",
+    "InputMethodKit_IMKServer",
+]
+MapKit_MKAnnotationView = [
+    "AppKit_NSView",
+]
+MapKit_MKCircle = [
+    "MapKit_MKShape",
+]
+MapKit_MKCircleRenderer = [
+    "MapKit_MKOverlayPathRenderer",
+]
+MapKit_MKClusterAnnotation = []
+MapKit_MKCompassButton = [
+    "AppKit_NSView",
+]
+MapKit_MKDirections = []
+MapKit_MKDirectionsRequest = []
+MapKit_MKDirectionsResponse = []
+MapKit_MKDistanceFormatter = [
+    "Foundation_NSFormatter",
+]
+MapKit_MKETAResponse = []
+MapKit_MKGeoJSONDecoder = []
+MapKit_MKGeoJSONFeature = []
+MapKit_MKGeodesicPolyline = [
+    "MapKit_MKPolyline",
+]
+MapKit_MKGradientPolylineRenderer = [
+    "MapKit_MKPolylineRenderer",
+]
+MapKit_MKHybridMapConfiguration = [
+    "MapKit_MKMapConfiguration",
+]
+MapKit_MKImageryMapConfiguration = [
+    "MapKit_MKMapConfiguration",
+]
+MapKit_MKLocalPointsOfInterestRequest = []
+MapKit_MKLocalSearch = []
+MapKit_MKLocalSearchCompleter = []
+MapKit_MKLocalSearchCompletion = []
+MapKit_MKLocalSearchRequest = []
+MapKit_MKLocalSearchResponse = []
+MapKit_MKLookAroundScene = []
+MapKit_MKLookAroundSceneRequest = []
+MapKit_MKLookAroundSnapshot = []
+MapKit_MKLookAroundSnapshotOptions = []
+MapKit_MKLookAroundSnapshotter = []
+MapKit_MKLookAroundViewController = [
+    "AppKit_NSViewController",
+]
+MapKit_MKMapCamera = []
+MapKit_MKMapCameraBoundary = []
+MapKit_MKMapCameraZoomRange = []
+MapKit_MKMapConfiguration = []
+MapKit_MKMapItem = []
+MapKit_MKMapSnapshot = []
+MapKit_MKMapSnapshotOptions = []
+MapKit_MKMapSnapshotter = []
+MapKit_MKMapView = [
+    "AppKit_NSView",
+]
+MapKit_MKMarkerAnnotationView = [
+    "MapKit_MKAnnotationView",
+]
+MapKit_MKMultiPoint = [
+    "MapKit_MKShape",
+]
+MapKit_MKMultiPolygon = [
+    "MapKit_MKShape",
+]
+MapKit_MKMultiPolygonRenderer = [
+    "MapKit_MKOverlayPathRenderer",
+]
+MapKit_MKMultiPolyline = [
+    "MapKit_MKShape",
+]
+MapKit_MKMultiPolylineRenderer = [
+    "MapKit_MKOverlayPathRenderer",
+]
+MapKit_MKOverlayPathRenderer = [
+    "MapKit_MKOverlayRenderer",
+]
+MapKit_MKOverlayRenderer = []
+MapKit_MKPinAnnotationView = [
+    "MapKit_MKAnnotationView",
+]
+MapKit_MKPitchControl = [
+    "AppKit_NSView",
+]
+MapKit_MKPlacemark = [
+    "CoreLocation_CLPlacemark",
+]
+MapKit_MKPointAnnotation = [
+    "MapKit_MKShape",
+]
+MapKit_MKPointOfInterestFilter = []
+MapKit_MKPolygon = [
+    "MapKit_MKMultiPoint",
+]
+MapKit_MKPolygonRenderer = [
+    "MapKit_MKOverlayPathRenderer",
+]
+MapKit_MKPolyline = [
+    "MapKit_MKMultiPoint",
+]
+MapKit_MKPolylineRenderer = [
+    "MapKit_MKOverlayPathRenderer",
+]
+MapKit_MKRoute = []
+MapKit_MKRouteStep = []
+MapKit_MKShape = []
+MapKit_MKStandardMapConfiguration = [
+    "MapKit_MKMapConfiguration",
+]
+MapKit_MKTileOverlay = []
+MapKit_MKTileOverlayRenderer = [
+    "MapKit_MKOverlayRenderer",
+]
+MapKit_MKUserLocation = []
+MapKit_MKUserLocationView = [
+    "MapKit_MKAnnotationView",
+]
+MapKit_MKZoomControl = [
+    "AppKit_NSView",
+]
+MapKit_all = [
+    "MapKit",
+    "MapKit_MKAnnotationView",
+    "MapKit_MKCircle",
+    "MapKit_MKCircleRenderer",
+    "MapKit_MKClusterAnnotation",
+    "MapKit_MKCompassButton",
+    "MapKit_MKDirections",
+    "MapKit_MKDirectionsRequest",
+    "MapKit_MKDirectionsResponse",
+    "MapKit_MKDistanceFormatter",
+    "MapKit_MKETAResponse",
+    "MapKit_MKGeoJSONDecoder",
+    "MapKit_MKGeoJSONFeature",
+    "MapKit_MKGeodesicPolyline",
+    "MapKit_MKGradientPolylineRenderer",
+    "MapKit_MKHybridMapConfiguration",
+    "MapKit_MKImageryMapConfiguration",
+    "MapKit_MKLocalPointsOfInterestRequest",
+    "MapKit_MKLocalSearch",
+    "MapKit_MKLocalSearchCompleter",
+    "MapKit_MKLocalSearchCompletion",
+    "MapKit_MKLocalSearchRequest",
+    "MapKit_MKLocalSearchResponse",
+    "MapKit_MKLookAroundScene",
+    "MapKit_MKLookAroundSceneRequest",
+    "MapKit_MKLookAroundSnapshot",
+    "MapKit_MKLookAroundSnapshotOptions",
+    "MapKit_MKLookAroundSnapshotter",
+    "MapKit_MKLookAroundViewController",
+    "MapKit_MKMapCamera",
+    "MapKit_MKMapCameraBoundary",
+    "MapKit_MKMapCameraZoomRange",
+    "MapKit_MKMapConfiguration",
+    "MapKit_MKMapItem",
+    "MapKit_MKMapSnapshot",
+    "MapKit_MKMapSnapshotOptions",
+    "MapKit_MKMapSnapshotter",
+    "MapKit_MKMapView",
+    "MapKit_MKMarkerAnnotationView",
+    "MapKit_MKMultiPoint",
+    "MapKit_MKMultiPolygon",
+    "MapKit_MKMultiPolygonRenderer",
+    "MapKit_MKMultiPolyline",
+    "MapKit_MKMultiPolylineRenderer",
+    "MapKit_MKOverlayPathRenderer",
+    "MapKit_MKOverlayRenderer",
+    "MapKit_MKPinAnnotationView",
+    "MapKit_MKPitchControl",
+    "MapKit_MKPlacemark",
+    "MapKit_MKPointAnnotation",
+    "MapKit_MKPointOfInterestFilter",
+    "MapKit_MKPolygon",
+    "MapKit_MKPolygonRenderer",
+    "MapKit_MKPolyline",
+    "MapKit_MKPolylineRenderer",
+    "MapKit_MKRoute",
+    "MapKit_MKRouteStep",
+    "MapKit_MKShape",
+    "MapKit_MKStandardMapConfiguration",
+    "MapKit_MKTileOverlay",
+    "MapKit_MKTileOverlayRenderer",
+    "MapKit_MKUserLocation",
+    "MapKit_MKUserLocationView",
+    "MapKit_MKZoomControl",
+]
+MetalFX_MTLFXSpatialScalerDescriptor = []
+MetalFX_MTLFXTemporalScalerDescriptor = []
+MetalFX_all = [
+    "MetalFX",
+    "MetalFX_MTLFXSpatialScalerDescriptor",
+    "MetalFX_MTLFXTemporalScalerDescriptor",
+]
+MetalKit_MTKMesh = []
+MetalKit_MTKMeshBuffer = []
+MetalKit_MTKMeshBufferAllocator = []
+MetalKit_MTKSubmesh = []
+MetalKit_MTKTextureLoader = []
+MetalKit_MTKView = [
+    "AppKit_NSView",
+]
+MetalKit_all = [
+    "MetalKit",
+    "MetalKit_MTKMesh",
+    "MetalKit_MTKMeshBuffer",
+    "MetalKit_MTKMeshBufferAllocator",
+    "MetalKit_MTKSubmesh",
+    "MetalKit_MTKTextureLoader",
+    "MetalKit_MTKView",
+]
 Metal_MTLAccelerationStructureBoundingBoxGeometryDescriptor = [
     "Metal_MTLAccelerationStructureGeometryDescriptor",
 ]
@@ -2470,6 +3559,23 @@ Metal_all = [
     "Metal_MTLVertexBufferLayoutDescriptorArray",
     "Metal_MTLVertexDescriptor",
     "Metal_MTLVisibleFunctionTableDescriptor",
+]
+OSAKit_OSALanguage = []
+OSAKit_OSALanguageInstance = []
+OSAKit_OSAScript = []
+OSAKit_OSAScriptController = [
+    "AppKit_NSController",
+]
+OSAKit_OSAScriptView = [
+    "AppKit_NSTextView",
+]
+OSAKit_all = [
+    "OSAKit",
+    "OSAKit_OSALanguage",
+    "OSAKit_OSALanguageInstance",
+    "OSAKit_OSAScript",
+    "OSAKit_OSAScriptController",
+    "OSAKit_OSAScriptView",
 ]
 WebKit_DOMAbstractView = [
     "WebKit_DOMObject",

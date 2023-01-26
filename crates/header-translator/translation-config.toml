@@ -4,21 +4,14 @@
 ### Libraries
 ###
 
-[library.Foundation]
-imports = ["Foundation"]
-
-[library.QuartzCore]
-name = "CoreAnimation"
-imports = ["CoreAnimation", "Foundation"]
-
-[library.Metal]
-imports = ["Metal", "Foundation"]
-
-[library.CoreData]
-imports = ["CoreData", "Foundation"]
-
 [library.Accessibility]
 imports = ["Accessibility", "Foundation"]
+
+[library.AdServices]
+imports = ["AdServices", "Foundation"]
+
+[library.AdSupport]
+imports = ["AdSupport", "Foundation"]
 
 [library.AppKit]
 imports = ["AppKit", "CoreData", "Foundation"]
@@ -26,11 +19,93 @@ imports = ["AppKit", "CoreData", "Foundation"]
 [library.AuthenticationServices]
 imports = ["AuthenticationServices", "Foundation"]
 
+[library.AutomaticAssessmentConfiguration]
+imports = ["AutomaticAssessmentConfiguration", "Foundation"]
+
+[library.Automator]
+imports = ["Automator", "AppKit", "Foundation", "OSAKit"]
+
 [library.BackgroundAssets]
 imports = ["BackgroundAssets", "Foundation"]
 
 [library.BackgroundTasks]
 imports = ["BackgroundTasks", "Foundation"]
+
+[library.BusinessChat]
+imports = ["BusinessChat", "AppKit", "Foundation"]
+
+[library.CallKit]
+imports = ["CallKit", "Foundation"]
+
+[library.ClassKit]
+imports = ["ClassKit", "Foundation"]
+
+[library.CloudKit]
+imports = ["CloudKit", "CoreLocation", "Foundation"]
+
+[library.Contacts]
+imports = ["Contacts", "Foundation"]
+
+[library.CoreData]
+imports = ["CoreData", "Foundation"]
+
+[library.CoreLocation]
+imports = ["CoreLocation", "Contacts", "Foundation"]
+
+[library.DataDetection]
+imports = ["DataDetection", "Foundation"]
+
+[library.DeviceCheck]
+imports = ["DeviceCheck", "Foundation"]
+
+[library.EventKit]
+imports = ["EventKit", "AppKit", "CoreLocation", "Foundation", "MapKit"]
+
+[library.ExceptionHandling]
+imports = ["ExceptionHandling", "Foundation"]
+
+[library.ExtensionKit]
+imports = ["ExtensionKit", "AppKit", "Foundation"]
+
+[library.ExternalAccessory]
+imports = ["ExternalAccessory", "Foundation"]
+
+[library.FileProvider]
+imports = ["FileProvider", "AppKit", "Foundation"]
+
+[library.FileProviderUI]
+imports = ["FileProviderUI", "AppKit", "FileProvider", "Foundation"]
+
+[library.Foundation]
+imports = ["Foundation"]
+
+[library.GameController]
+imports = ["GameController", "AppKit", "Foundation"]
+
+[library.GameKit]
+imports = ["GameKit", "AppKit", "Foundation"]
+
+[library.InputMethodKit]
+imports = ["InputMethodKit", "AppKit", "Foundation"]
+
+[library.MapKit]
+imports = ["MapKit", "AppKit", "Contacts", "CoreLocation", "Foundation"]
+
+[library.Metal]
+imports = ["Metal", "Foundation"]
+
+[library.MetalFX]
+imports = ["MetalFX", "Metal"]
+
+[library.MetalKit]
+imports = ["MetalKit", "AppKit", "Foundation", "Metal"]
+
+[library.OSAKit]
+imports = ["OSAKit", "AppKit", "Foundation"]
+
+[library.QuartzCore]
+name = "CoreAnimation"
+imports = ["CoreAnimation", "Foundation"]
 
 [library.WebKit]
 imports = ["WebKit", "AppKit", "Foundation"]
@@ -479,6 +554,10 @@ skipped = true
 [class.MTLRasterizationRateLayerDescriptor.methods.setSampleCount]
 skipped = true
 
+# Duplicated type? `typedef id<NSFileProviderItem> NSFileProviderItem`
+[typedef.NSFileProviderItem]
+skipped = true
+
 # Uses stuff from different frameworks / system libraries
 [fn.CFBridgingRetain]
 skipped = true
@@ -705,6 +784,96 @@ skipped = true
 [fn.AXNameFromColor]
 # Needs `CGColorRef`
 skipped = true
+[class.CLSContext.methods.thumbnail]
+# Needs `CGImageRef`
+skipped = true
+[class.CLSContext.methods.setThumbnail]
+# Needs `CGImageRef`
+skipped = true
+# Needs `CGColorRef`
+[class.EKCalendar.methods]
+CGColor = { skipped = true }
+setCGColor = { skipped = true }
+# Needs `TISInputSourceRef` from Carbon (HIToolbox)
+[class.IMKCandidates.methods]
+setSelectionKeysKeylayout = { skipped = true }
+selectionKeysKeylayout = { skipped = true }
+# Needs `CGRectEdge`
+[fn.MKMapRectDivide]
+skipped = true
+[class.MKMapSnapshotter.methods]
+# Needs `dispatch_queue_t`
+startWithQueue_completionHandler = { skipped = true }
+[class.MKOverlayPathRenderer.methods]
+# Needs `CGLineJoin`
+lineJoin = { skipped = true }
+setLineJoin = { skipped = true }
+# Needs `CGLineCap`
+lineCap = { skipped = true }
+setLineCap = { skipped = true }
+# Needs `CGPathRef`
+path = { skipped = true }
+setPath = { skipped = true }
+# Needs `CGContextRef`
+applyStrokePropertiesToContext_atZoomScale = { skipped = true }
+applyFillPropertiesToContext_atZoomScale = { skipped = true }
+# Needs `CGPathRef` and `CGContextRef`
+strokePath_inContext = { skipped = true }
+fillPath_inContext = { skipped = true }
+[class.MKOverlayRenderer.methods]
+# Needs `CGContextRef`
+drawMapRect_zoomScale_inContext = { skipped = true }
+# Needs `CGBlendMode`
+blendMode = { skipped = true }
+setBlendMode = { skipped = true }
+[class.MTKMeshBuffer.methods]
+# Needs `MDLMeshBufferZone` from ModelIO framework
+zone = { skipped = true }
+# Needs `MDLMeshBufferType` from ModelIO framework
+type = { skipped = true }
+# Needs `MDLVertexFormat` from ModelIO framework
+[fn.MTKModelIOVertexFormatFromMetal]
+skipped = true
+[fn.MTKMetalVertexFormatFromModelIO]
+skipped = true
+# Needs `CGImageRef`
+[class.MTKTextureLoader.methods.newTextureWithCGImage_options_completionHandler]
+skipped = true
+[class.MTKTextureLoader.methods.newTextureWithCGImage_options_error]
+skipped = true
+[class.MTKView.methods]
+# Needs `CAMetalDrawable`
+currentDrawable = { skipped = true }
+# Needs `CGColorSpaceRef`
+colorspace = { skipped = true }
+setColorspace = { skipped = true }
+# Needs `Component` from Core Services / Carbon Core / Component Manager
+[class.OSALanguage.methods]
+initWithComponent = { skipped = true }
+componentInstance = { skipped = true }
+[class.OSALanguageInstance.methods.componentInstance]
+skipped = true
+# Needs `dispatch_queue_t`
+[class.CXCallController.methods.initWithQueue]
+skipped = true
+[class.CXCallObserver.methods.setDelegate_queue]
+skipped = true
+[class.CXProvider.methods.setDelegate_queue]
+skipped = true
+# Needs `dispatch_queue_t`
+[class.EAWiFiUnconfiguredAccessoryBrowser.methods.initWithDelegate_queue]
+skipped = true
+# Needs `dispatch_queue_t`
+[protocol.GCDevice.methods.handlerQueue]
+skipped = true
+[protocol.GCDevice.methods.setHandlerQueue]
+skipped = true
+# Needs `CFIndex` (fixed locally for now)
+[typedef.GCKeyCode]
+skipped = true
+# Needs `IOHIDDeviceRef` from IOKit
+[class.GCController.methods.supportsHIDDevice]
+skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]
@@ -851,6 +1020,11 @@ skipped = true
 [fn.MTLPackedFloat3Make]
 skipped = true
 
+# Needs `JSContext` from JavaScriptCore
+[class.WebFrame.methods.javaScriptContext]
+skipped = true
+[protocol.WebFrameLoadDelegate.methods.webView_didCreateJavaScriptContext_forFrame]
+skipped = true
 # Needs `JSGlobalContextRef` from JavaScriptCore
 [class.WebFrame.methods.globalContext]
 skipped = true
@@ -859,10 +1033,139 @@ skipped = true
 skipped = true
 
 # error: translator assertion failure: invalid error nullability (left: Unspecified) (Right: Nullable)
+[class.GKSession.methods]
+acceptConnectionFromPeer_error = { skipped = true }
+sendData_toPeers_withDataMode_error = { skipped = true }
+sendDataToAllPeers_withDataMode_error = { skipped = true }
+[class.GKVoiceChatService.methods]
+acceptCallID_error = { skipped = true }
+startVoiceChatWithParticipantID_error = { skipped = true }
 [class.WebHistory.methods]
 loadFromURL_error = { skipped = true }
 saveToURL_error = { skipped = true }
+[class.AMWorkspace.methods.runWorkflowAtPath_withInput_error]
+skipped = true
+
+# error: unknown error result type
+[class.MTKTextureLoader.methods.newTexturesWithContentsOfURLs_options_error]
+skipped = true
 
 [class.WKWebView.methods]
 # uses `SecTrustRef` from Security.framework (not yet translated)
 serverTrust = { skipped = true }
+
+# error: translator assertion failure: (left `"NSString"`) (right `"const NSString"`)
+[static.kIMKCommandClientName]
+skipped = true
+[static.kIMKCommandMenuItemName]
+skipped = true
+[static.IMKCandidatesOpacityAttributeName]
+skipped = true
+[static.IMKCandidatesSendServerKeyEventFirst]
+skipped = true
+[static.IMKControllerClass]
+skipped = true
+[static.IMKDelegateClass]
+skipped = true
+[static.IMKModeDictionary]
+skipped = true
+
+# error: translator assertion failure: (left `"CLLocation"`) (right `"const CLLocation"`)
+[class.CLLocation.methods]
+getDistanceFrom = { skipped = true }
+distanceFromLocation = { skipped = true }
+
+# error: expected `f32`, found integer (NOTE: generated statics need a trailing `.`; fix manually for now)
+[static.MKFeatureDisplayPriorityRequired]
+skipped = true
+[static.MKFeatureDisplayPriorityDefaultHigh]
+skipped = true
+[static.MKFeatureDisplayPriorityDefaultLow]
+skipped = true
+[static.MKAnnotationViewZPriorityMax]
+skipped = true
+[static.MKAnnotationViewZPriorityDefaultSelected]
+skipped = true
+[static.MKAnnotationViewZPriorityDefaultUnselected]
+skipped = true
+[static.MKAnnotationViewZPriorityMin]
+skipped = true
+
+# tries to parse these as `pub type <name> = *const NSString`; fix manually for now
+[typedef.GCInputElementName]
+skipped = true
+[typedef.GCInputButtonName]
+skipped = true
+[typedef.GCInputAxisName]
+skipped = true
+[typedef.GCInputSwitchName]
+skipped = true
+[typedef.GCInputDirectionPadName]
+skipped = true
+# corresponding constants which we want to treat as (nonnull); fix manually for now
+[static.GCInputButtonA]
+skipped = true
+[static.GCInputButtonB]
+skipped = true
+[static.GCInputButtonX]
+skipped = true
+[static.GCInputButtonY]
+skipped = true
+[static.GCInputDirectionPad]
+skipped = true
+[static.GCInputLeftThumbstick]
+skipped = true
+[static.GCInputRightThumbstick]
+skipped = true
+[static.GCInputLeftShoulder]
+skipped = true
+[static.GCInputRightShoulder]
+skipped = true
+[static.GCInputLeftTrigger]
+skipped = true
+[static.GCInputRightTrigger]
+skipped = true
+[static.GCInputLeftThumbstickButton]
+skipped = true
+[static.GCInputRightThumbstickButton]
+skipped = true
+[static.GCInputButtonHome]
+skipped = true
+[static.GCInputButtonMenu]
+skipped = true
+[static.GCInputButtonOptions]
+skipped = true
+[static.GCInputButtonShare]
+skipped = true
+[static.GCInputXboxPaddleOne]
+skipped = true
+[static.GCInputXboxPaddleTwo]
+skipped = true
+[static.GCInputXboxPaddleThree]
+skipped = true
+[static.GCInputXboxPaddleFour]
+skipped = true
+[static.GCInputDualShockTouchpadOne]
+skipped = true
+[static.GCInputDualShockTouchpadTwo]
+skipped = true
+[static.GCInputDualShockTouchpadButton]
+skipped = true
+[static.GCInputSteeringWheel]
+skipped = true
+[static.GCInputShifter]
+skipped = true
+[static.GCInputPedalAccelerator]
+skipped = true
+[static.GCInputPedalBrake]
+skipped = true
+[static.GCInputPedalClutch]
+skipped = true
+[static.GCInputLeftPaddle]
+skipped = true
+[static.GCInputRightPaddle]
+skipped = true
+
+# tries to derive with `PartialEq` which fails because of `Bool` fields; manually define for now
+[struct.GCExtendedGamepadSnapshotData]
+skipped = true

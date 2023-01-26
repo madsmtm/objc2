@@ -91,16 +91,19 @@ impl UnexposedAttr {
     }
 
     pub fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Option<Self> {
-        let location = entity.get_location().expect("unexposed attr location");
+        if let Some(location) = entity.get_location() {
+            if let Some(macro_name) = context
+                .macro_invocations
+                .get(&location.get_spelling_location())
+            {
+                return Self::from_name(macro_name);
+            }
 
-        if let Some(macro_name) = context
-            .macro_invocations
-            .get(&location.get_spelling_location())
-        {
-            return Self::from_name(macro_name);
+            Self::parse_location(location)
+        } else {
+            error!("unexposed attr location");
+            None
         }
-
-        Self::parse_location(location)
     }
 
     fn parse_location(location: SourceLocation<'_>) -> Option<Self> {

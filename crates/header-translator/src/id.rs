@@ -107,6 +107,10 @@ impl ItemIdentifier {
         }
     }
 
+    pub fn is_nsdata(&self) -> bool {
+        self.library == "Foundation" && self.name == "NSData"
+    }
+
     pub fn is_nsstring(&self) -> bool {
         self.library == "Foundation" && self.name == "NSString"
     }
