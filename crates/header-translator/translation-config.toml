@@ -405,28 +405,6 @@ skipped = true
 initWithContentsOfURL_error = { skipped = true }
 dictionaryWithContentsOfURL_error = { skipped = true }
 
-# Protocol class methods (currently unsupported)
-[protocol.NSItemProviderWriting.methods.writableTypeIdentifiersForItemProvider]
-skipped = true
-[protocol.NSItemProviderWriting.methods.itemProviderVisibilityForRepresentationWithTypeIdentifier]
-skipped = true
-[protocol.NSItemProviderReading.methods.readableTypeIdentifiersForItemProvider]
-skipped = true
-[protocol.NSItemProviderReading.methods.objectWithItemProviderData_typeIdentifier_error]
-skipped = true
-[protocol.NSSecureCoding.methods.supportsSecureCoding]
-skipped = true
-[protocol.NSAnimatablePropertyContainer.methods.defaultAnimationForKey]
-skipped = true
-[protocol.NSPasteboardReading.methods.readableTypesForPasteboard]
-skipped = true
-[protocol.NSPasteboardReading.methods.readingOptionsForType_pasteboard]
-skipped = true
-[protocol.NSWindowRestoration.methods.restoreWindowWithIdentifier_state_completionHandler]
-skipped = true
-[protocol.WebPlugInViewFactory.methods.plugInViewWithArguments]
-skipped = true
-
 # Custom implementation for now
 [struct.NSRange]
 skipped = true
