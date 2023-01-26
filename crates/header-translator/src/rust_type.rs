@@ -279,7 +279,10 @@ impl IdType {
         let protocols: Vec<_> = ty
             .get_objc_protocol_declarations()
             .into_iter()
-            .map(|entity| ItemIdentifier::new(&entity, context))
+            .map(|entity| {
+                ItemIdentifier::new(&entity, context)
+                    .map_name(|name| context.replace_protocol_name(name))
+            })
             .collect();
 
         match ty.get_kind() {
@@ -408,7 +411,7 @@ impl fmt::Display for IdType {
             }
             Self::AnyObject { protocols } => match &**protocols {
                 [] => write!(f, "Object"),
-                [id] if id.is_nsobject() => write!(f, "{}", id.path()),
+                [id] if id.is_nsobject() => write!(f, "NSObject"),
                 [id] if id.name == "NSCopying" || id.name == "NSMutableCopying" => {
                     write!(f, "Object")
                 }

@@ -8,7 +8,7 @@ use std::mem;
 use clang::{Entity, EntityKind, EntityVisitResult};
 
 use crate::availability::Availability;
-use crate::config::ClassData;
+use crate::config::{ClassData, MethodData};
 use crate::context::Context;
 use crate::expr::Expr;
 use crate::id::ItemIdentifier;
@@ -36,13 +36,20 @@ impl fmt::Display for Derives {
 }
 
 /// Find all protocols, protocol's protocols and superclass' protocols.
-fn parse_protocols(entity: &Entity<'_>, protocols: &mut BTreeSet<ItemIdentifier>, context: &Context<'_>) {
+fn parse_protocols(
+    entity: &Entity<'_>,
+    protocols: &mut BTreeSet<ItemIdentifier>,
+    context: &Context<'_>,
+) {
     immediate_children(entity, |entity, _span| match entity.get_kind() {
         EntityKind::ObjCProtocolRef => {
             let entity = entity
                 .get_reference()
                 .expect("ObjCProtocolRef to reference entity");
-            if protocols.insert(ItemIdentifier::new(&entity, context)) {
+            if protocols.insert(
+                ItemIdentifier::new(&entity, context)
+                    .map_name(|name| context.replace_protocol_name(name)),
+            ) {
                 // Only recurse if we haven't already seen this protocol
                 parse_protocols(&entity, protocols, context);
             }
@@ -90,7 +97,7 @@ fn parse_objc_decl(
     entity: &Entity<'_>,
     superclass: bool,
     mut generics: Option<&mut Vec<String>>,
-    data: Option<&ClassData>,
+    get_data: impl Fn(&str) -> MethodData,
     context: &Context<'_>,
 ) -> (BTreeSet<ItemIdentifier>, Vec<Method>, Vec<String>) {
     let mut protocols = BTreeSet::new();
@@ -131,14 +138,17 @@ fn parse_objc_decl(
             let entity = entity
                 .get_reference()
                 .expect("ObjCProtocolRef to reference entity");
-            protocols.insert(ItemIdentifier::new(&entity, context));
+            protocols.insert(
+                ItemIdentifier::new(&entity, context)
+                    .map_name(|name| context.replace_protocol_name(name)),
+            );
         }
         EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
             drop(span);
             let partial = Method::partial(entity);
 
             if !properties.remove(&(partial.is_class, partial.fn_name.clone())) {
-                let data = ClassData::get_method_data(data, &partial.fn_name);
+                let data = get_data(&partial.fn_name);
                 if let Some((designated_initializer, method)) =
                     partial.parse(data, generics.is_none(), context)
                 {
@@ -153,11 +163,11 @@ fn parse_objc_decl(
             drop(span);
             let partial = Method::partial_property(entity);
 
-            let getter_data = ClassData::get_method_data(data, &partial.getter_name);
+            let getter_data = get_data(&partial.getter_name);
             let setter_data = partial
                 .setter_name
                 .as_ref()
-                .map(|setter_name| ClassData::get_method_data(data, setter_name));
+                .map(|setter_name| get_data(setter_name));
 
             let (getter, setter) =
                 partial.parse(getter_data, setter_data, generics.is_none(), context);
@@ -386,8 +396,13 @@ impl Stmt {
                 let availability = Availability::parse(entity, context);
                 let mut generics = Vec::new();
 
-                let (_, methods, designated_initializers) =
-                    parse_objc_decl(entity, true, Some(&mut generics), data, context);
+                let (_, methods, designated_initializers) = parse_objc_decl(
+                    entity,
+                    true,
+                    Some(&mut generics),
+                    |name| ClassData::get_method_data(data, name),
+                    context,
+                );
 
                 let mut protocols = Default::default();
                 parse_protocols(&entity, &mut protocols, context);
@@ -474,8 +489,13 @@ impl Stmt {
 
                 let mut generics = Vec::new();
 
-                let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(entity, false, Some(&mut generics), data, context);
+                let (protocols, methods, designated_initializers) = parse_objc_decl(
+                    entity,
+                    false,
+                    Some(&mut generics),
+                    |name| ClassData::get_method_data(data, name),
+                    context,
+                );
 
                 if !designated_initializers.is_empty() {
                     warn!(
@@ -512,7 +532,8 @@ impl Stmt {
                 .collect()
             }
             EntityKind::ObjCProtocolDecl => {
-                let id = ItemIdentifier::new(entity, context);
+                let id = ItemIdentifier::new(entity, context)
+                    .map_name(|name| context.replace_protocol_name(name));
                 let data = context.protocol_data.get(&id.name);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
@@ -521,8 +542,18 @@ impl Stmt {
 
                 let availability = Availability::parse(entity, context);
 
-                let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(entity, false, None, data, context);
+                let (protocols, methods, designated_initializers) = parse_objc_decl(
+                    entity,
+                    false,
+                    None,
+                    |name| {
+                        data.map(|data| data.methods.get(name))
+                            .flatten()
+                            .copied()
+                            .unwrap_or_default()
+                    },
+                    context,
+                );
 
                 if !designated_initializers.is_empty() {
                     warn!(
@@ -1172,13 +1203,14 @@ impl fmt::Display for Stmt {
                 if let Some(feature) = cls.feature() {
                     writeln!(f, "#[cfg(feature = \"{feature}\")]")?;
                 }
-                writeln!(f, "unsafe impl{} ", GenericParamsHelper(generics),)?;
-                if protocol.is_nsobject() {
-                    write!(f, "NSObjectProtocol")?;
-                } else {
-                    write!(f, "{}", protocol.path_in_relation_to(cls))?;
-                }
-                writeln!(f, " for {}{} {{}}", cls.path(), GenericTyHelper(generics),)?;
+                writeln!(
+                    f,
+                    "unsafe impl{} {} for {}{} {{}}",
+                    GenericParamsHelper(generics),
+                    protocol.path_in_relation_to(cls),
+                    cls.path(),
+                    GenericTyHelper(generics),
+                )?;
             }
             Self::ProtocolDecl {
                 id,
@@ -1197,11 +1229,7 @@ impl fmt::Display for Stmt {
                         } else {
                             write!(f, "+ ")?;
                         }
-                        if protocol.is_nsobject() {
-                            write!(f, "NSObjectProtocol")?;
-                        } else {
-                            write!(f, "{}", protocol.path())?;
-                        }
+                        write!(f, "{}", protocol.path())?;
                     }
                 }
                 writeln!(f, " {{")?;

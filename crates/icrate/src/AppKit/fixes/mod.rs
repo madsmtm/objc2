@@ -54,3 +54,6 @@ __inner_extern_class!(
         type Super = NSObject;
     }
 );
+
+#[cfg(feature = "AppKit_NSImage")]
+unsafe impl crate::Foundation::NSCoding for crate::AppKit::NSImage {}

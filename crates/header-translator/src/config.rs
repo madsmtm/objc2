@@ -17,7 +17,7 @@ pub struct Config {
     pub class_data: HashMap<String, ClassData>,
     #[serde(rename = "protocol")]
     #[serde(default)]
-    pub protocol_data: HashMap<String, ClassData>,
+    pub protocol_data: HashMap<String, ProtocolData>,
     #[serde(rename = "struct")]
     #[serde(default)]
     pub struct_data: HashMap<String, StructData>,
@@ -39,6 +39,14 @@ pub struct Config {
 }
 
 impl Config {
+    pub fn replace_protocol_name(&self, name: String) -> String {
+        self.protocol_data
+            .get(&name)
+            .map(|data| data.renamed.clone())
+            .flatten()
+            .unwrap_or(name)
+    }
+
     pub fn get_library_alias(&self, library_name: String) -> String {
         self.libraries
             .iter()
@@ -92,6 +100,17 @@ impl ClassData {
 pub struct CategoryData {
     #[serde(default)]
     pub skipped: bool,
+}
+
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ProtocolData {
+    #[serde(default)]
+    pub renamed: Option<String>,
+    #[serde(default)]
+    pub skipped: bool,
+    #[serde(default)]
+    pub methods: HashMap<String, MethodData>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

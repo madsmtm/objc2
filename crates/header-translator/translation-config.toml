@@ -258,7 +258,7 @@ definition-skipped = true
 [class.NSObject]
 skipped = true
 [protocol.NSObject]
-skipped = true
+renamed = "NSObjectProtocol"
 
 # Defined in `objc2` instead
 [typedef.NSZone]
@@ -503,16 +503,9 @@ skipped = true
 
 # Both protocols and classes
 [protocol.NSTextAttachmentCell]
-skipped = true
+renamed = "NSTextAttachmentCellProtocol"
 [protocol.NSAccessibilityElement]
-skipped = true
-# Uses the above protocols
-[protocol.NSAccessibilityElementLoading.methods.accessibilityElementWithToken]
-skipped = true
-[protocol.NSAccessibility.methods.accessibilityChildrenInNavigationOrder]
-skipped = true
-[protocol.NSAccessibility.methods.setAccessibilityChildrenInNavigationOrder]
-skipped = true
+renamed = "NSAccessibilityElementProtocol"
 
 # Both property and method
 [class.NSDocument.methods.setDisplayName]
