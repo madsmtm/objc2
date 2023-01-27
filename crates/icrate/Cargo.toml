@@ -23,6 +23,7 @@ license = "MIT"
 objc2 = { path = "../objc2", version = "=0.3.0-beta.4", default-features = false, optional = true }
 block2 = { path = "../block2", version = "=0.2.0-alpha.7", default-features = false, optional = true }
 dispatch = { version = "0.2.0", optional = true }
+libc = "0.2.139"
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
