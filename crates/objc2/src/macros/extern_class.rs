@@ -82,6 +82,12 @@
 ///     }
 /// );
 ///
+/// // We can specify the protocols that `NSFormatter` conforms to like this.
+/// // (These should be created using the `extern_protocol!` macro).
+/// //
+/// // unsafe impl NSCoding for NSFormatter {}
+/// // unsafe impl NSCopying for NSFormatter {}
+///
 /// // Provided by the implementation of `ClassType`
 /// let cls = NSFormatter::class();
 ///
@@ -115,6 +121,11 @@
 ///         type Super = NSFormatter;
 ///     }
 /// );
+///
+/// // Similarly, we can specify the protocols that this implements here:
+/// //
+/// // unsafe impl NSCoding for NSFormatter {}
+/// // unsafe impl NSCopying for NSFormatter {}
 /// ```
 ///
 /// See the source code of `icrate` for many more examples.

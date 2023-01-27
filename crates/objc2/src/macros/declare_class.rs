@@ -5,6 +5,9 @@
 /// with cutting down on boilerplate, in particular when defining delegate
 /// classes!
 ///
+/// [`extern_class!`]: crate::extern_class
+/// [`declare`]: crate::declare
+///
 ///
 /// # Specification
 ///
@@ -35,6 +38,7 @@
 /// in [`declare::IvarDrop`]), this macro will generate a `dealloc` method
 /// automatically.
 ///
+/// [`declare::Ivar`]: crate::declare::Ivar
 /// [`ClassType::class`]: crate::ClassType::class
 /// [`declare::IvarDrop`]: crate::declare::IvarDrop
 ///
@@ -83,11 +87,15 @@
 /// You can specify protocols that the class should implement, along with any
 /// required/optional methods for said protocols.
 ///
+/// The protocol must have been previously defined with [`extern_protocol!`].
+///
 /// The methods work exactly as normal, they're only put "under" the protocol
 /// definition to make things easier to read.
 ///
 /// Putting attributes on the `impl` item such as `cfg`, `allow`, `doc`,
 /// `deprecated` and so on is supported.
+///
+/// [`extern_protocol!`]: crate::extern_protocol
 ///
 ///
 /// # Panics
@@ -141,10 +149,10 @@
 ///     ProtocolType,
 /// };
 ///
-/// // Declare the NSCopying protocol so that we can implement it (since
-/// // NSCopying is a trait currently).
+/// // Declare the NSCopying protocol so that we can implement it.
 /// //
-/// // TODO: Remove the need for this!
+/// // In practice, you wouldn't have to do this, since it is done for you in
+/// // `icrate`.
 /// extern_protocol!(
 ///     unsafe trait NSCopying {
 ///         #[method(copyWithZone:)]
@@ -219,6 +227,10 @@
 ///             *obj.bar = *self.bar;
 ///             obj.autorelease_return()
 ///         }
+///
+///         // If we have tried to add other methods here, or had forgotten
+///         // to implement the method, we would have gotten an error with the
+///         // `verify` feature enabled.
 ///     }
 /// );
 ///
@@ -240,6 +252,7 @@
 ///     }
 /// }
 ///
+/// // TODO: `NSCopying` from `icrate` works a bit differently
 /// // unsafe impl icrate::Foundation::NSCopying for MyCustomObject {
 /// //     type Ownership = Owned;
 /// //     type Output = Self;
@@ -318,10 +331,6 @@
 ///
 /// @end
 /// ```
-///
-/// [`extern_class!`]: crate::extern_class
-/// [`declare`]: crate::declare
-/// [`declare::Ivar`]: crate::declare::Ivar
 #[doc(alias = "@interface")]
 #[doc(alias = "@implementation")]
 #[macro_export]

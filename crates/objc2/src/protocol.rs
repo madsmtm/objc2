@@ -14,7 +14,8 @@ use crate::Message;
 ///
 /// This is the protocol equivalent of [`ClassType`].
 ///
-/// This is implemented automatically by the [`extern_protocol!`] macro.
+/// This is implemented automatically by the [`extern_protocol!`] macro for
+/// `dyn T`, where `T` is the protocol.
 ///
 /// [`ClassType`]: crate::ClassType
 /// [`extern_protocol!`]: crate::extern_protocol
@@ -34,7 +35,8 @@ use crate::Message;
 /// use objc2::ProtocolType;
 /// use objc2::runtime::NSObject;
 /// // Get a protocol object representing `NSObject`
-/// let protocol = NSObject::protocol();
+/// let protocol = NSObject::protocol().expect("NSObject to have a protocol");
+/// assert_eq!(NSObject::NAME, protocol.name());
 /// ```
 ///
 /// Use the [`extern_protocol!`] macro to implement this trait for a type.
@@ -43,11 +45,7 @@ use crate::Message;
 /// use objc2::{extern_protocol, ProtocolType};
 ///
 /// extern_protocol!(
-///     unsafe trait MyProtocol {
-///         #[method(aMethod)]
-///         fn a_method(&self);
-///     }
-///
+///     unsafe trait MyProtocol {}
 ///     unsafe impl ProtocolType for dyn MyProtocol {}
 /// );
 ///
@@ -96,18 +94,38 @@ pub unsafe trait ImplementedBy<P: ?Sized + Message> {
     const __INNER: ();
 }
 
-// SAFETY: Trivial
-// unsafe impl<P: ?Sized + ProtocolType> ConformsTo<P> for ProtocolObject<P> {
-//     fn as_protocol(&self) -> &ProtocolObject<P> {
-//         self
-//     }
-//
-//     fn as_protocol_mut(&mut self) -> &mut ProtocolObject<P> {
-//         self
-//     }
-// }
-
-/// TODO
+/// An object representing any object that implements a specified protocol.
+///
+/// Objective-C has [a feature][protocol-type-checking] where you can write
+/// `id<MyProtocol>`, and then work with the protocol as-if it was an object;
+/// this is very similar to `dyn` traits in Rust!
+///
+/// If we could customize how `dyn Trait` works, then this struct would not
+/// have been necessary; however, `dyn Trait` is a wide pointer with overhead,
+/// which this struct helps avoid.
+///
+/// If the trait `T` inherits [`NSObjectProtocol`], this will implement common
+/// traits like `Debug`, `PartialEq`, `Eq` and `Hash`.
+///
+/// [protocol-type-checking]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocProtocols.html#//apple_ref/doc/uid/TP30001163-CH15-TPXREF151
+///
+///
+/// # Examples
+///
+/// Convert an object `MyObject` that implements the a protocol `MyProtocol`
+/// into a [`ProtocolObject`] for working with the protocol in a type-erased
+/// way.
+///
+/// ```rust,ignore
+/// use objc2::ProtocolObject;
+/// use objc2::rc::{Id, Shared};
+///
+/// let obj: Id<MyObject, Shared>;
+/// # obj = unimplemented!();
+/// let obj: &ProtocolObject<dyn MyProtocol> = ProtocolObject::from_ref(&*obj);
+/// let obj: Id<ProtocolObject<dyn MyProtocol>, Shared> = ProtocolObject::from_id(obj);
+/// ```
+#[doc(alias = "id")]
 #[repr(C)]
 pub struct ProtocolObject<P: ?Sized + ProtocolType> {
     inner: Object,
@@ -163,8 +181,7 @@ impl<P: ?Sized + ProtocolType> ProtocolObject<P> {
         T: 'static,
     {
         // SAFETY:
-        // - The type can be represented as the casted-to type, since
-        //   `T: ConformsTo` guarantees that it implements the protocol.
+        // - The type can be represented as the casted-to type.
         // - Both types are `'static` (this could maybe be relaxed a bit, but
         //   let's just be on the safe side)!
         unsafe { Id::cast::<Self>(obj) }

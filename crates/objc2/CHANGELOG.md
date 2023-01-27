@@ -7,19 +7,58 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
-* Added `NSObjectProtocol` trait for allowing `ProtocolObject` to implement
-  `Debug`, `Hash`, `PartialEq` and `Eq`.
 * Support `#[cfg(...)]` attributes in `extern_class!` macro.
 * Added support for selectors with multiple colons like `abc::` in the `sel!`,
   `extern_class!`, `extern_protocol!` and `declare_class!` macros.
 * Added ability to use `#[method_id(mySelector:)]` inside `declare_class!`,
   just like you would do in `extern_methods!`.
 * Added 16-fold impls for `EncodeArguments`, `MessageArguments`, and `MethodImplementation`.
+* Added `NSObjectProtocol` trait for allowing `ProtocolObject` to implement
+  `Debug`, `Hash`, `PartialEq` and `Eq`.
 
 ### Changed
 * **BREAKING**: Using the automatic `NSError**`-to-`Result` functionality in
   `extern_methods!` now requires a trailing underscore (so now it's
   `#[method(myMethod:error:_)]` instead of `#[method(myMethod:error:)]`).
+* **BREAKING**: Fundamentally changed how protocols work. Instead of being
+  structs with inherent methods, they're now traits. This means that you can
+  use their methods much more naturally from your Objective-C objects.
+
+  An example:
+  ```rust
+  // Before
+  extern_protocol!(
+    struct MyProtocol;
+
+    unsafe impl ProtocolType for MyProtocol {
+      #[method(myMethod)]
+      fn myMethod(&self);
+    }
+  );
+
+  let obj: &SomeObjectThatImplementsTheProtocol = ...;
+  let proto: &MyProtocol = obj.as_protocol();
+  proto.myMethod();
+
+  // After
+  extern_protocol!(
+    unsafe trait MyProtocol {
+      #[method(myMethod)]
+      fn myMethod(&self);
+    }
+
+    unsafe impl ProtocolType for dyn MyProtocol {}
+  );
+
+  let obj: &SomeObjectThatImplementsTheProtocol = ...;
+  obj.myMethod();
+  // Or
+  let proto: &ProtocolObject<dyn MyProtocol> = ProtocolObject::from_ref(obj);
+  proto.myMethod();
+  ```
+
+  The `ConformsTo` trait has similarly been removed, and the `ImplementedBy`
+  trait and `ProtocolObject` struct has been introduced instead.
 * **BREAKING**: Moved `NSObject::is_kind_of` to the new `NSObjectProtocol`.
 
 ### Fixed

@@ -78,6 +78,12 @@ unsafe impl ClassType for NSObject {
 ///
 /// [proto]: https://developer.apple.com/documentation/objectivec/1418956-nsobject?language=objc
 /// [`extern_protocol!`]: crate::extern_protocol!
+///
+///
+/// # Safety
+///
+/// Like with [other protocols](ProtocolType), the type must represent a class
+/// that implements the `NSObject` protocol.
 #[allow(non_snake_case)]
 pub unsafe trait NSObjectProtocol {
     #[doc(hidden)]
