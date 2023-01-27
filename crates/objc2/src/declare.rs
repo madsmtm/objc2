@@ -810,7 +810,10 @@ mod tests {
         let superclass = test_utils::custom_class();
         let builder = ClassBuilder::new("TestFetchWhileCreatingClass", superclass).unwrap();
 
-        if cfg!(all(feature = "apple", target_arch = "x86_64")) {
+        if cfg!(all(
+            feature = "apple",
+            any(target_arch = "aarch64", target_arch = "x86_64")
+        )) {
             // It is IMO a bug that it is present here!
             assert!(is_present(builder.cls.as_ptr().cast()));
         } else {
