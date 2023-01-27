@@ -1,7 +1,7 @@
 #![cfg(feature = "Foundation_NSMutableString")]
 use objc2::rc::Id;
 
-use icrate::Foundation::{self, NSMutableString, NSString};
+use icrate::Foundation::{self, NSMutableString, NSObjectProtocol, NSString};
 
 #[test]
 fn display_debug() {

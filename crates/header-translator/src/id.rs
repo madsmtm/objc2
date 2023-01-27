@@ -55,7 +55,7 @@ impl<N: ToOptionString> ItemIdentifier<N> {
         }
     }
 
-    fn map_name<R: ToOptionString>(self, f: impl FnOnce(N) -> R) -> ItemIdentifier<R> {
+    pub fn map_name<R: ToOptionString>(self, f: impl FnOnce(N) -> R) -> ItemIdentifier<R> {
         let Self {
             name,
             library,
@@ -91,9 +91,9 @@ impl ItemIdentifier {
         self.library == "System"
     }
 
-    // pub fn is_nsobject(&self) -> bool {
-    //     self.library == "System" && self.name == "NSObject"
-    // }
+    pub fn is_nsobject(&self) -> bool {
+        self.library == "System" && (self.name == "NSObject" || self.name == "NSObjectProtocol")
+    }
 
     pub fn is_nserror(&self) -> bool {
         self.library == "Foundation" && self.name == "NSError"

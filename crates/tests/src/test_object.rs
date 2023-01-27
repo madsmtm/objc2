@@ -6,79 +6,75 @@ use icrate::Foundation::NSNumber;
 #[cfg(feature = "Foundation_all")]
 use objc2::rc::Shared;
 use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
-use objc2::runtime::{Bool, Class, NSObject, Object, Protocol};
+use objc2::runtime::{Bool, Class, NSObject, NSObjectProtocol, Object, Protocol};
 #[cfg(feature = "malloc")]
 use objc2::sel;
 use objc2::{class, msg_send, msg_send_id};
-use objc2::{extern_protocol, ClassType, ConformsTo, Encoding, Message, ProtocolType, RefEncode};
+use objc2::{
+    extern_protocol, ClassType, Encoding, Message, ProtocolObject, ProtocolType, RefEncode,
+};
 
 extern_protocol!(
-    #[derive(Debug, PartialEq, Eq, Hash)]
-    struct MyTestProtocol;
-
-    unsafe impl ProtocolType for MyTestProtocol {
-        type Parent = NSObject;
-
-        const NAME: &'static str = "MyTestProtocol";
-
+    unsafe trait MyTestProtocol: NSObjectProtocol {
         #[method(a)]
         fn a(&self) -> c_int;
 
-        // TODO
-        // #[method(b)]
-        // fn b() -> c_int;
+        #[method(b)]
+        fn b() -> c_int;
 
         #[cfg(feature = "Foundation_all")]
         #[method_id(c)]
         fn c(&self) -> Id<NSNumber, Shared>;
 
-        // TODO
-        // #[method_id(d)]
-        // fn d() -> Id<NSNumber, Shared>;
+        #[cfg(feature = "Foundation_all")]
+        #[method_id(d)]
+        fn d() -> Id<NSNumber, Shared>;
 
         #[method(e)]
         #[optional]
         fn e(&self) -> c_int;
 
-        // TODO
-        // #[method(f)]
-        // #[optional]
-        // fn f() -> c_int;
+        #[method(f)]
+        #[optional]
+        fn f() -> c_int;
 
         #[cfg(feature = "Foundation_all")]
         #[optional]
         #[method_id(g)]
         fn g(&self) -> Id<NSNumber, Shared>;
 
-        // TODO
-        // #[optional]
-        // #[method_id(h)]
-        // fn h() -> Id<NSNumber, Shared>;
+        #[cfg(feature = "Foundation_all")]
+        #[optional]
+        #[method_id(h)]
+        fn h() -> Id<NSNumber, Shared>;
+    }
+
+    unsafe impl ProtocolType for dyn MyTestProtocol {
+        const NAME: &'static str = "MyTestProtocol";
     }
 );
 
 extern_protocol!(
-    struct MyTestProtocol2;
+    unsafe trait MyTestProtocol2 {}
 
-    unsafe impl ProtocolType for MyTestProtocol2 {
+    unsafe impl ProtocolType for dyn MyTestProtocol2 {
         const NAME: &'static str = "MyTestProtocol2";
     }
 );
 
 extern_protocol!(
-    struct MyTestProtocol3;
+    unsafe trait MyTestProtocol3: MyTestProtocol + NSObjectProtocol {}
 
-    #[conforms_to(NSObject)]
-    unsafe impl ProtocolType for MyTestProtocol3 {
-        type Parent = MyTestProtocol;
-    }
+    unsafe impl ProtocolType for dyn MyTestProtocol3 {}
 );
 
 extern_protocol!(
-    struct MyTestProtocol4;
+    unsafe trait MyTestProtocol4:
+        MyTestProtocol + MyTestProtocol3 + MyTestProtocol2 + NSObjectProtocol
+    {
+    }
 
-    #[conforms_to(MyTestProtocol3, MyTestProtocol2, NSObject)]
-    unsafe impl ProtocolType for MyTestProtocol4 {}
+    unsafe impl ProtocolType for dyn MyTestProtocol4 {}
 );
 
 #[repr(C)]
@@ -109,8 +105,8 @@ unsafe impl ClassType for MyTestObject {
     }
 }
 
-unsafe impl ConformsTo<NSObject> for MyTestObject {}
-unsafe impl ConformsTo<MyTestProtocol> for MyTestObject {}
+unsafe impl NSObjectProtocol for MyTestObject {}
+unsafe impl MyTestProtocol for MyTestObject {}
 
 impl MyTestObject {
     fn new() -> Id<Self, Owned> {
@@ -314,19 +310,20 @@ fn test_object() {
 #[test]
 fn test_protocol() {
     let obj = MyTestObject::new();
-    let proto: Id<MyTestProtocol, _> = Id::into_protocol(obj);
+    let proto: Id<ProtocolObject<dyn MyTestProtocol>, _> = ProtocolObject::from_id(obj);
     assert_eq!(proto.a(), 1);
-    // TODO: assert_eq!(MyTestObject::b(), 2);
+    assert_eq!(MyTestObject::b(), 2);
     #[cfg(feature = "Foundation_all")]
     assert_eq!(proto.c().as_i32(), 3);
-    // TODO: assert_eq!(MyTestObject::d().as_i32(), 4);
+    #[cfg(feature = "Foundation_all")]
+    assert_eq!(MyTestObject::d().as_i32(), 4);
     assert_eq!(proto.e(), 5);
-    // TODO: assert_eq!(MyTestObject::f(), 6);
+    assert_eq!(MyTestObject::f(), 6);
     #[cfg(feature = "Foundation_all")]
     assert_eq!(proto.g().as_i32(), 7);
-    // TODO: assert_eq!(MyTestObject::h().as_i32(), 8);
+    #[cfg(feature = "Foundation_all")]
+    assert_eq!(MyTestObject::h().as_i32(), 8);
 
-    // Check that dereferencing to `NSObject` works
-    let obj: &NSObject = &proto;
-    assert_eq!(obj, &**proto);
+    // Check that transforming to `NSObject` works
+    let _obj: &ProtocolObject<NSObject> = ProtocolObject::from_ref(&*proto);
 }

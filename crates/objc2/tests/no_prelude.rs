@@ -127,12 +127,13 @@ new_objc2::extern_class!(
 );
 
 new_objc2::extern_protocol!(
-    struct CustomProtocol;
-
-    unsafe impl ProtocolType for CustomProtocol {
+    #[allow(clippy::missing_safety_doc)]
+    unsafe trait CustomProtocol {
         #[method(c)]
         fn c(&self);
     }
+
+    unsafe impl ProtocolType for dyn CustomProtocol {}
 );
 
 pub fn test_selector() {

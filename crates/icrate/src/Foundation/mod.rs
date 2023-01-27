@@ -112,7 +112,7 @@ pub use self::additions::*;
 pub use self::fixes::*;
 pub use self::generated::*;
 
-pub use objc2::runtime::{NSObject, NSZone};
+pub use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
 // Available under Foundation, so makes sense here as well:
 // https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
 pub use objc2::ffi::{NSInteger, NSUInteger};

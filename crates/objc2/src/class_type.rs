@@ -1,5 +1,5 @@
 use crate::msg_send_id;
-use crate::rc::Allocated;
+use crate::rc::{Allocated, Id, Ownership};
 use crate::runtime::Class;
 use crate::Message;
 
@@ -105,5 +105,20 @@ pub unsafe trait ClassType: Message {
         // - The object is of the correct type, since we've used the class
         //   from `Self::class`.
         unsafe { msg_send_id![Self::class(), alloc] }
+    }
+}
+
+impl<T: ClassType + 'static, O: Ownership> Id<T, O>
+where
+    T::Super: 'static,
+{
+    /// Convert the object into its superclass.
+    #[inline]
+    pub fn into_super(this: Self) -> Id<T::Super, O> {
+        // SAFETY:
+        // - The casted-to type is a superclass of the type.
+        // - Both types are `'static` (this could maybe be relaxed a bit, but
+        //   let's just be on the safe side)!
+        unsafe { Self::cast::<T::Super>(this) }
     }
 }

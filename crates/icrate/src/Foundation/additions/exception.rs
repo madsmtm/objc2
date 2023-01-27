@@ -7,7 +7,7 @@ use objc2::exception::Exception;
 use objc2::{msg_send_id, sel};
 
 use crate::common::*;
-use crate::Foundation::{self, NSException, NSExceptionName, NSObject};
+use crate::Foundation::{self, NSException, NSExceptionName, NSObject, NSObjectProtocol};
 
 // SAFETY: Exception objects are immutable data containers, and documented as
 // thread safe.

@@ -154,7 +154,7 @@ dependencies = [
 [[package]]
 name = "iai"
 version = "0.1.1"
-source = "git+https://github.com/madsmtm/iai?branch=callgrind#89c9000c0490540b595b048d55d66e6c4f1c4f5c"
+source = "git+https://github.com/madsmtm/iai?branch=callgrind#c19e72306bef1a8a53305a926524e710a937eba0"
 dependencies = [
  "cfg-if",
 ]
@@ -286,9 +286,9 @@ checksum = "e0a7ae3ac2f1173085d398531c705756c94a4c56843785df85a60c1a0afac116"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.49"
+version = "1.0.50"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "57a8eca9f9c4ffde41714334dee777596264c7825420f521abc92b5b5deb63a5"
+checksum = "6ef7d57beacfaf2d8aee5937dab7b7f28de3cb8b1828479bb5de2a7106f2bae2"
 dependencies = [
  "unicode-ident",
 ]
@@ -427,6 +427,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "test_extern_protocol"
+version = "0.1.0"
+dependencies = [
+ "objc2",
+]
+
+[[package]]
 name = "test_msg_send_id"
 version = "0.1.0"
 dependencies = [
@@ -519,9 +526,9 @@ dependencies = [
 
 [[package]]
 name = "toml"
-version = "0.5.10"
+version = "0.5.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1333c76748e868a4d9d1017b5ab53171dfd095f70c712fdb4653a406547f598f"
+checksum = "f4f7f0dd8d50a853a531c426359045b1998f04219d88799810762cd4ad314234"
 dependencies = [
  "serde",
 ]
@@ -586,9 +593,9 @@ dependencies = [
 
 [[package]]
 name = "trybuild"
-version = "1.0.75"
+version = "1.0.76"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f1212c215a87a183687a7cc7065901b1a98da6b37277d51a1b5faedbb4efd4f3"
+checksum = "6ed2c57956f91546d4d33614265a85d55c8e1ab91484853a10335894786d7db6"
 dependencies = [
  "glob",
  "once_cell",

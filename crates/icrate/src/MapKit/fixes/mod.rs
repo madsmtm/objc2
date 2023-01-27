@@ -7,3 +7,6 @@ extern_static!(MKAnnotationViewZPriorityMax: MKAnnotationViewZPriority = 1000.);
 extern_static!(MKAnnotationViewZPriorityDefaultSelected: MKAnnotationViewZPriority = 1000.);
 extern_static!(MKAnnotationViewZPriorityDefaultUnselected: MKAnnotationViewZPriority = 500.);
 extern_static!(MKAnnotationViewZPriorityMin: MKAnnotationViewZPriority = 0.);
+
+#[cfg(feature = "MapKit_MKMapItem")]
+unsafe impl crate::Foundation::NSCoding for MKMapItem {}

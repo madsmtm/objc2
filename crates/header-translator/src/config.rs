@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::io::Result;
 use std::path::Path;
@@ -17,7 +17,7 @@ pub struct Config {
     pub class_data: HashMap<String, ClassData>,
     #[serde(rename = "protocol")]
     #[serde(default)]
-    pub protocol_data: HashMap<String, ClassData>,
+    pub protocol_data: HashMap<String, ProtocolData>,
     #[serde(rename = "struct")]
     #[serde(default)]
     pub struct_data: HashMap<String, StructData>,
@@ -39,6 +39,13 @@ pub struct Config {
 }
 
 impl Config {
+    pub fn replace_protocol_name(&self, name: String) -> String {
+        self.protocol_data
+            .get(&name)
+            .and_then(|data| data.renamed.clone())
+            .unwrap_or(name)
+    }
+
     pub fn get_library_alias(&self, library_name: String) -> String {
         self.libraries
             .iter()
@@ -72,10 +79,15 @@ pub struct ClassData {
     #[serde(default)]
     pub methods: HashMap<String, MethodData>,
     #[serde(default)]
+    pub categories: HashMap<String, CategoryData>,
+    #[serde(default)]
     pub derives: Derives,
     #[serde(rename = "owned")]
     #[serde(default)]
     pub ownership: Ownership,
+    #[serde(rename = "skipped-protocols")]
+    #[serde(default)]
+    pub skipped_protocols: HashSet<String>,
 }
 
 impl ClassData {
@@ -83,6 +95,24 @@ impl ClassData {
         this.map(|data| data.methods.get(name).copied().unwrap_or_default())
             .unwrap_or_default()
     }
+}
+
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct CategoryData {
+    #[serde(default)]
+    pub skipped: bool,
+}
+
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ProtocolData {
+    #[serde(default)]
+    pub renamed: Option<String>,
+    #[serde(default)]
+    pub skipped: bool,
+    #[serde(default)]
+    pub methods: HashMap<String, MethodData>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

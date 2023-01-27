@@ -8,7 +8,7 @@ use std::mem;
 use clang::{Entity, EntityKind, EntityVisitResult};
 
 use crate::availability::Availability;
-use crate::config::ClassData;
+use crate::config::{ClassData, MethodData};
 use crate::context::Context;
 use crate::expr::Expr;
 use crate::id::ItemIdentifier;
@@ -33,6 +33,35 @@ impl fmt::Display for Derives {
         }
         Ok(())
     }
+}
+
+/// Find all protocols, protocol's protocols and superclass' protocols.
+fn parse_protocols(
+    entity: &Entity<'_>,
+    protocols: &mut BTreeSet<ItemIdentifier>,
+    context: &Context<'_>,
+) {
+    immediate_children(entity, |entity, _span| match entity.get_kind() {
+        EntityKind::ObjCProtocolRef => {
+            let entity = entity
+                .get_reference()
+                .expect("ObjCProtocolRef to reference entity");
+            if protocols.insert(
+                ItemIdentifier::new(&entity, context)
+                    .map_name(|name| context.replace_protocol_name(name)),
+            ) {
+                // Only recurse if we haven't already seen this protocol
+                parse_protocols(&entity, protocols, context);
+            }
+        }
+        EntityKind::ObjCSuperClassRef => {
+            let entity = entity
+                .get_reference()
+                .expect("ObjCSuperClassRef to reference entity");
+            parse_protocols(&entity, protocols, context);
+        }
+        _ => {}
+    });
 }
 
 fn parse_superclass<'ty>(
@@ -68,10 +97,10 @@ fn parse_objc_decl(
     entity: &Entity<'_>,
     superclass: bool,
     mut generics: Option<&mut Vec<String>>,
-    data: Option<&ClassData>,
+    get_data: impl Fn(&str) -> MethodData,
     context: &Context<'_>,
-) -> (Vec<ItemIdentifier>, Vec<Method>, Vec<String>) {
-    let mut protocols = Vec::new();
+) -> (BTreeSet<ItemIdentifier>, Vec<Method>, Vec<String>) {
+    let mut protocols = BTreeSet::new();
     let mut methods = Vec::new();
     let mut designated_initializers = Vec::new();
 
@@ -106,15 +135,23 @@ fn parse_objc_decl(
             }
         }
         EntityKind::ObjCProtocolRef => {
-            protocols.push(ItemIdentifier::new(&entity, context));
+            let entity = entity
+                .get_reference()
+                .expect("ObjCProtocolRef to reference entity");
+            protocols.insert(
+                ItemIdentifier::new(&entity, context)
+                    .map_name(|name| context.replace_protocol_name(name)),
+            );
         }
         EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
             drop(span);
             let partial = Method::partial(entity);
 
             if !properties.remove(&(partial.is_class, partial.fn_name.clone())) {
-                let data = ClassData::get_method_data(data, &partial.fn_name);
-                if let Some((designated_initializer, method)) = partial.parse(data, context) {
+                let data = get_data(&partial.fn_name);
+                if let Some((designated_initializer, method)) =
+                    partial.parse(data, generics.is_none(), context)
+                {
                     if designated_initializer {
                         designated_initializers.push(method.fn_name.clone());
                     }
@@ -126,13 +163,14 @@ fn parse_objc_decl(
             drop(span);
             let partial = Method::partial_property(entity);
 
-            let getter_data = ClassData::get_method_data(data, &partial.getter_name);
+            let getter_data = get_data(&partial.getter_name);
             let setter_data = partial
                 .setter_name
                 .as_ref()
-                .map(|setter_name| ClassData::get_method_data(data, setter_name));
+                .map(|setter_name| get_data(setter_name));
 
-            let (getter, setter) = partial.parse(getter_data, setter_data, context);
+            let (getter, setter) =
+                partial.parse(getter_data, setter_data, generics.is_none(), context);
             if let Some(getter) = getter {
                 if !properties.insert((getter.is_class, getter.fn_name.clone())) {
                     error!(?setter, "already exisiting property");
@@ -204,7 +242,7 @@ pub enum Stmt {
     ProtocolDecl {
         id: ItemIdentifier,
         availability: Availability,
-        protocols: Vec<ItemIdentifier>,
+        protocols: BTreeSet<ItemIdentifier>,
         methods: Vec<Method>,
     },
     /// @interface ty: _ <protocols*>
@@ -358,8 +396,21 @@ impl Stmt {
                 let availability = Availability::parse(entity, context);
                 let mut generics = Vec::new();
 
-                let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(entity, true, Some(&mut generics), data, context);
+                let (_, methods, designated_initializers) = parse_objc_decl(
+                    entity,
+                    true,
+                    Some(&mut generics),
+                    |name| ClassData::get_method_data(data, name),
+                    context,
+                );
+
+                let mut protocols = Default::default();
+                parse_protocols(entity, &mut protocols, context);
+
+                let skipped_protocols = data
+                    .map(|data| data.skipped_protocols.clone())
+                    .unwrap_or_default();
+                protocols.retain(|protocol| !skipped_protocols.contains(&protocol.name));
 
                 let mut superclass_entity = *entity;
                 let mut superclasses = vec![];
@@ -429,10 +480,26 @@ impl Stmt {
                     return vec![];
                 }
 
+                if let Some(category_name) = &category.name {
+                    let category_data = data
+                        .and_then(|data| data.categories.get(category_name))
+                        .cloned()
+                        .unwrap_or_default();
+
+                    if category_data.skipped {
+                        return vec![];
+                    }
+                }
+
                 let mut generics = Vec::new();
 
-                let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(entity, false, Some(&mut generics), data, context);
+                let (protocols, methods, designated_initializers) = parse_objc_decl(
+                    entity,
+                    false,
+                    Some(&mut generics),
+                    |name| ClassData::get_method_data(data, name),
+                    context,
+                );
 
                 if !designated_initializers.is_empty() {
                     warn!(
@@ -469,7 +536,8 @@ impl Stmt {
                 .collect()
             }
             EntityKind::ObjCProtocolDecl => {
-                let id = ItemIdentifier::new(entity, context);
+                let id = ItemIdentifier::new(entity, context)
+                    .map_name(|name| context.replace_protocol_name(name));
                 let data = context.protocol_data.get(&id.name);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
@@ -478,8 +546,17 @@ impl Stmt {
 
                 let availability = Availability::parse(entity, context);
 
-                let (protocols, methods, designated_initializers) =
-                    parse_objc_decl(entity, false, None, data, context);
+                let (protocols, methods, designated_initializers) = parse_objc_decl(
+                    entity,
+                    false,
+                    None,
+                    |name| {
+                        data.and_then(|data| data.methods.get(name))
+                            .copied()
+                            .unwrap_or_default()
+                    },
+                    context,
+                );
 
                 if !designated_initializers.is_empty() {
                     warn!(
@@ -1115,22 +1192,57 @@ impl fmt::Display for Stmt {
             Self::ProtocolImpl {
                 cls: _,
                 generics: _,
-                protocol: _,
+                protocol,
+                availability: _,
+            } if protocol.name == "NSCopying" || protocol.name == "NSMutableCopying" => {
+                // TODO
+            }
+            Self::ProtocolImpl {
+                cls,
+                generics,
+                protocol,
                 availability: _,
             } => {
-                // TODO
+                if let Some(feature) = cls.feature() {
+                    writeln!(f, "#[cfg(feature = \"{feature}\")]")?;
+                }
+                writeln!(
+                    f,
+                    "unsafe impl{} {} for {}{} {{}}",
+                    GenericParamsHelper(generics),
+                    protocol.path_in_relation_to(cls),
+                    cls.path(),
+                    GenericTyHelper(generics),
+                )?;
             }
             Self::ProtocolDecl {
                 id,
                 availability,
-                protocols: _,
+                protocols,
                 methods,
             } => {
                 writeln!(f, "extern_protocol!(")?;
                 write!(f, "{availability}")?;
-                writeln!(f, "    pub struct {};", id.name)?;
-                writeln!(f)?;
-                writeln!(f, "    unsafe impl ProtocolType for {} {{", id.name)?;
+
+                write!(f, "    pub unsafe trait {}", id.name)?;
+                if !protocols.is_empty() {
+                    for (i, protocol) in protocols
+                        .iter()
+                        .filter(|protocol| {
+                            protocol.name != "NSCopying" && protocol.name != "NSMutableCopying"
+                        })
+                        .enumerate()
+                    {
+                        if i == 0 {
+                            write!(f, ": ")?;
+                        } else {
+                            write!(f, "+ ")?;
+                        }
+                        write!(f, "{}", protocol.path())?;
+                    }
+                }
+                writeln!(f, " {{")?;
+
                 for method in methods {
                     // Use a set to deduplicate features, and to have them in
                     // a consistent order
@@ -1160,6 +1272,8 @@ impl fmt::Display for Stmt {
                     writeln!(f, "{method}")?;
                 }
                 writeln!(f, "    }}")?;
+                writeln!(f)?;
+                writeln!(f, "    unsafe impl ProtocolType for dyn {} {{}}", id.name)?;
                 writeln!(f, ");")?;
             }
             Self::StructDecl {

@@ -43,11 +43,11 @@ error[E0277]: the trait bound `i32: Message` is not satisfied
             Exception
             NSAppleEventDescriptor
             NSArray<ObjectType, ObjectTypeOwnership>
-            NSCacheDelegate
-            NSCoding
-            NSConnectionDelegate
-            NSDecimalNumberBehaviors
             NSDictionary<KeyType, ObjectType, KeyTypeOwnership, ObjectTypeOwnership>
+            NSEnumerator<ObjectType, ObjectTypeOwnership>
+            NSError
+            NSHashTable<ObjectType, ObjectTypeOwnership>
+            NSMapTable<KeyType, ObjectType, KeyTypeOwnership, ObjectTypeOwnership>
           and $N others
 note: required by a bound in `__send_message_error`
  --> $WORKSPACE/crates/objc2/src/message/mod.rs
