@@ -5,7 +5,7 @@
 ###
 
 [library.Accessibility]
-imports = ["Accessibility", "Foundation"]
+imports = ["Accessibility", "CoreFoundation", "Foundation"]
 
 [library.AdServices]
 imports = ["AdServices", "Foundation"]
@@ -14,16 +14,16 @@ imports = ["AdServices", "Foundation"]
 imports = ["AdSupport", "Foundation"]
 
 [library.AppKit]
-imports = ["AppKit", "CoreData", "Foundation"]
+imports = ["AppKit", "CoreData", "CoreFoundation", "Foundation"]
 
 [library.AuthenticationServices]
-imports = ["AuthenticationServices", "Foundation"]
+imports = ["AuthenticationServices", "CoreFoundation", "Foundation"]
 
 [library.AutomaticAssessmentConfiguration]
 imports = ["AutomaticAssessmentConfiguration", "Foundation"]
 
 [library.Automator]
-imports = ["Automator", "AppKit", "Foundation", "OSAKit"]
+imports = ["Automator", "AppKit", "CoreFoundation", "Foundation", "OSAKit"]
 
 [library.BackgroundAssets]
 imports = ["BackgroundAssets", "Foundation"]
@@ -49,6 +49,9 @@ imports = ["Contacts", "Foundation"]
 [library.CoreData]
 imports = ["CoreData", "Foundation"]
 
+[library.CoreFoundation]
+imports = ["CoreFoundation"]
+
 [library.CoreLocation]
 imports = ["CoreLocation", "Contacts", "Foundation"]
 
@@ -71,16 +74,16 @@ imports = ["ExtensionKit", "AppKit", "Foundation"]
 imports = ["ExternalAccessory", "Foundation"]
 
 [library.FileProvider]
-imports = ["FileProvider", "AppKit", "Foundation", "UniformTypeIdentifiers"]
+imports = ["FileProvider", "AppKit", "CoreFoundation", "Foundation", "UniformTypeIdentifiers"]
 
 [library.FileProviderUI]
 imports = ["FileProviderUI", "AppKit", "FileProvider", "Foundation"]
 
 [library.Foundation]
-imports = ["Foundation"]
+imports = ["CoreFoundation", "Foundation"]
 
 [library.GameController]
-imports = ["GameController", "AppKit", "Foundation"]
+imports = ["GameController", "AppKit", "CoreFoundation", "Foundation"]
 
 [library.GameKit]
 imports = ["GameKit", "AppKit", "Foundation"]
@@ -104,7 +107,7 @@ imports = ["LinkPresentation", "AppKit", "Foundation"]
 imports = ["MailKit", "AppKit", "Foundation"]
 
 [library.MapKit]
-imports = ["MapKit", "AppKit", "Contacts", "CoreLocation", "Foundation"]
+imports = ["MapKit", "AppKit", "Contacts", "CoreFoundation", "CoreLocation", "Foundation"]
 
 [library.Metal]
 imports = ["Metal", "Foundation"]
@@ -113,14 +116,14 @@ imports = ["Metal", "Foundation"]
 imports = ["MetalFX", "Metal"]
 
 [library.MetalKit]
-imports = ["MetalKit", "AppKit", "Foundation", "Metal"]
+imports = ["MetalKit", "AppKit", "CoreFoundation", "Foundation", "Metal"]
 
 [library.OSAKit]
 imports = ["OSAKit", "AppKit", "Foundation"]
 
 [library.QuartzCore]
 name = "CoreAnimation"
-imports = ["CoreAnimation", "Foundation"]
+imports = ["CoreAnimation", "CoreFoundation", "Foundation"]
 
 [library.SoundAnalysis]
 imports = ["SoundAnalysis", "Foundation"]
@@ -129,7 +132,7 @@ imports = ["SoundAnalysis", "Foundation"]
 imports = ["Speech", "Foundation"]
 
 [library.StoreKit]
-imports = ["StoreKit", "AppKit", "Foundation"]
+imports = ["StoreKit", "AppKit", "CoreFoundation", "Foundation"]
 
 [library.UniformTypeIdentifiers]
 imports = ["UniformTypeIdentifiers", "Foundation"]
@@ -138,7 +141,7 @@ imports = ["UniformTypeIdentifiers", "Foundation"]
 imports = ["UserNotifications", "CoreLocation", "Foundation"]
 
 [library.WebKit]
-imports = ["WebKit", "AppKit", "Foundation"]
+imports = ["WebKit", "AppKit", "CoreFoundation", "Foundation"]
 
 ###
 ### Attributes that change a function/method's calling convention.
@@ -869,9 +872,6 @@ skipped = true
 skipped = true
 [protocol.GCDevice.methods.setHandlerQueue]
 skipped = true
-# Needs `CFIndex` (fixed locally for now)
-[typedef.GCKeyCode]
-skipped = true
 # Needs `IOHIDDeviceRef` from IOKit
 [class.GCController.methods.supportsHIDDevice]
 skipped = true
@@ -913,6 +913,21 @@ skipped = true
 [class.LAPublicKey.methods.encryptData_secKeyAlgorithm_completion]
 skipped = true
 [class.LAPublicKey.methods.verifyData_signature_secKeyAlgorithm_completion]
+skipped = true
+# needs `dispatch_queue_t`
+[fn.CFMessagePortSetDispatchQueue]
+skipped = true
+[fn.CFReadStreamCopyDispatchQueue]
+skipped = true
+[fn.CFReadStreamSetDispatchQueue]
+skipped = true
+[fn.CFWriteStreamCopyDispatchQueue]
+skipped = true
+[fn.CFWriteStreamSetDispatchQueue]
+skipped = true
+[fn.CFURLCreateFromFSRef]
+skipped = true
+[fn.CFURLGetFSRef]
 skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
@@ -1234,4 +1249,50 @@ skipped-protocols = ["CALayerDelegate"]
 skipped = true
 # produces wrong values for most cases; manually define for now
 [enum.LAError]
+skipped = true
+
+# manually defined to fix name clash due to __CFByteOrder
+[typedef.CFByteOrder]
+skipped = true
+[enum.__CFByteOrder]
+skipped = true
+[typedef.CFIndex]
+skipped = true
+
+# problem translating typedef
+[typedef.CFPropertyListRef]
+skipped = true
+[typedef.CFTypeRef]
+skipped = true
+
+# needs cf_closed_enum! equivalent; manually define for now
+[enum.CGRectEdge]
+skipped = true
+
+# needs variadics
+[fn.CFStringAppendFormatAndArguments]
+skipped = true
+[fn.CFStringCreateWithFormatAndArguments]
+skipped = true
+[fn.CFStringCreateStringWithValidatedFormatAndArguments]
+skipped = true
+
+# manually defined for portability reasons
+[fn.CFFileSecurityCopyAccessControlList]
+skipped = true
+[fn.CFFileSecuritySetAccessControlList]
+skipped = true
+[fn.CFMachPortCreateWithPort]
+skipped = true
+[fn.CFMachPortGetPort]
+skipped = true
+[struct.CFRunLoopSourceContext1]
+skipped = true
+[typedef.CGFloat]
+skipped = true
+[struct.CGPoint]
+skipped = true
+[struct.CGRect]
+skipped = true
+[struct.CGSize]
 skipped = true

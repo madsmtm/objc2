@@ -64,6 +64,8 @@ pub mod Contacts;
 pub mod CoreAnimation;
 #[cfg(feature = "CoreData")]
 pub mod CoreData;
+#[cfg(feature = "CoreFoundation")]
+pub mod CoreFoundation;
 #[cfg(feature = "CoreLocation")]
 pub mod CoreLocation;
 #[cfg(feature = "DataDetection")]

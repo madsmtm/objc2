@@ -2,8 +2,8 @@ pub use self::comparison_result::NSComparisonResult;
 pub use self::copying::{NSCopying, NSMutableCopying};
 pub use self::enumerator::{NSEnumerator2, NSFastEnumeration2, NSFastEnumerator2};
 pub use self::geometry::{
-    CGFloat, CGPoint, CGRect, CGSize, NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint,
-    NSRect, NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize,
+    NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint, NSRect, NSRectEdge, NSRectEdgeMaxX,
+    NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize,
 };
 pub use self::range::NSRange;
 #[cfg(feature = "Foundation_NSThread")]
