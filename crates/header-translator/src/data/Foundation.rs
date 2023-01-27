@@ -127,6 +127,7 @@ data! {
     class NSProcessInfo {
         unsafe +processInfo;
         unsafe -processName;
+        unsafe -operatingSystemVersion;
     }
 
     class NSSet {
