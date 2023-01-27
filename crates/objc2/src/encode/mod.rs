@@ -59,7 +59,7 @@
 //! method argument, but is a very common return type, and hence implements
 //! [`Encode`].
 
-use core::cell::UnsafeCell;
+use core::cell::{Cell, UnsafeCell};
 use core::ffi::c_void;
 use core::mem::{self, ManuallyDrop, MaybeUninit};
 use core::num::{
@@ -492,6 +492,9 @@ encode_impls_transparent! {
     // (e.g. an `Option<UnsafeCell<&u8>>` impl is not available).
     UnsafeCell<T: ?Sized>,
 
+    // SAFETY: Guaranteed to have the same layout as `UnsafeCell<T>`.
+    Cell<T: ?Sized>,
+
     // The inner field is not public, so may not be safe.
     // TODO: Pin<T>,
 
@@ -500,9 +503,6 @@ encode_impls_transparent! {
 
     // SAFETY: Guaranteed to have the same layout and ABI as `T`.
     Wrapping<T>,
-
-    // It might have requirements that would disourage this impl?
-    // TODO: Cell<T>
 
     // TODO: Types that need to be made repr(transparent) first:
     // - core::cell::Ref?
@@ -705,6 +705,9 @@ mod tests {
         assert_eq!(<&ManuallyDrop<Option<&u8>>>::ENCODING, <&&u8>::ENCODING);
 
         assert_eq!(<UnsafeCell<u8>>::ENCODING, u8::ENCODING);
+        assert_eq!(<UnsafeCell<&u8>>::ENCODING, <&u8>::ENCODING);
+        assert_eq!(<Cell<u8>>::ENCODING, u8::ENCODING);
+        assert_eq!(<Cell<&u8>>::ENCODING, <&u8>::ENCODING);
         // assert_eq!(<Pin<u8>>::ENCODING, u8::ENCODING);
         assert_eq!(<MaybeUninit<u8>>::ENCODING, u8::ENCODING);
         assert_eq!(<Wrapping<u8>>::ENCODING, u8::ENCODING);
