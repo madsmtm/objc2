@@ -6,22 +6,13 @@ use icrate::Foundation::NSNumber;
 #[cfg(feature = "Foundation_all")]
 use objc2::rc::Shared;
 use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
-use objc2::runtime::{Bool, Class, NSObject, Object, Protocol};
+use objc2::runtime::{Bool, Class, NSObject, NSObjectProtocol, Object, Protocol};
 #[cfg(feature = "malloc")]
 use objc2::sel;
 use objc2::{class, msg_send, msg_send_id};
 use objc2::{
     extern_protocol, ClassType, Encoding, Message, ProtocolObject, ProtocolType, RefEncode,
 };
-
-// TODO: Fix this
-extern_protocol!(
-    unsafe trait NSObjectProtocol {}
-
-    unsafe impl ProtocolType for dyn NSObjectProtocol {
-        const NAME: &'static str = "NSObject";
-    }
-);
 
 extern_protocol!(
     unsafe trait MyTestProtocol: NSObjectProtocol {
@@ -114,7 +105,6 @@ unsafe impl ClassType for MyTestObject {
     }
 }
 
-// unsafe impl ConformsTo<NSObject> for MyTestObject {}
 unsafe impl NSObjectProtocol for MyTestObject {}
 unsafe impl MyTestProtocol for MyTestObject {}
 
@@ -335,6 +325,5 @@ fn test_protocol() {
     assert_eq!(MyTestObject::h().as_i32(), 8);
 
     // Check that transforming to `NSObject` works
-    let _obj: &ProtocolObject<dyn NSObjectProtocol> = ProtocolObject::from_ref(&*proto);
-    // assert_eq!(obj, &**proto);
+    let _obj: &ProtocolObject<NSObject> = ProtocolObject::from_ref(&*proto);
 }
