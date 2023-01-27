@@ -9,6 +9,7 @@
 #if TARGET_OS_OSX
 #import <AppKit/AppKit.h>
 #import <Automator/Automator.h>
+#import <MailKit/MailKit.h>
 #import <OSAKit/OSAKit.h>
 #endif
 
@@ -62,7 +63,15 @@
 
 #import <GameKit/GameKit.h>
 
+#import <IdentityLookup/IdentityLookup.h>
+
 #import <InputMethodKit/InputMethodKit.h>
+
+#import <LinkPresentation/LinkPresentation.h>
+
+#import <LocalAuthentication/LocalAuthentication.h>
+
+#import <LocalAuthenticationEmbeddedUI/LocalAuthenticationEmbeddedUI.h>
 
 #import <MapKit/MapKit.h>
 
@@ -73,5 +82,15 @@
 #import <MetalKit/MetalKit.h>
 
 #import <QuartzCore/CoreAnimation.h>
+
+#import <SoundAnalysis/SoundAnalysis.h>
+
+#import <Speech/Speech.h>
+
+#import <StoreKit/StoreKit.h>
+
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+
+#import <UserNotifications/UserNotifications.h>
 
 #import <WebKit/WebKit.h>

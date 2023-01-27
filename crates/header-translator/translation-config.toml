@@ -71,7 +71,7 @@ imports = ["ExtensionKit", "AppKit", "Foundation"]
 imports = ["ExternalAccessory", "Foundation"]
 
 [library.FileProvider]
-imports = ["FileProvider", "AppKit", "Foundation"]
+imports = ["FileProvider", "AppKit", "Foundation", "UniformTypeIdentifiers"]
 
 [library.FileProviderUI]
 imports = ["FileProviderUI", "AppKit", "FileProvider", "Foundation"]
@@ -85,8 +85,23 @@ imports = ["GameController", "AppKit", "Foundation"]
 [library.GameKit]
 imports = ["GameKit", "AppKit", "Foundation"]
 
+[library.IdentityLookup]
+imports = ["IdentityLookup", "Foundation"]
+
 [library.InputMethodKit]
 imports = ["InputMethodKit", "AppKit", "Foundation"]
+
+[library.LocalAuthentication]
+imports = ["LocalAuthentication", "Foundation"]
+
+[library.LocalAuthenticationEmbeddedUI]
+imports = ["LocalAuthenticationEmbeddedUI", "AppKit", "Foundation", "LocalAuthentication"]
+
+[library.LinkPresentation]
+imports = ["LinkPresentation", "AppKit", "Foundation"]
+
+[library.MailKit]
+imports = ["MailKit", "AppKit", "Foundation"]
 
 [library.MapKit]
 imports = ["MapKit", "AppKit", "Contacts", "CoreLocation", "Foundation"]
@@ -106,6 +121,21 @@ imports = ["OSAKit", "AppKit", "Foundation"]
 [library.QuartzCore]
 name = "CoreAnimation"
 imports = ["CoreAnimation", "Foundation"]
+
+[library.SoundAnalysis]
+imports = ["SoundAnalysis", "Foundation"]
+
+[library.Speech]
+imports = ["Speech", "Foundation"]
+
+[library.StoreKit]
+imports = ["StoreKit", "AppKit", "Foundation"]
+
+[library.UniformTypeIdentifiers]
+imports = ["UniformTypeIdentifiers", "Foundation"]
+
+[library.UserNotifications]
+imports = ["UserNotifications", "CoreLocation", "Foundation"]
 
 [library.WebKit]
 imports = ["WebKit", "AppKit", "Foundation"]
@@ -845,6 +875,45 @@ skipped = true
 # Needs `IOHIDDeviceRef` from IOKit
 [class.GCController.methods.supportsHIDDevice]
 skipped = true
+# Needs `CMSampleBufferRef` from CoreMedia
+[class.SFSpeechAudioBufferRecognitionRequest.methods]
+appendAudioSampleBuffer = { skipped = true }
+# Needs `CMTimeRange`
+[class.SNTimeDurationConstraint.methods.durationRange]
+skipped = true
+[class.SNTimeDurationConstraint.methods.initWithDurationRange]
+skipped = true
+[class.SNClassificationResult.methods.timeRange]
+skipped = true
+# NEeds `CMTime`
+[class.SNClassifySoundRequest.methods.setWindowDuration]
+skipped = true
+[class.SNClassifySoundRequest.methods.windowDuration]
+skipped = true
+# Needs `SecAccessControlRef` from Security
+[class.LAContext.methods.evaluateAccessControl_operation_localizedReason_reply]
+skipped = true
+# Needs `SecKeyAlgorithm` from Security
+[class.LAPrivateKey.methods.canDecryptUsingSecKeyAlgorithm]
+skipped = true
+[class.LAPrivateKey.methods.canExchangeKeysUsingSecKeyAlgorithm]
+skipped = true
+[class.LAPrivateKey.methods.canSignUsingSecKeyAlgorithm]
+skipped = true
+[class.LAPrivateKey.methods.exchangeKeysWithPublicKey_secKeyAlgorithm_secKeyParameters_completion]
+skipped = true
+[class.LAPrivateKey.methods.decryptData_secKeyAlgorithm_completion]
+skipped = true
+[class.LAPrivateKey.methods.signData_secKeyAlgorithm_completion]
+skipped = true
+[class.LAPublicKey.methods.canEncryptUsingSecKeyAlgorithm]
+skipped = true
+[class.LAPublicKey.methods.canVerifyUsingSecKeyAlgorithm]
+skipped = true
+[class.LAPublicKey.methods.encryptData_secKeyAlgorithm_completion]
+skipped = true
+[class.LAPublicKey.methods.verifyData_signature_secKeyAlgorithm_completion]
+skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]
@@ -1155,3 +1224,10 @@ skipped-protocols = ["MDLMeshBufferAllocator"]
 skipped-protocols = ["MDLMeshBuffer", "MDLNamed"]
 [class.MTKView]
 skipped-protocols = ["CALayerDelegate"]
+
+# produces wrong values for `LACredentialTypeSmartCardPIN` case; manually define for now
+[enum.LACredentialType]
+skipped = true
+# produces wrong values for most cases; manually define for now
+[enum.LAError]
+skipped = true

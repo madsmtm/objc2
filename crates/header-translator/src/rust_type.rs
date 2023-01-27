@@ -1672,14 +1672,14 @@ impl fmt::Display for Ty {
                 Inner::Id {
                     ty:
                         ty @ IdType::Class {
-                            id,
                             params: TypeParams::Empty,
                             ownership: None,
+                            ..
                         },
                     is_const: _,
                     lifetime: _,
                     nullability: Nullability::Nullable | Nullability::Unspecified,
-                } if id.is_nsstring() || id.is_nsdata() => {
+                } => {
                     write!(f, "{ty}")
                 }
                 Inner::Id {
@@ -1687,7 +1687,7 @@ impl fmt::Display for Ty {
                     ..
                 } => write!(f, "{ty}"),
                 ty @ Inner::Id { .. } => {
-                    panic!("typedef declaration was not NSString: {ty:?}");
+                    panic!("unexpected form of typedef: {ty:?}");
                 }
                 ty => write!(f, "{ty}"),
             },

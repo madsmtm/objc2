@@ -165,7 +165,7 @@ EventKit = ["AppKit", "CoreLocation", "Foundation", "MapKit"]
 ExceptionHandling = ["Foundation"]
 ExtensionKit = ["AppKit", "Foundation"]
 ExternalAccessory = ["Foundation"]
-FileProvider = ["AppKit", "Foundation"]
+FileProvider = ["AppKit", "Foundation", "UniformTypeIdentifiers"]
 FileProviderUI = ["AppKit", "FileProvider", "Foundation"]
 Foundation = [
     "objective-c",
@@ -184,7 +184,12 @@ Foundation = [
 ]
 GameController = ["AppKit", "Foundation"]
 GameKit = ["AppKit", "Foundation"]
+IdentityLookup = ["Foundation"]
 InputMethodKit = ["AppKit", "Foundation"]
+LocalAuthentication = ["Foundation"]
+LocalAuthenticationEmbeddedUI = ["AppKit", "Foundation", "LocalAuthentication"]
+LinkPresentation = ["AppKit", "Foundation"]
+MailKit = ["AppKit", "Foundation"]
 MapKit = ["AppKit", "Contacts", "CoreLocation", "Foundation"]
 Metal = [
     "Foundation",
@@ -195,6 +200,11 @@ Metal = [
 MetalFX = ["Metal"]
 MetalKit = ["AppKit", "Foundation", "Metal"]
 OSAKit = ["AppKit", "Foundation"]
+SoundAnalysis = ["Foundation"]
+Speech = ["Foundation"]
+StoreKit = ["AppKit", "Foundation"]
+UniformTypeIdentifiers = ["Foundation"]
+UserNotifications = ["CoreLocation", "Foundation"]
 WebKit = [
     "AppKit",
     "Foundation",
@@ -206,12 +216,12 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameController_all", "GameKit_all", "MapKit_all", "Metal_all", "MetalKit_all", "WebKit_all"]
-unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "WebKit_all"]
-unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameController_all", "GameKit_all", "MapKit_all", "MetalKit_all"]
-unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "DeviceCheck_all", "FileProvider_all", "FileProviderUI_all", "Metal_all"]
-unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all"]
-unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "CallKit_all", "ExtensionKit_all", "MetalFX_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameController_all", "GameKit_all", "IdentityLookup_all", "LocalAuthentication_all", "LinkPresentation_all", "MapKit_all", "Metal_all", "MetalKit_all", "SoundAnalysis_all", "Speech_all", "StoreKit_all", "UniformTypeIdentifiers_all", "UserNotifications_all", "WebKit_all"]
+unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "StoreKit_all", "WebKit_all"]
+unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameController_all", "GameKit_all", "LocalAuthentication_all", "LocalAuthenticationEmbeddedUI_all", "MapKit_all", "MetalKit_all"]
+unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "DeviceCheck_all", "FileProvider_all", "FileProviderUI_all", "LinkPresentation_all", "Metal_all", "SoundAnalysis_all", "Speech_all", "UniformTypeIdentifiers_all", "UserNotifications_all"]
+unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all", "LocalAuthenticationEmbeddedUI_all", "MailKit_all"]
+unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "CallKit_all", "ExtensionKit_all", "IdentityLookup_all", "MetalFX_all"]
 
 # Temporary fixes until we can autogenerate these
 Foundation_NSProxy = []
@@ -3117,6 +3127,47 @@ GameKit_all = [
     "GameKit_GKVoiceChat",
     "GameKit_GKVoiceChatService",
 ]
+IdentityLookup_ILCallClassificationRequest = [
+    "IdentityLookup_ILClassificationRequest",
+]
+IdentityLookup_ILCallCommunication = [
+    "IdentityLookup_ILCommunication",
+]
+IdentityLookup_ILClassificationRequest = []
+IdentityLookup_ILClassificationResponse = []
+IdentityLookup_ILCommunication = []
+IdentityLookup_ILMessageClassificationRequest = [
+    "IdentityLookup_ILClassificationRequest",
+]
+IdentityLookup_ILMessageCommunication = [
+    "IdentityLookup_ILCommunication",
+]
+IdentityLookup_ILMessageFilterCapabilitiesQueryRequest = []
+IdentityLookup_ILMessageFilterCapabilitiesQueryResponse = []
+IdentityLookup_ILMessageFilterExtension = []
+IdentityLookup_ILMessageFilterExtensionContext = [
+    "Foundation_NSExtensionContext",
+]
+IdentityLookup_ILMessageFilterQueryRequest = []
+IdentityLookup_ILMessageFilterQueryResponse = []
+IdentityLookup_ILNetworkResponse = []
+IdentityLookup_all = [
+    "IdentityLookup",
+    "IdentityLookup_ILCallClassificationRequest",
+    "IdentityLookup_ILCallCommunication",
+    "IdentityLookup_ILClassificationRequest",
+    "IdentityLookup_ILClassificationResponse",
+    "IdentityLookup_ILCommunication",
+    "IdentityLookup_ILMessageClassificationRequest",
+    "IdentityLookup_ILMessageCommunication",
+    "IdentityLookup_ILMessageFilterCapabilitiesQueryRequest",
+    "IdentityLookup_ILMessageFilterCapabilitiesQueryResponse",
+    "IdentityLookup_ILMessageFilterExtension",
+    "IdentityLookup_ILMessageFilterExtensionContext",
+    "IdentityLookup_ILMessageFilterQueryRequest",
+    "IdentityLookup_ILMessageFilterQueryResponse",
+    "IdentityLookup_ILNetworkResponse",
+]
 InputMethodKit_IMKCandidates = [
     "AppKit_NSResponder",
 ]
@@ -3127,6 +3178,84 @@ InputMethodKit_all = [
     "InputMethodKit_IMKCandidates",
     "InputMethodKit_IMKInputController",
     "InputMethodKit_IMKServer",
+]
+LinkPresentation_LPLinkMetadata = []
+LinkPresentation_LPLinkView = [
+    "AppKit_NSView",
+]
+LinkPresentation_LPMetadataProvider = []
+LinkPresentation_all = [
+    "LinkPresentation",
+    "LinkPresentation_LPLinkMetadata",
+    "LinkPresentation_LPLinkView",
+    "LinkPresentation_LPMetadataProvider",
+]
+LocalAuthenticationEmbeddedUI_LAAuthenticationView = [
+    "AppKit_NSView",
+]
+LocalAuthenticationEmbeddedUI_all = [
+    "LocalAuthenticationEmbeddedUI",
+    "LocalAuthenticationEmbeddedUI_LAAuthenticationView",
+]
+LocalAuthentication_LAAuthenticationRequirement = []
+LocalAuthentication_LABiometryFallbackRequirement = []
+LocalAuthentication_LAContext = []
+LocalAuthentication_LAPersistedRight = [
+    "LocalAuthentication_LARight",
+]
+LocalAuthentication_LAPrivateKey = []
+LocalAuthentication_LAPublicKey = []
+LocalAuthentication_LARight = []
+LocalAuthentication_LARightStore = []
+LocalAuthentication_LASecret = []
+LocalAuthentication_all = [
+    "LocalAuthentication",
+    "LocalAuthentication_LAAuthenticationRequirement",
+    "LocalAuthentication_LABiometryFallbackRequirement",
+    "LocalAuthentication_LAContext",
+    "LocalAuthentication_LAPersistedRight",
+    "LocalAuthentication_LAPrivateKey",
+    "LocalAuthentication_LAPublicKey",
+    "LocalAuthentication_LARight",
+    "LocalAuthentication_LARightStore",
+    "LocalAuthentication_LASecret",
+]
+MailKit_MEAddressAnnotation = []
+MailKit_MEComposeContext = []
+MailKit_MEComposeSession = []
+MailKit_MEDecodedMessage = []
+MailKit_MEDecodedMessageBanner = []
+MailKit_MEEmailAddress = []
+MailKit_MEEncodedOutgoingMessage = []
+MailKit_MEExtensionManager = []
+MailKit_MEExtensionViewController = [
+    "AppKit_NSViewController",
+]
+MailKit_MEMessage = []
+MailKit_MEMessageAction = []
+MailKit_MEMessageActionDecision = []
+MailKit_MEMessageEncodingResult = []
+MailKit_MEMessageSecurityInformation = []
+MailKit_MEMessageSigner = []
+MailKit_MEOutgoingMessageEncodingStatus = []
+MailKit_all = [
+    "MailKit",
+    "MailKit_MEAddressAnnotation",
+    "MailKit_MEComposeContext",
+    "MailKit_MEComposeSession",
+    "MailKit_MEDecodedMessage",
+    "MailKit_MEDecodedMessageBanner",
+    "MailKit_MEEmailAddress",
+    "MailKit_MEEncodedOutgoingMessage",
+    "MailKit_MEExtensionManager",
+    "MailKit_MEExtensionViewController",
+    "MailKit_MEMessage",
+    "MailKit_MEMessageAction",
+    "MailKit_MEMessageActionDecision",
+    "MailKit_MEMessageEncodingResult",
+    "MailKit_MEMessageSecurityInformation",
+    "MailKit_MEMessageSigner",
+    "MailKit_MEOutgoingMessageEncodingStatus",
 ]
 MapKit_MKAnnotationView = [
     "AppKit_NSView",
@@ -3576,6 +3705,183 @@ OSAKit_all = [
     "OSAKit_OSAScript",
     "OSAKit_OSAScriptController",
     "OSAKit_OSAScriptView",
+]
+SoundAnalysis_SNAudioFileAnalyzer = []
+SoundAnalysis_SNAudioStreamAnalyzer = []
+SoundAnalysis_SNClassification = []
+SoundAnalysis_SNClassificationResult = []
+SoundAnalysis_SNClassifySoundRequest = []
+SoundAnalysis_SNTimeDurationConstraint = []
+SoundAnalysis_all = [
+    "SoundAnalysis",
+    "SoundAnalysis_SNAudioFileAnalyzer",
+    "SoundAnalysis_SNAudioStreamAnalyzer",
+    "SoundAnalysis_SNClassification",
+    "SoundAnalysis_SNClassificationResult",
+    "SoundAnalysis_SNClassifySoundRequest",
+    "SoundAnalysis_SNTimeDurationConstraint",
+]
+Speech_SFAcousticFeature = []
+Speech_SFSpeechAudioBufferRecognitionRequest = [
+    "Speech_SFSpeechRecognitionRequest",
+]
+Speech_SFSpeechRecognitionMetadata = []
+Speech_SFSpeechRecognitionRequest = []
+Speech_SFSpeechRecognitionResult = []
+Speech_SFSpeechRecognitionTask = []
+Speech_SFSpeechRecognizer = []
+Speech_SFSpeechURLRecognitionRequest = [
+    "Speech_SFSpeechRecognitionRequest",
+]
+Speech_SFTranscription = []
+Speech_SFTranscriptionSegment = []
+Speech_SFVoiceAnalytics = []
+Speech_all = [
+    "Speech",
+    "Speech_SFAcousticFeature",
+    "Speech_SFSpeechAudioBufferRecognitionRequest",
+    "Speech_SFSpeechRecognitionMetadata",
+    "Speech_SFSpeechRecognitionRequest",
+    "Speech_SFSpeechRecognitionResult",
+    "Speech_SFSpeechRecognitionTask",
+    "Speech_SFSpeechRecognizer",
+    "Speech_SFSpeechURLRecognitionRequest",
+    "Speech_SFTranscription",
+    "Speech_SFTranscriptionSegment",
+    "Speech_SFVoiceAnalytics",
+]
+StoreKit_SKAdImpression = []
+StoreKit_SKAdNetwork = []
+StoreKit_SKArcadeService = []
+StoreKit_SKCloudServiceController = []
+StoreKit_SKCloudServiceSetupViewController = [
+    "AppKit_NSViewController",
+]
+StoreKit_SKDownload = []
+StoreKit_SKMutablePayment = [
+    "StoreKit_SKPayment",
+]
+StoreKit_SKOverlay = []
+StoreKit_SKOverlayAppClipConfiguration = [
+    "StoreKit_SKOverlayConfiguration",
+]
+StoreKit_SKOverlayAppConfiguration = [
+    "StoreKit_SKOverlayConfiguration",
+]
+StoreKit_SKOverlayConfiguration = []
+StoreKit_SKOverlayTransitionContext = []
+StoreKit_SKPayment = []
+StoreKit_SKPaymentDiscount = []
+StoreKit_SKPaymentQueue = []
+StoreKit_SKPaymentTransaction = []
+StoreKit_SKProduct = []
+StoreKit_SKProductDiscount = []
+StoreKit_SKProductStorePromotionController = []
+StoreKit_SKProductSubscriptionPeriod = []
+StoreKit_SKProductsRequest = [
+    "StoreKit_SKRequest",
+]
+StoreKit_SKProductsResponse = []
+StoreKit_SKReceiptRefreshRequest = [
+    "StoreKit_SKRequest",
+]
+StoreKit_SKRequest = []
+StoreKit_SKStoreProductViewController = [
+    "AppKit_NSViewController",
+]
+StoreKit_SKStoreReviewController = []
+StoreKit_SKStorefront = []
+StoreKit_all = [
+    "StoreKit",
+    "StoreKit_SKAdImpression",
+    "StoreKit_SKAdNetwork",
+    "StoreKit_SKArcadeService",
+    "StoreKit_SKCloudServiceController",
+    "StoreKit_SKCloudServiceSetupViewController",
+    "StoreKit_SKDownload",
+    "StoreKit_SKMutablePayment",
+    "StoreKit_SKOverlay",
+    "StoreKit_SKOverlayAppClipConfiguration",
+    "StoreKit_SKOverlayAppConfiguration",
+    "StoreKit_SKOverlayConfiguration",
+    "StoreKit_SKOverlayTransitionContext",
+    "StoreKit_SKPayment",
+    "StoreKit_SKPaymentDiscount",
+    "StoreKit_SKPaymentQueue",
+    "StoreKit_SKPaymentTransaction",
+    "StoreKit_SKProduct",
+    "StoreKit_SKProductDiscount",
+    "StoreKit_SKProductStorePromotionController",
+    "StoreKit_SKProductSubscriptionPeriod",
+    "StoreKit_SKProductsRequest",
+    "StoreKit_SKProductsResponse",
+    "StoreKit_SKReceiptRefreshRequest",
+    "StoreKit_SKRequest",
+    "StoreKit_SKStoreProductViewController",
+    "StoreKit_SKStoreReviewController",
+    "StoreKit_SKStorefront",
+]
+UniformTypeIdentifiers_UTType = []
+UniformTypeIdentifiers_all = [
+    "UniformTypeIdentifiers",
+    "UniformTypeIdentifiers_UTType",
+]
+UserNotifications_UNCalendarNotificationTrigger = [
+    "UserNotifications_UNNotificationTrigger",
+]
+UserNotifications_UNLocationNotificationTrigger = [
+    "UserNotifications_UNNotificationTrigger",
+]
+UserNotifications_UNMutableNotificationContent = [
+    "UserNotifications_UNNotificationContent",
+]
+UserNotifications_UNNotification = []
+UserNotifications_UNNotificationAction = []
+UserNotifications_UNNotificationActionIcon = []
+UserNotifications_UNNotificationAttachment = []
+UserNotifications_UNNotificationCategory = []
+UserNotifications_UNNotificationContent = []
+UserNotifications_UNNotificationRequest = []
+UserNotifications_UNNotificationResponse = []
+UserNotifications_UNNotificationServiceExtension = []
+UserNotifications_UNNotificationSettings = []
+UserNotifications_UNNotificationSound = []
+UserNotifications_UNNotificationTrigger = []
+UserNotifications_UNPushNotificationTrigger = [
+    "UserNotifications_UNNotificationTrigger",
+]
+UserNotifications_UNTextInputNotificationAction = [
+    "UserNotifications_UNNotificationAction",
+]
+UserNotifications_UNTextInputNotificationResponse = [
+    "UserNotifications_UNNotificationResponse",
+]
+UserNotifications_UNTimeIntervalNotificationTrigger = [
+    "UserNotifications_UNNotificationTrigger",
+]
+UserNotifications_UNUserNotificationCenter = []
+UserNotifications_all = [
+    "UserNotifications",
+    "UserNotifications_UNCalendarNotificationTrigger",
+    "UserNotifications_UNLocationNotificationTrigger",
+    "UserNotifications_UNMutableNotificationContent",
+    "UserNotifications_UNNotification",
+    "UserNotifications_UNNotificationAction",
+    "UserNotifications_UNNotificationActionIcon",
+    "UserNotifications_UNNotificationAttachment",
+    "UserNotifications_UNNotificationCategory",
+    "UserNotifications_UNNotificationContent",
+    "UserNotifications_UNNotificationRequest",
+    "UserNotifications_UNNotificationResponse",
+    "UserNotifications_UNNotificationServiceExtension",
+    "UserNotifications_UNNotificationSettings",
+    "UserNotifications_UNNotificationSound",
+    "UserNotifications_UNNotificationTrigger",
+    "UserNotifications_UNPushNotificationTrigger",
+    "UserNotifications_UNTextInputNotificationAction",
+    "UserNotifications_UNTextInputNotificationResponse",
+    "UserNotifications_UNTimeIntervalNotificationTrigger",
+    "UserNotifications_UNUserNotificationCenter",
 ]
 WebKit_DOMAbstractView = [
     "WebKit_DOMObject",

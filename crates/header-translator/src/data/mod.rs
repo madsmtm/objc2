@@ -32,11 +32,21 @@ data! {
     mod Foundation;
     mod GameController;
     mod GameKit;
+    mod IdentityLookup;
     mod InputMethodKit;
+    mod LocalAuthentication;
+    mod LocalAuthenticationEmbeddedUI;
+    mod LinkPresentation;
+    mod MailKit;
     mod MapKit;
     mod Metal;
     mod MetalFX;
     mod MetalKit;
     mod OSAKit;
+    mod SoundAnalysis;
+    mod Speech;
+    mod StoreKit;
+    mod UniformTypeIdentifiers;
+    mod UserNotifications;
     mod WebKit;
 }
