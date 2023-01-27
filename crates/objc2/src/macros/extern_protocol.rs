@@ -152,6 +152,7 @@ macro_rules! extern_protocol {
             $($methods:tt)*
         }
 
+        $(#[$impl_m:meta])*
         unsafe impl ProtocolType for dyn $for:ident {
             $(const NAME: &'static str = $name_const:literal;)?
         }
@@ -163,6 +164,7 @@ macro_rules! extern_protocol {
             }
         }
 
+        $(#[$impl_m])*
         unsafe impl<T> $name for $crate::ProtocolObject<T>
         where
             T: ?$crate::__macro_helpers::Sized + $crate::ProtocolType + $name
@@ -170,6 +172,7 @@ macro_rules! extern_protocol {
 
         // SAFETY: The specified name is ensured by caller to be a protocol,
         // and is correctly defined.
+        $(#[$impl_m])*
         unsafe impl ProtocolType for dyn $for {
             const NAME: &'static $crate::__macro_helpers::str = $crate::__select_name!($name; $($name_const)?);
             const __INNER: () = ();
@@ -177,6 +180,7 @@ macro_rules! extern_protocol {
 
         // SAFETY: Anything that implements the protocol `$name` is valid to
         // convert to `ProtocolObject<dyn $name>`.
+        $(#[$impl_m])*
         unsafe impl<T> $crate::ImplementedBy<T> for dyn $for
         where
             T: ?$crate::__macro_helpers::Sized + $crate::Message + $name

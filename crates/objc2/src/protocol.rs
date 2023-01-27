@@ -428,4 +428,22 @@ mod tests {
 
         assert_eq!(hashstate_a.finish(), hashstate_b.finish());
     }
+
+    // We use `debug_assertions` here just because it's something that we know
+    // our CI already tests.
+    extern_protocol!(
+        #[cfg(debug_assertions)]
+        unsafe trait CfgTest {}
+
+        #[cfg(debug_assertions)]
+        unsafe impl ProtocolType for dyn CfgTest {}
+    );
+
+    #[test]
+    #[cfg(debug_assertions)]
+    fn test_meta() {
+        if false {
+            let _protocol = <dyn CfgTest>::protocol();
+        }
+    }
 }
