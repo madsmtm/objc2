@@ -427,6 +427,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "test_extern_protocol"
+version = "0.1.0"
+dependencies = [
+ "objc2",
+]
+
+[[package]]
 name = "test_msg_send_id"
 version = "0.1.0"
 dependencies = [
