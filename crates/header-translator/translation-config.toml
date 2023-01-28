@@ -85,6 +85,9 @@ imports = ["GameController", "AppKit", "Foundation"]
 [library.GameKit]
 imports = ["GameKit", "AppKit", "Foundation"]
 
+[library.HealthKit]
+imports = ["HealthKit", "CoreLocation", "Foundation", "UniformTypeIdentifiers"]
+
 [library.IdentityLookup]
 imports = ["IdentityLookup", "Foundation"]
 

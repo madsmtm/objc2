@@ -32,6 +32,7 @@ data! {
     mod Foundation;
     mod GameController;
     mod GameKit;
+    mod HealthKit;
     mod IdentityLookup;
     mod InputMethodKit;
     mod LocalAuthentication;

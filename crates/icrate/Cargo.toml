@@ -184,6 +184,7 @@ Foundation = [
 ]
 GameController = ["AppKit", "Foundation"]
 GameKit = ["AppKit", "Foundation"]
+HealthKit = ["CoreLocation", "Foundation", "UniformTypeIdentifiers"]
 IdentityLookup = ["Foundation"]
 InputMethodKit = ["AppKit", "Foundation"]
 LocalAuthentication = ["Foundation"]
@@ -216,12 +217,12 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameController_all", "GameKit_all", "IdentityLookup_all", "LocalAuthentication_all", "LinkPresentation_all", "MapKit_all", "Metal_all", "MetalKit_all", "SoundAnalysis_all", "Speech_all", "StoreKit_all", "UniformTypeIdentifiers_all", "UserNotifications_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameController_all", "GameKit_all", "HealthKit_all", "IdentityLookup_all", "LocalAuthentication_all", "LinkPresentation_all", "MapKit_all", "Metal_all", "MetalKit_all", "SoundAnalysis_all", "Speech_all", "StoreKit_all", "UniformTypeIdentifiers_all", "UserNotifications_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "StoreKit_all", "WebKit_all"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameController_all", "GameKit_all", "LocalAuthentication_all", "LocalAuthenticationEmbeddedUI_all", "MapKit_all", "MetalKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "DeviceCheck_all", "FileProvider_all", "FileProviderUI_all", "LinkPresentation_all", "Metal_all", "SoundAnalysis_all", "Speech_all", "UniformTypeIdentifiers_all", "UserNotifications_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all", "LocalAuthenticationEmbeddedUI_all", "MailKit_all"]
-unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "CallKit_all", "ExtensionKit_all", "IdentityLookup_all", "MetalFX_all"]
+unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "CallKit_all", "ExtensionKit_all", "HealthKit_all", "IdentityLookup_all", "MetalFX_all"]
 
 # Temporary fixes until we can autogenerate these
 Foundation_NSProxy = []
@@ -3126,6 +3127,293 @@ GameKit_all = [
     "GameKit_GKTurnBasedParticipant",
     "GameKit_GKVoiceChat",
     "GameKit_GKVoiceChatService",
+]
+HealthKit_HKActivityMoveModeObject = []
+HealthKit_HKActivitySummary = []
+HealthKit_HKActivitySummaryQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKActivitySummaryType = [
+    "HealthKit_HKObjectType",
+]
+HealthKit_HKAnchoredObjectQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKAttachment = []
+HealthKit_HKAttachmentStore = []
+HealthKit_HKAudiogramSample = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKAudiogramSampleType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKAudiogramSensitivityPoint = []
+HealthKit_HKBiologicalSexObject = []
+HealthKit_HKBloodTypeObject = []
+HealthKit_HKCDADocument = []
+HealthKit_HKCDADocumentSample = [
+    "HealthKit_HKDocumentSample",
+]
+HealthKit_HKCategorySample = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKCategoryType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKCharacteristicType = [
+    "HealthKit_HKObjectType",
+]
+HealthKit_HKClinicalRecord = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKClinicalType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKContactsLensSpecification = [
+    "HealthKit_HKLensSpecification",
+]
+HealthKit_HKContactsPrescription = [
+    "HealthKit_HKVisionPrescription",
+]
+HealthKit_HKCorrelation = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKCorrelationQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKCorrelationType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKCumulativeQuantitySample = [
+    "HealthKit_HKQuantitySample",
+]
+HealthKit_HKCumulativeQuantitySeriesSample = [
+    "HealthKit_HKCumulativeQuantitySample",
+]
+HealthKit_HKDeletedObject = []
+HealthKit_HKDevice = []
+HealthKit_HKDiscreteQuantitySample = [
+    "HealthKit_HKQuantitySample",
+]
+HealthKit_HKDocumentQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKDocumentSample = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKDocumentType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKElectrocardiogram = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKElectrocardiogramQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKElectrocardiogramType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKElectrocardiogramVoltageMeasurement = []
+HealthKit_HKFHIRResource = []
+HealthKit_HKFHIRVersion = []
+HealthKit_HKFitzpatrickSkinTypeObject = []
+HealthKit_HKGlassesLensSpecification = [
+    "HealthKit_HKLensSpecification",
+]
+HealthKit_HKGlassesPrescription = [
+    "HealthKit_HKVisionPrescription",
+]
+HealthKit_HKHealthStore = []
+HealthKit_HKHeartbeatSeriesBuilder = [
+    "HealthKit_HKSeriesBuilder",
+]
+HealthKit_HKHeartbeatSeriesQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKHeartbeatSeriesSample = [
+    "HealthKit_HKSeriesSample",
+]
+HealthKit_HKLensSpecification = []
+HealthKit_HKLiveWorkoutBuilder = [
+    "HealthKit_HKWorkoutBuilder",
+]
+HealthKit_HKLiveWorkoutDataSource = []
+HealthKit_HKObject = []
+HealthKit_HKObjectType = []
+HealthKit_HKObserverQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKPrescriptionType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKQuantity = []
+HealthKit_HKQuantitySample = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKQuantitySeriesSampleBuilder = []
+HealthKit_HKQuantitySeriesSampleQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKQuantityType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKQuery = []
+HealthKit_HKQueryAnchor = []
+HealthKit_HKQueryDescriptor = []
+HealthKit_HKSample = [
+    "HealthKit_HKObject",
+]
+HealthKit_HKSampleQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKSampleType = [
+    "HealthKit_HKObjectType",
+]
+HealthKit_HKSeriesBuilder = []
+HealthKit_HKSeriesSample = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKSeriesType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKSource = []
+HealthKit_HKSourceQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKSourceRevision = []
+HealthKit_HKStatistics = []
+HealthKit_HKStatisticsCollection = []
+HealthKit_HKStatisticsCollectionQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKStatisticsQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKUnit = []
+HealthKit_HKVerifiableClinicalRecord = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKVerifiableClinicalRecordQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKVerifiableClinicalRecordSubject = []
+HealthKit_HKVisionPrescription = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKVisionPrism = []
+HealthKit_HKWheelchairUseObject = []
+HealthKit_HKWorkout = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKWorkoutActivity = []
+HealthKit_HKWorkoutBuilder = []
+HealthKit_HKWorkoutConfiguration = []
+HealthKit_HKWorkoutEvent = []
+HealthKit_HKWorkoutRoute = [
+    "HealthKit_HKSeriesSample",
+]
+HealthKit_HKWorkoutRouteBuilder = [
+    "HealthKit_HKSeriesBuilder",
+]
+HealthKit_HKWorkoutRouteQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKWorkoutSession = []
+HealthKit_HKWorkoutType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_all = [
+    "HealthKit",
+    "HealthKit_HKActivityMoveModeObject",
+    "HealthKit_HKActivitySummary",
+    "HealthKit_HKActivitySummaryQuery",
+    "HealthKit_HKActivitySummaryType",
+    "HealthKit_HKAnchoredObjectQuery",
+    "HealthKit_HKAttachment",
+    "HealthKit_HKAttachmentStore",
+    "HealthKit_HKAudiogramSample",
+    "HealthKit_HKAudiogramSampleType",
+    "HealthKit_HKAudiogramSensitivityPoint",
+    "HealthKit_HKBiologicalSexObject",
+    "HealthKit_HKBloodTypeObject",
+    "HealthKit_HKCDADocument",
+    "HealthKit_HKCDADocumentSample",
+    "HealthKit_HKCategorySample",
+    "HealthKit_HKCategoryType",
+    "HealthKit_HKCharacteristicType",
+    "HealthKit_HKClinicalRecord",
+    "HealthKit_HKClinicalType",
+    "HealthKit_HKContactsLensSpecification",
+    "HealthKit_HKContactsPrescription",
+    "HealthKit_HKCorrelation",
+    "HealthKit_HKCorrelationQuery",
+    "HealthKit_HKCorrelationType",
+    "HealthKit_HKCumulativeQuantitySample",
+    "HealthKit_HKCumulativeQuantitySeriesSample",
+    "HealthKit_HKDeletedObject",
+    "HealthKit_HKDevice",
+    "HealthKit_HKDiscreteQuantitySample",
+    "HealthKit_HKDocumentQuery",
+    "HealthKit_HKDocumentSample",
+    "HealthKit_HKDocumentType",
+    "HealthKit_HKElectrocardiogram",
+    "HealthKit_HKElectrocardiogramQuery",
+    "HealthKit_HKElectrocardiogramType",
+    "HealthKit_HKElectrocardiogramVoltageMeasurement",
+    "HealthKit_HKFHIRResource",
+    "HealthKit_HKFHIRVersion",
+    "HealthKit_HKFitzpatrickSkinTypeObject",
+    "HealthKit_HKGlassesLensSpecification",
+    "HealthKit_HKGlassesPrescription",
+    "HealthKit_HKHealthStore",
+    "HealthKit_HKHeartbeatSeriesBuilder",
+    "HealthKit_HKHeartbeatSeriesQuery",
+    "HealthKit_HKHeartbeatSeriesSample",
+    "HealthKit_HKLensSpecification",
+    "HealthKit_HKLiveWorkoutBuilder",
+    "HealthKit_HKLiveWorkoutDataSource",
+    "HealthKit_HKObject",
+    "HealthKit_HKObjectType",
+    "HealthKit_HKObserverQuery",
+    "HealthKit_HKPrescriptionType",
+    "HealthKit_HKQuantity",
+    "HealthKit_HKQuantitySample",
+    "HealthKit_HKQuantitySeriesSampleBuilder",
+    "HealthKit_HKQuantitySeriesSampleQuery",
+    "HealthKit_HKQuantityType",
+    "HealthKit_HKQuery",
+    "HealthKit_HKQueryAnchor",
+    "HealthKit_HKQueryDescriptor",
+    "HealthKit_HKSample",
+    "HealthKit_HKSampleQuery",
+    "HealthKit_HKSampleType",
+    "HealthKit_HKSeriesBuilder",
+    "HealthKit_HKSeriesSample",
+    "HealthKit_HKSeriesType",
+    "HealthKit_HKSource",
+    "HealthKit_HKSourceQuery",
+    "HealthKit_HKSourceRevision",
+    "HealthKit_HKStatistics",
+    "HealthKit_HKStatisticsCollection",
+    "HealthKit_HKStatisticsCollectionQuery",
+    "HealthKit_HKStatisticsQuery",
+    "HealthKit_HKUnit",
+    "HealthKit_HKVerifiableClinicalRecord",
+    "HealthKit_HKVerifiableClinicalRecordQuery",
+    "HealthKit_HKVerifiableClinicalRecordSubject",
+    "HealthKit_HKVisionPrescription",
+    "HealthKit_HKVisionPrism",
+    "HealthKit_HKWheelchairUseObject",
+    "HealthKit_HKWorkout",
+    "HealthKit_HKWorkoutActivity",
+    "HealthKit_HKWorkoutBuilder",
+    "HealthKit_HKWorkoutConfiguration",
+    "HealthKit_HKWorkoutEvent",
+    "HealthKit_HKWorkoutRoute",
+    "HealthKit_HKWorkoutRouteBuilder",
+    "HealthKit_HKWorkoutRouteQuery",
+    "HealthKit_HKWorkoutSession",
+    "HealthKit_HKWorkoutType",
 ]
 IdentityLookup_ILCallClassificationRequest = [
     "IdentityLookup_ILClassificationRequest",

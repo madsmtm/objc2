@@ -103,6 +103,8 @@ pub mod Foundation;
 pub mod GameController;
 #[cfg(feature = "GameKit")]
 pub mod GameKit;
+#[cfg(feature = "HealthKit")]
+pub mod HealthKit;
 #[cfg(feature = "IdentityLookup")]
 pub mod IdentityLookup;
 #[cfg(feature = "InputMethodKit")]

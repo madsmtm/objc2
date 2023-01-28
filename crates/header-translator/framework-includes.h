@@ -63,6 +63,8 @@
 
 #import <GameKit/GameKit.h>
 
+#import <HealthKit/HealthKit.h>
+
 #import <IdentityLookup/IdentityLookup.h>
 
 #import <InputMethodKit/InputMethodKit.h>
