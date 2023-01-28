@@ -7,8 +7,11 @@
 
 Apple's C language extension of blocks in Rust.
 
-This crate provides functionality for interracting with C blocks, effectively
-the C-equivalent of Rust's closures.
+This crate provides functionality for interracting with C blocks, which is
+effectively the C-equivalent of Rust's closures.
+
+They are _technically_ not limited to only being used in Objective-C, though
+in practice it's likely the only place you'll ever encounter them.
 
 See [the docs](https://docs.rs/block2/) for a more thorough overview.
 

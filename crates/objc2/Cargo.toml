@@ -5,8 +5,8 @@ authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 rust-version = "1.60"
 
-description = "Objective-C interface and bindings to the Cocoa Foundation framework"
-keywords = ["objective-c", "macos", "ios", "objc_msgSend", "cocoa"]
+description = "Objective-C interface and runtime bindings"
+keywords = ["objective-c", "macos", "ios", "objc_msgSend", "objc"]
 categories = [
     "api-bindings",
     "development-tools::ffi",

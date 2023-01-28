@@ -33,6 +33,21 @@ manpage for [`git-submodule`] for further details on how submodules work.
 [`git-submodule`]: https://git-scm.com/docs/git-submodule
 
 
+### Updating the `git` submodule
+
+When making changes to `header-translator`, you must update the `git`
+submodule manually and push your changes to a fork of `icrate-generated` (you
+do not need to submit a PR to that repo).
+
+We try to maintain a linear history in that repo, in a fashion such that every
+ref that is ever referenced from the `HEAD` branch in this repository, is
+reachable from the `HEAD` branch that repository. This will probably mean
+you'll have to rebase more often.
+
+If you're confused about this, don't worry too much about it, if you enable
+"Allow edits by maintainers" we can fix it for you.
+
+
 ## Release checklist
 
 Copy and fill out the following checklist into the release PR:

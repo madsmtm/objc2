@@ -5,9 +5,17 @@
 [![Documentation](https://docs.rs/icrate/badge.svg)](https://docs.rs/icrate/)
 [![CI](https://github.com/madsmtm/objc2/actions/workflows/ci.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/ci.yml)
 
-Rust bindings to Apple's frameworks.
+Rust bindings to Apple's frameworks..
 
-These are automatically generated from the SDKs in Xcode 14.2 (will be periodically updated).
+This crate is part of the [`objc2` project](https://github.com/madsmtm/objc2),
+see that for related crates, or see [the docs](https://docs.rs/icrate/) for
+more details.
+
+
+## Supported versions
+
+These bindings are automatically generated from the SDKs in Xcode 14.2 (will
+be periodically updated).
 
 Currently supports:
 - macOS: `10.7-13.1`
@@ -15,5 +23,20 @@ Currently supports:
 - tvOS: `9.0-16.1` (WIP)
 - watchOS: `1.0-9.1` (WIP)
 
-This crate is part of the [`objc2` project](https://github.com/madsmtm/objc2),
-see that for related crates.
+
+## Example
+
+```rust
+use icrate::Foundation::{NSCopying, NSArray};
+use icrate::ns_string;
+
+let string = ns_string!("world");
+println!("hello {string}");
+
+let array = NSArray::from_slice(&[string.copy()]);
+println!("{array:?}");
+```
+
+More examples are [available in the repository][examples].
+
+[examples]: https://github.com/madsmtm/objc2/tree/master/crates/icrate/examples

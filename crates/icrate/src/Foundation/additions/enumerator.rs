@@ -168,6 +168,7 @@ impl<'a, C: NSFastEnumeration2 + ?Sized> Iterator for NSFastEnumerator2<'a, C> {
 #[cfg(test)]
 #[cfg(feature = "Foundation_NSArray")]
 #[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "Foundation_NSNumber")]
 mod tests {
     use super::*;
 

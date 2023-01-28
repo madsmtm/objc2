@@ -30,7 +30,8 @@ iOS versions.
 
 - Feature flag: `apple`.
 
-This is used by default.
+This is used by default, and naturally has the highest support priority (e.g.
+all of `objc2`/`icrate` will work with this runtime).
 
 The supported runtime version (higher versions lets the compiler enable newer
 optimizations, at the cost of not supporting older operating systems) can be
@@ -38,7 +39,7 @@ chosen using the standard `X_DEPLOYMENT_TARGET` environment variables:
 - macOS: `MACOSX_DEPLOYMENT_TARGET`
   - Default: `10.7`, `11.0` on Aarch64
   - Minimum: `10.7`
-- iOS: `IPHONEOS_DEPLOYMENT_TARGET`
+- iOS / iPadOS: `IPHONEOS_DEPLOYMENT_TARGET`
   - Default: `7.0`
   - Minimum: `5.0` (theoretically)
 - tvOS: `TVOS_DEPLOYMENT_TARGET`

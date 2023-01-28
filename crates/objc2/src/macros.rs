@@ -9,7 +9,12 @@ mod extern_protocol;
 
 /// Gets a reference to a [`Class`] from the given name.
 ///
+/// If you have an object that implements [`ClassType`], consider using the
+/// [`ClassType::class`] method instead.
+///
 /// [`Class`]: crate::runtime::Class
+/// [`ClassType`]: crate::ClassType
+/// [`ClassType::class`]: crate::ClassType::class
 ///
 ///
 /// # Panics
@@ -39,6 +44,7 @@ mod extern_protocol;
 ///
 /// [sel#features]: crate::sel#features
 /// [`sel!`]: crate::sel
+///
 ///
 /// # Examples
 ///
