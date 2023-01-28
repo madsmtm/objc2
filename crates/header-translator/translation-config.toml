@@ -109,6 +109,9 @@ imports = ["MailKit", "AppKit", "Foundation"]
 [library.MapKit]
 imports = ["MapKit", "AppKit", "Contacts", "CoreLocation", "Foundation"]
 
+[library.MediaPlayer]
+imports = ["MediaPlayer", "AppKit", "Foundation"]
+
 [library.Metal]
 imports = ["Metal", "Foundation"]
 
@@ -948,6 +951,13 @@ skipped = true
 [class.PHPhotoLibrary.methods.performChanges_completionHandler]
 skipped = true
 [class.PHPhotoLibrary.methods.performChangesAndWait_error]
+skipped = true
+# Needs `CMTimeRange` from `CoreMedia`
+[class.MPAdTimeRange.methods.initWithTimeRange]
+skipped = true
+[class.MPAdTimeRange.methods.timeRange]
+skipped = true
+[class.MPAdTimeRange.methods.setTimeRange]
 skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet

@@ -119,6 +119,8 @@ pub mod LocalAuthenticationEmbeddedUI;
 pub mod MailKit;
 #[cfg(feature = "MapKit")]
 pub mod MapKit;
+#[cfg(feature = "MediaPlayer")]
+pub mod MediaPlayer;
 #[cfg(feature = "Metal")]
 pub mod Metal;
 #[cfg(feature = "MetalFX")]

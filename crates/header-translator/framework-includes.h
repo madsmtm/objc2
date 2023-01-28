@@ -77,6 +77,8 @@
 
 #import <MapKit/MapKit.h>
 
+#import <MediaPlayer/MediaPlayer.h>
+
 #import <Metal/Metal.h>
 
 #import <MetalFX/MetalFX.h>

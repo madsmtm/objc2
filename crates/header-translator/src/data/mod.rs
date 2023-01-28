@@ -40,6 +40,7 @@ data! {
     mod LinkPresentation;
     mod MailKit;
     mod MapKit;
+    mod MediaPlayer;
     mod Metal;
     mod MetalFX;
     mod MetalKit;

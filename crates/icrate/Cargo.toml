@@ -192,6 +192,7 @@ LocalAuthenticationEmbeddedUI = ["AppKit", "Foundation", "LocalAuthentication"]
 LinkPresentation = ["AppKit", "Foundation"]
 MailKit = ["AppKit", "Foundation"]
 MapKit = ["AppKit", "Contacts", "CoreLocation", "Foundation"]
+MediaPlayer = ["AppKit", "Foundation"]
 Metal = [
     "Foundation",
     # Temporary, since some structs and statics use these
@@ -218,9 +219,9 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameController_all", "GameKit_all", "HealthKit_all", "IdentityLookup_all", "LocalAuthentication_all", "LinkPresentation_all", "MapKit_all", "Metal_all", "MetalKit_all", "PhotoKit_all", "SoundAnalysis_all", "Speech_all", "StoreKit_all", "UniformTypeIdentifiers_all", "UserNotifications_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameController_all", "GameKit_all", "HealthKit_all", "IdentityLookup_all", "LocalAuthentication_all", "LinkPresentation_all", "MapKit_all", "MediaPlayer_all", "Metal_all", "MetalKit_all", "PhotoKit_all", "SoundAnalysis_all", "Speech_all", "StoreKit_all", "UniformTypeIdentifiers_all", "UserNotifications_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "StoreKit_all", "WebKit_all"]
-unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameController_all", "GameKit_all", "LocalAuthentication_all", "LocalAuthenticationEmbeddedUI_all", "MapKit_all", "MetalKit_all", "PhotoKit_all"]
+unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameController_all", "GameKit_all", "LocalAuthentication_all", "LocalAuthenticationEmbeddedUI_all", "MapKit_all", "MediaPlayer_all", "MetalKit_all", "PhotoKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "DeviceCheck_all", "FileProvider_all", "FileProviderUI_all", "LinkPresentation_all", "Metal_all", "SoundAnalysis_all", "Speech_all", "UniformTypeIdentifiers_all", "UserNotifications_all"]
 unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all", "LocalAuthenticationEmbeddedUI_all", "MailKit_all"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "CallKit_all", "ExtensionKit_all", "HealthKit_all", "IdentityLookup_all", "MetalFX_all"]
@@ -3734,6 +3735,153 @@ MapKit_all = [
     "MapKit_MKUserLocation",
     "MapKit_MKUserLocationView",
     "MapKit_MKZoomControl",
+]
+MediaPlayer_MPAdTimeRange = []
+MediaPlayer_MPChangeLanguageOptionCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPChangePlaybackPositionCommand = [
+    "MediaPlayer_MPRemoteCommand",
+]
+MediaPlayer_MPChangePlaybackPositionCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPChangePlaybackRateCommand = [
+    "MediaPlayer_MPRemoteCommand",
+]
+MediaPlayer_MPChangePlaybackRateCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPChangeRepeatModeCommand = [
+    "MediaPlayer_MPRemoteCommand",
+]
+MediaPlayer_MPChangeRepeatModeCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPChangeShuffleModeCommand = [
+    "MediaPlayer_MPRemoteCommand",
+]
+MediaPlayer_MPChangeShuffleModeCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPContentItem = []
+MediaPlayer_MPFeedbackCommand = [
+    "MediaPlayer_MPRemoteCommand",
+]
+MediaPlayer_MPFeedbackCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPMediaEntity = []
+MediaPlayer_MPMediaItem = [
+    "MediaPlayer_MPMediaEntity",
+]
+MediaPlayer_MPMediaItemArtwork = []
+MediaPlayer_MPMediaItemCollection = [
+    "MediaPlayer_MPMediaEntity",
+]
+MediaPlayer_MPMediaLibrary = []
+MediaPlayer_MPMediaPlaylist = [
+    "MediaPlayer_MPMediaItemCollection",
+]
+MediaPlayer_MPMediaPlaylistCreationMetadata = []
+MediaPlayer_MPMediaPredicate = []
+MediaPlayer_MPMediaPropertyPredicate = [
+    "MediaPlayer_MPMediaPredicate",
+]
+MediaPlayer_MPMediaQuery = []
+MediaPlayer_MPMediaQuerySection = []
+MediaPlayer_MPMusicPlayerApplicationController = [
+    "MediaPlayer_MPMusicPlayerController",
+]
+MediaPlayer_MPMusicPlayerController = []
+MediaPlayer_MPMusicPlayerControllerMutableQueue = [
+    "MediaPlayer_MPMusicPlayerControllerQueue",
+]
+MediaPlayer_MPMusicPlayerControllerQueue = []
+MediaPlayer_MPMusicPlayerMediaItemQueueDescriptor = [
+    "MediaPlayer_MPMusicPlayerQueueDescriptor",
+]
+MediaPlayer_MPMusicPlayerPlayParameters = []
+MediaPlayer_MPMusicPlayerPlayParametersQueueDescriptor = [
+    "MediaPlayer_MPMusicPlayerQueueDescriptor",
+]
+MediaPlayer_MPMusicPlayerQueueDescriptor = []
+MediaPlayer_MPMusicPlayerStoreQueueDescriptor = [
+    "MediaPlayer_MPMusicPlayerQueueDescriptor",
+]
+MediaPlayer_MPNowPlayingInfoCenter = []
+MediaPlayer_MPNowPlayingInfoLanguageOption = []
+MediaPlayer_MPNowPlayingInfoLanguageOptionGroup = []
+MediaPlayer_MPNowPlayingSession = []
+MediaPlayer_MPPlayableContentManager = []
+MediaPlayer_MPPlayableContentManagerContext = []
+MediaPlayer_MPRatingCommand = [
+    "MediaPlayer_MPRemoteCommand",
+]
+MediaPlayer_MPRatingCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPRemoteCommand = []
+MediaPlayer_MPRemoteCommandCenter = []
+MediaPlayer_MPRemoteCommandEvent = []
+MediaPlayer_MPSeekCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPSkipIntervalCommand = [
+    "MediaPlayer_MPRemoteCommand",
+]
+MediaPlayer_MPSkipIntervalCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_all = [
+    "MediaPlayer",
+    "MediaPlayer_MPAdTimeRange",
+    "MediaPlayer_MPChangeLanguageOptionCommandEvent",
+    "MediaPlayer_MPChangePlaybackPositionCommand",
+    "MediaPlayer_MPChangePlaybackPositionCommandEvent",
+    "MediaPlayer_MPChangePlaybackRateCommand",
+    "MediaPlayer_MPChangePlaybackRateCommandEvent",
+    "MediaPlayer_MPChangeRepeatModeCommand",
+    "MediaPlayer_MPChangeRepeatModeCommandEvent",
+    "MediaPlayer_MPChangeShuffleModeCommand",
+    "MediaPlayer_MPChangeShuffleModeCommandEvent",
+    "MediaPlayer_MPContentItem",
+    "MediaPlayer_MPFeedbackCommand",
+    "MediaPlayer_MPFeedbackCommandEvent",
+    "MediaPlayer_MPMediaEntity",
+    "MediaPlayer_MPMediaItem",
+    "MediaPlayer_MPMediaItemArtwork",
+    "MediaPlayer_MPMediaItemCollection",
+    "MediaPlayer_MPMediaLibrary",
+    "MediaPlayer_MPMediaPlaylist",
+    "MediaPlayer_MPMediaPlaylistCreationMetadata",
+    "MediaPlayer_MPMediaPredicate",
+    "MediaPlayer_MPMediaPropertyPredicate",
+    "MediaPlayer_MPMediaQuery",
+    "MediaPlayer_MPMediaQuerySection",
+    "MediaPlayer_MPMusicPlayerApplicationController",
+    "MediaPlayer_MPMusicPlayerController",
+    "MediaPlayer_MPMusicPlayerControllerMutableQueue",
+    "MediaPlayer_MPMusicPlayerControllerQueue",
+    "MediaPlayer_MPMusicPlayerMediaItemQueueDescriptor",
+    "MediaPlayer_MPMusicPlayerPlayParameters",
+    "MediaPlayer_MPMusicPlayerPlayParametersQueueDescriptor",
+    "MediaPlayer_MPMusicPlayerQueueDescriptor",
+    "MediaPlayer_MPMusicPlayerStoreQueueDescriptor",
+    "MediaPlayer_MPNowPlayingInfoCenter",
+    "MediaPlayer_MPNowPlayingInfoLanguageOption",
+    "MediaPlayer_MPNowPlayingInfoLanguageOptionGroup",
+    "MediaPlayer_MPNowPlayingSession",
+    "MediaPlayer_MPPlayableContentManager",
+    "MediaPlayer_MPPlayableContentManagerContext",
+    "MediaPlayer_MPRatingCommand",
+    "MediaPlayer_MPRatingCommandEvent",
+    "MediaPlayer_MPRemoteCommand",
+    "MediaPlayer_MPRemoteCommandCenter",
+    "MediaPlayer_MPRemoteCommandEvent",
+    "MediaPlayer_MPSeekCommandEvent",
+    "MediaPlayer_MPSkipIntervalCommand",
+    "MediaPlayer_MPSkipIntervalCommandEvent",
 ]
 MetalFX_MTLFXSpatialScalerDescriptor = []
 MetalFX_MTLFXTemporalScalerDescriptor = []
