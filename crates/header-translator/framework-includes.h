@@ -83,6 +83,8 @@
 
 #import <MetalKit/MetalKit.h>
 
+#import <Photos/Photos.h>
+
 #import <QuartzCore/CoreAnimation.h>
 
 #import <SoundAnalysis/SoundAnalysis.h>

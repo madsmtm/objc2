@@ -121,6 +121,10 @@ imports = ["MetalKit", "AppKit", "Foundation", "Metal"]
 [library.OSAKit]
 imports = ["OSAKit", "AppKit", "Foundation"]
 
+[library.Photos]
+name = "PhotoKit"
+imports = ["PhotoKit", "AppKit", "CoreLocation", "Foundation"]
+
 [library.QuartzCore]
 name = "CoreAnimation"
 imports = ["CoreAnimation", "Foundation"]
@@ -917,6 +921,34 @@ skipped = true
 skipped = true
 [class.LAPublicKey.methods.verifyData_signature_secKeyAlgorithm_completion]
 skipped = true
+# Needs `CGImagePropertyOrientation` from `ImageIO`
+[class.PHLivePhotoEditingContext.methods.orientation]
+skipped = true
+[class.PHImageManager.methods.requestImageDataAndOrientationForAsset_options_resultHandler]
+skipped = true
+# Needs `UIImageOrientation` from `UIKit`
+[class.PHImageManager.methods.requestImageDataForAsset_options_resultHandler]
+skipped = true
+# Needs `CMTime` from `CoreMedia`
+[class.PHLivePhotoEditingContext.methods.duration]
+skipped = true
+[class.PHLivePhotoEditingContext.methods.photoTime]
+skipped = true
+[protocol.PHLivePhotoFrame.methods.time]
+skipped = true
+# Needs `PHLivePhotoFrameProcessingBlock` (skipped because needs `CIImage`)
+[class.PHLivePhotoEditingContext.methods.frameProcessor]
+skipped = true
+[class.PHLivePhotoEditingContext.methods.setFrameProcessor]
+skipped = true
+# Needs `CIImage` from `CoreImage`
+[typedef.PHLivePhotoFrameProcessingBlock]
+skipped = true
+# Needs `dispatch_block_t`
+[class.PHPhotoLibrary.methods.performChanges_completionHandler]
+skipped = true
+[class.PHPhotoLibrary.methods.performChangesAndWait_error]
+skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]
@@ -1238,3 +1270,4 @@ skipped = true
 # produces wrong values for most cases; manually define for now
 [enum.LAError]
 skipped = true
+

@@ -44,6 +44,7 @@ data! {
     mod MetalFX;
     mod MetalKit;
     mod OSAKit;
+    mod PhotoKit;
     mod SoundAnalysis;
     mod Speech;
     mod StoreKit;
