@@ -1265,10 +1265,6 @@ impl AnyObject {
         // SAFETY: Invariants upheld by caller
         unsafe { *self.ivar_mut::<T>(name) = value };
     }
-
-    // objc_setAssociatedObject
-    // objc_getAssociatedObject
-    // objc_removeAssociatedObjects
 }
 
 impl fmt::Debug for AnyObject {

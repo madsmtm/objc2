@@ -6,6 +6,7 @@ mod __rewrite_self_arg;
 mod declare_class;
 mod extern_class;
 mod extern_methods;
+mod associated_object;
 mod extern_protocol;
 
 /// Gets a reference to an [`AnyClass`] from the given name.
