@@ -1090,6 +1090,10 @@ skipped = true
 [class.MTKTextureLoader.methods.newTexturesWithContentsOfURLs_options_error]
 skipped = true
 
+[class.WKNavigationAction.methods]
+# Not marked as nullable but should be; manually defined in fixes
+sourceFrame = { skipped = true }
+
 [class.WKWebView.methods]
 # uses `SecTrustRef` from Security.framework (not yet translated)
 serverTrust = { skipped = true }
