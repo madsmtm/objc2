@@ -7,27 +7,23 @@ Objective-C completely lacks.
 You will find when using `icrate` that basically everything (that has not been
 manually audited) is `unsafe`. So you might rightfully ask: What's the point
 then? Can't I just use `msg_send!`, and save the extra dependency?
+Yes, you could, but in fact `icrate` is much safer than doing method calling
+manually, even though you may end up writing `unsafe` just as many times. I
+dub this "layered safety"<sup>1</sup> to capture the fact that _not all usage
+of `unsafe` is created equally_!
 
-In fact, `icrate` is much safer than doing method calling manually, even
-though you may end up writing `unsafe` just as many times. I dub this "layered
-safety" <sup>1</sup> to capture the fact that _not all usage of `unsafe` is
-created equally_!
-
-The truth is simply that when using an `unsafe` method in `icrate`, you have
-to ensure the compiler of much fewer things than when doing method calling
-manually.
-
-To see how this is the case, let me guide you through the various abstraction
+Simply put, when using an `unsafe` method in `icrate`, you have to ensure the
+compiler of much fewer things than when doing method calling manually.
+To see why this is the case, let me guide you through the various abstraction
 layers that `icrate` and `objc2` provide, and we'll see how each step makes
 things safer!
 
-Importantly, `icrate` is not perfect, and there may be cases where you have to
-drop down into lower-level details; luckily, the fact that we have this
-layered architecture with each step exposed along the way allows you to do
-exactly that!
+`icrate` is not perfect, and there may be cases where you have to drop down
+into lower-level details; luckily though, the fact that we have this layered
+architecture with each step exposed along the way allows you to do exactly
+that!
 
-<sup>1: I haven't heard this concept named before, if you know of a better
-name please let me know.</sup>
+<sup>1: I haven't heard this concept named before, if you know of prior art on this please let me know.</sup>
 
 [citation needed]: https://xkcd.com/285/
 [nomicon]: https://doc.rust-lang.org/nomicon/intro.html
@@ -38,7 +34,6 @@ name please let me know.</sup>
 Unlike C APIs where you define an `extern "C"` function that you want to call,
 method calling is done in Objective-C using the "trampoline functions"
 [`objc_msgSend`], `objc_msgSend_stret`, `objc_msgSend_fpret` and so on.
-
 Which of these is correct depends on the target architecture and the calling
 convention. Furthermore, to use these you first have to cast them to the
 correct function signature using `mem::transmute`.
