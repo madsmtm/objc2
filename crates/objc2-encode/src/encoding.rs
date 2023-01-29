@@ -47,8 +47,8 @@ pub enum Encoding {
     Int,
     /// A C `long`. Corresponds to the `"l"` code.
     ///
-    /// This is treated as a 32-bit quantity in 64-bit programs.
-    // TODO: What does that mean??
+    /// This is treated as a 32-bit quantity in 64-bit programs, see
+    /// [`Encoding::C_LONG`].
     Long,
     /// A C `long long`. Corresponds to the `"q"` code.
     LongLong,
@@ -59,6 +59,8 @@ pub enum Encoding {
     /// A C `unsigned int`. Corresponds to the `"I"` code.
     UInt,
     /// A C `unsigned long`. Corresponds to the `"L"` code.
+    ///
+    /// See [`Encoding::C_ULONG`].
     ULong,
     /// A C `unsigned long long`. Corresponds to the `"Q"` code.
     ULongLong,
@@ -133,7 +135,8 @@ pub enum Encoding {
     ///
     /// Corresponds to the `"(" name "=" fields... ")"` code.
     Union(&'static str, &'static [Encoding]),
-    // "Vector" types have the '!' encoding, but are not implemented in clang
+    // TODO: "Vector" types have the '!' encoding, but are not implemented in
+    // clang
 
     // TODO: `t` and `T` codes for i128 and u128?
 }
@@ -149,7 +152,9 @@ impl Encoding {
     /// Unfortunately, `long` have a different encoding than `int` when it is
     /// 32 bits wide; the [`l`][`Encoding::Long`] encoding.
     pub const C_LONG: Self = {
-        // Alternative: `mem::size_of::<c_long>() == 4`
+        // TODO once `core::ffi::c_long` is in MSRV
+        // `mem::size_of::<c_long>() == 4`
+        //
         // That would exactly match what `clang` does:
         // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/AST/ASTContext.cpp#L7245
         if cfg!(any(target_pointer_width = "32", windows)) {
@@ -202,8 +207,6 @@ impl Encoding {
         let mut parser = Parser::new(s);
 
         parser.strip_leading_qualifiers();
-
-        // TODO: Allow missing/"?" names in structs and unions?
 
         if let Some(()) = parser.expect_encoding(self, NestingLevel::new()) {
             // if the given encoding can be successfully removed from the
@@ -489,7 +492,6 @@ mod tests {
         fn empty_struct() {
             Encoding::Struct("SomeStruct", &[]);
             "{SomeStruct=}";
-            // TODO: Unsure about this
             !"{SomeStruct}";
         }
 

@@ -168,6 +168,7 @@ impl<'a> Parser<'a> {
 impl Parser<'_> {
     /// Strip leading qualifiers, if any.
     pub(crate) fn strip_leading_qualifiers(&mut self) {
+        // TODO: Add API for accessing and outputting qualifiers.
         const QUALIFIERS: &[u8] = &[
             b'r', // const
             b'n', // in
@@ -176,8 +177,8 @@ impl Parser<'_> {
             b'O', // bycopy
             b'R', // byref
             b'V', // oneway
-                  // b'!', // GCINVISIBLE
         ];
+        // TODO: b'|', // GCINVISIBLE
 
         self.consume_while(|b| QUALIFIERS.contains(&b));
     }
