@@ -27,7 +27,7 @@ alloc = ["objc2/alloc", "block-sys/alloc"]
 
 # Runtime selection. Default is `apple`. See `block-sys` for details.
 apple = ["block-sys/apple", "objc2/apple"]
-compiler-rt = ["block-sys/compiler-rt", "objc2/apple"] # Use Apple's encoding
+compiler-rt = ["block-sys/compiler-rt", "objc2/unstable-compiler-rt"] # TODO: fix this
 gnustep-1-7 = ["block-sys/gnustep-1-7", "objc2/gnustep-1-7"]
 gnustep-1-8 = ["gnustep-1-7", "block-sys/gnustep-1-8", "objc2/gnustep-1-8"]
 gnustep-1-9 = ["gnustep-1-8", "block-sys/gnustep-1-9", "objc2/gnustep-1-9"]

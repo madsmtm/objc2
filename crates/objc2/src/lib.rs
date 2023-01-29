@@ -225,6 +225,9 @@ mod test_utils;
 mod verify;
 
 // Link to Foundation to make NSObject work
-#[cfg_attr(feature = "apple", link(name = "Foundation", kind = "framework"))]
+#[cfg_attr(
+    all(feature = "apple", not(feature = "unstable-compiler-rt")),
+    link(name = "Foundation", kind = "framework")
+)]
 #[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-base", kind = "dylib"))]
 extern "C" {}
