@@ -20,6 +20,7 @@ data! {
     mod Contacts;
     mod CoreAnimation;
     mod CoreData;
+    mod CoreFoundation;
     mod CoreLocation;
     mod DataDetection;
     mod DeviceCheck;

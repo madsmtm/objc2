@@ -1,6 +1,7 @@
 #![cfg(feature = "Foundation_all")] // TODO: More precise
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
+use icrate::CoreFoundation::CGFloat;
 use icrate::Foundation::*;
 use objc2::rc::{Id, Owned, Shared};
 

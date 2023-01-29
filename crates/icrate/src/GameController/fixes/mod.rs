@@ -1,10 +1,6 @@
 use crate::common::*;
 use crate::Foundation::NSString;
 
-// TODO: GCKeyCode = CFIndex
-// NOTE: CFIndex is c_long_long on __LLP64__ / Windows 64-bit (doesn't matter for us)
-pub type GCKeyCode = c_long;
-
 typed_extensible_enum!(
     pub type GCInputElementName = NSString;
 );
