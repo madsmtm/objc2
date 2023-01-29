@@ -132,6 +132,7 @@
 #[doc(alias = "@interface")]
 #[macro_export]
 macro_rules! extern_class {
+    // No fields
     (
         $(#[$m:meta])*
         $v:vis struct $name:ident;
@@ -254,16 +255,16 @@ macro_rules! __impl_as_ref_borrow {
             @($($tail,)*)
         }
     };
+    // TODO: Expose a generic variant of the macro.
 }
 
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __inner_extern_class {
-    // TODO: Expose this variant of the macro.
     (
         $(#[$m:meta])*
         $v:vis struct $name:ident<$($t_struct:ident $(: $b_struct:ident $(= $default:ty)?)?),* $(,)?> {
-            $($field_vis:vis $field:ident: $field_ty:ty,)*
+            $($fields:tt)*
         }
 
         $(#[$impl_m:meta])*
@@ -274,13 +275,17 @@ macro_rules! __inner_extern_class {
             $(const NAME: &'static str = $name_const:literal;)?
         }
     ) => {
-        $crate::__inner_extern_class! {
-            @__inner
-            $(#[$m])*
-            $v struct ($name<$($t_struct $(: $b_struct $(= $default)?)?),*>) {
-                $($field_vis $field: $field_ty,)*
-            }
+        $crate::__emit_struct! {
+            ($(#[$m])*)
+            ($v)
+            ($name<$($t_struct $(: $b_struct $(= $default)?)?),*>)
+            (
+                __inner: $superclass,
+                $($fields)*
+            )
+        }
 
+        $crate::__extern_class_impl_traits! {
             $(#[$impl_m])*
             unsafe impl ($($t_for $(: $b_for)?),*) for $for {
                 INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::Object];
@@ -311,28 +316,17 @@ macro_rules! __inner_extern_class {
             }
         }
     };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_class_impl_traits {
     (
-        @__inner
-
-        $(#[$m:meta])*
-        $v:vis struct ($($struct:tt)*) {
-            $($field_vis:vis $field:ident: $field_ty:ty,)*
-        }
-
         $(#[$impl_m:meta])*
         unsafe impl ($($t:tt)*) for $for:ty {
             INHERITS = [$superclass:ty $(, $inheritance_rest:ty)*];
         }
     ) => {
-        $(#[$m])*
-        // TODO: repr(transparent) when the inner pointer is no longer a ZST.
-        #[repr(C)]
-        $v struct $($struct)* {
-            __inner: $superclass,
-            // Additional fields (should only be zero-sized PhantomData or ivars).
-            $($field_vis $field: $field_ty,)*
-        }
-
         // SAFETY:
         // - The item is FFI-safe with `#[repr(C)]`.
         // - The encoding is taken from the inner item, and caller verifies

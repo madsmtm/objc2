@@ -21,9 +21,17 @@
 ///
 /// The class definition works a lot like [`extern_class!`], with the added
 /// functionality that you can define custom instance variables on your class,
-/// which are then wrapped in a [`declare::Ivar`] and made accessible
-/// through the class. (E.g. you can use `self.my_ivar` as if it was a normal
-/// Rust struct).
+/// which are then wrapped in a [`declare::Ivar`] with the given name, and
+/// made accessible through the class. (E.g. you can use `self.my_ivar` as if
+/// it was a normal Rust struct).
+///
+/// The instance variable names are specified as such:
+/// - [`IvarEncode<T, "my_crate_ivar">`](crate::declare::IvarEncode)
+/// - [`IvarBool<"my_crate_ivar">`](crate::declare::IvarBool)
+/// - [`IvarDrop<T, "my_crate_ivar">`](crate::declare::IvarDrop)
+///
+/// This is special syntax that will be used to generate helper types that
+/// implement [`declare::IvarType`], which is then used inside the new struct.
 ///
 /// Note that the class name should be unique across the entire application!
 /// You can declare the class with the desired unique name like
@@ -34,13 +42,12 @@
 /// Objective-C runtime after the [`ClassType::class`] function has been
 /// called.
 ///
-/// If any of the instance variables require being `Drop`'ed (e.g. are wrapped
-/// in [`declare::IvarDrop`]), this macro will generate a `dealloc` method
-/// automatically.
+/// The macro will generate a `dealloc` method for you, which will call any
+/// `Drop` impl the class may have.
 ///
 /// [`declare::Ivar`]: crate::declare::Ivar
+/// [`declare::IvarType`]: crate::declare::IvarType
 /// [`ClassType::class`]: crate::ClassType::class
-/// [`declare::IvarDrop`]: crate::declare::IvarDrop
 ///
 ///
 /// ## Method definitions
@@ -141,7 +148,7 @@
 ///
 /// ```
 /// use std::os::raw::c_int;
-/// use objc2::declare::{Ivar, IvarDrop};
+/// use objc2::declare::{Ivar, IvarDrop, IvarEncode};
 /// use objc2::rc::{Id, Owned, Shared};
 /// use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
 /// use objc2::{
@@ -167,10 +174,12 @@
 ///
 /// declare_class!(
 ///     struct MyCustomObject {
-///         foo: u8,
-///         pub bar: c_int,
-///         object: IvarDrop<Id<NSObject, Shared>>,
+///         foo: IvarEncode<u8, "_foo">,
+///         pub bar: IvarEncode<c_int, "_bar">,
+///         object: IvarDrop<Id<NSObject, Shared>, "_object">,
 ///     }
+///
+///     mod ivars;
 ///
 ///     unsafe impl ClassType for MyCustomObject {
 ///         type Super = NSObject;
@@ -335,10 +344,55 @@
 #[doc(alias = "@implementation")]
 #[macro_export]
 macro_rules! declare_class {
+    // With ivar helper
     {
         $(#[$m:meta])*
         $v:vis struct $name:ident {
-            $($ivar_v:vis $ivar:ident: $ivar_ty:ty,)*
+            $($fields:tt)*
+        }
+
+        $ivar_helper_module_v:vis mod $ivar_helper_module:ident;
+
+        unsafe impl ClassType for $for:ty {
+            $(#[inherits($($inheritance_rest:ty),+)])?
+            type Super = $superclass:ty;
+
+            $(const NAME: &'static str = $name_const:literal;)?
+        }
+
+        $($methods:tt)*
+    } => {
+        $crate::__emit_struct_and_ivars! {
+            ($(#[$m])*)
+            ($v)
+            ($name)
+            ($ivar_helper_module_v mod $ivar_helper_module)
+            ($($fields)*)
+            (
+                // Superclasses are deallocated by calling `[super dealloc]`.
+                __inner: $crate::__macro_helpers::ManuallyDrop<$superclass>,
+            )
+        }
+
+        $crate::__inner_declare_class! {
+            ($ivar_helper_module)
+
+            unsafe impl ClassType for $for {
+                $(#[inherits($($inheritance_rest),+)])?
+                type Super = $superclass;
+
+                const NAME: &'static str = $crate::__select_name!($name; $($name_const)?);
+            }
+
+            $($methods)*
+        }
+    };
+
+    // No ivar helper
+    {
+        $(#[$m:meta])*
+        $v:vis struct $name:ident {
+            $($fields:tt)*
         }
 
         unsafe impl ClassType for $for:ty {
@@ -350,39 +404,90 @@ macro_rules! declare_class {
 
         $($methods:tt)*
     } => {
-        $(
-            #[allow(non_camel_case_types)]
-            $ivar_v struct $ivar {
-                __priv: (),
+        $crate::__emit_struct_and_ivars! {
+            ($(#[$m])*)
+            ($v)
+            ($name)
+            ()
+            ($($fields)*)
+            (
+                // Superclasses are deallocated by calling `[super dealloc]`.
+                __inner: $crate::__macro_helpers::ManuallyDrop<$superclass>,
+            )
+        }
+
+        $crate::__inner_declare_class! {
+            ()
+
+            unsafe impl ClassType for $for {
+                $(#[inherits($($inheritance_rest),+)])?
+                type Super = $superclass;
+
+                const NAME: &'static str = $crate::__select_name!($name; $($name_const)?);
             }
 
-            unsafe impl $crate::declare::IvarType for $ivar {
-                type Type = $ivar_ty;
-                const NAME: &'static $crate::__macro_helpers::str = stringify!($ivar);
-            }
-        )*
+            $($methods)*
+        }
+    };
 
-        $crate::__inner_extern_class! {
-            @__inner
-            $(#[$m])*
+    // Allow declaring class with no instance variables
+    {
+        $(#[$m:meta])*
+        $v:vis struct $name:ident;
+
+        unsafe impl ClassType for $for:ty {
+            $(#[inherits($($inheritance_rest:ty),+)])?
+            type Super = $superclass:ty;
+
+            $(const NAME: &'static str = $name_const:literal;)?
+        }
+
+        $($methods:tt)*
+    } => {
+        $crate::__emit_struct_and_ivars! {
+            ($(#[$m])*)
+            ($v)
+            ($name)
+            ()
+            ()
+            (
+                // Superclasses are deallocated by calling `[super dealloc]`.
+                __inner: $crate::__macro_helpers::ManuallyDrop<$superclass>,
+            )
+        }
+
+        $crate::__inner_declare_class! {
+            ()
+
+            unsafe impl ClassType for $for {
+                $(#[inherits($($inheritance_rest),+)])?
+                type Super = $superclass;
+
+                const NAME: &'static str = $crate::__select_name!($name; $($name_const)?);
+            }
+
+            $($methods)*
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __inner_declare_class {
+    {
+        ($($ivar_helper_module:ident)?)
+
+        unsafe impl ClassType for $for:ty {
+            $(#[inherits($($inheritance_rest:ty),+)])?
+            type Super = $superclass:ty;
+
+            const NAME: &'static str = $name_const:expr;
+        }
+
+        $($methods:tt)*
+    } => {
+        $crate::__extern_class_impl_traits! {
             // SAFETY: Upheld by caller
-            $v struct ($name) {
-                // SAFETY:
-                // - The ivars are in a type used as an Objective-C object.
-                // - The ivar is added to the class below.
-                // - Rust prevents having two fields with the same name.
-                // - Caller upholds that the ivars are properly initialized
-                //
-                // Note that while I couldn't find a reference on whether
-                // ivars are zero-initialized or not, it has been true since
-                // the Objective-C version shipped with Mac OS X 10.0 [link]
-                // and is generally what one would expect coming from C. So I
-                // think it's a valid assumption to make!
-                //
-                // [link]: https://github.com/apple-oss-distributions/objc4/blob/objc4-208/runtime/objc-class.m#L367
-                $($ivar_v $ivar: $crate::declare::Ivar<$ivar>,)*
-            }
-
             unsafe impl () for $for {
                 INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::Object];
             }
@@ -391,7 +496,7 @@ macro_rules! declare_class {
         // Creation
         unsafe impl ClassType for $for {
             type Super = $superclass;
-            const NAME: &'static $crate::__macro_helpers::str = $crate::__select_name!($name; $($name_const)?);
+            const NAME: &'static $crate::__macro_helpers::str = $name_const;
 
             fn class() -> &'static $crate::runtime::Class {
                 // TODO: Use `core::cell::LazyCell`
@@ -409,41 +514,39 @@ macro_rules! declare_class {
                         )
                     });
 
-                    // Ivars
-                    $(
-                        __objc2_builder.add_static_ivar::<$ivar>();
-                    )*
+                    $($ivar_helper_module::__objc2_declare_ivars(&mut __objc2_builder);)?
 
-                    // Check whether we need to add a `dealloc` method
-                    if false $(
-                        || <<$ivar as $crate::declare::IvarType>::Type as $crate::declare::InnerIvarType>::__MAY_DROP
-                    )* {
-                        // See the following links for more details:
-                        // - <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#dealloc>
-                        // - <https://developer.apple.com/documentation/objectivec/nsobject/1571947-dealloc>
-                        // - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html#//apple_ref/doc/uid/20000994-SW2>
-                        unsafe extern "C" fn __objc2_dealloc(__objc2_self: &mut $for, _: $crate::runtime::Sel) {
-                            // We deallocate each ivar individually instead of
-                            // using e.g. `drop_in_place(__objc2_self)`, since
-                            // if the type is subclassing another, the type
-                            // will deallocate the superclass' instance
-                            // variables as well!
-                            $(
-                                let __objc2_ptr: *mut $crate::declare::Ivar<$ivar> = &mut __objc2_self.$ivar;
-                                // SAFETY: The ivar is valid, and since this
-                                // is the `dealloc` method, we know the ivars
-                                // are never going to be touched again.
-                                unsafe { $crate::__macro_helpers::drop_in_place(__objc2_ptr) };
-                            )*
+                    // See the following links for more details:
+                    // - <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#dealloc>
+                    // - <https://developer.apple.com/documentation/objectivec/nsobject/1571947-dealloc>
+                    // - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html#//apple_ref/doc/uid/20000994-SW2>
+                    unsafe extern "C" fn __objc2_dealloc(__objc2_self: *mut $for, __objc2_cmd: $crate::runtime::Sel) {
+                        // SAFETY: Ivars are explicitly designed to always
+                        // be valid to drop, and since this is the
+                        // `dealloc` method, we know the ivars are never
+                        // going to be touched again.
+                        //
+                        // This also runs any `Drop` impl that the type may
+                        // have.
+                        unsafe { $crate::__macro_helpers::drop_in_place(__objc2_self) };
 
-                            // Invoke the super class' `dealloc` method.
-                            //
-                            // Note: ARC does this automatically, which means
-                            // most Objective-C code in the wild don't contain
-                            // this; but we _are_ ARC, so we must do this.
-                            unsafe { $crate::msg_send![super(__objc2_self), dealloc] }
+                        // The superclass' "marker" that this stores is
+                        // wrapped in `ManuallyDrop`, instead we drop it by
+                        // calling the superclass' `dealloc` method.
+                        //
+                        // Note: ARC does this automatically, which means
+                        // most Objective-C code in the wild don't contain
+                        // this; but we _are_ ARC, so we must do this.
+                        unsafe {
+                            $crate::MessageReceiver::__send_super_message_static(
+                                __objc2_self,
+                                __objc2_cmd, // Reuse the selector
+                                (), // No arguments
+                            )
                         }
+                    }
 
+                    if $crate::__macro_helpers::needs_drop::<Self>() {
                         unsafe {
                             __objc2_builder.add_method(
                                 $crate::sel!(dealloc),
@@ -479,21 +582,6 @@ macro_rules! declare_class {
         // Methods
         $crate::__declare_class_methods! {
             $($methods)*
-        }
-    };
-
-    // Allow declaring class with no instance variables
-    {
-        $(#[$m:meta])*
-        $v:vis struct $name:ident;
-
-        $($rest:tt)*
-    } => {
-        $crate::declare_class! {
-            $(#[$m])*
-            $v struct $name {}
-
-            $($rest)*
         }
     };
 }
@@ -974,6 +1062,32 @@ macro_rules! __convert_result {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __declare_class_register_out {
+    // #[method(dealloc)]
+    {
+        ($builder:ident)
+        ($($qualifiers:tt)*)
+        ($name:ident)
+        ($($__ret:ty)?)
+        ($__body:block)
+
+        ($builder_method:ident)
+        ($__receiver:expr)
+        ($__receiver_ty:ty)
+        ($($__args_prefix:tt)*)
+        ($($args_rest:tt)*)
+
+        (#[method(dealloc)])
+        () // No optional
+        ($($m_checked:tt)*)
+    } => {
+        $crate::__extract_and_apply_cfg_attributes! {
+            @($($m_checked)*)
+            @($crate::__macro_helpers::compile_error!(
+                "`#[method(dealloc)]` is not supported. Implement `Drop` for the type instead"
+            ))
+        }
+    };
+
     // #[method(...)]
     {
         ($builder:ident)

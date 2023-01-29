@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added 16-fold impls for `EncodeArguments`, `MessageArguments`, and `MethodImplementation`.
 * Added `NSObjectProtocol` trait for allowing `ProtocolObject` to implement
   `Debug`, `Hash`, `PartialEq` and `Eq`.
+* Support running `Drop` impls on `dealloc` in `declare_class!`.
+* Added `declare::IvarEncode` and `declare::IvarBool` types.
 
 ### Changed
 * **BREAKING**: Using the automatic `NSError**`-to-`Result` functionality in
@@ -28,12 +30,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   ```rust
   // Before
   extern_protocol!(
-    struct MyProtocol;
+      struct MyProtocol;
 
-    unsafe impl ProtocolType for MyProtocol {
-      #[method(myMethod)]
-      fn myMethod(&self);
-    }
+      unsafe impl ProtocolType for MyProtocol {
+          #[method(myMethod)]
+          fn myMethod(&self);
+      }
   );
 
   let obj: &SomeObjectThatImplementsTheProtocol = ...;
@@ -42,12 +44,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   // After
   extern_protocol!(
-    unsafe trait MyProtocol {
-      #[method(myMethod)]
-      fn myMethod(&self);
-    }
+      unsafe trait MyProtocol {
+          #[method(myMethod)]
+          fn myMethod(&self);
+      }
 
-    unsafe impl ProtocolType for dyn MyProtocol {}
+      unsafe impl ProtocolType for dyn MyProtocol {}
   );
 
   let obj: &SomeObjectThatImplementsTheProtocol = ...;
@@ -60,6 +62,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   The `ConformsTo` trait has similarly been removed, and the `ImplementedBy`
   trait and `ProtocolObject` struct has been introduced instead.
 * **BREAKING**: Moved `NSObject::is_kind_of` to the new `NSObjectProtocol`.
+* **BREAKING**: Removed support for custom `dealloc` impls in
+  `declare_class!`. Implement `Drop` for the type instead.
+* **BREAKING**: Changed how instance variables in `declare_class!` works. Now,
+  you must explicitly specify the "kind" of ivar you want, as well as the ivar
+  name.
+
+  An example:
+  ```rust
+  // Before
+  declare_class!(
+      struct MyClass {
+          pub ivar: u8,
+          another_ivar: bool,
+          box_ivar: IvarDrop<Box<i32>>,
+      }
+
+      unsafe impl ClassType for MyClass { ... }
+  );
+
+  // After
+  declare_class!(
+      struct MyClass {
+          pub ivar: IvarEncode<u8, "_ivar">,
+          another_ivar: IvarBool<"_another_ivar">,
+          box_ivar: IvarDrop<Box<i32>, "_box_ivar">,
+      }
+
+      // Helper types for ivars will be put in here
+      mod ivars;
+
+      unsafe impl ClassType for MyClass { ... }
+  );
+
+  ```
 
 ### Fixed
 * Allow empty structs in `declare_class!` macro.

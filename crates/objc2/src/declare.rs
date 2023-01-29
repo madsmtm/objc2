@@ -111,7 +111,9 @@
 #[cfg(test)]
 mod declare_class_tests;
 mod ivar;
+mod ivar_bool;
 mod ivar_drop;
+mod ivar_encode;
 mod ivar_forwarding_impls;
 
 use alloc::format;
@@ -130,7 +132,9 @@ use crate::sel;
 use crate::Message;
 
 pub use ivar::{InnerIvarType, Ivar, IvarType};
+pub use ivar_bool::IvarBool;
 pub use ivar_drop::IvarDrop;
+pub use ivar_encode::IvarEncode;
 
 pub(crate) mod private {
     pub trait Sealed {}
@@ -537,7 +541,7 @@ impl ClassBuilder {
         unsafe {
             self.add_ivar_inner::<<T::Type as InnerIvarType>::__Inner>(
                 T::NAME,
-                &T::Type::__ENCODING,
+                &T::Type::__IVAR_ENCODING,
             )
         }
     }

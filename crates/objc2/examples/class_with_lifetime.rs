@@ -6,7 +6,7 @@
 use std::marker::PhantomData;
 use std::sync::Once;
 
-use objc2::declare::{ClassBuilder, Ivar, IvarType};
+use objc2::declare::{ClassBuilder, Ivar, IvarEncode, IvarType};
 use objc2::rc::{Id, Owned};
 use objc2::runtime::{Class, NSObject, Sel};
 use objc2::{msg_send, msg_send_id, sel};
@@ -20,7 +20,7 @@ struct NumberIvar<'a> {
 }
 
 unsafe impl<'a> IvarType for NumberIvar<'a> {
-    type Type = &'a mut u8;
+    type Type = IvarEncode<&'a mut u8>;
     const NAME: &'static str = "_number_ptr";
 }
 

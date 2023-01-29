@@ -124,12 +124,6 @@ declare_class!(
             unsafe { msg_send![super(self), autorelease] }
         }
 
-        #[method(dealloc)]
-        unsafe fn dealloc(&mut self) {
-            TEST_DATA.with(|data| data.borrow_mut().dealloc += 1);
-            unsafe { msg_send![super(self), dealloc] }
-        }
-
         #[method(_tryRetain)]
         unsafe fn try_retain(&self) -> bool {
             TEST_DATA.with(|data| data.borrow_mut().try_retain += 1);
@@ -271,6 +265,12 @@ declare_class!(
         }
     }
 );
+
+impl Drop for __RcTestObject {
+    fn drop(&mut self) {
+        TEST_DATA.with(|data| data.borrow_mut().dealloc += 1);
+    }
+}
 
 unsafe impl Send for __RcTestObject {}
 unsafe impl Sync for __RcTestObject {}

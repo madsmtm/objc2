@@ -3,17 +3,13 @@ use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::ptr::NonNull;
 
-use crate::encode::{EncodeConvert, Encoding};
+use crate::encode::{Encode, Encoding};
 use crate::rc::{Id, Ownership};
 use crate::Message;
 
 use super::InnerIvarType;
 
-/// A helper type to allow putting certain types that may drop into ivars.
-///
-/// This is used to work around current limitations in the type system.
-/// Consider this type "temporary" in the sense that one day it may just
-/// become `type IvarDrop<T> = T`.
+/// Ivar types that may drop.
 ///
 /// This currently works with the following types:
 /// - `Box<T>`
@@ -21,13 +17,8 @@ use super::InnerIvarType;
 /// - `Id<T, O>`
 /// - `Option<Id<T, O>>`
 ///
-/// Further may be added when the standard library guarantees their layout.
-///
-/// See `examples/delegate.rs` for usage.
-pub struct IvarDrop<T> {
-    /// For proper variance and auto traits.
-    p: PhantomData<T>,
-}
+/// Further may be added when the standard library guarantee their layout.
+pub struct IvarDrop<T>(PhantomData<T>);
 
 impl<T: Sized> super::ivar::private::Sealed for IvarDrop<Box<T>> {}
 // SAFETY: The memory layout of `Box<T: Sized>` is guaranteed to be a pointer:
@@ -38,7 +29,7 @@ impl<T: Sized> super::ivar::private::Sealed for IvarDrop<Box<T>> {}
 unsafe impl<T: Sized> InnerIvarType for IvarDrop<Box<T>> {
     // Note that we use `*const c_void` and not `*const T` to allow _any_
     // type, not just types that can be encoded by Objective-C
-    const __ENCODING: Encoding = <*const c_void as EncodeConvert>::__ENCODING;
+    const __IVAR_ENCODING: Encoding = <*const c_void>::ENCODING;
 
     type __Inner = Option<Box<T>>;
     type Output = Box<T>;
@@ -75,7 +66,7 @@ impl<T: Sized> super::ivar::private::Sealed for IvarDrop<Option<Box<T>>> {}
 // This is valid to initialize as all-zeroes, so the user doesn't have to do
 // anything to initialize it.
 unsafe impl<T: Sized> InnerIvarType for IvarDrop<Option<Box<T>>> {
-    const __ENCODING: Encoding = <*const c_void as EncodeConvert>::__ENCODING;
+    const __IVAR_ENCODING: Encoding = <*const c_void>::ENCODING;
 
     type __Inner = Option<Box<T>>;
     type Output = Option<Box<T>>;
@@ -108,7 +99,7 @@ impl<T: Message, O: Ownership> super::ivar::private::Sealed for IvarDrop<Id<T, O
 // directly today, but since we can't do so for `Box` (because that is
 // `#[fundamental]`), I think it makes sense to handle them similarly.
 unsafe impl<T: Message, O: Ownership> InnerIvarType for IvarDrop<Id<T, O>> {
-    const __ENCODING: Encoding = <*const T as EncodeConvert>::__ENCODING;
+    const __IVAR_ENCODING: Encoding = <*const T>::ENCODING;
 
     type __Inner = Option<Id<T, O>>;
     type Output = Id<T, O>;
@@ -143,7 +134,7 @@ impl<T: Message, O: Ownership> super::ivar::private::Sealed for IvarDrop<Option<
 // This is valid to initialize as all-zeroes, so the user doesn't have to do
 // anything to initialize it.
 unsafe impl<T: Message, O: Ownership> InnerIvarType for IvarDrop<Option<Id<T, O>>> {
-    const __ENCODING: Encoding = <*const T as EncodeConvert>::__ENCODING;
+    const __IVAR_ENCODING: Encoding = <*const T>::ENCODING;
 
     type __Inner = Option<Id<T, O>>;
     type Output = Option<Id<T, O>>;
@@ -241,11 +232,13 @@ mod tests {
     declare_class!(
         #[derive(Debug, PartialEq, Eq)]
         struct IvarTester {
-            ivar1: IvarDrop<Id<__RcTestObject, Shared>>,
-            ivar2: IvarDrop<Option<Id<__RcTestObject, Owned>>>,
-            ivar3: IvarDrop<Box<Id<__RcTestObject, Owned>>>,
-            ivar4: IvarDrop<Option<Box<Id<__RcTestObject, Owned>>>>,
+            ivar1: IvarDrop<Id<__RcTestObject, Shared>, "_ivar1">,
+            ivar2: IvarDrop<Option<Id<__RcTestObject, Owned>>, "_ivar2">,
+            ivar3: IvarDrop<Box<Id<__RcTestObject, Owned>>, "_ivar3">,
+            ivar4: IvarDrop<Option<Box<Id<__RcTestObject, Owned>>>, "_ivar4">,
         }
+
+        mod ivartester;
 
         unsafe impl ClassType for IvarTester {
             type Super = NSObject;
@@ -277,8 +270,10 @@ mod tests {
     declare_class!(
         #[derive(Debug, PartialEq, Eq)]
         struct IvarTesterSubclass {
-            ivar5: IvarDrop<Id<__RcTestObject, Shared>>,
+            ivar5: IvarDrop<Id<__RcTestObject, Shared>, "_ivar5">,
         }
+
+        mod ivartestersubclass;
 
         unsafe impl ClassType for IvarTesterSubclass {
             type Super = IvarTester;

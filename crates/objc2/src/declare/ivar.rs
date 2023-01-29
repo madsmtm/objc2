@@ -4,7 +4,7 @@ use core::mem::MaybeUninit;
 use core::ops::{Deref, DerefMut};
 use core::ptr::{self, NonNull};
 
-use crate::encode::{EncodeConvert, Encoding};
+use crate::encode::Encoding;
 use crate::runtime::{ivar_offset, Object};
 
 pub(crate) mod private {
@@ -14,9 +14,9 @@ pub(crate) mod private {
 /// Types that may be used in ivars.
 ///
 /// This may be either:
-/// - [`bool`].
+/// - [`IvarBool`][super::IvarBool].
 /// - [`IvarDrop<T>`][super::IvarDrop].
-/// - Something that implements [`Encode`][crate::Encode].
+/// - [`IvarEncode<T>`][super::IvarEncode].
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restrition should be lifted!
@@ -27,7 +27,7 @@ pub(crate) mod private {
 /// You cannot rely on any safety guarantees from this.
 pub unsafe trait InnerIvarType: private::Sealed {
     #[doc(hidden)]
-    const __ENCODING: Encoding;
+    const __IVAR_ENCODING: Encoding;
 
     // SAFETY: It must be safe to transmute from `__Inner` to `Output`.
     #[doc(hidden)]
@@ -39,6 +39,13 @@ pub unsafe trait InnerIvarType: private::Sealed {
     type Output;
 
     // SAFETY: The __Inner type must be safe to drop even if zero-initialized.
+    //
+    // Note that while I couldn't find a reference on whether ivars are
+    // zero-initialized or not, it has been true since the Objective-C version
+    // shipped with Mac OS X 10.0 [link] and is generally what one would
+    // expect coming from C. So I think it's a valid assumption to make!
+    //
+    // [link]: https://github.com/apple-oss-distributions/objc4/blob/objc4-208/runtime/objc-class.m#L367
     #[doc(hidden)]
     const __MAY_DROP: bool;
 
@@ -50,35 +57,6 @@ pub unsafe trait InnerIvarType: private::Sealed {
 
     #[doc(hidden)]
     fn __to_ptr(inner: NonNull<Self::__Inner>) -> NonNull<Self::Output>;
-}
-
-impl<T: EncodeConvert> private::Sealed for T {}
-unsafe impl<T: EncodeConvert> InnerIvarType for T {
-    const __ENCODING: Encoding = <Self as EncodeConvert>::__ENCODING;
-    type __Inner = Self;
-    type Output = Self;
-    // Note: We explicitly tell `Ivar` that it shouldn't do anything to drop,
-    // since if the object was deallocated before an `init` method was called,
-    // the ivar would not have been initialized properly!
-    //
-    // For example in the case of `NonNull<u8>`, it would be zero-initialized
-    // which is an invalid state for that.
-    const __MAY_DROP: bool = false;
-
-    #[inline]
-    unsafe fn __to_ref(inner: &Self::__Inner) -> &Self::Output {
-        inner
-    }
-
-    #[inline]
-    unsafe fn __to_mut(inner: &mut Self::__Inner) -> &mut Self::Output {
-        inner
-    }
-
-    #[inline]
-    fn __to_ptr(inner: NonNull<Self::__Inner>) -> NonNull<Self::Output> {
-        inner
-    }
 }
 
 /// Helper trait for defining instance variables.
@@ -99,13 +77,13 @@ unsafe impl<T: EncodeConvert> InnerIvarType for T {
 /// Create an instance variable `myCustomIvar` with type `i32`.
 ///
 /// ```
-/// use objc2::declare::IvarType;
+/// use objc2::declare::{IvarEncode, IvarType};
 ///
 /// // Helper type
 /// struct MyCustomIvar;
 ///
 /// unsafe impl IvarType for MyCustomIvar {
-///     type Type = i32;
+///     type Type = IvarEncode<i32>;
 ///     const NAME: &'static str = "myCustomIvar";
 /// }
 ///
@@ -120,7 +98,7 @@ pub unsafe trait IvarType {
     #[doc(hidden)]
     unsafe fn __offset(ptr: NonNull<Object>) -> isize {
         let obj = unsafe { ptr.as_ref() };
-        ivar_offset(obj.class(), Self::NAME, &Self::Type::__ENCODING)
+        ivar_offset(obj.class(), Self::NAME, &Self::Type::__IVAR_ENCODING)
     }
 }
 
@@ -166,13 +144,13 @@ pub unsafe trait IvarType {
 /// # Examples
 ///
 /// ```
-/// use objc2::declare::{Ivar, IvarType};
+/// use objc2::declare::{Ivar, IvarEncode, IvarType};
 /// use objc2::runtime::Object;
 ///
 /// // Declare ivar with given type and name
 /// struct MyCustomIvar;
 /// unsafe impl IvarType for MyCustomIvar {
-///     type Type = i32;
+///     type Type = IvarEncode<i32>;
 ///     const NAME: &'static str = "myCustomIvar";
 /// }
 ///
@@ -348,6 +326,7 @@ mod tests {
     use std::sync::atomic::{AtomicBool, Ordering};
 
     use super::*;
+    use crate::declare::{IvarBool, IvarEncode};
     use crate::rc::{Id, Owned};
     use crate::runtime::NSObject;
     use crate::{declare_class, msg_send, msg_send_id, test_utils, ClassType, MessageReceiver};
@@ -355,7 +334,7 @@ mod tests {
     struct TestIvar;
 
     unsafe impl IvarType for TestIvar {
-        type Type = u32;
+        type Type = IvarEncode<u32>;
         const NAME: &'static str = "_foo";
     }
 
@@ -396,24 +375,25 @@ mod tests {
         declare_class!(
             #[derive(Debug, PartialEq, Eq)]
             struct CustomDrop {
-                ivar: u8,
+                ivar: IvarEncode<u8, "_ivar">,
+                ivar_bool: IvarBool<"_ivar_bool">,
             }
+
+            mod customdrop;
 
             unsafe impl ClassType for CustomDrop {
                 type Super = NSObject;
             }
-
-            unsafe impl CustomDrop {
-                #[method(dealloc)]
-                fn dealloc(&mut self) {
-                    HAS_RUN_DEALLOC.store(true, Ordering::SeqCst);
-                    unsafe { msg_send![super(self), dealloc] }
-                }
-            }
         );
+
+        impl Drop for CustomDrop {
+            fn drop(&mut self) {
+                HAS_RUN_DEALLOC.store(true, Ordering::Relaxed);
+            }
+        }
 
         let _: Id<CustomDrop, Owned> = unsafe { msg_send_id![CustomDrop::class(), new] };
 
-        assert!(HAS_RUN_DEALLOC.load(Ordering::SeqCst));
+        assert!(HAS_RUN_DEALLOC.load(Ordering::Relaxed));
     }
 }

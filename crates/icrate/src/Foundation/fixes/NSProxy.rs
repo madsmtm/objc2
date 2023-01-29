@@ -2,13 +2,18 @@
 use core::fmt;
 use core::hash;
 
-use objc2::runtime::{Class, Object};
-use objc2::{ClassType, __inner_extern_class};
+use crate::common::*;
 
-__inner_extern_class! {
-    @__inner
-    pub struct (NSProxy) {}
+objc2::__emit_struct! {
+    ()
+    (pub)
+    (NSProxy)
+    (
+        __inner: Object,
+    )
+}
 
+objc2::__extern_class_impl_traits! {
     unsafe impl () for NSProxy {
         INHERITS = [Object];
     }
@@ -32,9 +37,11 @@ unsafe impl ClassType for NSProxy {
     }
 }
 
+unsafe impl NSObjectProtocol for NSProxy {}
+
 impl PartialEq for NSProxy {
-    fn eq(&self, _other: &Self) -> bool {
-        todo!()
+    fn eq(&self, other: &Self) -> bool {
+        self.__isEqual(other)
     }
 }
 
@@ -42,13 +49,14 @@ impl Eq for NSProxy {}
 
 impl hash::Hash for NSProxy {
     #[inline]
-    fn hash<H: hash::Hasher>(&self, _state: &mut H) {
-        todo!()
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+        self.__hash().hash(state);
     }
 }
 
 impl fmt::Debug for NSProxy {
-    fn fmt(&self, _f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        todo!()
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let obj: &ProtocolObject<NSObject> = ProtocolObject::from_ref(self);
+        obj.fmt(f)
     }
 }
