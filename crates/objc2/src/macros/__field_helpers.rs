@@ -180,7 +180,7 @@ macro_rules! __parse_fields {
     (
         (
             $(#[$m:meta])*
-            $vis:vis $field_name:ident: IvarDrop<$ty:ty, $ivar_name:literal>
+            $vis:vis $field_name:ident: IvarDrop<$ty:ty $(, $ivar_name:literal)?>
             $(, $($rest_fields:tt)*)?
         )
         ($($ivar_helper_module_v:vis mod $ivar_helper_module:ident)?)
@@ -208,7 +208,7 @@ macro_rules! __parse_fields {
                 // - Caller upholds that the ivars are properly initialized.
                 unsafe impl $crate::declare::IvarType for $field_name {
                     type Type = IvarDrop<$ty>;
-                    const NAME: &'static $crate::__macro_helpers::str = $ivar_name;
+                    const NAME: &'static $crate::__macro_helpers::str = $crate::__select_ivar_name!($field_name; $($ivar_name)?);
                 }
             ) ($($ivar_type_name)* $field_name)
             (
@@ -227,7 +227,7 @@ macro_rules! __parse_fields {
     (
         (
             $(#[$m:meta])*
-            $vis:vis $field_name:ident: IvarEncode<$ty:ty, $ivar_name:literal>
+            $vis:vis $field_name:ident: IvarEncode<$ty:ty $(, $ivar_name:literal)?>
             $(, $($rest_fields:tt)*)?
         )
         ($($ivar_helper_module_v:vis mod $ivar_helper_module:ident)?)
@@ -252,7 +252,7 @@ macro_rules! __parse_fields {
                 // SAFETY: See above
                 unsafe impl $crate::declare::IvarType for $field_name {
                     type Type = IvarEncode<$ty>;
-                    const NAME: &'static $crate::__macro_helpers::str = $ivar_name;
+                    const NAME: &'static $crate::__macro_helpers::str = $crate::__select_ivar_name!($field_name; $($ivar_name)?);
                 }
             ) ($($ivar_type_name)* $field_name)
             (
@@ -271,7 +271,7 @@ macro_rules! __parse_fields {
     (
         (
             $(#[$m:meta])*
-            $vis:vis $field_name:ident: IvarBool<$ivar_name:literal>
+            $vis:vis $field_name:ident: IvarBool$(<$ivar_name:literal>)?
             $(, $($rest_fields:tt)*)?
         )
         ($($ivar_helper_module_v:vis mod $ivar_helper_module:ident)?)
@@ -296,7 +296,7 @@ macro_rules! __parse_fields {
                 // SAFETY: See above
                 unsafe impl $crate::declare::IvarType for $field_name {
                     type Type = IvarBool;
-                    const NAME: &'static $crate::__macro_helpers::str = $ivar_name;
+                    const NAME: &'static $crate::__macro_helpers::str = $crate::__select_ivar_name!($field_name; $($ivar_name)?);
                 }
             ) ($($ivar_type_name)* $field_name)
             (
@@ -348,4 +348,15 @@ macro_rules! __parse_fields {
             $($macro_args)*
         }
     }
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __select_ivar_name {
+    ($field_name:ident; $ivar_name:literal) => {
+        $ivar_name
+    };
+    ($field_name:ident;) => {
+        concat!('_', stringify!($field_name))
+    };
 }

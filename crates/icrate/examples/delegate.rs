@@ -14,12 +14,12 @@ extern "C" {}
 declare_class!(
     #[derive(Debug)]
     struct CustomAppDelegate {
-        pub ivar: IvarEncode<u8, "_ivar">,
-        another_ivar: IvarBool<"_another_ivar">,
-        box_ivar: IvarDrop<Box<i32>, "_box_ivar">,
-        maybe_box_ivar: IvarDrop<Option<Box<i32>>, "_maybe_box_ivar">,
-        id_ivar: IvarDrop<Id<NSString, Shared>, "_id_ivar">,
-        maybe_id_ivar: IvarDrop<Option<Id<NSString, Shared>>, "_maybe_id_ivar">,
+        pub ivar: IvarEncode<u8>,
+        another_ivar: IvarBool,
+        box_ivar: IvarDrop<Box<i32>>,
+        maybe_box_ivar: IvarDrop<Option<Box<i32>>>,
+        id_ivar: IvarDrop<Id<NSString, Shared>>,
+        maybe_id_ivar: IvarDrop<Option<Id<NSString, Shared>>>,
     }
 
     mod ivars;
