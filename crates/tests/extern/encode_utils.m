@@ -102,10 +102,45 @@ ENCODING(STRUCT_WITH_ATOMIC, struct with_atomic);
 // Bit field
 
 struct bitfield {
-    unsigned int a: 1;
-    unsigned int b: 30;
+    int8_t b1 : 5;
+    int16_t : 0;
+    int8_t b2 : 2;
 };
 ENCODING(BITFIELD, struct bitfield);
+
+struct bitfield_all_types {
+    struct bitfield nested;
+
+    char      b_char      : 1;
+    short     b_short     : 1;
+    int       b_int       : 1;
+    long      b_long      : 1;
+    long long b_long_long : 1;
+
+    signed char      b_signed_char      : 1;
+    signed short     b_signed_short     : 1;
+    signed int       b_signed_int       : 1;
+    signed long      b_signed_long      : 1;
+    signed long long b_signed_long_long : 1;
+
+    unsigned char      b_unsigned_char      : 1;
+    unsigned short     b_unsigned_short     : 1;
+    unsigned int       b_unsigned_int       : 1;
+    unsigned long      b_unsigned_long      : 1;
+    unsigned long long b_unsigned_long_long : 1;
+
+    bool      b_bool      : 1;
+};
+ENCODING(BITFIELD_ALL_TYPES, struct bitfield_all_types);
+
+// Ill-supported in compilers
+// #if __has_builtin(__int128_t)
+// struct bitfield_128 {
+//     __int128_t b_signed : 1;
+//     __uint128_t b_unsigned : 1;
+// };
+// ENCODING(BITFIELD_128, struct bitfield_128);
+// #endif
 
 // Union
 

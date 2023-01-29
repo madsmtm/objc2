@@ -489,7 +489,7 @@ unsafe impl RefEncode for NonNull<c_void> {
 unsafe impl OptionEncode for NonNull<c_void> {}
 
 unsafe impl<T: Encode, const LENGTH: usize> Encode for [T; LENGTH] {
-    const ENCODING: Encoding = Encoding::Array(LENGTH, &T::ENCODING);
+    const ENCODING: Encoding = Encoding::Array(LENGTH as u64, &T::ENCODING);
 }
 
 unsafe impl<T: Encode, const LENGTH: usize> RefEncode for [T; LENGTH] {

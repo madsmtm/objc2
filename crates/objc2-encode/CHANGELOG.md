@@ -8,10 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Made the crate `no_std` compatible.
+* Made the crate platform-agnostic.
 
 ### Changed
 * **BREAKING**: Moved the `Encode`, `RefEncode`, `EncodeArguments`,
   `EncodeConvert`, `OptionEncode` to `objc2`.
+* **BREAKING**: `Encoding::BitField` now allows omitting the type using an
+  `Option`.
+* **BREAKING**: Changed length field in `Encoding::Array` from `usize` to
+  `u64` (to be platform-agnostic).
+
+### Fixed
+* Fixed `Encoding::BitField` encoding parsing.
 
 
 ## 2.0.0-pre.3 - 2022-12-24

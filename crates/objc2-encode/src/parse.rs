@@ -130,6 +130,14 @@ impl<'a> Parser<'a> {
         self.data.as_bytes().get(self.split_point).copied()
     }
 
+    fn try_peek2(&self) -> Option<(u8, u8)> {
+        let bytes = self.data.as_bytes();
+        Some((
+            *bytes.get(self.split_point)?,
+            *bytes.get(self.split_point + 1)?,
+        ))
+    }
+
     fn advance(&mut self) {
         self.split_point += 1;
     }
@@ -191,7 +199,7 @@ impl Parser<'_> {
         Ok(&self.data[old_split_point..self.split_point])
     }
 
-    fn parse_usize(&mut self) -> Result<usize> {
+    fn parse_u64(&mut self) -> Result<u64> {
         self.chomp_digits()?
             .parse()
             .map_err(|_| ErrorKind::IntegerTooLarge)
@@ -224,8 +232,16 @@ impl Parser<'_> {
         Some(())
     }
 
-    fn expect_usize(&mut self, int: usize) -> Option<()> {
-        if self.parse_usize().ok()? == int {
+    fn expect_u64(&mut self, int: u64) -> Option<()> {
+        if self.parse_u64().ok()? == int {
+            Some(())
+        } else {
+            None
+        }
+    }
+
+    fn expect_u8(&mut self, int: u8) -> Option<()> {
+        if self.parse_u8().ok()? == int {
             Some(())
         } else {
             None
@@ -236,10 +252,15 @@ impl Parser<'_> {
         let helper = Helper::new(enc, level);
         match helper {
             Helper::Primitive(primitive) => self.expect_str(primitive.to_str()),
-            Helper::BitField(b, _type, _level) => {
-                // TODO: Use the type on GNUStep (nesting level?)
+            Helper::BitField(size, Some((offset, t)), level) => {
                 self.expect_byte(b'b')?;
-                self.expect_usize(b as usize)
+                self.expect_u64(*offset)?;
+                self.expect_encoding(t, level)?;
+                self.expect_u8(size)
+            }
+            Helper::BitField(size, None, _level) => {
+                self.expect_byte(b'b')?;
+                self.expect_u8(size)
             }
             Helper::Indirection(kind, t, level) => {
                 self.expect_byte(kind.prefix_byte())?;
@@ -247,7 +268,7 @@ impl Parser<'_> {
             }
             Helper::Array(len, item, level) => {
                 self.expect_byte(b'[')?;
-                self.expect_usize(len)?;
+                self.expect_u64(len)?;
                 self.expect_encoding(item, level)?;
                 self.expect_byte(b']')
             }
@@ -363,13 +384,21 @@ impl Parser<'_> {
             b'?' => EncodingBox::Unknown,
 
             b'b' => {
-                // TODO: Parse type here on GNUStep
-                EncodingBox::BitField(self.parse_u8()?, None)
+                let size_or_offset = self.parse_u64()?;
+                if let Some((size, ty)) = self.try_parse_bitfield_gnustep()? {
+                    let offset = size_or_offset;
+                    EncodingBox::BitField(size, Some(Box::new((offset, ty))))
+                } else {
+                    let size = size_or_offset
+                        .try_into()
+                        .map_err(|_| ErrorKind::IntegerTooLarge)?;
+                    EncodingBox::BitField(size, None)
+                }
             }
             b'^' => EncodingBox::Pointer(Box::new(self.parse_encoding()?)),
             b'A' => EncodingBox::Atomic(Box::new(self.parse_encoding()?)),
             b'[' => {
-                let len = self.parse_usize()?;
+                let len = self.parse_u64()?;
                 let item = self.parse_encoding()?;
                 self.expect_byte(b']').ok_or(ErrorKind::WrongEndArray)?;
                 EncodingBox::Array(len, Box::new(item))
@@ -387,6 +416,40 @@ impl Parser<'_> {
             b => return Err(ErrorKind::Unknown(b)),
         })
     }
+
+    fn try_parse_bitfield_gnustep(&mut self) -> Result<Option<(u8, EncodingBox)>> {
+        if let Some((b1, b2)) = self.try_peek2() {
+            // Try to parse the encoding.
+            //
+            // The encoding is always an integral type.
+            let ty = match b1 {
+                b'c' => EncodingBox::Char,
+                b's' => EncodingBox::Short,
+                b'i' => EncodingBox::Int,
+                b'l' => EncodingBox::Long,
+                b'q' => EncodingBox::LongLong,
+                b'C' => EncodingBox::UChar,
+                b'S' => EncodingBox::UShort,
+                b'I' => EncodingBox::UInt,
+                b'L' => EncodingBox::ULong,
+                b'Q' => EncodingBox::ULongLong,
+                b'B' => EncodingBox::Bool,
+                _ => return Ok(None),
+            };
+            // And then check if a digit follows that (which the size would
+            // always contain).
+            if !b2.is_ascii_digit() {
+                return Ok(None);
+            }
+            // We have a size; so let's advance...
+            self.advance();
+            // ...and parse it for real.
+            let size = self.parse_u8()?;
+            Ok(Some((size, ty)))
+        } else {
+            Ok(None)
+        }
+    }
 }
 
 #[cfg(test)]
@@ -398,6 +461,7 @@ mod tests {
     fn parse_container() {
         const KIND: ContainerKind = ContainerKind::Struct;
 
+        #[track_caller]
         fn assert_name(enc: &str, expected: Result<(&str, Option<Vec<EncodingBox>>)>) {
             let mut parser = Parser::new(enc);
             assert_eq!(parser.parse_container(KIND), expected);
@@ -416,5 +480,47 @@ mod tests {
         assert_name("", Err(ErrorKind::WrongEndContainer(KIND)));
         assert_name("abc", Err(ErrorKind::WrongEndContainer(KIND)));
         assert_name("abc)def", Err(ErrorKind::WrongEndContainer(KIND)));
+    }
+
+    #[test]
+    fn parse_bitfield() {
+        #[track_caller]
+        fn assert_bitfield(enc: &str, expected: Result<EncodingBox>) {
+            let mut parser = Parser::new(enc);
+            assert_eq!(
+                parser
+                    .parse_encoding()
+                    .and_then(|enc| parser.expect_empty().map(|()| enc)),
+                expected
+            );
+        }
+
+        assert_bitfield("b8", Ok(EncodingBox::BitField(8, None)));
+        assert_bitfield("b8C", Err(ErrorKind::NotAllConsumed));
+        assert_bitfield(
+            "b8C4",
+            Ok(EncodingBox::BitField(
+                4,
+                Some(Box::new((8, EncodingBox::UChar))),
+            )),
+        );
+
+        assert_bitfield(
+            "{s=b8C}",
+            Ok(EncodingBox::Struct(
+                "s".into(),
+                Some(vec![EncodingBox::BitField(8, None), EncodingBox::UChar]),
+            )),
+        );
+
+        assert_bitfield("b2000", Err(ErrorKind::IntegerTooLarge));
+        assert_bitfield(
+            "b2000c100",
+            Ok(EncodingBox::BitField(
+                100,
+                Some(Box::new((2000, EncodingBox::Char))),
+            )),
+        );
+        assert_bitfield("b2000C257", Err(ErrorKind::IntegerTooLarge));
     }
 }

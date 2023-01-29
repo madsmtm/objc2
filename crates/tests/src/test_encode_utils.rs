@@ -100,6 +100,71 @@ const WITH_ATOMIC_INNER: Encoding = Encoding::Struct(
     ],
 );
 
+#[cfg(feature = "apple")]
+const BITFIELD: Encoding = Encoding::Struct(
+    "bitfield",
+    &[
+        Encoding::BitField(5, None),
+        Encoding::BitField(0, None),
+        Encoding::BitField(2, None),
+    ],
+);
+#[cfg(feature = "apple")]
+const BITFIELD_ALL_TYPES: Encoding = Encoding::Struct(
+    "bitfield_all_types",
+    &[
+        BITFIELD,
+        Encoding::BitField(1, None),
+        Encoding::BitField(1, None),
+        Encoding::BitField(1, None),
+        Encoding::BitField(1, None),
+        Encoding::BitField(1, None),
+        Encoding::BitField(1, None),
+        Encoding::BitField(1, None),
+        Encoding::BitField(1, None),
+        Encoding::BitField(1, None),
+        Encoding::BitField(1, None),
+        Encoding::BitField(1, None),
+        Encoding::BitField(1, None),
+        Encoding::BitField(1, None),
+        Encoding::BitField(1, None),
+        Encoding::BitField(1, None),
+        Encoding::BitField(1, None),
+    ],
+);
+#[cfg(feature = "gnustep-1-7")]
+const BITFIELD: Encoding = Encoding::Struct(
+    "bitfield",
+    &[
+        Encoding::BitField(5, Some(&(0, i8::ENCODING))),
+        Encoding::BitField(0, Some(&(16, i16::ENCODING))),
+        Encoding::BitField(2, Some(&(16, i8::ENCODING))),
+    ],
+);
+#[cfg(feature = "gnustep-1-7")]
+const BITFIELD_ALL_TYPES: Encoding = Encoding::Struct(
+    "bitfield_all_types",
+    &[
+        BITFIELD,
+        Encoding::BitField(1, Some(&(24, Encoding::Char))),
+        Encoding::BitField(1, Some(&(25, Encoding::Short))),
+        Encoding::BitField(1, Some(&(26, Encoding::Int))),
+        Encoding::BitField(1, Some(&(27, Encoding::C_LONG))),
+        Encoding::BitField(1, Some(&(28, Encoding::LongLong))),
+        Encoding::BitField(1, Some(&(29, Encoding::Char))),
+        Encoding::BitField(1, Some(&(30, Encoding::Short))),
+        Encoding::BitField(1, Some(&(31, Encoding::Int))),
+        Encoding::BitField(1, Some(&(32, Encoding::C_LONG))),
+        Encoding::BitField(1, Some(&(33, Encoding::LongLong))),
+        Encoding::BitField(1, Some(&(34, Encoding::UChar))),
+        Encoding::BitField(1, Some(&(35, Encoding::UShort))),
+        Encoding::BitField(1, Some(&(36, Encoding::UInt))),
+        Encoding::BitField(1, Some(&(37, Encoding::C_ULONG))),
+        Encoding::BitField(1, Some(&(38, Encoding::ULongLong))),
+        Encoding::BitField(1, Some(&(39, Encoding::Bool))),
+    ],
+);
+
 assert_types! {
     // C types
 
@@ -174,14 +239,8 @@ assert_types! {
 
     // Bitfields
 
-    #[cfg(feature = "apple")]
-    BITFIELD => enc Encoding::Struct(
-        "bitfield",
-        &[
-            Encoding::BitField(1, &Encoding::UInt),
-            Encoding::BitField(30, &Encoding::UInt),
-        ],
-    ),
+    BITFIELD => enc BITFIELD,
+    BITFIELD_ALL_TYPES => enc BITFIELD_ALL_TYPES,
 
     // Unions
 
@@ -242,15 +301,4 @@ assert_types! {
 
     // SIGNED_INT_128 => i128,
     // UNSIGNED_INT_128 => u128,
-}
-
-// Bitfields
-
-#[cfg(feature = "gnustep-1-7")]
-mod bitfields {
-    use super::*;
-
-    assert_inner!(str ENCODING_BITFIELD => "{bitfield=b0I1b1I30}");
-    assert_inner!(str ENCODING_BITFIELD_POINTER => "^{bitfield=b0I1b1I30}");
-    assert_inner!(str ENCODING_BITFIELD_ATOMIC => "A{bitfield}");
 }

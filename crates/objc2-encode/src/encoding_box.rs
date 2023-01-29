@@ -77,13 +77,13 @@ pub enum EncodingBox {
     /// Same as [`Encoding::Unknown`].
     Unknown,
     /// Same as [`Encoding::BitField`].
-    BitField(u8, Option<Box<Self>>),
+    BitField(u8, Option<Box<(u64, Self)>>),
     /// Same as [`Encoding::Pointer`].
     Pointer(Box<Self>),
     /// Same as [`Encoding::Atomic`].
     Atomic(Box<Self>),
     /// Same as [`Encoding::Array`].
-    Array(usize, Box<Self>),
+    Array(u64, Box<Self>),
     /// Same as [`Encoding::Struct`].
     Struct(String, Option<Vec<Self>>),
     /// Same as [`Encoding::Union`].
@@ -236,13 +236,17 @@ mod tests {
 
     #[test]
     fn parse_part_of_string() {
-        let mut s = "{a}c";
+        let mut s = "{a}cb0i16";
 
         let expected = EncodingBox::Struct("a".into(), None);
         let actual = EncodingBox::from_start_of_str(&mut s).unwrap();
         assert_eq!(expected, actual);
 
         let expected = EncodingBox::Char;
+        let actual = EncodingBox::from_start_of_str(&mut s).unwrap();
+        assert_eq!(expected, actual);
+
+        let expected = EncodingBox::BitField(16, Some(Box::new((0, EncodingBox::Int))));
         let actual = EncodingBox::from_start_of_str(&mut s).unwrap();
         assert_eq!(expected, actual);
 
