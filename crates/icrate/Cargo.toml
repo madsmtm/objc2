@@ -48,37 +48,31 @@ targets = [
 [[example]]
 name = "basic_usage"
 required-features = [
-    "Foundation",
-    "Foundation_NSArray",
-    "Foundation_NSDictionary",
-    "Foundation_NSEnumerator",
+    "unstable-example-basic_usage"
 ]
 
 [[example]]
 name = "delegate"
 required-features = [
-    "apple",
-    "Foundation",
-    "Foundation_NSString",
-    "AppKit_NSResponder",
+    "unstable-example-delegate"
 ]
 
 [[example]]
 name = "speech_synthesis"
 required-features = [
-    "apple",
-    "Foundation",
-    "Foundation_NSString",
+    "unstable-example-speech_synthesis"
 ]
 
 [[example]]
 name = "nspasteboard"
 required-features = [
-    "apple",
-    "Foundation",
-    "Foundation_NSArray",
-    "Foundation_NSDictionary",
-    "Foundation_NSString",
+    "unstable-example-nspasteboard"
+]
+
+[[example]]
+name = "browser"
+required-features = [
+    "unstable-example-browser"
 ]
 
 [features]
@@ -116,6 +110,54 @@ unstable-private = []
 # Please test it, and report any issues you may find:
 # https://github.com/madsmtm/objc2/issues/new
 unstable-static-nsstring = []
+
+# Examples
+
+unstable-example-basic_usage = [
+    "Foundation",
+    "Foundation_NSArray",
+    "Foundation_NSDictionary",
+    "Foundation_NSEnumerator",
+]
+unstable-example-delegate = [
+    "apple",
+    "Foundation",
+    "Foundation_NSString",
+    "AppKit",
+    "AppKit_NSResponder",
+]
+unstable-example-speech_synthesis = [
+    "apple",
+    "Foundation",
+    "Foundation_NSString",
+]
+unstable-example-nspasteboard = [
+    "apple",
+    "Foundation",
+    "Foundation_NSArray",
+    "Foundation_NSDictionary",
+    "Foundation_NSString",
+]
+unstable-example-browser = [
+    "apple",
+    "AppKit",
+    "AppKit_NSButton",
+    "AppKit_NSColor",
+    "AppKit_NSMenu",
+    "AppKit_NSMenuItem",
+    "AppKit_NSStackView",
+    "AppKit_NSTextAttachmentCell",
+    "AppKit_NSTextField",
+    "AppKit_NSTextView",
+    "AppKit_NSWindow",
+    "Foundation",
+    "Foundation_NSString",
+    "Foundation_NSURL",
+    "Foundation_NSURLRequest",
+    "WebKit",
+    "WebKit_WKNavigation",
+    "WebKit_WKWebView",
+]
 
 # Frameworks
 
@@ -213,14 +255,14 @@ WebKit = [
 ]
 
 # Helps with CI
-unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
+unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13", "unstable-example-basic_usage"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameController_all", "GameKit_all", "IdentityLookup_all", "LocalAuthentication_all", "LinkPresentation_all", "MapKit_all", "Metal_all", "MetalKit_all", "SoundAnalysis_all", "Speech_all", "StoreKit_all", "UniformTypeIdentifiers_all", "UserNotifications_all", "WebKit_all"]
-unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "StoreKit_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameController_all", "GameKit_all", "IdentityLookup_all", "LocalAuthentication_all", "LinkPresentation_all", "MapKit_all", "Metal_all", "MetalKit_all", "SoundAnalysis_all", "Speech_all", "StoreKit_all", "UniformTypeIdentifiers_all", "UserNotifications_all", "WebKit_all", "unstable-example-speech_synthesis"]
+unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "StoreKit_all", "unstable-example-delegate", "unstable-example-nspasteboard", "unstable-example-speech_synthesis"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameController_all", "GameKit_all", "LocalAuthentication_all", "LocalAuthenticationEmbeddedUI_all", "MapKit_all", "MetalKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "DeviceCheck_all", "FileProvider_all", "FileProviderUI_all", "LinkPresentation_all", "Metal_all", "SoundAnalysis_all", "Speech_all", "UniformTypeIdentifiers_all", "UserNotifications_all"]
-unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all", "LocalAuthenticationEmbeddedUI_all", "MailKit_all"]
+unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all", "LocalAuthenticationEmbeddedUI_all", "MailKit_all", "WebKit_all", "unstable-example-browser"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "CallKit_all", "ExtensionKit_all", "IdentityLookup_all", "MetalFX_all"]
 
 # Temporary fixes until we can autogenerate these
