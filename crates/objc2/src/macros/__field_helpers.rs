@@ -204,9 +204,8 @@ macro_rules! __parse_fields {
 
                 // SAFETY:
                 // - The ivars are in a type used as an Objective-C object.
-                // - The ivar is added to the class below.
-                // - TODO: Rust prevents having two fields with the same name.
-                // - Caller upholds that the ivars are properly initialized
+                // - The ivar is added to the class in `__objc2_declare_ivars`.
+                // - Caller upholds that the ivars are properly initialized.
                 unsafe impl $crate::declare::IvarType for $field_name {
                     type Type = IvarDrop<$ty>;
                     const NAME: &'static $crate::__macro_helpers::str = $ivar_name;

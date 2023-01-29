@@ -33,7 +33,11 @@
 /// This is special syntax that will be used to generate helper types that
 /// implement [`declare::IvarType`], which is then used inside the new struct.
 ///
-/// Note that the class name should be unique across the entire application!
+/// Instance variable names must be unique, and must not conflict with any
+/// superclass' instance variables - this means is is good practice to name
+/// them with a prefix of your crate name, or similar.
+///
+/// Additionally, the class name must be unique across the entire application.
 /// You can declare the class with the desired unique name like
 /// `"MyCrateCustomObject"` by specifying it in `ClassType::NAME`, and then
 /// give the exposed type a different name like `CustomObject`.
@@ -109,8 +113,8 @@
 ///
 /// The implemented `ClassType::class` method may panic in a few cases, such
 /// as if:
-/// - A class with the name specified with `const NAME` already exists.
-/// - One of the
+/// - A class with the specified name already exists.
+/// - One of the class' instance variables already exist on a superclass.
 /// - Debug assertions are enabled, and an overriden method's signature is not
 ///   equal to the one on the superclass.
 /// - The `verify` feature and debug assertions are enabled, and the required

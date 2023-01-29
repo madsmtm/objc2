@@ -1,6 +1,7 @@
 #![deny(deprecated, unreachable_code)]
 use core::ptr;
 
+use crate::declare::IvarEncode;
 use crate::rc::{Id, Owned, Shared};
 use crate::runtime::NSObject;
 use crate::{declare_class, extern_methods, sel, ClassType};
@@ -352,4 +353,86 @@ declare_class!(
 #[test]
 fn test_unreachable() {
     let _ = DeclareClassUnreachable::class();
+}
+
+#[test]
+#[should_panic = "Failed to add ivar _ivar"]
+fn test_duplicate_ivar() {
+    declare_class!(
+        struct DeclareClassDuplicateIvar {
+            ivar1: IvarEncode<i32, "_ivar">,
+            ivar2: IvarEncode<i32, "_ivar">,
+        }
+
+        mod ivars;
+
+        unsafe impl ClassType for DeclareClassDuplicateIvar {
+            type Super = NSObject;
+        }
+    );
+
+    let _ = DeclareClassDuplicateIvar::class();
+}
+
+#[test]
+#[should_panic = "instance variable \"ivar\" already exists on a superclass"]
+fn test_subclass_duplicate_ivar() {
+    declare_class!(
+        struct Cls {
+            ivar_superclass: IvarEncode<i32, "ivar">,
+        }
+
+        mod ivars;
+
+        unsafe impl ClassType for Cls {
+            type Super = NSObject;
+            const NAME: &'static str = "DeclareClassDuplicateIvarSuperclass";
+        }
+    );
+
+    declare_class!(
+        struct SubCls {
+            ivar_subclass: IvarEncode<i32, "ivar">,
+        }
+
+        mod ivars_subclass;
+
+        unsafe impl ClassType for SubCls {
+            type Super = Cls;
+            const NAME: &'static str = "DeclareClassDuplicateIvarSubclass";
+        }
+    );
+
+    extern_methods!(
+        unsafe impl SubCls {
+            #[method_id(new)]
+            fn new() -> Id<Self, Owned>;
+        }
+    );
+
+    let _ = SubCls::class();
+
+    // The rest is just to show what would go wrong if it didn't panic
+
+    assert_eq!(Cls::class().instance_size(), 16);
+    assert_eq!(SubCls::class().instance_size(), 16);
+
+    let mut obj = SubCls::new();
+
+    // Zero-initialized
+    assert_eq!(*obj.ivar_superclass, 0);
+    assert_eq!(*obj.ivar_subclass, 0);
+
+    *obj.ivar_subclass = 2;
+
+    assert_eq!(*obj.ivar_superclass, 2);
+    assert_eq!(*obj.ivar_subclass, 2);
+
+    *obj.ivar_superclass = 3;
+
+    assert_eq!(*obj.ivar_superclass, 3);
+    assert_eq!(*obj.ivar_subclass, 3);
+
+    let ivar_dynamically = unsafe { obj.ivar::<i32>("ivar") };
+    assert_eq!(*ivar_dynamically, 3);
 }

@@ -514,6 +514,18 @@ impl ClassBuilder {
     }
 
     unsafe fn add_ivar_inner<T>(&mut self, name: &str, encoding: &Encoding) {
+        // `class_addIvar` sadly doesn't check this for us.
+        //
+        // We must _always_ do the check, since there is no way for the user
+        // to know if the superclass has a declared instance variable on it
+        // (e.g. we can't just make `add_ivar` unsafe).
+        if let Some(_ivar) = self
+            .superclass()
+            .and_then(|superclass| superclass.instance_variable(name))
+        {
+            panic!("instance variable {name:?} already exists on a superclass");
+        }
+
         let c_name = CString::new(name).unwrap();
         let encoding = CString::new(encoding.to_string()).unwrap();
         let size = mem::size_of::<T>();

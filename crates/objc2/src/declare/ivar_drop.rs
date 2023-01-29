@@ -331,15 +331,21 @@ mod tests {
     fn test_subclass() {
         let mut expected = __ThreadTestData::current();
 
-        let obj: Id<IvarTesterSubclass, Owned> =
+        let mut obj: Id<IvarTesterSubclass, Owned> =
             unsafe { msg_send_id![IvarTesterSubclass::class(), new] };
         expected.alloc += 5;
         expected.init += 5;
         expected.assert_current();
 
+        *obj.ivar5 = (*obj.ivar1).clone();
+        expected.retain += 1;
+        expected.release += 1;
+        expected.dealloc += 1;
+        expected.assert_current();
+
         drop(obj);
         expected.release += 5;
-        expected.dealloc += 5;
+        expected.dealloc += 4;
         expected.assert_current();
     }
 
