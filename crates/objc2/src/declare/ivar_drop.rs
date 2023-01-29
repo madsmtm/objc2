@@ -1,19 +1,22 @@
 use alloc::boxed::Box;
 use core::ffi::c_void;
-use core::marker::PhantomData;
-use core::ptr::NonNull;
 
-use crate::encode::{EncodeConvert, Encoding};
+use crate::encode::{Encode, Encoding};
 use crate::rc::{Id, Ownership};
 use crate::Message;
 
 use super::InnerIvarType;
 
-/// A helper type to allow putting certain types that may drop into ivars.
-///
-/// This is used to work around current limitations in the type system.
-/// Consider this type "temporary" in the sense that one day it may just
-/// become `type IvarDrop<T> = T`.
+mod private {
+    /// # Safety
+    ///
+    /// The inner type must be safe to zero-initialize.
+    pub unsafe trait IvarDropHelper {
+        type Inner;
+    }
+}
+
+/// Ivar types that may drop.
 ///
 /// This currently works with the following types:
 /// - `Box<T>`
@@ -21,53 +24,57 @@ use super::InnerIvarType;
 /// - `Id<T, O>`
 /// - `Option<Id<T, O>>`
 ///
-/// Further may be added when the standard library guarantees their layout.
-///
-/// See `examples/delegate.rs` for usage.
-pub struct IvarDrop<T> {
-    /// For proper variance and auto traits.
-    p: PhantomData<T>,
+/// Further may be added when the standard library guarantee their layout.
+#[repr(transparent)]
+pub struct IvarDrop<T: private::IvarDropHelper>(<T as private::IvarDropHelper>::Inner);
+
+impl<T: private::IvarDropHelper> super::ivar::private::Sealed for IvarDrop<T> {}
+
+// Note that we use `*const c_void` and not `*const T` to allow _any_ type,
+// not just types that can be encoded by Objective-C
+unsafe impl<T: Sized> Encode for IvarDrop<Box<T>> {
+    const ENCODING: Encoding = <*const c_void>::ENCODING;
 }
 
-impl<T: Sized> super::ivar::private::Sealed for IvarDrop<Box<T>> {}
+// SAFETY: `Option<Box<T>>` is safe to zero-initialize
+unsafe impl<T: Sized> private::IvarDropHelper for Box<T> {
+    type Inner = Option<Box<T>>;
+}
+
 // SAFETY: The memory layout of `Box<T: Sized>` is guaranteed to be a pointer:
 // <https://doc.rust-lang.org/1.62.1/std/boxed/index.html#memory-layout>
 //
 // The user ensures that the Box has been initialized in an `init` method
 // before being used.
 unsafe impl<T: Sized> InnerIvarType for IvarDrop<Box<T>> {
-    // Note that we use `*const c_void` and not `*const T` to allow _any_
-    // type, not just types that can be encoded by Objective-C
-    const __ENCODING: Encoding = <*const c_void as EncodeConvert>::__ENCODING;
-
-    type __Inner = Option<Box<T>>;
     type Output = Box<T>;
 
-    const __MAY_DROP: bool = true;
-
     #[inline]
-    unsafe fn __to_ref(inner: &Self::__Inner) -> &Self::Output {
-        match inner {
+    unsafe fn __deref(&self) -> &Self::Output {
+        match &self.0 {
             Some(inner) => inner,
             None => unsafe { box_unreachable() },
         }
     }
 
     #[inline]
-    unsafe fn __to_mut(inner: &mut Self::__Inner) -> &mut Self::Output {
-        match inner {
+    unsafe fn __deref_mut(&mut self) -> &mut Self::Output {
+        match &mut self.0 {
             Some(inner) => inner,
             None => unsafe { box_unreachable() },
         }
-    }
-
-    #[inline]
-    fn __to_ptr(inner: NonNull<Self::__Inner>) -> NonNull<Self::Output> {
-        inner.cast()
     }
 }
 
-impl<T: Sized> super::ivar::private::Sealed for IvarDrop<Option<Box<T>>> {}
+unsafe impl<T: Sized> Encode for IvarDrop<Option<Box<T>>> {
+    const ENCODING: Encoding = <*const c_void>::ENCODING;
+}
+
+// SAFETY: `Option<Box<T>>` is safe to zero-initialize
+unsafe impl<T: Sized> private::IvarDropHelper for Option<Box<T>> {
+    type Inner = Option<Box<T>>;
+}
+
 // SAFETY: `Option<Box<T>>` guarantees the null-pointer optimization, so for
 // `T: Sized` the layout is just a pointer:
 // <https://doc.rust-lang.org/1.62.1/std/option/index.html#representation>
@@ -75,30 +82,28 @@ impl<T: Sized> super::ivar::private::Sealed for IvarDrop<Option<Box<T>>> {}
 // This is valid to initialize as all-zeroes, so the user doesn't have to do
 // anything to initialize it.
 unsafe impl<T: Sized> InnerIvarType for IvarDrop<Option<Box<T>>> {
-    const __ENCODING: Encoding = <*const c_void as EncodeConvert>::__ENCODING;
-
-    type __Inner = Option<Box<T>>;
     type Output = Option<Box<T>>;
 
-    const __MAY_DROP: bool = true;
-
     #[inline]
-    unsafe fn __to_ref(this: &Self::__Inner) -> &Self::Output {
-        this
+    unsafe fn __deref(&self) -> &Self::Output {
+        &self.0
     }
 
     #[inline]
-    unsafe fn __to_mut(this: &mut Self::__Inner) -> &mut Self::Output {
-        this
-    }
-
-    #[inline]
-    fn __to_ptr(inner: NonNull<Self::__Inner>) -> NonNull<Self::Output> {
-        inner.cast()
+    unsafe fn __deref_mut(&mut self) -> &mut Self::Output {
+        &mut self.0
     }
 }
 
-impl<T: Message, O: Ownership> super::ivar::private::Sealed for IvarDrop<Id<T, O>> {}
+unsafe impl<T: Message, O: Ownership> Encode for IvarDrop<Id<T, O>> {
+    const ENCODING: Encoding = <*const T>::ENCODING;
+}
+
+// SAFETY: `Option<Id<T, O>>` is safe to zero-initialize
+unsafe impl<T: Message, O: Ownership> private::IvarDropHelper for Id<T, O> {
+    type Inner = Option<Id<T, O>>;
+}
+
 // SAFETY: `Id` is `NonNull<T>`, and hence safe to store as a pointer.
 //
 // The user ensures that the Id has been initialized in an `init` method
@@ -108,61 +113,49 @@ impl<T: Message, O: Ownership> super::ivar::private::Sealed for IvarDrop<Id<T, O
 // directly today, but since we can't do so for `Box` (because that is
 // `#[fundamental]`), I think it makes sense to handle them similarly.
 unsafe impl<T: Message, O: Ownership> InnerIvarType for IvarDrop<Id<T, O>> {
-    const __ENCODING: Encoding = <*const T as EncodeConvert>::__ENCODING;
-
-    type __Inner = Option<Id<T, O>>;
     type Output = Id<T, O>;
 
-    const __MAY_DROP: bool = true;
-
     #[inline]
-    unsafe fn __to_ref(inner: &Self::__Inner) -> &Self::Output {
-        match inner {
+    unsafe fn __deref(&self) -> &Self::Output {
+        match &self.0 {
             Some(inner) => inner,
             None => unsafe { id_unreachable() },
         }
     }
 
     #[inline]
-    unsafe fn __to_mut(inner: &mut Self::__Inner) -> &mut Self::Output {
-        match inner {
+    unsafe fn __deref_mut(&mut self) -> &mut Self::Output {
+        match &mut self.0 {
             Some(inner) => inner,
             None => unsafe { id_unreachable() },
         }
-    }
-
-    #[inline]
-    fn __to_ptr(inner: NonNull<Self::__Inner>) -> NonNull<Self::Output> {
-        inner.cast()
     }
 }
 
-impl<T: Message, O: Ownership> super::ivar::private::Sealed for IvarDrop<Option<Id<T, O>>> {}
+unsafe impl<T: Message, O: Ownership> Encode for IvarDrop<Option<Id<T, O>>> {
+    const ENCODING: Encoding = <*const T>::ENCODING;
+}
+
+// SAFETY: `Option<Id<T, O>>` is safe to zero-initialize
+unsafe impl<T: Message, O: Ownership> private::IvarDropHelper for Option<Id<T, O>> {
+    type Inner = Option<Id<T, O>>;
+}
+
 // SAFETY: `Id<T, O>` guarantees the null-pointer optimization.
 //
 // This is valid to initialize as all-zeroes, so the user doesn't have to do
 // anything to initialize it.
 unsafe impl<T: Message, O: Ownership> InnerIvarType for IvarDrop<Option<Id<T, O>>> {
-    const __ENCODING: Encoding = <*const T as EncodeConvert>::__ENCODING;
-
-    type __Inner = Option<Id<T, O>>;
     type Output = Option<Id<T, O>>;
 
-    const __MAY_DROP: bool = true;
-
     #[inline]
-    unsafe fn __to_ref(this: &Self::__Inner) -> &Self::Output {
-        this
+    unsafe fn __deref(&self) -> &Self::Output {
+        &self.0
     }
 
     #[inline]
-    unsafe fn __to_mut(this: &mut Self::__Inner) -> &mut Self::Output {
-        this
-    }
-
-    #[inline]
-    fn __to_ptr(inner: NonNull<Self::__Inner>) -> NonNull<Self::Output> {
-        inner.cast()
+    unsafe fn __deref_mut(&mut self) -> &mut Self::Output {
+        &mut self.0
     }
 }
 
@@ -180,6 +173,7 @@ unsafe impl<T: Message, O: Ownership> InnerIvarType for IvarDrop<Option<Id<T, O>
 // by default.
 
 #[inline]
+#[track_caller]
 unsafe fn id_unreachable() -> ! {
     #[cfg(debug_assertions)]
     {
@@ -193,6 +187,7 @@ unsafe fn id_unreachable() -> ! {
 }
 
 #[inline]
+#[track_caller]
 unsafe fn box_unreachable() -> ! {
     #[cfg(debug_assertions)]
     {
@@ -241,14 +236,17 @@ mod tests {
     declare_class!(
         #[derive(Debug, PartialEq, Eq)]
         struct IvarTester {
-            ivar1: IvarDrop<Id<__RcTestObject, Shared>>,
-            ivar2: IvarDrop<Option<Id<__RcTestObject, Owned>>>,
-            ivar3: IvarDrop<Box<Id<__RcTestObject, Owned>>>,
-            ivar4: IvarDrop<Option<Box<Id<__RcTestObject, Owned>>>>,
+            ivar1: IvarDrop<Id<__RcTestObject, Shared>, "_ivar1">,
+            ivar2: IvarDrop<Option<Id<__RcTestObject, Owned>>, "_ivar2">,
+            ivar3: IvarDrop<Box<Id<__RcTestObject, Owned>>, "_ivar3">,
+            ivar4: IvarDrop<Option<Box<Id<__RcTestObject, Owned>>>, "_ivar4">,
         }
+
+        mod ivartester;
 
         unsafe impl ClassType for IvarTester {
             type Super = NSObject;
+            const NAME: &'static str = "IvarTester";
         }
 
         unsafe impl IvarTester {
@@ -277,11 +275,14 @@ mod tests {
     declare_class!(
         #[derive(Debug, PartialEq, Eq)]
         struct IvarTesterSubclass {
-            ivar5: IvarDrop<Id<__RcTestObject, Shared>>,
+            ivar5: IvarDrop<Id<__RcTestObject, Shared>, "_ivar5">,
         }
+
+        mod ivartestersubclass;
 
         unsafe impl ClassType for IvarTesterSubclass {
             type Super = IvarTester;
+            const NAME: &'static str = "IvarTesterSubclass";
         }
 
         unsafe impl IvarTesterSubclass {
@@ -336,15 +337,21 @@ mod tests {
     fn test_subclass() {
         let mut expected = __ThreadTestData::current();
 
-        let obj: Id<IvarTesterSubclass, Owned> =
+        let mut obj: Id<IvarTesterSubclass, Owned> =
             unsafe { msg_send_id![IvarTesterSubclass::class(), new] };
         expected.alloc += 5;
         expected.init += 5;
         expected.assert_current();
 
+        *obj.ivar5 = (*obj.ivar1).clone();
+        expected.retain += 1;
+        expected.release += 1;
+        expected.dealloc += 1;
+        expected.assert_current();
+
         drop(obj);
         expected.release += 5;
-        expected.dealloc += 5;
+        expected.dealloc += 4;
         expected.assert_current();
     }
 

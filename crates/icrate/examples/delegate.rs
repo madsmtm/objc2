@@ -1,6 +1,6 @@
 #![cfg_attr(not(target_os = "macos"), allow(unused))]
 use icrate::ns_string;
-use icrate::objc2::declare::{Ivar, IvarDrop};
+use icrate::objc2::declare::{Ivar, IvarBool, IvarDrop, IvarEncode};
 use icrate::objc2::rc::{Id, Shared};
 use icrate::objc2::runtime::Object;
 use icrate::objc2::{declare_class, msg_send, msg_send_id, ClassType};
@@ -14,13 +14,15 @@ extern "C" {}
 declare_class!(
     #[derive(Debug)]
     struct CustomAppDelegate {
-        pub ivar: u8,
-        another_ivar: bool,
-        box_ivar: IvarDrop<Box<i32>>,
-        maybe_box_ivar: IvarDrop<Option<Box<i32>>>,
-        id_ivar: IvarDrop<Id<NSString, Shared>>,
-        maybe_id_ivar: IvarDrop<Option<Id<NSString, Shared>>>,
+        pub ivar: IvarEncode<u8, "_ivar">,
+        another_ivar: IvarBool<"_another_ivar">,
+        box_ivar: IvarDrop<Box<i32>, "_box_ivar">,
+        maybe_box_ivar: IvarDrop<Option<Box<i32>>, "_maybe_box_ivar">,
+        id_ivar: IvarDrop<Id<NSString, Shared>, "_id_ivar">,
+        maybe_id_ivar: IvarDrop<Option<Id<NSString, Shared>>, "_maybe_id_ivar">,
     }
+
+    mod ivars;
 
     unsafe impl ClassType for CustomAppDelegate {
         #[inherits(NSObject)]

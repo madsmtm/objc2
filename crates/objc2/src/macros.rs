@@ -1,4 +1,5 @@
 mod __attribute_helpers;
+mod __field_helpers;
 mod __method_msg_send;
 mod __msg_send_parse;
 mod __rewrite_self_arg;
@@ -868,6 +869,7 @@ macro_rules! __class_inner {
 /// #
 /// #     unsafe impl ClassType for MyObject {
 /// #         type Super = NSObject;
+/// #         const NAME: &'static str = "MyObject";
 /// #     }
 /// # );
 ///

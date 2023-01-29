@@ -4,27 +4,33 @@ use core::hash;
 use crate::rc::{DefaultId, Id, Owned, Shared};
 use crate::runtime::{Class, Object, Protocol};
 use crate::{
-    msg_send, ClassType, ProtocolObject, ProtocolType, __inner_extern_class, extern_methods,
-    msg_send_id, ImplementedBy, Message,
+    extern_methods, msg_send, msg_send_id, ClassType, ImplementedBy, Message, ProtocolObject,
+    ProtocolType,
 };
 
-__inner_extern_class! {
-    @__inner
+crate::__emit_struct! {
+    (
+        /// The root class of most Objective-C class hierarchies.
+        ///
+        /// This represents the [`NSObject` class][cls]. The name "NSObject" also
+        /// refers to a protocol, see [`NSObjectProtocol`] for that.
+        ///
+        /// Since this class is only available with the `Foundation` framework,
+        /// `objc2` links to it for you.
+        ///
+        /// This is exported under `icrate::Foundation::NSObject`, you probably
+        /// want to use that path instead.
+        ///
+        /// [cls]: https://developer.apple.com/documentation/objectivec/nsobject?language=objc
+    )
+    (pub)
+    (NSObject)
+    (
+        __inner: Object,
+    )
+}
 
-    /// The root class of most Objective-C class hierarchies.
-    ///
-    /// This represents the [`NSObject` class][cls]. The name "NSObject" also
-    /// refers to a protocol, see [`NSObjectProtocol`] for that.
-    ///
-    /// Since this class is only available with the `Foundation` framework,
-    /// `objc2` links to it for you.
-    ///
-    /// This is exported under `icrate::Foundation::NSObject`, you probably
-    /// want to use that path instead.
-    ///
-    /// [cls]: https://developer.apple.com/documentation/objectivec/nsobject?language=objc
-    pub struct (NSObject) {}
-
+crate::__extern_class_impl_traits! {
     unsafe impl () for NSObject {
         INHERITS = [Object];
     }

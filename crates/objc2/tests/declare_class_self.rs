@@ -25,6 +25,7 @@ declare_class!(
 
     unsafe impl ClassType for MyTestObject {
         type Super = NSObject;
+        const NAME: &'static str = "MyTestObject";
     }
 
     unsafe impl MyTestObject {

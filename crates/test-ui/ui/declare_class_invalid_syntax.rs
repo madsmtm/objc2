@@ -1,12 +1,16 @@
-use objc2::{declare_class, ClassType};
-use objc2::runtime::NSObject;
+use std::marker::PhantomData;
+
+use objc2::declare::IvarEncode;
 use objc2::rc::{Id, Shared};
+use objc2::runtime::NSObject;
+use objc2::{declare_class, ClassType};
 
 declare_class!(
     struct CustomObject;
 
     unsafe impl ClassType for CustomObject {
         type Super = NSObject;
+        const NAME: &'static str = "CustomObject";
     }
 
     unsafe impl CustomObject {
@@ -70,6 +74,65 @@ declare_class!(
         fn test_method_id_bad_selector5() -> Id<Self, Shared> {
             unimplemented!()
         }
+    }
+
+    unsafe impl CustomObject {
+        #[method(dealloc)]
+        fn deallocMethod(&mut self) {}
+    }
+);
+
+declare_class!(
+    struct MissingName;
+
+    unsafe impl ClassType for MissingName {
+        type Super = NSObject;
+    }
+);
+
+declare_class!(
+    struct InvalidField {
+        field: i32,
+    }
+
+    unsafe impl ClassType for InvalidField {
+        type Super = NSObject;
+        const NAME: &'static str = "InvalidField";
+    }
+);
+
+declare_class!(
+    struct UnnecessaryIvarModule;
+
+    mod ivars;
+
+    unsafe impl ClassType for UnnecessaryIvarModule {
+        type Super = NSObject;
+        const NAME: &'static str = "UnnecessaryIvarModule";
+    }
+);
+
+declare_class!(
+    struct UnnecessaryIvarModuleWithFields {
+        p: PhantomData<i32>,
+    }
+
+    mod ivars;
+
+    unsafe impl ClassType for UnnecessaryIvarModuleWithFields {
+        type Super = NSObject;
+        const NAME: &'static str = "UnnecessaryIvarModuleWithFields";
+    }
+);
+
+declare_class!(
+    struct MissingIvarModule {
+        field: IvarEncode<i32, "_field">,
+    }
+
+    unsafe impl ClassType for MissingIvarModule {
+        type Super = NSObject;
+        const NAME: &'static str = "MissingIvarModule";
     }
 );
 

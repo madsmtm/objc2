@@ -111,7 +111,9 @@
 #[cfg(test)]
 mod declare_class_tests;
 mod ivar;
+mod ivar_bool;
 mod ivar_drop;
+mod ivar_encode;
 mod ivar_forwarding_impls;
 
 use alloc::format;
@@ -130,7 +132,9 @@ use crate::sel;
 use crate::Message;
 
 pub use ivar::{InnerIvarType, Ivar, IvarType};
+pub use ivar_bool::IvarBool;
 pub use ivar_drop::IvarDrop;
+pub use ivar_encode::IvarEncode;
 
 pub(crate) mod private {
     pub trait Sealed {}
@@ -510,6 +514,18 @@ impl ClassBuilder {
     }
 
     unsafe fn add_ivar_inner<T>(&mut self, name: &str, encoding: &Encoding) {
+        // `class_addIvar` sadly doesn't check this for us.
+        //
+        // We must _always_ do the check, since there is no way for the user
+        // to know if the superclass has a declared instance variable on it
+        // (e.g. we can't just make `add_ivar` unsafe).
+        if let Some(_ivar) = self
+            .superclass()
+            .and_then(|superclass| superclass.instance_variable(name))
+        {
+            panic!("instance variable {name:?} already exists on a superclass");
+        }
+
         let c_name = CString::new(name).unwrap();
         let encoding = CString::new(encoding.to_string()).unwrap();
         let size = mem::size_of::<T>();
@@ -534,12 +550,7 @@ impl ClassBuilder {
     /// Same as [`ClassBuilder::add_ivar`].
     pub fn add_static_ivar<T: IvarType>(&mut self) {
         // SAFETY: The encoding is correct
-        unsafe {
-            self.add_ivar_inner::<<T::Type as InnerIvarType>::__Inner>(
-                T::NAME,
-                &T::Type::__ENCODING,
-            )
-        }
+        unsafe { self.add_ivar_inner::<T::Type>(T::NAME, &T::Type::ENCODING) }
     }
 
     /// Adds the given protocol to self.

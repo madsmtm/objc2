@@ -260,6 +260,7 @@ where
 #[allow(clippy::missing_safety_doc)]
 mod tests {
     use alloc::format;
+    use core::mem::ManuallyDrop;
 
     use super::*;
     use crate::rc::Owned;
@@ -416,7 +417,7 @@ mod tests {
 
         assert_eq!(
             format!("{obj:?}"),
-            format!("DummyClass {{ __inner: {foobar:?} }}")
+            format!("DummyClass {{ __inner: {:?} }}", ManuallyDrop::new(foobar)),
         );
         assert_eq!(obj == obj2, foobar == foobar2);
 

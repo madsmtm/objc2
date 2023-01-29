@@ -7,6 +7,7 @@ declare_class!(
 
     unsafe impl objc2::ClassType for CustomObject {
         type Super = NSObject;
+        const NAME: &'static str = "CustomObject";
     }
 );
 
