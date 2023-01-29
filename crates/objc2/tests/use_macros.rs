@@ -6,6 +6,7 @@ declare_class!(
 
     unsafe impl ClassType for MyObject {
         type Super = NSObject;
+        const NAME: &'static str = "MyObject";
     }
 );
 

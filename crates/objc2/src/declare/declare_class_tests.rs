@@ -9,10 +9,12 @@ use crate::{declare_class, extern_methods, sel, ClassType};
 // Test that adding the `deprecated` attribute does not mean that warnings
 // when using the method internally are output.
 declare_class!(
+    // Also ensure that empty fields still work
     struct DeclareClassDepreactedMethod {}
 
     unsafe impl ClassType for DeclareClassDepreactedMethod {
         type Super = NSObject;
+        const NAME: &'static str = "DeclareClassDepreactedMethod";
     }
 
     #[deprecated]
@@ -42,6 +44,7 @@ declare_class!(
 
     unsafe impl ClassType for DeclareClassCfg {
         type Super = NSObject;
+        const NAME: &'static str = "DeclareClassCfg";
     }
 
     unsafe impl DeclareClassCfg {
@@ -182,6 +185,7 @@ declare_class!(
 
     unsafe impl ClassType for TestMultipleColonSelector {
         type Super = NSObject;
+        const NAME: &'static str = "TestMultipleColonSelector";
     }
 
     unsafe impl TestMultipleColonSelector {
@@ -253,6 +257,7 @@ declare_class!(
 
     unsafe impl ClassType for DeclareClassAllTheBool {
         type Super = NSObject;
+        const NAME: &'static str = "DeclareClassAllTheBool";
     }
 
     unsafe impl DeclareClassAllTheBool {
@@ -314,6 +319,7 @@ declare_class!(
 
     unsafe impl ClassType for DeclareClassUnreachable {
         type Super = NSObject;
+        const NAME: &'static str = "DeclareClassUnreachable";
     }
 
     // Ensure none of these warn
@@ -368,6 +374,7 @@ fn test_duplicate_ivar() {
 
         unsafe impl ClassType for DeclareClassDuplicateIvar {
             type Super = NSObject;
+            const NAME: &'static str = "DeclareClassDuplicateIvar";
         }
     );
 

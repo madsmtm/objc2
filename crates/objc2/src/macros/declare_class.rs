@@ -37,10 +37,9 @@
 /// superclass' instance variables - this means is is good practice to name
 /// them with a prefix of your crate name, or similar.
 ///
-/// Additionally, the class name must be unique across the entire application.
-/// You can declare the class with the desired unique name like
-/// `"MyCrateCustomObject"` by specifying it in `ClassType::NAME`, and then
-/// give the exposed type a different name like `CustomObject`.
+/// The class name must be specified in `ClassType::NAME`, and it must be
+/// unique across the entire application. Good practice here is similarly to
+/// include your crate name in the prefix.
 ///
 /// The class is guaranteed to have been created and registered with the
 /// Objective-C runtime after the [`ClassType::class`] function has been
@@ -187,8 +186,7 @@
 ///
 ///     unsafe impl ClassType for MyCustomObject {
 ///         type Super = NSObject;
-///         // Optionally specify a different name
-///         // const NAME: &'static str = "MyCustomObject";
+///         const NAME: &'static str = "MyCustomObject";
 ///     }
 ///
 ///     unsafe impl MyCustomObject {
@@ -361,7 +359,7 @@ macro_rules! declare_class {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
 
-            $(const NAME: &'static str = $name_const:literal;)?
+            const NAME: &'static str = $name_const:literal;
         }
 
         $($methods:tt)*
@@ -385,7 +383,7 @@ macro_rules! declare_class {
                 $(#[inherits($($inheritance_rest),+)])?
                 type Super = $superclass;
 
-                const NAME: &'static str = $crate::__select_name!($name; $($name_const)?);
+                const NAME: &'static str = $name_const;
             }
 
             $($methods)*
@@ -403,7 +401,7 @@ macro_rules! declare_class {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
 
-            $(const NAME: &'static str = $name_const:literal;)?
+            const NAME: &'static str = $name_const:literal;
         }
 
         $($methods:tt)*
@@ -427,7 +425,7 @@ macro_rules! declare_class {
                 $(#[inherits($($inheritance_rest),+)])?
                 type Super = $superclass;
 
-                const NAME: &'static str = $crate::__select_name!($name; $($name_const)?);
+                const NAME: &'static str = $name_const;
             }
 
             $($methods)*
@@ -443,7 +441,7 @@ macro_rules! declare_class {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
 
-            $(const NAME: &'static str = $name_const:literal;)?
+            const NAME: &'static str = $name_const:literal;
         }
 
         $($methods:tt)*
@@ -467,7 +465,7 @@ macro_rules! declare_class {
                 $(#[inherits($($inheritance_rest),+)])?
                 type Super = $superclass;
 
-                const NAME: &'static str = $crate::__select_name!($name; $($name_const)?);
+                const NAME: &'static str = $name_const;
             }
 
             $($methods)*
@@ -485,7 +483,7 @@ macro_rules! __inner_declare_class {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
 
-            const NAME: &'static str = $name_const:expr;
+            const NAME: &'static str = $name_const:literal;
         }
 
         $($methods:tt)*

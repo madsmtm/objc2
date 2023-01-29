@@ -84,11 +84,16 @@ type ToString = BogusType;
 
 // Test begin below this line
 
+type PhantomData<T> = T;
+
 new_objc2::declare_class!(
-    pub struct CustomObject;
+    pub struct CustomObject {
+        field1: PhantomData<i32>,
+    }
 
     unsafe impl ClassType for CustomObject {
         type Super = new_objc2::runtime::NSObject;
+        const NAME: &'static str = "CustomObject";
     }
 
     unsafe impl CustomObject {

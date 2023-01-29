@@ -33,6 +33,7 @@ declare_class!(
 
     unsafe impl ClassType for CustomObject1 {
         type Super = NSObject;
+        const NAME: &'static str = "CustomObject1";
     }
 
     unsafe impl CustomObject1 {
@@ -48,6 +49,7 @@ declare_class!(
 
     unsafe impl ClassType for CustomObject2 {
         type Super = NSObject;
+        const NAME: &'static str = "CustomObject2";
     }
 
     unsafe impl CustomObject2 {

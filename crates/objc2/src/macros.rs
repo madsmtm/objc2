@@ -869,6 +869,7 @@ macro_rules! __class_inner {
 /// #
 /// #     unsafe impl ClassType for MyObject {
 /// #         type Super = NSObject;
+/// #         const NAME: &'static str = "MyObject";
 /// #     }
 /// # );
 ///

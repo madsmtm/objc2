@@ -205,6 +205,18 @@ note: while trying to match `:`
   |                       ^
   = note: this error originates in the macro `$crate::__declare_class_method_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
+error: no rules expected the token `}`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |     }
+  |     ^ no rules expected this token in macro call
+  |
+note: while trying to match `const`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |             const NAME: &'static str = $name_const:literal;
+  |             ^^^^^
+
 error: invalid type i32 in field field. Type must be either `PhantomData`, `IvarDrop`, `IvarBool` or `IvarEncode`.
  --> ui/declare_class_invalid_syntax.rs
   |

@@ -32,6 +32,7 @@ declare_class!(
 
     unsafe impl ClassType for DummyClass {
         type Super = NSObject;
+        const NAME: &'static str = "DummyClass";
     }
 );
 

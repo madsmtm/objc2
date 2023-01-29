@@ -246,6 +246,7 @@ mod tests {
 
         unsafe impl ClassType for IvarTester {
             type Super = NSObject;
+            const NAME: &'static str = "IvarTester";
         }
 
         unsafe impl IvarTester {
@@ -281,6 +282,7 @@ mod tests {
 
         unsafe impl ClassType for IvarTesterSubclass {
             type Super = IvarTester;
+            const NAME: &'static str = "IvarTesterSubclass";
         }
 
         unsafe impl IvarTesterSubclass {

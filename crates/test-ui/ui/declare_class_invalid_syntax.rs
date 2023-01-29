@@ -10,6 +10,7 @@ declare_class!(
 
     unsafe impl ClassType for CustomObject {
         type Super = NSObject;
+        const NAME: &'static str = "CustomObject";
     }
 
     unsafe impl CustomObject {
@@ -82,12 +83,21 @@ declare_class!(
 );
 
 declare_class!(
+    struct MissingName;
+
+    unsafe impl ClassType for MissingName {
+        type Super = NSObject;
+    }
+);
+
+declare_class!(
     struct InvalidField {
         field: i32,
     }
 
     unsafe impl ClassType for InvalidField {
         type Super = NSObject;
+        const NAME: &'static str = "InvalidField";
     }
 );
 
@@ -98,6 +108,7 @@ declare_class!(
 
     unsafe impl ClassType for UnnecessaryIvarModule {
         type Super = NSObject;
+        const NAME: &'static str = "UnnecessaryIvarModule";
     }
 );
 
@@ -110,6 +121,7 @@ declare_class!(
 
     unsafe impl ClassType for UnnecessaryIvarModuleWithFields {
         type Super = NSObject;
+        const NAME: &'static str = "UnnecessaryIvarModuleWithFields";
     }
 );
 
@@ -120,6 +132,7 @@ declare_class!(
 
     unsafe impl ClassType for MissingIvarModule {
         type Super = NSObject;
+        const NAME: &'static str = "MissingIvarModule";
     }
 );
 

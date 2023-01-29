@@ -64,9 +64,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Moved `NSObject::is_kind_of` to the new `NSObjectProtocol`.
 * **BREAKING**: Removed support for custom `dealloc` impls in
   `declare_class!`. Implement `Drop` for the type instead.
-* **BREAKING**: Changed how instance variables in `declare_class!` works. Now,
-  you must explicitly specify the "kind" of ivar you want, as well as the ivar
-  name.
+* **BREAKING**: Changed how the `declare_class!` macro works.
+
+  Now, you must explicitly specify the "kind" of ivar you want, as well as the
+  ivar name. Additionally, the class name must be explicitly specified.
+
+  This change is done to make it easier to see what's going on beneath the
+  hood (the name will be available in the final binary, which is important to
+  be aware of)!
 
   An example:
   ```rust
@@ -78,7 +83,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
           box_ivar: IvarDrop<Box<i32>>,
       }
 
-      unsafe impl ClassType for MyClass { ... }
+      unsafe impl ClassType for MyClass {
+          type Super = NSObject;
+      }
   );
 
   // After
@@ -92,7 +99,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
       // Helper types for ivars will be put in here
       mod ivars;
 
-      unsafe impl ClassType for MyClass { ... }
+      unsafe impl ClassType for MyClass {
+          type Super = NSObject;
+          const NAME: &'static str = "MyClass";
+      }
   );
 
   ```

@@ -57,6 +57,7 @@ declare_class!(
 
     unsafe impl ClassType for __RcTestObject {
         type Super = NSObject;
+        const NAME: &'static str = "__RcTestObject";
     }
 
     unsafe impl __RcTestObject {
@@ -290,6 +291,7 @@ declare_class!(
     unsafe impl ClassType for RcTestObjectSubclass {
         #[inherits(NSObject)]
         type Super = __RcTestObject;
+        const NAME: &'static str = "RcTestObjectSubclass";
     }
 );
 

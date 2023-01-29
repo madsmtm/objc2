@@ -72,6 +72,7 @@
 ///
 ///     unsafe impl ClassType for MyObject {
 ///         type Super = NSObject;
+///         const NAME: &'static str = "MyObject";
 ///     }
 ///
 ///     unsafe impl MyObject {
@@ -124,6 +125,7 @@
 /// #
 /// #     unsafe impl ClassType for MyObject {
 /// #         type Super = NSObject;
+/// #         const NAME: &'static str = "MyObject2";
 /// #     }
 /// #
 /// #     unsafe impl MyObject {

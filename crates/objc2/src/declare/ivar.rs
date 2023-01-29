@@ -374,6 +374,7 @@ mod tests {
 
             unsafe impl ClassType for CustomDrop {
                 type Super = NSObject;
+                const NAME: &'static str = "CustomDrop";
             }
         );
 
