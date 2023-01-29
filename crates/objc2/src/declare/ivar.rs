@@ -1,10 +1,10 @@
 use core::fmt;
 use core::marker::PhantomData;
-use core::mem::MaybeUninit;
+use core::mem::{self, MaybeUninit};
 use core::ops::{Deref, DerefMut};
 use core::ptr::{self, NonNull};
 
-use crate::encode::Encoding;
+use crate::encode::Encode;
 use crate::runtime::{ivar_offset, Object};
 
 pub(crate) mod private {
@@ -25,38 +25,34 @@ pub(crate) mod private {
 /// # Safety
 ///
 /// You cannot rely on any safety guarantees from this.
-pub unsafe trait InnerIvarType: private::Sealed {
-    #[doc(hidden)]
-    const __IVAR_ENCODING: Encoding;
-
-    // SAFETY: It must be safe to transmute from `__Inner` to `Output`.
-    #[doc(hidden)]
-    type __Inner;
-
+//
+// The type must have the same memory layout as the output type.
+//
+// Additionally, the type must be safe to drop even if zero-initialized.
+//
+// Note that while I couldn't find a reference on whether ivars are
+// zero-initialized or not, it has been true since the Objective-C version
+// shipped with Mac OS X 10.0 [link] and is generally what one would expect
+// coming from C. So I think it's a valid assumption to make!
+//
+// [link]: https://github.com/apple-oss-distributions/objc4/blob/objc4-208/runtime/objc-class.m#L367
+pub unsafe trait InnerIvarType: private::Sealed + Encode {
     /// The type that an `Ivar` containing this will dereference to.
     ///
     /// E.g. `Ivar<IvarDrop<Box<u8>>>` will deref to `Box<u8>`.
     type Output;
 
-    // SAFETY: The __Inner type must be safe to drop even if zero-initialized.
-    //
-    // Note that while I couldn't find a reference on whether ivars are
-    // zero-initialized or not, it has been true since the Objective-C version
-    // shipped with Mac OS X 10.0 [link] and is generally what one would
-    // expect coming from C. So I think it's a valid assumption to make!
-    //
-    // [link]: https://github.com/apple-oss-distributions/objc4/blob/objc4-208/runtime/objc-class.m#L367
+    /// # Safety
+    ///
+    /// The instance variable must have been initialized.
     #[doc(hidden)]
-    const __MAY_DROP: bool;
+    unsafe fn __deref(&self) -> &Self::Output;
 
+    /// # Safety
+    ///
+    /// The instance variable must have been initialized.
     #[doc(hidden)]
-    unsafe fn __to_ref(inner: &Self::__Inner) -> &Self::Output;
-
-    #[doc(hidden)]
-    unsafe fn __to_mut(inner: &mut Self::__Inner) -> &mut Self::Output;
-
-    #[doc(hidden)]
-    fn __to_ptr(inner: NonNull<Self::__Inner>) -> NonNull<Self::Output>;
+    unsafe fn __deref_mut(&mut self) -> &mut Self::Output;
 }
 
 /// Helper trait for defining instance variables.
@@ -98,7 +94,7 @@ pub unsafe trait IvarType {
     #[doc(hidden)]
     unsafe fn __offset(ptr: NonNull<Object>) -> isize {
         let obj = unsafe { ptr.as_ref() };
-        ivar_offset(obj.class(), Self::NAME, &Self::Type::__IVAR_ENCODING)
+        ivar_offset(obj.class(), Self::NAME, &Self::Type::ENCODING)
     }
 }
 
@@ -181,15 +177,13 @@ pub struct Ivar<T: IvarType> {
     /// Make this type allowed in `repr(C)`
     inner: [u8; 0],
     /// For proper variance and auto traits
-    item: PhantomData<<T::Type as InnerIvarType>::Output>,
+    item: PhantomData<T::Type>,
 }
 
 impl<T: IvarType> Drop for Ivar<T> {
     #[inline]
     fn drop(&mut self) {
-        if <T::Type as InnerIvarType>::__MAY_DROP {
-            // SAFETY: We drop the inner type, which is guaranteed by
-            // `__MAY_DROP` to always be safe to drop.
+        if mem::needs_drop::<T::Type>() {
             unsafe { ptr::drop_in_place(self.as_inner_mut_ptr().as_ptr()) }
         }
     }
@@ -203,11 +197,11 @@ impl<T: IvarType> Ivar<T> {
     ///
     /// This is similar to [`MaybeUninit::as_ptr`], see that for usage
     /// instructions.
-    pub fn as_ptr(this: &Self) -> *const <T::Type as InnerIvarType>::Output {
-        T::Type::__to_ptr(this.as_inner_ptr()).as_ptr()
+    pub fn as_ptr(this: &Self) -> *const <Self as Deref>::Target {
+        this.as_inner_ptr().as_ptr().cast()
     }
 
-    fn as_inner_ptr(&self) -> NonNull<<T::Type as InnerIvarType>::__Inner> {
+    fn as_inner_ptr(&self) -> NonNull<T::Type> {
         let ptr: NonNull<Object> = NonNull::from(self).cast();
 
         // SAFETY: The user ensures that this is placed in a struct that can
@@ -223,7 +217,7 @@ impl<T: IvarType> Ivar<T> {
         // so that is fine.
         let offset = unsafe { T::__offset(ptr) };
         // SAFETY: The offset is valid
-        unsafe { Object::ivar_at_offset::<<T::Type as InnerIvarType>::__Inner>(ptr, offset) }
+        unsafe { Object::ivar_at_offset::<T::Type>(ptr, offset) }
     }
 
     /// Get a mutable pointer to the instance variable.
@@ -236,17 +230,17 @@ impl<T: IvarType> Ivar<T> {
     ///
     /// This is similar to [`MaybeUninit::as_mut_ptr`], see that for usage
     /// instructions.
-    pub fn as_mut_ptr(this: &mut Self) -> *mut <T::Type as InnerIvarType>::Output {
-        T::Type::__to_ptr(this.as_inner_mut_ptr()).as_ptr()
+    pub fn as_mut_ptr(this: &mut Self) -> *mut <Self as Deref>::Target {
+        this.as_inner_mut_ptr().as_ptr().cast()
     }
 
-    fn as_inner_mut_ptr(&mut self) -> NonNull<<T::Type as InnerIvarType>::__Inner> {
+    fn as_inner_mut_ptr(&mut self) -> NonNull<T::Type> {
         let ptr: NonNull<Object> = NonNull::from(self).cast();
 
         // SAFETY: Same as `as_inner_ptr`
         let offset = unsafe { T::__offset(ptr) };
         // SAFETY: The offset is valid
-        unsafe { Object::ivar_at_offset::<<T::Type as InnerIvarType>::__Inner>(ptr, offset) }
+        unsafe { Object::ivar_at_offset::<T::Type>(ptr, offset) }
     }
 
     /// Sets the value of the instance variable.
@@ -256,12 +250,9 @@ impl<T: IvarType> Ivar<T> {
     ///
     /// This is similar to [`MaybeUninit::write`], see that for usage
     /// instructions.
-    pub fn write(
-        this: &mut Self,
-        val: <T::Type as InnerIvarType>::Output,
-    ) -> &mut <T::Type as InnerIvarType>::Output {
-        let ptr: *mut MaybeUninit<<T::Type as InnerIvarType>::Output> =
-            Self::as_mut_ptr(this).cast();
+    pub fn write(this: &mut Self, val: <Self as Deref>::Target) -> &mut <Self as Deref>::Target {
+        let ptr: *mut <T::Type as InnerIvarType>::Output = Self::as_mut_ptr(this);
+        let ptr: *mut MaybeUninit<<T::Type as InnerIvarType>::Output> = ptr.cast();
         let ivar = unsafe { ptr.as_mut().unwrap_unchecked() };
         ivar.write(val)
     }
@@ -277,7 +268,7 @@ impl<T: IvarType> Deref for Ivar<T> {
         //
         // Since all accesses to a particular ivar only goes through one
         // `Ivar`, if we have `&Ivar` we know that `&T` is safe.
-        unsafe { T::Type::__to_ref(self.as_inner_ptr().as_ref()) }
+        unsafe { self.as_inner_ptr().as_ref().__deref() }
     }
 }
 
@@ -308,7 +299,7 @@ impl<T: IvarType> DerefMut for Ivar<T> {
         //
         // And using `mut` would create aliasing mutable reference to the
         // object.
-        unsafe { T::Type::__to_mut(self.as_inner_mut_ptr().as_mut()) }
+        unsafe { self.as_inner_mut_ptr().as_mut().__deref_mut() }
     }
 }
 

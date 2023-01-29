@@ -1,13 +1,20 @@
 use alloc::boxed::Box;
 use core::ffi::c_void;
-use core::marker::PhantomData;
-use core::ptr::NonNull;
 
 use crate::encode::{Encode, Encoding};
 use crate::rc::{Id, Ownership};
 use crate::Message;
 
 use super::InnerIvarType;
+
+mod private {
+    /// # Safety
+    ///
+    /// The inner type must be safe to zero-initialize.
+    pub unsafe trait IvarDropHelper {
+        type Inner;
+    }
+}
 
 /// Ivar types that may drop.
 ///
@@ -18,47 +25,56 @@ use super::InnerIvarType;
 /// - `Option<Id<T, O>>`
 ///
 /// Further may be added when the standard library guarantee their layout.
-pub struct IvarDrop<T>(PhantomData<T>);
+#[repr(transparent)]
+pub struct IvarDrop<T: private::IvarDropHelper>(<T as private::IvarDropHelper>::Inner);
 
-impl<T: Sized> super::ivar::private::Sealed for IvarDrop<Box<T>> {}
+impl<T: private::IvarDropHelper> super::ivar::private::Sealed for IvarDrop<T> {}
+
+// Note that we use `*const c_void` and not `*const T` to allow _any_ type,
+// not just types that can be encoded by Objective-C
+unsafe impl<T: Sized> Encode for IvarDrop<Box<T>> {
+    const ENCODING: Encoding = <*const c_void>::ENCODING;
+}
+
+// SAFETY: `Option<Box<T>>` is safe to zero-initialize
+unsafe impl<T: Sized> private::IvarDropHelper for Box<T> {
+    type Inner = Option<Box<T>>;
+}
+
 // SAFETY: The memory layout of `Box<T: Sized>` is guaranteed to be a pointer:
 // <https://doc.rust-lang.org/1.62.1/std/boxed/index.html#memory-layout>
 //
 // The user ensures that the Box has been initialized in an `init` method
 // before being used.
 unsafe impl<T: Sized> InnerIvarType for IvarDrop<Box<T>> {
-    // Note that we use `*const c_void` and not `*const T` to allow _any_
-    // type, not just types that can be encoded by Objective-C
-    const __IVAR_ENCODING: Encoding = <*const c_void>::ENCODING;
-
-    type __Inner = Option<Box<T>>;
     type Output = Box<T>;
 
-    const __MAY_DROP: bool = true;
-
     #[inline]
-    unsafe fn __to_ref(inner: &Self::__Inner) -> &Self::Output {
-        match inner {
+    unsafe fn __deref(&self) -> &Self::Output {
+        match &self.0 {
             Some(inner) => inner,
             None => unsafe { box_unreachable() },
         }
     }
 
     #[inline]
-    unsafe fn __to_mut(inner: &mut Self::__Inner) -> &mut Self::Output {
-        match inner {
+    unsafe fn __deref_mut(&mut self) -> &mut Self::Output {
+        match &mut self.0 {
             Some(inner) => inner,
             None => unsafe { box_unreachable() },
         }
-    }
-
-    #[inline]
-    fn __to_ptr(inner: NonNull<Self::__Inner>) -> NonNull<Self::Output> {
-        inner.cast()
     }
 }
 
-impl<T: Sized> super::ivar::private::Sealed for IvarDrop<Option<Box<T>>> {}
+unsafe impl<T: Sized> Encode for IvarDrop<Option<Box<T>>> {
+    const ENCODING: Encoding = <*const c_void>::ENCODING;
+}
+
+// SAFETY: `Option<Box<T>>` is safe to zero-initialize
+unsafe impl<T: Sized> private::IvarDropHelper for Option<Box<T>> {
+    type Inner = Option<Box<T>>;
+}
+
 // SAFETY: `Option<Box<T>>` guarantees the null-pointer optimization, so for
 // `T: Sized` the layout is just a pointer:
 // <https://doc.rust-lang.org/1.62.1/std/option/index.html#representation>
@@ -66,30 +82,28 @@ impl<T: Sized> super::ivar::private::Sealed for IvarDrop<Option<Box<T>>> {}
 // This is valid to initialize as all-zeroes, so the user doesn't have to do
 // anything to initialize it.
 unsafe impl<T: Sized> InnerIvarType for IvarDrop<Option<Box<T>>> {
-    const __IVAR_ENCODING: Encoding = <*const c_void>::ENCODING;
-
-    type __Inner = Option<Box<T>>;
     type Output = Option<Box<T>>;
 
-    const __MAY_DROP: bool = true;
-
     #[inline]
-    unsafe fn __to_ref(this: &Self::__Inner) -> &Self::Output {
-        this
+    unsafe fn __deref(&self) -> &Self::Output {
+        &self.0
     }
 
     #[inline]
-    unsafe fn __to_mut(this: &mut Self::__Inner) -> &mut Self::Output {
-        this
-    }
-
-    #[inline]
-    fn __to_ptr(inner: NonNull<Self::__Inner>) -> NonNull<Self::Output> {
-        inner.cast()
+    unsafe fn __deref_mut(&mut self) -> &mut Self::Output {
+        &mut self.0
     }
 }
 
-impl<T: Message, O: Ownership> super::ivar::private::Sealed for IvarDrop<Id<T, O>> {}
+unsafe impl<T: Message, O: Ownership> Encode for IvarDrop<Id<T, O>> {
+    const ENCODING: Encoding = <*const T>::ENCODING;
+}
+
+// SAFETY: `Option<Id<T, O>>` is safe to zero-initialize
+unsafe impl<T: Message, O: Ownership> private::IvarDropHelper for Id<T, O> {
+    type Inner = Option<Id<T, O>>;
+}
+
 // SAFETY: `Id` is `NonNull<T>`, and hence safe to store as a pointer.
 //
 // The user ensures that the Id has been initialized in an `init` method
@@ -99,61 +113,49 @@ impl<T: Message, O: Ownership> super::ivar::private::Sealed for IvarDrop<Id<T, O
 // directly today, but since we can't do so for `Box` (because that is
 // `#[fundamental]`), I think it makes sense to handle them similarly.
 unsafe impl<T: Message, O: Ownership> InnerIvarType for IvarDrop<Id<T, O>> {
-    const __IVAR_ENCODING: Encoding = <*const T>::ENCODING;
-
-    type __Inner = Option<Id<T, O>>;
     type Output = Id<T, O>;
 
-    const __MAY_DROP: bool = true;
-
     #[inline]
-    unsafe fn __to_ref(inner: &Self::__Inner) -> &Self::Output {
-        match inner {
+    unsafe fn __deref(&self) -> &Self::Output {
+        match &self.0 {
             Some(inner) => inner,
             None => unsafe { id_unreachable() },
         }
     }
 
     #[inline]
-    unsafe fn __to_mut(inner: &mut Self::__Inner) -> &mut Self::Output {
-        match inner {
+    unsafe fn __deref_mut(&mut self) -> &mut Self::Output {
+        match &mut self.0 {
             Some(inner) => inner,
             None => unsafe { id_unreachable() },
         }
-    }
-
-    #[inline]
-    fn __to_ptr(inner: NonNull<Self::__Inner>) -> NonNull<Self::Output> {
-        inner.cast()
     }
 }
 
-impl<T: Message, O: Ownership> super::ivar::private::Sealed for IvarDrop<Option<Id<T, O>>> {}
+unsafe impl<T: Message, O: Ownership> Encode for IvarDrop<Option<Id<T, O>>> {
+    const ENCODING: Encoding = <*const T>::ENCODING;
+}
+
+// SAFETY: `Option<Id<T, O>>` is safe to zero-initialize
+unsafe impl<T: Message, O: Ownership> private::IvarDropHelper for Option<Id<T, O>> {
+    type Inner = Option<Id<T, O>>;
+}
+
 // SAFETY: `Id<T, O>` guarantees the null-pointer optimization.
 //
 // This is valid to initialize as all-zeroes, so the user doesn't have to do
 // anything to initialize it.
 unsafe impl<T: Message, O: Ownership> InnerIvarType for IvarDrop<Option<Id<T, O>>> {
-    const __IVAR_ENCODING: Encoding = <*const T>::ENCODING;
-
-    type __Inner = Option<Id<T, O>>;
     type Output = Option<Id<T, O>>;
 
-    const __MAY_DROP: bool = true;
-
     #[inline]
-    unsafe fn __to_ref(this: &Self::__Inner) -> &Self::Output {
-        this
+    unsafe fn __deref(&self) -> &Self::Output {
+        &self.0
     }
 
     #[inline]
-    unsafe fn __to_mut(this: &mut Self::__Inner) -> &mut Self::Output {
-        this
-    }
-
-    #[inline]
-    fn __to_ptr(inner: NonNull<Self::__Inner>) -> NonNull<Self::Output> {
-        inner.cast()
+    unsafe fn __deref_mut(&mut self) -> &mut Self::Output {
+        &mut self.0
     }
 }
 
@@ -171,6 +173,7 @@ unsafe impl<T: Message, O: Ownership> InnerIvarType for IvarDrop<Option<Id<T, O>
 // by default.
 
 #[inline]
+#[track_caller]
 unsafe fn id_unreachable() -> ! {
     #[cfg(debug_assertions)]
     {
@@ -184,6 +187,7 @@ unsafe fn id_unreachable() -> ! {
 }
 
 #[inline]
+#[track_caller]
 unsafe fn box_unreachable() -> ! {
     #[cfg(debug_assertions)]
     {

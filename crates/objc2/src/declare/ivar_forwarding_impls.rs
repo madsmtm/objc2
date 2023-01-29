@@ -325,6 +325,7 @@ where
 
 impl<T: IvarType> Future for Ivar<T>
 where
+    Self: Unpin,
     <Self as Deref>::Target: Future + Unpin,
 {
     type Output = <<Self as Deref>::Target as Future>::Output;

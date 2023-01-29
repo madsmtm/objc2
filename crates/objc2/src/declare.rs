@@ -550,12 +550,7 @@ impl ClassBuilder {
     /// Same as [`ClassBuilder::add_ivar`].
     pub fn add_static_ivar<T: IvarType>(&mut self) {
         // SAFETY: The encoding is correct
-        unsafe {
-            self.add_ivar_inner::<<T::Type as InnerIvarType>::__Inner>(
-                T::NAME,
-                &T::Type::__IVAR_ENCODING,
-            )
-        }
+        unsafe { self.add_ivar_inner::<T::Type>(T::NAME, &T::Type::ENCODING) }
     }
 
     /// Adds the given protocol to self.
