@@ -1,7 +1,7 @@
 use core::marker::PhantomData;
 use core::mem;
 
-use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
+use objc2::encode::{Encode, EncodeArguments, Encoding, RefEncode};
 
 use crate::ffi;
 

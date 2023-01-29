@@ -31,7 +31,7 @@ pub(crate) const fn verify_name(name: &str) -> bool {
     true
 }
 
-/// The error that was encountered while parsing the encoding.
+/// The error that was encountered while parsing an encoding string.
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub struct ParseError {
     kind: ErrorKind,
@@ -59,6 +59,7 @@ impl fmt::Display for ParseError {
     }
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for ParseError {}
 
 #[derive(Debug, PartialEq, Eq, Hash)]

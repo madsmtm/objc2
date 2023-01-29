@@ -10,9 +10,6 @@ Objective-C type-encoding in Rust.
 This crates provides the equivalent of the Objective-C `@encode` directive,
 and functions for comparing these encodings.
 
-Additionally, it provides traits for annotating types that has an Objective-C
-encoding.
-
 See [the docs](https://docs.rs/objc2-encode/) for a more thorough overview.
 
 This crate is part of the [`objc2` project](https://github.com/madsmtm/objc2),

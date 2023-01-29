@@ -16,16 +16,15 @@ use crate::Encoding;
 ///
 /// In `Encoding`, the data is stored in static memory, while in `EncodingBox`
 /// it is stored on the heap. The former allows storing in constants (which is
-/// required by the [`Encode`] and [`RefEncode`] traits), while the latter
-/// allows dynamically, such as in the case of parsing encodings.
+/// required by the `objc2::encode::Encode` and `objc2::encode::RefEncode`
+/// traits), while the latter allows dynamically, such as in the case of
+/// parsing encodings.
 ///
 /// **This should be considered a _temporary_ restriction**. `Encoding` and
 /// `EncodingBox` will become equivalent once heap allocation in constants
 /// is possible.
 ///
 /// [`Struct`]: Self::Struct
-/// [`Encode`]: crate::Encode
-/// [`RefEncode`]: crate::RefEncode
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 #[non_exhaustive] // Maybe we're missing some encodings?
 pub enum EncodingBox {

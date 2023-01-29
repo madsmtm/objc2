@@ -100,7 +100,7 @@ gnustep-2-1 = ["gnustep-2-0", "objc2?/gnustep-2-1", "block2?/gnustep-2-1"]
 objective-c = ["objc2"]
 
 # Expose features that requires creating blocks.
-block = ["objc2?/block", "block2"]
+block = ["block2"]
 
 # For better documentation on docs.rs
 unstable-docsrs = []

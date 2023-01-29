@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `Debug`, `Hash`, `PartialEq` and `Eq`.
 * Support running `Drop` impls on `dealloc` in `declare_class!`.
 * Added `declare::IvarEncode` and `declare::IvarBool` types.
+* Moved the `objc2_encode` traits to `objc2::encode` (API surface is
+  unchanged, since they were already exposed from that).
 
 ### Changed
 * **BREAKING**: Using the automatic `NSError**`-to-`Result` functionality in

@@ -1,3 +1,64 @@
+//! # Support for type-encodings
+//!
+//! This module contains traits for annotating types that has an Objective-C
+//! type-encoding: Specifically [`Encode`] for structs/numeric types and
+//! [`RefEncode`] for references.
+//!
+//! Additionally, this exports the [`Encoding`] and [`EncodingBox`] types from
+//! [`objc2-encode`][objc2_encode], see that crate for a few more details on
+//! what Objective-C type-encodings are.
+//!
+//!
+//! ## Example
+//!
+//! Implementing [`Encode`] and [`RefEncode`] for a custom type:
+//!
+//! ```
+//! use objc2::encode::{Encode, Encoding, RefEncode};
+//!
+//! #[repr(C)]
+//! struct MyStruct {
+//!     a: f32, // float
+//!     b: i16, // int16_t
+//! }
+//!
+//! unsafe impl Encode for MyStruct {
+//!     const ENCODING: Encoding = Encoding::Struct(
+//!         "MyStruct", // Must use the same name as defined in C header files
+//!         &[
+//!             f32::ENCODING, // Same as Encoding::Float
+//!             i16::ENCODING, // Same as Encoding::Short
+//!         ],
+//!     );
+//! }
+//!
+//! // @encode(MyStruct) -> "{MyStruct=fs}"
+//! assert!(MyStruct::ENCODING.equivalent_to_str("{MyStruct=fs}"));
+//!
+//! unsafe impl RefEncode for MyStruct {
+//!     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
+//! }
+//!
+//! // @encode(MyStruct*) -> "^{MyStruct=fs}"
+//! assert!(MyStruct::ENCODING_REF.equivalent_to_str("^{MyStruct=fs}"));
+//! ```
+//!
+//! See the [`examples`] folder for more complex usage.
+//!
+//! [`examples`]: https://github.com/madsmtm/objc2/tree/master/crates/objc2/examples
+//!
+//!
+//! ## Caveats
+//!
+//! We've taken the pragmatic approach with [`Encode`] and [`RefEncode`], and
+//! have implemented it for as many types as possible (instead of defining a
+//! bunch of subtraits for very specific purposes). However, that might
+//! sometimes be slightly surprising.
+//!
+//! The primary example is [`()`][`unit`], which doesn't make sense as a
+//! method argument, but is a very common return type, and hence implements
+//! [`Encode`].
+
 use core::ffi::c_void;
 use core::mem::{self, ManuallyDrop, MaybeUninit};
 use core::num::{
@@ -7,8 +68,10 @@ use core::num::{
 use core::ptr::NonNull;
 use core::sync::atomic;
 
-use crate::Encoding;
-use crate::__bool::Bool;
+use crate::runtime::Bool;
+
+#[doc(inline)]
+pub use objc2_encode::{Encoding, EncodingBox, ParseError};
 
 /// Types that have an Objective-C type-encoding.
 ///
@@ -39,7 +102,7 @@ use crate::__bool::Bool;
 /// Implementing for a struct:
 ///
 /// ```
-/// # use objc2_encode::{Encode, Encoding, RefEncode};
+/// # use objc2::encode::{Encode, Encoding, RefEncode};
 /// # use core::ffi::c_void;
 /// #
 /// #[repr(C)]
@@ -122,7 +185,7 @@ pub unsafe trait RefEncode {
     ///
     /// This is usually implemented either as an object pointer:
     /// ```
-    /// # use objc2_encode::{Encoding, RefEncode};
+    /// # use objc2::encode::{Encoding, RefEncode};
     /// # #[repr(C)]
     /// # struct MyObject {
     /// #     _priv: [u8; 0],
@@ -135,7 +198,7 @@ pub unsafe trait RefEncode {
     /// Or as a pointer to the type, delegating the rest to the [`Encode`]
     /// implementation:
     /// ```
-    /// # use objc2_encode::{Encode, Encoding, RefEncode};
+    /// # use objc2::encode::{Encode, Encoding, RefEncode};
     /// # #[repr(transparent)]
     /// # struct MyType(i32);
     /// # unsafe impl Encode for MyType {
@@ -168,7 +231,7 @@ pub unsafe trait RefEncode {
 /// # Examples
 ///
 /// ```
-/// use objc2_encode::{Encode, Encoding, OptionEncode};
+/// use objc2::encode::{Encode, Encoding, OptionEncode};
 /// use core::ptr::NonNull;
 /// use core::ffi::c_void;
 ///
@@ -249,21 +312,21 @@ unsafe impl Encode for () {
 // UI tests of this is too brittle.
 #[cfg(doctest)]
 /// ```
-/// use objc2_encode::Encode;
+/// use objc2::encode::Encode;
 /// <()>::ENCODING; // TODO: Make this fail as well
 /// ```
 /// ```should_fail
 /// use core::ffi::c_void;
-/// use objc2_encode::Encode;
+/// use objc2::encode::Encode;
 /// <c_void>::ENCODING;
 /// ```
 /// ```should_fail
-/// use objc2_encode::Encode;
+/// use objc2::encode::Encode;
 /// <*const ()>::ENCODING;
 /// ```
 /// ```should_fail
 /// use core::ffi::c_void;
-/// use objc2_encode::Encode;
+/// use objc2::encode::Encode;
 /// <&c_void>::ENCODING;
 /// ```
 extern "C" {}

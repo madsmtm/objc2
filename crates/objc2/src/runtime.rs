@@ -21,6 +21,7 @@ use std::os::raw::c_uint;
 
 #[doc(hidden)]
 pub mod __nsstring;
+mod bool;
 mod method_encoding_iter;
 mod nsobject;
 mod nszone;
@@ -30,10 +31,9 @@ use crate::encode::{Encode, EncodeArguments, EncodeConvert, Encoding, OptionEnco
 use crate::ffi;
 use crate::verify::{verify_method_signature, Inner, VerificationError};
 
+pub use self::bool::Bool;
 pub use self::nsobject::{NSObject, NSObjectProtocol};
 pub use self::nszone::NSZone;
-#[doc(inline)]
-pub use crate::encode::__bool::Bool;
 
 /// Use [`Bool`] or [`ffi::BOOL`] instead.
 #[deprecated = "Use `Bool` or `ffi::BOOL` instead"]

@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Made the crate `no_std` compatible.
+
+### Changed
+* **BREAKING**: Moved the `Encode`, `RefEncode`, `EncodeArguments`,
+  `EncodeConvert`, `OptionEncode` to `objc2`.
+
 
 ## 2.0.0-pre.3 - 2022-12-24
 

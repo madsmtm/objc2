@@ -1,8 +1,7 @@
-//! This belongs in `objc2`, but it is put here to make `EncodeConvert` work
-//! properly!
 use core::fmt;
 
-use crate::{Encode, EncodeConvert, Encoding, RefEncode};
+use crate::encode::{Encode, EncodeConvert, Encoding, RefEncode};
+use crate::ffi;
 
 /// The Objective-C `BOOL` type.
 ///
@@ -23,35 +22,35 @@ use crate::{Encode, EncodeConvert, Encoding, RefEncode};
 // And it is not immediately clear for users which one was chosen.
 #[derive(Copy, Clone, Default)]
 pub struct Bool {
-    value: objc_sys::BOOL,
+    value: ffi::BOOL,
 }
 
 impl Bool {
     /// The equivalent of [`true`] for Objective-C's `BOOL` type.
-    pub const YES: Self = Self::from_raw(objc_sys::YES);
+    pub const YES: Self = Self::from_raw(ffi::YES);
 
     /// The equivalent of [`false`] for Objective-C's `BOOL` type.
-    pub const NO: Self = Self::from_raw(objc_sys::NO);
+    pub const NO: Self = Self::from_raw(ffi::NO);
 
     /// Creates an Objective-C boolean from a Rust boolean.
     #[inline]
     pub const fn new(value: bool) -> Self {
         // true as BOOL => 1 (YES)
         // false as BOOL => 0 (NO)
-        let value = value as objc_sys::BOOL;
+        let value = value as ffi::BOOL;
         Self { value }
     }
 
     /// Creates this from a boolean value received from a raw Objective-C API.
     #[inline]
-    pub const fn from_raw(value: objc_sys::BOOL) -> Self {
+    pub const fn from_raw(value: ffi::BOOL) -> Self {
         Self { value }
     }
 
-    /// Retrieves the inner [`objc_sys::BOOL`] boolean type, to be used in raw
+    /// Retrieves the inner [`ffi::BOOL`] boolean type, to be used in raw
     /// Objective-C APIs.
     #[inline]
-    pub const fn as_raw(self) -> objc_sys::BOOL {
+    pub const fn as_raw(self) -> ffi::BOOL {
         self.value
     }
 
@@ -76,7 +75,7 @@ impl Bool {
     pub const fn as_bool(self) -> bool {
         // Always compare with 0 (NO)
         // This is what happens with the `!` operator / when using `if` in C.
-        self.value != objc_sys::NO
+        self.value != ffi::NO
     }
 }
 
@@ -106,7 +105,7 @@ unsafe impl Encode for Bool {
     // u8::__ENCODING == Encoding::UChar
     // bool::__ENCODING == Encoding::Bool
     // i32::__ENCODING == Encoding::Int
-    const ENCODING: Encoding = objc_sys::BOOL::__ENCODING;
+    const ENCODING: Encoding = ffi::BOOL::__ENCODING;
 }
 
 // Note that we shouldn't delegate to `BOOL`'s  `ENCODING_REF` since `BOOL` is
