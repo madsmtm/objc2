@@ -658,11 +658,7 @@ encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K);
 encode_fn_pointer_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
 
 mod convert_private {
-    use super::*;
-
     pub trait Sealed {}
-    impl<T: Encode> Sealed for T {}
-    impl Sealed for bool {}
 }
 
 /// Represents types that can easily be converted to/from an [`Encode`] type.
@@ -679,10 +675,6 @@ pub trait EncodeConvert: convert_private::Sealed {
     #[doc(hidden)]
     type __Inner: Encode;
 
-    /// The actual encoding this type has.
-    #[doc(hidden)]
-    const __ENCODING: Encoding;
-
     #[doc(hidden)]
     fn __from_inner(inner: Self::__Inner) -> Self;
 
@@ -690,9 +682,9 @@ pub trait EncodeConvert: convert_private::Sealed {
     fn __into_inner(self) -> Self::__Inner;
 }
 
+impl<T: Encode> convert_private::Sealed for T {}
 impl<T: Encode> EncodeConvert for T {
     type __Inner = Self;
-    const __ENCODING: Encoding = Self::ENCODING;
 
     #[inline]
     fn __from_inner(inner: Self::__Inner) -> Self {
@@ -705,9 +697,9 @@ impl<T: Encode> EncodeConvert for T {
     }
 }
 
+impl convert_private::Sealed for bool {}
 impl EncodeConvert for bool {
     type __Inner = Bool;
-    const __ENCODING: Encoding = Encoding::Bool;
 
     #[inline]
     fn __from_inner(inner: Self::__Inner) -> Self {
@@ -934,12 +926,6 @@ mod tests {
 
         assert!(!false.__into_inner().as_bool());
         assert!(true.__into_inner().as_bool());
-        assert_eq!(bool::__ENCODING, Encoding::Bool);
-
-        assert_eq!(
-            <bool as EncodeConvert>::__Inner::__ENCODING,
-            <bool as EncodeConvert>::__Inner::ENCODING
-        );
 
         #[cfg(all(feature = "apple", target_os = "macos", target_arch = "x86_64"))]
         assert_eq!(<bool as EncodeConvert>::__Inner::ENCODING, Encoding::Char);
