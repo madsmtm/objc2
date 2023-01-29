@@ -1,4 +1,5 @@
 use crate::common::*;
+#[cfg(feature = "WebKit_WKNavigationAction")]
 use crate::WebKit::*;
 
 extern_methods!(
