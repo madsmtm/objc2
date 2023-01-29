@@ -85,6 +85,8 @@
 
 #import <MetalKit/MetalKit.h>
 
+#import <MetricKit/MetricKit.h>
+
 #import <Photos/Photos.h>
 
 #import <QuartzCore/CoreAnimation.h>

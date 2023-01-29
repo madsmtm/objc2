@@ -127,6 +127,8 @@ pub mod Metal;
 pub mod MetalFX;
 #[cfg(feature = "MetalKit")]
 pub mod MetalKit;
+#[cfg(feature = "MetricKit")]
+pub mod MetricKit;
 #[cfg(feature = "OSAKit")]
 pub mod OSAKit;
 #[cfg(feature = "PhotoKit")]

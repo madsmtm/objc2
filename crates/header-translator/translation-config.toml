@@ -121,6 +121,9 @@ imports = ["MetalFX", "Metal"]
 [library.MetalKit]
 imports = ["MetalKit", "AppKit", "Foundation", "Metal"]
 
+[library.MetricKit]
+imports = ["MetricKit", "Foundation"]
+
 [library.OSAKit]
 imports = ["OSAKit", "AppKit", "Foundation"]
 
@@ -1281,3 +1284,14 @@ skipped = true
 [enum.LAError]
 skipped = true
 
+# fails to strip const from `typedef const NSString *const MXLaunchTaskID;`
+[typedef.MXLaunchTaskID]
+skipped = true
+# fails to parse method argument with `MXLaunchTaskID`
+[class.MXMetricManager.methods.extendLaunchMeasurementForTaskID_error]
+skipped = true
+[class.MXMetricManager.methods.finishExtendedLaunchMeasurementForTaskID_error]
+skipped = true
+# `os_log_t` not defined; skip for now
+[class.MXMetricManager.methods.makeLogHandleWithCategory]
+skipped = true

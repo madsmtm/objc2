@@ -201,6 +201,7 @@ Metal = [
 ]
 MetalFX = ["Metal"]
 MetalKit = ["AppKit", "Foundation", "Metal"]
+MetricKit = ["Foundation"]
 OSAKit = ["AppKit", "Foundation"]
 PhotoKit = ["AppKit", "CoreLocation", "Foundation"]
 SoundAnalysis = ["Foundation"]
@@ -219,11 +220,11 @@ WebKit = [
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameController_all", "GameKit_all", "HealthKit_all", "IdentityLookup_all", "LocalAuthentication_all", "LinkPresentation_all", "MapKit_all", "MediaPlayer_all", "Metal_all", "MetalKit_all", "PhotoKit_all", "SoundAnalysis_all", "Speech_all", "StoreKit_all", "UniformTypeIdentifiers_all", "UserNotifications_all", "WebKit_all"]
+unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameController_all", "GameKit_all", "HealthKit_all", "IdentityLookup_all", "LocalAuthentication_all", "LinkPresentation_all", "MapKit_all", "MediaPlayer_all", "Metal_all", "MetalKit_all", "MetricKit_all", "PhotoKit_all", "SoundAnalysis_all", "Speech_all", "StoreKit_all", "UniformTypeIdentifiers_all", "UserNotifications_all", "WebKit_all"]
 unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "StoreKit_all", "WebKit_all"]
 unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameController_all", "GameKit_all", "LocalAuthentication_all", "LocalAuthenticationEmbeddedUI_all", "MapKit_all", "MediaPlayer_all", "MetalKit_all", "PhotoKit_all"]
 unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "DeviceCheck_all", "FileProvider_all", "FileProviderUI_all", "LinkPresentation_all", "Metal_all", "SoundAnalysis_all", "Speech_all", "UniformTypeIdentifiers_all", "UserNotifications_all"]
-unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all", "LocalAuthenticationEmbeddedUI_all", "MailKit_all"]
+unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all", "LocalAuthenticationEmbeddedUI_all", "MailKit_all", "MetricKit_all"]
 unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "CallKit_all", "ExtensionKit_all", "HealthKit_all", "IdentityLookup_all", "MetalFX_all"]
 
 # Temporary fixes until we can autogenerate these
@@ -4125,6 +4126,119 @@ Metal_all = [
     "Metal_MTLVertexBufferLayoutDescriptorArray",
     "Metal_MTLVertexDescriptor",
     "Metal_MTLVisibleFunctionTableDescriptor",
+]
+MetricKit_MXAnimationMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXAppExitMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXAppLaunchDiagnostic = [
+    "MetricKit_MXDiagnostic",
+]
+MetricKit_MXAppLaunchMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXAppResponsivenessMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXAppRunTimeMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXAverage = []
+MetricKit_MXBackgroundExitData = []
+MetricKit_MXCPUExceptionDiagnostic = [
+    "MetricKit_MXDiagnostic",
+]
+MetricKit_MXCPUMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXCallStackTree = []
+MetricKit_MXCellularConditionMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXCrashDiagnostic = [
+    "MetricKit_MXDiagnostic",
+]
+MetricKit_MXDiagnostic = []
+MetricKit_MXDiagnosticPayload = []
+MetricKit_MXDiskIOMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXDiskWriteExceptionDiagnostic = [
+    "MetricKit_MXDiagnostic",
+]
+MetricKit_MXDisplayMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXForegroundExitData = []
+MetricKit_MXGPUMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXHangDiagnostic = [
+    "MetricKit_MXDiagnostic",
+]
+MetricKit_MXHistogram = []
+MetricKit_MXHistogramBucket = []
+MetricKit_MXLocationActivityMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXMemoryMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXMetaData = []
+MetricKit_MXMetric = []
+MetricKit_MXMetricManager = []
+MetricKit_MXMetricPayload = []
+MetricKit_MXNetworkTransferMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXSignpostIntervalData = []
+MetricKit_MXSignpostMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXUnitAveragePixelLuminance = [
+    "Foundation_NSDimension",
+]
+MetricKit_MXUnitSignalBars = [
+    "Foundation_NSDimension",
+]
+MetricKit_all = [
+    "MetricKit",
+    "MetricKit_MXAnimationMetric",
+    "MetricKit_MXAppExitMetric",
+    "MetricKit_MXAppLaunchDiagnostic",
+    "MetricKit_MXAppLaunchMetric",
+    "MetricKit_MXAppResponsivenessMetric",
+    "MetricKit_MXAppRunTimeMetric",
+    "MetricKit_MXAverage",
+    "MetricKit_MXBackgroundExitData",
+    "MetricKit_MXCPUExceptionDiagnostic",
+    "MetricKit_MXCPUMetric",
+    "MetricKit_MXCallStackTree",
+    "MetricKit_MXCellularConditionMetric",
+    "MetricKit_MXCrashDiagnostic",
+    "MetricKit_MXDiagnostic",
+    "MetricKit_MXDiagnosticPayload",
+    "MetricKit_MXDiskIOMetric",
+    "MetricKit_MXDiskWriteExceptionDiagnostic",
+    "MetricKit_MXDisplayMetric",
+    "MetricKit_MXForegroundExitData",
+    "MetricKit_MXGPUMetric",
+    "MetricKit_MXHangDiagnostic",
+    "MetricKit_MXHistogram",
+    "MetricKit_MXHistogramBucket",
+    "MetricKit_MXLocationActivityMetric",
+    "MetricKit_MXMemoryMetric",
+    "MetricKit_MXMetaData",
+    "MetricKit_MXMetric",
+    "MetricKit_MXMetricManager",
+    "MetricKit_MXMetricPayload",
+    "MetricKit_MXNetworkTransferMetric",
+    "MetricKit_MXSignpostIntervalData",
+    "MetricKit_MXSignpostMetric",
+    "MetricKit_MXUnitAveragePixelLuminance",
+    "MetricKit_MXUnitSignalBars",
 ]
 OSAKit_OSALanguage = []
 OSAKit_OSALanguageInstance = []
