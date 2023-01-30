@@ -7,8 +7,8 @@
 
 Objective-C type-encoding in Rust.
 
-This crates provides the equivalent of the Objective-C `@encode` directive,
-and functions for comparing these encodings.
+This crates provides types to parse and compare Objective-C type-encodings
+created with the `@encode` directive.
 
 See [the docs](https://docs.rs/objc2-encode/) for a more thorough overview.
 

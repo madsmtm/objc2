@@ -5,7 +5,7 @@
 //!
 //! This crate provides the [`Encoding`] type to describe and compare these
 //! type-encodings, and the [`EncodingBox`] type which does the same, except
-//! is can be parsed from an encoding at runtime.
+//! it can be parsed from an encoding at runtime.
 //!
 //! The types from this crate is exported under the [`objc2`] crate as
 //! `objc2::encode`, so usually you would just use it from there.
@@ -15,7 +15,7 @@
 //!
 //! ## Example
 //!
-//! Parse an encoding from a string and compare it to
+//! Parse an encoding from a string and compare it to a known encoding.
 //!
 //! ```rust
 //! use objc2_encode::{Encoding, EncodingBox};
