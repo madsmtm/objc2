@@ -5,6 +5,7 @@ use std::process::abort;
 use std::ptr;
 use std::sync::Mutex;
 
+use objc2::encode::Encode;
 use objc2::rc::{Allocated, Id, Shared, __RcTestObject};
 use objc2::runtime::{NSObject, Object};
 use objc2::{class, declare_class, msg_send, msg_send_id, ClassType};
@@ -108,8 +109,8 @@ pub fn test_verify(checker: &PanicChecker) {
         let _: () = unsafe { msg_send![&obj, description] };
     });
 
-    let msg = "invalid message send to -[NSObject hash]: expected return to have type code 'Q', but found '@'";
-    checker.assert_panics(msg, line!() + 1, || {
+    let msg = format!("invalid message send to -[NSObject hash]: expected return to have type code '{}', but found '@'", usize::ENCODING);
+    checker.assert_panics(&msg, line!() + 1, || {
         let _: Option<Id<Object, Shared>> = unsafe { msg_send_id![&obj, hash] };
     });
 }
