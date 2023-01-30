@@ -309,28 +309,6 @@ unsafe impl Encode for () {
     const ENCODING: Encoding = Encoding::Void;
 }
 
-// UI tests of this is too brittle.
-#[cfg(doctest)]
-/// ```
-/// use objc2::encode::Encode;
-/// <()>::ENCODING; // TODO: Make this fail as well
-/// ```
-/// ```should_fail
-/// use core::ffi::c_void;
-/// use objc2::encode::Encode;
-/// <c_void>::ENCODING;
-/// ```
-/// ```should_fail
-/// use objc2::encode::Encode;
-/// <*const ()>::ENCODING;
-/// ```
-/// ```should_fail
-/// use core::ffi::c_void;
-/// use objc2::encode::Encode;
-/// <&c_void>::ENCODING;
-/// ```
-extern "C" {}
-
 macro_rules! encode_impls_size {
     ($($t:ty => ($t16:ty, $t32:ty, $t64:ty),)*) => ($(
         #[doc = concat!("The encoding of [`", stringify!($t), "`] varies based on the target pointer width.")]
