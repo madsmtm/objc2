@@ -985,7 +985,7 @@ mod tests {
         let _cls = Custom::class();
     }
 
-    // Proof-of-concept how we could make declare_class! accept generic.
+    // Proof-of-concept how we could make declare_class! accept generic types.
     #[test]
     fn test_generic() {
         struct GenericDeclareClass<T>(T);
