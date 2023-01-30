@@ -59,6 +59,7 @@
 //! method argument, but is a very common return type, and hence implements
 //! [`Encode`].
 
+use core::cell::UnsafeCell;
 use core::ffi::c_void;
 use core::mem::{self, ManuallyDrop, MaybeUninit};
 use core::num::{
@@ -484,11 +485,12 @@ encode_impls_transparent! {
     // TODO: With specialization: `impl Encode for ManuallyDrop<Box<T>>`
     ManuallyDrop<T: ?Sized>,
 
+    // SAFETY: Guaranteed to have the same in-memory representation `T`.
+    //
     // The fact that this has `repr(no_niche)` has no effect on us, since we
     // don't unconditionally implement `Encode` generically over `Option`.
     // (e.g. an `Option<UnsafeCell<&u8>>` impl is not available).
-    // The inner field is not public, so may not be stable.
-    // TODO: UnsafeCell<T>,
+    UnsafeCell<T: ?Sized>,
 
     // The inner field is not public, so may not be safe.
     // TODO: Pin<T>,
@@ -702,13 +704,10 @@ mod tests {
         assert_eq!(<ManuallyDrop<Option<&u8>>>::ENCODING, u8::ENCODING_REF);
         assert_eq!(<&ManuallyDrop<Option<&u8>>>::ENCODING, <&&u8>::ENCODING);
 
-        // assert_eq!(<UnsafeCell<u8>>::ENCODING, u8::ENCODING);
+        assert_eq!(<UnsafeCell<u8>>::ENCODING, u8::ENCODING);
         // assert_eq!(<Pin<u8>>::ENCODING, u8::ENCODING);
         assert_eq!(<MaybeUninit<u8>>::ENCODING, u8::ENCODING);
         assert_eq!(<Wrapping<u8>>::ENCODING, u8::ENCODING);
-
-        // Shouldn't compile
-        // assert_eq!(<Option<UnsafeCell<&u8>>>::ENCODING, <&u8>::ENCODING);
     }
 
     #[test]
