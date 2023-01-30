@@ -18,7 +18,8 @@ impl NestingLevel {
     }
 
     const fn bitfield(self) -> Self {
-        // TODO: Is this correct?
+        // This is a bit irrelevant, since bitfields can only contain integral
+        // types
         self
     }
 
@@ -83,23 +84,19 @@ pub(crate) fn compare_encodings<E1: EncodingType, E2: EncodingType>(
 
     match (enc1.helper(level1), enc2.helper(level2)) {
         (Primitive(p1), Primitive(p2)) => p1 == p2,
-        (BitField(b1, type1, level1), BitField(b2, type2, level2)) => {
-            b1 == b2
-                && match (type1, type2) {
-                    (None, None) => true,
-                    (Some(type1), Some(type2)) => {
-                        compare_encodings(type1, level1, type2, level2, include_all)
-                    }
-                    // The type-encoding of a bitfield is always either
-                    // available, or it is not (depends on platform); so if it
-                    // was available in one, but not the other, we should
-                    // compare the encodings unequal.
-                    //
-                    // However, since bitfield types are not really supported
-                    // ATM, we'll do the opposite, and compare them equal.
-                    _ => true,
-                }
+        (
+            BitField(size1, Some((offset1, type1)), level1),
+            BitField(size2, Some((offset2, type2)), level2),
+        ) => {
+            size1 == size2
+                && offset1 == offset2
+                && compare_encodings(type1, level1, type2, level2, include_all)
         }
+        (BitField(size1, None, _level1), BitField(size2, None, _level2)) => size1 == size2,
+        // The type-encoding of a bitfield is always either available, or it
+        // is not (depends on platform); so if it was available in one, but
+        // not the other, we should compare the encodings unequal.
+        (BitField(_, _, _), BitField(_, _, _)) => false,
         (Indirection(kind1, t1, level1), Indirection(kind2, t2, level2)) => {
             kind1 == kind2 && compare_encodings(t1, level1, t2, level2, include_all)
         }
@@ -263,9 +260,9 @@ pub(crate) trait EncodingType: Sized + fmt::Debug {
 #[non_exhaustive]
 pub(crate) enum Helper<'a, E = Encoding> {
     Primitive(Primitive),
-    BitField(u8, Option<&'a E>, NestingLevel),
+    BitField(u8, Option<&'a (u64, E)>, NestingLevel),
     Indirection(IndirectionKind, &'a E, NestingLevel),
-    Array(usize, &'a E, NestingLevel),
+    Array(u64, &'a E, NestingLevel),
     Container(ContainerKind, &'a str, Option<&'a [E]>, NestingLevel),
 }
 
@@ -273,9 +270,11 @@ impl<E: EncodingType> fmt::Display for Helper<'_, E> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Primitive(primitive) => write!(f, "{}", primitive.to_str()),
-            Self::BitField(b, _type, _level) => {
-                // TODO: Use the type on GNUStep (nesting level?)
-                write!(f, "b{b}")
+            Self::BitField(size, None, _level) => {
+                write!(f, "b{size}")
+            }
+            Self::BitField(size, Some((offset, t)), level) => {
+                write!(f, "b{offset}{}{size}", t.helper(*level))
             }
             Self::Indirection(kind, t, level) => {
                 write!(f, "{}{}", kind.prefix(), t.helper(*level))
@@ -326,7 +325,7 @@ impl Helper<'_> {
             Class => Self::Primitive(Primitive::Class),
             Sel => Self::Primitive(Primitive::Sel),
             Unknown => Self::Primitive(Primitive::Unknown),
-            BitField(b, t) => Self::BitField(*b, Some(t), level.bitfield()),
+            BitField(b, t) => Self::BitField(*b, *t, level.bitfield()),
             Pointer(t) => Self::Indirection(IndirectionKind::Pointer, t, level.pointer()),
             Atomic(t) => Self::Indirection(IndirectionKind::Atomic, t, level.atomic()),
             Array(len, item) => Self::Array(*len, item, level.array()),

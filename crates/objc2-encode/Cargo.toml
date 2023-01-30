@@ -6,7 +6,7 @@ authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 rust-version = "1.60"
 
-description = "Objective-C type-encodings"
+description = "Objective-C type-encoding representation and parsing"
 keywords = ["objective-c", "macos", "ios", "encode"]
 categories = [
     "development-tools::ffi",
@@ -20,27 +20,11 @@ documentation = "https://docs.rs/objc2-encode/"
 license = "MIT"
 
 [features]
-default = ["std", "apple"]
+default = ["std"]
 
-# Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "objc-sys/std"]
-alloc = ["objc-sys/alloc"]
-
-# Enables support for the nightly c_unwind feature
-unstable-c-unwind = []
-
-# Runtime selection. See `objc-sys` for details.
-apple = ["objc-sys/apple"]
-gnustep-1-7 = ["objc-sys/gnustep-1-7"]
-gnustep-1-8 = ["gnustep-1-7", "objc-sys/gnustep-1-8"]
-gnustep-1-9 = ["gnustep-1-8", "objc-sys/gnustep-1-9"]
-gnustep-2-0 = ["gnustep-1-9", "objc-sys/gnustep-2-0"]
-gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1"]
-
-[dependencies]
-# TODO: Remove this dependency when we can select `macabi` targets separately
-# from other targets without using a build script
-objc-sys = { path = "../objc-sys", version = "=0.2.0-beta.3", default-features = false }
+std = ["alloc"]
+# Currently not possible to turn off, put here for forwards compatibility
+alloc = []
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"

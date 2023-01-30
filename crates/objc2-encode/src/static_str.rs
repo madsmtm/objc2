@@ -2,7 +2,7 @@ use crate::helper::{Helper, NestingLevel};
 
 use super::Encoding;
 
-pub(crate) const fn static_int_str_len(mut n: u128) -> usize {
+pub(crate) const fn static_int_str_len(mut n: u64) -> usize {
     let mut i = 0;
     if n == 0 {
         return 1;
@@ -14,7 +14,7 @@ pub(crate) const fn static_int_str_len(mut n: u128) -> usize {
     i
 }
 
-pub(crate) const fn static_int_str_array<const RES: usize>(mut n: u128) -> [u8; RES] {
+pub(crate) const fn static_int_str_array<const RES: usize>(mut n: u64) -> [u8; RES] {
     let mut res: [u8; RES] = [0; RES];
     let mut i = 0;
     if n == 0 {
@@ -43,13 +43,15 @@ pub(crate) const fn static_encoding_str_len(encoding: &Encoding, level: NestingL
 
     match Helper::new(encoding, level) {
         Primitive(primitive) => primitive.to_str().len(),
-        BitField(b, _type, _level) => {
-            // TODO: Use the type on GNUStep (nesting level?)
-            1 + static_int_str_len(b as u128)
+        BitField(size, None, _level) => 1 + static_int_str_len(size as u64),
+        BitField(size, Some((offset, t)), level) => {
+            1 + static_int_str_len(*offset)
+                + static_encoding_str_len(t, level)
+                + static_int_str_len(size as u64)
         }
         Indirection(_kind, t, level) => 1 + static_encoding_str_len(t, level),
         Array(len, item, level) => {
-            1 + static_int_str_len(len as u128) + static_encoding_str_len(item, level) + 1
+            1 + static_int_str_len(len) + static_encoding_str_len(item, level) + 1
         }
         Container(_, name, items, level) => {
             let mut res = 1 + name.len();
@@ -84,15 +86,46 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 i += 1;
             }
         }
-        BitField(b, _type, _level) => {
-            // TODO: Use the type on GNUStep (nesting level?)
+        BitField(size, None, _level) => {
             res[res_i] = b'b';
             res_i += 1;
 
             let mut i = 0;
             // We use 3 even though it creates an oversized array
-            let arr = static_int_str_array::<3>(b as u128);
-            while i < static_int_str_len(b as u128) {
+            let arr = static_int_str_array::<3>(size as u64);
+            while i < static_int_str_len(size as u64) {
+                res[res_i] = arr[i];
+                res_i += 1;
+                i += 1;
+            }
+        }
+        BitField(size, Some((offset, t)), level) => {
+            res[res_i] = b'b';
+            res_i += 1;
+
+            let mut i = 0;
+            // We use 20 even though it creates an oversized array
+            let arr = static_int_str_array::<20>(*offset);
+            while i < static_int_str_len(*offset) {
+                res[res_i] = arr[i];
+                res_i += 1;
+                i += 1;
+            }
+
+            let mut i = 0;
+            // We use LEN even though it creates an oversized array
+            // This could probably be reduced to 1
+            let arr = static_encoding_str_array::<LEN>(t, level);
+            while i < static_encoding_str_len(t, level) {
+                res[res_i] = arr[i];
+                res_i += 1;
+                i += 1;
+            }
+
+            let mut i = 0;
+            // We use 3 even though it creates an oversized array
+            let arr = static_int_str_array::<3>(size as u64);
+            while i < static_int_str_len(size as u64) {
                 res[res_i] = arr[i];
                 res_i += 1;
                 i += 1;
@@ -119,8 +152,8 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
 
             let mut i = 0;
             // We use 20 even though it creates an oversized array
-            let arr = static_int_str_array::<20>(len as u128);
-            while i < static_int_str_len(len as u128) {
+            let arr = static_int_str_array::<20>(len);
+            while i < static_int_str_len(len) {
                 res[res_i] = arr[i];
                 res_i += 1;
                 i += 1;
@@ -182,7 +215,7 @@ mod tests {
 
     macro_rules! const_int_str {
         ($n:expr) => {{
-            const X: [u8; static_int_str_len($n as u128)] = static_int_str_array($n as u128);
+            const X: [u8; static_int_str_len($n)] = static_int_str_array($n);
             unsafe { core::str::from_utf8_unchecked(&X) }
         }};
     }

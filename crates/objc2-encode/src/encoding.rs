@@ -39,103 +39,111 @@ use crate::EncodingBox;
 // See <https://en.cppreference.com/w/c/language/type>
 #[non_exhaustive] // Maybe we're missing some encodings?
 pub enum Encoding {
-    /// A C `char`. Corresponds to the `c` code.
+    /// A C `char`. Corresponds to the `"c"` code.
     Char,
-    /// A C `short`. Corresponds to the `s` code.
+    /// A C `short`. Corresponds to the `"s"` code.
     Short,
-    /// A C `int`. Corresponds to the `i` code.
+    /// A C `int`. Corresponds to the `"i"` code.
     Int,
-    /// A C `long`. Corresponds to the `l` code.
+    /// A C `long`. Corresponds to the `"l"` code.
     ///
-    /// This is treated as a 32-bit quantity in 64-bit programs.
-    // TODO: What does that mean??
+    /// This is treated as a 32-bit quantity in 64-bit programs, see
+    /// [`Encoding::C_LONG`].
     Long,
-    /// A C `long long`. Corresponds to the `q` code.
+    /// A C `long long`. Corresponds to the `"q"` code.
     LongLong,
-    /// A C `unsigned char`. Corresponds to the `C` code.
+    /// A C `unsigned char`. Corresponds to the `"C"` code.
     UChar,
-    /// A C `unsigned short`. Corresponds to the `S` code.
+    /// A C `unsigned short`. Corresponds to the `"S"` code.
     UShort,
-    /// A C `unsigned int`. Corresponds to the `I` code.
+    /// A C `unsigned int`. Corresponds to the `"I"` code.
     UInt,
-    /// A C `unsigned long`. Corresponds to the `L` code.
+    /// A C `unsigned long`. Corresponds to the `"L"` code.
+    ///
+    /// See [`Encoding::C_ULONG`].
     ULong,
-    /// A C `unsigned long long`. Corresponds to the `Q` code.
+    /// A C `unsigned long long`. Corresponds to the `"Q"` code.
     ULongLong,
-    /// A C `float`. Corresponds to the `f` code.
+    /// A C `float`. Corresponds to the `"f"` code.
     Float,
-    /// A C `double`. Corresponds to the `d` code.
+    /// A C `double`. Corresponds to the `"d"` code.
     Double,
-    /// A C `long double`. Corresponds to the `D` code.
+    /// A C `long double`. Corresponds to the `"D"` code.
     LongDouble,
-    /// A C `float _Complex`. Corresponds to the `jf` code.
+    /// A C `float _Complex`. Corresponds to the `"j" "f"` code.
     FloatComplex,
-    /// A C `_Complex` or `double _Complex`. Corresponds to the `jd` code.
+    /// A C `_Complex` or `double _Complex`. Corresponds to the `"j" "d"` code.
     DoubleComplex,
-    /// A C `long double _Complex`. Corresponds to the `jD` code.
+    /// A C `long double _Complex`. Corresponds to the `"j" "D"` code.
     LongDoubleComplex,
-    // TODO: Complex(&Encoding) ???
-    /// A C++ `bool` / C99 `_Bool`. Corresponds to the `B` code.
+    /// A C++ `bool` / C99 `_Bool`. Corresponds to the `"B"` code.
     Bool,
-    /// A C `void`. Corresponds to the `v` code.
+    /// A C `void`. Corresponds to the `"v"` code.
     Void,
-    /// A C `char *`. Corresponds to the `*` code.
+    /// A C `char *`. Corresponds to the `"*"` code.
     String,
-    /// An Objective-C object (`id`). Corresponds to the `@` code.
+    /// An Objective-C object (`id`). Corresponds to the `"@"` code.
     Object,
-    /// An Objective-C block. Corresponds to the `@?` code.
+    /// An Objective-C block. Corresponds to the `"@" "?"` code.
     Block,
-    /// An Objective-C class (`Class`). Corresponds to the `#` code.
+    /// An Objective-C class (`Class`). Corresponds to the `"#"` code.
     Class,
-    /// An Objective-C selector (`SEL`). Corresponds to the `:` code.
+    /// An Objective-C selector (`SEL`). Corresponds to the `":"` code.
     Sel,
-    /// An unknown type. Corresponds to the `?` code.
+    /// An unknown type. Corresponds to the `"?"` code.
     ///
     /// This is usually used to encode functions.
     Unknown,
     /// A bitfield with the given number of bits, and the given type.
     ///
-    /// The type is not currently used, but may be in the future for better
-    /// compatibility with Objective-C runtimes.
+    /// Corresponds to the `"b" size` code.
     ///
-    /// Corresponds to the `b num` code.
-    BitField(u8, &'static Encoding),
+    /// On GNUStep, this uses the `"b" offset type size` code, so this
+    /// contains an `Option` that should be set for that. Only integral types
+    /// are possible for the type.
+    ///
+    /// A `BitField(_, Some(_))` and a `BitField(_, None)` do _not_ compare
+    /// equal; instead, you should set the bitfield depending on the target
+    /// platform.
+    BitField(u8, Option<&'static (u64, Encoding)>),
     /// A pointer to the given type.
     ///
-    /// Corresponds to the `^ type` code.
+    /// Corresponds to the `"^" type` code.
     Pointer(&'static Encoding),
     /// A C11 [`_Atomic`] type.
     ///
-    /// Corresponds to the `A type` code. Not all encodings are possible in
+    /// Corresponds to the `"A" type` code. Not all encodings are possible in
     /// this.
     ///
     /// [`_Atomic`]: https://en.cppreference.com/w/c/language/atomic
     Atomic(&'static Encoding),
     /// An array with the given length and type.
     ///
-    /// Corresponds to the `[len type]` code.
-    Array(usize, &'static Encoding),
+    /// Corresponds to the `"[" length type "]"` code.
+    Array(u64, &'static Encoding),
     /// A struct with the given name and fields.
     ///
     /// The order of the fields must match the order of the order in this.
     ///
     /// It is not uncommon for the name to be `"?"`.
     ///
-    /// Corresponds to the `{name=fields...}` code.
+    /// Corresponds to the `"{" name "=" fields... "}"` code.
     Struct(&'static str, &'static [Encoding]),
     /// A union with the given name and fields.
     ///
     /// The order of the fields must match the order of the order in this.
     ///
-    /// Corresponds to the `(name=fields...)` code.
+    /// Corresponds to the `"(" name "=" fields... ")"` code.
     Union(&'static str, &'static [Encoding]),
-    // "Vector" types have the '!' encoding, but are not implemented in clang
+    // TODO: "Vector" types have the '!' encoding, but are not implemented in
+    // clang
 
     // TODO: `t` and `T` codes for i128 and u128?
 }
 
 impl Encoding {
-    /// The encoding of [`c_long`](`std::os::raw::c_long`).
+    /// The encoding of [`c_long`](`std::os::raw::c_long`) on the current
+    /// target.
     ///
     /// Ideally the encoding of `long` would just be the same as `int` when
     /// it's 32 bits wide and the same as `long long` when it is 64 bits wide;
@@ -144,7 +152,9 @@ impl Encoding {
     /// Unfortunately, `long` have a different encoding than `int` when it is
     /// 32 bits wide; the [`l`][`Encoding::Long`] encoding.
     pub const C_LONG: Self = {
-        // Alternative: `mem::size_of::<c_long>() == 4`
+        // TODO once `core::ffi::c_long` is in MSRV
+        // `mem::size_of::<c_long>() == 4`
+        //
         // That would exactly match what `clang` does:
         // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/AST/ASTContext.cpp#L7245
         if cfg!(any(target_pointer_width = "32", windows)) {
@@ -156,7 +166,8 @@ impl Encoding {
         }
     };
 
-    /// The encoding of [`c_ulong`](`std::os::raw::c_ulong`).
+    /// The encoding of [`c_ulong`](`std::os::raw::c_ulong`) on the current
+    /// target.
     ///
     /// See [`Encoding::C_LONG`] for explanation.
     pub const C_ULONG: Self = {
@@ -196,8 +207,6 @@ impl Encoding {
         let mut parser = Parser::new(s);
 
         parser.strip_leading_qualifiers();
-
-        // TODO: Allow missing/"?" names in structs and unions?
 
         if let Some(()) = parser.expect_encoding(self, NestingLevel::new()) {
             // if the given encoding can be successfully removed from the
@@ -374,13 +383,35 @@ mod tests {
         }
 
         fn bitfield() {
-            Encoding::BitField(32, &Encoding::Int);
+            Encoding::BitField(4, None);
             !Encoding::Int;
-            !Encoding::BitField(33, &Encoding::Int);
-            "b32";
-            !"b32a";
+            !Encoding::BitField(5, None);
+            !Encoding::BitField(4, Some(&(0, Encoding::Bool)));
+            "b4";
+            !"b4a";
+            !"b4c";
+            !"b4B";
             !"b";
-            !"b-32";
+            !"b-4";
+            !"b0B4";
+        }
+
+        fn bitfield_gnustep() {
+            Encoding::BitField(4, Some(&(16, Encoding::Bool)));
+            !Encoding::Int;
+            !Encoding::BitField(4, None);
+            !Encoding::BitField(5, Some(&(16, Encoding::Bool)));
+            !Encoding::BitField(4, Some(&(20, Encoding::Bool)));
+            !Encoding::BitField(4, Some(&(16, Encoding::Char)));
+            "b16B4";
+            !"b4";
+            !"b16B";
+            !"b20B4";
+            !"b16B5";
+            !"b16c4";
+            !"b4a";
+            !"b";
+            !"b-4";
         }
 
         fn atomic() {
@@ -461,7 +492,6 @@ mod tests {
         fn empty_struct() {
             Encoding::Struct("SomeStruct", &[]);
             "{SomeStruct=}";
-            // TODO: Unsure about this
             !"{SomeStruct}";
         }
 
@@ -517,11 +547,12 @@ mod tests {
                 &[
                     Encoding::Pointer(&Encoding::Array(8, &Encoding::Bool)),
                     Encoding::Union("def", &[Encoding::Block]),
-                    Encoding::Pointer(&Encoding::Pointer(&Encoding::BitField(255, &Encoding::Int))),
+                    Encoding::Pointer(&Encoding::Pointer(&Encoding::BitField(255, None))),
+                    Encoding::Char,
                     Encoding::Unknown,
                 ]
             );
-            "{abc=^[8B](def=@?)^^b255?}";
+            "{abc=^[8B](def=@?)^^b255c?}";
         }
 
         fn identifier() {

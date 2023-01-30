@@ -87,14 +87,13 @@
 //! ## Encodings and message type verification
 //!
 //! The Objective-C runtime includes encodings for each method that describe
-//! the argument and return types. See the [`objc2-encode`] crate for the
-//! full overview of what this is (it is re-exported in this crate under the
-//! [`encode`] module).
+//! the argument and return types. See the [`encode`] module for a full
+//! overview of what this is.
 //!
 //! The important part is: To make message sending safer, all arguments and
-//! return values for messages must implement [`Encode`]. This allows the Rust
-//! compiler to prevent you from passing e.g. a [`Vec`] into Objective-C,
-//! which would both be UB and leak the vector.
+//! return values for messages must implement [`encode::Encode`]. This allows
+//! the Rust compiler to prevent you from passing e.g. a [`Vec`] into
+//! Objective-C, which would both be UB and leak the vector.
 //!
 //! Furthermore, we can take advantage of the encodings provided by the
 //! runtime to verify that the types used in Rust actually match the types
@@ -126,7 +125,6 @@
 //! This library contains further such debug checks, most of which are enabled
 //! by default. To enable all of them, use the `"verify"` cargo feature.
 //!
-//! [`objc2-encode`]: objc2_encode
 //! [`Vec`]: std::vec::Vec
 //!
 //!
@@ -186,16 +184,15 @@ extern crate std;
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
-pub use objc2_encode as encode;
+#[doc(no_inline)]
 pub use objc_sys as ffi;
 
+pub use self::class_type::ClassType;
 #[doc(no_inline)]
-pub use objc2_encode::{Encode, EncodeArguments, Encoding, RefEncode};
-
-pub use crate::class_type::ClassType;
-pub use crate::message::{Message, MessageArguments, MessageReceiver};
-pub use crate::protocol::{ImplementedBy, ProtocolObject, ProtocolType};
-pub use crate::verify::VerificationError;
+pub use self::encode::{Encode, EncodeArguments, Encoding, RefEncode};
+pub use self::message::{Message, MessageArguments, MessageReceiver};
+pub use self::protocol::{ImplementedBy, ProtocolObject, ProtocolType};
+pub use self::verify::VerificationError;
 
 #[cfg(feature = "objc2-proc-macros")]
 #[doc(hidden)]
@@ -216,6 +213,7 @@ pub mod __macro_helpers;
 mod cache;
 mod class_type;
 pub mod declare;
+pub mod encode;
 pub mod exception;
 mod macros;
 mod message;
@@ -227,6 +225,9 @@ mod test_utils;
 mod verify;
 
 // Link to Foundation to make NSObject work
-#[cfg_attr(feature = "apple", link(name = "Foundation", kind = "framework"))]
+#[cfg_attr(
+    all(feature = "apple", not(feature = "unstable-compiler-rt")),
+    link(name = "Foundation", kind = "framework")
+)]
 #[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-base", kind = "dylib"))]
 extern "C" {}

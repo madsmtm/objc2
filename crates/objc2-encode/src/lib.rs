@@ -1,76 +1,31 @@
 //! # Objective-C type-encoding
 //!
-//! This is re-exported into the top level of `objc2`.
-//!
 //! The Objective-C directive `@encode` encodes types as strings, and this is
 //! used in various places in the runtime.
 //!
-//! This crate provides the [`Encoding`] type to efficiently describe and
-//! compare these type-encodings.
+//! This crate provides the [`Encoding`] type to describe and compare these
+//! type-encodings, and the [`EncodingBox`] type which does the same, except
+//! it can be parsed from an encoding at runtime.
 //!
-//! Additionally it provides traits for annotating types that has an
-//! Objective-C encoding: Specifically [`Encode`] for structs, [`RefEncode`]
-//! for references and [`EncodeArguments`] for function arguments.
-//!
-//! This crate is exported under the [`objc2`] crate as `objc2::encode`, so
-//! usually you would just use it from there.
+//! The types from this crate is exported under the [`objc2`] crate as
+//! `objc2::encode`, so usually you would just use it from there.
 //!
 //! [`objc2`]: https://crates.io/crates/objc2
 //!
 //!
 //! ## Example
 //!
-//! Implementing [`Encode`] and [`RefEncode`] for a custom type:
+//! Parse an encoding from a string and compare it to a known encoding.
 //!
+//! ```rust
+//! use objc2_encode::{Encoding, EncodingBox};
+//! let s = "{s=i}";
+//! let enc = Encoding::Struct("s", &[Encoding::Int]);
+//! let parsed: EncodingBox = s.parse()?;
+//! assert!(enc.equivalent_to_box(&parsed));
+//! assert_eq!(enc.to_string(), s);
+//! # Ok::<(), objc2_encode::ParseError>(())
 //! ```
-//! use objc2_encode::{Encode, Encoding, RefEncode};
-//! // or from objc2:
-//! // use objc2::{Encode, Encoding, RefEncode};
-//!
-//! #[repr(C)]
-//! struct MyStruct {
-//!     a: f32, // float
-//!     b: i16, // int16_t
-//! }
-//!
-//! unsafe impl Encode for MyStruct {
-//!     const ENCODING: Encoding = Encoding::Struct(
-//!         "MyStruct", // Must use the same name as defined in C header files
-//!         &[
-//!             f32::ENCODING, // Same as Encoding::Float
-//!             i16::ENCODING, // Same as Encoding::Short
-//!         ],
-//!     );
-//! }
-//!
-//! // @encode(MyStruct) -> "{MyStruct=fs}"
-//! assert!(MyStruct::ENCODING.equivalent_to_str("{MyStruct=fs}"));
-//!
-//! unsafe impl RefEncode for MyStruct {
-//!     // Note that if `MyStruct` is an Objective-C instance, this should
-//!     // be `Encoding::Object`.
-//!     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
-//! }
-//!
-//! // @encode(MyStruct*) -> "^{MyStruct=fs}"
-//! assert!(MyStruct::ENCODING_REF.equivalent_to_str("^{MyStruct=fs}"));
-//! ```
-//!
-//! See the [`examples`] folder for more complex usage.
-//!
-//! [`examples`]: https://github.com/madsmtm/objc2/tree/master/crates/objc2-encode/examples
-//!
-//!
-//! ## Caveats
-//!
-//! We've taken the pragmatic approach with [`Encode`] and [`RefEncode`], and
-//! have implemented it for as many types as possible (instead of defining a
-//! bunch of subtraits for very specific purposes). However, that might
-//! sometimes be slightly surprising.
-//!
-//! The primary example is [`()`][`unit`], which doesn't make sense as a
-//! method argument, but is a very common return type, and hence implements
-//! [`Encode`].
 //!
 //!
 //! ## Further resources
@@ -96,15 +51,15 @@
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
+#[cfg(not(feature = "alloc"))]
+compile_error!("the `alloc` feature currently must be enabled");
+
 #[cfg(any(feature = "std", doc))]
 extern crate std;
 
-#[cfg(any(feature = "alloc", test, doc))]
+#[cfg(any(feature = "alloc", test))]
 extern crate alloc;
 
-#[doc(hidden)]
-pub mod __bool;
-mod encode;
 mod encoding;
 mod encoding_box;
 mod helper;
@@ -114,7 +69,6 @@ mod parse;
 #[allow(dead_code)]
 mod static_str;
 
-pub use self::encode::{Encode, EncodeArguments, EncodeConvert, OptionEncode, RefEncode};
 pub use self::encoding::Encoding;
 pub use self::encoding_box::EncodingBox;
 pub use self::parse::ParseError;

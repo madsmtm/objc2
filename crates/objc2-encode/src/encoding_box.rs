@@ -16,16 +16,15 @@ use crate::Encoding;
 ///
 /// In `Encoding`, the data is stored in static memory, while in `EncodingBox`
 /// it is stored on the heap. The former allows storing in constants (which is
-/// required by the [`Encode`] and [`RefEncode`] traits), while the latter
-/// allows dynamically, such as in the case of parsing encodings.
+/// required by the `objc2::encode::Encode` and `objc2::encode::RefEncode`
+/// traits), while the latter allows dynamically, such as in the case of
+/// parsing encodings.
 ///
 /// **This should be considered a _temporary_ restriction**. `Encoding` and
 /// `EncodingBox` will become equivalent once heap allocation in constants
 /// is possible.
 ///
 /// [`Struct`]: Self::Struct
-/// [`Encode`]: crate::Encode
-/// [`RefEncode`]: crate::RefEncode
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 #[non_exhaustive] // Maybe we're missing some encodings?
 pub enum EncodingBox {
@@ -78,13 +77,13 @@ pub enum EncodingBox {
     /// Same as [`Encoding::Unknown`].
     Unknown,
     /// Same as [`Encoding::BitField`].
-    BitField(u8, Option<Box<Self>>),
+    BitField(u8, Option<Box<(u64, Self)>>),
     /// Same as [`Encoding::Pointer`].
     Pointer(Box<Self>),
     /// Same as [`Encoding::Atomic`].
     Atomic(Box<Self>),
     /// Same as [`Encoding::Array`].
-    Array(usize, Box<Self>),
+    Array(u64, Box<Self>),
     /// Same as [`Encoding::Struct`].
     Struct(String, Option<Vec<Self>>),
     /// Same as [`Encoding::Union`].
@@ -237,13 +236,17 @@ mod tests {
 
     #[test]
     fn parse_part_of_string() {
-        let mut s = "{a}c";
+        let mut s = "{a}cb0i16";
 
         let expected = EncodingBox::Struct("a".into(), None);
         let actual = EncodingBox::from_start_of_str(&mut s).unwrap();
         assert_eq!(expected, actual);
 
         let expected = EncodingBox::Char;
+        let actual = EncodingBox::from_start_of_str(&mut s).unwrap();
+        assert_eq!(expected, actual);
+
+        let expected = EncodingBox::BitField(16, Some(Box::new((0, EncodingBox::Int))));
         let actual = EncodingBox::from_start_of_str(&mut s).unwrap();
         assert_eq!(expected, actual);
 

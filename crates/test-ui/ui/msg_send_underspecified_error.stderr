@@ -12,7 +12,7 @@ error[E0283]: type annotations needed
   |     let _: Result<(), _> = unsafe { msg_send![obj, a: _] };
   |                                     ^^^^^^^^^^^^^^^^^^^^ cannot infer type for raw pointer `*mut _`
   |
-  = note: multiple `impl`s satisfying `*mut _: RefEncode` found in the `objc2_encode` crate:
+  = note: multiple `impl`s satisfying `*mut _: RefEncode` found in the `objc2` crate:
           - impl RefEncode for *mut c_void;
           - impl<T> RefEncode for *mut T
             where T: RefEncode, T: ?Sized;
@@ -30,7 +30,7 @@ error[E0283]: type annotations needed
   |     let _: Result<_, _> = unsafe { msg_send_id![obj, b: _] };
   |                                    ^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type for raw pointer `*mut _`
   |
-  = note: multiple `impl`s satisfying `*mut _: RefEncode` found in the `objc2_encode` crate:
+  = note: multiple `impl`s satisfying `*mut _: RefEncode` found in the `objc2` crate:
           - impl RefEncode for *mut c_void;
           - impl<T> RefEncode for *mut T
             where T: RefEncode, T: ?Sized;
@@ -48,7 +48,7 @@ error[E0283]: type annotations needed
   |     let _: Result<Id<NSString, Shared>, _> = unsafe { msg_send_id![obj, c: _] };
   |                                                       ^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type for raw pointer `*mut _`
   |
-  = note: multiple `impl`s satisfying `*mut _: RefEncode` found in the `objc2_encode` crate:
+  = note: multiple `impl`s satisfying `*mut _: RefEncode` found in the `objc2` crate:
           - impl RefEncode for *mut c_void;
           - impl<T> RefEncode for *mut T
             where T: RefEncode, T: ?Sized;
@@ -66,7 +66,7 @@ error[E0283]: type annotations needed
   |     let _: Result<Id<NSString, Shared>, Id<_, Shared>> = unsafe { msg_send_id![obj, d: _] };
   |                                                                   ^^^^^^^^^^^^^^^^^^^^^^^ cannot infer type for raw pointer `*mut _`
   |
-  = note: multiple `impl`s satisfying `*mut _: RefEncode` found in the `objc2_encode` crate:
+  = note: multiple `impl`s satisfying `*mut _: RefEncode` found in the `objc2` crate:
           - impl RefEncode for *mut c_void;
           - impl<T> RefEncode for *mut T
             where T: RefEncode, T: ?Sized;
