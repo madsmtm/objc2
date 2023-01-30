@@ -17,6 +17,11 @@
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
+mod class;
+mod method;
+mod objc;
+mod protocol;
+
 use core::hash::{Hash, Hasher};
 
 use proc_macro::Ident;
@@ -71,4 +76,16 @@ pub fn __hash_idents(input: TokenStream) -> TokenStream {
     // Get the hash from the hasher and return it as 16 hexadecimal characters
     let s = format!("{:016x}", hasher.finish());
     TokenTree::Literal(Literal::string(&s)).into()
+}
+
+#[allow(missing_docs)]
+#[proc_macro_attribute]
+pub fn objc(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let attr = attr.into();
+    let item = item.into();
+    let result = crate::objc::objc(attr, item);
+    match result {
+        Ok(output) => output.into(),
+        Err(error) => error.to_compile_error().into(),
+    }
 }
