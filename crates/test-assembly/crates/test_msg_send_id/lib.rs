@@ -71,3 +71,13 @@ unsafe fn handle_autoreleased(obj: &Object, sel: Sel) -> Option<Id<Object, Share
 unsafe fn handle_autoreleased_fallible(obj: &Object, sel: Sel) -> Id<Object, Shared> {
     Other::send_message_id(obj, sel, ())
 }
+
+// TODO: The optimization does not happen here, fix this!
+#[no_mangle]
+unsafe fn handle_with_out_param(
+    obj: &Object,
+    sel: Sel,
+    param: &mut Id<Object, Shared>,
+) -> Option<Id<Object, Shared>> {
+    Other::send_message_id(obj, sel, (param,))
+}

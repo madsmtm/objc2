@@ -180,6 +180,30 @@ Lloh9:
 	bl	SYM(<objc2::__macro_helpers::RetainSemantics<5_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh8, Lloh9
 
+	.globl	_handle_with_out_param
+	.p2align	2
+_handle_with_out_param:
+	stp	x22, x21, [sp, #-48]!
+	stp	x20, x19, [sp, #16]
+	stp	x29, x30, [sp, #32]
+	add	x29, sp, #32
+	mov	x19, x2
+	ldr	x20, [x2]
+	bl	_objc_msgSend
+	mov	x21, x0
+	ldr	x0, [x19]
+	bl	_objc_retain
+	mov	x0, x20
+	bl	_objc_release
+	; InlineAsm Start
+	mov	x29, x29
+	; InlineAsm End
+	mov	x0, x21
+	ldp	x29, x30, [sp, #32]
+	ldp	x20, x19, [sp, #16]
+	ldp	x22, x21, [sp], #48
+	b	_objc_retainAutoreleasedReturnValue
+
 	.section	__TEXT,__const
 l_anon.[ID].0:
 	.ascii	"crates/$DIR/lib.rs"

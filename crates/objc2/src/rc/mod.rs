@@ -63,6 +63,7 @@ mod id_traits;
 mod ownership;
 mod test_object;
 mod weak_id;
+mod writeback;
 
 pub use self::allocated::Allocated;
 pub use self::autorelease::{autoreleasepool, AutoreleasePool, AutoreleaseSafe};

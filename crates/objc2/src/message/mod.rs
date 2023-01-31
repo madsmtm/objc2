@@ -229,7 +229,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
             let obj = unsafe { this.as_ref() };
             msg_send_check(obj, sel, A::ENCODINGS, &R::__Inner::ENCODING_RETURN);
         }
-        unsafe { EncodeConvertReturn::__from_inner(send_unverified(this, sel, args)) }
+        unsafe { EncodeConvertReturn::__from_return(send_unverified(this, sel, args)) }
     }
 
     /// Sends a message to a specific superclass with the given selector and
@@ -272,7 +272,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
             }
         }
         unsafe {
-            EncodeConvertReturn::__from_inner(send_super_unverified(this, superclass, sel, args))
+            EncodeConvertReturn::__from_return(send_super_unverified(this, superclass, sel, args))
         }
     }
 
@@ -502,6 +502,8 @@ macro_rules! message_args_impl {
         unsafe impl<$($t: EncodeConvertArgument),*> MessageArguments for ($($t,)*) {
             #[inline]
             unsafe fn __invoke<R: EncodeReturn>(imp: Imp, obj: *mut Object, sel: Sel, ($($a,)*): Self) -> R {
+                $(let $a = EncodeConvertArgument::__into_argument($a);)*
+
                 // The imp must be cast to the appropriate function pointer
                 // type before being called; the msgSend functions are not
                 // parametric, but instead "trampolines" to the actual
@@ -517,7 +519,18 @@ macro_rules! message_args_impl {
                 // TODO: On x86_64 it would be more efficient to use a GOT
                 // entry here (e.g. adding `nonlazybind` in LLVM).
                 // Same can be said of e.g. `objc_retain` and `objc_release`.
-                unsafe { imp(obj, sel $(, EncodeConvertArgument::__into_inner($a))*) }
+                let result = unsafe { imp(obj, sel $(, $a.0)*) };
+
+                // TODO: If we want `objc_retainAutoreleasedReturnValue` to
+                // work, we must not do any work before it has been run; so
+                // somehow, we should've done that before this call!
+                $(
+                    // SAFETY: The argument was passed to the message sending
+                    // function, and the stored values are only processed this
+                    // once. See `src/rc/writeback.rs` for details.
+                    unsafe { <$t as EncodeConvertArgument>::__process_after_message_send($a.1) };
+                )*
+                result
             }
         }
 

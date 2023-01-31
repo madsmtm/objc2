@@ -84,6 +84,9 @@
 /// make it behave similarly to the Objective-C `BOOL`. Use [`runtime::Bool`]
 /// if you want to control this manually.
 ///
+/// Note that `&mut Id<_, _>` and other such out parameters are not yet
+/// supported, and may generate a panic at runtime.
+///
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// [`extern_methods!`]: crate::extern_methods
@@ -900,7 +903,7 @@ macro_rules! __declare_class_rewrite_args {
             ($($args_converted)* $param : <$param_ty as $crate::encode::__unstable::EncodeConvertArgument>::__Inner,)
             (
                 $($body_prefix)*
-                let mut $param = <$param_ty as $crate::encode::__unstable::EncodeConvertArgument>::__from_inner($param);
+                let mut $param = <$param_ty as $crate::encode::__unstable::EncodeConvertArgument>::__from_declared_param($param);
             )
 
             ($out_macro)
@@ -921,7 +924,7 @@ macro_rules! __declare_class_rewrite_args {
             ($($args_converted)* $param : <$param_ty as $crate::encode::__unstable::EncodeConvertArgument>::__Inner,)
             (
                 $($body_prefix)*
-                let $param = <$param_ty as $crate::encode::__unstable::EncodeConvertArgument>::__from_inner($param);
+                let $param = <$param_ty as $crate::encode::__unstable::EncodeConvertArgument>::__from_declared_param($param);
             )
 
             ($out_macro)
@@ -1057,7 +1060,9 @@ macro_rules! __convert_result {
     ($body:block; $ret:ty) => {
         let __objc2_result = $body;
         #[allow(unreachable_code)]
-        <$ret as $crate::encode::__unstable::EncodeConvertReturn>::__into_inner(__objc2_result)
+        <$ret as $crate::encode::__unstable::EncodeConvertReturn>::__into_declared_return(
+            __objc2_result,
+        )
     };
 }
 

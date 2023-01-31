@@ -264,6 +264,13 @@ declare_class!(
                 unsafe { msg_send_id![Some(this), init] }
             }
         }
+
+        #[method(outParamNull:)]
+        fn out_param_null(param: Option<&mut *mut __RcTestObject>) {
+            if let Some(param) = param {
+                *param = ptr::null_mut();
+            }
+        }
     }
 );
 

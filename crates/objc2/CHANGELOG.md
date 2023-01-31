@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Moved the `objc2_encode` traits to `objc2::encode`.
 
   This includes removing the `EncodeConvert` and `EncodeArguments` traits.
+* Added support for out-parameters like `&mut Id<_, _>` in `msg_send!`,
+  `msg_send_id!` and `extern_methods!`.
 
 ### Changed
 * **BREAKING**: Using the automatic `NSError**`-to-`Result` functionality in

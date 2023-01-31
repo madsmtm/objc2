@@ -1,0 +1,25 @@
+[package]
+name = "test_out_parameters"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+path = "lib.rs"
+
+[dependencies]
+objc2 = { path = "../../../objc2", default-features = false }
+
+[features]
+default = ["apple", "std"]
+std = ["objc2/std"]
+# Runtime
+apple = ["objc2/apple"]
+gnustep-1-7 = ["objc2/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "objc2/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "objc2/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1"]
+
+# Hack
+assembly-features = []
