@@ -88,6 +88,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Removed a few instances of `TodoProtocols`.
 * Fixed type-encoding of a few `struct`s.
 * Fixed `NSProxy` trait methods.
+* **BREAKING**: Fixed type in methods that worked with out-parameters.
 
 
 ## icrate 0.0.1 - 2022-12-24
