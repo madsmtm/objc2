@@ -177,7 +177,7 @@ impl UnexposedAttr {
 
             Self::parse_location(location)
         } else {
-            error!("unexposed attr location");
+            warn!(?entity, "no unexposed attr location");
             None
         }
     }

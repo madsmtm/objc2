@@ -295,6 +295,12 @@ macro_rules! extern_static {
     ($name:ident: NSTouchBarItemPriority = $($value:tt)*) => {
         pub static $name: NSTouchBarItemPriority = $($value)* as _;
     };
+    ($name:ident: MKFeatureDisplayPriority = $($value:tt)*) => {
+        pub static $name: MKFeatureDisplayPriority = $($value)* as _;
+    };
+    ($name:ident: MKAnnotationViewZPriority = $($value:tt)*) => {
+        pub static $name: MKAnnotationViewZPriority = $($value)* as _;
+    };
     ($name:ident: $ty:ty = $value:expr) => {
         pub static $name: $ty = $value;
     };

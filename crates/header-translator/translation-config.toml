@@ -254,6 +254,10 @@ newComputePipelineStateWithDescriptor_options_reflection_error = { skipped = tru
 newRenderPipelineStateWithTileDescriptor_options_reflection_error = { skipped = true }
 newRenderPipelineStateWithMeshDescriptor_options_reflection_error = { skipped = true }
 
+# Uses NS_RETURNS_NOT_RETAINED on a `NSString*`
+[class.DOMMutationEvent.methods.newValue]
+skipped = true
+
 ###
 ### Others
 ###
@@ -1118,22 +1122,6 @@ skipped = true
 [class.CLLocation.methods]
 getDistanceFrom = { skipped = true }
 distanceFromLocation = { skipped = true }
-
-# error: expected `f32`, found integer (NOTE: generated statics need a trailing `.`; fix manually for now)
-[static.MKFeatureDisplayPriorityRequired]
-skipped = true
-[static.MKFeatureDisplayPriorityDefaultHigh]
-skipped = true
-[static.MKFeatureDisplayPriorityDefaultLow]
-skipped = true
-[static.MKAnnotationViewZPriorityMax]
-skipped = true
-[static.MKAnnotationViewZPriorityDefaultSelected]
-skipped = true
-[static.MKAnnotationViewZPriorityDefaultUnselected]
-skipped = true
-[static.MKAnnotationViewZPriorityMin]
-skipped = true
 
 # tries to parse these as `pub type <name> = *const NSString`; fix manually for now
 [typedef.GCInputElementName]

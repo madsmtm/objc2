@@ -354,7 +354,9 @@ impl IdType {
                         }
 
                         let mut parser = AttributeParser::new(pointer_name, &pointee_name);
+                        *is_kindof = parser.is_kindof(ParsePosition::Prefix);
                         lifetime.update(parser.lifetime(ParsePosition::Prefix));
+                        lifetime.update(parser.lifetime(ParsePosition::Suffix));
                         parser.set_inner_pointer();
 
                         Self::Class {
@@ -1788,7 +1790,7 @@ fn parse_unexposed_tokens(s: &str) -> String {
     let mut iter = tokens.into_iter().peekable();
     if let Some(TokenTree::Ident(ident)) = iter.peek() {
         let ident = ident.to_string();
-        if let Ok(_) = UnexposedAttr::from_name(&ident, || {
+        if let Ok(attr) = UnexposedAttr::from_name(&ident, || {
             iter.next();
             if let Some(TokenTree::Group(group)) = iter.peek() {
                 Some(group)
@@ -1797,6 +1799,9 @@ fn parse_unexposed_tokens(s: &str) -> String {
                 None
             }
         }) {
+            if let Some(attr) = attr {
+                error!(?attr, "unknown attribute");
+            }
             iter.next();
         }
     }
