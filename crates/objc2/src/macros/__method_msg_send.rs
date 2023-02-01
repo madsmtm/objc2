@@ -22,6 +22,30 @@ macro_rules! __method_msg_send {
         }
     };
 
+    // Skip using `MainThreadMarker` in the message send.
+    //
+    // This is a purely textual match, and using e.g.
+    // `Foundation::MainThreadMarker` would fail - but that would just be
+    // detected as giving a wrong number of arguments, so it's fine for now.
+    (
+        ($receiver:expr)
+        ($($sel_rest:tt)*)
+        ($arg:ident: MainThreadMarker $(, $($args_rest:tt)*)?)
+
+        ($($sel_parsed:tt)*)
+        ($($arg_parsed:tt)*)
+    ) => ({
+        let _ = $arg;
+        $crate::__method_msg_send! {
+            ($receiver)
+            ($($sel_rest)*)
+            ($($($args_rest)*)?)
+
+            ($($sel_parsed)*)
+            ($($arg_parsed)*)
+        }
+    });
+
     // Parse each argument-selector pair
     (
         ($receiver:expr)
@@ -172,6 +196,32 @@ macro_rules! __method_msg_send_id {
             ($retain_semantics)
         }
     };
+
+    // Skip using `MainThreadMarker` in the message send.
+    //
+    // This is a purely textual match, and using e.g.
+    // `Foundation::MainThreadMarker` would fail - but that would just be
+    // detected as giving a wrong number of arguments, so it's fine for now.
+    (
+        ($receiver:expr)
+        ($($sel_rest:tt)*)
+        ($arg:ident: MainThreadMarker $(, $($args_rest:tt)*)?)
+
+        ($($sel_parsed:tt)*)
+        ($($arg_parsed:tt)*)
+        ($($retain_semantics:ident)?)
+    ) => ({
+        let _ = $arg;
+        $crate::__method_msg_send_id! {
+            ($receiver)
+            ($($sel_rest)*)
+            ($($($args_rest)*)?)
+
+            ($($sel_parsed)*)
+            ($($arg_parsed)*)
+            ($($retain_semantics)?)
+        }
+    });
 
     // Parse each argument-selector pair
     (

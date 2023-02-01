@@ -49,3 +49,16 @@ error: number of arguments in function and selector did not match
   | |_^
   |
   = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: number of arguments in function and selector did not match
+ --> ui/extern_methods_wrong_arguments_error.rs
+  |
+  | / extern_methods!(
+  | |     unsafe impl MyObject {
+  | |         #[method(tooFew:withMtm:_)]
+  | |         fn too_few_with_mtm(&self, mtm: MainThreadMarker) -> Result<(), Id<NSObject>>;
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__method_msg_send` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
