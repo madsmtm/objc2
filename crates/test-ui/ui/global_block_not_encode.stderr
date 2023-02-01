@@ -9,12 +9,12 @@ error[E0277]: the trait bound `Box<i32>: objc2::encode::Encode` is not satisfied
   = help: the following other types implement trait `objc2::encode::Encode`:
             &'a T
             &'a mut T
-            ()
             *const T
             *const c_void
             *mut T
             *mut c_void
             AtomicI16
+            AtomicI32
           and $N others
   = note: required for `(Box<i32>,)` to implement `BlockArguments`
   = note: required for `GlobalBlock<(Box<i32>,)>` to implement `Sync`

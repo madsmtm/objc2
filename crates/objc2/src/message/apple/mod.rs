@@ -1,4 +1,4 @@
-use crate::encode::Encode;
+use crate::encode::__unstable::EncodeReturn;
 use crate::ffi;
 use crate::runtime::{Class, Imp, Object, Sel};
 use crate::MessageArguments;
@@ -17,9 +17,9 @@ mod arch;
 mod arch;
 
 /// On the above architectures we can statically find the correct method to
-/// call from the return type, by looking at its `Encode` implementation.
+/// call from the return type, by looking at its `EncodeReturn` impl.
 #[allow(clippy::missing_safety_doc)]
-unsafe trait MsgSendFn: Encode {
+unsafe trait MsgSendFn: EncodeReturn {
     const MSG_SEND: Imp;
     const MSG_SEND_SUPER: Imp;
 }
@@ -29,7 +29,7 @@ unsafe trait MsgSendFn: Encode {
 pub(crate) unsafe fn send_unverified<A, R>(receiver: *mut Object, sel: Sel, args: A) -> R
 where
     A: MessageArguments,
-    R: Encode,
+    R: EncodeReturn,
 {
     let msg_send_fn = R::MSG_SEND;
     unsafe { conditional_try!(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
@@ -45,7 +45,7 @@ pub(crate) unsafe fn send_super_unverified<A, R>(
 ) -> R
 where
     A: MessageArguments,
-    R: Encode,
+    R: EncodeReturn,
 {
     let superclass: *const Class = superclass;
     let mut sup = ffi::objc_super {

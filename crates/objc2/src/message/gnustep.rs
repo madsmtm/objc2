@@ -1,7 +1,7 @@
 use core::hint;
 use core::mem;
 
-use crate::encode::Encode;
+use crate::encode::__unstable::EncodeReturn;
 use crate::ffi;
 use crate::runtime::{Class, Imp, Object, Sel};
 use crate::MessageArguments;
@@ -24,7 +24,7 @@ fn unwrap_msg_send_fn(msg_send_fn: Option<Imp>) -> Imp {
 pub(crate) unsafe fn send_unverified<A, R>(receiver: *mut Object, sel: Sel, args: A) -> R
 where
     A: MessageArguments,
-    R: Encode,
+    R: EncodeReturn,
 {
     // If `receiver` is NULL, objc_msg_lookup will return a standard C-method
     // taking two arguments, the receiver and the selector. Transmuting and
@@ -50,7 +50,7 @@ pub(crate) unsafe fn send_super_unverified<A, R>(
 ) -> R
 where
     A: MessageArguments,
-    R: Encode,
+    R: EncodeReturn,
 {
     if receiver.is_null() {
         // SAFETY: Same as in `send_unverified`.

@@ -1,7 +1,8 @@
 use core::marker::PhantomData;
 use core::mem;
 
-use objc2::encode::{Encode, EncodeArguments, Encoding, RefEncode};
+use objc2::encode::__unstable::EncodeReturn;
+use objc2::encode::{Encode, Encoding, RefEncode};
 
 use crate::ffi;
 
@@ -15,10 +16,10 @@ use crate::ffi;
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait BlockArguments: EncodeArguments + Sized {
+pub unsafe trait BlockArguments: Sized {
     /// Calls the given method the block and arguments.
     #[doc(hidden)]
-    unsafe fn __call_block<R: Encode>(
+    unsafe fn __call_block<R: EncodeReturn>(
         invoke: unsafe extern "C" fn(),
         block: *mut Block<Self, R>,
         args: Self,
@@ -29,7 +30,11 @@ macro_rules! block_args_impl {
     ($($a:ident: $t:ident),*) => (
         unsafe impl<$($t: Encode),*> BlockArguments for ($($t,)*) {
             #[inline]
-            unsafe fn __call_block<R: Encode>(invoke: unsafe extern "C" fn(), block: *mut Block<Self, R>, ($($a,)*): Self) -> R {
+            unsafe fn __call_block<R: EncodeReturn>(
+                invoke: unsafe extern "C" fn(),
+                block: *mut Block<Self, R>,
+                ($($a,)*): Self,
+            ) -> R {
                 // Very similar to `MessageArguments::__invoke`
                 let invoke: unsafe extern "C" fn(*mut Block<Self, R> $(, $t)*) -> R = unsafe {
                     mem::transmute(invoke)
@@ -93,11 +98,11 @@ pub struct Block<A, R> {
     _p: PhantomData<fn(A) -> R>,
 }
 
-unsafe impl<A: BlockArguments, R: Encode> RefEncode for Block<A, R> {
+unsafe impl<A: BlockArguments, R: EncodeReturn> RefEncode for Block<A, R> {
     const ENCODING_REF: Encoding = Encoding::Block;
 }
 
-impl<A: BlockArguments, R: Encode> Block<A, R> {
+impl<A: BlockArguments, R: EncodeReturn> Block<A, R> {
     /// Call self with the given arguments.
     ///
     /// # Safety

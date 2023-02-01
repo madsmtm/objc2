@@ -879,7 +879,7 @@ macro_rules! __declare_class_rewrite_args {
     } => {
         $crate::__declare_class_rewrite_args! {
             ($($($rest_args)*)?)
-            ($($args_converted)* _ : <$param_ty as $crate::encode::EncodeConvert>::__Inner,)
+            ($($args_converted)* _ : <$param_ty as $crate::encode::__unstable::EncodeConvertArgument>::__Inner,)
             ($($body_prefix)*)
 
             ($out_macro)
@@ -897,10 +897,10 @@ macro_rules! __declare_class_rewrite_args {
     } => {
         $crate::__declare_class_rewrite_args! {
             ($($($rest_args)*)?)
-            ($($args_converted)* $param : <$param_ty as $crate::encode::EncodeConvert>::__Inner,)
+            ($($args_converted)* $param : <$param_ty as $crate::encode::__unstable::EncodeConvertArgument>::__Inner,)
             (
                 $($body_prefix)*
-                let mut $param = <$param_ty as $crate::encode::EncodeConvert>::__from_inner($param);
+                let mut $param = <$param_ty as $crate::encode::__unstable::EncodeConvertArgument>::__from_inner($param);
             )
 
             ($out_macro)
@@ -918,10 +918,10 @@ macro_rules! __declare_class_rewrite_args {
     } => {
         $crate::__declare_class_rewrite_args! {
             ($($($rest_args)*)?)
-            ($($args_converted)* $param : <$param_ty as $crate::encode::EncodeConvert>::__Inner,)
+            ($($args_converted)* $param : <$param_ty as $crate::encode::__unstable::EncodeConvertArgument>::__Inner,)
             (
                 $($body_prefix)*
-                let $param = <$param_ty as $crate::encode::EncodeConvert>::__from_inner($param);
+                let $param = <$param_ty as $crate::encode::__unstable::EncodeConvertArgument>::__from_inner($param);
             )
 
             ($out_macro)
@@ -972,7 +972,7 @@ macro_rules! __declare_class_method_out_inner {
         $($qualifiers)* extern "C" fn $name(
             $($args_prefix)*
             $($args_converted)*
-        ) $(-> <$ret as $crate::encode::EncodeConvert>::__Inner)? {
+        ) $(-> <$ret as $crate::encode::__unstable::EncodeConvertReturn>::__Inner)? {
             $($body_prefix)*
             $crate::__convert_result! {
                 $body $(; $ret)?
@@ -1057,7 +1057,7 @@ macro_rules! __convert_result {
     ($body:block; $ret:ty) => {
         let __objc2_result = $body;
         #[allow(unreachable_code)]
-        <$ret as $crate::encode::EncodeConvert>::__into_inner(__objc2_result)
+        <$ret as $crate::encode::__unstable::EncodeConvertReturn>::__into_inner(__objc2_result)
     };
 }
 

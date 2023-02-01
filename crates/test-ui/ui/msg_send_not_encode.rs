@@ -8,5 +8,7 @@ fn main() {
 
         let x: Vec<u8>;
         let _: () = msg_send![cls, newWith: x];
+
+        let _: () = msg_send![cls, unitAsArgument: ()];
     }
 }

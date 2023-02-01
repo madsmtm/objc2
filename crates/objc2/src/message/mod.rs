@@ -2,7 +2,10 @@ use core::mem;
 use core::mem::ManuallyDrop;
 use core::ptr::{self, NonNull};
 
-use crate::encode::{Encode, EncodeArguments, EncodeConvert, RefEncode};
+use crate::encode::__unstable::{
+    EncodeArguments, EncodeConvertArgument, EncodeConvertReturn, EncodeReturn,
+};
+use crate::encode::{Encode, RefEncode};
 use crate::rc::{Id, Owned, Ownership, Shared};
 use crate::runtime::{Class, Imp, Object, Sel};
 use crate::ClassType;
@@ -217,16 +220,16 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
     where
         A: MessageArguments,
-        R: EncodeConvert,
+        R: EncodeConvertReturn,
     {
         let this = self.__as_raw_receiver();
         #[cfg(debug_assertions)]
         {
             // SAFETY: Caller ensures only valid or NULL pointers.
             let obj = unsafe { this.as_ref() };
-            msg_send_check(obj, sel, A::ENCODINGS, &R::__Inner::ENCODING);
+            msg_send_check(obj, sel, A::ENCODINGS, &R::__Inner::ENCODING_RETURN);
         }
-        unsafe { EncodeConvert::__from_inner(send_unverified(this, sel, args)) }
+        unsafe { EncodeConvertReturn::__from_inner(send_unverified(this, sel, args)) }
     }
 
     /// Sends a message to a specific superclass with the given selector and
@@ -256,7 +259,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     unsafe fn send_super_message<A, R>(self, superclass: &Class, sel: Sel, args: A) -> R
     where
         A: MessageArguments,
-        R: EncodeConvert,
+        R: EncodeConvertReturn,
     {
         let this = self.__as_raw_receiver();
         #[cfg(debug_assertions)]
@@ -268,7 +271,9 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
                 panic_verify(superclass, sel, err);
             }
         }
-        unsafe { EncodeConvert::__from_inner(send_super_unverified(this, superclass, sel, args)) }
+        unsafe {
+            EncodeConvertReturn::__from_inner(send_super_unverified(this, superclass, sel, args))
+        }
     }
 
     #[inline]
@@ -279,7 +284,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         Self::__Inner: ClassType,
         <Self::__Inner as ClassType>::Super: ClassType,
         A: MessageArguments,
-        R: EncodeConvert,
+        R: EncodeConvertReturn,
     {
         unsafe { self.send_super_message(<Self::__Inner as ClassType>::Super::class(), sel, args) }
     }
@@ -482,7 +487,7 @@ pub unsafe trait MessageArguments: EncodeArguments {
     /// be called directly; instead, use the `msg_send!` macro or, in cases
     /// with a dynamic selector, the [`MessageReceiver::send_message`] method.
     #[doc(hidden)]
-    unsafe fn __invoke<R: Encode>(imp: Imp, obj: *mut Object, sel: Sel, args: Self) -> R;
+    unsafe fn __invoke<R: EncodeReturn>(imp: Imp, obj: *mut Object, sel: Sel, args: Self) -> R;
 }
 
 pub trait __TupleExtender<T> {
@@ -494,9 +499,9 @@ pub trait __TupleExtender<T> {
 
 macro_rules! message_args_impl {
     ($($a:ident: $t:ident),*) => (
-        unsafe impl<$($t: EncodeConvert),*> MessageArguments for ($($t,)*) {
+        unsafe impl<$($t: EncodeConvertArgument),*> MessageArguments for ($($t,)*) {
             #[inline]
-            unsafe fn __invoke<R: Encode>(imp: Imp, obj: *mut Object, sel: Sel, ($($a,)*): Self) -> R {
+            unsafe fn __invoke<R: EncodeReturn>(imp: Imp, obj: *mut Object, sel: Sel, ($($a,)*): Self) -> R {
                 // The imp must be cast to the appropriate function pointer
                 // type before being called; the msgSend functions are not
                 // parametric, but instead "trampolines" to the actual
@@ -512,7 +517,7 @@ macro_rules! message_args_impl {
                 // TODO: On x86_64 it would be more efficient to use a GOT
                 // entry here (e.g. adding `nonlazybind` in LLVM).
                 // Same can be said of e.g. `objc_retain` and `objc_release`.
-                unsafe { imp(obj, sel $(, EncodeConvert::__into_inner($a))*) }
+                unsafe { imp(obj, sel $(, EncodeConvertArgument::__into_inner($a))*) }
             }
         }
 

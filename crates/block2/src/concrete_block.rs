@@ -5,6 +5,7 @@ use core::ops::Deref;
 use core::ptr;
 use std::os::raw::c_ulong;
 
+use objc2::encode::__unstable::EncodeReturn;
 use objc2::encode::{Encode, Encoding, RefEncode};
 
 use crate::{ffi, Block, BlockArguments, RcBlock};
@@ -25,7 +26,7 @@ mod private {
 /// issue if you know a use-case where this restrition should be lifted!
 pub unsafe trait IntoConcreteBlock<A: BlockArguments>: private::Sealed<A> + Sized {
     /// The return type of the resulting `ConcreteBlock`.
-    type Output: Encode;
+    type Output: EncodeReturn;
 
     #[doc(hidden)]
     fn __into_concrete_block(self) -> ConcreteBlock<A, Self::Output, Self>;
@@ -36,12 +37,12 @@ macro_rules! concrete_block_impl {
         concrete_block_impl!($f,);
     );
     ($f:ident, $($a:ident : $t:ident),*) => (
-        impl<$($t: Encode,)* R: Encode, X> private::Sealed<($($t,)*)> for X
+        impl<$($t: Encode,)* R: EncodeReturn, X> private::Sealed<($($t,)*)> for X
         where
             X: Fn($($t,)*) -> R,
         {}
 
-        unsafe impl<$($t: Encode,)* R: Encode, X> IntoConcreteBlock<($($t,)*)> for X
+        unsafe impl<$($t: Encode,)* R: EncodeReturn, X> IntoConcreteBlock<($($t,)*)> for X
         where
             X: Fn($($t,)*) -> R,
         {
@@ -166,14 +167,14 @@ pub struct ConcreteBlock<A, R, F> {
     pub(crate) closure: F,
 }
 
-unsafe impl<A: BlockArguments, R: Encode, F> RefEncode for ConcreteBlock<A, R, F> {
+unsafe impl<A: BlockArguments, R: EncodeReturn, F> RefEncode for ConcreteBlock<A, R, F> {
     const ENCODING_REF: Encoding = Encoding::Block;
 }
 
 impl<A, R, F> ConcreteBlock<A, R, F>
 where
     A: BlockArguments,
-    R: Encode,
+    R: EncodeReturn,
     F: IntoConcreteBlock<A, Output = R>,
 {
     /// Constructs a `ConcreteBlock` with the given closure.
