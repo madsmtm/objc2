@@ -118,6 +118,9 @@ fn parse_objc_decl(
         EntityKind::ObjCSuperClassRef | EntityKind::TypeRef if superclass => {
             // Parsed in parse_superclass
         }
+        EntityKind::ObjCSubclassingRestricted if superclass => {
+            // TODO: https://clang.llvm.org/docs/AttributeReference.html#objc-subclassing-restricted
+        }
         EntityKind::ObjCRootClass => {
             debug!("parsing root class");
         }
@@ -908,6 +911,11 @@ impl Stmt {
                     children = ?entity.get_children(),
                     "union",
                 );
+                vec![]
+            }
+            EntityKind::UnexposedDecl => {
+                // `@compatibility_alias`, can be ignored (since we don't
+                // need to support older SDK versions).
                 vec![]
             }
             _ => {

@@ -7,6 +7,7 @@ use serde::Deserialize;
 
 use crate::context::Context;
 use crate::id::ItemIdentifier;
+use crate::unexposed_attr::UnexposedAttr;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 enum ParsePosition {
@@ -353,7 +354,9 @@ impl IdType {
                         }
 
                         let mut parser = AttributeParser::new(pointer_name, &pointee_name);
+                        *is_kindof = parser.is_kindof(ParsePosition::Prefix);
                         lifetime.update(parser.lifetime(ParsePosition::Prefix));
+                        lifetime.update(parser.lifetime(ParsePosition::Suffix));
                         parser.set_inner_pointer();
 
                         Self::Class {
@@ -1787,21 +1790,19 @@ fn parse_unexposed_tokens(s: &str) -> String {
     let mut iter = tokens.into_iter().peekable();
     if let Some(TokenTree::Ident(ident)) = iter.peek() {
         let ident = ident.to_string();
-        match &*ident {
-            "NS_RETURNS_INNER_POINTER" | "NS_REFINED_FOR_SWIFT" | "NS_SWIFT_UI_ACTOR" => {
-                iter.next();
+        if let Ok(attr) = UnexposedAttr::from_name(&ident, || {
+            iter.next();
+            if let Some(TokenTree::Group(group)) = iter.peek() {
+                Some(group)
+            } else {
+                error!(?ident, "expected group in macro");
+                None
             }
-            "API_AVAILABLE"
-            | "API_UNAVAILABLE"
-            | "NS_SWIFT_NAME"
-            | "API_DEPRECATED"
-            | "API_DEPRECATED_WITH_REPLACEMENT" => {
-                iter.next();
-                if let Some(TokenTree::Group(_)) = iter.peek() {
-                    iter.next();
-                }
+        }) {
+            if let Some(attr) = attr {
+                error!(?attr, "unknown attribute");
             }
-            _ => {}
+            iter.next();
         }
     }
     TokenStream::from_iter(iter).to_string()

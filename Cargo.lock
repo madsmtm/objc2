@@ -135,6 +135,7 @@ version = "0.1.0"
 dependencies = [
  "apple-sdk",
  "clang",
+ "clang-sys",
  "heck",
  "proc-macro2",
  "serde",

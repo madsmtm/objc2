@@ -11,9 +11,17 @@ cargo run --bin header-translator
 
 Make sure you have the same XCode version installed as the one documented in [`crates/icrate/README.md`](../icrate/README.md).
 
-If you have the SDK stored in a different directory, you can specify that as the first argument:
+If you use a different operating system than macOS, or simply have multiple SDKs installed, you can specify the directory as the first argument:
 
 ```console
+cargo run --bin header-translator -- /Applications/Xcode_new.app/Contents/Developer
+```
+
+Note that you will likely need to use a newer `libclang`, such as [the one distributed with Swift `5.7.2`](https://github.com/apple/llvm-project/tree/swift-5.7.2-RELEASE). You can use a different version as follows (details might vary between operating systems):
+
+```console
+export LIBCLANG_PATH=/path/to/custom/installation/usr/lib/libclang.dylib
+export CPATH=/path/to/custom/installation/usr/lib/clang/14.0.0/include/
 cargo run --bin header-translator -- /Applications/Xcode_new.app/Contents/Developer
 ```
 
