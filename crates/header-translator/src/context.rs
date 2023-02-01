@@ -10,7 +10,7 @@ use crate::config::Config;
 
 pub struct Context<'a> {
     config: &'a Config,
-    pub macro_invocations: HashMap<Location<'a>, String>,
+    pub macro_invocations: HashMap<Location<'a>, Entity<'a>>,
     framework_dir: PathBuf,
     include_dir: PathBuf,
     system_headers: HashSet<&'static Path>,

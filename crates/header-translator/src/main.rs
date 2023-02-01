@@ -252,11 +252,10 @@ fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Confi
                         }
                     }
                     EntityKind::MacroExpansion if preprocessing => {
-                        let name = entity.get_name().expect("macro name");
                         let location = entity.get_location().expect("macro location");
                         context
                             .macro_invocations
-                            .insert(location.get_spelling_location(), name);
+                            .insert(location.get_spelling_location(), entity);
                     }
                     EntityKind::MacroDefinition if preprocessing => {
                         // let name = entity.get_name().expect("macro def name");
