@@ -201,6 +201,37 @@ LBB12_2:
 	mov	rsi, r14
 	call	SYM(<objc2::__macro_helpers::RetainSemantics<5_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
+	.globl	_handle_with_out_param
+	.p2align	4, 0x90
+_handle_with_out_param:
+	push	rbp
+	mov	rbp, rsp
+	push	r15
+	push	r14
+	push	rbx
+	push	rax
+	mov	rbx, rdx
+	mov	r14, qword ptr [rdx]
+	call	_objc_msgSend
+	mov	r15, rax
+	mov	rdi, qword ptr [rbx]
+	call	_objc_retain
+	mov	rdi, r14
+	call	_objc_release
+	mov	rdi, r15
+	call	_objc_retainAutoreleasedReturnValue
+	## InlineAsm Start
+
+	nop
+
+	## InlineAsm End
+	add	rsp, 8
+	pop	rbx
+	pop	r14
+	pop	r15
+	pop	rbp
+	ret
+
 	.section	__TEXT,__const
 l_anon.[ID].0:
 	.ascii	"crates/$DIR/lib.rs"

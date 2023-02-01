@@ -17,8 +17,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `Debug`, `Hash`, `PartialEq` and `Eq`.
 * Support running `Drop` impls on `dealloc` in `declare_class!`.
 * Added `declare::IvarEncode` and `declare::IvarBool` types.
-* Moved the `objc2_encode` traits to `objc2::encode` (API surface is
-  unchanged, since they were already exposed from that).
+* **BREAKING**: Moved the `objc2_encode` traits to `objc2::encode`.
+
+  This includes removing the `EncodeConvert` and `EncodeArguments` traits.
+* Added support for out-parameters like `&mut Id<_, _>` in `msg_send!`,
+  `msg_send_id!` and `extern_methods!`.
 
 ### Changed
 * **BREAKING**: Using the automatic `NSError**`-to-`Result` functionality in
@@ -113,6 +116,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Allow empty structs in `declare_class!` macro.
 * Allow using `extern_methods!` without the `ClassType` trait in scope.
 * Fixed a few small issues with `declare_class!`.
+* Fixed `()` being possible in argument position in `msg_send!`.
 
 
 ## 0.3.0-beta.4 - 2022-12-24

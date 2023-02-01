@@ -761,24 +761,46 @@ macro_rules! __class_inner {
 /// [`runtime::Bool`]: crate::runtime::Bool
 ///
 ///
+/// # Out-parameters
+///
+/// Parameters like `NSString**` in Objective-C are passed by "writeback",
+/// which essentially just means that the callee autoreleases any value that
+/// they may write into the parameter.
+///
+/// This macro has support for passing such parameters using the following
+/// types:
+/// - `&mut Id<_, _>`
+/// - `Option<&mut Id<_, _>>`
+/// - `&mut Option<Id<_, _>>`,
+/// - `Option<&mut Option<Id<_, _>>>`
+///
+/// Beware with the first two, since they will cause undefined behaviour if
+/// the method overwrites the value with `nil`.
+///
+/// See [clang's documentation][clang-out-params] for more details.
+///
+/// [clang-out-params]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#passing-to-an-out-parameter-by-writeback
+///
+///
 /// # Errors
 ///
-/// Many methods take an `NSError**` as their last parameter, which is used to
-/// communicate errors to the caller, see [Error Handling Programming Guide
-/// For Cocoa][cocoa-error].
+/// The most common place you'll see out-parameters is as `NSError**` the last
+/// parameter, which is used to communicate errors to the caller, see [Error
+/// Handling Programming Guide For Cocoa][cocoa-error].
 ///
 /// Similar to Swift's [importing of error parameters][swift-error], this
-/// macro supports transforming methods whose last parameter is `NSError**`
-/// and returns `BOOL`, into the Rust equivalent, the [`Result`] type.
+/// macro supports an even more convenient version than the out-parameter
+/// support, which transforms methods whose last parameter is `NSError**` and
+/// returns `BOOL`, into the Rust equivalent, the [`Result`] type.
 ///
-/// In particular, you can make the last argument the special marker `_`, and
-/// then the macro will return a `Result<(), Id<E, Shared>>` (where you must
+/// In particular, if you make the last argument the special marker `_`, then
+/// the macro will return a `Result<(), Id<E, Shared>>` (where you must
 /// specify `E` yourself, usually you'd use `icrate::Foundation::NSError`).
 ///
-/// At runtime, a temporary error variable is created on the stack and sent as
-/// the last parameter. If the message send then returns `NO`/`false` (or in
-/// the case of `msg_send_id!`, `NULL`), the error variable is loaded and
-/// returned in [`Err`].
+/// At runtime, we create the temporary error variable for you on the stack
+/// and send it as the out-parameter to the method. If the method then returns
+/// `NO`/`false` (or in the case of `msg_send_id!`, `NULL`), the error
+/// variable is loaded and returned in [`Err`].
 ///
 /// Do beware that this is only valid on methods that return `BOOL`, see
 /// [`msg_send_id!`] for methods that return instance types.
@@ -834,7 +856,11 @@ macro_rules! __class_inner {
 ///      may not be valid outside of an [`autoreleasepool`] ([`msg_send_id!`]
 ///      can greatly help with that).
 ///
-/// 8. TODO: Maybe more?
+/// 8. Each out-parameter must have the correct nullability, and the method
+///    must not have any attributes that changes the how it handles memory
+///    management for these.
+///
+/// 9. TODO: Maybe more?
 ///
 /// [`autoreleasepool`]: crate::rc::autoreleasepool
 /// [`msg_send_id!`]: crate::msg_send_id
@@ -898,15 +924,45 @@ macro_rules! __class_inner {
 ///
 /// ```no_run
 /// use objc2::msg_send;
-/// use objc2::runtime::Object;
 /// use objc2::rc::{Id, Shared};
 ///
-/// let obj: *mut Object; // Let's assume an instance of `NSBundle`
-/// # obj = 0 as *mut Object;
+/// # type NSBundle = objc2::runtime::Object;
+/// # type NSError = objc2::runtime::Object;
+/// let obj: &NSBundle;
+/// # obj = todo!();
 /// // The `_` tells the macro that the return type should be `Result`.
-/// let res: Result<(), Id<Object, Shared>> = unsafe {
+/// let res: Result<(), Id<NSError, Shared>> = unsafe {
 ///     msg_send![obj, preflightAndReturnError: _]
 /// };
+/// ```
+///
+/// Sending a message with an out parameter _and_ automatic error handling.
+///
+/// ```no_run
+/// use objc2::msg_send;
+/// use objc2::rc::{Id, Shared};
+///
+/// # type NSFileManager = objc2::runtime::Object;
+/// # type NSURL = objc2::runtime::Object;
+/// # type NSError = objc2::runtime::Object;
+/// let obj: &NSFileManager;
+/// # obj = todo!();
+/// let url: &NSURL;
+/// # url = todo!();
+/// let mut result_url: Option<Id<NSURL, Shared>> = None;
+/// unsafe {
+///     msg_send![
+///         obj,
+///         trashItemAtURL: url,
+///         resultingItemURL: Some(&mut result_url),
+///         error: _
+///     ]?
+/// //   ^ is possible on error-returning methods, if the return type is specified
+/// };
+///
+/// // Use `result_url` here
+///
+/// # Ok::<(), Id<NSError, Shared>>(())
 /// ```
 #[macro_export]
 macro_rules! msg_send {

@@ -352,6 +352,40 @@ handle_autoreleased_fallible:
 .Lfunc_end12:
 	.size	handle_autoreleased_fallible, .Lfunc_end12-handle_autoreleased_fallible
 
+	.section	.text.handle_with_out_param,"ax",@progbits
+	.globl	handle_with_out_param
+	.p2align	4, 0x90
+	.type	handle_with_out_param,@function
+handle_with_out_param:
+	push	r15
+	push	r14
+	push	r12
+	push	rbx
+	push	rax
+	mov	rbx, rdx
+	mov	r14, rsi
+	mov	r15, rdi
+	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
+	mov	r12, qword ptr [rbx]
+	mov	rdi, r15
+	mov	rsi, r14
+	mov	rdx, rbx
+	call	rax
+	mov	r14, rax
+	mov	rdi, qword ptr [rbx]
+	call	qword ptr [rip + objc_retain@GOTPCREL]
+	mov	rdi, r12
+	call	qword ptr [rip + objc_release@GOTPCREL]
+	mov	rdi, r14
+	add	rsp, 8
+	pop	rbx
+	pop	r12
+	pop	r14
+	pop	r15
+	jmp	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
+.Lfunc_end13:
+	.size	handle_with_out_param, .Lfunc_end13-handle_with_out_param
+
 	.type	.Lanon.[ID].0,@object
 	.section	.rodata..Lanon.[ID].0,"a",@progbits
 .Lanon.[ID].0:

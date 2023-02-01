@@ -5,7 +5,7 @@ use core::ops::Deref;
 use core::ptr;
 use std::os::raw::c_ulong;
 
-use objc2::encode::Encode;
+use objc2::encode::__unstable::EncodeReturn;
 
 use super::{ffi, Block};
 use crate::BlockArguments;
@@ -35,13 +35,13 @@ pub struct GlobalBlock<A, R = ()> {
 unsafe impl<A, R> Sync for GlobalBlock<A, R>
 where
     A: BlockArguments,
-    R: Encode,
+    R: EncodeReturn,
 {
 }
 unsafe impl<A, R> Send for GlobalBlock<A, R>
 where
     A: BlockArguments,
-    R: Encode,
+    R: EncodeReturn,
 {
 }
 
@@ -78,7 +78,7 @@ impl<A, R> GlobalBlock<A, R> {
 impl<A, R> Deref for GlobalBlock<A, R>
 where
     A: BlockArguments,
-    R: Encode,
+    R: EncodeReturn,
 {
     type Target = Block<A, R>;
 
@@ -94,7 +94,7 @@ where
 ///
 /// The syntax is similar to a static closure (except that all types have to
 /// be specified). Note that the block cannot capture its environment, and
-/// its argument types and return type must be [`Encode`].
+/// its argument types and return type must be [`EncodeReturn`].
 ///
 /// # Examples
 ///
@@ -130,7 +130,7 @@ where
 /// assert_eq!(x, 47);
 /// ```
 ///
-/// The following does not compile because [`Box`] is not [`Encode`]:
+/// The following does not compile because [`Box`] is not [`EncodeReturn`]:
 ///
 /// ```compile_fail
 /// use block2::global_block;

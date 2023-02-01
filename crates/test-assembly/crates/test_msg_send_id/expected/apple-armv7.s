@@ -177,6 +177,27 @@ LPC12_0:
 	mov	lr, pc
 	b	SYM(<objc2::__macro_helpers::RetainSemantics<5_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
+	.globl	_handle_with_out_param
+	.p2align	2
+	.code	32
+_handle_with_out_param:
+	push	{r4, r5, r6, r7, lr}
+	add	r7, sp, #12
+	mov	r4, r2
+	ldr	r5, [r2]
+	bl	_objc_msgSend
+	mov	r6, r0
+	ldr	r0, [r4]
+	bl	_objc_retain
+	mov	r0, r5
+	bl	_objc_release
+	@ InlineAsm Start
+	mov	r7, r7
+	@ InlineAsm End
+	mov	r0, r6
+	pop	{r4, r5, r6, r7, lr}
+	b	_objc_retainAutoreleasedReturnValue
+
 	.section	__TEXT,__const
 l_anon.[ID].0:
 	.ascii	"crates/$DIR/lib.rs"

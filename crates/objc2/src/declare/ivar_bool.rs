@@ -4,15 +4,11 @@ use super::InnerIvarType;
 
 /// Ivar of [`bool`].
 ///
-/// This is used to work around the fact that `bool` is not [`Encode`], only
-/// [`EncodeConvert`] (and that is only usable when we can do a conversion
-/// step, which we can't here).
+/// This is used to work around the fact that `bool` is not [`Encode`].
 ///
 /// If you want to access this instance variable to Objective-C, you must do
 /// so using C99 `_Bool`; if you want to use `BOOL` in Objective-C, you should
 /// use `IvarEncode<Bool>`.
-///
-/// [`EncodeConvert`]: crate::encode::EncodeConvert
 #[repr(transparent)]
 pub struct IvarBool(bool);
 

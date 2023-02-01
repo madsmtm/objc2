@@ -443,3 +443,71 @@ fn test_subclass_duplicate_ivar() {
     let ivar_dynamically = unsafe { obj.ivar::<i32>("ivar") };
     assert_eq!(*ivar_dynamically, 3);
 }
+
+declare_class!(
+    struct OutParam;
+
+    unsafe impl ClassType for OutParam {
+        type Super = NSObject;
+        const NAME: &'static str = "OutParam";
+    }
+
+    unsafe impl OutParam {
+        #[method(unsupported1:)]
+        fn _unsupported1(_param: &mut Id<Self, Shared>) {}
+
+        #[method(unsupported2:)]
+        fn _unsupported2(_param: Option<&mut Id<Self, Shared>>) {}
+
+        #[method(unsupported3:)]
+        fn _unsupported3(_param: &mut Option<Id<Self, Shared>>) {}
+
+        #[method(unsupported4:)]
+        fn _unsupported4(_param: Option<&mut Option<Id<Self, Shared>>>) {}
+    }
+);
+
+extern_methods!(
+    unsafe impl OutParam {
+        #[method_id(new)]
+        fn new() -> Id<Self, Shared>;
+
+        #[method(unsupported1:)]
+        fn unsupported1(_param: &mut Id<Self, Shared>);
+
+        #[method(unsupported2:)]
+        fn unsupported2(_param: Option<&mut Id<Self, Shared>>);
+
+        #[method(unsupported3:)]
+        fn unsupported3(_param: &mut Option<Id<Self, Shared>>);
+
+        #[method(unsupported4:)]
+        fn unsupported4(_param: Option<&mut Option<Id<Self, Shared>>>);
+    }
+);
+
+#[test]
+#[should_panic = "`&mut Id<_, _>` is not supported in `declare_class!` yet"]
+fn out_param1() {
+    let mut param = OutParam::new();
+    OutParam::unsupported1(&mut param);
+}
+
+#[test]
+#[should_panic = "`Option<&mut Id<_, _>>` is not supported in `declare_class!` yet"]
+fn out_param2() {
+    OutParam::unsupported2(None);
+}
+
+#[test]
+#[should_panic = "`&mut Option<Id<_, _>>` is not supported in `declare_class!` yet"]
+fn out_param3() {
+    let mut param = Some(OutParam::new());
+    OutParam::unsupported3(&mut param);
+}
+
+#[test]
+#[should_panic = "`Option<&mut Option<Id<_, _>>>` is not supported in `declare_class!` yet"]
+fn out_param4() {
+    OutParam::unsupported4(None);
+}

@@ -502,6 +502,50 @@ handle_autoreleased_fallible:
 .Lfunc_end12:
 	.size	handle_autoreleased_fallible, .Lfunc_end12-handle_autoreleased_fallible
 
+	.section	.text.handle_with_out_param,"ax",@progbits
+	.globl	handle_with_out_param
+	.p2align	4, 0x90
+	.type	handle_with_out_param,@function
+handle_with_out_param:
+	push	ebp
+	push	ebx
+	push	edi
+	push	esi
+	sub	esp, 12
+	mov	eax, dword ptr [esp + 32]
+	mov	esi, dword ptr [esp + 36]
+	mov	edi, dword ptr [esp + 40]
+	call	.L13$pb
+.L13$pb:
+	pop	ebx
+.Ltmp13:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp13-.L13$pb)
+	mov	dword ptr [esp + 4], esi
+	mov	dword ptr [esp], eax
+	call	objc_msg_lookup@PLT
+	mov	ecx, dword ptr [esp + 32]
+	mov	ebp, dword ptr [edi]
+	mov	dword ptr [esp + 8], edi
+	mov	dword ptr [esp + 4], esi
+	mov	dword ptr [esp], ecx
+	call	eax
+	mov	esi, eax
+	mov	eax, dword ptr [edi]
+	mov	dword ptr [esp], eax
+	call	objc_retain@PLT
+	mov	dword ptr [esp], ebp
+	call	objc_release@PLT
+	mov	dword ptr [esp], esi
+	call	objc_retainAutoreleasedReturnValue@PLT
+	add	esp, 12
+	pop	esi
+	pop	edi
+	pop	ebx
+	pop	ebp
+	ret
+.Lfunc_end13:
+	.size	handle_with_out_param, .Lfunc_end13-handle_with_out_param
+
 	.type	.Lanon.[ID].0,@object
 	.section	.rodata..Lanon.[ID].0,"a",@progbits
 .Lanon.[ID].0:

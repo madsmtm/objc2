@@ -27,7 +27,8 @@ mod nsobject;
 mod nszone;
 
 pub(crate) use self::method_encoding_iter::{EncodingParseError, MethodEncodingIter};
-use crate::encode::{Encode, EncodeArguments, EncodeConvert, Encoding, OptionEncode, RefEncode};
+use crate::encode::__unstable::{EncodeArguments, EncodeConvertReturn, EncodeReturn};
+use crate::encode::{Encode, Encoding, OptionEncode, RefEncode};
 use crate::ffi;
 use crate::verify::{verify_method_signature, Inner, VerificationError};
 
@@ -624,10 +625,10 @@ impl Class {
     pub fn verify_sel<A, R>(&self, sel: Sel) -> Result<(), VerificationError>
     where
         A: EncodeArguments,
-        R: EncodeConvert,
+        R: EncodeConvertReturn,
     {
         let method = self.instance_method(sel).ok_or(Inner::MethodNotFound)?;
-        verify_method_signature(method, A::ENCODINGS, &R::__Inner::ENCODING)
+        verify_method_signature(method, A::ENCODINGS, &R::__Inner::ENCODING_RETURN)
     }
 }
 

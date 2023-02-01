@@ -125,7 +125,7 @@ pub struct Id<T: ?Sized, O: Ownership> {
 
 impl<T: ?Sized, O: Ownership> Id<T, O> {
     #[inline]
-    unsafe fn new_nonnull(ptr: NonNull<T>) -> Self {
+    pub(crate) unsafe fn new_nonnull(ptr: NonNull<T>) -> Self {
         Self {
             ptr,
             item: PhantomData,

@@ -1722,27 +1722,27 @@ impl fmt::Display for Ty {
                     is_const: false,
                     pointee,
                 } => match &**pointee {
-                    // TODO: Re-enable once we can support it
-                    // Inner::Id {
-                    //     ty,
-                    //     is_const: false,
-                    //     lifetime: Lifetime::Autoreleasing,
-                    //     nullability: inner_nullability,
-                    // } if self.kind == TyKind::MethodArgument => {
-                    //     let tokens = if *inner_nullability == Nullability::NonNull {
-                    //         format!("Id<{ty}, Shared>")
-                    //     } else {
-                    //         format!("Option<Id<{ty}, Shared>>")
-                    //     };
-                    //     if *nullability == Nullability::NonNull {
-                    //         write!(f, "&mut {tokens}")
-                    //     } else {
-                    //         write!(f, "Option<&mut {tokens}>")
-                    //     }
-                    // }
-                    // Inner::Id { .. } => {
-                    //     unreachable!("there should be no id with other values: {self:?}")
-                    // }
+                    Inner::Id {
+                        ty,
+                        // Don't care about the const-ness of the id.
+                        is_const: _,
+                        lifetime: Lifetime::Autoreleasing,
+                        nullability: inner_nullability,
+                    } if self.kind == TyKind::MethodArgument => {
+                        let tokens = if *inner_nullability == Nullability::NonNull {
+                            format!("Id<{ty}, Shared>")
+                        } else {
+                            format!("Option<Id<{ty}, Shared>>")
+                        };
+                        if *nullability == Nullability::NonNull {
+                            write!(f, "&mut {tokens}")
+                        } else {
+                            write!(f, "Option<&mut {tokens}>")
+                        }
+                    }
+                    Inner::Id { .. } if self.kind == TyKind::MethodArgument => {
+                        unreachable!("invalid out-pointer id {self:?}")
+                    }
                     block @ Inner::Block { .. } => {
                         if *nullability == Nullability::NonNull {
                             write!(f, "&{block}")

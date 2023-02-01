@@ -9,3 +9,6 @@ resolver = "2"
 inherits = "release"
 # Enable LTO to allow testing the `unstable-static-sel-inlined` feature
 lto = true
+# Don't emit unwind info; while important to get right, the control flow is
+# very hard to glean from assembly output.
+panic = "abort"

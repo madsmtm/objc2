@@ -1,6 +1,6 @@
 use core::fmt;
 
-use crate::encode::{Encode, EncodeConvert, Encoding, RefEncode};
+use crate::encode::{Encode, Encoding, RefEncode};
 use crate::ffi;
 
 /// The Objective-C `BOOL` type.
@@ -99,6 +99,18 @@ impl fmt::Debug for Bool {
     }
 }
 
+trait Helper {
+    const __ENCODING: Encoding;
+}
+
+impl<T: Encode> Helper for T {
+    const __ENCODING: Encoding = T::ENCODING;
+}
+
+impl Helper for bool {
+    const __ENCODING: Encoding = Encoding::Bool;
+}
+
 // SAFETY: `Bool` is `repr(transparent)`.
 unsafe impl Encode for Bool {
     // i8::__ENCODING == Encoding::Char
@@ -125,6 +137,7 @@ unsafe impl RefEncode for Bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::encode::__unstable::{EncodeConvertArgument, EncodeConvertReturn};
     use alloc::format;
 
     #[test]
@@ -155,6 +168,20 @@ mod tests {
         assert!(!b.as_bool());
         assert!(b.is_false());
         assert_eq!(b.as_raw() as usize, 0);
+    }
+
+    #[test]
+    fn test_encode() {
+        assert_eq!(bool::__ENCODING, Encoding::Bool);
+
+        assert_eq!(
+            <bool as EncodeConvertArgument>::__Inner::__ENCODING,
+            <bool as EncodeConvertArgument>::__Inner::ENCODING
+        );
+        assert_eq!(
+            <bool as EncodeConvertReturn>::__Inner::__ENCODING,
+            <bool as EncodeConvertReturn>::__Inner::ENCODING
+        );
     }
 
     #[test]

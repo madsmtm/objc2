@@ -138,15 +138,15 @@ pub trait MsgSendId<T, U> {
         if let Some(res) = res {
             // In this case, the error is likely not created. If it is, it is
             // autoreleased anyhow, so it would be a waste to retain and
-            // release it.
+            // release it here.
             Ok(res)
         } else {
             // In this case, the error has very likely been created, but has
-            // been autoreleased (as is common for "out parameters"). Hence we
-            // need to retain it if we want it to live across autorelease
-            // pools.
+            // been autoreleased (as is common for "out parameters", see
+            // `src/rc/writeback.rs`). Hence we need to retain it if we want
+            // it to live across autorelease pools.
             //
-            // SAFETY: The closure `f` is guaranteed to populate the error
+            // SAFETY: The message send is guaranteed to populate the error
             // object, or leave it as NULL. The error is shared, and all
             // holders of the error know this, so is safe to retain.
             Err(unsafe { encountered_error(err) })

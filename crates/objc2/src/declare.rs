@@ -124,7 +124,8 @@ use core::ptr;
 use core::ptr::NonNull;
 use std::ffi::CString;
 
-use crate::encode::{Encode, EncodeArguments, Encoding, RefEncode};
+use crate::encode::__unstable::{EncodeArguments, EncodeReturn};
+use crate::encode::{Encode, Encoding, RefEncode};
 use crate::ffi;
 use crate::rc::Allocated;
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
@@ -148,7 +149,7 @@ pub trait MethodImplementation: private::Sealed {
     /// The callee type of the method.
     type Callee: RefEncode + ?Sized;
     /// The return type of the method.
-    type Ret: Encode;
+    type Ret: EncodeReturn;
     /// The argument types of the method.
     type Args: EncodeArguments;
 
@@ -161,14 +162,14 @@ macro_rules! method_decl_impl {
         impl<$($l,)* T, $r, $($t),*> private::Sealed for $f
         where
             T: Message + ?Sized,
-            $r: Encode,
+            $r: EncodeReturn,
             $($t: Encode,)*
         {}
 
         impl<$($l,)* T, $r, $($t),*> MethodImplementation for $f
         where
             T: Message + ?Sized,
-            $r: Encode,
+            $r: EncodeReturn,
             $($t: Encode,)*
         {
             type Callee = T;
@@ -183,13 +184,13 @@ macro_rules! method_decl_impl {
     (@<$($l:lifetime),*> Class, $r:ident, $f:ty, $($t:ident),*) => {
         impl<$($l,)* $r, $($t),*> private::Sealed for $f
         where
-            $r: Encode,
+            $r: EncodeReturn,
             $($t: Encode,)*
         {}
 
         impl<$($l,)* $r, $($t),*> MethodImplementation for $f
         where
-            $r: Encode,
+            $r: EncodeReturn,
             $($t: Encode,)*
         {
             type Callee = Class;
@@ -408,7 +409,7 @@ impl ClassBuilder {
         F: MethodImplementation<Callee = T>,
     {
         let enc_args = F::Args::ENCODINGS;
-        let enc_ret = F::Ret::ENCODING;
+        let enc_ret = F::Ret::ENCODING_RETURN;
 
         let sel_args = sel.number_of_arguments();
         assert_eq!(
@@ -465,7 +466,7 @@ impl ClassBuilder {
         F: MethodImplementation<Callee = Class>,
     {
         let enc_args = F::Args::ENCODINGS;
-        let enc_ret = F::Ret::ENCODING;
+        let enc_ret = F::Ret::ENCODING_RETURN;
 
         let sel_args = sel.number_of_arguments();
         assert_eq!(
@@ -629,7 +630,7 @@ impl ProtocolBuilder {
         is_instance_method: bool,
     ) where
         Args: EncodeArguments,
-        Ret: Encode,
+        Ret: EncodeReturn,
     {
         let encs = Args::ENCODINGS;
         let sel_args = sel.number_of_arguments();
@@ -641,7 +642,7 @@ impl ProtocolBuilder {
             sel_args,
             encs.len(),
         );
-        let types = method_type_encoding(&Ret::ENCODING, encs);
+        let types = method_type_encoding(&Ret::ENCODING_RETURN, encs);
         unsafe {
             ffi::protocol_addMethodDescription(
                 self.as_mut_ptr(),
@@ -657,7 +658,7 @@ impl ProtocolBuilder {
     pub fn add_method_description<Args, Ret>(&mut self, sel: Sel, is_required: bool)
     where
         Args: EncodeArguments,
-        Ret: Encode,
+        Ret: EncodeReturn,
     {
         self.add_method_description_common::<Args, Ret>(sel, is_required, true)
     }
@@ -666,7 +667,7 @@ impl ProtocolBuilder {
     pub fn add_class_method_description<Args, Ret>(&mut self, sel: Sel, is_required: bool)
     where
         Args: EncodeArguments,
-        Ret: Encode,
+        Ret: EncodeReturn,
     {
         self.add_method_description_common::<Args, Ret>(sel, is_required, false)
     }

@@ -160,7 +160,7 @@
     feature(negative_impls, auto_traits)
 )]
 #![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]
-#![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg))]
+#![cfg_attr(feature = "unstable-docsrs", feature(doc_cfg, doc_auto_cfg))]
 #![warn(elided_lifetimes_in_paths)]
 #![warn(missing_docs)]
 #![deny(non_ascii_idents)]
@@ -189,7 +189,7 @@ pub use objc_sys as ffi;
 
 pub use self::class_type::ClassType;
 #[doc(no_inline)]
-pub use self::encode::{Encode, EncodeArguments, Encoding, RefEncode};
+pub use self::encode::{Encode, Encoding, RefEncode};
 pub use self::message::{Message, MessageArguments, MessageReceiver};
 pub use self::protocol::{ImplementedBy, ProtocolObject, ProtocolType};
 pub use self::verify::VerificationError;
