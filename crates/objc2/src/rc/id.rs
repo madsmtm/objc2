@@ -210,6 +210,13 @@ impl<T: Message + ?Sized, O: Ownership> Id<T, O> {
     pub(crate) fn consume_as_ptr(this: ManuallyDrop<Self>) -> *mut T {
         this.ptr.as_ptr()
     }
+
+    /// Helper for getting the pointer without assuming anything about
+    /// mutability.
+    #[inline]
+    pub(crate) fn with_ptr(this: Self) -> (NonNull<T>, Self) {
+        (this.ptr.as_ptr(), this)
+    }
 }
 
 impl<T: Message + ?Sized> Id<T, Owned> {

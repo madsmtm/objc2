@@ -54,6 +54,8 @@ mod convert_private {
 
 impl<T: EncodeReturn> convert_private::Sealed for T {}
 impl convert_private::Sealed for bool {}
+impl<T: Message, O: Ownership> convert_private::Sealed for Id<T, O> {}
+impl<T: Message, O: Ownership> convert_private::Sealed for Option<Id<T, O>> {}
 
 // Implemented in rc/writeback.rs
 impl<T: Message, O: Ownership> convert_private::Sealed for &mut Id<T, O> {}
@@ -158,6 +160,61 @@ impl EncodeConvertReturn for bool {
     #[inline]
     fn __from_return(inner: Self::__Inner) -> Self {
         inner.as_bool()
+    }
+}
+
+// Allow passing `Id` as argument (to ensure e.g. that a `NSMutableString`
+// argument can be consumed by a method in `extern_methods!`).
+//
+// Note: No `T: 'static` bound required here.
+
+// SAFETY: TODO
+impl<T: Message, O: Ownership> EncodeConvertArgument for Id<T, O> {
+    type __Inner = NonNull<T>;
+
+    type __StoredBeforeMessage = Id<T, O>;
+
+    #[inline]
+    fn __from_declared_param(_inner: Self::__Inner) -> Self {
+        todo!("`Id<_, _>` is not supported in `declare_class!` yet")
+    }
+
+    #[inline]
+    fn __into_argument(self) -> (Self::__Inner, Self::__StoredBeforeMessage) {
+        Id::with_ptr(self)
+    }
+
+    #[inline]
+    unsafe fn __process_after_message_send(obj: Self::__StoredBeforeMessage) {
+        drop(obj);
+    }
+}
+
+impl<T: Message, O: Ownership> EncodeConvertArgument for Option<Id<T, O>> {
+    type __Inner = Option<NonNull<T>>;
+
+    type __StoredBeforeMessage = Option<Id<T, O>>;
+
+    #[inline]
+    fn __from_declared_param(_inner: Self::__Inner) -> Self {
+        todo!("`Option<Id<_, _>>` is not supported in `declare_class!` yet")
+    }
+
+    #[inline]
+    fn __into_argument(self) -> (Self::__Inner, Self::__StoredBeforeMessage) {
+        // TODO: self.map(Id::with_ptr).unzip()
+        match self {
+            Some(this) => {
+                let (ptr, this) = Id::with_ptr(this);
+                (Some(ptr), Some(this))
+            },
+            None => (None, None),
+        }
+    }
+
+    #[inline]
+    unsafe fn __process_after_message_send(obj: Self::__StoredBeforeMessage) {
+        drop(obj);
     }
 }
 
