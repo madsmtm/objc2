@@ -72,6 +72,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   This means that to use e.g. `Foundation::NSThread::name`, you have to enable
   the `Foundation_NSThread` and `Foundation_NSString` cargo features.
+* **BREAKING**: Updated `objc2` to `v0.3.0-beta.5`.
 
 ### Removed
 * **BREAKING**: The optional `uuid` integration, since one might want to use
