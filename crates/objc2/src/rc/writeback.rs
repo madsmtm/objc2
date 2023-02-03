@@ -285,7 +285,10 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        not(debug_assertions),
+        any(
+            not(debug_assertions),
+            all(not(target_pointer_width = "64"), feature = "catch-all")
+        ),
         ignore = "invokes UB which is only caught with debug_assertions"
     )]
     #[should_panic = "found that NULL was written to `&mut Id<_, _>`, which is UB! You should handle this with `&mut Option<Id<_, _>>` instead"]
