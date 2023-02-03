@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.2.0-alpha.8 - 2023-02-03
+
 ### Changed
 * **BREAKING**: Use traits from `objc2` `v0.3.0-beta.5` instead of
   `objc2-encode`.

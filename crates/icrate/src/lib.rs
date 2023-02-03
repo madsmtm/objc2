@@ -42,6 +42,9 @@ extern "C" {}
 #[cfg(feature = "objective-c")]
 pub extern crate objc2;
 
+#[cfg(feature = "block")]
+pub extern crate block2;
+
 mod common;
 #[macro_use]
 mod macros;
