@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 * **BREAKING**: Use traits from `objc2` `v0.3.0-beta.4` instead of
   `objc2-encode`.
+* Updated `ffi` module to `block-sys v0.2.0`.
 
 
 ## 0.2.0-alpha.7 - 2022-12-24

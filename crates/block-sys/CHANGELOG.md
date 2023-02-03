@@ -6,8 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+## 0.2.0 - 2023-02-03
+
 ### Changed
 * Updated `objc-sys` to `v0.3.0`.
+* **BREAKING**: Changed `links` key from `block_0_1` to `block_0_2` (so
+  `DEP_BLOCK_0_1_CC_ARGS` in build scripts becomes `DEP_BLOCK_0_2_CC_ARGS`).
 
 
 ## 0.1.0-beta.2 - 2022-12-24
