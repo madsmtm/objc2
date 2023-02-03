@@ -124,7 +124,7 @@ ABI to the runtime you're using:
 
 This is relevant if you're building and linking to custom Objective-C sources
 in a build script. To assist in compiling Objective-C sources, this crate's
-build script expose the `DEP_OBJC_0_2_CC_ARGS` environment variable to
+build script expose the `DEP_OBJC_0_3_CC_ARGS` environment variable to
 downstream build scripts.
 
 Example usage in your `build.rs` (using the `cc` crate) would be as follows:
@@ -135,7 +135,7 @@ fn main() {
     builder.compiler("clang");
     builder.file("my_objective_c_script.m");
 
-    for flag in std::env::var("DEP_OBJC_0_2_CC_ARGS").unwrap().split(' ') {
+    for flag in std::env::var("DEP_OBJC_0_3_CC_ARGS").unwrap().split(' ') {
         builder.flag(flag);
     }
 

@@ -91,7 +91,9 @@ extern_c! {
     //
     // #[cfg(any(doc, gnustep))]
     // pub fn objc_set_apple_compatible_objcxx_exceptions(newValue: c_int) -> c_int;
+}
 
+extern "C" {
     /// Call the given function inside an Objective-C `@try/@catch` block.
     ///
     /// Defined in `extern/exception.m` and compiled in `build.rs`.
@@ -108,9 +110,21 @@ extern_c! {
     ///
     /// [manual-asm]: https://gitlab.com/objrs/objrs/-/blob/b4f6598696b3fa622e6fddce7aff281770b0a8c2/src/exception.rs
     #[cfg(feature = "unstable-exception")]
-    pub fn rust_objc_sys_0_2_try_catch_exception(
+    #[link_name = "rust_objc_sys_0_3_try_catch_exception"]
+    pub fn try_catch(
         f: TryCatchClosure,
         context: *mut c_void,
         error: *mut *mut objc_object,
     ) -> c_uchar;
+}
+
+#[cfg(all(test, feature = "unstable-exception"))]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_try_catch_linkable() {
+        let fptr: unsafe extern "C" fn(_, _, _) -> _ = try_catch;
+        std::println!("{fptr:p}");
+    }
 }

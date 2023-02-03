@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
+## 0.3.0 - 2023-02-03
+
+### Changed
+* **BREAKING**: Changed `links` key from `objc_0_2` to `objc_0_3` (so
+  `DEP_OBJC_0_2_CC_ARGS` in build scripts becomes `DEP_OBJC_0_3_CC_ARGS`).
+* **BREAKING**: Renamed `rust_objc_sys_0_2_try_catch_exception` to
+  `try_catch`.
+
+
 ## 0.2.0-beta.3 - 2022-12-24
 
 ### Fixed

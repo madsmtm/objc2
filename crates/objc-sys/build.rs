@@ -254,6 +254,6 @@ fn main() {
             builder.flag(flag);
         }
 
-        builder.compile("librust_objc_sys_0_2_try_catch_exception.a");
+        builder.compile("librust_objc_sys_0_3_try_catch_exception.a");
     }
 }

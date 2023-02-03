@@ -77,7 +77,7 @@ unstable-compiler-rt = ["apple"]
 
 [dependencies]
 malloc_buf = { version = "1.0", optional = true }
-objc-sys = { path = "../objc-sys", version = "=0.2.0-beta.3", default-features = false }
+objc-sys = { path = "../objc-sys", version = "0.3.0", default-features = false }
 objc2-encode = { path = "../objc2-encode", version = "=2.0.0-pre.3", default-features = false }
 objc2-proc-macros = { path = "../objc2-proc-macros", version = "0.1.1", optional = true }
 

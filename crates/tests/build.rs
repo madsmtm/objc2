@@ -12,7 +12,7 @@ fn main() {
         builder.flag(flag);
     }
 
-    for flag in env::var("DEP_OBJC_0_2_CC_ARGS").unwrap().split(' ') {
+    for flag in env::var("DEP_OBJC_0_3_CC_ARGS").unwrap().split(' ') {
         builder.flag(flag);
     }
 
@@ -33,7 +33,7 @@ fn main() {
         builder.flag(flag);
     }
 
-    for flag in env::var("DEP_OBJC_0_2_CC_ARGS").unwrap().split(' ') {
+    for flag in env::var("DEP_OBJC_0_3_CC_ARGS").unwrap().split(' ') {
         builder.flag(flag);
     }
 

@@ -232,7 +232,7 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception,
     let context = context.cast();
 
     let mut exception = ptr::null_mut();
-    let success = unsafe { ffi::rust_objc_sys_0_2_try_catch_exception(f, context, &mut exception) };
+    let success = unsafe { ffi::try_catch(f, context, &mut exception) };
 
     if success == 0 {
         Ok(())

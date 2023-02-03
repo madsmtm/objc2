@@ -56,7 +56,7 @@ unstable-objfw = []
 unstable-docsrs = ["objc-sys", "objc-sys/unstable-docsrs"]
 
 [dependencies]
-objc-sys = { path = "../objc-sys", version = "=0.2.0-beta.3", default-features = false, optional = true }
+objc-sys = { path = "../objc-sys", version = "0.3.0", default-features = false, optional = true }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
