@@ -53,11 +53,11 @@ dependencies = [
 
 [[package]]
 name = "objc-sys"
-version = "0.2.0-beta.3"
+version = "0.3.0"
 
 [[package]]
 name = "objc2"
-version = "0.3.0-beta.4"
+version = "0.3.0-beta.5"
 dependencies = [
  "objc-sys",
  "objc2-encode",
@@ -65,7 +65,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-encode"
-version = "2.0.0-pre.3"
+version = "2.0.0-pre.4"
 
 [[package]]
 name = "once_cell"
