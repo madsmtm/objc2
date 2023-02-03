@@ -138,6 +138,7 @@ dependencies = [
  "clang-sys",
  "heck",
  "proc-macro2",
+ "semver",
  "serde",
  "syn",
  "toml",

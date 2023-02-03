@@ -159,111 +159,12 @@ unstable-example-browser = [
     "WebKit_WKWebView",
 ]
 
-# Frameworks
-
-Accessibility = ["Foundation"]
-AdServices = ["Foundation"]
-AdSupport = ["Foundation"]
-AppKit = [
-    "Foundation",
-    "CoreData",
-    # Temporary, since some structs and statics use these
-    "AppKit_NSApplication",
-    "AppKit_NSCollectionLayoutSection",
-    "AppKit_NSCollectionLayoutGroupCustomItem",
-    "AppKit_NSCollectionView",
-    "AppKit_NSView",
-    "AppKit_NSTableView",
-    "AppKit_NSTableColumn",
-    "AppKit_NSTableRowView",
-    "Foundation_NSIndexPath",
-    "Foundation_NSArray",
-    "Foundation_NSCoder",
-]
-AuthenticationServices = [
-    "Foundation",
-    # Temporary, since some structs and statics use these
-    "Foundation_NSURL",
-]
-AutomaticAssessmentConfiguration = ["Foundation"]
-Automator = ["AppKit", "Foundation", "OSAKit"]
-BackgroundAssets = ["Foundation"]
-BackgroundTasks = ["Foundation"]
-BusinessChat = ["AppKit", "Foundation"]
-CallKit = ["Foundation"]
-ClassKit = ["Foundation"]
-CloudKit = ["CoreLocation", "Foundation"]
-Contacts = ["Foundation"]
-CoreAnimation = ["Foundation"]
-CoreData = [
-    "Foundation",
-    # Temporary, since some structs and statics use these
-    "CoreData_NSAsynchronousFetchResult",
-]
-CoreLocation = ["Contacts", "Foundation"]
-DataDetection = ["Foundation"]
-DeviceCheck = ["Foundation"]
-EventKit = ["AppKit", "CoreLocation", "Foundation", "MapKit"]
-ExceptionHandling = ["Foundation"]
-ExtensionKit = ["AppKit", "Foundation"]
-ExternalAccessory = ["Foundation"]
-FileProvider = ["AppKit", "Foundation", "UniformTypeIdentifiers"]
-FileProviderUI = ["AppKit", "FileProvider", "Foundation"]
-Foundation = [
-    "objective-c",
-    "block",
-    "Foundation_NSProxy",
-    # Temporary, since some structs and statics use these
-    "Foundation_NSError",
-    "Foundation_NSAppleEventDescriptor",
-    "Foundation_NSHashTable",
-    "Foundation_NSMapTable",
-    "Foundation_NSProgress",
-    # Some fmt::Debug impls require these
-    "Foundation_NSString",
-    "Foundation_NSDictionary",
-    "Foundation_NSEnumerator",
-]
-GameController = ["AppKit", "Foundation"]
-GameKit = ["AppKit", "Foundation"]
-IdentityLookup = ["Foundation"]
-InputMethodKit = ["AppKit", "Foundation"]
-LocalAuthentication = ["Foundation"]
-LocalAuthenticationEmbeddedUI = ["AppKit", "Foundation", "LocalAuthentication"]
-LinkPresentation = ["AppKit", "Foundation"]
-MailKit = ["AppKit", "Foundation"]
-MapKit = ["AppKit", "Contacts", "CoreLocation", "Foundation"]
-Metal = [
-    "Foundation",
-    # Temporary, since some structs and statics use these
-    "Metal_MTLRenderPipelineReflection",
-    "Metal_MTLComputePipelineReflection",
-]
-MetalFX = ["Metal"]
-MetalKit = ["AppKit", "Foundation", "Metal"]
-OSAKit = ["AppKit", "Foundation"]
-SoundAnalysis = ["Foundation"]
-Speech = ["Foundation"]
-StoreKit = ["AppKit", "Foundation"]
-UniformTypeIdentifiers = ["Foundation"]
-UserNotifications = ["CoreLocation", "Foundation"]
-WebKit = [
-    "AppKit",
-    "Foundation",
-    # Temporary, since some structs and statics use these
-    "Foundation_NSAttributedString",
-]
-
 # Helps with CI
-unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13", "unstable-example-basic_usage"]
+unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
 unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
-unstable-frameworks-ios = ["Accessibility_all", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "BackgroundAssets_all", "BackgroundTasks_all", "BusinessChat_all", "CallKit_all", "ClassKit_all", "CloudKit_all", "Contacts_all", "CoreData_all", "CoreAnimation_all", "CoreLocation_all", "DataDetection_all", "DeviceCheck_all", "EventKit_all", "ExtensionKit_all", "ExternalAccessory_all", "FileProvider_all", "FileProviderUI_all", "Foundation_all", "GameController_all", "GameKit_all", "IdentityLookup_all", "LocalAuthentication_all", "LinkPresentation_all", "MapKit_all", "Metal_all", "MetalKit_all", "SoundAnalysis_all", "Speech_all", "StoreKit_all", "UniformTypeIdentifiers_all", "UserNotifications_all", "WebKit_all", "unstable-example-speech_synthesis"]
-unstable-frameworks-macos-10-7 = ["Accessibility_all", "AppKit_all", "Automator_all", "CoreAnimation_all", "CoreData_all", "CoreLocation_all", "ExceptionHandling_all", "Foundation_all", "InputMethodKit_all", "OSAKit_all", "StoreKit_all", "unstable-example-delegate", "unstable-example-nspasteboard", "unstable-example-speech_synthesis"]
-unstable-frameworks-macos-10-13 = ["unstable-frameworks-macos-10-7", "BusinessChat_all", "CloudKit_all", "Contacts_all", "EventKit_all", "ExternalAccessory_all", "GameController_all", "GameKit_all", "LocalAuthentication_all", "LocalAuthenticationEmbeddedUI_all", "MapKit_all", "MetalKit_all"]
-unstable-frameworks-macos-11 = ["unstable-frameworks-macos-10-13", "AdServices_all", "AdSupport_all", "AuthenticationServices_all", "AutomaticAssessmentConfiguration_all", "ClassKit_all", "DeviceCheck_all", "FileProvider_all", "FileProviderUI_all", "LinkPresentation_all", "Metal_all", "SoundAnalysis_all", "Speech_all", "UniformTypeIdentifiers_all", "UserNotifications_all"]
-unstable-frameworks-macos-12 = ["unstable-frameworks-macos-11", "DataDetection_all", "LocalAuthenticationEmbeddedUI_all", "MailKit_all", "WebKit_all", "unstable-example-browser"]
-unstable-frameworks-macos-13 = ["unstable-frameworks-macos-12", "BackgroundAssets_all", "BackgroundTasks_all", "CallKit_all", "ExtensionKit_all", "IdentityLookup_all", "MetalFX_all"]
+# TODO: Autogenerate this
+unstable-frameworks-ios = ["Foundation_all", "unstable-example-basic_usage", "unstable-example-speech_synthesis"]
 
 # Temporary fixes until we can autogenerate these
 Foundation_NSProxy = []
@@ -275,6 +176,9 @@ AppKit_NSPopover = ["AppKit_NSResponder"]
 
 # This section has been automatically generated by `objc2`'s `header-translator`.
 # DO NOT EDIT
+Accessibility = [
+    "Foundation",
+]
 Accessibility_AXBrailleMap = []
 Accessibility_AXCategoricalDataAxisDescriptor = []
 Accessibility_AXChartDescriptor = []
@@ -296,15 +200,36 @@ Accessibility_all = [
     "Accessibility_AXLiveAudioGraph",
     "Accessibility_AXNumericDataAxisDescriptor",
 ]
+AdServices = [
+    "Foundation",
+]
 AdServices_AAAttribution = []
 AdServices_all = [
     "AdServices",
     "AdServices_AAAttribution",
 ]
+AdSupport = [
+    "Foundation",
+]
 AdSupport_ASIdentifierManager = []
 AdSupport_all = [
     "AdSupport",
     "AdSupport_ASIdentifierManager",
+]
+AppKit = [
+    "CoreData",
+    "Foundation",
+    "AppKit_NSApplication",
+    "AppKit_NSCollectionLayoutSection",
+    "AppKit_NSCollectionLayoutGroupCustomItem",
+    "AppKit_NSCollectionView",
+    "AppKit_NSView",
+    "AppKit_NSTableView",
+    "AppKit_NSTableColumn",
+    "AppKit_NSTableRowView",
+    "Foundation_NSIndexPath",
+    "Foundation_NSArray",
+    "Foundation_NSCoder",
 ]
 AppKit_NSATSTypesetter = [
     "AppKit_NSTypesetter",
@@ -1173,6 +1098,10 @@ AppKit_all = [
     "AppKit_NSWorkspaceAuthorization",
     "AppKit_NSWorkspaceOpenConfiguration",
 ]
+AuthenticationServices = [
+    "Foundation",
+    "Foundation_NSURL",
+]
 AuthenticationServices_ASAccountAuthenticationModificationController = []
 AuthenticationServices_ASAccountAuthenticationModificationExtensionContext = [
     "Foundation_NSExtensionContext",
@@ -1288,6 +1217,9 @@ AuthenticationServices_all = [
     "AuthenticationServices_ASWebAuthenticationSessionRequest",
     "AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionManager",
 ]
+AutomaticAssessmentConfiguration = [
+    "Foundation",
+]
 AutomaticAssessmentConfiguration_AEAssessmentApplication = []
 AutomaticAssessmentConfiguration_AEAssessmentConfiguration = []
 AutomaticAssessmentConfiguration_AEAssessmentParticipantConfiguration = []
@@ -1298,6 +1230,11 @@ AutomaticAssessmentConfiguration_all = [
     "AutomaticAssessmentConfiguration_AEAssessmentConfiguration",
     "AutomaticAssessmentConfiguration_AEAssessmentParticipantConfiguration",
     "AutomaticAssessmentConfiguration_AEAssessmentSession",
+]
+Automator = [
+    "AppKit",
+    "Foundation",
+    "OSAKit",
 ]
 Automator_AMAction = []
 Automator_AMAppleScriptAction = [
@@ -1328,6 +1265,9 @@ Automator_all = [
     "Automator_AMWorkflowView",
     "Automator_AMWorkspace",
 ]
+BackgroundAssets = [
+    "Foundation",
+]
 BackgroundAssets_BAAppExtensionInfo = []
 BackgroundAssets_BADownload = []
 BackgroundAssets_BADownloadManager = []
@@ -1340,6 +1280,9 @@ BackgroundAssets_all = [
     "BackgroundAssets_BADownload",
     "BackgroundAssets_BADownloadManager",
     "BackgroundAssets_BAURLDownload",
+]
+BackgroundTasks = [
+    "Foundation",
 ]
 BackgroundTasks_BGAppRefreshTask = [
     "BackgroundTasks_BGTask",
@@ -1366,6 +1309,10 @@ BackgroundTasks_all = [
     "BackgroundTasks_BGTaskRequest",
     "BackgroundTasks_BGTaskScheduler",
 ]
+BusinessChat = [
+    "AppKit",
+    "Foundation",
+]
 BusinessChat_BCChatAction = []
 BusinessChat_BCChatButton = [
     "AppKit_NSControl",
@@ -1374,6 +1321,9 @@ BusinessChat_all = [
     "BusinessChat",
     "BusinessChat_BCChatAction",
     "BusinessChat_BCChatButton",
+]
+CallKit = [
+    "Foundation",
 ]
 CallKit_CXAction = []
 CallKit_CXAnswerCallAction = [
@@ -1436,6 +1386,9 @@ CallKit_all = [
     "CallKit_CXStartCallAction",
     "CallKit_CXTransaction",
 ]
+ClassKit = [
+    "Foundation",
+]
 ClassKit_CLSActivity = [
     "ClassKit_CLSObject",
 ]
@@ -1470,6 +1423,11 @@ ClassKit_all = [
     "ClassKit_CLSProgressReportingCapability",
     "ClassKit_CLSQuantityItem",
     "ClassKit_CLSScoreItem",
+]
+CloudKit = [
+    "CoreLocation",
+    "Foundation",
+    "CloudKit_CKShare",
 ]
 CloudKit_CKAcceptSharesOperation = [
     "CloudKit_CKOperation",
@@ -1640,6 +1598,9 @@ CloudKit_all = [
     "CloudKit_CKUserIdentity",
     "CloudKit_CKUserIdentityLookupInfo",
 ]
+Contacts = [
+    "Foundation",
+]
 Contacts_CNChangeHistoryAddContactEvent = [
     "Contacts_CNChangeHistoryEvent",
 ]
@@ -1749,6 +1710,9 @@ Contacts_all = [
     "Contacts_CNSaveRequest",
     "Contacts_CNSocialProfile",
 ]
+CoreAnimation = [
+    "Foundation",
+]
 CoreAnimation_CAAnimation = []
 CoreAnimation_CAAnimationGroup = [
     "CoreAnimation_CAAnimation",
@@ -1833,6 +1797,10 @@ CoreAnimation_all = [
     "CoreAnimation_CATransformLayer",
     "CoreAnimation_CATransition",
     "CoreAnimation_CAValueFunction",
+]
+CoreData = [
+    "Foundation",
+    "CoreData_NSAsynchronousFetchResult",
 ]
 CoreData_NSAsynchronousFetchRequest = [
     "CoreData_NSPersistentStoreRequest",
@@ -1997,6 +1965,11 @@ CoreData_all = [
     "CoreData_NSRelationshipDescription",
     "CoreData_NSSaveChangesRequest",
 ]
+CoreLocation = [
+    "Contacts",
+    "Foundation",
+    "CoreLocation_CLPlacemark",
+]
 CoreLocation_CLBeacon = []
 CoreLocation_CLBeaconIdentityConstraint = []
 CoreLocation_CLBeaconRegion = [
@@ -2029,6 +2002,9 @@ CoreLocation_all = [
     "CoreLocation_CLPlacemark",
     "CoreLocation_CLRegion",
     "CoreLocation_CLVisit",
+]
+DataDetection = [
+    "Foundation",
 ]
 DataDetection_DDMatch = []
 DataDetection_DDMatchCalendarEvent = [
@@ -2067,12 +2043,22 @@ DataDetection_all = [
     "DataDetection_DDMatchPostalAddress",
     "DataDetection_DDMatchShipmentTrackingNumber",
 ]
+DeviceCheck = [
+    "Foundation",
+]
 DeviceCheck_DCAppAttestService = []
 DeviceCheck_DCDevice = []
 DeviceCheck_all = [
     "DeviceCheck",
     "DeviceCheck_DCAppAttestService",
     "DeviceCheck_DCDevice",
+]
+EventKit = [
+    "AppKit",
+    "CoreLocation",
+    "Foundation",
+    "MapKit",
+    "EventKit_EKEvent",
 ]
 EventKit_EKAlarm = [
     "EventKit_EKObject",
@@ -2129,10 +2115,17 @@ EventKit_all = [
     "EventKit_EKVirtualConferenceRoomTypeDescriptor",
     "EventKit_EKVirtualConferenceURLDescriptor",
 ]
+ExceptionHandling = [
+    "Foundation",
+]
 ExceptionHandling_NSExceptionHandler = []
 ExceptionHandling_all = [
     "ExceptionHandling",
     "ExceptionHandling_NSExceptionHandler",
+]
+ExtensionKit = [
+    "AppKit",
+    "Foundation",
 ]
 ExtensionKit_EXAppExtensionBrowserViewController = [
     "AppKit_NSViewController",
@@ -2144,6 +2137,9 @@ ExtensionKit_all = [
     "ExtensionKit",
     "ExtensionKit_EXAppExtensionBrowserViewController",
     "ExtensionKit_EXHostViewController",
+]
+ExternalAccessory = [
+    "Foundation",
 ]
 ExternalAccessory_EAAccessory = []
 ExternalAccessory_EAAccessoryManager = []
@@ -2157,6 +2153,16 @@ ExternalAccessory_all = [
     "ExternalAccessory_EASession",
     "ExternalAccessory_EAWiFiUnconfiguredAccessory",
     "ExternalAccessory_EAWiFiUnconfiguredAccessoryBrowser",
+]
+FileProvider = [
+    "AppKit",
+    "Foundation",
+    "UniformTypeIdentifiers",
+]
+FileProviderUI = [
+    "AppKit",
+    "FileProvider",
+    "Foundation",
 ]
 FileProviderUI_FPUIActionExtensionContext = [
     "Foundation_NSExtensionContext",
@@ -2183,6 +2189,19 @@ FileProvider_all = [
     "FileProvider_NSFileProviderItemVersion",
     "FileProvider_NSFileProviderManager",
     "FileProvider_NSFileProviderRequest",
+]
+Foundation = [
+    "objective-c",
+    "block",
+    "Foundation_NSProxy",
+    "Foundation_NSError",
+    "Foundation_NSAppleEventDescriptor",
+    "Foundation_NSHashTable",
+    "Foundation_NSMapTable",
+    "Foundation_NSProgress",
+    "Foundation_NSString",
+    "Foundation_NSDictionary",
+    "Foundation_NSEnumerator",
 ]
 Foundation_NSAffineTransform = []
 Foundation_NSAppleEventDescriptor = []
@@ -2949,6 +2968,21 @@ Foundation_all = [
     "Foundation_NSXPCListener",
     "Foundation_NSXPCListenerEndpoint",
 ]
+GameController = [
+    "AppKit",
+    "Foundation",
+    "GameController_GCControllerAxisInput",
+    "GameController_GCControllerButtonInput",
+    "GameController_GCControllerDirectionPad",
+    "GameController_GCControllerTouchpad",
+    "GameController_GCExtendedGamepad",
+    "GameController_GCControllerElement",
+    "GameController_GCGamepad",
+    "GameController_GCKeyboardInput",
+    "GameController_GCMicroGamepad",
+    "GameController_GCMotion",
+    "GameController_GCMouseInput",
+]
 GameController_GCColor = []
 GameController_GCController = []
 GameController_GCControllerAxisInput = [
@@ -3062,6 +3096,11 @@ GameController_all = [
     "GameController_GCSteeringWheelElement",
     "GameController_GCXboxGamepad",
 ]
+GameKit = [
+    "AppKit",
+    "Foundation",
+    "AppKit_NSViewController",
+]
 GameKit_GKAccessPoint = []
 GameKit_GKAchievement = []
 GameKit_GKAchievementChallenge = [
@@ -3169,6 +3208,9 @@ GameKit_all = [
     "GameKit_GKVoiceChat",
     "GameKit_GKVoiceChatService",
 ]
+IdentityLookup = [
+    "Foundation",
+]
 IdentityLookup_ILCallClassificationRequest = [
     "IdentityLookup_ILClassificationRequest",
 ]
@@ -3210,6 +3252,10 @@ IdentityLookup_all = [
     "IdentityLookup_ILMessageFilterQueryResponse",
     "IdentityLookup_ILNetworkResponse",
 ]
+InputMethodKit = [
+    "AppKit",
+    "Foundation",
+]
 InputMethodKit_IMKCandidates = [
     "AppKit_NSResponder",
 ]
@@ -3221,6 +3267,10 @@ InputMethodKit_all = [
     "InputMethodKit_IMKInputController",
     "InputMethodKit_IMKServer",
 ]
+LinkPresentation = [
+    "AppKit",
+    "Foundation",
+]
 LinkPresentation_LPLinkMetadata = []
 LinkPresentation_LPLinkView = [
     "AppKit_NSView",
@@ -3231,6 +3281,15 @@ LinkPresentation_all = [
     "LinkPresentation_LPLinkMetadata",
     "LinkPresentation_LPLinkView",
     "LinkPresentation_LPMetadataProvider",
+]
+LocalAuthentication = [
+    "Foundation",
+]
+LocalAuthenticationEmbeddedUI = [
+    "AppKit",
+    "Foundation",
+    "LocalAuthentication",
+    "AppKit_NSWindow",
 ]
 LocalAuthenticationEmbeddedUI_LAAuthenticationView = [
     "AppKit_NSView",
@@ -3261,6 +3320,10 @@ LocalAuthentication_all = [
     "LocalAuthentication_LARight",
     "LocalAuthentication_LARightStore",
     "LocalAuthentication_LASecret",
+]
+MailKit = [
+    "AppKit",
+    "Foundation",
 ]
 MailKit_MEAddressAnnotation = []
 MailKit_MEComposeContext = []
@@ -3298,6 +3361,16 @@ MailKit_all = [
     "MailKit_MEMessageSecurityInformation",
     "MailKit_MEMessageSigner",
     "MailKit_MEOutgoingMessageEncodingStatus",
+]
+MapKit = [
+    "AppKit",
+    "Contacts",
+    "CoreLocation",
+    "Foundation",
+    "MapKit_MKDirectionsResponse",
+    "MapKit_MKETAResponse",
+    "MapKit_MKLocalSearchResponse",
+    "MapKit_MKMapSnapshot",
 ]
 MapKit_MKAnnotationView = [
     "AppKit_NSView",
@@ -3488,12 +3561,25 @@ MapKit_all = [
     "MapKit_MKUserLocationView",
     "MapKit_MKZoomControl",
 ]
+Metal = [
+    "Foundation",
+]
+MetalFX = [
+    "Metal",
+]
 MetalFX_MTLFXSpatialScalerDescriptor = []
 MetalFX_MTLFXTemporalScalerDescriptor = []
 MetalFX_all = [
     "MetalFX",
     "MetalFX_MTLFXSpatialScalerDescriptor",
     "MetalFX_MTLFXTemporalScalerDescriptor",
+]
+MetalKit = [
+    "AppKit",
+    "Foundation",
+    "Metal",
+    "Metal_MTLRenderPipelineReflection",
+    "Metal_MTLComputePipelineReflection",
 ]
 MetalKit_MTKMesh = []
 MetalKit_MTKMeshBuffer = []
@@ -3731,6 +3817,10 @@ Metal_all = [
     "Metal_MTLVertexDescriptor",
     "Metal_MTLVisibleFunctionTableDescriptor",
 ]
+OSAKit = [
+    "AppKit",
+    "Foundation",
+]
 OSAKit_OSALanguage = []
 OSAKit_OSALanguageInstance = []
 OSAKit_OSAScript = []
@@ -3748,6 +3838,9 @@ OSAKit_all = [
     "OSAKit_OSAScriptController",
     "OSAKit_OSAScriptView",
 ]
+SoundAnalysis = [
+    "Foundation",
+]
 SoundAnalysis_SNAudioFileAnalyzer = []
 SoundAnalysis_SNAudioStreamAnalyzer = []
 SoundAnalysis_SNClassification = []
@@ -3762,6 +3855,9 @@ SoundAnalysis_all = [
     "SoundAnalysis_SNClassificationResult",
     "SoundAnalysis_SNClassifySoundRequest",
     "SoundAnalysis_SNTimeDurationConstraint",
+]
+Speech = [
+    "Foundation",
 ]
 Speech_SFAcousticFeature = []
 Speech_SFSpeechAudioBufferRecognitionRequest = [
@@ -3791,6 +3887,10 @@ Speech_all = [
     "Speech_SFTranscription",
     "Speech_SFTranscriptionSegment",
     "Speech_SFVoiceAnalytics",
+]
+StoreKit = [
+    "AppKit",
+    "Foundation",
 ]
 StoreKit_SKAdImpression = []
 StoreKit_SKAdNetwork = []
@@ -3863,10 +3963,18 @@ StoreKit_all = [
     "StoreKit_SKStoreReviewController",
     "StoreKit_SKStorefront",
 ]
+UniformTypeIdentifiers = [
+    "Foundation",
+    "UniformTypeIdentifiers_UTType",
+]
 UniformTypeIdentifiers_UTType = []
 UniformTypeIdentifiers_all = [
     "UniformTypeIdentifiers",
     "UniformTypeIdentifiers_UTType",
+]
+UserNotifications = [
+    "CoreLocation",
+    "Foundation",
 ]
 UserNotifications_UNCalendarNotificationTrigger = [
     "UserNotifications_UNNotificationTrigger",
@@ -3924,6 +4032,11 @@ UserNotifications_all = [
     "UserNotifications_UNTextInputNotificationResponse",
     "UserNotifications_UNTimeIntervalNotificationTrigger",
     "UserNotifications_UNUserNotificationCenter",
+]
+WebKit = [
+    "AppKit",
+    "Foundation",
+    "Foundation_NSAttributedString",
 ]
 WebKit_DOMAbstractView = [
     "WebKit_DOMObject",
@@ -4461,4 +4574,67 @@ WebKit_all = [
     "WebKit_WebScriptObject",
     "WebKit_WebUndefined",
     "WebKit_WebView",
+]
+unstable-frameworks-macos-10-13 = [
+    "CloudKit_all",
+    "Contacts_all",
+    "CoreLocation_all",
+    "EventKit_all",
+    "ExternalAccessory_all",
+    "GameController_all",
+    "GameKit_all",
+    "LocalAuthentication_all",
+    "MapKit_all",
+    "MetalKit_all",
+    "Metal_all",
+    "unstable-example-delegate",
+    "unstable-example-nspasteboard",
+    "unstable-example-speech_synthesis",
+    "unstable-frameworks-macos-10-7",
+]
+unstable-frameworks-macos-10-7 = [
+    "AppKit_all",
+    "Automator_all",
+    "CoreAnimation_all",
+    "CoreData_all",
+    "ExceptionHandling_all",
+    "Foundation_all",
+    "InputMethodKit_all",
+    "OSAKit_all",
+    "StoreKit_all",
+    "WebKit_all",
+    "unstable-example-basic_usage",
+]
+unstable-frameworks-macos-11 = [
+    "Accessibility_all",
+    "ClassKit_all",
+    "UniformTypeIdentifiers_all",
+    "unstable-frameworks-macos-10-13",
+]
+unstable-frameworks-macos-12 = [
+    "DataDetection_all",
+    "LocalAuthenticationEmbeddedUI_all",
+    "MailKit_all",
+    "unstable-frameworks-macos-11",
+]
+unstable-frameworks-macos-13 = [
+    "AdServices_all",
+    "AdSupport_all",
+    "AuthenticationServices_all",
+    "AutomaticAssessmentConfiguration_all",
+    "BackgroundAssets_all",
+    "BusinessChat_all",
+    "CallKit_all",
+    "DeviceCheck_all",
+    "ExtensionKit_all",
+    "FileProviderUI_all",
+    "FileProvider_all",
+    "IdentityLookup_all",
+    "LinkPresentation_all",
+    "MetalFX_all",
+    "SoundAnalysis_all",
+    "Speech_all",
+    "UserNotifications_all",
+    "unstable-example-browser",
+    "unstable-frameworks-macos-12",
 ]

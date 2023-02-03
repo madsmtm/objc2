@@ -1,4 +1,5 @@
 use std::collections::{BTreeMap, BTreeSet};
+use std::str::FromStr;
 
 use crate::config::Config;
 use crate::library::Library;
@@ -32,9 +33,77 @@ impl Output {
     pub fn cargo_features(&self, config: &Config) -> BTreeMap<String, Vec<String>> {
         let mut features = BTreeMap::new();
 
-        // for (_, library) in &config.libraries {
-        //
-        // }
+        let mut macos_10_7_features: BTreeSet<String> = vec!["unstable-example-basic_usage".into()]
+            .into_iter()
+            .collect();
+        let mut macos_10_13_features: BTreeSet<String> = vec![
+            "unstable-frameworks-macos-10-7".into(),
+            "unstable-example-delegate".into(),
+            "unstable-example-nspasteboard".into(),
+            "unstable-example-speech_synthesis".into(),
+        ]
+        .into_iter()
+        .collect();
+        let mut macos_11_features: BTreeSet<String> =
+            vec!["unstable-frameworks-macos-10-13".into()]
+                .into_iter()
+                .collect();
+        let mut macos_12_features: BTreeSet<String> = vec!["unstable-frameworks-macos-11".into()]
+            .into_iter()
+            .collect();
+        let mut macos_13_features: BTreeSet<String> = vec![
+            "unstable-frameworks-macos-12".into(),
+            "unstable-example-browser".into(),
+        ]
+        .into_iter()
+        .collect();
+
+        for (mut library_name, library) in &config.libraries {
+            if let Some(alias) = &library.name {
+                library_name = alias;
+            }
+            let library_features = library
+                .imports
+                .iter()
+                .chain(library.extra_features.iter())
+                .cloned();
+            let _ = features.insert(library_name.to_string(), library_features.collect());
+
+            if let Some(version) = &library.macos {
+                if version.matches(&semver::Version::from_str("10.7.0").unwrap()) {
+                    macos_10_7_features.insert(format!("{library_name}_all"));
+                } else if version.matches(&semver::Version::from_str("10.13.0").unwrap()) {
+                    macos_10_13_features.insert(format!("{library_name}_all"));
+                } else if version.matches(&semver::Version::from_str("11.0.0").unwrap()) {
+                    macos_11_features.insert(format!("{library_name}_all"));
+                } else if version.matches(&semver::Version::from_str("12.0.0").unwrap()) {
+                    macos_12_features.insert(format!("{library_name}_all"));
+                } else {
+                    macos_13_features.insert(format!("{library_name}_all"));
+                }
+            }
+        }
+
+        let _ = features.insert(
+            "unstable-frameworks-macos-10-7".into(),
+            macos_10_7_features.into_iter().collect(),
+        );
+        let _ = features.insert(
+            "unstable-frameworks-macos-10-13".into(),
+            macos_10_13_features.into_iter().collect(),
+        );
+        let _ = features.insert(
+            "unstable-frameworks-macos-11".into(),
+            macos_11_features.into_iter().collect(),
+        );
+        let _ = features.insert(
+            "unstable-frameworks-macos-12".into(),
+            macos_12_features.into_iter().collect(),
+        );
+        let _ = features.insert(
+            "unstable-frameworks-macos-13".into(),
+            macos_13_features.into_iter().collect(),
+        );
 
         for (library_name, library) in &self.libraries {
             let library_alias = config.get_library_alias(library_name.clone());

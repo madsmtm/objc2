@@ -8,6 +8,7 @@ pub(crate) const FILE_PRELUDE: &str = r#"//! This file has been automatically ge
 
 #[derive(Debug, PartialEq)]
 pub struct File {
+    library_name: String,
     imports: Vec<String>,
     pub(crate) stmts: Vec<Stmt>,
 }
@@ -15,6 +16,7 @@ pub struct File {
 impl File {
     pub fn new(library_name: &str, context: &Context<'_>) -> Self {
         Self {
+            library_name: context.get_library_alias(library_name.to_string()),
             imports: context
                 .libraries
                 .get(library_name)
@@ -42,6 +44,7 @@ impl fmt::Display for File {
         writeln!(f, "{FILE_PRELUDE}")?;
 
         writeln!(f, "use crate::common::*;")?;
+        writeln!(f, "use crate::{}::*;", self.library_name)?;
         for import in &self.imports {
             writeln!(f, "use crate::{import}::*;")?;
         }
