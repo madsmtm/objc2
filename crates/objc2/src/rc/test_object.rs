@@ -376,8 +376,12 @@ mod tests {
     // See also `tests/id_retain_autoreleased.rs`.
     //
     // Work around https://github.com/rust-lang/rust-clippy/issues/9737:
+    #[allow(clippy::if_same_then_else)]
     const IF_AUTORELEASE_NOT_SKIPPED: usize = if cfg!(feature = "gnustep-1-7") {
         1
+    } else if cfg!(all(target_arch = "arm", panic = "unwind")) {
+        // 32-bit ARM unwinding interferes with the optimization
+        2
     } else if cfg!(any(debug_assertions, feature = "exception")) {
         2
     } else {
