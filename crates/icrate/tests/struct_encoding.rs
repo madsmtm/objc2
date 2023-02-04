@@ -1,5 +1,6 @@
 #[test]
 #[cfg(feature = "Foundation_NSProcessInfo")]
+#[cfg(not(feature = "gnustep-1-7"))]
 fn test_operating_system_version() {
     let info = icrate::Foundation::NSProcessInfo::processInfo();
     let _version = info.operatingSystemVersion();

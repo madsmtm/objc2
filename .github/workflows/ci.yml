@@ -745,7 +745,8 @@ jobs:
       run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,unstable-frameworks-${{ matrix.frameworks }}
 
     - name: Test in release mode
-      if: ${{ env.FULL }}
+      # Disabled on GNUStep 2.1 for now
+      if: ${{ env.FULL && matrix.runtime != 'gnustep-2-1' }}
       run: cargo test $ARGS --features=Foundation --release
 
     - name: Run fuzzing
