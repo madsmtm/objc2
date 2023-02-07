@@ -89,7 +89,7 @@ error[E0271]: type mismatch resolving `<Id<Object, Shared> as MaybeUnwrap>::Inpu
  --> ui/msg_send_id_invalid_return.rs
   |
   |     let _: Id<Object, Shared> = unsafe { msg_send_id![cls, alloc] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^^^^^ expected struct `Allocated`, found struct `Id`
+  |                                          ^^^^^^^^^^^^^^^^^^^^^^^^ expected `Allocated<_>`, found `Id<Object, Shared>`
   |
   = note: expected struct `Allocated<_>`
              found struct `Id<objc2::runtime::Object, Shared>`
@@ -104,7 +104,7 @@ error[E0271]: type mismatch resolving `<Id<Allocated<Object>, Shared> as MaybeUn
  --> ui/msg_send_id_invalid_return.rs
   |
   |     let _: Id<Allocated<Object>, Shared> = unsafe { msg_send_id![cls, alloc] };
-  |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^ expected struct `Allocated`, found struct `Id`
+  |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^ expected `Allocated<_>`, found `Id<Allocated<Object>, Shared>`
   |
   = note: expected struct `Allocated<_>`
              found struct `Id<Allocated<objc2::runtime::Object>, Shared>`
@@ -137,7 +137,7 @@ error[E0271]: type mismatch resolving `<Id<Class, Shared> as MaybeUnwrap>::Input
  --> ui/msg_send_id_invalid_return.rs
   |
   |     let _: Id<Class, Shared> = unsafe { msg_send_id![obj, init] };
-  |                                         ^^^^^^^^^^^^^^^^^^^^^^^ expected struct `Object`, found struct `Class`
+  |                                         ^^^^^^^^^^^^^^^^^^^^^^^ expected `Id<Object, _>`, found `Id<Class, Shared>`
   |
   = note: expected struct `Id<objc2::runtime::Object, _>`
              found struct `Id<objc2::runtime::Class, Shared>`
@@ -152,7 +152,7 @@ error[E0271]: type mismatch resolving `<Id<NSObject, Shared> as MaybeUnwrap>::In
  --> ui/msg_send_id_invalid_return.rs
   |
   |     let _: Id<NSObject, Shared> = unsafe { msg_send_id![obj, init] };
-  |                                            ^^^^^^^^^^^^^^^^^^^^^^^ expected struct `Object`, found struct `NSObject`
+  |                                            ^^^^^^^^^^^^^^^^^^^^^^^ expected `Id<Object, _>`, found `Id<NSObject, Shared>`
   |
   = note: expected struct `Id<objc2::runtime::Object, _>`
              found struct `Id<NSObject, Shared>`

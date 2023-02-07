@@ -44,7 +44,7 @@ env:
     --package=objc2-encode
     --package=objc2-proc-macros
   # The current nightly Rust version that our CI uses
-  CURRENT_NIGHTLY: nightly-2023-01-15
+  CURRENT_NIGHTLY: nightly-2023-02-07
   # Various features that we'd usually want to test with
   #
   # Note: The `exception` feature is not enabled here, since it requires

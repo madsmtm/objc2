@@ -8,7 +8,7 @@ error[E0271]: type mismatch resolving `<Id<NSObject, Shared> as MaybeUnwrap>::In
 ... |
   | |     }
   | | );
-  | |_^ expected struct `CustomObject`, found struct `NSObject`
+  | |_^ expected `Id<CustomObject, _>`, found `Id<NSObject, Shared>`
   |
   = note: expected struct `Id<CustomObject, _>`
              found struct `Id<NSObject, Shared>`

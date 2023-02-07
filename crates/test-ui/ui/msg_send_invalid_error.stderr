@@ -2,7 +2,7 @@ error[E0308]: mismatched types
  --> ui/msg_send_invalid_error.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: _] };
-  |                          ^^^^^^^^^^^^^^^^^^^^ expected `()`, found enum `Result`
+  |                          ^^^^^^^^^^^^^^^^^^^^ expected `()`, found `Result<(), Id<_, Shared>>`
   |
   = note: expected unit type `()`
                   found enum `Result<(), Id<_, Shared>>`
@@ -12,7 +12,7 @@ error[E0308]: mismatched types
  --> ui/msg_send_invalid_error.rs
   |
   |     let _: Result<i32, _> = unsafe { msg_send![obj, b: _] };
-  |                                      ^^^^^^^^^^^^^^^^^^^^ expected `i32`, found `()`
+  |                                      ^^^^^^^^^^^^^^^^^^^^ expected `Result<i32, _>`, found `Result<(), Id<_, Shared>>`
   |
   = note: expected enum `Result<i32, _>`
              found enum `Result<(), Id<_, Shared>>`
@@ -27,7 +27,7 @@ error[E0308]: mismatched types
  --> ui/msg_send_invalid_error.rs
   |
   |     let _: Result<(), i32> = unsafe { msg_send![obj, c: _] };
-  |                                       ^^^^^^^^^^^^^^^^^^^^ expected `i32`, found struct `Id`
+  |                                       ^^^^^^^^^^^^^^^^^^^^ expected `Result<(), i32>`, found `Result<(), Id<_, Shared>>`
   |
   = note: expected enum `Result<_, i32>`
              found enum `Result<_, Id<_, Shared>>`
@@ -60,7 +60,7 @@ error[E0308]: mismatched types
  --> ui/msg_send_invalid_error.rs
   |
   |     let _: () = unsafe { msg_send![obj, e: obj, f: _] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found enum `Result`
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found `Result<(), Id<_, Shared>>`
   |
   = note: expected unit type `()`
                   found enum `Result<(), Id<_, Shared>>`
@@ -70,7 +70,7 @@ error[E0308]: mismatched types
  --> ui/msg_send_invalid_error.rs
   |
   |     let _: () = unsafe { msg_send![super(obj), g: _] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found enum `Result`
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found `Result<(), Id<_, Shared>>`
   |
   = note: expected unit type `()`
                   found enum `Result<(), Id<_, Shared>>`
@@ -80,7 +80,7 @@ error[E0308]: mismatched types
  --> ui/msg_send_invalid_error.rs
   |
   |     let _: () = unsafe { msg_send![super(obj, NSString::class()), h: _] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found enum `Result`
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found `Result<(), Id<_, Shared>>`
   |
   = note: expected unit type `()`
                   found enum `Result<(), Id<_, Shared>>`
@@ -90,7 +90,7 @@ error[E0308]: mismatched types
  --> ui/msg_send_invalid_error.rs
   |
   |     let _: () = unsafe { msg_send_id![obj, i: _] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found enum `Result`
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found `Result<Id<_, _>, Id<_, Shared>>`
   |
   = note: expected unit type `()`
                   found enum `Result<Id<_, _>, Id<_, Shared>>`
