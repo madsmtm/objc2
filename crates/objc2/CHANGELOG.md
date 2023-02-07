@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.3.0-beta.5 - 2023-02-07
+
 ### Added
 * Support `#[cfg(...)]` attributes in `extern_class!` macro.
 * Added support for selectors with multiple colons like `abc::` in the `sel!`,
@@ -111,6 +114,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   );
 
   ```
+* Updated `ffi` module to `objc-sys v0.3.0`.
+* **BREAKING**: Updated `encode` module to `objc2-encode v2.0.0-pre.4`.
 
 ### Fixed
 * Allow empty structs in `declare_class!` macro.

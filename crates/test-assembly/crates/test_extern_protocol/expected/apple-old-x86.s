@@ -56,18 +56,18 @@ L2$pb:
 l_anon.[ID].0:
 	.ascii	"MyProtocol"
 
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
+	.section	__OBJC,__image_info
 	.globl	L_OBJC_IMAGE_INFO_016b57e4e6a36961
 	.p2align	2
 L_OBJC_IMAGE_INFO_016b57e4e6a36961:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__TEXT,__objc_methname,cstring_literals
+	.section	__TEXT,__cstring,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_016b57e4e6a36961
 L_OBJC_METH_VAR_NAME_016b57e4e6a36961:
 	.asciz	"aMethod"
 
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
+	.section	__OBJC,__message_refs,literal_pointers,no_dead_strip
 	.globl	L_OBJC_SELECTOR_REFERENCES_016b57e4e6a36961
 	.p2align	2
 L_OBJC_SELECTOR_REFERENCES_016b57e4e6a36961:

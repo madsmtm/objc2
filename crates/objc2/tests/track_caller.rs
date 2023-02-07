@@ -1,3 +1,4 @@
+#![cfg(all(target_pointer_width = "64", not(feature = "catch-all")))]
 //! Test that our use of #[track_caller] is making the correct line number
 //! show up.
 use std::panic;

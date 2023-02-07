@@ -28,8 +28,12 @@ fn test_retain_autoreleased() {
         // When compiled in release mode / with optimizations enabled,
         // subsequent usage of `retain_autoreleased` will succeed in retaining
         // the autoreleased value!
+        #[allow(clippy::if_same_then_else)]
         let expected = if cfg!(feature = "gnustep-1-7") {
             1
+        } else if cfg!(all(target_arch = "arm", panic = "unwind")) {
+            // 32-bit ARM unwinding interferes with the optimization
+            2
         } else if cfg!(any(debug_assertions, feature = "exception")) {
             2
         } else {

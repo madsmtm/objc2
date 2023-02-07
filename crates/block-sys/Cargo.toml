@@ -1,6 +1,10 @@
 [package]
 name = "block-sys"
-version = "0.1.0-beta.2" # Remember to update html_root_url in lib.rs
+# Remember to update `html_root_url` in lib.rs and the `links` key.
+#
+# Also, beware of using pre-release versions here, since because of the
+# `links` key, two pre-releases requested with `=...` are incompatible.
+version = "0.2.0"
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 rust-version = "1.60"
@@ -20,7 +24,7 @@ readme = "README.md"
 
 # Downstream users can customize the linking!
 # See https://doc.rust-lang.org/cargo/reference/build-scripts.html#overriding-build-scripts
-links = "block_0_1"
+links = "block_0_2"
 build = "build.rs"
 
 [features]
@@ -56,7 +60,7 @@ unstable-objfw = []
 unstable-docsrs = ["objc-sys", "objc-sys/unstable-docsrs"]
 
 [dependencies]
-objc-sys = { path = "../objc-sys", version = "=0.2.0-beta.3", default-features = false, optional = true }
+objc-sys = { path = "../objc-sys", version = "0.3.0", default-features = false, optional = true }
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"

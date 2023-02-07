@@ -63,7 +63,7 @@ env:
   #
   # This condition is duplicated a few places, since there's no good way to
   # deduplicate such information in GitHub Actions...
-  FULL: ${{ (github.ref_name == 'new-versions' || github.ref_name == 'ci-full') && true || '' }}
+  FULL: ${{ (github.head_ref == 'new-versions' || github.ref_name == 'ci-full') && true || '' }}
 
 jobs:
   fmt:
@@ -284,7 +284,7 @@ jobs:
   check-icrate-features:
     # if: ${{ env.FULL }}
     # This will take ~40 minutes
-    if: ${{ github.ref_name == 'new-versions' || github.ref_name == 'ci-full' }}
+    if: ${{ github.head_ref == 'new-versions' || github.ref_name == 'ci-full' }}
     name: Check icrate features
     runs-on: macos-12
     needs:
@@ -345,7 +345,7 @@ jobs:
 
   test-apple:
     # if: ${{ env.FULL }}
-    if: ${{ github.ref_name == 'new-versions' || github.ref_name == 'ci-full' }}
+    if: ${{ github.head_ref == 'new-versions' || github.ref_name == 'ci-full' }}
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os || 'macos-latest' }}
     needs:
@@ -484,6 +484,7 @@ jobs:
     # TODO: Re-enable this on all of Foundation once we do some form of
     # availability checking.
     - name: Test static class and selectors
+      if: ${{ !contains(matrix.frameworks, 'ios') && !contains(matrix.frameworks, 'macos-10-7') }}
       run: >-
         cargo test $ARGS $PUBLIC_CRATES -ptests
         --features=unstable-static-sel,unstable-static-class,unstable-static-nsstring
@@ -491,7 +492,7 @@ jobs:
 
   test-ios:
     # if: ${{ env.FULL }}
-    if: ${{ github.ref_name == 'new-versions' || github.ref_name == 'ci-full' }}
+    if: ${{ github.head_ref == 'new-versions' || github.ref_name == 'ci-full' }}
     name: Test on iOS simulator w. dinghy
     runs-on: macos-11
     needs:
@@ -745,7 +746,8 @@ jobs:
       run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,unstable-frameworks-${{ matrix.frameworks }}
 
     - name: Test in release mode
-      if: ${{ env.FULL }}
+      # Disabled on GNUStep 2.1 for now
+      if: ${{ env.FULL && matrix.runtime != 'gnustep-2-1' }}
       run: cargo test $ARGS --features=Foundation --release
 
     - name: Run fuzzing

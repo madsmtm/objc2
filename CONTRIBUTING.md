@@ -60,8 +60,8 @@ Copy and fill out the following checklist into the release PR:
     - `objc-sys`
     - `objc2-encode`
     - `block-sys`
-    - `block2`
     - `objc2`
+    - `block2`
     - `icrate`
 - Local tests have been run (see `helper-scripts/test-local.fish`):
     - [ ] macOS 10.14.6 32bit

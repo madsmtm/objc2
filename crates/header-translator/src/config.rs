@@ -61,11 +61,25 @@ impl Config {
     }
 }
 
-#[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct LibraryData {
+    #[serde(default)]
     pub name: Option<String>,
     pub imports: Vec<String>,
+    #[serde(rename = "extra-features")]
+    #[serde(default)]
+    pub extra_features: Vec<String>,
+    #[serde(default)]
+    pub macos: Option<semver::VersionReq>,
+    #[serde(default)]
+    pub maccatalyst: Option<semver::VersionReq>,
+    #[serde(default)]
+    pub ios: Option<semver::VersionReq>,
+    #[serde(default)]
+    pub tvos: Option<semver::VersionReq>,
+    #[serde(default)]
+    pub watchos: Option<semver::VersionReq>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

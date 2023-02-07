@@ -1,7 +1,7 @@
 [package]
 name = "objc2-proc-macros"
 # Remember to update html_root_url in lib.rs
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Mads Marquart <mads@marquart.dk>", "Calvin Watford"]
 edition = "2021"
 rust-version = "1.60"

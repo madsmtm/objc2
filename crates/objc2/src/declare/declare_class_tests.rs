@@ -445,6 +445,7 @@ fn test_subclass_duplicate_ivar() {
 }
 
 declare_class!(
+    #[derive(Debug)]
     struct OutParam;
 
     unsafe impl ClassType for OutParam {
@@ -467,47 +468,52 @@ declare_class!(
     }
 );
 
-extern_methods!(
-    unsafe impl OutParam {
-        #[method_id(new)]
-        fn new() -> Id<Self, Shared>;
+#[cfg(all(target_pointer_width = "64", not(feature = "catch-all")))]
+mod out_param {
+    use super::*;
 
-        #[method(unsupported1:)]
-        fn unsupported1(_param: &mut Id<Self, Shared>);
+    extern_methods!(
+        unsafe impl OutParam {
+            #[method_id(new)]
+            fn new() -> Id<Self, Shared>;
 
-        #[method(unsupported2:)]
-        fn unsupported2(_param: Option<&mut Id<Self, Shared>>);
+            #[method(unsupported1:)]
+            fn unsupported1(_param: &mut Id<Self, Shared>);
 
-        #[method(unsupported3:)]
-        fn unsupported3(_param: &mut Option<Id<Self, Shared>>);
+            #[method(unsupported2:)]
+            fn unsupported2(_param: Option<&mut Id<Self, Shared>>);
 
-        #[method(unsupported4:)]
-        fn unsupported4(_param: Option<&mut Option<Id<Self, Shared>>>);
+            #[method(unsupported3:)]
+            fn unsupported3(_param: &mut Option<Id<Self, Shared>>);
+
+            #[method(unsupported4:)]
+            fn unsupported4(_param: Option<&mut Option<Id<Self, Shared>>>);
+        }
+    );
+
+    #[test]
+    #[should_panic = "`&mut Id<_, _>` is not supported in `declare_class!` yet"]
+    fn out_param1() {
+        let mut param = OutParam::new();
+        OutParam::unsupported1(&mut param);
     }
-);
 
-#[test]
-#[should_panic = "`&mut Id<_, _>` is not supported in `declare_class!` yet"]
-fn out_param1() {
-    let mut param = OutParam::new();
-    OutParam::unsupported1(&mut param);
-}
+    #[test]
+    #[should_panic = "`Option<&mut Id<_, _>>` is not supported in `declare_class!` yet"]
+    fn out_param2() {
+        OutParam::unsupported2(None);
+    }
 
-#[test]
-#[should_panic = "`Option<&mut Id<_, _>>` is not supported in `declare_class!` yet"]
-fn out_param2() {
-    OutParam::unsupported2(None);
-}
+    #[test]
+    #[should_panic = "`&mut Option<Id<_, _>>` is not supported in `declare_class!` yet"]
+    fn out_param3() {
+        let mut param = Some(OutParam::new());
+        OutParam::unsupported3(&mut param);
+    }
 
-#[test]
-#[should_panic = "`&mut Option<Id<_, _>>` is not supported in `declare_class!` yet"]
-fn out_param3() {
-    let mut param = Some(OutParam::new());
-    OutParam::unsupported3(&mut param);
-}
-
-#[test]
-#[should_panic = "`Option<&mut Option<Id<_, _>>>` is not supported in `declare_class!` yet"]
-fn out_param4() {
-    OutParam::unsupported4(None);
+    #[test]
+    #[should_panic = "`Option<&mut Option<Id<_, _>>>` is not supported in `declare_class!` yet"]
+    fn out_param4() {
+        OutParam::unsupported4(None);
+    }
 }

@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## icrate Unreleased - YYYY-MM-DD
 
+
+## icrate 0.0.2 - 2023-02-07
+
 ### Added
 * Added the following frameworks:
   - `Accessibility`
@@ -72,6 +75,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   This means that to use e.g. `Foundation::NSThread::name`, you have to enable
   the `Foundation_NSThread` and `Foundation_NSString` cargo features.
+* **BREAKING**: Updated `objc2` to `v0.3.0-beta.5`.
+* **BREAKING**: Updated `block2` to `v0.2.0-alpha.8`.
 
 ### Removed
 * **BREAKING**: The optional `uuid` integration, since one might want to use
