@@ -2,7 +2,7 @@ error[E0271]: type mismatch resolving `<Id<Object, Shared> as MaybeUnwrap>::Inpu
  --> ui/msg_send_id_alloc_init_different.rs
   |
   |     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, init] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^^^^ expected struct `NSObject`, found struct `Object`
+  |                                          ^^^^^^^^^^^^^^^^^^^^^^^ expected `Id<NSObject, _>`, found `Id<Object, Shared>`
   |
   = note: expected struct `Id<NSObject, _>`
              found struct `Id<objc2::runtime::Object, Shared>`

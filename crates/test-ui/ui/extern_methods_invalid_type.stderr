@@ -62,7 +62,7 @@ error[E0308]: mismatched types
   | | );
   | | ^
   | | |
-  | |_expected enum `Option`, found `&mut MyObject`
+  | |_expected `Option<Allocated<_>>`, found `&mut MyObject`
   |   arguments to this function are incorrect
   |
   = note:           expected enum `Option<Allocated<_>>`
