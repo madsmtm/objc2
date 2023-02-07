@@ -7,6 +7,6 @@ extern_methods!(
     unsafe impl WKNavigationAction {
         #[cfg(feature = "WebKit_WKFrameInfo")]
         #[method_id(@__retain_semantics Other sourceFrame)]
-        pub unsafe fn sourceFrame(&self) -> Option<Id<WKFrameInfo, Shared>>;
+        pub unsafe fn sourceFrame(&self) -> Option<Id<WKFrameInfo>>;
     }
 );

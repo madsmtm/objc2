@@ -2,7 +2,7 @@
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::rc::{Id, Shared};
+use objc2::rc::Id;
 use objc2::ClassType;
 
 use crate::Foundation::{
@@ -19,7 +19,7 @@ impl RefUnwindSafe for NSError {}
 /// Creation methods.
 impl NSError {
     /// Construct a new [`NSError`] with the given code in the given domain.
-    pub fn new(code: NSInteger, domain: &NSErrorDomain) -> Id<Self, Shared> {
+    pub fn new(code: NSInteger, domain: &NSErrorDomain) -> Id<Self> {
         // SAFETY: `domain` and `user_info` are copied to the error object, so
         // even if the `&NSString` came from a `&mut NSMutableString`, we're
         // still good!

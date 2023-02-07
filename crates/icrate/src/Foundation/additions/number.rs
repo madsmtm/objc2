@@ -34,7 +34,7 @@ macro_rules! def_new_fn {
         ($fn_name:ident($fn_inp:ty); $method_name:ident),
     )*} => {$(
         $(#[$($m)*])*
-        pub fn $fn_name(val: $fn_inp) -> Id<Self, Shared> {
+        pub fn $fn_name(val: $fn_inp) -> Id<Self> {
             Self::$method_name(val as _)
         }
     )*}
@@ -59,7 +59,7 @@ impl NSNumber {
     }
 
     #[inline]
-    pub fn new_cgfloat(val: CGFloat) -> Id<Self, Shared> {
+    pub fn new_cgfloat(val: CGFloat) -> Id<Self> {
         #[cfg(target_pointer_width = "64")]
         {
             Self::new_f64(val)
@@ -138,7 +138,7 @@ impl NSNumber {
     /// ```
     /// use icrate::Foundation::NSNumber;
     /// use icrate::objc2::Encoding;
-    /// use icrate::objc2::rc::{Id, Shared};
+    /// use icrate::objc2::rc::Id;
     ///
     /// // Note: `bool` would convert to either `Signed` or `Unsigned`,
     /// // depending on platform
@@ -150,7 +150,7 @@ impl NSNumber {
     /// }
     ///
     /// impl Number {
-    ///     fn into_nsnumber(self) -> Id<NSNumber, Shared> {
+    ///     fn into_nsnumber(self) -> Id<NSNumber> {
     ///         match self {
     ///             Self::Signed(val) => NSNumber::new_i64(val),
     ///             Self::Unsigned(val) => NSNumber::new_u64(val),

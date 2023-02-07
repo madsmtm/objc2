@@ -32,7 +32,7 @@ impl RefUnwindSafe for NSString {}
 
 impl NSString {
     /// Construct an empty NSString.
-    pub fn new() -> Id<Self, Shared> {
+    pub fn new() -> Id<Self> {
         Self::init(Self::alloc())
     }
 
@@ -125,7 +125,7 @@ impl NSString {
     #[doc(alias = "initWithBytes")]
     #[doc(alias = "initWithBytes:length:encoding:")]
     #[allow(clippy::should_implement_trait)] // Not really sure of a better name
-    pub fn from_str(string: &str) -> Id<Self, Shared> {
+    pub fn from_str(string: &str) -> Id<Self> {
         unsafe {
             let obj = from_str(Self::class(), string);
             Id::new(obj.cast()).unwrap()

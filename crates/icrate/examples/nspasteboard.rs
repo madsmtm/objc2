@@ -6,7 +6,7 @@
 
 use std::mem::ManuallyDrop;
 
-use icrate::objc2::rc::{Id, Shared};
+use icrate::objc2::rc::Id;
 use icrate::objc2::runtime::{Class, Object};
 use icrate::objc2::{extern_class, msg_send, msg_send_id, ClassType};
 use icrate::Foundation::{NSArray, NSDictionary, NSInteger, NSObject, NSString};
@@ -44,14 +44,14 @@ impl NSPasteboard {
     /// TODO: Is this safe to call outside the main thread?
     ///
     /// <https://developer.apple.com/documentation/appkit/nspasteboard/1530091-generalpasteboard?language=objc>
-    pub fn general() -> Id<Self, Shared> {
+    pub fn general() -> Id<Self> {
         unsafe { msg_send_id![Self::class(), generalPasteboard] }
     }
 
     /// Simple, straightforward implementation
     ///
     /// <https://developer.apple.com/documentation/appkit/nspasteboard/1533566-stringfortype?language=objc>
-    pub fn text_impl_1(&self) -> Id<NSString, Shared> {
+    pub fn text_impl_1(&self) -> Id<NSString> {
         let s = unsafe { NSPasteboardTypeString }.unwrap();
         unsafe { msg_send_id![self, stringForType: s] }
     }
@@ -61,7 +61,7 @@ impl NSPasteboard {
     /// of nitty-gritty details.
     ///
     /// <https://developer.apple.com/documentation/appkit/nspasteboard/1524454-readobjectsforclasses?language=objc>
-    pub fn text_impl_2(&self) -> Id<NSString, Shared> {
+    pub fn text_impl_2(&self) -> Id<NSString> {
         // The NSPasteboard API is a bit weird, it requires you to pass
         // classes as objects, which `icrate::Foundation::NSArray` was not
         // really made for - so we convert the class to an `Object` type
@@ -69,7 +69,7 @@ impl NSPasteboard {
         // how classes handle `release` calls?
         //
         // TODO: Investigate and find a better way to express this in objc2.
-        let string_classes: ManuallyDrop<[Id<Object, Shared>; 1]> = {
+        let string_classes: ManuallyDrop<[Id<Object>; 1]> = {
             let cls: *const Class = NSString::class();
             let cls = cls as *mut Object;
             unsafe { ManuallyDrop::new([Id::new(cls).unwrap()]) }
@@ -80,7 +80,7 @@ impl NSPasteboard {
         let options = NSDictionary::new();
         let objects = unsafe { self.read_objects_for_classes(&class_array, &options) };
 
-        // TODO: Should perhaps return Id<Object, Shared>?
+        // TODO: Should perhaps return Id<Object>?
         let ptr: *const Object = objects.first().unwrap();
 
         // And this part is weird as well, since we now have to convert the
@@ -96,9 +96,9 @@ impl NSPasteboard {
     /// SAFETY: `class_array` must contain classes!
     unsafe fn read_objects_for_classes(
         &self,
-        class_array: &NSArray<Object, Shared>,
+        class_array: &NSArray<Object>,
         options: &NSDictionary<NSPasteboardReadingOptionKey, Object>,
-    ) -> Id<NSArray<Object, Shared>, Shared> {
+    ) -> Id<NSArray<Object>> {
         unsafe { msg_send_id![self, readObjectsForClasses: class_array, options: options] }
     }
 
@@ -113,7 +113,7 @@ impl NSPasteboard {
     ///
     /// <https://developer.apple.com/documentation/appkit/nspasteboard/1533599-clearcontents?language=objc>
     /// <https://developer.apple.com/documentation/appkit/nspasteboard/1525945-writeobjects?language=objc>
-    pub fn set_text(&self, text: Id<NSString, Shared>) {
+    pub fn set_text(&self, text: Id<NSString>) {
         let _: NSInteger = unsafe { msg_send![self, clearContents] };
         let string_array = NSArray::from_slice(&[text]);
         let res: bool = unsafe { msg_send![self, writeObjects: &*string_array] };

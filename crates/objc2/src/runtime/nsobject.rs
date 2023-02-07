@@ -1,7 +1,7 @@
 use core::fmt;
 use core::hash;
 
-use crate::rc::{DefaultId, Id, Owned, Shared};
+use crate::rc::{DefaultId, Id, Owned};
 use crate::runtime::{Class, Object, Protocol};
 use crate::{
     extern_methods, msg_send, msg_send_id, ClassType, ImplementedBy, Message, ProtocolObject,
@@ -109,7 +109,7 @@ pub unsafe trait NSObjectProtocol {
     }
 
     #[doc(hidden)]
-    fn __description(&self) -> Option<Id<NSObject, Shared>>
+    fn __description(&self) -> Option<Id<NSObject>>
     where
         Self: Sized + Message,
     {

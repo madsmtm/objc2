@@ -1,8 +1,8 @@
-error[E0271]: type mismatch resolving `<Id<Object, Shared> as MaybeUnwrap>::Input == Id<NSObject, _>`
+error[E0271]: type mismatch resolving `<Id<Object> as MaybeUnwrap>::Input == Id<NSObject, _>`
  --> ui/msg_send_id_alloc_init_different.rs
   |
-  |     let _: Id<Object, Shared> = unsafe { msg_send_id![obj, init] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^^^^ expected `Id<NSObject, _>`, found `Id<Object, Shared>`
+  |     let _: Id<Object> = unsafe { msg_send_id![obj, init] };
+  |                                  ^^^^^^^^^^^^^^^^^^^^^^^ expected `Id<NSObject, _>`, found `Id<Object>`
   |
   = note: expected struct `Id<NSObject, _>`
              found struct `Id<objc2::runtime::Object, Shared>`

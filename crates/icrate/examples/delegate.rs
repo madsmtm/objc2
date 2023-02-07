@@ -1,7 +1,7 @@
 #![cfg_attr(not(target_os = "macos"), allow(unused))]
 use icrate::ns_string;
 use icrate::objc2::declare::{Ivar, IvarBool, IvarDrop, IvarEncode};
-use icrate::objc2::rc::{Id, Shared};
+use icrate::objc2::rc::Id;
 use icrate::objc2::runtime::Object;
 use icrate::objc2::{declare_class, msg_send, msg_send_id, ClassType};
 use icrate::Foundation::{NSCopying, NSObject, NSString};
@@ -18,8 +18,8 @@ declare_class!(
         another_ivar: IvarBool<"_another_ivar">,
         box_ivar: IvarDrop<Box<i32>, "_box_ivar">,
         maybe_box_ivar: IvarDrop<Option<Box<i32>>, "_maybe_box_ivar">,
-        id_ivar: IvarDrop<Id<NSString, Shared>, "_id_ivar">,
-        maybe_id_ivar: IvarDrop<Option<Id<NSString, Shared>>, "_maybe_id_ivar">,
+        id_ivar: IvarDrop<Id<NSString>, "_id_ivar">,
+        maybe_id_ivar: IvarDrop<Option<Id<NSString>>, "_maybe_id_ivar">,
     }
 
     mod ivars;
@@ -80,7 +80,7 @@ declare_class!(
 
 #[cfg(target_os = "macos")]
 impl CustomAppDelegate {
-    pub fn new(ivar: u8, another_ivar: bool) -> Id<Self, Shared> {
+    pub fn new(ivar: u8, another_ivar: bool) -> Id<Self> {
         unsafe { msg_send_id![Self::alloc(), initWith: ivar, another: another_ivar] }
     }
 }

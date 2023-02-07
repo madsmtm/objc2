@@ -64,7 +64,7 @@
 ///
 /// ```
 /// use objc2::runtime::NSObject;
-/// use objc2::rc::{Id, Shared};
+/// use objc2::rc::Id;
 /// use objc2::{ClassType, extern_class, msg_send_id};
 ///
 /// extern_class!(
@@ -92,7 +92,7 @@
 /// let cls = NSFormatter::class();
 ///
 /// // `NSFormatter` implements `Message`:
-/// let obj: Id<NSFormatter, Shared> = unsafe { msg_send_id![cls, new] };
+/// let obj: Id<NSFormatter> = unsafe { msg_send_id![cls, new] };
 /// ```
 ///
 /// Represent the `NSDateFormatter` class, using the `NSFormatter` type we

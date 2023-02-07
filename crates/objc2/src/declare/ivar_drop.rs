@@ -204,7 +204,7 @@ unsafe fn box_unreachable() -> ! {
 mod tests {
     use super::*;
     use crate::declare::{Ivar, IvarType};
-    use crate::rc::{Allocated, Owned, Shared, __RcTestObject, __ThreadTestData};
+    use crate::rc::{Allocated, Owned, __RcTestObject, __ThreadTestData};
     use crate::runtime::NSObject;
     use crate::runtime::Object;
     use crate::{declare_class, msg_send, msg_send_id, ClassType};
@@ -223,7 +223,7 @@ mod tests {
 
     struct TestIvar3;
     unsafe impl IvarType for TestIvar3 {
-        type Type = IvarDrop<Id<Object, Shared>>;
+        type Type = IvarDrop<Id<Object>>;
         const NAME: &'static str = "_abc";
     }
 
@@ -236,7 +236,7 @@ mod tests {
     declare_class!(
         #[derive(Debug, PartialEq, Eq)]
         struct IvarTester {
-            ivar1: IvarDrop<Id<__RcTestObject, Shared>, "_ivar1">,
+            ivar1: IvarDrop<Id<__RcTestObject>, "_ivar1">,
             ivar2: IvarDrop<Option<Id<__RcTestObject, Owned>>, "_ivar2">,
             ivar3: IvarDrop<Box<Id<__RcTestObject, Owned>>, "_ivar3">,
             ivar4: IvarDrop<Option<Box<Id<__RcTestObject, Owned>>>, "_ivar4">,
@@ -275,7 +275,7 @@ mod tests {
     declare_class!(
         #[derive(Debug, PartialEq, Eq)]
         struct IvarTesterSubclass {
-            ivar5: IvarDrop<Id<__RcTestObject, Shared>, "_ivar5">,
+            ivar5: IvarDrop<Id<__RcTestObject>, "_ivar5">,
         }
 
         mod ivartestersubclass;

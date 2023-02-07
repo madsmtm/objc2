@@ -1,6 +1,6 @@
 //! Test that msg_send! error handling works correctly.
 use objc2::{ClassType, msg_send, msg_send_id};
-use objc2::rc::{Id, Shared};
+use objc2::rc::Id;
 use icrate::Foundation::NSString;
 
 fn main() {
@@ -10,7 +10,7 @@ fn main() {
     let _: () = unsafe { msg_send![obj, a: _] };
     let _: Result<i32, _> = unsafe { msg_send![obj, b: _] };
     let _: Result<(), i32> = unsafe { msg_send![obj, c: _] };
-    let _: Result<(), Id<i32, Shared>> = unsafe { msg_send![obj, d: _] };
+    let _: Result<(), Id<i32>> = unsafe { msg_send![obj, d: _] };
 
     // Different calls
     let _: () = unsafe { msg_send![obj, e: obj, f: _] };

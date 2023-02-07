@@ -13,11 +13,11 @@ extern_methods!(
     unsafe impl Metal::MTLDevice {
         #[method_id(vendorName)]
         #[cfg(feature = "Foundation_NSString")]
-        pub unsafe fn vendorName(&self) -> Id<Foundation::NSString, Shared>;
+        pub unsafe fn vendorName(&self) -> Id<Foundation::NSString>;
 
         #[method_id(familyName)]
         #[cfg(feature = "Foundation_NSString")]
-        pub unsafe fn familyName(&self) -> Id<Foundation::NSString, Shared>;
+        pub unsafe fn familyName(&self) -> Id<Foundation::NSString>;
     }
 );
 
@@ -34,14 +34,14 @@ extern_methods!(
             device: &Metal::MTLDevice,
             options: u64,
             flags: u64,
-        ) -> Option<Id<Self, Shared>>;
+        ) -> Option<Id<Self>>;
 
         #[cfg(feature = "Foundation_NSError")]
         #[method_id(newSerializedVertexDataWithFlags:error:_)]
         pub unsafe fn newSerializedVertexDataWithFlags_error(
             &self,
             flags: u64,
-        ) -> Result<Id<Object, Shared>, Id<Foundation::NSError, Shared>>;
+        ) -> Result<Id<Object>, Id<Foundation::NSError>>;
 
         #[method(serializeFragmentData)]
         pub unsafe fn serializeFragmentData(&self) -> *mut c_void;
@@ -60,6 +60,6 @@ extern_methods!(
     #[cfg(feature = "Metal_MTLVertexDescriptor")]
     unsafe impl Metal::MTLVertexDescriptor {
         #[method_id(newSerializedDescriptor)]
-        pub unsafe fn newSerializedDescriptor(&self) -> Option<Id<Object, Shared>>;
+        pub unsafe fn newSerializedDescriptor(&self) -> Option<Id<Object>>;
     }
 );

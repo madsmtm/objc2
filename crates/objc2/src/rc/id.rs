@@ -17,7 +17,7 @@ use crate::Message;
 /// at the right time.
 ///
 /// An [`Id`] can either be [`Owned`] or [`Shared`], represented with the `O`
-/// type parameter.
+/// type parameter. The default is [`Shared`].
 ///
 /// If owned, it is guaranteed that there are no other references to the
 /// object, and the [`Id`] can therefore be mutably dereferenced.
@@ -99,7 +99,7 @@ use crate::Message;
 // TODO: Figure out if `Message` bound on `T` would be better here?
 // TODO: Add `ptr::Thin` bound on `T` to allow for only extern types
 // TODO: Consider changing the name of Id -> Retain
-pub struct Id<T: ?Sized, O: Ownership> {
+pub struct Id<T: ?Sized, O: Ownership = Shared> {
     /// A pointer to the contained object. The pointer is always retained.
     ///
     /// It is important that this is `NonNull`, since we want to dereference

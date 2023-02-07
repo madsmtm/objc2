@@ -1,7 +1,7 @@
 use core::ffi::c_void;
 use std::mem::ManuallyDrop;
 
-use objc2::rc::{autoreleasepool, Id, Shared};
+use objc2::rc::{autoreleasepool, Id};
 use objc2::runtime::{Class, Object, Sel};
 use objc2::{class, msg_send, sel};
 
@@ -29,13 +29,13 @@ fn alloc_nsobject() -> *mut Object {
     unsafe { msg_send![class!(NSObject), alloc] }
 }
 
-fn new_nsobject() -> Id<Object, Shared> {
+fn new_nsobject() -> Id<Object> {
     let obj = alloc_nsobject();
     let obj: *mut Object = unsafe { msg_send![obj, init] };
     unsafe { Id::new(obj).unwrap_unchecked() }
 }
 
-fn new_nsdata() -> Id<Object, Shared> {
+fn new_nsdata() -> Id<Object> {
     let bytes_ptr = BYTES.as_ptr() as *const c_void;
     let obj: *mut Object = unsafe { msg_send![class!(NSData), alloc] };
     let obj: *mut Object = unsafe {
@@ -64,7 +64,7 @@ fn autoreleased_nsdata() -> *const Object {
     unsafe { msg_send![new_leaked_nsdata(), autorelease] }
 }
 
-fn new_nsstring() -> Id<Object, Shared> {
+fn new_nsstring() -> Id<Object> {
     let obj: *mut Object = unsafe { msg_send![class!(NSString), alloc] };
     let obj: *mut Object = unsafe { msg_send![obj, init] };
     unsafe { Id::new(obj).unwrap_unchecked() }
@@ -79,7 +79,7 @@ fn autoreleased_nsstring() -> *const Object {
     unsafe { msg_send![new_leaked_nsstring(), autorelease] }
 }
 
-fn retain_autoreleased(obj: *const Object) -> Id<Object, Shared> {
+fn retain_autoreleased(obj: *const Object) -> Id<Object> {
     unsafe { Id::retain_autoreleased((obj as *mut Object).cast()).unwrap_unchecked() }
 }
 
@@ -87,11 +87,11 @@ fn autoreleased_nsdata_pool_cleanup() -> *const Object {
     autoreleasepool(|_| autoreleased_nsdata())
 }
 
-fn autoreleased_nsdata_fast_caller_cleanup() -> Id<Object, Shared> {
+fn autoreleased_nsdata_fast_caller_cleanup() -> Id<Object> {
     retain_autoreleased(autoreleased_nsdata())
 }
 
-fn autoreleased_nsdata_fast_caller_cleanup_pool_cleanup() -> Id<Object, Shared> {
+fn autoreleased_nsdata_fast_caller_cleanup_pool_cleanup() -> Id<Object> {
     autoreleasepool(|_| retain_autoreleased(autoreleased_nsdata()))
 }
 
@@ -99,11 +99,11 @@ fn autoreleased_nsstring_pool_cleanup() -> *const Object {
     autoreleasepool(|_| autoreleased_nsstring())
 }
 
-fn autoreleased_nsstring_fast_caller_cleanup() -> Id<Object, Shared> {
+fn autoreleased_nsstring_fast_caller_cleanup() -> Id<Object> {
     retain_autoreleased(autoreleased_nsstring())
 }
 
-fn autoreleased_nsstring_fast_caller_cleanup_pool_cleanup() -> Id<Object, Shared> {
+fn autoreleased_nsstring_fast_caller_cleanup_pool_cleanup() -> Id<Object> {
     autoreleasepool(|_| retain_autoreleased(autoreleased_nsstring()))
 }
 

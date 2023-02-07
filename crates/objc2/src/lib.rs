@@ -36,12 +36,12 @@
 #![cfg_attr(not(feature = "apple"), doc = "```no_run")]
 //! use objc2::{msg_send, msg_send_id, ClassType};
 //! use objc2::ffi::NSUInteger;
-//! use objc2::rc::{Id, Owned, Shared};
+//! use objc2::rc::Id;
 //! use objc2::runtime::{NSObject, NSObjectProtocol};
 //!
 //! // Creation
 //!
-//! let obj1: Id<NSObject, Owned> = unsafe {
+//! let obj1: Id<NSObject> = unsafe {
 //!     msg_send_id![NSObject::alloc(), init]
 //! };
 //! // Or we can simply do
@@ -58,10 +58,7 @@
 //! };
 //! assert!(is_kind);
 //!
-//! // We're going to create a new reference to the first object, so
-//! // relinquish mutable ownership.
-//! let obj1: Id<NSObject, Shared> = obj1.into();
-//! let obj1_self: Id<NSObject, Shared> = unsafe { msg_send_id![&obj1, self] };
+//! let obj1_self: Id<NSObject> = unsafe { msg_send_id![&obj1, self] };
 //! assert_eq!(obj1, obj1_self);
 //!
 //! // Deallocation on drop

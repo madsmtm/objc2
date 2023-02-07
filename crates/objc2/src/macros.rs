@@ -725,7 +725,7 @@ macro_rules! __class_inner {
 /// All arguments, and the return type, must implement [`Encode`].
 ///
 /// If the last argument is the special marker `_`, the macro will return a
-/// `Result<(), Id<E, Shared>>`, see below.
+/// `Result<(), Id<E>>`, see below.
 ///
 /// This macro translates into a call to [`sel!`], and afterwards a fully
 /// qualified call to [`MessageReceiver::send_message`]. Note that this means
@@ -794,8 +794,8 @@ macro_rules! __class_inner {
 /// returns `BOOL`, into the Rust equivalent, the [`Result`] type.
 ///
 /// In particular, if you make the last argument the special marker `_`, then
-/// the macro will return a `Result<(), Id<E, Shared>>` (where you must
-/// specify `E` yourself, usually you'd use `icrate::Foundation::NSError`).
+/// the macro will return a `Result<(), Id<E>>` (where you must specify `E`
+/// yourself, usually you'd use `icrate::Foundation::NSError`).
 ///
 /// At runtime, we create the temporary error variable for you on the stack
 /// and send it as the out-parameter to the method. If the method then returns
@@ -924,14 +924,14 @@ macro_rules! __class_inner {
 ///
 /// ```no_run
 /// use objc2::msg_send;
-/// use objc2::rc::{Id, Shared};
+/// use objc2::rc::Id;
 ///
 /// # type NSBundle = objc2::runtime::Object;
 /// # type NSError = objc2::runtime::Object;
 /// let obj: &NSBundle;
 /// # obj = todo!();
 /// // The `_` tells the macro that the return type should be `Result`.
-/// let res: Result<(), Id<NSError, Shared>> = unsafe {
+/// let res: Result<(), Id<NSError>> = unsafe {
 ///     msg_send![obj, preflightAndReturnError: _]
 /// };
 /// ```
@@ -940,7 +940,7 @@ macro_rules! __class_inner {
 ///
 /// ```no_run
 /// use objc2::msg_send;
-/// use objc2::rc::{Id, Shared};
+/// use objc2::rc::Id;
 ///
 /// # type NSFileManager = objc2::runtime::Object;
 /// # type NSURL = objc2::runtime::Object;
@@ -949,7 +949,7 @@ macro_rules! __class_inner {
 /// # obj = todo!();
 /// let url: &NSURL;
 /// # url = todo!();
-/// let mut result_url: Option<Id<NSURL, Shared>> = None;
+/// let mut result_url: Option<Id<NSURL>> = None;
 /// unsafe {
 ///     msg_send![
 ///         obj,
@@ -962,7 +962,7 @@ macro_rules! __class_inner {
 ///
 /// // Use `result_url` here
 ///
-/// # Ok::<(), Id<NSError, Shared>>(())
+/// # Ok::<(), Id<NSError>>(())
 /// ```
 #[macro_export]
 macro_rules! msg_send {
@@ -1126,7 +1126,7 @@ macro_rules! msg_send_bool {
 /// with an error message if it couldn't be retrieved.
 ///
 /// Though as a special case, if the last argument is the marker `_`, the
-/// macro will return a `Result<Id<T, O>, Id<E, Shared>>`, see below.
+/// macro will return a `Result<Id<T, O>, Id<E>>`, see below.
 ///
 /// This macro doesn't support super methods yet, see [#173].
 /// The `retain`, `release` and `autorelease` selectors are not supported, use
@@ -1149,9 +1149,8 @@ macro_rules! msg_send_bool {
 /// equivalent, the [`Result`] type.
 ///
 /// In particular, you can make the last argument the special marker `_`, and
-/// then the macro will return a `Result<Id<T, O>, Id<E, Shared>>` (where you
-/// must specify `E` yourself, usually you'd use
-/// `icrate::Foundation::NSError`).
+/// then the macro will return a `Result<Id<T, O>, Id<E>>` (where you must
+/// specify `E` yourself, usually you'd use `icrate::Foundation::NSError`).
 ///
 ///
 /// # Panics
@@ -1189,17 +1188,17 @@ macro_rules! msg_send_bool {
 /// ```no_run
 /// use objc2::{class, msg_send_id};
 /// use objc2::ffi::NSUInteger;
-/// use objc2::rc::{Id, Shared};
+/// use objc2::rc::Id;
 /// use objc2::runtime::Object;
 /// // Allocate new object
 /// let obj = unsafe { msg_send_id![class!(NSObject), alloc] };
 /// // Consume the allocated object, return initialized object
-/// let obj: Id<Object, Shared> = unsafe { msg_send_id![obj, init] };
+/// let obj: Id<Object> = unsafe { msg_send_id![obj, init] };
 /// // Copy the object
-/// let copy: Id<Object, Shared> = unsafe { msg_send_id![&obj, copy] };
+/// let copy: Id<Object> = unsafe { msg_send_id![&obj, copy] };
 /// // Call ordinary selector that returns an object
 /// // This time, we handle failures ourselves
-/// let s: Option<Id<Object, Shared>> = unsafe { msg_send_id![&obj, description] };
+/// let s: Option<Id<Object>> = unsafe { msg_send_id![&obj, description] };
 /// let s = s.expect("description was NULL");
 /// ```
 #[macro_export]

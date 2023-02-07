@@ -155,7 +155,7 @@
 /// ```
 /// use std::os::raw::c_int;
 /// use objc2::declare::{Ivar, IvarDrop, IvarEncode};
-/// use objc2::rc::{Id, Owned, Shared};
+/// use objc2::rc::{Id, Owned};
 /// use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
 /// use objc2::{
 ///     declare_class, extern_protocol, msg_send, msg_send_id, ClassType,
@@ -182,7 +182,7 @@
 ///     struct MyCustomObject {
 ///         foo: IvarEncode<u8, "_foo">,
 ///         pub bar: IvarEncode<c_int, "_bar">,
-///         object: IvarDrop<Id<NSObject, Shared>, "_object">,
+///         object: IvarDrop<Id<NSObject>, "_object">,
 ///     }
 ///
 ///     mod ivars;
@@ -224,7 +224,7 @@
 ///         }
 ///
 ///         #[method_id(object)]
-///         fn __get_object(&self) -> Id<NSObject, Shared> {
+///         fn __get_object(&self) -> Id<NSObject> {
 ///             self.object.clone()
 ///         }
 ///
@@ -257,7 +257,7 @@
 ///         unsafe { msg_send![self, foo] }
 ///     }
 ///
-///     pub fn get_object(&self) -> Id<NSObject, Shared> {
+///     pub fn get_object(&self) -> Id<NSObject> {
 ///         unsafe { msg_send_id![self, object] }
 ///     }
 ///
@@ -278,7 +278,7 @@
 ///     assert_eq!(*obj.bar, 42);
 ///     assert!(obj.object.is_kind_of::<NSObject>());
 ///
-///     let obj: Id<MyCustomObject, Shared> = unsafe {
+///     let obj: Id<MyCustomObject> = unsafe {
 ///          msg_send_id![&obj, copy]
 ///     }; // Or obj.copy() with `icrate`
 ///

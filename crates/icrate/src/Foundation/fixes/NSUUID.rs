@@ -22,7 +22,7 @@ extern_methods!(
         pub(crate) fn initWithUUIDBytes(
             this: Option<Allocated<Self>>,
             bytes: &UuidBytes,
-        ) -> Id<Self, Shared>;
+        ) -> Id<Self>;
 
         #[method(getUUIDBytes:)]
         pub(crate) fn getUUIDBytes(&self, bytes: &mut UuidBytes);

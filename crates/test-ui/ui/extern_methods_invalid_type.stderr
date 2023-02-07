@@ -1,13 +1,13 @@
-error[E0277]: the trait bound `Id<MyObject, objc2::rc::Owned>: Encode` is not satisfied
+error[E0277]: the trait bound `Id<MyObject>: Encode` is not satisfied
  --> ui/extern_methods_invalid_type.rs
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
   | |         #[method(a)]
-  | |         fn a(&self) -> Id<Self, Owned>;
+  | |         fn a(&self) -> Id<Self>;
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Id<MyObject, objc2::rc::Owned>`
+  | |_^ the trait `Encode` is not implemented for `Id<MyObject>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -19,8 +19,8 @@ error[E0277]: the trait bound `Id<MyObject, objc2::rc::Owned>: Encode` is not sa
             AtomicI16
             AtomicI32
           and $N others
-  = note: required for `Id<MyObject, objc2::rc::Owned>` to implement `EncodeReturn`
-  = note: required for `Id<MyObject, objc2::rc::Owned>` to implement `EncodeConvertReturn`
+  = note: required for `Id<MyObject>` to implement `EncodeReturn`
+  = note: required for `Id<MyObject>` to implement `EncodeConvertReturn`
 note: required by a bound in `send_message`
  --> $WORKSPACE/crates/objc2/src/message/mod.rs
   |
@@ -57,7 +57,7 @@ error[E0308]: mismatched types
   | / extern_methods!(
   | |     unsafe impl MyObject {
   | |         #[method_id(init)]
-  | |         fn init(&mut self) -> Option<Id<Self, Owned>>;
+  | |         fn init(&mut self) -> Option<Id<Self>>;
   | |     }
   | | );
   | | ^
@@ -74,16 +74,16 @@ note: associated function defined here
   |               ^^^^^^^^^^^^^^^
   = note: this error originates in the macro `$crate::__rewrite_self_arg_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Result<(), Id<NSObject, Shared>>: Encode` is not satisfied
+error[E0277]: the trait bound `Result<(), Id<NSObject>>: Encode` is not satisfied
  --> ui/extern_methods_invalid_type.rs
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
   | |         #[method(error:)]
-  | |         fn error(arg: i32) -> Result<(), Id<NSObject, Shared>>;
+  | |         fn error(arg: i32) -> Result<(), Id<NSObject>>;
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Result<(), Id<NSObject, Shared>>`
+  | |_^ the trait `Encode` is not implemented for `Result<(), Id<NSObject>>`
   |
   = help: the following other types implement trait `Encode`:
             &'a T
@@ -95,8 +95,8 @@ error[E0277]: the trait bound `Result<(), Id<NSObject, Shared>>: Encode` is not 
             AtomicI16
             AtomicI32
           and $N others
-  = note: required for `Result<(), Id<NSObject, Shared>>` to implement `EncodeReturn`
-  = note: required for `Result<(), Id<NSObject, Shared>>` to implement `EncodeConvertReturn`
+  = note: required for `Result<(), Id<NSObject>>` to implement `EncodeReturn`
+  = note: required for `Result<(), Id<NSObject>>` to implement `EncodeConvertReturn`
 note: required by a bound in `send_message`
  --> $WORKSPACE/crates/objc2/src/message/mod.rs
   |
@@ -104,16 +104,16 @@ note: required by a bound in `send_message`
   |            ^^^^^^^^^^^^^^^^^^^ required by this bound in `MessageReceiver::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Result<Id<MyObject, objc2::rc::Owned>, Id<NSObject, Shared>>: MaybeUnwrap` is not satisfied
+error[E0277]: the trait bound `Result<Id<MyObject>, Id<NSObject>>: MaybeUnwrap` is not satisfied
  --> ui/extern_methods_invalid_type.rs
   |
   | / extern_methods!(
   | |     unsafe impl MyObject {
   | |         #[method_id(error:)]
-  | |         fn error_id(arg: i32) -> Result<Id<Self, Owned>, Id<NSObject, Shared>>;
+  | |         fn error_id(arg: i32) -> Result<Id<Self>, Id<NSObject>>;
   | |     }
   | | );
-  | |_^ the trait `MaybeUnwrap` is not implemented for `Result<Id<MyObject, objc2::rc::Owned>, Id<NSObject, Shared>>`
+  | |_^ the trait `MaybeUnwrap` is not implemented for `Result<Id<MyObject>, Id<NSObject>>`
   |
   = help: the following other types implement trait `MaybeUnwrap`:
             Allocated<T>

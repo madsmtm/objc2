@@ -1,5 +1,5 @@
 use objc2::{extern_class, extern_methods, ClassType};
-use objc2::rc::{Id, Shared};
+use objc2::rc::Id;
 use objc2::runtime::NSObject;
 
 extern_class!(
@@ -27,14 +27,14 @@ extern_methods!(
 extern_methods!(
     unsafe impl MyObject {
         #[method_id(a:)]
-        fn variadic_id(arg: i32, arg2: ...) -> Id<NSObject, Shared>;
+        fn variadic_id(arg: i32, arg2: ...) -> Id<NSObject>;
     }
 );
 
 extern_methods!(
     unsafe impl MyObject {
         #[method(a:_)]
-        fn variadic_error(arg2: ...) -> Result<(), Id<NSObject, Shared>>;
+        fn variadic_error(arg2: ...) -> Result<(), Id<NSObject>>;
     }
 );
 

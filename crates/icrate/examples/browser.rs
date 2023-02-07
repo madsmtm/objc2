@@ -5,7 +5,7 @@ use icrate::{
     objc2::{
         declare::{Ivar, IvarDrop},
         declare_class, extern_methods, msg_send,
-        rc::{Allocated, Id, Shared},
+        rc::{Allocated, Id},
         runtime::{Object, Sel},
         sel, ClassType, ProtocolObject,
     },
@@ -24,8 +24,8 @@ use icrate::{
 
 declare_class!(
     struct Delegate {
-        text_field: IvarDrop<Id<NSTextField, Shared>, "_text_field">,
-        web_view: IvarDrop<Id<WKWebView, Shared>, "_web_view">,
+        text_field: IvarDrop<Id<NSTextField>, "_text_field">,
+        web_view: IvarDrop<Id<WKWebView>, "_web_view">,
     }
     mod ivars;
 
@@ -99,7 +99,7 @@ extern_methods!(
             this: Option<Allocated<Self>>,
             text_field: &NSTextField,
             web_view: &WKWebView,
-        ) -> Id<Self, Shared>;
+        ) -> Id<Self>;
     }
 );
 

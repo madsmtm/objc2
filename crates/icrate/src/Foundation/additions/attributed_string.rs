@@ -21,7 +21,7 @@ extern_methods!(
     unsafe impl NSAttributedString {
         /// Construct an empty attributed string.
         #[method_id(new)]
-        pub fn new() -> Id<Self, Shared>;
+        pub fn new() -> Id<Self>;
 
         /// Creates a new attributed string from the given string and attributes.
         ///
@@ -37,14 +37,14 @@ extern_methods!(
         pub unsafe fn new_with_attributes(
             string: &Foundation::NSString,
             attributes: &Foundation::NSDictionary<NSAttributedStringKey, Object>,
-        ) -> Id<Self, Shared> {
+        ) -> Id<Self> {
             unsafe { Self::initWithString_attributes(Self::alloc(), string, Some(attributes)) }
         }
 
         /// Creates a new attributed string without any attributes.
         #[doc(alias = "initWithString:")]
         #[cfg(feature = "Foundation_NSString")]
-        pub fn from_nsstring(string: &Foundation::NSString) -> Id<Self, Shared> {
+        pub fn from_nsstring(string: &Foundation::NSString) -> Id<Self> {
             Self::initWithString(Self::alloc(), string)
         }
     }

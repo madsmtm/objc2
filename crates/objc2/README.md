@@ -19,11 +19,11 @@ more thorough overview.
 
 ```rust
 use objc2::ffi::NSUInteger;
-use objc2::rc::{Id, Owned};
+use objc2::rc::Id;
 use objc2::runtime::NSObject;
 use objc2::{msg_send, msg_send_id, ClassType};
 
-let obj: Id<NSObject, Owned> = unsafe { msg_send_id![NSObject::class(), new] };
+let obj: Id<NSObject> = unsafe { msg_send_id![NSObject::class(), new] };
 
 let hash: NSUInteger = unsafe { msg_send![&obj, hash] };
 println!("NSObject hash: {}", hash);

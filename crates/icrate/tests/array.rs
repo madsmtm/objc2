@@ -12,7 +12,7 @@ fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
     NSArray::from_vec(vec)
 }
 
-fn sample_number_array(len: u8) -> Id<NSArray<NSNumber, Shared>, Shared> {
+fn sample_number_array(len: u8) -> Id<NSArray<NSNumber>> {
     let mut vec = Vec::with_capacity(len as usize);
     for i in 0..len {
         vec.push(NSNumber::new_u8(i));

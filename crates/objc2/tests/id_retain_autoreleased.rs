@@ -1,14 +1,14 @@
 use core::mem::ManuallyDrop;
 
 use objc2::msg_send;
-use objc2::rc::{autoreleasepool, Id, Shared};
+use objc2::rc::{autoreleasepool, Id};
 use objc2::runtime::NSObject;
 
 fn retain_count(obj: &NSObject) -> usize {
     unsafe { msg_send![obj, retainCount] }
 }
 
-fn create_obj() -> Id<NSObject, Shared> {
+fn create_obj() -> Id<NSObject> {
     let obj = ManuallyDrop::new(NSObject::new());
     unsafe {
         let obj: *mut NSObject = msg_send![&*obj, autorelease];

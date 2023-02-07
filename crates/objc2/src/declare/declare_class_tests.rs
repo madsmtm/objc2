@@ -2,7 +2,7 @@
 use core::ptr;
 
 use crate::declare::IvarEncode;
-use crate::rc::{Id, Owned, Shared};
+use crate::rc::{Id, Owned};
 use crate::runtime::NSObject;
 use crate::{declare_class, extern_methods, sel, ClassType};
 
@@ -106,7 +106,7 @@ declare_class!(
 extern_methods!(
     unsafe impl DeclareClassCfg {
         #[method_id(new)]
-        fn new() -> Id<Self, Owned>;
+        fn new() -> Id<Self>;
     }
 
     unsafe impl DeclareClassCfg {
@@ -211,7 +211,7 @@ declare_class!(
             _arg2: i32,
             _arg3: i32,
             _obj: *const Self,
-        ) -> Option<Id<Self, Owned>> {
+        ) -> Option<Id<Self>> {
             None
         }
     }
@@ -220,7 +220,7 @@ declare_class!(
 extern_methods!(
     unsafe impl TestMultipleColonSelector {
         #[method_id(new)]
-        fn new() -> Id<Self, Owned>;
+        fn new() -> Id<Self>;
 
         #[method(test::arg3:)]
         fn test_class(arg1: i32, arg2: i32, arg3: i32) -> i32;
@@ -229,7 +229,7 @@ extern_methods!(
         fn test_instance(&self, arg1: i32, arg2: i32, arg3: i32) -> i32;
 
         #[method(test::error:_)]
-        fn test_error(&self, arg1: i32, arg2: i32) -> Result<(), Id<NSObject, Shared>>;
+        fn test_error(&self, arg1: i32, arg2: i32) -> Result<(), Id<NSObject>>;
 
         #[method_id(test:::withObject:)]
         fn test_object(
@@ -238,7 +238,7 @@ extern_methods!(
             arg2: i32,
             arg3: i32,
             obj: *const Self,
-        ) -> Option<Id<Self, Shared>>;
+        ) -> Option<Id<Self>>;
     }
 );
 
@@ -298,12 +298,12 @@ declare_class!(
         }
 
         #[method_id(idTakesBool:)]
-        fn id_takes_bool(_b: bool) -> Option<Id<Self, Owned>> {
+        fn id_takes_bool(_b: bool) -> Option<Id<Self>> {
             None
         }
 
         #[method_id(idTakesBoolInstance:)]
-        fn id_takes_bool_instance(&self, _b: bool) -> Option<Id<Self, Owned>> {
+        fn id_takes_bool_instance(&self, _b: bool) -> Option<Id<Self>> {
             None
         }
     }
@@ -345,12 +345,12 @@ declare_class!(
         }
 
         #[method_id(unreachableId)]
-        fn unreachable_id(&self) -> Id<Self, Owned> {
+        fn unreachable_id(&self) -> Id<Self> {
             unreachable!()
         }
 
         #[method_id(unreachableClassId)]
-        fn unreachable_class_id() -> Id<Self, Owned> {
+        fn unreachable_class_id() -> Id<Self> {
             unreachable!()
         }
     }
@@ -455,16 +455,16 @@ declare_class!(
 
     unsafe impl OutParam {
         #[method(unsupported1:)]
-        fn _unsupported1(_param: &mut Id<Self, Shared>) {}
+        fn _unsupported1(_param: &mut Id<Self>) {}
 
         #[method(unsupported2:)]
-        fn _unsupported2(_param: Option<&mut Id<Self, Shared>>) {}
+        fn _unsupported2(_param: Option<&mut Id<Self>>) {}
 
         #[method(unsupported3:)]
-        fn _unsupported3(_param: &mut Option<Id<Self, Shared>>) {}
+        fn _unsupported3(_param: &mut Option<Id<Self>>) {}
 
         #[method(unsupported4:)]
-        fn _unsupported4(_param: Option<&mut Option<Id<Self, Shared>>>) {}
+        fn _unsupported4(_param: Option<&mut Option<Id<Self>>>) {}
     }
 );
 
@@ -475,19 +475,19 @@ mod out_param {
     extern_methods!(
         unsafe impl OutParam {
             #[method_id(new)]
-            fn new() -> Id<Self, Shared>;
+            fn new() -> Id<Self>;
 
             #[method(unsupported1:)]
-            fn unsupported1(_param: &mut Id<Self, Shared>);
+            fn unsupported1(_param: &mut Id<Self>);
 
             #[method(unsupported2:)]
-            fn unsupported2(_param: Option<&mut Id<Self, Shared>>);
+            fn unsupported2(_param: Option<&mut Id<Self>>);
 
             #[method(unsupported3:)]
-            fn unsupported3(_param: &mut Option<Id<Self, Shared>>);
+            fn unsupported3(_param: &mut Option<Id<Self>>);
 
             #[method(unsupported4:)]
-            fn unsupported4(_param: Option<&mut Option<Id<Self, Shared>>>);
+            fn unsupported4(_param: Option<&mut Option<Id<Self>>>);
         }
     );
 

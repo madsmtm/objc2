@@ -29,7 +29,7 @@ extern_methods!(
             name: &NSExceptionName,
             reason: Option<&Foundation::NSString>,
             user_info: Option<&Foundation::NSDictionary<Object, Object>>,
-        ) -> Option<Id<Self, Shared>> {
+        ) -> Option<Id<Self>> {
             unsafe {
                 msg_send_id![
                     Self::alloc(),
@@ -62,7 +62,7 @@ extern_methods!(
         }
 
         /// Convert this into an [`Exception`] object.
-        pub fn into_exception(this: Id<Self, Shared>) -> Id<Exception, Shared> {
+        pub fn into_exception(this: Id<Self>) -> Id<Exception> {
             // SAFETY: Downcasting to "subclass"
             unsafe { Id::cast(this) }
         }
@@ -82,9 +82,7 @@ extern_methods!(
         ///
         /// This should be considered a hint; it may return `Err` in very, very
         /// few cases where the object is actually an instance of `NSException`.
-        pub fn from_exception(
-            obj: Id<Exception, Shared>,
-        ) -> Result<Id<Self, Shared>, Id<Exception, Shared>> {
+        pub fn from_exception(obj: Id<Exception>) -> Result<Id<Self>, Id<Exception>> {
             if Self::is_nsexception(&obj) {
                 // SAFETY: Just checked the object is an NSException
                 Ok(unsafe { Id::cast::<Self>(obj) })

@@ -3,8 +3,6 @@ use std::os::raw::c_int;
 
 #[cfg(feature = "Foundation_all")]
 use icrate::Foundation::NSNumber;
-#[cfg(feature = "Foundation_all")]
-use objc2::rc::Shared;
 use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
 use objc2::runtime::{Bool, Class, NSObject, NSObjectProtocol, Object, Protocol};
 #[cfg(feature = "malloc")]
@@ -24,11 +22,11 @@ extern_protocol!(
 
         #[cfg(feature = "Foundation_all")]
         #[method_id(c)]
-        fn c(&self) -> Id<NSNumber, Shared>;
+        fn c(&self) -> Id<NSNumber>;
 
         #[cfg(feature = "Foundation_all")]
         #[method_id(d)]
-        fn d() -> Id<NSNumber, Shared>;
+        fn d() -> Id<NSNumber>;
 
         #[method(e)]
         #[optional]
@@ -41,12 +39,12 @@ extern_protocol!(
         #[cfg(feature = "Foundation_all")]
         #[optional]
         #[method_id(g)]
-        fn g(&self) -> Id<NSNumber, Shared>;
+        fn g(&self) -> Id<NSNumber>;
 
         #[cfg(feature = "Foundation_all")]
         #[optional]
         #[method_id(h)]
-        fn h() -> Id<NSNumber, Shared>;
+        fn h() -> Id<NSNumber>;
     }
 
     unsafe impl ProtocolType for dyn MyTestProtocol {
