@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
-## 0.1.1 - 2023-02-03
+## 0.1.1 - 2023-02-07
 
 ### Fixed
 * Allow all types of tokens in internal macro.
