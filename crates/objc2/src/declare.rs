@@ -60,7 +60,7 @@
 //!                 initWithNumber: number,
 //!             ]
 //!         };
-//!         obj.map(|obj| obj.autorelease_return()).unwrap_or(std::ptr::null_mut())
+//!         obj.map(Id::autorelease_return).unwrap_or(std::ptr::null_mut())
 //!     }
 //!     unsafe {
 //!         builder.add_class_method(

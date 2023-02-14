@@ -440,14 +440,8 @@ impl<T: Message, O: Ownership> Id<T, O> {
     }
 
     #[inline]
-    pub(super) fn autorelease_inner(self) -> *mut T {
-        // Note that this (and the actual `autorelease`) is not an associated
-        // function. This breaks the guideline that smart pointers shouldn't
-        // add inherent methods, but since autoreleasing only works on already
-        // retained objects it is hard to imagine a case where the inner type
-        // has a method with the same name.
-
-        let ptr = ManuallyDrop::new(self).ptr.as_ptr();
+    pub(super) fn autorelease_inner(this: Self) -> *mut T {
+        let ptr = ManuallyDrop::new(this).ptr.as_ptr();
         // SAFETY: The `ptr` is guaranteed to be valid and have at least one
         // retain count.
         // And because of the ManuallyDrop, we don't call the Drop
@@ -455,6 +449,23 @@ impl<T: Message, O: Ownership> Id<T, O> {
         let res: *mut T = unsafe { ffi::objc_autorelease(ptr.cast()) }.cast();
         debug_assert_eq!(res, ptr, "objc_autorelease did not return the same pointer");
         res
+    }
+
+    /// Autoreleases the shared [`Id`], returning an aliased reference bound
+    /// to the pool.
+    ///
+    /// The object is not immediately released, but will be when the innermost
+    /// / current autorelease pool (given as a parameter) is drained.
+    ///
+    /// See [`Id::autorelease_mut`] for the mutable alternative.
+    #[doc(alias = "objc_autorelease")]
+    #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
+    #[inline]
+    #[allow(clippy::needless_lifetimes)]
+    pub fn autorelease<'p>(this: Self, pool: AutoreleasePool<'p>) -> &'p T {
+        let ptr = Self::autorelease_inner(this);
+        // SAFETY: The pointer is valid as a reference
+        unsafe { pool.ptr_as_ref(ptr) }
     }
 
     #[inline]
@@ -509,7 +520,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     ///
     /// extern "C" fn get(cls: &Class, _cmd: Sel) -> *mut Object {
     ///     let obj: Id<Object, Owned> = unsafe { msg_send_id![cls, new] };
-    ///     obj.autorelease_return()
+    ///     Id::autorelease_return(obj)
     /// }
     ///
     /// unsafe {
@@ -524,9 +535,8 @@ impl<T: Message, O: Ownership> Id<T, O> {
     #[doc(alias = "objc_autoreleaseReturnValue")]
     #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
     #[inline]
-    pub fn autorelease_return(self) -> *mut T {
-        // See `autorelease_inner` for why this is an inherent method
-        Self::autorelease_return_option(Some(self))
+    pub fn autorelease_return(this: Self) -> *mut T {
+        Self::autorelease_return_option(Some(this))
     }
 }
 
@@ -546,12 +556,14 @@ impl<T: Message> Id<T, Owned> {
     ///
     /// The object is not immediately released, but will be when the innermost
     /// / current autorelease pool (given as a parameter) is drained.
+    ///
+    /// See [`Id::autorelease`] for the immutable alternative.
     #[doc(alias = "objc_autorelease")]
     #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
     #[inline]
     #[allow(clippy::needless_lifetimes)]
-    pub fn autorelease<'p>(self, pool: AutoreleasePool<'p>) -> &'p mut T {
-        let ptr = self.autorelease_inner();
+    pub fn autorelease_mut<'p>(this: Self, pool: AutoreleasePool<'p>) -> &'p mut T {
+        let ptr = Self::autorelease_inner(this);
         // SAFETY: The pointer is valid as a reference, and we've consumed
         // the unique access to the `Id` so mutability is safe.
         unsafe { pool.ptr_as_mut(ptr) }
@@ -588,24 +600,6 @@ impl<T: Message> Id<T, Owned> {
         let ptr = ManuallyDrop::new(obj).ptr;
         // SAFETY: The pointer is valid, and ownership is simply decreased
         unsafe { <Id<T, Shared>>::new_nonnull(ptr) }
-    }
-}
-
-// TODO: Add ?Sized bound
-impl<T: Message> Id<T, Shared> {
-    /// Autoreleases the shared [`Id`], returning an aliased reference bound
-    /// to the pool.
-    ///
-    /// The object is not immediately released, but will be when the innermost
-    /// / current autorelease pool (given as a parameter) is drained.
-    #[doc(alias = "objc_autorelease")]
-    #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
-    #[inline]
-    #[allow(clippy::needless_lifetimes)]
-    pub fn autorelease<'p>(self, pool: AutoreleasePool<'p>) -> &'p T {
-        let ptr = self.autorelease_inner();
-        // SAFETY: The pointer is valid as a reference
-        unsafe { pool.ptr_as_ref(ptr) }
     }
 }
 
@@ -765,7 +759,7 @@ mod tests {
         let mut expected = __ThreadTestData::current();
 
         autoreleasepool(|pool| {
-            let _ref = obj.autorelease(pool);
+            let _ref = Id::autorelease(obj, pool);
             expected.autorelease += 1;
             expected.assert_current();
             assert_retain_count(&cloned, 2);
@@ -775,7 +769,7 @@ mod tests {
         assert_retain_count(&cloned, 1);
 
         autoreleasepool(|pool| {
-            let _ref = cloned.autorelease(pool);
+            let _ref = Id::autorelease(cloned, pool);
             expected.autorelease += 1;
             expected.assert_current();
         });

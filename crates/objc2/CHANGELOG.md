@@ -12,6 +12,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: `objc2::rc::AutoreleasePool` is now a zero-sized `Copy` type
   with a lifetime parameter, instead of the lifetime parameter being the
   reference it was behind.
+* **BREAKING**: Made `Id::autorelease` and `Id::autorelease_return` be
+  associated functions instead of methods. This means they now have to be
+  called as `Id::autorelease(obj, pool)` instead of `obj.autorelease(pool)`.
+
+  Additionally, rename the mutable version to `Id::autorelease_mut`.
 
 
 ## 0.3.0-beta.5 - 2023-02-07

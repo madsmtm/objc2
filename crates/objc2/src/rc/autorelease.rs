@@ -288,7 +288,7 @@ impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 ///
 ///     // Or simply
 ///     // let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new] };
-///     // obj.autorelease(pool)
+///     // Id::autorelease_mut(obj, pool)
 /// }
 ///
 /// autoreleasepool(|pool| {
@@ -309,7 +309,7 @@ impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 /// #
 /// # fn needs_lifetime_from_pool<'p>(pool: AutoreleasePool<'p>) -> &'p mut Object {
 /// #     let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new] };
-/// #     obj.autorelease(pool)
+/// #     Id::autorelease_mut(obj, pool)
 /// # }
 /// #
 /// let obj = autoreleasepool(|pool| {
@@ -330,7 +330,7 @@ impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 /// #
 /// # fn needs_lifetime_from_pool<'p>(pool: AutoreleasePool<'p>) -> &'p mut Object {
 /// #     let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new] };
-/// #     obj.autorelease(pool)
+/// #     Id::autorelease_mut(obj, pool)
 /// # }
 /// #
 /// autoreleasepool(|outer_pool| {

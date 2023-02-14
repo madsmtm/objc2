@@ -46,7 +46,7 @@
 //! autoreleasepool(|pool| {
 //!     // Autorelease consumes the Id, but won't
 //!     // actually release until the end of an autoreleasepool
-//!     let obj_ref: &Object = cloned.autorelease(pool);
+//!     let obj_ref: &Object = Id::autorelease(cloned, pool);
 //! });
 //!
 //! // Weak references won't retain the object
