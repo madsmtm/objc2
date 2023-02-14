@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Added `objc2::rc::autoreleasepool_leaking`, and improve performance of
+  objects `Debug` impls.
+
 ### Changed
 * Made the default ownership in `Id` be `Shared`. This means that you can now
   write `Id<NSString>`, and it'll mean `Id<NSString, Shared>`.

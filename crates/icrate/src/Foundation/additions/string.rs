@@ -1,5 +1,4 @@
 #![cfg(feature = "Foundation_NSString")]
-use alloc::borrow::ToOwned;
 use core::cmp;
 use core::ffi::c_void;
 use core::fmt;
@@ -14,7 +13,7 @@ use core::str;
 use std::os::raw::c_char;
 
 use objc2::msg_send;
-use objc2::rc::{autoreleasepool, AutoreleasePool, DefaultId, Id, Shared};
+use objc2::rc::{autoreleasepool_leaking, AutoreleasePool, DefaultId, Id, Shared};
 use objc2::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
 
 use crate::common::*;
@@ -180,20 +179,12 @@ impl DefaultId for NSString {
 
 impl fmt::Display for NSString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // The call to `to_owned` is unfortunate, but is required to work
-        // around `f` not being AutoreleaseSafe.
-        // TODO: Fix this!
-        let s = autoreleasepool(|pool| self.as_str(pool).to_owned());
-        fmt::Display::fmt(&s, f)
+        autoreleasepool_leaking(|pool| fmt::Display::fmt(self.as_str(pool), f))
     }
 }
 
 impl fmt::Debug for NSString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // The call to `to_owned` is unfortunate, but is required to work
-        // around `f` not being AutoreleaseSafe.
-        // TODO: Fix this!
-        let s = autoreleasepool(|pool| self.as_str(pool).to_owned());
-        fmt::Debug::fmt(&s, f)
+        autoreleasepool_leaking(|pool| fmt::Debug::fmt(self.as_str(pool), f))
     }
 }

@@ -1,11 +1,10 @@
-use alloc::borrow::ToOwned;
 use core::fmt;
 use core::hash;
 use core::marker::PhantomData;
 use core::ptr::NonNull;
 
 use crate::encode::{Encoding, RefEncode};
-use crate::rc::{autoreleasepool, Id, Ownership};
+use crate::rc::{autoreleasepool_leaking, Id, Ownership};
 use crate::runtime::__nsstring::nsstring_to_str;
 use crate::runtime::{NSObjectProtocol, Object, Protocol};
 use crate::Message;
@@ -212,16 +211,17 @@ impl<P: ?Sized + ProtocolType + NSObjectProtocol> fmt::Debug for ProtocolObject<
         match description {
             // Attempt to format description string
             Some(description) => {
-                let s = autoreleasepool(|pool| {
+                // We use a leaking autorelease pool since often the string
+                // will be UTF-8, and in that case the pool will be
+                // irrelevant. Also, it allows us to pass the formatter into
+                // the pool (since it may contain a pool internally that it
+                // assumes is current when writing).
+                autoreleasepool_leaking(|pool| {
                     // SAFETY: `description` selector is guaranteed to always
                     // return an instance of `NSString`.
                     let s = unsafe { nsstring_to_str(&description, pool) };
-                    // The call to `to_owned` is unfortunate, but is required
-                    // to work around `f` not being `AutoreleaseSafe`.
-                    // TODO: Fix this!
-                    s.to_owned()
-                });
-                fmt::Display::fmt(&s, f)
+                    fmt::Display::fmt(s, f)
+                })
             }
             // If description was `NULL`, use `Object`'s `Debug` impl instead
             None => {

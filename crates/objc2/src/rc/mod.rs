@@ -66,7 +66,9 @@ mod weak_id;
 mod writeback;
 
 pub use self::allocated::Allocated;
-pub use self::autorelease::{autoreleasepool, AutoreleasePool, AutoreleaseSafe};
+pub use self::autorelease::{
+    autoreleasepool, autoreleasepool_leaking, AutoreleasePool, AutoreleaseSafe,
+};
 pub use self::id::Id;
 pub use self::id_traits::{DefaultId, SliceId, SliceIdMut};
 pub use self::ownership::{Owned, Ownership, Shared};
