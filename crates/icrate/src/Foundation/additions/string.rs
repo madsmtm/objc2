@@ -110,7 +110,7 @@ impl NSString {
     ///
     /// TODO: Further explain this.
     #[doc(alias = "UTF8String")]
-    pub fn as_str<'r, 's: 'r, 'p: 'r>(&'s self, pool: &'p AutoreleasePool) -> &'r str {
+    pub fn as_str<'r, 's: 'r, 'p: 'r>(&'s self, pool: AutoreleasePool<'p>) -> &'r str {
         // SAFETY: This is an instance of `NSString`
         unsafe { nsstring_to_str(self, pool) }
     }

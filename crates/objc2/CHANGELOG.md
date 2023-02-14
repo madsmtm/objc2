@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 * Made the default ownership in `Id` be `Shared`. This means that you can now
   write `Id<NSString>`, and it'll mean `Id<NSString, Shared>`.
+* **BREAKING**: `objc2::rc::AutoreleasePool` is now a zero-sized `Copy` type
+  with a lifetime parameter, instead of the lifetime parameter being the
+  reference it was behind.
 
 
 ## 0.3.0-beta.5 - 2023-02-07

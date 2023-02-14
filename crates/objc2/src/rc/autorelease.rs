@@ -1,119 +1,47 @@
-use core::cell::UnsafeCell;
 use core::ffi::c_void;
-use core::fmt;
+#[cfg(not(all(debug_assertions, not(feature = "unstable-autoreleasesafe"))))]
 use core::marker::PhantomData;
 #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
 use std::{cell::RefCell, thread_local, vec::Vec};
 
 use crate::ffi;
 
-/// An Objective-C autorelease pool.
+/// The actual pool object.
 ///
-/// The pool is drained when dropped.
+/// It is drained when dropped.
 ///
 /// This is not [`Send`], since `objc_autoreleasePoolPop` must be called on
-/// the same thread.
+/// the same thread as `objc_autoreleasePoolPush`.
 ///
-/// And this is not [`Sync`], since you can only autorelease a reference to a
-/// pool on the current thread.
+/// And this is not [`Sync`], since that would make `AutoreleasePool` `Send`.
 #[derive(Debug)]
-pub struct AutoreleasePool {
+struct Pool {
     /// This is an opaque handle, and is not guaranteed to be neither a valid
-    /// nor aligned pointer.
+    /// nor an aligned pointer.
     context: *mut c_void,
-    /// May point to data that is mutated (even though we hold shared access).
-    p: PhantomData<*mut UnsafeCell<c_void>>,
 }
 
-#[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
-thread_local! {
-    /// We track the thread's pools to verify that object lifetimes are only
-    /// taken from the innermost pool.
-    static POOLS: RefCell<Vec<*mut c_void>> = RefCell::new(Vec::new());
-}
-
-impl AutoreleasePool {
+impl Pool {
     /// Construct a new autorelease pool.
     ///
-    /// Use the [`autoreleasepool`] block for a safe alternative.
     ///
     /// # Safety
     ///
-    /// The caller must ensure that when handing out `&'p AutoreleasePool` to
+    /// The caller must ensure that when handing out `AutoreleasePool<'p>` to
     /// functions that this is the innermost pool.
     ///
     /// Additionally, the pools must be dropped in the same order they were
     /// created.
-    #[doc(alias = "objc_autoreleasePoolPush")]
     #[inline]
     unsafe fn new() -> Self {
-        // TODO: Make this function pub when we're more certain of the API
         let context = unsafe { ffi::objc_autoreleasePoolPush() };
         #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
         POOLS.with(|c| c.borrow_mut().push(context));
-        Self {
-            context,
-            p: PhantomData,
-        }
-    }
-
-    /// This will be removed in a future version.
-    #[inline]
-    #[doc(hidden)]
-    pub fn __verify_is_inner(&self) {
-        #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
-        POOLS.with(|c| {
-            assert_eq!(
-                c.borrow().last(),
-                Some(&self.context),
-                "Tried to use lifetime from pool that was not innermost"
-            )
-        });
-    }
-
-    /// Returns a shared reference to the given autoreleased pointer object.
-    ///
-    /// This is the preferred way to make references from autoreleased
-    /// objects, since it binds the lifetime of the reference to the pool, and
-    /// does some extra checks when debug assertions are enabled.
-    ///
-    /// For the mutable counterpart see [`ptr_as_mut`](#method.ptr_as_mut).
-    ///
-    /// # Safety
-    ///
-    /// This is equivalent to `&*ptr`, and shares the unsafety of that, except
-    /// the lifetime is bound to the pool instead of being unbounded.
-    #[inline]
-    #[allow(clippy::needless_lifetimes)]
-    pub unsafe fn ptr_as_ref<'p, T: ?Sized>(&'p self, ptr: *const T) -> &'p T {
-        self.__verify_is_inner();
-        // SAFETY: Checked by the caller
-        unsafe { ptr.as_ref().unwrap_unchecked() }
-    }
-
-    /// Returns a unique reference to the given autoreleased pointer object.
-    ///
-    /// This is the preferred way to make mutable references from autoreleased
-    /// objects, since it binds the lifetime of the reference to the pool, and
-    /// does some extra checks when debug assertions are enabled.
-    ///
-    /// For the shared counterpart see [`ptr_as_ref`](#method.ptr_as_ref).
-    ///
-    /// # Safety
-    ///
-    /// This is equivalent to `&mut *ptr`, and shares the unsafety of that,
-    /// except the lifetime is bound to the pool instead of being unbounded.
-    #[inline]
-    #[allow(clippy::needless_lifetimes)]
-    #[allow(clippy::mut_from_ref)]
-    pub unsafe fn ptr_as_mut<'p, T: ?Sized>(&'p self, ptr: *mut T) -> &'p mut T {
-        self.__verify_is_inner();
-        // SAFETY: Checked by the caller
-        unsafe { ptr.as_mut().unwrap_unchecked() }
+        Self { context }
     }
 }
 
-impl Drop for AutoreleasePool {
+impl Drop for Pool {
     /// Drains the autoreleasepool.
     ///
     /// The [clang documentation] says that `@autoreleasepool` blocks are not
@@ -136,7 +64,6 @@ impl Drop for AutoreleasePool {
     ///
     /// [clang documentation]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#autoreleasepool
     /// [revision `371`]: https://github.com/apple-oss-distributions/objc4/blob/objc4-371/runtime/objc-exception.m#L479-L482
-    #[doc(alias = "objc_autoreleasePoolPop")]
     #[inline]
     fn drop(&mut self) {
         unsafe { ffi::objc_autoreleasePoolPop(self.context) }
@@ -151,9 +78,120 @@ impl Drop for AutoreleasePool {
     }
 }
 
-impl fmt::Pointer for AutoreleasePool {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Pointer::fmt(&self.context, f)
+/// An Objective-C autorelease pool.
+///
+/// Autorelease pools are a way to store objects in a certain thread-local
+/// scope, such that they are only released at the end of said scope.
+///
+/// See [`autoreleasepool`] for how to use this.
+///
+/// This is not [`Send`] nor [`Sync`], since you can only autorelease a
+/// reference to a pool on the current thread (autorelease pools are
+/// thread-local).
+#[derive(Debug, Copy, Clone)]
+pub struct AutoreleasePool<'pool> {
+    /// A reference to the pool.
+    ///
+    /// The lifetime is covariant, since shortening the lifetime is not a
+    /// problem (the lifetime talks about the pool, and not any data inside
+    /// the pool).
+    ///
+    /// To somewhat prove this, consider the following example using
+    /// `typed-arena` to partially implement the autorelease pool:
+    ///
+    /// ```ignore
+    /// struct Pool(typed_arena::Arena<String>);
+    ///
+    /// pub struct AutoreleasePool<'pool>(&'pool Pool);
+    ///
+    /// impl<'pool> AutoreleasePool<'pool> {
+    ///     pub fn autorelease(self, s: String) -> &'pool str {
+    ///         &*self.0.0.alloc(s)
+    ///     }
+    ///
+    ///     pub fn autorelease_mut(self, s: String) -> &'pool mut str {
+    ///         &mut *self.0.0.alloc(s)
+    ///     }
+    /// }
+    ///
+    /// pub fn autoreleasepool<F, R>(f: F) -> R
+    /// where
+    ///     F: for<'pool> FnOnce(AutoreleasePool<'pool>) -> R
+    /// {
+    ///     let pool = Pool(Default::default());
+    ///     f(AutoreleasePool(&pool))
+    /// }
+    /// ```
+    ///
+    /// Hence assuming `typed-arena` is sound, having covariance here should
+    /// also be sound.
+    #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
+    inner: &'pool Pool,
+    /// We use `PhantomData` here to make `AutoreleasePool` a ZST.
+    #[cfg(not(all(debug_assertions, not(feature = "unstable-autoreleasesafe"))))]
+    inner: PhantomData<&'pool Pool>,
+}
+
+#[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
+thread_local! {
+    /// We track the thread's pools to verify that object lifetimes are only
+    /// taken from the innermost pool.
+    static POOLS: RefCell<Vec<*mut c_void>> = RefCell::new(Vec::new());
+}
+
+impl<'pool> AutoreleasePool<'pool> {
+    /// This will be removed in a future version.
+    #[inline]
+    #[doc(hidden)]
+    pub fn __verify_is_inner(self) {
+        #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
+        POOLS.with(|c| {
+            assert_eq!(
+                c.borrow().last(),
+                Some(&self.inner.context),
+                "Tried to use lifetime from pool that was not innermost"
+            )
+        });
+    }
+
+    /// Returns a shared reference to the given autoreleased pointer object.
+    ///
+    /// This is the preferred way to make references from autoreleased
+    /// objects, since it binds the lifetime of the reference to the pool, and
+    /// does some extra checks when debug assertions are enabled.
+    ///
+    /// For the mutable counterpart see [`ptr_as_mut`](#method.ptr_as_mut).
+    ///
+    ///
+    /// # Safety
+    ///
+    /// This is equivalent to `&*ptr`, and shares the unsafety of that, except
+    /// the lifetime is bound to the pool instead of being unbounded.
+    #[inline]
+    pub unsafe fn ptr_as_ref<T: ?Sized>(self, ptr: *const T) -> &'pool T {
+        self.__verify_is_inner();
+        // SAFETY: Checked by the caller
+        unsafe { ptr.as_ref().unwrap_unchecked() }
+    }
+
+    /// Returns a unique reference to the given autoreleased pointer object.
+    ///
+    /// This is the preferred way to make mutable references from autoreleased
+    /// objects, since it binds the lifetime of the reference to the pool, and
+    /// does some extra checks when debug assertions are enabled.
+    ///
+    /// For the shared counterpart see [`ptr_as_ref`](#method.ptr_as_ref).
+    ///
+    ///
+    /// # Safety
+    ///
+    /// This is equivalent to `&mut *ptr`, and shares the unsafety of that,
+    /// except the lifetime is bound to the pool instead of being unbounded.
+    #[inline]
+    pub unsafe fn ptr_as_mut<T: ?Sized>(self, ptr: *mut T) -> &'pool mut T {
+        self.__verify_is_inner();
+        // SAFETY: Checked by the caller
+        unsafe { ptr.as_mut().unwrap_unchecked() }
     }
 }
 
@@ -179,7 +217,7 @@ auto_trait! {
     /// Marks types that are safe to pass across the closure in an
     /// [`autoreleasepool`].
     ///
-    /// With the `unstable-autoreleasesafe` feature enabled, this is an auto
+    /// With the `"unstable-autoreleasesafe"` feature enabled, this is an auto
     /// trait that is implemented for all types except [`AutoreleasePool`].
     ///
     /// Otherwise it is just a dummy trait that is implemented for all types;
@@ -187,14 +225,16 @@ auto_trait! {
     ///
     /// You should not normally need to implement this trait yourself.
     ///
+    ///
     /// # Safety
     ///
     /// Must not be implemented for types that interract with the autorelease
     /// pool. So if you reimplement the [`AutoreleasePool`] struct or
     /// likewise, this should be negatively implemented for that.
     ///
-    /// This can easily be accomplished with an `PhantomData<AutoreleasePool>`
-    /// if the `unstable-autoreleasesafe` feature is enabled.
+    /// This can easily be accomplished with an
+    /// `PhantomData<AutoreleasePool<'_>>` if the `"unstable-autoreleasesafe"`
+    /// feature is enabled.
     pub unsafe trait AutoreleaseSafe {}
 }
 
@@ -202,7 +242,9 @@ auto_trait! {
 unsafe impl<T: ?Sized> AutoreleaseSafe for T {}
 
 #[cfg(feature = "unstable-autoreleasesafe")]
-impl !AutoreleaseSafe for AutoreleasePool {}
+impl !AutoreleaseSafe for Pool {}
+#[cfg(feature = "unstable-autoreleasesafe")]
+impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 
 /// Execute `f` in the context of a new autorelease pool. The pool is
 /// drained after the execution of `f` completes.
@@ -237,7 +279,7 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
 /// use objc2::runtime::Object;
 ///
-/// fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
+/// fn needs_lifetime_from_pool<'p>(pool: AutoreleasePool<'p>) -> &'p mut Object {
 ///     let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new] };
 ///     let obj = ManuallyDrop::new(obj);
 ///     let obj: *mut Object = unsafe { msg_send![obj, autorelease] };
@@ -265,7 +307,7 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// # use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
 /// # use objc2::runtime::Object;
 /// #
-/// # fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
+/// # fn needs_lifetime_from_pool<'p>(pool: AutoreleasePool<'p>) -> &'p mut Object {
 /// #     let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new] };
 /// #     obj.autorelease(pool)
 /// # }
@@ -286,7 +328,7 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// # use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
 /// # use objc2::runtime::Object;
 /// #
-/// # fn needs_lifetime_from_pool<'p>(pool: &'p AutoreleasePool) -> &'p mut Object {
+/// # fn needs_lifetime_from_pool<'p>(pool: AutoreleasePool<'p>) -> &'p mut Object {
 /// #     let obj: Id<Object, Owned> = unsafe { msg_send_id![class!(NSObject), new] };
 /// #     obj.autorelease(pool)
 /// # }
@@ -304,18 +346,32 @@ impl !AutoreleaseSafe for AutoreleasePool {}
 /// # panic!("Does not panic in release mode, so for testing we make it!");
 /// ```
 #[doc(alias = "@autoreleasepool")]
+#[doc(alias = "objc_autoreleasePoolPush")]
+#[doc(alias = "objc_autoreleasePoolPop")]
 #[inline]
 pub fn autoreleasepool<T, F>(f: F) -> T
 where
-    for<'p> F: FnOnce(&'p AutoreleasePool) -> T + AutoreleaseSafe,
+    for<'pool> F: AutoreleaseSafe + FnOnce(AutoreleasePool<'pool>) -> T,
 {
-    let pool = unsafe { AutoreleasePool::new() };
-    f(&pool)
+    let inner = unsafe { Pool::new() };
+    let pool = AutoreleasePool {
+        #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
+        inner: &inner,
+        #[cfg(not(all(debug_assertions, not(feature = "unstable-autoreleasesafe"))))]
+        inner: PhantomData,
+    };
+    let result = f(pool);
+    drop(inner);
+    result
 }
 
 #[cfg(all(test, feature = "unstable-autoreleasesafe"))]
 mod tests {
-    use super::AutoreleaseSafe;
+    use core::marker::Unpin;
+    use core::mem;
+    use core::panic::{RefUnwindSafe, UnwindSafe};
+
+    use super::{AutoreleasePool, AutoreleaseSafe};
     use crate::runtime::Object;
 
     fn requires_autoreleasesafe<T: AutoreleaseSafe>() {}
@@ -325,5 +381,40 @@ mod tests {
         requires_autoreleasesafe::<usize>();
         requires_autoreleasesafe::<*mut Object>();
         requires_autoreleasesafe::<&mut Object>();
+    }
+
+    #[test]
+    fn unwindsafe() {
+        fn assert_unwindsafe<T: UnwindSafe + RefUnwindSafe>() {}
+
+        assert_unwindsafe::<AutoreleasePool<'static>>();
+    }
+
+    #[test]
+    fn unpin() {
+        fn assert_unpin<T: Unpin>() {}
+
+        assert_unwindsafe::<AutoreleasePool<'static>>();
+    }
+
+    #[allow(unused)]
+    fn assert_covariant1<'a>(pool: AutoreleasePool<'static>) -> AutoreleasePool<'a> {
+        pool
+    }
+
+    #[allow(unused)]
+    fn assert_covariant2<'long: 'short, 'short>(
+        pool: AutoreleasePool<'long>,
+    ) -> AutoreleasePool<'short> {
+        pool
+    }
+
+    #[cfg_attr(
+        not(feature = "unstable-autoreleasesafe"),
+        ignore = "only stably ZST when `unstable-autoreleasesafe` is enabled"
+    )]
+    #[test]
+    fn assert_zst() {
+        assert_eq!(mem::size_of::<AutoreleasePool<'static>>(), 0);
     }
 }

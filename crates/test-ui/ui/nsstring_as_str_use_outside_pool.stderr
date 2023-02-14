@@ -5,4 +5,4 @@ error: lifetime may not live long enough
   |                               ----- ^^^^^^^^^^^^^^^^^^^^^^ returning this value requires that `'1` must outlive `'2`
   |                               |   |
   |                               |   return type of closure is &'2 str
-  |                               has type `&'1 AutoreleasePool`
+  |                               has type `AutoreleasePool<'1>`

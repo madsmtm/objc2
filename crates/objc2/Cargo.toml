@@ -54,7 +54,7 @@ unstable-static-sel-inlined = ["unstable-static-sel"]
 unstable-static-class = ["objc2-proc-macros"]
 unstable-static-class-inlined = ["unstable-static-class"]
 
-# Uses nightly features to make AutoreleasePool zero-cost even in debug mode
+# Uses nightly features to make AutoreleasePool sound
 unstable-autoreleasesafe = []
 
 # Uses the nightly c_unwind feature to make throwing safe

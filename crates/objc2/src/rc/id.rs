@@ -550,8 +550,7 @@ impl<T: Message> Id<T, Owned> {
     #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
     #[inline]
     #[allow(clippy::needless_lifetimes)]
-    #[allow(clippy::mut_from_ref)]
-    pub fn autorelease<'p>(self, pool: &'p AutoreleasePool) -> &'p mut T {
+    pub fn autorelease<'p>(self, pool: AutoreleasePool<'p>) -> &'p mut T {
         let ptr = self.autorelease_inner();
         // SAFETY: The pointer is valid as a reference, and we've consumed
         // the unique access to the `Id` so mutability is safe.
@@ -603,7 +602,7 @@ impl<T: Message> Id<T, Shared> {
     #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
     #[inline]
     #[allow(clippy::needless_lifetimes)]
-    pub fn autorelease<'p>(self, pool: &'p AutoreleasePool) -> &'p T {
+    pub fn autorelease<'p>(self, pool: AutoreleasePool<'p>) -> &'p T {
         let ptr = self.autorelease_inner();
         // SAFETY: The pointer is valid as a reference
         unsafe { pool.ptr_as_ref(ptr) }
