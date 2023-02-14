@@ -112,8 +112,7 @@ impl MyTestObject {
         unsafe { msg_send_id![cls, new] }
     }
 
-    #[allow(clippy::needless_lifetimes)]
-    fn new_autoreleased<'p>(pool: &'p AutoreleasePool) -> &'p Self {
+    fn new_autoreleased<'p>(pool: AutoreleasePool<'p>) -> &'p Self {
         let cls = Self::class();
         let ptr: *const Self = unsafe { msg_send![cls, getAutoreleasedInstance] };
         unsafe { pool.ptr_as_ref(ptr) }

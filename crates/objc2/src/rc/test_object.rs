@@ -167,7 +167,7 @@ declare_class!(
         fn class_error_bool(should_error: bool, err: Option<&mut *mut __RcTestObject>) -> bool {
             if should_error {
                 if let Some(err) = err {
-                    *err = __RcTestObject::new().autorelease_inner();
+                    *err = Id::autorelease_inner(__RcTestObject::new());
                 }
                 false
             } else {
@@ -183,7 +183,7 @@ declare_class!(
         ) -> bool {
             if should_error {
                 if let Some(err) = err {
-                    *err = __RcTestObject::new().autorelease_inner();
+                    *err = Id::autorelease_inner(__RcTestObject::new());
                 }
                 false
             } else {
@@ -198,7 +198,7 @@ declare_class!(
         ) -> Option<Id<Self, Owned>> {
             if should_error {
                 if let Some(err) = err {
-                    *err = __RcTestObject::new().autorelease_inner();
+                    *err = Id::autorelease_inner(__RcTestObject::new());
                 }
                 None
             } else {
@@ -214,7 +214,7 @@ declare_class!(
         ) -> Option<Id<Self, Owned>> {
             if should_error {
                 if let Some(err) = err {
-                    *err = __RcTestObject::new().autorelease_inner();
+                    *err = Id::autorelease_inner(__RcTestObject::new());
                 }
                 None
             } else {
@@ -229,7 +229,7 @@ declare_class!(
         ) -> Option<Id<Self, Owned>> {
             if should_error {
                 if let Some(err) = err {
-                    *err = __RcTestObject::new().autorelease_inner();
+                    *err = Id::autorelease_inner(__RcTestObject::new());
                 }
                 None
             } else {
@@ -241,7 +241,7 @@ declare_class!(
         fn alloc_error(should_error: bool, err: Option<&mut *mut __RcTestObject>) -> *mut Self {
             if should_error {
                 if let Some(err) = err {
-                    *err = __RcTestObject::new().autorelease_inner();
+                    *err = Id::autorelease_inner(__RcTestObject::new());
                 }
                 ptr::null_mut()
             } else {
@@ -257,7 +257,7 @@ declare_class!(
         ) -> Option<Id<Self, Owned>> {
             if should_error {
                 if let Some(err) = err {
-                    *err = __RcTestObject::new().autorelease_inner();
+                    *err = Id::autorelease_inner(__RcTestObject::new());
                 }
                 None
             } else {

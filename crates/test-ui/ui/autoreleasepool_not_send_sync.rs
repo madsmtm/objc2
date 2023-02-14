@@ -7,6 +7,6 @@ fn needs_sync<T: ?Sized + Sync>() {}
 fn needs_send<T: ?Sized + Send>() {}
 
 fn main() {
-    needs_sync::<AutoreleasePool>();
-    needs_send::<AutoreleasePool>();
+    needs_sync::<AutoreleasePool<'_>>();
+    needs_send::<AutoreleasePool<'_>>();
 }

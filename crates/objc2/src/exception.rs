@@ -19,7 +19,6 @@
 // TODO: Test this with panic=abort, and ensure that the code-size is
 // reasonable in that case.
 
-use crate::alloc::borrow::ToOwned;
 #[cfg(feature = "exception")]
 use core::ffi::c_void;
 use core::fmt;
@@ -35,7 +34,7 @@ use std::error::Error;
 use crate::encode::{Encoding, RefEncode};
 #[cfg(feature = "exception")]
 use crate::ffi;
-use crate::rc::{autoreleasepool, Id};
+use crate::rc::{autoreleasepool_leaking, Id};
 use crate::runtime::__nsstring::nsstring_to_str;
 use crate::runtime::{Class, NSObject, NSObjectProtocol, Object};
 use crate::{extern_methods, sel, Message};
@@ -110,28 +109,27 @@ impl fmt::Debug for Exception {
         // Attempt to present a somewhat usable error message if the exception
         // is an instance of NSException.
         if let Some(true) = self.is_nsexception() {
-            let (name, reason) = autoreleasepool(|pool| {
+            autoreleasepool_leaking(|pool| {
                 // SAFETY: Just checked that object is an NSException
                 let (name, reason) = unsafe { (self.name(), self.reason()) };
 
                 // SAFETY: `name` and `reason` are guaranteed to be NSString.
                 let name = name
                     .as_deref()
-                    .map(|name| unsafe { nsstring_to_str(name, pool).to_owned() });
+                    .map(|name| unsafe { nsstring_to_str(name, pool) });
                 let reason = reason
                     .as_deref()
-                    .map(|reason| unsafe { nsstring_to_str(reason, pool).to_owned() });
-                (name, reason)
-            });
+                    .map(|reason| unsafe { nsstring_to_str(reason, pool) });
 
-            let obj: &Object = self.as_ref();
-            write!(f, "{obj:?} '{}'", name.unwrap_or_default())?;
-            if let Some(reason) = reason {
-                write!(f, " reason:{reason}")?;
-            } else {
-                write!(f, " reason:(NULL)")?;
-            }
-            Ok(())
+                let obj: &Object = self.as_ref();
+                write!(f, "{obj:?} '{}'", name.unwrap_or_default())?;
+                if let Some(reason) = reason {
+                    write!(f, " reason:{reason}")?;
+                } else {
+                    write!(f, " reason:(NULL)")?;
+                }
+                Ok(())
+            })
         } else {
             // Fall back to `Object` Debug
             write!(f, "{:?}", self.0)
@@ -141,23 +139,20 @@ impl fmt::Debug for Exception {
 
 impl fmt::Display for Exception {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if let Some(true) = self.is_nsexception() {
-            let reason = autoreleasepool(|pool| {
+        autoreleasepool_leaking(|pool| {
+            if let Some(true) = self.is_nsexception() {
                 // SAFETY: Just checked that object is an NSException
                 let reason = unsafe { self.reason() };
 
-                // SAFETY: `reason` is guaranteed to be NSString.
-                reason
-                    .as_deref()
-                    .map(|reason| unsafe { nsstring_to_str(reason, pool).to_owned() })
-            });
-
-            if let Some(reason) = reason {
-                return write!(f, "{reason}");
+                if let Some(reason) = &reason {
+                    // SAFETY: `reason` is guaranteed to be NSString.
+                    let reason = unsafe { nsstring_to_str(reason, pool) };
+                    return write!(f, "{reason}");
+                }
             }
-        }
 
-        write!(f, "unknown exception")
+            write!(f, "unknown exception")
+        })
     }
 }
 

@@ -6,9 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Added `objc2::rc::autoreleasepool_leaking`, and improve performance of
+  objects `Debug` impls.
+
 ### Changed
 * Made the default ownership in `Id` be `Shared`. This means that you can now
   write `Id<NSString>`, and it'll mean `Id<NSString, Shared>`.
+* **BREAKING**: `objc2::rc::AutoreleasePool` is now a zero-sized `Copy` type
+  with a lifetime parameter, instead of the lifetime parameter being the
+  reference it was behind.
+* **BREAKING**: Made `Id::autorelease` and `Id::autorelease_return` be
+  associated functions instead of methods. This means they now have to be
+  called as `Id::autorelease(obj, pool)` instead of `obj.autorelease(pool)`.
+
+  Additionally, rename the mutable version to `Id::autorelease_mut`.
+
+### Fixed
+* Fixed using autorelease pools on 32bit macOS and older macOS versions.
 
 
 ## 0.3.0-beta.5 - 2023-02-07

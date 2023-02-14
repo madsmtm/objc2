@@ -28,7 +28,7 @@ pub unsafe fn nsstring_len(obj: &NSObject) -> NSUInteger {
 /// The object must be an instance of `NSString`.
 pub unsafe fn nsstring_to_str<'r, 's: 'r, 'p: 'r>(
     obj: &'s NSObject,
-    pool: &'p AutoreleasePool,
+    pool: AutoreleasePool<'p>,
 ) -> &'r str {
     // This is necessary until `auto` types stabilizes.
     pool.__verify_is_inner();
