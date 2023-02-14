@@ -39,9 +39,7 @@ impl Pool {
         POOLS.with(|c| c.borrow_mut().push(context));
         Self { context }
     }
-}
 
-impl Drop for Pool {
     /// Drains the autoreleasepool.
     ///
     /// The [clang documentation] says that `@autoreleasepool` blocks are not
@@ -50,23 +48,28 @@ impl Drop for Pool {
     /// > Not draining the pool during an unwind is apparently required by the
     /// > Objective-C exceptions implementation.
     ///
-    /// However, we would like to do this anyway whenever possible, since the
+    /// We _would_ really like to do this anyway whenever possible, since the
     /// unwind is probably caused by Rust, and forgetting to pop the pool will
     /// likely leak memory.
     ///
-    /// Fortunately, the above statement was true in the past, but since
-    /// [revision `371`] of objc4 (ships with MacOS 10.5) the exception is now
-    /// retained when `@throw` is encountered.
+    /// The above statement was true in the past, but since [revision `551.1`]
+    /// of objc4 (ships with MacOS 10.9) the exception is now retained when
+    /// `@throw` is encountered (on __OBJC2__, so e.g. not on macOS 32bit).
     ///
-    /// Hence it is safe to drain the pool when unwinding.
-    ///
-    /// TODO: Verify this claim on 32bit!
+    /// So in the future, once we drop support for older versions, we should
+    /// move this to `Drop`.
     ///
     /// [clang documentation]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#autoreleasepool
-    /// [revision `371`]: https://github.com/apple-oss-distributions/objc4/blob/objc4-371/runtime/objc-exception.m#L479-L482
+    /// [revision `551.1`]: https://github.com/apple-oss-distributions/objc4/blob/objc4-551.1/runtime/objc-exception.mm#L516
+    #[inline]
+    unsafe fn drain(self) {
+        unsafe { ffi::objc_autoreleasePoolPop(self.context) }
+    }
+}
+
+impl Drop for Pool {
     #[inline]
     fn drop(&mut self) {
-        unsafe { ffi::objc_autoreleasePoolPop(self.context) }
         #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
         POOLS.with(|c| {
             assert_eq!(
@@ -433,7 +436,9 @@ where
     //   This would not work if we e.g. just allowed users to create pools on
     //   the stack, since they could then safely control the drop order.
     let pool = unsafe { Pool::new() };
-    f(AutoreleasePool::new(Some(&pool)))
+    let res = f(AutoreleasePool::new(Some(&pool)));
+    unsafe { pool.drain() };
+    res
 }
 
 /// Execute `f` in the context of a "fake" autorelease pool.

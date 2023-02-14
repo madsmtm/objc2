@@ -22,6 +22,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   Additionally, rename the mutable version to `Id::autorelease_mut`.
 
+### Fixed
+* Fixed using autorelease pools on 32bit macOS and older macOS versions.
+
 
 ## 0.3.0-beta.5 - 2023-02-07
 
