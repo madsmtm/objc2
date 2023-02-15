@@ -148,7 +148,7 @@
 //! peruse the documentation at will!
 //!
 //! [exc]: crate::exception
-//! [declare]: crate::declare
+//! [declare]: mod@crate::declare
 //! [rc]: crate::rc
 
 #![no_std]
@@ -177,6 +177,11 @@ compile_error!("The `std` feature currently must be enabled.");
 extern crate alloc;
 extern crate std;
 
+// Not public API.
+#[doc(hidden)]
+#[path = "export.rs"]
+pub mod __private;
+
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]
 extern "C" {}
@@ -189,6 +194,14 @@ pub use self::class_type::ClassType;
 pub use self::encode::{Encode, Encoding, RefEncode};
 pub use self::message::{Message, MessageArguments, MessageReceiver};
 pub use self::protocol_type::ProtocolType;
+
+#[cfg(feature = "objc2-proc-macros")]
+pub use __macro_helpers::{Cases, Codes, ErrorEnum, TypedEnum, UserInfo};
+
+#[cfg(feature = "objc2-proc-macros")]
+pub use objc2_proc_macros::{
+    extern_enum, interface, ns_closed_enum, ns_enum, ns_error_enum, ns_options, protocol,
+};
 
 #[cfg(feature = "objc2-proc-macros")]
 #[doc(hidden)]

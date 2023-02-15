@@ -164,7 +164,7 @@ jobs:
     - name: Install Rust toolchain
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: '1.60'
+        toolchain: '1.62'
         profile: minimal
         override: true
         target: x86_64-apple-darwin
@@ -317,7 +317,7 @@ jobs:
     # - lint
 
     env:
-      ARGS: --no-default-features --features=std,apple
+      ARGS: --no-default-features --features=std,apple,unstable-proc-macros
 
     steps:
     - uses: actions/checkout@v3

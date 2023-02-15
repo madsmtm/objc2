@@ -577,30 +577,34 @@ impl fmt::Display for Method {
 
         write!(f, "{}", self.availability)?;
 
-        if self.is_optional_protocol {
-            writeln!(f, "        #[optional]")?;
-        }
-
-        let id_mm_name = match &self.memory_management {
-            MemoryManagement::IdCopyOrMutCopy => Some("CopyOrMutCopy"),
-            MemoryManagement::IdNew => Some("New"),
-            MemoryManagement::IdInit => Some("Init"),
-            MemoryManagement::IdOther => Some("Other"),
-            MemoryManagement::Normal => None,
-        };
-        if let Some(id_mm_name) = id_mm_name {
-            write!(f, "        #[method_id(@__retain_semantics {id_mm_name} ")?;
-        } else {
-            write!(f, "        #[method(")?;
-        }
-        let error_trailing = if self.result_type.is_error() { "_" } else { "" };
-        writeln!(f, "{}{})]", self.selector, error_trailing)?;
+        writeln!(
+            f,
+            r#"    #[objc2::method({}sel = "{}"{}{})]"#,
+            if self.is_optional_protocol {
+                "optional, "
+            } else {
+                ""
+            },
+            self.selector,
+            match &self.memory_management {
+                MemoryManagement::IdCopyOrMutCopy => r#", managed = "CopyOrMutCopy""#,
+                MemoryManagement::IdNew => r#", managed = "New""#,
+                MemoryManagement::IdInit => r#", managed = "Init""#,
+                MemoryManagement::IdOther => r#", managed = "Other""#,
+                MemoryManagement::Normal => "",
+            },
+            if self.result_type.is_error() {
+                ", throws"
+            } else {
+                ""
+            },
+        )?;
 
         //
         // Signature
         //
 
-        write!(f, "        ")?;
+        write!(f, "    ")?;
         if !self.is_protocol {
             write!(f, "pub ")?;
         }

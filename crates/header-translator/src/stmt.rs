@@ -1047,19 +1047,39 @@ impl fmt::Display for Stmt {
                 derives,
                 ownership: _,
             } => {
-                let macro_name = if generics.is_empty() {
-                    "extern_class"
-                } else {
-                    "__inner_extern_class"
-                };
+                let (superclass, inherits) = superclasses.split_at(1);
+                let (superclass, superclass_generics) =
+                    superclass.get(0).expect("must have a least one superclass");
 
-                writeln!(f, "{macro_name}!(")?;
-                writeln!(f, "    {derives}")?;
+                writeln!(f, "#[objc2::interface(")?;
+                writeln!(
+                    f,
+                    "    unsafe super = {}{},",
+                    superclass.path_in_relation_to(id),
+                    GenericTyHelper(superclass_generics)
+                )?;
+                writeln!(f, "    unsafe inherits = [")?;
+                if !inherits.is_empty() {
+                    for (superclass, superclass_generics) in inherits {
+                        writeln!(
+                            f,
+                            "        {}{},",
+                            superclass.path_in_relation_to(id),
+                            GenericTyHelper(superclass_generics)
+                        )?;
+                    }
+                }
+                writeln!(f, "    ]")?;
+                writeln!(f, ")]")?;
+                writeln!(f, r#"extern "Objective-C" {{"#)?;
+
+                write!(f, "{availability}")?;
                 if let Some(feature) = id.feature() {
                     writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
                 }
-                write!(f, "{availability}")?;
-                write!(f, "    pub struct {}", id.name)?;
+                writeln!(f, "    {derives}")?;
+                write!(f, "    pub type {}", id.name)?;
+
                 if !generics.is_empty() {
                     write!(f, "<")?;
                     for generic in generics {
@@ -1070,98 +1090,54 @@ impl fmt::Display for Stmt {
                     }
                     write!(f, ">")?;
                 };
-                if generics.is_empty() {
-                    writeln!(f, ";")?;
-                } else {
-                    writeln!(f, " {{")?;
-                    for (i, generic) in generics.iter().enumerate() {
-                        // Invariant over the generic (for now)
-                        writeln!(
-                            f,
-                            "_inner{i}: PhantomData<*mut ({generic}, {generic}Ownership)>,"
-                        )?;
-                    }
-                    writeln!(f, "notunwindsafe: PhantomData<&'static mut ()>,")?;
-                    writeln!(f, "}}")?;
-                }
-
+                writeln!(f, ";")?;
+                writeln!(f, "}}")?;
                 writeln!(f)?;
-
-                if let Some(feature) = id.feature() {
-                    writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
-                }
-                writeln!(
-                    f,
-                    "    unsafe impl{} ClassType for {}{} {{",
-                    GenericParamsHelper(generics),
-                    id.name,
-                    GenericTyHelper(generics),
-                )?;
-                let (superclass, rest) = superclasses.split_at(1);
-                let (superclass, generics) =
-                    superclass.get(0).expect("must have a least one superclass");
-                if !rest.is_empty() {
-                    write!(f, "    #[inherits(")?;
-                    let mut iter = rest.iter();
-                    // Using generics in here is not technically correct, but
-                    // should work for our use-cases.
-                    if let Some((superclass, generics)) = iter.next() {
-                        write!(
-                            f,
-                            "{}{}",
-                            superclass.path_in_relation_to(id),
-                            GenericTyHelper(generics)
-                        )?;
-                    }
-                    for (superclass, generics) in iter {
-                        write!(
-                            f,
-                            ", {}{}",
-                            superclass.path_in_relation_to(id),
-                            GenericTyHelper(generics)
-                        )?;
-                    }
-                    writeln!(f, ")]")?;
-                }
-                writeln!(
-                    f,
-                    "        type Super = {}{};",
-                    superclass.path_in_relation_to(id),
-                    GenericTyHelper(generics)
-                )?;
-                writeln!(f, "    }}")?;
-                writeln!(f, ");")?;
             }
             Self::Methods {
                 cls,
                 generics,
                 category,
                 // TODO: Output `#[deprecated]` only on categories
-                availability: _,
+                availability,
                 superclasses,
                 methods,
                 description,
             } => {
-                writeln!(f, "extern_methods!(")?;
+                writeln!(f, "#[objc2::interface(")?;
+                writeln!(f, "    unsafe continue,")?;
                 if let Some(description) = description {
-                    writeln!(f, "    /// {description}")?;
-                    if category.name.is_some() {
-                        writeln!(f, "    ///")?;
+                    writeln!(f, "    impl_attrs = {{")?;
+                    writeln!(f, "        /// {description}")?;
+                    if let Some(category_name) = &category.name {
+                        writeln!(f, "        ///")?;
+                        writeln!(f, "        /// {category_name}")?;
                     }
+                    if let Some(feature) = cls.feature() {
+                        writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
+                    }
+                    writeln!(f, "    }}")?;
                 }
-                if let Some(category_name) = &category.name {
-                    writeln!(f, "    /// {category_name}")?;
-                }
+                writeln!(f, ")]")?;
+                writeln!(f, r#"extern "Objective-C" {{"#)?;
+
                 if let Some(feature) = cls.feature() {
                     writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
                 }
-                writeln!(
-                    f,
-                    "    unsafe impl{} {}{} {{",
-                    GenericParamsHelper(generics),
-                    cls.path_in_relation_to(category),
-                    GenericTyHelper(generics),
-                )?;
+                write!(f, "{availability}")?;
+                write!(f, "    pub type {}", cls.name)?;
+                if !generics.is_empty() {
+                    write!(f, "<")?;
+                    for generic in generics {
+                        write!(f, "{generic}: Message = Object, ")?;
+                    }
+                    for generic in generics {
+                        write!(f, "{generic}Ownership: Ownership = Shared, ")?;
+                    }
+                    write!(f, ">")?;
+                };
+                writeln!(f, ";")?;
+
                 for method in methods {
                     // Use a set to deduplicate features, and to have them in
                     // a consistent order
@@ -1182,15 +1158,18 @@ impl fmt::Display for Stmt {
                             features.insert(format!("feature = \"{feature}\""));
                         }
                     });
+
+                    writeln!(f)?;
+
                     match features.len() {
                         0 => {}
                         1 => {
-                            writeln!(f, "        #[cfg({})]", features.first().unwrap())?;
+                            writeln!(f, "    #[cfg({})]", features.first().unwrap())?;
                         }
                         _ => {
                             writeln!(
                                 f,
-                                "        #[cfg(all({}))]",
+                                "    #[cfg(all({}))]",
                                 features
                                     .iter()
                                     .map(|s| &**s)
@@ -1200,10 +1179,10 @@ impl fmt::Display for Stmt {
                         }
                     }
 
-                    writeln!(f, "{method}")?;
+                    write!(f, "{method}")?;
                 }
-                writeln!(f, "    }}")?;
-                writeln!(f, ");")?;
+
+                writeln!(f, "}}")?;
             }
             Self::ProtocolImpl {
                 cls: _,
@@ -1237,10 +1216,9 @@ impl fmt::Display for Stmt {
                 protocols,
                 methods,
             } => {
-                writeln!(f, "extern_protocol!(")?;
+                writeln!(f, "#[objc2::protocol]")?;
                 write!(f, "{availability}")?;
-
-                write!(f, "    pub unsafe trait {}", id.name)?;
+                write!(f, "pub unsafe trait {}", id.name)?;
                 if !protocols.is_empty() {
                     for (i, protocol) in protocols
                         .iter()
@@ -1257,7 +1235,7 @@ impl fmt::Display for Stmt {
                         write!(f, "{}", protocol.path())?;
                     }
                 }
-                writeln!(f, " {{")?;
+                write!(f, " {{")?;
 
                 for method in methods {
                     // Use a set to deduplicate features, and to have them in
@@ -1268,15 +1246,18 @@ impl fmt::Display for Stmt {
                             features.insert(format!("feature = \"{feature}\""));
                         }
                     });
+
+                    writeln!(f)?;
+
                     match features.len() {
                         0 => {}
                         1 => {
-                            writeln!(f, "        #[cfg({})]", features.first().unwrap())?;
+                            writeln!(f, "    #[cfg({})]", features.first().unwrap())?;
                         }
                         _ => {
                             writeln!(
                                 f,
-                                "        #[cfg(all({}))]",
+                                "    #[cfg(all({}))]",
                                 features
                                     .iter()
                                     .map(|s| &**s)
@@ -1285,12 +1266,10 @@ impl fmt::Display for Stmt {
                             )?;
                         }
                     }
-                    writeln!(f, "{method}")?;
+                    write!(f, "{method}")?;
                 }
-                writeln!(f, "    }}")?;
-                writeln!(f)?;
-                writeln!(f, "    unsafe impl ProtocolType for dyn {} {{}}", id.name)?;
-                writeln!(f, ");")?;
+
+                writeln!(f, "}}")?;
             }
             Self::StructDecl {
                 id,
@@ -1331,20 +1310,19 @@ impl fmt::Display for Stmt {
                     Some(UnexposedAttr::ErrorEnum) => "ns_error_enum",
                     _ => panic!("invalid enum kind"),
                 };
-                writeln!(f, "{macro_name}!(")?;
-                writeln!(f, "    #[underlying({ty})]")?;
+                writeln!(f, "#[{macro_name}]")?;
+                writeln!(f, "#[underlying({ty})]")?;
                 write!(f, "{availability}")?;
                 writeln!(
                     f,
-                    "    pub enum {} {{",
+                    "pub enum {} {{",
                     id.name.as_deref().unwrap_or("__anonymous__")
                 )?;
                 for (name, availability, expr) in variants {
                     write!(f, "{availability}")?;
-                    writeln!(f, "        {name} = {expr},")?;
+                    writeln!(f, "    {name} = {expr},")?;
                 }
-                writeln!(f, "    }}")?;
-                writeln!(f, ");")?;
+                writeln!(f, "}}")?;
             }
             Self::VarDecl {
                 id,
