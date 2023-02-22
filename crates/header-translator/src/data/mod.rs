@@ -32,6 +32,7 @@ data! {
     mod Foundation;
     mod GameController;
     mod GameKit;
+    mod HealthKit;
     mod IdentityLookup;
     mod InputMethodKit;
     mod LocalAuthentication;
@@ -39,10 +40,13 @@ data! {
     mod LinkPresentation;
     mod MailKit;
     mod MapKit;
+    mod MediaPlayer;
     mod Metal;
     mod MetalFX;
     mod MetalKit;
+    mod MetricKit;
     mod OSAKit;
+    mod PhotoKit;
     mod SoundAnalysis;
     mod Speech;
     mod StoreKit;

@@ -63,6 +63,8 @@
 
 #import <GameKit/GameKit.h>
 
+#import <HealthKit/HealthKit.h>
+
 #import <IdentityLookup/IdentityLookup.h>
 
 #import <InputMethodKit/InputMethodKit.h>
@@ -75,11 +77,17 @@
 
 #import <MapKit/MapKit.h>
 
+#import <MediaPlayer/MediaPlayer.h>
+
 #import <Metal/Metal.h>
 
 #import <MetalFX/MetalFX.h>
 
 #import <MetalKit/MetalKit.h>
+
+#import <MetricKit/MetricKit.h>
+
+#import <Photos/Photos.h>
 
 #import <QuartzCore/CoreAnimation.h>
 
