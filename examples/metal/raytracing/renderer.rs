@@ -1,12 +1,18 @@
-use std::{mem::{size_of, transmute}, ops::Index, collections::BTreeMap, ffi::c_void, sync::{Arc, Condvar, Mutex}};
 use core_graphics_types::{base::CGFloat, geometry::CGSize};
+use std::{
+    collections::BTreeMap,
+    ffi::c_void,
+    mem::{size_of, transmute},
+    ops::Index,
+    sync::{Arc, Condvar, Mutex},
+};
 
 use glam::{Vec3, Vec4, Vec4Swizzles};
-use rand::{RngCore, thread_rng};
+use rand::{thread_rng, RngCore};
 
-use metal::{*, foreign_types::ForeignType};
+use metal::{foreign_types::ForeignType, *};
 
-use crate::{camera::Camera, scene::Scene, geometry::get_managed_buffer_storage_mode};
+use crate::{camera::Camera, geometry::get_managed_buffer_storage_mode, scene::Scene};
 
 #[repr(C)]
 struct Uniforms {
@@ -20,7 +26,6 @@ struct Uniforms {
 pub const MAX_FRAMES_IN_FLIGHT: NSUInteger = 3;
 pub const ALIGNED_UNIFORMS_SIZE: NSUInteger = (size_of::<Uniforms>() as NSUInteger + 255) & !255;
 pub const UNIFORM_BUFFER_SIZE: NSUInteger = MAX_FRAMES_IN_FLIGHT * ALIGNED_UNIFORMS_SIZE;
-
 
 #[derive(Clone)]
 struct Semaphore {
@@ -74,7 +79,8 @@ impl Renderer {
     pub fn new(device: Device) -> Self {
         let scene = Scene::new(device.clone());
 
-        let library_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("examples/raytracing/shaders.metallib");
+        let library_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("examples/raytracing/shaders.metallib");
         let library = device.new_library_with_file(library_path).unwrap();
         let queue = device.new_command_queue();
 
@@ -82,7 +88,8 @@ impl Renderer {
         let uniform_buffer = device.new_buffer_with_data(
             buffer_data.as_ptr() as *const c_void,
             UNIFORM_BUFFER_SIZE,
-            get_managed_buffer_storage_mode());
+            get_managed_buffer_storage_mode(),
+        );
         uniform_buffer.set_label("uniform buffer");
         let resources_stride = {
             let mut max = 0;
@@ -103,21 +110,23 @@ impl Renderer {
             for argument_index in 0..resources.len() {
                 let resource_buffer_index = resource_buffer_begin_index + argument_index;
                 let resource = resources[argument_index].clone();
-                resource_buffer_data[resource_buffer_index] = if resource.conforms_to_protocol::<MTLBuffer>().unwrap() {
-                    let buffer = unsafe { Buffer::from_ptr(transmute(resource.into_ptr())) };
-                    buffer.gpu_address()
-                } else if resource.conforms_to_protocol::<MTLTexture>().unwrap() {
-                    let texture = unsafe { Texture::from_ptr(transmute(resource.into_ptr())) };
-                    texture.gpu_resource_id()._impl
-                } else {
-                    panic!("Unexpected resource!")
-                }
+                resource_buffer_data[resource_buffer_index] =
+                    if resource.conforms_to_protocol::<MTLBuffer>().unwrap() {
+                        let buffer = unsafe { Buffer::from_ptr(transmute(resource.into_ptr())) };
+                        buffer.gpu_address()
+                    } else if resource.conforms_to_protocol::<MTLTexture>().unwrap() {
+                        let texture = unsafe { Texture::from_ptr(transmute(resource.into_ptr())) };
+                        texture.gpu_resource_id()._impl
+                    } else {
+                        panic!("Unexpected resource!")
+                    }
             }
         }
         let resource_buffer = device.new_buffer_with_data(
             resource_buffer_data.as_ptr() as *const c_void,
             (resource_buffer_data.len() * size_of::<u64>()) as NSUInteger,
-            get_managed_buffer_storage_mode());
+            get_managed_buffer_storage_mode(),
+        );
         resource_buffer.set_label("resource buffer");
         resource_buffer.did_modify_range(NSRange::new(0, resource_buffer.length()));
 
@@ -130,15 +139,24 @@ impl Renderer {
             let accel_descriptor = PrimitiveAccelerationStructureDescriptor::descriptor();
             accel_descriptor.set_geometry_descriptors(&geometry_descriptors);
             let accel_descriptor: AccelerationStructureDescriptor = From::from(accel_descriptor);
-            primitive_acceleration_structures.push(Self::new_acceleration_structure_with_descriptor(&device, &queue, &accel_descriptor));
+            primitive_acceleration_structures.push(
+                Self::new_acceleration_structure_with_descriptor(
+                    &device,
+                    &queue,
+                    &accel_descriptor,
+                ),
+            );
         }
 
-        let mut instance_descriptors =
-            vec![MTLAccelerationStructureInstanceDescriptor::default(); scene.geometry_instances.len()];
+        let mut instance_descriptors = vec![
+            MTLAccelerationStructureInstanceDescriptor::default();
+            scene.geometry_instances.len()
+        ];
         for instance_index in 0..scene.geometry_instances.len() {
             let instance = scene.geometry_instances[instance_index].as_ref();
             let geometry_index = instance.index_in_scene;
-            instance_descriptors[instance_index].acceleration_structure_index = geometry_index as u32;
+            instance_descriptors[instance_index].acceleration_structure_index =
+                geometry_index as u32;
             instance_descriptors[instance_index].options =
                 if instance.geometry.get_intersection_function_name().is_none() {
                     MTLAccelerationStructureInstanceOptions::Opaque
@@ -149,63 +167,92 @@ impl Renderer {
             instance_descriptors[instance_index].mask = instance.mask as u32;
             for column in 0..4 {
                 for row in 0..3 {
-                    instance_descriptors[instance_index].transformation_matrix[column][row] = *instance.transform.col(column).index(row);
+                    instance_descriptors[instance_index].transformation_matrix[column][row] =
+                        *instance.transform.col(column).index(row);
                 }
             }
         }
         let instance_buffer = device.new_buffer_with_data(
             instance_descriptors.as_ptr() as *const c_void,
-            (size_of::<MTLAccelerationStructureInstanceDescriptor>() * scene.geometry_instances.len()) as NSUInteger,
-            get_managed_buffer_storage_mode());
+            (size_of::<MTLAccelerationStructureInstanceDescriptor>()
+                * scene.geometry_instances.len()) as NSUInteger,
+            get_managed_buffer_storage_mode(),
+        );
         instance_buffer.set_label("instance buffer");
         instance_buffer.did_modify_range(NSRange::new(0, instance_buffer.length()));
 
         let accel_descriptor = InstanceAccelerationStructureDescriptor::descriptor();
-        accel_descriptor.set_instanced_acceleration_structures(&Array::from_owned_slice(&primitive_acceleration_structures));
+        accel_descriptor.set_instanced_acceleration_structures(&Array::from_owned_slice(
+            &primitive_acceleration_structures,
+        ));
         accel_descriptor.set_instance_count(scene.geometry_instances.len() as NSUInteger);
         accel_descriptor.set_instance_descriptor_buffer(&instance_buffer);
         let accel_descriptor: AccelerationStructureDescriptor = From::from(accel_descriptor);
-        let instance_acceleration_structure = Self::new_acceleration_structure_with_descriptor(
-            &device, &queue, &accel_descriptor);
+        let instance_acceleration_structure =
+            Self::new_acceleration_structure_with_descriptor(&device, &queue, &accel_descriptor);
 
         let mut intersection_functions = BTreeMap::<String, Function>::new();
         for geometry in &scene.geometries {
             if let Some(name) = geometry.get_intersection_function_name() {
                 if !intersection_functions.contains_key(name) {
                     let intersection_function = Self::new_specialised_function_with_name(
-                        &library, resources_stride as u32, name);
-                    intersection_functions.insert(name.to_string(),intersection_function);
+                        &library,
+                        resources_stride as u32,
+                        name,
+                    );
+                    intersection_functions.insert(name.to_string(), intersection_function);
                 }
             }
         }
         let raytracing_function = Self::new_specialised_function_with_name(
-            &library, resources_stride as u32, "raytracingKernel");
+            &library,
+            resources_stride as u32,
+            "raytracingKernel",
+        );
         let intersection_function_array: Vec<&FunctionRef> = intersection_functions
-            .values().map(|f| -> &FunctionRef { f } ).collect();
+            .values()
+            .map(|f| -> &FunctionRef { f })
+            .collect();
         let raytracing_pipeline = Self::new_compute_pipeline_state_with_function(
-            &device, &raytracing_function, &intersection_function_array);
+            &device,
+            &raytracing_function,
+            &intersection_function_array,
+        );
         let intersection_function_table_descriptor = IntersectionFunctionTableDescriptor::new();
-        intersection_function_table_descriptor.set_function_count(scene.geometries.len() as NSUInteger);
+        intersection_function_table_descriptor
+            .set_function_count(scene.geometries.len() as NSUInteger);
         let intersection_function_table = raytracing_pipeline
-            .new_intersection_function_table_with_descriptor(&intersection_function_table_descriptor);
+            .new_intersection_function_table_with_descriptor(
+                &intersection_function_table_descriptor,
+            );
         for geometry_index in 0..scene.geometries.len() {
             let geometry = scene.geometries[geometry_index].as_ref();
             if let Some(intersection_function_name) = geometry.get_intersection_function_name() {
                 let intersection_function = &intersection_functions[intersection_function_name];
-                let handle = raytracing_pipeline.function_handle_with_function(intersection_function).unwrap();
+                let handle = raytracing_pipeline
+                    .function_handle_with_function(intersection_function)
+                    .unwrap();
                 intersection_function_table.set_function(handle, geometry_index as NSUInteger);
-           }
+            }
         }
         let render_descriptor = RenderPipelineDescriptor::new();
-        render_descriptor.set_vertex_function(Some(&library.get_function("copyVertex", None).unwrap()));
-        render_descriptor.set_fragment_function(Some(&library.get_function("copyFragment", None).unwrap()));
-        render_descriptor.color_attachments().object_at(0).unwrap().set_pixel_format(MTLPixelFormat::RGBA16Float);
-        let copy_pipeline = device.new_render_pipeline_state(&render_descriptor).unwrap();
+        render_descriptor
+            .set_vertex_function(Some(&library.get_function("copyVertex", None).unwrap()));
+        render_descriptor
+            .set_fragment_function(Some(&library.get_function("copyFragment", None).unwrap()));
+        render_descriptor
+            .color_attachments()
+            .object_at(0)
+            .unwrap()
+            .set_pixel_format(MTLPixelFormat::RGBA16Float);
+        let copy_pipeline = device
+            .new_render_pipeline_state(&render_descriptor)
+            .unwrap();
 
         let texture_descriptor = Self::create_target_descriptor(1024, 1024);
         let accumulation_targets = [
             device.new_texture(&texture_descriptor),
-            device.new_texture(&texture_descriptor)
+            device.new_texture(&texture_descriptor),
         ];
         let random_texture = device.new_texture(&texture_descriptor);
 
@@ -244,8 +291,8 @@ impl Renderer {
 
     pub fn window_resized(&mut self, size: CGSize) {
         self.size = size;
-        let texture_descriptor = Self::create_target_descriptor(
-            size.width as NSUInteger, size.height as NSUInteger);
+        let texture_descriptor =
+            Self::create_target_descriptor(size.width as NSUInteger, size.height as NSUInteger);
         self.accumulation_targets[0] = self.device.new_texture(&texture_descriptor);
         self.accumulation_targets[1] = self.device.new_texture(&texture_descriptor);
         texture_descriptor.set_pixel_format(MTLPixelFormat::R32Uint);
@@ -259,8 +306,10 @@ impl Renderer {
         }
         self.random_texture.replace_region(
             MTLRegion::new_2d(0, 0, size.width as NSUInteger, size.height as NSUInteger),
-            0, random_values.as_ptr() as *const c_void,
-            size_of::<u32>() as NSUInteger * size.width as NSUInteger);
+            0,
+            random_values.as_ptr() as *const c_void,
+            size_of::<u32>() as NSUInteger * size.width as NSUInteger,
+        );
         self.frame_index = 0;
     }
 
@@ -268,7 +317,8 @@ impl Renderer {
         self.uniform_buffer_offset = ALIGNED_UNIFORMS_SIZE * self.uniform_buffer_index;
 
         let uniforms = unsafe {
-            &mut *((self.uniform_buffer.contents() as *mut u8).add(self.uniform_buffer_offset as usize) as *mut Uniforms)
+            &mut *((self.uniform_buffer.contents() as *mut u8)
+                .add(self.uniform_buffer_offset as usize) as *mut Uniforms)
         };
 
         let position = self.scene.camera.position;
@@ -315,7 +365,8 @@ impl Renderer {
         let sem = self.semaphore.clone();
         let block = block::ConcreteBlock::new(move |_| {
             sem.release();
-        }).copy();
+        })
+        .copy();
         command_buffer.add_completed_handler(&block);
         let width = self.size.width as NSUInteger;
         let height = self.size.height as NSUInteger;
@@ -323,13 +374,14 @@ impl Renderer {
         let thread_groups = MTLSize::new(
             (width + threads_per_thread_group.width - 1) / threads_per_thread_group.width,
             (height + threads_per_thread_group.height - 1) / threads_per_thread_group.height,
-            1);
+            1,
+        );
         let compute_encoder = command_buffer.new_compute_command_encoder();
         compute_encoder.set_buffer(0, Some(&self.uniform_buffer), self.uniform_buffer_offset);
         compute_encoder.set_buffer(2, Some(&self.instance_buffer), 0);
         compute_encoder.set_buffer(3, Some(&self.scene.lights_buffer), 0);
-        compute_encoder.set_acceleration_structure(4, &self.instance_acceleration_structure);
-        compute_encoder.set_intersection_function_table(5, &self.intersection_function_table);
+        compute_encoder.set_acceleration_structure(4, Some(&self.instance_acceleration_structure));
+        compute_encoder.set_intersection_function_table(5, Some(&self.intersection_function_table));
         compute_encoder.set_texture(0, Some(&self.random_texture));
         compute_encoder.set_texture(1, Some(&self.accumulation_targets[0]));
         compute_encoder.set_texture(2, Some(&self.accumulation_targets[1]));
@@ -345,11 +397,16 @@ impl Renderer {
         compute_encoder.set_compute_pipeline_state(&self.raytracing_pipeline);
         compute_encoder.dispatch_thread_groups(thread_groups, threads_per_thread_group);
         compute_encoder.end_encoding();
-        (self.accumulation_targets[0], self.accumulation_targets[1]) =
-            (self.accumulation_targets[1].clone(), self.accumulation_targets[0].clone());
+        (self.accumulation_targets[0], self.accumulation_targets[1]) = (
+            self.accumulation_targets[1].clone(),
+            self.accumulation_targets[0].clone(),
+        );
         if let Some(drawable) = layer.next_drawable() {
             let render_pass_descriptor = RenderPassDescriptor::new();
-            let colour_attachment = render_pass_descriptor.color_attachments().object_at(0).unwrap();
+            let colour_attachment = render_pass_descriptor
+                .color_attachments()
+                .object_at(0)
+                .unwrap();
             colour_attachment.set_texture(Some(drawable.texture()));
             colour_attachment.set_load_action(MTLLoadAction::Clear);
             colour_attachment.set_clear_color(MTLClearColor::new(0.0, 0.0, 0.0, 1.0));
@@ -366,41 +423,81 @@ impl Renderer {
     fn new_acceleration_structure_with_descriptor(
         device: &Device,
         queue: &CommandQueue,
-        descriptor: &AccelerationStructureDescriptorRef) -> AccelerationStructure {
+        descriptor: &AccelerationStructureDescriptorRef,
+    ) -> AccelerationStructure {
         let accel_sizes = device.acceleration_structure_sizes_with_descriptor(descriptor);
-        let acceleration_structure = device.new_acceleration_structure_with_size(accel_sizes.acceleration_structure_size);
-        let scratch_buffer = device.new_buffer(accel_sizes.build_scratch_buffer_size, MTLResourceOptions::StorageModePrivate);
+        let acceleration_structure =
+            device.new_acceleration_structure_with_size(accel_sizes.acceleration_structure_size);
+        let scratch_buffer = device.new_buffer(
+            accel_sizes.build_scratch_buffer_size,
+            MTLResourceOptions::StorageModePrivate,
+        );
         let command_buffer = queue.new_command_buffer();
         let command_encoder = command_buffer.new_acceleration_structure_command_encoder();
-        let compacted_size_buffer = device.new_buffer(size_of::<u32>() as NSUInteger, MTLResourceOptions::StorageModeShared);
-        command_encoder.build_acceleration_structure(&acceleration_structure, &descriptor, &scratch_buffer, 0);
-        command_encoder.write_compacted_acceleration_structure_size(&acceleration_structure, &compacted_size_buffer, 0);
+        let compacted_size_buffer = device.new_buffer(
+            size_of::<u32>() as NSUInteger,
+            MTLResourceOptions::StorageModeShared,
+        );
+        command_encoder.build_acceleration_structure(
+            &acceleration_structure,
+            &descriptor,
+            &scratch_buffer,
+            0,
+        );
+        command_encoder.write_compacted_acceleration_structure_size(
+            &acceleration_structure,
+            &compacted_size_buffer,
+            0,
+        );
         command_encoder.end_encoding();
         command_buffer.commit();
         command_buffer.wait_until_completed();
         let compacted_size: *const u32 = unsafe { transmute(compacted_size_buffer.contents()) };
         let compacted_size = unsafe { *compacted_size } as NSUInteger;
-        let compacted_acceleration_structure = device.new_acceleration_structure_with_size(compacted_size);
+        let compacted_acceleration_structure =
+            device.new_acceleration_structure_with_size(compacted_size);
         let command_buffer = queue.new_command_buffer();
         let command_encoder = command_buffer.new_acceleration_structure_command_encoder();
-        command_encoder.copy_and_compact_acceleration_structure(&acceleration_structure, &compacted_acceleration_structure);
+        command_encoder.copy_and_compact_acceleration_structure(
+            &acceleration_structure,
+            &compacted_acceleration_structure,
+        );
         command_encoder.end_encoding();
         command_buffer.commit();
         compacted_acceleration_structure
     }
 
-    fn new_specialised_function_with_name(library: &Library, resources_stride: u32, name: &str) -> Function {
+    fn new_specialised_function_with_name(
+        library: &Library,
+        resources_stride: u32,
+        name: &str,
+    ) -> Function {
         let constants = FunctionConstantValues::new();
         let resources_stride = resources_stride * size_of::<u64>() as u32;
-        constants.set_constant_value_at_index(&resources_stride as *const u32 as *const c_void, MTLDataType::UInt, 0);
+        constants.set_constant_value_at_index(
+            &resources_stride as *const u32 as *const c_void,
+            MTLDataType::UInt,
+            0,
+        );
         let v = true;
-        constants.set_constant_value_at_index(&v as *const bool as *const c_void, MTLDataType::Bool, 1);
-        constants.set_constant_value_at_index(&v as *const bool as *const c_void, MTLDataType::Bool, 2);
+        constants.set_constant_value_at_index(
+            &v as *const bool as *const c_void,
+            MTLDataType::Bool,
+            1,
+        );
+        constants.set_constant_value_at_index(
+            &v as *const bool as *const c_void,
+            MTLDataType::Bool,
+            2,
+        );
         library.get_function(name, Some(constants)).unwrap()
     }
 
     fn new_compute_pipeline_state_with_function(
-        device: &Device, function: &Function, linked_functions: &[&FunctionRef]) -> ComputePipelineState {
+        device: &Device,
+        function: &Function,
+        linked_functions: &[&FunctionRef],
+    ) -> ComputePipelineState {
         let linked_functions = {
             let lf = LinkedFunctions::new();
             lf.set_functions(linked_functions);
