@@ -1,6 +1,12 @@
-use std::{mem::{size_of, transmute}, sync::Arc};
+use std::{
+    mem::{size_of, transmute},
+    sync::Arc,
+};
 
-use glam::{f32::{Mat4, Vec3, Vec4}, Vec4Swizzles};
+use glam::{
+    f32::{Mat4, Vec3, Vec4},
+    Vec4Swizzles,
+};
 
 use metal::*;
 
@@ -18,11 +24,21 @@ pub const FACE_MASK_POSITIVE_Z: u16 = 1 << 5;
 pub const FACE_MASK_ALL: u16 = (1 << 6) - 1;
 
 pub trait Geometry {
-    fn upload_to_buffers(&mut self) { todo!() }
-    fn clear(&mut self) { todo!() }
-    fn get_geometry_descriptor(&self) -> AccelerationStructureGeometryDescriptor { todo!() }
-    fn get_resources(&self) -> Vec<Resource> { todo!() }
-    fn get_intersection_function_name(&self) -> Option<&str> { None }
+    fn upload_to_buffers(&mut self) {
+        todo!()
+    }
+    fn clear(&mut self) {
+        todo!()
+    }
+    fn get_geometry_descriptor(&self) -> AccelerationStructureGeometryDescriptor {
+        todo!()
+    }
+    fn get_resources(&self) -> Vec<Resource> {
+        todo!()
+    }
+    fn get_intersection_function_name(&self) -> Option<&str> {
+        None
+    }
 }
 
 pub fn compute_triangle_normal(v0: &Vec3, v1: &Vec3, v2: &Vec3) -> Vec3 {
@@ -75,7 +91,16 @@ impl TriangleGeometry {
         }
     }
 
-    pub fn add_cube_face_with_cube_vertices(&mut self, cube_vertices: &[Vec3], colour: Vec3, i0: u16, i1: u16, i2: u16, i3: u16, inward_normals: bool) {
+    pub fn add_cube_face_with_cube_vertices(
+        &mut self,
+        cube_vertices: &[Vec3],
+        colour: Vec3,
+        i0: u16,
+        i1: u16,
+        i2: u16,
+        i3: u16,
+        inward_normals: bool,
+    ) {
         let v0 = cube_vertices[i0 as usize];
         let v1 = cube_vertices[i1 as usize];
         let v2 = cube_vertices[i2 as usize];
@@ -99,9 +124,11 @@ impl TriangleGeometry {
         self.vertices.push(From::from((v2, 0.0)));
         self.vertices.push(From::from((v3, 0.0)));
 
-        self.normals.push(From::from((Vec3::normalize(n0 + n1), 0.0)));
+        self.normals
+            .push(From::from((Vec3::normalize(n0 + n1), 0.0)));
         self.normals.push(From::from((n0, 0.0)));
-        self.normals.push(From::from((Vec3::normalize(n0 + n1), 0.0)));
+        self.normals
+            .push(From::from((Vec3::normalize(n0 + n1), 0.0)));
         self.normals.push(From::from((n1, 0.0)));
 
         for _ in 0..4 {
@@ -119,7 +146,13 @@ impl TriangleGeometry {
         }
     }
 
-    pub fn add_cube_with_faces(&mut self, face_mask: u16, colour: Vec3, transform: Mat4, inward_normals: bool) {
+    pub fn add_cube_with_faces(
+        &mut self,
+        face_mask: u16,
+        colour: Vec3,
+        transform: Mat4,
+        inward_normals: bool,
+    ) {
         let mut cube_vertices = [
             Vec3::new(-0.5, -0.5, -0.5),
             Vec3::new(0.5, -0.5, -0.5),
@@ -155,7 +188,8 @@ impl TriangleGeometry {
                     CUBE_INDICES[face][1],
                     CUBE_INDICES[face][2],
                     CUBE_INDICES[face][3],
-                    inward_normals);
+                    inward_normals,
+                );
             }
         }
     }
@@ -167,48 +201,93 @@ impl Geometry for TriangleGeometry {
             self.device.new_buffer_with_data(
                 transmute(self.indices.as_ptr()),
                 (self.indices.len() * size_of::<u16>()) as NSUInteger,
-                get_managed_buffer_storage_mode())
+                get_managed_buffer_storage_mode(),
+            )
         });
         self.vertex_position_buffer = Some(unsafe {
             self.device.new_buffer_with_data(
                 transmute(self.vertices.as_ptr()),
                 (self.vertices.len() * size_of::<Vec4>()) as NSUInteger,
-                get_managed_buffer_storage_mode())
+                get_managed_buffer_storage_mode(),
+            )
         });
         self.vertex_normal_buffer = Some(unsafe {
             self.device.new_buffer_with_data(
                 transmute(self.normals.as_ptr()),
                 (self.normals.len() * size_of::<Vec4>()) as NSUInteger,
-                get_managed_buffer_storage_mode())
+                get_managed_buffer_storage_mode(),
+            )
         });
         self.vertex_colour_buffer = Some(unsafe {
             self.device.new_buffer_with_data(
                 transmute(self.colours.as_ptr()),
                 (self.colours.len() * size_of::<Vec4>()) as NSUInteger,
-                get_managed_buffer_storage_mode())
+                get_managed_buffer_storage_mode(),
+            )
         });
         self.per_primitive_data_buffer = Some(unsafe {
             self.device.new_buffer_with_data(
                 transmute(self.triangles.as_ptr()),
                 (self.triangles.len() * size_of::<Triangle>()) as NSUInteger,
-                get_managed_buffer_storage_mode())
+                get_managed_buffer_storage_mode(),
+            )
         });
-        self.index_buffer.as_ref().unwrap().did_modify_range(
-            NSRange::new(0, self.index_buffer.as_ref().unwrap().length()));
-        self.vertex_position_buffer.as_ref().unwrap().did_modify_range(
-            NSRange::new(0, self.vertex_position_buffer.as_ref().unwrap().length()));
-        self.vertex_normal_buffer.as_ref().unwrap().did_modify_range(
-            NSRange::new(0, self.vertex_normal_buffer.as_ref().unwrap().length()));
-        self.vertex_colour_buffer.as_ref().unwrap().did_modify_range(
-            NSRange::new(0, self.vertex_colour_buffer.as_ref().unwrap().length()));
-        self.per_primitive_data_buffer.as_ref().unwrap().did_modify_range(
-            NSRange::new(0, self.per_primitive_data_buffer.as_ref().unwrap().length()));
+        self.index_buffer
+            .as_ref()
+            .unwrap()
+            .did_modify_range(NSRange::new(
+                0,
+                self.index_buffer.as_ref().unwrap().length(),
+            ));
+        self.vertex_position_buffer
+            .as_ref()
+            .unwrap()
+            .did_modify_range(NSRange::new(
+                0,
+                self.vertex_position_buffer.as_ref().unwrap().length(),
+            ));
+        self.vertex_normal_buffer
+            .as_ref()
+            .unwrap()
+            .did_modify_range(NSRange::new(
+                0,
+                self.vertex_normal_buffer.as_ref().unwrap().length(),
+            ));
+        self.vertex_colour_buffer
+            .as_ref()
+            .unwrap()
+            .did_modify_range(NSRange::new(
+                0,
+                self.vertex_colour_buffer.as_ref().unwrap().length(),
+            ));
+        self.per_primitive_data_buffer
+            .as_ref()
+            .unwrap()
+            .did_modify_range(NSRange::new(
+                0,
+                self.per_primitive_data_buffer.as_ref().unwrap().length(),
+            ));
 
-        self.index_buffer.as_ref().unwrap().set_label(&format!("index buffer of {}", self.name));
-        self.vertex_position_buffer.as_ref().unwrap().set_label(&format!("vertex position buffer of {}", self.name));
-        self.vertex_normal_buffer.as_ref().unwrap().set_label(&format!("vertex normal buffer of {}", self.name));
-        self.vertex_colour_buffer.as_ref().unwrap().set_label(&format!("vertex colour buffer of {}", self.name));
-        self.per_primitive_data_buffer.as_ref().unwrap().set_label(&format!("per primitive data buffer of {}", self.name));
+        self.index_buffer
+            .as_ref()
+            .unwrap()
+            .set_label(&format!("index buffer of {}", self.name));
+        self.vertex_position_buffer
+            .as_ref()
+            .unwrap()
+            .set_label(&format!("vertex position buffer of {}", self.name));
+        self.vertex_normal_buffer
+            .as_ref()
+            .unwrap()
+            .set_label(&format!("vertex normal buffer of {}", self.name));
+        self.vertex_colour_buffer
+            .as_ref()
+            .unwrap()
+            .set_label(&format!("vertex colour buffer of {}", self.name));
+        self.per_primitive_data_buffer
+            .as_ref()
+            .unwrap()
+            .set_label(&format!("per primitive data buffer of {}", self.name));
     }
 
     fn clear(&mut self) {
@@ -227,7 +306,8 @@ impl Geometry for TriangleGeometry {
         descriptor.set_vertex_buffer(Some(self.vertex_position_buffer.as_ref().unwrap()));
         descriptor.set_vertex_stride(size_of::<Vec4>() as NSUInteger);
         descriptor.set_triangle_count((self.indices.len() / 3) as NSUInteger);
-        descriptor.set_primitive_data_buffer(Some(self.per_primitive_data_buffer.as_ref().unwrap()));
+        descriptor
+            .set_primitive_data_buffer(Some(self.per_primitive_data_buffer.as_ref().unwrap()));
         descriptor.set_primitive_data_stride(size_of::<Triangle>() as NSUInteger);
         descriptor.set_primitive_data_element_size(size_of::<Triangle>() as NSUInteger);
         From::from(descriptor)
@@ -287,9 +367,13 @@ impl Geometry for SphereGeometry {
             self.device.new_buffer_with_data(
                 transmute(self.spheres.as_ptr()),
                 (self.spheres.len() * size_of::<Sphere>()) as NSUInteger,
-                get_managed_buffer_storage_mode())
+                get_managed_buffer_storage_mode(),
+            )
         });
-        self.sphere_buffer.as_ref().unwrap().set_label("sphere buffer");
+        self.sphere_buffer
+            .as_ref()
+            .unwrap()
+            .set_label("sphere buffer");
         let mut bounding_boxes = Vec::new();
         for sphere in &self.spheres {
             bounding_boxes.push(BoundingBox {
@@ -301,13 +385,27 @@ impl Geometry for SphereGeometry {
             self.device.new_buffer_with_data(
                 transmute(bounding_boxes.as_ptr()),
                 (bounding_boxes.len() * size_of::<BoundingBox>()) as NSUInteger,
-                get_managed_buffer_storage_mode())
+                get_managed_buffer_storage_mode(),
+            )
         });
-        self.bounding_box_buffer.as_ref().unwrap().set_label("bounding box buffer");
-        self.sphere_buffer.as_ref().unwrap().did_modify_range(
-            NSRange::new(0, self.sphere_buffer.as_ref().unwrap().length()));
-        self.bounding_box_buffer.as_ref().unwrap().did_modify_range(
-            NSRange::new(0, self.bounding_box_buffer.as_ref().unwrap().length()));
+        self.bounding_box_buffer
+            .as_ref()
+            .unwrap()
+            .set_label("bounding box buffer");
+        self.sphere_buffer
+            .as_ref()
+            .unwrap()
+            .did_modify_range(NSRange::new(
+                0,
+                self.sphere_buffer.as_ref().unwrap().length(),
+            ));
+        self.bounding_box_buffer
+            .as_ref()
+            .unwrap()
+            .did_modify_range(NSRange::new(
+                0,
+                self.bounding_box_buffer.as_ref().unwrap().length(),
+            ));
     }
 
     fn clear(&mut self) {

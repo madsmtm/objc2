@@ -6,9 +6,9 @@ use metal::*;
 use objc::{rc::autoreleasepool, runtime::YES};
 use std::mem;
 use winit::{
-    platform::macos::WindowExtMacOS,
     event::{Event, WindowEvent},
     event_loop::ControlFlow,
+    platform::macos::WindowExtMacOS,
 };
 
 pub mod camera;
@@ -19,12 +19,12 @@ pub mod scene;
 fn find_raytracing_supporting_device() -> Device {
     for device in Device::all() {
         if !device.supports_raytracing() {
-            continue
+            continue;
         }
         if device.is_low_power() {
-            continue
+            continue;
         }
-        return device
+        return device;
     }
 
     panic!("No device in this machine supports raytracing!")
@@ -57,7 +57,7 @@ fn main() {
     let cg_size = CGSize::new(draw_size.width as f64, draw_size.height as f64);
     layer.set_drawable_size(cg_size);
 
-    let mut renderer =  renderer::Renderer::new(device);
+    let mut renderer = renderer::Renderer::new(device);
     renderer.window_resized(cg_size);
 
     events_loop.run(move |event, _, control_flow| {
