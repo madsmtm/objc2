@@ -9,6 +9,7 @@ error[E0277]: the trait bound `objc2::runtime::Object: ClassType` is not satisfi
   |
   = help: the following other types implement trait `ClassType`:
             NSObject
+            __NSProxy
             __RcTestObject
 note: required by a bound in `__send_super_message_static`
  --> $WORKSPACE/crates/objc2/src/message/mod.rs
@@ -27,6 +28,7 @@ error[E0277]: the trait bound `objc2::runtime::Object: ClassType` is not satisfi
   |
   = help: the following other types implement trait `ClassType`:
             NSObject
+            __NSProxy
             __RcTestObject
 note: required by a bound in `__send_super_message_static`
  --> $WORKSPACE/crates/objc2/src/message/mod.rs

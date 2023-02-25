@@ -2193,7 +2193,6 @@ FileProvider_all = [
 Foundation = [
     "objective-c",
     "block",
-    "Foundation_NSProxy",
     "Foundation_NSError",
     "Foundation_NSAppleEventDescriptor",
     "Foundation_NSHashTable",

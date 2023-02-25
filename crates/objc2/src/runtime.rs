@@ -24,6 +24,7 @@ pub mod __nsstring;
 mod bool;
 mod method_encoding_iter;
 mod nsobject;
+mod nsproxy;
 mod nszone;
 mod protocol_object;
 
@@ -35,6 +36,10 @@ use crate::verify::{verify_method_signature, Inner};
 
 pub use self::bool::Bool;
 pub use self::nsobject::{NSObject, NSObjectProtocol};
+// Note: While this is not public, it is still a breaking change to remove,
+// since `icrate` relies on it.
+#[doc(hidden)]
+pub use self::nsproxy::NSProxy as __NSProxy;
 pub use self::nszone::NSZone;
 pub use self::protocol_object::{ImplementedBy, ProtocolObject};
 pub use crate::verify::VerificationError;

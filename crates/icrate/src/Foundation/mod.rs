@@ -112,6 +112,9 @@ pub use self::additions::*;
 pub use self::fixes::*;
 pub use self::generated::*;
 
+#[doc(inline)]
+#[cfg(feature = "Foundation_NSProxy")]
+pub use objc2::runtime::__NSProxy as NSProxy;
 pub use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
 // Available under Foundation, so makes sense here as well:
 // https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
