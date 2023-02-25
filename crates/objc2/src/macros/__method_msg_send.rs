@@ -150,6 +150,9 @@ macro_rules! __method_msg_send_id {
     };
 
     // Parse retain semantics
+    //
+    // Note: While this is not public, it is still a breaking change to change
+    // this, since `icrate` relies on it.
     (
         ($receiver:expr)
         (@__retain_semantics $retain_semantics:ident $($sel_rest:tt)*)

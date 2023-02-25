@@ -258,6 +258,8 @@ macro_rules! __impl_as_ref_borrow {
     // TODO: Expose a generic variant of the macro.
 }
 
+/// Note: While this is not public, it is still a breaking change to change
+/// this, since `icrate` relies on it.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __inner_extern_class {

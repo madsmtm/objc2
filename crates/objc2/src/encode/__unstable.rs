@@ -30,6 +30,9 @@ mod return_private {
 ///
 /// We currently don't need a similar `EncodeArgument` trait, but we might in
 /// the future.
+//
+// Note: While this is not public, it is still a breaking change to change,
+// since `block2` relies on it.
 pub trait EncodeReturn: return_private::Sealed {
     /// The Objective-C type-encoding for this type.
     const ENCODING_RETURN: Encoding;
