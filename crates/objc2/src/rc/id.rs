@@ -8,7 +8,7 @@ use core::ptr::{self, NonNull};
 use super::AutoreleasePool;
 use super::{Owned, Ownership, Shared};
 use crate::ffi;
-use crate::Message;
+use crate::{ClassType, Message};
 
 /// An pointer for Objective-C reference counted objects.
 ///
@@ -244,7 +244,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// assumes no specific class.
     ///
     /// [`Object`]: crate::runtime::Object
-    /// [`ProtocolObject::from_id`]: crate::ProtocolObject::from_id
+    /// [`ProtocolObject::from_id`]: crate::runtime::ProtocolObject::from_id
     ///
     ///
     /// # Safety
@@ -600,6 +600,21 @@ impl<T: Message> Id<T, Owned> {
         let ptr = ManuallyDrop::new(obj).ptr;
         // SAFETY: The pointer is valid, and ownership is simply decreased
         unsafe { <Id<T, Shared>>::new_nonnull(ptr) }
+    }
+}
+
+impl<T: ClassType + 'static, O: Ownership> Id<T, O>
+where
+    T::Super: 'static,
+{
+    /// Convert the object into its superclass.
+    #[inline]
+    pub fn into_super(this: Self) -> Id<T::Super, O> {
+        // SAFETY:
+        // - The casted-to type is a superclass of the type.
+        // - Both types are `'static` (this could maybe be relaxed a bit, but
+        //   let's just be on the safe side)!
+        unsafe { Self::cast::<T::Super>(this) }
     }
 }
 

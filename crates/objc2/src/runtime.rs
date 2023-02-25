@@ -25,6 +25,7 @@ mod bool;
 mod method_encoding_iter;
 mod nsobject;
 mod nszone;
+mod protocol_object;
 
 pub(crate) use self::method_encoding_iter::{EncodingParseError, MethodEncodingIter};
 use crate::encode::__unstable::{EncodeArguments, EncodeConvertReturn, EncodeReturn};
@@ -35,6 +36,7 @@ use crate::verify::{verify_method_signature, Inner};
 pub use self::bool::Bool;
 pub use self::nsobject::{NSObject, NSObjectProtocol};
 pub use self::nszone::NSZone;
+pub use self::protocol_object::{ImplementedBy, ProtocolObject};
 pub use crate::verify::VerificationError;
 
 /// Use [`Bool`] or [`ffi::BOOL`] instead.

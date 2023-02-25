@@ -6,8 +6,8 @@ use icrate::{
         declare::{Ivar, IvarDrop},
         declare_class, extern_methods, msg_send,
         rc::{Allocated, Id},
-        runtime::{Object, Sel},
-        sel, ClassType, ProtocolObject,
+        runtime::{Object, ProtocolObject, Sel},
+        sel, ClassType,
     },
     AppKit::{
         NSApplication, NSApplicationActivationPolicyRegular, NSBackingStoreBuffered,

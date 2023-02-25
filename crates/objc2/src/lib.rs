@@ -188,7 +188,7 @@ pub use self::class_type::ClassType;
 #[doc(no_inline)]
 pub use self::encode::{Encode, Encoding, RefEncode};
 pub use self::message::{Message, MessageArguments, MessageReceiver};
-pub use self::protocol::{ImplementedBy, ProtocolObject, ProtocolType};
+pub use self::protocol_type::ProtocolType;
 
 #[cfg(feature = "objc2-proc-macros")]
 #[doc(hidden)]
@@ -213,7 +213,7 @@ pub mod encode;
 pub mod exception;
 mod macros;
 mod message;
-mod protocol;
+mod protocol_type;
 pub mod rc;
 pub mod runtime;
 #[cfg(test)]

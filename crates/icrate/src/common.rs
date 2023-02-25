@@ -17,11 +17,11 @@ pub(crate) use objc2::rc::{Allocated, Id, Owned, Ownership, Shared};
 #[cfg(feature = "objective-c")]
 pub(crate) use objc2::runtime::{Bool, Class, Object, Sel};
 #[cfg(feature = "objective-c")]
-pub(crate) use objc2::runtime::{NSObject, NSObjectProtocol};
+pub(crate) use objc2::runtime::{NSObject, NSObjectProtocol, ProtocolObject};
 #[cfg(feature = "objective-c")]
 pub(crate) use objc2::{
     __inner_extern_class, extern_class, extern_methods, extern_protocol, ClassType, Message,
-    ProtocolObject, ProtocolType,
+    ProtocolType,
 };
 
 #[cfg(feature = "block")]

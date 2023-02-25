@@ -21,7 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   called as `Id::autorelease(obj, pool)` instead of `obj.autorelease(pool)`.
 
   Additionally, rename the mutable version to `Id::autorelease_mut`.
-* **BREAKING**: Moved `VerificationError` into the `runtime` module.
+* **BREAKING**: Moved `VerificationError`, `ProtocolObject` and
+  `ImplementedBy` into the `runtime` module.
 
 ### Fixed
 * Fixed using autorelease pools on 32bit macOS and older macOS versions.

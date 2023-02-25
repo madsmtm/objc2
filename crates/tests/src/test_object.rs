@@ -3,14 +3,12 @@ use std::os::raw::c_int;
 
 #[cfg(feature = "Foundation_all")]
 use icrate::Foundation::NSNumber;
+use objc2::encode::{Encoding, RefEncode};
 use objc2::rc::{autoreleasepool, AutoreleasePool, Id, Owned};
-use objc2::runtime::{Bool, Class, NSObject, NSObjectProtocol, Object, Protocol};
+use objc2::runtime::{Bool, Class, NSObject, NSObjectProtocol, Object, Protocol, ProtocolObject};
 #[cfg(feature = "malloc")]
 use objc2::sel;
-use objc2::{class, msg_send, msg_send_id};
-use objc2::{
-    extern_protocol, ClassType, Encoding, Message, ProtocolObject, ProtocolType, RefEncode,
-};
+use objc2::{class, extern_protocol, msg_send, msg_send_id, ClassType, Message, ProtocolType};
 
 extern_protocol!(
     unsafe trait MyTestProtocol: NSObjectProtocol {
