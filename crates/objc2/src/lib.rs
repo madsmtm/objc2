@@ -189,7 +189,6 @@ pub use self::class_type::ClassType;
 pub use self::encode::{Encode, Encoding, RefEncode};
 pub use self::message::{Message, MessageArguments, MessageReceiver};
 pub use self::protocol::{ImplementedBy, ProtocolObject, ProtocolType};
-pub use self::verify::VerificationError;
 
 #[cfg(feature = "objc2-proc-macros")]
 #[doc(hidden)]

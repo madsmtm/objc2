@@ -30,11 +30,12 @@ pub(crate) use self::method_encoding_iter::{EncodingParseError, MethodEncodingIt
 use crate::encode::__unstable::{EncodeArguments, EncodeConvertReturn, EncodeReturn};
 use crate::encode::{Encode, Encoding, OptionEncode, RefEncode};
 use crate::ffi;
-use crate::verify::{verify_method_signature, Inner, VerificationError};
+use crate::verify::{verify_method_signature, Inner};
 
 pub use self::bool::Bool;
 pub use self::nsobject::{NSObject, NSObjectProtocol};
 pub use self::nszone::NSZone;
+pub use crate::verify::VerificationError;
 
 /// Use [`Bool`] or [`ffi::BOOL`] instead.
 #[deprecated = "Use `Bool` or `ffi::BOOL` instead"]

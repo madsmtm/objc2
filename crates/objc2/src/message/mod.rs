@@ -78,7 +78,7 @@ fn panic_null(sel: Sel) -> ! {
 
 #[cfg(debug_assertions)]
 #[track_caller]
-fn panic_verify(cls: &Class, sel: Sel, err: crate::VerificationError) -> ! {
+fn panic_verify(cls: &Class, sel: Sel, err: crate::runtime::VerificationError) -> ! {
     panic!(
         "invalid message send to {}[{cls:?} {sel:?}]: {err}",
         if cls.is_metaclass() { "+" } else { "-" },
