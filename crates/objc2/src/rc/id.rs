@@ -741,10 +741,12 @@ impl<T: UnwindSafe + ?Sized> UnwindSafe for Id<T, Owned> {}
 
 #[cfg(test)]
 mod tests {
+    use core::mem::size_of;
+
     use super::*;
     use crate::msg_send;
     use crate::rc::{__RcTestObject, __ThreadTestData, autoreleasepool};
-    use crate::runtime::Object;
+    use crate::runtime::{NSObject, Object};
 
     #[track_caller]
     fn assert_retain_count(obj: &Object, expected: usize) {
@@ -843,5 +845,29 @@ mod tests {
         // SAFETY: The object was originally `__RcTestObject`
         let _obj: Id<__RcTestObject, _> = unsafe { Id::cast(obj) };
         expected.assert_current();
+    }
+
+    #[repr(C)]
+    struct MyObject<'a> {
+        inner: NSObject,
+        p: PhantomData<&'a str>,
+    }
+
+    /// Test that `Id<T, O>` is covariant over `T`.
+    #[allow(unused)]
+    fn assert_id_variance<'a, 'b, O: Ownership>(
+        obj: &'a Id<MyObject<'static>, O>,
+    ) -> &'a Id<MyObject<'b>, O> {
+        obj
+    }
+
+    #[test]
+    fn test_size_of() {
+        let ptr_size = size_of::<&NSObject>();
+
+        assert_eq!(size_of::<Id<NSObject, Owned>>(), ptr_size);
+        assert_eq!(size_of::<Id<NSObject, Shared>>(), ptr_size);
+        assert_eq!(size_of::<Option<Id<NSObject, Owned>>>(), ptr_size);
+        assert_eq!(size_of::<Option<Id<NSObject, Shared>>>(), ptr_size);
     }
 }

@@ -149,9 +149,11 @@ impl<T: Message> TryFrom<WeakId<T>> for Id<T, Shared> {
 
 #[cfg(test)]
 mod tests {
+    use core::mem;
+
     use super::*;
     use crate::rc::{__RcTestObject, __ThreadTestData};
-    use crate::runtime::Object;
+    use crate::runtime::NSObject;
 
     #[test]
     fn test_weak() {
@@ -214,8 +216,28 @@ mod tests {
 
     #[test]
     fn test_weak_default() {
-        let weak: WeakId<Object> = WeakId::default();
+        let weak: WeakId<NSObject> = WeakId::default();
         assert!(weak.load().is_none());
         drop(weak);
+    }
+
+    #[repr(C)]
+    struct MyObject<'a> {
+        inner: NSObject,
+        p: PhantomData<&'a str>,
+    }
+
+    /// Test that `WeakId<T>` is covariant over `T`.
+    #[allow(unused)]
+    fn assert_variance<'a, 'b>(obj: &'a WeakId<MyObject<'static>>) -> &'a WeakId<MyObject<'b>> {
+        obj
+    }
+
+    #[test]
+    fn test_size_of() {
+        assert_eq!(
+            mem::size_of::<Option<WeakId<NSObject>>>(),
+            mem::size_of::<*const ()>()
+        );
     }
 }
