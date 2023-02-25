@@ -8,7 +8,9 @@ use crate::context::Context;
 #[derive(Debug, Clone, PartialEq, Default)]
 struct Unavailable {
     ios: bool,
+    ios_app_extension: bool,
     macos: bool,
+    macos_app_extension: bool,
     maccatalyst: bool,
     watchos: bool,
     tvos: bool,
@@ -17,7 +19,9 @@ struct Unavailable {
 #[derive(Debug, Clone, PartialEq, Default)]
 struct Versions {
     ios: Option<Version>,
+    ios_app_extension: Option<Version>,
     macos: Option<Version>,
+    macos_app_extension: Option<Version>,
     maccatalyst: Option<Version>,
     watchos: Option<Version>,
     tvos: Option<Version>,
@@ -76,11 +80,23 @@ impl Availability {
                     &mut introduced.ios,
                     &mut deprecated.ios,
                 ),
+                "ios_app_extension" => set(
+                    availability,
+                    &mut unavailable.ios_app_extension,
+                    &mut introduced.ios_app_extension,
+                    &mut deprecated.ios_app_extension,
+                ),
                 "macos" => set(
                     availability,
                     &mut unavailable.macos,
                     &mut introduced.macos,
                     &mut deprecated.macos,
+                ),
+                "macos_app_extension" => set(
+                    availability,
+                    &mut unavailable.macos_app_extension,
+                    &mut introduced.macos_app_extension,
+                    &mut deprecated.macos_app_extension,
                 ),
                 "maccatalyst" => set(
                     availability,
@@ -122,7 +138,9 @@ impl fmt::Display for Availability {
         match &self.deprecated {
             Versions {
                 ios: None,
+                ios_app_extension: None,
                 macos: None,
+                macos_app_extension: None,
                 maccatalyst: None,
                 watchos: None,
                 tvos: None,

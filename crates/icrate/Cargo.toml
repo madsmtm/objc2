@@ -3208,6 +3208,298 @@ GameKit_all = [
     "GameKit_GKVoiceChat",
     "GameKit_GKVoiceChatService",
 ]
+HealthKit = [
+    "CoreLocation",
+    "Foundation",
+    "UniformTypeIdentifiers",
+]
+HealthKit_HKActivityMoveModeObject = []
+HealthKit_HKActivitySummary = []
+HealthKit_HKActivitySummaryQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKActivitySummaryType = [
+    "HealthKit_HKObjectType",
+]
+HealthKit_HKAnchoredObjectQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKAttachment = []
+HealthKit_HKAttachmentStore = []
+HealthKit_HKAudiogramSample = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKAudiogramSampleType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKAudiogramSensitivityPoint = []
+HealthKit_HKBiologicalSexObject = []
+HealthKit_HKBloodTypeObject = []
+HealthKit_HKCDADocument = []
+HealthKit_HKCDADocumentSample = [
+    "HealthKit_HKDocumentSample",
+]
+HealthKit_HKCategorySample = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKCategoryType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKCharacteristicType = [
+    "HealthKit_HKObjectType",
+]
+HealthKit_HKClinicalRecord = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKClinicalType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKContactsLensSpecification = [
+    "HealthKit_HKLensSpecification",
+]
+HealthKit_HKContactsPrescription = [
+    "HealthKit_HKVisionPrescription",
+]
+HealthKit_HKCorrelation = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKCorrelationQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKCorrelationType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKCumulativeQuantitySample = [
+    "HealthKit_HKQuantitySample",
+]
+HealthKit_HKCumulativeQuantitySeriesSample = [
+    "HealthKit_HKCumulativeQuantitySample",
+]
+HealthKit_HKDeletedObject = []
+HealthKit_HKDevice = []
+HealthKit_HKDiscreteQuantitySample = [
+    "HealthKit_HKQuantitySample",
+]
+HealthKit_HKDocumentQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKDocumentSample = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKDocumentType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKElectrocardiogram = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKElectrocardiogramQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKElectrocardiogramType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKElectrocardiogramVoltageMeasurement = []
+HealthKit_HKFHIRResource = []
+HealthKit_HKFHIRVersion = []
+HealthKit_HKFitzpatrickSkinTypeObject = []
+HealthKit_HKGlassesLensSpecification = [
+    "HealthKit_HKLensSpecification",
+]
+HealthKit_HKGlassesPrescription = [
+    "HealthKit_HKVisionPrescription",
+]
+HealthKit_HKHealthStore = []
+HealthKit_HKHeartbeatSeriesBuilder = [
+    "HealthKit_HKSeriesBuilder",
+]
+HealthKit_HKHeartbeatSeriesQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKHeartbeatSeriesSample = [
+    "HealthKit_HKSeriesSample",
+]
+HealthKit_HKLensSpecification = []
+HealthKit_HKLiveWorkoutBuilder = [
+    "HealthKit_HKWorkoutBuilder",
+]
+HealthKit_HKLiveWorkoutDataSource = []
+HealthKit_HKObject = []
+HealthKit_HKObjectType = []
+HealthKit_HKObserverQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKPrescriptionType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKQuantity = []
+HealthKit_HKQuantitySample = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKQuantitySeriesSampleBuilder = []
+HealthKit_HKQuantitySeriesSampleQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKQuantityType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKQuery = []
+HealthKit_HKQueryAnchor = []
+HealthKit_HKQueryDescriptor = []
+HealthKit_HKSample = [
+    "HealthKit_HKObject",
+]
+HealthKit_HKSampleQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKSampleType = [
+    "HealthKit_HKObjectType",
+]
+HealthKit_HKSeriesBuilder = []
+HealthKit_HKSeriesSample = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKSeriesType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_HKSource = []
+HealthKit_HKSourceQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKSourceRevision = []
+HealthKit_HKStatistics = []
+HealthKit_HKStatisticsCollection = []
+HealthKit_HKStatisticsCollectionQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKStatisticsQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKUnit = []
+HealthKit_HKVerifiableClinicalRecord = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKVerifiableClinicalRecordQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKVerifiableClinicalRecordSubject = []
+HealthKit_HKVisionPrescription = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKVisionPrism = []
+HealthKit_HKWheelchairUseObject = []
+HealthKit_HKWorkout = [
+    "HealthKit_HKSample",
+]
+HealthKit_HKWorkoutActivity = []
+HealthKit_HKWorkoutBuilder = []
+HealthKit_HKWorkoutConfiguration = []
+HealthKit_HKWorkoutEvent = []
+HealthKit_HKWorkoutRoute = [
+    "HealthKit_HKSeriesSample",
+]
+HealthKit_HKWorkoutRouteBuilder = [
+    "HealthKit_HKSeriesBuilder",
+]
+HealthKit_HKWorkoutRouteQuery = [
+    "HealthKit_HKQuery",
+]
+HealthKit_HKWorkoutSession = []
+HealthKit_HKWorkoutType = [
+    "HealthKit_HKSampleType",
+]
+HealthKit_all = [
+    "HealthKit",
+    "HealthKit_HKActivityMoveModeObject",
+    "HealthKit_HKActivitySummary",
+    "HealthKit_HKActivitySummaryQuery",
+    "HealthKit_HKActivitySummaryType",
+    "HealthKit_HKAnchoredObjectQuery",
+    "HealthKit_HKAttachment",
+    "HealthKit_HKAttachmentStore",
+    "HealthKit_HKAudiogramSample",
+    "HealthKit_HKAudiogramSampleType",
+    "HealthKit_HKAudiogramSensitivityPoint",
+    "HealthKit_HKBiologicalSexObject",
+    "HealthKit_HKBloodTypeObject",
+    "HealthKit_HKCDADocument",
+    "HealthKit_HKCDADocumentSample",
+    "HealthKit_HKCategorySample",
+    "HealthKit_HKCategoryType",
+    "HealthKit_HKCharacteristicType",
+    "HealthKit_HKClinicalRecord",
+    "HealthKit_HKClinicalType",
+    "HealthKit_HKContactsLensSpecification",
+    "HealthKit_HKContactsPrescription",
+    "HealthKit_HKCorrelation",
+    "HealthKit_HKCorrelationQuery",
+    "HealthKit_HKCorrelationType",
+    "HealthKit_HKCumulativeQuantitySample",
+    "HealthKit_HKCumulativeQuantitySeriesSample",
+    "HealthKit_HKDeletedObject",
+    "HealthKit_HKDevice",
+    "HealthKit_HKDiscreteQuantitySample",
+    "HealthKit_HKDocumentQuery",
+    "HealthKit_HKDocumentSample",
+    "HealthKit_HKDocumentType",
+    "HealthKit_HKElectrocardiogram",
+    "HealthKit_HKElectrocardiogramQuery",
+    "HealthKit_HKElectrocardiogramType",
+    "HealthKit_HKElectrocardiogramVoltageMeasurement",
+    "HealthKit_HKFHIRResource",
+    "HealthKit_HKFHIRVersion",
+    "HealthKit_HKFitzpatrickSkinTypeObject",
+    "HealthKit_HKGlassesLensSpecification",
+    "HealthKit_HKGlassesPrescription",
+    "HealthKit_HKHealthStore",
+    "HealthKit_HKHeartbeatSeriesBuilder",
+    "HealthKit_HKHeartbeatSeriesQuery",
+    "HealthKit_HKHeartbeatSeriesSample",
+    "HealthKit_HKLensSpecification",
+    "HealthKit_HKLiveWorkoutBuilder",
+    "HealthKit_HKLiveWorkoutDataSource",
+    "HealthKit_HKObject",
+    "HealthKit_HKObjectType",
+    "HealthKit_HKObserverQuery",
+    "HealthKit_HKPrescriptionType",
+    "HealthKit_HKQuantity",
+    "HealthKit_HKQuantitySample",
+    "HealthKit_HKQuantitySeriesSampleBuilder",
+    "HealthKit_HKQuantitySeriesSampleQuery",
+    "HealthKit_HKQuantityType",
+    "HealthKit_HKQuery",
+    "HealthKit_HKQueryAnchor",
+    "HealthKit_HKQueryDescriptor",
+    "HealthKit_HKSample",
+    "HealthKit_HKSampleQuery",
+    "HealthKit_HKSampleType",
+    "HealthKit_HKSeriesBuilder",
+    "HealthKit_HKSeriesSample",
+    "HealthKit_HKSeriesType",
+    "HealthKit_HKSource",
+    "HealthKit_HKSourceQuery",
+    "HealthKit_HKSourceRevision",
+    "HealthKit_HKStatistics",
+    "HealthKit_HKStatisticsCollection",
+    "HealthKit_HKStatisticsCollectionQuery",
+    "HealthKit_HKStatisticsQuery",
+    "HealthKit_HKUnit",
+    "HealthKit_HKVerifiableClinicalRecord",
+    "HealthKit_HKVerifiableClinicalRecordQuery",
+    "HealthKit_HKVerifiableClinicalRecordSubject",
+    "HealthKit_HKVisionPrescription",
+    "HealthKit_HKVisionPrism",
+    "HealthKit_HKWheelchairUseObject",
+    "HealthKit_HKWorkout",
+    "HealthKit_HKWorkoutActivity",
+    "HealthKit_HKWorkoutBuilder",
+    "HealthKit_HKWorkoutConfiguration",
+    "HealthKit_HKWorkoutEvent",
+    "HealthKit_HKWorkoutRoute",
+    "HealthKit_HKWorkoutRouteBuilder",
+    "HealthKit_HKWorkoutRouteQuery",
+    "HealthKit_HKWorkoutSession",
+    "HealthKit_HKWorkoutType",
+]
 IdentityLookup = [
     "Foundation",
 ]
@@ -3561,6 +3853,157 @@ MapKit_all = [
     "MapKit_MKUserLocationView",
     "MapKit_MKZoomControl",
 ]
+MediaPlayer = [
+    "AppKit",
+    "Foundation",
+]
+MediaPlayer_MPAdTimeRange = []
+MediaPlayer_MPChangeLanguageOptionCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPChangePlaybackPositionCommand = [
+    "MediaPlayer_MPRemoteCommand",
+]
+MediaPlayer_MPChangePlaybackPositionCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPChangePlaybackRateCommand = [
+    "MediaPlayer_MPRemoteCommand",
+]
+MediaPlayer_MPChangePlaybackRateCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPChangeRepeatModeCommand = [
+    "MediaPlayer_MPRemoteCommand",
+]
+MediaPlayer_MPChangeRepeatModeCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPChangeShuffleModeCommand = [
+    "MediaPlayer_MPRemoteCommand",
+]
+MediaPlayer_MPChangeShuffleModeCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPContentItem = []
+MediaPlayer_MPFeedbackCommand = [
+    "MediaPlayer_MPRemoteCommand",
+]
+MediaPlayer_MPFeedbackCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPMediaEntity = []
+MediaPlayer_MPMediaItem = [
+    "MediaPlayer_MPMediaEntity",
+]
+MediaPlayer_MPMediaItemArtwork = []
+MediaPlayer_MPMediaItemCollection = [
+    "MediaPlayer_MPMediaEntity",
+]
+MediaPlayer_MPMediaLibrary = []
+MediaPlayer_MPMediaPlaylist = [
+    "MediaPlayer_MPMediaItemCollection",
+]
+MediaPlayer_MPMediaPlaylistCreationMetadata = []
+MediaPlayer_MPMediaPredicate = []
+MediaPlayer_MPMediaPropertyPredicate = [
+    "MediaPlayer_MPMediaPredicate",
+]
+MediaPlayer_MPMediaQuery = []
+MediaPlayer_MPMediaQuerySection = []
+MediaPlayer_MPMusicPlayerApplicationController = [
+    "MediaPlayer_MPMusicPlayerController",
+]
+MediaPlayer_MPMusicPlayerController = []
+MediaPlayer_MPMusicPlayerControllerMutableQueue = [
+    "MediaPlayer_MPMusicPlayerControllerQueue",
+]
+MediaPlayer_MPMusicPlayerControllerQueue = []
+MediaPlayer_MPMusicPlayerMediaItemQueueDescriptor = [
+    "MediaPlayer_MPMusicPlayerQueueDescriptor",
+]
+MediaPlayer_MPMusicPlayerPlayParameters = []
+MediaPlayer_MPMusicPlayerPlayParametersQueueDescriptor = [
+    "MediaPlayer_MPMusicPlayerQueueDescriptor",
+]
+MediaPlayer_MPMusicPlayerQueueDescriptor = []
+MediaPlayer_MPMusicPlayerStoreQueueDescriptor = [
+    "MediaPlayer_MPMusicPlayerQueueDescriptor",
+]
+MediaPlayer_MPNowPlayingInfoCenter = []
+MediaPlayer_MPNowPlayingInfoLanguageOption = []
+MediaPlayer_MPNowPlayingInfoLanguageOptionGroup = []
+MediaPlayer_MPNowPlayingSession = []
+MediaPlayer_MPPlayableContentManager = []
+MediaPlayer_MPPlayableContentManagerContext = []
+MediaPlayer_MPRatingCommand = [
+    "MediaPlayer_MPRemoteCommand",
+]
+MediaPlayer_MPRatingCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPRemoteCommand = []
+MediaPlayer_MPRemoteCommandCenter = []
+MediaPlayer_MPRemoteCommandEvent = []
+MediaPlayer_MPSeekCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_MPSkipIntervalCommand = [
+    "MediaPlayer_MPRemoteCommand",
+]
+MediaPlayer_MPSkipIntervalCommandEvent = [
+    "MediaPlayer_MPRemoteCommandEvent",
+]
+MediaPlayer_all = [
+    "MediaPlayer",
+    "MediaPlayer_MPAdTimeRange",
+    "MediaPlayer_MPChangeLanguageOptionCommandEvent",
+    "MediaPlayer_MPChangePlaybackPositionCommand",
+    "MediaPlayer_MPChangePlaybackPositionCommandEvent",
+    "MediaPlayer_MPChangePlaybackRateCommand",
+    "MediaPlayer_MPChangePlaybackRateCommandEvent",
+    "MediaPlayer_MPChangeRepeatModeCommand",
+    "MediaPlayer_MPChangeRepeatModeCommandEvent",
+    "MediaPlayer_MPChangeShuffleModeCommand",
+    "MediaPlayer_MPChangeShuffleModeCommandEvent",
+    "MediaPlayer_MPContentItem",
+    "MediaPlayer_MPFeedbackCommand",
+    "MediaPlayer_MPFeedbackCommandEvent",
+    "MediaPlayer_MPMediaEntity",
+    "MediaPlayer_MPMediaItem",
+    "MediaPlayer_MPMediaItemArtwork",
+    "MediaPlayer_MPMediaItemCollection",
+    "MediaPlayer_MPMediaLibrary",
+    "MediaPlayer_MPMediaPlaylist",
+    "MediaPlayer_MPMediaPlaylistCreationMetadata",
+    "MediaPlayer_MPMediaPredicate",
+    "MediaPlayer_MPMediaPropertyPredicate",
+    "MediaPlayer_MPMediaQuery",
+    "MediaPlayer_MPMediaQuerySection",
+    "MediaPlayer_MPMusicPlayerApplicationController",
+    "MediaPlayer_MPMusicPlayerController",
+    "MediaPlayer_MPMusicPlayerControllerMutableQueue",
+    "MediaPlayer_MPMusicPlayerControllerQueue",
+    "MediaPlayer_MPMusicPlayerMediaItemQueueDescriptor",
+    "MediaPlayer_MPMusicPlayerPlayParameters",
+    "MediaPlayer_MPMusicPlayerPlayParametersQueueDescriptor",
+    "MediaPlayer_MPMusicPlayerQueueDescriptor",
+    "MediaPlayer_MPMusicPlayerStoreQueueDescriptor",
+    "MediaPlayer_MPNowPlayingInfoCenter",
+    "MediaPlayer_MPNowPlayingInfoLanguageOption",
+    "MediaPlayer_MPNowPlayingInfoLanguageOptionGroup",
+    "MediaPlayer_MPNowPlayingSession",
+    "MediaPlayer_MPPlayableContentManager",
+    "MediaPlayer_MPPlayableContentManagerContext",
+    "MediaPlayer_MPRatingCommand",
+    "MediaPlayer_MPRatingCommandEvent",
+    "MediaPlayer_MPRemoteCommand",
+    "MediaPlayer_MPRemoteCommandCenter",
+    "MediaPlayer_MPRemoteCommandEvent",
+    "MediaPlayer_MPSeekCommandEvent",
+    "MediaPlayer_MPSkipIntervalCommand",
+    "MediaPlayer_MPSkipIntervalCommandEvent",
+]
 Metal = [
     "Foundation",
 ]
@@ -3817,6 +4260,122 @@ Metal_all = [
     "Metal_MTLVertexDescriptor",
     "Metal_MTLVisibleFunctionTableDescriptor",
 ]
+MetricKit = [
+    "Foundation",
+]
+MetricKit_MXAnimationMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXAppExitMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXAppLaunchDiagnostic = [
+    "MetricKit_MXDiagnostic",
+]
+MetricKit_MXAppLaunchMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXAppResponsivenessMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXAppRunTimeMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXAverage = []
+MetricKit_MXBackgroundExitData = []
+MetricKit_MXCPUExceptionDiagnostic = [
+    "MetricKit_MXDiagnostic",
+]
+MetricKit_MXCPUMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXCallStackTree = []
+MetricKit_MXCellularConditionMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXCrashDiagnostic = [
+    "MetricKit_MXDiagnostic",
+]
+MetricKit_MXDiagnostic = []
+MetricKit_MXDiagnosticPayload = []
+MetricKit_MXDiskIOMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXDiskWriteExceptionDiagnostic = [
+    "MetricKit_MXDiagnostic",
+]
+MetricKit_MXDisplayMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXForegroundExitData = []
+MetricKit_MXGPUMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXHangDiagnostic = [
+    "MetricKit_MXDiagnostic",
+]
+MetricKit_MXHistogram = []
+MetricKit_MXHistogramBucket = []
+MetricKit_MXLocationActivityMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXMemoryMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXMetaData = []
+MetricKit_MXMetric = []
+MetricKit_MXMetricManager = []
+MetricKit_MXMetricPayload = []
+MetricKit_MXNetworkTransferMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXSignpostIntervalData = []
+MetricKit_MXSignpostMetric = [
+    "MetricKit_MXMetric",
+]
+MetricKit_MXUnitAveragePixelLuminance = [
+    "Foundation_NSDimension",
+]
+MetricKit_MXUnitSignalBars = [
+    "Foundation_NSDimension",
+]
+MetricKit_all = [
+    "MetricKit",
+    "MetricKit_MXAnimationMetric",
+    "MetricKit_MXAppExitMetric",
+    "MetricKit_MXAppLaunchDiagnostic",
+    "MetricKit_MXAppLaunchMetric",
+    "MetricKit_MXAppResponsivenessMetric",
+    "MetricKit_MXAppRunTimeMetric",
+    "MetricKit_MXAverage",
+    "MetricKit_MXBackgroundExitData",
+    "MetricKit_MXCPUExceptionDiagnostic",
+    "MetricKit_MXCPUMetric",
+    "MetricKit_MXCallStackTree",
+    "MetricKit_MXCellularConditionMetric",
+    "MetricKit_MXCrashDiagnostic",
+    "MetricKit_MXDiagnostic",
+    "MetricKit_MXDiagnosticPayload",
+    "MetricKit_MXDiskIOMetric",
+    "MetricKit_MXDiskWriteExceptionDiagnostic",
+    "MetricKit_MXDisplayMetric",
+    "MetricKit_MXForegroundExitData",
+    "MetricKit_MXGPUMetric",
+    "MetricKit_MXHangDiagnostic",
+    "MetricKit_MXHistogram",
+    "MetricKit_MXHistogramBucket",
+    "MetricKit_MXLocationActivityMetric",
+    "MetricKit_MXMemoryMetric",
+    "MetricKit_MXMetaData",
+    "MetricKit_MXMetric",
+    "MetricKit_MXMetricManager",
+    "MetricKit_MXMetricPayload",
+    "MetricKit_MXNetworkTransferMetric",
+    "MetricKit_MXSignpostIntervalData",
+    "MetricKit_MXSignpostMetric",
+    "MetricKit_MXUnitAveragePixelLuminance",
+    "MetricKit_MXUnitSignalBars",
+]
 OSAKit = [
     "AppKit",
     "Foundation",
@@ -3837,6 +4396,120 @@ OSAKit_all = [
     "OSAKit_OSAScript",
     "OSAKit_OSAScriptController",
     "OSAKit_OSAScriptView",
+]
+PhotoKit = [
+    "AppKit",
+    "CoreLocation",
+    "Foundation",
+]
+PhotoKit_PHAdjustmentData = []
+PhotoKit_PHAsset = [
+    "PhotoKit_PHObject",
+]
+PhotoKit_PHAssetChangeRequest = [
+    "PhotoKit_PHChangeRequest",
+]
+PhotoKit_PHAssetCollection = [
+    "PhotoKit_PHCollection",
+]
+PhotoKit_PHAssetCollectionChangeRequest = [
+    "PhotoKit_PHChangeRequest",
+]
+PhotoKit_PHAssetCreationRequest = [
+    "PhotoKit_PHAssetChangeRequest",
+]
+PhotoKit_PHAssetResource = []
+PhotoKit_PHAssetResourceCreationOptions = []
+PhotoKit_PHAssetResourceManager = []
+PhotoKit_PHAssetResourceRequestOptions = []
+PhotoKit_PHCachingImageManager = [
+    "PhotoKit_PHImageManager",
+]
+PhotoKit_PHChange = []
+PhotoKit_PHChangeRequest = []
+PhotoKit_PHCloudIdentifier = []
+PhotoKit_PHCloudIdentifierMapping = []
+PhotoKit_PHCollection = [
+    "PhotoKit_PHObject",
+]
+PhotoKit_PHCollectionList = [
+    "PhotoKit_PHCollection",
+]
+PhotoKit_PHCollectionListChangeRequest = [
+    "PhotoKit_PHChangeRequest",
+]
+PhotoKit_PHContentEditingInput = []
+PhotoKit_PHContentEditingInputRequestOptions = []
+PhotoKit_PHContentEditingOutput = []
+PhotoKit_PHFetchOptions = []
+PhotoKit_PHFetchResult = []
+PhotoKit_PHFetchResultChangeDetails = []
+PhotoKit_PHImageManager = []
+PhotoKit_PHImageRequestOptions = []
+PhotoKit_PHLivePhoto = []
+PhotoKit_PHLivePhotoEditingContext = []
+PhotoKit_PHLivePhotoRequestOptions = []
+PhotoKit_PHLocalIdentifierMapping = []
+PhotoKit_PHObject = []
+PhotoKit_PHObjectChangeDetails = []
+PhotoKit_PHObjectPlaceholder = [
+    "PhotoKit_PHObject",
+]
+PhotoKit_PHPersistentChange = []
+PhotoKit_PHPersistentChangeFetchResult = []
+PhotoKit_PHPersistentChangeToken = []
+PhotoKit_PHPersistentObjectChangeDetails = []
+PhotoKit_PHPhotoLibrary = []
+PhotoKit_PHProject = [
+    "PhotoKit_PHAssetCollection",
+]
+PhotoKit_PHProjectChangeRequest = [
+    "PhotoKit_PHChangeRequest",
+]
+PhotoKit_PHVideoRequestOptions = []
+PhotoKit_all = [
+    "PhotoKit",
+    "PhotoKit_PHAdjustmentData",
+    "PhotoKit_PHAsset",
+    "PhotoKit_PHAssetChangeRequest",
+    "PhotoKit_PHAssetCollection",
+    "PhotoKit_PHAssetCollectionChangeRequest",
+    "PhotoKit_PHAssetCreationRequest",
+    "PhotoKit_PHAssetResource",
+    "PhotoKit_PHAssetResourceCreationOptions",
+    "PhotoKit_PHAssetResourceManager",
+    "PhotoKit_PHAssetResourceRequestOptions",
+    "PhotoKit_PHCachingImageManager",
+    "PhotoKit_PHChange",
+    "PhotoKit_PHChangeRequest",
+    "PhotoKit_PHCloudIdentifier",
+    "PhotoKit_PHCloudIdentifierMapping",
+    "PhotoKit_PHCollection",
+    "PhotoKit_PHCollectionList",
+    "PhotoKit_PHCollectionListChangeRequest",
+    "PhotoKit_PHContentEditingInput",
+    "PhotoKit_PHContentEditingInputRequestOptions",
+    "PhotoKit_PHContentEditingOutput",
+    "PhotoKit_PHFetchOptions",
+    "PhotoKit_PHFetchResult",
+    "PhotoKit_PHFetchResultChangeDetails",
+    "PhotoKit_PHImageManager",
+    "PhotoKit_PHImageRequestOptions",
+    "PhotoKit_PHLivePhoto",
+    "PhotoKit_PHLivePhotoEditingContext",
+    "PhotoKit_PHLivePhotoRequestOptions",
+    "PhotoKit_PHLocalIdentifierMapping",
+    "PhotoKit_PHObject",
+    "PhotoKit_PHObjectChangeDetails",
+    "PhotoKit_PHObjectPlaceholder",
+    "PhotoKit_PHPersistentChange",
+    "PhotoKit_PHPersistentChangeFetchResult",
+    "PhotoKit_PHPersistentChangeToken",
+    "PhotoKit_PHPersistentObjectChangeDetails",
+    "PhotoKit_PHPhotoLibrary",
+    "PhotoKit_PHProject",
+    "PhotoKit_PHProjectChangeRequest",
+    "PhotoKit_PHVideoRequestOptions",
 ]
 SoundAnalysis = [
     "Foundation",
@@ -4585,8 +5258,10 @@ unstable-frameworks-macos-10-13 = [
     "GameKit_all",
     "LocalAuthentication_all",
     "MapKit_all",
+    "MediaPlayer_all",
     "MetalKit_all",
     "Metal_all",
+    "PhotoKit_all",
     "unstable-example-delegate",
     "unstable-example-nspasteboard",
     "unstable-example-speech_synthesis",
@@ -4615,6 +5290,7 @@ unstable-frameworks-macos-12 = [
     "DataDetection_all",
     "LocalAuthenticationEmbeddedUI_all",
     "MailKit_all",
+    "MetricKit_all",
     "unstable-frameworks-macos-11",
 ]
 unstable-frameworks-macos-13 = [
@@ -4629,6 +5305,7 @@ unstable-frameworks-macos-13 = [
     "ExtensionKit_all",
     "FileProviderUI_all",
     "FileProvider_all",
+    "HealthKit_all",
     "IdentityLookup_all",
     "LinkPresentation_all",
     "MetalFX_all",

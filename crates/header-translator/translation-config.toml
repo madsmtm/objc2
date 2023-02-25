@@ -247,6 +247,13 @@ ios = "3.0"
 tvos = "9.0"
 watchos = "3.0"
 
+[library.HealthKit]
+imports = ["CoreLocation", "Foundation", "UniformTypeIdentifiers"]
+macos = "13.0"
+maccatalyst = "13.0"
+ios = "8.0"
+watchos = "2.0"
+
 [library.IdentityLookup]
 imports = ["Foundation"]
 macos = "10.15"
@@ -299,6 +306,14 @@ ios = "3.0"
 tvos = "9.2"
 watchos = "2.0"
 
+[library.MediaPlayer]
+imports = ["AppKit", "Foundation"]
+macos = "10.12.1"
+maccatalyst = "13.0"
+ios = "2.0"
+tvos = "9.0"
+watchos = "5.0"
+
 [library.Metal]
 imports = ["Foundation"]
 macos = "10.11"
@@ -323,6 +338,21 @@ macos = "10.11"
 maccatalyst = "13.0"
 ios = "9.0"
 tvos = "9.0"
+
+[library.MetricKit]
+imports = ["Foundation"]
+macos = "12.0"
+maccatalyst = "13.0"
+ios = "13.0"
+
+[library.Photos]
+name = "PhotoKit"
+imports = ["AppKit", "CoreLocation", "Foundation"]
+macos = "10.11"
+maccatalyst = "13.0"
+ios = "8.0"
+tvos = "10.0"
+watchos = "9.0"
 
 [library.OSAKit]
 imports = ["AppKit", "Foundation"]
@@ -1162,6 +1192,41 @@ skipped = true
 skipped = true
 [class.LAPublicKey.methods.verifyData_signature_secKeyAlgorithm_completion]
 skipped = true
+# Needs `CGImagePropertyOrientation` from `ImageIO`
+[class.PHLivePhotoEditingContext.methods.orientation]
+skipped = true
+[class.PHImageManager.methods.requestImageDataAndOrientationForAsset_options_resultHandler]
+skipped = true
+# Needs `UIImageOrientation` from `UIKit`
+[class.PHImageManager.methods.requestImageDataForAsset_options_resultHandler]
+skipped = true
+# Needs `CMTime` from `CoreMedia`
+[class.PHLivePhotoEditingContext.methods.duration]
+skipped = true
+[class.PHLivePhotoEditingContext.methods.photoTime]
+skipped = true
+[protocol.PHLivePhotoFrame.methods.time]
+skipped = true
+# Needs `PHLivePhotoFrameProcessingBlock` (skipped because needs `CIImage`)
+[class.PHLivePhotoEditingContext.methods.frameProcessor]
+skipped = true
+[class.PHLivePhotoEditingContext.methods.setFrameProcessor]
+skipped = true
+# Needs `CIImage` from `CoreImage`
+[typedef.PHLivePhotoFrameProcessingBlock]
+skipped = true
+# Needs `dispatch_block_t`
+[class.PHPhotoLibrary.methods.performChanges_completionHandler]
+skipped = true
+[class.PHPhotoLibrary.methods.performChangesAndWait_error]
+skipped = true
+# Needs `CMTimeRange` from `CoreMedia`
+[class.MPAdTimeRange.methods.initWithTimeRange]
+skipped = true
+[class.MPAdTimeRange.methods.timeRange]
+skipped = true
+[class.MPAdTimeRange.methods.setTimeRange]
+skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]
@@ -1466,4 +1531,16 @@ skipped-protocols = ["CALayerDelegate"]
 skipped = true
 # produces wrong values for most cases; manually define for now
 [enum.LAError]
+skipped = true
+
+# fails to strip const from `typedef const NSString *const MXLaunchTaskID;`
+[typedef.MXLaunchTaskID]
+skipped = true
+# fails to parse method argument with `MXLaunchTaskID`
+[class.MXMetricManager.methods.extendLaunchMeasurementForTaskID_error]
+skipped = true
+[class.MXMetricManager.methods.finishExtendedLaunchMeasurementForTaskID_error]
+skipped = true
+# `os_log_t` not defined; skip for now
+[class.MXMetricManager.methods.makeLogHandleWithCategory]
 skipped = true

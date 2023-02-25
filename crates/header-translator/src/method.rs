@@ -108,6 +108,9 @@ impl MethodModifiers {
             EntityKind::ObjCInstanceMethodDecl => {
                 warn!("method inside property/method");
             }
+            EntityKind::VisibilityAttr => {
+                // TODO: Handle these visibility attributes
+            }
             _ => error!("unknown"),
         });
 
