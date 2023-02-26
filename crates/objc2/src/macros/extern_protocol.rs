@@ -18,7 +18,7 @@
 ///
 /// [protocols]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocProtocols.html
 /// [working-with]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithProtocols/WorkingwithProtocols.html
-/// [`ProtocolObject`]: crate::ProtocolObject
+/// [`ProtocolObject`]: crate::runtime::ProtocolObject
 ///
 ///
 /// # Specification
@@ -46,7 +46,7 @@
 /// [`extern_methods!`], if you are familiar with those, it should be fairly
 /// straightforward to use.
 ///
-/// [`ProtocolObject<dyn T>`]: crate::ProtocolObject
+/// [`ProtocolObject<dyn T>`]: crate::runtime::ProtocolObject
 /// [`ProtocolType`]: crate::ProtocolType
 /// [`declare_class!`]: crate::declare_class
 /// [`extern_class!`]: crate::extern_class
@@ -165,7 +165,7 @@ macro_rules! extern_protocol {
         }
 
         $(#[$impl_m])*
-        unsafe impl<T> $name for $crate::ProtocolObject<T>
+        unsafe impl<T> $name for $crate::runtime::ProtocolObject<T>
         where
             T: ?$crate::__macro_helpers::Sized + $crate::ProtocolType + $name
         {}
@@ -181,7 +181,7 @@ macro_rules! extern_protocol {
         // SAFETY: Anything that implements the protocol `$name` is valid to
         // convert to `ProtocolObject<dyn $name>`.
         $(#[$impl_m])*
-        unsafe impl<T> $crate::ImplementedBy<T> for dyn $for
+        unsafe impl<T> $crate::runtime::ImplementedBy<T> for dyn $for
         where
             T: ?$crate::__macro_helpers::Sized + $crate::Message + $name
         {

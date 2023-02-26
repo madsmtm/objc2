@@ -188,8 +188,7 @@ pub use self::class_type::ClassType;
 #[doc(no_inline)]
 pub use self::encode::{Encode, Encoding, RefEncode};
 pub use self::message::{Message, MessageArguments, MessageReceiver};
-pub use self::protocol::{ImplementedBy, ProtocolObject, ProtocolType};
-pub use self::verify::VerificationError;
+pub use self::protocol_type::ProtocolType;
 
 #[cfg(feature = "objc2-proc-macros")]
 #[doc(hidden)]
@@ -207,14 +206,13 @@ macro_rules! __hash_idents {
 
 #[doc(hidden)]
 pub mod __macro_helpers;
-mod cache;
 mod class_type;
 pub mod declare;
 pub mod encode;
 pub mod exception;
 mod macros;
 mod message;
-mod protocol;
+mod protocol_type;
 pub mod rc;
 pub mod runtime;
 #[cfg(test)]

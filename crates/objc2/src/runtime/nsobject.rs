@@ -2,11 +2,8 @@ use core::fmt;
 use core::hash;
 
 use crate::rc::{DefaultId, Id, Owned};
-use crate::runtime::{Class, Object, Protocol};
-use crate::{
-    extern_methods, msg_send, msg_send_id, ClassType, ImplementedBy, Message, ProtocolObject,
-    ProtocolType,
-};
+use crate::runtime::{Class, ImplementedBy, Object, Protocol, ProtocolObject};
+use crate::{extern_methods, msg_send, msg_send_id, ClassType, Message, ProtocolType};
 
 crate::__emit_struct! {
     (
@@ -62,10 +59,12 @@ unsafe impl ClassType for NSObject {
         }
     }
 
+    #[inline]
     fn as_super(&self) -> &Self::Super {
         &self.__inner
     }
 
+    #[inline]
     fn as_super_mut(&mut self) -> &mut Self::Super {
         &mut self.__inner
     }
@@ -211,6 +210,7 @@ impl hash::Hash for NSObject {
 }
 
 impl fmt::Debug for NSObject {
+    #[inline]
     #[doc(alias = "description")]
     #[doc(alias = "debugDescription")]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

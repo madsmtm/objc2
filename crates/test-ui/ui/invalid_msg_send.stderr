@@ -5,7 +5,7 @@ error: unexpected end of macro invocation
   |                                       ^ missing tokens in macro arguments
   |
 note: while trying to match `,`
- --> $WORKSPACE/crates/objc2/src/macros.rs
+ --> $WORKSPACE/crates/objc2/src/macros/mod.rs
   |
   |     [$obj:expr, $($selector_and_arguments:tt)+] => {
   |               ^
@@ -17,7 +17,7 @@ error: unexpected end of macro invocation
   |                                        ^ missing tokens in macro arguments
   |
 note: while trying to match meta-variable `$selector_and_arguments:tt`
- --> $WORKSPACE/crates/objc2/src/macros.rs
+ --> $WORKSPACE/crates/objc2/src/macros/mod.rs
   |
   |     [$obj:expr, $($selector_and_arguments:tt)+] => {
   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^

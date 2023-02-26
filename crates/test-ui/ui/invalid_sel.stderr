@@ -5,7 +5,7 @@ error: unexpected end of macro invocation
   |     ^^^^^^ missing tokens in macro arguments
   |
 note: while trying to match meta-variable `$first:ident`
- --> $WORKSPACE/crates/objc2/src/macros.rs
+ --> $WORKSPACE/crates/objc2/src/macros/mod.rs
   |
   |     ($first:ident $(: $($($rest:ident)? :)*)?) => {
   |      ^^^^^^^^^^^^
@@ -18,7 +18,7 @@ error: unexpected end of macro invocation
   |              ^ missing tokens in macro arguments
   |
 note: while trying to match `:`
- --> $WORKSPACE/crates/objc2/src/macros.rs
+ --> $WORKSPACE/crates/objc2/src/macros/mod.rs
   |
   |         $($ident:ident)? : $($rest:tt)*
   |                          ^
@@ -30,7 +30,7 @@ error: unexpected end of macro invocation
   |                 ^ missing tokens in macro arguments
   |
 note: while trying to match `:`
- --> $WORKSPACE/crates/objc2/src/macros.rs
+ --> $WORKSPACE/crates/objc2/src/macros/mod.rs
   |
   |         $($ident:ident)? : $($rest:tt)*
   |                          ^

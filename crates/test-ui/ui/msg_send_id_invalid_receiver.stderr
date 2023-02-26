@@ -10,7 +10,7 @@ error[E0308]: mismatched types
   = note: expected reference `&objc2::runtime::Class`
              found reference `&objc2::runtime::Object`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
@@ -27,7 +27,7 @@ error[E0308]: mismatched types
   = note:   expected enum `Option<Allocated<_>>`
           found reference `&objc2::runtime::Object`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
@@ -44,7 +44,7 @@ error[E0308]: mismatched types
   = note:   expected enum `Option<Allocated<_>>`
           found reference `&objc2::runtime::Class`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
@@ -61,7 +61,7 @@ error[E0308]: mismatched types
   = note: expected enum `Option<Allocated<_>>`
            found struct `Id<objc2::runtime::Object>`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
@@ -78,7 +78,7 @@ error[E0308]: mismatched types
   = note: expected enum `Option<Allocated<_>>`
              found enum `Option<Id<objc2::runtime::Object>>`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^

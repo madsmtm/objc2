@@ -1,6 +1,6 @@
 //! The negative cases of protocol.rs `impl_traits`
-use objc2::{ClassType, declare_class, extern_protocol, ProtocolObject, ProtocolType};
-use objc2::runtime::{NSObjectProtocol, NSObject};
+use objc2::{ClassType, declare_class, extern_protocol, ProtocolType};
+use objc2::runtime::{NSObjectProtocol, NSObject, ProtocolObject};
 
 extern_protocol!(
     unsafe trait Foo {}

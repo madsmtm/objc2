@@ -17,6 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `MetricKit`
   - `PhotoKit`
 
+### Removed
+* **BREAKING**: Removed various redundant `NSProxy` methods.
+
 
 ## icrate 0.0.2 - 2023-02-07
 

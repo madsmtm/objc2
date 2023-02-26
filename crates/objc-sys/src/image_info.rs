@@ -1,5 +1,7 @@
+/// Note: While `objc2` relies on this, you can freely break this, since it is
+/// only used behind experimental features (`unstable-static-*`).
 #[repr(C)]
-#[doc(hidden)] // Private for now
+#[doc(hidden)]
 pub struct __ImageInfo {
     // These are not actually `unsigned int`, even though the docs say so
     /// The version of the image info struct.

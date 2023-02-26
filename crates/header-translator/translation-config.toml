@@ -198,7 +198,6 @@ imports = []
 extra-features = [
     "objective-c",
     "block",
-    "Foundation_NSProxy",
     # Temporary, since some structs and statics use these
     "Foundation_NSError",
     "Foundation_NSAppleEventDescriptor",
@@ -558,13 +557,12 @@ countForFetchRequest_error = { skipped = true }
 [class.NSBundle.methods.localizedAttributedStringForKey_value_table]
 skipped = true
 
-# Root class
+# Root classes, defined in `objc2` for now
 [class.NSProxy]
-definition-skipped = true
-
-# Ignore categories on NSObject for now
-[class.NSObject]
 skipped = true
+[class.NSObject]
+skipped = true # Also ignore categories on NSObject for now
+
 [protocol.NSObject]
 renamed = "NSObjectProtocol"
 

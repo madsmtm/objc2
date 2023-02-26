@@ -3,8 +3,8 @@
 use core::mem::ManuallyDrop;
 
 use objc2::rc::Id;
-use objc2::runtime::Protocol;
-use objc2::{extern_protocol, ProtocolObject, ProtocolType};
+use objc2::runtime::{Protocol, ProtocolObject};
+use objc2::{extern_protocol, ProtocolType};
 
 extern_protocol!(
     unsafe trait MyProtocol {
