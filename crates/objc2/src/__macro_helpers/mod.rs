@@ -15,9 +15,6 @@ use crate::runtime::{Class, Object, Protocol, Sel};
 use crate::{Message, MessageArguments, MessageReceiver};
 use crate::{__sel_data, __sel_inner};
 
-pub use crate::cache::CachedClass;
-pub use crate::cache::CachedSel;
-
 pub use core::borrow::{Borrow, BorrowMut};
 pub use core::cell::UnsafeCell;
 pub use core::convert::{AsMut, AsRef};
@@ -31,8 +28,10 @@ pub use core::{compile_error, concat, panic, stringify};
 // TODO: Use `core::cell::LazyCell`
 pub use std::sync::Once;
 
+mod cache;
 mod declare_class;
 
+pub use self::cache::{CachedClass, CachedSel};
 pub use self::declare_class::{MaybeOptionId, MessageRecieveId};
 
 // Common selectors.

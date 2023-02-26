@@ -7,7 +7,7 @@ error[E0271]: type mismatch resolving `<Id<Object> as MaybeUnwrap>::Input == Id<
   = note: expected struct `Id<NSObject, _>`
              found struct `Id<objc2::runtime::Object, Shared>`
 note: required by a bound in `send_message_id`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |                                                                   ^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`

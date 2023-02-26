@@ -18,7 +18,7 @@ error[E0308]: mismatched types
              found enum `Result<(), Id<_>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 help: try wrapping the expression in `Err`
-  --> $WORKSPACE/crates/objc2/src/macros.rs
+  --> $WORKSPACE/crates/objc2/src/macros/mod.rs
    |
    |         Err(result)
    |         ++++      +
