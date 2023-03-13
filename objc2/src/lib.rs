@@ -175,7 +175,7 @@
 #![warn(clippy::cargo)]
 #![warn(clippy::ptr_as_ptr)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2/0.3.0-beta.3")]
+#![doc(html_root_url = "https://docs.rs/objc2/0.3.0-beta.3.patch-leaks")]
 
 #[cfg(not(feature = "alloc"))]
 compile_error!("The `alloc` feature currently must be enabled.");
