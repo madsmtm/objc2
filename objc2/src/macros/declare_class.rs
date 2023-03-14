@@ -693,7 +693,7 @@ macro_rules! declare_class {
                 // Note: ARC does this automatically, so most Objective-C code
                 // in the wild don't contain this; but we don't have ARC, so
                 // we must do this.
-                unsafe { msg_send![super(self), dealloc] }
+                unsafe { $crate::msg_send![super(self), dealloc] }
             }
         }
 
