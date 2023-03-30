@@ -1,4 +1,5 @@
 //! Verify that certain things we don't want to be encode aren't.
+use core::cell::{Cell, UnsafeCell};
 use core::ffi::c_void;
 
 use objc2::encode::Encode;
@@ -22,4 +23,12 @@ fn main() {
     is_encode::<fn(i32, ())>();
 
     is_encode::<&Sel>();
+
+    // This should compile
+    is_encode::<UnsafeCell<&u8>>();
+    // But this mustn't
+    is_encode::<Option<UnsafeCell<&u8>>>();
+
+    // Same
+    is_encode::<Option<Cell<&u8>>>();
 }
