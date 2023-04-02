@@ -15,6 +15,31 @@ struct Unavailable {
     watchos: bool,
     tvos: bool,
 }
+impl fmt::Display for Unavailable {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut unavailable_oses = Vec::new();
+        if self.ios {
+            unavailable_oses.push("target_os = \"ios\"");
+        }
+
+        if self.macos {
+            unavailable_oses.push("target_os = \"macos\"");
+        }
+        if self.watchos {
+            unavailable_oses.push("target_os = \"tvos\"");
+        }
+
+        if self.watchos {
+            unavailable_oses.push("target_os = \"watchos\"");
+        }
+
+        if !unavailable_oses.is_empty() {
+            let unavailable_oses = unavailable_oses.join(",");
+            writeln!(f, "#[cfg(not(any({unavailable_oses})))]")?;
+        }
+        Ok(())
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Default)]
 struct Versions {
@@ -157,6 +182,8 @@ impl fmt::Display for Availability {
                 }
             }
         }
+        writeln!(f, "{}", self.unavailable)?;
+
         // TODO: Emit `cfg` attributes based on `self.unavailable`
         // TODO: Emit availability checks based on `self.introduced`
         Ok(())
