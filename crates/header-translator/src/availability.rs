@@ -21,14 +21,12 @@ impl fmt::Display for Unavailable {
         if self.ios {
             unavailable_oses.push("target_os = \"ios\"");
         }
-
         if self.macos {
             unavailable_oses.push("target_os = \"macos\"");
         }
         if self.watchos {
             unavailable_oses.push("target_os = \"tvos\"");
         }
-
         if self.watchos {
             unavailable_oses.push("target_os = \"watchos\"");
         }
@@ -184,7 +182,6 @@ impl fmt::Display for Availability {
         }
         writeln!(f, "{}", self.unavailable)?;
 
-        // TODO: Emit `cfg` attributes based on `self.unavailable`
         // TODO: Emit availability checks based on `self.introduced`
         Ok(())
     }
