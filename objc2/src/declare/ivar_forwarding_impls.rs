@@ -162,9 +162,6 @@ where
     fn size_hint(&self) -> (usize, Option<usize>) {
         (**self).size_hint()
     }
-    fn nth(&mut self, n: usize) -> Option<<<Self as Deref>::Target as Iterator>::Item> {
-        (**self).nth(n)
-    }
 }
 
 impl<I: IvarType> DoubleEndedIterator for Ivar<I>
