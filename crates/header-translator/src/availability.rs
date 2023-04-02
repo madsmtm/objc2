@@ -180,7 +180,7 @@ impl fmt::Display for Availability {
                 }
             }
         }
-        writeln!(f, "{}", self.unavailable)?;
+        write!(f, "{}", self.unavailable)?;
 
         // TODO: Emit availability checks based on `self.introduced`
         Ok(())
