@@ -63,39 +63,36 @@ impl fmt::Display for Library {
             // NOTE: some SDK files have '+' in the file name
             let name = name.replace('+', "_");
             for stmt in &file.stmts {
+                // Use a set to deduplicate features, and to have them in
+                // a consistent order
+                let mut features = BTreeSet::new();
+                stmt.visit_required_types(|item| {
+                    if let Some(feature) = item.feature() {
+                        features.insert(format!("feature = \"{feature}\""));
+                    }
+                });
+                match features.len() {
+                    0 => {}
+                    1 => {
+                        writeln!(f, "#[cfg({})]", features.first().unwrap())?;
+                    }
+                    _ => {
+                        writeln!(
+                            f,
+                            "#[cfg(all({}))]",
+                            features
+                            .iter()
+                            .map(|s| &**s)
+                            .collect::<Vec<&str>>()
+                            .join(",")
+                        )?;
+                    }
+                }
                 let mut iter = stmt.declared_types();
-                if let Some(item) = iter.next() {
-                    // Use a set to deduplicate features, and to have them in
-                    // a consistent order
-                    let mut features = BTreeSet::new();
-                    stmt.visit_required_types(|item| {
-                        if let Some(feature) = item.feature() {
-                            features.insert(format!("feature = \"{feature}\""));
-                        }
-                    });
-                    match features.len() {
-                        0 => {}
-                        1 => {
-                            writeln!(f, "#[cfg({})]", features.first().unwrap())?;
-                        }
-                        _ => {
-                            writeln!(
-                                f,
-                                "#[cfg(all({}))]",
-                                features
-                                    .iter()
-                                    .map(|s| &**s)
-                                    .collect::<Vec<&str>>()
-                                    .join(",")
-                            )?;
-                        }
-                    }
 
-                    writeln!(f, "pub use self::__{name}::{{{item}")?;
-                    for item in iter {
-                        writeln!(f, ", {item}")?;
-                    }
-                    writeln!(f, "}};")?;
+                for (item, unavailability) in iter {
+                    writeln!(f, "{unavailability}")?;
+                    writeln!(f, "pub use self::__{name}::{{{item}}};")?;
                 }
             }
         }

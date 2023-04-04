@@ -976,24 +976,24 @@ impl Stmt {
         }
     }
 
-    pub(crate) fn declared_types(&self) -> impl Iterator<Item = &str> {
+    pub(crate) fn declared_types(&self) -> impl Iterator<Item = (&str, &Unavailable)> {
         match self {
-            Stmt::ClassDecl { id, .. } => Some(&*id.name),
+            Stmt::ClassDecl { id, availability, .. } => Some((&*id.name, &availability.unavailable)),
             Stmt::Methods { .. } => None,
-            Stmt::ProtocolDecl { id, .. } => Some(&*id.name),
+            Stmt::ProtocolDecl { id, availability,  .. } => Some((&*id.name, &availability.unavailable)),
             Stmt::ProtocolImpl { .. } => None,
-            Stmt::StructDecl { id, .. } => Some(&*id.name),
-            Stmt::EnumDecl { id, .. } => id.name.as_deref(),
-            Stmt::VarDecl { id, .. } => Some(&*id.name),
-            Stmt::FnDecl { id, body, .. } if body.is_none() => Some(&*id.name),
+            Stmt::StructDecl { id,  availability, .. } => Some((&*id.name, &availability.unavailable)),
+            Stmt::EnumDecl { id,  availability, .. } => id.name.as_deref().map(|name| (name, &availability.unavailable)),
+            Stmt::VarDecl { id,  availability, .. } => Some((&*id.name, &availability.unavailable)),
+            Stmt::FnDecl { id, body,  availability, .. } if body.is_none() => Some((&*id.name, &availability.unavailable)),
             // TODO
             Stmt::FnDecl { .. } => None,
-            Stmt::AliasDecl { id, .. } => Some(&*id.name),
+            Stmt::AliasDecl { id,  availability, .. } => Some((&*id.name, &availability.unavailable)),
         }
         .into_iter()
         .chain({
-            if let Stmt::EnumDecl { variants, .. } = self {
-                variants.iter().map(|(name, _, _)| &**name).collect()
+            if let Stmt::EnumDecl { variants, availability, .. } = self {
+                variants.iter().map(|(name, _, _)| (&**name, &availability.unavailable)).collect()
             } else {
                 vec![]
             }

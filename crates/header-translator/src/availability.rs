@@ -14,21 +14,22 @@ pub struct Unavailable {
     pub(crate) maccatalyst: bool,
     pub(crate) watchos: bool,
     pub(crate) tvos: bool,
-    pub(crate) library_unavailablility: Box<Unavailable>,
+    pub(crate) library_unavailablility: Option<Box<Unavailable>>,
 }
 impl fmt::Display for Unavailable {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut unavailable_oses = Vec::new();
-        if self.ios && !self.library_unavailablility.ios {
+        if self.ios && !self.library_unavailablility.as_ref().map(|u| u.ios).unwrap_or_else(|| false)
+        {
             unavailable_oses.push("target_os = \"ios\"");
         }
-        if self.macos && !self.library_unavailablility.macos {
+        if self.macos && !self.library_unavailablility.as_ref().map(|u| u.macos).unwrap_or_else(|| false) {
             unavailable_oses.push("target_os = \"macos\"");
         }
-        if self.tvos && !self.library_unavailablility.tvos {
+        if self.tvos && !self.library_unavailablility.as_ref().map(|u| u.tvos).unwrap_or_else(|| false) {
             unavailable_oses.push("target_os = \"tvos\"");
         }
-        if self.watchos && !self.library_unavailablility.watchos {
+        if self.watchos && !self.library_unavailablility.as_ref().map(|u| u.watchos).unwrap_or_else(|| false)  {
             unavailable_oses.push("target_os = \"watchos\"");
         }
 
@@ -53,7 +54,7 @@ struct Versions {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Availability {
-    unavailable: Unavailable,
+    pub(crate) unavailable: Unavailable,
     introduced: Versions,
     deprecated: Versions,
     message: Option<String>,
@@ -67,7 +68,7 @@ impl Availability {
             .expect("platform availability");
 
         let mut unavailable = Unavailable::default();
-        unavailable.library_unavailablility = Box::new(library_unavailablility.clone());
+        unavailable.library_unavailablility = Some(Box::new(library_unavailablility.clone()));
         let mut introduced = Versions::default();
         let mut deprecated = Versions::default();
         let mut message = None;
