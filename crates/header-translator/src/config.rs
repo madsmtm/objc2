@@ -8,6 +8,7 @@ use serde::Deserialize;
 use crate::data;
 use crate::rust_type::Ownership;
 use crate::stmt::Derives;
+use crate::availability::Unavailable;
 
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -80,6 +81,18 @@ pub struct LibraryData {
     pub tvos: Option<semver::VersionReq>,
     #[serde(default)]
     pub watchos: Option<semver::VersionReq>,
+}
+impl LibraryData {
+    pub(crate) fn unavailability(&self) -> Unavailable {
+        Unavailable {
+            ios: self.ios.is_none(),
+            macos: self.macos.is_none(),
+            tvos: self.tvos.is_none(),
+            watchos: self.watchos.is_none(),
+            maccatalyst: self.maccatalyst.is_none(),
+            ..Default::default()
+        }
+    }
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

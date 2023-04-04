@@ -3,7 +3,7 @@ use std::fmt;
 use clang::{Entity, EntityKind, ObjCAttributes, ObjCQualifiers};
 use tracing::span::EnteredSpan;
 
-use crate::availability::Availability;
+use crate::availability::{Availability, Unavailable};
 use crate::config::MethodData;
 use crate::context::Context;
 use crate::id::ItemIdentifier;
@@ -328,6 +328,7 @@ impl<'tu> PartialMethod<'tu> {
         data: MethodData,
         is_protocol: bool,
         context: &Context<'_>,
+        library_unavailablility: &Unavailable,
     ) -> Option<(bool, Method)> {
         let Self {
             entity,
@@ -346,7 +347,7 @@ impl<'tu> PartialMethod<'tu> {
             return None;
         }
 
-        let availability = Availability::parse(&entity, context);
+        let availability = Availability::parse(&entity, context, library_unavailablility);
 
         let modifiers = MethodModifiers::parse(&entity, context);
 
@@ -465,6 +466,7 @@ impl PartialProperty<'_> {
         setter_data: Option<MethodData>,
         is_protocol: bool,
         context: &Context<'_>,
+        library_unavailablility: &Unavailable,
     ) -> (Option<Method>, Option<Method>) {
         let Self {
             entity,
@@ -483,7 +485,7 @@ impl PartialProperty<'_> {
             return (None, None);
         }
 
-        let availability = Availability::parse(&entity, context);
+        let availability = Availability::parse(&entity, context, library_unavailablility);
 
         let modifiers = MethodModifiers::parse(&entity, context);
 

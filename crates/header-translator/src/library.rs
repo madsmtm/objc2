@@ -5,16 +5,19 @@ use std::io;
 use std::path::Path;
 
 use crate::file::{File, FILE_PRELUDE};
+use crate::availability::Unavailable;
 
 #[derive(Debug, PartialEq, Default)]
 pub struct Library {
     pub files: BTreeMap<String, File>,
+    pub unavailability: Unavailable,
 }
 
 impl Library {
-    pub fn new() -> Self {
+    pub(crate) fn new(unavailability: Unavailable) -> Self {
         Self {
             files: BTreeMap::new(),
+            unavailability,
         }
     }
 

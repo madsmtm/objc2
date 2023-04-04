@@ -7,7 +7,7 @@ use std::mem;
 
 use clang::{Entity, EntityKind, EntityVisitResult};
 
-use crate::availability::Availability;
+use crate::availability::{Availability, Unavailable};
 use crate::config::{ClassData, MethodData};
 use crate::context::Context;
 use crate::expr::Expr;
@@ -99,6 +99,7 @@ fn parse_objc_decl(
     mut generics: Option<&mut Vec<String>>,
     get_data: impl Fn(&str) -> MethodData,
     context: &Context<'_>,
+    library_unavailablility: &Unavailable,
 ) -> (BTreeSet<ItemIdentifier>, Vec<Method>, Vec<String>) {
     let mut protocols = BTreeSet::new();
     let mut methods = Vec::new();
@@ -153,7 +154,7 @@ fn parse_objc_decl(
             if !properties.remove(&(partial.is_class, partial.fn_name.clone())) {
                 let data = get_data(&partial.fn_name);
                 if let Some((designated_initializer, method)) =
-                    partial.parse(data, generics.is_none(), context)
+                    partial.parse(data, generics.is_none(), context, library_unavailablility)
                 {
                     if designated_initializer {
                         designated_initializers.push(method.fn_name.clone());
@@ -173,7 +174,7 @@ fn parse_objc_decl(
                 .map(|setter_name| get_data(setter_name));
 
             let (getter, setter) =
-                partial.parse(getter_data, setter_data, generics.is_none(), context);
+                partial.parse(getter_data, setter_data, generics.is_none(), context, library_unavailablility);
             if let Some(getter) = getter {
                 if !properties.insert((getter.is_class, getter.fn_name.clone())) {
                     error!(?setter, "already exisiting property");
@@ -379,7 +380,7 @@ fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
 }
 
 impl Stmt {
-    pub fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Vec<Self> {
+    pub fn parse(entity: &Entity<'_>, context: &Context<'_>, library_unavailablility: &Unavailable) -> Vec<Self> {
         let _span = debug_span!(
             "stmt",
             kind = ?entity.get_kind(),
@@ -399,7 +400,7 @@ impl Stmt {
                     return vec![];
                 }
 
-                let availability = Availability::parse(entity, context);
+                let availability = Availability::parse(entity, context, library_unavailablility);
                 let mut generics = Vec::new();
 
                 let (_, methods, designated_initializers) = parse_objc_decl(
@@ -408,6 +409,7 @@ impl Stmt {
                     Some(&mut generics),
                     |name| ClassData::get_method_data(data, name),
                     context,
+                    library_unavailablility,
                 );
 
                 let mut protocols = Default::default();
@@ -462,7 +464,7 @@ impl Stmt {
             }
             EntityKind::ObjCCategoryDecl => {
                 let category = ItemIdentifier::new_optional(entity, context);
-                let availability = Availability::parse(entity, context);
+                let availability = Availability::parse(entity, context, library_unavailablility);
 
                 let mut cls = None;
                 entity.visit_children(|entity, _parent| {
@@ -505,6 +507,7 @@ impl Stmt {
                     Some(&mut generics),
                     |name| ClassData::get_method_data(data, name),
                     context,
+                    library_unavailablility,
                 );
 
                 if !designated_initializers.is_empty() {
@@ -550,7 +553,7 @@ impl Stmt {
                     return vec![];
                 }
 
-                let availability = Availability::parse(entity, context);
+                let availability = Availability::parse(entity, context, library_unavailablility);
 
                 let (protocols, methods, designated_initializers) = parse_objc_decl(
                     entity,
@@ -562,6 +565,7 @@ impl Stmt {
                             .unwrap_or_default()
                     },
                     context,
+                    library_unavailablility,
                 );
 
                 if !designated_initializers.is_empty() {
@@ -580,7 +584,7 @@ impl Stmt {
             }
             EntityKind::TypedefDecl => {
                 let id = ItemIdentifier::new(entity, context);
-                let availability = Availability::parse(entity, context);
+                let availability = Availability::parse(entity, context, library_unavailablility);
                 let mut struct_ = None;
                 let mut encoding_name = "?".to_string();
                 let mut skip_struct = false;
@@ -668,7 +672,7 @@ impl Stmt {
             }
             EntityKind::StructDecl => {
                 if let Some(name) = entity.get_name() {
-                    let availability = Availability::parse(entity, context);
+                    let availability = Availability::parse(entity, context, library_unavailablility);
                     let id = ItemIdentifier::with_name(name, entity, context);
 
                     if context
@@ -716,7 +720,7 @@ impl Stmt {
                     return vec![];
                 }
 
-                let availability = Availability::parse(entity, context);
+                let availability = Availability::parse(entity, context, library_unavailablility);
 
                 let ty = entity.get_enum_underlying_type().expect("enum type");
                 let is_signed = ty.is_signed_integer();
@@ -727,7 +731,7 @@ impl Stmt {
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::EnumConstantDecl => {
                         let name = entity.get_name().expect("enum constant name");
-                        let availability = Availability::parse(&entity, context);
+                        let availability = Availability::parse(&entity, context, library_unavailablility);
 
                         if data
                             .constants
@@ -802,7 +806,7 @@ impl Stmt {
                     return vec![];
                 }
 
-                let availability = Availability::parse(entity, context);
+                let availability = Availability::parse(entity, context, library_unavailablility);
                 let ty = entity.get_type().expect("var type");
                 let ty = Ty::parse_static(ty, context);
                 let mut value = None;
@@ -856,7 +860,7 @@ impl Stmt {
                     return vec![];
                 }
 
-                let availability = Availability::parse(entity, context);
+                let availability = Availability::parse(entity, context, library_unavailablility);
                 let result_type = entity.get_result_type().expect("function result type");
                 let result_type = Ty::parse_function_return(result_type, context);
                 let mut arguments = Vec::new();

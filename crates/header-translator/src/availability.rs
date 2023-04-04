@@ -6,29 +6,34 @@ use clang::{Entity, PlatformAvailability, Version};
 use crate::context::Context;
 
 #[derive(Debug, Clone, PartialEq, Default)]
-struct Unavailable {
-    ios: bool,
-    ios_app_extension: bool,
-    macos: bool,
-    macos_app_extension: bool,
-    maccatalyst: bool,
-    watchos: bool,
-    tvos: bool,
+pub struct Unavailable {
+    pub(crate) ios: bool,
+    pub(crate) ios_app_extension: bool,
+    pub(crate) macos: bool,
+    pub(crate) macos_app_extension: bool,
+    pub(crate) maccatalyst: bool,
+    pub(crate) watchos: bool,
+    pub(crate) tvos: bool,
+    pub(crate) library_unavailablility: Box<Unavailable>,
 }
 impl fmt::Display for Unavailable {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut unavailable_oses = Vec::new();
-        if self.ios {
+        if self.ios && !self.library_unavailablility.ios {
             unavailable_oses.push("target_os = \"ios\"");
         }
-        if self.macos {
+        if self.macos && !self.library_unavailablility.macos {
             unavailable_oses.push("target_os = \"macos\"");
         }
-        if self.watchos {
+        if self.tvos && !self.library_unavailablility.tvos {
             unavailable_oses.push("target_os = \"tvos\"");
         }
-        if self.watchos {
+        if self.watchos && !self.library_unavailablility.watchos {
             unavailable_oses.push("target_os = \"watchos\"");
+        }
+        if self.maccatalyst && !self.library_unavailablility.maccatalyst {
+            unavailable_oses.push("target = \"aarch64-apple-ios-macabi\"");
+            unavailable_oses.push("target = \"x86_64-apple-ios-macabi\"");
         }
 
         if !unavailable_oses.is_empty() {
@@ -60,12 +65,13 @@ pub struct Availability {
 }
 
 impl Availability {
-    pub fn parse(entity: &Entity<'_>, _context: &Context<'_>) -> Self {
+    pub fn parse(entity: &Entity<'_>, _context: &Context<'_>, library_unavailablility: &Unavailable) -> Self {
         let availabilities = entity
             .get_platform_availability()
             .expect("platform availability");
 
         let mut unavailable = Unavailable::default();
+        unavailable.library_unavailablility = Box::new(library_unavailablility.clone());
         let mut introduced = Versions::default();
         let mut deprecated = Versions::default();
         let mut message = None;
