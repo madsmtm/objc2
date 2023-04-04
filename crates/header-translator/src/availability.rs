@@ -31,10 +31,6 @@ impl fmt::Display for Unavailable {
         if self.watchos && !self.library_unavailablility.watchos {
             unavailable_oses.push("target_os = \"watchos\"");
         }
-        if self.maccatalyst && !self.library_unavailablility.maccatalyst {
-            unavailable_oses.push("target = \"aarch64-apple-ios-macabi\"");
-            unavailable_oses.push("target = \"x86_64-apple-ios-macabi\"");
-        }
 
         if !unavailable_oses.is_empty() {
             let unavailable_oses = unavailable_oses.join(",");
