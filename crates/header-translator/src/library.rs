@@ -71,26 +71,8 @@ impl fmt::Display for Library {
                         features.insert(format!("feature = \"{feature}\""));
                     }
                 });
-                match features.len() {
-                    0 => {}
-                    1 => {
-                        writeln!(f, "#[cfg({})]", features.first().unwrap())?;
-                    }
-                    _ => {
-                        writeln!(
-                            f,
-                            "#[cfg(all({}))]",
-                            features
-                                .iter()
-                                .map(|s| &**s)
-                                .collect::<Vec<&str>>()
-                                .join(",")
-                        )?;
-                    }
-                }
-                let iter = stmt.declared_types();
 
-                for (item, unavailability) in iter {
+                for (item, unavailability) in stmt.declared_types() {
                     match features.len() {
                         0 => {}
                         1 => {
