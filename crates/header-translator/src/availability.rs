@@ -19,17 +19,40 @@ pub struct Unavailable {
 impl fmt::Display for Unavailable {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut unavailable_oses = Vec::new();
-        if self.ios && !self.library_unavailablility.as_ref().map(|u| u.ios).unwrap_or_else(|| false)
+        if self.ios
+            && !self
+                .library_unavailablility
+                .as_ref()
+                .map(|u| u.ios)
+                .unwrap_or_else(|| false)
         {
             unavailable_oses.push("target_os = \"ios\"");
         }
-        if self.macos && !self.library_unavailablility.as_ref().map(|u| u.macos).unwrap_or_else(|| false) {
+        if self.macos
+            && !self
+                .library_unavailablility
+                .as_ref()
+                .map(|u| u.macos)
+                .unwrap_or_else(|| false)
+        {
             unavailable_oses.push("target_os = \"macos\"");
         }
-        if self.tvos && !self.library_unavailablility.as_ref().map(|u| u.tvos).unwrap_or_else(|| false) {
+        if self.tvos
+            && !self
+                .library_unavailablility
+                .as_ref()
+                .map(|u| u.tvos)
+                .unwrap_or_else(|| false)
+        {
             unavailable_oses.push("target_os = \"tvos\"");
         }
-        if self.watchos && !self.library_unavailablility.as_ref().map(|u| u.watchos).unwrap_or_else(|| false)  {
+        if self.watchos
+            && !self
+                .library_unavailablility
+                .as_ref()
+                .map(|u| u.watchos)
+                .unwrap_or_else(|| false)
+        {
             unavailable_oses.push("target_os = \"watchos\"");
         }
 
@@ -62,7 +85,11 @@ pub struct Availability {
 }
 
 impl Availability {
-    pub fn parse(entity: &Entity<'_>, _context: &Context<'_>, library_unavailablility: &Unavailable) -> Self {
+    pub fn parse(
+        entity: &Entity<'_>,
+        _context: &Context<'_>,
+        library_unavailablility: &Unavailable,
+    ) -> Self {
         let availabilities = entity
             .get_platform_availability()
             .expect("platform availability");

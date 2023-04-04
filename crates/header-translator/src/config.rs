@@ -5,10 +5,10 @@ use std::path::Path;
 
 use serde::Deserialize;
 
+use crate::availability::Unavailable;
 use crate::data;
 use crate::rust_type::Ownership;
 use crate::stmt::Derives;
-use crate::availability::Unavailable;
 
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]

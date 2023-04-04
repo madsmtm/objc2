@@ -1,5 +1,5 @@
+use std::collections::HashMap;
 use std::collections::{BTreeMap, BTreeSet};
-use std::collections::{HashMap};
 use std::str::FromStr;
 
 use crate::config::{Config, LibraryData};

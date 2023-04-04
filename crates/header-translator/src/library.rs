@@ -4,8 +4,8 @@ use std::fs;
 use std::io;
 use std::path::Path;
 
-use crate::file::{File, FILE_PRELUDE};
 use crate::availability::Unavailable;
+use crate::file::{File, FILE_PRELUDE};
 
 #[derive(Debug, PartialEq, Default)]
 pub struct Library {
@@ -81,16 +81,33 @@ impl fmt::Display for Library {
                             f,
                             "#[cfg(all({}))]",
                             features
-                            .iter()
-                            .map(|s| &**s)
-                            .collect::<Vec<&str>>()
-                            .join(",")
+                                .iter()
+                                .map(|s| &**s)
+                                .collect::<Vec<&str>>()
+                                .join(",")
                         )?;
                     }
                 }
-                let mut iter = stmt.declared_types();
+                let iter = stmt.declared_types();
 
                 for (item, unavailability) in iter {
+                    match features.len() {
+                        0 => {}
+                        1 => {
+                            writeln!(f, "#[cfg({})]", features.first().unwrap())?;
+                        }
+                        _ => {
+                            writeln!(
+                                f,
+                                "#[cfg(all({}))]",
+                                features
+                                    .iter()
+                                    .map(|s| &**s)
+                                    .collect::<Vec<&str>>()
+                                    .join(",")
+                            )?;
+                        }
+                    }
                     writeln!(f, "{unavailability}")?;
                     writeln!(f, "pub use self::__{name}::{{{item}}};")?;
                 }

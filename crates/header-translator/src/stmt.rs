@@ -173,8 +173,13 @@ fn parse_objc_decl(
                 .as_ref()
                 .map(|setter_name| get_data(setter_name));
 
-            let (getter, setter) =
-                partial.parse(getter_data, setter_data, generics.is_none(), context, library_unavailablility);
+            let (getter, setter) = partial.parse(
+                getter_data,
+                setter_data,
+                generics.is_none(),
+                context,
+                library_unavailablility,
+            );
             if let Some(getter) = getter {
                 if !properties.insert((getter.is_class, getter.fn_name.clone())) {
                     error!(?setter, "already exisiting property");
@@ -380,7 +385,11 @@ fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
 }
 
 impl Stmt {
-    pub fn parse(entity: &Entity<'_>, context: &Context<'_>, library_unavailablility: &Unavailable) -> Vec<Self> {
+    pub fn parse(
+        entity: &Entity<'_>,
+        context: &Context<'_>,
+        library_unavailablility: &Unavailable,
+    ) -> Vec<Self> {
         let _span = debug_span!(
             "stmt",
             kind = ?entity.get_kind(),
@@ -672,7 +681,8 @@ impl Stmt {
             }
             EntityKind::StructDecl => {
                 if let Some(name) = entity.get_name() {
-                    let availability = Availability::parse(entity, context, library_unavailablility);
+                    let availability =
+                        Availability::parse(entity, context, library_unavailablility);
                     let id = ItemIdentifier::with_name(name, entity, context);
 
                     if context
@@ -731,7 +741,8 @@ impl Stmt {
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::EnumConstantDecl => {
                         let name = entity.get_name().expect("enum constant name");
-                        let availability = Availability::parse(&entity, context, library_unavailablility);
+                        let availability =
+                            Availability::parse(&entity, context, library_unavailablility);
 
                         if data
                             .constants
@@ -978,22 +989,50 @@ impl Stmt {
 
     pub(crate) fn declared_types(&self) -> impl Iterator<Item = (&str, &Unavailable)> {
         match self {
-            Stmt::ClassDecl { id, availability, .. } => Some((&*id.name, &availability.unavailable)),
+            Stmt::ClassDecl {
+                id, availability, ..
+            } => Some((&*id.name, &availability.unavailable)),
             Stmt::Methods { .. } => None,
-            Stmt::ProtocolDecl { id, availability,  .. } => Some((&*id.name, &availability.unavailable)),
+            Stmt::ProtocolDecl {
+                id, availability, ..
+            } => Some((&*id.name, &availability.unavailable)),
             Stmt::ProtocolImpl { .. } => None,
-            Stmt::StructDecl { id,  availability, .. } => Some((&*id.name, &availability.unavailable)),
-            Stmt::EnumDecl { id,  availability, .. } => id.name.as_deref().map(|name| (name, &availability.unavailable)),
-            Stmt::VarDecl { id,  availability, .. } => Some((&*id.name, &availability.unavailable)),
-            Stmt::FnDecl { id, body,  availability, .. } if body.is_none() => Some((&*id.name, &availability.unavailable)),
+            Stmt::StructDecl {
+                id, availability, ..
+            } => Some((&*id.name, &availability.unavailable)),
+            Stmt::EnumDecl {
+                id, availability, ..
+            } => id
+                .name
+                .as_deref()
+                .map(|name| (name, &availability.unavailable)),
+            Stmt::VarDecl {
+                id, availability, ..
+            } => Some((&*id.name, &availability.unavailable)),
+            Stmt::FnDecl {
+                id,
+                body,
+                availability,
+                ..
+            } if body.is_none() => Some((&*id.name, &availability.unavailable)),
             // TODO
             Stmt::FnDecl { .. } => None,
-            Stmt::AliasDecl { id,  availability, .. } => Some((&*id.name, &availability.unavailable)),
+            Stmt::AliasDecl {
+                id, availability, ..
+            } => Some((&*id.name, &availability.unavailable)),
         }
         .into_iter()
         .chain({
-            if let Stmt::EnumDecl { variants, availability, .. } = self {
-                variants.iter().map(|(name, _, _)| (&**name, &availability.unavailable)).collect()
+            if let Stmt::EnumDecl {
+                variants,
+                availability,
+                ..
+            } = self
+            {
+                variants
+                    .iter()
+                    .map(|(name, _, _)| (&**name, &availability.unavailable))
+                    .collect()
             } else {
                 vec![]
             }
