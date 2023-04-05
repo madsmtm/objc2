@@ -1332,6 +1332,7 @@ impl fmt::Display for Stmt {
                 }
                 writeln!(f, "    }}")?;
                 writeln!(f)?;
+                write!(f, "{availability}")?;
                 writeln!(f, "    unsafe impl ProtocolType for dyn {} {{}}", id.name)?;
                 writeln!(f, ");")?;
             }
@@ -1391,18 +1392,20 @@ impl fmt::Display for Stmt {
             }
             Self::VarDecl {
                 id,
-                availability: _,
+                availability,
                 ty,
                 value: None,
             } => {
+                write!(f, "{availability}")?;
                 writeln!(f, "extern_static!({}: {ty});", id.name)?;
             }
             Self::VarDecl {
                 id,
-                availability: _,
+                availability,
                 ty,
                 value: Some(expr),
             } => {
+                write!(f, "{availability}")?;
                 writeln!(f, "extern_static!({}: {ty} = {expr});", id.name)?;
             }
             Self::FnDecl {
@@ -1468,20 +1471,23 @@ impl fmt::Display for Stmt {
             }
             Self::AliasDecl {
                 id,
-                availability: _,
+                availability,
                 ty,
                 kind,
             } => {
                 match kind {
                     Some(UnexposedAttr::TypedEnum) => {
+                        write!(f, "{availability}")?;
                         writeln!(f, "typed_enum!(pub type {} = {ty};);", id.name)?;
                     }
                     Some(UnexposedAttr::TypedExtensibleEnum) => {
+                        write!(f, "{availability}")?;
                         writeln!(f, "typed_extensible_enum!(pub type {} = {ty};);", id.name)?;
                     }
                     None | Some(UnexposedAttr::BridgedTypedef) => {
                         // "bridged" typedefs should just use a normal type
                         // alias.
+                        write!(f, "{availability}")?;
                         writeln!(f, "pub type {} = {ty};", id.name)?;
                     }
                     kind => panic!("invalid alias kind {kind:?} for {ty:?}"),

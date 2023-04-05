@@ -64,7 +64,7 @@ impl fmt::Display for Unavailable {
         let unavailable_oses = self.list_oses();
         if !unavailable_oses.is_empty() {
             let unavailable_oses = unavailable_oses.join(",");
-            writeln!(f, "#[cfg(not(any({unavailable_oses})))]")?;
+            write!(f, "#[cfg(not(any({unavailable_oses})))]")?;
         }
         Ok(())
     }

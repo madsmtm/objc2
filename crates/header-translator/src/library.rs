@@ -90,9 +90,7 @@ impl fmt::Display for Library {
                             )?;
                         }
                     }
-                    if !unavailability.list_oses().is_empty() {
-                        writeln!(f, "{unavailability}")?;
-                    }
+                    write!(f, "{unavailability}")?;
                     writeln!(f, "pub use self::__{name}::{{{item}}};")?;
                 }
             }
