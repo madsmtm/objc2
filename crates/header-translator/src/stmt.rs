@@ -1025,13 +1025,13 @@ impl Stmt {
         .chain({
             if let Stmt::EnumDecl {
                 variants,
-                availability,
+                //availability,
                 ..
             } = self
             {
                 variants
                     .iter()
-                    .map(|(name, _, _)| (&**name, &availability.unavailable))
+                    .map(|(name, availability, _)| (&**name, &availability.unavailable))
                     .collect()
             } else {
                 vec![]

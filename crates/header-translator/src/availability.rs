@@ -16,8 +16,9 @@ pub struct Unavailable {
     pub(crate) tvos: bool,
     pub(crate) library_unavailablility: Option<Box<Unavailable>>,
 }
-impl fmt::Display for Unavailable {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+
+impl Unavailable {
+    pub fn list_oses(&self) -> Vec<&str> {
         let mut unavailable_oses = Vec::new();
         if self.ios
             && !self
@@ -55,7 +56,12 @@ impl fmt::Display for Unavailable {
         {
             unavailable_oses.push("target_os = \"watchos\"");
         }
-
+        unavailable_oses
+    }
+}
+impl fmt::Display for Unavailable {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let unavailable_oses = self.list_oses();
         if !unavailable_oses.is_empty() {
             let unavailable_oses = unavailable_oses.join(",");
             writeln!(f, "#[cfg(not(any({unavailable_oses})))]")?;
