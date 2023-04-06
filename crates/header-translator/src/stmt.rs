@@ -1032,7 +1032,10 @@ impl Stmt {
                 variants
                     .iter()
                     .map(|(name, variant_availability, _)| {
-                        let unavailable = availability.unavailable.merge(&variant_availability.unavailable).clone();
+                        let unavailable = availability
+                            .unavailable
+                            .merge(&variant_availability.unavailable)
+                            .clone();
                         (&**name, unavailable)
                     })
                     .collect()
