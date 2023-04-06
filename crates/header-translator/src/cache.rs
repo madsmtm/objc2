@@ -164,6 +164,7 @@ impl<'a> Cache<'a> {
                     id,
                     generics,
                     superclasses,
+                    availability,
                     ..
                 } => {
                     let _span = debug_span!("Stmt::ClassDecl", ?id).entered();
@@ -203,7 +204,7 @@ impl<'a> Cache<'a> {
                                     cls: id.clone(),
                                     generics: generics.clone(),
                                     category: cache.category.clone(),
-                                    availability: cache.availability.clone(),
+                                    availability: availability.clone(),
                                     superclasses: superclasses.clone(),
                                     methods,
                                     description: Some(format!(

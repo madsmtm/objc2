@@ -987,51 +987,54 @@ impl Stmt {
         }
     }
 
-    pub(crate) fn declared_types(&self) -> impl Iterator<Item = (&str, &Unavailable)> {
+    pub(crate) fn declared_types(&self) -> impl Iterator<Item = (&str, Unavailable)> {
         match self {
             Stmt::ClassDecl {
                 id, availability, ..
-            } => Some((&*id.name, &availability.unavailable)),
+            } => Some((&*id.name, availability.unavailable.clone())),
             Stmt::Methods { .. } => None,
             Stmt::ProtocolDecl {
                 id, availability, ..
-            } => Some((&*id.name, &availability.unavailable)),
+            } => Some((&*id.name, availability.unavailable.clone())),
             Stmt::ProtocolImpl { .. } => None,
             Stmt::StructDecl {
                 id, availability, ..
-            } => Some((&*id.name, &availability.unavailable)),
+            } => Some((&*id.name, availability.unavailable.clone())),
             Stmt::EnumDecl {
                 id, availability, ..
             } => id
                 .name
                 .as_deref()
-                .map(|name| (name, &availability.unavailable)),
+                .map(|name| (name, availability.unavailable.clone())),
             Stmt::VarDecl {
                 id, availability, ..
-            } => Some((&*id.name, &availability.unavailable)),
+            } => Some((&*id.name, availability.unavailable.clone())),
             Stmt::FnDecl {
                 id,
                 body,
                 availability,
                 ..
-            } if body.is_none() => Some((&*id.name, &availability.unavailable)),
+            } if body.is_none() => Some((&*id.name, availability.unavailable.clone())),
             // TODO
             Stmt::FnDecl { .. } => None,
             Stmt::AliasDecl {
                 id, availability, ..
-            } => Some((&*id.name, &availability.unavailable)),
+            } => Some((&*id.name, availability.unavailable.clone())),
         }
         .into_iter()
         .chain({
             if let Stmt::EnumDecl {
                 variants,
-                //availability,
+                availability,
                 ..
             } = self
             {
                 variants
                     .iter()
-                    .map(|(name, availability, _)| (&**name, &availability.unavailable))
+                    .map(|(name, variant_availability, _)| {
+                        let unavailable = availability.unavailable.merge(&variant_availability.unavailable).clone();
+                        (&**name, unavailable)
+                    })
                     .collect()
             } else {
                 vec![]
@@ -1130,6 +1133,7 @@ impl fmt::Display for Stmt {
 
                 writeln!(f)?;
 
+                write!(f, "{availability}")?;
                 if let Some(feature) = id.feature() {
                     writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
                 }
@@ -1180,7 +1184,7 @@ impl fmt::Display for Stmt {
                 generics,
                 category,
                 // TODO: Output `#[deprecated]` only on categories
-                availability: _,
+                availability,
                 superclasses,
                 methods,
                 description,
@@ -1198,6 +1202,8 @@ impl fmt::Display for Stmt {
                 if let Some(feature) = cls.feature() {
                     writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
                 }
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(
                     f,
                     "    unsafe impl{} {}{} {{",
@@ -1225,6 +1231,8 @@ impl fmt::Display for Stmt {
                             features.insert(format!("feature = \"{feature}\""));
                         }
                     });
+                    let unavailable = availability.unavailable.clone();
+                    write!(f, "{unavailable}")?;
                     match features.len() {
                         0 => {}
                         1 => {
@@ -1260,11 +1268,13 @@ impl fmt::Display for Stmt {
                 cls,
                 generics,
                 protocol,
-                availability: _,
+                availability,
             } => {
                 if let Some(feature) = cls.feature() {
                     writeln!(f, "#[cfg(feature = \"{feature}\")]")?;
                 }
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(
                     f,
                     "unsafe impl{} {} for {}{} {{}}",
@@ -1332,7 +1342,8 @@ impl fmt::Display for Stmt {
                 }
                 writeln!(f, "    }}")?;
                 writeln!(f)?;
-                write!(f, "{availability}")?;
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(f, "    unsafe impl ProtocolType for dyn {} {{}}", id.name)?;
                 writeln!(f, ");")?;
             }
@@ -1375,9 +1386,9 @@ impl fmt::Display for Stmt {
                     Some(UnexposedAttr::ErrorEnum) => "ns_error_enum",
                     _ => panic!("invalid enum kind"),
                 };
+                write!(f, "{availability}")?;
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    #[underlying({ty})]")?;
-                write!(f, "{availability}")?;
                 writeln!(
                     f,
                     "    pub enum {} {{",
@@ -1477,17 +1488,20 @@ impl fmt::Display for Stmt {
             } => {
                 match kind {
                     Some(UnexposedAttr::TypedEnum) => {
-                        write!(f, "{availability}")?;
+                        let unavailable = availability.unavailable.clone();
+                        write!(f, "{unavailable}")?;
                         writeln!(f, "typed_enum!(pub type {} = {ty};);", id.name)?;
                     }
                     Some(UnexposedAttr::TypedExtensibleEnum) => {
-                        write!(f, "{availability}")?;
+                        let unavailable = availability.unavailable.clone();
+                        write!(f, "{unavailable}")?;
                         writeln!(f, "typed_extensible_enum!(pub type {} = {ty};);", id.name)?;
                     }
                     None | Some(UnexposedAttr::BridgedTypedef) => {
                         // "bridged" typedefs should just use a normal type
                         // alias.
-                        write!(f, "{availability}")?;
+                        let unavailable = availability.unavailable.clone();
+                        write!(f, "{unavailable}")?;
                         writeln!(f, "pub type {} = {ty};", id.name)?;
                     }
                     kind => panic!("invalid alias kind {kind:?} for {ty:?}"),

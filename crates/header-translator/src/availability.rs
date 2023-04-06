@@ -18,7 +18,7 @@ pub struct Unavailable {
 }
 
 impl Unavailable {
-    pub fn list_oses(&self) -> Vec<&str> {
+    fn list_unavailable_oses(&self) -> Vec<&str> {
         let mut unavailable_oses = Vec::new();
         if self.ios
             && !self
@@ -27,7 +27,7 @@ impl Unavailable {
                 .map(|u| u.ios)
                 .unwrap_or_else(|| false)
         {
-            unavailable_oses.push("target_os = \"ios\"");
+            unavailable_oses.push("ios");
         }
         if self.macos
             && !self
@@ -36,7 +36,7 @@ impl Unavailable {
                 .map(|u| u.macos)
                 .unwrap_or_else(|| false)
         {
-            unavailable_oses.push("target_os = \"macos\"");
+            unavailable_oses.push("macos");
         }
         if self.tvos
             && !self
@@ -45,7 +45,7 @@ impl Unavailable {
                 .map(|u| u.tvos)
                 .unwrap_or_else(|| false)
         {
-            unavailable_oses.push("target_os = \"tvos\"");
+            unavailable_oses.push("tvos");
         }
         if self.watchos
             && !self
@@ -54,16 +54,35 @@ impl Unavailable {
                 .map(|u| u.watchos)
                 .unwrap_or_else(|| false)
         {
-            unavailable_oses.push("target_os = \"watchos\"");
+            unavailable_oses.push("watchos");
         }
         unavailable_oses
+    }
+
+    /// In some cases of enums, we need to know the availability of the parent enum and the enum
+    /// variant.
+    pub fn merge(&self, other: &Self) -> Self {
+        Self {
+            ios: self.ios || other.ios,
+            ios_app_extension: self.ios_app_extension || other.ios_app_extension,
+            macos: self.macos || other.macos,
+            macos_app_extension: self.macos_app_extension || other.macos_app_extension,
+            tvos: self.tvos || other.tvos,
+            watchos: self.watchos || other.watchos,
+            maccatalyst: self.maccatalyst || other.maccatalyst,
+            library_unavailablility: self.library_unavailablility.clone(),
+        }
     }
 }
 impl fmt::Display for Unavailable {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let unavailable_oses = self.list_oses();
+        let unavailable_oses = self.list_unavailable_oses();
+        let unavailable_oses = unavailable_oses
+            .iter()
+            .map(|os| format!("target_os = \"{}\"", os))
+            .collect::<Vec<String>>()
+            .join(",");
         if !unavailable_oses.is_empty() {
-            let unavailable_oses = unavailable_oses.join(",");
             write!(f, "#[cfg(not(any({unavailable_oses})))]")?;
         }
         Ok(())
