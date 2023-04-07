@@ -119,8 +119,10 @@ impl Availability {
             .get_platform_availability()
             .expect("platform availability");
 
-        let mut unavailable = Unavailable::default();
-        unavailable.library_unavailablility = Some(Box::new(library_unavailablility.clone()));
+        let mut unavailable = Unavailable {
+            library_unavailablility: Some(Box::new(library_unavailablility.clone())),
+            ..Default::default()
+        };
         let mut introduced = Versions::default();
         let mut deprecated = Versions::default();
         let mut message = None;

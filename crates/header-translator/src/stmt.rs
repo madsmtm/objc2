@@ -1034,8 +1034,7 @@ impl Stmt {
                     .map(|(name, variant_availability, _)| {
                         let unavailable = availability
                             .unavailable
-                            .merge(&variant_availability.unavailable)
-                            .clone();
+                            .merge(&variant_availability.unavailable);
                         (&**name, unavailable)
                     })
                     .collect()
@@ -1389,9 +1388,9 @@ impl fmt::Display for Stmt {
                     Some(UnexposedAttr::ErrorEnum) => "ns_error_enum",
                     _ => panic!("invalid enum kind"),
                 };
-                write!(f, "{availability}")?;
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    #[underlying({ty})]")?;
+                write!(f, "{availability}")?;
                 writeln!(
                     f,
                     "    pub enum {} {{",
@@ -1410,7 +1409,8 @@ impl fmt::Display for Stmt {
                 ty,
                 value: None,
             } => {
-                write!(f, "{availability}")?;
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(f, "extern_static!({}: {ty});", id.name)?;
             }
             Self::VarDecl {
@@ -1419,7 +1419,8 @@ impl fmt::Display for Stmt {
                 ty,
                 value: Some(expr),
             } => {
-                write!(f, "{availability}")?;
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(f, "extern_static!({}: {ty} = {expr});", id.name)?;
             }
             Self::FnDecl {

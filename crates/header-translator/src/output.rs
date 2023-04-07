@@ -14,7 +14,7 @@ pub struct Output {
 impl Output {
     pub fn from_libraries(libraries: &HashMap<String, LibraryData>) -> Self {
         let libraries = libraries
-            .into_iter()
+            .iter()
             .map(|(name, library_data)| (name.into(), Library::new(library_data.unavailability())))
             .collect();
         Self { libraries }
