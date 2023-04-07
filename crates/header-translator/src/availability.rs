@@ -79,7 +79,7 @@ impl fmt::Display for Unavailable {
         let unavailable_oses = self.list_unavailable_oses();
         let unavailable_oses = unavailable_oses
             .iter()
-            .map(|os| format!("target_os = \"{}\"", os))
+            .map(|os| format!("target_os = \"{os}\""))
             .collect::<Vec<String>>()
             .join(",");
         if !unavailable_oses.is_empty() {
