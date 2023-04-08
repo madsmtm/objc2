@@ -210,9 +210,7 @@ fn main() {
     // - ...
     //
     // TODO: -fobjc-weak ?
-    let mut cc_args = format!(
-        "-fobjc-arc -fobjc-arc-exceptions -fobjc-exceptions -fobjc-runtime={clang_runtime}"
-    );
+    let mut cc_args = format!("-fobjc-exceptions -fobjc-runtime={clang_runtime}");
 
     if let Runtime::ObjFW(_) = &runtime {
         // Add compability headers to make `#include <objc/objc.h>` work.
@@ -220,8 +218,6 @@ fn main() {
         cc_args.push_str(" -I");
         cc_args.push_str(compat_headers.to_str().unwrap());
     }
-
-    println!("cargo:cc_args={cc_args}"); // DEP_OBJC_[version]_CC_ARGS
 
     if let Runtime::ObjFW(_) = &runtime {
         // Link to libobjfw-rt
@@ -250,10 +246,18 @@ fn main() {
         let mut builder = cc::Build::new();
         builder.file("extern/exception.m");
 
+        // Compile with exceptions enabled and with the correct runtime, but
+        // _without ARC_!
         for flag in cc_args.split(' ') {
             builder.flag(flag);
         }
 
         builder.compile("librust_objc_sys_0_3_try_catch_exception.a");
     }
+
+    // Add this to the `CC` args _after_ we've omitted it when compiling
+    // `extern/exception.m`.
+    cc_args.push_str(" -fobjc-arc -fobjc-arc-exceptions");
+
+    println!("cargo:cc_args={cc_args}"); // DEP_OBJC_[version]_CC_ARGS
 }
