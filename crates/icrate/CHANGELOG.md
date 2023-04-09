@@ -28,6 +28,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `NSDictionary::get_retained`
   - `NSDictionary::keys_retained`
   - `NSDictionary::values_retained`
+* Added `MainThreadMarker::alloc` for allocating objects that need to be so on
+  the main thread.
 
 ### Changed
 * **BREAKING**: Renamed the `from_slice` method on `NSArray`, `NSSet`,

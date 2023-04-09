@@ -7,6 +7,8 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use crate::common::*;
 use crate::Foundation::NSThread;
 
+use objc2::msg_send_id;
+
 unsafe impl Send for NSThread {}
 unsafe impl Sync for NSThread {}
 
@@ -118,6 +120,43 @@ impl MainThreadMarker {
         // We can't debug_assert that this actually is the main thread, see
         // the comment above.
         Self { _priv: PhantomData }
+    }
+
+    /// Allocate a new instance of the specified class on the main thread.
+    ///
+    /// This is essentially the same as [`ClassType::alloc`], the difference
+    /// being that it is also callable with classes that can only be used on
+    /// the main thread.
+    ///
+    ///
+    /// # Example
+    ///
+    /// Create an object on the main thread.
+    ///
+    /// ```
+    /// use icrate::Foundation::MainThreadMarker;
+    /// # use icrate::Foundation::NSObject as SomeClass;
+    /// # #[cfg(for_example)]
+    /// use icrate::SomeFramework::SomeClass;
+    /// use objc2::rc::Id;
+    /// use objc2::msg_send_id;
+    ///
+    /// # let mtm = unsafe { MainThreadMarker::new_unchecked() };
+    /// # #[cfg(doctests_not_always_run_on_main_thread)]
+    /// let mtm = MainThreadMarker::new().expect("must be on the main thread");
+    ///
+    /// // _All_ objects are safe to allocate on the main thread!
+    /// let obj = mtm.alloc::<SomeClass>();
+    ///
+    /// // Though more knowledge is required for safe initialization
+    /// let obj: Id<SomeClass> = unsafe { msg_send_id![obj, init] };
+    /// ```
+    #[inline]
+    pub fn alloc<T: ClassType>(self) -> Option<Allocated<T>> {
+        // SAFETY: Same as `ClassType::alloc`, with the addition that since we
+        // take `self: MainThreadMarker`, the `IsAllocableAnyThread` bound is
+        // not required.
+        unsafe { msg_send_id![T::class(), alloc] }
     }
 
     /// Submit the given closure to the runloop on the main thread.

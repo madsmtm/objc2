@@ -168,6 +168,9 @@ pub unsafe trait ClassType: Message {
     /// The return value can be used directly inside [`msg_send_id!`] to
     /// initialize the object.
     ///
+    /// For classes that are only usable on the main thread, you can use
+    /// `MainThreadMarker::alloc` instead.
+    ///
     /// [`msg_send_id!`]: crate::msg_send_id
     //
     // Note: We could have placed this on `mutability::IsAllocableAnyThread`,
@@ -185,6 +188,8 @@ pub unsafe trait ClassType: Message {
         // - The object is safe to `dealloc` on the current thread (due to the
         //   `IsAllocableAnyThread` bound which guarantees it is not
         //   `MainThreadOnly`).
+        //
+        // See also `MainThreadMarker::alloc`.
         unsafe { msg_send_id![Self::class(), alloc] }
     }
 
