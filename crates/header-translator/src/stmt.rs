@@ -1191,6 +1191,8 @@ impl fmt::Display for Stmt {
                 methods,
                 description,
             } => {
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(f, "extern_methods!(")?;
                 if let Some(description) = description {
                     writeln!(f, "    /// {description}")?;
@@ -1204,8 +1206,6 @@ impl fmt::Display for Stmt {
                 if let Some(feature) = cls.feature() {
                     writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
                 }
-                let unavailable = availability.unavailable.clone();
-                write!(f, "{unavailable}")?;
                 writeln!(
                     f,
                     "    unsafe impl{} {}{} {{",
@@ -1233,8 +1233,6 @@ impl fmt::Display for Stmt {
                             features.insert(format!("feature = \"{feature}\""));
                         }
                     });
-                    let unavailable = availability.unavailable.clone();
-                    write!(f, "{unavailable}")?;
                     match features.len() {
                         0 => {}
                         1 => {
@@ -1292,8 +1290,9 @@ impl fmt::Display for Stmt {
                 protocols,
                 methods,
             } => {
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(f, "extern_protocol!(")?;
-                write!(f, "{availability}")?;
 
                 write!(f, "    pub unsafe trait {}", id.name)?;
                 if !protocols.is_empty() {
@@ -1344,8 +1343,6 @@ impl fmt::Display for Stmt {
                 }
                 writeln!(f, "    }}")?;
                 writeln!(f)?;
-                let unavailable = availability.unavailable.clone();
-                write!(f, "{unavailable}")?;
                 writeln!(f, "    unsafe impl ProtocolType for dyn {} {{}}", id.name)?;
                 writeln!(f, ");")?;
             }
@@ -1356,11 +1353,12 @@ impl fmt::Display for Stmt {
                 boxable: _,
                 fields,
             } => {
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(f, "extern_struct!(")?;
                 if let Some(encoding_name) = encoding_name {
                     writeln!(f, "    #[encoding_name({encoding_name:?})]")?;
                 }
-                write!(f, "{availability}")?;
                 writeln!(f, "    pub struct {} {{", id.name)?;
                 for (name, ty) in fields {
                     write!(f, "        ")?;
@@ -1388,9 +1386,10 @@ impl fmt::Display for Stmt {
                     Some(UnexposedAttr::ErrorEnum) => "ns_error_enum",
                     _ => panic!("invalid enum kind"),
                 };
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    #[underlying({ty})]")?;
-                write!(f, "{availability}")?;
                 writeln!(
                     f,
                     "    pub enum {} {{",
