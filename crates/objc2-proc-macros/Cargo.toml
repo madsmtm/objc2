@@ -33,3 +33,9 @@ gnustep-2-1 = ["gnustep-2-0"]
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
+
+[dependencies]
+heck = "0.4"
+proc-macro2 = "1.0"
+quote = "1.0"
+syn = { version = "1.0", features = ["full", "parsing"] }

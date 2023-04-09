@@ -6,7 +6,7 @@
 /// classes!
 ///
 /// [`extern_class!`]: crate::extern_class
-/// [`declare`]: crate::declare
+/// [`declare`]: mod@crate::declare
 ///
 ///
 /// # Specification

@@ -504,7 +504,7 @@ impl<T: Message, O: Ownership> Id<T, O> {
     /// optimization relies heavily on this function being tail called, so be
     /// careful to call this function at the end of your method.
     ///
-    /// [declare]: crate::declare
+    /// [declare]: mod@crate::declare
     /// [mmRules]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html
     ///
     ///

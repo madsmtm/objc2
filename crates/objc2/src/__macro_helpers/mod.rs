@@ -629,6 +629,36 @@ impl ClassProtocolMethodsBuilder<'_, '_> {
     }
 }
 
+// NOTE: this should go away when inherent associated types stabilize
+// NOTE: see https://github.com/rust-lang/rust/issues/8995
+// NOTE: once that lands, we can inline into `impl T` and write `T::Code` directly
+#[cfg(feature = "objc2-proc-macros")]
+/// Helper for proc-macro for NS_ERROR_ENUM.
+/// This allows us to write `<T as ErrorEnum>::Code` for pattern matching.
+pub trait ErrorEnum {
+    type Codes;
+    type UserInfo;
+}
+
+#[cfg(feature = "objc2-proc-macros")]
+pub type Codes<T> = <T as ErrorEnum>::Codes;
+
+#[cfg(feature = "objc2-proc-macros")]
+pub type UserInfo<T> = <T as ErrorEnum>::UserInfo;
+
+// NOTE: this should go away when inherent associated types stabilize
+// NOTE: see https://github.com/rust-lang/rust/issues/8995
+// NOTE: once that lands, we can inline into `impl T` and write `T::Cases::Variant` directly
+#[cfg(feature = "objc2-proc-macros")]
+/// Helper for proc-macro for NS_TYPED_ENUM, NS_TYPED_EXTENSIBLE_ENUM.
+/// This allows us to write `<T as TypedEnum>::Cases::Variant` for pattern matching.
+pub trait TypedEnum {
+    type Cases;
+}
+
+#[cfg(feature = "objc2-proc-macros")]
+pub type Cases<T> = <T as TypedEnum>::Cases;
+
 #[cfg(test)]
 mod tests {
     use super::*;

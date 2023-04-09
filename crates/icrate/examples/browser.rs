@@ -1,3 +1,4 @@
+#![cfg(feature = "unstable-example-browser")]
 #![deny(unsafe_op_in_unsafe_fn)]
 
 use icrate::{

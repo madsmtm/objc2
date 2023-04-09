@@ -445,6 +445,49 @@ impl ClassBuilder {
         assert!(success.as_bool(), "Failed to add method {sel:?}");
     }
 
+    /// Adds a method with the given name and implementation.
+    ///
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure that the types match those that are expected
+    /// when the method is invoked from Objective-C.
+    pub unsafe fn add_method_from_raw_parts(
+        &mut self,
+        sel: Sel,
+        enc_args: &[Encoding],
+        enc_ret: Encoding,
+        imp: Imp,
+    ) {
+        let sel_args = sel.number_of_arguments();
+        assert_eq!(
+            sel_args,
+            enc_args.len(),
+            "Selector {:?} accepts {} arguments, but function accepts {}",
+            sel,
+            sel_args,
+            enc_args.len(),
+        );
+
+        // Verify that, if the method is present on the superclass, that the
+        // encoding is correct.
+        #[cfg(debug_assertions)]
+        if let Some(superclass) = self.superclass() {
+            if let Some(method) = superclass.instance_method(sel) {
+                if let Err(err) = crate::verify::verify_method_signature(method, enc_args, &enc_ret)
+                {
+                    panic!("declared invalid method -[{} {sel:?}]: {err}", self.name())
+                }
+            }
+        }
+
+        let types = method_type_encoding(&enc_ret, enc_args);
+        let success = Bool::from_raw(unsafe {
+            ffi::class_addMethod(self.as_mut_ptr(), sel.as_ptr(), Some(imp), types.as_ptr())
+        });
+        assert!(success.as_bool(), "Failed to add method {sel:?}");
+    }
+
     fn metaclass_mut(&mut self) -> *mut ffi::objc_class {
         unsafe { ffi::object_getClass(self.as_mut_ptr().cast()) as *mut ffi::objc_class }
     }
