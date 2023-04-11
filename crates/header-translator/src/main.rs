@@ -313,8 +313,8 @@ fn get_translation_unit<'i: 'tu, 'tu>(
             "-fobjc-arc",
             "-fobjc-arc-exceptions",
             "-fobjc-abi-version=2", // 3??
-            // "-fparse-all-comments",
-            // TODO: "-fretain-comments-from-system-headers"
+            "-fparse-all-comments",
+            "-fretain-comments-from-system-headers",
             "-fapinotes",
             "-isysroot",
             sdk.path.to_str().unwrap(),

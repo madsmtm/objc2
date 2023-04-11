@@ -80,6 +80,7 @@ impl<'a> Cache<'a> {
             superclasses: _,
             methods,
             description,
+            comment: _,
         } = stmt
         {
             let _span = debug_span!("Stmt::Methods", ?cls).entered();
@@ -164,6 +165,7 @@ impl<'a> Cache<'a> {
                     id,
                     generics,
                     superclasses,
+                    comment,
                     ..
                 } => {
                     let _span = debug_span!("Stmt::ClassDecl", ?id).entered();
@@ -204,6 +206,7 @@ impl<'a> Cache<'a> {
                                     generics: generics.clone(),
                                     category: cache.category.clone(),
                                     availability: cache.availability.clone(),
+                                    comment: comment.clone(),
                                     superclasses: superclasses.clone(),
                                     methods,
                                     description: Some(format!(
@@ -244,6 +247,7 @@ impl<'a> Cache<'a> {
                     ty: enum_ty,
                     kind: _,
                     variants: _,
+                    comment: _,
                 }) = iter.peek_mut()
                 {
                     if enum_ty.is_typedef_to(&id.name) {

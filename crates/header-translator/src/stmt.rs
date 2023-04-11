@@ -225,6 +225,7 @@ pub enum Stmt {
         designated_initializers: Vec<String>,
         derives: Derives,
         ownership: Ownership,
+        comment: Option<String>,
     },
     /// @interface class_name (name) <protocols*>
     /// ->
@@ -238,6 +239,7 @@ pub enum Stmt {
         superclasses: Vec<(ItemIdentifier, Vec<String>)>,
         methods: Vec<Method>,
         description: Option<String>,
+        comment: Option<String>,
     },
     /// @protocol name <protocols*>
     /// ->
@@ -247,6 +249,7 @@ pub enum Stmt {
         availability: Availability,
         protocols: BTreeSet<ItemIdentifier>,
         methods: Vec<Method>,
+        comment: Option<String>,
     },
     /// @interface ty: _ <protocols*>
     /// @interface ty (_) <protocols*>
@@ -255,6 +258,7 @@ pub enum Stmt {
         protocol: ItemIdentifier,
         generics: Vec<String>,
         availability: Availability,
+        comment: Option<String>,
     },
     /// struct name {
     ///     fields*
@@ -275,6 +279,7 @@ pub enum Stmt {
         availability: Availability,
         boxable: bool,
         fields: Vec<(String, Ty)>,
+        comment: Option<String>,
     },
     /// typedef NS_OPTIONS(type, name) {
     ///     variants*
@@ -297,6 +302,7 @@ pub enum Stmt {
         ty: Ty,
         kind: Option<UnexposedAttr>,
         variants: Vec<(String, Availability, Expr)>,
+        comment: Option<String>,
     },
     /// static const ty name = expr;
     /// extern const ty name;
@@ -394,6 +400,7 @@ impl Stmt {
                 // entity.get_mangled_objc_names()
                 let id = ItemIdentifier::new(entity, context);
                 let data = context.class_data.get(&id.name);
+                let comment = entity.get_comment();
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -435,6 +442,7 @@ impl Stmt {
                     availability: availability.clone(),
                     superclasses: superclasses.clone(),
                     methods,
+                    comment: comment.clone(),
                     description: None,
                 };
 
@@ -447,12 +455,14 @@ impl Stmt {
                         designated_initializers,
                         derives: data.map(|data| data.derives.clone()).unwrap_or_default(),
                         ownership: data.map(|data| data.ownership.clone()).unwrap_or_default(),
+                        comment: comment.clone(),
                     })
                     .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
                         cls: id.clone(),
                         protocol,
                         generics: generics.clone(),
                         availability: availability.clone(),
+                        comment: comment.clone(),
                     }))
                     .chain(iter::once(methods))
                     .collect()
@@ -463,6 +473,7 @@ impl Stmt {
             EntityKind::ObjCCategoryDecl => {
                 let category = ItemIdentifier::new_optional(entity, context);
                 let availability = Availability::parse(entity, context);
+                let comment = entity.get_comment();
 
                 let mut cls = None;
                 entity.visit_children(|entity, _parent| {
@@ -531,12 +542,14 @@ impl Stmt {
                     availability: availability.clone(),
                     superclasses,
                     methods,
+                    comment: comment.clone(),
                     description: None,
                 })
                 .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
                     cls: cls.clone(),
                     generics: generics.clone(),
                     availability: availability.clone(),
+                    comment: comment.clone(),
                     protocol,
                 }))
                 .collect()
@@ -545,6 +558,7 @@ impl Stmt {
                 let id = ItemIdentifier::new(entity, context)
                     .map_name(|name| context.replace_protocol_name(name));
                 let data = context.protocol_data.get(&id.name);
+                let comment = entity.get_comment();
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -573,6 +587,7 @@ impl Stmt {
 
                 vec![Self::ProtocolDecl {
                     id,
+                    comment,
                     availability,
                     protocols,
                     methods,
@@ -585,6 +600,7 @@ impl Stmt {
                 let mut encoding_name = "?".to_string();
                 let mut skip_struct = false;
                 let mut kind = None;
+                let comment = entity.get_comment();
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
@@ -636,6 +652,7 @@ impl Stmt {
                         availability,
                         boxable,
                         fields,
+                        comment,
                     }];
                 }
 
@@ -670,6 +687,7 @@ impl Stmt {
                 if let Some(name) = entity.get_name() {
                     let availability = Availability::parse(entity, context);
                     let id = ItemIdentifier::with_name(name, entity, context);
+                    let comment = entity.get_comment();
 
                     if context
                         .struct_data
@@ -693,6 +711,7 @@ impl Stmt {
                             availability,
                             boxable,
                             fields,
+                            comment,
                         }];
                     }
                 }
@@ -723,6 +742,7 @@ impl Stmt {
                 let ty = Ty::parse_enum(ty, context);
                 let mut kind = None;
                 let mut variants = Vec::new();
+                let comment = entity.get_comment();
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::EnumConstantDecl => {
@@ -788,6 +808,7 @@ impl Stmt {
                     ty,
                     kind,
                     variants,
+                    comment,
                 }]
             }
             EntityKind::VarDecl => {
@@ -1046,6 +1067,7 @@ impl fmt::Display for Stmt {
                 designated_initializers: _,
                 derives,
                 ownership: _,
+                comment,
             } => {
                 let macro_name = if generics.is_empty() {
                     "extern_class"
@@ -1057,6 +1079,10 @@ impl fmt::Display for Stmt {
                 writeln!(f, "    {derives}")?;
                 if let Some(feature) = id.feature() {
                     writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
+                }
+                if let Some(comment) = comment {
+                    let comment = crate::comment::preprocess(comment);
+                    writeln!(f, "/**\n {comment} \n*/")?;
                 }
                 write!(f, "{availability}")?;
                 write!(f, "    pub struct {}", id.name)?;
@@ -1140,6 +1166,7 @@ impl fmt::Display for Stmt {
                 availability: _,
                 superclasses,
                 methods,
+                comment,
                 description,
             } => {
                 writeln!(f, "extern_methods!(")?;
@@ -1148,6 +1175,10 @@ impl fmt::Display for Stmt {
                     if category.name.is_some() {
                         writeln!(f, "    ///")?;
                     }
+                }
+                if let Some(comment) = comment {
+                    let comment = crate::comment::preprocess(comment);
+                    writeln!(f, "/**\n {comment} \n*/")?;
                 }
                 if let Some(category_name) = &category.name {
                     writeln!(f, "    /// {category_name}")?;
@@ -1209,6 +1240,7 @@ impl fmt::Display for Stmt {
                 cls: _,
                 generics: _,
                 protocol,
+                comment: _,
                 availability: _,
             } if protocol.name == "NSCopying" || protocol.name == "NSMutableCopying" => {
                 // TODO
@@ -1216,11 +1248,16 @@ impl fmt::Display for Stmt {
             Self::ProtocolImpl {
                 cls,
                 generics,
+                comment,
                 protocol,
                 availability: _,
             } => {
                 if let Some(feature) = cls.feature() {
                     writeln!(f, "#[cfg(feature = \"{feature}\")]")?;
+                }
+                if let Some(comment) = comment {
+                    let comment = crate::comment::preprocess(comment);
+                    writeln!(f, "/**\n {comment} \n*/")?;
                 }
                 writeln!(
                     f,
@@ -1234,12 +1271,17 @@ impl fmt::Display for Stmt {
             Self::ProtocolDecl {
                 id,
                 availability,
+                comment,
                 protocols,
                 methods,
             } => {
                 writeln!(f, "extern_protocol!(")?;
                 write!(f, "{availability}")?;
 
+                if let Some(comment) = comment {
+                    let comment = crate::comment::preprocess(comment);
+                    writeln!(f, "/**\n {comment} \n*/")?;
+                }
                 write!(f, "    pub unsafe trait {}", id.name)?;
                 if !protocols.is_empty() {
                     for (i, protocol) in protocols
@@ -1298,10 +1340,15 @@ impl fmt::Display for Stmt {
                 availability,
                 boxable: _,
                 fields,
+                comment,
             } => {
                 writeln!(f, "extern_struct!(")?;
                 if let Some(encoding_name) = encoding_name {
                     writeln!(f, "    #[encoding_name({encoding_name:?})]")?;
+                }
+                if let Some(comment) = comment {
+                    let comment = crate::comment::preprocess(comment);
+                    writeln!(f, "/**\n {comment} \n*/")?;
                 }
                 write!(f, "{availability}")?;
                 writeln!(f, "    pub struct {} {{", id.name)?;
@@ -1322,6 +1369,7 @@ impl fmt::Display for Stmt {
                 ty,
                 kind,
                 variants,
+                comment,
             } => {
                 let macro_name = match kind {
                     None => "extern_enum",
@@ -1333,6 +1381,10 @@ impl fmt::Display for Stmt {
                 };
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    #[underlying({ty})]")?;
+                if let Some(comment) = comment {
+                    let comment = crate::comment::preprocess(comment);
+                    writeln!(f, "/**\n {comment} \n*/")?;
+                }
                 write!(f, "{availability}")?;
                 writeln!(
                     f,
