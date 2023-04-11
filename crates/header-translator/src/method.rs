@@ -237,6 +237,7 @@ pub struct Method {
     safe: bool,
     mutating: bool,
     is_protocol: bool,
+    comment: Option<String>,
 }
 
 impl Method {
@@ -408,6 +409,7 @@ impl<'tu> PartialMethod<'tu> {
         }
 
         let result_type = entity.get_result_type().expect("method return type");
+        //let comment = entity.get_comment();
         let mut result_type = Ty::parse_method_return(result_type, context);
 
         let memory_management = MemoryManagement::new(is_class, &selector, &result_type, modifiers);
@@ -442,6 +444,7 @@ impl<'tu> PartialMethod<'tu> {
                 safe: !data.unsafe_,
                 mutating: data.mutating,
                 is_protocol,
+                comment: None,
             },
         ))
     }
@@ -484,6 +487,7 @@ impl PartialProperty<'_> {
         }
 
         let availability = Availability::parse(&entity, context);
+        let comment = entity.get_comment();
 
         let modifiers = MethodModifiers::parse(&entity, context);
 
@@ -514,6 +518,7 @@ impl PartialProperty<'_> {
                 safe: !getter_data.unsafe_,
                 mutating: getter_data.mutating,
                 is_protocol,
+                comment,
             })
         } else {
             None
@@ -528,6 +533,7 @@ impl PartialProperty<'_> {
                 let selector = setter_name.clone() + ":";
                 let memory_management =
                     MemoryManagement::new(is_class, &selector, &Ty::VOID_RESULT, modifiers);
+                let comment = entity.get_comment();
 
                 Some(Method {
                     selector,
@@ -541,6 +547,7 @@ impl PartialProperty<'_> {
                     safe: !setter_data.unsafe_,
                     mutating: setter_data.mutating,
                     is_protocol,
+                    comment,
                 })
             } else {
                 None
@@ -575,6 +582,10 @@ impl fmt::Display for Method {
         // Attributes
         //
 
+        if let Some(ref comment) = self.comment {
+            let comment = crate::comment::preprocess(comment);
+            writeln!(f, "/**\n {comment} \n*/")?;
+        }
         write!(f, "{}", self.availability)?;
 
         if self.is_optional_protocol {
