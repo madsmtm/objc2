@@ -20,7 +20,7 @@
 //!
 //! use objc2::declare::ClassBuilder;
 //! use objc2::rc::Id;
-//! use objc2::runtime::{Class, NSObject, Sel};
+//! use objc2::runtime::{Class, Object, NSObject, Sel};
 //! use objc2::{sel, msg_send, msg_send_id, ClassType};
 //!
 //! fn register_class() -> &'static Class {
@@ -32,12 +32,16 @@
 //!     builder.add_ivar::<Cell<u32>>("_number");
 //!
 //!     // Add an Objective-C method for initializing an instance with a number
+//!     //
+//!     // We "cheat" a bit here, and use `Object` instead of `NSObject`,
+//!     // since only the former is allowed to be a mutable receiver (which is
+//!     // always safe in `init` methods, but not in others).
 //!     unsafe extern "C" fn init_with_number(
-//!         this: &mut NSObject,
+//!         this: &mut Object,
 //!         _cmd: Sel,
 //!         number: u32,
-//!     ) -> Option<&mut NSObject> {
-//!         let this: Option<&mut NSObject> = msg_send![super(this, NSObject::class()), init];
+//!     ) -> Option<&mut Object> {
+//!         let this: Option<&mut Object> = msg_send![super(this, NSObject::class()), init];
 //!         this.map(|this| {
 //!             // SAFETY: The ivar is added with the same type above
 //!             this.set_ivar::<Cell<u32>>("_number", Cell::new(number));
@@ -130,6 +134,7 @@ use std::ffi::CString;
 use crate::encode::__unstable::{EncodeArguments, EncodeReturn};
 use crate::encode::{Encode, Encoding, RefEncode};
 use crate::ffi;
+use crate::mutability::IsMutable;
 use crate::rc::Allocated;
 use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
 use crate::sel;
@@ -161,17 +166,17 @@ pub trait MethodImplementation: private::Sealed {
 }
 
 macro_rules! method_decl_impl {
-    (@<$($l:lifetime),*> T, $r:ident, $f:ty, $($t:ident),*) => {
+    (@<$($l:lifetime),*> T: $t_bound:ident, $r:ident, $f:ty, $($t:ident),*) => {
         impl<$($l,)* T, $r, $($t),*> private::Sealed for $f
         where
-            T: Message + ?Sized,
+            T: ?Sized + $t_bound,
             $r: EncodeReturn,
             $($t: Encode,)*
         {}
 
         impl<$($l,)* T, $r, $($t),*> MethodImplementation for $f
         where
-            T: Message + ?Sized,
+            T: ?Sized + $t_bound,
             $r: EncodeReturn,
             $($t: Encode,)*
         {
@@ -184,7 +189,7 @@ macro_rules! method_decl_impl {
             }
         }
     };
-    (@<$($l:lifetime),*> Class, $r:ident, $f:ty, $($t:ident),*) => {
+    (@<$($l:lifetime),*> $callee:ident, $r:ident, $f:ty, $($t:ident),*) => {
         impl<$($l,)* $r, $($t),*> private::Sealed for $f
         where
             $r: EncodeReturn,
@@ -196,7 +201,7 @@ macro_rules! method_decl_impl {
             $r: EncodeReturn,
             $($t: Encode,)*
         {
-            type Callee = Class;
+            type Callee = $callee;
             type Ret = $r;
             type Args = ($($t,)*);
 
@@ -209,14 +214,14 @@ macro_rules! method_decl_impl {
         #[doc(hidden)]
         impl<T, $($t),*> private::Sealed for $f
         where
-            T: Message + ?Sized,
+            T: ?Sized + Message,
             $($t: Encode,)*
         {}
 
         #[doc(hidden)]
         impl<T, $($t),*> MethodImplementation for $f
         where
-            T: Message + ?Sized,
+            T: ?Sized + Message,
             $($t: Encode,)*
         {
             type Callee = T;
@@ -237,12 +242,15 @@ macro_rules! method_decl_impl {
         }
     };
     (# $abi:literal; $($t:ident),*) => {
-        method_decl_impl!(@<'a> T, R, extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<'a> T, R, extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<> T, R, unsafe extern $abi fn(*const T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<> T, R, unsafe extern $abi fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<'a> T, R, unsafe extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<'a> T, R, unsafe extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> T: Message, R, extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> T: IsMutable, R, extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<> T: Message, R, unsafe extern $abi fn(*const T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<> T: Message, R, unsafe extern $abi fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> T: Message, R, unsafe extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> T: IsMutable, R, unsafe extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
+
+        method_decl_impl!(@<'a> Object, R, extern $abi fn(&'a mut Object, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> Object, R, unsafe extern $abi fn(&'a mut Object, Sel $(, $t)*) -> R, $($t),*);
 
         method_decl_impl!(@<'a> Class, R, extern $abi fn(&'a Class, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(@<> Class, R, unsafe extern $abi fn(*const Class, Sel $(, $t)*) -> R, $($t),*);

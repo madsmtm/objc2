@@ -1,0 +1,80 @@
+error[E0277]: the trait bound `InteriorMutable: mutability::private::MutabilityIsMutable` is not satisfied
+ --> ui/declare_class_mut_self_not_mutable.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_the trait `mutability::private::MutabilityIsMutable` is not implemented for `InteriorMutable`
+  |   required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `mutability::private::MutabilityIsMutable`:
+            Mutable
+            MutableWithImmutableSuperclass<IS>
+  = note: required for `CustomObject` to implement `IsMutable`
+  = note: required for `extern "C" fn(&mut CustomObject, objc2::runtime::Sel) -> &mut CustomObject` to implement `MethodImplementation`
+note: required by a bound in `ClassBuilder::add_method`
+ --> $WORKSPACE/crates/objc2/src/declare/mod.rs
+  |
+  |         F: MethodImplementation<Callee = T>,
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `InteriorMutable: mutability::private::MutabilityIsMutable` is not satisfied
+ --> ui/declare_class_mut_self_not_mutable.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_the trait `mutability::private::MutabilityIsMutable` is not implemented for `InteriorMutable`
+  |   required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `mutability::private::MutabilityIsMutable`:
+            Mutable
+            MutableWithImmutableSuperclass<IS>
+  = note: required for `CustomObject` to implement `IsMutable`
+  = note: required for `extern "C" fn(&mut CustomObject, objc2::runtime::Sel)` to implement `MethodImplementation`
+note: required by a bound in `ClassBuilder::add_method`
+ --> $WORKSPACE/crates/objc2/src/declare/mod.rs
+  |
+  |         F: MethodImplementation<Callee = T>,
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `InteriorMutable: mutability::private::MutabilityIsMutable` is not satisfied
+ --> ui/declare_class_mut_self_not_mutable.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_the trait `mutability::private::MutabilityIsMutable` is not implemented for `InteriorMutable`
+  |   required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `mutability::private::MutabilityIsMutable`:
+            Mutable
+            MutableWithImmutableSuperclass<IS>
+  = note: required for `CustomObject` to implement `IsMutable`
+  = note: required for `extern "C" fn(&mut CustomObject, objc2::runtime::Sel) -> __IdReturnValue` to implement `MethodImplementation`
+note: required by a bound in `ClassBuilder::add_method`
+ --> $WORKSPACE/crates/objc2/src/declare/mod.rs
+  |
+  |         F: MethodImplementation<Callee = T>,
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

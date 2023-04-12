@@ -99,7 +99,7 @@ declare_class!(
         }
 
         #[method(init)]
-        fn init(this: &mut Self) -> *mut Self {
+        unsafe fn init(this: *mut Self) -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().init += 1);
             unsafe { msg_send![super(this), init] }
         }
