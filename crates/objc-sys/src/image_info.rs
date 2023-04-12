@@ -1,3 +1,6 @@
+// TODO: Move this to `objc2` once we can detect simulator targets without a
+// build script.
+
 /// Note: While `objc2` relies on this, you can freely break this, since it is
 /// only used behind experimental features (`unstable-static-*`).
 #[repr(C)]

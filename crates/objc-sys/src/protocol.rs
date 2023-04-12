@@ -30,12 +30,10 @@ extern_c! {
     #[cfg(any(doc, not(objfw)))]
     pub fn objc_registerProtocol(proto: *mut objc_protocol);
 
-    // TODO: Verify unwinding
     pub fn protocol_conformsToProtocol(
         proto: *const objc_protocol,
         other: *const objc_protocol,
     ) -> BOOL;
-    // TODO: Verify unwinding
     pub fn protocol_isEqual(proto: *const objc_protocol, other: *const objc_protocol) -> BOOL;
     pub fn protocol_getName(proto: *const objc_protocol) -> *const c_char;
 

@@ -105,14 +105,16 @@ pub type BOOL = inner::BOOL;
 //
 // Likewise for NSUInteger.
 //
+//
 // ## GNUStep / WinObjC
 //
 // Defined as intptr_t/uintptr_t, which is exactly the same as isize/usize.
 //
+//
 // ## ObjFW
 //
-// Doesn't define these, but e.g. `OFString -length` returns size_t, so our
-// definitions are should be correct on effectively all targets.
+// Doesn't define these, but e.g. -[OFString length] returns size_t, so our
+// definitions should be correct on effectively all targets.
 //
 // Things might change slightly in the future, see
 // <https://internals.rust-lang.org/t/pre-rfc-usize-is-not-size-t/15369>.
@@ -127,15 +129,23 @@ pub type BOOL = inner::BOOL;
 ///
 /// [docs]: https://developer.apple.com/documentation/objectivec/nsinteger?language=objc
 ///
+///
 /// # Examples
 ///
 /// ```
-/// #[repr(isize)] // NSInteger
+/// use core::mem::size_of;
+/// # use objc_sys::NSInteger;
+/// # #[cfg(not_available)]
+/// use objc2::ffi::NSInteger;
+///
+/// #[repr(isize)]
 /// pub enum NSComparisonResult {
 ///     NSOrderedAscending = -1,
 ///     NSOrderedSame = 0,
 ///     NSOrderedDescending = 1,
 /// }
+///
+/// assert_eq!(size_of::<NSComparisonResult>(), size_of::<NSInteger>());
 /// ```
 pub type NSInteger = isize;
 
@@ -149,36 +159,43 @@ pub type NSInteger = isize;
 ///
 /// [docs]: https://developer.apple.com/documentation/objectivec/nsuinteger?language=objc
 ///
+///
 /// # Examples
 ///
 /// ```
-/// use objc_sys::NSUInteger;
-/// // Or:
-/// // use objc2::ffi::NSUInteger;
-/// // use icrate::Foundation::NSUInteger;
+/// # use objc_sys::NSUInteger;
+/// # #[cfg(not_available)]
+/// use objc2::ffi::NSUInteger;
+///
 /// extern "C" {
 ///     fn some_external_function() -> NSUInteger;
 /// }
 /// ```
 ///
 /// ```
-/// #[repr(usize)] // NSUInteger
-/// enum NSRoundingMode {
-///     NSRoundPlain = 0,
-///     NSRoundDown = 1,
-///     NSRoundUp = 2,
-///     NSRoundBankers = 3,
-/// };
+/// use core::mem::size_of;
+/// # use objc_sys::NSUInteger;
+/// # #[cfg(not_available)]
+/// use objc2::ffi::NSUInteger;
+///
+/// #[repr(usize)]
+/// enum CLRegionState {
+///     Unknown = 0,
+///     Inside = 1,
+///     Outside = 2,
+/// }
+///
+/// assert_eq!(size_of::<CLRegionState>(), size_of::<NSUInteger>());
 /// ```
 pub type NSUInteger = usize;
 
-/// The maximum value for an NSInteger.
+/// The maximum value for a [`NSInteger`].
 pub const NSIntegerMax: NSInteger = NSInteger::MAX;
 
-/// The minimum value for an NSInteger.
+/// The minimum value for a [`NSInteger`].
 pub const NSIntegerMin: NSInteger = NSInteger::MIN;
 
-/// The maximum value for an NSUInteger.
+/// The maximum value for a [`NSUInteger`].
 pub const NSUIntegerMax: NSUInteger = NSUInteger::MAX;
 
 /// An immutable pointer to a selector.
@@ -189,7 +206,9 @@ pub type SEL = *const objc_selector;
 
 /// A mutable pointer to an object / instance.
 ///
-/// Type alias provided for convenience. See `objc2::runtime::Object` for a
-/// higher level binding, and `objc2::rc::Id` for an easier way of handling
-/// objects.
+/// Type alias provided for convenience. You'll likely want to use one of:
+/// - `icrate::Foundation::NS[...]` for when you know the class of the object
+///   you're dealing with.
+/// - `objc2::rc::Id` for a proper way of doing memory management.
+/// - `objc2::runtime::Object` for a bit safer representation of this.
 pub type id = *mut objc_object;
