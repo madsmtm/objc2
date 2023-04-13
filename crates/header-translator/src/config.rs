@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
+use std::error::Error;
 use std::fs;
-use std::io::Result;
 use std::path::Path;
 
 use serde::Deserialize;
@@ -206,10 +206,10 @@ impl Default for MethodData {
 }
 
 impl Config {
-    pub fn from_file(file: &Path) -> Result<Self> {
+    pub fn from_file(file: &Path) -> Result<Self, Box<dyn Error>> {
         let s = fs::read_to_string(file)?;
 
-        let mut this = toml::from_str(&s)?;
+        let mut this = basic_toml::from_str(&s)?;
 
         data::apply_tweaks(&mut this);
 

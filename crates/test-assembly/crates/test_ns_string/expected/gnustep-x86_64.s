@@ -68,7 +68,7 @@ get_with_nul:
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0,@object
 	.section	.bss.SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0,"aw",@nobits
-	.p2align	3
+	.p2align	3, 0x0
 SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0:
 	.quad	0
 	.size	SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0, 8
@@ -81,7 +81,7 @@ SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0:
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0,@object
 	.section	.bss.SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0,"aw",@nobits
-	.p2align	3
+	.p2align	3, 0x0
 SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0:
 	.quad	0
 	.size	SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0, 8
@@ -94,7 +94,7 @@ SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0:
 
 	.type	SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0,@object
 	.section	.bss.SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0,"aw",@nobits
-	.p2align	3
+	.p2align	3, 0x0
 SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0:
 	.quad	0
 	.size	SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0, 8

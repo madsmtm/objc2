@@ -73,7 +73,7 @@ SEL:
 	.type	SEL_REF,@object
 	.section	.data.rel.ro.SEL_REF,"aw",@progbits
 	.globl	SEL_REF
-	.p2align	2
+	.p2align	2, 0x0
 SEL_REF:
 	.long	SEL
 	.size	SEL_REF, 4

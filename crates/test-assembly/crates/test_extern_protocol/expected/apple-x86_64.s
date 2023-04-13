@@ -41,7 +41,7 @@ l_anon.[ID].0:
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_acbdb619e79b01b6
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_acbdb619e79b01b6:
 	.asciz	"\000\000\000\000@\000\000"
 
@@ -52,7 +52,7 @@ L_OBJC_METH_VAR_NAME_acbdb619e79b01b6:
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
 	.globl	L_OBJC_SELECTOR_REFERENCES_acbdb619e79b01b6
-	.p2align	3
+	.p2align	3, 0x0
 L_OBJC_SELECTOR_REFERENCES_acbdb619e79b01b6:
 	.quad	L_OBJC_METH_VAR_NAME_acbdb619e79b01b6
 

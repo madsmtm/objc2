@@ -64,15 +64,15 @@ _nonnull_null:
 	push	r14
 	push	rbx
 	push	rax
-	mov	rbx, rdx
-	mov	r15, qword ptr [rdx]
+	mov	r15, rdx
+	mov	rbx, qword ptr [rdx]
 	call	_objc_msgSend
 	mov	r14, rax
-	mov	rdi, qword ptr [rbx]
+	mov	rdi, qword ptr [r15]
 	call	_objc_retain
-	test	r15, r15
+	test	rbx, rbx
 	je	LBB2_2
-	mov	rdi, r15
+	mov	rdi, rbx
 	call	_objc_release
 LBB2_2:
 	mov	rax, r14
@@ -94,15 +94,15 @@ _null_null:
 	push	r14
 	push	rbx
 	push	rax
-	mov	rbx, rdx
-	mov	r15, qword ptr [rdx]
+	mov	r15, rdx
+	mov	rbx, qword ptr [rdx]
 	call	_objc_msgSend
 	mov	r14, rax
-	mov	rdi, qword ptr [rbx]
+	mov	rdi, qword ptr [r15]
 	call	_objc_retain
-	test	r15, r15
+	test	rbx, rbx
 	je	LBB3_3
-	mov	rdi, r15
+	mov	rdi, rbx
 	call	_objc_release
 LBB3_3:
 	mov	rax, r14
@@ -127,17 +127,17 @@ _two_nonnull_nonnull:
 	push	r12
 	push	rbx
 	push	rax
-	mov	r14, rcx
-	mov	rbx, rdx
+	mov	rbx, rcx
+	mov	r14, rdx
 	mov	r15, qword ptr [rdx]
 	mov	r12, qword ptr [rcx]
 	call	_objc_msgSend
 	mov	r13, rax
-	mov	rdi, qword ptr [rbx]
+	mov	rdi, qword ptr [r14]
 	call	_objc_retain
 	mov	rdi, r15
 	call	_objc_release
-	mov	rdi, qword ptr [r14]
+	mov	rdi, qword ptr [rbx]
 	call	_objc_retain
 	mov	rdi, r12
 	call	_objc_release
