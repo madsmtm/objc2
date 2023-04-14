@@ -557,10 +557,9 @@ enum Inner {
 }
 
 impl Inner {
-    fn parse(ty: Type<'_>, mut lifetime: Lifetime, context: &Context<'_>) -> Self {
-        let _span = debug_span!("ty", ?ty, ?lifetime).entered();
+    fn parse(attributed_ty: Type<'_>, mut lifetime: Lifetime, context: &Context<'_>) -> Self {
+        let _span = debug_span!("ty", ?attributed_ty, ?lifetime).entered();
 
-        let attributed_ty = ty;
         let mut ty = attributed_ty;
         while let TypeKind::Attributed = ty.get_kind() {
             ty = ty
@@ -729,9 +728,8 @@ impl Inner {
                 drop(parser);
 
                 let pointer_name = ty.get_display_name();
-                let ty = ty.get_pointee_type().expect("pointer type to have pointee");
+                let attributed_ty = ty.get_pointee_type().expect("pointer type to have pointee");
 
-                let attributed_ty = ty;
                 let mut ty = attributed_ty;
                 while let TypeKind::Attributed = ty.get_kind() {
                     ty = ty

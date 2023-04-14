@@ -316,43 +316,39 @@ handle_alloc_release:
 	.p2align	4, 0x90
 	.type	handle_alloc_init_release,@function
 handle_alloc_init_release:
+	push	ebp
 	push	ebx
 	push	edi
 	push	esi
-	sub	esp, 16
+	sub	esp, 12
 	mov	esi, dword ptr [esp + 32]
-	mov	edi, dword ptr [esp + 36]
+	mov	ebp, dword ptr [esp + 36]
+	mov	edi, dword ptr [esp + 40]
 	call	.L8$pb
 .L8$pb:
 	pop	ebx
 .Ltmp8:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp8-.L8$pb)
-	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp + 4], ebp
 	mov	dword ptr [esp], esi
 	call	objc_msg_lookup@PLT
-	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp + 4], ebp
 	mov	dword ptr [esp], esi
 	call	eax
-	test	eax, eax
-	je	.LBB8_1
-	mov	edi, dword ptr [esp + 40]
 	mov	esi, eax
-	mov	dword ptr [esp], eax
 	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], eax
 	call	objc_msg_lookup@PLT
 	mov	dword ptr [esp + 4], edi
 	mov	dword ptr [esp], esi
 	call	eax
-	jmp	.LBB8_3
-.LBB8_1:
-	xor	eax, eax
-.LBB8_3:
 	mov	dword ptr [esp], eax
 	call	objc_release@PLT
-	add	esp, 16
+	add	esp, 12
 	pop	esi
 	pop	edi
 	pop	ebx
+	pop	ebp
 	ret
 .Lfunc_end8:
 	.size	handle_alloc_init_release, .Lfunc_end8-handle_alloc_init_release
@@ -554,7 +550,7 @@ handle_with_out_param:
 
 	.type	.Lanon.[ID].1,@object
 	.section	.data.rel.ro..Lanon.[ID].1,"aw",@progbits
-	.p2align	2
+	.p2align	2, 0x0
 .Lanon.[ID].1:
 	.long	.Lanon.[ID].0
 	.asciz	"3\000\000\000\r\000\000\000\005\000\000"
@@ -562,7 +558,7 @@ handle_with_out_param:
 
 	.type	.Lanon.[ID].2,@object
 	.section	.data.rel.ro..Lanon.[ID].2,"aw",@progbits
-	.p2align	2
+	.p2align	2, 0x0
 .Lanon.[ID].2:
 	.long	.Lanon.[ID].0
 	.asciz	"3\000\000\000\027\000\000\000\005\000\000"
@@ -570,7 +566,7 @@ handle_with_out_param:
 
 	.type	.Lanon.[ID].3,@object
 	.section	.data.rel.ro..Lanon.[ID].3,"aw",@progbits
-	.p2align	2
+	.p2align	2, 0x0
 .Lanon.[ID].3:
 	.long	.Lanon.[ID].0
 	.asciz	"3\000\000\000!\000\000\000\005\000\000"
@@ -578,7 +574,7 @@ handle_with_out_param:
 
 	.type	.Lanon.[ID].4,@object
 	.section	.data.rel.ro..Lanon.[ID].4,"aw",@progbits
-	.p2align	2
+	.p2align	2, 0x0
 .Lanon.[ID].4:
 	.long	.Lanon.[ID].0
 	.asciz	"3\000\000\000>\000\000\000\005\000\000"
@@ -586,7 +582,7 @@ handle_with_out_param:
 
 	.type	.Lanon.[ID].5,@object
 	.section	.data.rel.ro..Lanon.[ID].5,"aw",@progbits
-	.p2align	2
+	.p2align	2, 0x0
 .Lanon.[ID].5:
 	.long	.Lanon.[ID].0
 	.asciz	"3\000\000\000H\000\000\000\005\000\000"

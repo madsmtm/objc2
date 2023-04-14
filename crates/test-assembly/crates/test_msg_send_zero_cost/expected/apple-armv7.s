@@ -23,7 +23,7 @@ _SEL:
 
 	.section	__DATA,__const
 	.globl	_SEL_REF
-	.p2align	2
+	.p2align	2, 0x0
 _SEL_REF:
 	.long	_SEL
 

@@ -91,21 +91,21 @@ nonnull_null:
 	push	r12
 	push	rbx
 	push	rax
-	mov	rbx, rdx
+	mov	r15, rdx
 	mov	r14, rsi
 	mov	r12, rdi
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	r15, qword ptr [rbx]
+	mov	rbx, qword ptr [r15]
 	mov	rdi, r12
 	mov	rsi, r14
-	mov	rdx, rbx
+	mov	rdx, r15
 	call	rax
 	mov	r14, rax
-	mov	rdi, qword ptr [rbx]
+	mov	rdi, qword ptr [r15]
 	call	qword ptr [rip + objc_retain@GOTPCREL]
-	test	r15, r15
+	test	rbx, rbx
 	je	.LBB2_2
-	mov	rdi, r15
+	mov	rdi, rbx
 	call	qword ptr [rip + objc_release@GOTPCREL]
 .LBB2_2:
 	mov	rax, r14
@@ -180,31 +180,30 @@ two_nonnull_nonnull:
 	push	r12
 	push	rbx
 	push	rax
-	mov	r14, rcx
-	mov	rbx, rdx
+	mov	rbx, rcx
+	mov	r14, rdx
 	mov	r15, rsi
 	mov	r12, rdi
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	r13, qword ptr [rbx]
-	mov	rcx, qword ptr [r14]
-	mov	qword ptr [rsp], rcx
+	mov	r13, qword ptr [r14]
+	mov	rbp, qword ptr [rbx]
 	mov	rdi, r12
 	mov	rsi, r15
-	mov	rdx, rbx
-	mov	rcx, r14
+	mov	rdx, r14
+	mov	rcx, rbx
 	call	rax
-	mov	rbp, rax
-	mov	rdi, qword ptr [rbx]
-	mov	r15, qword ptr [rip + objc_retain@GOTPCREL]
-	call	r15
-	mov	rbx, qword ptr [rip + objc_release@GOTPCREL]
-	mov	rdi, r13
-	call	rbx
+	mov	r15, rax
 	mov	rdi, qword ptr [r14]
-	call	r15
-	mov	rdi, qword ptr [rsp]
-	call	rbx
-	mov	rax, rbp
+	mov	r14, qword ptr [rip + objc_retain@GOTPCREL]
+	call	r14
+	mov	r12, qword ptr [rip + objc_release@GOTPCREL]
+	mov	rdi, r13
+	call	r12
+	mov	rdi, qword ptr [rbx]
+	call	r14
+	mov	rdi, rbp
+	call	r12
+	mov	rax, r15
 	add	rsp, 8
 	pop	rbx
 	pop	r12
@@ -224,11 +223,11 @@ call_with_none1:
 	push	r14
 	push	rbx
 	push	rax
-	mov	r14, rsi
-	mov	rbx, rdi
+	mov	rbx, rsi
+	mov	r14, rdi
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	rdi, rbx
-	mov	rsi, r14
+	mov	rdi, r14
+	mov	rsi, rbx
 	xor	edx, edx
 	add	rsp, 8
 	pop	rbx
@@ -245,11 +244,11 @@ call_with_none2:
 	push	r14
 	push	rbx
 	push	rax
-	mov	r14, rsi
-	mov	rbx, rdi
+	mov	rbx, rsi
+	mov	r14, rdi
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	rdi, rbx
-	mov	rsi, r14
+	mov	rdi, r14
+	mov	rsi, rbx
 	xor	edx, edx
 	add	rsp, 8
 	pop	rbx
@@ -266,13 +265,13 @@ call_with_none3:
 	push	r14
 	push	rbx
 	push	rax
-	mov	r14, rsi
-	mov	rbx, rdi
+	mov	rbx, rsi
+	mov	r14, rdi
 	mov	qword ptr [rsp], 0
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	mov	rdx, rsp
-	mov	rdi, rbx
-	mov	rsi, r14
+	mov	rdi, r14
+	mov	rsi, rbx
 	call	rax
 	mov	rbx, rax
 	mov	rdi, qword ptr [rsp]
@@ -294,13 +293,13 @@ call_with_none4:
 	push	r14
 	push	rbx
 	push	rax
-	mov	r14, rsi
-	mov	rbx, rdi
+	mov	rbx, rsi
+	mov	r14, rdi
 	mov	qword ptr [rsp], 0
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	mov	rdx, rsp
-	mov	rdi, rbx
-	mov	rsi, r14
+	mov	rdi, r14
+	mov	rsi, rbx
 	call	rax
 	mov	rbx, rax
 	mov	rdi, qword ptr [rsp]
@@ -323,22 +322,22 @@ call_with_some1:
 	push	r14
 	push	rbx
 	sub	rsp, 16
-	mov	r14, rdx
-	mov	r15, rsi
-	mov	rbx, rdi
+	mov	rbx, rdx
+	mov	r14, rsi
+	mov	r15, rdi
 	mov	qword ptr [rsp + 8], rdx
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	lea	rdx, [rsp + 8]
-	mov	rdi, rbx
-	mov	rsi, r15
+	mov	rdi, r15
+	mov	rsi, r14
 	call	rax
-	mov	rbx, rax
+	mov	r14, rax
 	mov	rdi, qword ptr [rsp + 8]
 	call	qword ptr [rip + objc_retain@GOTPCREL]
-	mov	rdi, r14
+	mov	rdi, rbx
 	call	qword ptr [rip + objc_release@GOTPCREL]
 	mov	rdx, qword ptr [rsp + 8]
-	mov	rax, rbx
+	mov	rax, r14
 	add	rsp, 16
 	pop	rbx
 	pop	r14
@@ -356,22 +355,22 @@ call_with_some2:
 	push	r14
 	push	rbx
 	sub	rsp, 16
-	mov	r14, rdx
-	mov	r15, rsi
-	mov	rbx, rdi
+	mov	rbx, rdx
+	mov	r14, rsi
+	mov	r15, rdi
 	mov	qword ptr [rsp + 8], rdx
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	lea	rdx, [rsp + 8]
-	mov	rdi, rbx
-	mov	rsi, r15
+	mov	rdi, r15
+	mov	rsi, r14
 	call	rax
-	mov	rbx, rax
+	mov	r14, rax
 	mov	rdi, qword ptr [rsp + 8]
 	call	qword ptr [rip + objc_retain@GOTPCREL]
-	mov	rdi, r14
+	mov	rdi, rbx
 	call	qword ptr [rip + objc_release@GOTPCREL]
 	mov	rdx, qword ptr [rsp + 8]
-	mov	rax, rbx
+	mov	rax, r14
 	add	rsp, 16
 	pop	rbx
 	pop	r14
@@ -389,22 +388,22 @@ call_with_some3:
 	push	r14
 	push	rbx
 	sub	rsp, 16
-	mov	r14, rdx
-	mov	r15, rsi
-	mov	rbx, rdi
+	mov	rbx, rdx
+	mov	r14, rsi
+	mov	r15, rdi
 	mov	qword ptr [rsp + 8], rdx
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	lea	rdx, [rsp + 8]
-	mov	rdi, rbx
-	mov	rsi, r15
+	mov	rdi, r15
+	mov	rsi, r14
 	call	rax
-	mov	rbx, rax
+	mov	r14, rax
 	mov	rdi, qword ptr [rsp + 8]
 	call	qword ptr [rip + objc_retain@GOTPCREL]
-	mov	rdi, r14
+	mov	rdi, rbx
 	call	qword ptr [rip + objc_release@GOTPCREL]
 	mov	rdx, qword ptr [rsp + 8]
-	mov	rax, rbx
+	mov	rax, r14
 	add	rsp, 16
 	pop	rbx
 	pop	r14

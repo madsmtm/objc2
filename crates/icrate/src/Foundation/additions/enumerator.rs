@@ -157,7 +157,8 @@ impl<'a, C: NSFastEnumeration2 + ?Sized> Iterator for NSFastEnumerator2<'a, C> {
             None
         } else {
             unsafe {
-                let obj = *self.ptr;
+                // TODO
+                let obj = self.ptr.read_unaligned();
                 self.ptr = self.ptr.offset(1);
                 Some(obj.as_ref().unwrap_unchecked())
             }

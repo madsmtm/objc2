@@ -41,7 +41,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let crates_dir = manifest_dir.parent().unwrap();
     let cargo_toml = fs::read_to_string(crates_dir.join("icrate").join("Cargo.toml"))?;
 
-    let CargoToml { features } = toml::from_str(&cargo_toml)?;
+    let CargoToml { features } = basic_toml::from_str(&cargo_toml)?;
 
     println!("Testing all Foundation features in `icrate`");
 
