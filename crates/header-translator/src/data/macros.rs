@@ -195,7 +195,7 @@ macro_rules! __data_methods {
     ) => {
         let mut method_data = $data.methods.entry(stringify!($name).to_string()).or_default();
 
-        method_data.mutating = true;
+        method_data.mutating = Some(true);
 
         __data_methods! {
             @($data)
@@ -229,7 +229,7 @@ macro_rules! __data_methods {
         let mut method_data = $data.methods.entry(stringify!($name).to_string()).or_default();
 
         method_data.unsafe_ = false;
-        method_data.mutating = true;
+        method_data.mutating = Some(true);
 
         __data_methods! {
             @($data)

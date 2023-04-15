@@ -7,13 +7,7 @@ data! {
     }
 
     class NSMutableArray: MutableWithImmutableSuperclass<Foundation::NSArray> {
-        unsafe mut -removeAllObjects;
-        mut -addObject;
-        mut -insertObject_atIndex;
-        mut -replaceObjectAtIndex_withObject;
-        mut -removeObjectAtIndex;
-        mut -removeLastObject;
-        mut -sortUsingFunction_context;
+        unsafe -removeAllObjects;
     }
 
     class NSString: ImmutableWithMutableSubclass<Foundation::NSMutableString> {
@@ -38,8 +32,8 @@ data! {
         unsafe +stringWithCapacity;
         unsafe -initWithString;
         unsafe +stringWithString;
-        unsafe mut -appendString;
-        unsafe mut -setString;
+        unsafe -appendString;
+        unsafe -setString;
     }
 
     // Allowed to be just `Immutable` since we've removed the `NSCopying` and
@@ -58,7 +52,7 @@ data! {
     class NSMutableAttributedString: MutableWithImmutableSuperclass<Foundation::NSAttributedString> {
         unsafe -initWithString;
         unsafe -initWithAttributedString;
-        unsafe mut -setAttributedString;
+        unsafe -setAttributedString;
     }
 
     class NSBundle {
@@ -77,8 +71,8 @@ data! {
         unsafe +dataWithData;
         unsafe -initWithCapacity;
         unsafe +dataWithCapacity;
-        unsafe mut -setLength;
-        unsafe mut -mutableBytes;
+        unsafe -setLength;
+        unsafe -mutableBytes;
     }
 
     // Allowed to be just `Mutable` since we've removed the `NSCopying` and
@@ -91,9 +85,8 @@ data! {
     }
 
     class NSMutableDictionary: MutableWithImmutableSuperclass<Foundation::NSDictionary> {
-        unsafe mut -removeObjectForKey;
-        unsafe mut -removeAllObjects;
-        mut -setDictionary;
+        unsafe -removeObjectForKey;
+        unsafe -removeAllObjects;
     }
 
     class NSError {
@@ -146,8 +139,7 @@ data! {
     }
 
     class NSMutableSet: MutableWithImmutableSuperclass<Foundation::NSSet> {
-        unsafe mut -removeAllObjects;
-        mut -addObject;
+        unsafe -removeAllObjects;
     }
 
     class NSCharacterSet: ImmutableWithMutableSubclass<Foundation::NSMutableCharacterSet> {}

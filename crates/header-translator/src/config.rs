@@ -154,8 +154,7 @@ pub struct MethodData {
     pub unsafe_: bool,
     #[serde(default = "skipped_default")]
     pub skipped: bool,
-    #[serde(default = "mutating_default")]
-    pub mutating: bool,
+    pub mutating: Option<bool>,
 }
 
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
@@ -189,16 +188,12 @@ fn skipped_default() -> bool {
     false
 }
 
-fn mutating_default() -> bool {
-    false
-}
-
 impl Default for MethodData {
     fn default() -> Self {
         Self {
             unsafe_: unsafe_default(),
             skipped: skipped_default(),
-            mutating: mutating_default(),
+            mutating: None,
         }
     }
 }

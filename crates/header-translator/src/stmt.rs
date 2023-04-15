@@ -152,9 +152,7 @@ fn parse_objc_decl(
 
             if !properties.remove(&(partial.is_class, partial.fn_name.clone())) {
                 let data = get_data(&partial.fn_name);
-                if let Some((designated_initializer, method)) =
-                    partial.parse(data, generics.is_none(), context)
-                {
+                if let Some((designated_initializer, method)) = partial.parse(data, context) {
                     if designated_initializer {
                         designated_initializers.push(method.fn_name.clone());
                     }
@@ -172,8 +170,7 @@ fn parse_objc_decl(
                 .as_ref()
                 .map(|setter_name| get_data(setter_name));
 
-            let (getter, setter) =
-                partial.parse(getter_data, setter_data, generics.is_none(), context);
+            let (getter, setter) = partial.parse(getter_data, setter_data, context);
             if let Some(getter) = getter {
                 if !properties.insert((getter.is_class, getter.fn_name.clone())) {
                     error!(?setter, "already exisiting property");
@@ -221,6 +218,15 @@ pub enum Mutability {
     #[default]
     InteriorMutable,
     // MainThreadOnly,
+}
+
+impl Mutability {
+    pub fn is_mutable(&self) -> bool {
+        matches!(
+            self,
+            Mutability::Mutable | Mutability::MutableWithImmutableSuperclass(_)
+        )
+    }
 }
 
 impl fmt::Display for Mutability {
@@ -406,6 +412,25 @@ fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
     });
 }
 
+pub(crate) fn get_category_cls<'tu>(entity: &Entity<'tu>) -> Entity<'tu> {
+    let mut cls = None;
+    entity.visit_children(|entity, _parent| {
+        if entity.get_kind() == EntityKind::ObjCClassRef {
+            if cls.is_some() {
+                panic!("could not find unique category class")
+            }
+            let definition = entity
+                .get_definition()
+                .expect("category class ref definition");
+            cls = Some(definition);
+            EntityVisitResult::Break
+        } else {
+            EntityVisitResult::Continue
+        }
+    });
+    cls.expect("could not find category class")
+}
+
 impl Stmt {
     pub fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Vec<Self> {
         let _span = debug_span!(
@@ -489,22 +514,7 @@ impl Stmt {
                 let category = ItemIdentifier::new_optional(entity, context);
                 let availability = Availability::parse(entity, context);
 
-                let mut cls = None;
-                entity.visit_children(|entity, _parent| {
-                    if entity.get_kind() == EntityKind::ObjCClassRef {
-                        if cls.is_some() {
-                            panic!("could not find unique category class")
-                        }
-                        let definition = entity
-                            .get_definition()
-                            .expect("category class ref definition");
-                        cls = Some(ItemIdentifier::new(&definition, context));
-                        EntityVisitResult::Break
-                    } else {
-                        EntityVisitResult::Continue
-                    }
-                });
-                let cls = cls.expect("could not find category class");
+                let cls = ItemIdentifier::new(&get_category_cls(entity), context);
                 let data = context.class_data.get(&cls.name);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
