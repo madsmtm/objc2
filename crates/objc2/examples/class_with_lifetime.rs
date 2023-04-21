@@ -7,7 +7,8 @@ use std::marker::PhantomData;
 use std::sync::Once;
 
 use objc2::declare::{ClassBuilder, Ivar, IvarEncode, IvarType};
-use objc2::rc::{Id, Owned};
+use objc2::mutability::Mutable;
+use objc2::rc::Id;
 use objc2::runtime::{Class, NSObject, Sel};
 use objc2::{msg_send, msg_send_id, sel};
 use objc2::{ClassType, Encoding, Message, RefEncode};
@@ -57,7 +58,7 @@ impl<'a> MyObject<'a> {
         })
     }
 
-    pub fn new(number: &'a mut u8) -> Id<Self, Owned> {
+    pub fn new(number: &'a mut u8) -> Id<Self> {
         // SAFETY: The lifetime of the reference is properly bound to the
         // returned type
         unsafe { msg_send_id![Self::alloc(), initWithPtr: number] }
@@ -74,6 +75,7 @@ impl<'a> MyObject<'a> {
 
 unsafe impl<'a> ClassType for MyObject<'a> {
     type Super = NSObject;
+    type Mutability = Mutable;
     const NAME: &'static str = "MyObject";
 
     fn class() -> &'static Class {
@@ -112,9 +114,13 @@ fn main() {
     let mut number = 54;
     let mut obj = MyObject::new(&mut number);
 
-    // It is not possible to convert to `Id<NSObject, Owned>` since that would
-    // loose the lifetime information that `MyObject` stores
+    // It is not possible to convert to `Id<NSObject>` since that would loose
+    // the lifetime information that `MyObject` stores.
     // let obj = Id::into_super(obj);
+    //
+    // Neither is it possible to clone the object, since it is marked as
+    // `Mutable` in `ClassType::Mutability`.
+    // let obj2 = obj.clone();
 
     println!("Number: {}", obj.get());
 
@@ -123,16 +129,6 @@ fn main() {
     // println!("Number: {}", number);
     println!("Number: {}", obj.get());
 
-    let obj = Id::into_shared(obj);
-    let obj2 = obj.clone();
-
-    // We gave up ownership above, so can't edit the number any more!
-    // obj.set(7);
-
-    println!("Number: {}", obj.get());
-    println!("Number: {}", obj2.get());
-
     drop(obj);
-    drop(obj2);
     println!("Number: {number}");
 }

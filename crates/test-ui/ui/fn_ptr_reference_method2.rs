@@ -1,8 +1,8 @@
 //! Extra test for `fn_ptr_reference_method`
 //! (They fail at different compilation passes).
-use objc2::{class, sel};
 use objc2::declare::ClassBuilder;
 use objc2::runtime::{Object, Sel};
+use objc2::{class, sel};
 
 extern "C" fn my_fn(_this: &Object, _cmd: Sel, _x: &Object) {}
 

@@ -6,7 +6,6 @@ use core::ops::Index;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::slice::{self, SliceIndex};
 
-use objc2::msg_send_id;
 use objc2::rc::DefaultId;
 
 use crate::common::*;
@@ -27,7 +26,8 @@ extern_methods!(
         pub fn new() -> Id<Self>;
 
         pub fn with_bytes(bytes: &[u8]) -> Id<Self> {
-            unsafe { Id::cast(with_slice(Self::class(), bytes)) }
+            let bytes_ptr = bytes.as_ptr() as *mut c_void;
+            unsafe { Self::initWithBytes_length(Self::alloc(), bytes_ptr, bytes.len()) }
         }
 
         #[cfg(feature = "block")]
@@ -94,10 +94,8 @@ impl<I: SliceIndex<[u8]>> Index<I> for NSData {
 }
 
 impl DefaultId for NSData {
-    type Ownership = Shared;
-
     #[inline]
-    fn default_id() -> Id<Self, Self::Ownership> {
+    fn default_id() -> Id<Self> {
         Self::new()
     }
 }
@@ -119,28 +117,18 @@ impl<'a> IntoIterator for &'a NSData {
     }
 }
 
-pub(crate) unsafe fn with_slice(cls: &Class, bytes: &[u8]) -> Id<Object> {
-    let bytes_ptr: *const c_void = bytes.as_ptr().cast();
-    unsafe {
-        msg_send_id![
-            msg_send_id![cls, alloc],
-            initWithBytes: bytes_ptr,
-            length: bytes.len(),
-        ]
-    }
-}
-
 #[cfg(feature = "block")]
 pub(crate) unsafe fn with_vec(cls: &Class, bytes: Vec<u8>) -> Id<Object> {
     use core::mem::ManuallyDrop;
 
     use block2::{Block, ConcreteBlock};
+    use objc2::msg_send_id;
 
     let capacity = bytes.capacity();
 
     let dealloc = ConcreteBlock::new(move |bytes: *mut c_void, len: usize| unsafe {
         // Recreate the Vec and let it drop
-        let _ = Vec::<u8>::from_raw_parts(bytes.cast(), len, capacity);
+        let _ = <Vec<u8>>::from_raw_parts(bytes.cast(), len, capacity);
     });
     let dealloc = dealloc.copy();
     let dealloc: &Block<(*mut c_void, usize), ()> = &dealloc;

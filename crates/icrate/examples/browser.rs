@@ -2,13 +2,6 @@
 
 use icrate::{
     ns_string,
-    objc2::{
-        declare::{Ivar, IvarDrop},
-        declare_class, extern_methods, msg_send,
-        rc::{Allocated, Id},
-        runtime::{Object, ProtocolObject, Sel},
-        sel, ClassType,
-    },
     AppKit::{
         NSApplication, NSApplicationActivationPolicyRegular, NSBackingStoreBuffered,
         NSBezelStyleShadowlessSquare, NSButton, NSColor, NSControl, NSControlTextEditingDelegate,
@@ -21,6 +14,14 @@ use icrate::{
     Foundation::{NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize, NSURLRequest, NSURL},
     WebKit::{WKNavigation, WKNavigationDelegate, WKWebView},
 };
+use objc2::{
+    declare::{Ivar, IvarDrop},
+    declare_class, extern_methods, msg_send,
+    mutability::InteriorMutable,
+    rc::{Allocated, Id},
+    runtime::{Object, ProtocolObject, Sel},
+    sel, ClassType,
+};
 
 declare_class!(
     struct Delegate {
@@ -31,6 +32,7 @@ declare_class!(
 
     unsafe impl ClassType for Delegate {
         type Super = NSObject;
+        type Mutability = InteriorMutable;
         const NAME: &'static str = "Delegate";
     }
 
@@ -39,13 +41,13 @@ declare_class!(
         #[allow(non_snake_case)]
         unsafe fn __init_withTextField_andWebView(
             self: &mut Self,
-            text_field: *mut NSTextField,
-            web_view: *mut WKWebView,
+            text_field: &NSTextField,
+            web_view: &WKWebView,
         ) -> Option<&mut Self> {
             let this: Option<&mut Self> = msg_send![super(self), init];
             let this = this?;
-            Ivar::write(&mut this.text_field, unsafe { Id::retain(text_field) }?);
-            Ivar::write(&mut this.web_view, unsafe { Id::retain(web_view) }?);
+            Ivar::write(&mut this.text_field, text_field.retain());
+            Ivar::write(&mut this.web_view, web_view.retain());
             Some(this)
         }
     }

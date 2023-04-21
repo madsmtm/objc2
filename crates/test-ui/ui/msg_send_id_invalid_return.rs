@@ -1,7 +1,7 @@
 //! Test compiler output with invalid msg_send_id return values.
 use objc2::msg_send_id;
 use objc2::rc::{Allocated, Id};
-use objc2::runtime::{Class, Object, NSObject};
+use objc2::runtime::{Class, NSObject, Object};
 
 fn main() {
     let cls: &Class;

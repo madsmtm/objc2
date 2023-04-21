@@ -1,9 +1,12 @@
 data! {
-    class NSArray {
+    // SAFETY: `new` or `initWithObjects:` may choose to deduplicate arrays,
+    // and returning mutable references to those would be unsound - hence
+    // `NSArray` cannot be mutable.
+    class NSArray: ImmutableWithMutableSubclass<Foundation::NSMutableArray> {
         unsafe -count;
     }
 
-    class NSMutableArray: Owned {
+    class NSMutableArray: MutableWithImmutableSuperclass<Foundation::NSArray> {
         unsafe mut -removeAllObjects;
         mut -addObject;
         mut -insertObject_atIndex;
@@ -13,7 +16,7 @@ data! {
         mut -sortUsingFunction_context;
     }
 
-    class NSString {
+    class NSString: ImmutableWithMutableSubclass<Foundation::NSMutableString> {
         unsafe -init;
         unsafe -compare;
         unsafe -hasPrefix;
@@ -30,7 +33,7 @@ data! {
         unsafe +stringWithString;
     }
 
-    class NSMutableString: Owned {
+    class NSMutableString: MutableWithImmutableSuperclass<Foundation::NSString> {
         unsafe -initWithCapacity;
         unsafe +stringWithCapacity;
         unsafe -initWithString;
@@ -39,14 +42,20 @@ data! {
         unsafe mut -setString;
     }
 
-    class NSAttributedString {
+    // Allowed to be just `Immutable` since we've removed the `NSCopying` and
+    // `NSMutableCopying` impls from these for now (they'd return the wrong
+    // type).
+    class NSSimpleCString: Immutable {}
+    class NSConstantString: Immutable {}
+
+    class NSAttributedString: ImmutableWithMutableSubclass<Foundation::NSMutableAttributedString> {
         unsafe -initWithString;
         unsafe -initWithAttributedString;
         unsafe -string;
         unsafe -length;
     }
 
-    class NSMutableAttributedString: Owned {
+    class NSMutableAttributedString: MutableWithImmutableSuperclass<Foundation::NSAttributedString> {
         unsafe -initWithString;
         unsafe -initWithAttributedString;
         unsafe mut -setAttributedString;
@@ -57,14 +66,14 @@ data! {
         unsafe -infoDictionary;
     }
 
-    class NSData {
+    class NSData: ImmutableWithMutableSubclass<Foundation::NSMutableData> {
         unsafe -initWithData;
         unsafe +dataWithData;
         unsafe -length;
         unsafe -bytes;
     }
 
-    class NSMutableData: Owned {
+    class NSMutableData: MutableWithImmutableSuperclass<Foundation::NSData> {
         unsafe +dataWithData;
         unsafe -initWithCapacity;
         unsafe +dataWithCapacity;
@@ -72,17 +81,19 @@ data! {
         unsafe mut -mutableBytes;
     }
 
-    class NSDictionary {
+    // Allowed to be just `Mutable` since we've removed the `NSCopying` and
+    // `NSMutableCopying` impls from this for now (since they'd return the
+    // wrong type).
+    class NSPurgeableData: Mutable {}
+
+    class NSDictionary: ImmutableWithMutableSubclass<Foundation::NSMutableDictionary> {
         unsafe -count;
-        unsafe -objectForKey;
-        unsafe -allKeys;
-        unsafe -allValues;
     }
 
-    class NSMutableDictionary: Owned {
-        unsafe mut -setDictionary;
+    class NSMutableDictionary: MutableWithImmutableSuperclass<Foundation::NSDictionary> {
         unsafe mut -removeObjectForKey;
         unsafe mut -removeAllObjects;
+        mut -setDictionary;
     }
 
     class NSError {
@@ -130,20 +141,23 @@ data! {
         unsafe -operatingSystemVersion;
     }
 
-    class NSSet {
+    class NSSet: ImmutableWithMutableSubclass<Foundation::NSMutableSet> {
         unsafe -count;
     }
 
-    class NSMutableSet: Owned {
+    class NSMutableSet: MutableWithImmutableSuperclass<Foundation::NSSet> {
         unsafe mut -removeAllObjects;
         mut -addObject;
     }
 
-    class NSMutableCharacterSet: Owned {}
+    class NSCharacterSet: ImmutableWithMutableSubclass<Foundation::NSMutableCharacterSet> {}
+    class NSMutableCharacterSet: MutableWithImmutableSuperclass<Foundation::NSCharacterSet> {}
 
-    class NSMutableOrderedSet: Owned {}
+    class NSOrderedSet: ImmutableWithMutableSubclass<Foundation::NSMutableOrderedSet> {}
+    class NSMutableOrderedSet: MutableWithImmutableSuperclass<Foundation::NSOrderedSet> {}
 
-    class NSMutableIndexSet: Owned {}
+    class NSIndexSet: ImmutableWithMutableSubclass<Foundation::NSMutableIndexSet> {}
+    class NSMutableIndexSet: MutableWithImmutableSuperclass<Foundation::NSIndexSet> {}
 
     class NSNumber {
         unsafe -initWithChar;
@@ -196,5 +210,6 @@ data! {
         unsafe -stringValue;
     }
 
-    class NSMutableURLRequest: Owned {}
+    class NSURLRequest: ImmutableWithMutableSubclass<Foundation::NSMutableURLRequest> {}
+    class NSMutableURLRequest: MutableWithImmutableSuperclass<Foundation::NSURLRequest> {}
 }

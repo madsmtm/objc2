@@ -1,4 +1,4 @@
-//! Functionality for dynamically declaring Objective-C classes.
+//! # Dynamically creating classes and protocols.
 //!
 //! Classes can be declared using the [`ClassBuilder`] struct. Instance
 //! variables and methods can then be added before the class is ultimately
@@ -8,16 +8,19 @@
 //! Consider using the [`declare_class!`][crate::declare_class] macro instead.
 //!
 //!
-//! # Example
+//! ## Example
 //!
 //! The following example demonstrates declaring a class named `MyNumber` that
 //! has one ivar, a `u32` named `_number` and a few methods for constructor
-//! methods and methods for interfacing with the number.
+//! methods and methods for interfacing with the number (using interior
+//! mutability, as is common for Objective-C objects).
 //!
 //! ```
+//! use core::cell::Cell;
+//!
 //! use objc2::declare::ClassBuilder;
-//! use objc2::rc::{Id, Owned};
-//! use objc2::runtime::{Class, Object, NSObject, Sel};
+//! use objc2::rc::Id;
+//! use objc2::runtime::{Class, NSObject, Sel};
 //! use objc2::{sel, msg_send, msg_send_id, ClassType};
 //!
 //! fn register_class() -> &'static Class {
@@ -25,19 +28,19 @@
 //!     let mut builder = ClassBuilder::new("MyNumber", NSObject::class())
 //!         .expect("a class with the name MyNumber likely already exists");
 //!
-//!     // Add an instance variable of type `u32`
-//!     builder.add_ivar::<u32>("_number");
+//!     // Add an instance variable of type `Cell<u32>`
+//!     builder.add_ivar::<Cell<u32>>("_number");
 //!
 //!     // Add an Objective-C method for initializing an instance with a number
 //!     unsafe extern "C" fn init_with_number(
-//!         this: &mut Object,
+//!         this: &mut NSObject,
 //!         _cmd: Sel,
 //!         number: u32,
-//!     ) -> Option<&mut Object> {
-//!         let this: Option<&mut Object> = msg_send![super(this, NSObject::class()), init];
+//!     ) -> Option<&mut NSObject> {
+//!         let this: Option<&mut NSObject> = msg_send![super(this, NSObject::class()), init];
 //!         this.map(|this| {
 //!             // SAFETY: The ivar is added with the same type above
-//!             this.set_ivar::<u32>("_number", number);
+//!             this.set_ivar::<Cell<u32>>("_number", Cell::new(number));
 //!             this
 //!         })
 //!     }
@@ -53,8 +56,8 @@
 //!         cls: &Class,
 //!         _cmd: Sel,
 //!         number: u32,
-//!     ) -> *mut Object {
-//!         let obj: Option<Id<Object, Owned>> = unsafe {
+//!     ) -> *mut NSObject {
+//!         let obj: Option<Id<NSObject>> = unsafe {
 //!             msg_send_id![
 //!                 msg_send_id![cls, alloc],
 //!                 initWithNumber: number,
@@ -70,18 +73,18 @@
 //!     }
 //!
 //!     // Add an Objective-C method for setting the number
-//!     extern "C" fn my_number_set(this: &mut Object, _cmd: Sel, number: u32) {
+//!     extern "C" fn my_number_set(this: &NSObject, _cmd: Sel, number: u32) {
 //!         // SAFETY: The ivar is added with the same type above
-//!         unsafe { this.set_ivar::<u32>("_number", number) }
+//!         unsafe { this.ivar::<Cell<u32>>("_number") }.set(number);
 //!     }
 //!     unsafe {
 //!         builder.add_method(sel!(setNumber:), my_number_set as extern "C" fn(_, _, _));
 //!     }
 //!
 //!     // Add an Objective-C method for getting the number
-//!     extern "C" fn my_number_get(this: &Object, _cmd: Sel) -> u32 {
+//!     extern "C" fn my_number_get(this: &NSObject, _cmd: Sel) -> u32 {
 //!         // SAFETY: The ivar is added with the same type above
-//!         unsafe { *this.ivar::<u32>("_number") }
+//!         unsafe { this.ivar::<Cell<u32>>("_number") }.get()
 //!     }
 //!     unsafe {
 //!         builder.add_method(sel!(number), my_number_get as extern "C" fn(_, _) -> _);
@@ -96,14 +99,14 @@
 //! // with `std::sync::Once` or the `once_cell` crate.
 //! let cls = register_class();
 //!
-//! let mut obj: Id<Object, Owned> = unsafe {
+//! let obj: Id<NSObject> = unsafe {
 //!     msg_send_id![cls, withNumber: 42u32]
 //! };
 //!
 //! let n: u32 = unsafe { msg_send![&obj, number] };
 //! assert_eq!(n, 42);
 //!
-//! let _: () = unsafe { msg_send![&mut obj, setNumber: 12u32] };
+//! let _: () = unsafe { msg_send![&obj, setNumber: 12u32] };
 //! let n: u32 = unsafe { msg_send![&obj, number] };
 //! assert_eq!(n, 12);
 //! ```
@@ -692,22 +695,11 @@ impl ProtocolBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::mutability::Immutable;
     use crate::rc::Id;
-    use crate::runtime::{NSObject, NSZone};
+    use crate::runtime::{NSObject, NSZone, __NSCopying as NSCopying};
     use crate::test_utils;
-    use crate::{declare_class, extern_protocol, msg_send, ClassType, ProtocolType};
-
-    extern_protocol!(
-        #[allow(clippy::missing_safety_doc)]
-        unsafe trait NSCopying {
-            #[method_id(copyWithZone:)]
-            fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self>;
-        }
-
-        unsafe impl ProtocolType for dyn NSCopying {
-            const NAME: &'static str = "NSCopying";
-        }
-    );
+    use crate::{declare_class, msg_send, ClassType, ProtocolType};
 
     #[test]
     fn test_classbuilder_duplicate() {
@@ -851,6 +843,7 @@ mod tests {
 
             unsafe impl ClassType for Custom1 {
                 type Super = NSObject;
+                type Mutability = Immutable;
                 const NAME: &'static str = "TestDeclareClassDuplicate";
             }
         );
@@ -860,6 +853,7 @@ mod tests {
 
             unsafe impl ClassType for Custom2 {
                 type Super = NSObject;
+                type Mutability = Immutable;
                 const NAME: &'static str = "TestDeclareClassDuplicate";
             }
         );
@@ -876,6 +870,7 @@ mod tests {
 
             unsafe impl ClassType for Custom {
                 type Super = NSObject;
+                type Mutability = Immutable;
                 const NAME: &'static str = "TestDeclareClassProtocolNotFound";
             }
 
@@ -902,6 +897,7 @@ mod tests {
 
             unsafe impl ClassType for Custom {
                 type Super = NSObject;
+                type Mutability = Immutable;
                 const NAME: &'static str = "TestDeclareClassInvalidMethod";
             }
 
@@ -926,6 +922,7 @@ mod tests {
 
             unsafe impl ClassType for Custom {
                 type Super = NSObject;
+                type Mutability = Immutable;
                 const NAME: &'static str = "TestDeclareClassMissingProtocolMethod";
             }
 
@@ -945,6 +942,7 @@ mod tests {
 
             unsafe impl ClassType for Custom {
                 type Super = NSObject;
+                type Mutability = Immutable;
                 const NAME: &'static str = "TestDeclareClassInvalidProtocolMethod";
             }
 
@@ -971,6 +969,7 @@ mod tests {
 
             unsafe impl ClassType for Custom {
                 type Super = NSObject;
+                type Mutability = Immutable;
                 const NAME: &'static str = "TestDeclareClassExtraProtocolMethod";
             }
 
@@ -997,10 +996,12 @@ mod tests {
         unsafe impl<T> RefEncode for GenericDeclareClass<T> {
             const ENCODING_REF: Encoding = Encoding::Object;
         }
+
         unsafe impl<T> Message for GenericDeclareClass<T> {}
 
         unsafe impl<T> ClassType for GenericDeclareClass<T> {
             type Super = NSObject;
+            type Mutability = Immutable;
             const NAME: &'static str = "GenericDeclareClass";
 
             #[inline]

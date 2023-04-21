@@ -1,4 +1,4 @@
-//! Objective-C's @throw and @try/@catch.
+//! # `@throw` and `@try/@catch` exceptions.
 //!
 //! By default, if the [`msg_send!`] macro causes an exception to be thrown,
 //! this will unwind into Rust, resulting in undefined behavior. However, this
@@ -6,8 +6,8 @@
 //! [`msg_send!`] in a `@catch` and panics if an exception is caught,
 //! preventing Objective-C from unwinding into Rust.
 //!
-//! The `@try`/`@catch` functionality in this module is only available when
-//! the `"exception"` feature is enabled.
+//! Most of the functionality in this module is only available when the
+//! `"exception"` feature is enabled.
 //!
 //! See the following links for more information:
 //! - [Exception Programming Topics for Cocoa](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Exceptions/Exceptions.html)
@@ -181,6 +181,8 @@ impl RefUnwindSafe for Exception {}
 #[inline]
 #[cfg(feature = "exception")] // For consistency, not strictly required
 pub unsafe fn throw(exception: Id<Exception>) -> ! {
+    // We consume the exception object since we can't make any guarantees
+    // about its mutability.
     let ptr = exception.0.as_ptr() as *mut ffi::objc_object;
     // SAFETY: Object is valid and non-null (nil exceptions are not valid in
     // the old runtime).
@@ -235,11 +237,9 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception>
         // SAFETY:
         // The exception is always a valid object or NULL.
         //
-        // The ownership is safe as Shared; Objective-C code throwing an
-        // exception knows that they don't hold sole access to that exception
-        // instance any more, and Rust code is forbidden by requiring a Shared
-        // Id in `throw` (instead of just a shared reference, which could have
-        // come from an Owned Id).
+        // Code throwing an exception know that they don't hold sole access to
+        // that object any more, so even if the type was originally mutable,
+        // it is okay to create a new `Id` to it here.
         Err(unsafe { Id::new(exception.cast()) })
     }
 }
@@ -257,7 +257,8 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception>
 ///
 /// The exception is `None` in the extremely exceptional case that the
 /// exception object is `nil`. This should basically never happen, but is
-/// technically possible on some systems with `@throw nil`.
+/// technically possible on some systems with `@throw nil`, or in OOM
+/// situations.
 ///
 /// [`catch_unwind`]: std::panic::catch_unwind
 ///
@@ -294,7 +295,6 @@ mod tests {
 
     use super::*;
     use crate::runtime::NSObject;
-    use crate::{msg_send_id, ClassType};
 
     #[test]
     fn test_catch() {
@@ -328,9 +328,10 @@ mod tests {
 
     #[test]
     fn test_throw_catch_object() {
-        let obj: Id<Exception> = unsafe { msg_send_id![NSObject::class(), new] };
+        let obj = NSObject::new();
         // TODO: Investigate why this is required on GNUStep!
         let _obj2 = obj.clone();
+        let obj: Id<Exception> = unsafe { Id::cast(obj) };
         let ptr: *const Exception = &*obj;
 
         let result = unsafe { catch(|| throw(obj)) };

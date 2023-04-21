@@ -14,7 +14,7 @@ use crate::expr::Expr;
 use crate::id::ItemIdentifier;
 use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
-use crate::rust_type::{Ownership, Ty};
+use crate::rust_type::Ty;
 use crate::unexposed_attr::UnexposedAttr;
 
 #[derive(serde::Deserialize, Debug, Clone, PartialEq, Eq)]
@@ -212,6 +212,33 @@ fn parse_objc_decl(
     (protocols, methods, designated_initializers)
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
+pub enum Mutability {
+    Immutable,
+    Mutable,
+    ImmutableWithMutableSubclass(ItemIdentifier),
+    MutableWithImmutableSuperclass(ItemIdentifier),
+    #[default]
+    InteriorMutable,
+    // MainThreadOnly,
+}
+
+impl fmt::Display for Mutability {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Immutable => write!(f, "Immutable"),
+            Self::Mutable => write!(f, "Mutable"),
+            Self::ImmutableWithMutableSubclass(subclass) => {
+                write!(f, "ImmutableWithMutableSubclass<{}>", subclass.path())
+            }
+            Self::MutableWithImmutableSuperclass(superclass) => {
+                write!(f, "MutableWithImmutableSuperclass<{}>", superclass.path())
+            }
+            Self::InteriorMutable => write!(f, "InteriorMutable"),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Stmt {
     /// @interface name: superclass <protocols*>
@@ -224,7 +251,8 @@ pub enum Stmt {
         superclasses: Vec<(ItemIdentifier, Vec<String>)>,
         designated_initializers: Vec<String>,
         derives: Derives,
-        ownership: Ownership,
+        mutability: Mutability,
+        skipped: bool,
     },
     /// @interface class_name (name) <protocols*>
     /// ->
@@ -438,27 +466,24 @@ impl Stmt {
                     description: None,
                 };
 
-                if !data.map(|data| data.definition_skipped).unwrap_or_default() {
-                    iter::once(Self::ClassDecl {
-                        id: id.clone(),
-                        generics: generics.clone(),
-                        availability: availability.clone(),
-                        superclasses,
-                        designated_initializers,
-                        derives: data.map(|data| data.derives.clone()).unwrap_or_default(),
-                        ownership: data.map(|data| data.ownership.clone()).unwrap_or_default(),
-                    })
-                    .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
-                        cls: id.clone(),
-                        protocol,
-                        generics: generics.clone(),
-                        availability: availability.clone(),
-                    }))
-                    .chain(iter::once(methods))
-                    .collect()
-                } else {
-                    vec![methods]
-                }
+                iter::once(Self::ClassDecl {
+                    id: id.clone(),
+                    generics: generics.clone(),
+                    availability: availability.clone(),
+                    superclasses,
+                    designated_initializers,
+                    derives: data.map(|data| data.derives.clone()).unwrap_or_default(),
+                    mutability: data.map(|data| data.mutability.clone()).unwrap_or_default(),
+                    skipped: data.map(|data| data.definition_skipped).unwrap_or_default(),
+                })
+                .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
+                    cls: id.clone(),
+                    protocol,
+                    generics: generics.clone(),
+                    availability: availability.clone(),
+                }))
+                .chain(iter::once(methods))
+                .collect()
             }
             EntityKind::ObjCCategoryDecl => {
                 let category = ItemIdentifier::new_optional(entity, context);
@@ -974,7 +999,13 @@ impl Stmt {
 
     pub(crate) fn declared_types(&self) -> impl Iterator<Item = &str> {
         match self {
-            Stmt::ClassDecl { id, .. } => Some(&*id.name),
+            Stmt::ClassDecl { id, skipped, .. } => {
+                if *skipped {
+                    None
+                } else {
+                    Some(&*id.name)
+                }
+            }
             Stmt::Methods { .. } => None,
             Stmt::ProtocolDecl { id, .. } => Some(&*id.name),
             Stmt::ProtocolImpl { .. } => None,
@@ -1010,8 +1041,20 @@ impl fmt::Display for Stmt {
                     for generic in self.0 {
                         write!(f, "{generic}, ")?;
                     }
+                    write!(f, ">")?;
+                }
+                Ok(())
+            }
+        }
+
+        struct GenericParamsHelper<'a>(&'a [String], &'a str);
+
+        impl fmt::Display for GenericParamsHelper<'_> {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                if !self.0.is_empty() {
+                    write!(f, "<")?;
                     for generic in self.0 {
-                        write!(f, "{generic}Ownership, ")?;
+                        write!(f, "{generic}: {}, ", self.1)?;
                     }
                     write!(f, ">")?;
                 }
@@ -1019,19 +1062,17 @@ impl fmt::Display for Stmt {
             }
         }
 
-        struct GenericParamsHelper<'a>(&'a [String]);
+        struct WhereBoundHelper<'a>(&'a [String], Option<&'a str>);
 
-        impl fmt::Display for GenericParamsHelper<'_> {
+        impl fmt::Display for WhereBoundHelper<'_> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                if !self.0.is_empty() {
-                    write!(f, "<")?;
-                    for generic in self.0 {
-                        write!(f, "{generic}: Message, ")?;
+                if let Some(bound) = self.1 {
+                    if !self.0.is_empty() {
+                        writeln!(f, "where")?;
+                        for generic in self.0 {
+                            writeln!(f, "{generic}{bound},")?;
+                        }
                     }
-                    for generic in self.0 {
-                        write!(f, "{generic}Ownership: Ownership, ")?;
-                    }
-                    write!(f, ">")?;
                 }
                 Ok(())
             }
@@ -1045,17 +1086,34 @@ impl fmt::Display for Stmt {
                 superclasses,
                 designated_initializers: _,
                 derives,
-                ownership: _,
+                mutability,
+                skipped,
             } => {
+                if *skipped {
+                    return Ok(());
+                }
+
                 let macro_name = if generics.is_empty() {
                     "extern_class"
                 } else {
                     "__inner_extern_class"
                 };
 
+                let main_feature_gate = match mutability {
+                    Mutability::MutableWithImmutableSuperclass(superclass) => superclass.feature(),
+                    Mutability::Immutable
+                    | Mutability::Mutable
+                    | Mutability::ImmutableWithMutableSubclass(_)
+                    | Mutability::InteriorMutable => id.feature(),
+                };
+
+                let (superclass, superclasses_rest) = superclasses.split_at(1);
+                let (superclass, superclass_generics) =
+                    superclass.get(0).expect("must have a least one superclass");
+
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    {derives}")?;
-                if let Some(feature) = id.feature() {
+                if let Some(feature) = &main_feature_gate {
                     writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
                 }
                 write!(f, "{availability}")?;
@@ -1065,21 +1123,21 @@ impl fmt::Display for Stmt {
                     for generic in generics {
                         write!(f, "{generic}: Message = Object, ")?;
                     }
-                    for generic in generics {
-                        write!(f, "{generic}Ownership: Ownership = Shared, ")?;
-                    }
                     write!(f, ">")?;
                 };
                 if generics.is_empty() {
                     writeln!(f, ";")?;
                 } else {
                     writeln!(f, " {{")?;
+                    writeln!(
+                        f,
+                        "__superclass: {}{},",
+                        superclass.path_in_relation_to(id),
+                        GenericTyHelper(superclass_generics),
+                    )?;
                     for (i, generic) in generics.iter().enumerate() {
-                        // Invariant over the generic (for now)
-                        writeln!(
-                            f,
-                            "_inner{i}: PhantomData<*mut ({generic}, {generic}Ownership)>,"
-                        )?;
+                        // Invariant over the generic by default
+                        writeln!(f, "_inner{i}: PhantomData<*mut {generic}>,")?;
                     }
                     writeln!(f, "notunwindsafe: PhantomData<&'static mut ()>,")?;
                     writeln!(f, "}}")?;
@@ -1087,22 +1145,19 @@ impl fmt::Display for Stmt {
 
                 writeln!(f)?;
 
-                if let Some(feature) = id.feature() {
+                if let Some(feature) = &main_feature_gate {
                     writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
                 }
                 writeln!(
                     f,
                     "    unsafe impl{} ClassType for {}{} {{",
-                    GenericParamsHelper(generics),
+                    GenericParamsHelper(generics, "Message"),
                     id.name,
                     GenericTyHelper(generics),
                 )?;
-                let (superclass, rest) = superclasses.split_at(1);
-                let (superclass, generics) =
-                    superclass.get(0).expect("must have a least one superclass");
-                if !rest.is_empty() {
-                    write!(f, "    #[inherits(")?;
-                    let mut iter = rest.iter();
+                if !superclasses_rest.is_empty() {
+                    write!(f, "        #[inherits(")?;
+                    let mut iter = superclasses_rest.iter();
                     // Using generics in here is not technically correct, but
                     // should work for our use-cases.
                     if let Some((superclass, generics)) = iter.next() {
@@ -1127,8 +1182,18 @@ impl fmt::Display for Stmt {
                     f,
                     "        type Super = {}{};",
                     superclass.path_in_relation_to(id),
-                    GenericTyHelper(generics)
+                    GenericTyHelper(superclass_generics),
                 )?;
+                writeln!(f, "        type Mutability = {mutability};")?;
+                if !generics.is_empty() {
+                    writeln!(f)?;
+                    writeln!(
+                        f,
+                        "        fn as_super(&self) -> &Self::Super {{ &self.__superclass }}"
+                    )?;
+                    writeln!(f)?;
+                    writeln!(f, "        fn as_super_mut(&mut self) -> &mut Self::Super {{ &mut self.__superclass }}")?;
+                }
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
             }
@@ -1158,7 +1223,7 @@ impl fmt::Display for Stmt {
                 writeln!(
                     f,
                     "    unsafe impl{} {}{} {{",
-                    GenericParamsHelper(generics),
+                    GenericParamsHelper(generics, "Message"),
                     cls.path_in_relation_to(category),
                     GenericTyHelper(generics),
                 )?;
@@ -1206,29 +1271,61 @@ impl fmt::Display for Stmt {
                 writeln!(f, ");")?;
             }
             Self::ProtocolImpl {
-                cls: _,
-                generics: _,
-                protocol,
-                availability: _,
-            } if protocol.name == "NSCopying" || protocol.name == "NSMutableCopying" => {
-                // TODO
-            }
-            Self::ProtocolImpl {
                 cls,
                 generics,
                 protocol,
                 availability: _,
             } => {
+                let (generic_bound, where_bound) = if !generics.is_empty() {
+                    match (&*protocol.library, &*protocol.name) {
+                        // The object inherits from `NSObject` or `NSProxy` no
+                        // matter what the generic type is, so this must be
+                        // safe.
+                        (_, _) if protocol.is_nsobject() => ("Message", None),
+                        // Encoding and decoding requires that the inner types
+                        // are codable as well.
+                        ("Foundation", "NSCoding") => ("Message + NSCoding", None),
+                        ("Foundation", "NSSecureCoding") => ("Message + NSSecureCoding", None),
+                        // Copying collections is done as a shallow copy:
+                        // <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Collections/Articles/Copying.html>
+                        //
+                        // E.g. it simply does a retain count bump, and hence
+                        // does not require the inner type to implement
+                        // `NSCopying`.
+                        //
+                        // The types does have to be cloneable, since generic
+                        // types effectively store an `Id<T>` of the type.
+                        ("Foundation", "NSCopying") => ("IsIdCloneable", None),
+                        ("Foundation", "NSMutableCopying") => ("IsIdCloneable", None),
+                        // TODO: Do we need further tweaks to this?
+                        ("Foundation", "NSFastEnumeration") => ("Message", None),
+                        // AppKit fixes. TODO: Should we add more bounds here?
+                        ("AppKit", "NSCollectionViewDataSource") => ("Message", None),
+                        ("AppKit", "NSTableViewDataSource") => ("Message", None),
+                        _ => {
+                            error!(
+                                ?protocol,
+                                ?cls,
+                                "unknown where bound for generic protocol impl"
+                            );
+                            ("Message", None)
+                        }
+                    }
+                } else {
+                    ("Message", None)
+                };
+
                 if let Some(feature) = cls.feature() {
                     writeln!(f, "#[cfg(feature = \"{feature}\")]")?;
                 }
                 writeln!(
                     f,
-                    "unsafe impl{} {} for {}{} {{}}",
-                    GenericParamsHelper(generics),
+                    "unsafe impl{} {} for {}{} {}{{}}",
+                    GenericParamsHelper(generics, generic_bound),
                     protocol.path_in_relation_to(cls),
                     cls.path(),
                     GenericTyHelper(generics),
+                    WhereBoundHelper(generics, where_bound)
                 )?;
             }
             Self::ProtocolDecl {

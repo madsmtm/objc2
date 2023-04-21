@@ -41,16 +41,16 @@ marked safe, so such an improvement can be made in a minor version!
 
 ```rust , ignore
 data! {
-    // Everywhere that the class is returned, it is as
-    // `Id<MyMutableClass, Owned>`.
-    //
-    // Specifying this is _not_ unsafe, but every method that returns this
-    // class must be checked for safety with it in mind.
-    class MyMutableClass: Owned {
+    class MyClass {
         // The class method `new` is safe.
         unsafe +new;
         // The method `init` is safe.
         unsafe -init;
+    }
+
+    class MyImmutableClass: ImmutableWithMutableSubclass<MyMutableClass> {}
+
+    class MyMutableClass: MutableWithImmutableSuperclass<MyImmutableClass> {
         // The method `mutate` takes &mut self, and is safe.
         unsafe mut -mutate;
         // The method `mutateUnchecked` takes &mut self, but is not safe.

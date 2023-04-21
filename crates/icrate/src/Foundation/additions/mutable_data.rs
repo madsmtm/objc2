@@ -1,31 +1,29 @@
 #![cfg(feature = "Foundation_NSMutableData")]
 #[cfg(feature = "block")]
 use alloc::vec::Vec;
-use core::ffi::c_void;
 use core::ops::{Index, IndexMut, Range};
-use core::ptr::NonNull;
 use core::slice::{self, SliceIndex};
 use std::io;
 
-use objc2::rc::{DefaultId, Id, Owned};
-use objc2::{extern_methods, ClassType};
+use objc2::rc::DefaultId;
 
-use super::data::with_slice;
+use crate::common::*;
 use crate::Foundation::{NSMutableData, NSRange};
 
 extern_methods!(
     /// Creation methods
     unsafe impl NSMutableData {
         #[method_id(new)]
-        pub fn new() -> Id<Self, Owned>;
+        pub fn new() -> Id<Self>;
 
-        pub fn with_bytes(bytes: &[u8]) -> Id<Self, Owned> {
-            unsafe { Id::from_shared(Id::cast(with_slice(Self::class(), bytes))) }
+        pub fn with_bytes(bytes: &[u8]) -> Id<Self> {
+            let bytes_ptr = bytes.as_ptr() as *mut c_void;
+            unsafe { Self::initWithBytes_length(Self::alloc(), bytes_ptr, bytes.len()) }
         }
 
         #[cfg(feature = "block")]
-        pub fn from_vec(bytes: Vec<u8>) -> Id<Self, Owned> {
-            unsafe { Id::from_shared(Id::cast(super::data::with_vec(Self::class(), bytes))) }
+        pub fn from_vec(bytes: Vec<u8>) -> Id<Self> {
+            unsafe { Id::cast(super::data::with_vec(Self::class(), bytes)) }
         }
     }
 
@@ -97,7 +95,7 @@ impl<I: SliceIndex<[u8]>> IndexMut<I> for NSMutableData {
     }
 }
 
-// impl FromIterator<u8> for Id<NSMutableData, Owned> {
+// impl FromIterator<u8> for Id<NSMutableData> {
 //     fn from_iter<T: IntoIterator<Item = u8>>(iter: T) -> Self {
 //         let iter = iter.into_iter();
 //         let (lower, _) = iter.size_hint();
@@ -145,10 +143,8 @@ impl io::Write for NSMutableData {
 }
 
 impl DefaultId for NSMutableData {
-    type Ownership = Owned;
-
     #[inline]
-    fn default_id() -> Id<Self, Self::Ownership> {
+    fn default_id() -> Id<Self> {
         Self::new()
     }
 }

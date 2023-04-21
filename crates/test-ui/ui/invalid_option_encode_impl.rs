@@ -1,5 +1,5 @@
 //! Ensure that implementing `OptionEncode` wrongly results in an error
-use objc2::encode::{OptionEncode, Encode, RefEncode, Encoding};
+use objc2::encode::{Encode, Encoding, OptionEncode, RefEncode};
 
 #[repr(transparent)]
 struct MyType(usize);

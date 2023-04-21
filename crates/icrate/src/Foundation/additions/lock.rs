@@ -7,6 +7,6 @@ use crate::Foundation::NSLock;
 extern_methods!(
     unsafe impl NSLock {
         #[method_id(new)]
-        pub fn new() -> Id<Self, Owned>;
+        pub fn new() -> Id<Self>;
     }
 );

@@ -3,7 +3,6 @@ use std::str::FromStr;
 
 use clang::{CallingConvention, EntityKind, Nullability, Type, TypeKind};
 use proc_macro2::{TokenStream, TokenTree};
-use serde::Deserialize;
 
 use crate::context::Context;
 use crate::id::ItemIdentifier;
@@ -152,24 +151,6 @@ impl Drop for AttributeParser<'_, '_> {
     }
 }
 
-#[derive(Deserialize, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord, Default)]
-#[serde(from = "bool")]
-pub enum Ownership {
-    Owned,
-    #[default]
-    Shared,
-}
-
-impl From<bool> for Ownership {
-    fn from(b: bool) -> Self {
-        if b {
-            Self::Owned
-        } else {
-            Self::Shared
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 enum TypeParams {
     Empty,
@@ -183,7 +164,6 @@ enum IdType {
     Class {
         id: ItemIdentifier,
         params: TypeParams,
-        ownership: Option<Ownership>,
     },
     TypeDef {
         id: ItemIdentifier,
@@ -198,9 +178,7 @@ enum IdType {
     AnyClass {
         protocols: Vec<ItemIdentifier>,
     },
-    Self_ {
-        ownership: Option<Ownership>,
-    },
+    Self_,
 }
 
 impl IdType {
@@ -216,28 +194,6 @@ impl IdType {
             Self::TypeDef { id, .. } => Some(id),
             _ => None,
         }
-    }
-
-    fn ownership(&self) -> impl fmt::Display + '_ {
-        struct IdTypeOwnership<'a>(&'a IdType);
-
-        impl fmt::Display for IdTypeOwnership<'_> {
-            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                match self.0 {
-                    IdType::Class {
-                        ownership: Some(Ownership::Owned),
-                        ..
-                    }
-                    | IdType::Self_ {
-                        ownership: Some(Ownership::Owned),
-                    } => write!(f, ", Owned"),
-                    IdType::GenericParam { name } => write!(f, ", {name}Ownership"),
-                    _ => Ok(()),
-                }
-            }
-        }
-
-        IdTypeOwnership(self)
     }
 
     fn parse_objc_pointer(
@@ -305,7 +261,6 @@ impl IdType {
                     Self::Class {
                         id,
                         params: TypeParams::Empty,
-                        ownership: None,
                     }
                 }
             }
@@ -357,7 +312,6 @@ impl IdType {
                             } else {
                                 TypeParams::Protocols(protocols)
                             },
-                            ownership: None,
                         }
                     }
                     TypeKind::ObjCClass => {
@@ -828,7 +782,7 @@ impl Inner {
                     "Float96" => panic!("can't handle 96 bit 68881 float"),
 
                     "instancetype" => Self::Id {
-                        ty: IdType::Self_ { ownership: None },
+                        ty: IdType::Self_,
                         is_const,
                         lifetime,
                         nullability,
@@ -1431,21 +1385,6 @@ impl Ty {
         }
     }
 
-    pub(crate) fn set_ownership(&mut self, mut get_ownership: impl FnMut(&str) -> Ownership) {
-        assert!(matches!(self.kind, TyKind::MethodReturn { .. }));
-        if let Inner::Id { ty, .. } = &mut self.ty {
-            match ty {
-                IdType::Class { id, ownership, .. } => {
-                    *ownership = Some(get_ownership(&id.name));
-                }
-                IdType::Self_ { ownership } => {
-                    *ownership = Some(get_ownership("Self"));
-                }
-                _ => {}
-            }
-        }
-    }
-
     pub fn visit_required_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
         if let TyKind::MethodReturn { with_error: true } = &self.kind {
             f(&ItemIdentifier::nserror());
@@ -1468,7 +1407,6 @@ impl Ty {
                     IdType::Class {
                         id,
                         params: TypeParams::Empty,
-                        ownership: None,
                     },
                 is_const: id_is_const,
                 lifetime,
@@ -1544,7 +1482,7 @@ impl Ty {
                     return;
                 }
 
-                *ty = IdType::Self_ { ownership: None };
+                *ty = IdType::Self_;
             } else {
                 // Only fix if the type is `id`
             }
@@ -1587,9 +1525,9 @@ impl fmt::Display for Ty {
                         nullability,
                     } => {
                         if *nullability == Nullability::NonNull {
-                            write!(f, "Id<{ty}{}>", ty.ownership())
+                            write!(f, "Id<{ty}>")
                         } else {
-                            write!(f, "Option<Id<{ty}{}>>", ty.ownership())
+                            write!(f, "Option<Id<{ty}>>")
                         }
                     }
                     Inner::Class { nullability } => {
@@ -1616,8 +1554,7 @@ impl fmt::Display for Ty {
                     // NULL -> error
                     write!(
                         f,
-                        " -> Result<Id<{ty}{}>, Id<{}>>",
-                        ty.ownership(),
+                        " -> Result<Id<{ty}>, Id<{}>>",
                         ItemIdentifier::nserror().path(),
                     )
                 }
@@ -1665,7 +1602,6 @@ impl fmt::Display for Ty {
                     ty:
                         ty @ IdType::Class {
                             params: TypeParams::Empty,
-                            ownership: None,
                             ..
                         },
                     is_const: _,

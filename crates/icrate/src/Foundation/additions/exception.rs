@@ -53,8 +53,8 @@ extern_methods!(
         ///
         /// Same as `objc2::exception::throw`.
         pub unsafe fn raise(&self) -> ! {
-            // SAFETY: We only create `Shared` NSExceptions, so it is safe to give
-            // to the place where `@catch` receives it.
+            // SAFETY: `NSException` is immutable, so it is safe to give to
+            // the place where `@catch` receives it.
             unsafe { self.raise_raw() };
             // SAFETY: `raise` will throw an exception, or abort if something
             // unexpected happened.

@@ -1,12 +1,13 @@
-use objc2::{declare_class, ClassType};
 use objc2::rc::{Allocated, Id};
 use objc2::runtime::NSObject;
+use objc2::{declare_class, mutability, ClassType};
 
 declare_class!(
     struct CustomObject;
 
     unsafe impl ClassType for CustomObject {
         type Super = NSObject;
+        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "CustomObject";
     }
 

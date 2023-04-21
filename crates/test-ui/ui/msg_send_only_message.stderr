@@ -8,9 +8,9 @@ error[E0277]: the trait bound `{integer}: MessageReceiver` is not satisfied
   |              required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a Id<T, O>
+            &'a Id<T>
             &'a T
-            &'a mut Id<T, objc2::rc::Owned>
+            &'a mut Id<T>
             &'a mut T
             &'a objc2::runtime::Class
             *const T

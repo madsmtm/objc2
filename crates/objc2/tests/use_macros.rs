@@ -1,3 +1,4 @@
+use objc2::mutability::Immutable;
 use objc2::runtime::{Class, NSObject, Object};
 use objc2::{class, declare_class, msg_send, sel, ClassType};
 
@@ -6,6 +7,7 @@ declare_class!(
 
     unsafe impl ClassType for MyObject {
         type Super = NSObject;
+        type Mutability = Immutable;
         const NAME: &'static str = "MyObject";
     }
 );

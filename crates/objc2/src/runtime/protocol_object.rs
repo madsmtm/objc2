@@ -4,7 +4,7 @@ use core::marker::PhantomData;
 use core::ptr::NonNull;
 
 use crate::encode::{Encoding, RefEncode};
-use crate::rc::{autoreleasepool_leaking, Id, Ownership};
+use crate::rc::{autoreleasepool_leaking, Id};
 use crate::runtime::__nsstring::nsstring_to_str;
 use crate::runtime::{NSObjectProtocol, Object};
 use crate::{Message, ProtocolType};
@@ -18,7 +18,7 @@ use crate::{Message, ProtocolType};
 /// of the [`extern_protocol!`] macro.
 ///
 /// [`extern_protocol!`]: crate::extern_protocol
-pub unsafe trait ImplementedBy<P: ?Sized + Message> {
+pub unsafe trait ImplementedBy<T: ?Sized + Message> {
     #[doc(hidden)]
     const __INNER: ();
 }
@@ -39,20 +39,21 @@ pub unsafe trait ImplementedBy<P: ?Sized + Message> {
 /// [protocol-type-checking]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocProtocols.html#//apple_ref/doc/uid/TP30001163-CH15-TPXREF151
 ///
 ///
-/// # Examples
+/// # Example
 ///
 /// Convert an object `MyObject` that implements the a protocol `MyProtocol`
 /// into a [`ProtocolObject`] for working with the protocol in a type-erased
 /// way.
 ///
-/// ```rust,ignore
+/// ```
 /// use objc2::runtime::ProtocolObject;
 /// use objc2::rc::Id;
+/// # use objc2::runtime::NSObject as MyObject;
+/// # use objc2::runtime::NSObjectProtocol as MyProtocol;
 ///
-/// let obj: Id<MyObject>;
-/// # obj = unimplemented!();
-/// let obj: &ProtocolObject<dyn MyProtocol> = ProtocolObject::from_ref(&*obj);
-/// let obj: Id<ProtocolObject<dyn MyProtocol>> = ProtocolObject::from_id(obj);
+/// let obj: Id<MyObject> = MyObject::new();
+/// let proto: &ProtocolObject<dyn MyProtocol> = ProtocolObject::from_ref(&*obj);
+/// let proto: Id<ProtocolObject<dyn MyProtocol>> = ProtocolObject::from_id(obj);
 /// ```
 #[doc(alias = "id")]
 #[repr(C)]
@@ -104,7 +105,7 @@ impl<P: ?Sized + ProtocolType> ProtocolObject<P> {
 
     /// Get a type-erased object from a type implementing a protocol.
     #[inline]
-    pub fn from_id<T: Message, O: Ownership>(obj: Id<T, O>) -> Id<Self, O>
+    pub fn from_id<T: Message>(obj: Id<T>) -> Id<Self>
     where
         P: ImplementedBy<T> + 'static,
         T: 'static,
@@ -192,8 +193,10 @@ mod tests {
     use alloc::format;
     use core::mem::ManuallyDrop;
 
+    use static_assertions::{assert_impl_all, assert_not_impl_any};
+
     use super::*;
-    use crate::rc::Owned;
+    use crate::mutability::Mutable;
     use crate::runtime::{NSObject, NSObjectProtocol};
     use crate::{declare_class, extern_methods, extern_protocol, ClassType};
 
@@ -251,6 +254,7 @@ mod tests {
 
         unsafe impl ClassType for DummyClass {
             type Super = NSObject;
+            type Mutability = Mutable;
             const NAME: &'static str = "ProtocolTestsDummyClass";
         }
     );
@@ -258,7 +262,7 @@ mod tests {
     extern_methods!(
         unsafe impl DummyClass {
             #[method_id(new)]
-            fn new() -> Id<Self, Owned>;
+            fn new() -> Id<Self>;
         }
     );
 
@@ -269,45 +273,46 @@ mod tests {
     // unsafe impl FooFooBar for DummyClass {}
 
     #[test]
-    /// The out-commented ones here are tested in `test-ui/ui/protocol.rs`
     fn impl_traits() {
-        fn impl_nsobject<T: NSObjectProtocol>() {}
-        fn impl_foo<T: Foo>() {}
-        fn impl_bar<T: Bar>() {}
-        fn impl_foobar<T: FooBar>() {}
-        fn impl_foofoobar<T: FooFooBar>() {}
+        assert_impl_all!(NSObject: NSObjectProtocol);
+        assert_impl_all!(ProtocolObject<NSObject>: NSObjectProtocol);
+        assert_not_impl_any!(ProtocolObject<dyn Foo>: NSObjectProtocol);
+        assert_impl_all!(ProtocolObject<dyn Bar>: NSObjectProtocol);
+        assert_impl_all!(ProtocolObject<dyn FooBar>: NSObjectProtocol);
+        assert_impl_all!(ProtocolObject<dyn FooFooBar>: NSObjectProtocol);
+        assert_impl_all!(DummyClass: NSObjectProtocol);
 
-        impl_nsobject::<NSObject>();
-        impl_nsobject::<ProtocolObject<NSObject>>();
-        // impl_nsobject::<ProtocolObject<dyn Foo>>();
-        impl_nsobject::<ProtocolObject<dyn Bar>>();
-        impl_nsobject::<ProtocolObject<dyn FooBar>>();
-        impl_nsobject::<ProtocolObject<dyn FooFooBar>>();
-        impl_nsobject::<DummyClass>();
+        assert_not_impl_any!(NSObject: Foo);
+        assert_not_impl_any!(ProtocolObject<NSObject>: Foo);
+        assert_impl_all!(ProtocolObject<dyn Foo>: Foo);
+        assert_not_impl_any!(ProtocolObject<dyn Bar>: Foo);
+        assert_impl_all!(ProtocolObject<dyn FooBar>: Foo);
+        assert_impl_all!(ProtocolObject<dyn FooFooBar>: Foo);
+        assert_impl_all!(DummyClass: Foo);
 
-        impl_foo::<ProtocolObject<dyn Foo>>();
-        // impl_foo::<ProtocolObject<dyn Bar>>();
-        impl_foo::<ProtocolObject<dyn FooBar>>();
-        impl_foo::<ProtocolObject<dyn FooFooBar>>();
-        impl_foo::<DummyClass>();
+        assert_not_impl_any!(NSObject: Bar);
+        assert_not_impl_any!(ProtocolObject<NSObject>: Bar);
+        assert_not_impl_any!(ProtocolObject<dyn Foo>: Bar);
+        assert_impl_all!(ProtocolObject<dyn Bar>: Bar);
+        assert_impl_all!(ProtocolObject<dyn FooBar>: Bar);
+        assert_impl_all!(ProtocolObject<dyn FooFooBar>: Bar);
+        assert_impl_all!(DummyClass: Bar);
 
-        // impl_bar::<ProtocolObject<dyn Foo>>();
-        impl_bar::<ProtocolObject<dyn Bar>>();
-        impl_bar::<ProtocolObject<dyn FooBar>>();
-        impl_bar::<ProtocolObject<dyn FooFooBar>>();
-        impl_bar::<DummyClass>();
+        assert_not_impl_any!(NSObject: FooBar);
+        assert_not_impl_any!(ProtocolObject<NSObject>: FooBar);
+        assert_not_impl_any!(ProtocolObject<dyn Foo>: FooBar);
+        assert_not_impl_any!(ProtocolObject<dyn Bar>: FooBar);
+        assert_impl_all!(ProtocolObject<dyn FooBar>: FooBar);
+        assert_impl_all!(ProtocolObject<dyn FooFooBar>: FooBar);
+        assert_impl_all!(DummyClass: FooBar);
 
-        // impl_foobar::<ProtocolObject<dyn Foo>>();
-        // impl_foobar::<ProtocolObject<dyn Bar>>();
-        impl_foobar::<ProtocolObject<dyn FooBar>>();
-        impl_foobar::<ProtocolObject<dyn FooFooBar>>();
-        impl_foobar::<DummyClass>();
-
-        // impl_foofoobar::<ProtocolObject<dyn Foo>>();
-        // impl_foofoobar::<ProtocolObject<dyn Bar>>();
-        // impl_foofoobar::<ProtocolObject<dyn FooBar>>();
-        impl_foofoobar::<ProtocolObject<dyn FooFooBar>>();
-        // impl_foofoobar::<DummyClass>();
+        assert_not_impl_any!(NSObject: FooFooBar);
+        assert_not_impl_any!(ProtocolObject<NSObject>: FooFooBar);
+        assert_not_impl_any!(ProtocolObject<dyn Foo>: FooFooBar);
+        assert_not_impl_any!(ProtocolObject<dyn Bar>: FooFooBar);
+        assert_not_impl_any!(ProtocolObject<dyn FooBar>: FooFooBar);
+        assert_impl_all!(ProtocolObject<dyn FooFooBar>: FooFooBar);
+        assert_not_impl_any!(DummyClass: FooFooBar);
     }
 
     #[test]
@@ -330,7 +335,7 @@ mod tests {
         let _nsobject: &ProtocolObject<NSObject> = ProtocolObject::from_ref(nsobject);
 
         let _foobar: &mut ProtocolObject<dyn FooBar> = ProtocolObject::from_mut(&mut *obj);
-        let _foobar: Id<ProtocolObject<dyn FooBar>, _> = ProtocolObject::from_id(obj);
+        let _foobar: Id<ProtocolObject<dyn FooBar>> = ProtocolObject::from_id(obj);
     }
 
     #[test]
@@ -347,7 +352,10 @@ mod tests {
 
         assert_eq!(
             format!("{obj:?}"),
-            format!("DummyClass {{ __inner: {:?} }}", ManuallyDrop::new(foobar)),
+            format!(
+                "DummyClass {{ __superclass: {:?} }}",
+                ManuallyDrop::new(foobar)
+            ),
         );
         assert_eq!(obj == obj2, foobar == foobar2);
 

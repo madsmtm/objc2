@@ -18,7 +18,7 @@ fn test_insert() {
 #[test]
 fn test_remove() {
     let strs = ["one", "two", "three"].map(NSString::from_str);
-    let mut set = NSMutableSet::from_slice(&strs);
+    let mut set = NSMutableSet::from_id_slice(&strs);
 
     assert!(set.remove(ns_string!("one")));
     assert!(!set.remove(ns_string!("one")));
@@ -27,7 +27,7 @@ fn test_remove() {
 #[test]
 fn test_clear() {
     let strs = ["one", "two", "three"].map(NSString::from_str);
-    let mut set = NSMutableSet::from_slice(&strs);
+    let mut set = NSMutableSet::from_id_slice(&strs);
     assert_eq!(set.len(), 3);
 
     set.removeAllObjects();
@@ -67,12 +67,12 @@ fn test_extend() {
 fn test_mutable_copy() {
     use Foundation::NSMutableCopying;
 
-    let set1 = NSSet::from_slice(&["one", "two", "three"].map(NSString::from_str));
-    let mut set2 = set1.mutable_copy();
+    let set1 = NSSet::from_id_slice(&["one", "two", "three"].map(NSString::from_str));
+    let mut set2 = set1.mutableCopy();
     set2.insert(NSString::from_str("four"));
 
     assert!(set1.is_subset(&set2));
-    assert_ne!(set1.mutable_copy(), set2);
+    assert_ne!(set1.mutableCopy(), set2);
 }
 
 #[test]

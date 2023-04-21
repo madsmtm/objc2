@@ -1,10 +1,13 @@
+#![deny(unsafe_op_in_unsafe_fn)]
 #![cfg_attr(not(target_os = "macos"), allow(unused))]
+use std::ptr::NonNull;
+
 use icrate::ns_string;
-use icrate::objc2::declare::{Ivar, IvarBool, IvarDrop, IvarEncode};
-use icrate::objc2::rc::Id;
-use icrate::objc2::runtime::Object;
-use icrate::objc2::{declare_class, msg_send, msg_send_id, ClassType};
 use icrate::Foundation::{NSCopying, NSObject, NSString};
+use objc2::declare::{Ivar, IvarBool, IvarDrop, IvarEncode};
+use objc2::rc::Id;
+use objc2::runtime::Object;
+use objc2::{declare_class, msg_send, msg_send_id, mutability, ClassType};
 
 #[cfg(target_os = "macos")]
 #[link(name = "AppKit", kind = "framework")]
@@ -27,13 +30,18 @@ declare_class!(
     unsafe impl ClassType for CustomAppDelegate {
         #[inherits(NSObject)]
         type Super = icrate::AppKit::NSResponder;
+        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "MyCustomAppDelegate";
     }
 
     unsafe impl CustomAppDelegate {
         #[method(initWith:another:)]
-        fn init_with(self: &mut Self, ivar: u8, another_ivar: bool) -> Option<&mut Self> {
-            let this: Option<&mut Self> = unsafe { msg_send![super(self), init] };
+        unsafe fn init_with(
+            this: *mut Self,
+            ivar: u8,
+            another_ivar: bool,
+        ) -> Option<NonNull<Self>> {
+            let this: Option<&mut Self> = unsafe { msg_send![super(this), init] };
 
             // TODO: `ns_string` can't be used inside closures; investigate!
             let s = ns_string!("def");
@@ -45,7 +53,7 @@ declare_class!(
                 *this.maybe_id_ivar = Some(s.copy());
                 Ivar::write(&mut this.box_ivar, Box::new(2));
                 Ivar::write(&mut this.id_ivar, NSString::from_str("abc"));
-                this
+                NonNull::from(this)
             })
         }
 

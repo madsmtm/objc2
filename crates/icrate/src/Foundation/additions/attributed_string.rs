@@ -1,10 +1,10 @@
 #![cfg(feature = "Foundation_NSAttributedString")]
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::rc::{DefaultId, Id, Shared};
-use objc2::runtime::Object;
-use objc2::{extern_methods, ClassType};
+use objc2::extern_methods;
+use objc2::rc::DefaultId;
 
+use crate::common::*;
 use crate::Foundation::{self, NSAttributedString, NSAttributedStringKey};
 
 // SAFETY: `NSAttributedString` is immutable and `NSMutableAttributedString`
@@ -51,10 +51,8 @@ extern_methods!(
 );
 
 impl DefaultId for NSAttributedString {
-    type Ownership = Shared;
-
     #[inline]
-    fn default_id() -> Id<Self, Self::Ownership> {
+    fn default_id() -> Id<Self> {
         Self::new()
     }
 }

@@ -93,9 +93,9 @@ error[E0277]: the trait bound `Id<objc2::runtime::Object>: MessageReceiver` is n
   |                                  required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a Id<T, O>
-            &'a mut Id<T, objc2::rc::Owned>
-  = note: required for `RetainSemantics<1>` to implement `MsgSendId<Id<objc2::runtime::Object>, Id<_, _>>`
+            &'a Id<T>
+            &'a mut Id<T>
+  = note: required for `RetainSemantics<1>` to implement `MsgSendId<Id<objc2::runtime::Object>, Id<_>>`
 
 error[E0277]: the trait bound `Id<objc2::runtime::Object>: MessageReceiver` is not satisfied
  --> ui/msg_send_id_invalid_receiver.rs
@@ -107,6 +107,6 @@ error[E0277]: the trait bound `Id<objc2::runtime::Object>: MessageReceiver` is n
   |                                  required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a Id<T, O>
-            &'a mut Id<T, objc2::rc::Owned>
-  = note: required for `RetainSemantics<4>` to implement `MsgSendId<Id<objc2::runtime::Object>, Id<_, _>>`
+            &'a Id<T>
+            &'a mut Id<T>
+  = note: required for `RetainSemantics<4>` to implement `MsgSendId<Id<objc2::runtime::Object>, Id<_>>`

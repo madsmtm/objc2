@@ -81,7 +81,7 @@ fn test_iter_values() {
 fn test_arrays() {
     let dict = sample_dict("abcd");
 
-    let keys = dict.allKeys();
+    let keys = unsafe { dict.allKeys() };
     assert_eq!(keys.len(), 1);
     autoreleasepool(|pool| {
         assert_eq!(keys[0].as_str(pool), "abcd");
@@ -95,8 +95,7 @@ fn test_arrays() {
 #[cfg(feature = "Foundation_NSEnumerator")]
 fn test_debug() {
     let key = NSString::from_str("a");
-    // TODO: Fix this
-    let val = unsafe { Id::from_shared(NSString::from_str("b")) };
+    let val = NSString::from_str("b");
     let dict = NSDictionary::from_keys_and_objects(&[&*key], vec![val]);
     assert_eq!(format!("{dict:?}"), r#"{"a": "b"}"#);
 }

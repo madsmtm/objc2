@@ -45,6 +45,32 @@ macro_rules! data {
     };
 }
 
+macro_rules! __set_mutability {
+    ($data:expr;) => {};
+    ($data:expr; ImmutableWithMutableSubclass<$framework:ident::$subclass:ident>) => {
+        $data.mutability = $crate::stmt::Mutability::ImmutableWithMutableSubclass(
+            $crate::ItemIdentifier::from_raw(
+                stringify!($subclass).to_string(),
+                stringify!($framework).to_string(),
+            ),
+        );
+    };
+    ($data:expr; MutableWithImmutableSuperclass<$framework:ident::$superclass:ident>) => {
+        $data.mutability = $crate::stmt::Mutability::MutableWithImmutableSuperclass(
+            $crate::ItemIdentifier::from_raw(
+                stringify!($superclass).to_string(),
+                stringify!($framework).to_string(),
+            ),
+        );
+    };
+    ($data:expr; Immutable) => {
+        $data.mutability = $crate::stmt::Mutability::Immutable;
+    };
+    ($data:expr; Mutable) => {
+        $data.mutability = $crate::stmt::Mutability::Mutable;
+    };
+}
+
 macro_rules! __data_inner {
     // Base case
     (
@@ -54,7 +80,7 @@ macro_rules! __data_inner {
     (
         @($config:expr)
 
-        class $class:ident $(: $ownership:ident)? {
+        class $class:ident $(: $mutability:ident $(<$framework:ident::$ty:ident>)?)? {
             $($methods:tt)*
         }
 
@@ -63,7 +89,10 @@ macro_rules! __data_inner {
         #[allow(unused_mut)]
         let mut data = $config.class_data.entry(stringify!($class).to_string()).or_default();
 
-        $(data.ownership = $crate::rust_type::Ownership::$ownership;)?
+        __set_mutability! {
+            data;
+            $($mutability $(<$framework::$ty>)?)?
+        }
 
         __data_methods! {
             @(data)

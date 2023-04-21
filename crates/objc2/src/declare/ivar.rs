@@ -318,6 +318,7 @@ mod tests {
 
     use super::*;
     use crate::declare::{IvarBool, IvarEncode};
+    use crate::mutability::Mutable;
     use crate::rc::Id;
     use crate::runtime::NSObject;
     use crate::{declare_class, msg_send, msg_send_id, test_utils, ClassType, MessageReceiver};
@@ -374,6 +375,7 @@ mod tests {
 
             unsafe impl ClassType for CustomDrop {
                 type Super = NSObject;
+                type Mutability = Mutable;
                 const NAME: &'static str = "CustomDrop";
             }
         );

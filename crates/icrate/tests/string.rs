@@ -82,7 +82,7 @@ fn test_copy() {
     assert_eq!(Id::as_ptr(&s1), Id::as_ptr(&s2));
     assert!(s2.is_kind_of::<NSString>());
 
-    let s3 = s1.mutable_copy();
+    let s3 = s1.mutableCopy();
     assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3).cast());
     assert!(s3.is_kind_of::<Foundation::NSMutableString>());
 }

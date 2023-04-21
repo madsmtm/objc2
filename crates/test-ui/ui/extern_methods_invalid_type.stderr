@@ -41,9 +41,9 @@ error[E0277]: the trait bound `i32: MaybeUnwrap` is not satisfied
   |
   = help: the following other types implement trait `MaybeUnwrap`:
             Allocated<T>
-            Id<T, O>
+            Id<T>
             Option<Allocated<T>>
-            Option<Id<T, O>>
+            Option<Id<T>>
 note: required by a bound in `send_message_id`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
   |
@@ -117,9 +117,9 @@ error[E0277]: the trait bound `Result<Id<MyObject>, Id<NSObject>>: MaybeUnwrap` 
   |
   = help: the following other types implement trait `MaybeUnwrap`:
             Allocated<T>
-            Id<T, O>
+            Id<T>
             Option<Allocated<T>>
-            Option<Id<T, O>>
+            Option<Id<T>>
 note: required by a bound in `send_message_id`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
   |

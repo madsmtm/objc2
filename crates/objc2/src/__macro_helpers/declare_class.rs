@@ -2,7 +2,7 @@ use core::mem::ManuallyDrop;
 use core::ptr;
 
 use crate::declare::__IdReturnValue;
-use crate::rc::{Allocated, Id, Ownership};
+use crate::rc::{Allocated, Id};
 use crate::{Message, MessageReceiver};
 
 use super::{CopyOrMutCopy, Init, MaybeUnwrap, New, Other};
@@ -38,11 +38,10 @@ where
 //
 // Additionally, the receiver and return type must have the same generic
 // generic parameter `T`.
-impl<Ret, T, O> MessageRecieveId<Allocated<T>, Ret> for Init
+impl<Ret, T> MessageRecieveId<Allocated<T>, Ret> for Init
 where
     T: Message,
-    O: Ownership,
-    Ret: MaybeOptionId<Input = Id<T, O>>,
+    Ret: MaybeOptionId<Input = Id<T>>,
 {
     #[inline]
     fn into_return(obj: Ret) -> __IdReturnValue {
@@ -74,7 +73,7 @@ where
     }
 }
 
-/// Helper trait for specifying an `Id<T, O>` or an `Option<Id<T, O>>`.
+/// Helper trait for specifying an `Id<T>` or an `Option<Id<T>>`.
 ///
 /// (Both of those are valid return types from declare_class! `#[method_id]`).
 pub trait MaybeOptionId: MaybeUnwrap {
@@ -82,7 +81,7 @@ pub trait MaybeOptionId: MaybeUnwrap {
     fn autorelease_return(self) -> __IdReturnValue;
 }
 
-impl<T: Message, O: Ownership> MaybeOptionId for Id<T, O> {
+impl<T: Message> MaybeOptionId for Id<T> {
     #[inline]
     fn consumed_return(self) -> __IdReturnValue {
         let ptr: *mut T = Id::consume_as_ptr(ManuallyDrop::new(self));
@@ -96,7 +95,7 @@ impl<T: Message, O: Ownership> MaybeOptionId for Id<T, O> {
     }
 }
 
-impl<T: Message, O: Ownership> MaybeOptionId for Option<Id<T, O>> {
+impl<T: Message> MaybeOptionId for Option<Id<T>> {
     #[inline]
     fn consumed_return(self) -> __IdReturnValue {
         let ptr: *mut T = self

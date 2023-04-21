@@ -9,10 +9,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added `objc2::rc::autoreleasepool_leaking`, and improve performance of
   objects `Debug` impls.
+* **BREAKING**: Added associated type `ClassType::Mutability`, which replaces
+  the ownership type on `Id`, and must be specified for all class types.
+
+  An example:
+  ```rust
+  // Before
+  use icrate::Foundation::NSObject;
+  use objc2::{declare_class, ClassType};
+
+  declare_class!(
+      struct MyDelegate;
+
+      unsafe impl ClassType for MyDelegate {
+          type Super = NSObject;
+      }
+
+      // ... methods
+  );
+
+  // After
+  use icrate::Foundation::NSObject;
+  use objc2::mutability::InteriorMutable;
+  use objc2::{declare_class, ClassType};
+
+  declare_class!(
+      struct MyDelegate;
+
+      unsafe impl ClassType for MyDelegate {
+          type Super = NSObject;
+          type Mutability = InteriorMutable; // Added
+      }
+
+      // ... methods
+  );
+  ```
+* Added `ClassType::retain`, which is a safe way to go from a reference `&T`
+  to an `Id<T>`.
+* Added `mutability` module, containing various types that can be specified
+  for the above.
+* Preliminary support for specifying `where` bounds on methods inside
+  `extern_protocol!` and `extern_methods!`.
+* Allow arbitary expressions in `const NAME` in `extern_class!`,
+  `extern_protocol!` and `declare_class!`.
 
 ### Changed
-* Made the default ownership in `Id` be `Shared`. This means that you can now
-  write `Id<NSString>`, and it'll mean `Id<NSString, Shared>`.
 * **BREAKING**: `objc2::rc::AutoreleasePool` is now a zero-sized `Copy` type
   with a lifetime parameter, instead of the lifetime parameter being the
   reference it was behind.
@@ -23,9 +64,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   Additionally, rename the mutable version to `Id::autorelease_mut`.
 * **BREAKING**: Moved `VerificationError`, `ProtocolObject` and
   `ImplementedBy` into the `runtime` module.
+* Relaxed a `fmt::Debug` bound on `WeakId`'s own `fmt::Debug` impl.
 
 ### Fixed
 * Fixed using autorelease pools on 32bit macOS and older macOS versions.
+
+### Removed
+* **BREAKING**: Removed `rc::SliceId`, since it is trivially implementable
+  outside `objc2` from the layout guarantees of `rc::Id`.
+* **BREAKING**: Removed `Ownership` type parameter from `Id`, as well as
+  `rc::Ownership`, `rc::Owned`, `rc::Shared`, `Id::from_shared` and
+  `Id::into_shared`. This functionality has been moved from being at the
+  "usage-level", to being moved to the "type-level" in the associated type
+  `ClassType::Mutability`.
+
+  While being slightly more restrictive, it should vastly help you avoid
+  making mistakes around mutability (e.g. it is usually a mistake to make a
+  mutable reference `&mut` to an Objective-C object).
+
+  An example:
+  ```rust
+  // Before
+  use objc2::rc::{Id, Shared};
+  use objc2::runtime::NSObject;
+  use objc2::msg_send_id;
+
+  let obj: Id<NSObject, Shared> = unsafe { msg_send_id![NSObject::class(), new] };
+
+  // After
+  use objc2::rc::Id;
+  use objc2::runtime::NSObject;
+  use objc2::msg_send_id;
+
+  let obj: Id<NSObject> = unsafe { msg_send_id![NSObject::class(), new] };
+  ```
 
 
 ## 0.3.0-beta.5 - 2023-02-07

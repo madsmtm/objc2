@@ -36,22 +36,31 @@ extern_class!(
     unsafe impl ClassType for NSPopover {
         #[inherits(NSObject)]
         type Super = crate::AppKit::NSResponder;
+        type Mutability = InteriorMutable;
     }
 );
 
 __inner_extern_class!(
     #[cfg(feature = "AppKit_NSLayoutAnchor")]
     #[derive(Debug, PartialEq, Eq, Hash)]
-    pub struct NSLayoutAnchor<AnchorType: Message = Object, AnchorTypeOwnership: Ownership = Shared> {
-        _inner0: PhantomData<*mut (AnchorType, AnchorTypeOwnership)>,
+    pub struct NSLayoutAnchor<AnchorType: Message = Object> {
+        __superclass: NSObject,
+        _inner0: PhantomData<*mut AnchorType>,
         notunwindsafe: PhantomData<&'static mut ()>,
     }
 
     #[cfg(feature = "AppKit_NSLayoutAnchor")]
-    unsafe impl<AnchorType: Message, AnchorTypeOwnership: Ownership> ClassType
-        for NSLayoutAnchor<AnchorType, AnchorTypeOwnership>
-    {
+    unsafe impl<AnchorType: Message> ClassType for NSLayoutAnchor<AnchorType> {
         type Super = NSObject;
+        type Mutability = InteriorMutable;
+
+        fn as_super(&self) -> &Self::Super {
+            &self.__superclass
+        }
+
+        fn as_super_mut(&mut self) -> &mut Self::Super {
+            &mut self.__superclass
+        }
     }
 );
 

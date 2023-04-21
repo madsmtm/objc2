@@ -2,9 +2,9 @@
 use core::cell::{Cell, UnsafeCell};
 use core::ffi::c_void;
 
+use block2::Block;
 use objc2::encode::Encode;
 use objc2::runtime::Sel;
-use block2::Block;
 
 fn is_encode<T: Encode>() {}
 

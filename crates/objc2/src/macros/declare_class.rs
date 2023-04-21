@@ -1,31 +1,44 @@
-/// Declare a new Objective-C class.
+/// Declare a new class.
 ///
-/// This is mostly just a convenience macro on top of [`extern_class!`] and
-/// the functionality in the [`declare`] module, but it can really help
-/// with cutting down on boilerplate, in particular when defining delegate
-/// classes!
+/// This is useful in many cases since Objective-C frameworks tend to favour a
+/// design pattern using "delegates", where to hook into a piece of
+/// functionality in a class, you implement that class' delegate protocol in
+/// a custom class.
 ///
-/// [`extern_class!`]: crate::extern_class
+/// This macro is the declarative way of creating classes, in contrast with
+/// the [`declare`] module which mostly contain ways of declaring classes in
+/// an imperative fashion. It is highly recommended that you use this macro
+/// though, since it contains a lot of extra debug assertions and niceties
+/// that help ensure the soundness of your code.
+///
 /// [`declare`]: crate::declare
 ///
 ///
 /// # Specification
 ///
-/// This macro consists of three parts:
-/// - The class definition + ivar definition + inheritance specification.
-/// - A set of method definitions.
-/// - A set of protocol definitions.
+/// This macro consists of roughly four parts:
+/// - The type and ivar definition.
+/// - The [`ClassType`] implementation.
+/// - Any number of method definitions.
+/// - Any number of protocol implementations.
+///
+/// With the syntax generally resembling a combination of that in
+/// [`extern_class!`] and [`extern_methods!`].
+///
+/// [`ClassType`]: crate::ClassType
+/// [`extern_class!`]: crate::extern_class
+/// [`extern_methods!`]: crate::extern_methods
 ///
 ///
-/// ## Class and ivar definition
+/// ## Ivar definition
 ///
-/// The class definition works a lot like [`extern_class!`], with the added
-/// functionality that you can define custom instance variables on your class,
-/// which are then wrapped in a [`declare::Ivar`] with the given name, and
-/// made accessible through the class. (E.g. you can use `self.my_ivar` as if
-/// it was a normal Rust struct).
+/// The type definition works a lot like [`extern_class!`] (including the
+/// allowed attributes), with the added capability that struct fields are
+/// automatically defined as custom instance variables, which are then
+/// accessible on instances of the class. (E.g. you can use `self.my_ivar` as
+/// if the class was a normal Rust struct).
 ///
-/// The instance variable names are specified as such:
+/// The instance variables are specified as such:
 /// - [`IvarEncode<T, "my_crate_ivar">`](crate::declare::IvarEncode)
 /// - [`IvarBool<"my_crate_ivar">`](crate::declare::IvarBool)
 /// - [`IvarDrop<T, "my_crate_ivar">`](crate::declare::IvarDrop)
@@ -37,19 +50,24 @@
 /// superclass' instance variables - this means is is good practice to name
 /// them with a prefix of your crate name, or similar.
 ///
-/// The class name must be specified in `ClassType::NAME`, and it must be
-/// unique across the entire application. Good practice here is similarly to
-/// include your crate name in the prefix.
+/// [`declare::IvarType`]: crate::declare::IvarType
+///
+///
+/// ## `ClassType` implementation
+///
+/// This also resembles that in [`extern_class!`], except that
+/// [`ClassType::NAME`] must be specified, and it must be unique across the
+/// entire application. Good practice here is to include your crate name in
+/// the prefix.
 ///
 /// The class is guaranteed to have been created and registered with the
 /// Objective-C runtime after the [`ClassType::class`] function has been
 /// called.
 ///
 /// The macro will generate a `dealloc` method for you, which will call any
-/// `Drop` impl the class may have.
+/// [`Drop`] impl you may have defined on the type.
 ///
-/// [`declare::Ivar`]: crate::declare::Ivar
-/// [`declare::IvarType`]: crate::declare::IvarType
+/// [`ClassType::NAME`]: crate::ClassType::NAME
 /// [`ClassType::class`]: crate::ClassType::class
 ///
 ///
@@ -67,7 +85,7 @@
 /// [`extern_methods!`] macro.
 ///
 /// If the `#[method_id(...)]` attribute is used, the return type must be
-/// `Option<Id<T, O>>` or `Id<T, O>`. Additionally, if the selector is in the
+/// `Option<Id<T>>` or `Id<T>`. Additionally, if the selector is in the
 /// "init"-family, the `self`/`this` argument must be `Allocated<Self>`.
 ///
 /// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
@@ -84,18 +102,17 @@
 /// make it behave similarly to the Objective-C `BOOL`. Use [`runtime::Bool`]
 /// if you want to control this manually.
 ///
-/// Note that `&mut Id<_, _>` and other such out parameters are not yet
+/// Note that `&mut Id<_>` and other such out parameters are not yet
 /// supported, and may generate a panic at runtime.
 ///
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
-/// [`extern_methods!`]: crate::extern_methods
 /// [open an issue]: https://github.com/madsmtm/objc2/issues/new
 /// [`msg_send!`]: crate::msg_send
 /// [`runtime::Bool`]: crate::runtime::Bool
 ///
 ///
-/// ## Protocol definitions
+/// ## Protocol implementations
 ///
 /// You can specify protocols that the class should implement, along with any
 /// required/optional methods for said protocols.
@@ -129,21 +146,26 @@
 /// Using this macro requires writing a few `unsafe` markers:
 ///
 /// `unsafe impl ClassType for T` has the following safety requirements:
-/// - Same as [`extern_class!`] (the inheritance chain has to be correct).
+/// - Any invariants that the overridden class [`ClassType::Super`] may have
+///   must be upheld.
+/// - [`ClassType::Mutability`] must be correct.
 /// - Any instance variables you specify under the struct definition must
 ///   either be able to be created using [`MaybeUninit::zeroed`], or be
 ///   properly initialized in an `init` method.
 ///
 /// `unsafe impl T { ... }` asserts that the types match those that are
-/// expected when the method is invoked from Objective-C. Note that there are
-/// no safe-guards here; you can easily write `i8`, but if Objective-C thinks
-/// it's an `u32`, it will cause UB when called!
+/// expected when the method is invoked from Objective-C. Note that unlike
+/// with [`extern_methods!`], there are no safe-guards here; you can easily
+/// write `i8`, but if Objective-C thinks it's an `u32`, it will cause UB when
+/// called!
 ///
 /// `unsafe impl P for T { ... }` requires that all required methods of the
 /// specified protocol is implemented, and that any extra requirements
 /// (implicit or explicit) that the protocol has are upheld. The methods in
 /// this definition has the same safety requirements as above.
 ///
+/// [`ClassType::Super`]: crate::ClassType::Super
+/// [`ClassType::Mutability`]: crate::ClassType::Mutability
 /// [`MaybeUninit::zeroed`]: core::mem::MaybeUninit::zeroed
 ///
 ///
@@ -154,29 +176,15 @@
 ///
 /// ```
 /// use std::os::raw::c_int;
+///
+/// # use objc2::runtime::{__NSCopying as NSCopying, NSObject, NSObjectProtocol, NSZone};
+/// # #[cfg(available_elsewhere)]
+/// use icrate::Foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
 /// use objc2::declare::{Ivar, IvarDrop, IvarEncode};
-/// use objc2::rc::{Id, Owned};
-/// use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
+/// use objc2::rc::Id;
 /// use objc2::{
-///     declare_class, extern_protocol, msg_send, msg_send_id, ClassType,
-///     ProtocolType,
+///     declare_class, extern_protocol, msg_send, msg_send_id, mutability, ClassType, ProtocolType,
 /// };
-///
-/// // Declare the NSCopying protocol so that we can implement it.
-/// //
-/// // In practice, you wouldn't have to do this, since it is done for you in
-/// // `icrate`.
-/// extern_protocol!(
-///     unsafe trait NSCopying {
-///         #[method(copyWithZone:)]
-///         fn copy_with_zone(&self, _zone: *const NSZone) -> *mut Self;
-///     }
-///
-///     unsafe impl ProtocolType for dyn NSCopying {
-///         const NAME: &'static str = "NSCopying";
-///     }
-/// );
-///
 ///
 /// declare_class!(
 ///     struct MyCustomObject {
@@ -189,6 +197,7 @@
 ///
 ///     unsafe impl ClassType for MyCustomObject {
 ///         type Super = NSObject;
+///         type Mutability = mutability::Mutable;
 ///         const NAME: &'static str = "MyCustomObject";
 ///     }
 ///
@@ -203,14 +212,14 @@
 ///                 // Initialize instance variables
 ///
 ///                 // Some types like `u8`, `bool`, `Option<Box<T>>` and
-///                 // `Option<Id<T, O>>` are safe to zero-initialize, and
-///                 // we can simply write to the variable as normal:
+///                 // `Option<Id<T>>` are safe to zero-initialize, and we can
+///                 // simply write to the variable as normal:
 ///                 *this.foo = foo;
 ///                 *this.bar = 42;
 ///
-///                 // For others like `&u8`, `Box<T>` or `Id<T, O>`, we have
-///                 // to initialize them with `Ivar::write`:
-///                 Ivar::write(&mut this.object, Id::into_shared(NSObject::new()));
+///                 // For others like `&u8`, `Box<T>` or `Id<T>`, we have to
+///                 // initialize them with `Ivar::write`:
+///                 Ivar::write(&mut this.object, NSObject::new());
 ///
 ///                 // All the instance variables have been initialized; our
 ///                 // initializer is sound
@@ -236,7 +245,7 @@
 ///
 ///     unsafe impl NSCopying for MyCustomObject {
 ///         #[method_id(copyWithZone:)]
-///         fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self, Owned> {
+///         fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self> {
 ///             let mut obj = Self::new(*self.foo);
 ///             *obj.bar = *self.bar;
 ///             obj
@@ -248,8 +257,11 @@
 ///     }
 /// );
 ///
+/// // TODO: Allow moving this inside `declare_class!`
+/// unsafe impl NSObjectProtocol for MyCustomObject {}
+///
 /// impl MyCustomObject {
-///     pub fn new(foo: u8) -> Id<Self, Owned> {
+///     pub fn new(foo: u8) -> Id<Self> {
 ///         unsafe { msg_send_id![Self::alloc(), initWithFoo: foo] }
 ///     }
 ///
@@ -265,12 +277,6 @@
 ///         unsafe { msg_send![Self::class(), myClassMethod] }
 ///     }
 /// }
-///
-/// // TODO: `NSCopying` from `icrate` works a bit differently
-/// // unsafe impl icrate::Foundation::NSCopying for MyCustomObject {
-/// //     type Ownership = Owned;
-/// //     type Output = Self;
-/// // }
 ///
 /// fn main() {
 ///     let obj = MyCustomObject::new(3);
@@ -362,7 +368,9 @@ macro_rules! declare_class {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
 
-            const NAME: &'static str = $name_const:literal;
+            type Mutability = $mutability:ty;
+
+            const NAME: &'static str = $name_const:expr;
         }
 
         $($methods:tt)*
@@ -375,7 +383,7 @@ macro_rules! declare_class {
             ($($fields)*)
             (
                 // Superclasses are deallocated by calling `[super dealloc]`.
-                __inner: $crate::__macro_helpers::ManuallyDrop<$superclass>,
+                __superclass: $crate::__macro_helpers::ManuallyDrop<$superclass>,
             )
         }
 
@@ -385,6 +393,8 @@ macro_rules! declare_class {
             unsafe impl ClassType for $for {
                 $(#[inherits($($inheritance_rest),+)])?
                 type Super = $superclass;
+
+                type Mutability = $mutability;
 
                 const NAME: &'static str = $name_const;
             }
@@ -404,7 +414,9 @@ macro_rules! declare_class {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
 
-            const NAME: &'static str = $name_const:literal;
+            type Mutability = $mutability:ty;
+
+            const NAME: &'static str = $name_const:expr;
         }
 
         $($methods:tt)*
@@ -417,7 +429,7 @@ macro_rules! declare_class {
             ($($fields)*)
             (
                 // Superclasses are deallocated by calling `[super dealloc]`.
-                __inner: $crate::__macro_helpers::ManuallyDrop<$superclass>,
+                __superclass: $crate::__macro_helpers::ManuallyDrop<$superclass>,
             )
         }
 
@@ -427,6 +439,8 @@ macro_rules! declare_class {
             unsafe impl ClassType for $for {
                 $(#[inherits($($inheritance_rest),+)])?
                 type Super = $superclass;
+
+                type Mutability = $mutability;
 
                 const NAME: &'static str = $name_const;
             }
@@ -444,7 +458,9 @@ macro_rules! declare_class {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
 
-            const NAME: &'static str = $name_const:literal;
+            type Mutability = $mutability:ty;
+
+            const NAME: &'static str = $name_const:expr;
         }
 
         $($methods:tt)*
@@ -457,7 +473,7 @@ macro_rules! declare_class {
             ()
             (
                 // Superclasses are deallocated by calling `[super dealloc]`.
-                __inner: $crate::__macro_helpers::ManuallyDrop<$superclass>,
+                __superclass: $crate::__macro_helpers::ManuallyDrop<$superclass>,
             )
         }
 
@@ -467,6 +483,8 @@ macro_rules! declare_class {
             unsafe impl ClassType for $for {
                 $(#[inherits($($inheritance_rest),+)])?
                 type Super = $superclass;
+
+                type Mutability = $mutability;
 
                 const NAME: &'static str = $name_const;
             }
@@ -486,7 +504,9 @@ macro_rules! __inner_declare_class {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
 
-            const NAME: &'static str = $name_const:literal;
+            type Mutability = $mutability:ty;
+
+            const NAME: &'static str = $name_const:expr;
         }
 
         $($methods:tt)*
@@ -495,12 +515,21 @@ macro_rules! __inner_declare_class {
             // SAFETY: Upheld by caller
             unsafe impl () for $for {
                 INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::Object];
+
+                fn as_super(&self) {
+                    &*self.__superclass
+                }
+
+                fn as_super_mut(&mut self) {
+                    &mut *self.__superclass
+                }
             }
         }
 
         // Creation
         unsafe impl ClassType for $for {
             type Super = $superclass;
+            type Mutability = $mutability;
             const NAME: &'static $crate::__macro_helpers::str = $name_const;
 
             fn class() -> &'static $crate::runtime::Class {
@@ -575,12 +604,12 @@ macro_rules! __inner_declare_class {
 
             #[inline]
             fn as_super(&self) -> &Self::Super {
-                &self.__inner
+                &*self.__superclass
             }
 
             #[inline]
             fn as_super_mut(&mut self) -> &mut Self::Super {
-                &mut self.__inner
+                &mut *self.__superclass
             }
         }
 
@@ -594,7 +623,7 @@ macro_rules! __inner_declare_class {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __select_name {
-    ($_name:ident; $name_const:literal) => {
+    ($_name:ident; $name_const:expr) => {
         $name_const
     };
     ($name:ident;) => {

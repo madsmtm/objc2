@@ -1,6 +1,6 @@
 //! Invalid receiver to msg_send![super(obj), ...], missing ClassType impl.
 use objc2::msg_send;
-use objc2::runtime::{Object, NSObject};
+use objc2::runtime::{NSObject, Object};
 
 fn main() {
     let obj: &Object;

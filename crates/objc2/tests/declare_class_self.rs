@@ -4,7 +4,7 @@
 //! types of such a function)!
 use objc2::rc::{Allocated, Id};
 use objc2::runtime::NSObject;
-use objc2::{declare_class, ClassType};
+use objc2::{declare_class, mutability, ClassType};
 
 trait GetSameType {
     type SameType: ?Sized;
@@ -25,6 +25,8 @@ declare_class!(
 
     unsafe impl ClassType for MyTestObject {
         type Super = NSObject;
+        type Mutability = mutability::Mutable;
+
         const NAME: &'static str = "MyTestObject";
     }
 

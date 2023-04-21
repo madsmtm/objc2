@@ -1,5 +1,4 @@
 pub use self::comparison_result::NSComparisonResult;
-pub use self::copying::{NSCopying, NSMutableCopying};
 pub use self::enumerator::{NSEnumerator2, NSFastEnumeration2, NSFastEnumerator2};
 pub use self::geometry::{
     CGFloat, CGPoint, CGRect, CGSize, NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint,
@@ -16,7 +15,6 @@ mod array;
 mod attributed_string;
 mod bundle;
 mod comparison_result;
-mod copying;
 mod data;
 mod dictionary;
 mod enumerator;
@@ -36,5 +34,6 @@ mod range;
 mod set;
 mod string;
 mod thread;
+mod util;
 mod uuid;
 mod value;

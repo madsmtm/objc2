@@ -22,7 +22,7 @@ fn main() {
     println!("{}", array.len());
 
     // Turn the NSArray back into a Vec
-    let mut objs = NSArray::into_vec(array);
+    let mut objs = array.to_vec_retained();
     let obj = objs.pop().unwrap();
 
     // Create a static NSString

@@ -14,12 +14,12 @@ extern_methods!(
     unsafe impl NSMutableString {
         /// Construct an empty [`NSMutableString`].
         #[method_id(new)]
-        pub fn new() -> Id<Self, Owned>;
+        pub fn new() -> Id<Self>;
 
         /// Creates a new [`NSMutableString`] by copying the given string slice.
         #[doc(alias = "initWithBytes:length:encoding:")]
         #[allow(clippy::should_implement_trait)] // Not really sure of a better name
-        pub fn from_str(string: &str) -> Id<Self, Owned> {
+        pub fn from_str(string: &str) -> Id<Self> {
             unsafe {
                 let obj = super::string::from_str(Self::class(), string);
                 Id::new(obj.cast()).unwrap()
@@ -29,10 +29,8 @@ extern_methods!(
 );
 
 impl DefaultId for NSMutableString {
-    type Ownership = Owned;
-
     #[inline]
-    fn default_id() -> Id<Self, Self::Ownership> {
+    fn default_id() -> Id<Self> {
         Self::new()
     }
 }

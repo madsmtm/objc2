@@ -1,6 +1,6 @@
 use objc2::declare::ClassBuilder;
 use objc2::rc::{Allocated, Id};
-use objc2::runtime::{Sel, NSObject};
+use objc2::runtime::{NSObject, Sel};
 use objc2::{sel, ClassType};
 
 fn main() {

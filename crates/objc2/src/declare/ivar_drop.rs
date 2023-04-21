@@ -2,7 +2,7 @@ use alloc::boxed::Box;
 use core::ffi::c_void;
 
 use crate::encode::{Encode, Encoding};
-use crate::rc::{Id, Ownership};
+use crate::rc::Id;
 use crate::Message;
 
 use super::InnerIvarType;
@@ -21,8 +21,8 @@ mod private {
 /// This currently works with the following types:
 /// - `Box<T>`
 /// - `Option<Box<T>>`
-/// - `Id<T, O>`
-/// - `Option<Id<T, O>>`
+/// - `Id<T>`
+/// - `Option<Id<T>>`
 ///
 /// Further may be added when the standard library guarantee their layout.
 #[repr(transparent)]
@@ -95,13 +95,13 @@ unsafe impl<T: Sized> InnerIvarType for IvarDrop<Option<Box<T>>> {
     }
 }
 
-unsafe impl<T: Message, O: Ownership> Encode for IvarDrop<Id<T, O>> {
+unsafe impl<T: Message> Encode for IvarDrop<Id<T>> {
     const ENCODING: Encoding = <*const T>::ENCODING;
 }
 
-// SAFETY: `Option<Id<T, O>>` is safe to zero-initialize
-unsafe impl<T: Message, O: Ownership> private::IvarDropHelper for Id<T, O> {
-    type Inner = Option<Id<T, O>>;
+// SAFETY: `Option<Id<T>>` is safe to zero-initialize
+unsafe impl<T: Message> private::IvarDropHelper for Id<T> {
+    type Inner = Option<Id<T>>;
 }
 
 // SAFETY: `Id` is `NonNull<T>`, and hence safe to store as a pointer.
@@ -109,11 +109,11 @@ unsafe impl<T: Message, O: Ownership> private::IvarDropHelper for Id<T, O> {
 // The user ensures that the Id has been initialized in an `init` method
 // before being used.
 //
-// Note: We could technically do `impl InnerIvarType for Ivar<Id<T, O>>`
+// Note: We could technically do `impl InnerIvarType for Ivar<Id<T>>`
 // directly today, but since we can't do so for `Box` (because that is
 // `#[fundamental]`), I think it makes sense to handle them similarly.
-unsafe impl<T: Message, O: Ownership> InnerIvarType for IvarDrop<Id<T, O>> {
-    type Output = Id<T, O>;
+unsafe impl<T: Message> InnerIvarType for IvarDrop<Id<T>> {
+    type Output = Id<T>;
 
     #[inline]
     unsafe fn __deref(&self) -> &Self::Output {
@@ -132,21 +132,21 @@ unsafe impl<T: Message, O: Ownership> InnerIvarType for IvarDrop<Id<T, O>> {
     }
 }
 
-unsafe impl<T: Message, O: Ownership> Encode for IvarDrop<Option<Id<T, O>>> {
+unsafe impl<T: Message> Encode for IvarDrop<Option<Id<T>>> {
     const ENCODING: Encoding = <*const T>::ENCODING;
 }
 
-// SAFETY: `Option<Id<T, O>>` is safe to zero-initialize
-unsafe impl<T: Message, O: Ownership> private::IvarDropHelper for Option<Id<T, O>> {
-    type Inner = Option<Id<T, O>>;
+// SAFETY: `Option<Id<T>>` is safe to zero-initialize
+unsafe impl<T: Message> private::IvarDropHelper for Option<Id<T>> {
+    type Inner = Option<Id<T>>;
 }
 
-// SAFETY: `Id<T, O>` guarantees the null-pointer optimization.
+// SAFETY: `Id<T>` guarantees the null-pointer optimization.
 //
 // This is valid to initialize as all-zeroes, so the user doesn't have to do
 // anything to initialize it.
-unsafe impl<T: Message, O: Ownership> InnerIvarType for IvarDrop<Option<Id<T, O>>> {
-    type Output = Option<Id<T, O>>;
+unsafe impl<T: Message> InnerIvarType for IvarDrop<Option<Id<T>>> {
+    type Output = Option<Id<T>>;
 
     #[inline]
     unsafe fn __deref(&self) -> &Self::Output {
@@ -204,9 +204,9 @@ unsafe fn box_unreachable() -> ! {
 mod tests {
     use super::*;
     use crate::declare::{Ivar, IvarType};
-    use crate::rc::{Allocated, Owned, __RcTestObject, __ThreadTestData};
+    use crate::mutability::Mutable;
+    use crate::rc::{Allocated, __RcTestObject, __ThreadTestData};
     use crate::runtime::NSObject;
-    use crate::runtime::Object;
     use crate::{declare_class, msg_send, msg_send_id, ClassType};
 
     struct TestIvar1;
@@ -223,13 +223,13 @@ mod tests {
 
     struct TestIvar3;
     unsafe impl IvarType for TestIvar3 {
-        type Type = IvarDrop<Id<Object>>;
+        type Type = IvarDrop<Id<NSObject>>;
         const NAME: &'static str = "_abc";
     }
 
     struct TestIvar4;
     unsafe impl IvarType for TestIvar4 {
-        type Type = IvarDrop<Option<Id<Object, Owned>>>;
+        type Type = IvarDrop<Option<Id<NSObject>>>;
         const NAME: &'static str = "_abc";
     }
 
@@ -237,15 +237,16 @@ mod tests {
         #[derive(Debug, PartialEq, Eq)]
         struct IvarTester {
             ivar1: IvarDrop<Id<__RcTestObject>, "_ivar1">,
-            ivar2: IvarDrop<Option<Id<__RcTestObject, Owned>>, "_ivar2">,
-            ivar3: IvarDrop<Box<Id<__RcTestObject, Owned>>, "_ivar3">,
-            ivar4: IvarDrop<Option<Box<Id<__RcTestObject, Owned>>>, "_ivar4">,
+            ivar2: IvarDrop<Option<Id<__RcTestObject>>, "_ivar2">,
+            ivar3: IvarDrop<Box<Id<__RcTestObject>>, "_ivar3">,
+            ivar4: IvarDrop<Option<Box<Id<__RcTestObject>>>, "_ivar4">,
         }
 
         mod ivartester;
 
         unsafe impl ClassType for IvarTester {
             type Super = NSObject;
+            type Mutability = Mutable;
             const NAME: &'static str = "IvarTester";
         }
 
@@ -254,7 +255,7 @@ mod tests {
             fn init(&mut self) -> Option<&mut Self> {
                 let this: Option<&mut Self> = unsafe { msg_send![super(self), init] };
                 this.map(|this| {
-                    Ivar::write(&mut this.ivar1, Id::into_shared(__RcTestObject::new()));
+                    Ivar::write(&mut this.ivar1, __RcTestObject::new());
                     *this.ivar2 = Some(__RcTestObject::new());
                     Ivar::write(&mut this.ivar3, Box::new(__RcTestObject::new()));
                     *this.ivar4 = Some(Box::new(__RcTestObject::new()));
@@ -282,6 +283,7 @@ mod tests {
 
         unsafe impl ClassType for IvarTesterSubclass {
             type Super = IvarTester;
+            type Mutability = Mutable;
             const NAME: &'static str = "IvarTesterSubclass";
         }
 
@@ -290,7 +292,7 @@ mod tests {
             fn init(&mut self) -> Option<&mut Self> {
                 let this: Option<&mut Self> = unsafe { msg_send![super(self), init] };
                 this.map(|this| {
-                    Ivar::write(&mut this.ivar5, Id::into_shared(__RcTestObject::new()));
+                    Ivar::write(&mut this.ivar5, __RcTestObject::new());
                     this
                 })
             }
@@ -312,7 +314,7 @@ mod tests {
     fn test_init_drop() {
         let mut expected = __ThreadTestData::current();
 
-        let mut obj: Id<IvarTester, Owned> = unsafe { msg_send_id![IvarTester::class(), new] };
+        let mut obj: Id<IvarTester> = unsafe { msg_send_id![IvarTester::class(), new] };
         expected.alloc += 4;
         expected.init += 4;
         expected.assert_current();
@@ -337,7 +339,7 @@ mod tests {
     fn test_subclass() {
         let mut expected = __ThreadTestData::current();
 
-        let mut obj: Id<IvarTesterSubclass, Owned> =
+        let mut obj: Id<IvarTesterSubclass> =
             unsafe { msg_send_id![IvarTesterSubclass::class(), new] };
         expected.alloc += 5;
         expected.init += 5;
@@ -359,7 +361,7 @@ mod tests {
     #[cfg_attr(not(debug_assertions), ignore = "only panics in debug mode")]
     #[should_panic = "an Id in instance variables must always be initialized before use"]
     fn test_init_invalid_ref() {
-        let obj: Id<IvarTester, Owned> = unsafe { msg_send_id![IvarTester::alloc(), initInvalid] };
+        let obj: Id<IvarTester> = unsafe { msg_send_id![IvarTester::alloc(), initInvalid] };
 
         std::println!("{:?}", obj.ivar1);
     }
@@ -368,9 +370,8 @@ mod tests {
     #[cfg_attr(not(debug_assertions), ignore = "only panics in debug mode")]
     #[should_panic = "an Id in instance variables must always be initialized before use"]
     fn test_init_invalid_mut() {
-        let mut obj: Id<IvarTester, Owned> =
-            unsafe { msg_send_id![IvarTester::alloc(), initInvalid] };
+        let mut obj: Id<IvarTester> = unsafe { msg_send_id![IvarTester::alloc(), initInvalid] };
 
-        *obj.ivar1 = __RcTestObject::new().into();
+        *obj.ivar1 = __RcTestObject::new();
     }
 }

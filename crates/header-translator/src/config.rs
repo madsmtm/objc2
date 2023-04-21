@@ -6,8 +6,7 @@ use std::path::Path;
 use serde::Deserialize;
 
 use crate::data;
-use crate::rust_type::Ownership;
-use crate::stmt::Derives;
+use crate::stmt::{Derives, Mutability};
 
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -96,9 +95,8 @@ pub struct ClassData {
     pub categories: HashMap<String, CategoryData>,
     #[serde(default)]
     pub derives: Derives,
-    #[serde(rename = "owned")]
-    #[serde(default)]
-    pub ownership: Ownership,
+    #[serde(skip)]
+    pub mutability: Mutability,
     #[serde(rename = "skipped-protocols")]
     #[serde(default)]
     pub skipped_protocols: HashSet<String>,

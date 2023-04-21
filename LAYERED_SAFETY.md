@@ -144,7 +144,7 @@ correctly.
 The `NSData` example again.
 
 ```rust
-let obj: Id<NSObject, Shared> = unsafe { msg_send_id![class!(NSData), new] };
+let obj: Id<NSObject> = unsafe { msg_send_id![class!(NSData), new] };
 let length: NSUInteger = unsafe { msg_send![&obj, length] };
 // `obj` goes out of scope, `release` is automatically sent to the object
 ```
@@ -181,13 +181,14 @@ extern_class!(
 
     unsafe impl ClassType for NSData {
         type Super = NSObject;
+        type Mutability = ImmutableWithMutableSubclass<NSMutableData>;
     }
 );
 
 extern_methods!(
     unsafe impl NSData {
         #[method_id(new)]
-        fn new() -> Id<Self, Shared>;
+        fn new() -> Id<Self>;
 
         #[method(length)]
         fn length(&self) -> NSUInteger;

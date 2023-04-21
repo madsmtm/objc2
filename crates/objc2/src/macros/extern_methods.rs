@@ -62,7 +62,7 @@
 /// use objc2::ffi::NSUInteger;
 /// use objc2::rc::{Allocated, Id};
 /// use objc2::runtime::NSObject;
-/// use objc2::{declare_class, extern_methods, ClassType};
+/// use objc2::{declare_class, extern_methods, mutability, ClassType};
 ///
 /// // Shim
 /// type NSError = NSObject;
@@ -72,6 +72,7 @@
 ///
 ///     unsafe impl ClassType for MyObject {
 ///         type Super = NSObject;
+///         type Mutability = mutability::Immutable;
 ///         const NAME: &'static str = "MyObject";
 ///     }
 ///
@@ -115,7 +116,7 @@
 /// # use objc2::ffi::NSUInteger;
 /// # use objc2::rc::{Allocated, Id};
 /// # use objc2::runtime::NSObject;
-/// # use objc2::{declare_class, extern_methods, ClassType};
+/// # use objc2::{declare_class, extern_methods, mutability, ClassType};
 /// #
 /// # // Shim
 /// # type NSError = NSObject;
@@ -125,6 +126,7 @@
 /// #
 /// #     unsafe impl ClassType for MyObject {
 /// #         type Super = NSObject;
+/// #         type Mutability = mutability::InteriorMutable;
 /// #         const NAME: &'static str = "MyObject2";
 /// #     }
 /// #
@@ -215,7 +217,9 @@ macro_rules! __extern_methods_rewrite_methods {
     // Unsafe variant
     {
         $(#[$($m:tt)*])*
-        $v:vis unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)?;
+        $v:vis unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)?
+        // TODO: Handle where bounds better
+        $(where $($where:ty : $bound:path),+ $(,)?)?;
 
         $($rest:tt)*
     } => {
@@ -228,6 +232,7 @@ macro_rules! __extern_methods_rewrite_methods {
 
             ($crate::__extern_methods_method_out)
             ($v unsafe fn $name($($args)*) $(-> $ret)?)
+            ($($($where : $bound ,)+)?)
         }
 
         $crate::__extern_methods_rewrite_methods! {
@@ -238,7 +243,9 @@ macro_rules! __extern_methods_rewrite_methods {
     // Safe variant
     {
         $(#[$($m:tt)*])*
-        $v:vis fn $name:ident($($args:tt)*) $(-> $ret:ty)?;
+        $v:vis fn $name:ident($($args:tt)*) $(-> $ret:ty)?
+        // TODO: Handle where bounds better
+        $(where $($where:ty : $bound:path),+ $(,)?)?;
 
         $($rest:tt)*
     } => {
@@ -251,6 +258,7 @@ macro_rules! __extern_methods_rewrite_methods {
 
             ($crate::__extern_methods_method_out)
             ($v fn $name($($args)*) $(-> $ret)?)
+            ($($($where : $bound ,)+)?)
         }
 
         $crate::__extern_methods_rewrite_methods! {
@@ -279,6 +287,7 @@ macro_rules! __extern_methods_method_out {
     // #[method(...)]
     {
         ($($function_start:tt)*)
+        ($($where:ty : $bound:path ,)*)
 
         ($__builder_method:ident)
         ($receiver:expr)
@@ -291,7 +300,10 @@ macro_rules! __extern_methods_method_out {
         ($($m_checked:tt)*)
     } => {
         $($m_checked)*
-        $($function_start)* {
+        $($function_start)*
+        where
+            $($where : $bound,)*
+        {
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send! {
@@ -309,6 +321,7 @@ macro_rules! __extern_methods_method_out {
     // #[method_id(...)]
     {
         ($($function_start:tt)*)
+        ($($where:ty : $bound:path ,)*)
 
         ($__builder_method:ident)
         ($receiver:expr)
@@ -321,7 +334,10 @@ macro_rules! __extern_methods_method_out {
         ($($m_checked:tt)*)
     } => {
         $($m_checked)*
-        $($function_start)* {
+        $($function_start)*
+        where
+            $($where : $bound,)*
+        {
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send_id! {
@@ -340,6 +356,7 @@ macro_rules! __extern_methods_method_out {
     // #[optional]
     {
         ($($function_start:tt)*)
+        ($($where:ty : $bound:path ,)*)
 
         ($__builder_method:ident)
         ($receiver:expr)
