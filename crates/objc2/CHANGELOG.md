@@ -68,6 +68,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 * Fixed using autorelease pools on 32bit macOS and older macOS versions.
+* Fixed memory leaks in and improved performance of `exception::catch`.
 
 ### Removed
 * **BREAKING**: Removed `rc::SliceId`, since it is trivially implementable

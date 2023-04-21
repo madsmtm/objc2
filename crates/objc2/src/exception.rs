@@ -237,6 +237,9 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception>
         // SAFETY:
         // The exception is always a valid object or NULL.
         //
+        // Since we do a retain inside `extern/exception.m`, the object has
+        // +1 retain count.
+        //
         // Code throwing an exception know that they don't hold sole access to
         // that object any more, so even if the type was originally mutable,
         // it is okay to create a new `Id` to it here.
