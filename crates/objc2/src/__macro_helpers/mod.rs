@@ -32,7 +32,10 @@ mod cache;
 mod declare_class;
 
 pub use self::cache::{CachedClass, CachedSel};
-pub use self::declare_class::{MaybeOptionId, MessageRecieveId};
+pub use self::declare_class::{
+    assert_mutability_matches_superclass_mutability, MaybeOptionId, MessageRecieveId,
+    ValidSubclassMutability,
+};
 
 // Common selectors.
 //

@@ -3,9 +3,10 @@ use core::ptr;
 
 use crate::declare::__IdReturnValue;
 use crate::rc::{Allocated, Id};
-use crate::{Message, MessageReceiver};
+use crate::{ClassType, Message, MessageReceiver};
 
 use super::{CopyOrMutCopy, Init, MaybeUnwrap, New, Other};
+use crate::mutability;
 
 // One could imagine a different design where we simply had a method like
 // `fn convert_receiver()`, but that won't work in `declare_class!` since we
@@ -109,4 +110,71 @@ impl<T: Message> MaybeOptionId for Option<Id<T>> {
         let ptr: *mut T = Id::autorelease_return_option(self);
         __IdReturnValue(ptr.cast())
     }
+}
+
+/// Helper for ensuring that `ClassType::Mutability` is implemented correctly
+/// for subclasses.
+pub trait ValidSubclassMutability<T: mutability::Mutability> {}
+
+// Root
+impl ValidSubclassMutability<mutability::Immutable> for mutability::Root {}
+impl ValidSubclassMutability<mutability::Mutable> for mutability::Root {}
+impl<MS, IS> ValidSubclassMutability<mutability::ImmutableWithMutableSubclass<MS>>
+    for mutability::Root
+where
+    MS: ?Sized + ClassType<Mutability = mutability::MutableWithImmutableSuperclass<IS>>,
+    IS: ?Sized + ClassType<Mutability = mutability::ImmutableWithMutableSubclass<MS>>,
+{
+}
+impl ValidSubclassMutability<mutability::InteriorMutable> for mutability::Root {}
+impl ValidSubclassMutability<mutability::MainThreadOnly> for mutability::Root {}
+
+// Immutable
+impl ValidSubclassMutability<mutability::Immutable> for mutability::Immutable {}
+
+// Mutable
+impl ValidSubclassMutability<mutability::Mutable> for mutability::Mutable {}
+
+// ImmutableWithMutableSubclass
+impl<MS, IS> ValidSubclassMutability<mutability::MutableWithImmutableSuperclass<IS>>
+    for mutability::ImmutableWithMutableSubclass<MS>
+where
+    MS: ?Sized + ClassType<Mutability = mutability::MutableWithImmutableSuperclass<IS>>,
+    IS: ?Sized + ClassType<Mutability = mutability::ImmutableWithMutableSubclass<MS>>,
+{
+}
+// Only valid when `NSCopying`/`NSMutableCopying` is not implemented!
+impl<MS: ?Sized + ClassType> ValidSubclassMutability<mutability::Immutable>
+    for mutability::ImmutableWithMutableSubclass<MS>
+{
+}
+
+// MutableWithImmutableSuperclass
+// Only valid when `NSCopying`/`NSMutableCopying` is not implemented!
+impl<IS: ?Sized + ClassType> ValidSubclassMutability<mutability::Mutable>
+    for mutability::MutableWithImmutableSuperclass<IS>
+{
+}
+
+// InteriorMutable
+impl ValidSubclassMutability<mutability::InteriorMutable> for mutability::InteriorMutable {}
+impl ValidSubclassMutability<mutability::MainThreadOnly> for mutability::InteriorMutable {}
+
+// MainThreadOnly
+impl ValidSubclassMutability<mutability::MainThreadOnly> for mutability::MainThreadOnly {}
+
+/// Ensure that:
+/// 1. The type is not a root class (it's superclass implements `ClassType`,
+///    and it's mutability is not `Root`), and therefore also implements basic
+///    memory management methods, as required by `unsafe impl Message`.
+/// 2. The mutability is valid according to the superclass' mutability.
+#[inline]
+pub fn assert_mutability_matches_superclass_mutability<T>()
+where
+    T: ?Sized + ClassType,
+    T::Super: ClassType,
+    T::Mutability: mutability::Mutability,
+    <T::Super as ClassType>::Mutability: ValidSubclassMutability<T::Mutability>,
+{
+    // Noop
 }

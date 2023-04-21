@@ -365,6 +365,8 @@ macro_rules! __inner_extern_class {
 
             #[inline]
             fn class() -> &'static $crate::runtime::Class {
+                $crate::__macro_helpers::assert_mutability_matches_superclass_mutability::<Self>();
+
                 $crate::__class_inner!(
                     $crate::__select_name!($name; $($name_const)?),
                     $crate::__hash_idents!($name),
@@ -416,8 +418,12 @@ macro_rules! __extern_class_impl_traits {
         // (we even ensure that `Object` is always last in our inheritance
         // tree), so it is always safe to reinterpret as that.
         //
-        // That the object must work with standard memory management is upheld
-        // by the caller.
+        // That the object must work with standard memory management is
+        // properly upheld by the fact that the superclass is required by
+        // `assert_mutability_matches_superclass_mutability` to implement
+        // `ClassType`, and hence must be a subclass of one of `NSObject`,
+        // `NSProxy` or some other class that ensures this (e.g. the object
+        // itself is not a root class).
         $(#[$impl_m])*
         unsafe impl<$($t)*> $crate::Message for $for {}
 

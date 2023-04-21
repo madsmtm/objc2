@@ -1,0 +1,67 @@
+error[E0119]: conflicting implementations of trait `AsRef<objc2::runtime::Object>` for type `MyRootClass`
+ --> ui/extern_class_subclass_object.rs
+  |
+  | / extern_class!(
+  | |     pub struct MyRootClass;
+  | |
+  | |     unsafe impl ClassType for MyRootClass {
+... |
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_first implementation here
+  |   conflicting implementation for `MyRootClass`
+  |
+  = note: this error originates in the macro `$crate::__impl_as_ref_borrow` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0119]: conflicting implementations of trait `AsMut<objc2::runtime::Object>` for type `MyRootClass`
+ --> ui/extern_class_subclass_object.rs
+  |
+  | / extern_class!(
+  | |     pub struct MyRootClass;
+  | |
+  | |     unsafe impl ClassType for MyRootClass {
+... |
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_first implementation here
+  |   conflicting implementation for `MyRootClass`
+  |
+  = note: this error originates in the macro `$crate::__impl_as_ref_borrow` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0119]: conflicting implementations of trait `Borrow<objc2::runtime::Object>` for type `MyRootClass`
+ --> ui/extern_class_subclass_object.rs
+  |
+  | / extern_class!(
+  | |     pub struct MyRootClass;
+  | |
+  | |     unsafe impl ClassType for MyRootClass {
+... |
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_first implementation here
+  |   conflicting implementation for `MyRootClass`
+  |
+  = note: this error originates in the macro `$crate::__impl_as_ref_borrow` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0119]: conflicting implementations of trait `BorrowMut<objc2::runtime::Object>` for type `MyRootClass`
+ --> ui/extern_class_subclass_object.rs
+  |
+  | / extern_class!(
+  | |     pub struct MyRootClass;
+  | |
+  | |     unsafe impl ClassType for MyRootClass {
+... |
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_first implementation here
+  |   conflicting implementation for `MyRootClass`
+  |
+  = note: this error originates in the macro `$crate::__impl_as_ref_borrow` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

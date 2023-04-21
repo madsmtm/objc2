@@ -533,6 +533,8 @@ macro_rules! __inner_declare_class {
             const NAME: &'static $crate::__macro_helpers::str = $name_const;
 
             fn class() -> &'static $crate::runtime::Class {
+                $crate::__macro_helpers::assert_mutability_matches_superclass_mutability::<Self>();
+
                 // TODO: Use `core::cell::LazyCell`
                 static REGISTER_CLASS: $crate::__macro_helpers::Once = $crate::__macro_helpers::Once::new();
 
