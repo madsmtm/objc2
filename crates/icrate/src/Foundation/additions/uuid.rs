@@ -85,8 +85,7 @@ impl fmt::Debug for NSUUID {
 // }
 
 impl DefaultId for NSUUID {
-    type Ownership = Shared;
-    fn default_id() -> Id<Self, Self::Ownership> {
+    fn default_id() -> Id<Self> {
         Self::nil()
     }
 }

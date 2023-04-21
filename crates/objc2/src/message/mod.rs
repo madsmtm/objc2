@@ -6,7 +6,8 @@ use crate::encode::__unstable::{
     EncodeArguments, EncodeConvertArgument, EncodeConvertReturn, EncodeReturn,
 };
 use crate::encode::{Encode, RefEncode};
-use crate::rc::{Id, Owned, Ownership};
+use crate::mutability::IsMutable;
+use crate::rc::Id;
 use crate::runtime::{Class, Imp, Object, Sel};
 use crate::ClassType;
 
@@ -103,9 +104,28 @@ use self::platform::{send_super_unverified, send_unverified};
 /// This trait also allows the object to be used in [`rc::Id`][`Id`].
 ///
 /// This is a subtrait of [`RefEncode`], meaning the type must also implement
-/// that, almost always as [`Encoding::Object`].
+/// that, almost always with [`RefEncode::ENCODING_REF`] being
+/// [`Encoding::Object`].
+///
+/// This can be implemented for unsized (`!Sized`) types, but the intention is
+/// not to support dynamically sized types like slices, only `extern type`s
+/// (which is currently unstable).
 ///
 /// [`Encoding::Object`]: crate::Encoding::Object
+///
+///
+/// # `Drop` interaction
+///
+/// If the inner type implements [`Drop`], that implementation will very
+/// likely not be called, since there is no way to ensure that the Objective-C
+/// runtime will do so. If you need to run some code when the object is
+/// destroyed, implement the `dealloc` method instead.
+///
+/// The [`declare_class!`] macro does this for you, but the [`extern_class!`]
+/// macro fundamentally cannot.
+///
+/// [`declare_class!`]: crate::declare_class
+/// [`extern_class!`]: crate::extern_class
 ///
 ///
 /// # Safety
@@ -116,9 +136,9 @@ use self::platform::{send_super_unverified, send_unverified};
 ///   [`objc_msgSend`] or similar.
 /// - Must respond to the standard memory management `retain`, `release` and
 ///   `autorelease` messages.
-/// - Must support weak references. TODO: Make a new trait for this, for
-///   example `NSTextView` only supports weak references on macOS 10.12 or
-///   above.
+/// - Must support weak references. (In the future we should probably make a
+///   new trait for this, for example `NSTextView` only supports weak
+///   references on macOS 10.12 or above).
 ///
 /// [`objc_msgSend`]: https://developer.apple.com/documentation/objectivec/1456712-objc_msgsend
 ///
@@ -144,37 +164,18 @@ use self::platform::{send_super_unverified, send_unverified};
 /// // `*mut MyObject` and other pointer/reference types to the object can
 /// // now be used in `msg_send!`
 /// //
-/// // And `Id<MyObject, O>` can now be constructed.
+/// // And `Id<MyObject>` can now be constructed.
 /// ```
 pub unsafe trait Message: RefEncode {}
 
-unsafe impl Message for Object {}
-
 // TODO: Make this fully private
 pub(crate) mod private {
-    use super::*;
-
     pub trait Sealed {}
-
-    impl<T: Message + ?Sized> Sealed for *const T {}
-    impl<T: Message + ?Sized> Sealed for *mut T {}
-    impl<T: Message + ?Sized> Sealed for NonNull<T> {}
-
-    impl<'a, T: Message + ?Sized> Sealed for &'a T {}
-    impl<'a, T: Message + ?Sized> Sealed for &'a mut T {}
-
-    impl<'a, T: Message + ?Sized, O: Ownership> Sealed for &'a Id<T, O> {}
-    impl<'a, T: Message + ?Sized> Sealed for &'a mut Id<T, Owned> {}
-
-    impl<T: Message + ?Sized, O: Ownership> Sealed for ManuallyDrop<Id<T, O>> {}
-
-    impl Sealed for *const Class {}
-    impl<'a> Sealed for &'a Class {}
 }
 
 /// Types that can directly be used as the receiver of Objective-C messages.
 ///
-/// Examples include objects, classes, and blocks.
+/// Examples include objects pointers, class pointers, and block pointers.
 ///
 /// This is a sealed trait (for now) that is automatically implemented for
 /// pointers to types implementing [`Message`], so that code can be generic
@@ -195,7 +196,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     #[doc(hidden)]
     fn __as_raw_receiver(self) -> *mut Object;
 
-    /// Sends a message to self with the given selector and arguments.
+    /// Sends a message to the receiver with the given selector and arguments.
     ///
     /// The correct version of `objc_msgSend` will be chosen based on the
     /// return type. For more information, see the section on "Sending
@@ -373,7 +374,8 @@ unsafe fn encountered_error<E: Message>(err: *mut E) -> Id<E> {
 // Note that we implement MessageReceiver for unsized types as well, this is
 // to support `extern type`s in the future, not because we want to allow DSTs.
 
-unsafe impl<T: Message + ?Sized> MessageReceiver for *const T {
+impl<T: ?Sized + Message> private::Sealed for *const T {}
+unsafe impl<T: ?Sized + Message> MessageReceiver for *const T {
     type __Inner = T;
 
     #[inline]
@@ -382,7 +384,8 @@ unsafe impl<T: Message + ?Sized> MessageReceiver for *const T {
     }
 }
 
-unsafe impl<T: Message + ?Sized> MessageReceiver for *mut T {
+impl<T: ?Sized + Message> private::Sealed for *mut T {}
+unsafe impl<T: ?Sized + Message> MessageReceiver for *mut T {
     type __Inner = T;
 
     #[inline]
@@ -391,7 +394,8 @@ unsafe impl<T: Message + ?Sized> MessageReceiver for *mut T {
     }
 }
 
-unsafe impl<T: Message + ?Sized> MessageReceiver for NonNull<T> {
+impl<T: ?Sized + Message> private::Sealed for NonNull<T> {}
+unsafe impl<T: ?Sized + Message> MessageReceiver for NonNull<T> {
     type __Inner = T;
 
     #[inline]
@@ -400,7 +404,8 @@ unsafe impl<T: Message + ?Sized> MessageReceiver for NonNull<T> {
     }
 }
 
-unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a T {
+impl<'a, T: ?Sized + Message> private::Sealed for &'a T {}
+unsafe impl<'a, T: ?Sized + Message> MessageReceiver for &'a T {
     type __Inner = T;
 
     #[inline]
@@ -410,7 +415,10 @@ unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a T {
     }
 }
 
-unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut T {
+// TODO: Use `T: IsMutable + Root` here once we can handle `init` methods
+// better in `declare_class!`.
+impl<'a, T: ?Sized + Message> private::Sealed for &'a mut T {}
+unsafe impl<'a, T: ?Sized + Message> MessageReceiver for &'a mut T {
     type __Inner = T;
 
     #[inline]
@@ -420,7 +428,8 @@ unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut T {
     }
 }
 
-unsafe impl<'a, T: Message + ?Sized, O: Ownership> MessageReceiver for &'a Id<T, O> {
+impl<'a, T: ?Sized + Message> private::Sealed for &'a Id<T> {}
+unsafe impl<'a, T: ?Sized + Message> MessageReceiver for &'a Id<T> {
     type __Inner = T;
 
     #[inline]
@@ -429,7 +438,8 @@ unsafe impl<'a, T: Message + ?Sized, O: Ownership> MessageReceiver for &'a Id<T,
     }
 }
 
-unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut Id<T, Owned> {
+impl<'a, T: ?Sized + IsMutable> private::Sealed for &'a mut Id<T> {}
+unsafe impl<'a, T: ?Sized + IsMutable> MessageReceiver for &'a mut Id<T> {
     type __Inner = T;
 
     #[inline]
@@ -438,7 +448,8 @@ unsafe impl<'a, T: Message + ?Sized> MessageReceiver for &'a mut Id<T, Owned> {
     }
 }
 
-unsafe impl<T: Message + ?Sized, O: Ownership> MessageReceiver for ManuallyDrop<Id<T, O>> {
+impl<T: ?Sized + Message> private::Sealed for ManuallyDrop<Id<T>> {}
+unsafe impl<T: ?Sized + Message> MessageReceiver for ManuallyDrop<Id<T>> {
     type __Inner = T;
 
     #[inline]
@@ -447,6 +458,7 @@ unsafe impl<T: Message + ?Sized, O: Ownership> MessageReceiver for ManuallyDrop<
     }
 }
 
+impl private::Sealed for *const Class {}
 unsafe impl MessageReceiver for *const Class {
     type __Inner = Class;
 
@@ -456,6 +468,7 @@ unsafe impl MessageReceiver for *const Class {
     }
 }
 
+impl<'a> private::Sealed for &'a Class {}
 unsafe impl<'a> MessageReceiver for &'a Class {
     type __Inner = Class;
 
@@ -649,12 +662,24 @@ message_args_impl!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::rc::{Id, Owned};
+    use crate::mutability;
+    use crate::rc::Id;
+    use crate::runtime::NSObject;
     use crate::test_utils;
-    use crate::{msg_send, msg_send_id};
+    use crate::{declare_class, msg_send, msg_send_id};
+
+    declare_class!(
+        struct MutableObject;
+
+        unsafe impl ClassType for MutableObject {
+            type Super = NSObject;
+            type Mutability = mutability::Mutable;
+            const NAME: &'static str = "TestMutableObject";
+        }
+    );
 
     #[allow(unused)]
-    fn test_different_receivers(mut obj: Id<Object, Owned>) {
+    fn test_different_receivers(mut obj: Id<MutableObject>) {
         unsafe {
             let x = &mut obj;
             let _: () = msg_send![x, mutable1];
@@ -662,10 +687,10 @@ mod tests {
             let _: () = msg_send![&mut *obj, mutable1];
             let _: () = msg_send![&mut *obj, mutable2];
             #[allow(clippy::needless_borrow)]
-            let obj: NonNull<Object> = (&mut *obj).into();
+            let obj: NonNull<MutableObject> = (&mut *obj).into();
             let _: () = msg_send![obj, mutable1];
             let _: () = msg_send![obj, mutable2];
-            let obj: *mut Object = obj.as_ptr();
+            let obj: *mut MutableObject = obj.as_ptr();
             let _: () = msg_send![obj, mutable1];
             let _: () = msg_send![obj, mutable2];
         }

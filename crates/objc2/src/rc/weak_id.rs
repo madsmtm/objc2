@@ -5,15 +5,28 @@ use core::marker::PhantomData;
 use core::ptr;
 use std::panic::{RefUnwindSafe, UnwindSafe};
 
-use super::{Id, Shared};
-use crate::ffi;
-use crate::Message;
+use super::Id;
+use crate::mutability::{IsIdCloneable, IsRetainable};
+use crate::{ffi, Message};
 
-/// A pointer type for a weak reference to an Objective-C reference counted
-/// object.
+/// A weak pointer to an Objective-C reference counted object.
 ///
-/// Allows breaking reference cycles and safely checking whether the object
-/// has been deallocated.
+/// The object is allowed to be deallocated while the weak pointer is alive,
+/// though the backing allocation for the object can only be released once all
+/// weak pointers are gone.
+///
+/// Useful for breaking reference cycles and safely checking whether an
+/// object has been deallocated.
+///
+///
+/// # Comparison to `std` types
+///
+/// This is the Objective-C equivalent of [`sync::Weak`] from the standard
+/// library, and hence is only usable on types where `Id<T>` acts like
+/// [`sync::Arc`], a.k.a. on non-mutable types.
+///
+/// [`sync::Weak`]: std::sync::Weak
+/// [`sync::Arc`]: std::sync::Arc
 #[repr(transparent)]
 pub struct WeakId<T: ?Sized> {
     /// We give the runtime the address to this box, so that it can modify it
@@ -30,22 +43,38 @@ pub struct WeakId<T: ?Sized> {
     /// TODO: Investigate if we can avoid some allocations using `Pin`.
     inner: Box<UnsafeCell<*mut ffi::objc_object>>,
     /// WeakId inherits variance, dropck and various marker traits from
-    /// `Id<T, Shared>` because it can be loaded as a shared Id.
-    item: PhantomData<Id<T, Shared>>,
+    /// `Id<T>`.
+    item: PhantomData<Id<T>>,
 }
 
 impl<T: Message> WeakId<T> {
-    /// Construct a new [`WeakId`] referencing the given shared [`Id`].
+    /// Construct a new weak pointer that references the given object.
     #[doc(alias = "objc_initWeak")]
     #[inline]
-    pub fn new(obj: &Id<T, Shared>) -> Self {
-        // Note that taking `&Id<T, Owned>` would not be safe since that would
-        // allow loading an `Id<T, Shared>` later on.
+    pub fn new(obj: &T) -> Self
+    where
+        T: IsRetainable,
+    {
+        // SAFETY: `obj` is retainable
+        unsafe { Self::new_inner(obj) }
+    }
 
-        // SAFETY: `obj` is valid
+    /// Construct a new weak pointer that references the given [`Id`].
+    ///
+    /// You should prefer [`WeakId::new`] whenever the object is retainable.
+    #[doc(alias = "objc_initWeak")]
+    #[inline]
+    pub fn from_id(obj: &Id<T>) -> Self
+    where
+        T: IsIdCloneable,
+    {
+        // SAFETY: `obj` is cloneable, and is known to have come from `Id`.
         unsafe { Self::new_inner(Id::as_ptr(obj)) }
     }
 
+    /// Raw constructor.
+    ///
+    ///
     /// # Safety
     ///
     /// The object must be valid or null.
@@ -59,25 +88,26 @@ impl<T: Message> WeakId<T> {
         }
     }
 
-    /// Load a shared (and retained) [`Id`] if the object still exists.
+    /// Load the object into an [`Id`] if it still exists.
     ///
-    /// Returns [`None`] if the object has been deallocated or was created
-    /// with [`Default::default`].
+    /// Returns [`None`] if the object has been deallocated, or the `WeakId`
+    /// was created with [`Default::default`].
     #[doc(alias = "retain")]
     #[doc(alias = "objc_loadWeak")]
     #[doc(alias = "objc_loadWeakRetained")]
     #[inline]
-    pub fn load(&self) -> Option<Id<T, Shared>> {
+    pub fn load(&self) -> Option<Id<T>> {
         let ptr = self.inner.get();
         let obj = unsafe { ffi::objc_loadWeakRetained(ptr) }.cast();
+        // SAFETY: The object has +1 retain count
         unsafe { Id::new(obj) }
     }
 
-    // TODO: Add `autorelease(&self) -> Option<&T>` using `objc_loadWeak`?
+    // TODO: Add `autorelease(&self, pool) -> Option<&T>` using `objc_loadWeak`?
 }
 
 impl<T: ?Sized> Drop for WeakId<T> {
-    /// Drops the `WeakId` pointer.
+    /// Destroys the weak pointer.
     #[doc(alias = "objc_destroyWeak")]
     #[inline]
     fn drop(&mut self) {
@@ -86,8 +116,8 @@ impl<T: ?Sized> Drop for WeakId<T> {
 }
 
 // TODO: Add ?Sized
-impl<T> Clone for WeakId<T> {
-    /// Makes a clone of the `WeakId` that points to the same object.
+impl<T: IsRetainable> Clone for WeakId<T> {
+    /// Make a clone of the weak pointer that points to the same object.
     #[doc(alias = "objc_copyWeak")]
     fn clone(&self) -> Self {
         let ptr = Box::new(UnsafeCell::new(ptr::null_mut()));
@@ -100,8 +130,8 @@ impl<T> Clone for WeakId<T> {
 }
 
 // TODO: Add ?Sized
-impl<T: Message> Default for WeakId<T> {
-    /// Constructs a new `WeakId<T>` that doesn't reference any object.
+impl<T: IsRetainable> Default for WeakId<T> {
+    /// Constructs a new weak pointer that doesn't reference any object.
     ///
     /// Calling [`Self::load`] on the return value always gives [`None`].
     #[inline]
@@ -111,39 +141,48 @@ impl<T: Message> Default for WeakId<T> {
     }
 }
 
-/// This implementation follows the same reasoning as `Id<T, Shared>`.
-unsafe impl<T: Sync + Send + ?Sized> Sync for WeakId<T> {}
-
-/// This implementation follows the same reasoning as `Id<T, Shared>`.
-unsafe impl<T: Sync + Send + ?Sized> Send for WeakId<T> {}
-
-// Unsure about the Debug bound on T, see std::sync::Weak
-impl<T: fmt::Debug + ?Sized> fmt::Debug for WeakId<T> {
+impl<T: ?Sized> fmt::Debug for WeakId<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Note: We intentionally don't try to debug-print the value, since
+        // that could lead to cycles. See:
+        // https://github.com/rust-lang/rust/pull/90291
         write!(f, "(WeakId)")
     }
 }
 
-// Underneath this is just a `Box`
-impl<T: ?Sized> Unpin for WeakId<T> {}
+// Same as `std::sync::Weak<T>`.
+unsafe impl<T: Sync + Send + ?Sized + IsIdCloneable> Sync for WeakId<T> {}
 
-// Same as `Id<T, Shared>`.
-impl<T: RefUnwindSafe + ?Sized> RefUnwindSafe for WeakId<T> {}
+// Same as `std::sync::Weak<T>`.
+unsafe impl<T: Sync + Send + ?Sized + IsIdCloneable> Send for WeakId<T> {}
 
-// Same as `Id<T, Shared>`.
-impl<T: RefUnwindSafe + ?Sized> UnwindSafe for WeakId<T> {}
+// Same as `std::sync::Weak<T>`.
+impl<T: ?Sized + Message> Unpin for WeakId<T> {}
 
-impl<T: Message> From<Id<T, Shared>> for WeakId<T> {
+// Same as `std::sync::Weak<T>`.
+impl<T: RefUnwindSafe + ?Sized + IsIdCloneable> RefUnwindSafe for WeakId<T> {}
+
+// Same as `std::sync::Weak<T>`.
+impl<T: RefUnwindSafe + ?Sized + IsIdCloneable> UnwindSafe for WeakId<T> {}
+
+impl<T: IsRetainable> From<&T> for WeakId<T> {
     #[inline]
-    fn from(obj: Id<T, Shared>) -> Self {
-        WeakId::new(&obj)
+    fn from(obj: &T) -> Self {
+        WeakId::new(obj)
     }
 }
 
-impl<T: Message> TryFrom<WeakId<T>> for Id<T, Shared> {
-    type Error = ();
-    fn try_from(weak: WeakId<T>) -> Result<Self, ()> {
-        weak.load().ok_or(())
+impl<T: IsIdCloneable> From<&Id<T>> for WeakId<T> {
+    #[inline]
+    fn from(obj: &Id<T>) -> Self {
+        WeakId::from_id(obj)
+    }
+}
+
+impl<T: IsIdCloneable> From<Id<T>> for WeakId<T> {
+    #[inline]
+    fn from(obj: Id<T>) -> Self {
+        WeakId::from_id(&obj)
     }
 }
 
@@ -157,10 +196,10 @@ mod tests {
 
     #[test]
     fn test_weak() {
-        let obj: Id<_, Shared> = __RcTestObject::new().into();
+        let obj = __RcTestObject::new();
         let mut expected = __ThreadTestData::current();
 
-        let weak = WeakId::new(&obj);
+        let weak = WeakId::from(&obj);
         expected.assert_current();
 
         let strong = weak.load().unwrap();
@@ -186,10 +225,10 @@ mod tests {
 
     #[test]
     fn test_weak_clone() {
-        let obj: Id<_, Shared> = __RcTestObject::new().into();
+        let obj: Id<_> = __RcTestObject::new();
         let mut expected = __ThreadTestData::current();
 
-        let weak = WeakId::new(&obj);
+        let weak = WeakId::from(&obj);
         expected.assert_current();
 
         let weak2 = weak.clone();
@@ -216,7 +255,7 @@ mod tests {
 
     #[test]
     fn test_weak_default() {
-        let weak: WeakId<NSObject> = WeakId::default();
+        let weak: WeakId<__RcTestObject> = WeakId::default();
         assert!(weak.load().is_none());
         drop(weak);
     }

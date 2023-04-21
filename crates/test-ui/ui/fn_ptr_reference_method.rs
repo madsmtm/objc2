@@ -5,9 +5,9 @@
 //!
 //! (`_` can be used to work around this, by letting the compiler choose an
 //! appropriate lifetime '0 that the trait is implemented for).
-use objc2::{class, sel};
 use objc2::declare::ClassBuilder;
 use objc2::runtime::{Object, Sel};
+use objc2::{class, sel};
 
 extern "C" fn my_fn(_this: &Object, _cmd: Sel, _x: &Object) {}
 

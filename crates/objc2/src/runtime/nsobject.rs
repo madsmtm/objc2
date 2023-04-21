@@ -1,9 +1,11 @@
 use core::fmt;
 use core::hash;
 
-use crate::rc::{DefaultId, Id, Owned};
+use crate::mutability::Root;
+use crate::rc::{DefaultId, Id};
 use crate::runtime::{Class, ImplementedBy, Object, Protocol, ProtocolObject};
-use crate::{extern_methods, msg_send, msg_send_id, ClassType, Message, ProtocolType};
+use crate::{extern_methods, msg_send, msg_send_id, Message};
+use crate::{ClassType, ProtocolType};
 
 crate::__emit_struct! {
     (
@@ -30,11 +32,20 @@ crate::__emit_struct! {
 crate::__extern_class_impl_traits! {
     unsafe impl () for NSObject {
         INHERITS = [Object];
+
+        fn as_super(&self) {
+            &self.__inner
+        }
+
+        fn as_super_mut(&mut self) {
+            &mut self.__inner
+        }
     }
 }
 
 unsafe impl ClassType for NSObject {
     type Super = Object;
+    type Mutability = Root;
     const NAME: &'static str = "NSObject";
 
     #[inline]
@@ -146,12 +157,14 @@ pub unsafe trait NSObjectProtocol {
     // not be modified.
 }
 
-unsafe impl NSObjectProtocol for NSObject {}
+crate::__inner_extern_protocol!(
+    ()
+    (NSObjectProtocol)
+    (dyn NSObjectProtocol)
+    ("NSCopying")
+);
 
-unsafe impl<T> NSObjectProtocol for ProtocolObject<T> where
-    T: ?Sized + ProtocolType + NSObjectProtocol
-{
-}
+unsafe impl NSObjectProtocol for NSObject {}
 
 unsafe impl ProtocolType for NSObject {
     const NAME: &'static str = "NSObject";
@@ -174,7 +187,7 @@ extern_methods!(
     unsafe impl NSObject {
         /// Create a new empty `NSObject`.
         #[method_id(new)]
-        pub fn new() -> Id<Self, Owned>;
+        pub fn new() -> Id<Self>;
     }
 );
 
@@ -220,10 +233,8 @@ impl fmt::Debug for NSObject {
 }
 
 impl DefaultId for NSObject {
-    type Ownership = Owned;
-
     #[inline]
-    fn default_id() -> Id<Self, Self::Ownership> {
+    fn default_id() -> Id<Self> {
         Self::new()
     }
 }
@@ -233,11 +244,39 @@ mod tests {
     use super::*;
     use alloc::format;
 
+    use crate::extern_class;
+    use crate::mutability::Mutable;
     use crate::rc::__RcTestObject;
+
+    extern_class!(
+        #[derive(Debug, PartialEq, Eq, Hash)]
+        struct NSObjectMutable;
+
+        unsafe impl ClassType for NSObjectMutable {
+            type Super = NSObject;
+            type Mutability = Mutable;
+            const NAME: &'static str = "NSObject";
+        }
+    );
+
+    impl NSObjectMutable {
+        fn new() -> Id<Self> {
+            unsafe { Id::cast(NSObject::new()) }
+        }
+    }
 
     #[test]
     fn test_deref() {
-        let mut obj: Id<NSObject, Owned> = NSObject::new();
+        let obj: Id<NSObject> = NSObject::new();
+        let _: &NSObject = &obj;
+        let _: &Object = &obj;
+    }
+
+    #[test]
+    fn test_deref_mut() {
+        let mut obj: Id<NSObjectMutable> = NSObjectMutable::new();
+        let _: &NSObjectMutable = &obj;
+        let _: &mut NSObjectMutable = &mut obj;
         let _: &NSObject = &obj;
         let _: &mut NSObject = &mut obj;
         let _: &Object = &obj;
@@ -251,13 +290,20 @@ mod tests {
         fn impls_as_ref<T: AsRef<U> + Borrow<U> + ?Sized, U: ?Sized>(_: &T) {}
         fn impls_as_mut<T: AsMut<U> + BorrowMut<U> + ?Sized, U: ?Sized>(_: &mut T) {}
 
-        let mut obj = NSObject::new();
-        impls_as_ref::<Id<NSObject, Owned>, NSObject>(&obj);
-        impls_as_mut::<Id<NSObject, Owned>, NSObject>(&mut obj);
+        let mut obj = NSObjectMutable::new();
+        impls_as_ref::<Id<NSObjectMutable>, NSObjectMutable>(&obj);
+        impls_as_mut::<Id<NSObjectMutable>, NSObjectMutable>(&mut obj);
+        impls_as_ref::<NSObjectMutable, NSObjectMutable>(&obj);
+        impls_as_mut::<NSObjectMutable, NSObjectMutable>(&mut obj);
         impls_as_ref::<NSObject, NSObject>(&obj);
         impls_as_mut::<NSObject, NSObject>(&mut obj);
         impls_as_ref::<NSObject, Object>(&obj);
         impls_as_mut::<NSObject, Object>(&mut obj);
+
+        let obj = NSObject::new();
+        impls_as_ref::<Id<NSObject>, NSObject>(&obj);
+        impls_as_ref::<NSObject, NSObject>(&obj);
+        impls_as_ref::<NSObject, Object>(&obj);
     }
 
     #[test]

@@ -22,7 +22,7 @@ mod extern_protocol;
 ///
 /// Panics if no class with the given name can be found.
 ///
-/// To check for a class that may not exist, use [`Class::get`].
+/// To dynamically check for a class that may not exist, use [`Class::get`].
 ///
 /// [`Class::get`]: crate::runtime::Class::get
 ///
@@ -47,11 +47,17 @@ mod extern_protocol;
 /// [`sel!`]: crate::sel
 ///
 ///
-/// # Examples
+/// # Example
 ///
-/// ```no_run
-/// # use objc2::class;
-/// let cls = class!(NSObject);
+/// Get and compare the class with one returned from [`ClassType::class`].
+///
+/// ```
+/// use objc2::runtime::NSObject;
+/// use objc2::{class, ClassType};
+///
+/// let cls1 = class!(NSObject);
+/// let cls2 = NSObject::class();
+/// assert_eq!(cls1, cls2);
 /// ```
 #[macro_export]
 macro_rules! class {
@@ -722,7 +728,8 @@ macro_rules! __class_inner {
 /// as the second argument. If no specific superclass is specified, the
 /// direct superclass is retrieved from [`ClassType`].
 ///
-/// All arguments, and the return type, must implement [`Encode`].
+/// All arguments, as well as the return type, must implement [`Encode`] (bar
+/// the exceptions below).
 ///
 /// If the last argument is the special marker `_`, the macro will return a
 /// `Result<(), Id<E>>`, see below.
@@ -769,10 +776,10 @@ macro_rules! __class_inner {
 ///
 /// This macro has support for passing such parameters using the following
 /// types:
-/// - `&mut Id<_, _>`
-/// - `Option<&mut Id<_, _>>`
-/// - `&mut Option<Id<_, _>>`,
-/// - `Option<&mut Option<Id<_, _>>>`
+/// - `&mut Id<_>`
+/// - `Option<&mut Id<_>>`
+/// - `&mut Option<Id<_>>`,
+/// - `Option<&mut Option<Id<_>>>`
 ///
 /// Beware with the first two, since they will cause undefined behaviour if
 /// the method overwrites the value with `nil`.
@@ -887,14 +894,16 @@ macro_rules! __class_inner {
 ///
 /// ```no_run
 /// use objc2::msg_send;
+/// #
 /// # use objc2::runtime::NSObject;
-/// # use objc2::{declare_class, ClassType};
+/// # use objc2::{declare_class, mutability, ClassType};
 /// #
 /// # declare_class!(
 /// #     struct MyObject;
 /// #
 /// #     unsafe impl ClassType for MyObject {
 /// #         type Super = NSObject;
+/// #         type Mutability = mutability::InteriorMutable;
 /// #         const NAME: &'static str = "MyObject";
 /// #     }
 /// # );
@@ -1088,32 +1097,31 @@ macro_rules! msg_send_bool {
 ///
 /// The accepted receiver and return types, and how we handle them, differ
 /// depending on which, if any, of the [recognized selector
-/// families][sel-families] the selector belongs to (here `T: Message` and
-/// `O: Ownership`):
+/// families][sel-families] the selector belongs to:
 ///
 /// - The `new` family: The receiver may be anything that implements
 ///   [`MessageReceiver`] (though often you'll want to use `&Class`). The
-///   return type is a generic `Id<T, O>` or `Option<Id<T, O>>`.
+///   return type is a generic `Id<T>` or `Option<Id<T>>`.
 ///
 /// - The `alloc` family: The receiver must be `&Class`, and the return type
 ///   is a generic `Allocated<T>` or `Option<Allocated<T>>`.
 ///
-/// - The `init` family: The receiver must be `Option<Allocated<T>>`
-///   as returned from `alloc`. The receiver is consumed, and a the
-///   now-initialized `Id<T, O>` or `Option<Id<T, O>>` (with the same `T`) is
+/// - The `init` family: The receiver must be `Option<Allocated<T>>` as
+///   returned from `alloc`. The receiver is consumed, and a the
+///   now-initialized `Id<T>` or `Option<Id<T>>` (with the same `T`) is
 ///   returned.
 ///
 /// - The `copy` family: The receiver may be anything that implements
-///   [`MessageReceiver`] and the return type is a generic `Id<T, O>` or
-///   `Option<Id<T, O>>`.
+///   [`MessageReceiver`] and the return type is a generic `Id<T>` or
+///   `Option<Id<T>>`.
 ///
 /// - The `mutableCopy` family: Same as the `copy` family.
 ///
 /// - No family: The receiver may be anything that implements
 ///   [`MessageReceiver`]. The result is retained using
-///   [`Id::retain_autoreleased`], and a generic `Id<T, O>` or
-///   `Option<Id<T, O>>` is returned. This retain is in most cases faster than
-///   using autorelease pools!
+///   [`Id::retain_autoreleased`], and a generic `Id<T>` or `Option<Id<T>>` is
+///   returned. This retain is in most cases faster than using autorelease
+///   pools!
 ///
 /// See [the clang documentation][arc-retainable] for the precise
 /// specification of Objective-C's ownership rules.
@@ -1126,7 +1134,7 @@ macro_rules! msg_send_bool {
 /// with an error message if it couldn't be retrieved.
 ///
 /// Though as a special case, if the last argument is the marker `_`, the
-/// macro will return a `Result<Id<T, O>, Id<E>>`, see below.
+/// macro will return a `Result<Id<T>, Id<E>>`, see below.
 ///
 /// This macro doesn't support super methods yet, see [#173].
 /// The `retain`, `release` and `autorelease` selectors are not supported, use
@@ -1149,7 +1157,7 @@ macro_rules! msg_send_bool {
 /// equivalent, the [`Result`] type.
 ///
 /// In particular, you can make the last argument the special marker `_`, and
-/// then the macro will return a `Result<Id<T, O>, Id<E>>` (where you must
+/// then the macro will return a `Result<Id<T>, Id<E>>` (where you must
 /// specify `E` yourself, usually you'd use `icrate::Foundation::NSError`).
 ///
 ///

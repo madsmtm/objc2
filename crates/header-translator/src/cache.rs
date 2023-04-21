@@ -7,7 +7,6 @@ use crate::file::File;
 use crate::id::ItemIdentifier;
 use crate::method::Method;
 use crate::output::Output;
-use crate::rust_type::Ownership;
 use crate::stmt::Stmt;
 
 #[derive(Debug, PartialEq, Clone)]
@@ -37,14 +36,12 @@ impl ClassCache {
 #[derive(Debug, PartialEq, Clone)]
 pub struct Cache<'a> {
     classes: BTreeMap<ItemIdentifier, ClassCache>,
-    ownership_map: BTreeMap<String, Ownership>,
     config: &'a Config,
 }
 
 impl<'a> Cache<'a> {
     pub fn new(output: &Output, config: &'a Config) -> Self {
         let mut classes: BTreeMap<_, ClassCache> = BTreeMap::new();
-        let mut ownership_map: BTreeMap<_, Ownership> = BTreeMap::new();
 
         for (name, library) in &output.libraries {
             let _span = debug_span!("library", name).entered();
@@ -55,20 +52,11 @@ impl<'a> Cache<'a> {
                         let cache = classes.entry(cls.clone()).or_default();
                         cache.to_emit.push(method_cache);
                     }
-                    if let Stmt::ClassDecl { id, ownership, .. } = stmt {
-                        if *ownership != Ownership::default() {
-                            ownership_map.insert(id.name.clone(), ownership.clone());
-                        }
-                    }
                 }
             }
         }
 
-        Self {
-            classes,
-            ownership_map,
-            config,
-        }
+        Self { classes, config }
     }
 
     fn cache_stmt(stmt: &Stmt) -> Option<(&ItemIdentifier, MethodCache)> {
@@ -159,6 +147,7 @@ impl<'a> Cache<'a> {
 
         let mut new_stmts = Vec::new();
         for stmt in &mut file.stmts {
+            #[allow(clippy::single_match)] // There will be others
             match stmt {
                 Stmt::ClassDecl {
                     id,
@@ -182,7 +171,7 @@ impl<'a> Cache<'a> {
                     for (superclass, _) in &*superclasses {
                         if let Some(cache) = self.classes.get(superclass) {
                             new_stmts.extend(cache.to_emit.iter().filter_map(|cache| {
-                                let mut methods: Vec<_> = cache
+                                let methods: Vec<_> = cache
                                     .methods
                                     .iter()
                                     .filter(|method| !seen_methods.contains(&method.id()))
@@ -196,8 +185,6 @@ impl<'a> Cache<'a> {
                                 if methods.is_empty() {
                                     return None;
                                 }
-
-                                self.update_methods(&mut methods, &id.name);
 
                                 Some(Stmt::Methods {
                                     cls: id.clone(),
@@ -216,12 +203,6 @@ impl<'a> Cache<'a> {
                             seen_methods.extend(cache.all_methods_data());
                         }
                     }
-                }
-                Stmt::Methods { cls, methods, .. } => {
-                    self.update_methods(methods, &cls.name);
-                }
-                Stmt::ProtocolDecl { id, methods, .. } => {
-                    self.update_methods(methods, &id.name);
                 }
                 _ => {}
             }
@@ -255,19 +236,6 @@ impl<'a> Cache<'a> {
                 }
             }
             file.stmts.push(stmt);
-        }
-    }
-
-    fn update_methods(&self, methods: &mut [Method], self_means: &str) {
-        for method in methods {
-            // Beware! We make instance methods return `Owned` as well, though
-            // those are basically never safe (since they'd refer to mutable
-            // data without a lifetime tied to the primary owner).
-            method.result_type.set_ownership(|name| {
-                let name = if name == "Self" { self_means } else { name };
-
-                self.ownership_map.get(name).cloned().unwrap_or_default()
-            });
         }
     }
 }

@@ -1,55 +1,64 @@
 #![cfg(feature = "Foundation_NSMutableArray")]
 use alloc::vec::Vec;
 use core::cmp::Ordering;
-use core::ffi::c_void;
 use core::ops::{Index, IndexMut};
-use core::ptr::NonNull;
 
-use objc2::rc::{DefaultId, Id, Owned, Ownership, Shared, SliceId};
-use objc2::{extern_methods, Message};
+use objc2::mutability::{IsMutable, IsRetainable};
+use objc2::rc::DefaultId;
 
-use super::array::with_objects;
+use super::util;
+use crate::common::*;
 use crate::Foundation::{self, NSArray, NSComparisonResult, NSInteger, NSMutableArray};
 
 extern_methods!(
-    /// Generic creation methods.
-    unsafe impl<T: Message, O: Ownership> NSMutableArray<T, O> {
-        // SAFETY: Same as `NSArray::new`, except mutable arrays are always
-        // unique.
+    /// Creation methods.
+    unsafe impl<T: Message> NSMutableArray<T> {
         #[method_id(new)]
-        pub fn new() -> Id<Self, Owned>;
+        pub fn new() -> Id<Self>;
 
-        pub fn from_vec(vec: Vec<Id<T, O>>) -> Id<Self, Owned> {
-            // SAFETY: Same as `NSArray::from_vec`, except mutable arrays are
-            // always unique.
-            unsafe { with_objects(vec.as_slice_ref()) }
+        pub fn from_vec(mut vec: Vec<Id<T>>) -> Id<Self> {
+            let len = vec.len();
+            let ptr = util::id_ptr_cast(vec.as_mut_ptr());
+            // SAFETY: Same as `NSArray::from_vec`.
+            unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
+        }
+
+        pub fn from_id_slice(slice: &[Id<T>]) -> Id<Self>
+        where
+            T: IsIdCloneable,
+        {
+            let len = slice.len();
+            let ptr = util::id_ptr_cast_const(slice.as_ptr());
+            // SAFETY: Same as `NSArray::from_id_slice`
+            unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
+        }
+
+        pub fn from_slice(slice: &[&T]) -> Id<Self>
+        where
+            T: IsRetainable,
+        {
+            let len = slice.len();
+            let ptr = util::ref_ptr_cast_const(slice.as_ptr());
+            // SAFETY: Same as `NSArray::from_slice`.
+            unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
         }
     }
 
-    /// Creation methods that produce shared arrays.
-    unsafe impl<T: Message> NSMutableArray<T, Shared> {
-        pub fn from_slice(slice: &[Id<T, Shared>]) -> Id<Self, Owned> {
-            // SAFETY: Same as `NSArray::from_slice`, except mutable arrays are
-            // always unique.
-            unsafe { with_objects(slice.as_slice_ref()) }
-        }
-    }
-
-    /// Generic accessor methods.
-    unsafe impl<T: Message, O: Ownership> NSMutableArray<T, O> {
+    /// Accessor methods.
+    unsafe impl<T: Message> NSMutableArray<T> {
         #[doc(alias = "addObject:")]
-        pub fn push(&mut self, obj: Id<T, O>) {
-            // SAFETY: The object has correct ownership.
+        pub fn push(&mut self, obj: Id<T>) {
+            // SAFETY: We've consumed ownership of the object.
             unsafe { self.addObject(&obj) }
         }
 
         #[doc(alias = "insertObject:atIndex:")]
-        pub fn insert(&mut self, index: usize, obj: Id<T, O>) {
+        pub fn insert(&mut self, index: usize, obj: Id<T>) {
             // TODO: Replace this check with catching the thrown NSRangeException
             let len = self.len();
             if index < len {
-                // SAFETY: The object has correct ownership, and the index is
-                // checked to be in bounds.
+                // SAFETY: We've consumed ownership of the object, and the
+                // index is checked to be in bounds.
                 unsafe { self.insertObject_atIndex(&obj, index) }
             } else {
                 panic!(
@@ -60,37 +69,37 @@ extern_methods!(
         }
 
         #[doc(alias = "replaceObjectAtIndex:withObject:")]
-        pub fn replace(&mut self, index: usize, obj: Id<T, O>) -> Id<T, O> {
-            let old_obj = unsafe {
-                let obj = self.get(index).unwrap();
-                Id::retain_autoreleased(obj as *const T as *mut T).unwrap_unchecked()
-            };
-            // SAFETY: The object has correct ownership.
-            unsafe { self.replaceObjectAtIndex_withObject(index, &obj) };
-            old_obj
+        pub fn replace(&mut self, index: usize, obj: Id<T>) -> Result<Id<T>, Id<T>> {
+            if let Some(old_obj) = self.get(index) {
+                // SAFETY: We remove the object from the array below.
+                let old_obj = unsafe { util::mutable_collection_retain_removed_id(old_obj) };
+                // SAFETY: The index is checked to be in bounds, and we've
+                // consumed ownership of the new object.
+                unsafe { self.replaceObjectAtIndex_withObject(index, &obj) };
+                Ok(old_obj)
+            } else {
+                Err(obj)
+            }
         }
 
         #[doc(alias = "removeObjectAtIndex:")]
-        pub fn remove(&mut self, index: usize) -> Id<T, O> {
-            let obj = if let Some(obj) = self.get(index) {
-                unsafe { Id::retain_autoreleased(obj as *const T as *mut T).unwrap_unchecked() }
-            } else {
-                panic!("removal index should be < len");
-            };
+        pub fn remove(&mut self, index: usize) -> Option<Id<T>> {
+            let obj = self.get(index)?;
+            // SAFETY: We remove the object from the array below.
+            let obj = unsafe { util::mutable_collection_retain_removed_id(obj) };
             // SAFETY: The index is checked to be in bounds.
             unsafe { self.removeObjectAtIndex(index) };
-            obj
+            Some(obj)
         }
 
         #[doc(alias = "removeLastObject")]
-        pub fn pop(&mut self) -> Option<Id<T, O>> {
-            self.last()
-                .map(|obj| unsafe { Id::retain(obj as *const T as *mut T).unwrap_unchecked() })
-                .map(|obj| {
-                    // SAFETY: `Self::last` just checked that there is an object
-                    unsafe { self.removeLastObject() };
-                    obj
-                })
+        pub fn pop(&mut self) -> Option<Id<T>> {
+            let obj = self.last()?;
+            // SAFETY: We remove the object from the array below.
+            let obj = unsafe { util::mutable_collection_retain_removed_id(obj) };
+            // SAFETY: Just checked that there is an object.
+            unsafe { self.removeLastObject() };
+            Some(obj)
         }
 
         #[doc(alias = "sortUsingFunction:context:")]
@@ -124,16 +133,26 @@ extern_methods!(
             // Keep the closure alive until the function has run.
             drop(closure);
         }
+
+        pub fn into_vec(array: Id<Self>) -> Vec<Id<T>> {
+            // SAFETY: We've consumed the array, so taking ownership of the
+            // returned values is safe.
+            array
+                .to_vec()
+                .into_iter()
+                .map(|obj| unsafe { util::mutable_collection_retain_removed_id(obj) })
+                .collect()
+        }
     }
 );
 
-unsafe impl<T: Message, O: Ownership> Foundation::NSFastEnumeration2 for NSMutableArray<T, O> {
+unsafe impl<T: Message> Foundation::NSFastEnumeration2 for NSMutableArray<T> {
     type Item = T;
 }
 
-impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSMutableArray<T, O> {
+impl<'a, T: Message> IntoIterator for &'a NSMutableArray<T> {
     type Item = &'a T;
-    type IntoIter = Foundation::NSFastEnumerator2<'a, NSMutableArray<T, O>>;
+    type IntoIter = Foundation::NSFastEnumerator2<'a, NSMutableArray<T>>;
 
     fn into_iter(self) -> Self::IntoIter {
         use Foundation::NSFastEnumeration2;
@@ -141,14 +160,14 @@ impl<'a, T: Message, O: Ownership> IntoIterator for &'a NSMutableArray<T, O> {
     }
 }
 
-impl<T: Message, O: Ownership> Extend<Id<T, O>> for NSMutableArray<T, O> {
-    fn extend<I: IntoIterator<Item = Id<T, O>>>(&mut self, iter: I) {
+impl<T: Message> Extend<Id<T>> for NSMutableArray<T> {
+    fn extend<I: IntoIterator<Item = Id<T>>>(&mut self, iter: I) {
         let iterator = iter.into_iter();
         iterator.for_each(move |item| self.push(item));
     }
 }
 
-impl<T: Message, O: Ownership> Index<usize> for NSMutableArray<T, O> {
+impl<T: Message> Index<usize> for NSMutableArray<T> {
     type Output = T;
 
     fn index(&self, index: usize) -> &T {
@@ -156,17 +175,15 @@ impl<T: Message, O: Ownership> Index<usize> for NSMutableArray<T, O> {
     }
 }
 
-impl<T: Message> IndexMut<usize> for NSMutableArray<T, Owned> {
+impl<T: IsMutable> IndexMut<usize> for NSMutableArray<T> {
     fn index_mut(&mut self, index: usize) -> &mut T {
         self.get_mut(index).unwrap()
     }
 }
 
-impl<T: Message, O: Ownership> DefaultId for NSMutableArray<T, O> {
-    type Ownership = Owned;
-
+impl<T: Message> DefaultId for NSMutableArray<T> {
     #[inline]
-    fn default_id() -> Id<Self, Self::Ownership> {
+    fn default_id() -> Id<Self> {
         Self::new()
     }
 }

@@ -18,7 +18,7 @@
 )]
 
 use crate::encode::{Encode, Encoding};
-use crate::rc::{Id, Ownership};
+use crate::rc::Id;
 use crate::runtime::Bool;
 use crate::Message;
 
@@ -56,10 +56,10 @@ impl<T: EncodeReturn> convert_private::Sealed for T {}
 impl convert_private::Sealed for bool {}
 
 // Implemented in rc/writeback.rs
-impl<T: Message, O: Ownership> convert_private::Sealed for &mut Id<T, O> {}
-impl<T: Message, O: Ownership> convert_private::Sealed for Option<&mut Id<T, O>> {}
-impl<T: Message, O: Ownership> convert_private::Sealed for &mut Option<Id<T, O>> {}
-impl<T: Message, O: Ownership> convert_private::Sealed for Option<&mut Option<Id<T, O>>> {}
+impl<T: Message> convert_private::Sealed for &mut Id<T> {}
+impl<T: Message> convert_private::Sealed for Option<&mut Id<T>> {}
+impl<T: Message> convert_private::Sealed for &mut Option<Id<T>> {}
+impl<T: Message> convert_private::Sealed for Option<&mut Option<Id<T>>> {}
 
 /// Represents types that can easily be converted to/from an [`Encode`] type.
 ///
@@ -67,7 +67,7 @@ impl<T: Message, O: Ownership> convert_private::Sealed for Option<&mut Option<Id
 /// Objective-C `BOOL`, where it would otherwise not be allowed (since they
 /// are not ABI compatible).
 ///
-/// This is also done specially for `&mut Id<_, _>`-like arguments, to allow
+/// This is also done specially for `&mut Id<_>`-like arguments, to allow
 /// using those as "out" parameters.
 pub trait EncodeConvertArgument: convert_private::Sealed {
     /// The inner type that this can be converted to and from.

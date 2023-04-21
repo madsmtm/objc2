@@ -93,6 +93,7 @@ new_objc2::declare_class!(
 
     unsafe impl ClassType for CustomObject {
         type Super = new_objc2::runtime::NSObject;
+        type Mutability = new_objc2::mutability::Immutable;
         const NAME: &'static str = "CustomObject";
     }
 
@@ -101,7 +102,7 @@ new_objc2::declare_class!(
         fn _a() {}
 
         #[method_id(b)]
-        fn _b() -> new_objc2::rc::Id<CustomObject, new_objc2::rc::Shared> {
+        fn _b() -> new_objc2::rc::Id<CustomObject> {
             ::core::unimplemented!()
         }
     }
@@ -127,6 +128,7 @@ new_objc2::extern_class!(
 
     unsafe impl ClassType for NSObject2 {
         type Super = new_objc2::runtime::NSObject;
+        type Mutability = new_objc2::mutability::Immutable;
         const NAME: &'static str = "NSObject";
     }
 );
@@ -161,11 +163,10 @@ pub fn test_msg_send(obj: &CustomObject) {
 }
 
 pub fn test_msg_send_id(obj: &new_objc2::runtime::Object) {
-    let _: new_objc2::rc::Id<new_objc2::runtime::Object, new_objc2::rc::Shared> =
+    let _: new_objc2::rc::Id<new_objc2::runtime::Object> =
         unsafe { new_objc2::msg_send_id![obj, a] };
-    let _: new_objc2::__macro_helpers::Option<
-        new_objc2::rc::Id<new_objc2::runtime::Object, new_objc2::rc::Shared>,
-    > = unsafe { new_objc2::msg_send_id![obj, a] };
-    let _: new_objc2::rc::Id<new_objc2::runtime::Object, new_objc2::rc::Shared> =
+    let _: new_objc2::__macro_helpers::Option<new_objc2::rc::Id<new_objc2::runtime::Object>> =
+        unsafe { new_objc2::msg_send_id![obj, a] };
+    let _: new_objc2::rc::Id<new_objc2::runtime::Object> =
         unsafe { new_objc2::msg_send_id![obj, a: obj, b: obj] };
 }

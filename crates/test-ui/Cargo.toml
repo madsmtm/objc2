@@ -18,6 +18,7 @@ default = [
     "icrate/Foundation_NSThread",
     "icrate/Foundation_NSError",
     "icrate/Foundation_NSArray",
+    "icrate/Foundation_NSMutableArray",
     "icrate/Foundation_NSValue",
 ]
 std = ["block2/std", "objc2/std", "icrate/std"]

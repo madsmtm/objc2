@@ -1,13 +1,17 @@
 #![cfg(feature = "Foundation_NSMutableDictionary")]
 use alloc::vec::Vec;
+use core::cmp::min;
+use core::mem;
 use core::ops::{Index, IndexMut};
 use core::ptr;
 
-use objc2::msg_send_id;
+use objc2::mutability::{IsMutable, IsRetainable};
 use objc2::rc::DefaultId;
+use objc2::runtime::Object;
 
+use super::util;
 use crate::common::*;
-use crate::Foundation::{self, NSDictionary, NSMutableDictionary};
+use crate::Foundation::{self, Copyhelper, NSDictionary, NSMutableDictionary};
 
 extern_methods!(
     unsafe impl<K: Message, V: Message> NSMutableDictionary<K, V> {
@@ -20,11 +24,8 @@ extern_methods!(
         ///
         /// let dict = NSMutableDictionary::<NSString, NSObject>::new();
         /// ```
-        // SAFETY:
-        // Mutable dictionaries are always unique, so it's safe to return
-        // `Id<Self, Owned>`
         #[method_id(new)]
-        pub fn new() -> Id<Self, Owned>;
+        pub fn new() -> Id<Self>;
 
         /// Creates an [`NSMutableDictionary`] from a slice of keys and a
         /// vector of values.
@@ -43,61 +44,19 @@ extern_methods!(
         ///    vec![NSObject::new(), NSObject::new(), NSObject::new()],
         /// );
         /// ```
-        pub fn from_keys_and_objects<T>(keys: &[&T], vals: Vec<Id<V, Owned>>) -> Id<Self, Owned>
+        pub fn from_keys_and_objects<T>(keys: &[&T], mut vals: Vec<Id<V>>) -> Id<Self>
         where
-            T: Foundation::NSCopying<Output = K>,
+            T: ClassType + Foundation::NSCopying,
+            T::Mutability: Copyhelper<T, CopyOutput = K>,
         {
-            let mut dict = NSMutableDictionary::new();
-            dict.setDictionary(&*NSDictionary::from_keys_and_objects(keys, vals));
-            dict
+            let count = min(keys.len(), vals.len());
+
+            let keys: *mut NonNull<T> = util::ref_ptr_cast_const(keys.as_ptr());
+            let keys: *mut NonNull<Object> = keys.cast();
+            let vals = util::id_ptr_cast(vals.as_mut_ptr());
+
+            unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), vals, keys, count) }
         }
-
-        /// Returns a mutable reference to the value corresponding to the key.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
-        /// use icrate::ns_string;
-        ///
-        /// let mut dict = NSMutableDictionary::new();
-        /// dict.insert(NSString::from_str("one"), NSObject::new());
-        /// println!("{:?}", dict.get_mut(ns_string!("one")));
-        /// ```
-        #[doc(alias = "objectForKey:")]
-        #[method(objectForKey:)]
-        pub fn get_mut(&mut self, key: &K) -> Option<&mut V>;
-
-        #[method(getObjects:andKeys:)]
-        unsafe fn get_objects_and_keys(&self, objects: *mut &mut V, keys: *mut &K);
-
-        /// Returns a vector of mutable references to the values in the dictionary.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
-        ///
-        /// let mut dict = NSMutableDictionary::new();
-        /// dict.insert(NSString::from_str("one"), NSObject::new());
-        /// for val in dict.values_mut() {
-        ///     println!("{:?}", val);
-        /// }
-        /// ```
-        #[doc(alias = "getObjects:andKeys:")]
-        pub fn values_mut(&mut self) -> Vec<&mut V> {
-            let len = self.len();
-            let mut vals: Vec<&mut V> = Vec::with_capacity(len);
-            // SAFETY: `vals` is not null
-            unsafe {
-                self.get_objects_and_keys(vals.as_mut_ptr(), ptr::null_mut());
-                vals.set_len(len);
-            }
-            vals
-        }
-
-        #[method(setObject:forKey:)]
-        fn set_object_for_key(&mut self, object: &V, key: &K);
 
         /// Inserts a key-value pair into the dictionary.
         ///
@@ -114,15 +73,17 @@ extern_methods!(
         /// dict.insert(NSString::from_str("one"), NSObject::new());
         /// ```
         #[doc(alias = "setObject:forKey:")]
-        pub fn insert(&mut self, key: Id<K, Shared>, value: Id<V, Owned>) -> Option<Id<V, Owned>> {
-            // SAFETY:
-            // `obj` is a reference to a value in the dictionary so it's safe
-            // to cast it to a pointer and pass it to `Id::retain_autoreleased`
-            let obj = self.get(&*key).map(|obj| unsafe {
-                Id::retain_autoreleased(obj as *const V as *mut V).unwrap_unchecked()
-            });
-            self.set_object_for_key(&*value, &*key);
-            obj
+        pub fn insert(&mut self, key: Id<K>, value: Id<V>) -> Option<Id<V>> {
+            // SAFETY: We remove the object from the dictionary below
+            let old_obj = self
+                .get(&key)
+                .map(|old_obj| unsafe { util::mutable_collection_retain_removed_id(old_obj) });
+
+            // SAFETY: It is always safe to transmute an `Id` to `Object`.
+            let key: Id<Object> = unsafe { Id::cast(key) };
+            // SAFETY: We have ownership over both the key and the value.
+            unsafe { self.setObject_forKey(&value, &key) };
+            old_obj
         }
 
         /// Removes a key from the dictionary, returning the value at the key
@@ -140,15 +101,13 @@ extern_methods!(
         /// assert!(dict.is_empty());
         /// ```
         #[doc(alias = "removeObjectForKey:")]
-        pub fn remove(&mut self, key: &K) -> Option<Id<V, Owned>> {
-            // SAFETY:
-            // `obj` is a reference to a value in the dictionary so it's safe
-            // to cast it to a pointer and pass it to `Id::retain_autoreleased`
-            let obj = self.get(key).map(|obj| unsafe {
-                Id::retain_autoreleased(obj as *const V as *mut V).unwrap_unchecked()
-            });
+        pub fn remove(&mut self, key: &K) -> Option<Id<V>> {
+            // SAFETY: We remove the object from the dictionary below
+            let old_obj = self
+                .get(key)
+                .map(|old_obj| unsafe { util::mutable_collection_retain_removed_id(old_obj) });
             self.removeObjectForKey(key);
-            obj
+            old_obj
         }
 
         /// Returns an [`NSArray`] containing the dictionary's values,
@@ -168,10 +127,10 @@ extern_methods!(
         /// println!("{:?}", array);
         /// ```
         #[cfg(feature = "Foundation_NSArray")]
-        pub fn into_values_array(
-            dict: Id<Self, Owned>,
-        ) -> Id<Foundation::NSArray<V, Owned>, Shared> {
-            unsafe { msg_send_id![&dict, allValues] }
+        pub fn into_values_array(this: Id<Self>) -> Id<Foundation::NSArray<V>> {
+            // SAFETY: We've consumed the dictionary, so getting an array from
+            // it is safe.
+            unsafe { this.allValues() }
         }
     }
 );
@@ -188,17 +147,15 @@ impl<'a, K: Message, V: Message> Index<&'a K> for NSMutableDictionary<K, V> {
     }
 }
 
-impl<'a, K: Message, V: Message> IndexMut<&'a K> for NSMutableDictionary<K, V> {
+impl<'a, K: Message, V: IsMutable> IndexMut<&'a K> for NSMutableDictionary<K, V> {
     fn index_mut<'s>(&'s mut self, index: &'a K) -> &'s mut V {
         self.get_mut(index).unwrap()
     }
 }
 
 impl<K: Message, V: Message> DefaultId for NSMutableDictionary<K, V> {
-    type Ownership = Owned;
-
     #[inline]
-    fn default_id() -> Id<Self, Self::Ownership> {
+    fn default_id() -> Id<Self> {
         Self::new()
     }
 }

@@ -1,7 +1,8 @@
 use core::cell::RefCell;
 use core::ptr;
 
-use super::{Allocated, Id, Owned};
+use super::{Allocated, Id};
+use crate::mutability::Immutable;
 use crate::runtime::{NSObject, NSZone};
 use crate::{declare_class, msg_send, msg_send_id, ClassType};
 
@@ -57,22 +58,23 @@ declare_class!(
 
     unsafe impl ClassType for __RcTestObject {
         type Super = NSObject;
+        type Mutability = Immutable;
         const NAME: &'static str = "__RcTestObject";
     }
 
     unsafe impl __RcTestObject {
         #[method_id(newReturningNull)]
-        fn new_returning_null() -> Option<Id<Self, Owned>> {
+        fn new_returning_null() -> Option<Id<Self>> {
             None
         }
 
         #[method_id(newMethodOnInstance)]
-        fn new_method_on_instance(&self) -> Id<Self, Owned> {
+        fn new_method_on_instance(&self) -> Id<Self> {
             Self::new()
         }
 
         #[method_id(newMethodOnInstanceNull)]
-        fn new_method_on_instance_null(&self) -> Option<Id<Self, Owned>> {
+        fn new_method_on_instance_null(&self) -> Option<Id<Self>> {
             None
         }
 
@@ -97,13 +99,13 @@ declare_class!(
         }
 
         #[method(init)]
-        fn init(this: &mut Self) -> *mut Self {
+        unsafe fn init(this: *mut Self) -> *mut Self {
             TEST_DATA.with(|data| data.borrow_mut().init += 1);
             unsafe { msg_send![super(this), init] }
         }
 
         #[method_id(initReturningNull)]
-        fn init_returning_null(_this: Allocated<Self>) -> Option<Id<Self, Owned>> {
+        fn init_returning_null(_this: Allocated<Self>) -> Option<Id<Self>> {
             None
         }
 
@@ -137,29 +139,29 @@ declare_class!(
         }
 
         #[method_id(copyWithZone:)]
-        fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self, Owned> {
+        fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self> {
             TEST_DATA.with(|data| data.borrow_mut().copy += 1);
             Self::new()
         }
 
         #[method_id(mutableCopyWithZone:)]
-        fn mutable_copy_with_zone(&self, _zone: *const NSZone) -> Id<Self, Owned> {
+        fn mutable_copy_with_zone(&self, _zone: *const NSZone) -> Id<Self> {
             TEST_DATA.with(|data| data.borrow_mut().mutable_copy += 1);
             Self::new()
         }
 
         #[method_id(copyReturningNull)]
-        fn copy_returning_null(_this: &Self) -> Option<Id<Self, Owned>> {
+        fn copy_returning_null(_this: &Self) -> Option<Id<Self>> {
             None
         }
 
         #[method_id(methodReturningNull)]
-        fn method_returning_null(self: &Self) -> Option<Id<Self, Owned>> {
+        fn method_returning_null(self: &Self) -> Option<Id<Self>> {
             None
         }
 
         #[method_id(aMethod:)]
-        fn a_method(&self, param: bool) -> Option<Id<Self, Owned>> {
+        fn a_method(&self, param: bool) -> Option<Id<Self>> {
             param.then(Self::new)
         }
 
@@ -195,7 +197,7 @@ declare_class!(
         fn class_error_id(
             should_error: bool,
             err: Option<&mut *mut __RcTestObject>,
-        ) -> Option<Id<Self, Owned>> {
+        ) -> Option<Id<Self>> {
             if should_error {
                 if let Some(err) = err {
                     *err = Id::autorelease_inner(__RcTestObject::new());
@@ -211,7 +213,7 @@ declare_class!(
             self: &Self,
             should_error: bool,
             err: Option<&mut *mut __RcTestObject>,
-        ) -> Option<Id<Self, Owned>> {
+        ) -> Option<Id<Self>> {
             if should_error {
                 if let Some(err) = err {
                     *err = Id::autorelease_inner(__RcTestObject::new());
@@ -226,7 +228,7 @@ declare_class!(
         fn new_error(
             should_error: bool,
             err: Option<&mut *mut __RcTestObject>,
-        ) -> Option<Id<Self, Owned>> {
+        ) -> Option<Id<Self>> {
             if should_error {
                 if let Some(err) = err {
                     *err = Id::autorelease_inner(__RcTestObject::new());
@@ -254,7 +256,7 @@ declare_class!(
             this: Allocated<Self>,
             should_error: bool,
             err: Option<&mut *mut __RcTestObject>,
-        ) -> Option<Id<Self, Owned>> {
+        ) -> Option<Id<Self>> {
             if should_error {
                 if let Some(err) = err {
                     *err = Id::autorelease_inner(__RcTestObject::new());
@@ -285,7 +287,7 @@ unsafe impl Sync for __RcTestObject {}
 
 impl __RcTestObject {
     #[doc(hidden)]
-    pub fn new() -> Id<Self, Owned> {
+    pub fn new() -> Id<Self> {
         // Use msg_send! - msg_send_id! is tested elsewhere!
         unsafe { Id::new(msg_send![Self::class(), new]) }.unwrap()
     }
@@ -298,13 +300,14 @@ declare_class!(
     unsafe impl ClassType for RcTestObjectSubclass {
         #[inherits(NSObject)]
         type Super = __RcTestObject;
+        type Mutability = Immutable;
         const NAME: &'static str = "RcTestObjectSubclass";
     }
 );
 
 #[cfg_attr(not(test), allow(unused))]
 impl RcTestObjectSubclass {
-    fn new() -> Id<Self, Owned> {
+    fn new() -> Id<Self> {
         unsafe { msg_send_id![Self::class(), new] }
     }
 }
@@ -392,7 +395,7 @@ mod tests {
         ($expected:expr, $if_autorelease_not_skipped:expr, $sel:ident, $($obj:tt)*) => {
             // Succeeds
             let res = autoreleasepool(|_pool| {
-                let res: Result<Id<__RcTestObject, Owned>, Id<__RcTestObject>> = unsafe {
+                let res: Result<Id<__RcTestObject>, Id<__RcTestObject>> = unsafe {
                     msg_send_id![$($obj)*, $sel: false, error: _]
                 };
                 let res = res.expect("not ok");
@@ -413,7 +416,7 @@ mod tests {
 
             // Errors
             let res = autoreleasepool(|_pool| {
-                let res: Result<Id<__RcTestObject, Owned>, Id<__RcTestObject>> = unsafe {
+                let res: Result<Id<__RcTestObject>, Id<__RcTestObject>> = unsafe {
                     msg_send_id![$($obj)*, $sel: true, error: _]
                 };
                 $expected.alloc += 1;
@@ -503,13 +506,12 @@ mod tests {
         expected.init += 1;
         expected.assert_current();
 
-        let res: Option<Id<__RcTestObject, Owned>> = unsafe { msg_send_id![&obj, aMethod: false] };
+        let res: Option<Id<__RcTestObject>> = unsafe { msg_send_id![&obj, aMethod: false] };
         assert!(res.is_none());
         expected.assert_current();
 
         let _res = autoreleasepool(|_pool| {
-            let res: Option<Id<__RcTestObject, Owned>> =
-                unsafe { msg_send_id![&obj, aMethod: true] };
+            let res: Option<Id<__RcTestObject>> = unsafe { msg_send_id![&obj, aMethod: true] };
             assert!(res.is_some());
             expected.alloc += 1;
             expected.init += 1;

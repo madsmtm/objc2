@@ -212,6 +212,7 @@ pub mod encode;
 pub mod exception;
 mod macros;
 mod message;
+pub mod mutability;
 mod protocol_type;
 pub mod rc;
 pub mod runtime;

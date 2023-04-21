@@ -20,9 +20,10 @@ use core::task::{Context, Poll};
 use std::error::Error;
 use std::io;
 
-use super::{Id, Owned, Ownership};
+use super::Id;
+use crate::mutability::IsMutable;
 
-impl<T: PartialEq + ?Sized, O: Ownership> PartialEq for Id<T, O> {
+impl<T: PartialEq + ?Sized> PartialEq for Id<T> {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
         (**self).eq(&**other)
@@ -35,9 +36,9 @@ impl<T: PartialEq + ?Sized, O: Ownership> PartialEq for Id<T, O> {
     }
 }
 
-impl<T: Eq + ?Sized, O: Ownership> Eq for Id<T, O> {}
+impl<T: Eq + ?Sized> Eq for Id<T> {}
 
-impl<T: PartialOrd + ?Sized, O: Ownership> PartialOrd for Id<T, O> {
+impl<T: PartialOrd + ?Sized> PartialOrd for Id<T> {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         (**self).partial_cmp(&**other)
@@ -60,20 +61,20 @@ impl<T: PartialOrd + ?Sized, O: Ownership> PartialOrd for Id<T, O> {
     }
 }
 
-impl<T: Ord + ?Sized, O: Ownership> Ord for Id<T, O> {
+impl<T: Ord + ?Sized> Ord for Id<T> {
     #[inline]
     fn cmp(&self, other: &Self) -> Ordering {
         (**self).cmp(&**other)
     }
 }
 
-impl<T: hash::Hash + ?Sized, O: Ownership> hash::Hash for Id<T, O> {
+impl<T: hash::Hash + ?Sized> hash::Hash for Id<T> {
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
         (**self).hash(state)
     }
 }
 
-impl<T: hash::Hasher + ?Sized> hash::Hasher for Id<T, Owned> {
+impl<T: hash::Hasher + ?Sized + IsMutable> hash::Hasher for Id<T> {
     fn finish(&self) -> u64 {
         (**self).finish()
     }
@@ -118,19 +119,19 @@ impl<T: hash::Hasher + ?Sized> hash::Hasher for Id<T, Owned> {
     }
 }
 
-impl<T: fmt::Display + ?Sized, O: Ownership> fmt::Display for Id<T, O> {
+impl<T: fmt::Display + ?Sized> fmt::Display for Id<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         (**self).fmt(f)
     }
 }
 
-impl<T: fmt::Debug + ?Sized, O: Ownership> fmt::Debug for Id<T, O> {
+impl<T: fmt::Debug + ?Sized> fmt::Debug for Id<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         (**self).fmt(f)
     }
 }
 
-impl<I: Iterator + ?Sized> Iterator for Id<I, Owned> {
+impl<I: Iterator + ?Sized + IsMutable> Iterator for Id<I> {
     type Item = I::Item;
     fn next(&mut self) -> Option<I::Item> {
         (**self).next()
@@ -143,7 +144,7 @@ impl<I: Iterator + ?Sized> Iterator for Id<I, Owned> {
     }
 }
 
-impl<I: DoubleEndedIterator + ?Sized> DoubleEndedIterator for Id<I, Owned> {
+impl<I: DoubleEndedIterator + ?Sized + IsMutable> DoubleEndedIterator for Id<I> {
     fn next_back(&mut self) -> Option<I::Item> {
         (**self).next_back()
     }
@@ -152,16 +153,16 @@ impl<I: DoubleEndedIterator + ?Sized> DoubleEndedIterator for Id<I, Owned> {
     }
 }
 
-impl<I: ExactSizeIterator + ?Sized> ExactSizeIterator for Id<I, Owned> {
+impl<I: ExactSizeIterator + ?Sized + IsMutable> ExactSizeIterator for Id<I> {
     fn len(&self) -> usize {
         (**self).len()
     }
 }
 
-impl<I: FusedIterator + ?Sized> FusedIterator for Id<I, Owned> {}
+impl<I: FusedIterator + ?Sized + IsMutable> FusedIterator for Id<I> {}
 
 // TODO: Consider this impl
-// impl<'a, T, O: Ownership> IntoIterator for &'a Id<T, O>
+// impl<'a, T> IntoIterator for &'a Id<T>
 // where
 //     &'a T: IntoIterator,
 // {
@@ -173,37 +174,37 @@ impl<I: FusedIterator + ?Sized> FusedIterator for Id<I, Owned> {}
 //     }
 // }
 
-impl<T, O: Ownership> borrow::Borrow<T> for Id<T, O> {
+impl<T: ?Sized> borrow::Borrow<T> for Id<T> {
     fn borrow(&self) -> &T {
         Deref::deref(self)
     }
 }
 
-impl<T> borrow::BorrowMut<T> for Id<T, Owned> {
+impl<T: ?Sized + IsMutable> borrow::BorrowMut<T> for Id<T> {
     fn borrow_mut(&mut self) -> &mut T {
         DerefMut::deref_mut(self)
     }
 }
 
-impl<T: ?Sized, O: Ownership> AsRef<T> for Id<T, O> {
+impl<T: ?Sized> AsRef<T> for Id<T> {
     fn as_ref(&self) -> &T {
         Deref::deref(self)
     }
 }
 
-impl<T: ?Sized> AsMut<T> for Id<T, Owned> {
+impl<T: ?Sized + IsMutable> AsMut<T> for Id<T> {
     fn as_mut(&mut self) -> &mut T {
         DerefMut::deref_mut(self)
     }
 }
 
-impl<T: Error + ?Sized, O: Ownership> Error for Id<T, O> {
+impl<T: Error + ?Sized> Error for Id<T> {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         (**self).source()
     }
 }
 
-impl<T: io::Read + ?Sized> io::Read for Id<T, Owned> {
+impl<T: io::Read + ?Sized + IsMutable> io::Read for Id<T> {
     #[inline]
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
         (**self).read(buf)
@@ -230,7 +231,7 @@ impl<T: io::Read + ?Sized> io::Read for Id<T, Owned> {
     }
 }
 
-impl<T: io::Write + ?Sized> io::Write for Id<T, Owned> {
+impl<T: io::Write + ?Sized + IsMutable> io::Write for Id<T> {
     #[inline]
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
         (**self).write(buf)
@@ -257,7 +258,7 @@ impl<T: io::Write + ?Sized> io::Write for Id<T, Owned> {
     }
 }
 
-impl<T: io::Seek + ?Sized> io::Seek for Id<T, Owned> {
+impl<T: io::Seek + ?Sized + IsMutable> io::Seek for Id<T> {
     #[inline]
     fn seek(&mut self, pos: io::SeekFrom) -> io::Result<u64> {
         (**self).seek(pos)
@@ -269,7 +270,7 @@ impl<T: io::Seek + ?Sized> io::Seek for Id<T, Owned> {
     }
 }
 
-impl<T: io::BufRead + ?Sized> io::BufRead for Id<T, Owned> {
+impl<T: io::BufRead + ?Sized + IsMutable> io::BufRead for Id<T> {
     #[inline]
     fn fill_buf(&mut self) -> io::Result<&[u8]> {
         (**self).fill_buf()
@@ -291,7 +292,7 @@ impl<T: io::BufRead + ?Sized> io::BufRead for Id<T, Owned> {
     }
 }
 
-impl<T: Future + Unpin + ?Sized> Future for Id<T, Owned> {
+impl<T: Future + Unpin + ?Sized + IsMutable> Future for Id<T> {
     type Output = T::Output;
 
     fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {

@@ -32,7 +32,7 @@ fn test_replace() {
     array.push(obj1);
     let mut expected = __ThreadTestData::current();
 
-    let old_obj = array.replace(0, obj2);
+    let old_obj = array.replace(0, obj2).unwrap();
     expected.retain += 2;
     expected.release += 2;
     expected.assert_current();
@@ -64,6 +64,15 @@ fn test_remove() {
     expected.dealloc += 2;
     expected.assert_current();
     assert_eq!(array.len(), 0);
+}
+
+#[test]
+#[cfg(feature = "Foundation_NSString")]
+fn test_into_vec() {
+    let array = NSMutableArray::from_id_slice(&[Foundation::NSString::new()]);
+
+    let vec = NSMutableArray::into_vec(array);
+    assert_eq!(vec.len(), 1);
 }
 
 #[test]

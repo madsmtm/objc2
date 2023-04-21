@@ -13,7 +13,7 @@ use core::str;
 use std::os::raw::c_char;
 
 use objc2::msg_send;
-use objc2::rc::{autoreleasepool_leaking, AutoreleasePool, DefaultId, Id, Shared};
+use objc2::rc::{autoreleasepool_leaking, AutoreleasePool, DefaultId};
 use objc2::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
 
 use crate::common::*;
@@ -169,10 +169,8 @@ impl Ord for NSString {
 // https://github.com/nvzqz/fruity/blob/320efcf715c2c5fbd2f3084f671f2be2e03a6f2b/src/foundation/ns_string/mod.rs#L69-L163
 
 impl DefaultId for NSString {
-    type Ownership = Shared;
-
     #[inline]
-    fn default_id() -> Id<Self, Self::Ownership> {
+    fn default_id() -> Id<Self> {
         Self::new()
     }
 }

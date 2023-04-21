@@ -52,52 +52,27 @@
 //!
 //! TODO.
 //!
-//! While `NSArray` _itself_ is immutable, i.e. the number of objects it
-//! contains can't change, it is still possible to modify the contained
-//! objects themselves, if you know you're the sole owner of them -
-//! quite similar to how you can modify elements in `Box<[T]>`.
-//!
-//! To mutate the contained objects the ownership must be `O = Owned`. A
-//! summary of what the different "types" of arrays allow you to do can be
-//! found below. `Array` refers to either `NSArray` or `NSMutableArray`.
-//! - `Id<NSMutableArray<T, Owned>, Owned>`: Allows you to mutate the
-//!   objects, and the array itself.
-//! - `Id<NSMutableArray<T, Shared>, Owned>`: Allows you to mutate the
-//!   array itself, but not it's contents.
-//! - `Id<NSArray<T, Owned>, Owned>`: Allows you to mutate the objects,
-//!   but not the array itself.
-//! - `Id<NSArray<T, Shared>, Owned>`: Effectively the same as the below.
-//! - `Id<Array<T, Shared>, Shared>`: Allows you to copy the array, but
-//!   does not allow you to modify it in any way.
-//! - `Id<Array<T, Owned>, Shared>`: Pretty useless compared to the
-//!   others, avoid this.
-//!
 //!
 //! # Rust vs. Objective-C types
 //!
 //! | Objective-C | (approximately) equivalent Rust |
 //! | --- | --- |
-//! | `NSData` | `Box<[u8]>` |
-//! | `NSMutableData` | `Vec<u8>` |
-//! | `NSString` | `Box<str>` |
-//! | `NSMutableString` | `String` |
-//! | `NSValue` | `Box<dyn Any>` |
-//! | `NSNumber` | `enum { I8(i8), U8(u8), I16(i16), U16(u16), I32(i32), U32(u32), I64(i64), U64(u64), F32(f32), F64(f64), CLong(ffi::c_long), CULong(ffi::c_ulong) }` |
-//! | `NSError` | `Box<dyn Error>` |
-//! | `NSException` | `Box<dyn Error>` |
+//! | `NSData*` | `Arc<[u8]>` |
+//! | `NSMutableData*` | `Vec<u8>` |
+//! | `NSString*` | `Arc<str>` |
+//! | `NSMutableString*` | `String` |
+//! | `NSValue*` | `Arc<dyn Any>` |
+//! | `NSNumber*` | `Arc<enum { I8(i8), U8(u8), I16(i16), U16(u16), I32(i32), U32(u32), I64(i64), U64(u64), F32(f32), F64(f64), CLong(ffi::c_long), CULong(ffi::c_ulong) }>` |
+//! | `NSError*` | `Arc<dyn Error + Send + Sync>` |
+//! | `NSException*` | `Arc<dyn Error + Send + Sync>` |
 //! | `NSRange` | `ops::Range<usize>` |
 //! | `NSComparisonResult` | `cmp::Ordering` |
-//! | `NSArray<T, Shared>` | `Box<[Arc<T>]>` |
-//! | `NSArray<T, Owned>` | `Box<[T]>` |
-//! | `NSMutableArray<T, Shared>` | `Vec<Arc<T>>` |
-//! | `NSMutableArray<T, Owned>` | `Vec<T>` |
-//! | `NSDictionary<K, V>` | `ImmutableMap<Arc<K>, Arc<V>>` |
-//! | `NSDictionary<K, V, Owned, Owned>` | `ImmutableMap<K, V>` |
-//! | `NSMutableDictionary<K, V>` | `Map<Arc<K>, Arc<V>>` |
-//! | `NSMutableDictionary<K, V, Owned, Owned>` | `Map<K, V>` |
-//! | `NSEnumerator<T, Shared>` | `impl Iterator<Arc<T>>` |
-//! | `NSEnumerator<T, Owned>` | `impl Iterator<T>` |
-//! | `@protocol NSCopying` | `trait Clone` |
+//! | `NSArray<T>*` | `Arc<[T]>` |
+//! | `NSMutableArray<T>*` | `Vec<T>` |
+//! | `NSDictionary<K, V>*` | `Arc<HashMap<K, V>>` |
+//! | `NSMutableDictionary<K, V>*` | `HashMap<K, V>` |
+//! | `NSEnumerator<T>*` | `Box<dyn Iterator<T>>` |
+//! | `NSCopying*` | `Box<dyn Clone>` |
 #![allow(unused_imports)]
 
 #[doc(hidden)]
@@ -112,13 +87,19 @@ pub use self::additions::*;
 pub use self::fixes::*;
 pub use self::generated::*;
 
+// Available under Foundation, so makes sense here as well:
+// https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
+pub use objc2::ffi::{NSInteger, NSUInteger};
+
+// Special types that are stored in `objc2`, but really belong here
 #[doc(inline)]
 #[cfg(feature = "Foundation_NSProxy")]
 pub use objc2::runtime::__NSProxy as NSProxy;
 pub use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
-// Available under Foundation, so makes sense here as well:
-// https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
-pub use objc2::ffi::{NSInteger, NSUInteger};
+#[doc(inline)]
+pub use objc2::runtime::{
+    __Copyhelper as Copyhelper, __NSCopying as NSCopying, __NSMutableCopying as NSMutableCopying,
+};
 
 // Link to the correct framework
 #[cfg_attr(feature = "apple", link(name = "Foundation", kind = "framework"))]

@@ -13,21 +13,16 @@ use crate::Message;
 /// `*mut T` is:
 /// - To allow releasing allocated objects, e.g. in the face of panics.
 /// - To safely know the object is valid (albeit uninitialized).
-///
-/// Note that there is no way to specify ownership of allocated types, since
-/// whether or not the allocated object is [`Owned`] or [`Shared`] is really
-/// something to be determined _after_ you know which initializer it has been
-/// called with.
-///
-/// For example, `+[NSMutableString alloc]` is allowed to return a non-unique
-/// object as an optimization, and then only figure out afterwards whether it
-/// needs to allocate, or if it can store an `NSString` internally.
-/// Similarly, while e.g. `+[NSData alloc]` may return a unique object,
-/// calling `-[NSData init]` afterwards could easily just return a shared
-/// empty `NSData` instance.
-///
-/// [`Shared`]: super::Shared
-/// [`Owned`]: super::Owned
+//
+// Note that there is no way to get something mutable out of `Allocated`
+// unless you're defining the object.
+//
+// For example, `+[NSMutableString alloc]` is allowed to return a non-unique
+// object as an optimization, and then only figure out afterwards whether it
+// needs to allocate, or if it can store an `NSString` internally.
+// Similarly, while e.g. `+[NSData alloc]` may return a unique object,
+// calling `-[NSData init]` afterwards could easily just return a shared
+// empty `NSData` instance.
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct Allocated<T: ?Sized> {
@@ -49,7 +44,7 @@ pub struct Allocated<T: ?Sized> {
 
 // Explicitly don't implement `Deref`, `Message` nor `RefEncode`!
 
-impl<T: Message + ?Sized> Allocated<T> {
+impl<T: ?Sized + Message> Allocated<T> {
     /// # Safety
     ///
     /// The caller must ensure the given object has +1 retain count, and that

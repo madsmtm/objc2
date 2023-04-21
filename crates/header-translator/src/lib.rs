@@ -34,7 +34,7 @@ pub use self::file::File;
 pub use self::id::ItemIdentifier;
 pub use self::library::Library;
 pub use self::output::Output;
-pub use self::stmt::Stmt;
+pub use self::stmt::{Mutability, Stmt};
 
 pub fn compare_btree<T>(
     data1: &BTreeMap<String, T>,

@@ -2,7 +2,7 @@
 #![cfg(feature = "Foundation_NSString")]
 #![cfg(feature = "Foundation_NSNumber")]
 
-use objc2::rc::{Id, __RcTestObject, __ThreadTestData};
+use objc2::rc::{__RcTestObject, __ThreadTestData};
 
 use icrate::ns_string;
 use icrate::Foundation::{self, NSFastEnumeration2, NSNumber, NSObject, NSSet, NSString};
@@ -28,16 +28,16 @@ fn test_from_vec() {
 }
 
 #[test]
-fn test_from_slice() {
-    let set = NSSet::<NSString>::from_slice(&[]);
+fn test_from_id_slice() {
+    let set = NSSet::<NSString>::from_id_slice(&[]);
     assert!(set.is_empty());
 
     let strs = ["one", "two", "three"].map(NSString::from_str);
-    let set = NSSet::from_slice(&strs);
+    let set = NSSet::from_id_slice(&strs);
     assert!(strs.into_iter().all(|s| set.contains(&s)));
 
     let nums = [1, 2, 3].map(NSNumber::new_i32);
-    let set = NSSet::from_slice(&nums);
+    let set = NSSet::from_id_slice(&nums);
     assert!(nums.into_iter().all(|n| set.contains(&n)));
 }
 
@@ -46,7 +46,7 @@ fn test_len() {
     let set = NSSet::<NSString>::new();
     assert!(set.is_empty());
 
-    let set = NSSet::from_slice(&["one", "two", "two"].map(NSString::from_str));
+    let set = NSSet::from_id_slice(&["one", "two", "two"].map(NSString::from_str));
     assert_eq!(set.len(), 2);
 
     let set = NSSet::from_vec(vec![NSObject::new(), NSObject::new(), NSObject::new()]);
@@ -58,14 +58,14 @@ fn test_get() {
     let set = NSSet::<NSString>::new();
     assert!(set.get(ns_string!("one")).is_none());
 
-    let set = NSSet::from_slice(&["one", "two", "two"].map(NSString::from_str));
+    let set = NSSet::from_id_slice(&["one", "two", "two"].map(NSString::from_str));
     assert!(set.get(ns_string!("two")).is_some());
     assert!(set.get(ns_string!("three")).is_none());
 }
 
 #[test]
 fn test_get_return_lifetime() {
-    let set = NSSet::from_slice(&["one", "two", "two"].map(NSString::from_str));
+    let set = NSSet::from_id_slice(&["one", "two", "two"].map(NSString::from_str));
 
     let res = {
         let value = NSString::from_str("one");
@@ -81,7 +81,7 @@ fn test_get_any() {
     assert!(set.get_any().is_none());
 
     let strs = ["one", "two", "three"].map(NSString::from_str);
-    let set = NSSet::from_slice(&strs);
+    let set = NSSet::from_id_slice(&strs);
     let any = set.get_any().unwrap();
     assert!(any == &*strs[0] || any == &*strs[1] || any == &*strs[2]);
 }
@@ -91,15 +91,15 @@ fn test_contains() {
     let set = NSSet::<NSString>::new();
     assert!(!set.contains(ns_string!("one")));
 
-    let set = NSSet::from_slice(&["one", "two", "two"].map(NSString::from_str));
+    let set = NSSet::from_id_slice(&["one", "two", "two"].map(NSString::from_str));
     assert!(set.contains(ns_string!("one")));
     assert!(!set.contains(ns_string!("three")));
 }
 
 #[test]
 fn test_is_subset() {
-    let set1 = NSSet::from_slice(&["one", "two"].map(NSString::from_str));
-    let set2 = NSSet::from_slice(&["one", "two", "three"].map(NSString::from_str));
+    let set1 = NSSet::from_id_slice(&["one", "two"].map(NSString::from_str));
+    let set2 = NSSet::from_id_slice(&["one", "two", "three"].map(NSString::from_str));
 
     assert!(set1.is_subset(&set2));
     assert!(!set2.is_subset(&set1));
@@ -107,8 +107,8 @@ fn test_is_subset() {
 
 #[test]
 fn test_is_superset() {
-    let set1 = NSSet::from_slice(&["one", "two"].map(NSString::from_str));
-    let set2 = NSSet::from_slice(&["one", "two", "three"].map(NSString::from_str));
+    let set1 = NSSet::from_id_slice(&["one", "two"].map(NSString::from_str));
+    let set2 = NSSet::from_id_slice(&["one", "two", "three"].map(NSString::from_str));
 
     assert!(!set1.is_superset(&set2));
     assert!(set2.is_superset(&set1));
@@ -116,9 +116,9 @@ fn test_is_superset() {
 
 #[test]
 fn test_is_disjoint() {
-    let set1 = NSSet::from_slice(&["one", "two"].map(NSString::from_str));
-    let set2 = NSSet::from_slice(&["one", "two", "three"].map(NSString::from_str));
-    let set3 = NSSet::from_slice(&["four", "five", "six"].map(NSString::from_str));
+    let set1 = NSSet::from_id_slice(&["one", "two"].map(NSString::from_str));
+    let set2 = NSSet::from_id_slice(&["one", "two", "three"].map(NSString::from_str));
+    let set3 = NSSet::from_id_slice(&["four", "five", "six"].map(NSString::from_str));
 
     assert!(!set1.is_disjoint(&set2));
     assert!(set1.is_disjoint(&set3));
@@ -128,7 +128,7 @@ fn test_is_disjoint() {
 #[test]
 fn test_to_array() {
     let nums = [1, 2, 3];
-    let set = NSSet::from_slice(&nums.map(NSNumber::new_i32));
+    let set = NSSet::from_id_slice(&nums.map(NSNumber::new_i32));
 
     assert_eq!(set.to_array().len(), 3);
     assert!(set.to_array().iter().all(|i| nums.contains(&i.as_i32())));
@@ -137,7 +137,7 @@ fn test_to_array() {
 #[test]
 fn test_iter() {
     let nums = [1, 2, 3];
-    let set = NSSet::from_slice(&nums.map(NSNumber::new_i32));
+    let set = NSSet::from_id_slice(&nums.map(NSNumber::new_i32));
 
     assert_eq!(set.iter().count(), 3);
     assert!(set.iter().all(|i| nums.contains(&i.as_i32())));
@@ -146,7 +146,7 @@ fn test_iter() {
 #[test]
 fn test_iter_fast() {
     let nums = [1, 2, 3];
-    let set = NSSet::from_slice(&nums.map(NSNumber::new_i32));
+    let set = NSSet::from_id_slice(&nums.map(NSNumber::new_i32));
 
     assert_eq!(set.iter_fast().count(), 3);
     assert!(set.iter_fast().all(|i| nums.contains(&i.as_i32())));
@@ -155,7 +155,7 @@ fn test_iter_fast() {
 #[test]
 fn test_into_iter() {
     let nums = [1, 2, 3];
-    let set = NSSet::from_slice(&nums.map(NSNumber::new_i32));
+    let set = NSSet::from_id_slice(&nums.map(NSNumber::new_i32));
 
     assert!(set.into_iter().all(|i| nums.contains(&i.as_i32())));
 }
@@ -164,20 +164,14 @@ fn test_into_iter() {
 #[cfg(feature = "Foundation_NSMutableString")]
 fn test_into_vec() {
     let strs = vec![
-        Foundation::NSMutableString::from_str("one"),
-        Foundation::NSMutableString::from_str("two"),
-        Foundation::NSMutableString::from_str("three"),
+        Foundation::NSString::from_str("one"),
+        Foundation::NSString::from_str("two"),
+        Foundation::NSString::from_str("three"),
     ];
     let set = NSSet::from_vec(strs);
 
-    let mut vec = NSSet::into_vec(set);
-    for str in vec.iter_mut() {
-        str.appendString(ns_string!(" times zero is zero"));
-    }
-
-    assert_eq!(vec.len(), 3);
-    let suffix = ns_string!("zero");
-    assert!(vec.iter().all(|str| str.hasSuffix(suffix)));
+    assert_eq!(set.len(), 3);
+    assert_eq!(set.to_vec().len(), 3);
 }
 
 #[test]
@@ -191,7 +185,7 @@ fn test_equality() {
 fn test_copy() {
     use Foundation::NSCopying;
 
-    let set1 = NSSet::from_slice(&["one", "two", "three"].map(NSString::from_str));
+    let set1 = NSSet::from_id_slice(&["one", "two", "three"].map(NSString::from_str));
     let set2 = set1.copy();
     assert_eq!(set1, set2);
 }
@@ -201,7 +195,7 @@ fn test_debug() {
     let set = NSSet::<NSString>::new();
     assert_eq!(format!("{set:?}"), "{}");
 
-    let set = NSSet::from_slice(&["one", "two"].map(NSString::from_str));
+    let set = NSSet::from_id_slice(&["one", "two"].map(NSString::from_str));
     assert!(matches!(
         format!("{set:?}").as_str(),
         "{\"one\", \"two\"}" | "{\"two\", \"one\"}"
@@ -210,14 +204,14 @@ fn test_debug() {
 
 #[test]
 fn test_retains_stored() {
-    let obj = Id::into_shared(__RcTestObject::new());
+    let obj = __RcTestObject::new();
     let mut expected = __ThreadTestData::current();
 
     let input = [obj.clone(), obj.clone()];
     expected.retain += 2;
     expected.assert_current();
 
-    let set = NSSet::from_slice(&input);
+    let set = NSSet::from_id_slice(&input);
     expected.retain += 1;
     expected.assert_current();
 
@@ -247,14 +241,14 @@ fn test_retains_stored() {
 fn test_nscopying_uses_retain() {
     use Foundation::{NSCopying, NSMutableCopying};
 
-    let obj = Id::into_shared(__RcTestObject::new());
-    let set = NSSet::from_slice(&[obj]);
+    let obj = __RcTestObject::new();
+    let set = NSSet::from_id_slice(&[obj]);
     let mut expected = __ThreadTestData::current();
 
     let _copy = set.copy();
     expected.assert_current();
 
-    let _copy = set.mutable_copy();
+    let _copy = set.mutableCopy();
     expected.retain += 1;
     expected.assert_current();
 }
@@ -265,8 +259,8 @@ fn test_nscopying_uses_retain() {
     ignore = "this works differently on different framework versions"
 )]
 fn test_iter_no_retain() {
-    let obj = Id::into_shared(__RcTestObject::new());
-    let set = NSSet::from_slice(&[obj]);
+    let obj = __RcTestObject::new();
+    let set = NSSet::from_id_slice(&[obj]);
     let mut expected = __ThreadTestData::current();
 
     let iter = set.iter();

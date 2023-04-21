@@ -1,10 +1,10 @@
 #![cfg(feature = "Foundation_NSMutableDictionary")]
 #![cfg(feature = "Foundation_NSNumber")]
-use objc2::rc::{Id, Owned, __RcTestObject, __ThreadTestData};
+use objc2::rc::{Id, __RcTestObject, __ThreadTestData};
 
 use icrate::Foundation::{NSMutableDictionary, NSNumber, NSObject};
 
-fn sample_dict() -> Id<NSMutableDictionary<NSNumber, NSObject>, Owned> {
+fn sample_dict() -> Id<NSMutableDictionary<NSNumber, NSObject>> {
     NSMutableDictionary::from_keys_and_objects(
         &[
             &*NSNumber::new_i32(1),
@@ -15,6 +15,22 @@ fn sample_dict() -> Id<NSMutableDictionary<NSNumber, NSObject>, Owned> {
     )
 }
 
+#[cfg(feature = "Foundation_NSMutableString")]
+fn sample_dict_mut() -> Id<NSMutableDictionary<NSNumber, icrate::Foundation::NSMutableString>> {
+    NSMutableDictionary::from_keys_and_objects(
+        &[
+            &*NSNumber::new_i32(1),
+            &*NSNumber::new_i32(2),
+            &*NSNumber::new_i32(3),
+        ],
+        vec![
+            icrate::Foundation::NSMutableString::from_str("a"),
+            icrate::Foundation::NSMutableString::from_str("b"),
+            icrate::Foundation::NSMutableString::from_str("c"),
+        ],
+    )
+}
+
 #[test]
 fn test_new() {
     let dict = NSMutableDictionary::<NSObject, NSObject>::new();
@@ -22,16 +38,19 @@ fn test_new() {
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSMutableString")]
 fn test_get_mut() {
-    let mut dict = sample_dict();
+    let mut dict = sample_dict_mut();
+
     assert!(dict.get_mut(&NSNumber::new_i32(1)).is_some());
     assert!(dict.get_mut(&NSNumber::new_i32(2)).is_some());
     assert!(dict.get_mut(&NSNumber::new_i32(4)).is_none());
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSMutableString")]
 fn test_values_mut() {
-    let mut dict = sample_dict();
+    let mut dict = sample_dict_mut();
     let vec = dict.values_mut();
     assert_eq!(vec.len(), 3);
 }

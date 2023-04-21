@@ -1,6 +1,6 @@
 #![cfg(feature = "Foundation_NSMutableData")]
 
-use objc2::rc::{Id, Owned};
+use objc2::rc::Id;
 use objc2::runtime::Object;
 
 use icrate::Foundation::{NSData, NSMutableData, NSObject};
@@ -82,8 +82,8 @@ fn test_as_ref_borrow() {
     fn impls_borrow_mut<T: AsMut<U> + BorrowMut<U> + ?Sized, U: ?Sized>(_: &mut T) {}
 
     let mut obj = NSMutableData::new();
-    impls_borrow::<Id<NSMutableData, Owned>, NSMutableData>(&obj);
-    impls_borrow_mut::<Id<NSMutableData, Owned>, NSMutableData>(&mut obj);
+    impls_borrow::<Id<NSMutableData>, NSMutableData>(&obj);
+    impls_borrow_mut::<Id<NSMutableData>, NSMutableData>(&mut obj);
 
     impls_borrow::<NSMutableData, NSMutableData>(&obj);
     impls_borrow_mut::<NSMutableData, NSMutableData>(&mut obj);

@@ -1,10 +1,10 @@
 #![cfg(feature = "Foundation_NSArray")]
 #![cfg(feature = "Foundation_NSNumber")]
 use icrate::Foundation::{NSArray, NSNumber, NSObject};
-use objc2::rc::{Id, Owned, Ownership, Shared};
+use objc2::rc::Id;
 use objc2::rc::{__RcTestObject, __ThreadTestData};
 
-fn sample_array(len: usize) -> Id<NSArray<NSObject, Owned>, Owned> {
+fn sample_array(len: usize) -> Id<NSArray<NSObject>> {
     let mut vec = Vec::with_capacity(len);
     for _ in 0..len {
         vec.push(NSObject::new());
@@ -72,14 +72,14 @@ fn test_get() {
 
 #[test]
 fn test_retains_stored() {
-    let obj = Id::into_shared(__RcTestObject::new());
+    let obj = __RcTestObject::new();
     let mut expected = __ThreadTestData::current();
 
     let input = [obj.clone(), obj.clone()];
     expected.retain += 2;
     expected.assert_current();
 
-    let array = NSArray::from_slice(&input);
+    let array = NSArray::from_id_slice(&input);
     expected.retain += 2;
     expected.assert_current();
 
@@ -115,14 +115,14 @@ fn test_retains_stored() {
 fn test_nscopying_uses_retain() {
     use icrate::Foundation::{NSCopying, NSMutableCopying};
 
-    let obj = Id::into_shared(__RcTestObject::new());
-    let array = NSArray::from_slice(&[obj]);
+    let obj = __RcTestObject::new();
+    let array = NSArray::from_id_slice(&[obj]);
     let mut expected = __ThreadTestData::current();
 
     let _copy = array.copy();
     expected.assert_current();
 
-    let _copy = array.mutable_copy();
+    let _copy = array.mutableCopy();
     expected.retain += 1;
     expected.assert_current();
 }
@@ -136,8 +136,8 @@ fn test_nscopying_uses_retain() {
 fn test_iter_no_retain() {
     use icrate::Foundation::NSFastEnumeration2;
 
-    let obj = Id::into_shared(__RcTestObject::new());
-    let array = NSArray::from_slice(&[obj]);
+    let obj = __RcTestObject::new();
+    let array = NSArray::from_id_slice(&[obj]);
     let mut expected = __ThreadTestData::current();
 
     let iter = array.iter();
@@ -182,27 +182,11 @@ fn test_objects_in_range() {
 }
 
 #[test]
-fn test_into_vec() {
-    let array = sample_array(4);
-
-    let vec = NSArray::into_vec(array);
-    assert_eq!(vec.len(), 4);
-}
-
-#[test]
 #[cfg(feature = "Foundation_NSString")]
 fn test_generic_ownership_traits() {
     use icrate::Foundation::NSString;
 
     fn assert_partialeq<T: PartialEq>() {}
 
-    assert_partialeq::<NSArray<NSString, Shared>>();
-    assert_partialeq::<NSArray<NSString, Owned>>();
-
-    fn test_ownership_implies_partialeq<O: Ownership>() {
-        assert_partialeq::<NSArray<NSString, O>>();
-    }
-
-    test_ownership_implies_partialeq::<Shared>();
-    test_ownership_implies_partialeq::<Owned>();
+    assert_partialeq::<NSArray<NSString>>();
 }

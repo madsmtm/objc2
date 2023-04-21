@@ -32,6 +32,14 @@ pub struct ItemIdentifier<N = String> {
 }
 
 impl<N: ToOptionString> ItemIdentifier<N> {
+    pub fn from_raw(name: N, library: String) -> Self {
+        Self {
+            name,
+            library,
+            file_name: None,
+        }
+    }
+
     pub fn with_name(name: N, entity: &Entity<'_>, context: &Context<'_>) -> Self {
         let (mut library_name, mut file_name) = context
             .get_library_and_file_name(entity)

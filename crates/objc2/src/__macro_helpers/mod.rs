@@ -8,7 +8,7 @@ use crate::declare::ClassBuilder;
 use crate::declare::MethodImplementation;
 use crate::encode::Encode;
 use crate::message::__TupleExtender;
-use crate::rc::{Allocated, Id, Ownership};
+use crate::rc::{Allocated, Id};
 #[cfg(all(debug_assertions, feature = "verify"))]
 use crate::runtime::MethodDescription;
 use crate::runtime::{Class, Object, Protocol, Sel};
@@ -32,7 +32,10 @@ mod cache;
 mod declare_class;
 
 pub use self::cache::{CachedClass, CachedSel};
-pub use self::declare_class::{MaybeOptionId, MessageRecieveId};
+pub use self::declare_class::{
+    assert_mutability_matches_superclass_mutability, MaybeOptionId, MessageRecieveId,
+    ValidSubclassMutability,
+};
 
 // Common selectors.
 //
@@ -71,8 +74,8 @@ pub fn new_sel() -> Sel {
 ///     retainable object pointer type - we ensure this by making
 ///     `message_send_id` return `Id`.
 ///   - `init`: The method must be an instance method and must return an
-///     Objective-C pointer type - We ensure this by taking `Id<T, O>`, which
-///     means it can't be a class method!
+///     Objective-C pointer type - We ensure this by taking
+///     `Option<Allocated<T>>`, which means it can't be a class method!
 ///
 /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments>
 // TODO: Use an enum instead of u8 here when stable
@@ -162,9 +165,9 @@ unsafe fn encountered_error<E: Message>(err: *mut E) -> Id<E> {
     unsafe { Id::retain(err) }.expect("error parameter should be set if the method returns NULL")
 }
 
-impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O>> for New {
+impl<T: MessageReceiver, U: ?Sized + Message> MsgSendId<T, Id<U>> for New {
     #[inline]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U, O>>>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -196,9 +199,9 @@ impl<T: ?Sized + Message> MsgSendId<&'_ Class, Allocated<T>> for Alloc {
     }
 }
 
-impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Allocated<T>>, Id<T, O>> for Init {
+impl<T: ?Sized + Message> MsgSendId<Option<Allocated<T>>, Id<T>> for Init {
     #[inline]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<T, O>>>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<T>>>(
         obj: Option<Allocated<T>>,
         sel: Sel,
         args: A,
@@ -217,11 +220,9 @@ impl<T: ?Sized + Message, O: Ownership> MsgSendId<Option<Allocated<T>>, Id<T, O>
     }
 }
 
-impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O>>
-    for CopyOrMutCopy
-{
+impl<T: MessageReceiver, U: ?Sized + Message> MsgSendId<T, Id<U>> for CopyOrMutCopy {
     #[inline]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U, O>>>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -235,9 +236,9 @@ impl<T: MessageReceiver, U: ?Sized + Message, O: Ownership> MsgSendId<T, Id<U, O
     }
 }
 
-impl<T: MessageReceiver, U: Message, O: Ownership> MsgSendId<T, Id<U, O>> for Other {
+impl<T: MessageReceiver, U: Message> MsgSendId<T, Id<U>> for Other {
     #[inline]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U, O>>>(
+    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -264,20 +265,20 @@ pub trait MaybeUnwrap {
     fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Self::Input>, args: F::Args) -> Self;
 }
 
-impl<T: ?Sized, O: Ownership> MaybeUnwrap for Option<Id<T, O>> {
-    type Input = Id<T, O>;
+impl<T: ?Sized> MaybeUnwrap for Option<Id<T>> {
+    type Input = Id<T>;
 
     #[inline]
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Id<T, O>>, _args: F::Args) -> Self {
+    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Id<T>>, _args: F::Args) -> Self {
         obj
     }
 }
 
-impl<T: ?Sized, O: Ownership> MaybeUnwrap for Id<T, O> {
-    type Input = Id<T, O>;
+impl<T: ?Sized> MaybeUnwrap for Id<T> {
+    type Input = Id<T>;
 
     #[inline]
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Id<T, O>>, args: F::Args) -> Self {
+    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Id<T>>, args: F::Args) -> Self {
         match obj {
             Some(obj) => obj,
             None => F::failed(args),
@@ -830,21 +831,21 @@ mod tests {
     #[test]
     #[should_panic = "failed copying object"]
     fn test_copy_with_null() {
-        let obj = Id::into_shared(__RcTestObject::new());
+        let obj = __RcTestObject::new();
         let _obj: Id<__RcTestObject> = unsafe { msg_send_id![&obj, copyReturningNull] };
     }
 
     #[test]
     #[should_panic = "unexpected NULL returned from -[__RcTestObject methodReturningNull]"]
     fn test_normal_with_null() {
-        let obj = Id::into_shared(__RcTestObject::new());
+        let obj = __RcTestObject::new();
         let _obj: Id<__RcTestObject> = unsafe { msg_send_id![&obj, methodReturningNull] };
     }
 
     #[test]
     #[should_panic = "unexpected NULL returned from -[__RcTestObject aMethod:]"]
     fn test_normal_with_param_and_null() {
-        let obj = Id::into_shared(__RcTestObject::new());
+        let obj = __RcTestObject::new();
         let _obj: Id<__RcTestObject> = unsafe { msg_send_id![&obj, aMethod: false] };
     }
 
