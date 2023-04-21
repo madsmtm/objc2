@@ -98,6 +98,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   let obj: Id<NSObject> = unsafe { msg_send_id![NSObject::class(), new] };
   ```
+* **BREAKING**: Removed `impl<T> TryFrom<WeakId<T>> for Id<T>` impl since it
+  did not have a proper error type, making it less useful than just using
+  `WeakId::load`.
 
 
 ## 0.3.0-beta.5 - 2023-02-07

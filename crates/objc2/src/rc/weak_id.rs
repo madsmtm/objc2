@@ -186,13 +186,6 @@ impl<T: IsIdCloneable> From<Id<T>> for WeakId<T> {
     }
 }
 
-impl<T: IsRetainable> TryFrom<WeakId<T>> for Id<T> {
-    type Error = ();
-    fn try_from(weak: WeakId<T>) -> Result<Self, ()> {
-        weak.load().ok_or(())
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use core::mem;
