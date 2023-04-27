@@ -13,7 +13,6 @@ use core::cmp::Ordering;
 use core::fmt;
 use core::future::Future;
 use core::hash;
-use core::iter::FusedIterator;
 use core::ops::{Deref, DerefMut};
 use core::pin::Pin;
 use core::task::{Context, Poll};
@@ -130,49 +129,6 @@ impl<T: fmt::Debug + ?Sized> fmt::Debug for Id<T> {
         (**self).fmt(f)
     }
 }
-
-impl<I: Iterator + ?Sized + IsMutable> Iterator for Id<I> {
-    type Item = I::Item;
-    fn next(&mut self) -> Option<I::Item> {
-        (**self).next()
-    }
-    fn size_hint(&self) -> (usize, Option<usize>) {
-        (**self).size_hint()
-    }
-    fn nth(&mut self, n: usize) -> Option<I::Item> {
-        (**self).nth(n)
-    }
-}
-
-impl<I: DoubleEndedIterator + ?Sized + IsMutable> DoubleEndedIterator for Id<I> {
-    fn next_back(&mut self) -> Option<I::Item> {
-        (**self).next_back()
-    }
-    fn nth_back(&mut self, n: usize) -> Option<I::Item> {
-        (**self).nth_back(n)
-    }
-}
-
-impl<I: ExactSizeIterator + ?Sized + IsMutable> ExactSizeIterator for Id<I> {
-    fn len(&self) -> usize {
-        (**self).len()
-    }
-}
-
-impl<I: FusedIterator + ?Sized + IsMutable> FusedIterator for Id<I> {}
-
-// TODO: Consider this impl
-// impl<'a, T> IntoIterator for &'a Id<T>
-// where
-//     &'a T: IntoIterator,
-// {
-//     type Item = <&'a T as IntoIterator>::Item;
-//     type IntoIter = <&'a T as IntoIterator>::IntoIter;
-//
-//     fn into_iter(self) -> Self::IntoIter {
-//         (**self).into_iter()
-//     }
-// }
 
 impl<T: ?Sized> borrow::Borrow<T> for Id<T> {
     fn borrow(&self) -> &T {

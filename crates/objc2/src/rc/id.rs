@@ -44,6 +44,27 @@ use crate::{ffi, ClassType, Message};
 /// [`Box`]: alloc::boxed::Box
 ///
 ///
+/// # Forwarding implementations
+///
+/// Since `Id<T>` is a smart pointer, it naturally [`Deref`]s to `T`, and
+/// similarly implements [`DerefMut`] when mutable.
+///
+/// On top of this, it also forwards the implementation of a bunch of standard
+/// library traits such as [`PartialEq`], [`AsRef`], and so on, so that it
+/// becomes easy to use e.g. `Id<NSString>` as if it was just an `NSString`.
+/// (Having just `NSString` is not possible since Objective-C objects cannot
+/// live on the stack, but instead must reside on the heap).
+///
+/// Note that because of current limitations in the Rust trait system, some
+/// traits like [`Default`] and [`IntoIterator`] are not directly
+/// implementable on `NSString`; for that ues-case, we provide the
+/// [`DefaultId`] and [`IdIntoIterator`] traits, which make the aforementioned
+/// traits available on `Id`.
+///
+/// [`IdIntoIterator`]: crate::rc::IdIntoIterator
+/// [`DefaultId`]: crate::rc::DefaultId
+///
+///
 /// # Memory layout
 ///
 /// This is guaranteed to have the same size and alignment as a pointer to the
