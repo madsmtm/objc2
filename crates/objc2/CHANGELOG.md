@@ -54,6 +54,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `extern_protocol!` and `declare_class!`.
 * Added `rc::IdIntoIterator` helper trait and forwarding `IntoIterator`
   implementations for `rc::Id`.
+* Added `rc::IdFromIterator` helper trait for implementing `IntoIterator`
+  for `rc::Id`.
 
 ### Changed
 * **BREAKING**: `objc2::rc::AutoreleasePool` is now a zero-sized `Copy` type

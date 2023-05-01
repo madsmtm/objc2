@@ -56,13 +56,15 @@ use crate::{ffi, ClassType, Message};
 /// live on the stack, but instead must reside on the heap).
 ///
 /// Note that because of current limitations in the Rust trait system, some
-/// traits like [`Default`] and [`IntoIterator`] are not directly
-/// implementable on `NSString`; for that ues-case, we provide the
-/// [`DefaultId`] and [`IdIntoIterator`] traits, which make the aforementioned
-/// traits available on `Id`.
+/// traits like [`Default`], [`IntoIterator`], [`FromIterator`], [`From`] and
+/// [`Into`] are not directly implementable on `NSString`; for that use-case,
+/// we instead provide the [`DefaultId`], [`IdIntoIterator`] and
+/// [`IdFromIterator`] traits, which make some of the the aforementioned
+/// traits implementable on `Id`.
 ///
-/// [`IdIntoIterator`]: crate::rc::IdIntoIterator
 /// [`DefaultId`]: crate::rc::DefaultId
+/// [`IdIntoIterator`]: crate::rc::IdIntoIterator
+/// [`IdFromIterator`]: crate::rc::IdFromIterator
 ///
 ///
 /// # Memory layout

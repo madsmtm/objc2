@@ -23,7 +23,7 @@ impl<T: ?Sized + DefaultId> Default for Id<T> {
 /// Helper trait to implement [`IntoIterator`] on [`Id`].
 ///
 /// This should be implemented in exactly the same fashion as if you were
-/// implementing `IntoIterator` for your type normally.
+/// just implementing `IntoIterator` for your type normally.
 //
 // Note that [`Box<T>` gets to cheat with regards moves][box-move], so
 // `boxed.into_iter()` is possible, while `id.into_iter()` is not possible
@@ -108,6 +108,23 @@ where
     }
 }
 
+/// Helper trait to implement [`FromIterator`] on [`Id`].
+///
+/// This should be implemented in exactly the same fashion as if you were
+/// just implementing `FromIterator` for your type normally.
+pub trait IdFromIterator<T>: Sized {
+    /// Creates an `Id` from an iterator.
+    fn id_from_iter<I>(iter: I) -> Id<Self>
+    where
+        I: IntoIterator<Item = T>;
+}
+
+impl<T, U: IdFromIterator<T>> FromIterator<T> for Id<U> {
+    #[inline]
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        U::id_from_iter(iter)
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -179,12 +196,18 @@ mod tests {
         }
     }
 
-    impl<'a> IntoIterator for Id<Collection> {
+    impl IdIntoIterator for Collection {
         type Item = Id<NSObject>;
         type IntoIter = IntoIter;
 
-        fn into_iter(self) -> Self::IntoIter {
-            IntoIter(self)
+        fn id_into_iter(this: Id<Self>) -> Self::IntoIter {
+            IntoIter(this)
+        }
+    }
+
+    impl IdFromIterator<Id<NSObject>> for Collection {
+        fn id_from_iter<I: IntoIterator<Item = Id<NSObject>>>(_iter: I) -> Id<Self> {
+            Collection::default_id()
         }
     }
 
@@ -206,5 +229,11 @@ mod tests {
         for _ in &mut obj {}
 
         for _ in obj {}
+    }
+
+
+    #[test]
+    fn test_from_iter() {
+        let _: Id<Collection> = [NSObject::new()].into_iter().collect();
     }
 }
