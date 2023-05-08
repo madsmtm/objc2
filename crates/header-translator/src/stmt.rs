@@ -64,6 +64,26 @@ fn parse_protocols(
     });
 }
 
+fn parse_direct_protocols(entity: &Entity<'_>, context: &Context<'_>) -> BTreeSet<ItemIdentifier> {
+    let mut protocols = BTreeSet::new();
+
+    #[allow(clippy::single_match)]
+    immediate_children(entity, |entity, _span| match entity.get_kind() {
+        EntityKind::ObjCProtocolRef => {
+            let entity = entity
+                .get_reference()
+                .expect("ObjCProtocolRef to reference entity");
+            protocols.insert(
+                ItemIdentifier::new(&entity, context)
+                    .map_name(|name| context.replace_protocol_name(name)),
+            );
+        }
+        _ => {}
+    });
+
+    protocols
+}
+
 fn parse_superclass<'ty>(
     entity: &Entity<'ty>,
     context: &Context<'_>,
@@ -89,18 +109,28 @@ fn parse_superclass<'ty>(
     superclass.map(|entity| (entity, ItemIdentifier::new(&entity, context), generics))
 }
 
-/// Takes one of:
-/// - `EntityKind::ObjCInterfaceDecl`
-/// - `EntityKind::ObjCProtocolDecl`
-/// - `EntityKind::ObjCCategoryDecl`
-fn parse_objc_decl(
+fn parse_class_generics(entity: &Entity<'_>, _context: &Context<'_>) -> Vec<String> {
+    let mut generics = Vec::new();
+
+    #[allow(clippy::single_match)]
+    immediate_children(entity, |entity, _span| match entity.get_kind() {
+        EntityKind::TemplateTypeParameter => {
+            // TODO: Generics with bounds (like NSMeasurement<UnitType: NSUnit *>)
+            // let ty = entity.get_type().expect("template type");
+            let name = entity.get_name().expect("template name");
+            generics.push(name);
+        }
+        _ => {}
+    });
+
+    generics
+}
+
+fn parse_methods(
     entity: &Entity<'_>,
-    superclass: bool,
-    mut generics: Option<&mut Vec<String>>,
     get_data: impl Fn(&str) -> MethodData,
     context: &Context<'_>,
-) -> (BTreeSet<ItemIdentifier>, Vec<Method>, Vec<String>) {
-    let mut protocols = BTreeSet::new();
+) -> (Vec<Method>, Vec<String>) {
     let mut methods = Vec::new();
     let mut designated_initializers = Vec::new();
 
@@ -109,43 +139,6 @@ fn parse_objc_decl(
     let mut properties = HashSet::new();
 
     immediate_children(entity, |entity, span| match entity.get_kind() {
-        EntityKind::ObjCExplicitProtocolImpl if generics.is_none() && !superclass => {
-            // TODO NS_PROTOCOL_REQUIRES_EXPLICIT_IMPLEMENTATION
-        }
-        EntityKind::ObjCIvarDecl | EntityKind::StructDecl | EntityKind::UnionDecl if superclass => {
-            // Explicitly ignored
-        }
-        EntityKind::ObjCSuperClassRef | EntityKind::TypeRef if superclass => {
-            // Parsed in parse_superclass
-        }
-        EntityKind::ObjCSubclassingRestricted if superclass => {
-            // TODO: https://clang.llvm.org/docs/AttributeReference.html#objc-subclassing-restricted
-        }
-        EntityKind::ObjCRootClass => {
-            debug!("parsing root class");
-        }
-        EntityKind::ObjCClassRef if generics.is_some() => {
-            // debug!("ObjCClassRef: {:?}", entity.get_display_name());
-        }
-        EntityKind::TemplateTypeParameter => {
-            if let Some(generics) = &mut generics {
-                // TODO: Generics with bounds (like NSMeasurement<UnitType: NSUnit *>)
-                // let ty = entity.get_type().expect("template type");
-                let name = entity.get_name().expect("template name");
-                generics.push(name);
-            } else {
-                error!("unsupported generics");
-            }
-        }
-        EntityKind::ObjCProtocolRef => {
-            let entity = entity
-                .get_reference()
-                .expect("ObjCProtocolRef to reference entity");
-            protocols.insert(
-                ItemIdentifier::new(&entity, context)
-                    .map_name(|name| context.replace_protocol_name(name)),
-            );
-        }
         EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
             drop(span);
             let partial = Method::partial(entity);
@@ -184,18 +177,7 @@ fn parse_objc_decl(
                 methods.push(setter);
             }
         }
-        EntityKind::VisibilityAttr => {
-            // Already exposed as entity.get_visibility()
-        }
-        EntityKind::ObjCException if superclass => {
-            // Maybe useful for knowing when to implement `Error` for the type
-        }
-        EntityKind::UnexposedAttr => {
-            if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                error!(?attr, "unknown attribute");
-            }
-        }
-        _ => error!("unknown"),
+        _ => {}
     });
 
     if !properties.is_empty() {
@@ -206,7 +188,76 @@ fn parse_objc_decl(
         );
     }
 
-    (protocols, methods, designated_initializers)
+    (methods, designated_initializers)
+}
+
+/// Takes one of:
+/// - `EntityKind::ObjCInterfaceDecl`
+/// - `EntityKind::ObjCProtocolDecl`
+/// - `EntityKind::ObjCCategoryDecl`
+fn verify_objc_decl(entity: &Entity<'_>, context: &Context<'_>) {
+    let parent_kind = entity.get_kind();
+
+    immediate_children(entity, |entity, _span| {
+        match (entity.get_kind(), parent_kind) {
+            (EntityKind::ObjCExplicitProtocolImpl, EntityKind::ObjCProtocolDecl) => {
+                // TODO NS_PROTOCOL_REQUIRES_EXPLICIT_IMPLEMENTATION
+            }
+            (
+                EntityKind::ObjCIvarDecl | EntityKind::StructDecl | EntityKind::UnionDecl,
+                EntityKind::ObjCInterfaceDecl,
+            ) => {
+                // Explicitly ignored
+            }
+            (
+                EntityKind::ObjCSuperClassRef | EntityKind::TypeRef,
+                EntityKind::ObjCInterfaceDecl,
+            ) => {
+                // Parsed in parse_superclass
+            }
+            (EntityKind::ObjCSubclassingRestricted, EntityKind::ObjCInterfaceDecl) => {
+                // TODO: https://clang.llvm.org/docs/AttributeReference.html#objc-subclassing-restricted
+            }
+            (EntityKind::ObjCRootClass, EntityKind::ObjCInterfaceDecl) => {
+                debug!("parsing root class");
+            }
+            (
+                EntityKind::ObjCClassRef,
+                EntityKind::ObjCInterfaceDecl | EntityKind::ObjCCategoryDecl,
+            ) => {
+                // debug!("ObjCClassRef: {:?}", entity.get_display_name());
+            }
+            (
+                EntityKind::TemplateTypeParameter,
+                EntityKind::ObjCInterfaceDecl | EntityKind::ObjCCategoryDecl,
+            ) => {
+                // Parsed in parse_class_generics
+            }
+            (EntityKind::ObjCProtocolRef, _) => {
+                // Parsed in parse_protocols and parse_direct_protocols
+            }
+            (
+                EntityKind::ObjCInstanceMethodDecl
+                | EntityKind::ObjCClassMethodDecl
+                | EntityKind::ObjCPropertyDecl,
+                _,
+            ) => {
+                // Parsed in parse_methods
+            }
+            (EntityKind::VisibilityAttr, _) => {
+                // Already exposed as entity.get_visibility()
+            }
+            (EntityKind::ObjCException, EntityKind::ObjCInterfaceDecl) => {
+                // Maybe useful for knowing when to implement `Error` for the type
+            }
+            (EntityKind::UnexposedAttr, _) => {
+                if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                    error!(?attr, "unknown attribute");
+                }
+            }
+            (_, parent_kind) => error!(?parent_kind, "unknown in parent"),
+        }
+    });
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
@@ -453,12 +504,11 @@ impl Stmt {
                 }
 
                 let availability = Availability::parse(entity, context);
-                let mut generics = Vec::new();
 
-                let (_, methods, designated_initializers) = parse_objc_decl(
+                verify_objc_decl(entity, context);
+                let generics = parse_class_generics(entity, context);
+                let (methods, designated_initializers) = parse_methods(
                     entity,
-                    true,
-                    Some(&mut generics),
                     |name| ClassData::get_method_data(data, name),
                     context,
                 );
@@ -532,12 +582,11 @@ impl Stmt {
                     }
                 }
 
-                let mut generics = Vec::new();
-
-                let (protocols, methods, designated_initializers) = parse_objc_decl(
+                verify_objc_decl(entity, context);
+                let generics = parse_class_generics(entity, context);
+                let protocols = parse_direct_protocols(entity, context);
+                let (methods, designated_initializers) = parse_methods(
                     entity,
-                    false,
-                    Some(&mut generics),
                     |name| ClassData::get_method_data(data, name),
                     context,
                 );
@@ -587,10 +636,10 @@ impl Stmt {
 
                 let availability = Availability::parse(entity, context);
 
-                let (protocols, methods, designated_initializers) = parse_objc_decl(
+                verify_objc_decl(entity, context);
+                let protocols = parse_direct_protocols(entity, context);
+                let (methods, designated_initializers) = parse_methods(
                     entity,
-                    false,
-                    None,
                     |name| {
                         data.and_then(|data| data.methods.get(name))
                             .copied()
