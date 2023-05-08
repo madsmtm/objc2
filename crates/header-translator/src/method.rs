@@ -421,7 +421,8 @@ impl<'tu> PartialMethod<'tu> {
         }
 
         let result_type = entity.get_result_type().expect("method return type");
-        let mut result_type = Ty::parse_method_return(result_type, context);
+        let default_nonnull = (selector == "init" && !is_class) || (selector == "new" && is_class);
+        let mut result_type = Ty::parse_method_return(result_type, default_nonnull, context);
 
         let memory_management = MemoryManagement::new(is_class, &selector, &result_type, modifiers);
 
