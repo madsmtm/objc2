@@ -4,8 +4,6 @@ use core::fmt;
 use core::ops::AddAssign;
 use core::str;
 
-use objc2::rc::DefaultId;
-
 use crate::common::*;
 use crate::Foundation::{NSMutableString, NSString};
 
@@ -19,13 +17,6 @@ impl NSMutableString {
             let obj = super::string::from_str(Self::class(), string);
             Id::new(obj.cast()).unwrap()
         }
-    }
-}
-
-impl DefaultId for NSMutableString {
-    #[inline]
-    fn default_id() -> Id<Self> {
-        Self::new()
     }
 }
 

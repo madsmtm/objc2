@@ -6,8 +6,6 @@ use core::ops::Index;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::slice::{self, SliceIndex};
 
-use objc2::rc::DefaultId;
-
 use crate::common::*;
 use crate::Foundation::{self, NSData};
 
@@ -82,13 +80,6 @@ impl<I: SliceIndex<[u8]>> Index<I> for NSData {
     fn index(&self, index: I) -> &Self::Output {
         // Replaces the need for getBytes:range:
         Index::index(self.bytes(), index)
-    }
-}
-
-impl DefaultId for NSData {
-    #[inline]
-    fn default_id() -> Id<Self> {
-        Self::new()
     }
 }
 

@@ -4,7 +4,6 @@ use core::cmp::Ordering;
 use core::ops::{Index, IndexMut};
 
 use objc2::mutability::{IsMutable, IsRetainable};
-use objc2::rc::DefaultId;
 
 use super::util;
 use crate::common::*;
@@ -173,12 +172,5 @@ impl<T: Message> Index<usize> for NSMutableArray<T> {
 impl<T: IsMutable> IndexMut<usize> for NSMutableArray<T> {
     fn index_mut(&mut self, index: usize) -> &mut T {
         self.get_mut(index).unwrap()
-    }
-}
-
-impl<T: Message> DefaultId for NSMutableArray<T> {
-    #[inline]
-    fn default_id() -> Id<Self> {
-        Self::new()
     }
 }

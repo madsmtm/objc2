@@ -5,8 +5,6 @@ use core::ops::{Index, IndexMut, Range};
 use core::slice::{self, SliceIndex};
 use std::io;
 
-use objc2::rc::DefaultId;
-
 use crate::common::*;
 use crate::Foundation::{NSMutableData, NSRange};
 
@@ -133,13 +131,6 @@ impl io::Write for NSMutableData {
 
     fn flush(&mut self) -> io::Result<()> {
         Ok(())
-    }
-}
-
-impl DefaultId for NSMutableData {
-    #[inline]
-    fn default_id() -> Id<Self> {
-        Self::new()
     }
 }
 

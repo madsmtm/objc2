@@ -18,7 +18,7 @@ pub(crate) use objc2::mutability::{
     MutableWithImmutableSuperclass,
 };
 #[cfg(feature = "objective-c")]
-pub(crate) use objc2::rc::{Allocated, Id};
+pub(crate) use objc2::rc::{Allocated, DefaultId, Id};
 #[cfg(feature = "objective-c")]
 pub(crate) use objc2::runtime::{Bool, Class, Object, Sel};
 #[cfg(feature = "objective-c")]

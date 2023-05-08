@@ -246,6 +246,10 @@ impl Method {
         (self.is_class, self.selector.clone())
     }
 
+    pub(crate) fn usable_in_default_id(&self) -> bool {
+        self.selector == "new" && self.is_class && self.arguments.is_empty() && self.safe
+    }
+
     fn parent_type_data(entity: &Entity<'_>, context: &Context<'_>) -> (bool, bool) {
         let parent = entity.get_semantic_parent().expect("method parent");
         let (parent, is_protocol) = match parent.get_kind() {

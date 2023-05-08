@@ -2,7 +2,6 @@
 use alloc::vec::Vec;
 
 use objc2::mutability::IsRetainable;
-use objc2::rc::DefaultId;
 
 use super::util;
 use crate::common::*;
@@ -148,12 +147,5 @@ impl<T: Message + PartialEq> Extend<Id<T>> for NSMutableSet<T> {
         for item in iter {
             self.insert(item);
         }
-    }
-}
-
-impl<T: Message> DefaultId for NSMutableSet<T> {
-    #[inline]
-    fn default_id() -> Id<Self> {
-        Self::new()
     }
 }

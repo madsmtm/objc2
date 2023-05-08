@@ -43,6 +43,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed ownership parameter from generic types, since the
   ownership/mutability information is now stored in `ClassType::Mutability`.
 * **BREAKING**: Renamed `NSMutableCopying::mutable_copy` to `::mutableCopy`.
+* **BREAKING**: The default value for `NSUUID` was changed from a nil UUID to
+  a new random UUID.
 
 ### Removed
 * **BREAKING**: Removed various redundant `NSProxy` methods.

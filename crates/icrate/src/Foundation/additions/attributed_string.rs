@@ -2,7 +2,6 @@
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::extern_methods;
-use objc2::rc::DefaultId;
 
 use crate::common::*;
 use crate::Foundation::{self, NSAttributedString, NSAttributedStringKey};
@@ -45,10 +44,3 @@ extern_methods!(
         }
     }
 );
-
-impl DefaultId for NSAttributedString {
-    #[inline]
-    fn default_id() -> Id<Self> {
-        Self::new()
-    }
-}

@@ -1428,6 +1428,25 @@ impl fmt::Display for Stmt {
                 }
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
+
+                if let Some(method) = methods.iter().find(|method| method.usable_in_default_id()) {
+                    if let Some(feature) = cls.feature() {
+                        // Assume new methods require no extra features
+                        writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
+                    }
+                    writeln!(
+                        f,
+                        "impl{} DefaultId for {}{} {{",
+                        GenericParamsHelper(generics, "Message"),
+                        cls.path_in_relation_to(category),
+                        GenericTyHelper(generics),
+                    )?;
+                    writeln!(f, "    #[inline]")?;
+                    writeln!(f, "    fn default_id() -> Id<Self> {{")?;
+                    writeln!(f, "        Self::{}()", method.fn_name)?;
+                    writeln!(f, "    }}")?;
+                    writeln!(f, "}}")?;
+                }
             }
             Self::ProtocolImpl {
                 cls,

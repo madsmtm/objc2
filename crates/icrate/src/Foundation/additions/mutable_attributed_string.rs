@@ -1,6 +1,4 @@
 #![cfg(feature = "Foundation_NSMutableAttributedString")]
-use objc2::rc::DefaultId;
-
 use crate::common::*;
 use crate::Foundation::{self, NSAttributedString, NSMutableAttributedString};
 
@@ -17,12 +15,5 @@ impl NSMutableAttributedString {
     #[doc(alias = "initWithAttributedString:")]
     pub fn from_attributed_nsstring(attributed_string: &NSAttributedString) -> Id<Self> {
         Self::initWithAttributedString(Self::alloc(), attributed_string)
-    }
-}
-
-impl DefaultId for NSMutableAttributedString {
-    #[inline]
-    fn default_id() -> Id<Self> {
-        Self::new()
     }
 }

@@ -6,7 +6,6 @@ use core::ops::{Index, IndexMut};
 use core::ptr;
 
 use objc2::mutability::{IsMutable, IsRetainable};
-use objc2::rc::DefaultId;
 use objc2::runtime::Object;
 
 use super::util;
@@ -136,12 +135,5 @@ impl<'a, K: Message, V: Message> Index<&'a K> for NSMutableDictionary<K, V> {
 impl<'a, K: Message, V: IsMutable> IndexMut<&'a K> for NSMutableDictionary<K, V> {
     fn index_mut<'s>(&'s mut self, index: &'a K) -> &'s mut V {
         self.get_mut(index).unwrap()
-    }
-}
-
-impl<K: Message, V: Message> DefaultId for NSMutableDictionary<K, V> {
-    #[inline]
-    fn default_id() -> Id<Self> {
-        Self::new()
     }
 }
