@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `NSDictionary::values_retained`
 * Added `MainThreadMarker::alloc` for allocating objects that need to be so on
   the main thread.
+* Added automatically generated `new`/`init` methods for all types.
 
 ### Changed
 * **BREAKING**: Renamed the `from_slice` method on `NSArray`, `NSSet`,
@@ -42,6 +43,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed ownership parameter from generic types, since the
   ownership/mutability information is now stored in `ClassType::Mutability`.
 * **BREAKING**: Renamed `NSMutableCopying::mutable_copy` to `::mutableCopy`.
+* **BREAKING**: The default value for `NSUUID` was changed from a nil UUID to
+  a new random UUID.
 
 ### Removed
 * **BREAKING**: Removed various redundant `NSProxy` methods.
@@ -50,6 +53,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed associated types from `NSCopying` and
   `NSMutableCopying`, that information is now specified in
   `ClassType::Mutability` instead.
+* **BREAKING**: Removed a few `init` methods on subclasses that were declared
+  on categories on their superclass. These should be re-added at some point.
 
 
 ## icrate 0.0.2 - 2023-02-07

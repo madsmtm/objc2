@@ -9,7 +9,6 @@ use core::ptr::{self, NonNull};
 
 use objc2::msg_send;
 use objc2::mutability::IsMutable;
-use objc2::rc::DefaultId;
 use objc2::runtime::Object;
 
 use super::util;
@@ -18,9 +17,6 @@ use crate::Foundation::{self, Copyhelper, NSDictionary};
 
 extern_methods!(
     unsafe impl<K: Message, V: Message> NSDictionary<K, V> {
-        #[method_id(new)]
-        pub fn new() -> Id<Self>;
-
         pub fn from_keys_and_objects<T>(keys: &[&T], mut vals: Vec<Id<V>>) -> Id<Self>
         where
             T: ClassType + Foundation::NSCopying,
@@ -213,13 +209,6 @@ extern_methods!(
         }
     }
 );
-
-impl<K: Message, V: Message> DefaultId for NSDictionary<K, V> {
-    #[inline]
-    fn default_id() -> Id<Self> {
-        Self::new()
-    }
-}
 
 unsafe impl<K: Message, V: Message> Foundation::NSFastEnumeration2 for NSDictionary<K, V> {
     type Item = K;

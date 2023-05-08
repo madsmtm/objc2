@@ -5,7 +5,6 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::msg_send;
 use objc2::mutability::IsRetainable;
-use objc2::rc::DefaultId;
 
 use super::util;
 use crate::common::*;
@@ -13,18 +12,6 @@ use crate::Foundation::{self, NSSet};
 
 extern_methods!(
     unsafe impl<T: Message> NSSet<T> {
-        /// Creates an empty [`NSSet`].
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icrate::Foundation::{NSSet, NSString};
-        ///
-        /// let set = NSSet::<NSString>::new();
-        /// ```
-        #[method_id(new)]
-        pub fn new() -> Id<Self>;
-
         /// Creates an [`NSSet`] from a vector.
         ///
         /// # Examples
@@ -325,13 +312,6 @@ impl<'a, T: Message> IntoIterator for &'a NSSet<T> {
     fn into_iter(self) -> Self::IntoIter {
         use Foundation::NSFastEnumeration2;
         self.iter_fast()
-    }
-}
-
-impl<T: Message> DefaultId for NSSet<T> {
-    #[inline]
-    fn default_id() -> Id<Self> {
-        Self::new()
     }
 }
 

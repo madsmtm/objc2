@@ -7,7 +7,6 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::msg_send;
 use objc2::mutability::{IsMutable, IsRetainable};
-use objc2::rc::DefaultId;
 
 use super::util;
 use crate::common::*;
@@ -16,10 +15,6 @@ use crate::Foundation::{self, NSArray};
 extern_methods!(
     /// Creation methods.
     unsafe impl<T: Message> NSArray<T> {
-        /// Get an empty array.
-        #[method_id(new)]
-        pub fn new() -> Id<Self>;
-
         pub fn from_vec(mut vec: Vec<Id<T>>) -> Id<Self> {
             // We intentionally extract the length before we access the
             // pointer as mutable, to not invalidate that mutable pointer.
@@ -235,13 +230,6 @@ impl<T: Message> Index<usize> for NSArray<T> {
 impl<T: IsMutable> IndexMut<usize> for NSArray<T> {
     fn index_mut(&mut self, index: usize) -> &mut T {
         self.get_mut(index).unwrap()
-    }
-}
-
-impl<T: Message> DefaultId for NSArray<T> {
-    #[inline]
-    fn default_id() -> Id<Self> {
-        Self::new()
     }
 }
 

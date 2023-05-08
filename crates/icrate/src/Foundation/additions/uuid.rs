@@ -2,8 +2,6 @@
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::rc::DefaultId;
-
 use crate::common::*;
 use crate::Foundation::{self, UuidBytes, NSUUID};
 
@@ -83,9 +81,3 @@ impl fmt::Debug for NSUUID {
 //         res.into()
 //     }
 // }
-
-impl DefaultId for NSUUID {
-    fn default_id() -> Id<Self> {
-        Self::nil()
-    }
-}

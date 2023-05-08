@@ -157,6 +157,17 @@ pub struct MethodData {
     pub mutating: Option<bool>,
 }
 
+impl MethodData {
+    pub(crate) fn merge_with_superclass(self, superclass: Self) -> Self {
+        Self {
+            // Only use `unsafe` from itself, never take if from the superclass
+            unsafe_: self.unsafe_,
+            skipped: self.skipped | superclass.skipped,
+            mutating: self.mutating.or(superclass.mutating),
+        }
+    }
+}
+
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct FnData {

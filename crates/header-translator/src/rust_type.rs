@@ -1211,8 +1211,22 @@ impl Ty {
         }
     }
 
-    pub fn parse_method_return(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = Inner::parse(ty, Lifetime::Unspecified, context);
+    pub fn parse_method_return(ty: Type<'_>, default_nonnull: bool, context: &Context<'_>) -> Self {
+        let mut ty = Inner::parse(ty, Lifetime::Unspecified, context);
+
+        // As in `parse_property_return`, the nullability is not guaranteed by
+        // the method, and can also fail in OOM situations, but that is
+        // handled by `#[method_id(...)]`
+        if default_nonnull {
+            match &mut ty {
+                Inner::Id { nullability, .. } => {
+                    if *nullability == Nullability::Unspecified {
+                        *nullability = Nullability::NonNull;
+                    }
+                }
+                _ => warn!(?ty, "`default_nonnull` which is not an object"),
+            }
+        }
 
         ty.visit_lifetime(|lifetime| {
             if lifetime != Lifetime::Unspecified {
@@ -1233,7 +1247,7 @@ impl Ty {
     }
 
     pub fn parse_function_return(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let mut this = Self::parse_method_return(ty, context);
+        let mut this = Self::parse_method_return(ty, false, context);
         this.kind = TyKind::FnReturn;
         this
     }

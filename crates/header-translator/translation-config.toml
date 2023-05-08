@@ -1319,6 +1319,24 @@ derives = "Debug, PartialEq, Hash"
 skipped = true
 [class.NSValue.methods.new]
 skipped = true
+[class.NSNumber.methods.init]
+skipped = true
+[class.NSNumber.methods.new]
+skipped = true
+
+# Marked as API_UNAVAILABLE in a category, so we hit the duplicate checking
+[class.NSLocale.methods.init]
+skipped = true
+[class.NSLocale.methods.new]
+skipped = true
+[class.NSNotification.methods.init]
+skipped = true
+[class.NSNotification.methods.new]
+skipped = true
+[class.GKLeaderboard.methods.init]
+skipped = true
+[class.GKLeaderboard.methods.new]
+skipped = true
 
 # Manual definitions
 [class.NSException.methods.raise]
@@ -1326,6 +1344,10 @@ skipped = true
 [class.NSData.methods.bytes]
 skipped = true
 [class.NSMutableData.methods.length]
+skipped = true
+[class.NSError.methods.new]
+skipped = true
+[class.NSException.methods.new]
 skipped = true
 
 # Wrong type on GNUStep

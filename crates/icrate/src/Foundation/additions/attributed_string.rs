@@ -2,7 +2,6 @@
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::extern_methods;
-use objc2::rc::DefaultId;
 
 use crate::common::*;
 use crate::Foundation::{self, NSAttributedString, NSAttributedStringKey};
@@ -19,10 +18,6 @@ impl RefUnwindSafe for NSAttributedString {}
 extern_methods!(
     /// Creating attributed strings.
     unsafe impl NSAttributedString {
-        /// Construct an empty attributed string.
-        #[method_id(new)]
-        pub fn new() -> Id<Self>;
-
         /// Creates a new attributed string from the given string and attributes.
         ///
         /// The attributes are associated with every UTF-16 code unit in the
@@ -49,10 +44,3 @@ extern_methods!(
         }
     }
 );
-
-impl DefaultId for NSAttributedString {
-    #[inline]
-    fn default_id() -> Id<Self> {
-        Self::new()
-    }
-}

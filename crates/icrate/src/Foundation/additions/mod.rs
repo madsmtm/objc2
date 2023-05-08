@@ -21,7 +21,6 @@ mod enumerator;
 mod error;
 mod exception;
 mod geometry;
-mod lock;
 mod mutable_array;
 mod mutable_attributed_string;
 mod mutable_data;

@@ -152,6 +152,41 @@ macro_rules! __data_methods {
     (
         @($data:expr)
     ) => {};
+    // Mark init (and by extension, `new`) method as safe
+    (
+        @($data:expr)
+
+        unsafe -init;
+
+        $($rest:tt)*
+    ) => {
+        let mut method_data = $data.methods.entry("init".to_string()).or_default();
+        method_data.unsafe_ = false;
+
+        let mut method_data = $data.methods.entry("new".to_string()).or_default();
+        method_data.unsafe_ = false;
+
+        __data_methods! {
+            @($data)
+            $($rest)*
+        }
+    };
+    // Mark new (and by extension, `init`) method as safe
+    (
+        @($data:expr)
+
+        unsafe +new;
+
+        $($rest:tt)*
+    ) => {
+        __data_methods! {
+            @($data)
+
+            unsafe -init;
+
+            $($rest)*
+        }
+    };
     // Mark method as safe
     (
         @($data:expr)

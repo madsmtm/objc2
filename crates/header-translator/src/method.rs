@@ -242,8 +242,12 @@ pub struct Method {
 
 impl Method {
     /// Value that uniquely identifies the method in a class.
-    pub fn id(&self) -> (bool, &str) {
-        (self.is_class, &self.selector)
+    pub fn id(&self) -> (bool, String) {
+        (self.is_class, self.selector.clone())
+    }
+
+    pub(crate) fn usable_in_default_id(&self) -> bool {
+        self.selector == "new" && self.is_class && self.arguments.is_empty() && self.safe
     }
 
     fn parent_type_data(entity: &Entity<'_>, context: &Context<'_>) -> (bool, bool) {
@@ -318,17 +322,6 @@ impl Method {
             attributes,
             _span,
         }
-    }
-
-    pub fn update(mut self, data: MethodData) -> Option<Self> {
-        if data.skipped {
-            return None;
-        }
-
-        self.mutating = data.mutating.unwrap_or(false);
-        self.safe = !data.unsafe_;
-
-        Some(self)
     }
 
     pub fn visit_required_types(&self, mut f: impl FnMut(&ItemIdentifier)) {
@@ -432,7 +425,8 @@ impl<'tu> PartialMethod<'tu> {
         }
 
         let result_type = entity.get_result_type().expect("method return type");
-        let mut result_type = Ty::parse_method_return(result_type, context);
+        let default_nonnull = (selector == "init" && !is_class) || (selector == "new" && is_class);
+        let mut result_type = Ty::parse_method_return(result_type, default_nonnull, context);
 
         let memory_management = MemoryManagement::new(is_class, &selector, &result_type, modifiers);
 
@@ -590,10 +584,9 @@ impl Method {
             return false;
         }
         if self.is_class {
-            !matches!(&*self.selector, "new" | "supportsSecureCoding")
+            true
         } else {
             self.memory_management == MemoryManagement::IdInit
-                && !matches!(&*self.selector, "init" | "initWithCoder:")
         }
     }
 }
