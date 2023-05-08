@@ -4,7 +4,6 @@ mod __NSDecimal;
 #[path = "NSNotFound.rs"]
 mod __NSNotFound;
 mod copy;
-mod data;
 mod debug;
 mod exception;
 mod generics;
