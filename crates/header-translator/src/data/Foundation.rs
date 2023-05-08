@@ -3,10 +3,12 @@ data! {
     // and returning mutable references to those would be unsound - hence
     // `NSArray` cannot be mutable.
     class NSArray: ImmutableWithMutableSubclass<Foundation::NSMutableArray> {
+        unsafe -init;
         unsafe -count;
     }
 
     class NSMutableArray: MutableWithImmutableSuperclass<Foundation::NSArray> {
+        unsafe -init;
         unsafe -removeAllObjects;
     }
 
@@ -28,6 +30,7 @@ data! {
     }
 
     class NSMutableString: MutableWithImmutableSuperclass<Foundation::NSString> {
+        unsafe -init;
         unsafe -initWithCapacity;
         unsafe +stringWithCapacity;
         unsafe -initWithString;
@@ -43,6 +46,7 @@ data! {
     class NSConstantString: Immutable {}
 
     class NSAttributedString: ImmutableWithMutableSubclass<Foundation::NSMutableAttributedString> {
+        unsafe -init;
         unsafe -initWithString;
         unsafe -initWithAttributedString;
         unsafe -string;
@@ -50,6 +54,7 @@ data! {
     }
 
     class NSMutableAttributedString: MutableWithImmutableSuperclass<Foundation::NSAttributedString> {
+        unsafe -init;
         unsafe -initWithString;
         unsafe -initWithAttributedString;
         unsafe -setAttributedString;
@@ -61,6 +66,7 @@ data! {
     }
 
     class NSData: ImmutableWithMutableSubclass<Foundation::NSMutableData> {
+        unsafe -init;
         unsafe -initWithData;
         unsafe +dataWithData;
         unsafe -length;
@@ -68,6 +74,7 @@ data! {
     }
 
     class NSMutableData: MutableWithImmutableSuperclass<Foundation::NSData> {
+        unsafe -init;
         unsafe +dataWithData;
         unsafe -initWithCapacity;
         unsafe +dataWithCapacity;
@@ -81,10 +88,12 @@ data! {
     class NSPurgeableData: Mutable {}
 
     class NSDictionary: ImmutableWithMutableSubclass<Foundation::NSMutableDictionary> {
+        unsafe -init;
         unsafe -count;
     }
 
     class NSMutableDictionary: MutableWithImmutableSuperclass<Foundation::NSDictionary> {
+        unsafe -init;
         unsafe -removeObjectForKey;
         unsafe -removeAllObjects;
     }
@@ -103,6 +112,7 @@ data! {
     }
 
     class NSLock {
+        unsafe -init;
         unsafe -name;
         unsafe -setName;
     }
@@ -120,6 +130,7 @@ data! {
     }
 
     class NSThread {
+        unsafe -init;
         unsafe +currentThread;
         unsafe +mainThread;
         unsafe -name;
@@ -135,10 +146,12 @@ data! {
     }
 
     class NSSet: ImmutableWithMutableSubclass<Foundation::NSMutableSet> {
+        unsafe -init;
         unsafe -count;
     }
 
     class NSMutableSet: MutableWithImmutableSuperclass<Foundation::NSSet> {
+        unsafe -init;
         unsafe -removeAllObjects;
     }
 

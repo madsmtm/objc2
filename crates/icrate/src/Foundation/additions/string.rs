@@ -30,11 +30,6 @@ impl UnwindSafe for NSString {}
 impl RefUnwindSafe for NSString {}
 
 impl NSString {
-    /// Construct an empty NSString.
-    pub fn new() -> Id<Self> {
-        Self::init(Self::alloc())
-    }
-
     /// The number of UTF-8 code units in `self`.
     #[doc(alias = "lengthOfBytesUsingEncoding")]
     #[doc(alias = "lengthOfBytesUsingEncoding:")]

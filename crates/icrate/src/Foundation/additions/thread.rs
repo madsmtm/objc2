@@ -15,13 +15,6 @@ unsafe impl Sync for NSThread {}
 impl UnwindSafe for NSThread {}
 impl RefUnwindSafe for NSThread {}
 
-extern_methods!(
-    unsafe impl NSThread {
-        #[method_id(new)]
-        unsafe fn new() -> Id<Self>;
-    }
-);
-
 /// Whether the application is multithreaded according to Cocoa.
 #[cfg(feature = "Foundation_NSThread")]
 pub fn is_multi_threaded() -> bool {

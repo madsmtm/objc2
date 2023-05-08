@@ -9,24 +9,18 @@ use objc2::rc::DefaultId;
 use crate::common::*;
 use crate::Foundation::{NSMutableString, NSString};
 
-extern_methods!(
-    /// Creating mutable strings.
-    unsafe impl NSMutableString {
-        /// Construct an empty [`NSMutableString`].
-        #[method_id(new)]
-        pub fn new() -> Id<Self>;
-
-        /// Creates a new [`NSMutableString`] by copying the given string slice.
-        #[doc(alias = "initWithBytes:length:encoding:")]
-        #[allow(clippy::should_implement_trait)] // Not really sure of a better name
-        pub fn from_str(string: &str) -> Id<Self> {
-            unsafe {
-                let obj = super::string::from_str(Self::class(), string);
-                Id::new(obj.cast()).unwrap()
-            }
+/// Creating mutable strings.
+impl NSMutableString {
+    /// Creates a new [`NSMutableString`] by copying the given string slice.
+    #[doc(alias = "initWithBytes:length:encoding:")]
+    #[allow(clippy::should_implement_trait)] // Not really sure of a better name
+    pub fn from_str(string: &str) -> Id<Self> {
+        unsafe {
+            let obj = super::string::from_str(Self::class(), string);
+            Id::new(obj.cast()).unwrap()
         }
     }
-);
+}
 
 impl DefaultId for NSMutableString {
     #[inline]

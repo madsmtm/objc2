@@ -18,9 +18,6 @@ use crate::Foundation::{self, Copyhelper, NSDictionary};
 
 extern_methods!(
     unsafe impl<K: Message, V: Message> NSDictionary<K, V> {
-        #[method_id(new)]
-        pub fn new() -> Id<Self>;
-
         pub fn from_keys_and_objects<T>(keys: &[&T], mut vals: Vec<Id<V>>) -> Id<Self>
         where
             T: ClassType + Foundation::NSCopying,

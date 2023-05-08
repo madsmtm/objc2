@@ -13,18 +13,6 @@ use crate::Foundation::{self, NSSet};
 
 extern_methods!(
     unsafe impl<T: Message> NSSet<T> {
-        /// Creates an empty [`NSSet`].
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icrate::Foundation::{NSSet, NSString};
-        ///
-        /// let set = NSSet::<NSString>::new();
-        /// ```
-        #[method_id(new)]
-        pub fn new() -> Id<Self>;
-
         /// Creates an [`NSSet`] from a vector.
         ///
         /// # Examples

@@ -16,10 +16,6 @@ use crate::Foundation::{self, NSArray};
 extern_methods!(
     /// Creation methods.
     unsafe impl<T: Message> NSArray<T> {
-        /// Get an empty array.
-        #[method_id(new)]
-        pub fn new() -> Id<Self>;
-
         pub fn from_vec(mut vec: Vec<Id<T>>) -> Id<Self> {
             // We intentionally extract the length before we access the
             // pointer as mutable, to not invalidate that mutable pointer.

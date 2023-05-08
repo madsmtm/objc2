@@ -580,10 +580,9 @@ impl Method {
             return false;
         }
         if self.is_class {
-            !matches!(&*self.selector, "new" | "supportsSecureCoding")
+            true
         } else {
             self.memory_management == MemoryManagement::IdInit
-                && !matches!(&*self.selector, "init" | "initWithCoder:")
         }
     }
 }

@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `NSDictionary::values_retained`
 * Added `MainThreadMarker::alloc` for allocating objects that need to be so on
   the main thread.
+* Added automatically generated `new`/`init` methods for all types.
 
 ### Changed
 * **BREAKING**: Renamed the `from_slice` method on `NSArray`, `NSSet`,

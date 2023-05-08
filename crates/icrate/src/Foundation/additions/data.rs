@@ -19,60 +19,52 @@ unsafe impl Send for NSData {}
 impl UnwindSafe for NSData {}
 impl RefUnwindSafe for NSData {}
 
-extern_methods!(
-    /// Creation methods.
-    unsafe impl NSData {
-        #[method_id(new)]
-        pub fn new() -> Id<Self>;
-
-        pub fn with_bytes(bytes: &[u8]) -> Id<Self> {
-            let bytes_ptr = bytes.as_ptr() as *mut c_void;
-            unsafe { Self::initWithBytes_length(Self::alloc(), bytes_ptr, bytes.len()) }
-        }
-
-        #[cfg(feature = "block")]
-        pub fn from_vec(bytes: Vec<u8>) -> Id<Self> {
-            // GNUStep's NSData `initWithBytesNoCopy:length:deallocator:` has a
-            // bug; it forgets to assign the input buffer and length to the
-            // instance before it swizzles to NSDataWithDeallocatorBlock.
-            // See https://github.com/gnustep/libs-base/pull/213
-            // So we just use NSDataWithDeallocatorBlock directly.
-            //
-            // NSMutableData does not have this problem.
-            #[cfg(feature = "gnustep-1-7")]
-            let cls = objc2::class!(NSDataWithDeallocatorBlock);
-            #[cfg(not(feature = "gnustep-1-7"))]
-            let cls = Self::class();
-
-            unsafe { Id::cast(with_vec(cls, bytes)) }
-        }
+/// Creation methods.
+impl NSData {
+    pub fn with_bytes(bytes: &[u8]) -> Id<Self> {
+        let bytes_ptr = bytes.as_ptr() as *mut c_void;
+        unsafe { Self::initWithBytes_length(Self::alloc(), bytes_ptr, bytes.len()) }
     }
 
-    /// Accessor methods.
-    unsafe impl NSData {
-        pub fn len(&self) -> usize {
-            self.length()
-        }
+    #[cfg(feature = "block")]
+    pub fn from_vec(bytes: Vec<u8>) -> Id<Self> {
+        // GNUStep's NSData `initWithBytesNoCopy:length:deallocator:` has a
+        // bug; it forgets to assign the input buffer and length to the
+        // instance before it swizzles to NSDataWithDeallocatorBlock.
+        // See https://github.com/gnustep/libs-base/pull/213
+        // So we just use NSDataWithDeallocatorBlock directly.
+        //
+        // NSMutableData does not have this problem.
+        #[cfg(feature = "gnustep-1-7")]
+        let cls = objc2::class!(NSDataWithDeallocatorBlock);
+        #[cfg(not(feature = "gnustep-1-7"))]
+        let cls = Self::class();
 
-        pub fn is_empty(&self) -> bool {
-            self.len() == 0
-        }
+        unsafe { Id::cast(with_vec(cls, bytes)) }
+    }
+}
 
-        #[method(bytes)]
-        fn bytes_raw(&self) -> *const c_void;
+/// Accessor methods.
+impl NSData {
+    pub fn len(&self) -> usize {
+        self.length()
+    }
 
-        pub fn bytes(&self) -> &[u8] {
-            let ptr = self.bytes_raw();
-            let ptr: *const u8 = ptr.cast();
-            // The bytes pointer may be null for length zero
-            if ptr.is_null() {
-                &[]
-            } else {
-                unsafe { slice::from_raw_parts(ptr, self.len()) }
-            }
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
+    pub fn bytes(&self) -> &[u8] {
+        let ptr = self.bytes_raw();
+        let ptr: *const u8 = ptr.cast();
+        // The bytes pointer may be null for length zero
+        if ptr.is_null() {
+            &[]
+        } else {
+            unsafe { slice::from_raw_parts(ptr, self.len()) }
         }
     }
-);
+}
 
 impl AsRef<[u8]> for NSData {
     fn as_ref(&self) -> &[u8] {
