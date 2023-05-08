@@ -84,29 +84,43 @@ fn parse_direct_protocols(entity: &Entity<'_>, context: &Context<'_>) -> BTreeSe
     protocols
 }
 
-fn parse_superclass<'ty>(
+fn parse_superclasses<'ty>(
     entity: &Entity<'ty>,
     context: &Context<'_>,
-) -> Option<(Entity<'ty>, ItemIdentifier, Vec<String>)> {
-    let mut superclass = None;
-    let mut generics = Vec::new();
+) -> Vec<(ItemIdentifier, Vec<String>, Entity<'ty>)> {
+    let mut current_entity = *entity;
+    let mut superclasses = vec![];
 
-    immediate_children(entity, |entity, _span| match entity.get_kind() {
-        EntityKind::ObjCSuperClassRef => {
-            superclass = Some(
-                entity
-                    .get_reference()
-                    .expect("ObjCSuperClassRef to reference entity"),
-            );
-        }
-        EntityKind::TypeRef => {
-            let name = entity.get_name().expect("typeref name");
-            generics.push(name);
-        }
-        _ => {}
-    });
+    loop {
+        let mut superclass = None;
+        let mut applied_generics = Vec::new();
 
-    superclass.map(|entity| (entity, ItemIdentifier::new(&entity, context), generics))
+        immediate_children(&current_entity, |entity, _span| match entity.get_kind() {
+            EntityKind::ObjCSuperClassRef => {
+                superclass = Some(
+                    entity
+                        .get_reference()
+                        .expect("ObjCSuperClassRef to reference entity"),
+                );
+            }
+            EntityKind::TypeRef => {
+                let name = entity.get_name().expect("typeref name");
+                applied_generics.push(name);
+            }
+            _ => {}
+        });
+
+        if let Some(superclass) = superclass {
+            current_entity = superclass;
+            superclasses.push((
+                ItemIdentifier::new(&superclass, context),
+                applied_generics,
+                superclass,
+            ));
+        } else {
+            return superclasses;
+        }
+    }
 }
 
 fn parse_class_generics(entity: &Entity<'_>, _context: &Context<'_>) -> Vec<String> {
@@ -156,6 +170,9 @@ fn parse_methods(
         EntityKind::ObjCPropertyDecl => {
             drop(span);
             let partial = Method::partial_property(entity);
+
+            // TODO: Use `get_overridden_methods` to deduplicate property
+            // getters (when declared on both immutable and mutable class).
 
             let getter_data = get_data(&partial.getter_name);
             let setter_data = partial
@@ -213,7 +230,7 @@ fn verify_objc_decl(entity: &Entity<'_>, context: &Context<'_>) {
                 EntityKind::ObjCSuperClassRef | EntityKind::TypeRef,
                 EntityKind::ObjCInterfaceDecl,
             ) => {
-                // Parsed in parse_superclass
+                // Parsed in parse_superclasses
             }
             (EntityKind::ObjCSubclassingRestricted, EntityKind::ObjCInterfaceDecl) => {
                 // TODO: https://clang.llvm.org/docs/AttributeReference.html#objc-subclassing-restricted
@@ -521,15 +538,58 @@ impl Stmt {
                     .unwrap_or_default();
                 protocols.retain(|protocol| !skipped_protocols.contains(&protocol.name));
 
-                let mut superclass_entity = *entity;
-                let mut superclasses = vec![];
+                let superclasses_full = parse_superclasses(entity, context);
 
-                while let Some((next_entity, superclass, generics)) =
-                    parse_superclass(&superclass_entity, context)
-                {
-                    superclass_entity = next_entity;
-                    superclasses.push((superclass, generics));
-                }
+                let superclasses: Vec<_> = superclasses_full
+                    .iter()
+                    .map(|(id, generics, _)| (id.clone(), generics.clone()))
+                    .collect();
+
+                // Used for duplicate checking (sometimes the subclass
+                // defines the same method that the superclass did).
+                let mut seen_methods: BTreeSet<_> =
+                    methods.iter().map(|method| method.id()).collect();
+
+                let superclass_methods: Vec<_> = superclasses_full
+                    .iter()
+                    .filter_map(|(superclass_id, _, entity)| {
+                        let superclass_data = context.class_data.get(&superclass_id.name);
+
+                        // Explicitly keep going, even if the class itself is skipped
+                        // if superclass_data.skipped
+
+                        let (mut methods, _) = parse_methods(
+                            entity,
+                            |name| {
+                                let data = ClassData::get_method_data(data, name);
+                                let superclass_data =
+                                    ClassData::get_method_data(superclass_data, name);
+                                data.merge_with_superclass(superclass_data)
+                            },
+                            context,
+                        );
+                        methods.retain(|method| {
+                            method.emit_on_subclasses() && !seen_methods.contains(&method.id())
+                        });
+                        seen_methods.extend(methods.iter().map(|method| method.id()));
+                        if methods.is_empty() {
+                            None
+                        } else {
+                            Some(Self::Methods {
+                                cls: id.clone(),
+                                generics: generics.clone(),
+                                category: ItemIdentifier::with_name(None, entity, context),
+                                availability: Availability::parse(entity, context),
+                                superclasses: superclasses.clone(),
+                                methods,
+                                description: Some(format!(
+                                    "Methods declared on superclass `{}`",
+                                    superclass_id.name
+                                )),
+                            })
+                        }
+                    })
+                    .collect();
 
                 let methods = Self::Methods {
                     cls: id.clone(),
@@ -558,6 +618,7 @@ impl Stmt {
                     availability: availability.clone(),
                 }))
                 .chain(iter::once(methods))
+                .chain(superclass_methods)
                 .collect()
             }
             EntityKind::ObjCCategoryDecl => {
@@ -598,15 +659,53 @@ impl Stmt {
                     )
                 }
 
-                let mut superclass_entity = *entity;
-                let mut superclasses = vec![];
+                let superclasses: Vec<_> = parse_superclasses(entity, context)
+                    .into_iter()
+                    .map(|(id, generics, _)| (id, generics))
+                    .collect();
 
-                while let Some((next_entity, superclass, generics)) =
-                    parse_superclass(&superclass_entity, context)
+                let subclass_methods = if let Mutability::ImmutableWithMutableSubclass(subclass) =
+                    data.map(|data| data.mutability.clone()).unwrap_or_default()
                 {
-                    superclass_entity = next_entity;
-                    superclasses.push((superclass, generics));
-                }
+                    let subclass_data = context.class_data.get(&subclass.name);
+                    assert!(!subclass_data.map(|data| data.skipped).unwrap_or_default());
+
+                    let (mut methods, _) = parse_methods(
+                        entity,
+                        |name| {
+                            let data = ClassData::get_method_data(data, name);
+                            let subclass_data = ClassData::get_method_data(subclass_data, name);
+                            subclass_data.merge_with_superclass(data)
+                        },
+                        context,
+                    );
+                    methods.retain(|method| method.emit_on_subclasses());
+                    if methods.is_empty() {
+                        None
+                    } else {
+                        Some(Self::Methods {
+                            cls: subclass,
+                            // Assume that immutable/mutable pairs have the
+                            // same amount of generics.
+                            generics: generics.clone(),
+                            category: category.clone(),
+                            // And that they have the same availability.
+                            availability: availability.clone(),
+                            superclasses: superclasses
+                                .iter()
+                                .cloned()
+                                .chain(iter::once((cls.clone(), generics.clone())))
+                                .collect(),
+                            methods,
+                            description: Some(format!(
+                                "Methods declared on superclass `{}`",
+                                cls.name
+                            )),
+                        })
+                    }
+                } else {
+                    None
+                };
 
                 iter::once(Self::Methods {
                     cls: cls.clone(),
@@ -617,6 +716,7 @@ impl Stmt {
                     methods,
                     description: None,
                 })
+                .chain(subclass_methods)
                 .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
                     cls: cls.clone(),
                     generics: generics.clone(),

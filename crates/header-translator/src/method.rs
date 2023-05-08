@@ -242,8 +242,8 @@ pub struct Method {
 
 impl Method {
     /// Value that uniquely identifies the method in a class.
-    pub fn id(&self) -> (bool, &str) {
-        (self.is_class, &self.selector)
+    pub fn id(&self) -> (bool, String) {
+        (self.is_class, self.selector.clone())
     }
 
     fn parent_type_data(entity: &Entity<'_>, context: &Context<'_>) -> (bool, bool) {
@@ -318,17 +318,6 @@ impl Method {
             attributes,
             _span,
         }
-    }
-
-    pub fn update(mut self, data: MethodData) -> Option<Self> {
-        if data.skipped {
-            return None;
-        }
-
-        self.mutating = data.mutating.unwrap_or(false);
-        self.safe = !data.unsafe_;
-
-        Some(self)
     }
 
     pub fn visit_required_types(&self, mut f: impl FnMut(&ItemIdentifier)) {

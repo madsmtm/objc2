@@ -50,6 +50,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed associated types from `NSCopying` and
   `NSMutableCopying`, that information is now specified in
   `ClassType::Mutability` instead.
+* **BREAKING**: Removed a few `init` methods on subclasses that were declared
+  on categories on their superclass. These should be re-added at some point.
 
 
 ## icrate 0.0.2 - 2023-02-07
