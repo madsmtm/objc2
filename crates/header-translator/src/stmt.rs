@@ -1158,7 +1158,12 @@ impl Stmt {
 
     pub(crate) fn declared_types(&self) -> impl Iterator<Item = (&str, Unavailable)> {
         match self {
-            Stmt::ClassDecl { id, skipped, availability, .. } => {
+            Stmt::ClassDecl {
+                id,
+                skipped,
+                availability,
+                ..
+            } => {
                 if *skipped {
                     None
                 } else {
