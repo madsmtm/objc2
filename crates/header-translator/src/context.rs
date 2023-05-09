@@ -6,8 +6,8 @@ use apple_sdk::SdkPath;
 use clang::source::Location;
 use clang::Entity;
 
-use crate::config::Config;
 use crate::availability::Unavailable;
+use crate::config::Config;
 
 pub struct Context<'a> {
     config: &'a Config,

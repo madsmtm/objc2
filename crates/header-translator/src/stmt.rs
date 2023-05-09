@@ -172,12 +172,8 @@ fn parse_objc_decl(
                 .as_ref()
                 .map(|setter_name| get_data(setter_name));
 
-            let (getter, setter) = partial.parse(
-                getter_data,
-                setter_data,
-                generics.is_none(),
-                context,
-            );
+            let (getter, setter) =
+                partial.parse(getter_data, setter_data, generics.is_none(), context);
             if let Some(getter) = getter {
                 if !properties.insert((getter.is_class, getter.fn_name.clone())) {
                     error!(?setter, "already exisiting property");
@@ -383,10 +379,7 @@ fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
 }
 
 impl Stmt {
-    pub fn parse(
-        entity: &Entity<'_>,
-        context: &Context<'_>,
-    ) -> Vec<Self> {
+    pub fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Vec<Self> {
         let _span = debug_span!(
             "stmt",
             kind = ?entity.get_kind(),
@@ -675,8 +668,7 @@ impl Stmt {
             }
             EntityKind::StructDecl => {
                 if let Some(name) = entity.get_name() {
-                    let availability =
-                        Availability::parse(entity, context);
+                    let availability = Availability::parse(entity, context);
                     let id = ItemIdentifier::with_name(name, entity, context);
 
                     if context
@@ -735,8 +727,7 @@ impl Stmt {
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::EnumConstantDecl => {
                         let name = entity.get_name().expect("enum constant name");
-                        let availability =
-                            Availability::parse(&entity, context);
+                        let availability = Availability::parse(&entity, context);
 
                         if data
                             .constants

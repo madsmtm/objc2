@@ -84,7 +84,8 @@ impl fmt::Display for Unavailable {
             .join(",");
         if unavailable_oses.len() > 1 {
             write!(f, "#[cfg(not(any({unavailable_oses})))]")?;
-        } if unavailable_oses.len() == 1 {
+        }
+        if unavailable_oses.len() == 1 {
             write!(f, "#[cfg(not({unavailable_oses}))]")?;
         }
         Ok(())
@@ -112,16 +113,16 @@ pub struct Availability {
 }
 
 impl Availability {
-    pub fn parse(
-        entity: &Entity<'_>,
-        context: &Context<'_>,
-    ) -> Self {
+    pub fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Self {
         let availabilities = entity
             .get_platform_availability()
             .expect("platform availability");
 
         let mut unavailable = Unavailable {
-            library_unavailablility: context.library_unavailability.as_ref().map(|l| Box::new(l.clone())),
+            library_unavailablility: context
+                .library_unavailability
+                .as_ref()
+                .map(|l| Box::new(l.clone())),
             ..Default::default()
         };
         let mut introduced = Versions::default();
