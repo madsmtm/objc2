@@ -269,7 +269,8 @@ fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Confi
                         preprocessing = false;
                         // No more includes / macro expansions after this line
                         let file = library.files.get_mut(&file_name).expect("file");
-                        for stmt in Stmt::parse(&entity, &context, &library.unavailability) {
+                        context.library_unavailability = Some(library.unavailability.clone());
+                        for stmt in Stmt::parse(&entity, &context) {
                             file.add_stmt(stmt);
                         }
                     }

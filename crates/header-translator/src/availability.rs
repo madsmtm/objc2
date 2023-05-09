@@ -114,15 +114,14 @@ pub struct Availability {
 impl Availability {
     pub fn parse(
         entity: &Entity<'_>,
-        _context: &Context<'_>,
-        library_unavailablility: &Unavailable,
+        context: &Context<'_>,
     ) -> Self {
         let availabilities = entity
             .get_platform_availability()
             .expect("platform availability");
 
         let mut unavailable = Unavailable {
-            library_unavailablility: Some(Box::new(library_unavailablility.clone())),
+            library_unavailablility: context.library_unavailability.as_ref().map(|l| Box::new(l.clone())),
             ..Default::default()
         };
         let mut introduced = Versions::default();
