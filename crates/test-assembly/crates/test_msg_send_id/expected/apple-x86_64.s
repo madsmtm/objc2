@@ -15,8 +15,8 @@ _handle_new_fallible:
 	mov	rbp, rsp
 	push	r14
 	push	rbx
-	mov	r14, rsi
-	mov	rbx, rdi
+	mov	rbx, rsi
+	mov	r14, rdi
 	call	_objc_msgSend
 	test	rax, rax
 	je	LBB1_2
@@ -26,8 +26,8 @@ _handle_new_fallible:
 	ret
 LBB1_2:
 	lea	rdx, [rip + l_anon.[ID].1]
-	mov	rdi, rbx
-	mov	rsi, r14
+	mov	rdi, r14
+	mov	rsi, rbx
 	call	SYM(<objc2::__macro_helpers::RetainSemantics<1_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_alloc
@@ -45,8 +45,8 @@ _handle_alloc_fallible:
 	mov	rbp, rsp
 	push	r14
 	push	rbx
-	mov	r14, rsi
-	mov	rbx, rdi
+	mov	rbx, rsi
+	mov	r14, rdi
 	call	_objc_msgSend
 	test	rax, rax
 	je	LBB3_2
@@ -56,8 +56,8 @@ _handle_alloc_fallible:
 	ret
 LBB3_2:
 	lea	rdx, [rip + l_anon.[ID].2]
-	mov	rdi, rbx
-	mov	rsi, r14
+	mov	rdi, r14
+	mov	rsi, rbx
 	call	SYM(<objc2::__macro_helpers::RetainSemantics<2_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_init
@@ -75,8 +75,8 @@ _handle_init_fallible:
 	mov	rbp, rsp
 	push	r14
 	push	rbx
-	mov	r14, rsi
-	mov	rbx, rdi
+	mov	rbx, rsi
+	mov	r14, rdi
 	call	_objc_msgSend
 	test	rax, rax
 	je	LBB5_2
@@ -86,8 +86,8 @@ _handle_init_fallible:
 	ret
 LBB5_2:
 	lea	rdx, [rip + l_anon.[ID].3]
-	mov	rdi, rbx
-	mov	rsi, r14
+	mov	rdi, r14
+	mov	rsi, rbx
 	call	SYM(<objc2::__macro_helpers::RetainSemantics<3_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_alloc_init
@@ -179,8 +179,8 @@ _handle_autoreleased_fallible:
 	mov	rbp, rsp
 	push	r14
 	push	rbx
-	mov	r14, rsi
-	mov	rbx, rdi
+	mov	rbx, rsi
+	mov	r14, rdi
 	call	_objc_msgSend
 	mov	rdi, rax
 	call	_objc_retainAutoreleasedReturnValue
@@ -197,8 +197,8 @@ _handle_autoreleased_fallible:
 	ret
 LBB12_2:
 	lea	rdx, [rip + l_anon.[ID].5]
-	mov	rdi, rbx
-	mov	rsi, r14
+	mov	rdi, r14
+	mov	rsi, rbx
 	call	SYM(<objc2::__macro_helpers::RetainSemantics<5_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_with_out_param
@@ -237,27 +237,27 @@ l_anon.[ID].0:
 	.ascii	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].1:
 	.quad	l_anon.[ID].0
 	.asciz	"3\000\000\000\000\000\000\000\r\000\000\000\005\000\000"
 
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].2:
 	.quad	l_anon.[ID].0
 	.asciz	"3\000\000\000\000\000\000\000\027\000\000\000\005\000\000"
 
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].3:
 	.quad	l_anon.[ID].0
 	.asciz	"3\000\000\000\000\000\000\000!\000\000\000\005\000\000"
 
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].4:
 	.quad	l_anon.[ID].0
 	.asciz	"3\000\000\000\000\000\000\000>\000\000\000\005\000\000"
 
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].5:
 	.quad	l_anon.[ID].0
 	.asciz	"3\000\000\000\000\000\000\000H\000\000\000\005\000\000"

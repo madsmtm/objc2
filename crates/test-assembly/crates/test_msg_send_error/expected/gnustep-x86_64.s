@@ -44,19 +44,19 @@ SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::Obje
 	.p2align	4, 0x90
 	.type	error_bool,@function
 error_bool:
-	push	rbp
+	push	r15
 	push	r14
 	push	rbx
 	sub	rsp, 16
-	mov	r14d, edx
-	mov	rbx, rsi
-	mov	rbp, rdi
+	mov	ebx, edx
+	mov	r14, rsi
+	mov	r15, rdi
 	mov	qword ptr [rsp + 8], 0
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	lea	rcx, [rsp + 8]
-	mov	rdi, rbp
-	mov	rsi, rbx
-	mov	edx, r14d
+	mov	rdi, r15
+	mov	rsi, r14
+	mov	edx, ebx
 	call	rax
 	test	al, al
 	je	.LBB2_2
@@ -65,7 +65,7 @@ error_bool:
 	add	rsp, 16
 	pop	rbx
 	pop	r14
-	pop	rbp
+	pop	r15
 	ret
 .LBB2_2:
 	mov	rdi, qword ptr [rsp + 8]
@@ -82,13 +82,13 @@ error_new:
 	push	r14
 	push	rbx
 	push	rax
-	mov	r14, rsi
-	mov	rbx, rdi
+	mov	rbx, rsi
+	mov	r14, rdi
 	mov	qword ptr [rsp], 0
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	mov	rdx, rsp
-	mov	rdi, rbx
-	mov	rsi, r14
+	mov	rdi, r14
+	mov	rsi, rbx
 	call	rax
 	test	rax, rax
 	je	.LBB3_2
@@ -119,13 +119,13 @@ error_alloc:
 	push	r14
 	push	rbx
 	push	rax
-	mov	r14, rsi
-	mov	rbx, rdi
+	mov	rbx, rsi
+	mov	r14, rdi
 	mov	qword ptr [rsp], 0
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	mov	rdx, rsp
-	mov	rdi, rbx
-	mov	rsi, r14
+	mov	rdi, r14
+	mov	rsi, rbx
 	call	rax
 	test	rax, rax
 	je	.LBB4_2
@@ -159,12 +159,12 @@ error_init:
 	mov	qword ptr [rsp], 0
 	test	rdi, rdi
 	je	.LBB5_1
-	mov	r14, rsi
-	mov	rbx, rdi
+	mov	rbx, rsi
+	mov	r14, rdi
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	mov	rdx, rsp
-	mov	rdi, rbx
-	mov	rsi, r14
+	mov	rdi, r14
+	mov	rsi, rbx
 	call	rax
 	test	rax, rax
 	je	.LBB5_4
@@ -199,13 +199,13 @@ error_copy:
 	push	r14
 	push	rbx
 	push	rax
-	mov	r14, rsi
-	mov	rbx, rdi
+	mov	rbx, rsi
+	mov	r14, rdi
 	mov	qword ptr [rsp], 0
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	mov	rdx, rsp
-	mov	rdi, rbx
-	mov	rsi, r14
+	mov	rdi, r14
+	mov	rsi, rbx
 	call	rax
 	test	rax, rax
 	je	.LBB6_2
@@ -236,13 +236,13 @@ error_autoreleased:
 	push	r14
 	push	rbx
 	push	rax
-	mov	r14, rsi
-	mov	rbx, rdi
+	mov	rbx, rsi
+	mov	r14, rdi
 	mov	qword ptr [rsp], 0
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	mov	rdx, rsp
-	mov	rdi, rbx
-	mov	rsi, r14
+	mov	rdi, r14
+	mov	rsi, rbx
 	call	rax
 	mov	rdi, rax
 	call	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
@@ -287,7 +287,7 @@ error_autoreleased:
 
 	.type	.Lanon.[ID].3,@object
 	.section	.data.rel.ro..Lanon.[ID].3,"aw",@progbits
-	.p2align	3
+	.p2align	3, 0x0
 .Lanon.[ID].3:
 	.quad	.Lanon.[ID].2
 	.asciz	"6\000\000\000\000\000\000\000\013\000\000\000\005\000\000"
@@ -295,7 +295,7 @@ error_autoreleased:
 
 	.type	.Lanon.[ID].4,@object
 	.section	.data.rel.ro..Lanon.[ID].4,"aw",@progbits
-	.p2align	3
+	.p2align	3, 0x0
 .Lanon.[ID].4:
 	.quad	.Lanon.[ID].2
 	.asciz	"6\000\000\000\000\000\000\000\020\000\000\000\005\000\000"
@@ -303,7 +303,7 @@ error_autoreleased:
 
 	.type	.Lanon.[ID].5,@object
 	.section	.data.rel.ro..Lanon.[ID].5,"aw",@progbits
-	.p2align	3
+	.p2align	3, 0x0
 .Lanon.[ID].5:
 	.quad	.Lanon.[ID].2
 	.asciz	"6\000\000\000\000\000\000\000\025\000\000\000\005\000\000"
@@ -311,7 +311,7 @@ error_autoreleased:
 
 	.type	.Lanon.[ID].6,@object
 	.section	.data.rel.ro..Lanon.[ID].6,"aw",@progbits
-	.p2align	3
+	.p2align	3, 0x0
 .Lanon.[ID].6:
 	.quad	.Lanon.[ID].2
 	.asciz	"6\000\000\000\000\000\000\000\032\000\000\000\005\000\000"
@@ -319,7 +319,7 @@ error_autoreleased:
 
 	.type	.Lanon.[ID].7,@object
 	.section	.data.rel.ro..Lanon.[ID].7,"aw",@progbits
-	.p2align	3
+	.p2align	3, 0x0
 .Lanon.[ID].7:
 	.quad	.Lanon.[ID].2
 	.asciz	"6\000\000\000\000\000\000\000\037\000\000\000\005\000\000"
@@ -327,7 +327,7 @@ error_autoreleased:
 
 	.type	.Lanon.[ID].8,@object
 	.section	.data.rel.ro..Lanon.[ID].8,"aw",@progbits
-	.p2align	3
+	.p2align	3, 0x0
 .Lanon.[ID].8:
 	.quad	.Lanon.[ID].2
 	.asciz	"6\000\000\000\000\000\000\000$\000\000\000\005\000\000"

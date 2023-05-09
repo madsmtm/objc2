@@ -1286,31 +1286,19 @@ derives = "PartialEq, Eq, Hash"
 derives = "PartialEq, Eq, Hash"
 [class.NSMutableData]
 derives = "PartialEq, Eq, Hash"
-[class.NSMutableArray]
-derives = "PartialEq, Eq, Hash"
 [class.NSMutableAttributedString]
-derives = "PartialEq, Eq, Hash"
-[class.NSMutableSet]
 derives = "PartialEq, Eq, Hash"
 [class.NSMutableString]
 derives = "PartialEq, Eq, Hash"
-[class.NSMutableDictionary]
-derives = "PartialEq, Eq, Hash"
 
 # Overridden fmt::Debug because it's prettier
-[class.NSArray]
-derives = "PartialEq, Eq, Hash"
 [class.NSData]
-derives = "PartialEq, Eq, Hash"
-[class.NSDictionary]
 derives = "PartialEq, Eq, Hash"
 [class.NSError]
 derives = "PartialEq, Eq, Hash"
 [class.NSException]
 derives = "PartialEq, Eq, Hash"
 [class.NSProcessInfo]
-derives = "PartialEq, Eq, Hash"
-[class.NSSet]
 derives = "PartialEq, Eq, Hash"
 [class.NSString]
 derives = "PartialEq, Eq, Hash"
@@ -1331,26 +1319,23 @@ derives = "Debug, PartialEq, Hash"
 skipped = true
 [class.NSValue.methods.new]
 skipped = true
+[class.NSNumber.methods.init]
+skipped = true
+[class.NSNumber.methods.new]
+skipped = true
 
-# Returns `NSMyType<T, Shared>` instead of `Self` or `NSMyType<T, O>`
-# See fixes/generic_return.rs
-[class.NSArray.methods.initWithContentsOfURL_error]
+# Marked as API_UNAVAILABLE in a category, so we hit the duplicate checking
+[class.NSLocale.methods.init]
 skipped = true
-[class.NSArray.methods.initWithContentsOfFile]
+[class.NSLocale.methods.new]
 skipped = true
-[class.NSArray.methods.initWithContentsOfURL]
+[class.NSNotification.methods.init]
 skipped = true
-[class.NSMutableArray.methods.initWithContentsOfFile]
+[class.NSNotification.methods.new]
 skipped = true
-[class.NSMutableArray.methods.initWithContentsOfURL]
+[class.GKLeaderboard.methods.init]
 skipped = true
-[class.NSDictionary.methods.initWithContentsOfFile]
-skipped = true
-[class.NSDictionary.methods.initWithContentsOfURL]
-skipped = true
-[class.NSMutableDictionary.methods.initWithContentsOfFile]
-skipped = true
-[class.NSMutableDictionary.methods.initWithContentsOfURL]
+[class.GKLeaderboard.methods.new]
 skipped = true
 
 # Manual definitions
@@ -1359,6 +1344,10 @@ skipped = true
 [class.NSData.methods.bytes]
 skipped = true
 [class.NSMutableData.methods.length]
+skipped = true
+[class.NSError.methods.new]
+skipped = true
+[class.NSException.methods.new]
 skipped = true
 
 # Wrong type on GNUStep
@@ -1548,3 +1537,33 @@ skipped = true
 # https://github.com/phracker/MacOSX-SDKs/blob/041600eda65c6a668f66cb7d56b7d1da3e8bcc93/MacOSX11.3.sdk/System/Library/Frameworks/MediaPlayer.framework/Versions/A/Headers/MPMediaQuery.h#L103-L118
 [class.MPMediaItem.categories.MPMediaQueryAdditions]
 skipped = true
+
+# Custom generics because of auto traits
+[class.NSArray]
+definition-skipped = true
+[class.NSMutableArray]
+definition-skipped = true
+[class.NSDictionary]
+definition-skipped = true
+[class.NSMutableDictionary]
+definition-skipped = true
+[class.NSSet]
+definition-skipped = true
+[class.NSMutableSet]
+definition-skipped = true
+[class.NSCountedSet]
+definition-skipped = true
+[class.NSOrderedSet]
+definition-skipped = true
+[class.NSMutableOrderedSet]
+definition-skipped = true
+
+# These protocol impls would return the wrong types
+[class.NSSimpleCString]
+skipped-protocols = ["NSCopying", "NSMutableCopying"]
+[class.NSConstantString]
+skipped-protocols = ["NSCopying", "NSMutableCopying"]
+[class.NSTextStorage]
+skipped-protocols = ["NSCopying", "NSMutableCopying"]
+[class.NSPurgeableData]
+skipped-protocols = ["NSCopying", "NSMutableCopying"]

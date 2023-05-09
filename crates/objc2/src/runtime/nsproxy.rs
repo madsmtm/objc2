@@ -1,6 +1,7 @@
 use core::fmt;
 use core::hash;
 
+use crate::mutability::Root;
 use crate::runtime::{Class, NSObject, NSObjectProtocol, Object, ProtocolObject};
 use crate::ClassType;
 
@@ -23,11 +24,20 @@ crate::__emit_struct! {
 crate::__extern_class_impl_traits! {
     unsafe impl () for NSProxy {
         INHERITS = [Object];
+
+        fn as_super(&self) {
+            &self.__inner
+        }
+
+        fn as_super_mut(&mut self) {
+            &mut self.__inner
+        }
     }
 }
 
 unsafe impl ClassType for NSProxy {
     type Super = Object;
+    type Mutability = Root;
     const NAME: &'static str = "NSProxy";
 
     #[inline]

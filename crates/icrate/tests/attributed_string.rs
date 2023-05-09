@@ -1,6 +1,6 @@
 #![cfg(feature = "Foundation_NSAttributedString")]
 #![cfg(feature = "Foundation_NSString")]
-use objc2::rc::{autoreleasepool, Id, Owned};
+use objc2::rc::{autoreleasepool, Id};
 use objc2::runtime::Object;
 
 use icrate::Foundation::{self, NSAttributedString, NSObject, NSString};
@@ -39,7 +39,7 @@ fn test_copy() {
     // assert_eq!(Id::as_ptr(&s1), Id::as_ptr(&s2));
     assert!(s2.is_kind_of::<NSAttributedString>());
 
-    let s3 = s1.mutable_copy();
+    let s3 = s1.mutableCopy();
     assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3).cast());
     assert!(s3.is_kind_of::<Foundation::NSMutableAttributedString>());
 }
@@ -55,7 +55,7 @@ fn test_debug() {
     };
     assert_eq!(format!("{s:?}"), expected);
 
-    let obj: Id<Object, Owned> = unsafe { Id::cast(NSObject::new()) };
+    let obj: Id<Object> = unsafe { Id::cast(NSObject::new()) };
     let ptr: *const Object = &*obj;
     let s = unsafe {
         NSAttributedString::new_with_attributes(
@@ -91,7 +91,7 @@ fn test_copy_mutable() {
     assert_ne!(Id::as_ptr(&s1).cast(), Id::as_ptr(&s2));
     assert!(s2.is_kind_of::<NSAttributedString>());
 
-    let s3 = s1.mutable_copy();
+    let s3 = s1.mutableCopy();
     assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3));
     assert!(s3.is_kind_of::<Foundation::NSMutableAttributedString>());
 }

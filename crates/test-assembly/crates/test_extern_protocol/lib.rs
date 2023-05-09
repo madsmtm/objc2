@@ -7,6 +7,7 @@ use objc2::runtime::{Protocol, ProtocolObject};
 use objc2::{extern_protocol, ProtocolType};
 
 extern_protocol!(
+    #[allow(clippy::missing_safety_doc)]
     unsafe trait MyProtocol {
         #[allow(non_snake_case)]
         #[method(aMethod)]

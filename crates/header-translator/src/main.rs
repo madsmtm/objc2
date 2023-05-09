@@ -178,6 +178,7 @@ fn main() -> Result<(), BoxError> {
         }
         writeln!(cargo_toml, "]")?;
     }
+    drop(cargo_toml);
     drop(span);
 
     let _span = info_span!("formatting").entered();

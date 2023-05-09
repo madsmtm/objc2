@@ -11,12 +11,12 @@ use core::mem::ManuallyDrop;
 use core::ptr::NonNull;
 
 use crate::encode::__unstable::EncodeConvertArgument;
-use crate::rc::{Id, Ownership};
+use crate::rc::Id;
 use crate::Message;
 
 // Note the `'static` bound here - this may not be necessary, but I'm unsure
 // of the exact requirements, so we better just keep it for now.
-impl<T: Message + 'static, O: Ownership> EncodeConvertArgument for &mut Id<T, O> {
+impl<T: Message + 'static> EncodeConvertArgument for &mut Id<T> {
     // We use `*mut T` as the inner value instead of `NonNull<T>`, since we
     // want to do debug checking that the value hasn't unexpectedly been
     // overwritten to contain NULL (which is clear UB, but the user might have
@@ -35,12 +35,12 @@ impl<T: Message + 'static, O: Ownership> EncodeConvertArgument for &mut Id<T, O>
 
     #[inline]
     fn __from_declared_param(_inner: Self::__Inner) -> Self {
-        todo!("`&mut Id<_, _>` is not supported in `declare_class!` yet")
+        todo!("`&mut Id<_>` is not supported in `declare_class!` yet")
     }
 
     #[inline]
     fn __into_argument(self) -> (Self::__Inner, Self::__StoredBeforeMessage) {
-        let ptr: NonNull<Id<T, O>> = NonNull::from(self);
+        let ptr: NonNull<Id<T>> = NonNull::from(self);
         // `Id` is `#[repr(transparent)]` over `NonNull`.
         let ptr: NonNull<NonNull<T>> = ptr.cast();
 
@@ -83,20 +83,20 @@ impl<T: Message + 'static, O: Ownership> EncodeConvertArgument for &mut Id<T, O>
         // }
         // ```
         //
-        // Note that using `Id<T, Owned>` is perfectly sound, since we may
-        // only intermittently have a retain count of 2 to the value, but
-        // after the function returns we're guaranteed to be back to 1.
+        // Note that using a mutable `Id<T>` is perfectly sound, since while
+        // we may intermittently have a retain count of 2 to the value, after
+        // the function returns we're guaranteed to be back to 1.
 
         // SAFETY: Caller ensures that the pointer is either left as-is, or is
         // safe to retain at this point.
-        let new: Option<Id<T, O>> = unsafe { Id::retain(*ptr.as_ptr()) };
+        let new: Option<Id<T>> = unsafe { Id::retain(*ptr.as_ptr()) };
         // We ignore the result of `retain`, since it always returns the same
         // value as was given (and it would just be unnecessary work to write
         // that value back into `ptr` again).
         let _new = ManuallyDrop::new(new);
         #[cfg(debug_assertions)]
         if _new.is_none() {
-            panic!("found that NULL was written to `&mut Id<_, _>`, which is UB! You should handle this with `&mut Option<Id<_, _>>` instead");
+            panic!("found that NULL was written to `&mut Id<_>`, which is UB! You should handle this with `&mut Option<Id<_>>` instead");
         }
 
         // SAFETY: The old pointer was valid when it was constructed.
@@ -105,24 +105,24 @@ impl<T: Message + 'static, O: Ownership> EncodeConvertArgument for &mut Id<T, O>
         // retain count on the old pointer; so either we have +1 from that, or
         // the message send didn't modify the pointer and we instead have +1
         // retain count from the `retain` above.
-        let _: Id<T, O> = unsafe { Id::new_nonnull(old) };
+        let _: Id<T> = unsafe { Id::new_nonnull(old) };
     }
 }
 
-impl<T: Message + 'static, O: Ownership> EncodeConvertArgument for &mut Option<Id<T, O>> {
+impl<T: Message + 'static> EncodeConvertArgument for &mut Option<Id<T>> {
     type __Inner = NonNull<*mut T>;
 
     type __StoredBeforeMessage = (Self::__Inner, *mut T);
 
     #[inline]
     fn __from_declared_param(_inner: Self::__Inner) -> Self {
-        todo!("`&mut Option<Id<_, _>>` is not supported in `declare_class!` yet")
+        todo!("`&mut Option<Id<_>>` is not supported in `declare_class!` yet")
     }
 
     #[inline]
     fn __into_argument(self) -> (Self::__Inner, Self::__StoredBeforeMessage) {
-        let ptr: NonNull<Option<Id<T, O>>> = NonNull::from(self);
-        // `Option<Id<T, _>>` has the same memory layout as `*mut T`.
+        let ptr: NonNull<Option<Id<T>>> = NonNull::from(self);
+        // `Option<Id<T>>` has the same memory layout as `*mut T`.
         let ptr: NonNull<*mut T> = ptr.cast();
         // SAFETY: Same as for `&mut Id`
         let old: *mut T = unsafe { *ptr.as_ptr() };
@@ -133,7 +133,7 @@ impl<T: Message + 'static, O: Ownership> EncodeConvertArgument for &mut Option<I
     #[inline]
     unsafe fn __process_after_message_send((ptr, old): Self::__StoredBeforeMessage) {
         // SAFETY: Same as for `&mut Id`
-        let new: Option<Id<T, O>> = unsafe { Id::retain(*ptr.as_ptr()) };
+        let new: Option<Id<T>> = unsafe { Id::retain(*ptr.as_ptr()) };
         let _ = ManuallyDrop::new(new);
 
         // SAFETY: Same as for `&mut Id`
@@ -147,7 +147,7 @@ impl<T: Message + 'static, O: Ownership> EncodeConvertArgument for &mut Option<I
         // ```
         //
         // And in that case, we can elide the `objc_release`!
-        let _: Option<Id<T, O>> = unsafe { Id::new(old) };
+        let _: Option<Id<T>> = unsafe { Id::new(old) };
     }
 }
 
@@ -156,14 +156,14 @@ impl<T: Message + 'static, O: Ownership> EncodeConvertArgument for &mut Option<I
 // known at compile-time, and for the `None` case it would be detrimental to
 // have extra `retain/release` calls here.
 
-impl<T: Message + 'static, O: Ownership> EncodeConvertArgument for Option<&mut Id<T, O>> {
+impl<T: Message + 'static> EncodeConvertArgument for Option<&mut Id<T>> {
     type __Inner = Option<NonNull<*mut T>>;
 
     type __StoredBeforeMessage = Option<(NonNull<*mut T>, NonNull<T>)>;
 
     #[inline]
     fn __from_declared_param(_inner: Self::__Inner) -> Self {
-        todo!("`Option<&mut Id<_, _>>` is not supported in `declare_class!` yet")
+        todo!("`Option<&mut Id<_>>` is not supported in `declare_class!` yet")
     }
 
     #[inline]
@@ -180,19 +180,19 @@ impl<T: Message + 'static, O: Ownership> EncodeConvertArgument for Option<&mut I
     unsafe fn __process_after_message_send(stored: Self::__StoredBeforeMessage) {
         if let Some(stored) = stored {
             // SAFETY: Checked by caller
-            unsafe { <&mut Id<T, O>>::__process_after_message_send(stored) };
+            unsafe { <&mut Id<T>>::__process_after_message_send(stored) };
         }
     }
 }
 
-impl<T: Message + 'static, O: Ownership> EncodeConvertArgument for Option<&mut Option<Id<T, O>>> {
+impl<T: Message + 'static> EncodeConvertArgument for Option<&mut Option<Id<T>>> {
     type __Inner = Option<NonNull<*mut T>>;
 
     type __StoredBeforeMessage = Option<(NonNull<*mut T>, *mut T)>;
 
     #[inline]
     fn __from_declared_param(_inner: Self::__Inner) -> Self {
-        todo!("`Option<&mut Option<Id<_, _>>>` is not supported in `declare_class!` yet")
+        todo!("`Option<&mut Option<Id<_>>>` is not supported in `declare_class!` yet")
     }
 
     #[inline]
@@ -209,7 +209,7 @@ impl<T: Message + 'static, O: Ownership> EncodeConvertArgument for Option<&mut O
     unsafe fn __process_after_message_send(stored: Self::__StoredBeforeMessage) {
         if let Some(stored) = stored {
             // SAFETY: Checked by caller
-            unsafe { <&mut Option<Id<T, O>>>::__process_after_message_send(stored) };
+            unsafe { <&mut Option<Id<T>>>::__process_after_message_send(stored) };
         }
     }
 }
@@ -217,14 +217,14 @@ impl<T: Message + 'static, O: Ownership> EncodeConvertArgument for Option<&mut O
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::rc::{Owned, __RcTestObject, __ThreadTestData, autoreleasepool};
+    use crate::rc::{__RcTestObject, __ThreadTestData, autoreleasepool};
     use crate::{msg_send, msg_send_id, ClassType};
 
     #[test]
     fn test_bool_error() {
         let mut expected = __ThreadTestData::current();
 
-        fn bool_error(should_error: bool, error: Option<&mut Option<Id<__RcTestObject, Owned>>>) {
+        fn bool_error(should_error: bool, error: Option<&mut Option<Id<__RcTestObject>>>) {
             let cls = __RcTestObject::class();
             let did_succeed: bool =
                 unsafe { msg_send![cls, boolAndShouldError: should_error, error: error] };
@@ -238,7 +238,7 @@ mod tests {
         fn helper(
             expected: &mut __ThreadTestData,
             should_error: bool,
-            mut error: Option<Id<__RcTestObject, Owned>>,
+            mut error: Option<Id<__RcTestObject>>,
         ) {
             std::dbg!(should_error, &error);
             autoreleasepool(|_| {
@@ -291,10 +291,10 @@ mod tests {
         ),
         ignore = "invokes UB which is only caught with debug_assertions"
     )]
-    #[should_panic = "found that NULL was written to `&mut Id<_, _>`, which is UB! You should handle this with `&mut Option<Id<_, _>>` instead"]
+    #[should_panic = "found that NULL was written to `&mut Id<_>`, which is UB! You should handle this with `&mut Option<Id<_>>` instead"]
     fn test_debug_check_ub() {
         let cls = __RcTestObject::class();
-        let mut param: Id<_, _> = __RcTestObject::new();
+        let mut param: Id<_> = __RcTestObject::new();
         let _: () = unsafe { msg_send![cls, outParamNull: &mut param] };
     }
 
@@ -306,13 +306,13 @@ mod tests {
         let mut expected = __ThreadTestData::current();
         let cls = __RcTestObject::class();
 
-        let mut err: Id<__RcTestObject, Owned> = __RcTestObject::new();
+        let mut err: Id<__RcTestObject> = __RcTestObject::new();
         expected.alloc += 1;
         expected.init += 1;
         expected.assert_current();
 
         autoreleasepool(|_| {
-            let obj: Option<Id<__RcTestObject, Owned>> =
+            let obj: Option<Id<__RcTestObject>> =
                 unsafe { msg_send_id![cls, idAndShouldError: false, error: &mut err] };
             expected.alloc += 1;
             expected.init += 1;

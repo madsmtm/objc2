@@ -1,12 +1,11 @@
-//! A Rust interface for the functionality of the Objective-C runtime.
+//! # High-level runtime bindings.
 //!
-//! For more information on foreign functions, see Apple's documentation:
-//! <https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ObjCRuntimeRef/index.html>
+//! This module contains safe(r) bindings to common parts of the Objective-C
+//! runtime. See the [`ffi`][crate::ffi] module for details on the raw
+//! bindings.
 
 #[cfg(feature = "malloc")]
 use alloc::vec::Vec;
-#[cfg(doc)]
-use core::cell::UnsafeCell;
 use core::fmt;
 use core::hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
@@ -19,10 +18,13 @@ use std::os::raw::c_char;
 #[cfg(feature = "malloc")]
 use std::os::raw::c_uint;
 
+// Note: While this is not public, it is still a breaking change to remove,
+// since `icrate` relies on it.
 #[doc(hidden)]
 pub mod __nsstring;
 mod bool;
 mod method_encoding_iter;
+mod nscopying;
 mod nsobject;
 mod nsproxy;
 mod nszone;
@@ -31,15 +33,20 @@ mod protocol_object;
 pub(crate) use self::method_encoding_iter::{EncodingParseError, MethodEncodingIter};
 use crate::encode::__unstable::{EncodeArguments, EncodeConvertReturn, EncodeReturn};
 use crate::encode::{Encode, Encoding, OptionEncode, RefEncode};
-use crate::ffi;
 use crate::verify::{verify_method_signature, Inner};
+use crate::{ffi, Message};
+
+// Note: While these are not public, they are still a breaking change to
+// remove, since `icrate` relies on them.
+#[doc(hidden)]
+pub use self::nscopying::{
+    Copyhelper as __Copyhelper, NSCopying as __NSCopying, NSMutableCopying as __NSMutableCopying,
+};
+#[doc(hidden)]
+pub use self::nsproxy::NSProxy as __NSProxy;
 
 pub use self::bool::Bool;
 pub use self::nsobject::{NSObject, NSObjectProtocol};
-// Note: While this is not public, it is still a breaking change to remove,
-// since `icrate` relies on it.
-#[doc(hidden)]
-pub use self::nsproxy::NSProxy as __NSProxy;
 pub use self::nszone::NSZone;
 pub use self::protocol_object::{ImplementedBy, ProtocolObject};
 pub use crate::verify::VerificationError;
@@ -792,11 +799,11 @@ pub(crate) fn ivar_offset(cls: &Class, name: &str, expected: &Encoding) -> isize
 
 /// An Objective-C object.
 ///
-/// This is slightly different from `NSObject` in that it may represent an
+/// This is slightly different from [`NSObject`] in that it may represent an
 /// instance of an _arbitary_ Objective-C class (e.g. it does not have to be
 /// a subclass of `NSObject`).
 ///
-/// `Id<Object, _>` is equivalent to Objective-C's `id`.
+/// `Id<Object>` is equivalent to Objective-C's `id`.
 ///
 /// This contains [`UnsafeCell`], and is similar to that in that one can
 /// safely access and perform interior mutability on this (both via.
@@ -809,6 +816,7 @@ pub(crate) fn ivar_offset(cls: &Class, name: &str, expected: &Encoding) -> isize
 /// not `Send`, it has to be deallocated on the same thread that it was
 /// created. `NSLock` is not `Send` either.
 ///
+/// [`UnsafeCell`]: core::cell::UnsafeCell
 /// [`msg_send!`]: crate::msg_send
 #[doc(alias = "id")]
 #[repr(C)]
@@ -817,6 +825,11 @@ pub struct Object(ffi::objc_object);
 unsafe impl RefEncode for Object {
     const ENCODING_REF: Encoding = Encoding::Object;
 }
+
+// SAFETY: This is technically slightly wrong, not all objects implement the
+// standard memory management methods. But not having this impl would be too
+// restrictive, so we'll live with it.
+unsafe impl Message for Object {}
 
 impl Object {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_object {
@@ -866,6 +879,7 @@ impl Object {
     /// Library implementors are strongly encouraged to expose a safe
     /// interface to the ivar.
     ///
+    /// [`UnsafeCell::get`]: core::cell::UnsafeCell::get
     /// [`ClassBuilder::add_ivar`]: crate::declare::ClassBuilder::add_ivar
     ///
     ///

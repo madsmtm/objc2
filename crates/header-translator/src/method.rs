@@ -10,6 +10,7 @@ use crate::id::ItemIdentifier;
 use crate::immediate_children;
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::{MethodArgumentQualifier, Ty};
+use crate::stmt::get_category_cls;
 use crate::unexposed_attr::UnexposedAttr;
 
 impl MethodArgumentQualifier {
@@ -241,8 +242,38 @@ pub struct Method {
 
 impl Method {
     /// Value that uniquely identifies the method in a class.
-    pub fn id(&self) -> (bool, &str) {
-        (self.is_class, &self.selector)
+    pub fn id(&self) -> (bool, String) {
+        (self.is_class, self.selector.clone())
+    }
+
+    pub(crate) fn usable_in_default_id(&self) -> bool {
+        self.selector == "new" && self.is_class && self.arguments.is_empty() && self.safe
+    }
+
+    fn parent_type_data(entity: &Entity<'_>, context: &Context<'_>) -> (bool, bool) {
+        let parent = entity.get_semantic_parent().expect("method parent");
+        let (parent, is_protocol) = match parent.get_kind() {
+            EntityKind::ObjCInterfaceDecl => (parent, false),
+            EntityKind::ObjCCategoryDecl => (get_category_cls(&parent), false),
+            EntityKind::ObjCProtocolDecl => (parent, true),
+            kind => {
+                error!(?kind, "unknown method parent kind");
+                (parent, false)
+            }
+        };
+        let parent_id = ItemIdentifier::new(&parent, context);
+
+        let is_mutable = if !is_protocol {
+            context
+                .class_data
+                .get(&parent_id.name)
+                .map(|data| data.mutability.is_mutable())
+                .unwrap_or(false)
+        } else {
+            false
+        };
+
+        (is_mutable, is_protocol)
     }
 
     /// Takes one of `EntityKind::ObjCInstanceMethodDecl` or
@@ -293,17 +324,6 @@ impl Method {
         }
     }
 
-    pub fn update(mut self, data: MethodData) -> Option<Self> {
-        if data.skipped {
-            return None;
-        }
-
-        self.mutating = data.mutating;
-        self.safe = !data.unsafe_;
-
-        Some(self)
-    }
-
     pub fn visit_required_types(&self, mut f: impl FnMut(&ItemIdentifier)) {
         for (_, arg) in &self.arguments {
             arg.visit_required_types(&mut f);
@@ -323,12 +343,7 @@ pub struct PartialMethod<'tu> {
 }
 
 impl<'tu> PartialMethod<'tu> {
-    pub fn parse(
-        self,
-        data: MethodData,
-        is_protocol: bool,
-        context: &Context<'_>,
-    ) -> Option<(bool, Method)> {
+    pub fn parse(self, data: MethodData, context: &Context<'_>) -> Option<(bool, Method)> {
         let Self {
             entity,
             selector,
@@ -345,6 +360,8 @@ impl<'tu> PartialMethod<'tu> {
             warn!("can't handle variadic method");
             return None;
         }
+
+        let (parent_is_mutable, is_protocol) = Method::parent_type_data(&entity, context);
 
         let availability = Availability::parse(&entity, context);
 
@@ -408,7 +425,8 @@ impl<'tu> PartialMethod<'tu> {
         }
 
         let result_type = entity.get_result_type().expect("method return type");
-        let mut result_type = Ty::parse_method_return(result_type, context);
+        let default_nonnull = (selector == "init" && !is_class) || (selector == "new" && is_class);
+        let mut result_type = Ty::parse_method_return(result_type, default_nonnull, context);
 
         let memory_management = MemoryManagement::new(is_class, &selector, &result_type, modifiers);
 
@@ -440,7 +458,10 @@ impl<'tu> PartialMethod<'tu> {
                 arguments,
                 result_type,
                 safe: !data.unsafe_,
-                mutating: data.mutating,
+                // Mutable if the parent is mutable is a reasonable default,
+                // since immutable methods are usually either declared on an
+                // immutable subclass, or as a property.
+                mutating: data.mutating.unwrap_or(parent_is_mutable),
                 is_protocol,
             },
         ))
@@ -463,7 +484,6 @@ impl PartialProperty<'_> {
         self,
         getter_data: MethodData,
         setter_data: Option<MethodData>,
-        is_protocol: bool,
         context: &Context<'_>,
     ) -> (Option<Method>, Option<Method>) {
         let Self {
@@ -482,6 +502,8 @@ impl PartialProperty<'_> {
         if getter_data.skipped && setter_data.map(|data| data.skipped).unwrap_or(true) {
             return (None, None);
         }
+
+        let (parent_is_mutable, is_protocol) = Method::parent_type_data(&entity, context);
 
         let availability = Availability::parse(&entity, context);
 
@@ -512,7 +534,9 @@ impl PartialProperty<'_> {
                 arguments: Vec::new(),
                 result_type: ty,
                 safe: !getter_data.unsafe_,
-                mutating: getter_data.mutating,
+                // Getters are usually not mutable, even if the class itself
+                // is, so let's default to immutable.
+                mutating: getter_data.mutating.unwrap_or(false),
                 is_protocol,
             })
         } else {
@@ -539,7 +563,8 @@ impl PartialProperty<'_> {
                     arguments: vec![(name, ty)],
                     result_type: Ty::VOID_RESULT,
                     safe: !setter_data.unsafe_,
-                    mutating: setter_data.mutating,
+                    // Setters are usually mutable if the class itself is.
+                    mutating: setter_data.mutating.unwrap_or(parent_is_mutable),
                     is_protocol,
                 })
             } else {
@@ -559,10 +584,9 @@ impl Method {
             return false;
         }
         if self.is_class {
-            !matches!(&*self.selector, "new" | "supportsSecureCoding")
+            true
         } else {
             self.memory_management == MemoryManagement::IdInit
-                && !matches!(&*self.selector, "init" | "initWithCoder:")
         }
     }
 }
@@ -612,14 +636,8 @@ impl fmt::Display for Method {
 
         // Receiver
         if let MemoryManagement::IdInit = self.memory_management {
-            if self.mutating {
-                error!("invalid mutating method");
-            }
             write!(f, "this: Option<Allocated<Self>>, ")?;
         } else if self.is_class {
-            if self.mutating {
-                error!("invalid mutating method");
-            }
             // Insert nothing; a class method is assumed
         } else if self.mutating {
             write!(f, "&mut self, ")?;

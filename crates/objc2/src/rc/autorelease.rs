@@ -516,36 +516,27 @@ where
     f(AutoreleasePool::new(None))
 }
 
-#[cfg(all(test, feature = "unstable-autoreleasesafe"))]
+#[cfg(test)]
 mod tests {
     use core::marker::Unpin;
     use core::mem;
     use core::panic::{RefUnwindSafe, UnwindSafe};
 
+    use static_assertions::{assert_impl_all, assert_not_impl_any};
+
     use super::{AutoreleasePool, AutoreleaseSafe};
     use crate::runtime::Object;
 
-    fn requires_autoreleasesafe<T: AutoreleaseSafe>() {}
-
     #[test]
-    fn test_autoreleasesafe() {
-        requires_autoreleasesafe::<usize>();
-        requires_autoreleasesafe::<*mut Object>();
-        requires_autoreleasesafe::<&mut Object>();
-    }
+    fn auto_traits() {
+        assert_impl_all!(AutoreleasePool<'static>: Unpin, UnwindSafe, RefUnwindSafe);
+        assert_not_impl_any!(AutoreleasePool<'static>: Send, Sync);
 
-    #[test]
-    fn unwindsafe() {
-        fn assert_unwindsafe<T: UnwindSafe + RefUnwindSafe>() {}
-
-        assert_unwindsafe::<AutoreleasePool<'static>>();
-    }
-
-    #[test]
-    fn unpin() {
-        fn assert_unpin<T: Unpin>() {}
-
-        assert_unwindsafe::<AutoreleasePool<'static>>();
+        assert_impl_all!(usize: AutoreleaseSafe);
+        assert_impl_all!(*mut Object: AutoreleaseSafe);
+        assert_impl_all!(&mut Object: AutoreleaseSafe);
+        #[cfg(feature = "unstable-autoreleasesafe")]
+        assert_not_impl_any!(AutoreleasePool<'static>: AutoreleaseSafe);
     }
 
     #[allow(unused)]

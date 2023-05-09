@@ -24,13 +24,13 @@ note: required by a bound in `send_message`
   |            ^^^^^^^^^^^^^^^^^^^ required by this bound in `MessageReceiver::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Id<NSObject, objc2::rc::Owned>: Encode` is not satisfied
+error[E0277]: the trait bound `Id<NSObject>: Encode` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: param] };
   |                          ^^^^^^^^^^^^^^^^^^^^^^^^
   |                          |
-  |                          the trait `Encode` is not implemented for `Id<NSObject, objc2::rc::Owned>`
+  |                          the trait `Encode` is not implemented for `Id<NSObject>`
   |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `Encode`:
@@ -43,8 +43,8 @@ error[E0277]: the trait bound `Id<NSObject, objc2::rc::Owned>: Encode` is not sa
             AtomicI16
             AtomicI32
           and $N others
-  = note: required for `Id<NSObject, objc2::rc::Owned>` to implement `EncodeConvertArgument`
-  = note: required for `(Id<NSObject, objc2::rc::Owned>,)` to implement `MessageArguments`
+  = note: required for `Id<NSObject>` to implement `EncodeConvertArgument`
+  = note: required for `(Id<NSObject>,)` to implement `MessageArguments`
 note: required by a bound in `send_message`
  --> $WORKSPACE/crates/objc2/src/message/mod.rs
   |
@@ -52,13 +52,13 @@ note: required by a bound in `send_message`
   |            ^^^^^^^^^^^^^^^^ required by this bound in `MessageReceiver::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Id<NSObject, objc2::rc::Owned>: RefEncode` is not satisfied
+error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: &param] };
   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^
   |                          |
-  |                          the trait `RefEncode` is not implemented for `Id<NSObject, objc2::rc::Owned>`
+  |                          the trait `RefEncode` is not implemented for `Id<NSObject>`
   |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `RefEncode`:
@@ -71,9 +71,9 @@ error[E0277]: the trait bound `Id<NSObject, objc2::rc::Owned>: RefEncode` is not
             AtomicI16
             AtomicI32
           and $N others
-  = note: required for `&Id<NSObject, objc2::rc::Owned>` to implement `Encode`
-  = note: required for `&Id<NSObject, objc2::rc::Owned>` to implement `EncodeConvertArgument`
-  = note: required for `(&Id<NSObject, objc2::rc::Owned>,)` to implement `MessageArguments`
+  = note: required for `&Id<NSObject>` to implement `Encode`
+  = note: required for `&Id<NSObject>` to implement `EncodeConvertArgument`
+  = note: required for `(&Id<NSObject>,)` to implement `MessageArguments`
 note: required by a bound in `send_message`
  --> $WORKSPACE/crates/objc2/src/message/mod.rs
   |
@@ -81,13 +81,13 @@ note: required by a bound in `send_message`
   |            ^^^^^^^^^^^^^^^^ required by this bound in `MessageReceiver::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Id<NSObject, objc2::rc::Owned>: RefEncode` is not satisfied
+error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: Some(&param)] };
   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |                          |
-  |                          the trait `RefEncode` is not implemented for `Id<NSObject, objc2::rc::Owned>`
+  |                          the trait `RefEncode` is not implemented for `Id<NSObject>`
   |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `RefEncode`:
@@ -100,11 +100,11 @@ error[E0277]: the trait bound `Id<NSObject, objc2::rc::Owned>: RefEncode` is not
             AtomicI16
             AtomicI32
           and $N others
-  = note: required for `&Id<NSObject, objc2::rc::Owned>` to implement `Encode`
+  = note: required for `&Id<NSObject>` to implement `Encode`
   = note: 1 redundant requirement hidden
-  = note: required for `Option<&Id<NSObject, objc2::rc::Owned>>` to implement `Encode`
-  = note: required for `Option<&Id<NSObject, objc2::rc::Owned>>` to implement `EncodeConvertArgument`
-  = note: required for `(Option<&Id<NSObject, objc2::rc::Owned>>,)` to implement `MessageArguments`
+  = note: required for `Option<&Id<NSObject>>` to implement `Encode`
+  = note: required for `Option<&Id<NSObject>>` to implement `EncodeConvertArgument`
+  = note: required for `(Option<&Id<NSObject>>,)` to implement `MessageArguments`
 note: required by a bound in `send_message`
  --> $WORKSPACE/crates/objc2/src/message/mod.rs
   |
@@ -141,13 +141,13 @@ note: required by a bound in `send_message`
   |            ^^^^^^^^^^^^^^^^ required by this bound in `MessageReceiver::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Id<NSObject, objc2::rc::Owned>: RefEncode` is not satisfied
+error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: param] };
   |                          ^^^^^^^^^^^^^^^^^^^^^^^^
   |                          |
-  |                          the trait `RefEncode` is not implemented for `Id<NSObject, objc2::rc::Owned>`
+  |                          the trait `RefEncode` is not implemented for `Id<NSObject>`
   |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `RefEncode`:
@@ -160,10 +160,10 @@ error[E0277]: the trait bound `Id<NSObject, objc2::rc::Owned>: RefEncode` is not
             AtomicI16
             AtomicI32
           and $N others
-  = note: required for `&mut Id<NSObject, objc2::rc::Owned>` to implement `RefEncode`
-  = note: required for `&mut &mut Id<NSObject, objc2::rc::Owned>` to implement `Encode`
-  = note: required for `&mut &mut Id<NSObject, objc2::rc::Owned>` to implement `EncodeConvertArgument`
-  = note: required for `(&mut &mut Id<NSObject, objc2::rc::Owned>,)` to implement `MessageArguments`
+  = note: required for `&mut Id<NSObject>` to implement `RefEncode`
+  = note: required for `&mut &mut Id<NSObject>` to implement `Encode`
+  = note: required for `&mut &mut Id<NSObject>` to implement `EncodeConvertArgument`
+  = note: required for `(&mut &mut Id<NSObject>,)` to implement `MessageArguments`
 note: required by a bound in `send_message`
  --> $WORKSPACE/crates/objc2/src/message/mod.rs
   |

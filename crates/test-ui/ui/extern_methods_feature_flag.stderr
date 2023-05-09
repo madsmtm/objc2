@@ -5,7 +5,7 @@ error[E0599]: no function or associated item named `disabled` found for struct `
   | |     pub struct MyTest;
   | |
   | |     unsafe impl ClassType for MyTest {
-  | |         type Super = NSObject;
+... |
   | |     }
   | | );
   | |_- function or associated item `disabled` not found for this struct
@@ -20,7 +20,7 @@ error[E0599]: no function or associated item named `disabled_inner1` found for s
   | |     pub struct MyTest;
   | |
   | |     unsafe impl ClassType for MyTest {
-  | |         type Super = NSObject;
+... |
   | |     }
   | | );
   | |_- function or associated item `disabled_inner1` not found for this struct
@@ -38,7 +38,7 @@ error[E0599]: no function or associated item named `disabled_inner2` found for s
   | |     pub struct MyTest;
   | |
   | |     unsafe impl ClassType for MyTest {
-  | |         type Super = NSObject;
+... |
   | |     }
   | | );
   | |_- function or associated item `disabled_inner2` not found for this struct

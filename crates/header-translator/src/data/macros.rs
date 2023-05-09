@@ -45,6 +45,32 @@ macro_rules! data {
     };
 }
 
+macro_rules! __set_mutability {
+    ($data:expr;) => {};
+    ($data:expr; ImmutableWithMutableSubclass<$framework:ident::$subclass:ident>) => {
+        $data.mutability = $crate::stmt::Mutability::ImmutableWithMutableSubclass(
+            $crate::ItemIdentifier::from_raw(
+                stringify!($subclass).to_string(),
+                stringify!($framework).to_string(),
+            ),
+        );
+    };
+    ($data:expr; MutableWithImmutableSuperclass<$framework:ident::$superclass:ident>) => {
+        $data.mutability = $crate::stmt::Mutability::MutableWithImmutableSuperclass(
+            $crate::ItemIdentifier::from_raw(
+                stringify!($superclass).to_string(),
+                stringify!($framework).to_string(),
+            ),
+        );
+    };
+    ($data:expr; Immutable) => {
+        $data.mutability = $crate::stmt::Mutability::Immutable;
+    };
+    ($data:expr; Mutable) => {
+        $data.mutability = $crate::stmt::Mutability::Mutable;
+    };
+}
+
 macro_rules! __data_inner {
     // Base case
     (
@@ -54,7 +80,7 @@ macro_rules! __data_inner {
     (
         @($config:expr)
 
-        class $class:ident $(: $ownership:ident)? {
+        class $class:ident $(: $mutability:ident $(<$framework:ident::$ty:ident>)?)? {
             $($methods:tt)*
         }
 
@@ -63,7 +89,10 @@ macro_rules! __data_inner {
         #[allow(unused_mut)]
         let mut data = $config.class_data.entry(stringify!($class).to_string()).or_default();
 
-        $(data.ownership = $crate::rust_type::Ownership::$ownership;)?
+        __set_mutability! {
+            data;
+            $($mutability $(<$framework::$ty>)?)?
+        }
 
         __data_methods! {
             @(data)
@@ -123,6 +152,41 @@ macro_rules! __data_methods {
     (
         @($data:expr)
     ) => {};
+    // Mark init (and by extension, `new`) method as safe
+    (
+        @($data:expr)
+
+        unsafe -init;
+
+        $($rest:tt)*
+    ) => {
+        let mut method_data = $data.methods.entry("init".to_string()).or_default();
+        method_data.unsafe_ = false;
+
+        let mut method_data = $data.methods.entry("new".to_string()).or_default();
+        method_data.unsafe_ = false;
+
+        __data_methods! {
+            @($data)
+            $($rest)*
+        }
+    };
+    // Mark new (and by extension, `init`) method as safe
+    (
+        @($data:expr)
+
+        unsafe +new;
+
+        $($rest:tt)*
+    ) => {
+        __data_methods! {
+            @($data)
+
+            unsafe -init;
+
+            $($rest)*
+        }
+    };
     // Mark method as safe
     (
         @($data:expr)
@@ -166,7 +230,7 @@ macro_rules! __data_methods {
     ) => {
         let mut method_data = $data.methods.entry(stringify!($name).to_string()).or_default();
 
-        method_data.mutating = true;
+        method_data.mutating = Some(true);
 
         __data_methods! {
             @($data)
@@ -200,7 +264,7 @@ macro_rules! __data_methods {
         let mut method_data = $data.methods.entry(stringify!($name).to_string()).or_default();
 
         method_data.unsafe_ = false;
-        method_data.mutating = true;
+        method_data.mutating = Some(true);
 
         __data_methods! {
             @($data)

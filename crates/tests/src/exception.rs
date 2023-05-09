@@ -22,17 +22,8 @@ fn throw_catch_raise_catch() {
     let reason = NSString::from_str("def");
 
     let exc = NSException::new(&name, Some(&reason), None).unwrap();
-    // TODO: Investigate why this is required on GNUStep!
-    let _exc2 = exc.clone();
 
-    assert_retain_count(&exc, 2);
-
-    // TODO: Investigate this!
-    let extra_retain = usize::from(cfg!(all(
-        feature = "apple",
-        target_os = "macos",
-        target_arch = "x86"
-    )));
+    assert_retain_count(&exc, 1);
 
     let exc = autoreleasepool(|_| {
         let exc = NSException::into_exception(exc);
@@ -40,11 +31,30 @@ fn throw_catch_raise_catch() {
         let exc = res.unwrap_err().unwrap();
         let exc = NSException::from_exception(exc).unwrap();
 
-        assert_retain_count(&exc, 3 + extra_retain);
+        assert_retain_count(&exc, 1);
         exc
     });
 
-    assert_retain_count(&exc, 2 + extra_retain);
+    assert_retain_count(&exc, 1);
+
+    let exc = autoreleasepool(|_| {
+        let inner = || {
+            autoreleasepool(|pool| {
+                let exc = Id::autorelease(exc, pool);
+                unsafe { exc.raise() }
+            })
+        };
+
+        let res = unsafe { catch(inner) };
+        let exc = NSException::from_exception(res.unwrap_err().unwrap()).unwrap();
+
+        // Undesired: The inner pool _should_ have been drained on unwind, but
+        // it isn't, see `rc::Pool::drain`.
+        assert_retain_count(&exc, 2);
+        exc
+    });
+
+    assert_retain_count(&exc, 1);
 
     assert_eq!(exc.name(), name);
     assert_eq!(exc.reason().unwrap(), reason);
@@ -85,28 +95,26 @@ fn raise_catch() {
     let exc = NSException::new(&name, Some(&reason), None).unwrap();
     assert_retain_count(&exc, 1);
 
-    let res = autoreleasepool(|_| {
-        let res = unsafe {
-            catch(|| {
-                if exc.name() == name {
-                    exc.raise();
-                } else {
-                    4
-                }
-            })
+    let exc = autoreleasepool(|pool| {
+        let exc = Id::autorelease(exc, pool);
+        let inner = || {
+            if exc.name() == name {
+                unsafe { exc.raise() };
+            } else {
+                42
+            }
         };
-        assert_retain_count(&exc, 3);
+        let res = unsafe { catch(inner) }.unwrap_err().unwrap();
+        assert_retain_count(&exc, 2);
         res
     });
 
-    assert_retain_count(&exc, 2);
+    assert_retain_count(&exc, 1);
 
-    let obj = res.unwrap_err().unwrap();
-
-    assert_eq!(format!("{obj}"), "def");
+    assert_eq!(format!("{exc}"), "def");
     assert_eq!(
-        format!("{obj:?}"),
-        format!("exception <NSException: {:p}> 'abc' reason:def", &*obj)
+        format!("{exc:?}"),
+        format!("exception <NSException: {:p}> 'abc' reason:def", &*exc)
     );
 }
 

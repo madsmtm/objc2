@@ -33,7 +33,7 @@ use icrate::ns_string;
 let string = ns_string!("world");
 println!("hello {string}");
 
-let array = NSArray::from_slice(&[string.copy()]);
+let array = NSArray::from_id_slice(&[string.copy()]);
 println!("{array:?}");
 ```
 

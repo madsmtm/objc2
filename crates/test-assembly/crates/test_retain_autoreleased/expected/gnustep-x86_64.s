@@ -8,11 +8,11 @@ handle:
 	push	r14
 	push	rbx
 	push	rax
-	mov	r14, rsi
-	mov	rbx, rdi
+	mov	rbx, rsi
+	mov	r14, rdi
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	rdi, rbx
-	mov	rsi, r14
+	mov	rdi, r14
+	mov	rsi, rbx
 	call	rax
 	mov	rdi, rax
 	add	rsp, 8

@@ -21,7 +21,7 @@ _SEL:
 
 	.section	__DATA,__const
 	.globl	_SEL_REF
-	.p2align	3
+	.p2align	3, 0x0
 _SEL_REF:
 	.quad	_SEL
 

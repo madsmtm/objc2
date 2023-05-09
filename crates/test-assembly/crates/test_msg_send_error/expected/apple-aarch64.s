@@ -224,32 +224,32 @@ l_anon.[ID].2:
 	.ascii	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].3:
 	.quad	l_anon.[ID].2
 	.asciz	"6\000\000\000\000\000\000\000\013\000\000\000\005\000\000"
 
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].4:
 	.quad	l_anon.[ID].2
 	.asciz	"6\000\000\000\000\000\000\000\020\000\000\000\005\000\000"
 
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].5:
 	.quad	l_anon.[ID].2
 	.asciz	"6\000\000\000\000\000\000\000\025\000\000\000\005\000\000"
 
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].6:
 	.quad	l_anon.[ID].2
 	.asciz	"6\000\000\000\000\000\000\000\032\000\000\000\005\000\000"
 
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].7:
 	.quad	l_anon.[ID].2
 	.asciz	"6\000\000\000\000\000\000\000\037\000\000\000\005\000\000"
 
-	.p2align	3
+	.p2align	3, 0x0
 l_anon.[ID].8:
 	.quad	l_anon.[ID].2
 	.asciz	"6\000\000\000\000\000\000\000$\000\000\000\005\000\000"

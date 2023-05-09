@@ -4,13 +4,13 @@ use core::ptr;
 use core::slice;
 use std::os::raw::c_ulong;
 
-use objc2::rc::{Id, Owned};
+use objc2::rc::Id;
 use objc2::runtime::Object;
 use objc2::{msg_send, Encode, Encoding, Message, RefEncode};
 
 // TODO: https://doc.rust-lang.org/stable/reference/trait-bounds.html#lifetime-bounds
 pub struct NSEnumerator2<'a, T: Message> {
-    id: Id<Object, Owned>,
+    id: Id<Object>,
     item: PhantomData<&'a T>,
 }
 
@@ -19,8 +19,7 @@ impl<'a, T: Message> NSEnumerator2<'a, T> {
     ///
     /// # Safety
     ///
-    /// The object pointer must be a valid `NSEnumerator2` with `Owned`
-    /// ownership.
+    /// The object pointer must be a valid `NSEnumerator2`.
     pub unsafe fn from_ptr(ptr: *mut Object) -> Self {
         Self {
             id: unsafe { Id::retain_autoreleased(ptr) }.unwrap(),
@@ -33,7 +32,7 @@ impl<'a, T: Message> Iterator for NSEnumerator2<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<&'a T> {
-        unsafe { msg_send![&mut self.id, nextObject] }
+        unsafe { msg_send![&self.id, nextObject] }
     }
 }
 
@@ -157,7 +156,8 @@ impl<'a, C: NSFastEnumeration2 + ?Sized> Iterator for NSFastEnumerator2<'a, C> {
             None
         } else {
             unsafe {
-                let obj = *self.ptr;
+                // TODO
+                let obj = self.ptr.read_unaligned();
                 self.ptr = self.ptr.offset(1);
                 Some(obj.as_ref().unwrap_unchecked())
             }

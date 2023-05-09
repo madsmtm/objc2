@@ -10,13 +10,13 @@ license = "Zlib OR Apache-2.0 OR MIT"
 [dependencies]
 clang = { version = "2.0", features = ["runtime", "clang_10_0"] }
 clang-sys = { version = "1.4.0" }
-toml = "0.5.9"
+basic-toml = "0.1.2"
 serde = { version = "1.0.144", features = ["derive"] }
 apple-sdk = { version = "0.4.0", default-features = false }
 tracing = { version = "0.1.37", default-features = false, features = ["std"] }
 tracing-subscriber = { version = "0.3.16", features = ["fmt"] }
 tracing-tree = { git = "https://github.com/madsmtm/tracing-tree.git" }
 proc-macro2 = "1.0.49"
-syn = { version = "1.0", features = ["parsing"] }
+syn = { version = "2.0", features = ["parsing"] }
 heck = "0.4"
 semver = { version = "1.0", features = ["serde"] }

@@ -203,9 +203,9 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
   | |_^ the trait `MessageReceiver` is not implemented for `Box<CustomObject>`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a Id<T, O>
+            &'a Id<T>
             &'a T
-            &'a mut Id<T, objc2::rc::Owned>
+            &'a mut Id<T>
             &'a mut T
             &'a objc2::runtime::Class
             *const T
@@ -228,8 +228,8 @@ error[E0277]: the trait bound `Id<CustomObject>: MessageReceiver` is not satisfi
   | |_^ the trait `MessageReceiver` is not implemented for `Id<CustomObject>`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a Id<T, O>
-            &'a mut Id<T, objc2::rc::Owned>
+            &'a Id<T>
+            &'a mut Id<T>
   = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<Id<CustomObject>, Id<CustomObject>>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
@@ -246,9 +246,9 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   | |_^ the trait `MessageReceiver` is not implemented for `CustomObject`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a Id<T, O>
+            &'a Id<T>
             &'a T
-            &'a mut Id<T, objc2::rc::Owned>
+            &'a mut Id<T>
             &'a mut T
             &'a objc2::runtime::Class
             *const T
@@ -271,9 +271,9 @@ error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not 
   | |_^ the trait `MessageReceiver` is not implemented for `Allocated<CustomObject>`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a Id<T, O>
+            &'a Id<T>
             &'a T
-            &'a mut Id<T, objc2::rc::Owned>
+            &'a mut Id<T>
             &'a mut T
             &'a objc2::runtime::Class
             *const T

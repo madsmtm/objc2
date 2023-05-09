@@ -93,7 +93,7 @@ _use_in_loop:
 
 	.section	__OBJC,__image_info
 	.globl	L_OBJC_IMAGE_INFO_49a0cd2a35b9a474
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_49a0cd2a35b9a474:
 	.asciz	"\000\000\000\000@\000\000"
 
@@ -104,7 +104,7 @@ L_OBJC_CLASS_NAME_49a0cd2a35b9a474:
 
 	.section	__OBJC,__cls_refs,literal_pointers,no_dead_strip
 	.globl	L_OBJC_CLASS_REFERENCES_49a0cd2a35b9a474
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_CLASS_REFERENCES_49a0cd2a35b9a474:
 	.long	L_OBJC_CLASS_NAME_49a0cd2a35b9a474
 
@@ -115,7 +115,7 @@ L_OBJC_CLASS_NAME_49a0cd2a35b9a474_MODULE_INFO:
 
 	.section	__OBJC,__module_info,regular,no_dead_strip
 	.globl	L_OBJC_MODULES_49a0cd2a35b9a474
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_MODULES_49a0cd2a35b9a474:
 	.asciz	"\007\000\000\000\020\000\000"
 	.long	L_OBJC_CLASS_NAME_49a0cd2a35b9a474_MODULE_INFO
@@ -123,7 +123,7 @@ L_OBJC_MODULES_49a0cd2a35b9a474:
 
 	.section	__OBJC,__image_info
 	.globl	L_OBJC_IMAGE_INFO_60860b498061fbc6
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_60860b498061fbc6:
 	.asciz	"\000\000\000\000@\000\000"
 
@@ -134,7 +134,7 @@ L_OBJC_CLASS_NAME_60860b498061fbc6:
 
 	.section	__OBJC,__cls_refs,literal_pointers,no_dead_strip
 	.globl	L_OBJC_CLASS_REFERENCES_60860b498061fbc6
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_CLASS_REFERENCES_60860b498061fbc6:
 	.long	L_OBJC_CLASS_NAME_60860b498061fbc6
 
@@ -145,7 +145,7 @@ L_OBJC_CLASS_NAME_60860b498061fbc6_MODULE_INFO:
 
 	.section	__OBJC,__module_info,regular,no_dead_strip
 	.globl	L_OBJC_MODULES_60860b498061fbc6
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_MODULES_60860b498061fbc6:
 	.asciz	"\007\000\000\000\020\000\000"
 	.long	L_OBJC_CLASS_NAME_60860b498061fbc6_MODULE_INFO
@@ -153,7 +153,7 @@ L_OBJC_MODULES_60860b498061fbc6:
 
 	.section	__OBJC,__image_info
 	.globl	L_OBJC_IMAGE_INFO_089cee9fe04089a4
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_089cee9fe04089a4:
 	.asciz	"\000\000\000\000@\000\000"
 
@@ -164,7 +164,7 @@ L_OBJC_CLASS_NAME_089cee9fe04089a4:
 
 	.section	__OBJC,__cls_refs,literal_pointers,no_dead_strip
 	.globl	L_OBJC_CLASS_REFERENCES_089cee9fe04089a4
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_CLASS_REFERENCES_089cee9fe04089a4:
 	.long	L_OBJC_CLASS_NAME_089cee9fe04089a4
 
@@ -175,7 +175,7 @@ L_OBJC_CLASS_NAME_089cee9fe04089a4_MODULE_INFO:
 
 	.section	__OBJC,__module_info,regular,no_dead_strip
 	.globl	L_OBJC_MODULES_089cee9fe04089a4
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_MODULES_089cee9fe04089a4:
 	.asciz	"\007\000\000\000\020\000\000"
 	.long	L_OBJC_CLASS_NAME_089cee9fe04089a4_MODULE_INFO
@@ -183,7 +183,7 @@ L_OBJC_MODULES_089cee9fe04089a4:
 
 	.section	__OBJC,__image_info
 	.globl	L_OBJC_IMAGE_INFO_5331bb309754c706
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_5331bb309754c706:
 	.asciz	"\000\000\000\000@\000\000"
 
@@ -194,7 +194,7 @@ L_OBJC_CLASS_NAME_5331bb309754c706:
 
 	.section	__OBJC,__cls_refs,literal_pointers,no_dead_strip
 	.globl	L_OBJC_CLASS_REFERENCES_5331bb309754c706
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_CLASS_REFERENCES_5331bb309754c706:
 	.long	L_OBJC_CLASS_NAME_5331bb309754c706
 
@@ -205,7 +205,7 @@ L_OBJC_CLASS_NAME_5331bb309754c706_MODULE_INFO:
 
 	.section	__OBJC,__module_info,regular,no_dead_strip
 	.globl	L_OBJC_MODULES_5331bb309754c706
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_MODULES_5331bb309754c706:
 	.asciz	"\007\000\000\000\020\000\000"
 	.long	L_OBJC_CLASS_NAME_5331bb309754c706_MODULE_INFO
@@ -213,7 +213,7 @@ L_OBJC_MODULES_5331bb309754c706:
 
 	.section	__OBJC,__image_info
 	.globl	L_OBJC_IMAGE_INFO_15b3f8b356e4fdb3
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_15b3f8b356e4fdb3:
 	.asciz	"\000\000\000\000@\000\000"
 
@@ -224,7 +224,7 @@ L_OBJC_CLASS_NAME_15b3f8b356e4fdb3:
 
 	.section	__OBJC,__cls_refs,literal_pointers,no_dead_strip
 	.globl	L_OBJC_CLASS_REFERENCES_15b3f8b356e4fdb3
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_CLASS_REFERENCES_15b3f8b356e4fdb3:
 	.long	L_OBJC_CLASS_NAME_15b3f8b356e4fdb3
 
@@ -235,7 +235,7 @@ L_OBJC_CLASS_NAME_15b3f8b356e4fdb3_MODULE_INFO:
 
 	.section	__OBJC,__module_info,regular,no_dead_strip
 	.globl	L_OBJC_MODULES_15b3f8b356e4fdb3
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_MODULES_15b3f8b356e4fdb3:
 	.asciz	"\007\000\000\000\020\000\000"
 	.long	L_OBJC_CLASS_NAME_15b3f8b356e4fdb3_MODULE_INFO
@@ -243,7 +243,7 @@ L_OBJC_MODULES_15b3f8b356e4fdb3:
 
 	.section	__OBJC,__image_info
 	.globl	L_OBJC_IMAGE_INFO_4fe8a7873c5b5bcf
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_4fe8a7873c5b5bcf:
 	.asciz	"\000\000\000\000@\000\000"
 
@@ -254,7 +254,7 @@ L_OBJC_CLASS_NAME_4fe8a7873c5b5bcf:
 
 	.section	__OBJC,__cls_refs,literal_pointers,no_dead_strip
 	.globl	L_OBJC_CLASS_REFERENCES_4fe8a7873c5b5bcf
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_CLASS_REFERENCES_4fe8a7873c5b5bcf:
 	.long	L_OBJC_CLASS_NAME_4fe8a7873c5b5bcf
 
@@ -265,7 +265,7 @@ L_OBJC_CLASS_NAME_4fe8a7873c5b5bcf_MODULE_INFO:
 
 	.section	__OBJC,__module_info,regular,no_dead_strip
 	.globl	L_OBJC_MODULES_4fe8a7873c5b5bcf
-	.p2align	2
+	.p2align	2, 0x0
 L_OBJC_MODULES_4fe8a7873c5b5bcf:
 	.asciz	"\007\000\000\000\020\000\000"
 	.long	L_OBJC_CLASS_NAME_4fe8a7873c5b5bcf_MODULE_INFO

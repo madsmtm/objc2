@@ -1,4 +1,4 @@
-//! # Support for type-encodings
+//! # Support for type-encodings.
 //!
 //! This module contains traits for annotating types that has an Objective-C
 //! type-encoding: Specifically [`Encode`] for structs/numeric types and

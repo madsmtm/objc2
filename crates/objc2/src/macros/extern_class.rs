@@ -1,30 +1,21 @@
-/// Create a new type to represent an Objective-C class.
+/// Create a new type to represent a class.
 ///
 /// This is similar to an `@interface` declaration in Objective-C.
 ///
-/// The given struct name should correspond to a valid Objective-C class,
-/// whose instances have the encoding [`Encoding::Object`]. (as an example:
-/// `NSAutoreleasePool` does not have this!)
-///
-/// You must specify the superclass of this class, similar to how you would
-/// in Objective-C.
-///
-/// Due to Rust trait limitations, specifying e.g. the superclass `NSData`
-/// would not give you easy access to `NSObject`'s functionality. Therefore,
-/// you may specify additional parts of the inheritance chain using the
-/// `#[inherits(...)]` attribute.
-///
-/// [`Encoding::Object`]: crate::Encoding::Object
+/// It is useful for things like `icrate`, which needs to create interfaces to
+/// existing, externally defined classes like `NSString`, `NSURL` and so on,
+/// but can also be useful for users that have custom classes written in
+/// Objective-C that they want to access from Rust.
 ///
 ///
 /// # Specification
 ///
 /// The syntax is similar enough to Rust syntax that if you invoke the macro
 /// with parentheses (as opposed to curly brackets), [`rustfmt` will be able to
-/// format the contents][rustfmt-macros].
+/// format the contents][rustfmt-macros] (so e.g. as `extern_class!( ... );`).
 ///
-/// This creates an opaque struct containing the superclass (which means that
-/// auto traits are inherited from the superclass), and implements the
+/// The macro creates an opaque struct containing the superclass (which means
+/// that auto traits are inherited from the superclass), and implements the
 /// following traits for it to allow easier usage as an Objective-C object:
 ///
 /// - [`RefEncode`][crate::RefEncode]
@@ -38,34 +29,74 @@
 /// - [`BorrowMut<$inheritance_chain>`][core::borrow::BorrowMut]
 ///
 /// The macro allows specifying fields on the struct, but _only_ zero-sized
-/// types like [`PhantomData`] and [`declare::Ivar`] are allowed here!
+/// types like [`PhantomData`] and [`declare::Ivar`] are allowed here.
 ///
-/// You may add a `#[cfg(...)]` attribute to the class and `ClassType` impl,
-/// and then it will work as expected. Only `#[cfg(...)]` attributes are
-/// supported on the `ClassType` impl!
+/// You can add most attributes to the class, including `#[cfg(...)]`,
+/// `#[derive(...)]` and doc comments (but not ABI-modifying attributes like
+/// `#[repr(...)]`).
 ///
 /// [rustfmt-macros]: https://github.com/rust-lang/rustfmt/discussions/5437
 /// [`PhantomData`]: core::marker::PhantomData
 /// [`declare::Ivar`]: crate::declare::Ivar
 ///
 ///
+/// ## `ClassType` implementation
+///
+/// The syntax of this macro neatly documents that it implements the
+/// [`ClassType`] trait for you, though to do so you need to provide it the
+/// following:
+/// - The [`Super`] class.
+///
+///   Due to Rust trait limitations, specifying e.g. the superclass `NSData`
+///   would not give you easy access to `NSObject`'s functionality. Therefore,
+///   you may optionally specify additional parts of the inheritance chain
+///   using an `#[inherits(...)]` attribute.
+/// - The class' [`Mutability`].
+/// - Optionally, the class' [`NAME`] - if not specified, this will default to
+///   the struct name.
+///
+/// You may add `#[cfg(...)]` attributes to the `ClassType` impl, and then it
+/// will work as expected. No other attributes are supported.
+///
+/// [`ClassType`]: crate::ClassType
+/// [`Super`]: crate::ClassType::Super
+/// [`Mutability`]: crate::ClassType::Mutability
+/// [`NAME`]: crate::ClassType::NAME
+///
+///
 /// # Safety
 ///
-/// The specified superclass must be correct. The object must also respond to
-/// standard memory management messages (this is upheld if [`NSObject`] is
-/// part of its inheritance chain).
+/// This macro implements the three unsafe traits [`RefEncode`], [`Message`]
+/// and [`ClassType`] for you, and while it can ensure most of the required
+/// properties in those, it cannot ensure all of them.
 ///
-/// [`NSObject`]: crate::runtime::NSObject
+/// In particular, when writing `unsafe` on `impl ClassType`, you must ensure
+/// that:
+/// 1. [`ClassType::Super`] is correct.
+/// 2. [`ClassType::Mutability`] is correct.
+///
+///    See [`ClassType`'s safety section][ClassType#safety] for further
+///    details on what this entails.
+///
+/// [`RefEncode`]: crate::encode::RefEncode
+/// [`Message`]: crate::Message
+/// [`ClassType::Super`]: crate::ClassType::Super
+/// [`ClassType::Mutability`]: crate::ClassType::Mutability
+/// [ClassType#safety]: crate::ClassType#safety
 ///
 ///
 /// # Examples
 ///
-/// Create a new type to represent the `NSFormatter` class.
+/// Create a new type to represent the `NSFormatter` class (of course, we
+/// could have just used `icrate::Foundation::NSFormatter`).
 ///
 /// ```
-/// use objc2::runtime::NSObject;
+/// # #[cfg(not_available)]
+/// use icrate::Foundation::{NSCoding, NSCopying, NSObjectProtocol};
+/// # use objc2::runtime::{NSObjectProtocol, __NSCopying as NSCopying};
 /// use objc2::rc::Id;
-/// use objc2::{ClassType, extern_class, msg_send_id};
+/// use objc2::runtime::NSObject;
+/// use objc2::{extern_class, msg_send_id, mutability, ClassType};
 ///
 /// extern_class!(
 ///     /// An example description.
@@ -76,31 +107,38 @@
 ///     // Specify the superclass, in this case `NSObject`
 ///     unsafe impl ClassType for NSFormatter {
 ///         type Super = NSObject;
+///         type Mutability = mutability::InteriorMutable;
 ///         // Optionally, specify the name of the class, if it differs from
 ///         // the struct name.
 ///         // const NAME: &'static str = "NSFormatter";
 ///     }
 /// );
 ///
-/// // We can specify the protocols that `NSFormatter` conforms to like this.
-/// // (These should be created using the `extern_protocol!` macro).
-/// //
-/// // unsafe impl NSCoding for NSFormatter {}
-/// // unsafe impl NSCopying for NSFormatter {}
+/// // Note: We have to specify the protocols for the superclasses as well,
+/// // since Rust doesn't do inheritance.
+/// unsafe impl NSObjectProtocol for NSFormatter {}
+/// unsafe impl NSCopying for NSFormatter {}
+/// # #[cfg(not_available)]
+/// unsafe impl NSCoding for NSFormatter {}
 ///
-/// // Provided by the implementation of `ClassType`
-/// let cls = NSFormatter::class();
+/// fn main() {
+///     // Provided by the implementation of `ClassType`
+///     let cls = NSFormatter::class();
 ///
-/// // `NSFormatter` implements `Message`:
-/// let obj: Id<NSFormatter> = unsafe { msg_send_id![cls, new] };
+///     // `NSFormatter` implements `Message`:
+///     let obj: Id<NSFormatter> = unsafe { msg_send_id![cls, new] };
+/// }
 /// ```
 ///
 /// Represent the `NSDateFormatter` class, using the `NSFormatter` type we
 /// declared previously to specify as its superclass.
 ///
 /// ```
+/// # #[cfg(not_available)]
+/// use icrate::Foundation::{NSCoding, NSCopying, NSObjectProtocol};
+/// # use objc2::runtime::{NSObjectProtocol, __NSCopying as NSCopying};
 /// use objc2::runtime::NSObject;
-/// use objc2::{extern_class, ClassType};
+/// use objc2::{extern_class, mutability, ClassType};
 /// #
 /// # extern_class!(
 /// #     #[derive(PartialEq, Eq, Hash)]
@@ -108,6 +146,7 @@
 /// #
 /// #     unsafe impl ClassType for NSFormatter {
 /// #         type Super = NSObject;
+/// #         type Mutability = mutability::InteriorMutable;
 /// #     }
 /// # );
 ///
@@ -119,13 +158,16 @@
 ///         // Specify the correct inheritance chain
 ///         #[inherits(NSObject)]
 ///         type Super = NSFormatter;
+///         type Mutability = mutability::InteriorMutable;
 ///     }
 /// );
 ///
 /// // Similarly, we can specify the protocols that this implements here:
-/// //
-/// // unsafe impl NSCoding for NSFormatter {}
-/// // unsafe impl NSCopying for NSFormatter {}
+/// unsafe impl NSObjectProtocol for NSFormatter {}
+/// # #[cfg(not_available)]
+/// unsafe impl NSCopying for NSDateFormatter {}
+/// # #[cfg(not_available)]
+/// unsafe impl NSCoding for NSDateFormatter {}
 /// ```
 ///
 /// See the source code of `icrate` for many more examples.
@@ -141,8 +183,9 @@ macro_rules! extern_class {
         unsafe impl ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
+            type Mutability = $mutability:ty;
 
-            $(const NAME: &'static str = $name_const:literal;)?
+            $(const NAME: &'static str = $name_const:expr;)?
         }
     ) => {
         // Just shorthand syntax for the following
@@ -154,6 +197,7 @@ macro_rules! extern_class {
             unsafe impl ClassType for $for {
                 $(#[inherits($($inheritance_rest),+)])?
                 type Super = $superclass;
+                type Mutability = $mutability;
 
                 $(const NAME: &'static str = $name_const;)?
             }
@@ -169,13 +213,15 @@ macro_rules! extern_class {
         unsafe impl ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
+            type Mutability = $mutability:ty;
 
-            $(const NAME: &'static str = $name_const:literal;)?
+            $(const NAME: &'static str = $name_const:expr;)?
         }
     ) => {
         $crate::__inner_extern_class!(
             $(#[$m])*
             $v struct $name<> {
+                __superclass: $superclass,
                 $($field_vis $field: $field_ty,)*
             }
 
@@ -183,6 +229,15 @@ macro_rules! extern_class {
             unsafe impl<> ClassType for $for {
                 $(#[inherits($($inheritance_rest),+)])?
                 type Super = $superclass;
+                type Mutability = $mutability;
+
+                fn as_super(&self) -> &Self::Super {
+                    &self.__superclass
+                }
+
+                fn as_super_mut(&mut self) -> &mut Self::Super {
+                    &mut self.__superclass
+                }
 
                 $(const NAME: &'static str = $name_const;)?
             }
@@ -266,6 +321,7 @@ macro_rules! __inner_extern_class {
     (
         $(#[$m:meta])*
         $v:vis struct $name:ident<$($t_struct:ident $(: $b_struct:ident $(= $default:ty)?)?),* $(,)?> {
+            $superclass_field:ident: $superclass_field_ty:ty,
             $($fields:tt)*
         }
 
@@ -273,8 +329,12 @@ macro_rules! __inner_extern_class {
         unsafe impl<$($t_for:ident $(: $b_for:ident)?),* $(,)?> ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+ $(,)?)])?
             type Super = $superclass:ty;
+            type Mutability = $mutability:ty;
 
-            $(const NAME: &'static str = $name_const:literal;)?
+            fn as_super(&$as_super_self:ident) -> &Self::Super $as_super:block
+            fn as_super_mut(&mut $as_super_mut_self:ident) -> &mut Self::Super $as_super_mut:block
+
+            $(const NAME: &'static str = $name_const:expr;)?
         }
     ) => {
         $crate::__emit_struct! {
@@ -282,7 +342,7 @@ macro_rules! __inner_extern_class {
             ($v)
             ($name<$($t_struct $(: $b_struct $(= $default)?)?),*>)
             (
-                __inner: $superclass,
+                $superclass_field: $superclass_field_ty,
                 $($fields)*
             )
         }
@@ -291,16 +351,22 @@ macro_rules! __inner_extern_class {
             $(#[$impl_m])*
             unsafe impl ($($t_for $(: $b_for)?),*) for $for {
                 INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::Object];
+
+                fn as_super(&$as_super_self) $as_super
+                fn as_super_mut(&mut $as_super_mut_self) $as_super_mut
             }
         }
 
         $(#[$impl_m])*
         unsafe impl<$($t_for $(: $b_for)?),*> ClassType for $for {
             type Super = $superclass;
+            type Mutability = $mutability;
             const NAME: &'static $crate::__macro_helpers::str = $crate::__select_name!($name; $($name_const)?);
 
             #[inline]
             fn class() -> &'static $crate::runtime::Class {
+                $crate::__macro_helpers::assert_mutability_matches_superclass_mutability::<Self>();
+
                 $crate::__class_inner!(
                     $crate::__select_name!($name; $($name_const)?),
                     $crate::__hash_idents!($name),
@@ -308,14 +374,10 @@ macro_rules! __inner_extern_class {
             }
 
             #[inline]
-            fn as_super(&self) -> &Self::Super {
-                &self.__inner
-            }
+            fn as_super(&$as_super_self) -> &Self::Super $as_super
 
             #[inline]
-            fn as_super_mut(&mut self) -> &mut Self::Super {
-                &mut self.__inner
-            }
+            fn as_super_mut(&mut $as_super_mut_self) -> &mut Self::Super $as_super_mut
         }
     };
 }
@@ -327,6 +389,9 @@ macro_rules! __extern_class_impl_traits {
         $(#[$impl_m:meta])*
         unsafe impl ($($t:tt)*) for $for:ty {
             INHERITS = [$superclass:ty $(, $inheritance_rest:ty)*];
+
+            fn as_super(&$as_super_self:ident) $as_super:block
+            fn as_super_mut(&mut $as_super_mut_self:ident) $as_super_mut:block
         }
     ) => {
         // SAFETY:
@@ -335,6 +400,14 @@ macro_rules! __extern_class_impl_traits {
         //   that it actually inherits said object.
         // - The rest of the struct's fields are ZSTs, so they don't influence
         //   the layout.
+        //
+        // Be aware that very rarely, this implementation is wrong because the
+        // class' instances do not have the encoding `Encoding::Object`.
+        //
+        // A known case is that `NSAutoreleasePool` has a different encoding.
+        // This should be fairly problem-free though, since that is still
+        // valid in Objective-C to represent that class' instances as
+        // `NSObject*`.
         $(#[$impl_m])*
         unsafe impl<$($t)*> $crate::RefEncode for $for {
             const ENCODING_REF: $crate::Encoding
@@ -345,8 +418,12 @@ macro_rules! __extern_class_impl_traits {
         // (we even ensure that `Object` is always last in our inheritance
         // tree), so it is always safe to reinterpret as that.
         //
-        // That the object must work with standard memory management is upheld
-        // by the caller.
+        // That the object must work with standard memory management is
+        // properly upheld by the fact that the superclass is required by
+        // `assert_mutability_matches_superclass_mutability` to implement
+        // `ClassType`, and hence must be a subclass of one of `NSObject`,
+        // `NSProxy` or some other class that ensures this (e.g. the object
+        // itself is not a root class).
         $(#[$impl_m])*
         unsafe impl<$($t)*> $crate::Message for $for {}
 
@@ -361,9 +438,11 @@ macro_rules! __extern_class_impl_traits {
         // Any lifetime information that the object may have been holding is
         // safely kept in the returned reference.
         //
-        // Generics are discarded (for example in the case of `&NSArray<T, O>`
-        // to `&NSObject`), but if the generic contained a lifetime, that
-        // lifetime is still included in the returned reference.
+        // Generics are discarded (for example in the case of `&NSArray<T>` to
+        // `&NSObject`), but if the generic contained a lifetime, that
+        // lifetime is still included in the returned reference, and is not
+        // erasable by e.g. `ClassType::retain` since `NSObject` does not
+        // allow that.
         //
         // Note that you can easily have two different variables pointing to
         // the same object, `x: &T` and `y: &T::Target`, and this would be
@@ -373,9 +452,7 @@ macro_rules! __extern_class_impl_traits {
             type Target = $superclass;
 
             #[inline]
-            fn deref(&self) -> &Self::Target {
-                &self.__inner
-            }
+            fn deref(&$as_super_self) -> &Self::Target $as_super
         }
 
         // SAFETY: Mutability does not change anything in the above
@@ -392,9 +469,7 @@ macro_rules! __extern_class_impl_traits {
         $(#[$impl_m])*
         impl<$($t)*> $crate::__macro_helpers::DerefMut for $for {
             #[inline]
-            fn deref_mut(&mut self) -> &mut Self::Target {
-                &mut self.__inner
-            }
+            fn deref_mut(&mut $as_super_mut_self) -> &mut Self::Target $as_super_mut
         }
 
         $(#[$impl_m])*

@@ -12,14 +12,11 @@ id objc_retain(id value);
 unsigned char rust_objc_sys_0_3_try_catch_exception(void (*f)(void *), void *context, id *error) {
     @try {
         f(context);
-        if (error) {
-            *error = (id)0; // nil
-        }
         return 0;
     } @catch (id exception) {
-        if (error) {
-            *error = objc_retain(exception);
-        }
+        // The exception is retained while inside the `@catch` block, but is
+        // not guaranteed to be so outside of it; so hence we must do it here!
+        *error = objc_retain(exception);
         return 1;
     }
 }

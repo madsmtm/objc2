@@ -1,12 +1,13 @@
-use objc2::{extern_class, extern_methods, declare_class, ClassType};
-use objc2::runtime::NSObject;
 use objc2::rc::Id;
+use objc2::runtime::NSObject;
+use objc2::{declare_class, extern_class, extern_methods, mutability, ClassType};
 
 extern_class!(
     pub struct MyObject;
 
     unsafe impl ClassType for MyObject {
         type Super = NSObject;
+        type Mutability = mutability::InteriorMutable;
     }
 );
 
@@ -33,6 +34,7 @@ declare_class!(
 
     unsafe impl ClassType for CustomObject1 {
         type Super = NSObject;
+        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "CustomObject1";
     }
 
@@ -49,6 +51,7 @@ declare_class!(
 
     unsafe impl ClassType for CustomObject2 {
         type Super = NSObject;
+        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "CustomObject2";
     }
 

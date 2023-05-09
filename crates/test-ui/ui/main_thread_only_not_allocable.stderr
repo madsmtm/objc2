@@ -1,0 +1,19 @@
+error[E0277]: the trait bound `MainThreadOnly: mutability::private::MutabilityIsAllocableAnyThread` is not satisfied
+ --> ui/main_thread_only_not_allocable.rs
+  |
+  |     let _ = MyMainThreadOnlyClass::alloc();
+  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `mutability::private::MutabilityIsAllocableAnyThread` is not implemented for `MainThreadOnly`
+  |
+  = help: the following other types implement trait `mutability::private::MutabilityIsAllocableAnyThread`:
+            Immutable
+            ImmutableWithMutableSubclass<MS>
+            InteriorMutable
+            Mutable
+            MutableWithImmutableSuperclass<IS>
+            Root
+  = note: required for `MyMainThreadOnlyClass` to implement `IsAllocableAnyThread`
+note: required by a bound in `objc2::ClassType::alloc`
+ --> $WORKSPACE/crates/objc2/src/class_type.rs
+  |
+  |         Self: IsAllocableAnyThread,
+  |               ^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassType::alloc`

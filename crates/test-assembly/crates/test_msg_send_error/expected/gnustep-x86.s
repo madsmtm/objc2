@@ -386,7 +386,7 @@ error_autoreleased:
 
 	.type	.Lanon.[ID].3,@object
 	.section	.data.rel.ro..Lanon.[ID].3,"aw",@progbits
-	.p2align	2
+	.p2align	2, 0x0
 .Lanon.[ID].3:
 	.long	.Lanon.[ID].2
 	.asciz	"6\000\000\000\013\000\000\000\005\000\000"
@@ -394,7 +394,7 @@ error_autoreleased:
 
 	.type	.Lanon.[ID].4,@object
 	.section	.data.rel.ro..Lanon.[ID].4,"aw",@progbits
-	.p2align	2
+	.p2align	2, 0x0
 .Lanon.[ID].4:
 	.long	.Lanon.[ID].2
 	.asciz	"6\000\000\000\020\000\000\000\005\000\000"
@@ -402,7 +402,7 @@ error_autoreleased:
 
 	.type	.Lanon.[ID].5,@object
 	.section	.data.rel.ro..Lanon.[ID].5,"aw",@progbits
-	.p2align	2
+	.p2align	2, 0x0
 .Lanon.[ID].5:
 	.long	.Lanon.[ID].2
 	.asciz	"6\000\000\000\025\000\000\000\005\000\000"
@@ -410,7 +410,7 @@ error_autoreleased:
 
 	.type	.Lanon.[ID].6,@object
 	.section	.data.rel.ro..Lanon.[ID].6,"aw",@progbits
-	.p2align	2
+	.p2align	2, 0x0
 .Lanon.[ID].6:
 	.long	.Lanon.[ID].2
 	.asciz	"6\000\000\000\032\000\000\000\005\000\000"
@@ -418,7 +418,7 @@ error_autoreleased:
 
 	.type	.Lanon.[ID].7,@object
 	.section	.data.rel.ro..Lanon.[ID].7,"aw",@progbits
-	.p2align	2
+	.p2align	2, 0x0
 .Lanon.[ID].7:
 	.long	.Lanon.[ID].2
 	.asciz	"6\000\000\000\037\000\000\000\005\000\000"
@@ -426,7 +426,7 @@ error_autoreleased:
 
 	.type	.Lanon.[ID].8,@object
 	.section	.data.rel.ro..Lanon.[ID].8,"aw",@progbits
-	.p2align	2
+	.p2align	2, 0x0
 .Lanon.[ID].8:
 	.long	.Lanon.[ID].2
 	.asciz	"6\000\000\000$\000\000\000\005\000\000"

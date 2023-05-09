@@ -3,13 +3,14 @@ use std::marker::PhantomData;
 use objc2::declare::IvarEncode;
 use objc2::rc::Id;
 use objc2::runtime::NSObject;
-use objc2::{declare_class, ClassType};
+use objc2::{declare_class, mutability, ClassType};
 
 declare_class!(
     struct CustomObject;
 
     unsafe impl ClassType for CustomObject {
         type Super = NSObject;
+        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "CustomObject";
     }
 
@@ -87,6 +88,7 @@ declare_class!(
 
     unsafe impl ClassType for MissingName {
         type Super = NSObject;
+        type Mutability = mutability::InteriorMutable;
     }
 );
 
@@ -97,6 +99,7 @@ declare_class!(
 
     unsafe impl ClassType for InvalidField {
         type Super = NSObject;
+        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "InvalidField";
     }
 );
@@ -108,6 +111,7 @@ declare_class!(
 
     unsafe impl ClassType for UnnecessaryIvarModule {
         type Super = NSObject;
+        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "UnnecessaryIvarModule";
     }
 );
@@ -121,6 +125,7 @@ declare_class!(
 
     unsafe impl ClassType for UnnecessaryIvarModuleWithFields {
         type Super = NSObject;
+        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "UnnecessaryIvarModuleWithFields";
     }
 );
@@ -132,7 +137,16 @@ declare_class!(
 
     unsafe impl ClassType for MissingIvarModule {
         type Super = NSObject;
+        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "MissingIvarModule";
+    }
+);
+
+declare_class!(
+    struct MissingMutability;
+
+    unsafe impl ClassType for MissingMutability {
+        type Super = NSObject;
     }
 );
 

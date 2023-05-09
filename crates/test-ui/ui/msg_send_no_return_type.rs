@@ -3,8 +3,6 @@
 use objc2::{class, msg_send};
 
 fn main() {
-    unsafe {
-        let cls = class!(NSObject);
-        msg_send![cls, new];
-    }
+    let cls = class!(NSObject);
+    unsafe { msg_send![cls, new] };
 }

@@ -18,16 +18,16 @@ extern_methods!(
         pub unsafe fn extendLaunchMeasurementForTaskID_error(
             &self,
             task_id: &MXLaunchTaskID,
-        ) -> Result<(), Id<NSError, Shared>>;
+        ) -> Result<(), Id<NSError>>;
 
         #[method(finishExtendedLaunchMeasurementForTaskID:error:_)]
         pub unsafe fn finishExtendedLaunchMeasurementForTaskID_error(
             &self,
             task_id: &MXLaunchTaskID,
-        ) -> Result<(), Id<NSError, Shared>>;
+        ) -> Result<(), Id<NSError>>;
 
         // #[cfg(feature = "Foundation_NSString")]
         // #[method(makeLogHandleWithCategory:)]
-        // pub unsafe fn makeLogHandleWithCategory(category: &NSString) -> Id<os_log_t, Shared>;
+        // pub unsafe fn makeLogHandleWithCategory(category: &NSString) -> Id<os_log_t>;
     }
 );

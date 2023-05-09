@@ -16,9 +16,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `MediaPlayer`
   - `MetricKit`
   - `PhotoKit`
+* Added `NSCopying` and `NSMutableCopying` implementations for the classes
+  that implement those protocols.
+* Added the following methods:
+  - `NSArray::get_retained`
+  - `NSArray::first_retained`
+  - `NSArray::last_retained`
+  - `NSSet::get_retained`
+  - `NSSet::to_vec`
+  - `NSSet::to_vec_retained`
+  - `NSDictionary::get_retained`
+  - `NSDictionary::keys_retained`
+  - `NSDictionary::values_retained`
+* Added `MainThreadMarker::alloc` for allocating objects that need to be so on
+  the main thread.
+* Added automatically generated `new`/`init` methods for all types.
+
+### Changed
+* **BREAKING**: Renamed the `from_slice` method on `NSArray`, `NSSet`,
+  `NSMutableArray` and `NSMutableSet` to `from_id_slice`, and provided a new
+  `from_slice` method that takes `&[&T]` instead.
+* **BREAKING**: Changed `NSMutableArray::replace` to return an `Result` in
+  case the index was out of bounds.
+* **BREAKING**: Changed `NSMutableArray::remove` to return an `Option` in case
+  the index was out of bounds.
+* **BREAKING**: Removed ownership parameter from generic types, since the
+  ownership/mutability information is now stored in `ClassType::Mutability`.
+* **BREAKING**: Renamed `NSMutableCopying::mutable_copy` to `::mutableCopy`.
+* **BREAKING**: The default value for `NSUUID` was changed from a nil UUID to
+  a new random UUID.
 
 ### Removed
 * **BREAKING**: Removed various redundant `NSProxy` methods.
+* **BREAKING**: Removed `NSArray::to_shared_vec` and `NSArray::into_vec`, use
+  `NSArray::to_vec` or `NSArray::to_vec_retained` instead.
+* **BREAKING**: Removed associated types from `NSCopying` and
+  `NSMutableCopying`, that information is now specified in
+  `ClassType::Mutability` instead.
+* **BREAKING**: Removed a few `init` methods on subclasses that were declared
+  on categories on their superclass. These should be re-added at some point.
 
 
 ## icrate 0.0.2 - 2023-02-07

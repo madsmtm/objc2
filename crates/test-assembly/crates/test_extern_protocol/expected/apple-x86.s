@@ -28,7 +28,7 @@ _dyn_call:
 L1$pb:
 	pop	eax
 	sub	esp, 8
-	push	dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_acbdb619e79b01b6-L1$pb]
+	push	dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_d7a070d5c55b8e69-L1$pb]
 	push	dword ptr [ebp + 8]
 	call	_objc_msgSend
 	add	esp, 24
@@ -45,7 +45,7 @@ _dyn_consume:
 L2$pb:
 	pop	eax
 	sub	esp, 8
-	push	dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_acbdb619e79b01b6-L2$pb]
+	push	dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_d7a070d5c55b8e69-L2$pb]
 	push	dword ptr [ebp + 8]
 	call	_objc_msgSend
 	add	esp, 24
@@ -57,20 +57,20 @@ l_anon.[ID].0:
 	.ascii	"MyProtocol"
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_acbdb619e79b01b6
-	.p2align	2
-L_OBJC_IMAGE_INFO_acbdb619e79b01b6:
+	.globl	L_OBJC_IMAGE_INFO_d7a070d5c55b8e69
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_d7a070d5c55b8e69:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_acbdb619e79b01b6
-L_OBJC_METH_VAR_NAME_acbdb619e79b01b6:
+	.globl	L_OBJC_METH_VAR_NAME_d7a070d5c55b8e69
+L_OBJC_METH_VAR_NAME_d7a070d5c55b8e69:
 	.asciz	"aMethod"
 
 	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_acbdb619e79b01b6
-	.p2align	2
-L_OBJC_SELECTOR_REFERENCES_acbdb619e79b01b6:
-	.long	L_OBJC_METH_VAR_NAME_acbdb619e79b01b6
+	.globl	L_OBJC_SELECTOR_REFERENCES_d7a070d5c55b8e69
+	.p2align	2, 0x0
+L_OBJC_SELECTOR_REFERENCES_d7a070d5c55b8e69:
+	.long	L_OBJC_METH_VAR_NAME_d7a070d5c55b8e69
 
 .subsections_via_symbols

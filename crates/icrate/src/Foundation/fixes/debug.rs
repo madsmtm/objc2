@@ -21,7 +21,7 @@ impl fmt::Debug for Foundation::NSBundle {
 }
 
 #[cfg(feature = "Foundation_NSMutableArray")]
-impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for Foundation::NSMutableArray<T, O> {
+impl<T: fmt::Debug + Message> fmt::Debug for Foundation::NSMutableArray<T> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)
@@ -54,7 +54,7 @@ impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug
 }
 
 #[cfg(feature = "Foundation_NSMutableSet")]
-impl<T: fmt::Debug + Message, O: Ownership> fmt::Debug for Foundation::NSMutableSet<T, O> {
+impl<T: fmt::Debug + Message> fmt::Debug for Foundation::NSMutableSet<T> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&**self, f)

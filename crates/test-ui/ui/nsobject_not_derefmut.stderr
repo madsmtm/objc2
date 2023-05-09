@@ -1,0 +1,7 @@
+error[E0596]: cannot borrow data in dereference of `Id<NSObject>` as mutable
+ --> ui/nsobject_not_derefmut.rs
+  |
+  |     let _: &mut NSObject = &mut *obj;
+  |                            ^^^^^^^^^ cannot borrow as mutable
+  |
+  = help: trait `DerefMut` is required to modify through a dereference, but it is not implemented for `Id<NSObject>`

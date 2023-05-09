@@ -2,7 +2,7 @@
 //! higher-ranked over lifetimes.
 //!
 //! Ideally, they should be, but they can't be right now.
-use objc2::Encode;
+use objc2::encode::Encode;
 
 extern "C" fn my_fn(_x: &i32) {}
 

@@ -29,14 +29,3 @@ error: msg_send_id![obj, dealloc] is not supported. Drop an `Id` instead
   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: msg_send_id![obj, retain] is not supported. Use `Id::retain` instead
- --> ui/msg_send_id_invalid_method.rs
-  |
-  | /         msg_send_id![
-  | |             object,
-  | |             retain,
-  | |         ]
-  | |_________^
-  |
-  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)

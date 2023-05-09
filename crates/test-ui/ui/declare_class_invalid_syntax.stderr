@@ -214,7 +214,7 @@ error: no rules expected the token `}`
 note: while trying to match `const`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |             const NAME: &'static str = $name_const:literal;
+  |             const NAME: &'static str = $name_const:expr;
   |             ^^^^^
 
 error: invalid type i32 in field field. Type must be either `PhantomData`, `IvarDrop`, `IvarBool` or `IvarEncode`.
@@ -270,6 +270,18 @@ error: must specify an ivar module when the type has ivars
   | |_^
   |
   = note: this error originates in the macro `$crate::__parse_fields` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: no rules expected the token `}`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |     }
+  |     ^ no rules expected this token in macro call
+  |
+note: while trying to match `type`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |             type Mutability = $mutability:ty;
+  |             ^^^^
 
 error[E0599]: no function or associated item named `test_pattern` found for struct `CustomObject` in the current scope
  --> ui/declare_class_invalid_syntax.rs

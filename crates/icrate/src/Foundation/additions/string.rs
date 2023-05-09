@@ -2,6 +2,8 @@
 use core::cmp;
 use core::ffi::c_void;
 use core::fmt;
+#[cfg(feature = "Foundation_NSMutableString")]
+use core::ops::AddAssign;
 use core::panic::RefUnwindSafe;
 use core::panic::UnwindSafe;
 #[cfg(feature = "apple")]
@@ -12,11 +14,13 @@ use core::str;
 #[cfg(feature = "apple")]
 use std::os::raw::c_char;
 
-use objc2::msg_send;
-use objc2::rc::{autoreleasepool_leaking, AutoreleasePool, DefaultId, Id, Shared};
+use objc2::msg_send_id;
+use objc2::rc::{autoreleasepool_leaking, AutoreleasePool};
 use objc2::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
 
 use crate::common::*;
+#[cfg(feature = "Foundation_NSMutableString")]
+use crate::Foundation::NSMutableString;
 use crate::Foundation::{self, NSString};
 
 // SAFETY: `NSString` is immutable and `NSMutableString` can only be mutated
@@ -30,11 +34,6 @@ impl UnwindSafe for NSString {}
 impl RefUnwindSafe for NSString {}
 
 impl NSString {
-    /// Construct an empty NSString.
-    pub fn new() -> Id<Self> {
-        Self::init(Self::alloc())
-    }
-
     /// The number of UTF-8 code units in `self`.
     #[doc(alias = "lengthOfBytesUsingEncoding")]
     #[doc(alias = "lengthOfBytesUsingEncoding:")]
@@ -125,10 +124,7 @@ impl NSString {
     #[doc(alias = "initWithBytes:length:encoding:")]
     #[allow(clippy::should_implement_trait)] // Not really sure of a better name
     pub fn from_str(string: &str) -> Id<Self> {
-        unsafe {
-            let obj = from_str(Self::class(), string);
-            Id::new(obj.cast()).unwrap()
-        }
+        unsafe { init_with_str(Self::alloc(), string) }
     }
 
     // TODO: initWithBytesNoCopy:, maybe add lifetime parameter to NSString?
@@ -138,16 +134,44 @@ impl NSString {
     // See https://github.com/drewcrawford/foundationr/blob/b27683417a35510e8e5d78a821f081905b803de6/src/nsstring.rs
 }
 
-pub(crate) fn from_str(cls: &Class, string: &str) -> *mut Object {
+#[cfg(feature = "Foundation_NSMutableString")]
+impl NSMutableString {
+    /// Creates a new [`NSMutableString`] by copying the given string slice.
+    #[doc(alias = "initWithBytes:length:encoding:")]
+    #[allow(clippy::should_implement_trait)] // Not really sure of a better name
+    pub fn from_str(string: &str) -> Id<Self> {
+        unsafe { init_with_str(Self::alloc(), string) }
+    }
+}
+
+unsafe fn init_with_str<T: Message>(obj: Option<Allocated<T>>, string: &str) -> Id<T> {
     let bytes: *const c_void = string.as_ptr().cast();
+    // We use `msg_send_id` instead of the generated method from `icrate`,
+    // since that assumes the encoding is `usize`, whereas GNUStep assumes
+    // `i32`.
     unsafe {
-        let obj: *mut Object = msg_send![cls, alloc];
-        msg_send![
+        msg_send_id![
             obj,
             initWithBytes: bytes,
             length: string.len(),
             encoding: UTF8_ENCODING,
         ]
+    }
+}
+
+#[cfg(feature = "Foundation_NSMutableString")]
+impl PartialEq<NSString> for NSMutableString {
+    #[inline]
+    fn eq(&self, other: &NSString) -> bool {
+        PartialEq::eq(&**self, other)
+    }
+}
+
+#[cfg(feature = "Foundation_NSMutableString")]
+impl PartialEq<NSMutableString> for NSString {
+    #[inline]
+    fn eq(&self, other: &NSMutableString) -> bool {
+        PartialEq::eq(self, &**other)
     }
 }
 
@@ -164,16 +188,47 @@ impl Ord for NSString {
     }
 }
 
+#[cfg(feature = "Foundation_NSMutableString")]
+impl PartialOrd for NSMutableString {
+    #[inline]
+    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
+        PartialOrd::partial_cmp(&**self, &**other)
+    }
+}
+
+#[cfg(feature = "Foundation_NSMutableString")]
+impl PartialOrd<NSString> for NSMutableString {
+    #[inline]
+    fn partial_cmp(&self, other: &NSString) -> Option<cmp::Ordering> {
+        PartialOrd::partial_cmp(&**self, other)
+    }
+}
+
+#[cfg(feature = "Foundation_NSMutableString")]
+impl PartialOrd<NSMutableString> for NSString {
+    #[inline]
+    fn partial_cmp(&self, other: &NSMutableString) -> Option<cmp::Ordering> {
+        PartialOrd::partial_cmp(self, &**other)
+    }
+}
+
+#[cfg(feature = "Foundation_NSMutableString")]
+impl Ord for NSMutableString {
+    #[inline]
+    fn cmp(&self, other: &Self) -> cmp::Ordering {
+        Ord::cmp(&**self, &**other)
+    }
+}
+
 // TODO: PartialEq and PartialOrd against &str
 // See `fruity`'s implementation:
 // https://github.com/nvzqz/fruity/blob/320efcf715c2c5fbd2f3084f671f2be2e03a6f2b/src/foundation/ns_string/mod.rs#L69-L163
 
-impl DefaultId for NSString {
-    type Ownership = Shared;
-
+#[cfg(feature = "Foundation_NSMutableString")]
+impl AddAssign<&NSString> for NSMutableString {
     #[inline]
-    fn default_id() -> Id<Self, Self::Ownership> {
-        Self::new()
+    fn add_assign(&mut self, other: &NSString) {
+        self.appendString(other)
     }
 }
 
@@ -183,8 +238,25 @@ impl fmt::Display for NSString {
     }
 }
 
+#[cfg(feature = "Foundation_NSMutableString")]
+impl fmt::Display for NSMutableString {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Display::fmt(&**self, f)
+    }
+}
+
 impl fmt::Debug for NSString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         autoreleasepool_leaking(|pool| fmt::Debug::fmt(self.as_str(pool), f))
+    }
+}
+
+#[cfg(feature = "Foundation_NSMutableString")]
+impl fmt::Write for NSMutableString {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        let nsstring = NSString::from_str(s);
+        self.appendString(&nsstring);
+        Ok(())
     }
 }

@@ -9,7 +9,7 @@ use std::sync::Mutex;
 use objc2::encode::Encode;
 use objc2::rc::{Allocated, Id, __RcTestObject};
 use objc2::runtime::{NSObject, Object};
-use objc2::{class, declare_class, msg_send, msg_send_id, ClassType};
+use objc2::{class, declare_class, msg_send, msg_send_id, mutability, ClassType};
 
 static EXPECTED_MESSAGE: Mutex<String> = Mutex::new(String::new());
 static EXPECTED_LINE: Mutex<u32> = Mutex::new(0);
@@ -190,6 +190,7 @@ declare_class!(
 
     unsafe impl ClassType for PanickingClass {
         type Super = NSObject;
+        type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "PanickingClass";
     }
 

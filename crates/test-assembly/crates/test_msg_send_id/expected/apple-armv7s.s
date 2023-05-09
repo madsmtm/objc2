@@ -215,27 +215,27 @@ l_anon.[ID].0:
 	.ascii	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
-	.p2align	2
+	.p2align	2, 0x0
 l_anon.[ID].1:
 	.long	l_anon.[ID].0
 	.asciz	"3\000\000\000\r\000\000\000\005\000\000"
 
-	.p2align	2
+	.p2align	2, 0x0
 l_anon.[ID].2:
 	.long	l_anon.[ID].0
 	.asciz	"3\000\000\000\027\000\000\000\005\000\000"
 
-	.p2align	2
+	.p2align	2, 0x0
 l_anon.[ID].3:
 	.long	l_anon.[ID].0
 	.asciz	"3\000\000\000!\000\000\000\005\000\000"
 
-	.p2align	2
+	.p2align	2, 0x0
 l_anon.[ID].4:
 	.long	l_anon.[ID].0
 	.asciz	"3\000\000\000>\000\000\000\005\000\000"
 
-	.p2align	2
+	.p2align	2, 0x0
 l_anon.[ID].5:
 	.long	l_anon.[ID].0
 	.asciz	"3\000\000\000H\000\000\000\005\000\000"
