@@ -82,8 +82,10 @@ impl fmt::Display for Unavailable {
             .map(|os| format!("target_os = \"{os}\""))
             .collect::<Vec<String>>()
             .join(",");
-        if !unavailable_oses.is_empty() {
+        if unavailable_oses.len() > 1 {
             write!(f, "#[cfg(not(any({unavailable_oses})))]")?;
+        } if unavailable_oses.len() == 1 {
+            write!(f, "#[cfg(not({unavailable_oses}))]")?;
         }
         Ok(())
     }
