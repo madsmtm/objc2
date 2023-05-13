@@ -144,9 +144,6 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: cargo doc
-      # Disable cargo doc checking for now, `NSEnumerator2<'a, T>` is broken
-      # on current nightly.
-      if: false
       run: cargo doc --no-deps --document-private-items ${{ matrix.args }}
 
     - name: cargo clippy

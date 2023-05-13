@@ -4,8 +4,9 @@ error[E0277]: `*const NSObject` cannot be shared between threads safely
   |     needs_sync::<NSArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be shared between threads safely
   |
-  = help: within `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`
+  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`
   = note: required because it appears within the type `UnknownStorage<NSObject>`
+  = note: required because it appears within the type `EquivalentType<NSObject>`
   = note: required for `Id<NSObject>` to implement `Sync`
   = note: required because it appears within the type `PhantomData<Id<NSObject>>`
   = note: required because it appears within the type `NSArray<NSObject>`
@@ -40,8 +41,9 @@ error[E0277]: `*const NSObject` cannot be sent between threads safely
   |     needs_send::<NSArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be sent between threads safely
   |
-  = help: within `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`, the trait `Send` is not implemented for `*const NSObject`
+  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`
   = note: required because it appears within the type `UnknownStorage<NSObject>`
+  = note: required because it appears within the type `EquivalentType<NSObject>`
   = note: required for `Id<NSObject>` to implement `Send`
   = note: required because it appears within the type `PhantomData<Id<NSObject>>`
   = note: required because it appears within the type `NSArray<NSObject>`
@@ -79,8 +81,9 @@ error[E0277]: `*const NSObject` cannot be shared between threads safely
   |     needs_sync::<NSMutableArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be shared between threads safely
   |
-  = help: within `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`
+  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`
   = note: required because it appears within the type `UnknownStorage<NSObject>`
+  = note: required because it appears within the type `EquivalentType<NSObject>`
   = note: required for `Id<NSObject>` to implement `Sync`
   = note: required because it appears within the type `PhantomData<Id<NSObject>>`
   = note: required because it appears within the type `NSArray<NSObject>`
@@ -117,8 +120,9 @@ error[E0277]: `*const NSObject` cannot be sent between threads safely
   |     needs_send::<NSMutableArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be sent between threads safely
   |
-  = help: within `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`, the trait `Send` is not implemented for `*const NSObject`
+  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`
   = note: required because it appears within the type `UnknownStorage<NSObject>`
+  = note: required because it appears within the type `EquivalentType<NSObject>`
   = note: required for `Id<NSObject>` to implement `Send`
   = note: required because it appears within the type `PhantomData<Id<NSObject>>`
   = note: required because it appears within the type `NSArray<NSObject>`
