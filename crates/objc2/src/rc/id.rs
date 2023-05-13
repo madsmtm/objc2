@@ -663,6 +663,7 @@ impl<T: ?Sized> fmt::Pointer for Id<T> {
 
 mod private {
     use crate::runtime::Object;
+    use crate::ClassType;
     use core::panic::{RefUnwindSafe, UnwindSafe};
 
     pub struct UnknownStorage<T: ?Sized>(*const T, Object);
@@ -682,6 +683,8 @@ mod private {
 
     #[doc(hidden)]
     pub trait IdSendSyncHelper<T: ?Sized>: mutability::Mutability {
+        // TODO: Move this to be a hidden type under `Mutability` once GATs
+        // are in our MSRV.
         type EquivalentType: ?Sized;
     }
 
@@ -714,6 +717,19 @@ mod private {
     impl<T: ?Sized> IdSendSyncHelper<T> for mutability::MainThreadOnly {
         type EquivalentType = ArcLikeStorage<T>;
     }
+
+    /// Helper struct for avoiding a gnarly ICE in `rustdoc` when generating
+    /// documentation for `icrate` iterator helpers (in particular, it fails
+    /// in generating auto trait implementations).
+    ///
+    /// See related issues:
+    /// - <https://github.com/rust-lang/rust/issues/91380>
+    /// - <https://github.com/rust-lang/rust/issues/107715>
+    pub struct EquivalentType<T: ?Sized + ClassType>(
+        <T::Mutability as IdSendSyncHelper<T>>::EquivalentType,
+    )
+    where
+        T::Mutability: IdSendSyncHelper<T>;
 }
 
 // https://doc.rust-lang.org/nomicon/arc-mutex/arc-base.html#send-and-sync
@@ -732,7 +748,7 @@ mod private {
 unsafe impl<T: ?Sized + ClassType + Send> Send for Id<T>
 where
     T::Mutability: private::IdSendSyncHelper<T>,
-    <T::Mutability as private::IdSendSyncHelper<T>>::EquivalentType: Send,
+    private::EquivalentType<T>: Send,
 {
 }
 
@@ -749,7 +765,7 @@ where
 unsafe impl<T: ?Sized + ClassType + Sync> Sync for Id<T>
 where
     T::Mutability: private::IdSendSyncHelper<T>,
-    <T::Mutability as private::IdSendSyncHelper<T>>::EquivalentType: Sync,
+    private::EquivalentType<T>: Sync,
 {
 }
 
