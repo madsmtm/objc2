@@ -7,6 +7,7 @@ use core::ops::{Index, IndexMut, Range};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::mutability::{IsMutable, IsRetainable};
+use objc2::rc::IdFromIterator;
 
 use super::iter;
 use super::util;
@@ -489,5 +490,35 @@ impl<'a, T: IsRetainable> Extend<&'a T> for NSMutableArray<T> {
         // array to retain the object here.
         iter.into_iter()
             .for_each(move |item| unsafe { self.addObject(item) })
+    }
+}
+
+impl<'a, T: IsRetainable + 'a> IdFromIterator<&'a T> for NSArray<T> {
+    fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Id<Self> {
+        let vec = Vec::from_iter(iter);
+        Self::from_slice(&vec)
+    }
+}
+
+impl<T: Message> IdFromIterator<Id<T>> for NSArray<T> {
+    fn id_from_iter<I: IntoIterator<Item = Id<T>>>(iter: I) -> Id<Self> {
+        let vec = Vec::from_iter(iter);
+        Self::from_vec(vec)
+    }
+}
+
+#[cfg(feature = "Foundation_NSMutableArray")]
+impl<'a, T: IsRetainable + 'a> IdFromIterator<&'a T> for NSMutableArray<T> {
+    fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Id<Self> {
+        let vec = Vec::from_iter(iter);
+        Self::from_slice(&vec)
+    }
+}
+
+#[cfg(feature = "Foundation_NSMutableArray")]
+impl<T: Message> IdFromIterator<Id<T>> for NSMutableArray<T> {
+    fn id_from_iter<I: IntoIterator<Item = Id<T>>>(iter: I) -> Id<Self> {
+        let vec = Vec::from_iter(iter);
+        Self::from_vec(vec)
     }
 }

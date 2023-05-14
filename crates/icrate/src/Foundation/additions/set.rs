@@ -5,6 +5,7 @@ use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::mutability::IsRetainable;
+use objc2::rc::IdFromIterator;
 
 use super::iter;
 use super::util;
@@ -515,5 +516,35 @@ impl<'a, T: IsRetainable + PartialEq> Extend<&'a T> for NSMutableSet<T> {
         // set to retain the object here.
         iter.into_iter()
             .for_each(move |item| unsafe { self.addObject(item) })
+    }
+}
+
+impl<'a, T: IsRetainable + 'a> IdFromIterator<&'a T> for NSSet<T> {
+    fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Id<Self> {
+        let vec = Vec::from_iter(iter);
+        Self::from_slice(&vec)
+    }
+}
+
+impl<T: Message> IdFromIterator<Id<T>> for NSSet<T> {
+    fn id_from_iter<I: IntoIterator<Item = Id<T>>>(iter: I) -> Id<Self> {
+        let vec = Vec::from_iter(iter);
+        Self::from_vec(vec)
+    }
+}
+
+#[cfg(feature = "Foundation_NSMutableSet")]
+impl<'a, T: IsRetainable + 'a> IdFromIterator<&'a T> for NSMutableSet<T> {
+    fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Id<Self> {
+        let vec = Vec::from_iter(iter);
+        Self::from_slice(&vec)
+    }
+}
+
+#[cfg(feature = "Foundation_NSMutableSet")]
+impl<T: Message> IdFromIterator<Id<T>> for NSMutableSet<T> {
+    fn id_from_iter<I: IntoIterator<Item = Id<T>>>(iter: I) -> Id<Self> {
+        let vec = Vec::from_iter(iter);
+        Self::from_vec(vec)
     }
 }
