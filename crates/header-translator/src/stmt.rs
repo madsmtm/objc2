@@ -579,7 +579,7 @@ impl Stmt {
                                 cls: id.clone(),
                                 generics: generics.clone(),
                                 category: ItemIdentifier::with_name(None, entity, context),
-                                availability: Availability::parse(entity, context),
+                                availability: availability.clone(),
                                 superclasses: superclasses.clone(),
                                 methods,
                                 description: Some(format!(
@@ -1340,6 +1340,7 @@ impl fmt::Display for Stmt {
 
                 writeln!(f)?;
 
+                write!(f, "{availability}")?;
                 if let Some(feature) = &main_feature_gate {
                     writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
                 }
@@ -1417,6 +1418,7 @@ impl fmt::Display for Stmt {
                 if let Some(feature) = cls.feature() {
                     writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
                 }
+                write!(f, "{unavailable}")?;
                 writeln!(
                     f,
                     "    unsafe impl{} {}{} {{",
@@ -1472,6 +1474,7 @@ impl fmt::Display for Stmt {
                         // Assume new methods require no extra features
                         writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
                     }
+                    write!(f, "{unavailable}")?;
                     writeln!(
                         f,
                         "impl{} DefaultId for {}{} {{",
@@ -1601,6 +1604,7 @@ impl fmt::Display for Stmt {
                             )?;
                         }
                     }
+                    write!(f, "{unavailable}")?;
                     writeln!(f, "{method}")?;
                 }
                 writeln!(f, "    }}")?;
