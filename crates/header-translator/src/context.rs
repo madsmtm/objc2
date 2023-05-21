@@ -6,6 +6,7 @@ use apple_sdk::SdkPath;
 use clang::source::Location;
 use clang::Entity;
 
+use crate::availability::Unavailable;
 use crate::config::Config;
 
 pub struct Context<'a> {
@@ -14,6 +15,7 @@ pub struct Context<'a> {
     framework_dir: PathBuf,
     include_dir: PathBuf,
     system_headers: HashSet<&'static Path>,
+    pub library_unavailability: Option<Unavailable>,
 }
 
 impl<'a> Context<'a> {
@@ -29,6 +31,7 @@ impl<'a> Context<'a> {
                 Path::new("objc/NSObject.h"),
                 Path::new("objc/NSObjCRuntime.h"),
             ]),
+            library_unavailability: None,
         }
     }
 

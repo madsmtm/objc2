@@ -1,7 +1,8 @@
+use std::collections::HashMap;
 use std::collections::{BTreeMap, BTreeSet};
 use std::str::FromStr;
 
-use crate::config::Config;
+use crate::config::{Config, LibraryData};
 use crate::library::Library;
 use crate::stmt::Stmt;
 
@@ -11,10 +12,10 @@ pub struct Output {
 }
 
 impl Output {
-    pub fn from_libraries(libraries: impl IntoIterator<Item = impl Into<String>>) -> Self {
+    pub fn from_libraries(libraries: &HashMap<String, LibraryData>) -> Self {
         let libraries = libraries
-            .into_iter()
-            .map(|name| (name.into(), Library::new()))
+            .iter()
+            .map(|(name, library_data)| (name.into(), Library::new(library_data.unavailability())))
             .collect();
         Self { libraries }
     }

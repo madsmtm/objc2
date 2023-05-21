@@ -1532,6 +1532,12 @@ skipped = true
 [class.MXMetricManager.methods.makeLogHandleWithCategory]
 skipped = true
 
+# The MPMediaQueryAddition definition does not have API_UNAVAILABLE annotations
+# where as the MPMediaItem does. This results in problematic conditional compliation:
+# https://github.com/phracker/MacOSX-SDKs/blob/041600eda65c6a668f66cb7d56b7d1da3e8bcc93/MacOSX11.3.sdk/System/Library/Frameworks/MediaPlayer.framework/Versions/A/Headers/MPMediaQuery.h#L103-L118
+[class.MPMediaItem.categories.MPMediaQueryAdditions]
+skipped = true
+
 # Custom generics because of auto traits
 [class.NSArray]
 definition-skipped = true

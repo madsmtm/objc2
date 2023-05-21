@@ -6,14 +6,90 @@ use clang::{Entity, PlatformAvailability, Version};
 use crate::context::Context;
 
 #[derive(Debug, Clone, PartialEq, Default)]
-struct Unavailable {
-    ios: bool,
-    ios_app_extension: bool,
-    macos: bool,
-    macos_app_extension: bool,
-    maccatalyst: bool,
-    watchos: bool,
-    tvos: bool,
+pub struct Unavailable {
+    pub(crate) ios: bool,
+    pub(crate) ios_app_extension: bool,
+    pub(crate) macos: bool,
+    pub(crate) macos_app_extension: bool,
+    pub(crate) maccatalyst: bool,
+    pub(crate) watchos: bool,
+    pub(crate) tvos: bool,
+    pub(crate) library_unavailablility: Option<Box<Unavailable>>,
+}
+
+impl Unavailable {
+    fn list_unavailable_oses(&self) -> Vec<&str> {
+        let mut unavailable_oses = Vec::new();
+        if self.ios
+            && !self
+                .library_unavailablility
+                .as_ref()
+                .map(|u| u.ios)
+                .unwrap_or_else(|| false)
+        {
+            unavailable_oses.push("ios");
+        }
+        if self.macos
+            && !self
+                .library_unavailablility
+                .as_ref()
+                .map(|u| u.macos)
+                .unwrap_or_else(|| false)
+        {
+            unavailable_oses.push("macos");
+        }
+        if self.tvos
+            && !self
+                .library_unavailablility
+                .as_ref()
+                .map(|u| u.tvos)
+                .unwrap_or_else(|| false)
+        {
+            unavailable_oses.push("tvos");
+        }
+        if self.watchos
+            && !self
+                .library_unavailablility
+                .as_ref()
+                .map(|u| u.watchos)
+                .unwrap_or_else(|| false)
+        {
+            unavailable_oses.push("watchos");
+        }
+        unavailable_oses
+    }
+
+    /// In some cases of enums, we need to know the availability of the parent enum and the enum
+    /// variant.
+    pub fn merge(&self, other: &Self) -> Self {
+        Self {
+            ios: self.ios || other.ios,
+            ios_app_extension: self.ios_app_extension || other.ios_app_extension,
+            macos: self.macos || other.macos,
+            macos_app_extension: self.macos_app_extension || other.macos_app_extension,
+            tvos: self.tvos || other.tvos,
+            watchos: self.watchos || other.watchos,
+            maccatalyst: self.maccatalyst || other.maccatalyst,
+            library_unavailablility: self.library_unavailablility.clone(),
+        }
+    }
+}
+impl fmt::Display for Unavailable {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let unavailable_oses = self.list_unavailable_oses();
+        let unavailable_oses = unavailable_oses
+            .iter()
+            .map(|os| format!("target_os = \"{os}\""))
+            .collect::<Vec<String>>()
+            .join(",");
+        if unavailable_oses.len() > 1 {
+            write!(f, "#[cfg(not(any({unavailable_oses})))]")?;
+        }
+        if unavailable_oses.len() == 1 {
+            write!(f, "#[cfg(not({unavailable_oses}))]")?;
+        }
+        Ok(())
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Default)]
@@ -29,7 +105,7 @@ struct Versions {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Availability {
-    unavailable: Unavailable,
+    pub(crate) unavailable: Unavailable,
     introduced: Versions,
     deprecated: Versions,
     message: Option<String>,
@@ -37,12 +113,18 @@ pub struct Availability {
 }
 
 impl Availability {
-    pub fn parse(entity: &Entity<'_>, _context: &Context<'_>) -> Self {
+    pub fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Self {
         let availabilities = entity
             .get_platform_availability()
             .expect("platform availability");
 
-        let mut unavailable = Unavailable::default();
+        let mut unavailable = Unavailable {
+            library_unavailablility: context
+                .library_unavailability
+                .as_ref()
+                .map(|l| Box::new(l.clone())),
+            ..Default::default()
+        };
         let mut introduced = Versions::default();
         let mut deprecated = Versions::default();
         let mut message = None;
@@ -157,7 +239,8 @@ impl fmt::Display for Availability {
                 }
             }
         }
-        // TODO: Emit `cfg` attributes based on `self.unavailable`
+        write!(f, "{}", self.unavailable)?;
+
         // TODO: Emit availability checks based on `self.introduced`
         Ok(())
     }

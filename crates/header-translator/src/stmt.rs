@@ -7,7 +7,7 @@ use std::mem;
 
 use clang::{Entity, EntityKind, EntityVisitResult};
 
-use crate::availability::Availability;
+use crate::availability::{Availability, Unavailable};
 use crate::config::{ClassData, MethodData};
 use crate::context::Context;
 use crate::expr::Expr;
@@ -579,7 +579,7 @@ impl Stmt {
                                 cls: id.clone(),
                                 generics: generics.clone(),
                                 category: ItemIdentifier::with_name(None, entity, context),
-                                availability: Availability::parse(entity, context),
+                                availability: availability.clone(),
                                 superclasses: superclasses.clone(),
                                 methods,
                                 description: Some(format!(
@@ -1156,30 +1156,66 @@ impl Stmt {
         }
     }
 
-    pub(crate) fn declared_types(&self) -> impl Iterator<Item = &str> {
+    pub(crate) fn declared_types(&self) -> impl Iterator<Item = (&str, Unavailable)> {
         match self {
-            Stmt::ClassDecl { id, skipped, .. } => {
+            Stmt::ClassDecl {
+                id,
+                skipped,
+                availability,
+                ..
+            } => {
                 if *skipped {
                     None
                 } else {
-                    Some(&*id.name)
+                    Some((&*id.name, availability.unavailable.clone()))
                 }
             }
             Stmt::Methods { .. } => None,
-            Stmt::ProtocolDecl { id, .. } => Some(&*id.name),
+            Stmt::ProtocolDecl {
+                id, availability, ..
+            } => Some((&*id.name, availability.unavailable.clone())),
             Stmt::ProtocolImpl { .. } => None,
-            Stmt::StructDecl { id, .. } => Some(&*id.name),
-            Stmt::EnumDecl { id, .. } => id.name.as_deref(),
-            Stmt::VarDecl { id, .. } => Some(&*id.name),
-            Stmt::FnDecl { id, body, .. } if body.is_none() => Some(&*id.name),
+            Stmt::StructDecl {
+                id, availability, ..
+            } => Some((&*id.name, availability.unavailable.clone())),
+            Stmt::EnumDecl {
+                id, availability, ..
+            } => id
+                .name
+                .as_deref()
+                .map(|name| (name, availability.unavailable.clone())),
+            Stmt::VarDecl {
+                id, availability, ..
+            } => Some((&*id.name, availability.unavailable.clone())),
+            Stmt::FnDecl {
+                id,
+                body,
+                availability,
+                ..
+            } if body.is_none() => Some((&*id.name, availability.unavailable.clone())),
             // TODO
             Stmt::FnDecl { .. } => None,
-            Stmt::AliasDecl { id, .. } => Some(&*id.name),
+            Stmt::AliasDecl {
+                id, availability, ..
+            } => Some((&*id.name, availability.unavailable.clone())),
         }
         .into_iter()
         .chain({
-            if let Stmt::EnumDecl { variants, .. } = self {
-                variants.iter().map(|(name, _, _)| &**name).collect()
+            if let Stmt::EnumDecl {
+                variants,
+                availability,
+                ..
+            } = self
+            {
+                variants
+                    .iter()
+                    .map(|(name, variant_availability, _)| {
+                        let unavailable = availability
+                            .unavailable
+                            .merge(&variant_availability.unavailable);
+                        (&**name, unavailable)
+                    })
+                    .collect()
             } else {
                 vec![]
             }
@@ -1304,6 +1340,7 @@ impl fmt::Display for Stmt {
 
                 writeln!(f)?;
 
+                write!(f, "{availability}")?;
                 if let Some(feature) = &main_feature_gate {
                     writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
                 }
@@ -1361,11 +1398,13 @@ impl fmt::Display for Stmt {
                 generics,
                 category,
                 // TODO: Output `#[deprecated]` only on categories
-                availability: _,
+                availability,
                 superclasses,
                 methods,
                 description,
             } => {
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(f, "extern_methods!(")?;
                 if let Some(description) = description {
                     writeln!(f, "    /// {description}")?;
@@ -1379,6 +1418,7 @@ impl fmt::Display for Stmt {
                 if let Some(feature) = cls.feature() {
                     writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
                 }
+                write!(f, "{unavailable}")?;
                 writeln!(
                     f,
                     "    unsafe impl{} {}{} {{",
@@ -1434,6 +1474,7 @@ impl fmt::Display for Stmt {
                         // Assume new methods require no extra features
                         writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
                     }
+                    write!(f, "{unavailable}")?;
                     writeln!(
                         f,
                         "impl{} DefaultId for {}{} {{",
@@ -1452,7 +1493,7 @@ impl fmt::Display for Stmt {
                 cls,
                 generics,
                 protocol,
-                availability: _,
+                availability,
             } => {
                 let (generic_bound, where_bound) = if !generics.is_empty() {
                     match (&*protocol.library, &*protocol.name) {
@@ -1496,6 +1537,8 @@ impl fmt::Display for Stmt {
                 if let Some(feature) = cls.feature() {
                     writeln!(f, "#[cfg(feature = \"{feature}\")]")?;
                 }
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(
                     f,
                     "unsafe impl{} {} for {}{} {}{{}}",
@@ -1512,8 +1555,9 @@ impl fmt::Display for Stmt {
                 protocols,
                 methods,
             } => {
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(f, "extern_protocol!(")?;
-                write!(f, "{availability}")?;
 
                 write!(f, "    pub unsafe trait {}", id.name)?;
                 if !protocols.is_empty() {
@@ -1560,6 +1604,7 @@ impl fmt::Display for Stmt {
                             )?;
                         }
                     }
+                    write!(f, "{unavailable}")?;
                     writeln!(f, "{method}")?;
                 }
                 writeln!(f, "    }}")?;
@@ -1574,11 +1619,12 @@ impl fmt::Display for Stmt {
                 boxable: _,
                 fields,
             } => {
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(f, "extern_struct!(")?;
                 if let Some(encoding_name) = encoding_name {
                     writeln!(f, "    #[encoding_name({encoding_name:?})]")?;
                 }
-                write!(f, "{availability}")?;
                 writeln!(f, "    pub struct {} {{", id.name)?;
                 for (name, ty) in fields {
                     write!(f, "        ")?;
@@ -1606,9 +1652,10 @@ impl fmt::Display for Stmt {
                     Some(UnexposedAttr::ErrorEnum) => "ns_error_enum",
                     _ => panic!("invalid enum kind"),
                 };
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    #[underlying({ty})]")?;
-                write!(f, "{availability}")?;
                 writeln!(
                     f,
                     "    pub enum {} {{",
@@ -1623,18 +1670,22 @@ impl fmt::Display for Stmt {
             }
             Self::VarDecl {
                 id,
-                availability: _,
+                availability,
                 ty,
                 value: None,
             } => {
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(f, "extern_static!({}: {ty});", id.name)?;
             }
             Self::VarDecl {
                 id,
-                availability: _,
+                availability,
                 ty,
                 value: Some(expr),
             } => {
+                let unavailable = availability.unavailable.clone();
+                write!(f, "{unavailable}")?;
                 writeln!(f, "extern_static!({}: {ty} = {expr});", id.name)?;
             }
             Self::FnDecl {
@@ -1700,20 +1751,26 @@ impl fmt::Display for Stmt {
             }
             Self::AliasDecl {
                 id,
-                availability: _,
+                availability,
                 ty,
                 kind,
             } => {
                 match kind {
                     Some(UnexposedAttr::TypedEnum) => {
+                        let unavailable = availability.unavailable.clone();
+                        write!(f, "{unavailable}")?;
                         writeln!(f, "typed_enum!(pub type {} = {ty};);", id.name)?;
                     }
                     Some(UnexposedAttr::TypedExtensibleEnum) => {
+                        let unavailable = availability.unavailable.clone();
+                        write!(f, "{unavailable}")?;
                         writeln!(f, "typed_extensible_enum!(pub type {} = {ty};);", id.name)?;
                     }
                     None | Some(UnexposedAttr::BridgedTypedef) => {
                         // "bridged" typedefs should just use a normal type
                         // alias.
+                        let unavailable = availability.unavailable.clone();
+                        write!(f, "{unavailable}")?;
                         writeln!(f, "pub type {} = {ty};", id.name)?;
                     }
                     kind => panic!("invalid alias kind {kind:?} for {ty:?}"),

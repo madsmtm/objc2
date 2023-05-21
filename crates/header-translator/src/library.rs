@@ -4,17 +4,20 @@ use std::fs;
 use std::io;
 use std::path::Path;
 
+use crate::availability::Unavailable;
 use crate::file::{File, FILE_PRELUDE};
 
 #[derive(Debug, PartialEq, Default)]
 pub struct Library {
     pub files: BTreeMap<String, File>,
+    pub unavailability: Unavailable,
 }
 
 impl Library {
-    pub fn new() -> Self {
+    pub(crate) fn new(unavailability: Unavailable) -> Self {
         Self {
             files: BTreeMap::new(),
+            unavailability,
         }
     }
 
@@ -60,16 +63,16 @@ impl fmt::Display for Library {
             // NOTE: some SDK files have '+' in the file name
             let name = name.replace('+', "_");
             for stmt in &file.stmts {
-                let mut iter = stmt.declared_types();
-                if let Some(item) = iter.next() {
-                    // Use a set to deduplicate features, and to have them in
-                    // a consistent order
-                    let mut features = BTreeSet::new();
-                    stmt.visit_required_types(|item| {
-                        if let Some(feature) = item.feature() {
-                            features.insert(format!("feature = \"{feature}\""));
-                        }
-                    });
+                // Use a set to deduplicate features, and to have them in
+                // a consistent order
+                let mut features = BTreeSet::new();
+                stmt.visit_required_types(|item| {
+                    if let Some(feature) = item.feature() {
+                        features.insert(format!("feature = \"{feature}\""));
+                    }
+                });
+
+                for (item, unavailability) in stmt.declared_types() {
                     match features.len() {
                         0 => {}
                         1 => {
@@ -87,12 +90,8 @@ impl fmt::Display for Library {
                             )?;
                         }
                     }
-
-                    writeln!(f, "pub use self::__{name}::{{{item}")?;
-                    for item in iter {
-                        writeln!(f, ", {item}")?;
-                    }
-                    writeln!(f, "}};")?;
+                    write!(f, "{unavailability}")?;
+                    writeln!(f, "pub use self::__{name}::{{{item}}};")?;
                 }
             }
         }

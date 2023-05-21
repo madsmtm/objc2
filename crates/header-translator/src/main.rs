@@ -197,7 +197,7 @@ fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Confi
     let tu = get_translation_unit(index, sdk, llvm_target);
 
     let mut preprocessing = true;
-    let mut result = Output::from_libraries(config.libraries.keys());
+    let mut result = Output::from_libraries(&config.libraries);
 
     let mut library_span = None;
     let mut library_span_name = String::new();
@@ -270,6 +270,7 @@ fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Confi
                         preprocessing = false;
                         // No more includes / macro expansions after this line
                         let file = library.files.get_mut(&file_name).expect("file");
+                        context.library_unavailability = Some(library.unavailability.clone());
                         for stmt in Stmt::parse(&entity, &context) {
                             file.add_stmt(stmt);
                         }
