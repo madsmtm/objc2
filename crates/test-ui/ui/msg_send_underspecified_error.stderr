@@ -18,6 +18,9 @@ error[E0283]: type annotations needed
 note: required by a bound in `__send_message_error`
  --> $WORKSPACE/crates/objc2/src/message/mod.rs
   |
+  |     unsafe fn __send_message_error<A, E>(self, sel: Sel, args: A) -> Result<(), Id<E>>
+  |               -------------------- required by a bound in this associated function
+  |     where
   |         *mut *mut E: Encode,
   |                      ^^^^^^ required by this bound in `MessageReceiver::__send_message_error`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -36,6 +39,9 @@ error[E0283]: type annotations needed
 note: required by a bound in `send_message_id_error`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
   |
+  |     unsafe fn send_message_id_error<A, E>(obj: T, sel: Sel, args: A) -> Result<U, Id<E>>
+  |               --------------------- required by a bound in this associated function
+  |     where
   |         *mut *mut E: Encode,
   |                      ^^^^^^ required by this bound in `MsgSendId::send_message_id_error`
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -54,6 +60,9 @@ error[E0283]: type annotations needed
 note: required by a bound in `send_message_id_error`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
   |
+  |     unsafe fn send_message_id_error<A, E>(obj: T, sel: Sel, args: A) -> Result<U, Id<E>>
+  |               --------------------- required by a bound in this associated function
+  |     where
   |         *mut *mut E: Encode,
   |                      ^^^^^^ required by this bound in `MsgSendId::send_message_id_error`
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -72,6 +81,9 @@ error[E0283]: type annotations needed
 note: required by a bound in `send_message_id_error`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
   |
+  |     unsafe fn send_message_id_error<A, E>(obj: T, sel: Sel, args: A) -> Result<U, Id<E>>
+  |               --------------------- required by a bound in this associated function
+  |     where
   |         *mut *mut E: Encode,
   |                      ^^^^^^ required by this bound in `MsgSendId::send_message_id_error`
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)

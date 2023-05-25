@@ -41,5 +41,8 @@ error[E0277]: the trait bound `Mutable: mutability::private::MutabilityIsRetaina
 note: required by a bound in `retain`
  --> $WORKSPACE/crates/objc2/src/class_type.rs
   |
+  |     fn retain(&self) -> Id<Self>
+  |        ------ required by a bound in this associated function
+  |     where
   |         Self: IsRetainable,
   |               ^^^^^^^^^^^^ required by this bound in `ClassType::retain`

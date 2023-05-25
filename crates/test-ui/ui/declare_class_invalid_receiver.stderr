@@ -26,6 +26,9 @@ error[E0277]: the trait bound `extern "C" fn(Box<CustomObject>, objc2::runtime::
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
+  |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
+  |                   ---------- required by a bound in this associated function
+...
   |         F: MethodImplementation<Callee = T>,
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -58,6 +61,9 @@ error[E0277]: the trait bound `extern "C" fn(Id<CustomObject>, objc2::runtime::S
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
+  |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
+  |                   ---------- required by a bound in this associated function
+...
   |         F: MethodImplementation<Callee = T>,
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -90,6 +96,9 @@ error[E0277]: the trait bound `extern "C" fn(CustomObject, objc2::runtime::Sel):
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
+  |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
+  |                   ---------- required by a bound in this associated function
+...
   |         F: MethodImplementation<Callee = T>,
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -122,6 +131,9 @@ error[E0277]: the trait bound `extern "C" fn(Box<CustomObject>, objc2::runtime::
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
+  |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
+  |                   ---------- required by a bound in this associated function
+...
   |         F: MethodImplementation<Callee = T>,
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -154,6 +166,9 @@ error[E0277]: the trait bound `extern "C" fn(Id<CustomObject>, objc2::runtime::S
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
+  |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
+  |                   ---------- required by a bound in this associated function
+...
   |         F: MethodImplementation<Callee = T>,
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -186,6 +201,9 @@ error[E0277]: the trait bound `extern "C" fn(CustomObject, objc2::runtime::Sel) 
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
+  |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
+  |                   ---------- required by a bound in this associated function
+...
   |         F: MethodImplementation<Callee = T>,
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

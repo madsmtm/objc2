@@ -19,6 +19,9 @@ error[E0277]: the trait bound `fn(_, _): MethodImplementation` is not satisfied
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
+  |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
+  |                   ---------- required by a bound in this associated function
+...
   |         F: MethodImplementation<Callee = T>,
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
 
@@ -43,6 +46,9 @@ error[E0277]: the trait bound `fn(_, _): MethodImplementation` is not satisfied
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
+  |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
+  |                   ---------- required by a bound in this associated function
+...
   |         F: MethodImplementation<Callee = T>,
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
 
@@ -67,6 +73,9 @@ error[E0277]: the trait bound `fn(_, _) -> _: MethodImplementation` is not satis
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
+  |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
+  |                   ---------- required by a bound in this associated function
+...
   |         F: MethodImplementation<Callee = T>,
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
 
@@ -91,6 +100,9 @@ error[E0277]: the trait bound `fn(_, _) -> _: MethodImplementation` is not satis
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
+  |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
+  |                   ---------- required by a bound in this associated function
+...
   |         F: MethodImplementation<Callee = T>,
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
 
@@ -115,5 +127,8 @@ error[E0277]: the trait bound `fn(_, _, _): MethodImplementation` is not satisfi
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
+  |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
+  |                   ---------- required by a bound in this associated function
+...
   |         F: MethodImplementation<Callee = T>,
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`

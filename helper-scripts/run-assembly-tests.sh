@@ -15,8 +15,8 @@ else
 fi
 
 echo "Apple"
-cargo $ARGS x86_64-apple-darwin
-cargo $ARGS aarch64-apple-darwin
+cargo $NIGHTLY $ARGS x86_64-apple-darwin
+cargo $NIGHTLY $ARGS aarch64-apple-darwin -Zbuild-std
 cargo $NIGHTLY $ARGS armv7s-apple-ios -Zbuild-std
 cargo $NIGHTLY $ARGS armv7-apple-ios -Zbuild-std
 cargo $NIGHTLY $ARGS i386-apple-ios -Zbuild-std
@@ -25,9 +25,9 @@ echo "Old Apple"
 cargo $NIGHTLY $ARGS i686-apple-darwin -Zbuild-std
 
 echo "GNUStep"
-cargo $ARGS x86_64-unknown-linux-gnu --no-default-features --features=std,gnustep-2-1
-cargo $ARGS i686-unknown-linux-gnu --no-default-features --features=std,gnustep-2-1
+cargo $NIGHTLY $ARGS x86_64-unknown-linux-gnu -Zbuild-std --no-default-features --features=std,gnustep-2-1
+cargo $NIGHTLY $ARGS i686-unknown-linux-gnu -Zbuild-std --no-default-features --features=std,gnustep-2-1
 
 echo "Old GNUStep"
-cargo $ARGS x86_64-unknown-linux-gnu --no-default-features --features=std,gnustep-1-7
-cargo $ARGS i686-unknown-linux-gnu --no-default-features --features=std,gnustep-1-7
+cargo $NIGHTLY $ARGS x86_64-unknown-linux-gnu -Zbuild-std --no-default-features --features=std,gnustep-1-7
+cargo $NIGHTLY $ARGS i686-unknown-linux-gnu -Zbuild-std --no-default-features --features=std,gnustep-1-7
