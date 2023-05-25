@@ -200,6 +200,7 @@ jobs:
         toolchain: ${{ env.CURRENT_NIGHTLY }}
         profile: minimal
         override: true
+        components: rust-src
 
     - name: Cache Cargo
       uses: actions/cache@v3
