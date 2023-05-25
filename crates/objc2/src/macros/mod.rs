@@ -635,7 +635,7 @@ macro_rules! __sel_inner {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(all(feature = "unstable-static-sel-inlined"))]
+#[cfg(feature = "unstable-static-sel-inlined")]
 macro_rules! __sel_inner {
     ($data:expr, $hash:expr) => {{
         $crate::__inner_statics!(@image_info $hash);
@@ -670,7 +670,7 @@ macro_rules! __class_inner {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(all(feature = "unstable-static-class-inlined"))]
+#[cfg(feature = "unstable-static-class-inlined")]
 macro_rules! __class_inner {
     ($name:expr, $hash:expr,) => {{
         $crate::__inner_statics!(@image_info $hash);

@@ -160,9 +160,11 @@ macro_rules! __data_methods {
 
         $($rest:tt)*
     ) => {
+        #[allow(unused_mut)]
         let mut method_data = $data.methods.entry("init".to_string()).or_default();
         method_data.unsafe_ = false;
 
+        #[allow(unused_mut)]
         let mut method_data = $data.methods.entry("new".to_string()).or_default();
         method_data.unsafe_ = false;
 
@@ -195,6 +197,7 @@ macro_rules! __data_methods {
 
         $($rest:tt)*
     ) => {
+        #[allow(unused_mut)]
         let mut method_data = $data.methods.entry(stringify!($name).to_string()).or_default();
 
         method_data.unsafe_ = false;
@@ -228,6 +231,7 @@ macro_rules! __data_methods {
 
         $($rest:tt)*
     ) => {
+        #[allow(unused_mut)]
         let mut method_data = $data.methods.entry(stringify!($name).to_string()).or_default();
 
         method_data.mutating = Some(true);
@@ -261,6 +265,7 @@ macro_rules! __data_methods {
 
         $($rest:tt)*
     ) => {
+        #[allow(unused_mut)]
         let mut method_data = $data.methods.entry(stringify!($name).to_string()).or_default();
 
         method_data.unsafe_ = false;
