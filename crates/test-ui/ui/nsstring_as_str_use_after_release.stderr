@@ -1,6 +1,8 @@
 error[E0505]: cannot move out of `ns_string` because it is borrowed
  --> ui/nsstring_as_str_use_after_release.rs
   |
+  |         let ns_string = NSString::new();
+  |             --------- binding `ns_string` declared here
   |         let s = ns_string.as_str(pool);
   |                 ---------------------- borrow of `ns_string` occurs here
   |         drop(ns_string);

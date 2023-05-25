@@ -48,6 +48,17 @@ note: while trying to match `:`
   |                             ^
   = note: this error originates in the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
+error: expected identifier, found `:`
+ --> ui/invalid_msg_send.rs
+  |
+  |     let _: () = unsafe { msg_send![obj, a: b: c] };
+  |                                             ^ expected identifier
+  |
+ ::: $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs
+  |
+  |         @($selector:ident : $argument:expr $(, $($rest:tt)*)?)
+  |                             -------------- while parsing argument for this `expr` macro fragment
+
 error: no rules expected the token `d`
  --> ui/invalid_msg_send.rs
   |
@@ -59,6 +70,17 @@ note: while trying to match `:`
   |
   |         @($selector:ident: _ $(,)?)
   |                          ^
+
+error: expected identifier, found `:`
+ --> ui/invalid_msg_send.rs
+  |
+  |     let _: () = unsafe { msg_send![obj, a: b: c] };
+  |                                             ^ expected identifier
+  |
+ ::: $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs
+  |
+  |         @($selector:ident : $argument:expr $(, $($rest:tt)*)?)
+  |                             -------------- while parsing argument for this `expr` macro fragment
 
 error: no rules expected the token `,`
  --> ui/invalid_msg_send.rs
@@ -83,21 +105,3 @@ note: while trying to match `)`
   |
   |         @($selector:ident: _ $(,)?)
   |                                   ^
-
-error[E0412]: cannot find type `c` in this scope
- --> ui/invalid_msg_send.rs
-  |
-  |     let _: () = unsafe { msg_send![obj, a: b: c] };
-  |                                               ^
-  |                                               |
-  |                                               not found in this scope
-  |                                               help: maybe you meant to write an assignment here: `let c`
-
-error[E0412]: cannot find type `c` in this scope
- --> ui/invalid_msg_send.rs
-  |
-  |     let _: () = unsafe { msg_send![obj, a: b: c] };
-  |                                               ^
-  |                                               |
-  |                                               not found in this scope
-  |                                               help: maybe you meant to write an assignment here: `let c`

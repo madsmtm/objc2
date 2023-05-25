@@ -15,5 +15,8 @@ error[E0277]: the trait bound `MainThreadOnly: mutability::private::MutabilityIs
 note: required by a bound in `objc2::ClassType::alloc`
  --> $WORKSPACE/crates/objc2/src/class_type.rs
   |
+  |     fn alloc() -> Option<Allocated<Self>>
+  |        ----- required by a bound in this associated function
+  |     where
   |         Self: IsAllocableAnyThread,
   |               ^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassType::alloc`

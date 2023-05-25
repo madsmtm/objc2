@@ -44,7 +44,7 @@ env:
     --package=objc2-encode
     --package=objc2-proc-macros
   # The current nightly Rust version that our CI uses
-  CURRENT_NIGHTLY: nightly-2023-04-12
+  CURRENT_NIGHTLY: nightly-2023-05-25
   # Various features that we'd usually want to test with
   #
   # Note: The `exception` feature is not enabled here, since it requires
@@ -200,6 +200,7 @@ jobs:
         toolchain: ${{ env.CURRENT_NIGHTLY }}
         profile: minimal
         override: true
+        components: rust-src
 
     - name: Cache Cargo
       uses: actions/cache@v3

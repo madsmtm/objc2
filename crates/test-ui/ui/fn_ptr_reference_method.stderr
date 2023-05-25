@@ -19,5 +19,8 @@ error[E0277]: the trait bound `for<'a> extern "C" fn(_, _, &'a objc2::runtime::O
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
+  |     pub unsafe fn add_method<T, F>(&mut self, sel: Sel, func: F)
+  |                   ---------- required by a bound in this associated function
+...
   |         F: MethodImplementation<Callee = T>,
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`

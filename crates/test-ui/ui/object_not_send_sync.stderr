@@ -5,8 +5,16 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |                  ^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
   = help: within `objc2::runtime::Object`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
-  = note: required because it appears within the type `objc_object`
-  = note: required because it appears within the type `Object`
+note: required because it appears within the type `objc_object`
+ --> $WORKSPACE/crates/objc-sys/src/object.rs
+  |
+  | pub struct objc_object {
+  |            ^^^^^^^^^^^
+note: required because it appears within the type `Object`
+ --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+  |
+  | pub struct Object(ffi::objc_object);
+  |            ^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/object_not_send_sync.rs
   |
@@ -21,10 +29,26 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |
   = help: within `objc2::runtime::Object`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
-  = note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
-  = note: required because it appears within the type `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
-  = note: required because it appears within the type `objc_object`
-  = note: required because it appears within the type `Object`
+note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
+ --> $RUST/core/src/marker.rs
+  |
+  | pub struct PhantomData<T: ?Sized>;
+  |            ^^^^^^^^^^^
+note: required because it appears within the type `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
+ --> $RUST/core/src/cell.rs
+  |
+  | pub struct UnsafeCell<T: ?Sized> {
+  |            ^^^^^^^^^^
+note: required because it appears within the type `objc_object`
+ --> $WORKSPACE/crates/objc-sys/src/object.rs
+  |
+  | pub struct objc_object {
+  |            ^^^^^^^^^^^
+note: required because it appears within the type `Object`
+ --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+  |
+  | pub struct Object(ffi::objc_object);
+  |            ^^^^^^
 note: required by a bound in `needs_send`
  --> ui/object_not_send_sync.rs
   |
@@ -38,9 +62,21 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |                  ^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
   = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
-  = note: required because it appears within the type `objc_object`
-  = note: required because it appears within the type `Object`
-  = note: required because it appears within the type `NSObject`
+note: required because it appears within the type `objc_object`
+ --> $WORKSPACE/crates/objc-sys/src/object.rs
+  |
+  | pub struct objc_object {
+  |            ^^^^^^^^^^^
+note: required because it appears within the type `Object`
+ --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+  |
+  | pub struct Object(ffi::objc_object);
+  |            ^^^^^^
+note: required because it appears within the type `NSObject`
+ --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
+  |
+  |     (NSObject)
+  |      ^^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/object_not_send_sync.rs
   |
@@ -55,11 +91,31 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |
   = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
-  = note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
-  = note: required because it appears within the type `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
-  = note: required because it appears within the type `objc_object`
-  = note: required because it appears within the type `Object`
-  = note: required because it appears within the type `NSObject`
+note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
+ --> $RUST/core/src/marker.rs
+  |
+  | pub struct PhantomData<T: ?Sized>;
+  |            ^^^^^^^^^^^
+note: required because it appears within the type `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
+ --> $RUST/core/src/cell.rs
+  |
+  | pub struct UnsafeCell<T: ?Sized> {
+  |            ^^^^^^^^^^
+note: required because it appears within the type `objc_object`
+ --> $WORKSPACE/crates/objc-sys/src/object.rs
+  |
+  | pub struct objc_object {
+  |            ^^^^^^^^^^^
+note: required because it appears within the type `Object`
+ --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+  |
+  | pub struct Object(ffi::objc_object);
+  |            ^^^^^^
+note: required because it appears within the type `NSObject`
+ --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
+  |
+  |     (NSObject)
+  |      ^^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/object_not_send_sync.rs
   |
@@ -73,10 +129,26 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |                  ^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
   = help: within `NSValue`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
-  = note: required because it appears within the type `objc_object`
-  = note: required because it appears within the type `Object`
-  = note: required because it appears within the type `NSObject`
-  = note: required because it appears within the type `NSValue`
+note: required because it appears within the type `objc_object`
+ --> $WORKSPACE/crates/objc-sys/src/object.rs
+  |
+  | pub struct objc_object {
+  |            ^^^^^^^^^^^
+note: required because it appears within the type `Object`
+ --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+  |
+  | pub struct Object(ffi::objc_object);
+  |            ^^^^^^
+note: required because it appears within the type `NSObject`
+ --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
+  |
+  |     (NSObject)
+  |      ^^^^^^^^
+note: required because it appears within the type `NSValue`
+ --> $WORKSPACE/crates/icrate/src/Foundation/../generated/Foundation/NSValue.rs
+  |
+  |     pub struct NSValue;
+  |                ^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/object_not_send_sync.rs
   |
@@ -91,12 +163,36 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |
   = help: within `NSValue`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
-  = note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
-  = note: required because it appears within the type `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
-  = note: required because it appears within the type `objc_object`
-  = note: required because it appears within the type `Object`
-  = note: required because it appears within the type `NSObject`
-  = note: required because it appears within the type `NSValue`
+note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
+ --> $RUST/core/src/marker.rs
+  |
+  | pub struct PhantomData<T: ?Sized>;
+  |            ^^^^^^^^^^^
+note: required because it appears within the type `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
+ --> $RUST/core/src/cell.rs
+  |
+  | pub struct UnsafeCell<T: ?Sized> {
+  |            ^^^^^^^^^^
+note: required because it appears within the type `objc_object`
+ --> $WORKSPACE/crates/objc-sys/src/object.rs
+  |
+  | pub struct objc_object {
+  |            ^^^^^^^^^^^
+note: required because it appears within the type `Object`
+ --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
+  |
+  | pub struct Object(ffi::objc_object);
+  |            ^^^^^^
+note: required because it appears within the type `NSObject`
+ --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
+  |
+  |     (NSObject)
+  |      ^^^^^^^^
+note: required because it appears within the type `NSValue`
+ --> $WORKSPACE/crates/icrate/src/Foundation/../generated/Foundation/NSValue.rs
+  |
+  |     pub struct NSValue;
+  |                ^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/object_not_send_sync.rs
   |

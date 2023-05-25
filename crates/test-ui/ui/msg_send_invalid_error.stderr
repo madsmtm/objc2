@@ -52,6 +52,9 @@ error[E0277]: the trait bound `i32: Message` is not satisfied
 note: required by a bound in `__send_message_error`
  --> $WORKSPACE/crates/objc2/src/message/mod.rs
   |
+  |     unsafe fn __send_message_error<A, E>(self, sel: Sel, args: A) -> Result<(), Id<E>>
+  |               -------------------- required by a bound in this associated function
+...
   |         E: Message,
   |            ^^^^^^^ required by this bound in `MessageReceiver::__send_message_error`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -19,6 +19,9 @@ error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
 note: required by a bound in `send_message`
  --> $WORKSPACE/crates/objc2/src/message/mod.rs
   |
+  |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
+  |               ------------ required by a bound in this associated function
+...
   |         R: EncodeConvertReturn,
   |            ^^^^^^^^^^^^^^^^^^^ required by this bound in `MessageReceiver::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -47,6 +50,9 @@ error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
 note: required by a bound in `send_message`
  --> $WORKSPACE/crates/objc2/src/message/mod.rs
   |
+  |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
+  |               ------------ required by a bound in this associated function
+  |     where
   |         A: MessageArguments,
   |            ^^^^^^^^^^^^^^^^ required by this bound in `MessageReceiver::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -75,6 +81,9 @@ error[E0277]: the trait bound `(): Encode` is not satisfied
 note: required by a bound in `send_message`
  --> $WORKSPACE/crates/objc2/src/message/mod.rs
   |
+  |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
+  |               ------------ required by a bound in this associated function
+  |     where
   |         A: MessageArguments,
   |            ^^^^^^^^^^^^^^^^ required by this bound in `MessageReceiver::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
