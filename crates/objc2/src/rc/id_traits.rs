@@ -231,7 +231,6 @@ mod tests {
         for _ in obj {}
     }
 
-
     #[test]
     fn test_from_iter() {
         let _: Id<Collection> = [NSObject::new()].into_iter().collect();

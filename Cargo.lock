@@ -449,6 +449,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "test_fast_enumeration"
+version = "0.1.0"
+dependencies = [
+ "icrate",
+ "objc2",
+]
+
+[[package]]
 name = "test_msg_send_error"
 version = "0.1.0"
 dependencies = [

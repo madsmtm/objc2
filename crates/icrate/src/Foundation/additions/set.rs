@@ -1,11 +1,12 @@
+//! Utilities for the `NSSet` and `NSMutableSet` classes.
 #![cfg(feature = "Foundation_NSSet")]
 use alloc::vec::Vec;
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::msg_send;
 use objc2::mutability::IsRetainable;
 
+use super::iter;
 use super::util;
 use crate::common::*;
 #[cfg(feature = "Foundation_NSMutableSet")]
@@ -188,10 +189,7 @@ impl<T: Message> NSMutableSet<T> {
     /// assert_eq!(vec.len(), 3);
     /// ```
     pub fn into_vec(set: Id<Self>) -> Vec<Id<T>> {
-        // SAFETY: Same as `NSMutableArray::into_vec`
-        set.into_iter()
-            .map(|obj| unsafe { util::mutable_collection_retain_removed_id(obj) })
-            .collect()
+        set.into_iter().collect()
     }
 }
 
@@ -243,28 +241,6 @@ extern_methods!(
         #[doc(alias = "anyObject")]
         #[method(anyObject)]
         pub fn get_any(&self) -> Option<&T>;
-
-        /// An iterator visiting all elements in arbitrary order.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icrate::Foundation::{NSSet, NSString};
-        ///
-        /// let strs = ["one", "two", "three"].map(NSString::from_str);
-        /// let set = NSSet::from_id_slice(&strs);
-        /// for s in set.iter() {
-        ///     println!("{s}");
-        /// }
-        /// ```
-        #[doc(alias = "objectEnumerator")]
-        #[cfg(feature = "Foundation_NSEnumerator")]
-        pub fn iter(&self) -> Foundation::NSEnumerator2<'_, T> {
-            unsafe {
-                let result = msg_send![self, objectEnumerator];
-                Foundation::NSEnumerator2::from_ptr(result)
-            }
-        }
     }
 
     // We're explicit about `T` being `PartialEq` for these methods because
@@ -423,42 +399,103 @@ impl<T: Message + PartialEq> NSMutableSet<T> {
     }
 }
 
-unsafe impl<T: Message> Foundation::NSFastEnumeration2 for NSSet<T> {
-    type Item = T;
+impl<T: Message> NSSet<T> {
+    /// An iterator visiting all elements in arbitrary order.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icrate::Foundation::{NSSet, NSString};
+    ///
+    /// let strs = ["one", "two", "three"].map(NSString::from_str);
+    /// let set = NSSet::from_id_slice(&strs);
+    /// for s in &set {
+    ///     println!("{s}");
+    /// }
+    /// ```
+    #[doc(alias = "objectEnumerator")]
+    #[inline]
+    pub fn iter(&self) -> Iter<'_, T> {
+        Iter(super::iter::Iter::new(self))
+    }
+
+    #[doc(alias = "objectEnumerator")]
+    #[inline]
+    pub fn iter_retained(&self) -> IterRetained<'_, T>
+    where
+        T: IsIdCloneable,
+    {
+        IterRetained(super::iter::IterRetained::new(self))
+    }
 }
 
-#[cfg(feature = "Foundation_NSMutableSet")]
-unsafe impl<T: Message> Foundation::NSFastEnumeration2 for NSMutableSet<T> {
+unsafe impl<T: Message> iter::FastEnumerationHelper for NSSet<T> {
     type Item = T;
-}
 
-impl<'a, T: Message> IntoIterator for &'a NSSet<T> {
-    type Item = &'a T;
-    type IntoIter = Foundation::NSFastEnumerator2<'a, NSSet<T>>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        use Foundation::NSFastEnumeration2;
-        self.iter_fast()
+    #[inline]
+    fn maybe_len(&self) -> Option<usize> {
+        Some(self.len())
     }
 }
 
 #[cfg(feature = "Foundation_NSMutableSet")]
-impl<'a, T: Message> IntoIterator for &'a NSMutableSet<T> {
-    type Item = &'a T;
-    type IntoIter = Foundation::NSFastEnumerator2<'a, NSMutableSet<T>>;
+unsafe impl<T: Message> iter::FastEnumerationHelper for NSMutableSet<T> {
+    type Item = T;
 
-    fn into_iter(self) -> Self::IntoIter {
-        use Foundation::NSFastEnumeration2;
-        self.iter_fast()
+    #[inline]
+    fn maybe_len(&self) -> Option<usize> {
+        Some(self.len())
     }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+/// An iterator over the items of a `NSSet`.
+#[derive(Debug)]
+pub struct Iter<'a, T: Message>(iter::Iter<'a, NSSet<T>>);
+
+__impl_iter! {
+    impl<'a, T: Message> Iterator<Item = &'a T> for Iter<'a, T> { ... }
+}
+
+/// An iterator that retains the items of a `NSSet`.
+#[derive(Debug)]
+pub struct IterRetained<'a, T: Message>(iter::IterRetained<'a, NSSet<T>>);
+
+__impl_iter! {
+    impl<'a, T: IsIdCloneable> Iterator<Item = Id<T>> for IterRetained<'a, T> { ... }
+}
+
+/// A consuming iterator over the items of a `NSSet`.
+#[derive(Debug)]
+pub struct IntoIter<T: Message>(iter::IntoIter<NSSet<T>>);
+
+__impl_iter! {
+    impl<'a, T: Message> Iterator<Item = Id<T>> for IntoIter<T> { ... }
+}
+
+__impl_into_iter! {
+    impl<T: Message> IntoIterator for &NSSet<T> {
+        type IntoIter = Iter<'_, T>;
+    }
+
+    #[cfg(feature = "Foundation_NSMutableSet")]
+    impl<T: Message> IntoIterator for &NSMutableSet<T> {
+        type IntoIter = Iter<'_, T>;
+    }
+
+    impl<T: IsIdCloneable> IntoIterator for Id<NSSet<T>> {
+        type IntoIter = IntoIter<T>;
+    }
+
+    #[cfg(feature = "Foundation_NSMutableSet")]
+    impl<T: Message> IntoIterator for Id<NSMutableSet<T>> {
+        type IntoIter = IntoIter<T>;
+    }
+}
+
 impl<T: fmt::Debug + Message> fmt::Debug for NSSet<T> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use Foundation::NSFastEnumeration2;
-        f.debug_set().entries(self.iter_fast()).finish()
+        f.debug_set().entries(self).finish()
     }
 }
 

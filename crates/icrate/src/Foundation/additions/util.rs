@@ -65,6 +65,7 @@ pub(crate) fn id_ptr_cast_const<T: ?Sized>(objects: *const Id<T>) -> *mut NonNul
 /// # Safety
 ///
 /// The object must be stored inside a collection.
+#[inline]
 pub(crate) unsafe fn collection_retain_id<T>(obj: &T) -> Id<T>
 where
     T: IsIdCloneable,
@@ -85,6 +86,7 @@ where
 //
 // TODO: Take a pointer here to avoid assuming `T` is immutable - this only
 // works now because `T` is usually `UnsafeCell` anyway.
+#[inline]
 pub(crate) unsafe fn mutable_collection_retain_removed_id<T>(obj: &T) -> Id<T>
 where
     T: Message,

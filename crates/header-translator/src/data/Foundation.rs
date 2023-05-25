@@ -12,6 +12,28 @@ data! {
         unsafe -removeAllObjects;
     }
 
+    // SAFETY: `NSEnumerator` and subclasses are safe as mutable because even
+    // though the items it contains are not mutable, the enumerator itself is
+    // (and it is important that the methods below are marked `&mut` as well).
+    //
+    // However, instances of this are only safe for others to create if
+    // they're ready to pass ownership to the enumerator, or if they somehow
+    // add a lifetime parameter (to prevent the original collection from
+    // being modified).
+    //
+    // So e.g. `Id<NSMutableArray<T>> -> Id<NSEnumerator<T>>` is safe, as is
+    // `&Id<NSArray<T: IsCloneable>> -> Id<NSEnumerator<T>>`, and so is
+    // `&'a NSArray<T: IsCloneable> -> Id<NSEnumerator<T>> + 'a`.
+    class NSEnumerator: Mutable {
+        // SAFETY: This removes the object from the internal collection, so it
+        // may safely return `Id<T>`.
+        unsafe -nextObject;
+        // SAFETY: The objects are removed from the internal collection and as
+        // such are safe to give ownership over.
+        unsafe -allObjects;
+    }
+    class NSDirectoryEnumerator: Mutable {}
+
     class NSString: ImmutableWithMutableSubclass<Foundation::NSMutableString> {
         unsafe -init;
         unsafe -compare;

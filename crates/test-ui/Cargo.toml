@@ -15,6 +15,7 @@ default = [
     "std",
     "icrate/Foundation",
     "icrate/Foundation_NSString",
+    "icrate/Foundation_NSMutableString",
     "icrate/Foundation_NSThread",
     "icrate/Foundation_NSError",
     "icrate/Foundation_NSArray",

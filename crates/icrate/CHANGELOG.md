@@ -45,6 +45,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Renamed `NSMutableCopying::mutable_copy` to `::mutableCopy`.
 * **BREAKING**: The default value for `NSUUID` was changed from a nil UUID to
   a new random UUID.
+* **BREAKING**: Changed how iteration works.
+
+  Instead of the single `NSFastEnumerator`, we now have concrete types
+  `array::Iter`, `array::IterMut`, `array::IterRetained` and
+  `array::IntoIter`, which allows iterating over `NSArray` in different ways.
+
+  Combined with proper `IntoIterator` implementations for collection types,
+  you can now do:
+  ```rust
+  let mut array: Id<NSMutableArray<T>> = ...;
+
+  for item in &array {
+      // item: &T
+  }
+
+  // If T: IsMutable
+  for item in &mut array {
+      // item: &mut T
+  }
+
+  // If T: IsIdCloneable
+  for item in array.iter_retained() {
+      // item: Id<T>
+  }
+
+  for item in array {
+      // item: Id<T>
+  }
+  ```
+
+  (similar functionality exist for `NSSet` and `NSDictionary`).
+* **BREAKING**: Renamed `NSDictionary` methods:
+  - `keys` -> `keys_vec`.
+  - `values` -> `values_vec`.
+  - `values_mut` -> `values_vec_mut`.
+  - `keys_and_objects` -> `to_vecs`.
+  - `iter_keys` -> `keys`.
+  - `iter_values` -> `values`.
+* **BREAKING**: `NSDictionary::keys_retained` and
+  `NSDictionary::values_retained` now return an iterator instead.
 
 ### Removed
 * **BREAKING**: Removed various redundant `NSProxy` methods.
@@ -55,6 +95,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `ClassType::Mutability` instead.
 * **BREAKING**: Removed a few `init` methods on subclasses that were declared
   on categories on their superclass. These should be re-added at some point.
+
+### Fixed
+* Soundness issues with enumeration / iteration over collection types.
 
 
 ## icrate 0.0.2 - 2023-02-07

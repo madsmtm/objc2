@@ -574,6 +574,10 @@ skipped = true
 [struct.NSDecimal]
 skipped = true
 
+# Uses `c_ulong` which means we need to specify the encoding manually.
+[struct.NSFastEnumerationState]
+skipped = true
+
 # Uses stuff from core Darwin libraries which we have not yet mapped
 [class.NSAppleEventDescriptor.methods]
 descriptorWithDescriptorType_bytes_length = { skipped = true }
@@ -1550,6 +1554,8 @@ definition-skipped = true
 [class.NSOrderedSet]
 definition-skipped = true
 [class.NSMutableOrderedSet]
+definition-skipped = true
+[class.NSEnumerator]
 definition-skipped = true
 
 # These protocol impls would return the wrong types
