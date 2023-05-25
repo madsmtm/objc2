@@ -295,3 +295,36 @@ __inner_extern_class!(
         }
     }
 );
+
+__inner_extern_class!(
+    #[derive(Debug, PartialEq, Eq, Hash)]
+    #[cfg(feature = "Foundation_NSEnumerator")]
+    pub struct NSEnumerator<ObjectType: Message = Object> {
+        // SAFETY: Auto traits specified below.
+        __superclass: UnsafeIgnoreAutoTraits<NSObject>,
+        // Enumerators are basically the same as if we were just storing
+        // `NSMutableArray<ObjectType>`, and removed an element from that on
+        // each iteration.
+        //
+        // This is only true because everything in this file has that type of
+        // ownership; if something didn't, and instead had e.g. `Arc<T>`-like
+        // ownership, we'd have to modify the ownership of enumerators to
+        // match with that (if we wanted to safely use enumerators returned by
+        // that type).
+        __inner: PhantomData<Id<ObjectType>>,
+    }
+
+    #[cfg(feature = "Foundation_NSEnumerator")]
+    unsafe impl<ObjectType: Message> ClassType for NSEnumerator<ObjectType> {
+        type Super = NSObject;
+        type Mutability = Mutable;
+
+        fn as_super(&self) -> &Self::Super {
+            &self.__superclass.0
+        }
+
+        fn as_super_mut(&mut self) -> &mut Self::Super {
+            &mut self.__superclass.0
+        }
+    }
+);

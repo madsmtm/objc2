@@ -27,6 +27,18 @@ fn test_two_empty() {
 }
 
 #[test]
+fn test_creation() {
+    let _ = <NSArray<NSNumber>>::from_vec(vec![]);
+    let _ = NSArray::from_vec(vec![NSNumber::new_u8(4), NSNumber::new_u8(2)]);
+
+    let _ = <NSArray<NSNumber>>::from_id_slice(&[]);
+    let _ = NSArray::from_id_slice(&[NSNumber::new_u8(4), NSNumber::new_u8(2)]);
+
+    let _ = <NSArray<NSNumber>>::from_slice(&[]);
+    let _ = NSArray::from_slice(&[&*NSNumber::new_u8(4), &*NSNumber::new_u8(2)]);
+}
+
+#[test]
 fn test_len() {
     let empty_array = NSArray::<NSObject>::new();
     assert_eq!(empty_array.len(), 0);
@@ -132,37 +144,100 @@ fn test_nscopying_uses_retain() {
     feature = "apple",
     ignore = "this works differently on different framework versions"
 )]
-#[cfg(feature = "Foundation_NSEnumerator")]
-fn test_iter_no_retain() {
-    use icrate::Foundation::NSFastEnumeration2;
-
-    let obj = __RcTestObject::new();
-    let array = NSArray::from_id_slice(&[obj]);
+fn test_iter_minimal_retains() {
+    let objs = [__RcTestObject::new()];
+    let array = NSArray::from_id_slice(&objs);
+    drop(objs);
     let mut expected = __ThreadTestData::current();
 
-    let iter = array.iter();
-    expected.retain += 0;
+    // Iter
+    let mut iter = array.iter();
     expected.assert_current();
 
-    assert_eq!(iter.count(), 1);
-    expected.autorelease += 0;
+    assert!(iter.next().is_some());
     expected.assert_current();
 
-    let iter = array.iter_fast();
-    assert_eq!(iter.count(), 1);
+    assert_eq!(iter.count(), 0);
+    expected.assert_current();
+
+    // IterRetained
+    let mut iter = array.iter_retained();
+    expected.assert_current();
+
+    assert!(iter.next().is_some());
+    expected.retain += 1;
+    expected.release += 1;
+    expected.assert_current();
+
+    assert_eq!(iter.count(), 0);
+    expected.assert_current();
+
+    // IntoIter
+    let mut iter = array.into_iter();
+    expected.assert_current();
+
+    assert!(iter.next().is_some());
+    expected.retain += 1;
+    expected.release += 1;
+    expected.assert_current();
+
+    assert_eq!(iter.count(), 0);
+    expected.release += 1;
+    expected.dealloc += 1;
     expected.assert_current();
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSEnumerator")]
 fn test_iter() {
-    let array = sample_array(4);
+    let array = sample_number_array(4);
 
-    assert_eq!(array.iter().count(), 4);
-    assert!(array
-        .iter()
-        .enumerate()
-        .all(|(i, obj)| Some(obj) == array.get(i)));
+    let vec1 = array.to_vec_retained();
+    let vec2: Vec<_> = array.iter_retained().collect();
+    assert_eq!(vec1, vec2);
+
+    let mut iterations = 0;
+    for _ in &array {
+        iterations += 1;
+    }
+    for _ in array.iter() {
+        iterations += 1;
+    }
+    for _ in array.iter_retained() {
+        iterations += 1;
+    }
+    for _ in array {
+        iterations += 1;
+    }
+    assert_eq!(iterations, 4 * 4);
+}
+
+#[test]
+fn test_iter_fused() {
+    // Not actually documented, nor is FusedIterator implemented for the
+    // array iterators; but it it still important to test that iterating past
+    // the end still works.
+
+    let array = sample_number_array(2);
+
+    let mut iter = array.iter();
+    assert_eq!(iter.next(), Some(&*NSNumber::new_u8(0)));
+    assert_eq!(iter.next(), Some(&*NSNumber::new_u8(1)));
+    assert_eq!(iter.next(), None);
+    assert_eq!(iter.next(), None);
+    assert_eq!(iter.next(), None);
+    assert_eq!(iter.next(), None);
+    assert_eq!(iter.next(), None);
+    assert_eq!(iter.next(), None);
+    assert_eq!(iter.next(), None);
+}
+
+#[test]
+fn test_two_iters() {
+    let array = sample_number_array(4);
+
+    let iter1 = array.iter();
+    let iter2 = array.iter_retained();
+    for (_, _) in iter1.zip(iter2) {}
 }
 
 #[test]
@@ -182,11 +257,8 @@ fn test_objects_in_range() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSString")]
 fn test_generic_ownership_traits() {
-    use icrate::Foundation::NSString;
-
     fn assert_partialeq<T: PartialEq>() {}
 
-    assert_partialeq::<NSArray<NSString>>();
+    assert_partialeq::<NSArray<NSObject>>();
 }

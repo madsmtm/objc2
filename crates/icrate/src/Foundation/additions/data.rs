@@ -8,6 +8,9 @@ use core::ops::{IndexMut, Range};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::slice::{self, SliceIndex};
 
+#[cfg(feature = "block")]
+use objc2::rc::IdFromIterator;
+
 use crate::common::*;
 #[cfg(feature = "Foundation_NSMutableData")]
 use crate::Foundation::NSMutableData;
@@ -246,18 +249,22 @@ impl std::io::Write for NSMutableData {
     }
 }
 
-// #[cfg(feature = "Foundation_NSMutableData")]
-// impl FromIterator<u8> for Id<NSMutableData> {
-//     fn from_iter<T: IntoIterator<Item = u8>>(iter: T) -> Self {
-//         let iter = iter.into_iter();
-//         let (lower, _) = iter.size_hint();
-//         let data = Self::with_capacity(lower);
-//         for item in iter {
-//             data.push(item);
-//         }
-//         data
-//     }
-// }
+#[cfg(feature = "block")]
+impl IdFromIterator<u8> for NSData {
+    fn id_from_iter<I: IntoIterator<Item = u8>>(iter: I) -> Id<Self> {
+        let vec = Vec::from_iter(iter);
+        Self::from_vec(vec)
+    }
+}
+
+#[cfg(feature = "Foundation_NSMutableData")]
+#[cfg(feature = "block")]
+impl IdFromIterator<u8> for NSMutableData {
+    fn id_from_iter<I: IntoIterator<Item = u8>>(iter: I) -> Id<Self> {
+        let vec = Vec::from_iter(iter);
+        Self::from_vec(vec)
+    }
+}
 
 #[cfg(feature = "block")]
 unsafe fn with_vec<T: Message>(obj: Option<Allocated<T>>, bytes: Vec<u8>) -> Id<T> {

@@ -1,3 +1,4 @@
+//! Utilities for the `NSArray` and `NSMutableArray` classes.
 #![cfg(feature = "Foundation_NSArray")]
 use alloc::vec::Vec;
 use core::fmt;
@@ -5,9 +6,10 @@ use core::mem;
 use core::ops::{Index, IndexMut, Range};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::msg_send;
 use objc2::mutability::{IsMutable, IsRetainable};
+use objc2::rc::IdFromIterator;
 
+use super::iter;
 use super::util;
 use crate::common::*;
 #[cfg(feature = "Foundation_NSMutableArray")]
@@ -220,15 +222,6 @@ extern_methods!(
 );
 
 impl<T: Message> NSArray<T> {
-    #[doc(alias = "objectEnumerator")]
-    #[cfg(feature = "Foundation_NSEnumerator")]
-    pub fn iter(&self) -> Foundation::NSEnumerator2<'_, T> {
-        unsafe {
-            let result: *mut Object = msg_send![self, objectEnumerator];
-            Foundation::NSEnumerator2::from_ptr(result)
-        }
-    }
-
     unsafe fn objects_in_range_unchecked(&self, range: Range<usize>) -> Vec<&T> {
         let range = Foundation::NSRange::from(range);
         let mut vec: Vec<NonNull<T>> = Vec::with_capacity(range.length);
@@ -340,33 +333,109 @@ impl<T: Message> NSMutableArray<T> {
     }
 }
 
-unsafe impl<T: Message> Foundation::NSFastEnumeration2 for NSArray<T> {
-    type Item = T;
+impl<T: Message> NSArray<T> {
+    #[doc(alias = "objectEnumerator")]
+    #[inline]
+    pub fn iter(&self) -> Iter<'_, T> {
+        Iter(super::iter::Iter::new(self))
+    }
+
+    #[doc(alias = "objectEnumerator")]
+    #[inline]
+    pub fn iter_mut(&mut self) -> IterMut<'_, T>
+    where
+        T: IsMutable,
+    {
+        IterMut(super::iter::IterMut::new(self))
+    }
+
+    #[doc(alias = "objectEnumerator")]
+    #[inline]
+    pub fn iter_retained(&self) -> IterRetained<'_, T>
+    where
+        T: IsIdCloneable,
+    {
+        IterRetained(super::iter::IterRetained::new(self))
+    }
 }
 
-#[cfg(feature = "Foundation_NSMutableArray")]
-unsafe impl<T: Message> Foundation::NSFastEnumeration2 for NSMutableArray<T> {
+unsafe impl<T: Message> iter::FastEnumerationHelper for NSArray<T> {
     type Item = T;
-}
 
-impl<'a, T: Message> IntoIterator for &'a NSArray<T> {
-    type Item = &'a T;
-    type IntoIter = Foundation::NSFastEnumerator2<'a, NSArray<T>>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        use Foundation::NSFastEnumeration2;
-        self.iter_fast()
+    #[inline]
+    fn maybe_len(&self) -> Option<usize> {
+        Some(self.len())
     }
 }
 
 #[cfg(feature = "Foundation_NSMutableArray")]
-impl<'a, T: Message> IntoIterator for &'a NSMutableArray<T> {
-    type Item = &'a T;
-    type IntoIter = Foundation::NSFastEnumerator2<'a, NSMutableArray<T>>;
+unsafe impl<T: Message> iter::FastEnumerationHelper for NSMutableArray<T> {
+    type Item = T;
 
-    fn into_iter(self) -> Self::IntoIter {
-        use Foundation::NSFastEnumeration2;
-        self.iter_fast()
+    #[inline]
+    fn maybe_len(&self) -> Option<usize> {
+        Some(self.len())
+    }
+}
+
+/// An iterator over the items of a `NSArray`.
+#[derive(Debug)]
+pub struct Iter<'a, T: Message>(iter::Iter<'a, NSArray<T>>);
+
+__impl_iter! {
+    impl<'a, T: Message> Iterator<Item = &'a T> for Iter<'a, T> { ... }
+}
+
+/// A mutable iterator over the items of a `NSArray`.
+#[derive(Debug)]
+pub struct IterMut<'a, T: Message>(iter::IterMut<'a, NSArray<T>>);
+
+__impl_iter! {
+    impl<'a, T: IsMutable> Iterator<Item = &'a mut T> for IterMut<'a, T> { ... }
+}
+
+/// An iterator that retains the items of a `NSArray`.
+#[derive(Debug)]
+pub struct IterRetained<'a, T: Message>(iter::IterRetained<'a, NSArray<T>>);
+
+__impl_iter! {
+    impl<'a, T: IsIdCloneable> Iterator<Item = Id<T>> for IterRetained<'a, T> { ... }
+}
+
+/// A consuming iterator over the items of a `NSArray`.
+#[derive(Debug)]
+pub struct IntoIter<T: Message>(iter::IntoIter<NSArray<T>>);
+
+__impl_iter! {
+    impl<'a, T: Message> Iterator<Item = Id<T>> for IntoIter<T> { ... }
+}
+
+__impl_into_iter! {
+    impl<T: Message> IntoIterator for &NSArray<T> {
+        type IntoIter = Iter<'_, T>;
+    }
+
+    #[cfg(feature = "Foundation_NSMutableArray")]
+    impl<T: Message> IntoIterator for &NSMutableArray<T> {
+        type IntoIter = Iter<'_, T>;
+    }
+
+    impl<T: IsMutable> IntoIterator for &mut NSArray<T> {
+        type IntoIter = IterMut<'_, T>;
+    }
+
+    #[cfg(feature = "Foundation_NSMutableArray")]
+    impl<T: IsMutable> IntoIterator for &mut NSMutableArray<T> {
+        type IntoIter = IterMut<'_, T>;
+    }
+
+    impl<T: IsIdCloneable> IntoIterator for Id<NSArray<T>> {
+        type IntoIter = IntoIter<T>;
+    }
+
+    #[cfg(feature = "Foundation_NSMutableArray")]
+    impl<T: Message> IntoIterator for Id<NSMutableArray<T>> {
+        type IntoIter = IntoIter<T>;
     }
 }
 
@@ -403,8 +472,7 @@ impl<T: IsMutable> IndexMut<usize> for NSMutableArray<T> {
 impl<T: fmt::Debug + Message> fmt::Debug for NSArray<T> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use Foundation::NSFastEnumeration2;
-        f.debug_list().entries(self.iter_fast()).finish()
+        f.debug_list().entries(self).finish()
     }
 }
 
@@ -422,5 +490,35 @@ impl<'a, T: IsRetainable> Extend<&'a T> for NSMutableArray<T> {
         // array to retain the object here.
         iter.into_iter()
             .for_each(move |item| unsafe { self.addObject(item) })
+    }
+}
+
+impl<'a, T: IsRetainable + 'a> IdFromIterator<&'a T> for NSArray<T> {
+    fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Id<Self> {
+        let vec = Vec::from_iter(iter);
+        Self::from_slice(&vec)
+    }
+}
+
+impl<T: Message> IdFromIterator<Id<T>> for NSArray<T> {
+    fn id_from_iter<I: IntoIterator<Item = Id<T>>>(iter: I) -> Id<Self> {
+        let vec = Vec::from_iter(iter);
+        Self::from_vec(vec)
+    }
+}
+
+#[cfg(feature = "Foundation_NSMutableArray")]
+impl<'a, T: IsRetainable + 'a> IdFromIterator<&'a T> for NSMutableArray<T> {
+    fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Id<Self> {
+        let vec = Vec::from_iter(iter);
+        Self::from_slice(&vec)
+    }
+}
+
+#[cfg(feature = "Foundation_NSMutableArray")]
+impl<T: Message> IdFromIterator<Id<T>> for NSMutableArray<T> {
+    fn id_from_iter<I: IntoIterator<Item = Id<T>>>(iter: I) -> Id<Self> {
+        let vec = Vec::from_iter(iter);
+        Self::from_vec(vec)
     }
 }

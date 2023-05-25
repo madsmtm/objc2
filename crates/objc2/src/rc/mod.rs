@@ -62,6 +62,6 @@ pub use self::autorelease::{
     autoreleasepool, autoreleasepool_leaking, AutoreleasePool, AutoreleaseSafe,
 };
 pub use self::id::Id;
-pub use self::id_traits::DefaultId;
+pub use self::id_traits::{DefaultId, IdFromIterator, IdIntoIterator};
 pub use self::test_object::{__RcTestObject, __ThreadTestData};
 pub use self::weak_id::WeakId;

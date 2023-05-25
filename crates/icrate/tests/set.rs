@@ -5,7 +5,7 @@
 use objc2::rc::{__RcTestObject, __ThreadTestData};
 
 use icrate::ns_string;
-use icrate::Foundation::{self, NSFastEnumeration2, NSNumber, NSObject, NSSet, NSString};
+use icrate::Foundation::{self, NSNumber, NSObject, NSSet, NSString};
 
 #[test]
 fn test_new() {
@@ -144,15 +144,6 @@ fn test_iter() {
 }
 
 #[test]
-fn test_iter_fast() {
-    let nums = [1, 2, 3];
-    let set = NSSet::from_id_slice(&nums.map(NSNumber::new_i32));
-
-    assert_eq!(set.iter_fast().count(), 3);
-    assert!(set.iter_fast().all(|i| nums.contains(&i.as_i32())));
-}
-
-#[test]
 fn test_into_iter() {
     let nums = [1, 2, 3];
     let set = NSSet::from_id_slice(&nums.map(NSNumber::new_i32));
@@ -258,20 +249,45 @@ fn test_nscopying_uses_retain() {
     feature = "apple",
     ignore = "this works differently on different framework versions"
 )]
-fn test_iter_no_retain() {
-    let obj = __RcTestObject::new();
-    let set = NSSet::from_id_slice(&[obj]);
+fn test_iter_minimal_retains() {
+    let objs = [__RcTestObject::new()];
+    let set = NSSet::from_id_slice(&objs);
+    drop(objs);
     let mut expected = __ThreadTestData::current();
 
-    let iter = set.iter();
-    expected.retain += 0;
+    // Iter
+    let mut iter = set.iter();
     expected.assert_current();
 
-    assert_eq!(iter.count(), 1);
-    expected.autorelease += 0;
+    assert!(iter.next().is_some());
     expected.assert_current();
 
-    let iter = set.iter_fast();
-    assert_eq!(iter.count(), 1);
+    assert_eq!(iter.count(), 0);
+    expected.assert_current();
+
+    // IterRetained
+    let mut iter = set.iter_retained();
+    expected.assert_current();
+
+    assert!(iter.next().is_some());
+    expected.retain += 1;
+    expected.release += 1;
+    expected.assert_current();
+
+    assert_eq!(iter.count(), 0);
+    expected.assert_current();
+
+    // IntoIter
+    let mut iter = set.into_iter();
+    expected.assert_current();
+
+    assert!(iter.next().is_some());
+    expected.retain += 1;
+    expected.release += 1;
+    expected.assert_current();
+
+    assert_eq!(iter.count(), 0);
+    expected.release += 1;
+    expected.dealloc += 1;
     expected.assert_current();
 }

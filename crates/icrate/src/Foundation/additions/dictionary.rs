@@ -1,3 +1,4 @@
+//! Utilities for the `NSDictionary` and `NSMutableDictionary` classes.
 #![cfg(feature = "Foundation_NSDictionary")]
 use alloc::vec::Vec;
 use core::cmp::min;
@@ -7,20 +8,20 @@ use core::ops::{Index, IndexMut};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 
-use objc2::msg_send;
 use objc2::mutability::IsMutable;
 use objc2::runtime::Object;
 
+use super::iter;
 use super::util;
 use crate::common::*;
 #[cfg(feature = "Foundation_NSMutableDictionary")]
 use crate::Foundation::NSMutableDictionary;
-use crate::Foundation::{self, Copyhelper, NSDictionary};
+use crate::Foundation::{self, Copyhelper, NSCopying, NSDictionary};
 
 impl<K: Message, V: Message> NSDictionary<K, V> {
     pub fn from_keys_and_objects<T>(keys: &[&T], mut vals: Vec<Id<V>>) -> Id<Self>
     where
-        T: ClassType + Foundation::NSCopying,
+        T: ClassType + NSCopying,
         T::Mutability: Copyhelper<T, CopyOutput = K>,
     {
         let count = min(keys.len(), vals.len());
@@ -37,7 +38,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
 impl<K: Message, V: Message> NSMutableDictionary<K, V> {
     pub fn from_keys_and_objects<T>(keys: &[&T], mut vals: Vec<Id<V>>) -> Id<Self>
     where
-        T: ClassType + Foundation::NSCopying,
+        T: ClassType + NSCopying,
         T::Mutability: Copyhelper<T, CopyOutput = K>,
     {
         let count = min(keys.len(), vals.len());
@@ -109,7 +110,7 @@ extern_methods!(
 
 impl<K: Message, V: Message> NSDictionary<K, V> {
     #[doc(alias = "getObjects:andKeys:")]
-    pub fn keys(&self) -> Vec<&K> {
+    pub fn keys_vec(&self) -> Vec<&K> {
         let len = self.len();
         let mut keys: Vec<NonNull<K>> = Vec::with_capacity(len);
         unsafe {
@@ -120,23 +121,11 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
         }
     }
 
-    // We don't provide `keys_mut`, since keys are expected to be
+    // We don't provide `keys_mut_vec`, since keys are expected to be
     // immutable.
 
     #[doc(alias = "getObjects:andKeys:")]
-    pub fn keys_retained(&self) -> Vec<Id<K>>
-    where
-        K: IsIdCloneable,
-    {
-        // SAFETY: The keys are stored in the array
-        self.keys()
-            .into_iter()
-            .map(|obj| unsafe { util::collection_retain_id(obj) })
-            .collect()
-    }
-
-    #[doc(alias = "getObjects:andKeys:")]
-    pub fn values(&self) -> Vec<&V> {
+    pub fn values_vec(&self) -> Vec<&V> {
         let len = self.len();
         let mut vals: Vec<NonNull<V>> = Vec::with_capacity(len);
         unsafe {
@@ -145,18 +134,6 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
             vals.set_len(len);
             mem::transmute(vals)
         }
-    }
-
-    #[doc(alias = "getObjects:andKeys:")]
-    pub fn values_retained(&self) -> Vec<Id<V>>
-    where
-        V: IsIdCloneable,
-    {
-        // SAFETY: The values are stored in the array
-        self.values()
-            .into_iter()
-            .map(|obj| unsafe { util::collection_retain_id(obj) })
-            .collect()
     }
 
     /// Returns a vector of mutable references to the values in the dictionary.
@@ -186,7 +163,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     /// }
     /// ```
     #[doc(alias = "getObjects:andKeys:")]
-    pub fn values_mut(&mut self) -> Vec<&mut V>
+    pub fn values_vec_mut(&mut self) -> Vec<&mut V>
     where
         V: IsMutable,
     {
@@ -201,7 +178,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     }
 
     #[doc(alias = "getObjects:andKeys:")]
-    pub fn keys_and_objects(&self) -> (Vec<&K>, Vec<&V>) {
+    pub fn to_vecs(&self) -> (Vec<&K>, Vec<&V>) {
         let len = self.len();
         let mut keys: Vec<NonNull<K>> = Vec::with_capacity(len);
         let mut objs: Vec<NonNull<V>> = Vec::with_capacity(len);
@@ -211,24 +188,6 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
             keys.set_len(len);
             objs.set_len(len);
             (mem::transmute(keys), mem::transmute(objs))
-        }
-    }
-
-    #[doc(alias = "keyEnumerator")]
-    #[cfg(feature = "Foundation_NSEnumerator")]
-    pub fn iter_keys(&self) -> Foundation::NSEnumerator2<'_, K> {
-        unsafe {
-            let result = msg_send![self, keyEnumerator];
-            Foundation::NSEnumerator2::from_ptr(result)
-        }
-    }
-
-    #[doc(alias = "objectEnumerator")]
-    #[cfg(feature = "Foundation_NSEnumerator")]
-    pub fn iter_values(&self) -> Foundation::NSEnumerator2<'_, V> {
-        unsafe {
-            let result = msg_send![self, objectEnumerator];
-            Foundation::NSEnumerator2::from_ptr(result)
         }
     }
 }
@@ -311,14 +270,158 @@ impl<K: Message, V: Message> NSMutableDictionary<K, V> {
     }
 }
 
-unsafe impl<K: Message, V: Message> Foundation::NSFastEnumeration2 for NSDictionary<K, V> {
+impl<K: Message, V: Message> NSDictionary<K, V> {
+    #[doc(alias = "keyEnumerator")]
+    #[cfg(feature = "Foundation_NSEnumerator")]
+    pub fn keys(&self) -> Keys<'_, K, V> {
+        Keys(iter::Iter::new(self))
+    }
+
+    #[doc(alias = "keyEnumerator")]
+    #[cfg(feature = "Foundation_NSEnumerator")]
+    pub fn keys_retained(&self) -> KeysRetained<'_, K, V>
+    where
+        K: IsIdCloneable,
+    {
+        KeysRetained(iter::IterRetained::new(self))
+    }
+
+    // TODO: Is this ever useful?
+    // pub fn into_keys(this: Id<Self>) -> IntoKeys<K, V> {
+    //     todo!()
+    // }
+
+    #[doc(alias = "objectEnumerator")]
+    #[cfg(feature = "Foundation_NSEnumerator")]
+    pub fn values(&self) -> Values<'_, K, V> {
+        let enumerator = unsafe { self.objectEnumerator() };
+        // SAFETY: The enumerator came from the dictionary.
+        Values(unsafe { iter::IterWithBackingEnum::new(self, enumerator) })
+    }
+
+    #[doc(alias = "objectEnumerator")]
+    #[cfg(feature = "Foundation_NSEnumerator")]
+    pub fn values_mut(&mut self) -> ValuesMut<'_, K, V>
+    where
+        V: IsMutable,
+    {
+        let enumerator = unsafe { self.objectEnumerator() };
+        // SAFETY: The enumerator came from the dictionary.
+        ValuesMut(unsafe { iter::IterMutWithBackingEnum::new(self, enumerator) })
+    }
+
+    #[doc(alias = "objectEnumerator")]
+    #[cfg(feature = "Foundation_NSEnumerator")]
+    pub fn values_retained(&self) -> ValuesRetained<'_, K, V>
+    where
+        V: IsIdCloneable,
+    {
+        let enumerator = unsafe { self.objectEnumerator() };
+        // SAFETY: The enumerator came from the dictionary.
+        ValuesRetained(unsafe { iter::IterRetainedWithBackingEnum::new(self, enumerator) })
+    }
+
+    #[doc(alias = "objectEnumerator")]
+    #[cfg(feature = "Foundation_NSEnumerator")]
+    pub fn into_values(this: Id<Self>) -> IntoValues<K, V>
+    where
+        V: IsIdCloneable,
+    {
+        let enumerator = unsafe { this.objectEnumerator() };
+        // SAFETY: The enumerator came from the dictionary.
+        IntoValues(unsafe { iter::IntoIterWithBackingEnum::new_immutable(this, enumerator) })
+    }
+}
+
+unsafe impl<K: Message, V: Message> iter::FastEnumerationHelper for NSDictionary<K, V> {
+    // Fast enumeration for dictionaries returns the keys.
     type Item = K;
+
+    #[inline]
+    fn maybe_len(&self) -> Option<usize> {
+        Some(self.len())
+    }
 }
 
 #[cfg(feature = "Foundation_NSMutableDictionary")]
-unsafe impl<K: Message, V: Message> Foundation::NSFastEnumeration2 for NSMutableDictionary<K, V> {
+unsafe impl<K: Message, V: Message> iter::FastEnumerationHelper for NSMutableDictionary<K, V> {
+    // Naturally, the same goes for mutable dictionaries.
     type Item = K;
+
+    #[inline]
+    fn maybe_len(&self) -> Option<usize> {
+        Some(self.len())
+    }
 }
+
+// We also cfg-gate `Keys` behind `NSEnumerator` for symmetry, even though we
+// don't necessarily need to.
+#[cfg(feature = "Foundation_NSEnumerator")]
+mod iter_helpers {
+    use super::*;
+    use crate::Foundation::NSEnumerator;
+
+    /// An iterator over the keys of a `NSDictionary`.
+    #[derive(Debug)]
+    pub struct Keys<'a, K: Message, V: Message>(pub(super) iter::Iter<'a, NSDictionary<K, V>>);
+
+    __impl_iter! {
+        impl<'a, K: Message, V: Message> Iterator<Item = &'a K> for Keys<'a, K, V> { ... }
+    }
+
+    /// An iterator that retains the keys of a `NSDictionary`.
+    #[derive(Debug)]
+    pub struct KeysRetained<'a, K: Message, V: Message>(
+        pub(super) iter::IterRetained<'a, NSDictionary<K, V>>,
+    );
+
+    __impl_iter! {
+        impl<'a, K: IsIdCloneable, V: Message> Iterator<Item = Id<K>> for KeysRetained<'a, K, V> { ... }
+    }
+
+    /// An iterator over the values of a `NSDictionary`.
+    #[derive(Debug)]
+    pub struct Values<'a, K: Message, V: Message>(
+        pub(super) iter::IterWithBackingEnum<'a, NSDictionary<K, V>, NSEnumerator<V>>,
+    );
+
+    __impl_iter! {
+        impl<'a, K: Message, V: Message> Iterator<Item = &'a V> for Values<'a, K, V> { ... }
+    }
+
+    /// A mutable iterator over the values of a `NSDictionary`.
+    #[derive(Debug)]
+    pub struct ValuesMut<'a, K: Message, V: Message>(
+        pub(super) iter::IterMutWithBackingEnum<'a, NSDictionary<K, V>, NSEnumerator<V>>,
+    );
+
+    __impl_iter! {
+        impl<'a, K: Message, V: IsMutable> Iterator<Item = &'a mut V> for ValuesMut<'a, K, V> { ... }
+    }
+
+    /// A iterator that retains the values of a `NSDictionary`.
+    #[derive(Debug)]
+    pub struct ValuesRetained<'a, K: Message, V: Message>(
+        pub(super) iter::IterRetainedWithBackingEnum<'a, NSDictionary<K, V>, NSEnumerator<V>>,
+    );
+
+    __impl_iter! {
+        impl<'a, K: Message, V: IsIdCloneable> Iterator<Item = Id<V>> for ValuesRetained<'a, K, V> { ... }
+    }
+
+    /// A consuming iterator over the values of a `NSDictionary`.
+    #[derive(Debug)]
+    pub struct IntoValues<K: Message, V: Message>(
+        pub(super) iter::IntoIterWithBackingEnum<NSDictionary<K, V>, NSEnumerator<V>>,
+    );
+
+    __impl_iter! {
+        impl<K: Message, V: Message> Iterator<Item = Id<V>> for IntoValues<K, V> { ... }
+    }
+}
+
+#[cfg(feature = "Foundation_NSEnumerator")]
+pub use self::iter_helpers::*;
 
 impl<'a, K: Message, V: Message> Index<&'a K> for NSDictionary<K, V> {
     type Output = V;
@@ -350,11 +453,11 @@ impl<'a, K: Message, V: IsMutable> IndexMut<&'a K> for NSMutableDictionary<K, V>
     }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
 impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug for NSDictionary<K, V> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let iter = self.iter_keys().zip(self.iter_values());
+        let (keys, values) = self.to_vecs();
+        let iter = keys.into_iter().zip(values);
         f.debug_map().entries(iter).finish()
     }
 }

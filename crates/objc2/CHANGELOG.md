@@ -52,6 +52,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `extern_protocol!` and `extern_methods!`.
 * Allow arbitary expressions in `const NAME` in `extern_class!`,
   `extern_protocol!` and `declare_class!`.
+* Added `rc::IdIntoIterator` helper trait and forwarding `IntoIterator`
+  implementations for `rc::Id`.
+* Added `rc::IdFromIterator` helper trait for implementing `IntoIterator`
+  for `rc::Id`.
 
 ### Changed
 * **BREAKING**: `objc2::rc::AutoreleasePool` is now a zero-sized `Copy` type
@@ -102,6 +106,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed `impl<T> TryFrom<WeakId<T>> for Id<T>` impl since it
   did not have a proper error type, making it less useful than just using
   `WeakId::load`.
+* **BREAKING**: Removed forwarding `Iterator` implementation for `Id`, since
+  it conflicts with the `IntoIterator` implementation that it now has instead.
 
 
 ## 0.3.0-beta.5 - 2023-02-07

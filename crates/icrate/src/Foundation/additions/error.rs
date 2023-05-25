@@ -37,12 +37,10 @@ impl NSError {
 
 #[cfg(feature = "Foundation_NSString")]
 #[cfg(feature = "Foundation_NSDictionary")]
-#[cfg(feature = "Foundation_NSEnumerator")]
 impl std::error::Error for Foundation::NSError {}
 
 #[cfg(feature = "Foundation_NSString")]
 #[cfg(feature = "Foundation_NSDictionary")]
-#[cfg(feature = "Foundation_NSEnumerator")]
 impl fmt::Debug for NSError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("NSError")

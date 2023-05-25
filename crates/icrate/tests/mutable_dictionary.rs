@@ -1,5 +1,6 @@
 #![cfg(feature = "Foundation_NSMutableDictionary")]
 #![cfg(feature = "Foundation_NSNumber")]
+use objc2::msg_send;
 use objc2::rc::{Id, __RcTestObject, __ThreadTestData};
 
 use icrate::Foundation::{NSMutableDictionary, NSNumber, NSObject};
@@ -51,7 +52,7 @@ fn test_get_mut() {
 #[cfg(feature = "Foundation_NSMutableString")]
 fn test_values_mut() {
     let mut dict = sample_dict_mut();
-    let vec = dict.values_mut();
+    let vec = dict.values_vec_mut();
     assert_eq!(vec.len(), 3);
 }
 
@@ -132,8 +133,28 @@ fn test_remove_clear_release_dealloc() {
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSArray")]
 fn test_into_values_array() {
     let dict = sample_dict();
     let array = NSMutableDictionary::into_values_array(dict);
     assert_eq!(array.len(), 3);
+}
+
+#[test]
+#[should_panic = "mutation detected during enumeration"]
+#[cfg_attr(
+    not(debug_assertions),
+    ignore = "enumeration mutation only detected with debug assertions on"
+)]
+fn test_iter_mutation_detection() {
+    let dict = sample_dict();
+
+    let mut iter = dict.keys();
+    let _ = iter.next();
+
+    let key: &NSNumber = &NSNumber::new_usize(1);
+    let obj: &NSObject = &NSObject::new();
+    let _: () = unsafe { msg_send![&dict, setObject: obj, forKey: key] };
+
+    let _ = iter.next();
 }

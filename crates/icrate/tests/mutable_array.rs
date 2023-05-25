@@ -1,7 +1,23 @@
 #![cfg(feature = "Foundation_NSMutableArray")]
+use objc2::msg_send;
 use objc2::rc::{__RcTestObject, __ThreadTestData, autoreleasepool};
 
-use icrate::Foundation::{self, NSMutableArray};
+#[cfg(feature = "Foundation_NSNumber")]
+use icrate::Foundation::NSNumber;
+use icrate::Foundation::{self, NSMutableArray, NSObject};
+
+#[test]
+#[cfg(feature = "Foundation_NSNumber")]
+fn test_creation() {
+    let _ = <NSMutableArray<NSNumber>>::from_vec(vec![]);
+    let _ = NSMutableArray::from_vec(vec![NSNumber::new_u8(4), NSNumber::new_u8(2)]);
+
+    let _ = <NSMutableArray<NSNumber>>::from_id_slice(&[]);
+    let _ = NSMutableArray::from_id_slice(&[NSNumber::new_u8(4), NSNumber::new_u8(2)]);
+
+    let _ = <NSMutableArray<NSNumber>>::from_slice(&[]);
+    let _ = NSMutableArray::from_slice(&[&*NSNumber::new_u8(4), &*NSNumber::new_u8(2)]);
+}
 
 #[test]
 fn test_adding() {
@@ -37,6 +53,37 @@ fn test_replace() {
     expected.release += 2;
     expected.assert_current();
     assert_ne!(&*old_obj, array.get(0).unwrap());
+}
+
+#[test]
+#[cfg(feature = "Foundation_NSMutableString")]
+fn test_allowed_mutation_while_iterating() {
+    use Foundation::{NSMutableString, NSString};
+
+    let mut array = NSMutableArray::from_vec(vec![NSMutableString::new(), NSMutableString::new()]);
+    let to_add = NSString::from_str("test");
+
+    for s in &mut array {
+        s.appendString(&to_add);
+    }
+
+    assert_eq!(&array[0], &*to_add);
+    assert_eq!(&array[1], &*to_add);
+}
+
+#[test]
+#[should_panic = "mutation detected during enumeration"]
+#[cfg_attr(
+    not(debug_assertions),
+    ignore = "enumeration mutation only detected with debug assertions on"
+)]
+fn test_iter_mutation_detection() {
+    let array = NSMutableArray::from_id_slice(&[NSObject::new(), NSObject::new()]);
+
+    for item in &array {
+        let item: &NSObject = item;
+        let _: () = unsafe { msg_send![&array, removeObject: item] };
+    }
 }
 
 #[test]

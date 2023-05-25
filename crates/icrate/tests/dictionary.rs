@@ -30,7 +30,7 @@ fn test_get() {
 #[test]
 fn test_keys() {
     let dict = sample_dict("abcd");
-    let keys = dict.keys();
+    let keys = dict.keys_vec();
 
     assert_eq!(keys.len(), 1);
     autoreleasepool(|pool| {
@@ -41,7 +41,7 @@ fn test_keys() {
 #[test]
 fn test_values() {
     let dict = sample_dict("abcd");
-    let vals = dict.values();
+    let vals = dict.values_vec();
 
     assert_eq!(vals.len(), 1);
 }
@@ -49,7 +49,7 @@ fn test_values() {
 #[test]
 fn test_keys_and_objects() {
     let dict = sample_dict("abcd");
-    let (keys, objs) = dict.keys_and_objects();
+    let (keys, objs) = dict.to_vecs();
 
     assert_eq!(keys.len(), 1);
     assert_eq!(objs.len(), 1);
@@ -63,9 +63,9 @@ fn test_keys_and_objects() {
 #[cfg(feature = "Foundation_NSEnumerator")]
 fn test_iter_keys() {
     let dict = sample_dict("abcd");
-    assert_eq!(dict.iter_keys().count(), 1);
+    assert_eq!(dict.keys().count(), 1);
     autoreleasepool(|pool| {
-        assert_eq!(dict.iter_keys().next().unwrap().as_str(pool), "abcd");
+        assert_eq!(dict.keys().next().unwrap().as_str(pool), "abcd");
     });
 }
 
@@ -73,7 +73,7 @@ fn test_iter_keys() {
 #[cfg(feature = "Foundation_NSEnumerator")]
 fn test_iter_values() {
     let dict = sample_dict("abcd");
-    assert_eq!(dict.iter_values().count(), 1);
+    assert_eq!(dict.values().count(), 1);
 }
 
 #[test]
@@ -92,7 +92,6 @@ fn test_arrays() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSEnumerator")]
 fn test_debug() {
     let key = NSString::from_str("a");
     let val = NSString::from_str("b");
