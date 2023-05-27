@@ -1,8 +1,17 @@
-//! # High-level runtime bindings.
+//! # Direct runtime bindings.
 //!
 //! This module contains safe(r) bindings to common parts of the Objective-C
 //! runtime. See the [`ffi`][crate::ffi] module for details on the raw
 //! bindings.
+//!
+//!
+//! # Example
+//!
+//! Using features of the runtime to query information about `NSObject`.
+//!
+//! ```
+#![doc = include_str!("../../examples/introspection.rs")]
+//! ```
 
 #[cfg(feature = "malloc")]
 use alloc::vec::Vec;

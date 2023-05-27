@@ -43,31 +43,68 @@ use crate::Message;
 /// Use the trait to access the [`Class`] of an object.
 ///
 /// ```
-/// use objc2::ClassType;
-/// use objc2::runtime::NSObject;
+/// use objc2::{ClassType, msg_send_id};
+/// use objc2::rc::Id;
+/// # use objc2::runtime::{NSObject as MyObject};
 ///
-/// // Get the class of `NSObject`
-/// let cls = <NSObject as ClassType>::class(); // Or just `NSObject::class()`
-/// assert_eq!(cls.name(), NSObject::NAME);
+/// // Get the class of the object.
+/// let cls = <MyObject as ClassType>::class();
+/// // Or, since the trait is in scope, just:
+/// let cls = MyObject::class();
+///
+/// // We can now access properties of the class.
+/// assert_eq!(cls.name(), MyObject::NAME);
+///
+/// // And we can send messages to the class.
+/// //
+/// // SAFETY:
+/// // - The class is `MyObject`, which can safely be initialized with `new`.
+/// // - The return type is correctly specified.
+/// let obj: Id<MyObject> = unsafe { msg_send_id![cls, new] };
 /// ```
 ///
-/// Use the [`extern_class!`][crate::extern_class] macro to implement this
-/// trait for a type.
+/// Use the trait to allocate a new instance of an object.
 ///
-/// ```no_run
+/// ```
+/// use objc2::{ClassType, msg_send_id};
+/// use objc2::rc::Id;
+/// # use objc2::runtime::{NSObject as MyObject};
+///
+/// let obj = MyObject::alloc();
+///
+/// // Now we can call initializers on this newly allocated object.
+/// //
+/// // SAFETY: `MyObject` can safely be initialized with `init`.
+/// let obj: Id<MyObject> = unsafe { msg_send_id![obj, init] };
+/// ```
+///
+/// Use the [`extern_class!`][crate::extern_class] macro to easily implement
+/// this trait for a type.
+///
+/// ```
 /// use objc2::runtime::NSObject;
 /// use objc2::{extern_class, mutability, ClassType};
 ///
 /// extern_class!(
 ///     struct MyClass;
 ///
+///     // SAFETY: The superclass and the mutability is correctly specified.
 ///     unsafe impl ClassType for MyClass {
 ///         type Super = NSObject;
 ///         type Mutability = mutability::InteriorMutable;
+///         # // For testing purposes
+///         # const NAME: &'static str = "NSObject";
 ///     }
 /// );
 ///
 /// let cls = MyClass::class();
+/// let obj = MyClass::alloc();
+/// ```
+///
+/// Implement the trait manually for a class with a lifetime parameter.
+///
+/// ```
+#[doc = include_str!("../examples/class_with_lifetime.rs")]
 /// ```
 pub unsafe trait ClassType: Message {
     /// The superclass of this class.
