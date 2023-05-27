@@ -1,5 +1,5 @@
 [package]
-name = "fuzz"
+name = "test-fuzz"
 version = "0.0.0"
 publish = false
 edition = "2021"
@@ -9,7 +9,7 @@ cargo-fuzz = true
 
 [dependencies]
 libfuzzer-sys = "0.4"
-objc2 = { path = "../crates/objc2", default-features = false }
+objc2 = { path = "../objc2", default-features = false }
 
 [features]
 default = ["apple", "std"]
@@ -21,9 +21,6 @@ gnustep-1-8 = ["gnustep-1-7", "objc2/gnustep-1-8"]
 gnustep-1-9 = ["gnustep-1-8", "objc2/gnustep-1-9"]
 gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0"]
 gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1"]
-
-[workspace]
-members = ["."]
 
 [[bin]]
 name = "class"
