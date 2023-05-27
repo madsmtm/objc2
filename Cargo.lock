@@ -464,6 +464,7 @@ dependencies = [
 name = "test-fuzz"
 version = "0.0.0"
 dependencies = [
+ "icrate",
  "libfuzzer-sys",
  "objc2",
 ]

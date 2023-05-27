@@ -10,17 +10,21 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "0.4"
 objc2 = { path = "../objc2", default-features = false }
+icrate = { path = "../icrate", default-features = false }
 
 [features]
 default = ["apple", "std"]
-std = ["objc2/std"]
+std = ["icrate/std"]
 # Runtime
-apple = ["objc2/apple"]
-gnustep-1-7 = ["objc2/gnustep-1-7"]
-gnustep-1-8 = ["gnustep-1-7", "objc2/gnustep-1-8"]
-gnustep-1-9 = ["gnustep-1-8", "objc2/gnustep-1-9"]
-gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0"]
-gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1"]
+apple = ["icrate/apple"]
+gnustep-1-7 = ["icrate/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "icrate/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "icrate/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "icrate/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "icrate/gnustep-2-1"]
+
+# The features required for fuzzing all targets (used by CI)
+fuzz-all = ["icrate/Foundation", "icrate/Foundation_NSString"]
 
 [[bin]]
 name = "class"
@@ -39,3 +43,10 @@ name = "encoding_parse"
 path = "fuzz_targets/encoding_parse.rs"
 test = false
 doc = false
+
+[[bin]]
+name = "nsstring"
+path = "fuzz_targets/nsstring.rs"
+test = false
+doc = false
+required-features = ["icrate/Foundation", "icrate/Foundation_NSString"]

@@ -761,7 +761,7 @@ jobs:
         # `max_total_time`, to get more determinism.
         for fuzz_target in $(cargo-fuzz list --fuzz-dir=./crates/test-fuzz/)
         do
-          cargo-fuzz run --fuzz-dir=./crates/test-fuzz/ $fuzz_target $ARGS -- -runs=10000 -timeout=2 -jobs=10
+          cargo-fuzz run --fuzz-dir=./crates/test-fuzz/ $fuzz_target $ARGS,fuzz-all -- -runs=10000 -timeout=2 -jobs=10
         done
 
         # Check if the fuzzer encountered something that should be added to
