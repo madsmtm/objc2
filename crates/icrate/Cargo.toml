@@ -3630,6 +3630,197 @@ LocalAuthentication_all = [
     "LocalAuthentication_LARightStore",
     "LocalAuthentication_LASecret",
 ]
+MLCompute = [
+    "Foundation",
+    "Metal",
+]
+MLCompute_MLCActivationDescriptor = []
+MLCompute_MLCActivationLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCAdamOptimizer = [
+    "MLCompute_MLCOptimizer",
+]
+MLCompute_MLCAdamWOptimizer = [
+    "MLCompute_MLCOptimizer",
+]
+MLCompute_MLCArithmeticLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCBatchNormalizationLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCComparisonLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCConcatenationLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCConvolutionDescriptor = []
+MLCompute_MLCConvolutionLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCDevice = []
+MLCompute_MLCDropoutLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCEmbeddingDescriptor = []
+MLCompute_MLCEmbeddingLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCFullyConnectedLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCGatherLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCGramMatrixLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCGraph = []
+MLCompute_MLCGroupNormalizationLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCInferenceGraph = [
+    "MLCompute_MLCGraph",
+]
+MLCompute_MLCInstanceNormalizationLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCLSTMDescriptor = []
+MLCompute_MLCLSTMLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCLayer = []
+MLCompute_MLCLayerNormalizationLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCLossDescriptor = []
+MLCompute_MLCLossLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCMatMulDescriptor = []
+MLCompute_MLCMatMulLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCMultiheadAttentionDescriptor = []
+MLCompute_MLCMultiheadAttentionLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCOptimizer = []
+MLCompute_MLCOptimizerDescriptor = []
+MLCompute_MLCPaddingLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCPlatform = []
+MLCompute_MLCPoolingDescriptor = []
+MLCompute_MLCPoolingLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCRMSPropOptimizer = [
+    "MLCompute_MLCOptimizer",
+]
+MLCompute_MLCReductionLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCReshapeLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCSGDOptimizer = [
+    "MLCompute_MLCOptimizer",
+]
+MLCompute_MLCScatterLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCSelectionLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCSliceLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCSoftmaxLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCSplitLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCTensor = []
+MLCompute_MLCTensorData = []
+MLCompute_MLCTensorDescriptor = []
+MLCompute_MLCTensorOptimizerDeviceData = []
+MLCompute_MLCTensorParameter = []
+MLCompute_MLCTrainingGraph = [
+    "MLCompute_MLCGraph",
+]
+MLCompute_MLCTransposeLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCUpsampleLayer = [
+    "MLCompute_MLCLayer",
+]
+MLCompute_MLCYOLOLossDescriptor = []
+MLCompute_MLCYOLOLossLayer = [
+    "MLCompute_MLCLossLayer",
+]
+MLCompute_all = [
+    "MLCompute",
+    "MLCompute_MLCActivationDescriptor",
+    "MLCompute_MLCActivationLayer",
+    "MLCompute_MLCAdamOptimizer",
+    "MLCompute_MLCAdamWOptimizer",
+    "MLCompute_MLCArithmeticLayer",
+    "MLCompute_MLCBatchNormalizationLayer",
+    "MLCompute_MLCComparisonLayer",
+    "MLCompute_MLCConcatenationLayer",
+    "MLCompute_MLCConvolutionDescriptor",
+    "MLCompute_MLCConvolutionLayer",
+    "MLCompute_MLCDevice",
+    "MLCompute_MLCDropoutLayer",
+    "MLCompute_MLCEmbeddingDescriptor",
+    "MLCompute_MLCEmbeddingLayer",
+    "MLCompute_MLCFullyConnectedLayer",
+    "MLCompute_MLCGatherLayer",
+    "MLCompute_MLCGramMatrixLayer",
+    "MLCompute_MLCGraph",
+    "MLCompute_MLCGroupNormalizationLayer",
+    "MLCompute_MLCInferenceGraph",
+    "MLCompute_MLCInstanceNormalizationLayer",
+    "MLCompute_MLCLSTMDescriptor",
+    "MLCompute_MLCLSTMLayer",
+    "MLCompute_MLCLayer",
+    "MLCompute_MLCLayerNormalizationLayer",
+    "MLCompute_MLCLossDescriptor",
+    "MLCompute_MLCLossLayer",
+    "MLCompute_MLCMatMulDescriptor",
+    "MLCompute_MLCMatMulLayer",
+    "MLCompute_MLCMultiheadAttentionDescriptor",
+    "MLCompute_MLCMultiheadAttentionLayer",
+    "MLCompute_MLCOptimizer",
+    "MLCompute_MLCOptimizerDescriptor",
+    "MLCompute_MLCPaddingLayer",
+    "MLCompute_MLCPlatform",
+    "MLCompute_MLCPoolingDescriptor",
+    "MLCompute_MLCPoolingLayer",
+    "MLCompute_MLCRMSPropOptimizer",
+    "MLCompute_MLCReductionLayer",
+    "MLCompute_MLCReshapeLayer",
+    "MLCompute_MLCSGDOptimizer",
+    "MLCompute_MLCScatterLayer",
+    "MLCompute_MLCSelectionLayer",
+    "MLCompute_MLCSliceLayer",
+    "MLCompute_MLCSoftmaxLayer",
+    "MLCompute_MLCSplitLayer",
+    "MLCompute_MLCTensor",
+    "MLCompute_MLCTensorData",
+    "MLCompute_MLCTensorDescriptor",
+    "MLCompute_MLCTensorOptimizerDeviceData",
+    "MLCompute_MLCTensorParameter",
+    "MLCompute_MLCTrainingGraph",
+    "MLCompute_MLCTransposeLayer",
+    "MLCompute_MLCUpsampleLayer",
+    "MLCompute_MLCYOLOLossDescriptor",
+    "MLCompute_MLCYOLOLossLayer",
+]
 MailKit = [
     "AppKit",
     "Foundation",
@@ -5300,6 +5491,7 @@ unstable-frameworks-macos-10-7 = [
 unstable-frameworks-macos-11 = [
     "Accessibility_all",
     "ClassKit_all",
+    "MLCompute_all",
     "UniformTypeIdentifiers_all",
     "unstable-frameworks-macos-10-13",
 ]

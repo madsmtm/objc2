@@ -118,6 +118,8 @@ pub mod LinkPresentation;
 pub mod LocalAuthentication;
 #[cfg(feature = "LocalAuthenticationEmbeddedUI")]
 pub mod LocalAuthenticationEmbeddedUI;
+#[cfg(feature = "MLCompute")]
+pub mod MLCompute;
 #[cfg(feature = "MailKit")]
 pub mod MailKit;
 #[cfg(feature = "MapKit")]
