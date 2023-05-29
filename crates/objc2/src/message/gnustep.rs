@@ -29,7 +29,7 @@ where
     // If `receiver` is NULL, objc_msg_lookup will return a standard C-method
     // taking two arguments, the receiver and the selector. Transmuting and
     // calling such a function with multiple parameters is UB, so instead we
-    // just return NULL directly.
+    // return NULL directly.
     if receiver.is_null() {
         // SAFETY: Caller guarantees that messages to NULL-receivers only
         // return pointers, and a mem::zeroed pointer is just a NULL-pointer.

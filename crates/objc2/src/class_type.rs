@@ -49,7 +49,7 @@ use crate::Message;
 ///
 /// // Get the class of the object.
 /// let cls = <MyObject as ClassType>::class();
-/// // Or, since the trait is in scope, just:
+/// // Or, since the trait is in scope.
 /// let cls = MyObject::class();
 ///
 /// // We can now access properties of the class.
@@ -78,8 +78,8 @@ use crate::Message;
 /// let obj: Id<MyObject> = unsafe { msg_send_id![obj, init] };
 /// ```
 ///
-/// Use the [`extern_class!`][crate::extern_class] macro to easily implement
-/// this trait for a type.
+/// Use the [`extern_class!`][crate::extern_class] macro to implement this
+/// trait for a type.
 ///
 /// ```
 /// use objc2::runtime::NSObject;
@@ -127,8 +127,7 @@ pub unsafe trait ClassType: Message {
 
     /// The name of the Objective-C class that this type represents.
     ///
-    /// `T::NAME` is essentially just the `const` version of
-    /// `T::class().name()`.
+    /// `T::NAME` is the `const` version of `T::class().name()`.
     const NAME: &'static str;
 
     /// Get a reference to the Objective-C class that this type represents.
@@ -191,9 +190,8 @@ pub unsafe trait ClassType: Message {
         // - The object is known to not be mutable (or have a mutable
         //   subclass) due to the `IsRetainable` bound.
         // - The pointer is valid since it came from `&self`.
-        // - The lifetime of the pointer itself is, naturally, extended,
-        //   but any lifetime that the object may carry is still kept within
-        //   the type itself.
+        // - The lifetime of the pointer itself is extended, but any lifetime
+        //   that the object may carry is still kept within the type itself.
         let obj = unsafe { Id::retain(ptr) };
         // SAFETY: The pointer came from `&self`, which is always non-null
         // (and objc_retain always returns the same value).

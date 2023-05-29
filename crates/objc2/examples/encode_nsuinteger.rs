@@ -1,7 +1,7 @@
 use objc2::encode::{Encode, Encoding, RefEncode};
 
-// Note: In this case `NSUInteger` could actually just be a type alias for
-// `usize`, and actually that's already available as `objc2::ffi::NSUInteger`.
+// Note: In this case `NSUInteger` could be a type alias for `usize`, and
+// actually that's already available as `objc2::ffi::NSUInteger`.
 #[repr(transparent)]
 struct NSUInteger {
     _inner: usize,

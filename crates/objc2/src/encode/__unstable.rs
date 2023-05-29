@@ -61,7 +61,7 @@ impl<T: Message> convert_private::Sealed for Option<&mut Id<T>> {}
 impl<T: Message> convert_private::Sealed for &mut Option<Id<T>> {}
 impl<T: Message> convert_private::Sealed for Option<&mut Option<Id<T>>> {}
 
-/// Represents types that can easily be converted to/from an [`Encode`] type.
+/// Represents types that can be converted to/from an [`Encode`] type.
 ///
 /// This is implemented specially for [`bool`] to allow using that as
 /// Objective-C `BOOL`, where it would otherwise not be allowed (since they

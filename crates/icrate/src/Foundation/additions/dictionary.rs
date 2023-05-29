@@ -345,7 +345,7 @@ unsafe impl<K: Message, V: Message> iter::FastEnumerationHelper for NSDictionary
 
 #[cfg(feature = "Foundation_NSMutableDictionary")]
 unsafe impl<K: Message, V: Message> iter::FastEnumerationHelper for NSMutableDictionary<K, V> {
-    // Naturally, the same goes for mutable dictionaries.
+    // The same goes for mutable dictionaries.
     type Item = K;
 
     #[inline]

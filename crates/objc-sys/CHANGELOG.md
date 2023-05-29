@@ -48,8 +48,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 * **BREAKING**: Removed type aliases `Class`, `Ivar`, `Method` and `Protocol`
-  since they could easily be mistaken for the `objc2::runtime` structs with
-  the same name.
+  since they could be mistaken for the `objc2::runtime` structs with the same
+  name.
 * **BREAKING**: Removed `objc_property_t`.
 * **BREAKING**: Removed `objc_hook_getClass` and `objc_hook_lazyClassNamer`
   type aliases (for now).

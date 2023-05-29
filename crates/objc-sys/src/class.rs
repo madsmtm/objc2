@@ -19,7 +19,7 @@ pub struct objc_class {
 /// The pointer represents opaque data, and is definitely not just an integer,
 /// so its signedness (i8 vs. u8) is not applicable.
 ///
-/// So we just assign it here as a private alias to u8, to not document the
+/// So we assign it here as a private alias to u8, to not document the
 /// difference.
 type ivar_layout_type = u8;
 

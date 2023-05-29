@@ -120,8 +120,8 @@ pub(crate) fn compare_encodings<E1: EncodingType, E2: EncodingType>(
                         true
                     }
                     // A bit unsure about this one, but the "safe" default
-                    // here is just to say that one container with items do
-                    // not compare equal to another container without items.
+                    // here is to say that a container with items does not
+                    // compare equal to another container without items.
                     //
                     // Note that this may be confusing, since a `Pointer` to
                     // the two containers might suddenly start comparing

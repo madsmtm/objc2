@@ -21,8 +21,8 @@ use objc2::{declare_class, ClassType};
 // that is the entire idea of `UnwindSafe` (that if the object could have
 // been mutated, it is not exception safe).
 //
-// Also note that this is still just a speed bump, not actually part of
-// any unsafe contract; we can't really protect against it if something is not
+// Also note that this is still only a speed bump, not actually part of any
+// unsafe contract; we can't really protect against it if something is not
 // exception safe, since `UnwindSafe` is a safe trait.
 fn assert_unwindsafe<T: UnwindSafe + RefUnwindSafe>() {}
 

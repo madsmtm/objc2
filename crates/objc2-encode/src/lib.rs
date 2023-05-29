@@ -8,7 +8,7 @@
 //! it can be parsed from an encoding at runtime.
 //!
 //! The types from this crate is exported under the [`objc2`] crate as
-//! `objc2::encode`, so usually you would just use it from there.
+//! `objc2::encode`, so usually you would use it from there.
 //!
 //! [`objc2`]: https://crates.io/crates/objc2
 //!

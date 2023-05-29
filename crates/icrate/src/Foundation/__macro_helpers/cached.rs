@@ -28,8 +28,7 @@ impl<T: Message> CachedId<T> {
         let ptr = self.ptr.load(Ordering::SeqCst);
         // SAFETY: The pointer is either NULL, or has been created below.
         unsafe { ptr.as_ref() }.unwrap_or_else(|| {
-            // "Forget" about releasing the object, effectively promoting it
-            // to a static.
+            // "Forget" about releasing the object, promoting it to a static.
             let s = ManuallyDrop::new(f());
             let ptr = Id::as_ptr(&s);
             self.ptr.store(ptr as *mut T, Ordering::SeqCst);

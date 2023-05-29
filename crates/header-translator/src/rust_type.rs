@@ -90,7 +90,7 @@ impl AttributeParser<'_, '_> {
             if position.strip(self.expected_name, needle).is_some() {
                 let rest = rest.trim();
                 // If it can be stripped from both `name` and `expected_name`,
-                // it might just appear twice in `name`.
+                // it might appear twice in `name`.
                 //
                 // This is done to support:
                 // "const char * _Nonnull  _Nonnull[]".

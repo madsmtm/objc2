@@ -192,8 +192,8 @@ impl<T: IvarType> Drop for Ivar<T> {
 impl<T: IvarType> Ivar<T> {
     /// Get a pointer to the instance variable.
     ///
-    /// Note that if the ivar has already been initialized, you can simply
-    /// use the `Deref` implementation to get a reference.
+    /// Note that if the ivar has already been initialized, you can use the
+    /// `Deref` implementation to get a reference.
     ///
     /// This is similar to [`MaybeUninit::as_ptr`], see that for usage
     /// instructions.
@@ -225,8 +225,8 @@ impl<T: IvarType> Ivar<T> {
     /// This is useful when you want to initialize the ivar inside an `init`
     /// method (where it may otherwise not have been safely initialized yet).
     ///
-    /// Note that if the ivar has already been initialized, you can simply
-    /// use the `DerefMut` implementation to get a mutable reference.
+    /// Note that if the ivar has already been initialized, you can use the
+    /// `DerefMut` implementation to get a mutable reference.
     ///
     /// This is similar to [`MaybeUninit::as_mut_ptr`], see that for usage
     /// instructions.

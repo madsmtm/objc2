@@ -170,7 +170,7 @@ impl MemoryManagement {
         // And if:
         // > its signature obeys the added restrictions of the method family.
         //
-        // Which is just:
+        // Which is:
         // > must return a retainable object pointer
         if result_type.is_id() {
             // We also check that the correct modifier flags were set for the

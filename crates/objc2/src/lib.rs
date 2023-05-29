@@ -3,7 +3,7 @@
 //! Objective-C was the standard programming language on Apple platforms like
 //! macOS, iOS, iPadOS, tvOS and watchOS. It is an object-oriented language
 //! centered around "sending messages" to its instances - this can for the
-//! most part be viewed as a simple method call.
+//! most part be viewed as a function call.
 //!
 //! It has since been superseded by Swift, but most of the core libraries and
 //! frameworks that are in use on Apple systems are still written in
@@ -44,7 +44,7 @@
 //! let obj1: Id<NSObject> = unsafe {
 //!     msg_send_id![NSObject::alloc(), init]
 //! };
-//! // Or we can simply do
+//! // Or
 //! let obj2 = NSObject::new();
 //!
 //! // Usage
@@ -64,12 +64,12 @@
 //! // Deallocation on drop
 //! ```
 //!
-//! Note that this very simple example contains a lot of `unsafe` (which
-//! should all ideally be justified with a `// SAFETY` comment). This is
-//! required because our compiler can verify very little about the Objective-C
-//! invocation, including all argument and return types used in [`msg_send!`];
-//! we could have just as easily accidentally made `hash` an `f32`, or any
-//! other type, and this would trigger undefined behaviour!
+//! Note that this example contains a lot of `unsafe` (which should all
+//! ideally be justified with a `// SAFETY` comment). This is required because
+//! our compiler can verify very little about the Objective-C invocation,
+//! including all argument and return types used in [`msg_send!`]. We could
+//! have accidentally made `hash` an `f32`, or any other type, and this would
+//! trigger undefined behaviour!
 //!
 //! See the `icrate` crate for much more ergonomic usage of the system
 //! frameworks like `Foundation`, `AppKit`, `UIKit` and so on.

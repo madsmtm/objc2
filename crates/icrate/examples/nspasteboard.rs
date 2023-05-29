@@ -9,7 +9,7 @@ use objc2::rc::Id;
 use objc2::runtime::{Class, Object, ProtocolObject};
 use objc2::ClassType;
 
-/// Simple, straightforward implementation
+/// Simplest implementation
 pub fn get_text_1(pasteboard: &NSPasteboard) -> Option<Id<NSString>> {
     unsafe { pasteboard.stringForType(NSPasteboardTypeString) }
 }

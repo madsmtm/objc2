@@ -291,7 +291,7 @@ unsafe impl<T: RefEncode + OptionEncode> RefEncode for Option<T> {
 
 // TODO: Implement for `PhantomData` and `PhantomPinned`?
 
-/// Simple helper for implementing [`Encode`].
+/// Helper for implementing [`Encode`].
 macro_rules! encode_impls {
     ($($t:ty => $e:ident,)*) => ($(
         unsafe impl Encode for $t {
@@ -337,7 +337,7 @@ encode_impls_size!(
     usize => (u16, u32, u64),
 );
 
-/// Simple helper for implementing [`RefEncode`].
+/// Helper for implementing [`RefEncode`].
 macro_rules! pointer_refencode_impl {
     ($($t:ty),*) => ($(
         unsafe impl RefEncode for $t {
@@ -358,7 +358,7 @@ unsafe impl RefEncode for u8 {
     const ENCODING_REF: Encoding = Encoding::String;
 }
 
-/// Simple helper for implementing [`Encode`] for nonzero integer types.
+/// Helper for implementing [`Encode`] for nonzero integer types.
 macro_rules! encode_impls_nonzero {
     ($($nonzero:ident => $type:ty,)*) => ($(
         unsafe impl Encode for $nonzero {
@@ -387,7 +387,7 @@ encode_impls_nonzero!(
     NonZeroUsize => usize,
 );
 
-/// Simple helper for implementing for atomic types.
+/// Helper for implementing for atomic types.
 macro_rules! encode_atomic_impls {
     ($(
         $(#[$m:meta])*

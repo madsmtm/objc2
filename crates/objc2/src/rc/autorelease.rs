@@ -258,8 +258,8 @@ auto_trait! {
     /// With the `"unstable-autoreleasesafe"` feature enabled, this is an auto
     /// trait that is implemented for all types except [`AutoreleasePool`].
     ///
-    /// Otherwise it is just a dummy trait that is implemented for all types;
-    /// the safety invariants are checked with debug assertions instead.
+    /// Otherwise it is a dummy trait that is implemented for all types; the
+    /// safety invariants are checked with debug assertions instead.
     ///
     /// You should not normally need to implement this trait yourself.
     ///
@@ -270,9 +270,8 @@ auto_trait! {
     /// pool. So if you reimplement the [`AutoreleasePool`] struct or
     /// likewise, this should be negatively implemented for that.
     ///
-    /// This can easily be accomplished with an
-    /// `PhantomData<AutoreleasePool<'_>>` if the `"unstable-autoreleasesafe"`
-    /// feature is enabled.
+    /// This can be accomplished with an `PhantomData<AutoreleasePool<'_>>` if
+    /// the `"unstable-autoreleasesafe"` feature is enabled.
     ///
     ///
     /// # Examples
@@ -433,8 +432,8 @@ where
     // - The pools are guaranteed to be dropped in the reverse order they were
     //   created (since you can't possibly "interleave" closures).
     //
-    //   This would not work if we e.g. just allowed users to create pools on
-    //   the stack, since they could then safely control the drop order.
+    //   This would not work if we e.g. allowed users to create pools on the
+    //   stack, since they could then safely control the drop order.
     let pool = unsafe { Pool::new() };
     let res = f(AutoreleasePool::new(Some(&pool)));
     unsafe { pool.drain() };
@@ -447,8 +446,8 @@ where
 /// without the overhead of actually creating and draining the pool.
 ///
 /// Any function boundary in Objective-C is an implicit autorelease pool, so
-/// you'd just do `id obj2 = [obj autorelease]` and be done with it - but we
-/// do this using a closure instead because we need some way to bound the
+/// there you'd do `id obj2 = [obj autorelease]` and be done with it - but we
+/// do this using a closure instead because we need some way to bind the
 /// lifetime of any objects released to the pool.
 ///
 ///
@@ -468,7 +467,8 @@ where
 ///     // do anything.
 ///     println!("{obj:?}");
 /// });
-/// // But it is of course still not usable here
+///
+/// // But it is not usable here, since the outer pool has been closed
 /// ```
 ///
 /// Like [`autoreleasepool`], you can't extend the lifetime of an object to
@@ -504,7 +504,7 @@ pub fn autoreleasepool_leaking<T, F>(f: F) -> T
 where
     for<'pool> F: FnOnce(AutoreleasePool<'pool>) -> T,
 {
-    // SAFETY: This is effectively what most Objective-C code does; they just
+    // SAFETY: This is effectively what most Objective-C code does; they
     // assume that there's an autorelease pool _somewhere_ in the call stack
     // above it, and then use their autoreleased objects for a duration that
     // is guaranteed to be shorter than that.

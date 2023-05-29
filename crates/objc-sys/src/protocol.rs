@@ -11,8 +11,8 @@ use crate::{OpaqueData, BOOL};
 /// Note that, although protocols are objects, sending messages to them is
 /// deprecated and may not work in the future.
 ///
-/// The naming of this follows GNUStep; this does not exist in Apple's
-/// original, there `Protocol` is just a type alias of `objc_object`.
+/// The naming of this follows GNUStep; this struct does not exist in Apple's
+/// runtime, there `Protocol` is a type alias of `objc_object`.
 #[repr(C)]
 pub struct objc_protocol {
     _priv: [u8; 0],

@@ -164,8 +164,8 @@
 ///
 /// `unsafe impl T { ... }` asserts that the types match those that are
 /// expected when the method is invoked from Objective-C. Note that unlike
-/// with [`extern_methods!`], there are no safe-guards here; you can easily
-/// write `i8`, but if Objective-C thinks it's an `u32`, it will cause UB when
+/// with [`extern_methods!`], there are no safe-guards here; you can write
+/// `i8`, but if Objective-C thinks it's an `u32`, it will cause UB when
 /// called!
 ///
 /// `unsafe impl P for T { ... }` requires that all required methods of the
@@ -222,7 +222,7 @@
 ///
 ///                 // Some types like `u8`, `bool`, `Option<Box<T>>` and
 ///                 // `Option<Id<T>>` are safe to zero-initialize, and we can
-///                 // simply write to the variable as normal:
+///                 // write to the variable as normal:
 ///                 *this.foo = foo;
 ///                 *this.bar = 42;
 ///
@@ -339,7 +339,7 @@
 /// }
 ///
 /// - (uint8_t)foo {
-///     return self->foo; // Or just `foo`
+///     return self->foo;
 /// }
 ///
 /// - (NSObject*)object {

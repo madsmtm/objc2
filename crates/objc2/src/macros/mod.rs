@@ -753,17 +753,17 @@ macro_rules! __class_inner {
 ///
 /// # `bool` handling
 ///
-/// Objective-C's `BOOL` is different from Rust's [`bool`], and hence a
-/// conversion step must be performed before using it. This is _very_ easy to
-/// forget (because it'll happen to work in _most_ cases), so for ease of use,
-/// this macro does the conversion step automatically whenever the argument or
-/// return type is `bool`!
+/// Objective-C's `BOOL` is slightly different from Rust's [`bool`], and hence
+/// a conversion step must be performed before using it. This is _very_ easy
+/// to forget (because it'll happen to work in _most_ cases), so this macro
+/// does the conversion step automatically whenever an argument or the return
+/// type is `bool`.
 ///
-/// That means that any Objective-C method that take or return `BOOL` can
-/// simply be translated to use `bool` on the Rust side.
+/// That means that any Objective-C method that take or return `BOOL` can be
+/// translated to use `bool` on the Rust side.
 ///
 /// If you want to handle the conversion explicitly, or the Objective-C method
-/// expects a pointer to a `BOOL`, use [`runtime::Bool`] instead.
+/// expects e.g. a pointer to a `BOOL`, use [`runtime::Bool`] instead.
 ///
 /// [`runtime::Bool`]: crate::runtime::Bool
 ///
@@ -771,8 +771,8 @@ macro_rules! __class_inner {
 /// # Out-parameters
 ///
 /// Parameters like `NSString**` in Objective-C are passed by "writeback",
-/// which essentially just means that the callee autoreleases any value that
-/// they may write into the parameter.
+/// which means that the callee autoreleases any value that they may write
+/// into the parameter.
 ///
 /// This macro has support for passing such parameters using the following
 /// types:
@@ -845,7 +845,8 @@ macro_rules! __class_inner {
 ///
 /// 4. The call must not violate Rust's mutability rules, for example if
 ///    passing an `&T`, the Objective-C method must not mutate the variable
-///    (of course except if the variable is inside [`std::cell::UnsafeCell`]).
+///    (except if the variable is inside [`std::cell::UnsafeCell`] or
+///    derivatives).
 ///
 /// 5. If the receiver is a raw pointer it must be valid (aligned,
 ///    dereferenceable, initialized and so on). Messages to `null` pointers
@@ -1061,9 +1062,10 @@ macro_rules! msg_send_bool {
 ///
 /// # A little history
 ///
-/// Objective-C's type system is... limited, so you can't easily tell who is
-/// responsible for releasing an object. To remedy this problem, Apple/Cocoa
-/// introduced approximately the following rule:
+/// Objective-C's type system is... limited, so you can't tell without
+/// consulting the documentation who is responsible for releasing an object.
+/// To remedy this problem, Apple/Cocoa introduced (approximately) the
+/// following rule:
 ///
 /// The caller is responsible for releasing objects return from methods that
 /// begin with `new`, `alloc`, `copy`, `mutableCopy` or `init`, and method

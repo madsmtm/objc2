@@ -116,7 +116,8 @@ impl<T: Message> NSSet<T> {
         T: IsIdCloneable,
     {
         // SAFETY: The `T: IsIdCloneable` bound ensures that it is safe to
-        // create what is effectively a copy from an `&self` reference.
+        // create what is effectively a copy of the collection from a `&self`
+        // reference.
         //
         // Could be implemented as:
         //    NSArray::from_vec(self.to_vec_retained())

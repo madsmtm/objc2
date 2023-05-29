@@ -38,7 +38,7 @@ impl __ImageInfo {
     #[inline]
     pub const fn system() -> Self {
         // We don't currently do anything relating to class properties, but
-        // let's just mimic what Clang does!
+        // let's mimic what Clang does!
         let mut flags = Self::CLASS_PROPERTIES;
 
         if cfg!(target_simulator) {

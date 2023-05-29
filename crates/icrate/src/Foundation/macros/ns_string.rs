@@ -90,8 +90,8 @@ macro_rules! __ns_string_inner {
         // Note: We create both the ASCII + NUL and the UTF-16 + NUL versions
         // of the string, since we can't conditionally create a static.
         //
-        // Since we don't add the `#[used]` attribute, Rust can fairly easily
-        // figure out that one of the variants are never used, and simply
+        // Since we don't add the `#[used]` attribute, Rust can fairly
+        // reliably figure out that one of the variants are never used, and
         // exclude it.
 
         // Convert the input slice to a C-style string with a NUL byte.

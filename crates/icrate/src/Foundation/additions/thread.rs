@@ -154,8 +154,7 @@ impl MainThreadMarker {
 
     /// Submit the given closure to the runloop on the main thread.
     ///
-    /// If the current thread is the main thread, this simply runs the
-    /// closure.
+    /// If the current thread is the main thread, this runs the closure.
     ///
     /// The closure is passed a [`MainThreadMarker`] that it can further use
     /// to access APIs that are only accessible from the main thread.
@@ -239,7 +238,7 @@ impl<T> Drop for MainThreadBound<T> {
     fn drop(&mut self) {
         if mem::needs_drop::<T>() {
             // TODO: Figure out whether we should assume the main thread to be
-            // dead if we're panicking, and just leak instead?
+            // dead if we're panicking, and leak instead?
             MainThreadMarker::run_on_main(|_mtm| {
                 let this = self;
                 // SAFETY: The value is dropped on the main thread, which is

@@ -13,24 +13,27 @@ see that for related crates.
 
 ## Runtime Support
 
-This library is basically just a raw interface to the aptly specified [Blocks
-ABI](https://clang.llvm.org/docs/Block-ABI-Apple.html). However, different
-runtime implementations exist and act in slightly different ways (and have
-several different helper functions), the most important aspect being that the
-libraries are named differently, so the linking must take that into account.
+This library is a raw interface to the aptly specified [Blocks ABI][abi].
+However, different runtime implementations exist and act in slightly different
+ways (and have several different helper functions), the most important aspect
+being that the libraries are named differently, so the linking must take that
+into account.
 
-The user can choose the desired runtime by using the relevant cargo feature
-flags, see the following sections (might have to disable the default `apple`
+You can choose the desired runtime by using the relevant cargo feature flags,
+see the following sections (you might have to disable the default `apple`
 feature first). Note that if the `objc-sys` crate is present in the module
 tree, this should have the same feature flag enabled as that.
+
+
+[abi]: https://clang.llvm.org/docs/Block-ABI-Apple.html
 
 
 ### Apple's [`libclosure`](https://github.com/apple-oss-distributions/libclosure)
 
 - Feature flag: `apple`.
 
-This is naturally the most sophisticated runtime, and it has quite a lot more
-features than the specification mandates. This is used by default.
+This is the most sophisticated runtime, and it has quite a lot more features
+than the specification mandates. It is used by default.
 
 The minimum required operating system versions are as follows:
 - macOS: `10.6`
@@ -45,11 +48,11 @@ Though in practice Rust itself requires higher versions than this.
 
 - Feature flag: `compiler-rt`.
 
-This is effectively just a copy of Apple's older (around macOS 10.6) runtime,
-and is now used in [Swift's `libdispatch`] and [Swift's Foundation] as well.
+This is a copy of Apple's older (around macOS 10.6) runtime, and is now used
+in [Swift's `libdispatch`] and [Swift's Foundation] as well.
 
-This can be easily used on many Linux systems with the `libblocksruntime-dev`
-package.
+The runtime and associated headers can be installed on many Linux systems with
+the `libblocksruntime-dev` package.
 
 Using this runtime probably won't work together with `objc-sys` crate.
 
@@ -77,8 +80,8 @@ Sources:
 
 **Unstable: Hasn't been tested on Windows yet!**
 
-Essentially just [a fork](https://github.com/microsoft/libobjc2) based on
-GNUStep's `libobjc2` version 1.8.
+[A fork](https://github.com/microsoft/libobjc2) based on GNUStep's `libobjc2`
+version 1.8.
 
 
 ### [`ObjFW`](https://github.com/ObjFW/ObjFW)

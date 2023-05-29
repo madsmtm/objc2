@@ -113,7 +113,7 @@ impl<P: ?Sized + ProtocolType> ProtocolObject<P> {
         // SAFETY:
         // - The type can be represented as the casted-to type.
         // - Both types are `'static` (this could maybe be relaxed a bit, but
-        //   let's just be on the safe side)!
+        //   let's be on the safe side)!
         unsafe { Id::cast::<Self>(obj) }
     }
 }

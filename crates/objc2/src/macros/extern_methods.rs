@@ -1,7 +1,7 @@
 /// Define methods on an external class.
 ///
-/// This is a convenience macro to easily generate associated functions and
-/// methods that call [`msg_send!`] or [`msg_send_id!`] appropriately.
+/// This is a convenience macro to generate associated functions and methods
+/// that call [`msg_send!`] or [`msg_send_id!`] appropriately.
 ///
 /// [`msg_send!`]: crate::msg_send
 /// [`msg_send_id!`]: crate::msg_send_id
@@ -31,11 +31,12 @@
 /// work correctly, due to implementation difficulty - if you have a concrete
 /// use-case, please [open an issue], then we can discuss it.
 ///
-/// The name of the function doesn't matter for out purposes, but is of course
-/// what the user will use to access the functionality.
+/// The name of the function will be used for the resulting function that the
+/// user will use to access the functionality, but is otherwise not used by
+/// the macro.
 ///
-/// If you specify a function/method with a body, the macro will simply ignore
-/// it.
+/// If you specify a function/method with a body, the macro will output it
+/// unchanged.
 ///
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods

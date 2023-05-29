@@ -18,11 +18,11 @@ type InnerFloat = f32;
 // TODO: Use a newtype here?
 pub type CGFloat = InnerFloat;
 
-// NSGeometry types are just aliases to CGGeometry types on iOS, tvOS, watchOS
-// and macOS 64bit (and hence their Objective-C encodings are different).
+// NSGeometry types are aliases to CGGeometry types on iOS, tvOS, watchOS and
+// macOS 64bit (and hence their Objective-C encodings are different).
 //
 // TODO: Adjust `objc2-encode` so that this is handled there, and so that we
-// can effectively just forget about it and use `NS` and `CG` types equally.
+// can effectively forget about it and use `NS` and `CG` types equally.
 #[cfg(all(
     feature = "apple",
     not(all(target_os = "macos", target_pointer_width = "32"))
@@ -346,7 +346,7 @@ impl CGRect {
 
 /// A point in a Cartesian coordinate system.
 ///
-/// This is just a convenience alias for [`CGPoint`]. For ease of use, it is
+/// This is a convenience alias for [`CGPoint`]. For ease of use, it is
 /// available on all platforms, though in practice it is only useful on macOS.
 ///
 /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nspoint?language=objc).
@@ -354,7 +354,7 @@ pub type NSPoint = CGPoint;
 
 /// A two-dimensional size.
 ///
-/// This is just a convenience alias for [`CGSize`]. For ease of use, it is
+/// This is a convenience alias for [`CGSize`]. For ease of use, it is
 /// available on all platforms, though in practice it is only useful on macOS.
 ///
 /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nssize?language=objc).
@@ -362,7 +362,7 @@ pub type NSSize = CGSize;
 
 /// A rectangle.
 ///
-/// This is just a convenience alias for [`CGRect`]. For ease of use, it is
+/// This is a convenience alias for [`CGRect`]. For ease of use, it is
 /// available on all platforms, though in practice it is only useful on macOS.
 ///
 /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsrect?language=objc).
@@ -406,7 +406,7 @@ mod tests {
         use crate::Foundation::{NSEqualPoints, NSEqualRects, NSEqualSizes};
 
         // We assume that comparisons handle e.g. `x` and `y` in the same way,
-        // therefore we just set the coordinates / dimensions to the same.
+        // therefore we set the coordinates / dimensions to the same.
         let cases: &[(CGFloat, CGFloat)] = &[
             (0.0, 0.0),
             (-0.0, -0.0),

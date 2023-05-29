@@ -11,7 +11,7 @@ cargo run --bin header-translator
 
 Make sure you have the same XCode version installed as the one documented in [`crates/icrate/README.md`](../icrate/README.md).
 
-If you use a different operating system than macOS, or simply have multiple SDKs installed, you can specify the directory as the first argument:
+If you use a different operating system than macOS, or have multiple SDKs installed, you can specify the directory as the first argument:
 
 ```console
 cargo run --bin header-translator -- /Applications/Xcode_new.app/Contents/Developer

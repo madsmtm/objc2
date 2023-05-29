@@ -89,7 +89,7 @@ pub struct Immutable {
 ///   Rust assume are unique.
 /// - As a special case of that, `-[NSCopying copy]` and
 ///   `-[NSMutableCopying mutableCopy]`, if implemented, must return a new
-///   instance (e.g. they cannot just `retain` the instance).
+///   instance (e.g. cannot be implemented by just `retain`-ing the instance).
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Mutable {
     inner: Never,

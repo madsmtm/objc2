@@ -9,7 +9,7 @@ use crate::Message;
 /// A marker type that can be used to indicate that the object has been
 /// allocated but not initialized.
 ///
-/// The reason we use `Allocated<T>` / `Option<Allocated<T>>` instead of just
+/// The reason we use `Allocated<T>` / `Option<Allocated<T>>` instead of
 /// `*mut T` is:
 /// - To allow releasing allocated objects, e.g. in the face of panics.
 /// - To safely know the object is valid (albeit uninitialized).
@@ -21,8 +21,8 @@ use crate::Message;
 // object as an optimization, and then only figure out afterwards whether it
 // needs to allocate, or if it can store an `NSString` internally.
 // Similarly, while e.g. `+[NSData alloc]` may return a unique object,
-// calling `-[NSData init]` afterwards could easily just return a shared
-// empty `NSData` instance.
+// calling `-[NSData init]` afterwards could return a shared empty `NSData`
+// instance.
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct Allocated<T: ?Sized> {
@@ -63,7 +63,7 @@ impl<T: ?Sized + Message> Allocated<T> {
         let ptr = this.map(|this| ManuallyDrop::new(this).ptr);
 
         // Difficult to write this in an ergonomic way with `?Sized`, so we
-        // just hack it with transmute.
+        // hack it with transmute.
         //
         // SAFETY: `Option<NonNull<T>>` has the same size as `*mut T`.
         unsafe { mem::transmute::<Option<NonNull<T>>, *mut T>(ptr) }

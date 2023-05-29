@@ -19,8 +19,8 @@ Apple's runtime, but if you're using another runtime you must tell it to this
 library using feature flags (you might have to disable the default `apple`
 feature first).
 
-One could ask, why even bother supporting other runtimes? To that, there's a
-simple answer: _Robustness_. By testing with these alternative runtimes in CI,
+One could ask, why even bother supporting other runtimes? For me, the primary
+reasoning iss _robustness_. By testing with these alternative runtimes in CI,
 we become by extension much more confident that our implementation doesn't
 rely on brittle unspecified behaviour, and works across different macOS and
 iOS versions.
@@ -30,8 +30,8 @@ iOS versions.
 
 - Feature flag: `apple`.
 
-This is used by default, and naturally has the highest support priority (e.g.
-all of `objc2`/`icrate` will work with this runtime).
+This is used by default, and has the highest support priority (all of
+`objc2`/`icrate` will work with this runtime).
 
 The supported runtime version (higher versions lets the compiler enable newer
 optimizations, at the cost of not supporting older operating systems) can be
@@ -67,8 +67,8 @@ The default versions are the [same as those Rust itself has][rust-apple-spec].
 
 **Unstable: Hasn't been tested on Windows yet!**
 
-This is essentially just [a fork](https://github.com/microsoft/libobjc2) based
-on GNUStep's `libobjc2` version 1.8, with very few user-facing changes.
+[A fork](https://github.com/microsoft/libobjc2) based on GNUStep's `libobjc2`
+version 1.8, with very few user-facing changes.
 
 
 ### [`ObjFW`](https://github.com/ObjFW/ObjFW)
@@ -86,9 +86,9 @@ This library will probably only ever support ["Modern"][modern] Objective-C
 runtimes, since support for reference-counting primitives like `objc_retain`
 and `objc_autoreleasePoolPop` is a vital requirement for most applications.
 
-Just so we're being clear, this rules out the GCC [`libobjc`][gcc-libobjc]
-runtime (see [this][gcc-objc-support]), the [`mulle-objc`] runtime and
-[cocotron]. (But support for [`darling`] may be added).
+This rules out the GCC [`libobjc`][gcc-libobjc] runtime (see
+[this][gcc-objc-support]), the [`mulle-objc`] runtime and [cocotron]. (But
+support for [`darling`] may be added).
 More information on different runtimes can be found in GNUStep's
 [Objective-C Compiler and Runtime FAQ][gnustep-faq].
 

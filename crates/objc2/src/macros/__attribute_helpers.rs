@@ -39,7 +39,7 @@ macro_rules! __extract_and_apply_cfg_attributes {
         )
         @($($output:tt)*)
     } => {
-        // Simply ignore the attribute, and continue parsing the rest
+        // Ignore the attribute, and continue parsing the rest
         $crate::__extract_and_apply_cfg_attributes! {
             @($($m_rest)*)
             @($($output)*)

@@ -75,15 +75,16 @@ pub const NO: ffi::BOOL = ffi::NO;
 
 /// A method selector.
 ///
-/// The Rust equivalent of Objective-C's `SEL` type. You can easily create
-/// this using the [`sel!`] macro.
+/// The Rust equivalent of Objective-C's `SEL` type. You can create this
+/// statically using the [`sel!`] macro.
 ///
-/// The main reason the Objective-C runtime uses a custom types for selectors
-/// is to support efficient comparison - a selector is effectively just an
-/// [interned string], so this makes that very easy!
+/// The main reason the Objective-C runtime uses a custom type for selectors,
+/// as opposed to a plain c-string, is to support efficient comparison - a
+/// a selector is effectively an [interned string], so this makes equiality
+/// comparisons very cheap.
 ///
-/// This guarantees the null-pointer optimization, namely that `Option<Sel>`
-/// is the same size as `Sel`.
+/// This struct guarantees the null-pointer optimization, namely that
+/// `Option<Sel>` is the same size as `Sel`.
 ///
 /// [`sel!`]: crate::sel
 /// [interned string]: https://en.wikipedia.org/wiki/String_interning
@@ -218,7 +219,7 @@ impl Sel {
         let ptr = unsafe { ffi::sel_getName(self.as_ptr()) };
         // SAFETY: The string is a valid C-style NUL-terminated string, and
         // likely has static lifetime since the selector has static lifetime
-        // (though we bind it to `&self` just to be safe).
+        // (though we bind it to `&self` to be safe).
         let name = unsafe { CStr::from_ptr(ptr) };
         str::from_utf8(name.to_bytes()).unwrap()
     }
@@ -232,7 +233,7 @@ impl Sel {
     }
 }
 
-// `ffi::sel_isEqual` is just pointer comparison on Apple (the documentation
+// `ffi::sel_isEqual` uses pointer comparison on Apple (the documentation
 // explicitly notes this); so as an optimization, let's do that as well!
 #[cfg(feature = "apple")]
 standard_pointer_impls!(Sel);
@@ -259,7 +260,7 @@ impl hash::Hash for Sel {
     }
 }
 
-// SAFETY: `Sel` is FFI compatible, and the encoding is of course `Sel`.
+// SAFETY: `Sel` is FFI compatible, and the encoding is `Sel`.
 unsafe impl Encode for Sel {
     const ENCODING: Encoding = Encoding::Sel;
 }
@@ -267,8 +268,8 @@ unsafe impl Encode for Sel {
 unsafe impl OptionEncode for Sel {}
 
 // RefEncode is not implemented for Sel, because there is literally no API
-// that takes &Sel, but the user could easily get confused and accidentally
-// attempt that.
+// that takes &Sel, while the user could get confused and accidentally attempt
+// that.
 
 // SAFETY: Sel is immutable (and can be retrieved from any thread using the
 // `sel!` macro).
@@ -993,8 +994,8 @@ impl Object {
 
     /// Sets the value of the ivar with the given name.
     ///
-    /// This is just a helpful shorthand for [`Object::ivar_mut`], see that
-    /// for more information.
+    /// This is a shorthand for [`Object::ivar_mut`], see that for more
+    /// information.
     ///
     ///
     /// # Safety

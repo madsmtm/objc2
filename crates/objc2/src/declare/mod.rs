@@ -529,8 +529,9 @@ impl ClassBuilder {
         // `class_addIvar` sadly doesn't check this for us.
         //
         // We must _always_ do the check, since there is no way for the user
-        // to know if the superclass has a declared instance variable on it
-        // (e.g. we can't just make `add_ivar` unsafe).
+        // to statically know if the superclass has a declared instance
+        // variable on it, since that may change if a new version of the
+        // library/framework the class came from is released.
         if let Some(_ivar) = self
             .superclass()
             .and_then(|superclass| superclass.instance_variable(name))

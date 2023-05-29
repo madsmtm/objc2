@@ -75,8 +75,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Fixed memory leaks in and improved performance of `exception::catch`.
 
 ### Removed
-* **BREAKING**: Removed `rc::SliceId`, since it is trivially implementable
-  outside `objc2` from the layout guarantees of `rc::Id`.
+* **BREAKING**: Removed `rc::SliceId`, since it is implementable outside
+  `objc2` from the layout guarantees of `rc::Id`.
 * **BREAKING**: Removed `Ownership` type parameter from `Id`, as well as
   `rc::Ownership`, `rc::Owned`, `rc::Shared`, `Id::from_shared` and
   `Id::into_shared`. This functionality has been moved from being at the
@@ -104,8 +104,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   let obj: Id<NSObject> = unsafe { msg_send_id![NSObject::class(), new] };
   ```
 * **BREAKING**: Removed `impl<T> TryFrom<WeakId<T>> for Id<T>` impl since it
-  did not have a proper error type, making it less useful than just using
-  `WeakId::load`.
+  did not have a proper error type, making it less useful than `WeakId::load`.
 * **BREAKING**: Removed forwarding `Iterator` implementation for `Id`, since
   it conflicts with the `IntoIterator` implementation that it now has instead.
 
@@ -117,7 +116,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added support for selectors with multiple colons like `abc::` in the `sel!`,
   `extern_class!`, `extern_protocol!` and `declare_class!` macros.
 * Added ability to use `#[method_id(mySelector:)]` inside `declare_class!`,
-  just like you would do in `extern_methods!`.
+  like you would do in `extern_methods!`.
 * Added 16-fold impls for `EncodeArguments`, `MessageArguments`, and `MethodImplementation`.
 * Added `NSObjectProtocol` trait for allowing `ProtocolObject` to implement
   `Debug`, `Hash`, `PartialEq` and `Eq`.
@@ -135,7 +134,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `#[method(myMethod:error:_)]` instead of `#[method(myMethod:error:)]`).
 * **BREAKING**: Fundamentally changed how protocols work. Instead of being
   structs with inherent methods, they're now traits. This means that you can
-  use their methods much more naturally from your Objective-C objects.
+  use their methods more naturally from your Objective-C objects.
 
   An example:
   ```rust
@@ -362,8 +361,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Change syntax in `declare_class!` macro to be more Rust-like.
 * **BREAKING**: Renamed `Id::from_owned` to `Id::into_shared`.
 * **BREAKING**: The return type of `msg_send_id!` is now more generic; it can
-  now either be `Option<Id<_, _>>` or `Id<_, _>` (if the latter, it'll simply
-  panic).
+  now either be `Option<Id<_, _>>` or `Id<_, _>` (if the latter, it'll panic
+  if the method returned `NULL`).
 
   Example:
   ```rust
@@ -493,8 +492,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
      = note: ...but `MethodImplementation` is actually implemented for the type `extern "C" fn(&'0 mut Object, Sel) -> *mut Object`, for some specific lifetime `'0`
   ```
 
-  Fret not, the fix is easy! Just let the compiler infer the argument and
-  return types:
+  To fix this, let the compiler infer the argument and return types:
   ```rust
   // After
   let init: extern "C" fn(_, _) -> _ = init;
@@ -666,8 +664,8 @@ Note: To use this version, specify `objc2-encode = "=2.0.0-beta.0"` in your
   extra functionality on `rc::Id`.
 
 ### Changed
-* **BREAKING**: The `exception` feature now just enables the `exception`
-  module for general use. Use the new `catch_all` feature to wrap all message
+* **BREAKING**: The `exception` feature now only enables the `exception`
+  module, for general use. Use the new `catch_all` feature to wrap all message
   sends in a `@try/@catch`.
 * **BREAKING**: Updated `objc-sys` to `v0.1.0`.
 * **BREAKING**: Updated `objc2-encode` (`Encoding`, `Encode`, `RefEncode` and
@@ -743,13 +741,13 @@ Note: To use this version, specify `objc2-encode = "=2.0.0-alpha.1"` in your
   `INSString::as_str` so that it knows which lifetime to bound the returned
   `&str` with.
 
-  Simple migration:
   ```rust
-  // Change
+  // Before
   autoreleasepool(|| {
       // Some code that autoreleases objects
   });
-  // To
+
+  // After
   autoreleasepool(|_pool| {
       // Some code that autoreleases objects
   });

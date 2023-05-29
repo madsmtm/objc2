@@ -46,14 +46,14 @@ use crate::{ffi, ClassType, Message};
 ///
 /// # Forwarding implementations
 ///
-/// Since `Id<T>` is a smart pointer, it naturally [`Deref`]s to `T`, and
-/// similarly implements [`DerefMut`] when mutable.
+/// Since `Id<T>` is a smart pointer, it [`Deref`]s to `T`, and similarly
+/// implements [`DerefMut`] when mutable.
 ///
-/// On top of this, it also forwards the implementation of a bunch of standard
-/// library traits such as [`PartialEq`], [`AsRef`], and so on, so that it
-/// becomes easy to use e.g. `Id<NSString>` as if it was just an `NSString`.
-/// (Having just `NSString` is not possible since Objective-C objects cannot
-/// live on the stack, but instead must reside on the heap).
+/// It also forwards the implementation of a bunch of standard library traits
+/// such as [`PartialEq`], [`AsRef`], and so on, so that it becomes possible
+/// to use e.g. `Id<NSString>` as if it was `NSString`. (Having `NSString`
+/// directly is not possible since Objective-C objects cannot live on the
+/// stack, but instead must reside on the heap).
 ///
 /// Note that because of current limitations in the Rust trait system, some
 /// traits like [`Default`], [`IntoIterator`], [`FromIterator`], [`From`] and
@@ -103,7 +103,7 @@ use crate::{ffi, ClassType, Message};
 /// // SAFETY: The types are correct, and it is safe to call the `new`
 /// // selector on `NSString`.
 /// let string: Id<NSString> = unsafe { msg_send_id![NSString::class(), new] };
-/// // Or simply:
+/// // Or:
 /// // let string = NSString::new();
 ///
 /// // Methods on `NSString` is usable via. `Deref`
@@ -422,8 +422,8 @@ impl<T: Message> Id<T> {
         // Ideally, we'd be able to specify that the above call should never
         // be tail-call optimized (become a `jmp` instruction instead of a
         // `call`); Rust doesn't really have a way of doing this currently, so
-        // we just emit a simple `nop` to make such tail-call optimizations
-        // less likely to occur.
+        // we emit a `nop` to make such tail-call optimizations less likely to
+        // occur.
         //
         // This is brittle! We should find a better solution!
         #[cfg(all(feature = "apple", not(target_os = "windows"), target_arch = "x86_64"))]
@@ -473,7 +473,7 @@ impl<T: Message> Id<T> {
     /// This is an associated method, and must be called as
     /// `Id::autorelease(obj, pool)`.
     #[doc(alias = "objc_autorelease")]
-    #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
+    #[must_use = "if you don't intend to use the object any more, drop it as usual"]
     #[inline]
     #[allow(clippy::needless_lifetimes)]
     pub fn autorelease<'p>(this: Self, pool: AutoreleasePool<'p>) -> &'p T {
@@ -493,7 +493,7 @@ impl<T: Message> Id<T> {
     /// This is an associated method, and must be called as
     /// `Id::autorelease_mut(obj, pool)`.
     #[doc(alias = "objc_autorelease")]
-    #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
+    #[must_use = "if you don't intend to use the object any more, drop it as usual"]
     #[inline]
     #[allow(clippy::needless_lifetimes)]
     pub fn autorelease_mut<'p>(this: Self, pool: AutoreleasePool<'p>) -> &'p mut T
@@ -579,7 +579,7 @@ impl<T: Message> Id<T> {
     ///
     /// [`declare_class!`]: crate::declare_class
     #[doc(alias = "objc_autoreleaseReturnValue")]
-    #[must_use = "If you don't intend to use the object any more, just drop it as usual"]
+    #[must_use = "if you don't intend to use the object any more, drop it as usual"]
     #[inline]
     pub fn autorelease_return(this: Self) -> *mut T {
         Self::autorelease_return_option(Some(this))
@@ -596,8 +596,8 @@ where
         // SAFETY:
         // - The casted-to type is a superclass of the type.
         // - Both types are `'static`, so no lifetime information is lost
-        //   (this could maybe be relaxed a bit, but let's just be on the safe
-        //   side for now).
+        //   (this could maybe be relaxed a bit, but let's be on the safe side
+        //   for now).
         unsafe { Self::cast::<T::Super>(this) }
     }
 }
