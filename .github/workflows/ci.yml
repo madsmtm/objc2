@@ -733,11 +733,11 @@ jobs:
       with:
         path: ~/.cargo/bin/cargo-fuzz
         # Change this key if we update the required cargo-fuzz version
-        key: cargo-fuzz-${{ github.job }}-${{ matrix.name }}-v0-11-1
+        key: cargo-fuzz-${{ github.job }}-${{ matrix.name }}-v0-11-2
 
     - name: Install cargo-fuzz
       if: ${{ matrix.fuzz && steps.fuzz-cache.outputs.cache-hit != 'true' }}
-      run: cargo install cargo-fuzz --version=^0.11.1
+      run: cargo install cargo-fuzz --version=^0.11.2
 
     - name: Test Foundation
       run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation
@@ -754,14 +754,14 @@ jobs:
     - name: Run fuzzing
       if: ${{ matrix.fuzz }}
       run: |
-        # Run each target for 100000 runs (approx. 5 seconds), and timeout
-        # after 2 seconds.
+        # Run each fuzz target for 100000 runs (approx. 5 seconds), and
+        # timeout after 2 seconds.
         #
         # We specify the number of runs explicitly instead of using
         # `max_total_time`, to get more determinism.
-        for target in $(cargo-fuzz list)
+        for fuzz_target in $(cargo-fuzz list --fuzz-dir=./crates/test-fuzz/)
         do
-          cargo-fuzz run $target $ARGS -- -runs=10000 -timeout=2 -jobs=10
+          cargo-fuzz run --fuzz-dir=./crates/test-fuzz/ $fuzz_target $ARGS,fuzz-all -- -runs=10000 -timeout=2 -jobs=10
         done
 
         # Check if the fuzzer encountered something that should be added to

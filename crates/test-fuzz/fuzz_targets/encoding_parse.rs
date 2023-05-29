@@ -10,7 +10,10 @@ fuzz_target!(|s: &str| {
         // Check a "negative" case of `equivalent_to_box`
         if enc != EncodingBox::Char {
             assert_ne!(EncodingBox::Char, enc, "not equal to char");
-            assert!(!Encoding::Char.equivalent_to_box(&enc), "not equivalent to char");
+            assert!(
+                !Encoding::Char.equivalent_to_box(&enc),
+                "not equivalent to char"
+            );
         }
 
         let s2 = enc.to_string();
