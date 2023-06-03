@@ -84,6 +84,14 @@ pub enum Encoding {
     /// A C `char *`. Corresponds to the `"*"` code.
     String,
     /// An Objective-C object (`id`). Corresponds to the `"@"` code.
+    ///
+    /// Some compilers may choose to store the name of the class in instance
+    /// variables and properties as `"@" class_name`, see [Extended Type Info
+    /// in Objective-C][ext] (note that this does not include generics).
+    ///
+    /// Such class names are currently ignored by `objc2-encode`.
+    ///
+    /// [ext]: https://bou.io/ExtendedTypeInfoInObjC.html
     Object,
     /// An Objective-C block. Corresponds to the `"@" "?"` code.
     Block,
@@ -378,6 +386,10 @@ mod tests {
             Encoding::Object;
             !Encoding::Block;
             "@";
+            ~"@\"AnyClassName\"";
+            ~"@\"\""; // Empty class name
+            !"@\"MyClassName";
+            !"@MyClassName\"";
             !"@?";
         }
 
