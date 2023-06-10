@@ -519,17 +519,8 @@ jobs:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Cache cargo-dinghy
-      id: dinghy-cache
-      uses: actions/cache@v3
-      with:
-        path: ~/.cargo/bin/cargo-dinghy
-        # Change this key if we update the required cargo-dinghy version
-        key: cargo-dinghy-${{ github.job }}-${{ matrix.name }}-v0-6-0
-
     - name: Install cargo-dinghy
-      if: ${{ steps.dinghy-cache.outputs.cache-hit != 'true' }}
-      run: cargo install cargo-dinghy --version=^0.6.0
+      uses: taiki-e/install-action@cargo-dinghy
 
     - name: Launch XCode Simulator and prepare Dinghy
       # Note that we're not testing all configurations with dinghy, since that
