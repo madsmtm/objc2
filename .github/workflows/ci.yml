@@ -520,7 +520,9 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Install cargo-dinghy
-      uses: taiki-e/install-action@cargo-dinghy
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-dinghy@0.6
 
     - name: Launch XCode Simulator and prepare Dinghy
       # Note that we're not testing all configurations with dinghy, since that
