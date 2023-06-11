@@ -7,11 +7,10 @@ pub use self::generated::*;
 extern "C" {}
 
 #[cfg(test)]
-#[cfg(feature = "Foundation_NSNumber")]
 #[cfg(feature = "Foundation_NSArray")]
 mod tests {
     use super::*;
-    use crate::Foundation::{NSArray, NSNumber};
+    use crate::Foundation::NSArray;
 
     #[test]
     fn it_works() {
