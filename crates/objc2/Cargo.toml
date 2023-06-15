@@ -85,6 +85,10 @@ unstable-autoreleasesafe = []
 # Additionally, the message sending improvements is not yet implemented.
 unstable-apple-new = []
 
+# Uses the nightly arbitrary_self_types feature to make initialization more
+# ergonomic.
+unstable-arbitrary-self-types = []
+
 # Deprecated; this is the default on Apple platforms, and not applicable on other platforms.
 apple = []
 

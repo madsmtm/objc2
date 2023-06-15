@@ -151,6 +151,10 @@
     feature = "unstable-autoreleasesafe",
     feature(negative_impls, auto_traits)
 )]
+#![cfg_attr(
+    feature = "unstable-arbitrary-self-types",
+    feature(arbitrary_self_types)
+)]
 // Note: `doc_notable_trait` doesn't really make sense for us, it's only shown
 // for functions returning a specific trait.
 #![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg, doc_cfg_hide))]

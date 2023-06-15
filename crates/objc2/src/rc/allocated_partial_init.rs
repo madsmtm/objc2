@@ -56,6 +56,13 @@ pub struct Allocated<T: ?Sized> {
 }
 
 // Explicitly don't implement `Deref`, `Message` nor `RefEncode`.
+//
+// We do want to implement `Receiver` though, to allow the user to type
+// `self: Allocated<Self>`.
+#[cfg(feature = "unstable-arbitrary-self-types")]
+impl<T> core::ops::Receiver for Allocated<T> {
+    type Target = T;
+}
 
 impl<T: ?Sized + Message> Allocated<T> {
     /// # Safety
@@ -348,5 +355,21 @@ mod tests {
         // SAFETY: The pointer is NULL
         let obj: Allocated<RcTestObject> = unsafe { Allocated::new(ptr::null_mut()) };
         let _ = obj.set_ivars(());
+    }
+
+    #[test]
+    #[cfg(feature = "unstable-arbitrary-self-types")]
+    fn arbitrary_self_types() {
+        use crate::rc::Retained;
+        use crate::{extern_methods, AllocAnyThread};
+
+        extern_methods!(
+            unsafe impl RcTestObject {
+                #[method_id(init)]
+                fn init_with_self(self: Allocated<Self>) -> Retained<Self>;
+            }
+        );
+
+        let _ = RcTestObject::alloc().init_with_self();
     }
 }
