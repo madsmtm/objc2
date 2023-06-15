@@ -812,7 +812,7 @@ mod tests {
     use super::*;
     use crate::mutability::{Immutable, Mutable};
     use crate::rc::{__RcTestObject, __ThreadTestData, autoreleasepool};
-    use crate::runtime::{NSObject, Object};
+    use crate::runtime::{NSObject, NSObjectProtocol, Object};
     use crate::{declare_class, msg_send};
 
     #[test]
@@ -981,5 +981,20 @@ mod tests {
 
         assert_eq!(size_of::<Id<NSObject>>(), ptr_size);
         assert_eq!(size_of::<Option<Id<NSObject>>>(), ptr_size);
+    }
+
+    #[test]
+    fn test_unsize() {
+        use core::marker::Unsize;
+        use core::ops::CoerceUnsized;
+
+        // Would require a few changes to `Id` for this to actually be safe
+        impl<T: ?Sized + Unsize<U>, U: ?Sized> CoerceUnsized<Id<U>> for Id<T> {}
+
+        // Would be _super_ nice to have this impl, but unfortunately, we can't
+        // impl Unsize<Object> for NSObject {}
+
+        let x: Id<NSObject> = NSObject::new();
+        let x: Id<dyn NSObjectProtocol> = x;
     }
 }
