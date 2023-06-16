@@ -103,10 +103,14 @@ type InnerImp = unsafe extern "C-unwind" fn();
 /// The first argument is a pointer to the receiver, the second argument is
 /// the selector, and the rest of the arguments follow.
 ///
+///
 /// # Safety
 ///
 /// This is a "catch all" type; it must be transmuted to the correct type
 /// before being called!
+///
+/// Also note that this is non-null! If you require an Imp that can be null,
+/// use `Option<Imp>`.
 pub type Imp = InnerImp;
 
 /// A method selector.
@@ -380,6 +384,12 @@ impl Method {
         ptr.cast()
     }
 
+    // Note: We don't take `&mut` here, since the operations on methods work
+    // atomically.
+    pub(crate) fn as_mut_ptr(&self) -> *mut ffi::objc_method {
+        self.as_ptr() as _
+    }
+
     /// Returns the name of self.
     #[doc(alias = "method_getName")]
     pub fn name(&self) -> Sel {
@@ -439,14 +449,89 @@ impl Method {
         unsafe { ffi::method_getNumberOfArguments(self.as_ptr()) as usize }
     }
 
-    /// Returns the implementation of self.
+    /// Returns the implementation of this method.
     #[doc(alias = "method_getImplementation")]
     pub fn implementation(&self) -> Imp {
-        unsafe { ffi::method_getImplementation(self.as_ptr()).expect("Null IMP") }
+        unsafe { ffi::method_getImplementation(self.as_ptr()).expect("null IMP") }
     }
 
-    // unsafe fn set_implementation(&mut self, imp: Imp) -> Imp;
-    // unsafe fn exchange_implementation(&mut self, other: &mut Method);
+    /// Set the implementation of this method.
+    ///
+    /// Note that any thread may at any point be changing method
+    /// implementations, so if you intend to call the previous method as
+    /// returned by e.g. [`Self::implementation`], beware that that may now be
+    /// stale.
+    ///
+    /// The previous implementation is returned from this function though, so
+    /// you can call that instead.
+    ///
+    /// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/1418707-method_setimplementation?language=objc).
+    ///
+    ///
+    /// # Safety
+    ///
+    /// The given implementation function pointer must:
+    ///
+    /// 1. Have the signature expected by the Objective-C runtime and callers
+    ///    of this method.
+    ///
+    /// 2. Be at least as safe as the existing method, i.e. by overriding the
+    ///    previous method, it should not be possible for the program to cause
+    ///    UB.
+    ///
+    ///    A common mistake would be expecting e.g. a pointer to not be null,
+    ///    where the null case was handled before.
+    #[inline]
+    #[doc(alias = "method_setImplementation")]
+    pub unsafe fn set_implementation(&self, imp: Imp) -> Imp {
+        // SAFETY: The new impl is not NULL, and the rest is upheld by the
+        // caller.
+        unsafe { ffi::method_setImplementation(self.as_mut_ptr(), Some(imp)).expect("null IMP") }
+    }
+
+    /// Exchange the implementation of two methods.
+    ///
+    /// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/1418769-method_exchangeimplementations?language=objc).
+    ///
+    ///
+    /// # Safety
+    ///
+    /// The two methods must be perfectly compatible, both in signature, and
+    /// in expected (in terms of safety, not necessarily behaviour) input and
+    /// output.
+    ///
+    ///
+    /// # Example
+    ///
+    /// This is an atomic version of the following:
+    ///
+    /// ```
+    /// use objc2::runtime::Method;
+    /// # use objc2::runtime::NSObject;
+    /// # use objc2::sel;
+    /// # use crate::objc2::ClassType;
+    ///
+    /// let m1: &Method;
+    /// let m2: &Method;
+    /// #
+    /// # // Use the same method twice, to avoid actually changing anything
+    /// # m1 = NSObject::class().instance_method(sel!(hash)).unwrap();
+    /// # m2 = NSObject::class().instance_method(sel!(hash)).unwrap();
+    ///
+    /// unsafe {
+    ///     let imp = m2.set_implementation(m1.implementation());
+    ///     m1.set_implementation(imp);
+    /// }
+    /// ```
+    #[inline]
+    #[doc(alias = "method_exchangeImplementations")]
+    pub unsafe fn exchange_implementation(&self, other: &Self) {
+        // TODO: Consider checking that `self.types()` and `other.types()`
+        // match when debug assertions are enabled?
+
+        // SAFETY: Verified by caller
+        unsafe { ffi::method_exchangeImplementations(self.as_mut_ptr(), other.as_mut_ptr()) }
+    }
 }
 
 standard_pointer_impls!(Method);
