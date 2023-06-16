@@ -54,8 +54,8 @@ unsafe impl RefEncode for NSZone {
             // Name of zone
             Encoding::Object,
             // Next zone - note that the contents of this doesn't matter,
-            // since this is nested far enough that the encoding string just
-            // ends up ignoring it.
+            // since this is nested far enough that the encoding string ends
+            // up ignoring it.
             Encoding::Pointer(&Encoding::Struct("_NSZone", &[])),
         ],
     ));

@@ -284,7 +284,8 @@ pub struct Block_layout {
     /// }
     /// ```
     ///
-    /// But it is safe to access this through just `Block_descriptor_header`.
+    /// But since all of these start with `Block_descriptor_header`, it is
+    /// always safe to reinterpret this pointer as that.
     // Note: Important to use `*const c_void` until we know which type it is!
     pub descriptor: *const c_void,
 }

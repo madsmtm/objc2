@@ -145,9 +145,9 @@ impl Encoding {
     /// The encoding of [`c_long`](`std::os::raw::c_long`) on the current
     /// target.
     ///
-    /// Ideally the encoding of `long` would just be the same as `int` when
-    /// it's 32 bits wide and the same as `long long` when it is 64 bits wide;
-    /// then `c_long::ENCODING` would just work.
+    /// Ideally the encoding of `long` would be the same as `int` when it's 32
+    /// bits wide and the same as `long long` when it is 64 bits wide; then
+    /// `c_long::ENCODING` would just work.
     ///
     /// Unfortunately, `long` have a different encoding than `int` when it is
     /// 32 bits wide; the [`l`][`Encoding::Long`] encoding.

@@ -18,7 +18,7 @@ const GLOBAL_DESCRIPTOR: ffi::Block_descriptor_header = ffi::Block_descriptor_he
 
 /// An Objective-C block that does not capture its environment.
 ///
-/// This is effectively just a glorified function pointer, and can created and
+/// This is effectively a glorified function pointer, and can created and
 /// stored in static memory using the [`global_block!`] macro.
 ///
 /// If [`ConcreteBlock`] is the [`Fn`]-block equivalent, this is likewise the

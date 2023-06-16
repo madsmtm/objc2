@@ -54,7 +54,7 @@ mod tests {
         assert!(!mem::needs_drop::<IvarEncode<i32>>());
         assert!(!mem::needs_drop::<IvarEncode<&i32>>());
 
-        // You wouldn't do this, but just as a check
+        // You wouldn't do this, but let's make sure it works as expected
         #[repr(transparent)]
         struct DropAndEncode(i32);
 

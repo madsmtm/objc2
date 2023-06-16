@@ -5,7 +5,7 @@ use core::hint::black_box;
 use icrate::Foundation::array::Iter;
 use icrate::Foundation::{NSArray, NSObject};
 
-// Should ideally just be zero-initialized.
+// Should ideally be a fast zero-initialization.
 #[no_mangle]
 fn iter_create(array: &NSArray<NSObject>) -> Iter<'_, NSObject> {
     array.iter()

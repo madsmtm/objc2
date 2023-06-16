@@ -31,7 +31,7 @@ fn main() {
     autoreleasepool(|pool| {
         println!("{}", string.as_str(pool));
     });
-    // Or simply use the `Display` implementation
+    // Or use the `Display` implementation
     let _s = string.to_string(); // Using ToString
     println!("{string}"); // Or Display directly
 

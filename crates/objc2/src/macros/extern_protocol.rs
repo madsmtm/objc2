@@ -8,8 +8,8 @@
 ///
 /// This macro will create an `unsafe` trait with methods which all have
 /// default implementations, such that an object that conforms to the protocol
-/// can simply write `unsafe impl MyProtocol for MyClass {}`, and get access
-/// to the functionality exposed by the protocol.
+/// can write `unsafe impl MyProtocol for MyClass {}`, and get access to the
+/// functionality exposed by the protocol.
 ///
 /// Objective-C has a smart feature where you can write `id<MyProtocol>`, and
 /// then work with the protocol as-if it was an object; this is very similar
@@ -43,8 +43,7 @@
 /// future when implementing protocols in [`declare_class!`].
 ///
 /// This macro otherwise shares similarities with [`extern_class!`] and
-/// [`extern_methods!`], if you are familiar with those, it should be fairly
-/// straightforward to use.
+/// [`extern_methods!`].
 ///
 /// [`ProtocolObject<dyn T>`]: crate::runtime::ProtocolObject
 /// [`ProtocolType`]: crate::ProtocolType

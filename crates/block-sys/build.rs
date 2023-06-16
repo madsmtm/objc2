@@ -30,11 +30,12 @@ fn main() {
 
     match (apple, compiler_rt, gnustep, objfw) {
         (true, false, false, false) => {
-            // Link to libclosure (internally called libsystem_blocks), which is
-            // exported by libSystem.dylib.
+            // Link to libclosure (internally called libsystem_blocks), which
+            // is exported by libSystem.dylib.
             //
-            // Note that System.framework is just a deprecated wrapper over the
-            // dynamic library.
+            // Note: Don't get confused by the presence of `System.framework`,
+            // it is a deprecated wrapper over the dynamic library, so we'd
+            // rather use the latter.
             println!("cargo:rustc-link-lib=dylib=System");
             // Alternative: Only link to libsystem_blocks.dylib
             // println!("cargo:rustc-link-search=native=/usr/lib/system");

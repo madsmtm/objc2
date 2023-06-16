@@ -78,7 +78,7 @@ __inner_extern_class!(
         ///
         /// But since we already require `T: IsCloneable` on `NSCopying`, and
         /// already prevent other forms of `&NSArray<T> -> Id<NSArray<T>>`,
-        /// this is actually just fine, since `Id<NSArray<T>>: Send | Sync`
+        /// this is actually fine, since `Id<NSArray<T>>: Send | Sync`
         /// requires `NSArray<T>: Send + Sync` (and hence `T: Send + Sync`).
         __inner: PhantomData<Id<ObjectType>>,
     }
@@ -128,7 +128,7 @@ __inner_extern_class!(
     pub struct NSDictionary<KeyType: Message = Object, ObjectType: Message = Object> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
-        // Same as if the dictionary was just:
+        // Same as if the dictionary was implemented with:
         // `(NSArray<KeyType>, NSArray<ObjectType>)`
         __inner: PhantomData<(Id<KeyType>, Id<ObjectType>)>,
     }
@@ -180,7 +180,7 @@ __inner_extern_class!(
     pub struct NSSet<ObjectType: Message = Object> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
-        // Same as if the set was just `NSArray<ObjectType>`.
+        // Same as if the set was implemented as `NSArray<ObjectType>`.
         __inner: PhantomData<Id<ObjectType>>,
     }
 
@@ -253,7 +253,7 @@ __inner_extern_class!(
     pub struct NSOrderedSet<ObjectType: Message = Object> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
-        // Same as if the set was just `NSArray<ObjectType>`.
+        // Same as if the set was implemented with `NSArray<ObjectType>`.
         __inner: PhantomData<Id<ObjectType>>,
     }
 
@@ -302,7 +302,7 @@ __inner_extern_class!(
     pub struct NSEnumerator<ObjectType: Message = Object> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
-        // Enumerators are basically the same as if we were just storing
+        // Enumerators are basically the same as if we were storing
         // `NSMutableArray<ObjectType>`, and removed an element from that on
         // each iteration.
         //

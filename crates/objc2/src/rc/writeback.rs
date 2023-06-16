@@ -4,8 +4,8 @@
 //! <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#passing-to-an-out-parameter-by-writeback>
 //!
 //! Note: We differ from that in that we do not create a temporary, whoose
-//! address we then work on; instead, we just directly reuse the pointer that
-//! the user provides (since, if it's a mutable pointer, we know that it's not
+//! address we then work on; instead, we directly reuse the pointer that the
+//! user provides (since, if it's a mutable pointer, we know that it's not
 //! shared elsewhere in the program, and hence it is safe to modify directly).
 use core::mem::ManuallyDrop;
 use core::ptr::NonNull;
@@ -15,7 +15,7 @@ use crate::rc::Id;
 use crate::Message;
 
 // Note the `'static` bound here - this may not be necessary, but I'm unsure
-// of the exact requirements, so we better just keep it for now.
+// of the exact requirements, so we better keep it for now.
 impl<T: Message + 'static> EncodeConvertArgument for &mut Id<T> {
     // We use `*mut T` as the inner value instead of `NonNull<T>`, since we
     // want to do debug checking that the value hasn't unexpectedly been
@@ -25,8 +25,8 @@ impl<T: Message + 'static> EncodeConvertArgument for &mut Id<T> {
 
     type __StoredBeforeMessage = (
         // A copy of the argument, so that we can retain it after the message
-        // send. Ideally, we'd just work with e.g. `&mut *mut T`, but we can't
-        // do that inside the generic context of `MessageArguments::__invoke`.
+        // send. Ideally, we'd work with e.g. `&mut *mut T`, but we can't do
+        // that inside the generic context of `MessageArguments::__invoke`.
         Self::__Inner,
         // A pointer to the old value stored in the `Id`, so that we can
         // release if after the message send.
@@ -55,7 +55,7 @@ impl<T: Message + 'static> EncodeConvertArgument for &mut Id<T> {
 
     #[inline]
     unsafe fn __process_after_message_send((ptr, old): Self::__StoredBeforeMessage) {
-        // In terms of provenance, we roughly just want to do the following:
+        // In terms of provenance, we roughly want to do the following:
         // ```
         // fn do(value: &mut Id<T>) {
         //     let old = value.clone();
@@ -91,8 +91,8 @@ impl<T: Message + 'static> EncodeConvertArgument for &mut Id<T> {
         // safe to retain at this point.
         let new: Option<Id<T>> = unsafe { Id::retain(*ptr.as_ptr()) };
         // We ignore the result of `retain`, since it always returns the same
-        // value as was given (and it would just be unnecessary work to write
-        // that value back into `ptr` again).
+        // value as was given (and it would be unnecessary work to write that
+        // value back into `ptr` again).
         let _new = ManuallyDrop::new(new);
         #[cfg(debug_assertions)]
         if _new.is_none() {

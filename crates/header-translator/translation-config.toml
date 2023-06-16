@@ -421,7 +421,7 @@ ios = "16.0"
 ### - `ns_returns_retained` / `cf_returns_retained` / `os_returns_retained`
 ###
 ### The rest are only very rarely used in Apple's frameworks, so while we
-### _could_ handle them too, I think it's easier to just do it manually.
+### _could_ handle them too, I think it's easier to do it manually.
 ###
 ### See https://clang.llvm.org/docs/AttributeReference.html
 ###
@@ -783,7 +783,7 @@ skipped = true
 skipped = true
 
 # The original superclass typedef is a bit difficult to extract from the
-# superclass name, so let's just overwrite it.
+# superclass name, so let's do it manually.
 [class.ASCredentialProviderViewController]
 definition-skipped = true
 [class.ASAccountAuthenticationModificationViewController]

@@ -9,7 +9,7 @@
 //! what Objective-C type-encodings are.
 //!
 //!
-//! ## Example
+//! ## Examples
 //!
 //! Implementing [`Encode`] and [`RefEncode`] for a custom type:
 //!
@@ -43,21 +43,33 @@
 //! assert!(MyStruct::ENCODING_REF.equivalent_to_str("^{MyStruct=fs}"));
 //! ```
 //!
-//! See the [`examples`] folder for more complex usage.
+//! Implementing [`Encode`] for a few core-graphics types.
 //!
-//! [`examples`]: https://github.com/madsmtm/objc2/tree/master/crates/objc2/examples
+//! Note that these are available in `icrate`, so the implementation here is
+//! mostly for demonstration.
 //!
+//! ```
+#![doc = include_str!("../../examples/encode_core_graphics.rs")]
+//! ```
 //!
-//! ## Caveats
+//! Implementing [`Encode`] and [`RefEncode`] for a transparent newtype.
 //!
-//! We've taken the pragmatic approach with [`Encode`] and [`RefEncode`], and
-//! have implemented it for as many types as possible (instead of defining a
-//! bunch of subtraits for very specific purposes). However, that might
-//! sometimes be slightly surprising.
+//! ```
+#![doc = include_str!("../../examples/encode_nsuinteger.rs")]
+//! ```
 //!
-//! The primary example is [`()`][`unit`], which doesn't make sense as a
-//! method argument, but is a very common return type, and hence implements
-//! [`Encode`].
+//! Implementing [`RefEncode`] for an object, in this case `NSString`.
+//!
+//! ```
+#![doc = include_str!("../../examples/encode_nsstring.rs")]
+//! ```
+//!
+//! Implementing [`RefEncode`] for a type where you don't necessarily know
+//! about the exact internals / the internals are not representable in Rust.
+//!
+//! ```
+#![doc = include_str!("../../examples/encode_opaque_type.rs")]
+//! ```
 
 use core::cell::{Cell, UnsafeCell};
 use core::ffi::c_void;
@@ -82,6 +94,7 @@ pub use objc2_encode::{Encoding, EncodingBox, ParseError};
 /// If your type is an opaque type you should not need to implement this;
 /// there you will only need [`RefEncode`].
 ///
+///
 /// # Safety
 ///
 /// The type must be FFI-safe, meaning a C-compatible `repr` (`repr(C)`,
@@ -98,6 +111,7 @@ pub use objc2_encode::{Encoding, EncodingBox, ParseError};
 /// You should also beware of having [`Drop`] types implement this, since when
 /// passed to Objective-C via. `objc2::msg_send!` their destructor will not be
 /// called!
+///
 ///
 /// # Examples
 ///
@@ -149,6 +163,7 @@ pub unsafe trait Encode {
 /// - `Option<&mut T>`
 /// - `Option<NonNull<T>>`
 ///
+///
 /// # Reasoning behind this trait's existence
 ///
 /// External crates cannot implement [`Encode`] for pointers or [`Option`]s
@@ -158,6 +173,7 @@ pub unsafe trait Encode {
 ///
 /// Finally, having this trait allows for much cleaner generic code that need
 /// to represent types that can be encoded as pointers.
+///
 ///
 /// # Safety
 ///
@@ -275,7 +291,7 @@ unsafe impl<T: RefEncode + OptionEncode> RefEncode for Option<T> {
 
 // TODO: Implement for `PhantomData` and `PhantomPinned`?
 
-/// Simple helper for implementing [`Encode`].
+/// Helper for implementing [`Encode`].
 macro_rules! encode_impls {
     ($($t:ty => $e:ident,)*) => ($(
         unsafe impl Encode for $t {
@@ -321,7 +337,7 @@ encode_impls_size!(
     usize => (u16, u32, u64),
 );
 
-/// Simple helper for implementing [`RefEncode`].
+/// Helper for implementing [`RefEncode`].
 macro_rules! pointer_refencode_impl {
     ($($t:ty),*) => ($(
         unsafe impl RefEncode for $t {
@@ -342,7 +358,7 @@ unsafe impl RefEncode for u8 {
     const ENCODING_REF: Encoding = Encoding::String;
 }
 
-/// Simple helper for implementing [`Encode`] for nonzero integer types.
+/// Helper for implementing [`Encode`] for nonzero integer types.
 macro_rules! encode_impls_nonzero {
     ($($nonzero:ident => $type:ty,)*) => ($(
         unsafe impl Encode for $nonzero {
@@ -371,7 +387,7 @@ encode_impls_nonzero!(
     NonZeroUsize => usize,
 );
 
-/// Simple helper for implementing for atomic types.
+/// Helper for implementing for atomic types.
 macro_rules! encode_atomic_impls {
     ($(
         $(#[$m:meta])*

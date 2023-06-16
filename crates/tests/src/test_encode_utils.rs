@@ -23,8 +23,7 @@ unsafe fn assert_encoding(s: *const c_char, e: Encoding) {
 #[allow(unused)]
 unsafe fn assert_str<T: Display>(s: *const c_char, expected: T) {
     let s = CStr::from_ptr(s).to_str().unwrap();
-    // Exact comparison to ensure we catch regressions (and that they are not
-    // just masked by ).
+    // Exact comparison to ensure we catch regressions.
     assert_eq!(s, expected.to_string());
 }
 
@@ -277,8 +276,8 @@ assert_types! {
     UINT32 => u32,
     UINT64 => u64,
 
-    // `intptr`, `uintptr` and `size_t` are cfg-guarded because they are
-    // simply just too much of a hassle to get working on this old platform.
+    // `intptr`, `uintptr` and `size_t` are cfg-guarded because they are too
+    // much of a hassle to get working on old platforms.
     //
     // Pointers (`intptr*`) works, but not plain `intptr`...
 

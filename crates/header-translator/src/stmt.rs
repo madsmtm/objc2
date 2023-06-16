@@ -1467,8 +1467,8 @@ impl fmt::Display for Stmt {
                         // Copying collections is done as a shallow copy:
                         // <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Collections/Articles/Copying.html>
                         //
-                        // E.g. it simply does a retain count bump, and hence
-                        // does not require the inner type to implement
+                        // E.g. it does a retain count bump on the items, and
+                        // hence does not require the inner type to implement
                         // `NSCopying`.
                         //
                         // The types does have to be cloneable, since generic
@@ -1712,8 +1712,7 @@ impl fmt::Display for Stmt {
                         writeln!(f, "typed_extensible_enum!(pub type {} = {ty};);", id.name)?;
                     }
                     None | Some(UnexposedAttr::BridgedTypedef) => {
-                        // "bridged" typedefs should just use a normal type
-                        // alias.
+                        // "bridged" typedefs should use a normal type alias.
                         writeln!(f, "pub type {} = {ty};", id.name)?;
                     }
                     kind => panic!("invalid alias kind {kind:?} for {ty:?}"),

@@ -48,9 +48,9 @@
 /// - The [`Super`] class.
 ///
 ///   Due to Rust trait limitations, specifying e.g. the superclass `NSData`
-///   would not give you easy access to `NSObject`'s functionality. Therefore,
-///   you may optionally specify additional parts of the inheritance chain
-///   using an `#[inherits(...)]` attribute.
+///   would not give you the ability to convert via. `AsRef` to `NSObject`.
+///   Therefore, you may optionally specify additional parts of the
+///   inheritance chain using an `#[inherits(...)]` attribute.
 /// - The class' [`Mutability`].
 /// - Optionally, the class' [`NAME`] - if not specified, this will default to
 ///   the struct name.
@@ -87,8 +87,8 @@
 ///
 /// # Examples
 ///
-/// Create a new type to represent the `NSFormatter` class (of course, we
-/// could have just used `icrate::Foundation::NSFormatter`).
+/// Create a new type to represent the `NSFormatter` class (for demonstration,
+/// `icrate::Foundation::NSFormatter` exist for exactly this purpose).
 ///
 /// ```
 /// # #[cfg(not_available)]
@@ -188,7 +188,7 @@ macro_rules! extern_class {
             $(const NAME: &'static str = $name_const:expr;)?
         }
     ) => {
-        // Just shorthand syntax for the following
+        // Shorthand syntax for the following
         $crate::extern_class!(
             $(#[$m])*
             $v struct $name {}
@@ -414,9 +414,9 @@ macro_rules! __extern_class_impl_traits {
                 = <$superclass as $crate::RefEncode>::ENCODING_REF;
         }
 
-        // SAFETY: This is essentially just a newtype wrapper over `Object`
-        // (we even ensure that `Object` is always last in our inheritance
-        // tree), so it is always safe to reinterpret as that.
+        // SAFETY: This is a newtype wrapper over `Object` (we even ensure
+        // that `Object` is always last in our inheritance tree), so it is
+        // always safe to reinterpret as that.
         //
         // That the object must work with standard memory management is
         // properly upheld by the fact that the superclass is required by
@@ -444,9 +444,9 @@ macro_rules! __extern_class_impl_traits {
         // erasable by e.g. `ClassType::retain` since `NSObject` does not
         // allow that.
         //
-        // Note that you can easily have two different variables pointing to
-        // the same object, `x: &T` and `y: &T::Target`, and this would be
-        // perfectly safe!
+        // Note that you can have two different variables pointing to the same
+        // object, `x: &T` and `y: &T::Target`, and this would be perfectly
+        // safe!
         $(#[$impl_m])*
         impl<$($t)*> $crate::__macro_helpers::Deref for $for {
             type Target = $superclass;

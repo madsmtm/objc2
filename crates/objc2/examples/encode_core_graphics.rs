@@ -2,7 +2,6 @@ use objc2::encode::{Encode, Encoding};
 
 #[cfg(target_pointer_width = "32")]
 type CGFloat = f32;
-
 #[cfg(target_pointer_width = "64")]
 type CGFloat = f64;
 
@@ -12,6 +11,7 @@ struct CGPoint {
     y: CGFloat,
 }
 
+// SAFETY: The struct is `repr(C)`, and the encoding is correct.
 unsafe impl Encode for CGPoint {
     const ENCODING: Encoding = Encoding::Struct("CGPoint", &[CGFloat::ENCODING, CGFloat::ENCODING]);
 }
@@ -22,6 +22,7 @@ struct CGSize {
     height: CGFloat,
 }
 
+// SAFETY: The struct is `repr(C)`, and the encoding is correct.
 unsafe impl Encode for CGSize {
     const ENCODING: Encoding = Encoding::Struct("CGSize", &[CGFloat::ENCODING, CGFloat::ENCODING]);
 }
@@ -32,10 +33,17 @@ struct CGRect {
     size: CGSize,
 }
 
+// SAFETY: The struct is `repr(C)`, and the encoding is correct.
 unsafe impl Encode for CGRect {
     const ENCODING: Encoding = Encoding::Struct("CGRect", &[CGPoint::ENCODING, CGSize::ENCODING]);
 }
 
 fn main() {
-    println!("{}", CGRect::ENCODING);
+    let expected = if cfg!(target_pointer_width = "64") {
+        "{CGRect={CGPoint=dd}{CGSize=dd}}"
+    } else {
+        "{CGRect={CGPoint=ff}{CGSize=ff}}"
+    };
+
+    assert!(CGRect::ENCODING.equivalent_to_str(expected));
 }

@@ -1,7 +1,7 @@
 //! # Apple's C language extension of blocks
 //!
-//! C Blocks are effectively the C-equivalent of Rust's closures, in that they
-//! have the ability to capture their environments.
+//! C Blocks are the C-equivalent of Rust's closures, in that they have the
+//! ability to capture their environments.
 //!
 //! This crate provides capabilities to create and invoke these blocks, in an
 //! ergonomic "Rust-centric" fashion.

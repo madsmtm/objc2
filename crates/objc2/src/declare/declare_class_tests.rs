@@ -39,8 +39,8 @@ fn test_deprecated() {
 
 // Test that `cfg` works properly.
 //
-// We use `debug_assertions` here just because it's something that we know
-// our CI already tests.
+// We use `debug_assertions` here because it's something that we know our CI
+// already tests.
 declare_class!(
     struct DeclareClassCfg;
 
@@ -428,7 +428,7 @@ fn test_subclass_duplicate_ivar() {
 
     let _ = SubCls::class();
 
-    // The rest is just to show what would go wrong if it didn't panic
+    // The rest is to show what would go wrong if it didn't panic
 
     assert_eq!(Cls::class().instance_size(), 16);
     assert_eq!(SubCls::class().instance_size(), 16);

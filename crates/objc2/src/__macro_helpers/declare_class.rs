@@ -8,7 +8,7 @@ use crate::{ClassType, Message, MessageReceiver};
 use super::{CopyOrMutCopy, Init, MaybeUnwrap, New, Other};
 use crate::mutability;
 
-// One could imagine a different design where we simply had a method like
+// One could imagine a different design where we had a method like
 // `fn convert_receiver()`, but that won't work in `declare_class!` since we
 // can't actually modify the `self` argument (e.g. `let self = foo(self)` is
 // not allowed).

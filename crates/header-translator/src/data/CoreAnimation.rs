@@ -48,8 +48,8 @@ data! {
         // `nil` superlayer.
 
         // If the layer already has a superlayer, it will be changed
-        // appropriately by these methods (effectively, removeFromSuperlayer
-        // is called on the given layer inside these).
+        // appropriately by these methods (`removeFromSuperlayer` is called on
+        // the given layer inside these).
         unsafe -addSublayer;
         unsafe -insertSublayer_atIndex;
         unsafe -insertSublayer_below;
@@ -193,8 +193,7 @@ data! {
         unsafe -endFrame;
     }
 
-    // SAFETY: CATransaction is basically just a way to call methods that
-    // access thread-local state.
+    // SAFETY: CATransaction methods access thread-local state.
     class CATransaction {
         unsafe +begin;
         unsafe +commit;

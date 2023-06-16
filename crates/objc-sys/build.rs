@@ -185,7 +185,7 @@ fn main() {
         // Default in clang is 1.6
         // GNUStep's own default is 1.8
         GNUStep(major, minor) => format!("gnustep-{major}.{minor}"),
-        // WinObjC's libobjc2 is just a fork of gnustep's from version 1.8
+        // WinObjC's libobjc2 is a fork of gnustep's from version 1.8
         WinObjC => "gnustep-1.8".into(),
         ObjFW(version) => {
             // Default in clang

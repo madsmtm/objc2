@@ -36,7 +36,7 @@ impl NSData {
         // bug; it forgets to assign the input buffer and length to the
         // instance before it swizzles to NSDataWithDeallocatorBlock.
         // See https://github.com/gnustep/libs-base/pull/213
-        // So we just use NSDataWithDeallocatorBlock directly.
+        // So instead we use NSDataWithDeallocatorBlock directly.
         //
         // NSMutableData does not have this problem.
         #[cfg(feature = "gnustep-1-7")]
@@ -112,7 +112,7 @@ impl NSMutableData {
     #[doc(alias = "replaceBytesInRange:withBytes:length:")]
     pub fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
         // No need to verify the length of the range here,
-        // `replaceBytesInRange:` just zero-fills if out of bounds.
+        // `replaceBytesInRange:` zero-fills if out of bounds.
         let ptr = bytes.as_ptr() as *mut c_void;
         unsafe { self.replaceBytesInRange_withBytes_length(range.into(), ptr, bytes.len()) }
     }

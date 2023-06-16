@@ -269,8 +269,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `NSTimeInterval`.
 * Added `NSString::len_utf16` and `NSAttributedString::len_utf16`.
 * Added `NSString::concat` and `NSString::join_path`.
-* Added `CGSize`, `CGPoint` and `CGRect` (just aliases to equivalent
-  `NS`-types, but helps readability).
+* Added `CGSize`, `CGPoint` and `CGRect` (aliases to equivalent `NS`-types
+  that helps readability).
 
 ### Changed
 * **BREAKING**: `NSSize::new` no longer requires it's arguments to be
@@ -310,8 +310,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 * `NSObject::hash_code`, `NSObject::is_equal` and `NSObject::description` in
-  favour of just having the trait implementations `Hash`, `PartiqalEq` and
-  `Debug`.
+  favour of having the trait implementations `Hash`, `PartiqalEq` and `Debug`.
 
 
 ## objc2-foundation 0.2.0-alpha.6 - 2022-07-19
@@ -397,7 +396,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 * **BREAKING**: Removed `Deref` and `DerefMut` from `NSData` and
   `NSMutableData`, since these invoke a non-trivial amount of code, and could
-  easily lead to hard-to-diagnose performance issues.
+  lead to hard-to-diagnose performance issues.
 
 
 ## objc2-foundation 0.2.0-alpha.3 - 2021-12-22

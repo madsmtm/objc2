@@ -1,7 +1,7 @@
 #![cfg(feature = "Foundation_NSString")]
 //! Macro for making a static NSString.
 //!
-//! This basically does what clang does, see:
+//! This closely follows what clang does, see:
 //! - Apple: <https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CodeGenModule.cpp#L5057-L5249>
 //! - GNUStep 2.0 (not yet supported): <https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CGObjCGNU.cpp#L973-L1118>
 //! - Other (not yet supported): <https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CGObjCGNU.cpp#L2471-L2507>
@@ -39,8 +39,8 @@ extern "C" {
 #[repr(C)]
 pub struct CFConstString {
     isa: &'static Class,
-    // Important that we don't just use `usize` here, since that would be
-    // wrong on big-endian systems!
+    // Important that we don't use `usize` here, since that would be wrong on
+    // big-endian systems!
     cfinfo: u32,
     #[cfg(target_pointer_width = "64")]
     _rc: u32,

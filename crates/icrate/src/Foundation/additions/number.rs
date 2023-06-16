@@ -20,8 +20,8 @@ use objc2::encode::Encoding;
 use crate::common::*;
 use crate::Foundation::{CGFloat, NSNumber};
 
-// SAFETY: `NSNumber` is just a wrapper around an integer/float/bool, and it
-// is immutable.
+// SAFETY: `NSNumber` is a wrapper around an integer/float/bool, and it is
+// immutable.
 unsafe impl Sync for NSNumber {}
 unsafe impl Send for NSNumber {}
 

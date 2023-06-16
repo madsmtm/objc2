@@ -174,7 +174,7 @@ impl FastEnumeratorHelper {
                 //   violated, but if that is the case, the program already
                 //   has UB, so then it is better that we detect it.
                 //
-                // - The value is a simple integer, so is always initialized.
+                // - The value is an integer, so is always initialized.
                 //
                 //
                 // We do an unaligned read here since we have no guarantees

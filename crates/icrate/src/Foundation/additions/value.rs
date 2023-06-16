@@ -61,7 +61,7 @@ impl NSValue {
     /// The type of `T` must be what the NSValue actually stores, and any
     /// safety invariants that the value has must be upheld.
     ///
-    /// Note that it may be, but is not always, enough to simply check whether
+    /// Note that it may be enough, although is not always, to check whether
     /// [`contains_encoding`] returns `true`. For example, `NonNull<T>` have
     /// the same encoding as `*const T`, but `NonNull<T>` is clearly not
     /// safe to return from this function even if you've checked the encoding

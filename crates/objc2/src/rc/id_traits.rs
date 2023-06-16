@@ -8,8 +8,8 @@ use crate::mutability::{IsAllocableAnyThread, IsMutable};
 pub trait DefaultId: IsAllocableAnyThread {
     /// The default [`Id`] for a type.
     ///
-    /// On most objects the implementation would just be sending a message to
-    /// the `new` selector.
+    /// On most objects the implementation would be sending a message to the
+    /// `new` selector.
     fn default_id() -> Id<Self>;
 }
 
@@ -23,7 +23,7 @@ impl<T: ?Sized + DefaultId> Default for Id<T> {
 /// Helper trait to implement [`IntoIterator`] on [`Id`].
 ///
 /// This should be implemented in exactly the same fashion as if you were
-/// just implementing `IntoIterator` for your type normally.
+/// implementing `IntoIterator` for your type normally.
 //
 // Note that [`Box<T>` gets to cheat with regards moves][box-move], so
 // `boxed.into_iter()` is possible, while `id.into_iter()` is not possible
@@ -40,7 +40,7 @@ pub trait IdIntoIterator {
     /// Creates an iterator from an [`Id`].
     ///
     /// You would normally not call this function directly; instead, you'd
-    /// just call [`into_iter`](IntoIterator::into_iter) on an [`Id`].
+    /// call [`into_iter`](IntoIterator::into_iter) on an [`Id`].
     fn id_into_iter(this: Id<Self>) -> Self::IntoIter;
 }
 
@@ -111,7 +111,7 @@ where
 /// Helper trait to implement [`FromIterator`] on [`Id`].
 ///
 /// This should be implemented in exactly the same fashion as if you were
-/// just implementing `FromIterator` for your type normally.
+/// implementing `FromIterator` for your type normally.
 pub trait IdFromIterator<T>: Sized {
     /// Creates an `Id` from an iterator.
     fn id_from_iter<I>(iter: I) -> Id<Self>

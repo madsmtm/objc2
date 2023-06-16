@@ -30,12 +30,12 @@ pub(crate) mod private {
 //
 // Additionally, the type must be safe to drop even if zero-initialized.
 //
-// Note that while I couldn't find a reference on whether ivars are
-// zero-initialized or not, it has been true since the Objective-C version
-// shipped with Mac OS X 10.0 [link] and is generally what one would expect
-// coming from C. So I think it's a valid assumption to make!
+// Ivars are documented to be zero-initialized in [this section of the
+// Objective-C manual][obj-dynamically-created], and that has been true since
+// at least [the Objective-C version shipped with Mac OS X 10.0][objc4-208].
 //
-// [link]: https://github.com/apple-oss-distributions/objc4/blob/objc4-208/runtime/objc-class.m#L367
+// [obj-dynamically-created]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithObjects/WorkingwithObjects.html#//apple_ref/doc/uid/TP40011210-CH4-SW7
+// [objc4-208]: https://github.com/apple-oss-distributions/objc4/blob/objc4-208/runtime/objc-class.m#L367
 pub unsafe trait InnerIvarType: private::Sealed + Encode {
     /// The type that an `Ivar` containing this will dereference to.
     ///
@@ -192,8 +192,8 @@ impl<T: IvarType> Drop for Ivar<T> {
 impl<T: IvarType> Ivar<T> {
     /// Get a pointer to the instance variable.
     ///
-    /// Note that if the ivar has already been initialized, you can simply
-    /// use the `Deref` implementation to get a reference.
+    /// Note that if the ivar has already been initialized, you can use the
+    /// `Deref` implementation to get a reference.
     ///
     /// This is similar to [`MaybeUninit::as_ptr`], see that for usage
     /// instructions.
@@ -225,8 +225,8 @@ impl<T: IvarType> Ivar<T> {
     /// This is useful when you want to initialize the ivar inside an `init`
     /// method (where it may otherwise not have been safely initialized yet).
     ///
-    /// Note that if the ivar has already been initialized, you can simply
-    /// use the `DerefMut` implementation to get a mutable reference.
+    /// Note that if the ivar has already been initialized, you can use the
+    /// `DerefMut` implementation to get a mutable reference.
     ///
     /// This is similar to [`MaybeUninit::as_mut_ptr`], see that for usage
     /// instructions.

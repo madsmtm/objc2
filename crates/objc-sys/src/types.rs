@@ -61,8 +61,8 @@ mod inner {
     // This has changed since v0.90, but we don't support that yet.
     pub(crate) type BOOL = i8;
 
-    // Note that ObjFW uses `bool` in return types, but that doesn't change
-    // the ABI, so we'll just use `BOOL` there for ease of use.
+    // Note that ObjFW usually uses `bool` in return types, but that doesn't
+    // change the ABI, so we'll use `BOOL` there as well, for ease of use.
 }
 
 /// The Objective-C `BOOL` type.
