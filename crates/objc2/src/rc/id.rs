@@ -405,8 +405,14 @@ impl<T: Message> Id<T> {
             };
 
             // Supported since macOS 10.10.
-            #[cfg(target_arch = "aarch64")]
+            //
+            // On macOS 13.0 / iOS 16.0 / tvOS 16.0 / watchOS 9.0, the runtime
+            // instead checks the return pointer address, so we no longer need
+            // to emit these extra instructions, see this video from WWDC22:
+            // https://developer.apple.com/videos/play/wwdc2022/110363/
+            #[cfg(all(target_arch = "aarch64", not(feature = "unstable-apple-new")))]
             unsafe {
+                // Same as `mov x29, x29`
                 core::arch::asm!("mov fp, fp", options(nomem, preserves_flags, nostack))
             };
 
