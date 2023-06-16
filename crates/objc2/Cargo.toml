@@ -65,6 +65,18 @@ unstable-c-unwind = []
 # For better documentation on docs.rs
 unstable-docsrs = []
 
+# Enable new features available on ARM64 on:
+# - macOS 13.0
+# - iOS 16.0
+# - tvOS 16.0
+# - watchOS 9.0
+#
+# See https://developer.apple.com/videos/play/wwdc2022/110363/ for an overview
+# of the features.
+#
+# Currently untested.
+unstable-apple-new = ["apple"]
+
 # Runtime selection. See `objc-sys` for details.
 apple = ["objc-sys/apple"]
 gnustep-1-7 = ["objc-sys/gnustep-1-7"]
