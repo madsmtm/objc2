@@ -1052,7 +1052,50 @@ impl Object {
     #[doc(alias = "object_getClass")]
     pub fn class(&self) -> &Class {
         let ptr: *const Class = unsafe { ffi::object_getClass(self.as_ptr()) }.cast();
+        // SAFETY: The class is not NULL because the object is not NULL.
         unsafe { ptr.as_ref().unwrap_unchecked() }
+    }
+
+    /// Change the class of the object at runtime.
+    ///
+    /// Returns the object's previous class.
+    ///
+    ///
+    /// # Safety
+    ///
+    /// The new class must:
+    ///
+    /// 1. Be a subclass of the object's current class.
+    ///
+    /// 2. The subclass must not add any instance variables - importantly, the
+    ///    instance size of old and the new classes must be the same.
+    ///
+    /// 3. Any overridden methods on the new class must be fully compatible
+    ///    with the old ones.
+    ///
+    /// Note that in the general case, where arbitary parts of the program
+    /// may be trying to modify the class of the object concurrently, these
+    /// requirements are not actually possible to uphold.
+    ///
+    /// Since usage of this function is expected to be extremely rare, and
+    /// even more so trying to do it concurrently, it is recommended that you
+    /// verify that the returned class is what you would expect, and if not,
+    /// panic.
+    #[inline]
+    #[doc(alias = "object_setClass")]
+    pub unsafe fn set_class<'s>(this: &Self, cls: &Class) -> &'s Class {
+        let ptr =
+            unsafe { ffi::object_setClass(this.as_ptr() as *mut ffi::objc_object, cls.as_ptr()) };
+        let ptr: *const Class = ptr.cast();
+        // SAFETY: The class is not NULL because the object is not NULL.
+        let old_cls = unsafe { ptr.as_ref().unwrap_unchecked() };
+        // TODO: Check the superclass requirement too?
+        debug_assert_eq!(
+            old_cls.instance_size(),
+            cls.instance_size(),
+            "old and new class sizes were not equal; this is UB!"
+        );
+        old_cls
     }
 
     /// Offset an object pointer to get a pointer to an ivar.

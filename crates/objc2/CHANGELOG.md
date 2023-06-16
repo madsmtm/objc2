@@ -61,6 +61,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Debug` impl for `runtime::Method` and `runtime::Ivar`.
 * Added `Method::set_implementation`.
 * Added `Method::exchange_implementation`.
+* Added `Object::set_class`.
 
 ### Changed
 * **BREAKING**: `objc2::rc::AutoreleasePool` is now a zero-sized `Copy` type
