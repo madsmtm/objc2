@@ -157,7 +157,16 @@ fn demangle_assembly(assembly: &str) -> String {
 
     // Find all identifiers, and attempt to demangle them
     let assembly = RE_SYMBOL.replace_all(assembly, |caps: &Captures| {
-        let symbol = caps.get(0).unwrap().as_str();
+        let mut symbol = caps.get(0).unwrap().as_str();
+        let (mut prefix, mut suffix) = ("", "");
+        if symbol.starts_with("L__") {
+            prefix = "L";
+            symbol = symbol.strip_prefix('L').unwrap();
+            if let Some(stripped) = symbol.strip_suffix("$non_lazy_ptr") {
+                suffix = "$non_lazy_ptr";
+                symbol = stripped;
+            }
+        }
         match rustc_demangle::try_demangle(symbol) {
             Ok(s) => {
                 let s = s.to_string();
@@ -174,9 +183,9 @@ fn demangle_assembly(assembly: &str) -> String {
                         list_for_this_symbol.len() - 1
                     });
 
-                format!("SYM({s}, {unique_identifier})")
+                format!("{prefix}SYM({s}, {unique_identifier}){suffix}")
             }
-            Err(_) => symbol.to_string(),
+            Err(_) => format!("{prefix}{symbol}{suffix}"),
         }
     });
     // Replace anonymous section names
@@ -188,6 +197,29 @@ mod tests {
     #[test]
     fn test_demangle() {
         use super::*;
+
+        let before = r#"
+   movw    r10, :lower16:(L__ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h32db0c71005d38edE$non_lazy_ptr-(LPC5_0+8))
+   movt    r10, :upper16:(L__ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h32db0c71005d38edE$non_lazy_ptr-(LPC5_0+8))
+
+   .section __DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
+   .p2align    2, 0x0
+L__ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h32db0c71005d38edE$non_lazy_ptr:
+   .indirect_symbol  __ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h86a0ced45445d2c5E
+   .long   0
+        "#;
+        let after = r#"
+   movw    r10, :lower16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_0+8))
+   movt    r10, :upper16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_0+8))
+
+   .section __DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
+   .p2align    2, 0x0
+LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
+   .indirect_symbol  SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 1)
+   .long   0
+        "#;
+        let output = demangle_assembly(before);
+        assert_eq!(output, after, "Got {output}");
 
         let before = r#"
     .section    __TEXT,__text,regular,pure_instructions
