@@ -329,15 +329,15 @@ impl<'a> MsgSendIdFailed<'a> for New {
             let cls = obj.class();
             if cls.is_metaclass() {
                 if sel == new_sel() {
-                    panic!("failed creating new instance of {:?}", cls)
+                    panic!("failed creating new instance of {cls}")
                 } else {
-                    panic!("failed creating new instance using +[{:?} {:?}]", cls, sel)
+                    panic!("failed creating new instance using +[{cls} {sel}]")
                 }
             } else {
-                panic!("unexpected NULL returned from -[{:?} {:?}]", cls, sel)
+                panic!("unexpected NULL returned from -[{cls} {sel}]")
             }
         } else {
-            panic!("unexpected NULL {:?}; receiver was NULL", sel);
+            panic!("unexpected NULL {sel}; receiver was NULL");
         }
     }
 }
@@ -348,9 +348,9 @@ impl<'a> MsgSendIdFailed<'a> for Alloc {
     #[cold]
     fn failed((cls, sel): Self::Args) -> ! {
         if sel == alloc_sel() {
-            panic!("failed allocating {:?}", cls)
+            panic!("failed allocating {cls}")
         } else {
-            panic!("failed allocating with +[{:?} {:?}]", cls, sel)
+            panic!("failed allocating with +[{cls} {sel}]")
         }
     }
 }
@@ -368,7 +368,7 @@ impl MsgSendIdFailed<'_> for Init {
             if sel == init_sel() {
                 panic!("failed initializing object")
             } else {
-                panic!("failed initializing object with -{:?}", sel)
+                panic!("failed initializing object with -{sel}")
             }
         }
     }
@@ -391,13 +391,11 @@ impl<'a> MsgSendIdFailed<'a> for Other {
         if let Some(obj) = obj {
             let cls = obj.class();
             panic!(
-                "unexpected NULL returned from {}[{:?} {:?}]",
+                "unexpected NULL returned from {}[{cls} {sel}]",
                 if cls.is_metaclass() { "+" } else { "-" },
-                cls,
-                sel,
             )
         } else {
-            panic!("unexpected NULL {:?}; receiver was NULL", sel);
+            panic!("unexpected NULL {sel}; receiver was NULL");
         }
     }
 }
@@ -554,9 +552,7 @@ impl ClassProtocolMethodsBuilder<'_, '_> {
                 .map(|desc| desc.types)
                 .unwrap_or_else(|| {
                     panic!(
-                        "failed overriding protocol method -[{} {:?}]: method not found",
-                        protocol.name(),
-                        sel
+                        "failed overriding protocol method -[{protocol} {sel}]: method not found"
                     )
                 });
         }
@@ -585,9 +581,7 @@ impl ClassProtocolMethodsBuilder<'_, '_> {
                 .map(|desc| desc.types)
                 .unwrap_or_else(|| {
                     panic!(
-                        "failed overriding protocol method +[{} {:?}]: method not found",
-                        protocol.name(),
-                        sel
+                        "failed overriding protocol method +[{protocol} {sel}]: method not found"
                     )
                 });
         }
@@ -607,8 +601,7 @@ impl ClassProtocolMethodsBuilder<'_, '_> {
             for desc in &self.required_instance_methods {
                 if !self.registered_instance_methods.contains(&desc.sel) {
                     panic!(
-                        "must implement required protocol method -[{} {:?}]",
-                        protocol.name(),
+                        "must implement required protocol method -[{protocol} {}]",
                         desc.sel
                     )
                 }
@@ -620,8 +613,7 @@ impl ClassProtocolMethodsBuilder<'_, '_> {
             for desc in &self.required_class_methods {
                 if !self.registered_class_methods.contains(&desc.sel) {
                     panic!(
-                        "must implement required protocol method +[{} {:?}]",
-                        protocol.name(),
+                        "must implement required protocol method +[{protocol} {}]",
                         desc.sel
                     )
                 }
