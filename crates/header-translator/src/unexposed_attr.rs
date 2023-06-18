@@ -198,6 +198,7 @@ impl UnexposedAttr {
             | "__WATCHOS_UNAVAILABLE"
             | "APPKIT_API_UNAVAILABLE_BEGIN_MACCATALYST"
             | "AVKIT_INIT_UNAVAILABLE"
+            | "CA_CANONICAL_DEPRECATED"
             | "CB_CM_API_AVAILABLE"
             | "MP_INIT_UNAVAILABLE"
             | "CF_AUTOMATED_REFCOUNT_UNAVAILABLE"

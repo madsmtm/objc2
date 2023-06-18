@@ -20,8 +20,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `MTLResourceID::from_raw` and `MTLResourceID::as_raw` to allow
   querying the underlying data.
 * Added new framework crates:
-  - `ScreenSaver` / `objc2-screen-saver`.
+  - `CoreAudioTypes` / `objc2-core-audio-types`.
   - `CoreFoundation` / `objc2-core-foundation`.
+  - `ScreenSaver` / `objc2-screen-saver`.
 
 ### Changed
 * Allow using `MainThreadBound` without the `NSThread` feature flag.

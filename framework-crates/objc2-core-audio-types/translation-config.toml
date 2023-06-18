@@ -1,0 +1,14 @@
+framework = "CoreAudioTypes"
+crate = "objc2-core-audio-types"
+required-dependencies = []
+custom-lib-rs = true
+macos = "10.15"
+maccatalyst = "13.0"
+ios = "13.0"
+tvos = "13.0"
+watchos = "6.0"
+visionos = "1.0"
+link = false # This framework only contains types
+
+# Requires a cast
+enum.anonymous.constants.AVAudioSessionErrorInsufficientPriority.skipped = true
