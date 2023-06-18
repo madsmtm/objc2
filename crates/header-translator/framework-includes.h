@@ -37,6 +37,8 @@
 
 #import <Contacts/Contacts.h>
 
+#import <CoreAudioTypes/CoreAudioTypes.h>
+
 #import <CoreData/CoreData.h>
 
 #import <CoreLocation/CoreLocation.h>
