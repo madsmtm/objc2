@@ -74,14 +74,14 @@ fn msg_send_check(
 #[cfg(debug_assertions)]
 #[track_caller]
 fn panic_null(sel: Sel) -> ! {
-    panic!("messsaging {sel:?} to nil")
+    panic!("messsaging {sel} to nil")
 }
 
 #[cfg(debug_assertions)]
 #[track_caller]
 fn panic_verify(cls: &Class, sel: Sel, err: crate::runtime::VerificationError) -> ! {
     panic!(
-        "invalid message send to {}[{cls:?} {sel:?}]: {err}",
+        "invalid message send to {}[{cls} {sel}]: {err}",
         if cls.is_metaclass() { "+" } else { "-" },
     )
 }

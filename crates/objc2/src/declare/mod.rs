@@ -426,7 +426,7 @@ impl ClassBuilder {
         assert_eq!(
             sel_args,
             enc_args.len(),
-            "Selector {:?} accepts {} arguments, but function accepts {}",
+            "Selector {} accepts {} arguments, but function accepts {}",
             sel,
             sel_args,
             enc_args.len(),
@@ -439,7 +439,7 @@ impl ClassBuilder {
             if let Some(method) = superclass.instance_method(sel) {
                 if let Err(err) = crate::verify::verify_method_signature(method, enc_args, &enc_ret)
                 {
-                    panic!("declared invalid method -[{} {sel:?}]: {err}", self.name())
+                    panic!("declared invalid method -[{} {sel}]: {err}", self.name())
                 }
             }
         }
@@ -453,7 +453,7 @@ impl ClassBuilder {
                 types.as_ptr(),
             )
         });
-        assert!(success.as_bool(), "Failed to add method {sel:?}");
+        assert!(success.as_bool(), "Failed to add method {sel}");
     }
 
     fn metaclass_mut(&mut self) -> *mut ffi::objc_class {
@@ -483,7 +483,7 @@ impl ClassBuilder {
         assert_eq!(
             sel_args,
             enc_args.len(),
-            "Selector {:?} accepts {} arguments, but function accepts {}",
+            "Selector {} accepts {} arguments, but function accepts {}",
             sel,
             sel_args,
             enc_args.len(),
@@ -496,7 +496,7 @@ impl ClassBuilder {
             if let Some(method) = superclass.class_method(sel) {
                 if let Err(err) = crate::verify::verify_method_signature(method, enc_args, &enc_ret)
                 {
-                    panic!("declared invalid method +[{} {sel:?}]: {err}", self.name())
+                    panic!("declared invalid method +[{} {sel}]: {err}", self.name())
                 }
             }
         }
@@ -510,7 +510,7 @@ impl ClassBuilder {
                 types.as_ptr(),
             )
         });
-        assert!(success.as_bool(), "Failed to add class method {sel:?}");
+        assert!(success.as_bool(), "Failed to add class method {sel}");
     }
 
     /// Adds an ivar with type `T` and the provided name.
@@ -574,7 +574,7 @@ impl ClassBuilder {
     pub fn add_protocol(&mut self, proto: &Protocol) {
         let success = unsafe { ffi::class_addProtocol(self.as_mut_ptr(), proto.as_ptr()) };
         let success = Bool::from_raw(success).as_bool();
-        assert!(success, "Failed to add protocol {proto:?}");
+        assert!(success, "Failed to add protocol {proto}");
     }
 
     // fn add_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
@@ -649,7 +649,7 @@ impl ProtocolBuilder {
         assert_eq!(
             sel_args,
             encs.len(),
-            "Selector {:?} accepts {} arguments, but function accepts {}",
+            "Selector {} accepts {} arguments, but function accepts {}",
             sel,
             sel_args,
             encs.len(),

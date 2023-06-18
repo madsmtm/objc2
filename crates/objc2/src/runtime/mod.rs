@@ -60,6 +60,26 @@ pub use self::nszone::NSZone;
 pub use self::protocol_object::{ImplementedBy, ProtocolObject};
 pub use crate::verify::VerificationError;
 
+/// Implement PartialEq, Eq and Hash using pointer semantics; there's not
+/// really a better way to do it for this type
+macro_rules! standard_pointer_impls {
+    ($name:ident) => {
+        impl PartialEq for $name {
+            #[inline]
+            fn eq(&self, other: &Self) -> bool {
+                self.as_ptr() == other.as_ptr()
+            }
+        }
+        impl Eq for $name {}
+        impl hash::Hash for $name {
+            #[inline]
+            fn hash<H: hash::Hasher>(&self, state: &mut H) {
+                self.as_ptr().hash(state)
+            }
+        }
+    };
+}
+
 /// Use [`Bool`] or [`ffi::BOOL`] instead.
 #[deprecated = "Use `Bool` or `ffi::BOOL` instead"]
 #[allow(non_upper_case_globals)]
@@ -72,6 +92,26 @@ pub const YES: ffi::BOOL = ffi::YES;
 /// Use [`Bool::NO`] or [`ffi::NO`] instead.
 #[deprecated = "Use `Bool::NO` or `ffi::NO` instead"]
 pub const NO: ffi::BOOL = ffi::NO;
+
+#[cfg(not(feature = "unstable-c-unwind"))]
+type InnerImp = unsafe extern "C" fn();
+#[cfg(feature = "unstable-c-unwind")]
+type InnerImp = unsafe extern "C-unwind" fn();
+
+/// A pointer to the start of a method implementation.
+///
+/// The first argument is a pointer to the receiver, the second argument is
+/// the selector, and the rest of the arguments follow.
+///
+///
+/// # Safety
+///
+/// This is a "catch all" type; it must be transmuted to the correct type
+/// before being called!
+///
+/// Also note that this is non-null! If you require an Imp that can be null,
+/// use `Option<Imp>`.
+pub type Imp = InnerImp;
 
 /// A method selector.
 ///
@@ -91,62 +131,17 @@ pub const NO: ffi::BOOL = ffi::NO;
 #[repr(transparent)]
 #[derive(Copy, Clone)]
 #[doc(alias = "SEL")]
+#[doc(alias = "objc_selector")]
 pub struct Sel {
     ptr: NonNull<ffi::objc_selector>,
 }
 
-/// A type that represents an instance variable.
-#[repr(C)]
-pub struct Ivar(ffi::objc_ivar);
-
-/// A type that represents a method in a class definition.
-#[repr(C)]
-pub struct Method(ffi::objc_method);
-
-/// A type that represents an Objective-C class.
-#[repr(C)]
-pub struct Class(ffi::objc_class);
-
-/// A type that represents an Objective-C protocol.
-#[repr(C)]
-pub struct Protocol(ffi::objc_protocol);
-
-macro_rules! standard_pointer_impls {
-    ($($name:ident),*) => {
-        $(
-            impl PartialEq for $name {
-                #[inline]
-                fn eq(&self, other: &Self) -> bool {
-                    self.as_ptr() == other.as_ptr()
-                }
-            }
-            impl Eq for $name {}
-            impl hash::Hash for $name {
-                #[inline]
-                fn hash<H: hash::Hasher>(&self, state: &mut H) {
-                    self.as_ptr().hash(state)
-                }
-            }
-        )*
-    }
-}
-
-// Implement PartialEq, Eq and Hash using pointer semantics; there's not
-// really a better way to do it.
-standard_pointer_impls!(Ivar, Method, Class);
-
-#[cfg(not(feature = "unstable-c-unwind"))]
-type InnerImp = unsafe extern "C" fn();
-#[cfg(feature = "unstable-c-unwind")]
-type InnerImp = unsafe extern "C-unwind" fn();
-
-/// A pointer to the start of a method implementation.
-///
-/// # Safety
-///
-/// This is a "catch all" type; it must be transmuted to the correct type
-/// before being called!
-pub type Imp = InnerImp;
+// SAFETY: Sel is immutable (and can be retrieved from any thread using the
+// `sel!` macro).
+unsafe impl Sync for Sel {}
+unsafe impl Send for Sel {}
+impl UnwindSafe for Sel {}
+impl RefUnwindSafe for Sel {}
 
 impl Sel {
     #[inline]
@@ -271,16 +266,15 @@ unsafe impl OptionEncode for Sel {}
 // that takes &Sel, while the user could get confused and accidentally attempt
 // that.
 
-// SAFETY: Sel is immutable (and can be retrieved from any thread using the
-// `sel!` macro).
-unsafe impl Sync for Sel {}
-unsafe impl Send for Sel {}
-impl UnwindSafe for Sel {}
-impl RefUnwindSafe for Sel {}
+impl fmt::Display for Sel {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Display::fmt(self.name(), f)
+    }
+}
 
 impl fmt::Debug for Sel {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.name())
+        f.debug_tuple("Sel").field(&self.name()).finish()
     }
 }
 
@@ -290,35 +284,64 @@ impl fmt::Pointer for Sel {
     }
 }
 
-impl Ivar {
-    pub(crate) fn as_ptr(&self) -> *const ffi::objc_ivar {
-        let ptr: *const Self = self;
-        ptr.cast()
-    }
-
-    /// Returns the name of self.
-    pub fn name(&self) -> &str {
-        let name = unsafe { CStr::from_ptr(ffi::ivar_getName(self.as_ptr())) };
-        str::from_utf8(name.to_bytes()).unwrap()
-    }
-
-    /// Returns the offset of self.
-    pub fn offset(&self) -> isize {
-        unsafe { ffi::ivar_getOffset(self.as_ptr()) }
-    }
-
-    /// Returns the `Encoding` of self.
-    pub fn type_encoding(&self) -> &str {
-        let encoding = unsafe { CStr::from_ptr(ffi::ivar_getTypeEncoding(self.as_ptr())) };
-        str::from_utf8(encoding.to_bytes()).unwrap()
-    }
-}
+/// A type that represents an instance variable.
+///
+/// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/ivar?language=objc).
+#[repr(C)]
+#[doc(alias = "objc_ivar")]
+pub struct Ivar(ffi::objc_ivar);
 
 // SAFETY: Ivar is immutable (and can be retrieved from Class anyhow).
 unsafe impl Sync for Ivar {}
 unsafe impl Send for Ivar {}
 impl UnwindSafe for Ivar {}
 impl RefUnwindSafe for Ivar {}
+
+impl Ivar {
+    pub(crate) fn as_ptr(&self) -> *const ffi::objc_ivar {
+        let ptr: *const Self = self;
+        ptr.cast()
+    }
+
+    /// Returns the instance variable's name.
+    ///
+    /// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/1418922-ivar_getname?language=objc).
+    #[doc(alias = "ivar_getName")]
+    pub fn name(&self) -> &str {
+        let name = unsafe { CStr::from_ptr(ffi::ivar_getName(self.as_ptr())) };
+        str::from_utf8(name.to_bytes()).unwrap()
+    }
+
+    /// Returns the instance variable's offset from the object base.
+    ///
+    /// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/1418976-ivar_getoffset?language=objc).
+    #[inline]
+    #[doc(alias = "ivar_getOffset")]
+    pub fn offset(&self) -> isize {
+        unsafe { ffi::ivar_getOffset(self.as_ptr()) }
+    }
+
+    /// Returns the instance variable's `@encode(type)` string.
+    ///
+    /// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/1418569-ivar_gettypeencoding?language=objc).
+    #[doc(alias = "ivar_getTypeEncoding")]
+    pub fn type_encoding(&self) -> &str {
+        let encoding = unsafe { CStr::from_ptr(ffi::ivar_getTypeEncoding(self.as_ptr())) };
+        str::from_utf8(encoding.to_bytes()).unwrap()
+    }
+}
+
+standard_pointer_impls!(Ivar);
+
+impl fmt::Debug for Ivar {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Ivar")
+            .field("name", &self.name())
+            .field("offset", &self.offset())
+            .field("type_encoding", &self.type_encoding())
+            .finish_non_exhaustive()
+    }
+}
 
 #[cfg_attr(not(feature = "malloc"), allow(dead_code))]
 #[derive(Debug, PartialEq, Eq, Hash)]
@@ -342,19 +365,40 @@ impl MethodDescription {
     }
 }
 
+/// A type that represents a method in a class definition.
+///
+/// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/method?language=objc).
+#[repr(C)]
+#[doc(alias = "objc_method")]
+pub struct Method(ffi::objc_method);
+
+// SAFETY: Method is immutable (and can be retrieved from Class anyhow).
+unsafe impl Sync for Method {}
+unsafe impl Send for Method {}
+impl UnwindSafe for Method {}
+impl RefUnwindSafe for Method {}
+
 impl Method {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_method {
         let ptr: *const Self = self;
         ptr.cast()
     }
 
+    // Note: We don't take `&mut` here, since the operations on methods work
+    // atomically.
+    pub(crate) fn as_mut_ptr(&self) -> *mut ffi::objc_method {
+        self.as_ptr() as _
+    }
+
     /// Returns the name of self.
+    #[doc(alias = "method_getName")]
     pub fn name(&self) -> Sel {
         unsafe { Sel::from_ptr(ffi::method_getName(self.as_ptr())).unwrap() }
     }
 
     /// Returns the `Encoding` of self's return type.
     #[cfg(feature = "malloc")]
+    #[doc(alias = "method_copyReturnType")]
     pub fn return_type(&self) -> Malloc<str> {
         unsafe {
             let encoding = ffi::method_copyReturnType(self.as_ptr());
@@ -365,6 +409,7 @@ impl Method {
     /// Returns the `Encoding` of a single parameter type of self, or
     /// [`None`] if self has no parameter at the given index.
     #[cfg(feature = "malloc")]
+    #[doc(alias = "method_copyArgumentType")]
     pub fn argument_type(&self, index: usize) -> Option<Malloc<str>> {
         unsafe {
             let encoding = ffi::method_copyArgumentType(self.as_ptr(), index as c_uint);
@@ -399,24 +444,128 @@ impl Method {
     }
 
     /// Returns the number of arguments accepted by self.
+    #[doc(alias = "method_getNumberOfArguments")]
     pub fn arguments_count(&self) -> usize {
         unsafe { ffi::method_getNumberOfArguments(self.as_ptr()) as usize }
     }
 
-    /// Returns the implementation of self.
+    /// Returns the implementation of this method.
+    #[doc(alias = "method_getImplementation")]
     pub fn implementation(&self) -> Imp {
-        unsafe { ffi::method_getImplementation(self.as_ptr()).expect("Null IMP") }
+        unsafe { ffi::method_getImplementation(self.as_ptr()).expect("null IMP") }
     }
 
-    // unsafe fn set_implementation(&mut self, imp: Imp) -> Imp;
-    // unsafe fn exchange_implementation(&mut self, other: &mut Method);
+    /// Set the implementation of this method.
+    ///
+    /// Note that any thread may at any point be changing method
+    /// implementations, so if you intend to call the previous method as
+    /// returned by e.g. [`Self::implementation`], beware that that may now be
+    /// stale.
+    ///
+    /// The previous implementation is returned from this function though, so
+    /// you can call that instead.
+    ///
+    /// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/1418707-method_setimplementation?language=objc).
+    ///
+    ///
+    /// # Safety
+    ///
+    /// The given implementation function pointer must:
+    ///
+    /// 1. Have the signature expected by the Objective-C runtime and callers
+    ///    of this method.
+    ///
+    /// 2. Be at least as safe as the existing method, i.e. by overriding the
+    ///    previous method, it should not be possible for the program to cause
+    ///    UB.
+    ///
+    ///    A common mistake would be expecting e.g. a pointer to not be null,
+    ///    where the null case was handled before.
+    #[inline]
+    #[doc(alias = "method_setImplementation")]
+    pub unsafe fn set_implementation(&self, imp: Imp) -> Imp {
+        // SAFETY: The new impl is not NULL, and the rest is upheld by the
+        // caller.
+        unsafe { ffi::method_setImplementation(self.as_mut_ptr(), Some(imp)).expect("null IMP") }
+    }
+
+    /// Exchange the implementation of two methods.
+    ///
+    /// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/1418769-method_exchangeimplementations?language=objc).
+    ///
+    ///
+    /// # Safety
+    ///
+    /// The two methods must be perfectly compatible, both in signature, and
+    /// in expected (in terms of safety, not necessarily behaviour) input and
+    /// output.
+    ///
+    ///
+    /// # Example
+    ///
+    /// This is an atomic version of the following:
+    ///
+    /// ```
+    /// use objc2::runtime::Method;
+    /// # use objc2::runtime::NSObject;
+    /// # use objc2::sel;
+    /// # use crate::objc2::ClassType;
+    ///
+    /// let m1: &Method;
+    /// let m2: &Method;
+    /// #
+    /// # // Use the same method twice, to avoid actually changing anything
+    /// # m1 = NSObject::class().instance_method(sel!(hash)).unwrap();
+    /// # m2 = NSObject::class().instance_method(sel!(hash)).unwrap();
+    ///
+    /// unsafe {
+    ///     let imp = m2.set_implementation(m1.implementation());
+    ///     m1.set_implementation(imp);
+    /// }
+    /// ```
+    #[inline]
+    #[doc(alias = "method_exchangeImplementations")]
+    pub unsafe fn exchange_implementation(&self, other: &Self) {
+        // TODO: Consider checking that `self.types()` and `other.types()`
+        // match when debug assertions are enabled?
+
+        // SAFETY: Verified by caller
+        unsafe { ffi::method_exchangeImplementations(self.as_mut_ptr(), other.as_mut_ptr()) }
+    }
 }
 
-// SAFETY: Method is immutable (and can be retrieved from Class anyhow).
-unsafe impl Sync for Method {}
-unsafe impl Send for Method {}
-impl UnwindSafe for Method {}
-impl RefUnwindSafe for Method {}
+standard_pointer_impls!(Method);
+
+impl fmt::Debug for Method {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Method")
+            .field("name", &self.name())
+            .field("types", &self.types())
+            .field("implementation", &self.implementation())
+            .finish_non_exhaustive()
+    }
+}
+
+/// A type that represents an Objective-C class.
+///
+/// This is an opaque type meant to be used behind a shared reference
+/// `&Class`, which is semantically equivalent to `Class _Nonnull`.
+///
+/// A nullable class can be used as `Option<&Class>`.
+///
+/// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/class?language=objc).
+#[repr(C)]
+#[doc(alias = "AnyClass")]
+#[doc(alias = "objc_class")]
+pub struct Class(ffi::objc_class);
+
+// SAFETY: Class is immutable (and can be retrieved from any thread using the
+// `class!` macro).
+unsafe impl Sync for Class {}
+unsafe impl Send for Class {}
+impl UnwindSafe for Class {}
+impl RefUnwindSafe for Class {}
+// Note that Unpin is not applicable.
 
 impl Class {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_class {
@@ -426,6 +575,7 @@ impl Class {
 
     /// Returns the class definition of a specified class, or [`None`] if the
     /// class is not registered with the Objective-C runtime.
+    #[doc(alias = "objc_getClass")]
     pub fn get(name: &str) -> Option<&'static Self> {
         let name = CString::new(name).unwrap();
         let cls = unsafe { ffi::objc_getClass(name.as_ptr()) };
@@ -437,6 +587,7 @@ impl Class {
 
     /// Obtains the list of registered class definitions.
     #[cfg(feature = "malloc")]
+    #[doc(alias = "objc_copyClassList")]
     pub fn classes() -> Malloc<[&'static Self]> {
         unsafe {
             let mut count: c_uint = 0;
@@ -446,6 +597,7 @@ impl Class {
     }
 
     /// Returns the total number of registered classes.
+    #[doc(alias = "objc_getClassList")]
     pub fn classes_count() -> usize {
         unsafe { ffi::objc_getClassList(ptr::null_mut(), 0) as usize }
     }
@@ -469,6 +621,7 @@ impl Class {
     }
 
     /// Returns the name of the class.
+    #[doc(alias = "class_getName")]
     pub fn name(&self) -> &str {
         // SAFETY: The pointer is valid, and the return is properly bounded
         unsafe { Self::name_raw(self.as_ptr()) }
@@ -478,6 +631,7 @@ impl Class {
     ///
     /// 1. The class pointer must be valid.
     /// 2. The caller must bound the lifetime of the returned class.
+    #[inline]
     pub(crate) unsafe fn superclass_raw<'a>(ptr: *const ffi::objc_class) -> Option<&'a Class> {
         // SAFETY: Caller ensures that the pointer is valid
         let superclass = unsafe { ffi::class_getSuperclass(ptr) };
@@ -487,12 +641,16 @@ impl Class {
     }
 
     /// Returns the superclass of self, or [`None`] if self is a root class.
+    #[inline]
+    #[doc(alias = "class_getSuperclass")]
     pub fn superclass(&self) -> Option<&Class> {
         // SAFETY: The pointer is valid, and the return is properly bounded
         unsafe { Self::superclass_raw(self.as_ptr()) }
     }
 
     /// Returns the metaclass of self.
+    #[inline]
+    #[doc(alias = "object_getClass")]
     pub fn metaclass(&self) -> &Self {
         let ptr: *const Self = unsafe { ffi::object_getClass(self.as_ptr().cast()) }.cast();
         unsafe { ptr.as_ref().unwrap_unchecked() }
@@ -506,6 +664,8 @@ impl Class {
     }
 
     /// Returns the size of instances of self.
+    #[inline]
+    #[doc(alias = "class_getInstanceSize")]
     pub fn instance_size(&self) -> usize {
         unsafe { ffi::class_getInstanceSize(self.as_ptr()) }
     }
@@ -513,6 +673,8 @@ impl Class {
     /// Returns a specified instance method for self, or [`None`] if self and
     /// its superclasses do not contain an instance method with the specified
     /// selector.
+    #[inline]
+    #[doc(alias = "class_getInstanceMethod")]
     pub fn instance_method(&self, sel: Sel) -> Option<&Method> {
         unsafe {
             let method = ffi::class_getInstanceMethod(self.as_ptr(), sel.as_ptr());
@@ -525,6 +687,8 @@ impl Class {
     /// selector.
     ///
     /// Same as `cls.metaclass().class_method()`.
+    #[inline]
+    #[doc(alias = "class_getClassMethod")]
     pub fn class_method(&self, sel: Sel) -> Option<&Method> {
         unsafe {
             let method = ffi::class_getClassMethod(self.as_ptr(), sel.as_ptr());
@@ -534,6 +698,7 @@ impl Class {
 
     /// Returns the ivar for a specified instance variable of self, or
     /// [`None`] if self has no ivar with the given name.
+    #[doc(alias = "class_getInstanceVariable")]
     pub fn instance_variable(&self, name: &str) -> Option<&Ivar> {
         let name = CString::new(name).unwrap();
         unsafe {
@@ -543,6 +708,7 @@ impl Class {
     }
 
     #[allow(unused)]
+    #[doc(alias = "class_getIvarLayout")]
     fn instance_variable_layout(&self) -> Option<&[u8]> {
         let layout: *const c_char = unsafe { ffi::class_getIvarLayout(self.as_ptr()).cast() };
         if layout.is_null() {
@@ -553,6 +719,7 @@ impl Class {
     }
 
     #[allow(unused)]
+    #[doc(alias = "class_getClassVariable")]
     fn class_variable(&self, name: &str) -> Option<&Ivar> {
         let name = CString::new(name).unwrap();
         let ivar = unsafe { ffi::class_getClassVariable(self.as_ptr(), name.as_ptr()) };
@@ -562,6 +729,7 @@ impl Class {
 
     /// Describes the instance methods implemented by self.
     #[cfg(feature = "malloc")]
+    #[doc(alias = "class_copyMethodList")]
     pub fn instance_methods(&self) -> Malloc<[&Method]> {
         unsafe {
             let mut count: c_uint = 0;
@@ -571,6 +739,7 @@ impl Class {
     }
 
     /// Checks whether this class conforms to the specified protocol.
+    #[doc(alias = "class_conformsToProtocol")]
     pub fn conforms_to(&self, proto: &Protocol) -> bool {
         unsafe {
             Bool::from_raw(ffi::class_conformsToProtocol(self.as_ptr(), proto.as_ptr())).as_bool()
@@ -579,6 +748,7 @@ impl Class {
 
     /// Get a list of the protocols to which this class conforms.
     #[cfg(feature = "malloc")]
+    #[doc(alias = "class_copyProtocolList")]
     pub fn adopted_protocols(&self) -> Malloc<[&Protocol]> {
         unsafe {
             let mut count: c_uint = 0;
@@ -590,6 +760,7 @@ impl Class {
 
     /// Describes the instance variables declared by self.
     #[cfg(feature = "malloc")]
+    #[doc(alias = "class_copyIvarList")]
     pub fn instance_variables(&self) -> Malloc<[&Ivar]> {
         unsafe {
             let mut count: c_uint = 0;
@@ -608,6 +779,7 @@ impl Class {
     /// That said, it will always return `true` if an instance of the class
     /// responds to the selector, but may return `false` if they don't
     /// directly (e.g. does so by using forwarding instead).
+    #[inline]
     #[doc(alias = "class_respondsToSelector")]
     pub fn responds_to(&self, sel: Sel) -> bool {
         // This may call `resolveInstanceMethod:` and `resolveClassMethod:`
@@ -657,13 +829,7 @@ impl Class {
     }
 }
 
-// SAFETY: Class is immutable (and can be retrieved from any thread using the
-// `class!` macro).
-unsafe impl Sync for Class {}
-unsafe impl Send for Class {}
-impl UnwindSafe for Class {}
-impl RefUnwindSafe for Class {}
-// Note that Unpin is not applicable.
+standard_pointer_impls!(Class);
 
 unsafe impl RefEncode for Class {
     const ENCODING_REF: Encoding = Encoding::Class;
@@ -671,9 +837,30 @@ unsafe impl RefEncode for Class {
 
 impl fmt::Debug for Class {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.name())
+        f.debug_struct("Class")
+            .field("name", &self.name())
+            .finish_non_exhaustive()
     }
 }
+
+impl fmt::Display for Class {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Display::fmt(self.name(), f)
+    }
+}
+
+/// A type that represents an Objective-C protocol.
+#[repr(C)]
+#[doc(alias = "AnyProtocol")]
+#[doc(alias = "objc_protocol")]
+pub struct Protocol(ffi::objc_protocol);
+
+// SAFETY: Protocol is immutable (and can be retrieved from Class anyhow).
+unsafe impl Sync for Protocol {}
+unsafe impl Send for Protocol {}
+impl UnwindSafe for Protocol {}
+impl RefUnwindSafe for Protocol {}
+// Note that Unpin is not applicable.
 
 impl Protocol {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_protocol {
@@ -683,6 +870,7 @@ impl Protocol {
 
     /// Returns the protocol definition of a specified protocol, or [`None`]
     /// if the protocol is not registered with the Objective-C runtime.
+    #[doc(alias = "objc_getProtocol")]
     pub fn get(name: &str) -> Option<&'static Protocol> {
         let name = CString::new(name).unwrap();
         unsafe {
@@ -693,6 +881,7 @@ impl Protocol {
 
     /// Obtains the list of registered protocol definitions.
     #[cfg(feature = "malloc")]
+    #[doc(alias = "objc_copyProtocolList")]
     pub fn protocols() -> Malloc<[&'static Protocol]> {
         unsafe {
             let mut count: c_uint = 0;
@@ -703,6 +892,7 @@ impl Protocol {
 
     /// Get a list of the protocols to which this protocol conforms.
     #[cfg(feature = "malloc")]
+    #[doc(alias = "protocol_copyProtocolList")]
     pub fn adopted_protocols(&self) -> Malloc<[&Protocol]> {
         unsafe {
             let mut count: c_uint = 0;
@@ -713,6 +903,7 @@ impl Protocol {
     }
 
     /// Checks whether this protocol conforms to the specified protocol.
+    #[doc(alias = "protocol_conformsToProtocol")]
     pub fn conforms_to(&self, proto: &Protocol) -> bool {
         unsafe {
             Bool::from_raw(ffi::protocol_conformsToProtocol(
@@ -724,6 +915,7 @@ impl Protocol {
     }
 
     /// Returns the name of self.
+    #[doc(alias = "protocol_getName")]
     pub fn name(&self) -> &str {
         let name = unsafe { CStr::from_ptr(ffi::protocol_getName(self.as_ptr())) };
         str::from_utf8(name.to_bytes()).unwrap()
@@ -754,12 +946,14 @@ impl Protocol {
 
     #[cfg(feature = "malloc")]
     #[allow(dead_code)]
+    #[doc(alias = "protocol_copyMethodDescriptionList")]
     pub(crate) fn method_descriptions(&self, required: bool) -> Vec<MethodDescription> {
         self.method_descriptions_inner(required, true)
     }
 
     #[cfg(feature = "malloc")]
     #[allow(dead_code)]
+    #[doc(alias = "protocol_copyMethodDescriptionList")]
     pub(crate) fn class_method_descriptions(&self, required: bool) -> Vec<MethodDescription> {
         self.method_descriptions_inner(required, false)
     }
@@ -768,30 +962,34 @@ impl Protocol {
 impl PartialEq for Protocol {
     /// Check whether the protocols are equal, or conform to each other.
     #[inline]
+    #[doc(alias = "protocol_isEqual")]
     fn eq(&self, other: &Protocol) -> bool {
         unsafe { Bool::from_raw(ffi::protocol_isEqual(self.as_ptr(), other.as_ptr())).as_bool() }
     }
 }
+
+impl Eq for Protocol {}
+
+// Don't implement `Hash` for protocol, it is unclear how that would work
 
 unsafe impl RefEncode for Protocol {
     // Protocol is an object internally
     const ENCODING_REF: Encoding = Encoding::Object;
 }
 
-impl Eq for Protocol {}
-
 impl fmt::Debug for Protocol {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.name())
+        f.debug_struct("Protocol")
+            .field("name", &self.name())
+            .finish_non_exhaustive()
     }
 }
 
-// SAFETY: Protocol is immutable (and can be retrieved from Class anyhow).
-unsafe impl Sync for Protocol {}
-unsafe impl Send for Protocol {}
-impl UnwindSafe for Protocol {}
-impl RefUnwindSafe for Protocol {}
-// Note that Unpin is not applicable.
+impl fmt::Display for Protocol {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Display::fmt(self.name(), f)
+    }
+}
 
 pub(crate) fn ivar_offset(cls: &Class, name: &str, expected: &Encoding) -> isize {
     match cls.instance_variable(name) {
@@ -803,7 +1001,7 @@ pub(crate) fn ivar_offset(cls: &Class, name: &str, expected: &Encoding) -> isize
             );
             ivar.offset()
         }
-        None => panic!("Ivar {} not found on class {:?}", name, cls),
+        None => panic!("ivar {name} not found on class {cls}"),
     }
 }
 
@@ -811,9 +1009,10 @@ pub(crate) fn ivar_offset(cls: &Class, name: &str, expected: &Encoding) -> isize
 ///
 /// This is slightly different from [`NSObject`] in that it may represent an
 /// instance of an _arbitary_ Objective-C class (e.g. it does not have to be
-/// a subclass of `NSObject`).
+/// a subclass of `NSObject`, so it can represent other root classes like
+/// `NSProxy`).
 ///
-/// `Id<Object>` is equivalent to Objective-C's `id`.
+/// `Id<Object>` is equivalent to Objective-C's `id _Nonnull`.
 ///
 /// This contains [`UnsafeCell`], and is similar to that in that one can
 /// safely access and perform interior mutability on this (both via.
@@ -825,6 +1024,8 @@ pub(crate) fn ivar_offset(cls: &Class, name: &str, expected: &Encoding) -> isize
 /// depending on the specific subclass. For example, `NSAutoreleasePool` is
 /// not `Send`, it has to be deallocated on the same thread that it was
 /// created. `NSLock` is not `Send` either.
+///
+/// This is somewhat similar to [`ffi::objc_object`].
 ///
 /// [`UnsafeCell`]: core::cell::UnsafeCell
 /// [`msg_send!`]: crate::msg_send
@@ -848,9 +1049,53 @@ impl Object {
     }
 
     /// Dynamically find the class of this object.
+    #[doc(alias = "object_getClass")]
     pub fn class(&self) -> &Class {
         let ptr: *const Class = unsafe { ffi::object_getClass(self.as_ptr()) }.cast();
+        // SAFETY: The class is not NULL because the object is not NULL.
         unsafe { ptr.as_ref().unwrap_unchecked() }
+    }
+
+    /// Change the class of the object at runtime.
+    ///
+    /// Returns the object's previous class.
+    ///
+    ///
+    /// # Safety
+    ///
+    /// The new class must:
+    ///
+    /// 1. Be a subclass of the object's current class.
+    ///
+    /// 2. The subclass must not add any instance variables - importantly, the
+    ///    instance size of old and the new classes must be the same.
+    ///
+    /// 3. Any overridden methods on the new class must be fully compatible
+    ///    with the old ones.
+    ///
+    /// Note that in the general case, where arbitary parts of the program
+    /// may be trying to modify the class of the object concurrently, these
+    /// requirements are not actually possible to uphold.
+    ///
+    /// Since usage of this function is expected to be extremely rare, and
+    /// even more so trying to do it concurrently, it is recommended that you
+    /// verify that the returned class is what you would expect, and if not,
+    /// panic.
+    #[inline]
+    #[doc(alias = "object_setClass")]
+    pub unsafe fn set_class<'s>(this: &Self, cls: &Class) -> &'s Class {
+        let ptr =
+            unsafe { ffi::object_setClass(this.as_ptr() as *mut ffi::objc_object, cls.as_ptr()) };
+        let ptr: *const Class = ptr.cast();
+        // SAFETY: The class is not NULL because the object is not NULL.
+        let old_cls = unsafe { ptr.as_ref().unwrap_unchecked() };
+        // TODO: Check the superclass requirement too?
+        debug_assert_eq!(
+            old_cls.instance_size(),
+            cls.instance_size(),
+            "old and new class sizes were not equal; this is UB!"
+        );
+        old_cls
     }
 
     /// Offset an object pointer to get a pointer to an ivar.
@@ -1013,7 +1258,7 @@ impl Object {
 
 impl fmt::Debug for Object {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "<{:?}: {:p}>", self.class(), self.as_ptr())
+        write!(f, "<{}: {:p}>", self.class().name(), self.as_ptr())
     }
 }
 
@@ -1224,7 +1469,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic = "Ivar unknown not found on class CustomObject"]
+    #[should_panic = "ivar unknown not found on class CustomObject"]
     fn test_object_ivar_unknown() {
         let obj = test_utils::custom_object();
         let _ = unsafe { *obj.ivar::<u32>("unknown") };
@@ -1264,12 +1509,19 @@ mod tests {
     }
 
     #[test]
-    fn test_debug() {
-        assert_eq!(format!("{:?}", sel!(abc:)), "abc:");
+    fn test_debug_display() {
+        let sel = sel!(abc:);
+        assert_eq!(format!("{sel}"), "abc:");
+        assert_eq!(format!("{sel:?}"), "Sel(\"abc:\")");
         let cls = test_utils::custom_class();
-        assert_eq!(format!("{cls:?}"), "CustomObject");
+        assert_eq!(format!("{cls}"), "CustomObject");
+        assert_eq!(format!("{cls:?}"), "Class { name: \"CustomObject\", .. }");
         let protocol = test_utils::custom_protocol();
-        assert_eq!(format!("{protocol:?}"), "CustomProtocol");
+        assert_eq!(format!("{protocol}"), "CustomProtocol");
+        assert_eq!(
+            format!("{protocol:?}"),
+            "Protocol { name: \"CustomProtocol\", .. }"
+        );
 
         let object = test_utils::custom_object();
         assert_eq!(

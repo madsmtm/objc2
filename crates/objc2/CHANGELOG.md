@@ -56,6 +56,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   implementations for `rc::Id`.
 * Added `rc::IdFromIterator` helper trait for implementing `IntoIterator`
   for `rc::Id`.
+* Added `Display` impl for `runtime::Class`, `runtime::Sel` and
+  `runtime::Protocol`.
+* Added `Debug` impl for `runtime::Method` and `runtime::Ivar`.
+* Added `Method::set_implementation`.
+* Added `Method::exchange_implementation`.
+* Added `Object::set_class`.
 
 ### Changed
 * **BREAKING**: `objc2::rc::AutoreleasePool` is now a zero-sized `Copy` type
@@ -69,6 +75,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Moved `VerificationError`, `ProtocolObject` and
   `ImplementedBy` into the `runtime` module.
 * Relaxed a `fmt::Debug` bound on `WeakId`'s own `fmt::Debug` impl.
+* Changed `Debug` impl for `runtime::Class`, `runtime::Sel` and
+  `runtime::Protocol` to give more information.
 
 ### Fixed
 * Fixed using autorelease pools on 32bit macOS and older macOS versions.
