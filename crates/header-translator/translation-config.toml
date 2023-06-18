@@ -1575,3 +1575,7 @@ skipped-protocols = ["NSCopying", "NSMutableCopying"]
 skipped-protocols = ["NSCopying", "NSMutableCopying"]
 [class.NSPurgeableData]
 skipped-protocols = ["NSCopying", "NSMutableCopying"]
+
+# Requires a cast
+[enum.anonymous.constants.AVAudioSessionErrorInsufficientPriority]
+skipped = true
