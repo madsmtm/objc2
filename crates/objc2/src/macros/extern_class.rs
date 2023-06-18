@@ -350,7 +350,7 @@ macro_rules! __inner_extern_class {
         $crate::__extern_class_impl_traits! {
             $(#[$impl_m])*
             unsafe impl ($($t_for $(: $b_for)?),*) for $for {
-                INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::Object];
+                INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::AnyObject];
 
                 fn as_super(&$as_super_self) $as_super
                 fn as_super_mut(&mut $as_super_mut_self) $as_super_mut
@@ -364,7 +364,7 @@ macro_rules! __inner_extern_class {
             const NAME: &'static $crate::__macro_helpers::str = $crate::__select_name!($name; $($name_const)?);
 
             #[inline]
-            fn class() -> &'static $crate::runtime::Class {
+            fn class() -> &'static $crate::runtime::AnyClass {
                 $crate::__macro_helpers::assert_mutability_matches_superclass_mutability::<Self>();
 
                 $crate::__class_inner!(
@@ -414,8 +414,8 @@ macro_rules! __extern_class_impl_traits {
                 = <$superclass as $crate::RefEncode>::ENCODING_REF;
         }
 
-        // SAFETY: This is a newtype wrapper over `Object` (we even ensure
-        // that `Object` is always last in our inheritance tree), so it is
+        // SAFETY: This is a newtype wrapper over `AnyObject` (we even ensure
+        // that `AnyObject` is always last in our inheritance tree), so it is
         // always safe to reinterpret as that.
         //
         // That the object must work with standard memory management is

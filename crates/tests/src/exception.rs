@@ -4,10 +4,10 @@ use icrate::Foundation::{NSArray, NSException, NSString};
 use objc2::exception::{catch, throw};
 use objc2::msg_send;
 use objc2::rc::{autoreleasepool, Id};
-use objc2::runtime::Object;
+use objc2::runtime::{AnyObject, NSObject};
 
 #[track_caller]
-fn assert_retain_count(obj: &Object, expected: usize) {
+fn assert_retain_count(obj: &AnyObject, expected: usize) {
     let retain_count: usize = unsafe { msg_send![obj, retainCount] };
     assert_eq!(retain_count, expected);
 }
@@ -126,8 +126,8 @@ fn raise_catch() {
 fn catch_actual() {
     let res = unsafe {
         catch(|| {
-            let arr: Id<NSArray<Object>> = NSArray::new();
-            let _obj: *mut Object = msg_send![&arr, objectAtIndex: 0usize];
+            let arr: Id<NSArray<NSObject>> = NSArray::new();
+            let _obj: *mut NSObject = msg_send![&arr, objectAtIndex: 0usize];
         })
     };
     let exc = res.unwrap_err().unwrap();

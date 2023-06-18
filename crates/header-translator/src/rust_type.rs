@@ -358,10 +358,10 @@ impl fmt::Display for IdType {
                 Ok(())
             }
             Self::AnyObject { protocols } => match &**protocols {
-                [] => write!(f, "Object"),
+                [] => write!(f, "AnyObject"),
                 [id] if id.is_nsobject() => write!(f, "NSObject"),
                 [id] if id.name == "NSCopying" || id.name == "NSMutableCopying" => {
-                    write!(f, "Object")
+                    write!(f, "AnyObject")
                 }
                 [id] => write!(f, "ProtocolObject<dyn {}>", id.path()),
                 // TODO: Handle this better
@@ -369,7 +369,7 @@ impl fmt::Display for IdType {
             },
             Self::TypeDef { id, .. } => write!(f, "{}", id.path()),
             Self::GenericParam { name } => write!(f, "{name}"),
-            Self::AnyProtocol => write!(f, "Protocol"),
+            Self::AnyProtocol => write!(f, "AnyProtocol"),
             // TODO: Handle this better
             Self::AnyClass { .. } => write!(f, "TodoClass"),
             Self::Self_ { .. } => write!(f, "Self"),
@@ -1052,9 +1052,9 @@ impl fmt::Display for Inner {
             }
             Class { nullability } => {
                 if *nullability == Nullability::NonNull {
-                    write!(f, "NonNull<Class>")
+                    write!(f, "NonNull<AnyClass>")
                 } else {
-                    write!(f, "*const Class")
+                    write!(f, "*const AnyClass")
                 }
             }
             Sel { nullability } => {
@@ -1546,9 +1546,9 @@ impl fmt::Display for Ty {
                     }
                     Inner::Class { nullability } => {
                         if *nullability == Nullability::NonNull {
-                            write!(f, "&'static Class")
+                            write!(f, "&'static AnyClass")
                         } else {
-                            write!(f, "Option<&'static Class>")
+                            write!(f, "Option<&'static AnyClass>")
                         }
                     }
                     Inner::C99Bool => {
@@ -1648,9 +1648,9 @@ impl fmt::Display for Ty {
                 }
                 Inner::Class { nullability } => {
                     if *nullability == Nullability::NonNull {
-                        write!(f, "&Class")
+                        write!(f, "&AnyClass")
                     } else {
-                        write!(f, "Option<&Class>")
+                        write!(f, "Option<&AnyClass>")
                     }
                 }
                 Inner::C99Bool if self.kind == TyKind::MethodArgument => {

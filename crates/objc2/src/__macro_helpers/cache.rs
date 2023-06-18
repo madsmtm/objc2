@@ -2,7 +2,7 @@ use core::ptr;
 use core::sync::atomic::{AtomicPtr, Ordering};
 
 use crate::ffi;
-use crate::runtime::{Class, Sel};
+use crate::runtime::{AnyClass, Sel};
 
 /// Allows storing a [`Sel`] in a static and lazily loading it.
 #[doc(hidden)]
@@ -40,10 +40,10 @@ impl CachedSel {
     }
 }
 
-/// Allows storing a [`Class`] reference in a static and lazily loading it.
+/// Allows storing a [`AnyClass`] reference in a static and lazily loading it.
 #[doc(hidden)]
 pub struct CachedClass {
-    ptr: AtomicPtr<Class>,
+    ptr: AtomicPtr<AnyClass>,
 }
 
 impl CachedClass {
@@ -58,14 +58,14 @@ impl CachedClass {
     /// the given name and stores it.
     #[inline]
     #[doc(hidden)]
-    pub unsafe fn get(&self, name: &str) -> Option<&'static Class> {
+    pub unsafe fn get(&self, name: &str) -> Option<&'static AnyClass> {
         // `Relaxed` should be fine since `objc_getClass` is thread-safe.
         let ptr = self.ptr.load(Ordering::Relaxed);
         if let Some(cls) = unsafe { ptr.as_ref() } {
             Some(cls)
         } else {
-            let ptr: *const Class = unsafe { ffi::objc_getClass(name.as_ptr().cast()) }.cast();
-            self.ptr.store(ptr as *mut Class, Ordering::Relaxed);
+            let ptr: *const AnyClass = unsafe { ffi::objc_getClass(name.as_ptr().cast()) }.cast();
+            self.ptr.store(ptr as *mut AnyClass, Ordering::Relaxed);
             unsafe { ptr.as_ref() }
         }
     }

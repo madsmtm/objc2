@@ -1,5 +1,5 @@
 use objc2::mutability::Immutable;
-use objc2::runtime::{Class, NSObject, Object};
+use objc2::runtime::{AnyClass, NSObject};
 use objc2::{class, declare_class, msg_send, sel, ClassType};
 
 declare_class!(
@@ -16,7 +16,7 @@ declare_class!(
 fn use_class_and_msg_send() {
     unsafe {
         let cls = class!(NSObject);
-        let obj: *mut Object = msg_send![cls, new];
+        let obj: *mut NSObject = msg_send![cls, new];
         let _hash: usize = msg_send![obj, hash];
         let _: () = msg_send![obj, release];
     }
@@ -29,7 +29,7 @@ fn use_sel() {
 }
 
 #[allow(unused)]
-fn test_msg_send_comma_handling(obj: &MyObject, superclass: &Class) {
+fn test_msg_send_comma_handling(obj: &MyObject, superclass: &AnyClass) {
     unsafe {
         let _: () = msg_send![obj, a];
         let _: () = msg_send![obj, a,];

@@ -2,11 +2,11 @@
 use core::mem;
 use core::ptr;
 
-use objc2::runtime::{Object, Sel};
+use objc2::runtime::{AnyObject, Sel};
 use objc2::MessageReceiver;
 
 #[no_mangle]
-unsafe fn handle(obj: &Object, sel: Sel) -> *mut Object {
+unsafe fn handle(obj: &AnyObject, sel: Sel) -> *mut AnyObject {
     MessageReceiver::send_message(obj, sel, ())
 }
 
@@ -22,6 +22,6 @@ fn selector() -> Sel {
 }
 
 #[no_mangle]
-unsafe fn handle_with_sel(obj: &Object) -> *mut Object {
+unsafe fn handle_with_sel(obj: &AnyObject) -> *mut AnyObject {
     MessageReceiver::send_message(obj, selector(), ())
 }

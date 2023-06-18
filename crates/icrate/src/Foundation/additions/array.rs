@@ -26,7 +26,7 @@ impl<T: Message> NSArray<T> {
         // now safely take ownership (even if `T` is mutable).
         unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
         // The drop of `Vec` here would invalidate our mutable pointer,
-        // except for the fact that we're using `UnsafeCell` in `Object`.
+        // except for the fact that we're using `UnsafeCell` in `AnyObject`.
     }
 
     pub fn from_id_slice(slice: &[Id<T>]) -> Id<Self>

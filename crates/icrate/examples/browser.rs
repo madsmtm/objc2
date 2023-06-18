@@ -19,7 +19,7 @@ use objc2::{
     declare_class, extern_methods, msg_send,
     mutability::InteriorMutable,
     rc::{Allocated, Id},
-    runtime::{Object, ProtocolObject, Sel},
+    runtime::{AnyObject, ProtocolObject, Sel},
     sel, ClassType,
 };
 
@@ -169,7 +169,7 @@ fn main() {
     let back_button = {
         // configure the button to navigate the webview backward
         let title = ns_string!("back");
-        let target = Some::<&Object>(&web_view);
+        let target = Some::<&AnyObject>(&web_view);
         let action = Some(sel!(goBack));
         let this = unsafe { NSButton::buttonWithTitle_target_action(title, target, action) };
         unsafe { this.setBezelStyle(NSBezelStyleShadowlessSquare) };
@@ -180,7 +180,7 @@ fn main() {
     let forward_button = {
         // configure the button to navigate the web view forward
         let title = ns_string!("forward");
-        let target = Some::<&Object>(&web_view);
+        let target = Some::<&AnyObject>(&web_view);
         let action = Some(sel!(goForward));
         let this = unsafe { NSButton::buttonWithTitle_target_action(title, target, action) };
         unsafe { this.setBezelStyle(NSBezelStyleShadowlessSquare) };

@@ -1,10 +1,10 @@
-error[E0277]: the trait bound `objc2::runtime::Object: ClassType` is not satisfied
+error[E0277]: the trait bound `AnyObject: ClassType` is not satisfied
  --> ui/msg_send_super_not_classtype.rs
   |
   |     let _: () = unsafe { msg_send![super(obj), method] };
   |                          ----------------^^^----------
   |                          |               |
-  |                          |               the trait `ClassType` is not implemented for `objc2::runtime::Object`
+  |                          |               the trait `ClassType` is not implemented for `AnyObject`
   |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `ClassType`:
@@ -20,13 +20,13 @@ note: required by a bound in `__send_super_message_static`
   |         Self::__Inner: ClassType,
   |                        ^^^^^^^^^ required by this bound in `MessageReceiver::__send_super_message_static`
 
-error[E0277]: the trait bound `objc2::runtime::Object: ClassType` is not satisfied
+error[E0277]: the trait bound `AnyObject: ClassType` is not satisfied
  --> ui/msg_send_super_not_classtype.rs
   |
   |     let _: () = unsafe { msg_send![super(obj), method] };
   |                          ----------------^^^----------
   |                          |               |
-  |                          |               the trait `ClassType` is not implemented for `objc2::runtime::Object`
+  |                          |               the trait `ClassType` is not implemented for `AnyObject`
   |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `ClassType`:

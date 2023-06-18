@@ -8,7 +8,7 @@ use crate::encode::__unstable::{
 use crate::encode::{Encode, RefEncode};
 use crate::mutability::IsMutable;
 use crate::rc::Id;
-use crate::runtime::{Class, Imp, Object, Sel};
+use crate::runtime::{AnyClass, AnyObject, Imp, Sel};
 use crate::ClassType;
 
 /// Wrap the given closure in `exception::catch` if the `catch-all` feature is
@@ -45,7 +45,7 @@ macro_rules! conditional_try {
 #[cfg(debug_assertions)]
 #[track_caller]
 fn msg_send_check(
-    obj: Option<&Object>,
+    obj: Option<&AnyObject>,
     sel: Sel,
     args: &[crate::encode::Encoding],
     ret: &crate::encode::Encoding,
@@ -79,7 +79,7 @@ fn panic_null(sel: Sel) -> ! {
 
 #[cfg(debug_assertions)]
 #[track_caller]
-fn panic_verify(cls: &Class, sel: Sel, err: crate::runtime::VerificationError) -> ! {
+fn panic_verify(cls: &AnyClass, sel: Sel, err: crate::runtime::VerificationError) -> ! {
     panic!(
         "invalid message send to {}[{cls} {sel}]: {err}",
         if cls.is_metaclass() { "+" } else { "-" },
@@ -131,7 +131,7 @@ use self::platform::{send_super_unverified, send_unverified};
 /// # Safety
 ///
 /// The type must represent an Objective-C object, meaning it:
-/// - Must be valid to reinterpret as [`runtime::Object`][`Object`].
+/// - Must be valid to reinterpret as [`runtime::AnyObject`][`AnyObject`].
 /// - Must be able to be the receiver of an Objective-C message sent with
 ///   [`objc_msgSend`] or similar.
 /// - Must respond to the standard memory management `retain`, `release` and
@@ -146,13 +146,13 @@ use self::platform::{send_super_unverified, send_unverified};
 /// # Example
 ///
 /// ```
-/// use objc2::runtime::Object;
+/// use objc2::runtime::NSObject;
 /// use objc2::{Encoding, Message, RefEncode};
 ///
 /// #[repr(C)]
 /// struct MyObject {
-///     // This has the exact same layout as `Object`
-///     inner: Object
+///     // This has the exact same layout as `NSObject`
+///     inner: NSObject
 /// }
 ///
 /// unsafe impl RefEncode for MyObject {
@@ -194,7 +194,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     type __Inner: ?Sized;
 
     #[doc(hidden)]
-    fn __as_raw_receiver(self) -> *mut Object;
+    fn __as_raw_receiver(self) -> *mut AnyObject;
 
     /// Sends a message to the receiver with the given selector and arguments.
     ///
@@ -257,7 +257,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     /// [`msg_send!(super(...), ...)`]: crate::msg_send
     #[inline]
     #[track_caller]
-    unsafe fn send_super_message<A, R>(self, superclass: &Class, sel: Sel, args: A) -> R
+    unsafe fn send_super_message<A, R>(self, superclass: &AnyClass, sel: Sel, args: A) -> R
     where
         A: MessageArguments,
         R: EncodeConvertReturn,
@@ -321,7 +321,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     #[doc(hidden)]
     unsafe fn __send_super_message_error<A, E>(
         self,
-        superclass: &Class,
+        superclass: &AnyClass,
         sel: Sel,
         args: A,
     ) -> Result<(), Id<E>>
@@ -379,7 +379,7 @@ unsafe impl<T: ?Sized + Message> MessageReceiver for *const T {
     type __Inner = T;
 
     #[inline]
-    fn __as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut AnyObject {
         (self as *mut T).cast()
     }
 }
@@ -389,7 +389,7 @@ unsafe impl<T: ?Sized + Message> MessageReceiver for *mut T {
     type __Inner = T;
 
     #[inline]
-    fn __as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut AnyObject {
         self.cast()
     }
 }
@@ -399,7 +399,7 @@ unsafe impl<T: ?Sized + Message> MessageReceiver for NonNull<T> {
     type __Inner = T;
 
     #[inline]
-    fn __as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut AnyObject {
         self.as_ptr().cast()
     }
 }
@@ -409,7 +409,7 @@ unsafe impl<'a, T: ?Sized + Message> MessageReceiver for &'a T {
     type __Inner = T;
 
     #[inline]
-    fn __as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut AnyObject {
         let ptr: *const T = self;
         (ptr as *mut T).cast()
     }
@@ -422,7 +422,7 @@ unsafe impl<'a, T: ?Sized + Message> MessageReceiver for &'a mut T {
     type __Inner = T;
 
     #[inline]
-    fn __as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut AnyObject {
         let ptr: *mut T = self;
         ptr.cast()
     }
@@ -433,7 +433,7 @@ unsafe impl<'a, T: ?Sized + Message> MessageReceiver for &'a Id<T> {
     type __Inner = T;
 
     #[inline]
-    fn __as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut AnyObject {
         (Id::as_ptr(self) as *mut T).cast()
     }
 }
@@ -443,7 +443,7 @@ unsafe impl<'a, T: ?Sized + IsMutable> MessageReceiver for &'a mut Id<T> {
     type __Inner = T;
 
     #[inline]
-    fn __as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut AnyObject {
         Id::as_mut_ptr(self).cast()
     }
 }
@@ -453,29 +453,29 @@ unsafe impl<T: ?Sized + Message> MessageReceiver for ManuallyDrop<Id<T>> {
     type __Inner = T;
 
     #[inline]
-    fn __as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut AnyObject {
         Id::consume_as_ptr(self).cast()
     }
 }
 
-impl private::Sealed for *const Class {}
-unsafe impl MessageReceiver for *const Class {
-    type __Inner = Class;
+impl private::Sealed for *const AnyClass {}
+unsafe impl MessageReceiver for *const AnyClass {
+    type __Inner = AnyClass;
 
     #[inline]
-    fn __as_raw_receiver(self) -> *mut Object {
-        (self as *mut Class).cast()
+    fn __as_raw_receiver(self) -> *mut AnyObject {
+        (self as *mut AnyClass).cast()
     }
 }
 
-impl<'a> private::Sealed for &'a Class {}
-unsafe impl<'a> MessageReceiver for &'a Class {
-    type __Inner = Class;
+impl<'a> private::Sealed for &'a AnyClass {}
+unsafe impl<'a> MessageReceiver for &'a AnyClass {
+    type __Inner = AnyClass;
 
     #[inline]
-    fn __as_raw_receiver(self) -> *mut Object {
-        let ptr: *const Class = self;
-        (ptr as *mut Class).cast()
+    fn __as_raw_receiver(self) -> *mut AnyObject {
+        let ptr: *const AnyClass = self;
+        (ptr as *mut AnyClass).cast()
     }
 }
 
@@ -496,7 +496,7 @@ pub unsafe trait MessageArguments: EncodeArguments {
     /// be called directly; instead, use the `msg_send!` macro or, in cases
     /// with a dynamic selector, the [`MessageReceiver::send_message`] method.
     #[doc(hidden)]
-    unsafe fn __invoke<R: EncodeReturn>(imp: Imp, obj: *mut Object, sel: Sel, args: Self) -> R;
+    unsafe fn __invoke<R: EncodeReturn>(imp: Imp, obj: *mut AnyObject, sel: Sel, args: Self) -> R;
 }
 
 pub trait __TupleExtender<T> {
@@ -510,7 +510,7 @@ macro_rules! message_args_impl {
     ($($a:ident: $t:ident),*) => (
         unsafe impl<$($t: EncodeConvertArgument),*> MessageArguments for ($($t,)*) {
             #[inline]
-            unsafe fn __invoke<R: EncodeReturn>(imp: Imp, obj: *mut Object, sel: Sel, ($($a,)*): Self) -> R {
+            unsafe fn __invoke<R: EncodeReturn>(imp: Imp, obj: *mut AnyObject, sel: Sel, ($($a,)*): Self) -> R {
                 $(let $a = EncodeConvertArgument::__into_argument($a);)*
 
                 // The imp must be cast to the appropriate function pointer
@@ -518,11 +518,11 @@ macro_rules! message_args_impl {
                 // parametric, but instead "trampolines" to the actual
                 // method implementations.
                 #[cfg(not(feature = "unstable-c-unwind"))]
-                let imp: unsafe extern "C" fn(*mut Object, Sel $(, $t::__Inner)*) -> R = unsafe {
+                let imp: unsafe extern "C" fn(*mut AnyObject, Sel $(, $t::__Inner)*) -> R = unsafe {
                     mem::transmute(imp)
                 };
                 #[cfg(feature = "unstable-c-unwind")]
-                let imp: unsafe extern "C-unwind" fn(*mut Object, Sel $(, $t::__Inner)*) -> R = unsafe {
+                let imp: unsafe extern "C-unwind" fn(*mut AnyObject, Sel $(, $t::__Inner)*) -> R = unsafe {
                     mem::transmute(imp)
                 };
                 // TODO: On x86_64 it would be more efficient to use a GOT
@@ -722,10 +722,10 @@ mod tests {
     #[test]
     #[cfg_attr(debug_assertions, should_panic = "messsaging description to nil")]
     fn test_send_message_nil() {
-        let nil: *mut Object = ::core::ptr::null_mut();
+        let nil: *mut NSObject = ::core::ptr::null_mut();
 
         // This result should not be relied on
-        let result: Option<Id<Object>> = unsafe { msg_send_id![nil, description] };
+        let result: Option<Id<NSObject>> = unsafe { msg_send_id![nil, description] };
         assert!(result.is_none());
 
         // This result should not be relied on
@@ -742,12 +742,12 @@ mod tests {
         assert_eq!(result, 0.0);
 
         // This result should not be relied on
-        let result: Option<Id<Object>> =
+        let result: Option<Id<NSObject>> =
             unsafe { msg_send_id![nil, multiple: 1u32, arguments: 2i8] };
         assert!(result.is_none());
 
         // This result should not be relied on
-        let result: Option<Id<Object>> = unsafe { msg_send_id![None, init] };
+        let result: Option<Id<NSObject>> = unsafe { msg_send_id![None, init] };
         assert!(result.is_none());
     }
 

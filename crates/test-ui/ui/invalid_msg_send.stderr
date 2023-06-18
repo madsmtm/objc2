@@ -97,8 +97,8 @@ note: while trying to match `)`
 error: no rules expected the token `b`
  --> ui/invalid_msg_send.rs
   |
-  |     let _: Result<(), Id<Object>> = unsafe { msg_send![obj, a: _, b: _] };
-  |                                                                   ^ no rules expected this token in macro call
+  |     let _: Result<(), Id<NSObject>> = unsafe { msg_send![obj, a: _, b: _] };
+  |                                                                     ^ no rules expected this token in macro call
   |
 note: while trying to match `)`
  --> $WORKSPACE/crates/objc2/src/macros/__msg_send_parse.rs

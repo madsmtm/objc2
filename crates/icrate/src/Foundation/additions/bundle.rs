@@ -20,7 +20,7 @@ impl NSBundle {
         let info = self.infoDictionary()?;
         // TODO: Use ns_string!
         let name = info.get(&NSString::from_str("CFBundleName"))?;
-        let ptr: *const Object = name;
+        let ptr: *const AnyObject = name;
         let ptr: *const NSString = ptr.cast();
         // SAFETY: TODO
         let name = unsafe { ptr.as_ref().unwrap_unchecked() };

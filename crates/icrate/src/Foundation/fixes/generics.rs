@@ -18,7 +18,7 @@ impl<T: ?Sized> UnwindSafe for UnsafeIgnoreAutoTraits<T> {}
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSArray")]
-    pub struct NSArray<ObjectType: Message = Object> {
+    pub struct NSArray<ObjectType: Message = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
         /// `NSArray` and `NSMutableArray` have `Id`-like storage.
@@ -101,7 +101,7 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSArray")]
-    pub struct NSMutableArray<ObjectType: Message = Object> {
+    pub struct NSMutableArray<ObjectType: Message = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSArray<ObjectType>,
     }
@@ -125,7 +125,7 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSDictionary")]
-    pub struct NSDictionary<KeyType: Message = Object, ObjectType: Message = Object> {
+    pub struct NSDictionary<KeyType: Message = AnyObject, ObjectType: Message = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
         // Same as if the dictionary was implemented with:
@@ -151,7 +151,7 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSDictionary")]
-    pub struct NSMutableDictionary<KeyType: Message = Object, ObjectType: Message = Object> {
+    pub struct NSMutableDictionary<KeyType: Message = AnyObject, ObjectType: Message = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSDictionary<KeyType, ObjectType>,
     }
@@ -177,7 +177,7 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSSet")]
-    pub struct NSSet<ObjectType: Message = Object> {
+    pub struct NSSet<ObjectType: Message = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
         // Same as if the set was implemented as `NSArray<ObjectType>`.
@@ -202,7 +202,7 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSSet")]
-    pub struct NSMutableSet<ObjectType: Message = Object> {
+    pub struct NSMutableSet<ObjectType: Message = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSSet<ObjectType>,
     }
@@ -226,7 +226,7 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(Debug, PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSCountedSet")]
-    pub struct NSCountedSet<ObjectType: Message = Object> {
+    pub struct NSCountedSet<ObjectType: Message = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSMutableSet<ObjectType>,
     }
@@ -250,7 +250,7 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSOrderedSet")]
-    pub struct NSOrderedSet<ObjectType: Message = Object> {
+    pub struct NSOrderedSet<ObjectType: Message = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
         // Same as if the set was implemented with `NSArray<ObjectType>`.
@@ -275,7 +275,7 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSOrderedSet")]
-    pub struct NSMutableOrderedSet<ObjectType: Message = Object> {
+    pub struct NSMutableOrderedSet<ObjectType: Message = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSOrderedSet<ObjectType>,
     }
@@ -299,7 +299,7 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(Debug, PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSEnumerator")]
-    pub struct NSEnumerator<ObjectType: Message = Object> {
+    pub struct NSEnumerator<ObjectType: Message = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
         // Enumerators are basically the same as if we were storing

@@ -5,7 +5,7 @@ use core::ops::{Deref, DerefMut};
 use core::ptr::{self, NonNull};
 
 use crate::encode::Encode;
-use crate::runtime::{ivar_offset, Object};
+use crate::runtime::{ivar_offset, AnyObject};
 
 pub(crate) mod private {
     pub trait Sealed {}
@@ -92,7 +92,7 @@ pub unsafe trait IvarType {
     const NAME: &'static str;
 
     #[doc(hidden)]
-    unsafe fn __offset(ptr: NonNull<Object>) -> isize {
+    unsafe fn __offset(ptr: NonNull<AnyObject>) -> isize {
         let obj = unsafe { ptr.as_ref() };
         ivar_offset(obj.class(), Self::NAME, &Self::Type::ENCODING)
     }
@@ -107,9 +107,9 @@ pub unsafe trait IvarType {
 /// of the containing object.
 ///
 /// Note that this is not ([currently][zst-hack]) allowed by [stacked
-/// borrows][sb], but due to [`Object`] being a zero-sized type such that we
-/// don't have provenance over the ivars anyhow, this should be just as sound
-/// as normal instance variable access.
+/// borrows][sb], but due to objects being zero-sized types, we don't have
+/// provenance over the ivars anyhow, this should be just as sound as normal
+/// instance variable access.
 ///
 /// [sb]: https://github.com/rust-lang/unsafe-code-guidelines/blob/e21202c60c7be03dd2ab016ada92fb5305d40438/wip/stacked-borrows.md
 /// [zst-hack]: https://github.com/rust-lang/unsafe-code-guidelines/issues/305
@@ -141,7 +141,7 @@ pub unsafe trait IvarType {
 ///
 /// ```
 /// use objc2::declare::{Ivar, IvarEncode, IvarType};
-/// use objc2::runtime::Object;
+/// use objc2::runtime::NSObject;
 ///
 /// // Declare ivar with given type and name
 /// struct MyCustomIvar;
@@ -153,15 +153,15 @@ pub unsafe trait IvarType {
 /// // Custom object
 /// #[repr(C)]
 /// pub struct MyObject {
-///     inner: Object,
+///     inner: NSObject,
 ///     // SAFETY: The instance variable is used within an object, and it is
 ///     // properly declared below.
 ///     my_ivar: Ivar<MyCustomIvar>,
 /// }
 ///
-/// # use objc2::class;
+/// # use objc2::ClassType;
 /// # use objc2::declare::ClassBuilder;
-/// # let mut builder = ClassBuilder::new("MyObject", class!(NSObject)).unwrap();
+/// # let mut builder = ClassBuilder::new("MyObject", NSObject::class()).unwrap();
 /// // Declare the class and add the instance variable to it
 /// builder.add_static_ivar::<MyCustomIvar>();
 /// # let _cls = builder.register();
@@ -202,10 +202,10 @@ impl<T: IvarType> Ivar<T> {
     }
 
     fn as_inner_ptr(&self) -> NonNull<T::Type> {
-        let ptr: NonNull<Object> = NonNull::from(self).cast();
+        let ptr: NonNull<AnyObject> = NonNull::from(self).cast();
 
         // SAFETY: The user ensures that this is placed in a struct that can
-        // be reinterpreted as an `Object`. Since `Ivar` can never be
+        // be reinterpreted as an `AnyObject`. Since `Ivar` can never be
         // constructed by itself (and is neither Copy nor Clone), we know that
         // it is guaranteed to _stay_ in said struct.
         //
@@ -217,7 +217,7 @@ impl<T: IvarType> Ivar<T> {
         // so that is fine.
         let offset = unsafe { T::__offset(ptr) };
         // SAFETY: The offset is valid
-        unsafe { Object::ivar_at_offset::<T::Type>(ptr, offset) }
+        unsafe { AnyObject::ivar_at_offset::<T::Type>(ptr, offset) }
     }
 
     /// Get a mutable pointer to the instance variable.
@@ -235,12 +235,12 @@ impl<T: IvarType> Ivar<T> {
     }
 
     fn as_inner_mut_ptr(&mut self) -> NonNull<T::Type> {
-        let ptr: NonNull<Object> = NonNull::from(self).cast();
+        let ptr: NonNull<AnyObject> = NonNull::from(self).cast();
 
         // SAFETY: Same as `as_inner_ptr`
         let offset = unsafe { T::__offset(ptr) };
         // SAFETY: The offset is valid
-        unsafe { Object::ivar_at_offset::<T::Type>(ptr, offset) }
+        unsafe { AnyObject::ivar_at_offset::<T::Type>(ptr, offset) }
     }
 
     /// Sets the value of the instance variable.
@@ -281,13 +281,13 @@ impl<T: IvarType> DerefMut for Ivar<T> {
         // Safe as mutable because there is only one access to a
         // particular ivar at a time (since we have `&mut self`).
 
-        // Note: We're careful not to create `&mut Object` because the user
+        // Note: We're careful not to create `&mut AnyObject` because the user
         // might have two mutable references to different ivars, as such:
         //
         // ```
         // #[repr(C)]
         // struct X {
-        //     inner: Object,
+        //     inner: AnyObject,
         //     ivar1: Ivar<Ivar1>,
         //     ivar2: Ivar<Ivar2>,
         // }
@@ -332,7 +332,7 @@ mod tests {
 
     #[repr(C)]
     struct IvarTestObject {
-        inner: Object,
+        inner: NSObject,
         foo: Ivar<TestIvar>,
     }
 

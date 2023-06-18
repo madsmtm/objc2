@@ -6,7 +6,7 @@
 use icrate::AppKit::{NSPasteboard, NSPasteboardTypeString};
 use icrate::Foundation::{NSArray, NSCopying, NSString};
 use objc2::rc::Id;
-use objc2::runtime::{Class, Object, ProtocolObject};
+use objc2::runtime::{AnyClass, AnyObject, ProtocolObject};
 use objc2::ClassType;
 
 /// Simplest implementation
@@ -20,18 +20,18 @@ pub fn get_text_1(pasteboard: &NSPasteboard) -> Option<Id<NSString>> {
 pub fn get_text_2(pasteboard: &NSPasteboard) -> Option<Id<NSString>> {
     // The NSPasteboard API is a bit weird, it requires you to pass classes as
     // objects, which `icrate::Foundation::NSArray` was not really made for -
-    // so we convert the class to an `Object` type instead.
+    // so we convert the class to an `AnyObject` type instead.
     //
     // TODO: Investigate and find a better way to express this in `objc2`.
     let string_class = {
-        let cls: *const Class = NSString::class();
-        let cls = cls as *mut Object;
+        let cls: *const AnyClass = NSString::class();
+        let cls = cls as *mut AnyObject;
         unsafe { Id::new(cls).unwrap() }
     };
     let class_array = NSArray::from_vec(vec![string_class]);
     let objects = unsafe { pasteboard.readObjectsForClasses_options(&class_array, None) };
 
-    let obj: *const Object = objects?.first()?;
+    let obj: *const AnyObject = objects?.first()?;
     // And this part is weird as well, since we now have to convert the object
     // into an NSString, which we know it to be since that's what we told
     // `readObjectsForClasses:options:`.

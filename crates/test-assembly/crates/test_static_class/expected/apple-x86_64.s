@@ -5,7 +5,7 @@
 _get_class:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_49a0cd2a35b9a474]
+	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_928cf03fcc497777]
 	pop	rbp
 	ret
 
@@ -14,7 +14,7 @@ _get_class:
 _get_same_class:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_60860b498061fbc6]
+	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_2fe1990982915f07]
 	pop	rbp
 	ret
 
@@ -23,7 +23,7 @@ _get_same_class:
 _get_different_class:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_089cee9fe04089a4]
+	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_dfff3a06c0bf722b]
 	pop	rbp
 	ret
 
@@ -41,10 +41,10 @@ _use_fns:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, rdi
-	mov	rcx, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_49a0cd2a35b9a474]
-	mov	rdx, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_60860b498061fbc6]
-	mov	rsi, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_089cee9fe04089a4]
-	mov	rdi, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_15b3f8b356e4fdb3]
+	mov	rcx, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_928cf03fcc497777]
+	mov	rdx, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_2fe1990982915f07]
+	mov	rsi, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_dfff3a06c0bf722b]
+	mov	rdi, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_5ab5a81fcf2763fb]
 	mov	qword ptr [rax], rcx
 	mov	qword ptr [rax + 8], rdx
 	mov	qword ptr [rax + 16], rsi
@@ -58,7 +58,7 @@ _use_same_twice:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, rdi
-	mov	rcx, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_49a0cd2a35b9a474]
+	mov	rcx, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_928cf03fcc497777]
 	mov	qword ptr [rdi], rcx
 	mov	qword ptr [rdi + 8], rcx
 	pop	rbp
@@ -73,75 +73,75 @@ _use_in_loop:
 	ret
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_49a0cd2a35b9a474
+	.globl	L_OBJC_IMAGE_INFO_928cf03fcc497777
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_49a0cd2a35b9a474:
+L_OBJC_IMAGE_INFO_928cf03fcc497777:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_49a0cd2a35b9a474
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_928cf03fcc497777
 	.p2align	3, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_49a0cd2a35b9a474:
+L_OBJC_CLASSLIST_REFERENCES_$_928cf03fcc497777:
 	.quad	_OBJC_CLASS_$_NSObject
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_60860b498061fbc6
+	.globl	L_OBJC_IMAGE_INFO_2fe1990982915f07
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_60860b498061fbc6:
+L_OBJC_IMAGE_INFO_2fe1990982915f07:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_60860b498061fbc6
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_2fe1990982915f07
 	.p2align	3, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_60860b498061fbc6:
+L_OBJC_CLASSLIST_REFERENCES_$_2fe1990982915f07:
 	.quad	_OBJC_CLASS_$_NSObject
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_089cee9fe04089a4
+	.globl	L_OBJC_IMAGE_INFO_dfff3a06c0bf722b
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_089cee9fe04089a4:
+L_OBJC_IMAGE_INFO_dfff3a06c0bf722b:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_089cee9fe04089a4
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_dfff3a06c0bf722b
 	.p2align	3, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_089cee9fe04089a4:
+L_OBJC_CLASSLIST_REFERENCES_$_dfff3a06c0bf722b:
 	.quad	_OBJC_CLASS_$_NSString
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_5331bb309754c706
+	.globl	L_OBJC_IMAGE_INFO_f6e054106fdbe219
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_5331bb309754c706:
+L_OBJC_IMAGE_INFO_f6e054106fdbe219:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_5331bb309754c706
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_f6e054106fdbe219
 	.p2align	3, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_5331bb309754c706:
+L_OBJC_CLASSLIST_REFERENCES_$_f6e054106fdbe219:
 	.quad	_OBJC_CLASS_$_NSData
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_15b3f8b356e4fdb3
+	.globl	L_OBJC_IMAGE_INFO_5ab5a81fcf2763fb
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_15b3f8b356e4fdb3:
+L_OBJC_IMAGE_INFO_5ab5a81fcf2763fb:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_15b3f8b356e4fdb3
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_5ab5a81fcf2763fb
 	.p2align	3, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_15b3f8b356e4fdb3:
+L_OBJC_CLASSLIST_REFERENCES_$_5ab5a81fcf2763fb:
 	.quad	_OBJC_CLASS_$_NSException
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_4fe8a7873c5b5bcf
+	.globl	L_OBJC_IMAGE_INFO_54ecac6d305d112a
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_4fe8a7873c5b5bcf:
+L_OBJC_IMAGE_INFO_54ecac6d305d112a:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_4fe8a7873c5b5bcf
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_54ecac6d305d112a
 	.p2align	3, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_4fe8a7873c5b5bcf:
+L_OBJC_CLASSLIST_REFERENCES_$_54ecac6d305d112a:
 	.quad	_OBJC_CLASS_$_NSLock
 
 .subsections_via_symbols

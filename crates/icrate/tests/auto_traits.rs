@@ -6,7 +6,7 @@ use static_assertions::{assert_impl_all, assert_not_impl_any};
 use icrate::Foundation::*;
 use objc2::mutability::{Immutable, Mutable};
 use objc2::rc::Id;
-use objc2::runtime::Object;
+use objc2::runtime::AnyObject;
 use objc2::{declare_class, ClassType};
 
 // We expect most Foundation types to be UnwindSafe and RefUnwindSafe,
@@ -102,9 +102,9 @@ fn test_generic_auto_traits() {
     }
 
     // TODO
-    assert_not_impl_any!(NSArray<Object>: Unpin);
-    assert_not_impl_any!(NSMutableArray<Object>: Unpin);
-    assert_not_impl_any!(NSDictionary<Object, Object>: Unpin);
+    assert_not_impl_any!(NSArray<AnyObject>: Unpin);
+    assert_not_impl_any!(NSMutableArray<AnyObject>: Unpin);
+    assert_not_impl_any!(NSDictionary<AnyObject, AnyObject>: Unpin);
 
     assert_id_like!(NSArray<T>);
     #[allow(dead_code)]

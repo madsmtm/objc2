@@ -2,7 +2,7 @@
 use core::fmt::Display;
 use core::sync::atomic::{AtomicI32, AtomicPtr};
 use objc2::ffi::{NSInteger, NSUInteger};
-use objc2::runtime::{Bool, Class, Object, Sel};
+use objc2::runtime::{AnyClass, AnyObject, Bool, Sel};
 use objc2::{Encode, Encoding};
 use paste::paste;
 use std::ffi::CStr;
@@ -258,8 +258,8 @@ assert_types! {
     // Objective-C
 
     OBJC_BOOL => Bool,
-    ID => enc <*mut Object>::ENCODING,
-    CLASS => enc <&Class>::ENCODING,
+    ID => enc <*mut AnyObject>::ENCODING,
+    CLASS => enc <&AnyClass>::ENCODING,
     // Sel is (intentionally) not RefEncode
     SEL => enc <Sel>::ENCODING,
     NS_INTEGER => NSInteger,

@@ -256,10 +256,10 @@ impl<T: Message> Id<T> {
     /// a specific class (e.g. casting an instance of `NSString` to `NSObject`
     /// is safe because `NSString` is a subclass of `NSObject`).
     ///
-    /// All `'static` objects can safely be cast to [`Object`], since that
+    /// All `'static` objects can safely be cast to [`AnyObject`], since that
     /// assumes no specific class.
     ///
-    /// [`Object`]: crate::runtime::Object
+    /// [`AnyObject`]: crate::runtime::AnyObject
     /// [`ProtocolObject::from_id`]: crate::runtime::ProtocolObject::from_id
     ///
     ///
@@ -558,12 +558,12 @@ impl<T: Message> Id<T> {
     /// use objc2::{class, msg_send_id, sel};
     /// use objc2::declare::ClassBuilder;
     /// use objc2::rc::Id;
-    /// use objc2::runtime::{Class, Object, Sel};
+    /// use objc2::runtime::{AnyClass, AnyObject, Sel};
     ///
     /// let mut builder = ClassBuilder::new("ExampleObject", class!(NSObject)).unwrap();
     ///
-    /// extern "C" fn get(cls: &Class, _cmd: Sel) -> *mut Object {
-    ///     let obj: Id<Object> = unsafe { msg_send_id![cls, new] };
+    /// extern "C" fn get(cls: &AnyClass, _cmd: Sel) -> *mut AnyObject {
+    ///     let obj: Id<AnyObject> = unsafe { msg_send_id![cls, new] };
     ///     Id::autorelease_return(obj)
     /// }
     ///
@@ -685,11 +685,11 @@ impl<T: ?Sized> fmt::Pointer for Id<T> {
 }
 
 mod private {
-    use crate::runtime::Object;
+    use crate::runtime::AnyObject;
     use crate::ClassType;
     use core::panic::{RefUnwindSafe, UnwindSafe};
 
-    pub struct UnknownStorage<T: ?Sized>(*const T, Object);
+    pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
 
     pub struct ArcLikeStorage<T: ?Sized>(*const T);
     // SAFETY: Same as `Arc`
@@ -812,7 +812,7 @@ mod tests {
     use super::*;
     use crate::mutability::{Immutable, Mutable};
     use crate::rc::{__RcTestObject, __ThreadTestData, autoreleasepool};
-    use crate::runtime::{NSObject, Object};
+    use crate::runtime::{AnyObject, NSObject};
     use crate::{declare_class, msg_send};
 
     #[test]
@@ -849,8 +849,8 @@ mod tests {
         unsafe impl Send for MutableSendSyncObject {}
         unsafe impl Sync for MutableSendSyncObject {}
 
-        assert_impl_all!(Id<Object>: Unpin);
-        assert_not_impl_any!(Id<Object>: Send, Sync, UnwindSafe, RefUnwindSafe);
+        assert_impl_all!(Id<AnyObject>: Unpin);
+        assert_not_impl_any!(Id<AnyObject>: Send, Sync, UnwindSafe, RefUnwindSafe);
 
         assert_not_impl_any!(Id<ImmutableObject>: Send, Sync);
         assert_not_impl_any!(Id<ImmutableSendObject>: Send, Sync);
@@ -866,7 +866,7 @@ mod tests {
     }
 
     #[track_caller]
-    fn assert_retain_count(obj: &Object, expected: usize) {
+    fn assert_retain_count(obj: &AnyObject, expected: usize) {
         let retain_count: usize = unsafe { msg_send![obj, retainCount] };
         assert_eq!(retain_count, expected);
     }
@@ -954,8 +954,8 @@ mod tests {
         let obj: Id<__RcTestObject> = __RcTestObject::new();
         let expected = __ThreadTestData::current();
 
-        // SAFETY: Any object can be cast to `Object`
-        let obj: Id<Object> = unsafe { Id::cast(obj) };
+        // SAFETY: Any object can be cast to `AnyObject`
+        let obj: Id<AnyObject> = unsafe { Id::cast(obj) };
         expected.assert_current();
 
         // SAFETY: The object was originally `__RcTestObject`

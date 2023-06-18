@@ -40,13 +40,13 @@ impl fmt::Display for Inner {
 
 /// Failed verifying selector on a class.
 ///
-/// This is returned in the error case of [`Class::verify_sel`], see that for
-/// details.
+/// This is returned in the error case of [`AnyClass::verify_sel`], see that
+/// for details.
 ///
 /// This implements [`Error`], and a description of the error can be retrieved
 /// using [`fmt::Display`].
 ///
-/// [`Class::verify_sel`]: crate::runtime::Class::verify_sel
+/// [`AnyClass::verify_sel`]: crate::runtime::AnyClass::verify_sel
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub struct VerificationError(Inner);
 

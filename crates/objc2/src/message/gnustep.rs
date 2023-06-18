@@ -3,7 +3,7 @@ use core::mem;
 
 use crate::encode::__unstable::EncodeReturn;
 use crate::ffi;
-use crate::runtime::{Class, Imp, Object, Sel};
+use crate::runtime::{AnyClass, AnyObject, Imp, Sel};
 use crate::MessageArguments;
 
 #[inline]
@@ -21,7 +21,7 @@ fn unwrap_msg_send_fn(msg_send_fn: Option<Imp>) -> Imp {
 }
 
 #[track_caller]
-pub(crate) unsafe fn send_unverified<A, R>(receiver: *mut Object, sel: Sel, args: A) -> R
+pub(crate) unsafe fn send_unverified<A, R>(receiver: *mut AnyObject, sel: Sel, args: A) -> R
 where
     A: MessageArguments,
     R: EncodeReturn,
@@ -43,8 +43,8 @@ where
 
 #[track_caller]
 pub(crate) unsafe fn send_super_unverified<A, R>(
-    receiver: *mut Object,
-    superclass: &Class,
+    receiver: *mut AnyObject,
+    superclass: &AnyClass,
     sel: Sel,
     args: A,
 ) -> R
@@ -57,7 +57,7 @@ where
         return unsafe { mem::zeroed() };
     }
 
-    let superclass: *const Class = superclass;
+    let superclass: *const AnyClass = superclass;
     let sup = ffi::objc_super {
         receiver: receiver.cast(),
         super_class: superclass.cast(),

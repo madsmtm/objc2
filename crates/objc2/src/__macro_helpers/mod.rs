@@ -11,7 +11,7 @@ use crate::message::__TupleExtender;
 use crate::rc::{Allocated, Id};
 #[cfg(all(debug_assertions, feature = "verify"))]
 use crate::runtime::MethodDescription;
-use crate::runtime::{Class, Object, Protocol, Sel};
+use crate::runtime::{AnyClass, AnyObject, AnyProtocol, Sel};
 use crate::{Message, MessageArguments, MessageReceiver};
 use crate::{__sel_data, __sel_inner};
 
@@ -184,10 +184,10 @@ impl<T: MessageReceiver, U: ?Sized + Message> MsgSendId<T, Id<U>> for New {
     }
 }
 
-impl<T: ?Sized + Message> MsgSendId<&'_ Class, Allocated<T>> for Alloc {
+impl<T: ?Sized + Message> MsgSendId<&'_ AnyClass, Allocated<T>> for Alloc {
     #[inline]
     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Allocated<T>>>(
-        cls: &Class,
+        cls: &AnyClass,
         sel: Sel,
         args: A,
     ) -> R {
@@ -321,7 +321,7 @@ pub trait MsgSendIdFailed<'a> {
 }
 
 impl<'a> MsgSendIdFailed<'a> for New {
-    type Args = (Option<&'a Object>, Sel);
+    type Args = (Option<&'a AnyObject>, Sel);
 
     #[cold]
     fn failed((obj, sel): Self::Args) -> ! {
@@ -343,7 +343,7 @@ impl<'a> MsgSendIdFailed<'a> for New {
 }
 
 impl<'a> MsgSendIdFailed<'a> for Alloc {
-    type Args = (&'a Class, Sel);
+    type Args = (&'a AnyClass, Sel);
 
     #[cold]
     fn failed((cls, sel): Self::Args) -> ! {
@@ -356,7 +356,7 @@ impl<'a> MsgSendIdFailed<'a> for Alloc {
 }
 
 impl MsgSendIdFailed<'_> for Init {
-    type Args = (*const Object, Sel);
+    type Args = (*const AnyObject, Sel);
 
     #[cold]
     fn failed((ptr, sel): Self::Args) -> ! {
@@ -384,7 +384,7 @@ impl MsgSendIdFailed<'_> for CopyOrMutCopy {
 }
 
 impl<'a> MsgSendIdFailed<'a> for Other {
-    type Args = (Option<&'a Object>, Sel);
+    type Args = (Option<&'a AnyObject>, Sel);
 
     #[cold]
     fn failed((obj, sel): Self::Args) -> ! {
@@ -475,7 +475,7 @@ impl ClassBuilder {
     #[doc(hidden)]
     pub fn __add_protocol_methods<'a, 'b>(
         &'a mut self,
-        protocol: Option<&'b Protocol>,
+        protocol: Option<&'b AnyProtocol>,
     ) -> ClassProtocolMethodsBuilder<'a, 'b> {
         if let Some(protocol) = protocol {
             self.add_protocol(protocol);
@@ -520,7 +520,7 @@ impl ClassBuilder {
 pub struct ClassProtocolMethodsBuilder<'a, 'b> {
     builder: &'a mut ClassBuilder,
     #[allow(unused)]
-    protocol: Option<&'b Protocol>,
+    protocol: Option<&'b AnyProtocol>,
     #[cfg(all(debug_assertions, feature = "verify"))]
     required_instance_methods: Vec<MethodDescription>,
     #[cfg(all(debug_assertions, feature = "verify"))]
@@ -569,7 +569,7 @@ impl ClassProtocolMethodsBuilder<'_, '_> {
     #[inline]
     pub unsafe fn add_class_method<F>(&mut self, sel: Sel, func: F)
     where
-        F: MethodImplementation<Callee = Class>,
+        F: MethodImplementation<Callee = AnyClass>,
     {
         #[cfg(all(debug_assertions, feature = "verify"))]
         if let Some(protocol) = self.protocol {
@@ -632,13 +632,13 @@ mod tests {
     #[cfg(feature = "objc2-proc-macros")]
     use crate::__hash_idents;
     use crate::rc::{__RcTestObject, __ThreadTestData};
-    use crate::runtime::{NSObject, NSZone, Object};
+    use crate::runtime::{AnyObject, NSObject, NSZone};
     use crate::{class, msg_send_id, ClassType};
 
     #[test]
     fn test_new() {
-        let _obj: Id<Object> = unsafe { msg_send_id![NSObject::class(), new] };
-        let _obj: Option<Id<Object>> = unsafe { msg_send_id![NSObject::class(), new] };
+        let _obj: Id<AnyObject> = unsafe { msg_send_id![NSObject::class(), new] };
+        let _obj: Option<Id<AnyObject>> = unsafe { msg_send_id![NSObject::class(), new] };
     }
 
     #[test]
@@ -646,8 +646,8 @@ mod tests {
         let mut expected = __ThreadTestData::current();
         let obj = __RcTestObject::new();
 
-        let _obj: Id<Object> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
-        let _obj: Option<Id<Object>> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
+        let _obj: Id<AnyObject> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
+        let _obj: Option<Id<AnyObject>> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
         expected.alloc += 3;
         expected.init += 3;
         expected.assert_current();
@@ -660,11 +660,11 @@ mod tests {
         let mut expected = __ThreadTestData::current();
 
         let object_class = __RcTestObject::class();
-        let key: Id<Object> = unsafe { msg_send_id![class!(NSString), new] };
-        let contents_value: *const Object = ptr::null();
-        let properties: Id<Object> = unsafe { msg_send_id![class!(NSDictionary), new] };
+        let key: Id<AnyObject> = unsafe { msg_send_id![class!(NSString), new] };
+        let contents_value: *const AnyObject = ptr::null();
+        let properties: Id<AnyObject> = unsafe { msg_send_id![class!(NSDictionary), new] };
 
-        let _obj: Option<Id<Object>> = unsafe {
+        let _obj: Option<Id<AnyObject>> = unsafe {
             msg_send_id![
                 NSObject::class(),
                 newScriptingObjectOfClass: object_class,
@@ -772,7 +772,7 @@ mod tests {
     // GNUStep instead returns an invalid instance that panics on accesses
     #[cfg_attr(feature = "gnustep-1-7", ignore)]
     fn new_nsvalue_fails() {
-        let _val: Id<Object> = unsafe { msg_send_id![class!(NSValue), new] };
+        let _val: Id<AnyObject> = unsafe { msg_send_id![class!(NSValue), new] };
     }
 
     #[test]
@@ -786,7 +786,7 @@ mod tests {
     #[should_panic = "unexpected NULL returned from -[__RcTestObject newMethodOnInstanceNull]"]
     fn test_new_any_with_null() {
         let obj = __RcTestObject::new();
-        let _obj: Id<Object> = unsafe { msg_send_id![&obj, newMethodOnInstanceNull] };
+        let _obj: Id<AnyObject> = unsafe { msg_send_id![&obj, newMethodOnInstanceNull] };
     }
 
     #[test]
@@ -794,7 +794,7 @@ mod tests {
     #[cfg(not(debug_assertions))] // Does NULL receiver checks
     fn test_new_any_with_null_receiver() {
         let obj: *const NSObject = ptr::null();
-        let _obj: Id<Object> = unsafe { msg_send_id![obj, newMethodOnInstance] };
+        let _obj: Id<AnyObject> = unsafe { msg_send_id![obj, newMethodOnInstance] };
     }
 
     #[test]
@@ -846,7 +846,7 @@ mod tests {
     #[cfg(not(debug_assertions))] // Does NULL receiver checks
     fn test_normal_with_null_receiver() {
         let obj: *const NSObject = ptr::null();
-        let _obj: Id<Object> = unsafe { msg_send_id![obj, description] };
+        let _obj: Id<AnyObject> = unsafe { msg_send_id![obj, description] };
     }
 
     #[test]
@@ -960,7 +960,7 @@ mod tests {
         #[test]
         fn test_macro_still_works() {
             let cls = class!(NSObject);
-            let _obj: Id<Object> = unsafe { msg_send_id![cls, new] };
+            let _obj: Id<AnyObject> = unsafe { msg_send_id![cls, new] };
         }
     }
 

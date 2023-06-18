@@ -1,7 +1,7 @@
 use crate::msg_send_id;
 use crate::mutability::{IsAllocableAnyThread, IsRetainable, Mutability};
 use crate::rc::{Allocated, Id};
-use crate::runtime::Class;
+use crate::runtime::AnyClass;
 use crate::Message;
 
 /// Marks types that represent specific classes.
@@ -21,7 +21,7 @@ use crate::Message;
 ///
 /// 1. The type must represent a specific class.
 /// 2. [`Self::Super`] must be a superclass of the class (or something that
-///    represents any object, like [`Object`][crate::runtime::Object]).
+///    represents any object, like [`AnyObject`][crate::runtime::AnyObject]).
 /// 3. [`Self::Mutability`] must be specified correctly.
 ///
 ///    Note that very little Objective-C code follows Rust's usual ownership
@@ -40,7 +40,7 @@ use crate::Message;
 ///
 /// # Examples
 ///
-/// Use the trait to access the [`Class`] of an object.
+/// Use the trait to access the [`AnyClass`] of an object.
 ///
 /// ```
 /// use objc2::{ClassType, msg_send_id};
@@ -112,11 +112,11 @@ pub unsafe trait ClassType: Message {
     /// If you have implemented [`Deref`] for your type, it is highly
     /// recommended that this is equal to [`Deref::Target`].
     ///
-    /// This may be [`Object`] if the class is a root class.
+    /// This may be [`AnyObject`] if the class is a root class.
     ///
     /// [`Deref`]: std::ops::Deref
     /// [`Deref::Target`]: std::ops::Deref::Target
-    /// [`Object`]: crate::runtime::Object
+    /// [`AnyObject`]: crate::runtime::AnyObject
     type Super: Message;
 
     /// Whether the type is mutable or immutable.
@@ -140,7 +140,7 @@ pub unsafe trait ClassType: Message {
     /// This may panic if something went wrong with getting or declaring the
     /// class, e.g. if the program is not properly linked to the framework
     /// that defines the class.
-    fn class() -> &'static Class;
+    fn class() -> &'static AnyClass;
 
     /// Get an immutable reference to the superclass.
     // Note: It'd be safe to provide a default impl using transmute here if

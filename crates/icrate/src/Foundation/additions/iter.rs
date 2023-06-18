@@ -23,7 +23,7 @@ const BUF_SIZE: usize = 16;
 #[derive(Debug, PartialEq)]
 struct FastEnumeratorHelper {
     state: NSFastEnumerationState,
-    buf: [*mut Object; BUF_SIZE],
+    buf: [*mut AnyObject; BUF_SIZE],
     // TODO: We could possibly optimize things a bit by doing
     // `itemsPtr.add(1); items_count -= 1;` on every loop, instead of storing
     // `current_item` - but it's not really defined whether we're allowed to
@@ -136,7 +136,7 @@ impl FastEnumeratorHelper {
     unsafe fn next_from(
         &mut self,
         collection: &ProtocolObject<dyn NSFastEnumeration>,
-    ) -> Option<NonNull<Object>> {
+    ) -> Option<NonNull<AnyObject>> {
         // If we've exhausted the current array of items.
         if self.current_item >= self.items_count {
             // Get the next array of items.

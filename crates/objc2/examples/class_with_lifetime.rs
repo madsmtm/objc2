@@ -7,7 +7,7 @@ use std::sync::Once;
 use objc2::declare::{ClassBuilder, Ivar, IvarEncode, IvarType};
 use objc2::mutability::Mutable;
 use objc2::rc::Id;
-use objc2::runtime::{Class, NSObject, Sel};
+use objc2::runtime::{AnyClass, NSObject, Sel};
 use objc2::{msg_send, msg_send_id, sel};
 use objc2::{ClassType, Encoding, Message, RefEncode};
 
@@ -76,7 +76,7 @@ unsafe impl<'a> ClassType for MyObject<'a> {
     type Mutability = Mutable;
     const NAME: &'static str = "MyObject";
 
-    fn class() -> &'static Class {
+    fn class() -> &'static AnyClass {
         // TODO: Use std::lazy::LazyCell
         static REGISTER_CLASS: Once = Once::new();
 
@@ -96,7 +96,7 @@ unsafe impl<'a> ClassType for MyObject<'a> {
             let _cls = builder.register();
         });
 
-        Class::get("MyObject").unwrap()
+        AnyClass::get("MyObject").unwrap()
     }
 
     fn as_super(&self) -> &Self::Super {

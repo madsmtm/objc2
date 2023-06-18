@@ -20,10 +20,10 @@
 //!
 //! use objc2::declare::ClassBuilder;
 //! use objc2::rc::Id;
-//! use objc2::runtime::{Class, Object, NSObject, Sel};
+//! use objc2::runtime::{AnyClass, AnyObject, NSObject, Sel};
 //! use objc2::{sel, msg_send, msg_send_id, ClassType};
 //!
-//! fn register_class() -> &'static Class {
+//! fn register_class() -> &'static AnyClass {
 //!     // Inherit from NSObject
 //!     let mut builder = ClassBuilder::new("MyNumber", NSObject::class())
 //!         .expect("a class with the name MyNumber likely already exists");
@@ -33,15 +33,15 @@
 //!
 //!     // Add an Objective-C method for initializing an instance with a number
 //!     //
-//!     // We "cheat" a bit here, and use `Object` instead of `NSObject`,
+//!     // We "cheat" a bit here, and use `AnyObject` instead of `NSObject`,
 //!     // since only the former is allowed to be a mutable receiver (which is
 //!     // always safe in `init` methods, but not in others).
 //!     unsafe extern "C" fn init_with_number(
-//!         this: &mut Object,
+//!         this: &mut AnyObject,
 //!         _cmd: Sel,
 //!         number: u32,
-//!     ) -> Option<&mut Object> {
-//!         let this: Option<&mut Object> = msg_send![super(this, NSObject::class()), init];
+//!     ) -> Option<&mut AnyObject> {
+//!         let this: Option<&mut AnyObject> = msg_send![super(this, NSObject::class()), init];
 //!         this.map(|this| {
 //!             // SAFETY: The ivar is added with the same type above
 //!             this.set_ivar::<Cell<u32>>("_number", Cell::new(number));
@@ -57,7 +57,7 @@
 //!
 //!     // Add convenience method for getting a new instance with the number
 //!     extern "C" fn with_number(
-//!         cls: &Class,
+//!         cls: &AnyClass,
 //!         _cmd: Sel,
 //!         number: u32,
 //!     ) -> *mut NSObject {
@@ -136,7 +136,7 @@ use crate::encode::{Encode, Encoding, RefEncode};
 use crate::ffi;
 use crate::mutability::IsMutable;
 use crate::rc::Allocated;
-use crate::runtime::{Bool, Class, Imp, Object, Protocol, Sel};
+use crate::runtime::{AnyClass, AnyObject, AnyProtocol, Bool, Imp, Sel};
 use crate::sel;
 use crate::Message;
 
@@ -249,12 +249,12 @@ macro_rules! method_decl_impl {
         method_decl_impl!(@<'a> T: Message, R, unsafe extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(@<'a> T: IsMutable, R, unsafe extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
 
-        method_decl_impl!(@<'a> Object, R, extern $abi fn(&'a mut Object, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<'a> Object, R, unsafe extern $abi fn(&'a mut Object, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> AnyObject, R, extern $abi fn(&'a mut AnyObject, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> AnyObject, R, unsafe extern $abi fn(&'a mut AnyObject, Sel $(, $t)*) -> R, $($t),*);
 
-        method_decl_impl!(@<'a> Class, R, extern $abi fn(&'a Class, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<> Class, R, unsafe extern $abi fn(*const Class, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<'a> Class, R, unsafe extern $abi fn(&'a Class, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> AnyClass, R, extern $abi fn(&'a AnyClass, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<> AnyClass, R, unsafe extern $abi fn(*const AnyClass, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> AnyClass, R, unsafe extern $abi fn(&'a AnyClass, Sel $(, $t)*) -> R, $($t),*);
 
         method_decl_impl!(@<> Allocated<T>, extern $abi fn(Allocated<T>, Sel $(, $t)*) -> __IdReturnValue, $($t),*);
         method_decl_impl!(@<> Allocated<T>, unsafe extern $abi fn(Allocated<T>, Sel $(, $t)*) -> __IdReturnValue, $($t),*);
@@ -288,16 +288,16 @@ method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P);
 /// `Allocated<T>`, without exposing that implementation to users.
 #[doc(hidden)]
 #[repr(transparent)]
-pub struct __IdReturnValue(pub(crate) *mut Object);
+pub struct __IdReturnValue(pub(crate) *mut AnyObject);
 
 // SAFETY: `__IdReturnValue` is `#[repr(transparent)]`
 unsafe impl Encode for __IdReturnValue {
-    const ENCODING: Encoding = <*mut Object>::ENCODING;
+    const ENCODING: Encoding = <*mut AnyObject>::ENCODING;
 }
 
 fn method_type_encoding(ret: &Encoding, args: &[Encoding]) -> CString {
     // First two arguments are always self and the selector
-    let mut types = format!("{ret}{}{}", <*mut Object>::ENCODING, Sel::ENCODING);
+    let mut types = format!("{ret}{}{}", <*mut AnyObject>::ENCODING, Sel::ENCODING);
     for enc in args {
         use core::fmt::Write;
         write!(&mut types, "{enc}").unwrap();
@@ -318,7 +318,7 @@ fn log2_align_of<T>() -> u8 {
 #[derive(Debug)]
 pub struct ClassBuilder {
     // Note: Don't ever construct a &mut objc_class, since it is possible to
-    // get this pointer using `Class::classes`!
+    // get this pointer using `AnyClass::classes`!
     cls: NonNull<ffi::objc_class>,
 }
 
@@ -346,19 +346,19 @@ impl ClassBuilder {
     }
 
     #[allow(unused)]
-    fn superclass(&self) -> Option<&Class> {
+    fn superclass(&self) -> Option<&AnyClass> {
         // SAFETY: Though the class is not finalized, `class_getSuperclass` is
         // still safe to call.
-        unsafe { Class::superclass_raw(self.cls.as_ptr()) }
+        unsafe { AnyClass::superclass_raw(self.cls.as_ptr()) }
     }
 
     #[allow(unused)]
     fn name(&self) -> &str {
         // SAFETY: Same as `superclass`
-        unsafe { Class::name_raw(self.cls.as_ptr()) }
+        unsafe { AnyClass::name_raw(self.cls.as_ptr()) }
     }
 
-    fn with_superclass(name: &str, superclass: Option<&Class>) -> Option<Self> {
+    fn with_superclass(name: &str, superclass: Option<&AnyClass>) -> Option<Self> {
         let name = CString::new(name).unwrap();
         let super_ptr = superclass.map_or(ptr::null(), |c| c).cast();
         let cls = unsafe { ffi::objc_allocateClassPair(super_ptr, name.as_ptr(), 0) };
@@ -369,7 +369,7 @@ impl ClassBuilder {
     ///
     /// Returns [`None`] if the class couldn't be allocated, or a class with
     /// that name already exist.
-    pub fn new(name: &str, superclass: &Class) -> Option<Self> {
+    pub fn new(name: &str, superclass: &AnyClass) -> Option<Self> {
         Self::with_superclass(name, Some(superclass))
     }
 
@@ -389,7 +389,7 @@ impl ClassBuilder {
     /// `-release` used by ARC, will not be present otherwise.
     pub fn root<F>(name: &str, intitialize_fn: F) -> Option<Self>
     where
-        F: MethodImplementation<Callee = Class, Args = (), Ret = ()>,
+        F: MethodImplementation<Callee = AnyClass, Args = (), Ret = ()>,
     {
         Self::with_superclass(name, None).map(|mut this| {
             unsafe { this.add_class_method(sel!(initialize), intitialize_fn) };
@@ -474,7 +474,7 @@ impl ClassBuilder {
     /// when the method is invoked from Objective-C.
     pub unsafe fn add_class_method<F>(&mut self, sel: Sel, func: F)
     where
-        F: MethodImplementation<Callee = Class>,
+        F: MethodImplementation<Callee = AnyClass>,
     {
         let enc_args = F::Args::ENCODINGS;
         let enc_ret = F::Ret::ENCODING_RETURN;
@@ -571,7 +571,7 @@ impl ClassBuilder {
     /// # Panics
     ///
     /// If the protocol wasn't successfully added.
-    pub fn add_protocol(&mut self, proto: &Protocol) {
+    pub fn add_protocol(&mut self, proto: &AnyProtocol) {
         let success = unsafe { ffi::class_addProtocol(self.as_mut_ptr(), proto.as_ptr()) };
         let success = Bool::from_raw(success).as_bool();
         assert!(success, "Failed to add protocol {proto}");
@@ -580,12 +580,12 @@ impl ClassBuilder {
     // fn add_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
 
     /// Registers the [`ClassBuilder`], consuming it, and returns a reference
-    /// to the newly registered [`Class`].
-    pub fn register(self) -> &'static Class {
+    /// to the newly registered [`AnyClass`].
+    pub fn register(self) -> &'static AnyClass {
         // Forget self, otherwise the class will be disposed in drop
         let mut this = ManuallyDrop::new(self);
         unsafe { ffi::objc_registerClassPair(this.as_mut_ptr()) };
-        unsafe { this.cls.cast::<Class>().as_ref() }
+        unsafe { this.cls.cast::<AnyClass>().as_ref() }
     }
 }
 
@@ -595,7 +595,7 @@ impl Drop for ClassBuilder {
         // so we register the class before disposing it.
         //
         // Doing it this way is _technically_ a race-condition, since other
-        // code could read e.g. `Class::classes()` and then pick the class
+        // code could read e.g. `AnyClass::classes()` and then pick the class
         // before it got disposed - but let's not worry about that for now.
         #[cfg(feature = "gnustep-1-7")]
         unsafe {
@@ -610,7 +610,7 @@ impl Drop for ClassBuilder {
 /// before registering it.
 #[derive(Debug)]
 pub struct ProtocolBuilder {
-    proto: NonNull<Protocol>,
+    proto: NonNull<AnyProtocol>,
 }
 
 #[doc(hidden)]
@@ -685,15 +685,15 @@ impl ProtocolBuilder {
     }
 
     /// Adds a requirement on another protocol.
-    pub fn add_protocol(&mut self, proto: &Protocol) {
+    pub fn add_protocol(&mut self, proto: &AnyProtocol) {
         unsafe {
             ffi::protocol_addProtocol(self.as_mut_ptr(), proto.as_ptr());
         }
     }
 
     /// Registers the [`ProtocolBuilder`], consuming it and returning a reference
-    /// to the newly registered [`Protocol`].
-    pub fn register(mut self) -> &'static Protocol {
+    /// to the newly registered [`AnyProtocol`].
+    pub fn register(mut self) -> &'static AnyProtocol {
         unsafe {
             ffi::objc_registerProtocol(self.as_mut_ptr());
             self.proto.as_ref()
@@ -736,7 +736,7 @@ mod tests {
         let cls = test_utils::custom_class();
         let mut builder = ClassBuilder::new("TestClassBuilderDuplicateMethod", cls).unwrap();
 
-        extern "C" fn xyz(_this: &Object, _cmd: Sel) {}
+        extern "C" fn xyz(_this: &NSObject, _cmd: Sel) {}
 
         unsafe {
             builder.add_method(sel!(xyz), xyz as extern "C" fn(_, _));
@@ -754,7 +754,7 @@ mod tests {
         let cls = test_utils::custom_class();
         let mut builder = ClassBuilder::new("TestClassBuilderInvalidMethod", cls).unwrap();
 
-        extern "C" fn foo(_this: &Object, _cmd: Sel) -> i32 {
+        extern "C" fn foo(_this: &NSObject, _cmd: Sel) -> i32 {
             0
         }
 
@@ -772,7 +772,7 @@ mod tests {
         let cls = test_utils::custom_class();
         let mut builder = ClassBuilder::new("TestClassBuilderInvalidClassMethod", cls).unwrap();
 
-        extern "C" fn class_foo(_cls: &Class, _cmd: Sel) -> i32 {
+        extern "C" fn class_foo(_cls: &AnyClass, _cmd: Sel) -> i32 {
             0
         }
 
@@ -787,7 +787,7 @@ mod tests {
         let cls = test_utils::custom_class();
         let mut builder = ClassBuilder::new("TestClassBuilderDuplicateProtocol", cls).unwrap();
 
-        let protocol = Protocol::get("NSObject").unwrap();
+        let protocol = AnyProtocol::get("NSObject").unwrap();
 
         builder.add_protocol(protocol);
         // Should panic:
@@ -815,9 +815,9 @@ mod tests {
     #[test]
     #[cfg(feature = "malloc")]
     fn test_in_all_classes() {
-        fn is_present(cls: *const Class) -> bool {
-            // Check whether the class is present in Class::classes()
-            Class::classes().iter().any(|item| ptr::eq(cls, *item))
+        fn is_present(cls: *const AnyClass) -> bool {
+            // Check whether the class is present in AnyClass::classes()
+            AnyClass::classes().iter().any(|item| ptr::eq(cls, *item))
         }
 
         let superclass = test_utils::custom_class();
@@ -1023,7 +1023,7 @@ mod tests {
                 unimplemented!()
             }
 
-            fn class() -> &'static Class {
+            fn class() -> &'static AnyClass {
                 let superclass = NSObject::class();
                 let mut builder = ClassBuilder::new(Self::NAME, superclass).unwrap();
 

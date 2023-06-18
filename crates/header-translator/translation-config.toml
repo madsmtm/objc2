@@ -1235,7 +1235,7 @@ skipped = true
 menuHasKeyEquivalent_forEvent_target_action = { skipped = true }
 
 # These subclass a generic struct, and hence the type parameter defaults to
-# `Object`, which is not PartialEq, Eq nor Hash.
+# `AnyObject`, which is not PartialEq, Eq nor Hash.
 [class.NSLayoutXAxisAnchor]
 derives = "Debug"
 [class.NSLayoutYAxisAnchor]

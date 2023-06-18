@@ -29,7 +29,7 @@ impl NSAttributedString {
     #[cfg(feature = "Foundation_NSString")]
     pub unsafe fn new_with_attributes(
         string: &Foundation::NSString,
-        attributes: &Foundation::NSDictionary<NSAttributedStringKey, Object>,
+        attributes: &Foundation::NSDictionary<NSAttributedStringKey, AnyObject>,
     ) -> Id<Self> {
         unsafe { Self::initWithString_attributes(Self::alloc(), string, Some(attributes)) }
     }
