@@ -77,6 +77,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Relaxed a `fmt::Debug` bound on `WeakId`'s own `fmt::Debug` impl.
 * Changed `Debug` impl for `runtime::Class`, `runtime::Sel` and
   `runtime::Protocol` to give more information.
+* **BREAKING**: Updated `encode` module to `objc2-encode v2.0.0`.
 
 ### Fixed
 * Fixed using autorelease pools on 32bit macOS and older macOS versions.
