@@ -87,6 +87,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: `NSDictionary::keys_retained` and
   `NSDictionary::values_retained` now return an iterator instead.
 * **BREAKING**: Updated `objc2` to `v0.4.0`.
+* **BREAKING**: Updated `block2` to `v0.2.0`.
 
 ### Removed
 * **BREAKING**: Removed various redundant `NSProxy` methods.
