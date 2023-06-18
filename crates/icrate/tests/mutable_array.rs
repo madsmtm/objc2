@@ -57,6 +57,18 @@ fn test_replace() {
 
 #[test]
 #[cfg(feature = "Foundation_NSMutableString")]
+fn test_containing_mutable_objects() {
+    use Foundation::NSMutableString;
+
+    let mut array = NSMutableArray::from_vec(vec![NSMutableString::new()]);
+    let _: &mut NSMutableString = &mut array[0];
+    let _: &mut NSMutableString = array.get_mut(0).unwrap();
+    let _: &mut NSMutableString = array.first_mut().unwrap();
+    let _: &mut NSMutableString = array.last_mut().unwrap();
+}
+
+#[test]
+#[cfg(feature = "Foundation_NSMutableString")]
 fn test_allowed_mutation_while_iterating() {
     use Foundation::{NSMutableString, NSString};
 
