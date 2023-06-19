@@ -234,6 +234,28 @@ macro_rules! ns_closed_enum {
             }
         }
     };
+    (
+        #[underlying(u32)]
+        $(#[$m:meta])*
+        $v:vis enum $name:ident {
+            $(
+                $(#[$field_m:meta])*
+                $field:ident = $value:expr
+            ),* $(,)?
+        }
+    ) => {
+        // TODO: Handle this differently
+        extern_enum! {
+            #[underlying(u32)]
+            $(#[$m])*
+            $v enum $name {
+                $(
+                    $(#[$field_m])*
+                    $field = $value
+                ),*
+            }
+        }
+    };
 }
 
 /// Corresponds to `NS_ERROR_ENUM`

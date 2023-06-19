@@ -1985,7 +1985,9 @@ CoreData_all = [
     "CoreData_NSRelationshipDescription",
     "CoreData_NSSaveChangesRequest",
 ]
-CoreFoundation = []
+CoreFoundation = [
+    "block",
+]
 CoreFoundation_all = [
     "CoreFoundation",
 ]

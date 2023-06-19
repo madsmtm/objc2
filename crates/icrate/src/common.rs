@@ -41,9 +41,15 @@ pub(crate) type TodoProtocols = AnyObject;
 
 // MacTypes.h
 pub(crate) type Boolean = u8; // unsigned char
+pub(crate) type ConstStr255Param = *const c_char;
+pub(crate) type ConstStringPtr = *const c_char;
 pub(crate) type FourCharCode = u32;
+pub(crate) type LangCode = i16;
 pub(crate) type OSType = FourCharCode;
+pub(crate) type RegionCode = i16;
 pub(crate) type ResType = FourCharCode;
+pub(crate) type StringPtr = *mut c_char;
+pub(crate) type UniChar = u16;
 pub(crate) type UTF32Char = u32; // Or maybe Rust's char?
 
 pub(crate) const INT64_MAX: i64 = i64::MAX;
