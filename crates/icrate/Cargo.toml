@@ -1984,6 +1984,10 @@ CoreData_all = [
     "CoreData_NSRelationshipDescription",
     "CoreData_NSSaveChangesRequest",
 ]
+CoreFoundation = []
+CoreFoundation_all = [
+    "CoreFoundation",
+]
 CoreLocation = [
     "Contacts",
     "Foundation",
@@ -5290,6 +5294,7 @@ unstable-frameworks-macos-10-7 = [
     "Automator_all",
     "CoreAnimation_all",
     "CoreData_all",
+    "CoreFoundation_all",
     "ExceptionHandling_all",
     "Foundation_all",
     "InputMethodKit_all",

@@ -39,6 +39,8 @@
 
 #import <CoreData/CoreData.h>
 
+#import <CoreFoundation/CoreFoundation.h>
+
 #import <CoreLocation/CoreLocation.h>
 
 #import <DataDetection/DataDetection.h>
