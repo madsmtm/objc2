@@ -1,6 +1,6 @@
 #![cfg(feature = "Foundation_NSMutableArray")]
-use objc2::msg_send;
 use objc2::rc::{__RcTestObject, __ThreadTestData, autoreleasepool};
+use objc2::{msg_send, ClassType};
 
 #[cfg(feature = "Foundation_NSNumber")]
 use icrate::Foundation::NSNumber;
@@ -57,6 +57,10 @@ fn test_replace() {
 
 #[test]
 #[cfg(feature = "Foundation_NSMutableString")]
+#[cfg_attr(
+    feature = "gnustep-1-7",
+    ignore = "thread safety issues regarding initialization"
+)]
 fn test_containing_mutable_objects() {
     use Foundation::NSMutableString;
 
@@ -69,6 +73,10 @@ fn test_containing_mutable_objects() {
 
 #[test]
 #[cfg(feature = "Foundation_NSMutableString")]
+#[cfg_attr(
+    feature = "gnustep-1-7",
+    ignore = "thread safety issues regarding initialization"
+)]
 fn test_allowed_mutation_while_iterating() {
     use Foundation::{NSMutableString, NSString};
 
@@ -89,6 +97,10 @@ fn test_allowed_mutation_while_iterating() {
     not(debug_assertions),
     ignore = "enumeration mutation only detected with debug assertions on"
 )]
+#[cfg_attr(
+    all(debug_assertions, feature = "gnustep-1-7"),
+    ignore = "thread safety issues regarding initialization"
+)]
 fn test_iter_mutation_detection() {
     let array = NSMutableArray::from_id_slice(&[NSObject::new(), NSObject::new()]);
 
@@ -96,6 +108,24 @@ fn test_iter_mutation_detection() {
         let item: &NSObject = item;
         let _: () = unsafe { msg_send![&array, removeObject: item] };
     }
+}
+
+#[test]
+#[cfg_attr(
+    feature = "gnustep-1-7",
+    ignore = "thread safety issues regarding initialization"
+)]
+fn test_threaded() {
+    std::thread::scope(|s| {
+        s.spawn(|| {
+            let _ = NSMutableArray::from_vec(vec![NSObject::new(), NSObject::new()]);
+        });
+
+        s.spawn(|| {
+            let array = <NSMutableArray<NSObject>>::alloc();
+            assert!(array.is_some());
+        });
+    });
 }
 
 #[test]
