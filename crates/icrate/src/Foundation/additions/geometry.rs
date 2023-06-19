@@ -1,22 +1,7 @@
 use objc2::encode::{Encode, Encoding, RefEncode};
 use objc2::ffi::NSUInteger;
 
-#[cfg(target_pointer_width = "64")]
-type InnerFloat = f64;
-#[cfg(not(target_pointer_width = "64"))]
-type InnerFloat = f32;
-
-/// The basic type for all floating-point values.
-///
-/// This is [`f32`] on 32-bit platforms and [`f64`] on 64-bit platforms.
-///
-/// This technically belongs to the `CoreGraphics` framework, but we define it
-/// here for convenience.
-///
-/// See [Apple's documentation](https://developer.apple.com/documentation/coregraphics/cgfloat?language=objc).
-// Defined in CoreGraphics/CGBase.h
-// TODO: Use a newtype here?
-pub type CGFloat = InnerFloat;
+use crate::CoreFoundation::*;
 
 // NSGeometry types are aliases to CGGeometry types on iOS, tvOS, watchOS and
 // macOS 64bit (and hence their Objective-C encodings are different).

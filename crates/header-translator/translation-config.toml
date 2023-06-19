@@ -203,7 +203,7 @@ maccatalyst = "15.0"
 ios = "11.0"
 
 [library.Foundation]
-imports = []
+imports = ["CoreFoundation"]
 extra-features = [
     "objective-c",
     "block",

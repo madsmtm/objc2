@@ -2217,6 +2217,7 @@ FileProvider_all = [
     "FileProvider_NSFileProviderRequest",
 ]
 Foundation = [
+    "CoreFoundation",
     "objective-c",
     "block",
     "Foundation_NSError",

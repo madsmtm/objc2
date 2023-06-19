@@ -1,7 +1,7 @@
 pub use self::comparison_result::NSComparisonResult;
 pub use self::geometry::{
-    CGFloat, CGPoint, CGRect, CGSize, NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint,
-    NSRect, NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize,
+    CGPoint, CGRect, CGSize, NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint, NSRect,
+    NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize,
 };
 pub use self::range::NSRange;
 #[cfg(feature = "Foundation_NSThread")]
