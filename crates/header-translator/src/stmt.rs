@@ -1711,7 +1711,7 @@ impl fmt::Display for Stmt {
                     Some(UnexposedAttr::TypedExtensibleEnum) => {
                         writeln!(f, "typed_extensible_enum!(pub type {} = {ty};);", id.name)?;
                     }
-                    None | Some(UnexposedAttr::BridgedTypedef) => {
+                    None | Some(UnexposedAttr::BridgedTypedef | UnexposedAttr::Bridged) => {
                         // "bridged" typedefs should use a normal type alias.
                         writeln!(f, "pub type {} = {ty};", id.name)?;
                     }
