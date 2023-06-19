@@ -2408,7 +2408,10 @@ impl Stmt {
                             writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
                         }
                         kind => {
-                            if !matches!(kind, None | Some(UnexposedAttr::BridgedTypedef)) {
+                            if !matches!(
+                                kind,
+                                None | Some(UnexposedAttr::BridgedTypedef | UnexposedAttr::Bridged)
+                            ) {
                                 error!("invalid alias kind {kind:?} for {ty:?}");
                             }
                             // "bridged" typedefs should use a normal type alias.
