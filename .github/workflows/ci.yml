@@ -343,7 +343,7 @@ jobs:
       run: cargo test $ARGS $PUBLIC_CRATES -ptests
 
     - name: Test all frameworks
-      run: cargo test $ARGS $PUBLIC_CRATES -ptests --features=$INTERESTING_FEATURES,$LATEST_MACOS_FEATURE
+      run: cargo test $ARGS $PUBLIC_CRATES -ptests --features=$INTERESTING_FEATURES,unstable-frameworks-macos-12
 
   test-apple:
     # if: ${{ env.FULL }}
