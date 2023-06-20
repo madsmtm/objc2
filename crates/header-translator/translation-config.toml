@@ -281,7 +281,7 @@ ios = "8.0"
 watchos = "9.0"
 
 [library.LocalAuthenticationEmbeddedUI]
-imports = ["AppKit", "Foundation", "LocalAuthentication"]
+imports = ["AppKit", "CoreFoundation", "Foundation", "LocalAuthentication"]
 extra-features = [
     "AppKit_NSWindow",
 ]
