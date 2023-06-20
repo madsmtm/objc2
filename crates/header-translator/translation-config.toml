@@ -269,7 +269,7 @@ maccatalyst = "13.0"
 ios = "11.0"
 
 [library.InputMethodKit]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 macos = "10.5"
 maccatalyst = "13.0"
 

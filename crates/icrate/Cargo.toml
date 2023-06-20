@@ -3578,6 +3578,7 @@ IdentityLookup_all = [
 ]
 InputMethodKit = [
     "AppKit",
+    "CoreFoundation",
     "Foundation",
 ]
 InputMethodKit_IMKCandidates = [
