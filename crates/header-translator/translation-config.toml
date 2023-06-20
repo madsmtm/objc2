@@ -290,7 +290,7 @@ maccatalyst = "16.0"
 ios = "16.0"
 
 [library.LinkPresentation]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 macos = "10.15"
 maccatalyst = "13.0"
 ios = "13.0"
