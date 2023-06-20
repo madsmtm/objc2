@@ -301,7 +301,7 @@ imports = ["AppKit", "Foundation"]
 macos = "12.0"
 
 [library.MapKit]
-imports = ["AppKit", "Contacts", "CoreLocation", "Foundation"]
+imports = ["AppKit", "Contacts", "CoreFoundation", "CoreLocation", "Foundation"]
 extra-features = [
     "MapKit_MKDirectionsResponse",
     "MapKit_MKETAResponse",

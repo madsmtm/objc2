@@ -3687,6 +3687,7 @@ MailKit_all = [
 MapKit = [
     "AppKit",
     "Contacts",
+    "CoreFoundation",
     "CoreLocation",
     "Foundation",
     "MapKit_MKDirectionsResponse",
