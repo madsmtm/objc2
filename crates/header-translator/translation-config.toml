@@ -315,7 +315,7 @@ tvos = "9.2"
 watchos = "2.0"
 
 [library.MediaPlayer]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 macos = "10.12.1"
 maccatalyst = "13.0"
 ios = "2.0"
