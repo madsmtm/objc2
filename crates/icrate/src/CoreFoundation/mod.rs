@@ -1,8 +1,9 @@
+mod additions;
 mod fixes;
 #[path = "../generated/CoreFoundation/mod.rs"]
 mod generated;
 
-#[allow(unreachable_pub)]
+pub use self::additions::*;
 pub use self::fixes::*;
 pub use self::generated::*;
 

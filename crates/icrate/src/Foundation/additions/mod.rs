@@ -1,8 +1,4 @@
 pub use self::comparison_result::NSComparisonResult;
-pub use self::geometry::{
-    CGPoint, CGRect, CGSize, NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint, NSRect,
-    NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize,
-};
 pub use self::range::NSRange;
 #[cfg(feature = "Foundation_NSThread")]
 #[cfg(feature = "dispatch")]
@@ -21,7 +17,6 @@ pub mod dictionary;
 pub mod enumerator;
 mod error;
 mod exception;
-mod geometry;
 mod number;
 mod process_info;
 mod range;

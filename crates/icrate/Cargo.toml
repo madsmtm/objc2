@@ -219,6 +219,7 @@ AdSupport_all = [
 ]
 AppKit = [
     "CoreData",
+    "CoreFoundation",
     "Foundation",
     "AppKit_NSApplication",
     "AppKit_NSCollectionLayoutSection",

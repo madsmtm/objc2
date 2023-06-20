@@ -26,7 +26,7 @@ ios = "6.0"
 tvos = "9.0"
 
 [library.AppKit]
-imports = ["CoreData", "Foundation"]
+imports = ["CoreData", "CoreFoundation", "Foundation"]
 extra-features = [
     # Temporary, since some structs and statics use these
     "AppKit_NSApplication",

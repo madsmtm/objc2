@@ -1,56 +1,6 @@
-use objc2::encode::{Encode, Encoding, RefEncode};
 use objc2::ffi::NSUInteger;
 
 use crate::CoreFoundation::*;
-
-// NSGeometry types are aliases to CGGeometry types on iOS, tvOS, watchOS and
-// macOS 64bit (and hence their Objective-C encodings are different).
-//
-// TODO: Adjust `objc2-encode` so that this is handled there, and so that we
-// can effectively forget about it and use `NS` and `CG` types equally.
-#[cfg(all(
-    feature = "apple",
-    not(all(target_os = "macos", target_pointer_width = "32"))
-))]
-mod names {
-    pub(super) const POINT: &str = "CGPoint";
-    pub(super) const SIZE: &str = "CGSize";
-    pub(super) const RECT: &str = "CGRect";
-}
-
-#[cfg(any(
-    feature = "gnustep-1-7",
-    all(target_os = "macos", target_pointer_width = "32")
-))]
-mod names {
-    pub(super) const POINT: &str = "_NSPoint";
-    pub(super) const SIZE: &str = "_NSSize";
-    pub(super) const RECT: &str = "_NSRect";
-}
-
-/// A point in a two-dimensional coordinate system.
-///
-/// This technically belongs to the `CoreGraphics` framework, but we define it
-/// here for convenience.
-///
-/// See [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cgpoint?language=objc).
-#[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq, Default)]
-pub struct CGPoint {
-    /// The x-coordinate of the point.
-    pub x: CGFloat,
-    /// The y-coordinate of the point.
-    pub y: CGFloat,
-}
-
-unsafe impl Encode for CGPoint {
-    const ENCODING: Encoding =
-        Encoding::Struct(names::POINT, &[CGFloat::ENCODING, CGFloat::ENCODING]);
-}
-
-unsafe impl RefEncode for CGPoint {
-    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
-}
 
 impl CGPoint {
     /// Create a new point with the given coordinates.
@@ -82,35 +32,6 @@ impl CGPoint {
     #[doc(alias = "CGPointZero")]
     #[doc(alias = "ORIGIN")]
     pub const ZERO: Self = Self::new(0.0, 0.0);
-}
-
-/// A two-dimensional size.
-///
-/// As this is sometimes used to represent a distance vector, rather than a
-/// physical size, the width and height are _not_ guaranteed to be
-/// non-negative! Methods that expect that must use one of [`CGSize::abs`] or
-/// [`CGRect::standardize`].
-///
-/// This technically belongs to the `CoreGraphics` framework, but we define it
-/// here for convenience.
-///
-/// See [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cgsize?language=objc).
-#[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq, Default)]
-pub struct CGSize {
-    /// The dimensions along the x-axis.
-    pub width: CGFloat,
-    /// The dimensions along the y-axis.
-    pub height: CGFloat,
-}
-
-unsafe impl Encode for CGSize {
-    const ENCODING: Encoding =
-        Encoding::Struct(names::SIZE, &[CGFloat::ENCODING, CGFloat::ENCODING]);
-}
-
-unsafe impl RefEncode for CGSize {
-    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
 impl CGSize {
@@ -174,38 +95,6 @@ impl CGSize {
     #[doc(alias = "NSZeroSize")]
     #[doc(alias = "CGSizeZero")]
     pub const ZERO: Self = Self::new(0.0, 0.0);
-}
-
-/// The location and dimensions of a rectangle.
-///
-/// In the default Core Graphics coordinate space (macOS), the origin is
-/// located in the lower-left corner of the rectangle and the rectangle
-/// extends towards the upper-right corner.
-///
-/// If the context has a flipped coordinate space (iOS, tvOS, watchOS) the
-/// origin is in the upper-left corner and the rectangle extends towards the
-/// lower-right corner.
-///
-/// This technically belongs to the `CoreGraphics` framework, but we define it
-/// here for convenience.
-///
-/// See [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cgrect?language=objc).
-#[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq, Default)]
-pub struct CGRect {
-    /// The coordinates of the rectangle’s origin.
-    pub origin: CGPoint,
-    /// The dimensions of the rectangle.
-    pub size: CGSize,
-}
-
-unsafe impl Encode for CGRect {
-    const ENCODING: Encoding =
-        Encoding::Struct(names::RECT, &[CGPoint::ENCODING, CGSize::ENCODING]);
-}
-
-unsafe impl RefEncode for CGRect {
-    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
 impl CGRect {
