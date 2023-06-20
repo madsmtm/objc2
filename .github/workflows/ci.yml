@@ -51,6 +51,7 @@ env:
   # compiling C code, even if just running a `check`/`clippy` build.
   INTERESTING_FEATURES: malloc,block,verify,unstable-private
   UNSTABLE_FEATURES: unstable-autoreleasesafe,unstable-c-unwind
+  LATEST_MACOS_FEATURE: unstable-frameworks-macos-13
   # Required when we want to use a different runtime than the default `apple`
   OTHER_RUNTIME: --no-default-features --features=std
   # https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
@@ -97,7 +98,7 @@ jobs:
           args: >-
             $PUBLIC_CRATES
             --features=$INTERESTING_FEATURES
-            --features=unstable-frameworks-macos-12
+            --features=$LATEST_MACOS_FEATURE
         - name: iOS 32bit
           target: armv7-apple-ios
           build-std: true
@@ -180,7 +181,7 @@ jobs:
         cargo check
         $PUBLIC_CRATES
         --features=$INTERESTING_FEATURES
-        --features=unstable-frameworks-macos-12
+        --features=$LATEST_MACOS_FEATURE
 
   ui:
     name: Compiler UI
@@ -342,7 +343,7 @@ jobs:
       run: cargo test $ARGS $PUBLIC_CRATES -ptests
 
     - name: Test all frameworks
-      run: cargo test $ARGS $PUBLIC_CRATES -ptests --features=$INTERESTING_FEATURES,unstable-frameworks-macos-12
+      run: cargo test $ARGS $PUBLIC_CRATES -ptests --features=$INTERESTING_FEATURES,$LATEST_MACOS_FEATURE
 
   test-apple:
     # if: ${{ env.FULL }}
