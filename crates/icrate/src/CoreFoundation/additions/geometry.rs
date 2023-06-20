@@ -9,7 +9,7 @@ impl CGPoint {
     /// # Examples
     ///
     /// ```
-    /// use icrate::Foundation::CGPoint;
+    /// use icrate::CoreFoundation::CGPoint;
     /// assert_eq!(CGPoint::new(10.0, -2.3), CGPoint { x: 10.0, y: -2.3 });
     /// ```
     #[inline]
@@ -25,7 +25,7 @@ impl CGPoint {
     /// # Examples
     ///
     /// ```
-    /// use icrate::Foundation::CGPoint;
+    /// use icrate::CoreFoundation::CGPoint;
     /// assert_eq!(CGPoint::ZERO, CGPoint { x: 0.0, y: 0.0 });
     /// ```
     #[doc(alias = "NSZeroPoint")]
@@ -41,7 +41,7 @@ impl CGSize {
     /// # Examples
     ///
     /// ```
-    /// use icrate::Foundation::CGSize;
+    /// use icrate::CoreFoundation::CGSize;
     /// let size = CGSize::new(10.0, 2.3);
     /// assert_eq!(size.width, 10.0);
     /// assert_eq!(size.height, 2.3);
@@ -50,7 +50,7 @@ impl CGSize {
     /// Negative values are allowed (though often undesired).
     ///
     /// ```
-    /// use icrate::Foundation::CGSize;
+    /// use icrate::CoreFoundation::CGSize;
     /// let size = CGSize::new(-1.0, 0.0);
     /// assert_eq!(size.width, -1.0);
     /// ```
@@ -75,7 +75,7 @@ impl CGSize {
     /// # Examples
     ///
     /// ```
-    /// use icrate::Foundation::CGSize;
+    /// use icrate::CoreFoundation::CGSize;
     /// assert_eq!(CGSize::new(-1.0, 1.0).abs(), CGSize::new(1.0, 1.0));
     /// ```
     #[inline]
@@ -89,7 +89,7 @@ impl CGSize {
     /// # Examples
     ///
     /// ```
-    /// use icrate::Foundation::CGSize;
+    /// use icrate::CoreFoundation::CGSize;
     /// assert_eq!(CGSize::ZERO, CGSize { width: 0.0, height: 0.0 });
     /// ```
     #[doc(alias = "NSZeroSize")]
@@ -104,7 +104,7 @@ impl CGRect {
     /// # Examples
     ///
     /// ```
-    /// use icrate::Foundation::{CGPoint, CGRect, CGSize};
+    /// use icrate::CoreFoundation::{CGPoint, CGRect, CGSize};
     /// let origin = CGPoint::new(10.0, -2.3);
     /// let size = CGSize::new(5.0, 0.0);
     /// let rect = CGRect::new(origin, size);
@@ -129,7 +129,7 @@ impl CGRect {
     /// # Examples
     ///
     /// ```
-    /// use icrate::Foundation::{CGPoint, CGRect, CGSize};
+    /// use icrate::CoreFoundation::{CGPoint, CGRect, CGSize};
     /// let origin = CGPoint::new(1.0, 1.0);
     /// let size = CGSize::new(-5.0, -2.0);
     /// let rect = CGRect::new(origin, size);
@@ -183,7 +183,7 @@ impl CGRect {
     /// # Examples
     ///
     /// ```
-    /// use icrate::Foundation::{CGPoint, CGRect, CGSize};
+    /// use icrate::CoreFoundation::{CGPoint, CGRect, CGSize};
     /// assert!(CGRect::ZERO.is_empty());
     /// let point = CGPoint::new(1.0, 2.0);
     /// assert!(CGRect::new(point, CGSize::ZERO).is_empty());
