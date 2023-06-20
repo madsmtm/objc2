@@ -355,7 +355,7 @@ ios = "13.0"
 
 [library.Photos]
 name = "PhotoKit"
-imports = ["AppKit", "CoreLocation", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "CoreLocation", "Foundation"]
 macos = "10.11"
 maccatalyst = "13.0"
 ios = "8.0"

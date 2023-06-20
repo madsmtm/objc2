@@ -4438,6 +4438,7 @@ OSAKit_all = [
 ]
 PhotoKit = [
     "AppKit",
+    "CoreFoundation",
     "CoreLocation",
     "Foundation",
 ]
