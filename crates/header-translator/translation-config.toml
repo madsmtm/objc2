@@ -45,7 +45,7 @@ macos = "10.0"
 maccatalyst = "13.0"
 
 [library.AuthenticationServices]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 # Temporary, since some structs and statics use these
 extra-features = ["Foundation_NSURL"]
 macos = "10.15"
