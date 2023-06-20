@@ -389,7 +389,7 @@ maccatalyst = "13.0"
 ios = "10.0"
 
 [library.StoreKit]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 macos = "10.7"
 maccatalyst = "13.0"
 ios = "3.0"

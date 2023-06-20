@@ -4604,6 +4604,7 @@ Speech_all = [
 ]
 StoreKit = [
     "AppKit",
+    "CoreFoundation",
     "Foundation",
 ]
 StoreKit_SKAdImpression = []
