@@ -416,7 +416,7 @@ tvos = "10.0"
 watchos = "3.0"
 
 [library.WebKit]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 extra-features = ["Foundation_NSAttributedString"]
 macos = "10.2"
 maccatalyst = "13.0"
