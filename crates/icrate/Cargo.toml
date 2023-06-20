@@ -1255,6 +1255,7 @@ AutomaticAssessmentConfiguration_all = [
 ]
 Automator = [
     "AppKit",
+    "CoreFoundation",
     "Foundation",
     "OSAKit",
 ]

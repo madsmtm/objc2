@@ -61,7 +61,7 @@ maccatalyst = "13.4"
 ios = "13.4"
 
 [library.Automator]
-imports = ["AppKit", "Foundation", "OSAKit"]
+imports = ["AppKit", "CoreFoundation", "Foundation", "OSAKit"]
 macos = "10.4"
 maccatalyst = "14.0"
 
