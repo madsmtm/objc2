@@ -368,7 +368,7 @@ macos = "10.4"
 
 [library.QuartzCore]
 name = "CoreAnimation"
-imports = ["Foundation"]
+imports = ["CoreFoundation", "Foundation"]
 macos = "10.3"
 maccatalyst = "13.0"
 ios = "2.0"
