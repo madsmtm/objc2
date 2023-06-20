@@ -52,7 +52,7 @@ dependencies = [
 
 [[package]]
 name = "block2"
-version = "0.2.0-alpha.8"
+version = "0.2.0"
 dependencies = [
  "block-sys",
  "objc2",
@@ -181,7 +181,7 @@ dependencies = [
 
 [[package]]
 name = "icrate"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "block2",
  "dispatch",
@@ -273,14 +273,14 @@ dependencies = [
 
 [[package]]
 name = "objc-sys"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "cc",
 ]
 
 [[package]]
 name = "objc2"
-version = "0.3.0-beta.5"
+version = "0.4.0"
 dependencies = [
  "iai",
  "malloc_buf",
@@ -292,7 +292,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-encode"
-version = "2.0.0-pre.4"
+version = "2.0.0"
 
 [[package]]
 name = "objc2-proc-macros"

@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
+## 0.2.0 - 2023-06-20
+
+### Changed
+* **BREAKING**: Updated `objc2` dependency to `v0.4.0`.
+
+
 ## 0.2.0-alpha.8 - 2023-02-07
 
 ### Changed
