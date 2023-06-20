@@ -78,7 +78,7 @@ ios = "13.0"
 tvos = "13.0"
 
 [library.BusinessChat]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 macos = "10.14"
 maccatalyst = "13.0" # Unsure
 ios = "11.0" # Unsure

@@ -1334,6 +1334,7 @@ BackgroundTasks_all = [
 ]
 BusinessChat = [
     "AppKit",
+    "CoreFoundation",
     "Foundation",
 ]
 BusinessChat_BCChatAction = []
