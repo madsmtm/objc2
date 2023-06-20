@@ -95,10 +95,12 @@ jobs:
         include:
         - name: macOS 64bit
           target: aarch64-apple-darwin
+          # Ideally this would use $LATEST_MACOS_FEATURE, but this causes clippy to
+          # use too much memory for the CI runner
           args: >-
             $PUBLIC_CRATES
             --features=$INTERESTING_FEATURES
-            --features=$LATEST_MACOS_FEATURE
+            --features=unstable-frameworks-macos-12
         - name: iOS 32bit
           target: armv7-apple-ios
           build-std: true
