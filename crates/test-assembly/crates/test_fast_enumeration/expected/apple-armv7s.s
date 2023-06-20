@@ -35,8 +35,8 @@ _iter_once:
 	cmp	r0, r1
 	blo	LBB1_4
 	ldr	r6, [r4]
-	movw	r10, :lower16:(L__ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h6140e5efd2948e03E$non_lazy_ptr-(LPC1_0+8))
-	movt	r10, :upper16:(L__ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h6140e5efd2948e03E$non_lazy_ptr-(LPC1_0+8))
+	movw	r10, :lower16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC1_0+8))
+	movt	r10, :upper16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC1_0+8))
 	add	r8, r4, #4
 LPC1_0:
 	ldr	r10, [pc, r10]
@@ -115,8 +115,8 @@ _iter:
 	str	r0, [sp, #84]
 	str	r0, [sp, #80]
 	str	r6, [sp, #8]
-	movw	r10, :lower16:(L__ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h6140e5efd2948e03E$non_lazy_ptr-(LPC3_0+8))
-	movt	r10, :upper16:(L__ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h6140e5efd2948e03E$non_lazy_ptr-(LPC3_0+8))
+	movw	r10, :lower16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
+	movt	r10, :upper16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
 	movw	r8, :lower16:(l_anon.[ID].0-(LPC3_1+8))
 LPC3_0:
 	ldr	r10, [pc, r10]
@@ -189,8 +189,8 @@ _iter_noop:
 	str	r0, [sp, #84]
 	str	r0, [sp, #80]
 	str	r6, [sp, #8]
-	movw	r10, :lower16:(L__ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h6140e5efd2948e03E$non_lazy_ptr-(LPC4_0+8))
-	movt	r10, :upper16:(L__ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h6140e5efd2948e03E$non_lazy_ptr-(LPC4_0+8))
+	movw	r10, :lower16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC4_0+8))
+	movt	r10, :upper16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC4_0+8))
 	movw	r8, :lower16:(l_anon.[ID].0-(LPC4_1+8))
 LPC4_0:
 	ldr	r10, [pc, r10]
@@ -258,8 +258,8 @@ _iter_retained:
 	str	r0, [sp, #84]
 	str	r0, [sp, #80]
 	str	r6, [sp, #8]
-	movw	r10, :lower16:(L__ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h6140e5efd2948e03E$non_lazy_ptr-(LPC5_0+8))
-	movt	r10, :upper16:(L__ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h6140e5efd2948e03E$non_lazy_ptr-(LPC5_0+8))
+	movw	r10, :lower16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_0+8))
+	movt	r10, :upper16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_0+8))
 	movw	r8, :lower16:(l_anon.[ID].0-(LPC5_1+8))
 LPC5_0:
 	ldr	r10, [pc, r10]
@@ -312,7 +312,7 @@ l_anon.[ID].0:
 
 	.section	__DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
 	.p2align	2, 0x0
-L__ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h6140e5efd2948e03E$non_lazy_ptr:
+LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
 	.indirect_symbol	SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)
 	.long	0
 

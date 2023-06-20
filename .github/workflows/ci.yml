@@ -733,7 +733,7 @@ jobs:
       run: cargo install cargo-fuzz --version=^0.11.2
 
     - name: Test Foundation
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation_all
 
     - name: Test all frameworks
       if: ${{ env.FULL }}
@@ -742,7 +742,7 @@ jobs:
     - name: Test in release mode
       # Disabled on GNUStep 2.1 for now
       if: ${{ env.FULL && matrix.runtime != 'gnustep-2-1' }}
-      run: cargo test $ARGS --features=Foundation --release
+      run: cargo test $ARGS --features=Foundation_all --release
 
     - name: Run fuzzing
       if: ${{ matrix.fuzz }}
@@ -770,7 +770,7 @@ jobs:
 
     - name: Test with unstable features
       if: ${{ env.FULL && matrix.nightly }}
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation,$UNSTABLE_FEATURES
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation_all,$UNSTABLE_FEATURES
 
   test-compiler-rt:
     name: Test Compiler-RT

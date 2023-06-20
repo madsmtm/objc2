@@ -41,7 +41,13 @@ impl __ThreadTestData {
             // GNUStep doesn't call `autorelease` if it's overridden
             expected.autorelease = 0;
         }
-        assert_eq!(current, expected);
+        if current != expected {
+            panic!(
+                "got differing amounts of calls:
+   current: `{current:?}`,
+  expected: `{expected:?}`"
+            )
+        }
     }
 }
 
@@ -384,6 +390,10 @@ mod tests {
         1
     } else if cfg!(all(target_arch = "arm", panic = "unwind")) {
         // 32-bit ARM unwinding interferes with the optimization
+        2
+    } else if cfg!(target_arch = "x86") {
+        // x86 autorelease_return is not currently tail-called, so the
+        // optimization doesn't work on declare_class! functions.
         2
     } else if cfg!(any(debug_assertions, feature = "exception")) {
         2
