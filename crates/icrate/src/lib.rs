@@ -80,6 +80,8 @@ pub mod CloudKit;
 pub mod Contacts;
 #[cfg(feature = "CoreAnimation")]
 pub mod CoreAnimation;
+#[cfg(feature = "CoreAudioTypes")]
+pub mod CoreAudioTypes;
 #[cfg(feature = "CoreData")]
 pub mod CoreData;
 #[cfg(feature = "CoreLocation")]

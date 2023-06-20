@@ -132,6 +132,14 @@ impl Expr {
             s = s.trim_start_matches('(').trim_end_matches(')').to_string();
         }
 
+        // Handle four character codes
+        if s.len() == 6 && s.starts_with('\'') && s.ends_with('\'') {
+            let fcc = four_char_code::FourCharCode::from_str(&s[1..5])
+                .expect("Invalid four character code");
+
+            return Some(Self::Unsigned(fcc.as_u32().into()));
+        }
+
         Some(Self::String(s))
     }
 }

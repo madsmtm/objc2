@@ -1816,6 +1816,10 @@ CoreAnimation_all = [
     "CoreAnimation_CATransition",
     "CoreAnimation_CAValueFunction",
 ]
+CoreAudioTypes = []
+CoreAudioTypes_all = [
+    "CoreAudioTypes",
+]
 CoreData = [
     "Foundation",
     "CoreData_NSAsynchronousFetchResult",
@@ -5318,6 +5322,7 @@ unstable-frameworks-macos-13 = [
     "BackgroundAssets_all",
     "BusinessChat_all",
     "CallKit_all",
+    "CoreAudioTypes_all",
     "DeviceCheck_all",
     "ExtensionKit_all",
     "FileProviderUI_all",

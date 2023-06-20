@@ -68,7 +68,7 @@ impl UnexposedAttr {
             "__unused" => None,
             // We assume that a function is inline if it has a body, so not
             // interesting.
-            "NS_INLINE" => None,
+            "CF_INLINE" | "NS_INLINE" => None,
             // We don't synthethize properties, so irrelevant for us.
             "NS_REQUIRES_PROPERTY_DEFINITIONS" => None,
             // Weak specifiers - would be interesting if Rust supported weak statics
@@ -129,6 +129,7 @@ impl UnexposedAttr {
             | "__WATCHOS_PROHIBITED"
             | "__WATCHOS_UNAVAILABLE"
             | "APPKIT_API_UNAVAILABLE_BEGIN_MACCATALYST"
+            | "CA_CANONICAL_DEPRECATED"
             | "MP_INIT_UNAVAILABLE"
             | "NS_AUTOMATED_REFCOUNT_UNAVAILABLE"
             | "NS_AUTOMATED_REFCOUNT_WEAK_UNAVAILABLE"
