@@ -192,7 +192,7 @@ ios = "3.0"
 tvos = "10.0"
 
 [library.FileProvider]
-imports = ["AppKit", "Foundation", "UniformTypeIdentifiers"]
+imports = ["AppKit", "CoreFoundation", "Foundation", "UniformTypeIdentifiers"]
 macos = "10.15"
 ios = "11.0"
 

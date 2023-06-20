@@ -2186,6 +2186,7 @@ ExternalAccessory_all = [
 ]
 FileProvider = [
     "AppKit",
+    "CoreFoundation",
     "Foundation",
     "UniformTypeIdentifiers",
 ]
