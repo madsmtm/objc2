@@ -336,7 +336,7 @@ maccatalyst = "16.0"
 ios = "16.0"
 
 [library.MetalKit]
-imports = ["AppKit", "Foundation", "Metal"]
+imports = ["AppKit", "CoreFoundation", "Foundation", "Metal"]
 # Temporary, since some structs and statics use these
 extra-features = [
     "Metal_MTLRenderPipelineReflection",

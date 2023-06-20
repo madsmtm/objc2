@@ -4056,6 +4056,7 @@ MetalFX_all = [
 ]
 MetalKit = [
     "AppKit",
+    "CoreFoundation",
     "Foundation",
     "Metal",
     "Metal_MTLRenderPipelineReflection",
