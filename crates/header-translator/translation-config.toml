@@ -245,7 +245,7 @@ ios = "7.0"
 tvos = "9.0"
 
 [library.GameKit]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 extra-features = [
     "AppKit_NSViewController",
 ]

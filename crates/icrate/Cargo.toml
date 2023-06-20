@@ -3129,6 +3129,7 @@ GameController_all = [
 ]
 GameKit = [
     "AppKit",
+    "CoreFoundation",
     "Foundation",
     "AppKit_NSViewController",
 ]
