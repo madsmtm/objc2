@@ -363,7 +363,7 @@ tvos = "10.0"
 watchos = "9.0"
 
 [library.OSAKit]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 macos = "10.4"
 
 [library.QuartzCore]

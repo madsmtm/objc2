@@ -4416,6 +4416,7 @@ MetricKit_all = [
 ]
 OSAKit = [
     "AppKit",
+    "CoreFoundation",
     "Foundation",
 ]
 OSAKit_OSALanguage = []
