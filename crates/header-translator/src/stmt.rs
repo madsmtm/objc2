@@ -472,7 +472,10 @@ fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
                 error!(?attr, "unknown attribute");
             }
         }
-        EntityKind::ObjCClassRef | EntityKind::TypeRef | EntityKind::ObjCProtocolRef => {}
+        EntityKind::ParmDecl
+        | EntityKind::ObjCClassRef
+        | EntityKind::TypeRef
+        | EntityKind::ObjCProtocolRef => {}
         EntityKind::NSConsumed => {
             error!("found NSConsumed, which requires manual handling");
         }
