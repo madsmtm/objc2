@@ -211,9 +211,9 @@ macro_rules! __rewrite_self_arg_inner {
 
             (add_class_method)
             (<Self as $crate::ClassType>::class())
-            (&$crate::runtime::Class)
+            (&$crate::runtime::AnyClass)
             (
-                _: &$crate::runtime::Class,
+                _: &$crate::runtime::AnyClass,
                 _: $crate::runtime::Sel,
             )
             ($($args_rest)*)

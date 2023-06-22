@@ -291,7 +291,7 @@ impl fmt::Pointer for Sel {
 #[doc(alias = "objc_ivar")]
 pub struct Ivar(ffi::objc_ivar);
 
-// SAFETY: Ivar is immutable (and can be retrieved from Class anyhow).
+// SAFETY: Ivar is immutable (and can be retrieved from AnyClass anyhow).
 unsafe impl Sync for Ivar {}
 unsafe impl Send for Ivar {}
 impl UnwindSafe for Ivar {}
@@ -372,7 +372,7 @@ impl MethodDescription {
 #[doc(alias = "objc_method")]
 pub struct Method(ffi::objc_method);
 
-// SAFETY: Method is immutable (and can be retrieved from Class anyhow).
+// SAFETY: Method is immutable (and can be retrieved from AnyClass anyhow).
 unsafe impl Sync for Method {}
 unsafe impl Send for Method {}
 impl UnwindSafe for Method {}
@@ -549,25 +549,29 @@ impl fmt::Debug for Method {
 /// A type that represents an Objective-C class.
 ///
 /// This is an opaque type meant to be used behind a shared reference
-/// `&Class`, which is semantically equivalent to `Class _Nonnull`.
+/// `&AnyClass`, which is semantically equivalent to `Class _Nonnull`.
 ///
-/// A nullable class can be used as `Option<&Class>`.
+/// A nullable class can be used as `Option<&AnyClass>`.
 ///
 /// See [Apple's documentation](https://developer.apple.com/documentation/objectivec/class?language=objc).
 #[repr(C)]
-#[doc(alias = "AnyClass")]
+#[doc(alias = "Class")]
 #[doc(alias = "objc_class")]
-pub struct Class(ffi::objc_class);
+pub struct AnyClass(ffi::objc_class);
 
-// SAFETY: Class is immutable (and can be retrieved from any thread using the
-// `class!` macro).
-unsafe impl Sync for Class {}
-unsafe impl Send for Class {}
-impl UnwindSafe for Class {}
-impl RefUnwindSafe for Class {}
+/// Use [`AnyClass`] instead.
+#[deprecated = "renamed to `runtime::AnyClass`"]
+pub type Class = AnyClass;
+
+// SAFETY: AnyClass is immutable (and can be retrieved from any thread using
+// the `class!` macro).
+unsafe impl Sync for AnyClass {}
+unsafe impl Send for AnyClass {}
+impl UnwindSafe for AnyClass {}
+impl RefUnwindSafe for AnyClass {}
 // Note that Unpin is not applicable.
 
-impl Class {
+impl AnyClass {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_class {
         let ptr: *const Self = self;
         ptr.cast()
@@ -632,10 +636,10 @@ impl Class {
     /// 1. The class pointer must be valid.
     /// 2. The caller must bound the lifetime of the returned class.
     #[inline]
-    pub(crate) unsafe fn superclass_raw<'a>(ptr: *const ffi::objc_class) -> Option<&'a Class> {
+    pub(crate) unsafe fn superclass_raw<'a>(ptr: *const ffi::objc_class) -> Option<&'a AnyClass> {
         // SAFETY: Caller ensures that the pointer is valid
         let superclass = unsafe { ffi::class_getSuperclass(ptr) };
-        let superclass: *const Class = superclass.cast();
+        let superclass: *const AnyClass = superclass.cast();
         // SAFETY: The result is properly bounded by the caller.
         unsafe { superclass.as_ref() }
     }
@@ -643,7 +647,7 @@ impl Class {
     /// Returns the superclass of self, or [`None`] if self is a root class.
     #[inline]
     #[doc(alias = "class_getSuperclass")]
-    pub fn superclass(&self) -> Option<&Class> {
+    pub fn superclass(&self) -> Option<&AnyClass> {
         // SAFETY: The pointer is valid, and the return is properly bounded
         unsafe { Self::superclass_raw(self.as_ptr()) }
     }
@@ -656,7 +660,7 @@ impl Class {
         unsafe { ptr.as_ref().unwrap_unchecked() }
     }
 
-    // objc_getMetaClass -> Same as `Class::get(name).metaclass()`
+    // objc_getMetaClass -> Same as `AnyClass::get(name).metaclass()`
 
     #[allow(unused)]
     pub(crate) fn is_metaclass(&self) -> bool {
@@ -740,7 +744,7 @@ impl Class {
 
     /// Checks whether this class conforms to the specified protocol.
     #[doc(alias = "class_conformsToProtocol")]
-    pub fn conforms_to(&self, proto: &Protocol) -> bool {
+    pub fn conforms_to(&self, proto: &AnyProtocol) -> bool {
         unsafe {
             Bool::from_raw(ffi::class_conformsToProtocol(self.as_ptr(), proto.as_ptr())).as_bool()
         }
@@ -749,10 +753,10 @@ impl Class {
     /// Get a list of the protocols to which this class conforms.
     #[cfg(feature = "malloc")]
     #[doc(alias = "class_copyProtocolList")]
-    pub fn adopted_protocols(&self) -> Malloc<[&Protocol]> {
+    pub fn adopted_protocols(&self) -> Malloc<[&AnyProtocol]> {
         unsafe {
             let mut count: c_uint = 0;
-            let protos: *mut &Protocol =
+            let protos: *mut &AnyProtocol =
                 ffi::class_copyProtocolList(self.as_ptr(), &mut count).cast();
             Malloc::from_array(protos, count as usize)
         }
@@ -809,14 +813,14 @@ impl Class {
     ///
     /// ```
     /// # use objc2::{class, sel};
-    /// # use objc2::runtime::Class;
+    /// # use objc2::runtime::AnyClass;
     /// let cls = class!(NSObject);
     /// let sel = sel!(isKindOfClass:);
     /// // Verify that `isKindOfClass:`:
     /// // - Exists on the class
     /// // - Takes a class as a parameter
     /// // - Returns a BOOL
-    /// let result = cls.verify_sel::<(&Class,), bool>(sel);
+    /// let result = cls.verify_sel::<(&AnyClass,), bool>(sel);
     /// assert!(result.is_ok());
     /// ```
     pub fn verify_sel<A, R>(&self, sel: Sel) -> Result<(), VerificationError>
@@ -829,21 +833,21 @@ impl Class {
     }
 }
 
-standard_pointer_impls!(Class);
+standard_pointer_impls!(AnyClass);
 
-unsafe impl RefEncode for Class {
+unsafe impl RefEncode for AnyClass {
     const ENCODING_REF: Encoding = Encoding::Class;
 }
 
-impl fmt::Debug for Class {
+impl fmt::Debug for AnyClass {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Class")
+        f.debug_struct("AnyClass")
             .field("name", &self.name())
             .finish_non_exhaustive()
     }
 }
 
-impl fmt::Display for Class {
+impl fmt::Display for AnyClass {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(self.name(), f)
     }
@@ -851,18 +855,21 @@ impl fmt::Display for Class {
 
 /// A type that represents an Objective-C protocol.
 #[repr(C)]
-#[doc(alias = "AnyProtocol")]
 #[doc(alias = "objc_protocol")]
-pub struct Protocol(ffi::objc_protocol);
+pub struct AnyProtocol(ffi::objc_protocol);
 
-// SAFETY: Protocol is immutable (and can be retrieved from Class anyhow).
-unsafe impl Sync for Protocol {}
-unsafe impl Send for Protocol {}
-impl UnwindSafe for Protocol {}
-impl RefUnwindSafe for Protocol {}
+/// Use [`AnyProtocol`] instead.
+#[deprecated = "renamed to `runtime::AnyProtocol`"]
+pub type Protocol = AnyProtocol;
+
+// SAFETY: AnyProtocol is immutable (and can be retrieved from AnyClass anyhow).
+unsafe impl Sync for AnyProtocol {}
+unsafe impl Send for AnyProtocol {}
+impl UnwindSafe for AnyProtocol {}
+impl RefUnwindSafe for AnyProtocol {}
 // Note that Unpin is not applicable.
 
-impl Protocol {
+impl AnyProtocol {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_protocol {
         let ptr: *const Self = self;
         ptr.cast()
@@ -871,7 +878,7 @@ impl Protocol {
     /// Returns the protocol definition of a specified protocol, or [`None`]
     /// if the protocol is not registered with the Objective-C runtime.
     #[doc(alias = "objc_getProtocol")]
-    pub fn get(name: &str) -> Option<&'static Protocol> {
+    pub fn get(name: &str) -> Option<&'static Self> {
         let name = CString::new(name).unwrap();
         unsafe {
             let proto = ffi::objc_getProtocol(name.as_ptr());
@@ -882,10 +889,10 @@ impl Protocol {
     /// Obtains the list of registered protocol definitions.
     #[cfg(feature = "malloc")]
     #[doc(alias = "objc_copyProtocolList")]
-    pub fn protocols() -> Malloc<[&'static Protocol]> {
+    pub fn protocols() -> Malloc<[&'static Self]> {
         unsafe {
             let mut count: c_uint = 0;
-            let protocols: *mut &Protocol = ffi::objc_copyProtocolList(&mut count).cast();
+            let protocols: *mut &Self = ffi::objc_copyProtocolList(&mut count).cast();
             Malloc::from_array(protocols, count as usize)
         }
     }
@@ -893,10 +900,10 @@ impl Protocol {
     /// Get a list of the protocols to which this protocol conforms.
     #[cfg(feature = "malloc")]
     #[doc(alias = "protocol_copyProtocolList")]
-    pub fn adopted_protocols(&self) -> Malloc<[&Protocol]> {
+    pub fn adopted_protocols(&self) -> Malloc<[&AnyProtocol]> {
         unsafe {
             let mut count: c_uint = 0;
-            let protocols: *mut &Protocol =
+            let protocols: *mut &AnyProtocol =
                 ffi::protocol_copyProtocolList(self.as_ptr(), &mut count).cast();
             Malloc::from_array(protocols, count as usize)
         }
@@ -904,7 +911,7 @@ impl Protocol {
 
     /// Checks whether this protocol conforms to the specified protocol.
     #[doc(alias = "protocol_conformsToProtocol")]
-    pub fn conforms_to(&self, proto: &Protocol) -> bool {
+    pub fn conforms_to(&self, proto: &AnyProtocol) -> bool {
         unsafe {
             Bool::from_raw(ffi::protocol_conformsToProtocol(
                 self.as_ptr(),
@@ -959,39 +966,39 @@ impl Protocol {
     }
 }
 
-impl PartialEq for Protocol {
+impl PartialEq for AnyProtocol {
     /// Check whether the protocols are equal, or conform to each other.
     #[inline]
     #[doc(alias = "protocol_isEqual")]
-    fn eq(&self, other: &Protocol) -> bool {
+    fn eq(&self, other: &Self) -> bool {
         unsafe { Bool::from_raw(ffi::protocol_isEqual(self.as_ptr(), other.as_ptr())).as_bool() }
     }
 }
 
-impl Eq for Protocol {}
+impl Eq for AnyProtocol {}
 
 // Don't implement `Hash` for protocol, it is unclear how that would work
 
-unsafe impl RefEncode for Protocol {
-    // Protocol is an object internally
+unsafe impl RefEncode for AnyProtocol {
+    // Protocols are objects internally.
     const ENCODING_REF: Encoding = Encoding::Object;
 }
 
-impl fmt::Debug for Protocol {
+impl fmt::Debug for AnyProtocol {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Protocol")
+        f.debug_struct("AnyProtocol")
             .field("name", &self.name())
             .finish_non_exhaustive()
     }
 }
 
-impl fmt::Display for Protocol {
+impl fmt::Display for AnyProtocol {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(self.name(), f)
     }
 }
 
-pub(crate) fn ivar_offset(cls: &Class, name: &str, expected: &Encoding) -> isize {
+pub(crate) fn ivar_offset(cls: &AnyClass, name: &str, expected: &Encoding) -> isize {
     match cls.instance_variable(name) {
         Some(ivar) => {
             let encoding = ivar.type_encoding();
@@ -1012,7 +1019,7 @@ pub(crate) fn ivar_offset(cls: &Class, name: &str, expected: &Encoding) -> isize
 /// a subclass of `NSObject`, so it can represent other root classes like
 /// `NSProxy`).
 ///
-/// `Id<Object>` is equivalent to Objective-C's `id _Nonnull`.
+/// `Id<AnyObject>` is equivalent to Objective-C's `id _Nonnull`.
 ///
 /// This contains [`UnsafeCell`], and is similar to that in that one can
 /// safely access and perform interior mutability on this (both via.
@@ -1031,18 +1038,22 @@ pub(crate) fn ivar_offset(cls: &Class, name: &str, expected: &Encoding) -> isize
 /// [`msg_send!`]: crate::msg_send
 #[doc(alias = "id")]
 #[repr(C)]
-pub struct Object(ffi::objc_object);
+pub struct AnyObject(ffi::objc_object);
 
-unsafe impl RefEncode for Object {
+/// Use [`AnyObject`] instead.
+#[deprecated = "renamed to `runtime::AnyObject`. Consider using the correct type from `icrate` instead though"]
+pub type Object = AnyObject;
+
+unsafe impl RefEncode for AnyObject {
     const ENCODING_REF: Encoding = Encoding::Object;
 }
 
 // SAFETY: This is technically slightly wrong, not all objects implement the
 // standard memory management methods. But not having this impl would be too
 // restrictive, so we'll live with it.
-unsafe impl Message for Object {}
+unsafe impl Message for AnyObject {}
 
-impl Object {
+impl AnyObject {
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_object {
         let ptr: *const Self = self;
         ptr.cast()
@@ -1050,8 +1061,8 @@ impl Object {
 
     /// Dynamically find the class of this object.
     #[doc(alias = "object_getClass")]
-    pub fn class(&self) -> &Class {
-        let ptr: *const Class = unsafe { ffi::object_getClass(self.as_ptr()) }.cast();
+    pub fn class(&self) -> &AnyClass {
+        let ptr: *const AnyClass = unsafe { ffi::object_getClass(self.as_ptr()) }.cast();
         // SAFETY: The class is not NULL because the object is not NULL.
         unsafe { ptr.as_ref().unwrap_unchecked() }
     }
@@ -1083,10 +1094,10 @@ impl Object {
     /// panic.
     #[inline]
     #[doc(alias = "object_setClass")]
-    pub unsafe fn set_class<'s>(this: &Self, cls: &Class) -> &'s Class {
+    pub unsafe fn set_class<'s>(this: &Self, cls: &AnyClass) -> &'s AnyClass {
         let ptr =
             unsafe { ffi::object_setClass(this.as_ptr() as *mut ffi::objc_object, cls.as_ptr()) };
-        let ptr: *const Class = ptr.cast();
+        let ptr: *const AnyClass = ptr.cast();
         // SAFETY: The class is not NULL because the object is not NULL.
         let old_cls = unsafe { ptr.as_ref().unwrap_unchecked() };
         // TODO: Check the superclass requirement too?
@@ -1170,8 +1181,8 @@ impl Object {
 
     /// Returns a reference to the instance variable with the given name.
     ///
-    /// See [`Object::ivar_ptr`] for more information, including on when this
-    /// panics.
+    /// See [`AnyObject::ivar_ptr`] for more information, including on when
+    /// this panics.
     ///
     ///
     /// # Safety
@@ -1181,20 +1192,20 @@ impl Object {
     ///
     /// No thread syncronization is done, so you must ensure that no other
     /// thread is concurrently mutating the variable. This requirement can be
-    /// considered upheld if all mutation happens through [`Object::ivar_mut`]
-    /// (since that  takes `&mut self`).
+    /// considered upheld if all mutation happens through
+    /// [`AnyObject::ivar_mut`] (since that  takes `&mut self`).
     pub unsafe fn ivar<T: Encode>(&self, name: &str) -> &T {
         // SAFETY: Upheld by caller.
         unsafe { self.ivar_ptr::<T>(name).as_ref().unwrap_unchecked() }
     }
 
-    /// Use [`Object::ivar`] instead.
+    /// Use [`AnyObject::ivar`] instead.
     ///
     ///
     /// # Safety
     ///
-    /// See [`Object::ivar`].
-    #[deprecated = "Use `Object::ivar` instead."]
+    /// See [`AnyObject::ivar`].
+    #[deprecated = "Use `AnyObject::ivar` instead."]
     pub unsafe fn get_ivar<T: Encode>(&self, name: &str) -> &T {
         // SAFETY: Upheld by caller
         unsafe { self.ivar::<T>(name) }
@@ -1202,8 +1213,8 @@ impl Object {
 
     /// Returns a mutable reference to the ivar with the given name.
     ///
-    /// See [`Object::ivar_ptr`] for more information, including on when this
-    /// panics.
+    /// See [`AnyObject::ivar_ptr`] for more information, including on when
+    /// this panics.
     ///
     ///
     /// # Safety
@@ -1225,13 +1236,13 @@ impl Object {
         unsafe { ptr.as_mut() }
     }
 
-    /// Use [`Object::ivar_mut`] instead.
+    /// Use [`AnyObject::ivar_mut`] instead.
     ///
     ///
     /// # Safety
     ///
-    /// Same as [`Object::ivar_mut`].
-    #[deprecated = "Use `Object::ivar_mut` instead."]
+    /// Same as [`AnyObject::ivar_mut`].
+    #[deprecated = "Use `AnyObject::ivar_mut` instead."]
     pub unsafe fn get_mut_ivar<T: Encode>(&mut self, name: &str) -> &mut T {
         // SAFETY: Upheld by caller
         unsafe { self.ivar_mut::<T>(name) }
@@ -1239,13 +1250,13 @@ impl Object {
 
     /// Sets the value of the ivar with the given name.
     ///
-    /// This is a shorthand for [`Object::ivar_mut`], see that for more
+    /// This is a shorthand for [`AnyObject::ivar_mut`], see that for more
     /// information.
     ///
     ///
     /// # Safety
     ///
-    /// Same as [`Object::ivar_mut`].
+    /// Same as [`AnyObject::ivar_mut`].
     pub unsafe fn set_ivar<T: Encode>(&mut self, name: &str, value: T) {
         // SAFETY: Invariants upheld by caller
         unsafe { *self.ivar_mut::<T>(name) = value };
@@ -1256,7 +1267,7 @@ impl Object {
     // objc_removeAssociatedObjects
 }
 
-impl fmt::Debug for Object {
+impl fmt::Debug for AnyObject {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "<{}: {:p}>", self.class().name(), self.as_ptr())
     }
@@ -1372,7 +1383,7 @@ mod tests {
         assert!(!cls.responds_to(sel!(abc)));
         assert!(!cls.responds_to(sel!(addNumber:toNumber:)));
 
-        assert_eq!(Class::get(cls.name()), Some(cls));
+        assert_eq!(AnyClass::get(cls.name()), Some(cls));
 
         let metaclass = cls.metaclass();
         // The metaclass of a root class is a subclass of the root class
@@ -1388,13 +1399,13 @@ mod tests {
 
     #[test]
     fn test_classes_count() {
-        assert!(Class::classes_count() > 0);
+        assert!(AnyClass::classes_count() > 0);
     }
 
     #[test]
     #[cfg(feature = "malloc")]
     fn test_classes() {
-        let classes = Class::classes();
+        let classes = AnyClass::classes();
         assert!(classes.len() > 0);
     }
 
@@ -1453,7 +1464,7 @@ mod tests {
         let _ = test_utils::custom_protocol();
 
         #[cfg(feature = "malloc")]
-        assert!(Protocol::protocols().len() > 0);
+        assert!(AnyProtocol::protocols().len() > 0);
     }
 
     #[test]
@@ -1487,24 +1498,24 @@ mod tests {
         fn assert_enc<T: Encode>(expected: &str) {
             assert_eq!(&T::ENCODING.to_string(), expected);
         }
-        assert_enc::<&Object>("@");
-        assert_enc::<*mut Object>("@");
-        assert_enc::<&Class>("#");
+        assert_enc::<&AnyObject>("@");
+        assert_enc::<*mut AnyObject>("@");
+        assert_enc::<&AnyClass>("#");
         assert_enc::<Sel>(":");
         assert_enc::<Option<Sel>>(":");
         assert_enc::<Imp>("^?");
         assert_enc::<Option<Imp>>("^?");
-        assert_enc::<&Protocol>("@");
+        assert_enc::<&AnyProtocol>("@");
     }
 
     #[test]
     fn test_send_sync() {
         fn assert_send_sync<T: Send + Sync + ?Sized>() {}
         assert_send_sync::<Bool>();
-        assert_send_sync::<Class>();
+        assert_send_sync::<AnyClass>();
         assert_send_sync::<Ivar>();
         assert_send_sync::<Method>();
-        assert_send_sync::<Protocol>();
+        assert_send_sync::<AnyProtocol>();
         assert_send_sync::<Sel>();
     }
 
@@ -1515,12 +1526,15 @@ mod tests {
         assert_eq!(format!("{sel:?}"), "Sel(\"abc:\")");
         let cls = test_utils::custom_class();
         assert_eq!(format!("{cls}"), "CustomObject");
-        assert_eq!(format!("{cls:?}"), "Class { name: \"CustomObject\", .. }");
+        assert_eq!(
+            format!("{cls:?}"),
+            "AnyClass { name: \"CustomObject\", .. }"
+        );
         let protocol = test_utils::custom_protocol();
         assert_eq!(format!("{protocol}"), "CustomProtocol");
         assert_eq!(
             format!("{protocol:?}"),
-            "Protocol { name: \"CustomProtocol\", .. }"
+            "AnyProtocol { name: \"CustomProtocol\", .. }"
         );
 
         let object = test_utils::custom_object();

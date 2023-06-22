@@ -210,5 +210,5 @@ pub type SEL = *const objc_selector;
 /// - `icrate::Foundation::NS[...]` for when you know the class of the object
 ///   you're dealing with.
 /// - `objc2::rc::Id` for a proper way of doing memory management.
-/// - `objc2::runtime::Object` for a bit safer representation of this.
+/// - `objc2::runtime::AnyObject` for a bit safer representation of this.
 pub type id = *mut objc_object;

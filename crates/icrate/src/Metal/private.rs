@@ -41,7 +41,7 @@ extern_methods!(
         pub unsafe fn newSerializedVertexDataWithFlags_error(
             &self,
             flags: u64,
-        ) -> Result<Id<Object>, Id<Foundation::NSError>>;
+        ) -> Result<Id<AnyObject>, Id<Foundation::NSError>>;
 
         #[method(serializeFragmentData)]
         pub unsafe fn serializeFragmentData(&self) -> *mut c_void;
@@ -60,6 +60,6 @@ extern_methods!(
     #[cfg(feature = "Metal_MTLVertexDescriptor")]
     unsafe impl Metal::MTLVertexDescriptor {
         #[method_id(newSerializedDescriptor)]
-        pub unsafe fn newSerializedDescriptor(&self) -> Option<Id<Object>>;
+        pub unsafe fn newSerializedDescriptor(&self) -> Option<Id<AnyObject>>;
     }
 );

@@ -8,7 +8,7 @@ use std::sync::Mutex;
 
 use objc2::encode::Encode;
 use objc2::rc::{Allocated, Id, __RcTestObject};
-use objc2::runtime::{NSObject, Object};
+use objc2::runtime::NSObject;
 use objc2::{class, declare_class, msg_send, msg_send_id, mutability, ClassType};
 
 static EXPECTED_MESSAGE: Mutex<String> = Mutex::new(String::new());
@@ -88,17 +88,17 @@ fn test_track_caller() {
 }
 
 pub fn test_nil(checker: &PanicChecker) {
-    let nil: *mut Object = ptr::null_mut();
+    let nil: *mut NSObject = ptr::null_mut();
 
     let msg = "messsaging description to nil";
     checker.assert_panics(msg, line!() + 1, || {
-        let _: *mut Object = unsafe { msg_send![nil, description] };
+        let _: *mut NSObject = unsafe { msg_send![nil, description] };
     });
     checker.assert_panics(msg, line!() + 1, || {
-        let _: *mut Object = unsafe { msg_send![super(nil, NSObject::class()), description] };
+        let _: *mut NSObject = unsafe { msg_send![super(nil, NSObject::class()), description] };
     });
     checker.assert_panics(msg, line!() + 1, || {
-        let _: Option<Id<Object>> = unsafe { msg_send_id![nil, description] };
+        let _: Option<Id<NSObject>> = unsafe { msg_send_id![nil, description] };
     });
 }
 
@@ -112,12 +112,12 @@ pub fn test_verify(checker: &PanicChecker) {
 
     let msg = format!("invalid message send to -[NSObject hash]: expected return to have type code '{}', but found '@'", usize::ENCODING);
     checker.assert_panics(&msg, line!() + 1, || {
-        let _: Option<Id<Object>> = unsafe { msg_send_id![&obj, hash] };
+        let _: Option<Id<NSObject>> = unsafe { msg_send_id![&obj, hash] };
     });
 }
 
 pub fn test_error_methods(checker: &PanicChecker) {
-    let nil: *mut Object = ptr::null_mut();
+    let nil: *mut NSObject = ptr::null_mut();
 
     let msg = "messsaging someSelectorWithError: to nil";
     checker.assert_panics(msg, line!() + 1, || {
@@ -128,7 +128,7 @@ pub fn test_error_methods(checker: &PanicChecker) {
             unsafe { msg_send![super(nil, NSObject::class()), someSelectorWithError: _] };
     });
     checker.assert_panics(msg, line!() + 2, || {
-        let _: Result<Id<Object>, Id<NSObject>> =
+        let _: Result<Id<NSObject>, Id<NSObject>> =
             unsafe { msg_send_id![nil, someSelectorWithError: _] };
     });
 
@@ -176,12 +176,12 @@ pub fn test_catch_all(checker: &PanicChecker) {
 
     let msg = "NSRangeException";
     checker.assert_panics(msg, line!() + 1, || {
-        let _: *mut Object = unsafe { msg_send![&obj, objectAtIndex: 0usize] };
+        let _: *mut NSObject = unsafe { msg_send![&obj, objectAtIndex: 0usize] };
     });
 
     let msg = "NSRangeException";
     checker.assert_panics(msg, line!() + 1, || {
-        let _: Id<Object> = unsafe { msg_send_id![&obj, objectAtIndex: 0usize] };
+        let _: Id<NSObject> = unsafe { msg_send_id![&obj, objectAtIndex: 0usize] };
     });
 }
 
@@ -206,9 +206,9 @@ pub fn test_unwind(checker: &PanicChecker) {
     let msg = "panic in PanickingClass";
     let line = line!() - 7;
     checker.assert_panics(msg, line, || {
-        let _: *mut Object = unsafe { msg_send![PanickingClass::class(), panic] };
+        let _: *mut NSObject = unsafe { msg_send![PanickingClass::class(), panic] };
     });
     checker.assert_panics(msg, line, || {
-        let _: Id<Object> = unsafe { msg_send_id![PanickingClass::class(), panic] };
+        let _: Id<NSObject> = unsafe { msg_send_id![PanickingClass::class(), panic] };
     });
 }

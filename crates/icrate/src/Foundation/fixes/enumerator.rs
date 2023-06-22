@@ -6,7 +6,7 @@ use crate::common::*;
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct NSFastEnumerationState {
     pub state: c_ulong,
-    pub itemsPtr: *mut *mut Object,
+    pub itemsPtr: *mut *mut AnyObject,
     pub mutationsPtr: *mut c_ulong,
     pub extra: [c_ulong; 5],
 }

@@ -1,15 +1,15 @@
 use objc2::encode::{Encode, Encoding, RefEncode};
-use objc2::runtime::Object;
+use objc2::runtime::AnyObject;
 
 #[repr(transparent)]
 struct NSString {
-    // `NSString` has the same layout / works the same as `Object`.
-    _priv: Object,
+    // `NSString` has the same layout / works the same as `AnyObject`.
+    _priv: AnyObject,
 }
 
 // We don't know the size of NSString, so we can only hold pointers to it.
 //
-// SAFETY: The string is `repr(transparent)` over `Object`.
+// SAFETY: The string is `repr(transparent)` over `AnyObject`.
 unsafe impl RefEncode for NSString {
     const ENCODING_REF: Encoding = Encoding::Object;
 }

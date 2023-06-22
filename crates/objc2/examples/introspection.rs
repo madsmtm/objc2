@@ -1,4 +1,4 @@
-use objc2::runtime::{Class, NSObject};
+use objc2::runtime::{AnyClass, NSObject};
 use objc2::{sel, ClassType, Encode};
 
 fn main() {
@@ -29,7 +29,7 @@ fn main() {
         ivar.name(),
         ivar.type_encoding()
     );
-    assert!(<*const Class>::ENCODING.equivalent_to_str(ivar.type_encoding()));
+    assert!(<*const AnyClass>::ENCODING.equivalent_to_str(ivar.type_encoding()));
 
     // Inspect a method of the class
     let method = cls.instance_method(sel!(hash)).unwrap();
@@ -52,6 +52,6 @@ fn main() {
     // Access an ivar of the object
     //
     // As before, you should not rely on the `isa` ivar being available!
-    let isa = unsafe { *obj.ivar::<*const Class>("isa") };
+    let isa = unsafe { *obj.ivar::<*const AnyClass>("isa") };
     println!("NSObject isa: {isa:?}");
 }

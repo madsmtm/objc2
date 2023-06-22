@@ -523,7 +523,7 @@ macro_rules! __inner_declare_class {
         $crate::__extern_class_impl_traits! {
             // SAFETY: Upheld by caller
             unsafe impl () for $for {
-                INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::Object];
+                INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::AnyObject];
 
                 fn as_super(&self) {
                     &*self.__superclass
@@ -541,7 +541,7 @@ macro_rules! __inner_declare_class {
             type Mutability = $mutability;
             const NAME: &'static $crate::__macro_helpers::str = $name_const;
 
-            fn class() -> &'static $crate::runtime::Class {
+            fn class() -> &'static $crate::runtime::AnyClass {
                 $crate::__macro_helpers::assert_mutability_matches_superclass_mutability::<Self>();
 
                 // TODO: Use `core::cell::LazyCell`
@@ -610,7 +610,7 @@ macro_rules! __inner_declare_class {
                 });
 
                 // We just registered the class, so it should be available
-                $crate::runtime::Class::get(<Self as ClassType>::NAME).unwrap()
+                $crate::runtime::AnyClass::get(<Self as ClassType>::NAME).unwrap()
             }
 
             #[inline]

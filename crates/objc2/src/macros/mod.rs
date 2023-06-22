@@ -8,12 +8,12 @@ mod extern_class;
 mod extern_methods;
 mod extern_protocol;
 
-/// Gets a reference to a [`Class`] from the given name.
+/// Gets a reference to an [`AnyClass`] from the given name.
 ///
 /// If you have an object that implements [`ClassType`], consider using the
 /// [`ClassType::class`] method instead.
 ///
-/// [`Class`]: crate::runtime::Class
+/// [`AnyClass`]: crate::runtime::AnyClass
 /// [`ClassType`]: crate::ClassType
 /// [`ClassType::class`]: crate::ClassType::class
 ///
@@ -22,9 +22,9 @@ mod extern_protocol;
 ///
 /// Panics if no class with the given name can be found.
 ///
-/// To dynamically check for a class that may not exist, use [`Class::get`].
+/// To dynamically check for a class that may not exist, use [`AnyClass::get`].
 ///
-/// [`Class::get`]: crate::runtime::Class::get
+/// [`AnyClass::get`]: crate::runtime::AnyClass::get
 ///
 ///
 /// # Features
@@ -442,7 +442,7 @@ macro_rules! __inner_statics_apple_generic {
         $hash:expr;
     } => {
         use $crate::__macro_helpers::UnsafeCell;
-        use $crate::runtime::Class;
+        use $crate::runtime::AnyClass;
 
         extern "C" {
             /// Link to the Objective-C class static.
@@ -458,7 +458,7 @@ macro_rules! __inner_statics_apple_generic {
             ///   though _should_ be a static linker error.
             ///
             /// Ideally, we'd have some way of allowing this to be weakly
-            /// linked, and return `Option<&Class>` in that case, but Rust
+            /// linked, and return `Option<&AnyClass>` in that case, but Rust
             /// doesn't have the capability to do so yet!
             /// <https://github.com/rust-lang/rust/issues/29603>
             /// <https://stackoverflow.com/a/16936512>
@@ -467,7 +467,7 @@ macro_rules! __inner_statics_apple_generic {
                 "OBJC_CLASS_$_",
                 $name,
             )]
-            static CLASS: Class;
+            static CLASS: AnyClass;
         }
 
         /// SAFETY: Same as `REF` above in `@sel`.
@@ -476,7 +476,7 @@ macro_rules! __inner_statics_apple_generic {
             "\x01L_OBJC_CLASSLIST_REFERENCES_$_",
             $hash,
         )]
-        static mut REF: UnsafeCell<&Class> = unsafe {
+        static mut REF: UnsafeCell<&AnyClass> = unsafe {
             UnsafeCell::new(&CLASS)
         };
     };
@@ -486,7 +486,7 @@ macro_rules! __inner_statics_apple_generic {
         $hash:expr;
     } => {
         use $crate::__macro_helpers::{u8, UnsafeCell};
-        use $crate::runtime::Class;
+        use $crate::runtime::AnyClass;
 
         const X: &[u8] = $name.as_bytes();
 
@@ -507,8 +507,8 @@ macro_rules! __inner_statics_apple_generic {
             "\x01L_OBJC_CLASS_REFERENCES_",
             $hash,
         )]
-        static mut REF: UnsafeCell<&Class> = unsafe {
-            let ptr: *const Class = NAME_DATA.as_ptr().cast();
+        static mut REF: UnsafeCell<&AnyClass> = unsafe {
+            let ptr: *const AnyClass = NAME_DATA.as_ptr().cast();
             UnsafeCell::new(&*ptr)
         };
     }
@@ -659,7 +659,7 @@ macro_rules! __class_inner {
         $crate::__inner_statics!(@class $name, $hash);
 
         #[inline(never)]
-        fn objc_static_workaround() -> &'static Class {
+        fn objc_static_workaround() -> &'static AnyClass {
             // SAFETY: Same as __sel_inner
             unsafe { *REF.get() }
         }
@@ -694,8 +694,8 @@ macro_rules! __class_inner {
 /// ```
 /// # use std::os::raw::{c_int, c_char};
 /// # use objc2::msg_send;
-/// # use objc2::runtime::Object;
-/// unsafe fn do_something(obj: &Object, arg: c_int) -> *const c_char {
+/// # use objc2::runtime::NSObject;
+/// unsafe fn do_something(obj: &NSObject, arg: c_int) -> *const c_char {
 ///     msg_send![obj, doSomething: arg]
 /// }
 /// ```
@@ -880,11 +880,11 @@ macro_rules! __class_inner {
 ///
 /// ```no_run
 /// use objc2::msg_send;
-/// use objc2::runtime::Object;
+/// use objc2::runtime::NSObject;
 ///
-/// let obj: *mut Object;
-/// # obj = 0 as *mut Object;
-/// let description: *const Object = unsafe { msg_send![obj, description] };
+/// let obj: *mut NSObject;
+/// # obj = 0 as *mut NSObject;
+/// let description: *const NSObject = unsafe { msg_send![obj, description] };
 /// // Usually you'd use msg_send_id here ^
 /// let _: () = unsafe { msg_send![obj, setArg1: 1i32, arg2: true] };
 /// let arg1: i32 = unsafe { msg_send![obj, getArg1] };
@@ -919,13 +919,13 @@ macro_rules! __class_inner {
 /// ```no_run
 /// # use objc2::class;
 /// use objc2::msg_send;
-/// use objc2::runtime::{Class, Object};
+/// use objc2::runtime::{AnyClass, NSObject};
 ///
 /// // Since we specify the superclass ourselves, this doesn't need to
 /// // implement ClassType
-/// let obj: *mut Object;
-/// # obj = 0 as *mut Object;
-/// let superclass: &Class;
+/// let obj: *mut NSObject;
+/// # obj = 0 as *mut NSObject;
+/// let superclass: &AnyClass;
 /// # superclass = class!(NSObject);
 /// let arg3: u32 = unsafe { msg_send![super(obj, superclass), getArg3] };
 /// ```
@@ -936,8 +936,8 @@ macro_rules! __class_inner {
 /// use objc2::msg_send;
 /// use objc2::rc::Id;
 ///
-/// # type NSBundle = objc2::runtime::Object;
-/// # type NSError = objc2::runtime::Object;
+/// # type NSBundle = objc2::runtime::NSObject;
+/// # type NSError = objc2::runtime::NSObject;
 /// let obj: &NSBundle;
 /// # obj = todo!();
 /// // The `_` tells the macro that the return type should be `Result`.
@@ -952,9 +952,9 @@ macro_rules! __class_inner {
 /// use objc2::msg_send;
 /// use objc2::rc::Id;
 ///
-/// # type NSFileManager = objc2::runtime::Object;
-/// # type NSURL = objc2::runtime::Object;
-/// # type NSError = objc2::runtime::Object;
+/// # type NSFileManager = objc2::runtime::NSObject;
+/// # type NSURL = objc2::runtime::NSObject;
+/// # type NSError = objc2::runtime::NSObject;
 /// let obj: &NSFileManager;
 /// # obj = todo!();
 /// let url: &NSURL;
@@ -1102,11 +1102,11 @@ macro_rules! msg_send_bool {
 /// families][sel-families] the selector belongs to:
 ///
 /// - The `new` family: The receiver may be anything that implements
-///   [`MessageReceiver`] (though often you'll want to use `&Class`). The
+///   [`MessageReceiver`] (though often you'll want to use `&AnyClass`). The
 ///   return type is a generic `Id<T>` or `Option<Id<T>>`.
 ///
-/// - The `alloc` family: The receiver must be `&Class`, and the return type
-///   is a generic `Allocated<T>` or `Option<Allocated<T>>`.
+/// - The `alloc` family: The receiver must be `&AnyClass`, and the return
+///   type is a generic `Allocated<T>` or `Option<Allocated<T>>`.
 ///
 /// - The `init` family: The receiver must be `Option<Allocated<T>>` as
 ///   returned from `alloc`. The receiver is consumed, and a the
@@ -1199,16 +1199,16 @@ macro_rules! msg_send_bool {
 /// use objc2::{class, msg_send_id};
 /// use objc2::ffi::NSUInteger;
 /// use objc2::rc::Id;
-/// use objc2::runtime::Object;
+/// use objc2::runtime::NSObject;
 /// // Allocate new object
 /// let obj = unsafe { msg_send_id![class!(NSObject), alloc] };
 /// // Consume the allocated object, return initialized object
-/// let obj: Id<Object> = unsafe { msg_send_id![obj, init] };
+/// let obj: Id<NSObject> = unsafe { msg_send_id![obj, init] };
 /// // Copy the object
-/// let copy: Id<Object> = unsafe { msg_send_id![&obj, copy] };
+/// let copy: Id<NSObject> = unsafe { msg_send_id![&obj, copy] };
 /// // Call ordinary selector that returns an object
 /// // This time, we handle failures ourselves
-/// let s: Option<Id<Object>> = unsafe { msg_send_id![&obj, description] };
+/// let s: Option<Id<NSObject>> = unsafe { msg_send_id![&obj, description] };
 /// let s = s.expect("description was NULL");
 /// ```
 #[macro_export]

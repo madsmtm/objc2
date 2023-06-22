@@ -2,12 +2,12 @@
 //!
 //! This is not sound without a conversion step.
 use objc2::declare::ClassBuilder;
-use objc2::runtime::{Object, Sel};
+use objc2::runtime::{NSObject, Sel};
 use objc2::sel;
 
-extern "C" fn my_bool_taking_method(obj: &Object, sel: Sel, arg: bool) {}
+extern "C" fn my_bool_taking_method(obj: &NSObject, sel: Sel, arg: bool) {}
 
-extern "C" fn my_bool_returning_method(obj: &Object, sel: Sel) -> bool {
+extern "C" fn my_bool_returning_method(obj: &NSObject, sel: Sel) -> bool {
     true
 }
 

@@ -162,11 +162,11 @@ pub fn test_msg_send(obj: &CustomObject) {
     let _: () = unsafe { new_objc2::msg_send![super(obj, superclass), a: obj, b: obj] };
 }
 
-pub fn test_msg_send_id(obj: &new_objc2::runtime::Object) {
-    let _: new_objc2::rc::Id<new_objc2::runtime::Object> =
+pub fn test_msg_send_id(obj: &new_objc2::runtime::AnyObject) {
+    let _: new_objc2::rc::Id<new_objc2::runtime::AnyObject> =
         unsafe { new_objc2::msg_send_id![obj, a] };
-    let _: new_objc2::__macro_helpers::Option<new_objc2::rc::Id<new_objc2::runtime::Object>> =
+    let _: new_objc2::__macro_helpers::Option<new_objc2::rc::Id<new_objc2::runtime::AnyObject>> =
         unsafe { new_objc2::msg_send_id![obj, a] };
-    let _: new_objc2::rc::Id<new_objc2::runtime::Object> =
+    let _: new_objc2::rc::Id<new_objc2::runtime::AnyObject> =
         unsafe { new_objc2::msg_send_id![obj, a: obj, b: obj] };
 }

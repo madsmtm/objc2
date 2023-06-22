@@ -6,7 +6,9 @@ use std::os::raw::c_int;
 use icrate::Foundation::NSNumber;
 use objc2::encode::{Encoding, RefEncode};
 use objc2::rc::{autoreleasepool, AutoreleasePool, Id};
-use objc2::runtime::{Bool, Class, NSObject, NSObjectProtocol, Object, Protocol, ProtocolObject};
+use objc2::runtime::{
+    AnyClass, AnyObject, AnyProtocol, Bool, NSObject, NSObjectProtocol, ProtocolObject,
+};
 #[cfg(feature = "malloc")]
 use objc2::sel;
 use objc2::{
@@ -92,7 +94,7 @@ unsafe impl ClassType for MyTestObject {
     type Mutability = mutability::Mutable;
     const NAME: &'static str = "MyTestObject";
 
-    fn class() -> &'static Class {
+    fn class() -> &'static AnyClass {
         class!(MyTestObject)
     }
 
@@ -159,19 +161,19 @@ impl MyTestObject {
         unsafe { self.inner.ivar_mut("var2") }
     }
 
-    fn var3(&self) -> *mut Object {
+    fn var3(&self) -> *mut AnyObject {
         unsafe { msg_send![self, var3] }
     }
 
-    fn set_var3(&mut self, obj: *mut Object) {
+    fn set_var3(&mut self, obj: *mut AnyObject) {
         unsafe { msg_send![self, setVar3: obj] }
     }
 
-    fn var3_ivar(&self) -> &*mut Object {
+    fn var3_ivar(&self) -> &*mut AnyObject {
         unsafe { self.inner.ivar("var3") }
     }
 
-    fn var3_ivar_mut(&mut self) -> &mut *mut Object {
+    fn var3_ivar_mut(&mut self) -> &mut *mut AnyObject {
         unsafe { self.inner.ivar_mut("var3") }
     }
 }
@@ -218,13 +220,13 @@ fn test_class() {
 
     #[cfg(feature = "malloc")]
     {
-        let classes = Class::classes();
-        assert_eq!(classes.len(), Class::classes_count());
+        let classes = AnyClass::classes();
+        assert_eq!(classes.len(), AnyClass::classes_count());
         assert_in!(cls, classes);
     }
 
     // Test objc2::runtime functionality
-    assert_eq!(Class::get("MyTestObject"), Some(cls));
+    assert_eq!(AnyClass::get("MyTestObject"), Some(cls));
     assert_ne!(cls, class!(NSObject));
     assert_eq!(cls.name(), "MyTestObject");
     assert_eq!(cls.superclass(), Some(class!(NSObject)));
@@ -233,7 +235,7 @@ fn test_class() {
     assert_eq!(cls.instance_size(), {
         #[repr(C)]
         struct MyTestObjectLayout {
-            isa: *const Class,
+            isa: *const AnyClass,
             var1: c_int,
             var2: Bool,
             var3: *mut NSObject,
@@ -241,14 +243,14 @@ fn test_class() {
         size_of::<MyTestObjectLayout>()
     });
 
-    let protocol = Protocol::get("NSObject").unwrap();
+    let protocol = AnyProtocol::get("NSObject").unwrap();
     assert!(cls.conforms_to(protocol));
-    assert!(!cls.conforms_to(Protocol::get("NSCopying").unwrap()));
+    assert!(!cls.conforms_to(AnyProtocol::get("NSCopying").unwrap()));
     #[cfg(feature = "malloc")]
     {
         assert_not_in!(protocol, cls.adopted_protocols());
         assert_in!(
-            Protocol::get("MyTestProtocol").unwrap(),
+            AnyProtocol::get("MyTestProtocol").unwrap(),
             cls.adopted_protocols()
         );
     }

@@ -1,8 +1,8 @@
 error[E0382]: use of moved value: `obj`
  --> ui/msg_send_mutable.rs
   |
-  |     let obj: &mut Object = unsafe { msg_send![cls, new] };
-  |         --- move occurs because `obj` has type `&mut objc2::runtime::Object`, which does not implement the `Copy` trait
+  |     let obj: &mut NSObject = unsafe { msg_send![cls, new] };
+  |         --- move occurs because `obj` has type `&mut NSObject`, which does not implement the `Copy` trait
   |
   |     let _: () = unsafe { msg_send![obj, selector] };
   |                                    --- value moved here

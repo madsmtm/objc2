@@ -36,7 +36,7 @@ use crate::encode::{Encoding, RefEncode};
 use crate::ffi;
 use crate::rc::{autoreleasepool_leaking, Id};
 use crate::runtime::__nsstring::nsstring_to_str;
-use crate::runtime::{Class, NSObject, NSObjectProtocol, Object};
+use crate::runtime::{AnyClass, AnyObject, NSObject, NSObjectProtocol};
 use crate::{extern_methods, sel, Message};
 
 /// An Objective-C exception.
@@ -47,7 +47,7 @@ use crate::{extern_methods, sel, Message};
 ///
 /// [`panic_any`]: std::panic::panic_any
 #[repr(transparent)]
-pub struct Exception(Object);
+pub struct Exception(AnyObject);
 
 unsafe impl RefEncode for Exception {
     const ENCODING_REF: Encoding = Encoding::Object;
@@ -56,17 +56,17 @@ unsafe impl RefEncode for Exception {
 unsafe impl Message for Exception {}
 
 impl Deref for Exception {
-    type Target = Object;
+    type Target = AnyObject;
 
     #[inline]
-    fn deref(&self) -> &Object {
+    fn deref(&self) -> &AnyObject {
         &self.0
     }
 }
 
-impl AsRef<Object> for Exception {
+impl AsRef<AnyObject> for Exception {
     #[inline]
-    fn as_ref(&self) -> &Object {
+    fn as_ref(&self) -> &AnyObject {
         self
     }
 }
@@ -78,7 +78,7 @@ impl Exception {
             let obj: *const Exception = self;
             let obj = unsafe { obj.cast::<NSObject>().as_ref().unwrap() };
             // Get class dynamically instead of with `class!` macro
-            Some(obj.__isKindOfClass(Class::get("NSException")?))
+            Some(obj.__isKindOfClass(AnyClass::get("NSException")?))
         } else {
             Some(false)
         }
@@ -121,7 +121,7 @@ impl fmt::Debug for Exception {
                     .as_deref()
                     .map(|reason| unsafe { nsstring_to_str(reason, pool) });
 
-                let obj: &Object = self.as_ref();
+                let obj: &AnyObject = self.as_ref();
                 write!(f, "{obj:?} '{}'", name.unwrap_or_default())?;
                 if let Some(reason) = reason {
                     write!(f, " reason:{reason}")?;
@@ -131,7 +131,7 @@ impl fmt::Debug for Exception {
                 Ok(())
             })
         } else {
-            // Fall back to `Object` Debug
+            // Fall back to `AnyObject` Debug
             write!(f, "{:?}", self.0)
         }
     }
@@ -184,8 +184,8 @@ pub unsafe fn throw(exception: Id<Exception>) -> ! {
     // We consume the exception object since we can't make any guarantees
     // about its mutability.
     let ptr = exception.0.as_ptr() as *mut ffi::objc_object;
-    // SAFETY: Object is valid and non-null (nil exceptions are not valid in
-    // the old runtime).
+    // SAFETY: The object is valid and non-null (nil exceptions are not valid
+    // in the old runtime).
     unsafe { ffi::objc_exception_throw(ptr) }
 }
 

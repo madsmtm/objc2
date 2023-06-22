@@ -56,14 +56,13 @@ fn make_multithreaded() {
 /// Use when designing APIs that are only safe to use on the main thread:
 ///
 /// ```no_run
-/// use icrate::Foundation::MainThreadMarker;
-/// use icrate::objc2::runtime::Object;
+/// use icrate::Foundation::{MainThreadMarker, NSObject};
 /// use icrate::objc2::msg_send;
-/// # let obj = 0 as *const Object;
+/// # let obj = 0 as *const NSObject;
 ///
 /// // This action requires the main thread, so we take a marker as parameter.
 /// // It signals clearly to users "this requires the main thread".
-/// unsafe fn do_thing(obj: *const Object, _mtm: MainThreadMarker) {
+/// unsafe fn do_thing(obj: *const NSObject, _mtm: MainThreadMarker) {
 ///     msg_send![obj, someActionThatRequiresTheMainThread]
 /// }
 ///

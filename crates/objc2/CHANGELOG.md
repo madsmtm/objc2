@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Changed
+* Renamed `runtime` types:
+  - `Object` to `AnyObject`.
+  - `Class` to `AnyClass`.
+  - `Protocol` to `AnyProtocol`.
+
+  To better fit with Swift's naming scheme. The types are still available
+  under the old names as deprecated aliases.
+
 
 ## 0.4.0 - 2023-06-20
 

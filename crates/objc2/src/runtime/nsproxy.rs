@@ -2,7 +2,7 @@ use core::fmt;
 use core::hash;
 
 use crate::mutability::Root;
-use crate::runtime::{Class, NSObject, NSObjectProtocol, Object, ProtocolObject};
+use crate::runtime::{AnyClass, AnyObject, NSObject, NSObjectProtocol, ProtocolObject};
 use crate::ClassType;
 
 crate::__emit_struct! {
@@ -17,13 +17,13 @@ crate::__emit_struct! {
     (pub)
     (NSProxy)
     (
-        __inner: Object,
+        __inner: AnyObject,
     )
 }
 
 crate::__extern_class_impl_traits! {
     unsafe impl () for NSProxy {
-        INHERITS = [Object];
+        INHERITS = [AnyObject];
 
         fn as_super(&self) {
             &self.__inner
@@ -36,12 +36,12 @@ crate::__extern_class_impl_traits! {
 }
 
 unsafe impl ClassType for NSProxy {
-    type Super = Object;
+    type Super = AnyObject;
     type Mutability = Root;
     const NAME: &'static str = "NSProxy";
 
     #[inline]
-    fn class() -> &'static Class {
+    fn class() -> &'static AnyClass {
         #[cfg(feature = "apple")]
         {
             crate::class!(NSProxy)
@@ -52,7 +52,7 @@ unsafe impl ClassType for NSProxy {
                 // The linking changed in libobjc2 v2.0
                 #[cfg_attr(feature = "gnustep-2-0", link_name = "._OBJC_CLASS_NSProxy")]
                 #[cfg_attr(not(feature = "gnustep-2-0"), link_name = "_OBJC_CLASS_NSProxy")]
-                static OBJC_CLASS_NSProxy: Class;
+                static OBJC_CLASS_NSProxy: AnyClass;
                 // Others:
                 // __objc_class_name_NSProxy
                 // _OBJC_CLASS_REF_NSProxy

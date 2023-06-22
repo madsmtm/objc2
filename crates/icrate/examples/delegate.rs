@@ -6,7 +6,7 @@ use icrate::ns_string;
 use icrate::Foundation::{NSCopying, NSObject, NSString};
 use objc2::declare::{Ivar, IvarBool, IvarDrop, IvarEncode};
 use objc2::rc::Id;
-use objc2::runtime::Object;
+use objc2::runtime::AnyObject;
 use objc2::{declare_class, msg_send, msg_send_id, mutability, ClassType};
 
 #[cfg(target_os = "macos")]
@@ -71,7 +71,7 @@ declare_class!(
     unsafe impl CustomAppDelegate {
         /// This is `unsafe` because it expects `sender` to be valid
         #[method(applicationDidFinishLaunching:)]
-        unsafe fn did_finish_launching(&self, sender: *mut Object) {
+        unsafe fn did_finish_launching(&self, sender: *mut AnyObject) {
             println!("Did finish launching!");
             // Do something with `sender`
             dbg!(sender);
@@ -80,7 +80,7 @@ declare_class!(
         /// Some comment before `sel`.
         #[method(applicationWillTerminate:)]
         /// Some comment after `sel`.
-        fn will_terminate(&self, _: *mut Object) {
+        fn will_terminate(&self, _: *mut AnyObject) {
             println!("Will terminate!");
         }
     }

@@ -1,20 +1,20 @@
 error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
  --> ui/object_not_send_sync.rs
   |
-  |     needs_sync::<Object>();
-  |                  ^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
+  |     needs_sync::<AnyObject>();
+  |                  ^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
-  = help: within `objc2::runtime::Object`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
+  = help: within `AnyObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
 note: required because it appears within the type `objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
-note: required because it appears within the type `Object`
+note: required because it appears within the type `AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
-  | pub struct Object(ffi::objc_object);
-  |            ^^^^^^
+  | pub struct AnyObject(ffi::objc_object);
+  |            ^^^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/object_not_send_sync.rs
   |
@@ -24,10 +24,10 @@ note: required by a bound in `needs_sync`
 error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
  --> ui/object_not_send_sync.rs
   |
-  |     needs_send::<Object>();
-  |                  ^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
+  |     needs_send::<AnyObject>();
+  |                  ^^^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
   |
-  = help: within `objc2::runtime::Object`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
+  = help: within `AnyObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
 note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
  --> $RUST/core/src/marker.rs
@@ -44,11 +44,11 @@ note: required because it appears within the type `objc_object`
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
-note: required because it appears within the type `Object`
+note: required because it appears within the type `AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
-  | pub struct Object(ffi::objc_object);
-  |            ^^^^^^
+  | pub struct AnyObject(ffi::objc_object);
+  |            ^^^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/object_not_send_sync.rs
   |
@@ -67,11 +67,11 @@ note: required because it appears within the type `objc_object`
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
-note: required because it appears within the type `Object`
+note: required because it appears within the type `AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
-  | pub struct Object(ffi::objc_object);
-  |            ^^^^^^
+  | pub struct AnyObject(ffi::objc_object);
+  |            ^^^^^^^^^
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |
@@ -106,11 +106,11 @@ note: required because it appears within the type `objc_object`
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
-note: required because it appears within the type `Object`
+note: required because it appears within the type `AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
-  | pub struct Object(ffi::objc_object);
-  |            ^^^^^^
+  | pub struct AnyObject(ffi::objc_object);
+  |            ^^^^^^^^^
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |
@@ -134,11 +134,11 @@ note: required because it appears within the type `objc_object`
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
-note: required because it appears within the type `Object`
+note: required because it appears within the type `AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
-  | pub struct Object(ffi::objc_object);
-  |            ^^^^^^
+  | pub struct AnyObject(ffi::objc_object);
+  |            ^^^^^^^^^
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |
@@ -178,11 +178,11 @@ note: required because it appears within the type `objc_object`
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
-note: required because it appears within the type `Object`
+note: required because it appears within the type `AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
-  | pub struct Object(ffi::objc_object);
-  |            ^^^^^^
+  | pub struct AnyObject(ffi::objc_object);
+  |            ^^^^^^^^^
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |

@@ -3,7 +3,7 @@
 use core::mem::ManuallyDrop;
 
 use objc2::rc::Id;
-use objc2::runtime::{Protocol, ProtocolObject};
+use objc2::runtime::{AnyProtocol, ProtocolObject};
 use objc2::{extern_protocol, ProtocolType};
 
 extern_protocol!(
@@ -18,7 +18,7 @@ extern_protocol!(
 );
 
 #[no_mangle]
-unsafe fn get_protocol() -> &'static Protocol {
+unsafe fn get_protocol() -> &'static AnyProtocol {
     <dyn MyProtocol>::protocol().unwrap_unchecked()
 }
 

@@ -43,7 +43,7 @@ extern_class!(
 __inner_extern_class!(
     #[cfg(feature = "AppKit_NSLayoutAnchor")]
     #[derive(Debug, PartialEq, Eq, Hash)]
-    pub struct NSLayoutAnchor<AnchorType: Message = Object> {
+    pub struct NSLayoutAnchor<AnchorType: Message = AnyObject> {
         __superclass: NSObject,
         _inner0: PhantomData<*mut AnchorType>,
         notunwindsafe: PhantomData<&'static mut ()>,

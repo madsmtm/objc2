@@ -313,7 +313,7 @@ error[E0599]: no function or associated item named `test_self` found for struct 
   | | );
   | |_- function or associated item `test_self` not found for this struct
 
-error[E0277]: the trait bound `RetainSemantics<2>: MessageRecieveId<&objc2::runtime::Class, Id<CustomObject>>` is not satisfied
+error[E0277]: the trait bound `RetainSemantics<2>: MessageRecieveId<&AnyClass, Id<CustomObject>>` is not satisfied
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
@@ -323,7 +323,7 @@ error[E0277]: the trait bound `RetainSemantics<2>: MessageRecieveId<&objc2::runt
 ... |
   | |     }
   | | );
-  | |_^ the trait `MessageRecieveId<&objc2::runtime::Class, Id<CustomObject>>` is not implemented for `RetainSemantics<2>`
+  | |_^ the trait `MessageRecieveId<&AnyClass, Id<CustomObject>>` is not implemented for `RetainSemantics<2>`
   |
   = help: the following other types implement trait `MessageRecieveId<Receiver, Ret>`:
             <RetainSemantics<1> as MessageRecieveId<Receiver, Ret>>

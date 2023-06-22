@@ -27,7 +27,7 @@ impl NSException {
     pub fn new(
         name: &NSExceptionName,
         reason: Option<&Foundation::NSString>,
-        user_info: Option<&Foundation::NSDictionary<Object, Object>>,
+        user_info: Option<&Foundation::NSDictionary<AnyObject, AnyObject>>,
     ) -> Option<Id<Self>> {
         unsafe {
             msg_send_id![
@@ -91,7 +91,7 @@ impl NSException {
 #[cfg(feature = "Foundation_NSString")]
 impl fmt::Debug for NSException {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let obj: &Object = self.as_ref();
+        let obj: &AnyObject = self.as_ref();
         write!(f, "{obj:?} '{}'", self.name())?;
         if let Some(reason) = self.reason() {
             write!(f, " reason:{reason}")?;

@@ -8,7 +8,7 @@ error[E0277]: `*const NSObject` cannot be shared between threads safely
 note: required because it appears within the type `UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
-  |     pub struct UnknownStorage<T: ?Sized>(*const T, Object);
+  |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
   |                ^^^^^^^^^^^^^^
 note: required because it appears within the type `EquivalentType<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
@@ -24,7 +24,7 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/Foundation/fixes/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = Object> {
+  |     pub struct NSArray<ObjectType: Message = AnyObject> {
   |                ^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -44,11 +44,11 @@ note: required because it appears within the type `objc_object`
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
-note: required because it appears within the type `Object`
+note: required because it appears within the type `AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
-  | pub struct Object(ffi::objc_object);
-  |            ^^^^^^
+  | pub struct AnyObject(ffi::objc_object);
+  |            ^^^^^^^^^
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |
@@ -63,7 +63,7 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/Foundation/fixes/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = Object> {
+  |     pub struct NSArray<ObjectType: Message = AnyObject> {
   |                ^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -81,7 +81,7 @@ error[E0277]: `*const NSObject` cannot be sent between threads safely
 note: required because it appears within the type `UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
-  |     pub struct UnknownStorage<T: ?Sized>(*const T, Object);
+  |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
   |                ^^^^^^^^^^^^^^
 note: required because it appears within the type `EquivalentType<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
@@ -97,7 +97,7 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/Foundation/fixes/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = Object> {
+  |     pub struct NSArray<ObjectType: Message = AnyObject> {
   |                ^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -128,11 +128,11 @@ note: required because it appears within the type `objc_object`
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
-note: required because it appears within the type `Object`
+note: required because it appears within the type `AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
-  | pub struct Object(ffi::objc_object);
-  |            ^^^^^^
+  | pub struct AnyObject(ffi::objc_object);
+  |            ^^^^^^^^^
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |
@@ -147,7 +147,7 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/Foundation/fixes/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = Object> {
+  |     pub struct NSArray<ObjectType: Message = AnyObject> {
   |                ^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -165,7 +165,7 @@ error[E0277]: `*const NSObject` cannot be shared between threads safely
 note: required because it appears within the type `UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
-  |     pub struct UnknownStorage<T: ?Sized>(*const T, Object);
+  |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
   |                ^^^^^^^^^^^^^^
 note: required because it appears within the type `EquivalentType<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
@@ -181,12 +181,12 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/Foundation/fixes/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = Object> {
+  |     pub struct NSArray<ObjectType: Message = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/Foundation/fixes/generics.rs
   |
-  |     pub struct NSMutableArray<ObjectType: Message = Object> {
+  |     pub struct NSMutableArray<ObjectType: Message = AnyObject> {
   |                ^^^^^^^^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -206,11 +206,11 @@ note: required because it appears within the type `objc_object`
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
-note: required because it appears within the type `Object`
+note: required because it appears within the type `AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
-  | pub struct Object(ffi::objc_object);
-  |            ^^^^^^
+  | pub struct AnyObject(ffi::objc_object);
+  |            ^^^^^^^^^
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |
@@ -225,12 +225,12 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/Foundation/fixes/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = Object> {
+  |     pub struct NSArray<ObjectType: Message = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/Foundation/fixes/generics.rs
   |
-  |     pub struct NSMutableArray<ObjectType: Message = Object> {
+  |     pub struct NSMutableArray<ObjectType: Message = AnyObject> {
   |                ^^^^^^^^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -248,7 +248,7 @@ error[E0277]: `*const NSObject` cannot be sent between threads safely
 note: required because it appears within the type `UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
-  |     pub struct UnknownStorage<T: ?Sized>(*const T, Object);
+  |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
   |                ^^^^^^^^^^^^^^
 note: required because it appears within the type `EquivalentType<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
@@ -264,12 +264,12 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/Foundation/fixes/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = Object> {
+  |     pub struct NSArray<ObjectType: Message = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/Foundation/fixes/generics.rs
   |
-  |     pub struct NSMutableArray<ObjectType: Message = Object> {
+  |     pub struct NSMutableArray<ObjectType: Message = AnyObject> {
   |                ^^^^^^^^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -300,11 +300,11 @@ note: required because it appears within the type `objc_object`
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
-note: required because it appears within the type `Object`
+note: required because it appears within the type `AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
-  | pub struct Object(ffi::objc_object);
-  |            ^^^^^^
+  | pub struct AnyObject(ffi::objc_object);
+  |            ^^^^^^^^^
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |
@@ -319,12 +319,12 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/Foundation/fixes/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = Object> {
+  |     pub struct NSArray<ObjectType: Message = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/Foundation/fixes/generics.rs
   |
-  |     pub struct NSMutableArray<ObjectType: Message = Object> {
+  |     pub struct NSMutableArray<ObjectType: Message = AnyObject> {
   |                ^^^^^^^^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/nsarray_bound_not_send_sync.rs

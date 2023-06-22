@@ -6,7 +6,7 @@ use core::ptr::NonNull;
 use crate::encode::{Encoding, RefEncode};
 use crate::rc::{autoreleasepool_leaking, Id};
 use crate::runtime::__nsstring::nsstring_to_str;
-use crate::runtime::{NSObjectProtocol, Object};
+use crate::runtime::{AnyObject, NSObjectProtocol};
 use crate::{Message, ProtocolType};
 
 /// An internal helper trait for [`ProtocolObject`].
@@ -58,17 +58,17 @@ pub unsafe trait ImplementedBy<T: ?Sized + Message> {
 #[doc(alias = "id")]
 #[repr(C)]
 pub struct ProtocolObject<P: ?Sized + ProtocolType> {
-    inner: Object,
+    inner: AnyObject,
     p: PhantomData<P>,
 }
 
-// SAFETY: The type is `#[repr(C)]` and `Object` internally
+// SAFETY: The type is `#[repr(C)]` and `AnyObject` internally
 unsafe impl<P: ?Sized + ProtocolType> RefEncode for ProtocolObject<P> {
     const ENCODING_REF: Encoding = Encoding::Object;
 }
 
-// SAFETY: The type is `Object` internally, and is mean to be messaged as-if
-// it's an object.
+// SAFETY: The type is `AnyObject` internally, and is mean to be messaged
+// as-if it's an object.
 unsafe impl<P: ?Sized + ProtocolType> Message for ProtocolObject<P> {}
 
 impl<P: ?Sized + ProtocolType> ProtocolObject<P> {
@@ -154,9 +154,10 @@ impl<P: ?Sized + ProtocolType + NSObjectProtocol> fmt::Debug for ProtocolObject<
                     fmt::Display::fmt(s, f)
                 })
             }
-            // If description was `NULL`, use `Object`'s `Debug` impl instead
+            // If description was `NULL`, use `AnyObject`'s `Debug` impl
+            // instead
             None => {
-                let obj: &Object = &self.inner;
+                let obj: &AnyObject = &self.inner;
                 fmt::Debug::fmt(obj, f)
             }
         }

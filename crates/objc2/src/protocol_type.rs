@@ -1,4 +1,4 @@
-use crate::runtime::Protocol;
+use crate::runtime::AnyProtocol;
 
 /// Marks types that represent specific protocols.
 ///
@@ -19,7 +19,7 @@ use crate::runtime::Protocol;
 ///
 /// # Examples
 ///
-/// Use the trait to access the [`Protocol`] of different objects.
+/// Use the trait to access the [`AnyProtocol`] of different objects.
 ///
 /// ```
 /// use objc2::ProtocolType;
@@ -62,8 +62,8 @@ pub unsafe trait ProtocolType {
     /// This may panic if something went wrong with getting or declaring the
     /// protocol, e.g. if the program is not properly linked to the framework
     /// that defines the protocol.
-    fn protocol() -> Option<&'static Protocol> {
-        Protocol::get(Self::NAME)
+    fn protocol() -> Option<&'static AnyProtocol> {
+        AnyProtocol::get(Self::NAME)
     }
 
     #[doc(hidden)]

@@ -525,7 +525,7 @@ mod tests {
     use static_assertions::{assert_impl_all, assert_not_impl_any};
 
     use super::{AutoreleasePool, AutoreleaseSafe};
-    use crate::runtime::Object;
+    use crate::runtime::AnyObject;
 
     #[test]
     fn auto_traits() {
@@ -533,8 +533,8 @@ mod tests {
         assert_not_impl_any!(AutoreleasePool<'static>: Send, Sync);
 
         assert_impl_all!(usize: AutoreleaseSafe);
-        assert_impl_all!(*mut Object: AutoreleaseSafe);
-        assert_impl_all!(&mut Object: AutoreleaseSafe);
+        assert_impl_all!(*mut AnyObject: AutoreleaseSafe);
+        assert_impl_all!(&mut AnyObject: AutoreleaseSafe);
         #[cfg(feature = "unstable-autoreleasesafe")]
         assert_not_impl_any!(AutoreleasePool<'static>: AutoreleaseSafe);
     }

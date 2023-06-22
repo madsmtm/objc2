@@ -1280,7 +1280,7 @@ impl fmt::Display for Stmt {
                 if !generics.is_empty() {
                     write!(f, "<")?;
                     for generic in generics {
-                        write!(f, "{generic}: Message = Object, ")?;
+                        write!(f, "{generic}: Message = AnyObject, ")?;
                     }
                     write!(f, ">")?;
                 };

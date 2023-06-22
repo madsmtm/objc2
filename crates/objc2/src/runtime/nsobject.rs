@@ -3,7 +3,7 @@ use core::hash;
 
 use crate::mutability::Root;
 use crate::rc::{DefaultId, Id};
-use crate::runtime::{Class, ImplementedBy, Object, Protocol, ProtocolObject};
+use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ImplementedBy, ProtocolObject};
 use crate::{extern_methods, msg_send, msg_send_id, Message};
 use crate::{ClassType, ProtocolType};
 
@@ -25,13 +25,13 @@ crate::__emit_struct! {
     (pub)
     (NSObject)
     (
-        __inner: Object,
+        __inner: AnyObject,
     )
 }
 
 crate::__extern_class_impl_traits! {
     unsafe impl () for NSObject {
-        INHERITS = [Object];
+        INHERITS = [AnyObject];
 
         fn as_super(&self) {
             &self.__inner
@@ -44,12 +44,12 @@ crate::__extern_class_impl_traits! {
 }
 
 unsafe impl ClassType for NSObject {
-    type Super = Object;
+    type Super = AnyObject;
     type Mutability = Root;
     const NAME: &'static str = "NSObject";
 
     #[inline]
-    fn class() -> &'static Class {
+    fn class() -> &'static AnyClass {
         #[cfg(feature = "apple")]
         {
             crate::class!(NSObject)
@@ -60,7 +60,7 @@ unsafe impl ClassType for NSObject {
                 // The linking changed in libobjc2 v2.0
                 #[cfg_attr(feature = "gnustep-2-0", link_name = "._OBJC_CLASS_NSObject")]
                 #[cfg_attr(not(feature = "gnustep-2-0"), link_name = "_OBJC_CLASS_NSObject")]
-                static OBJC_CLASS_NSObject: Class;
+                static OBJC_CLASS_NSObject: AnyClass;
                 // Others:
                 // __objc_class_name_NSObject
                 // _OBJC_CLASS_REF_NSObject
@@ -127,7 +127,7 @@ pub unsafe trait NSObjectProtocol {
     }
 
     #[doc(hidden)]
-    fn __isKindOfClass(&self, cls: &Class) -> bool
+    fn __isKindOfClass(&self, cls: &AnyClass) -> bool
     where
         Self: Sized + Message,
     {
@@ -169,8 +169,11 @@ unsafe impl NSObjectProtocol for NSObject {}
 unsafe impl ProtocolType for NSObject {
     const NAME: &'static str = "NSObject";
 
-    fn protocol() -> Option<&'static Protocol> {
-        Some(Protocol::get(<Self as ProtocolType>::NAME).expect("could not find NSObject protocol"))
+    fn protocol() -> Option<&'static AnyProtocol> {
+        Some(
+            AnyProtocol::get(<Self as ProtocolType>::NAME)
+                .expect("could not find NSObject protocol"),
+        )
     }
 
     const __INNER: () = ();
@@ -269,7 +272,7 @@ mod tests {
     fn test_deref() {
         let obj: Id<NSObject> = NSObject::new();
         let _: &NSObject = &obj;
-        let _: &Object = &obj;
+        let _: &AnyObject = &obj;
     }
 
     #[test]
@@ -279,8 +282,8 @@ mod tests {
         let _: &mut NSObjectMutable = &mut obj;
         let _: &NSObject = &obj;
         let _: &mut NSObject = &mut obj;
-        let _: &Object = &obj;
-        let _: &mut Object = &mut obj;
+        let _: &AnyObject = &obj;
+        let _: &mut AnyObject = &mut obj;
     }
 
     #[test]
@@ -297,13 +300,13 @@ mod tests {
         impls_as_mut::<NSObjectMutable, NSObjectMutable>(&mut obj);
         impls_as_ref::<NSObject, NSObject>(&obj);
         impls_as_mut::<NSObject, NSObject>(&mut obj);
-        impls_as_ref::<NSObject, Object>(&obj);
-        impls_as_mut::<NSObject, Object>(&mut obj);
+        impls_as_ref::<NSObject, AnyObject>(&obj);
+        impls_as_mut::<NSObject, AnyObject>(&mut obj);
 
         let obj = NSObject::new();
         impls_as_ref::<Id<NSObject>, NSObject>(&obj);
         impls_as_ref::<NSObject, NSObject>(&obj);
-        impls_as_ref::<NSObject, Object>(&obj);
+        impls_as_ref::<NSObject, AnyObject>(&obj);
     }
 
     #[test]

@@ -1,7 +1,7 @@
 #![cfg(feature = "Foundation_NSAttributedString")]
 #![cfg(feature = "Foundation_NSString")]
 use objc2::rc::{autoreleasepool, Id};
-use objc2::runtime::Object;
+use objc2::runtime::AnyObject;
 
 use icrate::Foundation::{self, NSAttributedString, NSObject, NSString};
 
@@ -55,8 +55,8 @@ fn test_debug() {
     };
     assert_eq!(format!("{s:?}"), expected);
 
-    let obj: Id<Object> = unsafe { Id::cast(NSObject::new()) };
-    let ptr: *const Object = &*obj;
+    let obj = Id::into_super(NSObject::new());
+    let ptr: *const AnyObject = &*obj;
     let s = unsafe {
         NSAttributedString::new_with_attributes(
             &NSString::from_str("abc"),

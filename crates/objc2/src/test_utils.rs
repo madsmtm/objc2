@@ -4,18 +4,18 @@ use std::os::raw::c_char;
 use std::sync::Once;
 
 use crate::declare::{ClassBuilder, ProtocolBuilder};
-use crate::runtime::{Class, Object, Protocol, Sel};
+use crate::runtime::{AnyClass, AnyObject, AnyProtocol, Sel};
 use crate::{ffi, Encode, Encoding, MessageReceiver};
 use crate::{msg_send, sel};
 
 #[derive(Debug)]
 pub(crate) struct CustomObject {
-    obj: *mut Object,
+    obj: *mut AnyObject,
 }
 
 impl CustomObject {
-    fn new(class: &Class) -> Self {
-        let ptr: *const Class = class;
+    fn new(class: &AnyClass) -> Self {
+        let ptr: *const AnyClass = class;
         let obj = unsafe { ffi::class_createInstance(ptr.cast(), 0) }.cast();
         CustomObject { obj }
     }
@@ -27,42 +27,42 @@ impl crate::message::private::Sealed for &mut CustomObject {}
 impl crate::message::private::Sealed for ManuallyDrop<CustomObject> {}
 
 unsafe impl MessageReceiver for &CustomObject {
-    type __Inner = Object;
+    type __Inner = AnyObject;
 
     #[inline]
-    fn __as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut AnyObject {
         self.obj
     }
 }
 
 unsafe impl MessageReceiver for &mut CustomObject {
-    type __Inner = Object;
+    type __Inner = AnyObject;
 
     #[inline]
-    fn __as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut AnyObject {
         self.obj
     }
 }
 
 unsafe impl MessageReceiver for ManuallyDrop<CustomObject> {
-    type __Inner = Object;
+    type __Inner = AnyObject;
 
     #[inline]
-    fn __as_raw_receiver(self) -> *mut Object {
+    fn __as_raw_receiver(self) -> *mut AnyObject {
         self.obj
     }
 }
 
 impl Deref for CustomObject {
-    type Target = Object;
+    type Target = AnyObject;
 
-    fn deref(&self) -> &Object {
+    fn deref(&self) -> &AnyObject {
         unsafe { self.obj.as_ref().unwrap_unchecked() }
     }
 }
 
 impl DerefMut for CustomObject {
-    fn deref_mut(&mut self) -> &mut Object {
+    fn deref_mut(&mut self) -> &mut AnyObject {
         unsafe { self.obj.as_mut().unwrap_unchecked() }
     }
 }
@@ -92,12 +92,12 @@ unsafe impl Encode for CustomStruct {
     );
 }
 
-pub(crate) fn custom_class() -> &'static Class {
+pub(crate) fn custom_class() -> &'static AnyClass {
     static REGISTER_CUSTOM_CLASS: Once = Once::new();
 
     REGISTER_CUSTOM_CLASS.call_once(|| {
         // The runtime will call this method, so it has to be implemented
-        extern "C" fn custom_obj_class_initialize(_this: &Class, _cmd: Sel) {}
+        extern "C" fn custom_obj_class_initialize(_this: &AnyClass, _cmd: Sel) {}
 
         let mut builder = ClassBuilder::root(
             "CustomObject",
@@ -109,24 +109,24 @@ pub(crate) fn custom_class() -> &'static Class {
         builder.add_protocol(proto);
         builder.add_ivar::<u32>("_foo");
 
-        unsafe extern "C" fn custom_obj_release(this: *mut Object, _cmd: Sel) {
+        unsafe extern "C" fn custom_obj_release(this: *mut AnyObject, _cmd: Sel) {
             // Drop the value
             let _ = CustomObject { obj: this };
         }
 
-        extern "C" fn custom_obj_set_foo(this: &mut Object, _cmd: Sel, foo: u32) {
+        extern "C" fn custom_obj_set_foo(this: &mut AnyObject, _cmd: Sel, foo: u32) {
             unsafe { this.set_ivar::<u32>("_foo", foo) }
         }
 
-        extern "C" fn custom_obj_get_foo(this: &Object, _cmd: Sel) -> u32 {
+        extern "C" fn custom_obj_get_foo(this: &AnyObject, _cmd: Sel) -> u32 {
             unsafe { *this.ivar::<u32>("_foo") }
         }
 
-        extern "C" fn custom_obj_get_foo_reference(this: &Object, _cmd: Sel) -> &u32 {
+        extern "C" fn custom_obj_get_foo_reference(this: &AnyObject, _cmd: Sel) -> &u32 {
             unsafe { this.ivar::<u32>("_foo") }
         }
 
-        extern "C" fn custom_obj_get_struct(_this: &Object, _cmd: Sel) -> CustomStruct {
+        extern "C" fn custom_obj_get_struct(_this: &AnyObject, _cmd: Sel) -> CustomStruct {
             CustomStruct {
                 a: 1,
                 b: 2,
@@ -135,18 +135,18 @@ pub(crate) fn custom_class() -> &'static Class {
             }
         }
 
-        extern "C" fn custom_obj_class_method(_this: &Class, _cmd: Sel) -> u32 {
+        extern "C" fn custom_obj_class_method(_this: &AnyClass, _cmd: Sel) -> u32 {
             7
         }
 
-        extern "C" fn custom_obj_set_bar(this: &mut Object, _cmd: Sel, bar: u32) {
+        extern "C" fn custom_obj_set_bar(this: &mut AnyObject, _cmd: Sel, bar: u32) {
             unsafe {
                 this.set_ivar::<u32>("_foo", bar);
             }
         }
 
         extern "C" fn custom_obj_add_number_to_number(
-            _this: &Class,
+            _this: &AnyClass,
             _cmd: Sel,
             fst: i32,
             snd: i32,
@@ -155,7 +155,7 @@ pub(crate) fn custom_class() -> &'static Class {
         }
 
         extern "C" fn custom_obj_multiple_colon(
-            _obj: &Object,
+            _obj: &AnyObject,
             _cmd: Sel,
             arg1: i32,
             arg2: i32,
@@ -166,7 +166,7 @@ pub(crate) fn custom_class() -> &'static Class {
         }
 
         extern "C" fn custom_obj_multiple_colon_class(
-            _cls: &Class,
+            _cls: &AnyClass,
             _cmd: Sel,
             arg1: i32,
             arg2: i32,
@@ -207,10 +207,10 @@ pub(crate) fn custom_class() -> &'static Class {
     });
 
     // Can't use `class!` here since `CustomObject` is dynamically created.
-    Class::get("CustomObject").unwrap()
+    AnyClass::get("CustomObject").unwrap()
 }
 
-pub(crate) fn custom_protocol() -> &'static Protocol {
+pub(crate) fn custom_protocol() -> &'static AnyProtocol {
     static REGISTER_CUSTOM_PROTOCOL: Once = Once::new();
 
     REGISTER_CUSTOM_PROTOCOL.call_once(|| {
@@ -223,10 +223,10 @@ pub(crate) fn custom_protocol() -> &'static Protocol {
         builder.register();
     });
 
-    Protocol::get("CustomProtocol").unwrap()
+    AnyProtocol::get("CustomProtocol").unwrap()
 }
 
-pub(crate) fn custom_subprotocol() -> &'static Protocol {
+pub(crate) fn custom_subprotocol() -> &'static AnyProtocol {
     static REGISTER_CUSTOM_SUBPROTOCOL: Once = Once::new();
 
     REGISTER_CUSTOM_SUBPROTOCOL.call_once(|| {
@@ -239,26 +239,26 @@ pub(crate) fn custom_subprotocol() -> &'static Protocol {
         builder.register();
     });
 
-    Protocol::get("CustomSubProtocol").unwrap()
+    AnyProtocol::get("CustomSubProtocol").unwrap()
 }
 
 pub(crate) fn custom_object() -> CustomObject {
     CustomObject::new(custom_class())
 }
 
-pub(crate) fn custom_subclass() -> &'static Class {
+pub(crate) fn custom_subclass() -> &'static AnyClass {
     static REGISTER_CUSTOM_SUBCLASS: Once = Once::new();
 
     REGISTER_CUSTOM_SUBCLASS.call_once(|| {
         let superclass = custom_class();
         let mut builder = ClassBuilder::new("CustomSubclassObject", superclass).unwrap();
 
-        extern "C" fn custom_subclass_get_foo(this: &Object, _cmd: Sel) -> u32 {
+        extern "C" fn custom_subclass_get_foo(this: &AnyObject, _cmd: Sel) -> u32 {
             let foo: u32 = unsafe { msg_send![super(this, custom_class()), foo] };
             foo + 2
         }
 
-        extern "C" fn custom_subclass_class_method(_cls: &Class, _cmd: Sel) -> u32 {
+        extern "C" fn custom_subclass_class_method(_cls: &AnyClass, _cmd: Sel) -> u32 {
             9
         }
 
@@ -272,7 +272,7 @@ pub(crate) fn custom_subclass() -> &'static Class {
         builder.register();
     });
 
-    Class::get("CustomSubclassObject").unwrap()
+    AnyClass::get("CustomSubclassObject").unwrap()
 }
 
 pub(crate) fn custom_subclass_object() -> CustomObject {

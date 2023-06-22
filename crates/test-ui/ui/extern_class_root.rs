@@ -1,11 +1,11 @@
 use core::ops::{Deref, DerefMut};
 
 use objc2::encode::{Encoding, RefEncode};
-use objc2::runtime::Object;
+use objc2::runtime::AnyObject;
 use objc2::{extern_class, mutability, ClassType, Message};
 
 #[repr(transparent)]
-struct MyObject(Object);
+struct MyObject(AnyObject);
 
 unsafe impl RefEncode for MyObject {
     const ENCODING_REF: Encoding = Encoding::Object;
@@ -14,15 +14,15 @@ unsafe impl RefEncode for MyObject {
 unsafe impl Message for MyObject {}
 
 impl Deref for MyObject {
-    type Target = Object;
+    type Target = AnyObject;
 
-    fn deref(&self) -> &Object {
+    fn deref(&self) -> &AnyObject {
         &self.0
     }
 }
 
 impl DerefMut for MyObject {
-    fn deref_mut(&mut self) -> &mut Object {
+    fn deref_mut(&mut self) -> &mut AnyObject {
         &mut self.0
     }
 }

@@ -11,8 +11,8 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
             *const c_void
             *mut T
             *mut c_void
-            AtomicI16
-            AtomicI32
+            AnyClass
+            AnyObject
           and $N others
   = note: required for `&mut Id<NSObject>` to implement `Encode`
   = note: required for `&mut Id<NSObject>` to implement `EncodeReturn`
@@ -74,8 +74,8 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
             *const c_void
             *mut T
             *mut c_void
-            AtomicI16
-            AtomicI32
+            AnyClass
+            AnyObject
           and $N others
   = note: required for `&Id<NSObject>` to implement `Encode`
   = note: required for `&Id<NSObject>` to implement `EncodeConvertArgument`
@@ -106,8 +106,8 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
             *const c_void
             *mut T
             *mut c_void
-            AtomicI16
-            AtomicI32
+            AnyClass
+            AnyObject
           and $N others
   = note: required for `&Id<NSObject>` to implement `Encode`
   = note: 1 redundant requirement hidden
@@ -140,8 +140,8 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
             *const c_void
             *mut T
             *mut c_void
-            AtomicI16
-            AtomicI32
+            AnyClass
+            AnyObject
           and $N others
   = note: required for `*mut Id<NSObject>` to implement `Encode`
   = note: required for `*mut Id<NSObject>` to implement `EncodeConvertArgument`
@@ -172,8 +172,8 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
             *const c_void
             *mut T
             *mut c_void
-            AtomicI16
-            AtomicI32
+            AnyClass
+            AnyObject
           and $N others
   = note: required for `&mut Id<NSObject>` to implement `RefEncode`
   = note: required for `&mut &mut Id<NSObject>` to implement `Encode`

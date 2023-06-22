@@ -20,7 +20,7 @@ pub(crate) use objc2::mutability::{
 #[cfg(feature = "objective-c")]
 pub(crate) use objc2::rc::{Allocated, DefaultId, Id};
 #[cfg(feature = "objective-c")]
-pub(crate) use objc2::runtime::{Bool, Class, Object, Sel};
+pub(crate) use objc2::runtime::{AnyClass, AnyObject, Bool, Sel};
 #[cfg(feature = "objective-c")]
 pub(crate) use objc2::runtime::{NSObject, NSObjectProtocol, ProtocolObject};
 #[cfg(feature = "objective-c")]
@@ -34,12 +34,12 @@ pub(crate) use block2::Block;
 
 // TODO
 #[cfg(feature = "objective-c")]
-pub(crate) type Protocol = Object;
+pub(crate) type AnyProtocol = AnyObject;
 pub(crate) type TodoFunction = *const c_void;
 #[cfg(feature = "objective-c")]
-pub(crate) type TodoClass = Object;
+pub(crate) type TodoClass = AnyObject;
 #[cfg(feature = "objective-c")]
-pub(crate) type TodoProtocols = Object;
+pub(crate) type TodoProtocols = AnyObject;
 
 // MacTypes.h
 pub(crate) type Boolean = u8; // unsigned char

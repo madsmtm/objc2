@@ -9,7 +9,6 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 
 use objc2::mutability::IsMutable;
-use objc2::runtime::Object;
 
 use super::iter;
 use super::util;
@@ -27,7 +26,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
         let count = min(keys.len(), vals.len());
 
         let keys: *mut NonNull<T> = util::ref_ptr_cast_const(keys.as_ptr());
-        let keys: *mut NonNull<Object> = keys.cast();
+        let keys: *mut NonNull<AnyObject> = keys.cast();
         let vals = util::id_ptr_cast(vals.as_mut_ptr());
 
         unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), vals, keys, count) }
@@ -44,7 +43,7 @@ impl<K: Message, V: Message> NSMutableDictionary<K, V> {
         let count = min(keys.len(), vals.len());
 
         let keys: *mut NonNull<T> = util::ref_ptr_cast_const(keys.as_ptr());
-        let keys: *mut NonNull<Object> = keys.cast();
+        let keys: *mut NonNull<AnyObject> = keys.cast();
         let vals = util::id_ptr_cast(vals.as_mut_ptr());
 
         unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), vals, keys, count) }
@@ -215,8 +214,8 @@ impl<K: Message, V: Message> NSMutableDictionary<K, V> {
             .get(&key)
             .map(|old_obj| unsafe { util::mutable_collection_retain_removed_id(old_obj) });
 
-        // SAFETY: It is always safe to transmute an `Id` to `Object`.
-        let key: Id<Object> = unsafe { Id::cast(key) };
+        // SAFETY: It is always safe to transmute an `Id` to `AnyObject`.
+        let key: Id<AnyObject> = unsafe { Id::cast(key) };
         // SAFETY: We have ownership over both the key and the value.
         unsafe { self.setObject_forKey(&value, &key) };
         old_obj

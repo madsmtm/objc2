@@ -16,7 +16,7 @@
 use core::ffi::c_void;
 
 use crate::Foundation::NSString;
-use objc2::runtime::Class;
+use objc2::runtime::AnyClass;
 
 // This is defined in CoreFoundation, but we don't emit a link attribute
 // here because it is already linked via Foundation.
@@ -24,7 +24,7 @@ use objc2::runtime::Class;
 // Although this is a "private" (underscored) symbol, it is directly
 // referenced in Objective-C binaries. So it's safe for us to reference.
 extern "C" {
-    pub static __CFConstantStringClassReference: Class;
+    pub static __CFConstantStringClassReference: AnyClass;
 }
 
 /// Structure used to describe a constant `CFString`.
@@ -38,7 +38,7 @@ extern "C" {
 /// [`CF_CONST_STRING`]: <https://github.com/apple-oss-distributions/CF/blob/CF-1153.18/CFInternal.h#L332-L336>
 #[repr(C)]
 pub struct CFConstString {
-    isa: &'static Class,
+    isa: &'static AnyClass,
     // Important that we don't use `usize` here, since that would be wrong on
     // big-endian systems!
     cfinfo: u32,
@@ -66,7 +66,7 @@ impl CFConstString {
     const FLAGS_ASCII: u32 = 0x07_C8;
     const FLAGS_UTF16: u32 = 0x07_D0;
 
-    pub const unsafe fn new_ascii(isa: &'static Class, data: &'static [u8]) -> Self {
+    pub const unsafe fn new_ascii(isa: &'static AnyClass, data: &'static [u8]) -> Self {
         Self {
             isa,
             cfinfo: Self::FLAGS_ASCII,
@@ -78,7 +78,7 @@ impl CFConstString {
         }
     }
 
-    pub const unsafe fn new_utf16(isa: &'static Class, data: &'static [u16]) -> Self {
+    pub const unsafe fn new_utf16(isa: &'static AnyClass, data: &'static [u16]) -> Self {
         Self {
             isa,
             cfinfo: Self::FLAGS_UTF16,
