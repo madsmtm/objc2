@@ -64,7 +64,7 @@ _get_common_twice:
 	call	L2$pb
 L2$pb:
 	pop	ebx
-	mov	edi, dword ptr [ebx + LSYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L2$pb]
+	mov	edi, dword ptr [ebx + LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L2$pb]
 	mov	esi, dword ptr [edi]
 	test	esi, esi
 	je	LBB2_1
@@ -367,8 +367,8 @@ l_anon.[ID].5:
 .zerofill __DATA,__bss,SYM(test_dynamic_sel[CRATE_ID]::use_fns::CACHED_SEL, 0),4,2
 .zerofill __DATA,__bss,SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0),4,2
 	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
-LSYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
-	.indirect_symbol	SYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)
+LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
+	.indirect_symbol	SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)
 	.long	0
 
 .subsections_via_symbols

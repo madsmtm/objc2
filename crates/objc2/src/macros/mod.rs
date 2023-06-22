@@ -73,7 +73,7 @@ macro_rules! class {
     ($name:ident) => {{
         $crate::__class_inner!(
             $crate::__macro_helpers::stringify!($name),
-            $crate::__hash_idents!($name),
+            $crate::__hash_idents!($name)
         )
     }};
 }
@@ -82,7 +82,7 @@ macro_rules! class {
 #[macro_export]
 #[cfg(not(feature = "unstable-static-class"))]
 macro_rules! __class_inner {
-    ($name:expr, $_hash:expr,) => {{
+    ($name:expr, $_hash:expr) => {{
         static CACHED_CLASS: $crate::__macro_helpers::CachedClass =
             $crate::__macro_helpers::CachedClass::new();
         #[allow(unused_unsafe)]
@@ -220,14 +220,17 @@ macro_rules! __class_inner {
 /// ```
 #[macro_export]
 macro_rules! sel {
-    (alloc) => ({
-        $crate::__macro_helpers::alloc_sel()
+    (new) => ({
+        $crate::__macro_helpers::new_sel()
     });
     (init) => ({
         $crate::__macro_helpers::init_sel()
     });
-    (new) => ({
-        $crate::__macro_helpers::new_sel()
+    (alloc) => ({
+        $crate::__macro_helpers::alloc_sel()
+    });
+    (dealloc) => ({
+        $crate::__macro_helpers::dealloc_sel()
     });
     ($sel:ident) => ({
         $crate::__sel_inner!(
@@ -660,7 +663,7 @@ macro_rules! __sel_inner {
     not(feature = "unstable-static-class-inlined")
 ))]
 macro_rules! __class_inner {
-    ($name:expr, $hash:expr,) => {{
+    ($name:expr, $hash:expr) => {{
         $crate::__inner_statics!(@image_info $hash);
         $crate::__inner_statics!(@class $name, $hash);
 
@@ -678,7 +681,7 @@ macro_rules! __class_inner {
 #[macro_export]
 #[cfg(feature = "unstable-static-class-inlined")]
 macro_rules! __class_inner {
-    ($name:expr, $hash:expr,) => {{
+    ($name:expr, $hash:expr) => {{
         $crate::__inner_statics!(@image_info $hash);
         $crate::__inner_statics!(@class $name, $hash);
 

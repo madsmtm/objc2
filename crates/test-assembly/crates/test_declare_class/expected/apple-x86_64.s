@@ -20,10 +20,10 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	cmp	byte ptr [rax], 0
 	mov	byte ptr [rax], 0
 	je	LBB1_3
-	call	SYM(<objc2::runtime::nsobject::NSObject as objc2::class_type::ClassType>::class::objc_static_workaround::GENERATED_ID, 0)
+	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
+	mov	rdx, qword ptr [rax]
 	lea	rdi, [rip + l_anon.[ID].11]
 	mov	esi, 15
-	mov	rdx, rax
 	call	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
 	test	rax, rax
 	je	LBB1_4
@@ -44,7 +44,8 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	r8d, 3
 	mov	r9, r14
 	call	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_694e247a0bc88869]
+	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_dealloc@GOTPCREL]
+	mov	rsi, qword ptr [rax]
 	lea	r15, [rip + l_anon.[ID].1]
 	lea	r12, [rip + l_anon.[ID].12]
 	lea	r9, [rip + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}::__objc2_dealloc, 0)]
@@ -309,7 +310,8 @@ SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassT
 	je	LBB8_2
 	call	_objc_release
 LBB8_2:
-	call	SYM(<objc2::runtime::nsobject::NSObject as objc2::class_type::ClassType>::class::objc_static_workaround::GENERATED_ID, 0)
+	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
+	mov	rax, qword ptr [rax]
 	mov	qword ptr [rbp - 32], r14
 	mov	qword ptr [rbp - 24], rax
 	lea	rdi, [rbp - 32]
@@ -326,17 +328,15 @@ LBB8_2:
 _init:
 	push	rbp
 	mov	rbp, rsp
-	push	r14
 	push	rbx
-	sub	rsp, 16
-	mov	rbx, rdi
+	sub	rsp, 24
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
-	mov	r14, qword ptr [rax]
-	call	SYM(<objc2::runtime::nsobject::NSObject as objc2::class_type::ClassType>::class::objc_static_workaround::GENERATED_ID, 0)
-	mov	qword ptr [rbp - 32], rbx
-	mov	qword ptr [rbp - 24], rax
-	lea	rdi, [rbp - 32]
-	mov	rsi, r14
+	mov	rsi, qword ptr [rax]
+	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
+	mov	rax, qword ptr [rax]
+	mov	qword ptr [rbp - 24], rdi
+	mov	qword ptr [rbp - 16], rax
+	lea	rdi, [rbp - 24]
 	call	_objc_msgSendSuper
 	mov	rbx, rax
 	test	rax, rax
@@ -359,9 +359,8 @@ _init:
 	mov	qword ptr [rbx + rax], 0
 LBB9_2:
 	mov	rax, rbx
-	add	rsp, 16
+	add	rsp, 24
 	pop	rbx
-	pop	r14
 	pop	rbp
 	ret
 
@@ -645,23 +644,6 @@ l_anon.[ID].20:
 l_anon.[ID].21:
 	.quad	l_anon.[ID].11
 	.asciz	"\017\000\000\000\000\000\000"
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_694e247a0bc88869
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_694e247a0bc88869:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_694e247a0bc88869
-L_OBJC_METH_VAR_NAME_694e247a0bc88869:
-	.asciz	"dealloc"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_694e247a0bc88869
-	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_694e247a0bc88869:
-	.quad	L_OBJC_METH_VAR_NAME_694e247a0bc88869
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_8dd788dbcc16b9bc

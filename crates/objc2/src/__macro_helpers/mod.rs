@@ -13,7 +13,6 @@ use crate::rc::{Allocated, Id};
 use crate::runtime::MethodDescription;
 use crate::runtime::{AnyClass, AnyObject, AnyProtocol, Sel};
 use crate::{Message, MessageArguments, MessageReceiver};
-use crate::{__sel_data, __sel_inner};
 
 pub use core::borrow::{Borrow, BorrowMut};
 pub use core::cell::UnsafeCell;
@@ -29,35 +28,15 @@ pub use core::{compile_error, concat, panic, stringify};
 pub use std::sync::Once;
 
 mod cache;
+mod common_selectors;
 mod declare_class;
 
 pub use self::cache::{CachedClass, CachedSel};
+pub use self::common_selectors::{alloc_sel, dealloc_sel, init_sel, new_sel};
 pub use self::declare_class::{
     assert_mutability_matches_superclass_mutability, MaybeOptionId, MessageRecieveId,
     ValidSubclassMutability,
 };
-
-// Common selectors.
-//
-// These are put here to deduplicate the cached selector, and when using
-// `unstable-static-sel`, the statics.
-//
-// Note that our assembly tests of `unstable-static-sel-inlined` output a GOT
-// entry for such accesses, but that is just a limitation of our tests - the
-// actual assembly is as one would expect.
-
-#[inline]
-pub fn alloc_sel() -> Sel {
-    __sel_inner!(__sel_data!(alloc), "alloc")
-}
-#[inline]
-pub fn init_sel() -> Sel {
-    __sel_inner!(__sel_data!(init), "init")
-}
-#[inline]
-pub fn new_sel() -> Sel {
-    __sel_inner!(__sel_data!(new), "new")
-}
 
 /// Helper for specifying the retain semantics for a given selector family.
 ///

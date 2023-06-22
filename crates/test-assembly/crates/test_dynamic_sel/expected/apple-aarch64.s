@@ -52,9 +52,9 @@ _get_common_twice:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 Lloh12:
-	adrp	x20, SYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
+	adrp	x20, SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
 Lloh13:
-	ldr	x20, [x20, SYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
+	ldr	x20, [x20, SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
 	ldr	x19, [x20]
 	cbz	x19, LBB2_3
 	ldr	x1, [x20]
@@ -66,9 +66,9 @@ LBB2_2:
 	ret
 LBB2_3:
 Lloh14:
-	adrp	x0, SYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
+	adrp	x0, SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
 Lloh15:
-	ldr	x0, [x0, SYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
+	ldr	x0, [x0, SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
 Lloh16:
 	adrp	x1, l_anon.[ID].1@PAGE
 Lloh17:
@@ -79,9 +79,9 @@ Lloh17:
 	cbnz	x1, LBB2_2
 LBB2_4:
 Lloh18:
-	adrp	x0, SYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
+	adrp	x0, SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
 Lloh19:
-	ldr	x0, [x0, SYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
+	ldr	x0, [x0, SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
 Lloh20:
 	adrp	x1, l_anon.[ID].1@PAGE
 Lloh21:

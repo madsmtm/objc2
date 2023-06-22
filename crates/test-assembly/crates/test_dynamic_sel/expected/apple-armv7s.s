@@ -53,8 +53,8 @@ LPC1_1:
 _get_common_twice:
 	push	{r4, r5, r7, lr}
 	add	r7, sp, #8
-	movw	r5, :lower16:(LSYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_0+8))
-	movt	r5, :upper16:(LSYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_0+8))
+	movw	r5, :lower16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_0+8))
+	movt	r5, :upper16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_0+8))
 LPC2_0:
 	ldr	r5, [pc, r5]
 	ldr	r4, [r5]
@@ -67,8 +67,8 @@ LBB2_2:
 	mov	r0, r4
 	pop	{r4, r5, r7, pc}
 LBB2_3:
-	movw	r0, :lower16:(LSYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_1+8))
-	movt	r0, :upper16:(LSYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_1+8))
+	movw	r0, :lower16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_1+8))
+	movt	r0, :upper16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_1+8))
 	movw	r1, :lower16:(l_anon.[ID].1-(LPC2_2+8))
 LPC2_1:
 	ldr	r0, [pc, r0]
@@ -81,8 +81,8 @@ LPC2_2:
 	cmp	r1, #0
 	bne	LBB2_2
 LBB2_4:
-	movw	r0, :lower16:(LSYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_3+8))
-	movt	r0, :upper16:(LSYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_3+8))
+	movw	r0, :lower16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_3+8))
+	movt	r0, :upper16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_3+8))
 	movw	r1, :lower16:(l_anon.[ID].1-(LPC2_4+8))
 LPC2_3:
 	ldr	r0, [pc, r0]
@@ -328,8 +328,8 @@ l_anon.[ID].5:
 .zerofill __DATA,__bss,__MergedGlobals,16,2
 	.section	__DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
 	.p2align	2, 0x0
-LSYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
-	.indirect_symbol	SYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)
+LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
+	.indirect_symbol	SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)
 	.long	0
 
 .subsections_via_symbols

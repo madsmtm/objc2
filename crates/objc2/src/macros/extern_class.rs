@@ -369,7 +369,7 @@ macro_rules! __inner_extern_class {
 
                 $crate::__class_inner!(
                     $crate::__select_name!($name; $($name_const)?),
-                    $crate::__hash_idents!($name),
+                    $crate::__hash_idents!($name)
                 )
             }
 

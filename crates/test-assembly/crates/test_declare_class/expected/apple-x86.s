@@ -23,10 +23,10 @@ L1$pb:
 	cmp	byte ptr [eax], 0
 	mov	byte ptr [eax], 0
 	je	LBB1_3
-	call	SYM(<objc2::runtime::nsobject::NSObject as objc2::class_type::ClassType>::class::objc_static_workaround::GENERATED_ID, 0)
+	mov	eax, dword ptr [esi + LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-L1$pb]
 	sub	esp, 4
 	lea	ecx, [esi + l_anon.[ID].11-L1$pb]
-	push	eax
+	push	dword ptr [eax]
 	push	15
 	push	ecx
 	call	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
@@ -37,13 +37,13 @@ L1$pb:
 	sub	esp, 8
 	lea	eax, [esi + l_anon.[ID].6-L1$pb]
 	lea	ecx, [esi + L_anon.[ID].5-L1$pb]
-	lea	edi, [ebp - 40]
+	lea	ebx, [ebp - 40]
 	push	eax
 	push	0
 	push	1
 	push	4
 	push	ecx
-	push	edi
+	push	ebx
 	call	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
 	add	esp, 24
 	lea	ecx, [esi + l_anon.[ID].8-L1$pb]
@@ -53,18 +53,21 @@ L1$pb:
 	push	4
 	push	4
 	push	eax
-	push	edi
-	call	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
-	add	esp, 24
-	lea	eax, [esi + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}::__objc2_dealloc, 0)-L1$pb]
-	lea	edx, [esi + l_anon.[ID].12-L1$pb]
-	lea	ebx, [esi + l_anon.[ID].1-L1$pb]
-	push	eax
-	push	edx
-	push	0
 	push	ebx
-	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_694e247a0bc88869-L1$pb]
+	call	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
+	add	esp, 32
+	mov	eax, dword ptr [esi + LL_OBJC_SELECTOR_REFERENCES_dealloc$non_lazy_ptr-L1$pb]
+	sub	esp, 8
+	lea	ecx, [esi + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}::__objc2_dealloc, 0)-L1$pb]
+	lea	edi, [esi + l_anon.[ID].12-L1$pb]
+	lea	edx, [esi + l_anon.[ID].1-L1$pb]
+	push	ecx
 	push	edi
+	push	0
+	push	edx
+	mov	edi, edx
+	push	dword ptr [eax]
+	push	ebx
 	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	add	esp, 32
 	mov	eax, dword ptr [esi + LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-L1$pb]
@@ -74,9 +77,9 @@ L1$pb:
 	lea	ecx, [esi + l_anon.[ID].8-L1$pb]
 	push	ecx
 	push	0
-	push	ebx
-	push	dword ptr [eax]
 	push	edi
+	push	dword ptr [eax]
+	push	ebx
 	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	add	esp, 24
 	lea	eax, [esi + _class_method-L1$pb]
@@ -84,9 +87,9 @@ L1$pb:
 	lea	eax, [esi + l_anon.[ID].12-L1$pb]
 	push	eax
 	push	0
-	push	ebx
-	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_8dd788dbcc16b9bc-L1$pb]
 	push	edi
+	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_8dd788dbcc16b9bc-L1$pb]
+	push	ebx
 	call	SYM(objc2::declare::ClassBuilder::add_class_method_inner::GENERATED_ID, 0)
 	add	esp, 24
 	lea	eax, [esi + _method-L1$pb]
@@ -94,9 +97,9 @@ L1$pb:
 	lea	eax, [esi + l_anon.[ID].12-L1$pb]
 	push	eax
 	push	0
-	push	ebx
-	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_450db9db0953dff5-L1$pb]
 	push	edi
+	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_450db9db0953dff5-L1$pb]
+	push	ebx
 	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	add	esp, 24
 	lea	eax, [esi + _method_bool-L1$pb]
@@ -106,28 +109,28 @@ L1$pb:
 	push	1
 	push	ecx
 	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_783b35bc45c6e4a6-L1$pb]
-	push	edi
+	push	ebx
 	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	add	esp, 24
 	lea	eax, [esi + _method_id-L1$pb]
 	push	eax
-	lea	ebx, [esi + l_anon.[ID].8-L1$pb]
-	push	ebx
+	lea	edi, [esi + l_anon.[ID].8-L1$pb]
+	push	edi
 	push	0
 	lea	eax, [esi + l_anon.[ID].1-L1$pb]
 	push	eax
 	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_828e9fbc6d0b4498-L1$pb]
-	push	edi
+	push	ebx
 	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	add	esp, 24
 	lea	eax, [esi + _method_id_with_param-L1$pb]
 	push	eax
-	push	ebx
+	push	edi
 	push	1
 	lea	eax, [esi + l_anon.[ID].13-L1$pb]
 	push	eax
 	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_788cc14ba6a28eb8-L1$pb]
-	push	edi
+	push	ebx
 	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	add	esp, 24
 	lea	eax, [esi + l_anon.[ID].14-L1$pb]
@@ -136,13 +139,13 @@ L1$pb:
 	call	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
 	add	esp, 8
 	push	eax
-	push	edi
+	push	ebx
 	call	SYM(objc2::__macro_helpers::<impl objc2::declare::ClassBuilder>::__add_protocol_methods::GENERATED_ID, 0)
 	add	esp, 8
 	lea	ecx, [esi + _copy_with_zone-L1$pb]
 	lea	edx, [esi + l_anon.[ID].17-L1$pb]
 	push	ecx
-	push	ebx
+	push	edi
 	push	1
 	push	edx
 	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_f058a81939de2cb9-L1$pb]
@@ -430,7 +433,8 @@ L8$pb:
 	call	_objc_release
 	add	esp, 16
 LBB8_2:
-	call	SYM(<objc2::runtime::nsobject::NSObject as objc2::class_type::ClassType>::class::objc_static_workaround::GENERATED_ID, 0)
+	mov	eax, dword ptr [ebx + LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-L8$pb]
+	mov	eax, dword ptr [eax]
 	mov	dword ptr [ebp - 24], edi
 	mov	dword ptr [ebp - 20], eax
 	sub	esp, 8
@@ -450,22 +454,22 @@ LBB8_2:
 _init:
 	push	ebp
 	mov	ebp, esp
-	push	ebx
 	push	edi
 	push	esi
-	sub	esp, 12
+	sub	esp, 16
 	call	L9$pb
 L9$pb:
 	pop	edi
-	mov	esi, dword ptr [ebp + 8]
-	mov	eax, dword ptr [edi + LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-L9$pb]
-	mov	ebx, dword ptr [eax]
-	call	SYM(<objc2::runtime::nsobject::NSObject as objc2::class_type::ClassType>::class::objc_static_workaround::GENERATED_ID, 0)
-	mov	dword ptr [ebp - 24], esi
-	mov	dword ptr [ebp - 20], eax
+	mov	eax, dword ptr [ebp + 8]
+	mov	ecx, dword ptr [edi + LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-L9$pb]
+	mov	ecx, dword ptr [ecx]
+	mov	edx, dword ptr [edi + LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-L9$pb]
+	mov	edx, dword ptr [edx]
+	mov	dword ptr [ebp - 16], eax
+	mov	dword ptr [ebp - 12], edx
 	sub	esp, 8
-	lea	eax, [ebp - 24]
-	push	ebx
+	lea	eax, [ebp - 16]
+	push	ecx
 	push	eax
 	call	_objc_msgSendSuper
 	add	esp, 16
@@ -500,10 +504,9 @@ L9$pb:
 	mov	dword ptr [esi + eax], 0
 LBB9_2:
 	mov	eax, esi
-	add	esp, 12
+	add	esp, 16
 	pop	esi
 	pop	edi
-	pop	ebx
 	pop	ebp
 	ret
 
@@ -829,23 +832,6 @@ l_anon.[ID].21:
 	.asciz	"\017\000\000"
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_694e247a0bc88869
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_694e247a0bc88869:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_694e247a0bc88869
-L_OBJC_METH_VAR_NAME_694e247a0bc88869:
-	.asciz	"dealloc"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_694e247a0bc88869
-	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_694e247a0bc88869:
-	.long	L_OBJC_METH_VAR_NAME_694e247a0bc88869
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_8dd788dbcc16b9bc
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_8dd788dbcc16b9bc:
@@ -948,6 +934,12 @@ L_OBJC_SELECTOR_REFERENCES_f058a81939de2cb9:
 	.long	L_OBJC_METH_VAR_NAME_f058a81939de2cb9
 
 	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
+LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_CLASSLIST_REFERENCES_$_NSObject
+	.long	0
+LL_OBJC_SELECTOR_REFERENCES_dealloc$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_dealloc
+	.long	0
 LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr:
 	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_init
 	.long	0

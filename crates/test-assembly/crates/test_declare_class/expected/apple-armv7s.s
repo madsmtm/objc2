@@ -18,173 +18,177 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	strb	r2, [r0]
 	cmp	r1, #0
 	beq	LBB1_3
-	bl	SYM(<objc2::runtime::nsobject::NSObject as objc2::class_type::ClassType>::class::objc_static_workaround::GENERATED_ID, 0)
-	mov	r2, r0
-	movw	r0, :lower16:(l_anon.[ID].11-(LPC1_0+8))
-	movt	r0, :upper16:(l_anon.[ID].11-(LPC1_0+8))
+	movw	r0, :lower16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC1_0+8))
 	mov	r1, #15
+	movt	r0, :upper16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC1_0+8))
 LPC1_0:
+	ldr	r0, [pc, r0]
+	ldr	r2, [r0]
+	movw	r0, :lower16:(l_anon.[ID].11-(LPC1_1+8))
+	movt	r0, :upper16:(l_anon.[ID].11-(LPC1_1+8))
+LPC1_1:
 	add	r0, pc, r0
 	bl	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
 	cmp	r0, #0
 	beq	LBB1_4
-	movw	r1, :lower16:(L_anon.[ID].5-(LPC1_1+8))
+	movw	r1, :lower16:(L_anon.[ID].5-(LPC1_2+8))
 	mov	r2, #0
-	movt	r1, :upper16:(L_anon.[ID].5-(LPC1_1+8))
-	movw	r3, :lower16:(l_anon.[ID].6-(LPC1_2+8))
-	movt	r3, :upper16:(l_anon.[ID].6-(LPC1_2+8))
+	movt	r1, :upper16:(L_anon.[ID].5-(LPC1_2+8))
+	movw	r3, :lower16:(l_anon.[ID].6-(LPC1_3+8))
+	movt	r3, :upper16:(l_anon.[ID].6-(LPC1_3+8))
 	add	r4, sp, #8
-LPC1_2:
+LPC1_3:
 	add	r3, pc, r3
 	str	r0, [sp, #8]
 	strd	r2, r3, [sp]
-LPC1_1:
+LPC1_2:
 	add	r1, pc, r1
 	mov	r0, r4
 	mov	r2, #4
 	mov	r3, #1
 	bl	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
-	movw	r8, :lower16:(l_anon.[ID].8-(LPC1_3+8))
+	movw	r8, :lower16:(l_anon.[ID].8-(LPC1_4+8))
 	mov	r0, #2
-	movt	r8, :upper16:(l_anon.[ID].8-(LPC1_3+8))
-	movw	r1, :lower16:(L_anon.[ID].7-(LPC1_4+8))
-	movt	r1, :upper16:(L_anon.[ID].7-(LPC1_4+8))
-LPC1_3:
+	movt	r8, :upper16:(l_anon.[ID].8-(LPC1_4+8))
+	movw	r1, :lower16:(L_anon.[ID].7-(LPC1_5+8))
+	movt	r1, :upper16:(L_anon.[ID].7-(LPC1_5+8))
+LPC1_4:
 	add	r8, pc, r8
 	stm	sp, {r0, r8}
-LPC1_4:
+LPC1_5:
 	add	r1, pc, r1
 	mov	r0, r4
 	mov	r2, #4
 	mov	r3, #4
 	bl	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
-	movw	r11, :lower16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}::__objc2_dealloc, 0)-(LPC1_5+8))
-	mov	r0, r4
-	movt	r11, :upper16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}::__objc2_dealloc, 0)-(LPC1_5+8))
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_694e247a0bc88869-(LPC1_6+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_694e247a0bc88869-(LPC1_6+8))
-LPC1_5:
-	add	r11, pc, r11
-LPC1_6:
-	ldr	r1, [pc, r1]
-	movw	r10, :lower16:(l_anon.[ID].12-(LPC1_7+8))
-	movt	r10, :upper16:(l_anon.[ID].12-(LPC1_7+8))
-	movw	r5, :lower16:(l_anon.[ID].1-(LPC1_8+8))
-	movt	r5, :upper16:(l_anon.[ID].1-(LPC1_8+8))
-LPC1_7:
-	add	r10, pc, r10
-LPC1_8:
-	add	r5, pc, r5
+	movw	r0, :lower16:(LL_OBJC_SELECTOR_REFERENCES_dealloc$non_lazy_ptr-(LPC1_6+8))
 	mov	r3, #0
+	movt	r0, :upper16:(LL_OBJC_SELECTOR_REFERENCES_dealloc$non_lazy_ptr-(LPC1_6+8))
+	movw	r11, :lower16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}::__objc2_dealloc, 0)-(LPC1_7+8))
+LPC1_6:
+	ldr	r0, [pc, r0]
+	movt	r11, :upper16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}::__objc2_dealloc, 0)-(LPC1_7+8))
+LPC1_7:
+	add	r11, pc, r11
+	ldr	r1, [r0]
+	movw	r10, :lower16:(l_anon.[ID].12-(LPC1_8+8))
+	movt	r10, :upper16:(l_anon.[ID].12-(LPC1_8+8))
+	movw	r5, :lower16:(l_anon.[ID].1-(LPC1_9+8))
+	movt	r5, :upper16:(l_anon.[ID].1-(LPC1_9+8))
+LPC1_8:
+	add	r10, pc, r10
+LPC1_9:
+	add	r5, pc, r5
+	mov	r0, r4
 	mov	r2, r5
 	strd	r10, r11, [sp]
 	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
-	movw	r0, :lower16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_9+8))
+	movw	r0, :lower16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_10+8))
 	mov	r2, r5
-	movt	r0, :upper16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_9+8))
+	movt	r0, :upper16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_10+8))
 	mov	r3, #0
-LPC1_9:
+LPC1_10:
 	ldr	r0, [pc, r0]
 	ldr	r1, [r0]
-	movw	r9, :lower16:(_init-(LPC1_10+8))
-	movt	r9, :upper16:(_init-(LPC1_10+8))
+	movw	r9, :lower16:(_init-(LPC1_11+8))
+	movt	r9, :upper16:(_init-(LPC1_11+8))
 	mov	r0, r4
-LPC1_10:
+LPC1_11:
 	add	r9, pc, r9
 	strd	r8, r9, [sp]
 	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
-	movw	r11, :lower16:(_class_method-(LPC1_11+8))
+	movw	r11, :lower16:(_class_method-(LPC1_12+8))
 	mov	r0, r4
-	movt	r11, :upper16:(_class_method-(LPC1_11+8))
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_8dd788dbcc16b9bc-(LPC1_12+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_8dd788dbcc16b9bc-(LPC1_12+8))
-LPC1_11:
-	add	r11, pc, r11
+	movt	r11, :upper16:(_class_method-(LPC1_12+8))
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_8dd788dbcc16b9bc-(LPC1_13+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_8dd788dbcc16b9bc-(LPC1_13+8))
 LPC1_12:
+	add	r11, pc, r11
+LPC1_13:
 	ldr	r1, [pc, r1]
 	mov	r2, r5
 	mov	r3, #0
 	strd	r10, r11, [sp]
 	bl	SYM(objc2::declare::ClassBuilder::add_class_method_inner::GENERATED_ID, 0)
-	movw	r11, :lower16:(_method-(LPC1_13+8))
+	movw	r11, :lower16:(_method-(LPC1_14+8))
 	mov	r0, r4
-	movt	r11, :upper16:(_method-(LPC1_13+8))
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_450db9db0953dff5-(LPC1_14+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_450db9db0953dff5-(LPC1_14+8))
-LPC1_13:
-	add	r11, pc, r11
+	movt	r11, :upper16:(_method-(LPC1_14+8))
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_450db9db0953dff5-(LPC1_15+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_450db9db0953dff5-(LPC1_15+8))
 LPC1_14:
+	add	r11, pc, r11
+LPC1_15:
 	ldr	r1, [pc, r1]
 	mov	r2, r5
 	mov	r3, #0
 	strd	r10, r11, [sp]
 	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
-	movw	r3, :lower16:(_method_bool-(LPC1_15+8))
+	movw	r3, :lower16:(_method_bool-(LPC1_16+8))
 	mov	r0, r4
-	movt	r3, :upper16:(_method_bool-(LPC1_15+8))
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_783b35bc45c6e4a6-(LPC1_16+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_783b35bc45c6e4a6-(LPC1_16+8))
-LPC1_15:
-	add	r3, pc, r3
+	movt	r3, :upper16:(_method_bool-(LPC1_16+8))
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_783b35bc45c6e4a6-(LPC1_17+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_783b35bc45c6e4a6-(LPC1_17+8))
 LPC1_16:
-	ldr	r1, [pc, r1]
-	movw	r10, :lower16:(l_anon.[ID].13-(LPC1_17+8))
-	movt	r10, :upper16:(l_anon.[ID].13-(LPC1_17+8))
+	add	r3, pc, r3
 LPC1_17:
+	ldr	r1, [pc, r1]
+	movw	r10, :lower16:(l_anon.[ID].13-(LPC1_18+8))
+	movt	r10, :upper16:(l_anon.[ID].13-(LPC1_18+8))
+LPC1_18:
 	add	r10, pc, r10
 	str	r10, [sp]
 	mov	r2, r10
 	str	r3, [sp, #4]
 	mov	r3, #1
 	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
-	movw	r9, :lower16:(_method_id-(LPC1_18+8))
+	movw	r9, :lower16:(_method_id-(LPC1_19+8))
 	mov	r0, r4
-	movt	r9, :upper16:(_method_id-(LPC1_18+8))
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_828e9fbc6d0b4498-(LPC1_19+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_828e9fbc6d0b4498-(LPC1_19+8))
-LPC1_18:
-	add	r9, pc, r9
+	movt	r9, :upper16:(_method_id-(LPC1_19+8))
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_828e9fbc6d0b4498-(LPC1_20+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_828e9fbc6d0b4498-(LPC1_20+8))
 LPC1_19:
+	add	r9, pc, r9
+LPC1_20:
 	ldr	r1, [pc, r1]
 	mov	r2, r5
 	mov	r3, #0
 	strd	r8, r9, [sp]
 	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
-	movw	r9, :lower16:(_method_id_with_param-(LPC1_20+8))
+	movw	r9, :lower16:(_method_id_with_param-(LPC1_21+8))
 	mov	r0, r4
-	movt	r9, :upper16:(_method_id_with_param-(LPC1_20+8))
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_788cc14ba6a28eb8-(LPC1_21+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_788cc14ba6a28eb8-(LPC1_21+8))
-LPC1_20:
-	add	r9, pc, r9
+	movt	r9, :upper16:(_method_id_with_param-(LPC1_21+8))
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_788cc14ba6a28eb8-(LPC1_22+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_788cc14ba6a28eb8-(LPC1_22+8))
 LPC1_21:
+	add	r9, pc, r9
+LPC1_22:
 	ldr	r1, [pc, r1]
 	mov	r2, r10
 	mov	r3, #1
 	strd	r8, r9, [sp]
 	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
-	movw	r0, :lower16:(l_anon.[ID].14-(LPC1_22+8))
+	movw	r0, :lower16:(l_anon.[ID].14-(LPC1_23+8))
 	mov	r1, #9
-	movt	r0, :upper16:(l_anon.[ID].14-(LPC1_22+8))
-LPC1_22:
+	movt	r0, :upper16:(l_anon.[ID].14-(LPC1_23+8))
+LPC1_23:
 	add	r0, pc, r0
 	bl	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
 	mov	r1, r0
 	mov	r0, r4
 	bl	SYM(objc2::__macro_helpers::<impl objc2::declare::ClassBuilder>::__add_protocol_methods::GENERATED_ID, 0)
-	movw	r9, :lower16:(_copy_with_zone-(LPC1_23+8))
+	movw	r9, :lower16:(_copy_with_zone-(LPC1_24+8))
 	mov	r3, #1
-	movt	r9, :upper16:(_copy_with_zone-(LPC1_23+8))
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_f058a81939de2cb9-(LPC1_24+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_f058a81939de2cb9-(LPC1_24+8))
-LPC1_23:
-	add	r9, pc, r9
+	movt	r9, :upper16:(_copy_with_zone-(LPC1_24+8))
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_f058a81939de2cb9-(LPC1_25+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_f058a81939de2cb9-(LPC1_25+8))
 LPC1_24:
-	ldr	r1, [pc, r1]
-	movw	r2, :lower16:(l_anon.[ID].17-(LPC1_25+8))
-	movt	r2, :upper16:(l_anon.[ID].17-(LPC1_25+8))
-	strd	r8, r9, [sp]
+	add	r9, pc, r9
 LPC1_25:
+	ldr	r1, [pc, r1]
+	movw	r2, :lower16:(l_anon.[ID].17-(LPC1_26+8))
+	movt	r2, :upper16:(l_anon.[ID].17-(LPC1_26+8))
+	strd	r8, r9, [sp]
+LPC1_26:
 	add	r2, pc, r2
 	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	ldr	r0, [sp, #8]
@@ -193,41 +197,41 @@ LPC1_25:
 	pop	{r8, r10, r11}
 	pop	{r4, r5, r7, pc}
 LBB1_3:
-	movw	r0, :lower16:(l_anon.[ID].2-(LPC1_26+8))
+	movw	r0, :lower16:(l_anon.[ID].2-(LPC1_27+8))
 	mov	r1, #43
-	movt	r0, :upper16:(l_anon.[ID].2-(LPC1_26+8))
-	movw	r2, :lower16:(l_anon.[ID].4-(LPC1_27+8))
-	movt	r2, :upper16:(l_anon.[ID].4-(LPC1_27+8))
-LPC1_26:
-	add	r0, pc, r0
+	movt	r0, :upper16:(l_anon.[ID].2-(LPC1_27+8))
+	movw	r2, :lower16:(l_anon.[ID].4-(LPC1_28+8))
+	movt	r2, :upper16:(l_anon.[ID].4-(LPC1_28+8))
 LPC1_27:
+	add	r0, pc, r0
+LPC1_28:
 	add	r2, pc, r2
 	mov	lr, pc
 	b	SYM(core::panicking::panic::GENERATED_ID, 0)
 LBB1_4:
-	movw	r0, :lower16:(l_anon.[ID].20-(LPC1_28+8))
+	movw	r0, :lower16:(l_anon.[ID].20-(LPC1_29+8))
 	mov	r5, #0
-	movt	r0, :upper16:(l_anon.[ID].20-(LPC1_28+8))
-	movw	r2, :lower16:(l_anon.[ID].21-(LPC1_29+8))
-	movt	r2, :upper16:(l_anon.[ID].21-(LPC1_29+8))
-	movw	r1, :lower16:(l_anon.[ID].10-(LPC1_30+8))
-	movt	r1, :upper16:(l_anon.[ID].10-(LPC1_30+8))
-	movw	r3, :lower16:(SYM(<&str as core[CRATE_ID]::fmt::Display>::fmt, 0)-(LPC1_31+8))
-	movt	r3, :upper16:(SYM(<&str as core[CRATE_ID]::fmt::Display>::fmt, 0)-(LPC1_31+8))
+	movt	r0, :upper16:(l_anon.[ID].20-(LPC1_29+8))
+	movw	r2, :lower16:(l_anon.[ID].21-(LPC1_30+8))
+	movt	r2, :upper16:(l_anon.[ID].21-(LPC1_30+8))
+	movw	r1, :lower16:(l_anon.[ID].10-(LPC1_31+8))
+	movt	r1, :upper16:(l_anon.[ID].10-(LPC1_31+8))
+	movw	r3, :lower16:(SYM(<&str as core[CRATE_ID]::fmt::Display>::fmt, 0)-(LPC1_32+8))
+	movt	r3, :upper16:(SYM(<&str as core[CRATE_ID]::fmt::Display>::fmt, 0)-(LPC1_32+8))
 	str	r5, [sp, #24]
 	mov	r5, #2
-LPC1_28:
+LPC1_29:
 	add	r0, pc, r0
 	str	r5, [sp, #12]
 	mov	r5, #1
-LPC1_29:
+LPC1_30:
 	add	r2, pc, r2
-LPC1_31:
+LPC1_32:
 	add	r3, pc, r3
 	str	r5, [sp, #20]
 	sub	r5, r7, #28
 	str	r0, [sp, #8]
-LPC1_30:
+LPC1_31:
 	add	r1, pc, r1
 	add	r0, sp, #8
 	str	r5, [sp, #16]
@@ -458,11 +462,15 @@ LPC8_1:
 	beq	LBB8_2
 	bl	_objc_release
 LBB8_2:
-	bl	SYM(<objc2::runtime::nsobject::NSObject as objc2::class_type::ClassType>::class::objc_static_workaround::GENERATED_ID, 0)
+	movw	r0, :lower16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC8_2+8))
+	mov	r1, r4
+	movt	r0, :upper16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC8_2+8))
+	str	r5, [sp]
+LPC8_2:
+	ldr	r0, [pc, r0]
+	ldr	r0, [r0]
 	str	r0, [sp, #4]
 	mov	r0, sp
-	mov	r1, r4
-	str	r5, [sp]
 	bl	_objc_msgSendSuper
 	sub	sp, r7, #8
 	pop	{r4, r5, r7, pc}
@@ -471,56 +479,57 @@ LBB8_2:
 	.p2align	2
 	.code	32
 _init:
-	push	{r4, r5, r7, lr}
-	add	r7, sp, #8
+	push	{r4, r7, lr}
+	add	r7, sp, #4
 	sub	sp, sp, #8
-	mov	r4, r0
-	movw	r0, :lower16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC9_0+8))
-	movt	r0, :upper16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC9_0+8))
+	movw	r1, :lower16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC9_0+8))
+	movt	r1, :upper16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC9_0+8))
+	movw	r2, :lower16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC9_1+8))
 LPC9_0:
-	ldr	r0, [pc, r0]
-	ldr	r5, [r0]
-	bl	SYM(<objc2::runtime::nsobject::NSObject as objc2::class_type::ClassType>::class::objc_static_workaround::GENERATED_ID, 0)
-	str	r0, [sp, #4]
+	ldr	r1, [pc, r1]
+	movt	r2, :upper16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC9_1+8))
+LPC9_1:
+	ldr	r2, [pc, r2]
+	ldr	r1, [r1]
+	ldr	r2, [r2]
+	stm	sp, {r0, r2}
 	mov	r0, sp
-	mov	r1, r5
-	str	r4, [sp]
 	bl	_objc_msgSendSuper
 	mov	r4, r0
 	cmp	r0, #0
 	beq	LBB9_2
 	mov	r0, r4
 	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
-	movw	r1, :lower16:(L_anon.[ID].5-(LPC9_1+8))
+	movw	r1, :lower16:(L_anon.[ID].5-(LPC9_2+8))
 	mov	r2, #4
-	movt	r1, :upper16:(L_anon.[ID].5-(LPC9_1+8))
-	movw	r3, :lower16:(l_anon.[ID].6-(LPC9_2+8))
-	movt	r3, :upper16:(l_anon.[ID].6-(LPC9_2+8))
-LPC9_1:
-	add	r1, pc, r1
+	movt	r1, :upper16:(L_anon.[ID].5-(LPC9_2+8))
+	movw	r3, :lower16:(l_anon.[ID].6-(LPC9_3+8))
+	movt	r3, :upper16:(l_anon.[ID].6-(LPC9_3+8))
 LPC9_2:
+	add	r1, pc, r1
+LPC9_3:
 	add	r3, pc, r3
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	mov	r1, #42
 	strb	r1, [r4, r0]
 	mov	r0, r4
 	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
-	movw	r1, :lower16:(L_anon.[ID].7-(LPC9_3+8))
+	movw	r1, :lower16:(L_anon.[ID].7-(LPC9_4+8))
 	mov	r2, #4
-	movt	r1, :upper16:(L_anon.[ID].7-(LPC9_3+8))
-	movw	r3, :lower16:(l_anon.[ID].8-(LPC9_4+8))
-	movt	r3, :upper16:(l_anon.[ID].8-(LPC9_4+8))
-LPC9_3:
-	add	r1, pc, r1
+	movt	r1, :upper16:(L_anon.[ID].7-(LPC9_4+8))
+	movw	r3, :lower16:(l_anon.[ID].8-(LPC9_5+8))
+	movt	r3, :upper16:(l_anon.[ID].8-(LPC9_5+8))
 LPC9_4:
+	add	r1, pc, r1
+LPC9_5:
 	add	r3, pc, r3
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	mov	r1, #0
 	str	r1, [r4, r0]
 LBB9_2:
 	mov	r0, r4
-	sub	sp, r7, #8
-	pop	{r4, r5, r7, pc}
+	sub	sp, r7, #4
+	pop	{r4, r7, pc}
 
 	.globl	_class_method
 	.p2align	2
@@ -801,23 +810,6 @@ l_anon.[ID].21:
 	.asciz	"\017\000\000"
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_694e247a0bc88869
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_694e247a0bc88869:
-	.asciz	"\000\000\000\000@\000\000"
-
-	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_694e247a0bc88869
-L_OBJC_METH_VAR_NAME_694e247a0bc88869:
-	.asciz	"dealloc"
-
-	.section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_694e247a0bc88869
-	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_694e247a0bc88869:
-	.long	L_OBJC_METH_VAR_NAME_694e247a0bc88869
-
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_8dd788dbcc16b9bc
 	.p2align	2, 0x0
 L_OBJC_IMAGE_INFO_8dd788dbcc16b9bc:
@@ -921,6 +913,12 @@ L_OBJC_SELECTOR_REFERENCES_f058a81939de2cb9:
 
 	.section	__DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
 	.p2align	2, 0x0
+LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_CLASSLIST_REFERENCES_$_NSObject
+	.long	0
+LL_OBJC_SELECTOR_REFERENCES_dealloc$non_lazy_ptr:
+	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_dealloc
+	.long	0
 LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr:
 	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_init
 	.long	0

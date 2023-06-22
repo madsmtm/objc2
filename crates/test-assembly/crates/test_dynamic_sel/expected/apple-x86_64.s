@@ -39,7 +39,7 @@ _get_common_twice:
 	mov	rbp, rsp
 	push	r14
 	push	rbx
-	mov	r14, qword ptr [rip + SYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	r14, qword ptr [rip + SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	mov	rbx, qword ptr [r14]
 	test	rbx, rbx
 	je	LBB2_1
@@ -53,7 +53,7 @@ LBB2_4:
 	pop	rbp
 	ret
 LBB2_1:
-	mov	rdi, qword ptr [rip + SYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	rdi, qword ptr [rip + SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	lea	rsi, [rip + l_anon.[ID].1]
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	rbx, rax
@@ -61,7 +61,7 @@ LBB2_1:
 	test	rdx, rdx
 	jne	LBB2_4
 LBB2_3:
-	mov	rdi, qword ptr [rip + SYM(objc2::__macro_helpers::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	rdi, qword ptr [rip + SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	lea	rsi, [rip + l_anon.[ID].1]
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	rdx, rax
