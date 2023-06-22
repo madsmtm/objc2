@@ -51,6 +51,7 @@ env:
   # compiling C code, even if just running a `check`/`clippy` build.
   INTERESTING_FEATURES: malloc,block,verify,unstable-private
   UNSTABLE_FEATURES: unstable-autoreleasesafe,unstable-c-unwind
+  LATEST_MACOS_FEATURE: unstable-frameworks-macos-13
   # Required when we want to use a different runtime than the default `apple`
   OTHER_RUNTIME: --no-default-features --features=std
   # https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
@@ -94,6 +95,8 @@ jobs:
         include:
         - name: macOS 64bit
           target: aarch64-apple-darwin
+          # Ideally this would use $LATEST_MACOS_FEATURE, but this causes clippy to
+          # use too much memory for the CI runner
           args: >-
             $PUBLIC_CRATES
             --features=$INTERESTING_FEATURES
@@ -180,7 +183,7 @@ jobs:
         cargo check
         $PUBLIC_CRATES
         --features=$INTERESTING_FEATURES
-        --features=unstable-frameworks-macos-12
+        --features=$LATEST_MACOS_FEATURE
 
   ui:
     name: Compiler UI

@@ -1105,6 +1105,7 @@ AppKit_all = [
     "AppKit_NSWorkspaceOpenConfiguration",
 ]
 AuthenticationServices = [
+    "AppKit",
     "Foundation",
     "Foundation_NSURL",
 ]
