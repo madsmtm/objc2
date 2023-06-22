@@ -595,6 +595,7 @@ impl ClassProtocolMethodsBuilder<'_, '_> {
         }
     }
 
+    #[inline]
     pub fn __finish(self) {
         #[cfg(all(debug_assertions, feature = "verify"))]
         if let Some(protocol) = self.protocol {

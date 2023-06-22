@@ -305,12 +305,20 @@ fn method_type_encoding(ret: &Encoding, args: &[Encoding]) -> CString {
     CString::new(types).unwrap()
 }
 
-fn log2_align_of<T>() -> u8 {
-    let align = mem::align_of::<T>();
-    // Alignments are required to be powers of 2
-    debug_assert!(align.count_ones() == 1);
-    // log2 of a power of 2 is the number of trailing zeros
-    align.trailing_zeros() as u8
+trait Log2Alignment {
+    const LOG2_ALIGNMENT: u8;
+}
+
+impl<T> Log2Alignment for T {
+    const LOG2_ALIGNMENT: u8 = {
+        let align = mem::align_of::<T>();
+        assert!(
+            align.count_ones() == 1,
+            "alignment required to be a power of 2"
+        );
+        // log2 of a power of 2 is the number of trailing zeros
+        align.trailing_zeros() as u8
+    };
 }
 
 /// A type for declaring a new class and adding new methods and ivars to it
@@ -419,16 +427,28 @@ impl ClassBuilder {
         T: Message + ?Sized,
         F: MethodImplementation<Callee = T>,
     {
-        let enc_args = F::Args::ENCODINGS;
-        let enc_ret = F::Ret::ENCODING_RETURN;
+        unsafe {
+            self.add_method_inner(
+                sel,
+                F::Args::ENCODINGS,
+                F::Ret::ENCODING_RETURN,
+                func.__imp(),
+            )
+        }
+    }
 
+    unsafe fn add_method_inner(
+        &mut self,
+        sel: Sel,
+        enc_args: &[Encoding],
+        enc_ret: Encoding,
+        func: Imp,
+    ) {
         let sel_args = sel.number_of_arguments();
         assert_eq!(
             sel_args,
             enc_args.len(),
-            "Selector {} accepts {} arguments, but function accepts {}",
-            sel,
-            sel_args,
+            "selector {sel} accepts {sel_args} arguments, but function accepts {}",
             enc_args.len(),
         );
 
@@ -446,14 +466,9 @@ impl ClassBuilder {
 
         let types = method_type_encoding(&enc_ret, enc_args);
         let success = Bool::from_raw(unsafe {
-            ffi::class_addMethod(
-                self.as_mut_ptr(),
-                sel.as_ptr(),
-                Some(func.__imp()),
-                types.as_ptr(),
-            )
+            ffi::class_addMethod(self.as_mut_ptr(), sel.as_ptr(), Some(func), types.as_ptr())
         });
-        assert!(success.as_bool(), "Failed to add method {sel}");
+        assert!(success.as_bool(), "failed to add method {sel}");
     }
 
     fn metaclass_mut(&mut self) -> *mut ffi::objc_class {
@@ -476,16 +491,28 @@ impl ClassBuilder {
     where
         F: MethodImplementation<Callee = AnyClass>,
     {
-        let enc_args = F::Args::ENCODINGS;
-        let enc_ret = F::Ret::ENCODING_RETURN;
+        unsafe {
+            self.add_class_method_inner(
+                sel,
+                F::Args::ENCODINGS,
+                F::Ret::ENCODING_RETURN,
+                func.__imp(),
+            )
+        }
+    }
 
+    unsafe fn add_class_method_inner(
+        &mut self,
+        sel: Sel,
+        enc_args: &[Encoding],
+        enc_ret: Encoding,
+        func: Imp,
+    ) {
         let sel_args = sel.number_of_arguments();
         assert_eq!(
             sel_args,
             enc_args.len(),
-            "Selector {} accepts {} arguments, but function accepts {}",
-            sel,
-            sel_args,
+            "selector {sel} accepts {sel_args} arguments, but function accepts {}",
             enc_args.len(),
         );
 
@@ -506,11 +533,11 @@ impl ClassBuilder {
             ffi::class_addMethod(
                 self.metaclass_mut(),
                 sel.as_ptr(),
-                Some(func.__imp()),
+                Some(func),
                 types.as_ptr(),
             )
         });
-        assert!(success.as_bool(), "Failed to add class method {sel}");
+        assert!(success.as_bool(), "failed to add class method {sel}");
     }
 
     /// Adds an ivar with type `T` and the provided name.
@@ -525,7 +552,14 @@ impl ClassBuilder {
         unsafe { self.add_ivar_inner::<T>(name, &T::ENCODING) }
     }
 
-    unsafe fn add_ivar_inner<T>(&mut self, name: &str, encoding: &Encoding) {
+    // Monomorphized version
+    unsafe fn add_ivar_inner_mono(
+        &mut self,
+        name: &str,
+        size: usize,
+        align: u8,
+        encoding: &Encoding,
+    ) {
         // `class_addIvar` sadly doesn't check this for us.
         //
         // We must _always_ do the check, since there is no way for the user
@@ -541,8 +575,6 @@ impl ClassBuilder {
 
         let c_name = CString::new(name).unwrap();
         let encoding = CString::new(encoding.to_string()).unwrap();
-        let size = mem::size_of::<T>();
-        let align = log2_align_of::<T>();
         let success = Bool::from_raw(unsafe {
             ffi::class_addIvar(
                 self.as_mut_ptr(),
@@ -552,7 +584,11 @@ impl ClassBuilder {
                 encoding.as_ptr(),
             )
         });
-        assert!(success.as_bool(), "Failed to add ivar {name}");
+        assert!(success.as_bool(), "failed to add ivar {name}");
+    }
+
+    unsafe fn add_ivar_inner<T>(&mut self, name: &str, encoding: &Encoding) {
+        unsafe { self.add_ivar_inner_mono(name, mem::size_of::<T>(), T::LOG2_ALIGNMENT, encoding) }
     }
 
     /// Adds an instance variable from an [`IvarType`].
@@ -574,7 +610,7 @@ impl ClassBuilder {
     pub fn add_protocol(&mut self, proto: &AnyProtocol) {
         let success = unsafe { ffi::class_addProtocol(self.as_mut_ptr(), proto.as_ptr()) };
         let success = Bool::from_raw(success).as_bool();
-        assert!(success, "Failed to add protocol {proto}");
+        assert!(success, "failed to add protocol {proto}");
     }
 
     // fn add_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
@@ -635,53 +671,61 @@ impl ProtocolBuilder {
         NonNull::new(proto.cast()).map(|proto| Self { proto })
     }
 
-    fn add_method_description_common<Args, Ret>(
+    fn add_method_description_inner(
         &mut self,
         sel: Sel,
-        is_required: bool,
-        is_instance_method: bool,
-    ) where
-        Args: EncodeArguments,
-        Ret: EncodeReturn,
-    {
-        let encs = Args::ENCODINGS;
+        enc_args: &[Encoding],
+        enc_ret: Encoding,
+        required: bool,
+        instance_method: bool,
+    ) {
         let sel_args = sel.number_of_arguments();
         assert_eq!(
             sel_args,
-            encs.len(),
-            "Selector {} accepts {} arguments, but function accepts {}",
-            sel,
-            sel_args,
-            encs.len(),
+            enc_args.len(),
+            "selector {sel} accepts {sel_args} arguments, but function accepts {}",
+            enc_args.len(),
         );
-        let types = method_type_encoding(&Ret::ENCODING_RETURN, encs);
+        let types = method_type_encoding(&enc_ret, enc_args);
         unsafe {
             ffi::protocol_addMethodDescription(
                 self.as_mut_ptr(),
                 sel.as_ptr(),
                 types.as_ptr(),
-                Bool::new(is_required).as_raw(),
-                Bool::new(is_instance_method).as_raw(),
+                Bool::new(required).as_raw(),
+                Bool::new(instance_method).as_raw(),
             );
         }
     }
 
     /// Adds an instance method declaration with a given description.
-    pub fn add_method_description<Args, Ret>(&mut self, sel: Sel, is_required: bool)
+    pub fn add_method_description<Args, Ret>(&mut self, sel: Sel, required: bool)
     where
         Args: EncodeArguments,
         Ret: EncodeReturn,
     {
-        self.add_method_description_common::<Args, Ret>(sel, is_required, true)
+        self.add_method_description_inner(
+            sel,
+            Args::ENCODINGS,
+            Ret::ENCODING_RETURN,
+            required,
+            true,
+        )
     }
 
     /// Adds a class method declaration with a given description.
-    pub fn add_class_method_description<Args, Ret>(&mut self, sel: Sel, is_required: bool)
+    pub fn add_class_method_description<Args, Ret>(&mut self, sel: Sel, required: bool)
     where
         Args: EncodeArguments,
         Ret: EncodeReturn,
     {
-        self.add_method_description_common::<Args, Ret>(sel, is_required, false)
+        self.add_method_description_inner(
+            sel,
+            Args::ENCODINGS,
+            Ret::ENCODING_RETURN,
+            required,
+            false,
+        )
     }
 
     /// Adds a requirement on another protocol.
@@ -711,6 +755,48 @@ mod tests {
     use crate::{declare_class, msg_send, ClassType, ProtocolType};
 
     #[test]
+    fn test_alignment() {
+        assert_eq!(<()>::LOG2_ALIGNMENT, 0);
+
+        assert_eq!(u8::LOG2_ALIGNMENT, 0);
+        assert_eq!(u16::LOG2_ALIGNMENT, 1);
+        assert_eq!(u32::LOG2_ALIGNMENT, 2);
+
+        assert_eq!(
+            u64::LOG2_ALIGNMENT,
+            if cfg!(target_pointer_width = "64") {
+                3
+            } else {
+                2
+            }
+        );
+
+        #[repr(align(16))]
+        struct Align16;
+        assert_eq!(Align16::LOG2_ALIGNMENT, 4);
+
+        #[repr(align(32))]
+        struct Align32;
+        assert_eq!(Align32::LOG2_ALIGNMENT, 5);
+
+        #[repr(align(64))]
+        struct Align64;
+        assert_eq!(Align64::LOG2_ALIGNMENT, 6);
+
+        #[repr(align(128))]
+        struct Align128;
+        assert_eq!(Align128::LOG2_ALIGNMENT, 7);
+
+        #[repr(align(256))]
+        struct Align256;
+        assert_eq!(Align256::LOG2_ALIGNMENT, 8);
+
+        #[repr(align(536870912))]
+        struct Align536870912;
+        assert_eq!(Align536870912::LOG2_ALIGNMENT, 29);
+    }
+
+    #[test]
     fn test_classbuilder_duplicate() {
         let cls = test_utils::custom_class();
         let builder = ClassBuilder::new("TestClassBuilderDuplicate", cls).unwrap();
@@ -720,7 +806,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic = "Failed to add ivar xyz"]
+    #[should_panic = "failed to add ivar xyz"]
     fn duplicate_ivar() {
         let cls = test_utils::custom_class();
         let mut builder = ClassBuilder::new("TestClassBuilderDuplicateIvar", cls).unwrap();
@@ -731,7 +817,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic = "Failed to add method xyz"]
+    #[should_panic = "failed to add method xyz"]
     fn duplicate_method() {
         let cls = test_utils::custom_class();
         let mut builder = ClassBuilder::new("TestClassBuilderDuplicateMethod", cls).unwrap();
@@ -742,6 +828,23 @@ mod tests {
             builder.add_method(sel!(xyz), xyz as extern "C" fn(_, _));
             // Should panic:
             builder.add_method(sel!(xyz), xyz as extern "C" fn(_, _));
+        }
+    }
+
+    #[test]
+    #[cfg_attr(
+        debug_assertions,
+        should_panic = "selector xyz: accepts 1 arguments, but function accepts 0"
+    )]
+    fn wrong_arguments() {
+        let cls = test_utils::custom_class();
+        let mut builder = ClassBuilder::new("TestClassBuilderWrongArguments", cls).unwrap();
+
+        extern "C" fn xyz(_this: &NSObject, _cmd: Sel) {}
+
+        unsafe {
+            // Should panic:
+            builder.add_method(sel!(xyz:), xyz as extern "C" fn(_, _));
         }
     }
 
@@ -782,7 +885,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic = "Failed to add protocol NSObject"]
+    #[should_panic = "failed to add protocol NSObject"]
     fn duplicate_protocol() {
         let cls = test_utils::custom_class();
         let mut builder = ClassBuilder::new("TestClassBuilderDuplicateProtocol", cls).unwrap();
