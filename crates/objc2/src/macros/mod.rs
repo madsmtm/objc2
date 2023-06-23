@@ -47,7 +47,7 @@ mod extern_protocol;
 /// [`sel!`]: crate::sel
 ///
 ///
-/// # Example
+/// # Examples
 ///
 /// Get and compare the class with one returned from [`ClassType::class`].
 ///
@@ -58,6 +58,15 @@ mod extern_protocol;
 /// let cls1 = class!(NSObject);
 /// let cls2 = NSObject::class();
 /// assert_eq!(cls1, cls2);
+/// ```
+///
+/// Try to get a non-existing class.
+///
+#[cfg_attr(not(feature = "unstable-static-class"), doc = "```should_panic")]
+#[cfg_attr(feature = "unstable-static-class", doc = "```ignore")]
+/// use objc2::class;
+///
+/// let _ = class!(NonExistantClass);
 /// ```
 #[macro_export]
 macro_rules! class {
@@ -74,14 +83,11 @@ macro_rules! class {
 #[cfg(not(feature = "unstable-static-class"))]
 macro_rules! __class_inner {
     ($name:expr, $_hash:expr,) => {{
-        use $crate::__macro_helpers::{concat, panic, CachedClass, None, Some};
-        static CACHED_CLASS: CachedClass = CachedClass::new();
-        let name = concat!($name, '\0');
+        static CACHED_CLASS: $crate::__macro_helpers::CachedClass =
+            $crate::__macro_helpers::CachedClass::new();
         #[allow(unused_unsafe)]
-        let cls = unsafe { CACHED_CLASS.get(name) };
-        match cls {
-            Some(cls) => cls,
-            None => panic!("Class with name {} could not be found", $name),
+        unsafe {
+            CACHED_CLASS.get($crate::__macro_helpers::concat!($name, '\0'))
         }
     }};
 }
@@ -307,8 +313,8 @@ macro_rules! __sel_data {
 #[cfg(not(feature = "unstable-static-sel"))]
 macro_rules! __sel_inner {
     ($data:expr, $_hash:expr) => {{
-        use $crate::__macro_helpers::CachedSel;
-        static CACHED_SEL: CachedSel = CachedSel::new();
+        static CACHED_SEL: $crate::__macro_helpers::CachedSel =
+            $crate::__macro_helpers::CachedSel::new();
         #[allow(unused_unsafe)]
         unsafe {
             CACHED_SEL.get($data)

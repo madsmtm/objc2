@@ -29,9 +29,9 @@ Lloh5:
 	ret
 	.loh AdrpLdr	Lloh4, Lloh5
 
-	.globl	_unused_sel
+	.globl	_unused_class
 	.p2align	2
-_unused_sel:
+_unused_class:
 	ret
 
 	.globl	_use_fns
@@ -50,9 +50,9 @@ Lloh10:
 Lloh11:
 	ldr	x11, [x11, L_OBJC_CLASSLIST_REFERENCES_$_dfff3a06c0bf722b@PAGEOFF]
 Lloh12:
-	adrp	x12, L_OBJC_CLASSLIST_REFERENCES_$_5ab5a81fcf2763fb@PAGE
+	adrp	x12, L_OBJC_CLASSLIST_REFERENCES_$_97e6a8c6ed5db063@PAGE
 Lloh13:
-	ldr	x12, [x12, L_OBJC_CLASSLIST_REFERENCES_$_5ab5a81fcf2763fb@PAGEOFF]
+	ldr	x12, [x12, L_OBJC_CLASSLIST_REFERENCES_$_97e6a8c6ed5db063@PAGEOFF]
 	stp	x9, x10, [x8]
 	stp	x11, x12, [x8, #16]
 	ret
@@ -114,39 +114,39 @@ L_OBJC_CLASSLIST_REFERENCES_$_dfff3a06c0bf722b:
 	.quad	_OBJC_CLASS_$_NSString
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_f6e054106fdbe219
+	.globl	L_OBJC_IMAGE_INFO_ea6fbcf172f7f513
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_f6e054106fdbe219:
+L_OBJC_IMAGE_INFO_ea6fbcf172f7f513:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_f6e054106fdbe219
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_ea6fbcf172f7f513
 	.p2align	3, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_f6e054106fdbe219:
+L_OBJC_CLASSLIST_REFERENCES_$_ea6fbcf172f7f513:
 	.quad	_OBJC_CLASS_$_NSData
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_5ab5a81fcf2763fb
+	.globl	L_OBJC_IMAGE_INFO_97e6a8c6ed5db063
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_5ab5a81fcf2763fb:
+L_OBJC_IMAGE_INFO_97e6a8c6ed5db063:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_5ab5a81fcf2763fb
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_97e6a8c6ed5db063
 	.p2align	3, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_5ab5a81fcf2763fb:
+L_OBJC_CLASSLIST_REFERENCES_$_97e6a8c6ed5db063:
 	.quad	_OBJC_CLASS_$_NSException
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_54ecac6d305d112a
+	.globl	L_OBJC_IMAGE_INFO_bb5b616899716c0d
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_54ecac6d305d112a:
+L_OBJC_IMAGE_INFO_bb5b616899716c0d:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_54ecac6d305d112a
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_bb5b616899716c0d
 	.p2align	3, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_54ecac6d305d112a:
+L_OBJC_CLASSLIST_REFERENCES_$_bb5b616899716c0d:
 	.quad	_OBJC_CLASS_$_NSLock
 
 .subsections_via_symbols
