@@ -167,6 +167,8 @@ impl Sel {
         self.ptr.as_ptr()
     }
 
+    // We explicitly don't do #[track_caller] here, since we expect the error
+    // to never actually happen.
     pub(crate) unsafe fn register_unchecked(name: *const c_char) -> Self {
         let ptr = unsafe { ffi::sel_registerName(name) };
         // SAFETY: `sel_registerName` declares return type as `SEL _Nonnull`,
@@ -180,7 +182,7 @@ impl Sel {
         // I suspect this will be really uncommon in practice, since the
         // called selector is almost always going to be present in the binary
         // already; but alas, we'll handle it!
-        unsafe { Self::from_ptr(ptr).unwrap() }
+        unsafe { Self::from_ptr(ptr).expect("failed allocating selector") }
     }
 
     /// Registers a selector with the Objective-C runtime.

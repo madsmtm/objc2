@@ -76,6 +76,9 @@ pub fn read_assembly<P: AsRef<Path>>(path: P, package_path: &Path) -> io::Result
             .unwrap(),
         "$DIR",
     );
+    let s = regex::Regex::new(r"/rustc/[0-9a-f]*/")
+        .unwrap()
+        .replace_all(&s, |_: &regex::Captures| "$RUSTC/");
     // HACK: Replace Objective-C image info for simulator targets
     let s = s.replace(
         ".asciz\t\"\\000\\000\\000\\000`\\000\\000\"",

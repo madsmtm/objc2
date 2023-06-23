@@ -44,7 +44,7 @@ unsafe impl ClassType for NSProxy {
     fn class() -> &'static AnyClass {
         #[cfg(feature = "apple")]
         {
-            crate::class!(NSProxy)
+            crate::__class_inner!("NSProxy", "NSProxy")
         }
         #[cfg(feature = "gnustep-1-7")]
         {

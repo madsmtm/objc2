@@ -19,7 +19,7 @@ fn get_different_class() -> &'static AnyClass {
 }
 
 #[no_mangle]
-fn unused_sel() {
+fn unused_class() {
     let _ = class!(NSData);
 }
 

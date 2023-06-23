@@ -52,7 +52,7 @@ unsafe impl ClassType for NSObject {
     fn class() -> &'static AnyClass {
         #[cfg(feature = "apple")]
         {
-            crate::class!(NSObject)
+            crate::__class_inner!("NSObject", "NSObject")
         }
         #[cfg(feature = "gnustep-1-7")]
         {

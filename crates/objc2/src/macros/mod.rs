@@ -47,7 +47,7 @@ mod extern_protocol;
 /// [`sel!`]: crate::sel
 ///
 ///
-/// # Example
+/// # Examples
 ///
 /// Get and compare the class with one returned from [`ClassType::class`].
 ///
@@ -59,12 +59,21 @@ mod extern_protocol;
 /// let cls2 = NSObject::class();
 /// assert_eq!(cls1, cls2);
 /// ```
+///
+/// Try to get a non-existing class.
+///
+#[cfg_attr(not(feature = "unstable-static-class"), doc = "```should_panic")]
+#[cfg_attr(feature = "unstable-static-class", doc = "```ignore")]
+/// use objc2::class;
+///
+/// let _ = class!(NonExistantClass);
+/// ```
 #[macro_export]
 macro_rules! class {
     ($name:ident) => {{
         $crate::__class_inner!(
             $crate::__macro_helpers::stringify!($name),
-            $crate::__hash_idents!($name),
+            $crate::__hash_idents!($name)
         )
     }};
 }
@@ -73,15 +82,12 @@ macro_rules! class {
 #[macro_export]
 #[cfg(not(feature = "unstable-static-class"))]
 macro_rules! __class_inner {
-    ($name:expr, $_hash:expr,) => {{
-        use $crate::__macro_helpers::{concat, panic, CachedClass, None, Some};
-        static CACHED_CLASS: CachedClass = CachedClass::new();
-        let name = concat!($name, '\0');
+    ($name:expr, $_hash:expr) => {{
+        static CACHED_CLASS: $crate::__macro_helpers::CachedClass =
+            $crate::__macro_helpers::CachedClass::new();
         #[allow(unused_unsafe)]
-        let cls = unsafe { CACHED_CLASS.get(name) };
-        match cls {
-            Some(cls) => cls,
-            None => panic!("Class with name {} could not be found", $name),
+        unsafe {
+            CACHED_CLASS.get($crate::__macro_helpers::concat!($name, '\0'))
         }
     }};
 }
@@ -214,14 +220,17 @@ macro_rules! __class_inner {
 /// ```
 #[macro_export]
 macro_rules! sel {
-    (alloc) => ({
-        $crate::__macro_helpers::alloc_sel()
+    (new) => ({
+        $crate::__macro_helpers::new_sel()
     });
     (init) => ({
         $crate::__macro_helpers::init_sel()
     });
-    (new) => ({
-        $crate::__macro_helpers::new_sel()
+    (alloc) => ({
+        $crate::__macro_helpers::alloc_sel()
+    });
+    (dealloc) => ({
+        $crate::__macro_helpers::dealloc_sel()
     });
     ($sel:ident) => ({
         $crate::__sel_inner!(
@@ -307,8 +316,8 @@ macro_rules! __sel_data {
 #[cfg(not(feature = "unstable-static-sel"))]
 macro_rules! __sel_inner {
     ($data:expr, $_hash:expr) => {{
-        use $crate::__macro_helpers::CachedSel;
-        static CACHED_SEL: CachedSel = CachedSel::new();
+        static CACHED_SEL: $crate::__macro_helpers::CachedSel =
+            $crate::__macro_helpers::CachedSel::new();
         #[allow(unused_unsafe)]
         unsafe {
             CACHED_SEL.get($data)
@@ -654,7 +663,7 @@ macro_rules! __sel_inner {
     not(feature = "unstable-static-class-inlined")
 ))]
 macro_rules! __class_inner {
-    ($name:expr, $hash:expr,) => {{
+    ($name:expr, $hash:expr) => {{
         $crate::__inner_statics!(@image_info $hash);
         $crate::__inner_statics!(@class $name, $hash);
 
@@ -672,7 +681,7 @@ macro_rules! __class_inner {
 #[macro_export]
 #[cfg(feature = "unstable-static-class-inlined")]
 macro_rules! __class_inner {
-    ($name:expr, $hash:expr,) => {{
+    ($name:expr, $hash:expr) => {{
         $crate::__inner_statics!(@image_info $hash);
         $crate::__inner_statics!(@class $name, $hash);
 

@@ -85,6 +85,9 @@ fn test_track_caller() {
     test_catch_all(&checker);
 
     test_unwind(&checker);
+
+    #[cfg(not(feature = "unstable-static-class"))]
+    test_unknown_class(&checker);
 }
 
 pub fn test_nil(checker: &PanicChecker) {
@@ -210,5 +213,13 @@ pub fn test_unwind(checker: &PanicChecker) {
     });
     checker.assert_panics(msg, line, || {
         let _: Id<NSObject> = unsafe { msg_send_id![PanickingClass::class(), panic] };
+    });
+}
+
+#[cfg(not(feature = "unstable-static-class"))]
+pub fn test_unknown_class(checker: &PanicChecker) {
+    let msg = "class NonExistantClass could not be found";
+    checker.assert_panics(msg, line!() + 1, || {
+        let _ = class!(NonExistantClass);
     });
 }

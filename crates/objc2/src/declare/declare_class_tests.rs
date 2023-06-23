@@ -368,7 +368,7 @@ fn test_unreachable() {
 }
 
 #[test]
-#[should_panic = "Failed to add ivar _ivar"]
+#[should_panic = "failed to add ivar _ivar"]
 fn test_duplicate_ivar() {
     declare_class!(
         struct DeclareClassDuplicateIvar {

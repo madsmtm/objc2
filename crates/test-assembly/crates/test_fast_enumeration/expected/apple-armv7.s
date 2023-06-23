@@ -28,30 +28,23 @@ _iter_create:
 _iter_once:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
-	push	{r8, r10}
+	push	{r8}
 	sub	sp, sp, #4
 	mov	r4, r0
 	ldrd	r0, r1, [r0, #100]
 	cmp	r0, r1
-	blo	LBB1_4
+	blo	LBB1_3
 	ldr	r6, [r4]
-	movw	r10, :lower16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC1_0+8))
-	movt	r10, :upper16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC1_0+8))
+	movw	r0, :lower16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC1_0+8))
+	movt	r0, :upper16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC1_0+8))
 	add	r8, r4, #4
 LPC1_0:
-	ldr	r10, [pc, r10]
+	ldr	r0, [pc, r0]
 	add	r5, r4, #68
-	ldr	r1, [r10]
+	ldr	r1, [r0]
 	cmp	r1, #0
-	bne	LBB1_3
-	movw	r0, :lower16:(l_anon.[ID].0-(LPC1_1+8))
-	movt	r0, :upper16:(l_anon.[ID].0-(LPC1_1+8))
-LPC1_1:
-	add	r0, pc, r0
-	bl	SYM(objc2::runtime::Sel::register_unchecked::GENERATED_ID, 0)
-	mov	r1, r0
-	str	r0, [r10]
-LBB1_3:
+	beq	LBB1_5
+LBB1_2:
 	mov	r0, #16
 	mov	r2, r5
 	str	r0, [sp]
@@ -62,16 +55,24 @@ LBB1_3:
 	mov	r0, #0
 	cmp	r1, #0
 	strd	r0, r1, [r4, #100]
-	beq	LBB1_5
-LBB1_4:
+	beq	LBB1_4
+LBB1_3:
 	ldr	r1, [r4, #72]
 	add	r2, r0, #1
 	str	r2, [r4, #100]
 	ldr	r0, [r1, r0, lsl #2]
-LBB1_5:
-	sub	sp, r7, #20
-	pop	{r8, r10}
+LBB1_4:
+	sub	sp, r7, #16
+	pop	{r8}
 	pop	{r4, r5, r6, r7, pc}
+LBB1_5:
+	movw	r1, :lower16:(l_anon.[ID].0-(LPC1_1+8))
+	movt	r1, :upper16:(l_anon.[ID].0-(LPC1_1+8))
+LPC1_1:
+	add	r1, pc, r1
+	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	mov	r1, r0
+	b	LBB1_2
 
 	.globl	_use_obj
 	.p2align	2
@@ -115,14 +116,14 @@ _iter:
 	str	r0, [sp, #84]
 	str	r0, [sp, #80]
 	str	r6, [sp, #8]
-	movw	r10, :lower16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
-	movt	r10, :upper16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
-	movw	r8, :lower16:(l_anon.[ID].0-(LPC3_1+8))
-	movt	r8, :upper16:(l_anon.[ID].0-(LPC3_1+8))
+	movw	r8, :lower16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
+	movt	r8, :upper16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
+	movw	r10, :lower16:(l_anon.[ID].0-(LPC3_1+8))
+	movt	r10, :upper16:(l_anon.[ID].0-(LPC3_1+8))
 LPC3_0:
-	ldr	r10, [pc, r10]
+	ldr	r8, [pc, r8]
 LPC3_1:
-	add	r8, pc, r8
+	add	r10, pc, r10
 	b	LBB3_3
 LBB3_1:
 	mov	r0, r6
@@ -146,13 +147,13 @@ LBB3_2:
 LBB3_3:
 	cmp	r1, r0
 	blo	LBB3_2
-	ldr	r1, [r10]
+	ldr	r1, [r8]
 	cmp	r1, #0
 	bne	LBB3_1
 	mov	r0, r8
-	bl	SYM(objc2::runtime::Sel::register_unchecked::GENERATED_ID, 0)
+	mov	r1, r10
+	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r1, r0
-	str	r0, [r10]
 	b	LBB3_1
 LBB3_6:
 	sub	sp, r7, #24
@@ -189,14 +190,14 @@ _iter_noop:
 	str	r0, [sp, #84]
 	str	r0, [sp, #80]
 	str	r6, [sp, #8]
-	movw	r10, :lower16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC4_0+8))
-	movt	r10, :upper16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC4_0+8))
-	movw	r8, :lower16:(l_anon.[ID].0-(LPC4_1+8))
-	movt	r8, :upper16:(l_anon.[ID].0-(LPC4_1+8))
+	movw	r8, :lower16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC4_0+8))
+	movt	r8, :upper16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC4_0+8))
+	movw	r10, :lower16:(l_anon.[ID].0-(LPC4_1+8))
+	movt	r10, :upper16:(l_anon.[ID].0-(LPC4_1+8))
 LPC4_0:
-	ldr	r10, [pc, r10]
+	ldr	r8, [pc, r8]
 LPC4_1:
-	add	r8, pc, r8
+	add	r10, pc, r10
 	b	LBB4_2
 LBB4_1:
 	add	r1, r1, #1
@@ -204,14 +205,10 @@ LBB4_1:
 LBB4_2:
 	cmp	r1, r0
 	blo	LBB4_1
-	ldr	r1, [r10]
+	ldr	r1, [r8]
 	cmp	r1, #0
-	bne	LBB4_5
-	mov	r0, r8
-	bl	SYM(objc2::runtime::Sel::register_unchecked::GENERATED_ID, 0)
-	mov	r1, r0
-	str	r0, [r10]
-LBB4_5:
+	beq	LBB4_6
+LBB4_4:
 	mov	r0, r6
 	mov	r2, r5
 	mov	r3, r4
@@ -223,6 +220,12 @@ LBB4_5:
 	ldr	r6, [sp, #8]
 	mov	r1, #0
 	b	LBB4_1
+LBB4_6:
+	mov	r0, r8
+	mov	r1, r10
+	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	mov	r1, r0
+	b	LBB4_4
 LBB4_7:
 	sub	sp, r7, #24
 	pop	{r8, r10, r11}
@@ -296,10 +299,10 @@ LBB5_3:
 	ldr	r1, [r10]
 	cmp	r1, #0
 	bne	LBB5_1
-	mov	r0, r8
-	bl	SYM(objc2::runtime::Sel::register_unchecked::GENERATED_ID, 0)
+	mov	r0, r10
+	mov	r1, r8
+	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r1, r0
-	str	r0, [r10]
 	b	LBB5_1
 LBB5_6:
 	sub	sp, r7, #24
