@@ -6,26 +6,34 @@ use objc2::runtime::NSObject;
 use objc2::{declare_class, mutability, ClassType};
 
 declare_class!(
-    struct CustomObject;
+    struct InvalidMethodDeclarations;
 
-    unsafe impl ClassType for CustomObject {
+    unsafe impl ClassType for InvalidMethodDeclarations {
         type Super = NSObject;
         type Mutability = mutability::InteriorMutable;
-        const NAME: &'static str = "CustomObject";
+        const NAME: &'static str = "InvalidMethodDeclarations";
     }
 
-    unsafe impl CustomObject {
+    unsafe impl InvalidMethodDeclarations {
         fn test_no_attribute() {
             unimplemented!()
         }
+
+        #[method(duplicateAttribute)]
+        #[method(duplicateAttribute)]
+        fn test_duplicate_attribute() {}
+
+        #[method_id(duplicateAttributeDifferent)]
+        #[method(duplicateAttributeDifferent)]
+        fn test_duplicate_attribute_different() {}
 
         #[method_id(testMethodId)]
         fn test_method_id_no_return() {
             unimplemented!()
         }
 
-        #[method(testInvalid)]
-        fn test_invalid() {
+        #[method(testInvalidBody)]
+        fn test_invalid_body() {
             a -
         }
 
@@ -40,17 +48,47 @@ declare_class!(
         }
     }
 
-    unsafe impl CustomObject {
+    unsafe impl InvalidMethodDeclarations {
         #[method(testPub)]
         pub fn test_pub() {}
     }
 
-    unsafe impl CustomObject {
+    unsafe impl InvalidMethodDeclarations {
+        #[method(testConst)]
+        const fn test_const() {}
+    }
+
+    unsafe impl InvalidMethodDeclarations {
+        #[method(testAsync)]
+        async fn test_async() {}
+    }
+
+    unsafe impl InvalidMethodDeclarations {
+        #[method(testExtern)]
+        extern "C" fn test_extern() {}
+    }
+
+    unsafe impl InvalidMethodDeclarations {
+        #[method(testFnFn)]
+        fn fn test_fn_fn() {}
+    }
+
+    unsafe impl InvalidMethodDeclarations {
+        #[method(testGeneric)]
+        fn test_generic<T>() {}
+    }
+
+    unsafe impl InvalidMethodDeclarations {
         #[method(testNoBody)]
         fn test_no_body(&self);
     }
 
-    unsafe impl CustomObject {
+    unsafe impl InvalidMethodDeclarations {
+        #[method(testUnfinished)]
+        fn test_unfinished()
+    }
+
+    unsafe impl InvalidMethodDeclarations {
         #[method_id(alloc)]
         fn test_method_id_bad_selector1() -> Id<Self> {
             unimplemented!()
@@ -77,9 +115,21 @@ declare_class!(
         }
     }
 
-    unsafe impl CustomObject {
+    unsafe impl InvalidMethodDeclarations {
         #[method(dealloc)]
         fn deallocMethod(&mut self) {}
+    }
+
+    unsafe impl InvalidMethodDeclarations {
+        #![doc = "inner_attribute"]
+    }
+
+    unsafe impl InvalidMethodDeclarations {
+        type TypeAlias = Self;
+    }
+
+    unsafe impl InvalidMethodDeclarations {
+        const CONSTANT: () = ();
     }
 );
 

@@ -2,9 +2,37 @@ error: must specify the desired selector using `#[method(...)]` or `#[method_id(
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
-  | |     struct CustomObject;
+  | |     struct InvalidMethodDeclarations;
   | |
-  | |     unsafe impl ClassType for CustomObject {
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extract_custom_attributes_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: cannot specify the `method`/`method_id` attribute twice
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct InvalidMethodDeclarations;
+  | |
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extract_custom_attributes_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: cannot specify the `method`/`method_id` attribute twice
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct InvalidMethodDeclarations;
+  | |
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -50,6 +78,66 @@ note: while trying to match `unsafe`
   |         unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
   |         ^^^^^^
 
+error: no rules expected the token `const`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |         const fn test_const() {}
+  |         ^^^^^ no rules expected this token in macro call
+  |
+note: while trying to match `unsafe`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |         unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+  |         ^^^^^^
+
+error: no rules expected the token `async`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |         async fn test_async() {}
+  |         ^^^^^ no rules expected this token in macro call
+  |
+note: while trying to match `unsafe`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |         unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+  |         ^^^^^^
+
+error: no rules expected the token `extern`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |         extern "C" fn test_extern() {}
+  |         ^^^^^^ no rules expected this token in macro call
+  |
+note: while trying to match `unsafe`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |         unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+  |         ^^^^^^
+
+error: no rules expected the token `test_fn_fn`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |         fn fn test_fn_fn() {}
+  |               ^^^^^^^^^^ no rules expected this token in macro call
+  |
+note: while trying to match `(`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+  |                       ^
+
+error: no rules expected the token `<`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |         fn test_generic<T>() {}
+  |                        ^ no rules expected this token in macro call
+  |
+note: while trying to match `(`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+  |                       ^
+
 error: no rules expected the token `;`
  --> ui/declare_class_invalid_syntax.rs
   |
@@ -62,13 +150,25 @@ note: while trying to match meta-variable `$body:block`
   |         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
   |                                                     ^^^^^^^^^^^
 
+error: unexpected end of macro invocation
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |         fn test_unfinished()
+  |                             ^ missing tokens in macro arguments
+  |
+note: while trying to match meta-variable `$body:block`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+  |                                                     ^^^^^^^^^^^
+
 error: `#[method_id(alloc)]` is not supported. Use `#[method(alloc)]` and do the memory management yourself
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
-  | |     struct CustomObject;
+  | |     struct InvalidMethodDeclarations;
   | |
-  | |     unsafe impl ClassType for CustomObject {
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -80,9 +180,9 @@ error: `#[method_id(retain)]` is not supported. Use `#[method(retain)]` and do t
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
-  | |     struct CustomObject;
+  | |     struct InvalidMethodDeclarations;
   | |
-  | |     unsafe impl ClassType for CustomObject {
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -94,9 +194,9 @@ error: `#[method_id(release)]` is not supported. Use `#[method(release)]` and do
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
-  | |     struct CustomObject;
+  | |     struct InvalidMethodDeclarations;
   | |
-  | |     unsafe impl ClassType for CustomObject {
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -108,9 +208,9 @@ error: `#[method_id(autorelease)]` is not supported. Use `#[method(autorelease)]
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
-  | |     struct CustomObject;
+  | |     struct InvalidMethodDeclarations;
   | |
-  | |     unsafe impl ClassType for CustomObject {
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -122,9 +222,9 @@ error: `#[method_id(dealloc)]` is not supported. Add an instance variable with a
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
-  | |     struct CustomObject;
+  | |     struct InvalidMethodDeclarations;
   | |
-  | |     unsafe impl ClassType for CustomObject {
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -136,9 +236,9 @@ error: `#[method(dealloc)]` is not supported. Implement `Drop` for the type inst
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
-  | |     struct CustomObject;
+  | |     struct InvalidMethodDeclarations;
   | |
-  | |     unsafe impl ClassType for CustomObject {
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -146,13 +246,77 @@ error: `#[method(dealloc)]` is not supported. Implement `Drop` for the type inst
   |
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
+error: no rules expected the token `!`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |         #![doc = "inner_attribute"]
+  |          ^ no rules expected this token in macro call
+  |
+note: while trying to match `[`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |         $(#[$($m:tt)*])*
+  |            ^
+
+error: no rules expected the token `type`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |         type TypeAlias = Self;
+  |         ^^^^ no rules expected this token in macro call
+  |
+note: while trying to match `)`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |         ($($macro_arg:tt)*)
+  |                           ^
+
+error: no rules expected the token `const`
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |         const CONSTANT: () = ();
+  |         ^^^^^ no rules expected this token in macro call
+  |
+note: while trying to match `)`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |         ($($macro_arg:tt)*)
+  |                           ^
+
 error: must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
-  | |     struct CustomObject;
+  | |     struct InvalidMethodDeclarations;
   | |
-  | |     unsafe impl ClassType for CustomObject {
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extract_custom_attributes_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: cannot specify the `method`/`method_id` attribute twice
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct InvalidMethodDeclarations;
+  | |
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
+... |
+  | |     }
+  | | );
+  | |_^
+  |
+  = note: this error originates in the macro `$crate::__extract_custom_attributes_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: cannot specify the `method`/`method_id` attribute twice
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  | / declare_class!(
+  | |     struct InvalidMethodDeclarations;
+  | |
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -164,9 +328,9 @@ error: `#[method_id(...)]` must have a return type
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
-  | |     struct CustomObject;
+  | |     struct InvalidMethodDeclarations;
   | |
-  | |     unsafe impl ClassType for CustomObject {
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -190,9 +354,9 @@ error: no rules expected the token `)`
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
-  | |     struct CustomObject;
+  | |     struct InvalidMethodDeclarations;
   | |
-  | |     unsafe impl ClassType for CustomObject {
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
@@ -283,47 +447,47 @@ note: while trying to match `type`
   |             type Mutability = $mutability:ty;
   |             ^^^^
 
-error[E0599]: no function or associated item named `test_pattern` found for struct `CustomObject` in the current scope
+error[E0599]: no function or associated item named `test_pattern` found for struct `InvalidMethodDeclarations` in the current scope
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
-  | |     struct CustomObject;
+  | |     struct InvalidMethodDeclarations;
   | |
-  | |     unsafe impl ClassType for CustomObject {
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |         fn test_pattern((a, b): (u32, i32)) {
-  | |            ^^^^^^^^^^^^ function or associated item not found in `CustomObject`
+  | |            ^^^^^^^^^^^^ function or associated item not found in `InvalidMethodDeclarations`
 ... |
   | |     }
   | | );
   | |_- function or associated item `test_pattern` not found for this struct
 
-error[E0599]: no function or associated item named `test_self` found for struct `CustomObject` in the current scope
+error[E0599]: no function or associated item named `test_self` found for struct `InvalidMethodDeclarations` in the current scope
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
-  | |     struct CustomObject;
+  | |     struct InvalidMethodDeclarations;
   | |
-  | |     unsafe impl ClassType for CustomObject {
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |         fn test_self(self) {
-  | |            ^^^^^^^^^ function or associated item not found in `CustomObject`
+  | |            ^^^^^^^^^ function or associated item not found in `InvalidMethodDeclarations`
 ... |
   | |     }
   | | );
   | |_- function or associated item `test_self` not found for this struct
 
-error[E0277]: the trait bound `RetainSemantics<2>: MessageRecieveId<&AnyClass, Id<CustomObject>>` is not satisfied
+error[E0277]: the trait bound `RetainSemantics<2>: MessageRecieveId<&AnyClass, Id<InvalidMethodDeclarations>>` is not satisfied
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
-  | |     struct CustomObject;
+  | |     struct InvalidMethodDeclarations;
   | |
-  | |     unsafe impl ClassType for CustomObject {
+  | |     unsafe impl ClassType for InvalidMethodDeclarations {
 ... |
   | |     }
   | | );
-  | |_^ the trait `MessageRecieveId<&AnyClass, Id<CustomObject>>` is not implemented for `RetainSemantics<2>`
+  | |_^ the trait `MessageRecieveId<&AnyClass, Id<InvalidMethodDeclarations>>` is not implemented for `RetainSemantics<2>`
   |
   = help: the following other types implement trait `MessageRecieveId<Receiver, Ret>`:
             <RetainSemantics<1> as MessageRecieveId<Receiver, Ret>>
