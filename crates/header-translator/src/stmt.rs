@@ -1358,6 +1358,9 @@ impl Stmt {
                                 UnexposedAttr::UIActor => {
                                     warn!("unhandled UIActor on function declaration")
                                 }
+                                UnexposedAttr::ReturnsRetained => {
+                                    // TODO: Ignore for now, but at some point handle in a similar way to in methods
+                                }
                                 _ => error!(?attr, "unknown attribute"),
                             }
                         }
