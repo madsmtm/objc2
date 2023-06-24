@@ -1054,8 +1054,12 @@ impl Stmt {
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
-                        if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                            error!(?attr, "unknown attribute");
+                        match UnexposedAttr::parse(&entity, context) {
+                            Some(UnexposedAttr::ReturnsRetained) => {
+                                // TODO: Ignore for now, but at some point handle in a similar way to in methods
+                            }
+                            Some(attr) => error!(?attr, "unknown attribute"),
+                            None => {}
                         }
                     }
                     EntityKind::ObjCClassRef
