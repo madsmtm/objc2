@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `MainThreadMarker` `From` implementation for `MainThreadOnly` types.
 * Added `Send` and `Sync` implementations for a bunch more types (same as the
   ones Swift marks as `@Sendable`).
+* Made some common methods in `AppKit` safe.
 
 ### Changed
 * Moved the `ns_string!` macro to `icrate::Foundation::ns_string`. The old
@@ -39,12 +40,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   let view = unsafe { NSView::initWithFrame(mtm.alloc(), frame) };
   // Do something with `app` and `view`
   ```
+* **BREAKING**: Changed the `NSApp` static to be a function taking `MainThreadMarker`.
 
 ### Removed
 * **BREAKING**: Removed the `MainThreadMarker` argument from the closure
   passed to `MainThreadBound::get_on_main`.
-* **BREAKING**: Removed the `NSApp` static for now - it will likely be
-  re-added later in another form.
 
 
 ## icrate 0.0.4 - 2023-07-31

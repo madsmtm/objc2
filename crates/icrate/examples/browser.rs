@@ -168,7 +168,7 @@ declare_class!(
 
             // create the window content view
             let content_view = {
-                let frame_rect = unsafe { window.frame() };
+                let frame_rect = window.frame();
                 let this = unsafe { NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
                 unsafe {
                     this.setOrientation(NSUserInterfaceLayoutOrientationVertical);
@@ -196,14 +196,14 @@ declare_class!(
 
             // create the menu with a "quit" entry
             unsafe {
-                let menu = NSMenu::initWithTitle(NSMenu::alloc(), ns_string!(""));
+                let menu = NSMenu::initWithTitle(mtm.alloc(), ns_string!(""));
                 let menu_app_item = NSMenuItem::initWithTitle_action_keyEquivalent(
-                    NSMenuItem::alloc(),
+                    mtm.alloc(),
                     ns_string!(""),
                     None,
                     ns_string!(""),
                 );
-                let menu_app_menu = NSMenu::initWithTitle(NSMenu::alloc(), ns_string!(""));
+                let menu_app_menu = NSMenu::initWithTitle(mtm.alloc(), ns_string!(""));
                 menu_app_menu.addItemWithTitle_action_keyEquivalent(
                     ns_string!("Quit"),
                     Some(sel!(terminate:)),
@@ -217,12 +217,10 @@ declare_class!(
             }
 
             // configure the window
-            unsafe {
-                window.setContentView(Some(&content_view));
-                window.center();
-                window.setTitle(ns_string!("browser example"));
-                window.makeKeyAndOrderFront(None);
-            }
+            window.setContentView(Some(&content_view));
+            window.center();
+            window.setTitle(ns_string!("browser example"));
+            window.makeKeyAndOrderFront(None);
 
             // request the web view navigate to a page
             unsafe {
@@ -290,17 +288,15 @@ unsafe impl NSObjectProtocol for Delegate {}
 
 fn main() {
     let mtm = MainThreadMarker::new().unwrap();
-    let app = unsafe { NSApplication::sharedApplication(mtm) };
-    unsafe { app.setActivationPolicy(NSApplicationActivationPolicyRegular) };
+    let app = NSApplication::sharedApplication(mtm);
+    app.setActivationPolicy(NSApplicationActivationPolicyRegular);
 
     // initialize the delegate
     let delegate = Delegate::new(mtm);
 
     // configure the application delegate
-    unsafe {
-        let object = ProtocolObject::from_ref(&*delegate);
-        app.setDelegate(Some(object))
-    };
+    let object = ProtocolObject::from_ref(&*delegate);
+    app.setDelegate(Some(object));
 
     // run the app
     unsafe { app.run() };

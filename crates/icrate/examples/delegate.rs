@@ -76,8 +76,8 @@ impl AppDelegate {
 fn main() {
     let mtm: MainThreadMarker = MainThreadMarker::new().unwrap();
 
-    let app = unsafe { NSApplication::sharedApplication(mtm) };
-    unsafe { app.setActivationPolicy(NSApplicationActivationPolicyRegular) };
+    let app = NSApplication::sharedApplication(mtm);
+    app.setActivationPolicy(NSApplicationActivationPolicyRegular);
 
     // initialize the delegate
     let delegate = AppDelegate::new(42, true, mtm);
@@ -85,10 +85,8 @@ fn main() {
     println!("{delegate:?}");
 
     // configure the application delegate
-    unsafe {
-        let object = ProtocolObject::from_ref(&*delegate);
-        app.setDelegate(Some(object));
-    };
+    let object = ProtocolObject::from_ref(&*delegate);
+    app.setDelegate(Some(object));
 
     // run the app
     unsafe { app.run() };
