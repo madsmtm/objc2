@@ -35,7 +35,7 @@
 //!    allocator ends up using `x16`, `x17`, `x18`, `x29` or `x30`, we will
 //!    emit a call to e.g. `objc_retain_x29`, which will fail at link time.
 //!
-//!    Before this option can be stable, we need a way to prevent that!
+//!    TODO: Before this option can be stable, we need a way to prevent that!
 //!
 //! 2. We use the `clobber_abi("C")` since we're effectively calling a C
 //!    C function.
