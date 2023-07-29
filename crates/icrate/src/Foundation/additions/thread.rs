@@ -8,6 +8,7 @@ use crate::common::*;
 use crate::Foundation::NSThread;
 
 use objc2::msg_send_id;
+use objc2::mutability::IsMainThreadOnly;
 
 unsafe impl Send for NSThread {}
 unsafe impl Sync for NSThread {}
@@ -188,6 +189,23 @@ impl MainThreadMarker {
                 f(unsafe { MainThreadMarker::new_unchecked() })
             })
         }
+    }
+}
+
+/// Get a [`MainThreadMarker`] from a main-thread-only object.
+///
+/// This function exists purely in the type-system, and will always
+/// succeed at runtime.
+impl<T: ?Sized + IsMainThreadOnly> From<&T> for MainThreadMarker {
+    #[inline]
+    fn from(_obj: &T) -> Self {
+        // SAFETY: Objects which are `IsMainThreadOnly` are guaranteed
+        // `!Send + !Sync` and are only constructible on the main thread.
+        //
+        // Since we hold a reference to such an object, and we know it cannot
+        // now possibly be on another thread than the main, we know that the
+        // current thread is the main thread.
+        unsafe { Self::new_unchecked() }
     }
 }
 

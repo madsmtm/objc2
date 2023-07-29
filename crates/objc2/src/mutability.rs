@@ -190,6 +190,9 @@ pub struct InteriorMutable {
 ///
 /// This is commonly used in GUI code like `AppKit` and `UIKit`, e.g.
 /// `UIWindow` is only usable from the application's main thread.
+///
+/// It is unsound to implement [`Send`] or [`Sync`] on a type with this
+/// mutability.
 //
 // While Xcode's Main Thread Checker doesn't report `alloc` and `dealloc` as
 // unsafe from other threads, things like `NSView` and `NSWindow` still do a
@@ -307,6 +310,15 @@ impl<T: ?Sized + ClassType> IsAllocableAnyThread for T where
 /// references.
 pub trait IsMutable: ClassType {}
 impl<T: ?Sized + ClassType> IsMutable for T where T::Mutability: private::MutabilityIsMutable {}
+
+/// Marker trait for classes that are only available on the main thread.
+///
+/// This is implemented for classes whose [`ClassType::Mutability`] is one of:
+/// - [`MainThreadOnly`].
+//
+// Note: MainThreadMarker::from relies on this.
+pub trait IsMainThreadOnly: ClassType {}
+impl<T: ?Sized + ClassType<Mutability = MainThreadOnly>> IsMainThreadOnly for T {}
 
 #[cfg(test)]
 mod tests {

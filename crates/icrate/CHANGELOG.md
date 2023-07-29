@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## icrate Unreleased - YYYY-MM-DD
 
+### Added
+* Added `MainThreadMarker` `From` implementation for `MainThreadOnly` types.
+
 ### Changed
 * Moved the `ns_string!` macro to `icrate::Foundation::ns_string`. The old
   location in the crate root is deprecated.
