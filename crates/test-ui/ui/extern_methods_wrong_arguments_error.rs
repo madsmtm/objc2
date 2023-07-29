@@ -1,3 +1,4 @@
+use icrate::Foundation::MainThreadMarker;
 use objc2::rc::Id;
 use objc2::runtime::NSObject;
 use objc2::{extern_class, extern_methods, mutability, ClassType};
@@ -36,6 +37,13 @@ extern_methods!(
     unsafe impl MyObject {
         #[method(tooMany:_)]
         fn too_many(&self, arg: i32) -> Result<(), Id<NSObject>>;
+    }
+);
+
+extern_methods!(
+    unsafe impl MyObject {
+        #[method(tooFew:withMtm:_)]
+        fn too_few_with_mtm(&self, mtm: MainThreadMarker) -> Result<(), Id<NSObject>>;
     }
 );
 

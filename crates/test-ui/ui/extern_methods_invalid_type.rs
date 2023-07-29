@@ -1,3 +1,4 @@
+use icrate::Foundation::MainThreadMarker;
 use objc2::rc::Id;
 use objc2::runtime::NSObject;
 use objc2::{extern_class, extern_methods, mutability, ClassType};
@@ -43,6 +44,13 @@ extern_methods!(
     unsafe impl MyObject {
         #[method_id(error:)]
         fn error_id(arg: i32) -> Result<Id<Self>, Id<NSObject>>;
+    }
+);
+
+extern_methods!(
+    unsafe impl MyObject {
+        #[method(mainThreadMarkerAsReturn)]
+        fn main_thread_marker_as_return() -> MainThreadMarker;
     }
 );
 
