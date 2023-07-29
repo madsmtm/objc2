@@ -7,6 +7,7 @@ use core::ptr::{self, NonNull};
 
 use super::AutoreleasePool;
 use crate::mutability::{IsIdCloneable, IsMutable};
+use crate::runtime::{objc_release_fast, objc_retain_fast};
 use crate::{ffi, ClassType, Message};
 
 /// A reference counted pointer type for Objective-C objects.
@@ -321,7 +322,7 @@ impl<T: Message> Id<T> {
     #[inline]
     pub unsafe fn retain(ptr: *mut T) -> Option<Id<T>> {
         // SAFETY: The caller upholds that the pointer is valid
-        let res: *mut T = unsafe { ffi::objc_retain(ptr.cast()) }.cast();
+        let res: *mut T = unsafe { objc_retain_fast(ptr.cast()) }.cast();
         debug_assert_eq!(res, ptr, "objc_retain did not return the same pointer");
         // SAFETY: We just retained the object, so it has +1 retain count
         unsafe { Self::new(res) }
@@ -404,8 +405,14 @@ impl<T: Message> Id<T> {
             };
 
             // Supported since macOS 10.10.
-            #[cfg(target_arch = "aarch64")]
+            //
+            // On macOS 13.0 / iOS 16.0 / tvOS 16.0 / watchOS 9.0, the runtime
+            // instead checks the return pointer address, so we no longer need
+            // to emit these extra instructions, see this video from WWDC22:
+            // https://developer.apple.com/videos/play/wwdc2022/110363/
+            #[cfg(all(target_arch = "aarch64", not(feature = "unstable-apple-new")))]
             unsafe {
+                // Same as `mov x29, x29`
                 core::arch::asm!("mov fp, fp", options(nomem, preserves_flags, nostack))
             };
 
@@ -650,7 +657,7 @@ impl<T: ?Sized> Drop for Id<T> {
 
         // SAFETY: The `ptr` is guaranteed to be valid and have at least one
         // retain count.
-        unsafe { ffi::objc_release(self.ptr.as_ptr().cast()) };
+        unsafe { objc_release_fast(self.ptr.as_ptr().cast()) };
     }
 }
 

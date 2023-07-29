@@ -3,7 +3,7 @@ use core::marker::PhantomData;
 use core::mem::{self, ManuallyDrop};
 use core::ptr::NonNull;
 
-use crate::ffi;
+use crate::runtime::objc_release_fast;
 use crate::Message;
 
 /// A marker type that can be used to indicate that the object has been
@@ -77,8 +77,8 @@ impl<T: ?Sized> Drop for Allocated<T> {
         // destructors are written to take into account that the object may
         // not have been initialized.
         //
-        // Rest is same as `Id`.
-        unsafe { ffi::objc_release(self.ptr.as_ptr().cast()) };
+        // Rest is same as `Id`'s `Drop`.
+        unsafe { objc_release_fast(self.ptr.as_ptr().cast()) };
     }
 }
 

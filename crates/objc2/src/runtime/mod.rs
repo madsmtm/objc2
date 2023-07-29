@@ -38,8 +38,10 @@ mod nsobject;
 mod nsproxy;
 mod nszone;
 mod protocol_object;
+mod retain_release_fast;
 
 pub(crate) use self::method_encoding_iter::{EncodingParseError, MethodEncodingIter};
+pub(crate) use self::retain_release_fast::{objc_release_fast, objc_retain_fast};
 use crate::encode::__unstable::{EncodeArguments, EncodeConvertReturn, EncodeReturn};
 use crate::encode::{Encode, Encoding, OptionEncode, RefEncode};
 use crate::verify::{verify_method_signature, Inner};
