@@ -311,10 +311,10 @@ impl<T> MainThreadBound<T> {
     #[inline]
     pub fn get_on_main<F, R>(&self, f: F) -> R
     where
-        F: Send + FnOnce(&T, MainThreadMarker) -> R,
+        F: Send + FnOnce(&T) -> R,
         R: Send,
     {
-        MainThreadMarker::run_on_main(|mtm| f(self.get(mtm), mtm))
+        MainThreadMarker::run_on_main(|mtm| f(self.get(mtm)))
     }
 
     /// Access the item mutably on the main thread.
@@ -323,10 +323,10 @@ impl<T> MainThreadBound<T> {
     #[inline]
     pub fn get_on_main_mut<F, R>(&mut self, f: F) -> R
     where
-        F: Send + FnOnce(&mut T, MainThreadMarker) -> R,
+        F: Send + FnOnce(&mut T) -> R,
         R: Send,
     {
-        MainThreadMarker::run_on_main(|mtm| f(self.get_mut(mtm), mtm))
+        MainThreadMarker::run_on_main(|mtm| f(self.get_mut(mtm)))
     }
 }
 

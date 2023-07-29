@@ -18,6 +18,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `refitAccelerationStructure_descriptor_destination_scratchBuffer_scratchBufferOffset`
   - `refitAccelerationStructure_descriptor_destination_scratchBuffer_scratchBufferOffset_options`
 
+### Removed
+* **BREAKING**: Removed the `MainThreadMarker` argument from the closure
+  passed to `MainThreadBound::get_on_main`.
+
 
 ## icrate 0.0.4 - 2023-07-31
 
