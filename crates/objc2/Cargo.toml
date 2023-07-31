@@ -35,6 +35,13 @@ catch-all = ["exception"]
 # Enable all verification steps when debug assertions are enabled.
 verify = ["malloc"]
 
+# Allow `*const c_void` and `*mut c_void` to be used as arguments and return
+# types where other pointers were expected.
+#
+# This may be useful for CoreFoundation types, or for migrating code from objc
+# to objc2.
+relax-void-encoding = []
+
 # Expose features that require linking to `libc::free`.
 #
 # This is not enabled by default because most users won't need it, and it

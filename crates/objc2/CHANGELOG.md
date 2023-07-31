@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Allow using `MainThreadMarker` in `extern_methods!`.
+* Added the feature flag `"relax-void-encoding"`, which when enabled, allows
+  using `*mut c_void` in a few places where you would otherwise have to
+  specify the encoding precisely.
 
 ### Changed
 * Renamed `runtime` types:
