@@ -63,5 +63,6 @@ pub use self::autorelease::{
 };
 pub use self::id::Id;
 pub use self::id_traits::{DefaultId, IdFromIterator, IdIntoIterator};
+#[doc(hidden)]
 pub use self::test_object::{__RcTestObject, __ThreadTestData};
 pub use self::weak_id::WeakId;
