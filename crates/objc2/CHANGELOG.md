@@ -21,6 +21,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   To better fit with Swift's naming scheme. The types are still available
   under the old names as deprecated aliases.
 
+### Fixed
+* Updated `encode` types to those from `objc2-encode v3.0.0`. Should allow
+  this crate can be compiled together with pre-release versions.
+
 
 ## 0.4.0 - 2023-06-20
 
