@@ -714,7 +714,7 @@ l_anon.[ID].2:
 	.ascii	"called `Option::unwrap()` on a `None` value"
 
 l_anon.[ID].3:
-	.ascii	"/Users/madsmarquart/.rustup/toolchains/nightly-x86_64-apple-darwin/lib/rustlib/src/rust/library/std/src/sync/once.rs"
+	.ascii	"$RUSTC/library/std/src/sync/once.rs"
 
 	.section	__DATA,__const
 	.p2align	2, 0x0
