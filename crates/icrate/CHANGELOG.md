@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## icrate Unreleased - YYYY-MM-DD
 
+### Changed
+* **BREAKING**: Updated `block2` to `v0.3.0`.
+
+### Fixed
+* Documentation on docs.rs.
+
 
 ## icrate 0.0.3 - 2023-06-20
 

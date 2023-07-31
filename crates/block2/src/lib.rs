@@ -83,7 +83,7 @@
 #![warn(clippy::cargo)]
 #![warn(clippy::ptr_as_ptr)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/block2/0.2.0")]
+#![doc(html_root_url = "https://docs.rs/block2/0.3.0")]
 
 extern crate alloc;
 extern crate std;
