@@ -30,21 +30,26 @@ mod return_private {
 ///
 /// We currently don't need a similar `EncodeArgument` trait, but we might in
 /// the future.
+///
+///
+/// # Safety
+///
+/// Similar to [`Encode`].
 //
 // Note: While this is not public, it is still a breaking change to change,
 // since `block2` relies on it.
-pub trait EncodeReturn: return_private::Sealed {
+pub unsafe trait EncodeReturn: return_private::Sealed {
     /// The Objective-C type-encoding for this type.
     const ENCODING_RETURN: Encoding;
 }
 
 impl return_private::Sealed for () {}
-impl EncodeReturn for () {
+unsafe impl EncodeReturn for () {
     const ENCODING_RETURN: Encoding = Encoding::Void;
 }
 
 impl<T: Encode> return_private::Sealed for T {}
-impl<T: Encode> EncodeReturn for T {
+unsafe impl<T: Encode> EncodeReturn for T {
     const ENCODING_RETURN: Encoding = T::ENCODING;
 }
 

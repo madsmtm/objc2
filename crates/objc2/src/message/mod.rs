@@ -454,7 +454,7 @@ unsafe impl<T: ?Sized + Message> MessageReceiver for ManuallyDrop<Id<T>> {
 
     #[inline]
     fn __as_raw_receiver(self) -> *mut AnyObject {
-        Id::consume_as_ptr(self).cast()
+        Id::consume_as_ptr(ManuallyDrop::into_inner(self)).cast()
     }
 }
 

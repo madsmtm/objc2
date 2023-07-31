@@ -1,5 +1,5 @@
 use objc2::rc::{Allocated, Id};
-use objc2::runtime::NSObject;
+use objc2::runtime::{AnyClass, NSObject};
 use objc2::{declare_class, mutability, ClassType};
 
 declare_class!(
@@ -12,47 +12,52 @@ declare_class!(
     }
 
     unsafe impl CustomObject {
-        #[method(test1)]
-        fn test1(self: Box<Self>) {
+        #[method(testBox)]
+        fn test_box(self: Box<Self>) {
             unimplemented!()
         }
 
-        #[method(test2)]
-        fn test2(this: Id<Self>) {
+        #[method(testIdSelf)]
+        fn test_id_self(this: Id<Self>) {
             unimplemented!()
         }
 
-        #[method(test3)]
-        fn test3(this: Self) {
-            unimplemented!()
-        }
-    }
-
-    unsafe impl CustomObject {
-        #[method_id(test4)]
-        fn test4(self: Box<Self>) -> Id<Self> {
+        #[method(testSelf)]
+        fn test_self(this: Self) {
             unimplemented!()
         }
 
-        #[method_id(test5)]
-        fn test5(this: Id<Self>) -> Id<Self> {
-            unimplemented!()
-        }
-
-        #[method_id(test6)]
-        fn test6(this: Self) -> Id<Self> {
+        #[method(testClass)]
+        fn test_class(this: &AnyClass) {
             unimplemented!()
         }
     }
 
     unsafe impl CustomObject {
-        #[method_id(test7)]
-        fn test7(this: Allocated<Self>) -> Id<Self> {
+        #[method_id(testBoxId)]
+        fn test_box_id(self: Box<Self>) -> Id<Self> {
             unimplemented!()
         }
 
-        #[method_id(initTest8)]
-        fn test8(&self) -> Id<Self> {
+        #[method_id(testIdSelfId)]
+        fn test_id_self_id(this: Id<Self>) -> Id<Self> {
+            unimplemented!()
+        }
+
+        #[method_id(testSelfId)]
+        fn test_self_id(this: Self) -> Id<Self> {
+            unimplemented!()
+        }
+    }
+
+    unsafe impl CustomObject {
+        #[method_id(testAlloc)]
+        fn test_alloc(this: Allocated<Self>) -> Id<Self> {
+            unimplemented!()
+        }
+
+        #[method_id(initTestNotAlloc)]
+        fn test_init_not_alloc(&self) -> Id<Self> {
             unimplemented!()
         }
     }

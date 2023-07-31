@@ -1,6 +1,3 @@
-use core::mem::ManuallyDrop;
-use core::ptr;
-
 use crate::declare::__IdReturnValue;
 use crate::rc::{Allocated, Id};
 use crate::{ClassType, Message, MessageReceiver};
@@ -85,7 +82,7 @@ pub trait MaybeOptionId: MaybeUnwrap {
 impl<T: Message> MaybeOptionId for Id<T> {
     #[inline]
     fn consumed_return(self) -> __IdReturnValue {
-        let ptr: *mut T = Id::consume_as_ptr(ManuallyDrop::new(self));
+        let ptr: *mut T = Id::consume_as_ptr(self);
         __IdReturnValue(ptr.cast())
     }
 
@@ -99,9 +96,7 @@ impl<T: Message> MaybeOptionId for Id<T> {
 impl<T: Message> MaybeOptionId for Option<Id<T>> {
     #[inline]
     fn consumed_return(self) -> __IdReturnValue {
-        let ptr: *mut T = self
-            .map(|this| Id::consume_as_ptr(ManuallyDrop::new(this)))
-            .unwrap_or_else(ptr::null_mut);
+        let ptr: *mut T = Id::consume_as_ptr_option(self);
         __IdReturnValue(ptr.cast())
     }
 

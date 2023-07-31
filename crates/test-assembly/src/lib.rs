@@ -64,6 +64,8 @@ pub fn read_assembly<P: AsRef<Path>>(path: P, package_path: &Path) -> io::Result
         .as_os_str()
         .to_str()
         .unwrap();
+
+    // Replace paths
     let s = s.replace(workspace_dir, "$WORKSPACE");
     let s = s.replace(
         package_path
@@ -79,6 +81,14 @@ pub fn read_assembly<P: AsRef<Path>>(path: P, package_path: &Path) -> io::Result
     let s = regex::Regex::new(r"/rustc/[0-9a-f]*/")
         .unwrap()
         .replace_all(&s, |_: &regex::Captures| "$RUSTC/");
+    let s = regex::Regex::new(r"/.*/rustlib/src/rust/")
+        .unwrap()
+        .replace_all(&s, |_: &regex::Captures| "$RUSTC/");
+
+    // HACK: Make location data the same no matter which platform generated
+    // the data.
+    let s = s.replace(".asciz\t\"}", ".asciz\t\"t");
+
     // HACK: Replace Objective-C image info for simulator targets
     let s = s.replace(
         ".asciz\t\"\\000\\000\\000\\000`\\000\\000\"",

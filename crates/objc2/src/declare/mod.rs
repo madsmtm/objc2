@@ -832,10 +832,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(
-        debug_assertions,
-        should_panic = "selector xyz: accepts 1 arguments, but function accepts 0"
-    )]
+    #[should_panic = "selector xyz: accepts 1 arguments, but function accepts 0"]
     fn wrong_arguments() {
         let cls = test_utils::custom_class();
         let mut builder = ClassBuilder::new("TestClassBuilderWrongArguments", cls).unwrap();

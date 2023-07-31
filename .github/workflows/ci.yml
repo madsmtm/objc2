@@ -254,6 +254,11 @@ jobs:
     - name: Run all assembly tests
       if: ${{ env.FULL }}
       run: ./helper-scripts/run-assembly-tests.sh
+      env:
+        TEST_OVERWRITE: 1
+
+    - name: Check diff
+      run: git diff --exit-code
 
   header-translator:
     name: Verify header translator output
