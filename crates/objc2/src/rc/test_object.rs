@@ -388,9 +388,6 @@ mod tests {
     #[allow(clippy::if_same_then_else)]
     const IF_AUTORELEASE_NOT_SKIPPED: usize = if cfg!(feature = "gnustep-1-7") {
         1
-    } else if cfg!(all(target_arch = "arm", panic = "unwind")) {
-        // 32-bit ARM unwinding interferes with the optimization
-        2
     } else if cfg!(target_arch = "x86") {
         // x86 autorelease_return is not currently tail-called, so the
         // optimization doesn't work on declare_class! functions.
@@ -400,6 +397,15 @@ mod tests {
     } else {
         1
     } - 1;
+
+    // 32-bit ARM unwinding sometimes interferes with the optimization
+    const IF_AUTORELEASE_NOT_SKIPPED_ARM_HACK: usize = {
+        if cfg!(all(target_arch = "arm", panic = "unwind")) {
+            1
+        } else {
+            IF_AUTORELEASE_NOT_SKIPPED
+        }
+    };
 
     macro_rules! test_error_id {
         ($expected:expr, $if_autorelease_not_skipped:expr, $sel:ident, $($obj:tt)*) => {
@@ -457,7 +463,12 @@ mod tests {
         let obj = __RcTestObject::new();
         expected.alloc += 1;
         expected.init += 1;
-        test_error_id!(expected, IF_AUTORELEASE_NOT_SKIPPED, idAndShouldError, &obj);
+        test_error_id!(
+            expected,
+            IF_AUTORELEASE_NOT_SKIPPED_ARM_HACK,
+            idAndShouldError,
+            &obj
+        );
 
         expected.alloc -= 1;
         expected.release -= 1;
@@ -525,12 +536,12 @@ mod tests {
             assert!(res.is_some());
             expected.alloc += 1;
             expected.init += 1;
-            expected.autorelease += IF_AUTORELEASE_NOT_SKIPPED;
-            expected.retain += IF_AUTORELEASE_NOT_SKIPPED;
+            expected.autorelease += IF_AUTORELEASE_NOT_SKIPPED_ARM_HACK;
+            expected.retain += IF_AUTORELEASE_NOT_SKIPPED_ARM_HACK;
             expected.assert_current();
             res
         });
-        expected.release += IF_AUTORELEASE_NOT_SKIPPED;
+        expected.release += IF_AUTORELEASE_NOT_SKIPPED_ARM_HACK;
         expected.assert_current();
     }
 }
