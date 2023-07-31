@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.4.1 - 2023-07-31
+
 ### Added
 * Allow using `MainThreadMarker` in `extern_methods!`.
 * Added the feature flag `"relax-void-encoding"`, which when enabled, allows
@@ -20,6 +23,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   To better fit with Swift's naming scheme. The types are still available
   under the old names as deprecated aliases.
+
+### Fixed
+* **BREAKING**: Updated `encode` types to those from `objc2-encode v3.0.0`.
+
+  This is technically a breaking change, but it should allow this crate to be
+  compiled together with pre-release versions of it, meaning that in practice
+  strictly more code out there will compile because of this. Hence it was
+  deemed the better trade-off.
 
 
 ## 0.4.0 - 2023-06-20

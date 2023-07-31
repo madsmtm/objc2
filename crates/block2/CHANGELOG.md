@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
+## 0.3.0 - 2023-07-31
+
+### Fixed
+* Bumped version number to ensure that this crate can be compiled together
+  with code that depends on pre-releases of `0.2.0`.
+
+
 ## 0.2.0 - 2023-06-20
 
 ### Changed

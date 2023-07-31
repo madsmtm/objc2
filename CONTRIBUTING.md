@@ -66,7 +66,6 @@ Copy and fill out the following checklist into the release PR:
 - Local tests have been run (see `helper-scripts/test-local.fish`):
     - [ ] macOS 10.14.6 32bit
     - [ ] iOS 9.3.6, 1st generation iPad Mini
-- [ ] Any errors that emerge have been fixed in other PRs.
 
 Post merge:
 - [ ] A tag is created on the merge commit for each new version.
