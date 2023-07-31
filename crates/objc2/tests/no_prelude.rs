@@ -143,11 +143,13 @@ new_objc2::extern_protocol!(
     unsafe impl ProtocolType for dyn CustomProtocol {}
 );
 
+#[test]
 pub fn test_selector() {
     let _sel = new_objc2::sel!(abc);
     let _sel = new_objc2::sel!(abc:def:);
 }
 
+#[test]
 pub fn test_class() {
     let _class = new_objc2::class!(NSObject);
 }

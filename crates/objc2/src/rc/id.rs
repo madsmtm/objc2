@@ -239,8 +239,17 @@ impl<T: ?Sized + Message> Id<T> {
     }
 
     #[inline]
-    pub(crate) fn consume_as_ptr(this: ManuallyDrop<Self>) -> *mut T {
-        this.ptr.as_ptr()
+    pub(crate) fn consume_as_ptr(this: Self) -> *mut T {
+        ManuallyDrop::new(this).ptr.as_ptr()
+    }
+
+    #[inline]
+    pub(crate) fn consume_as_ptr_option(this: Option<Self>) -> *mut T
+    where
+        T: Sized,
+    {
+        this.map(|this| Id::consume_as_ptr(this))
+            .unwrap_or_else(ptr::null_mut)
     }
 }
 

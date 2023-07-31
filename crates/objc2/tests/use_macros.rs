@@ -3,7 +3,7 @@ use objc2::runtime::{AnyClass, NSObject};
 use objc2::{class, declare_class, msg_send, sel, ClassType};
 
 declare_class!(
-    struct MyObject;
+    pub struct MyObject;
 
     unsafe impl ClassType for MyObject {
         type Super = NSObject;
@@ -28,8 +28,7 @@ fn use_sel() {
     let _sel = sel!(setObject:forKey:);
 }
 
-#[allow(unused)]
-fn test_msg_send_comma_handling(obj: &MyObject, superclass: &AnyClass) {
+pub fn test_msg_send_comma_handling(obj: &MyObject, superclass: &AnyClass) {
     unsafe {
         let _: () = msg_send![obj, a];
         let _: () = msg_send![obj, a,];
