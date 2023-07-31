@@ -71,6 +71,22 @@ impl fmt::Display for VerificationError {
 
 impl Error for VerificationError {}
 
+/// Relaxed version of `Encoding::equivalent_to_box` that allows
+/// `*mut c_void` and `*const c_void` to be used in place of other pointers.
+///
+/// Note: This is a top-level comparison; `*mut *mut c_void` or structures
+/// containing `*mut c_void` are not allowed differently than usual.
+fn relaxed_equivalent_to_box(encoding: &Encoding, expected: &EncodingBox) -> bool {
+    if cfg!(feature = "relax-void-encoding")
+        && matches!(encoding, Encoding::Pointer(&Encoding::Void))
+        && matches!(expected, EncodingBox::Pointer(_))
+    {
+        true
+    } else {
+        encoding.equivalent_to_box(expected)
+    }
+}
+
 pub(crate) fn verify_method_signature(
     method: &Method,
     args: &[Encoding],
@@ -80,7 +96,7 @@ pub(crate) fn verify_method_signature(
 
     // TODO: Verify stack layout
     let (expected, _stack_layout) = iter.extract_return()?;
-    if !ret.equivalent_to_box(&expected) {
+    if !relaxed_equivalent_to_box(ret, &expected) {
         return Err(Inner::MismatchedReturn(expected, ret.clone()).into());
     }
 
@@ -93,7 +109,7 @@ pub(crate) fn verify_method_signature(
         if let Some(res) = iter.next() {
             // TODO: Verify stack layout
             let (expected, _stack_layout) = res?;
-            if !actual.equivalent_to_box(&expected) {
+            if !relaxed_equivalent_to_box(actual, &expected) {
                 return Err(Inner::MismatchedArgument(i, expected, actual.clone()).into());
             }
         } else {
@@ -118,9 +134,10 @@ pub(crate) fn verify_method_signature(
 mod tests {
     use super::*;
     use crate::runtime::Sel;
-    use crate::sel;
     use crate::test_utils;
+    use crate::{msg_send, sel};
     use alloc::string::ToString;
+    use core::ffi::c_void;
     use core::panic::{RefUnwindSafe, UnwindSafe};
 
     #[test]
@@ -179,7 +196,7 @@ mod tests {
     #[should_panic = "invalid message send to -[CustomObject foo]: expected return to have type code 'I', but found 'i'"]
     fn test_send_message_verified() {
         let obj = test_utils::custom_object();
-        let _: i32 = unsafe { crate::msg_send![&obj, foo] };
+        let _: i32 = unsafe { msg_send![&obj, foo] };
     }
 
     #[test]
@@ -187,12 +204,47 @@ mod tests {
     #[should_panic = "invalid message send to +[CustomObject abcDef]: method not found"]
     fn test_send_message_verified_to_class() {
         let cls = test_utils::custom_class();
-        let _: i32 = unsafe { crate::msg_send![cls, abcDef] };
+        let _: i32 = unsafe { msg_send![cls, abcDef] };
     }
 
     #[test]
     fn test_marker_traits() {
         fn assert_marker_traits<T: Send + Sync + UnwindSafe + RefUnwindSafe + Unpin>() {}
         assert_marker_traits::<VerificationError>();
+    }
+
+    #[test]
+    fn test_get_reference() {
+        let mut obj = test_utils::custom_object();
+        let _: () = unsafe { msg_send![&mut obj, setFoo: 42u32] };
+
+        let res: &u32 = unsafe { msg_send![&obj, fooReference] };
+        assert_eq!(*res, 42);
+        let res: *const u32 = unsafe { msg_send![&obj, fooReference] };
+        assert_eq!(unsafe { *res }, 42);
+        let res: *mut u32 = unsafe { msg_send![&obj, fooReference] };
+        assert_eq!(unsafe { *res }, 42);
+    }
+
+    #[test]
+    #[cfg_attr(
+        all(debug_assertions, not(feature = "relax-void-encoding")),
+        should_panic = "invalid message send to -[CustomObject fooReference]: expected return to have type code '^I', but found '^v'"
+    )]
+    fn test_get_reference_void() {
+        let mut obj = test_utils::custom_object();
+        let _: () = unsafe { msg_send![&mut obj, setFoo: 42u32] };
+
+        let res: *mut c_void = unsafe { msg_send![&obj, fooReference] };
+        let res: *mut u32 = res.cast();
+        assert_eq!(unsafe { *res }, 42);
+    }
+
+    #[test]
+    #[cfg(debug_assertions)]
+    #[should_panic = "invalid message send to -[CustomObject foo]: expected return to have type code 'I', but found '^v'"]
+    fn test_get_integer_void() {
+        let obj = test_utils::custom_object();
+        let _: *mut c_void = unsafe { msg_send![&obj, foo] };
     }
 }
