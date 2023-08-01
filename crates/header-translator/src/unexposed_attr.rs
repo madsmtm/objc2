@@ -44,11 +44,14 @@ impl UnexposedAttr {
                 let _ = get_arguments();
                 Some(Self::ErrorEnum)
             }
-            "NS_TYPED_ENUM" | "NS_STRING_ENUM" | "CF_TYPED_ENUM" => Some(Self::TypedEnum),
+            "NS_TYPED_ENUM" | "NS_STRING_ENUM" | "CF_TYPED_ENUM" | "CF_STRING_ENUM" => {
+                Some(Self::TypedEnum)
+            }
             "_NS_TYPED_EXTENSIBLE_ENUM"
             | "NS_TYPED_EXTENSIBLE_ENUM"
             | "CF_TYPED_EXTENSIBLE_ENUM"
-            | "NS_EXTENSIBLE_STRING_ENUM" => Some(Self::TypedExtensibleEnum),
+            | "NS_EXTENSIBLE_STRING_ENUM"
+            | "CF_EXTENSIBLE_STRING_ENUM" => Some(Self::TypedExtensibleEnum),
             "NS_SWIFT_BRIDGED_TYPEDEF" | "CF_SWIFT_BRIDGED_TYPEDEF" => Some(Self::BridgedTypedef),
             "CF_BRIDGED_TYPE" => Some(Self::Bridged),
             "CF_BRIDGED_MUTABLE_TYPE" => Some(Self::BridgedMutable),
@@ -56,19 +59,20 @@ impl UnexposedAttr {
             "NS_RETURNS_NOT_RETAINED" | "CF_RETURNS_NOT_RETAINED" => Some(Self::ReturnsNotRetained),
             "NS_RETURNS_INNER_POINTER" => None,
             // TODO
-            "NS_FORMAT_FUNCTION" | "NS_FORMAT_ARGUMENT" => {
+            "CF_FORMAT_ARGUMENT" | "CF_FORMAT_FUNCTION" | "NS_FORMAT_FUNCTION"
+            | "NS_FORMAT_ARGUMENT" => {
                 let _ = get_arguments();
                 None
             }
             // TODO
-            "NS_NOESCAPE" => None,
+            "CF_NOESCAPE" | "NS_NOESCAPE" => None,
             // TODO: We could potentially automatically elide this argument
             // from the method call, though it's rare enough that it's
             // probably not really worth the effort.
             "__unused" => None,
             // We assume that a function is inline if it has a body, so not
             // interesting.
-            "NS_INLINE" => None,
+            "CF_INLINE" | "NS_INLINE" => None,
             // We don't synthethize properties, so irrelevant for us.
             "NS_REQUIRES_PROPERTY_DEFINITIONS" => None,
             // Weak specifiers - would be interesting if Rust supported weak statics
@@ -84,6 +88,8 @@ impl UnexposedAttr {
             | "API_DEPRECATED"
             | "API_UNAVAILABLE_BEGIN"
             | "API_UNAVAILABLE"
+            | "CF_AVAILABLE"
+            | "CF_DEPRECATED"
             | "CF_SWIFT_UNAVAILABLE"
             | "CG_AVAILABLE_BUT_DEPRECATED"
             | "CG_AVAILABLE_STARTING"
@@ -130,6 +136,7 @@ impl UnexposedAttr {
             | "__WATCHOS_UNAVAILABLE"
             | "APPKIT_API_UNAVAILABLE_BEGIN_MACCATALYST"
             | "MP_INIT_UNAVAILABLE"
+            | "CF_AUTOMATED_REFCOUNT_UNAVAILABLE"
             | "NS_AUTOMATED_REFCOUNT_UNAVAILABLE"
             | "NS_AUTOMATED_REFCOUNT_WEAK_UNAVAILABLE"
             | "NS_UNAVAILABLE"
@@ -140,6 +147,7 @@ impl UnexposedAttr {
             s if s.starts_with("FILEPROVIDER_API_AVAILABILITY_") => None,
             // Might be interesting in the future
             "CF_SWIFT_NAME"
+            | "CF_SWIFT_UNAVAILABLE_FROM_ASYNC"
             | "NS_HEADER_AUDIT_BEGIN"
             | "NS_REFINED_FOR_SWIFT_ASYNC"
             | "NS_SWIFT_ASYNC_NAME"
@@ -152,7 +160,8 @@ impl UnexposedAttr {
                 let _ = get_arguments();
                 None
             }
-            "CF_REFINED_FOR_SWIFT"
+            "CF_IMPLICIT_BRIDGING_ENABLED"
+            | "CF_REFINED_FOR_SWIFT"
             | "NS_REFINED_FOR_SWIFT"
             | "NS_SWIFT_DISABLE_ASYNC"
             | "NS_SWIFT_NONISOLATED"

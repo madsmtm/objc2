@@ -472,7 +472,10 @@ fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
                 error!(?attr, "unknown attribute");
             }
         }
-        EntityKind::ObjCClassRef | EntityKind::TypeRef | EntityKind::ObjCProtocolRef => {}
+        EntityKind::ParmDecl
+        | EntityKind::ObjCClassRef
+        | EntityKind::TypeRef
+        | EntityKind::ObjCProtocolRef => {}
         EntityKind::NSConsumed => {
             error!("found NSConsumed, which requires manual handling");
         }
@@ -1051,8 +1054,12 @@ impl Stmt {
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
-                        if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                            error!(?attr, "unknown attribute");
+                        match UnexposedAttr::parse(&entity, context) {
+                            Some(UnexposedAttr::ReturnsRetained) => {
+                                // TODO: Ignore for now, but at some point handle in a similar way to in methods
+                            }
+                            Some(attr) => error!(?attr, "unknown attribute"),
+                            None => {}
                         }
                     }
                     EntityKind::ObjCClassRef
@@ -1711,7 +1718,7 @@ impl fmt::Display for Stmt {
                     Some(UnexposedAttr::TypedExtensibleEnum) => {
                         writeln!(f, "typed_extensible_enum!(pub type {} = {ty};);", id.name)?;
                     }
-                    None | Some(UnexposedAttr::BridgedTypedef) => {
+                    None | Some(UnexposedAttr::BridgedTypedef | UnexposedAttr::Bridged) => {
                         // "bridged" typedefs should use a normal type alias.
                         writeln!(f, "pub type {} = {ty};", id.name)?;
                     }

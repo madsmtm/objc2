@@ -9,7 +9,8 @@ use std::ffi::{CStr, CString};
 use objc2::encode::Encode;
 
 use crate::common::*;
-use crate::Foundation::{NSPoint, NSRange, NSRect, NSSize, NSValue};
+use crate::CoreFoundation::{NSPoint, NSRect, NSSize};
+use crate::Foundation::{NSRange, NSValue};
 
 // We can't implement any auto traits for NSValue, since it can contain an
 // arbitary object!
@@ -27,7 +28,8 @@ impl NSValue {
     /// Create an `NSValue` containing an [`NSPoint`].
     ///
     /// ```
-    /// use icrate::Foundation::{NSPoint, NSValue};
+    /// use icrate::Foundation::NSValue;
+    /// use icrate::CoreFoundation::NSPoint;
     ///
     /// let val = NSValue::new::<NSPoint>(NSPoint::new(1.0, 1.0));
     /// ```

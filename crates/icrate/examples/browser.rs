@@ -11,7 +11,8 @@ use icrate::{
         NSUserInterfaceLayoutOrientationVertical, NSWindow, NSWindowStyleMaskClosable,
         NSWindowStyleMaskResizable, NSWindowStyleMaskTitled,
     },
-    Foundation::{NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize, NSURLRequest, NSURL},
+    CoreFoundation::{NSPoint, NSRect, NSSize},
+    Foundation::{NSObject, NSObjectProtocol, NSURLRequest, NSURL},
     WebKit::{WKNavigation, WKNavigationDelegate, WKWebView},
 };
 use objc2::{
@@ -40,7 +41,7 @@ declare_class!(
         #[method(initWithTextField:andWebView:)]
         #[allow(non_snake_case)]
         unsafe fn __init_withTextField_andWebView(
-            self: &mut Self,
+            self: &Self,
             text_field: &NSTextField,
             web_view: &WKWebView,
         ) -> Option<&mut Self> {

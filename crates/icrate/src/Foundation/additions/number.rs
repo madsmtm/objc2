@@ -18,7 +18,8 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use objc2::encode::Encoding;
 
 use crate::common::*;
-use crate::Foundation::{CGFloat, NSNumber};
+use crate::CoreFoundation::CGFloat;
+use crate::Foundation::NSNumber;
 
 // SAFETY: `NSNumber` is a wrapper around an integer/float/bool, and it is
 // immutable.

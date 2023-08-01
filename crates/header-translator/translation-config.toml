@@ -5,7 +5,7 @@
 ###
 
 [library.Accessibility]
-imports = ["Foundation"]
+imports = ["CoreFoundation", "Foundation"]
 macos = "11.0"
 maccatalyst = "14.0"
 ios = "14.0"
@@ -26,7 +26,7 @@ ios = "6.0"
 tvos = "9.0"
 
 [library.AppKit]
-imports = ["CoreData", "Foundation"]
+imports = ["CoreData", "CoreFoundation", "Foundation"]
 extra-features = [
     # Temporary, since some structs and statics use these
     "AppKit_NSApplication",
@@ -45,7 +45,7 @@ macos = "10.0"
 maccatalyst = "13.0"
 
 [library.AuthenticationServices]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 # Temporary, since some structs and statics use these
 extra-features = ["Foundation_NSURL"]
 macos = "10.15"
@@ -61,7 +61,7 @@ maccatalyst = "13.4"
 ios = "13.4"
 
 [library.Automator]
-imports = ["AppKit", "Foundation", "OSAKit"]
+imports = ["AppKit", "CoreFoundation", "Foundation", "OSAKit"]
 macos = "10.4"
 maccatalyst = "14.0"
 
@@ -78,7 +78,7 @@ ios = "13.0"
 tvos = "13.0"
 
 [library.BusinessChat]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 macos = "10.14"
 maccatalyst = "13.0" # Unsure
 ios = "11.0" # Unsure
@@ -121,6 +121,15 @@ extra-features = ["CoreData_NSAsynchronousFetchResult"]
 macos = "10.4"
 maccatalyst = "13.0"
 ios = "3.0"
+tvos = "9.0"
+watchos = "2.0"
+
+[library.CoreFoundation]
+imports = []
+extra-features= ["block"]
+macos = "10.0"
+maccatalyst = "13.0"
+ios = "2.0"
 tvos = "9.0"
 watchos = "2.0"
 
@@ -183,7 +192,7 @@ ios = "3.0"
 tvos = "10.0"
 
 [library.FileProvider]
-imports = ["AppKit", "Foundation", "UniformTypeIdentifiers"]
+imports = ["AppKit", "CoreFoundation", "Foundation", "UniformTypeIdentifiers"]
 macos = "10.15"
 ios = "11.0"
 
@@ -194,7 +203,7 @@ maccatalyst = "15.0"
 ios = "11.0"
 
 [library.Foundation]
-imports = []
+imports = ["CoreFoundation"]
 extra-features = [
     "objective-c",
     "block",
@@ -236,7 +245,7 @@ ios = "7.0"
 tvos = "9.0"
 
 [library.GameKit]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 extra-features = [
     "AppKit_NSViewController",
 ]
@@ -260,7 +269,7 @@ maccatalyst = "13.0"
 ios = "11.0"
 
 [library.InputMethodKit]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 macos = "10.5"
 maccatalyst = "13.0"
 
@@ -272,7 +281,7 @@ ios = "8.0"
 watchos = "9.0"
 
 [library.LocalAuthenticationEmbeddedUI]
-imports = ["AppKit", "Foundation", "LocalAuthentication"]
+imports = ["AppKit", "CoreFoundation", "Foundation", "LocalAuthentication"]
 extra-features = [
     "AppKit_NSWindow",
 ]
@@ -281,7 +290,7 @@ maccatalyst = "16.0"
 ios = "16.0"
 
 [library.LinkPresentation]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 macos = "10.15"
 maccatalyst = "13.0"
 ios = "13.0"
@@ -292,7 +301,7 @@ imports = ["AppKit", "Foundation"]
 macos = "12.0"
 
 [library.MapKit]
-imports = ["AppKit", "Contacts", "CoreLocation", "Foundation"]
+imports = ["AppKit", "Contacts", "CoreFoundation", "CoreLocation", "Foundation"]
 extra-features = [
     "MapKit_MKDirectionsResponse",
     "MapKit_MKETAResponse",
@@ -306,7 +315,7 @@ tvos = "9.2"
 watchos = "2.0"
 
 [library.MediaPlayer]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 macos = "10.12.1"
 maccatalyst = "13.0"
 ios = "2.0"
@@ -327,7 +336,7 @@ maccatalyst = "16.0"
 ios = "16.0"
 
 [library.MetalKit]
-imports = ["AppKit", "Foundation", "Metal"]
+imports = ["AppKit", "CoreFoundation", "Foundation", "Metal"]
 # Temporary, since some structs and statics use these
 extra-features = [
     "Metal_MTLRenderPipelineReflection",
@@ -346,7 +355,7 @@ ios = "13.0"
 
 [library.Photos]
 name = "PhotoKit"
-imports = ["AppKit", "CoreLocation", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "CoreLocation", "Foundation"]
 macos = "10.11"
 maccatalyst = "13.0"
 ios = "8.0"
@@ -354,12 +363,12 @@ tvos = "10.0"
 watchos = "9.0"
 
 [library.OSAKit]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 macos = "10.4"
 
 [library.QuartzCore]
 name = "CoreAnimation"
-imports = ["Foundation"]
+imports = ["CoreFoundation", "Foundation"]
 macos = "10.3"
 maccatalyst = "13.0"
 ios = "2.0"
@@ -380,7 +389,7 @@ maccatalyst = "13.0"
 ios = "10.0"
 
 [library.StoreKit]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 macos = "10.7"
 maccatalyst = "13.0"
 ios = "3.0"
@@ -407,7 +416,7 @@ tvos = "10.0"
 watchos = "3.0"
 
 [library.WebKit]
-imports = ["AppKit", "Foundation"]
+imports = ["AppKit", "CoreFoundation", "Foundation"]
 extra-features = ["Foundation_NSAttributedString"]
 macos = "10.2"
 maccatalyst = "13.0"
@@ -1567,3 +1576,27 @@ skipped-protocols = ["NSCopying", "NSMutableCopying"]
 skipped-protocols = ["NSCopying", "NSMutableCopying"]
 [class.NSPurgeableData]
 skipped-protocols = ["NSCopying", "NSMutableCopying"]
+
+# Uses variadics
+[fn.CFStringCreateWithFormatAndArguments]
+skipped = true
+[fn.CFStringCreateStringWithValidatedFormatAndArguments]
+skipped = true
+[fn.CFStringAppendFormatAndArguments]
+skipped = true
+
+# Name clash with containing module
+[enum.__CFByteOrder]
+skipped = true
+
+# Needs dispatch_queue_t
+[fn.CFMessagePortSetDispatchQueue]
+skipped = true
+[fn.CFReadStreamSetDispatchQueue]
+skipped = true
+[fn.CFWriteStreamSetDispatchQueue]
+skipped = true
+[fn.CFReadStreamCopyDispatchQueue]
+skipped = true
+[fn.CFWriteStreamCopyDispatchQueue]
+skipped = true

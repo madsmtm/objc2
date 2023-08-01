@@ -7,7 +7,8 @@ use std::os::raw::c_char;
 
 use objc2::rc::{__RcTestObject, __ThreadTestData};
 
-use icrate::Foundation::{self, NSPoint, NSRange, NSRect, NSSize, NSValue};
+use icrate::CoreFoundation::{NSPoint, NSRect, NSSize};
+use icrate::Foundation::{self, NSRange, NSValue};
 
 #[test]
 fn basic() {

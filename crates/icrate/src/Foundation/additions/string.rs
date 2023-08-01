@@ -19,6 +19,7 @@ use objc2::rc::{autoreleasepool_leaking, AutoreleasePool};
 use objc2::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
 
 use crate::common::*;
+use crate::CoreFoundation::*;
 #[cfg(feature = "Foundation_NSMutableString")]
 use crate::Foundation::NSMutableString;
 use crate::Foundation::{self, NSString};
@@ -67,16 +68,10 @@ impl NSString {
     #[cfg(feature = "apple")]
     // TODO: Finish this
     fn as_str_wip(&self) -> Option<&str> {
-        type CFStringEncoding = u32;
-        #[allow(non_upper_case_globals)]
-        // https://developer.apple.com/documentation/corefoundation/cfstringbuiltinencodings/kcfstringencodingutf8?language=objc
-        const kCFStringEncodingUTF8: CFStringEncoding = 0x08000100;
-        extern "C" {
-            // https://developer.apple.com/documentation/corefoundation/1542133-cfstringgetcstringptr?language=objc
-            fn CFStringGetCStringPtr(s: &NSString, encoding: CFStringEncoding) -> *const c_char;
-        }
-        let bytes = unsafe { CFStringGetCStringPtr(self, kCFStringEncodingUTF8) };
-        NonNull::new(bytes as *mut u8).map(|bytes| {
+        let bytes = unsafe {
+            CFStringGetCStringPtr(self as *const _ as CFStringRef, kCFStringEncodingUTF8)
+        };
+        NonNull::new(bytes.cast()).map(|bytes| {
             let len = self.len();
             let bytes: &[u8] = unsafe { slice::from_raw_parts(bytes.as_ptr(), len) };
             str::from_utf8(bytes).unwrap()
@@ -95,12 +90,8 @@ impl NSString {
     #[cfg(feature = "apple")]
     // TODO: Finish this
     fn as_utf16(&self) -> Option<&[u16]> {
-        extern "C" {
-            // https://developer.apple.com/documentation/corefoundation/1542939-cfstringgetcharactersptr?language=objc
-            fn CFStringGetCharactersPtr(s: &NSString) -> *const u16;
-        }
-        let ptr = unsafe { CFStringGetCharactersPtr(self) };
-        NonNull::new(ptr as *mut u16)
+        let ptr = unsafe { CFStringGetCharactersPtr(self as *const _ as CFStringRef) };
+        NonNull::new(ptr)
             .map(|ptr| unsafe { slice::from_raw_parts(ptr.as_ptr(), self.len_utf16()) })
     }
 
