@@ -8,6 +8,7 @@ use crate::{declare_class, msg_send, msg_send_id, ClassType};
 
 // TODO: Put tests that use this in another crate
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[allow(missing_copy_implementations)]
 #[doc(hidden)]
 pub struct __ThreadTestData {
     pub alloc: usize,

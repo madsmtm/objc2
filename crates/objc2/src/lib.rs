@@ -159,6 +159,8 @@
 #![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]
 #![cfg_attr(feature = "unstable-docsrs", feature(doc_cfg, doc_auto_cfg))]
 #![warn(elided_lifetimes_in_paths)]
+#![warn(missing_copy_implementations)]
+#![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
 #![deny(non_ascii_idents)]
 #![warn(unreachable_pub)]

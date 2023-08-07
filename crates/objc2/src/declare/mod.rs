@@ -288,6 +288,7 @@ method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P);
 /// `Allocated<T>`, without exposing that implementation to users.
 #[doc(hidden)]
 #[repr(transparent)]
+#[derive(Debug)]
 pub struct __IdReturnValue(pub(crate) *mut AnyObject);
 
 // SAFETY: `__IdReturnValue` is `#[repr(transparent)]`
@@ -742,6 +743,14 @@ impl ProtocolBuilder {
             ffi::objc_registerProtocol(self.as_mut_ptr());
             self.proto.as_ref()
         }
+    }
+}
+
+impl Drop for ProtocolBuilder {
+    fn drop(&mut self) {
+        // We implement Drop to communicate to the type-system that this type
+        // may drop in the future (once Apple add some way of disposing
+        // protocols).
     }
 }
 

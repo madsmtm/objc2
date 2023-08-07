@@ -8,6 +8,7 @@ use crate::ffi;
 use crate::runtime::{AnyClass, Sel};
 
 /// Allows storing a [`Sel`] in a static and lazily loading it.
+#[derive(Debug)]
 pub struct CachedSel {
     ptr: AtomicPtr<ffi::objc_selector>,
 }
@@ -52,6 +53,7 @@ impl CachedSel {
 }
 
 /// Allows storing a [`AnyClass`] reference in a static and lazily loading it.
+#[derive(Debug)]
 pub struct CachedClass {
     ptr: AtomicPtr<AnyClass>,
 }

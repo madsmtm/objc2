@@ -1,4 +1,5 @@
 #![cfg(feature = "Foundation_NSString")]
+#![allow(missing_copy_implementations)]
 //! Macro for making a static NSString.
 //!
 //! This closely follows what clang does, see:
@@ -37,6 +38,7 @@ extern "C" {
 /// [`CFRuntimeBase`]: <https://github.com/apple-oss-distributions/CF/blob/CF-1153.18/CFRuntime.h#L216-L228>
 /// [`CF_CONST_STRING`]: <https://github.com/apple-oss-distributions/CF/blob/CF-1153.18/CFInternal.h#L332-L336>
 #[repr(C)]
+#[derive(Debug)]
 pub struct CFConstString {
     isa: &'static AnyClass,
     // Important that we don't use `usize` here, since that would be wrong on
@@ -118,6 +120,7 @@ pub const fn is_ascii_no_nul(bytes: &[u8]) -> bool {
     true
 }
 
+#[derive(Debug)]
 pub struct Utf16Char {
     pub repr: [u16; 2],
     pub len: usize,
@@ -147,6 +150,7 @@ impl Utf16Char {
     }
 }
 
+#[derive(Debug)]
 pub struct EncodeUtf16Iter {
     str: &'static [u8],
     index: usize,

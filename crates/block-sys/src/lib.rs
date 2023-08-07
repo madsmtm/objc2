@@ -14,6 +14,7 @@
 
 #![no_std]
 #![warn(elided_lifetimes_in_paths)]
+#![warn(missing_copy_implementations)]
 #![deny(non_ascii_idents)]
 #![warn(unreachable_pub)]
 #![deny(unsafe_op_in_unsafe_fn)]
@@ -291,6 +292,7 @@ pub struct Block_layout {
 }
 
 #[repr(C)]
+#[allow(missing_copy_implementations)]
 pub struct Block_descriptor_header {
     /// Reserved for future use. Currently always 0.
     pub reserved: c_ulong, // usize

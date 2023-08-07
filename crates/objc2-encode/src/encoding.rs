@@ -34,7 +34,8 @@ use crate::EncodingBox;
 /// use objc2_encode::Encoding;
 /// assert!(Encoding::Array(10, &Encoding::FloatComplex).equivalent_to_str("[10jf]"));
 /// ```
-// Not `Copy`, since this may one day contain `Box`
+// Not `Copy`, since this may one day be merged with `EncodingBox`
+#[allow(missing_copy_implementations)]
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 // See <https://en.cppreference.com/w/c/language/type>
 #[non_exhaustive] // Maybe we're missing some encodings?

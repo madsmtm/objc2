@@ -702,6 +702,7 @@ impl<T: ?Sized> fmt::Pointer for Id<T> {
     }
 }
 
+#[allow(missing_debug_implementations)]
 mod private {
     use crate::runtime::AnyObject;
     use crate::ClassType;

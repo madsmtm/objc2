@@ -6,6 +6,7 @@ use objc2::rc::Id;
 use objc2::Message;
 
 /// Allows storing an `Id` in a static and lazily loading it.
+#[derive(Debug)]
 pub struct CachedId<T> {
     ptr: AtomicPtr<T>,
 }
