@@ -373,7 +373,7 @@ macro_rules! declare_class {
 
         $ivar_helper_module_v:vis mod $ivar_helper_module:ident;
 
-        unsafe impl ClassType for $for:ty {
+        unsafe impl ClassType for $for:ident {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
 
@@ -419,7 +419,7 @@ macro_rules! declare_class {
             $($fields:tt)*
         }
 
-        unsafe impl ClassType for $for:ty {
+        unsafe impl ClassType for $for:ident {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
 
@@ -463,7 +463,7 @@ macro_rules! declare_class {
         $(#[$m:meta])*
         $v:vis struct $name:ident;
 
-        unsafe impl ClassType for $for:ty {
+        unsafe impl ClassType for $for:ident {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
 
@@ -509,7 +509,7 @@ macro_rules! __inner_declare_class {
     {
         ($($ivar_helper_module:ident)?)
 
-        unsafe impl ClassType for $for:ty {
+        unsafe impl ClassType for $for:ident {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
 
@@ -628,6 +628,14 @@ macro_rules! __inner_declare_class {
         $crate::__declare_class_methods! {
             $($methods)*
         }
+
+        // SAFETY: This macro only allows non-generic classes and non-generic classes are always
+        // valid downcast targets.
+        unsafe impl $crate::DowncastTarget for $for
+        where
+            Self: 'static,
+        {
+        }
     };
 }
 
@@ -650,7 +658,7 @@ macro_rules! __declare_class_methods {
     // With protocol
     (
         $(#[$m:meta])*
-        unsafe impl $protocol:ident for $for:ty {
+        unsafe impl $protocol:ident for $for:ident {
             $($methods:tt)*
         }
 
@@ -677,7 +685,7 @@ macro_rules! __declare_class_methods {
     // Without protocol
     (
         $(#[$m:meta])*
-        unsafe impl $for:ty {
+        unsafe impl $for:ident {
             $($methods:tt)*
         }
 
@@ -712,7 +720,7 @@ macro_rules! __declare_class_register_methods {
         ($builder:ident)
 
         $(#[$($m:tt)*])*
-        unsafe impl $protocol:ident for $for:ty {
+        unsafe impl $protocol:ident for $for:ident {
             $($methods:tt)*
         }
 
@@ -757,7 +765,7 @@ macro_rules! __declare_class_register_methods {
         ($builder:ident)
 
         $(#[$($m:tt)*])*
-        unsafe impl $for:ty {
+        unsafe impl $for:ident {
             $($methods:tt)*
         }
 

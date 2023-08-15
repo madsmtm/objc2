@@ -185,6 +185,7 @@ extern "C" {}
 pub use objc_sys as ffi;
 
 pub use self::class_type::ClassType;
+pub use self::downcast::DowncastTarget;
 #[doc(no_inline)]
 pub use self::encode::{Encode, Encoding, RefEncode};
 pub use self::message::{Message, MessageArguments, MessageReceiver};
@@ -208,6 +209,7 @@ macro_rules! __hash_idents {
 pub mod __macro_helpers;
 mod class_type;
 pub mod declare;
+mod downcast;
 pub mod encode;
 pub mod exception;
 mod macros;

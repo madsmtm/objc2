@@ -4,6 +4,7 @@ use std::os::raw::c_int;
 
 #[cfg(feature = "Foundation_all")]
 use icrate::Foundation::NSNumber;
+use icrate::Foundation::{NSArray, NSException, NSMutableString, NSString};
 use objc2::encode::{Encoding, RefEncode};
 use objc2::rc::{autoreleasepool, AutoreleasePool, Id};
 use objc2::runtime::{
@@ -328,4 +329,30 @@ fn test_protocol() {
 
     // Check that transforming to `NSObject` works
     let _obj: &ProtocolObject<NSObject> = ProtocolObject::from_ref(&*proto);
+}
+
+#[test]
+fn downcast_basics() {
+    let obj = NSString::new();
+    assert!(matches!(obj.downcast::<NSString>(), Some(_)));
+
+    let obj = Id::into_super(obj);
+    assert!(matches!(obj.downcast::<NSNumber>(), None));
+    assert!(matches!(obj.downcast::<NSString>(), Some(_)));
+
+    let obj = NSMutableString::new();
+    assert!(matches!(obj.downcast::<NSMutableString>(), Some(_)));
+    assert!(matches!(obj.downcast::<NSString>(), Some(_)));
+    assert!(matches!(obj.downcast::<NSObject>(), Some(_)));
+    assert!(matches!(obj.downcast::<NSException>(), None));
+
+    let obj = Id::into_super(Id::into_super(obj));
+    assert!(matches!(obj.downcast::<NSMutableString>(), Some(_)));
+    assert!(matches!(obj.downcast::<NSString>(), Some(_)));
+    assert!(matches!(obj.downcast::<NSObject>(), Some(_)));
+    assert!(matches!(obj.downcast::<NSException>(), None));
+
+    let obj: Id<NSArray<NSString>> = NSArray::new();
+    assert!(matches!(obj.downcast::<NSString>(), None));
+    assert!(matches!(obj.downcast::<NSArray<AnyObject>>(), Some(_)));
 }
