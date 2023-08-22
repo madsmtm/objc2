@@ -78,6 +78,12 @@ required-features = [
     "unstable-example-browser"
 ]
 
+[[example]]
+name = "metal"
+required-features = [
+    "unstable-example-metal"
+]
+
 [features]
 default = ["std", "apple"]
 
@@ -162,6 +168,25 @@ unstable-example-browser = [
     "WebKit",
     "WebKit_WKNavigation",
     "WebKit_WKWebView",
+]
+unstable-example-metal = [
+    "apple",
+    "AppKit",
+    "AppKit_NSWindow",
+    "Foundation",
+    "Foundation_NSCoder",
+    "Foundation_NSError",
+    "Foundation_NSNotification",
+    "Foundation_NSString",
+    "Metal",
+    "Metal_MTLCompileOptions",
+    "Metal_MTLRenderPassDescriptor",
+    "Metal_MTLRenderPipelineColorAttachmentDescriptor",
+    "Metal_MTLRenderPipelineColorAttachmentDescriptorArray",
+    "Metal_MTLRenderPipelineDescriptor",
+    "MetalKit",
+    "MetalKit_MTKView",
+    "Metal_MTLRenderPassDescriptor",
 ]
 
 # Helps with CI
