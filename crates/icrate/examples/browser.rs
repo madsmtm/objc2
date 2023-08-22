@@ -1,4 +1,6 @@
 #![deny(unsafe_op_in_unsafe_fn)]
+#![cfg_attr(not(target_os = "macos"), allow(unused))]
+use std::ptr::NonNull;
 
 use icrate::{
     ns_string,
@@ -40,15 +42,16 @@ declare_class!(
         #[method(initWithTextField:andWebView:)]
         #[allow(non_snake_case)]
         unsafe fn __init_withTextField_andWebView(
-            self: &mut Self,
+            this: *mut Self,
             text_field: &NSTextField,
             web_view: &WKWebView,
-        ) -> Option<&mut Self> {
-            let this: Option<&mut Self> = msg_send![super(self), init];
-            let this = this?;
-            Ivar::write(&mut this.text_field, text_field.retain());
-            Ivar::write(&mut this.web_view, web_view.retain());
-            Some(this)
+        ) -> Option<NonNull<Self>> {
+            let this: Option<&mut Self> = msg_send![super(this), init];
+            this.map(|this| {
+                Ivar::write(&mut this.text_field, text_field.retain());
+                Ivar::write(&mut this.web_view, web_view.retain());
+                NonNull::from(this)
+            })
         }
     }
 
