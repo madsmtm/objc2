@@ -152,6 +152,13 @@ declare_class!(
         #[method(drawInMTKView:)]
         #[allow(non_snake_case)]
         unsafe fn drawInMTKView(&self, _view: &MTKView) {
+            // FIXME: icrate `MTKView` doesn't have a generated binding for `currentDrawable` yet
+            // (because it needs a definition of `CAMetalDrawable`, which we don't support yet) so
+            // we have to use a raw `msg_send_id` call here instead.
+            let current_drawable: Option<Id<ProtocolObject<dyn MTLDrawable>>> =
+                msg_send_id![&*self.mtk_view, currentDrawable];
+
+            let Some(current_drawable) = current_drawable else { return; };
             let Some(command_buffer) = self.command_queue.commandBuffer() else { return; };
             let Some(pass_descriptor) = (unsafe { self.mtk_view.currentRenderPassDescriptor() }) else { return; };
             let Some(encoder) = command_buffer.renderCommandEncoderWithDescriptor(&pass_descriptor) else { return; };
@@ -178,12 +185,6 @@ declare_class!(
                 encoder.drawPrimitives_vertexStart_vertexCount(MTLPrimitiveTypeTriangle, 0, 3)
             };
             encoder.endEncoding();
-
-            // FIXME: icrate `MTKView` doesn't have a generated binding for `currentDrawable` yet
-            // (because it needs a definition of `CAMetalDrawable`, which we don't support yet) so
-            // we have to use a raw `msg_send_id` call here instead.
-            let current_drawable: Id<ProtocolObject<dyn MTLDrawable>> =
-                msg_send_id![&*self.mtk_view, currentDrawable];
 
             command_buffer.presentDrawable(&current_drawable);
 
