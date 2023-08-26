@@ -1,4 +1,4 @@
-use icrate::ns_string;
+use icrate::Foundation::ns_string;
 
 fn main() {
     let s: &str = "abc";

@@ -2,8 +2,7 @@
 #![cfg(feature = "Foundation_NSString")]
 use objc2::rc::{__RcTestObject, __ThreadTestData};
 
-use icrate::ns_string;
-use icrate::Foundation::{self, NSMutableSet, NSSet, NSString};
+use icrate::Foundation::{self, ns_string, NSMutableSet, NSSet, NSString};
 
 #[test]
 fn test_insert() {

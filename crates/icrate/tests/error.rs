@@ -1,7 +1,6 @@
 #![cfg(feature = "Foundation_NSError")]
 #![cfg(feature = "Foundation_NSString")]
-use icrate::ns_string;
-use icrate::Foundation::{NSError, NSURLErrorDomain};
+use icrate::Foundation::{ns_string, NSError, NSURLErrorDomain};
 
 #[test]
 fn basic() {

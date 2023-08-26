@@ -254,8 +254,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use icrate::Foundation::{NSSet, NSString};
-        /// use icrate::ns_string;
+        /// use icrate::Foundation::{ns_string, NSSet, NSString};
         ///
         /// let strs = ["one", "two", "three"].map(NSString::from_str);
         /// let set = NSSet::from_id_slice(&strs);
@@ -272,8 +271,7 @@ extern_methods!(
         /// # Examples
         ///
         /// ```
-        /// use icrate::Foundation::{NSSet, NSString};
-        /// use icrate::ns_string;
+        /// use icrate::Foundation::{ns_string, NSSet, NSString};
         ///
         /// let strs = ["one", "two", "three"].map(NSString::from_str);
         /// let set = NSSet::from_id_slice(&strs);
@@ -384,8 +382,7 @@ impl<T: Message + PartialEq> NSMutableSet<T> {
     /// # Examples
     ///
     /// ```
-    /// use icrate::Foundation::{NSMutableSet, NSString};
-    /// use icrate::ns_string;
+    /// use icrate::Foundation::{ns_string, NSMutableSet, NSString};
     ///
     /// let mut set = NSMutableSet::new();
     ///

@@ -92,8 +92,7 @@ extern_methods!(
             )),
             doc = "```ignore"
         )]
-        /// use icrate::Foundation::{NSMutableDictionary, NSMutableString, NSString};
-        /// use icrate::ns_string;
+        /// use icrate::Foundation::{ns_string, NSMutableDictionary, NSMutableString, NSString};
         ///
         /// let mut dict = NSMutableDictionary::new();
         /// dict.insert(NSString::from_str("one"), NSMutableString::new());
@@ -227,8 +226,7 @@ impl<K: Message, V: Message> NSMutableDictionary<K, V> {
     /// # Examples
     ///
     /// ```
-    /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
-    /// use icrate::ns_string;
+    /// use icrate::Foundation::{ns_string, NSMutableDictionary, NSObject, NSString};
     ///
     /// let mut dict = NSMutableDictionary::new();
     /// dict.insert(NSString::from_str("one"), NSObject::new());

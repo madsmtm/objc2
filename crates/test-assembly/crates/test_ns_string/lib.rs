@@ -1,8 +1,7 @@
 //! Test the output of the `ns_string!` macro.
 #![cfg(feature = "Foundation_NSString")]
 
-use icrate::ns_string;
-use icrate::Foundation::NSString;
+use icrate::Foundation::{ns_string, NSString};
 
 // Temporary to allow testing putting string references in statics.
 // This doesn't yet compile on other platforms, but could in the future!

@@ -87,6 +87,10 @@ pub use self::additions::*;
 pub use self::fixes::*;
 pub use self::generated::*;
 
+#[cfg(feature = "Foundation_NSString")]
+#[doc(inline)]
+pub use crate::__ns_string as ns_string;
+
 // Available under Foundation, so makes sense here as well:
 // https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc
 pub use objc2::ffi::{NSInteger, NSUInteger};

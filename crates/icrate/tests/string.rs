@@ -3,8 +3,7 @@ use std::ptr;
 
 use objc2::rc::autoreleasepool;
 
-use icrate::ns_string;
-use icrate::Foundation::{self, NSString};
+use icrate::Foundation::{self, ns_string, NSString};
 
 #[test]
 fn test_equality() {

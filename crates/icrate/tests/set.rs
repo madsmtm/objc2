@@ -4,8 +4,7 @@
 
 use objc2::rc::{__RcTestObject, __ThreadTestData};
 
-use icrate::ns_string;
-use icrate::Foundation::{self, NSNumber, NSObject, NSSet, NSString};
+use icrate::Foundation::{self, ns_string, NSNumber, NSObject, NSSet, NSString};
 
 #[test]
 fn test_new() {
