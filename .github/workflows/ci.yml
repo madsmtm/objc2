@@ -262,13 +262,13 @@ jobs:
 
   header-translator:
     name: Verify header translator output
-    runs-on: macos-12
+    runs-on: macos-13
     needs:
     - fmt
     - lint
 
     env:
-      DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_14.3.1.app/Contents/Developer
 
     steps:
     - uses: actions/checkout@v3

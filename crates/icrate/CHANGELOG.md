@@ -13,6 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 * Moved the `ns_string!` macro to `icrate::Foundation::ns_string`. The old
   location in the crate root is deprecated.
+* Use SDK from Xcode 14.3.1 (previously Xcode 14.2).
+* **BREAKING**: The following two methods on `MTLAccelerationStructureCommandEncoder` now take a nullable scratch buffer:
+  - `refitAccelerationStructure_descriptor_destination_scratchBuffer_scratchBufferOffset`
+  - `refitAccelerationStructure_descriptor_destination_scratchBuffer_scratchBufferOffset_options`
 
 
 ## icrate 0.0.4 - 2023-07-31
