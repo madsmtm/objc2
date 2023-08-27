@@ -2,8 +2,7 @@
 #![cfg_attr(not(target_os = "macos"), allow(unused))]
 use std::ptr::NonNull;
 
-use icrate::ns_string;
-use icrate::Foundation::{NSCopying, NSObject, NSString};
+use icrate::Foundation::{ns_string, NSCopying, NSObject, NSString};
 use objc2::declare::{Ivar, IvarBool, IvarDrop, IvarEncode};
 use objc2::rc::Id;
 use objc2::runtime::AnyObject;

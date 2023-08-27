@@ -1,6 +1,5 @@
-use icrate::ns_string;
 use icrate::objc2::rc::autoreleasepool;
-use icrate::Foundation::{NSArray, NSDictionary, NSObject};
+use icrate::Foundation::{ns_string, NSArray, NSDictionary, NSObject};
 
 fn main() {
     // Create and compare NSObjects

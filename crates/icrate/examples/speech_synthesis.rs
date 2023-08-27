@@ -10,8 +10,7 @@
 use std::thread;
 use std::time::Duration;
 
-use icrate::ns_string;
-use icrate::Foundation::{NSObject, NSString};
+use icrate::Foundation::{ns_string, NSObject, NSString};
 use objc2::mutability::InteriorMutable;
 use objc2::rc::Id;
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};

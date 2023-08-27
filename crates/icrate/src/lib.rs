@@ -148,3 +148,13 @@ pub mod UniformTypeIdentifiers;
 pub mod UserNotifications;
 #[cfg(feature = "WebKit")]
 pub mod WebKit;
+
+/// Deprecated alias of [`Foundation::ns_string`][crate::Foundation::ns_string].
+#[macro_export]
+#[deprecated = "use icrate::Foundation::ns_string instead"]
+#[cfg(feature = "Foundation_NSString")]
+macro_rules! ns_string {
+    ($s:expr) => {
+        $crate::Foundation::ns_string!($s)
+    };
+}

@@ -27,8 +27,7 @@ Currently supports:
 ## Example
 
 ```rust
-use icrate::Foundation::{NSCopying, NSArray};
-use icrate::ns_string;
+use icrate::Foundation::{ns_string, NSCopying, NSArray};
 
 let string = ns_string!("world");
 println!("hello {string}");

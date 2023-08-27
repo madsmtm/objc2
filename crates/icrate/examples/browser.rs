@@ -3,7 +3,6 @@
 use std::ptr::NonNull;
 
 use icrate::{
-    ns_string,
     AppKit::{
         NSApplication, NSApplicationActivationPolicyRegular, NSBackingStoreBuffered,
         NSBezelStyleShadowlessSquare, NSButton, NSColor, NSControl, NSControlTextEditingDelegate,
@@ -13,7 +12,9 @@ use icrate::{
         NSUserInterfaceLayoutOrientationVertical, NSWindow, NSWindowStyleMaskClosable,
         NSWindowStyleMaskResizable, NSWindowStyleMaskTitled,
     },
-    Foundation::{NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize, NSURLRequest, NSURL},
+    Foundation::{
+        ns_string, NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize, NSURLRequest, NSURL,
+    },
     WebKit::{WKNavigation, WKNavigationDelegate, WKWebView},
 };
 use objc2::{

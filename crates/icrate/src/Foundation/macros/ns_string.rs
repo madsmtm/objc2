@@ -36,8 +36,7 @@
 /// Creating a static `NSString`.
 ///
 /// ```
-/// use icrate::ns_string;
-/// use icrate::Foundation::NSString;
+/// use icrate::Foundation::{ns_string, NSString};
 ///
 /// let hello: &'static NSString = ns_string!("hello");
 /// assert_eq!(hello.to_string(), "hello");
@@ -46,7 +45,7 @@
 /// Creating a `NSString` from a `const` `&str`.
 ///
 /// ```
-/// # use icrate::ns_string;
+/// # use icrate::Foundation::ns_string;
 /// const EXAMPLE: &str = "example";
 /// assert_eq!(ns_string!(EXAMPLE).to_string(), EXAMPLE);
 /// ```
@@ -54,7 +53,7 @@
 /// Creating unicode strings.
 ///
 /// ```
-/// # use icrate::ns_string;
+/// # use icrate::Foundation::ns_string;
 /// let hello_ru = ns_string!("Привет");
 /// assert_eq!(hello_ru.to_string(), "Привет");
 /// ```
@@ -62,13 +61,18 @@
 /// Creating a string containing a NUL byte:
 ///
 /// ```
-/// # use icrate::ns_string;
+/// # use icrate::Foundation::ns_string;
 /// assert_eq!(ns_string!("example\0").to_string(), "example\0");
 /// assert_eq!(ns_string!("exa\0mple").to_string(), "exa\0mple");
 /// ```
-#[cfg(feature = "Foundation_NSString")] // For auto_doc_cfg
+// For auto_doc_cfg
+#[cfg(feature = "Foundation_NSString")]
 #[macro_export]
-macro_rules! ns_string {
+// `macro_export` places the macro in the crate root, while we'd rather have
+// it scoped under `Foundation`; so let's call this something private, and
+// export it there with `#[doc(inline)]` instead.
+#[doc(hidden)]
+macro_rules! __ns_string {
     ($s:expr) => {{
         // Immediately place in constant for better UI
         const INPUT: &str = $s;
