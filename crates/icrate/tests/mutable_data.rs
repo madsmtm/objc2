@@ -81,7 +81,12 @@ fn test_as_ref_borrow() {
     fn impls_borrow<T: AsRef<U> + Borrow<U> + ?Sized, U: ?Sized>(_: &T) {}
     fn impls_borrow_mut<T: AsMut<U> + BorrowMut<U> + ?Sized, U: ?Sized>(_: &mut T) {}
 
-    let mut obj = NSMutableData::new();
+    // TODO: For some reason `new` doesn't work on GNUStep in release mode?
+    let mut obj = if cfg!(feature = "gnustep-1-8") {
+        NSMutableData::with_bytes(&[])
+    } else {
+        NSMutableData::new()
+    };
     impls_borrow::<Id<NSMutableData>, NSMutableData>(&obj);
     impls_borrow_mut::<Id<NSMutableData>, NSMutableData>(&mut obj);
 
