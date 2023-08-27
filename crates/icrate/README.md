@@ -14,7 +14,7 @@ more details.
 
 ## Supported versions
 
-These bindings are automatically generated from the SDKs in Xcode 14.2 (will
+These bindings are automatically generated from the SDKs in Xcode 14.3.1 (will
 be periodically updated).
 
 Currently supports:

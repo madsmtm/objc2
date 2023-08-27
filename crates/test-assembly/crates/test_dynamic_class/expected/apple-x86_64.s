@@ -179,14 +179,14 @@ LBB5_3:
 	.globl	_use_in_loop
 	.p2align	4, 0x90
 _use_in_loop:
+	test	rdi, rdi
+	je	LBB6_6
 	push	rbp
 	mov	rbp, rsp
 	push	r15
 	push	r14
 	push	r12
 	push	rbx
-	test	rdi, rdi
-	je	LBB6_5
 	mov	rbx, rdi
 	lea	r14, [rip + SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)]
 	lea	r15, [rip + l_anon.[ID].10]
@@ -211,6 +211,7 @@ LBB6_5:
 	pop	r14
 	pop	r15
 	pop	rbp
+LBB6_6:
 	ret
 
 	.section	__TEXT,__const

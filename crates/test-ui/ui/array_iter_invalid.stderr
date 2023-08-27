@@ -18,9 +18,9 @@ error[E0277]: the trait bound `&mut Id<NSArray<NSMutableString>>: IntoIterator` 
   |              ^^^^^^^^ the trait `IntoIterator` is not implemented for `&mut Id<NSArray<NSMutableString>>`
   |
   = help: the following other types implement trait `IntoIterator`:
+            Id<T>
             &'a Id<T>
             &'a mut Id<T>
-            Id<T>
   = note: `IntoIterator` is implemented for `&objc2::rc::Id<icrate::Foundation::NSArray<icrate::Foundation::NSMutableString>>`, but not for `&mut objc2::rc::Id<icrate::Foundation::NSArray<icrate::Foundation::NSMutableString>>`
 
 error[E0277]: the trait bound `&mut Id<NSMutableArray<NSString>>: IntoIterator` is not satisfied
@@ -31,7 +31,7 @@ error[E0277]: the trait bound `&mut Id<NSMutableArray<NSString>>: IntoIterator` 
   |
   = note: `IntoIterator` is implemented for `&objc2::rc::Id<icrate::Foundation::NSMutableArray<icrate::Foundation::NSString>>`, but not for `&mut objc2::rc::Id<icrate::Foundation::NSMutableArray<icrate::Foundation::NSString>>`
 help: consider removing the leading `&`-reference
-   |
+  |
 16 -     for s in &mut arr {
 16 +     for s in arr {
    |
@@ -43,6 +43,6 @@ error[E0277]: the trait bound `Id<NSArray<NSMutableString>>: IntoIterator` is no
   |              ^^^ the trait `IntoIterator` is not implemented for `Id<NSArray<NSMutableString>>`
   |
   = help: the following other types implement trait `IntoIterator`:
+            Id<T>
             &'a Id<T>
             &'a mut Id<T>
-            Id<T>

@@ -231,6 +231,8 @@ impl<T: ?Sized + Message> Id<T> {
     /// This is an associated method, and must be called as
     /// `Id::as_mut_ptr(obj)`.
     #[inline]
+    #[allow(unknown_lints)] // New lint below
+    #[allow(clippy::needless_pass_by_ref_mut)]
     pub fn as_mut_ptr(this: &mut Self) -> *mut T
     where
         T: IsMutable,

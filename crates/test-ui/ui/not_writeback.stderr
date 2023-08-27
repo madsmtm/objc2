@@ -5,14 +5,14 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
   |                                         ^^^^^^^^^^^^^^^^^ the trait `RefEncode` is not implemented for `Id<NSObject>`
   |
   = help: the following other types implement trait `RefEncode`:
-            &'a T
-            &'a mut T
-            *const T
-            *const c_void
-            *mut T
-            *mut c_void
-            AnyClass
-            AnyObject
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
           and $N others
   = note: required for `&mut Id<NSObject>` to implement `Encode`
   = note: required for `&mut Id<NSObject>` to implement `EncodeReturn`
@@ -37,14 +37,14 @@ error[E0277]: the trait bound `Id<NSObject>: Encode` is not satisfied
   |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `Encode`:
-            &'a T
-            &'a mut T
-            *const T
-            *const c_void
-            *mut T
-            *mut c_void
-            AtomicI16
-            AtomicI32
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
           and $N others
   = note: required for `Id<NSObject>` to implement `EncodeConvertArgument`
   = note: required for `(Id<NSObject>,)` to implement `MessageArguments`
@@ -68,14 +68,14 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
   |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `RefEncode`:
-            &'a T
-            &'a mut T
-            *const T
-            *const c_void
-            *mut T
-            *mut c_void
-            AnyClass
-            AnyObject
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
           and $N others
   = note: required for `&Id<NSObject>` to implement `Encode`
   = note: required for `&Id<NSObject>` to implement `EncodeConvertArgument`
@@ -100,14 +100,14 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
   |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `RefEncode`:
-            &'a T
-            &'a mut T
-            *const T
-            *const c_void
-            *mut T
-            *mut c_void
-            AnyClass
-            AnyObject
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
           and $N others
   = note: required for `&Id<NSObject>` to implement `Encode`
   = note: 1 redundant requirement hidden
@@ -134,14 +134,14 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
   |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `RefEncode`:
-            &'a T
-            &'a mut T
-            *const T
-            *const c_void
-            *mut T
-            *mut c_void
-            AnyClass
-            AnyObject
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
           and $N others
   = note: required for `*mut Id<NSObject>` to implement `Encode`
   = note: required for `*mut Id<NSObject>` to implement `EncodeConvertArgument`
@@ -166,14 +166,14 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
   |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `RefEncode`:
-            &'a T
-            &'a mut T
-            *const T
-            *const c_void
-            *mut T
-            *mut c_void
-            AnyClass
-            AnyObject
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
           and $N others
   = note: required for `&mut Id<NSObject>` to implement `RefEncode`
   = note: required for `&mut &mut Id<NSObject>` to implement `Encode`

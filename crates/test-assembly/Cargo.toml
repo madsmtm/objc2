@@ -10,7 +10,7 @@ license = "MIT"
 build = "build.rs"
 
 [dependencies]
-cargo_metadata = "0.15.2"
+cargo_metadata = "0.17"
 rustc-demangle = "0.1"
 regex = "1.6"
 lazy_static = "1.4.0"

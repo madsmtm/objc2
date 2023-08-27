@@ -1172,6 +1172,8 @@ AuthenticationServices_ASAuthorizationSingleSignOnProvider = []
 AuthenticationServices_ASAuthorizationSingleSignOnRequest = [
     "AuthenticationServices_ASAuthorizationOpenIDRequest",
 ]
+AuthenticationServices_ASAuthorizationWebBrowserPlatformPublicKeyCredential = []
+AuthenticationServices_ASAuthorizationWebBrowserPublicKeyCredentialManager = []
 AuthenticationServices_ASCredentialIdentityStore = []
 AuthenticationServices_ASCredentialIdentityStoreState = []
 AuthenticationServices_ASCredentialProviderExtensionContext = [
@@ -1225,6 +1227,8 @@ AuthenticationServices_all = [
     "AuthenticationServices_ASAuthorizationSingleSignOnCredential",
     "AuthenticationServices_ASAuthorizationSingleSignOnProvider",
     "AuthenticationServices_ASAuthorizationSingleSignOnRequest",
+    "AuthenticationServices_ASAuthorizationWebBrowserPlatformPublicKeyCredential",
+    "AuthenticationServices_ASAuthorizationWebBrowserPublicKeyCredentialManager",
     "AuthenticationServices_ASCredentialIdentityStore",
     "AuthenticationServices_ASCredentialIdentityStoreState",
     "AuthenticationServices_ASCredentialProviderExtensionContext",

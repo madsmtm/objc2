@@ -39,8 +39,15 @@ _XYZ:
 	.quad	SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 0)
 
 	.section	__TEXT,__cstring,cstring_literals
+	.globl	SYM(test_ns_string[CRATE_ID]::EMPTY::ASCII, 0)
 SYM(test_ns_string[CRATE_ID]::EMPTY::ASCII, 0):
 	.space	1
+
+	.section	__TEXT,__ustring
+	.globl	SYM(test_ns_string[CRATE_ID]::EMPTY::UTF16, 0)
+	.p2align	1, 0x0
+SYM(test_ns_string[CRATE_ID]::EMPTY::UTF16, 0):
+	.space	2
 
 	.section	__DATA,__cfstring
 	.globl	SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 0)
@@ -52,8 +59,15 @@ SYM(test_ns_string[CRATE_ID]::EMPTY::CFSTRING, 0):
 	.space	8
 
 	.section	__TEXT,__cstring,cstring_literals
+	.globl	SYM(test_ns_string[CRATE_ID]::XYZ::ASCII, 0)
 SYM(test_ns_string[CRATE_ID]::XYZ::ASCII, 0):
 	.asciz	"xyz"
+
+	.section	__TEXT,__ustring
+	.globl	SYM(test_ns_string[CRATE_ID]::XYZ::UTF16, 0)
+	.p2align	1, 0x0
+SYM(test_ns_string[CRATE_ID]::XYZ::UTF16, 0):
+	.asciz	"x\000y\000z\000\000"
 
 	.section	__DATA,__cfstring
 	.globl	SYM(test_ns_string[CRATE_ID]::XYZ::CFSTRING, 0)

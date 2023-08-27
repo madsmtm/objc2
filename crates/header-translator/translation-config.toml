@@ -80,8 +80,8 @@ tvos = "13.0"
 [library.BusinessChat]
 imports = ["AppKit", "Foundation"]
 macos = "10.14"
-maccatalyst = "13.0" # Unsure
-ios = "11.0" # Unsure
+maccatalyst = "13.0"               # Unsure
+ios = "11.0"                       # Unsure
 
 [library.CallKit]
 imports = ["Foundation"]
@@ -98,9 +98,7 @@ ios = "11.4"
 
 [library.CloudKit]
 imports = ["CoreLocation", "Foundation"]
-extra-features = [
-    "CloudKit_CKShare",
-]
+extra-features = ["CloudKit_CKShare"]
 macos = "10.10"
 maccatalyst = "13.0"
 ios = "8.0"
@@ -126,11 +124,9 @@ watchos = "2.0"
 
 [library.CoreLocation]
 imports = ["Contacts", "Foundation"]
-extra-features = [
-    "CoreLocation_CLPlacemark",
-]
+extra-features = ["CoreLocation_CLPlacemark"]
 # macos = "10.6"
-macos = "10.11" # Temporarily raised since `CoreLocation` imports `Contacts`
+macos = "10.11"      # Temporarily raised since `CoreLocation` imports `Contacts`
 maccatalyst = "13.0"
 ios = "2.0"
 tvos = "9.0"
@@ -154,9 +150,7 @@ watchos = "9.0"
 
 [library.EventKit]
 imports = ["AppKit", "CoreLocation", "Foundation", "MapKit"]
-extra-features = [
-    "EventKit_EKEvent",
-]
+extra-features = ["EventKit_EKEvent"]
 macos = "10.8"
 maccatalyst = "13.0"
 ios = "4.0"
@@ -237,9 +231,7 @@ tvos = "9.0"
 
 [library.GameKit]
 imports = ["AppKit", "Foundation"]
-extra-features = [
-    "AppKit_NSViewController",
-]
+extra-features = ["AppKit_NSViewController"]
 macos = "10.8"
 maccatalyst = "13.0"
 ios = "3.0"
@@ -273,9 +265,7 @@ watchos = "9.0"
 
 [library.LocalAuthenticationEmbeddedUI]
 imports = ["AppKit", "Foundation", "LocalAuthentication"]
-extra-features = [
-    "AppKit_NSWindow",
-]
+extra-features = ["AppKit_NSWindow"]
 macos = "12.0"
 maccatalyst = "16.0"
 ios = "16.0"
@@ -389,9 +379,7 @@ watchos = "6.2"
 
 [library.UniformTypeIdentifiers]
 imports = ["Foundation"]
-extra-features = [
-    "UniformTypeIdentifiers_UTType",
-]
+extra-features = ["UniformTypeIdentifiers_UTType"]
 macos = "11.0"
 maccatalyst = "14.0"
 ios = "14.0"
@@ -1229,6 +1217,10 @@ skipped = true
 skipped = true
 [class.MPAdTimeRange.methods.setTimeRange]
 skipped = true
+# Uses LocalAuthentication framework
+[protocol.ASAuthorizationWebBrowserExternallyAuthenticatableRequest.methods]
+authenticatedContext = { skipped = true }
+setAuthenticatedContext = { skipped = true }
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]

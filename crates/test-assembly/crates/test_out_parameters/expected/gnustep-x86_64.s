@@ -48,14 +48,13 @@ null_nonnull:
 	mov	r14, rsi
 	mov	r15, rdi
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	rcx, rax
 	test	rbx, rbx
 	je	.LBB1_2
 	mov	r12, qword ptr [rbx]
 	mov	rdi, r15
 	mov	rsi, r14
 	mov	rdx, rbx
-	call	rcx
+	call	rax
 	mov	r14, rax
 	mov	rdi, qword ptr [rbx]
 	call	qword ptr [rip + objc_retain@GOTPCREL]
@@ -77,7 +76,7 @@ null_nonnull:
 	pop	r12
 	pop	r14
 	pop	r15
-	jmp	rcx
+	jmp	rax
 .Lfunc_end1:
 	.size	null_nonnull, .Lfunc_end1-null_nonnull
 
@@ -132,14 +131,13 @@ null_null:
 	mov	r14, rsi
 	mov	r12, rdi
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	rcx, rax
 	test	rbx, rbx
 	je	.LBB3_4
 	mov	r15, qword ptr [rbx]
 	mov	rdi, r12
 	mov	rsi, r14
 	mov	rdx, rbx
-	call	rcx
+	call	rax
 	mov	r14, rax
 	mov	rdi, qword ptr [rbx]
 	call	qword ptr [rip + objc_retain@GOTPCREL]
@@ -164,7 +162,7 @@ null_null:
 	pop	r12
 	pop	r14
 	pop	r15
-	jmp	rcx
+	jmp	rax
 .Lfunc_end3:
 	.size	null_null, .Lfunc_end3-null_null
 

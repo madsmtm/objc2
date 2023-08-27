@@ -5,19 +5,18 @@
 	.p2align	4, 0x90
 	.type	get_ascii,@function
 get_ascii:
-	push	rax
 	mov	rax, qword ptr [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0]
 	test	rax, rax
 	je	.LBB0_1
-	pop	rcx
 	ret
 .LBB0_1:
+	push	rax
 	lea	rdi, [rip + .Lanon.[ID].0]
 	mov	esi, 3
 	call	qword ptr [rip + SYM(icrate::Foundation::additions::string::<impl icrate::Foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@GOTPCREL]
 	mov	rcx, rax
 	xchg	qword ptr [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0], rcx
-	pop	rcx
+	add	rsp, 8
 	ret
 .Lfunc_end0:
 	.size	get_ascii, .Lfunc_end0-get_ascii
@@ -27,19 +26,18 @@ get_ascii:
 	.p2align	4, 0x90
 	.type	get_utf16,@function
 get_utf16:
-	push	rax
 	mov	rax, qword ptr [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0]
 	test	rax, rax
 	je	.LBB1_1
-	pop	rcx
 	ret
 .LBB1_1:
+	push	rax
 	lea	rdi, [rip + .Lanon.[ID].1]
 	mov	esi, 5
 	call	qword ptr [rip + SYM(icrate::Foundation::additions::string::<impl icrate::Foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@GOTPCREL]
 	mov	rcx, rax
 	xchg	qword ptr [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0], rcx
-	pop	rcx
+	add	rsp, 8
 	ret
 .Lfunc_end1:
 	.size	get_utf16, .Lfunc_end1-get_utf16
@@ -49,19 +47,18 @@ get_utf16:
 	.p2align	4, 0x90
 	.type	get_with_nul,@function
 get_with_nul:
-	push	rax
 	mov	rax, qword ptr [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0]
 	test	rax, rax
 	je	.LBB2_1
-	pop	rcx
 	ret
 .LBB2_1:
+	push	rax
 	lea	rdi, [rip + .Lanon.[ID].2]
 	mov	esi, 6
 	call	qword ptr [rip + SYM(icrate::Foundation::additions::string::<impl icrate::Foundation::generated::__NSString::NSString>::from_str::GENERATED_ID, 0)@GOTPCREL]
 	mov	rcx, rax
 	xchg	qword ptr [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0], rcx
-	pop	rcx
+	add	rsp, 8
 	ret
 .Lfunc_end2:
 	.size	get_with_nul, .Lfunc_end2-get_with_nul

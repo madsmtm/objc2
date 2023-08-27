@@ -44,7 +44,7 @@ env:
     --package=objc2-encode
     --package=objc2-proc-macros
   # The current nightly Rust version that our CI uses
-  CURRENT_NIGHTLY: nightly-2023-05-25
+  CURRENT_NIGHTLY: nightly-2023-08-27
   # Various features that we'd usually want to test with
   #
   # Note: The `exception` feature is not enabled here, since it requires
@@ -148,7 +148,8 @@ jobs:
       run: cargo doc --no-deps --document-private-items ${{ matrix.args }}
 
     - name: cargo clippy
-      run: cargo clippy --all-targets ${{ matrix.args }}
+      # Temporarily allow diverging_sub_expression until we figure out how to silence them in declare_class!
+      run: cargo clippy --all-targets ${{ matrix.args }} -- --allow=clippy::diverging_sub_expression
 
   msrv:
     name: Check MSRV
@@ -215,6 +216,9 @@ jobs:
     - fmt
     - lint
 
+    env:
+      TEST_OVERWRITE: 1
+
     steps:
     - uses: actions/checkout@v3
       with:
@@ -226,14 +230,6 @@ jobs:
         toolchain: ${{ env.CURRENT_NIGHTLY }}
         components: rust-src
 
-    - name: Install remaining targets
-      run: >-
-        rustup target add
-        x86_64-apple-darwin
-        aarch64-apple-darwin
-        x86_64-unknown-linux-gnu
-        i686-unknown-linux-gnu
-
     - name: Cache Cargo
       uses: actions/cache@v3
       with:
@@ -241,26 +237,25 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Run macOS x86_64 assembly tests
-      run: cargo run --bin=test-assembly -- --target=x86_64-apple-darwin
+      run: cargo run --bin=test-assembly -- -Z build-std --target=x86_64-apple-darwin
 
     - name: Run all assembly tests
       if: ${{ env.FULL }}
       run: ./helper-scripts/run-assembly-tests.sh
-      env:
-        TEST_OVERWRITE: 1
 
     - name: Check diff
+      if: ${{ always() }}
       run: git diff --exit-code
 
   header-translator:
     name: Verify header translator output
-    runs-on: macos-12
+    runs-on: macos-13
     needs:
     - fmt
     - lint
 
     env:
-      DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_14.3.1.app/Contents/Developer
 
     steps:
     - uses: actions/checkout@v3

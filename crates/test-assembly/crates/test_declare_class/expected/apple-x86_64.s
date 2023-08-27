@@ -556,7 +556,7 @@ l_anon.[ID].3:
 	.p2align	3, 0x0
 l_anon.[ID].4:
 	.quad	l_anon.[ID].3
-	.asciz	"L\000\000\000\000\000\000\000\225\000\000\0002\000\000"
+	.asciz	"p\000\000\000\000\000\000\000\225\000\000\0002\000\000"
 
 	.section	__TEXT,__literal4,4byte_literals
 L_anon.[ID].5:
