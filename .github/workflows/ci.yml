@@ -132,13 +132,11 @@ jobs:
         submodules: true
 
     - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
+      uses: dtolnay/rust-toolchain@master
       with:
         toolchain: ${{ env.CURRENT_NIGHTLY }}
-        profile: minimal
-        override: true
         components: clippy ${{ matrix.build-std && ', rust-src' || '' }}
-        target: ${{ (!matrix.build-std) && matrix.target || null }}
+        targets: ${{ (!matrix.build-std) && matrix.target || null }}
 
     - name: Cache Cargo
       uses: actions/cache@v3
@@ -165,12 +163,10 @@ jobs:
         submodules: true
 
     - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
+      uses: dtolnay/rust-toolchain@master
       with:
         toolchain: '1.60'
-        profile: minimal
-        override: true
-        target: x86_64-apple-darwin
+        targets: x86_64-apple-darwin
 
     - name: Cache Cargo
       uses: actions/cache@v3
@@ -198,11 +194,9 @@ jobs:
         submodules: true
 
     - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
+      uses: dtolnay/rust-toolchain@master
       with:
         toolchain: ${{ env.CURRENT_NIGHTLY }}
-        profile: minimal
-        override: true
         components: rust-src
 
     - name: Cache Cargo
@@ -227,11 +221,9 @@ jobs:
         submodules: true
 
     - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
+      uses: dtolnay/rust-toolchain@master
       with:
         toolchain: ${{ env.CURRENT_NIGHTLY }}
-        profile: minimal
-        override: true
         components: rust-src
 
     - name: Install remaining targets
@@ -334,11 +326,9 @@ jobs:
         submodules: true
 
     - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
+      uses: dtolnay/rust-toolchain@master
       with:
         toolchain: stable
-        profile: minimal
-        override: true
 
     - name: Cache Cargo
       uses: actions/cache@v3
@@ -424,11 +414,9 @@ jobs:
         submodules: true
 
     - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
+      uses: dtolnay/rust-toolchain@master
       with:
         toolchain: ${{ matrix.nightly && env.CURRENT_NIGHTLY || 'stable' }}
-        profile: minimal
-        override: true
         components: ${{ matrix.build-std && 'rust-src' }}
         target: ${{ (!matrix.build-std) && matrix.target || null }}
 
@@ -514,12 +502,10 @@ jobs:
         submodules: true
 
     - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
+      uses: dtolnay/rust-toolchain@master
       with:
         toolchain: stable
-        profile: minimal
-        override: true
-        target: x86_64-apple-ios
+        targets: x86_64-apple-ios
 
     - name: Cache Cargo
       uses: actions/cache@v3
@@ -714,12 +700,10 @@ jobs:
         ls -al $HOME/extern/*
 
     - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
+      uses: dtolnay/rust-toolchain@master
       with:
         toolchain: ${{ matrix.nightly && env.CURRENT_NIGHTLY || 'stable' }}
-        profile: minimal
-        override: true
-        target: ${{ matrix.target }}
+        targets: ${{ matrix.target }}
 
     - name: Cache Cargo
       uses: actions/cache@v3
