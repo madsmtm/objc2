@@ -8,12 +8,12 @@ error[E0277]: the trait bound `{integer}: MessageReceiver` is not satisfied
   |              required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a AnyClass
-            &'a Id<T>
-            &'a T
-            &'a mut Id<T>
-            &'a mut T
+            NonNull<T>
+            ManuallyDrop<Id<T>>
             *const AnyClass
             *const T
             *mut T
+            &'a T
+            &'a mut T
+            &'a Id<T>
           and $N others

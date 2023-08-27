@@ -494,4 +494,4 @@ error[E0277]: the trait bound `RetainSemantics<2>: MessageRecieveId<&AnyClass, I
             <RetainSemantics<3> as MessageRecieveId<Allocated<T>, Ret>>
             <RetainSemantics<4> as MessageRecieveId<Receiver, Ret>>
             <RetainSemantics<5> as MessageRecieveId<Receiver, Ret>>
-  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__rewrite_self_arg_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

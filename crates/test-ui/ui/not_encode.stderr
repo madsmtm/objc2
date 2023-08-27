@@ -5,14 +5,14 @@ error[E0277]: the trait bound `Vec<u32>: Encode` is not satisfied
   |                 ^^^^^^^^ the trait `Encode` is not implemented for `Vec<u32>`
   |
   = help: the following other types implement trait `Encode`:
-            &'a T
-            &'a mut T
-            *const T
-            *const c_void
-            *mut T
-            *mut c_void
-            AtomicI16
-            AtomicI32
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
           and $N others
 note: required by a bound in `is_encode`
  --> ui/not_encode.rs
@@ -27,14 +27,14 @@ error[E0277]: the trait bound `(): Encode` is not satisfied
   |                 ^^ the trait `Encode` is not implemented for `()`
   |
   = help: the following other types implement trait `Encode`:
-            &'a T
-            &'a mut T
-            *const T
-            *const c_void
-            *mut T
-            *mut c_void
-            AtomicI16
-            AtomicI32
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
           and $N others
 note: required by a bound in `is_encode`
  --> ui/not_encode.rs
@@ -49,14 +49,14 @@ error[E0277]: the trait bound `(): RefEncode` is not satisfied
   |                 ^^^ the trait `RefEncode` is not implemented for `()`
   |
   = help: the following other types implement trait `RefEncode`:
-            &'a T
-            &'a mut T
-            *const T
-            *const c_void
-            *mut T
-            *mut c_void
-            AnyClass
-            AnyObject
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
           and $N others
   = note: required for `&()` to implement `Encode`
 note: required by a bound in `is_encode`
@@ -72,14 +72,14 @@ error[E0277]: the trait bound `(): RefEncode` is not satisfied
   |                 ^^^^^^^^^ the trait `RefEncode` is not implemented for `()`
   |
   = help: the following other types implement trait `RefEncode`:
-            &'a T
-            &'a mut T
-            *const T
-            *const c_void
-            *mut T
-            *mut c_void
-            AnyClass
-            AnyObject
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
           and $N others
   = note: required for `*const ()` to implement `Encode`
 note: required by a bound in `is_encode`
@@ -126,14 +126,14 @@ error[E0277]: the trait bound `(): Encode` is not satisfied
   |                 ^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `()`
   |
   = help: the following other types implement trait `Encode`:
-            &'a T
-            &'a mut T
-            *const T
-            *const c_void
-            *mut T
-            *mut c_void
-            AtomicI16
-            AtomicI32
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
           and $N others
   = note: required for `((), i32)` to implement `BlockArguments`
   = note: required for `block2::Block<((), i32), ()>` to implement `RefEncode`
@@ -151,14 +151,14 @@ error[E0277]: the trait bound `fn() -> &'static (): Encode` is not satisfied
   |                 ^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `fn() -> &'static ()`
   |
   = help: the following other types implement trait `Encode`:
+            unsafe extern "C" fn() -> Ret
             extern "C" fn() -> Ret
+            unsafe extern "C" fn(A) -> Ret
             extern "C" fn(A) -> Ret
+            unsafe extern "C" fn(A, ...) -> Ret
             extern "C" fn(A, ...) -> Ret
+            unsafe extern "C" fn(A, B) -> Ret
             extern "C" fn(A, B) -> Ret
-            extern "C" fn(A, B, ...) -> Ret
-            extern "C" fn(A, B, C) -> Ret
-            extern "C" fn(A, B, C, ...) -> Ret
-            extern "C" fn(A, B, C, D) -> Ret
           and $N others
 note: required by a bound in `is_encode`
  --> ui/not_encode.rs
@@ -173,14 +173,14 @@ error[E0277]: the trait bound `fn(()): Encode` is not satisfied
   |                 ^^^^^^ the trait `Encode` is not implemented for `fn(())`
   |
   = help: the following other types implement trait `Encode`:
+            unsafe extern "C" fn() -> Ret
             extern "C" fn() -> Ret
+            unsafe extern "C" fn(A) -> Ret
             extern "C" fn(A) -> Ret
+            unsafe extern "C" fn(A, ...) -> Ret
             extern "C" fn(A, ...) -> Ret
+            unsafe extern "C" fn(A, B) -> Ret
             extern "C" fn(A, B) -> Ret
-            extern "C" fn(A, B, ...) -> Ret
-            extern "C" fn(A, B, C) -> Ret
-            extern "C" fn(A, B, C, ...) -> Ret
-            extern "C" fn(A, B, C, D) -> Ret
           and $N others
 note: required by a bound in `is_encode`
  --> ui/not_encode.rs
@@ -195,14 +195,14 @@ error[E0277]: the trait bound `fn(i32, ()): Encode` is not satisfied
   |                 ^^^^^^^^^^^ the trait `Encode` is not implemented for `fn(i32, ())`
   |
   = help: the following other types implement trait `Encode`:
+            unsafe extern "C" fn() -> Ret
             extern "C" fn() -> Ret
+            unsafe extern "C" fn(A) -> Ret
             extern "C" fn(A) -> Ret
+            unsafe extern "C" fn(A, ...) -> Ret
             extern "C" fn(A, ...) -> Ret
+            unsafe extern "C" fn(A, B) -> Ret
             extern "C" fn(A, B) -> Ret
-            extern "C" fn(A, B, ...) -> Ret
-            extern "C" fn(A, B, C) -> Ret
-            extern "C" fn(A, B, C, ...) -> Ret
-            extern "C" fn(A, B, C, D) -> Ret
           and $N others
 note: required by a bound in `is_encode`
  --> ui/not_encode.rs
@@ -235,14 +235,14 @@ error[E0277]: the trait bound `UnsafeCell<&u8>: OptionEncode` is not satisfied
   |                 ^^^^^^^^^^^^^^^^^^^^^^^ the trait `OptionEncode` is not implemented for `UnsafeCell<&u8>`
   |
   = help: the following other types implement trait `OptionEncode`:
-            &'a T
-            &'a mut T
-            NonNull<T>
             NonNull<c_void>
-            NonZeroI16
-            NonZeroI32
-            NonZeroI64
-            NonZeroI8
+            NonNull<T>
+            objc2::runtime::Sel
+            NonZeroU8
+            NonZeroU16
+            NonZeroU32
+            NonZeroU64
+            NonZeroUsize
           and $N others
   = note: required for `Option<UnsafeCell<&u8>>` to implement `Encode`
 note: required by a bound in `is_encode`
@@ -258,14 +258,14 @@ error[E0277]: the trait bound `Cell<&u8>: OptionEncode` is not satisfied
   |                 ^^^^^^^^^^^^^^^^^ the trait `OptionEncode` is not implemented for `Cell<&u8>`
   |
   = help: the following other types implement trait `OptionEncode`:
-            &'a T
-            &'a mut T
-            NonNull<T>
             NonNull<c_void>
-            NonZeroI16
-            NonZeroI32
-            NonZeroI64
-            NonZeroI8
+            NonNull<T>
+            objc2::runtime::Sel
+            NonZeroU8
+            NonZeroU16
+            NonZeroU32
+            NonZeroU64
+            NonZeroUsize
           and $N others
   = note: required for `Option<Cell<&u8>>` to implement `Encode`
 note: required by a bound in `is_encode`
