@@ -192,7 +192,7 @@ impl Ord for NSString {
 impl PartialOrd for NSMutableString {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
-        PartialOrd::partial_cmp(&**self, &**other)
+        Some(self.cmp(other))
     }
 }
 

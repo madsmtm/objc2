@@ -46,7 +46,7 @@ fn unwrap() {
     )
     .unwrap();
 
-    let _: () = Err(exc).unwrap();
+    panic!("{exc:?}");
 }
 
 // Further tests in `tests::exception`
