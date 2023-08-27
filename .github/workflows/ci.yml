@@ -222,6 +222,9 @@ jobs:
     - fmt
     - lint
 
+    env:
+      TEST_OVERWRITE: 1
+
     steps:
     - uses: actions/checkout@v3
       with:
@@ -247,10 +250,9 @@ jobs:
     - name: Run all assembly tests
       if: ${{ env.FULL }}
       run: ./helper-scripts/run-assembly-tests.sh
-      env:
-        TEST_OVERWRITE: 1
 
     - name: Check diff
+      if: ${{ always() }}
       run: git diff --exit-code
 
   header-translator:
