@@ -223,7 +223,7 @@ note: required by a bound in `is_encode`
   | fn is_encode<T: Encode>() {}
   |                 ^^^^^^ required by this bound in `is_encode`
 help: consider removing the leading `&`-reference
-   |
+  |
 25 -     is_encode::<&Sel>();
 25 +     is_encode::<Sel>();
    |
