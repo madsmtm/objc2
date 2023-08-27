@@ -30,6 +30,7 @@ impl __ThreadTestData {
     }
 
     #[track_caller]
+    #[allow(clippy::missing_panics_doc)]
     pub fn assert_current(&self) {
         let current = Self::current();
         let mut expected = self.clone();

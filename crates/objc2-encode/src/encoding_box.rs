@@ -111,6 +111,11 @@ impl EncodingBox {
     /// returned by `method_getTypeEncoding`.
     ///
     /// [`from_str`][Self::from_str] is simpler, use that instead if you can.
+    ///
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the string was an ill-formatted encoding string.
     pub fn from_start_of_str(s: &mut &str) -> Result<Self, ParseError> {
         let mut parser = Parser::new(s);
         parser.strip_leading_qualifiers();

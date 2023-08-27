@@ -116,7 +116,7 @@ impl<A: BlockArguments, R: EncodeReturn> Block<A, R> {
         let ptr: *const Self = self;
         let layout = unsafe { ptr.cast::<ffi::Block_layout>().as_ref().unwrap_unchecked() };
         // TODO: Is `invoke` actually ever null?
-        let invoke = layout.invoke.unwrap();
+        let invoke = layout.invoke.unwrap_or_else(|| unreachable!());
 
         unsafe { A::__call_block(invoke, ptr as *mut Self, args) }
     }

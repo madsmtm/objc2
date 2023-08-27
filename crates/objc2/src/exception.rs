@@ -254,6 +254,11 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception>
 /// Accordingly, if your Rust code is compiled with `panic=abort` this cannot
 /// catch the exception.
 ///
+/// [`catch_unwind`]: std::panic::catch_unwind
+///
+///
+/// # Errors
+///
 /// Returns a `Result` that is either `Ok` if the closure succeeded without an
 /// exception being thrown, or an `Err` with the exception. The exception is
 /// automatically released.
@@ -262,8 +267,6 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception>
 /// exception object is `nil`. This should basically never happen, but is
 /// technically possible on some systems with `@throw nil`, or in OOM
 /// situations.
-///
-/// [`catch_unwind`]: std::panic::catch_unwind
 ///
 ///
 /// # Safety
@@ -286,8 +289,8 @@ pub unsafe fn catch<R>(
         *value_ref = Some(closure());
     };
     let result = unsafe { try_no_ret(closure) };
-    // If the try succeeded, this was set so it's safe to unwrap
-    result.map(|()| value.unwrap())
+    // If the try succeeded, value was set so it's safe to unwrap
+    result.map(|()| value.unwrap_or_else(|| unreachable!()))
 }
 
 #[cfg(test)]

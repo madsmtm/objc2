@@ -666,6 +666,11 @@ impl ProtocolBuilder {
     /// Constructs a [`ProtocolBuilder`] with the given name.
     ///
     /// Returns [`None`] if the protocol couldn't be allocated.
+    ///
+    ///
+    /// # Panics
+    ///
+    /// Panics if the name contains an internal NULL byte.
     pub fn new(name: &str) -> Option<Self> {
         let c_name = CString::new(name).unwrap();
         let proto = unsafe { ffi::objc_allocateProtocol(c_name.as_ptr()) };
