@@ -33,11 +33,11 @@ L1$pb:
 	add	esp, 16
 	test	eax, eax
 	je	LBB1_4
-	mov	dword ptr [ebp - 40], eax
+	mov	dword ptr [ebp - 36], eax
 	sub	esp, 8
 	lea	eax, [esi + l_anon.[ID].6-L1$pb]
 	lea	ecx, [esi + L_anon.[ID].5-L1$pb]
-	lea	ebx, [ebp - 40]
+	lea	ebx, [ebp - 36]
 	push	eax
 	push	0
 	push	1
@@ -152,7 +152,7 @@ L1$pb:
 	push	eax
 	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	add	esp, 20
-	push	dword ptr [ebp - 40]
+	push	dword ptr [ebp - 36]
 	call	SYM(objc2::declare::ClassBuilder::register::GENERATED_ID, 0)
 	add	esp, 60
 	pop	esi
@@ -170,19 +170,19 @@ LBB1_3:
 	call	SYM(core::panicking::panic::GENERATED_ID, 0)
 LBB1_4:
 	lea	eax, [esi + l_anon.[ID].21-L1$pb]
-	mov	dword ptr [ebp - 48], eax
-	lea	eax, [esi + SYM(<&str as core[CRATE_ID]::fmt::Display>::fmt, 0)-L1$pb]
 	mov	dword ptr [ebp - 44], eax
-	lea	eax, [esi + l_anon.[ID].20-L1$pb]
+	lea	eax, [esi + SYM(<&str as core[CRATE_ID]::fmt::Display>::fmt, 0)-L1$pb]
 	mov	dword ptr [ebp - 40], eax
-	mov	dword ptr [ebp - 36], 2
-	mov	dword ptr [ebp - 24], 0
-	lea	eax, [ebp - 48]
-	mov	dword ptr [ebp - 32], eax
-	mov	dword ptr [ebp - 28], 1
+	lea	eax, [esi + l_anon.[ID].20-L1$pb]
+	mov	dword ptr [ebp - 36], eax
+	mov	dword ptr [ebp - 32], 2
+	mov	dword ptr [ebp - 20], 0
+	lea	eax, [ebp - 44]
+	mov	dword ptr [ebp - 28], eax
+	mov	dword ptr [ebp - 24], 1
 	sub	esp, 8
 	lea	eax, [esi + l_anon.[ID].10-L1$pb]
-	lea	ecx, [ebp - 40]
+	lea	ecx, [ebp - 36]
 	push	eax
 	push	ecx
 	call	SYM(core::panicking::panic_fmt::GENERATED_ID, 0)
@@ -435,10 +435,10 @@ L8$pb:
 LBB8_2:
 	mov	eax, dword ptr [ebx + LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-L8$pb]
 	mov	eax, dword ptr [eax]
-	mov	dword ptr [ebp - 24], edi
-	mov	dword ptr [ebp - 20], eax
+	mov	dword ptr [ebp - 20], edi
+	mov	dword ptr [ebp - 16], eax
 	sub	esp, 8
-	lea	eax, [ebp - 24]
+	lea	eax, [ebp - 20]
 	push	esi
 	push	eax
 	call	_objc_msgSendSuper
@@ -742,7 +742,7 @@ l_anon.[ID].3:
 	.p2align	2, 0x0
 l_anon.[ID].4:
 	.long	l_anon.[ID].3
-	.asciz	"t\000\000\000\225\000\000\0002\000\000"
+	.asciz	"p\000\000\000\225\000\000\0002\000\000"
 
 	.section	__TEXT,__literal4,4byte_literals
 L_anon.[ID].5:

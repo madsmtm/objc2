@@ -262,11 +262,11 @@ LPC6_4:
 	.p2align	2
 	.code	32
 _use_in_loop:
+	cmp	r0, #0
+	bxeq	lr
+LBB7_1:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
-	cmp	r0, #0
-	popeq	{r4, r5, r6, r7, pc}
-LBB7_1:
 	movw	r5, :lower16:(SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)-(LPC7_0+8))
 	mov	r4, r0
 	movt	r5, :upper16:(SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)-(LPC7_0+8))
@@ -289,7 +289,8 @@ LBB7_3:
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	b	LBB7_2
 LBB7_5:
-	pop	{r4, r5, r6, r7, pc}
+	pop	{r4, r5, r6, r7, lr}
+	bx	lr
 
 	.section	__TEXT,__const
 l_anon.[ID].0:

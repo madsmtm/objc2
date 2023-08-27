@@ -255,11 +255,12 @@ LPC5_6:
 	.p2align	2
 	.code	32
 _use_in_loop:
+	cmp	r0, #0
+	bxeq	lr
+LBB6_1:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
 	push	{r8}
-	cmp	r0, #0
-	beq	LBB6_5
 	movw	r5, :lower16:(SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)-(LPC6_0+8))
 	mov	r4, r0
 	movt	r5, :upper16:(SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)-(LPC6_0+8))
@@ -288,7 +289,8 @@ LBB6_3:
 	b	LBB6_2
 LBB6_5:
 	pop	{r8}
-	pop	{r4, r5, r6, r7, pc}
+	pop	{r4, r5, r6, r7, lr}
+	bx	lr
 
 	.section	__TEXT,__const
 l_anon.[ID].0:

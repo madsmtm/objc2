@@ -313,12 +313,12 @@ Lloh81:
 	.globl	_use_in_loop
 	.p2align	2
 _use_in_loop:
+	cbz	x0, LBB6_6
 	stp	x24, x23, [sp, #-64]!
 	stp	x22, x21, [sp, #16]
 	stp	x20, x19, [sp, #32]
 	stp	x29, x30, [sp, #48]
 	add	x29, sp, #48
-	cbz	x0, LBB6_5
 	mov	x19, x0
 	adrp	x23, SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)@PAGE
 Lloh82:
@@ -350,6 +350,7 @@ LBB6_5:
 	ldp	x20, x19, [sp, #32]
 	ldp	x22, x21, [sp, #16]
 	ldp	x24, x23, [sp], #64
+LBB6_6:
 	ret
 	.loh AdrpAdd	Lloh86, Lloh87
 	.loh AdrpAdd	Lloh84, Lloh85

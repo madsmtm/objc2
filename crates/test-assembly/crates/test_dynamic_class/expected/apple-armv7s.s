@@ -4,16 +4,16 @@
 	.p2align	2
 	.code	32
 _get_class:
-	push	{r7, lr}
-	mov	r7, sp
 	movw	r0, :lower16:(__MergedGlobals-(LPC0_0+8))
 	movt	r0, :upper16:(__MergedGlobals-(LPC0_0+8))
 LPC0_0:
 	add	r0, pc, r0
 	ldr	r0, [r0]
 	cmp	r0, #0
-	popne	{r7, pc}
+	bxne	lr
 LBB0_1:
+	push	{r7, lr}
+	mov	r7, sp
 	movw	r0, :lower16:(__MergedGlobals-(LPC0_1+8))
 	movt	r0, :upper16:(__MergedGlobals-(LPC0_1+8))
 	movw	r1, :lower16:(l_anon.[ID].0-(LPC0_2+8))
@@ -27,22 +27,23 @@ LPC0_2:
 LPC0_3:
 	add	r2, pc, r2
 	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
-	pop	{r7, pc}
+	pop	{r7, lr}
+	bx	lr
 
 	.globl	_get_same_class
 	.p2align	2
 	.code	32
 _get_same_class:
-	push	{r7, lr}
-	mov	r7, sp
 	movw	r3, :lower16:(__MergedGlobals-(LPC1_0+8))
 	movt	r3, :upper16:(__MergedGlobals-(LPC1_0+8))
 LPC1_0:
 	add	r3, pc, r3
 	ldr	r0, [r3, #4]
 	cmp	r0, #0
-	popne	{r7, pc}
+	bxne	lr
 LBB1_1:
+	push	{r7, lr}
+	mov	r7, sp
 	movw	r1, :lower16:(l_anon.[ID].0-(LPC1_1+8))
 	add	r0, r3, #4
 	movt	r1, :upper16:(l_anon.[ID].0-(LPC1_1+8))
@@ -53,22 +54,23 @@ LPC1_1:
 LPC1_2:
 	add	r2, pc, r2
 	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
-	pop	{r7, pc}
+	pop	{r7, lr}
+	bx	lr
 
 	.globl	_get_different_class
 	.p2align	2
 	.code	32
 _get_different_class:
-	push	{r7, lr}
-	mov	r7, sp
 	movw	r3, :lower16:(__MergedGlobals-(LPC2_0+8))
 	movt	r3, :upper16:(__MergedGlobals-(LPC2_0+8))
 LPC2_0:
 	add	r3, pc, r3
 	ldr	r0, [r3, #8]
 	cmp	r0, #0
-	popne	{r7, pc}
+	bxne	lr
 LBB2_1:
+	push	{r7, lr}
+	mov	r7, sp
 	movw	r1, :lower16:(l_anon.[ID].4-(LPC2_1+8))
 	add	r0, r3, #8
 	movt	r1, :upper16:(l_anon.[ID].4-(LPC2_1+8))
@@ -79,22 +81,23 @@ LPC2_1:
 LPC2_2:
 	add	r2, pc, r2
 	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
-	pop	{r7, pc}
+	pop	{r7, lr}
+	bx	lr
 
 	.globl	_unused_class
 	.p2align	2
 	.code	32
 _unused_class:
-	push	{r7, lr}
-	mov	r7, sp
 	movw	r0, :lower16:(SYM(test_dynamic_class[CRATE_ID]::unused_class::CACHED_CLASS, 0)-(LPC3_0+8))
 	movt	r0, :upper16:(SYM(test_dynamic_class[CRATE_ID]::unused_class::CACHED_CLASS, 0)-(LPC3_0+8))
 LPC3_0:
 	add	r0, pc, r0
 	ldr	r0, [r0]
 	cmp	r0, #0
-	popne	{r7, pc}
+	bxne	lr
 LBB3_1:
+	push	{r7, lr}
+	mov	r7, sp
 	movw	r0, :lower16:(SYM(test_dynamic_class[CRATE_ID]::unused_class::CACHED_CLASS, 0)-(LPC3_1+8))
 	movt	r0, :upper16:(SYM(test_dynamic_class[CRATE_ID]::unused_class::CACHED_CLASS, 0)-(LPC3_1+8))
 	movw	r1, :lower16:(l_anon.[ID].6-(LPC3_2+8))
@@ -108,7 +111,8 @@ LPC3_2:
 LPC3_3:
 	add	r2, pc, r2
 	bl	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
-	pop	{r7, pc}
+	pop	{r7, lr}
+	bx	lr
 
 	.globl	_use_fns
 	.p2align	2
@@ -267,11 +271,12 @@ LPC5_6:
 	.p2align	2
 	.code	32
 _use_in_loop:
+	cmp	r0, #0
+	bxeq	lr
+LBB6_1:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
 	push	{r8}
-	cmp	r0, #0
-	beq	LBB6_5
 	movw	r5, :lower16:(SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)-(LPC6_0+8))
 	mov	r4, r0
 	movt	r5, :upper16:(SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0)-(LPC6_0+8))
@@ -300,7 +305,8 @@ LBB6_3:
 	b	LBB6_2
 LBB6_5:
 	pop	{r8}
-	pop	{r4, r5, r6, r7, pc}
+	pop	{r4, r5, r6, r7, lr}
+	bx	lr
 
 	.section	__TEXT,__const
 l_anon.[ID].0:

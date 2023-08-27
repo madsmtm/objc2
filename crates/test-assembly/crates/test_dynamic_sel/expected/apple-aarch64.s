@@ -316,11 +316,11 @@ Lloh71:
 	.globl	_use_in_loop
 	.p2align	2
 _use_in_loop:
+	cbz	x0, LBB7_6
 	stp	x22, x21, [sp, #-48]!
 	stp	x20, x19, [sp, #16]
 	stp	x29, x30, [sp, #32]
 	add	x29, sp, #32
-	cbz	x0, LBB7_5
 	mov	x19, x0
 	adrp	x22, SYM(test_dynamic_sel[CRATE_ID]::use_in_loop::CACHED_SEL, 0)@PAGE
 Lloh72:
@@ -346,6 +346,7 @@ LBB7_5:
 	ldp	x29, x30, [sp, #32]
 	ldp	x20, x19, [sp, #16]
 	ldp	x22, x21, [sp], #48
+LBB7_6:
 	ret
 	.loh AdrpAdd	Lloh74, Lloh75
 	.loh AdrpAdd	Lloh72, Lloh73

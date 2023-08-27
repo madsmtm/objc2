@@ -87,7 +87,9 @@ pub fn read_assembly<P: AsRef<Path>>(path: P, package_path: &Path) -> io::Result
 
     // HACK: Make location data the same no matter which platform generated
     // the data.
-    let s = s.replace(".asciz\t\"}", ".asciz\t\"t");
+    let s = s.replace(".asciz\t\"}\\000", ".asciz\t\"p\\000");
+    let s = s.replace(".asciz\t\"L\\000", ".asciz\t\"p\\000");
+    let s = s.replace(".asciz\t\"t\\000", ".asciz\t\"p\\000");
 
     // HACK: Replace Objective-C image info for simulator targets
     let s = s.replace(
@@ -102,6 +104,7 @@ pub fn read_assembly<P: AsRef<Path>>(path: P, package_path: &Path) -> io::Result
     let s = strip_lines(&s, ".file");
     // Added in nightly-2022-07-21
     let s = strip_lines(&s, ".no_dead_strip");
+    let s = strip_lines(&s, ".ident\t\"rustc ");
     // We remove the __LLVM,__bitcode and __LLVM,__cmdline sections because
     // they're uninteresting for out use-case.
     //

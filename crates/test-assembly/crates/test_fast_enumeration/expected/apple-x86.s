@@ -125,34 +125,34 @@ _iter:
 L3$pb:
 	pop	eax
 	mov	ebx, dword ptr [ebp + 8]
-	mov	dword ptr [ebp - 44], 0
-	mov	dword ptr [ebp - 48], 0
-	mov	dword ptr [ebp - 36], 0
 	mov	dword ptr [ebp - 40], 0
+	mov	dword ptr [ebp - 44], 0
 	mov	dword ptr [ebp - 32], 0
-	mov	dword ptr [ebp - 128], ebx
-	lea	edi, [ebp - 60]
-	mov	dword ptr [ebp - 120], 0
-	mov	dword ptr [ebp - 124], 0
-	mov	dword ptr [ebp - 112], 0
-	mov	dword ptr [ebp - 116], 0
-	mov	dword ptr [ebp - 104], 0
-	mov	dword ptr [ebp - 108], 0
-	mov	dword ptr [ebp - 96], 0
-	mov	dword ptr [ebp - 100], 0
-	mov	dword ptr [ebp - 88], 0
-	mov	dword ptr [ebp - 92], 0
-	mov	dword ptr [ebp - 80], 0
-	mov	dword ptr [ebp - 84], 0
-	mov	dword ptr [ebp - 72], 0
-	mov	dword ptr [ebp - 76], 0
-	mov	dword ptr [ebp - 64], 0
-	mov	dword ptr [ebp - 68], 0
-	mov	dword ptr [ebp - 56], 0
-	mov	dword ptr [ebp - 60], 0
-	mov	dword ptr [ebp - 52], 0
+	mov	dword ptr [ebp - 36], 0
 	mov	dword ptr [ebp - 28], 0
+	mov	dword ptr [ebp - 124], ebx
+	lea	edi, [ebp - 56]
+	mov	dword ptr [ebp - 116], 0
+	mov	dword ptr [ebp - 120], 0
+	mov	dword ptr [ebp - 108], 0
+	mov	dword ptr [ebp - 112], 0
+	mov	dword ptr [ebp - 100], 0
+	mov	dword ptr [ebp - 104], 0
+	mov	dword ptr [ebp - 92], 0
+	mov	dword ptr [ebp - 96], 0
+	mov	dword ptr [ebp - 84], 0
+	mov	dword ptr [ebp - 88], 0
+	mov	dword ptr [ebp - 76], 0
+	mov	dword ptr [ebp - 80], 0
+	mov	dword ptr [ebp - 68], 0
+	mov	dword ptr [ebp - 72], 0
+	mov	dword ptr [ebp - 60], 0
+	mov	dword ptr [ebp - 64], 0
+	mov	dword ptr [ebp - 52], 0
+	mov	dword ptr [ebp - 56], 0
+	mov	dword ptr [ebp - 48], 0
 	mov	dword ptr [ebp - 24], 0
+	mov	dword ptr [ebp - 20], 0
 	mov	esi, dword ptr [eax + LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L3$pb]
 	lea	eax, [eax + l_anon.[ID].0-L3$pb]
 	mov	dword ptr [ebp - 16], eax
@@ -163,28 +163,28 @@ L3$pb:
 LBB3_4:
 	sub	esp, 12
 	push	16
-	lea	ecx, [ebp - 124]
+	lea	ecx, [ebp - 120]
 	push	ecx
 	push	edi
 	push	eax
 	push	ebx
 	call	_objc_msgSend
 	add	esp, 32
-	mov	dword ptr [ebp - 24], eax
+	mov	dword ptr [ebp - 20], eax
 	xor	ecx, ecx
 	test	eax, eax
 	je	LBB3_5
 LBB3_6:
-	mov	eax, dword ptr [ebp - 56]
+	mov	eax, dword ptr [ebp - 52]
 	lea	edx, [ecx + 1]
-	mov	dword ptr [ebp - 28], edx
+	mov	dword ptr [ebp - 24], edx
 	sub	esp, 12
 	push	dword ptr [eax + 4*ecx]
 	call	_use_obj
 	add	esp, 16
-	mov	ebx, dword ptr [ebp - 128]
-	mov	ecx, dword ptr [ebp - 28]
-	mov	eax, dword ptr [ebp - 24]
+	mov	ebx, dword ptr [ebp - 124]
+	mov	ecx, dword ptr [ebp - 24]
+	mov	eax, dword ptr [ebp - 20]
 LBB3_1:
 	cmp	ecx, eax
 	jb	LBB3_6
@@ -218,34 +218,34 @@ _iter_noop:
 L4$pb:
 	pop	eax
 	mov	ebx, dword ptr [ebp + 8]
-	mov	dword ptr [ebp - 44], 0
-	mov	dword ptr [ebp - 48], 0
-	mov	dword ptr [ebp - 36], 0
 	mov	dword ptr [ebp - 40], 0
+	mov	dword ptr [ebp - 44], 0
 	mov	dword ptr [ebp - 32], 0
-	mov	dword ptr [ebp - 128], ebx
-	lea	edi, [ebp - 60]
-	mov	dword ptr [ebp - 120], 0
-	mov	dword ptr [ebp - 124], 0
-	mov	dword ptr [ebp - 112], 0
-	mov	dword ptr [ebp - 116], 0
-	mov	dword ptr [ebp - 104], 0
-	mov	dword ptr [ebp - 108], 0
-	mov	dword ptr [ebp - 96], 0
-	mov	dword ptr [ebp - 100], 0
-	mov	dword ptr [ebp - 88], 0
-	mov	dword ptr [ebp - 92], 0
-	mov	dword ptr [ebp - 80], 0
-	mov	dword ptr [ebp - 84], 0
-	mov	dword ptr [ebp - 72], 0
-	mov	dword ptr [ebp - 76], 0
-	mov	dword ptr [ebp - 64], 0
-	mov	dword ptr [ebp - 68], 0
-	mov	dword ptr [ebp - 56], 0
-	mov	dword ptr [ebp - 60], 0
-	mov	dword ptr [ebp - 52], 0
+	mov	dword ptr [ebp - 36], 0
 	mov	dword ptr [ebp - 28], 0
+	mov	dword ptr [ebp - 124], ebx
+	lea	edi, [ebp - 56]
+	mov	dword ptr [ebp - 116], 0
+	mov	dword ptr [ebp - 120], 0
+	mov	dword ptr [ebp - 108], 0
+	mov	dword ptr [ebp - 112], 0
+	mov	dword ptr [ebp - 100], 0
+	mov	dword ptr [ebp - 104], 0
+	mov	dword ptr [ebp - 92], 0
+	mov	dword ptr [ebp - 96], 0
+	mov	dword ptr [ebp - 84], 0
+	mov	dword ptr [ebp - 88], 0
+	mov	dword ptr [ebp - 76], 0
+	mov	dword ptr [ebp - 80], 0
+	mov	dword ptr [ebp - 68], 0
+	mov	dword ptr [ebp - 72], 0
+	mov	dword ptr [ebp - 60], 0
+	mov	dword ptr [ebp - 64], 0
+	mov	dword ptr [ebp - 52], 0
+	mov	dword ptr [ebp - 56], 0
+	mov	dword ptr [ebp - 48], 0
 	mov	dword ptr [ebp - 24], 0
+	mov	dword ptr [ebp - 20], 0
 	mov	esi, dword ptr [eax + LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L4$pb]
 	lea	eax, [eax + l_anon.[ID].0-L4$pb]
 	mov	dword ptr [ebp - 16], eax
@@ -255,7 +255,7 @@ L4$pb:
 	.p2align	4, 0x90
 LBB4_6:
 	inc	ecx
-	mov	dword ptr [ebp - 28], ecx
+	mov	dword ptr [ebp - 24], ecx
 LBB4_1:
 	cmp	ecx, eax
 	jb	LBB4_6
@@ -265,18 +265,18 @@ LBB4_1:
 LBB4_4:
 	sub	esp, 12
 	push	16
-	lea	ecx, [ebp - 124]
+	lea	ecx, [ebp - 120]
 	push	ecx
 	push	edi
 	push	eax
 	push	ebx
 	call	_objc_msgSend
 	add	esp, 32
-	mov	dword ptr [ebp - 24], eax
+	mov	dword ptr [ebp - 20], eax
 	test	eax, eax
 	je	LBB4_7
 	xor	ecx, ecx
-	mov	ebx, dword ptr [ebp - 128]
+	mov	ebx, dword ptr [ebp - 124]
 	jmp	LBB4_6
 LBB4_3:
 	sub	esp, 8
@@ -306,34 +306,34 @@ _iter_retained:
 L5$pb:
 	pop	eax
 	mov	esi, dword ptr [ebp + 8]
-	mov	dword ptr [ebp - 44], 0
-	mov	dword ptr [ebp - 48], 0
-	mov	dword ptr [ebp - 36], 0
 	mov	dword ptr [ebp - 40], 0
+	mov	dword ptr [ebp - 44], 0
 	mov	dword ptr [ebp - 32], 0
-	mov	dword ptr [ebp - 128], esi
-	lea	ebx, [ebp - 60]
-	mov	dword ptr [ebp - 120], 0
-	mov	dword ptr [ebp - 124], 0
-	mov	dword ptr [ebp - 112], 0
-	mov	dword ptr [ebp - 116], 0
-	mov	dword ptr [ebp - 104], 0
-	mov	dword ptr [ebp - 108], 0
-	mov	dword ptr [ebp - 96], 0
-	mov	dword ptr [ebp - 100], 0
-	mov	dword ptr [ebp - 88], 0
-	mov	dword ptr [ebp - 92], 0
-	mov	dword ptr [ebp - 80], 0
-	mov	dword ptr [ebp - 84], 0
-	mov	dword ptr [ebp - 72], 0
-	mov	dword ptr [ebp - 76], 0
-	mov	dword ptr [ebp - 64], 0
-	mov	dword ptr [ebp - 68], 0
-	mov	dword ptr [ebp - 56], 0
-	mov	dword ptr [ebp - 60], 0
-	mov	dword ptr [ebp - 52], 0
+	mov	dword ptr [ebp - 36], 0
 	mov	dword ptr [ebp - 28], 0
+	mov	dword ptr [ebp - 124], esi
+	lea	ebx, [ebp - 56]
+	mov	dword ptr [ebp - 116], 0
+	mov	dword ptr [ebp - 120], 0
+	mov	dword ptr [ebp - 108], 0
+	mov	dword ptr [ebp - 112], 0
+	mov	dword ptr [ebp - 100], 0
+	mov	dword ptr [ebp - 104], 0
+	mov	dword ptr [ebp - 92], 0
+	mov	dword ptr [ebp - 96], 0
+	mov	dword ptr [ebp - 84], 0
+	mov	dword ptr [ebp - 88], 0
+	mov	dword ptr [ebp - 76], 0
+	mov	dword ptr [ebp - 80], 0
+	mov	dword ptr [ebp - 68], 0
+	mov	dword ptr [ebp - 72], 0
+	mov	dword ptr [ebp - 60], 0
+	mov	dword ptr [ebp - 64], 0
+	mov	dword ptr [ebp - 52], 0
+	mov	dword ptr [ebp - 56], 0
+	mov	dword ptr [ebp - 48], 0
 	mov	dword ptr [ebp - 24], 0
+	mov	dword ptr [ebp - 20], 0
 	mov	edi, dword ptr [eax + LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L5$pb]
 	lea	eax, [eax + l_anon.[ID].0-L5$pb]
 	mov	dword ptr [ebp - 16], eax
@@ -344,21 +344,21 @@ L5$pb:
 LBB5_4:
 	sub	esp, 12
 	push	16
-	lea	ecx, [ebp - 124]
+	lea	ecx, [ebp - 120]
 	push	ecx
 	push	ebx
 	push	eax
 	push	esi
 	call	_objc_msgSend
 	add	esp, 32
-	mov	dword ptr [ebp - 24], eax
+	mov	dword ptr [ebp - 20], eax
 	xor	ecx, ecx
 	test	eax, eax
 	je	LBB5_5
 LBB5_6:
-	mov	eax, dword ptr [ebp - 56]
+	mov	eax, dword ptr [ebp - 52]
 	lea	edx, [ecx + 1]
-	mov	dword ptr [ebp - 28], edx
+	mov	dword ptr [ebp - 24], edx
 	sub	esp, 12
 	push	dword ptr [eax + 4*ecx]
 	call	_objc_retain
@@ -371,9 +371,9 @@ LBB5_6:
 	push	esi
 	call	_objc_release
 	add	esp, 16
-	mov	esi, dword ptr [ebp - 128]
-	mov	ecx, dword ptr [ebp - 28]
-	mov	eax, dword ptr [ebp - 24]
+	mov	esi, dword ptr [ebp - 124]
+	mov	ecx, dword ptr [ebp - 24]
+	mov	eax, dword ptr [ebp - 20]
 LBB5_1:
 	cmp	ecx, eax
 	jb	LBB5_6
