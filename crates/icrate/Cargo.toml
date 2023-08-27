@@ -178,6 +178,7 @@ unstable-example-metal = [
     "Foundation_NSError",
     "Foundation_NSNotification",
     "Foundation_NSString",
+    "Foundation_NSDate",
     "Metal",
     "Metal_MTLCompileOptions",
     "Metal_MTLRenderPassDescriptor",
