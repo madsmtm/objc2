@@ -9,11 +9,14 @@ use icrate::{
         NSBackingStoreBuffered, NSWindow, NSWindowStyleMaskClosable, NSWindowStyleMaskResizable,
         NSWindowStyleMaskTitled,
     },
-    Foundation::{NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize, NSString},
+    Foundation::{
+        NSDate, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize, NSString,
+    },
     Metal::{
-        MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue, MTLCreateSystemDefaultDevice,
-        MTLDevice, MTLDrawable, MTLLibrary, MTLPrimitiveTypeTriangle, MTLRenderCommandEncoder,
-        MTLRenderPipelineDescriptor, MTLRenderPipelineState,
+        MTLArgumentEncoder, MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue,
+        MTLCreateSystemDefaultDevice, MTLDevice, MTLDrawable, MTLFunction, MTLLibrary,
+        MTLPrimitiveTypeTriangle, MTLRenderCommandEncoder, MTLRenderPipelineDescriptor,
+        MTLRenderPipelineState,
     },
     MetalKit::{MTKView, MTKViewDelegate},
 };
@@ -33,8 +36,10 @@ declare_class!(
         device: IvarDrop<Id<ProtocolObject<dyn MTLDevice>>, "_device">,
         command_queue: IvarDrop<Id<ProtocolObject<dyn MTLCommandQueue>>, "_command_queue">,
         pipeline_state: IvarDrop<Id<ProtocolObject<dyn MTLRenderPipelineState>>, "_pipeline_state">,
+        pipeline_descriptor: IvarDrop<Id<MTLRenderPipelineDescriptor>, "_pipeline_descriptor">,
         window: IvarDrop<Id<NSWindow>, "_window">,
         mtk_view: IvarDrop<Id<MTKView>, "_mtk_view">,
+        start_date: IvarDrop<Id<NSDate>, "_start_date">,
     }
     mod ivars;
 
@@ -43,6 +48,27 @@ declare_class!(
         type Super = NSObject;
         type Mutability = InteriorMutable;
         const NAME: &'static str = "Delegate";
+    }
+
+    // define the delegate methods for the `NSApplicationDelegate` protocol
+    unsafe impl NSApplicationDelegate for Delegate {
+        #[method(applicationDidFinishLaunching:)]
+        #[allow(non_snake_case)]
+        unsafe fn applicationDidFinishLaunching(&self, _notification: &NSNotification) {
+            // configure the metal view delegate
+            unsafe {
+                let object = ProtocolObject::from_ref(self);
+                self.mtk_view.setDelegate(Some(object));
+            }
+
+            // configure the window
+            unsafe {
+                self.window.setContentView(Some(&self.mtk_view));
+                self.window.center();
+                self.window.setTitle(ns_string!("metal example"));
+                self.window.makeKeyAndOrderFront(None);
+            }
+        }
     }
 
     // define the Delegate methods (e.g., initializer)
@@ -66,7 +92,7 @@ declare_class!(
             // create the app window
             let window = {
                 let this = NSWindow::alloc();
-                let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(1024., 768.));
+                let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(768., 768.));
                 let style = NSWindowStyleMaskClosable
                     | NSWindowStyleMaskResizable
                     | NSWindowStyleMaskTitled;
@@ -119,31 +145,12 @@ declare_class!(
                 Ivar::write(&mut this.device, device);
                 Ivar::write(&mut this.command_queue, command_queue);
                 Ivar::write(&mut this.pipeline_state, pipeline_state);
+                Ivar::write(&mut this.pipeline_descriptor, pipeline_descriptor);
                 Ivar::write(&mut this.window, window);
                 Ivar::write(&mut this.mtk_view, mtk_view);
+                Ivar::write(&mut this.start_date, unsafe { NSDate::now() });
                 NonNull::from(this)
             })
-        }
-    }
-
-    // define the delegate methods for the `NSApplicationDelegate` protocol
-    unsafe impl NSApplicationDelegate for Delegate {
-        #[method(applicationDidFinishLaunching:)]
-        #[allow(non_snake_case)]
-        unsafe fn applicationDidFinishLaunching(&self, _notification: &NSNotification) {
-            // configure the metal view delegate
-            unsafe {
-                let object = ProtocolObject::from_ref(self);
-                self.mtk_view.setDelegate(Some(object));
-            }
-
-            // configure the window
-            unsafe {
-                self.window.setContentView(Some(&self.mtk_view));
-                self.window.center();
-                self.window.setTitle(ns_string!("metal example"));
-                self.window.makeKeyAndOrderFront(None);
-            }
         }
     }
 
@@ -165,10 +172,11 @@ declare_class!(
 
             #[rustfmt::skip]
             let vertex_data: &mut [f32] = &mut [
-                -0.5, -0.5, 0. , 1. , 0. , 0. ,
-                 0.5, -0.5, 0. , 0. , 1. , 0. ,
-                 0. ,  0.5, 0. , 0. , 0. , 1. ,
+                -f32::sqrt(3.0) / 4.0, -0.25, 0. , 1. , 0. , 0. ,
+                 f32::sqrt(3.0) / 4.0, -0.25, 0. , 0. , 1. , 0. ,
+                 0.                  ,  0.5, 0. , 0. , 0. , 1. ,
             ];
+
             let vertex_bytes = unsafe {
                 NonNull::new_unchecked(vertex_data.as_mut_ptr().cast::<core::ffi::c_void>())
             };
@@ -180,21 +188,45 @@ declare_class!(
                 )
             };
 
+            let argument_encoder = unsafe {
+                self.pipeline_descriptor
+                    .vertexFunction()
+                    .unwrap()
+                    .newArgumentEncoderWithBufferIndex(1)
+            };
+
+            let argument_buffer = self
+                .device
+                .newBufferWithLength_options(argument_encoder.encodedLength(), 0)
+                .unwrap();
+
+            unsafe {
+                argument_encoder.setArgumentBuffer_offset(Some(&*argument_buffer), 0);
+            };
+
+            let time = unsafe {
+                (argument_encoder.constantDataAtIndex(0).as_ptr() as *mut f32)
+                    .as_mut()
+                    .unwrap()
+            };
+            
+            *time = unsafe { self.start_date.timeIntervalSinceNow() as f32 };
+
+            unsafe { encoder.setVertexBuffer_offset_atIndex(Some(&*argument_buffer), 0, 1) };
+
             encoder.setRenderPipelineState(&self.pipeline_state);
             unsafe {
                 encoder.drawPrimitives_vertexStart_vertexCount(MTLPrimitiveTypeTriangle, 0, 3)
             };
             encoder.endEncoding();
-
             command_buffer.presentDrawable(&current_drawable);
-
             command_buffer.commit();
         }
 
         #[method(mtkView:drawableSizeWillChange:)]
         #[allow(non_snake_case)]
         unsafe fn mtkView_drawableSizeWillChange(&self, _view: &MTKView, _size: NSSize) {
-            println!("mtkView_drawableSizeWillChange");
+            // println!("mtkView_drawableSizeWillChange");
         }
     }
 );
@@ -216,19 +248,27 @@ fn main() {
         r#"
         #include <metal_stdlib>
         using namespace metal;
+        struct FragmentShaderArguments {
+            float time  [[id(0)]];
+        };        
         struct VertexIn {
             packed_float3 position;
             packed_float3 color;
         };
+        
         struct VertexOut {
             float4 position [[position]];
             float4 color;
         };
-        vertex VertexOut vertex_main(device const VertexIn *vertices [[buffer(0)]],
-                                    uint vertexId [[vertex_id]]) {
+        vertex VertexOut vertex_main(
+                                    device const VertexIn *vertices [[buffer(0)]],
+                                    device const FragmentShaderArguments & arg [[buffer(1)]],
+                                    uint vertexId [[vertex_id]]
+                                ) {
             VertexOut out;
-            out.position = float4(vertices[vertexId].position, 1);
-            out.color = float4(vertices[vertexId].color, 1);
+            VertexIn vert = vertices[vertexId];
+            out.position = float4(float2x2(cos(arg.time), -sin(arg.time), sin(arg.time), cos(arg.time))*vert.position.xy, vert.position.z, 1);
+            out.color = float4(vert.color, 1);
             return out;
         }
         fragment float4 fragment_main(VertexOut in [[stage_in]]) {
