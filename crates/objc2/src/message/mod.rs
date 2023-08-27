@@ -482,7 +482,7 @@ unsafe impl<'a> MessageReceiver for &'a AnyClass {
 /// Types that may be used as the arguments of an Objective-C message.
 ///
 /// This is implemented for tuples of up to 16 arguments, where each argument
-/// implements [`Encode`][crate::Encode] (or can be converted from one).
+/// implements [`Encode`] (or can be converted from one).
 ///
 ///
 /// # Safety
