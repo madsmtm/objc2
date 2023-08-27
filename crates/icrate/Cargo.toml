@@ -5311,6 +5311,7 @@ unstable-frameworks-macos-10-13 = [
     "Metal_all",
     "PhotoKit_all",
     "unstable-example-delegate",
+    "unstable-example-metal",
     "unstable-example-nspasteboard",
     "unstable-example-speech_synthesis",
     "unstable-frameworks-macos-10-7",

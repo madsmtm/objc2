@@ -1,22 +1,20 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 
-use core::ptr::NonNull;
+use core::{cell::RefCell, ptr::NonNull};
 
 use icrate::{
-    ns_string,
     AppKit::{
         NSApplication, NSApplicationActivationPolicyRegular, NSApplicationDelegate,
         NSBackingStoreBuffered, NSWindow, NSWindowStyleMaskClosable, NSWindowStyleMaskResizable,
         NSWindowStyleMaskTitled,
     },
     Foundation::{
-        NSDate, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize, NSString,
+        ns_string, NSDate, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize,
     },
     Metal::{
-        MTLArgumentEncoder, MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue,
-        MTLCreateSystemDefaultDevice, MTLDevice, MTLDrawable, MTLFunction, MTLLibrary,
-        MTLPrimitiveTypeTriangle, MTLRenderCommandEncoder, MTLRenderPipelineDescriptor,
-        MTLRenderPipelineState,
+        MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue, MTLCreateSystemDefaultDevice,
+        MTLDevice, MTLDrawable, MTLLibrary, MTLPrimitiveTypeTriangle, MTLRenderCommandEncoder,
+        MTLRenderPipelineDescriptor, MTLRenderPipelineState,
     },
     MetalKit::{MTKView, MTKViewDelegate},
 };
@@ -29,17 +27,91 @@ use objc2::{
     ClassType,
 };
 
+#[rustfmt::skip]
+const SHADERS: &str = r#"
+    #include <metal_stdlib>
+        
+    struct SceneProperties {
+        float time;
+    };        
+    
+    struct VertexInput {
+        metal::packed_float3 position;
+        metal::packed_float3 color;
+    };
+    
+    struct VertexOutput {
+        metal::float4 position [[position]];
+        metal::float4 color;
+    };
+    
+    vertex VertexOutput vertex_main(
+        device const SceneProperties& properties [[buffer(0)]],
+        device const VertexInput* vertices [[buffer(1)]],
+        uint vertex_idx [[vertex_id]]
+    ) {
+        VertexOutput out;
+        VertexInput in = vertices[vertex_idx];
+        out.position =
+            metal::float4(
+                metal::float2x2(
+                    metal::cos(properties.time), -metal::sin(properties.time),
+                    metal::sin(properties.time),  metal::cos(properties.time)
+                ) * in.position.xy,
+                in.position.z,
+                1);
+        out.color = metal::float4(in.color, 1);
+        return out;
+    }
+    
+    fragment metal::float4 fragment_main(VertexOutput in [[stage_in]]) {
+        return in.color;
+    }
+"#;
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct SceneProperties {
+    pub time: f32,
+}
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct VertexInput {
+    pub position: Position,
+    pub color: Color,
+}
+
+#[derive(Copy, Clone)]
+// NOTE: this has the same ABI as `MTLPackedFloat3`
+#[repr(C)]
+pub struct Position {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+}
+
+#[derive(Copy, Clone)]
+// NOTE: this has the same ABI as `MTLPackedFloat3`
+#[repr(C)]
+pub struct Color {
+    pub r: f32,
+    pub g: f32,
+    pub b: f32,
+}
+
+type IdCell<T> = Box<RefCell<Option<Id<T>>>>;
+
 // declare the Objective-C class machinery
 declare_class!(
     // declare the delegate class with our instance variables
+    #[rustfmt::skip] // FIXME: rustfmt breaks the macro parsing apparently
     struct Delegate {
-        device: IvarDrop<Id<ProtocolObject<dyn MTLDevice>>, "_device">,
-        command_queue: IvarDrop<Id<ProtocolObject<dyn MTLCommandQueue>>, "_command_queue">,
-        pipeline_state: IvarDrop<Id<ProtocolObject<dyn MTLRenderPipelineState>>, "_pipeline_state">,
-        pipeline_descriptor: IvarDrop<Id<MTLRenderPipelineDescriptor>, "_pipeline_descriptor">,
-        window: IvarDrop<Id<NSWindow>, "_window">,
-        mtk_view: IvarDrop<Id<MTKView>, "_mtk_view">,
         start_date: IvarDrop<Id<NSDate>, "_start_date">,
+        command_queue: IvarDrop<IdCell<ProtocolObject<dyn MTLCommandQueue>>, "_command_queue">,
+        pipeline_state: IvarDrop<IdCell<ProtocolObject<dyn MTLRenderPipelineState>>, "_pipeline_state">,
+        window: IvarDrop<IdCell<NSWindow>, "_window">,
+        mtk_view: IvarDrop<IdCell<MTKView>, "_mtk_view">,
     }
     mod ivars;
 
@@ -50,45 +122,28 @@ declare_class!(
         const NAME: &'static str = "Delegate";
     }
 
+    // define the Delegate methods (e.g., initializer)
+    unsafe impl Delegate {
+        #[method(init)]
+        #[allow(non_snake_case)]
+        unsafe fn init(this: *mut Self) -> Option<NonNull<Self>> {
+            let this: Option<&mut Self> = msg_send![super(this), init];
+            this.map(|this| {
+                Ivar::write(&mut this.start_date, unsafe { NSDate::now() });
+                Ivar::write(&mut this.command_queue, IdCell::default());
+                Ivar::write(&mut this.pipeline_state, IdCell::default());
+                Ivar::write(&mut this.window, IdCell::default());
+                Ivar::write(&mut this.mtk_view, IdCell::default());
+                NonNull::from(this)
+            })
+        }
+    }
+
     // define the delegate methods for the `NSApplicationDelegate` protocol
     unsafe impl NSApplicationDelegate for Delegate {
         #[method(applicationDidFinishLaunching:)]
         #[allow(non_snake_case)]
         unsafe fn applicationDidFinishLaunching(&self, _notification: &NSNotification) {
-            // configure the metal view delegate
-            unsafe {
-                let object = ProtocolObject::from_ref(self);
-                self.mtk_view.setDelegate(Some(object));
-            }
-
-            // configure the window
-            unsafe {
-                self.window.setContentView(Some(&self.mtk_view));
-                self.window.center();
-                self.window.setTitle(ns_string!("metal example"));
-                self.window.makeKeyAndOrderFront(None);
-            }
-        }
-    }
-
-    // define the Delegate methods (e.g., initializer)
-    unsafe impl Delegate {
-        #[method(initWithShaders:)]
-        #[allow(non_snake_case)]
-        unsafe fn __initWithShaders(this: *mut Self, shaders: &NSString) -> Option<NonNull<Self>> {
-            let this: Option<&mut Self> = msg_send![super(this), init];
-
-            // get the default device
-            let device = {
-                let ptr = unsafe { MTLCreateSystemDefaultDevice() };
-                unsafe { Id::retain(ptr) }.expect("Failed to get default system device.")
-            };
-
-            // create the command queue
-            let command_queue = device
-                .newCommandQueue()
-                .expect("Failed to create a command queue.");
-
             // create the app window
             let window = {
                 let this = NSWindow::alloc();
@@ -109,6 +164,17 @@ declare_class!(
                 }
             };
 
+            // get the default device
+            let device = {
+                let ptr = unsafe { MTLCreateSystemDefaultDevice() };
+                unsafe { Id::retain(ptr) }.expect("Failed to get default system device.")
+            };
+
+            // create the command queue
+            let command_queue = device
+                .newCommandQueue()
+                .expect("Failed to create a command queue.");
+
             // create the metal view
             let mtk_view = {
                 let this = MTKView::alloc();
@@ -126,31 +192,43 @@ declare_class!(
                     .setPixelFormat(mtk_view.colorPixelFormat());
             }
 
-            // create the pipeline state
+            // compile the shaders
             let library = device
-                .newLibraryWithSource_options_error(shaders, None)
+                .newLibraryWithSource_options_error(ns_string!(SHADERS), None)
                 .expect("Failed to create a library.");
 
+            // configure the vertex shader
             let vertex_function = library.newFunctionWithName(ns_string!("vertex_main"));
             pipeline_descriptor.setVertexFunction(vertex_function.as_deref());
 
+            // configure the fragment shader
             let fragment_function = library.newFunctionWithName(ns_string!("fragment_main"));
             pipeline_descriptor.setFragmentFunction(fragment_function.as_deref());
 
+            // create the pipeline state
             let pipeline_state = device
                 .newRenderPipelineStateWithDescriptor_error(&pipeline_descriptor)
                 .expect("Failed to create a pipeline state.");
 
-            this.map(|this| {
-                Ivar::write(&mut this.device, device);
-                Ivar::write(&mut this.command_queue, command_queue);
-                Ivar::write(&mut this.pipeline_state, pipeline_state);
-                Ivar::write(&mut this.pipeline_descriptor, pipeline_descriptor);
-                Ivar::write(&mut this.window, window);
-                Ivar::write(&mut this.mtk_view, mtk_view);
-                Ivar::write(&mut this.start_date, unsafe { NSDate::now() });
-                NonNull::from(this)
-            })
+            // configure the metal view delegate
+            unsafe {
+                let object = ProtocolObject::from_ref(self);
+                mtk_view.setDelegate(Some(object));
+            }
+
+            // configure the window
+            unsafe {
+                window.setContentView(Some(&mtk_view));
+                window.center();
+                window.setTitle(ns_string!("metal example"));
+                window.makeKeyAndOrderFront(None);
+            }
+
+            // initialize the delegate state
+            self.command_queue.borrow_mut().replace(command_queue);
+            self.pipeline_state.borrow_mut().replace(pipeline_state);
+            self.window.borrow_mut().replace(window);
+            self.mtk_view.borrow_mut().replace(mtk_view);
         }
     }
 
@@ -159,66 +237,98 @@ declare_class!(
         #[method(drawInMTKView:)]
         #[allow(non_snake_case)]
         unsafe fn drawInMTKView(&self, _view: &MTKView) {
+            let command_queue = self.command_queue.borrow();
+            let Some(command_queue) = command_queue.as_ref() else { return; };
+
+            let mtk_view = self.mtk_view.borrow();
+            let Some(mtk_view) = mtk_view.as_ref() else { return; };
+
+            let pipeline_state = self.pipeline_state.borrow();
+            let Some(pipeline_state) = pipeline_state.as_ref() else { return; };
+
             // FIXME: icrate `MTKView` doesn't have a generated binding for `currentDrawable` yet
             // (because it needs a definition of `CAMetalDrawable`, which we don't support yet) so
             // we have to use a raw `msg_send_id` call here instead.
             let current_drawable: Option<Id<ProtocolObject<dyn MTLDrawable>>> =
-                msg_send_id![&*self.mtk_view, currentDrawable];
+                msg_send_id![mtk_view, currentDrawable];
 
+            // prepare for drawing
             let Some(current_drawable) = current_drawable else { return; };
-            let Some(command_buffer) = self.command_queue.commandBuffer() else { return; };
-            let Some(pass_descriptor) = (unsafe { self.mtk_view.currentRenderPassDescriptor() }) else { return; };
+            let Some(command_buffer) = command_queue.commandBuffer() else { return; };
+            let Some(pass_descriptor) = (unsafe { mtk_view.currentRenderPassDescriptor() }) else { return; };
             let Some(encoder) = command_buffer.renderCommandEncoderWithDescriptor(&pass_descriptor) else { return; };
 
-            #[rustfmt::skip]
-            let vertex_data: &mut [f32] = &mut [
-                -f32::sqrt(3.0) / 4.0, -0.25, 0. , 1. , 0. , 0. ,
-                 f32::sqrt(3.0) / 4.0, -0.25, 0. , 0. , 1. , 0. ,
-                 0.                  ,  0.5, 0. , 0. , 0. , 1. ,
-            ];
-
-            let vertex_bytes = unsafe {
-                NonNull::new_unchecked(vertex_data.as_mut_ptr().cast::<core::ffi::c_void>())
+            // compute the scene properties
+            let scene_properties_data = &SceneProperties {
+                time: unsafe { self.start_date.timeIntervalSinceNow() } as f32,
             };
+            // write the scene properties to the vertex shader argument buffer at index 0
+            let scene_properties_bytes = NonNull::from(scene_properties_data);
             unsafe {
                 encoder.setVertexBytes_length_atIndex(
-                    vertex_bytes,
-                    vertex_data.len() * core::mem::size_of::<f32>(),
+                    scene_properties_bytes.cast::<core::ffi::c_void>(),
+                    core::mem::size_of_val(scene_properties_data),
                     0,
                 )
             };
 
-            let argument_encoder = unsafe {
-                self.pipeline_descriptor
-                    .vertexFunction()
-                    .unwrap()
-                    .newArgumentEncoderWithBufferIndex(1)
-            };
-
-            let argument_buffer = self
-                .device
-                .newBufferWithLength_options(argument_encoder.encodedLength(), 0)
-                .unwrap();
-
+            // compute the triangle geometry
+            let vertex_input_data: &[VertexInput] = &[
+                VertexInput {
+                    position: Position {
+                        x: -f32::sqrt(3.0) / 4.0,
+                        y: -0.25,
+                        z: 0.,
+                    },
+                    color: Color {
+                        r: 1.,
+                        g: 0.,
+                        b: 0.,
+                    },
+                },
+                VertexInput {
+                    position: Position {
+                        x: f32::sqrt(3.0) / 4.0,
+                        y: -0.25,
+                        z: 0.,
+                    },
+                    color: Color {
+                        r: 0.,
+                        g: 1.,
+                        b: 0.,
+                    },
+                },
+                VertexInput {
+                    position: Position {
+                        x: 0.,
+                        y: 0.5,
+                        z: 0.,
+                    },
+                    color: Color {
+                        r: 0.,
+                        g: 0.,
+                        b: 1.,
+                    },
+                },
+            ];
+            // write the triangle geometry to the vertex shader argument buffer at index 1
+            let vertex_input_bytes = NonNull::from(vertex_input_data);
             unsafe {
-                argument_encoder.setArgumentBuffer_offset(Some(&*argument_buffer), 0);
+                encoder.setVertexBytes_length_atIndex(
+                    vertex_input_bytes.cast::<core::ffi::c_void>(),
+                    core::mem::size_of_val(vertex_input_data),
+                    1,
+                )
             };
 
-            let time = unsafe {
-                (argument_encoder.constantDataAtIndex(0).as_ptr() as *mut f32)
-                    .as_mut()
-                    .unwrap()
-            };
-            
-            *time = unsafe { self.start_date.timeIntervalSinceNow() as f32 };
-
-            unsafe { encoder.setVertexBuffer_offset_atIndex(Some(&*argument_buffer), 0, 1) };
-
-            encoder.setRenderPipelineState(&self.pipeline_state);
+            // configure the encoder with the pipeline and draw the triangle
+            encoder.setRenderPipelineState(pipeline_state);
             unsafe {
                 encoder.drawPrimitives_vertexStart_vertexCount(MTLPrimitiveTypeTriangle, 0, 3)
             };
             encoder.endEncoding();
+
+            // schedule the command buffer for display and commit
             command_buffer.presentDrawable(&current_drawable);
             command_buffer.commit();
         }
@@ -233,52 +343,19 @@ declare_class!(
 
 unsafe impl NSObjectProtocol for Delegate {}
 
-#[cfg(target_os = "macos")]
 impl Delegate {
-    pub fn init_with_shaders(shaders: &NSString) -> Id<Self> {
-        unsafe { msg_send_id![Self::alloc(), initWithShaders: shaders] }
+    pub fn new() -> Id<Self> {
+        unsafe { msg_send_id![Self::alloc(), init] }
     }
 }
 
 fn main() {
+    // configure the app
     let app = unsafe { NSApplication::sharedApplication() };
     unsafe { app.setActivationPolicy(NSApplicationActivationPolicyRegular) };
 
-    let shaders = ns_string!(
-        r#"
-        #include <metal_stdlib>
-        using namespace metal;
-        struct FragmentShaderArguments {
-            float time  [[id(0)]];
-        };        
-        struct VertexIn {
-            packed_float3 position;
-            packed_float3 color;
-        };
-        
-        struct VertexOut {
-            float4 position [[position]];
-            float4 color;
-        };
-        vertex VertexOut vertex_main(
-                                    device const VertexIn *vertices [[buffer(0)]],
-                                    device const FragmentShaderArguments & arg [[buffer(1)]],
-                                    uint vertexId [[vertex_id]]
-                                ) {
-            VertexOut out;
-            VertexIn vert = vertices[vertexId];
-            out.position = float4(float2x2(cos(arg.time), -sin(arg.time), sin(arg.time), cos(arg.time))*vert.position.xy, vert.position.z, 1);
-            out.color = float4(vert.color, 1);
-            return out;
-        }
-        fragment float4 fragment_main(VertexOut in [[stage_in]]) {
-            return in.color;
-        }
-    "#
-    );
-
     // initialize the delegate
-    let delegate = Delegate::init_with_shaders(shaders);
+    let delegate = Delegate::new();
 
     // configure the application delegate
     unsafe {
