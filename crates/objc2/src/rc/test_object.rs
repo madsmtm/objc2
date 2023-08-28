@@ -54,7 +54,7 @@ impl __ThreadTestData {
 }
 
 std::thread_local! {
-    static TEST_DATA: RefCell<__ThreadTestData> = RefCell::new(Default::default());
+    static TEST_DATA: RefCell<__ThreadTestData> = RefCell::default();
 }
 
 declare_class!(

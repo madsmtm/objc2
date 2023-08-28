@@ -68,7 +68,7 @@ fn msg_send_check(
         VerificationError::from(Inner::MethodNotFound)
     };
 
-    panic_verify(cls, sel, err);
+    panic_verify(cls, sel, &err);
 }
 
 #[cfg(debug_assertions)]
@@ -79,7 +79,7 @@ fn panic_null(sel: Sel) -> ! {
 
 #[cfg(debug_assertions)]
 #[track_caller]
-fn panic_verify(cls: &AnyClass, sel: Sel, err: crate::runtime::VerificationError) -> ! {
+fn panic_verify(cls: &AnyClass, sel: Sel, err: &crate::runtime::VerificationError) -> ! {
     panic!(
         "invalid message send to {}[{cls} {sel}]: {err}",
         if cls.is_metaclass() { "+" } else { "-" },
@@ -269,7 +269,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
                 panic_null(sel);
             }
             if let Err(err) = superclass.verify_sel::<A, R>(sel) {
-                panic_verify(superclass, sel, err);
+                panic_verify(superclass, sel, &err);
             }
         }
         unsafe {

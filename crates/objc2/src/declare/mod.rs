@@ -432,7 +432,7 @@ impl ClassBuilder {
             self.add_method_inner(
                 sel,
                 F::Args::ENCODINGS,
-                F::Ret::ENCODING_RETURN,
+                &F::Ret::ENCODING_RETURN,
                 func.__imp(),
             )
         }
@@ -442,7 +442,7 @@ impl ClassBuilder {
         &mut self,
         sel: Sel,
         enc_args: &[Encoding],
-        enc_ret: Encoding,
+        enc_ret: &Encoding,
         func: Imp,
     ) {
         let sel_args = sel.number_of_arguments();
@@ -458,14 +458,14 @@ impl ClassBuilder {
         #[cfg(debug_assertions)]
         if let Some(superclass) = self.superclass() {
             if let Some(method) = superclass.instance_method(sel) {
-                if let Err(err) = crate::verify::verify_method_signature(method, enc_args, &enc_ret)
+                if let Err(err) = crate::verify::verify_method_signature(method, enc_args, enc_ret)
                 {
                     panic!("declared invalid method -[{} {sel}]: {err}", self.name())
                 }
             }
         }
 
-        let types = method_type_encoding(&enc_ret, enc_args);
+        let types = method_type_encoding(enc_ret, enc_args);
         let success = Bool::from_raw(unsafe {
             ffi::class_addMethod(self.as_mut_ptr(), sel.as_ptr(), Some(func), types.as_ptr())
         });
@@ -496,7 +496,7 @@ impl ClassBuilder {
             self.add_class_method_inner(
                 sel,
                 F::Args::ENCODINGS,
-                F::Ret::ENCODING_RETURN,
+                &F::Ret::ENCODING_RETURN,
                 func.__imp(),
             )
         }
@@ -506,7 +506,7 @@ impl ClassBuilder {
         &mut self,
         sel: Sel,
         enc_args: &[Encoding],
-        enc_ret: Encoding,
+        enc_ret: &Encoding,
         func: Imp,
     ) {
         let sel_args = sel.number_of_arguments();
@@ -522,14 +522,14 @@ impl ClassBuilder {
         #[cfg(debug_assertions)]
         if let Some(superclass) = self.superclass() {
             if let Some(method) = superclass.class_method(sel) {
-                if let Err(err) = crate::verify::verify_method_signature(method, enc_args, &enc_ret)
+                if let Err(err) = crate::verify::verify_method_signature(method, enc_args, enc_ret)
                 {
                     panic!("declared invalid method +[{} {sel}]: {err}", self.name())
                 }
             }
         }
 
-        let types = method_type_encoding(&enc_ret, enc_args);
+        let types = method_type_encoding(enc_ret, enc_args);
         let success = Bool::from_raw(unsafe {
             ffi::class_addMethod(
                 self.metaclass_mut(),
@@ -681,7 +681,7 @@ impl ProtocolBuilder {
         &mut self,
         sel: Sel,
         enc_args: &[Encoding],
-        enc_ret: Encoding,
+        enc_ret: &Encoding,
         required: bool,
         instance_method: bool,
     ) {
@@ -692,7 +692,7 @@ impl ProtocolBuilder {
             "selector {sel} accepts {sel_args} arguments, but function accepts {}",
             enc_args.len(),
         );
-        let types = method_type_encoding(&enc_ret, enc_args);
+        let types = method_type_encoding(enc_ret, enc_args);
         unsafe {
             ffi::protocol_addMethodDescription(
                 self.as_mut_ptr(),
@@ -713,7 +713,7 @@ impl ProtocolBuilder {
         self.add_method_description_inner(
             sel,
             Args::ENCODINGS,
-            Ret::ENCODING_RETURN,
+            &Ret::ENCODING_RETURN,
             required,
             true,
         )
@@ -728,7 +728,7 @@ impl ProtocolBuilder {
         self.add_method_description_inner(
             sel,
             Args::ENCODINGS,
-            Ret::ENCODING_RETURN,
+            &Ret::ENCODING_RETURN,
             required,
             false,
         )
