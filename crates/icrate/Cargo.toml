@@ -78,6 +78,12 @@ required-features = [
     "unstable-example-browser"
 ]
 
+[[example]]
+name = "metal"
+required-features = [
+    "unstable-example-metal"
+]
+
 [features]
 default = ["std", "apple"]
 
@@ -162,6 +168,26 @@ unstable-example-browser = [
     "WebKit",
     "WebKit_WKNavigation",
     "WebKit_WKWebView",
+]
+unstable-example-metal = [
+    "apple",
+    "AppKit",
+    "AppKit_NSWindow",
+    "Foundation",
+    "Foundation_NSCoder",
+    "Foundation_NSError",
+    "Foundation_NSNotification",
+    "Foundation_NSString",
+    "Foundation_NSDate",
+    "Metal",
+    "Metal_MTLCompileOptions",
+    "Metal_MTLRenderPassDescriptor",
+    "Metal_MTLRenderPipelineColorAttachmentDescriptor",
+    "Metal_MTLRenderPipelineColorAttachmentDescriptorArray",
+    "Metal_MTLRenderPipelineDescriptor",
+    "MetalKit",
+    "MetalKit_MTKView",
+    "Metal_MTLRenderPassDescriptor",
 ]
 
 # Helps with CI
@@ -5285,6 +5311,7 @@ unstable-frameworks-macos-10-13 = [
     "Metal_all",
     "PhotoKit_all",
     "unstable-example-delegate",
+    "unstable-example-metal",
     "unstable-example-nspasteboard",
     "unstable-example-speech_synthesis",
     "unstable-frameworks-macos-10-7",

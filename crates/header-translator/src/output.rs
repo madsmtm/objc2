@@ -39,6 +39,7 @@ impl Output {
         let mut macos_10_13_features: BTreeSet<String> = vec![
             "unstable-frameworks-macos-10-7".into(),
             "unstable-example-delegate".into(),
+            "unstable-example-metal".into(),
             "unstable-example-nspasteboard".into(),
             "unstable-example-speech_synthesis".into(),
         ]
