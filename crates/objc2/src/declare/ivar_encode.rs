@@ -9,6 +9,7 @@ use super::InnerIvarType;
 // Note: We put the inner type in a `MaybeUninit`, since we may need to access
 // this type before the inner type has been properly initialized.
 #[repr(transparent)]
+#[allow(missing_debug_implementations)]
 pub struct IvarEncode<T>(MaybeUninit<T>);
 
 // We intentionally don't implement `Drop`, since that may happen before the

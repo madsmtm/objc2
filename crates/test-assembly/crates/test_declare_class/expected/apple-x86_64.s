@@ -22,22 +22,22 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	je	LBB1_3
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdx, qword ptr [rax]
-	lea	rdi, [rip + l_anon.[ID].11]
+	lea	rdi, [rip + l_anon.[ID].16]
 	mov	esi, 15
 	call	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
 	test	rax, rax
 	je	LBB1_4
 	mov	qword ptr [rbp - 80], rax
-	lea	rsi, [rip + L_anon.[ID].5]
-	lea	r9, [rip + l_anon.[ID].6]
+	lea	rsi, [rip + L_anon.[ID].11]
+	lea	r9, [rip + l_anon.[ID].12]
 	lea	rbx, [rbp - 80]
 	mov	edx, 4
 	mov	ecx, 1
 	mov	rdi, rbx
 	xor	r8d, r8d
 	call	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
-	lea	rsi, [rip + L_anon.[ID].7]
-	lea	r14, [rip + l_anon.[ID].8]
+	lea	rsi, [rip + L_anon.[ID].13]
+	lea	r14, [rip + l_anon.[ID].2]
 	mov	edx, 4
 	mov	ecx, 8
 	mov	rdi, rbx
@@ -47,7 +47,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_dealloc@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 	lea	r15, [rip + l_anon.[ID].1]
-	lea	r12, [rip + l_anon.[ID].12]
+	lea	r12, [rip + l_anon.[ID].3]
 	lea	r9, [rip + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}::__objc2_dealloc, 0)]
 	mov	rdi, rbx
 	mov	rdx, r15
@@ -77,7 +77,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	r8, r12
 	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_783b35bc45c6e4a6]
-	lea	r12, [rip + l_anon.[ID].13]
+	lea	r12, [rip + l_anon.[ID].4]
 	lea	r9, [rip + _method_bool]
 	mov	ecx, 1
 	mov	rdi, rbx
@@ -98,14 +98,14 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	rdx, r12
 	mov	r8, r14
 	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
-	lea	rdi, [rip + l_anon.[ID].14]
+	lea	rdi, [rip + l_anon.[ID].17]
 	mov	esi, 9
 	call	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
 	mov	rdi, rbx
 	mov	rsi, rax
 	call	SYM(objc2::__macro_helpers::<impl objc2::declare::ClassBuilder>::__add_protocol_methods::GENERATED_ID, 0)
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_f058a81939de2cb9]
-	lea	rdx, [rip + l_anon.[ID].17]
+	lea	rdx, [rip + l_anon.[ID].7]
 	lea	r9, [rip + _copy_with_zone]
 	mov	ecx, 1
 	mov	rdi, rax
@@ -121,8 +121,8 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	pop	rbp
 	ret
 LBB1_3:
-	lea	rdi, [rip + l_anon.[ID].2]
-	lea	rdx, [rip + l_anon.[ID].4]
+	lea	rdi, [rip + l_anon.[ID].8]
+	lea	rdx, [rip + l_anon.[ID].10]
 	mov	esi, 43
 	call	SYM(core::panicking::panic::GENERATED_ID, 0)
 LBB1_4:
@@ -137,7 +137,7 @@ LBB1_4:
 	lea	rax, [rbp - 96]
 	mov	qword ptr [rbp - 64], rax
 	mov	qword ptr [rbp - 56], 1
-	lea	rsi, [rip + l_anon.[ID].10]
+	lea	rsi, [rip + l_anon.[ID].15]
 	lea	rdi, [rbp - 80]
 	call	SYM(core::panicking::panic_fmt::GENERATED_ID, 0)
 
@@ -175,7 +175,7 @@ _get_class:
 	cmp	rax, 3
 	jne	LBB4_1
 LBB4_2:
-	lea	rdi, [rip + l_anon.[ID].11]
+	lea	rdi, [rip + l_anon.[ID].16]
 	mov	esi, 15
 	call	SYM(objc2::runtime::AnyClass::get::GENERATED_ID, 0)
 	test	rax, rax
@@ -189,14 +189,14 @@ LBB4_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)]
 	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].10]
+	lea	r8, [rip + l_anon.[ID].15]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
 	jmp	LBB4_2
 LBB4_4:
-	lea	rdi, [rip + l_anon.[ID].2]
-	lea	rdx, [rip + l_anon.[ID].10]
+	lea	rdi, [rip + l_anon.[ID].8]
+	lea	rdx, [rip + l_anon.[ID].15]
 	mov	esi, 43
 	call	SYM(core::panicking::panic::GENERATED_ID, 0)
 
@@ -230,16 +230,16 @@ _access_ivars:
 	mov	rbx, rax
 	mov	rdi, rax
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
-	lea	rsi, [rip + L_anon.[ID].5]
-	lea	rcx, [rip + l_anon.[ID].6]
+	lea	rsi, [rip + L_anon.[ID].11]
+	lea	rcx, [rip + l_anon.[ID].12]
 	mov	edx, 4
 	mov	rdi, rax
 	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	movzx	r14d, byte ptr [rbx + rax]
 	mov	rdi, rbx
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
-	lea	rsi, [rip + L_anon.[ID].7]
-	lea	rcx, [rip + l_anon.[ID].8]
+	lea	rsi, [rip + L_anon.[ID].13]
+	lea	rcx, [rip + l_anon.[ID].2]
 	mov	edx, 4
 	mov	rdi, rax
 	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
@@ -265,7 +265,7 @@ SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassT
 	cmp	rax, 3
 	jne	LBB7_1
 LBB7_2:
-	lea	rdi, [rip + l_anon.[ID].11]
+	lea	rdi, [rip + l_anon.[ID].16]
 	mov	esi, 15
 	call	SYM(objc2::runtime::AnyClass::get::GENERATED_ID, 0)
 	test	rax, rax
@@ -279,14 +279,14 @@ LBB7_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)]
 	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].10]
+	lea	r8, [rip + l_anon.[ID].15]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
 	jmp	LBB7_2
 LBB7_4:
-	lea	rdi, [rip + l_anon.[ID].2]
-	lea	rdx, [rip + l_anon.[ID].10]
+	lea	rdi, [rip + l_anon.[ID].8]
+	lea	rdx, [rip + l_anon.[ID].15]
 	mov	esi, 43
 	call	SYM(core::panicking::panic::GENERATED_ID, 0)
 
@@ -300,8 +300,8 @@ SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassT
 	mov	rbx, rsi
 	mov	r14, rdi
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
-	lea	rsi, [rip + L_anon.[ID].7]
-	lea	rcx, [rip + l_anon.[ID].8]
+	lea	rsi, [rip + L_anon.[ID].13]
+	lea	rcx, [rip + l_anon.[ID].2]
 	mov	edx, 4
 	mov	rdi, rax
 	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
@@ -343,16 +343,16 @@ _init:
 	je	LBB9_2
 	mov	rdi, rbx
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
-	lea	rsi, [rip + L_anon.[ID].5]
-	lea	rcx, [rip + l_anon.[ID].6]
+	lea	rsi, [rip + L_anon.[ID].11]
+	lea	rcx, [rip + l_anon.[ID].12]
 	mov	edx, 4
 	mov	rdi, rax
 	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	mov	byte ptr [rbx + rax], 42
 	mov	rdi, rbx
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
-	lea	rsi, [rip + L_anon.[ID].7]
-	lea	rcx, [rip + l_anon.[ID].8]
+	lea	rsi, [rip + L_anon.[ID].13]
+	lea	rcx, [rip + l_anon.[ID].2]
 	mov	edx, 4
 	mov	rdi, rax
 	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
@@ -400,8 +400,8 @@ _method_id:
 	push	rax
 	mov	rbx, rdi
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
-	lea	rsi, [rip + L_anon.[ID].7]
-	lea	rcx, [rip + l_anon.[ID].8]
+	lea	rsi, [rip + L_anon.[ID].13]
+	lea	rcx, [rip + l_anon.[ID].2]
 	mov	edx, 4
 	mov	rdi, rax
 	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
@@ -438,8 +438,8 @@ _method_id_with_param:
 	je	LBB14_5
 	mov	rdi, r14
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
-	lea	rsi, [rip + L_anon.[ID].7]
-	lea	rcx, [rip + l_anon.[ID].8]
+	lea	rsi, [rip + L_anon.[ID].13]
+	lea	rcx, [rip + l_anon.[ID].2]
 	mov	edx, 4
 	mov	rdi, rax
 	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
@@ -482,8 +482,8 @@ _copy_with_zone:
 	je	LBB15_5
 	mov	rdi, r14
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
-	lea	r15, [rip + L_anon.[ID].5]
-	lea	r12, [rip + l_anon.[ID].6]
+	lea	r15, [rip + L_anon.[ID].11]
+	lea	r12, [rip + l_anon.[ID].12]
 	mov	edx, 4
 	mov	rdi, rax
 	mov	rsi, r15
@@ -500,8 +500,8 @@ _copy_with_zone:
 	mov	byte ptr [rbx + rax], r13b
 	mov	rdi, r14
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
-	lea	rsi, [rip + L_anon.[ID].7]
-	lea	rcx, [rip + l_anon.[ID].8]
+	lea	rsi, [rip + L_anon.[ID].13]
+	lea	rcx, [rip + l_anon.[ID].2]
 	mov	edx, 4
 	mov	rdi, rax
 	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
@@ -516,8 +516,8 @@ LBB15_2:
 LBB15_4:
 	mov	rdi, rbx
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
-	lea	rsi, [rip + L_anon.[ID].7]
-	lea	rcx, [rip + l_anon.[ID].8]
+	lea	rsi, [rip + L_anon.[ID].13]
+	lea	rcx, [rip + l_anon.[ID].2]
 	mov	edx, 4
 	mov	rdi, rax
 	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
@@ -546,86 +546,86 @@ l_anon.[ID].0:
 l_anon.[ID].1:
 	.byte	0
 
+	.p2align	3, 0x0
 l_anon.[ID].2:
-	.ascii	"called `Option::unwrap()` on a `None` value"
-
-l_anon.[ID].3:
-	.ascii	"$RUSTC/library/std/src/sync/once.rs"
-
-	.section	__DATA,__const
-	.p2align	3, 0x0
-l_anon.[ID].4:
-	.quad	l_anon.[ID].3
-	.asciz	"p\000\000\000\000\000\000\000\225\000\000\0002\000\000"
-
-	.section	__TEXT,__literal4,4byte_literals
-L_anon.[ID].5:
-	.ascii	"_foo"
-
-	.section	__TEXT,__const
-	.p2align	3, 0x0
-l_anon.[ID].6:
-	.byte	5
-	.space	39
-
-	.section	__TEXT,__literal4,4byte_literals
-L_anon.[ID].7:
-	.ascii	"_obj"
-
-	.section	__TEXT,__const
-	.p2align	3, 0x0
-l_anon.[ID].8:
 	.byte	19
 	.space	39
 
-l_anon.[ID].9:
-	.ascii	"crates/$DIR/lib.rs"
-
-	.section	__DATA,__const
 	.p2align	3, 0x0
-l_anon.[ID].10:
-	.quad	l_anon.[ID].9
-	.asciz	"5\000\000\000\000\000\000\000\013\000\000\000\001\000\000"
-
-	.section	__TEXT,__const
-l_anon.[ID].11:
-	.ascii	"CustomClassName"
-
-.zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0),8,3
-	.p2align	3, 0x0
-l_anon.[ID].12:
+l_anon.[ID].3:
 	.byte	17
 	.space	39
 
 	.p2align	3, 0x0
-l_anon.[ID].13:
+l_anon.[ID].4:
 	.space	1
 	.space	39
 
-l_anon.[ID].14:
-	.ascii	"NSCopying"
-
-l_anon.[ID].15:
+l_anon.[ID].5:
 	.ascii	"_NSZone"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
-l_anon.[ID].16:
+l_anon.[ID].6:
 	.byte	28
 	.space	7
-	.quad	l_anon.[ID].15
+	.quad	l_anon.[ID].5
 	.asciz	"\007\000\000\000\000\000\000"
 	.quad	l_anon.[ID].1
 	.space	8
 
 	.p2align	3, 0x0
-l_anon.[ID].17:
+l_anon.[ID].7:
 	.byte	25
 	.space	7
-	.quad	l_anon.[ID].16
+	.quad	l_anon.[ID].6
 	.space	24
 
 	.section	__TEXT,__const
+l_anon.[ID].8:
+	.ascii	"called `Option::unwrap()` on a `None` value"
+
+l_anon.[ID].9:
+	.ascii	"$RUSTC/library/std/src/sync/once.rs"
+
+	.section	__DATA,__const
+	.p2align	3, 0x0
+l_anon.[ID].10:
+	.quad	l_anon.[ID].9
+	.asciz	"p\000\000\000\000\000\000\000\225\000\000\0002\000\000"
+
+	.section	__TEXT,__literal4,4byte_literals
+L_anon.[ID].11:
+	.ascii	"_foo"
+
+	.section	__TEXT,__const
+	.p2align	3, 0x0
+l_anon.[ID].12:
+	.byte	5
+	.space	39
+
+	.section	__TEXT,__literal4,4byte_literals
+L_anon.[ID].13:
+	.ascii	"_obj"
+
+	.section	__TEXT,__const
+l_anon.[ID].14:
+	.ascii	"crates/$DIR/lib.rs"
+
+	.section	__DATA,__const
+	.p2align	3, 0x0
+l_anon.[ID].15:
+	.quad	l_anon.[ID].14
+	.asciz	"5\000\000\000\000\000\000\000\013\000\000\000\001\000\000"
+
+	.section	__TEXT,__const
+l_anon.[ID].16:
+	.ascii	"CustomClassName"
+
+.zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0),8,3
+l_anon.[ID].17:
+	.ascii	"NSCopying"
+
 l_anon.[ID].18:
 	.ascii	"could not create new class "
 
@@ -642,7 +642,7 @@ l_anon.[ID].20:
 
 	.p2align	3, 0x0
 l_anon.[ID].21:
-	.quad	l_anon.[ID].11
+	.quad	l_anon.[ID].16
 	.asciz	"\017\000\000\000\000\000\000"
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip

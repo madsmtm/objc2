@@ -137,29 +137,24 @@ impl<P: ?Sized + ProtocolType + NSObjectProtocol> hash::Hash for ProtocolObject<
 
 impl<P: ?Sized + ProtocolType + NSObjectProtocol> fmt::Debug for ProtocolObject<P> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let description = self.__description();
-
-        match description {
-            // Attempt to format description string
-            Some(description) => {
-                // We use a leaking autorelease pool since often the string
-                // will be UTF-8, and in that case the pool will be
-                // irrelevant. Also, it allows us to pass the formatter into
-                // the pool (since it may contain a pool internally that it
-                // assumes is current when writing).
-                autoreleasepool_leaking(|pool| {
-                    // SAFETY: `description` selector is guaranteed to always
-                    // return an instance of `NSString`.
-                    let s = unsafe { nsstring_to_str(&description, pool) };
-                    fmt::Display::fmt(s, f)
-                })
-            }
+        // Attempt to format description string
+        if let Some(description) = self.__description() {
+            // We use a leaking autorelease pool since often the string
+            // will be UTF-8, and in that case the pool will be
+            // irrelevant. Also, it allows us to pass the formatter into
+            // the pool (since it may contain a pool internally that it
+            // assumes is current when writing).
+            autoreleasepool_leaking(|pool| {
+                // SAFETY: `description` selector is guaranteed to always
+                // return an instance of `NSString`.
+                let s = unsafe { nsstring_to_str(&description, pool) };
+                fmt::Display::fmt(s, f)
+            })
+        } else {
             // If description was `NULL`, use `AnyObject`'s `Debug` impl
             // instead
-            None => {
-                let obj: &AnyObject = &self.inner;
-                fmt::Debug::fmt(obj, f)
-            }
+            let obj: &AnyObject = &self.inner;
+            fmt::Debug::fmt(obj, f)
         }
     }
 }

@@ -14,11 +14,14 @@
 
 #![no_std]
 #![warn(elided_lifetimes_in_paths)]
+#![warn(missing_copy_implementations)]
 #![deny(non_ascii_idents)]
 #![warn(unreachable_pub)]
 #![deny(unsafe_op_in_unsafe_fn)]
 #![warn(clippy::cargo)]
 #![warn(clippy::ptr_as_ptr)]
+#![warn(clippy::missing_errors_doc)]
+#![warn(clippy::missing_panics_doc)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/block-sys/0.2.0")]
 #![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg, doc_cfg_hide))]
@@ -291,6 +294,7 @@ pub struct Block_layout {
 }
 
 #[repr(C)]
+#[allow(missing_copy_implementations)]
 pub struct Block_descriptor_header {
     /// Reserved for future use. Currently always 0.
     pub reserved: c_ulong, // usize

@@ -37,12 +37,16 @@
 
 #![no_std]
 #![warn(elided_lifetimes_in_paths)]
+#![warn(missing_copy_implementations)]
+#![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
 #![deny(non_ascii_idents)]
 #![warn(unreachable_pub)]
 #![deny(unsafe_op_in_unsafe_fn)]
 #![warn(clippy::cargo)]
 #![warn(clippy::ptr_as_ptr)]
+#![warn(clippy::missing_errors_doc)]
+#![warn(clippy::missing_panics_doc)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-encode/3.0.0")]
 #![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]

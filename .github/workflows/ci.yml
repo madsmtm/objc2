@@ -181,6 +181,8 @@ jobs:
         $PUBLIC_CRATES
         --features=$INTERESTING_FEATURES
         --features=$LATEST_MACOS_FEATURE
+      env:
+        RUSTFLAGS: "--codegen=debuginfo=0" # Removed --deny=warnings
 
   ui:
     name: Compiler UI

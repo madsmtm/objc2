@@ -10,6 +10,8 @@ use super::InnerIvarType;
 /// so using C99 `_Bool`; if you want to use `BOOL` in Objective-C, you should
 /// use `IvarEncode<Bool>`.
 #[repr(transparent)]
+#[allow(missing_copy_implementations)]
+#[allow(missing_debug_implementations)]
 pub struct IvarBool(bool);
 
 unsafe impl Encode for IvarBool {

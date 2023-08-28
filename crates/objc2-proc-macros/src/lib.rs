@@ -5,11 +5,15 @@
 
 #![warn(elided_lifetimes_in_paths)]
 #![warn(missing_docs)]
+#![warn(missing_copy_implementations)]
+#![warn(missing_debug_implementations)]
 #![deny(non_ascii_idents)]
 #![warn(unreachable_pub)]
 #![deny(unsafe_op_in_unsafe_fn)]
 #![warn(clippy::cargo)]
 #![warn(clippy::ptr_as_ptr)]
+#![warn(clippy::missing_errors_doc)]
+#![warn(clippy::missing_panics_doc)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-proc-macros/0.1.1")]
 

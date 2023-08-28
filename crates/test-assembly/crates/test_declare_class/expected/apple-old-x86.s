@@ -25,7 +25,7 @@ L1$pb:
 	je	LBB1_3
 	mov	eax, dword ptr [esi + LL_OBJC_CLASS_REFERENCES_NSObject$non_lazy_ptr-L1$pb]
 	sub	esp, 4
-	lea	ecx, [esi + l_anon.[ID].11-L1$pb]
+	lea	ecx, [esi + l_anon.[ID].16-L1$pb]
 	push	dword ptr [eax]
 	push	15
 	push	ecx
@@ -35,8 +35,8 @@ L1$pb:
 	je	LBB1_4
 	mov	dword ptr [ebp - 36], eax
 	sub	esp, 8
-	lea	eax, [esi + l_anon.[ID].6-L1$pb]
-	lea	ecx, [esi + L_anon.[ID].5-L1$pb]
+	lea	eax, [esi + l_anon.[ID].12-L1$pb]
+	lea	ecx, [esi + L_anon.[ID].11-L1$pb]
 	lea	ebx, [ebp - 36]
 	push	eax
 	push	0
@@ -46,8 +46,8 @@ L1$pb:
 	push	ebx
 	call	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
 	add	esp, 24
-	lea	ecx, [esi + l_anon.[ID].8-L1$pb]
-	lea	eax, [esi + L_anon.[ID].7-L1$pb]
+	lea	ecx, [esi + l_anon.[ID].2-L1$pb]
+	lea	eax, [esi + L_anon.[ID].13-L1$pb]
 	push	ecx
 	push	2
 	push	4
@@ -59,7 +59,7 @@ L1$pb:
 	mov	eax, dword ptr [esi + LL_OBJC_SELECTOR_REFERENCES_dealloc$non_lazy_ptr-L1$pb]
 	sub	esp, 8
 	lea	ecx, [esi + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}::__objc2_dealloc, 0)-L1$pb]
-	lea	edi, [esi + l_anon.[ID].12-L1$pb]
+	lea	edi, [esi + l_anon.[ID].3-L1$pb]
 	lea	edx, [esi + l_anon.[ID].1-L1$pb]
 	push	ecx
 	push	edi
@@ -74,7 +74,7 @@ L1$pb:
 	sub	esp, 8
 	lea	ecx, [esi + _init-L1$pb]
 	push	ecx
-	lea	ecx, [esi + l_anon.[ID].8-L1$pb]
+	lea	ecx, [esi + l_anon.[ID].2-L1$pb]
 	push	ecx
 	push	0
 	push	edi
@@ -84,7 +84,7 @@ L1$pb:
 	add	esp, 24
 	lea	eax, [esi + _class_method-L1$pb]
 	push	eax
-	lea	eax, [esi + l_anon.[ID].12-L1$pb]
+	lea	eax, [esi + l_anon.[ID].3-L1$pb]
 	push	eax
 	push	0
 	push	edi
@@ -94,7 +94,7 @@ L1$pb:
 	add	esp, 24
 	lea	eax, [esi + _method-L1$pb]
 	push	eax
-	lea	eax, [esi + l_anon.[ID].12-L1$pb]
+	lea	eax, [esi + l_anon.[ID].3-L1$pb]
 	push	eax
 	push	0
 	push	edi
@@ -103,7 +103,7 @@ L1$pb:
 	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	add	esp, 24
 	lea	eax, [esi + _method_bool-L1$pb]
-	lea	ecx, [esi + l_anon.[ID].13-L1$pb]
+	lea	ecx, [esi + l_anon.[ID].4-L1$pb]
 	push	eax
 	push	ecx
 	push	1
@@ -114,7 +114,7 @@ L1$pb:
 	add	esp, 24
 	lea	eax, [esi + _method_id-L1$pb]
 	push	eax
-	lea	edi, [esi + l_anon.[ID].8-L1$pb]
+	lea	edi, [esi + l_anon.[ID].2-L1$pb]
 	push	edi
 	push	0
 	lea	eax, [esi + l_anon.[ID].1-L1$pb]
@@ -127,13 +127,13 @@ L1$pb:
 	push	eax
 	push	edi
 	push	1
-	lea	eax, [esi + l_anon.[ID].13-L1$pb]
+	lea	eax, [esi + l_anon.[ID].4-L1$pb]
 	push	eax
 	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_788cc14ba6a28eb8-L1$pb]
 	push	ebx
 	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	add	esp, 24
-	lea	eax, [esi + l_anon.[ID].14-L1$pb]
+	lea	eax, [esi + l_anon.[ID].17-L1$pb]
 	push	9
 	push	eax
 	call	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
@@ -143,7 +143,7 @@ L1$pb:
 	call	SYM(objc2::__macro_helpers::<impl objc2::declare::ClassBuilder>::__add_protocol_methods::GENERATED_ID, 0)
 	add	esp, 8
 	lea	ecx, [esi + _copy_with_zone-L1$pb]
-	lea	edx, [esi + l_anon.[ID].17-L1$pb]
+	lea	edx, [esi + l_anon.[ID].7-L1$pb]
 	push	ecx
 	push	edi
 	push	1
@@ -162,8 +162,8 @@ L1$pb:
 	ret
 LBB1_3:
 	sub	esp, 4
-	lea	eax, [esi + l_anon.[ID].4-L1$pb]
-	lea	ecx, [esi + l_anon.[ID].2-L1$pb]
+	lea	eax, [esi + l_anon.[ID].10-L1$pb]
+	lea	ecx, [esi + l_anon.[ID].8-L1$pb]
 	push	eax
 	push	43
 	push	ecx
@@ -181,7 +181,7 @@ LBB1_4:
 	mov	dword ptr [ebp - 28], eax
 	mov	dword ptr [ebp - 24], 1
 	sub	esp, 8
-	lea	eax, [esi + l_anon.[ID].10-L1$pb]
+	lea	eax, [esi + l_anon.[ID].15-L1$pb]
 	lea	ecx, [ebp - 36]
 	push	eax
 	push	ecx
@@ -233,7 +233,7 @@ L4$pb:
 	jne	LBB4_1
 LBB4_2:
 	sub	esp, 8
-	lea	eax, [esi + l_anon.[ID].11-L4$pb]
+	lea	eax, [esi + l_anon.[ID].16-L4$pb]
 	push	15
 	push	eax
 	call	SYM(objc2::runtime::AnyClass::get::GENERATED_ID, 0)
@@ -250,7 +250,7 @@ LBB4_1:
 	lea	eax, [ebp - 9]
 	mov	dword ptr [ebp - 16], eax
 	sub	esp, 12
-	lea	eax, [esi + l_anon.[ID].10-L4$pb]
+	lea	eax, [esi + l_anon.[ID].15-L4$pb]
 	lea	ecx, [esi + l_anon.[ID].0-L4$pb]
 	lea	edx, [ebp - 16]
 	lea	edi, [esi + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)-L4$pb]
@@ -264,8 +264,8 @@ LBB4_1:
 	jmp	LBB4_2
 LBB4_4:
 	sub	esp, 4
-	lea	eax, [esi + l_anon.[ID].10-L4$pb]
-	lea	ecx, [esi + l_anon.[ID].2-L4$pb]
+	lea	eax, [esi + l_anon.[ID].15-L4$pb]
+	lea	ecx, [esi + l_anon.[ID].8-L4$pb]
 	push	eax
 	push	43
 	push	ecx
@@ -311,8 +311,8 @@ L6$pb:
 	push	eax
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
 	add	esp, 16
-	lea	ecx, [edi + l_anon.[ID].6-L6$pb]
-	lea	edx, [edi + L_anon.[ID].5-L6$pb]
+	lea	ecx, [edi + l_anon.[ID].12-L6$pb]
+	lea	edx, [edi + L_anon.[ID].11-L6$pb]
 	push	ecx
 	push	4
 	push	edx
@@ -324,8 +324,8 @@ L6$pb:
 	push	esi
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
 	add	esp, 16
-	lea	ecx, [edi + l_anon.[ID].8-L6$pb]
-	lea	edx, [edi + L_anon.[ID].7-L6$pb]
+	lea	ecx, [edi + l_anon.[ID].2-L6$pb]
+	lea	edx, [edi + L_anon.[ID].13-L6$pb]
 	push	ecx
 	push	4
 	push	edx
@@ -362,7 +362,7 @@ L7$pb:
 	jne	LBB7_1
 LBB7_2:
 	sub	esp, 8
-	lea	eax, [esi + l_anon.[ID].11-L7$pb]
+	lea	eax, [esi + l_anon.[ID].16-L7$pb]
 	push	15
 	push	eax
 	call	SYM(objc2::runtime::AnyClass::get::GENERATED_ID, 0)
@@ -379,7 +379,7 @@ LBB7_1:
 	lea	eax, [ebp - 9]
 	mov	dword ptr [ebp - 16], eax
 	sub	esp, 12
-	lea	eax, [esi + l_anon.[ID].10-L7$pb]
+	lea	eax, [esi + l_anon.[ID].15-L7$pb]
 	lea	ecx, [esi + l_anon.[ID].0-L7$pb]
 	lea	edx, [ebp - 16]
 	lea	edi, [esi + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)-L7$pb]
@@ -393,8 +393,8 @@ LBB7_1:
 	jmp	LBB7_2
 LBB7_4:
 	sub	esp, 4
-	lea	eax, [esi + l_anon.[ID].10-L7$pb]
-	lea	ecx, [esi + l_anon.[ID].2-L7$pb]
+	lea	eax, [esi + l_anon.[ID].15-L7$pb]
+	lea	ecx, [esi + l_anon.[ID].8-L7$pb]
 	push	eax
 	push	43
 	push	ecx
@@ -417,8 +417,8 @@ L8$pb:
 	push	edi
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
 	add	esp, 16
-	lea	ecx, [ebx + l_anon.[ID].8-L8$pb]
-	lea	edx, [ebx + L_anon.[ID].7-L8$pb]
+	lea	ecx, [ebx + l_anon.[ID].2-L8$pb]
+	lea	edx, [ebx + L_anon.[ID].13-L8$pb]
 	push	ecx
 	push	4
 	push	edx
@@ -480,8 +480,8 @@ L9$pb:
 	push	esi
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
 	add	esp, 16
-	lea	ecx, [edi + l_anon.[ID].6-L9$pb]
-	lea	edx, [edi + L_anon.[ID].5-L9$pb]
+	lea	ecx, [edi + l_anon.[ID].12-L9$pb]
+	lea	edx, [edi + L_anon.[ID].11-L9$pb]
 	push	ecx
 	push	4
 	push	edx
@@ -493,8 +493,8 @@ L9$pb:
 	push	esi
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
 	add	esp, 16
-	lea	ecx, [edi + l_anon.[ID].8-L9$pb]
-	lea	edx, [edi + L_anon.[ID].7-L9$pb]
+	lea	ecx, [edi + l_anon.[ID].2-L9$pb]
+	lea	edx, [edi + L_anon.[ID].13-L9$pb]
 	push	ecx
 	push	4
 	push	edx
@@ -552,8 +552,8 @@ L13$pb:
 	push	esi
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
 	add	esp, 16
-	lea	ecx, [edi + l_anon.[ID].8-L13$pb]
-	lea	edx, [edi + L_anon.[ID].7-L13$pb]
+	lea	ecx, [edi + l_anon.[ID].2-L13$pb]
+	lea	edx, [edi + L_anon.[ID].13-L13$pb]
 	push	ecx
 	push	4
 	push	edx
@@ -599,9 +599,9 @@ L14$pb:
 	mov	ebx, dword ptr [ebp + 8]
 	mov	dword ptr [esp], ebx
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
-	lea	ecx, [edi + l_anon.[ID].8-L14$pb]
+	lea	ecx, [edi + l_anon.[ID].2-L14$pb]
 	mov	dword ptr [esp + 12], ecx
-	lea	ecx, [edi + L_anon.[ID].7-L14$pb]
+	lea	ecx, [edi + L_anon.[ID].13-L14$pb]
 	mov	dword ptr [esp + 4], ecx
 	mov	dword ptr [esp], eax
 	mov	dword ptr [esp + 8], 4
@@ -651,8 +651,8 @@ L15$pb:
 	mov	ebx, eax
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
 	add	esp, 16
-	lea	edx, [edi + l_anon.[ID].6-L15$pb]
-	lea	ecx, [edi + L_anon.[ID].5-L15$pb]
+	lea	edx, [edi + l_anon.[ID].12-L15$pb]
+	lea	ecx, [edi + L_anon.[ID].11-L15$pb]
 	push	edx
 	push	4
 	push	ecx
@@ -664,10 +664,10 @@ L15$pb:
 	push	esi
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
 	add	esp, 16
-	lea	ecx, [edi + l_anon.[ID].6-L15$pb]
+	lea	ecx, [edi + l_anon.[ID].12-L15$pb]
 	push	ecx
 	push	4
-	lea	ecx, [edi + L_anon.[ID].5-L15$pb]
+	lea	ecx, [edi + L_anon.[ID].11-L15$pb]
 	push	ecx
 	push	eax
 	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
@@ -677,8 +677,8 @@ L15$pb:
 	push	dword ptr [ebp + 8]
 	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
 	add	esp, 16
-	lea	ecx, [edi + l_anon.[ID].8-L15$pb]
-	lea	ebx, [edi + L_anon.[ID].7-L15$pb]
+	lea	ecx, [edi + l_anon.[ID].2-L15$pb]
+	lea	ebx, [edi + L_anon.[ID].13-L15$pb]
 	mov	dword ptr [ebp - 16], ecx
 	push	ecx
 	push	4
@@ -732,86 +732,86 @@ l_anon.[ID].0:
 l_anon.[ID].1:
 	.byte	0
 
+	.p2align	2, 0x0
 l_anon.[ID].2:
-	.ascii	"called `Option::unwrap()` on a `None` value"
-
-l_anon.[ID].3:
-	.ascii	"$RUSTC/library/std/src/sync/once.rs"
-
-	.section	__DATA,__const
-	.p2align	2, 0x0
-l_anon.[ID].4:
-	.long	l_anon.[ID].3
-	.asciz	"p\000\000\000\225\000\000\0002\000\000"
-
-	.section	__TEXT,__literal4,4byte_literals
-L_anon.[ID].5:
-	.ascii	"_foo"
-
-	.section	__TEXT,__const
-	.p2align	2, 0x0
-l_anon.[ID].6:
-	.byte	5
-	.space	19
-
-	.section	__TEXT,__literal4,4byte_literals
-L_anon.[ID].7:
-	.ascii	"_obj"
-
-	.section	__TEXT,__const
-	.p2align	2, 0x0
-l_anon.[ID].8:
 	.byte	19
 	.space	19
 
-l_anon.[ID].9:
-	.ascii	"crates/$DIR/lib.rs"
-
-	.section	__DATA,__const
 	.p2align	2, 0x0
-l_anon.[ID].10:
-	.long	l_anon.[ID].9
-	.asciz	"5\000\000\000\013\000\000\000\001\000\000"
-
-	.section	__TEXT,__const
-l_anon.[ID].11:
-	.ascii	"CustomClassName"
-
-.zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0),4,2
-	.p2align	2, 0x0
-l_anon.[ID].12:
+l_anon.[ID].3:
 	.byte	17
 	.space	19
 
 	.p2align	2, 0x0
-l_anon.[ID].13:
+l_anon.[ID].4:
 	.space	1
 	.space	19
 
-l_anon.[ID].14:
-	.ascii	"NSCopying"
-
-l_anon.[ID].15:
+l_anon.[ID].5:
 	.ascii	"_NSZone"
 
 	.section	__DATA,__const
 	.p2align	2, 0x0
-l_anon.[ID].16:
+l_anon.[ID].6:
 	.byte	28
 	.space	3
-	.long	l_anon.[ID].15
+	.long	l_anon.[ID].5
 	.asciz	"\007\000\000"
 	.long	l_anon.[ID].1
 	.space	4
 
 	.p2align	2, 0x0
-l_anon.[ID].17:
+l_anon.[ID].7:
 	.byte	25
 	.space	3
-	.long	l_anon.[ID].16
+	.long	l_anon.[ID].6
 	.space	12
 
 	.section	__TEXT,__const
+l_anon.[ID].8:
+	.ascii	"called `Option::unwrap()` on a `None` value"
+
+l_anon.[ID].9:
+	.ascii	"$RUSTC/library/std/src/sync/once.rs"
+
+	.section	__DATA,__const
+	.p2align	2, 0x0
+l_anon.[ID].10:
+	.long	l_anon.[ID].9
+	.asciz	"p\000\000\000\225\000\000\0002\000\000"
+
+	.section	__TEXT,__literal4,4byte_literals
+L_anon.[ID].11:
+	.ascii	"_foo"
+
+	.section	__TEXT,__const
+	.p2align	2, 0x0
+l_anon.[ID].12:
+	.byte	5
+	.space	19
+
+	.section	__TEXT,__literal4,4byte_literals
+L_anon.[ID].13:
+	.ascii	"_obj"
+
+	.section	__TEXT,__const
+l_anon.[ID].14:
+	.ascii	"crates/$DIR/lib.rs"
+
+	.section	__DATA,__const
+	.p2align	2, 0x0
+l_anon.[ID].15:
+	.long	l_anon.[ID].14
+	.asciz	"5\000\000\000\013\000\000\000\001\000\000"
+
+	.section	__TEXT,__const
+l_anon.[ID].16:
+	.ascii	"CustomClassName"
+
+.zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0),4,2
+l_anon.[ID].17:
+	.ascii	"NSCopying"
+
 l_anon.[ID].18:
 	.ascii	"could not create new class "
 
@@ -828,7 +828,7 @@ l_anon.[ID].20:
 
 	.p2align	2, 0x0
 l_anon.[ID].21:
-	.long	l_anon.[ID].11
+	.long	l_anon.[ID].16
 	.asciz	"\017\000\000"
 
 	.section	__OBJC,__image_info

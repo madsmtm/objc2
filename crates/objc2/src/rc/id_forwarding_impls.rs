@@ -13,7 +13,6 @@ use core::cmp::Ordering;
 use core::fmt;
 use core::future::Future;
 use core::hash;
-use core::ops::{Deref, DerefMut};
 use core::pin::Pin;
 use core::task::{Context, Poll};
 use std::error::Error;
@@ -132,25 +131,29 @@ impl<T: fmt::Debug + ?Sized> fmt::Debug for Id<T> {
 
 impl<T: ?Sized> borrow::Borrow<T> for Id<T> {
     fn borrow(&self) -> &T {
-        Deref::deref(self)
+        // Auto-derefs
+        self
     }
 }
 
 impl<T: ?Sized + IsMutable> borrow::BorrowMut<T> for Id<T> {
     fn borrow_mut(&mut self) -> &mut T {
-        DerefMut::deref_mut(self)
+        // Auto-derefs
+        self
     }
 }
 
 impl<T: ?Sized> AsRef<T> for Id<T> {
     fn as_ref(&self) -> &T {
-        Deref::deref(self)
+        // Auto-derefs
+        self
     }
 }
 
 impl<T: ?Sized + IsMutable> AsMut<T> for Id<T> {
     fn as_mut(&mut self) -> &mut T {
-        DerefMut::deref_mut(self)
+        // Auto-derefs
+        self
     }
 }
 

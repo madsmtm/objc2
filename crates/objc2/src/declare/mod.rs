@@ -288,6 +288,7 @@ method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P);
 /// `Allocated<T>`, without exposing that implementation to users.
 #[doc(hidden)]
 #[repr(transparent)]
+#[derive(Debug)]
 pub struct __IdReturnValue(pub(crate) *mut AnyObject);
 
 // SAFETY: `__IdReturnValue` is `#[repr(transparent)]`
@@ -431,7 +432,7 @@ impl ClassBuilder {
             self.add_method_inner(
                 sel,
                 F::Args::ENCODINGS,
-                F::Ret::ENCODING_RETURN,
+                &F::Ret::ENCODING_RETURN,
                 func.__imp(),
             )
         }
@@ -441,7 +442,7 @@ impl ClassBuilder {
         &mut self,
         sel: Sel,
         enc_args: &[Encoding],
-        enc_ret: Encoding,
+        enc_ret: &Encoding,
         func: Imp,
     ) {
         let sel_args = sel.number_of_arguments();
@@ -457,14 +458,14 @@ impl ClassBuilder {
         #[cfg(debug_assertions)]
         if let Some(superclass) = self.superclass() {
             if let Some(method) = superclass.instance_method(sel) {
-                if let Err(err) = crate::verify::verify_method_signature(method, enc_args, &enc_ret)
+                if let Err(err) = crate::verify::verify_method_signature(method, enc_args, enc_ret)
                 {
                     panic!("declared invalid method -[{} {sel}]: {err}", self.name())
                 }
             }
         }
 
-        let types = method_type_encoding(&enc_ret, enc_args);
+        let types = method_type_encoding(enc_ret, enc_args);
         let success = Bool::from_raw(unsafe {
             ffi::class_addMethod(self.as_mut_ptr(), sel.as_ptr(), Some(func), types.as_ptr())
         });
@@ -495,7 +496,7 @@ impl ClassBuilder {
             self.add_class_method_inner(
                 sel,
                 F::Args::ENCODINGS,
-                F::Ret::ENCODING_RETURN,
+                &F::Ret::ENCODING_RETURN,
                 func.__imp(),
             )
         }
@@ -505,7 +506,7 @@ impl ClassBuilder {
         &mut self,
         sel: Sel,
         enc_args: &[Encoding],
-        enc_ret: Encoding,
+        enc_ret: &Encoding,
         func: Imp,
     ) {
         let sel_args = sel.number_of_arguments();
@@ -521,14 +522,14 @@ impl ClassBuilder {
         #[cfg(debug_assertions)]
         if let Some(superclass) = self.superclass() {
             if let Some(method) = superclass.class_method(sel) {
-                if let Err(err) = crate::verify::verify_method_signature(method, enc_args, &enc_ret)
+                if let Err(err) = crate::verify::verify_method_signature(method, enc_args, enc_ret)
                 {
                     panic!("declared invalid method +[{} {sel}]: {err}", self.name())
                 }
             }
         }
 
-        let types = method_type_encoding(&enc_ret, enc_args);
+        let types = method_type_encoding(enc_ret, enc_args);
         let success = Bool::from_raw(unsafe {
             ffi::class_addMethod(
                 self.metaclass_mut(),
@@ -665,6 +666,11 @@ impl ProtocolBuilder {
     /// Constructs a [`ProtocolBuilder`] with the given name.
     ///
     /// Returns [`None`] if the protocol couldn't be allocated.
+    ///
+    ///
+    /// # Panics
+    ///
+    /// Panics if the name contains an internal NULL byte.
     pub fn new(name: &str) -> Option<Self> {
         let c_name = CString::new(name).unwrap();
         let proto = unsafe { ffi::objc_allocateProtocol(c_name.as_ptr()) };
@@ -675,7 +681,7 @@ impl ProtocolBuilder {
         &mut self,
         sel: Sel,
         enc_args: &[Encoding],
-        enc_ret: Encoding,
+        enc_ret: &Encoding,
         required: bool,
         instance_method: bool,
     ) {
@@ -686,7 +692,7 @@ impl ProtocolBuilder {
             "selector {sel} accepts {sel_args} arguments, but function accepts {}",
             enc_args.len(),
         );
-        let types = method_type_encoding(&enc_ret, enc_args);
+        let types = method_type_encoding(enc_ret, enc_args);
         unsafe {
             ffi::protocol_addMethodDescription(
                 self.as_mut_ptr(),
@@ -707,7 +713,7 @@ impl ProtocolBuilder {
         self.add_method_description_inner(
             sel,
             Args::ENCODINGS,
-            Ret::ENCODING_RETURN,
+            &Ret::ENCODING_RETURN,
             required,
             true,
         )
@@ -722,7 +728,7 @@ impl ProtocolBuilder {
         self.add_method_description_inner(
             sel,
             Args::ENCODINGS,
-            Ret::ENCODING_RETURN,
+            &Ret::ENCODING_RETURN,
             required,
             false,
         )
@@ -742,6 +748,14 @@ impl ProtocolBuilder {
             ffi::objc_registerProtocol(self.as_mut_ptr());
             self.proto.as_ref()
         }
+    }
+}
+
+impl Drop for ProtocolBuilder {
+    fn drop(&mut self) {
+        // We implement Drop to communicate to the type-system that this type
+        // may drop in the future (once Apple add some way of disposing
+        // protocols).
     }
 }
 

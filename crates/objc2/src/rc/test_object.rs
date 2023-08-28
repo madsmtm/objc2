@@ -8,6 +8,7 @@ use crate::{declare_class, msg_send, msg_send_id, ClassType};
 
 // TODO: Put tests that use this in another crate
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[allow(missing_copy_implementations)]
 #[doc(hidden)]
 pub struct __ThreadTestData {
     pub alloc: usize,
@@ -29,6 +30,7 @@ impl __ThreadTestData {
     }
 
     #[track_caller]
+    #[allow(clippy::missing_panics_doc)]
     pub fn assert_current(&self) {
         let current = Self::current();
         let mut expected = self.clone();
@@ -52,7 +54,7 @@ impl __ThreadTestData {
 }
 
 std::thread_local! {
-    static TEST_DATA: RefCell<__ThreadTestData> = RefCell::new(Default::default());
+    static TEST_DATA: RefCell<__ThreadTestData> = RefCell::default();
 }
 
 declare_class!(

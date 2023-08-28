@@ -827,6 +827,7 @@ impl AnyClass {
     /// let result = cls.verify_sel::<(&AnyClass,), bool>(sel);
     /// assert!(result.is_ok());
     /// ```
+    #[allow(clippy::missing_errors_doc)] // Written differently in the docs
     pub fn verify_sel<A, R>(&self, sel: Sel) -> Result<(), VerificationError>
     where
         A: EncodeArguments,

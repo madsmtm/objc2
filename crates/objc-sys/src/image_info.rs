@@ -5,6 +5,7 @@
 /// only used behind experimental features (`unstable-static-*`).
 #[repr(C)]
 #[doc(hidden)]
+#[allow(missing_copy_implementations)]
 pub struct __ImageInfo {
     // These are not actually `unsigned int`, even though the docs say so
     /// The version of the image info struct.

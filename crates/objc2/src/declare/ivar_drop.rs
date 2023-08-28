@@ -26,6 +26,7 @@ mod private {
 ///
 /// Further may be added when the standard library guarantee their layout.
 #[repr(transparent)]
+#[allow(missing_debug_implementations)]
 pub struct IvarDrop<T: private::IvarDropHelper>(<T as private::IvarDropHelper>::Inner);
 
 impl<T: private::IvarDropHelper> super::ivar::private::Sealed for IvarDrop<T> {}

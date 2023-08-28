@@ -14,7 +14,7 @@ use core::fmt;
 use core::future::Future;
 use core::hash;
 use core::iter::FusedIterator;
-use core::ops::{Deref, DerefMut};
+use core::ops::Deref;
 use core::pin::Pin;
 use core::task::{Context, Poll};
 use std::error::Error;
@@ -192,25 +192,27 @@ impl<I: IvarType> FusedIterator for Ivar<I> where <Self as Deref>::Target: Fused
 
 // impl<T: IvarType> borrow::Borrow<<Self as Deref>::Target> for Ivar<T> {
 //     fn borrow(&self) -> &<Self as Deref>::Target {
-//         Deref::deref(self)
+//         self
 //     }
 // }
 //
 // impl<T: IvarType> borrow::BorrowMut<<Self as Deref>::Target> for Ivar<T> {
 //     fn borrow_mut(&mut self) -> &mut <Self as Deref>::Target {
-//         DerefMut::deref_mut(self)
+//         self
 //     }
 // }
 
 impl<T: IvarType> AsRef<<Self as Deref>::Target> for Ivar<T> {
     fn as_ref(&self) -> &<Self as Deref>::Target {
-        Deref::deref(self)
+        // Auto-derefs
+        self
     }
 }
 
 impl<T: IvarType> AsMut<<Self as Deref>::Target> for Ivar<T> {
     fn as_mut(&mut self) -> &mut <Self as Deref>::Target {
-        DerefMut::deref_mut(self)
+        // Auto-derefs
+        self
     }
 }
 

@@ -58,6 +58,7 @@ pub use self::declare_class::{
 ///
 /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments>
 // TODO: Use an enum instead of u8 here when stable
+#[derive(Debug)]
 pub struct RetainSemantics<const INNER: u8> {}
 
 pub type New = RetainSemantics<1>;
@@ -425,6 +426,7 @@ const fn in_selector_family(mut selector: &[u8], mut family: &[u8]) -> bool {
 ///
 /// <https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CGObjCMac.cpp#L5211-L5234>
 #[repr(C)]
+#[derive(Debug)]
 pub struct ModuleInfo {
     version: usize,
     size: usize,
@@ -496,6 +498,7 @@ impl ClassBuilder {
 /// - Only methods on the protocol are overriden.
 /// - TODO: The methods have the correct signature.
 /// - All required methods are overridden.
+#[derive(Debug)]
 pub struct ClassProtocolMethodsBuilder<'a, 'b> {
     builder: &'a mut ClassBuilder,
     #[allow(unused)]
