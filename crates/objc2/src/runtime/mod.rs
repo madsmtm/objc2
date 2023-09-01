@@ -1281,6 +1281,7 @@ impl fmt::Debug for AnyObject {
 mod tests {
     use alloc::format;
     use alloc::string::ToString;
+    use core::mem::size_of;
 
     use super::*;
     use crate::test_utils;
@@ -1561,5 +1562,19 @@ mod tests {
             MessageReceiver::send_message(&obj, sel!(test::test::), (1i32, 2i32, 3i32, 4i32))
         };
         assert_eq!(res, 24);
+    }
+
+    #[test]
+    fn test_sizes() {
+        assert_eq!(size_of::<Sel>(), size_of::<*const ()>());
+        assert_eq!(size_of::<Sel>(), size_of::<Option<Sel>>());
+
+        // These must be zero-sized until we get extern types, otherwise the
+        // optimizer may invalidly assume something about their layout.
+        assert_eq!(size_of::<AnyClass>(), 0);
+        assert_eq!(size_of::<AnyObject>(), 0);
+        assert_eq!(size_of::<AnyProtocol>(), 0);
+        assert_eq!(size_of::<Ivar>(), 0);
+        assert_eq!(size_of::<Method>(), 0);
     }
 }
