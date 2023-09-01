@@ -124,7 +124,7 @@ mod ivar_encode;
 mod ivar_forwarding_impls;
 
 use alloc::format;
-use alloc::string::ToString;
+use core::ffi::CStr;
 use core::mem;
 use core::mem::ManuallyDrop;
 use core::ptr;
@@ -550,17 +550,11 @@ impl ClassBuilder {
     /// happens if there already was an ivar with that name.
     pub fn add_ivar<T: Encode>(&mut self, name: &str) {
         // SAFETY: The encoding is correct
-        unsafe { self.add_ivar_inner::<T>(name, &T::ENCODING) }
+        unsafe { self.add_ivar_inner::<T>(name, &T::ENCODING_CSTR) }
     }
 
     // Monomorphized version
-    unsafe fn add_ivar_inner_mono(
-        &mut self,
-        name: &str,
-        size: usize,
-        align: u8,
-        encoding: &Encoding,
-    ) {
+    unsafe fn add_ivar_inner_mono(&mut self, name: &str, size: usize, align: u8, encoding: &CStr) {
         // `class_addIvar` sadly doesn't check this for us.
         //
         // We must _always_ do the check, since there is no way for the user
@@ -575,7 +569,6 @@ impl ClassBuilder {
         }
 
         let c_name = CString::new(name).unwrap();
-        let encoding = CString::new(encoding.to_string()).unwrap();
         let success = Bool::from_raw(unsafe {
             ffi::class_addIvar(
                 self.as_mut_ptr(),
@@ -588,7 +581,7 @@ impl ClassBuilder {
         assert!(success.as_bool(), "failed to add ivar {name}");
     }
 
-    unsafe fn add_ivar_inner<T>(&mut self, name: &str, encoding: &Encoding) {
+    unsafe fn add_ivar_inner<T>(&mut self, name: &str, encoding: &CStr) {
         unsafe { self.add_ivar_inner_mono(name, mem::size_of::<T>(), T::LOG2_ALIGNMENT, encoding) }
     }
 
@@ -600,7 +593,7 @@ impl ClassBuilder {
     /// Same as [`ClassBuilder::add_ivar`].
     pub fn add_static_ivar<T: IvarType>(&mut self) {
         // SAFETY: The encoding is correct
-        unsafe { self.add_ivar_inner::<T::Type>(T::NAME, &T::Type::ENCODING) }
+        unsafe { self.add_ivar_inner::<T::Type>(T::NAME, &T::Type::ENCODING_CSTR) }
     }
 
     /// Adds the given protocol to self.

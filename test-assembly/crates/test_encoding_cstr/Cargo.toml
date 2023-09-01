@@ -1,0 +1,26 @@
+[package]
+name = "test_encoding_cstr"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+path = "lib.rs"
+
+[dependencies]
+objc2-encode = { path = "../../../objc2-encode", default-features = false }
+
+[features]
+default = ["apple", "std"]
+std = ["objc2-encode/std"]
+
+# Runtime
+apple = []
+gnustep-1-7 = []
+gnustep-1-8 = ["gnustep-1-7"]
+gnustep-1-9 = ["gnustep-1-8"]
+gnustep-2-0 = ["gnustep-1-9"]
+gnustep-2-1 = ["gnustep-2-0"]
+
+# Hack
+assembly-features = ["std"]

@@ -1,10 +1,9 @@
 #![cfg(feature = "Foundation_NSValue")]
-use alloc::string::ToString;
 use core::fmt;
 use core::hash;
 use core::mem::MaybeUninit;
 use core::str;
-use std::ffi::{CStr, CString};
+use std::ffi::CStr;
 
 use objc2::encode::Encode;
 
@@ -35,7 +34,7 @@ impl NSValue {
     /// [`NSPoint`]: crate::Foundation::NSPoint
     pub fn new<T: 'static + Copy + Encode>(value: T) -> Id<Self> {
         let bytes: NonNull<T> = NonNull::from(&value);
-        let encoding = CString::new(T::ENCODING.to_string()).unwrap();
+        let encoding = T::ENCODING_CSTR;
         unsafe {
             Self::initWithBytes_objCType(
                 Self::alloc(),

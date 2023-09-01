@@ -80,6 +80,7 @@ use core::num::{
 };
 use core::ptr::NonNull;
 use core::sync::atomic;
+use std::ffi::CStr;
 
 // Intentionally not `#[doc(hidden)]`
 pub mod __unstable;
@@ -111,6 +112,8 @@ pub use objc2_encode::{Encoding, EncodingBox, ParseError};
 /// You should also beware of having [`Drop`] types implement this, since when
 /// passed to Objective-C via. `objc2::msg_send!` their destructor will not be
 /// called!
+///
+/// Finally, you must not override [`ENCODING_CSTR`][Self::ENCODING_CSTR].
 ///
 ///
 /// # Examples
@@ -149,6 +152,43 @@ pub use objc2_encode::{Encoding, EncodingBox, ParseError};
 pub unsafe trait Encode {
     /// The Objective-C type-encoding for this type.
     const ENCODING: Encoding;
+
+    #[doc(hidden)]
+    const __ENCODING_CSTR_LEN: usize = Self::ENCODING.static_encoding_str_len();
+
+    #[doc(hidden)]
+    const __ENCODING_CSTR_ARRAY: [u8; 128] = {
+        if Self::__ENCODING_CSTR_LEN >= 127 {
+            panic!("encoding string was too long! The maximum supported length is 1023.");
+        }
+
+        Self::ENCODING.static_encoding_str_array()
+    };
+
+    /// The encoding as a static [`CStr`].
+    ///
+    /// This has the same output as `Encoding::to_string`, but it is created
+    /// at compile-time instead.
+    ///
+    /// The encoding is guaranteed to be a pure ASCII string.
+    #[cfg(feature = "std")]
+    const ENCODING_CSTR: &'static CStr = {
+        let mut slice: &[u8] = &Self::__ENCODING_CSTR_ARRAY;
+        // Cut down to desired size (length + 1 for NUL byte)
+        // Equivalent to:
+        // slice[0..Self::__ENCODING_CSTR_LEN + 1]
+        while slice.len() > Self::__ENCODING_CSTR_LEN + 1 {
+            if let Some(res) = slice.split_last() {
+                slice = res.1;
+            } else {
+                unreachable!();
+            }
+        }
+        // SAFETY: `static_encoding_str_array` is guaranteed to not contain
+        // any NULL bytes (the only place those could appear would be in a
+        // struct or union name, and that case is checked).
+        unsafe { CStr::from_bytes_with_nul_unchecked(slice) }
+    };
 }
 
 /// Types whoose references has an Objective-C type-encoding.
@@ -767,5 +807,40 @@ mod tests {
         impls_encode(my_fn2 as extern "C" fn(_, _));
         impls_encode(my_fn3 as extern "C" fn(_) -> _);
         impls_encode(my_fn4 as extern "C" fn(_, _) -> _);
+    }
+
+    #[test]
+    #[cfg(feature = "std")]
+    fn test_cstr_simple() {
+        assert_eq!(i8::__ENCODING_CSTR_LEN, 1);
+
+        let mut array = [0; 128];
+        array[0] = b'c';
+        assert_eq!(i8::__ENCODING_CSTR_ARRAY, array);
+
+        let cstr = CStr::from_bytes_with_nul(b"c\0").unwrap();
+        assert_eq!(i8::ENCODING_CSTR, cstr);
+    }
+
+    #[test]
+    #[cfg(feature = "std")]
+    fn test_cstr() {
+        struct X;
+
+        unsafe impl Encode for X {
+            const ENCODING: Encoding = Encoding::Struct(
+                "abc",
+                &[
+                    Encoding::Union("def", &[Encoding::Char]),
+                    <*const *const i8>::ENCODING,
+                    <AtomicPtr<AtomicI16>>::ENCODING,
+                    <extern "C" fn()>::ENCODING,
+                ],
+            );
+        }
+
+        let s = b"{abc=(def=c)^*A^As^?}\0";
+
+        assert_eq!(X::ENCODING_CSTR.to_bytes_with_nul(), s);
     }
 }
