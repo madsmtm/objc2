@@ -107,6 +107,29 @@ impl<T: Message> MaybeOptionId for Option<Id<T>> {
     }
 }
 
+pub struct IvarStaticHelper {
+    offset: Cell<isize>,
+}
+
+impl IvarStaticHelper {
+    #[inline]
+    pub const fn new() -> Self {
+        Self {
+            offset: Cell::new(0),
+        }
+    }
+
+    pub fn set<T: IvarType>(&self, cls: &Class) {
+        let offset = ivar_offset(cls, T::NAME, &T::Type::__ENCODING);
+        self.offset.set(offset);
+    }
+
+    #[inline]
+    pub fn get(&self) -> isize {
+        self.offset.get()
+    }
+}
+
 /// Helper for ensuring that `ClassType::Mutability` is implemented correctly
 /// for subclasses.
 pub trait ValidSubclassMutability<T: mutability::Mutability> {}

@@ -202,6 +202,16 @@ macro_rules! __parse_fields {
                     __priv: (),
                 }
 
+                impl $field_name {
+                    #[inline]
+                    unsafe fn __offset_ptr() -> &'static $crate::__macro_helpers::IvarStaticHelper {
+                        static mut OFFSET: $crate::__macro_helpers::IvarStaticHelper
+                            = $crate::__macro_helpers::IvarStaticHelper::new();
+                        #[allow(unused_unsafe)]
+                        unsafe { &OFFSET }
+                    }
+                }
+
                 // SAFETY:
                 // - The ivars are in a type used as an Objective-C object.
                 // - The ivar is added to the class in `__objc2_declare_ivars`.
@@ -209,6 +219,14 @@ macro_rules! __parse_fields {
                 unsafe impl $crate::declare::IvarType for $field_name {
                     type Type = IvarDrop<$ty>;
                     const NAME: &'static $crate::__macro_helpers::str = $ivar_name;
+
+                    #[inline]
+                    unsafe fn __offset(
+                        _ptr: $crate::__macro_helpers::NonNull<$crate::runtime::AnyObject>,
+                    ) -> $crate::__macro_helpers::isize {
+                        #[allow(unused_unsafe)]
+                        unsafe { Self::__offset_ptr().get() }
+                    }
                 }
             ) ($($ivar_type_name)* $field_name)
             (

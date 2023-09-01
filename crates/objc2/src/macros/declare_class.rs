@@ -607,6 +607,12 @@ macro_rules! __inner_declare_class {
                     }
 
                     let _cls = __objc2_builder.register();
+
+                    $(
+                        unsafe {
+                            $ivar::__offset_ptr().set::<$ivar>(_cls);
+                        }
+                    )*
                 });
 
                 // We just registered the class, so it should be available
