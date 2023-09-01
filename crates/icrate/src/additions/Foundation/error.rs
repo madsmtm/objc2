@@ -9,10 +9,6 @@ use crate::Foundation::{
     self, NSError, NSErrorDomain, NSErrorUserInfoKey, NSInteger, NSLocalizedDescriptionKey,
 };
 
-// SAFETY: Error objects are immutable data containers.
-unsafe impl Sync for NSError {}
-unsafe impl Send for NSError {}
-
 impl UnwindSafe for NSError {}
 impl RefUnwindSafe for NSError {}
 

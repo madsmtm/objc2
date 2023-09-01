@@ -1319,7 +1319,7 @@ impl fmt::Display for Stmt {
                 derives,
                 mutability,
                 skipped,
-                sendable: _,
+                sendable,
                 mainthreadonly: _,
             } => {
                 if *skipped {
@@ -1429,6 +1429,20 @@ impl fmt::Display for Stmt {
                 }
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
+
+                if *sendable && generics.is_empty() {
+                    writeln!(f)?;
+                    if let Some(feature) = &main_feature_gate {
+                        writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
+                    }
+                    writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
+
+                    writeln!(f)?;
+                    if let Some(feature) = &main_feature_gate {
+                        writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
+                    }
+                    writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
+                }
             }
             Self::Methods {
                 cls,
@@ -1608,6 +1622,15 @@ impl fmt::Display for Stmt {
                         write!(f, "{}", protocol.path())?;
                     }
                 }
+                // TODO
+                // if *required_sendable {
+                //     if protocols.is_empty() {
+                //         write!(f, ": ")?;
+                //     } else {
+                //         write!(f, "+ ")?;
+                //     }
+                //     write!(f, "Send + Sync")?;
+                // }
                 writeln!(f, " {{")?;
 
                 for method in methods {
@@ -1649,7 +1672,7 @@ impl fmt::Display for Stmt {
                 availability,
                 boxable: _,
                 fields,
-                sendable: _,
+                sendable,
             } => {
                 writeln!(f, "extern_struct!(")?;
                 if let Some(encoding_name) = encoding_name {
@@ -1667,6 +1690,14 @@ impl fmt::Display for Stmt {
                 }
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
+
+                if let Some(true) = sendable {
+                    writeln!(f)?;
+                    writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
+
+                    writeln!(f)?;
+                    writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
+                }
             }
             Self::EnumDecl {
                 id,
@@ -1674,7 +1705,7 @@ impl fmt::Display for Stmt {
                 ty,
                 kind,
                 variants,
-                sendable: _,
+                sendable,
             } => {
                 let macro_name = match kind {
                     None => "extern_enum",
@@ -1698,6 +1729,16 @@ impl fmt::Display for Stmt {
                 }
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
+
+                if let Some(true) = sendable {
+                    if let Some(name) = &id.name {
+                        writeln!(f)?;
+                        writeln!(f, "unsafe impl Send for {name} {{}}")?;
+
+                        writeln!(f)?;
+                        writeln!(f, "unsafe impl Sync for {name} {{}}")?;
+                    }
+                }
             }
             Self::VarDecl {
                 id,
