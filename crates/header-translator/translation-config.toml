@@ -27,6 +27,7 @@ tvos = "9.0"
 
 [library.AppKit]
 imports = ["CoreData", "Foundation"]
+gnustep-library = "gnustep-gui"
 extra-features = [
     # Temporary, since some structs and statics use these
     "AppKit_NSApplication",
@@ -189,6 +190,7 @@ ios = "11.0"
 
 [library.Foundation]
 imports = []
+gnustep-library = "gnustep-base"
 extra-features = [
     "objective-c",
     "block",

@@ -252,10 +252,19 @@ declare_class!(
                 msg_send_id![mtk_view, currentDrawable];
 
             // prepare for drawing
-            let Some(current_drawable) = current_drawable else { return; };
-            let Some(command_buffer) = command_queue.commandBuffer() else { return; };
-            let Some(pass_descriptor) = (unsafe { mtk_view.currentRenderPassDescriptor() }) else { return; };
-            let Some(encoder) = command_buffer.renderCommandEncoderWithDescriptor(&pass_descriptor) else { return; };
+            let Some(current_drawable) = current_drawable else {
+                return;
+            };
+            let Some(command_buffer) = command_queue.commandBuffer() else {
+                return;
+            };
+            let Some(pass_descriptor) = (unsafe { mtk_view.currentRenderPassDescriptor() }) else {
+                return;
+            };
+            let Some(encoder) = command_buffer.renderCommandEncoderWithDescriptor(&pass_descriptor)
+            else {
+                return;
+            };
 
             // compute the scene properties
             let scene_properties_data = &SceneProperties {

@@ -1,7 +1,7 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::str::FromStr;
 
-use crate::config::Config;
+use crate::config::{Config, LibraryData};
 use crate::library::Library;
 use crate::stmt::Stmt;
 
@@ -11,10 +11,10 @@ pub struct Output {
 }
 
 impl Output {
-    pub fn from_libraries(libraries: impl IntoIterator<Item = impl Into<String>>) -> Self {
+    pub fn from_libraries(libraries: &HashMap<String, LibraryData>) -> Self {
         let libraries = libraries
-            .into_iter()
-            .map(|name| (name.into(), Library::new()))
+            .iter()
+            .map(|(name, data)| (name.into(), Library::new(name, data)))
             .collect();
         Self { libraries }
     }
@@ -58,6 +58,7 @@ impl Output {
         ]
         .into_iter()
         .collect();
+        let mut gnustep_features: BTreeSet<String> = vec![].into_iter().collect();
 
         for (mut library_name, library) in &config.libraries {
             if let Some(alias) = &library.name {
@@ -83,6 +84,10 @@ impl Output {
                     macos_13_features.insert(format!("{library_name}_all"));
                 }
             }
+
+            if library.gnustep_library.is_some() {
+                gnustep_features.insert(format!("{library_name}_all"));
+            }
         }
 
         let _ = features.insert(
@@ -104,6 +109,10 @@ impl Output {
         let _ = features.insert(
             "unstable-frameworks-macos-13".into(),
             macos_13_features.into_iter().collect(),
+        );
+        let _ = features.insert(
+            "unstable-frameworks-gnustep".into(),
+            gnustep_features.into_iter().collect(),
         );
 
         for (library_name, library) in &self.libraries {

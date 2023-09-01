@@ -2,6 +2,3 @@
 mod generated;
 
 pub use self::generated::*;
-
-#[link(name = "SoundAnalysis", kind = "framework")]
-extern "C" {}

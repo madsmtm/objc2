@@ -66,6 +66,9 @@ pub struct LibraryData {
     #[serde(default)]
     pub name: Option<String>,
     pub imports: Vec<String>,
+    #[serde(rename = "gnustep-library")]
+    #[serde(default)]
+    pub gnustep_library: Option<String>,
     #[serde(rename = "extra-features")]
     #[serde(default)]
     pub extra_features: Vec<String>,

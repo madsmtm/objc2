@@ -119,8 +119,3 @@ pub use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
 pub use objc2::runtime::{
     __Copyhelper as Copyhelper, __NSCopying as NSCopying, __NSMutableCopying as NSMutableCopying,
 };
-
-// Link to the correct framework
-#[cfg_attr(feature = "apple", link(name = "Foundation", kind = "framework"))]
-#[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-base", kind = "dylib"))]
-extern "C" {}

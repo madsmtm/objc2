@@ -194,7 +194,6 @@ unstable-example-metal = [
 
 # Helps with CI
 unstable-frameworks-all = ["unstable-frameworks-ios", "unstable-frameworks-macos-13"]
-unstable-frameworks-gnustep = ["AppKit_all", "Foundation_all"]
 unstable-frameworks-gnustep-32bit = ["Foundation_all"]
 # TODO: Autogenerate this
 unstable-frameworks-ios = ["Foundation_all", "unstable-example-basic_usage", "unstable-example-speech_synthesis"]
@@ -5297,6 +5296,10 @@ WebKit_all = [
     "WebKit_WebScriptObject",
     "WebKit_WebUndefined",
     "WebKit_WebView",
+]
+unstable-frameworks-gnustep = [
+    "AppKit_all",
+    "Foundation_all",
 ]
 unstable-frameworks-macos-10-13 = [
     "CloudKit_all",

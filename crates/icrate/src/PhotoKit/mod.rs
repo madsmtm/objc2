@@ -5,6 +5,3 @@
 mod generated;
 
 pub use self::generated::*;
-
-#[link(name = "Photos", kind = "framework")]
-extern "C" {}

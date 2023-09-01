@@ -197,7 +197,7 @@ fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Confi
     let tu = get_translation_unit(index, sdk, llvm_target);
 
     let mut preprocessing = true;
-    let mut result = Output::from_libraries(config.libraries.keys());
+    let mut result = Output::from_libraries(&config.libraries);
 
     let mut library_span = None;
     let mut library_span_name = String::new();

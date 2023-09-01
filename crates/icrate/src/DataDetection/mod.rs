@@ -2,6 +2,3 @@
 mod generated;
 
 pub use self::generated::*;
-
-#[link(name = "DataDetection", kind = "framework")]
-extern "C" {}
