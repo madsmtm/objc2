@@ -17,4 +17,12 @@ fn main() {
         .join("ui")
         .join("*.rs");
     t.compile_fail(path);
+    // Make trybuild use `cargo build` instead of `cargo check`
+    //
+    // Workaround for https://github.com/dtolnay/trybuild/issues/241
+    t.pass(
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("src")
+            .join("hack.rs"),
+    );
 }
