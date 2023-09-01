@@ -8,6 +8,7 @@ use crate::common::*;
 use crate::Foundation::NSThread;
 
 use objc2::msg_send_id;
+use objc2::mutability::IsMainThreadOnly;
 
 unsafe impl Send for NSThread {}
 unsafe impl Sync for NSThread {}
@@ -191,6 +192,23 @@ impl MainThreadMarker {
     }
 }
 
+/// Get a [`MainThreadMarker`] from a main-thread-only object.
+///
+/// This function exists purely in the type-system, and will always
+/// succeed at runtime.
+impl<T: ?Sized + IsMainThreadOnly> From<&T> for MainThreadMarker {
+    #[inline]
+    fn from(_obj: &T) -> Self {
+        // SAFETY: Objects which are `IsMainThreadOnly` are guaranteed
+        // `!Send + !Sync` and are only constructible on the main thread.
+        //
+        // Since we hold a reference to such an object, and we know it cannot
+        // now possibly be on another thread than the main, we know that the
+        // current thread is the main thread.
+        unsafe { Self::new_unchecked() }
+    }
+}
+
 impl fmt::Debug for MainThreadMarker {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_tuple("MainThreadMarker").finish()
@@ -311,10 +329,10 @@ impl<T> MainThreadBound<T> {
     #[inline]
     pub fn get_on_main<F, R>(&self, f: F) -> R
     where
-        F: Send + FnOnce(&T, MainThreadMarker) -> R,
+        F: Send + FnOnce(&T) -> R,
         R: Send,
     {
-        MainThreadMarker::run_on_main(|mtm| f(self.get(mtm), mtm))
+        MainThreadMarker::run_on_main(|mtm| f(self.get(mtm)))
     }
 
     /// Access the item mutably on the main thread.
@@ -323,10 +341,10 @@ impl<T> MainThreadBound<T> {
     #[inline]
     pub fn get_on_main_mut<F, R>(&mut self, f: F) -> R
     where
-        F: Send + FnOnce(&mut T, MainThreadMarker) -> R,
+        F: Send + FnOnce(&mut T) -> R,
         R: Send,
     {
-        MainThreadMarker::run_on_main(|mtm| f(self.get_mut(mtm), mtm))
+        MainThreadMarker::run_on_main(|mtm| f(self.get_mut(mtm)))
     }
 }
 

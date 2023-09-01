@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## icrate Unreleased - YYYY-MM-DD
 
+### Added
+* Added `MainThreadMarker` `From` implementation for `MainThreadOnly` types.
+
 ### Changed
 * Moved the `ns_string!` macro to `icrate::Foundation::ns_string`. The old
   location in the crate root is deprecated.
@@ -17,6 +20,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: The following two methods on `MTLAccelerationStructureCommandEncoder` now take a nullable scratch buffer:
   - `refitAccelerationStructure_descriptor_destination_scratchBuffer_scratchBufferOffset`
   - `refitAccelerationStructure_descriptor_destination_scratchBuffer_scratchBufferOffset_options`
+
+### Removed
+* **BREAKING**: Removed the `MainThreadMarker` argument from the closure
+  passed to `MainThreadBound::get_on_main`.
 
 
 ## icrate 0.0.4 - 2023-07-31
