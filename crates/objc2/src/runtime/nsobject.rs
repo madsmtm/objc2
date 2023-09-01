@@ -1,10 +1,10 @@
 use core::fmt;
 use core::hash;
 
-use crate::mutability::Root;
 use crate::rc::{DefaultId, Id};
 use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ImplementedBy, ProtocolObject};
 use crate::{extern_methods, msg_send, msg_send_id, Message};
+use crate::{mutability::Root, DowncastTarget};
 use crate::{ClassType, ProtocolType};
 
 crate::__emit_struct! {
@@ -80,6 +80,8 @@ unsafe impl ClassType for NSObject {
         &mut self.__inner
     }
 }
+
+unsafe impl DowncastTarget for NSObject {}
 
 /// The methods that are fundamental to most Objective-C objects.
 ///

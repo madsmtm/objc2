@@ -18,6 +18,7 @@ catch-all = ["objc2/catch-all", "exception"]
 Foundation_all = [
     "icrate/Foundation",
     "icrate/Foundation_NSString",
+    "icrate/Foundation_NSMutableString",
     "icrate/Foundation_NSException",
     "icrate/Foundation_NSArray",
     "icrate/Foundation_NSNumber",
