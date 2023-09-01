@@ -141,6 +141,10 @@ impl AttributeParser<'_, '_> {
             None
         }
     }
+
+    fn nullable_result(&mut self, position: ParsePosition) -> bool {
+        self.strip("_Nullable_result", position)
+    }
 }
 
 impl Drop for AttributeParser<'_, '_> {
@@ -584,6 +588,10 @@ impl Inner {
 
                 let is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
+
+                // TODO: Use _Nullable_result
+                let _nullable_result = parser.nullable_result(ParsePosition::Suffix);
+
                 let nullability = if let Some(nullability) = unexposed_nullability {
                     nullability
                 } else {
@@ -672,6 +680,10 @@ impl Inner {
 
                 let is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
+
+                // TODO: Use _Nullable_result
+                let _nullable_result = parser.nullable_result(ParsePosition::Suffix);
+
                 let mut nullability = if let Some(nullability) = unexposed_nullability {
                     nullability
                 } else {
