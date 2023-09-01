@@ -66,6 +66,18 @@ pub struct LibraryData {
     #[serde(default)]
     pub name: Option<String>,
     pub imports: Vec<String>,
+    #[serde(rename = "gnustep-library")]
+    #[serde(default)]
+    pub gnustep_library: Option<String>,
+    #[serde(default)]
+    #[serde(rename = "extra-docs")]
+    pub extra_docs: String,
+    #[serde(default)]
+    #[serde(rename = "additions")]
+    pub has_additions: bool,
+    #[serde(default)]
+    #[serde(rename = "fixes")]
+    pub has_fixes: bool,
     #[serde(rename = "extra-features")]
     #[serde(default)]
     pub extra_features: Vec<String>,
@@ -79,6 +91,16 @@ pub struct LibraryData {
     pub tvos: Option<semver::VersionReq>,
     #[serde(default)]
     pub watchos: Option<semver::VersionReq>,
+    #[serde(default)]
+    pub examples: Vec<Example>,
+}
+
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct Example {
+    pub name: String,
+    #[serde(default)]
+    pub description: String,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

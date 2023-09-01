@@ -1,7 +1,10 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::fmt::{self, Write};
+use std::fs;
+use std::path::Path;
 use std::str::FromStr;
 
-use crate::config::Config;
+use crate::config::{Config, LibraryData};
 use crate::library::Library;
 use crate::stmt::Stmt;
 
@@ -11,10 +14,10 @@ pub struct Output {
 }
 
 impl Output {
-    pub fn from_libraries(libraries: impl IntoIterator<Item = impl Into<String>>) -> Self {
+    pub fn from_libraries(libraries: &HashMap<String, LibraryData>) -> Self {
         let libraries = libraries
-            .into_iter()
-            .map(|name| (name.into(), Library::new()))
+            .iter()
+            .map(|(name, data)| (name.into(), Library::new(name, data)))
             .collect();
         Self { libraries }
     }
@@ -28,6 +31,19 @@ impl Output {
                 self_library.compare(other_library);
             },
         );
+    }
+
+    pub fn output_module(&self, path: &Path) -> fmt::Result {
+        let mut f = String::new();
+
+        for library_name in self.libraries.keys() {
+            writeln!(&mut f, "#[cfg(feature = \"{library_name}\")]")?;
+            writeln!(&mut f, "pub mod {library_name};")?;
+        }
+
+        fs::write(path, f).unwrap();
+
+        Ok(())
     }
 
     pub fn cargo_features(&self, config: &Config) -> BTreeMap<String, Vec<String>> {
@@ -58,6 +74,7 @@ impl Output {
         ]
         .into_iter()
         .collect();
+        let mut gnustep_features: BTreeSet<String> = vec![].into_iter().collect();
 
         for (mut library_name, library) in &config.libraries {
             if let Some(alias) = &library.name {
@@ -83,6 +100,10 @@ impl Output {
                     macos_13_features.insert(format!("{library_name}_all"));
                 }
             }
+
+            if library.gnustep_library.is_some() {
+                gnustep_features.insert(format!("{library_name}_all"));
+            }
         }
 
         let _ = features.insert(
@@ -104,6 +125,10 @@ impl Output {
         let _ = features.insert(
             "unstable-frameworks-macos-13".into(),
             macos_13_features.into_iter().collect(),
+        );
+        let _ = features.insert(
+            "unstable-frameworks-gnustep".into(),
+            gnustep_features.into_iter().collect(),
         );
 
         for (library_name, library) in &self.libraries {

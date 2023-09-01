@@ -12,7 +12,7 @@ note: required because it appears within the type `PhantomData<*mut ()>`
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `MainThreadMarker`
- --> $WORKSPACE/crates/icrate/src/Foundation/additions/thread.rs
+ --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/thread.rs
   |
   | pub struct MainThreadMarker {
   |            ^^^^^^^^^^^^^^^^
@@ -36,7 +36,7 @@ note: required because it appears within the type `PhantomData<*mut ()>`
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `MainThreadMarker`
- --> $WORKSPACE/crates/icrate/src/Foundation/additions/thread.rs
+ --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/thread.rs
   |
   | pub struct MainThreadMarker {
   |            ^^^^^^^^^^^^^^^^

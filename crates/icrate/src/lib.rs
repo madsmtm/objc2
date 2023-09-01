@@ -12,6 +12,56 @@
 //! [apple-doc-index]: https://developer.apple.com/documentation/technologies
 //!
 //!
+//! ## Use of `Deref`
+//!
+//! `icrate` uses the [`Deref`] trait in a bit special way: All objects deref
+//! to their superclasses. For example, `NSMutableArray` derefs to `NSArray`,
+//! which in turn derefs to `NSObject`.
+//!
+//! Note that this is explicitly recommended against in [the
+//! documentation][`Deref`] and [the Rust Design patterns
+//! book][anti-pattern-deref] (see those links for details).
+//!
+//! Due to Objective-C objects only ever being accessible behind pointers in
+//! the first place, the problems stated there are less severe, and having the
+//! implementation just means that everything is much nicer when you actually
+//! want to use the objects!
+//!
+//! All objects also implement [`AsRef`] and [`AsMut`] to their superclass,
+//! and can be used in [`Id::into_super`], so if you favour explicit
+//! conversion, that is a possibility too.
+//!
+//! [`Deref`]: std::ops::Deref
+//! [`ClassType`]: crate::objc2::ClassType
+//! [anti-pattern-deref]: https://rust-unofficial.github.io/patterns/anti_patterns/deref.html
+//! [`Id::into_super`]: objc2::rc::Id::into_super
+//!
+//!
+//! ## Rust vs. Objective-C types
+//!
+//! A quick overview of some types you will encounter often in Objective-C,
+//! and their approximate Rust equivalent.
+//!
+//! | Objective-C | (approximately) equivalent Rust |
+//! | --- | --- |
+//! | `NSData*` | `Arc<[u8]>` |
+//! | `NSMutableData*` | `Vec<u8>` |
+//! | `NSString*` | `Arc<str>` |
+//! | `NSMutableString*` | `String` |
+//! | `NSValue*` | `Arc<dyn Any>` |
+//! | `NSNumber*` | `Arc<enum { I8(i8), U8(u8), I16(i16), U16(u16), I32(i32), U32(u32), I64(i64), U64(u64), F32(f32), F64(f64), CLong(ffi::c_long), CULong(ffi::c_ulong) }>` |
+//! | `NSError*` | `Arc<dyn Error + Send + Sync>` |
+//! | `NSException*` | `Arc<dyn Error + Send + Sync>` |
+//! | `NSRange` | `ops::Range<usize>` |
+//! | `NSComparisonResult` | `cmp::Ordering` |
+//! | `NSArray<T>*` | `Arc<[T]>` |
+//! | `NSMutableArray<T>*` | `Vec<T>` |
+//! | `NSDictionary<K, V>*` | `Arc<HashMap<K, V>>` |
+//! | `NSMutableDictionary<K, V>*` | `HashMap<K, V>` |
+//! | `NSEnumerator<T>*` | `Box<dyn Iterator<T>>` |
+//! | `NSCopying*` | `Box<dyn Clone>` |
+//!
+//!
 //! ## Example
 //!
 //! ```console
@@ -42,7 +92,6 @@
 //! let array = NSArray::from_id_slice(&[string.copy()]);
 //! println!("{array:?}");
 //! ```
-
 #![no_std]
 #![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg))]
 #![warn(elided_lifetimes_in_paths)]
@@ -84,106 +133,13 @@ pub extern crate block2;
 mod common;
 #[macro_use]
 mod macros;
+#[allow(unreachable_pub)]
+#[allow(unused_imports)]
+#[allow(deprecated)]
+mod generated;
 
-// Frameworks
-#[cfg(feature = "Accessibility")]
-pub mod Accessibility;
-#[cfg(feature = "AdServices")]
-pub mod AdServices;
-#[cfg(feature = "AdSupport")]
-pub mod AdSupport;
-#[cfg(feature = "AppKit")]
-pub mod AppKit;
-#[cfg(feature = "AuthenticationServices")]
-pub mod AuthenticationServices;
-#[cfg(feature = "AutomaticAssessmentConfiguration")]
-pub mod AutomaticAssessmentConfiguration;
-#[cfg(feature = "Automator")]
-pub mod Automator;
-#[cfg(feature = "BackgroundAssets")]
-pub mod BackgroundAssets;
-#[cfg(feature = "BackgroundTasks")]
-pub mod BackgroundTasks;
-#[cfg(feature = "BusinessChat")]
-pub mod BusinessChat;
-#[cfg(feature = "CallKit")]
-pub mod CallKit;
-#[cfg(feature = "ClassKit")]
-pub mod ClassKit;
-#[cfg(feature = "CloudKit")]
-pub mod CloudKit;
-#[cfg(feature = "Contacts")]
-pub mod Contacts;
-#[cfg(feature = "CoreAnimation")]
-pub mod CoreAnimation;
-#[cfg(feature = "CoreData")]
-pub mod CoreData;
-#[cfg(feature = "CoreLocation")]
-pub mod CoreLocation;
-#[cfg(feature = "DataDetection")]
-pub mod DataDetection;
-#[cfg(feature = "DeviceCheck")]
-pub mod DeviceCheck;
-#[cfg(feature = "EventKit")]
-pub mod EventKit;
-#[cfg(feature = "ExceptionHandling")]
-pub mod ExceptionHandling;
-#[cfg(feature = "ExtensionKit")]
-pub mod ExtensionKit;
-#[cfg(feature = "ExternalAccessory")]
-pub mod ExternalAccessory;
-#[cfg(feature = "FileProvider")]
-pub mod FileProvider;
-#[cfg(feature = "FileProviderUI")]
-pub mod FileProviderUI;
-#[cfg(feature = "Foundation")]
-pub mod Foundation;
-#[cfg(feature = "GameController")]
-pub mod GameController;
-#[cfg(feature = "GameKit")]
-pub mod GameKit;
-#[cfg(feature = "HealthKit")]
-pub mod HealthKit;
-#[cfg(feature = "IdentityLookup")]
-pub mod IdentityLookup;
-#[cfg(feature = "InputMethodKit")]
-pub mod InputMethodKit;
-#[cfg(feature = "LinkPresentation")]
-pub mod LinkPresentation;
-#[cfg(feature = "LocalAuthentication")]
-pub mod LocalAuthentication;
-#[cfg(feature = "LocalAuthenticationEmbeddedUI")]
-pub mod LocalAuthenticationEmbeddedUI;
-#[cfg(feature = "MailKit")]
-pub mod MailKit;
-#[cfg(feature = "MapKit")]
-pub mod MapKit;
-#[cfg(feature = "MediaPlayer")]
-pub mod MediaPlayer;
-#[cfg(feature = "Metal")]
-pub mod Metal;
-#[cfg(feature = "MetalFX")]
-pub mod MetalFX;
-#[cfg(feature = "MetalKit")]
-pub mod MetalKit;
-#[cfg(feature = "MetricKit")]
-pub mod MetricKit;
-#[cfg(feature = "OSAKit")]
-pub mod OSAKit;
-#[cfg(feature = "PhotoKit")]
-pub mod PhotoKit;
-#[cfg(feature = "SoundAnalysis")]
-pub mod SoundAnalysis;
-#[cfg(feature = "Speech")]
-pub mod Speech;
-#[cfg(feature = "StoreKit")]
-pub mod StoreKit;
-#[cfg(feature = "UniformTypeIdentifiers")]
-pub mod UniformTypeIdentifiers;
-#[cfg(feature = "UserNotifications")]
-pub mod UserNotifications;
-#[cfg(feature = "WebKit")]
-pub mod WebKit;
+#[allow(unreachable_pub)]
+pub use self::generated::*;
 
 /// Deprecated alias of [`Foundation::ns_string`].
 #[macro_export]
