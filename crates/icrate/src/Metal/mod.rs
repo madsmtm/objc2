@@ -1,3 +1,13 @@
+//! # Bindings to the `Metal` framework
+//!
+//!
+//! ## Examples
+//!
+//! Drawing a rotating triangle.
+//!
+//! ```ignore
+#![doc = include_str!("../../examples/metal.rs")]
+//! ```
 #![allow(unused_imports)]
 
 mod capture;

@@ -1,6 +1,4 @@
 #![deny(unsafe_op_in_unsafe_fn)]
-#![cfg_attr(not(target_os = "macos"), allow(unused))]
-
 use core::{cell::RefCell, ptr::NonNull};
 
 use icrate::{

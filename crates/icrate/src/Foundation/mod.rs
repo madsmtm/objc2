@@ -73,6 +73,21 @@
 //! | `NSMutableDictionary<K, V>*` | `HashMap<K, V>` |
 //! | `NSEnumerator<T>*` | `Box<dyn Iterator<T>>` |
 //! | `NSCopying*` | `Box<dyn Clone>` |
+//!
+//!
+//! ## Examples
+//!
+//! Basic usage of a few Foundation types.
+//!
+//! ```ignore
+#![doc = include_str!("../../examples/basic_usage.rs")]
+//! ```
+//!
+//! An example showing how to define your own interfaces to parts that may be missing in `icrate`.
+//!
+//! ```ignore
+#![doc = include_str!("../../examples/speech_synthesis.rs")]
+//! ```
 #![allow(unused_imports)]
 
 #[doc(hidden)]

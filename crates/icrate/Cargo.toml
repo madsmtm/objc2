@@ -132,8 +132,9 @@ unstable-example-delegate = [
     "apple",
     "Foundation",
     "Foundation_NSString",
+    "Foundation_NSNotification",
     "AppKit",
-    "AppKit_NSResponder",
+    "AppKit_NSApplication",
 ]
 unstable-example-speech_synthesis = [
     "apple",
