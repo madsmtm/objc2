@@ -1,22 +1,19 @@
 #![deny(unsafe_op_in_unsafe_fn)]
-#![cfg_attr(not(target_os = "macos"), allow(unused))]
 use std::ptr::NonNull;
 
-use icrate::Foundation::{ns_string, NSCopying, NSObject, NSString};
+use icrate::AppKit::{NSApplication, NSApplicationActivationPolicyRegular, NSApplicationDelegate};
+use icrate::Foundation::{
+    ns_string, NSCopying, NSNotification, NSObject, NSObjectProtocol, NSString,
+};
 use objc2::declare::{Ivar, IvarBool, IvarDrop, IvarEncode};
 use objc2::rc::Id;
-use objc2::runtime::AnyObject;
+use objc2::runtime::ProtocolObject;
 use objc2::{declare_class, msg_send, msg_send_id, mutability, ClassType};
 
-#[cfg(target_os = "macos")]
-#[link(name = "AppKit", kind = "framework")]
-extern "C" {}
-
-#[cfg(target_os = "macos")]
 declare_class!(
     #[derive(Debug)]
-    struct CustomAppDelegate {
-        pub ivar: IvarEncode<u8, "_ivar">,
+    struct AppDelegate {
+        ivar: IvarEncode<u8, "_ivar">,
         another_ivar: IvarBool<"_another_ivar">,
         box_ivar: IvarDrop<Box<i32>, "_box_ivar">,
         maybe_box_ivar: IvarDrop<Option<Box<i32>>, "_maybe_box_ivar">,
@@ -26,14 +23,14 @@ declare_class!(
 
     mod ivars;
 
-    unsafe impl ClassType for CustomAppDelegate {
+    unsafe impl ClassType for AppDelegate {
         #[inherits(NSObject)]
         type Super = icrate::AppKit::NSResponder;
         type Mutability = mutability::InteriorMutable;
-        const NAME: &'static str = "MyCustomAppDelegate";
+        const NAME: &'static str = "MyAppDelegate";
     }
 
-    unsafe impl CustomAppDelegate {
+    unsafe impl AppDelegate {
         #[method(initWith:another:)]
         unsafe fn init_with(
             this: *mut Self,
@@ -42,70 +39,56 @@ declare_class!(
         ) -> Option<NonNull<Self>> {
             let this: Option<&mut Self> = unsafe { msg_send![super(this), init] };
 
-            // TODO: `ns_string` can't be used inside closures; investigate!
-            let s = ns_string!("def");
-
             this.map(|this| {
                 Ivar::write(&mut this.ivar, ivar);
-                *this.another_ivar = another_ivar;
-                *this.maybe_box_ivar = None;
-                *this.maybe_id_ivar = Some(s.copy());
+                Ivar::write(&mut this.another_ivar, another_ivar);
+                Ivar::write(&mut this.maybe_box_ivar, None);
+                Ivar::write(&mut this.maybe_id_ivar, Some(ns_string!("def").copy()));
                 Ivar::write(&mut this.box_ivar, Box::new(2));
                 Ivar::write(&mut this.id_ivar, NSString::from_str("abc"));
                 NonNull::from(this)
             })
         }
-
-        #[method(myClassMethod)]
-        fn my_class_method() {
-            println!("A class method!");
-        }
     }
 
-    // For some reason, `NSApplicationDelegate` is not a "real" protocol we
-    // can retrieve using `objc_getProtocol` - it seems it is created by
-    // `clang` only when used in Objective-C...
-    //
-    // TODO: Investigate this!
-    unsafe impl CustomAppDelegate {
-        /// This is `unsafe` because it expects `sender` to be valid
+    unsafe impl NSApplicationDelegate for AppDelegate {
         #[method(applicationDidFinishLaunching:)]
-        unsafe fn did_finish_launching(&self, sender: *mut AnyObject) {
+        fn did_finish_launching(&self, notification: &NSNotification) {
             println!("Did finish launching!");
-            // Do something with `sender`
-            dbg!(sender);
+            // Do something with the notification
+            dbg!(notification);
         }
 
-        /// Some comment before `sel`.
         #[method(applicationWillTerminate:)]
-        /// Some comment after `sel`.
-        fn will_terminate(&self, _: *mut AnyObject) {
+        fn will_terminate(&self, _notification: &NSNotification) {
             println!("Will terminate!");
         }
     }
 );
 
-#[cfg(target_os = "macos")]
-impl CustomAppDelegate {
+unsafe impl NSObjectProtocol for AppDelegate {}
+
+impl AppDelegate {
     pub fn new(ivar: u8, another_ivar: bool) -> Id<Self> {
         unsafe { msg_send_id![Self::alloc(), initWith: ivar, another: another_ivar] }
     }
 }
 
-#[cfg(target_os = "macos")]
 fn main() {
-    let delegate = CustomAppDelegate::new(42, true);
+    let app = unsafe { NSApplication::sharedApplication() };
+    unsafe { app.setActivationPolicy(NSApplicationActivationPolicyRegular) };
+
+    // initialize the delegate
+    let delegate = AppDelegate::new(42, true);
 
     println!("{delegate:?}");
-    println!("{:?}", delegate.ivar);
-    println!("{:?}", delegate.another_ivar);
-    println!("{:?}", delegate.box_ivar);
-    println!("{:?}", delegate.maybe_box_ivar);
-    println!("{:?}", delegate.id_ivar);
-    println!("{:?}", delegate.maybe_id_ivar);
-}
 
-#[cfg(not(target_os = "macos"))]
-fn main() {
-    panic!("This example uses AppKit, which is only present on macOS");
+    // configure the application delegate
+    unsafe {
+        let object = ProtocolObject::from_ref(&*delegate);
+        app.setDelegate(Some(object));
+    };
+
+    // run the app
+    unsafe { app.run() };
 }

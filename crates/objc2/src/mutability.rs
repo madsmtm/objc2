@@ -104,6 +104,12 @@ pub struct Mutable {
 /// The mutable counterpart must be specified as the type parameter `MS` to
 /// allow `NSCopying` and `NSMutableCopying` to return the correct type.
 ///
+/// Functionality that is provided with this:
+/// - [`IsIdCloneable`].
+/// - [`IsAllocableAnyThread`].
+/// - You are allowed to hand out pointers / references to an instance's
+///   internal data, since you know such data will never be mutated.
+///
 ///
 /// # Example
 ///
@@ -259,7 +265,11 @@ impl<IS: ?Sized> Mutability for MutableWithImmutableSuperclass<IS> {}
 impl Mutability for InteriorMutable {}
 impl Mutability for MainThreadOnly {}
 
-/// Marker trait for classes where [`Id::clone`][clone-id] is safe.
+/// Marker trait for classes where [`Id::clone`] is safe.
+///
+/// Since the `Foundation` collection types (`NSArray<T>`,
+/// `NSDictionary<K, V>`, ...) act as if they store [`Id`]s, this also makes
+/// certain functionality on those types possible.
 ///
 /// This is implemented for classes whose [`ClassType::Mutability`] is one of:
 /// - [`Root`].
@@ -268,19 +278,24 @@ impl Mutability for MainThreadOnly {}
 /// - [`InteriorMutable`].
 /// - [`MainThreadOnly`].
 ///
-/// [clone-id]: crate::rc::Id#impl-Clone-for-Id<T>
+/// [`Id`]: crate::rc::Id
+/// [`Id::clone`]: crate::rc::Id#impl-Clone-for-Id<T>
 pub trait IsIdCloneable: ClassType {}
 impl<T: ?Sized + ClassType> IsIdCloneable for T where T::Mutability: private::MutabilityIsIdCloneable
 {}
 
-/// Marker trait for classes where the [`retain`] selector is always safe.
+/// Marker trait for classes where the `retain` selector is always safe.
+///
+/// [`Id::clone`] takes `&Id<T>`, while [`ClassType::retain`] only takes `&T`;
+/// the difference between these two is that in the former case, you know that
+/// there are no live mutable subclasses.
 ///
 /// This is implemented for classes whose [`ClassType::Mutability`] is one of:
 /// - [`Immutable`].
 /// - [`InteriorMutable`].
 /// - [`MainThreadOnly`].
 ///
-/// [`retain`]: ClassType::retain
+/// [`Id::clone`]: crate::rc::Id#impl-Clone-for-Id<T>
 pub trait IsRetainable: IsIdCloneable {}
 impl<T: ?Sized + ClassType> IsRetainable for T where T::Mutability: private::MutabilityIsRetainable {}
 
