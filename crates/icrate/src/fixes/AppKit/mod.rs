@@ -36,7 +36,7 @@ extern_class!(
     unsafe impl ClassType for NSPopover {
         #[inherits(NSObject)]
         type Super = crate::AppKit::NSResponder;
-        type Mutability = InteriorMutable;
+        type Mutability = MainThreadOnly;
     }
 );
 

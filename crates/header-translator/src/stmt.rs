@@ -306,7 +306,7 @@ pub enum Mutability {
     MutableWithImmutableSuperclass(ItemIdentifier),
     #[default]
     InteriorMutable,
-    // MainThreadOnly,
+    MainThreadOnly,
 }
 
 impl Mutability {
@@ -330,6 +330,7 @@ impl fmt::Display for Mutability {
                 write!(f, "MutableWithImmutableSuperclass<{}>", superclass.path())
             }
             Self::InteriorMutable => write!(f, "InteriorMutable"),
+            Self::MainThreadOnly => write!(f, "MainThreadOnly"),
         }
     }
 }
@@ -349,7 +350,6 @@ pub enum Stmt {
         mutability: Mutability,
         skipped: bool,
         sendable: bool,
-        mainthreadonly: bool,
     },
     /// @interface class_name (name) <protocols*>
     /// ->
@@ -565,7 +565,7 @@ impl Stmt {
                     context,
                 );
 
-                let (sendable, mainthreadonly) = parse_attributes(entity, context);
+                let (sendable, mut mainthreadonly) = parse_attributes(entity, context);
 
                 let mut protocols = Default::default();
                 parse_protocols(entity, &mut protocols, context);
@@ -579,7 +579,17 @@ impl Stmt {
 
                 let superclasses: Vec<_> = superclasses_full
                     .iter()
-                    .map(|(id, generics, _)| (id.clone(), generics.clone()))
+                    .map(|(id, generics, entity)| {
+                        // Ignore sendability on superclasses; because it's an auto trait, it's propagated to subclasses anyhow!
+                        let (_sendable, superclass_mainthreadonly) =
+                            parse_attributes(entity, context);
+
+                        if superclass_mainthreadonly {
+                            mainthreadonly = true;
+                        }
+
+                        (id.clone(), generics.clone())
+                    })
                     .collect();
 
                 // Used for duplicate checking (sometimes the subclass
@@ -591,8 +601,6 @@ impl Stmt {
                     .iter()
                     .filter_map(|(superclass_id, _, entity)| {
                         let superclass_data = context.class_data.get(&superclass_id.name);
-
-                        // let (sendable, mainthreadonly) = parse_attributes(entity, context);
 
                         // Explicitly keep going, even if the class itself is skipped
                         // if superclass_data.skipped
@@ -647,10 +655,13 @@ impl Stmt {
                     superclasses,
                     designated_initializers,
                     derives: data.map(|data| data.derives.clone()).unwrap_or_default(),
-                    mutability: data.map(|data| data.mutability.clone()).unwrap_or_default(),
+                    mutability: if mainthreadonly {
+                        Mutability::MainThreadOnly
+                    } else {
+                        data.map(|data| data.mutability.clone()).unwrap_or_default()
+                    },
                     skipped: data.map(|data| data.definition_skipped).unwrap_or_default(),
                     sendable: sendable.unwrap_or(false),
-                    mainthreadonly,
                 })
                 .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
                     cls: id.clone(),
@@ -694,7 +705,7 @@ impl Stmt {
                 );
 
                 let (sendable, mainthreadonly) = parse_attributes(entity, context);
-                if sendable.is_some() {
+                if let Some(sendable) = sendable {
                     error!(?sendable, "sendable on category");
                 }
                 if mainthreadonly {
@@ -710,7 +721,18 @@ impl Stmt {
 
                 let superclasses: Vec<_> = parse_superclasses(entity, context)
                     .into_iter()
-                    .map(|(id, generics, _)| (id, generics))
+                    .map(|(id, generics, entity)| {
+                        let (sendable, mainthreadonly) = parse_attributes(&entity, context);
+
+                        if let Some(sendable) = sendable {
+                            error!(?sendable, "sendable on category superclass");
+                        }
+                        if mainthreadonly {
+                            error!("@UIActor on category superclass");
+                        }
+
+                        (id, generics)
+                    })
                     .collect();
 
                 let subclass_methods = if let Mutability::ImmutableWithMutableSubclass(subclass) =
@@ -718,8 +740,6 @@ impl Stmt {
                 {
                     let subclass_data = context.class_data.get(&subclass.name);
                     assert!(!subclass_data.map(|data| data.skipped).unwrap_or_default());
-
-                    // let (sendable, mainthreadonly) = parse_attributes(entity, context);
 
                     let (mut methods, _) = parse_methods(
                         entity,
@@ -1320,7 +1340,6 @@ impl fmt::Display for Stmt {
                 mutability,
                 skipped,
                 sendable,
-                mainthreadonly: _,
             } => {
                 if *skipped {
                     return Ok(());
@@ -1337,7 +1356,8 @@ impl fmt::Display for Stmt {
                     Mutability::Immutable
                     | Mutability::Mutable
                     | Mutability::ImmutableWithMutableSubclass(_)
-                    | Mutability::InteriorMutable => id.feature(),
+                    | Mutability::InteriorMutable
+                    | Mutability::MainThreadOnly => id.feature(),
                 };
 
                 let (superclass, superclasses_rest) = superclasses.split_at(1);

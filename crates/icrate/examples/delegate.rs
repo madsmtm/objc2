@@ -24,9 +24,8 @@ declare_class!(
     mod ivars;
 
     unsafe impl ClassType for AppDelegate {
-        #[inherits(NSObject)]
-        type Super = icrate::AppKit::NSResponder;
-        type Mutability = mutability::InteriorMutable;
+        type Super = NSObject;
+        type Mutability = mutability::MainThreadOnly;
         const NAME: &'static str = "MyAppDelegate";
     }
 
