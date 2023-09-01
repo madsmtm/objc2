@@ -58,6 +58,7 @@ impl Output {
             "unstable-example-metal".into(),
             "unstable-example-nspasteboard".into(),
             "unstable-example-speech_synthesis".into(),
+            "unstable-example-tutorial".into(),
         ]
         .into_iter()
         .collect();
