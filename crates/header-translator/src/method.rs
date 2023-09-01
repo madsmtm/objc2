@@ -401,6 +401,7 @@ impl<'tu> PartialMethod<'tu> {
                     .get_objc_qualifiers()
                     .map(MethodArgumentQualifier::parse);
                 let mut sendable = None;
+                let mut no_escape = false;
 
                 immediate_children(&entity, |entity, _span| match entity.get_kind() {
                     EntityKind::ObjCClassRef
@@ -417,6 +418,7 @@ impl<'tu> PartialMethod<'tu> {
                             match attr {
                                 UnexposedAttr::Sendable => sendable = Some(true),
                                 UnexposedAttr::NonSendable => sendable = Some(false),
+                                UnexposedAttr::NoEscape => no_escape = true,
                                 attr => error!(?attr, "unknown attribute"),
                             }
                         }
@@ -427,7 +429,7 @@ impl<'tu> PartialMethod<'tu> {
                 });
 
                 let ty = entity.get_type().expect("argument type");
-                let ty = Ty::parse_method_argument(ty, qualifier, sendable, context);
+                let ty = Ty::parse_method_argument(ty, qualifier, sendable, no_escape, context);
 
                 (name, ty)
             })

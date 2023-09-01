@@ -501,10 +501,13 @@ enum Inner {
     },
     Fn {
         is_variadic: bool,
+        no_escape: bool,
         arguments: Vec<Inner>,
         result_type: Box<Inner>,
     },
     Block {
+        sendable: Option<bool>,
+        no_escape: bool,
         arguments: Vec<Inner>,
         result_type: Box<Inner>,
     },
@@ -546,7 +549,7 @@ impl Inner {
 
             match attr {
                 Some(UnexposedAttr::NonIsolated | UnexposedAttr::UIActor) => {
-                    // Ignored for now; these are almost always also emitted on the method/property,
+                    // Ignored for now; these are usually also emitted on the method/property,
                     // which is where they will be useful in any case.
                 }
                 Some(attr) => error!(?attr, "unknown attribute"),
@@ -681,12 +684,15 @@ impl Inner {
                 match Self::parse(ty, Lifetime::Unspecified, context) {
                     Self::Fn {
                         is_variadic: false,
+                        no_escape,
                         arguments,
                         result_type,
                     } => Self::Pointer {
                         nullability,
                         is_const,
                         pointee: Box::new(Self::Block {
+                            sendable: None,
+                            no_escape,
                             arguments,
                             result_type,
                         }),
@@ -924,6 +930,7 @@ impl Inner {
 
                 Self::Fn {
                     is_variadic: ty.is_variadic(),
+                    no_escape: false,
                     arguments,
                     result_type: Box::new(result_type),
                 }
@@ -1008,11 +1015,14 @@ impl Inner {
             //
             // }
             Self::Fn {
+                is_variadic: _,
+                no_escape: _,
                 arguments,
                 result_type,
-                ..
             }
             | Self::Block {
+                sendable: _,
+                no_escape: _,
                 arguments,
                 result_type,
             } => {
@@ -1106,6 +1116,7 @@ impl fmt::Display for Inner {
             } => match &**pointee {
                 Self::Fn {
                     is_variadic,
+                    no_escape: _,
                     arguments,
                     result_type,
                 } => {
@@ -1161,6 +1172,8 @@ impl fmt::Display for Inner {
             Enum { id } | Struct { id } | TypeDef { id } => write!(f, "{}", id.path()),
             Self::Fn { .. } => write!(f, "TodoFunction"),
             Self::Block {
+                sendable: _,
+                no_escape: _,
                 arguments,
                 result_type,
             } => {
@@ -1213,10 +1226,44 @@ impl Ty {
     pub fn parse_method_argument(
         ty: Type<'_>,
         _qualifier: Option<MethodArgumentQualifier>,
-        _sendable: Option<bool>,
+        mut arg_sendable: Option<bool>,
+        mut arg_no_escape: bool,
         context: &Context<'_>,
     ) -> Self {
-        let ty = Inner::parse(ty, Lifetime::Unspecified, context);
+        let mut ty = Inner::parse(ty, Lifetime::Unspecified, context);
+
+        match &mut ty {
+            Inner::Pointer { pointee, .. } => match &mut **pointee {
+                Inner::Block {
+                    sendable,
+                    no_escape,
+                    ..
+                } => {
+                    *sendable = arg_sendable;
+                    *no_escape = arg_no_escape;
+                    arg_sendable = None;
+                    arg_no_escape = false;
+                }
+                Inner::Fn { no_escape, .. } => {
+                    *no_escape = arg_no_escape;
+                    arg_no_escape = false;
+                }
+                _ => {}
+            },
+            // Ignore NSComparator for now
+            Inner::TypeDef { id } if id.is_nscomparator() => {
+                arg_no_escape = false;
+            }
+            _ => {}
+        }
+
+        if arg_sendable.is_some() {
+            warn!(?ty, "did not consume sendable in argument");
+        }
+
+        if arg_no_escape {
+            warn!(?ty, "did not consume no_escape in argument");
+        }
 
         match &ty {
             Inner::Pointer { pointee, .. } => pointee.visit_lifetime(|lifetime| {
@@ -1274,7 +1321,7 @@ impl Ty {
     }
 
     pub fn parse_function_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let mut this = Self::parse_method_argument(ty, None, None, context);
+        let mut this = Self::parse_method_argument(ty, None, None, false, context);
         this.kind = TyKind::FnArgument;
         this
     }

@@ -25,6 +25,8 @@ pub enum UnexposedAttr {
     NonSendable,
     UIActor,
     NonIsolated,
+
+    NoEscape,
 }
 
 impl UnexposedAttr {
@@ -77,8 +79,7 @@ impl UnexposedAttr {
                 let _ = get_arguments();
                 None
             }
-            // TODO
-            "NS_NOESCAPE" => None,
+            "NS_NOESCAPE" => Some(Self::NoEscape),
             // TODO: We could potentially automatically elide this argument
             // from the method call, though it's rare enough that it's
             // probably not really worth the effort.
