@@ -162,6 +162,7 @@ unstable-example-browser = [
     "AppKit_NSTextView",
     "AppKit_NSWindow",
     "Foundation",
+    "Foundation_NSNotification",
     "Foundation_NSString",
     "Foundation_NSURL",
     "Foundation_NSURLRequest",

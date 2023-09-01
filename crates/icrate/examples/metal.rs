@@ -102,6 +102,15 @@ pub struct Color {
 
 type IdCell<T> = Box<RefCell<Option<Id<T>>>>;
 
+macro_rules! idcell {
+    ($name:ident <= $this:expr) => {
+        let $name = $this.$name.borrow();
+        let $name = $name
+            .as_ref()
+            .expect(concat!(stringify!($name), " ivar should be initialized"));
+    };
+}
+
 // declare the Objective-C class machinery
 declare_class!(
     // declare the delegate class with our instance variables
@@ -111,7 +120,6 @@ declare_class!(
         command_queue: IvarDrop<IdCell<ProtocolObject<dyn MTLCommandQueue>>, "_command_queue">,
         pipeline_state: IvarDrop<IdCell<ProtocolObject<dyn MTLRenderPipelineState>>, "_pipeline_state">,
         window: IvarDrop<IdCell<NSWindow>, "_window">,
-        mtk_view: IvarDrop<IdCell<MTKView>, "_mtk_view">,
     }
     mod ivars;
 
@@ -125,7 +133,6 @@ declare_class!(
     // define the Delegate methods (e.g., initializer)
     unsafe impl Delegate {
         #[method(init)]
-        #[allow(non_snake_case)]
         unsafe fn init(this: *mut Self) -> Option<NonNull<Self>> {
             let this: Option<&mut Self> = msg_send![super(this), init];
             this.map(|this| {
@@ -133,7 +140,6 @@ declare_class!(
                 Ivar::write(&mut this.command_queue, IdCell::default());
                 Ivar::write(&mut this.pipeline_state, IdCell::default());
                 Ivar::write(&mut this.window, IdCell::default());
-                Ivar::write(&mut this.mtk_view, IdCell::default());
                 NonNull::from(this)
             })
         }
@@ -225,10 +231,9 @@ declare_class!(
             }
 
             // initialize the delegate state
-            self.command_queue.borrow_mut().replace(command_queue);
-            self.pipeline_state.borrow_mut().replace(pipeline_state);
-            self.window.borrow_mut().replace(window);
-            self.mtk_view.borrow_mut().replace(mtk_view);
+            self.command_queue.replace(Some(command_queue));
+            self.pipeline_state.replace(Some(pipeline_state));
+            self.window.replace(Some(window));
         }
     }
 
@@ -236,15 +241,9 @@ declare_class!(
     unsafe impl MTKViewDelegate for Delegate {
         #[method(drawInMTKView:)]
         #[allow(non_snake_case)]
-        unsafe fn drawInMTKView(&self, _view: &MTKView) {
-            let command_queue = self.command_queue.borrow();
-            let Some(command_queue) = command_queue.as_ref() else { return; };
-
-            let mtk_view = self.mtk_view.borrow();
-            let Some(mtk_view) = mtk_view.as_ref() else { return; };
-
-            let pipeline_state = self.pipeline_state.borrow();
-            let Some(pipeline_state) = pipeline_state.as_ref() else { return; };
+        unsafe fn drawInMTKView(&self, mtk_view: &MTKView) {
+            idcell!(command_queue <= self);
+            idcell!(pipeline_state <= self);
 
             // FIXME: icrate `MTKView` doesn't have a generated binding for `currentDrawable` yet
             // (because it needs a definition of `CAMetalDrawable`, which we don't support yet) so
