@@ -57,7 +57,7 @@ L1$pb:
 	mov	eax, dword ptr [esi]
 	mov	dword ptr [ebp - 16], eax
 	lea	edi, [esi + 68]
-	mov	edx, dword ptr [ecx + LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L1$pb]
+	mov	edx, dword ptr [ecx + LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L1$pb]
 	mov	eax, dword ptr [edx]
 	test	eax, eax
 	je	LBB1_3
@@ -153,7 +153,7 @@ L3$pb:
 	mov	dword ptr [ebp - 48], 0
 	mov	dword ptr [ebp - 24], 0
 	mov	dword ptr [ebp - 20], 0
-	mov	esi, dword ptr [eax + LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L3$pb]
+	mov	esi, dword ptr [eax + LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L3$pb]
 	lea	eax, [eax + l_anon.[ID].0-L3$pb]
 	mov	dword ptr [ebp - 16], eax
 	xor	eax, eax
@@ -246,7 +246,7 @@ L4$pb:
 	mov	dword ptr [ebp - 48], 0
 	mov	dword ptr [ebp - 24], 0
 	mov	dword ptr [ebp - 20], 0
-	mov	esi, dword ptr [eax + LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L4$pb]
+	mov	esi, dword ptr [eax + LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L4$pb]
 	lea	eax, [eax + l_anon.[ID].0-L4$pb]
 	mov	dword ptr [ebp - 16], eax
 	xor	eax, eax
@@ -334,7 +334,7 @@ L5$pb:
 	mov	dword ptr [ebp - 48], 0
 	mov	dword ptr [ebp - 24], 0
 	mov	dword ptr [ebp - 20], 0
-	mov	edi, dword ptr [eax + LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L5$pb]
+	mov	edi, dword ptr [eax + LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L5$pb]
 	lea	eax, [eax + l_anon.[ID].0-L5$pb]
 	mov	dword ptr [ebp - 16], eax
 	xor	eax, eax
@@ -399,8 +399,8 @@ l_anon.[ID].0:
 	.asciz	"countByEnumeratingWithState:objects:count:"
 
 	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
-LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
-	.indirect_symbol	SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)
+LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
+	.indirect_symbol	SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)
 	.long	0
 
 .subsections_via_symbols

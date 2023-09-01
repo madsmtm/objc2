@@ -43,7 +43,7 @@ iter_once:
 	lea	r14, [rbx + 8]
 	mov	r15, qword ptr [rbx]
 	lea	r12, [rbx + 136]
-	mov	rax, qword ptr [rip + SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	rax, qword ptr [rip + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	mov	r13, qword ptr [rax]
 	test	r13, r13
 	je	.LBB1_3
@@ -76,7 +76,7 @@ iter_once:
 	pop	r15
 	ret
 .LBB1_3:
-	mov	rdi, qword ptr [rip + SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	rdi, qword ptr [rip + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	lea	rsi, [rip + .Lanon.[ID].0]
 	call	qword ptr [rip + SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@GOTPCREL]
 	mov	r13, rax
@@ -129,7 +129,7 @@ iter:
 	movups	xmmword ptr [rsp + 200], xmm0
 	xor	ecx, ecx
 	mov	r13, qword ptr [rip + use_obj@GOTPCREL]
-	mov	r12, qword ptr [rip + SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	r12, qword ptr [rip + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	mov	rbx, qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	xor	eax, eax
 	jmp	.LBB3_1
@@ -214,7 +214,7 @@ iter_noop:
 	mov	qword ptr [rsp + 152], 0
 	movups	xmmword ptr [rsp + 200], xmm0
 	xor	eax, eax
-	mov	r12, qword ptr [rip + SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	r12, qword ptr [rip + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	mov	r13, qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	xor	ecx, ecx
 	jmp	.LBB4_1
@@ -295,7 +295,7 @@ iter_retained:
 	mov	r12, qword ptr [rip + objc_retain@GOTPCREL]
 	mov	rbx, qword ptr [rip + use_obj@GOTPCREL]
 	mov	r14, qword ptr [rip + objc_release@GOTPCREL]
-	mov	r15, qword ptr [rip + SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	r15, qword ptr [rip + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	xor	eax, eax
 	jmp	.LBB5_1
 	.p2align	4, 0x90

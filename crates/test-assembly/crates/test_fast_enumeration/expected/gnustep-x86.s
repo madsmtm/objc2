@@ -62,7 +62,7 @@ iter_once:
 	mov	dword ptr [esp + 8], eax
 	lea	eax, [edi + 68]
 	mov	dword ptr [esp + 4], eax
-	mov	eax, dword ptr [ebx + SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
+	mov	eax, dword ptr [ebx + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
 	mov	esi, dword ptr [eax]
 	test	esi, esi
 	je	.LBB1_3
@@ -147,7 +147,7 @@ iter:
 	mov	dword ptr [esp + 112], 0
 .Ltmp1:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp1-.L3$pb)
-	mov	ebp, dword ptr [ebx + SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
+	mov	ebp, dword ptr [ebx + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
 	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
 	mov	dword ptr [esp + 12], ecx
 	xor	ecx, ecx
@@ -250,7 +250,7 @@ iter_noop:
 	mov	dword ptr [esp + 112], 0
 .Ltmp2:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp2-.L4$pb)
-	mov	ebp, dword ptr [ebx + SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
+	mov	ebp, dword ptr [ebx + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
 	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
 	mov	dword ptr [esp + 12], ecx
 	xor	ecx, ecx
@@ -348,7 +348,7 @@ iter_retained:
 	mov	dword ptr [esp + 112], 0
 .Ltmp3:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp3-.L5$pb)
-	mov	edi, dword ptr [ebx + SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
+	mov	edi, dword ptr [ebx + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
 	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
 	mov	dword ptr [esp + 12], ecx
 	xor	ecx, ecx

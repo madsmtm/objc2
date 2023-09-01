@@ -34,9 +34,9 @@ _iter_once:
 	ldr	x21, [x19]
 	add	x22, x19, #136
 Lloh0:
-	adrp	x8, SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
+	adrp	x8, SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
 Lloh1:
-	ldr	x8, [x8, SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
+	ldr	x8, [x8, SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
 Lloh2:
 	ldr	x1, [x8]
 	cbz	x1, LBB1_5
@@ -61,9 +61,9 @@ LBB1_4:
 	ret
 LBB1_5:
 Lloh3:
-	adrp	x0, SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
+	adrp	x0, SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
 Lloh4:
-	ldr	x0, [x0, SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
+	ldr	x0, [x0, SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
 Lloh5:
 	adrp	x1, l_anon.[ID].0@PAGE
 Lloh6:
@@ -118,9 +118,9 @@ Lloh7:
 Lloh8:
 	add	x22, x22, l_anon.[ID].0@PAGEOFF
 Lloh9:
-	adrp	x23, SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
+	adrp	x23, SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
 Lloh10:
-	ldr	x23, [x23, SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
+	ldr	x23, [x23, SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
 	b	LBB3_2
 LBB3_1:
 	ldr	x9, [sp, #152]
@@ -193,9 +193,9 @@ Lloh11:
 Lloh12:
 	add	x22, x22, l_anon.[ID].0@PAGEOFF
 Lloh13:
-	adrp	x23, SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
+	adrp	x23, SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
 Lloh14:
-	ldr	x23, [x23, SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
+	ldr	x23, [x23, SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
 	b	LBB4_2
 LBB4_1:
 	add	x8, x8, #1
@@ -264,9 +264,9 @@ Lloh15:
 Lloh16:
 	add	x21, x21, l_anon.[ID].0@PAGEOFF
 Lloh17:
-	adrp	x22, SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
+	adrp	x22, SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
 Lloh18:
-	ldr	x22, [x22, SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
+	ldr	x22, [x22, SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
 	b	LBB5_2
 LBB5_1:
 	ldr	x9, [sp, #152]

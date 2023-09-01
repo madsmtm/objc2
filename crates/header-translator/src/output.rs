@@ -1,4 +1,7 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::fmt::{self, Write};
+use std::fs;
+use std::path::Path;
 use std::str::FromStr;
 
 use crate::config::{Config, LibraryData};
@@ -28,6 +31,19 @@ impl Output {
                 self_library.compare(other_library);
             },
         );
+    }
+
+    pub fn output_module(&self, path: &Path) -> fmt::Result {
+        let mut f = String::new();
+
+        for library_name in self.libraries.keys() {
+            writeln!(&mut f, "#[cfg(feature = \"{library_name}\")]")?;
+            writeln!(&mut f, "pub mod {library_name};")?;
+        }
+
+        fs::write(path, f).unwrap();
+
+        Ok(())
     }
 
     pub fn cargo_features(&self, config: &Config) -> BTreeMap<String, Vec<String>> {
