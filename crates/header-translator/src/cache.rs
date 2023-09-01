@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::mem;
 
 use crate::config::Config;
@@ -7,16 +7,38 @@ use crate::id::ItemIdentifier;
 use crate::method::Method;
 use crate::output::Output;
 use crate::stmt::Stmt;
+use crate::Mutability;
 
 /// A helper struct for doing global analysis on the output.
 #[derive(Debug, PartialEq, Clone)]
 pub struct Cache<'a> {
     config: &'a Config,
+    mainthreadonly_classes: BTreeSet<ItemIdentifier>,
 }
 
 impl<'a> Cache<'a> {
-    pub fn new(_output: &Output, config: &'a Config) -> Self {
-        Self { config }
+    pub fn new(output: &Output, config: &'a Config) -> Self {
+        let mut mainthreadonly_classes = BTreeSet::new();
+
+        for library in output.libraries.values() {
+            for file in library.files.values() {
+                for stmt in file.stmts.iter() {
+                    if let Stmt::ClassDecl {
+                        id,
+                        mutability: Mutability::MainThreadOnly,
+                        ..
+                    } = stmt
+                    {
+                        mainthreadonly_classes.insert(id.clone());
+                    }
+                }
+            }
+        }
+
+        Self {
+            config,
+            mainthreadonly_classes,
+        }
     }
 
     pub fn update(&self, output: &mut Output) {
@@ -61,6 +83,67 @@ impl<'a> Cache<'a> {
                             }
                         } else {
                             names.insert(key, method);
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+
+        // Add `mainthreadonly` to relevant methods
+        for stmt in file.stmts.iter_mut() {
+            match stmt {
+                Stmt::Methods {
+                    cls: id, methods, ..
+                }
+                | Stmt::ProtocolDecl { id, methods, .. } => {
+                    for method in methods.iter_mut() {
+                        let mut result_type_contains_mainthreadonly: bool = false;
+                        method.result_type.visit_required_types(&mut |id| {
+                            if self.mainthreadonly_classes.contains(id) {
+                                result_type_contains_mainthreadonly = true;
+                            }
+                        });
+
+                        match (method.is_class, self.mainthreadonly_classes.contains(id)) {
+                            // MainThreadOnly class with static method
+                            (true, true) => {
+                                // Assume the method needs main thread
+                                result_type_contains_mainthreadonly = true;
+                            }
+                            // Class with static method
+                            (true, false) => {
+                                // Continue with the normal check
+                            }
+                            // MainThreadOnly class with non-static method
+                            (false, true) => {
+                                // Method is already required to run on main
+                                // thread, so no need to add MainThreadMarker
+                                continue;
+                            }
+                            // Class with non-static method
+                            (false, false) => {
+                                // Continue with the normal check
+                            }
+                        }
+
+                        if result_type_contains_mainthreadonly {
+                            let mut any_argument_contains_mainthreadonly: bool = false;
+                            for (_, argument) in method.arguments.iter() {
+                                // Important: We only visit the top-level types, to not
+                                // include e.g. `Option<&NSView>` or `&NSArray<NSView>`.
+                                argument.visit_toplevel_types(&mut |id| {
+                                    if self.mainthreadonly_classes.contains(id) {
+                                        any_argument_contains_mainthreadonly = true;
+                                    }
+                                });
+                            }
+
+                            // Apply main thread only, unless a (required)
+                            // argument was main thread only.
+                            if !any_argument_contains_mainthreadonly {
+                                method.mainthreadonly = true;
+                            }
                         }
                     }
                 }

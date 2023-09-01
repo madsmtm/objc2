@@ -249,14 +249,14 @@ pub struct Method {
     pub is_class: bool,
     is_optional_protocol: bool,
     memory_management: MemoryManagement,
-    arguments: Vec<(String, Ty)>,
+    pub(crate) arguments: Vec<(String, Ty)>,
     pub result_type: Ty,
     safe: bool,
     mutating: bool,
     is_protocol: bool,
     // Thread-safe, even on main-thread only (@MainActor/@UIActor) classes
     non_isolated: bool,
-    mainthreadonly: bool,
+    pub(crate) mainthreadonly: bool,
 }
 
 impl Method {
@@ -636,6 +636,11 @@ impl fmt::Display for Method {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let _span = debug_span!("method", self.fn_name).entered();
 
+        // TODO: Use this somehow?
+        // if self.non_isolated {
+        //     writeln!(f, "// non_isolated")?;
+        // }
+
         //
         // Attributes
         //
@@ -689,7 +694,11 @@ impl fmt::Display for Method {
         // Arguments
         for (param, arg_ty) in &self.arguments {
             let param = handle_reserved(&crate::to_snake_case(param));
-            write!(f, "{param}: {arg_ty},")?;
+            write!(f, "{param}: {arg_ty}, ")?;
+        }
+        // FIXME: Skipping main thread only on protocols for now
+        if self.mainthreadonly && !self.is_protocol {
+            write!(f, "mtm: MainThreadMarker")?;
         }
         write!(f, ")")?;
 

@@ -345,6 +345,12 @@ impl IdType {
             }
         }
     }
+
+    fn visit_toplevel_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
+        if let Some(id) = self._id() {
+            f(id);
+        }
+    }
 }
 
 impl fmt::Display for IdType {
@@ -1036,6 +1042,25 @@ impl Inner {
             _ => {}
         }
     }
+
+    pub fn visit_toplevel_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
+        match self {
+            Self::Id { ty, .. } => {
+                ty.visit_toplevel_types(f);
+            }
+            Self::Pointer {
+                // Only visit non-null types
+                nullability: Nullability::NonNull,
+                is_const: _,
+                pointee,
+            } => {
+                pointee.visit_toplevel_types(f);
+            }
+            // TODO
+            Self::TypeDef { id } => f(id),
+            _ => {}
+        }
+    }
 }
 
 /// This is sound to output in (almost, c_void is not a valid return type) any
@@ -1491,6 +1516,14 @@ impl Ty {
         }
 
         self.ty.visit_required_types(f);
+    }
+
+    pub fn visit_toplevel_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
+        if let TyKind::MethodReturn { with_error: true } = &self.kind {
+            f(&ItemIdentifier::nserror());
+        }
+
+        self.ty.visit_toplevel_types(f);
     }
 }
 

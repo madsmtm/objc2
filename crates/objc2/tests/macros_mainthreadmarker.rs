@@ -51,7 +51,7 @@ struct MainThreadMarker(bool);
 extern_methods!(
     unsafe impl Cls {
         #[method_id(new)]
-        fn new() -> Id<Self>;
+        fn new(mtm: MainThreadMarker) -> Id<Self>;
 
         #[method(myMethod:)]
         fn method(mtm: MainThreadMarker, arg: i32, mtm2: MainThreadMarker) -> i32;
@@ -63,8 +63,8 @@ extern_methods!(
 
 #[test]
 fn call() {
-    let obj1 = Cls::new();
     let mtm = MainThreadMarker(true);
+    let obj1 = Cls::new(mtm);
 
     let res = Cls::method(mtm, 2, mtm);
     assert_eq!(res, 3);
