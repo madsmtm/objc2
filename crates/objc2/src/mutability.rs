@@ -315,6 +315,10 @@ impl<T: ?Sized + ClassType> IsMutable for T where T::Mutability: private::Mutabi
 ///
 /// This is implemented for classes whose [`ClassType::Mutability`] is one of:
 /// - [`MainThreadOnly`].
+///
+/// Since `MainThreadOnly` types must be `!Send` and `!Sync`, if you hold a
+/// type that implements this trait, then you're guaranteed to be on the main
+/// thread.
 //
 // Note: MainThreadMarker::from relies on this.
 pub trait IsMainThreadOnly: ClassType {}
