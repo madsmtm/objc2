@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Added `mutability::IsMainThreadOnly`.
+* Added new `encode` traits `EncodeReturn`, `EncodeArgument` and
+  `EncodeArguments`.
+
+### Changed
+* **BREAKING**: `AnyClass::verify_sel` now take more well-defined types
+  `EncodeArguments` and  `EncodeReturn`.
 
 
 ## 0.4.1 - 2023-07-31

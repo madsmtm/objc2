@@ -5,7 +5,7 @@ use core::ops::Deref;
 use core::ptr;
 use std::os::raw::c_ulong;
 
-use objc2::encode::__unstable::EncodeReturn;
+use objc2::encode::EncodeReturn;
 
 use super::{ffi, Block};
 use crate::BlockArguments;

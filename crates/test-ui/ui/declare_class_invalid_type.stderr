@@ -21,13 +21,13 @@ error[E0277]: the trait bound `Id<CustomObject>: Encode` is not satisfied
             u16
           and $N others
   = note: required for `Id<CustomObject>` to implement `EncodeReturn`
-  = note: required for `Id<CustomObject>` to implement `__unstable::convert_private::Sealed`
-note: required by a bound in `EncodeConvertReturn`
- --> $WORKSPACE/crates/objc2/src/encode/__unstable.rs
+  = note: required for `Id<CustomObject>` to implement `__macro_helpers::convert::return_private::Sealed`
+note: required by a bound in `ConvertReturn`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/convert.rs
   |
-  | pub trait EncodeConvertReturn: convert_private::Sealed {
-  |                                ^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `EncodeConvertReturn`
-  = note: `EncodeConvertReturn` is a "sealed trait", because to implement it you also need to implement `objc2::encode::__unstable::convert_private::Sealed`, which is not accessible; this is usually done to force you to use one of the provided types that already implement it
+  | pub trait ConvertReturn: return_private::Sealed {
+  |                          ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertReturn`
+  = note: `ConvertReturn` is a "sealed trait", because to implement it you also need to implement `objc2::__macro_helpers::convert::return_private::Sealed`, which is not accessible; this is usually done to force you to use one of the provided types that already implement it
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Vec<()>: Encode` is not satisfied
@@ -53,13 +53,13 @@ error[E0277]: the trait bound `Vec<()>: Encode` is not satisfied
             u16
           and $N others
   = note: required for `Vec<()>` to implement `EncodeReturn`
-  = note: required for `Vec<()>` to implement `__unstable::convert_private::Sealed`
-note: required by a bound in `EncodeConvertReturn`
- --> $WORKSPACE/crates/objc2/src/encode/__unstable.rs
+  = note: required for `Vec<()>` to implement `__macro_helpers::convert::return_private::Sealed`
+note: required by a bound in `ConvertReturn`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/convert.rs
   |
-  | pub trait EncodeConvertReturn: convert_private::Sealed {
-  |                                ^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `EncodeConvertReturn`
-  = note: `EncodeConvertReturn` is a "sealed trait", because to implement it you also need to implement `objc2::encode::__unstable::convert_private::Sealed`, which is not accessible; this is usually done to force you to use one of the provided types that already implement it
+  | pub trait ConvertReturn: return_private::Sealed {
+  |                          ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertReturn`
+  = note: `ConvertReturn` is a "sealed trait", because to implement it you also need to implement `objc2::__macro_helpers::convert::return_private::Sealed`, which is not accessible; this is usually done to force you to use one of the provided types that already implement it
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Box<u32>: Encode` is not satisfied
@@ -84,7 +84,14 @@ error[E0277]: the trait bound `Box<u32>: Encode` is not satisfied
             u8
             u16
           and $N others
-  = note: required for `Box<u32>` to implement `EncodeConvertArgument`
+  = note: required for `Box<u32>` to implement `EncodeArgument`
+  = note: required for `Box<u32>` to implement `__macro_helpers::convert::argument_private::Sealed`
+note: required by a bound in `ConvertArgument`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/convert.rs
+  |
+  | pub trait ConvertArgument: argument_private::Sealed {
+  |                            ^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertArgument`
+  = note: `ConvertArgument` is a "sealed trait", because to implement it you also need to implement `objc2::__macro_helpers::convert::argument_private::Sealed`, which is not accessible; this is usually done to force you to use one of the provided types that already implement it
   = note: this error originates in the macro `$crate::__declare_class_rewrite_args` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `CustomObject: Encode` is not satisfied
@@ -109,5 +116,12 @@ error[E0277]: the trait bound `CustomObject: Encode` is not satisfied
             u8
             u16
           and $N others
-  = note: required for `CustomObject` to implement `EncodeConvertArgument`
+  = note: required for `CustomObject` to implement `EncodeArgument`
+  = note: required for `CustomObject` to implement `__macro_helpers::convert::argument_private::Sealed`
+note: required by a bound in `ConvertArgument`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/convert.rs
+  |
+  | pub trait ConvertArgument: argument_private::Sealed {
+  |                            ^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertArgument`
+  = note: `ConvertArgument` is a "sealed trait", because to implement it you also need to implement `objc2::__macro_helpers::convert::argument_private::Sealed`, which is not accessible; this is usually done to force you to use one of the provided types that already implement it
   = note: this error originates in the macro `$crate::__declare_class_rewrite_args` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

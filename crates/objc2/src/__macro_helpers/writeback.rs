@@ -10,13 +10,13 @@
 use core::mem::ManuallyDrop;
 use core::ptr::NonNull;
 
-use crate::encode::__unstable::EncodeConvertArgument;
+use super::ConvertArgument;
 use crate::rc::Id;
 use crate::Message;
 
 // Note the `'static` bound here - this may not be necessary, but I'm unsure
 // of the exact requirements, so we better keep it for now.
-impl<T: Message + 'static> EncodeConvertArgument for &mut Id<T> {
+impl<T: Message + 'static> ConvertArgument for &mut Id<T> {
     // We use `*mut T` as the inner value instead of `NonNull<T>`, since we
     // want to do debug checking that the value hasn't unexpectedly been
     // overwritten to contain NULL (which is clear UB, but the user might have
@@ -109,7 +109,7 @@ impl<T: Message + 'static> EncodeConvertArgument for &mut Id<T> {
     }
 }
 
-impl<T: Message + 'static> EncodeConvertArgument for &mut Option<Id<T>> {
+impl<T: Message + 'static> ConvertArgument for &mut Option<Id<T>> {
     type __Inner = NonNull<*mut T>;
 
     type __StoredBeforeMessage = (Self::__Inner, *mut T);
@@ -156,7 +156,7 @@ impl<T: Message + 'static> EncodeConvertArgument for &mut Option<Id<T>> {
 // known at compile-time, and for the `None` case it would be detrimental to
 // have extra `retain/release` calls here.
 
-impl<T: Message + 'static> EncodeConvertArgument for Option<&mut Id<T>> {
+impl<T: Message + 'static> ConvertArgument for Option<&mut Id<T>> {
     type __Inner = Option<NonNull<*mut T>>;
 
     type __StoredBeforeMessage = Option<(NonNull<*mut T>, NonNull<T>)>;
@@ -185,7 +185,7 @@ impl<T: Message + 'static> EncodeConvertArgument for Option<&mut Id<T>> {
     }
 }
 
-impl<T: Message + 'static> EncodeConvertArgument for Option<&mut Option<Id<T>>> {
+impl<T: Message + 'static> ConvertArgument for Option<&mut Option<Id<T>>> {
     type __Inner = Option<NonNull<*mut T>>;
 
     type __StoredBeforeMessage = Option<(NonNull<*mut T>, *mut T)>;

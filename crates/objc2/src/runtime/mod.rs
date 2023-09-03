@@ -42,8 +42,7 @@ mod retain_release_fast;
 
 pub(crate) use self::method_encoding_iter::{EncodingParseError, MethodEncodingIter};
 pub(crate) use self::retain_release_fast::{objc_release_fast, objc_retain_fast};
-use crate::encode::__unstable::{EncodeArguments, EncodeConvertReturn, EncodeReturn};
-use crate::encode::{Encode, Encoding, OptionEncode, RefEncode};
+use crate::encode::{Encode, EncodeArguments, EncodeReturn, Encoding, OptionEncode, RefEncode};
 use crate::verify::{verify_method_signature, Inner};
 use crate::{ffi, Message};
 
@@ -816,25 +815,25 @@ impl AnyClass {
     /// # Example
     ///
     /// ```
-    /// # use objc2::{class, sel};
-    /// # use objc2::runtime::AnyClass;
+    /// use objc2::{class, sel};
+    /// use objc2::runtime::{AnyClass, Bool};
     /// let cls = class!(NSObject);
     /// let sel = sel!(isKindOfClass:);
     /// // Verify that `isKindOfClass:`:
     /// // - Exists on the class
     /// // - Takes a class as a parameter
     /// // - Returns a BOOL
-    /// let result = cls.verify_sel::<(&AnyClass,), bool>(sel);
+    /// let result = cls.verify_sel::<(&AnyClass,), Bool>(sel);
     /// assert!(result.is_ok());
     /// ```
     #[allow(clippy::missing_errors_doc)] // Written differently in the docs
     pub fn verify_sel<A, R>(&self, sel: Sel) -> Result<(), VerificationError>
     where
         A: EncodeArguments,
-        R: EncodeConvertReturn,
+        R: EncodeReturn,
     {
         let method = self.instance_method(sel).ok_or(Inner::MethodNotFound)?;
-        verify_method_signature(method, A::ENCODINGS, &R::__Inner::ENCODING_RETURN)
+        verify_method_signature(method, A::ENCODINGS, &R::ENCODING_RETURN)
     }
 }
 

@@ -2,10 +2,8 @@ use core::mem;
 use core::mem::ManuallyDrop;
 use core::ptr::{self, NonNull};
 
-use crate::encode::__unstable::{
-    EncodeArguments, EncodeConvertArgument, EncodeConvertReturn, EncodeReturn,
-};
-use crate::encode::{Encode, RefEncode};
+use crate::__macro_helpers::{ConvertArgument, ConvertReturn};
+use crate::encode::{Encode, EncodeArgument, EncodeReturn, Encoding, RefEncode};
 use crate::mutability::IsMutable;
 use crate::rc::Id;
 use crate::runtime::{AnyClass, AnyObject, Imp, Sel};
@@ -50,13 +48,24 @@ fn msg_send_check(
     args: &[crate::encode::Encoding],
     ret: &crate::encode::Encoding,
 ) {
-    use crate::verify::{verify_method_signature, Inner, VerificationError};
-
     let cls = if let Some(obj) = obj {
         obj.class()
     } else {
         panic_null(sel)
     };
+
+    msg_send_check_class(cls, sel, args, ret);
+}
+
+#[cfg(debug_assertions)]
+#[track_caller]
+fn msg_send_check_class(
+    cls: &AnyClass,
+    sel: Sel,
+    args: &[crate::encode::Encoding],
+    ret: &crate::encode::Encoding,
+) {
+    use crate::verify::{verify_method_signature, Inner, VerificationError};
 
     let err = if let Some(method) = cls.instance_method(sel) {
         if let Err(err) = verify_method_signature(method, args, ret) {
@@ -221,16 +230,16 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
     where
         A: MessageArguments,
-        R: EncodeConvertReturn,
+        R: ConvertReturn,
     {
         let this = self.__as_raw_receiver();
         #[cfg(debug_assertions)]
         {
             // SAFETY: Caller ensures only valid or NULL pointers.
             let obj = unsafe { this.as_ref() };
-            msg_send_check(obj, sel, A::ENCODINGS, &R::__Inner::ENCODING_RETURN);
+            msg_send_check(obj, sel, A::__ENCODINGS, &R::__Inner::ENCODING_RETURN);
         }
-        unsafe { EncodeConvertReturn::__from_return(send_unverified(this, sel, args)) }
+        unsafe { ConvertReturn::__from_return(send_unverified(this, sel, args)) }
     }
 
     /// Sends a message to a specific superclass with the given selector and
@@ -260,7 +269,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     unsafe fn send_super_message<A, R>(self, superclass: &AnyClass, sel: Sel, args: A) -> R
     where
         A: MessageArguments,
-        R: EncodeConvertReturn,
+        R: ConvertReturn,
     {
         let this = self.__as_raw_receiver();
         #[cfg(debug_assertions)]
@@ -268,13 +277,14 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
             if this.is_null() {
                 panic_null(sel);
             }
-            if let Err(err) = superclass.verify_sel::<A, R>(sel) {
-                panic_verify(superclass, sel, &err);
-            }
+            msg_send_check_class(
+                superclass,
+                sel,
+                A::__ENCODINGS,
+                &R::__Inner::ENCODING_RETURN,
+            );
         }
-        unsafe {
-            EncodeConvertReturn::__from_return(send_super_unverified(this, superclass, sel, args))
-        }
+        unsafe { ConvertReturn::__from_return(send_super_unverified(this, superclass, sel, args)) }
     }
 
     #[inline]
@@ -285,7 +295,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         Self::__Inner: ClassType,
         <Self::__Inner as ClassType>::Super: ClassType,
         A: MessageArguments,
-        R: EncodeConvertReturn,
+        R: ConvertReturn,
     {
         unsafe { self.send_super_message(<Self::__Inner as ClassType>::Super::class(), sel, args) }
     }
@@ -479,6 +489,10 @@ unsafe impl<'a> MessageReceiver for &'a AnyClass {
     }
 }
 
+mod message_args_private {
+    pub trait Sealed {}
+}
+
 /// Types that may be used as the arguments of an Objective-C message.
 ///
 /// This is implemented for tuples of up to 16 arguments, where each argument
@@ -489,7 +503,10 @@ unsafe impl<'a> MessageReceiver for &'a AnyClass {
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait MessageArguments: EncodeArguments {
+pub unsafe trait MessageArguments: message_args_private::Sealed {
+    #[doc(hidden)]
+    const __ENCODINGS: &'static [Encoding];
+
     /// Invoke an [`Imp`] with the given object, selector, and arguments.
     ///
     /// This method is the primitive used when sending messages and should not
@@ -508,10 +525,16 @@ pub trait __TupleExtender<T> {
 
 macro_rules! message_args_impl {
     ($($a:ident: $t:ident),*) => (
-        unsafe impl<$($t: EncodeConvertArgument),*> MessageArguments for ($($t,)*) {
+        impl<$($t: ConvertArgument),*> message_args_private::Sealed for ($($t,)*) {}
+
+        unsafe impl<$($t: ConvertArgument),*> MessageArguments for ($($t,)*) {
+            const __ENCODINGS: &'static [Encoding] = &[
+                $($t::__Inner::ENCODING_ARGUMENT),*
+            ];
+
             #[inline]
             unsafe fn __invoke<R: EncodeReturn>(imp: Imp, obj: *mut AnyObject, sel: Sel, ($($a,)*): Self) -> R {
-                $(let $a = EncodeConvertArgument::__into_argument($a);)*
+                $(let $a = ConvertArgument::__into_argument($a);)*
 
                 // The imp must be cast to the appropriate function pointer
                 // type before being called; the msgSend functions are not
@@ -536,8 +559,9 @@ macro_rules! message_args_impl {
                 $(
                     // SAFETY: The argument was passed to the message sending
                     // function, and the stored values are only processed this
-                    // once. See `src/rc/writeback.rs` for details.
-                    unsafe { <$t as EncodeConvertArgument>::__process_after_message_send($a.1) };
+                    // once. See `src/__macro_helpers/writeback.rs` for
+                    // details.
+                    unsafe { <$t as ConvertArgument>::__process_after_message_send($a.1) };
                 )*
                 result
             }

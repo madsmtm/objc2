@@ -137,7 +137,7 @@ unsafe impl RefEncode for Bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::encode::__unstable::{EncodeConvertArgument, EncodeConvertReturn};
+    use crate::__macro_helpers::{ConvertArgument, ConvertReturn};
     use alloc::format;
 
     #[test]
@@ -175,12 +175,12 @@ mod tests {
         assert_eq!(bool::__ENCODING, Encoding::Bool);
 
         assert_eq!(
-            <bool as EncodeConvertArgument>::__Inner::__ENCODING,
-            <bool as EncodeConvertArgument>::__Inner::ENCODING
+            <bool as ConvertArgument>::__Inner::__ENCODING,
+            <bool as ConvertArgument>::__Inner::ENCODING
         );
         assert_eq!(
-            <bool as EncodeConvertReturn>::__Inner::__ENCODING,
-            <bool as EncodeConvertReturn>::__Inner::ENCODING
+            <bool as ConvertReturn>::__Inner::__ENCODING,
+            <bool as ConvertReturn>::__Inner::ENCODING
         );
     }
 

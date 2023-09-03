@@ -55,7 +55,6 @@ mod id_forwarding_impls;
 mod id_traits;
 mod test_object;
 mod weak_id;
-mod writeback;
 
 pub use self::allocated::Allocated;
 pub use self::autorelease::{
