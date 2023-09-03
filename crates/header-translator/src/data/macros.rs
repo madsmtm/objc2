@@ -69,6 +69,9 @@ macro_rules! __set_mutability {
     ($data:expr; Mutable) => {
         $data.mutability = $crate::stmt::Mutability::Mutable;
     };
+    ($data:expr; MainThreadOnly) => {
+        $data.mutability = $crate::stmt::Mutability::MainThreadOnly;
+    };
 }
 
 macro_rules! __data_inner {

@@ -139,12 +139,12 @@ data! {
         unsafe -setName;
     }
 
-    class NSValue {
+    class NSValue: Immutable {
         unsafe -objCType;
         unsafe -isEqualToValue;
     }
 
-    class NSUUID {
+    class NSUUID: Immutable {
         unsafe +UUID;
         unsafe -init;
         unsafe -initWithUUIDString;
@@ -186,7 +186,7 @@ data! {
     class NSIndexSet: ImmutableWithMutableSubclass<Foundation::NSMutableIndexSet> {}
     class NSMutableIndexSet: MutableWithImmutableSuperclass<Foundation::NSIndexSet> {}
 
-    class NSNumber {
+    class NSNumber: Immutable {
         unsafe -initWithChar;
         unsafe -initWithUnsignedChar;
         unsafe -initWithShort;
@@ -236,6 +236,8 @@ data! {
         unsafe -unsignedIntegerValue;
         unsafe -stringValue;
     }
+
+    class NSDecimalNumber: Immutable {}
 
     class NSURLRequest: ImmutableWithMutableSubclass<Foundation::NSMutableURLRequest> {}
     class NSMutableURLRequest: MutableWithImmutableSuperclass<Foundation::NSURLRequest> {}

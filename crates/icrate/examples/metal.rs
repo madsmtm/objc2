@@ -184,7 +184,7 @@ declare_class!(
 
             // create the metal view
             let mtk_view = {
-                let frame_rect = unsafe { window.frame() };
+                let frame_rect = window.frame();
                 unsafe { MTKView::initWithFrame_device(mtm.alloc(), frame_rect, Some(&device)) }
             };
 
@@ -223,12 +223,10 @@ declare_class!(
             }
 
             // configure the window
-            unsafe {
-                window.setContentView(Some(&mtk_view));
-                window.center();
-                window.setTitle(ns_string!("metal example"));
-                window.makeKeyAndOrderFront(None);
-            }
+            window.setContentView(Some(&mtk_view));
+            window.center();
+            window.setTitle(ns_string!("metal example"));
+            window.makeKeyAndOrderFront(None);
 
             // initialize the delegate state
             self.command_queue.replace(Some(command_queue));
@@ -360,17 +358,15 @@ impl Delegate {
 fn main() {
     let mtm = MainThreadMarker::new().unwrap();
     // configure the app
-    let app = unsafe { NSApplication::sharedApplication(mtm) };
-    unsafe { app.setActivationPolicy(NSApplicationActivationPolicyRegular) };
+    let app = NSApplication::sharedApplication(mtm);
+    app.setActivationPolicy(NSApplicationActivationPolicyRegular);
 
     // initialize the delegate
     let delegate = Delegate::new(mtm);
 
     // configure the application delegate
-    unsafe {
-        let object = ProtocolObject::from_ref(&*delegate);
-        app.setDelegate(Some(object))
-    };
+    let object = ProtocolObject::from_ref(&*delegate);
+    app.setDelegate(Some(object));
 
     // run the app
     unsafe { app.run() };

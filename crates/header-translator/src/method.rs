@@ -266,7 +266,11 @@ impl Method {
     }
 
     pub(crate) fn usable_in_default_id(&self) -> bool {
-        self.selector == "new" && self.is_class && self.arguments.is_empty() && self.safe
+        self.selector == "new"
+            && self.is_class
+            && self.arguments.is_empty()
+            && self.safe
+            && !self.mainthreadonly
     }
 
     fn parent_type_data(entity: &Entity<'_>, context: &Context<'_>) -> (bool, bool) {
