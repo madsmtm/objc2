@@ -1,5 +1,5 @@
 #![deny(unsafe_op_in_unsafe_fn)]
-use core::{cell::RefCell, ptr::NonNull};
+use core::{cell::OnceCell, ptr::NonNull};
 
 use icrate::{
     AppKit::{
@@ -26,20 +26,29 @@ use objc2::{
     sel, ClassType,
 };
 
-type IdCell<T> = Box<RefCell<Option<Id<T>>>>;
+type IdCell<T> = Box<OnceCell<Id<T>>>;
 
 macro_rules! idcell {
+    ($name:ident => $this:expr) => {
+        $this.$name.set($name).expect(&format!(
+            "ivar should not already be initialized: `{}`",
+            stringify!($name)
+        ));
+    };
     ($name:ident <= $this:expr) => {
-        let $name = $this.$name.borrow();
-        let $name = $name
-            .as_ref()
-            .expect(concat!(stringify!($name), " ivar should be initialized"));
+        #[rustfmt::skip]
+        let Some($name) = $this.$name.get() else {
+            unreachable!(
+                "ivar should be initialized: `{}`",
+                stringify!($name)
+            )
+        };
     };
 }
 
 declare_class!(
     struct Delegate {
-        text_field: IvarDrop<IdCell<NSTextField>, "_text_field">,
+        nav_url: IvarDrop<IdCell<NSTextField>, "_nav_url">,
         web_view: IvarDrop<IdCell<WKWebView>, "_web_view">,
         window: IvarDrop<IdCell<NSWindow>, "_window">,
     }
@@ -56,7 +65,7 @@ declare_class!(
         unsafe fn init(this: *mut Self) -> Option<NonNull<Self>> {
             let this: Option<&mut Self> = msg_send![super(this), init];
             this.map(|this| {
-                Ivar::write(&mut this.text_field, IdCell::default());
+                Ivar::write(&mut this.nav_url, IdCell::default());
                 Ivar::write(&mut this.web_view, IdCell::default());
                 Ivar::write(&mut this.window, IdCell::default());
                 NonNull::from(this)
@@ -232,9 +241,9 @@ declare_class!(
                 web_view.loadRequest(&request);
             }
 
-            self.text_field.replace(Some(nav_url));
-            self.web_view.replace(Some(web_view));
-            self.window.replace(Some(window));
+            idcell!(nav_url => self);
+            idcell!(web_view => self);
+            idcell!(window => self);
         }
     }
 
@@ -268,10 +277,10 @@ declare_class!(
             web_view: &WKWebView,
             _navigation: Option<&WKNavigation>,
         ) {
-            idcell!(text_field <= self);
+            idcell!(nav_url <= self);
             unsafe {
                 if let Some(url) = web_view.URL().and_then(|url| url.absoluteString()) {
-                    text_field.setStringValue(&url);
+                    nav_url.setStringValue(&url);
                 }
             }
         }

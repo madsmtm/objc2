@@ -1,6 +1,6 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 
-use core::{cell::RefCell, ptr::NonNull};
+use core::{cell::OnceCell, ptr::NonNull};
 
 use icrate::{
     AppKit::{
@@ -101,14 +101,23 @@ pub struct Color {
     pub b: f32,
 }
 
-type IdCell<T> = Box<RefCell<Option<Id<T>>>>;
+type IdCell<T> = Box<OnceCell<Id<T>>>;
 
 macro_rules! idcell {
+    ($name:ident => $this:expr) => {
+        $this.$name.set($name).expect(&format!(
+            "ivar should not already be initialized: `{}`",
+            stringify!($name)
+        ));
+    };
     ($name:ident <= $this:expr) => {
-        let $name = $this.$name.borrow();
-        let $name = $name
-            .as_ref()
-            .expect(concat!(stringify!($name), " ivar should be initialized"));
+        #[rustfmt::skip]
+        let Some($name) = $this.$name.get() else {
+            unreachable!(
+                "ivar should be initialized: `{}`",
+                stringify!($name)
+            )
+        };
     };
 }
 
@@ -229,9 +238,9 @@ declare_class!(
             window.makeKeyAndOrderFront(None);
 
             // initialize the delegate state
-            self.command_queue.replace(Some(command_queue));
-            self.pipeline_state.replace(Some(pipeline_state));
-            self.window.replace(Some(window));
+            idcell!(command_queue => self);
+            idcell!(pipeline_state => self);
+            idcell!(window => self);
         }
     }
 
