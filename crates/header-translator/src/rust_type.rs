@@ -141,6 +141,10 @@ impl AttributeParser<'_, '_> {
             None
         }
     }
+
+    fn nullable_result(&mut self, position: ParsePosition) -> bool {
+        self.strip("_Nullable_result", position)
+    }
 }
 
 impl Drop for AttributeParser<'_, '_> {
@@ -341,6 +345,12 @@ impl IdType {
             }
         }
     }
+
+    fn visit_toplevel_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
+        if let Some(id) = self._id() {
+            f(id);
+        }
+    }
 }
 
 impl fmt::Display for IdType {
@@ -497,10 +507,13 @@ enum Inner {
     },
     Fn {
         is_variadic: bool,
+        no_escape: bool,
         arguments: Vec<Inner>,
         result_type: Box<Inner>,
     },
     Block {
+        sendable: Option<bool>,
+        no_escape: bool,
         arguments: Vec<Inner>,
         result_type: Box<Inner>,
     },
@@ -528,10 +541,30 @@ impl Inner {
 
         let unexposed_nullability = if let TypeKind::Unexposed = ty.get_kind() {
             let nullability = ty.get_nullability();
-            attributed_name = parse_unexposed_tokens(&attributed_name);
+            let (new_attributed_name, attributed_attr) = parse_unexposed_tokens(&attributed_name);
             // Also parse the expected name to ensure that the formatting that
             // TokenStream does is the same on both.
-            name = parse_unexposed_tokens(&name);
+            let (new_name, attr) = parse_unexposed_tokens(&name);
+            if attributed_attr != attr {
+                error!(
+                    ?attributed_attr,
+                    ?attr,
+                    "attributed attr was not equal to attr",
+                );
+            }
+
+            match attr {
+                Some(UnexposedAttr::NonIsolated | UnexposedAttr::UIActor) => {
+                    // Ignored for now; these are usually also emitted on the method/property,
+                    // which is where they will be useful in any case.
+                }
+                Some(attr) => error!(?attr, "unknown attribute"),
+                None => {}
+            }
+
+            attributed_name = new_attributed_name;
+            name = new_name;
+
             ty = ty
                 .get_modified_type()
                 .expect("attributed type to have modified type");
@@ -584,6 +617,10 @@ impl Inner {
 
                 let is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
+
+                // TODO: Use _Nullable_result
+                let _nullable_result = parser.nullable_result(ParsePosition::Suffix);
+
                 let nullability = if let Some(nullability) = unexposed_nullability {
                     nullability
                 } else {
@@ -653,12 +690,15 @@ impl Inner {
                 match Self::parse(ty, Lifetime::Unspecified, context) {
                     Self::Fn {
                         is_variadic: false,
+                        no_escape,
                         arguments,
                         result_type,
                     } => Self::Pointer {
                         nullability,
                         is_const,
                         pointee: Box::new(Self::Block {
+                            sendable: None,
+                            no_escape,
                             arguments,
                             result_type,
                         }),
@@ -672,6 +712,10 @@ impl Inner {
 
                 let is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
+
+                // TODO: Use _Nullable_result
+                let _nullable_result = parser.nullable_result(ParsePosition::Suffix);
+
                 let mut nullability = if let Some(nullability) = unexposed_nullability {
                     nullability
                 } else {
@@ -892,6 +936,7 @@ impl Inner {
 
                 Self::Fn {
                     is_variadic: ty.is_variadic(),
+                    no_escape: false,
                     arguments,
                     result_type: Box::new(result_type),
                 }
@@ -976,11 +1021,14 @@ impl Inner {
             //
             // }
             Self::Fn {
+                is_variadic: _,
+                no_escape: _,
                 arguments,
                 result_type,
-                ..
             }
             | Self::Block {
+                sendable: _,
+                no_escape: _,
                 arguments,
                 result_type,
             } => {
@@ -991,6 +1039,25 @@ impl Inner {
                 }
                 result_type.visit_required_types(f);
             }
+            _ => {}
+        }
+    }
+
+    pub fn visit_toplevel_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
+        match self {
+            Self::Id { ty, .. } => {
+                ty.visit_toplevel_types(f);
+            }
+            Self::Pointer {
+                // Only visit non-null types
+                nullability: Nullability::NonNull,
+                is_const: _,
+                pointee,
+            } => {
+                pointee.visit_toplevel_types(f);
+            }
+            // TODO
+            Self::TypeDef { id } => f(id),
             _ => {}
         }
     }
@@ -1074,6 +1141,7 @@ impl fmt::Display for Inner {
             } => match &**pointee {
                 Self::Fn {
                     is_variadic,
+                    no_escape: _,
                     arguments,
                     result_type,
                 } => {
@@ -1129,6 +1197,8 @@ impl fmt::Display for Inner {
             Enum { id } | Struct { id } | TypeDef { id } => write!(f, "{}", id.path()),
             Self::Fn { .. } => write!(f, "TodoFunction"),
             Self::Block {
+                sendable: _,
+                no_escape: _,
                 arguments,
                 result_type,
             } => {
@@ -1181,9 +1251,44 @@ impl Ty {
     pub fn parse_method_argument(
         ty: Type<'_>,
         _qualifier: Option<MethodArgumentQualifier>,
+        mut arg_sendable: Option<bool>,
+        mut arg_no_escape: bool,
         context: &Context<'_>,
     ) -> Self {
-        let ty = Inner::parse(ty, Lifetime::Unspecified, context);
+        let mut ty = Inner::parse(ty, Lifetime::Unspecified, context);
+
+        match &mut ty {
+            Inner::Pointer { pointee, .. } => match &mut **pointee {
+                Inner::Block {
+                    sendable,
+                    no_escape,
+                    ..
+                } => {
+                    *sendable = arg_sendable;
+                    *no_escape = arg_no_escape;
+                    arg_sendable = None;
+                    arg_no_escape = false;
+                }
+                Inner::Fn { no_escape, .. } => {
+                    *no_escape = arg_no_escape;
+                    arg_no_escape = false;
+                }
+                _ => {}
+            },
+            // Ignore NSComparator for now
+            Inner::TypeDef { id } if id.is_nscomparator() => {
+                arg_no_escape = false;
+            }
+            _ => {}
+        }
+
+        if arg_sendable.is_some() {
+            warn!(?ty, "did not consume sendable in argument");
+        }
+
+        if arg_no_escape {
+            warn!(?ty, "did not consume no_escape in argument");
+        }
 
         match &ty {
             Inner::Pointer { pointee, .. } => pointee.visit_lifetime(|lifetime| {
@@ -1241,7 +1346,7 @@ impl Ty {
     }
 
     pub fn parse_function_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let mut this = Self::parse_method_argument(ty, None, context);
+        let mut this = Self::parse_method_argument(ty, None, None, false, context);
         this.kind = TyKind::FnArgument;
         this
     }
@@ -1292,6 +1397,7 @@ impl Ty {
         ty: Type<'_>,
         // Ignored; see `parse_property_return`
         _is_copy: bool,
+        _sendable: Option<bool>,
         context: &Context<'_>,
     ) -> Self {
         let ty = Inner::parse(ty, Lifetime::Unspecified, context);
@@ -1308,7 +1414,12 @@ impl Ty {
         }
     }
 
-    pub fn parse_property_return(ty: Type<'_>, is_copy: bool, context: &Context<'_>) -> Self {
+    pub fn parse_property_return(
+        ty: Type<'_>,
+        is_copy: bool,
+        _sendable: Option<bool>,
+        context: &Context<'_>,
+    ) -> Self {
         let mut ty = Inner::parse(ty, Lifetime::Unspecified, context);
 
         // `@property(copy)` is expected to always return a nonnull instance
@@ -1405,6 +1516,14 @@ impl Ty {
         }
 
         self.ty.visit_required_types(f);
+    }
+
+    pub fn visit_toplevel_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
+        if let TyKind::MethodReturn { with_error: true } = &self.kind {
+            f(&ItemIdentifier::nserror());
+        }
+
+        self.ty.visit_toplevel_types(f);
     }
 }
 
@@ -1724,10 +1843,10 @@ impl fmt::Display for Ty {
 /// - NS_SWIFT_UNAVAILABLE
 /// - NS_REFINED_FOR_SWIFT
 /// - ...
-fn parse_unexposed_tokens(s: &str) -> String {
+fn parse_unexposed_tokens(s: &str) -> (String, Option<UnexposedAttr>) {
     let tokens = TokenStream::from_str(s).expect("parse attributed name");
     let mut iter = tokens.into_iter().peekable();
-    if let Some(TokenTree::Ident(ident)) = iter.peek() {
+    let attr = if let Some(TokenTree::Ident(ident)) = iter.peek() {
         let ident = ident.to_string();
         if let Ok(attr) = UnexposedAttr::from_name(&ident, || {
             iter.next();
@@ -1738,13 +1857,15 @@ fn parse_unexposed_tokens(s: &str) -> String {
                 None
             }
         }) {
-            if let Some(attr) = attr {
-                error!(?attr, "unknown attribute");
-            }
             iter.next();
+            attr
+        } else {
+            None
         }
-    }
-    TokenStream::from_iter(iter).to_string()
+    } else {
+        None
+    };
+    (TokenStream::from_iter(iter).to_string(), attr)
 }
 
 #[cfg(test)]
@@ -1754,7 +1875,9 @@ mod tests {
     #[test]
     fn test_parse_unexposed_tokens() {
         fn check(inp: &str, expected: &str) {
-            assert_eq!(parse_unexposed_tokens(inp), expected);
+            let (actual, attr) = parse_unexposed_tokens(inp);
+            assert_eq!(actual, expected);
+            assert_eq!(attr, None);
         }
 
         check("NS_RETURNS_INNER_POINTER const char *", "const char *");
@@ -1779,5 +1902,13 @@ mod tests {
             "API_DEPRECATED_WITH_REPLACEMENT(\"@\\\"com.adobe.encapsulated-postscript\\\"\", macos(10.0,10.14)) NSPasteboardType __strong",
             "NSPasteboardType __strong",
         );
+
+        let (actual, attr) = parse_unexposed_tokens("NS_SWIFT_NONISOLATED NSTextAttachment *");
+        assert_eq!(actual, "NSTextAttachment *");
+        assert_eq!(attr, Some(UnexposedAttr::NonIsolated));
+
+        let (actual, attr) = parse_unexposed_tokens("NS_SWIFT_UI_ACTOR SEL");
+        assert_eq!(actual, "SEL");
+        assert_eq!(attr, Some(UnexposedAttr::UIActor));
     }
 }

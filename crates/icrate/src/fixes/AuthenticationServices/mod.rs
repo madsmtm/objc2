@@ -19,7 +19,7 @@ extern_class!(
     #[cfg(feature = "AuthenticationServices_ASCredentialProviderViewController")]
     unsafe impl ClassType for ASCredentialProviderViewController {
         type Super = ASViewController;
-        type Mutability = InteriorMutable;
+        type Mutability = MainThreadOnly;
     }
 );
 
@@ -31,7 +31,7 @@ extern_class!(
     #[cfg(feature = "AuthenticationServices_ASAccountAuthenticationModificationViewController")]
     unsafe impl ClassType for ASAccountAuthenticationModificationViewController {
         type Super = ASViewController;
-        type Mutability = InteriorMutable;
+        type Mutability = MainThreadOnly;
     }
 );
 
@@ -43,6 +43,6 @@ extern_class!(
     #[cfg(feature = "AuthenticationServices_ASAuthorizationAppleIDButton")]
     unsafe impl ClassType for ASAuthorizationAppleIDButton {
         type Super = ASControl;
-        type Mutability = InteriorMutable;
+        type Mutability = MainThreadOnly;
     }
 );

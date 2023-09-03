@@ -9,7 +9,8 @@ use icrate::{
         NSWindowStyleMaskTitled,
     },
     Foundation::{
-        ns_string, NSDate, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize,
+        ns_string, MainThreadMarker, NSDate, NSNotification, NSObject, NSObjectProtocol, NSPoint,
+        NSRect, NSSize,
     },
     Metal::{
         MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue, MTLCreateSystemDefaultDevice,
@@ -21,7 +22,7 @@ use icrate::{
 use objc2::{
     declare::{Ivar, IvarDrop},
     declare_class, msg_send, msg_send_id,
-    mutability::InteriorMutable,
+    mutability::MainThreadOnly,
     rc::Id,
     runtime::ProtocolObject,
     ClassType,
@@ -126,7 +127,7 @@ declare_class!(
     // declare the class type
     unsafe impl ClassType for Delegate {
         type Super = NSObject;
-        type Mutability = InteriorMutable;
+        type Mutability = MainThreadOnly;
         const NAME: &'static str = "Delegate";
     }
 
@@ -150,9 +151,9 @@ declare_class!(
         #[method(applicationDidFinishLaunching:)]
         #[allow(non_snake_case)]
         unsafe fn applicationDidFinishLaunching(&self, _notification: &NSNotification) {
+            let mtm = MainThreadMarker::from(self);
             // create the app window
             let window = {
-                let this = NSWindow::alloc();
                 let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(768., 768.));
                 let style = NSWindowStyleMaskClosable
                     | NSWindowStyleMaskResizable
@@ -161,7 +162,7 @@ declare_class!(
                 let flag = false;
                 unsafe {
                     NSWindow::initWithContentRect_styleMask_backing_defer(
-                        this,
+                        mtm.alloc(),
                         content_rect,
                         style,
                         backing_store_type,
@@ -183,9 +184,8 @@ declare_class!(
 
             // create the metal view
             let mtk_view = {
-                let this = MTKView::alloc();
                 let frame_rect = unsafe { window.frame() };
-                unsafe { MTKView::initWithFrame_device(this, frame_rect, Some(&device)) }
+                unsafe { MTKView::initWithFrame_device(mtm.alloc(), frame_rect, Some(&device)) }
             };
 
             // create the pipeline descriptor
@@ -352,18 +352,19 @@ declare_class!(
 unsafe impl NSObjectProtocol for Delegate {}
 
 impl Delegate {
-    pub fn new() -> Id<Self> {
-        unsafe { msg_send_id![Self::alloc(), init] }
+    pub fn new(mtm: MainThreadMarker) -> Id<Self> {
+        unsafe { msg_send_id![mtm.alloc(), init] }
     }
 }
 
 fn main() {
+    let mtm = MainThreadMarker::new().unwrap();
     // configure the app
-    let app = unsafe { NSApplication::sharedApplication() };
+    let app = unsafe { NSApplication::sharedApplication(mtm) };
     unsafe { app.setActivationPolicy(NSApplicationActivationPolicyRegular) };
 
     // initialize the delegate
-    let delegate = Delegate::new();
+    let delegate = Delegate::new(mtm);
 
     // configure the application delegate
     unsafe {

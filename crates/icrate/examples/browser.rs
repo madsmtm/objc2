@@ -12,15 +12,15 @@ use icrate::{
         NSWindowStyleMaskResizable, NSWindowStyleMaskTitled,
     },
     Foundation::{
-        ns_string, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect, NSSize,
-        NSURLRequest, NSURL,
+        ns_string, MainThreadMarker, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect,
+        NSSize, NSURLRequest, NSURL,
     },
     WebKit::{WKNavigation, WKNavigationDelegate, WKWebView},
 };
 use objc2::{
     declare::{Ivar, IvarDrop},
     declare_class, msg_send, msg_send_id,
-    mutability::InteriorMutable,
+    mutability::MainThreadOnly,
     rc::Id,
     runtime::{AnyObject, ProtocolObject, Sel},
     sel, ClassType,
@@ -47,7 +47,7 @@ declare_class!(
 
     unsafe impl ClassType for Delegate {
         type Super = NSObject;
-        type Mutability = InteriorMutable;
+        type Mutability = MainThreadOnly;
         const NAME: &'static str = "Delegate";
     }
 
@@ -68,9 +68,9 @@ declare_class!(
         #[method(applicationDidFinishLaunching:)]
         #[allow(non_snake_case)]
         unsafe fn applicationDidFinishLaunching(&self, _notification: &NSNotification) {
+            let mtm = MainThreadMarker::from(self);
             // create the app window
             let window = {
-                let this = NSWindow::alloc();
                 let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(1024., 768.));
                 let style = NSWindowStyleMaskClosable
                     | NSWindowStyleMaskResizable
@@ -79,7 +79,7 @@ declare_class!(
                 let flag = false;
                 unsafe {
                     NSWindow::initWithContentRect_styleMask_backing_defer(
-                        this,
+                        mtm.alloc(),
                         content_rect,
                         style,
                         backing_store_type,
@@ -90,16 +90,14 @@ declare_class!(
 
             // create the web view
             let web_view = {
-                let this = WKWebView::alloc();
                 let frame_rect = NSRect::ZERO;
-                unsafe { WKWebView::initWithFrame(this, frame_rect) }
+                unsafe { WKWebView::initWithFrame(mtm.alloc(), frame_rect) }
             };
 
             // create the nav bar view
             let nav_bar = {
                 let frame_rect = NSRect::ZERO;
-                let this = NSStackView::alloc();
-                let this = unsafe { NSStackView::initWithFrame(this, frame_rect) };
+                let this = unsafe { NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
                 unsafe {
                     this.setOrientation(NSUserInterfaceLayoutOrientationHorizontal);
                     this.setAlignment(NSLayoutAttributeHeight);
@@ -112,8 +110,7 @@ declare_class!(
             // create the nav buttons view
             let nav_buttons = {
                 let frame_rect = NSRect::ZERO;
-                let this = NSStackView::alloc();
-                let this = unsafe { NSStackView::initWithFrame(this, frame_rect) };
+                let this = unsafe { NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
                 unsafe {
                     this.setOrientation(NSUserInterfaceLayoutOrientationHorizontal);
                     this.setAlignment(NSLayoutAttributeHeight);
@@ -130,7 +127,7 @@ declare_class!(
                 let target = Some::<&AnyObject>(&web_view);
                 let action = Some(sel!(goBack));
                 let this =
-                    unsafe { NSButton::buttonWithTitle_target_action(title, target, action) };
+                    unsafe { NSButton::buttonWithTitle_target_action(title, target, action, mtm) };
                 unsafe { this.setBezelStyle(NSBezelStyleShadowlessSquare) };
                 this
             };
@@ -142,7 +139,7 @@ declare_class!(
                 let target = Some::<&AnyObject>(&web_view);
                 let action = Some(sel!(goForward));
                 let this =
-                    unsafe { NSButton::buttonWithTitle_target_action(title, target, action) };
+                    unsafe { NSButton::buttonWithTitle_target_action(title, target, action, mtm) };
                 unsafe { this.setBezelStyle(NSBezelStyleShadowlessSquare) };
                 this
             };
@@ -155,8 +152,7 @@ declare_class!(
             // create the url text field
             let nav_url = {
                 let frame_rect = NSRect::ZERO;
-                let this = NSTextField::alloc();
-                let this = unsafe { NSTextField::initWithFrame(this, frame_rect) };
+                let this = unsafe { NSTextField::initWithFrame(mtm.alloc(), frame_rect) };
                 unsafe {
                     this.setDrawsBackground(true);
                     this.setBackgroundColor(Some(&NSColor::lightGrayColor()));
@@ -173,8 +169,7 @@ declare_class!(
             // create the window content view
             let content_view = {
                 let frame_rect = unsafe { window.frame() };
-                let this = NSStackView::alloc();
-                let this = unsafe { NSStackView::initWithFrame(this, frame_rect) };
+                let this = unsafe { NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
                 unsafe {
                     this.setOrientation(NSUserInterfaceLayoutOrientationVertical);
                     this.setAlignment(NSLayoutAttributeWidth);
@@ -217,7 +212,7 @@ declare_class!(
                 menu_app_item.setSubmenu(Some(&menu_app_menu));
                 menu.addItem(&menu_app_item);
 
-                let app = NSApplication::sharedApplication();
+                let app = NSApplication::sharedApplication(mtm);
                 app.setMainMenu(Some(&menu));
             }
 
@@ -286,19 +281,20 @@ declare_class!(
 );
 
 impl Delegate {
-    pub fn new() -> Id<Self> {
-        unsafe { msg_send_id![Self::alloc(), init] }
+    pub fn new(mtm: MainThreadMarker) -> Id<Self> {
+        unsafe { msg_send_id![mtm.alloc(), init] }
     }
 }
 
 unsafe impl NSObjectProtocol for Delegate {}
 
 fn main() {
-    let app = unsafe { NSApplication::sharedApplication() };
+    let mtm = MainThreadMarker::new().unwrap();
+    let app = unsafe { NSApplication::sharedApplication(mtm) };
     unsafe { app.setActivationPolicy(NSApplicationActivationPolicyRegular) };
 
     // initialize the delegate
-    let delegate = Delegate::new();
+    let delegate = Delegate::new(mtm);
 
     // configure the application delegate
     unsafe {

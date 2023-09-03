@@ -12,18 +12,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Added `MainThreadMarker` `From` implementation for `MainThreadOnly` types.
+* Added `Send` and `Sync` implementations for a bunch more types (same as the
+  ones Swift marks as `@Sendable`).
 
 ### Changed
 * Moved the `ns_string!` macro to `icrate::Foundation::ns_string`. The old
   location in the crate root is deprecated.
 * Use SDK from Xcode 14.3.1 (previously Xcode 14.2).
-* **BREAKING**: The following two methods on `MTLAccelerationStructureCommandEncoder` now take a nullable scratch buffer:
+* **BREAKING**: The following two methods on
+  `MTLAccelerationStructureCommandEncoder` now take a nullable scratch buffer:
   - `refitAccelerationStructure_descriptor_destination_scratchBuffer_scratchBufferOffset`
   - `refitAccelerationStructure_descriptor_destination_scratchBuffer_scratchBufferOffset_options`
+* **BREAKING**: Marked UI-related types as `MainThreadOnly`. This means that
+  they can now only be constructed on the main thread, meaning you have to
+  aquire a `MainThreadMarker` first.
+
+  ```rust
+  // Before
+  let app = unsafe { NSApplication::sharedApplication() };
+  let view = unsafe { NSView::initWithFrame(NSView::alloc(), frame) };
+  // Do something with `app` and `view`
+
+  // After
+  let mtm = MainThreadMarker::new().unwrap();
+  let app = unsafe { NSApplication::sharedApplication(mtm) };
+  let view = unsafe { NSView::initWithFrame(mtm.alloc(), frame) };
+  // Do something with `app` and `view`
+  ```
 
 ### Removed
 * **BREAKING**: Removed the `MainThreadMarker` argument from the closure
   passed to `MainThreadBound::get_on_main`.
+* **BREAKING**: Removed the `NSApp` static for now - it will likely be
+  re-added later in another form.
 
 
 ## icrate 0.0.4 - 2023-07-31

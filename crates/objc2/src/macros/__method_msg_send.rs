@@ -162,12 +162,13 @@ macro_rules! __method_msg_send_id {
 
         ()
         ()
-        ()
+        // Possible to hit via. the MainThreadMarker branch
+        ($($already_parsed_retain_semantics:ident)?)
     ) => {
         $crate::__msg_send_id_helper! {
             @(send_message_id)
             @($receiver)
-            @($($retain_semantics)?)
+            @($($retain_semantics)? $($already_parsed_retain_semantics)?)
             @($sel)
             @()
         }

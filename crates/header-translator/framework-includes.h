@@ -1,9 +1,3 @@
-// Workaround for clang < 13, only used in NSBundle.h
-#define NS_FORMAT_ARGUMENT(A)
-
-// Workaround for clang < 13
-#define _Nullable_result _Nullable
-
 #include <TargetConditionals.h>
 
 #if TARGET_OS_OSX

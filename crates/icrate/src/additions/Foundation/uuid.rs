@@ -5,10 +5,6 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use crate::common::*;
 use crate::Foundation::{self, UuidBytes, NSUUID};
 
-// SAFETY: `NSUUID` is immutable.
-unsafe impl Sync for NSUUID {}
-unsafe impl Send for NSUUID {}
-
 impl UnwindSafe for NSUUID {}
 impl RefUnwindSafe for NSUUID {}
 

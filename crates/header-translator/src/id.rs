@@ -119,6 +119,10 @@ impl ItemIdentifier {
         self.library == "Foundation" && self.name == "NSString"
     }
 
+    pub fn is_nscomparator(&self) -> bool {
+        self.library == "Foundation" && self.name == "NSComparator"
+    }
+
     pub fn feature(&self) -> Option<impl fmt::Display + '_> {
         struct ItemIdentifierFeature<'a>(&'a ItemIdentifier);
 

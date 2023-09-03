@@ -1,19 +1,23 @@
-#![cfg(feature = "Foundation_NSThread")]
 use core::fmt;
 use core::marker::PhantomData;
 use core::mem::{self, ManuallyDrop};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use crate::common::*;
+#[cfg(feature = "Foundation_NSThread")]
 use crate::Foundation::NSThread;
 
 use objc2::msg_send_id;
 use objc2::mutability::IsMainThreadOnly;
 
+#[cfg(feature = "Foundation_NSThread")]
 unsafe impl Send for NSThread {}
+#[cfg(feature = "Foundation_NSThread")]
 unsafe impl Sync for NSThread {}
 
+#[cfg(feature = "Foundation_NSThread")]
 impl UnwindSafe for NSThread {}
+#[cfg(feature = "Foundation_NSThread")]
 impl RefUnwindSafe for NSThread {}
 
 /// Whether the application is multithreaded according to Cocoa.
@@ -68,7 +72,15 @@ fn make_multithreaded() {
 /// }
 ///
 /// // Usage
+///
+/// // Create a new marker. This requires the `"Foundation_NSThread"` feature.
+/// // If that is not available, create the marker unsafely with
+/// // `new_unchecked`, after having checked that the thread is the main one
+/// // through other means.
+/// #[cfg(feature = "Foundation_NSThread")]
 /// let mtm = MainThreadMarker::new().expect("must be on the main thread");
+/// #[cfg(not(feature = "Foundation_NSThread"))]
+/// let mtm = unsafe { MainThreadMarker::new_unchecked() };
 /// unsafe { do_thing(obj, mtm) }
 /// ```
 #[derive(Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]

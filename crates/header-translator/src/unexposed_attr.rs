@@ -20,6 +20,13 @@ pub enum UnexposedAttr {
 
     ReturnsRetained,
     ReturnsNotRetained,
+
+    Sendable,
+    NonSendable,
+    UIActor,
+    NonIsolated,
+
+    NoEscape,
 }
 
 impl UnexposedAttr {
@@ -55,13 +62,24 @@ impl UnexposedAttr {
             "NS_RETURNS_RETAINED" | "CF_RETURNS_RETAINED" => Some(Self::ReturnsRetained),
             "NS_RETURNS_NOT_RETAINED" | "CF_RETURNS_NOT_RETAINED" => Some(Self::ReturnsNotRetained),
             "NS_RETURNS_INNER_POINTER" => None,
+            // This has two arguments: `sendability` and `nullability`.
+            // `nullability` is already exposed, so we won't bother with that.
+            // `sendability` is most for backwards-compatibility with older
+            // versions of system headers that didn't assign sendability.
+            "NS_HEADER_AUDIT_BEGIN" => {
+                let _ = get_arguments();
+                None
+            }
+            "NS_SWIFT_SENDABLE" => Some(Self::Sendable),
+            "NS_SWIFT_NONSENDABLE" => Some(Self::NonSendable),
+            "NS_SWIFT_UI_ACTOR" => Some(Self::UIActor),
+            "NS_SWIFT_NONISOLATED" => Some(Self::NonIsolated),
             // TODO
             "NS_FORMAT_FUNCTION" | "NS_FORMAT_ARGUMENT" => {
                 let _ = get_arguments();
                 None
             }
-            // TODO
-            "NS_NOESCAPE" => None,
+            "NS_NOESCAPE" => Some(Self::NoEscape),
             // TODO: We could potentially automatically elide this argument
             // from the method call, though it's rare enough that it's
             // probably not really worth the effort.
@@ -140,7 +158,6 @@ impl UnexposedAttr {
             s if s.starts_with("FILEPROVIDER_API_AVAILABILITY_") => None,
             // Might be interesting in the future
             "CF_SWIFT_NAME"
-            | "NS_HEADER_AUDIT_BEGIN"
             | "NS_REFINED_FOR_SWIFT_ASYNC"
             | "NS_SWIFT_ASYNC_NAME"
             | "NS_SWIFT_ASYNC_THROWS_ON_FALSE"
@@ -155,11 +172,7 @@ impl UnexposedAttr {
             "CF_REFINED_FOR_SWIFT"
             | "NS_REFINED_FOR_SWIFT"
             | "NS_SWIFT_DISABLE_ASYNC"
-            | "NS_SWIFT_NONISOLATED"
-            | "NS_SWIFT_NONSENDABLE"
-            | "NS_SWIFT_NOTHROW"
-            | "NS_SWIFT_SENDABLE"
-            | "NS_SWIFT_UI_ACTOR" => None,
+            | "NS_SWIFT_NOTHROW" => None,
             _ => return Err(()),
         })
     }

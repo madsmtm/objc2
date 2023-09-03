@@ -3,7 +3,7 @@ use std::ptr::NonNull;
 
 use icrate::AppKit::{NSApplication, NSApplicationActivationPolicyRegular, NSApplicationDelegate};
 use icrate::Foundation::{
-    ns_string, NSCopying, NSNotification, NSObject, NSObjectProtocol, NSString,
+    ns_string, MainThreadMarker, NSCopying, NSNotification, NSObject, NSObjectProtocol, NSString,
 };
 use objc2::declare::{Ivar, IvarBool, IvarDrop, IvarEncode};
 use objc2::rc::Id;
@@ -24,9 +24,8 @@ declare_class!(
     mod ivars;
 
     unsafe impl ClassType for AppDelegate {
-        #[inherits(NSObject)]
-        type Super = icrate::AppKit::NSResponder;
-        type Mutability = mutability::InteriorMutable;
+        type Super = NSObject;
+        type Mutability = mutability::MainThreadOnly;
         const NAME: &'static str = "MyAppDelegate";
     }
 
@@ -69,17 +68,19 @@ declare_class!(
 unsafe impl NSObjectProtocol for AppDelegate {}
 
 impl AppDelegate {
-    pub fn new(ivar: u8, another_ivar: bool) -> Id<Self> {
-        unsafe { msg_send_id![Self::alloc(), initWith: ivar, another: another_ivar] }
+    pub fn new(ivar: u8, another_ivar: bool, mtm: MainThreadMarker) -> Id<Self> {
+        unsafe { msg_send_id![mtm.alloc(), initWith: ivar, another: another_ivar] }
     }
 }
 
 fn main() {
-    let app = unsafe { NSApplication::sharedApplication() };
+    let mtm: MainThreadMarker = MainThreadMarker::new().unwrap();
+
+    let app = unsafe { NSApplication::sharedApplication(mtm) };
     unsafe { app.setActivationPolicy(NSApplicationActivationPolicyRegular) };
 
     // initialize the delegate
-    let delegate = AppDelegate::new(42, true);
+    let delegate = AppDelegate::new(42, true, mtm);
 
     println!("{delegate:?}");
 

@@ -1607,3 +1607,9 @@ skipped-protocols = ["NSCopying", "NSMutableCopying"]
 skipped-protocols = ["NSCopying", "NSMutableCopying"]
 [class.NSPurgeableData]
 skipped-protocols = ["NSCopying", "NSMutableCopying"]
+
+# Uses `NS_SWIFT_UI_ACTOR` on a static, which is hard to support.
+# 
+# Will have to be a method that takes `MainThreadMarker`.
+[static.NSApp]
+skipped = true
