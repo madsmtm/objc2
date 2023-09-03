@@ -1,7 +1,7 @@
 use core::hint;
 use core::mem;
 
-use crate::encode::__unstable::EncodeReturn;
+use crate::encode::EncodeReturn;
 use crate::ffi;
 use crate::runtime::{AnyClass, AnyObject, Imp, Sel};
 use crate::MessageArguments;

@@ -131,8 +131,7 @@ use core::ptr;
 use core::ptr::NonNull;
 use std::ffi::CString;
 
-use crate::encode::__unstable::{EncodeArguments, EncodeReturn};
-use crate::encode::{Encode, Encoding, RefEncode};
+use crate::encode::{Encode, EncodeArgument, EncodeArguments, EncodeReturn, Encoding, RefEncode};
 use crate::ffi;
 use crate::mutability::IsMutable;
 use crate::rc::Allocated;
@@ -171,14 +170,14 @@ macro_rules! method_decl_impl {
         where
             T: ?Sized + $t_bound,
             $r: EncodeReturn,
-            $($t: Encode,)*
+            $($t: EncodeArgument,)*
         {}
 
         impl<$($l,)* T, $r, $($t),*> MethodImplementation for $f
         where
             T: ?Sized + $t_bound,
             $r: EncodeReturn,
-            $($t: Encode,)*
+            $($t: EncodeArgument,)*
         {
             type Callee = T;
             type Ret = $r;
@@ -193,13 +192,13 @@ macro_rules! method_decl_impl {
         impl<$($l,)* $r, $($t),*> private::Sealed for $f
         where
             $r: EncodeReturn,
-            $($t: Encode,)*
+            $($t: EncodeArgument,)*
         {}
 
         impl<$($l,)* $r, $($t),*> MethodImplementation for $f
         where
             $r: EncodeReturn,
-            $($t: Encode,)*
+            $($t: EncodeArgument,)*
         {
             type Callee = $callee;
             type Ret = $r;
@@ -215,14 +214,14 @@ macro_rules! method_decl_impl {
         impl<T, $($t),*> private::Sealed for $f
         where
             T: ?Sized + Message,
-            $($t: Encode,)*
+            $($t: EncodeArgument,)*
         {}
 
         #[doc(hidden)]
         impl<T, $($t),*> MethodImplementation for $f
         where
             T: ?Sized + Message,
-            $($t: Encode,)*
+            $($t: EncodeArgument,)*
         {
             type Callee = T;
             type Ret = __IdReturnValue;

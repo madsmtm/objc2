@@ -16,6 +16,7 @@ error[E0277]: the trait bound `bool: Encode` is not satisfied
             u8
             u16
           and $N others
+  = note: required for `bool` to implement `EncodeArgument`
   = note: required for `unsafe extern "C" fn(&NSObject, objc2::runtime::Sel, bool)` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs

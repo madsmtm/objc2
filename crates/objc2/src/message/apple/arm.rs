@@ -1,8 +1,7 @@
 use core::mem;
 
 use super::MsgSendFn;
-use crate::encode::Encoding;
-use crate::encode::__unstable::EncodeReturn;
+use crate::encode::{EncodeReturn, Encoding};
 use crate::ffi;
 use crate::runtime::Imp;
 

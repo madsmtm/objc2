@@ -1,15 +1,14 @@
 use core::marker::PhantomData;
 use core::mem;
 
-use objc2::encode::__unstable::EncodeReturn;
-use objc2::encode::{Encode, Encoding, RefEncode};
+use objc2::encode::{EncodeArgument, EncodeReturn, Encoding, RefEncode};
 
 use crate::ffi;
 
 /// Types that may be used as the arguments of an Objective-C block.
 ///
 /// This is implemented for tuples of up to 12 arguments, where each argument
-/// implements [`Encode`].
+/// implements [`EncodeArgument`].
 ///
 ///
 /// # Safety
@@ -28,7 +27,7 @@ pub unsafe trait BlockArguments: Sized {
 
 macro_rules! block_args_impl {
     ($($a:ident: $t:ident),*) => (
-        unsafe impl<$($t: Encode),*> BlockArguments for ($($t,)*) {
+        unsafe impl<$($t: EncodeArgument),*> BlockArguments for ($($t,)*) {
             #[inline]
             unsafe fn __call_block<R: EncodeReturn>(
                 invoke: unsafe extern "C" fn(),

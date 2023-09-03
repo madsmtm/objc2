@@ -29,7 +29,9 @@ pub use std::sync::Once;
 
 mod cache;
 mod common_selectors;
+mod convert;
 mod declare_class;
+mod writeback;
 
 pub use self::cache::{CachedClass, CachedSel};
 pub use self::common_selectors::{alloc_sel, dealloc_sel, init_sel, new_sel};
@@ -37,6 +39,7 @@ pub use self::declare_class::{
     assert_mutability_matches_superclass_mutability, MaybeOptionId, MessageRecieveId,
     ValidSubclassMutability,
 };
+pub use convert::{ConvertArgument, ConvertReturn};
 
 /// Helper for specifying the retain semantics for a given selector family.
 ///
@@ -125,8 +128,8 @@ pub trait MsgSendId<T, U> {
         } else {
             // In this case, the error has very likely been created, but has
             // been autoreleased (as is common for "out parameters", see
-            // `src/rc/writeback.rs`). Hence we need to retain it if we want
-            // it to live across autorelease pools.
+            // `src/__macro_helpers/writeback.rs`). Hence we need to retain it
+            // if we want it to live across autorelease pools.
             //
             // SAFETY: The message send is guaranteed to populate the error
             // object, or leave it as NULL. The error is shared, and all

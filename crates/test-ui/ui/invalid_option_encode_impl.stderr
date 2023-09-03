@@ -1,8 +1,8 @@
 error[E0080]: evaluation of `<std::option::Option<MyType> as objc2::Encode>::ENCODING` failed
- --> $WORKSPACE/crates/objc2/src/encode/mod.rs
+ --> $WORKSPACE/crates/objc2/src/encode.rs
   |
   |             panic!("invalid OptionEncode + Encode implementation");
-  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the evaluated program panicked at 'invalid OptionEncode + Encode implementation', $WORKSPACE/crates/objc2/src/encode/mod.rs:276:13
+  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the evaluated program panicked at 'invalid OptionEncode + Encode implementation', $WORKSPACE/crates/objc2/src/encode.rs:273:13
   |
   = note: this error originates in the macro `$crate::panic::panic_2021` which comes from the expansion of the macro `panic` (in Nightly builds, run with -Z macro-backtrace for more info)
 

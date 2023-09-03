@@ -49,26 +49,26 @@
 //! mostly for demonstration.
 //!
 //! ```
-#![doc = include_str!("../../examples/encode_core_graphics.rs")]
+#![doc = include_str!("../examples/encode_core_graphics.rs")]
 //! ```
 //!
 //! Implementing [`Encode`] and [`RefEncode`] for a transparent newtype.
 //!
 //! ```
-#![doc = include_str!("../../examples/encode_nsuinteger.rs")]
+#![doc = include_str!("../examples/encode_nsuinteger.rs")]
 //! ```
 //!
 //! Implementing [`RefEncode`] for an object, in this case `NSString`.
 //!
 //! ```
-#![doc = include_str!("../../examples/encode_nsstring.rs")]
+#![doc = include_str!("../examples/encode_nsstring.rs")]
 //! ```
 //!
 //! Implementing [`RefEncode`] for a type where you don't necessarily know
 //! about the exact internals / the internals are not representable in Rust.
 //!
 //! ```
-#![doc = include_str!("../../examples/encode_opaque_type.rs")]
+#![doc = include_str!("../examples/encode_opaque_type.rs")]
 //! ```
 
 use core::cell::{Cell, UnsafeCell};
@@ -80,9 +80,6 @@ use core::num::{
 };
 use core::ptr::NonNull;
 use core::sync::atomic;
-
-// Intentionally not `#[doc(hidden)]`
-pub mod __unstable;
 
 #[doc(inline)]
 pub use objc2_encode::{Encoding, EncodingBox, ParseError};
@@ -288,6 +285,123 @@ unsafe impl<T: RefEncode + OptionEncode> RefEncode for Option<T> {
         T::ENCODING_REF
     };
 }
+
+mod return_private {
+    pub trait Sealed {}
+}
+
+/// Types that are safe as the return value from Objective-C.
+///
+/// This is a sealed trait, and should not need to be implemented manually.
+///
+///
+/// # Safety
+///
+/// Similar to [`Encode`], except the value is only guaranteed to be valid as
+/// a return value, both from functions/methods you're calling, and from
+/// declared functions/methods.
+///
+/// It does not have to be valid as e.g. an instance variable, or as an
+/// argument to a function.
+pub unsafe trait EncodeReturn: return_private::Sealed {
+    /// The Objective-C type-encoding for this type.
+    const ENCODING_RETURN: Encoding;
+}
+
+impl return_private::Sealed for () {}
+// SAFETY: `()` is the same as C's `void` type, which is a valid return type
+unsafe impl EncodeReturn for () {
+    const ENCODING_RETURN: Encoding = Encoding::Void;
+}
+
+impl<T: Encode> return_private::Sealed for T {}
+// SAFETY: All `Encode` types are also valid as return types
+unsafe impl<T: Encode> EncodeReturn for T {
+    const ENCODING_RETURN: Encoding = T::ENCODING;
+}
+
+mod argument_private {
+    pub trait Sealed {}
+}
+
+/// Types that are safe as arguments to Objective-C methods.
+///
+/// This is a sealed trait, and should not need to be implemented manually.
+///
+///
+/// # Safety
+///
+/// Similar to [`Encode`], except the value is only guaranteed to be valid as
+/// an argument or a parameter, both from functions/methods you're calling and
+/// from declared functions/methods.
+///
+/// It does not have to be valid as e.g. an instance variable, or as an
+/// argument to a function.
+//
+// Note: This is mostly implemented for consistency; there are (not that I've
+// found at least) no places where this is not just `Encode`.
+//
+// You might be tempted to think that `bool` could work in this, but that
+// would be a mistake (even ignoring that its size is different on certain
+// targets) because it cannot be safely used in declared methods.
+pub unsafe trait EncodeArgument: argument_private::Sealed {
+    /// The Objective-C type-encoding for this type.
+    const ENCODING_ARGUMENT: Encoding;
+}
+
+impl<T: Encode> argument_private::Sealed for T {}
+// SAFETY: All `Encode` types are also valid as argument types
+unsafe impl<T: Encode> EncodeArgument for T {
+    const ENCODING_ARGUMENT: Encoding = T::ENCODING;
+}
+
+mod args_private {
+    pub trait Sealed {}
+}
+
+/// Types that represent an ordered group of function arguments, where each
+/// argument has an Objective-C type-encoding, or can be converted from one.
+///
+/// This is implemented for tuples of up to 16 arguments, where each argument
+/// implements [`EncodeArgument`]. It is primarily used to make generic
+/// code a bit easier.
+///
+/// Note that tuples themselves don't implement [`Encode`] directly, because
+/// they're not FFI-safe!
+pub trait EncodeArguments: args_private::Sealed {
+    /// The encodings for the arguments.
+    const ENCODINGS: &'static [Encoding];
+}
+
+macro_rules! encode_args_impl {
+    ($($Arg: ident),*) => {
+        impl<$($Arg: EncodeArgument),*> args_private::Sealed for ($($Arg,)*) {}
+
+        impl<$($Arg: EncodeArgument),*> EncodeArguments for ($($Arg,)*) {
+            const ENCODINGS: &'static [Encoding] = &[
+                $($Arg::ENCODING_ARGUMENT),*
+            ];
+        }
+    };
+}
+
+encode_args_impl!();
+encode_args_impl!(A);
+encode_args_impl!(A, B);
+encode_args_impl!(A, B, C);
+encode_args_impl!(A, B, C, D);
+encode_args_impl!(A, B, C, D, E);
+encode_args_impl!(A, B, C, D, E, F);
+encode_args_impl!(A, B, C, D, E, F, G);
+encode_args_impl!(A, B, C, D, E, F, G, H);
+encode_args_impl!(A, B, C, D, E, F, G, H, I);
+encode_args_impl!(A, B, C, D, E, F, G, H, I, J);
+encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K);
+encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
+encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M);
+encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N);
+encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O);
+encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P);
 
 // TODO: Implement for `PhantomData` and `PhantomPinned`?
 
@@ -602,14 +716,14 @@ unsafe impl<T: RefEncode + ?Sized> OptionEncode for NonNull<T> {}
 /// and return items with a known size.
 macro_rules! encode_fn_pointer_impl {
     (@ $FnTy: ty, $($Arg: ident),*) => {
-        unsafe impl<Ret: __unstable::EncodeReturn, $($Arg: Encode),*> Encode for $FnTy {
+        unsafe impl<Ret: EncodeReturn, $($Arg: EncodeArgument),*> Encode for $FnTy {
             const ENCODING: Encoding = Encoding::Pointer(&Encoding::Unknown);
         }
-        unsafe impl<Ret: __unstable::EncodeReturn, $($Arg: Encode),*> RefEncode for $FnTy {
+        unsafe impl<Ret: EncodeReturn, $($Arg: EncodeArgument),*> RefEncode for $FnTy {
             const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
         }
         // SAFETY: Function pointers have a NULL niche
-        unsafe impl<Ret: __unstable::EncodeReturn, $($Arg: Encode),*> OptionEncode for $FnTy {}
+        unsafe impl<Ret: EncodeReturn, $($Arg: EncodeArgument),*> OptionEncode for $FnTy {}
     };
     (# $abi:literal; $($Arg: ident),+) => {
         // Normal functions
@@ -767,5 +881,23 @@ mod tests {
         impls_encode(my_fn2 as extern "C" fn(_, _));
         impls_encode(my_fn3 as extern "C" fn(_) -> _);
         impls_encode(my_fn4 as extern "C" fn(_, _) -> _);
+    }
+
+    #[test]
+    fn test_return() {
+        assert_eq!(<i32>::ENCODING_RETURN, <i32>::ENCODING);
+        assert_eq!(<()>::ENCODING_RETURN, Encoding::Void);
+    }
+
+    #[test]
+    fn test_argument() {
+        assert_eq!(<i32>::ENCODING_ARGUMENT, <i32>::ENCODING);
+    }
+
+    #[test]
+    fn test_arguments() {
+        assert!(<()>::ENCODINGS.is_empty());
+        assert_eq!(<(i8,)>::ENCODINGS, &[i8::ENCODING]);
+        assert_eq!(<(i8, u32)>::ENCODINGS, &[i8::ENCODING, u32::ENCODING]);
     }
 }

@@ -5,8 +5,7 @@ use core::ops::Deref;
 use core::ptr;
 use std::os::raw::c_ulong;
 
-use objc2::encode::__unstable::EncodeReturn;
-use objc2::encode::{Encode, Encoding, RefEncode};
+use objc2::encode::{EncodeArgument, EncodeReturn, Encoding, RefEncode};
 
 use crate::{ffi, Block, BlockArguments, RcBlock};
 
@@ -17,7 +16,8 @@ mod private {
 /// Types that may be converted into a [`ConcreteBlock`].
 ///
 /// This is implemented for [`Fn`] closures of up to 12 arguments, where each
-/// argument and the return type implements [`Encode`].
+/// argument implements [`EncodeArgument`] and the return type implements
+/// [`EncodeReturn`].
 ///
 ///
 /// # Safety
@@ -37,12 +37,12 @@ macro_rules! concrete_block_impl {
         concrete_block_impl!($f,);
     );
     ($f:ident, $($a:ident : $t:ident),*) => (
-        impl<$($t: Encode,)* R: EncodeReturn, X> private::Sealed<($($t,)*)> for X
+        impl<$($t: EncodeArgument,)* R: EncodeReturn, X> private::Sealed<($($t,)*)> for X
         where
             X: Fn($($t,)*) -> R,
         {}
 
-        unsafe impl<$($t: Encode,)* R: EncodeReturn, X> IntoConcreteBlock<($($t,)*)> for X
+        unsafe impl<$($t: EncodeArgument,)* R: EncodeReturn, X> IntoConcreteBlock<($($t,)*)> for X
         where
             X: Fn($($t,)*) -> R,
         {
