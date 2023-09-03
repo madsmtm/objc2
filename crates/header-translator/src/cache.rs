@@ -84,6 +84,7 @@ impl<'a> Cache<'a> {
                     ty: enum_ty,
                     kind: _,
                     variants: _,
+                    sendable: _,
                 }) = iter.peek_mut()
                 {
                     if enum_ty.is_typedef_to(&id.name) {

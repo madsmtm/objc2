@@ -52,6 +52,9 @@ struct MethodModifiers {
     returns_retained: bool,
     returns_not_retained: bool,
     designated_initializer: bool,
+    non_isolated: bool,
+    sendable: Option<bool>,
+    mainthreadonly: bool,
 }
 
 impl MethodModifiers {
@@ -67,6 +70,18 @@ impl MethodModifiers {
                         }
                         UnexposedAttr::ReturnsNotRetained => {
                             this.returns_not_retained = true;
+                        }
+                        UnexposedAttr::NonIsolated => {
+                            this.non_isolated = true;
+                        }
+                        UnexposedAttr::Sendable => {
+                            this.sendable = Some(true);
+                        }
+                        UnexposedAttr::NonSendable => {
+                            this.sendable = Some(false);
+                        }
+                        UnexposedAttr::UIActor => {
+                            this.mainthreadonly = true;
                         }
                         attr => error!(?attr, "unknown attribute"),
                     }
@@ -214,6 +229,7 @@ impl MemoryManagement {
             consumes_self: false,
             returns_retained: false,
             returns_not_retained: false,
+            ..
         } = modifiers
         {
             Self::Normal
@@ -238,6 +254,9 @@ pub struct Method {
     safe: bool,
     mutating: bool,
     is_protocol: bool,
+    // Thread-safe, even on main-thread only (@MainActor/@UIActor) classes
+    non_isolated: bool,
+    mainthreadonly: bool,
 }
 
 impl Method {
@@ -367,6 +386,10 @@ impl<'tu> PartialMethod<'tu> {
 
         let modifiers = MethodModifiers::parse(&entity, context);
 
+        if modifiers.sendable.is_some() {
+            error!("sendable on method");
+        }
+
         let mut arguments: Vec<_> = entity
             .get_arguments()
             .expect("method arguments")
@@ -377,6 +400,7 @@ impl<'tu> PartialMethod<'tu> {
                 let qualifier = entity
                     .get_objc_qualifiers()
                     .map(MethodArgumentQualifier::parse);
+                let mut sendable = None;
 
                 immediate_children(&entity, |entity, _span| match entity.get_kind() {
                     EntityKind::ObjCClassRef
@@ -390,7 +414,11 @@ impl<'tu> PartialMethod<'tu> {
                     }
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                            error!(?attr, "unknown attribute");
+                            match attr {
+                                UnexposedAttr::Sendable => sendable = Some(true),
+                                UnexposedAttr::NonSendable => sendable = Some(false),
+                                attr => error!(?attr, "unknown attribute"),
+                            }
                         }
                     }
                     // For some reason we recurse into array types
@@ -399,7 +427,7 @@ impl<'tu> PartialMethod<'tu> {
                 });
 
                 let ty = entity.get_type().expect("argument type");
-                let ty = Ty::parse_method_argument(ty, qualifier, context);
+                let ty = Ty::parse_method_argument(ty, qualifier, sendable, context);
 
                 (name, ty)
             })
@@ -463,6 +491,8 @@ impl<'tu> PartialMethod<'tu> {
                 // immutable subclass, or as a property.
                 mutating: data.mutating.unwrap_or(parent_is_mutable),
                 is_protocol,
+                non_isolated: modifiers.non_isolated,
+                mainthreadonly: modifiers.mainthreadonly,
             },
         ))
     }
@@ -519,6 +549,7 @@ impl PartialProperty<'_> {
             let ty = Ty::parse_property_return(
                 entity.get_type().expect("property type"),
                 is_copy,
+                modifiers.sendable,
                 context,
             );
 
@@ -538,6 +569,8 @@ impl PartialProperty<'_> {
                 // is, so let's default to immutable.
                 mutating: getter_data.mutating.unwrap_or(false),
                 is_protocol,
+                non_isolated: modifiers.non_isolated,
+                mainthreadonly: modifiers.mainthreadonly,
             })
         } else {
             None
@@ -546,8 +579,12 @@ impl PartialProperty<'_> {
         let setter = if let Some(setter_name) = setter_name {
             let setter_data = setter_data.expect("setter_data must be present if setter_name was");
             if !setter_data.skipped {
-                let ty =
-                    Ty::parse_property(entity.get_type().expect("property type"), is_copy, context);
+                let ty = Ty::parse_property(
+                    entity.get_type().expect("property type"),
+                    is_copy,
+                    modifiers.sendable,
+                    context,
+                );
 
                 let selector = setter_name.clone() + ":";
                 let memory_management =
@@ -566,6 +603,8 @@ impl PartialProperty<'_> {
                     // Setters are usually mutable if the class itself is.
                     mutating: setter_data.mutating.unwrap_or(parent_is_mutable),
                     is_protocol,
+                    non_isolated: modifiers.non_isolated,
+                    mainthreadonly: modifiers.mainthreadonly,
                 })
             } else {
                 None

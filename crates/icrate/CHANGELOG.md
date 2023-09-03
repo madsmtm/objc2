@@ -24,6 +24,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 * **BREAKING**: Removed the `MainThreadMarker` argument from the closure
   passed to `MainThreadBound::get_on_main`.
+* **BREAKING**: Removed the `NSApp` static for now - it will likely be
+  re-added later in another form.
 
 
 ## icrate 0.0.4 - 2023-07-31

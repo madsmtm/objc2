@@ -140,6 +140,29 @@ fn parse_class_generics(entity: &Entity<'_>, _context: &Context<'_>) -> Vec<Stri
     generics
 }
 
+fn parse_attributes(entity: &Entity<'_>, context: &Context<'_>) -> (Option<bool>, bool) {
+    let mut sendable = None;
+    let mut mainthreadonly = false;
+
+    immediate_children(entity, |entity, _span| {
+        if let EntityKind::UnexposedAttr = entity.get_kind() {
+            if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                match attr {
+                    UnexposedAttr::Sendable => sendable = Some(true),
+                    UnexposedAttr::NonSendable => sendable = Some(false),
+                    UnexposedAttr::UIActor => {
+                        sendable = Some(false);
+                        mainthreadonly = true;
+                    }
+                    attr => error!(?attr, "unknown attribute"),
+                }
+            }
+        }
+    });
+
+    (sendable, mainthreadonly)
+}
+
 fn parse_methods(
     entity: &Entity<'_>,
     get_data: impl Fn(&str) -> MethodData,
@@ -212,7 +235,7 @@ fn parse_methods(
 /// - `EntityKind::ObjCInterfaceDecl`
 /// - `EntityKind::ObjCProtocolDecl`
 /// - `EntityKind::ObjCCategoryDecl`
-fn verify_objc_decl(entity: &Entity<'_>, context: &Context<'_>) {
+fn verify_objc_decl(entity: &Entity<'_>, _context: &Context<'_>) {
     let parent_kind = entity.get_kind();
 
     immediate_children(entity, |entity, _span| {
@@ -268,9 +291,7 @@ fn verify_objc_decl(entity: &Entity<'_>, context: &Context<'_>) {
                 // Maybe useful for knowing when to implement `Error` for the type
             }
             (EntityKind::UnexposedAttr, _) => {
-                if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                    error!(?attr, "unknown attribute");
-                }
+                // Parsed in parse_attributes
             }
             (_, parent_kind) => error!(?parent_kind, "unknown in parent"),
         }
@@ -327,6 +348,8 @@ pub enum Stmt {
         derives: Derives,
         mutability: Mutability,
         skipped: bool,
+        sendable: bool,
+        mainthreadonly: bool,
     },
     /// @interface class_name (name) <protocols*>
     /// ->
@@ -349,6 +372,8 @@ pub enum Stmt {
         availability: Availability,
         protocols: BTreeSet<ItemIdentifier>,
         methods: Vec<Method>,
+        required_sendable: bool,
+        required_mainthreadonly: bool,
     },
     /// @interface ty: _ <protocols*>
     /// @interface ty (_) <protocols*>
@@ -377,6 +402,7 @@ pub enum Stmt {
         availability: Availability,
         boxable: bool,
         fields: Vec<(String, Ty)>,
+        sendable: Option<bool>,
     },
     /// typedef NS_OPTIONS(type, name) {
     ///     variants*
@@ -399,6 +425,7 @@ pub enum Stmt {
         ty: Ty,
         kind: Option<UnexposedAttr>,
         variants: Vec<(String, Availability, Expr)>,
+        sendable: Option<bool>,
     },
     /// static const ty name = expr;
     /// extern const ty name;
@@ -431,14 +458,22 @@ pub enum Stmt {
     },
 }
 
-fn parse_struct(entity: &Entity<'_>, context: &Context<'_>) -> (bool, Vec<(String, Ty)>) {
+fn parse_struct(
+    entity: &Entity<'_>,
+    context: &Context<'_>,
+) -> (bool, Vec<(String, Ty)>, Option<bool>) {
     let mut boxable = false;
     let mut fields = Vec::new();
+    let mut sendable = None;
 
     immediate_children(entity, |entity, span| match entity.get_kind() {
         EntityKind::UnexposedAttr => {
             if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                error!(?attr, "unknown attribute");
+                match attr {
+                    UnexposedAttr::Sendable => sendable = Some(true),
+                    UnexposedAttr::NonSendable => sendable = Some(false),
+                    attr => error!(?attr, "unknown attribute"),
+                }
             }
         }
         EntityKind::FieldDecl => {
@@ -462,7 +497,7 @@ fn parse_struct(entity: &Entity<'_>, context: &Context<'_>) -> (bool, Vec<(Strin
         _ => error!("unknown"),
     });
 
-    (boxable, fields)
+    (boxable, fields, sendable)
 }
 
 fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
@@ -530,6 +565,8 @@ impl Stmt {
                     context,
                 );
 
+                let (sendable, mainthreadonly) = parse_attributes(entity, context);
+
                 let mut protocols = Default::default();
                 parse_protocols(entity, &mut protocols, context);
 
@@ -554,6 +591,8 @@ impl Stmt {
                     .iter()
                     .filter_map(|(superclass_id, _, entity)| {
                         let superclass_data = context.class_data.get(&superclass_id.name);
+
+                        // let (sendable, mainthreadonly) = parse_attributes(entity, context);
 
                         // Explicitly keep going, even if the class itself is skipped
                         // if superclass_data.skipped
@@ -610,6 +649,8 @@ impl Stmt {
                     derives: data.map(|data| data.derives.clone()).unwrap_or_default(),
                     mutability: data.map(|data| data.mutability.clone()).unwrap_or_default(),
                     skipped: data.map(|data| data.definition_skipped).unwrap_or_default(),
+                    sendable: sendable.unwrap_or(false),
+                    mainthreadonly,
                 })
                 .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
                     cls: id.clone(),
@@ -652,6 +693,14 @@ impl Stmt {
                     context,
                 );
 
+                let (sendable, mainthreadonly) = parse_attributes(entity, context);
+                if sendable.is_some() {
+                    error!(?sendable, "sendable on category");
+                }
+                if mainthreadonly {
+                    error!("@UIActor on category");
+                }
+
                 if !designated_initializers.is_empty() {
                     warn!(
                         ?designated_initializers,
@@ -669,6 +718,8 @@ impl Stmt {
                 {
                     let subclass_data = context.class_data.get(&subclass.name);
                     assert!(!subclass_data.map(|data| data.skipped).unwrap_or_default());
+
+                    // let (sendable, mainthreadonly) = parse_attributes(entity, context);
 
                     let (mut methods, _) = parse_methods(
                         entity,
@@ -748,6 +799,8 @@ impl Stmt {
                     context,
                 );
 
+                let (sendable, mainthreadonly) = parse_attributes(entity, context);
+
                 if !designated_initializers.is_empty() {
                     warn!(
                         ?designated_initializers,
@@ -760,6 +813,8 @@ impl Stmt {
                     availability,
                     protocols,
                     methods,
+                    required_sendable: sendable.unwrap_or(false),
+                    required_mainthreadonly: mainthreadonly,
                 }]
             }
             EntityKind::TypedefDecl => {
@@ -776,7 +831,11 @@ impl Stmt {
                             if kind.is_some() {
                                 panic!("got multiple unexposed attributes {kind:?}, {attr:?}");
                             }
-                            kind = Some(attr);
+                            match attr {
+                                // TODO
+                                UnexposedAttr::Sendable => warn!("sendable on typedef"),
+                                _ => kind = Some(attr),
+                            }
                         }
                     }
                     EntityKind::StructDecl => {
@@ -812,7 +871,7 @@ impl Stmt {
                     _ => error!("unknown"),
                 });
 
-                if let Some((boxable, fields)) = struct_ {
+                if let Some((boxable, fields, sendable)) = struct_ {
                     assert_eq!(kind, None, "should not have parsed a kind");
                     return vec![Self::StructDecl {
                         id,
@@ -820,6 +879,7 @@ impl Stmt {
                         availability,
                         boxable,
                         fields,
+                        sendable,
                     }];
                 }
 
@@ -870,13 +930,14 @@ impl Stmt {
                     }
 
                     if !id.name.starts_with('_') {
-                        let (boxable, fields) = parse_struct(entity, context);
+                        let (boxable, fields, sendable) = parse_struct(entity, context);
                         return vec![Self::StructDecl {
                             id,
                             encoding_name: None,
                             availability,
                             boxable,
                             fields,
+                            sendable,
                         }];
                     }
                 }
@@ -907,6 +968,7 @@ impl Stmt {
                 let ty = Ty::parse_enum(ty, context);
                 let mut kind = None;
                 let mut variants = Vec::new();
+                let mut sendable = None;
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::EnumConstantDecl => {
@@ -941,10 +1003,19 @@ impl Stmt {
                     }
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                            if let Some(kind) = &kind {
-                                assert_eq!(kind, &attr, "got differing enum kinds in {id:?}");
-                            } else {
-                                kind = Some(attr);
+                            match attr {
+                                UnexposedAttr::Sendable => sendable = Some(true),
+                                UnexposedAttr::NonSendable => sendable = Some(false),
+                                attr => {
+                                    if let Some(kind) = &kind {
+                                        assert_eq!(
+                                            kind, &attr,
+                                            "got differing enum kinds in {id:?}"
+                                        );
+                                    } else {
+                                        kind = Some(attr);
+                                    }
+                                }
                             }
                         }
                     }
@@ -972,6 +1043,7 @@ impl Stmt {
                     ty,
                     kind,
                     variants,
+                    sendable,
                 }]
             }
             EntityKind::VarDecl => {
@@ -1247,6 +1319,8 @@ impl fmt::Display for Stmt {
                 derives,
                 mutability,
                 skipped,
+                sendable: _,
+                mainthreadonly: _,
             } => {
                 if *skipped {
                     return Ok(());
@@ -1511,6 +1585,8 @@ impl fmt::Display for Stmt {
                 availability,
                 protocols,
                 methods,
+                required_sendable: _,
+                required_mainthreadonly: _,
             } => {
                 writeln!(f, "extern_protocol!(")?;
                 write!(f, "{availability}")?;
@@ -1573,6 +1649,7 @@ impl fmt::Display for Stmt {
                 availability,
                 boxable: _,
                 fields,
+                sendable: _,
             } => {
                 writeln!(f, "extern_struct!(")?;
                 if let Some(encoding_name) = encoding_name {
@@ -1597,6 +1674,7 @@ impl fmt::Display for Stmt {
                 ty,
                 kind,
                 variants,
+                sendable: _,
             } => {
                 let macro_name = match kind {
                     None => "extern_enum",

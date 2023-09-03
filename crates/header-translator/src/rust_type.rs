@@ -532,10 +532,30 @@ impl Inner {
 
         let unexposed_nullability = if let TypeKind::Unexposed = ty.get_kind() {
             let nullability = ty.get_nullability();
-            attributed_name = parse_unexposed_tokens(&attributed_name);
+            let (new_attributed_name, attributed_attr) = parse_unexposed_tokens(&attributed_name);
             // Also parse the expected name to ensure that the formatting that
             // TokenStream does is the same on both.
-            name = parse_unexposed_tokens(&name);
+            let (new_name, attr) = parse_unexposed_tokens(&name);
+            if attributed_attr != attr {
+                error!(
+                    ?attributed_attr,
+                    ?attr,
+                    "attributed attr was not equal to attr",
+                );
+            }
+
+            match attr {
+                Some(UnexposedAttr::NonIsolated | UnexposedAttr::UIActor) => {
+                    // Ignored for now; these are almost always also emitted on the method/property,
+                    // which is where they will be useful in any case.
+                }
+                Some(attr) => error!(?attr, "unknown attribute"),
+                None => {}
+            }
+
+            attributed_name = new_attributed_name;
+            name = new_name;
+
             ty = ty
                 .get_modified_type()
                 .expect("attributed type to have modified type");
@@ -1193,6 +1213,7 @@ impl Ty {
     pub fn parse_method_argument(
         ty: Type<'_>,
         _qualifier: Option<MethodArgumentQualifier>,
+        _sendable: Option<bool>,
         context: &Context<'_>,
     ) -> Self {
         let ty = Inner::parse(ty, Lifetime::Unspecified, context);
@@ -1253,7 +1274,7 @@ impl Ty {
     }
 
     pub fn parse_function_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let mut this = Self::parse_method_argument(ty, None, context);
+        let mut this = Self::parse_method_argument(ty, None, None, context);
         this.kind = TyKind::FnArgument;
         this
     }
@@ -1304,6 +1325,7 @@ impl Ty {
         ty: Type<'_>,
         // Ignored; see `parse_property_return`
         _is_copy: bool,
+        _sendable: Option<bool>,
         context: &Context<'_>,
     ) -> Self {
         let ty = Inner::parse(ty, Lifetime::Unspecified, context);
@@ -1320,7 +1342,12 @@ impl Ty {
         }
     }
 
-    pub fn parse_property_return(ty: Type<'_>, is_copy: bool, context: &Context<'_>) -> Self {
+    pub fn parse_property_return(
+        ty: Type<'_>,
+        is_copy: bool,
+        _sendable: Option<bool>,
+        context: &Context<'_>,
+    ) -> Self {
         let mut ty = Inner::parse(ty, Lifetime::Unspecified, context);
 
         // `@property(copy)` is expected to always return a nonnull instance
@@ -1736,10 +1763,10 @@ impl fmt::Display for Ty {
 /// - NS_SWIFT_UNAVAILABLE
 /// - NS_REFINED_FOR_SWIFT
 /// - ...
-fn parse_unexposed_tokens(s: &str) -> String {
+fn parse_unexposed_tokens(s: &str) -> (String, Option<UnexposedAttr>) {
     let tokens = TokenStream::from_str(s).expect("parse attributed name");
     let mut iter = tokens.into_iter().peekable();
-    if let Some(TokenTree::Ident(ident)) = iter.peek() {
+    let attr = if let Some(TokenTree::Ident(ident)) = iter.peek() {
         let ident = ident.to_string();
         if let Ok(attr) = UnexposedAttr::from_name(&ident, || {
             iter.next();
@@ -1750,13 +1777,15 @@ fn parse_unexposed_tokens(s: &str) -> String {
                 None
             }
         }) {
-            if let Some(attr) = attr {
-                error!(?attr, "unknown attribute");
-            }
             iter.next();
+            attr
+        } else {
+            None
         }
-    }
-    TokenStream::from_iter(iter).to_string()
+    } else {
+        None
+    };
+    (TokenStream::from_iter(iter).to_string(), attr)
 }
 
 #[cfg(test)]
@@ -1766,7 +1795,9 @@ mod tests {
     #[test]
     fn test_parse_unexposed_tokens() {
         fn check(inp: &str, expected: &str) {
-            assert_eq!(parse_unexposed_tokens(inp), expected);
+            let (actual, attr) = parse_unexposed_tokens(inp);
+            assert_eq!(actual, expected);
+            assert_eq!(attr, None);
         }
 
         check("NS_RETURNS_INNER_POINTER const char *", "const char *");
@@ -1791,5 +1822,13 @@ mod tests {
             "API_DEPRECATED_WITH_REPLACEMENT(\"@\\\"com.adobe.encapsulated-postscript\\\"\", macos(10.0,10.14)) NSPasteboardType __strong",
             "NSPasteboardType __strong",
         );
+
+        let (actual, attr) = parse_unexposed_tokens("NS_SWIFT_NONISOLATED NSTextAttachment *");
+        assert_eq!(actual, "NSTextAttachment *");
+        assert_eq!(attr, Some(UnexposedAttr::NonIsolated));
+
+        let (actual, attr) = parse_unexposed_tokens("NS_SWIFT_UI_ACTOR SEL");
+        assert_eq!(actual, "SEL");
+        assert_eq!(attr, Some(UnexposedAttr::UIActor));
     }
 }
