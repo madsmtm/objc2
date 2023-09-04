@@ -1,5 +1,5 @@
 use crate::mutability::{
-    Immutable, ImmutableWithMutableSubclass, InteriorMutable, MainThreadOnly, Mutable,
+    Immutable, ImmutableWithMutableSubclass, InteriorMutable, MainThreadOnly, Mutability, Mutable,
     MutableWithImmutableSuperclass, Root,
 };
 use crate::rc::Id;
@@ -12,7 +12,9 @@ use crate::{msg_send_id, ClassType, ProtocolType};
 /// and because the return type of those differ if the class has a mutable or
 /// an immutable counterpart (as is the case for `NSString` and
 /// `NSMutableString`).
-pub trait Copyhelper<T: ?Sized> {
+//
+// Note: This trait is intentionally not object safe.
+pub trait Copyhelper<T: ?Sized>: Mutability {
     /// The output type of [`NSCopying`] for the given `T`.
     type CopyOutput: ?Sized + ClassType;
     /// The output type of [`NSMutableCopying`] for the given `T`.

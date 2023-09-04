@@ -551,6 +551,9 @@ mod tests {
         pool
     }
 
+    #[allow(unused)]
+    fn assert_object_safe(_: &dyn AutoreleaseSafe) {}
+
     #[cfg_attr(
         not(feature = "unstable-autoreleasesafe"),
         ignore = "only stably ZST when `unstable-autoreleasesafe` is enabled"

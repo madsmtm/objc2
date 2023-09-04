@@ -256,6 +256,8 @@ mod private {
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restrition should be lifted!
+//
+// Note: `Sized` is intentionally added to make the trait not object safe.
 pub trait Mutability: private::Sealed + Sized {}
 impl Mutability for Root {}
 impl Mutability for Immutable {}
