@@ -34,6 +34,7 @@ pub fn test_msg_send_comma_handling(obj: &MyObject, superclass: &AnyClass) {
         let _: () = msg_send![obj, a,];
         let _: () = msg_send![obj, a: 32i32];
         let _: () = msg_send![obj, a: 32i32,];
+        #[cfg_attr(feature = "unstable-msg-send-always-comma", allow(deprecated))]
         let _: () = msg_send![obj, a: 32i32 b: 32i32];
         let _: () = msg_send![obj, a: 32i32, b: 32i32];
         let _: () = msg_send![obj, a: 32i32, b: 32i32,];
@@ -44,6 +45,7 @@ pub fn test_msg_send_comma_handling(obj: &MyObject, superclass: &AnyClass) {
         let _: () = msg_send![super(obj, superclass), a,];
         let _: () = msg_send![super(obj, superclass), a: 32i32];
         let _: () = msg_send![super(obj, superclass), a: 32i32,];
+        #[cfg_attr(feature = "unstable-msg-send-always-comma", allow(deprecated))]
         let _: () = msg_send![super(obj, superclass), a: 32i32 b: 32i32];
         let _: () = msg_send![super(obj, superclass), a: 32i32, b: 32i32];
         let _: () = msg_send![super(obj, superclass), a: 32i32, b: 32i32,];

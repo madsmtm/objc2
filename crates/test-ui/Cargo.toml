@@ -21,6 +21,7 @@ default = [
     "icrate/Foundation_NSArray",
     "icrate/Foundation_NSMutableArray",
     "icrate/Foundation_NSValue",
+    "objc2/unstable-msg-send-always-comma",
 ]
 std = ["block2/std", "objc2/std", "icrate/std"]
 

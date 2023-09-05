@@ -42,6 +42,9 @@ verify = ["malloc"]
 # to objc2.
 relax-void-encoding = []
 
+# Enable deprecation of using `msg_send!` without a comma between arguments.
+unstable-msg-send-always-comma = []
+
 # Expose features that require linking to `libc::free`.
 #
 # This is not enabled by default because most users won't need it, and it
