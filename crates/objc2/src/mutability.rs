@@ -15,7 +15,9 @@
 //! (can be done inside [`extern_class!`] and [`declare_class!`]).
 //!
 //! Note that precious little of Objective-C follows Rust's usual shared xor
-//! unique ownership model, most often objects assume interior mutability.
+//! unique ownership model, most often objects assume interior mutability, so
+//! a safe default is often [`InteriorMutable`], or of you're working with GUI
+//! code, [`MainThreadOnly`].
 //!
 //! [`UnsafeCell`]: core::cell::UnsafeCell
 //! [`ClassType::Mutability`]: crate::ClassType::Mutability
