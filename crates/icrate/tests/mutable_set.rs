@@ -1,6 +1,7 @@
 #![cfg(feature = "Foundation_NSMutableSet")]
 #![cfg(feature = "Foundation_NSString")]
 use objc2::rc::{__RcTestObject, __ThreadTestData};
+use objc2::ClassType;
 
 use icrate::Foundation::{self, ns_string, NSMutableSet, NSSet, NSString};
 
@@ -79,17 +80,30 @@ fn test_insert_retain_release() {
     let mut set = NSMutableSet::new();
     let obj1 = __RcTestObject::new();
     let obj2 = __RcTestObject::new();
+    let obj2_copy = obj2.retain();
     let mut expected = __ThreadTestData::current();
 
     set.insert(obj1);
+    // Retain to store in set
     expected.retain += 1;
+    // Release passed in object
     expected.release += 1;
     expected.assert_current();
     assert_eq!(set.len(), 1);
     assert_eq!(set.get_any(), set.get_any());
 
     set.insert(obj2);
+    // Retain to store in set
     expected.retain += 1;
+    // Release passed in object
+    expected.release += 1;
+    expected.assert_current();
+    assert_eq!(set.len(), 2);
+
+    set.insert(obj2_copy);
+    // No retain, since the object is already in the set
+    expected.retain += 0;
+    // Release passed in object
     expected.release += 1;
     expected.assert_current();
     assert_eq!(set.len(), 2);

@@ -67,16 +67,47 @@ fn test_insert() {
 }
 
 #[test]
-fn test_insert_retain_release() {
+fn test_insert_key_copies() {
     let mut dict = NSMutableDictionary::new();
-    dict.insert(NSNumber::new_i32(1), __RcTestObject::new());
+    let key1 = __RcTestObject::new();
     let mut expected = __ThreadTestData::current();
 
-    let old = dict.insert(NSNumber::new_i32(1), __RcTestObject::new());
+    let _ = dict.insert(key1, NSNumber::new_i32(1));
+    // Create copy
+    expected.copy += 1;
     expected.alloc += 1;
     expected.init += 1;
-    expected.retain += 2;
-    expected.release += 2;
+
+    // Release passed-in key
+    expected.release += 1;
+    expected.dealloc += 1;
+    expected.assert_current();
+
+    dict.removeAllObjects();
+    // Release key
+    expected.release += 1;
+    expected.dealloc += 1;
+    expected.assert_current();
+}
+
+#[test]
+fn test_insert_value_retain_release() {
+    let mut dict = NSMutableDictionary::new();
+    dict.insert(NSNumber::new_i32(1), __RcTestObject::new());
+    let to_insert = __RcTestObject::new();
+    let mut expected = __ThreadTestData::current();
+
+    let old = dict.insert(NSNumber::new_i32(1), to_insert);
+    // Grab old value
+    expected.retain += 1;
+
+    // Dictionary takes new value and overwrites the old one
+    expected.retain += 1;
+    expected.release += 1;
+
+    // Release passed-in `Id`
+    expected.release += 1;
+
     expected.assert_current();
 
     drop(old);
