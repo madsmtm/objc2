@@ -10,6 +10,10 @@ use crate::{objc_class, OpaqueData};
 #[repr(C)]
 pub struct objc_object {
     // `isa` field is deprecated, so we don't expose it here.
+    //
+    // Also, we need this to be a zero-sized, so that the compiler doesn't
+    // assume anything about the layout.
+    //
     // Use `object_getClass` instead.
     _priv: [u8; 0],
     _p: OpaqueData,

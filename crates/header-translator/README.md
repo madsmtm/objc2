@@ -14,7 +14,7 @@ Make sure you have the same XCode version installed as the one documented in [`c
 If you use a different operating system than macOS, or have multiple SDKs installed, you can specify the directory as the first argument:
 
 ```console
-cargo run --bin header-translator -- /Applications/Xcode_new.app/Contents/Developer
+cargo run --bin header-translator -- /Applications/Xcode.app/Contents/Developer
 ```
 
 Note that you will likely need to use a newer `libclang`, such as [the one distributed with Swift `5.7.2`](https://github.com/apple/llvm-project/tree/swift-5.7.2-RELEASE). You can use a different version as follows (details might vary between operating systems):

@@ -27,7 +27,7 @@ use crate::{ffi, Message};
 ///
 /// [`sync::Weak`]: std::sync::Weak
 /// [`sync::Arc`]: std::sync::Arc
-#[repr(transparent)]
+#[repr(transparent)] // This is not a public guarantee
 pub struct WeakId<T: ?Sized> {
     /// We give the runtime the address to this box, so that it can modify it
     /// even if the `WeakId` is moved.

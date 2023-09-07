@@ -152,7 +152,9 @@ pub(crate) mod private {
 ///
 /// This is a sealed trait that is implemented for a lot of `extern "C"`
 /// function pointer types.
-pub trait MethodImplementation: private::Sealed {
+//
+// Note: `Sized` is intentionally added to make the trait not object safe.
+pub trait MethodImplementation: private::Sealed + Sized {
     /// The callee type of the method.
     type Callee: RefEncode + ?Sized;
     /// The return type of the method.

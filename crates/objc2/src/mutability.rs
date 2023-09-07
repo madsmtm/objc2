@@ -15,7 +15,9 @@
 //! (can be done inside [`extern_class!`] and [`declare_class!`]).
 //!
 //! Note that precious little of Objective-C follows Rust's usual shared xor
-//! unique ownership model, most often objects assume interior mutability.
+//! unique ownership model, most often objects assume interior mutability, so
+//! a safe default is often [`InteriorMutable`], or of you're working with GUI
+//! code, [`MainThreadOnly`].
 //!
 //! [`UnsafeCell`]: core::cell::UnsafeCell
 //! [`ClassType::Mutability`]: crate::ClassType::Mutability
@@ -248,6 +250,9 @@ mod private {
     impl MutabilityIsMutable for Mutable {}
     impl<IS: ?Sized> MutabilityIsMutable for MutableWithImmutableSuperclass<IS> {}
 
+    pub trait MutabilityIsMainThreadOnly: Mutability {}
+    impl MutabilityIsMainThreadOnly for MainThreadOnly {}
+
     // TODO: Trait for objects whose `hash` is guaranteed to never change,
     // which allows it to be used as a key in `NSDictionary`.
 }
@@ -256,6 +261,8 @@ mod private {
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restrition should be lifted!
+//
+// Note: `Sized` is intentionally added to make the trait not object safe.
 pub trait Mutability: private::Sealed + Sized {}
 impl Mutability for Root {}
 impl Mutability for Immutable {}
@@ -337,7 +344,10 @@ impl<T: ?Sized + ClassType> IsMutable for T where T::Mutability: private::Mutabi
 //
 // Note: MainThreadMarker::from relies on this.
 pub trait IsMainThreadOnly: ClassType {}
-impl<T: ?Sized + ClassType<Mutability = MainThreadOnly>> IsMainThreadOnly for T {}
+impl<T: ?Sized + ClassType> IsMainThreadOnly for T where
+    T::Mutability: private::MutabilityIsMainThreadOnly
+{
+}
 
 #[cfg(test)]
 mod tests {
