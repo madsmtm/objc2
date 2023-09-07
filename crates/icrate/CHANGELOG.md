@@ -305,7 +305,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   unsound before).
 
 ### Fixed
-* Fixed `NSZone` not being `#[repr(C)]`.
+* Fixed `NSZone` not specifying a `#[repr(...)]`.
 
 
 ## objc2::foundation 0.3.0-beta.3 - 2022-09-01
@@ -470,7 +470,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 * Soundness issue with `NSValue`, `NSDictionary`, `NSArray` and
-  `NSMutableArray` not being `#[repr(C)]`.
+  `NSMutableArray` not specifying a `#[repr(...)]`.
 * **BREAKING**: `NSObject` is no longer `Send` and `Sync` (because its
   subclasses may not be).
 

@@ -2,7 +2,7 @@ error[E0080]: evaluation of `<std::option::Option<MyType> as objc2::RefEncode>::
  --> $WORKSPACE/crates/objc2/src/encode.rs
   |
   |             panic!("invalid OptionEncode + RefEncode implementation");
-  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the evaluated program panicked at 'invalid OptionEncode + RefEncode implementation', $WORKSPACE/crates/objc2/src/encode.rs:283:13
+  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the evaluated program panicked at 'invalid OptionEncode + RefEncode implementation', $WORKSPACE/crates/objc2/src/encode.rs:284:13
   |
   = note: this error originates in the macro `$crate::panic::panic_2021` which comes from the expansion of the macro `panic` (in Nightly builds, run with -Z macro-backtrace for more info)
 

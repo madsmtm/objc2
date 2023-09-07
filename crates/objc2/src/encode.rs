@@ -196,6 +196,7 @@ pub unsafe trait RefEncode {
     /// [`Encoding::Class`], [`Encoding::Pointer`], [`Encoding::Sel`] or
     /// [`Encoding::Unknown`].
     ///
+    ///
     /// # Examples
     ///
     /// This is usually implemented either as an object pointer:
