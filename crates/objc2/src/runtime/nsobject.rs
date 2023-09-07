@@ -357,4 +357,15 @@ mod tests {
         assert!(obj.is_kind_of::<NSObject>());
         assert!(obj.is_kind_of::<__RcTestObject>());
     }
+
+    #[test]
+    fn test_retain_same() {
+        let obj1 = NSObject::new();
+        let ptr1 = Id::as_ptr(&obj1);
+
+        let obj2 = obj1.clone();
+        let ptr2 = Id::as_ptr(&obj2);
+
+        assert_eq!(ptr1, ptr2);
+    }
 }

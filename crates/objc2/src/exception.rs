@@ -298,8 +298,10 @@ pub unsafe fn catch<R>(
 mod tests {
     use alloc::format;
     use alloc::string::ToString;
+    use core::panic::AssertUnwindSafe;
 
     use super::*;
+    use crate::msg_send_id;
     use crate::runtime::NSObject;
 
     #[test]
@@ -330,6 +332,27 @@ mod tests {
             })
         };
         assert!(result.unwrap_err().is_none());
+    }
+
+    #[test]
+    #[cfg_attr(
+        feature = "catch-all",
+        ignore = "Panics inside `catch` when catch-all is enabled"
+    )]
+    fn test_catch_unknown_selector() {
+        let obj = AssertUnwindSafe(NSObject::new());
+        let ptr = Id::as_ptr(&obj);
+        let result = unsafe {
+            catch(|| {
+                let _: Id<NSObject> = msg_send_id![&*obj, copy];
+            })
+        };
+        let err = result.unwrap_err().unwrap();
+
+        assert_eq!(
+            format!("{err}"),
+            format!("-[NSObject copyWithZone:]: unrecognized selector sent to instance {ptr:?}"),
+        );
     }
 
     #[test]
