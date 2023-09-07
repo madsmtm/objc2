@@ -760,12 +760,15 @@ impl Drop for ProtocolBuilder {
 
 #[cfg(test)]
 mod tests {
+    use core::hash::Hasher;
+    use std::collections::hash_map::DefaultHasher;
+    use std::hash::Hash;
+
     use super::*;
     use crate::mutability::Immutable;
     use crate::rc::Id;
-    use crate::runtime::{NSObject, NSZone, __NSCopying as NSCopying};
-    use crate::test_utils;
-    use crate::{declare_class, msg_send, ClassType, ProtocolType};
+    use crate::runtime::{NSObject, NSObjectProtocol, NSZone, __NSCopying as NSCopying};
+    use crate::{declare_class, extern_methods, msg_send, test_utils, ClassType, ProtocolType};
 
     #[test]
     fn test_alignment() {
@@ -1156,5 +1159,56 @@ mod tests {
         }
 
         let _ = GenericDeclareClass::<()>::class();
+    }
+
+    #[test]
+    fn test_inherited_nsobject_methods_work() {
+        declare_class!(
+            #[derive(Debug, PartialEq, Eq, Hash)]
+            struct Custom;
+
+            unsafe impl ClassType for Custom {
+                type Super = NSObject;
+                type Mutability = Immutable;
+                const NAME: &'static str = "TestInheritedNSObjectMethodsWork";
+            }
+        );
+
+        extern_methods!(
+            unsafe impl Custom {
+                #[method_id(new)]
+                fn new() -> Id<Self>;
+            }
+        );
+
+        let obj1 = Custom::new();
+        let obj2 = Custom::new();
+
+        // isEqual:
+        assert_eq!(obj1, obj1);
+        assert_ne!(obj1, obj2);
+
+        // description
+        let expected =
+            format!("Custom {{ __superclass: ManuallyDrop {{ value: <TestInheritedNSObjectMethodsWork: {obj1:p}> }} }}");
+        assert_eq!(format!("{obj1:?}"), expected);
+
+        // hash
+        let mut hashstate1 = DefaultHasher::new();
+        let mut hashstate2 = DefaultHasher::new();
+
+        obj1.hash(&mut hashstate1);
+        obj1.hash(&mut hashstate2);
+
+        assert_eq!(hashstate1.finish(), hashstate2.finish());
+
+        let mut hashstate2 = DefaultHasher::new();
+        obj2.hash(&mut hashstate2);
+        assert_ne!(hashstate1.finish(), hashstate2.finish());
+
+        // isKindOfClass:
+        assert!(obj1.is_kind_of::<NSObject>());
+        assert!(obj1.is_kind_of::<Custom>());
+        assert!(obj1.is_kind_of::<Custom>());
     }
 }
