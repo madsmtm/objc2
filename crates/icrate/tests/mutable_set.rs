@@ -10,9 +10,9 @@ fn test_insert() {
     let mut set = NSMutableSet::new();
     assert!(set.is_empty());
 
-    assert!(set.insert(NSString::from_str("one")));
-    assert!(!set.insert(NSString::from_str("one")));
-    assert!(set.insert(NSString::from_str("two")));
+    assert!(set.insert_id(NSString::from_str("one")));
+    assert!(!set.insert_id(NSString::from_str("one")));
+    assert!(set.insert_id(NSString::from_str("two")));
 }
 
 #[test]
@@ -69,7 +69,7 @@ fn test_mutable_copy() {
 
     let set1 = NSSet::from_id_slice(&["one", "two", "three"].map(NSString::from_str));
     let mut set2 = set1.mutableCopy();
-    set2.insert(NSString::from_str("four"));
+    set2.insert_id(NSString::from_str("four"));
 
     assert!(set1.is_subset(&set2));
     assert_ne!(set1.mutableCopy(), set2);
@@ -77,34 +77,28 @@ fn test_mutable_copy() {
 
 #[test]
 fn test_insert_retain_release() {
-    let mut set = NSMutableSet::new();
+    let mut set = <NSMutableSet<__RcTestObject>>::new();
     let obj1 = __RcTestObject::new();
     let obj2 = __RcTestObject::new();
     let obj2_copy = obj2.retain();
     let mut expected = __ThreadTestData::current();
 
-    set.insert(obj1);
+    set.insert(&obj1);
     // Retain to store in set
     expected.retain += 1;
-    // Release passed in object
-    expected.release += 1;
     expected.assert_current();
     assert_eq!(set.len(), 1);
     assert_eq!(set.get_any(), set.get_any());
 
-    set.insert(obj2);
+    set.insert(&obj2);
     // Retain to store in set
     expected.retain += 1;
-    // Release passed in object
-    expected.release += 1;
     expected.assert_current();
     assert_eq!(set.len(), 2);
 
-    set.insert(obj2_copy);
+    set.insert(&obj2_copy);
     // No retain, since the object is already in the set
     expected.retain += 0;
-    // Release passed in object
-    expected.release += 1;
     expected.assert_current();
     assert_eq!(set.len(), 2);
 }
@@ -113,7 +107,7 @@ fn test_insert_retain_release() {
 fn test_clear_release_dealloc() {
     let mut set = NSMutableSet::new();
     for _ in 0..4 {
-        set.insert(__RcTestObject::new());
+        set.insert_id(__RcTestObject::new());
     }
     let mut expected = __ThreadTestData::current();
 

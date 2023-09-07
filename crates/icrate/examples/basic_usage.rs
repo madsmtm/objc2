@@ -36,8 +36,8 @@ fn main() {
 
     // Create a dictionary mapping strings to objects
     let keys = &[string];
-    let vals = vec![obj];
-    let dict = NSDictionary::from_keys_and_objects(keys, vals);
+    let objects = &[obj];
+    let dict = NSDictionary::from_id_slice(keys, objects);
     println!("{:?}", dict.get(string));
     println!("{}", dict.len());
 }

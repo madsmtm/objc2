@@ -4,7 +4,7 @@
 
 use objc2::rc::{__RcTestObject, __ThreadTestData};
 
-use icrate::Foundation::{self, ns_string, NSNumber, NSObject, NSSet, NSString};
+use icrate::Foundation::{self, ns_string, NSNumber, NSSet, NSString};
 
 #[test]
 fn test_new() {
@@ -48,7 +48,11 @@ fn test_len() {
     let set = NSSet::from_id_slice(&["one", "two", "two"].map(NSString::from_str));
     assert_eq!(set.len(), 2);
 
-    let set = NSSet::from_vec(vec![NSObject::new(), NSObject::new(), NSObject::new()]);
+    let set = NSSet::from_vec(vec![
+        NSNumber::new_i32(1),
+        NSNumber::new_i32(2),
+        NSNumber::new_i32(3),
+    ]);
     assert_eq!(set.len(), 3);
 }
 

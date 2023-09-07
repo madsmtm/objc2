@@ -6,19 +6,19 @@ use objc2::rc::{Id, __RcTestObject, __ThreadTestData};
 use icrate::Foundation::{NSMutableDictionary, NSNumber, NSObject};
 
 fn sample_dict() -> Id<NSMutableDictionary<NSNumber, NSObject>> {
-    NSMutableDictionary::from_keys_and_objects(
+    NSMutableDictionary::from_id_slice(
         &[
             &*NSNumber::new_i32(1),
             &*NSNumber::new_i32(2),
             &*NSNumber::new_i32(3),
         ],
-        vec![NSObject::new(), NSObject::new(), NSObject::new()],
+        &[NSObject::new(), NSObject::new(), NSObject::new()],
     )
 }
 
 #[cfg(feature = "Foundation_NSMutableString")]
 fn sample_dict_mut() -> Id<NSMutableDictionary<NSNumber, icrate::Foundation::NSMutableString>> {
-    NSMutableDictionary::from_keys_and_objects(
+    NSMutableDictionary::from_vec(
         &[
             &*NSNumber::new_i32(1),
             &*NSNumber::new_i32(2),
@@ -30,6 +30,18 @@ fn sample_dict_mut() -> Id<NSMutableDictionary<NSNumber, icrate::Foundation::NSM
             icrate::Foundation::NSMutableString::from_str("c"),
         ],
     )
+}
+
+#[test]
+#[cfg(feature = "Foundation_NSMutableString")]
+fn dict_from_mutable() {
+    let _: Id<NSMutableDictionary<icrate::Foundation::NSString, icrate::Foundation::NSString>> =
+        NSMutableDictionary::from_id_slice(
+            &[&*icrate::Foundation::NSMutableString::from_str("a")],
+            &[Id::into_super(
+                icrate::Foundation::NSMutableString::from_str("b"),
+            )],
+        );
 }
 
 #[test]
@@ -58,29 +70,33 @@ fn test_values_mut() {
 
 #[test]
 fn test_insert() {
-    let mut dict = NSMutableDictionary::new();
-    assert!(dict.insert(NSNumber::new_i32(1), NSObject::new()).is_none());
-    assert!(dict.insert(NSNumber::new_i32(2), NSObject::new()).is_none());
-    assert!(dict.insert(NSNumber::new_i32(3), NSObject::new()).is_none());
-    assert!(dict.insert(NSNumber::new_i32(1), NSObject::new()).is_some());
+    let mut dict = <NSMutableDictionary<NSNumber, _>>::new();
+    assert!(dict
+        .insert_id(&NSNumber::new_i32(1), NSObject::new())
+        .is_none());
+    assert!(dict
+        .insert_id(&NSNumber::new_i32(2), NSObject::new())
+        .is_none());
+    assert!(dict
+        .insert_id(&NSNumber::new_i32(3), NSObject::new())
+        .is_none());
+    assert!(dict
+        .insert_id(&NSNumber::new_i32(1), NSObject::new())
+        .is_some());
     assert_eq!(dict.len(), 3);
 }
 
 #[test]
 fn test_insert_key_copies() {
-    let mut dict = NSMutableDictionary::new();
+    let mut dict = <NSMutableDictionary<__RcTestObject, _>>::new();
     let key1 = __RcTestObject::new();
     let mut expected = __ThreadTestData::current();
 
-    let _ = dict.insert(key1, NSNumber::new_i32(1));
+    let _ = dict.insert_id(&key1, NSNumber::new_i32(1));
     // Create copy
     expected.copy += 1;
     expected.alloc += 1;
     expected.init += 1;
-
-    // Release passed-in key
-    expected.release += 1;
-    expected.dealloc += 1;
     expected.assert_current();
 
     dict.removeAllObjects();
@@ -91,21 +107,30 @@ fn test_insert_key_copies() {
 }
 
 #[test]
+fn test_get_key_copies() {
+    let mut dict = <NSMutableDictionary<__RcTestObject, _>>::new();
+    let key1 = __RcTestObject::new();
+    let _ = dict.insert_id(&key1, NSNumber::new_i32(1));
+    let expected = __ThreadTestData::current();
+
+    let _ = dict.get(&key1);
+    // No change, getting doesn't do anything to the key!
+    expected.assert_current();
+}
+
+#[test]
 fn test_insert_value_retain_release() {
-    let mut dict = NSMutableDictionary::new();
-    dict.insert(NSNumber::new_i32(1), __RcTestObject::new());
+    let mut dict = <NSMutableDictionary<NSNumber, _>>::new();
+    dict.insert_id(&NSNumber::new_i32(1), __RcTestObject::new());
     let to_insert = __RcTestObject::new();
     let mut expected = __ThreadTestData::current();
 
-    let old = dict.insert(NSNumber::new_i32(1), to_insert);
+    let old = dict.insert(&NSNumber::new_i32(1), &to_insert);
     // Grab old value
     expected.retain += 1;
 
     // Dictionary takes new value and overwrites the old one
     expected.retain += 1;
-    expected.release += 1;
-
-    // Release passed-in `Id`
     expected.release += 1;
 
     expected.assert_current();
@@ -138,9 +163,9 @@ fn test_clear() {
 
 #[test]
 fn test_remove_clear_release_dealloc() {
-    let mut dict = NSMutableDictionary::new();
+    let mut dict = <NSMutableDictionary<NSNumber, _>>::new();
     for i in 0..4 {
-        dict.insert(NSNumber::new_i32(i), __RcTestObject::new());
+        dict.insert_id(&NSNumber::new_i32(i), __RcTestObject::new());
     }
     let mut expected = __ThreadTestData::current();
 
@@ -165,9 +190,9 @@ fn test_remove_clear_release_dealloc() {
 
 #[test]
 #[cfg(feature = "Foundation_NSArray")]
-fn test_into_values_array() {
+fn test_to_array() {
     let dict = sample_dict();
-    let array = NSMutableDictionary::into_values_array(dict);
+    let array = dict.to_array();
     assert_eq!(array.len(), 3);
 }
 

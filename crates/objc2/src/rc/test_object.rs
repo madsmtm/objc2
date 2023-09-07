@@ -60,7 +60,7 @@ std::thread_local! {
 declare_class!(
     /// A helper object that counts how many times various reference-counting
     /// primitives are called.
-    #[derive(Debug, PartialEq, Eq)]
+    #[derive(Debug, PartialEq, Eq, Hash)]
     #[doc(hidden)]
     pub struct __RcTestObject;
 

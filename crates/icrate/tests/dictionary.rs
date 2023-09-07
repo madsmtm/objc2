@@ -7,7 +7,7 @@ use icrate::Foundation::{NSDictionary, NSObject, NSString};
 fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>> {
     let string = NSString::from_str(key);
     let obj = NSObject::new();
-    NSDictionary::from_keys_and_objects(&[&*string], vec![obj])
+    NSDictionary::from_vec(&[&*string], vec![obj])
 }
 
 #[test]
@@ -87,7 +87,7 @@ fn test_arrays() {
         assert_eq!(keys[0].as_str(pool), "abcd");
     });
 
-    // let objs = NSDictionary::into_values_array(dict);
+    // let objs = dict.to_array();
     // assert_eq!(objs.len(), 1);
 }
 
@@ -95,6 +95,19 @@ fn test_arrays() {
 fn test_debug() {
     let key = NSString::from_str("a");
     let val = NSString::from_str("b");
-    let dict = NSDictionary::from_keys_and_objects(&[&*key], vec![val]);
+    let dict = NSDictionary::from_id_slice(&[&*key], &[val]);
     assert_eq!(format!("{dict:?}"), r#"{"a": "b"}"#);
+}
+
+#[test]
+fn new_different_lengths() {
+    let dict = NSDictionary::from_id_slice(
+        &[
+            &*NSString::from_str("a"),
+            &*NSString::from_str("b"),
+            &*NSString::from_str("c"),
+        ],
+        &[NSObject::new(), NSObject::new()],
+    );
+    assert_eq!(dict.len(), 2);
 }

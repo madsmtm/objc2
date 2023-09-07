@@ -102,6 +102,8 @@ unsafe impl ClassType for NSObject {
 /// that implements the `NSObject` protocol.
 #[allow(non_snake_case)]
 pub unsafe trait NSObjectProtocol {
+    // Note: This method must remain `unsafe` to override, since hashing
+    // collections like `NSDictionary` and `NSSet` rely on it being stable.
     #[doc(hidden)]
     fn __isEqual(&self, other: &Self) -> bool
     where
@@ -110,6 +112,8 @@ pub unsafe trait NSObjectProtocol {
         unsafe { msg_send![self, isEqual: other] }
     }
 
+    // Note: This method must remain `unsafe` to override, since hashing
+    // collections like `NSDictionary` and `NSSet` rely on it being stable.
     #[doc(hidden)]
     fn __hash(&self) -> usize
     where

@@ -136,9 +136,16 @@ pub struct ImmutableWithMutableSubclass<MS: ?Sized> {
 
 /// Marker type for mutable classes that have a immutable counterpart.
 ///
-/// This is effectively the same as [`Mutable`], except that the immutable
+/// This is effectively the same as [`Mutable`], except for the immutable
 /// counterpart being be specified as the type parameter `IS` to allow
 /// `NSCopying` and `NSMutableCopying` to return the correct type.
+///
+/// Functionality that is provided with this:
+/// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
+/// - [`IsMutable`] -> [`impl DerefMut for Id`][crate::rc::Id#impl-DerefMut-for-Id<T>].
+/// - You are allowed to hand out pointers / references to an instance's
+///   internal data, since you know such data will never be mutated without
+///   the borrowchecker catching it.
 ///
 ///
 /// # Example
@@ -201,6 +208,11 @@ pub struct InteriorMutable {
 ///
 /// It is unsound to implement [`Send`] or [`Sync`] on a type with this
 /// mutability.
+///
+/// Functionality that is provided with this:
+/// - [`IsRetainable`] -> [`ClassType::retain`].
+/// - [`IsIdCloneable`] -> [`Id::clone`][crate::rc::Id#impl-Clone-for-Id<T>].
+/// - [`IsMainThreadOnly`] -> `MainThreadMarker::from`.
 //
 // While Xcode's Main Thread Checker doesn't report `alloc` and `dealloc` as
 // unsafe from other threads, things like `NSView` and `NSWindow` still do a
@@ -253,6 +265,12 @@ mod private {
     pub trait MutabilityIsMainThreadOnly: Mutability {}
     impl MutabilityIsMainThreadOnly for MainThreadOnly {}
 
+    pub trait MutabilityHashIsStable: Mutability {}
+    impl MutabilityHashIsStable for Immutable {}
+    impl MutabilityHashIsStable for Mutable {}
+    impl<MS: ?Sized> MutabilityHashIsStable for ImmutableWithMutableSubclass<MS> {}
+    impl<IS: ?Sized> MutabilityHashIsStable for MutableWithImmutableSuperclass<IS> {}
+
     pub trait MutabilityCounterpartOrSelf<T: ?Sized>: Mutability {
         type Immutable: ?Sized + ClassType;
         type Mutable: ?Sized + ClassType;
@@ -295,9 +313,6 @@ mod private {
         type Immutable = T;
         type Mutable = T;
     }
-
-    // TODO: Trait for objects whose `hash` is guaranteed to never change,
-    // which allows it to be used as a key in `NSDictionary`.
 }
 
 /// Marker trait for the different types of mutability a class can have.
@@ -391,6 +406,26 @@ impl<T: ?Sized + ClassType> IsMainThreadOnly for T where
     T::Mutability: private::MutabilityIsMainThreadOnly
 {
 }
+
+/// Marker trait for classes whose `hash` and `isEqual:` methods are stable.
+///
+/// This is useful for hashing collection types like `NSDictionary` and
+/// `NSSet` which require that their keys never change.
+///
+/// This is implemented for classes whose [`ClassType::Mutability`] is one of:
+/// - [`Immutable`].
+/// - [`Mutable`].
+/// - [`ImmutableWithMutableSubclass`].
+/// - [`MutableWithImmutableSuperclass`].
+///
+/// Since all of these do not use interior mutability, and since the `hash`
+/// and `isEqual:` methods are required to not use external sources like
+/// thread locals or randomness to determine their result, we can guarantee
+/// that the hash is stable for these types.
+//
+// TODO: Exclude generic types like `NSArray<NSView>` from this!
+pub trait HasStableHash: ClassType {}
+impl<T: ?Sized + ClassType> HasStableHash for T where T::Mutability: private::MutabilityHashIsStable {}
 
 /// Retrieve the immutable/mutable counterpart class, and fall back to `Self`
 /// if not applicable.
