@@ -16,6 +16,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   ones Swift marks as `@Sendable`).
 * Made some common methods in `AppKit` safe.
 * Added missing `NSCopying` and `NSMutableCopying` zone methods.
+* Added `Eq` and `Ord` implementations for `NSNumber`, since its
+  handling of floating point values allows it.
 
 ### Changed
 * Moved the `ns_string!` macro to `icrate::Foundation::ns_string`. The old

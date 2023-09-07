@@ -89,6 +89,28 @@ fn equality() {
 }
 
 #[test]
+#[cfg_attr(feature = "gnustep-1-7", ignore = "GNUStep handles NaNs differently")]
+fn nan_equality() {
+    let nan = NSNumber::new_f32(f32::NAN);
+    let nan2 = NSNumber::new_f32(f32::NAN);
+    let neg_nan = NSNumber::new_f32(-f32::NAN);
+    assert_eq!(nan, nan);
+    assert_eq!(nan, nan2);
+    assert_eq!(neg_nan, neg_nan);
+    assert_eq!(nan, neg_nan);
+}
+
+// Ensure that comparisons are made on the number, and not the bits of the floating point value
+#[test]
+fn float_int_equality() {
+    let val1 = NSNumber::new_f32(1.0);
+    let val2 = NSNumber::new_u32(1);
+    let val3 = NSNumber::new_u32(1.0f32.to_bits());
+    assert_eq!(val1, val2);
+    assert_ne!(val1, val3);
+}
+
+#[test]
 #[cfg(feature = "Foundation_NSString")]
 fn display_debug() {
     use std::fmt;

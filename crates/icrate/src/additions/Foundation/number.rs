@@ -217,13 +217,33 @@ impl PartialEq for NSNumber {
     }
 }
 
+/// Beware: This uses the Objective-C method "isEqualToNumber:", which has
+/// different floating point NaN semantics than Rust!
+//
+// This is valid since the following pass (i.e. Objective-C says that two NaNs
+// are equal):
+// ```
+// let nan = NSNumber::from_f32(f32::NAN);
+// assert_eq!(nan, nan);
+// ```
+impl Eq for NSNumber {}
+
 /// Beware: This uses the Objective-C method "compare:", which has different
 /// floating point NaN semantics than Rust!
 impl PartialOrd for NSNumber {
     #[doc(alias = "compare:")]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+/// Beware: This uses the Objective-C method "compare:", which has different
+/// floating point NaN semantics than Rust!
+impl Ord for NSNumber {
+    #[doc(alias = "compare:")]
+    fn cmp(&self, other: &Self) -> Ordering {
         // Use Objective-C semantics for comparison
-        Some(self.compare(other).into())
+        self.compare(other).into()
     }
 }
 
