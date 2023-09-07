@@ -250,4 +250,8 @@ data! {
 
         // `addChildWindow:ordered:` is not safe, as cycles must be prevented
     }
+
+    class NSTouch: Immutable {}
+
+    class NSUserInterfaceCompressionOptions: Immutable {}
 }
