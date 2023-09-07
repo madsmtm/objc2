@@ -250,6 +250,9 @@ mod private {
     impl MutabilityIsMutable for Mutable {}
     impl<IS: ?Sized> MutabilityIsMutable for MutableWithImmutableSuperclass<IS> {}
 
+    pub trait MutabilityIsMainThreadOnly: Mutability {}
+    impl MutabilityIsMainThreadOnly for MainThreadOnly {}
+
     // TODO: Trait for objects whose `hash` is guaranteed to never change,
     // which allows it to be used as a key in `NSDictionary`.
 }
@@ -341,7 +344,10 @@ impl<T: ?Sized + ClassType> IsMutable for T where T::Mutability: private::Mutabi
 //
 // Note: MainThreadMarker::from relies on this.
 pub trait IsMainThreadOnly: ClassType {}
-impl<T: ?Sized + ClassType<Mutability = MainThreadOnly>> IsMainThreadOnly for T {}
+impl<T: ?Sized + ClassType> IsMainThreadOnly for T where
+    T::Mutability: private::MutabilityIsMainThreadOnly
+{
+}
 
 #[cfg(test)]
 mod tests {
