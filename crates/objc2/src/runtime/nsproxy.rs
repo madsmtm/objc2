@@ -2,7 +2,7 @@ use core::fmt;
 use core::hash;
 
 use crate::mutability::Root;
-use crate::runtime::{AnyClass, AnyObject, NSObject, NSObjectProtocol, ProtocolObject};
+use crate::runtime::{AnyClass, AnyObject, NSObjectProtocol, ProtocolObject};
 use crate::ClassType;
 
 crate::__emit_struct! {
@@ -97,7 +97,7 @@ impl fmt::Debug for NSProxy {
     #[doc(alias = "description")]
     #[doc(alias = "debugDescription")]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let obj: &ProtocolObject<NSObject> = ProtocolObject::from_ref(self);
+        let obj: &ProtocolObject<dyn NSObjectProtocol> = ProtocolObject::from_ref(self);
         obj.fmt(f)
     }
 }

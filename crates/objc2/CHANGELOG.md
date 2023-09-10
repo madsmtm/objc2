@@ -46,6 +46,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 * Fixed the name of the protocol that `NSObjectProtocol` references.
 
+### Removed
+* **BREAKING**: Removed `ProtocolType` implementation for `NSObject`.
+  Use the more precise `NSObjectProtocol` trait instead!
+
 
 ## 0.4.1 - 2023-07-31
 

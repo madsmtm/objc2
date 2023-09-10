@@ -272,7 +272,7 @@ mod tests {
     #[test]
     fn impl_traits() {
         assert_impl_all!(NSObject: NSObjectProtocol);
-        assert_impl_all!(ProtocolObject<NSObject>: NSObjectProtocol);
+        assert_impl_all!(ProtocolObject<dyn NSObjectProtocol>: NSObjectProtocol);
         assert_not_impl_any!(ProtocolObject<dyn Foo>: NSObjectProtocol);
         assert_impl_all!(ProtocolObject<dyn Bar>: NSObjectProtocol);
         assert_impl_all!(ProtocolObject<dyn FooBar>: NSObjectProtocol);
@@ -280,7 +280,7 @@ mod tests {
         assert_impl_all!(DummyClass: NSObjectProtocol);
 
         assert_not_impl_any!(NSObject: Foo);
-        assert_not_impl_any!(ProtocolObject<NSObject>: Foo);
+        assert_not_impl_any!(ProtocolObject<dyn NSObjectProtocol>: Foo);
         assert_impl_all!(ProtocolObject<dyn Foo>: Foo);
         assert_not_impl_any!(ProtocolObject<dyn Bar>: Foo);
         assert_impl_all!(ProtocolObject<dyn FooBar>: Foo);
@@ -288,7 +288,7 @@ mod tests {
         assert_impl_all!(DummyClass: Foo);
 
         assert_not_impl_any!(NSObject: Bar);
-        assert_not_impl_any!(ProtocolObject<NSObject>: Bar);
+        assert_not_impl_any!(ProtocolObject<dyn NSObjectProtocol>: Bar);
         assert_not_impl_any!(ProtocolObject<dyn Foo>: Bar);
         assert_impl_all!(ProtocolObject<dyn Bar>: Bar);
         assert_impl_all!(ProtocolObject<dyn FooBar>: Bar);
@@ -296,7 +296,7 @@ mod tests {
         assert_impl_all!(DummyClass: Bar);
 
         assert_not_impl_any!(NSObject: FooBar);
-        assert_not_impl_any!(ProtocolObject<NSObject>: FooBar);
+        assert_not_impl_any!(ProtocolObject<dyn NSObjectProtocol>: FooBar);
         assert_not_impl_any!(ProtocolObject<dyn Foo>: FooBar);
         assert_not_impl_any!(ProtocolObject<dyn Bar>: FooBar);
         assert_impl_all!(ProtocolObject<dyn FooBar>: FooBar);
@@ -304,7 +304,7 @@ mod tests {
         assert_impl_all!(DummyClass: FooBar);
 
         assert_not_impl_any!(NSObject: FooFooBar);
-        assert_not_impl_any!(ProtocolObject<NSObject>: FooFooBar);
+        assert_not_impl_any!(ProtocolObject<dyn NSObjectProtocol>: FooFooBar);
         assert_not_impl_any!(ProtocolObject<dyn Foo>: FooFooBar);
         assert_not_impl_any!(ProtocolObject<dyn Bar>: FooFooBar);
         assert_not_impl_any!(ProtocolObject<dyn FooBar>: FooFooBar);
@@ -326,10 +326,10 @@ mod tests {
         let foo: &ProtocolObject<dyn Foo> = ProtocolObject::from_ref(&*obj);
         let _foo: &ProtocolObject<dyn Foo> = ProtocolObject::from_ref(foo);
 
-        let _nsobject: &ProtocolObject<NSObject> = ProtocolObject::from_ref(foobar);
-        let _nsobject: &ProtocolObject<NSObject> = ProtocolObject::from_ref(bar);
-        let nsobject: &ProtocolObject<NSObject> = ProtocolObject::from_ref(&*obj);
-        let _nsobject: &ProtocolObject<NSObject> = ProtocolObject::from_ref(nsobject);
+        let _nsobject: &ProtocolObject<dyn NSObjectProtocol> = ProtocolObject::from_ref(foobar);
+        let _nsobject: &ProtocolObject<dyn NSObjectProtocol> = ProtocolObject::from_ref(bar);
+        let nsobject: &ProtocolObject<dyn NSObjectProtocol> = ProtocolObject::from_ref(&*obj);
+        let _nsobject: &ProtocolObject<dyn NSObjectProtocol> = ProtocolObject::from_ref(nsobject);
 
         let _foobar: &mut ProtocolObject<dyn FooBar> = ProtocolObject::from_mut(&mut *obj);
         let _foobar: Id<ProtocolObject<dyn FooBar>> = ProtocolObject::from_id(obj);

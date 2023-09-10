@@ -3,7 +3,7 @@ use core::hash;
 
 use crate::mutability::Root;
 use crate::rc::{DefaultId, Id};
-use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ImplementedBy, ProtocolObject};
+use crate::runtime::{AnyClass, AnyObject, ProtocolObject};
 use crate::{extern_methods, msg_send, msg_send_id, Message};
 use crate::{ClassType, ProtocolType};
 
@@ -170,26 +170,6 @@ crate::__inner_extern_protocol!(
 
 unsafe impl NSObjectProtocol for NSObject {}
 
-unsafe impl ProtocolType for NSObject {
-    const NAME: &'static str = "NSObject";
-
-    fn protocol() -> Option<&'static AnyProtocol> {
-        Some(
-            AnyProtocol::get(<Self as ProtocolType>::NAME)
-                .expect("could not find NSObject protocol"),
-        )
-    }
-
-    const __INNER: () = ();
-}
-
-unsafe impl<T> ImplementedBy<T> for NSObject
-where
-    T: ?Sized + Message + NSObjectProtocol,
-{
-    const __INNER: () = ();
-}
-
 extern_methods!(
     unsafe impl NSObject {
         /// Create a new empty `NSObject`.
@@ -234,7 +214,7 @@ impl fmt::Debug for NSObject {
     #[doc(alias = "description")]
     #[doc(alias = "debugDescription")]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let obj: &ProtocolObject<NSObject> = ProtocolObject::from_ref(self);
+        let obj: &ProtocolObject<dyn NSObjectProtocol> = ProtocolObject::from_ref(self);
         obj.fmt(f)
     }
 }
