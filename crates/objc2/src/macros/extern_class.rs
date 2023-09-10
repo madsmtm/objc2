@@ -93,7 +93,7 @@
 /// ```
 /// # #[cfg(not_available)]
 /// use icrate::Foundation::{NSCoding, NSCopying, NSObjectProtocol};
-/// # use objc2::runtime::{NSObjectProtocol, __NSCopying as NSCopying};
+/// # use objc2::runtime::NSObjectProtocol;
 /// use objc2::rc::Id;
 /// use objc2::runtime::NSObject;
 /// use objc2::{extern_class, msg_send_id, mutability, ClassType};
@@ -117,6 +117,7 @@
 /// // Note: We have to specify the protocols for the superclasses as well,
 /// // since Rust doesn't do inheritance.
 /// unsafe impl NSObjectProtocol for NSFormatter {}
+/// # #[cfg(not_available)]
 /// unsafe impl NSCopying for NSFormatter {}
 /// # #[cfg(not_available)]
 /// unsafe impl NSCoding for NSFormatter {}
@@ -136,7 +137,7 @@
 /// ```
 /// # #[cfg(not_available)]
 /// use icrate::Foundation::{NSCoding, NSCopying, NSObjectProtocol};
-/// # use objc2::runtime::{NSObjectProtocol, __NSCopying as NSCopying};
+/// # use objc2::runtime::NSObjectProtocol;
 /// use objc2::runtime::NSObject;
 /// use objc2::{extern_class, mutability, ClassType};
 /// #
@@ -464,8 +465,9 @@ macro_rules! __extern_class_impl_traits {
         // same object, and would violate aliasing rules.
         //
         // But `&mut NSMutableString` -> `&mut NSString` safe, since the
-        // `NSCopying` implementation of `NSMutableString` is used, and that
-        // is guaranteed to return a different object.
+        // `NSCopying` implementation of `NSMutableString` is still used on
+        // the `&mut NSString`, and that is guaranteed to return a different
+        // object.
         $(#[$impl_m])*
         impl<$($t)*> $crate::__macro_helpers::DerefMut for $for {
             #[inline]

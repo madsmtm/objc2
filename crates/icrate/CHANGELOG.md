@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Send` and `Sync` implementations for a bunch more types (same as the
   ones Swift marks as `@Sendable`).
 * Made some common methods in `AppKit` safe.
+* Added missing `NSCopying` and `NSMutableCopying` zone methods.
 
 ### Changed
 * Moved the `ns_string!` macro to `icrate::Foundation::ns_string`. The old
@@ -45,6 +46,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 * **BREAKING**: Removed the `MainThreadMarker` argument from the closure
   passed to `MainThreadBound::get_on_main`.
+* **BREAKING**: Removed `Foundation::CopyHelper` since it is superseded by
+  `objc2::mutability::CounterpartOrSelf`.
 
 
 ## icrate 0.0.4 - 2023-07-31

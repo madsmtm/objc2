@@ -49,7 +49,3 @@ pub use objc2::ffi::{NSInteger, NSUInteger};
 #[cfg(feature = "Foundation_NSProxy")]
 pub use objc2::runtime::__NSProxy as NSProxy;
 pub use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
-#[doc(inline)]
-pub use objc2::runtime::{
-    __Copyhelper as Copyhelper, __NSCopying as NSCopying, __NSMutableCopying as NSMutableCopying,
-};

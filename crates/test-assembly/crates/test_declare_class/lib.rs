@@ -3,9 +3,10 @@
 #![cfg(feature = "apple")]
 use core::ptr::{self};
 
+use icrate::Foundation::{NSCopying, NSObject};
 use objc2::declare::{Ivar, IvarDrop, IvarEncode};
 use objc2::rc::Id;
-use objc2::runtime::{AnyClass, NSObject, NSZone, __NSCopying as NSCopying};
+use objc2::runtime::{AnyClass, NSZone};
 use objc2::{declare_class, msg_send, msg_send_id, mutability, ClassType};
 
 declare_class!(
@@ -75,7 +76,7 @@ declare_class!(
     unsafe impl NSCopying for Custom {
         #[no_mangle]
         #[method_id(copyWithZone:)]
-        fn copy_with_zone(&self, _zone: *const NSZone) -> Option<Id<Self>> {
+        fn copyWithZone(&self, _zone: *const NSZone) -> Option<Id<Self>> {
             get_obj().map(|new| {
                 let hack = Id::as_ptr(&new) as *mut Self;
                 let hack = unsafe { &mut *hack };

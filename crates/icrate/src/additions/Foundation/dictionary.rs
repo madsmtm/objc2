@@ -8,20 +8,19 @@ use core::ops::{Index, IndexMut};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 
-use objc2::mutability::IsMutable;
+use objc2::mutability::{CounterpartOrSelf, IsMutable};
 
 use super::iter;
 use super::util;
 use crate::common::*;
 #[cfg(feature = "Foundation_NSMutableDictionary")]
 use crate::Foundation::NSMutableDictionary;
-use crate::Foundation::{self, Copyhelper, NSCopying, NSDictionary};
+use crate::Foundation::{self, NSCopying, NSDictionary};
 
 impl<K: Message, V: Message> NSDictionary<K, V> {
     pub fn from_keys_and_objects<T>(keys: &[&T], mut vals: Vec<Id<V>>) -> Id<Self>
     where
-        T: ClassType + NSCopying,
-        T::Mutability: Copyhelper<T, CopyOutput = K>,
+        T: ClassType + NSCopying + CounterpartOrSelf<Immutable = K>,
     {
         let count = min(keys.len(), vals.len());
 
@@ -37,8 +36,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
 impl<K: Message, V: Message> NSMutableDictionary<K, V> {
     pub fn from_keys_and_objects<T>(keys: &[&T], mut vals: Vec<Id<V>>) -> Id<Self>
     where
-        T: ClassType + NSCopying,
-        T::Mutability: Copyhelper<T, CopyOutput = K>,
+        T: ClassType + NSCopying + CounterpartOrSelf<Immutable = K>,
     {
         let count = min(keys.len(), vals.len());
 

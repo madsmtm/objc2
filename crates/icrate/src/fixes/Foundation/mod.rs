@@ -4,6 +4,7 @@ mod __NSDecimal;
 #[path = "NSNotFound.rs"]
 mod __NSNotFound;
 mod copy;
+mod copying;
 mod debug;
 mod enumerator;
 mod exception;
@@ -13,6 +14,7 @@ mod ns_consumed;
 
 pub use self::__NSDecimal::NSDecimal;
 pub use self::__NSNotFound::NSNotFound;
+pub use self::copying::{NSCopying, NSMutableCopying};
 pub use self::enumerator::NSFastEnumerationState;
 pub use self::generics::*;
 #[cfg(feature = "Foundation_NSMapTable")]

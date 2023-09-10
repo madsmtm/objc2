@@ -253,6 +253,49 @@ mod private {
     pub trait MutabilityIsMainThreadOnly: Mutability {}
     impl MutabilityIsMainThreadOnly for MainThreadOnly {}
 
+    pub trait MutabilityCounterpartOrSelf<T: ?Sized>: Mutability {
+        type Immutable: ?Sized + ClassType;
+        type Mutable: ?Sized + ClassType;
+    }
+    impl<T: ClassType<Mutability = Root>> MutabilityCounterpartOrSelf<T> for Root {
+        type Immutable = T;
+        type Mutable = T;
+    }
+    impl<T: ClassType<Mutability = Immutable>> MutabilityCounterpartOrSelf<T> for Immutable {
+        type Immutable = T;
+        type Mutable = T;
+    }
+    impl<T: ClassType<Mutability = Mutable>> MutabilityCounterpartOrSelf<T> for Mutable {
+        type Immutable = T;
+        type Mutable = T;
+    }
+    impl<T, S> MutabilityCounterpartOrSelf<T> for ImmutableWithMutableSubclass<S>
+    where
+        T: ClassType<Mutability = ImmutableWithMutableSubclass<S>>,
+        S: ClassType<Mutability = MutableWithImmutableSuperclass<T>>,
+    {
+        type Immutable = T;
+        type Mutable = S;
+    }
+    impl<T, S> MutabilityCounterpartOrSelf<T> for MutableWithImmutableSuperclass<S>
+    where
+        T: ClassType<Mutability = MutableWithImmutableSuperclass<S>>,
+        S: ClassType<Mutability = ImmutableWithMutableSubclass<T>>,
+    {
+        type Immutable = S;
+        type Mutable = T;
+    }
+    impl<T: ClassType<Mutability = InteriorMutable>> MutabilityCounterpartOrSelf<T>
+        for InteriorMutable
+    {
+        type Immutable = T;
+        type Mutable = T;
+    }
+    impl<T: ClassType<Mutability = MainThreadOnly>> MutabilityCounterpartOrSelf<T> for MainThreadOnly {
+        type Immutable = T;
+        type Mutable = T;
+    }
+
     // TODO: Trait for objects whose `hash` is guaranteed to never change,
     // which allows it to be used as a key in `NSDictionary`.
 }
@@ -349,10 +392,43 @@ impl<T: ?Sized + ClassType> IsMainThreadOnly for T where
 {
 }
 
+/// Retrieve the immutable/mutable counterpart class, and fall back to `Self`
+/// if not applicable.
+///
+/// This is mostly used for describing the return type of `NSCopying` and
+/// `NSMutableCopying`, since due to Rust trait limitations, those two can't
+/// have associated types themselves (at least not since we want to use them
+/// in `ProtocolObject<dyn NSCopying>`).
+pub trait CounterpartOrSelf: ClassType {
+    /// The immutable counterpart of the type, or `Self` if the type has no
+    /// immutable counterpart.
+    ///
+    /// The implementation for `NSString` has itself (`NSString`) here, while
+    /// `NSMutableString` instead has `NSString`.
+    type Immutable: ?Sized + ClassType;
+
+    /// The mutable counterpart of the type, or `Self` if the type has no
+    /// mutable counterpart.
+    ///
+    /// The implementation for `NSString` has `NSMutableString` here, while
+    /// `NSMutableString` has itself (`NSMutableString`).
+    type Mutable: ?Sized + ClassType;
+}
+impl<T: ?Sized + ClassType> CounterpartOrSelf for T
+where
+    T::Mutability: private::MutabilityCounterpartOrSelf<T>,
+{
+    type Immutable = <T::Mutability as private::MutabilityCounterpartOrSelf<T>>::Immutable;
+    type Mutable = <T::Mutability as private::MutabilityCounterpartOrSelf<T>>::Mutable;
+}
+
 #[cfg(test)]
 mod tests {
+    use crate::runtime::NSObject;
+
     use super::*;
 
+    use core::any::TypeId;
     use core::fmt;
     use core::hash;
 
@@ -378,5 +454,17 @@ mod tests {
             fn assert_sized<T: Sized>() {}
             assert_sized::<M>();
         }
+    }
+
+    #[test]
+    fn counterpart_root() {
+        assert_eq!(
+            TypeId::of::<NSObject>(),
+            TypeId::of::<<NSObject as CounterpartOrSelf>::Immutable>(),
+        );
+        assert_eq!(
+            TypeId::of::<NSObject>(),
+            TypeId::of::<<NSObject as CounterpartOrSelf>::Mutable>(),
+        );
     }
 }

@@ -186,8 +186,8 @@
 /// ```
 /// use std::os::raw::c_int;
 ///
-/// # use objc2::runtime::{__NSCopying as NSCopying, NSObject, NSObjectProtocol, NSZone};
-/// # #[cfg(available_elsewhere)]
+/// # use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
+/// # #[cfg(available_in_icrate)]
 /// use icrate::Foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
 /// use objc2::declare::{Ivar, IvarDrop, IvarEncode};
 /// use objc2::rc::Id;
@@ -250,11 +250,19 @@
 ///         fn __my_class_method() -> bool {
 ///             true
 ///         }
+/// #
+/// #       #[method_id(copyWithZone:)]
+/// #       fn copyWithZone(&self, _zone: *const NSZone) -> Id<Self> {
+/// #           let mut obj = Self::new(*self.foo);
+/// #           *obj.bar = *self.bar;
+/// #           obj
+/// #       }
 ///     }
 ///
+///     # #[cfg(available_in_icrate)]
 ///     unsafe impl NSCopying for MyCustomObject {
 ///         #[method_id(copyWithZone:)]
-///         fn copy_with_zone(&self, _zone: *const NSZone) -> Id<Self> {
+///         fn copyWithZone(&self, _zone: *const NSZone) -> Id<Self> {
 ///             let mut obj = Self::new(*self.foo);
 ///             *obj.bar = *self.bar;
 ///             obj
@@ -293,9 +301,9 @@
 ///     assert_eq!(*obj.bar, 42);
 ///     assert!(obj.object.is_kind_of::<NSObject>());
 ///
-///     let obj: Id<MyCustomObject> = unsafe {
-///          msg_send_id![&obj, copy]
-///     }; // Or obj.copy() with `icrate`
+/// #   let obj: Id<MyCustomObject> = unsafe { msg_send_id![&obj, copy] };
+/// #   #[cfg(available_in_icrate)]
+///     let obj = obj.copy();
 ///
 ///     assert_eq!(obj.get_foo(), 3);
 ///     assert!(obj.get_object().is_kind_of::<NSObject>());
