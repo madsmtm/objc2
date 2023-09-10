@@ -369,6 +369,7 @@ pub enum Stmt {
     /// extern_protocol!
     ProtocolDecl {
         id: ItemIdentifier,
+        actual_name: Option<String>,
         availability: Availability,
         protocols: BTreeSet<ItemIdentifier>,
         methods: Vec<Method>,
@@ -797,9 +798,14 @@ impl Stmt {
                 .collect()
             }
             EntityKind::ObjCProtocolDecl => {
-                let id = ItemIdentifier::new(entity, context)
-                    .map_name(|name| context.replace_protocol_name(name));
-                let data = context.protocol_data.get(&id.name);
+                let actual_id = ItemIdentifier::new(entity, context);
+                let data = context.protocol_data.get(&actual_id.name);
+                let actual_name = data
+                    .map(|data| data.renamed.is_some())
+                    .unwrap_or_default()
+                    .then(|| actual_id.name.clone());
+
+                let id = actual_id.map_name(|name| context.replace_protocol_name(name));
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -830,6 +836,7 @@ impl Stmt {
 
                 vec![Self::ProtocolDecl {
                     id,
+                    actual_name,
                     availability,
                     protocols,
                     methods,
@@ -1616,6 +1623,7 @@ impl fmt::Display for Stmt {
             }
             Self::ProtocolDecl {
                 id,
+                actual_name,
                 availability,
                 protocols,
                 methods,
@@ -1683,7 +1691,13 @@ impl fmt::Display for Stmt {
                 }
                 writeln!(f, "    }}")?;
                 writeln!(f)?;
-                writeln!(f, "    unsafe impl ProtocolType for dyn {} {{}}", id.name)?;
+                writeln!(f, "    unsafe impl ProtocolType for dyn {} {{", id.name)?;
+                if let Some(actual_name) = actual_name {
+                    writeln!(f)?;
+                    writeln!(f, "        const NAME: &'static str = {actual_name:?};")?;
+                    write!(f, "    ")?;
+                }
+                writeln!(f, "}}")?;
                 writeln!(f, ");")?;
             }
             Self::StructDecl {
