@@ -27,13 +27,13 @@ note: the trait `IsIdCloneable` must be implemented
   | pub trait IsIdCloneable: ClassType {}
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-error[E0277]: the trait bound `Mutable: mutability::private::MutabilityIsRetainable` is not satisfied
+error[E0277]: the trait bound `Mutable: mutability::MutabilityIsRetainable` is not satisfied
  --> ui/mutable_id_not_clone_not_retain.rs
   |
   |     let _ = obj.retain();
-  |                 ^^^^^^ the trait `mutability::private::MutabilityIsRetainable` is not implemented for `Mutable`
+  |                 ^^^^^^ the trait `mutability::MutabilityIsRetainable` is not implemented for `Mutable`
   |
-  = help: the following other types implement trait `mutability::private::MutabilityIsRetainable`:
+  = help: the following other types implement trait `mutability::MutabilityIsRetainable`:
             Immutable
             InteriorMutable
             MainThreadOnly

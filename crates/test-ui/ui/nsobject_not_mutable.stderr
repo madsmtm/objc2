@@ -1,12 +1,12 @@
-error[E0277]: the trait bound `Root: mutability::private::MutabilityIsMutable` is not satisfied
+error[E0277]: the trait bound `Root: mutability::MutabilityIsMutable` is not satisfied
  --> ui/nsobject_not_mutable.rs
   |
   |     let mut_ptr = Id::as_mut_ptr(&mut obj);
-  |                   -------------- ^^^^^^^^ the trait `mutability::private::MutabilityIsMutable` is not implemented for `Root`
+  |                   -------------- ^^^^^^^^ the trait `mutability::MutabilityIsMutable` is not implemented for `Root`
   |                   |
   |                   required by a bound introduced by this call
   |
-  = help: the following other types implement trait `mutability::private::MutabilityIsMutable`:
+  = help: the following other types implement trait `mutability::MutabilityIsMutable`:
             Mutable
             MutableWithImmutableSuperclass<IS>
   = note: required for `NSObject` to implement `IsMutable`
@@ -19,15 +19,15 @@ note: required by a bound in `Id::<T>::as_mut_ptr`
   |         T: IsMutable,
   |            ^^^^^^^^^ required by this bound in `Id::<T>::as_mut_ptr`
 
-error[E0277]: the trait bound `Root: mutability::private::MutabilityIsMutable` is not satisfied
+error[E0277]: the trait bound `Root: mutability::MutabilityIsMutable` is not satisfied
  --> ui/nsobject_not_mutable.rs
   |
   |         let mut_ref = Id::autorelease_mut(obj, pool);
-  |                       ------------------- ^^^ the trait `mutability::private::MutabilityIsMutable` is not implemented for `Root`
+  |                       ------------------- ^^^ the trait `mutability::MutabilityIsMutable` is not implemented for `Root`
   |                       |
   |                       required by a bound introduced by this call
   |
-  = help: the following other types implement trait `mutability::private::MutabilityIsMutable`:
+  = help: the following other types implement trait `mutability::MutabilityIsMutable`:
             Mutable
             MutableWithImmutableSuperclass<IS>
   = note: required for `NSObject` to implement `IsMutable`

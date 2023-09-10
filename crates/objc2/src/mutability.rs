@@ -34,6 +34,39 @@ use core::marker::PhantomData;
 
 use crate::ClassType;
 
+mod private_mutability {
+    pub trait Sealed {}
+}
+
+/// Marker trait for the different types of mutability a class can have.
+///
+/// This is a sealed trait, and should not need to be implemented. Open an
+/// issue if you know a use-case where this restrition should be lifted!
+//
+// Note: `Sized` is intentionally added to make the trait not object safe.
+pub trait Mutability: private_mutability::Sealed + Sized {}
+
+impl private_mutability::Sealed for Root {}
+impl Mutability for Root {}
+
+impl private_mutability::Sealed for Immutable {}
+impl Mutability for Immutable {}
+
+impl private_mutability::Sealed for Mutable {}
+impl Mutability for Mutable {}
+
+impl<MS: ?Sized> private_mutability::Sealed for ImmutableWithMutableSubclass<MS> {}
+impl<MS: ?Sized> Mutability for ImmutableWithMutableSubclass<MS> {}
+
+impl<IS: ?Sized> private_mutability::Sealed for MutableWithImmutableSuperclass<IS> {}
+impl<IS: ?Sized> Mutability for MutableWithImmutableSuperclass<IS> {}
+
+impl private_mutability::Sealed for InteriorMutable {}
+impl Mutability for InteriorMutable {}
+
+impl private_mutability::Sealed for MainThreadOnly {}
+impl Mutability for MainThreadOnly {}
+
 /// Helper to make the structs uninhabited, without that being a public fact.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 enum Never {}
@@ -226,110 +259,6 @@ pub struct MainThreadOnly {
     inner: Never,
 }
 
-mod private {
-    use super::*;
-
-    pub trait Sealed {}
-    impl Sealed for Root {}
-    impl Sealed for Immutable {}
-    impl Sealed for Mutable {}
-    impl<MS: ?Sized> Sealed for ImmutableWithMutableSubclass<MS> {}
-    impl<IS: ?Sized> Sealed for MutableWithImmutableSuperclass<IS> {}
-    impl Sealed for InteriorMutable {}
-    impl Sealed for MainThreadOnly {}
-
-    pub trait MutabilityIsIdCloneable: Mutability {}
-    impl MutabilityIsIdCloneable for Root {}
-    impl MutabilityIsIdCloneable for Immutable {}
-    impl<MS: ?Sized> MutabilityIsIdCloneable for ImmutableWithMutableSubclass<MS> {}
-    impl MutabilityIsIdCloneable for InteriorMutable {}
-    impl MutabilityIsIdCloneable for MainThreadOnly {}
-
-    pub trait MutabilityIsRetainable: MutabilityIsIdCloneable {}
-    impl MutabilityIsRetainable for Immutable {}
-    impl MutabilityIsRetainable for InteriorMutable {}
-    impl MutabilityIsRetainable for MainThreadOnly {}
-
-    pub trait MutabilityIsAllocableAnyThread: Mutability {}
-    impl MutabilityIsAllocableAnyThread for Root {}
-    impl MutabilityIsAllocableAnyThread for Immutable {}
-    impl MutabilityIsAllocableAnyThread for Mutable {}
-    impl<MS: ?Sized> MutabilityIsAllocableAnyThread for ImmutableWithMutableSubclass<MS> {}
-    impl<IS: ?Sized> MutabilityIsAllocableAnyThread for MutableWithImmutableSuperclass<IS> {}
-    impl MutabilityIsAllocableAnyThread for InteriorMutable {}
-
-    pub trait MutabilityIsMutable: Mutability {}
-    impl MutabilityIsMutable for Mutable {}
-    impl<IS: ?Sized> MutabilityIsMutable for MutableWithImmutableSuperclass<IS> {}
-
-    pub trait MutabilityIsMainThreadOnly: Mutability {}
-    impl MutabilityIsMainThreadOnly for MainThreadOnly {}
-
-    pub trait MutabilityHashIsStable: Mutability {}
-    impl MutabilityHashIsStable for Immutable {}
-    impl MutabilityHashIsStable for Mutable {}
-    impl<MS: ?Sized> MutabilityHashIsStable for ImmutableWithMutableSubclass<MS> {}
-    impl<IS: ?Sized> MutabilityHashIsStable for MutableWithImmutableSuperclass<IS> {}
-
-    pub trait MutabilityCounterpartOrSelf<T: ?Sized>: Mutability {
-        type Immutable: ?Sized + ClassType;
-        type Mutable: ?Sized + ClassType;
-    }
-    impl<T: ClassType<Mutability = Root>> MutabilityCounterpartOrSelf<T> for Root {
-        type Immutable = T;
-        type Mutable = T;
-    }
-    impl<T: ClassType<Mutability = Immutable>> MutabilityCounterpartOrSelf<T> for Immutable {
-        type Immutable = T;
-        type Mutable = T;
-    }
-    impl<T: ClassType<Mutability = Mutable>> MutabilityCounterpartOrSelf<T> for Mutable {
-        type Immutable = T;
-        type Mutable = T;
-    }
-    impl<T, S> MutabilityCounterpartOrSelf<T> for ImmutableWithMutableSubclass<S>
-    where
-        T: ClassType<Mutability = ImmutableWithMutableSubclass<S>>,
-        S: ClassType<Mutability = MutableWithImmutableSuperclass<T>>,
-    {
-        type Immutable = T;
-        type Mutable = S;
-    }
-    impl<T, S> MutabilityCounterpartOrSelf<T> for MutableWithImmutableSuperclass<S>
-    where
-        T: ClassType<Mutability = MutableWithImmutableSuperclass<S>>,
-        S: ClassType<Mutability = ImmutableWithMutableSubclass<T>>,
-    {
-        type Immutable = S;
-        type Mutable = T;
-    }
-    impl<T: ClassType<Mutability = InteriorMutable>> MutabilityCounterpartOrSelf<T>
-        for InteriorMutable
-    {
-        type Immutable = T;
-        type Mutable = T;
-    }
-    impl<T: ClassType<Mutability = MainThreadOnly>> MutabilityCounterpartOrSelf<T> for MainThreadOnly {
-        type Immutable = T;
-        type Mutable = T;
-    }
-}
-
-/// Marker trait for the different types of mutability a class can have.
-///
-/// This is a sealed trait, and should not need to be implemented. Open an
-/// issue if you know a use-case where this restrition should be lifted!
-//
-// Note: `Sized` is intentionally added to make the trait not object safe.
-pub trait Mutability: private::Sealed + Sized {}
-impl Mutability for Root {}
-impl Mutability for Immutable {}
-impl Mutability for Mutable {}
-impl<MS: ?Sized> Mutability for ImmutableWithMutableSubclass<MS> {}
-impl<IS: ?Sized> Mutability for MutableWithImmutableSuperclass<IS> {}
-impl Mutability for InteriorMutable {}
-impl Mutability for MainThreadOnly {}
-
 /// Marker trait for classes where [`Id::clone`] is safe.
 ///
 /// Since the `Foundation` collection types (`NSArray<T>`,
@@ -346,8 +275,15 @@ impl Mutability for MainThreadOnly {}
 /// [`Id`]: crate::rc::Id
 /// [`Id::clone`]: crate::rc::Id#impl-Clone-for-Id<T>
 pub trait IsIdCloneable: ClassType {}
-impl<T: ?Sized + ClassType> IsIdCloneable for T where T::Mutability: private::MutabilityIsIdCloneable
-{}
+
+trait MutabilityIsIdCloneable: Mutability {}
+impl MutabilityIsIdCloneable for Root {}
+impl MutabilityIsIdCloneable for Immutable {}
+impl<MS: ?Sized> MutabilityIsIdCloneable for ImmutableWithMutableSubclass<MS> {}
+impl MutabilityIsIdCloneable for InteriorMutable {}
+impl MutabilityIsIdCloneable for MainThreadOnly {}
+
+impl<T: ?Sized + ClassType> IsIdCloneable for T where T::Mutability: MutabilityIsIdCloneable {}
 
 /// Marker trait for classes where the `retain` selector is always safe.
 ///
@@ -362,7 +298,13 @@ impl<T: ?Sized + ClassType> IsIdCloneable for T where T::Mutability: private::Mu
 ///
 /// [`Id::clone`]: crate::rc::Id#impl-Clone-for-Id<T>
 pub trait IsRetainable: IsIdCloneable {}
-impl<T: ?Sized + ClassType> IsRetainable for T where T::Mutability: private::MutabilityIsRetainable {}
+
+trait MutabilityIsRetainable: MutabilityIsIdCloneable {}
+impl MutabilityIsRetainable for Immutable {}
+impl MutabilityIsRetainable for InteriorMutable {}
+impl MutabilityIsRetainable for MainThreadOnly {}
+
+impl<T: ?Sized + ClassType> IsRetainable for T where T::Mutability: MutabilityIsRetainable {}
 
 /// Marker trait for classes that can be allocated from any thread.
 ///
@@ -374,8 +316,17 @@ impl<T: ?Sized + ClassType> IsRetainable for T where T::Mutability: private::Mut
 /// - [`MutableWithImmutableSuperclass`].
 /// - [`InteriorMutable`].
 pub trait IsAllocableAnyThread: ClassType {}
+
+trait MutabilityIsAllocableAnyThread: Mutability {}
+impl MutabilityIsAllocableAnyThread for Root {}
+impl MutabilityIsAllocableAnyThread for Immutable {}
+impl MutabilityIsAllocableAnyThread for Mutable {}
+impl<MS: ?Sized> MutabilityIsAllocableAnyThread for ImmutableWithMutableSubclass<MS> {}
+impl<IS: ?Sized> MutabilityIsAllocableAnyThread for MutableWithImmutableSuperclass<IS> {}
+impl MutabilityIsAllocableAnyThread for InteriorMutable {}
+
 impl<T: ?Sized + ClassType> IsAllocableAnyThread for T where
-    T::Mutability: private::MutabilityIsAllocableAnyThread
+    T::Mutability: MutabilityIsAllocableAnyThread
 {
 }
 
@@ -389,7 +340,12 @@ impl<T: ?Sized + ClassType> IsAllocableAnyThread for T where
 /// technically mutable), since it is allowed to mutate through shared
 /// references.
 pub trait IsMutable: ClassType {}
-impl<T: ?Sized + ClassType> IsMutable for T where T::Mutability: private::MutabilityIsMutable {}
+
+trait MutabilityIsMutable: Mutability {}
+impl MutabilityIsMutable for Mutable {}
+impl<IS: ?Sized> MutabilityIsMutable for MutableWithImmutableSuperclass<IS> {}
+
+impl<T: ?Sized + ClassType> IsMutable for T where T::Mutability: MutabilityIsMutable {}
 
 /// Marker trait for classes that are only available on the main thread.
 ///
@@ -402,10 +358,11 @@ impl<T: ?Sized + ClassType> IsMutable for T where T::Mutability: private::Mutabi
 //
 // Note: MainThreadMarker::from relies on this.
 pub trait IsMainThreadOnly: ClassType {}
-impl<T: ?Sized + ClassType> IsMainThreadOnly for T where
-    T::Mutability: private::MutabilityIsMainThreadOnly
-{
-}
+
+trait MutabilityIsMainThreadOnly: Mutability {}
+impl MutabilityIsMainThreadOnly for MainThreadOnly {}
+
+impl<T: ?Sized + ClassType> IsMainThreadOnly for T where T::Mutability: MutabilityIsMainThreadOnly {}
 
 /// Marker trait for classes whose `hash` and `isEqual:` methods are stable.
 ///
@@ -425,7 +382,14 @@ impl<T: ?Sized + ClassType> IsMainThreadOnly for T where
 //
 // TODO: Exclude generic types like `NSArray<NSView>` from this!
 pub trait HasStableHash: ClassType {}
-impl<T: ?Sized + ClassType> HasStableHash for T where T::Mutability: private::MutabilityHashIsStable {}
+
+trait MutabilityHashIsStable: Mutability {}
+impl MutabilityHashIsStable for Immutable {}
+impl MutabilityHashIsStable for Mutable {}
+impl<MS: ?Sized> MutabilityHashIsStable for ImmutableWithMutableSubclass<MS> {}
+impl<IS: ?Sized> MutabilityHashIsStable for MutableWithImmutableSuperclass<IS> {}
+
+impl<T: ?Sized + ClassType> HasStableHash for T where T::Mutability: MutabilityHashIsStable {}
 
 /// Retrieve the immutable/mutable counterpart class, and fall back to `Self`
 /// if not applicable.
@@ -449,12 +413,61 @@ pub trait CounterpartOrSelf: ClassType {
     /// `NSMutableString` has itself (`NSMutableString`).
     type Mutable: ?Sized + ClassType;
 }
+
+mod private_counterpart {
+    use super::*;
+
+    pub trait MutabilityCounterpartOrSelf<T: ?Sized>: Mutability {
+        type Immutable: ?Sized + ClassType;
+        type Mutable: ?Sized + ClassType;
+    }
+    impl<T: ClassType<Mutability = Root>> MutabilityCounterpartOrSelf<T> for Root {
+        type Immutable = T;
+        type Mutable = T;
+    }
+    impl<T: ClassType<Mutability = Immutable>> MutabilityCounterpartOrSelf<T> for Immutable {
+        type Immutable = T;
+        type Mutable = T;
+    }
+    impl<T: ClassType<Mutability = Mutable>> MutabilityCounterpartOrSelf<T> for Mutable {
+        type Immutable = T;
+        type Mutable = T;
+    }
+    impl<T, MS> MutabilityCounterpartOrSelf<T> for ImmutableWithMutableSubclass<MS>
+    where
+        T: ClassType<Mutability = ImmutableWithMutableSubclass<MS>>,
+        MS: ClassType<Mutability = MutableWithImmutableSuperclass<T>>,
+    {
+        type Immutable = T;
+        type Mutable = MS;
+    }
+    impl<T, IS> MutabilityCounterpartOrSelf<T> for MutableWithImmutableSuperclass<IS>
+    where
+        T: ClassType<Mutability = MutableWithImmutableSuperclass<IS>>,
+        IS: ClassType<Mutability = ImmutableWithMutableSubclass<T>>,
+    {
+        type Immutable = IS;
+        type Mutable = T;
+    }
+    impl<T: ClassType<Mutability = InteriorMutable>> MutabilityCounterpartOrSelf<T>
+        for InteriorMutable
+    {
+        type Immutable = T;
+        type Mutable = T;
+    }
+    impl<T: ClassType<Mutability = MainThreadOnly>> MutabilityCounterpartOrSelf<T> for MainThreadOnly {
+        type Immutable = T;
+        type Mutable = T;
+    }
+}
+
 impl<T: ?Sized + ClassType> CounterpartOrSelf for T
 where
-    T::Mutability: private::MutabilityCounterpartOrSelf<T>,
+    T::Mutability: private_counterpart::MutabilityCounterpartOrSelf<T>,
 {
-    type Immutable = <T::Mutability as private::MutabilityCounterpartOrSelf<T>>::Immutable;
-    type Mutable = <T::Mutability as private::MutabilityCounterpartOrSelf<T>>::Mutable;
+    type Immutable =
+        <T::Mutability as private_counterpart::MutabilityCounterpartOrSelf<T>>::Immutable;
+    type Mutable = <T::Mutability as private_counterpart::MutabilityCounterpartOrSelf<T>>::Mutable;
 }
 
 #[cfg(test)]
