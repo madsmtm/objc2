@@ -294,3 +294,16 @@ fn test_iter_minimal_retains() {
     expected.dealloc += 1;
     expected.assert_current();
 }
+
+/// This currently works, but we should figure out a way to disallow it!
+#[test]
+#[cfg(all(feature = "Foundation_NSArray", feature = "Foundation_NSConnection"))]
+#[allow(deprecated)]
+fn invalid_generic() {
+    let something_interior_mutable = unsafe { Foundation::NSConnection::defaultConnection() };
+    let set = NSSet::from_id_slice(&[Foundation::NSArray::from_id_slice(&[
+        something_interior_mutable,
+    ])]);
+    let _ = set.get_any().unwrap().get(0).unwrap();
+    // something_interior_mutable.setAbc(...)
+}
