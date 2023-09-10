@@ -42,7 +42,7 @@ error[E0277]: the trait bound `i32: Message` is not satisfied
             NSMutableArray<ObjectType>
             NSDictionary<KeyType, ObjectType>
             NSMutableDictionary<KeyType, ObjectType>
-            NSEnumerator<ObjectType>
+            NSSet<ObjectType>
           and $N others
 note: required by a bound in `__send_message_error`
  --> $WORKSPACE/crates/objc2/src/message/mod.rs

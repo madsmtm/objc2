@@ -4,7 +4,7 @@
 
 use objc2::rc::{__RcTestObject, __ThreadTestData};
 
-use icrate::Foundation::{self, ns_string, NSNumber, NSObject, NSSet, NSString};
+use icrate::Foundation::{self, ns_string, NSNumber, NSSet, NSString};
 
 #[test]
 fn test_new() {
@@ -48,7 +48,11 @@ fn test_len() {
     let set = NSSet::from_id_slice(&["one", "two", "two"].map(NSString::from_str));
     assert_eq!(set.len(), 2);
 
-    let set = NSSet::from_vec(vec![NSObject::new(), NSObject::new(), NSObject::new()]);
+    let set = NSSet::from_vec(vec![
+        NSNumber::new_i32(1),
+        NSNumber::new_i32(2),
+        NSNumber::new_i32(3),
+    ]);
     assert_eq!(set.len(), 3);
 }
 
@@ -289,4 +293,17 @@ fn test_iter_minimal_retains() {
     expected.release += 1;
     expected.dealloc += 1;
     expected.assert_current();
+}
+
+/// This currently works, but we should figure out a way to disallow it!
+#[test]
+#[cfg(all(feature = "Foundation_NSArray", feature = "Foundation_NSConnection"))]
+#[allow(deprecated)]
+fn invalid_generic() {
+    let something_interior_mutable = unsafe { Foundation::NSConnection::defaultConnection() };
+    let set = NSSet::from_id_slice(&[Foundation::NSArray::from_id_slice(&[
+        something_interior_mutable,
+    ])]);
+    let _ = set.get_any().unwrap().get(0).unwrap();
+    // something_interior_mutable.setAbc(...)
 }

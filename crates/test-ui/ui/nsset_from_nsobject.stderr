@@ -1,0 +1,22 @@
+error[E0277]: the trait bound `Root: mutability::private::MutabilityHashIsStable` is not satisfied
+ --> ui/nsset_from_nsobject.rs
+  |
+  |     let _ = NSSet::from_vec(vec![NSObject::new()]);
+  |             --------------- ^^^^^^^^^^^^^^^^^^^^^ the trait `mutability::private::MutabilityHashIsStable` is not implemented for `Root`
+  |             |
+  |             required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `mutability::private::MutabilityHashIsStable`:
+            Immutable
+            Mutable
+            ImmutableWithMutableSubclass<MS>
+            MutableWithImmutableSuperclass<IS>
+  = note: required for `NSObject` to implement `HasStableHash`
+note: required by a bound in `set::<impl NSSet<T>>::from_vec`
+ --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/set.rs
+  |
+  |     pub fn from_vec(mut vec: Vec<Id<T>>) -> Id<Self>
+  |            -------- required by a bound in this associated function
+  |     where
+  |         T: HasStableHash,
+  |            ^^^^^^^^^^^^^ required by this bound in `set::<impl NSSet<T>>::from_vec`

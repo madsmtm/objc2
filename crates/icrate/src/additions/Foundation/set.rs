@@ -2,9 +2,10 @@
 #![cfg(feature = "Foundation_NSSet")]
 use alloc::vec::Vec;
 use core::fmt;
+use core::hash::Hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::mutability::IsRetainable;
+use objc2::mutability::{HasStableHash, IsRetainable};
 use objc2::rc::IdFromIterator;
 
 use super::iter;
@@ -15,6 +16,38 @@ use crate::Foundation::NSMutableSet;
 use crate::Foundation::{self, NSSet};
 
 impl<T: Message> NSSet<T> {
+    /// Returns the number of elements in the set.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icrate::Foundation::{NSSet, NSString};
+    ///
+    /// let strs = ["one", "two", "three"].map(NSString::from_str);
+    /// let set = NSSet::from_id_slice(&strs);
+    /// assert_eq!(set.len(), 3);
+    /// ```
+    #[doc(alias = "count")]
+    pub fn len(&self) -> usize {
+        self.count()
+    }
+
+    /// Returns `true` if the set contains no elements.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icrate::Foundation::{NSSet, NSString};
+    ///
+    /// let set = NSSet::<NSString>::new();
+    /// assert!(set.is_empty());
+    /// ```
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+}
+
+impl<T: Message + Eq + Hash> NSSet<T> {
     /// Creates an [`NSSet`] from a vector.
     ///
     /// # Examples
@@ -25,7 +58,10 @@ impl<T: Message> NSSet<T> {
     /// let strs = ["one", "two", "three"].map(NSString::from_str).to_vec();
     /// let set = NSSet::from_vec(strs);
     /// ```
-    pub fn from_vec(mut vec: Vec<Id<T>>) -> Id<Self> {
+    pub fn from_vec(mut vec: Vec<Id<T>>) -> Id<Self>
+    where
+        T: HasStableHash,
+    {
         let len = vec.len();
         let ptr = util::id_ptr_cast(vec.as_mut_ptr());
         // SAFETY: Same as `NSArray::from_vec`.
@@ -44,7 +80,7 @@ impl<T: Message> NSSet<T> {
     /// ```
     pub fn from_id_slice(slice: &[Id<T>]) -> Id<Self>
     where
-        T: IsIdCloneable,
+        T: HasStableHash + IsIdCloneable,
     {
         let len = slice.len();
         let ptr = util::id_ptr_cast_const(slice.as_ptr());
@@ -54,7 +90,7 @@ impl<T: Message> NSSet<T> {
 
     pub fn from_slice(slice: &[&T]) -> Id<Self>
     where
-        T: IsRetainable,
+        T: HasStableHash + IsRetainable,
     {
         let len = slice.len();
         let ptr = util::ref_ptr_cast_const(slice.as_ptr());
@@ -126,7 +162,7 @@ impl<T: Message> NSSet<T> {
 }
 
 #[cfg(feature = "Foundation_NSMutableSet")]
-impl<T: Message> NSMutableSet<T> {
+impl<T: Message + Eq + Hash> NSMutableSet<T> {
     /// Creates an [`NSMutableSet`] from a vector.
     ///
     /// # Examples
@@ -137,7 +173,10 @@ impl<T: Message> NSMutableSet<T> {
     /// let strs = ["one", "two", "three"].map(NSString::from_str).to_vec();
     /// let set = NSMutableSet::from_vec(strs);
     /// ```
-    pub fn from_vec(mut vec: Vec<Id<T>>) -> Id<Self> {
+    pub fn from_vec(mut vec: Vec<Id<T>>) -> Id<Self>
+    where
+        T: HasStableHash,
+    {
         let len = vec.len();
         let ptr = util::id_ptr_cast(vec.as_mut_ptr());
         // SAFETY: Same as `NSArray::from_vec`.
@@ -156,7 +195,7 @@ impl<T: Message> NSMutableSet<T> {
     /// ```
     pub fn from_id_slice(slice: &[Id<T>]) -> Id<Self>
     where
-        T: IsIdCloneable,
+        T: HasStableHash + IsIdCloneable,
     {
         let len = slice.len();
         let ptr = util::id_ptr_cast_const(slice.as_ptr());
@@ -166,7 +205,7 @@ impl<T: Message> NSMutableSet<T> {
 
     pub fn from_slice(slice: &[&T]) -> Id<Self>
     where
-        T: IsRetainable,
+        T: HasStableHash + IsRetainable,
     {
         let len = slice.len();
         let ptr = util::ref_ptr_cast_const(slice.as_ptr());
@@ -197,36 +236,6 @@ impl<T: Message> NSMutableSet<T> {
 
 extern_methods!(
     unsafe impl<T: Message> NSSet<T> {
-        /// Returns the number of elements in the set.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icrate::Foundation::{NSSet, NSString};
-        ///
-        /// let strs = ["one", "two", "three"].map(NSString::from_str);
-        /// let set = NSSet::from_id_slice(&strs);
-        /// assert_eq!(set.len(), 3);
-        /// ```
-        #[doc(alias = "count")]
-        pub fn len(&self) -> usize {
-            self.count()
-        }
-
-        /// Returns `true` if the set contains no elements.
-        ///
-        /// # Examples
-        ///
-        /// ```
-        /// use icrate::Foundation::{NSSet, NSString};
-        ///
-        /// let set = NSSet::<NSString>::new();
-        /// assert!(set.is_empty());
-        /// ```
-        pub fn is_empty(&self) -> bool {
-            self.len() == 0
-        }
-
         /// Returns a reference to one of the objects in the set, or `None` if
         /// the set is empty.
         ///
@@ -245,10 +254,7 @@ extern_methods!(
         pub fn get_any(&self) -> Option<&T>;
     }
 
-    // We're explicit about `T` being `PartialEq` for these methods because
-    // the set compares the input value(s) with elements in the set. For
-    // comparison: Rust's HashSet requires similar methods to be `Hash` + `Eq`
-    unsafe impl<T: Message + PartialEq> NSSet<T> {
+    unsafe impl<T: Message + Eq + Hash> NSSet<T> {
         /// Returns `true` if the set contains a value.
         ///
         /// # Examples
@@ -292,7 +298,7 @@ extern_methods!(
         }
 
         // Note: No `get_mut` method exposed on sets, since their objects'
-        // hashes are supposed to be immutable.
+        // hashes are immutable.
 
         /// Returns `true` if the set is a subset of another, i.e., `other`
         /// contains at least all the values in `self`.
@@ -353,8 +359,34 @@ extern_methods!(
 );
 
 #[cfg(feature = "Foundation_NSMutableSet")]
-impl<T: Message + PartialEq> NSMutableSet<T> {
-    /// Adds a value to the set. Returns whether the value was
+impl<T: Message + Eq + Hash> NSMutableSet<T> {
+    /// Add a value to the set. Returns whether the value was
+    /// newly inserted.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icrate::Foundation::{NSNumber, NSMutableSet};
+    ///
+    /// let mut set = NSMutableSet::new();
+    ///
+    /// assert_eq!(set.insert(&*NSNumber::new_u32(42)), true);
+    /// assert_eq!(set.insert(&*NSNumber::new_u32(42)), false);
+    /// assert_eq!(set.len(), 1);
+    /// ```
+    #[doc(alias = "addObject:")]
+    pub fn insert(&mut self, value: &T) -> bool
+    where
+        T: HasStableHash + IsRetainable,
+    {
+        let contains_value = self.contains(value);
+        // SAFETY: Because of the `T: IsRetainable` bound, it is safe for the
+        // set to retain the object here.
+        unsafe { self.addObject(value) };
+        !contains_value
+    }
+
+    /// Add an `Id` to the set. Returns whether the value was
     /// newly inserted.
     ///
     /// # Examples
@@ -364,12 +396,15 @@ impl<T: Message + PartialEq> NSMutableSet<T> {
     ///
     /// let mut set = NSMutableSet::new();
     ///
-    /// assert_eq!(set.insert(NSString::from_str("one")), true);
-    /// assert_eq!(set.insert(NSString::from_str("one")), false);
+    /// assert_eq!(set.insert_id(NSString::from_str("one")), true);
+    /// assert_eq!(set.insert_id(NSString::from_str("one")), false);
     /// assert_eq!(set.len(), 1);
     /// ```
     #[doc(alias = "addObject:")]
-    pub fn insert(&mut self, value: Id<T>) -> bool {
+    pub fn insert_id(&mut self, value: Id<T>) -> bool
+    where
+        T: HasStableHash,
+    {
         let contains_value = self.contains(&value);
         // SAFETY: We've consumed ownership of the object.
         unsafe { self.addObject(&value) };
@@ -386,18 +421,24 @@ impl<T: Message + PartialEq> NSMutableSet<T> {
     ///
     /// let mut set = NSMutableSet::new();
     ///
-    /// set.insert(NSString::from_str("one"));
+    /// set.insert_id(NSString::from_str("one"));
     /// assert_eq!(set.remove(ns_string!("one")), true);
     /// assert_eq!(set.remove(ns_string!("one")), false);
     /// ```
     #[doc(alias = "removeObject:")]
-    pub fn remove(&mut self, value: &T) -> bool {
+    pub fn remove(&mut self, value: &T) -> bool
+    where
+        T: HasStableHash,
+    {
         let contains_value = self.contains(value);
         unsafe { self.removeObject(value) };
         contains_value
     }
 }
 
+// Iteration is not supposed to touch the elements, not even do comparisons.
+//
+// TODO: Verify that this is actually the case.
 impl<T: Message> NSSet<T> {
     /// An iterator visiting all elements in arbitrary order.
     ///
@@ -499,32 +540,31 @@ impl<T: fmt::Debug + Message> fmt::Debug for NSSet<T> {
 }
 
 #[cfg(feature = "Foundation_NSMutableSet")]
-impl<T: Message + PartialEq> Extend<Id<T>> for NSMutableSet<T> {
+impl<T: Message + Eq + Hash + HasStableHash> Extend<Id<T>> for NSMutableSet<T> {
     fn extend<I: IntoIterator<Item = Id<T>>>(&mut self, iter: I) {
+        iter.into_iter().for_each(move |item| {
+            self.insert_id(item);
+        })
+    }
+}
+
+#[cfg(feature = "Foundation_NSMutableSet")]
+impl<'a, T: IsRetainable + Eq + Hash + HasStableHash> Extend<&'a T> for NSMutableSet<T> {
+    fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| {
             self.insert(item);
         })
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableSet")]
-impl<'a, T: IsRetainable + PartialEq> Extend<&'a T> for NSMutableSet<T> {
-    fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
-        // SAFETY: Because of the `T: IsRetainable` bound, it is safe for the
-        // set to retain the object here.
-        iter.into_iter()
-            .for_each(move |item| unsafe { self.addObject(item) })
-    }
-}
-
-impl<'a, T: IsRetainable + 'a> IdFromIterator<&'a T> for NSSet<T> {
+impl<'a, T: IsRetainable + Eq + Hash + HasStableHash + 'a> IdFromIterator<&'a T> for NSSet<T> {
     fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Id<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
     }
 }
 
-impl<T: Message> IdFromIterator<Id<T>> for NSSet<T> {
+impl<T: Message + Eq + Hash + HasStableHash> IdFromIterator<Id<T>> for NSSet<T> {
     fn id_from_iter<I: IntoIterator<Item = Id<T>>>(iter: I) -> Id<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_vec(vec)
@@ -532,7 +572,9 @@ impl<T: Message> IdFromIterator<Id<T>> for NSSet<T> {
 }
 
 #[cfg(feature = "Foundation_NSMutableSet")]
-impl<'a, T: IsRetainable + 'a> IdFromIterator<&'a T> for NSMutableSet<T> {
+impl<'a, T: IsRetainable + Eq + Hash + HasStableHash + 'a> IdFromIterator<&'a T>
+    for NSMutableSet<T>
+{
     fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Id<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
@@ -540,7 +582,7 @@ impl<'a, T: IsRetainable + 'a> IdFromIterator<&'a T> for NSMutableSet<T> {
 }
 
 #[cfg(feature = "Foundation_NSMutableSet")]
-impl<T: Message> IdFromIterator<Id<T>> for NSMutableSet<T> {
+impl<T: Message + Eq + Hash + HasStableHash> IdFromIterator<Id<T>> for NSMutableSet<T> {
     fn id_from_iter<I: IntoIterator<Item = Id<T>>>(iter: I) -> Id<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_vec(vec)

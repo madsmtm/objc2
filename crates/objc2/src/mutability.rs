@@ -136,9 +136,16 @@ pub struct ImmutableWithMutableSubclass<MS: ?Sized> {
 
 /// Marker type for mutable classes that have a immutable counterpart.
 ///
-/// This is effectively the same as [`Mutable`], except that the immutable
+/// This is effectively the same as [`Mutable`], except for the immutable
 /// counterpart being be specified as the type parameter `IS` to allow
 /// `NSCopying` and `NSMutableCopying` to return the correct type.
+///
+/// Functionality that is provided with this:
+/// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
+/// - [`IsMutable`] -> [`impl DerefMut for Id`][crate::rc::Id#impl-DerefMut-for-Id<T>].
+/// - You are allowed to hand out pointers / references to an instance's
+///   internal data, since you know such data will never be mutated without
+///   the borrowchecker catching it.
 ///
 ///
 /// # Example
@@ -201,6 +208,11 @@ pub struct InteriorMutable {
 ///
 /// It is unsound to implement [`Send`] or [`Sync`] on a type with this
 /// mutability.
+///
+/// Functionality that is provided with this:
+/// - [`IsRetainable`] -> [`ClassType::retain`].
+/// - [`IsIdCloneable`] -> [`Id::clone`][crate::rc::Id#impl-Clone-for-Id<T>].
+/// - [`IsMainThreadOnly`] -> `MainThreadMarker::from`.
 //
 // While Xcode's Main Thread Checker doesn't report `alloc` and `dealloc` as
 // unsafe from other threads, things like `NSView` and `NSWindow` still do a
@@ -253,8 +265,54 @@ mod private {
     pub trait MutabilityIsMainThreadOnly: Mutability {}
     impl MutabilityIsMainThreadOnly for MainThreadOnly {}
 
-    // TODO: Trait for objects whose `hash` is guaranteed to never change,
-    // which allows it to be used as a key in `NSDictionary`.
+    pub trait MutabilityHashIsStable: Mutability {}
+    impl MutabilityHashIsStable for Immutable {}
+    impl MutabilityHashIsStable for Mutable {}
+    impl<MS: ?Sized> MutabilityHashIsStable for ImmutableWithMutableSubclass<MS> {}
+    impl<IS: ?Sized> MutabilityHashIsStable for MutableWithImmutableSuperclass<IS> {}
+
+    pub trait MutabilityCounterpartOrSelf<T: ?Sized>: Mutability {
+        type Immutable: ?Sized + ClassType;
+        type Mutable: ?Sized + ClassType;
+    }
+    impl<T: ClassType<Mutability = Root>> MutabilityCounterpartOrSelf<T> for Root {
+        type Immutable = T;
+        type Mutable = T;
+    }
+    impl<T: ClassType<Mutability = Immutable>> MutabilityCounterpartOrSelf<T> for Immutable {
+        type Immutable = T;
+        type Mutable = T;
+    }
+    impl<T: ClassType<Mutability = Mutable>> MutabilityCounterpartOrSelf<T> for Mutable {
+        type Immutable = T;
+        type Mutable = T;
+    }
+    impl<T, S> MutabilityCounterpartOrSelf<T> for ImmutableWithMutableSubclass<S>
+    where
+        T: ClassType<Mutability = ImmutableWithMutableSubclass<S>>,
+        S: ClassType<Mutability = MutableWithImmutableSuperclass<T>>,
+    {
+        type Immutable = T;
+        type Mutable = S;
+    }
+    impl<T, S> MutabilityCounterpartOrSelf<T> for MutableWithImmutableSuperclass<S>
+    where
+        T: ClassType<Mutability = MutableWithImmutableSuperclass<S>>,
+        S: ClassType<Mutability = ImmutableWithMutableSubclass<T>>,
+    {
+        type Immutable = S;
+        type Mutable = T;
+    }
+    impl<T: ClassType<Mutability = InteriorMutable>> MutabilityCounterpartOrSelf<T>
+        for InteriorMutable
+    {
+        type Immutable = T;
+        type Mutable = T;
+    }
+    impl<T: ClassType<Mutability = MainThreadOnly>> MutabilityCounterpartOrSelf<T> for MainThreadOnly {
+        type Immutable = T;
+        type Mutable = T;
+    }
 }
 
 /// Marker trait for the different types of mutability a class can have.
@@ -349,10 +407,63 @@ impl<T: ?Sized + ClassType> IsMainThreadOnly for T where
 {
 }
 
+/// Marker trait for classes whose `hash` and `isEqual:` methods are stable.
+///
+/// This is useful for hashing collection types like `NSDictionary` and
+/// `NSSet` which require that their keys never change.
+///
+/// This is implemented for classes whose [`ClassType::Mutability`] is one of:
+/// - [`Immutable`].
+/// - [`Mutable`].
+/// - [`ImmutableWithMutableSubclass`].
+/// - [`MutableWithImmutableSuperclass`].
+///
+/// Since all of these do not use interior mutability, and since the `hash`
+/// and `isEqual:` methods are required to not use external sources like
+/// thread locals or randomness to determine their result, we can guarantee
+/// that the hash is stable for these types.
+//
+// TODO: Exclude generic types like `NSArray<NSView>` from this!
+pub trait HasStableHash: ClassType {}
+impl<T: ?Sized + ClassType> HasStableHash for T where T::Mutability: private::MutabilityHashIsStable {}
+
+/// Retrieve the immutable/mutable counterpart class, and fall back to `Self`
+/// if not applicable.
+///
+/// This is mostly used for describing the return type of `NSCopying` and
+/// `NSMutableCopying`, since due to Rust trait limitations, those two can't
+/// have associated types themselves (at least not since we want to use them
+/// in `ProtocolObject<dyn NSCopying>`).
+pub trait CounterpartOrSelf: ClassType {
+    /// The immutable counterpart of the type, or `Self` if the type has no
+    /// immutable counterpart.
+    ///
+    /// The implementation for `NSString` has itself (`NSString`) here, while
+    /// `NSMutableString` instead has `NSString`.
+    type Immutable: ?Sized + ClassType;
+
+    /// The mutable counterpart of the type, or `Self` if the type has no
+    /// mutable counterpart.
+    ///
+    /// The implementation for `NSString` has `NSMutableString` here, while
+    /// `NSMutableString` has itself (`NSMutableString`).
+    type Mutable: ?Sized + ClassType;
+}
+impl<T: ?Sized + ClassType> CounterpartOrSelf for T
+where
+    T::Mutability: private::MutabilityCounterpartOrSelf<T>,
+{
+    type Immutable = <T::Mutability as private::MutabilityCounterpartOrSelf<T>>::Immutable;
+    type Mutable = <T::Mutability as private::MutabilityCounterpartOrSelf<T>>::Mutable;
+}
+
 #[cfg(test)]
 mod tests {
+    use crate::runtime::NSObject;
+
     use super::*;
 
+    use core::any::TypeId;
     use core::fmt;
     use core::hash;
 
@@ -378,5 +489,17 @@ mod tests {
             fn assert_sized<T: Sized>() {}
             assert_sized::<M>();
         }
+    }
+
+    #[test]
+    fn counterpart_root() {
+        assert_eq!(
+            TypeId::of::<NSObject>(),
+            TypeId::of::<<NSObject as CounterpartOrSelf>::Immutable>(),
+        );
+        assert_eq!(
+            TypeId::of::<NSObject>(),
+            TypeId::of::<<NSObject as CounterpartOrSelf>::Mutable>(),
+        );
     }
 }

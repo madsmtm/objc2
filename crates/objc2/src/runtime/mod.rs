@@ -33,7 +33,6 @@ use std::os::raw::c_uint;
 pub mod __nsstring;
 mod bool;
 mod method_encoding_iter;
-mod nscopying;
 mod nsobject;
 mod nsproxy;
 mod nszone;
@@ -46,12 +45,8 @@ use crate::encode::{Encode, EncodeArguments, EncodeReturn, Encoding, OptionEncod
 use crate::verify::{verify_method_signature, Inner};
 use crate::{ffi, Message};
 
-// Note: While these are not public, they are still a breaking change to
-// remove, since `icrate` relies on them.
-#[doc(hidden)]
-pub use self::nscopying::{
-    Copyhelper as __Copyhelper, NSCopying as __NSCopying, NSMutableCopying as __NSMutableCopying,
-};
+// Note: While this is not public, it is still a breaking change to remove,
+// since `icrate` relies on it.
 #[doc(hidden)]
 pub use self::nsproxy::NSProxy as __NSProxy;
 

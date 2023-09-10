@@ -60,10 +60,7 @@ fn test_debug() {
     let s = unsafe {
         NSAttributedString::new_with_attributes(
             &NSString::from_str("abc"),
-            &Foundation::NSDictionary::from_keys_and_objects(
-                &[&*NSString::from_str("test")],
-                vec![obj],
-            ),
+            &Foundation::NSDictionary::from_vec(&[&*NSString::from_str("test")], vec![obj]),
         )
     };
     let expected = if cfg!(feature = "gnustep-1-7") {

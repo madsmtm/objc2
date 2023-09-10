@@ -7,7 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
-* Added `mutability::IsMainThreadOnly`.
+* Added the following traits to the `mutability` module (see the documentation
+  for motivation and usage info):
+  - `HasStableHash`.
+  - `IsMainThreadOnly`.
+  - `CounterpartOrSelf`.
 * Added new `encode` traits `EncodeReturn`, `EncodeArgument` and
   `EncodeArguments`.
 

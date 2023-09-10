@@ -241,4 +241,6 @@ data! {
 
     class NSURLRequest: ImmutableWithMutableSubclass<Foundation::NSMutableURLRequest> {}
     class NSMutableURLRequest: MutableWithImmutableSuperclass<Foundation::NSURLRequest> {}
+
+    class NSIndexPath: Immutable {}
 }

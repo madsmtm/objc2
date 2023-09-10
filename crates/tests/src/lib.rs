@@ -11,6 +11,8 @@ extern crate std;
 mod exception;
 pub mod ffi;
 #[cfg(test)]
+mod test_declare_class_protocol;
+#[cfg(test)]
 mod test_encode_utils;
 #[cfg(test)]
 mod test_object;

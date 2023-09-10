@@ -1,65 +1,152 @@
 //! Utilities for the `NSDictionary` and `NSMutableDictionary` classes.
 #![cfg(feature = "Foundation_NSDictionary")]
 use alloc::vec::Vec;
+use core::borrow::Borrow;
 use core::cmp::min;
 use core::fmt;
+use core::hash::Hash;
 use core::mem;
 use core::ops::{Index, IndexMut};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 
-use objc2::mutability::IsMutable;
+use objc2::mutability::{CounterpartOrSelf, HasStableHash, IsIdCloneable, IsMutable, IsRetainable};
 
 use super::iter;
 use super::util;
 use crate::common::*;
 #[cfg(feature = "Foundation_NSMutableDictionary")]
 use crate::Foundation::NSMutableDictionary;
-use crate::Foundation::{self, Copyhelper, NSCopying, NSDictionary};
+use crate::Foundation::{self, NSCopying, NSDictionary};
 
-impl<K: Message, V: Message> NSDictionary<K, V> {
-    pub fn from_keys_and_objects<T>(keys: &[&T], mut vals: Vec<Id<V>>) -> Id<Self>
+impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
+    pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Id<V>>) -> Id<Self>
     where
-        T: ClassType + NSCopying,
-        T::Mutability: Copyhelper<T, CopyOutput = K>,
+        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
     {
-        let count = min(keys.len(), vals.len());
+        // Find the minimum of the two provided lengths, to ensure that we
+        // don't read too far in one of the buffers.
+        //
+        // Note: We could also have chosen to just panic here if the buffers have
+        // different lengths, either would be fine.
+        let count = min(keys.len(), objects.len());
 
-        let keys: *mut NonNull<T> = util::ref_ptr_cast_const(keys.as_ptr());
+        let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
         let keys: *mut NonNull<AnyObject> = keys.cast();
-        let vals = util::id_ptr_cast(vals.as_mut_ptr());
+        let objects = util::id_ptr_cast(objects.as_mut_ptr());
 
-        unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), vals, keys, count) }
+        // SAFETY:
+        // - The objects are valid, similar reasoning as `NSArray::from_vec`.
+        //
+        // - The key must not be mutated, as that may cause the hash value to
+        //   change, which is unsound as stated in:
+        //   https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/ObjectMutability/ObjectMutability.html#//apple_ref/doc/uid/TP40010810-CH5-SW69
+        //
+        //   The dictionary always copies its keys, which is why we require
+        //   `NSCopying` and use `CounterpartOrSelf` on all input data - we
+        //   want to ensure that it is very clear that it's not actually
+        //   `NSMutableString` that is being stored, but `NSString`.
+        //
+        //   But that is not by itself enough to verify that the key does not
+        //   still contain interior mutable objects (e.g. if the copy was only
+        //   a shallow copy), which is why we also require `HasStableHash`.
+        //
+        // - The length is lower than or equal to the length of the two arrays.
+        unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
+    }
+
+    pub fn from_id_slice<Q>(keys: &[&Q], objects: &[Id<V>]) -> Id<Self>
+    where
+        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
+        V: IsIdCloneable,
+    {
+        let count = min(keys.len(), objects.len());
+
+        let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
+        let keys: *mut NonNull<AnyObject> = keys.cast();
+        let objects = util::id_ptr_cast_const(objects.as_ptr());
+
+        // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_id_slice`.
+        unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
+    }
+
+    pub fn from_slice<Q>(keys: &[&Q], objects: &[&V]) -> Id<Self>
+    where
+        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
+        V: IsRetainable,
+    {
+        let count = min(keys.len(), objects.len());
+
+        let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
+        let keys: *mut NonNull<AnyObject> = keys.cast();
+        let objects = util::ref_ptr_cast_const(objects.as_ptr());
+
+        // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_slice`.
+        unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
     }
 }
 
 #[cfg(feature = "Foundation_NSMutableDictionary")]
-impl<K: Message, V: Message> NSMutableDictionary<K, V> {
-    pub fn from_keys_and_objects<T>(keys: &[&T], mut vals: Vec<Id<V>>) -> Id<Self>
+impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, V> {
+    pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Id<V>>) -> Id<Self>
     where
-        T: ClassType + NSCopying,
-        T::Mutability: Copyhelper<T, CopyOutput = K>,
+        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
     {
-        let count = min(keys.len(), vals.len());
+        let count = min(keys.len(), objects.len());
 
-        let keys: *mut NonNull<T> = util::ref_ptr_cast_const(keys.as_ptr());
+        let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
         let keys: *mut NonNull<AnyObject> = keys.cast();
-        let vals = util::id_ptr_cast(vals.as_mut_ptr());
+        let objects = util::id_ptr_cast(objects.as_mut_ptr());
 
-        unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), vals, keys, count) }
+        // SAFETY: See `NSDictionary::from_vec`
+        unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
+    }
+
+    pub fn from_id_slice<Q>(keys: &[&Q], objects: &[Id<V>]) -> Id<Self>
+    where
+        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
+        V: IsIdCloneable,
+    {
+        let count = min(keys.len(), objects.len());
+
+        let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
+        let keys: *mut NonNull<AnyObject> = keys.cast();
+        let objects = util::id_ptr_cast_const(objects.as_ptr());
+
+        // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_id_slice`.
+        unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
+    }
+
+    pub fn from_slice<Q>(keys: &[&Q], objects: &[&V]) -> Id<Self>
+    where
+        Q: Message + NSCopying + CounterpartOrSelf<Immutable = K>,
+        V: IsRetainable,
+    {
+        let count = min(keys.len(), objects.len());
+
+        let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
+        let keys: *mut NonNull<AnyObject> = keys.cast();
+        let objects = util::ref_ptr_cast_const(objects.as_ptr());
+
+        // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_slice`.
+        unsafe { Self::initWithObjects_forKeys_count(Self::alloc(), objects, keys, count) }
     }
 }
 
+// Note: We'd like to make getter methods take `K: Borrow<Q>` like
+// `std::collections::HashMap`, so that e.g.
+// `NSDictionary<NSString, ...>` could take a `&NSObject` as input,
+// and still make that work since `NSString` borrows to `NSObject`.
+//
+// But we can't really, at least not with extra `unsafe` / an extra
+// trait, since we don't control how the comparisons happen.
+//
+// The most useful alternative would probably be to take
+// `impl AsRef<K>`, but objc2 classes deref to their superclass anyhow, so
+// let's just use a simple normal reference.
+
 extern_methods!(
-    unsafe impl<K: Message, V: Message> NSDictionary<K, V> {
-        pub fn len(&self) -> usize {
-            self.count()
-        }
-
-        pub fn is_empty(&self) -> bool {
-            self.len() == 0
-        }
-
+    unsafe impl<K: Message + Eq + Hash, V: Message> NSDictionary<K, V> {
         #[doc(alias = "objectForKey:")]
         #[method(objectForKey:)]
         pub fn get(&self, key: &K) -> Option<&V>;
@@ -95,7 +182,7 @@ extern_methods!(
         /// use icrate::Foundation::{ns_string, NSMutableDictionary, NSMutableString, NSString};
         ///
         /// let mut dict = NSMutableDictionary::new();
-        /// dict.insert(NSString::from_str("one"), NSMutableString::new());
+        /// dict.insert_id(ns_string!("one"), NSMutableString::new());
         /// println!("{:?}", dict.get_mut(ns_string!("one")));
         /// ```
         #[doc(alias = "objectForKey:")]
@@ -107,6 +194,14 @@ extern_methods!(
 );
 
 impl<K: Message, V: Message> NSDictionary<K, V> {
+    pub fn len(&self) -> usize {
+        self.count()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
     #[doc(alias = "getObjects:andKeys:")]
     pub fn keys_vec(&self) -> Vec<&K> {
         let len = self.len();
@@ -119,8 +214,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
         }
     }
 
-    // We don't provide `keys_mut_vec`, since keys are expected to be
-    // immutable.
+    // We don't provide `keys_mut_vec`, since keys are immutable.
 
     #[doc(alias = "getObjects:andKeys:")]
     pub fn values_vec(&self) -> Vec<&V> {
@@ -152,10 +246,10 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
         )),
         doc = "```ignore"
     )]
-    /// use icrate::Foundation::{NSMutableDictionary, NSMutableString, NSString};
+    /// use icrate::Foundation::{ns_string, NSMutableDictionary, NSMutableString, NSString};
     ///
     /// let mut dict = NSMutableDictionary::new();
-    /// dict.insert(NSString::from_str("one"), NSMutableString::from_str("two"));
+    /// dict.insert_id(ns_string!("one"), NSMutableString::from_str("two"));
     /// for val in dict.values_mut() {
     ///     println!("{:?}", val);
     /// }
@@ -188,10 +282,35 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
             (mem::transmute(keys), mem::transmute(objs))
         }
     }
+
+    /// Returns an [`NSArray`] containing the dictionary's values.
+    ///
+    /// [`NSArray`]: crate::Foundation::NSArray
+    ///
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icrate::Foundation::{ns_string, NSMutableDictionary, NSObject, NSString};
+    ///
+    /// let mut dict = NSMutableDictionary::new();
+    /// dict.insert_id(ns_string!("one"), NSObject::new());
+    /// let array = dict.to_array();
+    /// assert_eq!(array.len(), 1);
+    /// ```
+    #[cfg(feature = "Foundation_NSArray")]
+    pub fn to_array(&self) -> Id<Foundation::NSArray<V>>
+    where
+        V: IsIdCloneable,
+    {
+        // SAFETY: The elements are retainable behind `Id<V>`, so getting
+        // another reference to them (via. `NSArray`) is sound.
+        unsafe { self.allValues() }
+    }
 }
 
 #[cfg(feature = "Foundation_NSMutableDictionary")]
-impl<K: Message, V: Message> NSMutableDictionary<K, V> {
+impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, V> {
     /// Inserts a key-value pair into the dictionary.
     ///
     /// If the dictionary did not have this key present, None is returned.
@@ -201,22 +320,66 @@ impl<K: Message, V: Message> NSMutableDictionary<K, V> {
     /// # Examples
     ///
     /// ```
-    /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
+    /// use icrate::Foundation::{NSMutableDictionary, NSObject, ns_string};
     ///
     /// let mut dict = NSMutableDictionary::new();
-    /// dict.insert(NSString::from_str("one"), NSObject::new());
+    /// dict.insert_id(ns_string!("one"), NSObject::new());
     /// ```
     #[doc(alias = "setObject:forKey:")]
-    pub fn insert(&mut self, key: Id<K>, value: Id<V>) -> Option<Id<V>> {
+    pub fn insert_id(&mut self, key: &K, value: Id<V>) -> Option<Id<V>>
+    where
+        K: NSCopying + CounterpartOrSelf<Immutable = K>,
+    {
         // SAFETY: We remove the object from the dictionary below
         let old_obj = self
-            .get(&key)
+            .get(key)
             .map(|old_obj| unsafe { util::mutable_collection_retain_removed_id(old_obj) });
 
-        // SAFETY: It is always safe to transmute an `Id` to `AnyObject`.
-        let key: Id<AnyObject> = unsafe { Id::cast(key) };
-        // SAFETY: We have ownership over both the key and the value.
-        unsafe { self.setObject_forKey(&value, &key) };
+        // SAFETY: It is always safe to transmute an `&T` where `T: Message`
+        // to `&AnyObject`.
+        let key: NonNull<K> = NonNull::from(key);
+        let key: NonNull<AnyObject> = key.cast();
+        let key: &AnyObject = unsafe { key.as_ref() };
+        // SAFETY: The key is NSCopying (see `NSDictionary::from_vec`), and we
+        // have ownership over the value.
+        unsafe { self.setObject_forKey(&value, key) };
+        old_obj
+    }
+
+    /// Inserts a key-value pair into the dictionary.
+    ///
+    /// If the dictionary did not have this key present, None is returned.
+    /// If the dictionary did have this key present, the value is updated,
+    /// and the old value is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icrate::Foundation::{ns_string, NSCopying, NSMutableDictionary};
+    ///
+    /// let mut dict = NSMutableDictionary::new();
+    /// dict.insert_id(ns_string!("key"), ns_string!("value").copy());
+    /// ```
+    #[doc(alias = "setObject:forKey:")]
+    pub fn insert(&mut self, key: &K, value: &V) -> Option<Id<V>>
+    where
+        K: NSCopying + CounterpartOrSelf<Immutable = K>,
+        V: IsRetainable,
+    {
+        // SAFETY: We remove the object from the dictionary below
+        let old_obj = self
+            .get(key)
+            .map(|old_obj| unsafe { util::mutable_collection_retain_removed_id(old_obj) });
+
+        // SAFETY: It is always safe to transmute an `&T` where `T: Message`
+        // to `&AnyObject`.
+        let key: NonNull<K> = NonNull::from(key);
+        let key: NonNull<AnyObject> = key.cast();
+        let key: &AnyObject = unsafe { key.as_ref() };
+        // SAFETY: The key is NSCopying (see `NSDictionary::from_vec`), and
+        // the value is `IsRetainable` (and hence safe for the collection to
+        // retain).
+        unsafe { self.setObject_forKey(value, key) };
         old_obj
     }
 
@@ -226,44 +389,24 @@ impl<K: Message, V: Message> NSMutableDictionary<K, V> {
     /// # Examples
     ///
     /// ```
-    /// use icrate::Foundation::{ns_string, NSMutableDictionary, NSObject, NSString};
+    /// use icrate::Foundation::{ns_string, NSMutableDictionary, NSObject};
     ///
     /// let mut dict = NSMutableDictionary::new();
-    /// dict.insert(NSString::from_str("one"), NSObject::new());
+    /// dict.insert_id(ns_string!("one"), NSObject::new());
     /// dict.remove(ns_string!("one"));
     /// assert!(dict.is_empty());
     /// ```
     #[doc(alias = "removeObjectForKey:")]
-    pub fn remove(&mut self, key: &K) -> Option<Id<V>> {
+    pub fn remove(&mut self, key: &K) -> Option<Id<V>>
+    where
+        K: CounterpartOrSelf<Immutable = K>,
+    {
         // SAFETY: We remove the object from the dictionary below
         let old_obj = self
             .get(key)
             .map(|old_obj| unsafe { util::mutable_collection_retain_removed_id(old_obj) });
         self.removeObjectForKey(key);
         old_obj
-    }
-
-    /// Returns an [`NSArray`] containing the dictionary's values,
-    /// consuming the dictionary.
-    ///
-    /// [`NSArray`]: crate::Foundation::NSArray
-    ///
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icrate::Foundation::{NSMutableDictionary, NSObject, NSString};
-    ///
-    /// let mut dict = NSMutableDictionary::new();
-    /// dict.insert(NSString::from_str("one"), NSObject::new());
-    /// let array = NSMutableDictionary::into_values_array(dict);
-    /// println!("{:?}", array);
-    /// ```
-    #[cfg(feature = "Foundation_NSArray")]
-    pub fn into_values_array(this: Id<Self>) -> Id<Foundation::NSArray<V>> {
-        // SAFETY: We've consumed the dictionary, so getting an array from
-        // it is safe.
-        unsafe { this.allValues() }
     }
 }
 
@@ -420,7 +563,7 @@ mod iter_helpers {
 #[cfg(feature = "Foundation_NSEnumerator")]
 pub use self::iter_helpers::*;
 
-impl<'a, K: Message, V: Message> Index<&'a K> for NSDictionary<K, V> {
+impl<'a, K: Message + Eq + Hash, V: Message> Index<&'a K> for NSDictionary<K, V> {
     type Output = V;
 
     fn index<'s>(&'s self, index: &'a K) -> &'s V {
@@ -429,7 +572,7 @@ impl<'a, K: Message, V: Message> Index<&'a K> for NSDictionary<K, V> {
 }
 
 #[cfg(feature = "Foundation_NSMutableDictionary")]
-impl<'a, K: Message, V: Message> Index<&'a K> for NSMutableDictionary<K, V> {
+impl<'a, K: Message + Eq + Hash, V: Message> Index<&'a K> for NSMutableDictionary<K, V> {
     type Output = V;
 
     fn index<'s>(&'s self, index: &'a K) -> &'s V {
@@ -437,14 +580,14 @@ impl<'a, K: Message, V: Message> Index<&'a K> for NSMutableDictionary<K, V> {
     }
 }
 
-impl<'a, K: Message, V: IsMutable> IndexMut<&'a K> for NSDictionary<K, V> {
+impl<'a, K: Message + Eq + Hash, V: IsMutable> IndexMut<&'a K> for NSDictionary<K, V> {
     fn index_mut<'s>(&'s mut self, index: &'a K) -> &'s mut V {
         self.get_mut(index).unwrap()
     }
 }
 
 #[cfg(feature = "Foundation_NSMutableDictionary")]
-impl<'a, K: Message, V: IsMutable> IndexMut<&'a K> for NSMutableDictionary<K, V> {
+impl<'a, K: Message + Eq + Hash, V: IsMutable> IndexMut<&'a K> for NSMutableDictionary<K, V> {
     fn index_mut<'s>(&'s mut self, index: &'a K) -> &'s mut V {
         self.get_mut(index).unwrap()
     }

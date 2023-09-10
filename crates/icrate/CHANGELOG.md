@@ -15,6 +15,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Send` and `Sync` implementations for a bunch more types (same as the
   ones Swift marks as `@Sendable`).
 * Made some common methods in `AppKit` safe.
+* Added missing `NSCopying` and `NSMutableCopying` zone methods.
+* Added `Eq` and `Ord` implementations for `NSNumber`, since its
+  handling of floating point values allows it.
+* Added `NS[Mutable]Dictionary::from_id_slice` and
+  `NS[Mutable]Dictionary::from_slice`.
+* Added `NSMutableDictionary::insert` and `NSMutableSet::insert` which can
+  be more efficient than the previous insertion methods.
 
 ### Changed
 * Moved the `ns_string!` macro to `icrate::Foundation::ns_string`. The old
@@ -41,10 +48,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   // Do something with `app` and `view`
   ```
 * **BREAKING**: Changed the `NSApp` static to be a function taking `MainThreadMarker`.
+* **BREAKING**: Renamed `NS[Mutable]Dictionary::from_keys_and_objects` to
+  `NS[Mutable]Dictionary::from_vec`.
+* **BREAKING**: Renamed `NSMutableDictionary::insert` and
+  `NSMutableSet::insert` to `insert_id`.
 
 ### Removed
 * **BREAKING**: Removed the `MainThreadMarker` argument from the closure
   passed to `MainThreadBound::get_on_main`.
+* **BREAKING**: Removed `Foundation::CopyHelper` since it is superseded by
+  `objc2::mutability::CounterpartOrSelf`.
+
+### Fixed
+* **BREAKING**: Added `Eq + Hash` requirement on most `NSDictionary` and
+  `NSSet` methods, thereby making sure that the types are actually correct
+  to use in such hashing collections.
+* **BREAKING**: Added `HasStableHash` requirement on `NSDictionary` and
+  `NSSet` creation methods, fixing a long-standing soundess issue.
 
 
 ## icrate 0.0.4 - 2023-07-31
