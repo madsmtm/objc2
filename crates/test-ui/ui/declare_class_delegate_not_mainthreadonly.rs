@@ -49,4 +49,10 @@ extern_methods!(
     }
 );
 
-fn main() {}
+fn main() {
+    let mtm = MainThreadMarker::new().unwrap();
+    let app = NSApplication::sharedApplication(mtm);
+
+    let delegate = CustomObject::new(mtm);
+    app.setDelegate(Some(&delegate));
+}

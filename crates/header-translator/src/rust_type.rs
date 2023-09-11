@@ -1635,6 +1635,26 @@ impl Ty {
 
     pub(crate) fn fn_argument(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
+            Inner::Id {
+                ty: IdType::AnyObject { protocols },
+                is_const: false,
+                lifetime: Lifetime::Unspecified | Lifetime::Strong,
+                nullability,
+            } if self.kind == TyKind::MethodArgument && !protocols.is_empty() => {
+                if *nullability != Nullability::NonNull {
+                    write!(f, "Option<")?;
+                }
+                write!(f, "&")?;
+                write!(f, "(impl ")?;
+                for protocol in protocols {
+                    write!(f, "{} + ", protocol.path())?;
+                }
+                write!(f, "Message)")?;
+                if *nullability != Nullability::NonNull {
+                    write!(f, ">")?;
+                }
+                Ok(())
+            }
             Self::Pointer {
                 nullability,
                 is_const: _,

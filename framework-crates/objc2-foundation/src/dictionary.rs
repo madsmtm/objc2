@@ -381,7 +381,6 @@ impl<KeyType: Message, ObjectType: Message> NSMutableDictionary<KeyType, ObjectT
     where
         CopiedKey: Message + NSCopying + CopyingHelper<Result = KeyType>,
     {
-        let key = ProtocolObject::from_ref(key);
         // SAFETY: The key is copied, and then has the correct type `KeyType`.
         unsafe { self.setObject_forKey(object, key) };
     }
