@@ -21,6 +21,7 @@ data! {
     mod CoreAnimation;
     mod CoreData;
     mod CoreLocation;
+    mod CoreWLAN;
     mod DataDetection;
     mod DeviceCheck;
     mod EventKit;

@@ -35,6 +35,8 @@
 
 #import <CoreLocation/CoreLocation.h>
 
+#import <CoreWLAN/CoreWLAN.h>
+
 #import <DataDetection/DataDetection.h>
 
 #import <DeviceCheck/DeviceCheck.h>

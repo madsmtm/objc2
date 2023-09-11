@@ -144,6 +144,10 @@ ios = "2.0"
 tvos = "9.0"
 watchos = "2.0"
 
+[library.CoreWLAN]
+imports = ["Foundation"]
+macos = "10.6"
+
 [library.DataDetection]
 imports = ["Foundation"]
 macos = "12.0"
@@ -1613,4 +1617,42 @@ skipped-protocols = ["NSCopying", "NSMutableCopying"]
 # 
 # Will have to be a method that takes `MainThreadMarker`.
 [static.NSApp]
+skipped = true
+
+# Uses types from CoreFoundation
+[fn.CWKeychainCopyEAPUsernameAndPassword]
+skipped = true
+[fn.CWKeychainCopyEAPIdentityList]
+skipped = true
+[fn.CWKeychainSetEAPUsernameAndPassword]
+skipped = true
+[fn.CWKeychainDeleteEAPUsernameAndPassword]
+skipped = true
+[fn.CWKeychainSetPassword]
+skipped = true
+[fn.CWKeychainDeletePassword]
+skipped = true
+[fn.CWKeychainCopyEAPIdentity]
+skipped = true
+[fn.CWKeychainSetEAPIdentity]
+skipped = true
+[fn.CWKeychainCopyPassword]
+skipped = true
+[fn.CWKeychainFindWiFiPassword]
+skipped = true
+[fn.CWKeychainSetWiFiPassword]
+skipped = true
+[fn.CWKeychainDeleteWiFiPassword]
+skipped = true
+[fn.CWKeychainFindWiFiEAPUsernameAndPassword]
+skipped = true
+[fn.CWKeychainSetWiFiEAPUsernameAndPassword]
+skipped = true
+[fn.CWKeychainDeleteWiFiEAPUsernameAndPassword]
+skipped = true
+[fn.CWKeychainCopyWiFiEAPIdentity]
+skipped = true
+[fn.CWKeychainSetWiFiEAPIdentity]
+skipped = true
+[class.CWInterface.methods.associateToEnterpriseNetwork_identity_username_password_error]
 skipped = true

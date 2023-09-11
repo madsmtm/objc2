@@ -2056,6 +2056,32 @@ CoreLocation_all = [
     "CoreLocation_CLRegion",
     "CoreLocation_CLVisit",
 ]
+CoreWLAN = [
+    "Foundation",
+]
+CoreWLAN_CWChannel = []
+CoreWLAN_CWConfiguration = []
+CoreWLAN_CWInterface = []
+CoreWLAN_CWMutableConfiguration = [
+    "CoreWLAN_CWConfiguration",
+]
+CoreWLAN_CWMutableNetworkProfile = [
+    "CoreWLAN_CWNetworkProfile",
+]
+CoreWLAN_CWNetwork = []
+CoreWLAN_CWNetworkProfile = []
+CoreWLAN_CWWiFiClient = []
+CoreWLAN_all = [
+    "CoreWLAN",
+    "CoreWLAN_CWChannel",
+    "CoreWLAN_CWConfiguration",
+    "CoreWLAN_CWInterface",
+    "CoreWLAN_CWMutableConfiguration",
+    "CoreWLAN_CWMutableNetworkProfile",
+    "CoreWLAN_CWNetwork",
+    "CoreWLAN_CWNetworkProfile",
+    "CoreWLAN_CWWiFiClient",
+]
 DataDetection = [
     "Foundation",
 ]
@@ -5329,6 +5355,7 @@ unstable-frameworks-macos-10-7 = [
     "Automator_all",
     "CoreAnimation_all",
     "CoreData_all",
+    "CoreWLAN_all",
     "ExceptionHandling_all",
     "Foundation_all",
     "InputMethodKit_all",
