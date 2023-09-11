@@ -18,6 +18,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 * **BREAKING**: `AnyClass::verify_sel` now take more well-defined types
   `EncodeArguments` and  `EncodeReturn`.
+* **BREAKING**: Changed how the `mutability` traits work; these no longer have
+  `ClassType` as a super trait, allowing them to work for `ProtocolObject` as
+  well.
+
+  This effectively means you can now `copy` a `ProtocolObject<dyn NSCopying>`.
+* **BREAKING**: Allow implementing `DefaultId` for any type, not just those
+  who are `IsAllocableAnyThread`.
 
 ### Deprecated
 * Soft deprecated using `msg_send!` without a comma between arguments (i.e.

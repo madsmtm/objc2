@@ -1,6 +1,4 @@
-//! Check that the `mutability` traits are not implementable manually.
-//!
-//! Since they are not `unsafe`, it would be a soundness hole if you could.
+//! Check that `mutability` traits are not implementable manually.
 use objc2::runtime::NSObject;
 use objc2::{declare_class, mutability, ClassType};
 
@@ -14,6 +12,6 @@ declare_class!(
     }
 );
 
-impl mutability::IsMutable for CustomObject {}
+unsafe impl mutability::IsMutable for CustomObject {}
 
 fn main() {}

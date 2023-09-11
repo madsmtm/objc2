@@ -167,17 +167,17 @@ pub trait MethodImplementation: private::Sealed + Sized {
 }
 
 macro_rules! method_decl_impl {
-    (@<$($l:lifetime),*> T: $t_bound:ident, $r:ident, $f:ty, $($t:ident),*) => {
+    (@<$($l:lifetime),*> T: $t_bound:ident $(+ $t_bound2:ident)?, $r:ident, $f:ty, $($t:ident),*) => {
         impl<$($l,)* T, $r, $($t),*> private::Sealed for $f
         where
-            T: ?Sized + $t_bound,
+            T: ?Sized + $t_bound $(+ $t_bound2)?,
             $r: EncodeReturn,
             $($t: EncodeArgument,)*
         {}
 
         impl<$($l,)* T, $r, $($t),*> MethodImplementation for $f
         where
-            T: ?Sized + $t_bound,
+            T: ?Sized + $t_bound $(+ $t_bound2)?,
             $r: EncodeReturn,
             $($t: EncodeArgument,)*
         {
@@ -244,11 +244,11 @@ macro_rules! method_decl_impl {
     };
     (# $abi:literal; $($t:ident),*) => {
         method_decl_impl!(@<'a> T: Message, R, extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<'a> T: IsMutable, R, extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> T: Message + IsMutable, R, extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(@<> T: Message, R, unsafe extern $abi fn(*const T, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(@<> T: Message, R, unsafe extern $abi fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(@<'a> T: Message, R, unsafe extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<'a> T: IsMutable, R, unsafe extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_decl_impl!(@<'a> T: Message + IsMutable, R, unsafe extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
 
         method_decl_impl!(@<'a> AnyObject, R, extern $abi fn(&'a mut AnyObject, Sel $(, $t)*) -> R, $($t),*);
         method_decl_impl!(@<'a> AnyObject, R, unsafe extern $abi fn(&'a mut AnyObject, Sel $(, $t)*) -> R, $($t),*);

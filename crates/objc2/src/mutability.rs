@@ -32,7 +32,8 @@
 //! bug.
 use core::marker::PhantomData;
 
-use crate::ClassType;
+use crate::runtime::ProtocolObject;
+use crate::{ClassType, Message, ProtocolType};
 
 mod private_mutability {
     pub trait Sealed {}
@@ -259,6 +260,13 @@ pub struct MainThreadOnly {
     inner: Never,
 }
 
+mod private_traits {
+    pub trait Sealed {}
+}
+
+impl<T: ?Sized + ClassType> private_traits::Sealed for T {}
+impl<P: ?Sized + ProtocolType> private_traits::Sealed for ProtocolObject<P> {}
+
 /// Marker trait for classes where [`Id::clone`] is safe.
 ///
 /// Since the `Foundation` collection types (`NSArray<T>`,
@@ -274,7 +282,13 @@ pub struct MainThreadOnly {
 ///
 /// [`Id`]: crate::rc::Id
 /// [`Id::clone`]: crate::rc::Id#impl-Clone-for-Id<T>
-pub trait IsIdCloneable: ClassType {}
+///
+///
+/// # Safety
+///
+/// This is a sealed trait, and should not need to be implemented. Open an
+/// issue if you know a use-case where this restrition should be lifted!
+pub unsafe trait IsIdCloneable: private_traits::Sealed {}
 
 trait MutabilityIsIdCloneable: Mutability {}
 impl MutabilityIsIdCloneable for Root {}
@@ -283,7 +297,8 @@ impl<MS: ?Sized> MutabilityIsIdCloneable for ImmutableWithMutableSubclass<MS> {}
 impl MutabilityIsIdCloneable for InteriorMutable {}
 impl MutabilityIsIdCloneable for MainThreadOnly {}
 
-impl<T: ?Sized + ClassType> IsIdCloneable for T where T::Mutability: MutabilityIsIdCloneable {}
+unsafe impl<T: ?Sized + ClassType> IsIdCloneable for T where T::Mutability: MutabilityIsIdCloneable {}
+unsafe impl<P: ?Sized + ProtocolType + IsIdCloneable> IsIdCloneable for ProtocolObject<P> {}
 
 /// Marker trait for classes where the `retain` selector is always safe.
 ///
@@ -296,15 +311,25 @@ impl<T: ?Sized + ClassType> IsIdCloneable for T where T::Mutability: MutabilityI
 /// - [`InteriorMutable`].
 /// - [`MainThreadOnly`].
 ///
+/// This trait inherits [`IsIdCloneable`], so if a function is bound by this,
+/// functionality given with that trait is available.
+///
 /// [`Id::clone`]: crate::rc::Id#impl-Clone-for-Id<T>
-pub trait IsRetainable: IsIdCloneable {}
+///
+///
+/// # Safety
+///
+/// This is a sealed trait, and should not need to be implemented. Open an
+/// issue if you know a use-case where this restrition should be lifted!
+pub unsafe trait IsRetainable: IsIdCloneable {}
 
 trait MutabilityIsRetainable: MutabilityIsIdCloneable {}
 impl MutabilityIsRetainable for Immutable {}
 impl MutabilityIsRetainable for InteriorMutable {}
 impl MutabilityIsRetainable for MainThreadOnly {}
 
-impl<T: ?Sized + ClassType> IsRetainable for T where T::Mutability: MutabilityIsRetainable {}
+unsafe impl<T: ?Sized + ClassType> IsRetainable for T where T::Mutability: MutabilityIsRetainable {}
+unsafe impl<P: ?Sized + ProtocolType + IsRetainable> IsRetainable for ProtocolObject<P> {}
 
 /// Marker trait for classes that can be allocated from any thread.
 ///
@@ -315,7 +340,13 @@ impl<T: ?Sized + ClassType> IsRetainable for T where T::Mutability: MutabilityIs
 /// - [`ImmutableWithMutableSubclass`].
 /// - [`MutableWithImmutableSuperclass`].
 /// - [`InteriorMutable`].
-pub trait IsAllocableAnyThread: ClassType {}
+///
+///
+/// # Safety
+///
+/// This is a sealed trait, and should not need to be implemented. Open an
+/// issue if you know a use-case where this restrition should be lifted!
+pub unsafe trait IsAllocableAnyThread: private_traits::Sealed {}
 
 trait MutabilityIsAllocableAnyThread: Mutability {}
 impl MutabilityIsAllocableAnyThread for Root {}
@@ -325,8 +356,12 @@ impl<MS: ?Sized> MutabilityIsAllocableAnyThread for ImmutableWithMutableSubclass
 impl<IS: ?Sized> MutabilityIsAllocableAnyThread for MutableWithImmutableSuperclass<IS> {}
 impl MutabilityIsAllocableAnyThread for InteriorMutable {}
 
-impl<T: ?Sized + ClassType> IsAllocableAnyThread for T where
+unsafe impl<T: ?Sized + ClassType> IsAllocableAnyThread for T where
     T::Mutability: MutabilityIsAllocableAnyThread
+{
+}
+unsafe impl<P: ?Sized + ProtocolType + IsAllocableAnyThread> IsAllocableAnyThread
+    for ProtocolObject<P>
 {
 }
 
@@ -339,13 +374,20 @@ impl<T: ?Sized + ClassType> IsAllocableAnyThread for T where
 /// Notably, [`InteriorMutable`] does not implement this (though it is
 /// technically mutable), since it is allowed to mutate through shared
 /// references.
-pub trait IsMutable: ClassType {}
+///
+///
+/// # Safety
+///
+/// This is a sealed trait, and should not need to be implemented. Open an
+/// issue if you know a use-case where this restrition should be lifted!
+pub unsafe trait IsMutable: private_traits::Sealed {}
 
 trait MutabilityIsMutable: Mutability {}
 impl MutabilityIsMutable for Mutable {}
 impl<IS: ?Sized> MutabilityIsMutable for MutableWithImmutableSuperclass<IS> {}
 
-impl<T: ?Sized + ClassType> IsMutable for T where T::Mutability: MutabilityIsMutable {}
+unsafe impl<T: ?Sized + ClassType> IsMutable for T where T::Mutability: MutabilityIsMutable {}
+unsafe impl<P: ?Sized + ProtocolType + IsMutable> IsMutable for ProtocolObject<P> {}
 
 /// Marker trait for classes that are only available on the main thread.
 ///
@@ -354,15 +396,23 @@ impl<T: ?Sized + ClassType> IsMutable for T where T::Mutability: MutabilityIsMut
 ///
 /// Since `MainThreadOnly` types must be `!Send` and `!Sync`, if you hold a
 /// type that implements this trait, then you're guaranteed to be on the main
-/// thread.
-//
-// Note: MainThreadMarker::from relies on this.
-pub trait IsMainThreadOnly: ClassType {}
+/// thread (and can get a `MainThreadMarker` using `MainThreadMarker::from`).
+///
+///
+/// # Safety
+///
+/// This is a sealed trait, and should not need to be implemented. Open an
+/// issue if you know a use-case where this restrition should be lifted!
+pub unsafe trait IsMainThreadOnly: private_traits::Sealed {}
 
 trait MutabilityIsMainThreadOnly: Mutability {}
 impl MutabilityIsMainThreadOnly for MainThreadOnly {}
 
-impl<T: ?Sized + ClassType> IsMainThreadOnly for T where T::Mutability: MutabilityIsMainThreadOnly {}
+unsafe impl<T: ?Sized + ClassType> IsMainThreadOnly for T where
+    T::Mutability: MutabilityIsMainThreadOnly
+{
+}
+unsafe impl<P: ?Sized + ProtocolType + IsMainThreadOnly> IsMainThreadOnly for ProtocolObject<P> {}
 
 /// Marker trait for classes whose `hash` and `isEqual:` methods are stable.
 ///
@@ -379,9 +429,15 @@ impl<T: ?Sized + ClassType> IsMainThreadOnly for T where T::Mutability: Mutabili
 /// and `isEqual:` methods are required to not use external sources like
 /// thread locals or randomness to determine their result, we can guarantee
 /// that the hash is stable for these types.
+///
+///
+/// # Safety
+///
+/// This is a sealed trait, and should not need to be implemented. Open an
+/// issue if you know a use-case where this restrition should be lifted!
 //
 // TODO: Exclude generic types like `NSArray<NSView>` from this!
-pub trait HasStableHash: ClassType {}
+pub unsafe trait HasStableHash: private_traits::Sealed {}
 
 trait MutabilityHashIsStable: Mutability {}
 impl MutabilityHashIsStable for Immutable {}
@@ -389,37 +445,57 @@ impl MutabilityHashIsStable for Mutable {}
 impl<MS: ?Sized> MutabilityHashIsStable for ImmutableWithMutableSubclass<MS> {}
 impl<IS: ?Sized> MutabilityHashIsStable for MutableWithImmutableSuperclass<IS> {}
 
-impl<T: ?Sized + ClassType> HasStableHash for T where T::Mutability: MutabilityHashIsStable {}
+unsafe impl<T: ?Sized + ClassType> HasStableHash for T where T::Mutability: MutabilityHashIsStable {}
+unsafe impl<P: ?Sized + ProtocolType + HasStableHash> HasStableHash for ProtocolObject<P> {}
 
 /// Retrieve the immutable/mutable counterpart class, and fall back to `Self`
 /// if not applicable.
 ///
-/// This is mostly used for describing the return type of `NSCopying` and
+/// This is used for describing the return type of `NSCopying` and
 /// `NSMutableCopying`, since due to Rust trait limitations, those two can't
-/// have associated types themselves (at least not since we want to use them
-/// in `ProtocolObject<dyn NSCopying>`).
-pub trait CounterpartOrSelf: ClassType {
+/// have associated types themselves (since we want to use them in
+/// `ProtocolObject<dyn NSCopying>`).
+///
+///
+/// # Usage notes
+///
+/// You may not rely on this being implemented entirely correctly for protocol
+/// objects, since we have less type-information available there.
+///
+/// In particular, the immutable counterpart of a mutable object converted to
+/// `ProtocolObject<dyn AProtocol>` may not itself implement the protocol, and
+/// invalidly assuming it does is unsound.
+///
+/// All of this is to say: Do not use this trait in isolation, either require
+/// `NSCopying` or `ClassType` along with it.
+///
+///
+/// # Safety
+///
+/// This is a sealed trait, and should not need to be implemented. Open an
+/// issue if you know a use-case where this restrition should be lifted!
+pub unsafe trait CounterpartOrSelf: private_traits::Sealed {
     /// The immutable counterpart of the type, or `Self` if the type has no
     /// immutable counterpart.
     ///
     /// The implementation for `NSString` has itself (`NSString`) here, while
     /// `NSMutableString` instead has `NSString`.
-    type Immutable: ?Sized + ClassType;
+    type Immutable: ?Sized + Message;
 
     /// The mutable counterpart of the type, or `Self` if the type has no
     /// mutable counterpart.
     ///
     /// The implementation for `NSString` has `NSMutableString` here, while
     /// `NSMutableString` has itself (`NSMutableString`).
-    type Mutable: ?Sized + ClassType;
+    type Mutable: ?Sized + Message;
 }
 
 mod private_counterpart {
     use super::*;
 
     pub trait MutabilityCounterpartOrSelf<T: ?Sized>: Mutability {
-        type Immutable: ?Sized + ClassType;
-        type Mutable: ?Sized + ClassType;
+        type Immutable: ?Sized + Message;
+        type Mutable: ?Sized + Message;
     }
     impl<T: ClassType<Mutability = Root>> MutabilityCounterpartOrSelf<T> for Root {
         type Immutable = T;
@@ -461,13 +537,34 @@ mod private_counterpart {
     }
 }
 
-impl<T: ?Sized + ClassType> CounterpartOrSelf for T
+unsafe impl<T: ?Sized + ClassType> CounterpartOrSelf for T
 where
     T::Mutability: private_counterpart::MutabilityCounterpartOrSelf<T>,
 {
     type Immutable =
         <T::Mutability as private_counterpart::MutabilityCounterpartOrSelf<T>>::Immutable;
     type Mutable = <T::Mutability as private_counterpart::MutabilityCounterpartOrSelf<T>>::Mutable;
+}
+
+unsafe impl<P: ?Sized + ProtocolType> CounterpartOrSelf for ProtocolObject<P> {
+    // SAFETY: The only place where this would differ from `Self` is for
+    // classes with `MutableWithImmutableSuperclass<IS>`.
+    //
+    // Superclasses are not in general required to implement the same traits
+    // as their subclasses, but we're not dealing with normal classes, we're
+    // dealing with with immutable/mutable class counterparts!
+    //
+    // We could probably get away with requiring that mutable classes
+    // only implement the same protocols as their immutable counterparts, but
+    // for now we relax the requirements of `CounterpartOrSelf`.
+    type Immutable = Self;
+    // SAFETY: The only place where this would differ from `Self` is for
+    // classes with `ImmutableWithMutableSubclass<MS>`.
+    //
+    // But subclasses are required to always implement the same traits as
+    // their superclasses, so a mutable subclass is required to implement the
+    // same traits too.
+    type Mutable = Self;
 }
 
 #[cfg(test)]
@@ -514,5 +611,17 @@ mod tests {
             TypeId::of::<NSObject>(),
             TypeId::of::<<NSObject as CounterpartOrSelf>::Mutable>(),
         );
+    }
+
+    #[allow(unused)]
+    fn object_safe(
+        _: &dyn IsIdCloneable,
+        _: &dyn IsRetainable,
+        _: &dyn IsAllocableAnyThread,
+        _: &dyn IsMutable,
+        _: &dyn IsMainThreadOnly,
+        _: &dyn HasStableHash,
+        _: &dyn CounterpartOrSelf<Immutable = (), Mutable = ()>,
+    ) {
     }
 }

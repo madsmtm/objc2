@@ -428,7 +428,7 @@ impl<C: FastEnumerationHelper> IntoIter<C> {
         }
     }
 
-    pub(crate) fn new_mutable<T: IsMutable + ClassType<Super = C>>(collection: Id<T>) -> Self
+    pub(crate) fn new_mutable<T: ClassType<Super = C> + IsMutable>(collection: Id<T>) -> Self
     where
         C: IsIdCloneable,
     {
@@ -648,7 +648,7 @@ where
         }
     }
 
-    pub(crate) unsafe fn new_mutable<T: IsMutable + ClassType<Super = C>>(
+    pub(crate) unsafe fn new_mutable<T: ClassType<Super = C> + IsMutable>(
         collection: Id<T>,
         enumerator: Id<E>,
     ) -> Self
@@ -696,9 +696,9 @@ where
 #[doc(hidden)]
 macro_rules! __impl_iter {
     (
-        impl<$($lifetime:lifetime, )? $t1:ident: $bound1:ident $(, $t2:ident: $bound2:ident)?> Iterator<Item = $item:ty> for $for:ty { ... }
+        impl<$($lifetime:lifetime, )? $t1:ident: $bound1:ident $(+ $bound1_b:ident)? $(, $t2:ident: $bound2:ident $(+ $bound2_b:ident)?)?> Iterator<Item = $item:ty> for $for:ty { ... }
     ) => {
-        impl<$($lifetime, )? $t1: $bound1 $(, $t2: $bound2)?> Iterator for $for {
+        impl<$($lifetime, )? $t1: $bound1 $(+ $bound1_b)? $(, $t2: $bound2 $(+ $bound2_b)?)?> Iterator for $for {
             type Item = $item;
 
             #[inline]
@@ -743,14 +743,14 @@ macro_rules! __impl_into_iter {
     };
     (
         $(#[$m:meta])*
-        impl<T: IsMutable> IntoIterator for &mut $ty:ident<T> {
+        impl<T: Message + IsMutable> IntoIterator for &mut $ty:ident<T> {
             type IntoIter = $iter_mut:ident<'_, T>;
         }
 
         $($rest:tt)*
     ) => {
         $(#[$m])*
-        impl<'a, T: IsMutable> IntoIterator for &'a mut $ty<T> {
+        impl<'a, T: Message + IsMutable> IntoIterator for &'a mut $ty<T> {
             type Item = &'a mut T;
             type IntoIter = $iter_mut<'a, T>;
 
@@ -766,14 +766,14 @@ macro_rules! __impl_into_iter {
     };
     (
         $(#[$m:meta])*
-        impl<T: IsIdCloneable> IntoIterator for Id<$ty:ident<T>> {
+        impl<T: Message + IsIdCloneable> IntoIterator for Id<$ty:ident<T>> {
             type IntoIter = $into_iter:ident<T>;
         }
 
         $($rest:tt)*
     ) => {
         $(#[$m])*
-        impl<T: IsIdCloneable> objc2::rc::IdIntoIterator for $ty<T> {
+        impl<T: Message + IsIdCloneable> objc2::rc::IdIntoIterator for $ty<T> {
             type Item = Id<T>;
             type IntoIter = $into_iter<T>;
 

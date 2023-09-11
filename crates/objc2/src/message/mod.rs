@@ -448,8 +448,8 @@ unsafe impl<'a, T: ?Sized + Message> MessageReceiver for &'a Id<T> {
     }
 }
 
-impl<'a, T: ?Sized + IsMutable> private::Sealed for &'a mut Id<T> {}
-unsafe impl<'a, T: ?Sized + IsMutable> MessageReceiver for &'a mut Id<T> {
+impl<'a, T: ?Sized + Message + IsMutable> private::Sealed for &'a mut Id<T> {}
+unsafe impl<'a, T: ?Sized + Message + IsMutable> MessageReceiver for &'a mut Id<T> {
     type __Inner = T;
 
     #[inline]

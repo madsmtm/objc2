@@ -4,7 +4,7 @@ use crate::common::*;
 use crate::Foundation::{self, NSCopying, NSMutableCopying};
 
 #[cfg(feature = "Foundation_NSArray")]
-impl<T: IsIdCloneable> ToOwned for Foundation::NSArray<T> {
+impl<T: Message + IsIdCloneable> ToOwned for Foundation::NSArray<T> {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
@@ -12,7 +12,7 @@ impl<T: IsIdCloneable> ToOwned for Foundation::NSArray<T> {
 }
 
 #[cfg(feature = "Foundation_NSMutableArray")]
-impl<T: IsIdCloneable> ToOwned for Foundation::NSMutableArray<T> {
+impl<T: Message + IsIdCloneable> ToOwned for Foundation::NSMutableArray<T> {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.mutableCopy()
@@ -44,7 +44,7 @@ impl ToOwned for Foundation::NSException {
 }
 
 #[cfg(feature = "Foundation_NSSet")]
-impl<T: IsIdCloneable> ToOwned for Foundation::NSSet<T> {
+impl<T: Message + IsIdCloneable> ToOwned for Foundation::NSSet<T> {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.copy()
@@ -52,7 +52,7 @@ impl<T: IsIdCloneable> ToOwned for Foundation::NSSet<T> {
 }
 
 #[cfg(feature = "Foundation_NSMutableSet")]
-impl<T: IsIdCloneable> ToOwned for Foundation::NSMutableSet<T> {
+impl<T: Message + IsIdCloneable> ToOwned for Foundation::NSMutableSet<T> {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
         self.mutableCopy()

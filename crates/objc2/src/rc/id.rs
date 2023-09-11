@@ -621,7 +621,7 @@ where
 }
 
 // TODO: Add ?Sized bound
-impl<T: IsIdCloneable> Clone for Id<T> {
+impl<T: Message + IsIdCloneable> Clone for Id<T> {
     /// Makes a clone of the shared object.
     ///
     /// This increases the object's reference count.
@@ -815,12 +815,12 @@ where
 //
 // See https://doc.rust-lang.org/1.54.0/src/alloc/boxed.rs.html#1652-1675
 // and the `Arc` implementation.
-impl<T: ?Sized + Message> Unpin for Id<T> {}
+impl<T: ?Sized> Unpin for Id<T> {}
 
-impl<T: ?Sized + Message + RefUnwindSafe> RefUnwindSafe for Id<T> {}
+impl<T: ?Sized + RefUnwindSafe> RefUnwindSafe for Id<T> {}
 
 // TODO: Relax this bound
-impl<T: ?Sized + Message + RefUnwindSafe + UnwindSafe> UnwindSafe for Id<T> {}
+impl<T: ?Sized + RefUnwindSafe + UnwindSafe> UnwindSafe for Id<T> {}
 
 #[cfg(test)]
 mod tests {

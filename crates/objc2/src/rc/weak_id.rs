@@ -116,7 +116,7 @@ impl<T: ?Sized> Drop for WeakId<T> {
 }
 
 // TODO: Add ?Sized
-impl<T: IsRetainable> Clone for WeakId<T> {
+impl<T: Message + IsRetainable> Clone for WeakId<T> {
     /// Make a clone of the weak pointer that points to the same object.
     #[doc(alias = "objc_copyWeak")]
     fn clone(&self) -> Self {
@@ -130,7 +130,7 @@ impl<T: IsRetainable> Clone for WeakId<T> {
 }
 
 // TODO: Add ?Sized
-impl<T: IsRetainable> Default for WeakId<T> {
+impl<T: Message + IsRetainable> Default for WeakId<T> {
     /// Constructs a new weak pointer that doesn't reference any object.
     ///
     /// Calling [`Self::load`] on the return value always gives [`None`].
@@ -151,35 +151,35 @@ impl<T: ?Sized> fmt::Debug for WeakId<T> {
 }
 
 // Same as `std::sync::Weak<T>`.
-unsafe impl<T: Sync + Send + ?Sized + IsIdCloneable> Sync for WeakId<T> {}
+unsafe impl<T: ?Sized + Sync + Send + IsIdCloneable> Sync for WeakId<T> {}
 
 // Same as `std::sync::Weak<T>`.
-unsafe impl<T: Sync + Send + ?Sized + IsIdCloneable> Send for WeakId<T> {}
+unsafe impl<T: ?Sized + Sync + Send + IsIdCloneable> Send for WeakId<T> {}
 
 // Same as `std::sync::Weak<T>`.
-impl<T: ?Sized + Message> Unpin for WeakId<T> {}
+impl<T: ?Sized> Unpin for WeakId<T> {}
 
 // Same as `std::sync::Weak<T>`.
-impl<T: RefUnwindSafe + ?Sized + IsIdCloneable> RefUnwindSafe for WeakId<T> {}
+impl<T: ?Sized + RefUnwindSafe + IsIdCloneable> RefUnwindSafe for WeakId<T> {}
 
 // Same as `std::sync::Weak<T>`.
-impl<T: RefUnwindSafe + ?Sized + IsIdCloneable> UnwindSafe for WeakId<T> {}
+impl<T: ?Sized + RefUnwindSafe + IsIdCloneable> UnwindSafe for WeakId<T> {}
 
-impl<T: IsRetainable> From<&T> for WeakId<T> {
+impl<T: Message + IsRetainable> From<&T> for WeakId<T> {
     #[inline]
     fn from(obj: &T) -> Self {
         WeakId::new(obj)
     }
 }
 
-impl<T: IsIdCloneable> From<&Id<T>> for WeakId<T> {
+impl<T: Message + IsIdCloneable> From<&Id<T>> for WeakId<T> {
     #[inline]
     fn from(obj: &Id<T>) -> Self {
         WeakId::from_id(obj)
     }
 }
 
-impl<T: IsIdCloneable> From<Id<T>> for WeakId<T> {
+impl<T: Message + IsIdCloneable> From<Id<T>> for WeakId<T> {
     #[inline]
     fn from(obj: Id<T>) -> Self {
         WeakId::from_id(&obj)

@@ -1,8 +1,8 @@
 error[E0119]: conflicting implementations of trait `IsMutable` for type `CustomObject`
  --> ui/mutability_traits_unimplementable.rs
   |
-  | impl mutability::IsMutable for CustomObject {}
-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  | unsafe impl mutability::IsMutable for CustomObject {}
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
   = note: conflicting implementation in crate `objc2`:
           - impl<T> IsMutable for T

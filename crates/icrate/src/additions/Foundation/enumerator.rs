@@ -1,7 +1,5 @@
 //! Utilities for the `NSEnumerator` class.
 #![cfg(feature = "Foundation_NSEnumerator")]
-use objc2::mutability::{IsIdCloneable, IsMutable};
-
 use super::iter;
 use crate::common::*;
 use crate::Foundation::NSEnumerator;

@@ -1,11 +1,10 @@
 //! Helper traits for Id.
 
 use super::Id;
-use crate::mutability::{IsAllocableAnyThread, IsMutable};
+use crate::mutability::IsMutable;
 
 /// Helper trait to implement [`Default`] on [`Id`].
-// TODO: Maybe make this `unsafe` and provide a default implementation?
-pub trait DefaultId: IsAllocableAnyThread {
+pub trait DefaultId {
     /// The default [`Id`] for a type.
     ///
     /// On most objects the implementation would be sending a message to the
