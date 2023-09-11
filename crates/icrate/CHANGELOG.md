@@ -67,6 +67,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `NSSet` creation methods, fixing a long-standing soundess issue.
 * Fixed the protocol names of `NSAccessibilityElementProtocol`,
   `NSTextAttachmentCellProtocol` and `NSFileProviderItemProtocol`.
+* **BREAKING**: Generic types no longer strictly require `Message` (although
+  most of their trait implementations still require that).
 
 
 ## icrate 0.0.4 - 2023-07-31

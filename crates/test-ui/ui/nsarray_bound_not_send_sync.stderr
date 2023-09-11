@@ -25,7 +25,7 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = AnyObject> {
+  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -65,7 +65,7 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = AnyObject> {
+  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -100,7 +100,7 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = AnyObject> {
+  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -151,7 +151,7 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = AnyObject> {
+  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -186,12 +186,12 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = AnyObject> {
+  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
   |
-  |     pub struct NSMutableArray<ObjectType: Message = AnyObject> {
+  |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -231,12 +231,12 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = AnyObject> {
+  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
   |
-  |     pub struct NSMutableArray<ObjectType: Message = AnyObject> {
+  |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -271,12 +271,12 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = AnyObject> {
+  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
   |
-  |     pub struct NSMutableArray<ObjectType: Message = AnyObject> {
+  |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/nsarray_bound_not_send_sync.rs
@@ -327,12 +327,12 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
 note: required because it appears within the type `NSArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
   |
-  |     pub struct NSArray<ObjectType: Message = AnyObject> {
+  |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
  --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
   |
-  |     pub struct NSMutableArray<ObjectType: Message = AnyObject> {
+  |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/nsarray_bound_not_send_sync.rs
