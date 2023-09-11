@@ -761,8 +761,7 @@ mod private {
     }
 
     /// Helper struct for avoiding a gnarly ICE in `rustdoc` when generating
-    /// documentation for `icrate` iterator helpers (in particular, it fails
-    /// in generating auto trait implementations).
+    /// documentation for auto traits for `Id<T>` where `T: !ClassType`.
     ///
     /// See related issues:
     /// - <https://github.com/rust-lang/rust/issues/91380>
@@ -821,6 +820,12 @@ impl<T: ?Sized + RefUnwindSafe> RefUnwindSafe for Id<T> {}
 
 // TODO: Relax this bound
 impl<T: ?Sized + RefUnwindSafe + UnwindSafe> UnwindSafe for Id<T> {}
+
+#[cfg(doc)]
+#[allow(unused)]
+struct TestDocIdWithNonClassType {
+    id: Id<crate::runtime::AnyObject>,
+}
 
 #[cfg(test)]
 mod tests {
