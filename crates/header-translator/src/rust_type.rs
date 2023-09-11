@@ -186,12 +186,10 @@ enum IdType {
 }
 
 impl IdType {
-    #[allow(dead_code)]
     fn _id(&self) -> Option<&ItemIdentifier> {
         match self {
             Self::Class { id, .. } => Some(id),
             Self::AnyObject { protocols } => match &**protocols {
-                [id] if id.name == "NSCopying" || id.name == "NSMutableCopying" => None,
                 [id] => Some(id),
                 _ => None,
             },
@@ -370,9 +368,6 @@ impl fmt::Display for IdType {
             Self::AnyObject { protocols } => match &**protocols {
                 [] => write!(f, "AnyObject"),
                 [id] if id.is_nsobject() => write!(f, "NSObject"),
-                [id] if id.name == "NSCopying" || id.name == "NSMutableCopying" => {
-                    write!(f, "AnyObject")
-                }
                 [id] => write!(f, "ProtocolObject<dyn {}>", id.path()),
                 // TODO: Handle this better
                 _ => write!(f, "TodoProtocols"),

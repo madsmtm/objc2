@@ -19,6 +19,17 @@ use crate::common::*;
 use crate::Foundation::NSMutableDictionary;
 use crate::Foundation::{self, NSCopying, NSDictionary};
 
+fn keys_to_ptr<Q>(keys: &[&Q]) -> *mut NonNull<ProtocolObject<dyn NSCopying>>
+where
+    Q: Message + NSCopying,
+{
+    let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
+    // SAFETY: `Q` is `Message + NSCopying`, and is therefore safe to cast to
+    // `ProtocolObject<dyn NSCopying>`.
+    let keys: *mut NonNull<ProtocolObject<dyn NSCopying>> = keys.cast();
+    keys
+}
+
 impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
     pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Id<V>>) -> Id<Self>
     where
@@ -31,8 +42,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
         // different lengths, either would be fine.
         let count = min(keys.len(), objects.len());
 
-        let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
-        let keys: *mut NonNull<AnyObject> = keys.cast();
+        let keys = keys_to_ptr(keys);
         let objects = util::id_ptr_cast(objects.as_mut_ptr());
 
         // SAFETY:
@@ -62,8 +72,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
     {
         let count = min(keys.len(), objects.len());
 
-        let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
-        let keys: *mut NonNull<AnyObject> = keys.cast();
+        let keys = keys_to_ptr(keys);
         let objects = util::id_ptr_cast_const(objects.as_ptr());
 
         // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_id_slice`.
@@ -77,8 +86,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
     {
         let count = min(keys.len(), objects.len());
 
-        let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
-        let keys: *mut NonNull<AnyObject> = keys.cast();
+        let keys = keys_to_ptr(keys);
         let objects = util::ref_ptr_cast_const(objects.as_ptr());
 
         // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_slice`.
@@ -95,7 +103,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
         let count = min(keys.len(), objects.len());
 
         let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
-        let keys: *mut NonNull<AnyObject> = keys.cast();
+        let keys: *mut NonNull<ProtocolObject<dyn NSCopying>> = keys.cast();
         let objects = util::id_ptr_cast(objects.as_mut_ptr());
 
         // SAFETY: See `NSDictionary::from_vec`
@@ -109,8 +117,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
     {
         let count = min(keys.len(), objects.len());
 
-        let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
-        let keys: *mut NonNull<AnyObject> = keys.cast();
+        let keys = keys_to_ptr(keys);
         let objects = util::id_ptr_cast_const(objects.as_ptr());
 
         // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_id_slice`.
@@ -124,8 +131,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
     {
         let count = min(keys.len(), objects.len());
 
-        let keys: *mut NonNull<Q> = util::ref_ptr_cast_const(keys.as_ptr());
-        let keys: *mut NonNull<AnyObject> = keys.cast();
+        let keys = keys_to_ptr(keys);
         let objects = util::ref_ptr_cast_const(objects.as_ptr());
 
         // SAFETY: See `NSDictionary::from_vec` and `NSArray::from_slice`.
@@ -335,13 +341,8 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
             .get(key)
             .map(|old_obj| unsafe { util::mutable_collection_retain_removed_id(old_obj) });
 
-        // SAFETY: It is always safe to transmute an `&T` where `T: Message`
-        // to `&AnyObject`.
-        let key: NonNull<K> = NonNull::from(key);
-        let key: NonNull<AnyObject> = key.cast();
-        let key: &AnyObject = unsafe { key.as_ref() };
-        // SAFETY: The key is NSCopying (see `NSDictionary::from_vec`), and we
-        // have ownership over the value.
+        let key = ProtocolObject::from_ref(key);
+        // SAFETY: We have ownership over the value.
         unsafe { self.setObject_forKey(&value, key) };
         old_obj
     }
@@ -371,14 +372,9 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
             .get(key)
             .map(|old_obj| unsafe { util::mutable_collection_retain_removed_id(old_obj) });
 
-        // SAFETY: It is always safe to transmute an `&T` where `T: Message`
-        // to `&AnyObject`.
-        let key: NonNull<K> = NonNull::from(key);
-        let key: NonNull<AnyObject> = key.cast();
-        let key: &AnyObject = unsafe { key.as_ref() };
-        // SAFETY: The key is NSCopying (see `NSDictionary::from_vec`), and
-        // the value is `IsRetainable` (and hence safe for the collection to
-        // retain).
+        let key = ProtocolObject::from_ref(key);
+        // SAFETY: The value is `IsRetainable`, and hence safe for the
+        // collection to retain.
         unsafe { self.setObject_forKey(value, key) };
         old_obj
     }
