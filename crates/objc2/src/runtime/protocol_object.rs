@@ -253,7 +253,14 @@ mod tests {
             type Mutability = Mutable;
             const NAME: &'static str = "ProtocolTestsDummyClass";
         }
+
+        unsafe impl NSObjectProtocol for DummyClass {}
     );
+
+    unsafe impl Foo for DummyClass {}
+    unsafe impl Bar for DummyClass {}
+    unsafe impl FooBar for DummyClass {}
+    // unsafe impl FooFooBar for DummyClass {}
 
     extern_methods!(
         unsafe impl DummyClass {
@@ -261,12 +268,6 @@ mod tests {
             fn new() -> Id<Self>;
         }
     );
-
-    unsafe impl NSObjectProtocol for DummyClass {}
-    unsafe impl Foo for DummyClass {}
-    unsafe impl Bar for DummyClass {}
-    unsafe impl FooBar for DummyClass {}
-    // unsafe impl FooFooBar for DummyClass {}
 
     #[test]
     fn impl_traits() {

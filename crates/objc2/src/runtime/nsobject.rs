@@ -165,7 +165,7 @@ crate::__inner_extern_protocol!(
     ()
     (NSObjectProtocol)
     (dyn NSObjectProtocol)
-    ("NSCopying")
+    ("NSObject")
 );
 
 unsafe impl NSObjectProtocol for NSObject {}
@@ -371,5 +371,11 @@ mod tests {
         let ptr2 = Id::as_ptr(&obj2);
 
         assert_eq!(ptr1, ptr2);
+    }
+
+    #[test]
+    fn conforms_to_nsobjectprotocol() {
+        let protocol = <dyn NSObjectProtocol>::protocol().unwrap();
+        assert!(NSObject::class().conforms_to(protocol));
     }
 }

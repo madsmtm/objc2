@@ -50,6 +50,8 @@ declare_class!(
         }
     }
 
+    unsafe impl NSObjectProtocol for AppDelegate {}
+
     unsafe impl NSApplicationDelegate for AppDelegate {
         #[method(applicationDidFinishLaunching:)]
         fn did_finish_launching(&self, notification: &NSNotification) {
@@ -64,8 +66,6 @@ declare_class!(
         }
     }
 );
-
-unsafe impl NSObjectProtocol for AppDelegate {}
 
 impl AppDelegate {
     pub fn new(ivar: u8, another_ivar: bool, mtm: MainThreadMarker) -> Id<Self> {

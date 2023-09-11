@@ -356,7 +356,7 @@ impl ClassBuilder {
     }
 
     #[allow(unused)]
-    fn superclass(&self) -> Option<&AnyClass> {
+    pub(crate) fn superclass(&self) -> Option<&AnyClass> {
         // SAFETY: Though the class is not finalized, `class_getSuperclass` is
         // still safe to call.
         unsafe { AnyClass::superclass_raw(self.cls.as_ptr()) }
@@ -612,7 +612,9 @@ impl ClassBuilder {
     pub fn add_protocol(&mut self, proto: &AnyProtocol) {
         let success = unsafe { ffi::class_addProtocol(self.as_mut_ptr(), proto.as_ptr()) };
         let success = Bool::from_raw(success).as_bool();
-        assert!(success, "failed to add protocol {proto}");
+        if cfg!(not(feature = "gnustep-1-7")) {
+            assert!(success, "failed to add protocol {proto}");
+        }
     }
 
     // fn add_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
@@ -770,7 +772,7 @@ mod tests {
     use crate::mutability::Immutable;
     use crate::rc::Id;
     use crate::runtime::{NSObject, NSObjectProtocol};
-    use crate::{declare_class, extern_methods, msg_send, test_utils, ClassType};
+    use crate::{declare_class, extern_methods, msg_send, test_utils, ClassType, ProtocolType};
 
     #[test]
     fn test_alignment() {
@@ -900,7 +902,43 @@ mod tests {
     }
 
     #[test]
-    #[should_panic = "failed to add protocol NSObject"]
+    fn inheriting_does_not_implement_protocols() {
+        let builder = ClassBuilder::new(
+            "TestClassBuilderInheritingDoesNotImplementProtocols",
+            NSObject::class(),
+        )
+        .unwrap();
+
+        let cls = builder.register();
+        let conforms = cls.conforms_to(<dyn NSObjectProtocol>::protocol().unwrap());
+        if cfg!(feature = "gnustep-1-7") {
+            // FIXME: GNUStep works differently here!
+            assert!(conforms);
+        } else {
+            assert!(!conforms);
+        }
+    }
+
+    #[test]
+    fn inherit_nsobject_add_protocol() {
+        let mut builder = ClassBuilder::new(
+            "TestClassBuilderInheritNSObjectAddProtocol",
+            NSObject::class(),
+        )
+        .unwrap();
+
+        let protocol = <dyn NSObjectProtocol>::protocol().unwrap();
+
+        builder.add_protocol(protocol);
+        let cls = builder.register();
+        assert!(cls.conforms_to(protocol));
+    }
+
+    #[test]
+    #[cfg_attr(
+        not(feature = "gnustep-1-7"),
+        should_panic = "failed to add protocol NSObject"
+    )]
     fn duplicate_protocol() {
         let cls = test_utils::custom_class();
         let mut builder = ClassBuilder::new("TestClassBuilderDuplicateProtocol", cls).unwrap();
