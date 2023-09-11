@@ -65,6 +65,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   to use in such hashing collections.
 * **BREAKING**: Added `HasStableHash` requirement on `NSDictionary` and
   `NSSet` creation methods, fixing a long-standing soundess issue.
+* Fixed the protocol names of `NSAccessibilityElementProtocol`,
+  `NSTextAttachmentCellProtocol` and `NSFileProviderItemProtocol`.
 
 
 ## icrate 0.0.4 - 2023-07-31

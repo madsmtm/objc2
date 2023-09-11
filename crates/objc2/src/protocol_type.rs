@@ -23,10 +23,10 @@ use crate::runtime::AnyProtocol;
 ///
 /// ```
 /// use objc2::ProtocolType;
-/// use objc2::runtime::NSObject;
-/// // Get a protocol object representing `NSObject`
-/// let protocol = NSObject::protocol().expect("NSObject to have a protocol");
-/// assert_eq!(NSObject::NAME, protocol.name());
+/// use objc2::runtime::NSObjectProtocol;
+/// // Get a protocol object representing the `NSObject` protocol
+/// let protocol = <dyn NSObjectProtocol>::protocol().expect("NSObject to have a protocol");
+/// assert_eq!(<dyn NSObjectProtocol>::NAME, protocol.name());
 /// ```
 ///
 /// Use the [`extern_protocol!`] macro to implement this trait for a type.

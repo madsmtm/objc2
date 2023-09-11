@@ -41,9 +41,7 @@ extern_protocol!(
             Self: CounterpartOrSelf;
     }
 
-    unsafe impl ProtocolType for dyn NSCopying {
-        const NAME: &'static str = "NSCopying";
-    }
+    unsafe impl ProtocolType for dyn NSCopying {}
 );
 
 // FIXME: Remove this hack which makes NSMutableDictionary tests work
@@ -86,7 +84,5 @@ extern_protocol!(
             Self: CounterpartOrSelf;
     }
 
-    unsafe impl ProtocolType for dyn NSMutableCopying {
-        const NAME: &'static str = "NSMutableCopying";
-    }
+    unsafe impl ProtocolType for dyn NSMutableCopying {}
 );

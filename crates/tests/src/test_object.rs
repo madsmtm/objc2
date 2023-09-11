@@ -326,6 +326,6 @@ fn test_protocol() {
     #[cfg(feature = "Foundation_all")]
     assert_eq!(MyTestObject::h().as_i32(), 8);
 
-    // Check that transforming to `NSObject` works
-    let _obj: &ProtocolObject<NSObject> = ProtocolObject::from_ref(&*proto);
+    // Check that transforming to `NSObjectProtocol` works
+    let _obj: &ProtocolObject<dyn NSObjectProtocol> = ProtocolObject::from_ref(&*proto);
 }

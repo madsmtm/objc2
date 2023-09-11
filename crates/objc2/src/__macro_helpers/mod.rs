@@ -580,32 +580,56 @@ impl ClassProtocolMethodsBuilder<'_, '_> {
         }
     }
 
-    #[inline]
+    #[cfg(all(debug_assertions, feature = "verify"))]
     pub fn __finish(self) {
-        #[cfg(all(debug_assertions, feature = "verify"))]
+        let superclass = self.builder.superclass();
+
         if let Some(protocol) = self.protocol {
             for desc in &self.required_instance_methods {
-                if !self.registered_instance_methods.contains(&desc.sel) {
-                    panic!(
-                        "must implement required protocol method -[{protocol} {}]",
-                        desc.sel
-                    )
+                if self.registered_instance_methods.contains(&desc.sel) {
+                    continue;
                 }
+
+                // TODO: Don't do this when `NS_PROTOCOL_REQUIRES_EXPLICIT_IMPLEMENTATION`
+                if superclass
+                    .and_then(|superclass| superclass.instance_method(desc.sel))
+                    .is_some()
+                {
+                    continue;
+                }
+
+                panic!(
+                    "must implement required protocol method -[{protocol} {}]",
+                    desc.sel
+                )
             }
         }
 
-        #[cfg(all(debug_assertions, feature = "verify"))]
         if let Some(protocol) = self.protocol {
             for desc in &self.required_class_methods {
-                if !self.registered_class_methods.contains(&desc.sel) {
-                    panic!(
-                        "must implement required protocol method +[{protocol} {}]",
-                        desc.sel
-                    )
+                if self.registered_class_methods.contains(&desc.sel) {
+                    continue;
                 }
+
+                // TODO: Don't do this when `NS_PROTOCOL_REQUIRES_EXPLICIT_IMPLEMENTATION`
+                if superclass
+                    .and_then(|superclass| superclass.class_method(desc.sel))
+                    .is_some()
+                {
+                    continue;
+                }
+
+                panic!(
+                    "must implement required protocol method +[{protocol} {}]",
+                    desc.sel
+                );
             }
         }
     }
+
+    #[inline]
+    #[cfg(not(all(debug_assertions, feature = "verify")))]
+    pub fn __finish(self) {}
 }
 
 #[cfg(test)]

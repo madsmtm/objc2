@@ -259,6 +259,8 @@
 /// #       }
 ///     }
 ///
+///     unsafe impl NSObjectProtocol for MyCustomObject {}
+///
 ///     # #[cfg(available_in_icrate)]
 ///     unsafe impl NSCopying for MyCustomObject {
 ///         #[method_id(copyWithZone:)]
@@ -273,9 +275,6 @@
 ///         // `verify` feature enabled.
 ///     }
 /// );
-///
-/// // TODO: Allow moving this inside `declare_class!`
-/// unsafe impl NSObjectProtocol for MyCustomObject {}
 ///
 /// impl MyCustomObject {
 ///     pub fn new(foo: u8) -> Id<Self> {

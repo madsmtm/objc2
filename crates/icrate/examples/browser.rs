@@ -73,6 +73,8 @@ declare_class!(
         }
     }
 
+    unsafe impl NSObjectProtocol for Delegate {}
+
     unsafe impl NSApplicationDelegate for Delegate {
         #[method(applicationDidFinishLaunching:)]
         #[allow(non_snake_case)]
@@ -292,8 +294,6 @@ impl Delegate {
         unsafe { msg_send_id![mtm.alloc(), init] }
     }
 }
-
-unsafe impl NSObjectProtocol for Delegate {}
 
 fn main() {
     let mtm = MainThreadMarker::new().unwrap();
