@@ -621,7 +621,7 @@ where
 }
 
 // TODO: Add ?Sized bound
-impl<T: IsIdCloneable> Clone for Id<T> {
+impl<T: Message + IsIdCloneable> Clone for Id<T> {
     /// Makes a clone of the shared object.
     ///
     /// This increases the object's reference count.
@@ -761,8 +761,7 @@ mod private {
     }
 
     /// Helper struct for avoiding a gnarly ICE in `rustdoc` when generating
-    /// documentation for `icrate` iterator helpers (in particular, it fails
-    /// in generating auto trait implementations).
+    /// documentation for auto traits for `Id<T>` where `T: !ClassType`.
     ///
     /// See related issues:
     /// - <https://github.com/rust-lang/rust/issues/91380>
@@ -815,12 +814,18 @@ where
 //
 // See https://doc.rust-lang.org/1.54.0/src/alloc/boxed.rs.html#1652-1675
 // and the `Arc` implementation.
-impl<T: ?Sized + Message> Unpin for Id<T> {}
+impl<T: ?Sized> Unpin for Id<T> {}
 
-impl<T: ?Sized + Message + RefUnwindSafe> RefUnwindSafe for Id<T> {}
+impl<T: ?Sized + RefUnwindSafe> RefUnwindSafe for Id<T> {}
 
 // TODO: Relax this bound
-impl<T: ?Sized + Message + RefUnwindSafe + UnwindSafe> UnwindSafe for Id<T> {}
+impl<T: ?Sized + RefUnwindSafe + UnwindSafe> UnwindSafe for Id<T> {}
+
+#[cfg(doc)]
+#[allow(unused)]
+struct TestDocIdWithNonClassType {
+    id: Id<crate::runtime::AnyObject>,
+}
 
 #[cfg(test)]
 mod tests {

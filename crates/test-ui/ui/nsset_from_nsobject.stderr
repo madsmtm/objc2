@@ -1,12 +1,12 @@
-error[E0277]: the trait bound `Root: mutability::private::MutabilityHashIsStable` is not satisfied
+error[E0277]: the trait bound `Root: mutability::MutabilityHashIsStable` is not satisfied
  --> ui/nsset_from_nsobject.rs
   |
   |     let _ = NSSet::from_vec(vec![NSObject::new()]);
-  |             --------------- ^^^^^^^^^^^^^^^^^^^^^ the trait `mutability::private::MutabilityHashIsStable` is not implemented for `Root`
+  |             --------------- ^^^^^^^^^^^^^^^^^^^^^ the trait `mutability::MutabilityHashIsStable` is not implemented for `Root`
   |             |
   |             required by a bound introduced by this call
   |
-  = help: the following other types implement trait `mutability::private::MutabilityHashIsStable`:
+  = help: the following other types implement trait `mutability::MutabilityHashIsStable`:
             Immutable
             Mutable
             ImmutableWithMutableSubclass<MS>

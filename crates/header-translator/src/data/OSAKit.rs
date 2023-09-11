@@ -1,2 +1,3 @@
 data! {
+    class OSAScriptController: MainThreadOnly {}
 }

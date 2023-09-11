@@ -30,6 +30,13 @@ data! {
         // `run` cannot be safe, the user must ensure there is no re-entrancy.
     }
 
+    class NSController: MainThreadOnly {}
+    class NSObjectController: MainThreadOnly {}
+    class NSArrayController: MainThreadOnly {}
+    class NSDictionaryController: MainThreadOnly {}
+    class NSTreeController: MainThreadOnly {}
+    class NSUserDefaultsController: MainThreadOnly {}
+
     // Documentation says:
     // > Color objects are immutable and thread-safe
     //
@@ -37,6 +44,8 @@ data! {
     class NSColor: Immutable {
         unsafe -clear;
     }
+
+    class NSColorPicker: MainThreadOnly {}
 
     class NSControl {
         unsafe -isEnabled;
@@ -80,6 +89,8 @@ data! {
     class NSEvent: Immutable {
 
     }
+
+    class NSFontManager: MainThreadOnly {}
 
     // Documented Thread-Unsafe, but:
     // > One thread can create an NSImage object, draw to the image buffer,

@@ -1,0 +1,17 @@
+error[E0277]: the trait bound `CustomStruct: ClassType` is not satisfied
+ --> ui/mutability_traits_unimplementable2.rs
+  |
+  | unsafe impl mutability::IsMutable for CustomStruct {}
+  |                                       ^^^^^^^^^^^^ the trait `ClassType` is not implemented for `CustomStruct`
+  |
+  = help: the following other types implement trait `ClassType`:
+            __RcTestObject
+            NSObject
+            __NSProxy
+  = note: required for `CustomStruct` to implement `mutability::private_traits::Sealed`
+note: required by a bound in `IsMutable`
+ --> $WORKSPACE/crates/objc2/src/mutability.rs
+  |
+  | pub unsafe trait IsMutable: private_traits::Sealed {}
+  |                             ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `IsMutable`
+  = note: `IsMutable` is a "sealed trait", because to implement it you also need to implement `objc2::mutability::private_traits::Sealed`, which is not accessible; this is usually done to force you to use one of the provided types that already implement it

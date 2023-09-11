@@ -18,7 +18,7 @@ impl<T: ?Sized> UnwindSafe for UnsafeIgnoreAutoTraits<T> {}
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSArray")]
-    pub struct NSArray<ObjectType: Message = AnyObject> {
+    pub struct NSArray<ObjectType: ?Sized = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
         /// `NSArray` and `NSMutableArray` have `Id`-like storage.
@@ -84,7 +84,7 @@ __inner_extern_class!(
     }
 
     #[cfg(feature = "Foundation_NSArray")]
-    unsafe impl<ObjectType: Message> ClassType for NSArray<ObjectType> {
+    unsafe impl<ObjectType: ?Sized + Message> ClassType for NSArray<ObjectType> {
         type Super = NSObject;
         type Mutability = ImmutableWithMutableSubclass<NSMutableArray<ObjectType>>;
 
@@ -101,13 +101,13 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSArray")]
-    pub struct NSMutableArray<ObjectType: Message = AnyObject> {
+    pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSArray<ObjectType>,
     }
 
     #[cfg(feature = "Foundation_NSArray")]
-    unsafe impl<ObjectType: Message> ClassType for NSMutableArray<ObjectType> {
+    unsafe impl<ObjectType: ?Sized + Message> ClassType for NSMutableArray<ObjectType> {
         #[inherits(NSObject)]
         type Super = NSArray<ObjectType>;
         type Mutability = MutableWithImmutableSuperclass<NSArray<ObjectType>>;
@@ -125,7 +125,7 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSDictionary")]
-    pub struct NSDictionary<KeyType: Message = AnyObject, ObjectType: Message = AnyObject> {
+    pub struct NSDictionary<KeyType: ?Sized = AnyObject, ObjectType: ?Sized = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
         // Same as if the dictionary was implemented with:
@@ -134,7 +134,9 @@ __inner_extern_class!(
     }
 
     #[cfg(feature = "Foundation_NSDictionary")]
-    unsafe impl<KeyType: Message, ObjectType: Message> ClassType for NSDictionary<KeyType, ObjectType> {
+    unsafe impl<KeyType: ?Sized + Message, ObjectType: ?Sized + Message> ClassType
+        for NSDictionary<KeyType, ObjectType>
+    {
         type Super = NSObject;
         type Mutability = ImmutableWithMutableSubclass<NSMutableDictionary<KeyType, ObjectType>>;
 
@@ -151,13 +153,13 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSDictionary")]
-    pub struct NSMutableDictionary<KeyType: Message = AnyObject, ObjectType: Message = AnyObject> {
+    pub struct NSMutableDictionary<KeyType: ?Sized = AnyObject, ObjectType: ?Sized = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSDictionary<KeyType, ObjectType>,
     }
 
     #[cfg(feature = "Foundation_NSDictionary")]
-    unsafe impl<KeyType: Message, ObjectType: Message> ClassType
+    unsafe impl<KeyType: ?Sized + Message, ObjectType: ?Sized + Message> ClassType
         for NSMutableDictionary<KeyType, ObjectType>
     {
         #[inherits(NSObject)]
@@ -177,7 +179,7 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSSet")]
-    pub struct NSSet<ObjectType: Message = AnyObject> {
+    pub struct NSSet<ObjectType: ?Sized = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
         // Same as if the set was implemented as `NSArray<ObjectType>`.
@@ -185,7 +187,7 @@ __inner_extern_class!(
     }
 
     #[cfg(feature = "Foundation_NSSet")]
-    unsafe impl<ObjectType: Message> ClassType for NSSet<ObjectType> {
+    unsafe impl<ObjectType: ?Sized + Message> ClassType for NSSet<ObjectType> {
         type Super = NSObject;
         type Mutability = ImmutableWithMutableSubclass<NSMutableSet<ObjectType>>;
 
@@ -202,13 +204,13 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSSet")]
-    pub struct NSMutableSet<ObjectType: Message = AnyObject> {
+    pub struct NSMutableSet<ObjectType: ?Sized = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSSet<ObjectType>,
     }
 
     #[cfg(feature = "Foundation_NSSet")]
-    unsafe impl<ObjectType: Message> ClassType for NSMutableSet<ObjectType> {
+    unsafe impl<ObjectType: ?Sized + Message> ClassType for NSMutableSet<ObjectType> {
         #[inherits(NSObject)]
         type Super = NSSet<ObjectType>;
         type Mutability = MutableWithImmutableSuperclass<NSSet<ObjectType>>;
@@ -224,15 +226,15 @@ __inner_extern_class!(
 );
 
 __inner_extern_class!(
-    #[derive(Debug, PartialEq, Eq, Hash)]
+    #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSCountedSet")]
-    pub struct NSCountedSet<ObjectType: Message = AnyObject> {
+    pub struct NSCountedSet<ObjectType: ?Sized = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSMutableSet<ObjectType>,
     }
 
     #[cfg(feature = "Foundation_NSCountedSet")]
-    unsafe impl<ObjectType: Message> ClassType for NSCountedSet<ObjectType> {
+    unsafe impl<ObjectType: ?Sized + Message> ClassType for NSCountedSet<ObjectType> {
         #[inherits(NSSet<ObjectType>, NSObject)]
         type Super = NSMutableSet<ObjectType>;
         type Mutability = Mutable;
@@ -250,7 +252,7 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSOrderedSet")]
-    pub struct NSOrderedSet<ObjectType: Message = AnyObject> {
+    pub struct NSOrderedSet<ObjectType: ?Sized = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
         // Same as if the set was implemented with `NSArray<ObjectType>`.
@@ -258,7 +260,7 @@ __inner_extern_class!(
     }
 
     #[cfg(feature = "Foundation_NSOrderedSet")]
-    unsafe impl<ObjectType: Message> ClassType for NSOrderedSet<ObjectType> {
+    unsafe impl<ObjectType: ?Sized + Message> ClassType for NSOrderedSet<ObjectType> {
         type Super = NSObject;
         type Mutability = ImmutableWithMutableSubclass<NSMutableOrderedSet<ObjectType>>;
 
@@ -275,13 +277,13 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSOrderedSet")]
-    pub struct NSMutableOrderedSet<ObjectType: Message = AnyObject> {
+    pub struct NSMutableOrderedSet<ObjectType: ?Sized = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSOrderedSet<ObjectType>,
     }
 
     #[cfg(feature = "Foundation_NSOrderedSet")]
-    unsafe impl<ObjectType: Message> ClassType for NSMutableOrderedSet<ObjectType> {
+    unsafe impl<ObjectType: ?Sized + Message> ClassType for NSMutableOrderedSet<ObjectType> {
         #[inherits(NSObject)]
         type Super = NSOrderedSet<ObjectType>;
         type Mutability = MutableWithImmutableSuperclass<NSOrderedSet<ObjectType>>;
@@ -299,7 +301,7 @@ __inner_extern_class!(
 __inner_extern_class!(
     #[derive(Debug, PartialEq, Eq, Hash)]
     #[cfg(feature = "Foundation_NSEnumerator")]
-    pub struct NSEnumerator<ObjectType: Message = AnyObject> {
+    pub struct NSEnumerator<ObjectType: ?Sized = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
         // Enumerators are basically the same as if we were storing
@@ -315,7 +317,7 @@ __inner_extern_class!(
     }
 
     #[cfg(feature = "Foundation_NSEnumerator")]
-    unsafe impl<ObjectType: Message> ClassType for NSEnumerator<ObjectType> {
+    unsafe impl<ObjectType: ?Sized + Message> ClassType for NSEnumerator<ObjectType> {
         type Super = NSObject;
         type Mutability = Mutable;
 

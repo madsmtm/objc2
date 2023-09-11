@@ -852,6 +852,20 @@ skipped = true
 [class.NSCollectionViewDiffableDataSource.methods.initWithCollectionView_itemProvider]
 skipped = true
 
+# Requires `MainThreadOnly`, which I'm not sure is a good idea here?
+[class.NSCollectionViewDiffableDataSource]
+skipped-protocols = ["NSCollectionViewDataSource"]
+[class.NSManagedObjectContext]
+skipped-protocols = ["NSEditor", "NSEditorRegistration"]
+
+# Most methods on these require MainThreadMarker anyhow
+[protocol.NSDraggingInfo]
+requires-mainthreadonly = true
+[protocol.NSBrowserDelegate]
+requires-mainthreadonly = true
+[protocol.NSSplitViewDelegate]
+requires-mainthreadonly = true
+
 # Both protocols and classes
 [protocol.NSTextAttachmentCell]
 renamed = "NSTextAttachmentCellProtocol"
@@ -1614,7 +1628,7 @@ skipped-protocols = ["NSCopying", "NSMutableCopying"]
 skipped-protocols = ["NSCopying", "NSMutableCopying"]
 
 # Uses `NS_SWIFT_UI_ACTOR` on a static, which is hard to support.
-# 
+#
 # Will have to be a method that takes `MainThreadMarker`.
 [static.NSApp]
 skipped = true

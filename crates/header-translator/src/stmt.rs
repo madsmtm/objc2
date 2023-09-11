@@ -698,7 +698,13 @@ impl Stmt {
 
                 verify_objc_decl(entity, context);
                 let generics = parse_class_generics(entity, context);
-                let protocols = parse_direct_protocols(entity, context);
+                let mut protocols = parse_direct_protocols(entity, context);
+
+                let skipped_protocols = data
+                    .map(|data| data.skipped_protocols.clone())
+                    .unwrap_or_default();
+                protocols.retain(|protocol| !skipped_protocols.contains(&protocol.name));
+
                 let (methods, designated_initializers) = parse_methods(
                     entity,
                     |name| ClassData::get_method_data(data, name),
@@ -825,13 +831,50 @@ impl Stmt {
                     context,
                 );
 
-                let (sendable, mainthreadonly) = parse_attributes(entity, context);
+                let (sendable, mut mainthreadonly) = parse_attributes(entity, context);
 
                 if !designated_initializers.is_empty() {
                     warn!(
                         ?designated_initializers,
                         "designated initializer in protocol"
                     )
+                }
+
+                // Set the protocol as main thread only if all methods are
+                // main thread only.
+                //
+                // This is done to make the UI nicer when the user tries to
+                // implement such traits.
+                //
+                // Note: This is a deviation from the headers, but I don't
+                // see a way for this to be unsound? As an example, let's say
+                // there is some Objective-C code that assumes it can create
+                // an object which is not `MainThreadOnly`, and then sets it
+                // as the application delegate.
+                //
+                // Rust code that later retrieves the delegate would assume
+                // that the object is `MainThreadOnly`, and could use this
+                // information to create `MainThreadMarker`; but they can
+                // _already_ do that, since the only way to retrieve the
+                // delegate in the first place would be through
+                // `NSApplication`!
+                if !methods.is_empty() && methods.iter().all(|method| method.mainthreadonly) {
+                    mainthreadonly = true;
+                }
+
+                // Overwrite with config preference
+                if let Some(data) = data
+                    .map(|data| data.requires_mainthreadonly)
+                    .unwrap_or_default()
+                {
+                    if mainthreadonly == data {
+                        warn!(
+                            mainthreadonly,
+                            data,
+                            "set requires-mainthreadonly to the same value that it already has"
+                        );
+                    }
+                    mainthreadonly = data;
                 }
 
                 vec![Self::ProtocolDecl {
@@ -1381,7 +1424,7 @@ impl fmt::Display for Stmt {
                 if !generics.is_empty() {
                     write!(f, "<")?;
                     for generic in generics {
-                        write!(f, "{generic}: Message = AnyObject, ")?;
+                        write!(f, "{generic}: ?Sized = AnyObject, ")?;
                     }
                     write!(f, ">")?;
                 };
@@ -1411,7 +1454,7 @@ impl fmt::Display for Stmt {
                 writeln!(
                     f,
                     "    unsafe impl{} ClassType for {}{} {{",
-                    GenericParamsHelper(generics, "Message"),
+                    GenericParamsHelper(generics, "?Sized + Message"),
                     id.name,
                     GenericTyHelper(generics),
                 )?;
@@ -1494,6 +1537,7 @@ impl fmt::Display for Stmt {
                 if let Some(feature) = cls.feature() {
                     writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
                 }
+                // TODO: Add ?Sized here once `extern_methods!` supports it.
                 writeln!(
                     f,
                     "    unsafe impl{} {}{} {{",
@@ -1545,6 +1589,7 @@ impl fmt::Display for Stmt {
                 writeln!(f, ");")?;
 
                 if let Some(method) = methods.iter().find(|method| method.usable_in_default_id()) {
+                    writeln!(f)?;
                     if let Some(feature) = cls.feature() {
                         // Assume new methods require no extra features
                         writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
@@ -1574,11 +1619,11 @@ impl fmt::Display for Stmt {
                         // The object inherits from `NSObject` or `NSProxy` no
                         // matter what the generic type is, so this must be
                         // safe.
-                        (_, _) if protocol.is_nsobject() => ("Message", None),
+                        (_, _) if protocol.is_nsobject() => ("?Sized", None),
                         // Encoding and decoding requires that the inner types
                         // are codable as well.
-                        ("Foundation", "NSCoding") => ("Message + NSCoding", None),
-                        ("Foundation", "NSSecureCoding") => ("Message + NSSecureCoding", None),
+                        ("Foundation", "NSCoding") => ("?Sized + NSCoding", None),
+                        ("Foundation", "NSSecureCoding") => ("?Sized + NSSecureCoding", None),
                         // Copying collections is done as a shallow copy:
                         // <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Collections/Articles/Copying.html>
                         //
@@ -1588,24 +1633,24 @@ impl fmt::Display for Stmt {
                         //
                         // The types does have to be cloneable, since generic
                         // types effectively store an `Id<T>` of the type.
-                        ("Foundation", "NSCopying") => ("IsIdCloneable", None),
-                        ("Foundation", "NSMutableCopying") => ("IsIdCloneable", None),
+                        ("Foundation", "NSCopying") => ("?Sized + IsIdCloneable", None),
+                        ("Foundation", "NSMutableCopying") => ("?Sized + IsIdCloneable", None),
                         // TODO: Do we need further tweaks to this?
-                        ("Foundation", "NSFastEnumeration") => ("Message", None),
+                        ("Foundation", "NSFastEnumeration") => ("?Sized", None),
                         // AppKit fixes. TODO: Should we add more bounds here?
-                        ("AppKit", "NSCollectionViewDataSource") => ("Message", None),
-                        ("AppKit", "NSTableViewDataSource") => ("Message", None),
+                        ("AppKit", "NSCollectionViewDataSource") => ("?Sized", None),
+                        ("AppKit", "NSTableViewDataSource") => ("?Sized", None),
                         _ => {
                             error!(
                                 ?protocol,
                                 ?cls,
                                 "unknown where bound for generic protocol impl"
                             );
-                            ("Message", None)
+                            ("?Sized", None)
                         }
                     }
                 } else {
-                    ("Message", None)
+                    ("InvalidGenericBound", None)
                 };
 
                 if let Some(feature) = cls.feature() {
@@ -1628,7 +1673,7 @@ impl fmt::Display for Stmt {
                 protocols,
                 methods,
                 required_sendable: _,
-                required_mainthreadonly: _,
+                required_mainthreadonly,
             } => {
                 writeln!(f, "extern_protocol!(")?;
                 write!(f, "{availability}")?;
@@ -1659,6 +1704,14 @@ impl fmt::Display for Stmt {
                 //     }
                 //     write!(f, "Send + Sync")?;
                 // }
+                if *required_mainthreadonly {
+                    if protocols.is_empty() {
+                        write!(f, ": ")?;
+                    } else {
+                        write!(f, "+ ")?;
+                    }
+                    write!(f, "IsMainThreadOnly")?;
+                }
                 writeln!(f, " {{")?;
 
                 for method in methods {

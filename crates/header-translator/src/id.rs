@@ -1,4 +1,6 @@
+use core::cmp::Ordering;
 use core::fmt;
+use core::hash;
 
 use clang::Entity;
 
@@ -20,7 +22,7 @@ impl ToOptionString for Option<String> {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone)]
 pub struct ItemIdentifier<N = String> {
     /// Names in Objective-C are global, so this is always enough to uniquely
     /// identify the item.
@@ -29,6 +31,32 @@ pub struct ItemIdentifier<N = String> {
     pub name: N,
     pub library: String,
     pub file_name: Option<String>,
+}
+
+impl<N: PartialEq> PartialEq for ItemIdentifier<N> {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+    }
+}
+
+impl<N: Eq> Eq for ItemIdentifier<N> {}
+
+impl<N: hash::Hash> hash::Hash for ItemIdentifier<N> {
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+        self.name.hash(state);
+    }
+}
+
+impl<N: Ord> PartialOrd for ItemIdentifier<N> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl<N: Ord> Ord for ItemIdentifier<N> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.name.cmp(&other.name)
+    }
 }
 
 impl<N: ToOptionString> ItemIdentifier<N> {

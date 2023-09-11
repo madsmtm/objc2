@@ -24,16 +24,16 @@ error[E0599]: the method `clone` exists for struct `Id<NSMutableObject>`, but it
 note: the trait `IsIdCloneable` must be implemented
  --> $WORKSPACE/crates/objc2/src/mutability.rs
   |
-  | pub trait IsIdCloneable: ClassType {}
-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  | pub unsafe trait IsIdCloneable: private_traits::Sealed {}
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-error[E0277]: the trait bound `Mutable: mutability::private::MutabilityIsRetainable` is not satisfied
+error[E0277]: the trait bound `Mutable: mutability::MutabilityIsRetainable` is not satisfied
  --> ui/mutable_id_not_clone_not_retain.rs
   |
   |     let _ = obj.retain();
-  |                 ^^^^^^ the trait `mutability::private::MutabilityIsRetainable` is not implemented for `Mutable`
+  |                 ^^^^^^ the trait `mutability::MutabilityIsRetainable` is not implemented for `Mutable`
   |
-  = help: the following other types implement trait `mutability::private::MutabilityIsRetainable`:
+  = help: the following other types implement trait `mutability::MutabilityIsRetainable`:
             Immutable
             InteriorMutable
             MainThreadOnly

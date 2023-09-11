@@ -53,6 +53,14 @@ impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug
     }
 }
 
+#[cfg(feature = "Foundation_NSCountedSet")]
+impl<T: fmt::Debug + Message> fmt::Debug for Foundation::NSCountedSet<T> {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Debug::fmt(&**self, f)
+    }
+}
+
 #[cfg(feature = "Foundation_NSMutableSet")]
 impl<T: fmt::Debug + Message> fmt::Debug for Foundation::NSMutableSet<T> {
     #[inline]

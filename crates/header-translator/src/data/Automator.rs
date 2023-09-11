@@ -1,2 +1,3 @@
 data! {
+    class AMWorkflowController: MainThreadOnly {}
 }

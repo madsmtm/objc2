@@ -321,13 +321,13 @@ macro_rules! __impl_as_ref_borrow {
 macro_rules! __inner_extern_class {
     (
         $(#[$m:meta])*
-        $v:vis struct $name:ident<$($t_struct:ident $(: $b_struct:ident $(= $default:ty)?)?),* $(,)?> {
+        $v:vis struct $name:ident<$($t_struct:ident $(: $(?$b_sized_struct:ident)? $($b_struct:ident)? $(= $default:ty)?)?),* $(,)?> {
             $superclass_field:ident: $superclass_field_ty:ty,
             $($fields:tt)*
         }
 
         $(#[$impl_m:meta])*
-        unsafe impl<$($t_for:ident $(: $b_for:ident)?),* $(,)?> ClassType for $for:ty {
+        unsafe impl<$($t_for:ident $(: $(?$b_sized_for:ident +)? $b_for:ident)?),* $(,)?> ClassType for $for:ty {
             $(#[inherits($($inheritance_rest:ty),+ $(,)?)])?
             type Super = $superclass:ty;
             type Mutability = $mutability:ty;
@@ -341,7 +341,7 @@ macro_rules! __inner_extern_class {
         $crate::__emit_struct! {
             ($(#[$m])*)
             ($v)
-            ($name<$($t_struct $(: $b_struct $(= $default)?)?),*>)
+            ($name<$($t_struct $(: $(?$b_sized_struct)? $($b_struct)? $(= $default)?)?),*>)
             (
                 $superclass_field: $superclass_field_ty,
                 $($fields)*
@@ -350,7 +350,7 @@ macro_rules! __inner_extern_class {
 
         $crate::__extern_class_impl_traits! {
             $(#[$impl_m])*
-            unsafe impl ($($t_for $(: $b_for)?),*) for $for {
+            unsafe impl ($($t_for $(: $(?$b_sized_for +)? $b_for)?),*) for $for {
                 INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::AnyObject];
 
                 fn as_super(&$as_super_self) $as_super
@@ -359,7 +359,7 @@ macro_rules! __inner_extern_class {
         }
 
         $(#[$impl_m])*
-        unsafe impl<$($t_for $(: $b_for)?),*> ClassType for $for {
+        unsafe impl<$($t_for $(: $(?$b_sized_for +)? $b_for)?),*> ClassType for $for {
             type Super = $superclass;
             type Mutability = $mutability;
             const NAME: &'static $crate::__macro_helpers::str = $crate::__select_name!($name; $($name_const)?);

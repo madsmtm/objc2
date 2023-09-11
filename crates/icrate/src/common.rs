@@ -14,8 +14,8 @@ pub(crate) use std::os::raw::{
 pub(crate) use objc2::ffi::{NSInteger, NSIntegerMax, NSUInteger, NSUIntegerMax, IMP};
 #[cfg(feature = "objective-c")]
 pub(crate) use objc2::mutability::{
-    Immutable, ImmutableWithMutableSubclass, InteriorMutable, IsIdCloneable, MainThreadOnly,
-    Mutable, MutableWithImmutableSuperclass,
+    Immutable, ImmutableWithMutableSubclass, InteriorMutable, IsIdCloneable, IsMainThreadOnly,
+    MainThreadOnly, Mutable, MutableWithImmutableSuperclass,
 };
 #[cfg(feature = "objective-c")]
 pub(crate) use objc2::rc::{Allocated, DefaultId, Id};

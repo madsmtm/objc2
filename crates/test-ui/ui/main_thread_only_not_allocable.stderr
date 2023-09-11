@@ -1,10 +1,10 @@
-error[E0277]: the trait bound `MainThreadOnly: mutability::private::MutabilityIsAllocableAnyThread` is not satisfied
+error[E0277]: the trait bound `MainThreadOnly: mutability::MutabilityIsAllocableAnyThread` is not satisfied
  --> ui/main_thread_only_not_allocable.rs
   |
   |     let _ = MyMainThreadOnlyClass::alloc();
-  |             ^^^^^^^^^^^^^^^^^^^^^ the trait `mutability::private::MutabilityIsAllocableAnyThread` is not implemented for `MainThreadOnly`
+  |             ^^^^^^^^^^^^^^^^^^^^^ the trait `mutability::MutabilityIsAllocableAnyThread` is not implemented for `MainThreadOnly`
   |
-  = help: the following other types implement trait `mutability::private::MutabilityIsAllocableAnyThread`:
+  = help: the following other types implement trait `mutability::MutabilityIsAllocableAnyThread`:
             Root
             Immutable
             Mutable

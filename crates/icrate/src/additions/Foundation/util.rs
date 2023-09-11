@@ -68,7 +68,7 @@ pub(crate) fn id_ptr_cast_const<T: ?Sized>(objects: *const Id<T>) -> *mut NonNul
 #[inline]
 pub(crate) unsafe fn collection_retain_id<T>(obj: &T) -> Id<T>
 where
-    T: IsIdCloneable,
+    T: Message + IsIdCloneable,
 {
     // SAFETY: We're allowed to access `&Id<T>` from `&self` in collections,
     // and since `T: IsIdCloneable`, we can convert that to `Id<T>`.

@@ -1,8 +1,10 @@
 #![cfg(feature = "Foundation_NSArray")]
 #![cfg(feature = "Foundation_NSNumber")]
 use icrate::Foundation::{NSArray, NSNumber, NSObject};
-use objc2::rc::Id;
-use objc2::rc::{__RcTestObject, __ThreadTestData};
+use objc2::mutability::IsRetainable;
+use objc2::rc::{Id, __RcTestObject, __ThreadTestData};
+use objc2::runtime::ProtocolObject;
+use objc2::{extern_protocol, ProtocolType};
 
 fn sample_array(len: usize) -> Id<NSArray<NSObject>> {
     let mut vec = Vec::with_capacity(len);
@@ -261,4 +263,23 @@ fn test_generic_ownership_traits() {
     fn assert_partialeq<T: PartialEq>() {}
 
     assert_partialeq::<NSArray<NSObject>>();
+}
+
+#[test]
+fn test_trait_retainable() {
+    extern_protocol!(
+        #[allow(clippy::missing_safety_doc)]
+        unsafe trait TestProtocol: IsRetainable {}
+
+        unsafe impl ProtocolType for dyn TestProtocol {
+            const NAME: &'static str = "NSObject";
+        }
+    );
+
+    unsafe impl TestProtocol for NSNumber {}
+
+    let obj: Id<ProtocolObject<dyn TestProtocol>> = ProtocolObject::from_id(NSNumber::new_i32(42));
+    let _ = NSArray::from_slice(&[&*obj, &*obj]);
+    let _ = NSArray::from_id_slice(&[obj.clone(), obj.clone()]);
+    let _ = NSArray::from_vec(vec![obj.clone(), obj.clone()]);
 }

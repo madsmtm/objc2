@@ -391,7 +391,7 @@ __impl_iter! {
 pub struct IterMut<'a, T: Message>(iter::IterMut<'a, NSArray<T>>);
 
 __impl_iter! {
-    impl<'a, T: IsMutable> Iterator<Item = &'a mut T> for IterMut<'a, T> { ... }
+    impl<'a, T: Message + IsMutable> Iterator<Item = &'a mut T> for IterMut<'a, T> { ... }
 }
 
 /// An iterator that retains the items of a `NSArray`.
@@ -399,7 +399,7 @@ __impl_iter! {
 pub struct IterRetained<'a, T: Message>(iter::IterRetained<'a, NSArray<T>>);
 
 __impl_iter! {
-    impl<'a, T: IsIdCloneable> Iterator<Item = Id<T>> for IterRetained<'a, T> { ... }
+    impl<'a, T: Message + IsIdCloneable> Iterator<Item = Id<T>> for IterRetained<'a, T> { ... }
 }
 
 /// A consuming iterator over the items of a `NSArray`.
@@ -420,16 +420,16 @@ __impl_into_iter! {
         type IntoIter = Iter<'_, T>;
     }
 
-    impl<T: IsMutable> IntoIterator for &mut NSArray<T> {
+    impl<T: Message + IsMutable> IntoIterator for &mut NSArray<T> {
         type IntoIter = IterMut<'_, T>;
     }
 
     #[cfg(feature = "Foundation_NSMutableArray")]
-    impl<T: IsMutable> IntoIterator for &mut NSMutableArray<T> {
+    impl<T: Message + IsMutable> IntoIterator for &mut NSMutableArray<T> {
         type IntoIter = IterMut<'_, T>;
     }
 
-    impl<T: IsIdCloneable> IntoIterator for Id<NSArray<T>> {
+    impl<T: Message + IsIdCloneable> IntoIterator for Id<NSArray<T>> {
         type IntoIter = IntoIter<T>;
     }
 
@@ -456,14 +456,14 @@ impl<T: Message> Index<usize> for NSMutableArray<T> {
     }
 }
 
-impl<T: IsMutable> IndexMut<usize> for NSArray<T> {
+impl<T: Message + IsMutable> IndexMut<usize> for NSArray<T> {
     fn index_mut(&mut self, index: usize) -> &mut T {
         self.get_mut(index).unwrap()
     }
 }
 
 #[cfg(feature = "Foundation_NSMutableArray")]
-impl<T: IsMutable> IndexMut<usize> for NSMutableArray<T> {
+impl<T: Message + IsMutable> IndexMut<usize> for NSMutableArray<T> {
     fn index_mut(&mut self, index: usize) -> &mut T {
         self.get_mut(index).unwrap()
     }
@@ -484,7 +484,7 @@ impl<T: Message> Extend<Id<T>> for NSMutableArray<T> {
 }
 
 #[cfg(feature = "Foundation_NSMutableArray")]
-impl<'a, T: IsRetainable> Extend<&'a T> for NSMutableArray<T> {
+impl<'a, T: Message + IsRetainable> Extend<&'a T> for NSMutableArray<T> {
     fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
         // SAFETY: Because of the `T: IsRetainable` bound, it is safe for the
         // array to retain the object here.
@@ -493,7 +493,7 @@ impl<'a, T: IsRetainable> Extend<&'a T> for NSMutableArray<T> {
     }
 }
 
-impl<'a, T: IsRetainable + 'a> IdFromIterator<&'a T> for NSArray<T> {
+impl<'a, T: Message + IsRetainable + 'a> IdFromIterator<&'a T> for NSArray<T> {
     fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Id<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
@@ -508,7 +508,7 @@ impl<T: Message> IdFromIterator<Id<T>> for NSArray<T> {
 }
 
 #[cfg(feature = "Foundation_NSMutableArray")]
-impl<'a, T: IsRetainable + 'a> IdFromIterator<&'a T> for NSMutableArray<T> {
+impl<'a, T: Message + IsRetainable + 'a> IdFromIterator<&'a T> for NSMutableArray<T> {
     fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Id<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)

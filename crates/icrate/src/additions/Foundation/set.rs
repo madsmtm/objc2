@@ -501,7 +501,7 @@ __impl_iter! {
 pub struct IterRetained<'a, T: Message>(iter::IterRetained<'a, NSSet<T>>);
 
 __impl_iter! {
-    impl<'a, T: IsIdCloneable> Iterator<Item = Id<T>> for IterRetained<'a, T> { ... }
+    impl<'a, T: Message + IsIdCloneable> Iterator<Item = Id<T>> for IterRetained<'a, T> { ... }
 }
 
 /// A consuming iterator over the items of a `NSSet`.
@@ -522,7 +522,7 @@ __impl_into_iter! {
         type IntoIter = Iter<'_, T>;
     }
 
-    impl<T: IsIdCloneable> IntoIterator for Id<NSSet<T>> {
+    impl<T: Message + IsIdCloneable> IntoIterator for Id<NSSet<T>> {
         type IntoIter = IntoIter<T>;
     }
 
@@ -549,7 +549,7 @@ impl<T: Message + Eq + Hash + HasStableHash> Extend<Id<T>> for NSMutableSet<T> {
 }
 
 #[cfg(feature = "Foundation_NSMutableSet")]
-impl<'a, T: IsRetainable + Eq + Hash + HasStableHash> Extend<&'a T> for NSMutableSet<T> {
+impl<'a, T: Message + Eq + Hash + HasStableHash + IsRetainable> Extend<&'a T> for NSMutableSet<T> {
     fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| {
             self.insert(item);
@@ -557,7 +557,9 @@ impl<'a, T: IsRetainable + Eq + Hash + HasStableHash> Extend<&'a T> for NSMutabl
     }
 }
 
-impl<'a, T: IsRetainable + Eq + Hash + HasStableHash + 'a> IdFromIterator<&'a T> for NSSet<T> {
+impl<'a, T: Message + Eq + Hash + HasStableHash + IsRetainable + 'a> IdFromIterator<&'a T>
+    for NSSet<T>
+{
     fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Id<Self> {
         let vec = Vec::from_iter(iter);
         Self::from_slice(&vec)
@@ -572,7 +574,7 @@ impl<T: Message + Eq + Hash + HasStableHash> IdFromIterator<Id<T>> for NSSet<T> 
 }
 
 #[cfg(feature = "Foundation_NSMutableSet")]
-impl<'a, T: IsRetainable + Eq + Hash + HasStableHash + 'a> IdFromIterator<&'a T>
+impl<'a, T: Message + Eq + Hash + HasStableHash + IsRetainable + 'a> IdFromIterator<&'a T>
     for NSMutableSet<T>
 {
     fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Id<Self> {

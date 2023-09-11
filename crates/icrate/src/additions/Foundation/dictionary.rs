@@ -516,7 +516,7 @@ mod iter_helpers {
     );
 
     __impl_iter! {
-        impl<'a, K: IsIdCloneable, V: Message> Iterator<Item = Id<K>> for KeysRetained<'a, K, V> { ... }
+        impl<'a, K: Message + IsIdCloneable, V: Message> Iterator<Item = Id<K>> for KeysRetained<'a, K, V> { ... }
     }
 
     /// An iterator over the values of a `NSDictionary`.
@@ -536,7 +536,7 @@ mod iter_helpers {
     );
 
     __impl_iter! {
-        impl<'a, K: Message, V: IsMutable> Iterator<Item = &'a mut V> for ValuesMut<'a, K, V> { ... }
+        impl<'a, K: Message, V: Message + IsMutable> Iterator<Item = &'a mut V> for ValuesMut<'a, K, V> { ... }
     }
 
     /// A iterator that retains the values of a `NSDictionary`.
@@ -546,7 +546,7 @@ mod iter_helpers {
     );
 
     __impl_iter! {
-        impl<'a, K: Message, V: IsIdCloneable> Iterator<Item = Id<V>> for ValuesRetained<'a, K, V> { ... }
+        impl<'a, K: Message, V: Message + IsIdCloneable> Iterator<Item = Id<V>> for ValuesRetained<'a, K, V> { ... }
     }
 
     /// A consuming iterator over the values of a `NSDictionary`.
@@ -580,14 +580,16 @@ impl<'a, K: Message + Eq + Hash, V: Message> Index<&'a K> for NSMutableDictionar
     }
 }
 
-impl<'a, K: Message + Eq + Hash, V: IsMutable> IndexMut<&'a K> for NSDictionary<K, V> {
+impl<'a, K: Message + Eq + Hash, V: Message + IsMutable> IndexMut<&'a K> for NSDictionary<K, V> {
     fn index_mut<'s>(&'s mut self, index: &'a K) -> &'s mut V {
         self.get_mut(index).unwrap()
     }
 }
 
 #[cfg(feature = "Foundation_NSMutableDictionary")]
-impl<'a, K: Message + Eq + Hash, V: IsMutable> IndexMut<&'a K> for NSMutableDictionary<K, V> {
+impl<'a, K: Message + Eq + Hash, V: Message + IsMutable> IndexMut<&'a K>
+    for NSMutableDictionary<K, V>
+{
     fn index_mut<'s>(&'s mut self, index: &'a K) -> &'s mut V {
         self.get_mut(index).unwrap()
     }

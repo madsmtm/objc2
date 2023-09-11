@@ -1,0 +1,29 @@
+error[E0277]: the trait bound `CustomObject: NSObjectProtocol` is not satisfied
+ --> ui/implement_protocol_missing_super.rs
+  |
+  |     unsafe impl NSApplicationDelegate for CustomObject {}
+  |                                           ^^^^^^^^^^^^ the trait `NSObjectProtocol` is not implemented for `CustomObject`
+  |
+  = help: the following other types implement trait `NSObjectProtocol`:
+            ProtocolObject<T>
+            NSObject
+            __NSProxy
+            NSApplication
+            NSCollectionView
+            NSCollectionLayoutSection
+            NSCollectionLayoutGroupCustomItem
+            NSControl
+          and $N others
+note: required by a bound in `NSApplicationDelegate`
+ --> $WORKSPACE/crates/icrate/src/generated/AppKit/NSApplication.rs
+  |
+  | / extern_protocol!(
+  | |     pub unsafe trait NSApplicationDelegate: NSObjectProtocol + IsMainThreadOnly {
+  | |                      --------------------- required by a bound in this trait
+  | |         #[cfg(feature = "AppKit_NSApplication")]
+  | |         #[optional]
+... |
+  | |     unsafe impl ProtocolType for dyn NSApplicationDelegate {}
+  | | );
+  | |_^ required by this bound in `NSApplicationDelegate`
+  = note: this error originates in the macro `extern_protocol` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -31,9 +31,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `MTLAccelerationStructureCommandEncoder` now take a nullable scratch buffer:
   - `refitAccelerationStructure_descriptor_destination_scratchBuffer_scratchBufferOffset`
   - `refitAccelerationStructure_descriptor_destination_scratchBuffer_scratchBufferOffset_options`
-* **BREAKING**: Marked UI-related types as `MainThreadOnly`. This means that
-  they can now only be constructed on the main thread, meaning you have to
-  aquire a `MainThreadMarker` first.
+* **BREAKING**: Marked UI-related classes as `MainThreadOnly`, and UI-related
+  protocols as `IsMainThreadOnly`.
+
+  This means that they can now only be constructed, retrieved and used on the
+  main thread, meaning you usually have to aquire a `MainThreadMarker` first.
 
   ```rust
   // Before
@@ -67,6 +69,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `NSSet` creation methods, fixing a long-standing soundess issue.
 * Fixed the protocol names of `NSAccessibilityElementProtocol`,
   `NSTextAttachmentCellProtocol` and `NSFileProviderItemProtocol`.
+* **BREAKING**: Generic types no longer strictly require `Message` (although
+  most of their trait implementations still require that).
 
 
 ## icrate 0.0.4 - 2023-07-31
