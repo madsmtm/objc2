@@ -1680,13 +1680,7 @@ impl fmt::Display for Stmt {
 
                 write!(f, "    pub unsafe trait {}", id.name)?;
                 if !protocols.is_empty() {
-                    for (i, protocol) in protocols
-                        .iter()
-                        .filter(|protocol| {
-                            protocol.name != "NSCopying" && protocol.name != "NSMutableCopying"
-                        })
-                        .enumerate()
-                    {
+                    for (i, protocol) in protocols.iter().enumerate() {
                         if i == 0 {
                             write!(f, ": ")?;
                         } else {

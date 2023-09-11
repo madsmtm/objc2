@@ -71,6 +71,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `NSTextAttachmentCellProtocol` and `NSFileProviderItemProtocol`.
 * **BREAKING**: Generic types no longer strictly require `Message` (although
   most of their trait implementations still require that).
+* **BREAKING**: Removed a workaround that made the `NSCopying` and
+  `NSMutableCopying` protocols not act as regular protocols (many methods used
+  `AnyObject` instead of the correct `ProtocolObject<dyn NSCopying>`).
 
 
 ## icrate 0.0.4 - 2023-07-31
