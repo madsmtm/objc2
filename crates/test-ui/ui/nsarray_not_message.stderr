@@ -1,0 +1,178 @@
+error[E0277]: the trait bound `i32: Message` is not satisfied
+ --> ui/nsarray_not_message.rs
+  |
+  |     let _: Id<NSArray<i32>> = NSArray::new();
+  |            ^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `i32`
+  |
+  = help: the following other types implement trait `Message`:
+            Exception
+            ProtocolObject<P>
+            AnyObject
+            NSArray<ObjectType>
+            NSMutableArray<ObjectType>
+            NSDictionary<KeyType, ObjectType>
+            NSMutableDictionary<KeyType, ObjectType>
+            NSSet<ObjectType>
+          and $N others
+note: required by a bound in `NSArray`
+ --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
+  |
+  | / __inner_extern_class!(
+  | |     #[derive(PartialEq, Eq, Hash)]
+  | |     #[cfg(feature = "Foundation_NSArray")]
+  | |     pub struct NSArray<ObjectType: Message = AnyObject> {
+  | |                ------- required by a bound in this struct
+... |
+  | |     }
+  | | );
+  | |_^ required by this bound in `NSArray`
+  = note: this error originates in the macro `__inner_extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Id<NSObject>: Message` is not satisfied
+ --> ui/nsarray_not_message.rs
+  |
+  |     let _: Id<NSArray<Id<NSObject>>> = NSArray::from_slice(&[&NSObject::new()]);
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `Id<NSObject>`
+  |
+  = help: the following other types implement trait `Message`:
+            Exception
+            ProtocolObject<P>
+            AnyObject
+            NSArray<ObjectType>
+            NSMutableArray<ObjectType>
+            NSDictionary<KeyType, ObjectType>
+            NSMutableDictionary<KeyType, ObjectType>
+            NSSet<ObjectType>
+          and $N others
+note: required by a bound in `NSArray`
+ --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
+  |
+  | / __inner_extern_class!(
+  | |     #[derive(PartialEq, Eq, Hash)]
+  | |     #[cfg(feature = "Foundation_NSArray")]
+  | |     pub struct NSArray<ObjectType: Message = AnyObject> {
+  | |                ------- required by a bound in this struct
+... |
+  | |     }
+  | | );
+  | |_^ required by this bound in `NSArray`
+  = note: this error originates in the macro `__inner_extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `i32: Message` is not satisfied
+ --> ui/nsarray_not_message.rs
+  |
+  |     let _: Id<NSArray<i32>> = NSArray::new();
+  |                               ^^^^^^^^^^^^ the trait `Message` is not implemented for `i32`
+  |
+  = help: the following other types implement trait `Message`:
+            Exception
+            ProtocolObject<P>
+            AnyObject
+            NSArray<ObjectType>
+            NSMutableArray<ObjectType>
+            NSDictionary<KeyType, ObjectType>
+            NSMutableDictionary<KeyType, ObjectType>
+            NSSet<ObjectType>
+          and $N others
+note: required by a bound in `Foundation::__NSArray::<impl NSArray<ObjectType>>::new`
+ --> $WORKSPACE/crates/icrate/src/generated/Foundation/NSArray.rs
+  |
+  | / extern_methods!(
+  | |     /// Methods declared on superclass `NSObject`
+  | |     #[cfg(feature = "Foundation_NSArray")]
+  | |     unsafe impl<ObjectType: Message> NSArray<ObjectType> {
+  | |         #[method_id(@__retain_semantics New new)]
+  | |         pub fn new() -> Id<Self>;
+  | |                --- required by a bound in this associated function
+  | |     }
+  | | );
+  | |_^ required by this bound in `Foundation::__NSArray::<impl NSArray<ObjectType>>::new`
+  = note: this error originates in the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `i32: Message` is not satisfied
+ --> ui/nsarray_not_message.rs
+  |
+  |     let _: Id<NSArray<i32>> = NSArray::new();
+  |                               ^^^^^^^ the trait `Message` is not implemented for `i32`
+  |
+  = help: the following other types implement trait `Message`:
+            Exception
+            ProtocolObject<P>
+            AnyObject
+            NSArray<ObjectType>
+            NSMutableArray<ObjectType>
+            NSDictionary<KeyType, ObjectType>
+            NSMutableDictionary<KeyType, ObjectType>
+            NSSet<ObjectType>
+          and $N others
+note: required by a bound in `NSArray`
+ --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
+  |
+  | / __inner_extern_class!(
+  | |     #[derive(PartialEq, Eq, Hash)]
+  | |     #[cfg(feature = "Foundation_NSArray")]
+  | |     pub struct NSArray<ObjectType: Message = AnyObject> {
+  | |                ------- required by a bound in this struct
+... |
+  | |     }
+  | | );
+  | |_^ required by this bound in `NSArray`
+  = note: this error originates in the macro `__inner_extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Id<NSObject>: ClassType` is not satisfied
+ --> ui/nsarray_not_message.rs
+  |
+  |     let _: Id<NSArray<Id<NSObject>>> = NSArray::from_slice(&[&NSObject::new()]);
+  |                                        ------------------- ^^^^^^^^^^^^^^^^^^^ the trait `ClassType` is not implemented for `Id<NSObject>`
+  |                                        |
+  |                                        required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `ClassType`:
+            NSArray<ObjectType>
+            NSMutableArray<ObjectType>
+            NSDictionary<KeyType, ObjectType>
+            NSMutableDictionary<KeyType, ObjectType>
+            NSSet<ObjectType>
+            NSMutableSet<ObjectType>
+            NSEnumerator<ObjectType>
+            NSAppleEventDescriptor
+          and $N others
+  = note: required for `Id<NSObject>` to implement `IsRetainable`
+note: required by a bound in `icrate::Foundation::array::<impl NSArray<T>>::from_slice`
+ --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/array.rs
+  |
+  |     pub fn from_slice(slice: &[&T]) -> Id<Self>
+  |            ---------- required by a bound in this associated function
+  |     where
+  |         T: IsRetainable,
+  |            ^^^^^^^^^^^^ required by this bound in `icrate::Foundation::array::<impl NSArray<T>>::from_slice`
+
+error[E0277]: the trait bound `Id<NSObject>: Message` is not satisfied
+ --> ui/nsarray_not_message.rs
+  |
+  |     let _: Id<NSArray<Id<NSObject>>> = NSArray::from_slice(&[&NSObject::new()]);
+  |                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Message` is not implemented for `Id<NSObject>`
+  |
+  = help: the following other types implement trait `Message`:
+            Exception
+            ProtocolObject<P>
+            AnyObject
+            NSArray<ObjectType>
+            NSMutableArray<ObjectType>
+            NSDictionary<KeyType, ObjectType>
+            NSMutableDictionary<KeyType, ObjectType>
+            NSSet<ObjectType>
+          and $N others
+note: required by a bound in `NSArray`
+ --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../fixes/Foundation/generics.rs
+  |
+  | / __inner_extern_class!(
+  | |     #[derive(PartialEq, Eq, Hash)]
+  | |     #[cfg(feature = "Foundation_NSArray")]
+  | |     pub struct NSArray<ObjectType: Message = AnyObject> {
+  | |                ------- required by a bound in this struct
+... |
+  | |     }
+  | | );
+  | |_^ required by this bound in `NSArray`
+  = note: this error originates in the macro `__inner_extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
