@@ -105,45 +105,46 @@ impl<'a> Cache<'a> {
                             }
                         });
 
-                        match (method.is_class, self.mainthreadonly_classes.contains(id)) {
-                            // MainThreadOnly class with static method
-                            (true, true) => {
-                                // Assume the method needs main thread
+                        let mut any_argument_contains_mainthreadonly: bool = false;
+                        for (_, argument) in method.arguments.iter() {
+                            // Important: We only visit the top-level types, to not
+                            // include optional arguments like `Option<&NSView>` or
+                            // `&NSArray<NSView>`.
+                            argument.visit_toplevel_types(&mut |id| {
+                                if self.mainthreadonly_classes.contains(id) {
+                                    any_argument_contains_mainthreadonly = true;
+                                }
+                            });
+                        }
+
+                        if self.mainthreadonly_classes.contains(id) {
+                            if method.is_class {
+                                // Assume the method needs main thread if it's
+                                // declared on a main thread only class.
                                 result_type_contains_mainthreadonly = true;
-                            }
-                            // Class with static method
-                            (true, false) => {
-                                // Continue with the normal check
-                            }
-                            // MainThreadOnly class with non-static method
-                            (false, true) => {
-                                // Method is already required to run on main
-                                // thread, so no need to add MainThreadMarker
-                                continue;
-                            }
-                            // Class with non-static method
-                            (false, false) => {
-                                // Continue with the normal check
+                            } else {
+                                // Method takes `&self` or `&mut self`, or is
+                                // an initialization method, all of which
+                                // already require the main thread.
+                                //
+                                // Note: Initialization methods can be passed
+                                // `None`, but in that case the return will
+                                // always be NULL.
+                                any_argument_contains_mainthreadonly = true;
                             }
                         }
 
-                        if result_type_contains_mainthreadonly {
-                            let mut any_argument_contains_mainthreadonly: bool = false;
-                            for (_, argument) in method.arguments.iter() {
-                                // Important: We only visit the top-level types, to not
-                                // include e.g. `Option<&NSView>` or `&NSArray<NSView>`.
-                                argument.visit_toplevel_types(&mut |id| {
-                                    if self.mainthreadonly_classes.contains(id) {
-                                        any_argument_contains_mainthreadonly = true;
-                                    }
-                                });
-                            }
-
-                            // Apply main thread only, unless a (required)
-                            // argument was main thread only.
-                            if !any_argument_contains_mainthreadonly {
-                                method.mainthreadonly = true;
-                            }
+                        if any_argument_contains_mainthreadonly {
+                            // MainThreadMarker can be retrieved from
+                            // `MainThreadMarker::from` inside these methods,
+                            // and hence passing it is redundant.
+                            method.mainthreadonly = false;
+                        } else if result_type_contains_mainthreadonly {
+                            method.mainthreadonly = true;
+                        } else {
+                            // If neither, then we respect any annotation
+                            // the method may have had before
+                            // method.mainthreadonly = method.mainthreadonly;
                         }
                     }
                 }
