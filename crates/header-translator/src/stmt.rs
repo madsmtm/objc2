@@ -698,7 +698,13 @@ impl Stmt {
 
                 verify_objc_decl(entity, context);
                 let generics = parse_class_generics(entity, context);
-                let protocols = parse_direct_protocols(entity, context);
+                let mut protocols = parse_direct_protocols(entity, context);
+
+                let skipped_protocols = data
+                    .map(|data| data.skipped_protocols.clone())
+                    .unwrap_or_default();
+                protocols.retain(|protocol| !skipped_protocols.contains(&protocol.name));
+
                 let (methods, designated_initializers) = parse_methods(
                     entity,
                     |name| ClassData::get_method_data(data, name),
@@ -825,13 +831,50 @@ impl Stmt {
                     context,
                 );
 
-                let (sendable, mainthreadonly) = parse_attributes(entity, context);
+                let (sendable, mut mainthreadonly) = parse_attributes(entity, context);
 
                 if !designated_initializers.is_empty() {
                     warn!(
                         ?designated_initializers,
                         "designated initializer in protocol"
                     )
+                }
+
+                // Set the protocol as main thread only if all methods are
+                // main thread only.
+                //
+                // This is done to make the UI nicer when the user tries to
+                // implement such traits.
+                //
+                // Note: This is a deviation from the headers, but I don't
+                // see a way for this to be unsound? As an example, let's say
+                // there is some Objective-C code that assumes it can create
+                // an object which is not `MainThreadOnly`, and then sets it
+                // as the application delegate.
+                //
+                // Rust code that later retrieves the delegate would assume
+                // that the object is `MainThreadOnly`, and could use this
+                // information to create `MainThreadMarker`; but they can
+                // _already_ do that, since the only way to retrieve the
+                // delegate in the first place would be through
+                // `NSApplication`!
+                if !methods.is_empty() && methods.iter().all(|method| method.mainthreadonly) {
+                    mainthreadonly = true;
+                }
+
+                // Overwrite with config preference
+                if let Some(data) = data
+                    .map(|data| data.requires_mainthreadonly)
+                    .unwrap_or_default()
+                {
+                    if mainthreadonly == data {
+                        warn!(
+                            mainthreadonly,
+                            data,
+                            "set requires-mainthreadonly to the same value that it already has"
+                        );
+                    }
+                    mainthreadonly = data;
                 }
 
                 vec![Self::ProtocolDecl {
@@ -1630,7 +1673,7 @@ impl fmt::Display for Stmt {
                 protocols,
                 methods,
                 required_sendable: _,
-                required_mainthreadonly: _,
+                required_mainthreadonly,
             } => {
                 writeln!(f, "extern_protocol!(")?;
                 write!(f, "{availability}")?;
@@ -1661,6 +1704,14 @@ impl fmt::Display for Stmt {
                 //     }
                 //     write!(f, "Send + Sync")?;
                 // }
+                if *required_mainthreadonly {
+                    if protocols.is_empty() {
+                        write!(f, ": ")?;
+                    } else {
+                        write!(f, "+ ")?;
+                    }
+                    write!(f, "IsMainThreadOnly")?;
+                }
                 writeln!(f, " {{")?;
 
                 for method in methods {

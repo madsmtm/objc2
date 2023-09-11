@@ -700,8 +700,7 @@ impl fmt::Display for Method {
             let param = handle_reserved(&crate::to_snake_case(param));
             write!(f, "{param}: {arg_ty}, ")?;
         }
-        // FIXME: Skipping main thread only on protocols for now
-        if self.mainthreadonly && !self.is_protocol {
+        if self.mainthreadonly {
             write!(f, "mtm: MainThreadMarker")?;
         }
         write!(f, ")")?;

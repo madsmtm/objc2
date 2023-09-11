@@ -13,23 +13,44 @@ use crate::Mutability;
 #[derive(Debug, PartialEq, Clone)]
 pub struct Cache<'a> {
     config: &'a Config,
-    mainthreadonly_classes: BTreeSet<ItemIdentifier>,
+    mainthreadonly_items: BTreeSet<ItemIdentifier>,
 }
 
 impl<'a> Cache<'a> {
     pub fn new(output: &Output, config: &'a Config) -> Self {
-        let mut mainthreadonly_classes = BTreeSet::new();
+        let mut mainthreadonly_items = BTreeSet::new();
 
         for library in output.libraries.values() {
             for file in library.files.values() {
                 for stmt in file.stmts.iter() {
-                    if let Stmt::ClassDecl {
-                        id,
-                        mutability: Mutability::MainThreadOnly,
-                        ..
-                    } = stmt
-                    {
-                        mainthreadonly_classes.insert(id.clone());
+                    match stmt {
+                        Stmt::ClassDecl {
+                            id,
+                            mutability: Mutability::MainThreadOnly,
+                            ..
+                        } => {
+                            mainthreadonly_items.insert(id.clone());
+                        }
+                        Stmt::ProtocolDecl {
+                            id,
+                            required_mainthreadonly: true,
+                            ..
+                        } => {
+                            mainthreadonly_items.insert(id.clone());
+                        }
+                        Stmt::ProtocolDecl {
+                            id,
+                            required_mainthreadonly: false,
+                            protocols,
+                            ..
+                        } => {
+                            for protocol in protocols {
+                                if mainthreadonly_items.contains(protocol) {
+                                    let _ = mainthreadonly_items.insert(id.clone());
+                                }
+                            }
+                        }
+                        _ => {}
                     }
                 }
             }
@@ -37,7 +58,7 @@ impl<'a> Cache<'a> {
 
         Self {
             config,
-            mainthreadonly_classes,
+            mainthreadonly_items,
         }
     }
 
@@ -100,7 +121,7 @@ impl<'a> Cache<'a> {
                     for method in methods.iter_mut() {
                         let mut result_type_contains_mainthreadonly: bool = false;
                         method.result_type.visit_required_types(&mut |id| {
-                            if self.mainthreadonly_classes.contains(id) {
+                            if self.mainthreadonly_items.contains(id) {
                                 result_type_contains_mainthreadonly = true;
                             }
                         });
@@ -111,13 +132,13 @@ impl<'a> Cache<'a> {
                             // include optional arguments like `Option<&NSView>` or
                             // `&NSArray<NSView>`.
                             argument.visit_toplevel_types(&mut |id| {
-                                if self.mainthreadonly_classes.contains(id) {
+                                if self.mainthreadonly_items.contains(id) {
                                     any_argument_contains_mainthreadonly = true;
                                 }
                             });
                         }
 
-                        if self.mainthreadonly_classes.contains(id) {
+                        if self.mainthreadonly_items.contains(id) {
                             if method.is_class {
                                 // Assume the method needs main thread if it's
                                 // declared on a main thread only class.

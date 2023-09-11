@@ -16,12 +16,15 @@ default = [
     "icrate/Foundation",
     "icrate/Foundation_NSString",
     "icrate/Foundation_NSMutableString",
+    "icrate/Foundation_NSNotification",
     "icrate/Foundation_NSThread",
     "icrate/Foundation_NSError",
     "icrate/Foundation_NSArray",
     "icrate/Foundation_NSMutableArray",
     "icrate/Foundation_NSValue",
     "icrate/Foundation_NSSet",
+    "icrate/AppKit",
+    "icrate/AppKit_NSApplication",
     "objc2/unstable-msg-send-always-comma",
 ]
 std = ["block2/std", "objc2/std", "icrate/std"]

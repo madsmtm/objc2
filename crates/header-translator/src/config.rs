@@ -146,6 +146,9 @@ pub struct ProtocolData {
     #[serde(default)]
     pub skipped: bool,
     #[serde(default)]
+    #[serde(rename = "requires-mainthreadonly")]
+    pub requires_mainthreadonly: Option<bool>,
+    #[serde(default)]
     pub methods: HashMap<String, MethodData>,
 }
 
