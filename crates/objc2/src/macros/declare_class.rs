@@ -886,6 +886,7 @@ macro_rules! __declare_class_method_out {
         ($($args_rest:tt)*)
 
         ($($m_method:tt)*)
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
@@ -907,6 +908,7 @@ macro_rules! __declare_class_method_out {
             ($($args_prefix)*)
 
             ($($m_method)*)
+            ($($retain_semantics)*)
             ($($m_optional)*)
             ($($m_checked)*)
         }
@@ -1010,6 +1012,7 @@ macro_rules! __declare_class_method_out_inner {
         ($($args_prefix:tt)*)
 
         (#[method($($__sel:tt)*)])
+        ()
         ($($__m_optional:tt)*)
         ($($m_checked:tt)*)
 
@@ -1041,6 +1044,7 @@ macro_rules! __declare_class_method_out_inner {
         ($($args_prefix:tt)*)
 
         (#[method_id($($sel:tt)*)])
+        () // Specifying retain semantics is unsupported in declare_class! for now
         ($($__m_optional:tt)*)
         ($($m_checked:tt)*)
 
@@ -1083,6 +1087,7 @@ macro_rules! __declare_class_method_out_inner {
         ($($args_prefix:tt)*)
 
         (#[method_id($($sel:tt)*)])
+        ($($retain_semantics:tt)*)
         ($($__m_optional:tt)*)
         ($($m_checked:tt)*)
 
@@ -1127,6 +1132,7 @@ macro_rules! __declare_class_register_out {
         ($($args_rest:tt)*)
 
         (#[method(dealloc)])
+        ()
         () // No optional
         ($($m_checked:tt)*)
     } => {
@@ -1153,6 +1159,7 @@ macro_rules! __declare_class_register_out {
         ($($args_rest:tt)*)
 
         (#[method($($sel:tt)*)])
+        ()
         () // No optional
         ($($m_checked:tt)*)
     } => {
@@ -1186,6 +1193,7 @@ macro_rules! __declare_class_register_out {
         ($($args_rest:tt)*)
 
         (#[method_id($($sel:tt)*)])
+        () // Retain semantics unsupported in declare_class!
         () // No optional
         ($($m_checked:tt)*)
     } => {
@@ -1219,6 +1227,7 @@ macro_rules! __declare_class_register_out {
         ($($args_rest:tt)*)
 
         ($($m_method:tt)*)
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {

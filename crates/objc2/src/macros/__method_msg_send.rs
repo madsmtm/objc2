@@ -157,44 +157,19 @@ macro_rules! __method_msg_send_id {
     // Selector with no arguments
     (
         ($receiver:expr)
-        ($(@__retain_semantics $retain_semantics:ident)? $sel:ident)
+        ($sel:ident)
         ()
 
         ()
         ()
-        // Possible to hit via. the MainThreadMarker branch
-        ($($already_parsed_retain_semantics:ident)?)
+        ($($retain_semantics:ident)?)
     ) => {
         $crate::__msg_send_id_helper! {
             @(send_message_id)
             @($receiver)
-            @($($retain_semantics)? $($already_parsed_retain_semantics)?)
+            @($($retain_semantics)?)
             @($sel)
             @()
-        }
-    };
-
-    // Parse retain semantics
-    //
-    // Note: While this is not public, it is still a breaking change to change
-    // this, since `icrate` relies on it.
-    (
-        ($receiver:expr)
-        (@__retain_semantics $retain_semantics:ident $($sel_rest:tt)*)
-        ($($args_rest:tt)*)
-
-        ($($sel_parsed:tt)*)
-        ($($arg_parsed:tt)*)
-        ()
-    ) => {
-        $crate::__method_msg_send_id! {
-            ($receiver)
-            ($($sel_rest)*)
-            ($($args_rest)*)
-
-            ($($sel_parsed)*)
-            ($($arg_parsed)*)
-            ($retain_semantics)
         }
     };
 

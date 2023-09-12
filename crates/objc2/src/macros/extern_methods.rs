@@ -301,6 +301,7 @@ macro_rules! __extern_methods_method_out {
         ($($args_rest:tt)*)
 
         (#[method($($sel:tt)*)])
+        ()
         () // No `optional`
         ($($m_checked:tt)*)
     } => {
@@ -335,6 +336,7 @@ macro_rules! __extern_methods_method_out {
         ($($args_rest:tt)*)
 
         (#[method_id($($sel:tt)*)])
+        ($($retain_semantics:tt)*)
         () // No `optional`
         ($($m_checked:tt)*)
     } => {
@@ -352,7 +354,7 @@ macro_rules! __extern_methods_method_out {
 
                     ()
                     ()
-                    ()
+                    ($($retain_semantics)*)
                 }
             }
         }
@@ -370,6 +372,7 @@ macro_rules! __extern_methods_method_out {
         ($($args_rest:tt)*)
 
         ($($m_method:tt)*)
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {

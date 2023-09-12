@@ -280,6 +280,7 @@ macro_rules! __extern_protocol_method_out {
         ($($args_rest:tt)*)
 
         (#[method($($sel:tt)*)])
+        ()
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
@@ -315,6 +316,7 @@ macro_rules! __extern_protocol_method_out {
         ($($args_rest:tt)*)
 
         (#[method_id($($sel:tt)*)])
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
@@ -333,7 +335,7 @@ macro_rules! __extern_protocol_method_out {
 
                     ()
                     ()
-                    ()
+                    ($($retain_semantics)*)
                 }
             }
         }
@@ -351,6 +353,7 @@ macro_rules! __extern_protocol_method_out {
         ($($args_rest:tt)*)
 
         (#[method($($sel:tt)*)])
+        ()
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
@@ -386,6 +389,7 @@ macro_rules! __extern_protocol_method_out {
         ($($args_rest:tt)*)
 
         (#[method_id($($sel:tt)*)])
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
@@ -404,7 +408,7 @@ macro_rules! __extern_protocol_method_out {
 
                     ()
                     ()
-                    ()
+                    ($($retain_semantics)*)
                 }
             }
         }
