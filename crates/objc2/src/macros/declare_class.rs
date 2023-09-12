@@ -819,7 +819,6 @@ macro_rules! __declare_class_rewrite_methods {
 
             ($crate::__extract_custom_attributes)
             ($(#[$($m)*])*)
-            ($name)
 
             ($out_macro)
             ($($macro_arg)*)
@@ -852,7 +851,6 @@ macro_rules! __declare_class_rewrite_methods {
 
             ($crate::__extract_custom_attributes)
             ($(#[$($m)*])*)
-            ($name)
 
             ($out_macro)
             ($($macro_arg)*)

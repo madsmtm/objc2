@@ -53,23 +53,28 @@ macro_rules! __extract_and_apply_cfg_attributes {
 /// This will ensure that there is one and only one of the method attributes
 /// present.
 ///
-/// This is implemented as a tt-muncher, taking the following arguments:
-/// - The attributes to parse.
-/// - The function name, for better UI if an error occurs.
-/// - The output macro that will be called.
-/// - Any extra arguments given to the output macro.
+/// This takes the following arguments:
+/// 1. The attributes to parse.
+///    ($($m:tt)*)
 ///
-/// And will call the output macro with the given arguments, along with the
-/// following extra arguments:
-/// - The `method` or `method_id` attribute.
-/// - The `optional` attribute, if any.
-/// - The rest of the attributes.
+/// 2. The output macro.
+///    ($out_macro:path)
+///
+/// Further arguments are passed on to the output macro, with the following
+/// arguments appended to it:
+/// 1. The `method` or `method_id` attribute.
+///    (#[$method_or_method_id:ident($($sel:tt)*)])
+///
+/// 2. The `optional` attribute, if any.
+///    ($(#[optional])?)
+///
+/// 3. The rest of the attributes.
+///    ($(#[$($m:tt)*])*)
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __extract_custom_attributes {
     {
         ($($m:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -80,7 +85,6 @@ macro_rules! __extract_custom_attributes {
             ()
             ()
             ()
-            ($name)
 
             ($out_macro)
             $($macro_args)*
@@ -99,14 +103,11 @@ macro_rules! __extract_custom_attributes_inner {
         ()
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        fn $name() {
-            compile_error!("must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`")
-        }
+        compile_error!("must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`");
     };
 
     // Base case
@@ -117,7 +118,6 @@ macro_rules! __extract_custom_attributes_inner {
         ($($m_method:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -142,7 +142,6 @@ macro_rules! __extract_custom_attributes_inner {
         ()
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -153,7 +152,6 @@ macro_rules! __extract_custom_attributes_inner {
             (#[method($($args)*)])
             ($($m_optional)*)
             ($($m_checked)*)
-            ($name)
 
             ($out_macro)
             $($macro_args)*
@@ -168,14 +166,11 @@ macro_rules! __extract_custom_attributes_inner {
         ($($m_method:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        fn $name() {
-            compile_error!("cannot specify the `method`/`method_id` attribute twice")
-        }
+        compile_error!("cannot specify the `method`/`method_id` attribute twice");
     };
 
     // `method_id` attribute
@@ -188,7 +183,6 @@ macro_rules! __extract_custom_attributes_inner {
         ()
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -199,7 +193,6 @@ macro_rules! __extract_custom_attributes_inner {
             (#[method_id($($args)*)])
             ($($m_optional)*)
             ($($m_checked)*)
-            ($name)
 
             ($out_macro)
             $($macro_args)*
@@ -214,14 +207,11 @@ macro_rules! __extract_custom_attributes_inner {
         ($($m_method:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        fn $name() {
-            compile_error!("cannot specify the `method`/`method_id` attribute twice")
-        }
+        compile_error!("cannot specify the `method`/`method_id` attribute twice");
     };
 
     // `optional` attribute
@@ -234,7 +224,6 @@ macro_rules! __extract_custom_attributes_inner {
         // If no existing `optional` attributes exist
         ()
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -245,7 +234,6 @@ macro_rules! __extract_custom_attributes_inner {
             // Add optional attribute
             (#[optional])
             ($($m_checked)*)
-            ($name)
 
             ($out_macro)
             $($macro_args)*
@@ -260,14 +248,11 @@ macro_rules! __extract_custom_attributes_inner {
         ($($m_method:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        fn $name() {
-            compile_error!("cannot specify the `optional` attribute twice")
-        }
+        compile_error!("cannot specify the `optional` attribute twice");
     };
 
     // Other attributes
@@ -279,7 +264,6 @@ macro_rules! __extract_custom_attributes_inner {
         ($($m_method:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
-        ($name:ident)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -294,7 +278,6 @@ macro_rules! __extract_custom_attributes_inner {
                 // been consuming the attributes from the front.
                 #[$($checked)*]
             )
-            ($name)
 
             ($out_macro)
             $($macro_args)*

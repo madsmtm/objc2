@@ -235,7 +235,6 @@ macro_rules! __extern_methods_rewrite_methods {
 
             ($crate::__extract_custom_attributes)
             ($(#[$($m)*])*)
-            ($name)
 
             ($crate::__extern_methods_method_out)
             ($v unsafe fn $name($($args)*) $(-> $ret)?)
@@ -261,7 +260,6 @@ macro_rules! __extern_methods_rewrite_methods {
 
             ($crate::__extract_custom_attributes)
             ($(#[$($m)*])*)
-            ($name)
 
             ($crate::__extern_methods_method_out)
             ($v fn $name($($args)*) $(-> $ret)?)
