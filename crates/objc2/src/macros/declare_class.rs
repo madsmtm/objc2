@@ -1178,7 +1178,6 @@ macro_rules! __convert_result {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __declare_class_register_out {
-    // #[method(...)]
     {
         ($builder:ident)
         ($($qualifiers:tt)*)
@@ -1192,51 +1191,15 @@ macro_rules! __declare_class_register_out {
         ($($__params_prefix:tt)*)
         ($($params_rest:tt)*)
 
-        (#[method($($sel:tt)*)])
-        ()
+        (#[$method_or_method_id:ident($($sel:tt)*)])
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
         $crate::__extract_and_apply_cfg_attributes! {
             ($($m_checked)*)
 
-            $crate::__declare_class_invalid_selectors!(#[method($($sel)*)]);
-            $crate::__extern_methods_no_optional!($($m_optional)*);
-
-            $builder.$builder_method(
-                $crate::sel!($($sel)*),
-                Self::$name as $crate::__fn_ptr! {
-                    ($($qualifiers)*)
-                    (_, _,)
-                    $($params_rest)*
-                },
-            );
-        }
-    };
-
-    // #[method_id(...)]
-    {
-        ($builder:ident)
-        ($($qualifiers:tt)*)
-        ($name:ident)
-        ($($__ret:ty)?)
-        ($__body:block)
-
-        ($builder_method:ident)
-        ($__receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__params_prefix:tt)*)
-        ($($params_rest:tt)*)
-
-        (#[method_id($($sel:tt)*)])
-        () // Retain semantics unsupported in declare_class!
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
-    } => {
-        $crate::__extract_and_apply_cfg_attributes! {
-            ($($m_checked)*)
-
-            $crate::__declare_class_invalid_selectors!(#[method_id($($sel)*)]);
+            $crate::__declare_class_invalid_selectors!(#[$method_or_method_id($($sel)*)]);
             $crate::__extern_methods_no_optional!($($m_optional)*);
 
             $builder.$builder_method(
