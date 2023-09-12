@@ -247,7 +247,7 @@ macro_rules! sel {
     ($($sel:tt)*) => {
         $crate::__sel_inner!(
             $crate::__sel_helper! {
-                @()
+                ()
                 $($sel)*
             },
             $crate::__hash_idents!($($sel)*)
@@ -263,37 +263,37 @@ macro_rules! sel {
 macro_rules! __sel_helper {
     // Base-case
     {
-        @($($parsed_sel:tt)*)
+        ($($parsed_sel:tt)*)
     } => ({
         $crate::__sel_data!($($parsed_sel)*)
     });
     // Single identifier
     {
-        @()
+        ()
         $ident:ident
     } => {
         $crate::__sel_helper! {
-            @($ident)
+            ($ident)
         }
     };
     // Parse identitifer + colon token
     {
-        @($($parsed_sel:tt)*)
+        ($($parsed_sel:tt)*)
         $($ident:ident)? : $($rest:tt)*
     } => {
         $crate::__sel_helper! {
-            @($($parsed_sel)* $($ident)? :)
+            ($($parsed_sel)* $($ident)? :)
             $($rest)*
         }
     };
     // Parse identitifer + path separator token
     {
-        @($($parsed_sel:tt)*)
+        ($($parsed_sel:tt)*)
         $($ident:ident)? :: $($rest:tt)*
     } => {
         $crate::__sel_helper! {
             // Notice space between these
-            @($($parsed_sel)* $($ident)? : :)
+            ($($parsed_sel)* $($ident)? : :)
             $($rest)*
         }
     };
@@ -989,38 +989,38 @@ macro_rules! __class_inner {
 macro_rules! msg_send {
     [super($obj:expr), $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
-            ($crate::__msg_send_helper)
-            @(__send_super_message_static_error)
-            @()
-            @()
-            @($($selector_and_arguments)+)
-            @(__send_super_message_static)
+            (__send_super_message_static_error)
+            ()
+            ()
+            ($($selector_and_arguments)+)
+            (__send_super_message_static)
 
-            @($obj)
+            ($crate::__msg_send_helper)
+            ($obj)
         }
     };
     [super($obj:expr, $superclass:expr), $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
-            ($crate::__msg_send_helper)
-            @(__send_super_message_error)
-            @()
-            @()
-            @($($selector_and_arguments)+)
-            @(send_super_message)
+            (__send_super_message_error)
+            ()
+            ()
+            ($($selector_and_arguments)+)
+            (send_super_message)
 
-            @($obj, $superclass)
+            ($crate::__msg_send_helper)
+            ($obj, $superclass)
         }
     };
     [$obj:expr, $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
-            ($crate::__msg_send_helper)
-            @(__send_message_error)
-            @()
-            @()
-            @($($selector_and_arguments)+)
-            @(send_message)
+            (__send_message_error)
+            ()
+            ()
+            ($($selector_and_arguments)+)
+            (send_message)
 
-            @($obj)
+            ($crate::__msg_send_helper)
+            ($obj)
         }
     };
 }
@@ -1029,10 +1029,10 @@ macro_rules! msg_send {
 #[macro_export]
 macro_rules! __msg_send_helper {
     {
-        @($fn:ident)
-        @($($fn_args:tt)+)
-        @($($selector:tt)*)
-        @($($argument:expr,)*)
+        ($($fn_args:tt)+)
+        ($fn:ident)
+        ($($selector:tt)*)
+        ($($argument:expr,)*)
     } => ({
         // Assign to intermediary variable for better UI, and to prevent
         // miscompilation on older Rust versions.
@@ -1244,15 +1244,15 @@ macro_rules! msg_send_id {
     });
     [$obj:expr, $($selector_and_arguments:tt)+] => {
         $crate::__msg_send_parse! {
-            ($crate::__msg_send_id_helper)
-            @(send_message_id_error)
-            @()
-            @()
-            @($($selector_and_arguments)+)
-            @(send_message_id)
+            (send_message_id_error)
+            ()
+            ()
+            ($($selector_and_arguments)+)
+            (send_message_id)
 
-            @($obj)
-            @()
+            ($crate::__msg_send_id_helper)
+            ($obj)
+            () // No retain semantics
         }
     };
 }
@@ -1262,55 +1262,55 @@ macro_rules! msg_send_id {
 #[macro_export]
 macro_rules! __msg_send_id_helper {
     {
-        @($fn:ident)
-        @($obj:expr)
-        @($($retain_semantics:ident)?)
-        @(retain)
-        @()
+        ($obj:expr)
+        ($($retain_semantics:ident)?)
+        ($fn:ident)
+        (retain)
+        ()
     } => {{
         $crate::__macro_helpers::compile_error!(
             "msg_send_id![obj, retain] is not supported. Use `Id::retain` instead"
         )
     }};
     {
-        @($fn:ident)
-        @($obj:expr)
-        @($($retain_semantics:ident)?)
-        @(release)
-        @()
+        ($obj:expr)
+        ($($retain_semantics:ident)?)
+        ($fn:ident)
+        (release)
+        ()
     } => {{
         $crate::__macro_helpers::compile_error!(
             "msg_send_id![obj, release] is not supported. Drop an `Id` instead"
         )
     }};
     {
-        @($fn:ident)
-        @($obj:expr)
-        @($($retain_semantics:ident)?)
-        @(autorelease)
-        @()
+        ($obj:expr)
+        ($($retain_semantics:ident)?)
+        ($fn:ident)
+        (autorelease)
+        ()
     } => {{
         $crate::__macro_helpers::compile_error!(
             "msg_send_id![obj, autorelease] is not supported. Use `Id::autorelease`"
         )
     }};
     {
-        @($fn:ident)
-        @($obj:expr)
-        @($($retain_semantics:ident)?)
-        @(dealloc)
-        @()
+        ($obj:expr)
+        ($($retain_semantics:ident)?)
+        ($fn:ident)
+        (dealloc)
+        ()
     } => {{
         $crate::__macro_helpers::compile_error!(
             "msg_send_id![obj, dealloc] is not supported. Drop an `Id` instead"
         )
     }};
     {
-        @($fn:ident)
-        @($obj:expr)
-        @($retain_semantics:ident)
-        @($($selector:tt)*)
-        @($($argument:expr,)*)
+        ($obj:expr)
+        ($retain_semantics:ident)
+        ($fn:ident)
+        ($($selector:tt)*)
+        ($($argument:expr,)*)
     } => ({
         <$crate::__macro_helpers::$retain_semantics as $crate::__macro_helpers::MsgSendId<_, _>>::$fn::<_, _>(
             $obj,
@@ -1319,11 +1319,11 @@ macro_rules! __msg_send_id_helper {
         )
     });
     {
-        @($fn:ident)
-        @($obj:expr)
-        @()
-        @($($selector:tt)*)
-        @($($argument:expr,)*)
+        ($obj:expr)
+        ()
+        ($fn:ident)
+        ($($selector:tt)*)
+        ($($argument:expr,)*)
     } => ({
         // Don't use `sel!`, otherwise we'd end up with defining this data twice.
         const __SELECTOR_DATA: &$crate::__macro_helpers::str = $crate::__sel_data!(

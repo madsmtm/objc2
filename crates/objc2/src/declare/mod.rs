@@ -166,8 +166,8 @@ pub trait MethodImplementation: private::Sealed + Sized {
     fn __imp(self) -> Imp;
 }
 
-macro_rules! method_decl_impl {
-    (@<$($l:lifetime),*> T: $t_bound:ident $(+ $t_bound2:ident)?, $r:ident, $f:ty, $($t:ident),*) => {
+macro_rules! method_impl_generic {
+    (<$($l:lifetime),*> T: $t_bound:ident $(+ $t_bound2:ident)?, $r:ident, $f:ty, $($t:ident),*) => {
         impl<$($l,)* T, $r, $($t),*> private::Sealed for $f
         where
             T: ?Sized + $t_bound $(+ $t_bound2)?,
@@ -190,7 +190,10 @@ macro_rules! method_decl_impl {
             }
         }
     };
-    (@<$($l:lifetime),*> $callee:ident, $r:ident, $f:ty, $($t:ident),*) => {
+}
+
+macro_rules! method_impl_concrete {
+    (<$($l:lifetime),*> $callee:ident, $r:ident, $f:ty, $($t:ident),*) => {
         impl<$($l,)* $r, $($t),*> private::Sealed for $f
         where
             $r: EncodeReturn,
@@ -211,7 +214,10 @@ macro_rules! method_decl_impl {
             }
         }
     };
-    (@<> Allocated<T>, $f:ty, $($t:ident),*) => {
+}
+
+macro_rules! method_impl_allocated {
+    (<> Allocated<T>, $f:ty, $($t:ident),*) => {
         #[doc(hidden)]
         impl<T, $($t),*> private::Sealed for $f
         where
@@ -242,48 +248,54 @@ macro_rules! method_decl_impl {
             }
         }
     };
-    (# $abi:literal; $($t:ident),*) => {
-        method_decl_impl!(@<'a> T: Message, R, extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<'a> T: Message + IsMutable, R, extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<> T: Message, R, unsafe extern $abi fn(*const T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<> T: Message, R, unsafe extern $abi fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<'a> T: Message, R, unsafe extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<'a> T: Message + IsMutable, R, unsafe extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
+}
 
-        method_decl_impl!(@<'a> AnyObject, R, extern $abi fn(&'a mut AnyObject, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<'a> AnyObject, R, unsafe extern $abi fn(&'a mut AnyObject, Sel $(, $t)*) -> R, $($t),*);
+macro_rules! method_impl_abi {
+    ($abi:literal; $($t:ident),*) => {
+        method_impl_generic!(<'a> T: Message, R, extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
+        method_impl_generic!(<'a> T: Message + IsMutable, R, extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_impl_generic!(<> T: Message, R, unsafe extern $abi fn(*const T, Sel $(, $t)*) -> R, $($t),*);
+        method_impl_generic!(<> T: Message, R, unsafe extern $abi fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_impl_generic!(<'a> T: Message, R, unsafe extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
+        method_impl_generic!(<'a> T: Message + IsMutable, R, unsafe extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
 
-        method_decl_impl!(@<'a> AnyClass, R, extern $abi fn(&'a AnyClass, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<> AnyClass, R, unsafe extern $abi fn(*const AnyClass, Sel $(, $t)*) -> R, $($t),*);
-        method_decl_impl!(@<'a> AnyClass, R, unsafe extern $abi fn(&'a AnyClass, Sel $(, $t)*) -> R, $($t),*);
+        method_impl_concrete!(<'a> AnyObject, R, extern $abi fn(&'a mut AnyObject, Sel $(, $t)*) -> R, $($t),*);
+        method_impl_concrete!(<'a> AnyObject, R, unsafe extern $abi fn(&'a mut AnyObject, Sel $(, $t)*) -> R, $($t),*);
 
-        method_decl_impl!(@<> Allocated<T>, extern $abi fn(Allocated<T>, Sel $(, $t)*) -> __IdReturnValue, $($t),*);
-        method_decl_impl!(@<> Allocated<T>, unsafe extern $abi fn(Allocated<T>, Sel $(, $t)*) -> __IdReturnValue, $($t),*);
-    };
-    ($($t:ident),*) => {
-        method_decl_impl!(# "C"; $($t),*);
-        #[cfg(feature = "unstable-c-unwind")]
-        method_decl_impl!(# "C-unwind"; $($t),*);
+        method_impl_concrete!(<'a> AnyClass, R, extern $abi fn(&'a AnyClass, Sel $(, $t)*) -> R, $($t),*);
+        method_impl_concrete!(<> AnyClass, R, unsafe extern $abi fn(*const AnyClass, Sel $(, $t)*) -> R, $($t),*);
+        method_impl_concrete!(<'a> AnyClass, R, unsafe extern $abi fn(&'a AnyClass, Sel $(, $t)*) -> R, $($t),*);
+
+        method_impl_allocated!(<> Allocated<T>, extern $abi fn(Allocated<T>, Sel $(, $t)*) -> __IdReturnValue, $($t),*);
+        method_impl_allocated!(<> Allocated<T>, unsafe extern $abi fn(Allocated<T>, Sel $(, $t)*) -> __IdReturnValue, $($t),*);
     };
 }
 
-method_decl_impl!();
-method_decl_impl!(A);
-method_decl_impl!(A, B);
-method_decl_impl!(A, B, C);
-method_decl_impl!(A, B, C, D);
-method_decl_impl!(A, B, C, D, E);
-method_decl_impl!(A, B, C, D, E, F);
-method_decl_impl!(A, B, C, D, E, F, G);
-method_decl_impl!(A, B, C, D, E, F, G, H);
-method_decl_impl!(A, B, C, D, E, F, G, H, I);
-method_decl_impl!(A, B, C, D, E, F, G, H, I, J);
-method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K);
-method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
-method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M);
-method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N);
-method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O);
-method_decl_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P);
+macro_rules! method_impl {
+    ($($t:ident),*) => {
+        method_impl_abi!("C"; $($t),*);
+        #[cfg(feature = "unstable-c-unwind")]
+        method_impl_abi!("C-unwind"; $($t),*);
+    };
+}
+
+method_impl!();
+method_impl!(A);
+method_impl!(A, B);
+method_impl!(A, B, C);
+method_impl!(A, B, C, D);
+method_impl!(A, B, C, D, E);
+method_impl!(A, B, C, D, E, F);
+method_impl!(A, B, C, D, E, F, G);
+method_impl!(A, B, C, D, E, F, G, H);
+method_impl!(A, B, C, D, E, F, G, H, I);
+method_impl!(A, B, C, D, E, F, G, H, I, J);
+method_impl!(A, B, C, D, E, F, G, H, I, J, K);
+method_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
+method_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M);
+method_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N);
+method_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O);
+method_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P);
 
 /// Helper type for implementing `MethodImplementation` with a receiver of
 /// `Allocated<T>`, without exposing that implementation to users.

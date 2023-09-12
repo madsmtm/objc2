@@ -9,40 +9,40 @@
 macro_rules! __extract_and_apply_cfg_attributes {
     // Base case
     {
-        @() // No attributes left to process
-        @($($output:tt)*)
+        () // No attributes left to process
+        $($output:tt)*
     } => {
         $($output)*
     };
     // `cfg` attribute
     {
-        @(
+        (
             #[cfg $($args:tt)*]
             $($m_rest:tt)*
         )
-        @($($output:tt)*)
+        $($output:tt)*
     } => {
         // Apply the attribute and continue
         #[cfg $($args)*]
         {
             $crate::__extract_and_apply_cfg_attributes! {
-                @($($m_rest)*)
-                @($($output)*)
+                ($($m_rest)*)
+                $($output)*
             }
         }
     };
     // Other attributes
     {
-        @(
+        (
             #[$($m_ignored:tt)*]
             $($m_rest:tt)*
         )
-        @($($output:tt)*)
+        $($output:tt)*
     } => {
         // Ignore the attribute, and continue parsing the rest
         $crate::__extract_and_apply_cfg_attributes! {
-            @($($m_rest)*)
-            @($($output)*)
+            ($($m_rest)*)
+            $($output)*
         }
     };
 }

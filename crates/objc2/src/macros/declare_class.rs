@@ -779,30 +779,29 @@ macro_rules! __declare_class_register_impls {
         $($rest:tt)*
     ) => {
         $crate::__extract_and_apply_cfg_attributes! {
-            @($(#[$($m)*])*)
-            @(
-                // Implement protocol
-                #[allow(unused_mut)]
-                let mut __objc2_protocol_builder = $builder.__add_protocol_methods(
-                    <dyn $protocol as $crate::ProtocolType>::protocol()
-                );
+            ($(#[$($m)*])*)
 
-                // In case the user's function is marked `deprecated`
-                #[allow(deprecated)]
-                // In case the user did not specify any methods
-                #[allow(unused_unsafe)]
-                // SAFETY: Upheld by caller
-                unsafe {
-                    $crate::__declare_class_register_methods! {
-                        (__objc2_protocol_builder)
+            // Implement protocol
+            #[allow(unused_mut)]
+            let mut __objc2_protocol_builder = $builder.__add_protocol_methods(
+                <dyn $protocol as $crate::ProtocolType>::protocol()
+            );
 
-                        $($methods)*
-                    }
+            // In case the user's function is marked `deprecated`
+            #[allow(deprecated)]
+            // In case the user did not specify any methods
+            #[allow(unused_unsafe)]
+            // SAFETY: Upheld by caller
+            unsafe {
+                $crate::__declare_class_register_methods! {
+                    (__objc2_protocol_builder)
+
+                    $($methods)*
                 }
+            }
 
-                // Finished declaring protocol; get error message if any
-                __objc2_protocol_builder.__finish();
-            )
+            // Finished declaring protocol; get error message if any
+            __objc2_protocol_builder.__finish();
         }
 
         $crate::__declare_class_register_impls! {
@@ -823,21 +822,20 @@ macro_rules! __declare_class_register_impls {
         $($rest:tt)*
     ) => {
         $crate::__extract_and_apply_cfg_attributes! {
-            @($(#[$($m)*])*)
-            @(
-                // In case the user's function is marked `deprecated`
-                #[allow(deprecated)]
-                // In case the user did not specify any methods
-                #[allow(unused_unsafe)]
-                // SAFETY: Upheld by caller
-                unsafe {
-                    $crate::__declare_class_register_methods! {
-                        ($builder)
+            ($(#[$($m)*])*)
 
-                        $($methods)*
-                    }
+            // In case the user's function is marked `deprecated`
+            #[allow(deprecated)]
+            // In case the user did not specify any methods
+            #[allow(unused_unsafe)]
+            // SAFETY: Upheld by caller
+            unsafe {
+                $crate::__declare_class_register_methods! {
+                    ($builder)
+
+                    $($methods)*
                 }
-            )
+            }
         }
 
         $crate::__declare_class_register_impls! {
@@ -1127,7 +1125,7 @@ macro_rules! __declare_class_method_out_inner {
             <$crate::__macro_helpers::RetainSemantics<{
                 $crate::__macro_helpers::retain_semantics(
                     $crate::__sel_helper! {
-                        @()
+                        ()
                         $($sel)*
                     }
                 )
@@ -1200,20 +1198,19 @@ macro_rules! __declare_class_register_out {
         ($($m_checked:tt)*)
     } => {
         $crate::__extract_and_apply_cfg_attributes! {
-            @($($m_checked)*)
-            @(
-                $crate::__declare_class_invalid_selectors!(#[method($($sel)*)]);
-                $crate::__extern_methods_no_optional!($($m_optional)*);
+            ($($m_checked)*)
 
-                $builder.$builder_method(
-                    $crate::sel!($($sel)*),
-                    Self::$name as $crate::__fn_ptr! {
-                        ($($qualifiers)*)
-                        (_, _,)
-                        $($params_rest)*
-                    },
-                );
-            )
+            $crate::__declare_class_invalid_selectors!(#[method($($sel)*)]);
+            $crate::__extern_methods_no_optional!($($m_optional)*);
+
+            $builder.$builder_method(
+                $crate::sel!($($sel)*),
+                Self::$name as $crate::__fn_ptr! {
+                    ($($qualifiers)*)
+                    (_, _,)
+                    $($params_rest)*
+                },
+            );
         }
     };
 
@@ -1237,20 +1234,19 @@ macro_rules! __declare_class_register_out {
         ($($m_checked:tt)*)
     } => {
         $crate::__extract_and_apply_cfg_attributes! {
-            @($($m_checked)*)
-            @(
-                $crate::__declare_class_invalid_selectors!(#[method_id($($sel)*)]);
-                $crate::__extern_methods_no_optional!($($m_optional)*);
+            ($($m_checked)*)
 
-                $builder.$builder_method(
-                    $crate::sel!($($sel)*),
-                    Self::$name as $crate::__fn_ptr! {
-                        ($($qualifiers)*)
-                        (_, _,)
-                        $($params_rest)*
-                    },
-                );
-            )
+            $crate::__declare_class_invalid_selectors!(#[method_id($($sel)*)]);
+            $crate::__extern_methods_no_optional!($($m_optional)*);
+
+            $builder.$builder_method(
+                $crate::sel!($($sel)*),
+                Self::$name as $crate::__fn_ptr! {
+                    ($($qualifiers)*)
+                    (_, _,)
+                    $($params_rest)*
+                },
+            );
         }
     };
 }

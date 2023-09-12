@@ -19,7 +19,7 @@ error: use of deprecated function `main::__msg_send_missing_comma`: using msg_se
   |     let _: () = unsafe { msg_send![super(obj), a:obj b:obj] };
   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-  = note: this error originates in the macro `$crate::__comma_between_args` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__comma_between_args_inner` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: use of deprecated function `main::__msg_send_missing_comma`: using msg_send! without a comma between arguments is technically not valid macro syntax, and may break in a future version of Rust. You should use the following instead:
        msg_send![super(obj, NSString::class()), a: obj, b: obj]
@@ -28,7 +28,7 @@ error: use of deprecated function `main::__msg_send_missing_comma`: using msg_se
    |     let _: () = unsafe { msg_send![super(obj, NSString::class()), a:obj b:obj] };
    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
-   = note: this error originates in the macro `$crate::__comma_between_args` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `$crate::__comma_between_args_inner` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: use of deprecated function `main::__msg_send_missing_comma`: using msg_send! without a comma between arguments is technically not valid macro syntax, and may break in a future version of Rust. You should use the following instead:
        msg_send![obj, a: obj, b: obj]
@@ -37,7 +37,7 @@ error: use of deprecated function `main::__msg_send_missing_comma`: using msg_se
    |     let _: () = unsafe { msg_send![obj, a:obj b:obj] };
    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
-   = note: this error originates in the macro `$crate::__comma_between_args` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `$crate::__comma_between_args_inner` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: use of deprecated function `main::__msg_send_missing_comma`: using msg_send! without a comma between arguments is technically not valid macro syntax, and may break in a future version of Rust. You should use the following instead:
        msg_send![obj, c: obj, d: obj]
@@ -46,7 +46,7 @@ error: use of deprecated function `main::__msg_send_missing_comma`: using msg_se
    |     unsafe { msg_send_bool![obj, c:obj d:obj] };
    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
-   = note: this error originates in the macro `$crate::__comma_between_args` which comes from the expansion of the macro `msg_send_bool` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `$crate::__comma_between_args_inner` which comes from the expansion of the macro `msg_send_bool` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: use of deprecated function `main::__msg_send_missing_comma`: using msg_send_id! without a comma between arguments is technically not valid macro syntax, and may break in a future version of Rust. You should use the following instead:
        msg_send_id![obj, e: obj, f: obj]
@@ -55,4 +55,4 @@ error: use of deprecated function `main::__msg_send_missing_comma`: using msg_se
    |     let _: Id<NSString> = unsafe { msg_send_id![obj, e:obj f:obj] };
    |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
-   = note: this error originates in the macro `$crate::__comma_between_args` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: this error originates in the macro `$crate::__comma_between_args_inner` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)

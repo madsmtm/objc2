@@ -70,14 +70,13 @@ macro_rules! extern_enum {
             ),* $(,)?
         }
     ) => {
-        extern_enum! {
-            @__inner
-            @($v)
-            @($ty)
-            @($(
+        extern_enum_inner! {
+            ($v)
+            ($ty)
+            $(
                 $(#[$field_m])*
                 $field = $value,
-            )*)
+            )*
         }
     };
     (
@@ -94,45 +93,42 @@ macro_rules! extern_enum {
         $(#[$m])*
         $v type $name = $ty;
 
-        extern_enum! {
-            @__inner
-            @($v)
-            @($name)
-            @($(
+        extern_enum_inner! {
+            ($v)
+            ($name)
+            $(
                 $(#[$field_m])*
                 $field = $value,
-            )*)
+            )*
         }
     };
+}
 
-    // tt-munch each field
+// tt-munch each enum field
+macro_rules! extern_enum_inner {
+    // Base case
     (
-        @__inner
-        @($v:vis)
-        @($ty:ty)
-        @()
-    ) => {
-        // Base case
-    };
-    (
-        @__inner
-        @($v:vis)
-        @($ty:ty)
-        @(
-            $(#[$field_m:meta])*
-            $field:ident = $value:expr,
+        ($v:vis)
+        ($ty:ty)
+    ) => {};
 
-            $($rest:tt)*
-        )
+    // Parse each field
+    (
+        ($v:vis)
+        ($ty:ty)
+
+        $(#[$field_m:meta])*
+        $field:ident = $value:expr,
+
+        $($rest:tt)*
     ) => {
         $(#[$field_m])*
         $v const $field: $ty = $value;
 
-        extern_enum! {
-            @__inner
-            @($v)
-            @($ty)
-            @($($rest)*)
+        extern_enum_inner! {
+            ($v)
+            ($ty)
+            $($rest)*
         }
     };
 }

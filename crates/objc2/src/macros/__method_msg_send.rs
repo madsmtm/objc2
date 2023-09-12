@@ -15,10 +15,10 @@ macro_rules! __method_msg_send {
         ()
     ) => {
         $crate::__msg_send_helper! {
-            @(send_message)
-            @($receiver)
-            @($sel)
-            @()
+            ($receiver)
+            (send_message)
+            ($sel)
+            ()
         }
     };
 
@@ -95,10 +95,10 @@ macro_rules! __method_msg_send {
         ($($arg_parsed:tt)*)
     ) => {
         $crate::__msg_send_helper! {
-            @(send_message)
-            @($receiver)
-            @($($sel_parsed)*)
-            @($($arg_parsed)*)
+            ($receiver)
+            (send_message)
+            ($($sel_parsed)*)
+            ($($arg_parsed)*)
         }
     };
 
@@ -113,11 +113,11 @@ macro_rules! __method_msg_send {
         ($($arg_parsed:tt)*)
     ) => {
         $crate::__msg_send_helper! {
+            ($receiver)
             // Use error method
-            @(__send_message_error)
-            @($receiver)
-            @($($sel_parsed)* $sel :)
-            @($($arg_parsed)*)
+            (__send_message_error)
+            ($($sel_parsed)* $sel :)
+            ($($arg_parsed)*)
         }
     };
 
@@ -165,11 +165,11 @@ macro_rules! __method_msg_send_id {
         ($($retain_semantics:ident)?)
     ) => {
         $crate::__msg_send_id_helper! {
-            @(send_message_id)
-            @($receiver)
-            @($($retain_semantics)?)
-            @($sel)
-            @()
+            ($receiver)
+            ($($retain_semantics)?)
+            (send_message_id)
+            ($sel)
+            ()
         }
     };
 
@@ -253,11 +253,11 @@ macro_rules! __method_msg_send_id {
         ($($retain_semantics:ident)?)
     ) => {
         $crate::__msg_send_id_helper! {
-            @(send_message_id)
-            @($receiver)
-            @($($retain_semantics)?)
-            @($($sel_parsed)*)
-            @($($arg_parsed)*)
+            ($receiver)
+            ($($retain_semantics)?)
+            (send_message_id)
+            ($($sel_parsed)*)
+            ($($arg_parsed)*)
         }
     };
 
@@ -273,12 +273,12 @@ macro_rules! __method_msg_send_id {
         ($($retain_semantics:ident)?)
     ) => {
         $crate::__msg_send_id_helper! {
+            ($receiver)
+            ($($retain_semantics)?)
             // Use error method
-            @(send_message_id_error)
-            @($receiver)
-            @($($retain_semantics)?)
-            @($($sel_parsed)* $sel :)
-            @($($arg_parsed)*)
+            (send_message_id_error)
+            ($($sel_parsed)* $sel :)
+            ($($arg_parsed)*)
         }
     };
 

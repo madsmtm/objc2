@@ -266,7 +266,7 @@ macro_rules! __impl_as_ref_borrow {
             fn as_mut($($self_mut:tt)*) $mut:block
         }
 
-        @()
+        ()
     } => {};
     {
         impl ($($t:tt)*) for $for:ty {
@@ -274,7 +274,7 @@ macro_rules! __impl_as_ref_borrow {
             fn as_mut($($self_mut:tt)*) $mut:block
         }
 
-        @($item:ty, $($tail:ty,)*)
+        ($item:ty, $($tail:ty,)*)
     } => {
         impl<$($t)*> $crate::__macro_helpers::AsRef<$item> for $for {
             #[inline]
@@ -308,7 +308,7 @@ macro_rules! __impl_as_ref_borrow {
                 fn as_mut($($self_mut)*) $mut
             }
 
-            @($($tail,)*)
+            ($($tail,)*)
         }
     };
     // TODO: Expose a generic variant of the macro.
@@ -504,7 +504,7 @@ macro_rules! __extern_class_impl_traits {
                 }
             }
 
-            @($superclass, $($inheritance_rest,)*)
+            ($superclass, $($inheritance_rest,)*)
         }
     };
 }

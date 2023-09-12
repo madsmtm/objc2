@@ -3,20 +3,24 @@
 macro_rules! __msg_send_parse {
     // No arguments
     {
-        ($out_macro:path)
-        @($error_fn:ident)
+        ($error_fn:ident)
         // Intentionally empty
-        @()
-        @()
-        @($selector:ident $(,)?)
+        ()
+        ()
+        ($selector:ident $(,)?)
+        ($fn:ident)
+
+        ($out_macro:path)
         $($macro_args:tt)*
     } => {
         $crate::__msg_send_parse! {
+            ($error_fn)
+            ($selector)
+            ()
+            ()
+            ($fn)
+
             ($out_macro)
-            @($error_fn)
-            @($selector)
-            @()
-            @()
             $($macro_args)*
         }
     };
@@ -24,85 +28,101 @@ macro_rules! __msg_send_parse {
     // tt-munch remaining `selector: argument` pairs, looking for a pattern
     // that ends with `sel: _`.
     {
+        ($_error_fn:ident)
+        ($($selector_output:tt)*)
+        ($($argument_output:tt)*)
+        ()
+        ($fn:ident)
+
         ($out_macro:path)
-        @($_error_fn:ident)
-        @($($selector_output:tt)*)
-        @($($argument_output:tt)*)
-        @()
         $($macro_args:tt)*
     } => ({
         $out_macro! {
             $($macro_args)*
-            @($($selector_output)*)
-            @($($argument_output)*)
+
+            ($fn)
+            ($($selector_output)*)
+            ($($argument_output)*)
         }
     });
     {
+        ($error_fn:ident)
+        ($($selector_output:tt)*)
+        ($($argument_output:tt)*)
+        ($selector:ident: _ $(,)?)
+        ($fn:ident)
+
         ($out_macro:path)
-        @($error_fn:ident)
-        @($($selector_output:tt)*)
-        @($($argument_output:tt)*)
-        @($selector:ident: _ $(,)?)
-        @($fn:ident)
         $($macro_args:tt)*
     } => {
         $crate::__msg_send_parse! {
-            ($out_macro)
-            @($error_fn)
-            @($($selector_output)* $selector:)
+            ($error_fn)
+            ($($selector_output)* $selector:)
             // Don't pass an argument
-            @($($argument_output)*)
-            @()
-
+            ($($argument_output)*)
+            ()
             // Instead, we change the called function to the error function.
-            @($error_fn)
+            ($error_fn)
+
+            ($out_macro)
             $($macro_args)*
         }
     };
     {
+        ($error_fn:ident)
+        ($($selector_output:tt)*)
+        ($($argument_output:tt)*)
+        ($selector:ident : $argument:expr $(, $($rest:tt)*)?)
+        ($fn:ident)
+
         ($out_macro:path)
-        @($error_fn:ident)
-        @($($selector_output:tt)*)
-        @($($argument_output:tt)*)
-        @($selector:ident : $argument:expr $(, $($rest:tt)*)?)
         $($macro_args:tt)*
     } => {
         $crate::__msg_send_parse! {
+            ($error_fn)
+            ($($selector_output)* $selector:)
+            ($($argument_output)* $argument,)
+            ($($($rest)*)?)
+            ($fn)
+
             ($out_macro)
-            @($error_fn)
-            @($($selector_output)* $selector:)
-            @($($argument_output)* $argument,)
-            @($($($rest)*)?)
             $($macro_args)*
         }
     };
 
     // Handle calls without comma between `selector: argument` pair.
     {
-        ($out_macro:path)
-        @($error_fn:ident)
+        ($error_fn:ident)
         // Intentionally empty
-        @()
-        @()
-        @($($selector:ident : $argument:expr)*)
+        ()
+        ()
+        ($($selector:ident : $argument:expr)*)
+        ($fn:ident)
+
+        ($out_macro:path)
         $($macro_args:tt)*
     } => {{
         $crate::__comma_between_args!(
-            @($(
+            ($fn)
+
+            ($(
                 ", ",
                 $crate::__macro_helpers::stringify!($selector),
                 ": ",
                 $crate::__macro_helpers::stringify!($argument),
             )+)
+
             $($macro_args)*
         );
 
         $crate::__msg_send_parse! {
+            ($error_fn)
+            ()
+            ()
+            ($($selector : $argument),*)
+            ($fn)
+
             ($out_macro)
-            @($error_fn)
-            @()
-            @()
-            @($($selector : $argument),*)
             $($macro_args)*
         }
     }};
@@ -120,9 +140,56 @@ macro_rules! __comma_between_args {
 #[cfg(feature = "unstable-msg-send-always-comma")]
 macro_rules! __comma_between_args {
     (
-        @__output
-        @($($args:tt)*)
-        @($macro_name:literal)
+        (__send_super_message_static)
+        ($($args:tt)*)
+        ($obj:expr)
+    ) => {
+        $crate::__comma_between_args_inner! {
+            ("msg_send")
+            ($crate::__macro_helpers::stringify!(super($obj)), $($args)*)
+        }
+    };
+    (
+        (send_super_message)
+        ($($args:tt)*)
+        ($obj:expr, $superclass:expr)
+    ) => {
+        $crate::__comma_between_args_inner! {
+            ("msg_send")
+            ($crate::__macro_helpers::stringify!(super($obj, $superclass)), $($args)*)
+        }
+    };
+    (
+        (send_message)
+        ($($args:tt)*)
+        ($obj:expr)
+    ) => {
+        $crate::__comma_between_args_inner! {
+            ("msg_send")
+            ($crate::__macro_helpers::stringify!($obj), $($args)*)
+        }
+    };
+    // Catch-all for msg_send_id!
+    (
+        ($fn:ident)
+        ($($args:tt)*)
+        ($obj:expr)
+        ()
+    ) => {
+        $crate::__comma_between_args_inner! {
+            ("msg_send_id")
+            ($crate::__macro_helpers::stringify!($obj), $($args)*)
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(feature = "unstable-msg-send-always-comma")]
+macro_rules! __comma_between_args_inner {
+    (
+        ($macro_name:literal)
+        ($($args:tt)*)
     ) => {
         #[deprecated = $crate::__macro_helpers::concat!(
             "using ", $macro_name, "! without a comma between arguments is ",
@@ -133,51 +200,5 @@ macro_rules! __comma_between_args {
         #[inline]
         fn __msg_send_missing_comma() {}
         __msg_send_missing_comma();
-    };
-    (
-        @($($args:tt)*)
-        @(__send_super_message_static)
-        @($obj:expr)
-    ) => {
-        $crate::__comma_between_args! {
-            @__output
-            @($crate::__macro_helpers::stringify!(super($obj)), $($args)*)
-            @("msg_send")
-        }
-    };
-    (
-        @($($args:tt)*)
-        @(send_super_message)
-        @($obj:expr, $superclass:expr)
-    ) => {
-        $crate::__comma_between_args! {
-            @__output
-            @($crate::__macro_helpers::stringify!(super($obj, $superclass)), $($args)*)
-            @("msg_send")
-        }
-    };
-    (
-        @($($args:tt)*)
-        @(send_message)
-        @($obj:expr)
-    ) => {
-        $crate::__comma_between_args! {
-            @__output
-            @($crate::__macro_helpers::stringify!($obj), $($args)*)
-            @("msg_send")
-        }
-    };
-    // Catch-all for msg_send_id!
-    (
-        @($($args:tt)*)
-        @($fn:ident)
-        @($obj:expr)
-        @()
-    ) => {
-        $crate::__comma_between_args! {
-            @__output
-            @($crate::__macro_helpers::stringify!($obj), $($args)*)
-            @("msg_send_id")
-        }
     };
 }
