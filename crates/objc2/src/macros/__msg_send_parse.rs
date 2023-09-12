@@ -90,9 +90,9 @@ macro_rules! __msg_send_parse {
         $crate::__comma_between_args!(
             @($(
                 ", ",
-                stringify!($selector),
+                $crate::__macro_helpers::stringify!($selector),
                 ": ",
-                stringify!($argument),
+                $crate::__macro_helpers::stringify!($argument),
             )+)
             $($macro_args)*
         );
@@ -124,7 +124,7 @@ macro_rules! __comma_between_args {
         @($($args:tt)*)
         @($macro_name:literal)
     ) => {
-        #[deprecated = concat!(
+        #[deprecated = $crate::__macro_helpers::concat!(
             "using ", $macro_name, "! without a comma between arguments is ",
             "technically not valid macro syntax, and may break in a future ",
             "version of Rust. You should use the following instead:\n",
@@ -141,7 +141,7 @@ macro_rules! __comma_between_args {
     ) => {
         $crate::__comma_between_args! {
             @__output
-            @(stringify!(super($obj)), $($args)*)
+            @($crate::__macro_helpers::stringify!(super($obj)), $($args)*)
             @("msg_send")
         }
     };
@@ -152,7 +152,7 @@ macro_rules! __comma_between_args {
     ) => {
         $crate::__comma_between_args! {
             @__output
-            @(stringify!(super($obj, $superclass)), $($args)*)
+            @($crate::__macro_helpers::stringify!(super($obj, $superclass)), $($args)*)
             @("msg_send")
         }
     };
@@ -163,7 +163,7 @@ macro_rules! __comma_between_args {
     ) => {
         $crate::__comma_between_args! {
             @__output
-            @(stringify!($obj), $($args)*)
+            @($crate::__macro_helpers::stringify!($obj), $($args)*)
             @("msg_send")
         }
     };
@@ -176,7 +176,7 @@ macro_rules! __comma_between_args {
     ) => {
         $crate::__comma_between_args! {
             @__output
-            @(stringify!($obj), $($args)*)
+            @($crate::__macro_helpers::stringify!($obj), $($args)*)
             @("msg_send_id")
         }
     };

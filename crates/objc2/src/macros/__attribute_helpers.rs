@@ -115,7 +115,7 @@ macro_rules! __extract_custom_attributes_inner {
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        compile_error!("must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`");
+        $crate::__macro_helpers::compile_error!("must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`");
     };
 
     // Base case
@@ -183,7 +183,7 @@ macro_rules! __extract_custom_attributes_inner {
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        compile_error!("cannot specify the `method`/`method_id` attribute twice");
+        $crate::__macro_helpers::compile_error!("cannot specify the `method`/`method_id` attribute twice");
     };
 
     // `method_id` attribute with retain semantics
@@ -254,7 +254,7 @@ macro_rules! __extract_custom_attributes_inner {
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        compile_error!("cannot specify the `method`/`method_id` attribute twice");
+        $crate::__macro_helpers::compile_error!("cannot specify the `method`/`method_id` attribute twice");
     };
 
     // `optional` attribute
@@ -298,7 +298,7 @@ macro_rules! __extract_custom_attributes_inner {
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        compile_error!("cannot specify the `optional` attribute twice");
+        $crate::__macro_helpers::compile_error!("cannot specify the `optional` attribute twice");
     };
 
     // Other attributes

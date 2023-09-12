@@ -378,7 +378,7 @@ macro_rules! __extern_methods_method_out {
     } => {
         $($m_checked)*
         $($function_start)* {
-            compile_error!("`#[optional]` is only supported in `extern_protocol!`")
+            $crate::__macro_helpers::compile_error!("`#[optional]` is only supported in `extern_protocol!`")
         }
     };
 }

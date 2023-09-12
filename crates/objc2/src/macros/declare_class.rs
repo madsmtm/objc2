@@ -1159,7 +1159,7 @@ macro_rules! __declare_class_method_out_inner {
     } => {
         $($m_checked)*
         $($qualifiers)* extern "C" fn $name() {
-            compile_error!("`#[method_id(...)]` must have a return type")
+            $crate::__macro_helpers::compile_error!("`#[method_id(...)]` must have a return type")
         }
     };
 }
@@ -1294,7 +1294,7 @@ macro_rules! __declare_class_register_out {
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
-        compile_error!("`#[optional]` is only supported in `extern_protocol!`")
+        $crate::__macro_helpers::compile_error!("`#[optional]` is only supported in `extern_protocol!`")
     };
 }
 
@@ -1302,31 +1302,31 @@ macro_rules! __declare_class_register_out {
 #[macro_export]
 macro_rules! __get_method_id_sel {
     (alloc) => {
-        compile_error!(concat!(
+        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
             "`#[method_id(alloc)]` is not supported. ",
             "Use `#[method(alloc)]` and do the memory management yourself",
         ))
     };
     (retain) => {
-        compile_error!(concat!(
+        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
             "`#[method_id(retain)]` is not supported. ",
             "Use `#[method(retain)]` and do the memory management yourself",
         ))
     };
     (release) => {
-        compile_error!(concat!(
+        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
             "`#[method_id(release)]` is not supported. ",
             "Use `#[method(release)]` and do the memory management yourself",
         ))
     };
     (autorelease) => {
-        compile_error!(concat!(
+        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
             "`#[method_id(autorelease)]` is not supported. ",
             "Use `#[method(autorelease)]` and do the memory management yourself",
         ))
     };
     (dealloc) => {
-        compile_error!(concat!(
+        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
             "`#[method_id(dealloc)]` is not supported. ",
             "Add an instance variable with a `Drop` impl to the class instead",
         ))
