@@ -670,10 +670,7 @@ macro_rules! __declare_class_output_impls {
 
         $(#[$m])*
         impl $for {
-            $crate::__declare_class_rewrite_methods! {
-                ($crate::__declare_class_method_out)
-                ()
-
+            $crate::__declare_class_output_methods! {
                 $($methods)*
             }
         }
@@ -694,15 +691,69 @@ macro_rules! __declare_class_output_impls {
     ) => {
         $(#[$m])*
         impl $for {
-            $crate::__declare_class_rewrite_methods! {
-                ($crate::__declare_class_method_out)
-                ()
-
+            $crate::__declare_class_output_methods! {
                 $($methods)*
             }
         }
 
         $crate::__declare_class_output_impls! {
+            $($rest)*
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_output_methods {
+    // Base case
+    {} => {};
+
+    // Unsafe variant
+    {
+        $(#[$($m:tt)*])*
+        unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
+
+        $($rest:tt)*
+    } => {
+        $crate::__rewrite_self_param! {
+            ($($params)*)
+
+            ($crate::__extract_custom_attributes)
+            ($(#[$($m)*])*)
+
+            ($crate::__declare_class_method_out)
+            (unsafe)
+            ($name)
+            ($($ret)?)
+            ($body)
+        }
+
+        $crate::__declare_class_output_methods! {
+            $($rest)*
+        }
+    };
+
+    // Safe variant
+    {
+        $(#[$($m:tt)*])*
+        fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
+
+        $($rest:tt)*
+    } => {
+        $crate::__rewrite_self_param! {
+            ($($params)*)
+
+            ($crate::__extract_custom_attributes)
+            ($(#[$($m)*])*)
+
+            ($crate::__declare_class_method_out)
+            ()
+            ($name)
+            ($($ret)?)
+            ($body)
+        }
+
+        $crate::__declare_class_output_methods! {
             $($rest)*
         }
     };
@@ -742,8 +793,7 @@ macro_rules! __declare_class_register_impls {
                 #[allow(unused_unsafe)]
                 // SAFETY: Upheld by caller
                 unsafe {
-                    $crate::__declare_class_rewrite_methods! {
-                        ($crate::__declare_class_register_out)
+                    $crate::__declare_class_register_methods! {
                         (__objc2_protocol_builder)
 
                         $($methods)*
@@ -781,8 +831,7 @@ macro_rules! __declare_class_register_impls {
                 #[allow(unused_unsafe)]
                 // SAFETY: Upheld by caller
                 unsafe {
-                    $crate::__declare_class_rewrite_methods! {
-                        ($crate::__declare_class_register_out)
+                    $crate::__declare_class_register_methods! {
                         ($builder)
 
                         $($methods)*
@@ -800,16 +849,15 @@ macro_rules! __declare_class_register_impls {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __declare_class_rewrite_methods {
+macro_rules! __declare_class_register_methods {
+    // Base case
     {
-        ($out_macro:path)
-        ($($macro_args:tt)*)
+        ($builder:ident)
     } => {};
 
     // Unsafe variant
     {
-        ($out_macro:path)
-        ($($macro_args:tt)*)
+        ($builder:ident)
 
         $(#[$($m:tt)*])*
         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
@@ -822,17 +870,16 @@ macro_rules! __declare_class_rewrite_methods {
             ($crate::__extract_custom_attributes)
             ($(#[$($m)*])*)
 
-            ($out_macro)
-            ($($macro_args)*)
+            ($crate::__declare_class_register_out)
+            ($builder)
             (unsafe)
             ($name)
             ($($ret)?)
             ($body)
         }
 
-        $crate::__declare_class_rewrite_methods! {
-            ($out_macro)
-            ($($macro_args)*)
+        $crate::__declare_class_register_methods! {
+            ($builder)
 
             $($rest)*
         }
@@ -840,8 +887,7 @@ macro_rules! __declare_class_rewrite_methods {
 
     // Safe variant
     {
-        ($out_macro:path)
-        ($($macro_args:tt)*)
+        ($builder:ident)
 
         $(#[$($m:tt)*])*
         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
@@ -854,28 +900,43 @@ macro_rules! __declare_class_rewrite_methods {
             ($crate::__extract_custom_attributes)
             ($(#[$($m)*])*)
 
-            ($out_macro)
-            ($($macro_args)*)
+            ($crate::__declare_class_register_out)
+            ($builder)
             ()
             ($name)
             ($($ret)?)
             ($body)
         }
 
-        $crate::__declare_class_rewrite_methods! {
-            ($out_macro)
-            ($($macro_args)*)
+        $crate::__declare_class_register_methods! {
+            ($builder)
 
             $($rest)*
         }
     };
+
+    // Consume associated items for better UI.
+    //
+    // This will still fail inside __declare_class_output_methods!
+    {
+        ($builder:ident)
+
+        $_associated_item:item
+
+        $($rest:tt)*
+    } => {
+        $crate::__declare_class_output_methods! {
+            ($builder)
+
+            $($rest)*
+        }
+    }
 }
 
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __declare_class_method_out {
     {
-        ()
         ($($qualifiers:tt)*)
         ($name:ident)
         ($($ret:ty)?)
