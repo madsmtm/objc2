@@ -389,7 +389,7 @@ macro_rules! declare_class {
             const NAME: &'static str = $name_const:expr;
         }
 
-        $($methods:tt)*
+        $($impls:tt)*
     } => {
         $crate::__emit_struct_and_ivars! {
             ($(#[$m])*)
@@ -403,7 +403,7 @@ macro_rules! declare_class {
             )
         }
 
-        $crate::__inner_declare_class! {
+        $crate::__declare_class_inner! {
             ($ivar_helper_module)
 
             unsafe impl ClassType for $for {
@@ -415,7 +415,7 @@ macro_rules! declare_class {
                 const NAME: &'static str = $name_const;
             }
 
-            $($methods)*
+            $($impls)*
         }
     };
 
@@ -435,7 +435,7 @@ macro_rules! declare_class {
             const NAME: &'static str = $name_const:expr;
         }
 
-        $($methods:tt)*
+        $($impls:tt)*
     } => {
         $crate::__emit_struct_and_ivars! {
             ($(#[$m])*)
@@ -449,7 +449,7 @@ macro_rules! declare_class {
             )
         }
 
-        $crate::__inner_declare_class! {
+        $crate::__declare_class_inner! {
             ()
 
             unsafe impl ClassType for $for {
@@ -461,7 +461,7 @@ macro_rules! declare_class {
                 const NAME: &'static str = $name_const;
             }
 
-            $($methods)*
+            $($impls)*
         }
     };
 
@@ -479,7 +479,7 @@ macro_rules! declare_class {
             const NAME: &'static str = $name_const:expr;
         }
 
-        $($methods:tt)*
+        $($impls:tt)*
     } => {
         $crate::__emit_struct_and_ivars! {
             ($(#[$m])*)
@@ -493,7 +493,7 @@ macro_rules! declare_class {
             )
         }
 
-        $crate::__inner_declare_class! {
+        $crate::__declare_class_inner! {
             ()
 
             unsafe impl ClassType for $for {
@@ -505,14 +505,14 @@ macro_rules! declare_class {
                 const NAME: &'static str = $name_const;
             }
 
-            $($methods)*
+            $($impls)*
         }
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __inner_declare_class {
+macro_rules! __declare_class_inner {
     {
         ($($ivar_helper_module:ident)?)
 
@@ -525,7 +525,7 @@ macro_rules! __inner_declare_class {
             const NAME: &'static str = $name_const:expr;
         }
 
-        $($methods:tt)*
+        $($impls:tt)*
     } => {
         $crate::__extern_class_impl_traits! {
             // SAFETY: Upheld by caller
@@ -608,9 +608,9 @@ macro_rules! __inner_declare_class {
                     }
 
                     // Implement protocols and methods
-                    $crate::__declare_class_register_methods! {
+                    $crate::__declare_class_register_impls! {
                         (__objc2_builder)
-                        $($methods)*
+                        $($impls)*
                     }
 
                     let _cls = __objc2_builder.register();
@@ -632,8 +632,8 @@ macro_rules! __inner_declare_class {
         }
 
         // Methods
-        $crate::__declare_class_methods! {
-            $($methods)*
+        $crate::__declare_class_output_impls! {
+            $($impls)*
         }
     };
 }
@@ -651,9 +651,10 @@ macro_rules! __select_name {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __declare_class_methods {
+macro_rules! __declare_class_output_impls {
     // Base-case
     () => {};
+
     // With protocol
     (
         $(#[$m:meta])*
@@ -677,10 +678,11 @@ macro_rules! __declare_class_methods {
             }
         }
 
-        $crate::__declare_class_methods!{
+        $crate::__declare_class_output_impls!{
             $($rest)*
         }
     };
+
     // Without protocol
     (
         $(#[$m:meta])*
@@ -700,7 +702,7 @@ macro_rules! __declare_class_methods {
             }
         }
 
-        $crate::__declare_class_methods! {
+        $crate::__declare_class_output_impls! {
             $($rest)*
         }
     };
@@ -708,7 +710,7 @@ macro_rules! __declare_class_methods {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __declare_class_register_methods {
+macro_rules! __declare_class_register_impls {
     // Base-case
     (
         ($builder:ident)
@@ -753,7 +755,7 @@ macro_rules! __declare_class_register_methods {
             )
         }
 
-        $crate::__declare_class_register_methods! {
+        $crate::__declare_class_register_impls! {
             ($builder)
             $($rest)*
         }
@@ -789,7 +791,7 @@ macro_rules! __declare_class_register_methods {
             )
         }
 
-        $crate::__declare_class_register_methods! {
+        $crate::__declare_class_register_impls! {
             ($builder)
             $($rest)*
         }
