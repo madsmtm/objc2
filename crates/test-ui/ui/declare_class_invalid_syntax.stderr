@@ -136,7 +136,7 @@ error: `#[method_id(alloc)]` is not supported. Use `#[method(alloc)]` and do the
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__get_method_id_sel` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__declare_class_invalid_selectors` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: `#[method_id(retain)]` is not supported. Use `#[method(retain)]` and do the memory management yourself
  --> ui/declare_class_invalid_syntax.rs
@@ -150,7 +150,7 @@ error: `#[method_id(retain)]` is not supported. Use `#[method(retain)]` and do t
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__get_method_id_sel` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__declare_class_invalid_selectors` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: `#[method_id(release)]` is not supported. Use `#[method(release)]` and do the memory management yourself
  --> ui/declare_class_invalid_syntax.rs
@@ -164,7 +164,7 @@ error: `#[method_id(release)]` is not supported. Use `#[method(release)]` and do
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__get_method_id_sel` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__declare_class_invalid_selectors` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: `#[method_id(autorelease)]` is not supported. Use `#[method(autorelease)]` and do the memory management yourself
  --> ui/declare_class_invalid_syntax.rs
@@ -178,9 +178,9 @@ error: `#[method_id(autorelease)]` is not supported. Use `#[method(autorelease)]
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__get_method_id_sel` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__declare_class_invalid_selectors` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: `#[method_id(dealloc)]` is not supported. Add an instance variable with a `Drop` impl to the class instead
+error: `#[method_id(dealloc)]` is not supported. Implement `Drop` for the type instead
  --> ui/declare_class_invalid_syntax.rs
   |
   | / declare_class!(
@@ -192,7 +192,7 @@ error: `#[method_id(dealloc)]` is not supported. Add an instance variable with a
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__get_method_id_sel` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__declare_class_invalid_selectors` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: `#[method(dealloc)]` is not supported. Implement `Drop` for the type instead
  --> ui/declare_class_invalid_syntax.rs
@@ -206,7 +206,7 @@ error: `#[method(dealloc)]` is not supported. Implement `Drop` for the type inst
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__declare_class_invalid_selectors` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: an inner attribute is not permitted in this context
  --> ui/declare_class_invalid_syntax.rs

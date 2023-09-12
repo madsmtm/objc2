@@ -302,7 +302,7 @@ macro_rules! __extern_methods_method_out {
 
         (#[method($($sel:tt)*)])
         ()
-        () // No `optional`
+        ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
         $($m_checked)*
@@ -310,6 +310,8 @@ macro_rules! __extern_methods_method_out {
         where
             $($where : $bound,)*
         {
+            $crate::__extern_methods_no_optional!($($m_optional)*);
+
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send! {
@@ -337,7 +339,7 @@ macro_rules! __extern_methods_method_out {
 
         (#[method_id($($sel:tt)*)])
         ($($retain_semantics:tt)*)
-        () // No `optional`
+        ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
         $($m_checked)*
@@ -345,6 +347,8 @@ macro_rules! __extern_methods_method_out {
         where
             $($where : $bound,)*
         {
+            $crate::__extern_methods_no_optional!($($m_optional)*);
+
             #[allow(unused_unsafe)]
             unsafe {
                 $crate::__method_msg_send_id! {
@@ -359,26 +363,15 @@ macro_rules! __extern_methods_method_out {
             }
         }
     };
+}
 
-    // #[optional]
-    {
-        ($($function_start:tt)*)
-        ($($where:ty : $bound:path ,)*)
-
-        ($__builder_method:ident)
-        ($receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__params_prefix:tt)*)
-        ($($params_rest:tt)*)
-
-        ($($m_method:tt)*)
-        ($($retain_semantics:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
-    } => {
-        $($m_checked)*
-        $($function_start)* {
-            $crate::__macro_helpers::compile_error!("`#[optional]` is only supported in `extern_protocol!`")
-        }
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_methods_no_optional {
+    () => {};
+    (#[optional]) => {
+        $crate::__macro_helpers::compile_error!(
+            "`#[optional]` is only supported in `extern_protocol!`"
+        )
     };
 }

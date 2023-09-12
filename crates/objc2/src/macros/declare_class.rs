@@ -1180,33 +1180,6 @@ macro_rules! __convert_result {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __declare_class_register_out {
-    // #[method(dealloc)]
-    {
-        ($builder:ident)
-        ($($qualifiers:tt)*)
-        ($name:ident)
-        ($($__ret:ty)?)
-        ($__body:block)
-
-        ($builder_method:ident)
-        ($__receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__params_prefix:tt)*)
-        ($($params_rest:tt)*)
-
-        (#[method(dealloc)])
-        ()
-        () // No optional
-        ($($m_checked:tt)*)
-    } => {
-        $crate::__extract_and_apply_cfg_attributes! {
-            @($($m_checked)*)
-            @($crate::__macro_helpers::compile_error!(
-                "`#[method(dealloc)]` is not supported. Implement `Drop` for the type instead"
-            ))
-        }
-    };
-
     // #[method(...)]
     {
         ($builder:ident)
@@ -1223,12 +1196,15 @@ macro_rules! __declare_class_register_out {
 
         (#[method($($sel:tt)*)])
         ()
-        () // No optional
+        ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
         $crate::__extract_and_apply_cfg_attributes! {
             @($($m_checked)*)
             @(
+                $crate::__declare_class_invalid_selectors!(#[method($($sel)*)]);
+                $crate::__extern_methods_no_optional!($($m_optional)*);
+
                 $builder.$builder_method(
                     $crate::sel!($($sel)*),
                     Self::$name as $crate::__fn_ptr! {
@@ -1257,14 +1233,17 @@ macro_rules! __declare_class_register_out {
 
         (#[method_id($($sel:tt)*)])
         () // Retain semantics unsupported in declare_class!
-        () // No optional
+        ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
         $crate::__extract_and_apply_cfg_attributes! {
             @($($m_checked)*)
             @(
+                $crate::__declare_class_invalid_selectors!(#[method_id($($sel)*)]);
+                $crate::__extern_methods_no_optional!($($m_optional)*);
+
                 $builder.$builder_method(
-                    $crate::__get_method_id_sel!($($sel)*),
+                    $crate::sel!($($sel)*),
                     Self::$name as $crate::__fn_ptr! {
                         ($($qualifiers)*)
                         (_, _,)
@@ -1274,65 +1253,56 @@ macro_rules! __declare_class_register_out {
             )
         }
     };
-
-    // #[optional]
-    {
-        ($builder:ident)
-        ($($qualifiers:tt)*)
-        ($name:ident)
-        ($($__ret:ty)?)
-        ($__body:block)
-
-        ($builder_method:ident)
-        ($__receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__params_prefix:tt)*)
-        ($($params_rest:tt)*)
-
-        ($($m_method:tt)*)
-        ($($retain_semantics:tt)*)
-        ($($m_optional:tt)*)
-        ($($m_checked:tt)*)
-    } => {
-        $crate::__macro_helpers::compile_error!("`#[optional]` is only supported in `extern_protocol!`")
-    };
 }
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __get_method_id_sel {
-    (alloc) => {
+macro_rules! __declare_class_invalid_selectors {
+    (#[method(dealloc)]) => {
+        $crate::__macro_helpers::compile_error!(
+            "`#[method(dealloc)]` is not supported. Implement `Drop` for the type instead"
+        )
+    };
+    (#[method_id(dealloc)]) => {
+        $crate::__macro_helpers::compile_error!(
+            "`#[method_id(dealloc)]` is not supported. Implement `Drop` for the type instead"
+        )
+    };
+    (#[method_id(alloc)]) => {
         $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
             "`#[method_id(alloc)]` is not supported. ",
             "Use `#[method(alloc)]` and do the memory management yourself",
         ))
     };
-    (retain) => {
+    (#[method_id(retain)]) => {
         $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
             "`#[method_id(retain)]` is not supported. ",
             "Use `#[method(retain)]` and do the memory management yourself",
         ))
     };
-    (release) => {
+    (#[method_id(release)]) => {
         $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
             "`#[method_id(release)]` is not supported. ",
             "Use `#[method(release)]` and do the memory management yourself",
         ))
     };
-    (autorelease) => {
+    (#[method_id(autorelease)]) => {
         $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
             "`#[method_id(autorelease)]` is not supported. ",
             "Use `#[method(autorelease)]` and do the memory management yourself",
         ))
     };
-    (dealloc) => {
-        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
-            "`#[method_id(dealloc)]` is not supported. ",
-            "Add an instance variable with a `Drop` impl to the class instead",
-        ))
-    };
-    ($($t:tt)*) => {
-        $crate::sel!($($t)*)
+    (#[$method_or_method_id:ident($($sel:tt)*)]) => {};
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_no_optional {
+    () => {};
+    (#[optional]) => {
+        $crate::__macro_helpers::compile_error!(
+            "`#[optional]` is only supported in `extern_protocol!`"
+        )
     };
 }
 
