@@ -93,7 +93,7 @@
 ///
 /// If the `#[method_id(...)]` attribute is used, the return type must be
 /// `Option<Id<T>>` or `Id<T>`. Additionally, if the selector is in the
-/// "init"-family, the `self`/`this` argument must be `Allocated<Self>`.
+/// "init"-family, the `self`/`this` parameter must be `Allocated<Self>`.
 ///
 /// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
 /// `deprecated` and so on is supported. However, note that `cfg_attr` may not
@@ -105,7 +105,7 @@
 /// can't mark them as `pub` for the same reason). Instead, use the
 /// [`extern_methods!`] macro to create a Rust interface to the methods.
 ///
-/// If the argument or return type is [`bool`], a conversion is performed to
+/// If the parameter or return type is [`bool`], a conversion is performed to
 /// make it behave similarly to the Objective-C `BOOL`. Use [`runtime::Bool`]
 /// if you want to control this manually.
 ///
@@ -389,7 +389,7 @@ macro_rules! declare_class {
             const NAME: &'static str = $name_const:expr;
         }
 
-        $($methods:tt)*
+        $($impls:tt)*
     } => {
         $crate::__emit_struct_and_ivars! {
             ($(#[$m])*)
@@ -403,7 +403,7 @@ macro_rules! declare_class {
             )
         }
 
-        $crate::__inner_declare_class! {
+        $crate::__declare_class_inner! {
             ($ivar_helper_module)
 
             unsafe impl ClassType for $for {
@@ -415,7 +415,7 @@ macro_rules! declare_class {
                 const NAME: &'static str = $name_const;
             }
 
-            $($methods)*
+            $($impls)*
         }
     };
 
@@ -435,7 +435,7 @@ macro_rules! declare_class {
             const NAME: &'static str = $name_const:expr;
         }
 
-        $($methods:tt)*
+        $($impls:tt)*
     } => {
         $crate::__emit_struct_and_ivars! {
             ($(#[$m])*)
@@ -449,7 +449,7 @@ macro_rules! declare_class {
             )
         }
 
-        $crate::__inner_declare_class! {
+        $crate::__declare_class_inner! {
             ()
 
             unsafe impl ClassType for $for {
@@ -461,7 +461,7 @@ macro_rules! declare_class {
                 const NAME: &'static str = $name_const;
             }
 
-            $($methods)*
+            $($impls)*
         }
     };
 
@@ -479,7 +479,7 @@ macro_rules! declare_class {
             const NAME: &'static str = $name_const:expr;
         }
 
-        $($methods:tt)*
+        $($impls:tt)*
     } => {
         $crate::__emit_struct_and_ivars! {
             ($(#[$m])*)
@@ -493,7 +493,7 @@ macro_rules! declare_class {
             )
         }
 
-        $crate::__inner_declare_class! {
+        $crate::__declare_class_inner! {
             ()
 
             unsafe impl ClassType for $for {
@@ -505,14 +505,14 @@ macro_rules! declare_class {
                 const NAME: &'static str = $name_const;
             }
 
-            $($methods)*
+            $($impls)*
         }
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __inner_declare_class {
+macro_rules! __declare_class_inner {
     {
         ($($ivar_helper_module:ident)?)
 
@@ -525,7 +525,7 @@ macro_rules! __inner_declare_class {
             const NAME: &'static str = $name_const:expr;
         }
 
-        $($methods:tt)*
+        $($impls:tt)*
     } => {
         $crate::__extern_class_impl_traits! {
             // SAFETY: Upheld by caller
@@ -608,9 +608,9 @@ macro_rules! __inner_declare_class {
                     }
 
                     // Implement protocols and methods
-                    $crate::__declare_class_register_methods! {
+                    $crate::__declare_class_register_impls! {
                         (__objc2_builder)
-                        $($methods)*
+                        $($impls)*
                     }
 
                     let _cls = __objc2_builder.register();
@@ -632,8 +632,8 @@ macro_rules! __inner_declare_class {
         }
 
         // Methods
-        $crate::__declare_class_methods! {
-            $($methods)*
+        $crate::__declare_class_output_impls! {
+            $($impls)*
         }
     };
 }
@@ -651,9 +651,10 @@ macro_rules! __select_name {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __declare_class_methods {
+macro_rules! __declare_class_output_impls {
     // Base-case
     () => {};
+
     // With protocol
     (
         $(#[$m:meta])*
@@ -669,18 +670,16 @@ macro_rules! __declare_class_methods {
 
         $(#[$m])*
         impl $for {
-            $crate::__declare_class_rewrite_methods! {
-                ($crate::__declare_class_method_out)
-                ()
-
+            $crate::__declare_class_output_methods! {
                 $($methods)*
             }
         }
 
-        $crate::__declare_class_methods!{
+        $crate::__declare_class_output_impls!{
             $($rest)*
         }
     };
+
     // Without protocol
     (
         $(#[$m:meta])*
@@ -692,15 +691,12 @@ macro_rules! __declare_class_methods {
     ) => {
         $(#[$m])*
         impl $for {
-            $crate::__declare_class_rewrite_methods! {
-                ($crate::__declare_class_method_out)
-                ()
-
+            $crate::__declare_class_output_methods! {
                 $($methods)*
             }
         }
 
-        $crate::__declare_class_methods! {
+        $crate::__declare_class_output_impls! {
             $($rest)*
         }
     };
@@ -708,7 +704,64 @@ macro_rules! __declare_class_methods {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __declare_class_register_methods {
+macro_rules! __declare_class_output_methods {
+    // Base case
+    {} => {};
+
+    // Unsafe variant
+    {
+        $(#[$($m:tt)*])*
+        unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
+
+        $($rest:tt)*
+    } => {
+        $crate::__rewrite_self_param! {
+            ($($params)*)
+
+            ($crate::__extract_custom_attributes)
+            ($(#[$($m)*])*)
+
+            ($crate::__declare_class_method_out)
+            (unsafe)
+            ($name)
+            ($($ret)?)
+            ($body)
+        }
+
+        $crate::__declare_class_output_methods! {
+            $($rest)*
+        }
+    };
+
+    // Safe variant
+    {
+        $(#[$($m:tt)*])*
+        fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
+
+        $($rest:tt)*
+    } => {
+        $crate::__rewrite_self_param! {
+            ($($params)*)
+
+            ($crate::__extract_custom_attributes)
+            ($(#[$($m)*])*)
+
+            ($crate::__declare_class_method_out)
+            ()
+            ($name)
+            ($($ret)?)
+            ($body)
+        }
+
+        $crate::__declare_class_output_methods! {
+            $($rest)*
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_register_impls {
     // Base-case
     (
         ($builder:ident)
@@ -726,34 +779,32 @@ macro_rules! __declare_class_register_methods {
         $($rest:tt)*
     ) => {
         $crate::__extract_and_apply_cfg_attributes! {
-            @($(#[$($m)*])*)
-            @(
-                // Implement protocol
-                #[allow(unused_mut)]
-                let mut __objc2_protocol_builder = $builder.__add_protocol_methods(
-                    <dyn $protocol as $crate::ProtocolType>::protocol()
-                );
+            ($(#[$($m)*])*)
 
-                // In case the user's function is marked `deprecated`
-                #[allow(deprecated)]
-                // In case the user did not specify any methods
-                #[allow(unused_unsafe)]
-                // SAFETY: Upheld by caller
-                unsafe {
-                    $crate::__declare_class_rewrite_methods! {
-                        ($crate::__declare_class_register_out)
-                        (__objc2_protocol_builder)
+            // Implement protocol
+            #[allow(unused_mut)]
+            let mut __objc2_protocol_builder = $builder.__add_protocol_methods(
+                <dyn $protocol as $crate::ProtocolType>::protocol()
+            );
 
-                        $($methods)*
-                    }
+            // In case the user's function is marked `deprecated`
+            #[allow(deprecated)]
+            // In case the user did not specify any methods
+            #[allow(unused_unsafe)]
+            // SAFETY: Upheld by caller
+            unsafe {
+                $crate::__declare_class_register_methods! {
+                    (__objc2_protocol_builder)
+
+                    $($methods)*
                 }
+            }
 
-                // Finished declaring protocol; get error message if any
-                __objc2_protocol_builder.__finish();
-            )
+            // Finished declaring protocol; get error message if any
+            __objc2_protocol_builder.__finish();
         }
 
-        $crate::__declare_class_register_methods! {
+        $crate::__declare_class_register_impls! {
             ($builder)
             $($rest)*
         }
@@ -771,25 +822,23 @@ macro_rules! __declare_class_register_methods {
         $($rest:tt)*
     ) => {
         $crate::__extract_and_apply_cfg_attributes! {
-            @($(#[$($m)*])*)
-            @(
-                // In case the user's function is marked `deprecated`
-                #[allow(deprecated)]
-                // In case the user did not specify any methods
-                #[allow(unused_unsafe)]
-                // SAFETY: Upheld by caller
-                unsafe {
-                    $crate::__declare_class_rewrite_methods! {
-                        ($crate::__declare_class_register_out)
-                        ($builder)
+            ($(#[$($m)*])*)
 
-                        $($methods)*
-                    }
+            // In case the user's function is marked `deprecated`
+            #[allow(deprecated)]
+            // In case the user did not specify any methods
+            #[allow(unused_unsafe)]
+            // SAFETY: Upheld by caller
+            unsafe {
+                $crate::__declare_class_register_methods! {
+                    ($builder)
+
+                    $($methods)*
                 }
-            )
+            }
         }
 
-        $crate::__declare_class_register_methods! {
+        $crate::__declare_class_register_impls! {
             ($builder)
             $($rest)*
         }
@@ -798,40 +847,37 @@ macro_rules! __declare_class_register_methods {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __declare_class_rewrite_methods {
+macro_rules! __declare_class_register_methods {
+    // Base case
     {
-        ($out_macro:path)
-        ($($macro_arg:tt)*)
+        ($builder:ident)
     } => {};
 
     // Unsafe variant
     {
-        ($out_macro:path)
-        ($($macro_arg:tt)*)
+        ($builder:ident)
 
         $(#[$($m:tt)*])*
-        unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+        unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
 
         $($rest:tt)*
     } => {
-        $crate::__rewrite_self_arg! {
-            ($($args)*)
+        $crate::__rewrite_self_param! {
+            ($($params)*)
 
             ($crate::__extract_custom_attributes)
             ($(#[$($m)*])*)
-            ($name)
 
-            ($out_macro)
-            ($($macro_arg)*)
+            ($crate::__declare_class_register_out)
+            ($builder)
             (unsafe)
             ($name)
             ($($ret)?)
             ($body)
         }
 
-        $crate::__declare_class_rewrite_methods! {
-            ($out_macro)
-            ($($macro_arg)*)
+        $crate::__declare_class_register_methods! {
+            ($builder)
 
             $($rest)*
         }
@@ -839,43 +885,56 @@ macro_rules! __declare_class_rewrite_methods {
 
     // Safe variant
     {
-        ($out_macro:path)
-        ($($macro_arg:tt)*)
+        ($builder:ident)
 
         $(#[$($m:tt)*])*
-        fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+        fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
 
         $($rest:tt)*
     } => {
-        $crate::__rewrite_self_arg! {
-            ($($args)*)
+        $crate::__rewrite_self_param! {
+            ($($params)*)
 
             ($crate::__extract_custom_attributes)
             ($(#[$($m)*])*)
-            ($name)
 
-            ($out_macro)
-            ($($macro_arg)*)
+            ($crate::__declare_class_register_out)
+            ($builder)
             ()
             ($name)
             ($($ret)?)
             ($body)
         }
 
-        $crate::__declare_class_rewrite_methods! {
-            ($out_macro)
-            ($($macro_arg)*)
+        $crate::__declare_class_register_methods! {
+            ($builder)
 
             $($rest)*
         }
     };
+
+    // Consume associated items for better UI.
+    //
+    // This will still fail inside __declare_class_output_methods!
+    {
+        ($builder:ident)
+
+        $_associated_item:item
+
+        $($rest:tt)*
+    } => {
+        $crate::__declare_class_output_methods! {
+            ($builder)
+
+            $($rest)*
+        }
+    }
 }
 
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __declare_class_method_out {
     {
-        ()
         ($($qualifiers:tt)*)
         ($name:ident)
         ($($ret:ty)?)
@@ -884,15 +943,16 @@ macro_rules! __declare_class_method_out {
         ($builder_method:ident)
         ($receiver:expr)
         ($receiver_ty:ty)
-        ($($args_prefix:tt)*)
-        ($($args_rest:tt)*)
+        ($($params_prefix:tt)*)
+        ($($params_rest:tt)*)
 
         ($($m_method:tt)*)
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
-        $crate::__declare_class_rewrite_args! {
-            ($($args_rest)*)
+        $crate::__declare_class_rewrite_params! {
+            ($($params_rest)*)
             ()
             ()
 
@@ -906,9 +966,10 @@ macro_rules! __declare_class_method_out {
             ($builder_method)
             ($receiver)
             ($receiver_ty)
-            ($($args_prefix)*)
+            ($($params_prefix)*)
 
             ($($m_method)*)
+            ($($retain_semantics)*)
             ($($m_optional)*)
             ($($m_checked)*)
         }
@@ -917,19 +978,19 @@ macro_rules! __declare_class_method_out {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __declare_class_rewrite_args {
+macro_rules! __declare_class_rewrite_params {
     // Convert _
     {
-        (_ : $param_ty:ty $(, $($rest_args:tt)*)?)
-        ($($args_converted:tt)*)
+        (_ : $param_ty:ty $(, $($params_rest:tt)*)?)
+        ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        $crate::__declare_class_rewrite_args! {
-            ($($($rest_args)*)?)
-            ($($args_converted)* _ : <$param_ty as $crate::__macro_helpers::ConvertArgument>::__Inner,)
+        $crate::__declare_class_rewrite_params! {
+            ($($($params_rest)*)?)
+            ($($params_converted)* _ : <$param_ty as $crate::__macro_helpers::ConvertArgument>::__Inner,)
             ($($body_prefix)*)
 
             ($out_macro)
@@ -938,16 +999,16 @@ macro_rules! __declare_class_rewrite_args {
     };
     // Convert mut
     {
-        (mut $param:ident : $param_ty:ty $(, $($rest_args:tt)*)?)
-        ($($args_converted:tt)*)
+        (mut $param:ident : $param_ty:ty $(, $($params_rest:tt)*)?)
+        ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        $crate::__declare_class_rewrite_args! {
-            ($($($rest_args)*)?)
-            ($($args_converted)* $param : <$param_ty as $crate::__macro_helpers::ConvertArgument>::__Inner,)
+        $crate::__declare_class_rewrite_params! {
+            ($($($params_rest)*)?)
+            ($($params_converted)* $param : <$param_ty as $crate::__macro_helpers::ConvertArgument>::__Inner,)
             (
                 $($body_prefix)*
                 let mut $param = <$param_ty as $crate::__macro_helpers::ConvertArgument>::__from_declared_param($param);
@@ -959,16 +1020,16 @@ macro_rules! __declare_class_rewrite_args {
     };
     // Convert
     {
-        ($param:ident : $param_ty:ty $(, $($rest_args:tt)*)?)
-        ($($args_converted:tt)*)
+        ($param:ident : $param_ty:ty $(, $($params_rest:tt)*)?)
+        ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        $crate::__declare_class_rewrite_args! {
-            ($($($rest_args)*)?)
-            ($($args_converted)* $param : <$param_ty as $crate::__macro_helpers::ConvertArgument>::__Inner,)
+        $crate::__declare_class_rewrite_params! {
+            ($($($params_rest)*)?)
+            ($($params_converted)* $param : <$param_ty as $crate::__macro_helpers::ConvertArgument>::__Inner,)
             (
                 $($body_prefix)*
                 let $param = <$param_ty as $crate::__macro_helpers::ConvertArgument>::__from_declared_param($param);
@@ -981,7 +1042,7 @@ macro_rules! __declare_class_rewrite_args {
     // Output result
     {
         ()
-        ($($args_converted:tt)*)
+        ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
 
         ($out_macro:path)
@@ -990,7 +1051,7 @@ macro_rules! __declare_class_rewrite_args {
         $out_macro! {
             $($macro_args)*
 
-            ($($args_converted)*)
+            ($($params_converted)*)
             ($($body_prefix)*)
         }
     };
@@ -1009,19 +1070,20 @@ macro_rules! __declare_class_method_out_inner {
         ($__builder_method:ident)
         ($__receiver:expr)
         ($__receiver_ty:ty)
-        ($($args_prefix:tt)*)
+        ($($params_prefix:tt)*)
 
         (#[method($($__sel:tt)*)])
+        ()
         ($($__m_optional:tt)*)
         ($($m_checked:tt)*)
 
-        ($($args_converted:tt)*)
+        ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
     } => {
         $($m_checked)*
         $($qualifiers)* extern "C" fn $name(
-            $($args_prefix)*
-            $($args_converted)*
+            $($params_prefix)*
+            $($params_converted)*
         ) $(-> <$ret as $crate::__macro_helpers::ConvertReturn>::__Inner)? {
             $($body_prefix)*
             $crate::__convert_result! {
@@ -1040,19 +1102,20 @@ macro_rules! __declare_class_method_out_inner {
         ($__builder_method:ident)
         ($__receiver:expr)
         ($receiver_ty:ty)
-        ($($args_prefix:tt)*)
+        ($($params_prefix:tt)*)
 
         (#[method_id($($sel:tt)*)])
+        () // Specifying retain semantics is unsupported in declare_class! for now
         ($($__m_optional:tt)*)
         ($($m_checked:tt)*)
 
-        ($($args_converted:tt)*)
+        ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
     } => {
         $($m_checked)*
         $($qualifiers)* extern "C" fn $name(
-            $($args_prefix)*
-            $($args_converted)*
+            $($params_prefix)*
+            $($params_converted)*
         ) -> $crate::declare::__IdReturnValue {
             $($body_prefix)*
 
@@ -1062,7 +1125,7 @@ macro_rules! __declare_class_method_out_inner {
             <$crate::__macro_helpers::RetainSemantics<{
                 $crate::__macro_helpers::retain_semantics(
                     $crate::__sel_helper! {
-                        @()
+                        ()
                         $($sel)*
                     }
                 )
@@ -1082,18 +1145,19 @@ macro_rules! __declare_class_method_out_inner {
         ($__builder_method:ident)
         ($__receiver:expr)
         ($__receiver_ty:ty)
-        ($($args_prefix:tt)*)
+        ($($params_prefix:tt)*)
 
         (#[method_id($($sel:tt)*)])
+        ($($retain_semantics:tt)*)
         ($($__m_optional:tt)*)
         ($($m_checked:tt)*)
 
-        ($($args_converted:tt)*)
+        ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
     } => {
         $($m_checked)*
         $($qualifiers)* extern "C" fn $name() {
-            compile_error!("`#[method_id(...)]` must have a return type")
+            $crate::__macro_helpers::compile_error!("`#[method_id(...)]` must have a return type")
         }
     };
 }
@@ -1114,7 +1178,6 @@ macro_rules! __convert_result {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __declare_class_register_out {
-    // #[method(dealloc)]
     {
         ($builder:ident)
         ($($qualifiers:tt)*)
@@ -1125,148 +1188,84 @@ macro_rules! __declare_class_register_out {
         ($builder_method:ident)
         ($__receiver:expr)
         ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
 
-        (#[method(dealloc)])
-        () // No optional
-        ($($m_checked:tt)*)
-    } => {
-        $crate::__extract_and_apply_cfg_attributes! {
-            @($($m_checked)*)
-            @($crate::__macro_helpers::compile_error!(
-                "`#[method(dealloc)]` is not supported. Implement `Drop` for the type instead"
-            ))
-        }
-    };
-
-    // #[method(...)]
-    {
-        ($builder:ident)
-        ($($qualifiers:tt)*)
-        ($name:ident)
-        ($($__ret:ty)?)
-        ($__body:block)
-
-        ($builder_method:ident)
-        ($__receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
-
-        (#[method($($sel:tt)*)])
-        () // No optional
-        ($($m_checked:tt)*)
-    } => {
-        $crate::__extract_and_apply_cfg_attributes! {
-            @($($m_checked)*)
-            @(
-                $builder.$builder_method(
-                    $crate::sel!($($sel)*),
-                    Self::$name as $crate::__fn_ptr! {
-                        ($($qualifiers)*)
-                        (_, _,)
-                        $($args_rest)*
-                    },
-                );
-            )
-        }
-    };
-
-    // #[method_id(...)]
-    {
-        ($builder:ident)
-        ($($qualifiers:tt)*)
-        ($name:ident)
-        ($($__ret:ty)?)
-        ($__body:block)
-
-        ($builder_method:ident)
-        ($__receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
-
-        (#[method_id($($sel:tt)*)])
-        () // No optional
-        ($($m_checked:tt)*)
-    } => {
-        $crate::__extract_and_apply_cfg_attributes! {
-            @($($m_checked)*)
-            @(
-                $builder.$builder_method(
-                    $crate::__get_method_id_sel!($($sel)*),
-                    Self::$name as $crate::__fn_ptr! {
-                        ($($qualifiers)*)
-                        (_, _,)
-                        $($args_rest)*
-                    },
-                );
-            )
-        }
-    };
-
-    // #[optional]
-    {
-        ($builder:ident)
-        ($($qualifiers:tt)*)
-        ($name:ident)
-        ($($__ret:ty)?)
-        ($__body:block)
-
-        ($builder_method:ident)
-        ($__receiver:expr)
-        ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
-
-        ($($m_method:tt)*)
+        (#[$method_or_method_id:ident($($sel:tt)*)])
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
-        compile_error!("`#[optional]` is only supported in `extern_protocol!`")
+        $crate::__extract_and_apply_cfg_attributes! {
+            ($($m_checked)*)
+
+            $crate::__declare_class_invalid_selectors!(#[$method_or_method_id($($sel)*)]);
+            $crate::__extern_methods_no_optional!($($m_optional)*);
+
+            $builder.$builder_method(
+                $crate::sel!($($sel)*),
+                Self::$name as $crate::__fn_ptr! {
+                    ($($qualifiers)*)
+                    (_, _,)
+                    $($params_rest)*
+                },
+            );
+        }
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __get_method_id_sel {
-    (alloc) => {
-        compile_error!(concat!(
+macro_rules! __declare_class_invalid_selectors {
+    (#[method(dealloc)]) => {
+        $crate::__macro_helpers::compile_error!(
+            "`#[method(dealloc)]` is not supported. Implement `Drop` for the type instead"
+        )
+    };
+    (#[method_id(dealloc)]) => {
+        $crate::__macro_helpers::compile_error!(
+            "`#[method_id(dealloc)]` is not supported. Implement `Drop` for the type instead"
+        )
+    };
+    (#[method_id(alloc)]) => {
+        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
             "`#[method_id(alloc)]` is not supported. ",
             "Use `#[method(alloc)]` and do the memory management yourself",
         ))
     };
-    (retain) => {
-        compile_error!(concat!(
+    (#[method_id(retain)]) => {
+        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
             "`#[method_id(retain)]` is not supported. ",
             "Use `#[method(retain)]` and do the memory management yourself",
         ))
     };
-    (release) => {
-        compile_error!(concat!(
+    (#[method_id(release)]) => {
+        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
             "`#[method_id(release)]` is not supported. ",
             "Use `#[method(release)]` and do the memory management yourself",
         ))
     };
-    (autorelease) => {
-        compile_error!(concat!(
+    (#[method_id(autorelease)]) => {
+        $crate::__macro_helpers::compile_error!($crate::__macro_helpers::concat!(
             "`#[method_id(autorelease)]` is not supported. ",
             "Use `#[method(autorelease)]` and do the memory management yourself",
         ))
     };
-    (dealloc) => {
-        compile_error!(concat!(
-            "`#[method_id(dealloc)]` is not supported. ",
-            "Add an instance variable with a `Drop` impl to the class instead",
-        ))
-    };
-    ($($t:tt)*) => {
-        $crate::sel!($($t)*)
+    (#[$method_or_method_id:ident($($sel:tt)*)]) => {};
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __declare_class_no_optional {
+    () => {};
+    (#[optional]) => {
+        $crate::__macro_helpers::compile_error!(
+            "`#[optional]` is only supported in `extern_protocol!`"
+        )
     };
 }
 
-/// Create function pointer type with inferred arguments.
+/// Create function pointer type with inferred parameters.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __fn_ptr {

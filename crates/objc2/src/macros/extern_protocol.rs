@@ -217,21 +217,20 @@ macro_rules! __extern_protocol_rewrite_methods {
     // Unsafe variant
     {
         $(#[$($m:tt)*])*
-        $v:vis unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)?
+        $v:vis unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)?
         // TODO: Handle where bounds better
         $(where $($where:ty : $bound:path),+ $(,)?)?;
 
         $($rest:tt)*
     } => {
-        $crate::__rewrite_self_arg! {
-            ($($args)*)
+        $crate::__rewrite_self_param! {
+            ($($params)*)
 
             ($crate::__extract_custom_attributes)
             ($(#[$($m)*])*)
-            ($name)
 
             ($crate::__extern_protocol_method_out)
-            ($v unsafe fn $name($($args)*) $(-> $ret)?)
+            ($v unsafe fn $name($($params)*) $(-> $ret)?)
             ($($($where : $bound ,)+)?)
         }
 
@@ -243,21 +242,20 @@ macro_rules! __extern_protocol_rewrite_methods {
     // Safe variant
     {
         $(#[$($m:tt)*])*
-        $v:vis fn $name:ident($($args:tt)*) $(-> $ret:ty)?
+        $v:vis fn $name:ident($($params:tt)*) $(-> $ret:ty)?
         // TODO: Handle where bounds better
         $(where $($where:ty : $bound:path),+ $(,)?)?;
 
         $($rest:tt)*
     } => {
-        $crate::__rewrite_self_arg! {
-            ($($args)*)
+        $crate::__rewrite_self_param! {
+            ($($params)*)
 
             ($crate::__extract_custom_attributes)
             ($(#[$($m)*])*)
-            ($name)
 
             ($crate::__extern_protocol_method_out)
-            ($v fn $name($($args)*) $(-> $ret)?)
+            ($v fn $name($($params)*) $(-> $ret)?)
             ($($($where : $bound ,)+)?)
         }
 
@@ -278,10 +276,11 @@ macro_rules! __extern_protocol_method_out {
         (add_method)
         ($receiver:expr)
         ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
 
         (#[method($($sel:tt)*)])
+        ()
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
@@ -296,7 +295,7 @@ macro_rules! __extern_protocol_method_out {
                 $crate::__method_msg_send! {
                     ($receiver)
                     ($($sel)*)
-                    ($($args_rest)*)
+                    ($($params_rest)*)
 
                     ()
                     ()
@@ -313,10 +312,11 @@ macro_rules! __extern_protocol_method_out {
         (add_method)
         ($receiver:expr)
         ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
 
         (#[method_id($($sel:tt)*)])
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
@@ -331,11 +331,11 @@ macro_rules! __extern_protocol_method_out {
                 $crate::__method_msg_send_id! {
                     ($receiver)
                     ($($sel)*)
-                    ($($args_rest)*)
+                    ($($params_rest)*)
 
                     ()
                     ()
-                    ()
+                    ($($retain_semantics)*)
                 }
             }
         }
@@ -349,10 +349,11 @@ macro_rules! __extern_protocol_method_out {
         (add_class_method)
         ($receiver:expr)
         ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
 
         (#[method($($sel:tt)*)])
+        ()
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
@@ -367,7 +368,7 @@ macro_rules! __extern_protocol_method_out {
                 $crate::__method_msg_send! {
                     ($receiver)
                     ($($sel)*)
-                    ($($args_rest)*)
+                    ($($params_rest)*)
 
                     ()
                     ()
@@ -384,10 +385,11 @@ macro_rules! __extern_protocol_method_out {
         (add_class_method)
         ($receiver:expr)
         ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
 
         (#[method_id($($sel:tt)*)])
+        ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
@@ -402,11 +404,11 @@ macro_rules! __extern_protocol_method_out {
                 $crate::__method_msg_send_id! {
                     ($receiver)
                     ($($sel)*)
-                    ($($args_rest)*)
+                    ($($params_rest)*)
 
                     ()
                     ()
-                    ()
+                    ($($retain_semantics)*)
                 }
             }
         }

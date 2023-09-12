@@ -42,12 +42,6 @@ Lloh5:
 l_anon.[ID].0:
 	.ascii	"MyProtocol"
 
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_17aa92881c42487f
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_17aa92881c42487f:
-	.asciz	"\000\000\000\000@\000\000"
-
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_17aa92881c42487f
 L_OBJC_METH_VAR_NAME_17aa92881c42487f:
@@ -58,5 +52,11 @@ L_OBJC_METH_VAR_NAME_17aa92881c42487f:
 	.p2align	3, 0x0
 L_OBJC_SELECTOR_REFERENCES_17aa92881c42487f:
 	.quad	L_OBJC_METH_VAR_NAME_17aa92881c42487f
+
+	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
+	.globl	L_OBJC_IMAGE_INFO_17aa92881c42487f
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_17aa92881c42487f:
+	.asciz	"\000\000\000\000@\000\000"
 
 .subsections_via_symbols

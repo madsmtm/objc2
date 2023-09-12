@@ -86,11 +86,17 @@ macro_rules! __ns_string {
 macro_rules! __ns_string_inner {
     ($inp:ident) => {{
         const X: &[u8] = $inp.as_bytes();
-        $crate::__ns_string_inner!(@inner X);
+        $crate::__ns_string_static!(X);
         // Return &'static NSString
         CFSTRING.as_nsstring()
     }};
-    (@inner $inp:ident) => {
+}
+
+#[doc(hidden)]
+#[cfg(all(feature = "apple", feature = "unstable-static-nsstring"))]
+#[macro_export]
+macro_rules! __ns_string_static {
+    ($inp:ident) => {
         // Note: We create both the ASCII + NUL and the UTF-16 + NUL versions
         // of the string, since we can't conditionally create a static.
         //

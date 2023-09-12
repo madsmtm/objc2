@@ -15,10 +15,10 @@ macro_rules! __method_msg_send {
         ()
     ) => {
         $crate::__msg_send_helper! {
-            @(send_message)
-            @($receiver)
-            @($sel)
-            @()
+            ($receiver)
+            (send_message)
+            ($sel)
+            ()
         }
     };
 
@@ -30,7 +30,7 @@ macro_rules! __method_msg_send {
     (
         ($receiver:expr)
         ($($sel_rest:tt)*)
-        ($arg:ident: MainThreadMarker $(, $($args_rest:tt)*)?)
+        ($arg:ident: MainThreadMarker $(, $($params_rest:tt)*)?)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
@@ -39,7 +39,7 @@ macro_rules! __method_msg_send {
         $crate::__method_msg_send! {
             ($receiver)
             ($($sel_rest)*)
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
 
             ($($sel_parsed)*)
             ($($arg_parsed)*)
@@ -50,7 +50,7 @@ macro_rules! __method_msg_send {
     (
         ($receiver:expr)
         ($($sel:ident)? : $($sel_rest:tt)*)
-        ($arg:ident : $_arg_ty:ty $(, $($args_rest:tt)*)?)
+        ($arg:ident : $_arg_ty:ty $(, $($params_rest:tt)*)?)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
@@ -58,7 +58,7 @@ macro_rules! __method_msg_send {
         $crate::__method_msg_send! {
             ($receiver)
             ($($sel_rest)*)
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
 
             ($($sel_parsed)* $($sel)? :)
             ($($arg_parsed)* $arg,)
@@ -68,7 +68,7 @@ macro_rules! __method_msg_send {
     (
         ($receiver:expr)
         ($($sel:ident)? :: $($sel_rest:tt)*)
-        ($arg1:ident : $_arg_ty1:ty, $arg2:ident : $_arg_ty2:ty $(, $($args_rest:tt)*)?)
+        ($arg1:ident : $_arg_ty1:ty, $arg2:ident : $_arg_ty2:ty $(, $($params_rest:tt)*)?)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
@@ -76,7 +76,7 @@ macro_rules! __method_msg_send {
         $crate::__method_msg_send! {
             ($receiver)
             ($($sel_rest)*)
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
 
             ($($sel_parsed)* $($sel)? : :)
             ($($arg_parsed)* $arg1, $arg2,)
@@ -95,10 +95,10 @@ macro_rules! __method_msg_send {
         ($($arg_parsed:tt)*)
     ) => {
         $crate::__msg_send_helper! {
-            @(send_message)
-            @($receiver)
-            @($($sel_parsed)*)
-            @($($arg_parsed)*)
+            ($receiver)
+            (send_message)
+            ($($sel_parsed)*)
+            ($($arg_parsed)*)
         }
     };
 
@@ -113,11 +113,11 @@ macro_rules! __method_msg_send {
         ($($arg_parsed:tt)*)
     ) => {
         $crate::__msg_send_helper! {
+            ($receiver)
             // Use error method
-            @(__send_message_error)
-            @($receiver)
-            @($($sel_parsed)* $sel :)
-            @($($arg_parsed)*)
+            (__send_message_error)
+            ($($sel_parsed)* $sel :)
+            ($($arg_parsed)*)
         }
     };
 
@@ -139,7 +139,7 @@ macro_rules! __method_msg_send {
     (
         ($receiver:expr)
         ($($sel_rest:tt)*)
-        ($($args_rest:tt)*)
+        ($($params_rest:tt)*)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
@@ -157,44 +157,19 @@ macro_rules! __method_msg_send_id {
     // Selector with no arguments
     (
         ($receiver:expr)
-        ($(@__retain_semantics $retain_semantics:ident)? $sel:ident)
+        ($sel:ident)
         ()
 
         ()
         ()
-        // Possible to hit via. the MainThreadMarker branch
-        ($($already_parsed_retain_semantics:ident)?)
+        ($($retain_semantics:ident)?)
     ) => {
         $crate::__msg_send_id_helper! {
-            @(send_message_id)
-            @($receiver)
-            @($($retain_semantics)? $($already_parsed_retain_semantics)?)
-            @($sel)
-            @()
-        }
-    };
-
-    // Parse retain semantics
-    //
-    // Note: While this is not public, it is still a breaking change to change
-    // this, since `icrate` relies on it.
-    (
-        ($receiver:expr)
-        (@__retain_semantics $retain_semantics:ident $($sel_rest:tt)*)
-        ($($args_rest:tt)*)
-
-        ($($sel_parsed:tt)*)
-        ($($arg_parsed:tt)*)
-        ()
-    ) => {
-        $crate::__method_msg_send_id! {
             ($receiver)
-            ($($sel_rest)*)
-            ($($args_rest)*)
-
-            ($($sel_parsed)*)
-            ($($arg_parsed)*)
-            ($retain_semantics)
+            ($($retain_semantics)?)
+            (send_message_id)
+            ($sel)
+            ()
         }
     };
 
@@ -206,7 +181,7 @@ macro_rules! __method_msg_send_id {
     (
         ($receiver:expr)
         ($($sel_rest:tt)*)
-        ($arg:ident: MainThreadMarker $(, $($args_rest:tt)*)?)
+        ($arg:ident: MainThreadMarker $(, $($params_rest:tt)*)?)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
@@ -216,7 +191,7 @@ macro_rules! __method_msg_send_id {
         $crate::__method_msg_send_id! {
             ($receiver)
             ($($sel_rest)*)
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
 
             ($($sel_parsed)*)
             ($($arg_parsed)*)
@@ -228,7 +203,7 @@ macro_rules! __method_msg_send_id {
     (
         ($receiver:expr)
         ($($sel:ident)? : $($sel_rest:tt)*)
-        ($arg:ident : $_arg_ty:ty $(, $($args_rest:tt)*)?)
+        ($arg:ident : $_arg_ty:ty $(, $($params_rest:tt)*)?)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
@@ -237,7 +212,7 @@ macro_rules! __method_msg_send_id {
         $crate::__method_msg_send_id! {
             ($receiver)
             ($($sel_rest)*)
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
 
             ($($sel_parsed)* $($sel)? :)
             ($($arg_parsed)* $arg,)
@@ -248,7 +223,7 @@ macro_rules! __method_msg_send_id {
     (
         ($receiver:expr)
         ($($sel:ident)? :: $($sel_rest:tt)*)
-        ($arg1:ident : $_arg_ty1:ty, $arg2:ident : $_arg_ty2:ty $(, $($args_rest:tt)*)?)
+        ($arg1:ident : $_arg_ty1:ty, $arg2:ident : $_arg_ty2:ty $(, $($params_rest:tt)*)?)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
@@ -257,7 +232,7 @@ macro_rules! __method_msg_send_id {
         $crate::__method_msg_send_id! {
             ($receiver)
             ($($sel_rest)*)
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
 
             ($($sel_parsed)* $($sel)? : :)
             ($($arg_parsed)* $arg1, $arg2,)
@@ -278,11 +253,11 @@ macro_rules! __method_msg_send_id {
         ($($retain_semantics:ident)?)
     ) => {
         $crate::__msg_send_id_helper! {
-            @(send_message_id)
-            @($receiver)
-            @($($retain_semantics)?)
-            @($($sel_parsed)*)
-            @($($arg_parsed)*)
+            ($receiver)
+            ($($retain_semantics)?)
+            (send_message_id)
+            ($($sel_parsed)*)
+            ($($arg_parsed)*)
         }
     };
 
@@ -298,12 +273,12 @@ macro_rules! __method_msg_send_id {
         ($($retain_semantics:ident)?)
     ) => {
         $crate::__msg_send_id_helper! {
+            ($receiver)
+            ($($retain_semantics)?)
             // Use error method
-            @(send_message_id_error)
-            @($receiver)
-            @($($retain_semantics)?)
-            @($($sel_parsed)* $sel :)
-            @($($arg_parsed)*)
+            (send_message_id_error)
+            ($($sel_parsed)* $sel :)
+            ($($arg_parsed)*)
         }
     };
 
@@ -326,7 +301,7 @@ macro_rules! __method_msg_send_id {
     (
         ($receiver:expr)
         ($($sel_rest:tt)*)
-        ($($args_rest:tt)*)
+        ($($params_rest:tt)*)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)

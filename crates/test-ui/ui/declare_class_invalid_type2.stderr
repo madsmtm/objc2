@@ -24,4 +24,4 @@ error[E0277]: the trait bound `i32: MaybeOptionId` is not satisfied
             Id<T>
             Option<Id<T>>
   = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<&CustomObject, i32>`
-  = note: this error originates in the macro `$crate::__rewrite_self_arg_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

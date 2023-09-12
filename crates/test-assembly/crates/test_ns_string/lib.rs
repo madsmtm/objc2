@@ -9,14 +9,14 @@ use icrate::Foundation::{ns_string, NSString};
 #[no_mangle]
 static EMPTY: &NSString = {
     const INPUT: &[u8] = b"";
-    icrate::__ns_string_inner!(@inner INPUT);
+    icrate::__ns_string_static!(INPUT);
     CFSTRING.as_nsstring_const()
 };
 #[cfg(all(feature = "apple", feature = "assembly-features"))]
 #[no_mangle]
 static XYZ: &NSString = {
     const INPUT: &[u8] = b"xyz";
-    icrate::__ns_string_inner!(@inner INPUT);
+    icrate::__ns_string_static!(INPUT);
     CFSTRING.as_nsstring_const()
 };
 
