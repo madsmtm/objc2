@@ -309,11 +309,11 @@ macro_rules! extern_static {
 macro_rules! extern_fn {
     (
         $(#[$m:meta])*
-        $v:vis unsafe fn $name:ident($($args:tt)*) $(-> $res:ty)?;
+        $v:vis unsafe fn $name:ident($($params:tt)*) $(-> $res:ty)?;
     ) => {
         $(#[$m])*
         extern "C" {
-            $v fn $name($($args)*) $(-> $res)?;
+            $v fn $name($($params)*) $(-> $res)?;
         }
     };
     (
@@ -336,7 +336,7 @@ macro_rules! extern_fn {
 macro_rules! inline_fn {
     (
         $(#[$m:meta])*
-        $v:vis unsafe fn $name:ident($($args:tt)*) $(-> $res:ty)? $body:block
+        $v:vis unsafe fn $name:ident($($params:tt)*) $(-> $res:ty)? $body:block
     ) => {
         // TODO
     };

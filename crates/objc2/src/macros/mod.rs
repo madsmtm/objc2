@@ -2,7 +2,7 @@ mod __attribute_helpers;
 mod __field_helpers;
 mod __method_msg_send;
 mod __msg_send_parse;
-mod __rewrite_self_arg;
+mod __rewrite_self_param;
 mod declare_class;
 mod extern_class;
 mod extern_methods;

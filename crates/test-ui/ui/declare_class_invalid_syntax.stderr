@@ -75,7 +75,7 @@ error: no rules expected the token `pub`
 note: while trying to match `unsafe`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |         unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+  |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |         ^^^^^^
 
 error: no rules expected the token `const`
@@ -87,7 +87,7 @@ error: no rules expected the token `const`
 note: while trying to match `unsafe`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |         unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+  |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |         ^^^^^^
 
 error: no rules expected the token `async`
@@ -99,7 +99,7 @@ error: no rules expected the token `async`
 note: while trying to match `unsafe`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |         unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+  |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |         ^^^^^^
 
 error: no rules expected the token `extern`
@@ -111,7 +111,7 @@ error: no rules expected the token `extern`
 note: while trying to match `unsafe`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |         unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+  |         unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |         ^^^^^^
 
 error: no rules expected the token `test_fn_fn`
@@ -123,7 +123,7 @@ error: no rules expected the token `test_fn_fn`
 note: while trying to match `(`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+  |         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |                       ^
 
 error: no rules expected the token `<`
@@ -135,7 +135,7 @@ error: no rules expected the token `<`
 note: while trying to match `(`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+  |         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
   |                       ^
 
 error: no rules expected the token `;`
@@ -147,8 +147,8 @@ error: no rules expected the token `;`
 note: while trying to match meta-variable `$body:block`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
-  |                                                     ^^^^^^^^^^^
+  |         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
+  |                                                       ^^^^^^^^^^^
 
 error: unexpected end of macro invocation
  --> ui/declare_class_invalid_syntax.rs
@@ -159,8 +159,8 @@ error: unexpected end of macro invocation
 note: while trying to match meta-variable `$body:block`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |         fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
-  |                                                     ^^^^^^^^^^^
+  |         fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
+  |                                                       ^^^^^^^^^^^
 
 error: `#[method_id(alloc)]` is not supported. Use `#[method(alloc)]` and do the memory management yourself
  --> ui/declare_class_invalid_syntax.rs
@@ -267,8 +267,8 @@ error: no rules expected the token `type`
 note: while trying to match `)`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |         ($($macro_arg:tt)*)
-  |                           ^
+  |         ($($macro_args:tt)*)
+  |                            ^
 
 error: no rules expected the token `const`
  --> ui/declare_class_invalid_syntax.rs
@@ -279,8 +279,8 @@ error: no rules expected the token `const`
 note: while trying to match `)`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |         ($($macro_arg:tt)*)
-  |                           ^
+  |         ($($macro_args:tt)*)
+  |                            ^
 
 error: must specify the desired selector using `#[method(...)]` or `#[method_id(...)]`
  --> ui/declare_class_invalid_syntax.rs
@@ -347,7 +347,7 @@ error: no rules expected the token `(`
 note: while trying to match `_`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |         (_ : $param_ty:ty $(, $($rest_args:tt)*)?)
+  |         (_ : $param_ty:ty $(, $($params_rest:tt)*)?)
   |          ^
 
 error: no rules expected the token `)`
@@ -365,7 +365,7 @@ error: no rules expected the token `)`
 note: while trying to match `:`
  --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
   |
-  |         ($param:ident : $param_ty:ty $(, $($rest_args:tt)*)?)
+  |         ($param:ident : $param_ty:ty $(, $($params_rest:tt)*)?)
   |                       ^
   = note: this error originates in the macro `$crate::__declare_class_method_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
@@ -494,4 +494,4 @@ error[E0277]: the trait bound `RetainSemantics<2>: MessageRecieveId<&AnyClass, I
             <RetainSemantics<3> as MessageRecieveId<Allocated<T>, Ret>>
             <RetainSemantics<4> as MessageRecieveId<Receiver, Ret>>
             <RetainSemantics<5> as MessageRecieveId<Receiver, Ret>>
-  = note: this error originates in the macro `$crate::__rewrite_self_arg_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

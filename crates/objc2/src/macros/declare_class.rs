@@ -93,7 +93,7 @@
 ///
 /// If the `#[method_id(...)]` attribute is used, the return type must be
 /// `Option<Id<T>>` or `Id<T>`. Additionally, if the selector is in the
-/// "init"-family, the `self`/`this` argument must be `Allocated<Self>`.
+/// "init"-family, the `self`/`this` parameter must be `Allocated<Self>`.
 ///
 /// Putting other attributes on the method such as `cfg`, `allow`, `doc`,
 /// `deprecated` and so on is supported. However, note that `cfg_attr` may not
@@ -105,7 +105,7 @@
 /// can't mark them as `pub` for the same reason). Instead, use the
 /// [`extern_methods!`] macro to create a Rust interface to the methods.
 ///
-/// If the argument or return type is [`bool`], a conversion is performed to
+/// If the parameter or return type is [`bool`], a conversion is performed to
 /// make it behave similarly to the Objective-C `BOOL`. Use [`runtime::Bool`]
 /// if you want to control this manually.
 ///
@@ -801,27 +801,27 @@ macro_rules! __declare_class_register_methods {
 macro_rules! __declare_class_rewrite_methods {
     {
         ($out_macro:path)
-        ($($macro_arg:tt)*)
+        ($($macro_args:tt)*)
     } => {};
 
     // Unsafe variant
     {
         ($out_macro:path)
-        ($($macro_arg:tt)*)
+        ($($macro_args:tt)*)
 
         $(#[$($m:tt)*])*
-        unsafe fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+        unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
 
         $($rest:tt)*
     } => {
-        $crate::__rewrite_self_arg! {
-            ($($args)*)
+        $crate::__rewrite_self_param! {
+            ($($params)*)
 
             ($crate::__extract_custom_attributes)
             ($(#[$($m)*])*)
 
             ($out_macro)
-            ($($macro_arg)*)
+            ($($macro_args)*)
             (unsafe)
             ($name)
             ($($ret)?)
@@ -830,7 +830,7 @@ macro_rules! __declare_class_rewrite_methods {
 
         $crate::__declare_class_rewrite_methods! {
             ($out_macro)
-            ($($macro_arg)*)
+            ($($macro_args)*)
 
             $($rest)*
         }
@@ -839,21 +839,21 @@ macro_rules! __declare_class_rewrite_methods {
     // Safe variant
     {
         ($out_macro:path)
-        ($($macro_arg:tt)*)
+        ($($macro_args:tt)*)
 
         $(#[$($m:tt)*])*
-        fn $name:ident($($args:tt)*) $(-> $ret:ty)? $body:block
+        fn $name:ident($($params:tt)*) $(-> $ret:ty)? $body:block
 
         $($rest:tt)*
     } => {
-        $crate::__rewrite_self_arg! {
-            ($($args)*)
+        $crate::__rewrite_self_param! {
+            ($($params)*)
 
             ($crate::__extract_custom_attributes)
             ($(#[$($m)*])*)
 
             ($out_macro)
-            ($($macro_arg)*)
+            ($($macro_args)*)
             ()
             ($name)
             ($($ret)?)
@@ -862,7 +862,7 @@ macro_rules! __declare_class_rewrite_methods {
 
         $crate::__declare_class_rewrite_methods! {
             ($out_macro)
-            ($($macro_arg)*)
+            ($($macro_args)*)
 
             $($rest)*
         }
@@ -882,16 +882,16 @@ macro_rules! __declare_class_method_out {
         ($builder_method:ident)
         ($receiver:expr)
         ($receiver_ty:ty)
-        ($($args_prefix:tt)*)
-        ($($args_rest:tt)*)
+        ($($params_prefix:tt)*)
+        ($($params_rest:tt)*)
 
         ($($m_method:tt)*)
         ($($retain_semantics:tt)*)
         ($($m_optional:tt)*)
         ($($m_checked:tt)*)
     } => {
-        $crate::__declare_class_rewrite_args! {
-            ($($args_rest)*)
+        $crate::__declare_class_rewrite_params! {
+            ($($params_rest)*)
             ()
             ()
 
@@ -905,7 +905,7 @@ macro_rules! __declare_class_method_out {
             ($builder_method)
             ($receiver)
             ($receiver_ty)
-            ($($args_prefix)*)
+            ($($params_prefix)*)
 
             ($($m_method)*)
             ($($retain_semantics)*)
@@ -917,19 +917,19 @@ macro_rules! __declare_class_method_out {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __declare_class_rewrite_args {
+macro_rules! __declare_class_rewrite_params {
     // Convert _
     {
-        (_ : $param_ty:ty $(, $($rest_args:tt)*)?)
-        ($($args_converted:tt)*)
+        (_ : $param_ty:ty $(, $($params_rest:tt)*)?)
+        ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        $crate::__declare_class_rewrite_args! {
-            ($($($rest_args)*)?)
-            ($($args_converted)* _ : <$param_ty as $crate::__macro_helpers::ConvertArgument>::__Inner,)
+        $crate::__declare_class_rewrite_params! {
+            ($($($params_rest)*)?)
+            ($($params_converted)* _ : <$param_ty as $crate::__macro_helpers::ConvertArgument>::__Inner,)
             ($($body_prefix)*)
 
             ($out_macro)
@@ -938,16 +938,16 @@ macro_rules! __declare_class_rewrite_args {
     };
     // Convert mut
     {
-        (mut $param:ident : $param_ty:ty $(, $($rest_args:tt)*)?)
-        ($($args_converted:tt)*)
+        (mut $param:ident : $param_ty:ty $(, $($params_rest:tt)*)?)
+        ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        $crate::__declare_class_rewrite_args! {
-            ($($($rest_args)*)?)
-            ($($args_converted)* $param : <$param_ty as $crate::__macro_helpers::ConvertArgument>::__Inner,)
+        $crate::__declare_class_rewrite_params! {
+            ($($($params_rest)*)?)
+            ($($params_converted)* $param : <$param_ty as $crate::__macro_helpers::ConvertArgument>::__Inner,)
             (
                 $($body_prefix)*
                 let mut $param = <$param_ty as $crate::__macro_helpers::ConvertArgument>::__from_declared_param($param);
@@ -959,16 +959,16 @@ macro_rules! __declare_class_rewrite_args {
     };
     // Convert
     {
-        ($param:ident : $param_ty:ty $(, $($rest_args:tt)*)?)
-        ($($args_converted:tt)*)
+        ($param:ident : $param_ty:ty $(, $($params_rest:tt)*)?)
+        ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        $crate::__declare_class_rewrite_args! {
-            ($($($rest_args)*)?)
-            ($($args_converted)* $param : <$param_ty as $crate::__macro_helpers::ConvertArgument>::__Inner,)
+        $crate::__declare_class_rewrite_params! {
+            ($($($params_rest)*)?)
+            ($($params_converted)* $param : <$param_ty as $crate::__macro_helpers::ConvertArgument>::__Inner,)
             (
                 $($body_prefix)*
                 let $param = <$param_ty as $crate::__macro_helpers::ConvertArgument>::__from_declared_param($param);
@@ -981,7 +981,7 @@ macro_rules! __declare_class_rewrite_args {
     // Output result
     {
         ()
-        ($($args_converted:tt)*)
+        ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
 
         ($out_macro:path)
@@ -990,7 +990,7 @@ macro_rules! __declare_class_rewrite_args {
         $out_macro! {
             $($macro_args)*
 
-            ($($args_converted)*)
+            ($($params_converted)*)
             ($($body_prefix)*)
         }
     };
@@ -1009,20 +1009,20 @@ macro_rules! __declare_class_method_out_inner {
         ($__builder_method:ident)
         ($__receiver:expr)
         ($__receiver_ty:ty)
-        ($($args_prefix:tt)*)
+        ($($params_prefix:tt)*)
 
         (#[method($($__sel:tt)*)])
         ()
         ($($__m_optional:tt)*)
         ($($m_checked:tt)*)
 
-        ($($args_converted:tt)*)
+        ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
     } => {
         $($m_checked)*
         $($qualifiers)* extern "C" fn $name(
-            $($args_prefix)*
-            $($args_converted)*
+            $($params_prefix)*
+            $($params_converted)*
         ) $(-> <$ret as $crate::__macro_helpers::ConvertReturn>::__Inner)? {
             $($body_prefix)*
             $crate::__convert_result! {
@@ -1041,20 +1041,20 @@ macro_rules! __declare_class_method_out_inner {
         ($__builder_method:ident)
         ($__receiver:expr)
         ($receiver_ty:ty)
-        ($($args_prefix:tt)*)
+        ($($params_prefix:tt)*)
 
         (#[method_id($($sel:tt)*)])
         () // Specifying retain semantics is unsupported in declare_class! for now
         ($($__m_optional:tt)*)
         ($($m_checked:tt)*)
 
-        ($($args_converted:tt)*)
+        ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
     } => {
         $($m_checked)*
         $($qualifiers)* extern "C" fn $name(
-            $($args_prefix)*
-            $($args_converted)*
+            $($params_prefix)*
+            $($params_converted)*
         ) -> $crate::declare::__IdReturnValue {
             $($body_prefix)*
 
@@ -1084,14 +1084,14 @@ macro_rules! __declare_class_method_out_inner {
         ($__builder_method:ident)
         ($__receiver:expr)
         ($__receiver_ty:ty)
-        ($($args_prefix:tt)*)
+        ($($params_prefix:tt)*)
 
         (#[method_id($($sel:tt)*)])
         ($($retain_semantics:tt)*)
         ($($__m_optional:tt)*)
         ($($m_checked:tt)*)
 
-        ($($args_converted:tt)*)
+        ($($params_converted:tt)*)
         ($($body_prefix:tt)*)
     } => {
         $($m_checked)*
@@ -1128,8 +1128,8 @@ macro_rules! __declare_class_register_out {
         ($builder_method:ident)
         ($__receiver:expr)
         ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
 
         (#[method(dealloc)])
         ()
@@ -1155,8 +1155,8 @@ macro_rules! __declare_class_register_out {
         ($builder_method:ident)
         ($__receiver:expr)
         ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
 
         (#[method($($sel:tt)*)])
         ()
@@ -1171,7 +1171,7 @@ macro_rules! __declare_class_register_out {
                     Self::$name as $crate::__fn_ptr! {
                         ($($qualifiers)*)
                         (_, _,)
-                        $($args_rest)*
+                        $($params_rest)*
                     },
                 );
             )
@@ -1189,8 +1189,8 @@ macro_rules! __declare_class_register_out {
         ($builder_method:ident)
         ($__receiver:expr)
         ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
 
         (#[method_id($($sel:tt)*)])
         () // Retain semantics unsupported in declare_class!
@@ -1205,7 +1205,7 @@ macro_rules! __declare_class_register_out {
                     Self::$name as $crate::__fn_ptr! {
                         ($($qualifiers)*)
                         (_, _,)
-                        $($args_rest)*
+                        $($params_rest)*
                     },
                 );
             )
@@ -1223,8 +1223,8 @@ macro_rules! __declare_class_register_out {
         ($builder_method:ident)
         ($__receiver:expr)
         ($__receiver_ty:ty)
-        ($($__args_prefix:tt)*)
-        ($($args_rest:tt)*)
+        ($($__params_prefix:tt)*)
+        ($($params_rest:tt)*)
 
         ($($m_method:tt)*)
         ($($retain_semantics:tt)*)
@@ -1273,7 +1273,7 @@ macro_rules! __get_method_id_sel {
     };
 }
 
-/// Create function pointer type with inferred arguments.
+/// Create function pointer type with inferred parameters.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __fn_ptr {

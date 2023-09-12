@@ -5,23 +5,23 @@
 /// (builder_method:ident)
 /// (receiver:expr)
 /// (receiver_ty:ty)
-/// (args_prefix*)
-/// (args_rest*)
+/// (params_prefix*)
+/// (params_rest*)
 /// ```
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __rewrite_self_arg {
+macro_rules! __rewrite_self_param {
     {
-        ($($args:tt)*)
+        ($($params:tt)*)
 
         ($out_macro:path)
         $($macro_args:tt)*
     } => {
-        $crate::__rewrite_self_arg_inner! {
-            // Duplicate args out so that we can match on `self`, while still
-            // using it as a function argument
-            ($($args)*)
-            ($($args)*)
+        $crate::__rewrite_self_param_inner! {
+            // Duplicate params out so that we can match on `self`, while still
+            // using it as a function parameter
+            ($($params)*)
+            ($($params)*)
 
             ($out_macro)
             $($macro_args)*
@@ -31,11 +31,11 @@ macro_rules! __rewrite_self_arg {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __rewrite_self_arg_inner {
+macro_rules! __rewrite_self_param_inner {
     // Instance method
     {
-        (&self $($__args_rest:tt)*)
-        (&$self:ident $(, $($args_rest:tt)*)?)
+        (&self $($__params_rest:tt)*)
+        (&$self:ident $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -50,12 +50,12 @@ macro_rules! __rewrite_self_arg_inner {
                 &$self,
                 _: $crate::runtime::Sel,
             )
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
         }
     };
     {
-        (&mut self $($__args_rest:tt)*)
-        (&mut $self:ident $(, $($args_rest:tt)*)?)
+        (&mut self $($__params_rest:tt)*)
+        (&mut $self:ident $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -70,12 +70,12 @@ macro_rules! __rewrite_self_arg_inner {
                 &mut $self,
                 _: $crate::runtime::Sel,
             )
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
         }
     };
     {
-        (self: $__self_ty:ty $(, $($__args_rest:tt)*)?)
-        ($self:ident: $self_ty:ty $(, $($args_rest:tt)*)?)
+        (self: $__self_ty:ty $(, $($__params_rest:tt)*)?)
+        ($self:ident: $self_ty:ty $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -90,12 +90,12 @@ macro_rules! __rewrite_self_arg_inner {
                 $self: $self_ty,
                 _: $crate::runtime::Sel,
             )
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
         }
     };
     {
-        (mut self: $__self_ty:ty $(, $($__args_rest:tt)*)?)
-        ($mut:ident $self:ident: $self_ty:ty $(, $($args_rest:tt)*)?)
+        (mut self: $__self_ty:ty $(, $($__params_rest:tt)*)?)
+        ($mut:ident $self:ident: $self_ty:ty $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -110,7 +110,7 @@ macro_rules! __rewrite_self_arg_inner {
                 $mut $self: $self_ty,
                 _: $crate::runtime::Sel,
             )
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
         }
     };
 
@@ -118,8 +118,8 @@ macro_rules! __rewrite_self_arg_inner {
     // Workaround for arbitary self types being unstable
     // https://doc.rust-lang.org/nightly/unstable-book/language-features/arbitrary-self-types.html
     {
-        (mut this: $__self_ty:ty $(, $($__args_rest:tt)*)?)
-        ($mut:ident $this:ident: $this_ty:ty $(, $($args_rest:tt)*)?)
+        (mut this: $__self_ty:ty $(, $($__params_rest:tt)*)?)
+        ($mut:ident $this:ident: $this_ty:ty $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -134,12 +134,12 @@ macro_rules! __rewrite_self_arg_inner {
                 $mut $this: $this_ty,
                 _: $crate::runtime::Sel,
             )
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
         }
     };
     {
-        (this: $__self_ty:ty $(, $($__args_rest:tt)*)?)
-        ($this:ident: $this_ty:ty $(, $($args_rest:tt)*)?)
+        (this: $__self_ty:ty $(, $($__params_rest:tt)*)?)
+        ($this:ident: $this_ty:ty $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -154,12 +154,12 @@ macro_rules! __rewrite_self_arg_inner {
                 $this: $this_ty,
                 _: $crate::runtime::Sel,
             )
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
         }
     };
     {
-        (mut _this: $__self_ty:ty $(, $($__args_rest:tt)*)?)
-        ($mut:ident $this:ident: $this_ty:ty $(, $($args_rest:tt)*)?)
+        (mut _this: $__self_ty:ty $(, $($__params_rest:tt)*)?)
+        ($mut:ident $this:ident: $this_ty:ty $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -174,12 +174,12 @@ macro_rules! __rewrite_self_arg_inner {
                 $mut $this: $this_ty,
                 _: $crate::runtime::Sel,
             )
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
         }
     };
     {
-        (_this: $__self_ty:ty $(, $($__args_rest:tt)*)?)
-        ($this:ident: $this_ty:ty $(, $($args_rest:tt)*)?)
+        (_this: $__self_ty:ty $(, $($__params_rest:tt)*)?)
+        ($this:ident: $this_ty:ty $(, $($params_rest:tt)*)?)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -194,14 +194,14 @@ macro_rules! __rewrite_self_arg_inner {
                 $this: $this_ty,
                 _: $crate::runtime::Sel,
             )
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
         }
     };
 
     // Class method
     {
-        ($($__args:tt)*)
-        ($($args_rest:tt)*)
+        ($($__params:tt)*)
+        ($($params_rest:tt)*)
 
         ($out_macro:path)
         $($macro_args:tt)*
@@ -216,7 +216,7 @@ macro_rules! __rewrite_self_arg_inner {
                 _: &$crate::runtime::AnyClass,
                 _: $crate::runtime::Sel,
             )
-            ($($args_rest)*)
+            ($($params_rest)*)
         }
     };
 }

@@ -30,7 +30,7 @@ macro_rules! __method_msg_send {
     (
         ($receiver:expr)
         ($($sel_rest:tt)*)
-        ($arg:ident: MainThreadMarker $(, $($args_rest:tt)*)?)
+        ($arg:ident: MainThreadMarker $(, $($params_rest:tt)*)?)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
@@ -39,7 +39,7 @@ macro_rules! __method_msg_send {
         $crate::__method_msg_send! {
             ($receiver)
             ($($sel_rest)*)
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
 
             ($($sel_parsed)*)
             ($($arg_parsed)*)
@@ -50,7 +50,7 @@ macro_rules! __method_msg_send {
     (
         ($receiver:expr)
         ($($sel:ident)? : $($sel_rest:tt)*)
-        ($arg:ident : $_arg_ty:ty $(, $($args_rest:tt)*)?)
+        ($arg:ident : $_arg_ty:ty $(, $($params_rest:tt)*)?)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
@@ -58,7 +58,7 @@ macro_rules! __method_msg_send {
         $crate::__method_msg_send! {
             ($receiver)
             ($($sel_rest)*)
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
 
             ($($sel_parsed)* $($sel)? :)
             ($($arg_parsed)* $arg,)
@@ -68,7 +68,7 @@ macro_rules! __method_msg_send {
     (
         ($receiver:expr)
         ($($sel:ident)? :: $($sel_rest:tt)*)
-        ($arg1:ident : $_arg_ty1:ty, $arg2:ident : $_arg_ty2:ty $(, $($args_rest:tt)*)?)
+        ($arg1:ident : $_arg_ty1:ty, $arg2:ident : $_arg_ty2:ty $(, $($params_rest:tt)*)?)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
@@ -76,7 +76,7 @@ macro_rules! __method_msg_send {
         $crate::__method_msg_send! {
             ($receiver)
             ($($sel_rest)*)
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
 
             ($($sel_parsed)* $($sel)? : :)
             ($($arg_parsed)* $arg1, $arg2,)
@@ -139,7 +139,7 @@ macro_rules! __method_msg_send {
     (
         ($receiver:expr)
         ($($sel_rest:tt)*)
-        ($($args_rest:tt)*)
+        ($($params_rest:tt)*)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
@@ -181,7 +181,7 @@ macro_rules! __method_msg_send_id {
     (
         ($receiver:expr)
         ($($sel_rest:tt)*)
-        ($arg:ident: MainThreadMarker $(, $($args_rest:tt)*)?)
+        ($arg:ident: MainThreadMarker $(, $($params_rest:tt)*)?)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
@@ -191,7 +191,7 @@ macro_rules! __method_msg_send_id {
         $crate::__method_msg_send_id! {
             ($receiver)
             ($($sel_rest)*)
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
 
             ($($sel_parsed)*)
             ($($arg_parsed)*)
@@ -203,7 +203,7 @@ macro_rules! __method_msg_send_id {
     (
         ($receiver:expr)
         ($($sel:ident)? : $($sel_rest:tt)*)
-        ($arg:ident : $_arg_ty:ty $(, $($args_rest:tt)*)?)
+        ($arg:ident : $_arg_ty:ty $(, $($params_rest:tt)*)?)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
@@ -212,7 +212,7 @@ macro_rules! __method_msg_send_id {
         $crate::__method_msg_send_id! {
             ($receiver)
             ($($sel_rest)*)
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
 
             ($($sel_parsed)* $($sel)? :)
             ($($arg_parsed)* $arg,)
@@ -223,7 +223,7 @@ macro_rules! __method_msg_send_id {
     (
         ($receiver:expr)
         ($($sel:ident)? :: $($sel_rest:tt)*)
-        ($arg1:ident : $_arg_ty1:ty, $arg2:ident : $_arg_ty2:ty $(, $($args_rest:tt)*)?)
+        ($arg1:ident : $_arg_ty1:ty, $arg2:ident : $_arg_ty2:ty $(, $($params_rest:tt)*)?)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
@@ -232,7 +232,7 @@ macro_rules! __method_msg_send_id {
         $crate::__method_msg_send_id! {
             ($receiver)
             ($($sel_rest)*)
-            ($($($args_rest)*)?)
+            ($($($params_rest)*)?)
 
             ($($sel_parsed)* $($sel)? : :)
             ($($arg_parsed)* $arg1, $arg2,)
@@ -301,7 +301,7 @@ macro_rules! __method_msg_send_id {
     (
         ($receiver:expr)
         ($($sel_rest:tt)*)
-        ($($args_rest:tt)*)
+        ($($params_rest:tt)*)
 
         ($($sel_parsed:tt)*)
         ($($arg_parsed:tt)*)
