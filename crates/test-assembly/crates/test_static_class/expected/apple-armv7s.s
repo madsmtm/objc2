@@ -79,12 +79,6 @@ LPC5_0:
 _use_in_loop:
 	bx	lr
 
-	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_928cf03fcc497777
-	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_928cf03fcc497777:
-	.asciz	"\000\000\000\000@\000\000"
-
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
 	.globl	L_OBJC_CLASSLIST_REFERENCES_$_928cf03fcc497777
 	.p2align	2, 0x0
@@ -92,9 +86,9 @@ L_OBJC_CLASSLIST_REFERENCES_$_928cf03fcc497777:
 	.long	_OBJC_CLASS_$_NSObject
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_2fe1990982915f07
+	.globl	L_OBJC_IMAGE_INFO_928cf03fcc497777
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_2fe1990982915f07:
+L_OBJC_IMAGE_INFO_928cf03fcc497777:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
@@ -104,9 +98,9 @@ L_OBJC_CLASSLIST_REFERENCES_$_2fe1990982915f07:
 	.long	_OBJC_CLASS_$_NSObject
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_dfff3a06c0bf722b
+	.globl	L_OBJC_IMAGE_INFO_2fe1990982915f07
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_dfff3a06c0bf722b:
+L_OBJC_IMAGE_INFO_2fe1990982915f07:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
@@ -116,9 +110,9 @@ L_OBJC_CLASSLIST_REFERENCES_$_dfff3a06c0bf722b:
 	.long	_OBJC_CLASS_$_NSString
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_ea6fbcf172f7f513
+	.globl	L_OBJC_IMAGE_INFO_dfff3a06c0bf722b
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_ea6fbcf172f7f513:
+L_OBJC_IMAGE_INFO_dfff3a06c0bf722b:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
@@ -128,9 +122,9 @@ L_OBJC_CLASSLIST_REFERENCES_$_ea6fbcf172f7f513:
 	.long	_OBJC_CLASS_$_NSData
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_97e6a8c6ed5db063
+	.globl	L_OBJC_IMAGE_INFO_ea6fbcf172f7f513
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_97e6a8c6ed5db063:
+L_OBJC_IMAGE_INFO_ea6fbcf172f7f513:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
@@ -140,9 +134,9 @@ L_OBJC_CLASSLIST_REFERENCES_$_97e6a8c6ed5db063:
 	.long	_OBJC_CLASS_$_NSException
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_bb5b616899716c0d
+	.globl	L_OBJC_IMAGE_INFO_97e6a8c6ed5db063
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_bb5b616899716c0d:
+L_OBJC_IMAGE_INFO_97e6a8c6ed5db063:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
@@ -150,5 +144,11 @@ L_OBJC_IMAGE_INFO_bb5b616899716c0d:
 	.p2align	2, 0x0
 L_OBJC_CLASSLIST_REFERENCES_$_bb5b616899716c0d:
 	.long	_OBJC_CLASS_$_NSLock
+
+	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
+	.globl	L_OBJC_IMAGE_INFO_bb5b616899716c0d
+	.p2align	2, 0x0
+L_OBJC_IMAGE_INFO_bb5b616899716c0d:
+	.asciz	"\000\000\000\000@\000\000"
 
 .subsections_via_symbols

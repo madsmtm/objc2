@@ -327,26 +327,25 @@ macro_rules! __sel_inner {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __inner_statics_apple_generic {
-    {
-        @string_to_known_length_bytes;
-        $x:ident;
-    } => {{
+macro_rules! __statics_string_to_known_length_bytes {
+    ($inp:ident) => {{
         // Convert the `&[u8]` slice to an array with known length, so
         // that we can place that directly in a static.
-        let mut res: [u8; $x.len()] = [0; $x.len()];
+        let mut res: [$crate::__macro_helpers::u8; $inp.len()] = [0; $inp.len()];
         let mut i = 0;
-        while i < $x.len() {
-            res[i] = $x[i];
+        while i < $inp.len() {
+            res[i] = $inp[i];
             i += 1;
         }
         res
     }};
-    {
-        @image_info;
-        $image_info_section:literal;
-        $hash:expr;
-    } => {
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(feature = "apple")]
+macro_rules! __statics_image_info {
+    ($hash:expr) => {
         /// We always emit the image info tag, since we need it to:
         /// - End up in the same codegen unit as the other statics below.
         /// - End up in the final binary so it can be read by dyld.
@@ -354,24 +353,27 @@ macro_rules! __inner_statics_apple_generic {
         /// Unfortunately however, this leads to duplicated tags - the linker
         /// reports `__DATA/__objc_imageinfo has unexpectedly large size XXX`,
         /// but things still seems to work.
-        #[link_section = $image_info_section]
-        #[export_name = $crate::__macro_helpers::concat!(
-            "\x01L_OBJC_IMAGE_INFO_",
-            $hash,
+        #[cfg_attr(
+            not(all(target_os = "macos", target_arch = "x86")),
+            link_section = "__DATA,__objc_imageinfo,regular,no_dead_strip"
         )]
+        #[cfg_attr(
+            all(target_os = "macos", target_arch = "x86"),
+            link_section = "__OBJC,__image_info,regular"
+        )]
+        #[export_name = $crate::__macro_helpers::concat!("\x01L_OBJC_IMAGE_INFO_", $hash)]
         #[used] // Make sure this reaches the linker
         static _IMAGE_INFO: $crate::ffi::__ImageInfo = $crate::ffi::__ImageInfo::system();
     };
-    {
-        @module_info;
-        $hash:expr;
-    } => {
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(feature = "apple")]
+macro_rules! __statics_module_info {
+    ($hash:expr) => {
         #[link_section = "__TEXT,__cstring,cstring_literals"]
-        #[export_name = $crate::__macro_helpers::concat!(
-            "\x01L_OBJC_CLASS_NAME_",
-            $hash,
-            "_MODULE_INFO"
-        )]
+        #[export_name = $crate::__macro_helpers::concat!("\x01L_OBJC_CLASS_NAME_", $hash, "_MODULE_INFO")]
         static MODULE_INFO_NAME: [$crate::__macro_helpers::u8; 1] = [0];
 
         /// Emit module info.
@@ -379,39 +381,39 @@ macro_rules! __inner_statics_apple_generic {
         /// This is similar to image info, and must be present in the final
         /// binary on macOS 32-bit.
         #[link_section = "__OBJC,__module_info,regular,no_dead_strip"]
-        #[export_name = $crate::__macro_helpers::concat!(
-            "\x01L_OBJC_MODULES_",
-            $hash,
-        )]
+        #[export_name = $crate::__macro_helpers::concat!("\x01L_OBJC_MODULES_", $hash)]
         #[used] // Make sure this reaches the linker
-        static _MODULE_INFO: $crate::__macro_helpers::ModuleInfo = $crate::__macro_helpers::ModuleInfo::new(
-            MODULE_INFO_NAME.as_ptr()
-        );
+        static _MODULE_INFO: $crate::__macro_helpers::ModuleInfo =
+            $crate::__macro_helpers::ModuleInfo::new(MODULE_INFO_NAME.as_ptr());
     };
-    {
-        @sel;
-        $var_name_section:literal;
-        $selector_ref_section:literal;
-        $data:expr;
-        $hash:expr;
-    } => {
-        use $crate::__macro_helpers::{u8, UnsafeCell};
-        use $crate::runtime::Sel;
+}
 
-        const X: &[u8] = $data.as_bytes();
+#[doc(hidden)]
+#[macro_export]
+#[cfg(feature = "apple")]
+macro_rules! __statics_sel {
+    {
+        ($data:expr)
+        ($hash:expr)
+    } => {
+        const X: &[$crate::__macro_helpers::u8] = $data.as_bytes();
 
         /// Clang marks this with LLVM's `unnamed_addr`.
         /// See rust-lang/rust#18297
         /// Should only be an optimization (?)
-        #[link_section = $var_name_section]
+        #[cfg_attr(
+            not(all(target_os = "macos", target_arch = "x86")),
+            link_section = "__TEXT,__objc_methname,cstring_literals",
+        )]
+        #[cfg_attr(
+            all(target_os = "macos", target_arch = "x86"),
+            link_section = "__TEXT,__cstring,cstring_literals",
+        )]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_METH_VAR_NAME_",
             $hash,
         )]
-        static NAME_DATA: [u8; X.len()] = $crate::__inner_statics_apple_generic! {
-            @string_to_known_length_bytes;
-            X;
-        };
+        static NAME_DATA: [$crate::__macro_helpers::u8; X.len()] = $crate::__statics_string_to_known_length_bytes!(X);
 
         /// Place the constant value in the correct section.
         ///
@@ -436,23 +438,46 @@ macro_rules! __inner_statics_apple_generic {
         ///
         /// See the [`ctor`](https://crates.io/crates/ctor) crate for more
         /// info on "life before main".
-        #[link_section = $selector_ref_section]
-        #[export_name = $crate::__macro_helpers::concat!(
-            "\x01L_OBJC_SELECTOR_REFERENCES_",
-            $hash,
+        #[cfg_attr(
+            not(all(target_os = "macos", target_arch = "x86")),
+            // Clang uses `no_dead_strip` in the link section for some reason,
+            // which other tools (notably some LLVM tools) now assume is
+            // present, so we have to add it as well.
+            link_section = "__DATA,__objc_selrefs,literal_pointers,no_dead_strip",
         )]
-        static mut REF: UnsafeCell<Sel> = unsafe {
-            UnsafeCell::new(Sel::__internal_from_ptr(NAME_DATA.as_ptr().cast()))
+        #[cfg_attr(
+            all(target_os = "macos", target_arch = "x86"),
+            link_section = "__OBJC,__message_refs,literal_pointers,no_dead_strip",
+        )]
+        #[export_name = $crate::__macro_helpers::concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $hash)]
+        static mut REF: $crate::__macro_helpers::UnsafeCell<$crate::runtime::Sel> = unsafe {
+            $crate::__macro_helpers::UnsafeCell::new($crate::runtime::Sel::__internal_from_ptr(NAME_DATA.as_ptr().cast()))
         };
-    };
-    {
-        @class;
-        $name:expr;
-        $hash:expr;
-    } => {
-        use $crate::__macro_helpers::UnsafeCell;
-        use $crate::runtime::AnyClass;
 
+        $crate::__statics_image_info!($hash);
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(not(feature = "apple"))]
+macro_rules! __statics_sel {
+    ($($args:tt)*) => {
+        // TODO
+        $crate::__macro_helpers::compile_error!(
+            "The `\"unstable-static-sel\"` feature is not yet supported on GNUStep!"
+        )
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(feature = "apple", not(all(target_os = "macos", target_arch = "x86"))))]
+macro_rules! __statics_class {
+    {
+        ($name:expr)
+        ($hash:expr)
+    } => {
         extern "C" {
             /// Link to the Objective-C class static.
             ///
@@ -472,137 +497,63 @@ macro_rules! __inner_statics_apple_generic {
             /// <https://github.com/rust-lang/rust/issues/29603>
             /// <https://stackoverflow.com/a/16936512>
             /// <http://sealiesoftware.com/blog/archive/2010/4/8/Do-it-yourself_Objective-C_weak_import.html>
-            #[link_name = $crate::__macro_helpers::concat!(
-                "OBJC_CLASS_$_",
-                $name,
-            )]
-            static CLASS: AnyClass;
+            #[link_name = $crate::__macro_helpers::concat!("OBJC_CLASS_$_", $name)]
+            static CLASS: $crate::runtime::AnyClass;
         }
 
-        /// SAFETY: Same as `REF` above in `@sel`.
+        /// SAFETY: Same as `REF` above in `__statics_sel!`.
         #[link_section = "__DATA,__objc_classrefs,regular,no_dead_strip"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASSLIST_REFERENCES_$_",
             $hash,
         )]
-        static mut REF: UnsafeCell<&AnyClass> = unsafe {
-            UnsafeCell::new(&CLASS)
+        static mut REF: $crate::__macro_helpers::UnsafeCell<&$crate::runtime::AnyClass> = unsafe {
+            $crate::__macro_helpers::UnsafeCell::new(&CLASS)
         };
+
+        $crate::__statics_image_info!($hash);
     };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(feature = "apple", all(target_os = "macos", target_arch = "x86")))]
+macro_rules! __statics_class {
     {
-        @class_old;
-        $name:expr;
-        $hash:expr;
+        ($name:expr)
+        ($hash:expr)
     } => {
-        use $crate::__macro_helpers::{u8, UnsafeCell};
-        use $crate::runtime::AnyClass;
+        const X: &[$crate::__macro_helpers::u8] = $name.as_bytes();
 
-        const X: &[u8] = $name.as_bytes();
-
-        /// Similar to NAME_DATA above in `@sel`.
+        /// Similar to NAME_DATA above in `__statics_sel!`.
         #[link_section = "__TEXT,__cstring,cstring_literals"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASS_NAME_",
             $hash,
         )]
-        static NAME_DATA: [u8; X.len()] = $crate::__inner_statics_apple_generic! {
-            @string_to_known_length_bytes;
-            X;
-        };
+        static NAME_DATA: [$crate::__macro_helpers::u8; X.len()] = $crate::__statics_string_to_known_length_bytes!(X);
 
-        /// SAFETY: Same as `REF` above in `@sel`.
+        /// SAFETY: Same as `REF` above in `__statics_sel!`.
         #[link_section = "__OBJC,__cls_refs,literal_pointers,no_dead_strip"]
         #[export_name = $crate::__macro_helpers::concat!(
             "\x01L_OBJC_CLASS_REFERENCES_",
             $hash,
         )]
-        static mut REF: UnsafeCell<&AnyClass> = unsafe {
-            let ptr: *const AnyClass = NAME_DATA.as_ptr().cast();
-            UnsafeCell::new(&*ptr)
+        static mut REF: $crate::__macro_helpers::UnsafeCell<&$crate::runtime::AnyClass> = unsafe {
+            let ptr: *const $crate::runtime::AnyClass = NAME_DATA.as_ptr().cast();
+            $crate::__macro_helpers::UnsafeCell::new(&*ptr)
         };
+
+        $crate::__statics_image_info!($hash);
+        $crate::__statics_module_info!($hash);
     }
-}
-
-// These sections are found by reading clang/LLVM sources
-#[doc(hidden)]
-#[macro_export]
-#[cfg(all(feature = "apple", not(all(target_os = "macos", target_arch = "x86"))))]
-macro_rules! __inner_statics {
-    (@image_info $hash:expr) => {
-        $crate::__inner_statics_apple_generic! {
-            @image_info;
-            "__DATA,__objc_imageinfo,regular,no_dead_strip";
-            $hash;
-        }
-    };
-    (@sel $data:expr, $hash:expr) => {
-        $crate::__inner_statics_apple_generic! {
-            @sel;
-            "__TEXT,__objc_methname,cstring_literals";
-            // Clang uses `no_dead_strip` in the link section for some reason,
-            // which other tools (notably some LLVM tools) now assume is
-            // present, so we have to add it as well.
-            "__DATA,__objc_selrefs,literal_pointers,no_dead_strip";
-            $data;
-            $hash;
-        }
-    };
-    (@class $name:expr, $hash:expr) => {
-        $crate::__inner_statics_apple_generic! {
-            @class;
-            $name;
-            $hash;
-        }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-#[cfg(all(feature = "apple", target_os = "macos", target_arch = "x86"))]
-macro_rules! __inner_statics {
-    (@image_info $hash:expr) => {
-        $crate::__inner_statics_apple_generic! {
-            @image_info;
-            "__OBJC,__image_info,regular";
-            $hash;
-        }
-    };
-    (@sel $data:expr, $hash:expr) => {
-        $crate::__inner_statics_apple_generic! {
-            @sel;
-            "__TEXT,__cstring,cstring_literals";
-            "__OBJC,__message_refs,literal_pointers,no_dead_strip";
-            $data;
-            $hash;
-        }
-    };
-    (@class $name:expr, $hash:expr) => {
-        $crate::__inner_statics_apple_generic! {
-            @class_old;
-            $name;
-            $hash;
-        }
-        $crate::__inner_statics_apple_generic! {
-            @module_info;
-            $hash;
-        }
-    };
 }
 
 #[doc(hidden)]
 #[macro_export]
 #[cfg(not(feature = "apple"))]
-macro_rules! __inner_statics {
-    (@image_info $($args:tt)*) => {
-        // TODO
-    };
-    (@sel $($args:tt)*) => {
-        // TODO
-        $crate::__macro_helpers::compile_error!(
-            "The `\"unstable-static-sel\"` feature is not yet supported on GNUStep!"
-        )
-    };
-    (@class $($args:tt)*) => {
+macro_rules! __statics_class {
+    ($($args:tt)*) => {
         // TODO
         $crate::__macro_helpers::compile_error!(
             "The `\"unstable-static-class\"` feature is not yet supported on GNUStep!"
@@ -618,8 +569,10 @@ macro_rules! __inner_statics {
 ))]
 macro_rules! __sel_inner {
     ($data:expr, $hash:expr) => {{
-        $crate::__inner_statics!(@image_info $hash);
-        $crate::__inner_statics!(@sel $data, $hash);
+        $crate::__statics_sel! {
+            ($data)
+            ($hash)
+        }
 
         /// HACK: Wrap the access in a non-generic, `#[inline(never)]`
         /// function to make the compiler group it into the same codegen unit
@@ -647,12 +600,16 @@ macro_rules! __sel_inner {
 #[cfg(feature = "unstable-static-sel-inlined")]
 macro_rules! __sel_inner {
     ($data:expr, $hash:expr) => {{
-        $crate::__inner_statics!(@image_info $hash);
-        $crate::__inner_statics!(@sel $data, $hash);
+        $crate::__statics_sel! {
+            ($data)
+            ($hash)
+        }
 
         #[allow(unused_unsafe)]
         // SAFETY: See above
-        unsafe { *REF.get() }
+        unsafe {
+            *REF.get()
+        }
     }};
 }
 
@@ -664,11 +621,13 @@ macro_rules! __sel_inner {
 ))]
 macro_rules! __class_inner {
     ($name:expr, $hash:expr) => {{
-        $crate::__inner_statics!(@image_info $hash);
-        $crate::__inner_statics!(@class $name, $hash);
+        $crate::__statics_class! {
+            ($name)
+            ($hash)
+        }
 
         #[inline(never)]
-        fn objc_static_workaround() -> &'static AnyClass {
+        fn objc_static_workaround() -> &'static $crate::runtime::AnyClass {
             // SAFETY: Same as __sel_inner
             unsafe { *REF.get() }
         }
@@ -682,12 +641,16 @@ macro_rules! __class_inner {
 #[cfg(feature = "unstable-static-class-inlined")]
 macro_rules! __class_inner {
     ($name:expr, $hash:expr) => {{
-        $crate::__inner_statics!(@image_info $hash);
-        $crate::__inner_statics!(@class $name, $hash);
+        $crate::__statics_class! {
+            ($name)
+            ($hash)
+        }
 
         #[allow(unused_unsafe)]
         // SAFETY: See above
-        unsafe { *REF.get() }
+        unsafe {
+            *REF.get()
+        }
     }};
 }
 
