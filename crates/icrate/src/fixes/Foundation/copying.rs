@@ -22,7 +22,6 @@ extern_protocol!(
         #[optional]
         fn copy(&self) -> Id<Self::Immutable>
         where
-            Self: Sized,
             Self: CounterpartOrSelf;
 
         /// Returns a new instance that's a copy of the receiver.
@@ -37,7 +36,6 @@ extern_protocol!(
         #[method_id(copyWithZone:)]
         unsafe fn copyWithZone(&self, zone: *mut NSZone) -> Id<Self::Immutable>
         where
-            Self: Sized,
             Self: CounterpartOrSelf;
     }
 
@@ -65,7 +63,6 @@ extern_protocol!(
         #[optional]
         fn mutableCopy(&self) -> Id<Self::Mutable>
         where
-            Self: Sized,
             Self: CounterpartOrSelf;
 
         /// Returns a new instance that's a mutable copy of the receiver.
@@ -80,7 +77,6 @@ extern_protocol!(
         #[method_id(mutableCopyWithZone:)]
         unsafe fn mutableCopyWithZone(&self, zone: *mut NSZone) -> Id<Self::Mutable>
         where
-            Self: Sized,
             Self: CounterpartOrSelf;
     }
 
