@@ -1116,7 +1116,7 @@ macro_rules! __declare_class_method_out_inner {
         $($qualifiers)* extern "C" fn $name(
             $($params_prefix)*
             $($params_converted)*
-        ) -> $crate::declare::__IdReturnValue {
+        ) -> $crate::__macro_helpers::IdReturnValue {
             $($body_prefix)*
 
             let __objc2_result = $body;

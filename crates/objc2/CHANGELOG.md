@@ -25,6 +25,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   This effectively means you can now `copy` a `ProtocolObject<dyn NSCopying>`.
 * **BREAKING**: Allow implementing `DefaultId` for any type, not just those
   who are `IsAllocableAnyThread`.
+* **BREAKING**: Moved the `MethodImplementation` trait from the `declare`
+  module to the `runtime` module.
 
 ### Deprecated
 * Soft deprecated using `msg_send!` without a comma between arguments (i.e.

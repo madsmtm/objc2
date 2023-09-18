@@ -77,7 +77,7 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsMutable`
             Mutable
             MutableWithImmutableSuperclass<IS>
   = note: required for `CustomObject` to implement `IsMutable`
-  = note: required for `extern "C" fn(&mut CustomObject, objc2::runtime::Sel) -> __IdReturnValue` to implement `MethodImplementation`
+  = note: required for `extern "C" fn(&mut CustomObject, objc2::runtime::Sel) -> IdReturnValue` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |

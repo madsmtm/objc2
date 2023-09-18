@@ -5,13 +5,12 @@ use core::ptr;
 use std::collections::HashSet;
 
 use crate::declare::ClassBuilder;
-use crate::declare::MethodImplementation;
 use crate::encode::Encode;
 use crate::message::__TupleExtender;
 use crate::rc::{Allocated, Id};
 #[cfg(all(debug_assertions, feature = "verify"))]
 use crate::runtime::MethodDescription;
-use crate::runtime::{AnyClass, AnyObject, AnyProtocol, Sel};
+use crate::runtime::{AnyClass, AnyObject, AnyProtocol, MethodImplementation, Sel};
 use crate::{Message, MessageArguments, MessageReceiver};
 
 pub use core::borrow::{Borrow, BorrowMut};
@@ -35,11 +34,11 @@ mod writeback;
 
 pub use self::cache::{CachedClass, CachedSel};
 pub use self::common_selectors::{alloc_sel, dealloc_sel, init_sel, new_sel};
+pub use self::convert::{ConvertArgument, ConvertReturn};
 pub use self::declare_class::{
-    assert_mutability_matches_superclass_mutability, MaybeOptionId, MessageRecieveId,
-    ValidSubclassMutability,
+    assert_mutability_matches_superclass_mutability, IdReturnValue, MaybeOptionId,
+    MessageRecieveId, ValidSubclassMutability,
 };
-pub use convert::{ConvertArgument, ConvertReturn};
 
 /// Helper for specifying the retain semantics for a given selector family.
 ///
