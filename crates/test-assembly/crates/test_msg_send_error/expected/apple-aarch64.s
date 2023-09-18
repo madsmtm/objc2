@@ -147,19 +147,15 @@ Lloh11:
 	b	LBB5_2
 	.loh AdrpAdd	Lloh10, Lloh11
 
-	.globl	_error_autoreleased
+	.globl	_error_mutable_copy
 	.p2align	2
-_error_autoreleased:
+_error_mutable_copy:
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	str	xzr, [sp, #8]
 	add	x2, sp, #8
 	bl	_objc_msgSend
-	; InlineAsm Start
-	mov	x29, x29
-	; InlineAsm End
-	bl	_objc_retainAutoreleasedReturnValue
 	cbz	x0, LBB6_3
 	mov	x1, x0
 	mov	x0, #0
@@ -178,6 +174,38 @@ Lloh13:
 	mov	w0, #1
 	b	LBB6_2
 	.loh AdrpAdd	Lloh12, Lloh13
+
+	.globl	_error_autoreleased
+	.p2align	2
+_error_autoreleased:
+	sub	sp, sp, #32
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+	str	xzr, [sp, #8]
+	add	x2, sp, #8
+	bl	_objc_msgSend
+	; InlineAsm Start
+	mov	x29, x29
+	; InlineAsm End
+	bl	_objc_retainAutoreleasedReturnValue
+	cbz	x0, LBB7_3
+	mov	x1, x0
+	mov	x0, #0
+LBB7_2:
+	ldp	x29, x30, [sp, #16]
+	add	sp, sp, #32
+	ret
+LBB7_3:
+	ldr	x0, [sp, #8]
+Lloh14:
+	adrp	x1, l_anon.[ID].8@PAGE
+Lloh15:
+	add	x1, x1, l_anon.[ID].8@PAGEOFF
+	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	mov	x1, x0
+	mov	w0, #1
+	b	LBB7_2
+	.loh AdrpAdd	Lloh14, Lloh15
 
 	.section	__TEXT,__const
 l_anon.[ID].0:
@@ -214,5 +242,10 @@ l_anon.[ID].6:
 l_anon.[ID].7:
 	.quad	l_anon.[ID].2
 	.asciz	"6\000\000\000\000\000\000\000 \000\000\000\005\000\000"
+
+	.p2align	3, 0x0
+l_anon.[ID].8:
+	.quad	l_anon.[ID].2
+	.asciz	"6\000\000\000\000\000\000\000%\000\000\000\005\000\000"
 
 .subsections_via_symbols

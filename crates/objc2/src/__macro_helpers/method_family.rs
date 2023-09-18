@@ -24,8 +24,9 @@ pub struct RetainSemantics<const INNER: u8> {}
 pub type New = RetainSemantics<1>;
 pub type Alloc = RetainSemantics<2>;
 pub type Init = RetainSemantics<3>;
-pub type CopyOrMutCopy = RetainSemantics<4>;
-pub type Other = RetainSemantics<5>;
+pub type Copy = RetainSemantics<4>;
+pub type MutableCopy = RetainSemantics<5>;
+pub type Other = RetainSemantics<6>;
 
 pub const fn retain_semantics(selector: &str) -> u8 {
     let selector = selector.as_bytes();
@@ -40,8 +41,8 @@ pub const fn retain_semantics(selector: &str) -> u8 {
         (false, true, false, false, false) => 2,
         (false, false, true, false, false) => 3,
         (false, false, false, true, false) => 4,
-        (false, false, false, false, true) => 4,
-        (false, false, false, false, false) => 5,
+        (false, false, false, false, true) => 5,
+        (false, false, false, false, false) => 6,
         _ => unreachable!(),
     }
 }

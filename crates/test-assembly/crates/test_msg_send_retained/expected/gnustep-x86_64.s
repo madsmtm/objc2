@@ -264,6 +264,52 @@ handle_copy_fallible:
 .Lfunc_end9:
 	.size	handle_copy_fallible, .Lfunc_end9-handle_copy_fallible
 
+	.section	.text.handle_mutable_copy,"ax",@progbits
+	.globl	handle_mutable_copy
+	.p2align	4, 0x90
+	.type	handle_mutable_copy,@function
+handle_mutable_copy:
+	push	r14
+	push	rbx
+	push	rax
+	mov	rbx, rsi
+	mov	r14, rdi
+	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
+	mov	rdi, r14
+	mov	rsi, rbx
+	add	rsp, 8
+	pop	rbx
+	pop	r14
+	jmp	rax
+.Lfunc_end10:
+	.size	handle_mutable_copy, .Lfunc_end10-handle_mutable_copy
+
+	.section	.text.handle_mutable_copy_fallible,"ax",@progbits
+	.globl	handle_mutable_copy_fallible
+	.p2align	4, 0x90
+	.type	handle_mutable_copy_fallible,@function
+handle_mutable_copy_fallible:
+	push	r14
+	push	rbx
+	push	rax
+	mov	rbx, rsi
+	mov	r14, rdi
+	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
+	mov	rdi, r14
+	mov	rsi, rbx
+	call	rax
+	test	rax, rax
+	je	.LBB11_2
+	add	rsp, 8
+	pop	rbx
+	pop	r14
+	ret
+.LBB11_2:
+	lea	rdi, [rip + .Lanon.[ID].4]
+	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
+.Lfunc_end11:
+	.size	handle_mutable_copy_fallible, .Lfunc_end11-handle_mutable_copy_fallible
+
 	.section	.text.handle_autoreleased,"ax",@progbits
 	.globl	handle_autoreleased
 	.p2align	4, 0x90
@@ -283,8 +329,8 @@ handle_autoreleased:
 	pop	rbx
 	pop	r14
 	jmp	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
-.Lfunc_end10:
-	.size	handle_autoreleased, .Lfunc_end10-handle_autoreleased
+.Lfunc_end12:
+	.size	handle_autoreleased, .Lfunc_end12-handle_autoreleased
 
 	.section	.text.handle_autoreleased_with_arg,"ax",@progbits
 	.globl	handle_autoreleased_with_arg
@@ -307,8 +353,8 @@ handle_autoreleased_with_arg:
 	pop	r14
 	pop	r15
 	jmp	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
-.Lfunc_end11:
-	.size	handle_autoreleased_with_arg, .Lfunc_end11-handle_autoreleased_with_arg
+.Lfunc_end13:
+	.size	handle_autoreleased_with_arg, .Lfunc_end13-handle_autoreleased_with_arg
 
 	.section	.text.handle_autoreleased_fallible,"ax",@progbits
 	.globl	handle_autoreleased_fallible
@@ -327,18 +373,18 @@ handle_autoreleased_fallible:
 	mov	rdi, rax
 	call	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
 	test	rax, rax
-	je	.LBB12_2
+	je	.LBB14_2
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB12_2:
-	lea	rdx, [rip + .Lanon.[ID].4]
+.LBB14_2:
+	lea	rdx, [rip + .Lanon.[ID].5]
 	mov	rdi, r14
 	mov	rsi, rbx
-	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
-.Lfunc_end12:
-	.size	handle_autoreleased_fallible, .Lfunc_end12-handle_autoreleased_fallible
+	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<6_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
+.Lfunc_end14:
+	.size	handle_autoreleased_fallible, .Lfunc_end14-handle_autoreleased_fallible
 
 	.section	.text.handle_with_out_param,"ax",@progbits
 	.globl	handle_with_out_param
@@ -371,8 +417,8 @@ handle_with_out_param:
 	pop	r14
 	pop	r15
 	jmp	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
-.Lfunc_end13:
-	.size	handle_with_out_param, .Lfunc_end13-handle_with_out_param
+.Lfunc_end15:
+	.size	handle_with_out_param, .Lfunc_end15-handle_with_out_param
 
 	.type	.Lanon.[ID].0,@object
 	.section	.rodata..Lanon.[ID].0,"a",@progbits
@@ -409,7 +455,15 @@ handle_with_out_param:
 	.p2align	3, 0x0
 .Lanon.[ID].4:
 	.quad	.Lanon.[ID].0
-	.asciz	"9\000\000\000\000\000\000\000L\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\000\000\000\000B\000\000\000\005\000\000"
 	.size	.Lanon.[ID].4, 24
+
+	.type	.Lanon.[ID].5,@object
+	.section	.data.rel.ro..Lanon.[ID].5,"aw",@progbits
+	.p2align	3, 0x0
+.Lanon.[ID].5:
+	.quad	.Lanon.[ID].0
+	.asciz	"9\000\000\000\000\000\000\000V\000\000\000\005\000\000"
+	.size	.Lanon.[ID].5, 24
 
 	.section	".note.GNU-stack","",@progbits

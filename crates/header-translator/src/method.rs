@@ -140,7 +140,8 @@ impl MethodModifiers {
 /// This also encodes the "method family" that a method belongs to.
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum MemoryManagement {
-    IdCopyOrMutCopy,
+    IdCopy,
+    IdMutableCopy,
     IdNew,
     IdInit,
     IdOther,
@@ -175,8 +176,8 @@ impl MemoryManagement {
                 error!("the `alloc` method-family requires manual handling");
                 Self::IdOther
             }
-            (false, true, false, false, false) => Self::IdCopyOrMutCopy,
-            (false, false, true, false, false) => Self::IdCopyOrMutCopy,
+            (false, true, false, false, false) => Self::IdCopy,
+            (false, false, true, false, false) => Self::IdMutableCopy,
             (false, false, false, true, false) => Self::IdNew,
             (false, false, false, false, true) => Self::IdInit,
             (false, false, false, false, false) => Self::IdOther,
@@ -199,7 +200,8 @@ impl MemoryManagement {
                 modifiers.designated_initializer,
                 id_type,
             ) {
-                (false, false, true, false, false, Self::IdCopyOrMutCopy) => Self::IdCopyOrMutCopy,
+                (false, false, true, false, false, Self::IdCopy) => Self::IdCopy,
+                (false, false, true, false, false, Self::IdMutableCopy) => Self::IdMutableCopy,
                 (false, false, true, false, false, Self::IdNew) => Self::IdNew,
                 // For the `init` family there's another restriction:
                 // > must be instance methods
@@ -689,7 +691,8 @@ impl fmt::Display for Method {
         }
 
         let id_mm_name = match &self.memory_management {
-            MemoryManagement::IdCopyOrMutCopy => Some("CopyOrMutCopy"),
+            MemoryManagement::IdCopy => Some("Copy"),
+            MemoryManagement::IdMutableCopy => Some("MutableCopy"),
             MemoryManagement::IdNew => Some("New"),
             MemoryManagement::IdInit => Some("Init"),
             MemoryManagement::IdOther => Some("Other"),

@@ -135,6 +135,32 @@ LBB5_2:
 	pop	rbp
 	ret
 
+	.globl	_error_mutable_copy
+	.p2align	4, 0x90
+_error_mutable_copy:
+	push	rbp
+	mov	rbp, rsp
+	sub	rsp, 16
+	mov	qword ptr [rbp - 8], 0
+	lea	rdx, [rbp - 8]
+	call	_objc_msgSend
+	test	rax, rax
+	je	LBB6_2
+	mov	rdx, rax
+	xor	eax, eax
+	add	rsp, 16
+	pop	rbp
+	ret
+LBB6_2:
+	mov	rdi, qword ptr [rbp - 8]
+	lea	rsi, [rip + l_anon.[ID].7]
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	mov	rdx, rax
+	mov	eax, 1
+	add	rsp, 16
+	pop	rbp
+	ret
+
 	.globl	_error_autoreleased
 	.p2align	4, 0x90
 _error_autoreleased:
@@ -152,15 +178,15 @@ _error_autoreleased:
 
 	## InlineAsm End
 	test	rax, rax
-	je	LBB6_2
+	je	LBB7_2
 	mov	rdx, rax
 	xor	eax, eax
 	add	rsp, 16
 	pop	rbp
 	ret
-LBB6_2:
+LBB7_2:
 	mov	rdi, qword ptr [rbp - 8]
-	lea	rsi, [rip + l_anon.[ID].7]
+	lea	rsi, [rip + l_anon.[ID].8]
 	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
@@ -203,5 +229,10 @@ l_anon.[ID].6:
 l_anon.[ID].7:
 	.quad	l_anon.[ID].2
 	.asciz	"6\000\000\000\000\000\000\000 \000\000\000\005\000\000"
+
+	.p2align	3, 0x0
+l_anon.[ID].8:
+	.quad	l_anon.[ID].2
+	.asciz	"6\000\000\000\000\000\000\000%\000\000\000\005\000\000"
 
 .subsections_via_symbols

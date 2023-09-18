@@ -521,4 +521,5 @@ error[E0277]: the trait bound `RetainSemantics<2>: MessageReceiveRetained<&AnyCl
             `RetainSemantics<3>` implements `MessageReceiveRetained<Allocated<T>, Ret>`
             `RetainSemantics<4>` implements `MessageReceiveRetained<Receiver, Ret>`
             `RetainSemantics<5>` implements `MessageReceiveRetained<Receiver, Ret>`
+            `RetainSemantics<6>` implements `MessageReceiveRetained<Receiver, Ret>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -272,7 +272,7 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
             *const T
             *mut T
             NonNull<T>
-  = note: required for `RetainSemantics<5>` to implement `MessageReceiveRetained<Box<CustomObject>, Retained<CustomObject>>`
+  = note: required for `RetainSemantics<6>` to implement `MessageReceiveRetained<Box<CustomObject>, Retained<CustomObject>>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not satisfied
@@ -295,7 +295,7 @@ error[E0277]: the trait bound `Retained<CustomObject>: MessageReceiver` is not s
             *const T
             *mut T
             NonNull<T>
-  = note: required for `RetainSemantics<5>` to implement `MessageReceiveRetained<Retained<CustomObject>, Retained<CustomObject>>`
+  = note: required for `RetainSemantics<6>` to implement `MessageReceiveRetained<Retained<CustomObject>, Retained<CustomObject>>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
@@ -318,7 +318,7 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
             *const T
             *mut T
             NonNull<T>
-  = note: required for `RetainSemantics<5>` to implement `MessageReceiveRetained<CustomObject, Retained<CustomObject>>`
+  = note: required for `RetainSemantics<6>` to implement `MessageReceiveRetained<CustomObject, Retained<CustomObject>>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not satisfied
@@ -341,7 +341,7 @@ error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not 
             *const T
             *mut T
             NonNull<T>
-  = note: required for `RetainSemantics<5>` to implement `MessageReceiveRetained<Allocated<CustomObject>, Retained<CustomObject>>`
+  = note: required for `RetainSemantics<6>` to implement `MessageReceiveRetained<Allocated<CustomObject>, Retained<CustomObject>>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `RetainSemantics<3>: MessageReceiveRetained<&CustomObject, Retained<CustomObject>>` is not satisfied

@@ -374,6 +374,73 @@ handle_copy_fallible:
 .Lfunc_end9:
 	.size	handle_copy_fallible, .Lfunc_end9-handle_copy_fallible
 
+	.section	.text.handle_mutable_copy,"ax",@progbits
+	.globl	handle_mutable_copy
+	.p2align	4, 0x90
+	.type	handle_mutable_copy,@function
+handle_mutable_copy:
+	push	ebx
+	push	edi
+	push	esi
+	mov	esi, dword ptr [esp + 16]
+	mov	edi, dword ptr [esp + 20]
+	call	.L10$pb
+.L10$pb:
+	pop	ebx
+.Ltmp10:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp10-.L10$pb)
+	sub	esp, 8
+	push	edi
+	push	esi
+	call	objc_msg_lookup@PLT
+	add	esp, 8
+	push	edi
+	push	esi
+	call	eax
+	add	esp, 16
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
+.Lfunc_end10:
+	.size	handle_mutable_copy, .Lfunc_end10-handle_mutable_copy
+
+	.section	.text.handle_mutable_copy_fallible,"ax",@progbits
+	.globl	handle_mutable_copy_fallible
+	.p2align	4, 0x90
+	.type	handle_mutable_copy_fallible,@function
+handle_mutable_copy_fallible:
+	push	ebx
+	push	edi
+	push	esi
+	sub	esp, 16
+	mov	esi, dword ptr [esp + 32]
+	mov	edi, dword ptr [esp + 36]
+	call	.L11$pb
+.L11$pb:
+	pop	ebx
+.Ltmp11:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp11-.L11$pb)
+	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], esi
+	call	objc_msg_lookup@PLT
+	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], esi
+	call	eax
+	test	eax, eax
+	je	.LBB11_2
+	add	esp, 16
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
+.LBB11_2:
+	lea	eax, [ebx + .Lanon.[ID].4@GOTOFF]
+	mov	dword ptr [esp], eax
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
+.Lfunc_end11:
+	.size	handle_mutable_copy_fallible, .Lfunc_end11-handle_mutable_copy_fallible
+
 	.section	.text.handle_autoreleased,"ax",@progbits
 	.globl	handle_autoreleased
 	.p2align	4, 0x90
@@ -385,11 +452,11 @@ handle_autoreleased:
 	sub	esp, 16
 	mov	esi, dword ptr [esp + 32]
 	mov	edi, dword ptr [esp + 36]
-	call	.L10$pb
-.L10$pb:
+	call	.L12$pb
+.L12$pb:
 	pop	ebx
-.Ltmp10:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp10-.L10$pb)
+.Ltmp12:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp12-.L12$pb)
 	mov	dword ptr [esp + 4], edi
 	mov	dword ptr [esp], esi
 	call	objc_msg_lookup@PLT
@@ -403,8 +470,8 @@ handle_autoreleased:
 	pop	edi
 	pop	ebx
 	ret
-.Lfunc_end10:
-	.size	handle_autoreleased, .Lfunc_end10-handle_autoreleased
+.Lfunc_end12:
+	.size	handle_autoreleased, .Lfunc_end12-handle_autoreleased
 
 	.section	.text.handle_autoreleased_with_arg,"ax",@progbits
 	.globl	handle_autoreleased_with_arg
@@ -419,11 +486,11 @@ handle_autoreleased_with_arg:
 	movzx	edi, byte ptr [esp + 40]
 	mov	esi, dword ptr [esp + 32]
 	mov	ebp, dword ptr [esp + 36]
-	call	.L11$pb
-.L11$pb:
+	call	.L13$pb
+.L13$pb:
 	pop	ebx
-.Ltmp11:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp11-.L11$pb)
+.Ltmp13:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp13-.L13$pb)
 	sub	esp, 8
 	push	ebp
 	push	esi
@@ -442,8 +509,8 @@ handle_autoreleased_with_arg:
 	pop	ebx
 	pop	ebp
 	ret
-.Lfunc_end11:
-	.size	handle_autoreleased_with_arg, .Lfunc_end11-handle_autoreleased_with_arg
+.Lfunc_end13:
+	.size	handle_autoreleased_with_arg, .Lfunc_end13-handle_autoreleased_with_arg
 
 	.section	.text.handle_autoreleased_fallible,"ax",@progbits
 	.globl	handle_autoreleased_fallible
@@ -455,11 +522,11 @@ handle_autoreleased_fallible:
 	push	esi
 	mov	edi, dword ptr [esp + 20]
 	mov	esi, dword ptr [esp + 16]
-	call	.L12$pb
-.L12$pb:
+	call	.L14$pb
+.L14$pb:
 	pop	ebx
-.Ltmp12:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp12-.L12$pb)
+.Ltmp14:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp14-.L14$pb)
 	sub	esp, 8
 	push	edi
 	push	esi
@@ -473,20 +540,20 @@ handle_autoreleased_fallible:
 	call	objc_retainAutoreleasedReturnValue@PLT
 	add	esp, 16
 	test	eax, eax
-	je	.LBB12_2
+	je	.LBB14_2
 	pop	esi
 	pop	edi
 	pop	ebx
 	ret
-.LBB12_2:
+.LBB14_2:
 	sub	esp, 4
-	lea	eax, [ebx + .Lanon.[ID].4@GOTOFF]
+	lea	eax, [ebx + .Lanon.[ID].5@GOTOFF]
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
-.Lfunc_end12:
-	.size	handle_autoreleased_fallible, .Lfunc_end12-handle_autoreleased_fallible
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<6_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)@PLT
+.Lfunc_end14:
+	.size	handle_autoreleased_fallible, .Lfunc_end14-handle_autoreleased_fallible
 
 	.section	.text.handle_with_out_param,"ax",@progbits
 	.globl	handle_with_out_param
@@ -501,11 +568,11 @@ handle_with_out_param:
 	mov	ebp, dword ptr [esp + 40]
 	mov	eax, dword ptr [esp + 32]
 	mov	esi, dword ptr [esp + 36]
-	call	.L13$pb
-.L13$pb:
+	call	.L15$pb
+.L15$pb:
 	pop	ebx
-.Ltmp13:
-	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp13-.L13$pb)
+.Ltmp15:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp15-.L15$pb)
 	mov	edi, dword ptr [ebp]
 	mov	dword ptr [esp + 4], esi
 	mov	dword ptr [esp], eax
@@ -529,8 +596,8 @@ handle_with_out_param:
 	pop	ebx
 	pop	ebp
 	ret
-.Lfunc_end13:
-	.size	handle_with_out_param, .Lfunc_end13-handle_with_out_param
+.Lfunc_end15:
+	.size	handle_with_out_param, .Lfunc_end15-handle_with_out_param
 
 	.type	.Lanon.[ID].0,@object
 	.section	.rodata..Lanon.[ID].0,"a",@progbits
@@ -567,7 +634,15 @@ handle_with_out_param:
 	.p2align	2, 0x0
 .Lanon.[ID].4:
 	.long	.Lanon.[ID].0
-	.asciz	"9\000\000\000L\000\000\000\005\000\000"
+	.asciz	"9\000\000\000B\000\000\000\005\000\000"
 	.size	.Lanon.[ID].4, 16
+
+	.type	.Lanon.[ID].5,@object
+	.section	.data.rel.ro..Lanon.[ID].5,"aw",@progbits
+	.p2align	2, 0x0
+.Lanon.[ID].5:
+	.long	.Lanon.[ID].0
+	.asciz	"9\000\000\000V\000\000\000\005\000\000"
+	.size	.Lanon.[ID].5, 16
 
 	.section	".note.GNU-stack","",@progbits

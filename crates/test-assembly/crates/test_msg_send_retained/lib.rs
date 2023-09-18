@@ -1,5 +1,5 @@
 //! Test assembly output of `msg_send_id!` internals.
-use objc2::__macro_helpers::{Alloc, CopyOrMutCopy, Init, MsgSendRetained, New, Other};
+use objc2::__macro_helpers::{Alloc, Copy, Init, MsgSendRetained, MutableCopy, New, Other};
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::{AnyClass, AnyObject, Sel};
 
@@ -48,12 +48,22 @@ unsafe fn handle_alloc_init_release(cls: &AnyClass, sel1: Sel, sel2: Sel) {
 
 #[no_mangle]
 unsafe fn handle_copy(obj: &AnyObject, sel: Sel) -> Option<Retained<AnyObject>> {
-    CopyOrMutCopy::send_message_retained(obj, sel, ())
+    Copy::send_message_retained(obj, sel, ())
 }
 
 #[no_mangle]
 unsafe fn handle_copy_fallible(obj: &AnyObject, sel: Sel) -> Retained<AnyObject> {
-    CopyOrMutCopy::send_message_retained(obj, sel, ())
+    Copy::send_message_retained(obj, sel, ())
+}
+
+#[no_mangle]
+unsafe fn handle_mutable_copy(obj: &AnyObject, sel: Sel) -> Option<Retained<AnyObject>> {
+    MutableCopy::send_message_retained(obj, sel, ())
+}
+
+#[no_mangle]
+unsafe fn handle_mutable_copy_fallible(obj: &AnyObject, sel: Sel) -> Retained<AnyObject> {
+    MutableCopy::send_message_retained(obj, sel, ())
 }
 
 #[no_mangle]

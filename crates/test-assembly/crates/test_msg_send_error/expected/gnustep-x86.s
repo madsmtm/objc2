@@ -263,11 +263,11 @@ error_copy:
 .Lfunc_end5:
 	.size	error_copy, .Lfunc_end5-error_copy
 
-	.section	.text.error_autoreleased,"ax",@progbits
-	.globl	error_autoreleased
+	.section	.text.error_mutable_copy,"ax",@progbits
+	.globl	error_mutable_copy
 	.p2align	4, 0x90
-	.type	error_autoreleased,@function
-error_autoreleased:
+	.type	error_mutable_copy,@function
+error_mutable_copy:
 	push	ebx
 	push	edi
 	push	esi
@@ -290,9 +290,6 @@ error_autoreleased:
 	push	edi
 	push	esi
 	call	eax
-	add	esp, 4
-	push	eax
-	call	objc_retainAutoreleasedReturnValue@PLT
 	add	esp, 16
 	test	eax, eax
 	je	.LBB6_2
@@ -312,7 +309,58 @@ error_autoreleased:
 	mov	eax, 1
 	jmp	.LBB6_3
 .Lfunc_end6:
-	.size	error_autoreleased, .Lfunc_end6-error_autoreleased
+	.size	error_mutable_copy, .Lfunc_end6-error_mutable_copy
+
+	.section	.text.error_autoreleased,"ax",@progbits
+	.globl	error_autoreleased
+	.p2align	4, 0x90
+	.type	error_autoreleased,@function
+error_autoreleased:
+	push	ebx
+	push	edi
+	push	esi
+	sub	esp, 16
+	mov	esi, dword ptr [esp + 32]
+	mov	edi, dword ptr [esp + 36]
+	call	.L7$pb
+.L7$pb:
+	pop	ebx
+	mov	dword ptr [esp + 12], 0
+.Ltmp7:
+	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp7-.L7$pb)
+	sub	esp, 8
+	push	edi
+	push	esi
+	call	objc_msg_lookup@PLT
+	add	esp, 12
+	lea	ecx, [esp + 16]
+	push	ecx
+	push	edi
+	push	esi
+	call	eax
+	add	esp, 4
+	push	eax
+	call	objc_retainAutoreleasedReturnValue@PLT
+	add	esp, 16
+	test	eax, eax
+	je	.LBB7_2
+	mov	edx, eax
+	xor	eax, eax
+.LBB7_3:
+	add	esp, 16
+	pop	esi
+	pop	edi
+	pop	ebx
+	ret
+.LBB7_2:
+	mov	ecx, dword ptr [esp + 12]
+	lea	edx, [ebx + .Lanon.[ID].8@GOTOFF]
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	mov	edx, eax
+	mov	eax, 1
+	jmp	.LBB7_3
+.Lfunc_end7:
+	.size	error_autoreleased, .Lfunc_end7-error_autoreleased
 
 	.type	.Lanon.[ID].0,@object
 	.section	.rodata..Lanon.[ID].0,"a",@progbits
@@ -371,5 +419,13 @@ error_autoreleased:
 	.long	.Lanon.[ID].2
 	.asciz	"6\000\000\000 \000\000\000\005\000\000"
 	.size	.Lanon.[ID].7, 16
+
+	.type	.Lanon.[ID].8,@object
+	.section	.data.rel.ro..Lanon.[ID].8,"aw",@progbits
+	.p2align	2, 0x0
+.Lanon.[ID].8:
+	.long	.Lanon.[ID].2
+	.asciz	"6\000\000\000%\000\000\000\005\000\000"
+	.size	.Lanon.[ID].8, 16
 
 	.section	".note.GNU-stack","",@progbits

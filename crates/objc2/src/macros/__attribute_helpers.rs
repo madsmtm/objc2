@@ -68,7 +68,7 @@ macro_rules! __extract_and_apply_cfg_attributes {
 /// 2. The retain semantics, if any was present in the selector for
 ///    `#[method_id(...)]`.
 ///
-///    One of `New`, `Alloc`, `Init`, `CopyOrMutCopy` and `Other`.
+///    One of `New`, `Alloc`, `Init`, `Copy`, `MutableCopy` and `Other`.
 ///    ($($retain_semantics:ident)?)
 ///
 /// 3. The `optional` attribute, if any.

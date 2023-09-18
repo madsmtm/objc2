@@ -30,5 +30,5 @@ error[E0277]: the trait bound `i32: MaybeOptionRetained` is not satisfied
   = help: the following other types implement trait `MaybeOptionRetained`:
             Option<Retained<T>>
             Retained<T>
-  = note: required for `RetainSemantics<5>` to implement `MessageReceiveRetained<&CustomObject, i32>`
+  = note: required for `RetainSemantics<6>` to implement `MessageReceiveRetained<&CustomObject, i32>`
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

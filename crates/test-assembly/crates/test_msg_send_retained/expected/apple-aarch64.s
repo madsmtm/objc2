@@ -118,6 +118,28 @@ Lloh5:
 	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh4, Lloh5
 
+	.globl	_handle_mutable_copy
+	.p2align	2
+_handle_mutable_copy:
+	b	_objc_msgSend
+
+	.globl	_handle_mutable_copy_fallible
+	.p2align	2
+_handle_mutable_copy_fallible:
+	stp	x29, x30, [sp, #-16]!
+	mov	x29, sp
+	bl	_objc_msgSend
+	cbz	x0, LBB11_2
+	ldp	x29, x30, [sp], #16
+	ret
+LBB11_2:
+Lloh6:
+	adrp	x0, l_anon.[ID].4@PAGE
+Lloh7:
+	add	x0, x0, l_anon.[ID].4@PAGEOFF
+	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
+	.loh AdrpAdd	Lloh6, Lloh7
+
 	.globl	_handle_autoreleased
 	.p2align	2
 _handle_autoreleased:
@@ -156,19 +178,19 @@ _handle_autoreleased_fallible:
 	mov	x29, x29
 	; InlineAsm End
 	bl	_objc_retainAutoreleasedReturnValue
-	cbz	x0, LBB12_2
+	cbz	x0, LBB14_2
 	ldp	x29, x30, [sp, #16]
 	ldp	x20, x19, [sp], #32
 	ret
-LBB12_2:
-Lloh6:
-	adrp	x2, l_anon.[ID].4@PAGE
-Lloh7:
-	add	x2, x2, l_anon.[ID].4@PAGEOFF
+LBB14_2:
+Lloh8:
+	adrp	x2, l_anon.[ID].5@PAGE
+Lloh9:
+	add	x2, x2, l_anon.[ID].5@PAGEOFF
 	mov	x0, x20
 	mov	x1, x19
-	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
-	.loh AdrpAdd	Lloh6, Lloh7
+	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<6_u8> as objc2::__macro_helpers::msg_send_retained::MsgSendRetainedFailed>::failed::GENERATED_ID, 0)
+	.loh AdrpAdd	Lloh8, Lloh9
 
 	.globl	_handle_with_out_param
 	.p2align	2
@@ -217,6 +239,11 @@ l_anon.[ID].3:
 	.p2align	3, 0x0
 l_anon.[ID].4:
 	.quad	l_anon.[ID].0
-	.asciz	"9\000\000\000\000\000\000\000L\000\000\000\005\000\000"
+	.asciz	"9\000\000\000\000\000\000\000B\000\000\000\005\000\000"
+
+	.p2align	3, 0x0
+l_anon.[ID].5:
+	.quad	l_anon.[ID].0
+	.asciz	"9\000\000\000\000\000\000\000V\000\000\000\005\000\000"
 
 .subsections_via_symbols

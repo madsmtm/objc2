@@ -6,7 +6,7 @@ use crate::runtime::{AnyClass, AnyObject, Sel};
 use crate::{sel, ClassType, DeclaredClass, Message};
 
 use super::declared_ivars::set_finalized;
-use super::{Alloc, ConvertArguments, CopyOrMutCopy, Init, MsgSend, New, Other, TupleExtender};
+use super::{Alloc, ConvertArguments, Copy, Init, MsgSend, MutableCopy, New, Other, TupleExtender};
 
 pub trait MsgSendRetained<T, U> {
     #[track_caller]
@@ -329,7 +329,7 @@ impl<T: DeclaredClass> MsgSendSuperRetained<PartialInit<T>, Option<Retained<T>>>
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> for CopyOrMutCopy {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> for Copy {
     #[inline]
     unsafe fn send_message_retained<
         A: ConvertArguments,
@@ -348,9 +348,47 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> fo
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>>>
-    for CopyOrMutCopy
-{
+impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>>> for Copy {
+    type Inner = T::Inner;
+
+    #[inline]
+    unsafe fn send_super_message_retained<
+        A: ConvertArguments,
+        R: MaybeUnwrap<Input = Option<Retained<U>>>,
+    >(
+        obj: T,
+        superclass: &AnyClass,
+        sel: Sel,
+        args: A,
+    ) -> R {
+        // SAFETY: Same as in `send_message_retained`
+        let obj = unsafe { MsgSend::send_super_message(obj, superclass, sel, args) };
+        // SAFETY: Same as in `send_message_retained`
+        let obj = unsafe { Retained::from_raw(obj) };
+        R::maybe_unwrap::<Self>(obj, ())
+    }
+}
+
+impl<T: MsgSend, U: ?Sized + Message> MsgSendRetained<T, Option<Retained<U>>> for MutableCopy {
+    #[inline]
+    unsafe fn send_message_retained<
+        A: ConvertArguments,
+        R: MaybeUnwrap<Input = Option<Retained<U>>>,
+    >(
+        obj: T,
+        sel: Sel,
+        args: A,
+    ) -> R {
+        // SAFETY: Checked by caller
+        let obj = unsafe { MsgSend::send_message(obj, sel, args) };
+        // SAFETY: The selector is `copy` or `mutableCopy`, so this has +1
+        // retain count
+        let obj = unsafe { Retained::from_raw(obj) };
+        R::maybe_unwrap::<Self>(obj, ())
+    }
+}
+
+impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperRetained<T, Option<Retained<U>>> for MutableCopy {
     type Inner = T::Inner;
 
     #[inline]
@@ -525,7 +563,16 @@ impl MsgSendRetainedFailed<'_> for Init {
     }
 }
 
-impl MsgSendRetainedFailed<'_> for CopyOrMutCopy {
+impl MsgSendRetainedFailed<'_> for Copy {
+    type Args = ();
+
+    #[cold]
+    fn failed(_: Self::Args) -> ! {
+        panic!("failed copying object")
+    }
+}
+
+impl MsgSendRetainedFailed<'_> for MutableCopy {
     type Args = ();
 
     #[cold]

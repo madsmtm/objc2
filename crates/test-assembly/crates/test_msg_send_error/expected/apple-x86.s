@@ -207,6 +207,45 @@ LBB5_2:
 	pop	ebp
 	ret
 
+	.globl	_error_mutable_copy
+	.p2align	4, 0x90
+_error_mutable_copy:
+	push	ebp
+	mov	ebp, esp
+	push	esi
+	push	eax
+	call	L6$pb
+L6$pb:
+	pop	esi
+	mov	eax, dword ptr [ebp + 8]
+	mov	ecx, dword ptr [ebp + 12]
+	mov	dword ptr [ebp - 8], 0
+	sub	esp, 4
+	lea	edx, [ebp - 8]
+	push	edx
+	push	ecx
+	push	eax
+	call	_objc_msgSend
+	add	esp, 16
+	test	eax, eax
+	je	LBB6_2
+	mov	edx, eax
+	xor	eax, eax
+	add	esp, 4
+	pop	esi
+	pop	ebp
+	ret
+LBB6_2:
+	mov	ecx, dword ptr [ebp - 8]
+	lea	edx, [esi + l_anon.[ID].7-L6$pb]
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	mov	edx, eax
+	mov	eax, 1
+	add	esp, 4
+	pop	esi
+	pop	ebp
+	ret
+
 	.globl	_error_autoreleased
 	.p2align	4, 0x90
 _error_autoreleased:
@@ -214,8 +253,8 @@ _error_autoreleased:
 	mov	ebp, esp
 	push	esi
 	push	eax
-	call	L6$pb
-L6$pb:
+	call	L7$pb
+L7$pb:
 	pop	esi
 	mov	eax, dword ptr [ebp + 8]
 	mov	ecx, dword ptr [ebp + 12]
@@ -237,16 +276,16 @@ L6$pb:
 	call	_objc_retainAutoreleasedReturnValue
 	add	esp, 16
 	test	eax, eax
-	je	LBB6_2
+	je	LBB7_2
 	mov	edx, eax
 	xor	eax, eax
 	add	esp, 4
 	pop	esi
 	pop	ebp
 	ret
-LBB6_2:
+LBB7_2:
 	mov	ecx, dword ptr [ebp - 8]
-	lea	edx, [esi + l_anon.[ID].7-L6$pb]
+	lea	edx, [esi + l_anon.[ID].8-L7$pb]
 	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	edx, eax
 	mov	eax, 1
@@ -290,5 +329,10 @@ l_anon.[ID].6:
 l_anon.[ID].7:
 	.long	l_anon.[ID].2
 	.asciz	"6\000\000\000 \000\000\000\005\000\000"
+
+	.p2align	2, 0x0
+l_anon.[ID].8:
+	.long	l_anon.[ID].2
+	.asciz	"6\000\000\000%\000\000\000\005\000\000"
 
 .subsections_via_symbols

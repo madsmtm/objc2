@@ -1,5 +1,5 @@
 //! Test that error parameters are handled correctly.
-use objc2::__macro_helpers::{CopyOrMutCopy, Init, MsgSend, MsgSendRetained, New, Other};
+use objc2::__macro_helpers::{Copy, Init, MsgSend, MsgSendRetained, MutableCopy, New, Other};
 use objc2::rc::{Allocated, Retained};
 use objc2::runtime::{AnyClass, AnyObject, Sel};
 
@@ -24,7 +24,12 @@ unsafe fn error_init(obj: Allocated<AnyObject>, sel: Sel) -> Result<Retained<Any
 
 #[no_mangle]
 unsafe fn error_copy(obj: &AnyObject, sel: Sel) -> Result<Retained<AnyObject>> {
-    CopyOrMutCopy::send_message_retained_error(obj, sel, ())
+    Copy::send_message_retained_error(obj, sel, ())
+}
+
+#[no_mangle]
+unsafe fn error_mutable_copy(obj: &AnyObject, sel: Sel) -> Result<Retained<AnyObject>> {
+    MutableCopy::send_message_retained_error(obj, sel, ())
 }
 
 #[no_mangle]

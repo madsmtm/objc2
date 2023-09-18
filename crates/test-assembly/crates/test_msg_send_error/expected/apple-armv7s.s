@@ -154,6 +154,36 @@ LPC5_0:
 	sub	sp, r7, #4
 	pop	{r4, r7, pc}
 
+	.globl	_error_mutable_copy
+	.p2align	2
+	.code	32
+_error_mutable_copy:
+	push	{r4, r7, lr}
+	add	r7, sp, #4
+	sub	sp, sp, #4
+	mov	r4, #0
+	str	r4, [sp]
+	mov	r2, sp
+	bl	_objc_msgSend
+	mov	r1, r0
+	cmp	r0, #0
+	beq	LBB6_2
+	mov	r0, r4
+	sub	sp, r7, #4
+	pop	{r4, r7, pc}
+LBB6_2:
+	ldr	r0, [sp]
+	movw	r1, :lower16:(l_anon.[ID].7-(LPC6_0+8))
+	movt	r1, :upper16:(l_anon.[ID].7-(LPC6_0+8))
+LPC6_0:
+	add	r1, pc, r1
+	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	mov	r1, r0
+	mov	r4, #1
+	mov	r0, r4
+	sub	sp, r7, #4
+	pop	{r4, r7, pc}
+
 	.globl	_error_autoreleased
 	.p2align	2
 	.code	32
@@ -171,15 +201,15 @@ _error_autoreleased:
 	bl	_objc_retainAutoreleasedReturnValue
 	mov	r1, r0
 	cmp	r0, #0
-	beq	LBB6_2
+	beq	LBB7_2
 	mov	r0, r4
 	sub	sp, r7, #4
 	pop	{r4, r7, pc}
-LBB6_2:
+LBB7_2:
 	ldr	r0, [sp]
-	movw	r1, :lower16:(l_anon.[ID].7-(LPC6_0+8))
-	movt	r1, :upper16:(l_anon.[ID].7-(LPC6_0+8))
-LPC6_0:
+	movw	r1, :lower16:(l_anon.[ID].8-(LPC7_0+8))
+	movt	r1, :upper16:(l_anon.[ID].8-(LPC7_0+8))
+LPC7_0:
 	add	r1, pc, r1
 	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	r1, r0
@@ -223,5 +253,10 @@ l_anon.[ID].6:
 l_anon.[ID].7:
 	.long	l_anon.[ID].2
 	.asciz	"6\000\000\000 \000\000\000\005\000\000"
+
+	.p2align	2, 0x0
+l_anon.[ID].8:
+	.long	l_anon.[ID].2
+	.asciz	"6\000\000\000%\000\000\000\005\000\000"
 
 .subsections_via_symbols

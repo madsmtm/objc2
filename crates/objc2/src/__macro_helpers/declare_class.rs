@@ -15,7 +15,7 @@ use crate::runtime::{AnyProtocol, MethodDescription};
 use crate::{ClassType, DeclaredClass, Message, ProtocolType};
 
 use super::declared_ivars::{register_with_ivars, setup_dealloc};
-use super::{CopyOrMutCopy, Init, MaybeUnwrap, New, Other};
+use super::{Copy, Init, MaybeUnwrap, MutableCopy, New, Other};
 
 /// Helper type for implementing `MethodImplementation` with a receiver of
 /// `Allocated<T>`, without exposing that implementation to users.
@@ -75,7 +75,19 @@ where
 }
 
 // Receiver and return type have no correlation
-impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for CopyOrMutCopy
+impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for Copy
+where
+    Receiver: MessageReceiver,
+    Ret: MaybeOptionRetained,
+{
+    #[inline]
+    fn into_return(obj: Ret) -> RetainedReturnValue {
+        obj.consumed_return()
+    }
+}
+
+// Receiver and return type have no correlation
+impl<Receiver, Ret> MessageReceiveRetained<Receiver, Ret> for MutableCopy
 where
     Receiver: MessageReceiver,
     Ret: MaybeOptionRetained,

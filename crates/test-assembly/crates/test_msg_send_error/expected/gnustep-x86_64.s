@@ -189,11 +189,11 @@ error_copy:
 .Lfunc_end5:
 	.size	error_copy, .Lfunc_end5-error_copy
 
-	.section	.text.error_autoreleased,"ax",@progbits
-	.globl	error_autoreleased
+	.section	.text.error_mutable_copy,"ax",@progbits
+	.globl	error_mutable_copy
 	.p2align	4, 0x90
-	.type	error_autoreleased,@function
-error_autoreleased:
+	.type	error_mutable_copy,@function
+error_mutable_copy:
 	push	r14
 	push	rbx
 	push	rax
@@ -205,8 +205,6 @@ error_autoreleased:
 	mov	rdi, r14
 	mov	rsi, rbx
 	call	rax
-	mov	rdi, rax
-	call	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
 	test	rax, rax
 	je	.LBB6_2
 	mov	rdx, rax
@@ -226,7 +224,46 @@ error_autoreleased:
 	pop	r14
 	ret
 .Lfunc_end6:
-	.size	error_autoreleased, .Lfunc_end6-error_autoreleased
+	.size	error_mutable_copy, .Lfunc_end6-error_mutable_copy
+
+	.section	.text.error_autoreleased,"ax",@progbits
+	.globl	error_autoreleased
+	.p2align	4, 0x90
+	.type	error_autoreleased,@function
+error_autoreleased:
+	push	r14
+	push	rbx
+	push	rax
+	mov	rbx, rsi
+	mov	r14, rdi
+	mov	qword ptr [rsp], 0
+	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
+	mov	rdx, rsp
+	mov	rdi, r14
+	mov	rsi, rbx
+	call	rax
+	mov	rdi, rax
+	call	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
+	test	rax, rax
+	je	.LBB7_2
+	mov	rdx, rax
+	xor	eax, eax
+	add	rsp, 8
+	pop	rbx
+	pop	r14
+	ret
+.LBB7_2:
+	mov	rdi, qword ptr [rsp]
+	lea	rsi, [rip + .Lanon.[ID].8]
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_retained::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	mov	rdx, rax
+	mov	eax, 1
+	add	rsp, 8
+	pop	rbx
+	pop	r14
+	ret
+.Lfunc_end7:
+	.size	error_autoreleased, .Lfunc_end7-error_autoreleased
 
 	.type	.Lanon.[ID].0,@object
 	.section	.rodata..Lanon.[ID].0,"a",@progbits
@@ -285,5 +322,13 @@ error_autoreleased:
 	.quad	.Lanon.[ID].2
 	.asciz	"6\000\000\000\000\000\000\000 \000\000\000\005\000\000"
 	.size	.Lanon.[ID].7, 24
+
+	.type	.Lanon.[ID].8,@object
+	.section	.data.rel.ro..Lanon.[ID].8,"aw",@progbits
+	.p2align	3, 0x0
+.Lanon.[ID].8:
+	.quad	.Lanon.[ID].2
+	.asciz	"6\000\000\000\000\000\000\000%\000\000\000\005\000\000"
+	.size	.Lanon.[ID].8, 24
 
 	.section	".note.GNU-stack","",@progbits
