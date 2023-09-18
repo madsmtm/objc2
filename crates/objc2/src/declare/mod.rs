@@ -342,7 +342,7 @@ pub struct ClassBuilder {
     cls: NonNull<ffi::objc_class>,
 }
 
-#[doc(hidden)]
+/// Use [`ClassBuilder`] instead.
 #[deprecated = "Use `ClassBuilder` instead."]
 pub type ClassDecl = ClassBuilder;
 
@@ -663,7 +663,7 @@ pub struct ProtocolBuilder {
     proto: NonNull<AnyProtocol>,
 }
 
-#[doc(hidden)]
+/// Use [`ProtocolBuilder`] instead.
 #[deprecated = "Use `ProtocolBuilder` instead."]
 pub type ProtocolDecl = ProtocolBuilder;
 
