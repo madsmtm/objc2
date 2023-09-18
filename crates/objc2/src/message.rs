@@ -158,7 +158,7 @@ mod msg_send_primitive {
         R: EncodeReturn,
     {
         let msg_send_fn = R::MSG_SEND;
-        unsafe { conditional_try!(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
+        unsafe { A::__invoke(msg_send_fn, receiver, sel, args) }
     }
 
     #[inline]
@@ -182,7 +182,7 @@ mod msg_send_primitive {
         let receiver = receiver.cast();
 
         let msg_send_fn = R::MSG_SEND_SUPER;
-        unsafe { conditional_try!(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
+        unsafe { A::__invoke(msg_send_fn, receiver, sel, args) }
     }
 }
 
@@ -227,7 +227,7 @@ mod msg_send_primitive {
 
         let msg_send_fn = unsafe { ffi::objc_msg_lookup(receiver.cast(), sel.as_ptr()) };
         let msg_send_fn = unwrap_msg_send_fn(msg_send_fn);
-        unsafe { conditional_try!(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
+        unsafe { A::__invoke(msg_send_fn, receiver, sel, args) }
     }
 
     #[track_caller]
@@ -253,7 +253,7 @@ mod msg_send_primitive {
         };
         let msg_send_fn = unsafe { ffi::objc_msg_lookup_super(&sup, sel.as_ptr()) };
         let msg_send_fn = unwrap_msg_send_fn(msg_send_fn);
-        unsafe { conditional_try!(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
+        unsafe { A::__invoke(msg_send_fn, receiver, sel, args) }
     }
 }
 
@@ -449,7 +449,9 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
             msg_send_check(obj, sel, A::__ENCODINGS, &R::__Inner::ENCODING_RETURN);
         }
         unsafe {
-            ConvertReturn::__from_return(msg_send_primitive::send_unverified(this, sel, args))
+            ConvertReturn::__from_return(conditional_try!(|| msg_send_primitive::send_unverified(
+                this, sel, args
+            )))
         }
     }
 
@@ -496,9 +498,9 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
             );
         }
         unsafe {
-            ConvertReturn::__from_return(msg_send_primitive::send_super_unverified(
-                this, superclass, sel, args,
-            ))
+            ConvertReturn::__from_return(conditional_try!(|| {
+                msg_send_primitive::send_super_unverified(this, superclass, sel, args)
+            }))
         }
     }
 
