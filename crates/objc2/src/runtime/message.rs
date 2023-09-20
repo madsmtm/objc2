@@ -1,8 +1,8 @@
-use core::mem::{self, ManuallyDrop};
+use core::mem::ManuallyDrop;
 use core::ptr::{self, NonNull};
 
 use crate::__macro_helpers::{ConvertArgument, ConvertReturn};
-use crate::encode::{Encode, EncodeArgument, EncodeReturn, Encoding};
+use crate::encode::{Encode, EncodeArguments, EncodeReturn};
 use crate::mutability::IsMutable;
 use crate::rc::Id;
 use crate::runtime::{AnyClass, AnyObject, Imp, Sel};
@@ -372,7 +372,12 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         {
             // SAFETY: Caller ensures only valid or NULL pointers.
             let obj = unsafe { this.as_ref() };
-            msg_send_check(obj, sel, A::__ENCODINGS, &R::__Inner::ENCODING_RETURN);
+            msg_send_check(
+                obj,
+                sel,
+                A::__Inner::ENCODINGS,
+                &R::__Inner::ENCODING_RETURN,
+            );
         }
         unsafe {
             ConvertReturn::__from_return(conditional_try!(|| msg_send_primitive::send_unverified(
@@ -419,7 +424,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
             msg_send_check_class(
                 superclass,
                 sel,
-                A::__ENCODINGS,
+                A::__Inner::ENCODINGS,
                 &R::__Inner::ENCODING_RETURN,
             );
         }
@@ -659,7 +664,7 @@ mod message_args_private {
 /// issue if you know a use-case where this restrition should be lifted!
 pub unsafe trait MessageArguments: message_args_private::Sealed {
     #[doc(hidden)]
-    const __ENCODINGS: &'static [Encoding];
+    type __Inner: EncodeArguments;
 
     /// Invoke an [`Imp`] with the given object, selector, and arguments.
     ///
@@ -682,30 +687,13 @@ macro_rules! message_args_impl {
         impl<$($t: ConvertArgument),*> message_args_private::Sealed for ($($t,)*) {}
 
         unsafe impl<$($t: ConvertArgument),*> MessageArguments for ($($t,)*) {
-            const __ENCODINGS: &'static [Encoding] = &[
-                $($t::__Inner::ENCODING_ARGUMENT),*
-            ];
+            type __Inner = ($($t::__Inner,)*);
 
             #[inline]
             unsafe fn __invoke<R: EncodeReturn>(imp: Imp, obj: *mut AnyObject, sel: Sel, ($($a,)*): Self) -> R {
                 $(let $a = ConvertArgument::__into_argument($a);)*
 
-                // The imp must be cast to the appropriate function pointer
-                // type before being called; the msgSend functions are not
-                // parametric, but instead "trampolines" to the actual
-                // method implementations.
-                #[cfg(not(feature = "unstable-c-unwind"))]
-                let imp: unsafe extern "C" fn(*mut AnyObject, Sel $(, $t::__Inner)*) -> R = unsafe {
-                    mem::transmute(imp)
-                };
-                #[cfg(feature = "unstable-c-unwind")]
-                let imp: unsafe extern "C-unwind" fn(*mut AnyObject, Sel $(, $t::__Inner)*) -> R = unsafe {
-                    mem::transmute(imp)
-                };
-                // TODO: On x86_64 it would be more efficient to use a GOT
-                // entry here (e.g. adding `nonlazybind` in LLVM).
-                // Same can be said of e.g. `objc_retain` and `objc_release`.
-                let result = unsafe { imp(obj, sel $(, $a.0)*) };
+                let result = unsafe { <Self::__Inner as EncodeArguments>::__invoke(imp, obj, sel, ($($a.0,)*)) };
 
                 // TODO: If we want `objc_retainAutoreleasedReturnValue` to
                 // work, we must not do any work before it has been run; so
@@ -717,6 +705,7 @@ macro_rules! message_args_impl {
                     // details.
                     unsafe { <$t as ConvertArgument>::__process_after_message_send($a.1) };
                 )*
+
                 result
             }
         }

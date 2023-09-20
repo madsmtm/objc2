@@ -84,6 +84,8 @@ use core::sync::atomic;
 #[doc(inline)]
 pub use objc2_encode::{Encoding, EncodingBox, ParseError};
 
+use crate::runtime::{AnyObject, Imp, Sel};
+
 /// Types that have an Objective-C type-encoding.
 ///
 /// Usually you will want to implement [`RefEncode`] as well.
@@ -364,45 +366,180 @@ mod args_private {
 /// argument has an Objective-C type-encoding, or can be converted from one.
 ///
 /// This is implemented for tuples of up to 16 arguments, where each argument
-/// implements [`EncodeArgument`]. It is primarily used to make generic
-/// code a bit easier.
+/// implements [`EncodeArgument`]. It is a sealed trait, and should not need
+/// to be implemented manually - it is primarily used to make generic code a
+/// bit easier to read and understand.
 ///
 /// Note that tuples themselves don't implement [`Encode`] directly, because
 /// they're not FFI-safe!
 pub trait EncodeArguments: args_private::Sealed {
     /// The encodings for the arguments.
     const ENCODINGS: &'static [Encoding];
+
+    /// Invoke a message sending function with the given object, selector,
+    /// and arguments.
+    ///
+    /// Implementation-wise, this is a bit ugly, but simply just easiest to
+    /// have the method on this trait, since inside `MessageReceiver` we only
+    /// want to publicly require `EncodeArguments`, and not another private
+    /// trait.
+    #[doc(hidden)]
+    unsafe fn __invoke<R: EncodeReturn>(
+        msg_send_fn: Imp,
+        receiver: *mut AnyObject,
+        sel: Sel,
+        args: Self,
+    ) -> R;
 }
 
 macro_rules! encode_args_impl {
-    ($($Arg: ident),*) => {
-        impl<$($Arg: EncodeArgument),*> args_private::Sealed for ($($Arg,)*) {}
+    ($($a:ident: $T: ident),*) => {
+        impl<$($T: EncodeArgument),*> args_private::Sealed for ($($T,)*) {}
 
-        impl<$($Arg: EncodeArgument),*> EncodeArguments for ($($Arg,)*) {
+        impl<$($T: EncodeArgument),*> EncodeArguments for ($($T,)*) {
             const ENCODINGS: &'static [Encoding] = &[
-                $($Arg::ENCODING_ARGUMENT),*
+                $($T::ENCODING_ARGUMENT),*
             ];
+
+            #[inline]
+            unsafe fn __invoke<R: EncodeReturn>(msg_send_fn: Imp, receiver: *mut AnyObject, sel: Sel, ($($a,)*): Self) -> R {
+                // Message sending works by passing the receiver as the first
+                // argument, the selector as the second argument, and the rest
+                // of the arguments after that.
+                //
+                // The imp must be cast to the appropriate function pointer
+                // type before being called; contrary to how the headers and
+                // documentation describe them, the msgSend functions are not
+                // parametric on all platforms, instead they "trampoline" to
+                // the actual method implementations.
+                //
+                // SAFETY: We're transmuting an `unsafe` function pointer to
+                // another `unsafe` function pointer.
+                #[cfg(not(feature = "unstable-c-unwind"))]
+                let msg_send_fn: unsafe extern "C" fn(*mut AnyObject, Sel $(, $T)*) -> R = unsafe {
+                    mem::transmute(msg_send_fn)
+                };
+                #[cfg(feature = "unstable-c-unwind")]
+                let msg_send_fn: unsafe extern "C-unwind" fn(*mut AnyObject, Sel $(, $T)*) -> R = unsafe {
+                    mem::transmute(msg_send_fn)
+                };
+
+                // SAFETY: Caller upholds that the imp is safe to call with
+                // the given receiver, selector and arguments.
+                //
+                // TODO: On x86_64 it would be more efficient to use a GOT
+                // entry here (e.g. adding `nonlazybind` in LLVM).
+                // Same can be said of e.g. `objc_retain` and `objc_release`.
+                unsafe { msg_send_fn(receiver, sel $(, $a)*) }
+            }
         }
     };
 }
 
 encode_args_impl!();
-encode_args_impl!(A);
-encode_args_impl!(A, B);
-encode_args_impl!(A, B, C);
-encode_args_impl!(A, B, C, D);
-encode_args_impl!(A, B, C, D, E);
-encode_args_impl!(A, B, C, D, E, F);
-encode_args_impl!(A, B, C, D, E, F, G);
-encode_args_impl!(A, B, C, D, E, F, G, H);
-encode_args_impl!(A, B, C, D, E, F, G, H, I);
-encode_args_impl!(A, B, C, D, E, F, G, H, I, J);
-encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K);
-encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
-encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M);
-encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N);
-encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O);
-encode_args_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P);
+encode_args_impl!(a: A);
+encode_args_impl!(a: A, b: B);
+encode_args_impl!(a: A, b: B, c: C);
+encode_args_impl!(a: A, b: B, c: C, d: D);
+encode_args_impl!(a: A, b: B, c: C, d: D, e: E);
+encode_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F);
+encode_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G);
+encode_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H);
+encode_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I);
+encode_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J);
+encode_args_impl!(
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    f: F,
+    g: G,
+    h: H,
+    i: I,
+    j: J,
+    k: K
+);
+encode_args_impl!(
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    f: F,
+    g: G,
+    h: H,
+    i: I,
+    j: J,
+    k: K,
+    l: L
+);
+encode_args_impl!(
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    f: F,
+    g: G,
+    h: H,
+    i: I,
+    j: J,
+    k: K,
+    l: L,
+    m: M
+);
+encode_args_impl!(
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    f: F,
+    g: G,
+    h: H,
+    i: I,
+    j: J,
+    k: K,
+    l: L,
+    m: M,
+    n: N
+);
+encode_args_impl!(
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    f: F,
+    g: G,
+    h: H,
+    i: I,
+    j: J,
+    k: K,
+    l: L,
+    m: M,
+    n: N,
+    o: O
+);
+encode_args_impl!(
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    f: F,
+    g: G,
+    h: H,
+    i: I,
+    j: J,
+    k: K,
+    l: L,
+    m: M,
+    n: N,
+    o: O,
+    p: P
+);
 
 // TODO: Implement for `PhantomData` and `PhantomPinned`?
 
