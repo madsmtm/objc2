@@ -28,8 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   who are `IsAllocableAnyThread`.
 * **BREAKING**: Moved the `MethodImplementation` trait from the `declare`
   module to the `runtime` module.
-* **BREAKING**: Moved the `MessageReceiver` and `MessageArguments` traits to
-  the `runtime` module.
+* **BREAKING**: Moved the `MessageReceiver` trait to the `runtime` module.
 
 ### Deprecated
 * Soft deprecated using `msg_send!` without a comma between arguments (i.e.
@@ -64,6 +63,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 * **BREAKING**: Removed `ProtocolType` implementation for `NSObject`.
   Use the more precise `NSObjectProtocol` trait instead!
+* **BREAKING**: Removed the `MessageArguments` trait.
 
 
 ## 0.4.1 - 2023-07-31

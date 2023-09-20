@@ -1,11 +1,13 @@
 use core::mem::ManuallyDrop;
 use core::ptr::{self, NonNull};
 
-use crate::__macro_helpers::{ConvertArgument, ConvertReturn};
-use crate::encode::{Encode, EncodeArguments, EncodeReturn};
+use crate::__macro_helpers::{ConvertArguments, ConvertReturn, TupleExtender};
+use crate::encode::Encode;
+#[cfg(debug_assertions)]
+use crate::encode::{EncodeArguments, EncodeReturn};
 use crate::mutability::{IsAllowedMutable, IsMutable};
 use crate::rc::Id;
-use crate::runtime::{AnyClass, AnyObject, Imp, Sel};
+use crate::runtime::{AnyClass, AnyObject, Sel};
 use crate::{ClassType, Message};
 
 /// Wrap the given closure in `exception::catch` if the `catch-all` feature is
@@ -43,10 +45,9 @@ mod msg_send_primitive {
     #[allow(unused_imports)]
     use core::mem;
 
-    use super::MessageArguments;
-    use crate::encode::EncodeReturn;
     #[allow(unused_imports)]
     use crate::encode::Encoding;
+    use crate::encode::{EncodeArguments, EncodeReturn};
     use crate::ffi;
     use crate::runtime::{AnyClass, AnyObject, Imp, Sel};
 
@@ -152,27 +153,23 @@ mod msg_send_primitive {
 
     #[inline]
     #[track_caller]
-    pub(crate) unsafe fn send_unverified<A, R>(receiver: *mut AnyObject, sel: Sel, args: A) -> R
-    where
-        A: MessageArguments,
-        R: EncodeReturn,
-    {
+    pub(crate) unsafe fn send<A: EncodeArguments, R: EncodeReturn>(
+        receiver: *mut AnyObject,
+        sel: Sel,
+        args: A,
+    ) -> R {
         let msg_send_fn = R::MSG_SEND;
         unsafe { A::__invoke(msg_send_fn, receiver, sel, args) }
     }
 
     #[inline]
     #[track_caller]
-    pub(crate) unsafe fn send_super_unverified<A, R>(
+    pub(crate) unsafe fn send_super<A: EncodeArguments, R: EncodeReturn>(
         receiver: *mut AnyObject,
         superclass: &AnyClass,
         sel: Sel,
         args: A,
-    ) -> R
-    where
-        A: MessageArguments,
-        R: EncodeReturn,
-    {
+    ) -> R {
         let superclass: *const AnyClass = superclass;
         let mut sup = ffi::objc_super {
             receiver: receiver.cast(),
@@ -190,8 +187,7 @@ mod msg_send_primitive {
 mod msg_send_primitive {
     use core::mem;
 
-    use super::MessageArguments;
-    use crate::encode::EncodeReturn;
+    use crate::encode::{EncodeArguments, EncodeReturn};
     use crate::ffi;
     use crate::runtime::{AnyClass, AnyObject, Imp, Sel};
 
@@ -210,11 +206,11 @@ mod msg_send_primitive {
     }
 
     #[track_caller]
-    pub(crate) unsafe fn send_unverified<A, R>(receiver: *mut AnyObject, sel: Sel, args: A) -> R
-    where
-        A: MessageArguments,
-        R: EncodeReturn,
-    {
+    pub(crate) unsafe fn send<A: EncodeArguments, R: EncodeReturn>(
+        receiver: *mut AnyObject,
+        sel: Sel,
+        args: A,
+    ) -> R {
         // If `receiver` is NULL, objc_msg_lookup will return a standard C-method
         // taking two arguments, the receiver and the selector. Transmuting and
         // calling such a function with multiple parameters is UB, so instead we
@@ -231,18 +227,14 @@ mod msg_send_primitive {
     }
 
     #[track_caller]
-    pub(crate) unsafe fn send_super_unverified<A, R>(
+    pub(crate) unsafe fn send_super<A: EncodeArguments, R: EncodeReturn>(
         receiver: *mut AnyObject,
         superclass: &AnyClass,
         sel: Sel,
         args: A,
-    ) -> R
-    where
-        A: MessageArguments,
-        R: EncodeReturn,
-    {
+    ) -> R {
         if receiver.is_null() {
-            // SAFETY: Same as in `send_unverified`.
+            // SAFETY: Same as in `send`.
             return unsafe { mem::zeroed() };
         }
 
@@ -364,14 +356,14 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     #[track_caller]
     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
     where
-        A: MessageArguments,
+        A: ConvertArguments,
         R: ConvertReturn,
     {
-        let this = self.__as_raw_receiver();
+        let receiver = self.__as_raw_receiver();
         #[cfg(debug_assertions)]
         {
             // SAFETY: Caller ensures only valid or NULL pointers.
-            let obj = unsafe { this.as_ref() };
+            let obj = unsafe { receiver.as_ref() };
             msg_send_check(
                 obj,
                 sel,
@@ -379,11 +371,23 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
                 &R::__Inner::ENCODING_RETURN,
             );
         }
-        unsafe {
-            ConvertReturn::__from_return(conditional_try!(|| msg_send_primitive::send_unverified(
-                this, sel, args
-            )))
-        }
+
+        let (args, stored) = A::__into_arguments(args);
+
+        // SAFETY: Upheld by caller
+        let result = unsafe { conditional_try!(|| msg_send_primitive::send(receiver, sel, args)) };
+
+        // TODO: If we want `objc_retainAutoreleasedReturnValue` to
+        // work, we must not do any work before it has been run; so
+        // somehow, we should do that _before_ this call!
+        //
+        // SAFETY: The argument was passed to the message sending
+        // function, and the stored values are only processed this
+        // once. See `src/__macro_helpers/writeback.rs` for
+        // details.
+        unsafe { A::__process_after_message_send(stored) };
+
+        R::__from_return(result)
     }
 
     /// Sends a message to a specific superclass with the given selector and
@@ -412,13 +416,13 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     #[track_caller]
     unsafe fn send_super_message<A, R>(self, superclass: &AnyClass, sel: Sel, args: A) -> R
     where
-        A: MessageArguments,
+        A: ConvertArguments,
         R: ConvertReturn,
     {
-        let this = self.__as_raw_receiver();
+        let receiver = self.__as_raw_receiver();
         #[cfg(debug_assertions)]
         {
-            if this.is_null() {
+            if receiver.is_null() {
                 panic_null(sel);
             }
             msg_send_check_class(
@@ -428,11 +432,18 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
                 &R::__Inner::ENCODING_RETURN,
             );
         }
-        unsafe {
-            ConvertReturn::__from_return(conditional_try!(|| {
-                msg_send_primitive::send_super_unverified(this, superclass, sel, args)
-            }))
-        }
+
+        let (args, stored) = A::__into_arguments(args);
+
+        // SAFETY: Upheld by caller
+        let result = unsafe {
+            conditional_try!(|| msg_send_primitive::send_super(receiver, superclass, sel, args))
+        };
+
+        // SAFETY: Same as in send_message above.
+        unsafe { A::__process_after_message_send(stored) };
+
+        R::__from_return(result)
     }
 
     #[inline]
@@ -442,7 +453,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     where
         Self::__Inner: ClassType,
         <Self::__Inner as ClassType>::Super: ClassType,
-        A: MessageArguments,
+        A: ConvertArguments,
         R: ConvertReturn,
     {
         unsafe { self.send_super_message(<Self::__Inner as ClassType>::Super::class(), sel, args) }
@@ -460,8 +471,8 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     unsafe fn __send_message_error<A, E>(self, sel: Sel, args: A) -> Result<(), Id<E>>
     where
         *mut *mut E: Encode,
-        A: __TupleExtender<*mut *mut E>,
-        <A as __TupleExtender<*mut *mut E>>::PlusOneArgument: MessageArguments,
+        A: TupleExtender<*mut *mut E>,
+        <A as TupleExtender<*mut *mut E>>::PlusOneArgument: ConvertArguments,
         E: Message,
     {
         let mut err: *mut E = ptr::null_mut();
@@ -485,8 +496,8 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     ) -> Result<(), Id<E>>
     where
         *mut *mut E: Encode,
-        A: __TupleExtender<*mut *mut E>,
-        <A as __TupleExtender<*mut *mut E>>::PlusOneArgument: MessageArguments,
+        A: TupleExtender<*mut *mut E>,
+        <A as TupleExtender<*mut *mut E>>::PlusOneArgument: ConvertArguments,
         E: Message,
     {
         let mut err: *mut E = ptr::null_mut();
@@ -507,8 +518,8 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
         Self::__Inner: ClassType,
         <Self::__Inner as ClassType>::Super: ClassType,
         *mut *mut E: Encode,
-        A: __TupleExtender<*mut *mut E>,
-        <A as __TupleExtender<*mut *mut E>>::PlusOneArgument: MessageArguments,
+        A: TupleExtender<*mut *mut E>,
+        <A as TupleExtender<*mut *mut E>>::PlusOneArgument: ConvertArguments,
         E: Message,
     {
         let mut err: *mut E = ptr::null_mut();
@@ -634,184 +645,6 @@ unsafe impl<'a> MessageReceiver for &'a AnyClass {
         (ptr as *mut AnyClass).cast()
     }
 }
-
-mod message_args_private {
-    pub trait Sealed {}
-}
-
-/// Types that may be used as the arguments of an Objective-C message.
-///
-/// This is implemented for tuples of up to 16 arguments, where each argument
-/// implements [`Encode`] (or can be converted from one).
-///
-///
-/// # Safety
-///
-/// This is a sealed trait, and should not need to be implemented. Open an
-/// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait MessageArguments: message_args_private::Sealed {
-    #[doc(hidden)]
-    type __Inner: EncodeArguments;
-
-    /// Invoke an [`Imp`] with the given object, selector, and arguments.
-    ///
-    /// This method is the primitive used when sending messages and should not
-    /// be called directly; instead, use the `msg_send!` macro or, in cases
-    /// with a dynamic selector, the [`MessageReceiver::send_message`] method.
-    #[doc(hidden)]
-    unsafe fn __invoke<R: EncodeReturn>(imp: Imp, obj: *mut AnyObject, sel: Sel, args: Self) -> R;
-}
-
-pub trait __TupleExtender<T> {
-    #[doc(hidden)]
-    type PlusOneArgument;
-    #[doc(hidden)]
-    fn add_argument(self, arg: T) -> Self::PlusOneArgument;
-}
-
-macro_rules! message_args_impl {
-    ($($a:ident: $t:ident),*) => (
-        impl<$($t: ConvertArgument),*> message_args_private::Sealed for ($($t,)*) {}
-
-        unsafe impl<$($t: ConvertArgument),*> MessageArguments for ($($t,)*) {
-            type __Inner = ($($t::__Inner,)*);
-
-            #[inline]
-            unsafe fn __invoke<R: EncodeReturn>(imp: Imp, obj: *mut AnyObject, sel: Sel, ($($a,)*): Self) -> R {
-                $(let $a = ConvertArgument::__into_argument($a);)*
-
-                let result = unsafe { <Self::__Inner as EncodeArguments>::__invoke(imp, obj, sel, ($($a.0,)*)) };
-
-                // TODO: If we want `objc_retainAutoreleasedReturnValue` to
-                // work, we must not do any work before it has been run; so
-                // somehow, we should've done that before this call!
-                $(
-                    // SAFETY: The argument was passed to the message sending
-                    // function, and the stored values are only processed this
-                    // once. See `src/__macro_helpers/writeback.rs` for
-                    // details.
-                    unsafe { <$t as ConvertArgument>::__process_after_message_send($a.1) };
-                )*
-
-                result
-            }
-        }
-
-        impl<$($t,)* T> __TupleExtender<T> for ($($t,)*) {
-            type PlusOneArgument = ($($t,)* T,);
-
-            fn add_argument(self, arg: T) -> Self::PlusOneArgument {
-                let ($($a,)*) = self;
-                ($($a,)* arg,)
-            }
-        }
-    );
-}
-
-message_args_impl!();
-message_args_impl!(a: A);
-message_args_impl!(a: A, b: B);
-message_args_impl!(a: A, b: B, c: C);
-message_args_impl!(a: A, b: B, c: C, d: D);
-message_args_impl!(a: A, b: B, c: C, d: D, e: E);
-message_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F);
-message_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G);
-message_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H);
-message_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I);
-message_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J);
-message_args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K
-);
-message_args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L
-);
-message_args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-    m: M
-);
-message_args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-    m: M,
-    n: N
-);
-message_args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-    m: M,
-    n: N,
-    o: O
-);
-message_args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-    m: M,
-    n: N,
-    o: O,
-    p: P
-);
 
 #[cfg(test)]
 mod tests {

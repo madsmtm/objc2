@@ -10,28 +10,28 @@ nonnull_nonnull:
 	push	edi
 	push	esi
 	sub	esp, 12
+	mov	ebp, dword ptr [esp + 40]
 	mov	eax, dword ptr [esp + 32]
 	mov	esi, dword ptr [esp + 36]
-	mov	edi, dword ptr [esp + 40]
 	call	.L0$pb
 .L0$pb:
 	pop	ebx
 .Ltmp0:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp0-.L0$pb)
+	mov	edi, dword ptr [ebp]
 	mov	dword ptr [esp + 4], esi
 	mov	dword ptr [esp], eax
 	call	objc_msg_lookup@PLT
 	mov	ecx, dword ptr [esp + 32]
-	mov	ebp, dword ptr [edi]
-	mov	dword ptr [esp + 8], edi
+	mov	dword ptr [esp + 8], ebp
 	mov	dword ptr [esp + 4], esi
 	mov	dword ptr [esp], ecx
 	call	eax
 	mov	esi, eax
-	mov	eax, dword ptr [edi]
+	mov	eax, dword ptr [ebp]
 	mov	dword ptr [esp], eax
 	call	objc_retain@PLT
-	mov	dword ptr [esp], ebp
+	mov	dword ptr [esp], edi
 	call	objc_release@PLT
 	mov	eax, esi
 	add	esp, 12
@@ -52,49 +52,41 @@ null_nonnull:
 	push	ebx
 	push	edi
 	push	esi
-	sub	esp, 12
-	mov	edi, dword ptr [esp + 40]
-	mov	ebp, dword ptr [esp + 36]
-	mov	esi, dword ptr [esp + 32]
+	sub	esp, 28
+	mov	ebp, dword ptr [esp + 56]
+	mov	edi, dword ptr [esp + 52]
+	mov	esi, dword ptr [esp + 48]
 	call	.L1$pb
 .L1$pb:
 	pop	ebx
 .Ltmp1:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp1-.L1$pb)
-	sub	esp, 8
-	push	ebp
-	push	esi
-	call	objc_msg_lookup@PLT
-	add	esp, 16
-	test	edi, edi
+	test	ebp, ebp
 	je	.LBB1_1
-	mov	ecx, dword ptr [edi]
-	mov	dword ptr [esp + 8], ecx
-	sub	esp, 4
-	push	edi
-	push	ebp
-	push	esi
-	call	eax
-	add	esp, 16
-	mov	esi, eax
-	sub	esp, 12
-	push	dword ptr [edi]
-	call	objc_retain@PLT
-	add	esp, 4
-	push	dword ptr [esp + 20]
-	call	objc_release@PLT
-	add	esp, 16
-	mov	eax, esi
-	add	esp, 12
-	jmp	.LBB1_2
+	mov	eax, dword ptr [ebp]
+	mov	dword ptr [esp + 24], eax
+	jmp	.LBB1_3
 .LBB1_1:
-	sub	esp, 4
-	push	0
-	push	ebp
-	push	esi
+.LBB1_3:
+	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], esi
+	call	objc_msg_lookup@PLT
+	mov	dword ptr [esp + 8], ebp
+	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], esi
 	call	eax
+	mov	esi, eax
+	test	ebp, ebp
+	je	.LBB1_5
+	mov	eax, dword ptr [ebp]
+	mov	dword ptr [esp], eax
+	call	objc_retain@PLT
+	mov	eax, dword ptr [esp + 24]
+	mov	dword ptr [esp], eax
+	call	objc_release@PLT
+.LBB1_5:
+	mov	eax, esi
 	add	esp, 28
-.LBB1_2:
 	pop	esi
 	pop	edi
 	pop	ebx
@@ -113,19 +105,19 @@ nonnull_null:
 	push	edi
 	push	esi
 	sub	esp, 12
+	mov	ebp, dword ptr [esp + 40]
 	mov	eax, dword ptr [esp + 32]
 	mov	esi, dword ptr [esp + 36]
-	mov	ebp, dword ptr [esp + 40]
 	call	.L2$pb
 .L2$pb:
 	pop	ebx
 .Ltmp2:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp2-.L2$pb)
+	mov	edi, dword ptr [ebp]
 	mov	dword ptr [esp + 4], esi
 	mov	dword ptr [esp], eax
 	call	objc_msg_lookup@PLT
 	mov	ecx, dword ptr [esp + 32]
-	mov	edi, dword ptr [ebp]
 	mov	dword ptr [esp + 8], ebp
 	mov	dword ptr [esp + 4], esi
 	mov	dword ptr [esp], ecx
@@ -158,53 +150,43 @@ null_null:
 	push	ebx
 	push	edi
 	push	esi
-	sub	esp, 12
-	mov	edi, dword ptr [esp + 40]
-	mov	ebp, dword ptr [esp + 36]
-	mov	esi, dword ptr [esp + 32]
+	sub	esp, 28
+	mov	ebp, dword ptr [esp + 56]
+	mov	edi, dword ptr [esp + 52]
+	mov	esi, dword ptr [esp + 48]
 	call	.L3$pb
 .L3$pb:
 	pop	ebx
 .Ltmp3:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp3-.L3$pb)
-	sub	esp, 8
-	push	ebp
-	push	esi
-	call	objc_msg_lookup@PLT
-	add	esp, 16
-	test	edi, edi
+	test	ebp, ebp
 	je	.LBB3_1
-	mov	ecx, esi
-	mov	esi, dword ptr [edi]
-	sub	esp, 4
-	push	edi
-	push	ebp
-	push	ecx
-	call	eax
-	add	esp, 16
-	mov	ebp, eax
-	sub	esp, 12
-	push	dword ptr [edi]
-	call	objc_retain@PLT
-	add	esp, 16
-	test	esi, esi
-	je	.LBB3_4
-	sub	esp, 12
-	push	esi
-	call	objc_release@PLT
-	add	esp, 16
-.LBB3_4:
-	mov	eax, ebp
-	add	esp, 12
-	jmp	.LBB3_5
+	mov	eax, dword ptr [ebp]
+	mov	dword ptr [esp + 24], eax
+	jmp	.LBB3_3
 .LBB3_1:
-	sub	esp, 4
-	push	0
-	push	ebp
-	push	esi
+.LBB3_3:
+	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], esi
+	call	objc_msg_lookup@PLT
+	mov	dword ptr [esp + 8], ebp
+	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp], esi
 	call	eax
+	mov	esi, eax
+	test	ebp, ebp
+	je	.LBB3_6
+	mov	eax, dword ptr [ebp]
+	mov	dword ptr [esp], eax
+	call	objc_retain@PLT
+	cmp	dword ptr [esp + 24], 0
+	je	.LBB3_6
+	mov	eax, dword ptr [esp + 24]
+	mov	dword ptr [esp], eax
+	call	objc_release@PLT
+.LBB3_6:
+	mov	eax, esi
 	add	esp, 28
-.LBB3_5:
 	pop	esi
 	pop	edi
 	pop	ebx
@@ -223,32 +205,34 @@ two_nonnull_nonnull:
 	push	edi
 	push	esi
 	sub	esp, 28
-	mov	eax, dword ptr [esp + 48]
+	mov	ebp, dword ptr [esp + 56]
+	mov	edi, dword ptr [esp + 60]
+	mov	edx, dword ptr [esp + 48]
 	mov	esi, dword ptr [esp + 52]
-	mov	edi, dword ptr [esp + 56]
 	call	.L4$pb
 .L4$pb:
 	pop	ebx
 .Ltmp4:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp4-.L4$pb)
+	mov	eax, dword ptr [ebp]
 	mov	dword ptr [esp + 4], esi
-	mov	dword ptr [esp], eax
+	mov	dword ptr [esp], edx
+	mov	dword ptr [esp + 20], eax
+	mov	eax, dword ptr [edi]
+	mov	dword ptr [esp + 24], eax
 	call	objc_msg_lookup@PLT
-	mov	ecx, dword ptr [esp + 60]
-	mov	ebp, dword ptr [edi]
-	mov	dword ptr [esp + 8], edi
-	mov	dword ptr [esp + 4], esi
-	mov	edx, dword ptr [ecx]
-	mov	dword ptr [esp + 12], ecx
 	mov	ecx, dword ptr [esp + 48]
-	mov	dword ptr [esp + 24], edx
+	mov	dword ptr [esp + 12], edi
+	mov	dword ptr [esp + 8], ebp
+	mov	dword ptr [esp + 4], esi
 	mov	dword ptr [esp], ecx
 	call	eax
 	mov	esi, eax
-	mov	eax, dword ptr [edi]
+	mov	eax, dword ptr [ebp]
 	mov	dword ptr [esp], eax
 	call	objc_retain@PLT
-	mov	dword ptr [esp], ebp
+	mov	eax, dword ptr [esp + 20]
+	mov	dword ptr [esp], eax
 	call	objc_release@PLT
 	mov	eax, dword ptr [esp + 60]
 	mov	eax, dword ptr [eax]

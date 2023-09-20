@@ -508,28 +508,28 @@ handle_with_out_param:
 	push	edi
 	push	esi
 	sub	esp, 12
+	mov	ebp, dword ptr [esp + 40]
 	mov	eax, dword ptr [esp + 32]
 	mov	esi, dword ptr [esp + 36]
-	mov	edi, dword ptr [esp + 40]
 	call	.L13$pb
 .L13$pb:
 	pop	ebx
 .Ltmp13:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp13-.L13$pb)
+	mov	edi, dword ptr [ebp]
 	mov	dword ptr [esp + 4], esi
 	mov	dword ptr [esp], eax
 	call	objc_msg_lookup@PLT
 	mov	ecx, dword ptr [esp + 32]
-	mov	ebp, dword ptr [edi]
-	mov	dword ptr [esp + 8], edi
+	mov	dword ptr [esp + 8], ebp
 	mov	dword ptr [esp + 4], esi
 	mov	dword ptr [esp], ecx
 	call	eax
 	mov	esi, eax
-	mov	eax, dword ptr [edi]
+	mov	eax, dword ptr [ebp]
 	mov	dword ptr [esp], eax
 	call	objc_retain@PLT
-	mov	dword ptr [esp], ebp
+	mov	dword ptr [esp], edi
 	call	objc_release@PLT
 	mov	dword ptr [esp], esi
 	call	objc_retainAutoreleasedReturnValue@PLT

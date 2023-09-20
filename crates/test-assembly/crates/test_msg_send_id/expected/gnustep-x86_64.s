@@ -362,8 +362,8 @@ handle_with_out_param:
 	mov	rbx, rdx
 	mov	r14, rsi
 	mov	r15, rdi
+	mov	r12, qword ptr [rdx]
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	r12, qword ptr [rbx]
 	mov	rdi, r15
 	mov	rsi, r14
 	mov	rdx, rbx

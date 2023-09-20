@@ -32,7 +32,7 @@ mod writeback;
 
 pub use self::cache::{CachedClass, CachedSel};
 pub use self::common_selectors::{alloc_sel, dealloc_sel, init_sel, new_sel};
-pub use self::convert::{ConvertArgument, ConvertReturn};
+pub use self::convert::{ConvertArgument, ConvertArguments, ConvertReturn, TupleExtender};
 pub use self::declare_class::{
     assert_mutability_matches_superclass_mutability, IdReturnValue, MaybeOptionId,
     MessageRecieveId, ValidSubclassMutability,

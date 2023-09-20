@@ -2,15 +2,14 @@ use core::ptr;
 
 use crate::encode::Encode;
 use crate::rc::{Allocated, Id};
-use crate::runtime::message::__TupleExtender;
-use crate::runtime::{AnyClass, AnyObject, MessageArguments, MessageReceiver, Sel};
+use crate::runtime::{AnyClass, AnyObject, MessageReceiver, Sel};
 use crate::{sel, Message};
 
-use super::{Alloc, CopyOrMutCopy, Init, New, Other};
+use super::{Alloc, ConvertArguments, CopyOrMutCopy, Init, New, Other, TupleExtender};
 
 pub trait MsgSendId<T, U> {
     #[track_caller]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -23,8 +22,8 @@ pub trait MsgSendId<T, U> {
     unsafe fn send_message_id_error<A, E>(obj: T, sel: Sel, args: A) -> Result<U, Id<E>>
     where
         *mut *mut E: Encode,
-        A: __TupleExtender<*mut *mut E>,
-        <A as __TupleExtender<*mut *mut E>>::PlusOneArgument: MessageArguments,
+        A: TupleExtender<*mut *mut E>,
+        <A as TupleExtender<*mut *mut E>>::PlusOneArgument: ConvertArguments,
         E: Message,
         Option<U>: MaybeUnwrap<Input = U>,
     {
@@ -69,7 +68,7 @@ unsafe fn encountered_error<E: Message>(err: *mut E) -> Id<E> {
 
 impl<T: MessageReceiver, U: ?Sized + Message> MsgSendId<T, Id<U>> for New {
     #[inline]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U>>>(
+    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Id<U>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -88,7 +87,7 @@ impl<T: MessageReceiver, U: ?Sized + Message> MsgSendId<T, Id<U>> for New {
 
 impl<T: ?Sized + Message> MsgSendId<&'_ AnyClass, Allocated<T>> for Alloc {
     #[inline]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Allocated<T>>>(
+    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Allocated<T>>>(
         cls: &AnyClass,
         sel: Sel,
         args: A,
@@ -103,7 +102,7 @@ impl<T: ?Sized + Message> MsgSendId<&'_ AnyClass, Allocated<T>> for Alloc {
 
 impl<T: ?Sized + Message> MsgSendId<Option<Allocated<T>>, Id<T>> for Init {
     #[inline]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<T>>>(
+    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Id<T>>>(
         obj: Option<Allocated<T>>,
         sel: Sel,
         args: A,
@@ -124,7 +123,7 @@ impl<T: ?Sized + Message> MsgSendId<Option<Allocated<T>>, Id<T>> for Init {
 
 impl<T: MessageReceiver, U: ?Sized + Message> MsgSendId<T, Id<U>> for CopyOrMutCopy {
     #[inline]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U>>>(
+    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Id<U>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -140,7 +139,7 @@ impl<T: MessageReceiver, U: ?Sized + Message> MsgSendId<T, Id<U>> for CopyOrMutC
 
 impl<T: MessageReceiver, U: Message> MsgSendId<T, Id<U>> for Other {
     #[inline]
-    unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = Id<U>>>(
+    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Id<U>>>(
         obj: T,
         sel: Sel,
         args: A,
