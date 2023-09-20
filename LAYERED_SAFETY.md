@@ -52,14 +52,14 @@ Doing the Rust equivalent of Objective-C's `NSUInteger hash_code = [obj hash];`.
 
 ```rust
 let obj: *const c_void = ...;
-let sel = unsafe { sel_registerName(b"hash\0".as_ptr() as *const c_char) };
-let fnptr = unsafe {
+let sel = unsafe { ffi::sel_registerName(b"hash\0".as_ptr() as *const c_char) };
+let msg_send_fn = unsafe {
     mem::transmute::<
-        extern "C" fn(*const c_void, SEL) -> NSUInteger,
-        extern "C" fn(),
-    >(objc_msgSend)
+        unsafe extern "C" fn(),
+        unsafe extern "C" fn(*const c_void, SEL) -> NSUInteger,
+    >(ffi::objc_msgSend)
 };
-let hash_code = unsafe { fnptr(obj, sel) };
+let hash_code = unsafe { msg_send_fn(obj, sel) };
 ```
 
 
@@ -68,8 +68,7 @@ let hash_code = unsafe { fnptr(obj, sel) };
 We can improve on this using [`MessageReceiver::send_message`], which
 abstracts away the calling convention details, as well as adding an `Encode`
 bound on all the involved types. This ensures that we don't accidentally try
-to pass e.g. a `Vec<T>`, which does not have a stable memory layout. It also
-handles details surrounding Objective-C's `BOOL` type.
+to pass e.g. a `Vec<T>`, which does not have a stable memory layout.
 
 Additionally, when `debug_assertions` are enabled, the types involved in the
 message send are compared to the types exposed in the Objective-C runtime.
@@ -97,7 +96,8 @@ let hash_code: NSUInteger = unsafe {
 
 Introducing macros: [`msg_send!`] can abstract away the tediousness of writing
 the selector expression, as well as ensuring that the number of arguments to
-the method is correct.
+the method is correct. It also handles details surrounding Objective-C's
+`BOOL` type.
 
 [`msg_send!`]: https://docs.rs/objc2/0.3.0-beta.4/objc2/macro.msg_send.html
 

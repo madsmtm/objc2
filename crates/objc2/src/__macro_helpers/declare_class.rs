@@ -1,9 +1,26 @@
-use crate::declare::__IdReturnValue;
+use objc2_encode::Encoding;
+
+use crate::encode::Encode;
 use crate::rc::{Allocated, Id};
-use crate::{ClassType, Message, MessageReceiver};
+use crate::runtime::{AnyObject, MessageReceiver};
+use crate::{ClassType, Message};
 
 use super::{CopyOrMutCopy, Init, MaybeUnwrap, New, Other};
 use crate::mutability;
+
+/// Helper type for implementing `MethodImplementation` with a receiver of
+/// `Allocated<T>`, without exposing that implementation to users.
+//
+// Must be private, soundness of MethodImplementation relies on this.
+#[doc(hidden)]
+#[repr(transparent)]
+#[derive(Debug)]
+pub struct IdReturnValue(pub(crate) *mut AnyObject);
+
+// SAFETY: `IdReturnValue` is `#[repr(transparent)]`
+unsafe impl Encode for IdReturnValue {
+    const ENCODING: Encoding = <*mut AnyObject>::ENCODING;
+}
 
 // One could imagine a different design where we had a method like
 // `fn convert_receiver()`, but that won't work in `declare_class!` since we
@@ -13,7 +30,7 @@ use crate::mutability;
 // See `MsgSendId` and `RetainSemantics` for details on the retain semantics
 // we're following here.
 pub trait MessageRecieveId<Receiver, Ret> {
-    fn into_return(obj: Ret) -> __IdReturnValue;
+    fn into_return(obj: Ret) -> IdReturnValue;
 }
 
 // Receiver and return type have no correlation
@@ -23,7 +40,7 @@ where
     Ret: MaybeOptionId,
 {
     #[inline]
-    fn into_return(obj: Ret) -> __IdReturnValue {
+    fn into_return(obj: Ret) -> IdReturnValue {
         obj.consumed_return()
     }
 }
@@ -42,7 +59,7 @@ where
     Ret: MaybeOptionId<Input = Id<T>>,
 {
     #[inline]
-    fn into_return(obj: Ret) -> __IdReturnValue {
+    fn into_return(obj: Ret) -> IdReturnValue {
         obj.consumed_return()
     }
 }
@@ -54,7 +71,7 @@ where
     Ret: MaybeOptionId,
 {
     #[inline]
-    fn into_return(obj: Ret) -> __IdReturnValue {
+    fn into_return(obj: Ret) -> IdReturnValue {
         obj.consumed_return()
     }
 }
@@ -66,7 +83,7 @@ where
     Ret: MaybeOptionId,
 {
     #[inline]
-    fn into_return(obj: Ret) -> __IdReturnValue {
+    fn into_return(obj: Ret) -> IdReturnValue {
         obj.autorelease_return()
     }
 }
@@ -75,35 +92,35 @@ where
 ///
 /// (Both of those are valid return types from declare_class! `#[method_id]`).
 pub trait MaybeOptionId: MaybeUnwrap {
-    fn consumed_return(self) -> __IdReturnValue;
-    fn autorelease_return(self) -> __IdReturnValue;
+    fn consumed_return(self) -> IdReturnValue;
+    fn autorelease_return(self) -> IdReturnValue;
 }
 
 impl<T: Message> MaybeOptionId for Id<T> {
     #[inline]
-    fn consumed_return(self) -> __IdReturnValue {
+    fn consumed_return(self) -> IdReturnValue {
         let ptr: *mut T = Id::consume_as_ptr(self);
-        __IdReturnValue(ptr.cast())
+        IdReturnValue(ptr.cast())
     }
 
     #[inline]
-    fn autorelease_return(self) -> __IdReturnValue {
+    fn autorelease_return(self) -> IdReturnValue {
         let ptr: *mut T = Id::autorelease_return(self);
-        __IdReturnValue(ptr.cast())
+        IdReturnValue(ptr.cast())
     }
 }
 
 impl<T: Message> MaybeOptionId for Option<Id<T>> {
     #[inline]
-    fn consumed_return(self) -> __IdReturnValue {
+    fn consumed_return(self) -> IdReturnValue {
         let ptr: *mut T = Id::consume_as_ptr_option(self);
-        __IdReturnValue(ptr.cast())
+        IdReturnValue(ptr.cast())
     }
 
     #[inline]
-    fn autorelease_return(self) -> __IdReturnValue {
+    fn autorelease_return(self) -> IdReturnValue {
         let ptr: *mut T = Id::autorelease_return_option(self);
-        __IdReturnValue(ptr.cast())
+        IdReturnValue(ptr.cast())
     }
 }
 

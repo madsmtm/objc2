@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added the following traits to the `mutability` module (see the documentation
   for motivation and usage info):
   - `HasStableHash`.
+  - `IsAllowedMutable`.
   - `IsMainThreadOnly`.
   - `CounterpartOrSelf`.
 * Added new `encode` traits `EncodeReturn`, `EncodeArgument` and
@@ -25,6 +26,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   This effectively means you can now `copy` a `ProtocolObject<dyn NSCopying>`.
 * **BREAKING**: Allow implementing `DefaultId` for any type, not just those
   who are `IsAllocableAnyThread`.
+* **BREAKING**: Moved the `MethodImplementation` trait from the `declare`
+  module to the `runtime` module.
+* **BREAKING**: Moved the `MessageReceiver` trait to the `runtime` module.
+* **BREAKING**: Make the `MessageReceiver` trait no longer implemented for
+  references to `Id`. Dereference the `Id` yourself.
+
+  Note: Passing `&Id` in `msg_send!` is still supported.
+* **BREAKING**: `MessageReceiver::send_message` and
+  `MessageReceiver::send_super_message` now take `EncodeArguments` and return
+  `EncodeReturn`, instead of internal traits.
+
+  This is done to make `MessageReceiver` more straightforward to understand,
+  although it now also has slightly less functionality than `msg_send!`.
+
+  In particular automatic conversion of `bool` is not supported in
+  `MessageReceiver`.
+* Relaxed the requirements for receivers in `MethodImplementation`; now,
+  anything that implements `MessageReceiver` can be used as the receiver of
+  a method.
+* **BREAKING**: Renamed the associated types `Ret` and `Args` on
+  `MethodImplementation` to `Return` and `Arguments`.
 
 ### Deprecated
 * Soft deprecated using `msg_send!` without a comma between arguments (i.e.
@@ -52,10 +74,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 * Fixed the name of the protocol that `NSObjectProtocol` references.
+* Allow cloning `Id<AnyObject>`.
+* **BREAKING**: Restrict message sending to `&mut` references to things that
+  implement `IsAllowedMutable`.
 
 ### Removed
 * **BREAKING**: Removed `ProtocolType` implementation for `NSObject`.
   Use the more precise `NSObjectProtocol` trait instead!
+* **BREAKING**: Removed the `MessageArguments` trait.
 
 
 ## 0.4.1 - 2023-07-31

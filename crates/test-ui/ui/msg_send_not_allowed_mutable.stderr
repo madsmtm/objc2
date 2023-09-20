@@ -1,0 +1,36 @@
+error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
+ --> ui/msg_send_not_allowed_mutable.rs
+  |
+  |     let _: () = unsafe { msg_send![&mut *obj, test] };
+  |                          ----------^^^^^^^^^-------
+  |                          |         |
+  |                          |         the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
+  |                          required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
+            Root
+            Mutable
+            ImmutableWithMutableSubclass<MS>
+            MutableWithImmutableSuperclass<IS>
+  = note: required for `NSThread` to implement `IsAllowedMutable`
+  = note: required for `&mut NSThread` to implement `MessageReceiver`
+  = note: required for `&mut NSThread` to implement `MsgSend`
+
+error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
+ --> ui/msg_send_not_allowed_mutable.rs
+  |
+  |     let _: Id<NSThread> = unsafe { msg_send_id![obj, test] };
+  |                                    -------------^^^-------
+  |                                    |            |
+  |                                    |            the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
+  |                                    required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
+            Root
+            Mutable
+            ImmutableWithMutableSubclass<MS>
+            MutableWithImmutableSuperclass<IS>
+  = note: required for `NSThread` to implement `IsAllowedMutable`
+  = note: required for `&mut NSThread` to implement `MessageReceiver`
+  = note: required for `&mut NSThread` to implement `MsgSend`
+  = note: required for `RetainSemantics<5>` to implement `MsgSendId<&mut NSThread, Id<_>>`

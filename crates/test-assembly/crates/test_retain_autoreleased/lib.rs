@@ -1,8 +1,7 @@
 //! Test that `Id::retain_autoreleased` is inlined properly.
 
 use objc2::rc::Id;
-use objc2::runtime::{AnyObject, Sel};
-use objc2::MessageReceiver;
+use objc2::runtime::{AnyObject, MessageReceiver, Sel};
 
 #[no_mangle]
 unsafe fn handle(obj: &AnyObject, sel: Sel) -> Option<Id<AnyObject>> {

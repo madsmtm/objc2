@@ -32,7 +32,7 @@
 //! bug.
 use core::marker::PhantomData;
 
-use crate::runtime::ProtocolObject;
+use crate::runtime::{AnyObject, ProtocolObject};
 use crate::{ClassType, Message, ProtocolType};
 
 mod private_mutability {
@@ -81,6 +81,7 @@ enum Never {}
 /// Functionality that is provided with this:
 /// - [`IsIdCloneable`] -> [`Id::clone`][crate::rc::Id#impl-Clone-for-Id<T>].
 /// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
+/// - [`IsAllowedMutable`].
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct Root {
     inner: Never,
@@ -110,6 +111,7 @@ pub struct Immutable {
 ///
 /// Functionality that is provided with this:
 /// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
+/// - [`IsAllowedMutable`].
 /// - [`IsMutable`] -> [`impl DerefMut for Id`][crate::rc::Id#impl-DerefMut-for-Id<T>].
 /// - You are allowed to hand out pointers / references to an instance's
 ///   internal data, since you know such data will never be mutated without
@@ -143,6 +145,7 @@ pub struct Mutable {
 /// Functionality that is provided with this:
 /// - [`IsIdCloneable`].
 /// - [`IsAllocableAnyThread`].
+/// - [`IsAllowedMutable`].
 /// - You are allowed to hand out pointers / references to an instance's
 ///   internal data, since you know such data will never be mutated.
 ///
@@ -176,6 +179,7 @@ pub struct ImmutableWithMutableSubclass<MS: ?Sized> {
 ///
 /// Functionality that is provided with this:
 /// - [`IsAllocableAnyThread`] -> [`ClassType::alloc`].
+/// - [`IsAllowedMutable`].
 /// - [`IsMutable`] -> [`impl DerefMut for Id`][crate::rc::Id#impl-DerefMut-for-Id<T>].
 /// - You are allowed to hand out pointers / references to an instance's
 ///   internal data, since you know such data will never be mutated without
@@ -266,6 +270,7 @@ mod private_traits {
 
 impl<T: ?Sized + ClassType> private_traits::Sealed for T {}
 impl<P: ?Sized + ProtocolType> private_traits::Sealed for ProtocolObject<P> {}
+impl private_traits::Sealed for AnyObject {}
 
 /// Marker trait for classes where [`Id::clone`] is safe.
 ///
@@ -299,6 +304,8 @@ impl MutabilityIsIdCloneable for MainThreadOnly {}
 
 unsafe impl<T: ?Sized + ClassType> IsIdCloneable for T where T::Mutability: MutabilityIsIdCloneable {}
 unsafe impl<P: ?Sized + ProtocolType + IsIdCloneable> IsIdCloneable for ProtocolObject<P> {}
+// SAFETY: Same as for root classes.
+unsafe impl IsIdCloneable for AnyObject {}
 
 /// Marker trait for classes where the `retain` selector is always safe.
 ///
@@ -321,7 +328,7 @@ unsafe impl<P: ?Sized + ProtocolType + IsIdCloneable> IsIdCloneable for Protocol
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait IsRetainable: IsIdCloneable {}
+pub unsafe trait IsRetainable: private_traits::Sealed + IsIdCloneable {}
 
 trait MutabilityIsRetainable: MutabilityIsIdCloneable {}
 impl MutabilityIsRetainable for Immutable {}
@@ -365,6 +372,39 @@ unsafe impl<P: ?Sized + ProtocolType + IsAllocableAnyThread> IsAllocableAnyThrea
 {
 }
 
+/// Marker trait for classes that may feasibly be used behind a mutable
+/// reference.
+///
+/// This trait exist mostly to disallow using `&mut self` when declaring
+/// classes, since that would be a huge footgun.
+///
+/// This is implemented for classes whose [`ClassType::Mutability`] is one of:
+/// - [`Root`]
+/// - [`Mutable`]
+/// - [`ImmutableWithMutableSubclass`]
+/// - [`MutableWithImmutableSuperclass`]
+///
+///
+/// # Safety
+///
+/// This is a sealed trait, and should not need to be implemented. Open an
+/// issue if you know a use-case where this restrition should be lifted!
+pub unsafe trait IsAllowedMutable: private_traits::Sealed {}
+
+trait MutabilityIsAllowedMutable: Mutability {}
+impl MutabilityIsAllowedMutable for Root {}
+impl MutabilityIsAllowedMutable for Mutable {}
+impl<MS: ?Sized> MutabilityIsAllowedMutable for ImmutableWithMutableSubclass<MS> {}
+impl<IS: ?Sized> MutabilityIsAllowedMutable for MutableWithImmutableSuperclass<IS> {}
+
+unsafe impl<T: ?Sized + ClassType> IsAllowedMutable for T where
+    T::Mutability: MutabilityIsAllowedMutable
+{
+}
+unsafe impl<P: ?Sized + ProtocolType + IsAllowedMutable> IsAllowedMutable for ProtocolObject<P> {}
+// SAFETY: Same as for root classes.
+unsafe impl IsAllowedMutable for AnyObject {}
+
 /// Marker trait for classes that are only mutable through `&mut`.
 ///
 /// This is implemented for classes whose [`ClassType::Mutability`] is one of:
@@ -375,14 +415,17 @@ unsafe impl<P: ?Sized + ProtocolType + IsAllocableAnyThread> IsAllocableAnyThrea
 /// technically mutable), since it is allowed to mutate through shared
 /// references.
 ///
+/// This trait inherits [`IsAllowedMutable`], so if a function is bound by
+/// this, functionality given with that trait is available.
+///
 ///
 /// # Safety
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait IsMutable: private_traits::Sealed {}
+pub unsafe trait IsMutable: private_traits::Sealed + IsAllowedMutable {}
 
-trait MutabilityIsMutable: Mutability {}
+trait MutabilityIsMutable: MutabilityIsAllowedMutable {}
 impl MutabilityIsMutable for Mutable {}
 impl<IS: ?Sized> MutabilityIsMutable for MutableWithImmutableSuperclass<IS> {}
 
@@ -613,11 +656,12 @@ mod tests {
         );
     }
 
-    #[allow(unused)]
+    #[allow(unused, clippy::too_many_arguments)]
     fn object_safe(
         _: &dyn IsIdCloneable,
         _: &dyn IsRetainable,
         _: &dyn IsAllocableAnyThread,
+        _: &dyn IsAllowedMutable,
         _: &dyn IsMutable,
         _: &dyn IsMainThreadOnly,
         _: &dyn HasStableHash,

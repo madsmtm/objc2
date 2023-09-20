@@ -3,120 +3,7 @@
 //! Classes can be declared using the [`ClassBuilder`] struct. Instance
 //! variables and methods can then be added before the class is ultimately
 //! registered.
-//!
-//! **Note**: You likely don't need the dynamicism that this module provides!
-//! Consider using the [`declare_class!`][crate::declare_class] macro instead.
-//!
-//!
-//! ## Example
-//!
-//! The following example demonstrates declaring a class named `MyNumber` that
-//! has one ivar, a `u32` named `_number` and a few methods for constructor
-//! methods and methods for interfacing with the number (using interior
-//! mutability, as is common for Objective-C objects).
-//!
-//! ```
-//! use core::cell::Cell;
-//!
-//! use objc2::declare::ClassBuilder;
-//! use objc2::rc::Id;
-//! use objc2::runtime::{AnyClass, AnyObject, NSObject, Sel};
-//! use objc2::{sel, msg_send, msg_send_id, ClassType};
-//!
-//! fn register_class() -> &'static AnyClass {
-//!     // Inherit from NSObject
-//!     let mut builder = ClassBuilder::new("MyNumber", NSObject::class())
-//!         .expect("a class with the name MyNumber likely already exists");
-//!
-//!     // Add an instance variable of type `Cell<u32>`
-//!     builder.add_ivar::<Cell<u32>>("_number");
-//!
-//!     // Add an Objective-C method for initializing an instance with a number
-//!     //
-//!     // We "cheat" a bit here, and use `AnyObject` instead of `NSObject`,
-//!     // since only the former is allowed to be a mutable receiver (which is
-//!     // always safe in `init` methods, but not in others).
-//!     unsafe extern "C" fn init_with_number(
-//!         this: &mut AnyObject,
-//!         _cmd: Sel,
-//!         number: u32,
-//!     ) -> Option<&mut AnyObject> {
-//!         let this: Option<&mut AnyObject> = msg_send![super(this, NSObject::class()), init];
-//!         this.map(|this| {
-//!             // SAFETY: The ivar is added with the same type above
-//!             this.set_ivar::<Cell<u32>>("_number", Cell::new(number));
-//!             this
-//!         })
-//!     }
-//!     unsafe {
-//!         builder.add_method(
-//!             sel!(initWithNumber:),
-//!             init_with_number as unsafe extern "C" fn(_, _, _) -> _,
-//!         );
-//!     }
-//!
-//!     // Add convenience method for getting a new instance with the number
-//!     extern "C" fn with_number(
-//!         cls: &AnyClass,
-//!         _cmd: Sel,
-//!         number: u32,
-//!     ) -> *mut NSObject {
-//!         let obj: Option<Id<NSObject>> = unsafe {
-//!             msg_send_id![
-//!                 msg_send_id![cls, alloc],
-//!                 initWithNumber: number,
-//!             ]
-//!         };
-//!         obj.map(Id::autorelease_return).unwrap_or(std::ptr::null_mut())
-//!     }
-//!     unsafe {
-//!         builder.add_class_method(
-//!             sel!(withNumber:),
-//!             with_number as extern "C" fn(_, _, _) -> _,
-//!         );
-//!     }
-//!
-//!     // Add an Objective-C method for setting the number
-//!     extern "C" fn my_number_set(this: &NSObject, _cmd: Sel, number: u32) {
-//!         // SAFETY: The ivar is added with the same type above
-//!         unsafe { this.ivar::<Cell<u32>>("_number") }.set(number);
-//!     }
-//!     unsafe {
-//!         builder.add_method(sel!(setNumber:), my_number_set as extern "C" fn(_, _, _));
-//!     }
-//!
-//!     // Add an Objective-C method for getting the number
-//!     extern "C" fn my_number_get(this: &NSObject, _cmd: Sel) -> u32 {
-//!         // SAFETY: The ivar is added with the same type above
-//!         unsafe { this.ivar::<Cell<u32>>("_number") }.get()
-//!     }
-//!     unsafe {
-//!         builder.add_method(sel!(number), my_number_get as extern "C" fn(_, _) -> _);
-//!     }
-//!
-//!     builder.register()
-//! }
-//!
-//! // Usage
-//!
-//! // Note: you should only do class registration once! This can be ensure
-//! // with `std::sync::Once` or the `once_cell` crate.
-//! let cls = register_class();
-//!
-//! let obj: Id<NSObject> = unsafe {
-//!     msg_send_id![cls, withNumber: 42u32]
-//! };
-//!
-//! let n: u32 = unsafe { msg_send![&obj, number] };
-//! assert_eq!(n, 42);
-//!
-//! let _: () = unsafe { msg_send![&obj, setNumber: 12u32] };
-//! let n: u32 = unsafe { msg_send![&obj, number] };
-//! assert_eq!(n, 12);
-//! ```
 
-#[cfg(test)]
-mod declare_class_tests;
 mod ivar;
 mod ivar_bool;
 mod ivar_drop;
@@ -131,11 +18,9 @@ use core::ptr;
 use core::ptr::NonNull;
 use std::ffi::CString;
 
-use crate::encode::{Encode, EncodeArgument, EncodeArguments, EncodeReturn, Encoding, RefEncode};
+use crate::encode::{Encode, EncodeArguments, EncodeReturn, Encoding};
 use crate::ffi;
-use crate::mutability::IsMutable;
-use crate::rc::Allocated;
-use crate::runtime::{AnyClass, AnyObject, AnyProtocol, Bool, Imp, Sel};
+use crate::runtime::{AnyClass, AnyObject, AnyProtocol, Bool, Imp, MethodImplementation, Sel};
 use crate::sel;
 use crate::Message;
 
@@ -143,171 +28,6 @@ pub use ivar::{InnerIvarType, Ivar, IvarType};
 pub use ivar_bool::IvarBool;
 pub use ivar_drop::IvarDrop;
 pub use ivar_encode::IvarEncode;
-
-pub(crate) mod private {
-    pub trait Sealed {}
-}
-
-/// Types that can be used as the implementation of an Objective-C method.
-///
-/// This is a sealed trait that is implemented for a lot of `extern "C"`
-/// function pointer types.
-//
-// Note: `Sized` is intentionally added to make the trait not object safe.
-pub trait MethodImplementation: private::Sealed + Sized {
-    /// The callee type of the method.
-    type Callee: RefEncode + ?Sized;
-    /// The return type of the method.
-    type Ret: EncodeReturn;
-    /// The argument types of the method.
-    type Args: EncodeArguments;
-
-    #[doc(hidden)]
-    fn __imp(self) -> Imp;
-}
-
-macro_rules! method_impl_generic {
-    (<$($l:lifetime),*> T: $t_bound:ident $(+ $t_bound2:ident)?, $r:ident, $f:ty, $($t:ident),*) => {
-        impl<$($l,)* T, $r, $($t),*> private::Sealed for $f
-        where
-            T: ?Sized + $t_bound $(+ $t_bound2)?,
-            $r: EncodeReturn,
-            $($t: EncodeArgument,)*
-        {}
-
-        impl<$($l,)* T, $r, $($t),*> MethodImplementation for $f
-        where
-            T: ?Sized + $t_bound $(+ $t_bound2)?,
-            $r: EncodeReturn,
-            $($t: EncodeArgument,)*
-        {
-            type Callee = T;
-            type Ret = $r;
-            type Args = ($($t,)*);
-
-            fn __imp(self) -> Imp {
-                unsafe { mem::transmute(self) }
-            }
-        }
-    };
-}
-
-macro_rules! method_impl_concrete {
-    (<$($l:lifetime),*> $callee:ident, $r:ident, $f:ty, $($t:ident),*) => {
-        impl<$($l,)* $r, $($t),*> private::Sealed for $f
-        where
-            $r: EncodeReturn,
-            $($t: EncodeArgument,)*
-        {}
-
-        impl<$($l,)* $r, $($t),*> MethodImplementation for $f
-        where
-            $r: EncodeReturn,
-            $($t: EncodeArgument,)*
-        {
-            type Callee = $callee;
-            type Ret = $r;
-            type Args = ($($t,)*);
-
-            fn __imp(self) -> Imp {
-                unsafe { mem::transmute(self) }
-            }
-        }
-    };
-}
-
-macro_rules! method_impl_allocated {
-    (<> Allocated<T>, $f:ty, $($t:ident),*) => {
-        #[doc(hidden)]
-        impl<T, $($t),*> private::Sealed for $f
-        where
-            T: ?Sized + Message,
-            $($t: EncodeArgument,)*
-        {}
-
-        #[doc(hidden)]
-        impl<T, $($t),*> MethodImplementation for $f
-        where
-            T: ?Sized + Message,
-            $($t: EncodeArgument,)*
-        {
-            type Callee = T;
-            type Ret = __IdReturnValue;
-            type Args = ($($t,)*);
-
-            fn __imp(self) -> Imp {
-                // SAFETY: `Allocated<T>` is the same as `NonNull<T>`, except
-                // with the assumption of a +1 calling convention.
-                //
-                // The calling convention is ensured to be upheld by having
-                // `__IdReturnValue` in the type, since that type is private
-                // and hence only internal macros like `#[method_id]` will be
-                // able to produce it (and that, in turn, only allows it if
-                // the selector is `init` as checked by `MessageRecieveId`).
-                unsafe { mem::transmute(self) }
-            }
-        }
-    };
-}
-
-macro_rules! method_impl_abi {
-    ($abi:literal; $($t:ident),*) => {
-        method_impl_generic!(<'a> T: Message, R, extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
-        method_impl_generic!(<'a> T: Message + IsMutable, R, extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
-        method_impl_generic!(<> T: Message, R, unsafe extern $abi fn(*const T, Sel $(, $t)*) -> R, $($t),*);
-        method_impl_generic!(<> T: Message, R, unsafe extern $abi fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
-        method_impl_generic!(<'a> T: Message, R, unsafe extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
-        method_impl_generic!(<'a> T: Message + IsMutable, R, unsafe extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
-
-        method_impl_concrete!(<'a> AnyObject, R, extern $abi fn(&'a mut AnyObject, Sel $(, $t)*) -> R, $($t),*);
-        method_impl_concrete!(<'a> AnyObject, R, unsafe extern $abi fn(&'a mut AnyObject, Sel $(, $t)*) -> R, $($t),*);
-
-        method_impl_concrete!(<'a> AnyClass, R, extern $abi fn(&'a AnyClass, Sel $(, $t)*) -> R, $($t),*);
-        method_impl_concrete!(<> AnyClass, R, unsafe extern $abi fn(*const AnyClass, Sel $(, $t)*) -> R, $($t),*);
-        method_impl_concrete!(<'a> AnyClass, R, unsafe extern $abi fn(&'a AnyClass, Sel $(, $t)*) -> R, $($t),*);
-
-        method_impl_allocated!(<> Allocated<T>, extern $abi fn(Allocated<T>, Sel $(, $t)*) -> __IdReturnValue, $($t),*);
-        method_impl_allocated!(<> Allocated<T>, unsafe extern $abi fn(Allocated<T>, Sel $(, $t)*) -> __IdReturnValue, $($t),*);
-    };
-}
-
-macro_rules! method_impl {
-    ($($t:ident),*) => {
-        method_impl_abi!("C"; $($t),*);
-        #[cfg(feature = "unstable-c-unwind")]
-        method_impl_abi!("C-unwind"; $($t),*);
-    };
-}
-
-method_impl!();
-method_impl!(A);
-method_impl!(A, B);
-method_impl!(A, B, C);
-method_impl!(A, B, C, D);
-method_impl!(A, B, C, D, E);
-method_impl!(A, B, C, D, E, F);
-method_impl!(A, B, C, D, E, F, G);
-method_impl!(A, B, C, D, E, F, G, H);
-method_impl!(A, B, C, D, E, F, G, H, I);
-method_impl!(A, B, C, D, E, F, G, H, I, J);
-method_impl!(A, B, C, D, E, F, G, H, I, J, K);
-method_impl!(A, B, C, D, E, F, G, H, I, J, K, L);
-method_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M);
-method_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N);
-method_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O);
-method_impl!(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P);
-
-/// Helper type for implementing `MethodImplementation` with a receiver of
-/// `Allocated<T>`, without exposing that implementation to users.
-#[doc(hidden)]
-#[repr(transparent)]
-#[derive(Debug)]
-pub struct __IdReturnValue(pub(crate) *mut AnyObject);
-
-// SAFETY: `__IdReturnValue` is `#[repr(transparent)]`
-unsafe impl Encode for __IdReturnValue {
-    const ENCODING: Encoding = <*mut AnyObject>::ENCODING;
-}
 
 fn method_type_encoding(ret: &Encoding, args: &[Encoding]) -> CString {
     // First two arguments are always self and the selector
@@ -337,6 +57,116 @@ impl<T> Log2Alignment for T {
 
 /// A type for declaring a new class and adding new methods and ivars to it
 /// before registering it.
+///
+/// **Note**: You likely don't need the dynamicism that this provides!
+/// Consider using the [`declare_class!`][crate::declare_class] macro instead.
+///
+///
+/// # Example
+///
+/// Declare a class named `MyNumber` that has one ivar, a `u32` named `_number`
+/// and a few constructor  methods and methods for interfacing with the number
+/// (using interior mutability, as is common for Objective-C objects).
+///
+/// ```
+/// use core::cell::Cell;
+///
+/// use objc2::declare::ClassBuilder;
+/// use objc2::rc::Id;
+/// use objc2::runtime::{AnyClass, AnyObject, NSObject, Sel};
+/// use objc2::{sel, msg_send, msg_send_id, ClassType};
+///
+/// fn register_class() -> &'static AnyClass {
+///     // Inherit from NSObject
+///     let mut builder = ClassBuilder::new("MyNumber", NSObject::class())
+///         .expect("a class with the name MyNumber likely already exists");
+///
+///     // Add an instance variable of type `Cell<u32>`
+///     builder.add_ivar::<Cell<u32>>("_number");
+///
+///     // Add an Objective-C method for initializing an instance with a number
+///     //
+///     // We "cheat" a bit here, and use `AnyObject` instead of `NSObject`,
+///     // since only the former is allowed to be a mutable receiver (which is
+///     // always safe in `init` methods, but not in others).
+///     unsafe extern "C" fn init_with_number(
+///         this: &mut AnyObject,
+///         _cmd: Sel,
+///         number: u32,
+///     ) -> Option<&mut AnyObject> {
+///         let this: Option<&mut AnyObject> = msg_send![super(this, NSObject::class()), init];
+///         this.map(|this| {
+///             // SAFETY: The ivar is added with the same type above
+///             this.set_ivar::<Cell<u32>>("_number", Cell::new(number));
+///             this
+///         })
+///     }
+///     unsafe {
+///         builder.add_method(
+///             sel!(initWithNumber:),
+///             init_with_number as unsafe extern "C" fn(_, _, _) -> _,
+///         );
+///     }
+///
+///     // Add convenience method for getting a new instance with the number
+///     extern "C" fn with_number(
+///         cls: &AnyClass,
+///         _cmd: Sel,
+///         number: u32,
+///     ) -> *mut NSObject {
+///         let obj: Option<Id<NSObject>> = unsafe {
+///             msg_send_id![
+///                 msg_send_id![cls, alloc],
+///                 initWithNumber: number,
+///             ]
+///         };
+///         obj.map(Id::autorelease_return).unwrap_or(std::ptr::null_mut())
+///     }
+///     unsafe {
+///         builder.add_class_method(
+///             sel!(withNumber:),
+///             with_number as extern "C" fn(_, _, _) -> _,
+///         );
+///     }
+///
+///     // Add an Objective-C method for setting the number
+///     extern "C" fn my_number_set(this: &NSObject, _cmd: Sel, number: u32) {
+///         // SAFETY: The ivar is added with the same type above
+///         unsafe { this.ivar::<Cell<u32>>("_number") }.set(number);
+///     }
+///     unsafe {
+///         builder.add_method(sel!(setNumber:), my_number_set as extern "C" fn(_, _, _));
+///     }
+///
+///     // Add an Objective-C method for getting the number
+///     extern "C" fn my_number_get(this: &NSObject, _cmd: Sel) -> u32 {
+///         // SAFETY: The ivar is added with the same type above
+///         unsafe { this.ivar::<Cell<u32>>("_number") }.get()
+///     }
+///     unsafe {
+///         builder.add_method(sel!(number), my_number_get as extern "C" fn(_, _) -> _);
+///     }
+///
+///     builder.register()
+/// }
+///
+/// // Usage
+///
+/// // Note: you should only do class registration once! This can be ensured
+/// // with `std::sync::Once` or the `once_cell` crate.
+/// let cls = register_class();
+///
+/// let obj: Id<NSObject> = unsafe {
+///     msg_send_id![cls, withNumber: 42u32]
+/// };
+///
+/// let n: u32 = unsafe { msg_send![&obj, number] };
+/// assert_eq!(n, 42);
+///
+/// let _: () = unsafe { msg_send![&obj, setNumber: 12u32] };
+/// let n: u32 = unsafe { msg_send![&obj, number] };
+/// assert_eq!(n, 12);
+/// ```
 #[derive(Debug)]
 pub struct ClassBuilder {
     // Note: Don't ever construct a &mut objc_class, since it is possible to
@@ -344,7 +174,7 @@ pub struct ClassBuilder {
     cls: NonNull<ffi::objc_class>,
 }
 
-#[doc(hidden)]
+/// Use [`ClassBuilder`] instead.
 #[deprecated = "Use `ClassBuilder` instead."]
 pub type ClassDecl = ClassBuilder;
 
@@ -411,7 +241,7 @@ impl ClassBuilder {
     /// `-release` used by ARC, will not be present otherwise.
     pub fn root<F>(name: &str, intitialize_fn: F) -> Option<Self>
     where
-        F: MethodImplementation<Callee = AnyClass, Args = (), Ret = ()>,
+        F: MethodImplementation<Callee = AnyClass, Arguments = (), Return = ()>,
     {
         Self::with_superclass(name, None).map(|mut this| {
             unsafe { this.add_class_method(sel!(initialize), intitialize_fn) };
@@ -444,8 +274,8 @@ impl ClassBuilder {
         unsafe {
             self.add_method_inner(
                 sel,
-                F::Args::ENCODINGS,
-                &F::Ret::ENCODING_RETURN,
+                F::Arguments::ENCODINGS,
+                &F::Return::ENCODING_RETURN,
                 func.__imp(),
             )
         }
@@ -508,8 +338,8 @@ impl ClassBuilder {
         unsafe {
             self.add_class_method_inner(
                 sel,
-                F::Args::ENCODINGS,
-                &F::Ret::ENCODING_RETURN,
+                F::Arguments::ENCODINGS,
+                &F::Return::ENCODING_RETURN,
                 func.__imp(),
             )
         }
@@ -665,7 +495,7 @@ pub struct ProtocolBuilder {
     proto: NonNull<AnyProtocol>,
 }
 
-#[doc(hidden)]
+/// Use [`ProtocolBuilder`] instead.
 #[deprecated = "Use `ProtocolBuilder` instead."]
 pub type ProtocolDecl = ProtocolBuilder;
 
@@ -781,6 +611,7 @@ mod tests {
     use std::hash::Hash;
 
     use super::*;
+    use crate::encode::RefEncode;
     use crate::mutability::Immutable;
     use crate::rc::Id;
     use crate::runtime::{NSObject, NSObjectProtocol};

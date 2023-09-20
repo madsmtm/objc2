@@ -1,9 +1,11 @@
 #![cfg(feature = "Foundation_NSArray")]
 #![cfg(feature = "Foundation_NSNumber")]
+use core::ptr;
+
 use icrate::Foundation::{NSArray, NSNumber, NSObject};
 use objc2::mutability::IsRetainable;
 use objc2::rc::{Id, __RcTestObject, __ThreadTestData};
-use objc2::runtime::ProtocolObject;
+use objc2::runtime::{AnyObject, ProtocolObject};
 use objc2::{extern_protocol, ProtocolType};
 
 fn sample_array(len: usize) -> Id<NSArray<NSObject>> {
@@ -282,4 +284,16 @@ fn test_trait_retainable() {
     let _ = NSArray::from_slice(&[&*obj, &*obj]);
     let _ = NSArray::from_id_slice(&[obj.clone(), obj.clone()]);
     let _ = NSArray::from_vec(vec![obj.clone(), obj.clone()]);
+}
+
+#[test]
+fn test_access_anyobject() {
+    let obj: Id<AnyObject> = Id::into_super(NSObject::new());
+    let array = NSArray::from_id_slice(&[obj.clone(), obj.clone()]);
+    assert!(ptr::eq(&array[0], &*obj));
+    assert!(ptr::eq(array.get(0).unwrap(), &*obj));
+    assert!(ptr::eq(&*array.get_retained(0).unwrap(), &*obj));
+    for _ in array.iter() {}
+    for _ in array.iter_retained() {}
+    for _ in array {}
 }

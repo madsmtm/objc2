@@ -82,9 +82,9 @@
 ///
 /// On instance methods, you can freely choose between different types of
 /// receivers, e.g. `&self`, `this: *const Self`, `&mut self`, and so on. Note
-/// though that using raw pointers requires the function to be `unsafe`, and
-/// using `&mut self` requires the class' mutability to be [`IsMutable`].
-/// If you require mutating your class' instance variables, consider using
+/// though that using `&mut self` requires the class' mutability to be
+/// [`IsAllowedMutable`].
+/// If you need mutation of your class' instance variables, consider using
 /// [`Cell`] or similar instead.
 ///
 /// The desired selector can be specified using the `#[method(my:selector:)]`
@@ -114,7 +114,7 @@
 ///
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
-/// [`IsMutable`]: crate::mutability::IsMutable
+/// [`IsAllowedMutable`]: crate::mutability::IsAllowedMutable
 /// [`Cell`]: core::cell::Cell
 /// [open an issue]: https://github.com/madsmtm/objc2/issues/new
 /// [`msg_send!`]: crate::msg_send
@@ -590,7 +590,7 @@ macro_rules! __declare_class_inner {
                         // most Objective-C code in the wild don't contain
                         // this; but we _are_ ARC, so we must do this.
                         unsafe {
-                            $crate::MessageReceiver::__send_super_message_static(
+                            $crate::__macro_helpers::MsgSend::send_super_message_static(
                                 __objc2_self,
                                 __objc2_cmd, // Reuse the selector
                                 (), // No arguments
@@ -1116,7 +1116,7 @@ macro_rules! __declare_class_method_out_inner {
         $($qualifiers)* extern "C" fn $name(
             $($params_prefix)*
             $($params_converted)*
-        ) -> $crate::declare::__IdReturnValue {
+        ) -> $crate::__macro_helpers::IdReturnValue {
             $($body_prefix)*
 
             let __objc2_result = $body;

@@ -1,14 +1,14 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.p2align	4, 0x90
-SYM(core[CRATE_ID]::ptr::drop_in_place::<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}>::{closure#0}>, 0):
+SYM(core[CRATE_ID]::ptr::drop_in_place::<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}>, 0):
 	push	ebp
 	mov	ebp, esp
 	pop	ebp
 	ret
 
 	.p2align	4, 0x90
-SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}>::{closure#0}, 0):
+SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 	push	ebp
 	mov	ebp, esp
 	push	ebx
@@ -58,7 +58,7 @@ L1$pb:
 	add	esp, 32
 	mov	eax, dword ptr [esi + LL_OBJC_SELECTOR_REFERENCES_dealloc$non_lazy_ptr-L1$pb]
 	sub	esp, 8
-	lea	ecx, [esi + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}::__objc2_dealloc, 0)-L1$pb]
+	lea	ecx, [esi + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::__objc2_dealloc, 0)-L1$pb]
 	lea	edi, [esi + l_anon.[ID].3-L1$pb]
 	lea	edx, [esi + l_anon.[ID].1-L1$pb]
 	push	ecx
@@ -188,7 +188,7 @@ LBB1_4:
 	call	SYM(core::panicking::panic_fmt::GENERATED_ID, 0)
 
 	.p2align	4, 0x90
-SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
+SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	push	ebp
 	mov	ebp, esp
 	sub	esp, 24
@@ -197,7 +197,7 @@ SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]:
 	mov	dword ptr [ebp - 4], eax
 	lea	eax, [ebp - 4]
 	mov	dword ptr [esp], eax
-	call	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	call	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 	add	esp, 24
 	pop	ebp
 	ret
@@ -228,7 +228,7 @@ _get_class:
 	call	L4$pb
 L4$pb:
 	pop	esi
-	mov	eax, dword ptr [esi + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)-L4$pb]
+	mov	eax, dword ptr [esi + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-L4$pb]
 	cmp	eax, 3
 	jne	LBB4_1
 LBB4_2:
@@ -253,7 +253,7 @@ LBB4_1:
 	lea	eax, [esi + l_anon.[ID].15-L4$pb]
 	lea	ecx, [esi + l_anon.[ID].0-L4$pb]
 	lea	edx, [ebp - 16]
-	lea	edi, [esi + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)-L4$pb]
+	lea	edi, [esi + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-L4$pb]
 	push	eax
 	push	ecx
 	push	edx
@@ -346,9 +346,9 @@ L6$pb:
 	pop	ebp
 	ret
 
-	.globl	SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class, 0)
+	.globl	SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	4, 0x90
-SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class, 0):
+SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
 	push	ebp
 	mov	ebp, esp
 	push	edi
@@ -357,7 +357,7 @@ SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassT
 	call	L7$pb
 L7$pb:
 	pop	esi
-	mov	eax, dword ptr [esi + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)-L7$pb]
+	mov	eax, dword ptr [esi + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-L7$pb]
 	cmp	eax, 3
 	jne	LBB7_1
 LBB7_2:
@@ -382,7 +382,7 @@ LBB7_1:
 	lea	eax, [esi + l_anon.[ID].15-L7$pb]
 	lea	ecx, [esi + l_anon.[ID].0-L7$pb]
 	lea	edx, [ebp - 16]
-	lea	edi, [esi + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)-L7$pb]
+	lea	edi, [esi + SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-L7$pb]
 	push	eax
 	push	ecx
 	push	edx
@@ -401,7 +401,7 @@ LBB7_4:
 	call	SYM(core::panicking::panic::GENERATED_ID, 0)
 
 	.p2align	4, 0x90
-SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}::__objc2_dealloc, 0):
+SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::__objc2_dealloc, 0):
 	push	ebp
 	mov	ebp, esp
 	push	ebx
@@ -722,10 +722,10 @@ LBB15_5:
 	.section	__DATA,__const
 	.p2align	2, 0x0
 l_anon.[ID].0:
-	.long	SYM(core[CRATE_ID]::ptr::drop_in_place::<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}>::{closure#0}>, 0)
+	.long	SYM(core[CRATE_ID]::ptr::drop_in_place::<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}>, 0)
 	.asciz	"\004\000\000\000\004\000\000"
-	.long	SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
-	.long	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	.long	SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
+	.long	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 
 	.section	__TEXT,__const
 	.p2align	2, 0x0
@@ -808,7 +808,7 @@ l_anon.[ID].15:
 l_anon.[ID].16:
 	.ascii	"CustomClassName"
 
-.zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0),4,2
+.zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0),4,2
 l_anon.[ID].17:
 	.ascii	"NSCopying"
 

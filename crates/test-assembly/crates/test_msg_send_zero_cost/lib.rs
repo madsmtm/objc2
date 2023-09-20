@@ -2,8 +2,7 @@
 use core::mem;
 use core::ptr;
 
-use objc2::runtime::{AnyObject, Sel};
-use objc2::MessageReceiver;
+use objc2::runtime::{AnyObject, MessageReceiver, Sel};
 
 #[no_mangle]
 unsafe fn handle(obj: &AnyObject, sel: Sel) -> *mut AnyObject {

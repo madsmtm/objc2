@@ -67,7 +67,7 @@ handle_new_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<1_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<1_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	ud2
 .Lfunc_end1:
@@ -140,7 +140,7 @@ handle_alloc_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<2_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<2_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	ud2
 .Lfunc_end3:
@@ -223,7 +223,7 @@ handle_init_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<3_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	ud2
 .Lfunc_end5:
@@ -416,7 +416,7 @@ handle_copy_fallible:
 .LBB10_1:
 	lea	eax, [ebx + .Lanon.[ID].4@GOTOFF]
 	mov	dword ptr [esp], eax
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<4_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
 	ud2
 .Lfunc_end10:
 	.size	handle_copy_fallible, .Lfunc_end10-handle_copy_fallible
@@ -492,7 +492,7 @@ handle_autoreleased_fallible:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<5_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	ud2
 .Lfunc_end12:
@@ -508,28 +508,28 @@ handle_with_out_param:
 	push	edi
 	push	esi
 	sub	esp, 12
+	mov	ebp, dword ptr [esp + 40]
 	mov	eax, dword ptr [esp + 32]
 	mov	esi, dword ptr [esp + 36]
-	mov	edi, dword ptr [esp + 40]
 	call	.L13$pb
 .L13$pb:
 	pop	ebx
 .Ltmp13:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp13-.L13$pb)
+	mov	edi, dword ptr [ebp]
 	mov	dword ptr [esp + 4], esi
 	mov	dword ptr [esp], eax
 	call	objc_msg_lookup@PLT
 	mov	ecx, dword ptr [esp + 32]
-	mov	ebp, dword ptr [edi]
-	mov	dword ptr [esp + 8], edi
+	mov	dword ptr [esp + 8], ebp
 	mov	dword ptr [esp + 4], esi
 	mov	dword ptr [esp], ecx
 	call	eax
 	mov	esi, eax
-	mov	eax, dword ptr [edi]
+	mov	eax, dword ptr [ebp]
 	mov	dword ptr [esp], eax
 	call	objc_retain@PLT
-	mov	dword ptr [esp], ebp
+	mov	dword ptr [esp], edi
 	call	objc_release@PLT
 	mov	dword ptr [esp], esi
 	call	objc_retainAutoreleasedReturnValue@PLT

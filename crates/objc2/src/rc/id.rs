@@ -951,7 +951,19 @@ mod tests {
         assert_retain_count(&cloned, 2);
         assert_retain_count(&obj, 2);
 
+        let obj = Id::into_super(Id::into_super(obj));
+        let cloned_and_type_erased = obj.clone();
+        expected.retain += 1;
+        expected.assert_current();
+        assert_retain_count(&cloned_and_type_erased, 3);
+        assert_retain_count(&obj, 3);
+
         drop(obj);
+        expected.release += 1;
+        expected.assert_current();
+        assert_retain_count(&cloned, 2);
+
+        drop(cloned_and_type_erased);
         expected.release += 1;
         expected.assert_current();
         assert_retain_count(&cloned, 1);

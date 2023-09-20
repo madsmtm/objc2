@@ -10,9 +10,9 @@ error[E0308]: mismatched types
   = note: expected reference `&AnyClass`
              found reference `&NSObject`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
-  |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
@@ -27,9 +27,9 @@ error[E0308]: mismatched types
   = note:   expected enum `Option<Allocated<_>>`
           found reference `&NSObject`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
-  |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
@@ -44,9 +44,9 @@ error[E0308]: mismatched types
   = note:   expected enum `Option<Allocated<_>>`
           found reference `&AnyClass`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
-  |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
@@ -61,9 +61,9 @@ error[E0308]: mismatched types
   = note: expected enum `Option<Allocated<_>>`
            found struct `Id<NSObject>`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
-  |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
@@ -78,35 +78,39 @@ error[E0308]: mismatched types
   = note: expected enum `Option<Allocated<_>>`
              found enum `Option<Id<NSObject>>`
 note: associated function defined here
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
-  |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
+  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
 
-error[E0277]: the trait bound `Id<NSObject>: MessageReceiver` is not satisfied
- --> ui/msg_send_id_invalid_receiver.rs
-  |
-  |     let _: Id<NSObject> = unsafe { msg_send_id![obj, new] };
-  |                                    -------------^^^------
-  |                                    |            |
-  |                                    |            the trait `MessageReceiver` is not implemented for `Id<NSObject>`
-  |                                    required by a bound introduced by this call
-  |
-  = help: the following other types implement trait `MessageReceiver`:
-            &'a Id<T>
-            &'a mut Id<T>
-  = note: required for `RetainSemantics<1>` to implement `MsgSendId<Id<NSObject>, Id<_>>`
+error[E0277]: the trait bound `Id<NSObject>: MsgSend` is not satisfied
+  --> ui/msg_send_id_invalid_receiver.rs
+   |
+   |     let _: Id<NSObject> = unsafe { msg_send_id![obj, new] };
+   |                                    -------------^^^------
+   |                                    |            |
+   |                                    |            the trait `MsgSend` is not implemented for `Id<NSObject>`
+   |                                    required by a bound introduced by this call
+   |
+   = note: required for `Id<NSObject>` to implement `MsgSend`
+   = note: required for `RetainSemantics<1>` to implement `MsgSendId<Id<NSObject>, Id<_>>`
+help: consider borrowing here
+   |
+19 |     let _: Id<NSObject> = unsafe { msg_send_id![&obj, new] };
+   |                                                 +
 
-error[E0277]: the trait bound `Id<NSObject>: MessageReceiver` is not satisfied
- --> ui/msg_send_id_invalid_receiver.rs
-  |
-  |     let _: Id<NSObject> = unsafe { msg_send_id![obj, copy] };
-  |                                    -------------^^^-------
-  |                                    |            |
-  |                                    |            the trait `MessageReceiver` is not implemented for `Id<NSObject>`
-  |                                    required by a bound introduced by this call
-  |
-  = help: the following other types implement trait `MessageReceiver`:
-            &'a Id<T>
-            &'a mut Id<T>
-  = note: required for `RetainSemantics<4>` to implement `MsgSendId<Id<NSObject>, Id<_>>`
+error[E0277]: the trait bound `Id<NSObject>: MsgSend` is not satisfied
+  --> ui/msg_send_id_invalid_receiver.rs
+   |
+   |     let _: Id<NSObject> = unsafe { msg_send_id![obj, copy] };
+   |                                    -------------^^^-------
+   |                                    |            |
+   |                                    |            the trait `MsgSend` is not implemented for `Id<NSObject>`
+   |                                    required by a bound introduced by this call
+   |
+   = note: required for `Id<NSObject>` to implement `MsgSend`
+   = note: required for `RetainSemantics<4>` to implement `MsgSendId<Id<NSObject>, Id<_>>`
+help: consider borrowing here
+   |
+21 |     let _: Id<NSObject> = unsafe { msg_send_id![&obj, copy] };
+   |                                                 +

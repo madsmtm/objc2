@@ -9,11 +9,10 @@ error[E0277]: the trait bound `{integer}: MessageReceiver` is not satisfied
   |
   = help: the following other types implement trait `MessageReceiver`:
             NonNull<T>
-            ManuallyDrop<Id<T>>
             *const AnyClass
             *const T
             *mut T
             &'a T
             &'a mut T
-            &'a Id<T>
-          and $N others
+            &'a AnyClass
+  = note: required for `{integer}` to implement `MsgSend`

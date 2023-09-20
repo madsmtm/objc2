@@ -32,7 +32,9 @@ use std::os::raw::c_uint;
 #[doc(hidden)]
 pub mod __nsstring;
 mod bool;
+mod message_receiver;
 mod method_encoding_iter;
+mod method_implementation;
 mod nsobject;
 mod nsproxy;
 mod nszone;
@@ -51,6 +53,8 @@ use crate::{ffi, Message};
 pub use self::nsproxy::NSProxy as __NSProxy;
 
 pub use self::bool::Bool;
+pub use self::message_receiver::MessageReceiver;
+pub use self::method_implementation::MethodImplementation;
 pub use self::nsobject::{NSObject, NSObjectProtocol};
 pub use self::nszone::NSZone;
 pub use self::protocol_object::{ImplementedBy, ProtocolObject};
@@ -1279,8 +1283,8 @@ mod tests {
     use core::mem::size_of;
 
     use super::*;
+    use crate::runtime::MessageReceiver;
     use crate::test_utils;
-    use crate::MessageReceiver;
     use crate::{msg_send, sel};
 
     #[test]
@@ -1540,7 +1544,7 @@ mod tests {
         let object = test_utils::custom_object();
         assert_eq!(
             format!("{:?}", &*object),
-            format!("<CustomObject: {:p}>", &*object)
+            format!("CustomObject(<CustomObject: {:p}>)", &*object)
         );
     }
 
@@ -1554,7 +1558,7 @@ mod tests {
 
         let obj = test_utils::custom_object();
         let res: i32 = unsafe {
-            MessageReceiver::send_message(&obj, sel!(test::test::), (1i32, 2i32, 3i32, 4i32))
+            MessageReceiver::send_message(&*obj, sel!(test::test::), (1i32, 2i32, 3i32, 4i32))
         };
         assert_eq!(res, 24);
     }

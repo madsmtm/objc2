@@ -1,14 +1,13 @@
 //! Test that error parameters are handled correctly.
+use objc2::__macro_helpers::{Alloc, CopyOrMutCopy, Init, MsgSend, MsgSendId, New, Other};
 use objc2::rc::{Allocated, Id};
 use objc2::runtime::{AnyClass, AnyObject, Sel};
-use objc2::MessageReceiver;
-use objc2::__macro_helpers::{Alloc, CopyOrMutCopy, Init, MsgSendId, New, Other};
 
 type Result<T> = std::result::Result<T, Id<AnyObject>>;
 
 #[no_mangle]
 unsafe fn error_bool(obj: &AnyObject, sel: Sel, param: u32) -> Result<()> {
-    MessageReceiver::__send_message_error(obj, sel, (param,))
+    MsgSend::send_message_error(obj, sel, (param,))
 }
 
 #[no_mangle]
