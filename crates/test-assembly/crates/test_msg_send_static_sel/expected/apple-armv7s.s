@@ -43,7 +43,7 @@ LBB1_1:
 LPC1_2:
 	add	r2, pc, r2
 	mov	lr, pc
-	b	SYM(<objc2::__macro_helpers::RetainSemantics<3_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	b	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_use_generic
 	.p2align	2

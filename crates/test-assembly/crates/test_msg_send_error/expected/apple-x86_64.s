@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.p2align	4, 0x90
-SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
+SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
 	push	rbp
 	mov	rbp, rsp
 	push	rbx
@@ -76,7 +76,7 @@ _error_new:
 LBB3_2:
 	mov	rdi, qword ptr [rbp - 8]
 	lea	rsi, [rip + l_anon.[ID].4]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 16
@@ -102,7 +102,7 @@ _error_alloc:
 LBB4_2:
 	mov	rdi, qword ptr [rbp - 8]
 	lea	rsi, [rip + l_anon.[ID].5]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 16
@@ -128,7 +128,7 @@ _error_init:
 LBB5_2:
 	mov	rdi, qword ptr [rbp - 8]
 	lea	rsi, [rip + l_anon.[ID].6]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 16
@@ -154,7 +154,7 @@ _error_copy:
 LBB6_2:
 	mov	rdi, qword ptr [rbp - 8]
 	lea	rsi, [rip + l_anon.[ID].7]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 16
@@ -187,7 +187,7 @@ _error_autoreleased:
 LBB7_2:
 	mov	rdi, qword ptr [rbp - 8]
 	lea	rsi, [rip + l_anon.[ID].8]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
 	add	rsp, 16

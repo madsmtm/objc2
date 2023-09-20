@@ -2,7 +2,7 @@
 	.syntax unified
 	.p2align	2
 	.code	32
-SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
+SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	mov	r4, r1
@@ -87,7 +87,7 @@ LBB3_2:
 	ldr	r0, [sp]
 LPC3_0:
 	add	r1, pc, r1
-	bl	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	r1, r0
 	mov	r4, #1
 	mov	r0, r4
@@ -117,7 +117,7 @@ LBB4_2:
 	ldr	r0, [sp]
 LPC4_0:
 	add	r1, pc, r1
-	bl	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	r1, r0
 	mov	r4, #1
 	mov	r0, r4
@@ -147,7 +147,7 @@ LBB5_2:
 	ldr	r0, [sp]
 LPC5_0:
 	add	r1, pc, r1
-	bl	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	r1, r0
 	mov	r4, #1
 	mov	r0, r4
@@ -177,7 +177,7 @@ LBB6_2:
 	ldr	r0, [sp]
 LPC6_0:
 	add	r1, pc, r1
-	bl	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	r1, r0
 	mov	r4, #1
 	mov	r0, r4
@@ -211,7 +211,7 @@ LBB7_2:
 	ldr	r0, [sp]
 LPC7_0:
 	add	r1, pc, r1
-	bl	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	r1, r0
 	mov	r4, #1
 	mov	r0, r4

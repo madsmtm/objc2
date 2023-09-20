@@ -10,7 +10,7 @@ error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
             Option<Id<T>>
             Option<Allocated<T>>
 note: required by a bound in `send_message_id`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
@@ -64,7 +64,7 @@ error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
             Option<Id<T>>
             Option<Allocated<T>>
 note: required by a bound in `send_message_id`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
@@ -97,7 +97,7 @@ error[E0271]: type mismatch resolving `<Id<AnyObject> as MaybeUnwrap>::Input == 
   = note: expected struct `Allocated<_>`
              found struct `Id<AnyObject>`
 note: required by a bound in `send_message_id`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |                                                                   ^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
@@ -112,7 +112,7 @@ error[E0271]: type mismatch resolving `<Id<Allocated<AnyObject>> as MaybeUnwrap>
   = note: expected struct `Allocated<_>`
              found struct `Id<Allocated<AnyObject>>`
 note: required by a bound in `send_message_id`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |                                                                   ^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
@@ -130,7 +130,7 @@ error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
             Option<Id<T>>
             Option<Allocated<T>>
 note: required by a bound in `send_message_id`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
@@ -145,7 +145,7 @@ error[E0271]: type mismatch resolving `<Id<AnyClass> as MaybeUnwrap>::Input == I
   = note: expected struct `Id<AnyObject>`
              found struct `Id<AnyClass>`
 note: required by a bound in `send_message_id`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |                                                                   ^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
@@ -160,7 +160,7 @@ error[E0271]: type mismatch resolving `<Id<NSObject> as MaybeUnwrap>::Input == I
   = note: expected struct `Id<AnyObject>`
              found struct `Id<NSObject>`
 note: required by a bound in `send_message_id`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |                                                                   ^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
@@ -178,7 +178,7 @@ error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
             Option<Id<T>>
             Option<Allocated<T>>
 note: required by a bound in `send_message_id`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
@@ -196,7 +196,7 @@ error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
             Option<Id<T>>
             Option<Allocated<T>>
 note: required by a bound in `send_message_id`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
@@ -212,7 +212,7 @@ error[E0277]: the trait bound `Option<&AnyObject>: MaybeUnwrap` is not satisfied
             Option<Id<T>>
             Option<Allocated<T>>
 note: required by a bound in `send_message_id`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/mod.rs
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
   |     unsafe fn send_message_id<A: MessageArguments, R: MaybeUnwrap<Input = U>>(
   |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`

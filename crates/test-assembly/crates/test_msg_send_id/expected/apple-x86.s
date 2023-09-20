@@ -41,7 +41,7 @@ LBB1_2:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<1_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<1_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_alloc
 	.p2align	4, 0x90
@@ -84,7 +84,7 @@ LBB3_2:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<2_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<2_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_init
 	.p2align	4, 0x90
@@ -127,7 +127,7 @@ LBB5_2:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<3_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_alloc_init
 	.p2align	4, 0x90
@@ -222,7 +222,7 @@ L10$pb:
 LBB10_2:
 	lea	eax, [esi + l_anon.[ID].4-L10$pb]
 	mov	dword ptr [esp], eax
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<4_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_autoreleased
 	.p2align	4, 0x90
@@ -288,7 +288,7 @@ LBB12_2:
 	push	eax
 	push	edi
 	push	esi
-	call	SYM(<objc2::__macro_helpers::RetainSemantics<5_u8> as objc2::__macro_helpers::MsgSendIdFailed>::failed::GENERATED_ID, 0)
+	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_with_out_param
 	.p2align	4, 0x90
