@@ -320,7 +320,7 @@ mod tests {
     use crate::declare::{IvarBool, IvarEncode};
     use crate::mutability::Mutable;
     use crate::rc::Id;
-    use crate::runtime::{MessageReceiver, NSObject};
+    use crate::runtime::NSObject;
     use crate::{declare_class, msg_send, msg_send_id, test_utils, ClassType};
 
     struct TestIvar;
@@ -351,12 +351,7 @@ mod tests {
         let mut obj = test_utils::custom_object();
         let _: () = unsafe { msg_send![&mut obj, setFoo: 42u32] };
 
-        let obj = unsafe {
-            obj.__as_raw_receiver()
-                .cast::<IvarTestObject>()
-                .as_ref()
-                .unwrap()
-        };
+        let obj = unsafe { Id::as_ptr(&obj).cast::<IvarTestObject>().as_ref().unwrap() };
         assert_eq!(*obj.foo, 42);
     }
 

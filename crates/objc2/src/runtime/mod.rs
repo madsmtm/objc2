@@ -1544,7 +1544,7 @@ mod tests {
         let object = test_utils::custom_object();
         assert_eq!(
             format!("{:?}", &*object),
-            format!("<CustomObject: {:p}>", &*object)
+            format!("CustomObject(<CustomObject: {:p}>)", &*object)
         );
     }
 

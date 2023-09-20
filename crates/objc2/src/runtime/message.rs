@@ -635,17 +635,6 @@ unsafe impl<'a> MessageReceiver for &'a AnyClass {
     }
 }
 
-#[cfg(test)]
-mod test_utils_hack {
-    use super::*;
-    use crate::test_utils::CustomObject;
-
-    // TODO: Remove the need for this hack
-    impl private::Sealed for &CustomObject {}
-    impl private::Sealed for &mut CustomObject {}
-    impl private::Sealed for ManuallyDrop<CustomObject> {}
-}
-
 mod message_args_private {
     pub trait Sealed {}
 }
