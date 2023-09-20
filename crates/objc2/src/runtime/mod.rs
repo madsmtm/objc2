@@ -32,6 +32,7 @@ use std::os::raw::c_uint;
 #[doc(hidden)]
 pub mod __nsstring;
 mod bool;
+pub(crate) mod message;
 mod method_encoding_iter;
 mod method_implementation;
 mod nsobject;
@@ -52,6 +53,7 @@ use crate::{ffi, Message};
 pub use self::nsproxy::NSProxy as __NSProxy;
 
 pub use self::bool::Bool;
+pub use self::message::{MessageArguments, MessageReceiver};
 pub use self::method_implementation::MethodImplementation;
 pub use self::nsobject::{NSObject, NSObjectProtocol};
 pub use self::nszone::NSZone;
@@ -1281,8 +1283,8 @@ mod tests {
     use core::mem::size_of;
 
     use super::*;
+    use crate::runtime::MessageReceiver;
     use crate::test_utils;
-    use crate::MessageReceiver;
     use crate::{msg_send, sel};
 
     #[test]

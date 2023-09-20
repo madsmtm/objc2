@@ -20,7 +20,7 @@ use crate::runtime::{AnyClass, AnyProtocol};
 /// not to support dynamically sized types like slices, only `extern type`s
 /// (which is currently unstable).
 ///
-/// [`MessageReceiver`]: crate::MessageReceiver
+/// [`MessageReceiver`]: crate::runtime::MessageReceiver
 /// [`Encoding::Object`]: crate::Encoding::Object
 ///
 ///

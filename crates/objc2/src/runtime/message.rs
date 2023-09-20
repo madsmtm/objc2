@@ -313,8 +313,7 @@ fn panic_verify(cls: &AnyClass, sel: Sel, err: &crate::runtime::VerificationErro
     )
 }
 
-// TODO: Make this fully private
-pub(crate) mod private {
+mod private {
     pub trait Sealed {}
 }
 
@@ -631,6 +630,17 @@ unsafe impl<'a> MessageReceiver for &'a AnyClass {
         let ptr: *const AnyClass = self;
         (ptr as *mut AnyClass).cast()
     }
+}
+
+#[cfg(test)]
+mod test_utils_hack {
+    use super::*;
+    use crate::test_utils::CustomObject;
+
+    // TODO: Remove the need for this hack
+    impl private::Sealed for &CustomObject {}
+    impl private::Sealed for &mut CustomObject {}
+    impl private::Sealed for ManuallyDrop<CustomObject> {}
 }
 
 mod message_args_private {

@@ -1,8 +1,7 @@
 //! Test that error parameters are handled correctly.
-use objc2::rc::{Allocated, Id};
-use objc2::runtime::{AnyClass, AnyObject, Sel};
-use objc2::MessageReceiver;
 use objc2::__macro_helpers::{Alloc, CopyOrMutCopy, Init, MsgSendId, New, Other};
+use objc2::rc::{Allocated, Id};
+use objc2::runtime::{AnyClass, AnyObject, MessageReceiver, Sel};
 
 type Result<T> = std::result::Result<T, Id<AnyObject>>;
 

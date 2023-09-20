@@ -21,7 +21,7 @@ LPC0_0:
 
 	.p2align	2
 	.code	32
-SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
+SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
 	push	{r7, lr}
 	mov	r7, sp
 	bl	_objc_retain
@@ -58,7 +58,7 @@ _error_bool:
 	pop	{r4, r7, pc}
 LBB2_2:
 	ldr	r0, [sp]
-	bl	SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	bl	SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	r4, r0
 	mov	r0, r4
 	sub	sp, r7, #4
@@ -232,31 +232,31 @@ l_anon.[ID].2:
 	.p2align	2, 0x0
 l_anon.[ID].3:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000\013\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\n\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].4:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000\020\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\017\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].5:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000\025\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\024\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].6:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000\032\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\031\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].7:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000\037\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\036\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].8:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000$\000\000\000\005\000\000"
+	.asciz	"6\000\000\000#\000\000\000\005\000\000"
 
 .subsections_via_symbols

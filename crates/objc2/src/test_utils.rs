@@ -4,8 +4,8 @@ use std::os::raw::c_char;
 use std::sync::Once;
 
 use crate::declare::{ClassBuilder, ProtocolBuilder};
-use crate::runtime::{AnyClass, AnyObject, AnyProtocol, Sel};
-use crate::{ffi, Encode, Encoding, MessageReceiver};
+use crate::runtime::{AnyClass, AnyObject, AnyProtocol, MessageReceiver, Sel};
+use crate::{ffi, Encode, Encoding};
 use crate::{msg_send, sel};
 
 #[derive(Debug)]
@@ -20,11 +20,6 @@ impl CustomObject {
         CustomObject { obj }
     }
 }
-
-// TODO: Remove the need for this hack
-impl crate::message::private::Sealed for &CustomObject {}
-impl crate::message::private::Sealed for &mut CustomObject {}
-impl crate::message::private::Sealed for ManuallyDrop<CustomObject> {}
 
 unsafe impl MessageReceiver for &CustomObject {
     type __Inner = AnyObject;

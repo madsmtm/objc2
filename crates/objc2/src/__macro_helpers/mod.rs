@@ -6,12 +6,14 @@ use std::collections::HashSet;
 
 use crate::declare::ClassBuilder;
 use crate::encode::Encode;
-use crate::message::__TupleExtender;
 use crate::rc::{Allocated, Id};
+use crate::runtime::message::__TupleExtender;
 #[cfg(all(debug_assertions, feature = "verify"))]
 use crate::runtime::MethodDescription;
-use crate::runtime::{AnyClass, AnyObject, AnyProtocol, MethodImplementation, Sel};
-use crate::{Message, MessageArguments, MessageReceiver};
+use crate::runtime::{
+    AnyClass, AnyObject, AnyProtocol, MessageArguments, MessageReceiver, MethodImplementation, Sel,
+};
+use crate::Message;
 
 pub use core::borrow::{Borrow, BorrowMut};
 pub use core::cell::UnsafeCell;

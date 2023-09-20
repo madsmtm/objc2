@@ -717,12 +717,12 @@ macro_rules! __class_inner {
 ///
 /// Variadic arguments are currently not supported.
 ///
-/// [`MessageReceiver`]: crate::MessageReceiver
+/// [`MessageReceiver`]: crate::runtime::MessageReceiver
 /// [`rc::Id`]: crate::rc::Id
 /// [`ClassType`]: crate::ClassType
 /// [`Encode`]: crate::Encode
 /// [`sel!`]: crate::sel
-/// [`MessageReceiver::send_message`]: crate::MessageReceiver::send_message
+/// [`MessageReceiver::send_message`]: crate::runtime::MessageReceiver::send_message
 ///
 ///
 /// # `bool` handling
@@ -1007,7 +1007,7 @@ macro_rules! __msg_send_helper {
         // 1-tuple if there is only one.
         //
         // And use `::<_, _>` for better UI
-        result = $crate::MessageReceiver::$fn::<_, _>($($fn_args)+, $crate::sel!($($selector)*), ($($argument,)*));
+        result = $crate::runtime::MessageReceiver::$fn::<_, _>($($fn_args)+, $crate::sel!($($selector)*), ($($argument,)*));
         result
     });
 }
@@ -1117,7 +1117,7 @@ macro_rules! msg_send_bool {
 /// [`Id::retain`], [`Id::drop`] and [`Id::autorelease`] for that.
 ///
 /// [sel-families]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#arc-method-families
-/// [`MessageReceiver`]: crate::MessageReceiver
+/// [`MessageReceiver`]: crate::runtime::MessageReceiver
 /// [`Id::retain_autoreleased`]: crate::rc::Id::retain_autoreleased
 /// [arc-retainable]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments
 /// [#173]: https://github.com/madsmtm/objc2/pull/173

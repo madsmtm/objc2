@@ -2,8 +2,8 @@ use objc2_encode::Encoding;
 
 use crate::encode::Encode;
 use crate::rc::{Allocated, Id};
-use crate::runtime::AnyObject;
-use crate::{ClassType, Message, MessageReceiver};
+use crate::runtime::{AnyObject, MessageReceiver};
+use crate::{ClassType, Message};
 
 use super::{CopyOrMutCopy, Init, MaybeUnwrap, New, Other};
 use crate::mutability;

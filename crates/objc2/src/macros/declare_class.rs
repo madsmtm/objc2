@@ -590,7 +590,7 @@ macro_rules! __declare_class_inner {
                         // most Objective-C code in the wild don't contain
                         // this; but we _are_ ARC, so we must do this.
                         unsafe {
-                            $crate::MessageReceiver::__send_super_message_static(
+                            $crate::runtime::MessageReceiver::__send_super_message_static(
                                 __objc2_self,
                                 __objc2_cmd, // Reuse the selector
                                 (), // No arguments

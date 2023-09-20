@@ -20,10 +20,10 @@ SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runti
 .Lfunc_end0:
 	.size	SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end0-SYM(objc2[CRATE_ID]::__macro_helpers::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 
-	.section	.text.unlikely.SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),"ax",@progbits
+	.section	.text.unlikely.SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),"ax",@progbits
 	.p2align	4, 0x90
-	.type	SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),@function
-SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
+	.type	SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),@function
+SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
 	push	rax
 	call	qword ptr [rip + objc_retain@GOTPCREL]
 	test	rax, rax
@@ -37,7 +37,7 @@ SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyO
 	call	qword ptr [rip + SYM(core::option::expect_failed::GENERATED_ID, 0)@GOTPCREL]
 	ud2
 .Lfunc_end1:
-	.size	SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end1-SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	.size	SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end1-SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 
 	.section	.text.error_bool,"ax",@progbits
 	.globl	error_bool
@@ -69,7 +69,7 @@ error_bool:
 	ret
 .LBB2_2:
 	mov	rdi, qword ptr [rsp + 8]
-	call	SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	jmp	.LBB2_3
 .Lfunc_end2:
 	.size	error_bool, .Lfunc_end2-error_bool
@@ -290,7 +290,7 @@ error_autoreleased:
 	.p2align	3, 0x0
 .Lanon.[ID].3:
 	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\013\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000\n\000\000\000\005\000\000"
 	.size	.Lanon.[ID].3, 24
 
 	.type	.Lanon.[ID].4,@object
@@ -298,7 +298,7 @@ error_autoreleased:
 	.p2align	3, 0x0
 .Lanon.[ID].4:
 	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\020\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000\017\000\000\000\005\000\000"
 	.size	.Lanon.[ID].4, 24
 
 	.type	.Lanon.[ID].5,@object
@@ -306,7 +306,7 @@ error_autoreleased:
 	.p2align	3, 0x0
 .Lanon.[ID].5:
 	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\025\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000\024\000\000\000\005\000\000"
 	.size	.Lanon.[ID].5, 24
 
 	.type	.Lanon.[ID].6,@object
@@ -314,7 +314,7 @@ error_autoreleased:
 	.p2align	3, 0x0
 .Lanon.[ID].6:
 	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\032\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000\031\000\000\000\005\000\000"
 	.size	.Lanon.[ID].6, 24
 
 	.type	.Lanon.[ID].7,@object
@@ -322,7 +322,7 @@ error_autoreleased:
 	.p2align	3, 0x0
 .Lanon.[ID].7:
 	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\037\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000\036\000\000\000\005\000\000"
 	.size	.Lanon.[ID].7, 24
 
 	.type	.Lanon.[ID].8,@object
@@ -330,7 +330,7 @@ error_autoreleased:
 	.p2align	3, 0x0
 .Lanon.[ID].8:
 	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000$\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000#\000\000\000\005\000\000"
 	.size	.Lanon.[ID].8, 24
 
 	.section	".note.GNU-stack","",@progbits

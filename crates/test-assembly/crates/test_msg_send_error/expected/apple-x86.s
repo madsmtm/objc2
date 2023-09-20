@@ -29,7 +29,7 @@ LBB0_2:
 	call	SYM(core::option::expect_failed::GENERATED_ID, 0)
 
 	.p2align	4, 0x90
-SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
+SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
 	push	ebp
 	mov	ebp, esp
 	push	esi
@@ -84,7 +84,7 @@ _error_bool:
 	ret
 LBB2_1:
 	mov	ecx, dword ptr [ebp - 8]
-	call	SYM(objc2[CRATE_ID]::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	add	esp, 4
 	pop	esi
 	pop	ebp
@@ -308,31 +308,31 @@ l_anon.[ID].2:
 	.p2align	2, 0x0
 l_anon.[ID].3:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000\013\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\n\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].4:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000\020\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\017\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].5:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000\025\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\024\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].6:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000\032\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\031\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].7:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000\037\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\036\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].8:
 	.long	l_anon.[ID].2
-	.asciz	"6\000\000\000$\000\000\000\005\000\000"
+	.asciz	"6\000\000\000#\000\000\000\005\000\000"
 
 .subsections_via_symbols

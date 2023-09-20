@@ -1,7 +1,6 @@
 //! Test that out parameters are handled correctly.
 use objc2::rc::Id;
-use objc2::runtime::{NSObject, Sel};
-use objc2::MessageReceiver;
+use objc2::runtime::{MessageReceiver, NSObject, Sel};
 
 #[no_mangle]
 unsafe fn nonnull_nonnull(obj: &NSObject, sel: Sel, param: &mut Id<NSObject>) -> usize {
