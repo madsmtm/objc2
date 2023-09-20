@@ -19,10 +19,12 @@ mod private {
 pub trait MethodImplementation: private::Sealed + Sized {
     /// The callee type of the method.
     type Callee: ?Sized + RefEncode;
-    /// The return type of the method.
-    type Ret: EncodeReturn;
+
     /// The argument types of the method.
-    type Args: EncodeArguments;
+    type Arguments: EncodeArguments;
+
+    /// The return type of the method.
+    type Return: EncodeReturn;
 
     #[doc(hidden)]
     fn __imp(self) -> Imp;
@@ -44,8 +46,8 @@ macro_rules! method_impl_inner {
             $($t: EncodeArgument,)*
         {
             type Callee = T::__Inner;
-            type Ret = R;
-            type Args = ($($t,)*);
+            type Arguments = ($($t,)*);
+            type Return = R;
 
             fn __imp(self) -> Imp {
                 // SAFETY: Transmuting to an `unsafe` function pointer
@@ -66,8 +68,8 @@ macro_rules! method_impl_inner {
             $($t: EncodeArgument,)*
         {
             type Callee = T;
-            type Ret = IdReturnValue;
-            type Args = ($($t,)*);
+            type Arguments = ($($t,)*);
+            type Return = IdReturnValue;
 
             fn __imp(self) -> Imp {
                 // SAFETY: `Allocated<T>` is the same as `NonNull<T>`, except

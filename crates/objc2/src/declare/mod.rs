@@ -241,7 +241,7 @@ impl ClassBuilder {
     /// `-release` used by ARC, will not be present otherwise.
     pub fn root<F>(name: &str, intitialize_fn: F) -> Option<Self>
     where
-        F: MethodImplementation<Callee = AnyClass, Args = (), Ret = ()>,
+        F: MethodImplementation<Callee = AnyClass, Arguments = (), Return = ()>,
     {
         Self::with_superclass(name, None).map(|mut this| {
             unsafe { this.add_class_method(sel!(initialize), intitialize_fn) };
@@ -274,8 +274,8 @@ impl ClassBuilder {
         unsafe {
             self.add_method_inner(
                 sel,
-                F::Args::ENCODINGS,
-                &F::Ret::ENCODING_RETURN,
+                F::Arguments::ENCODINGS,
+                &F::Return::ENCODING_RETURN,
                 func.__imp(),
             )
         }
@@ -338,8 +338,8 @@ impl ClassBuilder {
         unsafe {
             self.add_class_method_inner(
                 sel,
-                F::Args::ENCODINGS,
-                &F::Ret::ENCODING_RETURN,
+                F::Arguments::ENCODINGS,
+                &F::Return::ENCODING_RETURN,
                 func.__imp(),
             )
         }

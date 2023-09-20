@@ -45,6 +45,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Relaxed the requirements for receivers in `MethodImplementation`; now,
   anything that implements `MessageReceiver` can be used as the receiver of
   a method.
+* **BREAKING**: Renamed the associated types `Ret` and `Args` on
+  `MethodImplementation` to `Return` and `Arguments`.
 
 ### Deprecated
 * Soft deprecated using `msg_send!` without a comma between arguments (i.e.
