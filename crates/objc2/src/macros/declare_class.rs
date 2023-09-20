@@ -83,8 +83,9 @@
 /// On instance methods, you can freely choose between different types of
 /// receivers, e.g. `&self`, `this: *const Self`, `&mut self`, and so on. Note
 /// though that using raw pointers requires the function to be `unsafe`, and
-/// using `&mut self` requires the class' mutability to be [`IsMutable`].
-/// If you require mutating your class' instance variables, consider using
+/// using `&mut self` requires the class' mutability to be
+/// [`IsAllowedMutable`].
+/// If you require mutation of your class' instance variables, consider using
 /// [`Cell`] or similar instead.
 ///
 /// The desired selector can be specified using the `#[method(my:selector:)]`
@@ -114,7 +115,7 @@
 ///
 /// ["associated functions"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
 /// ["methods"]: https://doc.rust-lang.org/reference/items/associated-items.html#methods
-/// [`IsMutable`]: crate::mutability::IsMutable
+/// [`IsAllowedMutable`]: crate::mutability::IsAllowedMutable
 /// [`Cell`]: core::cell::Cell
 /// [open an issue]: https://github.com/madsmtm/objc2/issues/new
 /// [`msg_send!`]: crate::msg_send

@@ -3,7 +3,7 @@ use core::ptr::{self, NonNull};
 
 use crate::__macro_helpers::{ConvertArgument, ConvertReturn};
 use crate::encode::{Encode, EncodeArguments, EncodeReturn};
-use crate::mutability::IsMutable;
+use crate::mutability::{IsAllowedMutable, IsMutable};
 use crate::rc::Id;
 use crate::runtime::{AnyClass, AnyObject, Imp, Sel};
 use crate::{ClassType, Message};
@@ -573,10 +573,8 @@ unsafe impl<'a, T: ?Sized + Message> MessageReceiver for &'a T {
     }
 }
 
-// TODO: Use `T: IsMutable + Root` here once we can handle `init` methods
-// better in `declare_class!`.
-impl<'a, T: ?Sized + Message> private::Sealed for &'a mut T {}
-unsafe impl<'a, T: ?Sized + Message> MessageReceiver for &'a mut T {
+impl<'a, T: ?Sized + Message + IsAllowedMutable> private::Sealed for &'a mut T {}
+unsafe impl<'a, T: ?Sized + Message + IsAllowedMutable> MessageReceiver for &'a mut T {
     type __Inner = T;
 
     #[inline]

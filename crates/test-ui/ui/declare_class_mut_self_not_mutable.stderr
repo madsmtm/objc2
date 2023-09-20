@@ -1,4 +1,4 @@
-error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsMutable` is not satisfied
+error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
  --> ui/declare_class_mut_self_not_mutable.rs
   |
   | / declare_class!(
@@ -10,13 +10,15 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsMutable`
   | | );
   | | ^
   | | |
-  | |_the trait `mutability::MutabilityIsMutable` is not implemented for `InteriorMutable`
+  | |_the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
   |   required by a bound introduced by this call
   |
-  = help: the following other types implement trait `mutability::MutabilityIsMutable`:
+  = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
+            Root
             Mutable
+            ImmutableWithMutableSubclass<MS>
             MutableWithImmutableSuperclass<IS>
-  = note: required for `CustomObject` to implement `IsMutable`
+  = note: required for `CustomObject` to implement `IsAllowedMutable`
   = note: required for `extern "C" fn(&mut CustomObject, objc2::runtime::Sel) -> &mut CustomObject` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
@@ -28,7 +30,7 @@ note: required by a bound in `ClassBuilder::add_method`
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsMutable` is not satisfied
+error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
  --> ui/declare_class_mut_self_not_mutable.rs
   |
   | / declare_class!(
@@ -40,13 +42,15 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsMutable`
   | | );
   | | ^
   | | |
-  | |_the trait `mutability::MutabilityIsMutable` is not implemented for `InteriorMutable`
+  | |_the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
   |   required by a bound introduced by this call
   |
-  = help: the following other types implement trait `mutability::MutabilityIsMutable`:
+  = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
+            Root
             Mutable
+            ImmutableWithMutableSubclass<MS>
             MutableWithImmutableSuperclass<IS>
-  = note: required for `CustomObject` to implement `IsMutable`
+  = note: required for `CustomObject` to implement `IsAllowedMutable`
   = note: required for `extern "C" fn(&mut CustomObject, objc2::runtime::Sel)` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
@@ -58,7 +62,7 @@ note: required by a bound in `ClassBuilder::add_method`
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsMutable` is not satisfied
+error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
  --> ui/declare_class_mut_self_not_mutable.rs
   |
   | / declare_class!(
@@ -70,13 +74,15 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsMutable`
   | | );
   | | ^
   | | |
-  | |_the trait `mutability::MutabilityIsMutable` is not implemented for `InteriorMutable`
+  | |_the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
   |   required by a bound introduced by this call
   |
-  = help: the following other types implement trait `mutability::MutabilityIsMutable`:
+  = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
+            Root
             Mutable
+            ImmutableWithMutableSubclass<MS>
             MutableWithImmutableSuperclass<IS>
-  = note: required for `CustomObject` to implement `IsMutable`
+  = note: required for `CustomObject` to implement `IsAllowedMutable`
   = note: required for `extern "C" fn(&mut CustomObject, objc2::runtime::Sel) -> IdReturnValue` to implement `MethodImplementation`
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
@@ -87,3 +93,25 @@ note: required by a bound in `ClassBuilder::add_method`
   |         F: MethodImplementation<Callee = T>,
   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
+ --> ui/declare_class_mut_self_not_mutable.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
+  |
+  = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
+            Root
+            Mutable
+            ImmutableWithMutableSubclass<MS>
+            MutableWithImmutableSuperclass<IS>
+  = note: required for `CustomObject` to implement `IsAllowedMutable`
+  = note: required for `&mut CustomObject` to implement `MessageReceiver`
+  = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<&mut CustomObject, Id<CustomObject>>`
+  = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

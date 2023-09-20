@@ -2,9 +2,9 @@ use core::mem;
 
 use crate::__macro_helpers::IdReturnValue;
 use crate::encode::{EncodeArgument, EncodeArguments, EncodeReturn, RefEncode};
-use crate::mutability::IsMutable;
+use crate::mutability::IsAllowedMutable;
 use crate::rc::Allocated;
-use crate::runtime::{AnyClass, AnyObject, Imp, Sel};
+use crate::runtime::{AnyClass, Imp, Sel};
 use crate::Message;
 
 mod private {
@@ -116,14 +116,11 @@ macro_rules! method_impl_allocated {
 macro_rules! method_impl_abi {
     ($abi:literal; $($t:ident),*) => {
         method_impl_generic!(<'a> T: Message, R, extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
-        method_impl_generic!(<'a> T: Message + IsMutable, R, extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
+        method_impl_generic!(<'a> T: Message + IsAllowedMutable, R, extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
         method_impl_generic!(<> T: Message, R, unsafe extern $abi fn(*const T, Sel $(, $t)*) -> R, $($t),*);
         method_impl_generic!(<> T: Message, R, unsafe extern $abi fn(*mut T, Sel $(, $t)*) -> R, $($t),*);
         method_impl_generic!(<'a> T: Message, R, unsafe extern $abi fn(&'a T, Sel $(, $t)*) -> R, $($t),*);
-        method_impl_generic!(<'a> T: Message + IsMutable, R, unsafe extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
-
-        method_impl_concrete!(<'a> AnyObject, R, extern $abi fn(&'a mut AnyObject, Sel $(, $t)*) -> R, $($t),*);
-        method_impl_concrete!(<'a> AnyObject, R, unsafe extern $abi fn(&'a mut AnyObject, Sel $(, $t)*) -> R, $($t),*);
+        method_impl_generic!(<'a> T: Message + IsAllowedMutable, R, unsafe extern $abi fn(&'a mut T, Sel $(, $t)*) -> R, $($t),*);
 
         method_impl_concrete!(<'a> AnyClass, R, extern $abi fn(&'a AnyClass, Sel $(, $t)*) -> R, $($t),*);
         method_impl_concrete!(<> AnyClass, R, unsafe extern $abi fn(*const AnyClass, Sel $(, $t)*) -> R, $($t),*);

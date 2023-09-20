@@ -1,0 +1,42 @@
+error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
+ --> ui/msg_send_not_allowed_mutable.rs
+  |
+  |     let _: () = unsafe { msg_send![&mut *obj, test] };
+  |                          ---------------^^^^-------
+  |                          |              |
+  |                          |              the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
+  |                          required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
+            Root
+            Mutable
+            ImmutableWithMutableSubclass<MS>
+            MutableWithImmutableSuperclass<IS>
+  = note: required for `NSThread` to implement `IsAllowedMutable`
+  = note: required for `&mut NSThread` to implement `runtime::message::private::Sealed`
+note: required by a bound in `send_message`
+ --> $WORKSPACE/crates/objc2/src/runtime/message.rs
+  |
+  | pub unsafe trait MessageReceiver: private::Sealed + Sized {
+  |                                   ^^^^^^^^^^^^^^^ required by this bound in `MessageReceiver::send_message`
+...
+  |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
+  |               ------------ required by a bound in this associated function
+
+error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
+ --> ui/msg_send_not_allowed_mutable.rs
+  |
+  |     let _: Id<NSThread> = unsafe { msg_send_id![obj, test] };
+  |                                    -------------^^^-------
+  |                                    |            |
+  |                                    |            the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
+  |                                    required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
+            Root
+            Mutable
+            ImmutableWithMutableSubclass<MS>
+            MutableWithImmutableSuperclass<IS>
+  = note: required for `NSThread` to implement `IsAllowedMutable`
+  = note: required for `&mut NSThread` to implement `MessageReceiver`
+  = note: required for `RetainSemantics<5>` to implement `MsgSendId<&mut NSThread, Id<_>>`

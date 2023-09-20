@@ -13,7 +13,7 @@ declare_class!(
 
     unsafe impl CustomObject {
         #[method(initTest)]
-        fn initTest(&mut self) -> &mut Self {
+        fn init_test(&mut self) -> &mut Self {
             unimplemented!()
         }
 

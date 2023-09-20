@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added the following traits to the `mutability` module (see the documentation
   for motivation and usage info):
   - `HasStableHash`.
+  - `IsAllowedMutable`.
   - `IsMainThreadOnly`.
   - `CounterpartOrSelf`.
 * Added new `encode` traits `EncodeReturn`, `EncodeArgument` and
@@ -57,6 +58,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 * Fixed the name of the protocol that `NSObjectProtocol` references.
 * Allow cloning `Id<AnyObject>`.
+* **BREAKING**: Restrict message sending to `&mut` references to things that
+  implement `IsAllowedMutable`.
 
 ### Removed
 * **BREAKING**: Removed `ProtocolType` implementation for `NSObject`.
