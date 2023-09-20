@@ -115,8 +115,6 @@
 //! assert_eq!(n, 12);
 //! ```
 
-#[cfg(test)]
-mod declare_class_tests;
 mod ivar;
 mod ivar_bool;
 mod ivar_drop;

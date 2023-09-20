@@ -1,11 +1,11 @@
 #![deny(deprecated, unreachable_code)]
 use core::ptr;
 
-use crate::declare::IvarEncode;
-use crate::mutability::{Immutable, Mutable};
-use crate::rc::Id;
-use crate::runtime::NSObject;
-use crate::{declare_class, extern_methods, sel, ClassType};
+use objc2::declare::IvarEncode;
+use objc2::mutability::{Immutable, Mutable};
+use objc2::rc::Id;
+use objc2::runtime::NSObject;
+use objc2::{declare_class, extern_methods, sel, ClassType};
 
 // Test that adding the `deprecated` attribute does not mean that warnings
 // when using the method internally are output.
@@ -478,52 +478,63 @@ declare_class!(
     }
 );
 
-#[cfg(all(target_pointer_width = "64", not(feature = "catch-all")))]
-mod out_param {
-    use super::*;
+extern_methods!(
+    unsafe impl OutParam {
+        #[method_id(new)]
+        fn new() -> Id<Self>;
 
-    extern_methods!(
-        unsafe impl OutParam {
-            #[method_id(new)]
-            fn new() -> Id<Self>;
+        #[method(unsupported1:)]
+        fn unsupported1(_param: &mut Id<Self>);
 
-            #[method(unsupported1:)]
-            fn unsupported1(_param: &mut Id<Self>);
+        #[method(unsupported2:)]
+        fn unsupported2(_param: Option<&mut Id<Self>>);
 
-            #[method(unsupported2:)]
-            fn unsupported2(_param: Option<&mut Id<Self>>);
+        #[method(unsupported3:)]
+        fn unsupported3(_param: &mut Option<Id<Self>>);
 
-            #[method(unsupported3:)]
-            fn unsupported3(_param: &mut Option<Id<Self>>);
-
-            #[method(unsupported4:)]
-            fn unsupported4(_param: Option<&mut Option<Id<Self>>>);
-        }
-    );
-
-    #[test]
-    #[should_panic = "`&mut Id<_>` is not supported in `declare_class!` yet"]
-    fn out_param1() {
-        let mut param = OutParam::new();
-        OutParam::unsupported1(&mut param);
+        #[method(unsupported4:)]
+        fn unsupported4(_param: Option<&mut Option<Id<Self>>>);
     }
+);
 
-    #[test]
-    #[should_panic = "`Option<&mut Id<_>>` is not supported in `declare_class!` yet"]
-    fn out_param2() {
-        OutParam::unsupported2(None);
-    }
+#[test]
+#[should_panic = "`&mut Id<_>` is not supported in `declare_class!` yet"]
+#[cfg_attr(
+    not(all(target_pointer_width = "64", not(feature = "catch-all"))),
+    ignore = "unwinds through FFI boundary"
+)]
+fn out_param1() {
+    let mut param = OutParam::new();
+    OutParam::unsupported1(&mut param);
+}
 
-    #[test]
-    #[should_panic = "`&mut Option<Id<_>>` is not supported in `declare_class!` yet"]
-    fn out_param3() {
-        let mut param = Some(OutParam::new());
-        OutParam::unsupported3(&mut param);
-    }
+#[test]
+#[should_panic = "`Option<&mut Id<_>>` is not supported in `declare_class!` yet"]
+#[cfg_attr(
+    not(all(target_pointer_width = "64", not(feature = "catch-all"))),
+    ignore = "unwinds through FFI boundary"
+)]
+fn out_param2() {
+    OutParam::unsupported2(None);
+}
 
-    #[test]
-    #[should_panic = "`Option<&mut Option<Id<_>>>` is not supported in `declare_class!` yet"]
-    fn out_param4() {
-        OutParam::unsupported4(None);
-    }
+#[test]
+#[should_panic = "`&mut Option<Id<_>>` is not supported in `declare_class!` yet"]
+#[cfg_attr(
+    not(all(target_pointer_width = "64", not(feature = "catch-all"))),
+    ignore = "unwinds through FFI boundary"
+)]
+fn out_param3() {
+    let mut param = Some(OutParam::new());
+    OutParam::unsupported3(&mut param);
+}
+
+#[test]
+#[should_panic = "`Option<&mut Option<Id<_>>>` is not supported in `declare_class!` yet"]
+#[cfg_attr(
+    not(all(target_pointer_width = "64", not(feature = "catch-all"))),
+    ignore = "unwinds through FFI boundary"
+)]
+fn out_param4() {
+    OutParam::unsupported4(None);
 }
