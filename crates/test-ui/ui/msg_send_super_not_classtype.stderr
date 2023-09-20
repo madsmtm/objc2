@@ -12,7 +12,7 @@ error[E0277]: the trait bound `AnyObject: ClassType` is not satisfied
             NSObject
             __NSProxy
 note: required by a bound in `__send_super_message_static`
- --> $WORKSPACE/crates/objc2/src/message/mod.rs
+ --> $WORKSPACE/crates/objc2/src/message.rs
   |
   |     unsafe fn __send_super_message_static<A, R>(self, sel: Sel, args: A) -> R
   |               --------------------------- required by a bound in this associated function
@@ -34,7 +34,7 @@ error[E0277]: the trait bound `AnyObject: ClassType` is not satisfied
             NSObject
             __NSProxy
 note: required by a bound in `__send_super_message_static`
- --> $WORKSPACE/crates/objc2/src/message/mod.rs
+ --> $WORKSPACE/crates/objc2/src/message.rs
   |
   |     unsafe fn __send_super_message_static<A, R>(self, sel: Sel, args: A) -> R
   |               --------------------------- required by a bound in this associated function

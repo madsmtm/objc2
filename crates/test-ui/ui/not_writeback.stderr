@@ -18,7 +18,7 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
   = note: required for `&mut Id<NSObject>` to implement `EncodeReturn`
   = note: required for `&mut Id<NSObject>` to implement `ConvertReturn`
 note: required by a bound in `send_message`
- --> $WORKSPACE/crates/objc2/src/message/mod.rs
+ --> $WORKSPACE/crates/objc2/src/message.rs
   |
   |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
   |               ------------ required by a bound in this associated function
@@ -50,7 +50,7 @@ error[E0277]: the trait bound `Id<NSObject>: Encode` is not satisfied
   = note: required for `Id<NSObject>` to implement `ConvertArgument`
   = note: required for `(Id<NSObject>,)` to implement `MessageArguments`
 note: required by a bound in `send_message`
- --> $WORKSPACE/crates/objc2/src/message/mod.rs
+ --> $WORKSPACE/crates/objc2/src/message.rs
   |
   |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
   |               ------------ required by a bound in this associated function
@@ -83,7 +83,7 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
   = note: required for `&Id<NSObject>` to implement `ConvertArgument`
   = note: required for `(&Id<NSObject>,)` to implement `MessageArguments`
 note: required by a bound in `send_message`
- --> $WORKSPACE/crates/objc2/src/message/mod.rs
+ --> $WORKSPACE/crates/objc2/src/message.rs
   |
   |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
   |               ------------ required by a bound in this associated function
@@ -118,7 +118,7 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
   = note: required for `Option<&Id<NSObject>>` to implement `ConvertArgument`
   = note: required for `(Option<&Id<NSObject>>,)` to implement `MessageArguments`
 note: required by a bound in `send_message`
- --> $WORKSPACE/crates/objc2/src/message/mod.rs
+ --> $WORKSPACE/crates/objc2/src/message.rs
   |
   |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
   |               ------------ required by a bound in this associated function
@@ -151,7 +151,7 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
   = note: required for `*mut Id<NSObject>` to implement `ConvertArgument`
   = note: required for `(*mut Id<NSObject>,)` to implement `MessageArguments`
 note: required by a bound in `send_message`
- --> $WORKSPACE/crates/objc2/src/message/mod.rs
+ --> $WORKSPACE/crates/objc2/src/message.rs
   |
   |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
   |               ------------ required by a bound in this associated function
@@ -185,7 +185,7 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
   = note: required for `&mut &mut Id<NSObject>` to implement `ConvertArgument`
   = note: required for `(&mut &mut Id<NSObject>,)` to implement `MessageArguments`
 note: required by a bound in `send_message`
- --> $WORKSPACE/crates/objc2/src/message/mod.rs
+ --> $WORKSPACE/crates/objc2/src/message.rs
   |
   |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
   |               ------------ required by a bound in this associated function

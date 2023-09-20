@@ -1,5 +1,4 @@
-use core::mem;
-use core::mem::ManuallyDrop;
+use core::mem::{self, ManuallyDrop};
 use core::ptr::{self, NonNull};
 
 use crate::__macro_helpers::{ConvertArgument, ConvertReturn};
@@ -37,6 +36,225 @@ macro_rules! conditional_try {
             }
         }
     }};
+}
+
+#[cfg(feature = "apple")]
+mod msg_send_primitive {
+    #[allow(unused_imports)]
+    use core::mem;
+
+    use super::MessageArguments;
+    use crate::encode::EncodeReturn;
+    #[allow(unused_imports)]
+    use crate::encode::Encoding;
+    use crate::ffi;
+    use crate::runtime::{AnyClass, AnyObject, Imp, Sel};
+
+    /// On the below architectures we can statically find the correct method to
+    /// call from the return type, by looking at its `EncodeReturn` impl.
+    #[allow(clippy::missing_safety_doc)]
+    unsafe trait MsgSendFn: EncodeReturn {
+        const MSG_SEND: Imp;
+        const MSG_SEND_SUPER: Imp;
+    }
+
+    #[cfg(target_arch = "aarch64")]
+    /// `objc_msgSend_stret` is not even available in arm64.
+    ///
+    /// <https://twitter.com/gparker/status/378079715824660480>
+    unsafe impl<T: EncodeReturn> MsgSendFn for T {
+        const MSG_SEND: Imp = ffi::objc_msgSend;
+        const MSG_SEND_SUPER: Imp = ffi::objc_msgSendSuper;
+    }
+
+    #[cfg(target_arch = "arm")]
+    /// Double-word sized fundamental data types don't use stret, but any
+    /// composite type larger than 4 bytes does.
+    ///
+    /// <https://web.archive.org/web/20191016000656/http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042f/IHI0042F_aapcs.pdf>
+    /// <https://developer.arm.com/documentation/ihi0042/latest>
+    unsafe impl<T: EncodeReturn> MsgSendFn for T {
+        const MSG_SEND: Imp = {
+            if let Encoding::LongLong | Encoding::ULongLong | Encoding::Double = T::ENCODING_RETURN
+            {
+                ffi::objc_msgSend
+            } else if mem::size_of::<T>() <= 4 {
+                ffi::objc_msgSend
+            } else {
+                ffi::objc_msgSend_stret
+            }
+        };
+        const MSG_SEND_SUPER: Imp = {
+            if let Encoding::LongLong | Encoding::ULongLong | Encoding::Double = T::ENCODING_RETURN
+            {
+                ffi::objc_msgSendSuper
+            } else if mem::size_of::<T>() <= 4 {
+                ffi::objc_msgSendSuper
+            } else {
+                ffi::objc_msgSendSuper_stret
+            }
+        };
+    }
+
+    #[cfg(target_arch = "x86")]
+    /// Structures 1 or 2 bytes in size are placed in EAX.
+    /// Structures 4 or 8 bytes in size are placed in: EAX and EDX.
+    /// Structures of other sizes are placed at the address supplied by the caller.
+    ///
+    /// <https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/LowLevelABI/130-IA-32_Function_Calling_Conventions/IA32.html>
+    unsafe impl<T: EncodeReturn> MsgSendFn for T {
+        const MSG_SEND: Imp = {
+            // See https://github.com/apple-oss-distributions/objc4/blob/objc4-818.2/runtime/message.h#L156-L172
+            if let Encoding::Float | Encoding::Double | Encoding::LongDouble = T::ENCODING_RETURN {
+                ffi::objc_msgSend_fpret
+            } else if let 0 | 1 | 2 | 4 | 8 = mem::size_of::<T>() {
+                ffi::objc_msgSend
+            } else {
+                ffi::objc_msgSend_stret
+            }
+        };
+        const MSG_SEND_SUPER: Imp = {
+            if let 0 | 1 | 2 | 4 | 8 = mem::size_of::<T>() {
+                ffi::objc_msgSendSuper
+            } else {
+                ffi::objc_msgSendSuper_stret
+            }
+        };
+    }
+
+    #[cfg(target_arch = "x86_64")]
+    /// If the size of an object is larger than two eightbytes, it has class
+    /// MEMORY. If the type has class MEMORY, then the caller provides space for
+    /// the return value and passes the address of this storage.
+    ///
+    /// <https://www.uclibc.org/docs/psABI-x86_64.pdf>
+    unsafe impl<T: EncodeReturn> MsgSendFn for T {
+        const MSG_SEND: Imp = {
+            // See https://github.com/apple-oss-distributions/objc4/blob/objc4-818.2/runtime/message.h#L156-L172
+            if let Encoding::LongDouble = T::ENCODING_RETURN {
+                ffi::objc_msgSend_fpret
+            } else if let Encoding::LongDoubleComplex = T::ENCODING_RETURN {
+                ffi::objc_msgSend_fp2ret
+            } else if mem::size_of::<T>() <= 16 {
+                ffi::objc_msgSend
+            } else {
+                ffi::objc_msgSend_stret
+            }
+        };
+        const MSG_SEND_SUPER: Imp = {
+            if mem::size_of::<T>() <= 16 {
+                ffi::objc_msgSendSuper
+            } else {
+                ffi::objc_msgSendSuper_stret
+            }
+        };
+    }
+
+    #[inline]
+    #[track_caller]
+    pub(crate) unsafe fn send_unverified<A, R>(receiver: *mut AnyObject, sel: Sel, args: A) -> R
+    where
+        A: MessageArguments,
+        R: EncodeReturn,
+    {
+        let msg_send_fn = R::MSG_SEND;
+        unsafe { conditional_try!(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
+    }
+
+    #[inline]
+    #[track_caller]
+    pub(crate) unsafe fn send_super_unverified<A, R>(
+        receiver: *mut AnyObject,
+        superclass: &AnyClass,
+        sel: Sel,
+        args: A,
+    ) -> R
+    where
+        A: MessageArguments,
+        R: EncodeReturn,
+    {
+        let superclass: *const AnyClass = superclass;
+        let mut sup = ffi::objc_super {
+            receiver: receiver.cast(),
+            super_class: superclass.cast(),
+        };
+        let receiver: *mut ffi::objc_super = &mut sup;
+        let receiver = receiver.cast();
+
+        let msg_send_fn = R::MSG_SEND_SUPER;
+        unsafe { conditional_try!(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
+    }
+}
+
+#[cfg(feature = "gnustep-1-7")]
+mod msg_send_primitive {
+    use core::mem;
+
+    use super::MessageArguments;
+    use crate::encode::EncodeReturn;
+    use crate::ffi;
+    use crate::runtime::{AnyClass, AnyObject, Imp, Sel};
+
+    #[inline]
+    fn unwrap_msg_send_fn(msg_send_fn: Option<Imp>) -> Imp {
+        match msg_send_fn {
+            Some(msg_send_fn) => msg_send_fn,
+            None => {
+                // SAFETY: This will never be NULL, even if the selector is not
+                // found a callable function pointer will still be returned!
+                //
+                // `clang` doesn't insert a NULL check here either.
+                unsafe { core::hint::unreachable_unchecked() }
+            }
+        }
+    }
+
+    #[track_caller]
+    pub(crate) unsafe fn send_unverified<A, R>(receiver: *mut AnyObject, sel: Sel, args: A) -> R
+    where
+        A: MessageArguments,
+        R: EncodeReturn,
+    {
+        // If `receiver` is NULL, objc_msg_lookup will return a standard C-method
+        // taking two arguments, the receiver and the selector. Transmuting and
+        // calling such a function with multiple parameters is UB, so instead we
+        // return NULL directly.
+        if receiver.is_null() {
+            // SAFETY: Caller guarantees that messages to NULL-receivers only
+            // return pointers, and a mem::zeroed pointer is just a NULL-pointer.
+            return unsafe { mem::zeroed() };
+        }
+
+        let msg_send_fn = unsafe { ffi::objc_msg_lookup(receiver.cast(), sel.as_ptr()) };
+        let msg_send_fn = unwrap_msg_send_fn(msg_send_fn);
+        unsafe { conditional_try!(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
+    }
+
+    #[track_caller]
+    pub(crate) unsafe fn send_super_unverified<A, R>(
+        receiver: *mut AnyObject,
+        superclass: &AnyClass,
+        sel: Sel,
+        args: A,
+    ) -> R
+    where
+        A: MessageArguments,
+        R: EncodeReturn,
+    {
+        if receiver.is_null() {
+            // SAFETY: Same as in `send_unverified`.
+            return unsafe { mem::zeroed() };
+        }
+
+        let superclass: *const AnyClass = superclass;
+        let sup = ffi::objc_super {
+            receiver: receiver.cast(),
+            super_class: superclass.cast(),
+        };
+        let msg_send_fn = unsafe { ffi::objc_msg_lookup_super(&sup, sel.as_ptr()) };
+        let msg_send_fn = unwrap_msg_send_fn(msg_send_fn);
+        unsafe { conditional_try!(|| A::__invoke(msg_send_fn, receiver, sel, args)) }
+    }
 }
 
 /// Help with monomorphizing in `icrate`
@@ -94,15 +312,6 @@ fn panic_verify(cls: &AnyClass, sel: Sel, err: &crate::runtime::VerificationErro
         if cls.is_metaclass() { "+" } else { "-" },
     )
 }
-
-#[cfg(feature = "apple")]
-#[path = "apple/mod.rs"]
-mod platform;
-#[cfg(feature = "gnustep-1-7")]
-#[path = "gnustep.rs"]
-mod platform;
-
-use self::platform::{send_super_unverified, send_unverified};
 
 /// Types that can be sent Objective-C messages.
 ///
@@ -239,7 +448,9 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
             let obj = unsafe { this.as_ref() };
             msg_send_check(obj, sel, A::__ENCODINGS, &R::__Inner::ENCODING_RETURN);
         }
-        unsafe { ConvertReturn::__from_return(send_unverified(this, sel, args)) }
+        unsafe {
+            ConvertReturn::__from_return(msg_send_primitive::send_unverified(this, sel, args))
+        }
     }
 
     /// Sends a message to a specific superclass with the given selector and
@@ -284,7 +495,11 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
                 &R::__Inner::ENCODING_RETURN,
             );
         }
-        unsafe { ConvertReturn::__from_return(send_super_unverified(this, superclass, sel, args)) }
+        unsafe {
+            ConvertReturn::__from_return(msg_send_primitive::send_super_unverified(
+                this, superclass, sel, args,
+            ))
+        }
     }
 
     #[inline]
