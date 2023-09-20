@@ -29,6 +29,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Moved the `MethodImplementation` trait from the `declare`
   module to the `runtime` module.
 * **BREAKING**: Moved the `MessageReceiver` trait to the `runtime` module.
+* **BREAKING**: Make the `MessageReceiver` trait no longer implemented for
+  references to `Id`. Dereference the `Id` yourself.
+
+  Note: Passing `&Id` in `msg_send!` is still supported.
+* **BREAKING**: `MessageReceiver::send_message` and
+  `MessageReceiver::send_super_message` now take `EncodeArguments` and return
+  `EncodeReturn`, instead of internal traits.
+
+  This is done to make `MessageReceiver` more straightforward to understand,
+  although it now also has slightly less functionality than `msg_send!`.
+
+  In particular automatic conversion of `bool` is not supported in
+  `MessageReceiver`.
 
 ### Deprecated
 * Soft deprecated using `msg_send!` without a comma between arguments (i.e.

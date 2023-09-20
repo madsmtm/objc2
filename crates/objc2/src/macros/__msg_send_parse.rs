@@ -140,7 +140,7 @@ macro_rules! __comma_between_args {
 #[cfg(feature = "unstable-msg-send-always-comma")]
 macro_rules! __comma_between_args {
     (
-        (__send_super_message_static)
+        (send_super_message_static)
         ($($args:tt)*)
         ($obj:expr)
     ) => {

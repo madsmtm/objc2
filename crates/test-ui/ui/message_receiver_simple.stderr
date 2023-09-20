@@ -1,0 +1,70 @@
+error[E0277]: the trait bound `Id<NSObject>: Message` is not satisfied
+  --> ui/message_receiver_simple.rs
+   |
+   |     let _: usize = unsafe { MessageReceiver::send_message(&obj, sel!(hash), ()) };
+   |                             -----------------------------  ^^^ the trait `Message` is not implemented for `Id<NSObject>`
+   |                             |
+   |                             required by a bound introduced by this call
+   |
+   = note: required for `&Id<NSObject>` to implement `runtime::message_receiver::private::Sealed`
+note: required by a bound in `objc2::runtime::MessageReceiver::send_message`
+  --> $WORKSPACE/crates/objc2/src/runtime/message_receiver.rs
+   |
+   | pub unsafe trait MessageReceiver: private::Sealed + Sized {
+   |                                   ^^^^^^^^^^^^^^^ required by this bound in `MessageReceiver::send_message`
+...
+   |     unsafe fn send_message<A: EncodeArguments, R: EncodeReturn>(self, sel: Sel, args: A) -> R {
+   |               ------------ required by a bound in this associated function
+help: consider dereferencing here
+   |
+10 |     let _: usize = unsafe { MessageReceiver::send_message(&*obj, sel!(hash), ()) };
+   |                                                            +
+
+error[E0277]: the trait bound `bool: Encode` is not satisfied
+ --> ui/message_receiver_simple.rs
+  |
+  |     let _: () = unsafe { MessageReceiver::send_message(&*obj, sel!(hash:), (true,)) };
+  |                          -----------------------------                      ^^^^ the trait `Encode` is not implemented for `bool`
+  |                          |
+  |                          required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `Encode`:
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
+          and $N others
+  = note: required for `bool` to implement `EncodeArgument`
+  = note: required for `(bool,)` to implement `EncodeArguments`
+note: required by a bound in `objc2::runtime::MessageReceiver::send_message`
+ --> $WORKSPACE/crates/objc2/src/runtime/message_receiver.rs
+  |
+  |     unsafe fn send_message<A: EncodeArguments, R: EncodeReturn>(self, sel: Sel, args: A) -> R {
+  |                               ^^^^^^^^^^^^^^^ required by this bound in `MessageReceiver::send_message`
+
+error[E0277]: the trait bound `bool: Encode` is not satisfied
+ --> ui/message_receiver_simple.rs
+  |
+  |     let _: bool = unsafe { MessageReceiver::send_message(&*obj, sel!(hash), ()) };
+  |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `bool`
+  |
+  = help: the following other types implement trait `Encode`:
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
+          and $N others
+  = note: required for `bool` to implement `EncodeReturn`
+note: required by a bound in `objc2::runtime::MessageReceiver::send_message`
+ --> $WORKSPACE/crates/objc2/src/runtime/message_receiver.rs
+  |
+  |     unsafe fn send_message<A: EncodeArguments, R: EncodeReturn>(self, sel: Sel, args: A) -> R {
+  |                                                   ^^^^^^^^^^^^ required by this bound in `MessageReceiver::send_message`

@@ -83,30 +83,34 @@ note: associated function defined here
   |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
 
-error[E0277]: the trait bound `Id<NSObject>: MessageReceiver` is not satisfied
- --> ui/msg_send_id_invalid_receiver.rs
-  |
-  |     let _: Id<NSObject> = unsafe { msg_send_id![obj, new] };
-  |                                    -------------^^^------
-  |                                    |            |
-  |                                    |            the trait `MessageReceiver` is not implemented for `Id<NSObject>`
-  |                                    required by a bound introduced by this call
-  |
-  = help: the following other types implement trait `MessageReceiver`:
-            &'a Id<T>
-            &'a mut Id<T>
-  = note: required for `RetainSemantics<1>` to implement `MsgSendId<Id<NSObject>, Id<_>>`
+error[E0277]: the trait bound `Id<NSObject>: MsgSend` is not satisfied
+  --> ui/msg_send_id_invalid_receiver.rs
+   |
+   |     let _: Id<NSObject> = unsafe { msg_send_id![obj, new] };
+   |                                    -------------^^^------
+   |                                    |            |
+   |                                    |            the trait `MsgSend` is not implemented for `Id<NSObject>`
+   |                                    required by a bound introduced by this call
+   |
+   = note: required for `Id<NSObject>` to implement `MsgSend`
+   = note: required for `RetainSemantics<1>` to implement `MsgSendId<Id<NSObject>, Id<_>>`
+help: consider borrowing here
+   |
+19 |     let _: Id<NSObject> = unsafe { msg_send_id![&obj, new] };
+   |                                                 +
 
-error[E0277]: the trait bound `Id<NSObject>: MessageReceiver` is not satisfied
- --> ui/msg_send_id_invalid_receiver.rs
-  |
-  |     let _: Id<NSObject> = unsafe { msg_send_id![obj, copy] };
-  |                                    -------------^^^-------
-  |                                    |            |
-  |                                    |            the trait `MessageReceiver` is not implemented for `Id<NSObject>`
-  |                                    required by a bound introduced by this call
-  |
-  = help: the following other types implement trait `MessageReceiver`:
-            &'a Id<T>
-            &'a mut Id<T>
-  = note: required for `RetainSemantics<4>` to implement `MsgSendId<Id<NSObject>, Id<_>>`
+error[E0277]: the trait bound `Id<NSObject>: MsgSend` is not satisfied
+  --> ui/msg_send_id_invalid_receiver.rs
+   |
+   |     let _: Id<NSObject> = unsafe { msg_send_id![obj, copy] };
+   |                                    -------------^^^-------
+   |                                    |            |
+   |                                    |            the trait `MsgSend` is not implemented for `Id<NSObject>`
+   |                                    required by a bound introduced by this call
+   |
+   = note: required for `Id<NSObject>` to implement `MsgSend`
+   = note: required for `RetainSemantics<4>` to implement `MsgSendId<Id<NSObject>, Id<_>>`
+help: consider borrowing here
+   |
+21 |     let _: Id<NSObject> = unsafe { msg_send_id![&obj, copy] };
+   |                                                 +

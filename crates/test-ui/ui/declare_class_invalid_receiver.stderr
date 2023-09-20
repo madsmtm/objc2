@@ -246,14 +246,12 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
   |
   = help: the following other types implement trait `MessageReceiver`:
             NonNull<T>
-            ManuallyDrop<Id<T>>
             *const AnyClass
             *const T
             *mut T
             &'a T
             &'a mut T
-            &'a Id<T>
-          and $N others
+            &'a AnyClass
   = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<Box<CustomObject>, Id<CustomObject>>`
 
 error[E0277]: the trait bound `Id<CustomObject>: MessageReceiver` is not satisfied
@@ -263,8 +261,13 @@ error[E0277]: the trait bound `Id<CustomObject>: MessageReceiver` is not satisfi
   |                                  ^^^^^^^^ the trait `MessageReceiver` is not implemented for `Id<CustomObject>`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            &'a Id<T>
-            &'a mut Id<T>
+            NonNull<T>
+            *const AnyClass
+            *const T
+            *mut T
+            &'a T
+            &'a mut T
+            &'a AnyClass
   = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<Id<CustomObject>, Id<CustomObject>>`
 
 error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
@@ -275,14 +278,12 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   |
   = help: the following other types implement trait `MessageReceiver`:
             NonNull<T>
-            ManuallyDrop<Id<T>>
             *const AnyClass
             *const T
             *mut T
             &'a T
             &'a mut T
-            &'a Id<T>
-          and $N others
+            &'a AnyClass
   = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<CustomObject, Id<CustomObject>>`
 
 error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not satisfied
@@ -293,14 +294,12 @@ error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not 
   |
   = help: the following other types implement trait `MessageReceiver`:
             NonNull<T>
-            ManuallyDrop<Id<T>>
             *const AnyClass
             *const T
             *mut T
             &'a T
             &'a mut T
-            &'a Id<T>
-          and $N others
+            &'a AnyClass
   = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<Allocated<CustomObject>, Id<CustomObject>>`
 
 error[E0277]: the trait bound `RetainSemantics<3>: MessageRecieveId<&CustomObject, Id<CustomObject>>` is not satisfied

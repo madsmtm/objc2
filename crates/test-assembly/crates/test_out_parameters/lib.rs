@@ -1,25 +1,26 @@
 //! Test that out parameters are handled correctly.
+use objc2::__macro_helpers::MsgSend;
 use objc2::rc::Id;
-use objc2::runtime::{MessageReceiver, NSObject, Sel};
+use objc2::runtime::{NSObject, Sel};
 
 #[no_mangle]
 unsafe fn nonnull_nonnull(obj: &NSObject, sel: Sel, param: &mut Id<NSObject>) -> usize {
-    MessageReceiver::send_message(obj, sel, (param,))
+    MsgSend::send_message(obj, sel, (param,))
 }
 
 #[no_mangle]
 unsafe fn null_nonnull(obj: &NSObject, sel: Sel, param: Option<&mut Id<NSObject>>) -> usize {
-    MessageReceiver::send_message(obj, sel, (param,))
+    MsgSend::send_message(obj, sel, (param,))
 }
 
 #[no_mangle]
 unsafe fn nonnull_null(obj: &NSObject, sel: Sel, param: &mut Option<Id<NSObject>>) -> usize {
-    MessageReceiver::send_message(obj, sel, (param,))
+    MsgSend::send_message(obj, sel, (param,))
 }
 
 #[no_mangle]
 unsafe fn null_null(obj: &NSObject, sel: Sel, param: Option<&mut Option<Id<NSObject>>>) -> usize {
-    MessageReceiver::send_message(obj, sel, (param,))
+    MsgSend::send_message(obj, sel, (param,))
 }
 
 #[no_mangle]
@@ -29,7 +30,7 @@ unsafe fn two_nonnull_nonnull(
     param1: &mut Id<NSObject>,
     param2: &mut Id<NSObject>,
 ) -> usize {
-    MessageReceiver::send_message(obj, sel, (param1, param2))
+    MsgSend::send_message(obj, sel, (param1, param2))
 }
 
 //

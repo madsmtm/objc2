@@ -27,6 +27,7 @@ mod common_selectors;
 mod convert;
 mod declare_class;
 mod method_family;
+mod msg_send;
 mod msg_send_id;
 mod writeback;
 
@@ -40,6 +41,7 @@ pub use self::declare_class::{
 pub use self::method_family::{
     retain_semantics, Alloc, CopyOrMutCopy, Init, New, Other, RetainSemantics,
 };
+pub use self::msg_send::MsgSend;
 pub use self::msg_send_id::{MaybeUnwrap, MsgSendId};
 
 /// Helper struct for emitting the module info that macOS 32-bit requires.

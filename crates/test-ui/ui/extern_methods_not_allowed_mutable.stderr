@@ -18,15 +18,8 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
             ImmutableWithMutableSubclass<MS>
             MutableWithImmutableSuperclass<IS>
   = note: required for `MyObject` to implement `IsAllowedMutable`
-  = note: required for `&mut MyObject` to implement `runtime::message::private::Sealed`
-note: required by a bound in `send_message`
- --> $WORKSPACE/crates/objc2/src/runtime/message.rs
-  |
-  | pub unsafe trait MessageReceiver: private::Sealed + Sized {
-  |                                   ^^^^^^^^^^^^^^^ required by this bound in `MessageReceiver::send_message`
-...
-  |     unsafe fn send_message<A, R>(self, sel: Sel, args: A) -> R
-  |               ------------ required by a bound in this associated function
+  = note: required for `&mut MyObject` to implement `MessageReceiver`
+  = note: required for `&mut MyObject` to implement `MsgSend`
   = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
@@ -50,5 +43,6 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
             MutableWithImmutableSuperclass<IS>
   = note: required for `MyObject` to implement `IsAllowedMutable`
   = note: required for `&mut MyObject` to implement `MessageReceiver`
+  = note: required for `&mut MyObject` to implement `MsgSend`
   = note: required for `RetainSemantics<5>` to implement `MsgSendId<&mut MyObject, Id<_>>`
   = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

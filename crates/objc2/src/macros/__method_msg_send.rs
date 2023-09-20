@@ -1,4 +1,4 @@
-/// Forward selector and arguments to `MessageReceiver::send_message[_error]`.
+/// Forward selector and arguments to `MsgSend::send_message[_error]`.
 ///
 /// Note: We can't forward to `msg_send!` since that doesn't support selectors
 /// with space between.
@@ -115,7 +115,7 @@ macro_rules! __method_msg_send {
         $crate::__msg_send_helper! {
             ($receiver)
             // Use error method
-            (__send_message_error)
+            (send_message_error)
             ($($sel_parsed)* $sel :)
             ($($arg_parsed)*)
         }

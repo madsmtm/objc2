@@ -21,7 +21,7 @@ Lloh1:
 	.loh AdrpAdd	Lloh0, Lloh1
 
 	.p2align	2
-SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
+SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
 	stp	x29, x30, [sp, #-16]!
 	mov	x29, sp
 	bl	_objc_retain
@@ -59,7 +59,7 @@ _error_bool:
 	ret
 LBB2_2:
 	ldr	x0, [sp, #8]
-	bl	SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret

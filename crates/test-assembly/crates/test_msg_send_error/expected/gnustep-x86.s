@@ -35,10 +35,10 @@ SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRA
 .Lfunc_end0:
 	.size	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end0-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 
-	.section	.text.unlikely.SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),"ax",@progbits
+	.section	.text.unlikely.SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),"ax",@progbits
 	.p2align	4, 0x90
-	.type	SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),@function
-SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
+	.type	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0),@function
+SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
 	push	ebx
 	sub	esp, 8
 	call	.L1$pb
@@ -66,7 +66,7 @@ SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runt
 	add	esp, 16
 	ud2
 .Lfunc_end1:
-	.size	SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end1-SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	.size	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end1-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 
 	.section	.text.error_bool,"ax",@progbits
 	.globl	error_bool
@@ -112,7 +112,7 @@ error_bool:
 	ret
 .LBB2_1:
 	mov	ecx, dword ptr [esp + 8]
-	call	SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	jmp	.LBB2_2
 .Lfunc_end2:
 	.size	error_bool, .Lfunc_end2-error_bool

@@ -21,7 +21,7 @@ LPC0_0:
 
 	.p2align	2
 	.code	32
-SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
+SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0):
 	push	{r7, lr}
 	mov	r7, sp
 	bl	_objc_retain
@@ -58,7 +58,7 @@ _error_bool:
 	pop	{r4, r7, pc}
 LBB2_2:
 	ldr	r0, [sp]
-	bl	SYM(objc2[CRATE_ID]::runtime::message::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
+	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	r4, r0
 	mov	r0, r4
 	sub	sp, r7, #4

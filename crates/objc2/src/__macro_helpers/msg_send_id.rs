@@ -2,10 +2,10 @@ use core::ptr;
 
 use crate::encode::Encode;
 use crate::rc::{Allocated, Id};
-use crate::runtime::{AnyClass, AnyObject, MessageReceiver, Sel};
+use crate::runtime::{AnyClass, AnyObject, Sel};
 use crate::{sel, Message};
 
-use super::{Alloc, ConvertArguments, CopyOrMutCopy, Init, New, Other, TupleExtender};
+use super::{Alloc, ConvertArguments, CopyOrMutCopy, Init, MsgSend, New, Other, TupleExtender};
 
 pub trait MsgSendId<T, U> {
     #[track_caller]
@@ -66,16 +66,16 @@ unsafe fn encountered_error<E: Message>(err: *mut E) -> Id<E> {
     unsafe { Id::retain(err) }.expect("error parameter should be set if the method returns NULL")
 }
 
-impl<T: MessageReceiver, U: ?Sized + Message> MsgSendId<T, Id<U>> for New {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Id<U>> for New {
     #[inline]
     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Id<U>>>(
         obj: T,
         sel: Sel,
         args: A,
     ) -> R {
-        let ptr = obj.__as_raw_receiver();
+        let ptr = obj.into_raw_receiver();
         // SAFETY: Checked by caller
-        let obj = unsafe { MessageReceiver::send_message(ptr, sel, args) };
+        let obj = unsafe { MsgSend::send_message(ptr, sel, args) };
         // SAFETY: The selector is `new`, so this has +1 retain count
         let obj = unsafe { Id::new(obj) };
 
@@ -93,7 +93,7 @@ impl<T: ?Sized + Message> MsgSendId<&'_ AnyClass, Allocated<T>> for Alloc {
         args: A,
     ) -> R {
         // SAFETY: Checked by caller
-        let obj = unsafe { MessageReceiver::send_message(cls, sel, args) };
+        let obj = unsafe { MsgSend::send_message(cls, sel, args) };
         // SAFETY: The selector is `alloc`, so this has +1 retain count
         let obj = unsafe { Allocated::new(obj) };
         R::maybe_unwrap::<Self>(obj, (cls, sel))
@@ -114,14 +114,14 @@ impl<T: ?Sized + Message> MsgSendId<Option<Allocated<T>>, Id<T>> for Init {
         //
         // We do this for efficiency, to avoid having a branch that the user
         // did not intend after every `alloc`.
-        let obj = unsafe { MessageReceiver::send_message(ptr, sel, args) };
+        let obj = unsafe { MsgSend::send_message(ptr, sel, args) };
         // SAFETY: The selector is `init`, so this has +1 retain count
         let obj = unsafe { Id::new(obj) };
         R::maybe_unwrap::<Self>(obj, (ptr.cast(), sel))
     }
 }
 
-impl<T: MessageReceiver, U: ?Sized + Message> MsgSendId<T, Id<U>> for CopyOrMutCopy {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Id<U>> for CopyOrMutCopy {
     #[inline]
     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Id<U>>>(
         obj: T,
@@ -129,7 +129,7 @@ impl<T: MessageReceiver, U: ?Sized + Message> MsgSendId<T, Id<U>> for CopyOrMutC
         args: A,
     ) -> R {
         // SAFETY: Checked by caller
-        let obj = unsafe { MessageReceiver::send_message(obj, sel, args) };
+        let obj = unsafe { MsgSend::send_message(obj, sel, args) };
         // SAFETY: The selector is `copy` or `mutableCopy`, so this has +1
         // retain count
         let obj = unsafe { Id::new(obj) };
@@ -137,16 +137,16 @@ impl<T: MessageReceiver, U: ?Sized + Message> MsgSendId<T, Id<U>> for CopyOrMutC
     }
 }
 
-impl<T: MessageReceiver, U: Message> MsgSendId<T, Id<U>> for Other {
+impl<T: MsgSend, U: Message> MsgSendId<T, Id<U>> for Other {
     #[inline]
     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Id<U>>>(
         obj: T,
         sel: Sel,
         args: A,
     ) -> R {
-        let ptr = obj.__as_raw_receiver();
+        let ptr = obj.into_raw_receiver();
         // SAFETY: Checked by caller
-        let obj = unsafe { MessageReceiver::send_message(ptr, sel, args) };
+        let obj = unsafe { MsgSend::send_message(ptr, sel, args) };
         // All code between the message send and the `retain_autoreleased`
         // must be able to be optimized away for this to work.
 
