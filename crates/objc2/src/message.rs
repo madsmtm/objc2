@@ -2,11 +2,11 @@ use core::mem::{self, ManuallyDrop};
 use core::ptr::{self, NonNull};
 
 use crate::__macro_helpers::{ConvertArgument, ConvertReturn};
-use crate::encode::{Encode, EncodeArgument, EncodeReturn, Encoding, RefEncode};
+use crate::encode::{Encode, EncodeArgument, EncodeReturn, Encoding};
 use crate::mutability::IsMutable;
 use crate::rc::Id;
 use crate::runtime::{AnyClass, AnyObject, Imp, Sel};
-use crate::ClassType;
+use crate::{ClassType, Message};
 
 /// Wrap the given closure in `exception::catch` if the `catch-all` feature is
 /// enabled.
@@ -312,79 +312,6 @@ fn panic_verify(cls: &AnyClass, sel: Sel, err: &crate::runtime::VerificationErro
         if cls.is_metaclass() { "+" } else { "-" },
     )
 }
-
-/// Types that can be sent Objective-C messages.
-///
-/// Implementing this provides [`MessageReceiver`] implementations for common
-/// pointer types and references to the type, which allows using them as the
-/// receiver (first argument) in the [`msg_send!`][`crate::msg_send`] macro.
-///
-/// This trait also allows the object to be used in [`rc::Id`][`Id`].
-///
-/// This is a subtrait of [`RefEncode`], meaning the type must also implement
-/// that, almost always with [`RefEncode::ENCODING_REF`] being
-/// [`Encoding::Object`].
-///
-/// This can be implemented for unsized (`!Sized`) types, but the intention is
-/// not to support dynamically sized types like slices, only `extern type`s
-/// (which is currently unstable).
-///
-/// [`Encoding::Object`]: crate::Encoding::Object
-///
-///
-/// # `Drop` interaction
-///
-/// If the inner type implements [`Drop`], that implementation will very
-/// likely not be called, since there is no way to ensure that the Objective-C
-/// runtime will do so. If you need to run some code when the object is
-/// destroyed, implement the `dealloc` method instead.
-///
-/// The [`declare_class!`] macro does this for you, but the [`extern_class!`]
-/// macro fundamentally cannot.
-///
-/// [`declare_class!`]: crate::declare_class
-/// [`extern_class!`]: crate::extern_class
-///
-///
-/// # Safety
-///
-/// The type must represent an Objective-C object, meaning it:
-/// - Must be valid to reinterpret as [`runtime::AnyObject`][`AnyObject`].
-/// - Must be able to be the receiver of an Objective-C message sent with
-///   [`objc_msgSend`] or similar.
-/// - Must respond to the standard memory management `retain`, `release` and
-///   `autorelease` messages.
-/// - Must support weak references. (In the future we should probably make a
-///   new trait for this, for example `NSTextView` only supports weak
-///   references on macOS 10.12 or above).
-///
-/// [`objc_msgSend`]: https://developer.apple.com/documentation/objectivec/1456712-objc_msgsend
-///
-///
-/// # Example
-///
-/// ```
-/// use objc2::runtime::NSObject;
-/// use objc2::{Encoding, Message, RefEncode};
-///
-/// #[repr(C)]
-/// struct MyObject {
-///     // This has the exact same layout as `NSObject`
-///     inner: NSObject
-/// }
-///
-/// unsafe impl RefEncode for MyObject {
-///     const ENCODING_REF: Encoding = Encoding::Object;
-/// }
-///
-/// unsafe impl Message for MyObject {}
-///
-/// // `*mut MyObject` and other pointer/reference types to the object can
-/// // now be used in `msg_send!`
-/// //
-/// // And `Id<MyObject>` can now be constructed.
-/// ```
-pub unsafe trait Message: RefEncode {}
 
 // TODO: Make this fully private
 pub(crate) mod private {

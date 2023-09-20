@@ -188,11 +188,10 @@ extern "C" {}
 #[doc(no_inline)]
 pub use objc_sys as ffi;
 
-pub use self::class_type::ClassType;
 #[doc(no_inline)]
 pub use self::encode::{Encode, Encoding, RefEncode};
-pub use self::message::{Message, MessageArguments, MessageReceiver};
-pub use self::protocol_type::ProtocolType;
+pub use self::message::{MessageArguments, MessageReceiver};
+pub use self::top_level_traits::{ClassType, Message, ProtocolType};
 
 #[cfg(feature = "objc2-proc-macros")]
 #[doc(hidden)]
@@ -210,18 +209,17 @@ macro_rules! __hash_idents {
 
 #[doc(hidden)]
 pub mod __macro_helpers;
-mod class_type;
 pub mod declare;
 pub mod encode;
 pub mod exception;
 mod macros;
 mod message;
 pub mod mutability;
-mod protocol_type;
 pub mod rc;
 pub mod runtime;
 #[cfg(test)]
 mod test_utils;
+mod top_level_traits;
 mod verify;
 
 // Link to Foundation to make NSObject work

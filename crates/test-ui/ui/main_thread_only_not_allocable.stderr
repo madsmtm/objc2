@@ -13,7 +13,7 @@ error[E0277]: the trait bound `MainThreadOnly: mutability::MutabilityIsAllocable
             InteriorMutable
   = note: required for `MyMainThreadOnlyClass` to implement `IsAllocableAnyThread`
 note: required by a bound in `objc2::ClassType::alloc`
- --> $WORKSPACE/crates/objc2/src/class_type.rs
+ --> $WORKSPACE/crates/objc2/src/top_level_traits.rs
   |
   |     fn alloc() -> Option<Allocated<Self>>
   |        ----- required by a bound in this associated function

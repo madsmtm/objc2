@@ -1,8 +1,83 @@
+use crate::encode::RefEncode;
 use crate::msg_send_id;
 use crate::mutability::{IsAllocableAnyThread, IsRetainable, Mutability};
 use crate::rc::{Allocated, Id};
-use crate::runtime::AnyClass;
-use crate::Message;
+use crate::runtime::{AnyClass, AnyProtocol};
+
+/// Types that can be sent Objective-C messages.
+///
+/// Implementing this provides [`MessageReceiver`] implementations for common
+/// pointer types and references to the type, which allows using them as the
+/// receiver (first argument) in the [`msg_send!`][`crate::msg_send`] macro.
+///
+/// This trait also allows the object to be used in [`rc::Id`][`Id`].
+///
+/// This is a subtrait of [`RefEncode`], meaning the type must also implement
+/// that, almost always with [`RefEncode::ENCODING_REF`] being
+/// [`Encoding::Object`].
+///
+/// This can be implemented for unsized (`!Sized`) types, but the intention is
+/// not to support dynamically sized types like slices, only `extern type`s
+/// (which is currently unstable).
+///
+/// [`MessageReceiver`]: crate::MessageReceiver
+/// [`Encoding::Object`]: crate::Encoding::Object
+///
+///
+/// # `Drop` interaction
+///
+/// If the inner type implements [`Drop`], that implementation will very
+/// likely not be called, since there is no way to ensure that the Objective-C
+/// runtime will do so. If you need to run some code when the object is
+/// destroyed, implement the `dealloc` method instead.
+///
+/// The [`declare_class!`] macro does this for you, but the [`extern_class!`]
+/// macro fundamentally cannot.
+///
+/// [`declare_class!`]: crate::declare_class
+/// [`extern_class!`]: crate::extern_class
+///
+///
+/// # Safety
+///
+/// The type must represent an Objective-C object, meaning it:
+/// - Must be valid to reinterpret as [`AnyObject`].
+/// - Must be able to be the receiver of an Objective-C message sent with
+///   [`objc_msgSend`] or similar.
+/// - Must respond to the standard memory management `retain`, `release` and
+///   `autorelease` messages.
+/// - Must support weak references. (In the future we should probably make a
+///   new trait for this, for example `NSTextView` only supports weak
+///   references on macOS 10.12 or above).
+///
+/// [`AnyObject`]: crate::runtime::AnyObject
+/// [`objc_msgSend`]: https://developer.apple.com/documentation/objectivec/1456712-objc_msgsend
+///
+///
+/// # Example
+///
+/// ```
+/// use objc2::runtime::NSObject;
+/// use objc2::{Encoding, Message, RefEncode};
+///
+/// #[repr(C)]
+/// struct MyObject {
+///     // This has the exact same layout as `NSObject`
+///     inner: NSObject
+/// }
+///
+/// unsafe impl RefEncode for MyObject {
+///     const ENCODING_REF: Encoding = Encoding::Object;
+/// }
+///
+/// unsafe impl Message for MyObject {}
+///
+/// // `*mut MyObject` and other pointer/reference types to the object can
+/// // now be used in `msg_send!`
+/// //
+/// // And `Id<MyObject>` can now be constructed.
+/// ```
+pub unsafe trait Message: RefEncode {}
 
 /// Marks types that represent specific classes.
 ///
@@ -230,4 +305,74 @@ pub unsafe trait ClassType: Message {
 
     // TODO: `fn alloc_on_main(mtm: MainThreadMarker)`
     // TODO: `fn mtm(&self) -> MainThreadMarker where T::Mutability: MainThreadOnly`
+}
+
+/// Marks types that represent specific protocols.
+///
+/// This is the protocol equivalent of [`ClassType`].
+///
+/// This is implemented automatically by the [`extern_protocol!`] macro for
+/// `dyn T`, where `T` is the protocol.
+///
+/// [`ClassType`]: crate::ClassType
+/// [`extern_protocol!`]: crate::extern_protocol
+///
+///
+/// # Safety
+///
+/// This is meant to be a sealed trait, and should not be implemented outside
+/// of the [`extern_protocol!`] macro.
+///
+///
+/// # Examples
+///
+/// Use the trait to access the [`AnyProtocol`] of different objects.
+///
+/// ```
+/// use objc2::ProtocolType;
+/// use objc2::runtime::NSObjectProtocol;
+/// // Get a protocol object representing the `NSObject` protocol
+/// let protocol = <dyn NSObjectProtocol>::protocol().expect("NSObject to have a protocol");
+/// assert_eq!(<dyn NSObjectProtocol>::NAME, protocol.name());
+/// ```
+///
+/// Use the [`extern_protocol!`] macro to implement this trait for a type.
+///
+/// ```no_run
+/// use objc2::{extern_protocol, ProtocolType};
+///
+/// extern_protocol!(
+///     unsafe trait MyProtocol {}
+///     unsafe impl ProtocolType for dyn MyProtocol {}
+/// );
+///
+/// let protocol = <dyn MyProtocol>::protocol();
+/// ```
+pub unsafe trait ProtocolType {
+    /// The name of the Objective-C protocol that this type represents.
+    const NAME: &'static str;
+
+    /// Get a reference to the Objective-C protocol object that this type
+    /// represents.
+    ///
+    /// May register the protocol with the runtime if it wasn't already.
+    ///
+    /// Note that some protocols [are not registered with the runtime][p-obj],
+    /// depending on various factors. In those cases, this function may return
+    /// `None`.
+    ///
+    /// [p-obj]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjectiveC/Chapters/ocProtocols.html#//apple_ref/doc/uid/TP30001163-CH15-TPXREF149
+    ///
+    ///
+    /// # Panics
+    ///
+    /// This may panic if something went wrong with getting or declaring the
+    /// protocol, e.g. if the program is not properly linked to the framework
+    /// that defines the protocol.
+    fn protocol() -> Option<&'static AnyProtocol> {
+        AnyProtocol::get(Self::NAME)
+    }
+
+    #[doc(hidden)]
+    const __INNER: ();
 }

@@ -1,10 +1,10 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(core[CRATE_ID]::ptr::drop_in_place::<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}>::{closure#0}>, 0):
+SYM(core[CRATE_ID]::ptr::drop_in_place::<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}>, 0):
 	ret
 
 	.p2align	2
-SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}>::{closure#0}, 0):
+SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
 	sub	sp, sp, #112
 	stp	x22, x21, [sp, #64]
 	stp	x20, x19, [sp, #80]
@@ -70,9 +70,9 @@ Lloh18:
 Lloh19:
 	add	x21, x21, l_anon.[ID].3@PAGEOFF
 Lloh20:
-	adrp	x5, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}::__objc2_dealloc, 0)@PAGE
+	adrp	x5, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::__objc2_dealloc, 0)@PAGE
 Lloh21:
-	add	x5, x5, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}::__objc2_dealloc, 0)@PAGEOFF
+	add	x5, x5, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::__objc2_dealloc, 0)@PAGEOFF
 	mov	x0, sp
 	mov	x2, x20
 	mov	x3, #0
@@ -265,14 +265,14 @@ Lloh68:
 	.loh AdrpAdd	Lloh61, Lloh62
 
 	.p2align	2
-SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
+SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	ldr	x8, [x0]
 	str	x8, [sp, #8]
 	add	x0, sp, #8
-	bl	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	bl	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret
@@ -291,9 +291,9 @@ _get_class:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 Lloh69:
-	adrp	x8, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)@PAGE
+	adrp	x8, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGE
 Lloh70:
-	add	x8, x8, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)@PAGEOFF
+	add	x8, x8, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGEOFF
 	ldapr	x8, [x8]
 	cmp	x8, #3
 	b.ne	LBB4_3
@@ -314,9 +314,9 @@ LBB4_3:
 	add	x8, sp, #7
 	str	x8, [sp, #8]
 Lloh73:
-	adrp	x0, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)@PAGE
+	adrp	x0, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGE
 Lloh74:
-	add	x0, x0, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)@PAGEOFF
+	add	x0, x0, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGEOFF
 Lloh75:
 	adrp	x3, l_anon.[ID].0@PAGE
 Lloh76:
@@ -421,16 +421,16 @@ Lloh95:
 	.loh AdrpAdd	Lloh90, Lloh91
 	.loh AdrpAdd	Lloh88, Lloh89
 
-	.globl	SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class, 0)
+	.globl	SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	2
-SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class, 0):
+SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 Lloh96:
-	adrp	x8, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)@PAGE
+	adrp	x8, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGE
 Lloh97:
-	add	x8, x8, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)@PAGEOFF
+	add	x8, x8, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGEOFF
 	ldapr	x8, [x8]
 	cmp	x8, #3
 	b.ne	LBB7_3
@@ -451,9 +451,9 @@ LBB7_3:
 	add	x8, sp, #7
 	str	x8, [sp, #8]
 Lloh100:
-	adrp	x0, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)@PAGE
+	adrp	x0, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGE
 Lloh101:
-	add	x0, x0, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0)@PAGEOFF
+	add	x0, x0, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGEOFF
 Lloh102:
 	adrp	x3, l_anon.[ID].0@PAGE
 Lloh103:
@@ -493,7 +493,7 @@ Lloh111:
 	.loh AdrpAdd	Lloh108, Lloh109
 
 	.p2align	2
-SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}::__objc2_dealloc, 0):
+SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::__objc2_dealloc, 0):
 	sub	sp, sp, #48
 	stp	x20, x19, [sp, #16]
 	stp	x29, x30, [sp, #32]
@@ -769,10 +769,10 @@ LBB15_5:
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].0:
-	.quad	SYM(core[CRATE_ID]::ptr::drop_in_place::<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}>::{closure#0}>, 0)
+	.quad	SYM(core[CRATE_ID]::ptr::drop_in_place::<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}>, 0)
 	.asciz	"\b\000\000\000\000\000\000\000\b\000\000\000\000\000\000"
-	.quad	SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
-	.quad	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::{closure#0}>::{closure#0}, 0)
+	.quad	SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0)
+	.quad	SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0)
 
 	.section	__TEXT,__const
 	.p2align	3, 0x0
@@ -855,7 +855,7 @@ l_anon.[ID].15:
 l_anon.[ID].16:
 	.ascii	"CustomClassName"
 
-.zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::class_type::ClassType>::class::REGISTER_CLASS, 0),8,3
+.zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0),8,3
 l_anon.[ID].17:
 	.ascii	"NSCopying"
 
