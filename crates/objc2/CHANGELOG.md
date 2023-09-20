@@ -56,6 +56,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 * Fixed the name of the protocol that `NSObjectProtocol` references.
+* Allow cloning `Id<AnyObject>`.
 
 ### Removed
 * **BREAKING**: Removed `ProtocolType` implementation for `NSObject`.

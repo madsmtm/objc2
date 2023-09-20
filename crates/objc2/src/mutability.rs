@@ -32,7 +32,7 @@
 //! bug.
 use core::marker::PhantomData;
 
-use crate::runtime::ProtocolObject;
+use crate::runtime::{AnyObject, ProtocolObject};
 use crate::{ClassType, Message, ProtocolType};
 
 mod private_mutability {
@@ -266,6 +266,7 @@ mod private_traits {
 
 impl<T: ?Sized + ClassType> private_traits::Sealed for T {}
 impl<P: ?Sized + ProtocolType> private_traits::Sealed for ProtocolObject<P> {}
+impl private_traits::Sealed for AnyObject {}
 
 /// Marker trait for classes where [`Id::clone`] is safe.
 ///
@@ -299,6 +300,8 @@ impl MutabilityIsIdCloneable for MainThreadOnly {}
 
 unsafe impl<T: ?Sized + ClassType> IsIdCloneable for T where T::Mutability: MutabilityIsIdCloneable {}
 unsafe impl<P: ?Sized + ProtocolType + IsIdCloneable> IsIdCloneable for ProtocolObject<P> {}
+// SAFETY: Same as for root classes.
+unsafe impl IsIdCloneable for AnyObject {}
 
 /// Marker trait for classes where the `retain` selector is always safe.
 ///
