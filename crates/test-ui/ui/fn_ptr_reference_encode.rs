@@ -1,7 +1,7 @@
 //! Test that `Encode` is not implemented for function pointers that are
 //! higher-ranked over lifetimes.
 //!
-//! Ideally, they should be, but they can't be right now.
+//! Ideally, it should be, but it can't right now.
 use objc2::encode::Encode;
 
 extern "C" fn my_fn(_x: &i32) {}

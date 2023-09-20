@@ -1,5 +1,5 @@
 #![deny(deprecated, unreachable_code)]
-use core::ptr;
+use core::ptr::{self, NonNull};
 
 use objc2::declare::IvarEncode;
 use objc2::mutability::{Immutable, Mutable};
@@ -537,4 +537,31 @@ fn out_param3() {
 )]
 fn out_param4() {
     OutParam::unsupported4(None);
+}
+
+#[test]
+fn test_pointer_receiver_allowed() {
+    declare_class!(
+        #[derive(Debug)]
+        struct PointerReceiver;
+
+        unsafe impl ClassType for PointerReceiver {
+            type Super = NSObject;
+            type Mutability = Immutable;
+            const NAME: &'static str = "PointerReceiver";
+        }
+
+        unsafe impl PointerReceiver {
+            #[method(constPtr)]
+            fn const_ptr(_this: *const Self) {}
+
+            #[method(mutPtr)]
+            fn mut_ptr(_this: *mut Self) {}
+
+            #[method(nonnullPtr)]
+            fn nonnull_ptr(_this: NonNull<Self>) {}
+        }
+    );
+
+    let _ = PointerReceiver::class();
 }

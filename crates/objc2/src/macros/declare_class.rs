@@ -82,10 +82,9 @@
 ///
 /// On instance methods, you can freely choose between different types of
 /// receivers, e.g. `&self`, `this: *const Self`, `&mut self`, and so on. Note
-/// though that using raw pointers requires the function to be `unsafe`, and
-/// using `&mut self` requires the class' mutability to be
+/// though that using `&mut self` requires the class' mutability to be
 /// [`IsAllowedMutable`].
-/// If you require mutation of your class' instance variables, consider using
+/// If you need mutation of your class' instance variables, consider using
 /// [`Cell`] or similar instead.
 ///
 /// The desired selector can be specified using the `#[method(my:selector:)]`

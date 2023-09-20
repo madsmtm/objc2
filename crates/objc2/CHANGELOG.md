@@ -42,6 +42,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   In particular automatic conversion of `bool` is not supported in
   `MessageReceiver`.
+* Relaxed the requirements for receivers in `MethodImplementation`; now,
+  anything that implements `MessageReceiver` can be used as the receiver of
+  a method.
 
 ### Deprecated
 * Soft deprecated using `msg_send!` without a comma between arguments (i.e.

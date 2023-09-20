@@ -19,7 +19,7 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
             ImmutableWithMutableSubclass<MS>
             MutableWithImmutableSuperclass<IS>
   = note: required for `CustomObject` to implement `IsAllowedMutable`
-  = note: required for `extern "C" fn(&mut CustomObject, objc2::runtime::Sel) -> &mut CustomObject` to implement `MethodImplementation`
+  = note: required for `&mut CustomObject` to implement `MessageReceiver`
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
@@ -27,7 +27,7 @@ note: required by a bound in `ClassBuilder::add_method`
   |                   ---------- required by a bound in this associated function
 ...
   |         F: MethodImplementation<Callee = T>,
-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
+  |                                 ^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
@@ -51,7 +51,7 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
             ImmutableWithMutableSubclass<MS>
             MutableWithImmutableSuperclass<IS>
   = note: required for `CustomObject` to implement `IsAllowedMutable`
-  = note: required for `extern "C" fn(&mut CustomObject, objc2::runtime::Sel)` to implement `MethodImplementation`
+  = note: required for `&mut CustomObject` to implement `MessageReceiver`
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
@@ -59,7 +59,7 @@ note: required by a bound in `ClassBuilder::add_method`
   |                   ---------- required by a bound in this associated function
 ...
   |         F: MethodImplementation<Callee = T>,
-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
+  |                                 ^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
@@ -83,7 +83,7 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
             ImmutableWithMutableSubclass<MS>
             MutableWithImmutableSuperclass<IS>
   = note: required for `CustomObject` to implement `IsAllowedMutable`
-  = note: required for `extern "C" fn(&mut CustomObject, objc2::runtime::Sel) -> IdReturnValue` to implement `MethodImplementation`
+  = note: required for `&mut CustomObject` to implement `MessageReceiver`
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
@@ -91,7 +91,7 @@ note: required by a bound in `ClassBuilder::add_method`
   |                   ---------- required by a bound in this associated function
 ...
   |         F: MethodImplementation<Callee = T>,
-  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
+  |                                 ^^^^^^^^^^ required by this bound in `ClassBuilder::add_method`
   = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedMutable` is not satisfied
