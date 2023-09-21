@@ -341,7 +341,6 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
             .get(key)
             .map(|old_obj| unsafe { util::mutable_collection_retain_removed_id(old_obj) });
 
-        let key = ProtocolObject::from_ref(key);
         // SAFETY: We have ownership over the value.
         unsafe { self.setObject_forKey(&value, key) };
         old_obj
@@ -372,7 +371,6 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
             .get(key)
             .map(|old_obj| unsafe { util::mutable_collection_retain_removed_id(old_obj) });
 
-        let key = ProtocolObject::from_ref(key);
         // SAFETY: The value is `IsRetainable`, and hence safe for the
         // collection to retain.
         unsafe { self.setObject_forKey(value, key) };

@@ -22,7 +22,7 @@ use objc2::{
     declare_class, msg_send, msg_send_id,
     mutability::MainThreadOnly,
     rc::Id,
-    runtime::{AnyObject, ProtocolObject, Sel},
+    runtime::{AnyObject, Sel},
     sel, ClassType,
 };
 
@@ -197,12 +197,10 @@ declare_class!(
 
             unsafe {
                 // handle input from text field (on <ENTER>, load URL from text field in web view)
-                let object = ProtocolObject::from_ref(self);
-                nav_url.setDelegate(Some(object));
+                nav_url.setDelegate(Some(self));
 
                 // handle nav events from web view (on finished navigating, update text area with current URL)
-                let object = ProtocolObject::from_ref(self);
-                web_view.setNavigationDelegate(Some(object));
+                web_view.setNavigationDelegate(Some(self));
             }
 
             // create the menu with a "quit" entry
@@ -304,8 +302,7 @@ fn main() {
     let delegate = Delegate::new(mtm);
 
     // configure the application delegate
-    let object = ProtocolObject::from_ref(&*delegate);
-    app.setDelegate(Some(object));
+    app.setDelegate(Some(&*delegate));
 
     // run the app
     unsafe { app.run() };

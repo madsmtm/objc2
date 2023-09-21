@@ -1759,6 +1759,26 @@ impl fmt::Display for Ty {
             },
             TyKind::MethodArgument | TyKind::FnArgument => match &self.ty {
                 Inner::Id {
+                    ty: IdType::AnyObject { protocols },
+                    is_const: false,
+                    lifetime: Lifetime::Unspecified | Lifetime::Strong,
+                    nullability,
+                } if self.kind == TyKind::MethodArgument && !protocols.is_empty() => {
+                    if *nullability != Nullability::NonNull {
+                        write!(f, "Option<")?;
+                    }
+                    write!(f, "&")?;
+                    write!(f, "(impl ")?;
+                    for protocol in protocols {
+                        write!(f, "{} + ", protocol.path())?;
+                    }
+                    write!(f, "Message)")?;
+                    if *nullability != Nullability::NonNull {
+                        write!(f, ">")?;
+                    }
+                    Ok(())
+                }
+                Inner::Id {
                     ty,
                     is_const: false,
                     lifetime: Lifetime::Unspecified | Lifetime::Strong,

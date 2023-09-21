@@ -229,8 +229,7 @@ declare_class!(
 
             // configure the metal view delegate
             unsafe {
-                let object = ProtocolObject::from_ref(self);
-                mtk_view.setDelegate(Some(object));
+                mtk_view.setDelegate(Some(self));
             }
 
             // configure the window
@@ -374,8 +373,7 @@ fn main() {
     let delegate = Delegate::new(mtm);
 
     // configure the application delegate
-    let object = ProtocolObject::from_ref(&*delegate);
-    app.setDelegate(Some(object));
+    app.setDelegate(Some(&delegate));
 
     // run the app
     unsafe { app.run() };

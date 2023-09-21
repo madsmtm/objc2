@@ -38,6 +38,5 @@ fn main() {
     let app = NSApplication::sharedApplication(mtm);
 
     let delegate = CustomObject::new(mtm);
-    let delegate = ProtocolObject::from_ref(&*delegate);
-    app.setDelegate(Some(delegate));
+    app.setDelegate(Some(&delegate));
 }

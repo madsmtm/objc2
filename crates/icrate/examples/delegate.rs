@@ -7,7 +7,6 @@ use icrate::Foundation::{
 };
 use objc2::declare::{Ivar, IvarBool, IvarDrop, IvarEncode};
 use objc2::rc::Id;
-use objc2::runtime::ProtocolObject;
 use objc2::{declare_class, msg_send, msg_send_id, mutability, ClassType};
 
 declare_class!(
@@ -85,8 +84,7 @@ fn main() {
     println!("{delegate:?}");
 
     // configure the application delegate
-    let object = ProtocolObject::from_ref(&*delegate);
-    app.setDelegate(Some(object));
+    app.setDelegate(Some(&delegate));
 
     // run the app
     unsafe { app.run() };
