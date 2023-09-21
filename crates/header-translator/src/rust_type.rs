@@ -1416,14 +1416,18 @@ impl Ty {
             Self::GenericParam { name } => write!(f, "{name}"),
             Self::AnyObject { protocols } => match &**protocols {
                 [] => write!(f, "AnyObject"),
-                [decl] => write!(f, "ProtocolObject<dyn {}>", decl.id.path()),
-                // TODO: Handle this better
-                [first, rest @ ..] => {
-                    write!(f, "AnyObject /* {}", first.id.path())?;
-                    for protocol in rest {
-                        write!(f, "+ {}", protocol.id.path())?;
+                protocols => {
+                    write!(f, "ProtocolObject<dyn ")?;
+
+                    let mut iter = protocols.iter();
+                    let protocol = iter.next().unwrap();
+                    write!(f, "{}", protocol.path())?;
+
+                    for protocol in iter {
+                        write!(f, " + {}", protocol.path())?;
                     }
-                    write!(f, " */")?;
+
+                    write!(f, ">")?;
                     Ok(())
                 }
             },
