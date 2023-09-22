@@ -35,6 +35,10 @@ macro_rules! conditional_try {
     }};
 }
 
+// More information on how objc_msgSend works:
+// <https://web.archive.org/web/20200118080513/http://www.friday.com/bbum/2009/12/18/objc_msgsend-part-1-the-road-map/>
+// <https://www.mikeash.com/pyblog/objc_msgsends-new-prototype.html>
+// <https://www.mikeash.com/pyblog/friday-qa-2012-11-16-lets-build-objc_msgsend.html>
 #[cfg(feature = "apple")]
 mod msg_send_primitive {
     #[allow(unused_imports)]
@@ -340,13 +344,13 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     /// Sends a message to the receiver with the given selector and arguments.
     ///
     /// The correct version of `objc_msgSend` will be chosen based on the
-    /// return type. For more information, see the section on "Sending
-    /// Messages" in Apple's [documentation][runtime].
+    /// return type. For more information, see [the Messaging section in
+    /// Apple's Objective-C Runtime Programming Guide][guide-messaging].
     ///
     /// If the selector is known at compile-time, it is recommended to use the
     /// [`msg_send!`] macro rather than this method.
     ///
-    /// [runtime]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
+    /// [guide-messaging]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtHowMessagingWorks.html
     ///
     ///
     /// # Safety

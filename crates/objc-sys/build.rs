@@ -171,6 +171,7 @@ fn main() {
                 // The fragile runtime is expected on i686-apple-darwin, see:
                 // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/Driver/ToolChains/Darwin.h#L228-L231
                 // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/Driver/ToolChains/Clang.cpp#L3639-L3640
+                // https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtVersionsPlatforms.html
                 (MacOS(version), "x86") => format!("macosx-fragile-{version}"),
                 (MacOS(version), _) => format!("macosx-{version}"),
                 (IOS(version), _) => format!("ios-{version}"),

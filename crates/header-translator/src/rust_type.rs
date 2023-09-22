@@ -122,6 +122,10 @@ impl AttributeParser<'_, '_> {
         }
     }
 
+    /// We completely ignore `__kindof` in Rust as it is done in Swift, since
+    /// it only exists to allow legacy Objective-C code to continue compiling.
+    ///
+    /// See <https://lapcatsoftware.com/articles/kindof.html>
     fn is_kindof(&mut self, position: ParsePosition) -> bool {
         self.strip("__kindof", position)
     }
