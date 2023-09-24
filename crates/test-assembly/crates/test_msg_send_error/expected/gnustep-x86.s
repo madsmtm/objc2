@@ -223,15 +223,13 @@ error_init:
 	push	esi
 	sub	esp, 16
 	mov	esi, dword ptr [esp + 32]
+	mov	edi, dword ptr [esp + 36]
 	call	.L5$pb
 .L5$pb:
 	pop	ebx
 	mov	dword ptr [esp + 12], 0
 .Ltmp5:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp5-.L5$pb)
-	test	esi, esi
-	je	.LBB5_1
-	mov	edi, dword ptr [esp + 36]
 	sub	esp, 8
 	push	edi
 	push	esi
@@ -244,26 +242,22 @@ error_init:
 	call	eax
 	add	esp, 16
 	test	eax, eax
-	je	.LBB5_4
+	je	.LBB5_2
 	mov	edx, eax
 	xor	eax, eax
-.LBB5_6:
+.LBB5_3:
 	add	esp, 16
 	pop	esi
 	pop	edi
 	pop	ebx
 	ret
-.LBB5_1:
-	xor	ecx, ecx
-	jmp	.LBB5_5
-.LBB5_4:
+.LBB5_2:
 	mov	ecx, dword ptr [esp + 12]
-.LBB5_5:
 	lea	edx, [ebx + .Lanon.[ID].6@GOTOFF]
 	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	edx, eax
 	mov	eax, 1
-	jmp	.LBB5_6
+	jmp	.LBB5_3
 .Lfunc_end5:
 	.size	error_init, .Lfunc_end5-error_init
 

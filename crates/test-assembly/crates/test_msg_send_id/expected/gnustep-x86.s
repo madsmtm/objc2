@@ -155,14 +155,12 @@ handle_init:
 	push	edi
 	push	esi
 	mov	esi, dword ptr [esp + 16]
+	mov	edi, dword ptr [esp + 20]
 	call	.L4$pb
 .L4$pb:
 	pop	ebx
 .Ltmp4:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp4-.L4$pb)
-	test	esi, esi
-	je	.LBB4_2
-	mov	edi, dword ptr [esp + 20]
 	sub	esp, 8
 	push	edi
 	push	esi
@@ -172,12 +170,6 @@ handle_init:
 	push	esi
 	call	eax
 	add	esp, 16
-	pop	esi
-	pop	edi
-	pop	ebx
-	ret
-.LBB4_2:
-	xor	eax, eax
 	pop	esi
 	pop	edi
 	pop	ebx
@@ -193,15 +185,13 @@ handle_init_fallible:
 	push	ebx
 	push	edi
 	push	esi
-	mov	esi, dword ptr [esp + 16]
 	mov	edi, dword ptr [esp + 20]
+	mov	esi, dword ptr [esp + 16]
 	call	.L5$pb
 .L5$pb:
 	pop	ebx
 .Ltmp5:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp5-.L5$pb)
-	test	esi, esi
-	je	.LBB5_2
 	sub	esp, 8
 	push	edi
 	push	esi
@@ -212,12 +202,12 @@ handle_init_fallible:
 	call	eax
 	add	esp, 16
 	test	eax, eax
-	je	.LBB5_2
+	je	.LBB5_1
 	pop	esi
 	pop	edi
 	pop	ebx
 	ret
-.LBB5_2:
+.LBB5_1:
 	sub	esp, 4
 	lea	eax, [ebx + .Lanon.[ID].3@GOTOFF]
 	push	eax
@@ -234,28 +224,28 @@ handle_init_fallible:
 	.p2align	4, 0x90
 	.type	handle_alloc_init,@function
 handle_alloc_init:
+	push	ebp
 	push	ebx
 	push	edi
 	push	esi
-	mov	esi, dword ptr [esp + 16]
-	mov	edi, dword ptr [esp + 20]
+	sub	esp, 12
+	mov	edi, dword ptr [esp + 40]
+	mov	esi, dword ptr [esp + 32]
+	mov	ebp, dword ptr [esp + 36]
 	call	.L6$pb
 .L6$pb:
 	pop	ebx
 .Ltmp6:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp6-.L6$pb)
 	sub	esp, 8
-	push	edi
+	push	ebp
 	push	esi
 	call	objc_msg_lookup@PLT
 	add	esp, 8
-	push	edi
+	push	ebp
 	push	esi
 	call	eax
 	add	esp, 16
-	test	eax, eax
-	je	.LBB6_2
-	mov	edi, dword ptr [esp + 24]
 	mov	esi, eax
 	sub	esp, 8
 	push	edi
@@ -265,16 +255,11 @@ handle_alloc_init:
 	push	edi
 	push	esi
 	call	eax
-	add	esp, 16
+	add	esp, 28
 	pop	esi
 	pop	edi
 	pop	ebx
-	ret
-.LBB6_2:
-	xor	eax, eax
-	pop	esi
-	pop	edi
-	pop	ebx
+	pop	ebp
 	ret
 .Lfunc_end6:
 	.size	handle_alloc_init, .Lfunc_end6-handle_alloc_init

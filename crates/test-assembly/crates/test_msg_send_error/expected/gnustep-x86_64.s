@@ -156,30 +156,24 @@ error_init:
 	push	r14
 	push	rbx
 	push	rax
-	mov	qword ptr [rsp], 0
-	test	rdi, rdi
-	je	.LBB5_1
 	mov	rbx, rsi
 	mov	r14, rdi
+	mov	qword ptr [rsp], 0
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	mov	rdx, rsp
 	mov	rdi, r14
 	mov	rsi, rbx
 	call	rax
 	test	rax, rax
-	je	.LBB5_4
+	je	.LBB5_2
 	mov	rdx, rax
 	xor	eax, eax
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB5_1:
-	xor	edi, edi
-	jmp	.LBB5_5
-.LBB5_4:
+.LBB5_2:
 	mov	rdi, qword ptr [rsp]
-.LBB5_5:
 	lea	rsi, [rip + .Lanon.[ID].6]
 	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax

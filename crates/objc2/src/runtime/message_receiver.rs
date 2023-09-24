@@ -154,6 +154,15 @@ mod msg_send_primitive {
         args: A,
     ) -> R {
         let msg_send_fn = R::MSG_SEND;
+        // Note: Modern Objective-C compilers have a workaround to ensure that
+        // messages to `nil` with a struct return produces `mem::zeroed()`,
+        // see:
+        // <https://www.sealiesoftware.com/blog/archive/2012/2/29/objc_explain_return_value_of_message_to_nil.html>
+        //
+        // We _could_ technically do something similar, but since we're
+        // disallowing messages to `nil` with `debug_assertions` enabled
+        // anyhow, and since Rust has a much stronger type-system that
+        // disallows NULL/nil in most cases, we won't bother supporting it.
         unsafe { A::__invoke(msg_send_fn, receiver, sel, args) }
     }
 
@@ -180,8 +189,6 @@ mod msg_send_primitive {
 
 #[cfg(feature = "gnustep-1-7")]
 mod msg_send_primitive {
-    use core::mem;
-
     use crate::encode::{EncodeArguments, EncodeReturn};
     use crate::ffi;
     use crate::runtime::{AnyClass, AnyObject, Imp, Sel};
@@ -206,16 +213,12 @@ mod msg_send_primitive {
         sel: Sel,
         args: A,
     ) -> R {
-        // If `receiver` is NULL, objc_msg_lookup will return a standard C-method
-        // taking two arguments, the receiver and the selector. Transmuting and
-        // calling such a function with multiple parameters is UB, so instead we
-        // return NULL directly.
-        if receiver.is_null() {
-            // SAFETY: Caller guarantees that messages to NULL-receivers only
-            // return pointers, and a mem::zeroed pointer is just a NULL-pointer.
-            return unsafe { mem::zeroed() };
-        }
-
+        // If `receiver` is NULL, objc_msg_lookup will return a standard
+        // C-method taking two arguments, the receiver and the selector.
+        //
+        // Transmuting and calling such a function with multiple parameters is
+        // safe as long as the return value is a primitive (and e.g. not a big
+        // struct or array).
         let msg_send_fn = unsafe { ffi::objc_msg_lookup(receiver.cast(), sel.as_ptr()) };
         let msg_send_fn = unwrap_msg_send_fn(msg_send_fn);
         unsafe { A::__invoke(msg_send_fn, receiver, sel, args) }
@@ -228,11 +231,6 @@ mod msg_send_primitive {
         sel: Sel,
         args: A,
     ) -> R {
-        if receiver.is_null() {
-            // SAFETY: Same as in `send`.
-            return unsafe { mem::zeroed() };
-        }
-
         let superclass: *const AnyClass = superclass;
         let sup = ffi::objc_super {
             receiver: receiver.cast(),

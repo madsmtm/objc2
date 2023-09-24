@@ -103,8 +103,6 @@ handle_alloc_fallible:
 	.p2align	4, 0x90
 	.type	handle_init,@function
 handle_init:
-	test	rdi, rdi
-	je	.LBB4_1
 	push	r14
 	push	rbx
 	push	rax
@@ -117,9 +115,6 @@ handle_init:
 	pop	rbx
 	pop	r14
 	jmp	rax
-.LBB4_1:
-	xor	eax, eax
-	ret
 .Lfunc_end4:
 	.size	handle_init, .Lfunc_end4-handle_init
 
@@ -133,21 +128,17 @@ handle_init_fallible:
 	push	rax
 	mov	rbx, rsi
 	mov	r14, rdi
-	test	rdi, rdi
-	je	.LBB5_2
-	mov	rdi, r14
-	mov	rsi, rbx
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	mov	rdi, r14
 	mov	rsi, rbx
 	call	rax
 	test	rax, rax
-	je	.LBB5_2
+	je	.LBB5_1
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB5_2:
+.LBB5_1:
 	lea	rdx, [rip + .Lanon.[ID].3]
 	mov	rdi, r14
 	mov	rsi, rbx
@@ -163,32 +154,29 @@ handle_init_fallible:
 handle_alloc_init:
 	push	r15
 	push	r14
+	push	r12
 	push	rbx
+	push	rax
 	mov	rbx, rdx
 	mov	r14, rsi
 	mov	r15, rdi
-	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
+	mov	r12, qword ptr [rip + objc_msg_lookup@GOTPCREL]
+	call	r12
 	mov	rdi, r15
 	mov	rsi, r14
 	call	rax
-	test	rax, rax
-	je	.LBB6_1
 	mov	r14, rax
 	mov	rdi, rax
 	mov	rsi, rbx
-	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
+	call	r12
 	mov	rdi, r14
 	mov	rsi, rbx
+	add	rsp, 8
 	pop	rbx
+	pop	r12
 	pop	r14
 	pop	r15
 	jmp	rax
-.LBB6_1:
-	xor	eax, eax
-	pop	rbx
-	pop	r14
-	pop	r15
-	ret
 .Lfunc_end6:
 	.size	handle_alloc_init, .Lfunc_end6-handle_alloc_init
 
