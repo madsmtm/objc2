@@ -482,9 +482,11 @@ unsafe impl<'a> MessageReceiver for &'a AnyClass {
 
 #[cfg(test)]
 mod tests {
+    use core::ptr;
+
     use super::*;
     use crate::mutability;
-    use crate::rc::Id;
+    use crate::rc::{Allocated, Id};
     use crate::runtime::NSObject;
     use crate::test_utils;
     use crate::{declare_class, msg_send, msg_send_id, ClassType};
@@ -568,7 +570,8 @@ mod tests {
         assert!(result.is_none());
 
         // This result should not be relied on
-        let result: Option<Id<NSObject>> = unsafe { msg_send_id![None, init] };
+        let obj = unsafe { Allocated::new(ptr::null_mut()) };
+        let result: Option<Id<NSObject>> = unsafe { msg_send_id![obj, init] };
         assert!(result.is_none());
     }
 

@@ -39,7 +39,7 @@ error[E0283]: type annotations needed
 note: required by a bound in `send_message_id_error`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
-  |     unsafe fn send_message_id_error<A, E>(obj: T, sel: Sel, args: A) -> Result<U, Id<E>>
+  |     unsafe fn send_message_id_error<A, E, R>(obj: T, sel: Sel, args: A) -> Result<R, Id<E>>
   |               --------------------- required by a bound in this associated function
   |     where
   |         *mut *mut E: Encode,
@@ -60,7 +60,7 @@ error[E0283]: type annotations needed
 note: required by a bound in `send_message_id_error`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
-  |     unsafe fn send_message_id_error<A, E>(obj: T, sel: Sel, args: A) -> Result<U, Id<E>>
+  |     unsafe fn send_message_id_error<A, E, R>(obj: T, sel: Sel, args: A) -> Result<R, Id<E>>
   |               --------------------- required by a bound in this associated function
   |     where
   |         *mut *mut E: Encode,
@@ -81,7 +81,7 @@ error[E0283]: type annotations needed
 note: required by a bound in `send_message_id_error`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
-  |     unsafe fn send_message_id_error<A, E>(obj: T, sel: Sel, args: A) -> Result<U, Id<E>>
+  |     unsafe fn send_message_id_error<A, E, R>(obj: T, sel: Sel, args: A) -> Result<R, Id<E>>
   |               --------------------- required by a bound in this associated function
   |     where
   |         *mut *mut E: Encode,

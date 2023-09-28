@@ -19,17 +19,17 @@ pub trait MsgSendId<T, U> {
     /// `send_message_id` with that, and return an error if one occurred.
     #[inline]
     #[track_caller]
-    unsafe fn send_message_id_error<A, E>(obj: T, sel: Sel, args: A) -> Result<U, Id<E>>
+    unsafe fn send_message_id_error<A, E, R>(obj: T, sel: Sel, args: A) -> Result<R, Id<E>>
     where
         *mut *mut E: Encode,
         A: TupleExtender<*mut *mut E>,
         <A as TupleExtender<*mut *mut E>>::PlusOneArgument: ConvertArguments,
         E: Message,
-        Option<U>: MaybeUnwrap<Input = U>,
+        Option<R>: MaybeUnwrap<Input = U>,
     {
         let mut err: *mut E = ptr::null_mut();
         let args = args.add_argument(&mut err);
-        let res: Option<U> = unsafe { Self::send_message_id(obj, sel, args) };
+        let res: Option<R> = unsafe { Self::send_message_id(obj, sel, args) };
         // As per the Cocoa documentation:
         // > Success or failure is indicated by the return value of the
         // > method. Although Cocoa methods that indirectly return error
@@ -66,9 +66,9 @@ unsafe fn encountered_error<E: Message>(err: *mut E) -> Id<E> {
     unsafe { Id::retain(err) }.expect("error parameter should be set if the method returns NULL")
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Id<U>> for New {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Id<U>>> for New {
     #[inline]
-    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Id<U>>>(
+    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<U>>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -96,18 +96,18 @@ impl<T: ?Sized + Message> MsgSendId<&'_ AnyClass, Allocated<T>> for Alloc {
         let obj = unsafe { MsgSend::send_message(cls, sel, args) };
         // SAFETY: The selector is `alloc`, so this has +1 retain count
         let obj = unsafe { Allocated::new(obj) };
-        R::maybe_unwrap::<Self>(obj, (cls, sel))
+        R::maybe_unwrap::<Self>(obj, ())
     }
 }
 
-impl<T: ?Sized + Message> MsgSendId<Option<Allocated<T>>, Id<T>> for Init {
+impl<T: ?Sized + Message> MsgSendId<Allocated<T>, Option<Id<T>>> for Init {
     #[inline]
-    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Id<T>>>(
-        obj: Option<Allocated<T>>,
+    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<T>>>>(
+        obj: Allocated<T>,
         sel: Sel,
         args: A,
     ) -> R {
-        let ptr = Allocated::option_into_ptr(obj);
+        let ptr = Allocated::into_ptr(obj);
         // SAFETY: `ptr` may be null here, but that's fine since the return
         // is `*mut T`, which is one of the few types where messages to nil is
         // allowed.
@@ -121,9 +121,9 @@ impl<T: ?Sized + Message> MsgSendId<Option<Allocated<T>>, Id<T>> for Init {
     }
 }
 
-impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Id<U>> for CopyOrMutCopy {
+impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Id<U>>> for CopyOrMutCopy {
     #[inline]
-    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Id<U>>>(
+    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<U>>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -137,9 +137,9 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Id<U>> for CopyOrMutCopy {
     }
 }
 
-impl<T: MsgSend, U: Message> MsgSendId<T, Id<U>> for Other {
+impl<T: MsgSend, U: Message> MsgSendId<T, Option<Id<U>>> for Other {
     #[inline]
-    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Id<U>>>(
+    unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<U>>>>(
         obj: T,
         sel: Sel,
         args: A,
@@ -163,11 +163,11 @@ impl<T: MsgSend, U: Message> MsgSendId<T, Id<U>> for Other {
 pub trait MaybeUnwrap {
     type Input;
     #[track_caller]
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Self::Input>, args: F::Args) -> Self;
+    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Self::Input, args: F::Args) -> Self;
 }
 
 impl<T: ?Sized> MaybeUnwrap for Option<Id<T>> {
-    type Input = Id<T>;
+    type Input = Option<Id<T>>;
 
     #[inline]
     fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Id<T>>, _args: F::Args) -> Self {
@@ -176,7 +176,7 @@ impl<T: ?Sized> MaybeUnwrap for Option<Id<T>> {
 }
 
 impl<T: ?Sized> MaybeUnwrap for Id<T> {
-    type Input = Id<T>;
+    type Input = Option<Id<T>>;
 
     #[inline]
     fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Id<T>>, args: F::Args) -> Self {
@@ -187,24 +187,12 @@ impl<T: ?Sized> MaybeUnwrap for Id<T> {
     }
 }
 
-impl<T: ?Sized> MaybeUnwrap for Option<Allocated<T>> {
-    type Input = Allocated<T>;
-
-    #[inline]
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Allocated<T>>, _args: F::Args) -> Self {
-        obj
-    }
-}
-
 impl<T: ?Sized> MaybeUnwrap for Allocated<T> {
     type Input = Allocated<T>;
 
     #[inline]
-    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Option<Allocated<T>>, args: F::Args) -> Self {
-        match obj {
-            Some(obj) => obj,
-            None => F::failed(args),
-        }
+    fn maybe_unwrap<'a, F: MsgSendIdFailed<'a>>(obj: Allocated<T>, _args: F::Args) -> Self {
+        obj
     }
 }
 
@@ -244,15 +232,11 @@ impl<'a> MsgSendIdFailed<'a> for New {
 }
 
 impl<'a> MsgSendIdFailed<'a> for Alloc {
-    type Args = (&'a AnyClass, Sel);
+    type Args = ();
 
     #[cold]
-    fn failed((cls, sel): Self::Args) -> ! {
-        if sel == sel!(alloc) {
-            panic!("failed allocating {cls}")
-        } else {
-            panic!("failed allocating with +[{cls} {sel}]")
-        }
+    fn failed(_: Self::Args) -> ! {
+        unreachable!()
     }
 }
 
@@ -385,18 +369,22 @@ mod tests {
         let mut expected = __ThreadTestData::current();
         let cls = __RcTestObject::class();
 
-        let obj: Option<Allocated<__RcTestObject>> = unsafe { msg_send_id![cls, alloc] };
+        let obj: Allocated<__RcTestObject> = unsafe { msg_send_id![cls, alloc] };
         expected.alloc += 1;
+        expected.assert_current();
+
         // Don't check allocation error
         let _obj: Id<__RcTestObject> = unsafe { msg_send_id![obj, init] };
         expected.init += 1;
         expected.assert_current();
 
-        let obj: Option<Allocated<__RcTestObject>> = unsafe { msg_send_id![cls, alloc] };
+        let obj: Allocated<__RcTestObject> = unsafe { msg_send_id![cls, alloc] };
         expected.alloc += 1;
+        expected.assert_current();
+
         // Check allocation error before init
-        let obj = obj.unwrap();
-        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![Some(obj), init] };
+        assert!(!Allocated::as_ptr(&obj).is_null());
+        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![obj, init] };
         expected.init += 1;
         expected.assert_current();
     }
@@ -474,7 +462,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic = "failed allocating with +[__RcTestObject allocReturningNull]"]
     fn test_alloc_with_null() {
         let _obj: Allocated<__RcTestObject> =
             unsafe { msg_send_id![__RcTestObject::class(), allocReturningNull] };
@@ -483,7 +470,7 @@ mod tests {
     #[test]
     #[should_panic = "failed initializing object with -initReturningNull"]
     fn test_init_with_null() {
-        let obj: Option<Allocated<__RcTestObject>> =
+        let obj: Allocated<__RcTestObject> =
             unsafe { msg_send_id![__RcTestObject::class(), alloc] };
         let _obj: Id<__RcTestObject> = unsafe { msg_send_id![obj, initReturningNull] };
     }
@@ -492,7 +479,8 @@ mod tests {
     #[should_panic = "failed allocating object"]
     #[cfg(not(debug_assertions))] // Does NULL receiver checks
     fn test_init_with_null_receiver() {
-        let obj: Option<Allocated<__RcTestObject>> = None;
+        let obj: Allocated<__RcTestObject> =
+            unsafe { msg_send_id![__RcTestObject::class(), allocReturningNull] };
         let _obj: Id<__RcTestObject> = unsafe { msg_send_id![obj, init] };
     }
 

@@ -33,4 +33,4 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   = note: required for `NSThread` to implement `IsAllowedMutable`
   = note: required for `&mut NSThread` to implement `MessageReceiver`
   = note: required for `&mut NSThread` to implement `MsgSend`
-  = note: required for `RetainSemantics<5>` to implement `MsgSendId<&mut NSThread, Id<_>>`
+  = note: required for `RetainSemantics<5>` to implement `MsgSendId<&mut NSThread, Option<Id<_>>>`

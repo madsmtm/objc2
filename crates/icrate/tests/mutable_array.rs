@@ -1,5 +1,5 @@
 #![cfg(feature = "Foundation_NSMutableArray")]
-use objc2::rc::{__RcTestObject, __ThreadTestData, autoreleasepool};
+use objc2::rc::{__RcTestObject, __ThreadTestData, autoreleasepool, Allocated};
 use objc2::{msg_send, ClassType};
 
 #[cfg(feature = "Foundation_NSNumber")]
@@ -123,7 +123,8 @@ fn test_threaded() {
 
         s.spawn(|| {
             let array = <NSMutableArray<NSObject>>::alloc();
-            assert!(array.is_some());
+            let ptr = Allocated::as_ptr(&array);
+            assert!(!ptr.is_null());
         });
     });
 }

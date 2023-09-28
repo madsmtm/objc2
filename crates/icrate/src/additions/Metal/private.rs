@@ -27,7 +27,7 @@ extern_methods!(
         #[cfg(feature = "Metal_MTLDevice")]
         #[method_id(initWithVertexData:fragmentData:serializedVertexDescriptor:device:options:flags:)]
         pub unsafe fn initWithVertexData(
-            this: Option<Allocated<Self>>,
+            this: Allocated<Self>,
             vertex_data: *mut c_void,
             fragment_data: *mut c_void,
             vertex_desc: *mut c_void,

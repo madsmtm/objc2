@@ -13,8 +13,8 @@
 ///     retainable object pointer type - we ensure this by making
 ///     `message_send_id` return `Id`.
 ///   - `init`: The method must be an instance method and must return an
-///     Objective-C pointer type - We ensure this by taking
-///     `Option<Allocated<T>>`, which means it can't be a class method!
+///     Objective-C pointer type - We ensure this by taking `Allocated<T>`,
+///     which means it can't be a class method!
 ///
 /// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments>
 // TODO: Use an enum instead of u8 here when stable

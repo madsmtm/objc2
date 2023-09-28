@@ -14,22 +14,17 @@ unsafe fn handle_new_fallible(cls: &AnyClass, sel: Sel) -> Id<AnyObject> {
 }
 
 #[no_mangle]
-unsafe fn handle_alloc(cls: &AnyClass, sel: Sel) -> Option<Allocated<AnyObject>> {
+unsafe fn handle_alloc(cls: &AnyClass, sel: Sel) -> Allocated<AnyObject> {
     Alloc::send_message_id(cls, sel, ())
 }
 
 #[no_mangle]
-unsafe fn handle_alloc_fallible(cls: &AnyClass, sel: Sel) -> Allocated<AnyObject> {
-    Alloc::send_message_id(cls, sel, ())
-}
-
-#[no_mangle]
-unsafe fn handle_init(obj: Option<Allocated<AnyObject>>, sel: Sel) -> Option<Id<AnyObject>> {
+unsafe fn handle_init(obj: Allocated<AnyObject>, sel: Sel) -> Option<Id<AnyObject>> {
     Init::send_message_id(obj, sel, ())
 }
 
 #[no_mangle]
-unsafe fn handle_init_fallible(obj: Option<Allocated<AnyObject>>, sel: Sel) -> Id<AnyObject> {
+unsafe fn handle_init_fallible(obj: Allocated<AnyObject>, sel: Sel) -> Id<AnyObject> {
     Init::send_message_id(obj, sel, ())
 }
 
@@ -41,8 +36,7 @@ unsafe fn handle_alloc_init(cls: &AnyClass, sel1: Sel, sel2: Sel) -> Option<Id<A
 
 #[no_mangle]
 unsafe fn handle_alloc_release(cls: &AnyClass, sel: Sel) {
-    let obj: Option<Allocated<AnyObject>> = Alloc::send_message_id(cls, sel, ());
-    let _obj = obj.unwrap_unchecked();
+    let _obj: Allocated<AnyObject> = Alloc::send_message_id(cls, sel, ());
 }
 
 #[no_mangle]

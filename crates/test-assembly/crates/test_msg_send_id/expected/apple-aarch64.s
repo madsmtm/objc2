@@ -32,29 +32,6 @@ Lloh1:
 _handle_alloc:
 	b	_objc_msgSend
 
-	.globl	_handle_alloc_fallible
-	.p2align	2
-_handle_alloc_fallible:
-	stp	x20, x19, [sp, #-32]!
-	stp	x29, x30, [sp, #16]
-	add	x29, sp, #16
-	mov	x19, x1
-	mov	x20, x0
-	bl	_objc_msgSend
-	cbz	x0, LBB3_2
-	ldp	x29, x30, [sp, #16]
-	ldp	x20, x19, [sp], #32
-	ret
-LBB3_2:
-Lloh2:
-	adrp	x2, l_anon.[ID].2@PAGE
-Lloh3:
-	add	x2, x2, l_anon.[ID].2@PAGEOFF
-	mov	x0, x20
-	mov	x1, x19
-	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<2_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
-	.loh AdrpAdd	Lloh2, Lloh3
-
 	.globl	_handle_init
 	.p2align	2
 _handle_init:
@@ -69,19 +46,19 @@ _handle_init_fallible:
 	mov	x19, x1
 	mov	x20, x0
 	bl	_objc_msgSend
-	cbz	x0, LBB5_2
+	cbz	x0, LBB4_2
 	ldp	x29, x30, [sp, #16]
 	ldp	x20, x19, [sp], #32
 	ret
-LBB5_2:
-Lloh4:
-	adrp	x2, l_anon.[ID].3@PAGE
-Lloh5:
-	add	x2, x2, l_anon.[ID].3@PAGEOFF
+LBB4_2:
+Lloh2:
+	adrp	x2, l_anon.[ID].2@PAGE
+Lloh3:
+	add	x2, x2, l_anon.[ID].2@PAGEOFF
 	mov	x0, x20
 	mov	x1, x19
 	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
-	.loh AdrpAdd	Lloh4, Lloh5
+	.loh AdrpAdd	Lloh2, Lloh3
 
 	.globl	_handle_alloc_init
 	.p2align	2
@@ -130,16 +107,16 @@ _handle_copy_fallible:
 	stp	x29, x30, [sp, #-16]!
 	mov	x29, sp
 	bl	_objc_msgSend
-	cbz	x0, LBB10_2
+	cbz	x0, LBB9_2
 	ldp	x29, x30, [sp], #16
 	ret
-LBB10_2:
-Lloh6:
-	adrp	x0, l_anon.[ID].4@PAGE
-Lloh7:
-	add	x0, x0, l_anon.[ID].4@PAGEOFF
+LBB9_2:
+Lloh4:
+	adrp	x0, l_anon.[ID].3@PAGE
+Lloh5:
+	add	x0, x0, l_anon.[ID].3@PAGEOFF
 	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
-	.loh AdrpAdd	Lloh6, Lloh7
+	.loh AdrpAdd	Lloh4, Lloh5
 
 	.globl	_handle_autoreleased
 	.p2align	2
@@ -166,19 +143,19 @@ _handle_autoreleased_fallible:
 	mov	x29, x29
 	; InlineAsm End
 	bl	_objc_retainAutoreleasedReturnValue
-	cbz	x0, LBB12_2
+	cbz	x0, LBB11_2
 	ldp	x29, x30, [sp, #16]
 	ldp	x20, x19, [sp], #32
 	ret
-LBB12_2:
-Lloh8:
-	adrp	x2, l_anon.[ID].5@PAGE
-Lloh9:
-	add	x2, x2, l_anon.[ID].5@PAGEOFF
+LBB11_2:
+Lloh6:
+	adrp	x2, l_anon.[ID].4@PAGE
+Lloh7:
+	add	x2, x2, l_anon.[ID].4@PAGEOFF
 	mov	x0, x20
 	mov	x1, x19
 	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
-	.loh AdrpAdd	Lloh8, Lloh9
+	.loh AdrpAdd	Lloh6, Lloh7
 
 	.globl	_handle_with_out_param
 	.p2align	2
@@ -217,21 +194,16 @@ l_anon.[ID].1:
 	.p2align	3, 0x0
 l_anon.[ID].2:
 	.quad	l_anon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000\027\000\000\000\005\000\000"
+	.asciz	"3\000\000\000\000\000\000\000\034\000\000\000\005\000\000"
 
 	.p2align	3, 0x0
 l_anon.[ID].3:
 	.quad	l_anon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000!\000\000\000\005\000\000"
+	.asciz	"3\000\000\000\000\000\000\0008\000\000\000\005\000\000"
 
 	.p2align	3, 0x0
 l_anon.[ID].4:
 	.quad	l_anon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000>\000\000\000\005\000\000"
-
-	.p2align	3, 0x0
-l_anon.[ID].5:
-	.quad	l_anon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000H\000\000\000\005\000\000"
+	.asciz	"3\000\000\000\000\000\000\000B\000\000\000\005\000\000"
 
 .subsections_via_symbols

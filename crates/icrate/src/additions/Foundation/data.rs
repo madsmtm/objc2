@@ -267,7 +267,7 @@ impl IdFromIterator<u8> for NSMutableData {
 }
 
 #[cfg(feature = "block")]
-unsafe fn with_vec<T: Message>(obj: Option<Allocated<T>>, bytes: Vec<u8>) -> Id<T> {
+unsafe fn with_vec<T: Message>(obj: Allocated<T>, bytes: Vec<u8>) -> Id<T> {
     use core::mem::ManuallyDrop;
 
     use block2::{Block, ConcreteBlock};

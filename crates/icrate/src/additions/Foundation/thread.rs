@@ -157,7 +157,7 @@ impl MainThreadMarker {
     /// let obj: Id<SomeClass> = unsafe { msg_send_id![obj, init] };
     /// ```
     #[inline]
-    pub fn alloc<T: ClassType>(self) -> Option<Allocated<T>> {
+    pub fn alloc<T: ClassType>(self) -> Allocated<T> {
         // SAFETY: Same as `ClassType::alloc`, with the addition that since we
         // take `self: MainThreadMarker`, the `IsAllocableAnyThread` bound is
         // not required.

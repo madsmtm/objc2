@@ -152,9 +152,14 @@ pub fn test_id_unwrap(checker: &PanicChecker) {
         let _obj: Id<__RcTestObject> = unsafe { msg_send_id![cls, newReturningNull] };
     });
 
-    let msg = "failed allocating with +[__RcTestObject allocReturningNull]";
-    checker.assert_panics(msg, line!() + 1, || {
-        let _obj: Allocated<__RcTestObject> = unsafe { msg_send_id![cls, allocReturningNull] };
+    let msg = if cfg!(debug_assertions) {
+        "messsaging init to nil"
+    } else {
+        "failed allocating object"
+    };
+    checker.assert_panics(msg, line!() + 2, || {
+        let obj: Allocated<__RcTestObject> = unsafe { msg_send_id![cls, allocReturningNull] };
+        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![obj, init] };
     });
 
     let msg = "failed initializing object with -initReturningNull";

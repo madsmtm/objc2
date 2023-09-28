@@ -144,7 +144,7 @@ impl NSMutableString {
     }
 }
 
-unsafe fn init_with_str<T: Message>(obj: Option<Allocated<T>>, string: &str) -> Id<T> {
+unsafe fn init_with_str<T: Message>(obj: Allocated<T>, string: &str) -> Id<T> {
     let bytes: *const c_void = string.as_ptr().cast();
     // We use `msg_send_id` instead of the generated method from `icrate`,
     // since that assumes the encoding is `usize`, whereas GNUStep assumes

@@ -1,5 +1,5 @@
 //! Test that error parameters are handled correctly.
-use objc2::__macro_helpers::{Alloc, CopyOrMutCopy, Init, MsgSend, MsgSendId, New, Other};
+use objc2::__macro_helpers::{CopyOrMutCopy, Init, MsgSend, MsgSendId, New, Other};
 use objc2::rc::{Allocated, Id};
 use objc2::runtime::{AnyClass, AnyObject, Sel};
 
@@ -15,13 +15,10 @@ unsafe fn error_new(cls: &AnyClass, sel: Sel) -> Result<Id<AnyObject>> {
     New::send_message_id_error(cls, sel, ())
 }
 
-#[no_mangle]
-unsafe fn error_alloc(cls: &AnyClass, sel: Sel) -> Result<Allocated<AnyObject>> {
-    Alloc::send_message_id_error(cls, sel, ())
-}
+// Note: Erroring allocation methods are intentionally not supported
 
 #[no_mangle]
-unsafe fn error_init(obj: Option<Allocated<AnyObject>>, sel: Sel) -> Result<Id<AnyObject>> {
+unsafe fn error_init(obj: Allocated<AnyObject>, sel: Sel) -> Result<Id<AnyObject>> {
     Init::send_message_id_error(obj, sel, ())
 }
 

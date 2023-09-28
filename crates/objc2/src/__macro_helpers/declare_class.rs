@@ -46,7 +46,7 @@ where
 }
 
 // Explicitly left unimplemented for now!
-// impl MessageRecieveId<impl MessageReceiver, Option<Allocated<T>>> for Alloc {}
+// impl MessageRecieveId<impl MessageReceiver, Allocated<T>> for Alloc {}
 
 // Note: `MethodImplementation` allows for `Allocated` as the receiver, so we
 // restrict it here to only be when the selector is `init`.
@@ -56,7 +56,7 @@ where
 impl<Ret, T> MessageRecieveId<Allocated<T>, Ret> for Init
 where
     T: Message,
-    Ret: MaybeOptionId<Input = Id<T>>,
+    Ret: MaybeOptionId<Input = Option<Id<T>>>,
 {
     #[inline]
     fn into_return(obj: Ret) -> IdReturnValue {

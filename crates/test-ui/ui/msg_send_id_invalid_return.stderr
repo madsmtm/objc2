@@ -8,7 +8,6 @@ error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
             Id<T>
             Allocated<T>
             Option<Id<T>>
-            Option<Allocated<T>>
 note: required by a bound in `send_message_id`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
@@ -32,7 +31,7 @@ error[E0277]: the trait bound `AnyClass: Message` is not satisfied
             __RcTestObject
             NSObject
             __NSProxy
-  = note: required for `RetainSemantics<1>` to implement `MsgSendId<&AnyClass, Id<AnyClass>>`
+  = note: required for `RetainSemantics<1>` to implement `MsgSendId<&AnyClass, Option<Id<AnyClass>>>`
 
 error[E0277]: the trait bound `AnyClass: Message` is not satisfied
  --> ui/msg_send_id_invalid_return.rs
@@ -50,7 +49,7 @@ error[E0277]: the trait bound `AnyClass: Message` is not satisfied
             __RcTestObject
             NSObject
             __NSProxy
-  = note: required for `RetainSemantics<1>` to implement `MsgSendId<&AnyClass, Id<AnyClass>>`
+  = note: required for `RetainSemantics<1>` to implement `MsgSendId<&AnyClass, Option<Id<AnyClass>>>`
 
 error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
  --> ui/msg_send_id_invalid_return.rs
@@ -62,7 +61,6 @@ error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
             Id<T>
             Allocated<T>
             Option<Id<T>>
-            Option<Allocated<T>>
 note: required by a bound in `send_message_id`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
@@ -92,10 +90,10 @@ error[E0271]: type mismatch resolving `<Id<AnyObject> as MaybeUnwrap>::Input == 
  --> ui/msg_send_id_invalid_return.rs
   |
   |     let _: Id<AnyObject> = unsafe { msg_send_id![cls, alloc] };
-  |                                     ^^^^^^^^^^^^^^^^^^^^^^^^ expected `Allocated<_>`, found `Id<AnyObject>`
+  |                                     ^^^^^^^^^^^^^^^^^^^^^^^^ expected `Allocated<_>`, found `Option<Id<AnyObject>>`
   |
   = note: expected struct `Allocated<_>`
-             found struct `Id<AnyObject>`
+               found enum `Option<Id<AnyObject>>`
 note: required by a bound in `send_message_id`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
@@ -103,14 +101,28 @@ note: required by a bound in `send_message_id`
   |                                                                   ^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
+error[E0277]: the trait bound `Option<Allocated<AnyObject>>: MaybeUnwrap` is not satisfied
+ --> ui/msg_send_id_invalid_return.rs
+  |
+  |     let _: Option<Allocated<AnyObject>> = unsafe { msg_send_id![cls, alloc] };
+  |                                                    ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap` is not implemented for `Option<Allocated<AnyObject>>`
+  |
+  = help: the trait `MaybeUnwrap` is implemented for `Option<Id<T>>`
+note: required by a bound in `send_message_id`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
+  |
+  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
+  |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
+  = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+
 error[E0271]: type mismatch resolving `<Id<Allocated<AnyObject>> as MaybeUnwrap>::Input == Allocated<_>`
  --> ui/msg_send_id_invalid_return.rs
   |
   |     let _: Id<Allocated<AnyObject>> = unsafe { msg_send_id![cls, alloc] };
-  |                                                ^^^^^^^^^^^^^^^^^^^^^^^^ expected `Allocated<_>`, found `Id<Allocated<AnyObject>>`
+  |                                                ^^^^^^^^^^^^^^^^^^^^^^^^ expected `Allocated<_>`, found `Option<Id<Allocated<AnyObject>>>`
   |
   = note: expected struct `Allocated<_>`
-             found struct `Id<Allocated<AnyObject>>`
+               found enum `Option<Id<Allocated<AnyObject>>>`
 note: required by a bound in `send_message_id`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
@@ -128,7 +140,6 @@ error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
             Id<T>
             Allocated<T>
             Option<Id<T>>
-            Option<Allocated<T>>
 note: required by a bound in `send_message_id`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
@@ -136,14 +147,14 @@ note: required by a bound in `send_message_id`
   |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0271]: type mismatch resolving `<Id<AnyClass> as MaybeUnwrap>::Input == Id<AnyObject>`
+error[E0271]: type mismatch resolving `<Id<AnyClass> as MaybeUnwrap>::Input == Option<Id<AnyObject>>`
  --> ui/msg_send_id_invalid_return.rs
   |
   |     let _: Id<AnyClass> = unsafe { msg_send_id![obj, init] };
-  |                                    ^^^^^^^^^^^^^^^^^^^^^^^ expected `Id<AnyObject>`, found `Id<AnyClass>`
+  |                                    ^^^^^^^^^^^^^^^^^^^^^^^ expected `Option<Id<AnyObject>>`, found `Option<Id<AnyClass>>`
   |
-  = note: expected struct `Id<AnyObject>`
-             found struct `Id<AnyClass>`
+  = note: expected enum `Option<Id<AnyObject>>`
+             found enum `Option<Id<AnyClass>>`
 note: required by a bound in `send_message_id`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
@@ -151,14 +162,14 @@ note: required by a bound in `send_message_id`
   |                                                                   ^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0271]: type mismatch resolving `<Id<NSObject> as MaybeUnwrap>::Input == Id<AnyObject>`
+error[E0271]: type mismatch resolving `<Id<NSObject> as MaybeUnwrap>::Input == Option<Id<AnyObject>>`
  --> ui/msg_send_id_invalid_return.rs
   |
   |     let _: Id<NSObject> = unsafe { msg_send_id![obj, init] };
-  |                                    ^^^^^^^^^^^^^^^^^^^^^^^ expected `Id<AnyObject>`, found `Id<NSObject>`
+  |                                    ^^^^^^^^^^^^^^^^^^^^^^^ expected `Option<Id<AnyObject>>`, found `Option<Id<NSObject>>`
   |
-  = note: expected struct `Id<AnyObject>`
-             found struct `Id<NSObject>`
+  = note: expected enum `Option<Id<AnyObject>>`
+             found enum `Option<Id<NSObject>>`
 note: required by a bound in `send_message_id`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
@@ -176,7 +187,6 @@ error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
             Id<T>
             Allocated<T>
             Option<Id<T>>
-            Option<Allocated<T>>
 note: required by a bound in `send_message_id`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
@@ -194,7 +204,6 @@ error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
             Id<T>
             Allocated<T>
             Option<Id<T>>
-            Option<Allocated<T>>
 note: required by a bound in `send_message_id`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
@@ -208,9 +217,7 @@ error[E0277]: the trait bound `Option<&AnyObject>: MaybeUnwrap` is not satisfied
   |     let _: Option<&AnyObject> = unsafe { msg_send_id![obj, description] };
   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `MaybeUnwrap` is not implemented for `Option<&AnyObject>`
   |
-  = help: the following other types implement trait `MaybeUnwrap`:
-            Option<Id<T>>
-            Option<Allocated<T>>
+  = help: the trait `MaybeUnwrap` is implemented for `Option<Id<T>>`
 note: required by a bound in `send_message_id`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |

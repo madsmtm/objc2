@@ -1,11 +1,11 @@
-error[E0271]: type mismatch resolving `<Id<NSObject> as MaybeUnwrap>::Input == Id<CustomObject>`
+error[E0271]: type mismatch resolving `<Id<NSObject> as MaybeUnwrap>::Input == Option<Id<CustomObject>>`
  --> ui/declare_class_invalid_type2.rs
   |
   |         fn test_init_not_same_generics(this: Allocated<Self>) -> Id<NSObject> {
-  |                                              ^^^^^^^^^^^^^^^ expected `Id<CustomObject>`, found `Id<NSObject>`
+  |                                              ^^^^^^^^^^^^^^^ expected `Option<Id<CustomObject>>`, found `Option<Id<NSObject>>`
   |
-  = note: expected struct `Id<CustomObject>`
-             found struct `Id<NSObject>`
+  = note: expected enum `Option<Id<CustomObject>>`
+             found enum `Option<Id<NSObject>>`
   = note: required for `RetainSemantics<3>` to implement `MessageRecieveId<Allocated<CustomObject>, Id<NSObject>>`
 
 error[E0277]: the trait bound `i32: MaybeOptionId` is not satisfied

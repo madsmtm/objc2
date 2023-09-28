@@ -28,8 +28,8 @@ extern_methods!(
 
 extern_methods!(
     unsafe impl MyObject {
-        #[method_id(init)]
-        fn init(&mut self) -> Option<Id<Self>>;
+        #[method(c:)]
+        fn c(&self, arg: Box<i32>);
     }
 );
 

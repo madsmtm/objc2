@@ -69,42 +69,13 @@ handle_alloc:
 .Lfunc_end2:
 	.size	handle_alloc, .Lfunc_end2-handle_alloc
 
-	.section	.text.handle_alloc_fallible,"ax",@progbits
-	.globl	handle_alloc_fallible
-	.p2align	4, 0x90
-	.type	handle_alloc_fallible,@function
-handle_alloc_fallible:
-	push	r14
-	push	rbx
-	push	rax
-	mov	rbx, rsi
-	mov	r14, rdi
-	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	rdi, r14
-	mov	rsi, rbx
-	call	rax
-	test	rax, rax
-	je	.LBB3_1
-	add	rsp, 8
-	pop	rbx
-	pop	r14
-	ret
-.LBB3_1:
-	lea	rdx, [rip + .Lanon.[ID].2]
-	mov	rdi, r14
-	mov	rsi, rbx
-	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<2_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
-	ud2
-.Lfunc_end3:
-	.size	handle_alloc_fallible, .Lfunc_end3-handle_alloc_fallible
-
 	.section	.text.handle_init,"ax",@progbits
 	.globl	handle_init
 	.p2align	4, 0x90
 	.type	handle_init,@function
 handle_init:
 	test	rdi, rdi
-	je	.LBB4_1
+	je	.LBB3_1
 	push	r14
 	push	rbx
 	push	rax
@@ -117,11 +88,11 @@ handle_init:
 	pop	rbx
 	pop	r14
 	jmp	rax
-.LBB4_1:
+.LBB3_1:
 	xor	eax, eax
 	ret
-.Lfunc_end4:
-	.size	handle_init, .Lfunc_end4-handle_init
+.Lfunc_end3:
+	.size	handle_init, .Lfunc_end3-handle_init
 
 	.section	.text.handle_init_fallible,"ax",@progbits
 	.globl	handle_init_fallible
@@ -134,7 +105,7 @@ handle_init_fallible:
 	mov	rbx, rsi
 	mov	r14, rdi
 	test	rdi, rdi
-	je	.LBB5_2
+	je	.LBB4_2
 	mov	rdi, r14
 	mov	rsi, rbx
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
@@ -142,19 +113,19 @@ handle_init_fallible:
 	mov	rsi, rbx
 	call	rax
 	test	rax, rax
-	je	.LBB5_2
+	je	.LBB4_2
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB5_2:
-	lea	rdx, [rip + .Lanon.[ID].3]
+.LBB4_2:
+	lea	rdx, [rip + .Lanon.[ID].2]
 	mov	rdi, r14
 	mov	rsi, rbx
 	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
 	ud2
-.Lfunc_end5:
-	.size	handle_init_fallible, .Lfunc_end5-handle_init_fallible
+.Lfunc_end4:
+	.size	handle_init_fallible, .Lfunc_end4-handle_init_fallible
 
 	.section	.text.handle_alloc_init,"ax",@progbits
 	.globl	handle_alloc_init
@@ -172,7 +143,7 @@ handle_alloc_init:
 	mov	rsi, r14
 	call	rax
 	test	rax, rax
-	je	.LBB6_1
+	je	.LBB5_1
 	mov	r14, rax
 	mov	rdi, rax
 	mov	rsi, rbx
@@ -183,14 +154,14 @@ handle_alloc_init:
 	pop	r14
 	pop	r15
 	jmp	rax
-.LBB6_1:
+.LBB5_1:
 	xor	eax, eax
 	pop	rbx
 	pop	r14
 	pop	r15
 	ret
-.Lfunc_end6:
-	.size	handle_alloc_init, .Lfunc_end6-handle_alloc_init
+.Lfunc_end5:
+	.size	handle_alloc_init, .Lfunc_end5-handle_alloc_init
 
 	.section	.text.handle_alloc_release,"ax",@progbits
 	.globl	handle_alloc_release
@@ -211,8 +182,8 @@ handle_alloc_release:
 	pop	rbx
 	pop	r14
 	jmp	qword ptr [rip + objc_release@GOTPCREL]
-.Lfunc_end7:
-	.size	handle_alloc_release, .Lfunc_end7-handle_alloc_release
+.Lfunc_end6:
+	.size	handle_alloc_release, .Lfunc_end6-handle_alloc_release
 
 	.section	.text.handle_alloc_init_release,"ax",@progbits
 	.globl	handle_alloc_init_release
@@ -246,8 +217,8 @@ handle_alloc_init_release:
 	pop	r14
 	pop	r15
 	jmp	qword ptr [rip + objc_release@GOTPCREL]
-.Lfunc_end8:
-	.size	handle_alloc_init_release, .Lfunc_end8-handle_alloc_init_release
+.Lfunc_end7:
+	.size	handle_alloc_init_release, .Lfunc_end7-handle_alloc_init_release
 
 	.section	.text.handle_copy,"ax",@progbits
 	.globl	handle_copy
@@ -266,8 +237,8 @@ handle_copy:
 	pop	rbx
 	pop	r14
 	jmp	rax
-.Lfunc_end9:
-	.size	handle_copy, .Lfunc_end9-handle_copy
+.Lfunc_end8:
+	.size	handle_copy, .Lfunc_end8-handle_copy
 
 	.section	.text.handle_copy_fallible,"ax",@progbits
 	.globl	handle_copy_fallible
@@ -284,17 +255,17 @@ handle_copy_fallible:
 	mov	rsi, rbx
 	call	rax
 	test	rax, rax
-	je	.LBB10_1
+	je	.LBB9_1
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB10_1:
-	lea	rdi, [rip + .Lanon.[ID].4]
+.LBB9_1:
+	lea	rdi, [rip + .Lanon.[ID].3]
 	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
 	ud2
-.Lfunc_end10:
-	.size	handle_copy_fallible, .Lfunc_end10-handle_copy_fallible
+.Lfunc_end9:
+	.size	handle_copy_fallible, .Lfunc_end9-handle_copy_fallible
 
 	.section	.text.handle_autoreleased,"ax",@progbits
 	.globl	handle_autoreleased
@@ -315,8 +286,8 @@ handle_autoreleased:
 	pop	rbx
 	pop	r14
 	jmp	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
-.Lfunc_end11:
-	.size	handle_autoreleased, .Lfunc_end11-handle_autoreleased
+.Lfunc_end10:
+	.size	handle_autoreleased, .Lfunc_end10-handle_autoreleased
 
 	.section	.text.handle_autoreleased_fallible,"ax",@progbits
 	.globl	handle_autoreleased_fallible
@@ -335,19 +306,19 @@ handle_autoreleased_fallible:
 	mov	rdi, rax
 	call	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
 	test	rax, rax
-	je	.LBB12_1
+	je	.LBB11_1
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB12_1:
-	lea	rdx, [rip + .Lanon.[ID].5]
+.LBB11_1:
+	lea	rdx, [rip + .Lanon.[ID].4]
 	mov	rdi, r14
 	mov	rsi, rbx
 	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
 	ud2
-.Lfunc_end12:
-	.size	handle_autoreleased_fallible, .Lfunc_end12-handle_autoreleased_fallible
+.Lfunc_end11:
+	.size	handle_autoreleased_fallible, .Lfunc_end11-handle_autoreleased_fallible
 
 	.section	.text.handle_with_out_param,"ax",@progbits
 	.globl	handle_with_out_param
@@ -380,8 +351,8 @@ handle_with_out_param:
 	pop	r14
 	pop	r15
 	jmp	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
-.Lfunc_end13:
-	.size	handle_with_out_param, .Lfunc_end13-handle_with_out_param
+.Lfunc_end12:
+	.size	handle_with_out_param, .Lfunc_end12-handle_with_out_param
 
 	.type	.Lanon.[ID].0,@object
 	.section	.rodata..Lanon.[ID].0,"a",@progbits
@@ -402,7 +373,7 @@ handle_with_out_param:
 	.p2align	3, 0x0
 .Lanon.[ID].2:
 	.quad	.Lanon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000\027\000\000\000\005\000\000"
+	.asciz	"3\000\000\000\000\000\000\000\034\000\000\000\005\000\000"
 	.size	.Lanon.[ID].2, 24
 
 	.type	.Lanon.[ID].3,@object
@@ -410,7 +381,7 @@ handle_with_out_param:
 	.p2align	3, 0x0
 .Lanon.[ID].3:
 	.quad	.Lanon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000!\000\000\000\005\000\000"
+	.asciz	"3\000\000\000\000\000\000\0008\000\000\000\005\000\000"
 	.size	.Lanon.[ID].3, 24
 
 	.type	.Lanon.[ID].4,@object
@@ -418,15 +389,7 @@ handle_with_out_param:
 	.p2align	3, 0x0
 .Lanon.[ID].4:
 	.quad	.Lanon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000>\000\000\000\005\000\000"
+	.asciz	"3\000\000\000\000\000\000\000B\000\000\000\005\000\000"
 	.size	.Lanon.[ID].4, 24
-
-	.type	.Lanon.[ID].5,@object
-	.section	.data.rel.ro..Lanon.[ID].5,"aw",@progbits
-	.p2align	3, 0x0
-.Lanon.[ID].5:
-	.quad	.Lanon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000H\000\000\000\005\000\000"
-	.size	.Lanon.[ID].5, 24
 
 	.section	".note.GNU-stack","",@progbits

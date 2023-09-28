@@ -287,7 +287,7 @@ pub unsafe trait ClassType: Message {
     // but `ClassType` is more often already in scope, allowing easier access
     // to `T::alloc()`.
     #[inline]
-    fn alloc() -> Option<Allocated<Self>>
+    fn alloc() -> Allocated<Self>
     where
         Self: IsAllocableAnyThread,
     {

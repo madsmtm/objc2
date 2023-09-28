@@ -97,7 +97,7 @@
 ///         #[method_id(initWithVal:)]
 ///         // Arbitary self types are not stable, but we can work around it
 ///         // with the special name `this`.
-///         pub fn init(this: Option<Allocated<Self>>, val: usize) -> Id<Self>;
+///         pub fn init(this: Allocated<Self>, val: usize) -> Id<Self>;
 ///     }
 ///
 ///     /// Instance accessor methods.
@@ -150,7 +150,7 @@
 ///         unsafe { msg_send_id![Self::class(), new] }
 ///     }
 ///
-///     pub fn init(this: Option<Allocated<Self>>, val: usize) -> Id<Self> {
+///     pub fn init(this: Allocated<Self>, val: usize) -> Id<Self> {
 ///         unsafe { msg_send_id![this, initWithVal: val] }
 ///     }
 /// }

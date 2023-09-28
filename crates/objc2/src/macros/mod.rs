@@ -1081,12 +1081,11 @@ macro_rules! msg_send_bool {
 ///   return type is a generic `Id<T>` or `Option<Id<T>>`.
 ///
 /// - The `alloc` family: The receiver must be `&AnyClass`, and the return
-///   type is a generic `Allocated<T>` or `Option<Allocated<T>>`.
+///   type is a generic `Allocated<T>`.
 ///
-/// - The `init` family: The receiver must be `Option<Allocated<T>>` as
-///   returned from `alloc`. The receiver is consumed, and a the
-///   now-initialized `Id<T>` or `Option<Id<T>>` (with the same `T`) is
-///   returned.
+/// - The `init` family: The receiver must be `Allocated<T>` as returned from
+///   `alloc`. The receiver is consumed, and a the now-initialized `Id<T>` or
+///   `Option<Id<T>>` (with the same `T`) is returned.
 ///
 /// - The `copy` family: The receiver may be anything that implements
 ///   [`MessageReceiver`] and the return type is a generic `Id<T>` or
@@ -1276,7 +1275,7 @@ macro_rules! __msg_send_id_helper {
         ($($selector:tt)*)
         ($($argument:expr,)*)
     } => ({
-        <$crate::__macro_helpers::$retain_semantics as $crate::__macro_helpers::MsgSendId<_, _>>::$fn::<_, _>(
+        <$crate::__macro_helpers::$retain_semantics as $crate::__macro_helpers::MsgSendId<_, _>>::$fn(
             $obj,
             $crate::sel!($($selector)*),
             ($($argument,)*),
@@ -1296,7 +1295,7 @@ macro_rules! __msg_send_id_helper {
         let result;
         result = <$crate::__macro_helpers::RetainSemantics<{
             $crate::__macro_helpers::retain_semantics(__SELECTOR_DATA)
-        }> as $crate::__macro_helpers::MsgSendId<_, _>>::$fn::<_, _>(
+        }> as $crate::__macro_helpers::MsgSendId<_, _>>::$fn(
             $obj,
             $crate::__sel_inner!(
                 __SELECTOR_DATA,

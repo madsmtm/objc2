@@ -19,10 +19,7 @@ unsafe impl RefEncode for UuidBytes {
 extern_methods!(
     unsafe impl Foundation::NSUUID {
         #[method_id(initWithUUIDBytes:)]
-        pub(crate) fn initWithUUIDBytes(
-            this: Option<Allocated<Self>>,
-            bytes: &UuidBytes,
-        ) -> Id<Self>;
+        pub(crate) fn initWithUUIDBytes(this: Allocated<Self>, bytes: &UuidBytes) -> Id<Self>;
 
         #[method(getUUIDBytes:)]
         pub(crate) fn getUUIDBytes(&self, bytes: &mut UuidBytes);
