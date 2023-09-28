@@ -44,5 +44,5 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   = note: required for `MyObject` to implement `IsAllowedMutable`
   = note: required for `&mut MyObject` to implement `MessageReceiver`
   = note: required for `&mut MyObject` to implement `MsgSend`
-  = note: required for `RetainSemantics<5>` to implement `MsgSendId<&mut MyObject, Id<_>>`
+  = note: required for `RetainSemantics<5>` to implement `MsgSendId<&mut MyObject, Option<Id<_>>>`
   = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

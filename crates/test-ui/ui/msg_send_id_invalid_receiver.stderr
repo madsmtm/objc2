@@ -21,10 +21,10 @@ error[E0308]: mismatched types
   |     let _: Id<NSObject> = unsafe { msg_send_id![obj, init] };
   |                                    -------------^^^-------
   |                                    |            |
-  |                                    |            expected `Option<Allocated<_>>`, found `&NSObject`
+  |                                    |            expected `Allocated<_>`, found `&NSObject`
   |                                    arguments to this function are incorrect
   |
-  = note:   expected enum `Option<Allocated<_>>`
+  = note: expected struct `Allocated<_>`
           found reference `&NSObject`
 note: associated function defined here
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
@@ -38,10 +38,10 @@ error[E0308]: mismatched types
   |     let _: Id<NSObject> = unsafe { msg_send_id![cls, init] };
   |                                    -------------^^^-------
   |                                    |            |
-  |                                    |            expected `Option<Allocated<_>>`, found `&AnyClass`
+  |                                    |            expected `Allocated<_>`, found `&AnyClass`
   |                                    arguments to this function are incorrect
   |
-  = note:   expected enum `Option<Allocated<_>>`
+  = note: expected struct `Allocated<_>`
           found reference `&AnyClass`
 note: associated function defined here
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
@@ -55,11 +55,11 @@ error[E0308]: mismatched types
   |     let _: Id<NSObject> = unsafe { msg_send_id![obj, init] };
   |                                    -------------^^^-------
   |                                    |            |
-  |                                    |            expected `Option<Allocated<_>>`, found `Id<NSObject>`
+  |                                    |            expected `Allocated<_>`, found `Id<NSObject>`
   |                                    arguments to this function are incorrect
   |
-  = note: expected enum `Option<Allocated<_>>`
-           found struct `Id<NSObject>`
+  = note: expected struct `Allocated<_>`
+             found struct `Id<NSObject>`
 note: associated function defined here
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
@@ -72,11 +72,11 @@ error[E0308]: mismatched types
   |     let _: Id<NSObject> = unsafe { msg_send_id![obj, init] };
   |                                    -------------^^^-------
   |                                    |            |
-  |                                    |            expected `Option<Allocated<_>>`, found `Option<Id<NSObject>>`
+  |                                    |            expected `Allocated<_>`, found `Option<Id<NSObject>>`
   |                                    arguments to this function are incorrect
   |
-  = note: expected enum `Option<Allocated<_>>`
-             found enum `Option<Id<NSObject>>`
+  = note: expected struct `Allocated<_>`
+               found enum `Option<Id<NSObject>>`
 note: associated function defined here
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
@@ -93,7 +93,7 @@ error[E0277]: the trait bound `Id<NSObject>: MsgSend` is not satisfied
    |                                    required by a bound introduced by this call
    |
    = note: required for `Id<NSObject>` to implement `MsgSend`
-   = note: required for `RetainSemantics<1>` to implement `MsgSendId<Id<NSObject>, Id<_>>`
+   = note: required for `RetainSemantics<1>` to implement `MsgSendId<Id<NSObject>, Option<Id<_>>>`
 help: consider borrowing here
    |
 19 |     let _: Id<NSObject> = unsafe { msg_send_id![&obj, new] };
@@ -109,7 +109,7 @@ error[E0277]: the trait bound `Id<NSObject>: MsgSend` is not satisfied
    |                                    required by a bound introduced by this call
    |
    = note: required for `Id<NSObject>` to implement `MsgSend`
-   = note: required for `RetainSemantics<4>` to implement `MsgSendId<Id<NSObject>, Id<_>>`
+   = note: required for `RetainSemantics<4>` to implement `MsgSendId<Id<NSObject>, Option<Id<_>>>`
 help: consider borrowing here
    |
 21 |     let _: Id<NSObject> = unsafe { msg_send_id![&obj, copy] };

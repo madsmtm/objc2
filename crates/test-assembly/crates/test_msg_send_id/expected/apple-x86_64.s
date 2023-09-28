@@ -38,28 +38,6 @@ _handle_alloc:
 	pop	rbp
 	jmp	_objc_msgSend
 
-	.globl	_handle_alloc_fallible
-	.p2align	4, 0x90
-_handle_alloc_fallible:
-	push	rbp
-	mov	rbp, rsp
-	push	r14
-	push	rbx
-	mov	rbx, rsi
-	mov	r14, rdi
-	call	_objc_msgSend
-	test	rax, rax
-	je	LBB3_2
-	pop	rbx
-	pop	r14
-	pop	rbp
-	ret
-LBB3_2:
-	lea	rdx, [rip + l_anon.[ID].2]
-	mov	rdi, r14
-	mov	rsi, rbx
-	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<2_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
-
 	.globl	_handle_init
 	.p2align	4, 0x90
 _handle_init:
@@ -79,13 +57,13 @@ _handle_init_fallible:
 	mov	r14, rdi
 	call	_objc_msgSend
 	test	rax, rax
-	je	LBB5_2
+	je	LBB4_2
 	pop	rbx
 	pop	r14
 	pop	rbp
 	ret
-LBB5_2:
-	lea	rdx, [rip + l_anon.[ID].3]
+LBB4_2:
+	lea	rdx, [rip + l_anon.[ID].2]
 	mov	rdi, r14
 	mov	rsi, rbx
 	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
@@ -149,11 +127,11 @@ _handle_copy_fallible:
 	mov	rbp, rsp
 	call	_objc_msgSend
 	test	rax, rax
-	je	LBB10_2
+	je	LBB9_2
 	pop	rbp
 	ret
-LBB10_2:
-	lea	rdi, [rip + l_anon.[ID].4]
+LBB9_2:
+	lea	rdi, [rip + l_anon.[ID].3]
 	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_handle_autoreleased
@@ -190,13 +168,13 @@ _handle_autoreleased_fallible:
 
 	## InlineAsm End
 	test	rax, rax
-	je	LBB12_2
+	je	LBB11_2
 	pop	rbx
 	pop	r14
 	pop	rbp
 	ret
-LBB12_2:
-	lea	rdx, [rip + l_anon.[ID].5]
+LBB11_2:
+	lea	rdx, [rip + l_anon.[ID].4]
 	mov	rdi, r14
 	mov	rsi, rbx
 	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
@@ -245,21 +223,16 @@ l_anon.[ID].1:
 	.p2align	3, 0x0
 l_anon.[ID].2:
 	.quad	l_anon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000\027\000\000\000\005\000\000"
+	.asciz	"3\000\000\000\000\000\000\000\034\000\000\000\005\000\000"
 
 	.p2align	3, 0x0
 l_anon.[ID].3:
 	.quad	l_anon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000!\000\000\000\005\000\000"
+	.asciz	"3\000\000\000\000\000\000\0008\000\000\000\005\000\000"
 
 	.p2align	3, 0x0
 l_anon.[ID].4:
 	.quad	l_anon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000>\000\000\000\005\000\000"
-
-	.p2align	3, 0x0
-l_anon.[ID].5:
-	.quad	l_anon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000H\000\000\000\005\000\000"
+	.asciz	"3\000\000\000\000\000\000\000B\000\000\000\005\000\000"
 
 .subsections_via_symbols

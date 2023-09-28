@@ -33,27 +33,6 @@ LPC1_0:
 _handle_alloc:
 	b	_objc_msgSend
 
-	.globl	_handle_alloc_fallible
-	.p2align	2
-	.code	32
-_handle_alloc_fallible:
-	push	{r4, r5, r7, lr}
-	add	r7, sp, #8
-	mov	r4, r1
-	mov	r5, r0
-	bl	_objc_msgSend
-	cmp	r0, #0
-	popne	{r4, r5, r7, pc}
-LBB3_1:
-	movw	r2, :lower16:(l_anon.[ID].2-(LPC3_0+8))
-	mov	r0, r5
-	movt	r2, :upper16:(l_anon.[ID].2-(LPC3_0+8))
-	mov	r1, r4
-LPC3_0:
-	add	r2, pc, r2
-	mov	lr, pc
-	b	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<2_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
-
 	.globl	_handle_init
 	.p2align	2
 	.code	32
@@ -71,12 +50,12 @@ _handle_init_fallible:
 	bl	_objc_msgSend
 	cmp	r0, #0
 	popne	{r4, r5, r7, pc}
-LBB5_1:
-	movw	r2, :lower16:(l_anon.[ID].3-(LPC5_0+8))
+LBB4_1:
+	movw	r2, :lower16:(l_anon.[ID].2-(LPC4_0+8))
 	mov	r0, r5
-	movt	r2, :upper16:(l_anon.[ID].3-(LPC5_0+8))
+	movt	r2, :upper16:(l_anon.[ID].2-(LPC4_0+8))
 	mov	r1, r4
-LPC5_0:
+LPC4_0:
 	add	r2, pc, r2
 	mov	lr, pc
 	b	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
@@ -131,10 +110,10 @@ _handle_copy_fallible:
 	bl	_objc_msgSend
 	cmp	r0, #0
 	popne	{r7, pc}
-LBB10_1:
-	movw	r0, :lower16:(l_anon.[ID].4-(LPC10_0+8))
-	movt	r0, :upper16:(l_anon.[ID].4-(LPC10_0+8))
-LPC10_0:
+LBB9_1:
+	movw	r0, :lower16:(l_anon.[ID].3-(LPC9_0+8))
+	movt	r0, :upper16:(l_anon.[ID].3-(LPC9_0+8))
+LPC9_0:
 	add	r0, pc, r0
 	mov	lr, pc
 	b	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
@@ -167,12 +146,12 @@ _handle_autoreleased_fallible:
 	bl	_objc_retainAutoreleasedReturnValue
 	cmp	r0, #0
 	popne	{r4, r5, r7, pc}
-LBB12_1:
-	movw	r2, :lower16:(l_anon.[ID].5-(LPC12_0+8))
+LBB11_1:
+	movw	r2, :lower16:(l_anon.[ID].4-(LPC11_0+8))
 	mov	r0, r5
-	movt	r2, :upper16:(l_anon.[ID].5-(LPC12_0+8))
+	movt	r2, :upper16:(l_anon.[ID].4-(LPC11_0+8))
 	mov	r1, r4
-LPC12_0:
+LPC11_0:
 	add	r2, pc, r2
 	mov	lr, pc
 	b	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
@@ -211,21 +190,16 @@ l_anon.[ID].1:
 	.p2align	2, 0x0
 l_anon.[ID].2:
 	.long	l_anon.[ID].0
-	.asciz	"3\000\000\000\027\000\000\000\005\000\000"
+	.asciz	"3\000\000\000\034\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].3:
 	.long	l_anon.[ID].0
-	.asciz	"3\000\000\000!\000\000\000\005\000\000"
+	.asciz	"3\000\000\0008\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].4:
 	.long	l_anon.[ID].0
-	.asciz	"3\000\000\000>\000\000\000\005\000\000"
-
-	.p2align	2, 0x0
-l_anon.[ID].5:
-	.long	l_anon.[ID].0
-	.asciz	"3\000\000\000H\000\000\000\005\000\000"
+	.asciz	"3\000\000\000B\000\000\000\005\000\000"
 
 .subsections_via_symbols

@@ -686,7 +686,7 @@ impl fmt::Display for Method {
 
         // Receiver
         if let MemoryManagement::IdInit = self.memory_management {
-            write!(f, "this: Option<Allocated<Self>>, ")?;
+            write!(f, "this: Allocated<Self>, ")?;
         } else if self.is_class {
             // Insert nothing; a class method is assumed
         } else if self.mutating {

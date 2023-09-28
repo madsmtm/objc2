@@ -271,7 +271,7 @@ declare_class!(
                 }
                 None
             } else {
-                unsafe { msg_send_id![Some(this), init] }
+                unsafe { msg_send_id![this, init] }
             }
         }
 
@@ -488,11 +488,14 @@ mod tests {
         let mut expected = __ThreadTestData::current();
 
         // Succeeds
-        let res: Result<Allocated<__RcTestObject>, Id<__RcTestObject>> =
-            unsafe { msg_send_id![__RcTestObject::class(), allocAndShouldError: false, error: _] };
-        let res = res.expect("not ok");
+        let mut error: Option<Id<__RcTestObject>> = None;
+        let res: Allocated<__RcTestObject> = unsafe {
+            msg_send_id![__RcTestObject::class(), allocAndShouldError: false, error: &mut error]
+        };
         expected.alloc += 1;
         expected.assert_current();
+        assert!(!Allocated::as_ptr(&res).is_null());
+        assert!(error.is_none());
 
         drop(res);
         expected.release += 1;
@@ -500,16 +503,18 @@ mod tests {
         expected.assert_current();
 
         // Errors
-        let res = autoreleasepool(|_pool| {
-            let res: Result<Allocated<__RcTestObject>, Id<__RcTestObject>> = unsafe {
-                msg_send_id![__RcTestObject::class(), allocAndShouldError: true, error: _]
+        let res: Id<__RcTestObject> = autoreleasepool(|_pool| {
+            let mut error = None;
+            let res: Allocated<__RcTestObject> = unsafe {
+                msg_send_id![__RcTestObject::class(), allocAndShouldError: true, error: &mut error]
             };
             expected.alloc += 1;
             expected.init += 1;
             expected.autorelease += 1;
             expected.retain += 1;
             expected.assert_current();
-            res.expect_err("not err")
+            assert!(Allocated::as_ptr(&res).is_null());
+            error.unwrap()
         });
         expected.release += 1;
         expected.assert_current();

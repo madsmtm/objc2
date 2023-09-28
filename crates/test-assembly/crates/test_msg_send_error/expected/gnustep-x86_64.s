@@ -111,43 +111,6 @@ error_new:
 .Lfunc_end3:
 	.size	error_new, .Lfunc_end3-error_new
 
-	.section	.text.error_alloc,"ax",@progbits
-	.globl	error_alloc
-	.p2align	4, 0x90
-	.type	error_alloc,@function
-error_alloc:
-	push	r14
-	push	rbx
-	push	rax
-	mov	rbx, rsi
-	mov	r14, rdi
-	mov	qword ptr [rsp], 0
-	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	rdx, rsp
-	mov	rdi, r14
-	mov	rsi, rbx
-	call	rax
-	test	rax, rax
-	je	.LBB4_2
-	mov	rdx, rax
-	xor	eax, eax
-	add	rsp, 8
-	pop	rbx
-	pop	r14
-	ret
-.LBB4_2:
-	mov	rdi, qword ptr [rsp]
-	lea	rsi, [rip + .Lanon.[ID].5]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
-	mov	rdx, rax
-	mov	eax, 1
-	add	rsp, 8
-	pop	rbx
-	pop	r14
-	ret
-.Lfunc_end4:
-	.size	error_alloc, .Lfunc_end4-error_alloc
-
 	.section	.text.error_init,"ax",@progbits
 	.globl	error_init
 	.p2align	4, 0x90
@@ -158,7 +121,7 @@ error_init:
 	push	rax
 	mov	qword ptr [rsp], 0
 	test	rdi, rdi
-	je	.LBB5_1
+	je	.LBB4_1
 	mov	rbx, rsi
 	mov	r14, rdi
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
@@ -167,20 +130,20 @@ error_init:
 	mov	rsi, rbx
 	call	rax
 	test	rax, rax
-	je	.LBB5_4
+	je	.LBB4_4
 	mov	rdx, rax
 	xor	eax, eax
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB5_1:
+.LBB4_1:
 	xor	edi, edi
-	jmp	.LBB5_5
-.LBB5_4:
+	jmp	.LBB4_5
+.LBB4_4:
 	mov	rdi, qword ptr [rsp]
-.LBB5_5:
-	lea	rsi, [rip + .Lanon.[ID].6]
+.LBB4_5:
+	lea	rsi, [rip + .Lanon.[ID].5]
 	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
@@ -188,8 +151,8 @@ error_init:
 	pop	rbx
 	pop	r14
 	ret
-.Lfunc_end5:
-	.size	error_init, .Lfunc_end5-error_init
+.Lfunc_end4:
+	.size	error_init, .Lfunc_end4-error_init
 
 	.section	.text.error_copy,"ax",@progbits
 	.globl	error_copy
@@ -208,16 +171,16 @@ error_copy:
 	mov	rsi, rbx
 	call	rax
 	test	rax, rax
-	je	.LBB6_2
+	je	.LBB5_2
 	mov	rdx, rax
 	xor	eax, eax
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB6_2:
+.LBB5_2:
 	mov	rdi, qword ptr [rsp]
-	lea	rsi, [rip + .Lanon.[ID].7]
+	lea	rsi, [rip + .Lanon.[ID].6]
 	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
@@ -225,8 +188,8 @@ error_copy:
 	pop	rbx
 	pop	r14
 	ret
-.Lfunc_end6:
-	.size	error_copy, .Lfunc_end6-error_copy
+.Lfunc_end5:
+	.size	error_copy, .Lfunc_end5-error_copy
 
 	.section	.text.error_autoreleased,"ax",@progbits
 	.globl	error_autoreleased
@@ -247,16 +210,16 @@ error_autoreleased:
 	mov	rdi, rax
 	call	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
 	test	rax, rax
-	je	.LBB7_2
+	je	.LBB6_2
 	mov	rdx, rax
 	xor	eax, eax
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB7_2:
+.LBB6_2:
 	mov	rdi, qword ptr [rsp]
-	lea	rsi, [rip + .Lanon.[ID].8]
+	lea	rsi, [rip + .Lanon.[ID].7]
 	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
@@ -264,8 +227,8 @@ error_autoreleased:
 	pop	rbx
 	pop	r14
 	ret
-.Lfunc_end7:
-	.size	error_autoreleased, .Lfunc_end7-error_autoreleased
+.Lfunc_end6:
+	.size	error_autoreleased, .Lfunc_end6-error_autoreleased
 
 	.type	.Lanon.[ID].0,@object
 	.section	.rodata..Lanon.[ID].0,"a",@progbits
@@ -306,7 +269,7 @@ error_autoreleased:
 	.p2align	3, 0x0
 .Lanon.[ID].5:
 	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\024\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000\026\000\000\000\005\000\000"
 	.size	.Lanon.[ID].5, 24
 
 	.type	.Lanon.[ID].6,@object
@@ -314,7 +277,7 @@ error_autoreleased:
 	.p2align	3, 0x0
 .Lanon.[ID].6:
 	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\031\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000\033\000\000\000\005\000\000"
 	.size	.Lanon.[ID].6, 24
 
 	.type	.Lanon.[ID].7,@object
@@ -322,15 +285,7 @@ error_autoreleased:
 	.p2align	3, 0x0
 .Lanon.[ID].7:
 	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\036\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000 \000\000\000\005\000\000"
 	.size	.Lanon.[ID].7, 24
-
-	.type	.Lanon.[ID].8,@object
-	.section	.data.rel.ro..Lanon.[ID].8,"aw",@progbits
-	.p2align	3, 0x0
-.Lanon.[ID].8:
-	.quad	.Lanon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000#\000\000\000\005\000\000"
-	.size	.Lanon.[ID].8, 24
 
 	.section	".note.GNU-stack","",@progbits

@@ -83,9 +83,9 @@ LBB3_2:
 	pop	rbp
 	ret
 
-	.globl	_error_alloc
+	.globl	_error_init
 	.p2align	4, 0x90
-_error_alloc:
+_error_init:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
@@ -109,9 +109,9 @@ LBB4_2:
 	pop	rbp
 	ret
 
-	.globl	_error_init
+	.globl	_error_copy
 	.p2align	4, 0x90
-_error_init:
+_error_copy:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
@@ -128,32 +128,6 @@ _error_init:
 LBB5_2:
 	mov	rdi, qword ptr [rbp - 8]
 	lea	rsi, [rip + l_anon.[ID].6]
-	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
-	mov	rdx, rax
-	mov	eax, 1
-	add	rsp, 16
-	pop	rbp
-	ret
-
-	.globl	_error_copy
-	.p2align	4, 0x90
-_error_copy:
-	push	rbp
-	mov	rbp, rsp
-	sub	rsp, 16
-	mov	qword ptr [rbp - 8], 0
-	lea	rdx, [rbp - 8]
-	call	_objc_msgSend
-	test	rax, rax
-	je	LBB6_2
-	mov	rdx, rax
-	xor	eax, eax
-	add	rsp, 16
-	pop	rbp
-	ret
-LBB6_2:
-	mov	rdi, qword ptr [rbp - 8]
-	lea	rsi, [rip + l_anon.[ID].7]
 	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
@@ -178,15 +152,15 @@ _error_autoreleased:
 
 	## InlineAsm End
 	test	rax, rax
-	je	LBB7_2
+	je	LBB6_2
 	mov	rdx, rax
 	xor	eax, eax
 	add	rsp, 16
 	pop	rbp
 	ret
-LBB7_2:
+LBB6_2:
 	mov	rdi, qword ptr [rbp - 8]
-	lea	rsi, [rip + l_anon.[ID].8]
+	lea	rsi, [rip + l_anon.[ID].7]
 	call	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 	mov	rdx, rax
 	mov	eax, 1
@@ -218,21 +192,16 @@ l_anon.[ID].4:
 	.p2align	3, 0x0
 l_anon.[ID].5:
 	.quad	l_anon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\024\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000\026\000\000\000\005\000\000"
 
 	.p2align	3, 0x0
 l_anon.[ID].6:
 	.quad	l_anon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\031\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000\033\000\000\000\005\000\000"
 
 	.p2align	3, 0x0
 l_anon.[ID].7:
 	.quad	l_anon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000\036\000\000\000\005\000\000"
-
-	.p2align	3, 0x0
-l_anon.[ID].8:
-	.quad	l_anon.[ID].2
-	.asciz	"6\000\000\000\000\000\000\000#\000\000\000\005\000\000"
+	.asciz	"6\000\000\000\000\000\000\000 \000\000\000\005\000\000"
 
 .subsections_via_symbols

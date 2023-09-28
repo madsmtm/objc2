@@ -1,0 +1,47 @@
+error[E0308]: mismatched types
+ --> ui/msg_send_id_invalid_error.rs
+  |
+  |     let _: () = unsafe { msg_send_id![obj, a: _] };
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^ expected `()`, found `Result<Id<_>, Id<_>>`
+  |
+  = note: expected unit type `()`
+                  found enum `Result<Id<_>, Id<_>>`
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+ --> ui/msg_send_id_invalid_error.rs
+  |
+  |         unsafe { msg_send_id![NSObject::alloc(), initWithError: _] };
+  |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Result<Id<AnyObject>, Id<NSObject>>`, found `Result<Id<NSObject>, Id<_>>`
+  |
+  = note: expected enum `Result<Id<AnyObject>, Id<NSObject>>`
+             found enum `Result<Id<NSObject>, Id<_>>`
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0271]: type mismatch resolving `<Option<Id<_>> as MaybeUnwrap>::Input == Allocated<_>`
+ --> ui/msg_send_id_invalid_error.rs
+  |
+  |         unsafe { msg_send_id![NSObject::class(), allocWithError: _] };
+  |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Allocated<_>`, found `Option<Id<_>>`
+  |
+  = note: expected struct `Allocated<_>`
+               found enum `Option<Id<_>>`
+note: required by a bound in `send_message_id_error`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
+  |
+  |     unsafe fn send_message_id_error<A, E, R>(obj: T, sel: Sel, args: A) -> Result<R, Id<E>>
+  |               --------------------- required by a bound in this associated function
+...
+  |         Option<R>: MaybeUnwrap<Input = U>,
+  |                                ^^^^^^^^^ required by this bound in `MsgSendId::send_message_id_error`
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+ --> ui/msg_send_id_invalid_error.rs
+  |
+  |         unsafe { msg_send_id![NSObject::class(), allocWithError: _] };
+  |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `Result<Allocated<NSObject>, ...>`, found `Result<Id<_>, Id<_>>`
+  |
+  = note: expected enum `Result<Allocated<NSObject>, Id<NSObject>>`
+             found enum `Result<Id<_>, Id<_>>`
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
