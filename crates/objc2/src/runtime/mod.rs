@@ -714,17 +714,6 @@ impl AnyClass {
     }
 
     #[allow(unused)]
-    #[doc(alias = "class_getIvarLayout")]
-    fn instance_variable_layout(&self) -> Option<&[u8]> {
-        let layout: *const c_char = unsafe { ffi::class_getIvarLayout(self.as_ptr()).cast() };
-        if layout.is_null() {
-            None
-        } else {
-            Some(unsafe { CStr::from_ptr(layout) }.to_bytes())
-        }
-    }
-
-    #[allow(unused)]
     #[doc(alias = "class_getClassVariable")]
     fn class_variable(&self, name: &str) -> Option<&Ivar> {
         let name = CString::new(name).unwrap();
@@ -798,7 +787,6 @@ impl AnyClass {
     // fn properties(&self) -> Malloc<[&Property]>;
     // unsafe fn replace_method(&self, name: Sel, imp: Imp, types: &str) -> Imp;
     // unsafe fn replace_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
-    // unsafe fn set_ivar_layout(&mut self, layout: &[u8]);
     // fn method_imp(&self, name: Sel) -> Imp; // + _stret
 
     // fn get_version(&self) -> u32;
@@ -1285,7 +1273,7 @@ mod tests {
     use super::*;
     use crate::runtime::MessageReceiver;
     use crate::test_utils;
-    use crate::{msg_send, sel};
+    use crate::{class, msg_send, sel};
 
     #[test]
     fn test_selector() {
@@ -1575,5 +1563,23 @@ mod tests {
         assert_eq!(size_of::<AnyProtocol>(), 0);
         assert_eq!(size_of::<Ivar>(), 0);
         assert_eq!(size_of::<Method>(), 0);
+    }
+
+    fn get_ivar_layout(cls: &AnyClass) -> *const u8 {
+        let cls: *const AnyClass = cls;
+        unsafe { ffi::class_getIvarLayout(cls.cast()) }
+    }
+
+    #[test]
+    #[cfg_attr(
+        feature = "gnustep-1-7",
+        ignore = "ivar layout is still used on GNUStep"
+    )]
+    fn test_layout_does_not_matter_any_longer() {
+        assert!(get_ivar_layout(class!(NSObject)).is_null());
+        assert!(get_ivar_layout(class!(NSArray)).is_null());
+        assert!(get_ivar_layout(class!(NSException)).is_null());
+        assert!(get_ivar_layout(class!(NSNumber)).is_null());
+        assert!(get_ivar_layout(class!(NSString)).is_null());
     }
 }
