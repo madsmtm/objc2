@@ -1052,9 +1052,11 @@ impl AnyObject {
 
     /// Dynamically find the class of this object.
     #[doc(alias = "object_getClass")]
-    pub fn class(&self) -> &AnyClass {
+    pub fn class(&self) -> &'static AnyClass {
         let ptr: *const AnyClass = unsafe { ffi::object_getClass(self.as_ptr()) }.cast();
-        // SAFETY: The class is not NULL because the object is not NULL.
+        // SAFETY: The class is not NULL because the object is not NULL, and
+        // it is safe as `'static` since classes are static, and it could be
+        // retrieved via. `AnyClass::get(self.class().name())` anyhow.
         unsafe { ptr.as_ref().unwrap_unchecked() }
     }
 
