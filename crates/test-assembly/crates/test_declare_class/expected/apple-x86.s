@@ -309,7 +309,7 @@ L6$pb:
 	mov	esi, eax
 	sub	esp, 12
 	push	eax
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	add	esp, 16
 	lea	ecx, [edi + l_anon.[ID].12-L6$pb]
 	lea	edx, [edi + L_anon.[ID].11-L6$pb]
@@ -322,7 +322,7 @@ L6$pb:
 	movzx	ebx, byte ptr [esi + eax]
 	sub	esp, 12
 	push	esi
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	add	esp, 16
 	lea	ecx, [edi + l_anon.[ID].2-L6$pb]
 	lea	edx, [edi + L_anon.[ID].13-L6$pb]
@@ -415,7 +415,7 @@ L8$pb:
 	mov	edi, dword ptr [ebp + 8]
 	sub	esp, 12
 	push	edi
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	add	esp, 16
 	lea	ecx, [ebx + l_anon.[ID].2-L8$pb]
 	lea	edx, [ebx + L_anon.[ID].13-L8$pb]
@@ -478,7 +478,7 @@ L9$pb:
 	je	LBB9_2
 	sub	esp, 12
 	push	esi
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	add	esp, 16
 	lea	ecx, [edi + l_anon.[ID].12-L9$pb]
 	lea	edx, [edi + L_anon.[ID].11-L9$pb]
@@ -491,7 +491,7 @@ L9$pb:
 	mov	byte ptr [esi + eax], 42
 	sub	esp, 12
 	push	esi
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	add	esp, 16
 	lea	ecx, [edi + l_anon.[ID].2-L9$pb]
 	lea	edx, [edi + L_anon.[ID].13-L9$pb]
@@ -550,7 +550,7 @@ L13$pb:
 	mov	esi, dword ptr [ebp + 8]
 	sub	esp, 12
 	push	esi
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	add	esp, 16
 	lea	ecx, [edi + l_anon.[ID].2-L13$pb]
 	lea	edx, [edi + L_anon.[ID].13-L13$pb]
@@ -598,7 +598,7 @@ L14$pb:
 	je	LBB14_5
 	mov	ebx, dword ptr [ebp + 8]
 	mov	dword ptr [esp], ebx
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	lea	ecx, [edi + l_anon.[ID].2-L14$pb]
 	mov	dword ptr [esp + 12], ecx
 	lea	ecx, [edi + L_anon.[ID].13-L14$pb]
@@ -649,7 +649,7 @@ L15$pb:
 	sub	esp, 12
 	push	eax
 	mov	ebx, eax
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	add	esp, 16
 	lea	edx, [edi + l_anon.[ID].12-L15$pb]
 	lea	ecx, [edi + L_anon.[ID].11-L15$pb]
@@ -662,7 +662,7 @@ L15$pb:
 	movzx	ebx, byte ptr [ebx + eax]
 	sub	esp, 12
 	push	esi
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	add	esp, 16
 	lea	ecx, [edi + l_anon.[ID].12-L15$pb]
 	push	ecx
@@ -675,7 +675,7 @@ L15$pb:
 	mov	byte ptr [esi + eax], bl
 	sub	esp, 12
 	push	dword ptr [ebp + 8]
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	add	esp, 16
 	lea	ecx, [edi + l_anon.[ID].2-L15$pb]
 	lea	ebx, [edi + L_anon.[ID].13-L15$pb]
@@ -701,7 +701,7 @@ LBB15_2:
 LBB15_4:
 	sub	esp, 12
 	push	esi
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	add	esp, 16
 	push	dword ptr [ebp - 16]
 	push	4

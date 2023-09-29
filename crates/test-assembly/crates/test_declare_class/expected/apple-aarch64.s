@@ -383,7 +383,7 @@ _access_ivars:
 	add	x29, sp, #32
 	bl	_get_obj
 	mov	x19, x0
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 Lloh88:
 	adrp	x1, l_anon.[ID].11@PAGE
 Lloh89:
@@ -396,7 +396,7 @@ Lloh91:
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	ldrb	w20, [x19, x0]
 	mov	x0, x19
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 Lloh92:
 	adrp	x1, l_anon.[ID].13@PAGE
 Lloh93:
@@ -500,7 +500,7 @@ SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::
 	add	x29, sp, #32
 	mov	x19, x1
 	mov	x20, x0
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 Lloh112:
 	adrp	x1, l_anon.[ID].13@PAGE
 Lloh113:
@@ -558,7 +558,7 @@ Lloh124:
 	mov	x19, x0
 	cbz	x0, LBB9_2
 	mov	x0, x19
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 Lloh125:
 	adrp	x1, l_anon.[ID].11@PAGE
 Lloh126:
@@ -572,7 +572,7 @@ Lloh128:
 	mov	w8, #42
 	strb	w8, [x19, x0]
 	mov	x0, x19
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 Lloh129:
 	adrp	x1, l_anon.[ID].13@PAGE
 Lloh130:
@@ -620,7 +620,7 @@ _method_id:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	mov	x19, x0
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 Lloh133:
 	adrp	x1, l_anon.[ID].13@PAGE
 Lloh134:
@@ -654,7 +654,7 @@ _method_id_with_param:
 	mov	x19, x0
 	cbz	w21, LBB14_5
 	mov	x0, x20
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 Lloh137:
 	adrp	x1, l_anon.[ID].13@PAGE
 Lloh138:
@@ -698,7 +698,7 @@ _copyWithZone:
 	mov	x19, x0
 	cbz	x0, LBB15_5
 	mov	x0, x20
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 Lloh141:
 	adrp	x21, l_anon.[ID].11@PAGE
 Lloh142:
@@ -713,14 +713,14 @@ Lloh144:
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	ldrb	w23, [x20, x0]
 	mov	x0, x19
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 	mov	x1, x21
 	mov	w2, #4
 	mov	x3, x22
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	strb	w23, [x19, x0]
 	mov	x0, x20
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 Lloh145:
 	adrp	x1, l_anon.[ID].13@PAGE
 Lloh146:
@@ -740,7 +740,7 @@ LBB15_3:
 	mov	x20, #0
 LBB15_4:
 	mov	x0, x19
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 Lloh149:
 	adrp	x1, l_anon.[ID].13@PAGE
 Lloh150:
