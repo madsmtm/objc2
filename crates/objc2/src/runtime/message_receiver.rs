@@ -154,6 +154,15 @@ mod msg_send_primitive {
         args: A,
     ) -> R {
         let msg_send_fn = R::MSG_SEND;
+        // Note: Modern Objective-C compilers have a workaround to ensure that
+        // messages to `nil` with a struct return produces `mem::zeroed()`,
+        // see:
+        // <https://www.sealiesoftware.com/blog/archive/2012/2/29/objc_explain_return_value_of_message_to_nil.html>
+        //
+        // We _could_ technically do something similar, but since we're
+        // disallowing messages to `nil` with `debug_assertions` enabled
+        // anyhow, and since Rust has a much stronger type-system that
+        // disallows NULL/nil in most cases, we won't bother supporting it.
         unsafe { A::__invoke(msg_send_fn, receiver, sel, args) }
     }
 
@@ -206,13 +215,21 @@ mod msg_send_primitive {
         sel: Sel,
         args: A,
     ) -> R {
-        // If `receiver` is NULL, objc_msg_lookup will return a standard C-method
-        // taking two arguments, the receiver and the selector. Transmuting and
-        // calling such a function with multiple parameters is UB, so instead we
-        // return NULL directly.
+        // If `receiver` is NULL, objc_msg_lookup will return a standard
+        // C-method taking two arguments, the receiver and the selector.
+        //
+        // Transmuting and calling such a function with multiple parameters is
+        // safe as long as the return value is a primitive (and e.g. not a big
+        // struct or array).
+        //
+        // However, when the return value is a floating point value, the float
+        // will end up as some undefined value, usually NaN, which is
+        // incompatible with Apple's platforms. As such, we insert this extra
+        // NULL check here.
         if receiver.is_null() {
             // SAFETY: Caller guarantees that messages to NULL-receivers only
-            // return pointers, and a mem::zeroed pointer is just a NULL-pointer.
+            // return pointers or primitive values, and a mem::zeroed pointer
+            // / primitive is just a NULL-pointer or a zeroed primitive.
             return unsafe { mem::zeroed() };
         }
 
