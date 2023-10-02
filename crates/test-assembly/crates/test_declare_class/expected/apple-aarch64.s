@@ -5,15 +5,15 @@ SYM(core[CRATE_ID]::ptr::drop_in_place::<<std[CRATE_ID]::sync::once::Once>::call
 
 	.p2align	2
 SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
-	sub	sp, sp, #112
-	stp	x22, x21, [sp, #64]
-	stp	x20, x19, [sp, #80]
-	stp	x29, x30, [sp, #96]
-	add	x29, sp, #96
+	sub	sp, sp, #64
+	stp	x22, x21, [sp, #16]
+	stp	x20, x19, [sp, #32]
+	stp	x29, x30, [sp, #48]
+	add	x29, sp, #48
 	ldr	x8, [x0]
 	ldrb	w9, [x8]
 	strb	wzr, [x8]
-	cbz	w9, LBB1_3
+	cbz	w9, LBB1_5
 Lloh0:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh1:
@@ -21,35 +21,35 @@ Lloh1:
 Lloh2:
 	ldr	x2, [x8]
 Lloh3:
-	adrp	x0, l_anon.[ID].16@PAGE
+	adrp	x0, l_anon.[ID].11@PAGE
 Lloh4:
-	add	x0, x0, l_anon.[ID].16@PAGEOFF
+	add	x0, x0, l_anon.[ID].11@PAGEOFF
 	mov	w1, #15
 	bl	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
-	cbz	x0, LBB1_4
-	str	x0, [sp]
+	cbz	x0, LBB1_6
+	str	x0, [sp, #8]
 Lloh5:
-	adrp	x1, l_anon.[ID].11@PAGE
+	adrp	x1, l_anon.[ID].12@PAGE
 Lloh6:
-	add	x1, x1, l_anon.[ID].11@PAGEOFF
+	add	x1, x1, l_anon.[ID].12@PAGEOFF
 Lloh7:
-	adrp	x5, l_anon.[ID].12@PAGE
+	adrp	x5, l_anon.[ID].13@PAGE
 Lloh8:
-	add	x5, x5, l_anon.[ID].12@PAGEOFF
-	mov	x0, sp
+	add	x5, x5, l_anon.[ID].13@PAGEOFF
+	add	x0, sp, #8
 	mov	w2, #4
 	mov	w3, #1
 	mov	w4, #0
 	bl	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
 Lloh9:
-	adrp	x1, l_anon.[ID].13@PAGE
+	adrp	x1, l_anon.[ID].14@PAGE
 Lloh10:
-	add	x1, x1, l_anon.[ID].13@PAGEOFF
+	add	x1, x1, l_anon.[ID].14@PAGEOFF
 Lloh11:
 	adrp	x19, l_anon.[ID].2@PAGE
 Lloh12:
 	add	x19, x19, l_anon.[ID].2@PAGEOFF
-	mov	x0, sp
+	add	x0, sp, #8
 	mov	w2, #4
 	mov	w3, #8
 	mov	w4, #3
@@ -73,7 +73,7 @@ Lloh20:
 	adrp	x5, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::__objc2_dealloc, 0)@PAGE
 Lloh21:
 	add	x5, x5, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::__objc2_dealloc, 0)@PAGEOFF
-	mov	x0, sp
+	add	x0, sp, #8
 	mov	x2, x20
 	mov	x3, #0
 	mov	x4, x21
@@ -88,7 +88,7 @@ Lloh25:
 	adrp	x5, _init@PAGE
 Lloh26:
 	add	x5, x5, _init@PAGEOFF
-	mov	x0, sp
+	add	x0, sp, #8
 	mov	x2, x20
 	mov	x3, #0
 	mov	x4, x19
@@ -101,7 +101,7 @@ Lloh29:
 	adrp	x5, _class_method@PAGE
 Lloh30:
 	add	x5, x5, _class_method@PAGEOFF
-	mov	x0, sp
+	add	x0, sp, #8
 	mov	x2, x20
 	mov	x3, #0
 	mov	x4, x21
@@ -114,7 +114,7 @@ Lloh33:
 	adrp	x5, _method@PAGE
 Lloh34:
 	add	x5, x5, _method@PAGEOFF
-	mov	x0, sp
+	add	x0, sp, #8
 	mov	x2, x20
 	mov	x3, #0
 	mov	x4, x21
@@ -131,7 +131,7 @@ Lloh39:
 	adrp	x5, _method_bool@PAGE
 Lloh40:
 	add	x5, x5, _method_bool@PAGEOFF
-	mov	x0, sp
+	add	x0, sp, #8
 	mov	x2, x21
 	mov	w3, #1
 	mov	x4, x21
@@ -144,7 +144,7 @@ Lloh43:
 	adrp	x5, _method_id@PAGE
 Lloh44:
 	add	x5, x5, _method_id@PAGEOFF
-	mov	x0, sp
+	add	x0, sp, #8
 	mov	x2, x20
 	mov	x3, #0
 	mov	x4, x19
@@ -157,7 +157,7 @@ Lloh47:
 	adrp	x5, _method_id_with_param@PAGE
 Lloh48:
 	add	x5, x5, _method_id_with_param@PAGEOFF
-	mov	x0, sp
+	add	x0, sp, #8
 	mov	x2, x21
 	mov	w3, #1
 	mov	x4, x19
@@ -168,9 +168,11 @@ Lloh50:
 	add	x0, x0, l_anon.[ID].17@PAGEOFF
 	mov	w1, #9
 	bl	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
+	cbz	x0, LBB1_4
 	mov	x1, x0
-	mov	x0, sp
-	bl	SYM(objc2::__macro_helpers::<impl objc2::declare::ClassBuilder>::__add_protocol_methods::GENERATED_ID, 0)
+	add	x0, sp, #8
+	bl	SYM(objc2::declare::ClassBuilder::add_protocol::GENERATED_ID, 0)
+LBB1_4:
 Lloh51:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_4a8c690dbc9d8166@PAGE
 Lloh52:
@@ -180,61 +182,47 @@ Lloh53:
 Lloh54:
 	add	x2, x2, l_anon.[ID].7@PAGEOFF
 Lloh55:
-	adrp	x5, _copyWithZone@PAGE
+	adrp	x4, l_anon.[ID].2@PAGE
 Lloh56:
-	add	x5, x5, _copyWithZone@PAGEOFF
-	mov	w3, #1
-	mov	x4, x19
-	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
-	ldr	x0, [sp]
-	bl	SYM(objc2::declare::ClassBuilder::register::GENERATED_ID, 0)
-	ldp	x29, x30, [sp, #96]
-	ldp	x20, x19, [sp, #80]
-	ldp	x22, x21, [sp, #64]
-	add	sp, sp, #112
-	ret
-LBB1_3:
+	add	x4, x4, l_anon.[ID].2@PAGEOFF
 Lloh57:
-	adrp	x0, l_anon.[ID].8@PAGE
+	adrp	x5, _copyWithZone@PAGE
 Lloh58:
-	add	x0, x0, l_anon.[ID].8@PAGEOFF
+	add	x5, x5, _copyWithZone@PAGEOFF
+	add	x0, sp, #8
+	mov	w3, #1
+	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	ldr	x0, [sp, #8]
+	bl	SYM(objc2::declare::ClassBuilder::register::GENERATED_ID, 0)
+	ldp	x29, x30, [sp, #48]
+	ldp	x20, x19, [sp, #32]
+	ldp	x22, x21, [sp, #16]
+	add	sp, sp, #64
+	ret
+LBB1_5:
 Lloh59:
-	adrp	x2, l_anon.[ID].10@PAGE
+	adrp	x0, l_anon.[ID].8@PAGE
 Lloh60:
+	add	x0, x0, l_anon.[ID].8@PAGEOFF
+Lloh61:
+	adrp	x2, l_anon.[ID].10@PAGE
+Lloh62:
 	add	x2, x2, l_anon.[ID].10@PAGEOFF
 	mov	w1, #43
 	bl	SYM(core::panicking::panic::GENERATED_ID, 0)
-LBB1_4:
-Lloh61:
-	adrp	x8, l_anon.[ID].21@PAGE
-Lloh62:
-	add	x8, x8, l_anon.[ID].21@PAGEOFF
+LBB1_6:
 Lloh63:
-	adrp	x9, SYM(<&str as core[CRATE_ID]::fmt::Display>::fmt, 0)@PAGE
+	adrp	x0, l_anon.[ID].11@PAGE
 Lloh64:
-	add	x9, x9, SYM(<&str as core[CRATE_ID]::fmt::Display>::fmt, 0)@PAGEOFF
-	stp	x8, x9, [sp, #48]
+	add	x0, x0, l_anon.[ID].11@PAGEOFF
 Lloh65:
-	adrp	x8, l_anon.[ID].20@PAGE
+	adrp	x2, l_anon.[ID].16@PAGE
 Lloh66:
-	add	x8, x8, l_anon.[ID].20@PAGEOFF
-	mov	w9, #2
-	stp	x8, x9, [sp]
-	add	x8, sp, #48
-	mov	w9, #1
-	str	x8, [sp, #16]
-	stp	x9, xzr, [sp, #24]
-Lloh67:
-	adrp	x1, l_anon.[ID].15@PAGE
-Lloh68:
-	add	x1, x1, l_anon.[ID].15@PAGEOFF
-	mov	x0, sp
-	bl	SYM(core::panicking::panic_fmt::GENERATED_ID, 0)
+	add	x2, x2, l_anon.[ID].16@PAGEOFF
+	mov	w1, #15
+	bl	SYM(objc2::__macro_helpers::declare_class::failed_declaring_class::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh3, Lloh4
 	.loh AdrpLdrGotLdr	Lloh0, Lloh1, Lloh2
-	.loh AdrpAdd	Lloh55, Lloh56
-	.loh AdrpAdd	Lloh53, Lloh54
-	.loh AdrpLdr	Lloh51, Lloh52
 	.loh AdrpAdd	Lloh49, Lloh50
 	.loh AdrpAdd	Lloh47, Lloh48
 	.loh AdrpLdr	Lloh45, Lloh46
@@ -257,12 +245,14 @@ Lloh68:
 	.loh AdrpAdd	Lloh9, Lloh10
 	.loh AdrpAdd	Lloh7, Lloh8
 	.loh AdrpAdd	Lloh5, Lloh6
-	.loh AdrpAdd	Lloh59, Lloh60
 	.loh AdrpAdd	Lloh57, Lloh58
-	.loh AdrpAdd	Lloh67, Lloh68
+	.loh AdrpAdd	Lloh55, Lloh56
+	.loh AdrpAdd	Lloh53, Lloh54
+	.loh AdrpLdr	Lloh51, Lloh52
+	.loh AdrpAdd	Lloh61, Lloh62
+	.loh AdrpAdd	Lloh59, Lloh60
 	.loh AdrpAdd	Lloh65, Lloh66
 	.loh AdrpAdd	Lloh63, Lloh64
-	.loh AdrpAdd	Lloh61, Lloh62
 
 	.p2align	2
 SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
@@ -277,83 +267,76 @@ SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]:
 	add	sp, sp, #32
 	ret
 
-	.p2align	2
-SYM(<&str as core[CRATE_ID]::fmt::Display>::fmt, 0):
-	mov	x2, x1
-	ldp	x8, x1, [x0]
-	mov	x0, x8
-	b	SYM(<str as core::fmt::Display>::fmt::GENERATED_ID, 0)
-
 	.globl	_get_class
 	.p2align	2
 _get_class:
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
-Lloh69:
+Lloh67:
 	adrp	x8, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGE
-Lloh70:
+Lloh68:
 	add	x8, x8, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGEOFF
 	ldapr	x8, [x8]
 	cmp	x8, #3
-	b.ne	LBB4_3
-Lloh71:
-	adrp	x0, l_anon.[ID].16@PAGE
-Lloh72:
-	add	x0, x0, l_anon.[ID].16@PAGEOFF
+	b.ne	LBB3_3
+Lloh69:
+	adrp	x0, l_anon.[ID].11@PAGE
+Lloh70:
+	add	x0, x0, l_anon.[ID].11@PAGEOFF
 	mov	w1, #15
 	bl	SYM(objc2::runtime::AnyClass::get::GENERATED_ID, 0)
-	cbz	x0, LBB4_4
-LBB4_2:
+	cbz	x0, LBB3_4
+LBB3_2:
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret
-LBB4_3:
+LBB3_3:
 	mov	w8, #1
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh73:
+Lloh71:
 	adrp	x0, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGE
-Lloh74:
+Lloh72:
 	add	x0, x0, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGEOFF
-Lloh75:
+Lloh73:
 	adrp	x3, l_anon.[ID].0@PAGE
-Lloh76:
+Lloh74:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh77:
-	adrp	x4, l_anon.[ID].15@PAGE
-Lloh78:
-	add	x4, x4, l_anon.[ID].15@PAGEOFF
+Lloh75:
+	adrp	x4, l_anon.[ID].16@PAGE
+Lloh76:
+	add	x4, x4, l_anon.[ID].16@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
-Lloh79:
-	adrp	x0, l_anon.[ID].16@PAGE
-Lloh80:
-	add	x0, x0, l_anon.[ID].16@PAGEOFF
+Lloh77:
+	adrp	x0, l_anon.[ID].11@PAGE
+Lloh78:
+	add	x0, x0, l_anon.[ID].11@PAGEOFF
 	mov	w1, #15
 	bl	SYM(objc2::runtime::AnyClass::get::GENERATED_ID, 0)
-	cbnz	x0, LBB4_2
-LBB4_4:
-Lloh81:
+	cbnz	x0, LBB3_2
+LBB3_4:
+Lloh79:
 	adrp	x0, l_anon.[ID].8@PAGE
-Lloh82:
+Lloh80:
 	add	x0, x0, l_anon.[ID].8@PAGEOFF
-Lloh83:
-	adrp	x2, l_anon.[ID].15@PAGE
-Lloh84:
-	add	x2, x2, l_anon.[ID].15@PAGEOFF
+Lloh81:
+	adrp	x2, l_anon.[ID].16@PAGE
+Lloh82:
+	add	x2, x2, l_anon.[ID].16@PAGEOFF
 	mov	w1, #43
 	bl	SYM(core::panicking::panic::GENERATED_ID, 0)
+	.loh AdrpAdd	Lloh67, Lloh68
 	.loh AdrpAdd	Lloh69, Lloh70
-	.loh AdrpAdd	Lloh71, Lloh72
-	.loh AdrpAdd	Lloh79, Lloh80
 	.loh AdrpAdd	Lloh77, Lloh78
 	.loh AdrpAdd	Lloh75, Lloh76
 	.loh AdrpAdd	Lloh73, Lloh74
-	.loh AdrpAdd	Lloh83, Lloh84
+	.loh AdrpAdd	Lloh71, Lloh72
 	.loh AdrpAdd	Lloh81, Lloh82
+	.loh AdrpAdd	Lloh79, Lloh80
 
 	.globl	_get_obj
 	.p2align	2
@@ -361,18 +344,18 @@ _get_obj:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
-Lloh85:
+Lloh83:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGE
-Lloh86:
+Lloh84:
 	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
-Lloh87:
+Lloh85:
 	ldr	x19, [x8]
 	bl	_get_class
 	mov	x1, x19
 	ldp	x29, x30, [sp, #16]
 	ldp	x20, x19, [sp], #32
 	b	_objc_msgSend
-	.loh AdrpLdrGotLdr	Lloh85, Lloh86, Lloh87
+	.loh AdrpLdrGotLdr	Lloh83, Lloh84, Lloh85
 
 	.globl	_access_ivars
 	.p2align	2
@@ -384,26 +367,26 @@ _access_ivars:
 	bl	_get_obj
 	mov	x19, x0
 	bl	_object_getClass
+Lloh86:
+	adrp	x1, l_anon.[ID].12@PAGE
+Lloh87:
+	add	x1, x1, l_anon.[ID].12@PAGEOFF
 Lloh88:
-	adrp	x1, l_anon.[ID].11@PAGE
+	adrp	x3, l_anon.[ID].13@PAGE
 Lloh89:
-	add	x1, x1, l_anon.[ID].11@PAGEOFF
-Lloh90:
-	adrp	x3, l_anon.[ID].12@PAGE
-Lloh91:
-	add	x3, x3, l_anon.[ID].12@PAGEOFF
+	add	x3, x3, l_anon.[ID].13@PAGEOFF
 	mov	w2, #4
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	ldrb	w20, [x19, x0]
 	mov	x0, x19
 	bl	_object_getClass
+Lloh90:
+	adrp	x1, l_anon.[ID].14@PAGE
+Lloh91:
+	add	x1, x1, l_anon.[ID].14@PAGEOFF
 Lloh92:
-	adrp	x1, l_anon.[ID].13@PAGE
-Lloh93:
-	add	x1, x1, l_anon.[ID].13@PAGEOFF
-Lloh94:
 	adrp	x3, l_anon.[ID].2@PAGE
-Lloh95:
+Lloh93:
 	add	x3, x3, l_anon.[ID].2@PAGEOFF
 	mov	w2, #4
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
@@ -416,10 +399,10 @@ Lloh95:
 	ldp	x20, x19, [sp, #16]
 	ldp	x22, x21, [sp], #48
 	ret
-	.loh AdrpAdd	Lloh94, Lloh95
 	.loh AdrpAdd	Lloh92, Lloh93
 	.loh AdrpAdd	Lloh90, Lloh91
 	.loh AdrpAdd	Lloh88, Lloh89
+	.loh AdrpAdd	Lloh86, Lloh87
 
 	.globl	SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	2
@@ -427,70 +410,70 @@ SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
-Lloh96:
+Lloh94:
 	adrp	x8, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGE
-Lloh97:
+Lloh95:
 	add	x8, x8, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGEOFF
 	ldapr	x8, [x8]
 	cmp	x8, #3
-	b.ne	LBB7_3
-Lloh98:
-	adrp	x0, l_anon.[ID].16@PAGE
-Lloh99:
-	add	x0, x0, l_anon.[ID].16@PAGEOFF
+	b.ne	LBB6_3
+Lloh96:
+	adrp	x0, l_anon.[ID].11@PAGE
+Lloh97:
+	add	x0, x0, l_anon.[ID].11@PAGEOFF
 	mov	w1, #15
 	bl	SYM(objc2::runtime::AnyClass::get::GENERATED_ID, 0)
-	cbz	x0, LBB7_4
-LBB7_2:
+	cbz	x0, LBB6_4
+LBB6_2:
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret
-LBB7_3:
+LBB6_3:
 	mov	w8, #1
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh100:
+Lloh98:
 	adrp	x0, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGE
-Lloh101:
+Lloh99:
 	add	x0, x0, SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)@PAGEOFF
-Lloh102:
+Lloh100:
 	adrp	x3, l_anon.[ID].0@PAGE
-Lloh103:
+Lloh101:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh104:
-	adrp	x4, l_anon.[ID].15@PAGE
-Lloh105:
-	add	x4, x4, l_anon.[ID].15@PAGEOFF
+Lloh102:
+	adrp	x4, l_anon.[ID].16@PAGE
+Lloh103:
+	add	x4, x4, l_anon.[ID].16@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
-Lloh106:
-	adrp	x0, l_anon.[ID].16@PAGE
-Lloh107:
-	add	x0, x0, l_anon.[ID].16@PAGEOFF
+Lloh104:
+	adrp	x0, l_anon.[ID].11@PAGE
+Lloh105:
+	add	x0, x0, l_anon.[ID].11@PAGEOFF
 	mov	w1, #15
 	bl	SYM(objc2::runtime::AnyClass::get::GENERATED_ID, 0)
-	cbnz	x0, LBB7_2
-LBB7_4:
-Lloh108:
+	cbnz	x0, LBB6_2
+LBB6_4:
+Lloh106:
 	adrp	x0, l_anon.[ID].8@PAGE
-Lloh109:
+Lloh107:
 	add	x0, x0, l_anon.[ID].8@PAGEOFF
-Lloh110:
-	adrp	x2, l_anon.[ID].15@PAGE
-Lloh111:
-	add	x2, x2, l_anon.[ID].15@PAGEOFF
+Lloh108:
+	adrp	x2, l_anon.[ID].16@PAGE
+Lloh109:
+	add	x2, x2, l_anon.[ID].16@PAGEOFF
 	mov	w1, #43
 	bl	SYM(core::panicking::panic::GENERATED_ID, 0)
+	.loh AdrpAdd	Lloh94, Lloh95
 	.loh AdrpAdd	Lloh96, Lloh97
-	.loh AdrpAdd	Lloh98, Lloh99
-	.loh AdrpAdd	Lloh106, Lloh107
 	.loh AdrpAdd	Lloh104, Lloh105
 	.loh AdrpAdd	Lloh102, Lloh103
 	.loh AdrpAdd	Lloh100, Lloh101
-	.loh AdrpAdd	Lloh110, Lloh111
+	.loh AdrpAdd	Lloh98, Lloh99
 	.loh AdrpAdd	Lloh108, Lloh109
+	.loh AdrpAdd	Lloh106, Lloh107
 
 	.p2align	2
 SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::__objc2_dealloc, 0):
@@ -501,25 +484,25 @@ SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::
 	mov	x19, x1
 	mov	x20, x0
 	bl	_object_getClass
+Lloh110:
+	adrp	x1, l_anon.[ID].14@PAGE
+Lloh111:
+	add	x1, x1, l_anon.[ID].14@PAGEOFF
 Lloh112:
-	adrp	x1, l_anon.[ID].13@PAGE
-Lloh113:
-	add	x1, x1, l_anon.[ID].13@PAGEOFF
-Lloh114:
 	adrp	x3, l_anon.[ID].2@PAGE
-Lloh115:
+Lloh113:
 	add	x3, x3, l_anon.[ID].2@PAGEOFF
 	mov	w2, #4
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	ldr	x0, [x20, x0]
-	cbz	x0, LBB8_2
+	cbz	x0, LBB7_2
 	bl	_objc_release
-LBB8_2:
-Lloh116:
+LBB7_2:
+Lloh114:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
-Lloh117:
+Lloh115:
 	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
-Lloh118:
+Lloh116:
 	ldr	x8, [x8]
 	stp	x20, x8, [sp]
 	mov	x0, sp
@@ -529,9 +512,9 @@ Lloh118:
 	ldp	x20, x19, [sp, #16]
 	add	sp, sp, #48
 	ret
-	.loh AdrpAdd	Lloh114, Lloh115
 	.loh AdrpAdd	Lloh112, Lloh113
-	.loh AdrpLdrGotLdr	Lloh116, Lloh117, Lloh118
+	.loh AdrpAdd	Lloh110, Lloh111
+	.loh AdrpLdrGotLdr	Lloh114, Lloh115, Lloh116
 
 	.globl	_init
 	.p2align	2
@@ -540,62 +523,62 @@ _init:
 	stp	x20, x19, [sp, #16]
 	stp	x29, x30, [sp, #32]
 	add	x29, sp, #32
-Lloh119:
+Lloh117:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
-Lloh120:
+Lloh118:
 	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
-Lloh121:
+Lloh119:
 	ldr	x1, [x8]
-Lloh122:
+Lloh120:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
-Lloh123:
+Lloh121:
 	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
-Lloh124:
+Lloh122:
 	ldr	x8, [x8]
 	stp	x0, x8, [sp]
 	mov	x0, sp
 	bl	_objc_msgSendSuper
 	mov	x19, x0
-	cbz	x0, LBB9_2
+	cbz	x0, LBB8_2
 	mov	x0, x19
 	bl	_object_getClass
+Lloh123:
+	adrp	x1, l_anon.[ID].12@PAGE
+Lloh124:
+	add	x1, x1, l_anon.[ID].12@PAGEOFF
 Lloh125:
-	adrp	x1, l_anon.[ID].11@PAGE
+	adrp	x3, l_anon.[ID].13@PAGE
 Lloh126:
-	add	x1, x1, l_anon.[ID].11@PAGEOFF
-Lloh127:
-	adrp	x3, l_anon.[ID].12@PAGE
-Lloh128:
-	add	x3, x3, l_anon.[ID].12@PAGEOFF
+	add	x3, x3, l_anon.[ID].13@PAGEOFF
 	mov	w2, #4
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	mov	w8, #42
 	strb	w8, [x19, x0]
 	mov	x0, x19
 	bl	_object_getClass
+Lloh127:
+	adrp	x1, l_anon.[ID].14@PAGE
+Lloh128:
+	add	x1, x1, l_anon.[ID].14@PAGEOFF
 Lloh129:
-	adrp	x1, l_anon.[ID].13@PAGE
-Lloh130:
-	add	x1, x1, l_anon.[ID].13@PAGEOFF
-Lloh131:
 	adrp	x3, l_anon.[ID].2@PAGE
-Lloh132:
+Lloh130:
 	add	x3, x3, l_anon.[ID].2@PAGEOFF
 	mov	w2, #4
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	str	xzr, [x19, x0]
-LBB9_2:
+LBB8_2:
 	mov	x0, x19
 	ldp	x29, x30, [sp, #32]
 	ldp	x20, x19, [sp, #16]
 	add	sp, sp, #48
 	ret
-	.loh AdrpLdrGotLdr	Lloh122, Lloh123, Lloh124
-	.loh AdrpLdrGotLdr	Lloh119, Lloh120, Lloh121
-	.loh AdrpAdd	Lloh131, Lloh132
+	.loh AdrpLdrGotLdr	Lloh120, Lloh121, Lloh122
+	.loh AdrpLdrGotLdr	Lloh117, Lloh118, Lloh119
 	.loh AdrpAdd	Lloh129, Lloh130
 	.loh AdrpAdd	Lloh127, Lloh128
 	.loh AdrpAdd	Lloh125, Lloh126
+	.loh AdrpAdd	Lloh123, Lloh124
 
 	.globl	_class_method
 	.p2align	2
@@ -621,25 +604,25 @@ _method_id:
 	add	x29, sp, #16
 	mov	x19, x0
 	bl	_object_getClass
+Lloh131:
+	adrp	x1, l_anon.[ID].14@PAGE
+Lloh132:
+	add	x1, x1, l_anon.[ID].14@PAGEOFF
 Lloh133:
-	adrp	x1, l_anon.[ID].13@PAGE
-Lloh134:
-	add	x1, x1, l_anon.[ID].13@PAGEOFF
-Lloh135:
 	adrp	x3, l_anon.[ID].2@PAGE
-Lloh136:
+Lloh134:
 	add	x3, x3, l_anon.[ID].2@PAGEOFF
 	mov	w2, #4
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	ldr	x0, [x19, x0]
-	cbz	x0, LBB13_2
+	cbz	x0, LBB12_2
 	bl	_objc_retain
-LBB13_2:
+LBB12_2:
 	ldp	x29, x30, [sp, #16]
 	ldp	x20, x19, [sp], #32
 	b	_objc_autoreleaseReturnValue
-	.loh AdrpAdd	Lloh135, Lloh136
 	.loh AdrpAdd	Lloh133, Lloh134
+	.loh AdrpAdd	Lloh131, Lloh132
 
 	.globl	_method_id_with_param
 	.p2align	2
@@ -652,38 +635,38 @@ _method_id_with_param:
 	mov	x20, x0
 	bl	SYM(objc2::runtime::nsobject::NSObject::new::GENERATED_ID, 0)
 	mov	x19, x0
-	cbz	w21, LBB14_5
+	cbz	w21, LBB13_5
 	mov	x0, x20
 	bl	_object_getClass
+Lloh135:
+	adrp	x1, l_anon.[ID].14@PAGE
+Lloh136:
+	add	x1, x1, l_anon.[ID].14@PAGEOFF
 Lloh137:
-	adrp	x1, l_anon.[ID].13@PAGE
-Lloh138:
-	add	x1, x1, l_anon.[ID].13@PAGEOFF
-Lloh139:
 	adrp	x3, l_anon.[ID].2@PAGE
-Lloh140:
+Lloh138:
 	add	x3, x3, l_anon.[ID].2@PAGEOFF
 	mov	w2, #4
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	ldr	x0, [x20, x0]
-	cbz	x0, LBB14_3
+	cbz	x0, LBB13_3
 	bl	_objc_retain
 	mov	x20, x0
-	b	LBB14_4
-LBB14_3:
+	b	LBB13_4
+LBB13_3:
 	mov	x20, #0
-LBB14_4:
+LBB13_4:
 	mov	x0, x19
 	bl	_objc_release
 	mov	x19, x20
-LBB14_5:
+LBB13_5:
 	mov	x0, x19
 	ldp	x29, x30, [sp, #32]
 	ldp	x20, x19, [sp, #16]
 	ldp	x22, x21, [sp], #48
 	b	_objc_autoreleaseReturnValue
-	.loh AdrpAdd	Lloh139, Lloh140
 	.loh AdrpAdd	Lloh137, Lloh138
+	.loh AdrpAdd	Lloh135, Lloh136
 
 	.globl	_copyWithZone
 	.p2align	2
@@ -696,17 +679,17 @@ _copyWithZone:
 	mov	x20, x0
 	bl	_get_obj
 	mov	x19, x0
-	cbz	x0, LBB15_5
+	cbz	x0, LBB14_5
 	mov	x0, x20
 	bl	_object_getClass
+Lloh139:
+	adrp	x21, l_anon.[ID].12@PAGE
+Lloh140:
+	add	x21, x21, l_anon.[ID].12@PAGEOFF
 Lloh141:
-	adrp	x21, l_anon.[ID].11@PAGE
+	adrp	x22, l_anon.[ID].13@PAGE
 Lloh142:
-	add	x21, x21, l_anon.[ID].11@PAGEOFF
-Lloh143:
-	adrp	x22, l_anon.[ID].12@PAGE
-Lloh144:
-	add	x22, x22, l_anon.[ID].12@PAGEOFF
+	add	x22, x22, l_anon.[ID].13@PAGEOFF
 	mov	x1, x21
 	mov	w2, #4
 	mov	x3, x22
@@ -721,50 +704,50 @@ Lloh144:
 	strb	w23, [x19, x0]
 	mov	x0, x20
 	bl	_object_getClass
+Lloh143:
+	adrp	x1, l_anon.[ID].14@PAGE
+Lloh144:
+	add	x1, x1, l_anon.[ID].14@PAGEOFF
 Lloh145:
-	adrp	x1, l_anon.[ID].13@PAGE
-Lloh146:
-	add	x1, x1, l_anon.[ID].13@PAGEOFF
-Lloh147:
 	adrp	x3, l_anon.[ID].2@PAGE
-Lloh148:
+Lloh146:
 	add	x3, x3, l_anon.[ID].2@PAGEOFF
 	mov	w2, #4
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	ldr	x0, [x20, x0]
-	cbz	x0, LBB15_3
+	cbz	x0, LBB14_3
 	bl	_objc_retain
 	mov	x20, x0
-	b	LBB15_4
-LBB15_3:
+	b	LBB14_4
+LBB14_3:
 	mov	x20, #0
-LBB15_4:
+LBB14_4:
 	mov	x0, x19
 	bl	_object_getClass
+Lloh147:
+	adrp	x1, l_anon.[ID].14@PAGE
+Lloh148:
+	add	x1, x1, l_anon.[ID].14@PAGEOFF
 Lloh149:
-	adrp	x1, l_anon.[ID].13@PAGE
-Lloh150:
-	add	x1, x1, l_anon.[ID].13@PAGEOFF
-Lloh151:
 	adrp	x3, l_anon.[ID].2@PAGE
-Lloh152:
+Lloh150:
 	add	x3, x3, l_anon.[ID].2@PAGEOFF
 	mov	w2, #4
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	str	x20, [x19, x0]
-LBB15_5:
+LBB14_5:
 	mov	x0, x19
 	ldp	x29, x30, [sp, #48]
 	ldp	x20, x19, [sp, #32]
 	ldp	x22, x21, [sp, #16]
 	ldp	x24, x23, [sp], #64
 	ret
-	.loh AdrpAdd	Lloh147, Lloh148
 	.loh AdrpAdd	Lloh145, Lloh146
 	.loh AdrpAdd	Lloh143, Lloh144
 	.loh AdrpAdd	Lloh141, Lloh142
-	.loh AdrpAdd	Lloh151, Lloh152
+	.loh AdrpAdd	Lloh139, Lloh140
 	.loh AdrpAdd	Lloh149, Lloh150
+	.loh AdrpAdd	Lloh147, Lloh148
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
@@ -827,56 +810,38 @@ l_anon.[ID].10:
 	.quad	l_anon.[ID].9
 	.asciz	"p\000\000\000\000\000\000\000\225\000\000\0002\000\000"
 
-	.section	__TEXT,__literal4,4byte_literals
+	.section	__TEXT,__const
 l_anon.[ID].11:
+	.ascii	"CustomClassName"
+
+	.section	__TEXT,__literal4,4byte_literals
+l_anon.[ID].12:
 	.ascii	"_foo"
 
 	.section	__TEXT,__const
 	.p2align	3, 0x0
-l_anon.[ID].12:
+l_anon.[ID].13:
 	.byte	5
 	.space	39
 
 	.section	__TEXT,__literal4,4byte_literals
-l_anon.[ID].13:
+l_anon.[ID].14:
 	.ascii	"_obj"
 
 	.section	__TEXT,__const
-l_anon.[ID].14:
+l_anon.[ID].15:
 	.ascii	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
-l_anon.[ID].15:
-	.quad	l_anon.[ID].14
+l_anon.[ID].16:
+	.quad	l_anon.[ID].15
 	.asciz	"5\000\000\000\000\000\000\000\f\000\000\000\001\000\000"
 
-	.section	__TEXT,__const
-l_anon.[ID].16:
-	.ascii	"CustomClassName"
-
 .zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0),8,3
+	.section	__TEXT,__const
 l_anon.[ID].17:
 	.ascii	"NSCopying"
-
-l_anon.[ID].18:
-	.ascii	"could not create new class "
-
-l_anon.[ID].19:
-	.ascii	". Perhaps a class with that name already exists?"
-
-	.section	__DATA,__const
-	.p2align	3, 0x0
-l_anon.[ID].20:
-	.quad	l_anon.[ID].18
-	.asciz	"\033\000\000\000\000\000\000"
-	.quad	l_anon.[ID].19
-	.asciz	"0\000\000\000\000\000\000"
-
-	.p2align	3, 0x0
-l_anon.[ID].21:
-	.quad	l_anon.[ID].16
-	.asciz	"\017\000\000\000\000\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_d874ee9262978be2

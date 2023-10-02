@@ -31,6 +31,11 @@ declare_class!(
         fn test_class(this: &AnyClass) {
             unimplemented!()
         }
+
+        #[method(testClass)]
+        fn test_object(this: &NSObject) {
+            unimplemented!()
+        }
     }
 
     unsafe impl CustomObject {

@@ -11,31 +11,31 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	push	{r4, r5, r7, lr}
 	add	r7, sp, #8
 	push	{r8, r10, r11}
-	sub	sp, sp, #40
+	sub	sp, sp, #12
 	ldr	r0, [r0]
 	mov	r2, #0
 	ldrb	r1, [r0]
 	strb	r2, [r0]
 	cmp	r1, #0
-	beq	LBB1_3
-	movw	r0, :lower16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC1_0+8))
-	mov	r1, #15
-	movt	r0, :upper16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC1_0+8))
+	beq	LBB1_5
+	movw	r1, :lower16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC1_0+8))
+	movt	r1, :upper16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC1_0+8))
+	movw	r0, :lower16:(l_anon.[ID].11-(LPC1_1+8))
 LPC1_0:
-	ldr	r0, [pc, r0]
-	ldr	r2, [r0]
-	movw	r0, :lower16:(l_anon.[ID].16-(LPC1_1+8))
-	movt	r0, :upper16:(l_anon.[ID].16-(LPC1_1+8))
+	ldr	r1, [pc, r1]
+	movt	r0, :upper16:(l_anon.[ID].11-(LPC1_1+8))
 LPC1_1:
 	add	r0, pc, r0
+	ldr	r2, [r1]
+	mov	r1, #15
 	bl	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
 	cmp	r0, #0
-	beq	LBB1_4
-	movw	r1, :lower16:(L_anon.[ID].11-(LPC1_2+8))
+	beq	LBB1_6
+	movw	r1, :lower16:(L_anon.[ID].12-(LPC1_2+8))
 	add	r4, sp, #8
-	movt	r1, :upper16:(L_anon.[ID].11-(LPC1_2+8))
-	movw	r3, :lower16:(l_anon.[ID].12-(LPC1_3+8))
-	movt	r3, :upper16:(l_anon.[ID].12-(LPC1_3+8))
+	movt	r1, :upper16:(L_anon.[ID].12-(LPC1_2+8))
+	movw	r3, :lower16:(l_anon.[ID].13-(LPC1_3+8))
+	movt	r3, :upper16:(l_anon.[ID].13-(LPC1_3+8))
 LPC1_2:
 	add	r1, pc, r1
 LPC1_3:
@@ -50,8 +50,8 @@ LPC1_3:
 	movw	r8, :lower16:(l_anon.[ID].2-(LPC1_4+8))
 	mov	r0, #2
 	movt	r8, :upper16:(l_anon.[ID].2-(LPC1_4+8))
-	movw	r1, :lower16:(L_anon.[ID].13-(LPC1_5+8))
-	movt	r1, :upper16:(L_anon.[ID].13-(LPC1_5+8))
+	movw	r1, :lower16:(L_anon.[ID].14-(LPC1_5+8))
+	movt	r1, :upper16:(L_anon.[ID].14-(LPC1_5+8))
 LPC1_4:
 	add	r8, pc, r8
 LPC1_5:
@@ -173,20 +173,24 @@ LPC1_22:
 LPC1_23:
 	add	r0, pc, r0
 	bl	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
+	cmp	r0, #0
+	beq	LBB1_4
 	mov	r1, r0
-	mov	r0, r4
-	bl	SYM(objc2::__macro_helpers::<impl objc2::declare::ClassBuilder>::__add_protocol_methods::GENERATED_ID, 0)
-	movw	r2, :lower16:(l_anon.[ID].7-(LPC1_24+8))
+	add	r0, sp, #8
+	bl	SYM(objc2::declare::ClassBuilder::add_protocol::GENERATED_ID, 0)
+LBB1_4:
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_4a8c690dbc9d8166-(LPC1_24+8))
+	add	r0, sp, #8
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_4a8c690dbc9d8166-(LPC1_24+8))
 	mov	r3, #1
-	movt	r2, :upper16:(l_anon.[ID].7-(LPC1_24+8))
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_4a8c690dbc9d8166-(LPC1_25+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_4a8c690dbc9d8166-(LPC1_25+8))
 LPC1_24:
-	add	r2, pc, r2
-LPC1_25:
 	ldr	r1, [pc, r1]
+	movw	r2, :lower16:(l_anon.[ID].7-(LPC1_25+8))
+	movt	r2, :upper16:(l_anon.[ID].7-(LPC1_25+8))
 	movw	r9, :lower16:(_copyWithZone-(LPC1_26+8))
 	movt	r9, :upper16:(_copyWithZone-(LPC1_26+8))
+LPC1_25:
+	add	r2, pc, r2
 LPC1_26:
 	add	r9, pc, r9
 	strd	r8, r9, [sp]
@@ -196,7 +200,7 @@ LPC1_26:
 	sub	sp, r7, #20
 	pop	{r8, r10, r11}
 	pop	{r4, r5, r7, pc}
-LBB1_3:
+LBB1_5:
 	movw	r0, :lower16:(l_anon.[ID].8-(LPC1_27+8))
 	mov	r1, #43
 	movt	r0, :upper16:(l_anon.[ID].8-(LPC1_27+8))
@@ -208,37 +212,18 @@ LPC1_28:
 	add	r2, pc, r2
 	mov	lr, pc
 	b	SYM(core::panicking::panic::GENERATED_ID, 0)
-LBB1_4:
-	movw	r0, :lower16:(l_anon.[ID].20-(LPC1_29+8))
-	mov	r5, #0
-	movt	r0, :upper16:(l_anon.[ID].20-(LPC1_29+8))
-	movw	r2, :lower16:(SYM(<&str as core[CRATE_ID]::fmt::Display>::fmt, 0)-(LPC1_30+8))
-	movt	r2, :upper16:(SYM(<&str as core[CRATE_ID]::fmt::Display>::fmt, 0)-(LPC1_30+8))
-	movw	r3, :lower16:(l_anon.[ID].21-(LPC1_31+8))
-	movt	r3, :upper16:(l_anon.[ID].21-(LPC1_31+8))
-	movw	r1, :lower16:(l_anon.[ID].15-(LPC1_32+8))
+LBB1_6:
+	movw	r0, :lower16:(l_anon.[ID].11-(LPC1_29+8))
+	mov	r1, #15
+	movt	r0, :upper16:(l_anon.[ID].11-(LPC1_29+8))
+	movw	r2, :lower16:(l_anon.[ID].16-(LPC1_30+8))
+	movt	r2, :upper16:(l_anon.[ID].16-(LPC1_30+8))
 LPC1_29:
 	add	r0, pc, r0
-	movt	r1, :upper16:(l_anon.[ID].15-(LPC1_32+8))
-	str	r0, [sp, #8]
-	mov	r0, #1
-	str	r0, [sp, #20]
-	sub	r0, r7, #28
-	str	r0, [sp, #16]
-LPC1_32:
-	add	r1, pc, r1
-	add	r0, sp, #8
-	str	r5, [sp, #24]
-	mov	r5, #2
 LPC1_30:
 	add	r2, pc, r2
-LPC1_31:
-	add	r3, pc, r3
-	str	r5, [sp, #12]
-	str	r2, [r7, #-24]
-	str	r3, [r7, #-28]
 	mov	lr, pc
-	b	SYM(core::panicking::panic_fmt::GENERATED_ID, 0)
+	b	SYM(objc2::__macro_helpers::declare_class::failed_declaring_class::GENERATED_ID, 0)
 
 	.p2align	2
 	.code	32
@@ -253,13 +238,6 @@ SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]:
 	mov	sp, r7
 	pop	{r7, pc}
 
-	.p2align	2
-	.code	32
-SYM(<&str as core[CRATE_ID]::fmt::Display>::fmt, 0):
-	mov	r2, r1
-	ldrd	r0, r1, [r0]
-	b	SYM(<str as core::fmt::Display>::fmt::GENERATED_ID, 0)
-
 	.globl	_get_class
 	.p2align	2
 	.code	32
@@ -267,58 +245,58 @@ _get_class:
 	push	{r7, lr}
 	mov	r7, sp
 	sub	sp, sp, #12
-	movw	r0, :lower16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC4_0+8))
-	movt	r0, :upper16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC4_0+8))
-LPC4_0:
+	movw	r0, :lower16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC3_0+8))
+	movt	r0, :upper16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC3_0+8))
+LPC3_0:
 	add	r0, pc, r0
 	ldr	r0, [r0]
 	dmb	ish
 	cmp	r0, #3
-	bne	LBB4_3
-LBB4_1:
-	movw	r0, :lower16:(l_anon.[ID].16-(LPC4_4+8))
+	bne	LBB3_3
+LBB3_1:
+	movw	r0, :lower16:(l_anon.[ID].11-(LPC3_4+8))
 	mov	r1, #15
-	movt	r0, :upper16:(l_anon.[ID].16-(LPC4_4+8))
-LPC4_4:
+	movt	r0, :upper16:(l_anon.[ID].11-(LPC3_4+8))
+LPC3_4:
 	add	r0, pc, r0
 	bl	SYM(objc2::runtime::AnyClass::get::GENERATED_ID, 0)
 	cmp	r0, #0
 	movne	sp, r7
 	popne	{r7, pc}
-LBB4_2:
-	movw	r0, :lower16:(l_anon.[ID].8-(LPC4_5+8))
+LBB3_2:
+	movw	r0, :lower16:(l_anon.[ID].8-(LPC3_5+8))
 	mov	r1, #43
-	movt	r0, :upper16:(l_anon.[ID].8-(LPC4_5+8))
-	movw	r2, :lower16:(l_anon.[ID].15-(LPC4_6+8))
-	movt	r2, :upper16:(l_anon.[ID].15-(LPC4_6+8))
-LPC4_5:
+	movt	r0, :upper16:(l_anon.[ID].8-(LPC3_5+8))
+	movw	r2, :lower16:(l_anon.[ID].16-(LPC3_6+8))
+	movt	r2, :upper16:(l_anon.[ID].16-(LPC3_6+8))
+LPC3_5:
 	add	r0, pc, r0
-LPC4_6:
+LPC3_6:
 	add	r2, pc, r2
 	mov	lr, pc
 	b	SYM(core::panicking::panic::GENERATED_ID, 0)
-LBB4_3:
-	movw	r0, :lower16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC4_1+8))
+LBB3_3:
+	movw	r0, :lower16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC3_1+8))
 	mov	r2, #1
-	movt	r0, :upper16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC4_1+8))
-	movw	r3, :lower16:(l_anon.[ID].0-(LPC4_2+8))
-	movt	r3, :upper16:(l_anon.[ID].0-(LPC4_2+8))
-	movw	r1, :lower16:(l_anon.[ID].15-(LPC4_3+8))
-	movt	r1, :upper16:(l_anon.[ID].15-(LPC4_3+8))
+	movt	r0, :upper16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC3_1+8))
+	movw	r3, :lower16:(l_anon.[ID].0-(LPC3_2+8))
+	movt	r3, :upper16:(l_anon.[ID].0-(LPC3_2+8))
+	movw	r1, :lower16:(l_anon.[ID].16-(LPC3_3+8))
+	movt	r1, :upper16:(l_anon.[ID].16-(LPC3_3+8))
 	strb	r2, [r7, #-5]
 	sub	r2, r7, #5
-LPC4_3:
+LPC3_3:
 	add	r1, pc, r1
 	str	r2, [r7, #-4]
-LPC4_1:
+LPC3_1:
 	add	r0, pc, r0
-LPC4_2:
+LPC3_2:
 	add	r3, pc, r3
 	sub	r2, r7, #4
 	str	r1, [sp]
 	mov	r1, #0
 	bl	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
-	b	LBB4_1
+	b	LBB3_1
 
 	.globl	_get_obj
 	.p2align	2
@@ -326,9 +304,9 @@ LPC4_2:
 _get_obj:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
-	movw	r0, :lower16:(LL_OBJC_SELECTOR_REFERENCES_new$non_lazy_ptr-(LPC5_0+8))
-	movt	r0, :upper16:(LL_OBJC_SELECTOR_REFERENCES_new$non_lazy_ptr-(LPC5_0+8))
-LPC5_0:
+	movw	r0, :lower16:(LL_OBJC_SELECTOR_REFERENCES_new$non_lazy_ptr-(LPC4_0+8))
+	movt	r0, :upper16:(LL_OBJC_SELECTOR_REFERENCES_new$non_lazy_ptr-(LPC4_0+8))
+LPC4_0:
 	ldr	r0, [pc, r0]
 	ldr	r4, [r0]
 	bl	_get_class
@@ -345,27 +323,27 @@ _access_ivars:
 	bl	_get_obj
 	mov	r4, r0
 	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].11-(LPC6_0+8))
+	movw	r1, :lower16:(L_anon.[ID].12-(LPC5_0+8))
 	mov	r2, #4
-	movt	r1, :upper16:(L_anon.[ID].11-(LPC6_0+8))
-	movw	r3, :lower16:(l_anon.[ID].12-(LPC6_1+8))
-	movt	r3, :upper16:(l_anon.[ID].12-(LPC6_1+8))
-LPC6_0:
+	movt	r1, :upper16:(L_anon.[ID].12-(LPC5_0+8))
+	movw	r3, :lower16:(l_anon.[ID].13-(LPC5_1+8))
+	movt	r3, :upper16:(l_anon.[ID].13-(LPC5_1+8))
+LPC5_0:
 	add	r1, pc, r1
-LPC6_1:
+LPC5_1:
 	add	r3, pc, r3
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	ldrb	r5, [r4, r0]
 	mov	r0, r4
 	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].13-(LPC6_2+8))
+	movw	r1, :lower16:(L_anon.[ID].14-(LPC5_2+8))
 	mov	r2, #4
-	movt	r1, :upper16:(L_anon.[ID].13-(LPC6_2+8))
-	movw	r3, :lower16:(l_anon.[ID].2-(LPC6_3+8))
-	movt	r3, :upper16:(l_anon.[ID].2-(LPC6_3+8))
-LPC6_2:
+	movt	r1, :upper16:(L_anon.[ID].14-(LPC5_2+8))
+	movw	r3, :lower16:(l_anon.[ID].2-(LPC5_3+8))
+	movt	r3, :upper16:(l_anon.[ID].2-(LPC5_3+8))
+LPC5_2:
 	add	r1, pc, r1
-LPC6_3:
+LPC5_3:
 	add	r3, pc, r3
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	ldr	r6, [r4, r0]
@@ -382,58 +360,58 @@ SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::
 	push	{r7, lr}
 	mov	r7, sp
 	sub	sp, sp, #12
-	movw	r0, :lower16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC7_0+8))
-	movt	r0, :upper16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC7_0+8))
-LPC7_0:
+	movw	r0, :lower16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC6_0+8))
+	movt	r0, :upper16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC6_0+8))
+LPC6_0:
 	add	r0, pc, r0
 	ldr	r0, [r0]
 	dmb	ish
 	cmp	r0, #3
-	bne	LBB7_3
-LBB7_1:
-	movw	r0, :lower16:(l_anon.[ID].16-(LPC7_4+8))
+	bne	LBB6_3
+LBB6_1:
+	movw	r0, :lower16:(l_anon.[ID].11-(LPC6_4+8))
 	mov	r1, #15
-	movt	r0, :upper16:(l_anon.[ID].16-(LPC7_4+8))
-LPC7_4:
+	movt	r0, :upper16:(l_anon.[ID].11-(LPC6_4+8))
+LPC6_4:
 	add	r0, pc, r0
 	bl	SYM(objc2::runtime::AnyClass::get::GENERATED_ID, 0)
 	cmp	r0, #0
 	movne	sp, r7
 	popne	{r7, pc}
-LBB7_2:
-	movw	r0, :lower16:(l_anon.[ID].8-(LPC7_5+8))
+LBB6_2:
+	movw	r0, :lower16:(l_anon.[ID].8-(LPC6_5+8))
 	mov	r1, #43
-	movt	r0, :upper16:(l_anon.[ID].8-(LPC7_5+8))
-	movw	r2, :lower16:(l_anon.[ID].15-(LPC7_6+8))
-	movt	r2, :upper16:(l_anon.[ID].15-(LPC7_6+8))
-LPC7_5:
+	movt	r0, :upper16:(l_anon.[ID].8-(LPC6_5+8))
+	movw	r2, :lower16:(l_anon.[ID].16-(LPC6_6+8))
+	movt	r2, :upper16:(l_anon.[ID].16-(LPC6_6+8))
+LPC6_5:
 	add	r0, pc, r0
-LPC7_6:
+LPC6_6:
 	add	r2, pc, r2
 	mov	lr, pc
 	b	SYM(core::panicking::panic::GENERATED_ID, 0)
-LBB7_3:
-	movw	r0, :lower16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC7_1+8))
+LBB6_3:
+	movw	r0, :lower16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC6_1+8))
 	mov	r2, #1
-	movt	r0, :upper16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC7_1+8))
-	movw	r3, :lower16:(l_anon.[ID].0-(LPC7_2+8))
-	movt	r3, :upper16:(l_anon.[ID].0-(LPC7_2+8))
-	movw	r1, :lower16:(l_anon.[ID].15-(LPC7_3+8))
-	movt	r1, :upper16:(l_anon.[ID].15-(LPC7_3+8))
+	movt	r0, :upper16:(SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)-(LPC6_1+8))
+	movw	r3, :lower16:(l_anon.[ID].0-(LPC6_2+8))
+	movt	r3, :upper16:(l_anon.[ID].0-(LPC6_2+8))
+	movw	r1, :lower16:(l_anon.[ID].16-(LPC6_3+8))
+	movt	r1, :upper16:(l_anon.[ID].16-(LPC6_3+8))
 	strb	r2, [r7, #-5]
 	sub	r2, r7, #5
-LPC7_3:
+LPC6_3:
 	add	r1, pc, r1
 	str	r2, [r7, #-4]
-LPC7_1:
+LPC6_1:
 	add	r0, pc, r0
-LPC7_2:
+LPC6_2:
 	add	r3, pc, r3
 	sub	r2, r7, #4
 	str	r1, [sp]
 	mov	r1, #0
 	bl	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
-	b	LBB7_1
+	b	LBB6_1
 
 	.p2align	2
 	.code	32
@@ -444,26 +422,26 @@ SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::
 	mov	r4, r1
 	mov	r5, r0
 	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].13-(LPC8_0+8))
+	movw	r1, :lower16:(L_anon.[ID].14-(LPC7_0+8))
 	mov	r2, #4
-	movt	r1, :upper16:(L_anon.[ID].13-(LPC8_0+8))
-	movw	r3, :lower16:(l_anon.[ID].2-(LPC8_1+8))
-	movt	r3, :upper16:(l_anon.[ID].2-(LPC8_1+8))
-LPC8_0:
+	movt	r1, :upper16:(L_anon.[ID].14-(LPC7_0+8))
+	movw	r3, :lower16:(l_anon.[ID].2-(LPC7_1+8))
+	movt	r3, :upper16:(l_anon.[ID].2-(LPC7_1+8))
+LPC7_0:
 	add	r1, pc, r1
-LPC8_1:
+LPC7_1:
 	add	r3, pc, r3
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	ldr	r0, [r5, r0]
 	cmp	r0, #0
-	beq	LBB8_2
+	beq	LBB7_2
 	bl	_objc_release
-LBB8_2:
-	movw	r0, :lower16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC8_2+8))
+LBB7_2:
+	movw	r0, :lower16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC7_2+8))
 	mov	r1, r4
-	movt	r0, :upper16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC8_2+8))
+	movt	r0, :upper16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC7_2+8))
 	str	r5, [sp]
-LPC8_2:
+LPC7_2:
 	ldr	r0, [pc, r0]
 	ldr	r0, [r0]
 	str	r0, [sp, #4]
@@ -479,13 +457,13 @@ _init:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	sub	sp, sp, #8
-	movw	r1, :lower16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC9_0+8))
-	movt	r1, :upper16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC9_0+8))
-	movw	r2, :lower16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC9_1+8))
-LPC9_0:
+	movw	r1, :lower16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC8_0+8))
+	movt	r1, :upper16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC8_0+8))
+	movw	r2, :lower16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC8_1+8))
+LPC8_0:
 	ldr	r1, [pc, r1]
-	movt	r2, :upper16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC9_1+8))
-LPC9_1:
+	movt	r2, :upper16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC8_1+8))
+LPC8_1:
 	ldr	r2, [pc, r2]
 	ldr	r1, [r1]
 	ldr	r2, [r2]
@@ -494,36 +472,36 @@ LPC9_1:
 	bl	_objc_msgSendSuper
 	mov	r4, r0
 	cmp	r0, #0
-	beq	LBB9_2
+	beq	LBB8_2
 	mov	r0, r4
 	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].11-(LPC9_2+8))
+	movw	r1, :lower16:(L_anon.[ID].12-(LPC8_2+8))
 	mov	r2, #4
-	movt	r1, :upper16:(L_anon.[ID].11-(LPC9_2+8))
-	movw	r3, :lower16:(l_anon.[ID].12-(LPC9_3+8))
-	movt	r3, :upper16:(l_anon.[ID].12-(LPC9_3+8))
-LPC9_2:
+	movt	r1, :upper16:(L_anon.[ID].12-(LPC8_2+8))
+	movw	r3, :lower16:(l_anon.[ID].13-(LPC8_3+8))
+	movt	r3, :upper16:(l_anon.[ID].13-(LPC8_3+8))
+LPC8_2:
 	add	r1, pc, r1
-LPC9_3:
+LPC8_3:
 	add	r3, pc, r3
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	mov	r1, #42
 	strb	r1, [r4, r0]
 	mov	r0, r4
 	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].13-(LPC9_4+8))
+	movw	r1, :lower16:(L_anon.[ID].14-(LPC8_4+8))
 	mov	r2, #4
-	movt	r1, :upper16:(L_anon.[ID].13-(LPC9_4+8))
-	movw	r3, :lower16:(l_anon.[ID].2-(LPC9_5+8))
-	movt	r3, :upper16:(l_anon.[ID].2-(LPC9_5+8))
-LPC9_4:
+	movt	r1, :upper16:(L_anon.[ID].14-(LPC8_4+8))
+	movw	r3, :lower16:(l_anon.[ID].2-(LPC8_5+8))
+	movt	r3, :upper16:(l_anon.[ID].2-(LPC8_5+8))
+LPC8_4:
 	add	r1, pc, r1
-LPC9_5:
+LPC8_5:
 	add	r3, pc, r3
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	mov	r1, #0
 	str	r1, [r4, r0]
-LBB9_2:
+LBB8_2:
 	mov	r0, r4
 	sub	sp, r7, #4
 	pop	{r4, r7, pc}
@@ -556,23 +534,23 @@ _method_id:
 	add	r7, sp, #4
 	mov	r4, r0
 	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].13-(LPC13_0+8))
+	movw	r1, :lower16:(L_anon.[ID].14-(LPC12_0+8))
 	mov	r2, #4
-	movt	r1, :upper16:(L_anon.[ID].13-(LPC13_0+8))
-	movw	r3, :lower16:(l_anon.[ID].2-(LPC13_1+8))
-	movt	r3, :upper16:(l_anon.[ID].2-(LPC13_1+8))
-LPC13_0:
+	movt	r1, :upper16:(L_anon.[ID].14-(LPC12_0+8))
+	movw	r3, :lower16:(l_anon.[ID].2-(LPC12_1+8))
+	movt	r3, :upper16:(l_anon.[ID].2-(LPC12_1+8))
+LPC12_0:
 	add	r1, pc, r1
-LPC13_1:
+LPC12_1:
 	add	r3, pc, r3
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	ldr	r0, [r4, r0]
 	cmp	r0, #0
-	beq	LBB13_2
+	beq	LBB12_2
 	bl	_objc_retain
 	pop	{r4, r7, lr}
 	b	_objc_autoreleaseReturnValue
-LBB13_2:
+LBB12_2:
 	mov	r0, #0
 	pop	{r4, r7, lr}
 	b	_objc_autoreleaseReturnValue
@@ -588,33 +566,33 @@ _method_id_with_param:
 	bl	SYM(objc2::runtime::nsobject::NSObject::new::GENERATED_ID, 0)
 	mov	r4, r0
 	cmp	r6, #0
-	beq	LBB14_3
+	beq	LBB13_3
 	mov	r0, r5
 	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].13-(LPC14_0+8))
+	movw	r1, :lower16:(L_anon.[ID].14-(LPC13_0+8))
 	mov	r2, #4
-	movt	r1, :upper16:(L_anon.[ID].13-(LPC14_0+8))
-	movw	r3, :lower16:(l_anon.[ID].2-(LPC14_1+8))
-	movt	r3, :upper16:(l_anon.[ID].2-(LPC14_1+8))
-LPC14_0:
+	movt	r1, :upper16:(L_anon.[ID].14-(LPC13_0+8))
+	movw	r3, :lower16:(l_anon.[ID].2-(LPC13_1+8))
+	movt	r3, :upper16:(l_anon.[ID].2-(LPC13_1+8))
+LPC13_0:
 	add	r1, pc, r1
-LPC14_1:
+LPC13_1:
 	add	r3, pc, r3
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	ldr	r0, [r5, r0]
 	cmp	r0, #0
-	beq	LBB14_4
+	beq	LBB13_4
 	bl	_objc_retain
 	mov	r5, r0
-	b	LBB14_5
-LBB14_3:
+	b	LBB13_5
+LBB13_3:
 	mov	r5, r4
 	mov	r0, r5
 	pop	{r4, r5, r6, r7, lr}
 	b	_objc_autoreleaseReturnValue
-LBB14_4:
+LBB13_4:
 	mov	r5, #0
-LBB14_5:
+LBB13_5:
 	mov	r0, r4
 	bl	_objc_release
 	mov	r0, r5
@@ -632,17 +610,17 @@ _copyWithZone:
 	bl	_get_obj
 	mov	r4, r0
 	cmp	r0, #0
-	beq	LBB15_5
+	beq	LBB14_5
 	mov	r0, r5
 	bl	_object_getClass
-	movw	r10, :lower16:(L_anon.[ID].11-(LPC15_0+8))
+	movw	r10, :lower16:(L_anon.[ID].12-(LPC14_0+8))
 	mov	r2, #4
-	movt	r10, :upper16:(L_anon.[ID].11-(LPC15_0+8))
-	movw	r8, :lower16:(l_anon.[ID].12-(LPC15_1+8))
-	movt	r8, :upper16:(l_anon.[ID].12-(LPC15_1+8))
-LPC15_0:
+	movt	r10, :upper16:(L_anon.[ID].12-(LPC14_0+8))
+	movw	r8, :lower16:(l_anon.[ID].13-(LPC14_1+8))
+	movt	r8, :upper16:(l_anon.[ID].13-(LPC14_1+8))
+LPC14_0:
 	add	r10, pc, r10
-LPC15_1:
+LPC14_1:
 	add	r8, pc, r8
 	mov	r1, r10
 	mov	r3, r8
@@ -657,39 +635,39 @@ LPC15_1:
 	strb	r6, [r4, r0]
 	mov	r0, r5
 	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].13-(LPC15_2+8))
+	movw	r1, :lower16:(L_anon.[ID].14-(LPC14_2+8))
 	mov	r2, #4
-	movt	r1, :upper16:(L_anon.[ID].13-(LPC15_2+8))
-	movw	r3, :lower16:(l_anon.[ID].2-(LPC15_3+8))
-	movt	r3, :upper16:(l_anon.[ID].2-(LPC15_3+8))
-LPC15_2:
+	movt	r1, :upper16:(L_anon.[ID].14-(LPC14_2+8))
+	movw	r3, :lower16:(l_anon.[ID].2-(LPC14_3+8))
+	movt	r3, :upper16:(l_anon.[ID].2-(LPC14_3+8))
+LPC14_2:
 	add	r1, pc, r1
-LPC15_3:
+LPC14_3:
 	add	r3, pc, r3
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	ldr	r0, [r5, r0]
 	cmp	r0, #0
-	beq	LBB15_3
+	beq	LBB14_3
 	bl	_objc_retain
 	mov	r5, r0
-	b	LBB15_4
-LBB15_3:
+	b	LBB14_4
+LBB14_3:
 	mov	r5, #0
-LBB15_4:
+LBB14_4:
 	mov	r0, r4
 	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].13-(LPC15_4+8))
+	movw	r1, :lower16:(L_anon.[ID].14-(LPC14_4+8))
 	mov	r2, #4
-	movt	r1, :upper16:(L_anon.[ID].13-(LPC15_4+8))
-	movw	r3, :lower16:(l_anon.[ID].2-(LPC15_5+8))
-	movt	r3, :upper16:(l_anon.[ID].2-(LPC15_5+8))
-LPC15_4:
+	movt	r1, :upper16:(L_anon.[ID].14-(LPC14_4+8))
+	movw	r3, :lower16:(l_anon.[ID].2-(LPC14_5+8))
+	movt	r3, :upper16:(l_anon.[ID].2-(LPC14_5+8))
+LPC14_4:
 	add	r1, pc, r1
-LPC15_5:
+LPC14_5:
 	add	r3, pc, r3
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	str	r5, [r4, r0]
-LBB15_5:
+LBB14_5:
 	mov	r0, r4
 	pop	{r8, r10}
 	pop	{r4, r5, r6, r7, pc}
@@ -755,56 +733,38 @@ l_anon.[ID].10:
 	.long	l_anon.[ID].9
 	.asciz	"p\000\000\000\225\000\000\0002\000\000"
 
+	.section	__TEXT,__const
+l_anon.[ID].11:
+	.ascii	"CustomClassName"
+
 	.section	__TEXT,__literal4,4byte_literals
-L_anon.[ID].11:
+L_anon.[ID].12:
 	.ascii	"_foo"
 
 	.section	__TEXT,__const
 	.p2align	2, 0x0
-l_anon.[ID].12:
+l_anon.[ID].13:
 	.byte	5
 	.space	19
 
 	.section	__TEXT,__literal4,4byte_literals
-L_anon.[ID].13:
+L_anon.[ID].14:
 	.ascii	"_obj"
 
 	.section	__TEXT,__const
-l_anon.[ID].14:
+l_anon.[ID].15:
 	.ascii	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
 	.p2align	2, 0x0
-l_anon.[ID].15:
-	.long	l_anon.[ID].14
+l_anon.[ID].16:
+	.long	l_anon.[ID].15
 	.asciz	"5\000\000\000\f\000\000\000\001\000\000"
 
-	.section	__TEXT,__const
-l_anon.[ID].16:
-	.ascii	"CustomClassName"
-
 .zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0),4,2
+	.section	__TEXT,__const
 l_anon.[ID].17:
 	.ascii	"NSCopying"
-
-l_anon.[ID].18:
-	.ascii	"could not create new class "
-
-l_anon.[ID].19:
-	.ascii	". Perhaps a class with that name already exists?"
-
-	.section	__DATA,__const
-	.p2align	2, 0x0
-l_anon.[ID].20:
-	.long	l_anon.[ID].18
-	.asciz	"\033\000\000"
-	.long	l_anon.[ID].19
-	.asciz	"0\000\000"
-
-	.p2align	2, 0x0
-l_anon.[ID].21:
-	.long	l_anon.[ID].16
-	.asciz	"\017\000\000"
 
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_d874ee9262978be2

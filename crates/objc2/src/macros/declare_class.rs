@@ -555,16 +555,7 @@ macro_rules! __declare_class_inner {
                 static REGISTER_CLASS: $crate::__macro_helpers::Once = $crate::__macro_helpers::Once::new();
 
                 REGISTER_CLASS.call_once(|| {
-                    let __objc2_superclass = <$superclass as $crate::ClassType>::class();
-                    let mut __objc2_builder = $crate::declare::ClassBuilder::new(
-                        <Self as ClassType>::NAME,
-                        __objc2_superclass,
-                    ).unwrap_or_else(|| {
-                        $crate::__macro_helpers::panic!(
-                            "could not create new class {}. Perhaps a class with that name already exists?",
-                            <Self as ClassType>::NAME,
-                        )
-                    });
+                    let mut __objc2_builder = $crate::__macro_helpers::ClassBuilderHelper::<Self>::new();
 
                     $($ivar_helper_module::__objc2_declare_ivars(&mut __objc2_builder);)?
 
@@ -783,9 +774,7 @@ macro_rules! __declare_class_register_impls {
 
             // Implement protocol
             #[allow(unused_mut)]
-            let mut __objc2_protocol_builder = $builder.__add_protocol_methods(
-                <dyn $protocol as $crate::ProtocolType>::protocol()
-            );
+            let mut __objc2_protocol_builder = $builder.add_protocol_methods::<dyn $protocol>();
 
             // In case the user's function is marked `deprecated`
             #[allow(deprecated)]
@@ -801,7 +790,7 @@ macro_rules! __declare_class_register_impls {
             }
 
             // Finished declaring protocol; get error message if any
-            __objc2_protocol_builder.__finish();
+            __objc2_protocol_builder.finish();
         }
 
         $crate::__declare_class_register_impls! {
