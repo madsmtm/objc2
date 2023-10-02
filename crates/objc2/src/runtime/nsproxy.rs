@@ -5,20 +5,15 @@ use crate::mutability::Root;
 use crate::runtime::{AnyClass, AnyObject, NSObjectProtocol, ProtocolObject};
 use crate::ClassType;
 
-crate::__emit_struct! {
-    (
-        /// An abstract superclass defining an API for objects that act as
-        /// stand-ins for other objects or for objects that don’t exist yet.
-        ///
-        /// See [Apple's documentation][apple-doc] for more information.
-        ///
-        /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsproxy?language=objc
-    )
-    (pub)
-    (NSProxy)
-    (
-        __inner: AnyObject,
-    )
+/// An abstract superclass defining an API for objects that act as
+/// stand-ins for other objects or for objects that don’t exist yet.
+///
+/// See [Apple's documentation][apple-doc] for more information.
+///
+/// [apple-doc]: https://developer.apple.com/documentation/foundation/nsproxy?language=objc
+#[repr(C)]
+pub struct NSProxy {
+    __inner: AnyObject,
 }
 
 crate::__extern_class_impl_traits! {

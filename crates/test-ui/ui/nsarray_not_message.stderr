@@ -6,11 +6,11 @@ error[E0277]: the trait bound `i32: Message` is not satisfied
   |
   = help: the following other types implement trait `Message`:
             Exception
+            NSObject
+            __NSProxy
             ProtocolObject<P>
             AnyObject
             __RcTestObject
-            NSObject
-            __NSProxy
             NSApplication
             NSCollectionView
           and $N others
@@ -38,9 +38,9 @@ error[E0277]: the trait bound `Id<NSObject>: ClassType` is not satisfied
   |                                        required by a bound introduced by this call
   |
   = help: the following other types implement trait `ClassType`:
-            __RcTestObject
             NSObject
             __NSProxy
+            __RcTestObject
             NSApplication
             NSCollectionView
             NSCollectionLayoutSection

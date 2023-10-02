@@ -54,8 +54,8 @@ note: required because it appears within the type `AnyObject`
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |
-  |     (NSObject)
-  |      ^^^^^^^^
+  | pub struct NSObject {
+  |            ^^^^^^^^
   = note: required for `Id<NSObject>` to implement `Sync`
 note: required because it appears within the type `PhantomData<Id<NSObject>>`
  --> $RUST/core/src/marker.rs
@@ -140,8 +140,8 @@ note: required because it appears within the type `AnyObject`
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |
-  |     (NSObject)
-  |      ^^^^^^^^
+  | pub struct NSObject {
+  |            ^^^^^^^^
   = note: required for `Id<NSObject>` to implement `Send`
 note: required because it appears within the type `PhantomData<Id<NSObject>>`
  --> $RUST/core/src/marker.rs
@@ -220,8 +220,8 @@ note: required because it appears within the type `AnyObject`
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |
-  |     (NSObject)
-  |      ^^^^^^^^
+  | pub struct NSObject {
+  |            ^^^^^^^^
   = note: required for `Id<NSObject>` to implement `Sync`
 note: required because it appears within the type `PhantomData<Id<NSObject>>`
  --> $RUST/core/src/marker.rs
@@ -316,8 +316,8 @@ note: required because it appears within the type `AnyObject`
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |
-  |     (NSObject)
-  |      ^^^^^^^^
+  | pub struct NSObject {
+  |            ^^^^^^^^
   = note: required for `Id<NSObject>` to implement `Send`
 note: required because it appears within the type `PhantomData<Id<NSObject>>`
  --> $RUST/core/src/marker.rs

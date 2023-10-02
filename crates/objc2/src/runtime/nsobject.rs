@@ -7,26 +7,21 @@ use crate::runtime::{AnyClass, AnyObject, ProtocolObject};
 use crate::{extern_methods, msg_send, msg_send_id, Message};
 use crate::{ClassType, ProtocolType};
 
-crate::__emit_struct! {
-    (
-        /// The root class of most Objective-C class hierarchies.
-        ///
-        /// This represents the [`NSObject` class][cls]. The name "NSObject" also
-        /// refers to a protocol, see [`NSObjectProtocol`] for that.
-        ///
-        /// Since this class is only available with the `Foundation` framework,
-        /// `objc2` links to it for you.
-        ///
-        /// This is exported under `icrate::Foundation::NSObject`, you probably
-        /// want to use that path instead.
-        ///
-        /// [cls]: https://developer.apple.com/documentation/objectivec/nsobject?language=objc
-    )
-    (pub)
-    (NSObject)
-    (
-        __inner: AnyObject,
-    )
+/// The root class of most Objective-C class hierarchies.
+///
+/// This represents the [`NSObject` class][cls]. The name "NSObject" also
+/// refers to a protocol, see [`NSObjectProtocol`] for that.
+///
+/// Since this class is only available with the `Foundation` framework,
+/// `objc2` links to it for you.
+///
+/// This is exported under `icrate::Foundation::NSObject`, you probably
+/// want to use that path instead.
+///
+/// [cls]: https://developer.apple.com/documentation/objectivec/nsobject?language=objc
+#[repr(C)]
+pub struct NSObject {
+    __inner: AnyObject,
 }
 
 crate::__extern_class_impl_traits! {

@@ -115,11 +115,11 @@ error[E0277]: the trait bound `AnyClass: Message` is not satisfied
   = help: the following other types implement trait `Message`:
             CustomObject
             Exception
+            NSObject
+            __NSProxy
             ProtocolObject<P>
             AnyObject
             __RcTestObject
-            NSObject
-            __NSProxy
 note: required by a bound in `ClassBuilder::add_method`
  --> $WORKSPACE/crates/objc2/src/declare/mod.rs
   |
