@@ -100,7 +100,9 @@ macro_rules! __parse_fields {
                 "no need to specify an ivar module when the type has no ivars"
             );
 
-            pub(super) fn __objc2_declare_ivars(__objc2_builder: &mut $crate::declare::ClassBuilder) {}
+            pub(super) fn __objc2_declare_ivars<T: ?$crate::__macro_helpers::Sized + $crate::ClassType>(
+                __objc2_builder: &mut $crate::__macro_helpers::ClassBuilderHelper<T>,
+            ) {}
         }
 
         $out_macro! {
@@ -125,7 +127,9 @@ macro_rules! __parse_fields {
 
             $($ivar_output)+
 
-            pub(super) fn __objc2_declare_ivars(__objc2_builder: &mut $crate::declare::ClassBuilder) {
+            pub(super) fn __objc2_declare_ivars<T: ?$crate::__macro_helpers::Sized + $crate::ClassType>(
+                __objc2_builder: &mut $crate::__macro_helpers::ClassBuilderHelper<T>,
+            ) {
                 // Ivars
                 $(
                     __objc2_builder.add_static_ivar::<$ivar_type_name>();

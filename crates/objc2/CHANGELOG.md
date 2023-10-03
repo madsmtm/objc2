@@ -81,6 +81,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Allow cloning `Id<AnyObject>`.
 * **BREAKING**: Restrict message sending to `&mut` references to things that
   implement `IsAllowedMutable`.
+* Disallow the ability to use non-`Self`-like types as the receiver in
+  `declare_class!`.
 
 ### Removed
 * **BREAKING**: Removed `ProtocolType` implementation for `NSObject`.
