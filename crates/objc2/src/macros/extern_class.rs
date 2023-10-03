@@ -338,14 +338,11 @@ macro_rules! __inner_extern_class {
             $(const NAME: &'static str = $name_const:expr;)?
         }
     ) => {
-        $crate::__emit_struct! {
-            ($(#[$m])*)
-            ($v)
-            ($name<$($t_struct $(: $(?$b_sized_struct)? $($b_struct)? $(= $default)?)?),*>)
-            (
-                $superclass_field: $superclass_field_ty,
-                $($fields)*
-            )
+        $(#[$m])*
+        #[repr(C)]
+        $v struct $name<$($t_struct $(: $(?$b_sized_struct)? $($b_struct)? $(= $default)?)?),*> {
+            $superclass_field: $superclass_field_ty,
+            $($fields)*
         }
 
         $crate::__extern_class_impl_traits! {

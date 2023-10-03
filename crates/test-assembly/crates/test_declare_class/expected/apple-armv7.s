@@ -344,7 +344,7 @@ _access_ivars:
 	add	r7, sp, #12
 	bl	_get_obj
 	mov	r4, r0
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 	movw	r1, :lower16:(L_anon.[ID].11-(LPC6_0+8))
 	mov	r2, #4
 	movt	r1, :upper16:(L_anon.[ID].11-(LPC6_0+8))
@@ -357,7 +357,7 @@ LPC6_1:
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	ldrb	r5, [r4, r0]
 	mov	r0, r4
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 	movw	r1, :lower16:(L_anon.[ID].13-(LPC6_2+8))
 	mov	r2, #4
 	movt	r1, :upper16:(L_anon.[ID].13-(LPC6_2+8))
@@ -443,7 +443,7 @@ SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::
 	sub	sp, sp, #8
 	mov	r4, r1
 	mov	r5, r0
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 	movw	r1, :lower16:(L_anon.[ID].13-(LPC8_0+8))
 	mov	r2, #4
 	movt	r1, :upper16:(L_anon.[ID].13-(LPC8_0+8))
@@ -496,7 +496,7 @@ LPC9_1:
 	cmp	r0, #0
 	beq	LBB9_2
 	mov	r0, r4
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 	movw	r1, :lower16:(L_anon.[ID].11-(LPC9_2+8))
 	mov	r2, #4
 	movt	r1, :upper16:(L_anon.[ID].11-(LPC9_2+8))
@@ -510,7 +510,7 @@ LPC9_3:
 	mov	r1, #42
 	strb	r1, [r4, r0]
 	mov	r0, r4
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 	movw	r1, :lower16:(L_anon.[ID].13-(LPC9_4+8))
 	mov	r2, #4
 	movt	r1, :upper16:(L_anon.[ID].13-(LPC9_4+8))
@@ -555,7 +555,7 @@ _method_id:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	mov	r4, r0
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 	movw	r1, :lower16:(L_anon.[ID].13-(LPC13_0+8))
 	mov	r2, #4
 	movt	r1, :upper16:(L_anon.[ID].13-(LPC13_0+8))
@@ -590,7 +590,7 @@ _method_id_with_param:
 	cmp	r6, #0
 	beq	LBB14_3
 	mov	r0, r5
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 	movw	r1, :lower16:(L_anon.[ID].13-(LPC14_0+8))
 	mov	r2, #4
 	movt	r1, :upper16:(L_anon.[ID].13-(LPC14_0+8))
@@ -634,7 +634,7 @@ _copyWithZone:
 	cmp	r0, #0
 	beq	LBB15_5
 	mov	r0, r5
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 	movw	r10, :lower16:(L_anon.[ID].11-(LPC15_0+8))
 	mov	r2, #4
 	movt	r10, :upper16:(L_anon.[ID].11-(LPC15_0+8))
@@ -649,14 +649,14 @@ LPC15_1:
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	ldrb	r6, [r5, r0]
 	mov	r0, r4
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 	mov	r1, r10
 	mov	r2, #4
 	mov	r3, r8
 	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	strb	r6, [r4, r0]
 	mov	r0, r5
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 	movw	r1, :lower16:(L_anon.[ID].13-(LPC15_2+8))
 	mov	r2, #4
 	movt	r1, :upper16:(L_anon.[ID].13-(LPC15_2+8))
@@ -677,7 +677,7 @@ LBB15_3:
 	mov	r5, #0
 LBB15_4:
 	mov	r0, r4
-	bl	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	bl	_object_getClass
 	movw	r1, :lower16:(L_anon.[ID].13-(LPC15_4+8))
 	mov	r2, #4
 	movt	r1, :upper16:(L_anon.[ID].13-(LPC15_4+8))

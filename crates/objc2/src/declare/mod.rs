@@ -419,6 +419,10 @@ impl ClassBuilder {
 
         let c_name = CString::new(name).unwrap();
         let encoding = CString::new(encoding.to_string()).unwrap();
+
+        // Note: The Objective-C runtime contains functionality to do stuff
+        // with "instance variable layouts", but we don't have to touch any of
+        // that, it was only used in the garbage-collecting runtime.
         let success = Bool::from_raw(unsafe {
             ffi::class_addIvar(
                 self.as_mut_ptr(),

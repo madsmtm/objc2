@@ -229,7 +229,7 @@ _access_ivars:
 	call	_get_obj
 	mov	rbx, rax
 	mov	rdi, rax
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	lea	rsi, [rip + L_anon.[ID].11]
 	lea	rcx, [rip + l_anon.[ID].12]
 	mov	edx, 4
@@ -237,7 +237,7 @@ _access_ivars:
 	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	movzx	r14d, byte ptr [rbx + rax]
 	mov	rdi, rbx
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	lea	rsi, [rip + L_anon.[ID].13]
 	lea	rcx, [rip + l_anon.[ID].2]
 	mov	edx, 4
@@ -299,7 +299,7 @@ SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::
 	sub	rsp, 16
 	mov	rbx, rsi
 	mov	r14, rdi
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	lea	rsi, [rip + L_anon.[ID].13]
 	lea	rcx, [rip + l_anon.[ID].2]
 	mov	edx, 4
@@ -342,7 +342,7 @@ _init:
 	test	rax, rax
 	je	LBB9_2
 	mov	rdi, rbx
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	lea	rsi, [rip + L_anon.[ID].11]
 	lea	rcx, [rip + l_anon.[ID].12]
 	mov	edx, 4
@@ -350,7 +350,7 @@ _init:
 	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	mov	byte ptr [rbx + rax], 42
 	mov	rdi, rbx
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	lea	rsi, [rip + L_anon.[ID].13]
 	lea	rcx, [rip + l_anon.[ID].2]
 	mov	edx, 4
@@ -399,7 +399,7 @@ _method_id:
 	push	rbx
 	push	rax
 	mov	rbx, rdi
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	lea	rsi, [rip + L_anon.[ID].13]
 	lea	rcx, [rip + l_anon.[ID].2]
 	mov	edx, 4
@@ -437,7 +437,7 @@ _method_id_with_param:
 	test	r15b, r15b
 	je	LBB14_5
 	mov	rdi, r14
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	lea	rsi, [rip + L_anon.[ID].13]
 	lea	rcx, [rip + l_anon.[ID].2]
 	mov	edx, 4
@@ -481,7 +481,7 @@ _copyWithZone:
 	test	rax, rax
 	je	LBB15_5
 	mov	rdi, r14
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	lea	r15, [rip + L_anon.[ID].11]
 	lea	r12, [rip + l_anon.[ID].12]
 	mov	edx, 4
@@ -491,7 +491,7 @@ _copyWithZone:
 	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	movzx	r13d, byte ptr [r14 + rax]
 	mov	rdi, rbx
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	mov	edx, 4
 	mov	rdi, rax
 	mov	rsi, r15
@@ -499,7 +499,7 @@ _copyWithZone:
 	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
 	mov	byte ptr [rbx + rax], r13b
 	mov	rdi, r14
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	lea	rsi, [rip + L_anon.[ID].13]
 	lea	rcx, [rip + l_anon.[ID].2]
 	mov	edx, 4
@@ -515,7 +515,7 @@ LBB15_2:
 	xor	r14d, r14d
 LBB15_4:
 	mov	rdi, rbx
-	call	SYM(objc2::runtime::AnyObject::class::GENERATED_ID, 0)
+	call	_object_getClass
 	lea	rsi, [rip + L_anon.[ID].13]
 	lea	rcx, [rip + l_anon.[ID].2]
 	mov	edx, 4

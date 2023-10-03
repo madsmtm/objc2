@@ -300,6 +300,7 @@ impl UnwindSafe for Ivar {}
 impl RefUnwindSafe for Ivar {}
 
 impl Ivar {
+    #[inline]
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_ivar {
         let ptr: *const Self = self;
         ptr.cast()
@@ -381,6 +382,7 @@ impl UnwindSafe for Method {}
 impl RefUnwindSafe for Method {}
 
 impl Method {
+    #[inline]
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_method {
         let ptr: *const Self = self;
         ptr.cast()
@@ -388,11 +390,13 @@ impl Method {
 
     // Note: We don't take `&mut` here, since the operations on methods work
     // atomically.
+    #[inline]
     pub(crate) fn as_mut_ptr(&self) -> *mut ffi::objc_method {
         self.as_ptr() as _
     }
 
     /// Returns the name of self.
+    #[inline]
     #[doc(alias = "method_getName")]
     pub fn name(&self) -> Sel {
         unsafe { Sel::from_ptr(ffi::method_getName(self.as_ptr())).unwrap() }
@@ -446,6 +450,7 @@ impl Method {
     }
 
     /// Returns the number of arguments accepted by self.
+    #[inline]
     #[doc(alias = "method_getNumberOfArguments")]
     pub fn arguments_count(&self) -> usize {
         unsafe { ffi::method_getNumberOfArguments(self.as_ptr()) as usize }
@@ -483,7 +488,6 @@ impl Method {
     ///
     ///    A common mistake would be expecting e.g. a pointer to not be null,
     ///    where the null case was handled before.
-    #[inline]
     #[doc(alias = "method_setImplementation")]
     pub unsafe fn set_implementation(&self, imp: Imp) -> Imp {
         // SAFETY: The new impl is not NULL, and the rest is upheld by the
@@ -574,6 +578,7 @@ impl RefUnwindSafe for AnyClass {}
 // Note that Unpin is not applicable.
 
 impl AnyClass {
+    #[inline]
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_class {
         let ptr: *const Self = self;
         ptr.cast()
@@ -603,6 +608,7 @@ impl AnyClass {
     }
 
     /// Returns the total number of registered classes.
+    #[inline]
     #[doc(alias = "objc_getClassList")]
     pub fn classes_count() -> usize {
         unsafe { ffi::objc_getClassList(ptr::null_mut(), 0) as usize }
@@ -714,17 +720,6 @@ impl AnyClass {
     }
 
     #[allow(unused)]
-    #[doc(alias = "class_getIvarLayout")]
-    fn instance_variable_layout(&self) -> Option<&[u8]> {
-        let layout: *const c_char = unsafe { ffi::class_getIvarLayout(self.as_ptr()).cast() };
-        if layout.is_null() {
-            None
-        } else {
-            Some(unsafe { CStr::from_ptr(layout) }.to_bytes())
-        }
-    }
-
-    #[allow(unused)]
     #[doc(alias = "class_getClassVariable")]
     fn class_variable(&self, name: &str) -> Option<&Ivar> {
         let name = CString::new(name).unwrap();
@@ -745,6 +740,7 @@ impl AnyClass {
     }
 
     /// Checks whether this class conforms to the specified protocol.
+    #[inline]
     #[doc(alias = "class_conformsToProtocol")]
     pub fn conforms_to(&self, proto: &AnyProtocol) -> bool {
         unsafe {
@@ -798,7 +794,6 @@ impl AnyClass {
     // fn properties(&self) -> Malloc<[&Property]>;
     // unsafe fn replace_method(&self, name: Sel, imp: Imp, types: &str) -> Imp;
     // unsafe fn replace_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
-    // unsafe fn set_ivar_layout(&mut self, layout: &[u8]);
     // fn method_imp(&self, name: Sel) -> Imp; // + _stret
 
     // fn get_version(&self) -> u32;
@@ -873,6 +868,7 @@ impl RefUnwindSafe for AnyProtocol {}
 // Note that Unpin is not applicable.
 
 impl AnyProtocol {
+    #[inline]
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_protocol {
         let ptr: *const Self = self;
         ptr.cast()
@@ -913,6 +909,7 @@ impl AnyProtocol {
     }
 
     /// Checks whether this protocol conforms to the specified protocol.
+    #[inline]
     #[doc(alias = "protocol_conformsToProtocol")]
     pub fn conforms_to(&self, proto: &AnyProtocol) -> bool {
         unsafe {
@@ -1057,16 +1054,20 @@ unsafe impl RefEncode for AnyObject {
 unsafe impl Message for AnyObject {}
 
 impl AnyObject {
+    #[inline]
     pub(crate) fn as_ptr(&self) -> *const ffi::objc_object {
         let ptr: *const Self = self;
         ptr.cast()
     }
 
     /// Dynamically find the class of this object.
+    #[inline]
     #[doc(alias = "object_getClass")]
-    pub fn class(&self) -> &AnyClass {
+    pub fn class(&self) -> &'static AnyClass {
         let ptr: *const AnyClass = unsafe { ffi::object_getClass(self.as_ptr()) }.cast();
-        // SAFETY: The class is not NULL because the object is not NULL.
+        // SAFETY: The class is not NULL because the object is not NULL, and
+        // it is safe as `'static` since classes are static, and it could be
+        // retrieved via. `AnyClass::get(self.class().name())` anyhow.
         unsafe { ptr.as_ref().unwrap_unchecked() }
     }
 
@@ -1285,7 +1286,7 @@ mod tests {
     use super::*;
     use crate::runtime::MessageReceiver;
     use crate::test_utils;
-    use crate::{msg_send, sel};
+    use crate::{class, msg_send, sel};
 
     #[test]
     fn test_selector() {
@@ -1575,5 +1576,23 @@ mod tests {
         assert_eq!(size_of::<AnyProtocol>(), 0);
         assert_eq!(size_of::<Ivar>(), 0);
         assert_eq!(size_of::<Method>(), 0);
+    }
+
+    fn get_ivar_layout(cls: &AnyClass) -> *const u8 {
+        let cls: *const AnyClass = cls;
+        unsafe { ffi::class_getIvarLayout(cls.cast()) }
+    }
+
+    #[test]
+    #[cfg_attr(
+        feature = "gnustep-1-7",
+        ignore = "ivar layout is still used on GNUStep"
+    )]
+    fn test_layout_does_not_matter_any_longer() {
+        assert!(get_ivar_layout(class!(NSObject)).is_null());
+        assert!(get_ivar_layout(class!(NSArray)).is_null());
+        assert!(get_ivar_layout(class!(NSException)).is_null());
+        assert!(get_ivar_layout(class!(NSNumber)).is_null());
+        assert!(get_ivar_layout(class!(NSString)).is_null());
     }
 }

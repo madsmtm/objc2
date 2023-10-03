@@ -78,8 +78,8 @@ note: required because it appears within the type `AnyObject`
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |
-  |     (NSObject)
-  |      ^^^^^^^^
+  | pub struct NSObject {
+  |            ^^^^^^^^
 note: required by a bound in `needs_sync`
  --> ui/object_not_send_sync.rs
   |
@@ -118,8 +118,8 @@ note: required because it appears within the type `AnyObject`
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |
-  |     (NSObject)
-  |      ^^^^^^^^
+  | pub struct NSObject {
+  |            ^^^^^^^^
 note: required by a bound in `needs_send`
  --> ui/object_not_send_sync.rs
   |
@@ -147,8 +147,8 @@ note: required because it appears within the type `AnyObject`
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |
-  |     (NSObject)
-  |      ^^^^^^^^
+  | pub struct NSObject {
+  |            ^^^^^^^^
 note: required because it appears within the type `NSValue`
  --> $WORKSPACE/crates/icrate/src/generated/Foundation/NSValue.rs
   |
@@ -192,8 +192,8 @@ note: required because it appears within the type `AnyObject`
 note: required because it appears within the type `NSObject`
  --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |
-  |     (NSObject)
-  |      ^^^^^^^^
+  | pub struct NSObject {
+  |            ^^^^^^^^
 note: required because it appears within the type `NSValue`
  --> $WORKSPACE/crates/icrate/src/generated/Foundation/NSValue.rs
   |

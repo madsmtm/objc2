@@ -45,6 +45,7 @@ extern_c_unwind! {
 extern_c! {
     #[cfg(any(doc, not(objfw)))]
     pub fn imp_getBlock(imp: IMP) -> *mut objc_object;
+    // See also <https://landonf.org/code/objc/imp_implementationWithBlock.20110413.html>
     #[cfg(any(doc, not(objfw)))]
     pub fn imp_implementationWithBlock(block: *mut objc_object) -> IMP;
     #[cfg(any(doc, not(objfw)))]

@@ -12,7 +12,7 @@ error[E0277]: the trait bound `MyObject: ClassType` is not satisfied
   |
   = help: the following other types implement trait `ClassType`:
             MyRootClass
-            __RcTestObject
             NSObject
             __NSProxy
+            __RcTestObject
   = note: this error originates in the macro `$crate::__inner_extern_class` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

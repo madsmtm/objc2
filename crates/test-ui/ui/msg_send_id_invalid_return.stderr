@@ -26,11 +26,11 @@ error[E0277]: the trait bound `AnyClass: Message` is not satisfied
   |
   = help: the following other types implement trait `Message`:
             Exception
+            NSObject
+            __NSProxy
             ProtocolObject<P>
             AnyObject
             __RcTestObject
-            NSObject
-            __NSProxy
   = note: required for `RetainSemantics<1>` to implement `MsgSendId<&AnyClass, Option<Id<AnyClass>>>`
 
 error[E0277]: the trait bound `AnyClass: Message` is not satisfied
@@ -44,11 +44,11 @@ error[E0277]: the trait bound `AnyClass: Message` is not satisfied
   |
   = help: the following other types implement trait `Message`:
             Exception
+            NSObject
+            __NSProxy
             ProtocolObject<P>
             AnyObject
             __RcTestObject
-            NSObject
-            __NSProxy
   = note: required for `RetainSemantics<1>` to implement `MsgSendId<&AnyClass, Option<Id<AnyClass>>>`
 
 error[E0277]: the trait bound `&AnyObject: MaybeUnwrap` is not satisfied
@@ -79,11 +79,11 @@ error[E0277]: the trait bound `AnyClass: Message` is not satisfied
   |
   = help: the following other types implement trait `Message`:
             Exception
+            NSObject
+            __NSProxy
             ProtocolObject<P>
             AnyObject
             __RcTestObject
-            NSObject
-            __NSProxy
   = note: required for `RetainSemantics<2>` to implement `MsgSendId<&AnyClass, Allocated<AnyClass>>`
 
 error[E0271]: type mismatch resolving `<Id<AnyObject> as MaybeUnwrap>::Input == Allocated<_>`

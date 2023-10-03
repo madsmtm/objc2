@@ -2,13 +2,15 @@
 //!
 //! These bindings contain almost no documentation, so it is highly
 //! recommended to read the documentation of the original libraries:
-//! - Apple's [official documentation][apple].
+//! - Apple's [documentation about the Objective-C runtime][runtime-guide].
+//! - Apple's [runtime reference][apple].
 //! - Apple's `objc4` [source code][objc4], in particular `runtime.h`.
 //! - GNUStep's `libobjc2` [source code][libobjc2], in particular `runtime.h`.
 //!
 //! See also the [`README.md`](https://crates.io/crates/objc-sys) for more
 //! background information, and for how to configure the desired runtime.
 //!
+//! [runtime-guide]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Introduction/Introduction.html
 //! [apple]: https://developer.apple.com/documentation/objectivec/objective-c_runtime?language=objc
 //! [libobjc2]: https://github.com/gnustep/libobjc2/tree/v2.1/objc
 //! [objc4]: https://github.com/apple-oss-distributions/objc4

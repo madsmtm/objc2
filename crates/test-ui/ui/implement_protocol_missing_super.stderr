@@ -5,9 +5,9 @@ error[E0277]: the trait bound `CustomObject: NSObjectProtocol` is not satisfied
   |                                           ^^^^^^^^^^^^ the trait `NSObjectProtocol` is not implemented for `CustomObject`
   |
   = help: the following other types implement trait `NSObjectProtocol`:
-            ProtocolObject<T>
             NSObject
             __NSProxy
+            ProtocolObject<T>
             NSApplication
             NSCollectionView
             NSCollectionLayoutSection

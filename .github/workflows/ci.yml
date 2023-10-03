@@ -584,6 +584,8 @@ jobs:
       ASMFLAGS: ${{ matrix.cflags }}
       LDFLAGS: ${{ matrix.cflags }}
       ARGS: --no-default-features --features=std,${{ matrix.runtime }}
+      # http://wiki.gnustep.org/index.php/Building_GNUstep_under_Debian_FreeBSD#installing_gnustep-make
+      RUNTIME_VERSION: gnustep-${{ matrix.libobjc2 }}
 
     steps:
     - uses: actions/checkout@v3
