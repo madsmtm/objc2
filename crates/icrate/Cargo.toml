@@ -84,6 +84,12 @@ required-features = [
     "unstable-example-metal"
 ]
 
+[[example]]
+name = "tutorial"
+required-features = [
+    "unstable-example-tutorial"
+]
+
 [features]
 default = ["std", "apple"]
 
@@ -193,6 +199,27 @@ unstable-example-metal = [
     "MetalKit",
     "MetalKit_MTKView",
     "Metal_MTLRenderPassDescriptor",
+]
+unstable-example-tutorial = [
+    "apple",
+    "AppKit",
+    "AppKit_NSApplication",
+    "AppKit_NSButton",
+    "AppKit_NSLayoutConstraint",
+    "AppKit_NSLayoutDimension",
+    "AppKit_NSColor",
+    "AppKit_NSSlider",
+    "AppKit_NSStackView",
+    "AppKit_NSTextField",
+    "AppKit_NSViewController",
+    "AppKit_NSWindow",
+    "AppKit_NSWindowController",
+    "Foundation",
+    "Foundation_NSArray",
+    "Foundation_NSDictionary",
+    "Foundation_NSNotification",
+    "Foundation_NSNumber",
+    "Foundation_NSNumberFormatter",
 ]
 
 # Helps with CI
@@ -5348,6 +5375,7 @@ unstable-frameworks-macos-10-13 = [
     "unstable-example-metal",
     "unstable-example-nspasteboard",
     "unstable-example-speech_synthesis",
+    "unstable-example-tutorial",
     "unstable-frameworks-macos-10-7",
 ]
 unstable-frameworks-macos-10-7 = [
