@@ -85,7 +85,10 @@ required-features = [
 ]
 
 [features]
-default = ["std", "apple"]
+default = ["std", "apple", "link"]
+
+# Link against framework, otherwise the correct framework should be load at runtime
+link = []
 
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "objc2?/std", "block2?/std"]

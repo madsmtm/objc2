@@ -109,7 +109,7 @@ impl fmt::Display for Library {
         // FIXME: We always do cfg_attr(feature = "apple", ...) to make compiling things for GNUStep easier.
         writeln!(
             f,
-            "#[cfg_attr(feature = \"apple\", link(name = \"{}\", kind = \"framework\"))]",
+            "#[cfg_attr(all(feature = \"apple\", feature = \"link\"), link(name = \"{}\", kind = \"framework\"))]",
             self.link_name
         )?;
         if let Some(gnustep_library) = &self.data.gnustep_library {
