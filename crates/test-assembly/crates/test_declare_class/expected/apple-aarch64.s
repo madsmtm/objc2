@@ -211,39 +211,32 @@ Lloh53:
 	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	ldr	x0, [sp, #8]
 	bl	SYM(objc2::declare::ClassBuilder::register::GENERATED_ID, 0)
-Lloh54:
 	adrp	x8, __MergedGlobals@PAGE
 	str	x0, [x8, __MergedGlobals@PAGEOFF]
-Lloh55:
-	adrp	x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 1)@PAGE
-	str	xzr, [x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 1)@PAGEOFF]
-Lloh56:
-	adrp	x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 1)@PAGE
-	str	xzr, [x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 1)@PAGEOFF]
 	ldp	x29, x30, [sp, #48]
 	ldp	x20, x19, [sp, #32]
 	ldp	x22, x21, [sp, #16]
 	add	sp, sp, #64
 	ret
 LBB4_7:
-Lloh57:
+Lloh54:
 	adrp	x0, l_anon.[ID].24@PAGE
-Lloh58:
+Lloh55:
 	add	x0, x0, l_anon.[ID].24@PAGEOFF
-Lloh59:
+Lloh56:
 	adrp	x2, l_anon.[ID].26@PAGE
-Lloh60:
+Lloh57:
 	add	x2, x2, l_anon.[ID].26@PAGEOFF
 	mov	w1, #43
 	bl	SYM(core::panicking::panic::GENERATED_ID, 0)
 LBB4_8:
-Lloh61:
+Lloh58:
 	adrp	x0, l_anon.[ID].22@PAGE
-Lloh62:
+Lloh59:
 	add	x0, x0, l_anon.[ID].22@PAGEOFF
-Lloh63:
+Lloh60:
 	adrp	x2, l_anon.[ID].28@PAGE
-Lloh64:
+Lloh61:
 	add	x2, x2, l_anon.[ID].28@PAGEOFF
 	mov	w1, #7
 	bl	SYM(objc2::__macro_helpers::declare_class::failed_declaring_class::GENERATED_ID, 0)
@@ -266,16 +259,14 @@ Lloh64:
 	.loh AdrpAdd	Lloh14, Lloh15
 	.loh AdrpLdr	Lloh12, Lloh13
 	.loh AdrpAdd	Lloh44, Lloh45
-	.loh AdrpAdrp	Lloh55, Lloh56
-	.loh AdrpAdrp	Lloh54, Lloh55
 	.loh AdrpAdd	Lloh52, Lloh53
 	.loh AdrpAdd	Lloh50, Lloh51
 	.loh AdrpAdd	Lloh48, Lloh49
 	.loh AdrpLdr	Lloh46, Lloh47
-	.loh AdrpAdd	Lloh59, Lloh60
-	.loh AdrpAdd	Lloh57, Lloh58
-	.loh AdrpAdd	Lloh63, Lloh64
-	.loh AdrpAdd	Lloh61, Lloh62
+	.loh AdrpAdd	Lloh56, Lloh57
+	.loh AdrpAdd	Lloh54, Lloh55
+	.loh AdrpAdd	Lloh60, Lloh61
+	.loh AdrpAdd	Lloh58, Lloh59
 
 	.p2align	2
 SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
@@ -287,37 +278,37 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	ldrb	w9, [x8]
 	strb	wzr, [x8]
 	cbz	w9, LBB5_5
-Lloh65:
+Lloh62:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
-Lloh66:
+Lloh63:
 	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
-Lloh67:
+Lloh64:
 	ldr	x2, [x8]
-Lloh68:
+Lloh65:
 	adrp	x0, l_anon.[ID].23@PAGE
-Lloh69:
+Lloh66:
 	add	x0, x0, l_anon.[ID].23@PAGEOFF
 	mov	w1, #9
 	bl	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
 	cbz	x0, LBB5_6
 	str	x0, [sp, #24]
-Lloh70:
+Lloh67:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_dealloc@GOTPAGE
-Lloh71:
+Lloh68:
 	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_dealloc@GOTPAGEOFF]
-Lloh72:
+Lloh69:
 	ldr	x1, [x8]
-Lloh73:
+Lloh70:
 	adrp	x19, l_anon.[ID].3@PAGE
-Lloh74:
+Lloh71:
 	add	x19, x19, l_anon.[ID].3@PAGEOFF
-Lloh75:
+Lloh72:
 	adrp	x4, l_anon.[ID].5@PAGE
-Lloh76:
+Lloh73:
 	add	x4, x4, l_anon.[ID].5@PAGEOFF
-Lloh77:
+Lloh74:
 	adrp	x5, SYM(objc2[CRATE_ID]::__macro_helpers::declared_ivars::dealloc::<test_declare_class[CRATE_ID]::DropIvars>, 0)@PAGE
-Lloh78:
+Lloh75:
 	add	x5, x5, SYM(objc2[CRATE_ID]::__macro_helpers::declared_ivars::dealloc::<test_declare_class[CRATE_ID]::DropIvars>, 0)@PAGEOFF
 	add	x0, sp, #24
 	mov	x2, x19
@@ -325,19 +316,19 @@ Lloh78:
 	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	ldr	x8, [sp, #24]
 	str	x8, [sp, #8]
-Lloh79:
+Lloh76:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
-Lloh80:
+Lloh77:
 	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
-Lloh81:
+Lloh78:
 	ldr	x1, [x8]
-Lloh82:
+Lloh79:
 	adrp	x4, l_anon.[ID].4@PAGE
-Lloh83:
+Lloh80:
 	add	x4, x4, l_anon.[ID].4@PAGEOFF
-Lloh84:
+Lloh81:
 	adrp	x5, _init_drop_ivars@PAGE
-Lloh85:
+Lloh82:
 	add	x5, x5, _init_drop_ivars@PAGEOFF
 	add	x0, sp, #8
 	mov	x2, x19
@@ -346,16 +337,16 @@ Lloh85:
 	ldr	x8, [sp, #8]
 	str	x8, [sp, #16]
 	mov	w8, #16
-Lloh86:
+Lloh83:
 	adrp	x9, l_anon.[ID].15@PAGE
-Lloh87:
+Lloh84:
 	add	x9, x9, l_anon.[ID].15@PAGEOFF
 	stp	x8, x9, [sp, #32]
 	mov	w8, #27
 	strb	w8, [sp, #24]
-Lloh88:
+Lloh85:
 	adrp	x20, l_anon.[ID].11@PAGE
-Lloh89:
+Lloh86:
 	add	x20, x20, l_anon.[ID].11@PAGEOFF
 	add	x0, sp, #16
 	add	x5, sp, #24
@@ -364,13 +355,13 @@ Lloh89:
 	mov	w3, #16
 	mov	w4, #3
 	bl	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
-Lloh90:
+Lloh87:
 	adrp	x1, l_anon.[ID].12@PAGE
-Lloh91:
+Lloh88:
 	add	x1, x1, l_anon.[ID].12@PAGEOFF
-Lloh92:
+Lloh89:
 	adrp	x5, l_anon.[ID].13@PAGE
-Lloh93:
+Lloh90:
 	add	x5, x5, l_anon.[ID].13@PAGEOFF
 	add	x0, sp, #16
 	mov	w2, #9
@@ -386,22 +377,22 @@ Lloh93:
 	cbz	x0, LBB5_7
 	bl	_ivar_getOffset
 	mov	x20, x0
-Lloh94:
+Lloh91:
 	adrp	x1, l_anon.[ID].12@PAGE
-Lloh95:
+Lloh92:
 	add	x1, x1, l_anon.[ID].12@PAGEOFF
 	mov	x0, x19
 	mov	w2, #9
 	bl	SYM(objc2::runtime::AnyClass::instance_variable::GENERATED_ID, 0)
 	cbz	x0, LBB5_8
 	bl	_ivar_getOffset
-Lloh96:
+Lloh93:
 	adrp	x8, __MergedGlobals@PAGE+32
 	str	x19, [x8, __MergedGlobals@PAGEOFF+32]
-Lloh97:
+Lloh94:
 	adrp	x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0)@PAGE
 	str	x20, [x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0)@PAGEOFF]
-Lloh98:
+Lloh95:
 	adrp	x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 0)@PAGE
 	str	x0, [x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 0)@PAGEOFF]
 	ldp	x29, x30, [sp, #80]
@@ -409,73 +400,73 @@ Lloh98:
 	add	sp, sp, #96
 	ret
 LBB5_5:
-Lloh99:
+Lloh96:
 	adrp	x0, l_anon.[ID].24@PAGE
-Lloh100:
+Lloh97:
 	add	x0, x0, l_anon.[ID].24@PAGEOFF
-Lloh101:
+Lloh98:
 	adrp	x2, l_anon.[ID].26@PAGE
-Lloh102:
+Lloh99:
 	add	x2, x2, l_anon.[ID].26@PAGEOFF
 	mov	w1, #43
 	bl	SYM(core::panicking::panic::GENERATED_ID, 0)
 LBB5_6:
-Lloh103:
+Lloh100:
 	adrp	x0, l_anon.[ID].23@PAGE
-Lloh104:
+Lloh101:
 	add	x0, x0, l_anon.[ID].23@PAGEOFF
-Lloh105:
+Lloh102:
 	adrp	x2, l_anon.[ID].32@PAGE
-Lloh106:
+Lloh103:
 	add	x2, x2, l_anon.[ID].32@PAGEOFF
 	mov	w1, #9
 	bl	SYM(objc2::__macro_helpers::declare_class::failed_declaring_class::GENERATED_ID, 0)
 LBB5_7:
-Lloh107:
+Lloh104:
 	adrp	x0, l_anon.[ID].16@PAGE
-Lloh108:
+Lloh105:
 	add	x0, x0, l_anon.[ID].16@PAGEOFF
-Lloh109:
+Lloh106:
 	adrp	x2, l_anon.[ID].18@PAGE
-Lloh110:
+Lloh107:
 	add	x2, x2, l_anon.[ID].18@PAGEOFF
 	mov	w1, #59
 	bl	SYM(core::option::expect_failed::GENERATED_ID, 0)
 LBB5_8:
-Lloh111:
+Lloh108:
 	adrp	x0, l_anon.[ID].19@PAGE
-Lloh112:
+Lloh109:
 	add	x0, x0, l_anon.[ID].19@PAGEOFF
-Lloh113:
+Lloh110:
 	adrp	x2, l_anon.[ID].20@PAGE
-Lloh114:
+Lloh111:
 	add	x2, x2, l_anon.[ID].20@PAGEOFF
 	mov	w1, #69
 	bl	SYM(core::option::expect_failed::GENERATED_ID, 0)
-	.loh AdrpAdd	Lloh68, Lloh69
-	.loh AdrpLdrGotLdr	Lloh65, Lloh66, Lloh67
-	.loh AdrpAdd	Lloh92, Lloh93
-	.loh AdrpAdd	Lloh90, Lloh91
-	.loh AdrpAdd	Lloh88, Lloh89
-	.loh AdrpAdd	Lloh86, Lloh87
-	.loh AdrpAdd	Lloh84, Lloh85
-	.loh AdrpAdd	Lloh82, Lloh83
-	.loh AdrpLdrGotLdr	Lloh79, Lloh80, Lloh81
-	.loh AdrpAdd	Lloh77, Lloh78
-	.loh AdrpAdd	Lloh75, Lloh76
-	.loh AdrpAdd	Lloh73, Lloh74
-	.loh AdrpLdrGotLdr	Lloh70, Lloh71, Lloh72
-	.loh AdrpAdd	Lloh94, Lloh95
-	.loh AdrpAdrp	Lloh97, Lloh98
-	.loh AdrpAdrp	Lloh96, Lloh97
-	.loh AdrpAdd	Lloh101, Lloh102
-	.loh AdrpAdd	Lloh99, Lloh100
-	.loh AdrpAdd	Lloh105, Lloh106
-	.loh AdrpAdd	Lloh103, Lloh104
-	.loh AdrpAdd	Lloh109, Lloh110
-	.loh AdrpAdd	Lloh107, Lloh108
-	.loh AdrpAdd	Lloh113, Lloh114
-	.loh AdrpAdd	Lloh111, Lloh112
+	.loh AdrpAdd	Lloh65, Lloh66
+	.loh AdrpLdrGotLdr	Lloh62, Lloh63, Lloh64
+	.loh AdrpAdd	Lloh89, Lloh90
+	.loh AdrpAdd	Lloh87, Lloh88
+	.loh AdrpAdd	Lloh85, Lloh86
+	.loh AdrpAdd	Lloh83, Lloh84
+	.loh AdrpAdd	Lloh81, Lloh82
+	.loh AdrpAdd	Lloh79, Lloh80
+	.loh AdrpLdrGotLdr	Lloh76, Lloh77, Lloh78
+	.loh AdrpAdd	Lloh74, Lloh75
+	.loh AdrpAdd	Lloh72, Lloh73
+	.loh AdrpAdd	Lloh70, Lloh71
+	.loh AdrpLdrGotLdr	Lloh67, Lloh68, Lloh69
+	.loh AdrpAdd	Lloh91, Lloh92
+	.loh AdrpAdrp	Lloh94, Lloh95
+	.loh AdrpAdrp	Lloh93, Lloh94
+	.loh AdrpAdd	Lloh98, Lloh99
+	.loh AdrpAdd	Lloh96, Lloh97
+	.loh AdrpAdd	Lloh102, Lloh103
+	.loh AdrpAdd	Lloh100, Lloh101
+	.loh AdrpAdd	Lloh106, Lloh107
+	.loh AdrpAdd	Lloh104, Lloh105
+	.loh AdrpAdd	Lloh110, Lloh111
+	.loh AdrpAdd	Lloh108, Lloh109
 
 	.p2align	2
 SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
@@ -487,37 +478,37 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	ldrb	w9, [x8]
 	strb	wzr, [x8]
 	cbz	w9, LBB6_4
-Lloh115:
+Lloh112:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
-Lloh116:
+Lloh113:
 	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
-Lloh117:
+Lloh114:
 	ldr	x2, [x8]
-Lloh118:
+Lloh115:
 	adrp	x0, l_anon.[ID].21@PAGE
-Lloh119:
+Lloh116:
 	add	x0, x0, l_anon.[ID].21@PAGEOFF
 	mov	w1, #15
 	bl	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
 	cbz	x0, LBB6_5
 	str	x0, [sp, #8]
-Lloh120:
+Lloh117:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
-Lloh121:
+Lloh118:
 	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
-Lloh122:
+Lloh119:
 	ldr	x1, [x8]
-Lloh123:
+Lloh120:
 	adrp	x2, l_anon.[ID].3@PAGE
-Lloh124:
+Lloh121:
 	add	x2, x2, l_anon.[ID].3@PAGEOFF
-Lloh125:
+Lloh122:
 	adrp	x4, l_anon.[ID].4@PAGE
-Lloh126:
+Lloh123:
 	add	x4, x4, l_anon.[ID].4@PAGEOFF
-Lloh127:
+Lloh124:
 	adrp	x5, _init_forgetable_ivars@PAGE
-Lloh128:
+Lloh125:
 	add	x5, x5, _init_forgetable_ivars@PAGEOFF
 	add	x0, sp, #8
 	mov	x3, #0
@@ -525,16 +516,16 @@ Lloh128:
 	ldr	x8, [sp, #8]
 	str	x8, [sp, #16]
 	mov	w8, #8
-Lloh129:
+Lloh126:
 	adrp	x9, l_anon.[ID].14@PAGE
-Lloh130:
+Lloh127:
 	add	x9, x9, l_anon.[ID].14@PAGEOFF
 	stp	x8, x9, [sp, #32]
 	mov	w8, #27
 	strb	w8, [sp, #24]
-Lloh131:
+Lloh128:
 	adrp	x20, l_anon.[ID].11@PAGE
-Lloh132:
+Lloh129:
 	add	x20, x20, l_anon.[ID].11@PAGEOFF
 	add	x0, sp, #16
 	add	x5, sp, #24
@@ -551,68 +542,64 @@ Lloh132:
 	bl	SYM(objc2::runtime::AnyClass::instance_variable::GENERATED_ID, 0)
 	cbz	x0, LBB6_6
 	bl	_ivar_getOffset
-Lloh133:
+Lloh130:
 	adrp	x8, __MergedGlobals@PAGE+16
 	str	x19, [x8, __MergedGlobals@PAGEOFF+16]
-Lloh134:
-	adrp	x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2)@PAGE
-	str	x0, [x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2)@PAGEOFF]
-Lloh135:
-	adrp	x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 2)@PAGE
-	str	xzr, [x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 2)@PAGEOFF]
+Lloh131:
+	adrp	x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 1)@PAGE
+	str	x0, [x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 1)@PAGEOFF]
 	ldp	x29, x30, [sp, #80]
 	ldp	x20, x19, [sp, #64]
 	add	sp, sp, #96
 	ret
 LBB6_4:
-Lloh136:
+Lloh132:
 	adrp	x0, l_anon.[ID].24@PAGE
-Lloh137:
+Lloh133:
 	add	x0, x0, l_anon.[ID].24@PAGEOFF
-Lloh138:
+Lloh134:
 	adrp	x2, l_anon.[ID].26@PAGE
-Lloh139:
+Lloh135:
 	add	x2, x2, l_anon.[ID].26@PAGEOFF
 	mov	w1, #43
 	bl	SYM(core::panicking::panic::GENERATED_ID, 0)
 LBB6_5:
-Lloh140:
+Lloh136:
 	adrp	x0, l_anon.[ID].21@PAGE
-Lloh141:
+Lloh137:
 	add	x0, x0, l_anon.[ID].21@PAGEOFF
-Lloh142:
+Lloh138:
 	adrp	x2, l_anon.[ID].31@PAGE
-Lloh143:
+Lloh139:
 	add	x2, x2, l_anon.[ID].31@PAGEOFF
 	mov	w1, #15
 	bl	SYM(objc2::__macro_helpers::declare_class::failed_declaring_class::GENERATED_ID, 0)
 LBB6_6:
-Lloh144:
+Lloh140:
 	adrp	x0, l_anon.[ID].16@PAGE
-Lloh145:
+Lloh141:
 	add	x0, x0, l_anon.[ID].16@PAGEOFF
-Lloh146:
+Lloh142:
 	adrp	x2, l_anon.[ID].18@PAGE
-Lloh147:
+Lloh143:
 	add	x2, x2, l_anon.[ID].18@PAGEOFF
 	mov	w1, #59
 	bl	SYM(core::option::expect_failed::GENERATED_ID, 0)
-	.loh AdrpAdd	Lloh118, Lloh119
-	.loh AdrpLdrGotLdr	Lloh115, Lloh116, Lloh117
-	.loh AdrpAdd	Lloh131, Lloh132
-	.loh AdrpAdd	Lloh129, Lloh130
-	.loh AdrpAdd	Lloh127, Lloh128
-	.loh AdrpAdd	Lloh125, Lloh126
-	.loh AdrpAdd	Lloh123, Lloh124
-	.loh AdrpLdrGotLdr	Lloh120, Lloh121, Lloh122
-	.loh AdrpAdrp	Lloh134, Lloh135
-	.loh AdrpAdrp	Lloh133, Lloh134
+	.loh AdrpAdd	Lloh115, Lloh116
+	.loh AdrpLdrGotLdr	Lloh112, Lloh113, Lloh114
+	.loh AdrpAdd	Lloh128, Lloh129
+	.loh AdrpAdd	Lloh126, Lloh127
+	.loh AdrpAdd	Lloh124, Lloh125
+	.loh AdrpAdd	Lloh122, Lloh123
+	.loh AdrpAdd	Lloh120, Lloh121
+	.loh AdrpLdrGotLdr	Lloh117, Lloh118, Lloh119
+	.loh AdrpAdrp	Lloh130, Lloh131
+	.loh AdrpAdd	Lloh134, Lloh135
+	.loh AdrpAdd	Lloh132, Lloh133
 	.loh AdrpAdd	Lloh138, Lloh139
 	.loh AdrpAdd	Lloh136, Lloh137
 	.loh AdrpAdd	Lloh142, Lloh143
 	.loh AdrpAdd	Lloh140, Lloh141
-	.loh AdrpAdd	Lloh146, Lloh147
-	.loh AdrpAdd	Lloh144, Lloh145
 
 	.p2align	2
 SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
@@ -656,16 +643,16 @@ SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]:
 	.globl	_access_forgetable_ivars_class
 	.p2align	2
 _access_forgetable_ivars_class:
-Lloh148:
+Lloh144:
 	adrp	x8, __MergedGlobals@PAGE+24
-Lloh149:
+Lloh145:
 	add	x8, x8, __MergedGlobals@PAGEOFF+24
 	ldapr	x8, [x8]
 	cmp	x8, #3
 	b.ne	LBB10_2
-Lloh150:
+Lloh146:
 	adrp	x8, __MergedGlobals@PAGE+16
-Lloh151:
+Lloh147:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF+16]
 	ret
 LBB10_2:
@@ -676,47 +663,47 @@ LBB10_2:
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh152:
+Lloh148:
 	adrp	x0, __MergedGlobals@PAGE+24
-Lloh153:
+Lloh149:
 	add	x0, x0, __MergedGlobals@PAGEOFF+24
-Lloh154:
+Lloh150:
 	adrp	x3, l_anon.[ID].2@PAGE
-Lloh155:
+Lloh151:
 	add	x3, x3, l_anon.[ID].2@PAGEOFF
-Lloh156:
+Lloh152:
 	adrp	x4, l_anon.[ID].31@PAGE
-Lloh157:
+Lloh153:
 	add	x4, x4, l_anon.[ID].31@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
-Lloh158:
+Lloh154:
 	adrp	x8, __MergedGlobals@PAGE+16
-Lloh159:
+Lloh155:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF+16]
 	ret
-	.loh AdrpAdd	Lloh148, Lloh149
-	.loh AdrpLdr	Lloh150, Lloh151
-	.loh AdrpLdr	Lloh158, Lloh159
-	.loh AdrpAdd	Lloh156, Lloh157
-	.loh AdrpAdd	Lloh154, Lloh155
+	.loh AdrpAdd	Lloh144, Lloh145
+	.loh AdrpLdr	Lloh146, Lloh147
+	.loh AdrpLdr	Lloh154, Lloh155
 	.loh AdrpAdd	Lloh152, Lloh153
+	.loh AdrpAdd	Lloh150, Lloh151
+	.loh AdrpAdd	Lloh148, Lloh149
 
 	.globl	_access_forgetable_ivars
 	.p2align	2
 _access_forgetable_ivars:
-Lloh160:
-	adrp	x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2)@PAGE
-Lloh161:
-	ldr	x8, [x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2)@PAGEOFF]
+Lloh156:
+	adrp	x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 1)@PAGE
+Lloh157:
+	ldr	x8, [x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 1)@PAGEOFF]
 	add	x8, x0, x8
 	ldr	w1, [x8]
 	ldrb	w0, [x8, #4]
 	ret
-	.loh AdrpLdr	Lloh160, Lloh161
+	.loh AdrpLdr	Lloh156, Lloh157
 
 	.globl	SYM(<test_declare_class[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::drop::Drop>::drop, 0)
 	.p2align	2
@@ -728,16 +715,16 @@ SYM(<test_declare_class[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::drop::Drop>
 	.globl	_access_drop_ivars_class
 	.p2align	2
 _access_drop_ivars_class:
-Lloh162:
+Lloh158:
 	adrp	x8, __MergedGlobals@PAGE+40
-Lloh163:
+Lloh159:
 	add	x8, x8, __MergedGlobals@PAGEOFF+40
 	ldapr	x8, [x8]
 	cmp	x8, #3
 	b.ne	LBB13_2
-Lloh164:
+Lloh160:
 	adrp	x8, __MergedGlobals@PAGE+32
-Lloh165:
+Lloh161:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF+32]
 	ret
 LBB13_2:
@@ -748,60 +735,60 @@ LBB13_2:
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh166:
+Lloh162:
 	adrp	x0, __MergedGlobals@PAGE+40
-Lloh167:
+Lloh163:
 	add	x0, x0, __MergedGlobals@PAGEOFF+40
-Lloh168:
+Lloh164:
 	adrp	x3, l_anon.[ID].1@PAGE
-Lloh169:
+Lloh165:
 	add	x3, x3, l_anon.[ID].1@PAGEOFF
-Lloh170:
+Lloh166:
 	adrp	x4, l_anon.[ID].32@PAGE
-Lloh171:
+Lloh167:
 	add	x4, x4, l_anon.[ID].32@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
-Lloh172:
+Lloh168:
 	adrp	x8, __MergedGlobals@PAGE+32
-Lloh173:
+Lloh169:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF+32]
 	ret
-	.loh AdrpAdd	Lloh162, Lloh163
-	.loh AdrpLdr	Lloh164, Lloh165
-	.loh AdrpLdr	Lloh172, Lloh173
-	.loh AdrpAdd	Lloh170, Lloh171
-	.loh AdrpAdd	Lloh168, Lloh169
+	.loh AdrpAdd	Lloh158, Lloh159
+	.loh AdrpLdr	Lloh160, Lloh161
+	.loh AdrpLdr	Lloh168, Lloh169
 	.loh AdrpAdd	Lloh166, Lloh167
+	.loh AdrpAdd	Lloh164, Lloh165
+	.loh AdrpAdd	Lloh162, Lloh163
 
 	.globl	_access_drop_ivars
 	.p2align	2
 _access_drop_ivars:
-Lloh174:
+Lloh170:
 	adrp	x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0)@PAGE
-Lloh175:
+Lloh171:
 	ldr	x8, [x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0)@PAGEOFF]
 	add	x8, x0, x8
 	ldp	x0, x1, [x8]
 	ret
-	.loh AdrpLdr	Lloh174, Lloh175
+	.loh AdrpLdr	Lloh170, Lloh171
 
 	.globl	SYM(<test_declare_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	2
 SYM(<test_declare_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
-Lloh176:
+Lloh172:
 	adrp	x8, __MergedGlobals@PAGE+8
-Lloh177:
+Lloh173:
 	add	x8, x8, __MergedGlobals@PAGEOFF+8
 	ldapr	x8, [x8]
 	cmp	x8, #3
 	b.ne	LBB15_2
-Lloh178:
+Lloh174:
 	adrp	x8, __MergedGlobals@PAGE
-Lloh179:
+Lloh175:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF]
 	ret
 LBB15_2:
@@ -812,48 +799,48 @@ LBB15_2:
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh180:
+Lloh176:
 	adrp	x0, __MergedGlobals@PAGE+8
-Lloh181:
+Lloh177:
 	add	x0, x0, __MergedGlobals@PAGEOFF+8
-Lloh182:
+Lloh178:
 	adrp	x3, l_anon.[ID].0@PAGE
-Lloh183:
+Lloh179:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh184:
+Lloh180:
 	adrp	x4, l_anon.[ID].28@PAGE
-Lloh185:
+Lloh181:
 	add	x4, x4, l_anon.[ID].28@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
-Lloh186:
+Lloh182:
 	adrp	x8, __MergedGlobals@PAGE
-Lloh187:
+Lloh183:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF]
 	ret
-	.loh AdrpAdd	Lloh176, Lloh177
-	.loh AdrpLdr	Lloh178, Lloh179
-	.loh AdrpLdr	Lloh186, Lloh187
-	.loh AdrpAdd	Lloh184, Lloh185
-	.loh AdrpAdd	Lloh182, Lloh183
+	.loh AdrpAdd	Lloh172, Lloh173
+	.loh AdrpLdr	Lloh174, Lloh175
+	.loh AdrpLdr	Lloh182, Lloh183
 	.loh AdrpAdd	Lloh180, Lloh181
+	.loh AdrpAdd	Lloh178, Lloh179
+	.loh AdrpAdd	Lloh176, Lloh177
 
 	.globl	_get_class
 	.p2align	2
 _get_class:
-Lloh188:
+Lloh184:
 	adrp	x8, __MergedGlobals@PAGE+8
-Lloh189:
+Lloh185:
 	add	x8, x8, __MergedGlobals@PAGEOFF+8
 	ldapr	x8, [x8]
 	cmp	x8, #3
 	b.ne	LBB16_2
-Lloh190:
+Lloh186:
 	adrp	x8, __MergedGlobals@PAGE
-Lloh191:
+Lloh187:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF]
 	ret
 LBB16_2:
@@ -864,34 +851,34 @@ LBB16_2:
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh192:
+Lloh188:
 	adrp	x0, __MergedGlobals@PAGE+8
-Lloh193:
+Lloh189:
 	add	x0, x0, __MergedGlobals@PAGEOFF+8
-Lloh194:
+Lloh190:
 	adrp	x3, l_anon.[ID].0@PAGE
-Lloh195:
+Lloh191:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh196:
+Lloh192:
 	adrp	x4, l_anon.[ID].28@PAGE
-Lloh197:
+Lloh193:
 	add	x4, x4, l_anon.[ID].28@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
-Lloh198:
+Lloh194:
 	adrp	x8, __MergedGlobals@PAGE
-Lloh199:
+Lloh195:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF]
 	ret
-	.loh AdrpAdd	Lloh188, Lloh189
-	.loh AdrpLdr	Lloh190, Lloh191
-	.loh AdrpLdr	Lloh198, Lloh199
-	.loh AdrpAdd	Lloh196, Lloh197
-	.loh AdrpAdd	Lloh194, Lloh195
+	.loh AdrpAdd	Lloh184, Lloh185
+	.loh AdrpLdr	Lloh186, Lloh187
+	.loh AdrpLdr	Lloh194, Lloh195
 	.loh AdrpAdd	Lloh192, Lloh193
+	.loh AdrpAdd	Lloh190, Lloh191
+	.loh AdrpAdd	Lloh188, Lloh189
 
 	.globl	_method_simple
 	.p2align	2
@@ -910,23 +897,23 @@ _method_id:
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
-Lloh200:
+Lloh196:
 	adrp	x8, __MergedGlobals@PAGE+8
-Lloh201:
+Lloh197:
 	add	x8, x8, __MergedGlobals@PAGEOFF+8
 	ldapr	x8, [x8]
 	cmp	x8, #3
 	b.ne	LBB19_2
 LBB19_1:
-Lloh202:
+Lloh198:
 	adrp	x8, __MergedGlobals@PAGE
-Lloh203:
+Lloh199:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF]
-Lloh204:
+Lloh200:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGE
-Lloh205:
+Lloh201:
 	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
-Lloh206:
+Lloh202:
 	ldr	x1, [x8]
 	bl	_objc_msgSend
 	bl	_objc_autoreleaseReturnValue
@@ -938,29 +925,29 @@ LBB19_2:
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh207:
+Lloh203:
 	adrp	x0, __MergedGlobals@PAGE+8
-Lloh208:
+Lloh204:
 	add	x0, x0, __MergedGlobals@PAGEOFF+8
-Lloh209:
+Lloh205:
 	adrp	x3, l_anon.[ID].0@PAGE
-Lloh210:
+Lloh206:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh211:
+Lloh207:
 	adrp	x4, l_anon.[ID].28@PAGE
-Lloh212:
+Lloh208:
 	add	x4, x4, l_anon.[ID].28@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
 	b	LBB19_1
-	.loh AdrpAdd	Lloh200, Lloh201
-	.loh AdrpLdrGotLdr	Lloh204, Lloh205, Lloh206
-	.loh AdrpAdrp	Lloh202, Lloh204
-	.loh AdrpLdr	Lloh202, Lloh203
-	.loh AdrpAdd	Lloh211, Lloh212
-	.loh AdrpAdd	Lloh209, Lloh210
+	.loh AdrpAdd	Lloh196, Lloh197
+	.loh AdrpLdrGotLdr	Lloh200, Lloh201, Lloh202
+	.loh AdrpAdrp	Lloh198, Lloh200
+	.loh AdrpLdr	Lloh198, Lloh199
 	.loh AdrpAdd	Lloh207, Lloh208
+	.loh AdrpAdd	Lloh205, Lloh206
+	.loh AdrpAdd	Lloh203, Lloh204
 
 	.globl	_method_id_with_param
 	.p2align	2
@@ -989,23 +976,23 @@ _copyWithZone:
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
-Lloh213:
+Lloh209:
 	adrp	x8, __MergedGlobals@PAGE+8
-Lloh214:
+Lloh210:
 	add	x8, x8, __MergedGlobals@PAGEOFF+8
 	ldapr	x8, [x8]
 	cmp	x8, #3
 	b.ne	LBB21_2
 LBB21_1:
-Lloh215:
+Lloh211:
 	adrp	x8, __MergedGlobals@PAGE
-Lloh216:
+Lloh212:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF]
-Lloh217:
+Lloh213:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGE
-Lloh218:
+Lloh214:
 	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
-Lloh219:
+Lloh215:
 	ldr	x1, [x8]
 	bl	_objc_msgSend
 	ldp	x29, x30, [sp, #16]
@@ -1016,43 +1003,43 @@ LBB21_2:
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh220:
+Lloh216:
 	adrp	x0, __MergedGlobals@PAGE+8
-Lloh221:
+Lloh217:
 	add	x0, x0, __MergedGlobals@PAGEOFF+8
-Lloh222:
+Lloh218:
 	adrp	x3, l_anon.[ID].0@PAGE
-Lloh223:
+Lloh219:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh224:
+Lloh220:
 	adrp	x4, l_anon.[ID].28@PAGE
-Lloh225:
+Lloh221:
 	add	x4, x4, l_anon.[ID].28@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
 	b	LBB21_1
-	.loh AdrpAdd	Lloh213, Lloh214
-	.loh AdrpLdrGotLdr	Lloh217, Lloh218, Lloh219
-	.loh AdrpAdrp	Lloh215, Lloh217
-	.loh AdrpLdr	Lloh215, Lloh216
-	.loh AdrpAdd	Lloh224, Lloh225
-	.loh AdrpAdd	Lloh222, Lloh223
+	.loh AdrpAdd	Lloh209, Lloh210
+	.loh AdrpLdrGotLdr	Lloh213, Lloh214, Lloh215
+	.loh AdrpAdrp	Lloh211, Lloh213
+	.loh AdrpLdr	Lloh211, Lloh212
 	.loh AdrpAdd	Lloh220, Lloh221
+	.loh AdrpAdd	Lloh218, Lloh219
+	.loh AdrpAdd	Lloh216, Lloh217
 
 	.globl	SYM(<test_declare_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	2
 SYM(<test_declare_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
-Lloh226:
+Lloh222:
 	adrp	x8, __MergedGlobals@PAGE+24
-Lloh227:
+Lloh223:
 	add	x8, x8, __MergedGlobals@PAGEOFF+24
 	ldapr	x8, [x8]
 	cmp	x8, #3
 	b.ne	LBB22_2
-Lloh228:
+Lloh224:
 	adrp	x8, __MergedGlobals@PAGE+16
-Lloh229:
+Lloh225:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF+16]
 	ret
 LBB22_2:
@@ -1063,43 +1050,43 @@ LBB22_2:
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh230:
+Lloh226:
 	adrp	x0, __MergedGlobals@PAGE+24
-Lloh231:
+Lloh227:
 	add	x0, x0, __MergedGlobals@PAGEOFF+24
-Lloh232:
+Lloh228:
 	adrp	x3, l_anon.[ID].2@PAGE
-Lloh233:
+Lloh229:
 	add	x3, x3, l_anon.[ID].2@PAGEOFF
-Lloh234:
+Lloh230:
 	adrp	x4, l_anon.[ID].31@PAGE
-Lloh235:
+Lloh231:
 	add	x4, x4, l_anon.[ID].31@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
-Lloh236:
+Lloh232:
 	adrp	x8, __MergedGlobals@PAGE+16
-Lloh237:
+Lloh233:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF+16]
 	ret
-	.loh AdrpAdd	Lloh226, Lloh227
-	.loh AdrpLdr	Lloh228, Lloh229
-	.loh AdrpLdr	Lloh236, Lloh237
-	.loh AdrpAdd	Lloh234, Lloh235
-	.loh AdrpAdd	Lloh232, Lloh233
+	.loh AdrpAdd	Lloh222, Lloh223
+	.loh AdrpLdr	Lloh224, Lloh225
+	.loh AdrpLdr	Lloh232, Lloh233
 	.loh AdrpAdd	Lloh230, Lloh231
+	.loh AdrpAdd	Lloh228, Lloh229
+	.loh AdrpAdd	Lloh226, Lloh227
 
 	.globl	_init_forgetable_ivars
 	.p2align	2
 _init_forgetable_ivars:
 	cbz	x0, LBB23_2
-Lloh238:
-	adrp	x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2)@PAGE
-Lloh239:
-	ldr	x8, [x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2)@PAGEOFF]
+Lloh234:
+	adrp	x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 1)@PAGE
+Lloh235:
+	ldr	x8, [x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 1)@PAGEOFF]
 	add	x8, x0, x8
 	mov	w9, #43
 	str	w9, [x8]
@@ -1109,15 +1096,15 @@ LBB23_2:
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
-Lloh240:
+Lloh236:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_af8966656b8b2b6c@PAGE
-Lloh241:
+Lloh237:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_af8966656b8b2b6c@PAGEOFF]
-Lloh242:
+Lloh238:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
-Lloh243:
+Lloh239:
 	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
-Lloh244:
+Lloh240:
 	ldr	x8, [x8]
 	stp	x0, x8, [sp]
 	mov	x0, sp
@@ -1125,24 +1112,24 @@ Lloh244:
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
 	ret
-	.loh AdrpLdr	Lloh238, Lloh239
-	.loh AdrpLdrGotLdr	Lloh242, Lloh243, Lloh244
-	.loh AdrpAdrp	Lloh240, Lloh242
-	.loh AdrpLdr	Lloh240, Lloh241
+	.loh AdrpLdr	Lloh234, Lloh235
+	.loh AdrpLdrGotLdr	Lloh238, Lloh239, Lloh240
+	.loh AdrpAdrp	Lloh236, Lloh238
+	.loh AdrpLdr	Lloh236, Lloh237
 
 	.globl	SYM(<test_declare_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	2
 SYM(<test_declare_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
-Lloh245:
+Lloh241:
 	adrp	x8, __MergedGlobals@PAGE+40
-Lloh246:
+Lloh242:
 	add	x8, x8, __MergedGlobals@PAGEOFF+40
 	ldapr	x8, [x8]
 	cmp	x8, #3
 	b.ne	LBB24_2
-Lloh247:
+Lloh243:
 	adrp	x8, __MergedGlobals@PAGE+32
-Lloh248:
+Lloh244:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF+32]
 	ret
 LBB24_2:
@@ -1153,34 +1140,34 @@ LBB24_2:
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh249:
+Lloh245:
 	adrp	x0, __MergedGlobals@PAGE+40
-Lloh250:
+Lloh246:
 	add	x0, x0, __MergedGlobals@PAGEOFF+40
-Lloh251:
+Lloh247:
 	adrp	x3, l_anon.[ID].1@PAGE
-Lloh252:
+Lloh248:
 	add	x3, x3, l_anon.[ID].1@PAGEOFF
-Lloh253:
+Lloh249:
 	adrp	x4, l_anon.[ID].32@PAGE
-Lloh254:
+Lloh250:
 	add	x4, x4, l_anon.[ID].32@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
-Lloh255:
+Lloh251:
 	adrp	x8, __MergedGlobals@PAGE+32
-Lloh256:
+Lloh252:
 	ldr	x0, [x8, __MergedGlobals@PAGEOFF+32]
 	ret
-	.loh AdrpAdd	Lloh245, Lloh246
-	.loh AdrpLdr	Lloh247, Lloh248
-	.loh AdrpLdr	Lloh255, Lloh256
-	.loh AdrpAdd	Lloh253, Lloh254
-	.loh AdrpAdd	Lloh251, Lloh252
+	.loh AdrpAdd	Lloh241, Lloh242
+	.loh AdrpLdr	Lloh243, Lloh244
+	.loh AdrpLdr	Lloh251, Lloh252
 	.loh AdrpAdd	Lloh249, Lloh250
+	.loh AdrpAdd	Lloh247, Lloh248
+	.loh AdrpAdd	Lloh245, Lloh246
 
 	.globl	_init_drop_ivars
 	.p2align	2
@@ -1197,9 +1184,9 @@ _init_drop_ivars:
 	mov	x21, x0
 	adrp	x22, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 0)@PAGE
 	cbz	x19, LBB25_2
-Lloh257:
+Lloh253:
 	adrp	x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0)@PAGE
-Lloh258:
+Lloh254:
 	ldr	x8, [x8, SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 0)@PAGEOFF]
 	add	x8, x19, x8
 	stp	x20, x21, [x8]
@@ -1213,15 +1200,15 @@ LBB25_2:
 	mov	x0, x21
 	bl	_objc_release
 LBB25_3:
-Lloh259:
+Lloh255:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_6edddcebbded8f32@PAGE
-Lloh260:
+Lloh256:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_6edddcebbded8f32@PAGEOFF]
-Lloh261:
+Lloh257:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
-Lloh262:
+Lloh258:
 	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
-Lloh263:
+Lloh259:
 	ldr	x8, [x8]
 	stp	x19, x8, [sp]
 	mov	x0, sp
@@ -1236,10 +1223,10 @@ LBB25_5:
 	ldp	x22, x21, [sp, #16]
 	add	sp, sp, #64
 	ret
-	.loh AdrpLdr	Lloh257, Lloh258
-	.loh AdrpLdrGotLdr	Lloh261, Lloh262, Lloh263
-	.loh AdrpAdrp	Lloh259, Lloh261
-	.loh AdrpLdr	Lloh259, Lloh260
+	.loh AdrpLdr	Lloh253, Lloh254
+	.loh AdrpLdrGotLdr	Lloh257, Lloh258, Lloh259
+	.loh AdrpAdrp	Lloh255, Lloh257
+	.loh AdrpLdr	Lloh255, Lloh256
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
@@ -1374,8 +1361,8 @@ l_anon.[ID].26:
 	.quad	l_anon.[ID].25
 	.asciz	"p\000\000\000\000\000\000\000\225\000\000\0002\000\000"
 
-	.globl	SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 1)
-.zerofill __DATA,__common,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 1),8,3
+	.globl	SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2)
+.zerofill __DATA,__common,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2),8,3
 	.globl	SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 1)
 .zerofill __DATA,__common,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 1),8,3
 	.section	__TEXT,__const
@@ -1498,8 +1485,8 @@ L_OBJC_SELECTOR_REFERENCES_2837f061c311eb14:
 L_OBJC_IMAGE_INFO_2837f061c311eb14:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2)
-.zerofill __DATA,__common,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2),8,3
+	.globl	SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 1)
+.zerofill __DATA,__common,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 1),8,3
 	.globl	SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 2)
 .zerofill __DATA,__common,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 2),8,3
 	.section	__DATA,__const

@@ -452,8 +452,12 @@ macro_rules! declare_class {
                         // before any access to the variables.
                         unsafe {
                             __OBJC2_CLASS.write(__objc2_cls);
-                            __OBJC2_IVAR_OFFSET.write(__objc2_ivar_offset);
-                            __OBJC2_DROP_FLAG_OFFSET.write(__objc2_drop_flag_offset);
+                            if <Self as $crate::__macro_helpers::DeclaredIvarsHelper>::HAS_IVARS {
+                                __OBJC2_IVAR_OFFSET.write(__objc2_ivar_offset);
+                            }
+                            if <Self as $crate::__macro_helpers::DeclaredIvarsHelper>::HAS_DROP_FLAG {
+                                __OBJC2_DROP_FLAG_OFFSET.write(__objc2_drop_flag_offset);
+                            }
                         }
                     });
 
@@ -477,15 +481,35 @@ macro_rules! declare_class {
 
                 #[inline]
                 fn __ivars_offset() -> $crate::__macro_helpers::isize {
-                    // SAFETY: Accessing the offset is guaranteed to only be
-                    // done after the class has been initialized.
-                    unsafe { __OBJC2_IVAR_OFFSET.assume_init() }
+                    // Only access ivar offset if we have an ivar.
+                    //
+                    // This makes the offset not be included in the final
+                    // executable if it's not needed.
+                    if <Self as $crate::__macro_helpers::DeclaredIvarsHelper>::HAS_IVARS {
+                        // SAFETY: Accessing the offset is guaranteed to only be
+                        // done after the class has been initialized.
+                        unsafe { __OBJC2_IVAR_OFFSET.assume_init() }
+                    } else {
+                        // Fall back to an offset of zero.
+                        //
+                        // This is fine, since any reads here will only be via. zero-sized
+                        // ivars, where the actual pointer doesn't matter.
+                        0
+                    }
                 }
 
                 #[inline]
                 fn __drop_flag_offset() -> $crate::__macro_helpers::isize {
-                    // SAFETY: Same as above.
-                    unsafe { __OBJC2_DROP_FLAG_OFFSET.assume_init() }
+                    if <Self as $crate::__macro_helpers::DeclaredIvarsHelper>::HAS_DROP_FLAG {
+                        // SAFETY: Same as above.
+                        unsafe { __OBJC2_DROP_FLAG_OFFSET.assume_init() }
+                    } else {
+                        // Fall back to an offset of zero.
+                        //
+                        // This is fine, since the drop flag is never actually used in the
+                        // cases where it was not added.
+                        0
+                    }
                 }
 
                 // SAFETY: The offsets are implemented correctly
