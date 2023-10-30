@@ -85,10 +85,12 @@ required-features = [
 ]
 
 [features]
-default = ["std", "apple", "link"]
+default = ["std", "apple"]
 
-# Link against framework, otherwise the correct framework should be load at runtime
-link = []
+# Disable to link specific frameworks, which may not available on lower OS versions, or users don't want to load the frameworks at startup (dyld).
+no-link-Metal = []
+no-link-MetalKit = []
+no-link-MetalFX = []
 
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "objc2?/std", "block2?/std"]
