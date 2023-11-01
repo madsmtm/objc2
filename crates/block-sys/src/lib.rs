@@ -22,6 +22,7 @@
 #![warn(clippy::ptr_as_ptr)]
 #![warn(clippy::missing_errors_doc)]
 #![warn(clippy::missing_panics_doc)]
+#![allow(clippy::negative_feature_names)]
 #![allow(non_camel_case_types)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/block-sys/0.2.0")]

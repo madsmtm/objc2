@@ -26,6 +26,7 @@
 #![warn(clippy::missing_errors_doc)]
 #![warn(clippy::missing_panics_doc)]
 #![allow(clippy::upper_case_acronyms)]
+#![allow(clippy::negative_feature_names)]
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
 #![allow(non_snake_case)]
