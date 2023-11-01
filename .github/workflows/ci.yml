@@ -149,7 +149,7 @@ jobs:
 
     - name: cargo clippy
       # Temporarily allow diverging_sub_expression until we figure out how to silence them in declare_class!
-      run: cargo clippy --all-targets ${{ matrix.args }} -- --allow=clippy::diverging_sub_expression --allow=clippy::negative_feature_names
+      run: cargo clippy --all-targets ${{ matrix.args }} -- --allow=clippy::diverging_sub_expression
 
   msrv:
     name: Check MSRV
