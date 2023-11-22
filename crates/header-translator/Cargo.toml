@@ -12,7 +12,7 @@ clang = { version = "2.0", features = ["runtime", "clang_10_0"] }
 clang-sys = { version = "1.4.0" }
 basic-toml = "0.1.2"
 serde = { version = "1.0.144", features = ["derive"] }
-apple-sdk = { version = "0.4.0", default-features = false }
+apple-sdk = { version = "0.5.1", default-features = false }
 tracing = { version = "0.1.37", default-features = false, features = ["std"] }
 tracing-subscriber = { version = "0.3.16", features = ["fmt"] }
 tracing-tree = { git = "https://github.com/madsmtm/tracing-tree.git" }
