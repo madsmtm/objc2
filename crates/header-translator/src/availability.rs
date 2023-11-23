@@ -14,6 +14,7 @@ struct Unavailable {
     maccatalyst: bool,
     watchos: bool,
     tvos: bool,
+    visionos: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Default)]
@@ -25,6 +26,7 @@ struct Versions {
     maccatalyst: Option<Version>,
     watchos: Option<Version>,
     tvos: Option<Version>,
+    visionos: Option<Version>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -116,6 +118,12 @@ impl Availability {
                     &mut introduced.tvos,
                     &mut deprecated.tvos,
                 ),
+                "xros" => set(
+                    availability,
+                    &mut unavailable.visionos,
+                    &mut introduced.visionos,
+                    &mut deprecated.visionos,
+                ),
                 "swift" => {
                     _swift = Some(availability);
                 }
@@ -144,6 +152,7 @@ impl fmt::Display for Availability {
                 maccatalyst: None,
                 watchos: None,
                 tvos: None,
+                visionos: None,
             } => {
                 // Not deprecated
             }

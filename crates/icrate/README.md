@@ -12,11 +12,11 @@ This README is kept intentionally small in an effort to consolidate the document
 
 ## Supported versions
 
-These bindings are automatically generated from the SDKs in Xcode 14.3.1 (will
+These bindings are automatically generated from the SDKs in Xcode 15.0.1 (will
 be periodically updated).
 
 Currently supports:
-- macOS: `10.12-13.1`
-- iOS/iPadOS: `10.0-16.2` (WIP)
-- tvOS: `10.0-16.1` (WIP)
-- watchOS: `5.0-9.1` (WIP)
+- macOS: `10.12-14.0`
+- iOS/iPadOS: `10.0-17.0` (WIP)
+- tvOS: `10.0-17.0` (WIP)
+- watchOS: `5.0-10.0` (WIP)

@@ -1684,7 +1684,8 @@ impl fmt::Display for Ty {
                         }
                     }
                     Inner::C99Bool => {
-                        panic!("C99's bool as Objective-C method return is unsupported")
+                        warn!("C99's bool as Objective-C method return is ill supported");
+                        write!(f, "bool")
                     }
                     Inner::ObjcBool => write!(f, "bool"),
                     ty => write!(f, "{ty}"),
