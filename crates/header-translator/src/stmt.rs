@@ -1260,7 +1260,7 @@ impl Stmt {
         }
     }
 
-    pub(crate) fn declared_types(&self) -> impl Iterator<Item = &str> {
+    pub(crate) fn name(&self) -> Option<&str> {
         match self {
             Stmt::ClassDecl { id, skipped, .. } => {
                 if *skipped {
@@ -1280,14 +1280,14 @@ impl Stmt {
             Stmt::FnDecl { .. } => None,
             Stmt::AliasDecl { id, .. } => Some(&*id.name),
         }
-        .into_iter()
-        .chain({
-            if let Stmt::EnumDecl { variants, .. } = self {
-                variants.iter().map(|(name, _, _)| &**name).collect()
-            } else {
-                vec![]
-            }
-        })
+    }
+
+    pub(crate) fn extra_declared_types(&self) -> Vec<&str> {
+        if let Stmt::EnumDecl { variants, .. } = self {
+            variants.iter().map(|(name, _, _)| &**name).collect()
+        } else {
+            vec![]
+        }
     }
 }
 

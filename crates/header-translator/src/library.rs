@@ -131,12 +131,11 @@ impl fmt::Display for Library {
 
         writeln!(f)?;
 
-        for (name, file) in &self.files {
+        for (file_name, file) in &self.files {
             // NOTE: some SDK files have '+' in the file name
-            let name = name.replace('+', "_");
+            let file_name = file_name.replace('+', "_");
             for stmt in &file.stmts {
-                let mut iter = stmt.declared_types().filter(|item| !item.starts_with('_'));
-                if let Some(item) = iter.next() {
+                if let Some(name) = stmt.name() {
                     // Use a set to deduplicate features, and to have them in
                     // a consistent order
                     let mut features = BTreeSet::new();
@@ -163,9 +162,20 @@ impl fmt::Display for Library {
                         }
                     }
 
-                    writeln!(f, "pub use self::__{name}::{{{item}")?;
-                    for item in iter {
-                        writeln!(f, ", {item}")?;
+                    let visibility = if name.starts_with('_') {
+                        "pub(crate)"
+                    } else {
+                        "pub"
+                    };
+
+                    write!(f, "{visibility} use self::__{file_name}::{{{name}}};")?;
+                }
+
+                let extra_declared_types = stmt.extra_declared_types();
+                if !extra_declared_types.is_empty() {
+                    write!(f, "pub use self::__{file_name}::{{")?;
+                    for item in extra_declared_types {
+                        writeln!(f, "    {item},")?;
                     }
                     writeln!(f, "}};")?;
                 }
