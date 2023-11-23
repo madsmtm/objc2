@@ -60,6 +60,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   passed to `MainThreadBound::get_on_main`.
 * **BREAKING**: Removed `Foundation::CopyHelper` since it is superseded by
   `objc2::mutability::CounterpartOrSelf`.
+* Removed private `MetricKit::_MXSignpostMetricsSnapshot` function.
 
 ### Fixed
 * **BREAKING**: Added `Eq + Hash` requirement on most `NSDictionary` and

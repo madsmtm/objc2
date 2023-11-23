@@ -757,7 +757,9 @@ initWithContentsOfURL_error = { skipped = true }
 dictionaryWithContentsOfURL_error = { skipped = true }
 
 # Custom implementation for now
-[struct.NSRange]
+[struct._NSRange]
+skipped = true
+[typedef.NSRange]
 skipped = true
 [enum.NSComparisonResult]
 skipped = true
@@ -1408,7 +1410,9 @@ skipped = true
 skipped = true
 
 # Uses unions internally
-[struct.MTLPackedFloat3]
+[struct._MTLPackedFloat3]
+skipped = true
+[typedef.MTLPackedFloat3]
 skipped = true
 [fn.MTLPackedFloat3Make]
 skipped = true

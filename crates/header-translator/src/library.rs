@@ -135,7 +135,7 @@ impl fmt::Display for Library {
             // NOTE: some SDK files have '+' in the file name
             let name = name.replace('+', "_");
             for stmt in &file.stmts {
-                let mut iter = stmt.declared_types();
+                let mut iter = stmt.declared_types().filter(|item| !item.starts_with('_'));
                 if let Some(item) = iter.next() {
                     // Use a set to deduplicate features, and to have them in
                     // a consistent order

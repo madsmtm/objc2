@@ -29,6 +29,7 @@ fn main() -> Result<(), BoxError> {
         //             metadata.is_span() && metadata.level() == &tracing::Level::INFO
         //         })),
         // )
+        // .with(tracing_subscriber::fmt::Layer::default().with_filter(LevelFilter::ERROR))
         .with(
             HierarchicalLayer::new(2)
                 .with_targets(false)

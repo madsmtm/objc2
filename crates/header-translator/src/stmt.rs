@@ -459,48 +459,6 @@ pub enum Stmt {
     },
 }
 
-fn parse_struct(
-    entity: &Entity<'_>,
-    context: &Context<'_>,
-) -> (bool, Vec<(String, Ty)>, Option<bool>) {
-    let mut boxable = false;
-    let mut fields = Vec::new();
-    let mut sendable = None;
-
-    immediate_children(entity, |entity, span| match entity.get_kind() {
-        EntityKind::UnexposedAttr => {
-            if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                match attr {
-                    UnexposedAttr::Sendable => sendable = Some(true),
-                    UnexposedAttr::NonSendable => sendable = Some(false),
-                    attr => error!(?attr, "unknown attribute"),
-                }
-            }
-        }
-        EntityKind::FieldDecl => {
-            drop(span);
-            let name = entity.get_name().expect("struct field name");
-            let _span = debug_span!("field", name).entered();
-
-            let ty = entity.get_type().expect("struct field type");
-            let ty = Ty::parse_struct_field(ty, context);
-
-            if entity.is_bit_field() {
-                error!("unsound struct bitfield");
-            }
-
-            fields.push((name, ty))
-        }
-        EntityKind::ObjCBoxable => {
-            boxable = true;
-        }
-        EntityKind::UnionDecl => error!("can't handle unions in structs yet"),
-        _ => error!("unknown"),
-    });
-
-    (boxable, fields, sendable)
-}
-
 fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
     immediate_children(entity, |entity, _span| match entity.get_kind() {
         EntityKind::UnexposedAttr => {
@@ -890,9 +848,6 @@ impl Stmt {
             EntityKind::TypedefDecl => {
                 let id = ItemIdentifier::new(entity, context);
                 let availability = Availability::parse(entity, context);
-                let mut struct_ = None;
-                let mut encoding_name = "?".to_string();
-                let mut skip_struct = false;
                 let mut kind = None;
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
@@ -908,54 +863,13 @@ impl Stmt {
                             }
                         }
                     }
-                    EntityKind::StructDecl => {
-                        if context
-                            .struct_data
-                            .get(&id.name)
-                            .map(|data| data.skipped)
-                            .unwrap_or_default()
-                        {
-                            skip_struct = true;
-                            return;
-                        }
-
-                        if let Some(name) = entity.get_name() {
-                            // if the struct has a name use it
-                            // otherwise it will be the default "?"
-                            encoding_name = name;
-                        }
-
-                        if encoding_name == "?" || encoding_name.starts_with('_') {
-                            // If this struct doesn't have a name, or the
-                            // name is private, let's parse it with the
-                            // typedef name.
-                            struct_ = Some(parse_struct(&entity, context))
-                        } else {
-                            skip_struct = true;
-                        }
-                    }
-                    EntityKind::ObjCClassRef
+                    EntityKind::StructDecl
+                    | EntityKind::ObjCClassRef
                     | EntityKind::ObjCProtocolRef
                     | EntityKind::TypeRef
                     | EntityKind::ParmDecl => {}
                     _ => error!("unknown"),
                 });
-
-                if let Some((boxable, fields, sendable)) = struct_ {
-                    assert_eq!(kind, None, "should not have parsed a kind");
-                    return vec![Self::StructDecl {
-                        id,
-                        encoding_name: Some(encoding_name),
-                        availability,
-                        boxable,
-                        fields,
-                        sendable,
-                    }];
-                }
-
-                if skip_struct {
-                    return vec![];
-                }
 
                 if context
                     .typedef_data
@@ -981,37 +895,76 @@ impl Stmt {
                 }
             }
             EntityKind::StructDecl => {
-                if let Some(name) = entity.get_name() {
-                    let availability = Availability::parse(entity, context);
-                    let id = ItemIdentifier::with_name(name, entity, context);
+                let id = ItemIdentifier::new(entity, context);
 
-                    if context
-                        .struct_data
-                        .get(&id.name)
-                        .map(|data| data.skipped)
-                        .unwrap_or_default()
-                    {
-                        return vec![];
-                    }
+                let availability = Availability::parse(entity, context);
 
-                    // See https://github.com/rust-lang/rust-bindgen/blob/95fd17b874910184cc0fcd33b287fa4e205d9d7a/bindgen/ir/comp.rs#L1392-L1408
-                    if !entity.is_definition() {
-                        return vec![];
-                    }
-
-                    if !id.name.starts_with('_') {
-                        let (boxable, fields, sendable) = parse_struct(entity, context);
-                        return vec![Self::StructDecl {
-                            id,
-                            encoding_name: None,
-                            availability,
-                            boxable,
-                            fields,
-                            sendable,
-                        }];
-                    }
+                if context
+                    .struct_data
+                    .get(&id.name)
+                    .map(|data| data.skipped)
+                    .unwrap_or_default()
+                {
+                    return vec![];
                 }
-                vec![]
+
+                // See https://github.com/rust-lang/rust-bindgen/blob/95fd17b874910184cc0fcd33b287fa4e205d9d7a/bindgen/ir/comp.rs#L1392-L1408
+                if !entity.is_definition() {
+                    return vec![];
+                }
+
+                let ty = entity.get_type().unwrap();
+                let enc = ty.get_objc_encoding().unwrap();
+                let encoding_name = enc.strip_prefix('{').unwrap().split_once('=').unwrap().0;
+                let encoding_name = if encoding_name == id.name {
+                    None
+                } else {
+                    Some(encoding_name.to_string())
+                };
+
+                let mut boxable = false;
+                let mut fields = Vec::new();
+                let mut sendable = None;
+
+                immediate_children(entity, |entity, span| match entity.get_kind() {
+                    EntityKind::UnexposedAttr => {
+                        if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                            match attr {
+                                UnexposedAttr::Sendable => sendable = Some(true),
+                                UnexposedAttr::NonSendable => sendable = Some(false),
+                                attr => error!(?attr, "unknown attribute"),
+                            }
+                        }
+                    }
+                    EntityKind::FieldDecl => {
+                        drop(span);
+                        let name = entity.get_name().expect("struct field name");
+                        let _span = debug_span!("field", name).entered();
+
+                        let ty = entity.get_type().expect("struct field type");
+                        let ty = Ty::parse_struct_field(ty, context);
+
+                        if entity.is_bit_field() {
+                            error!("unsound struct bitfield");
+                        }
+
+                        fields.push((name, ty))
+                    }
+                    EntityKind::ObjCBoxable => {
+                        boxable = true;
+                    }
+                    EntityKind::UnionDecl => error!("can't handle unions in structs yet"),
+                    _ => error!("unknown"),
+                });
+
+                return vec![Self::StructDecl {
+                    id,
+                    encoding_name,
+                    availability,
+                    boxable,
+                    fields,
+                    sendable,
+                }];
             }
             EntityKind::EnumDecl => {
                 // Enum declarations show up twice for some reason, but
@@ -1020,7 +973,16 @@ impl Stmt {
                     return vec![];
                 }
 
-                let id = ItemIdentifier::new_optional(entity, context);
+                let mut id = ItemIdentifier::new_optional(entity, context);
+
+                if id
+                    .name
+                    .as_deref()
+                    .map(|name| name.starts_with("enum (unnamed at"))
+                    .unwrap_or(false)
+                {
+                    id.name = None;
+                }
 
                 let data = context
                     .enum_data
