@@ -154,7 +154,6 @@ fn send_sync_unwindsafe() {
     assert_auto_traits::<NSString>();
     assert_unwindsafe::<MainThreadMarker>(); // Intentional
     assert_auto_traits::<NSThread>();
-    #[cfg(not(macos_10_7))]
     assert_auto_traits::<NSUUID>();
     // assert_auto_traits::<NSValue>(); // Intentional
     assert_unwindsafe::<NSZone>(); // Intentional

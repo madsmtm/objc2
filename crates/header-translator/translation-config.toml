@@ -1321,16 +1321,6 @@ skipped = true
 [enum.NSTextAlignment]
 skipped = true
 
-# Different definitions depending on deployment target
-[class.NSLayoutAnchor]
-definition-skipped = true
-[class.NSPopover]
-definition-skipped = true
-[class.NSPopover.methods]
-appearance = { skipped = true }
-setAppearance = { skipped = true }
-effectiveAppearance = { skipped = true }
-
 # I'm unsure of the ABI of the array this takes
 [fn.NSDrawBitmap]
 skipped = true

@@ -365,7 +365,7 @@ jobs:
         - name: Test macOS old SDK
           # Oldest macOS version we support
           sdk: "10.12"
-          frameworks: macos-10-7
+          frameworks: macos-10-12
         - name: Test macOS nightly
           nightly: true
           frameworks: macos-11
@@ -475,7 +475,7 @@ jobs:
     # TODO: Re-enable this on all of Foundation once we do some form of
     # availability checking.
     - name: Test static class and selectors
-      if: ${{ !contains(matrix.frameworks, 'ios') && !contains(matrix.frameworks, 'macos-10-7') }}
+      if: ${{ !contains(matrix.frameworks, 'ios') && !contains(matrix.frameworks, 'macos-10-12') }}
       run: >-
         cargo test $ARGS $PUBLIC_CRATES -ptests
         --features=unstable-static-sel,unstable-static-class,unstable-static-nsstring

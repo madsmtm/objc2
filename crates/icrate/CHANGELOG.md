@@ -74,6 +74,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed a workaround that made the `NSCopying` and
   `NSMutableCopying` protocols not act as regular protocols (many methods used
   `AnyObject` instead of the correct `ProtocolObject<dyn NSCopying>`).
+* Update the minimum deployment target, which adds a few missing protocol
+  implementations and methods for `NSPopover` and `NSLayoutAnchor`.
 
 
 ## icrate 0.0.4 - 2023-07-31

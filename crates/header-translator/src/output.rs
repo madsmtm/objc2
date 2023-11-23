@@ -49,11 +49,12 @@ impl Output {
     pub fn cargo_features(&self, config: &Config) -> BTreeMap<String, Vec<String>> {
         let mut features = BTreeMap::new();
 
-        let mut macos_10_7_features: BTreeSet<String> = vec!["unstable-example-basic_usage".into()]
-            .into_iter()
-            .collect();
+        let mut macos_10_12_features: BTreeSet<String> =
+            vec!["unstable-example-basic_usage".into()]
+                .into_iter()
+                .collect();
         let mut macos_10_13_features: BTreeSet<String> = vec![
-            "unstable-frameworks-macos-10-7".into(),
+            "unstable-frameworks-macos-10-12".into(),
             "unstable-example-delegate".into(),
             "unstable-example-metal".into(),
             "unstable-example-nspasteboard".into(),
@@ -88,8 +89,8 @@ impl Output {
             let _ = features.insert(library_name.to_string(), library_features.collect());
 
             if let Some(version) = &library.macos {
-                if version.matches(&semver::Version::from_str("10.7.0").unwrap()) {
-                    macos_10_7_features.insert(format!("{library_name}_all"));
+                if version.matches(&semver::Version::from_str("10.12.0").unwrap()) {
+                    macos_10_12_features.insert(format!("{library_name}_all"));
                 } else if version.matches(&semver::Version::from_str("10.13.0").unwrap()) {
                     macos_10_13_features.insert(format!("{library_name}_all"));
                 } else if version.matches(&semver::Version::from_str("11.0.0").unwrap()) {
@@ -107,8 +108,8 @@ impl Output {
         }
 
         let _ = features.insert(
-            "unstable-frameworks-macos-10-7".into(),
-            macos_10_7_features.into_iter().collect(),
+            "unstable-frameworks-macos-10-12".into(),
+            macos_10_12_features.into_iter().collect(),
         );
         let _ = features.insert(
             "unstable-frameworks-macos-10-13".into(),
