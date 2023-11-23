@@ -15,15 +15,15 @@ _handle_alloc_init:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
+	bl	_objc_alloc
+	mov	x19, x0
 Lloh2:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
 Lloh3:
 	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
 Lloh4:
-	ldr	x19, [x8]
-	bl	_objc_alloc
-	mov	x20, x0
-	mov	x1, x19
+	ldr	x20, [x8]
+	mov	x1, x20
 	bl	_objc_msgSend
 	cbz	x0, LBB1_2
 	ldp	x29, x30, [sp, #16]
@@ -34,8 +34,8 @@ Lloh5:
 	adrp	x2, l_anon.[ID].1@PAGE
 Lloh6:
 	add	x2, x2, l_anon.[ID].1@PAGEOFF
-	mov	x0, x20
-	mov	x1, x19
+	mov	x0, x19
+	mov	x1, x20
 	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 	.loh AdrpLdrGotLdr	Lloh2, Lloh3, Lloh4
 	.loh AdrpAdd	Lloh5, Lloh6

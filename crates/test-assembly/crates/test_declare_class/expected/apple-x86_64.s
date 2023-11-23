@@ -187,15 +187,10 @@ LBB3_4:
 _get_obj:
 	push	rbp
 	mov	rbp, rsp
-	push	rbx
-	push	rax
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_new@GOTPCREL]
-	mov	rbx, qword ptr [rax]
 	call	_get_class
+	mov	rcx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_new@GOTPCREL]
+	mov	rsi, qword ptr [rcx]
 	mov	rdi, rax
-	mov	rsi, rbx
-	add	rsp, 8
-	pop	rbx
 	pop	rbp
 	jmp	_objc_msgSend
 

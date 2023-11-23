@@ -302,16 +302,15 @@ LPC3_3:
 	.p2align	2
 	.code	32
 _get_obj:
-	push	{r4, r7, lr}
-	add	r7, sp, #4
-	movw	r0, :lower16:(LL_OBJC_SELECTOR_REFERENCES_new$non_lazy_ptr-(LPC4_0+8))
-	movt	r0, :upper16:(LL_OBJC_SELECTOR_REFERENCES_new$non_lazy_ptr-(LPC4_0+8))
-LPC4_0:
-	ldr	r0, [pc, r0]
-	ldr	r4, [r0]
+	push	{r7, lr}
+	mov	r7, sp
 	bl	_get_class
-	mov	r1, r4
-	pop	{r4, r7, lr}
+	movw	r1, :lower16:(LL_OBJC_SELECTOR_REFERENCES_new$non_lazy_ptr-(LPC4_0+8))
+	movt	r1, :upper16:(LL_OBJC_SELECTOR_REFERENCES_new$non_lazy_ptr-(LPC4_0+8))
+LPC4_0:
+	ldr	r1, [pc, r1]
+	ldr	r1, [r1]
+	pop	{r7, lr}
 	b	_objc_msgSend
 
 	.globl	_access_ivars

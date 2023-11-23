@@ -16,13 +16,13 @@ LPC0_0:
 _handle_alloc_init:
 	push	{r4, r5, r7, lr}
 	add	r7, sp, #8
+	bl	_objc_alloc
 	movw	r1, :lower16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_0+8))
 	movt	r1, :upper16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_0+8))
 LPC1_0:
 	ldr	r1, [pc, r1]
-	ldr	r4, [r1]
-	bl	_objc_alloc
 	mov	r5, r0
+	ldr	r4, [r1]
 	mov	r1, r4
 	bl	_objc_msgSend
 	cmp	r0, #0
