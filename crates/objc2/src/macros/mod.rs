@@ -1194,9 +1194,8 @@ macro_rules! msg_send_id {
         result
     });
     [$obj:expr, alloc $(,)?] => ({
-        let sel = $crate::sel!(alloc);
         let result;
-        result = <$crate::__macro_helpers::Alloc as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
+        result = $crate::__macro_helpers::Alloc::send_message_id_alloc($obj);
         result
     });
     [$obj:expr, init $(,)?] => ({

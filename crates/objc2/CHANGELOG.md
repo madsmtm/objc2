@@ -16,6 +16,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added new `encode` traits `EncodeReturn`, `EncodeArgument` and
   `EncodeArguments`.
 * Added methods `as_ptr` and `as_mut_ptr` to `Allocated`.
+* Added optimization for converting `msg_send_id![cls, alloc]` to a call to
+  the faster runtime function `objc_alloc`.
 
 ### Changed
 * **BREAKING**: `AnyClass::verify_sel` now take more well-defined types

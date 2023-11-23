@@ -12,8 +12,8 @@ error[E0308]: mismatched types
 note: associated function defined here
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
-  |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
-  |               ^^^^^^^^^^^^^^^
+  |     pub unsafe fn send_message_id_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
+  |                   ^^^^^^^^^^^^^^^^^^^^^
 
 error[E0308]: mismatched types
  --> ui/msg_send_id_invalid_receiver.rs

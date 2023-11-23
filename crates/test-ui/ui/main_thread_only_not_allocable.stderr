@@ -18,5 +18,5 @@ note: required by a bound in `objc2::ClassType::alloc`
   |     fn alloc() -> Allocated<Self>
   |        ----- required by a bound in this associated function
   |     where
-  |         Self: IsAllocableAnyThread,
+  |         Self: IsAllocableAnyThread + Sized,
   |               ^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassType::alloc`

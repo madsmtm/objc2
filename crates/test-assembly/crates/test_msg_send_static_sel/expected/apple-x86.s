@@ -31,11 +31,9 @@ L1$pb:
 	pop	ebx
 	mov	eax, dword ptr [ebx + LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-L1$pb]
 	mov	edi, dword ptr [eax]
-	mov	eax, dword ptr [ebx + LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-L1$pb]
-	sub	esp, 8
-	push	dword ptr [eax]
+	sub	esp, 12
 	push	dword ptr [ebp + 8]
-	call	_objc_msgSend
+	call	_objc_alloc
 	add	esp, 16
 	mov	esi, eax
 	sub	esp, 8
@@ -187,9 +185,6 @@ L_OBJC_IMAGE_INFO_c76827c00227cd8a:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
-LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr:
-	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_alloc
-	.long	0
 LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr:
 	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_init
 	.long	0

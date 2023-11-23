@@ -85,7 +85,7 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Id<U>>> for New {
     }
 }
 
-impl<T: ?Sized + Message> MsgSendId<&'_ AnyClass, Allocated<T>> for Alloc {
+impl<T: Message> MsgSendId<&'_ AnyClass, Allocated<T>> for Alloc {
     #[inline]
     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Allocated<T>>>(
         cls: &AnyClass,
@@ -97,6 +97,29 @@ impl<T: ?Sized + Message> MsgSendId<&'_ AnyClass, Allocated<T>> for Alloc {
         // SAFETY: The selector is `alloc`, so this has +1 retain count
         let obj = unsafe { Allocated::new(obj) };
         R::maybe_unwrap::<Self>(obj, ())
+    }
+}
+
+impl Alloc {
+    /// Fast path optimization for `msg_send_id![cls, alloc]`.
+    #[inline]
+    pub unsafe fn send_message_id_alloc<T: Message, R: MaybeUnwrap<Input = Allocated<T>>>(
+        cls: &AnyClass,
+    ) -> R {
+        // Available on non-fragile Apple runtimes.
+        #[cfg(all(feature = "apple", not(all(target_os = "macos", target_arch = "x86"))))]
+        {
+            // SAFETY: Checked by caller
+            let obj: *mut T = unsafe { crate::ffi::objc_alloc(cls.as_ptr()).cast() };
+            // SAFETY: The object is newly allocated, so this has +1 retain count
+            let obj = unsafe { Allocated::new(obj) };
+            R::maybe_unwrap::<Alloc>(obj, ())
+        }
+        #[cfg(not(all(feature = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
+        {
+            // SAFETY: Checked by caller
+            unsafe { Alloc::send_message_id(cls, sel!(alloc), ()) }
+        }
     }
 }
 
