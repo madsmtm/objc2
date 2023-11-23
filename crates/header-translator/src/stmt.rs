@@ -957,14 +957,14 @@ impl Stmt {
                     _ => error!("unknown"),
                 });
 
-                return vec![Self::StructDecl {
+                vec![Self::StructDecl {
                     id,
                     encoding_name,
                     availability,
                     boxable,
                     fields,
                     sendable,
-                }];
+                }]
             }
             EntityKind::EnumDecl => {
                 // Enum declarations show up twice for some reason, but
@@ -1373,8 +1373,9 @@ impl fmt::Display for Stmt {
                 };
 
                 let (superclass, superclasses_rest) = superclasses.split_at(1);
-                let (superclass, superclass_generics) =
-                    superclass.get(0).expect("must have a least one superclass");
+                let (superclass, superclass_generics) = superclass
+                    .first()
+                    .expect("must have a least one superclass");
 
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    {derives}")?;

@@ -12,6 +12,7 @@
 //! ```
 #![doc = include_str!("../../examples/introspection.rs")]
 //! ```
+#![allow(clippy::missing_panics_doc)]
 
 #[cfg(feature = "malloc")]
 use alloc::vec::Vec;

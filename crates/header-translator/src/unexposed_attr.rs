@@ -240,7 +240,7 @@ fn get_argument_tokens<'a>(entity: &Entity<'a>) -> Vec<Token<'a>> {
     // Remove the macro name from the full macro tokens
     let name_ranges = entity.get_name_ranges();
     assert_eq!(name_ranges.len(), 1, "macro name ranges");
-    let name_range = name_ranges.get(0).unwrap();
+    let name_range = name_ranges.first().unwrap();
     let range = entity.get_range().expect("macro range");
 
     let mut tokens = SourceRange::new(name_range.get_end(), range.get_end()).tokenize();
