@@ -53,7 +53,7 @@ env:
   # compiling C code, even if just running a `check`/`clippy` build.
   INTERESTING_FEATURES: malloc,block,verify,unstable-private
   UNSTABLE_FEATURES: unstable-autoreleasesafe,unstable-c-unwind
-  LATEST_MACOS_FEATURE: unstable-frameworks-macos-13
+  LATEST_MACOS_FEATURE: unstable-frameworks-macos-14
   # Required when we want to use a different runtime than the default `apple`
   OTHER_RUNTIME: --no-default-features --features=std
   # https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
@@ -356,6 +356,9 @@ jobs:
       fail-fast: true
       matrix:
         include:
+        - name: Test macOS 13
+          os: macos-13
+          frameworks: macos-13
         - name: Test macOS 11
           os: macos-11
           frameworks: macos-11

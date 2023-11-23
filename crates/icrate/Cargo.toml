@@ -5597,6 +5597,7 @@ unstable-frameworks-macos-10-12 = [
     "InputMethodKit_all",
     "LocalAuthentication_all",
     "MapKit_all",
+    "MediaPlayer_all",
     "MetalKit_all",
     "Metal_all",
     "OSAKit_all",
@@ -5607,7 +5608,6 @@ unstable-frameworks-macos-10-12 = [
 ]
 unstable-frameworks-macos-10-13 = [
     "ExternalAccessory_all",
-    "MediaPlayer_all",
     "unstable-example-delegate",
     "unstable-example-metal",
     "unstable-example-nspasteboard",
@@ -5616,11 +5616,24 @@ unstable-frameworks-macos-10-13 = [
 ]
 unstable-frameworks-macos-11 = [
     "Accessibility_all",
+    "AdSupport_all",
+    "AuthenticationServices_all",
+    "AutomaticAssessmentConfiguration_all",
+    "BusinessChat_all",
     "ClassKit_all",
+    "DeviceCheck_all",
+    "FileProviderUI_all",
+    "FileProvider_all",
+    "IdentityLookup_all",
+    "LinkPresentation_all",
+    "SoundAnalysis_all",
+    "Speech_all",
     "UniformTypeIdentifiers_all",
+    "UserNotifications_all",
     "unstable-frameworks-macos-10-13",
 ]
 unstable-frameworks-macos-12 = [
+    "AdServices_all",
     "DataDetection_all",
     "LocalAuthenticationEmbeddedUI_all",
     "MailKit_all",
@@ -5628,24 +5641,14 @@ unstable-frameworks-macos-12 = [
     "unstable-frameworks-macos-11",
 ]
 unstable-frameworks-macos-13 = [
-    "AdServices_all",
-    "AdSupport_all",
-    "AuthenticationServices_all",
-    "AutomaticAssessmentConfiguration_all",
     "BackgroundAssets_all",
-    "BusinessChat_all",
     "CallKit_all",
-    "DeviceCheck_all",
     "ExtensionKit_all",
-    "FileProviderUI_all",
-    "FileProvider_all",
     "HealthKit_all",
-    "IdentityLookup_all",
-    "LinkPresentation_all",
     "MetalFX_all",
-    "SoundAnalysis_all",
-    "Speech_all",
-    "UserNotifications_all",
     "unstable-example-browser",
     "unstable-frameworks-macos-12",
+]
+unstable-frameworks-macos-14 = [
+    "unstable-frameworks-macos-13",
 ]
