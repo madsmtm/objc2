@@ -36,22 +36,14 @@ This is used by default, and has the highest support priority (all of
 The supported runtime version (higher versions lets the compiler enable newer
 optimizations, at the cost of not supporting older operating systems) can be
 chosen using the standard `X_DEPLOYMENT_TARGET` environment variables:
-- macOS: `MACOSX_DEPLOYMENT_TARGET`
-  - Default: `10.7`, `11.0` on Aarch64
-  - Minimum: `10.7`
-- iOS / iPadOS: `IPHONEOS_DEPLOYMENT_TARGET`
-  - Default: `7.0`
-  - Minimum: `5.0` (theoretically)
-- tvOS: `TVOS_DEPLOYMENT_TARGET`
-  - Default: `7.0`
-  - Minimum: `5.0` (theoretically)
-- watchOS: `WATCHOS_DEPLOYMENT_TARGET`
-  - Default: `5.0`
-  - Minimum: `1.0` (theoretically)
+- macOS: `MACOSX_DEPLOYMENT_TARGET`, default `10.12`, `11.0` on Aarch64.
+- iOS / iPadOS: `IPHONEOS_DEPLOYMENT_TARGET`, default `10.0`.
+- tvOS: `TVOS_DEPLOYMENT_TARGET`, default `10.0`.
+- watchOS: `WATCHOS_DEPLOYMENT_TARGET`, default `5.0`.
 
-The default versions are the [same as those Rust itself has][rust-apple-spec].
+The default (and minimum) versions are the [same as those Rust itself has][rust-apple-spec].
 
-[rust-apple-spec]: https://github.com/rust-lang/rust/blob/fd815a5091eb4d49cd317f8ad272f17b7a5f550d/compiler/rustc_target/src/spec/apple_base.rs
+[rust-apple-spec]: https://github.com/rust-lang/rust/blob/1.74.0/compiler/rustc_target/src/spec/apple_base.rs
 
 
 ### GNUStep's [`libobjc2`](https://github.com/gnustep/libobjc2)

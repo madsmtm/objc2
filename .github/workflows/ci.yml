@@ -25,9 +25,11 @@ env:
   # Faster compilation, error on warnings and only document current crate
   RUSTFLAGS: "--codegen=debuginfo=0 --deny=warnings"
   RUSTDOCFLAGS: "--deny=warnings"
-  # Minimum deployment target
-  MACOSX_DEPLOYMENT_TARGET: 10.7
-  IPHONEOS_DEPLOYMENT_TARGET: 7.0
+  # Minimum deployment targets.
+  # Follows `rustc --target=x86_64-apple-darwin --print deployment-target`
+  MACOSX_DEPLOYMENT_TARGET: 10.12
+  # Follows `rustc --target=x86_64-apple-ios --print deployment-target`
+  IPHONEOS_DEPLOYMENT_TARGET: 10.0
   # We only support compiling Objective-C code with clang
   CC: clang
   CXX: clang++
@@ -102,7 +104,7 @@ jobs:
             --features=$INTERESTING_FEATURES
             --features=unstable-frameworks-macos-12
         - name: iOS 32bit
-          target: armv7-apple-ios
+          target: armv7s-apple-ios
           build-std: true
           args: >-
             -Zbuild-std
@@ -362,7 +364,7 @@ jobs:
           frameworks: macos-11
         - name: Test macOS old SDK
           # Oldest macOS version we support
-          sdk: "10.7"
+          sdk: "10.12"
           frameworks: macos-10-7
         - name: Test macOS nightly
           nightly: true
@@ -379,11 +381,6 @@ jobs:
           frameworks: ios
         - name: Build iOS ARM64
           target: aarch64-apple-ios
-          frameworks: ios
-        - name: Build iOS ARMv7
-          target: armv7-apple-ios
-          nightly: true
-          build-std: true
           frameworks: ios
         - name: Build iOS ARMv7s
           target: armv7s-apple-ios

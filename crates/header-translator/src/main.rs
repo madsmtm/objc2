@@ -92,7 +92,6 @@ fn main() -> Result<(), BoxError> {
             ],
             Platform::IPhoneOs => &[
                 // "arm64-apple-ios7.0.0",
-                // "armv7-apple-ios7.0.0",
                 // "armv7s-apple-ios",
                 // "arm64-apple-ios14.0-macabi",
                 // "x86_64-apple-ios13.0-macabi",
