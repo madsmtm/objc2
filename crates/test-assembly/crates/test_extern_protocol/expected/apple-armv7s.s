@@ -4,28 +4,22 @@
 	.p2align	2
 	.code	32
 _get_protocol:
-	push	{r7, lr}
-	mov	r7, sp
 	movw	r0, :lower16:(l_anon.[ID].0-(LPC0_0+8))
-	mov	r1, #10
 	movt	r0, :upper16:(l_anon.[ID].0-(LPC0_0+8))
 LPC0_0:
 	add	r0, pc, r0
-	bl	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
-	pop	{r7, pc}
+	mov	r1, #10
+	b	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
 
 	.globl	_dyn_call
 	.p2align	2
 	.code	32
 _dyn_call:
-	push	{r7, lr}
-	mov	r7, sp
 	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_17aa92881c42487f-(LPC1_0+8))
 	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_17aa92881c42487f-(LPC1_0+8))
 LPC1_0:
 	ldr	r1, [pc, r1]
-	bl	_objc_msgSend
-	pop	{r7, pc}
+	b	_objc_msgSend
 
 	.globl	_dyn_consume
 	.p2align	2
@@ -33,15 +27,15 @@ LPC1_0:
 _dyn_consume:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_17aa92881c42487f-(LPC2_0+8))
 	mov	r4, r0
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_17aa92881c42487f-(LPC2_0+8))
 	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_17aa92881c42487f-(LPC2_0+8))
 LPC2_0:
 	ldr	r1, [pc, r1]
 	bl	_objc_msgSend
 	mov	r0, r4
-	bl	_objc_release
-	pop	{r4, r7, pc}
+	pop	{r4, r7, lr}
+	b	_objc_release
 
 	.section	__TEXT,__const
 l_anon.[ID].0:

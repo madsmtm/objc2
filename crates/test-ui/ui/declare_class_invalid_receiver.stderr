@@ -255,8 +255,14 @@ note: required by a bound in `ClassBuilderHelper::<T>::add_method`
 error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisfied
  --> ui/declare_class_invalid_receiver.rs
   |
-  |         fn test_box_id(self: Box<Self>) -> Id<Self> {
-  |                              ^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Box<CustomObject>`
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `Box<CustomObject>`
   |
   = help: the following other types implement trait `MessageReceiver`:
             NonNull<T>
@@ -267,12 +273,19 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
             &'a mut T
             &'a AnyClass
   = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<Box<CustomObject>, Id<CustomObject>>`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Id<CustomObject>: MessageReceiver` is not satisfied
  --> ui/declare_class_invalid_receiver.rs
   |
-  |         fn test_id_self_id(this: Id<Self>) -> Id<Self> {
-  |                                  ^^^^^^^^ the trait `MessageReceiver` is not implemented for `Id<CustomObject>`
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `Id<CustomObject>`
   |
   = help: the following other types implement trait `MessageReceiver`:
             NonNull<T>
@@ -283,12 +296,19 @@ error[E0277]: the trait bound `Id<CustomObject>: MessageReceiver` is not satisfi
             &'a mut T
             &'a AnyClass
   = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<Id<CustomObject>, Id<CustomObject>>`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
  --> ui/declare_class_invalid_receiver.rs
   |
-  |         fn test_self_id(this: Self) -> Id<Self> {
-  |                               ^^^^ the trait `MessageReceiver` is not implemented for `CustomObject`
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `CustomObject`
   |
   = help: the following other types implement trait `MessageReceiver`:
             NonNull<T>
@@ -299,12 +319,19 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
             &'a mut T
             &'a AnyClass
   = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<CustomObject, Id<CustomObject>>`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not satisfied
  --> ui/declare_class_invalid_receiver.rs
   |
-  |         fn test_alloc(this: Allocated<Self>) -> Id<Self> {
-  |                             ^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Allocated<CustomObject>`
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `Allocated<CustomObject>`
   |
   = help: the following other types implement trait `MessageReceiver`:
             NonNull<T>
@@ -315,6 +342,7 @@ error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not 
             &'a mut T
             &'a AnyClass
   = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<Allocated<CustomObject>, Id<CustomObject>>`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `RetainSemantics<3>: MessageRecieveId<&CustomObject, Id<CustomObject>>` is not satisfied
  --> ui/declare_class_invalid_receiver.rs
@@ -328,5 +356,6 @@ error[E0277]: the trait bound `RetainSemantics<3>: MessageRecieveId<&CustomObjec
   | | );
   | |_^ the trait `MessageRecieveId<&CustomObject, Id<CustomObject>>` is not implemented for `RetainSemantics<3>`
   |
-  = help: the trait `MessageRecieveId<Allocated<T>, Ret>` is implemented for `RetainSemantics<3>`
-  = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = help: the trait `MessageRecieveId<Allocated<CustomObject>, Id<CustomObject>>` is implemented for `RetainSemantics<3>`
+  = help: for that trait implementation, expected `Allocated<CustomObject>`, found `&CustomObject`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -4,22 +4,22 @@
 	.p2align	2
 	.code	32
 _iter_create:
+	add	r2, r0, #80
 	vmov.i32	q8, #0x0
-	mov	r2, #0
+	vst1.32	{d16, d17}, [r2]!
+	mov	r3, #0
+	str	r3, [r2]
+	add	r2, r0, #4
+	vst1.32	{d16, d17}, [r2]!
+	vst1.32	{d16, d17}, [r2]!
+	vst1.32	{d16, d17}, [r2]!
+	vst1.32	{d16, d17}, [r2]!
 	str	r1, [r0]
-	add	r1, r0, #80
-	str	r2, [r0, #100]
-	str	r2, [r0, #104]
-	str	r2, [r0, #72]
-	str	r2, [r0, #76]
-	add	r0, r0, #4
-	vst1.32	{d16, d17}, [r0]!
-	vst1.32	{d16, d17}, [r0]!
-	vst1.32	{d16, d17}, [r0]!
-	vst1.32	{d16, d17}, [r1]!
-	vst1.32	{d16, d17}, [r0]!
-	str	r2, [r1]
-	str	r2, [r0]
+	str	r3, [r2]
+	str	r3, [r0, #72]
+	str	r3, [r0, #76]
+	str	r3, [r0, #100]
+	str	r3, [r0, #104]
 	bx	lr
 
 	.globl	_iter_once
@@ -34,10 +34,10 @@ _iter_once:
 	ldrd	r0, r1, [r0, #100]
 	cmp	r0, r1
 	blo	LBB1_3
+	add	r8, r4, #4
 	ldr	r6, [r4]
 	movw	r0, :lower16:(LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC1_0+8))
 	movt	r0, :upper16:(LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC1_0+8))
-	add	r8, r4, #4
 LPC1_0:
 	ldr	r0, [pc, r0]
 	add	r5, r4, #68
@@ -46,15 +46,15 @@ LPC1_0:
 	beq	LBB1_5
 LBB1_2:
 	mov	r0, #16
-	mov	r2, r5
 	str	r0, [sp]
 	mov	r0, r6
+	mov	r2, r5
 	mov	r3, r8
 	bl	_objc_msgSend
 	mov	r1, r0
 	mov	r0, #0
-	cmp	r1, #0
 	strd	r0, r1, [r4, #100]
+	cmp	r1, #0
 	beq	LBB1_4
 LBB1_3:
 	ldr	r1, [r4, #72]
@@ -96,44 +96,44 @@ _iter:
 	sub	sp, sp, #120
 	bfc	sp, #0, #3
 	add	r1, sp, #8
-	vmov.i32	q8, #0x0
-	orr	r4, r1, #4
 	add	r2, r1, #80
-	mov	r5, r4
-	mov	r6, r0
-	vst1.32	{d16, d17}, [r5]!
-	mov	r0, #0
-	vst1.32	{d16, d17}, [r5]!
-	mov	r11, #16
-	vst1.32	{d16, d17}, [r5]!
-	mov	r1, #0
+	vmov.i32	q8, #0x0
 	vst1.64	{d16, d17}, [r2]!
+	mov	r6, r0
+	mov	r0, #0
+	orr	r4, r1, #4
+	mov	r5, r4
+	vst1.32	{d16, d17}, [r5]!
+	vst1.32	{d16, d17}, [r5]!
+	vst1.32	{d16, d17}, [r5]!
 	vst1.32	{d16, d17}, [r5]!
 	str	r0, [r2]
-	str	r0, [r5]
-	str	r0, [sp, #112]
-	str	r0, [sp, #108]
-	str	r0, [sp, #84]
-	str	r0, [sp, #80]
 	str	r6, [sp, #8]
-	movw	r8, :lower16:(LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
-	movt	r8, :upper16:(LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
-	movw	r10, :lower16:(l_anon.[ID].0-(LPC3_1+8))
+	str	r0, [r5]
+	str	r0, [sp, #80]
+	str	r0, [sp, #84]
+	str	r0, [sp, #108]
+	movw	r10, :lower16:(LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
+	movt	r10, :upper16:(LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC3_0+8))
 LPC3_0:
-	ldr	r8, [pc, r8]
-	movt	r10, :upper16:(l_anon.[ID].0-(LPC3_1+8))
+	ldr	r10, [pc, r10]
+	movw	r8, :lower16:(l_anon.[ID].0-(LPC3_1+8))
+	movt	r8, :upper16:(l_anon.[ID].0-(LPC3_1+8))
 LPC3_1:
-	add	r10, pc, r10
+	add	r8, pc, r8
+	str	r0, [sp, #112]
+	mov	r11, #16
+	mov	r1, #0
 	b	LBB3_3
 LBB3_1:
+	str	r11, [sp]
 	mov	r0, r6
 	mov	r2, r5
 	mov	r3, r4
-	str	r11, [sp]
 	bl	_objc_msgSend
+	str	r0, [sp, #112]
 	mov	r1, #0
 	cmp	r0, #0
-	str	r0, [sp, #112]
 	beq	LBB3_6
 LBB3_2:
 	ldr	r0, [sp, #80]
@@ -147,11 +147,11 @@ LBB3_2:
 LBB3_3:
 	cmp	r1, r0
 	blo	LBB3_2
-	ldr	r1, [r8]
+	ldr	r1, [r10]
 	cmp	r1, #0
 	bne	LBB3_1
-	mov	r0, r8
-	mov	r1, r10
+	mov	r0, r10
+	mov	r1, r8
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r1, r0
 	b	LBB3_1
@@ -170,34 +170,34 @@ _iter_noop:
 	sub	sp, sp, #120
 	bfc	sp, #0, #3
 	add	r1, sp, #8
-	vmov.i32	q8, #0x0
-	orr	r4, r1, #4
 	add	r2, r1, #80
-	mov	r5, r4
-	mov	r6, r0
-	vst1.32	{d16, d17}, [r5]!
-	mov	r0, #0
-	vst1.32	{d16, d17}, [r5]!
-	mov	r11, #16
-	vst1.32	{d16, d17}, [r5]!
-	mov	r1, #0
+	vmov.i32	q8, #0x0
 	vst1.64	{d16, d17}, [r2]!
+	mov	r6, r0
+	mov	r0, #0
+	orr	r4, r1, #4
+	mov	r5, r4
+	vst1.32	{d16, d17}, [r5]!
+	vst1.32	{d16, d17}, [r5]!
+	vst1.32	{d16, d17}, [r5]!
 	vst1.32	{d16, d17}, [r5]!
 	str	r0, [r2]
-	str	r0, [r5]
-	str	r0, [sp, #112]
-	str	r0, [sp, #108]
-	str	r0, [sp, #84]
-	str	r0, [sp, #80]
 	str	r6, [sp, #8]
+	str	r0, [r5]
+	str	r0, [sp, #80]
+	str	r0, [sp, #84]
+	str	r0, [sp, #108]
 	movw	r8, :lower16:(LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC4_0+8))
 	movt	r8, :upper16:(LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC4_0+8))
-	movw	r10, :lower16:(l_anon.[ID].0-(LPC4_1+8))
 LPC4_0:
 	ldr	r8, [pc, r8]
+	movw	r10, :lower16:(l_anon.[ID].0-(LPC4_1+8))
 	movt	r10, :upper16:(l_anon.[ID].0-(LPC4_1+8))
 LPC4_1:
 	add	r10, pc, r10
+	str	r0, [sp, #112]
+	mov	r11, #16
+	mov	r1, #0
 	b	LBB4_2
 LBB4_1:
 	add	r1, r1, #1
@@ -209,16 +209,16 @@ LBB4_2:
 	cmp	r1, #0
 	beq	LBB4_6
 LBB4_4:
+	str	r11, [sp]
 	mov	r0, r6
 	mov	r2, r5
 	mov	r3, r4
-	str	r11, [sp]
 	bl	_objc_msgSend
-	cmp	r0, #0
 	str	r0, [sp, #112]
+	cmp	r0, #0
 	beq	LBB4_7
-	ldr	r6, [sp, #8]
 	mov	r1, #0
+	ldr	r6, [sp, #8]
 	b	LBB4_1
 LBB4_6:
 	mov	r0, r8
@@ -241,44 +241,44 @@ _iter_retained:
 	sub	sp, sp, #120
 	bfc	sp, #0, #3
 	add	r1, sp, #8
-	vmov.i32	q8, #0x0
-	orr	r4, r1, #4
 	add	r2, r1, #80
-	mov	r5, r4
-	mov	r6, r0
-	vst1.32	{d16, d17}, [r5]!
-	mov	r0, #0
-	vst1.32	{d16, d17}, [r5]!
-	mov	r11, #16
-	vst1.32	{d16, d17}, [r5]!
-	mov	r1, #0
+	vmov.i32	q8, #0x0
 	vst1.64	{d16, d17}, [r2]!
+	mov	r6, r0
+	mov	r0, #0
+	orr	r4, r1, #4
+	mov	r5, r4
+	vst1.32	{d16, d17}, [r5]!
+	vst1.32	{d16, d17}, [r5]!
+	vst1.32	{d16, d17}, [r5]!
 	vst1.32	{d16, d17}, [r5]!
 	str	r0, [r2]
-	str	r0, [r5]
-	str	r0, [sp, #112]
-	str	r0, [sp, #108]
-	str	r0, [sp, #84]
-	str	r0, [sp, #80]
 	str	r6, [sp, #8]
+	str	r0, [r5]
+	str	r0, [sp, #80]
+	str	r0, [sp, #84]
+	str	r0, [sp, #108]
 	movw	r10, :lower16:(LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_0+8))
 	movt	r10, :upper16:(LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_0+8))
-	movw	r8, :lower16:(l_anon.[ID].0-(LPC5_1+8))
 LPC5_0:
 	ldr	r10, [pc, r10]
+	movw	r8, :lower16:(l_anon.[ID].0-(LPC5_1+8))
 	movt	r8, :upper16:(l_anon.[ID].0-(LPC5_1+8))
 LPC5_1:
 	add	r8, pc, r8
+	str	r0, [sp, #112]
+	mov	r11, #16
+	mov	r1, #0
 	b	LBB5_3
 LBB5_1:
+	str	r11, [sp]
 	mov	r0, r6
 	mov	r2, r5
 	mov	r3, r4
-	str	r11, [sp]
 	bl	_objc_msgSend
+	str	r0, [sp, #112]
 	mov	r1, #0
 	cmp	r0, #0
-	str	r0, [sp, #112]
 	beq	LBB5_6
 LBB5_2:
 	ldr	r0, [sp, #80]

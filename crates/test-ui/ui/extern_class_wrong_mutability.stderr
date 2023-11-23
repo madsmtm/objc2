@@ -11,6 +11,7 @@ error[E0277]: the trait bound `MainThreadOnly: ValidSubclassMutability<InteriorM
   | |_^ the trait `ValidSubclassMutability<InteriorMutable>` is not implemented for `MainThreadOnly`
   |
   = help: the trait `ValidSubclassMutability<MainThreadOnly>` is implemented for `MainThreadOnly`
+  = help: for that trait implementation, expected `MainThreadOnly`, found `InteriorMutable`
 note: required by a bound in `assert_mutability_matches_superclass_mutability`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
   |

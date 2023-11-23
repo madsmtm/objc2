@@ -5,7 +5,6 @@ error[E0277]: `*const NSObject` cannot be shared between threads safely
   |                  ^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be shared between threads safely
   |
   = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`
-  = note: consider using `std::sync::Arc<*const NSObject>`; for more information visit <https://doc.rust-lang.org/book/ch16-03-shared-state.html>
 note: required because it appears within the type `UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
@@ -40,7 +39,6 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |                  ^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
   = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
-  = note: consider using `std::sync::Arc<UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>>`; for more information visit <https://doc.rust-lang.org/book/ch16-03-shared-state.html>
 note: required because it appears within the type `objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
   |
@@ -80,7 +78,6 @@ error[E0277]: `*const NSObject` cannot be sent between threads safely
   |                  ^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be sent between threads safely
   |
   = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`
-  = note: consider using `std::sync::Arc<*const NSObject>`; for more information visit <https://doc.rust-lang.org/book/ch16-03-shared-state.html>
 note: required because it appears within the type `UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
@@ -115,7 +112,6 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |                  ^^^^^^^^^^^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
   |
   = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
-  = note: consider using `std::sync::Arc<*const UnsafeCell<()>>`; for more information visit <https://doc.rust-lang.org/book/ch16-03-shared-state.html>
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
 note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
  --> $RUST/core/src/marker.rs
@@ -166,7 +162,6 @@ error[E0277]: `*const NSObject` cannot be shared between threads safely
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be shared between threads safely
   |
   = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`
-  = note: consider using `std::sync::Arc<*const NSObject>`; for more information visit <https://doc.rust-lang.org/book/ch16-03-shared-state.html>
 note: required because it appears within the type `UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
@@ -206,7 +201,6 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
   = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
-  = note: consider using `std::sync::Arc<UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>>`; for more information visit <https://doc.rust-lang.org/book/ch16-03-shared-state.html>
 note: required because it appears within the type `objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
   |
@@ -251,7 +245,6 @@ error[E0277]: `*const NSObject` cannot be sent between threads safely
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be sent between threads safely
   |
   = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`
-  = note: consider using `std::sync::Arc<*const NSObject>`; for more information visit <https://doc.rust-lang.org/book/ch16-03-shared-state.html>
 note: required because it appears within the type `UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
@@ -291,7 +284,6 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
   |
   = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
-  = note: consider using `std::sync::Arc<*const UnsafeCell<()>>`; for more information visit <https://doc.rust-lang.org/book/ch16-03-shared-state.html>
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
 note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
  --> $RUST/core/src/marker.rs

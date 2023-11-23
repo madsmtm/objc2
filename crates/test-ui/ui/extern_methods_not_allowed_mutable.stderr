@@ -31,10 +31,7 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   | |         fn test_id(&mut self) -> Id<Self>;
   | |     }
   | | );
-  | | ^
-  | | |
-  | |_the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
-  |   required by a bound introduced by this call
+  | |_^ the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
   |
   = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
             Root
@@ -45,4 +42,4 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   = note: required for `&mut MyObject` to implement `MessageReceiver`
   = note: required for `&mut MyObject` to implement `MsgSend`
   = note: required for `RetainSemantics<5>` to implement `MsgSendId<&mut MyObject, Option<Id<_>>>`
-  = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

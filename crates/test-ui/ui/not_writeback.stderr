@@ -31,10 +31,7 @@ error[E0277]: the trait bound `Id<NSObject>: Encode` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: param] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^
-  |                          |
-  |                          the trait `Encode` is not implemented for `Id<NSObject>`
-  |                          required by a bound introduced by this call
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Id<NSObject>`
   |
   = help: the following other types implement trait `Encode`:
             isize
@@ -63,10 +60,7 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: &param] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^
-  |                          |
-  |                          the trait `RefEncode` is not implemented for `Id<NSObject>`
-  |                          required by a bound introduced by this call
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `RefEncode` is not implemented for `Id<NSObject>`
   |
   = help: the following other types implement trait `RefEncode`:
             isize
@@ -96,10 +90,7 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: Some(&param)] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  |                          |
-  |                          the trait `RefEncode` is not implemented for `Id<NSObject>`
-  |                          required by a bound introduced by this call
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `RefEncode` is not implemented for `Id<NSObject>`
   |
   = help: the following other types implement trait `RefEncode`:
             isize
@@ -131,10 +122,7 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: param] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^
-  |                          |
-  |                          the trait `RefEncode` is not implemented for `Id<NSObject>`
-  |                          required by a bound introduced by this call
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `RefEncode` is not implemented for `Id<NSObject>`
   |
   = help: the following other types implement trait `RefEncode`:
             isize
@@ -164,10 +152,7 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: () = unsafe { msg_send![obj, a: param] };
-  |                          ^^^^^^^^^^^^^^^^^^^^^^^^
-  |                          |
-  |                          the trait `RefEncode` is not implemented for `Id<NSObject>`
-  |                          required by a bound introduced by this call
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `RefEncode` is not implemented for `Id<NSObject>`
   |
   = help: the following other types implement trait `RefEncode`:
             isize

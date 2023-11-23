@@ -62,10 +62,7 @@ error[E0277]: the trait bound `Box<i32>: Encode` is not satisfied
   | |         fn c(&self, arg: Box<i32>);
   | |     }
   | | );
-  | | ^
-  | | |
-  | |_the trait `Encode` is not implemented for `Box<i32>`
-  |   required by a bound introduced by this call
+  | |_^ the trait `Encode` is not implemented for `Box<i32>`
   |
   = help: the following other types implement trait `Encode`:
             isize

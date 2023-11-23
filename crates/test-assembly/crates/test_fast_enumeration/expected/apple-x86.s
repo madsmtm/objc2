@@ -52,7 +52,7 @@ L1$pb:
 	mov	esi, dword ptr [ebp + 8]
 	mov	eax, dword ptr [esi + 100]
 	cmp	eax, dword ptr [esi + 104]
-	jb	LBB1_1
+	jb	LBB1_4
 	lea	ebx, [esi + 4]
 	mov	eax, dword ptr [esi]
 	mov	dword ptr [ebp - 16], eax
@@ -60,8 +60,8 @@ L1$pb:
 	mov	edx, dword ptr [ecx + LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L1$pb]
 	mov	eax, dword ptr [edx]
 	test	eax, eax
-	je	LBB1_3
-LBB1_4:
+	je	LBB1_2
+LBB1_3:
 	sub	esp, 12
 	push	16
 	push	ebx
@@ -76,7 +76,7 @@ LBB1_4:
 	xor	eax, eax
 	test	ecx, ecx
 	je	LBB1_5
-LBB1_1:
+LBB1_4:
 	mov	ecx, dword ptr [esi + 72]
 	lea	edx, [eax + 1]
 	mov	dword ptr [esi + 100], edx
@@ -88,14 +88,14 @@ LBB1_5:
 	pop	ebx
 	pop	ebp
 	ret
-LBB1_3:
+LBB1_2:
 	sub	esp, 8
 	lea	eax, [ecx + l_anon.[ID].0-L1$pb]
 	push	eax
 	push	edx
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	add	esp, 16
-	jmp	LBB1_4
+	jmp	LBB1_3
 
 	.globl	_use_obj
 	.p2align	4, 0x90

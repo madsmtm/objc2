@@ -1,12 +1,19 @@
 error[E0271]: type mismatch resolving `<Id<NSObject> as MaybeUnwrap>::Input == Option<Id<CustomObject>>`
  --> ui/declare_class_invalid_type2.rs
   |
-  |         fn test_init_not_same_generics(this: Allocated<Self>) -> Id<NSObject> {
-  |                                              ^^^^^^^^^^^^^^^ expected `Option<Id<CustomObject>>`, found `Option<Id<NSObject>>`
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ expected `Option<Id<CustomObject>>`, found `Option<Id<NSObject>>`
   |
   = note: expected enum `Option<Id<CustomObject>>`
              found enum `Option<Id<NSObject>>`
   = note: required for `RetainSemantics<3>` to implement `MessageRecieveId<Allocated<CustomObject>, Id<NSObject>>`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `i32: MaybeOptionId` is not satisfied
  --> ui/declare_class_invalid_type2.rs
@@ -24,4 +31,4 @@ error[E0277]: the trait bound `i32: MaybeOptionId` is not satisfied
             Id<T>
             Option<Id<T>>
   = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<&CustomObject, i32>`
-  = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
