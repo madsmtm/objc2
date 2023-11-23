@@ -545,6 +545,8 @@ jobs:
     - lint
 
     strategy:
+      # GNUStep tests are currently flaky, this makes it easier to see
+      fail-fast: false
       matrix:
         include:
         - name: Test GNUStep with libobjc2 v1.9

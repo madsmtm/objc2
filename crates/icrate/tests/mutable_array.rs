@@ -158,6 +158,10 @@ fn test_remove() {
 
 #[test]
 #[cfg(feature = "Foundation_NSString")]
+#[cfg_attr(
+    feature = "gnustep-1-7",
+    ignore = "thread safety issues regarding initialization"
+)]
 fn test_into_vec() {
     let array = NSMutableArray::from_id_slice(&[Foundation::NSString::new()]);
 
