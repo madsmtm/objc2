@@ -44,12 +44,15 @@ extern_c_unwind! {
     /// See [`objc-exception.h`].
     ///
     /// [`objc-exception.h`]: https://github.com/apple-oss-distributions/objc4/blob/objc4-818.2/runtime/objc-exception.h
+    #[cold]
     pub fn objc_exception_throw(exception: *mut objc_object) -> !;
 
     #[cfg(apple_new)]
+    #[cold]
     pub fn objc_exception_rethrow() -> !;
 
     #[cfg(gnustep)]
+    #[cold]
     pub fn objc_exception_rethrow(exc_buf: *mut c_void) -> !;
 }
 
@@ -91,6 +94,10 @@ extern_c! {
     //
     // #[cfg(any(doc, gnustep))]
     // pub fn objc_set_apple_compatible_objcxx_exceptions(newValue: c_int) -> c_int;
+
+    #[cold]
+    #[cfg(any(doc, apple_new))]
+    pub fn objc_terminate() -> !;
 }
 
 extern "C" {

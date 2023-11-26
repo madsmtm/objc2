@@ -1,17 +1,18 @@
 //! ARC functions.
 //!
-//! Is available in Clang's [documentation][ARC] so these are safe to rely on.
-//!
-//! All available since macOS `10.7`.
+//! These are documented in Clang's [documentation][ARC], and available since
+//! macOS `10.7` unless otherwise noted, so they are safe to rely on.
 //!
 //! Defined in:
 //! - Apple: `objc-internal.h`
 //! - GNUStep: `objc-arc.h`
 //! - ObjFW: `runtime/arc.m`
 //!
-//! [ARC]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#runtime-support>
+//! [ARC]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#runtime-support
 use core::ffi::c_void;
 
+#[cfg(any(doc, apple_new))]
+use crate::objc_class;
 use crate::objc_object;
 
 // All of these very rarely unwind, but may if the user defined methods
@@ -60,4 +61,25 @@ extern_c_unwind! {
     // TODO: Decide about nonstandard extensions like these:
     // #[cfg(any(doc, gnustep))]
     // pub fn objc_delete_weak_refs(obj: *mut objc_object) -> BOOL;
+
+    // Fast paths for certain selectors.
+    //
+    // These are not defined in the ARC documentation, but are emitted by
+    // `clang` and included (and intended to be included) in the final
+    // binary, so very likely safe to use.
+    //
+    // TODO: Unsure why these are not available in the old fragile runtime,
+    // the headers seem to indicate that they are.
+    //
+    // <https://github.com/llvm/llvm-project/blob/llvmorg-17.0.5/clang/include/clang/Basic/ObjCRuntime.h#L229>
+
+    // Available since macOS 10.9.
+    #[cfg(any(doc, apple_new))]
+    pub fn objc_alloc(value: *const objc_class) -> *mut objc_object;
+
+    // Available since macOS 10.9.
+    #[cfg(any(doc, apple_new))]
+    pub fn objc_allocWithZone(value: *const objc_class) -> *mut objc_object;
+
+    // TODO: objc_alloc_init once supported
 }
