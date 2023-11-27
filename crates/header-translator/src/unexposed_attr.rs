@@ -98,13 +98,15 @@ impl UnexposedAttr {
             | "__WATCHOS_AVAILABLE"
             | "API_AVAILABLE_BEGIN"
             | "API_AVAILABLE"
-            | "API_DEPRECATED_WITH_REPLACEMENT"
             | "API_DEPRECATED"
+            | "API_DEPRECATED_BEGIN"
+            | "API_DEPRECATED_WITH_REPLACEMENT"
             | "API_UNAVAILABLE_BEGIN"
             | "API_UNAVAILABLE"
             | "CF_SWIFT_UNAVAILABLE"
             | "CG_AVAILABLE_BUT_DEPRECATED"
             | "CG_AVAILABLE_STARTING"
+            | "CK_UNAVAILABLE"
             | "FPUI_AVAILABLE"
             | "MP_API"
             | "MP_DEPRECATED_WITH_REPLACEMENT"
@@ -121,8 +123,10 @@ impl UnexposedAttr {
             | "NS_DEPRECATED_MAC"
             | "NS_DEPRECATED"
             | "NS_ENUM_AVAILABLE"
-            | "NS_ENUM_DEPRECATED_IOS"
+            | "NS_ENUM_AVAILABLE_MAC"
             | "NS_ENUM_DEPRECATED"
+            | "NS_ENUM_DEPRECATED_IOS"
+            | "NS_ENUM_DEPRECATED_MAC"
             | "NS_EXTENSION_UNAVAILABLE"
             | "NS_OPENGL_CLASS_DEPRECATED"
             | "NS_OPENGL_DEPRECATED"
@@ -138,6 +142,9 @@ impl UnexposedAttr {
                 let _ = get_arguments();
                 None
             }
+            // For some reason we don't need to extract the arguments for
+            // these, perhaps because they simply delegate to other macros.
+            "AS_API_AVAILABLE" | "AS_HEADER_AUDIT_BEGIN" => None,
             "__IOS_PROHIBITED"
             | "__IOS_UNAVAILABLE"
             | "__OSX_AVAILABLE_BUT_DEPRECATED"
@@ -233,7 +240,7 @@ fn get_argument_tokens<'a>(entity: &Entity<'a>) -> Vec<Token<'a>> {
     // Remove the macro name from the full macro tokens
     let name_ranges = entity.get_name_ranges();
     assert_eq!(name_ranges.len(), 1, "macro name ranges");
-    let name_range = name_ranges.get(0).unwrap();
+    let name_range = name_ranges.first().unwrap();
     let range = entity.get_range().expect("macro range");
 
     let mut tokens = SourceRange::new(name_range.get_end(), range.get_end()).tokenize();

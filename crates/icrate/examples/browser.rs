@@ -1,6 +1,7 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 use core::{cell::OnceCell, ptr::NonNull};
 
+#[allow(deprecated)]
 use icrate::{
     AppKit::{
         NSApplication, NSApplicationActivationPolicyRegular, NSApplicationDelegate,
@@ -139,7 +140,10 @@ declare_class!(
                 let action = Some(sel!(goBack));
                 let this =
                     unsafe { NSButton::buttonWithTitle_target_action(title, target, action, mtm) };
-                unsafe { this.setBezelStyle(NSBezelStyleShadowlessSquare) };
+                #[allow(deprecated)]
+                unsafe {
+                    this.setBezelStyle(NSBezelStyleShadowlessSquare)
+                };
                 this
             };
 
@@ -151,7 +155,10 @@ declare_class!(
                 let action = Some(sel!(goForward));
                 let this =
                     unsafe { NSButton::buttonWithTitle_target_action(title, target, action, mtm) };
-                unsafe { this.setBezelStyle(NSBezelStyleShadowlessSquare) };
+                #[allow(deprecated)]
+                unsafe {
+                    this.setBezelStyle(NSBezelStyleShadowlessSquare)
+                };
                 this
             };
 

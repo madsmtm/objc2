@@ -2,9 +2,7 @@ error[E0277]: the trait bound `Root: mutability::MutabilityIsMainThreadOnly` is 
  --> ui/mainthreadmarker_from_nsobject.rs
   |
   |     let mtm = MainThreadMarker::from(&*obj);
-  |               ---------------------- ^^^^^ the trait `mutability::MutabilityIsMainThreadOnly` is not implemented for `Root`
-  |               |
-  |               required by a bound introduced by this call
+  |               ^^^^^^^^^^^^^^^^ the trait `mutability::MutabilityIsMainThreadOnly` is not implemented for `Root`
   |
   = help: the trait `mutability::MutabilityIsMainThreadOnly` is implemented for `MainThreadOnly`
   = note: required for `NSObject` to implement `IsMainThreadOnly`

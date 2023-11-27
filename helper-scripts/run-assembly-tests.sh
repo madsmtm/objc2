@@ -17,7 +17,6 @@ echo "Apple"
 $RUN x86_64-apple-darwin
 $RUN aarch64-apple-darwin
 $RUN armv7s-apple-ios
-$RUN armv7-apple-ios
 $RUN i386-apple-ios
 
 echo "Old Apple"

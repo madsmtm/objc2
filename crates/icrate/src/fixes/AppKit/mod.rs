@@ -27,42 +27,5 @@ ns_enum!(
     }
 );
 
-extern_class!(
-    #[cfg(feature = "AppKit_NSPopover")]
-    #[derive(Debug, PartialEq, Eq, Hash)]
-    pub struct NSPopover;
-
-    #[cfg(feature = "AppKit_NSPopover")]
-    unsafe impl ClassType for NSPopover {
-        #[inherits(NSObject)]
-        type Super = crate::AppKit::NSResponder;
-        type Mutability = MainThreadOnly;
-    }
-);
-
-__inner_extern_class!(
-    #[cfg(feature = "AppKit_NSLayoutAnchor")]
-    #[derive(Debug, PartialEq, Eq, Hash)]
-    pub struct NSLayoutAnchor<AnchorType: ?Sized = AnyObject> {
-        __superclass: NSObject,
-        _inner0: PhantomData<*mut AnchorType>,
-        notunwindsafe: PhantomData<&'static mut ()>,
-    }
-
-    #[cfg(feature = "AppKit_NSLayoutAnchor")]
-    unsafe impl<AnchorType: ?Sized + Message> ClassType for NSLayoutAnchor<AnchorType> {
-        type Super = NSObject;
-        type Mutability = InteriorMutable;
-
-        fn as_super(&self) -> &Self::Super {
-            &self.__superclass
-        }
-
-        fn as_super_mut(&mut self) -> &mut Self::Super {
-            &mut self.__superclass
-        }
-    }
-);
-
 #[cfg(feature = "AppKit_NSImage")]
 unsafe impl crate::Foundation::NSCoding for crate::AppKit::NSImage {}

@@ -28,19 +28,19 @@ _handle_alloc_init:
 	sub	esp, 12
 	call	L1$pb
 L1$pb:
-	pop	ebx
-	mov	eax, dword ptr [ebx + LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-L1$pb]
-	mov	edi, dword ptr [eax]
-	mov	eax, dword ptr [ebx + LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-L1$pb]
+	pop	edi
+	mov	eax, dword ptr [edi + LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-L1$pb]
 	sub	esp, 8
 	push	dword ptr [eax]
 	push	dword ptr [ebp + 8]
 	call	_objc_msgSend
 	add	esp, 16
 	mov	esi, eax
+	mov	eax, dword ptr [edi + LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-L1$pb]
+	mov	ebx, dword ptr [eax]
 	sub	esp, 8
-	push	edi
-	push	eax
+	push	ebx
+	push	esi
 	call	_objc_msgSend
 	add	esp, 16
 	test	eax, eax
@@ -53,9 +53,9 @@ L1$pb:
 	ret
 LBB1_2:
 	sub	esp, 4
-	lea	eax, [ebx + l_anon.[ID].1-L1$pb]
+	lea	eax, [edi + l_anon.[ID].1-L1$pb]
 	push	eax
-	push	edi
+	push	ebx
 	push	esi
 	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 

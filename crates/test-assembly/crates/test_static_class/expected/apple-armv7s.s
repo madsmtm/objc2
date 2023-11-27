@@ -40,25 +40,23 @@ _unused_class:
 	.p2align	2
 	.code	32
 _use_fns:
-	movw	r9, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_97e6a8c6ed5db063-(LPC4_0+8))
-	movt	r9, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_97e6a8c6ed5db063-(LPC4_0+8))
+	movw	r1, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_928cf03fcc497777-(LPC4_0+8))
+	movt	r1, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_928cf03fcc497777-(LPC4_0+8))
 LPC4_0:
-	ldr	r9, [pc, r9]
-	movw	r2, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_dfff3a06c0bf722b-(LPC4_1+8))
-	movt	r2, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_dfff3a06c0bf722b-(LPC4_1+8))
+	ldr	r1, [pc, r1]
+	movw	r2, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_2fe1990982915f07-(LPC4_1+8))
+	movt	r2, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_2fe1990982915f07-(LPC4_1+8))
 LPC4_1:
 	ldr	r2, [pc, r2]
-	movw	r3, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_2fe1990982915f07-(LPC4_2+8))
-	movt	r3, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_2fe1990982915f07-(LPC4_2+8))
+	movw	r3, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_dfff3a06c0bf722b-(LPC4_2+8))
+	movt	r3, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_dfff3a06c0bf722b-(LPC4_2+8))
 LPC4_2:
 	ldr	r3, [pc, r3]
-	movw	r1, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_928cf03fcc497777-(LPC4_3+8))
-	movt	r1, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_928cf03fcc497777-(LPC4_3+8))
-	str	r2, [r0, #8]
+	movw	r9, :lower16:(L_OBJC_CLASSLIST_REFERENCES_$_97e6a8c6ed5db063-(LPC4_3+8))
+	movt	r9, :upper16:(L_OBJC_CLASSLIST_REFERENCES_$_97e6a8c6ed5db063-(LPC4_3+8))
 LPC4_3:
-	ldr	r1, [pc, r1]
-	str	r9, [r0, #12]
-	stm	r0, {r1, r3}
+	ldr	r9, [pc, r9]
+	stm	r0, {r1, r2, r3, r9}
 	bx	lr
 
 	.globl	_use_same_twice

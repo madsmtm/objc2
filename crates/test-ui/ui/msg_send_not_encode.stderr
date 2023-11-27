@@ -30,10 +30,7 @@ error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
  --> ui/msg_send_not_encode.rs
   |
   |         let _: () = msg_send![cls, newWith: x];
-  |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  |                     |
-  |                     the trait `Encode` is not implemented for `Vec<u8>`
-  |                     required by a bound introduced by this call
+  |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Vec<u8>`
   |
   = help: the following other types implement trait `Encode`:
             isize
@@ -62,10 +59,7 @@ error[E0277]: the trait bound `(): Encode` is not satisfied
  --> ui/msg_send_not_encode.rs
   |
   |         let _: () = msg_send![cls, unitAsArgument: ()];
-  |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  |                     |
-  |                     the trait `Encode` is not implemented for `()`
-  |                     required by a bound introduced by this call
+  |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `()`
   |
   = help: the following other types implement trait `Encode`:
             isize

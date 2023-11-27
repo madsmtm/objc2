@@ -138,7 +138,7 @@ mod macros;
 #[allow(deprecated)]
 mod generated;
 
-#[allow(unreachable_pub)]
+#[allow(unreachable_pub, unused_imports)]
 pub use self::generated::*;
 
 /// Deprecated alias of [`Foundation::ns_string`].

@@ -16,14 +16,12 @@ _handle_alloc_init:
 	mov	rbp, rsp
 	push	r14
 	push	rbx
+	call	_objc_alloc
+	mov	rbx, rax
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
-	mov	rbx, qword ptr [rax]
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_alloc@GOTPCREL]
-	mov	rsi, qword ptr [rax]
-	call	_objc_msgSend
-	mov	r14, rax
-	mov	rdi, rax
-	mov	rsi, rbx
+	mov	r14, qword ptr [rax]
+	mov	rdi, rbx
+	mov	rsi, r14
 	call	_objc_msgSend
 	test	rax, rax
 	je	LBB1_2
@@ -33,8 +31,8 @@ _handle_alloc_init:
 	ret
 LBB1_2:
 	lea	rdx, [rip + l_anon.[ID].1]
-	mov	rdi, r14
-	mov	rsi, rbx
+	mov	rdi, rbx
+	mov	rsi, r14
 	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 
 	.globl	_use_generic

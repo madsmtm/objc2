@@ -1,8 +1,10 @@
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
+use std::fmt;
 use std::fs;
 use std::path::Path;
 
+use semver::Version;
 use serde::Deserialize;
 
 use crate::data;
@@ -60,6 +62,40 @@ impl Config {
     }
 }
 
+fn get_version<'de, D: serde::Deserializer<'de>>(
+    deserializer: D,
+) -> Result<Option<Version>, D::Error> {
+    use serde::de;
+
+    struct VersionVisitor;
+
+    impl de::Visitor<'_> for VersionVisitor {
+        type Value = Option<Version>;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+            formatter.write_str("a version string")
+        }
+
+        fn visit_none<E>(self) -> Result<Self::Value, E>
+        where
+            E: de::Error,
+        {
+            Ok(None)
+        }
+
+        fn visit_borrowed_str<E>(self, v: &str) -> Result<Self::Value, E>
+        where
+            E: de::Error,
+        {
+            Ok(Some(
+                lenient_semver_parser::parse::<Version>(v).map_err(de::Error::custom)?,
+            ))
+        }
+    }
+
+    deserializer.deserialize_str(VersionVisitor)
+}
+
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct LibraryData {
@@ -82,15 +118,20 @@ pub struct LibraryData {
     #[serde(default)]
     pub extra_features: Vec<String>,
     #[serde(default)]
-    pub macos: Option<semver::VersionReq>,
+    #[serde(deserialize_with = "get_version")]
+    pub macos: Option<Version>,
     #[serde(default)]
-    pub maccatalyst: Option<semver::VersionReq>,
+    #[serde(deserialize_with = "get_version")]
+    pub maccatalyst: Option<Version>,
     #[serde(default)]
-    pub ios: Option<semver::VersionReq>,
+    #[serde(deserialize_with = "get_version")]
+    pub ios: Option<Version>,
     #[serde(default)]
-    pub tvos: Option<semver::VersionReq>,
+    #[serde(deserialize_with = "get_version")]
+    pub tvos: Option<Version>,
     #[serde(default)]
-    pub watchos: Option<semver::VersionReq>,
+    #[serde(deserialize_with = "get_version")]
+    pub watchos: Option<Version>,
     #[serde(default)]
     pub examples: Vec<Example>,
 }

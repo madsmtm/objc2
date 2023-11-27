@@ -7,6 +7,11 @@ error[E0308]: mismatched types
   = note: expected unit type `()`
                   found enum `Result<(), Id<_>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider using `Result::expect` to unwrap the `Result<(), Id<_>>` value, panicking if the value is a `Result::Err`
+ --> $WORKSPACE/crates/objc2/src/macros/mod.rs
+  |
+  |         result.expect("REASON")
+  |               +++++++++++++++++
 
 error[E0308]: mismatched types
  --> ui/msg_send_invalid_error.rs
@@ -63,6 +68,11 @@ error[E0308]: mismatched types
   = note: expected unit type `()`
                   found enum `Result<(), Id<_>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider using `Result::expect` to unwrap the `Result<(), Id<_>>` value, panicking if the value is a `Result::Err`
+ --> $WORKSPACE/crates/objc2/src/macros/mod.rs
+  |
+  |         result.expect("REASON")
+  |               +++++++++++++++++
 
 error[E0308]: mismatched types
  --> ui/msg_send_invalid_error.rs
@@ -73,6 +83,11 @@ error[E0308]: mismatched types
   = note: expected unit type `()`
                   found enum `Result<(), Id<_>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider using `Result::expect` to unwrap the `Result<(), Id<_>>` value, panicking if the value is a `Result::Err`
+ --> $WORKSPACE/crates/objc2/src/macros/mod.rs
+  |
+  |         result.expect("REASON")
+  |               +++++++++++++++++
 
 error[E0308]: mismatched types
  --> ui/msg_send_invalid_error.rs
@@ -83,3 +98,8 @@ error[E0308]: mismatched types
   = note: expected unit type `()`
                   found enum `Result<(), Id<_>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider using `Result::expect` to unwrap the `Result<(), Id<_>>` value, panicking if the value is a `Result::Err`
+ --> $WORKSPACE/crates/objc2/src/macros/mod.rs
+  |
+  |         result.expect("REASON")
+  |               +++++++++++++++++

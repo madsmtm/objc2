@@ -56,7 +56,7 @@ iter_once:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp0-.L1$pb)
 	mov	eax, dword ptr [edi + 100]
 	cmp	eax, dword ptr [edi + 104]
-	jb	.LBB1_1
+	jb	.LBB1_4
 	lea	eax, [edi + 4]
 	mov	ebp, dword ptr [edi]
 	mov	dword ptr [esp + 8], eax
@@ -65,8 +65,8 @@ iter_once:
 	mov	eax, dword ptr [ebx + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
 	mov	esi, dword ptr [eax]
 	test	esi, esi
-	je	.LBB1_3
-.LBB1_4:
+	je	.LBB1_2
+.LBB1_3:
 	sub	esp, 8
 	push	esi
 	push	ebp
@@ -85,7 +85,7 @@ iter_once:
 	mov	dword ptr [edi + 100], 0
 	test	ecx, ecx
 	je	.LBB1_5
-.LBB1_1:
+.LBB1_4:
 	mov	ecx, dword ptr [edi + 72]
 	lea	edx, [eax + 1]
 	mov	dword ptr [edi + 100], edx
@@ -97,7 +97,7 @@ iter_once:
 	pop	ebx
 	pop	ebp
 	ret
-.LBB1_3:
+.LBB1_2:
 	sub	esp, 8
 	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
 	push	ecx
@@ -105,7 +105,7 @@ iter_once:
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	mov	esi, eax
-	jmp	.LBB1_4
+	jmp	.LBB1_3
 .Lfunc_end1:
 	.size	iter_once, .Lfunc_end1-iter_once
 

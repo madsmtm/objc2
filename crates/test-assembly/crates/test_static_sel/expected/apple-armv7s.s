@@ -52,25 +52,23 @@ _unused_sel:
 	.p2align	2
 	.code	32
 _use_fns:
-	movw	r9, :lower16:(L_OBJC_SELECTOR_REFERENCES_acb291d82e56f534-(LPC5_0+8))
-	movt	r9, :upper16:(L_OBJC_SELECTOR_REFERENCES_acb291d82e56f534-(LPC5_0+8))
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_2ff5c2d33acc98c0-(LPC5_0+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_2ff5c2d33acc98c0-(LPC5_0+8))
 LPC5_0:
-	ldr	r9, [pc, r9]
-	movw	r2, :lower16:(L_OBJC_SELECTOR_REFERENCES_25911857653c680c-(LPC5_1+8))
-	movt	r2, :upper16:(L_OBJC_SELECTOR_REFERENCES_25911857653c680c-(LPC5_1+8))
+	ldr	r1, [pc, r1]
+	movw	r2, :lower16:(L_OBJC_SELECTOR_REFERENCES_6e17eb9d3fa7fa83-(LPC5_1+8))
+	movt	r2, :upper16:(L_OBJC_SELECTOR_REFERENCES_6e17eb9d3fa7fa83-(LPC5_1+8))
 LPC5_1:
 	ldr	r2, [pc, r2]
-	movw	r3, :lower16:(L_OBJC_SELECTOR_REFERENCES_6e17eb9d3fa7fa83-(LPC5_2+8))
-	movt	r3, :upper16:(L_OBJC_SELECTOR_REFERENCES_6e17eb9d3fa7fa83-(LPC5_2+8))
+	movw	r3, :lower16:(L_OBJC_SELECTOR_REFERENCES_25911857653c680c-(LPC5_2+8))
+	movt	r3, :upper16:(L_OBJC_SELECTOR_REFERENCES_25911857653c680c-(LPC5_2+8))
 LPC5_2:
 	ldr	r3, [pc, r3]
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_2ff5c2d33acc98c0-(LPC5_3+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_2ff5c2d33acc98c0-(LPC5_3+8))
-	str	r2, [r0, #8]
+	movw	r9, :lower16:(L_OBJC_SELECTOR_REFERENCES_acb291d82e56f534-(LPC5_3+8))
+	movt	r9, :upper16:(L_OBJC_SELECTOR_REFERENCES_acb291d82e56f534-(LPC5_3+8))
 LPC5_3:
-	ldr	r1, [pc, r1]
-	str	r9, [r0, #12]
-	stm	r0, {r1, r3}
+	ldr	r9, [pc, r9]
+	stm	r0, {r1, r2, r3, r9}
 	bx	lr
 
 	.globl	_use_same_twice

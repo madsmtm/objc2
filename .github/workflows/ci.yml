@@ -25,9 +25,11 @@ env:
   # Faster compilation, error on warnings and only document current crate
   RUSTFLAGS: "--codegen=debuginfo=0 --deny=warnings"
   RUSTDOCFLAGS: "--deny=warnings"
-  # Minimum deployment target
-  MACOSX_DEPLOYMENT_TARGET: 10.7
-  IPHONEOS_DEPLOYMENT_TARGET: 7.0
+  # Minimum deployment targets.
+  # Follows `rustc --target=x86_64-apple-darwin --print deployment-target`
+  MACOSX_DEPLOYMENT_TARGET: 10.12
+  # Follows `rustc --target=x86_64-apple-ios --print deployment-target`
+  IPHONEOS_DEPLOYMENT_TARGET: 10.0
   # We only support compiling Objective-C code with clang
   CC: clang
   CXX: clang++
@@ -44,14 +46,14 @@ env:
     --package=objc2-encode
     --package=objc2-proc-macros
   # The current nightly Rust version that our CI uses
-  CURRENT_NIGHTLY: nightly-2023-08-27
+  CURRENT_NIGHTLY: nightly-2023-11-22
   # Various features that we'd usually want to test with
   #
   # Note: The `exception` feature is not enabled here, since it requires
   # compiling C code, even if just running a `check`/`clippy` build.
   INTERESTING_FEATURES: malloc,block,verify,unstable-private
   UNSTABLE_FEATURES: unstable-autoreleasesafe,unstable-c-unwind
-  LATEST_MACOS_FEATURE: unstable-frameworks-macos-13
+  LATEST_MACOS_FEATURE: unstable-frameworks-macos-14
   # Required when we want to use a different runtime than the default `apple`
   OTHER_RUNTIME: --no-default-features --features=std
   # https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
@@ -102,7 +104,7 @@ jobs:
             --features=$INTERESTING_FEATURES
             --features=unstable-frameworks-macos-12
         - name: iOS 32bit
-          target: armv7-apple-ios
+          target: armv7s-apple-ios
           build-std: true
           args: >-
             -Zbuild-std
@@ -257,7 +259,7 @@ jobs:
     - lint
 
     env:
-      DEVELOPER_DIR: /Applications/Xcode_14.3.1.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_15.0.1.app/Contents/Developer
 
     steps:
     - uses: actions/checkout@v3
@@ -354,6 +356,9 @@ jobs:
       fail-fast: true
       matrix:
         include:
+        - name: Test macOS 13
+          os: macos-13
+          frameworks: macos-13
         - name: Test macOS 11
           os: macos-11
           frameworks: macos-11
@@ -362,8 +367,8 @@ jobs:
           frameworks: macos-11
         - name: Test macOS old SDK
           # Oldest macOS version we support
-          sdk: "10.7"
-          frameworks: macos-10-7
+          sdk: "10.12"
+          frameworks: macos-10-12
         - name: Test macOS nightly
           nightly: true
           frameworks: macos-11
@@ -379,11 +384,6 @@ jobs:
           frameworks: ios
         - name: Build iOS ARM64
           target: aarch64-apple-ios
-          frameworks: ios
-        - name: Build iOS ARMv7
-          target: armv7-apple-ios
-          nightly: true
-          build-std: true
           frameworks: ios
         - name: Build iOS ARMv7s
           target: armv7s-apple-ios
@@ -478,7 +478,7 @@ jobs:
     # TODO: Re-enable this on all of Foundation once we do some form of
     # availability checking.
     - name: Test static class and selectors
-      if: ${{ !contains(matrix.frameworks, 'ios') && !contains(matrix.frameworks, 'macos-10-7') }}
+      if: ${{ !contains(matrix.frameworks, 'ios') && !contains(matrix.frameworks, 'macos-10-12') }}
       run: >-
         cargo test $ARGS $PUBLIC_CRATES -ptests
         --features=unstable-static-sel,unstable-static-class,unstable-static-nsstring
@@ -545,6 +545,8 @@ jobs:
     - lint
 
     strategy:
+      # GNUStep tests are currently flaky, this makes it easier to see
+      fail-fast: false
       matrix:
         include:
         - name: Test GNUStep with libobjc2 v1.9

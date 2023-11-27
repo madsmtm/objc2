@@ -11,11 +11,11 @@ SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRA
 	popne	{r4, r7, pc}
 LBB0_1:
 	movw	r0, :lower16:(l_anon.[ID].0-(LPC0_0+8))
-	mov	r1, #56
 	movt	r0, :upper16:(l_anon.[ID].0-(LPC0_0+8))
-	mov	r2, r4
 LPC0_0:
 	add	r0, pc, r0
+	mov	r1, #56
+	mov	r2, r4
 	mov	lr, pc
 	b	SYM(core::option::expect_failed::GENERATED_ID, 0)
 
@@ -29,14 +29,14 @@ SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_
 	popne	{r7, pc}
 LBB1_1:
 	movw	r0, :lower16:(l_anon.[ID].1-(LPC1_0+8))
-	mov	r1, #54
 	movt	r0, :upper16:(l_anon.[ID].1-(LPC1_0+8))
-	movw	r2, :lower16:(l_anon.[ID].3-(LPC1_1+8))
-	movt	r2, :upper16:(l_anon.[ID].3-(LPC1_1+8))
 LPC1_0:
 	add	r0, pc, r0
+	movw	r2, :lower16:(l_anon.[ID].3-(LPC1_1+8))
+	movt	r2, :upper16:(l_anon.[ID].3-(LPC1_1+8))
 LPC1_1:
 	add	r2, pc, r2
+	mov	r1, #54
 	mov	lr, pc
 	b	SYM(core::option::expect_failed::GENERATED_ID, 0)
 
@@ -48,8 +48,8 @@ _error_bool:
 	add	r7, sp, #4
 	sub	sp, sp, #4
 	mov	r4, #0
-	mov	r3, sp
 	str	r4, [sp]
+	mov	r3, sp
 	bl	_objc_msgSend
 	cmp	r0, #0
 	beq	LBB2_2
@@ -72,8 +72,8 @@ _error_new:
 	add	r7, sp, #4
 	sub	sp, sp, #4
 	mov	r4, #0
-	mov	r2, sp
 	str	r4, [sp]
+	mov	r2, sp
 	bl	_objc_msgSend
 	mov	r1, r0
 	cmp	r0, #0
@@ -82,9 +82,9 @@ _error_new:
 	sub	sp, r7, #4
 	pop	{r4, r7, pc}
 LBB3_2:
+	ldr	r0, [sp]
 	movw	r1, :lower16:(l_anon.[ID].4-(LPC3_0+8))
 	movt	r1, :upper16:(l_anon.[ID].4-(LPC3_0+8))
-	ldr	r0, [sp]
 LPC3_0:
 	add	r1, pc, r1
 	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
@@ -102,8 +102,8 @@ _error_init:
 	add	r7, sp, #4
 	sub	sp, sp, #4
 	mov	r4, #0
-	mov	r2, sp
 	str	r4, [sp]
+	mov	r2, sp
 	bl	_objc_msgSend
 	mov	r1, r0
 	cmp	r0, #0
@@ -112,9 +112,9 @@ _error_init:
 	sub	sp, r7, #4
 	pop	{r4, r7, pc}
 LBB4_2:
+	ldr	r0, [sp]
 	movw	r1, :lower16:(l_anon.[ID].5-(LPC4_0+8))
 	movt	r1, :upper16:(l_anon.[ID].5-(LPC4_0+8))
-	ldr	r0, [sp]
 LPC4_0:
 	add	r1, pc, r1
 	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
@@ -132,8 +132,8 @@ _error_copy:
 	add	r7, sp, #4
 	sub	sp, sp, #4
 	mov	r4, #0
-	mov	r2, sp
 	str	r4, [sp]
+	mov	r2, sp
 	bl	_objc_msgSend
 	mov	r1, r0
 	cmp	r0, #0
@@ -142,9 +142,9 @@ _error_copy:
 	sub	sp, r7, #4
 	pop	{r4, r7, pc}
 LBB5_2:
+	ldr	r0, [sp]
 	movw	r1, :lower16:(l_anon.[ID].6-(LPC5_0+8))
 	movt	r1, :upper16:(l_anon.[ID].6-(LPC5_0+8))
-	ldr	r0, [sp]
 LPC5_0:
 	add	r1, pc, r1
 	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
@@ -162,8 +162,8 @@ _error_autoreleased:
 	add	r7, sp, #4
 	sub	sp, sp, #4
 	mov	r4, #0
-	mov	r2, sp
 	str	r4, [sp]
+	mov	r2, sp
 	bl	_objc_msgSend
 	@ InlineAsm Start
 	mov	r7, r7
@@ -176,9 +176,9 @@ _error_autoreleased:
 	sub	sp, r7, #4
 	pop	{r4, r7, pc}
 LBB6_2:
+	ldr	r0, [sp]
 	movw	r1, :lower16:(l_anon.[ID].7-(LPC6_0+8))
 	movt	r1, :upper16:(l_anon.[ID].7-(LPC6_0+8))
-	ldr	r0, [sp]
 LPC6_0:
 	add	r1, pc, r1
 	bl	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)

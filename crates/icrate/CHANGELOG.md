@@ -24,9 +24,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   be more efficient than the previous insertion methods.
 
 ### Changed
+* Updated SDK from Xcode 14.2 to 15.0.1.
+
+  View the release notes to learn more details:
+  - [14.3](https://developer.apple.com/documentation/xcode-release-notes/xcode-14_3-release-notes)
+  - [14.3.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-14_3_1-release-notes)
+  - [15.0](https://developer.apple.com/documentation/xcode-release-notes/xcode-15-release-notes)
+  - [15.0.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-15_0_1-release-notes)
+
+  Breaking changes are noted elsewhere in this changelog entry.
 * Moved the `ns_string!` macro to `icrate::Foundation::ns_string`. The old
   location in the crate root is deprecated.
-* Use SDK from Xcode 14.3.1 (previously Xcode 14.2).
 * **BREAKING**: The following two methods on
   `MTLAccelerationStructureCommandEncoder` now take a nullable scratch buffer:
   - `refitAccelerationStructure_descriptor_destination_scratchBuffer_scratchBufferOffset`
@@ -54,12 +62,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `NS[Mutable]Dictionary::from_vec`.
 * **BREAKING**: Renamed `NSMutableDictionary::insert` and
   `NSMutableSet::insert` to `insert_id`.
+- **BREAKING**: `CWWiFiClient::interfaceNames` has been renamed to `CWWiFiClient::interfaceNames_class`.
 
 ### Removed
 * **BREAKING**: Removed the `MainThreadMarker` argument from the closure
   passed to `MainThreadBound::get_on_main`.
 * **BREAKING**: Removed `Foundation::CopyHelper` since it is superseded by
   `objc2::mutability::CounterpartOrSelf`.
+* **BREAKING**: Removed the following APIs, as they are no longer available in macOS 14 / iOS 17:
+  - `NSFileProviderDomain::volumeUUID`
+  - `CLBeaconIdentityConstraint::UUID`
+  - `CLBeaconIdentityConstraint::major`
+  - `CLBeaconIdentityConstraint::minor`
+  - `ASIdentifierManager::clearAdvertisingIdentifier`
+* Removed private `MetricKit::_MXSignpostMetricsSnapshot` function.
 
 ### Fixed
 * **BREAKING**: Added `Eq + Hash` requirement on most `NSDictionary` and
@@ -74,6 +90,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed a workaround that made the `NSCopying` and
   `NSMutableCopying` protocols not act as regular protocols (many methods used
   `AnyObject` instead of the correct `ProtocolObject<dyn NSCopying>`).
+* Update the minimum deployment target, which adds a few missing protocol
+  implementations and methods for `NSPopover` and `NSLayoutAnchor`.
+- **BREAKING**: `CKSystemSharingUIObserver` and `CKLocationSortDescriptor` are no longer marked thread safe.
+- **BREAKING**: `NSColor::ignoresAlpha` now requires a main thread marker.
 
 
 ## icrate 0.0.4 - 2023-07-31

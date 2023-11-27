@@ -354,7 +354,7 @@ name = "metal"
 description = "Drawing a rotating triangle"
 
 [library.MetalFX]
-imports = ["Metal"]
+imports = ["Foundation", "Metal"]
 macos = "13.0"
 maccatalyst = "16.0"
 ios = "16.0"
@@ -734,6 +734,10 @@ skipped = true
 skipped = true
 [class.NSString.methods.initWithValidatedFormat_validFormatSpecifiers_locale_arguments_error]
 skipped = true
+[class.NSAttributedString.methods.initWithFormat_options_locale_context_arguments]
+skipped = true
+[class.NSMutableAttributedString.methods.initWithFormat_options_locale_context_arguments]
+skipped = true
 [fn.NSLogv]
 skipped = true
 
@@ -747,6 +751,14 @@ skipped = true
 [class.NSUserNotification.methods.setContentImage]
 skipped = true
 
+# Uses , which is only available in CoreAnimation
+[class.NSView.methods.displayLinkWithTarget_selector]
+skipped = true
+[class.NSWindow.methods.displayLinkWithTarget_selector]
+skipped = true
+[class.NSScreen.methods.displayLinkWithTarget_selector]
+skipped = true
+
 # Outlier that really should have been part of the original enum
 [enum.anonymous.constants.NSProprietaryStringEncoding]
 skipped = true
@@ -757,7 +769,9 @@ initWithContentsOfURL_error = { skipped = true }
 dictionaryWithContentsOfURL_error = { skipped = true }
 
 # Custom implementation for now
-[struct.NSRange]
+[struct._NSRange]
+skipped = true
+[typedef.NSRange]
 skipped = true
 [enum.NSComparisonResult]
 skipped = true
@@ -904,6 +918,12 @@ skipped = true
 [class.NSBezierPath.methods.appendBezierPathWithCGGlyph_inFont]
 skipped = true
 [class.NSBezierPath.methods.appendBezierPathWithCGGlyphs_count_inFont]
+skipped = true
+[class.NSBezierPath.methods.bezierPathWithCGPath]
+skipped = true
+[class.NSBezierPath.methods.CGPath]
+skipped = true
+[class.NSBezierPath.methods.setCGPath]
 skipped = true
 [class.NSBitmapImageRep.methods.initWithCGImage]
 skipped = true
@@ -1204,6 +1224,20 @@ skipped = true
 skipped = true
 [protocol.GCDevice.methods.setHandlerQueue]
 skipped = true
+# Needs `dispatch_queue_t`
+[class.CLLocationUpdater.methods.liveUpdaterWithQueue_handler]
+skipped = true
+[class.CLLocationUpdater.methods.liveUpdaterWithConfiguration_queue_handler]
+skipped = true
+[class.CLMonitorConfiguration.methods.queue]
+skipped = true
+[class.CLMonitorConfiguration.methods.configWithMonitorName_queue_eventHandler]
+skipped = true
+# Needs `dispatch_queue_t`
+[protocol.GCDevicePhysicalInput.methods.queue]
+skipped = true
+[protocol.GCDevicePhysicalInput.methods.setQueue]
+skipped = true
 # Needs `CFIndex` (fixed locally for now)
 [typedef.GCKeyCode]
 skipped = true
@@ -1220,10 +1254,32 @@ skipped = true
 skipped = true
 [class.SNClassificationResult.methods.timeRange]
 skipped = true
-# NEeds `CMTime`
+[class._SFSpeechAnalyzer.methods.initWithClientIdentifier_inputSequence_audioFormat_transcriberResultDelegate_endpointingResultDelegate_queue_transcriberOptions_commandRecognizerOptions_options_restrictedLogging_geoLMRegionID_contextualNamedEntities_didChangeVolatileRange]
+skipped = true
+[class._SFTranscriberResult.methods.range]
+skipped = true
+[class._SFTranscriberResult.methods.initWithRange_normalizedTranscriberMultisegmentResult_normalizedCommandRecognizerResult_contextualizedTranscriberMultisegmentResult_contextualizedCommandRecognizerResult]
+skipped = true
+[class._STTranscriberMultisegmentResult.methods.recognitionAudioRange]
+skipped = true
+[class._STTranscriberMultisegmentResult.methods.initWithSegments_transcriptions_earResultType_nBestChoices_recognitionAudioRange]
+skipped = true
+[class._SFEndpointingResult.methods.range]
+skipped = true
+[class._SFEndpointingResult.methods.initWithRange_wordCount_eosLikelihood_pauseCounts_silencePosterior]
+skipped = true
+# Needs `CMTime`
 [class.SNClassifySoundRequest.methods.setWindowDuration]
 skipped = true
 [class.SNClassifySoundRequest.methods.windowDuration]
+skipped = true
+[class._SFSpeechAnalyzer.methods.getNextBufferStartTimeWithCompletion]
+skipped = true
+[class._SFSpeechAnalyzer.methods.setDidChangeVolatileRange_completion]
+skipped = true
+[class._SFSpeechAnalyzer.methods.finalizeThrough_completion]
+skipped = true
+[class._SFSpeechAnalyzer.methods.finalizeAndFinishThrough_completion]
 skipped = true
 # Needs `SecAccessControlRef` from Security
 [class.LAContext.methods.evaluateAccessControl_operation_localizedReason_reply]
@@ -1248,6 +1304,11 @@ skipped = true
 [class.LAPublicKey.methods.encryptData_secKeyAlgorithm_completion]
 skipped = true
 [class.LAPublicKey.methods.verifyData_signature_secKeyAlgorithm_completion]
+skipped = true
+# Needs `SecKeyRef` from Security
+[class.ASAuthorizationProviderExtensionLoginConfiguration.methods.loginRequestEncryptionPublicKey]
+skipped = true
+[class.ASAuthorizationProviderExtensionLoginConfiguration.methods.setLoginRequestEncryptionPublicKey]
 skipped = true
 # Needs `CGImagePropertyOrientation` from `ImageIO`
 [class.PHLivePhotoEditingContext.methods.orientation]
@@ -1288,6 +1349,13 @@ skipped = true
 [protocol.ASAuthorizationWebBrowserExternallyAuthenticatableRequest.methods]
 authenticatedContext = { skipped = true }
 setAuthenticatedContext = { skipped = true }
+# Needs `pid_t`
+[class.MXMetaData.methods.pid]
+skipped = true
+# Needs `nw_proxy_config_t`
+[class.WKWebsiteDataStore.methods]
+proxyConfigurations = { skipped = true }
+setProxyConfigurations = { skipped = true }
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]
@@ -1320,16 +1388,6 @@ skipped = true
 skipped = true
 [enum.NSTextAlignment]
 skipped = true
-
-# Different definitions depending on deployment target
-[class.NSLayoutAnchor]
-definition-skipped = true
-[class.NSPopover]
-definition-skipped = true
-[class.NSPopover.methods]
-appearance = { skipped = true }
-setAppearance = { skipped = true }
-effectiveAppearance = { skipped = true }
 
 # I'm unsure of the ABI of the array this takes
 [fn.NSDrawBitmap]
@@ -1418,7 +1476,9 @@ skipped = true
 skipped = true
 
 # Uses unions internally
-[struct.MTLPackedFloat3]
+[struct._MTLPackedFloat3]
+skipped = true
+[typedef.MTLPackedFloat3]
 skipped = true
 [fn.MTLPackedFloat3Make]
 skipped = true
@@ -1555,6 +1615,10 @@ skipped = true
 [static.GCInputLeftPaddle]
 skipped = true
 [static.GCInputRightPaddle]
+skipped = true
+
+# Uses GCInputButtonName
+[fn.GCInputArcadeButtonName]
 skipped = true
 
 # tries to derive with `PartialEq` which fails because of `Bool` fields; manually define for now

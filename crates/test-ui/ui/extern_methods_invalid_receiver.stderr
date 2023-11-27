@@ -43,3 +43,8 @@ note: associated function defined here
   |     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
   |               ^^^^^^^^^^^^^^^
   = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: use the `?` operator to extract the `Option<Allocated<MyObject>>` value, propagating an `Option::None` value to the caller
+ --> $WORKSPACE/crates/objc2/src/macros/__rewrite_self_param.rs
+  |
+  |             ($this?)
+  |                   +

@@ -1188,21 +1188,26 @@ macro_rules! msg_send_bool {
 #[macro_export]
 macro_rules! msg_send_id {
     [$obj:expr, new $(,)?] => ({
-        let sel = $crate::sel!(new);
         let result;
-        result = <$crate::__macro_helpers::New as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
+        result = <$crate::__macro_helpers::New as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id(
+            $obj,
+            $crate::sel!(new),
+            (),
+        );
         result
     });
     [$obj:expr, alloc $(,)?] => ({
-        let sel = $crate::sel!(alloc);
         let result;
-        result = <$crate::__macro_helpers::Alloc as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
+        result = $crate::__macro_helpers::Alloc::send_message_id_alloc($obj);
         result
     });
     [$obj:expr, init $(,)?] => ({
-        let sel = $crate::sel!(init);
         let result;
-        result = <$crate::__macro_helpers::Init as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id($obj, sel, ());
+        result = <$crate::__macro_helpers::Init as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id(
+            $obj,
+            $crate::sel!(init),
+            (),
+        );
         result
     });
     [$obj:expr, $($selector_and_arguments:tt)+] => {

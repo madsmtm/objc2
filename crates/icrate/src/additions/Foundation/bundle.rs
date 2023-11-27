@@ -4,10 +4,6 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use crate::common::*;
 use crate::Foundation::{self, NSBundle};
 
-// SAFETY: Bundles are documented as thread-safe.
-unsafe impl Sync for NSBundle {}
-unsafe impl Send for NSBundle {}
-
 impl UnwindSafe for NSBundle {}
 impl RefUnwindSafe for NSBundle {}
 

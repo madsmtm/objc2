@@ -61,12 +61,6 @@ function bty
 end
 
 function blocklisted
-    # Added in 10.8
-    bfn objc_terminate
-
-    # Added in 10.10
-    bfn object_isClass
-
     # Removed in 10.11
     bfn objc_setFutureClass
 

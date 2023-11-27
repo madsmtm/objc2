@@ -6,13 +6,13 @@ error[E0080]: evaluation of `<std::option::Option<MyType> as objc2::Encode>::ENC
   |
   = note: this error originates in the macro `$crate::panic::panic_2021` which comes from the expansion of the macro `panic` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-note: erroneous constant used
+note: erroneous constant encountered
   --> ui/invalid_option_encode_impl.rs
    |
    |     assert_eq!(<Option<MyType>>::ENCODING, MyType::ENCODING);
    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-note: erroneous constant used
+note: erroneous constant encountered
   --> ui/invalid_option_encode_impl.rs
    |
    |     assert_eq!(<Option<MyType>>::ENCODING, MyType::ENCODING);

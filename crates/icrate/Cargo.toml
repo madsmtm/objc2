@@ -39,7 +39,6 @@ targets = [
     # iOS
     "aarch64-apple-ios",
     "x86_64-apple-ios",
-    # "armv7-apple-ios",
     # "i386-apple-ios",
     # GNUStep
     "x86_64-unknown-linux-gnu",
@@ -496,6 +495,7 @@ AppKit_NSMatrix = [
 AppKit_NSMediaLibraryBrowserController = []
 AppKit_NSMenu = []
 AppKit_NSMenuItem = []
+AppKit_NSMenuItemBadge = []
 AppKit_NSMenuItemCell = [
     "AppKit_NSButtonCell",
 ]
@@ -758,6 +758,9 @@ AppKit_NSTextFieldCell = [
 ]
 AppKit_NSTextFinder = []
 AppKit_NSTextInputContext = []
+AppKit_NSTextInsertionIndicator = [
+    "AppKit_NSView",
+]
 AppKit_NSTextLayoutFragment = []
 AppKit_NSTextLayoutManager = []
 AppKit_NSTextLineFragment = []
@@ -968,6 +971,7 @@ AppKit_all = [
     "AppKit_NSMediaLibraryBrowserController",
     "AppKit_NSMenu",
     "AppKit_NSMenuItem",
+    "AppKit_NSMenuItemBadge",
     "AppKit_NSMenuItemCell",
     "AppKit_NSMenuToolbarItem",
     "AppKit_NSMovie",
@@ -1090,6 +1094,7 @@ AppKit_all = [
     "AppKit_NSTextFieldCell",
     "AppKit_NSTextFinder",
     "AppKit_NSTextInputContext",
+    "AppKit_NSTextInsertionIndicator",
     "AppKit_NSTextLayoutFragment",
     "AppKit_NSTextLayoutManager",
     "AppKit_NSTextLineFragment",
@@ -1185,6 +1190,11 @@ AuthenticationServices_ASAuthorizationProviderExtensionAuthorizationResult = []
 AuthenticationServices_ASAuthorizationProviderExtensionKerberosMapping = []
 AuthenticationServices_ASAuthorizationProviderExtensionLoginConfiguration = []
 AuthenticationServices_ASAuthorizationProviderExtensionLoginManager = []
+AuthenticationServices_ASAuthorizationProviderExtensionUserLoginConfiguration = []
+AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobAssertionInput = []
+AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobAssertionOutput = []
+AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobRegistrationInput = []
+AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobRegistrationOutput = []
 AuthenticationServices_ASAuthorizationPublicKeyCredentialParameters = []
 AuthenticationServices_ASAuthorizationRequest = []
 AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialAssertion = []
@@ -1213,8 +1223,16 @@ AuthenticationServices_ASCredentialProviderViewController = [
     "AppKit_NSViewController",
 ]
 AuthenticationServices_ASCredentialServiceIdentifier = []
+AuthenticationServices_ASPasskeyAssertionCredential = []
+AuthenticationServices_ASPasskeyCredentialIdentity = []
+AuthenticationServices_ASPasskeyCredentialRequest = []
+AuthenticationServices_ASPasskeyCredentialRequestParameters = []
+AuthenticationServices_ASPasskeyRegistrationCredential = []
 AuthenticationServices_ASPasswordCredential = []
 AuthenticationServices_ASPasswordCredentialIdentity = []
+AuthenticationServices_ASPasswordCredentialRequest = []
+AuthenticationServices_ASPublicKeyCredentialClientData = []
+AuthenticationServices_ASSettingsHelper = []
 AuthenticationServices_ASWebAuthenticationSession = []
 AuthenticationServices_ASWebAuthenticationSessionRequest = []
 AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionManager = []
@@ -1246,6 +1264,11 @@ AuthenticationServices_all = [
     "AuthenticationServices_ASAuthorizationProviderExtensionKerberosMapping",
     "AuthenticationServices_ASAuthorizationProviderExtensionLoginConfiguration",
     "AuthenticationServices_ASAuthorizationProviderExtensionLoginManager",
+    "AuthenticationServices_ASAuthorizationProviderExtensionUserLoginConfiguration",
+    "AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobAssertionInput",
+    "AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobAssertionOutput",
+    "AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobRegistrationInput",
+    "AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobRegistrationOutput",
     "AuthenticationServices_ASAuthorizationPublicKeyCredentialParameters",
     "AuthenticationServices_ASAuthorizationRequest",
     "AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialAssertion",
@@ -1264,8 +1287,16 @@ AuthenticationServices_all = [
     "AuthenticationServices_ASCredentialProviderExtensionContext",
     "AuthenticationServices_ASCredentialProviderViewController",
     "AuthenticationServices_ASCredentialServiceIdentifier",
+    "AuthenticationServices_ASPasskeyAssertionCredential",
+    "AuthenticationServices_ASPasskeyCredentialIdentity",
+    "AuthenticationServices_ASPasskeyCredentialRequest",
+    "AuthenticationServices_ASPasskeyCredentialRequestParameters",
+    "AuthenticationServices_ASPasskeyRegistrationCredential",
     "AuthenticationServices_ASPasswordCredential",
     "AuthenticationServices_ASPasswordCredentialIdentity",
+    "AuthenticationServices_ASPasswordCredentialRequest",
+    "AuthenticationServices_ASPublicKeyCredentialClientData",
+    "AuthenticationServices_ASSettingsHelper",
     "AuthenticationServices_ASWebAuthenticationSession",
     "AuthenticationServices_ASWebAuthenticationSessionRequest",
     "AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionManager",
@@ -1343,6 +1374,12 @@ BackgroundTasks_BGAppRefreshTask = [
 BackgroundTasks_BGAppRefreshTaskRequest = [
     "BackgroundTasks_BGTaskRequest",
 ]
+BackgroundTasks_BGHealthResearchTask = [
+    "BackgroundTasks_BGProcessingTask",
+]
+BackgroundTasks_BGHealthResearchTaskRequest = [
+    "BackgroundTasks_BGProcessingTaskRequest",
+]
 BackgroundTasks_BGProcessingTask = [
     "BackgroundTasks_BGTask",
 ]
@@ -1356,6 +1393,8 @@ BackgroundTasks_all = [
     "BackgroundTasks",
     "BackgroundTasks_BGAppRefreshTask",
     "BackgroundTasks_BGAppRefreshTaskRequest",
+    "BackgroundTasks_BGHealthResearchTask",
+    "BackgroundTasks_BGHealthResearchTaskRequest",
     "BackgroundTasks_BGProcessingTask",
     "BackgroundTasks_BGProcessingTaskRequest",
     "BackgroundTasks_BGTask",
@@ -1591,6 +1630,66 @@ CloudKit_CKShare = [
 CloudKit_CKShareMetadata = []
 CloudKit_CKShareParticipant = []
 CloudKit_CKSubscription = []
+CloudKit_CKSyncEngine = []
+CloudKit_CKSyncEngineAccountChangeEvent = [
+    "CloudKit_CKSyncEngineEvent",
+]
+CloudKit_CKSyncEngineConfiguration = []
+CloudKit_CKSyncEngineDidFetchChangesEvent = [
+    "CloudKit_CKSyncEngineEvent",
+]
+CloudKit_CKSyncEngineDidFetchRecordZoneChangesEvent = [
+    "CloudKit_CKSyncEngineEvent",
+]
+CloudKit_CKSyncEngineDidSendChangesEvent = [
+    "CloudKit_CKSyncEngineEvent",
+]
+CloudKit_CKSyncEngineEvent = []
+CloudKit_CKSyncEngineFailedRecordSave = []
+CloudKit_CKSyncEngineFailedZoneSave = []
+CloudKit_CKSyncEngineFetchChangesContext = []
+CloudKit_CKSyncEngineFetchChangesOptions = []
+CloudKit_CKSyncEngineFetchChangesScope = []
+CloudKit_CKSyncEngineFetchedDatabaseChangesEvent = [
+    "CloudKit_CKSyncEngineEvent",
+]
+CloudKit_CKSyncEngineFetchedRecordDeletion = []
+CloudKit_CKSyncEngineFetchedRecordZoneChangesEvent = [
+    "CloudKit_CKSyncEngineEvent",
+]
+CloudKit_CKSyncEngineFetchedZoneDeletion = []
+CloudKit_CKSyncEnginePendingDatabaseChange = []
+CloudKit_CKSyncEnginePendingRecordZoneChange = []
+CloudKit_CKSyncEnginePendingZoneDelete = [
+    "CloudKit_CKSyncEnginePendingDatabaseChange",
+]
+CloudKit_CKSyncEnginePendingZoneSave = [
+    "CloudKit_CKSyncEnginePendingDatabaseChange",
+]
+CloudKit_CKSyncEngineRecordZoneChangeBatch = []
+CloudKit_CKSyncEngineSendChangesContext = []
+CloudKit_CKSyncEngineSendChangesOptions = []
+CloudKit_CKSyncEngineSendChangesScope = []
+CloudKit_CKSyncEngineSentDatabaseChangesEvent = [
+    "CloudKit_CKSyncEngineEvent",
+]
+CloudKit_CKSyncEngineSentRecordZoneChangesEvent = [
+    "CloudKit_CKSyncEngineEvent",
+]
+CloudKit_CKSyncEngineState = []
+CloudKit_CKSyncEngineStateSerialization = []
+CloudKit_CKSyncEngineStateUpdateEvent = [
+    "CloudKit_CKSyncEngineEvent",
+]
+CloudKit_CKSyncEngineWillFetchChangesEvent = [
+    "CloudKit_CKSyncEngineEvent",
+]
+CloudKit_CKSyncEngineWillFetchRecordZoneChangesEvent = [
+    "CloudKit_CKSyncEngineEvent",
+]
+CloudKit_CKSyncEngineWillSendChangesEvent = [
+    "CloudKit_CKSyncEngineEvent",
+]
 CloudKit_CKSystemSharingUIObserver = []
 CloudKit_CKUserIdentity = []
 CloudKit_CKUserIdentityLookupInfo = []
@@ -1647,6 +1746,38 @@ CloudKit_all = [
     "CloudKit_CKShareMetadata",
     "CloudKit_CKShareParticipant",
     "CloudKit_CKSubscription",
+    "CloudKit_CKSyncEngine",
+    "CloudKit_CKSyncEngineAccountChangeEvent",
+    "CloudKit_CKSyncEngineConfiguration",
+    "CloudKit_CKSyncEngineDidFetchChangesEvent",
+    "CloudKit_CKSyncEngineDidFetchRecordZoneChangesEvent",
+    "CloudKit_CKSyncEngineDidSendChangesEvent",
+    "CloudKit_CKSyncEngineEvent",
+    "CloudKit_CKSyncEngineFailedRecordSave",
+    "CloudKit_CKSyncEngineFailedZoneSave",
+    "CloudKit_CKSyncEngineFetchChangesContext",
+    "CloudKit_CKSyncEngineFetchChangesOptions",
+    "CloudKit_CKSyncEngineFetchChangesScope",
+    "CloudKit_CKSyncEngineFetchedDatabaseChangesEvent",
+    "CloudKit_CKSyncEngineFetchedRecordDeletion",
+    "CloudKit_CKSyncEngineFetchedRecordZoneChangesEvent",
+    "CloudKit_CKSyncEngineFetchedZoneDeletion",
+    "CloudKit_CKSyncEnginePendingDatabaseChange",
+    "CloudKit_CKSyncEnginePendingRecordZoneChange",
+    "CloudKit_CKSyncEnginePendingZoneDelete",
+    "CloudKit_CKSyncEnginePendingZoneSave",
+    "CloudKit_CKSyncEngineRecordZoneChangeBatch",
+    "CloudKit_CKSyncEngineSendChangesContext",
+    "CloudKit_CKSyncEngineSendChangesOptions",
+    "CloudKit_CKSyncEngineSendChangesScope",
+    "CloudKit_CKSyncEngineSentDatabaseChangesEvent",
+    "CloudKit_CKSyncEngineSentRecordZoneChangesEvent",
+    "CloudKit_CKSyncEngineState",
+    "CloudKit_CKSyncEngineStateSerialization",
+    "CloudKit_CKSyncEngineStateUpdateEvent",
+    "CloudKit_CKSyncEngineWillFetchChangesEvent",
+    "CloudKit_CKSyncEngineWillFetchRecordZoneChangesEvent",
+    "CloudKit_CKSyncEngineWillSendChangesEvent",
     "CloudKit_CKSystemSharingUIObserver",
     "CloudKit_CKUserIdentity",
     "CloudKit_CKUserIdentityLookupInfo",
@@ -1789,6 +1920,8 @@ CoreAnimation_CAKeyframeAnimation = [
 ]
 CoreAnimation_CALayer = []
 CoreAnimation_CAMediaTimingFunction = []
+CoreAnimation_CAMetalDisplayLink = []
+CoreAnimation_CAMetalDisplayLinkUpdate = []
 CoreAnimation_CAPropertyAnimation = [
     "CoreAnimation_CAAnimation",
 ]
@@ -1836,6 +1969,8 @@ CoreAnimation_all = [
     "CoreAnimation_CAKeyframeAnimation",
     "CoreAnimation_CALayer",
     "CoreAnimation_CAMediaTimingFunction",
+    "CoreAnimation_CAMetalDisplayLink",
+    "CoreAnimation_CAMetalDisplayLinkUpdate",
     "CoreAnimation_CAPropertyAnimation",
     "CoreAnimation_CARemoteLayerClient",
     "CoreAnimation_CARemoteLayerServer",
@@ -1886,8 +2021,14 @@ CoreData_NSBatchUpdateRequest = [
 CoreData_NSBatchUpdateResult = [
     "CoreData_NSPersistentStoreResult",
 ]
+CoreData_NSCompositeAttributeDescription = [
+    "CoreData_NSAttributeDescription",
+]
 CoreData_NSConstraintConflict = []
 CoreData_NSCoreDataCoreSpotlightDelegate = []
+CoreData_NSCustomMigrationStage = [
+    "CoreData_NSMigrationStage",
+]
 CoreData_NSDerivedAttributeDescription = [
     "CoreData_NSAttributeDescription",
 ]
@@ -1913,14 +2054,19 @@ CoreData_NSIncrementalStore = [
     "CoreData_NSPersistentStore",
 ]
 CoreData_NSIncrementalStoreNode = []
+CoreData_NSLightweightMigrationStage = [
+    "CoreData_NSMigrationStage",
+]
 CoreData_NSManagedObject = []
 CoreData_NSManagedObjectContext = []
 CoreData_NSManagedObjectID = []
 CoreData_NSManagedObjectModel = []
+CoreData_NSManagedObjectModelReference = []
 CoreData_NSMappingModel = []
 CoreData_NSMergeConflict = []
 CoreData_NSMergePolicy = []
 CoreData_NSMigrationManager = []
+CoreData_NSMigrationStage = []
 CoreData_NSPersistentCloudKitContainer = [
     "CoreData_NSPersistentContainer",
 ]
@@ -1959,6 +2105,7 @@ CoreData_NSRelationshipDescription = [
 CoreData_NSSaveChangesRequest = [
     "CoreData_NSPersistentStoreRequest",
 ]
+CoreData_NSStagedMigrationManager = []
 CoreData_all = [
     "CoreData",
     "CoreData_NSAsynchronousFetchRequest",
@@ -1972,8 +2119,10 @@ CoreData_all = [
     "CoreData_NSBatchInsertResult",
     "CoreData_NSBatchUpdateRequest",
     "CoreData_NSBatchUpdateResult",
+    "CoreData_NSCompositeAttributeDescription",
     "CoreData_NSConstraintConflict",
     "CoreData_NSCoreDataCoreSpotlightDelegate",
+    "CoreData_NSCustomMigrationStage",
     "CoreData_NSDerivedAttributeDescription",
     "CoreData_NSEntityDescription",
     "CoreData_NSEntityMapping",
@@ -1987,14 +2136,17 @@ CoreData_all = [
     "CoreData_NSFetchedResultsController",
     "CoreData_NSIncrementalStore",
     "CoreData_NSIncrementalStoreNode",
+    "CoreData_NSLightweightMigrationStage",
     "CoreData_NSManagedObject",
     "CoreData_NSManagedObjectContext",
     "CoreData_NSManagedObjectID",
     "CoreData_NSManagedObjectModel",
+    "CoreData_NSManagedObjectModelReference",
     "CoreData_NSMappingModel",
     "CoreData_NSMergeConflict",
     "CoreData_NSMergePolicy",
     "CoreData_NSMigrationManager",
+    "CoreData_NSMigrationStage",
     "CoreData_NSPersistentCloudKitContainer",
     "CoreData_NSPersistentCloudKitContainerEvent",
     "CoreData_NSPersistentCloudKitContainerEventRequest",
@@ -2017,43 +2169,70 @@ CoreData_all = [
     "CoreData_NSQueryGenerationToken",
     "CoreData_NSRelationshipDescription",
     "CoreData_NSSaveChangesRequest",
+    "CoreData_NSStagedMigrationManager",
 ]
 CoreLocation = [
     "Contacts",
     "Foundation",
     "CoreLocation_CLPlacemark",
 ]
+CoreLocation_CLBackgroundActivitySession = []
 CoreLocation_CLBeacon = []
-CoreLocation_CLBeaconIdentityConstraint = []
+CoreLocation_CLBeaconIdentityCondition = [
+    "CoreLocation_CLCondition",
+]
+CoreLocation_CLBeaconIdentityConstraint = [
+    "CoreLocation_CLBeaconIdentityCondition",
+]
 CoreLocation_CLBeaconRegion = [
     "CoreLocation_CLRegion",
+]
+CoreLocation_CLCircularGeographicCondition = [
+    "CoreLocation_CLCondition",
 ]
 CoreLocation_CLCircularRegion = [
     "CoreLocation_CLRegion",
 ]
+CoreLocation_CLCondition = []
 CoreLocation_CLFloor = []
 CoreLocation_CLGeocoder = []
 CoreLocation_CLHeading = []
 CoreLocation_CLLocation = []
 CoreLocation_CLLocationManager = []
 CoreLocation_CLLocationSourceInformation = []
+CoreLocation_CLLocationUpdater = []
+CoreLocation_CLMonitor = []
+CoreLocation_CLMonitorConfiguration = []
+CoreLocation_CLMonitoringEvent = []
+CoreLocation_CLMonitoringRecord = []
 CoreLocation_CLPlacemark = []
 CoreLocation_CLRegion = []
+CoreLocation_CLUpdate = []
 CoreLocation_CLVisit = []
 CoreLocation_all = [
     "CoreLocation",
+    "CoreLocation_CLBackgroundActivitySession",
     "CoreLocation_CLBeacon",
+    "CoreLocation_CLBeaconIdentityCondition",
     "CoreLocation_CLBeaconIdentityConstraint",
     "CoreLocation_CLBeaconRegion",
+    "CoreLocation_CLCircularGeographicCondition",
     "CoreLocation_CLCircularRegion",
+    "CoreLocation_CLCondition",
     "CoreLocation_CLFloor",
     "CoreLocation_CLGeocoder",
     "CoreLocation_CLHeading",
     "CoreLocation_CLLocation",
     "CoreLocation_CLLocationManager",
     "CoreLocation_CLLocationSourceInformation",
+    "CoreLocation_CLLocationUpdater",
+    "CoreLocation_CLMonitor",
+    "CoreLocation_CLMonitorConfiguration",
+    "CoreLocation_CLMonitoringEvent",
+    "CoreLocation_CLMonitoringRecord",
     "CoreLocation_CLPlacemark",
     "CoreLocation_CLRegion",
+    "CoreLocation_CLUpdate",
     "CoreLocation_CLVisit",
 ]
 CoreWLAN = [
@@ -2478,6 +2657,7 @@ Foundation_NSMiddleSpecifier = [
 ]
 Foundation_NSMorphology = []
 Foundation_NSMorphologyCustomPronoun = []
+Foundation_NSMorphologyPronoun = []
 Foundation_NSMoveCommand = [
     "Foundation_NSScriptCommand",
 ]
@@ -2616,6 +2796,7 @@ Foundation_NSSpellServer = []
 Foundation_NSStream = []
 Foundation_NSString = []
 Foundation_NSTask = []
+Foundation_NSTermOfAddress = []
 Foundation_NSTextCheckingResult = []
 Foundation_NSThread = []
 Foundation_NSTimeZone = []
@@ -2889,6 +3070,7 @@ Foundation_all = [
     "Foundation_NSMiddleSpecifier",
     "Foundation_NSMorphology",
     "Foundation_NSMorphologyCustomPronoun",
+    "Foundation_NSMorphologyPronoun",
     "Foundation_NSMoveCommand",
     "Foundation_NSMutableArray",
     "Foundation_NSMutableAttributedString",
@@ -2963,6 +3145,7 @@ Foundation_all = [
     "Foundation_NSStream",
     "Foundation_NSString",
     "Foundation_NSTask",
+    "Foundation_NSTermOfAddress",
     "Foundation_NSTextCheckingResult",
     "Foundation_NSThread",
     "Foundation_NSTimeZone",
@@ -3073,6 +3256,10 @@ GameController_GCControllerDirectionPad = [
     "GameController_GCControllerElement",
 ]
 GameController_GCControllerElement = []
+GameController_GCControllerInputState = []
+GameController_GCControllerLiveInput = [
+    "GameController_GCControllerInputState",
+]
 GameController_GCControllerTouchpad = [
     "GameController_GCControllerElement",
 ]
@@ -3144,6 +3331,8 @@ GameController_all = [
     "GameController_GCControllerButtonInput",
     "GameController_GCControllerDirectionPad",
     "GameController_GCControllerElement",
+    "GameController_GCControllerInputState",
+    "GameController_GCControllerLiveInput",
     "GameController_GCControllerTouchpad",
     "GameController_GCDeviceBattery",
     "GameController_GCDeviceCursor",
@@ -4086,6 +4275,7 @@ Metal = [
     "Foundation",
 ]
 MetalFX = [
+    "Foundation",
     "Metal",
 ]
 MetalFX_MTLFXSpatialScalerDescriptor = []
@@ -4122,9 +4312,15 @@ MetalKit_all = [
 Metal_MTLAccelerationStructureBoundingBoxGeometryDescriptor = [
     "Metal_MTLAccelerationStructureGeometryDescriptor",
 ]
+Metal_MTLAccelerationStructureCurveGeometryDescriptor = [
+    "Metal_MTLAccelerationStructureGeometryDescriptor",
+]
 Metal_MTLAccelerationStructureDescriptor = []
 Metal_MTLAccelerationStructureGeometryDescriptor = []
 Metal_MTLAccelerationStructureMotionBoundingBoxGeometryDescriptor = [
+    "Metal_MTLAccelerationStructureGeometryDescriptor",
+]
+Metal_MTLAccelerationStructureMotionCurveGeometryDescriptor = [
     "Metal_MTLAccelerationStructureGeometryDescriptor",
 ]
 Metal_MTLAccelerationStructureMotionTriangleGeometryDescriptor = [
@@ -4136,6 +4332,7 @@ Metal_MTLAccelerationStructurePassSampleBufferAttachmentDescriptorArray = []
 Metal_MTLAccelerationStructureTriangleGeometryDescriptor = [
     "Metal_MTLAccelerationStructureGeometryDescriptor",
 ]
+Metal_MTLArchitecture = []
 Metal_MTLArgument = []
 Metal_MTLArgumentDescriptor = []
 Metal_MTLArrayType = [
@@ -4171,6 +4368,9 @@ Metal_MTLFunctionStitchingInputNode = []
 Metal_MTLHeapDescriptor = []
 Metal_MTLIOCommandQueueDescriptor = []
 Metal_MTLIndirectCommandBufferDescriptor = []
+Metal_MTLIndirectInstanceAccelerationStructureDescriptor = [
+    "Metal_MTLAccelerationStructureDescriptor",
+]
 Metal_MTLInstanceAccelerationStructureDescriptor = [
     "Metal_MTLAccelerationStructureDescriptor",
 ]
@@ -4244,14 +4444,17 @@ Metal_MTLVisibleFunctionTableDescriptor = []
 Metal_all = [
     "Metal",
     "Metal_MTLAccelerationStructureBoundingBoxGeometryDescriptor",
+    "Metal_MTLAccelerationStructureCurveGeometryDescriptor",
     "Metal_MTLAccelerationStructureDescriptor",
     "Metal_MTLAccelerationStructureGeometryDescriptor",
     "Metal_MTLAccelerationStructureMotionBoundingBoxGeometryDescriptor",
+    "Metal_MTLAccelerationStructureMotionCurveGeometryDescriptor",
     "Metal_MTLAccelerationStructureMotionTriangleGeometryDescriptor",
     "Metal_MTLAccelerationStructurePassDescriptor",
     "Metal_MTLAccelerationStructurePassSampleBufferAttachmentDescriptor",
     "Metal_MTLAccelerationStructurePassSampleBufferAttachmentDescriptorArray",
     "Metal_MTLAccelerationStructureTriangleGeometryDescriptor",
+    "Metal_MTLArchitecture",
     "Metal_MTLArgument",
     "Metal_MTLArgumentDescriptor",
     "Metal_MTLArrayType",
@@ -4285,6 +4488,7 @@ Metal_all = [
     "Metal_MTLHeapDescriptor",
     "Metal_MTLIOCommandQueueDescriptor",
     "Metal_MTLIndirectCommandBufferDescriptor",
+    "Metal_MTLIndirectInstanceAccelerationStructureDescriptor",
     "Metal_MTLInstanceAccelerationStructureDescriptor",
     "Metal_MTLIntersectionFunctionDescriptor",
     "Metal_MTLIntersectionFunctionTableDescriptor",
@@ -4374,6 +4578,7 @@ MetricKit_MXCellularConditionMetric = [
 MetricKit_MXCrashDiagnostic = [
     "MetricKit_MXDiagnostic",
 ]
+MetricKit_MXCrashDiagnosticObjectiveCExceptionReason = []
 MetricKit_MXDiagnostic = []
 MetricKit_MXDiagnosticPayload = []
 MetricKit_MXDiskIOMetric = [
@@ -4411,6 +4616,7 @@ MetricKit_MXSignpostIntervalData = []
 MetricKit_MXSignpostMetric = [
     "MetricKit_MXMetric",
 ]
+MetricKit_MXSignpostRecord = []
 MetricKit_MXUnitAveragePixelLuminance = [
     "Foundation_NSDimension",
 ]
@@ -4432,6 +4638,7 @@ MetricKit_all = [
     "MetricKit_MXCallStackTree",
     "MetricKit_MXCellularConditionMetric",
     "MetricKit_MXCrashDiagnostic",
+    "MetricKit_MXCrashDiagnosticObjectiveCExceptionReason",
     "MetricKit_MXDiagnostic",
     "MetricKit_MXDiagnosticPayload",
     "MetricKit_MXDiskIOMetric",
@@ -4451,6 +4658,7 @@ MetricKit_all = [
     "MetricKit_MXNetworkTransferMetric",
     "MetricKit_MXSignpostIntervalData",
     "MetricKit_MXSignpostMetric",
+    "MetricKit_MXSignpostRecord",
     "MetricKit_MXUnitAveragePixelLuminance",
     "MetricKit_MXUnitSignalBars",
 ]
@@ -4614,6 +4822,8 @@ Speech_SFAcousticFeature = []
 Speech_SFSpeechAudioBufferRecognitionRequest = [
     "Speech_SFSpeechRecognitionRequest",
 ]
+Speech_SFSpeechLanguageModel = []
+Speech_SFSpeechLanguageModelConfiguration = []
 Speech_SFSpeechRecognitionMetadata = []
 Speech_SFSpeechRecognitionRequest = []
 Speech_SFSpeechRecognitionResult = []
@@ -4625,10 +4835,31 @@ Speech_SFSpeechURLRecognitionRequest = [
 Speech_SFTranscription = []
 Speech_SFTranscriptionSegment = []
 Speech_SFVoiceAnalytics = []
+Speech__SFAnalysisContext = []
+Speech__SFAnalyzerTranscriptionSegment = []
+Speech__SFCommandRecognizerArgument = []
+Speech__SFCommandRecognizerInterpretation = []
+Speech__SFContextualNamedEntity = []
+Speech__SFEndpointingResult = []
+Speech__SFInputSequencer = []
+Speech__SFModelDownloadRequest = []
+Speech__SFSpeechAnalyzer = []
+Speech__SFSpeechAnalyzerCommandRecognizerOptions = []
+Speech__SFSpeechAnalyzerOptions = []
+Speech__SFSpeechAnalyzerOptionsLoggingInfo = []
+Speech__SFSpeechAnalyzerOptionsPowerContext = []
+Speech__SFSpeechAnalyzerTranscriberOptions = []
+Speech__SFToken = []
+Speech__SFTranscriberModelOptions = []
+Speech__SFTranscriberResult = []
+Speech__STCommandRecognizerResult = []
+Speech__STTranscriberMultisegmentResult = []
 Speech_all = [
     "Speech",
     "Speech_SFAcousticFeature",
     "Speech_SFSpeechAudioBufferRecognitionRequest",
+    "Speech_SFSpeechLanguageModel",
+    "Speech_SFSpeechLanguageModelConfiguration",
     "Speech_SFSpeechRecognitionMetadata",
     "Speech_SFSpeechRecognitionRequest",
     "Speech_SFSpeechRecognitionResult",
@@ -4638,6 +4869,25 @@ Speech_all = [
     "Speech_SFTranscription",
     "Speech_SFTranscriptionSegment",
     "Speech_SFVoiceAnalytics",
+    "Speech__SFAnalysisContext",
+    "Speech__SFAnalyzerTranscriptionSegment",
+    "Speech__SFCommandRecognizerArgument",
+    "Speech__SFCommandRecognizerInterpretation",
+    "Speech__SFContextualNamedEntity",
+    "Speech__SFEndpointingResult",
+    "Speech__SFInputSequencer",
+    "Speech__SFModelDownloadRequest",
+    "Speech__SFSpeechAnalyzer",
+    "Speech__SFSpeechAnalyzerCommandRecognizerOptions",
+    "Speech__SFSpeechAnalyzerOptions",
+    "Speech__SFSpeechAnalyzerOptionsLoggingInfo",
+    "Speech__SFSpeechAnalyzerOptionsPowerContext",
+    "Speech__SFSpeechAnalyzerTranscriberOptions",
+    "Speech__SFToken",
+    "Speech__SFTranscriberModelOptions",
+    "Speech__SFTranscriberResult",
+    "Speech__STCommandRecognizerResult",
+    "Speech__STTranscriberMultisegmentResult",
 ]
 StoreKit = [
     "AppKit",
@@ -5330,47 +5580,60 @@ unstable-frameworks-gnustep = [
     "AppKit_all",
     "Foundation_all",
 ]
-unstable-frameworks-macos-10-13 = [
+unstable-frameworks-macos-10-12 = [
+    "AppKit_all",
+    "Automator_all",
     "CloudKit_all",
     "Contacts_all",
+    "CoreAnimation_all",
+    "CoreData_all",
     "CoreLocation_all",
+    "CoreWLAN_all",
     "EventKit_all",
-    "ExternalAccessory_all",
+    "ExceptionHandling_all",
+    "Foundation_all",
     "GameController_all",
     "GameKit_all",
+    "InputMethodKit_all",
     "LocalAuthentication_all",
     "MapKit_all",
     "MediaPlayer_all",
     "MetalKit_all",
     "Metal_all",
-    "PhotoKit_all",
-    "unstable-example-delegate",
-    "unstable-example-metal",
-    "unstable-example-nspasteboard",
-    "unstable-example-speech_synthesis",
-    "unstable-frameworks-macos-10-7",
-]
-unstable-frameworks-macos-10-7 = [
-    "AppKit_all",
-    "Automator_all",
-    "CoreAnimation_all",
-    "CoreData_all",
-    "CoreWLAN_all",
-    "ExceptionHandling_all",
-    "Foundation_all",
-    "InputMethodKit_all",
     "OSAKit_all",
+    "PhotoKit_all",
     "StoreKit_all",
     "WebKit_all",
     "unstable-example-basic_usage",
 ]
+unstable-frameworks-macos-10-13 = [
+    "ExternalAccessory_all",
+    "unstable-example-delegate",
+    "unstable-example-metal",
+    "unstable-example-nspasteboard",
+    "unstable-example-speech_synthesis",
+    "unstable-frameworks-macos-10-12",
+]
 unstable-frameworks-macos-11 = [
     "Accessibility_all",
+    "AdSupport_all",
+    "AuthenticationServices_all",
+    "AutomaticAssessmentConfiguration_all",
+    "BusinessChat_all",
     "ClassKit_all",
+    "DeviceCheck_all",
+    "FileProviderUI_all",
+    "FileProvider_all",
+    "IdentityLookup_all",
+    "LinkPresentation_all",
+    "SoundAnalysis_all",
+    "Speech_all",
     "UniformTypeIdentifiers_all",
+    "UserNotifications_all",
     "unstable-frameworks-macos-10-13",
 ]
 unstable-frameworks-macos-12 = [
+    "AdServices_all",
     "DataDetection_all",
     "LocalAuthenticationEmbeddedUI_all",
     "MailKit_all",
@@ -5378,24 +5641,14 @@ unstable-frameworks-macos-12 = [
     "unstable-frameworks-macos-11",
 ]
 unstable-frameworks-macos-13 = [
-    "AdServices_all",
-    "AdSupport_all",
-    "AuthenticationServices_all",
-    "AutomaticAssessmentConfiguration_all",
     "BackgroundAssets_all",
-    "BusinessChat_all",
     "CallKit_all",
-    "DeviceCheck_all",
     "ExtensionKit_all",
-    "FileProviderUI_all",
-    "FileProvider_all",
     "HealthKit_all",
-    "IdentityLookup_all",
-    "LinkPresentation_all",
     "MetalFX_all",
-    "SoundAnalysis_all",
-    "Speech_all",
-    "UserNotifications_all",
     "unstable-example-browser",
     "unstable-frameworks-macos-12",
+]
+unstable-frameworks-macos-14 = [
+    "unstable-frameworks-macos-13",
 ]

@@ -114,4 +114,4 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   = note: required for `CustomObject` to implement `IsAllowedMutable`
   = note: required for `&mut CustomObject` to implement `MessageReceiver`
   = note: required for `RetainSemantics<5>` to implement `MessageRecieveId<&mut CustomObject, Id<CustomObject>>`
-  = note: this error originates in the macro `$crate::__rewrite_self_param_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

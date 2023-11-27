@@ -20,10 +20,7 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
  --> ui/msg_send_not_allowed_mutable.rs
   |
   |     let _: Id<NSThread> = unsafe { msg_send_id![obj, test] };
-  |                                    -------------^^^-------
-  |                                    |            |
-  |                                    |            the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
-  |                                    required by a bound introduced by this call
+  |                                    ^^^^^^^^^^^^^^^^^^^^^^^ the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
   |
   = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
             Root
@@ -34,3 +31,4 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   = note: required for `&mut NSThread` to implement `MessageReceiver`
   = note: required for `&mut NSThread` to implement `MsgSend`
   = note: required for `RetainSemantics<5>` to implement `MsgSendId<&mut NSThread, Option<Id<_>>>`
+  = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)

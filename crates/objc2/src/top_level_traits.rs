@@ -289,7 +289,7 @@ pub unsafe trait ClassType: Message {
     #[inline]
     fn alloc() -> Allocated<Self>
     where
-        Self: IsAllocableAnyThread,
+        Self: IsAllocableAnyThread + Sized,
     {
         // SAFETY:
         // - It is always safe to (attempt to) allocate an object.

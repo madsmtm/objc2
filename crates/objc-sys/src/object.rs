@@ -4,6 +4,8 @@ use std::os::raw::c_char;
 
 #[cfg(any(doc, not(objfw)))]
 use crate::objc_ivar;
+#[cfg(any(doc, apple))]
+use crate::BOOL;
 use crate::{objc_class, OpaqueData};
 
 /// An opaque type that represents an object / an instance of a class.
@@ -23,6 +25,8 @@ extern_c! {
     pub fn object_getClass(obj: *const objc_object) -> *const objc_class;
     pub fn object_getClassName(obj: *const objc_object) -> *const c_char;
     pub fn object_setClass(obj: *mut objc_object, cls: *const objc_class) -> *const objc_class;
+    #[cfg(any(doc, apple))]
+    pub fn object_isClass(obj: *const objc_object) -> BOOL;
 
     #[cfg(any(doc, not(objfw)))]
     pub fn object_getIndexedIvars(obj: *const objc_object) -> *const c_void;
@@ -90,6 +94,8 @@ extern_c! {
     //     atomic: BOOL,
     //     shouldCopy: i8,
     // );
+    // + the atomic versions
+
     // This is generated in setters to struct properties.
     // pub fn objc_copyStruct(
     //     dest: *mut c_void,

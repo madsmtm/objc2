@@ -4,10 +4,7 @@
 	.p2align	2
 	.code	32
 _simple:
-	push	{r7, lr}
-	mov	r7, sp
-	bl	_objc_autoreleaseReturnValue
-	pop	{r7, pc}
+	b	_objc_autoreleaseReturnValue
 
 	.globl	_with_body
 	.p2align	2
@@ -16,7 +13,7 @@ _with_body:
 	push	{r7, lr}
 	mov	r7, sp
 	bl	_objc_msgSend
-	bl	_objc_autoreleaseReturnValue
-	pop	{r7, pc}
+	pop	{r7, lr}
+	b	_objc_autoreleaseReturnValue
 
 .subsections_via_symbols

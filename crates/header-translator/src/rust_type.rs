@@ -574,6 +574,14 @@ impl Inner {
 
         let _span = debug_span!("ty3", ?ty).entered();
 
+        let elaborated_ty = ty;
+
+        if let Some(true) = ty.is_elaborated() {
+            ty = ty.get_elaborated_type().expect("elaborated");
+        }
+
+        let _span = debug_span!("ty4", ?ty).entered();
+
         let get_is_const = |new: bool| {
             if new {
                 if !attributed_ty.is_const_qualified() || ty.is_const_qualified() {
@@ -609,6 +617,26 @@ impl Inner {
             ULongLong => Self::ULongLong,
             Float => Self::Float,
             Double => Self::Double,
+            Record => {
+                let declaration = ty.get_declaration().expect("record declaration");
+                let name = ty
+                    .get_display_name()
+                    .trim_start_matches("struct ")
+                    .to_string();
+                Self::Struct {
+                    id: ItemIdentifier::with_name(name, &declaration, context),
+                }
+            }
+            Enum => {
+                let declaration = ty.get_declaration().expect("enum declaration");
+                let name = ty
+                    .get_display_name()
+                    .trim_start_matches("enum ")
+                    .to_string();
+                Self::Enum {
+                    id: ItemIdentifier::with_name(name, &declaration, context),
+                }
+            }
             ObjCId => {
                 let mut parser = AttributeParser::new(&attributed_name, "id");
 
@@ -785,13 +813,27 @@ impl Inner {
                 drop(parser);
 
                 let is_const = if is_const1 || is_const2 {
-                    if !attributed_ty.is_const_qualified() && !ty.is_const_qualified() {
-                        warn!(?attributed_ty, ?ty, ?typedef_name, ?is_const1, ?is_const2, attr = ?attributed_ty.is_const_qualified(), ty = ?ty.is_const_qualified(), "unnecessarily stripped const");
+                    if !attributed_ty.is_const_qualified()
+                        && !elaborated_ty.is_const_qualified()
+                        && !ty.is_const_qualified()
+                    {
+                        warn!(
+                            ?attributed_ty,
+                            ?elaborated_ty,
+                            ?ty,
+                            ?typedef_name,
+                            ?is_const1,
+                            ?is_const2,
+                            attr = ?attributed_ty.is_const_qualified(),
+                            elaborated = ?elaborated_ty.is_const_qualified(),
+                            ty = ?ty.is_const_qualified(),
+                            "typedef unnecessarily stripped const",
+                        );
                     }
                     true
                 } else {
                     if ty.is_const_qualified() {
-                        warn!("type was const but that could not be stripped");
+                        warn!("typedef was const but that could not be stripped");
                     }
                     false
                 };
@@ -887,32 +929,6 @@ impl Inner {
                             }
                         }
                     }
-                }
-            }
-            Elaborated => {
-                let ty = ty.get_elaborated_type().expect("elaborated");
-                match ty.get_kind() {
-                    TypeKind::Record => {
-                        let declaration = ty.get_declaration().expect("record declaration");
-                        let name = ty
-                            .get_display_name()
-                            .trim_start_matches("struct ")
-                            .to_string();
-                        Self::Struct {
-                            id: ItemIdentifier::with_name(name, &declaration, context),
-                        }
-                    }
-                    TypeKind::Enum => {
-                        let declaration = ty.get_declaration().expect("enum declaration");
-                        let name = ty
-                            .get_display_name()
-                            .trim_start_matches("enum ")
-                            .to_string();
-                        Self::Enum {
-                            id: ItemIdentifier::with_name(name, &declaration, context),
-                        }
-                    }
-                    _ => panic!("unknown elaborated type {ty:?}"),
                 }
             }
             FunctionPrototype => {
@@ -1368,12 +1384,10 @@ impl Ty {
         match &mut ty {
             // Handled by Stmt::EnumDecl
             Inner::Enum { .. } => None,
-            // Handled above and in Stmt::StructDecl
+            // No need to output a typedef if it'll just point to the same thing.
+            //
+            // TODO: We're discarding a slight bit of availability data this way.
             Inner::Struct { id } if id.name == typedef_name => None,
-            Inner::Struct { id } if id.name != typedef_name => {
-                warn!(?id, "invalid struct in typedef");
-                None
-            }
             // Opaque structs
             Inner::Pointer { pointee, .. } if matches!(&**pointee, Inner::Struct { .. }) => {
                 **pointee = Inner::Void;
@@ -1670,7 +1684,8 @@ impl fmt::Display for Ty {
                         }
                     }
                     Inner::C99Bool => {
-                        panic!("C99's bool as Objective-C method return is unsupported")
+                        warn!("C99's bool as Objective-C method return is ill supported");
+                        write!(f, "bool")
                     }
                     Inner::ObjcBool => write!(f, "bool"),
                     ty => write!(f, "{ty}"),

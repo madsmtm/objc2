@@ -5,6 +5,7 @@ error: use of deprecated macro `msg_send_bool`: use a normal msg_send! instead, 
   |              ^^^^^^^^^^^^^
   |
   = note: `-D deprecated` implied by `-D warnings`
+  = help: to override `-D warnings` add `#[allow(deprecated)]`
 
 error: use of deprecated macro `objc2::msg_send_bool`: use a normal msg_send! instead, it will perform the conversion for you
  --> ui/msg_send_missing_comma.rs

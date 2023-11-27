@@ -15,37 +15,30 @@ _handle_alloc_init:
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
+	bl	_objc_alloc
+	mov	x19, x0
 Lloh2:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
 Lloh3:
 	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
 Lloh4:
-	ldr	x19, [x8]
-Lloh5:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_alloc@GOTPAGE
-Lloh6:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_alloc@GOTPAGEOFF]
-Lloh7:
-	ldr	x1, [x8]
-	bl	_objc_msgSend
-	mov	x20, x0
-	mov	x1, x19
+	ldr	x20, [x8]
+	mov	x1, x20
 	bl	_objc_msgSend
 	cbz	x0, LBB1_2
 	ldp	x29, x30, [sp, #16]
 	ldp	x20, x19, [sp], #32
 	ret
 LBB1_2:
-Lloh8:
+Lloh5:
 	adrp	x2, l_anon.[ID].1@PAGE
-Lloh9:
+Lloh6:
 	add	x2, x2, l_anon.[ID].1@PAGEOFF
-	mov	x0, x20
-	mov	x1, x19
+	mov	x0, x19
+	mov	x1, x20
 	bl	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
-	.loh AdrpLdrGotLdr	Lloh5, Lloh6, Lloh7
 	.loh AdrpLdrGotLdr	Lloh2, Lloh3, Lloh4
-	.loh AdrpAdd	Lloh8, Lloh9
+	.loh AdrpAdd	Lloh5, Lloh6
 
 	.globl	_use_generic
 	.p2align	2
@@ -54,32 +47,32 @@ _use_generic:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 	mov	x19, x0
-Lloh10:
+Lloh7:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_1f1c7bd8029c3138@PAGE
-Lloh11:
+Lloh8:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_1f1c7bd8029c3138@PAGEOFF]
 	adrp	x20, L_OBJC_SELECTOR_REFERENCES_5ace898e385eba05@PAGE
 	ldr	x2, [x20, L_OBJC_SELECTOR_REFERENCES_5ace898e385eba05@PAGEOFF]
 	bl	_objc_msgSend
-Lloh12:
+Lloh9:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_eb5b4d2de37744da@PAGE
-Lloh13:
+Lloh10:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_eb5b4d2de37744da@PAGEOFF]
 	ldr	x2, [x20, L_OBJC_SELECTOR_REFERENCES_5ace898e385eba05@PAGEOFF]
 	mov	x0, x19
 	bl	_objc_msgSend
-Lloh14:
+Lloh11:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_c76827c00227cd8a@PAGE
-Lloh15:
+Lloh12:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_c76827c00227cd8a@PAGEOFF]
 	ldr	x2, [x20, L_OBJC_SELECTOR_REFERENCES_5ace898e385eba05@PAGEOFF]
 	mov	x0, x19
 	ldp	x29, x30, [sp, #16]
 	ldp	x20, x19, [sp], #32
 	b	_objc_msgSend
-	.loh AdrpLdr	Lloh14, Lloh15
-	.loh AdrpLdr	Lloh12, Lloh13
-	.loh AdrpLdr	Lloh10, Lloh11
+	.loh AdrpLdr	Lloh11, Lloh12
+	.loh AdrpLdr	Lloh9, Lloh10
+	.loh AdrpLdr	Lloh7, Lloh8
 
 	.section	__TEXT,__const
 l_anon.[ID].0:

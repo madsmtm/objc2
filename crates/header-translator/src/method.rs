@@ -222,13 +222,13 @@ impl MemoryManagement {
                 }
             }
         } else if let MethodModifiers {
-            designated_initializer: false,
             // TODO: Maybe we can use this to emit things with lifetime of:
             // `'self + 'autoreleasepool`
             returns_inner_pointer: _,
             consumes_self: false,
             returns_retained: false,
             returns_not_retained: false,
+            designated_initializer: false,
             ..
         } = modifiers
         {

@@ -341,19 +341,16 @@ Lloh82:
 	.globl	_get_obj
 	.p2align	2
 _get_obj:
-	stp	x20, x19, [sp, #-32]!
-	stp	x29, x30, [sp, #16]
-	add	x29, sp, #16
+	stp	x29, x30, [sp, #-16]!
+	mov	x29, sp
+	bl	_get_class
 Lloh83:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGE
 Lloh84:
 	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
 Lloh85:
-	ldr	x19, [x8]
-	bl	_get_class
-	mov	x1, x19
-	ldp	x29, x30, [sp, #16]
-	ldp	x20, x19, [sp], #32
+	ldr	x1, [x8]
+	ldp	x29, x30, [sp], #16
 	b	_objc_msgSend
 	.loh AdrpLdrGotLdr	Lloh83, Lloh84, Lloh85
 

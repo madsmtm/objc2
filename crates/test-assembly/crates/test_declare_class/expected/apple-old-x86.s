@@ -260,12 +260,11 @@ _get_obj:
 	push	eax
 	call	L4$pb
 L4$pb:
-	pop	eax
-	mov	eax, dword ptr [eax + LL_OBJC_SELECTOR_REFERENCES_new$non_lazy_ptr-L4$pb]
-	mov	esi, dword ptr [eax]
+	pop	esi
 	call	_get_class
+	mov	ecx, dword ptr [esi + LL_OBJC_SELECTOR_REFERENCES_new$non_lazy_ptr-L4$pb]
 	sub	esp, 8
-	push	esi
+	push	dword ptr [ecx]
 	push	eax
 	call	_objc_msgSend
 	add	esp, 20
