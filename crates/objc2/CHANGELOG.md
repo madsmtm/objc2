@@ -201,6 +201,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   let ivar = cls.instance_variable("number").unwrap();
   let number = unsafe { *ivar.load::<u32>(&obj) };
   ```
+* Implement `RefEncode` normally for `c_void`. This makes `AtomicPtr<c_void>`
+  implement `Encode`.
 
 ### Removed
 * **BREAKING**: Removed `ProtocolType` implementation for `NSObject`.
