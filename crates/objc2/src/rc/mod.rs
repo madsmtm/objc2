@@ -48,7 +48,7 @@
 //! assert!(weak.load().is_none());
 //! ```
 
-mod allocated;
+mod allocated_partial_init;
 mod autorelease;
 mod id;
 mod id_forwarding_impls;
@@ -56,7 +56,7 @@ mod id_traits;
 mod test_object;
 mod weak_id;
 
-pub use self::allocated::{Allocated, PartialInit};
+pub use self::allocated_partial_init::{Allocated, PartialInit};
 pub use self::autorelease::{
     autoreleasepool, autoreleasepool_leaking, AutoreleasePool, AutoreleaseSafe,
 };
