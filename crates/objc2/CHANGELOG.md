@@ -85,6 +85,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   implement `IsAllowedMutable`.
 * Disallow the ability to use non-`Self`-like types as the receiver in
   `declare_class!`.
+* Allow adding instance variables with the same name on Apple platforms.
+* **BREAKING**: Make loading instance variables robust and sound in the face
+  of instance variables with the same name.
+
+  To read or write the instance variable for an object, you should now use the
+  `load`, `load_ptr` and `load_mut` methods on `Ivar`, instead of the `ivar`,
+  `ivar_ptr` and `ivar_mut` methods on `AnyObject`.
+
+  This _is_ more verbose, but it also ensures that the class for the instance
+  variable you're loading is the same as the one the instance variable you
+  want to access is defined on.
+
+  ```rust
+  // Before
+  let number = unsafe { *obj.ivar::<u32>("number") };
+
+  // After
+  let ivar = cls.instance_variable("number").unwrap();
+  let number = unsafe { *ivar.load::<u32>(&obj) };
+  ```
 
 ### Removed
 * **BREAKING**: Removed `ProtocolType` implementation for `NSObject`.

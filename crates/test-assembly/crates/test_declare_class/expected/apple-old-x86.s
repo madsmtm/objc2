@@ -35,7 +35,7 @@ L1$pb:
 	je	LBB1_6
 	mov	dword ptr [ebp - 16], eax
 	sub	esp, 8
-	lea	eax, [esi + l_anon.[ID].13-L1$pb]
+	lea	eax, [esi + l_anon.[ID].15-L1$pb]
 	lea	ecx, [esi + L_anon.[ID].12-L1$pb]
 	lea	ebx, [ebp - 16]
 	push	eax
@@ -47,7 +47,7 @@ L1$pb:
 	call	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
 	add	esp, 24
 	lea	ecx, [esi + l_anon.[ID].2-L1$pb]
-	lea	eax, [esi + L_anon.[ID].14-L1$pb]
+	lea	eax, [esi + L_anon.[ID].13-L1$pb]
 	push	ecx
 	push	2
 	push	4
@@ -286,36 +286,24 @@ L5$pb:
 	pop	edi
 	call	_get_obj
 	mov	esi, eax
-	sub	esp, 12
-	push	eax
-	call	_object_getClass
-	add	esp, 16
-	lea	ecx, [edi + l_anon.[ID].13-L5$pb]
-	lea	edx, [edi + L_anon.[ID].12-L5$pb]
-	push	ecx
-	push	4
-	push	edx
-	push	eax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
-	add	esp, 16
+	lea	eax, [edi + L_anon.[ID].12-L5$pb]
+	mov	dword ptr [esp + 4], eax
+	mov	dword ptr [esp], esi
+	mov	dword ptr [esp + 8], 4
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	mov	dword ptr [esp], eax
+	call	_ivar_getOffset
 	movzx	ebx, byte ptr [esi + eax]
-	sub	esp, 12
-	push	esi
-	call	_object_getClass
-	add	esp, 16
-	lea	ecx, [edi + l_anon.[ID].2-L5$pb]
-	lea	edx, [edi + L_anon.[ID].14-L5$pb]
-	push	ecx
-	push	4
-	push	edx
-	push	eax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
-	add	esp, 16
+	lea	eax, [edi + L_anon.[ID].13-L5$pb]
+	mov	dword ptr [esp + 4], eax
+	mov	dword ptr [esp], esi
+	mov	dword ptr [esp + 8], 4
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	mov	dword ptr [esp], eax
+	call	_ivar_getOffset
 	mov	edi, dword ptr [esi + eax]
-	sub	esp, 12
-	push	esi
+	mov	dword ptr [esp], esi
 	call	_objc_release
-	add	esp, 16
 	mov	eax, ebx
 	mov	edx, edi
 	add	esp, 12
@@ -386,40 +374,32 @@ SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::
 	push	ebx
 	push	edi
 	push	esi
-	sub	esp, 12
+	sub	esp, 28
 	call	L7$pb
 L7$pb:
 	pop	ebx
 	mov	esi, dword ptr [ebp + 12]
 	mov	edi, dword ptr [ebp + 8]
-	sub	esp, 12
-	push	edi
-	call	_object_getClass
-	add	esp, 16
-	lea	ecx, [ebx + l_anon.[ID].2-L7$pb]
-	lea	edx, [ebx + L_anon.[ID].14-L7$pb]
-	push	ecx
-	push	4
-	push	edx
-	push	eax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
-	add	esp, 16
+	lea	eax, [ebx + L_anon.[ID].13-L7$pb]
+	mov	dword ptr [esp + 4], eax
+	mov	dword ptr [esp], edi
+	mov	dword ptr [esp + 8], 4
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	mov	dword ptr [esp], eax
+	call	_ivar_getOffset
 	mov	eax, dword ptr [edi + eax]
 	test	eax, eax
 	je	LBB7_2
-	sub	esp, 12
-	push	eax
+	mov	dword ptr [esp], eax
 	call	_objc_release
-	add	esp, 16
 LBB7_2:
 	mov	eax, dword ptr [ebx + LL_OBJC_CLASS_REFERENCES_NSObject$non_lazy_ptr-L7$pb]
 	mov	eax, dword ptr [eax]
 	mov	dword ptr [ebp - 20], edi
 	mov	dword ptr [ebp - 16], eax
-	sub	esp, 8
+	mov	dword ptr [esp + 4], esi
 	lea	eax, [ebp - 20]
-	push	esi
-	push	eax
+	mov	dword ptr [esp], eax
 	call	_objc_msgSendSuper
 	add	esp, 28
 	pop	esi
@@ -455,30 +435,26 @@ L8$pb:
 	mov	esi, eax
 	test	eax, eax
 	je	LBB8_2
-	sub	esp, 12
-	push	esi
-	call	_object_getClass
-	add	esp, 16
-	lea	ecx, [edi + l_anon.[ID].13-L8$pb]
-	lea	edx, [edi + L_anon.[ID].12-L8$pb]
-	push	ecx
+	sub	esp, 4
+	lea	eax, [edi + L_anon.[ID].12-L8$pb]
 	push	4
-	push	edx
 	push	eax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	push	esi
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	add	esp, 4
+	push	eax
+	call	_ivar_getOffset
 	add	esp, 16
 	mov	byte ptr [esi + eax], 42
-	sub	esp, 12
-	push	esi
-	call	_object_getClass
-	add	esp, 16
-	lea	ecx, [edi + l_anon.[ID].2-L8$pb]
-	lea	edx, [edi + L_anon.[ID].14-L8$pb]
-	push	ecx
+	sub	esp, 4
+	lea	eax, [edi + L_anon.[ID].13-L8$pb]
 	push	4
-	push	edx
 	push	eax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	push	esi
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	add	esp, 4
+	push	eax
+	call	_ivar_getOffset
 	add	esp, 16
 	mov	dword ptr [esi + eax], 0
 LBB8_2:
@@ -521,41 +497,32 @@ _method_bool:
 _method_id:
 	push	ebp
 	mov	ebp, esp
-	push	edi
 	push	esi
+	sub	esp, 20
 	call	L12$pb
 L12$pb:
-	pop	edi
+	pop	eax
 	mov	esi, dword ptr [ebp + 8]
-	sub	esp, 12
-	push	esi
-	call	_object_getClass
-	add	esp, 16
-	lea	ecx, [edi + l_anon.[ID].2-L12$pb]
-	lea	edx, [edi + L_anon.[ID].14-L12$pb]
-	push	ecx
-	push	4
-	push	edx
-	push	eax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
-	add	esp, 16
+	lea	eax, [eax + L_anon.[ID].13-L12$pb]
+	mov	dword ptr [esp + 4], eax
+	mov	dword ptr [esp], esi
+	mov	dword ptr [esp + 8], 4
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	mov	dword ptr [esp], eax
+	call	_ivar_getOffset
 	mov	eax, dword ptr [esi + eax]
 	test	eax, eax
 	je	LBB12_1
-	sub	esp, 12
-	push	eax
+	mov	dword ptr [esp], eax
 	call	_objc_retain
-	add	esp, 16
 	jmp	LBB12_3
 LBB12_1:
 	xor	eax, eax
 LBB12_3:
-	sub	esp, 12
-	push	eax
+	mov	dword ptr [esp], eax
 	call	_objc_autoreleaseReturnValue
-	add	esp, 16
+	add	esp, 20
 	pop	esi
-	pop	edi
 	pop	ebp
 	ret
 
@@ -567,25 +534,23 @@ _method_id_with_param:
 	push	ebx
 	push	edi
 	push	esi
-	sub	esp, 28
+	sub	esp, 12
 	call	L13$pb
 L13$pb:
-	pop	edi
+	pop	ebx
 	call	SYM(objc2::runtime::nsobject::NSObject::new::GENERATED_ID, 0)
 	mov	esi, eax
 	cmp	byte ptr [ebp + 16], 0
 	je	LBB13_5
-	mov	ebx, dword ptr [ebp + 8]
-	mov	dword ptr [esp], ebx
-	call	_object_getClass
-	lea	ecx, [edi + l_anon.[ID].2-L13$pb]
-	mov	dword ptr [esp + 12], ecx
-	lea	ecx, [edi + L_anon.[ID].14-L13$pb]
-	mov	dword ptr [esp + 4], ecx
-	mov	dword ptr [esp], eax
+	mov	edi, dword ptr [ebp + 8]
+	lea	eax, [ebx + L_anon.[ID].13-L13$pb]
+	mov	dword ptr [esp + 4], eax
+	mov	dword ptr [esp], edi
 	mov	dword ptr [esp + 8], 4
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
-	mov	eax, dword ptr [ebx + eax]
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	mov	dword ptr [esp], eax
+	call	_ivar_getOffset
+	mov	eax, dword ptr [edi + eax]
 	test	eax, eax
 	je	LBB13_2
 	mov	dword ptr [esp], eax
@@ -601,7 +566,7 @@ LBB13_4:
 LBB13_5:
 	mov	dword ptr [esp], esi
 	call	_objc_autoreleaseReturnValue
-	add	esp, 28
+	add	esp, 12
 	pop	esi
 	pop	edi
 	pop	ebx
@@ -616,82 +581,60 @@ _copyWithZone:
 	push	ebx
 	push	edi
 	push	esi
-	sub	esp, 12
+	sub	esp, 28
 	call	L14$pb
 L14$pb:
-	pop	edi
+	pop	ebx
 	call	_get_obj
 	mov	esi, eax
 	test	eax, eax
 	je	LBB14_5
-	mov	eax, dword ptr [ebp + 8]
-	sub	esp, 12
-	push	eax
-	mov	ebx, eax
-	call	_object_getClass
-	add	esp, 16
-	lea	edx, [edi + l_anon.[ID].13-L14$pb]
-	lea	ecx, [edi + L_anon.[ID].12-L14$pb]
-	push	edx
-	push	4
-	push	ecx
-	push	eax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
-	add	esp, 16
-	movzx	ebx, byte ptr [ebx + eax]
-	sub	esp, 12
-	push	esi
-	call	_object_getClass
-	add	esp, 16
-	lea	ecx, [edi + l_anon.[ID].13-L14$pb]
-	push	ecx
-	push	4
-	lea	ecx, [edi + L_anon.[ID].12-L14$pb]
-	push	ecx
-	push	eax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
-	add	esp, 16
-	mov	byte ptr [esi + eax], bl
-	sub	esp, 12
-	push	dword ptr [ebp + 8]
-	call	_object_getClass
-	add	esp, 16
-	lea	ecx, [edi + l_anon.[ID].2-L14$pb]
-	lea	ebx, [edi + L_anon.[ID].14-L14$pb]
-	mov	dword ptr [ebp - 16], ecx
-	push	ecx
-	push	4
-	push	ebx
-	push	eax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
-	add	esp, 16
-	mov	ecx, dword ptr [ebp + 8]
-	mov	eax, dword ptr [ecx + eax]
+	mov	edi, dword ptr [ebp + 8]
+	lea	ecx, [ebx + L_anon.[ID].12-L14$pb]
+	mov	dword ptr [esp + 4], ecx
+	mov	dword ptr [esp], edi
+	mov	dword ptr [esp + 8], 4
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	mov	dword ptr [esp], eax
+	call	_ivar_getOffset
+	movzx	eax, byte ptr [edi + eax]
+	mov	byte ptr [ebp - 13], al
+	lea	eax, [ebx + L_anon.[ID].12-L14$pb]
+	mov	dword ptr [esp + 4], eax
+	mov	dword ptr [esp], esi
+	mov	dword ptr [esp + 8], 4
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	mov	dword ptr [esp], eax
+	call	_ivar_getOffset
+	movzx	ecx, byte ptr [ebp - 13]
+	mov	byte ptr [esi + eax], cl
+	lea	ebx, [ebx + L_anon.[ID].13-L14$pb]
+	mov	dword ptr [esp + 4], ebx
+	mov	dword ptr [esp], edi
+	mov	dword ptr [esp + 8], 4
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	mov	dword ptr [esp], eax
+	call	_ivar_getOffset
+	mov	eax, dword ptr [edi + eax]
 	test	eax, eax
 	je	LBB14_2
-	sub	esp, 12
-	push	eax
+	mov	dword ptr [esp], eax
 	call	_objc_retain
-	add	esp, 16
 	mov	edi, eax
 	jmp	LBB14_4
 LBB14_2:
 	xor	edi, edi
 LBB14_4:
-	sub	esp, 12
-	push	esi
-	call	_object_getClass
-	add	esp, 16
-	push	dword ptr [ebp - 16]
-	push	4
-	push	ebx
-	push	eax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
-	add	esp, 16
+	mov	dword ptr [esp + 4], ebx
+	mov	dword ptr [esp], esi
+	mov	dword ptr [esp + 8], 4
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	mov	dword ptr [esp], eax
+	call	_ivar_getOffset
 	mov	dword ptr [esi + eax], edi
 LBB14_5:
 	mov	eax, esi
-	add	esp, 12
+	add	esp, 28
 	pop	esi
 	pop	edi
 	pop	ebx
@@ -767,24 +710,22 @@ l_anon.[ID].11:
 L_anon.[ID].12:
 	.ascii	"_foo"
 
-	.section	__TEXT,__const
-	.p2align	2, 0x0
-l_anon.[ID].13:
-	.byte	5
-	.space	19
-
-	.section	__TEXT,__literal4,4byte_literals
-L_anon.[ID].14:
+L_anon.[ID].13:
 	.ascii	"_obj"
 
 	.section	__TEXT,__const
-l_anon.[ID].15:
+l_anon.[ID].14:
 	.ascii	"crates/$DIR/lib.rs"
+
+	.p2align	2, 0x0
+l_anon.[ID].15:
+	.byte	5
+	.space	19
 
 	.section	__DATA,__const
 	.p2align	2, 0x0
 l_anon.[ID].16:
-	.long	l_anon.[ID].15
+	.long	l_anon.[ID].14
 	.asciz	"5\000\000\000\f\000\000\000\001\000\000"
 
 .zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0),4,2

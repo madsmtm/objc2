@@ -5,7 +5,7 @@ use core::ops::{Deref, DerefMut};
 use core::ptr::{self, NonNull};
 
 use crate::encode::Encode;
-use crate::runtime::{ivar_offset, AnyObject};
+use crate::runtime::AnyObject;
 
 pub(crate) mod private {
     pub trait Sealed {}
@@ -92,9 +92,13 @@ pub unsafe trait IvarType {
     const NAME: &'static str;
 
     #[doc(hidden)]
-    unsafe fn __offset(ptr: NonNull<AnyObject>) -> isize {
-        let obj = unsafe { ptr.as_ref() };
-        ivar_offset(obj.class(), Self::NAME, &Self::Type::ENCODING)
+    unsafe fn __ivar_ptr(ptr: NonNull<AnyObject>) -> NonNull<Self::Type> {
+        // FIXME: This is currently unsound! Looking up the instance variable
+        // dynamically will return the wrong variable if two variables with
+        // the same name exist.
+        let ivar = unsafe { ptr.as_ref() }.lookup_instance_variable_dynamically(Self::NAME);
+        ivar.debug_assert_encoding(&Self::Type::ENCODING);
+        unsafe { AnyObject::ivar_at_offset(ptr, ivar.offset()) }
     }
 }
 
@@ -215,9 +219,7 @@ impl<T: IvarType> Ivar<T> {
         // Note: We technically don't have provenance over the object, nor the
         // ivar, but the object doesn't have provenance over the ivar either,
         // so that is fine.
-        let offset = unsafe { T::__offset(ptr) };
-        // SAFETY: The offset is valid
-        unsafe { AnyObject::ivar_at_offset::<T::Type>(ptr, offset) }
+        unsafe { T::__ivar_ptr(ptr) }
     }
 
     /// Get a mutable pointer to the instance variable.
@@ -238,9 +240,7 @@ impl<T: IvarType> Ivar<T> {
         let ptr: NonNull<AnyObject> = NonNull::from(self).cast();
 
         // SAFETY: Same as `as_inner_ptr`
-        let offset = unsafe { T::__offset(ptr) };
-        // SAFETY: The offset is valid
-        unsafe { AnyObject::ivar_at_offset::<T::Type>(ptr, offset) }
+        unsafe { T::__ivar_ptr(ptr) }
     }
 
     /// Sets the value of the instance variable.

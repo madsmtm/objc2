@@ -4,36 +4,19 @@
 use std::marker::PhantomData;
 use std::sync::Once;
 
-use objc2::declare::{ClassBuilder, Ivar, IvarEncode, IvarType};
+use objc2::declare::ClassBuilder;
 use objc2::mutability::Mutable;
 use objc2::rc::Id;
 use objc2::runtime::{AnyClass, NSObject, Sel};
 use objc2::{msg_send, msg_send_id, sel};
 use objc2::{ClassType, Encoding, Message, RefEncode};
 
-/// Helper type for the instance variable
-struct NumberIvar<'a> {
-    // Doesn't actually matter what we put here, but we have to use the
-    // lifetime parameter somehow
-    p: PhantomData<&'a mut u8>,
-}
-
-unsafe impl<'a> IvarType for NumberIvar<'a> {
-    type Type = IvarEncode<&'a mut u8>;
-    const NAME: &'static str = "_number_ptr";
-}
-
 /// Struct that represents our custom object.
 #[repr(C)]
 pub struct MyObject<'a> {
     // Required to give MyObject the proper layout
     superclass: NSObject,
-    // SAFETY: The ivar is declared below, and is properly initialized in the
-    // designated initializer.
-    //
-    // Note! Attempting to acess the ivar before it has been initialized is
-    // undefined behaviour!
-    number: Ivar<NumberIvar<'a>>,
+    p: PhantomData<&'a mut u8>,
 }
 
 unsafe impl RefEncode for MyObject<'_> {
@@ -50,8 +33,12 @@ impl<'a> MyObject<'a> {
     ) -> Option<&'s mut Self> {
         let this: Option<&mut Self> = unsafe { msg_send![super(self), init] };
         this.map(|this| {
-            // Properly initialize the number reference
-            Ivar::write(&mut this.number, ptr.expect("got NULL number ptr"));
+            let ivar = Self::class().instance_variable("number").unwrap();
+            // SAFETY: The ivar is added with the same type below
+            unsafe {
+                ivar.load_ptr::<&mut u8>(&this.superclass)
+                    .write(ptr.expect("got NULL number ptr"))
+            };
             this
         })
     }
@@ -62,12 +49,16 @@ impl<'a> MyObject<'a> {
         unsafe { msg_send_id![Self::alloc(), initWithPtr: number] }
     }
 
-    pub fn get(&self) -> &u8 {
-        &self.number
+    pub fn get(&self) -> u8 {
+        let ivar = Self::class().instance_variable("number").unwrap();
+        // SAFETY: The ivar is added with the same type below, and is initialized in `init_with_ptr`
+        unsafe { **ivar.load::<&mut u8>(&self.superclass) }
     }
 
     pub fn set(&mut self, number: u8) {
-        **self.number = number;
+        let ivar = Self::class().instance_variable("number").unwrap();
+        // SAFETY: The ivar is added with the same type below, and is initialized in `init_with_ptr`
+        unsafe { **ivar.load_mut::<&mut u8>(&mut self.superclass) = number };
     }
 }
 
@@ -84,7 +75,7 @@ unsafe impl<'a> ClassType for MyObject<'a> {
             let superclass = NSObject::class();
             let mut builder = ClassBuilder::new(Self::NAME, superclass).unwrap();
 
-            builder.add_static_ivar::<NumberIvar<'a>>();
+            builder.add_ivar::<&mut u8>("number");
 
             unsafe {
                 builder.add_method(
@@ -112,7 +103,7 @@ fn main() {
     let mut number = 54;
 
     let mut obj = MyObject::new(&mut number);
-    assert_eq!(*obj.get(), 54);
+    assert_eq!(obj.get(), 54);
 
     // It is not possible to convert to `Id<NSObject>`, since that would loose
     // the lifetime information that `MyObject` stores.
@@ -131,7 +122,7 @@ fn main() {
 
     // But we can now mutate the referenced `number`
     obj.set(7);
-    assert_eq!(*obj.get(), 7);
+    assert_eq!(obj.get(), 7);
 
     drop(obj);
     // And now that we've dropped `obj`, we can access `number` again

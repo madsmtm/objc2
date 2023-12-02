@@ -32,8 +32,8 @@ LPC1_1:
 	cmp	r0, #0
 	beq	LBB1_6
 	str	r0, [sp, #8]
-	movw	r1, :lower16:(l_anon.[ID].13-(LPC1_2+8))
-	movt	r1, :upper16:(l_anon.[ID].13-(LPC1_2+8))
+	movw	r1, :lower16:(l_anon.[ID].15-(LPC1_2+8))
+	movt	r1, :upper16:(l_anon.[ID].15-(LPC1_2+8))
 LPC1_2:
 	add	r1, pc, r1
 	mov	r0, #0
@@ -53,8 +53,8 @@ LPC1_4:
 	add	r8, pc, r8
 	mov	r0, #2
 	stm	sp, {r0, r8}
-	movw	r1, :lower16:(L_anon.[ID].14-(LPC1_5+8))
-	movt	r1, :upper16:(L_anon.[ID].14-(LPC1_5+8))
+	movw	r1, :lower16:(L_anon.[ID].13-(LPC1_5+8))
+	movt	r1, :upper16:(L_anon.[ID].13-(LPC1_5+8))
 LPC1_5:
 	add	r1, pc, r1
 	mov	r0, r4
@@ -321,30 +321,22 @@ _access_ivars:
 	add	r7, sp, #12
 	bl	_get_obj
 	mov	r4, r0
-	bl	_object_getClass
 	movw	r1, :lower16:(L_anon.[ID].12-(LPC5_0+8))
 	movt	r1, :upper16:(L_anon.[ID].12-(LPC5_0+8))
 LPC5_0:
 	add	r1, pc, r1
-	movw	r3, :lower16:(l_anon.[ID].13-(LPC5_1+8))
-	movt	r3, :upper16:(l_anon.[ID].13-(LPC5_1+8))
-LPC5_1:
-	add	r3, pc, r3
 	mov	r2, #4
-	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	bl	_ivar_getOffset
 	ldrb	r5, [r4, r0]
-	mov	r0, r4
-	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].14-(LPC5_2+8))
-	movt	r1, :upper16:(L_anon.[ID].14-(LPC5_2+8))
-LPC5_2:
+	movw	r1, :lower16:(L_anon.[ID].13-(LPC5_1+8))
+	movt	r1, :upper16:(L_anon.[ID].13-(LPC5_1+8))
+LPC5_1:
 	add	r1, pc, r1
-	movw	r3, :lower16:(l_anon.[ID].2-(LPC5_3+8))
-	movt	r3, :upper16:(l_anon.[ID].2-(LPC5_3+8))
-LPC5_3:
-	add	r3, pc, r3
+	mov	r0, r4
 	mov	r2, #4
-	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	bl	_ivar_getOffset
 	ldr	r6, [r4, r0]
 	mov	r0, r4
 	bl	_objc_release
@@ -420,25 +412,21 @@ SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::
 	sub	sp, sp, #8
 	mov	r4, r1
 	mov	r5, r0
-	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].14-(LPC7_0+8))
-	movt	r1, :upper16:(L_anon.[ID].14-(LPC7_0+8))
+	movw	r1, :lower16:(L_anon.[ID].13-(LPC7_0+8))
+	movt	r1, :upper16:(L_anon.[ID].13-(LPC7_0+8))
 LPC7_0:
 	add	r1, pc, r1
-	movw	r3, :lower16:(l_anon.[ID].2-(LPC7_1+8))
-	movt	r3, :upper16:(l_anon.[ID].2-(LPC7_1+8))
-LPC7_1:
-	add	r3, pc, r3
 	mov	r2, #4
-	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	bl	_ivar_getOffset
 	ldr	r0, [r5, r0]
 	cmp	r0, #0
 	beq	LBB7_2
 	bl	_objc_release
 LBB7_2:
-	movw	r0, :lower16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC7_2+8))
-	movt	r0, :upper16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC7_2+8))
-LPC7_2:
+	movw	r0, :lower16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC7_1+8))
+	movt	r0, :upper16:(LL_OBJC_CLASSLIST_REFERENCES_$_NSObject$non_lazy_ptr-(LPC7_1+8))
+LPC7_1:
 	ldr	r0, [pc, r0]
 	ldr	r0, [r0]
 	str	r5, [sp]
@@ -472,32 +460,24 @@ LPC8_1:
 	mov	r4, r0
 	cmp	r0, #0
 	beq	LBB8_2
-	mov	r0, r4
-	bl	_object_getClass
 	movw	r1, :lower16:(L_anon.[ID].12-(LPC8_2+8))
 	movt	r1, :upper16:(L_anon.[ID].12-(LPC8_2+8))
 LPC8_2:
 	add	r1, pc, r1
-	movw	r3, :lower16:(l_anon.[ID].13-(LPC8_3+8))
-	movt	r3, :upper16:(l_anon.[ID].13-(LPC8_3+8))
-LPC8_3:
-	add	r3, pc, r3
+	mov	r0, r4
 	mov	r2, #4
-	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	bl	_ivar_getOffset
 	mov	r1, #42
 	strb	r1, [r4, r0]
-	mov	r0, r4
-	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].14-(LPC8_4+8))
-	movt	r1, :upper16:(L_anon.[ID].14-(LPC8_4+8))
-LPC8_4:
+	movw	r1, :lower16:(L_anon.[ID].13-(LPC8_3+8))
+	movt	r1, :upper16:(L_anon.[ID].13-(LPC8_3+8))
+LPC8_3:
 	add	r1, pc, r1
-	movw	r3, :lower16:(l_anon.[ID].2-(LPC8_5+8))
-	movt	r3, :upper16:(l_anon.[ID].2-(LPC8_5+8))
-LPC8_5:
-	add	r3, pc, r3
+	mov	r0, r4
 	mov	r2, #4
-	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	bl	_ivar_getOffset
 	mov	r1, #0
 	str	r1, [r4, r0]
 LBB8_2:
@@ -532,17 +512,13 @@ _method_id:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	mov	r4, r0
-	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].14-(LPC12_0+8))
-	movt	r1, :upper16:(L_anon.[ID].14-(LPC12_0+8))
+	movw	r1, :lower16:(L_anon.[ID].13-(LPC12_0+8))
+	movt	r1, :upper16:(L_anon.[ID].13-(LPC12_0+8))
 LPC12_0:
 	add	r1, pc, r1
-	movw	r3, :lower16:(l_anon.[ID].2-(LPC12_1+8))
-	movt	r3, :upper16:(l_anon.[ID].2-(LPC12_1+8))
-LPC12_1:
-	add	r3, pc, r3
 	mov	r2, #4
-	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	bl	_ivar_getOffset
 	ldr	r0, [r4, r0]
 	cmp	r0, #0
 	beq	LBB12_2
@@ -566,18 +542,14 @@ _method_id_with_param:
 	mov	r4, r0
 	cmp	r6, #0
 	beq	LBB13_5
-	mov	r0, r5
-	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].14-(LPC13_0+8))
-	movt	r1, :upper16:(L_anon.[ID].14-(LPC13_0+8))
+	movw	r1, :lower16:(L_anon.[ID].13-(LPC13_0+8))
+	movt	r1, :upper16:(L_anon.[ID].13-(LPC13_0+8))
 LPC13_0:
 	add	r1, pc, r1
-	movw	r3, :lower16:(l_anon.[ID].2-(LPC13_1+8))
-	movt	r3, :upper16:(l_anon.[ID].2-(LPC13_1+8))
-LPC13_1:
-	add	r3, pc, r3
+	mov	r0, r5
 	mov	r2, #4
-	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	bl	_ivar_getOffset
 	ldr	r0, [r5, r0]
 	cmp	r0, #0
 	beq	LBB13_3
@@ -601,46 +573,36 @@ LBB13_5:
 _copyWithZone:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
-	push	{r8, r10}
+	push	{r8}
 	mov	r5, r0
 	bl	_get_obj
 	mov	r4, r0
 	cmp	r0, #0
 	beq	LBB14_5
-	mov	r0, r5
-	bl	_object_getClass
-	movw	r10, :lower16:(L_anon.[ID].12-(LPC14_0+8))
-	movt	r10, :upper16:(L_anon.[ID].12-(LPC14_0+8))
+	movw	r8, :lower16:(L_anon.[ID].12-(LPC14_0+8))
+	movt	r8, :upper16:(L_anon.[ID].12-(LPC14_0+8))
 LPC14_0:
-	add	r10, pc, r10
-	movw	r8, :lower16:(l_anon.[ID].13-(LPC14_1+8))
-	movt	r8, :upper16:(l_anon.[ID].13-(LPC14_1+8))
-LPC14_1:
 	add	r8, pc, r8
-	mov	r1, r10
+	mov	r0, r5
+	mov	r1, r8
 	mov	r2, #4
-	mov	r3, r8
-	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	bl	_ivar_getOffset
 	ldrb	r6, [r5, r0]
 	mov	r0, r4
-	bl	_object_getClass
-	mov	r1, r10
+	mov	r1, r8
 	mov	r2, #4
-	mov	r3, r8
-	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	bl	_ivar_getOffset
 	strb	r6, [r4, r0]
-	mov	r0, r5
-	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].14-(LPC14_2+8))
-	movt	r1, :upper16:(L_anon.[ID].14-(LPC14_2+8))
-LPC14_2:
+	movw	r1, :lower16:(L_anon.[ID].13-(LPC14_1+8))
+	movt	r1, :upper16:(L_anon.[ID].13-(LPC14_1+8))
+LPC14_1:
 	add	r1, pc, r1
-	movw	r3, :lower16:(l_anon.[ID].2-(LPC14_3+8))
-	movt	r3, :upper16:(l_anon.[ID].2-(LPC14_3+8))
-LPC14_3:
-	add	r3, pc, r3
+	mov	r0, r5
 	mov	r2, #4
-	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	bl	_ivar_getOffset
 	ldr	r0, [r5, r0]
 	cmp	r0, #0
 	beq	LBB14_3
@@ -650,22 +612,18 @@ LPC14_3:
 LBB14_3:
 	mov	r5, #0
 LBB14_4:
-	mov	r0, r4
-	bl	_object_getClass
-	movw	r1, :lower16:(L_anon.[ID].14-(LPC14_4+8))
-	movt	r1, :upper16:(L_anon.[ID].14-(LPC14_4+8))
-LPC14_4:
+	movw	r1, :lower16:(L_anon.[ID].13-(LPC14_2+8))
+	movt	r1, :upper16:(L_anon.[ID].13-(LPC14_2+8))
+LPC14_2:
 	add	r1, pc, r1
-	movw	r3, :lower16:(l_anon.[ID].2-(LPC14_5+8))
-	movt	r3, :upper16:(l_anon.[ID].2-(LPC14_5+8))
-LPC14_5:
-	add	r3, pc, r3
+	mov	r0, r4
 	mov	r2, #4
-	bl	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	bl	_ivar_getOffset
 	str	r5, [r4, r0]
 LBB14_5:
 	mov	r0, r4
-	pop	{r8, r10}
+	pop	{r8}
 	pop	{r4, r5, r6, r7, pc}
 
 	.section	__DATA,__const
@@ -737,24 +695,22 @@ l_anon.[ID].11:
 L_anon.[ID].12:
 	.ascii	"_foo"
 
-	.section	__TEXT,__const
-	.p2align	2, 0x0
-l_anon.[ID].13:
-	.byte	5
-	.space	19
-
-	.section	__TEXT,__literal4,4byte_literals
-L_anon.[ID].14:
+L_anon.[ID].13:
 	.ascii	"_obj"
 
 	.section	__TEXT,__const
-l_anon.[ID].15:
+l_anon.[ID].14:
 	.ascii	"crates/$DIR/lib.rs"
+
+	.p2align	2, 0x0
+l_anon.[ID].15:
+	.byte	5
+	.space	19
 
 	.section	__DATA,__const
 	.p2align	2, 0x0
 l_anon.[ID].16:
-	.long	l_anon.[ID].15
+	.long	l_anon.[ID].14
 	.asciz	"5\000\000\000\f\000\000\000\001\000\000"
 
 .zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0),4,2

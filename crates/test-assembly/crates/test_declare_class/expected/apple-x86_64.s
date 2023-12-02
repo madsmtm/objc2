@@ -29,14 +29,14 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	je	LBB1_6
 	mov	qword ptr [rbp - 40], rax
 	lea	rsi, [rip + L_anon.[ID].12]
-	lea	r9, [rip + l_anon.[ID].13]
+	lea	r9, [rip + l_anon.[ID].15]
 	lea	rbx, [rbp - 40]
 	mov	edx, 4
 	mov	ecx, 1
 	mov	rdi, rbx
 	xor	r8d, r8d
 	call	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
-	lea	rsi, [rip + L_anon.[ID].14]
+	lea	rsi, [rip + L_anon.[ID].13]
 	lea	r14, [rip + l_anon.[ID].2]
 	mov	edx, 4
 	mov	ecx, 8
@@ -205,21 +205,19 @@ _access_ivars:
 	push	rax
 	call	_get_obj
 	mov	rbx, rax
-	mov	rdi, rax
-	call	_object_getClass
 	lea	rsi, [rip + L_anon.[ID].12]
-	lea	rcx, [rip + l_anon.[ID].13]
 	mov	edx, 4
 	mov	rdi, rax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	mov	rdi, rax
+	call	_ivar_getOffset
 	movzx	r14d, byte ptr [rbx + rax]
-	mov	rdi, rbx
-	call	_object_getClass
-	lea	rsi, [rip + L_anon.[ID].14]
-	lea	rcx, [rip + l_anon.[ID].2]
+	lea	rsi, [rip + L_anon.[ID].13]
 	mov	edx, 4
+	mov	rdi, rbx
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
 	mov	rdi, rax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	call	_ivar_getOffset
 	mov	r15, qword ptr [rbx + rax]
 	mov	rdi, rbx
 	call	_objc_release
@@ -276,12 +274,11 @@ SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::
 	sub	rsp, 16
 	mov	rbx, rsi
 	mov	r14, rdi
-	call	_object_getClass
-	lea	rsi, [rip + L_anon.[ID].14]
-	lea	rcx, [rip + l_anon.[ID].2]
+	lea	rsi, [rip + L_anon.[ID].13]
 	mov	edx, 4
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
 	mov	rdi, rax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	call	_ivar_getOffset
 	mov	rdi, qword ptr [r14 + rax]
 	test	rdi, rdi
 	je	LBB7_2
@@ -318,21 +315,19 @@ _init:
 	mov	rbx, rax
 	test	rax, rax
 	je	LBB8_2
-	mov	rdi, rbx
-	call	_object_getClass
 	lea	rsi, [rip + L_anon.[ID].12]
-	lea	rcx, [rip + l_anon.[ID].13]
 	mov	edx, 4
-	mov	rdi, rax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
-	mov	byte ptr [rbx + rax], 42
 	mov	rdi, rbx
-	call	_object_getClass
-	lea	rsi, [rip + L_anon.[ID].14]
-	lea	rcx, [rip + l_anon.[ID].2]
-	mov	edx, 4
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
 	mov	rdi, rax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	call	_ivar_getOffset
+	mov	byte ptr [rbx + rax], 42
+	lea	rsi, [rip + L_anon.[ID].13]
+	mov	edx, 4
+	mov	rdi, rbx
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	mov	rdi, rax
+	call	_ivar_getOffset
 	mov	qword ptr [rbx + rax], 0
 LBB8_2:
 	mov	rax, rbx
@@ -376,12 +371,11 @@ _method_id:
 	push	rbx
 	push	rax
 	mov	rbx, rdi
-	call	_object_getClass
-	lea	rsi, [rip + L_anon.[ID].14]
-	lea	rcx, [rip + l_anon.[ID].2]
+	lea	rsi, [rip + L_anon.[ID].13]
 	mov	edx, 4
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
 	mov	rdi, rax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	call	_ivar_getOffset
 	mov	rdi, qword ptr [rbx + rax]
 	test	rdi, rdi
 	je	LBB12_1
@@ -413,13 +407,12 @@ _method_id_with_param:
 	mov	rbx, rax
 	test	r15b, r15b
 	je	LBB13_5
-	mov	rdi, r14
-	call	_object_getClass
-	lea	rsi, [rip + L_anon.[ID].14]
-	lea	rcx, [rip + l_anon.[ID].2]
+	lea	rsi, [rip + L_anon.[ID].13]
 	mov	edx, 4
+	mov	rdi, r14
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
 	mov	rdi, rax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	call	_ivar_getOffset
 	mov	rdi, qword ptr [r14 + rax]
 	test	rdi, rdi
 	je	LBB13_2
@@ -448,40 +441,34 @@ _copyWithZone:
 	mov	rbp, rsp
 	push	r15
 	push	r14
-	push	r13
 	push	r12
 	push	rbx
-	push	rax
 	mov	r14, rdi
 	call	_get_obj
 	mov	rbx, rax
 	test	rax, rax
 	je	LBB14_5
-	mov	rdi, r14
-	call	_object_getClass
 	lea	r15, [rip + L_anon.[ID].12]
-	lea	r12, [rip + l_anon.[ID].13]
 	mov	edx, 4
-	mov	rdi, rax
-	mov	rsi, r15
-	mov	rcx, r12
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
-	movzx	r13d, byte ptr [r14 + rax]
-	mov	rdi, rbx
-	call	_object_getClass
-	mov	edx, 4
-	mov	rdi, rax
-	mov	rsi, r15
-	mov	rcx, r12
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
-	mov	byte ptr [rbx + rax], r13b
 	mov	rdi, r14
-	call	_object_getClass
-	lea	rsi, [rip + L_anon.[ID].14]
-	lea	rcx, [rip + l_anon.[ID].2]
-	mov	edx, 4
+	mov	rsi, r15
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
 	mov	rdi, rax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	call	_ivar_getOffset
+	movzx	r12d, byte ptr [r14 + rax]
+	mov	edx, 4
+	mov	rdi, rbx
+	mov	rsi, r15
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	mov	rdi, rax
+	call	_ivar_getOffset
+	mov	byte ptr [rbx + rax], r12b
+	lea	rsi, [rip + L_anon.[ID].13]
+	mov	edx, 4
+	mov	rdi, r14
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
+	mov	rdi, rax
+	call	_ivar_getOffset
 	mov	rdi, qword ptr [r14 + rax]
 	test	rdi, rdi
 	je	LBB14_2
@@ -491,20 +478,17 @@ _copyWithZone:
 LBB14_2:
 	xor	r14d, r14d
 LBB14_4:
-	mov	rdi, rbx
-	call	_object_getClass
-	lea	rsi, [rip + L_anon.[ID].14]
-	lea	rcx, [rip + l_anon.[ID].2]
+	lea	rsi, [rip + L_anon.[ID].13]
 	mov	edx, 4
+	mov	rdi, rbx
+	call	SYM(objc2::runtime::AnyObject::lookup_instance_variable_dynamically::GENERATED_ID, 0)
 	mov	rdi, rax
-	call	SYM(objc2::runtime::ivar_offset::GENERATED_ID, 0)
+	call	_ivar_getOffset
 	mov	qword ptr [rbx + rax], r14
 LBB14_5:
 	mov	rax, rbx
-	add	rsp, 8
 	pop	rbx
 	pop	r12
-	pop	r13
 	pop	r14
 	pop	r15
 	pop	rbp
@@ -579,24 +563,22 @@ l_anon.[ID].11:
 L_anon.[ID].12:
 	.ascii	"_foo"
 
-	.section	__TEXT,__const
-	.p2align	3, 0x0
-l_anon.[ID].13:
-	.byte	5
-	.space	39
-
-	.section	__TEXT,__literal4,4byte_literals
-L_anon.[ID].14:
+L_anon.[ID].13:
 	.ascii	"_obj"
 
 	.section	__TEXT,__const
-l_anon.[ID].15:
+l_anon.[ID].14:
 	.ascii	"crates/$DIR/lib.rs"
+
+	.p2align	3, 0x0
+l_anon.[ID].15:
+	.byte	5
+	.space	39
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].16:
-	.quad	l_anon.[ID].15
+	.quad	l_anon.[ID].14
 	.asciz	"5\000\000\000\000\000\000\000\f\000\000\000\001\000\000"
 
 .zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::Custom as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0),8,3

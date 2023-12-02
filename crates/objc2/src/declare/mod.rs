@@ -96,8 +96,9 @@ impl<T> Log2Alignment for T {
 ///     ) -> Option<&mut AnyObject> {
 ///         let this: Option<&mut AnyObject> = msg_send![super(this, NSObject::class()), init];
 ///         this.map(|this| {
+///             let ivar = AnyClass::get("MyNumber").unwrap().instance_variable("_number").unwrap();
 ///             // SAFETY: The ivar is added with the same type above
-///             this.set_ivar::<Cell<u32>>("_number", Cell::new(number));
+///             *ivar.load_mut::<Cell<u32>>(this) = Cell::new(number);
 ///             this
 ///         })
 ///     }
@@ -131,8 +132,9 @@ impl<T> Log2Alignment for T {
 ///
 ///     // Add an Objective-C method for setting the number
 ///     extern "C" fn my_number_set(this: &NSObject, _cmd: Sel, number: u32) {
+///         let ivar = AnyClass::get("MyNumber").unwrap().instance_variable("_number").unwrap();
 ///         // SAFETY: The ivar is added with the same type above
-///         unsafe { this.ivar::<Cell<u32>>("_number") }.set(number);
+///         unsafe { ivar.load::<Cell<u32>>(this) }.set(number);
 ///     }
 ///     unsafe {
 ///         builder.add_method(sel!(setNumber:), my_number_set as extern "C" fn(_, _, _));
@@ -140,8 +142,9 @@ impl<T> Log2Alignment for T {
 ///
 ///     // Add an Objective-C method for getting the number
 ///     extern "C" fn my_number_get(this: &NSObject, _cmd: Sel) -> u32 {
+///         let ivar = AnyClass::get("MyNumber").unwrap().instance_variable("_number").unwrap();
 ///         // SAFETY: The ivar is added with the same type above
-///         unsafe { this.ivar::<Cell<u32>>("_number") }.get()
+///         unsafe { ivar.load::<Cell<u32>>(this) }.get()
 ///     }
 ///     unsafe {
 ///         builder.add_method(sel!(number), my_number_get as extern "C" fn(_, _) -> _);
@@ -404,25 +407,17 @@ impl ClassBuilder {
         align: u8,
         encoding: &Encoding,
     ) {
-        // `class_addIvar` sadly doesn't check this for us.
-        //
-        // We must _always_ do the check, since there is no way for the user
-        // to statically know if the superclass has a declared instance
-        // variable on it, since that may change if a new version of the
-        // library/framework the class came from is released.
-        if let Some(_ivar) = self
-            .superclass()
-            .and_then(|superclass| superclass.instance_variable(name))
-        {
-            panic!("instance variable {name:?} already exists on a superclass");
-        }
-
         let c_name = CString::new(name).unwrap();
         let encoding = CString::new(encoding.to_string()).unwrap();
 
         // Note: The Objective-C runtime contains functionality to do stuff
         // with "instance variable layouts", but we don't have to touch any of
         // that, it was only used in the garbage-collecting runtime.
+        //
+        // Note: On GNUStep, instance variables cannot have the same name
+        // on subclasses as it has on superclasses.
+        //
+        // See <https://github.com/gnustep/libobjc2/issues/246>
         let success = Bool::from_raw(unsafe {
             ffi::class_addIvar(
                 self.as_mut_ptr(),
@@ -614,12 +609,16 @@ mod tests {
     use std::collections::hash_map::DefaultHasher;
     use std::hash::Hash;
 
+    use memoffset::offset_of;
+
     use super::*;
     use crate::encode::RefEncode;
     use crate::mutability::Immutable;
     use crate::rc::Id;
     use crate::runtime::{NSObject, NSObjectProtocol};
-    use crate::{declare_class, extern_methods, msg_send, test_utils, ClassType, ProtocolType};
+    use crate::{
+        declare_class, extern_methods, msg_send, msg_send_id, test_utils, ClassType, ProtocolType,
+    };
 
     #[test]
     fn test_alignment() {
@@ -944,5 +943,146 @@ mod tests {
         assert!(obj1.is_kind_of::<NSObject>());
         assert!(obj1.is_kind_of::<Custom>());
         assert!(obj1.is_kind_of::<Custom>());
+    }
+
+    #[test]
+    #[cfg_attr(
+        feature = "gnustep-1-7",
+        ignore = "ivars cannot have the same name on GNUStep"
+    )]
+    fn test_ivar_sizing() {
+        #[repr(align(16))]
+        struct U128align16([u64; 2]);
+
+        unsafe impl Encode for U128align16 {
+            const ENCODING: Encoding = <[u64; 2]>::ENCODING;
+        }
+
+        let mut superclass =
+            ClassBuilder::new("DeclareClassDuplicateIvarSuperclass", NSObject::class()).unwrap();
+        superclass.add_ivar::<u8>("ivar1");
+        superclass.add_ivar::<U128align16>("ivar2");
+        superclass.add_ivar::<u8>("ivar3");
+        superclass.add_ivar::<[u8; 0]>("ivar4");
+        let superclass = superclass.register();
+
+        let mut subclass =
+            ClassBuilder::new("DeclareClassDuplicateIvarSubclass", superclass).unwrap();
+        // Try to overwrite instance variables
+        subclass.add_ivar::<i16>("ivar1");
+        subclass.add_ivar::<usize>("ivar2");
+        subclass.add_ivar::<*const AnyObject>("ivar3");
+        subclass.add_ivar::<usize>("ivar4");
+        let subclass = subclass.register();
+
+        // Test that ivar layout matches that of C
+        //
+        // In particular, ivars are not reordered, though any extra padding on
+        // superclasses are utilized on subclasses.
+        #[repr(C)]
+        struct NSObjectLayout {
+            isa: *const AnyClass,
+        }
+        assert_eq!(
+            NSObject::class().instance_size(),
+            mem::size_of::<NSObjectLayout>(),
+        );
+
+        #[repr(C)]
+        struct SuperLayout {
+            isa: *const AnyClass,
+            ivar1: u8,
+            // Padding (7 on 64bit, 11 on 32bit)
+            ivar2: U128align16,
+            ivar3: u8,
+            ivar4: [u8; 0],
+            // Padding (15 in Rust, 7 on 64bit, 3 on 32bit)
+        }
+        // Class's ivar size is only rounded up to a pointer-sized boundary,
+        // not all the way up to the maximum alignment.
+        //
+        // This is surprising, but actually fine, since Objective-C objects
+        // are never packed closely like Rust structs would be in an array.
+        assert_eq!(
+            superclass.instance_size(),
+            mem::size_of::<SuperLayout>() - 16 + mem::size_of::<*const AnyClass>(),
+        );
+
+        #[repr(C)]
+        struct SubLayout {
+            isa: *const AnyClass,
+            ivar1: u8,
+            // Padding (7 on 64bit, 11 on 32bit)
+            ivar2: U128align16,
+            ivar3: u8,
+            ivar4: [u8; 0],
+            // Padding (1)
+            ivar1_b: i16,
+            // Padding (4)
+            ivar2_b: usize,
+            ivar3_b: *const AnyObject,
+            ivar4_b: usize,
+        }
+        assert_eq!(subclass.instance_size(), mem::size_of::<SubLayout>());
+
+        let superclass_ivar1 = superclass.instance_variable("ivar1").unwrap();
+        let superclass_ivar2 = superclass.instance_variable("ivar2").unwrap();
+        let superclass_ivar3 = superclass.instance_variable("ivar3").unwrap();
+        let superclass_ivar4 = superclass.instance_variable("ivar4").unwrap();
+        let subclass_ivar1 = subclass.instance_variable("ivar1").unwrap();
+        let subclass_ivar2 = subclass.instance_variable("ivar2").unwrap();
+        let subclass_ivar3 = subclass.instance_variable("ivar3").unwrap();
+        let subclass_ivar4 = subclass.instance_variable("ivar4").unwrap();
+
+        // Ensure that duplicate names do not conflict
+        assert_ne!(superclass_ivar1, subclass_ivar1);
+        assert_ne!(superclass_ivar2, subclass_ivar2);
+        assert_ne!(superclass_ivar3, subclass_ivar3);
+        assert_ne!(superclass_ivar4, subclass_ivar4);
+
+        // Ensure that all offsets are as expected
+        assert_eq!(
+            superclass_ivar1.offset(),
+            offset_of!(SuperLayout, ivar1) as isize
+        );
+        assert_eq!(
+            superclass_ivar2.offset(),
+            offset_of!(SuperLayout, ivar2) as isize
+        );
+        assert_eq!(
+            superclass_ivar3.offset(),
+            offset_of!(SuperLayout, ivar3) as isize
+        );
+        assert_eq!(
+            superclass_ivar4.offset(),
+            offset_of!(SuperLayout, ivar4) as isize
+        );
+        assert_eq!(
+            subclass_ivar1.offset(),
+            offset_of!(SubLayout, ivar1_b) as isize
+        );
+        assert_eq!(
+            subclass_ivar2.offset(),
+            offset_of!(SubLayout, ivar2_b) as isize
+        );
+        assert_eq!(
+            subclass_ivar3.offset(),
+            offset_of!(SubLayout, ivar3_b) as isize
+        );
+        assert_eq!(
+            subclass_ivar4.offset(),
+            offset_of!(SubLayout, ivar4_b) as isize
+        );
+
+        // Ensure our ivar loading works correctly
+        let obj: Id<NSObject> = unsafe { msg_send_id![subclass, new] };
+        let ptr = unsafe { *subclass_ivar3.load::<*const AnyObject>(&obj) };
+        assert!(ptr.is_null());
+
+        // Illustration of what goes wrong with the naive approach of loading
+        // the Ivar dynamically; in short, we can't be sure of which instance
+        // variable we're refering to here.
+        //
+        // let ivar = *obj.get_ivar::<u8>("ivar3");
     }
 }

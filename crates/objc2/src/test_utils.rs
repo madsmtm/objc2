@@ -93,15 +93,18 @@ pub(crate) fn custom_class() -> &'static AnyClass {
         }
 
         extern "C" fn custom_obj_set_foo(this: &mut AnyObject, _cmd: Sel, foo: u32) {
-            unsafe { this.set_ivar::<u32>("_foo", foo) }
+            let ivar = this.class().instance_variable("_foo").unwrap();
+            unsafe { *ivar.load_mut::<u32>(this) = foo }
         }
 
         extern "C" fn custom_obj_get_foo(this: &AnyObject, _cmd: Sel) -> u32 {
-            unsafe { *this.ivar::<u32>("_foo") }
+            let ivar = this.class().instance_variable("_foo").unwrap();
+            unsafe { *ivar.load::<u32>(this) }
         }
 
         extern "C" fn custom_obj_get_foo_reference(this: &AnyObject, _cmd: Sel) -> &u32 {
-            unsafe { this.ivar::<u32>("_foo") }
+            let ivar = this.class().instance_variable("_foo").unwrap();
+            unsafe { ivar.load::<u32>(this) }
         }
 
         extern "C" fn custom_obj_get_struct(_this: &AnyObject, _cmd: Sel) -> CustomStruct {
@@ -118,9 +121,8 @@ pub(crate) fn custom_class() -> &'static AnyClass {
         }
 
         extern "C" fn custom_obj_set_bar(this: &mut AnyObject, _cmd: Sel, bar: u32) {
-            unsafe {
-                this.set_ivar::<u32>("_foo", bar);
-            }
+            let ivar = this.class().instance_variable("_bar").unwrap();
+            unsafe { *ivar.load_mut::<u32>(this) = bar }
         }
 
         extern "C" fn custom_obj_add_number_to_number(
