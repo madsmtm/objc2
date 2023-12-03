@@ -154,6 +154,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   that uses of `Option<Allocated<T>>` is now simply `Allocated<T>`.
 * `AnyObject::class` now returns a `'static` reference to the class.
 * Relaxed `ProtocolType` requirement on `ProtocolObject`.
+* **BREAKING**: Updated `encode` types to those from `objc2-encode v4.0.0`.
 
 ### Deprecated
 * Soft deprecated using `msg_send!` without a comma between arguments (i.e.

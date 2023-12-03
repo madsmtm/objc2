@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 4.0.0 - 2023-12-03
+
 ### Changed
 * **BREAKING**: Changed the type of `EncodingBox::Struct` and
   `EncodingBox::Union` to no longer contain an `Option`.

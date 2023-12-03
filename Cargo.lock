@@ -326,7 +326,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-encode"
-version = "3.0.0"
+version = "4.0.0"
 
 [[package]]
 name = "objc2-proc-macros"
