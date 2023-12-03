@@ -149,6 +149,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Make `rc::Allocated` allowed to be `NULL` internally, such
   that uses of `Option<Allocated<T>>` is now simply `Allocated<T>`.
 * `AnyObject::class` now returns a `'static` reference to the class.
+* Relaxed `ProtocolType` requirement on `ProtocolObject`.
 
 ### Deprecated
 * Soft deprecated using `msg_send!` without a comma between arguments (i.e.

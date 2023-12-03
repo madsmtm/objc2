@@ -1,0 +1,216 @@
+error[E0277]: the trait bound `NSObject: ImplementedBy<NSObject>` is not satisfied
+ --> ui/protocol_object_only_protocols.rs
+  |
+  |     let _: &ProtocolObject<NSObject> = ProtocolObject::from_ref(&*obj);
+  |                                        ------------------------ ^^^^^ the trait `ImplementedBy<NSObject>` is not implemented for `NSObject`
+  |                                        |
+  |                                        required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `ImplementedBy<T>`:
+            (dyn NSObjectProtocol + 'static)
+            (dyn NSAccessibilityColor + 'static)
+            (dyn NSAccessibilityCustomRotorItemSearchDelegate + 'static)
+            (dyn NSAccessibilityElementProtocol + 'static)
+            (dyn NSAccessibilityGroup + 'static)
+            (dyn NSAccessibilityButton + 'static)
+            (dyn NSAccessibilitySwitch + 'static)
+            (dyn NSAccessibilityRadioButton + 'static)
+          and $N others
+note: required by a bound in `ProtocolObject::<P>::from_ref`
+ --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
+  |
+  |     pub fn from_ref<T: ?Sized + Message>(obj: &T) -> &Self
+  |            -------- required by a bound in this associated function
+  |     where
+  |         P: ImplementedBy<T>,
+  |            ^^^^^^^^^^^^^^^^ required by this bound in `ProtocolObject::<P>::from_ref`
+
+error[E0277]: the trait bound `dyn Send: ImplementedBy<NSObject>` is not satisfied
+ --> ui/protocol_object_only_protocols.rs
+  |
+  |     let _: &ProtocolObject<dyn Send> = ProtocolObject::from_ref(&*obj);
+  |                                        ------------------------ ^^^^^ the trait `ImplementedBy<NSObject>` is not implemented for `dyn Send`
+  |                                        |
+  |                                        required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `ImplementedBy<T>`:
+            (dyn NSObjectProtocol + 'static)
+            (dyn NSAccessibilityColor + 'static)
+            (dyn NSAccessibilityCustomRotorItemSearchDelegate + 'static)
+            (dyn NSAccessibilityElementProtocol + 'static)
+            (dyn NSAccessibilityGroup + 'static)
+            (dyn NSAccessibilityButton + 'static)
+            (dyn NSAccessibilitySwitch + 'static)
+            (dyn NSAccessibilityRadioButton + 'static)
+          and $N others
+note: required by a bound in `ProtocolObject::<P>::from_ref`
+ --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
+  |
+  |     pub fn from_ref<T: ?Sized + Message>(obj: &T) -> &Self
+  |            -------- required by a bound in this associated function
+  |     where
+  |         P: ImplementedBy<T>,
+  |            ^^^^^^^^^^^^^^^^ required by this bound in `ProtocolObject::<P>::from_ref`
+
+error[E0277]: the trait bound `dyn Foo: ImplementedBy<NSObject>` is not satisfied
+ --> ui/protocol_object_only_protocols.rs
+  |
+  |     let _: &ProtocolObject<dyn Foo> = ProtocolObject::from_ref(&*obj);
+  |                                       ------------------------ ^^^^^ the trait `ImplementedBy<NSObject>` is not implemented for `dyn Foo`
+  |                                       |
+  |                                       required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `ImplementedBy<T>`:
+            (dyn NSObjectProtocol + 'static)
+            (dyn NSAccessibilityColor + 'static)
+            (dyn NSAccessibilityCustomRotorItemSearchDelegate + 'static)
+            (dyn NSAccessibilityElementProtocol + 'static)
+            (dyn NSAccessibilityGroup + 'static)
+            (dyn NSAccessibilityButton + 'static)
+            (dyn NSAccessibilitySwitch + 'static)
+            (dyn NSAccessibilityRadioButton + 'static)
+          and $N others
+note: required by a bound in `ProtocolObject::<P>::from_ref`
+ --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
+  |
+  |     pub fn from_ref<T: ?Sized + Message>(obj: &T) -> &Self
+  |            -------- required by a bound in this associated function
+  |     where
+  |         P: ImplementedBy<T>,
+  |            ^^^^^^^^^^^^^^^^ required by this bound in `ProtocolObject::<P>::from_ref`
+
+error[E0277]: the trait bound `dyn NSObjectProtocol + Send: ImplementedBy<NSObject>` is not satisfied
+ --> ui/protocol_object_only_protocols.rs
+  |
+  |     let _: &ProtocolObject<dyn NSObjectProtocol + Send> = ProtocolObject::from_ref(&*obj);
+  |                                                           ------------------------ ^^^^^ the trait `ImplementedBy<NSObject>` is not implemented for `dyn NSObjectProtocol + Send`
+  |                                                           |
+  |                                                           required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `ImplementedBy<T>`:
+            (dyn NSObjectProtocol + 'static)
+            (dyn NSAccessibilityColor + 'static)
+            (dyn NSAccessibilityCustomRotorItemSearchDelegate + 'static)
+            (dyn NSAccessibilityElementProtocol + 'static)
+            (dyn NSAccessibilityGroup + 'static)
+            (dyn NSAccessibilityButton + 'static)
+            (dyn NSAccessibilitySwitch + 'static)
+            (dyn NSAccessibilityRadioButton + 'static)
+          and $N others
+note: required by a bound in `ProtocolObject::<P>::from_ref`
+ --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
+  |
+  |     pub fn from_ref<T: ?Sized + Message>(obj: &T) -> &Self
+  |            -------- required by a bound in this associated function
+  |     where
+  |         P: ImplementedBy<T>,
+  |            ^^^^^^^^^^^^^^^^ required by this bound in `ProtocolObject::<P>::from_ref`
+
+error[E0277]: the trait bound `dyn NSObjectProtocol + Sync: ImplementedBy<NSObject>` is not satisfied
+ --> ui/protocol_object_only_protocols.rs
+  |
+  |     let _: &ProtocolObject<dyn NSObjectProtocol + Sync> = ProtocolObject::from_ref(&*obj);
+  |                                                           ------------------------ ^^^^^ the trait `ImplementedBy<NSObject>` is not implemented for `dyn NSObjectProtocol + Sync`
+  |                                                           |
+  |                                                           required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `ImplementedBy<T>`:
+            (dyn NSObjectProtocol + 'static)
+            (dyn NSAccessibilityColor + 'static)
+            (dyn NSAccessibilityCustomRotorItemSearchDelegate + 'static)
+            (dyn NSAccessibilityElementProtocol + 'static)
+            (dyn NSAccessibilityGroup + 'static)
+            (dyn NSAccessibilityButton + 'static)
+            (dyn NSAccessibilitySwitch + 'static)
+            (dyn NSAccessibilityRadioButton + 'static)
+          and $N others
+note: required by a bound in `ProtocolObject::<P>::from_ref`
+ --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
+  |
+  |     pub fn from_ref<T: ?Sized + Message>(obj: &T) -> &Self
+  |            -------- required by a bound in this associated function
+  |     where
+  |         P: ImplementedBy<T>,
+  |            ^^^^^^^^^^^^^^^^ required by this bound in `ProtocolObject::<P>::from_ref`
+
+error[E0277]: the trait bound `dyn NSObjectProtocol + Send + Sync: ImplementedBy<NSObject>` is not satisfied
+ --> ui/protocol_object_only_protocols.rs
+  |
+  |     let _: &ProtocolObject<dyn NSObjectProtocol + Send + Sync> = ProtocolObject::from_ref(&*obj);
+  |                                                                  ------------------------ ^^^^^ the trait `ImplementedBy<NSObject>` is not implemented for `dyn NSObjectProtocol + Send + Sync`
+  |                                                                  |
+  |                                                                  required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `ImplementedBy<T>`:
+            (dyn NSObjectProtocol + 'static)
+            (dyn NSAccessibilityColor + 'static)
+            (dyn NSAccessibilityCustomRotorItemSearchDelegate + 'static)
+            (dyn NSAccessibilityElementProtocol + 'static)
+            (dyn NSAccessibilityGroup + 'static)
+            (dyn NSAccessibilityButton + 'static)
+            (dyn NSAccessibilitySwitch + 'static)
+            (dyn NSAccessibilityRadioButton + 'static)
+          and $N others
+note: required by a bound in `ProtocolObject::<P>::from_ref`
+ --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
+  |
+  |     pub fn from_ref<T: ?Sized + Message>(obj: &T) -> &Self
+  |            -------- required by a bound in this associated function
+  |     where
+  |         P: ImplementedBy<T>,
+  |            ^^^^^^^^^^^^^^^^ required by this bound in `ProtocolObject::<P>::from_ref`
+
+error[E0277]: the trait bound `NSObject: NSCopying` is not satisfied
+ --> ui/protocol_object_only_protocols.rs
+  |
+  |     let _: &ProtocolObject<dyn NSCopying> = ProtocolObject::from_ref(&*obj);
+  |                                             ------------------------ ^^^^^ the trait `NSCopying` is not implemented for `NSObject`
+  |                                             |
+  |                                             required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `NSCopying`:
+            ProtocolObject<T>
+            __RcTestObject
+            NSCollectionLayoutSection
+            NSCollectionLayoutGroupCustomItem
+            NSArray<ObjectType>
+            NSMutableArray<ObjectType>
+            NSDictionary<KeyType, ObjectType>
+            NSSet<ObjectType>
+          and $N others
+  = note: required for `dyn NSCopying` to implement `ImplementedBy<NSObject>`
+note: required by a bound in `ProtocolObject::<P>::from_ref`
+ --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
+  |
+  |     pub fn from_ref<T: ?Sized + Message>(obj: &T) -> &Self
+  |            -------- required by a bound in this associated function
+  |     where
+  |         P: ImplementedBy<T>,
+  |            ^^^^^^^^^^^^^^^^ required by this bound in `ProtocolObject::<P>::from_ref`
+
+error[E0277]: the trait bound `dyn NSCopying + Send: ImplementedBy<NSObject>` is not satisfied
+ --> ui/protocol_object_only_protocols.rs
+  |
+  |     let _: &ProtocolObject<dyn NSCopying + Send> = ProtocolObject::from_ref(&*obj);
+  |                                                    ------------------------ ^^^^^ the trait `ImplementedBy<NSObject>` is not implemented for `dyn NSCopying + Send`
+  |                                                    |
+  |                                                    required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `ImplementedBy<T>`:
+            (dyn NSObjectProtocol + 'static)
+            (dyn NSAccessibilityColor + 'static)
+            (dyn NSAccessibilityCustomRotorItemSearchDelegate + 'static)
+            (dyn NSAccessibilityElementProtocol + 'static)
+            (dyn NSAccessibilityGroup + 'static)
+            (dyn NSAccessibilityButton + 'static)
+            (dyn NSAccessibilitySwitch + 'static)
+            (dyn NSAccessibilityRadioButton + 'static)
+          and $N others
+note: required by a bound in `ProtocolObject::<P>::from_ref`
+ --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
+  |
+  |     pub fn from_ref<T: ?Sized + Message>(obj: &T) -> &Self
+  |            -------- required by a bound in this associated function
+  |     where
+  |         P: ImplementedBy<T>,
+  |            ^^^^^^^^^^^^^^^^ required by this bound in `ProtocolObject::<P>::from_ref`

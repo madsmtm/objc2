@@ -7,7 +7,7 @@ use crate::encode::{Encoding, RefEncode};
 use crate::rc::{autoreleasepool_leaking, Id};
 use crate::runtime::__nsstring::nsstring_to_str;
 use crate::runtime::{AnyObject, NSObjectProtocol};
-use crate::{Message, ProtocolType};
+use crate::Message;
 
 /// An internal helper trait for [`ProtocolObject`].
 ///
@@ -57,25 +57,25 @@ pub unsafe trait ImplementedBy<T: ?Sized + Message> {
 /// ```
 #[doc(alias = "id")]
 #[repr(C)]
-pub struct ProtocolObject<P: ?Sized + ProtocolType> {
+pub struct ProtocolObject<P: ?Sized> {
     inner: AnyObject,
     p: PhantomData<P>,
 }
 
 // SAFETY: The type is `#[repr(C)]` and `AnyObject` internally
-unsafe impl<P: ?Sized + ProtocolType> RefEncode for ProtocolObject<P> {
+unsafe impl<P: ?Sized> RefEncode for ProtocolObject<P> {
     const ENCODING_REF: Encoding = Encoding::Object;
 }
 
 // SAFETY: The type is `AnyObject` internally, and is mean to be messaged
 // as-if it's an object.
-unsafe impl<P: ?Sized + ProtocolType> Message for ProtocolObject<P> {}
+unsafe impl<P: ?Sized> Message for ProtocolObject<P> {}
 
-impl<P: ?Sized + ProtocolType> ProtocolObject<P> {
+impl<P: ?Sized> ProtocolObject<P> {
     /// Get an immutable type-erased reference from a type implementing a
     /// protocol.
     #[inline]
-    pub fn from_ref<T: Message>(obj: &T) -> &Self
+    pub fn from_ref<T: ?Sized + Message>(obj: &T) -> &Self
     where
         P: ImplementedBy<T>,
     {
@@ -89,7 +89,7 @@ impl<P: ?Sized + ProtocolType> ProtocolObject<P> {
     /// Get a mutable type-erased reference from a type implementing a
     /// protocol.
     #[inline]
-    pub fn from_mut<T: Message>(obj: &mut T) -> &mut Self
+    pub fn from_mut<T: ?Sized + Message>(obj: &mut T) -> &mut Self
     where
         P: ImplementedBy<T>,
     {
@@ -118,7 +118,7 @@ impl<P: ?Sized + ProtocolType> ProtocolObject<P> {
     }
 }
 
-impl<P: ?Sized + ProtocolType + NSObjectProtocol> PartialEq for ProtocolObject<P> {
+impl<P: ?Sized + NSObjectProtocol> PartialEq for ProtocolObject<P> {
     #[inline]
     #[doc(alias = "isEqual:")]
     fn eq(&self, other: &Self) -> bool {
@@ -126,16 +126,16 @@ impl<P: ?Sized + ProtocolType + NSObjectProtocol> PartialEq for ProtocolObject<P
     }
 }
 
-impl<P: ?Sized + ProtocolType + NSObjectProtocol> Eq for ProtocolObject<P> {}
+impl<P: ?Sized + NSObjectProtocol> Eq for ProtocolObject<P> {}
 
-impl<P: ?Sized + ProtocolType + NSObjectProtocol> hash::Hash for ProtocolObject<P> {
+impl<P: ?Sized + NSObjectProtocol> hash::Hash for ProtocolObject<P> {
     #[inline]
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
         self.__hash().hash(state);
     }
 }
 
-impl<P: ?Sized + ProtocolType + NSObjectProtocol> fmt::Debug for ProtocolObject<P> {
+impl<P: ?Sized + NSObjectProtocol> fmt::Debug for ProtocolObject<P> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Attempt to format description string
         if let Some(description) = self.__description() {
@@ -159,10 +159,9 @@ impl<P: ?Sized + ProtocolType + NSObjectProtocol> fmt::Debug for ProtocolObject<
     }
 }
 
-impl<P, T> AsRef<ProtocolObject<T>> for ProtocolObject<P>
+impl<P: ?Sized, T> AsRef<ProtocolObject<T>> for ProtocolObject<P>
 where
-    P: ?Sized + ProtocolType,
-    T: ?Sized + ProtocolType + ImplementedBy<ProtocolObject<P>>,
+    T: ?Sized + ImplementedBy<ProtocolObject<P>>,
 {
     #[inline]
     fn as_ref(&self) -> &ProtocolObject<T> {
@@ -170,10 +169,9 @@ where
     }
 }
 
-impl<P, T> AsMut<ProtocolObject<T>> for ProtocolObject<P>
+impl<P: ?Sized, T> AsMut<ProtocolObject<T>> for ProtocolObject<P>
 where
-    P: ?Sized + ProtocolType,
-    T: ?Sized + ProtocolType + ImplementedBy<ProtocolObject<P>>,
+    T: ?Sized + ImplementedBy<ProtocolObject<P>>,
 {
     #[inline]
     fn as_mut(&mut self) -> &mut ProtocolObject<T> {
@@ -181,7 +179,7 @@ where
     }
 }
 
-// TODO: Maybe iplement Borrow + BorrowMut?
+// TODO: Maybe implement Borrow + BorrowMut?
 
 #[cfg(test)]
 #[allow(clippy::missing_safety_doc)]
@@ -194,7 +192,9 @@ mod tests {
     use super::*;
     use crate::mutability::Mutable;
     use crate::runtime::{NSObject, NSObjectProtocol};
-    use crate::{declare_class, extern_methods, extern_protocol, ClassType, DeclaredClass};
+    use crate::{
+        declare_class, extern_methods, extern_protocol, ClassType, DeclaredClass, ProtocolType,
+    };
 
     extern_protocol!(
         unsafe trait Foo {

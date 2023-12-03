@@ -184,7 +184,7 @@ macro_rules! __inner_extern_protocol {
         $(#[$impl_m])*
         unsafe impl<T> $name for $crate::runtime::ProtocolObject<T>
         where
-            T: ?$crate::__macro_helpers::Sized + $crate::ProtocolType + $name
+            T: ?$crate::__macro_helpers::Sized + $name
         {}
 
         // SAFETY: The specified name is ensured by caller to be a protocol,
