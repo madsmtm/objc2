@@ -49,7 +49,7 @@ impl NestingLevel {
         }
     }
 
-    const fn include_container_fields(self) -> bool {
+    pub(crate) const fn include_container_fields(self) -> bool {
         match self {
             Self::Top | Self::Within => true,
             Self::Bottom => false,
@@ -80,7 +80,7 @@ pub(crate) fn compare_encodings<E1: EncodingType, E2: EncodingType>(
         level2
     };
 
-    // TODO: Are level1 and level2 ever be different?
+    // TODO: Are level1 and level2 ever different?
 
     match (enc1.helper(level1), enc2.helper(level2)) {
         (Primitive(p1), Primitive(p2)) => p1 == p2,
@@ -106,9 +106,16 @@ pub(crate) fn compare_encodings<E1: EncodingType, E2: EncodingType>(
         (Container(kind1, name1, items1, level1), Container(kind2, name2, items2, level2)) => {
             kind1 == kind2
                 && name1 == name2
-                && match (items1, items2) {
-                    (None, None) => true,
-                    (Some(items1), Some(items2)) => {
+                && match (
+                    items1,
+                    items2,
+                    level1.include_container_fields() && level2.include_container_fields(),
+                ) {
+                    (_, _, false) => true,
+                    // If one container is empty, then they are equivalent
+                    ([], _, true) => true,
+                    (_, [], true) => true,
+                    (items1, items2, true) => {
                         if items1.len() != items2.len() {
                             return false;
                         }
@@ -119,14 +126,6 @@ pub(crate) fn compare_encodings<E1: EncodingType, E2: EncodingType>(
                         }
                         true
                     }
-                    // A bit unsure about this one, but the "safe" default
-                    // here is to say that a container with items does not
-                    // compare equal to another container without items.
-                    //
-                    // Note that this may be confusing, since a `Pointer` to
-                    // the two containers might suddenly start comparing
-                    // equal, but
-                    _ => false,
                 }
         }
         (_, _) => false,
@@ -263,7 +262,7 @@ pub(crate) enum Helper<'a, E = Encoding> {
     BitField(u8, Option<&'a (u64, E)>, NestingLevel),
     Indirection(IndirectionKind, &'a E, NestingLevel),
     Array(u64, &'a E, NestingLevel),
-    Container(ContainerKind, &'a str, Option<&'a [E]>, NestingLevel),
+    Container(ContainerKind, &'a str, &'a [E], NestingLevel),
 }
 
 impl<E: EncodingType> fmt::Display for Helper<'_, E> {
@@ -285,7 +284,7 @@ impl<E: EncodingType> fmt::Display for Helper<'_, E> {
             Self::Container(kind, name, items, level) => {
                 write!(f, "{}", kind.start())?;
                 write!(f, "{name}")?;
-                if let Some(items) = items {
+                if level.include_container_fields() {
                     write!(f, "=")?;
                     for item in *items {
                         write!(f, "{}", item.helper(*level))?;
@@ -333,22 +332,12 @@ impl Helper<'_> {
                 if !verify_name(name) {
                     panic!("Struct name was not a valid identifier");
                 }
-                let fields = if level.include_container_fields() {
-                    Some(*fields)
-                } else {
-                    None
-                };
                 Self::Container(ContainerKind::Struct, name, fields, level.container())
             }
             Union(name, members) => {
                 if !verify_name(name) {
                     panic!("Union name was not a valid identifier");
                 }
-                let members = if level.include_container_fields() {
-                    Some(*members)
-                } else {
-                    None
-                };
                 Self::Container(ContainerKind::Union, name, members, level.container())
             }
         }
@@ -391,22 +380,12 @@ impl<'a> Helper<'a, EncodingBox> {
                 if !verify_name(name) {
                     panic!("Struct name was not a valid identifier");
                 }
-                let fields = if level.include_container_fields() {
-                    fields.as_deref()
-                } else {
-                    None
-                };
                 Self::Container(ContainerKind::Struct, name, fields, level.container())
             }
             Union(name, members) => {
                 if !verify_name(name) {
                     panic!("Union name was not a valid identifier");
                 }
-                let members = if level.include_container_fields() {
-                    members.as_deref()
-                } else {
-                    None
-                };
                 Self::Container(ContainerKind::Union, name, members, level.container())
             }
         }

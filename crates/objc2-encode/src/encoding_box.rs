@@ -85,9 +85,9 @@ pub enum EncodingBox {
     /// Same as [`Encoding::Array`].
     Array(u64, Box<Self>),
     /// Same as [`Encoding::Struct`].
-    Struct(String, Option<Vec<Self>>),
+    Struct(String, Vec<Self>),
     /// Same as [`Encoding::Union`].
-    Union(String, Option<Vec<Self>>),
+    Union(String, Vec<Self>),
 }
 
 impl EncodingBox {
@@ -188,20 +188,20 @@ mod tests {
         ));
         let enc2 = EncodingBox::Atomic(Box::new(EncodingBox::Struct(
             "test".to_string(),
-            Some(vec![EncodingBox::Array(2, Box::new(EncodingBox::Int))]),
+            vec![EncodingBox::Array(2, Box::new(EncodingBox::Int))],
         )));
         let enc3 = EncodingBox::Atomic(Box::new(EncodingBox::Struct(
             "test".to_string(),
-            Some(vec![EncodingBox::Array(2, Box::new(EncodingBox::Char))]),
+            vec![EncodingBox::Array(2, Box::new(EncodingBox::Char))],
         )));
         assert_eq!(enc1, enc2);
         assert_ne!(enc1, enc3);
     }
 
     #[test]
-    fn ne_struct_with_without_fields() {
-        let enc1 = EncodingBox::Struct("test".to_string(), Some(vec![EncodingBox::Char]));
-        let enc2 = EncodingBox::Struct("test".to_string(), None);
+    fn struct_nested_in_pointer() {
+        let enc1 = EncodingBox::Struct("test".to_string(), vec![EncodingBox::Char]);
+        let enc2 = EncodingBox::Struct("test".to_string(), vec![EncodingBox::Int]);
         const ENC3A: Encoding = Encoding::Struct("test", &[Encoding::Char]);
         assert_ne!(enc1, enc2);
         assert!(ENC3A.equivalent_to_box(&enc1));
@@ -225,15 +225,12 @@ mod tests {
     #[test]
     fn parse_atomic_struct() {
         let expected = EncodingBox::Atomic(Box::new(EncodingBox::Atomic(Box::new(
-            EncodingBox::Struct("a".into(), Some(Vec::new())),
+            EncodingBox::Struct("a".into(), vec![]),
         ))));
         let actual = EncodingBox::from_str("AA{a=}").unwrap();
         assert_eq!(expected, actual);
         assert_eq!(expected.to_string(), "AA{a}");
 
-        let expected = EncodingBox::Atomic(Box::new(EncodingBox::Atomic(Box::new(
-            EncodingBox::Struct("a".into(), None),
-        ))));
         let actual = EncodingBox::from_str("AA{a}").unwrap();
         assert_eq!(expected, actual);
         assert_eq!(expected.to_string(), "AA{a}");
@@ -243,7 +240,7 @@ mod tests {
     fn parse_part_of_string() {
         let mut s = "{a}cb0i16";
 
-        let expected = EncodingBox::Struct("a".into(), None);
+        let expected = EncodingBox::Struct("a".into(), vec![]);
         let actual = EncodingBox::from_start_of_str(&mut s).unwrap();
         assert_eq!(expected, actual);
 

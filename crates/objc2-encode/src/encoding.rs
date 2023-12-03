@@ -104,8 +104,8 @@ pub enum Encoding {
     /// are possible for the type.
     ///
     /// A `BitField(_, Some(_))` and a `BitField(_, None)` do _not_ compare
-    /// equal; instead, you should set the bitfield depending on the target
-    /// platform.
+    /// equal; instead, you should set the bitfield correctly depending on the
+    /// target platform.
     BitField(u8, Option<&'static (u64, Encoding)>),
     /// A pointer to the given type.
     ///
@@ -129,12 +129,18 @@ pub enum Encoding {
     /// It is not uncommon for the name to be `"?"`.
     ///
     /// Corresponds to the `"{" name "=" fields... "}"` code.
+    ///
+    /// Note that the `=` may be omitted in some situations; this is
+    /// considered equal to the case where there are no fields.
     Struct(&'static str, &'static [Encoding]),
-    /// A union with the given name and fields.
+    /// A union with the given name and members.
     ///
-    /// The order of the fields must match the order of the order in this.
+    /// The order of the members must match the order of the order in this.
     ///
-    /// Corresponds to the `"(" name "=" fields... ")"` code.
+    /// Corresponds to the `"(" name "=" members... ")"` code.
+    ///
+    /// Note that the `=` may be omitted in some situations; this is
+    /// considered equal to the case where there are no members.
     Union(&'static str, &'static [Encoding]),
     // TODO: "Vector" types have the '!' encoding, but are not implemented in
     // clang
@@ -189,6 +195,9 @@ impl Encoding {
     /// - Structs or unions behind multiple pointers are considered
     ///   equivalent, since Objective-C compilers strip this information to
     ///   avoid unnecessary nesting.
+    /// - Structs or unions with no fields/members are considered to represent
+    ///   "opqaue" types, and will therefore be equivalent to all other
+    ///   structs / unions.
     ///
     /// The comparison may be changed in the future to e.g. ignore struct
     /// names or similar changes that may be required because of limitations
@@ -303,16 +312,16 @@ mod tests {
 
                 // Check equivalence comparisons
                 assert!(E.equivalent_to(&E), "equivalent self");
-                assert!(E.equivalent_to_str($string), "equivalent self string");
+                assert!(E.equivalent_to_str($string), "equivalent self string {}", $string);
                 assert!(E.equivalent_to_box(&boxed), "equivalent self boxed");
                 $(
-                    assert!(E.equivalent_to(&$equivalent_encoding), "equivalent encoding");
+                    assert!(E.equivalent_to(&$equivalent_encoding), "equivalent encoding {}", $equivalent_encoding);
                     assert!(E.equivalent_to_str(&$equivalent_encoding.to_string()), "equivalent encoding string");
                     let boxed = EncodingBox::from_str(&$equivalent_encoding.to_string()).expect("parse equivalent encoding");
                     assert!(E.equivalent_to_box(&boxed), "equivalent encoding boxed");
                 )*
                 $(
-                    assert!(E.equivalent_to_str($equivalent_string), "equivalent string");
+                    assert!(E.equivalent_to_str($equivalent_string), "equivalent string {}", $equivalent_string);
                     let boxed = EncodingBox::from_str($equivalent_string).expect("parse equivalent string");
                     assert!(E.equivalent_to_box(&boxed), "equivalent string boxed");
                 )*
@@ -447,6 +456,7 @@ mod tests {
 
         fn struct_() {
             Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int]);
+            ~Encoding::Struct("SomeStruct", &[]);
             !Encoding::Union("SomeStruct", &[Encoding::Char, Encoding::Int]);
             !Encoding::Int;
             !Encoding::Struct("SomeStruct", &[Encoding::Int]);
@@ -454,45 +464,53 @@ mod tests {
             !Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char]);
             !Encoding::Struct("AnotherName", &[Encoding::Char, Encoding::Int]);
             "{SomeStruct=ci}";
-            !"{SomeStruct=ci";
+            ~"{SomeStruct=}";
             !"{SomeStruct}";
-            !"{SomeStruct=}";
+            !"{SomeStruct=ic}";
+            !"{SomeStruct=malformed";
         }
 
         fn pointer_struct() {
             Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int]));
+            ~Encoding::Pointer(&Encoding::Struct("SomeStruct", &[]));
             !Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char]));
             !Encoding::Pointer(&Encoding::Struct("AnotherName", &[Encoding::Char, Encoding::Int]));
             "^{SomeStruct=ci}";
-            !"^{SomeStruct=ci";
+            ~"^{SomeStruct=}";
             !"^{SomeStruct}";
-            !"^{SomeStruct=}";
+            !"^{SomeStruct=ic}";
+            !"^{SomeStruct=malformed";
         }
 
         fn pointer_pointer_struct() {
             Encoding::Pointer(&Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int])));
+            ~Encoding::Pointer(&Encoding::Pointer(&Encoding::Struct("SomeStruct", &[])));
             ~Encoding::Pointer(&Encoding::Pointer(&Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char])));
             !Encoding::Pointer(&Encoding::Pointer(&Encoding::Struct("AnotherName", &[Encoding::Char, Encoding::Int])));
             "^^{SomeStruct}";
-            !"^^{SomeStruct=ci}";
-            !"^^{SomeStruct=ii}";
-            !"^^{SomeStruct=ci";
             !"^^{SomeStruct=}";
+            !"^^{SomeStruct=ci}";
+            !"^^{SomeStruct=ic}";
+            !"^^{AnotherName=ic}";
+            !"^^{SomeStruct=malformed";
         }
 
         fn atomic_struct() {
             Encoding::Atomic(&Encoding::Struct("SomeStruct", &[Encoding::Char, Encoding::Int]));
+            ~Encoding::Atomic(&Encoding::Struct("SomeStruct", &[]));
             ~Encoding::Atomic(&Encoding::Struct("SomeStruct", &[Encoding::Int, Encoding::Char]));
             !Encoding::Atomic(&Encoding::Struct("AnotherName", &[Encoding::Char, Encoding::Int]));
             "A{SomeStruct}";
-            !"A{SomeStruct=ci}";
-            !"A{SomeStruct=ci";
             !"A{SomeStruct=}";
+            !"A{SomeStruct=ci}";
+            !"A{SomeStruct=ic}";
+            !"A{SomeStruct=malformed";
         }
 
         fn empty_struct() {
             Encoding::Struct("SomeStruct", &[]);
             "{SomeStruct=}";
+            ~"{SomeStruct=ci}";
             !"{SomeStruct}";
         }
 
@@ -554,11 +572,24 @@ mod tests {
                 ]
             );
             "{abc=^[8B](def=@?)^^b255c?}";
+            ~"{abc=}";
+            !"{abc}";
         }
 
         fn identifier() {
             Encoding::Struct("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", &[]);
             "{_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789=}";
+        }
+
+        // Regression test. The encoding of the `CGLContextObj` object changed
+        // between versions of macOS. As such, this is something that we must
+        // be prepared to handle.
+        fn cgl_context_obj() {
+            Encoding::Pointer(&Encoding::Struct("_CGLContextObject", &[]));
+            "^{_CGLContextObject=}";
+            ~"^{_CGLContextObject=^{__GLIContextRec}{__GLIFunctionDispatchRec=^?^?^?^?^?}^{_CGLPrivateObject}^v}";
+            !"^{_CGLContextObject}";
+            !"^{SomeOtherStruct=}";
         }
     }
 
@@ -592,7 +623,7 @@ mod tests {
         let parsed = EncodingBox::from_str(s).unwrap();
         let expected = EncodingBox::Struct(
             "S".to_string(),
-            Some(vec![EncodingBox::Block, EncodingBox::Block]),
+            vec![EncodingBox::Block, EncodingBox::Block],
         );
         assert_eq!(parsed, expected);
 

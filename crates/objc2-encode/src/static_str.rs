@@ -55,7 +55,7 @@ pub(crate) const fn static_encoding_str_len(encoding: &Encoding, level: NestingL
         }
         Container(_, name, items, level) => {
             let mut res = 1 + name.len();
-            if let Some(items) = items {
+            if level.include_container_fields() {
                 res += 1;
                 let mut i = 0;
                 while i < items.len() {
@@ -184,7 +184,7 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 name_i += 1;
             }
 
-            if let Some(items) = items {
+            if level.include_container_fields() {
                 res[res_i] = b'=';
                 res_i += 1;
 
