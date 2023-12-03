@@ -1,0 +1,5 @@
+error[E0282]: type annotations needed
+ --> ui/msg_send_id_underspecified_error3.rs
+  |
+  |     let _: Result<_, _> = unsafe { msg_send_id![obj, error: _] };
+  |            ^^^^^^^^^^^^ cannot infer type

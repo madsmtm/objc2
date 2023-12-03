@@ -704,28 +704,9 @@ unsafe impl<T: RefEncode> RefEncode for atomic::AtomicPtr<T> {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
-/// [`Encode`] is implemented manually for `*const c_void`, `*mut c_void` and
-/// `NonNull<c_void>`, instead of implementing [`RefEncode`], to discourage
-/// creating `&c_void`/`&mut c_void`.
-unsafe impl Encode for *const c_void {
-    const ENCODING: Encoding = Encoding::Pointer(&Encoding::Void);
+unsafe impl RefEncode for c_void {
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Encoding::Void);
 }
-unsafe impl RefEncode for *const c_void {
-    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
-}
-unsafe impl Encode for *mut c_void {
-    const ENCODING: Encoding = Encoding::Pointer(&Encoding::Void);
-}
-unsafe impl RefEncode for *mut c_void {
-    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
-}
-unsafe impl Encode for NonNull<c_void> {
-    const ENCODING: Encoding = Encoding::Pointer(&Encoding::Void);
-}
-unsafe impl RefEncode for NonNull<c_void> {
-    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
-}
-unsafe impl OptionEncode for NonNull<c_void> {}
 
 unsafe impl<T: Encode, const LENGTH: usize> Encode for [T; LENGTH] {
     const ENCODING: Encoding = Encoding::Array(LENGTH as u64, &T::ENCODING);
@@ -959,9 +940,14 @@ mod tests {
             <*const c_void>::ENCODING,
             Encoding::Pointer(&Encoding::Void)
         );
+        assert_eq!(<&c_void>::ENCODING, Encoding::Pointer(&Encoding::Void));
         assert_eq!(
             <&*const c_void>::ENCODING,
             Encoding::Pointer(&Encoding::Pointer(&Encoding::Void))
+        );
+        assert_eq!(
+            <AtomicPtr<c_void>>::ENCODING,
+            Encoding::Atomic(&Encoding::Pointer(&Encoding::Void))
         );
     }
 

@@ -95,24 +95,15 @@ error[E0277]: the trait bound `c_void: Encode` is not satisfied
   |                 ^^^^^^ the trait `Encode` is not implemented for `c_void`
   |
   = help: the following other types implement trait `Encode`:
-            *const c_void
-            *mut c_void
-note: required by a bound in `is_encode`
- --> ui/not_encode.rs
-  |
-  | fn is_encode<T: Encode>() {}
-  |                 ^^^^^^ required by this bound in `is_encode`
-
-error[E0277]: the trait bound `c_void: RefEncode` is not satisfied
- --> ui/not_encode.rs
-  |
-  |     is_encode::<&c_void>();
-  |                 ^^^^^^^ the trait `RefEncode` is not implemented for `c_void`
-  |
-  = help: the following other types implement trait `RefEncode`:
-            *const c_void
-            *mut c_void
-  = note: required for `&c_void` to implement `Encode`
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
+          and $N others
 note: required by a bound in `is_encode`
  --> ui/not_encode.rs
   |
@@ -225,8 +216,8 @@ note: required by a bound in `is_encode`
   |                 ^^^^^^ required by this bound in `is_encode`
 help: consider removing the leading `&`-reference
   |
-25 -     is_encode::<&Sel>();
-25 +     is_encode::<Sel>();
+24 -     is_encode::<&Sel>();
+24 +     is_encode::<Sel>();
    |
 
 error[E0277]: the trait bound `UnsafeCell<&u8>: OptionEncode` is not satisfied
@@ -236,7 +227,6 @@ error[E0277]: the trait bound `UnsafeCell<&u8>: OptionEncode` is not satisfied
   |                 ^^^^^^^^^^^^^^^^^^^^^^^ the trait `OptionEncode` is not implemented for `UnsafeCell<&u8>`
   |
   = help: the following other types implement trait `OptionEncode`:
-            NonNull<c_void>
             NonNull<T>
             objc2::runtime::Sel
             NonZeroU8
@@ -244,6 +234,7 @@ error[E0277]: the trait bound `UnsafeCell<&u8>: OptionEncode` is not satisfied
             NonZeroU32
             NonZeroU64
             NonZeroUsize
+            NonZeroI8
           and $N others
   = note: required for `Option<UnsafeCell<&u8>>` to implement `Encode`
 note: required by a bound in `is_encode`
@@ -259,7 +250,6 @@ error[E0277]: the trait bound `Cell<&u8>: OptionEncode` is not satisfied
   |                 ^^^^^^^^^^^^^^^^^ the trait `OptionEncode` is not implemented for `Cell<&u8>`
   |
   = help: the following other types implement trait `OptionEncode`:
-            NonNull<c_void>
             NonNull<T>
             objc2::runtime::Sel
             NonZeroU8
@@ -267,6 +257,7 @@ error[E0277]: the trait bound `Cell<&u8>: OptionEncode` is not satisfied
             NonZeroU32
             NonZeroU64
             NonZeroUsize
+            NonZeroI8
           and $N others
   = note: required for `Option<Cell<&u8>>` to implement `Encode`
 note: required by a bound in `is_encode`
