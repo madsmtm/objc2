@@ -151,7 +151,7 @@ fn test_remove() {
 
     array.removeAllObjects();
     expected.release += 2;
-    expected.dealloc += 2;
+    expected.drop += 2;
     expected.assert_current();
     assert_eq!(array.len(), 0);
 }

@@ -102,7 +102,7 @@ fn test_insert_key_copies() {
     dict.removeAllObjects();
     // Release key
     expected.release += 1;
-    expected.dealloc += 1;
+    expected.drop += 1;
     expected.assert_current();
 }
 
@@ -137,7 +137,7 @@ fn test_insert_value_retain_release() {
 
     drop(old);
     expected.release += 1;
-    expected.dealloc += 1;
+    expected.drop += 1;
     expected.assert_current();
 }
 
@@ -183,7 +183,7 @@ fn test_remove_clear_release_dealloc() {
 
     dict.removeAllObjects();
     expected.release += 2;
-    expected.dealloc += 2;
+    expected.drop += 2;
     expected.assert_current();
     assert_eq!(dict.len(), 0);
 }

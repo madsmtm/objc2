@@ -4,12 +4,6 @@
 //! variables and methods can then be added before the class is ultimately
 //! registered.
 
-mod ivar;
-mod ivar_bool;
-mod ivar_drop;
-mod ivar_encode;
-mod ivar_forwarding_impls;
-
 use alloc::format;
 use alloc::string::ToString;
 use core::mem;
@@ -23,11 +17,6 @@ use crate::ffi;
 use crate::runtime::{AnyClass, AnyObject, AnyProtocol, Bool, Imp, MethodImplementation, Sel};
 use crate::sel;
 use crate::Message;
-
-pub use ivar::{InnerIvarType, Ivar, IvarType};
-pub use ivar_bool::IvarBool;
-pub use ivar_drop::IvarDrop;
-pub use ivar_encode::IvarEncode;
 
 fn method_type_encoding(ret: &Encoding, args: &[Encoding]) -> CString {
     // First two arguments are always self and the selector
@@ -399,6 +388,10 @@ impl ClassBuilder {
         unsafe { self.add_ivar_inner::<T>(name, &T::ENCODING) }
     }
 
+    pub(crate) unsafe fn add_ivar_inner<T>(&mut self, name: &str, encoding: &Encoding) {
+        unsafe { self.add_ivar_inner_mono(name, mem::size_of::<T>(), T::LOG2_ALIGNMENT, encoding) }
+    }
+
     // Monomorphized version
     unsafe fn add_ivar_inner_mono(
         &mut self,
@@ -428,21 +421,6 @@ impl ClassBuilder {
             )
         });
         assert!(success.as_bool(), "failed to add ivar {name}");
-    }
-
-    unsafe fn add_ivar_inner<T>(&mut self, name: &str, encoding: &Encoding) {
-        unsafe { self.add_ivar_inner_mono(name, mem::size_of::<T>(), T::LOG2_ALIGNMENT, encoding) }
-    }
-
-    /// Adds an instance variable from an [`IvarType`].
-    ///
-    ///
-    /// # Panics
-    ///
-    /// Same as [`ClassBuilder::add_ivar`].
-    pub fn add_static_ivar<T: IvarType>(&mut self) {
-        // SAFETY: The encoding is correct
-        unsafe { self.add_ivar_inner::<T::Type>(T::NAME, &T::Type::ENCODING) }
     }
 
     /// Adds the given protocol to self.
@@ -617,7 +595,8 @@ mod tests {
     use crate::rc::Id;
     use crate::runtime::{NSObject, NSObjectProtocol};
     use crate::{
-        declare_class, extern_methods, msg_send, msg_send_id, test_utils, ClassType, ProtocolType,
+        declare_class, extern_methods, msg_send, msg_send_id, test_utils, ClassType, DeclaredClass,
+        ProtocolType,
     };
 
     #[test]
@@ -905,6 +884,8 @@ mod tests {
                 type Mutability = Immutable;
                 const NAME: &'static str = "TestInheritedNSObjectMethodsWork";
             }
+
+            impl DeclaredClass for Custom {}
         );
 
         extern_methods!(
@@ -923,7 +904,7 @@ mod tests {
 
         // description
         let expected =
-            format!("Custom {{ __superclass: ManuallyDrop {{ value: <TestInheritedNSObjectMethodsWork: {obj1:p}> }} }}");
+            format!("Custom {{ __superclass: ManuallyDrop {{ value: <TestInheritedNSObjectMethodsWork: {obj1:p}> }}, __ivars: PhantomData<()> }}");
         assert_eq!(format!("{obj1:?}"), expected);
 
         // hash

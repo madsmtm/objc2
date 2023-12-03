@@ -1,6 +1,6 @@
 use objc2::rc::Id;
 use objc2::runtime::NSObject;
-use objc2::{declare_class, extern_class, extern_methods, mutability, ClassType};
+use objc2::{declare_class, extern_class, extern_methods, mutability, ClassType, DeclaredClass};
 
 extern_class!(
     pub struct MyObject;
@@ -38,6 +38,8 @@ declare_class!(
         const NAME: &'static str = "CustomObject1";
     }
 
+    impl DeclaredClass for CustomObject1 {}
+
     unsafe impl CustomObject1 {
         #[method(c)]
         #[optional]
@@ -54,6 +56,8 @@ declare_class!(
         type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "CustomObject2";
     }
+
+    impl DeclaredClass for CustomObject2 {}
 
     unsafe impl CustomObject2 {
         #[optional]

@@ -837,7 +837,7 @@ mod tests {
     use crate::mutability::{Immutable, Mutable};
     use crate::rc::{__RcTestObject, __ThreadTestData, autoreleasepool};
     use crate::runtime::{AnyObject, NSObject};
-    use crate::{declare_class, msg_send};
+    use crate::{declare_class, msg_send, DeclaredClass};
 
     #[test]
     fn auto_traits() {
@@ -851,6 +851,8 @@ mod tests {
                         type Mutability = $mutability;
                         const NAME: &'static str = concat!(stringify!($name), "Test");
                     }
+
+                    impl DeclaredClass for $name {}
                 );
             };
         }
@@ -906,7 +908,7 @@ mod tests {
 
         drop(obj);
         expected.release += 1;
-        expected.dealloc += 1;
+        expected.drop += 1;
         expected.assert_current();
     }
 
@@ -932,7 +934,7 @@ mod tests {
             expected.assert_current();
         });
         expected.release += 1;
-        expected.dealloc += 1;
+        expected.drop += 1;
         expected.assert_current();
     }
 
@@ -970,7 +972,7 @@ mod tests {
 
         drop(cloned);
         expected.release += 1;
-        expected.dealloc += 1;
+        expected.drop += 1;
         expected.assert_current();
     }
 

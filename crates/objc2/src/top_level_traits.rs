@@ -1,3 +1,6 @@
+use core::ptr::NonNull;
+
+use crate::__macro_helpers::declared_ivars::get_initialized_ivar_ptr;
 use crate::encode::RefEncode;
 use crate::msg_send_id;
 use crate::mutability::{IsAllocableAnyThread, IsRetainable, Mutability};
@@ -305,6 +308,70 @@ pub unsafe trait ClassType: Message {
 
     // TODO: `fn alloc_on_main(mtm: MainThreadMarker)`
     // TODO: `fn mtm(&self) -> MainThreadMarker where T::Mutability: MainThreadOnly`
+}
+
+/// Marks types whose implementation is defined in Rust.
+///
+/// This is used in [`declare_class!`], and allows access to the instance
+/// variables that a given type declares, see that macro for details.
+///
+/// [`declare_class!`]: crate::declare_class
+//
+// Note: We mark this trait as not `unsafe` for better documentation, since
+// implementing it inside `declare_class!` is not `unsafe`.
+//
+// Safety is ensured by `__UNSAFE_OFFSETS_CORRECT`.
+pub trait DeclaredClass: ClassType {
+    /// A type representing the instance variables that this class carries.
+    type Ivars: Sized;
+
+    // TODO: Add `ivars_ptr(this: NonNull<Self>) -> NonNull<Self::Ivars>`?
+
+    /// Get a reference to the instance variable data that this object
+    /// carries.
+    #[inline]
+    #[track_caller]
+    fn ivars(&self) -> &Self::Ivars
+    where
+        Self: Sized, // Required because of MSRV
+    {
+        let ptr: NonNull<Self> = NonNull::from(self);
+        // SAFETY: The pointer is valid and initialized.
+        let ivars = unsafe { get_initialized_ivar_ptr(ptr) };
+        // SAFETY: The lifetime of the instance variable is tied to the object.
+        unsafe { ivars.as_ref() }
+    }
+
+    /// Get a mutable reference to the instance variable data that this object
+    /// carries.
+    #[inline]
+    #[track_caller]
+    fn ivars_mut(&mut self) -> &mut Self::Ivars
+    where
+        Self: Sized, // Required because of MSRV
+    {
+        let ptr: NonNull<Self> = NonNull::from(self);
+        // SAFETY: The pointer is valid and initialized.
+        let mut ivars = unsafe { get_initialized_ivar_ptr(ptr) };
+        // SAFETY: The lifetime of the instance variable is tied to the object.
+        //
+        // Mutability is safe since the object itself is mutable. See
+        // `ClassType::as_super_mut` for why this is safe without
+        // `Self: IsMutable`.
+        unsafe { ivars.as_mut() }
+    }
+
+    #[doc(hidden)]
+    fn __ivars_offset() -> isize;
+
+    #[doc(hidden)]
+    fn __drop_flag_offset() -> isize;
+
+    /// # Safety
+    ///
+    /// The ivar offset and drop flag offsets must be implemented correctly.
+    #[doc(hidden)]
+    const __UNSAFE_OFFSETS_CORRECT: ();
 }
 
 /// Marks types that represent specific protocols.

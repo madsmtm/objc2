@@ -1,6 +1,9 @@
 use objc2::rc::Id;
 use objc2::runtime::{NSObject, NSObjectProtocol};
-use objc2::{declare_class, extern_methods, extern_protocol, mutability, ClassType, ProtocolType};
+use objc2::{
+    declare_class, extern_methods, extern_protocol, mutability, ClassType, DeclaredClass,
+    ProtocolType,
+};
 
 extern_protocol!(
     #[allow(clippy::missing_safety_doc)]
@@ -26,6 +29,8 @@ declare_class!(
         type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "MainThreadMarkerTest";
     }
+
+    impl DeclaredClass for Cls {}
 
     unsafe impl Proto for Cls {
         #[method(myMethod:)]

@@ -1,5 +1,4 @@
 mod __attribute_helpers;
-mod __field_helpers;
 mod __method_msg_send;
 mod __msg_send_parse;
 mod __rewrite_self_param;
@@ -872,7 +871,7 @@ macro_rules! __class_inner {
 /// use objc2::msg_send;
 /// #
 /// # use objc2::runtime::NSObject;
-/// # use objc2::{declare_class, mutability, ClassType};
+/// # use objc2::{declare_class, mutability, ClassType, DeclaredClass};
 /// #
 /// # declare_class!(
 /// #     struct MyObject;
@@ -882,6 +881,8 @@ macro_rules! __class_inner {
 /// #         type Mutability = mutability::InteriorMutable;
 /// #         const NAME: &'static str = "MyObject";
 /// #     }
+/// #
+/// #     impl DeclaredClass for MyObject {}
 /// # );
 ///
 /// let obj: &MyObject; // Some object that implements ClassType
@@ -1084,7 +1085,10 @@ macro_rules! msg_send_bool {
 ///   type is a generic `Allocated<T>`.
 ///
 /// - The `init` family: The receiver must be `Allocated<T>` as returned from
-///   `alloc`. The receiver is consumed, and a the now-initialized `Id<T>` or
+///   `alloc`, or if sending messages to the superclass, it must be
+///   `PartialInit<T>`.
+///
+///   The receiver is consumed, and a the now-initialized `Id<T>` or
 ///   `Option<Id<T>>` (with the same `T`) is returned.
 ///
 /// - The `copy` family: The receiver may be anything that implements
@@ -1102,17 +1106,16 @@ macro_rules! msg_send_bool {
 /// See [the clang documentation][arc-retainable] for the precise
 /// specification of Objective-C's ownership rules.
 ///
-/// As you may have noticed, the return type is always either `Id / Allocated`
-/// or `Option<Id / Allocated>`. Internally, the return type is always
-/// `Option<Id / Allocated>` (for example: almost all `new` methods can fail
-/// if the allocation failed), but for convenience, if the return type is
-/// `Id / Allocated` this macro will automatically unwrap the object, or panic
-/// with an error message if it couldn't be retrieved.
+/// As you may have noticed, the return type is usually either `Id` or
+/// `Option<Id>`. Internally, the return type is always `Option<Id>` (for
+/// example: almost all `new` methods can fail if the allocation failed), but
+/// for convenience, if the return type is `Id<T>`, this macro will
+/// automatically unwrap the object, or panic with an error message if it
+/// couldn't be retrieved.
 ///
-/// Though as a special case, if the last argument is the marker `_`, the
-/// macro will return a `Result<Id<T>, Id<E>>`, see below.
+/// As a special case, if the last argument is the marker `_`, the macro will
+/// return a `Result<Id<T>, Id<E>>`, see below.
 ///
-/// This macro doesn't support super methods yet, see [#173].
 /// The `retain`, `release` and `autorelease` selectors are not supported, use
 /// [`Id::retain`], [`Id::drop`] and [`Id::autorelease`] for that.
 ///
@@ -1120,7 +1123,6 @@ macro_rules! msg_send_bool {
 /// [`MessageReceiver`]: crate::runtime::MessageReceiver
 /// [`Id::retain_autoreleased`]: crate::rc::Id::retain_autoreleased
 /// [arc-retainable]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#retainable-object-pointers-as-operands-and-arguments
-/// [#173]: https://github.com/madsmtm/objc2/pull/173
 /// [`Id::retain`]: crate::rc::Id::retain
 /// [`Id::drop`]: crate::rc::Id::drop
 /// [`Id::autorelease`]: crate::rc::Id::autorelease
@@ -1187,6 +1189,34 @@ macro_rules! msg_send_bool {
 /// ```
 #[macro_export]
 macro_rules! msg_send_id {
+    [super($obj:expr), $($selector_and_arguments:tt)+] => {
+        $crate::__msg_send_parse! {
+            (send_super_message_id_static_error)
+            ()
+            ()
+            ($($selector_and_arguments)+)
+            (send_super_message_id_static)
+
+            ($crate::__msg_send_id_helper)
+            ($obj)
+            () // No retain semantics
+            (MsgSendSuperId)
+        }
+    };
+    [super($obj:expr, $superclass:expr), $($selector_and_arguments:tt)+] => {
+        $crate::__msg_send_parse! {
+            (send_super_message_id_error)
+            ()
+            ()
+            ($($selector_and_arguments)+)
+            (send_super_message_id)
+
+            ($crate::__msg_send_id_helper)
+            ($obj, $superclass)
+            () // No retain semantics
+            (MsgSendSuperId)
+        }
+    };
     [$obj:expr, new $(,)?] => ({
         let result;
         result = <$crate::__macro_helpers::New as $crate::__macro_helpers::MsgSendId<_, _>>::send_message_id(
@@ -1221,6 +1251,7 @@ macro_rules! msg_send_id {
             ($crate::__msg_send_id_helper)
             ($obj)
             () // No retain semantics
+            (MsgSendId)
         }
     };
 }
@@ -1230,8 +1261,9 @@ macro_rules! msg_send_id {
 #[macro_export]
 macro_rules! __msg_send_id_helper {
     {
-        ($obj:expr)
+        ($($fn_args:tt)+)
         ($($retain_semantics:ident)?)
+        ($trait:ident)
         ($fn:ident)
         (retain)
         ()
@@ -1241,8 +1273,9 @@ macro_rules! __msg_send_id_helper {
         )
     }};
     {
-        ($obj:expr)
+        ($($fn_args:tt)+)
         ($($retain_semantics:ident)?)
+        ($trait:ident)
         ($fn:ident)
         (release)
         ()
@@ -1252,8 +1285,9 @@ macro_rules! __msg_send_id_helper {
         )
     }};
     {
-        ($obj:expr)
+        ($($fn_args:tt)+)
         ($($retain_semantics:ident)?)
+        ($trait:ident)
         ($fn:ident)
         (autorelease)
         ()
@@ -1263,8 +1297,9 @@ macro_rules! __msg_send_id_helper {
         )
     }};
     {
-        ($obj:expr)
+        ($($fn_args:tt)+)
         ($($retain_semantics:ident)?)
+        ($trait:ident)
         ($fn:ident)
         (dealloc)
         ()
@@ -1274,21 +1309,23 @@ macro_rules! __msg_send_id_helper {
         )
     }};
     {
-        ($obj:expr)
+        ($($fn_args:tt)+)
         ($retain_semantics:ident)
+        ($trait:ident)
         ($fn:ident)
         ($($selector:tt)*)
         ($($argument:expr,)*)
     } => ({
-        <$crate::__macro_helpers::$retain_semantics as $crate::__macro_helpers::MsgSendId<_, _>>::$fn(
-            $obj,
+        <$crate::__macro_helpers::$retain_semantics as $crate::__macro_helpers::$trait<_, _>>::$fn(
+            $($fn_args)+,
             $crate::sel!($($selector)*),
             ($($argument,)*),
         )
     });
     {
-        ($obj:expr)
+        ($($fn_args:tt)+)
         ()
+        ($trait:ident)
         ($fn:ident)
         ($($selector:tt)*)
         ($($argument:expr,)*)
@@ -1300,8 +1337,8 @@ macro_rules! __msg_send_id_helper {
         let result;
         result = <$crate::__macro_helpers::RetainSemantics<{
             $crate::__macro_helpers::retain_semantics(__SELECTOR_DATA)
-        }> as $crate::__macro_helpers::MsgSendId<_, _>>::$fn(
-            $obj,
+        }> as $crate::__macro_helpers::$trait<_, _>>::$fn(
+            $($fn_args)+,
             $crate::__sel_inner!(
                 __SELECTOR_DATA,
                 $crate::__hash_idents!($($selector)*)

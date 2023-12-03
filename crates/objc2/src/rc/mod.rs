@@ -56,7 +56,7 @@ mod id_traits;
 mod test_object;
 mod weak_id;
 
-pub use self::allocated::Allocated;
+pub use self::allocated::{Allocated, PartialInit};
 pub use self::autorelease::{
     autoreleasepool, autoreleasepool_leaking, AutoreleasePool, AutoreleaseSafe,
 };

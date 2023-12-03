@@ -139,6 +139,7 @@ macro_rules! __comma_between_args {
 #[macro_export]
 #[cfg(feature = "unstable-msg-send-always-comma")]
 macro_rules! __comma_between_args {
+    // msg_send!
     (
         (send_super_message_static)
         ($($args:tt)*)
@@ -169,12 +170,37 @@ macro_rules! __comma_between_args {
             ($crate::__macro_helpers::stringify!($obj), $($args)*)
         }
     };
-    // Catch-all for msg_send_id!
+    // msg_send_id!
     (
-        ($fn:ident)
+        (send_super_message_id_static)
         ($($args:tt)*)
         ($obj:expr)
         ()
+        (MsgSendSuperId)
+    ) => {
+        $crate::__comma_between_args_inner! {
+            ("msg_send_id")
+            ($crate::__macro_helpers::stringify!(super($obj)), $($args)*)
+        }
+    };
+    (
+        (send_super_message_id)
+        ($($args:tt)*)
+        ($obj:expr, $superclass:expr)
+        ()
+        (MsgSendSuperId)
+    ) => {
+        $crate::__comma_between_args_inner! {
+            ("msg_send_id")
+            ($crate::__macro_helpers::stringify!(super($obj, $superclass)), $($args)*)
+        }
+    };
+    (
+        (send_message_id)
+        ($($args:tt)*)
+        ($obj:expr)
+        ()
+        (MsgSendId)
     ) => {
         $crate::__comma_between_args_inner! {
             ("msg_send_id")

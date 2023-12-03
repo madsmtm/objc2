@@ -10,6 +10,8 @@ declare_class!(
         type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "CustomObject";
     }
+
+    impl objc2::DeclaredClass for CustomObject {}
 );
 
 fn main() {}

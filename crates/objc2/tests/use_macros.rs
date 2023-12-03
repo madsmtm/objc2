@@ -1,6 +1,6 @@
 use objc2::mutability::Immutable;
 use objc2::runtime::{AnyClass, NSObject};
-use objc2::{class, declare_class, msg_send, sel, ClassType};
+use objc2::{class, declare_class, msg_send, sel, ClassType, DeclaredClass};
 
 declare_class!(
     pub struct MyObject;
@@ -10,6 +10,8 @@ declare_class!(
         type Mutability = Immutable;
         const NAME: &'static str = "MyObject";
     }
+
+    impl DeclaredClass for MyObject {}
 );
 
 #[test]

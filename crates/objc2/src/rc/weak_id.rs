@@ -210,7 +210,7 @@ mod tests {
         drop(obj);
         drop(strong);
         expected.release += 2;
-        expected.dealloc += 1;
+        expected.drop += 1;
         expected.assert_current();
 
         if cfg!(not(feature = "gnustep-1-7")) {

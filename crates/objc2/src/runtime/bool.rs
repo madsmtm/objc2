@@ -10,7 +10,9 @@ use crate::ffi;
 /// soon as possible.
 ///
 /// This is FFI-safe and can be used directly with `msg_send!` and `extern`
-/// functions.
+/// functions as a substitute for `BOOL` in Objective-C. If your Objective-C
+/// code uses C99 `_Bool`, you should use a `#[repr(transparent)]` wrapper
+/// around `bool` instead.
 ///
 /// Note that this is able to contain more states than `bool` on some
 /// platforms, but these cases should not be relied on!

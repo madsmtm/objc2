@@ -130,7 +130,7 @@ mod tests {
     use super::*;
     use crate::mutability::Mutable;
     use crate::runtime::NSObject;
-    use crate::{declare_class, msg_send_id, ClassType};
+    use crate::{declare_class, msg_send_id, ClassType, DeclaredClass};
 
     declare_class!(
         #[derive(PartialEq, Eq, Hash, Debug)]
@@ -141,6 +141,8 @@ mod tests {
             type Mutability = Mutable;
             const NAME: &'static str = "MyCustomCollection";
         }
+
+        impl DeclaredClass for Collection {}
     );
 
     impl DefaultId for Collection {

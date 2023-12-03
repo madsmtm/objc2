@@ -3,7 +3,7 @@ use icrate::Foundation::NSCopying;
 use objc2::mutability::Immutable;
 use objc2::rc::Id;
 use objc2::runtime::{NSObject, NSZone};
-use objc2::{declare_class, ClassType, ProtocolType};
+use objc2::{declare_class, ClassType, DeclaredClass, ProtocolType};
 
 #[test]
 #[should_panic = "could not create new class TestDeclareClassDuplicate. Perhaps a class with that name already exists?"]
@@ -16,6 +16,8 @@ fn test_declare_class_duplicate() {
             type Mutability = Immutable;
             const NAME: &'static str = "TestDeclareClassDuplicate";
         }
+
+        impl DeclaredClass for Custom1 {}
     );
 
     declare_class!(
@@ -26,6 +28,8 @@ fn test_declare_class_duplicate() {
             type Mutability = Immutable;
             const NAME: &'static str = "TestDeclareClassDuplicate";
         }
+
+        impl DeclaredClass for Custom2 {}
     );
 
     let _cls = Custom1::class();
@@ -43,6 +47,8 @@ fn test_declare_class_protocol() {
             type Mutability = Immutable;
             const NAME: &'static str = "TestDeclareClassProtocolNotFound";
         }
+
+        impl DeclaredClass for Custom {}
 
         unsafe impl NSCopying for Custom {
             #[method_id(copyWithZone:)]
@@ -71,6 +77,8 @@ fn test_declare_class_invalid_method() {
             const NAME: &'static str = "TestDeclareClassInvalidMethod";
         }
 
+        impl DeclaredClass for Custom {}
+
         unsafe impl Custom {
             // Override `description` with a bad return type
             #[method(description)]
@@ -96,6 +104,8 @@ fn test_declare_class_missing_protocol_method() {
             const NAME: &'static str = "TestDeclareClassMissingProtocolMethod";
         }
 
+        impl DeclaredClass for Custom {}
+
         unsafe impl NSCopying for Custom {
             // Missing required method
         }
@@ -115,6 +125,8 @@ fn test_declare_class_invalid_protocol_method() {
             type Mutability = Immutable;
             const NAME: &'static str = "TestDeclareClassInvalidProtocolMethod";
         }
+
+        impl DeclaredClass for Custom {}
 
         unsafe impl NSCopying for Custom {
             // Override with a bad return type
@@ -142,6 +154,8 @@ fn test_declare_class_extra_protocol_method() {
             type Mutability = Immutable;
             const NAME: &'static str = "TestDeclareClassExtraProtocolMethod";
         }
+
+        impl DeclaredClass for Custom {}
 
         unsafe impl NSCopying for Custom {
             #[method_id(copyWithZone:)]

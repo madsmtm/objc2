@@ -3,7 +3,7 @@
 //! do it in a context where `Self` works.
 use objc2::rc::{Allocated, Id};
 use objc2::runtime::NSObject;
-use objc2::{declare_class, mutability, ClassType};
+use objc2::{declare_class, mutability, ClassType, DeclaredClass};
 
 trait GetSameType {
     type SameType: ?Sized;
@@ -36,6 +36,8 @@ declare_class!(
 
         const NAME: &'static str = "MyTestObject";
     }
+
+    impl DeclaredClass for MyTestObject {}
 
     unsafe impl MyTestObject {
         #[method_id(initWith:)]

@@ -90,6 +90,7 @@ pub fn read_assembly<P: AsRef<Path>>(path: P, package_path: &Path) -> io::Result
     let s = s.replace(".asciz\t\"}\\000", ".asciz\t\"p\\000");
     let s = s.replace(".asciz\t\"L\\000", ".asciz\t\"p\\000");
     let s = s.replace(".asciz\t\"t\\000", ".asciz\t\"p\\000");
+    let s = s.replace(".asciz\t\"T\\000", ".asciz\t\"P\\000");
 
     // HACK: Replace Objective-C image info for simulator targets
     let s = s.replace(

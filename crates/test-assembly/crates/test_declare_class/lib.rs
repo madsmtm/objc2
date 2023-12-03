@@ -7,10 +7,9 @@
 use core::ptr;
 
 use icrate::Foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
-use objc2::declare::{Ivar, IvarDrop, IvarEncode};
-use objc2::rc::Id;
+use objc2::rc::{Allocated, Id};
 use objc2::runtime::AnyClass;
-use objc2::{declare_class, msg_send, msg_send_id, mutability, ClassType};
+use objc2::{declare_class, msg_send_id, mutability, ClassType, DeclaredClass};
 
 declare_class!(
     #[no_mangle]
@@ -21,6 +20,8 @@ declare_class!(
         type Mutability = mutability::InteriorMutable;
         const NAME: &'static str = "NoIvars";
     }
+
+    impl DeclaredClass for NoIvars {}
 
     unsafe impl NoIvars {
         #[no_mangle]
@@ -70,14 +71,14 @@ declare_class!(
     }
 );
 
+pub struct ForgetableIvarsIvars {
+    foo: u8,
+    bar: u32,
+}
+
 declare_class!(
     #[no_mangle]
-    pub struct ForgetableIvars {
-        foo: IvarEncode<u8, "_foo">,
-        bar: IvarEncode<u32, "_bar">,
-    }
-
-    mod forgetable_ivars;
+    pub struct ForgetableIvars;
 
     unsafe impl ClassType for ForgetableIvars {
         type Super = NSObject;
@@ -85,19 +86,16 @@ declare_class!(
         const NAME: &'static str = "ForgetableIvars";
     }
 
+    impl DeclaredClass for ForgetableIvars {
+        type Ivars = ForgetableIvarsIvars;
+    }
+
     unsafe impl ForgetableIvars {
         #[no_mangle]
-        #[method(init)]
-        unsafe fn init_forgetable_ivars(this: *mut Self) -> *mut Self {
-            let this: Option<&mut Self> = unsafe { msg_send![super(this), init] };
-
-            this.map(|this| {
-                Ivar::write(&mut this.foo, 42);
-                Ivar::write(&mut this.bar, 43);
-                let this: *mut Self = this;
-                this
-            })
-            .unwrap_or_else(ptr::null_mut)
+        #[method_id(init)]
+        fn init_forgetable_ivars(this: Allocated<Self>) -> Option<Id<Self>> {
+            let this = this.set_ivars(ForgetableIvarsIvars { foo: 42, bar: 43 });
+            unsafe { msg_send_id![super(this), init] }
         }
     }
 );
@@ -110,18 +108,18 @@ impl ForgetableIvars {
 
     #[no_mangle]
     pub fn access_forgetable_ivars(&self) -> (u8, u32) {
-        (*self.foo, *self.bar)
+        (self.ivars().foo, self.ivars().bar)
     }
+}
+
+pub struct DropIvarsIvars {
+    obj: Id<NSObject>,
+    obj_option: Option<Id<NSObject>>,
 }
 
 declare_class!(
     #[no_mangle]
-    pub struct DropIvars {
-        obj: IvarDrop<Id<NSObject>, "_obj">,
-        obj_option: IvarDrop<Option<Id<NSObject>>, "_obj_option">,
-    }
-
-    mod drop_ivars;
+    pub struct DropIvars;
 
     unsafe impl ClassType for DropIvars {
         type Super = NSObject;
@@ -129,19 +127,19 @@ declare_class!(
         const NAME: &'static str = "DropIvars";
     }
 
+    impl DeclaredClass for DropIvars {
+        type Ivars = DropIvarsIvars;
+    }
+
     unsafe impl DropIvars {
         #[no_mangle]
-        #[method(init)]
-        unsafe fn init_drop_ivars(this: *mut Self) -> *mut Self {
-            let this: Option<&mut Self> = unsafe { msg_send![super(this), init] };
-
-            this.map(|this| {
-                Ivar::write(&mut this.obj, NSObject::new());
-                Ivar::write(&mut this.obj_option, Some(NSObject::new()));
-                let this: *mut Self = this;
-                this
-            })
-            .unwrap_or_else(ptr::null_mut)
+        #[method_id(init)]
+        fn init_drop_ivars(this: Allocated<Self>) -> Option<Id<Self>> {
+            let this = this.set_ivars(DropIvarsIvars {
+                obj: NSObject::new(),
+                obj_option: Some(NSObject::new()),
+            });
+            unsafe { msg_send_id![super(this), init] }
         }
     }
 );
@@ -160,7 +158,14 @@ impl DropIvars {
     }
 
     #[no_mangle]
-    pub fn access_drop_ivars(&self) -> *const NSObject {
-        Id::as_ptr(&*self.obj)
+    pub fn access_drop_ivars(&self) -> (*const NSObject, *const NSObject) {
+        (
+            Id::as_ptr(&self.ivars().obj),
+            self.ivars()
+                .obj_option
+                .as_ref()
+                .map(Id::as_ptr)
+                .unwrap_or_else(ptr::null),
+        )
     }
 }

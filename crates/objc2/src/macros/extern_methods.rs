@@ -69,7 +69,7 @@
 /// use objc2::ffi::NSUInteger;
 /// use objc2::rc::{Allocated, Id};
 /// use objc2::runtime::NSObject;
-/// use objc2::{declare_class, extern_methods, mutability, ClassType};
+/// use objc2::{declare_class, extern_methods, mutability, ClassType, DeclaredClass};
 ///
 /// // Shim
 /// type NSError = NSObject;
@@ -77,11 +77,17 @@
 /// declare_class!(
 ///     pub struct MyObject;
 ///
+///     // SAFETY:
+///     // - The superclass NSObject does not have any subclassing requirements.
+///     // - Interior mutability is a safe default.
+///     // - `MyObject` does not implement `Drop`.
 ///     unsafe impl ClassType for MyObject {
 ///         type Super = NSObject;
-///         type Mutability = mutability::Immutable;
+///         type Mutability = mutability::InteriorMutable;
 ///         const NAME: &'static str = "MyObject";
 ///     }
+///
+///     impl DeclaredClass for MyObject {}
 ///
 ///     unsafe impl MyObject {
 ///         // ... Assume we've implemented all the methods used below
@@ -123,7 +129,7 @@
 /// # use objc2::ffi::NSUInteger;
 /// # use objc2::rc::{Allocated, Id};
 /// # use objc2::runtime::NSObject;
-/// # use objc2::{declare_class, extern_methods, mutability, ClassType};
+/// # use objc2::{declare_class, extern_methods, mutability, ClassType, DeclaredClass};
 /// #
 /// # // Shim
 /// # type NSError = NSObject;
@@ -136,6 +142,8 @@
 /// #         type Mutability = mutability::InteriorMutable;
 /// #         const NAME: &'static str = "MyObject2";
 /// #     }
+/// #
+/// #     impl DeclaredClass for MyObject {}
 /// #
 /// #     unsafe impl MyObject {
 /// #         // ... Assume we've implemented all the methods used below

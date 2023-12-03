@@ -1,5 +1,5 @@
 use objc2::runtime::NSObject;
-use objc2::{declare_class, mutability, ClassType};
+use objc2::{declare_class, mutability, ClassType, DeclaredClass};
 
 declare_class!(
     struct MyMainThreadOnlyClass;
@@ -9,6 +9,8 @@ declare_class!(
         type Mutability = mutability::MainThreadOnly;
         const NAME: &'static str = "MyMainThreadOnlyClass";
     }
+
+    impl DeclaredClass for MyMainThreadOnlyClass {}
 );
 
 fn main() {
