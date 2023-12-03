@@ -204,6 +204,9 @@ macro_rules! __inner_extern_protocol {
         {
             const __INNER: () = ();
         }
+
+        // TODO: Should we also implement `ImplementedBy` for `Send + Sync`
+        // types, as is done for `NSObjectProtocol`?
     };
 }
 

@@ -7,6 +7,8 @@ use crate::runtime::{AnyClass, AnyObject, ProtocolObject};
 use crate::{extern_methods, msg_send, msg_send_id, Message};
 use crate::{ClassType, ProtocolType};
 
+use super::ImplementedBy;
+
 /// The root class of most Objective-C class hierarchies.
 ///
 /// This represents the [`NSObject` class][cls]. The name "NSObject" also
@@ -162,6 +164,33 @@ crate::__inner_extern_protocol!(
     (dyn NSObjectProtocol)
     ("NSObject")
 );
+
+// SAFETY: Anything that implements `NSObjectProtocol` and is `Send` is valid
+// to convert to `ProtocolObject<dyn NSObjectProtocol + Send>`.
+unsafe impl<T> ImplementedBy<T> for dyn NSObjectProtocol + Send
+where
+    T: ?Sized + Message + NSObjectProtocol + Send,
+{
+    const __INNER: () = ();
+}
+
+// SAFETY: Anything that implements `NSObjectProtocol` and is `Sync` is valid
+// to convert to `ProtocolObject<dyn NSObjectProtocol + Sync>`.
+unsafe impl<T> ImplementedBy<T> for dyn NSObjectProtocol + Sync
+where
+    T: ?Sized + Message + NSObjectProtocol + Sync,
+{
+    const __INNER: () = ();
+}
+
+// SAFETY: Anything that implements `NSObjectProtocol` and is `Send + Sync` is
+// valid to convert to `ProtocolObject<dyn NSObjectProtocol + Send + Sync>`.
+unsafe impl<T> ImplementedBy<T> for dyn NSObjectProtocol + Send + Sync
+where
+    T: ?Sized + Message + NSObjectProtocol + Send + Sync,
+{
+    const __INNER: () = ();
+}
 
 unsafe impl NSObjectProtocol for NSObject {}
 

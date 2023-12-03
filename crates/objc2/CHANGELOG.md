@@ -22,6 +22,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Allocated::set_ivars`, which sets the instance variables of an
   object, and returns the new `rc::PartialInit`.
 * Added the ability for `msg_send_id!` to call `super` methods.
+* Implement `Send` and `Sync` for `ProtocolObject` if the underlying protocol
+  implements it.
+* Added ability to create `Send` and `Sync` versions of
+  `ProtocolObject<dyn NSObjectProtocol>`.
 
 ### Changed
 * **BREAKING**: Changed how instance variables work in `declare_class!`.

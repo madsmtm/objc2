@@ -62,6 +62,16 @@ pub struct ProtocolObject<P: ?Sized> {
     p: PhantomData<P>,
 }
 
+// SAFETY: `Send` if the underlying trait promises `Send`.
+//
+// E.g. `ProtocolObject<dyn NSObjectProtocol + Send>` is naturally `Send`.
+unsafe impl<P: ?Sized + Send> Send for ProtocolObject<P> {}
+
+// SAFETY: `Sync` if the underlying trait promises `Sync`.
+//
+// E.g. `ProtocolObject<dyn NSObjectProtocol + Sync>` is naturally `Sync`.
+unsafe impl<P: ?Sized + Sync> Sync for ProtocolObject<P> {}
+
 // SAFETY: The type is `#[repr(C)]` and `AnyObject` internally
 unsafe impl<P: ?Sized> RefEncode for ProtocolObject<P> {
     const ENCODING_REF: Encoding = Encoding::Object;
@@ -264,6 +274,9 @@ mod tests {
     unsafe impl FooBar for DummyClass {}
     // unsafe impl FooFooBar for DummyClass {}
 
+    unsafe impl Send for DummyClass {}
+    unsafe impl Sync for DummyClass {}
+
     extern_methods!(
         unsafe impl DummyClass {
             #[method_id(new)]
@@ -275,6 +288,12 @@ mod tests {
     fn impl_traits() {
         assert_impl_all!(NSObject: NSObjectProtocol);
         assert_impl_all!(ProtocolObject<dyn NSObjectProtocol>: NSObjectProtocol);
+        assert_not_impl_any!(ProtocolObject<dyn NSObjectProtocol>: Send, Sync);
+        assert_impl_all!(ProtocolObject<dyn NSObjectProtocol + Send>: NSObjectProtocol, Send);
+        assert_not_impl_any!(ProtocolObject<dyn NSObjectProtocol + Send>: Sync);
+        assert_impl_all!(ProtocolObject<dyn NSObjectProtocol + Sync>: NSObjectProtocol, Sync);
+        assert_not_impl_any!(ProtocolObject<dyn NSObjectProtocol + Sync>: Send);
+        assert_impl_all!(ProtocolObject<dyn NSObjectProtocol + Send + Sync>: NSObjectProtocol, Send, Sync);
         assert_not_impl_any!(ProtocolObject<dyn Foo>: NSObjectProtocol);
         assert_impl_all!(ProtocolObject<dyn Bar>: NSObjectProtocol);
         assert_impl_all!(ProtocolObject<dyn FooBar>: NSObjectProtocol);
@@ -332,6 +351,10 @@ mod tests {
         let _nsobject: &ProtocolObject<dyn NSObjectProtocol> = ProtocolObject::from_ref(bar);
         let nsobject: &ProtocolObject<dyn NSObjectProtocol> = ProtocolObject::from_ref(&*obj);
         let _nsobject: &ProtocolObject<dyn NSObjectProtocol> = ProtocolObject::from_ref(nsobject);
+        let _: &ProtocolObject<dyn NSObjectProtocol + Send> = ProtocolObject::from_ref(&*obj);
+        let _: &ProtocolObject<dyn NSObjectProtocol + Sync> = ProtocolObject::from_ref(&*obj);
+        let _: &ProtocolObject<dyn NSObjectProtocol + Send + Sync> =
+            ProtocolObject::from_ref(&*obj);
 
         let _foobar: &mut ProtocolObject<dyn FooBar> = ProtocolObject::from_mut(&mut *obj);
         let _foobar: Id<ProtocolObject<dyn FooBar>> = ProtocolObject::from_id(obj);
