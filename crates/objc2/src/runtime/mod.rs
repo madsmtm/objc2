@@ -917,6 +917,7 @@ impl AnyClass {
         Bool::from_raw(res).as_bool()
     }
 
+    // <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html>
     // fn property(&self, name: &str) -> Option<&Property>;
     // fn properties(&self) -> Malloc<[&Property]>;
     // unsafe fn replace_method(&self, name: Sel, imp: Imp, types: &str) -> Imp;

@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 * Fixed encoding equivalence between empty structs and unions.
+* Parse (and ignore) extended type information.
 
 
 ## 3.0.0 - 2023-07-31

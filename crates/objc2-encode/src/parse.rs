@@ -5,7 +5,7 @@ use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use core::fmt;
 
-use crate::helper::{ContainerKind, EncodingType, Helper, NestingLevel};
+use crate::helper::{ContainerKind, EncodingType, Helper, NestingLevel, Primitive};
 use crate::{Encoding, EncodingBox};
 
 /// Check whether a struct or union name is a valid identifier
@@ -251,7 +251,16 @@ impl Parser<'_> {
 
     pub(crate) fn expect_encoding(&mut self, enc: &Encoding, level: NestingLevel) -> Option<()> {
         match enc.helper() {
-            Helper::Primitive(primitive) => self.expect_str(primitive.to_str()),
+            Helper::Primitive(primitive) => {
+                self.expect_str(primitive.to_str())?;
+
+                if primitive == Primitive::Object && self.try_peek() == Some(b'"') {
+                    self.advance();
+                    self.consume_while(|b| b != b'"');
+                    self.expect_byte(b'"')?;
+                }
+                Some(())
+            }
             Helper::BitField(size, Some((offset, t))) => {
                 self.expect_byte(b'b')?;
                 self.expect_u64(*offset)?;
@@ -387,6 +396,13 @@ impl Parser<'_> {
                 Some(b'?') => {
                     self.advance();
                     EncodingBox::Block
+                }
+                // Parse class name if present
+                Some(b'"') => {
+                    self.advance();
+                    self.consume_while(|b| b != b'"');
+                    self.expect_byte(b'"').ok_or(ErrorKind::UnexpectedEnd)?;
+                    EncodingBox::Object
                 }
                 _ => EncodingBox::Object,
             },
