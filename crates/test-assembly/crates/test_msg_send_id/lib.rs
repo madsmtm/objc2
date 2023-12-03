@@ -61,6 +61,16 @@ unsafe fn handle_autoreleased(obj: &AnyObject, sel: Sel) -> Option<Id<AnyObject>
     Other::send_message_id(obj, sel, ())
 }
 
+// TODO: The optimization does not happen here on aarch64, fix this!
+#[no_mangle]
+unsafe fn handle_autoreleased_with_arg(
+    obj: &AnyObject,
+    sel: Sel,
+    arg: u8,
+) -> Option<Id<AnyObject>> {
+    Other::send_message_id(obj, sel, (arg,))
+}
+
 #[no_mangle]
 unsafe fn handle_autoreleased_fallible(obj: &AnyObject, sel: Sel) -> Id<AnyObject> {
     Other::send_message_id(obj, sel, ())

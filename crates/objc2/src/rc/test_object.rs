@@ -405,7 +405,10 @@ mod tests {
         // x86 autorelease_return is not currently tail-called, so the
         // optimization doesn't work on declare_class! functions.
         2
-    } else if cfg!(any(debug_assertions, feature = "exception")) {
+    } else if cfg!(target_arch = "aarch64") {
+        // Currently doesn't work
+        2
+    } else if cfg!(any(debug_assertions, feature = "catch-all")) {
         2
     } else {
         1

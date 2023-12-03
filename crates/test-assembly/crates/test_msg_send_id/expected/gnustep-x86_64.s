@@ -289,6 +289,30 @@ handle_autoreleased:
 .Lfunc_end10:
 	.size	handle_autoreleased, .Lfunc_end10-handle_autoreleased
 
+	.section	.text.handle_autoreleased_with_arg,"ax",@progbits
+	.globl	handle_autoreleased_with_arg
+	.p2align	4, 0x90
+	.type	handle_autoreleased_with_arg,@function
+handle_autoreleased_with_arg:
+	push	r15
+	push	r14
+	push	rbx
+	mov	ebx, edx
+	mov	r14, rsi
+	mov	r15, rdi
+	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
+	movzx	edx, bl
+	mov	rdi, r15
+	mov	rsi, r14
+	call	rax
+	mov	rdi, rax
+	pop	rbx
+	pop	r14
+	pop	r15
+	jmp	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
+.Lfunc_end11:
+	.size	handle_autoreleased_with_arg, .Lfunc_end11-handle_autoreleased_with_arg
+
 	.section	.text.handle_autoreleased_fallible,"ax",@progbits
 	.globl	handle_autoreleased_fallible
 	.p2align	4, 0x90
@@ -306,19 +330,19 @@ handle_autoreleased_fallible:
 	mov	rdi, rax
 	call	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
 	test	rax, rax
-	je	.LBB11_1
+	je	.LBB12_1
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB11_1:
+.LBB12_1:
 	lea	rdx, [rip + .Lanon.[ID].4]
 	mov	rdi, r14
 	mov	rsi, rbx
 	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
 	ud2
-.Lfunc_end11:
-	.size	handle_autoreleased_fallible, .Lfunc_end11-handle_autoreleased_fallible
+.Lfunc_end12:
+	.size	handle_autoreleased_fallible, .Lfunc_end12-handle_autoreleased_fallible
 
 	.section	.text.handle_with_out_param,"ax",@progbits
 	.globl	handle_with_out_param
@@ -351,8 +375,8 @@ handle_with_out_param:
 	pop	r14
 	pop	r15
 	jmp	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
-.Lfunc_end12:
-	.size	handle_with_out_param, .Lfunc_end12-handle_with_out_param
+.Lfunc_end13:
+	.size	handle_with_out_param, .Lfunc_end13-handle_with_out_param
 
 	.type	.Lanon.[ID].0,@object
 	.section	.rodata..Lanon.[ID].0,"a",@progbits
@@ -389,7 +413,7 @@ handle_with_out_param:
 	.p2align	3, 0x0
 .Lanon.[ID].4:
 	.quad	.Lanon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000B\000\000\000\005\000\000"
+	.asciz	"3\000\000\000\000\000\000\000L\000\000\000\005\000\000"
 	.size	.Lanon.[ID].4, 24
 
 	.section	".note.GNU-stack","",@progbits

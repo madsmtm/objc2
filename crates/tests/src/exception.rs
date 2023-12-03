@@ -1,4 +1,5 @@
 use alloc::format;
+use alloc::string::ToString;
 
 use icrate::Foundation::{NSArray, NSException, NSString};
 use objc2::exception::{catch, throw};
@@ -136,21 +137,18 @@ fn catch_actual() {
     let reason = if cfg!(feature = "gnustep-1-7") {
         "Index 0 is out of range 0 (in 'objectAtIndex:')"
     } else {
-        "*** -[__NSArray0 objectAtIndex:]: index 0 beyond bounds for empty NSArray"
+        "*** -[__NSArray0 objectAtIndex:]: index 0 beyond bounds for empty " // + "NSArray" or "array"
     };
 
-    assert_eq!(format!("{}", exc), reason);
-    assert_eq!(
-        format!("{:?}", exc),
-        format!(
-            "exception <NSException: {:p}> '{}' reason:{}",
-            &*exc, name, reason
-        )
-    );
+    assert!(format!("{}", exc).starts_with(reason));
+    assert!(format!("{:?}", exc).starts_with(&format!(
+        "exception <NSException: {:p}> '{}' reason:{}",
+        &*exc, name, reason
+    )));
 
     let exc = NSException::from_exception(exc).unwrap();
     assert_eq!(exc.name(), NSString::from_str(name));
-    assert_eq!(exc.reason().unwrap(), NSString::from_str(reason));
+    assert!(exc.reason().unwrap().to_string().starts_with(reason));
     let user_info = exc.userInfo();
     if cfg!(feature = "gnustep-1-7") {
         let user_info = user_info.unwrap();

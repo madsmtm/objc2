@@ -150,6 +150,23 @@ _handle_autoreleased:
 	pop	rbp
 	ret
 
+	.globl	_handle_autoreleased_with_arg
+	.p2align	4, 0x90
+_handle_autoreleased_with_arg:
+	push	rbp
+	mov	rbp, rsp
+	movzx	edx, dl
+	call	_objc_msgSend
+	mov	rdi, rax
+	call	_objc_retainAutoreleasedReturnValue
+	## InlineAsm Start
+
+	nop
+
+	## InlineAsm End
+	pop	rbp
+	ret
+
 	.globl	_handle_autoreleased_fallible
 	.p2align	4, 0x90
 _handle_autoreleased_fallible:
@@ -168,12 +185,12 @@ _handle_autoreleased_fallible:
 
 	## InlineAsm End
 	test	rax, rax
-	je	LBB11_2
+	je	LBB12_2
 	pop	rbx
 	pop	r14
 	pop	rbp
 	ret
-LBB11_2:
+LBB12_2:
 	lea	rdx, [rip + l_anon.[ID].4]
 	mov	rdi, r14
 	mov	rsi, rbx
@@ -233,6 +250,6 @@ l_anon.[ID].3:
 	.p2align	3, 0x0
 l_anon.[ID].4:
 	.quad	l_anon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000B\000\000\000\005\000\000"
+	.asciz	"3\000\000\000\000\000\000\000L\000\000\000\005\000\000"
 
 .subsections_via_symbols
