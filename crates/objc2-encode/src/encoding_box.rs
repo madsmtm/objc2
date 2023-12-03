@@ -135,13 +135,13 @@ impl EncodingBox {
 /// Same formatting as [`Encoding`]'s `Display` implementation.
 impl fmt::Display for EncodingBox {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", Helper::from_box(self, NestingLevel::new()))
+        Helper::from_box(self).fmt(f, NestingLevel::new())
     }
 }
 
 impl PartialEq<Encoding> for EncodingBox {
     fn eq(&self, other: &Encoding) -> bool {
-        compare_encodings(self, NestingLevel::new(), other, NestingLevel::new(), true)
+        compare_encodings(self, other, NestingLevel::new(), true)
     }
 }
 
