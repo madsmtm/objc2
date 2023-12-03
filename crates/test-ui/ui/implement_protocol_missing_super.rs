@@ -1,7 +1,6 @@
-//! Test that implementing traits like `NSApplicationDelegate` requires super
-//! protocols like `NSObjectProtocol` to also be implemented.
-use icrate::AppKit::NSApplicationDelegate;
-use icrate::Foundation::NSObject;
+//! Test that implementing certain traits like `NSURLSessionDelegate` requires
+//! super protocols like `NSObjectProtocol` to also be implemented.
+use icrate::Foundation::{NSObject, NSURLSessionDelegate};
 use objc2::{declare_class, mutability, ClassType, DeclaredClass};
 
 declare_class!(
@@ -15,7 +14,7 @@ declare_class!(
 
     impl DeclaredClass for CustomObject {}
 
-    unsafe impl NSApplicationDelegate for CustomObject {}
+    unsafe impl NSURLSessionDelegate for CustomObject {}
 );
 
 fn main() {}

@@ -1,10 +1,25 @@
 //! Test that implementing `NSApplicationDelegate` and similar requires
 //! a `MainThreadOnly` class.
-use icrate::AppKit::{NSApplication, NSApplicationDelegate};
 use icrate::Foundation::{MainThreadMarker, NSNotification, NSObject, NSObjectProtocol};
+use objc2::mutability::IsMainThreadOnly;
 use objc2::rc::Id;
-use objc2::runtime::ProtocolObject;
-use objc2::{declare_class, extern_methods, mutability, ClassType, DeclaredClass};
+use objc2::{
+    declare_class, extern_methods, extern_protocol, mutability, ClassType, DeclaredClass,
+    ProtocolType,
+};
+
+// Use fake `NSApplicationDelegate` so that this works on iOS too.
+extern_protocol!(
+    pub unsafe trait NSApplicationDelegate: NSObjectProtocol + IsMainThreadOnly {
+        #[optional]
+        #[method(applicationDidFinishLaunching:)]
+        unsafe fn applicationDidFinishLaunching(&self, notification: &NSNotification);
+
+        // snip
+    }
+
+    unsafe impl ProtocolType for dyn NSApplicationDelegate {}
+);
 
 declare_class!(
     struct CustomObject;
@@ -35,11 +50,4 @@ extern_methods!(
     }
 );
 
-fn main() {
-    let mtm = MainThreadMarker::new().unwrap();
-    let app = NSApplication::sharedApplication(mtm);
-
-    let delegate = CustomObject::new(mtm);
-    let delegate = ProtocolObject::from_ref(&*delegate);
-    app.setDelegate(Some(delegate));
-}
+fn main() {}

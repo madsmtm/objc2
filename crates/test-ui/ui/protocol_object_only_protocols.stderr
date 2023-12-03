@@ -11,10 +11,10 @@ error[E0277]: the trait bound `NSObject: ImplementedBy<NSObject>` is not satisfi
             (dyn NSObjectProtocol + Send + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
-            (dyn NSAccessibilityColor + 'static)
-            (dyn NSAccessibilityCustomRotorItemSearchDelegate + 'static)
-            (dyn NSAccessibilityElementProtocol + 'static)
-            (dyn NSAccessibilityGroup + 'static)
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
+            (dyn NSCacheDelegate + 'static)
+            (dyn NSConnectionDelegate + 'static)
           and $N others
 note: required by a bound in `ProtocolObject::<P>::from_ref`
  --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
@@ -38,10 +38,10 @@ error[E0277]: the trait bound `dyn Send: ImplementedBy<NSObject>` is not satisfi
             (dyn NSObjectProtocol + Send + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
-            (dyn NSAccessibilityColor + 'static)
-            (dyn NSAccessibilityCustomRotorItemSearchDelegate + 'static)
-            (dyn NSAccessibilityElementProtocol + 'static)
-            (dyn NSAccessibilityGroup + 'static)
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
+            (dyn NSCacheDelegate + 'static)
+            (dyn NSConnectionDelegate + 'static)
           and $N others
 note: required by a bound in `ProtocolObject::<P>::from_ref`
  --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
@@ -65,10 +65,10 @@ error[E0277]: the trait bound `dyn Foo: ImplementedBy<NSObject>` is not satisfie
             (dyn NSObjectProtocol + Send + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
-            (dyn NSAccessibilityColor + 'static)
-            (dyn NSAccessibilityCustomRotorItemSearchDelegate + 'static)
-            (dyn NSAccessibilityElementProtocol + 'static)
-            (dyn NSAccessibilityGroup + 'static)
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
+            (dyn NSCacheDelegate + 'static)
+            (dyn NSConnectionDelegate + 'static)
           and $N others
 note: required by a bound in `ProtocolObject::<P>::from_ref`
  --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
@@ -93,10 +93,10 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
             (dyn NSObjectProtocol + Send + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
-            (dyn NSAccessibilityColor + 'static)
-            (dyn NSAccessibilityCustomRotorItemSearchDelegate + 'static)
-            (dyn NSAccessibilityElementProtocol + 'static)
-            (dyn NSAccessibilityGroup + 'static)
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
+            (dyn NSCacheDelegate + 'static)
+            (dyn NSConnectionDelegate + 'static)
           and $N others
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
 note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
@@ -148,10 +148,10 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
             (dyn NSObjectProtocol + Send + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
-            (dyn NSAccessibilityColor + 'static)
-            (dyn NSAccessibilityCustomRotorItemSearchDelegate + 'static)
-            (dyn NSAccessibilityElementProtocol + 'static)
-            (dyn NSAccessibilityGroup + 'static)
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
+            (dyn NSCacheDelegate + 'static)
+            (dyn NSConnectionDelegate + 'static)
           and $N others
 note: required because it appears within the type `objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
@@ -192,10 +192,10 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
             (dyn NSObjectProtocol + Send + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
-            (dyn NSAccessibilityColor + 'static)
-            (dyn NSAccessibilityCustomRotorItemSearchDelegate + 'static)
-            (dyn NSAccessibilityElementProtocol + 'static)
-            (dyn NSAccessibilityGroup + 'static)
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
+            (dyn NSCacheDelegate + 'static)
+            (dyn NSConnectionDelegate + 'static)
           and $N others
 note: required because it appears within the type `objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
@@ -236,10 +236,10 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
             (dyn NSObjectProtocol + Send + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
-            (dyn NSAccessibilityColor + 'static)
-            (dyn NSAccessibilityCustomRotorItemSearchDelegate + 'static)
-            (dyn NSAccessibilityElementProtocol + 'static)
-            (dyn NSAccessibilityGroup + 'static)
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
+            (dyn NSCacheDelegate + 'static)
+            (dyn NSConnectionDelegate + 'static)
           and $N others
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
 note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
@@ -287,13 +287,13 @@ error[E0277]: the trait bound `NSObject: NSCopying` is not satisfied
   |
   = help: the following other types implement trait `NSCopying`:
             ProtocolObject<T>
-            __RcTestObject
-            NSCollectionLayoutSection
-            NSCollectionLayoutGroupCustomItem
             NSArray<ObjectType>
             NSMutableArray<ObjectType>
+            __RcTestObject
             NSDictionary<KeyType, ObjectType>
             NSSet<ObjectType>
+            NSAppleEventDescriptor
+            NSError
           and $N others
   = note: required for `dyn NSCopying` to implement `ImplementedBy<NSObject>`
 note: required by a bound in `ProtocolObject::<P>::from_ref`
@@ -318,10 +318,10 @@ error[E0277]: the trait bound `dyn NSCopying + Send: ImplementedBy<NSObject>` is
             (dyn NSObjectProtocol + Send + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
-            (dyn NSAccessibilityColor + 'static)
-            (dyn NSAccessibilityCustomRotorItemSearchDelegate + 'static)
-            (dyn NSAccessibilityElementProtocol + 'static)
-            (dyn NSAccessibilityGroup + 'static)
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
+            (dyn NSCacheDelegate + 'static)
+            (dyn NSConnectionDelegate + 'static)
           and $N others
 note: required by a bound in `ProtocolObject::<P>::from_ref`
  --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
