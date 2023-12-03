@@ -281,8 +281,14 @@ pub(crate) fn register_with_ivars<T: DeclaredClass>(
     let cls = builder.register();
 
     let ivars_offset = if T::HAS_IVARS {
+        // Monomorphized error handling
+        // Intentionally not #[track_caller], we expect this error to never occur
+        fn get_ivar_failed() -> ! {
+            unreachable!("failed retrieving instance variable on newly declared class")
+        }
+
         cls.instance_variable(&ivar_name)
-            .expect("failed retrieving instance variable on newly declared class")
+            .unwrap_or_else(|| get_ivar_failed())
             .offset()
     } else {
         // Fallback to an offset of zero.
@@ -293,8 +299,14 @@ pub(crate) fn register_with_ivars<T: DeclaredClass>(
     };
 
     let drop_flag_offset = if T::HAS_DROP_FLAG {
+        // Monomorphized error handling
+        // Intentionally not #[track_caller], we expect this error to never occur
+        fn get_drop_flag_failed() -> ! {
+            unreachable!("failed retrieving drop flag instance variable on newly declared class")
+        }
+
         cls.instance_variable(&drop_flag_name)
-            .expect("failed retrieving drop flag instance variable on newly declared class")
+            .unwrap_or_else(|| get_drop_flag_failed())
             .offset()
     } else {
         // Fall back to an offset of zero.

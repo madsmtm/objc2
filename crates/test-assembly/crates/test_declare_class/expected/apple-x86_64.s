@@ -77,7 +77,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	je	LBB4_7
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdx, qword ptr [rax]
-	lea	rdi, [rip + l_anon.[ID].22]
+	lea	rdi, [rip + l_anon.[ID].17]
 	mov	esi, 7
 	call	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
 	test	rax, rax
@@ -122,7 +122,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	rdx, r15
 	mov	r8, r12
 	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
-	lea	rdi, [rip + L_anon.[ID].29]
+	lea	rdi, [rip + L_anon.[ID].24]
 	mov	esi, 8
 	call	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
 	test	rax, rax
@@ -131,7 +131,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	rsi, rax
 	call	SYM(objc2::declare::ClassBuilder::add_protocol::GENERATED_ID, 0)
 LBB4_4:
-	lea	rdi, [rip + l_anon.[ID].30]
+	lea	rdi, [rip + l_anon.[ID].25]
 	mov	esi, 9
 	call	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
 	test	rax, rax
@@ -158,13 +158,13 @@ LBB4_6:
 	pop	rbp
 	ret
 LBB4_7:
-	lea	rdi, [rip + l_anon.[ID].24]
-	lea	rdx, [rip + l_anon.[ID].26]
+	lea	rdi, [rip + l_anon.[ID].19]
+	lea	rdx, [rip + l_anon.[ID].21]
 	mov	esi, 43
 	call	SYM(core::panicking::panic::GENERATED_ID, 0)
 LBB4_8:
-	lea	rdi, [rip + l_anon.[ID].22]
-	lea	rdx, [rip + l_anon.[ID].28]
+	lea	rdi, [rip + l_anon.[ID].17]
+	lea	rdx, [rip + l_anon.[ID].23]
 	mov	esi, 7
 	call	SYM(objc2::__macro_helpers::declare_class::failed_declaring_class::GENERATED_ID, 0)
 
@@ -181,7 +181,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	je	LBB5_5
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdx, qword ptr [rax]
-	lea	rdi, [rip + l_anon.[ID].23]
+	lea	rdi, [rip + l_anon.[ID].18]
 	mov	esi, 9
 	call	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
 	test	rax, rax
@@ -257,25 +257,19 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	pop	rbp
 	ret
 LBB5_5:
-	lea	rdi, [rip + l_anon.[ID].24]
-	lea	rdx, [rip + l_anon.[ID].26]
+	lea	rdi, [rip + l_anon.[ID].19]
+	lea	rdx, [rip + l_anon.[ID].21]
 	mov	esi, 43
 	call	SYM(core::panicking::panic::GENERATED_ID, 0)
 LBB5_6:
-	lea	rdi, [rip + l_anon.[ID].23]
-	lea	rdx, [rip + l_anon.[ID].32]
+	lea	rdi, [rip + l_anon.[ID].18]
+	lea	rdx, [rip + l_anon.[ID].27]
 	mov	esi, 9
 	call	SYM(objc2::__macro_helpers::declare_class::failed_declaring_class::GENERATED_ID, 0)
 LBB5_7:
-	lea	rdi, [rip + l_anon.[ID].16]
-	lea	rdx, [rip + l_anon.[ID].18]
-	mov	esi, 59
-	call	SYM(core::option::expect_failed::GENERATED_ID, 0)
+	call	SYM(objc2::__macro_helpers::declared_ivars::register_with_ivars::get_ivar_failed::GENERATED_ID, 0)
 LBB5_8:
-	lea	rdi, [rip + l_anon.[ID].19]
-	lea	rdx, [rip + l_anon.[ID].20]
-	mov	esi, 69
-	call	SYM(core::option::expect_failed::GENERATED_ID, 0)
+	call	SYM(objc2::__macro_helpers::declared_ivars::register_with_ivars::get_drop_flag_failed::GENERATED_ID, 0)
 
 	.p2align	4, 0x90
 SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0}, 0):
@@ -290,7 +284,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	je	LBB6_4
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdx, qword ptr [rax]
-	lea	rdi, [rip + l_anon.[ID].21]
+	lea	rdi, [rip + l_anon.[ID].16]
 	mov	esi, 15
 	call	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
 	test	rax, rax
@@ -337,20 +331,17 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	pop	rbp
 	ret
 LBB6_4:
-	lea	rdi, [rip + l_anon.[ID].24]
-	lea	rdx, [rip + l_anon.[ID].26]
+	lea	rdi, [rip + l_anon.[ID].19]
+	lea	rdx, [rip + l_anon.[ID].21]
 	mov	esi, 43
 	call	SYM(core::panicking::panic::GENERATED_ID, 0)
 LBB6_5:
-	lea	rdi, [rip + l_anon.[ID].21]
-	lea	rdx, [rip + l_anon.[ID].31]
+	lea	rdi, [rip + l_anon.[ID].16]
+	lea	rdx, [rip + l_anon.[ID].26]
 	mov	esi, 15
 	call	SYM(objc2::__macro_helpers::declare_class::failed_declaring_class::GENERATED_ID, 0)
 LBB6_6:
-	lea	rdi, [rip + l_anon.[ID].16]
-	lea	rdx, [rip + l_anon.[ID].18]
-	mov	esi, 59
-	call	SYM(core::option::expect_failed::GENERATED_ID, 0)
+	call	SYM(objc2::__macro_helpers::declared_ivars::register_with_ivars::get_ivar_failed::GENERATED_ID, 0)
 
 	.p2align	4, 0x90
 SYM(<<std[CRATE_ID]::sync::once::Once>::call_once<<test_declare_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}>::{closure#0} as core[CRATE_ID]::ops::function::FnOnce<(&std[CRATE_ID]::sync::once::OnceState,)>>::call_once::{shim:vtable#0}, 0):
@@ -408,7 +399,7 @@ LBB10_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + SYM(<test_declare_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)]
 	lea	rcx, [rip + l_anon.[ID].2]
-	lea	r8, [rip + l_anon.[ID].31]
+	lea	r8, [rip + l_anon.[ID].26]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
@@ -455,7 +446,7 @@ LBB13_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + SYM(<test_declare_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)]
 	lea	rcx, [rip + l_anon.[ID].1]
-	lea	r8, [rip + l_anon.[ID].32]
+	lea	r8, [rip + l_anon.[ID].27]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
@@ -492,7 +483,7 @@ LBB15_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + SYM(<test_declare_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)]
 	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].28]
+	lea	r8, [rip + l_anon.[ID].23]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
@@ -518,7 +509,7 @@ LBB16_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + SYM(<test_declare_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)]
 	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].28]
+	lea	r8, [rip + l_anon.[ID].23]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
@@ -571,7 +562,7 @@ LBB19_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + SYM(<test_declare_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)]
 	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].28]
+	lea	r8, [rip + l_anon.[ID].23]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
@@ -624,7 +615,7 @@ LBB21_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + SYM(<test_declare_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)]
 	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].28]
+	lea	r8, [rip + l_anon.[ID].23]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
@@ -647,7 +638,7 @@ LBB22_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + SYM(<test_declare_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)]
 	lea	rcx, [rip + l_anon.[ID].2]
-	lea	r8, [rip + l_anon.[ID].31]
+	lea	r8, [rip + l_anon.[ID].26]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
@@ -696,7 +687,7 @@ LBB24_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + SYM(<test_declare_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0)]
 	lea	rcx, [rip + l_anon.[ID].1]
-	lea	r8, [rip + l_anon.[ID].32]
+	lea	r8, [rip + l_anon.[ID].27]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(std::sys_common::once::queue::Once::call::GENERATED_ID, 0)
@@ -842,47 +833,24 @@ l_anon.[ID].15:
 	.space	39
 
 l_anon.[ID].16:
-	.ascii	"failed retrieving instance variable on newly declared class"
-
-l_anon.[ID].17:
-	.ascii	"$WORKSPACE/objc2/src/__macro_helpers/declared_ivars.rs"
-
-	.section	__DATA,__const
-	.p2align	3, 0x0
-l_anon.[ID].18:
-	.quad	l_anon.[ID].17
-	.asciz	"P\000\000\000\000\000\000\000\035\001\000\000\016\000\000"
-
-	.section	__TEXT,__const
-l_anon.[ID].19:
-	.ascii	"failed retrieving drop flag instance variable on newly declared class"
-
-	.section	__DATA,__const
-	.p2align	3, 0x0
-l_anon.[ID].20:
-	.quad	l_anon.[ID].17
-	.asciz	"P\000\000\000\000\000\000\000)\001\000\000\016\000\000"
-
-	.section	__TEXT,__const
-l_anon.[ID].21:
 	.ascii	"ForgetableIvars"
 
-l_anon.[ID].22:
+l_anon.[ID].17:
 	.ascii	"NoIvars"
 
-l_anon.[ID].23:
+l_anon.[ID].18:
 	.ascii	"DropIvars"
 
-l_anon.[ID].24:
+l_anon.[ID].19:
 	.ascii	"called `Option::unwrap()` on a `None` value"
 
-l_anon.[ID].25:
+l_anon.[ID].20:
 	.ascii	"$RUSTC/library/std/src/sync/once.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
-l_anon.[ID].26:
-	.quad	l_anon.[ID].25
+l_anon.[ID].21:
+	.quad	l_anon.[ID].20
 	.asciz	"p\000\000\000\000\000\000\000\225\000\000\0002\000\000"
 
 .zerofill __DATA,__bss,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_CLASS, 0).0,8,3
@@ -891,22 +859,22 @@ l_anon.[ID].26:
 	.globl	SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 1)
 .zerofill __DATA,__common,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 1),8,3
 	.section	__TEXT,__const
-l_anon.[ID].27:
+l_anon.[ID].22:
 	.ascii	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
-l_anon.[ID].28:
-	.quad	l_anon.[ID].27
+l_anon.[ID].23:
+	.quad	l_anon.[ID].22
 	.asciz	"5\000\000\000\000\000\000\000\016\000\000\000\001\000\000"
 
 .zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0),8,3
 	.section	__TEXT,__literal8,8byte_literals
-L_anon.[ID].29:
+L_anon.[ID].24:
 	.ascii	"NSObject"
 
 	.section	__TEXT,__const
-l_anon.[ID].30:
+l_anon.[ID].25:
 	.ascii	"NSCopying"
 
 	.section	__TEXT,__objc_methname,cstring_literals
@@ -1018,8 +986,8 @@ L_OBJC_IMAGE_INFO_2837f061c311eb14:
 .zerofill __DATA,__common,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 2),8,3
 	.section	__DATA,__const
 	.p2align	3, 0x0
-l_anon.[ID].31:
-	.quad	l_anon.[ID].27
+l_anon.[ID].26:
+	.quad	l_anon.[ID].22
 	.asciz	"5\000\000\000\000\000\000\000O\000\000\000\001\000\000"
 
 .zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0),8,3
@@ -1047,8 +1015,8 @@ L_OBJC_IMAGE_INFO_af8966656b8b2b6c:
 .zerofill __DATA,__common,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 0),8,3
 	.section	__DATA,__const
 	.p2align	3, 0x0
-l_anon.[ID].32:
-	.quad	l_anon.[ID].27
+l_anon.[ID].27:
+	.quad	l_anon.[ID].22
 	.asciz	"5\000\000\000\000\000\000\000x\000\000\000\001\000\000"
 
 .zerofill __DATA,__bss,SYM(<test_declare_class[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::REGISTER_CLASS, 0),8,3
