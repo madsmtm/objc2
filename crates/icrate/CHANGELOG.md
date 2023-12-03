@@ -62,7 +62,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `NS[Mutable]Dictionary::from_vec`.
 * **BREAKING**: Renamed `NSMutableDictionary::insert` and
   `NSMutableSet::insert` to `insert_id`.
-- **BREAKING**: `CWWiFiClient::interfaceNames` has been renamed to `CWWiFiClient::interfaceNames_class`.
+* **BREAKING**: `CWWiFiClient::interfaceNames` has been renamed to `CWWiFiClient::interfaceNames_class`.
+* **BREAKING**: Updated `objc2` to `v0.5.0`.
 
 ### Removed
 * **BREAKING**: Removed the `MainThreadMarker` argument from the closure
@@ -92,8 +93,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `AnyObject` instead of the correct `ProtocolObject<dyn NSCopying>`).
 * Update the minimum deployment target, which adds a few missing protocol
   implementations and methods for `NSPopover` and `NSLayoutAnchor`.
-- **BREAKING**: `CKSystemSharingUIObserver` and `CKLocationSortDescriptor` are no longer marked thread safe.
-- **BREAKING**: `NSColor::ignoresAlpha` now requires a main thread marker.
+* **BREAKING**: `CKSystemSharingUIObserver` and `CKLocationSortDescriptor` are no longer marked thread safe.
+* **BREAKING**: `NSColor::ignoresAlpha` now requires a main thread marker.
 
 
 ## icrate 0.0.4 - 2023-07-31

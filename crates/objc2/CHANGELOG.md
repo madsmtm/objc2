@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.5.0 - 2023-12-03
+
 ### Added
 * Added the following traits to the `mutability` module (see the documentation
   for motivation and usage info):

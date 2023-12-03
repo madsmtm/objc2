@@ -20,7 +20,7 @@ documentation = "https://docs.rs/icrate/"
 license = "MIT"
 
 [dependencies]
-objc2 = { path = "../objc2", version = "0.4.1", default-features = false, optional = true }
+objc2 = { path = "../objc2", version = "0.5.0", default-features = false, optional = true }
 block2 = { path = "../block2", version = "0.3.0", default-features = false, optional = true }
 dispatch = { version = "0.2.0", optional = true }
 
