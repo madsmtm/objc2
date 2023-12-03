@@ -64,6 +64,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `NSMutableSet::insert` to `insert_id`.
 * **BREAKING**: `CWWiFiClient::interfaceNames` has been renamed to `CWWiFiClient::interfaceNames_class`.
 * **BREAKING**: Updated `objc2` to `v0.5.0`.
+* **BREAKING**: Updated `block2` to `v0.4.0`.
 
 ### Removed
 * **BREAKING**: Removed the `MainThreadMarker` argument from the closure
