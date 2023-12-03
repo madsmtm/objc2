@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Changed
+* **BREAKING**: Changed the type of `EncodingBox::Struct` and
+  `EncodingBox::Union` to no longer contain an `Option`.
+
+### Fixed
+* Fixed encoding equivalence between empty structs and unions.
+
 
 ## 3.0.0 - 2023-07-31
 

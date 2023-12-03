@@ -179,10 +179,10 @@ mod tests {
                 (
                     EncodingBox::Struct(
                         "bitfield".into(),
-                        Some(vec![
+                        vec![
                             EncodingBox::BitField(64, None),
                             EncodingBox::BitField(1, None),
-                        ]),
+                        ],
                     ),
                     Some(32),
                 ),

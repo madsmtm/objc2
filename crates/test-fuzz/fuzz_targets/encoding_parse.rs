@@ -5,6 +5,10 @@ use libfuzzer_sys::fuzz_target;
 use objc2::encode::{Encoding, EncodingBox};
 
 fuzz_target!(|s: &str| {
+    // Limit string length to < 1024 so that we don't hit stack overflows
+    if s.len() > 1024 {
+        return;
+    }
     // Check that parsing encodings doesn't panic
     if let Ok(enc) = EncodingBox::from_str(s) {
         // Check a "negative" case of `equivalent_to_box`

@@ -5,7 +5,7 @@ use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use core::fmt;
 
-use crate::helper::{ContainerKind, Helper, NestingLevel};
+use crate::helper::{ContainerKind, EncodingType, Helper, NestingLevel};
 use crate::{Encoding, EncodingBox};
 
 /// Check whether a struct or union name is a valid identifier
@@ -250,34 +250,46 @@ impl Parser<'_> {
     }
 
     pub(crate) fn expect_encoding(&mut self, enc: &Encoding, level: NestingLevel) -> Option<()> {
-        let helper = Helper::new(enc, level);
-        match helper {
+        match enc.helper() {
             Helper::Primitive(primitive) => self.expect_str(primitive.to_str()),
-            Helper::BitField(size, Some((offset, t)), level) => {
+            Helper::BitField(size, Some((offset, t))) => {
                 self.expect_byte(b'b')?;
                 self.expect_u64(*offset)?;
-                self.expect_encoding(t, level)?;
+                self.expect_encoding(t, level.bitfield())?;
                 self.expect_u8(size)
             }
-            Helper::BitField(size, None, _level) => {
+            Helper::BitField(size, None) => {
                 self.expect_byte(b'b')?;
                 self.expect_u8(size)
             }
-            Helper::Indirection(kind, t, level) => {
+            Helper::Indirection(kind, t) => {
                 self.expect_byte(kind.prefix_byte())?;
-                self.expect_encoding(t, level)
+                self.expect_encoding(t, level.indirection(kind))
             }
-            Helper::Array(len, item, level) => {
+            Helper::Array(len, item) => {
                 self.expect_byte(b'[')?;
                 self.expect_u64(len)?;
-                self.expect_encoding(item, level)?;
+                self.expect_encoding(item, level.array())?;
                 self.expect_byte(b']')
             }
-            Helper::Container(kind, name, items, level) => {
+            Helper::Container(kind, name, items) => {
                 self.expect_byte(kind.start_byte())?;
                 self.expect_str(name)?;
-                if let Some(items) = items {
+                if let Some(level) = level.container_include_fields() {
                     self.expect_byte(b'=')?;
+                    // Parse as equal if the container is empty
+                    if items.is_empty() {
+                        while self.try_peek() != Some(kind.end_byte()) {
+                            let _ = self.parse_encoding().ok()?;
+                        }
+                        self.advance();
+                        return Some(());
+                    }
+                    // Parse as equal if the string's container is empty
+                    if self.try_peek() == Some(kind.end_byte()) {
+                        self.advance();
+                        return Some(());
+                    }
                     for item in items {
                         self.expect_encoding(item, level)?;
                     }
@@ -289,10 +301,10 @@ impl Parser<'_> {
 }
 
 impl Parser<'_> {
-    fn parse_container(&mut self, kind: ContainerKind) -> Result<(&str, Option<Vec<EncodingBox>>)> {
+    fn parse_container(&mut self, kind: ContainerKind) -> Result<(&str, Vec<EncodingBox>)> {
         let old_split_point = self.split_point;
 
-        // Parse name until hits `=`
+        // Parse name until hits `=` or `}`/`)`
         let has_items = loop {
             let b = self.try_peek().ok_or(ErrorKind::WrongEndContainer(kind))?;
             if b == b'=' {
@@ -309,25 +321,23 @@ impl Parser<'_> {
             return Err(ErrorKind::InvalidIdentifier(kind));
         }
 
-        self.advance();
-
         if has_items {
-            let mut items = Vec::new();
-            // Parse items until hits end
-            loop {
-                let b = self.try_peek().ok_or(ErrorKind::WrongEndContainer(kind))?;
-                if b == kind.end_byte() {
-                    self.advance();
-                    break;
-                } else {
-                    // Wasn't the end, so try to extract one more encoding
-                    items.push(self.parse_encoding()?);
-                }
-            }
-            Ok((s, Some(items)))
-        } else {
-            Ok((s, None))
+            self.advance();
         }
+
+        let mut items = Vec::new();
+        // Parse items until hits end
+        loop {
+            let b = self.try_peek().ok_or(ErrorKind::WrongEndContainer(kind))?;
+            if b == kind.end_byte() {
+                self.advance();
+                break;
+            } else {
+                // Wasn't the end, so try to extract one more encoding
+                items.push(self.parse_encoding()?);
+            }
+        }
+        Ok((s, items))
     }
 
     pub(crate) fn parse_encoding(&mut self) -> Result<EncodingBox> {
@@ -463,18 +473,18 @@ mod tests {
         const KIND: ContainerKind = ContainerKind::Struct;
 
         #[track_caller]
-        fn assert_name(enc: &str, expected: Result<(&str, Option<Vec<EncodingBox>>)>) {
+        fn assert_name(enc: &str, expected: Result<(&str, Vec<EncodingBox>)>) {
             let mut parser = Parser::new(enc);
             assert_eq!(parser.parse_container(KIND), expected);
         }
 
-        assert_name("abc=}", Ok(("abc", Some(vec![]))));
+        assert_name("abc=}", Ok(("abc", vec![])));
         assert_name(
             "abc=ii}",
-            Ok(("abc", Some(vec![EncodingBox::Int, EncodingBox::Int]))),
+            Ok(("abc", vec![EncodingBox::Int, EncodingBox::Int])),
         );
-        assert_name("_=}.a'", Ok(("_", Some(vec![]))));
-        assert_name("abc}def", Ok(("abc", None)));
+        assert_name("_=}.a'", Ok(("_", vec![])));
+        assert_name("abc}def", Ok(("abc", vec![])));
         assert_name("=def}", Err(ErrorKind::InvalidIdentifier(KIND)));
         assert_name(".=def}", Err(ErrorKind::InvalidIdentifier(KIND)));
         assert_name("}xyz", Err(ErrorKind::InvalidIdentifier(KIND)));
@@ -510,7 +520,7 @@ mod tests {
             "{s=b8C}",
             Ok(EncodingBox::Struct(
                 "s".into(),
-                Some(vec![EncodingBox::BitField(8, None), EncodingBox::UChar]),
+                vec![EncodingBox::BitField(8, None), EncodingBox::UChar],
             )),
         );
 

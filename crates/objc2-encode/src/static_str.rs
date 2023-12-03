@@ -41,21 +41,21 @@ pub(crate) const fn static_int_str_array<const RES: usize>(mut n: u64) -> [u8; R
 pub(crate) const fn static_encoding_str_len(encoding: &Encoding, level: NestingLevel) -> usize {
     use Helper::*;
 
-    match Helper::new(encoding, level) {
+    match Helper::new(encoding) {
         Primitive(primitive) => primitive.to_str().len(),
-        BitField(size, None, _level) => 1 + static_int_str_len(size as u64),
-        BitField(size, Some((offset, t)), level) => {
+        BitField(size, None) => 1 + static_int_str_len(size as u64),
+        BitField(size, Some((offset, t))) => {
             1 + static_int_str_len(*offset)
-                + static_encoding_str_len(t, level)
+                + static_encoding_str_len(t, level.bitfield())
                 + static_int_str_len(size as u64)
         }
-        Indirection(_kind, t, level) => 1 + static_encoding_str_len(t, level),
-        Array(len, item, level) => {
-            1 + static_int_str_len(len) + static_encoding_str_len(item, level) + 1
+        Indirection(kind, t) => 1 + static_encoding_str_len(t, level.indirection(kind)),
+        Array(len, item) => {
+            1 + static_int_str_len(len) + static_encoding_str_len(item, level.array()) + 1
         }
-        Container(_, name, items, level) => {
+        Container(_, name, items) => {
             let mut res = 1 + name.len();
-            if let Some(items) = items {
+            if let Some(level) = level.container_include_fields() {
                 res += 1;
                 let mut i = 0;
                 while i < items.len() {
@@ -77,7 +77,7 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
     let mut res: [u8; LEN] = [0; LEN];
     let mut res_i = 0;
 
-    match Helper::new(encoding, level) {
+    match Helper::new(encoding) {
         Primitive(primitive) => {
             let s = primitive.to_str().as_bytes();
             let mut i = 0;
@@ -86,7 +86,7 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 i += 1;
             }
         }
-        BitField(size, None, _level) => {
+        BitField(size, None) => {
             res[res_i] = b'b';
             res_i += 1;
 
@@ -99,7 +99,8 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 i += 1;
             }
         }
-        BitField(size, Some((offset, t)), level) => {
+        BitField(size, Some((offset, t))) => {
+            let level = level.bitfield();
             res[res_i] = b'b';
             res_i += 1;
 
@@ -131,7 +132,8 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 i += 1;
             }
         }
-        Indirection(kind, t, level) => {
+        Indirection(kind, t) => {
+            let level = level.indirection(kind);
             res[res_i] = kind.prefix_byte();
             res_i += 1;
 
@@ -144,7 +146,8 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 i += 1;
             }
         }
-        Array(len, item, level) => {
+        Array(len, item) => {
+            let level = level.array();
             let mut res_i = 0;
 
             res[res_i] = b'[';
@@ -170,7 +173,7 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
 
             res[res_i] = b']';
         }
-        Container(kind, name, items, level) => {
+        Container(kind, name, items) => {
             let mut res_i = 0;
 
             res[res_i] = kind.start_byte();
@@ -184,7 +187,7 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
                 name_i += 1;
             }
 
-            if let Some(items) = items {
+            if let Some(level) = level.container_include_fields() {
                 res[res_i] = b'=';
                 res_i += 1;
 
