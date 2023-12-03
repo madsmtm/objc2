@@ -333,6 +333,126 @@ impl Ivar {
         let encoding = unsafe { CStr::from_ptr(ffi::ivar_getTypeEncoding(self.as_ptr())) };
         str::from_utf8(encoding.to_bytes()).unwrap()
     }
+
+    #[inline]
+    pub(crate) fn debug_assert_encoding(&self, _expected: &Encoding) {
+        #[cfg(debug_assertions)]
+        {
+            let encoding = self.type_encoding();
+            assert!(
+                _expected.equivalent_to_str(encoding),
+                "wrong encoding. Tried to retrieve ivar with encoding {encoding}, but the encoding of the given type was {_expected}",
+            );
+        }
+    }
+
+    /// Returns a pointer to the instance variable / ivar on the given object.
+    ///
+    /// This is similar to [`UnsafeCell::get`], see that for more information
+    /// on what is and isn't safe to do.
+    ///
+    /// Usually you will have defined the instance variable yourself with
+    /// [`ClassBuilder::add_ivar`], the type of the ivar `T` must match the
+    /// type used in that.
+    ///
+    /// Library implementors are strongly encouraged to expose a safe
+    /// interface to the ivar.
+    ///
+    /// [`UnsafeCell::get`]: core::cell::UnsafeCell::get
+    /// [`ClassBuilder::add_ivar`]: crate::declare::ClassBuilder::add_ivar
+    ///
+    ///
+    /// # Panics
+    ///
+    /// Panics when `debug_assertions` are enabled if the type encoding of the
+    /// ivar differs from the type encoding of `T`.
+    ///
+    ///
+    /// # Safety
+    ///
+    /// The object must have the given instance variable on it, and it must be
+    /// of type `T`. Any invariants that the object have assumed about the
+    /// value of the instance variable must not be violated.
+    ///
+    /// Note that an object can have multiple instance variables with the same
+    /// name; you must ensure that when the instance variable was retrieved,
+    /// was retrieved from the class that it was defined on. In particular,
+    /// getting a class dynamically using e.g. [`AnyObject::class`], and using
+    /// an instance variable from that here is _not_ sound in general.
+    ///
+    /// No thread syncronization is done on accesses to the variable, so you
+    /// must ensure that any access to the returned pointer do not cause data
+    /// races, and that Rust's mutability rules are not otherwise violated.
+    #[inline]
+    pub unsafe fn load_ptr<T: Encode>(&self, obj: &AnyObject) -> *mut T {
+        self.debug_assert_encoding(&T::ENCODING);
+
+        let ptr = NonNull::from(obj);
+        // SAFETY: That the ivar is valid is ensured by the caller
+        let ptr = unsafe { AnyObject::ivar_at_offset::<T>(ptr, self.offset()) };
+
+        // Safe as *mut T because `self` is `UnsafeCell`
+        ptr.as_ptr()
+    }
+
+    /// Returns a reference to the instance variable with the given name.
+    ///
+    /// See [`Ivar::load_ptr`] for more information.
+    ///
+    ///
+    /// # Panics
+    ///
+    /// Panics when `debug_assertions` are enabled if the type encoding of the
+    /// ivar differs from the type encoding of `T`.
+    ///
+    ///
+    /// # Safety
+    ///
+    /// The object must have the given instance variable on it, and it must be
+    /// of type `T`.
+    ///
+    /// No thread syncronization is done, so you must ensure that no other
+    /// thread is concurrently mutating the variable. This requirement can be
+    /// considered upheld if all mutation happens through [`Ivar::load_mut`]
+    /// (since that takes the object mutably).
+    #[inline]
+    pub unsafe fn load<'obj, T: Encode>(&self, obj: &'obj AnyObject) -> &'obj T {
+        // SAFETY: That the ivar is valid as `&T` is ensured by the caller,
+        // and the reference is properly bound to the object.
+        unsafe { self.load_ptr::<T>(obj).as_ref().unwrap_unchecked() }
+    }
+
+    /// Returns a mutable reference to the ivar with the given name.
+    ///
+    /// See [`Ivar::load_ptr`] for more information.
+    ///
+    ///
+    /// # Panics
+    ///
+    /// Panics when `debug_assertions` are enabled if the type encoding of the
+    /// ivar differs from the type encoding of `T`.
+    ///
+    ///
+    /// # Safety
+    ///
+    /// The object must have an instance variable with the given name, and it
+    /// must be of type `T`.
+    ///
+    /// This access happens through `&mut`, which means we know it to be the
+    /// only reference, hence you do not need to do any work to ensure that
+    /// data races do not happen.
+    #[inline]
+    pub unsafe fn load_mut<'obj, T: Encode>(&self, obj: &'obj mut AnyObject) -> &'obj mut T {
+        self.debug_assert_encoding(&T::ENCODING);
+
+        let ptr = NonNull::from(obj);
+        // SAFETY: That the ivar is valid is ensured by the caller
+        let mut ptr = unsafe { AnyObject::ivar_at_offset::<T>(ptr, self.offset()) };
+
+        // SAFETY: That the ivar is valid as `&mut T` is ensured by taking an
+        // `&mut` object
+        unsafe { ptr.as_mut() }
+    }
 }
 
 standard_pointer_impls!(Ivar);
@@ -711,6 +831,12 @@ impl AnyClass {
 
     /// Returns the ivar for a specified instance variable of self, or
     /// [`None`] if self has no ivar with the given name.
+    ///
+    /// If the instance variable was not found on the specified class, the
+    /// superclasses are searched.
+    ///
+    /// Attempting to access or modify instance variables of a class that you
+    /// do no control may invoke undefined behaviour.
     #[doc(alias = "class_getInstanceVariable")]
     pub fn instance_variable(&self, name: &str) -> Option<&Ivar> {
         let name = CString::new(name).unwrap();
@@ -999,20 +1125,6 @@ impl fmt::Display for AnyProtocol {
     }
 }
 
-pub(crate) fn ivar_offset(cls: &AnyClass, name: &str, expected: &Encoding) -> isize {
-    match cls.instance_variable(name) {
-        Some(ivar) => {
-            let encoding = ivar.type_encoding();
-            assert!(
-                expected.equivalent_to_str(encoding),
-                "wrong encoding. Tried to retrieve ivar with encoding {encoding}, but the encoding of the given type was {expected}",
-            );
-            ivar.offset()
-        }
-        None => panic!("ivar {name} not found on class {cls}"),
-    }
-}
-
 /// An Objective-C object.
 ///
 /// This is slightly different from [`NSObject`] in that it may represent an
@@ -1134,60 +1246,13 @@ impl AnyObject {
         ptr
     }
 
-    /// Returns a pointer to the instance variable / ivar with the given name.
-    ///
-    /// This is similar to [`UnsafeCell::get`], see that for more information
-    /// on what is and isn't safe to do.
-    ///
-    /// Usually you will have defined the instance variable yourself with
-    /// [`ClassBuilder::add_ivar`], the type of the ivar `T` must match the
-    /// type used in that.
-    ///
-    /// Attempting to access or modify private implementation details of a
-    /// class that you do no control using this is not supported, and may
-    /// invoke undefined behaviour.
-    ///
-    /// Library implementors are strongly encouraged to expose a safe
-    /// interface to the ivar.
-    ///
-    /// [`UnsafeCell::get`]: core::cell::UnsafeCell::get
-    /// [`ClassBuilder::add_ivar`]: crate::declare::ClassBuilder::add_ivar
-    ///
-    ///
-    /// # Panics
-    ///
-    /// May panic if the object has no ivar with the given name. May also
-    /// panic if the type encoding of the ivar differs from the type encoding
-    /// of `T`.
-    ///
-    /// This should purely seen as help while debugging and is not guaranteed
-    /// (e.g. it may be disabled when `debug_assertions` are off).
-    ///
-    ///
-    /// # Safety
-    ///
-    /// The object must have an instance variable with the given name, and it
-    /// must be of type `T`. Any invariants that the object have assumed about
-    /// the value of the instance variable must not be violated.
-    ///
-    /// No thread syncronization is done on accesses to the variable, so you
-    /// must ensure that any access to the returned pointer do not cause data
-    /// races, and that Rust's mutability rules are not otherwise violated.
-    pub unsafe fn ivar_ptr<T: Encode>(&self, name: &str) -> *mut T {
-        let offset = ivar_offset(self.class(), name, &T::ENCODING);
-
-        let ptr = NonNull::from(self);
-        // SAFETY: The offset is valid
-        let ptr = unsafe { Self::ivar_at_offset::<T>(ptr, offset) };
-
-        // Safe as *mut T because `self` is `UnsafeCell`
-        ptr.as_ptr()
+    pub(crate) fn lookup_instance_variable_dynamically(&self, name: &str) -> &'static Ivar {
+        let cls = self.class();
+        cls.instance_variable(name)
+            .unwrap_or_else(|| panic!("ivar {name} not found on class {cls}"))
     }
 
-    /// Returns a reference to the instance variable with the given name.
-    ///
-    /// See [`AnyObject::ivar_ptr`] for more information, including on when
-    /// this panics.
+    /// Use [`Ivar::load`] instead.
     ///
     ///
     /// # Safety
@@ -1195,31 +1260,15 @@ impl AnyObject {
     /// The object must have an instance variable with the given name, and it
     /// must be of type `T`.
     ///
-    /// No thread syncronization is done, so you must ensure that no other
-    /// thread is concurrently mutating the variable. This requirement can be
-    /// considered upheld if all mutation happens through
-    /// [`AnyObject::ivar_mut`] (since that  takes `&mut self`).
-    pub unsafe fn ivar<T: Encode>(&self, name: &str) -> &T {
-        // SAFETY: Upheld by caller.
-        unsafe { self.ivar_ptr::<T>(name).as_ref().unwrap_unchecked() }
-    }
-
-    /// Use [`AnyObject::ivar`] instead.
-    ///
-    ///
-    /// # Safety
-    ///
-    /// See [`AnyObject::ivar`].
-    #[deprecated = "Use `AnyObject::ivar` instead."]
+    /// See [`Ivar::load_ptr`] for details surrounding this.
+    #[deprecated = "this is difficult to use correctly, use `Ivar::load` instead."]
     pub unsafe fn get_ivar<T: Encode>(&self, name: &str) -> &T {
+        let ivar = self.lookup_instance_variable_dynamically(name);
         // SAFETY: Upheld by caller
-        unsafe { self.ivar::<T>(name) }
+        unsafe { ivar.load::<T>(self) }
     }
 
-    /// Returns a mutable reference to the ivar with the given name.
-    ///
-    /// See [`AnyObject::ivar_ptr`] for more information, including on when
-    /// this panics.
+    /// Use [`Ivar::load_mut`] instead.
     ///
     ///
     /// # Safety
@@ -1227,44 +1276,12 @@ impl AnyObject {
     /// The object must have an instance variable with the given name, and it
     /// must be of type `T`.
     ///
-    /// This access happens through `&mut self`, which means we know it to be
-    /// the only reference, hence you do not need to do any work to ensure
-    /// that data races do not happen.
-    pub unsafe fn ivar_mut<T: Encode>(&mut self, name: &str) -> &mut T {
-        let offset = ivar_offset(self.class(), name, &T::ENCODING);
-
-        let ptr = NonNull::from(self);
-        // SAFETY: The offset is valid
-        let mut ptr = unsafe { Self::ivar_at_offset::<T>(ptr, offset) };
-
-        // SAFETY:
-        unsafe { ptr.as_mut() }
-    }
-
-    /// Use [`AnyObject::ivar_mut`] instead.
-    ///
-    ///
-    /// # Safety
-    ///
-    /// Same as [`AnyObject::ivar_mut`].
-    #[deprecated = "Use `AnyObject::ivar_mut` instead."]
+    /// See [`Ivar::load_ptr`] for details surrounding this.
+    #[deprecated = "this is difficult to use correctly, use `Ivar::load_mut` instead."]
     pub unsafe fn get_mut_ivar<T: Encode>(&mut self, name: &str) -> &mut T {
+        let ivar = self.lookup_instance_variable_dynamically(name);
         // SAFETY: Upheld by caller
-        unsafe { self.ivar_mut::<T>(name) }
-    }
-
-    /// Sets the value of the ivar with the given name.
-    ///
-    /// This is a shorthand for [`AnyObject::ivar_mut`], see that for more
-    /// information.
-    ///
-    ///
-    /// # Safety
-    ///
-    /// Same as [`AnyObject::ivar_mut`].
-    pub unsafe fn set_ivar<T: Encode>(&mut self, name: &str, value: T) {
-        // SAFETY: Invariants upheld by caller
-        unsafe { *self.ivar_mut::<T>(name) = value };
+        unsafe { ivar.load_mut::<T>(self) }
     }
 
     // objc_setAssociatedObject
@@ -1476,27 +1493,32 @@ mod tests {
     #[test]
     fn test_object() {
         let mut obj = test_utils::custom_object();
-        assert_eq!(obj.class(), test_utils::custom_class());
+        let cls = test_utils::custom_class();
+        assert_eq!(obj.class(), cls);
 
-        let result = unsafe {
-            obj.set_ivar::<u32>("_foo", 4);
-            *obj.ivar::<u32>("_foo")
-        };
+        let ivar = cls.instance_variable("_foo").unwrap();
+
+        unsafe { *ivar.load_mut::<u32>(&mut obj) = 4 };
+        let result = unsafe { *ivar.load::<u32>(&obj) };
         assert_eq!(result, 4);
     }
 
     #[test]
-    #[should_panic = "ivar unknown not found on class CustomObject"]
     fn test_object_ivar_unknown() {
-        let obj = test_utils::custom_object();
-        let _ = unsafe { *obj.ivar::<u32>("unknown") };
+        let cls = test_utils::custom_class();
+        assert_eq!(cls.instance_variable("unknown"), None);
     }
 
     #[test]
-    #[should_panic = "wrong encoding. Tried to retrieve ivar with encoding I, but the encoding of the given type was C"]
+    #[cfg_attr(
+        debug_assertions,
+        should_panic = "wrong encoding. Tried to retrieve ivar with encoding I, but the encoding of the given type was C"
+    )]
     fn test_object_ivar_wrong_type() {
         let obj = test_utils::custom_object();
-        let _ = unsafe { *obj.ivar::<u8>("_foo") };
+        let cls = test_utils::custom_class();
+        let ivar = cls.instance_variable("_foo").unwrap();
+        let _ = unsafe { *ivar.load::<u8>(&obj) };
     }
 
     #[test]

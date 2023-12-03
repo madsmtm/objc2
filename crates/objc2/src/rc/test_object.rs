@@ -1,10 +1,10 @@
 use core::cell::RefCell;
 use core::ptr;
 
-use super::{Allocated, Id};
+use super::{Allocated, DefaultId, Id};
 use crate::mutability::Immutable;
 use crate::runtime::{NSObject, NSZone};
-use crate::{declare_class, msg_send, msg_send_id, ClassType};
+use crate::{declare_class, msg_send, msg_send_id, ClassType, DeclaredClass};
 
 // TODO: Put tests that use this in another crate
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -12,7 +12,7 @@ use crate::{declare_class, msg_send, msg_send_id, ClassType};
 #[doc(hidden)]
 pub struct __ThreadTestData {
     pub alloc: usize,
-    pub dealloc: usize,
+    pub drop: usize,
     pub init: usize,
     pub retain: usize,
     pub copy: usize,
@@ -70,6 +70,8 @@ declare_class!(
         const NAME: &'static str = "__RcTestObject";
     }
 
+    impl DeclaredClass for __RcTestObject {}
+
     unsafe impl __RcTestObject {
         #[method_id(newReturningNull)]
         fn new_returning_null() -> Option<Id<Self>> {
@@ -106,10 +108,11 @@ declare_class!(
             ptr::null_mut()
         }
 
-        #[method(init)]
-        unsafe fn init(this: *mut Self) -> *mut Self {
+        #[method_id(init)]
+        unsafe fn init(this: Allocated<Self>) -> Id<Self> {
             TEST_DATA.with(|data| data.borrow_mut().init += 1);
-            unsafe { msg_send![super(this), init] }
+            let this = this.set_ivars(());
+            unsafe { msg_send_id![super(this), init] }
         }
 
         #[method_id(initReturningNull)]
@@ -286,7 +289,13 @@ declare_class!(
 
 impl Drop for __RcTestObject {
     fn drop(&mut self) {
-        TEST_DATA.with(|data| data.borrow_mut().dealloc += 1);
+        TEST_DATA.with(|data| data.borrow_mut().drop += 1);
+    }
+}
+
+impl DefaultId for __RcTestObject {
+    fn default_id() -> Id<Self> {
+        Self::new()
     }
 }
 
@@ -311,6 +320,8 @@ declare_class!(
         type Mutability = Immutable;
         const NAME: &'static str = "RcTestObjectSubclass";
     }
+
+    impl DeclaredClass for RcTestObjectSubclass {}
 );
 
 #[cfg_attr(not(test), allow(unused))]
@@ -357,7 +368,7 @@ mod tests {
 
             drop(res);
             $expected.release += 1;
-            $expected.dealloc += 1;
+            $expected.drop += 1;
             $expected.assert_current();
         }
     }
@@ -429,7 +440,7 @@ mod tests {
 
             drop(res);
             $expected.release += 1;
-            $expected.dealloc += 1;
+            $expected.drop += 1;
             $expected.assert_current();
 
             // Errors
@@ -449,7 +460,7 @@ mod tests {
 
             drop(res);
             $expected.release += 1;
-            $expected.dealloc += 1;
+            $expected.drop += 1;
             $expected.assert_current();
         }
     }
@@ -474,11 +485,11 @@ mod tests {
 
         expected.alloc -= 1;
         expected.release -= 1;
-        expected.dealloc -= 1;
         test_error_id!(expected, 0, initAndShouldError, {
             expected.alloc += 1;
             expected.release += 1;
-            expected.dealloc += 1;
+            // Drop flag ensures newly allocated objects do not drop
+            // expected.drop += 1;
             __RcTestObject::alloc()
         });
     }
@@ -499,7 +510,8 @@ mod tests {
 
         drop(res);
         expected.release += 1;
-        expected.dealloc += 1;
+        // Drop flag ensures uninitialized do not drop
+        // expected.drop += 1;
         expected.assert_current();
 
         // Errors
@@ -521,7 +533,7 @@ mod tests {
 
         drop(res);
         expected.release += 1;
-        expected.dealloc += 1;
+        expected.drop += 1;
         expected.assert_current();
     }
 

@@ -1,10 +1,11 @@
-use core::ptr;
+use core::ptr::{self, NonNull};
 
-use crate::encode::Encode;
-use crate::rc::{Allocated, Id};
+use crate::encode::{Encode, RefEncode};
+use crate::rc::{Allocated, Id, PartialInit};
 use crate::runtime::{AnyClass, AnyObject, Sel};
-use crate::{sel, Message};
+use crate::{sel, ClassType, DeclaredClass, Message};
 
+use super::declared_ivars::set_finalized;
 use super::{Alloc, ConvertArguments, CopyOrMutCopy, Init, MsgSend, New, Other, TupleExtender};
 
 pub trait MsgSendId<T, U> {
@@ -57,6 +58,94 @@ pub trait MsgSendId<T, U> {
     }
 }
 
+/// new: T -> Option<Id<U>>
+/// alloc: &AnyClass -> Allocated<T>
+/// init: PartialInit<T> -> Option<Id<T>> // Changed
+/// copy/mutableCopy: T -> Option<Id<U>>
+/// others: T -> Option<Id<U>>
+#[doc(hidden)]
+pub trait MsgSendSuperId<T, U> {
+    type Inner: ?Sized + RefEncode;
+
+    unsafe fn send_super_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
+        obj: T,
+        superclass: &AnyClass,
+        sel: Sel,
+        args: A,
+    ) -> R;
+
+    #[inline]
+    #[track_caller]
+    unsafe fn send_super_message_id_static<A: ConvertArguments, R: MaybeUnwrap<Input = U>>(
+        obj: T,
+        sel: Sel,
+        args: A,
+    ) -> R
+    where
+        Self::Inner: ClassType,
+        <Self::Inner as ClassType>::Super: ClassType,
+    {
+        unsafe {
+            Self::send_super_message_id(obj, <Self::Inner as ClassType>::Super::class(), sel, args)
+        }
+    }
+
+    #[inline]
+    #[track_caller]
+    unsafe fn send_super_message_id_error<A, E, R>(
+        obj: T,
+        superclass: &AnyClass,
+        sel: Sel,
+        args: A,
+    ) -> Result<R, Id<E>>
+    where
+        *mut *mut E: Encode,
+        A: TupleExtender<*mut *mut E>,
+        <A as TupleExtender<*mut *mut E>>::PlusOneArgument: ConvertArguments,
+        E: Message,
+        Option<R>: MaybeUnwrap<Input = U>,
+    {
+        let mut err: *mut E = ptr::null_mut();
+        let args = args.add_argument(&mut err);
+        // SAFETY: See `send_message_id_error`
+        let res: Option<R> = unsafe { Self::send_super_message_id(obj, superclass, sel, args) };
+        if let Some(res) = res {
+            Ok(res)
+        } else {
+            // SAFETY: See `send_message_id_error`
+            Err(unsafe { encountered_error(err) })
+        }
+    }
+
+    #[inline]
+    #[track_caller]
+    unsafe fn send_super_message_id_static_error<A, E, R>(
+        obj: T,
+        sel: Sel,
+        args: A,
+    ) -> Result<R, Id<E>>
+    where
+        Self::Inner: ClassType,
+        <Self::Inner as ClassType>::Super: ClassType,
+        *mut *mut E: Encode,
+        A: TupleExtender<*mut *mut E>,
+        <A as TupleExtender<*mut *mut E>>::PlusOneArgument: ConvertArguments,
+        E: Message,
+        Option<R>: MaybeUnwrap<Input = U>,
+    {
+        let mut err: *mut E = ptr::null_mut();
+        let args = args.add_argument(&mut err);
+        // SAFETY: See `send_message_id_error`
+        let res: Option<R> = unsafe { Self::send_super_message_id_static(obj, sel, args) };
+        if let Some(res) = res {
+            Ok(res)
+        } else {
+            // SAFETY: See `send_message_id_error`
+            Err(unsafe { encountered_error(err) })
+        }
+    }
+}
+
 // Marked `cold` to tell the optimizer that errors are comparatively rare.
 // And intentionally not inlined, for much the same reason.
 #[cold]
@@ -85,6 +174,26 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Id<U>>> for New {
     }
 }
 
+impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Id<U>>> for New {
+    type Inner = T::Inner;
+
+    #[inline]
+    unsafe fn send_super_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<U>>>>(
+        obj: T,
+        superclass: &AnyClass,
+        sel: Sel,
+        args: A,
+    ) -> R {
+        let ptr = obj.into_raw_receiver();
+        // SAFETY: Same as in `send_message_id`
+        let obj = unsafe { MsgSend::send_super_message(ptr, superclass, sel, args) };
+        // SAFETY: Same as in `send_message_id`
+        let obj = unsafe { Id::new(obj) };
+        // SAFETY: Same as in `send_message_id`
+        R::maybe_unwrap::<Self>(obj, (unsafe { ptr.as_ref() }, sel))
+    }
+}
+
 impl<T: Message> MsgSendId<&'_ AnyClass, Allocated<T>> for Alloc {
     #[inline]
     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Allocated<T>>>(
@@ -95,6 +204,24 @@ impl<T: Message> MsgSendId<&'_ AnyClass, Allocated<T>> for Alloc {
         // SAFETY: Checked by caller
         let obj = unsafe { MsgSend::send_message(cls, sel, args) };
         // SAFETY: The selector is `alloc`, so this has +1 retain count
+        let obj = unsafe { Allocated::new(obj) };
+        R::maybe_unwrap::<Self>(obj, ())
+    }
+}
+
+impl<T: ?Sized + Message> MsgSendSuperId<&'_ AnyClass, Allocated<T>> for Alloc {
+    type Inner = AnyClass;
+
+    #[inline]
+    unsafe fn send_super_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Allocated<T>>>(
+        cls: &AnyClass,
+        superclass: &AnyClass,
+        sel: Sel,
+        args: A,
+    ) -> R {
+        // SAFETY: Same as in `send_message_id`
+        let obj = unsafe { MsgSend::send_super_message(cls, superclass, sel, args) };
+        // SAFETY: Same as in `send_message_id`
         let obj = unsafe { Allocated::new(obj) };
         R::maybe_unwrap::<Self>(obj, ())
     }
@@ -144,6 +271,32 @@ impl<T: ?Sized + Message> MsgSendId<Allocated<T>, Option<Id<T>>> for Init {
     }
 }
 
+impl<T: DeclaredClass> MsgSendSuperId<PartialInit<T>, Option<Id<T>>> for Init {
+    type Inner = T;
+
+    #[inline]
+    unsafe fn send_super_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<T>>>>(
+        obj: PartialInit<T>,
+        superclass: &AnyClass,
+        sel: Sel,
+        args: A,
+    ) -> R {
+        let ptr = PartialInit::into_ptr(obj);
+        // SAFETY: Same as `send_message_id`.
+        let ptr = unsafe { MsgSend::send_super_message(ptr, superclass, sel, args) };
+        // SAFETY: The returned pointer is the same as the one we passed in.
+        //
+        // TODO: If this is not the case, a lot will have gone wrong anyhow,
+        // so unsure if we can do anything better than just ignore the issue?
+        if let Some(ptr) = NonNull::new(ptr) {
+            unsafe { set_finalized(ptr) };
+        }
+        // SAFETY: Same as `send_message_id`
+        let obj = unsafe { Id::new(ptr) };
+        R::maybe_unwrap::<Self>(obj, (ptr.cast(), sel))
+    }
+}
+
 impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Id<U>>> for CopyOrMutCopy {
     #[inline]
     unsafe fn send_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<U>>>>(
@@ -155,6 +308,24 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Id<U>>> for CopyOrMutC
         let obj = unsafe { MsgSend::send_message(obj, sel, args) };
         // SAFETY: The selector is `copy` or `mutableCopy`, so this has +1
         // retain count
+        let obj = unsafe { Id::new(obj) };
+        R::maybe_unwrap::<Self>(obj, ())
+    }
+}
+
+impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Id<U>>> for CopyOrMutCopy {
+    type Inner = T::Inner;
+
+    #[inline]
+    unsafe fn send_super_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<U>>>>(
+        obj: T,
+        superclass: &AnyClass,
+        sel: Sel,
+        args: A,
+    ) -> R {
+        // SAFETY: Same as in `send_message_id`
+        let obj = unsafe { MsgSend::send_super_message(obj, superclass, sel, args) };
+        // SAFETY: Same as in `send_message_id`
         let obj = unsafe { Id::new(obj) };
         R::maybe_unwrap::<Self>(obj, ())
     }
@@ -179,6 +350,26 @@ impl<T: MsgSend, U: Message> MsgSendId<T, Option<Id<U>>> for Other {
 
         // SAFETY: The object is still valid after a message send to a
         // normal method - it would not be if the method was `init`.
+        R::maybe_unwrap::<Self>(obj, (unsafe { ptr.as_ref() }, sel))
+    }
+}
+
+impl<T: MsgSend, U: Message> MsgSendSuperId<T, Option<Id<U>>> for Other {
+    type Inner = T::Inner;
+
+    #[inline]
+    unsafe fn send_super_message_id<A: ConvertArguments, R: MaybeUnwrap<Input = Option<Id<U>>>>(
+        obj: T,
+        superclass: &AnyClass,
+        sel: Sel,
+        args: A,
+    ) -> R {
+        let ptr = obj.into_raw_receiver();
+        // SAFETY: Same as `send_message_id`
+        let obj = unsafe { MsgSend::send_super_message(ptr, superclass, sel, args) };
+        // SAFETY: Same as `send_message_id`
+        let obj = unsafe { Id::retain_autoreleased(obj) };
+        // SAFETY: Same as `send_message_id`
         R::maybe_unwrap::<Self>(obj, (unsafe { ptr.as_ref() }, sel))
     }
 }
@@ -318,21 +509,60 @@ mod tests {
     use crate::runtime::{AnyObject, NSObject, NSZone};
     use crate::{class, msg_send_id, ClassType};
 
+    mod test_trait_disambugated {
+        use super::*;
+
+        trait Abc {
+            fn send_message_id(&self) {}
+        }
+
+        impl<T> Abc for T {}
+
+        #[test]
+        fn test_macro_still_works() {
+            let _: Id<NSObject> = unsafe { msg_send_id![NSObject::class(), new] };
+        }
+    }
+
+    // `new` family
+
     #[test]
     fn test_new() {
-        let _obj: Id<AnyObject> = unsafe { msg_send_id![NSObject::class(), new] };
-        let _obj: Option<Id<AnyObject>> = unsafe { msg_send_id![NSObject::class(), new] };
+        let mut expected = __ThreadTestData::current();
+        let cls = __RcTestObject::class();
+
+        let _obj: Id<AnyObject> = unsafe { msg_send_id![cls, new] };
+        let _obj: Option<Id<AnyObject>> = unsafe { msg_send_id![cls, new] };
+        // This is just a roundabout way of calling `[__RcTestObject new]`.
+        let _obj: Id<AnyObject> = unsafe { msg_send_id![super(cls, cls.metaclass()), new] };
+        let _obj: Option<Id<AnyObject>> = unsafe { msg_send_id![super(cls, cls.metaclass()), new] };
+
+        // `__RcTestObject` does not override `new`, so this just ends up
+        // calling `[[__RcTestObject alloc] init]` as usual.
+        let _obj: Id<__RcTestObject> =
+            unsafe { msg_send_id![super(cls, NSObject::class().metaclass()), new] };
+
+        expected.alloc += 5;
+        expected.init += 5;
+        expected.assert_current();
     }
 
     #[test]
     fn test_new_not_on_class() {
         let mut expected = __ThreadTestData::current();
         let obj = __RcTestObject::new();
+        expected.alloc += 1;
+        expected.init += 1;
+        expected.assert_current();
 
         let _obj: Id<AnyObject> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
         let _obj: Option<Id<AnyObject>> = unsafe { msg_send_id![&obj, newMethodOnInstance] };
-        expected.alloc += 3;
-        expected.init += 3;
+        let _obj: Id<AnyObject> =
+            unsafe { msg_send_id![super(&obj, __RcTestObject::class()), newMethodOnInstance] };
+        let _obj: Option<Id<AnyObject>> =
+            unsafe { msg_send_id![super(&obj, __RcTestObject::class()), newMethodOnInstance] };
+        expected.alloc += 4;
+        expected.init += 4;
         expected.assert_current();
     }
 
@@ -362,99 +592,6 @@ mod tests {
     }
 
     #[test]
-    fn test_macro_alloc() {
-        let mut expected = __ThreadTestData::current();
-        let cls = __RcTestObject::class();
-
-        let obj: Allocated<__RcTestObject> = unsafe { msg_send_id![cls, alloc] };
-        expected.alloc += 1;
-        expected.assert_current();
-
-        drop(obj);
-        expected.release += 1;
-        expected.dealloc += 1;
-        expected.assert_current();
-    }
-
-    #[test]
-    fn test_alloc_with_zone() {
-        let mut expected = __ThreadTestData::current();
-        let cls = __RcTestObject::class();
-
-        let zone: *const NSZone = ptr::null();
-        let _obj: Allocated<__RcTestObject> = unsafe { msg_send_id![cls, allocWithZone: zone] };
-        expected.alloc += 1;
-        expected.assert_current();
-    }
-
-    #[test]
-    fn test_macro_init() {
-        let mut expected = __ThreadTestData::current();
-        let cls = __RcTestObject::class();
-
-        let obj: Allocated<__RcTestObject> = unsafe { msg_send_id![cls, alloc] };
-        expected.alloc += 1;
-        expected.assert_current();
-
-        // Don't check allocation error
-        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![obj, init] };
-        expected.init += 1;
-        expected.assert_current();
-
-        let obj: Allocated<__RcTestObject> = unsafe { msg_send_id![cls, alloc] };
-        expected.alloc += 1;
-        expected.assert_current();
-
-        // Check allocation error before init
-        assert!(!Allocated::as_ptr(&obj).is_null());
-        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![obj, init] };
-        expected.init += 1;
-        expected.assert_current();
-    }
-
-    #[test]
-    fn test_macro() {
-        let mut expected = __ThreadTestData::current();
-        let cls = __RcTestObject::class();
-        crate::rc::autoreleasepool(|_| {
-            let _obj: Id<__RcTestObject> = unsafe { msg_send_id![cls, new] };
-            expected.alloc += 1;
-            expected.init += 1;
-            expected.assert_current();
-
-            let obj = unsafe { msg_send_id![cls, alloc] };
-            expected.alloc += 1;
-            expected.assert_current();
-
-            let obj: Id<__RcTestObject> = unsafe { msg_send_id![obj, init] };
-            expected.init += 1;
-            expected.assert_current();
-
-            let _copy: Id<__RcTestObject> = unsafe { msg_send_id![&obj, copy] };
-            expected.copy += 1;
-            expected.alloc += 1;
-            expected.init += 1;
-            expected.assert_current();
-
-            let _mutable_copy: Id<__RcTestObject> = unsafe { msg_send_id![&obj, mutableCopy] };
-            expected.mutable_copy += 1;
-            expected.alloc += 1;
-            expected.init += 1;
-            expected.assert_current();
-
-            let _self: Id<__RcTestObject> = unsafe { msg_send_id![&obj, self] };
-            expected.retain += 1;
-            expected.assert_current();
-
-            let _desc: Option<Id<__RcTestObject>> = unsafe { msg_send_id![&obj, description] };
-            expected.assert_current();
-        });
-        expected.release += 5;
-        expected.dealloc += 4;
-        expected.assert_current();
-    }
-
-    #[test]
     #[should_panic = "failed creating new instance of NSValue"]
     // GNUStep instead returns an invalid instance that panics on accesses
     #[cfg_attr(feature = "gnustep-1-7", ignore)]
@@ -470,6 +607,17 @@ mod tests {
     }
 
     #[test]
+    #[should_panic = "failed creating new instance using +[__RcTestObject newReturningNull]"]
+    fn test_super_new_with_null() {
+        let _: Id<__RcTestObject> = unsafe {
+            msg_send_id![
+                super(__RcTestObject::class(), __RcTestObject::class().metaclass()),
+                newReturningNull
+            ]
+        };
+    }
+
+    #[test]
     #[should_panic = "unexpected NULL returned from -[__RcTestObject newMethodOnInstanceNull]"]
     fn test_new_any_with_null() {
         let obj = __RcTestObject::new();
@@ -477,17 +625,129 @@ mod tests {
     }
 
     #[test]
-    #[should_panic = "unexpected NULL newMethodOnInstance; receiver was NULL"]
-    #[cfg(not(debug_assertions))] // Does NULL receiver checks
+    #[should_panic = "unexpected NULL returned from -[__RcTestObject newMethodOnInstanceNull]"]
+    fn test_super_new_any_with_null() {
+        let obj = __RcTestObject::new();
+        let _obj: Id<AnyObject> = unsafe {
+            msg_send_id![
+                super(&obj, __RcTestObject::class()),
+                newMethodOnInstanceNull
+            ]
+        };
+    }
+
+    #[test]
+    #[cfg_attr(
+        debug_assertions,
+        should_panic = "messsaging newMethodOnInstance to nil"
+    )]
+    #[cfg_attr(
+        not(debug_assertions),
+        ignore = "unexpected NULL newMethodOnInstance; receiver was NULL"
+    )]
     fn test_new_any_with_null_receiver() {
         let obj: *const NSObject = ptr::null();
         let _obj: Id<AnyObject> = unsafe { msg_send_id![obj, newMethodOnInstance] };
     }
 
     #[test]
-    fn test_alloc_with_null() {
+    #[cfg_attr(
+        debug_assertions,
+        should_panic = "messsaging newMethodOnInstance to nil"
+    )]
+    #[cfg_attr(
+        not(debug_assertions),
+        ignore = "unexpected NULL newMethodOnInstance; receiver was NULL"
+    )]
+    fn test_super_new_any_with_null_receiver() {
+        let obj: *const __RcTestObject = ptr::null();
+        let _obj: Id<AnyObject> = unsafe { msg_send_id![super(obj), newMethodOnInstance] };
+    }
+
+    // `alloc` family
+
+    #[test]
+    fn test_alloc() {
+        let mut expected = __ThreadTestData::current();
+        let cls = __RcTestObject::class();
+
+        let obj: Allocated<__RcTestObject> = unsafe { msg_send_id![cls, alloc] };
+        expected.alloc += 1;
+        expected.assert_current();
+
+        drop(obj);
+        expected.release += 1;
+        // Drop flag ensures uninitialized do not Drop
+        // expected.drop += 1;
+        expected.assert_current();
+
+        // `+[NSObject alloc]` forwards to `allocWithZone:`, so this still
+        // allocates a `__RcTestObject`.
+        let _: Allocated<NSObject> =
+            unsafe { msg_send_id![super(cls, NSObject::class().metaclass()), alloc] };
+        expected.alloc += 1;
+        expected.release += 1;
+        // Drop flag ensures uninitialized do not Drop
+        // expected.drop += 1;
+        expected.assert_current();
+    }
+
+    #[test]
+    fn test_alloc_with_zone() {
+        let mut expected = __ThreadTestData::current();
+        let cls = __RcTestObject::class();
+        let zone: *const NSZone = ptr::null();
+
+        let _obj: Allocated<__RcTestObject> = unsafe { msg_send_id![cls, allocWithZone: zone] };
+        expected.alloc += 1;
+        expected.assert_current();
+
         let _obj: Allocated<__RcTestObject> =
+            unsafe { msg_send_id![super(cls, cls.metaclass()), allocWithZone: zone] };
+        expected.alloc += 1;
+        expected.assert_current();
+
+        let _obj: Allocated<NSObject> =
+            unsafe { msg_send_id![super(cls, NSObject::class().metaclass()), allocWithZone: zone] };
+        expected.assert_current();
+    }
+
+    #[test]
+    fn test_alloc_with_null() {
+        let obj: Allocated<__RcTestObject> =
             unsafe { msg_send_id![__RcTestObject::class(), allocReturningNull] };
+        assert!(Allocated::as_ptr(&obj).is_null());
+    }
+
+    // `init` family
+
+    #[test]
+    fn test_init() {
+        let mut expected = __ThreadTestData::current();
+
+        let _: Id<__RcTestObject> = unsafe { msg_send_id![__RcTestObject::alloc(), init] };
+        expected.alloc += 1;
+        expected.init += 1;
+        expected.release += 1;
+        expected.drop += 1;
+        expected.assert_current();
+
+        let obj = __RcTestObject::alloc().set_ivars(());
+        let _: Id<__RcTestObject> = unsafe { msg_send_id![super(obj), init] };
+        expected.alloc += 1;
+        expected.release += 1;
+        expected.drop += 1;
+        expected.assert_current();
+
+        // Check allocation error before init
+        let obj = __RcTestObject::alloc();
+        expected.alloc += 1;
+        assert!(!Allocated::as_ptr(&obj).is_null());
+        let _: Id<__RcTestObject> = unsafe { msg_send_id![obj, init] };
+        expected.init += 1;
+        expected.release += 1;
+        expected.drop += 1;
+        expected.assert_current();
     }
 
     #[test]
@@ -499,8 +759,8 @@ mod tests {
     }
 
     #[test]
-    #[should_panic = "failed allocating object"]
-    #[cfg(not(debug_assertions))] // Does NULL receiver checks
+    #[cfg_attr(debug_assertions, should_panic = "messsaging init to nil")]
+    #[cfg_attr(not(debug_assertions), ignore = "failed allocating object")]
     fn test_init_with_null_receiver() {
         let obj: Allocated<__RcTestObject> =
             unsafe { msg_send_id![__RcTestObject::class(), allocReturningNull] };
@@ -508,10 +768,112 @@ mod tests {
     }
 
     #[test]
+    #[should_panic = "tried to initialize ivars after they were already initialized"]
+    #[cfg_attr(not(debug_assertions), ignore = "only checked with debug assertions")]
+    fn test_super_init_not_initialized() {
+        let obj = __RcTestObject::alloc().set_ivars(());
+        let _: Id<__RcTestObject> =
+            unsafe { msg_send_id![super(obj, __RcTestObject::class()), init] };
+    }
+
+    #[test]
+    #[should_panic = "tried to finalize an already finalized object"]
+    #[cfg_attr(not(debug_assertions), ignore = "only checked with debug assertions")]
+    fn test_super_init_not_finalized() {
+        let obj = unsafe { PartialInit::new(Allocated::into_ptr(__RcTestObject::alloc())) };
+        let _: Id<__RcTestObject> =
+            unsafe { msg_send_id![super(obj, __RcTestObject::class()), init] };
+    }
+
+    // `copy` family
+
+    #[test]
+    fn test_copy() {
+        let obj = __RcTestObject::new();
+        let mut expected = __ThreadTestData::current();
+
+        let _: Id<__RcTestObject> = unsafe { msg_send_id![&obj, copy] };
+        expected.copy += 1;
+        expected.alloc += 1;
+        expected.init += 1;
+        expected.release += 1;
+        expected.drop += 1;
+        expected.assert_current();
+
+        // `+[NSObject copy]` forwards to `copyWithZone:`, so this still
+        // creates a `__RcTestObject`.
+        let _: Id<NSObject> = unsafe { msg_send_id![super(&obj), copy] };
+        expected.copy += 1;
+        expected.alloc += 1;
+        expected.init += 1;
+        expected.release += 1;
+        expected.drop += 1;
+        expected.assert_current();
+    }
+
+    #[test]
     #[should_panic = "failed copying object"]
     fn test_copy_with_null() {
         let obj = __RcTestObject::new();
         let _obj: Id<__RcTestObject> = unsafe { msg_send_id![&obj, copyReturningNull] };
+    }
+
+    #[test]
+    #[should_panic = "failed copying object"]
+    fn test_super_copy_with_null() {
+        let obj = __RcTestObject::new();
+        let _obj: Id<__RcTestObject> =
+            unsafe { msg_send_id![super(&obj, __RcTestObject::class()), copyReturningNull] };
+    }
+
+    // `mutableCopy` family
+
+    #[test]
+    fn test_mutable_copy() {
+        let obj = __RcTestObject::new();
+        let mut expected = __ThreadTestData::current();
+
+        let _: Id<__RcTestObject> = unsafe { msg_send_id![&obj, mutableCopy] };
+        expected.mutable_copy += 1;
+        expected.alloc += 1;
+        expected.init += 1;
+        expected.release += 1;
+        expected.drop += 1;
+        expected.assert_current();
+
+        // `+[NSObject mutableCopy]` forwards to `mutableCopyWithZone:`, so
+        // this still creates a `__RcTestObject`.
+        let _: Id<NSObject> = unsafe { msg_send_id![super(&obj), mutableCopy] };
+        expected.mutable_copy += 1;
+        expected.alloc += 1;
+        expected.init += 1;
+        expected.release += 1;
+        expected.drop += 1;
+        expected.assert_current();
+    }
+
+    // No method family
+
+    #[test]
+    fn test_normal() {
+        let obj = __RcTestObject::new();
+        let mut expected = __ThreadTestData::current();
+
+        let _: Id<__RcTestObject> = unsafe { msg_send_id![&obj, self] };
+        expected.retain += 1;
+        expected.release += 1;
+        expected.assert_current();
+
+        let _: Id<__RcTestObject> = unsafe { msg_send_id![super(&obj), self] };
+        expected.retain += 1;
+        expected.release += 1;
+        expected.assert_current();
+
+        let _: Option<Id<__RcTestObject>> = unsafe { msg_send_id![&obj, description] };
+        expected.assert_current();
+
+        let _: Option<Id<__RcTestObject>> = unsafe { msg_send_id![super(&obj), description] };
+        expected.assert_current();
     }
 
     #[test]
@@ -529,26 +891,13 @@ mod tests {
     }
 
     #[test]
-    #[should_panic = "unexpected NULL description; receiver was NULL"]
-    #[cfg(not(debug_assertions))] // Does NULL receiver checks
+    #[cfg_attr(debug_assertions, should_panic = "messsaging description to nil")]
+    #[cfg_attr(
+        not(debug_assertions),
+        ignore = "unexpected NULL description; receiver was NULL"
+    )]
     fn test_normal_with_null_receiver() {
         let obj: *const NSObject = ptr::null();
         let _obj: Id<AnyObject> = unsafe { msg_send_id![obj, description] };
-    }
-
-    mod test_trait_disambugated {
-        use super::*;
-
-        trait Abc {
-            fn send_message_id() {}
-        }
-
-        impl<T> Abc for T {}
-
-        #[test]
-        fn test_macro_still_works() {
-            let cls = class!(NSObject);
-            let _obj: Id<AnyObject> = unsafe { msg_send_id![cls, new] };
-        }
     }
 }

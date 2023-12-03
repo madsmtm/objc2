@@ -4,18 +4,15 @@ use core::marker::PhantomData;
 #[cfg(all(debug_assertions, feature = "verify"))]
 use std::collections::HashSet;
 
+use crate::declare::ClassBuilder;
+use crate::encode::{Encode, Encoding};
+use crate::rc::{Allocated, Id};
+use crate::runtime::{AnyClass, AnyObject, MessageReceiver, MethodImplementation, Sel};
 #[cfg(all(debug_assertions, feature = "verify"))]
 use crate::runtime::{AnyProtocol, MethodDescription};
+use crate::{ClassType, DeclaredClass, Message, ProtocolType};
 
-use objc2_encode::Encoding;
-
-use crate::declare::{ClassBuilder, IvarType};
-use crate::encode::Encode;
-use crate::rc::{Allocated, Id};
-use crate::runtime::{AnyClass, MethodImplementation, Sel};
-use crate::runtime::{AnyObject, MessageReceiver};
-use crate::{ClassType, Message, ProtocolType};
-
+use super::declared_ivars::{register_with_ivars, setup_dealloc};
 use super::{CopyOrMutCopy, Init, MaybeUnwrap, New, Other};
 use crate::mutability;
 
@@ -213,7 +210,7 @@ fn failed_declaring_class(name: &str) -> ! {
     panic!("could not create new class {name}. Perhaps a class with that name already exists?")
 }
 
-impl<T: ?Sized + ClassType> ClassBuilderHelper<T> {
+impl<T: DeclaredClass> ClassBuilderHelper<T> {
     #[inline]
     #[track_caller]
     #[allow(clippy::new_without_default)]
@@ -221,10 +218,12 @@ impl<T: ?Sized + ClassType> ClassBuilderHelper<T> {
     where
         T::Super: ClassType,
     {
-        let builder = match ClassBuilder::new(T::NAME, <T::Super as ClassType>::class()) {
+        let mut builder = match ClassBuilder::new(T::NAME, <T::Super as ClassType>::class()) {
             Some(builder) => builder,
             None => failed_declaring_class(T::NAME),
         };
+
+        setup_dealloc::<T>(&mut builder);
 
         Self {
             builder,
@@ -291,13 +290,8 @@ impl<T: ?Sized + ClassType> ClassBuilderHelper<T> {
     }
 
     #[inline]
-    pub fn add_static_ivar<I: IvarType>(&mut self) {
-        self.builder.add_static_ivar::<I>()
-    }
-
-    #[inline]
-    pub fn register(self) -> &'static AnyClass {
-        self.builder.register()
+    pub fn register(self) -> (&'static AnyClass, isize, isize) {
+        register_with_ivars::<T>(self.builder)
     }
 }
 
@@ -324,7 +318,7 @@ pub struct ClassProtocolMethodsBuilder<'a, T: ?Sized> {
     registered_class_methods: HashSet<Sel>,
 }
 
-impl<T: ?Sized + ClassType> ClassProtocolMethodsBuilder<'_, T> {
+impl<T: DeclaredClass> ClassProtocolMethodsBuilder<'_, T> {
     // Addition: This restricts to callee `T`
     #[inline]
     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)

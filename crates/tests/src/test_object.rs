@@ -138,11 +138,13 @@ impl MyTestObject {
     }
 
     fn var1_ivar(&self) -> &c_int {
-        unsafe { self.inner.ivar("var1") }
+        let ivar = Self::class().instance_variable("var1").unwrap();
+        unsafe { ivar.load(&self.inner) }
     }
 
     fn var1_ivar_mut(&mut self) -> &mut c_int {
-        unsafe { self.inner.ivar_mut("var1") }
+        let ivar = Self::class().instance_variable("var1").unwrap();
+        unsafe { ivar.load_mut(&mut self.inner) }
     }
 
     fn add_to_ivar1(&mut self, number: c_int) {
@@ -154,11 +156,13 @@ impl MyTestObject {
     }
 
     fn var2_ivar(&self) -> &Bool {
-        unsafe { self.inner.ivar("var2") }
+        let ivar = Self::class().instance_variable("var2").unwrap();
+        unsafe { ivar.load(&self.inner) }
     }
 
     fn var2_ivar_mut(&mut self) -> &mut Bool {
-        unsafe { self.inner.ivar_mut("var2") }
+        let ivar = Self::class().instance_variable("var2").unwrap();
+        unsafe { ivar.load_mut(&mut self.inner) }
     }
 
     fn var3(&self) -> *mut AnyObject {
@@ -170,11 +174,13 @@ impl MyTestObject {
     }
 
     fn var3_ivar(&self) -> &*mut AnyObject {
-        unsafe { self.inner.ivar("var3") }
+        let ivar = Self::class().instance_variable("var3").unwrap();
+        unsafe { ivar.load(&self.inner) }
     }
 
     fn var3_ivar_mut(&mut self) -> &mut *mut AnyObject {
-        unsafe { self.inner.ivar_mut("var3") }
+        let ivar = Self::class().instance_variable("var3").unwrap();
+        unsafe { ivar.load_mut(&mut self.inner) }
     }
 }
 

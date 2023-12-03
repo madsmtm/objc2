@@ -49,9 +49,7 @@ fn main() {
 
     println!("NSObject address: {obj:p}");
 
-    // Access an ivar of the object
-    //
-    // As before, you should not rely on the `isa` ivar being available!
-    let isa = unsafe { *obj.ivar::<*const AnyClass>("isa") };
+    // Read an ivar on the object
+    let isa: *const AnyClass = unsafe { *ivar.load(&obj) };
     println!("NSObject isa: {isa:?}");
 }

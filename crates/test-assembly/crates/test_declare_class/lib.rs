@@ -1,51 +1,38 @@
 //! Test assembly output of `declare_class!`.
 #![deny(unsafe_op_in_unsafe_fn)]
+// Limit to Apple targets only, since we don't particularly care about GNUStep code-size for now.
 #![cfg(feature = "apple")]
-use core::ptr::{self};
+// Limit to 64-bit since we don't do anything special on other targets, and the assembly files are _huge_.
+#![cfg(target_pointer_width = "64")]
+use core::ptr;
 
-use icrate::Foundation::{NSCopying, NSObject};
-use objc2::declare::{Ivar, IvarDrop, IvarEncode};
-use objc2::rc::Id;
-use objc2::runtime::{AnyClass, NSZone};
-use objc2::{declare_class, msg_send, msg_send_id, mutability, ClassType};
+use icrate::Foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
+use objc2::rc::{Allocated, Id};
+use objc2::runtime::AnyClass;
+use objc2::{declare_class, msg_send_id, mutability, ClassType, DeclaredClass};
 
 declare_class!(
     #[no_mangle]
-    pub struct Custom {
-        foo: IvarEncode<u8, "_foo">,
-        obj: IvarDrop<Option<Id<NSObject>>, "_obj">,
-    }
+    pub struct NoIvars;
 
-    mod ivars;
-
-    unsafe impl ClassType for Custom {
+    unsafe impl ClassType for NoIvars {
         type Super = NSObject;
         type Mutability = mutability::InteriorMutable;
-        const NAME: &'static str = "CustomClassName";
+        const NAME: &'static str = "NoIvars";
     }
 
-    unsafe impl Custom {
-        #[no_mangle]
-        #[method(init)]
-        unsafe fn init(this: *mut Self) -> *mut Self {
-            let this: Option<&mut Self> = unsafe { msg_send![super(this), init] };
+    impl DeclaredClass for NoIvars {}
 
-            this.map(|this| {
-                Ivar::write(&mut this.foo, 42);
-                Ivar::write(&mut this.obj, None);
-                let this: *mut Self = this;
-                this
-            })
-            .unwrap_or_else(ptr::null_mut)
+    unsafe impl NoIvars {
+        #[no_mangle]
+        #[method(classMethod)]
+        fn get_class() -> &'static AnyClass {
+            Self::class()
         }
 
         #[no_mangle]
-        #[method(classMethod)]
-        fn class_method() {}
-
-        #[no_mangle]
         #[method(method)]
-        fn method(&self) {}
+        fn method_simple(&self) {}
 
         #[no_mangle]
         #[method(methodBool:)]
@@ -56,60 +43,129 @@ declare_class!(
         #[no_mangle]
         #[method_id(methodId)]
         fn method_id(&self) -> Option<Id<NSObject>> {
-            self.obj.clone()
+            unsafe { msg_send_id![Self::class(), new] }
         }
 
         // Test that `objc_autoreleaseReturnValue` is tail-called
         #[no_mangle]
         #[method_id(methodIdWithParam:)]
         fn method_id_with_param(&self, param: bool) -> Option<Id<NSObject>> {
-            // Explicitly create outside condition
+            // Intentionally create this outside condition
             let obj = NSObject::new();
             if param {
-                self.obj.clone()
+                Some(NSObject::new())
             } else {
                 Some(obj)
             }
         }
     }
 
-    unsafe impl NSCopying for Custom {
+    unsafe impl NSObjectProtocol for NoIvars {}
+
+    unsafe impl NSCopying for NoIvars {
         #[no_mangle]
         #[method_id(copyWithZone:)]
         fn copyWithZone(&self, _zone: *const NSZone) -> Option<Id<Self>> {
-            get_obj().map(|new| {
-                let hack = Id::as_ptr(&new) as *mut Self;
-                let hack = unsafe { &mut *hack };
-
-                Ivar::write(&mut hack.foo, *self.foo);
-                Ivar::write(&mut hack.obj, self.obj.clone());
-                new
-            })
+            unsafe { msg_send_id![Self::class(), new] }
         }
     }
 );
 
-#[no_mangle]
-#[inline(never)]
-pub fn get_class() -> &'static AnyClass {
-    Custom::class()
+pub struct ForgetableIvarsIvars {
+    foo: u8,
+    bar: u32,
 }
 
-#[no_mangle]
-#[inline(never)]
-pub fn get_obj() -> Option<Id<Custom>> {
-    unsafe { msg_send_id![get_class(), new] }
+declare_class!(
+    #[no_mangle]
+    pub struct ForgetableIvars;
+
+    unsafe impl ClassType for ForgetableIvars {
+        type Super = NSObject;
+        type Mutability = mutability::InteriorMutable;
+        const NAME: &'static str = "ForgetableIvars";
+    }
+
+    impl DeclaredClass for ForgetableIvars {
+        type Ivars = ForgetableIvarsIvars;
+    }
+
+    unsafe impl ForgetableIvars {
+        #[no_mangle]
+        #[method_id(init)]
+        fn init_forgetable_ivars(this: Allocated<Self>) -> Option<Id<Self>> {
+            let this = this.set_ivars(ForgetableIvarsIvars { foo: 42, bar: 43 });
+            unsafe { msg_send_id![super(this), init] }
+        }
+    }
+);
+
+impl ForgetableIvars {
+    #[no_mangle]
+    pub fn access_forgetable_ivars_class() -> &'static AnyClass {
+        Self::class()
+    }
+
+    #[no_mangle]
+    pub fn access_forgetable_ivars(&self) -> (u8, u32) {
+        (self.ivars().foo, self.ivars().bar)
+    }
 }
 
-#[no_mangle]
-#[inline(never)]
-pub fn access_ivars() -> (u8, *const NSObject) {
-    let obj = unsafe { get_obj().unwrap_unchecked() };
-    (
-        *obj.foo,
-        (*obj.obj)
-            .as_ref()
-            .map(|obj| Id::as_ptr(&obj))
-            .unwrap_or_else(ptr::null),
-    )
+pub struct DropIvarsIvars {
+    obj: Id<NSObject>,
+    obj_option: Option<Id<NSObject>>,
+}
+
+declare_class!(
+    #[no_mangle]
+    pub struct DropIvars;
+
+    unsafe impl ClassType for DropIvars {
+        type Super = NSObject;
+        type Mutability = mutability::InteriorMutable;
+        const NAME: &'static str = "DropIvars";
+    }
+
+    impl DeclaredClass for DropIvars {
+        type Ivars = DropIvarsIvars;
+    }
+
+    unsafe impl DropIvars {
+        #[no_mangle]
+        #[method_id(init)]
+        fn init_drop_ivars(this: Allocated<Self>) -> Option<Id<Self>> {
+            let this = this.set_ivars(DropIvarsIvars {
+                obj: NSObject::new(),
+                obj_option: Some(NSObject::new()),
+            });
+            unsafe { msg_send_id![super(this), init] }
+        }
+    }
+);
+
+impl Drop for DropIvars {
+    #[inline(never)]
+    fn drop(&mut self) {
+        std::hint::black_box(());
+    }
+}
+
+impl DropIvars {
+    #[no_mangle]
+    pub fn access_drop_ivars_class() -> &'static AnyClass {
+        Self::class()
+    }
+
+    #[no_mangle]
+    pub fn access_drop_ivars(&self) -> (*const NSObject, *const NSObject) {
+        (
+            Id::as_ptr(&self.ivars().obj),
+            self.ivars()
+                .obj_option
+                .as_ref()
+                .map(Id::as_ptr)
+                .unwrap_or_else(ptr::null),
+        )
+    }
 }

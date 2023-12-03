@@ -122,7 +122,7 @@ fn test_retains_stored() {
 
     drop(obj);
     expected.release += 1;
-    expected.dealloc += 1;
+    expected.drop += 1;
     expected.assert_current();
 }
 
@@ -187,7 +187,7 @@ fn test_iter_minimal_retains() {
 
     assert_eq!(iter.count(), 0);
     expected.release += 1;
-    expected.dealloc += 1;
+    expected.drop += 1;
     expected.assert_current();
 }
 

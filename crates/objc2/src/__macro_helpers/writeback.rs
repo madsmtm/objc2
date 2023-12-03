@@ -258,7 +258,7 @@ mod tests {
 
             if error.is_some() {
                 expected.release += 1;
-                expected.dealloc += 1;
+                expected.drop += 1;
             }
             drop(error);
             expected.assert_current();
@@ -279,7 +279,7 @@ mod tests {
         expected.init += 1;
         expected.retain += 1;
         expected.release += 1;
-        expected.dealloc += 1;
+        expected.drop += 1;
         helper(&mut expected, true, Some(__RcTestObject::new()));
     }
 
@@ -328,19 +328,19 @@ mod tests {
             drop(obj);
             expected.release += 1;
             if AUTORELEASE_SKIPPED {
-                expected.dealloc += 1;
+                expected.drop += 1;
             }
             expected.assert_current();
         });
         if !AUTORELEASE_SKIPPED {
             expected.release += 1;
-            expected.dealloc += 1;
+            expected.drop += 1;
         }
         expected.assert_current();
 
         drop(err);
         expected.release += 1;
-        expected.dealloc += 1;
+        expected.drop += 1;
         expected.assert_current();
     }
 }

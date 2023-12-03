@@ -194,7 +194,7 @@ mod tests {
     use super::*;
     use crate::mutability::Mutable;
     use crate::runtime::{NSObject, NSObjectProtocol};
-    use crate::{declare_class, extern_methods, extern_protocol, ClassType};
+    use crate::{declare_class, extern_methods, extern_protocol, ClassType, DeclaredClass};
 
     extern_protocol!(
         unsafe trait Foo {
@@ -253,6 +253,8 @@ mod tests {
             type Mutability = Mutable;
             const NAME: &'static str = "ProtocolTestsDummyClass";
         }
+
+        impl DeclaredClass for DummyClass {}
 
         unsafe impl NSObjectProtocol for DummyClass {}
     );
@@ -350,7 +352,7 @@ mod tests {
         assert_eq!(
             format!("{obj:?}"),
             format!(
-                "DummyClass {{ __superclass: {:?} }}",
+                "DummyClass {{ __superclass: {:?}, __ivars: PhantomData<()> }}",
                 ManuallyDrop::new(foobar)
             ),
         );

@@ -18,8 +18,104 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added methods `as_ptr` and `as_mut_ptr` to `Allocated`.
 * Added optimization for converting `msg_send_id![cls, alloc]` to a call to
   the faster runtime function `objc_alloc`.
+* Added `DeclaredClass`, which represents classes that are declared in Rust.
+* Added `Allocated::set_ivars`, which sets the instance variables of an
+  object, and returns the new `rc::PartialInit`.
+* Added the ability for `msg_send_id!` to call `super` methods.
 
 ### Changed
+* **BREAKING**: Changed how instance variables work in `declare_class!`.
+
+  Previously, instance variables had to implement `Encode`, and you had to
+  initialize them properly, which was difficult to ensure.
+
+  Now, you implement the new `DeclaredClass` trait instead, which helps to
+  ensure all of this for you.
+
+  ```rust
+  // Before
+  declare_class!(
+      struct MyObject {
+          object: IvarDrop<Id<NSObject>, "_object">,
+          data: IvarDrop<Option<Box<MyData>>, "_data">,
+      }
+
+      mod ivars;
+
+      unsafe impl ClassType for MyObject {
+          type Super = NSObject;
+          type Mutability = InteriorMutable;
+          const NAME: &'static str = "MyObject";
+      }
+
+      unsafe impl MyObject {
+          #[method(init)]
+          unsafe fn init(this: *mut Self) -> Option<NonNull<Self>> {
+              let this: Option<&mut Self> = msg_send![super(this), init];
+              this.map(|this| {
+                  Ivar::write(&mut this.object, NSObject::new());
+                  Ivar::write(&mut this.data, Box::new(MyData::new()));
+                  NonNull::from(this)
+              })
+          }
+      }
+  );
+
+  extern_methods!(
+      unsafe impl MyObject {
+          #[method_id(new)]
+          pub fn new() -> Id<Self>;
+      }
+  );
+
+  fn main() {
+      let obj = MyObject::new();
+      println!("{:?}", obj.object);
+  }
+
+  // After
+  struct MyIvars {
+      object: Id<NSObject>,
+      data: Option<Box<MyData>>,
+  }
+
+  declare_class!(
+      struct MyObject;
+
+      unsafe impl ClassType for MyObject {
+          type Super = NSObject;
+          type Mutability = InteriorMutable;
+          const NAME: &'static str = "MyObject";
+      }
+
+      impl DeclaredClass for MyObject {
+          type Ivars = MyIvars;
+      }
+
+      unsafe impl MyObject {
+          #[method_id(init)]
+          pub fn init(this: Allocated<Self>) -> Option<Id<Self>> {
+              let this = this.set_ivars(MyIvars {
+                  object: NSObject::new(),
+                  data: MyData::new(),
+              });
+              unsafe { msg_send_id![super(this), init] }
+          }
+      }
+  );
+
+  extern_methods!(
+      unsafe impl MyObject {
+          #[method_id(new)]
+          pub fn new() -> Id<Self>;
+      }
+  );
+
+  fn main() {
+      let obj = MyObject::new();
+      println!("{:?}", obj.ivars().object);
+  }
+  ```
 * **BREAKING**: `AnyClass::verify_sel` now take more well-defined types
   `EncodeArguments` and  `EncodeReturn`.
 * **BREAKING**: Changed how the `mutability` traits work; these no longer have
@@ -85,11 +181,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   implement `IsAllowedMutable`.
 * Disallow the ability to use non-`Self`-like types as the receiver in
   `declare_class!`.
+* Allow adding instance variables with the same name on Apple platforms.
+* **BREAKING**: Make loading instance variables robust and sound in the face
+  of instance variables with the same name.
+
+  To read or write the instance variable for an object, you should now use the
+  `load`, `load_ptr` and `load_mut` methods on `Ivar`, instead of the `ivar`,
+  `ivar_ptr` and `ivar_mut` methods on `AnyObject`.
+
+  This _is_ more verbose, but it also ensures that the class for the instance
+  variable you're loading is the same as the one the instance variable you
+  want to access is defined on.
+
+  ```rust
+  // Before
+  let number = unsafe { *obj.ivar::<u32>("number") };
+
+  // After
+  let ivar = cls.instance_variable("number").unwrap();
+  let number = unsafe { *ivar.load::<u32>(&obj) };
+  ```
 
 ### Removed
 * **BREAKING**: Removed `ProtocolType` implementation for `NSObject`.
   Use the more precise `NSObjectProtocol` trait instead!
 * **BREAKING**: Removed the `MessageArguments` trait.
+* **BREAKING**: Removed the following items from the `declare` module: `Ivar`,
+  `IvarEncode`, `IvarBool`, `IvarDrop`, `IvarType` and `InnerIvarType`.
+
+  Ivar functionality is available in a different form now, see above under
+  "Changed".
+* **BREAKING**: Removed `ClassBuilder::add_static_ivar`.
 
 
 ## 0.4.1 - 2023-07-31

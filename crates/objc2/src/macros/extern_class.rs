@@ -28,8 +28,8 @@
 /// - [`Borrow<$inheritance_chain>`][core::borrow::Borrow]
 /// - [`BorrowMut<$inheritance_chain>`][core::borrow::BorrowMut]
 ///
-/// The macro allows specifying fields on the struct, but _only_ zero-sized
-/// types like [`PhantomData`] and [`declare::Ivar`] are allowed here.
+/// The macro allows specifying zero-sized fields like [`PhantomData`] on the
+/// struct.
 ///
 /// You can add most attributes to the class, including `#[cfg(...)]`,
 /// `#[derive(...)]` and doc comments (but not ABI-modifying attributes like
@@ -37,7 +37,6 @@
 ///
 /// [rustfmt-macros]: https://github.com/rust-lang/rustfmt/discussions/5437
 /// [`PhantomData`]: core::marker::PhantomData
-/// [`declare::Ivar`]: crate::declare::Ivar
 ///
 ///
 /// ## `ClassType` implementation

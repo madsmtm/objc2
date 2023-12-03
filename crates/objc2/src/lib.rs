@@ -190,7 +190,7 @@ pub use objc_sys as ffi;
 
 #[doc(no_inline)]
 pub use self::encode::{Encode, Encoding, RefEncode};
-pub use self::top_level_traits::{ClassType, Message, ProtocolType};
+pub use self::top_level_traits::{ClassType, DeclaredClass, Message, ProtocolType};
 
 #[cfg(feature = "objc2-proc-macros")]
 #[doc(hidden)]

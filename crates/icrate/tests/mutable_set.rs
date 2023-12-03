@@ -113,7 +113,7 @@ fn test_clear_release_dealloc() {
 
     set.removeAllObjects();
     expected.release += 4;
-    expected.dealloc += 4;
+    expected.drop += 4;
     expected.assert_current();
     assert_eq!(set.len(), 0);
 }

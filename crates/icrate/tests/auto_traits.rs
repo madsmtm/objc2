@@ -7,7 +7,7 @@ use icrate::Foundation::*;
 use objc2::mutability::{Immutable, Mutable};
 use objc2::rc::Id;
 use objc2::runtime::AnyObject;
-use objc2::{declare_class, ClassType};
+use objc2::{declare_class, ClassType, DeclaredClass};
 
 // We expect most Foundation types to be UnwindSafe and RefUnwindSafe,
 // since they follow Rust's usual mutability rules (&T = immutable).
@@ -40,6 +40,8 @@ macro_rules! helper {
                 type Mutability = $mutability;
                 const NAME: &'static str = concat!(stringify!($name), "Test");
             }
+
+            impl DeclaredClass for $name {}
         );
     };
 }

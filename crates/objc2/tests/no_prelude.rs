@@ -9,7 +9,7 @@
 
 extern crate objc2 as new_objc2;
 
-use new_objc2::{ClassType, ProtocolType};
+use new_objc2::{ClassType, DeclaredClass, ProtocolType};
 
 mod core {}
 mod std {}
@@ -82,19 +82,25 @@ type ExactSizeIterator = BogusType;
 type SliceConcatExt = BogusType;
 type ToString = BogusType;
 
+type PhantomData = BogusType;
+
 // Test begin below this line
 
-type PhantomData<T> = T;
+pub struct MyCustomIvars {
+    ivars: i32,
+}
 
 new_objc2::declare_class!(
-    pub struct CustomObject {
-        field1: PhantomData<i32>,
-    }
+    pub struct CustomObject;
 
     unsafe impl ClassType for CustomObject {
         type Super = new_objc2::runtime::NSObject;
         type Mutability = new_objc2::mutability::Immutable;
         const NAME: &'static str = "CustomObject";
+    }
+
+    impl DeclaredClass for CustomObject {
+        type Ivars = MyCustomIvars;
     }
 
     unsafe impl CustomObject {

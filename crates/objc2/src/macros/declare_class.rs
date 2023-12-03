@@ -16,62 +16,74 @@
 ///
 /// # Specification
 ///
-/// This macro consists of roughly four parts:
-/// - The type and ivar definition.
+/// This macro consists of the following parts (the first three are required):
+/// - The type declaration.
 /// - The [`ClassType`] implementation.
-/// - Any number of method definitions.
+/// - The [`DeclaredClass`] implementation.
+/// - Any number of inherent implementations.
 /// - Any number of protocol implementations.
 ///
 /// With the syntax generally resembling a combination of that in
 /// [`extern_class!`] and [`extern_methods!`].
 ///
 /// [`ClassType`]: crate::ClassType
+/// [`DeclaredClass`]: crate::DeclaredClass
 /// [`extern_class!`]: crate::extern_class
 /// [`extern_methods!`]: crate::extern_methods
 ///
 ///
-/// ## Ivar definition
+/// ## Type declaration
 ///
-/// The type definition works a lot like [`extern_class!`] (including the
-/// allowed attributes), with the added capability that struct fields are
-/// automatically defined as custom instance variables, which are then
-/// accessible on instances of the class. (E.g. you can use `self.my_ivar` as
-/// if the class was a normal Rust struct).
+/// The type declaration works a lot like in [`extern_class!`], an opaque
+/// struct is created and a lot of traits is implemented for that struct.
 ///
-/// The instance variables are specified as such:
-/// - [`IvarEncode<T, "my_crate_ivar">`](crate::declare::IvarEncode)
-/// - [`IvarBool<"my_crate_ivar">`](crate::declare::IvarBool)
-/// - [`IvarDrop<T, "my_crate_ivar">`](crate::declare::IvarDrop)
+/// You are allowed to add most common attributes to the declaration,
+/// including `#[cfg(...)]` and doc comments. ABI-modifying attributes like
+/// `#[repr(...)]` are not allowed.
 ///
-/// This is special syntax that will be used to generate helper types that
-/// implement [`declare::IvarType`], which is then used inside the new struct.
+/// `#[derive(...)]` attributes are allowed, but heavily discouraged, as they
+/// are likely to not work as you'd expect them to. This is being worked on in
+/// [#267].
 ///
-/// Instance variable names must be unique, and must not conflict with any
-/// superclass' instance variables - this means is is good practice to name
-/// them with a prefix of your crate name, or similar.
+/// If the type implements [`Drop`], the macro will generate a `dealloc`
+/// method for you, which will call `drop` automatically.
 ///
-/// [`declare::IvarType`]: crate::declare::IvarType
+/// [#267]: https://github.com/madsmtm/objc2/issues/267
 ///
 ///
 /// ## `ClassType` implementation
 ///
-/// This also resembles that in [`extern_class!`], except that
+/// This also resembles the syntax in [`extern_class!`], except that
 /// [`ClassType::NAME`] must be specified, and it must be unique across the
-/// entire application. Good practice here is to include your crate name in
-/// the prefix.
+/// entire application.
+///
+/// If you're developing a library, good practice here would be to include
+/// your crate name in the prefix (something like `"MyLibrary_MyClass"`).
 ///
 /// The class is guaranteed to have been created and registered with the
 /// Objective-C runtime after the [`ClassType::class`] function has been
 /// called.
 ///
-/// The macro will generate a `dealloc` method for you, which will call any
-/// [`Drop`] impl you may have defined on the type.
-///
 /// [`ClassType::NAME`]: crate::ClassType::NAME
 /// [`ClassType::class`]: crate::ClassType::class
 ///
 ///
-/// ## Method definitions
+/// ## `DeclaredClass` implementation
+///
+/// The syntax here is as if you were implementing the trait yourself.
+///
+/// You may optionally specify the associated type [`Ivars`]; this is the
+/// intended way to specify the data your class stores. If you don't specify
+/// any ivars, the macro will default to [`()`][unit].
+///
+/// Beware that if you want to use the class' inherited initializers (such as
+/// `init`), you must override the subclass' designated initializers, and
+/// initialize your ivars properly in there.
+///
+/// [`Ivars`]: crate::DeclaredClass::Ivars
+///
+///
+/// ## Inherent method definitions
 ///
 /// Within the `impl` block you can define two types of functions;
 /// ["associated functions"] and ["methods"]. These are then mapped to the
@@ -142,12 +154,12 @@
 /// The implemented `ClassType::class` method may panic in a few cases, such
 /// as if:
 /// - A class with the specified name already exists.
-/// - One of the class' instance variables already exist on a superclass.
 /// - Debug assertions are enabled, and an overriden method's signature is not
 ///   equal to the one on the superclass.
 /// - The `verify` feature and debug assertions are enabled, and the required
 ///   protocol methods are not implemented.
-/// - And possibly more similar cases.
+///
+/// And possibly more similar cases.
 ///
 ///
 /// # Safety
@@ -155,12 +167,16 @@
 /// Using this macro requires writing a few `unsafe` markers:
 ///
 /// `unsafe impl ClassType for T` has the following safety requirements:
-/// - Any invariants that the overridden class [`ClassType::Super`] may have
-///   must be upheld.
+/// - Any invariants that the superclass [`ClassType::Super`] may have must be
+///   upheld.
 /// - [`ClassType::Mutability`] must be correct.
-/// - Any instance variables you specify under the struct definition must
-///   either be able to be created using [`MaybeUninit::zeroed`], or be
-///   properly initialized in an `init` method.
+/// - If your type implements `Drop`, the implementation must abide by the
+///   following rules:
+///   - It must not call any overridden methods.
+///   - It must not `retain` the object past the lifetime of the drop.
+///   - It must not `retain` in the same scope that `&mut self` is active.
+///   - TODO: And probably a few more. [Open an issue] if you would like
+///     guidance on whether your implementation is correct.
 ///
 /// `unsafe impl T { ... }` asserts that the types match those that are
 /// expected when the method is invoked from Objective-C. Note that unlike
@@ -175,7 +191,7 @@
 ///
 /// [`ClassType::Super`]: crate::ClassType::Super
 /// [`ClassType::Mutability`]: crate::ClassType::Mutability
-/// [`MaybeUninit::zeroed`]: core::mem::MaybeUninit::zeroed
+/// [Open an issue]: https://github.com/madsmtm/objc2/issues/new
 ///
 ///
 /// # Examples
@@ -189,61 +205,55 @@
 /// # use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
 /// # #[cfg(available_in_icrate)]
 /// use icrate::Foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
-/// use objc2::declare::{Ivar, IvarDrop, IvarEncode};
-/// use objc2::rc::Id;
+/// use objc2::rc::{Allocated, Id};
 /// use objc2::{
-///     declare_class, extern_protocol, msg_send, msg_send_id, mutability, ClassType, ProtocolType,
+///     declare_class, extern_protocol, msg_send, msg_send_id, mutability, ClassType,
+///     DeclaredClass, ProtocolType,
 /// };
 ///
+/// #[derive(Clone)]
+/// struct Ivars {
+///     foo: u8,
+///     bar: c_int,
+///     object: Id<NSObject>,
+/// }
+///
 /// declare_class!(
-///     struct MyCustomObject {
-///         foo: IvarEncode<u8, "_foo">,
-///         pub bar: IvarEncode<c_int, "_bar">,
-///         object: IvarDrop<Id<NSObject>, "_object">,
-///     }
+///     struct MyCustomObject;
 ///
-///     mod ivars;
-///
+///     // SAFETY:
+///     // - The superclass NSObject does not have any subclassing requirements.
+///     // - Interior mutability is a safe default.
+///     // - `MyCustomObject` does not implement `Drop`.
 ///     unsafe impl ClassType for MyCustomObject {
 ///         type Super = NSObject;
-///         type Mutability = mutability::Mutable;
+///         type Mutability = mutability::InteriorMutable;
 ///         const NAME: &'static str = "MyCustomObject";
 ///     }
 ///
+///     impl DeclaredClass for MyCustomObject {
+///         type Ivars = Ivars;
+///     }
+///
 ///     unsafe impl MyCustomObject {
-///         #[method(initWithFoo:)]
-///         fn init_with(this: &mut Self, foo: u8) -> Option<&mut Self> {
-///             let this: Option<&mut Self> = unsafe {
-///                 msg_send![super(this), init]
-///             };
-///
-///             this.map(|this| {
-///                 // Initialize instance variables
-///
-///                 // Some types like `u8`, `bool`, `Option<Box<T>>` and
-///                 // `Option<Id<T>>` are safe to zero-initialize, and we can
-///                 // write to the variable as normal:
-///                 *this.foo = foo;
-///                 *this.bar = 42;
-///
-///                 // For others like `&u8`, `Box<T>` or `Id<T>`, we have to
-///                 // initialize them with `Ivar::write`:
-///                 Ivar::write(&mut this.object, NSObject::new());
-///
-///                 // All the instance variables have been initialized; our
-///                 // initializer is sound
-///                 this
-///             })
+///         #[method_id(initWithFoo:)]
+///         fn init_with(this: Allocated<Self>, foo: u8) -> Option<Id<Self>> {
+///             let this = this.set_ivars(Ivars {
+///                 foo,
+///                 bar: 42,
+///                 object: NSObject::new(),
+///             });
+///             unsafe { msg_send_id![super(this), init] }
 ///         }
 ///
 ///         #[method(foo)]
 ///         fn __get_foo(&self) -> u8 {
-///             *self.foo
+///             self.ivars().foo
 ///         }
 ///
 ///         #[method_id(object)]
 ///         fn __get_object(&self) -> Id<NSObject> {
-///             self.object.clone()
+///             self.ivars().object.clone()
 ///         }
 ///
 ///         #[method(myClassMethod)]
@@ -253,9 +263,8 @@
 /// #
 /// #       #[method_id(copyWithZone:)]
 /// #       fn copyWithZone(&self, _zone: *const NSZone) -> Id<Self> {
-/// #           let mut obj = Self::new(*self.foo);
-/// #           *obj.bar = *self.bar;
-/// #           obj
+/// #           let new = Self::alloc().set_ivars(self.ivars().clone());
+/// #           unsafe { msg_send_id![super(new), init] }
 /// #       }
 ///     }
 ///
@@ -265,9 +274,8 @@
 ///     unsafe impl NSCopying for MyCustomObject {
 ///         #[method_id(copyWithZone:)]
 ///         fn copyWithZone(&self, _zone: *const NSZone) -> Id<Self> {
-///             let mut obj = Self::new(*self.foo);
-///             *obj.bar = *self.bar;
-///             obj
+///             let new = Self::alloc().set_ivars(self.ivars().clone());
+///             unsafe { msg_send_id![super(new), init] }
 ///         }
 ///
 ///         // If we have tried to add other methods here, or had forgotten
@@ -296,9 +304,9 @@
 ///
 /// fn main() {
 ///     let obj = MyCustomObject::new(3);
-///     assert_eq!(*obj.foo, 3);
-///     assert_eq!(*obj.bar, 42);
-///     assert!(obj.object.is_kind_of::<NSObject>());
+///     assert_eq!(obj.ivars().foo, 3);
+///     assert_eq!(obj.ivars().bar, 42);
+///     assert!(obj.ivars().object.is_kind_of::<NSObject>());
 ///
 /// #   let obj: Id<MyCustomObject> = unsafe { msg_send_id![&obj, copy] };
 /// #   #[cfg(available_in_icrate)]
@@ -316,22 +324,18 @@
 /// ```text
 /// #import <Foundation/Foundation.h>
 ///
-/// @interface MyCustomObject: NSObject <NSCopying> {
-///     // Public ivar
-///     int bar;
-/// }
-///
+/// @interface MyCustomObject: NSObject <NSCopying>
 /// - (instancetype)initWithFoo:(uint8_t)foo;
 /// - (uint8_t)foo;
 /// - (NSObject*)object;
 /// + (BOOL)myClassMethod;
-///
 /// @end
 ///
 ///
 /// @implementation MyCustomObject {
-///     // Private ivar
+///     // Instance variables
 ///     uint8_t foo;
+///     int bar;
 ///     NSObject* _Nonnull object;
 /// }
 ///
@@ -360,9 +364,10 @@
 /// // NSCopying
 ///
 /// - (id)copyWithZone:(NSZone *)_zone {
-///     MyCustomObject* obj = [[MyCustomObject alloc] initWithFoo: self->foo];
-///     obj->bar = self->bar;
-///     return obj;
+///     MyCustomObject* new = [[MyCustomObject alloc] initWithFoo: self->foo];
+///     new->bar = self->bar;
+///     new->obj = self->obj;
+///     return new;
 /// }
 ///
 /// @end
@@ -371,106 +376,11 @@
 #[doc(alias = "@implementation")]
 #[macro_export]
 macro_rules! declare_class {
-    // With ivar helper
-    {
-        $(#[$m:meta])*
-        $v:vis struct $name:ident {
-            $($fields:tt)*
-        }
-
-        $ivar_helper_module_v:vis mod $ivar_helper_module:ident;
-
-        unsafe impl ClassType for $for:ty {
-            $(#[inherits($($inheritance_rest:ty),+)])?
-            type Super = $superclass:ty;
-
-            type Mutability = $mutability:ty;
-
-            const NAME: &'static str = $name_const:expr;
-        }
-
-        $($impls:tt)*
-    } => {
-        $crate::__emit_struct_and_ivars! {
-            ($(#[$m])*)
-            ($v)
-            ($name)
-            ($ivar_helper_module_v mod $ivar_helper_module)
-            ($($fields)*)
-            (
-                // Superclasses are deallocated by calling `[super dealloc]`.
-                __superclass: $crate::__macro_helpers::ManuallyDrop<$superclass>,
-            )
-        }
-
-        $crate::__declare_class_inner! {
-            ($ivar_helper_module)
-
-            unsafe impl ClassType for $for {
-                $(#[inherits($($inheritance_rest),+)])?
-                type Super = $superclass;
-
-                type Mutability = $mutability;
-
-                const NAME: &'static str = $name_const;
-            }
-
-            $($impls)*
-        }
-    };
-
-    // No ivar helper
-    {
-        $(#[$m:meta])*
-        $v:vis struct $name:ident {
-            $($fields:tt)*
-        }
-
-        unsafe impl ClassType for $for:ty {
-            $(#[inherits($($inheritance_rest:ty),+)])?
-            type Super = $superclass:ty;
-
-            type Mutability = $mutability:ty;
-
-            const NAME: &'static str = $name_const:expr;
-        }
-
-        $($impls:tt)*
-    } => {
-        $crate::__emit_struct_and_ivars! {
-            ($(#[$m])*)
-            ($v)
-            ($name)
-            ()
-            ($($fields)*)
-            (
-                // Superclasses are deallocated by calling `[super dealloc]`.
-                __superclass: $crate::__macro_helpers::ManuallyDrop<$superclass>,
-            )
-        }
-
-        $crate::__declare_class_inner! {
-            ()
-
-            unsafe impl ClassType for $for {
-                $(#[inherits($($inheritance_rest),+)])?
-                type Super = $superclass;
-
-                type Mutability = $mutability;
-
-                const NAME: &'static str = $name_const;
-            }
-
-            $($impls)*
-        }
-    };
-
-    // Allow declaring class with no instance variables
     {
         $(#[$m:meta])*
         $v:vis struct $name:ident;
 
-        unsafe impl ClassType for $for:ty {
+        unsafe impl ClassType for $for_class:ty {
             $(#[inherits($($inheritance_rest:ty),+)])?
             type Super = $superclass:ty;
 
@@ -479,57 +389,24 @@ macro_rules! declare_class {
             const NAME: &'static str = $name_const:expr;
         }
 
-        $($impls:tt)*
-    } => {
-        $crate::__emit_struct_and_ivars! {
-            ($(#[$m])*)
-            ($v)
-            ($name)
-            ()
-            ()
-            (
-                // Superclasses are deallocated by calling `[super dealloc]`.
-                __superclass: $crate::__macro_helpers::ManuallyDrop<$superclass>,
-            )
-        }
-
-        $crate::__declare_class_inner! {
-            ()
-
-            unsafe impl ClassType for $for {
-                $(#[inherits($($inheritance_rest),+)])?
-                type Super = $superclass;
-
-                type Mutability = $mutability;
-
-                const NAME: &'static str = $name_const;
-            }
-
-            $($impls)*
-        }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __declare_class_inner {
-    {
-        ($($ivar_helper_module:ident)?)
-
-        unsafe impl ClassType for $for:ty {
-            $(#[inherits($($inheritance_rest:ty),+)])?
-            type Super = $superclass:ty;
-
-            type Mutability = $mutability:ty;
-
-            const NAME: &'static str = $name_const:expr;
+        impl DeclaredClass for $for_declared:ty {
+            $(type Ivars = $ivars:ty;)?
         }
 
         $($impls:tt)*
     } => {
+        $(#[$m])*
+        #[repr(C)]
+        $v struct $name {
+            // Superclasses are deallocated by calling `[super dealloc]`.
+            __superclass: $crate::__macro_helpers::ManuallyDrop<$superclass>,
+            // Include ivars for proper auto traits.
+            __ivars: $crate::__macro_helpers::PhantomData<<Self as $crate::DeclaredClass>::Ivars>,
+        }
+
         $crate::__extern_class_impl_traits! {
             // SAFETY: Upheld by caller
-            unsafe impl () for $for {
+            unsafe impl () for $for_class {
                 INHERITS = [$superclass, $($($inheritance_rest,)+)? $crate::runtime::AnyObject];
 
                 fn as_super(&self) {
@@ -542,85 +419,103 @@ macro_rules! __declare_class_inner {
             }
         }
 
-        // Creation
-        unsafe impl ClassType for $for {
-            type Super = $superclass;
-            type Mutability = $mutability;
-            const NAME: &'static $crate::__macro_helpers::str = $name_const;
+        // Anonymous block to hide the shared statics
+        const _: () = {
+            static mut __OBJC2_CLASS: $crate::__macro_helpers::MaybeUninit<&'static $crate::runtime::AnyClass> = $crate::__macro_helpers::MaybeUninit::uninit();
+            static mut __OBJC2_IVAR_OFFSET: $crate::__macro_helpers::MaybeUninit<$crate::__macro_helpers::isize> = $crate::__macro_helpers::MaybeUninit::uninit();
+            static mut __OBJC2_DROP_FLAG_OFFSET: $crate::__macro_helpers::MaybeUninit<$crate::__macro_helpers::isize> = $crate::__macro_helpers::MaybeUninit::uninit();
 
-            fn class() -> &'static $crate::runtime::AnyClass {
-                $crate::__macro_helpers::assert_mutability_matches_superclass_mutability::<Self>();
+            // Creation
+            unsafe impl ClassType for $for_class {
+                type Super = $superclass;
+                type Mutability = $mutability;
+                const NAME: &'static $crate::__macro_helpers::str = $name_const;
 
-                // TODO: Use `core::cell::LazyCell`
-                static REGISTER_CLASS: $crate::__macro_helpers::Once = $crate::__macro_helpers::Once::new();
+                fn class() -> &'static $crate::runtime::AnyClass {
+                    $crate::__macro_helpers::assert_mutability_matches_superclass_mutability::<Self>();
 
-                REGISTER_CLASS.call_once(|| {
-                    let mut __objc2_builder = $crate::__macro_helpers::ClassBuilderHelper::<Self>::new();
+                    // TODO: Use `std::sync::OnceLock`
+                    static REGISTER_CLASS: $crate::__macro_helpers::Once = $crate::__macro_helpers::Once::new();
 
-                    $($ivar_helper_module::__objc2_declare_ivars(&mut __objc2_builder);)?
+                    REGISTER_CLASS.call_once(|| {
+                        let mut __objc2_builder = $crate::__macro_helpers::ClassBuilderHelper::<Self>::new();
 
-                    // See the following links for more details:
-                    // - <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#dealloc>
-                    // - <https://developer.apple.com/documentation/objectivec/nsobject/1571947-dealloc>
-                    // - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html#//apple_ref/doc/uid/20000994-SW2>
-                    unsafe extern "C" fn __objc2_dealloc(__objc2_self: *mut $for, __objc2_cmd: $crate::runtime::Sel) {
-                        // SAFETY: Ivars are explicitly designed to always
-                        // be valid to drop, and since this is the
-                        // `dealloc` method, we know the ivars are never
-                        // going to be touched again.
-                        //
-                        // This also runs any `Drop` impl that the type may
-                        // have.
-                        unsafe { $crate::__macro_helpers::drop_in_place(__objc2_self) };
-
-                        // The superclass' "marker" that this stores is
-                        // wrapped in `ManuallyDrop`, instead we drop it by
-                        // calling the superclass' `dealloc` method.
-                        //
-                        // Note: ARC does this automatically, which means
-                        // most Objective-C code in the wild don't contain
-                        // this; but we _are_ ARC, so we must do this.
-                        unsafe {
-                            $crate::__macro_helpers::MsgSend::send_super_message_static(
-                                __objc2_self,
-                                __objc2_cmd, // Reuse the selector
-                                (), // No arguments
-                            )
+                        // Implement protocols and methods
+                        $crate::__declare_class_register_impls! {
+                            (__objc2_builder)
+                            $($impls)*
                         }
-                    }
 
-                    if $crate::__macro_helpers::needs_drop::<Self>() {
+                        let (__objc2_cls, __objc2_ivar_offset, __objc2_drop_flag_offset) = __objc2_builder.register();
+
+                        // SAFETY: Modification is ensured by `Once` to happen
+                        // before any access to the variables.
                         unsafe {
-                            __objc2_builder.add_method(
-                                $crate::sel!(dealloc),
-                                __objc2_dealloc as unsafe extern "C" fn(_, _),
-                            );
+                            __OBJC2_CLASS.write(__objc2_cls);
+                            if <Self as $crate::__macro_helpers::DeclaredIvarsHelper>::HAS_IVARS {
+                                __OBJC2_IVAR_OFFSET.write(__objc2_ivar_offset);
+                            }
+                            if <Self as $crate::__macro_helpers::DeclaredIvarsHelper>::HAS_DROP_FLAG {
+                                __OBJC2_DROP_FLAG_OFFSET.write(__objc2_drop_flag_offset);
+                            }
                         }
+                    });
+
+                    // SAFETY: We just registered the class, so is now available
+                    unsafe { __OBJC2_CLASS.assume_init() }
+                }
+
+                #[inline]
+                fn as_super(&self) -> &Self::Super {
+                    &*self.__superclass
+                }
+
+                #[inline]
+                fn as_super_mut(&mut self) -> &mut Self::Super {
+                    &mut *self.__superclass
+                }
+            }
+
+            impl DeclaredClass for $for_declared {
+                type Ivars = $crate::__select_ivars!($($ivars)?);
+
+                #[inline]
+                fn __ivars_offset() -> $crate::__macro_helpers::isize {
+                    // Only access ivar offset if we have an ivar.
+                    //
+                    // This makes the offset not be included in the final
+                    // executable if it's not needed.
+                    if <Self as $crate::__macro_helpers::DeclaredIvarsHelper>::HAS_IVARS {
+                        // SAFETY: Accessing the offset is guaranteed to only be
+                        // done after the class has been initialized.
+                        unsafe { __OBJC2_IVAR_OFFSET.assume_init() }
+                    } else {
+                        // Fall back to an offset of zero.
+                        //
+                        // This is fine, since any reads here will only be via. zero-sized
+                        // ivars, where the actual pointer doesn't matter.
+                        0
                     }
+                }
 
-                    // Implement protocols and methods
-                    $crate::__declare_class_register_impls! {
-                        (__objc2_builder)
-                        $($impls)*
+                #[inline]
+                fn __drop_flag_offset() -> $crate::__macro_helpers::isize {
+                    if <Self as $crate::__macro_helpers::DeclaredIvarsHelper>::HAS_DROP_FLAG {
+                        // SAFETY: Same as above.
+                        unsafe { __OBJC2_DROP_FLAG_OFFSET.assume_init() }
+                    } else {
+                        // Fall back to an offset of zero.
+                        //
+                        // This is fine, since the drop flag is never actually used in the
+                        // cases where it was not added.
+                        0
                     }
+                }
 
-                    let _cls = __objc2_builder.register();
-                });
-
-                // We just registered the class, so it should be available
-                $crate::runtime::AnyClass::get(<Self as ClassType>::NAME).unwrap()
+                // SAFETY: The offsets are implemented correctly
+                const __UNSAFE_OFFSETS_CORRECT: () = ();
             }
-
-            #[inline]
-            fn as_super(&self) -> &Self::Super {
-                &*self.__superclass
-            }
-
-            #[inline]
-            fn as_super_mut(&mut self) -> &mut Self::Super {
-                &mut *self.__superclass
-            }
-        }
+        };
 
         // Methods
         $crate::__declare_class_output_impls! {
@@ -637,6 +532,18 @@ macro_rules! __select_name {
     };
     ($name:ident;) => {
         $crate::__macro_helpers::stringify!($name)
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __select_ivars {
+    ($ivars:ty) => {
+        $ivars
+    };
+    () => {
+        // Default ivars to unit
+        ()
     };
 }
 
@@ -1106,6 +1013,8 @@ macro_rules! __declare_class_method_out_inner {
             $($params_prefix)*
             $($params_converted)*
         ) -> $crate::__macro_helpers::IdReturnValue {
+            // TODO: Somehow tell the compiler that `this: Allocated<Self>` is non-null.
+
             $($body_prefix)*
 
             let __objc2_result = $body;

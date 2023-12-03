@@ -20,12 +20,8 @@ use icrate::{
     MetalKit::{MTKView, MTKViewDelegate},
 };
 use objc2::{
-    declare::{Ivar, IvarDrop},
-    declare_class, msg_send, msg_send_id,
-    mutability::MainThreadOnly,
-    rc::Id,
-    runtime::ProtocolObject,
-    ClassType,
+    declare_class, msg_send_id, mutability::MainThreadOnly, rc::Id, runtime::ProtocolObject,
+    ClassType, DeclaredClass,
 };
 
 #[rustfmt::skip]
@@ -101,18 +97,16 @@ pub struct Color {
     pub b: f32,
 }
 
-type IdCell<T> = Box<OnceCell<Id<T>>>;
-
 macro_rules! idcell {
     ($name:ident => $this:expr) => {
-        $this.$name.set($name).expect(&format!(
+        $this.ivars().$name.set($name).expect(&format!(
             "ivar should not already be initialized: `{}`",
             stringify!($name)
         ));
     };
     ($name:ident <= $this:expr) => {
         #[rustfmt::skip]
-        let Some($name) = $this.$name.get() else {
+        let Some($name) = $this.ivars().$name.get() else {
             unreachable!(
                 "ivar should be initialized: `{}`",
                 stringify!($name)
@@ -121,38 +115,30 @@ macro_rules! idcell {
     };
 }
 
+// declare the desired instance variables
+struct Ivars {
+    start_date: Id<NSDate>,
+    command_queue: OnceCell<Id<ProtocolObject<dyn MTLCommandQueue>>>,
+    pipeline_state: OnceCell<Id<ProtocolObject<dyn MTLRenderPipelineState>>>,
+    window: OnceCell<Id<NSWindow>>,
+}
+
 // declare the Objective-C class machinery
 declare_class!(
-    // declare the delegate class with our instance variables
-    #[rustfmt::skip] // FIXME: rustfmt breaks the macro parsing apparently
-    struct Delegate {
-        start_date: IvarDrop<Id<NSDate>, "_start_date">,
-        command_queue: IvarDrop<IdCell<ProtocolObject<dyn MTLCommandQueue>>, "_command_queue">,
-        pipeline_state: IvarDrop<IdCell<ProtocolObject<dyn MTLRenderPipelineState>>, "_pipeline_state">,
-        window: IvarDrop<IdCell<NSWindow>, "_window">,
-    }
-    mod ivars;
+    struct Delegate;
 
-    // declare the class type
+    // SAFETY:
+    // - The superclass NSObject does not have any subclassing requirements.
+    // - Main thread only mutability is correct, since this is an application delegate.
+    // - `Delegate` does not implement `Drop`.
     unsafe impl ClassType for Delegate {
         type Super = NSObject;
         type Mutability = MainThreadOnly;
         const NAME: &'static str = "Delegate";
     }
 
-    // define the Delegate methods (e.g., initializer)
-    unsafe impl Delegate {
-        #[method(init)]
-        unsafe fn init(this: *mut Self) -> Option<NonNull<Self>> {
-            let this: Option<&mut Self> = msg_send![super(this), init];
-            this.map(|this| {
-                Ivar::write(&mut this.start_date, unsafe { NSDate::now() });
-                Ivar::write(&mut this.command_queue, IdCell::default());
-                Ivar::write(&mut this.pipeline_state, IdCell::default());
-                Ivar::write(&mut this.window, IdCell::default());
-                NonNull::from(this)
-            })
-        }
+    impl DeclaredClass for Delegate {
+        type Ivars = Ivars;
     }
 
     unsafe impl NSObjectProtocol for Delegate {}
@@ -277,7 +263,7 @@ declare_class!(
 
             // compute the scene properties
             let scene_properties_data = &SceneProperties {
-                time: unsafe { self.start_date.timeIntervalSinceNow() } as f32,
+                time: unsafe { self.ivars().start_date.timeIntervalSinceNow() } as f32,
             };
             // write the scene properties to the vertex shader argument buffer at index 0
             let scene_properties_bytes = NonNull::from(scene_properties_data);
@@ -360,7 +346,14 @@ declare_class!(
 
 impl Delegate {
     pub fn new(mtm: MainThreadMarker) -> Id<Self> {
-        unsafe { msg_send_id![mtm.alloc(), init] }
+        let this = mtm.alloc();
+        let this = this.set_ivars(Ivars {
+            start_date: unsafe { NSDate::now() },
+            command_queue: OnceCell::default(),
+            pipeline_state: OnceCell::default(),
+            window: OnceCell::default(),
+        });
+        unsafe { msg_send_id![super(this), init] }
     }
 }
 
@@ -370,10 +363,8 @@ fn main() {
     let app = NSApplication::sharedApplication(mtm);
     app.setActivationPolicy(NSApplicationActivationPolicyRegular);
 
-    // initialize the delegate
-    let delegate = Delegate::new(mtm);
-
     // configure the application delegate
+    let delegate = Delegate::new(mtm);
     let object = ProtocolObject::from_ref(&*delegate);
     app.setDelegate(Some(object));
 

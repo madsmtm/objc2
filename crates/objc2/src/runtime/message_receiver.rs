@@ -510,7 +510,7 @@ mod tests {
     use crate::rc::{Allocated, Id};
     use crate::runtime::NSObject;
     use crate::test_utils;
-    use crate::{declare_class, msg_send, msg_send_id, ClassType};
+    use crate::{declare_class, msg_send, msg_send_id, ClassType, DeclaredClass};
 
     declare_class!(
         struct MutableObject;
@@ -520,6 +520,8 @@ mod tests {
             type Mutability = mutability::Mutable;
             const NAME: &'static str = "TestMutableObject";
         }
+
+        impl DeclaredClass for MutableObject {}
     );
 
     #[allow(unused)]

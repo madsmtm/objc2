@@ -457,60 +457,6 @@ note: while trying to match `const`
   |             const NAME: &'static str = $name_const:expr;
   |             ^^^^^
 
-error: invalid type i32 in field field. Type must be either `PhantomData`, `IvarDrop`, `IvarBool` or `IvarEncode`.
- --> ui/declare_class_invalid_syntax.rs
-  |
-  | / declare_class!(
-  | |     struct InvalidField {
-  | |         field: i32,
-  | |     }
-... |
-  | |     }
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__parse_fields` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: no rules expected the token `mod`
- --> ui/declare_class_invalid_syntax.rs
-  |
-  |     mod ivars;
-  |     ^^^ no rules expected this token in macro call
-  |
-note: while trying to match `unsafe`
- --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
-  |
-  |         unsafe impl ClassType for $for:ty {
-  |         ^^^^^^
-
-error: no need to specify an ivar module when the type has no ivars
- --> ui/declare_class_invalid_syntax.rs
-  |
-  | / declare_class!(
-  | |     struct UnnecessaryIvarModuleWithFields {
-  | |         p: PhantomData<i32>,
-  | |     }
-... |
-  | |     }
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__parse_fields` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: must specify an ivar module when the type has ivars
- --> ui/declare_class_invalid_syntax.rs
-  |
-  | / declare_class!(
-  | |     struct MissingIvarModule {
-  | |         field: IvarEncode<i32, "_field">,
-  | |     }
-... |
-  | |     }
-  | | );
-  | |_^
-  |
-  = note: this error originates in the macro `$crate::__parse_fields` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
-
 error: no rules expected the token `}`
  --> ui/declare_class_invalid_syntax.rs
   |
@@ -522,6 +468,18 @@ note: while trying to match `type`
   |
   |             type Mutability = $mutability:ty;
   |             ^^^^
+
+error: unexpected end of macro invocation
+ --> ui/declare_class_invalid_syntax.rs
+  |
+  |     }
+  |      ^ missing tokens in macro arguments
+  |
+note: while trying to match `impl`
+ --> $WORKSPACE/crates/objc2/src/macros/declare_class.rs
+  |
+  |         impl DeclaredClass for $for_declared:ty {
+  |         ^^^^
 
 error[E0599]: no function or associated item named `test_pattern` found for struct `InvalidMethodDeclarations` in the current scope
  --> ui/declare_class_invalid_syntax.rs

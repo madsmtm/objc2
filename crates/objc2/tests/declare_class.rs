@@ -1,23 +1,23 @@
 #![deny(deprecated, unreachable_code)]
 use core::ptr::{self, NonNull};
 
-use objc2::declare::IvarEncode;
-use objc2::mutability::{Immutable, Mutable};
+use objc2::mutability::Immutable;
 use objc2::rc::Id;
 use objc2::runtime::NSObject;
-use objc2::{declare_class, extern_methods, sel, ClassType};
+use objc2::{declare_class, extern_methods, sel, ClassType, DeclaredClass};
 
 // Test that adding the `deprecated` attribute does not mean that warnings
 // when using the method internally are output.
 declare_class!(
-    // Also ensure that empty fields still work
-    struct DeclareClassDepreactedMethod {}
+    struct DeclareClassDepreactedMethod;
 
     unsafe impl ClassType for DeclareClassDepreactedMethod {
         type Super = NSObject;
         type Mutability = Immutable;
         const NAME: &'static str = "DeclareClassDepreactedMethod";
     }
+
+    impl DeclaredClass for DeclareClassDepreactedMethod {}
 
     #[deprecated]
     unsafe impl DeclareClassDepreactedMethod {
@@ -49,6 +49,8 @@ declare_class!(
         type Mutability = Immutable;
         const NAME: &'static str = "DeclareClassCfg";
     }
+
+    impl DeclaredClass for DeclareClassCfg {}
 
     unsafe impl DeclareClassCfg {
         #[cfg(debug_assertions)]
@@ -192,6 +194,8 @@ declare_class!(
         const NAME: &'static str = "TestMultipleColonSelector";
     }
 
+    impl DeclaredClass for TestMultipleColonSelector {}
+
     unsafe impl TestMultipleColonSelector {
         #[method(test::arg3:)]
         fn _test_class(arg1: i32, arg2: i32, arg3: i32) -> i32 {
@@ -265,6 +269,8 @@ declare_class!(
         const NAME: &'static str = "DeclareClassAllTheBool";
     }
 
+    impl DeclaredClass for DeclareClassAllTheBool {}
+
     unsafe impl DeclareClassAllTheBool {
         #[method(returnsBool)]
         fn returns_bool() -> bool {
@@ -328,6 +334,8 @@ declare_class!(
         const NAME: &'static str = "DeclareClassUnreachable";
     }
 
+    impl DeclaredClass for DeclareClassUnreachable {}
+
     // Ensure none of these warn
     unsafe impl DeclareClassUnreachable {
         #[method(unreachable)]
@@ -367,92 +375,6 @@ fn test_unreachable() {
     let _ = DeclareClassUnreachable::class();
 }
 
-#[test]
-#[should_panic = "failed to add ivar _ivar"]
-fn test_duplicate_ivar() {
-    declare_class!(
-        struct DeclareClassDuplicateIvar {
-            ivar1: IvarEncode<i32, "_ivar">,
-            ivar2: IvarEncode<i32, "_ivar">,
-        }
-
-        mod ivars;
-
-        unsafe impl ClassType for DeclareClassDuplicateIvar {
-            type Super = NSObject;
-            type Mutability = Immutable;
-            const NAME: &'static str = "DeclareClassDuplicateIvar";
-        }
-    );
-
-    let _ = DeclareClassDuplicateIvar::class();
-}
-
-#[test]
-#[should_panic = "instance variable \"ivar\" already exists on a superclass"]
-fn test_subclass_duplicate_ivar() {
-    declare_class!(
-        struct Cls {
-            ivar_superclass: IvarEncode<i32, "ivar">,
-        }
-
-        mod ivars;
-
-        unsafe impl ClassType for Cls {
-            type Super = NSObject;
-            type Mutability = Mutable;
-            const NAME: &'static str = "DeclareClassDuplicateIvarSuperclass";
-        }
-    );
-
-    declare_class!(
-        struct SubCls {
-            ivar_subclass: IvarEncode<i32, "ivar">,
-        }
-
-        mod ivars_subclass;
-
-        unsafe impl ClassType for SubCls {
-            type Super = Cls;
-            type Mutability = Mutable;
-            const NAME: &'static str = "DeclareClassDuplicateIvarSubclass";
-        }
-    );
-
-    extern_methods!(
-        unsafe impl SubCls {
-            #[method_id(new)]
-            fn new() -> Id<Self>;
-        }
-    );
-
-    let _ = SubCls::class();
-
-    // The rest is to show what would go wrong if it didn't panic
-
-    assert_eq!(Cls::class().instance_size(), 16);
-    assert_eq!(SubCls::class().instance_size(), 16);
-
-    let mut obj = SubCls::new();
-
-    // Zero-initialized
-    assert_eq!(*obj.ivar_superclass, 0);
-    assert_eq!(*obj.ivar_subclass, 0);
-
-    *obj.ivar_subclass = 2;
-
-    assert_eq!(*obj.ivar_superclass, 2);
-    assert_eq!(*obj.ivar_subclass, 2);
-
-    *obj.ivar_superclass = 3;
-
-    assert_eq!(*obj.ivar_superclass, 3);
-    assert_eq!(*obj.ivar_subclass, 3);
-
-    let ivar_dynamically = unsafe { obj.ivar::<i32>("ivar") };
-    assert_eq!(*ivar_dynamically, 3);
-}
-
 declare_class!(
     #[derive(Debug)]
     struct OutParam;
@@ -462,6 +384,8 @@ declare_class!(
         type Mutability = Immutable;
         const NAME: &'static str = "OutParam";
     }
+
+    impl DeclaredClass for OutParam {}
 
     unsafe impl OutParam {
         #[method(unsupported1:)]
@@ -550,6 +474,8 @@ fn test_pointer_receiver_allowed() {
             type Mutability = Immutable;
             const NAME: &'static str = "PointerReceiver";
         }
+
+        impl DeclaredClass for PointerReceiver {}
 
         unsafe impl PointerReceiver {
             #[method(constPtr)]

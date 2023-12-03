@@ -2,11 +2,10 @@ pub use core::borrow::{Borrow, BorrowMut};
 pub use core::cell::UnsafeCell;
 pub use core::convert::{AsMut, AsRef};
 pub use core::marker::{PhantomData, Sized};
-pub use core::mem::{needs_drop, size_of, ManuallyDrop};
+pub use core::mem::{size_of, ManuallyDrop, MaybeUninit};
 pub use core::ops::{Deref, DerefMut};
 pub use core::option::Option::{self, None, Some};
-pub use core::primitive::{bool, str, u8};
-pub use core::ptr::drop_in_place;
+pub use core::primitive::{bool, isize, str, u8};
 pub use core::{compile_error, concat, panic, stringify};
 // TODO: Use `core::cell::LazyCell`
 pub use std::sync::Once;
@@ -15,6 +14,7 @@ mod cache;
 mod common_selectors;
 mod convert;
 mod declare_class;
+pub(crate) mod declared_ivars;
 mod method_family;
 mod msg_send;
 mod msg_send_id;
@@ -28,11 +28,12 @@ pub use self::declare_class::{
     ClassProtocolMethodsBuilder, IdReturnValue, MaybeOptionId, MessageRecieveId,
     ValidSubclassMutability,
 };
+pub use self::declared_ivars::DeclaredIvarsHelper;
 pub use self::method_family::{
     retain_semantics, Alloc, CopyOrMutCopy, Init, New, Other, RetainSemantics,
 };
 pub use self::msg_send::MsgSend;
-pub use self::msg_send_id::{MaybeUnwrap, MsgSendId};
+pub use self::msg_send_id::{MaybeUnwrap, MsgSendId, MsgSendSuperId};
 
 /// Helper struct for emitting the module info that macOS 32-bit requires.
 ///
