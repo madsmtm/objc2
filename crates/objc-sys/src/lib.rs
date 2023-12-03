@@ -29,7 +29,7 @@
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
 #![allow(non_snake_case)]
-#![doc(html_root_url = "https://docs.rs/objc-sys/0.3.1")]
+#![doc(html_root_url = "https://docs.rs/objc-sys/0.3.2")]
 #![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]
 #![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg, doc_cfg_hide))]
 #![cfg_attr(feature = "unstable-docsrs", doc(cfg_hide(doc)))]

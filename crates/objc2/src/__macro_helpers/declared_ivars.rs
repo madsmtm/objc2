@@ -875,6 +875,10 @@ mod tests {
 
     #[test]
     #[should_panic = "panic in drop"]
+    #[cfg_attr(
+        any(feature = "unstable-c-unwind", target_arch = "x86"),
+        ignore = "panicking in Drop requires that we actually implement `dealloc` as `C-unwind`"
+    )]
     fn test_panic_in_drop() {
         declare_class!(
             struct DropPanics;
@@ -901,6 +905,10 @@ mod tests {
 
     #[test]
     #[should_panic = "panic in ivar drop"]
+    #[cfg_attr(
+        any(feature = "unstable-c-unwind", target_arch = "x86"),
+        ignore = "panicking in Drop requires that we actually implement `dealloc` as `C-unwind`"
+    )]
     fn test_panic_in_ivar_drop() {
         struct DropPanics;
 

@@ -296,7 +296,11 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     ///
     /// # Examples
     ///
-    /// ```
+    #[cfg_attr(all(feature = "Foundation_NSMutableDictionary"), doc = "```")]
+    #[cfg_attr(
+        not(all(feature = "Foundation_NSMutableDictionary")),
+        doc = "```ignore"
+    )]
     /// use icrate::Foundation::{ns_string, NSMutableDictionary, NSObject, NSString};
     ///
     /// let mut dict = NSMutableDictionary::new();

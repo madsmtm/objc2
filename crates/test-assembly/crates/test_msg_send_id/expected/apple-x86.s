@@ -211,6 +211,31 @@ _handle_autoreleased:
 	pop	ebp
 	ret
 
+	.globl	_handle_autoreleased_with_arg
+	.p2align	4, 0x90
+_handle_autoreleased_with_arg:
+	push	ebp
+	mov	ebp, esp
+	sub	esp, 8
+	movzx	eax, byte ptr [ebp + 16]
+	sub	esp, 4
+	push	eax
+	push	dword ptr [ebp + 12]
+	push	dword ptr [ebp + 8]
+	call	_objc_msgSend
+	add	esp, 16
+	## InlineAsm Start
+
+	mov	ebp, ebp
+
+	## InlineAsm End
+	sub	esp, 12
+	push	eax
+	call	_objc_retainAutoreleasedReturnValue
+	add	esp, 24
+	pop	ebp
+	ret
+
 	.globl	_handle_autoreleased_fallible
 	.p2align	4, 0x90
 _handle_autoreleased_fallible:
@@ -220,8 +245,8 @@ _handle_autoreleased_fallible:
 	push	edi
 	push	esi
 	sub	esp, 12
-	call	L11$pb
-L11$pb:
+	call	L12$pb
+L12$pb:
 	pop	ebx
 	mov	edi, dword ptr [ebp + 12]
 	mov	esi, dword ptr [ebp + 8]
@@ -240,16 +265,16 @@ L11$pb:
 	call	_objc_retainAutoreleasedReturnValue
 	add	esp, 16
 	test	eax, eax
-	je	LBB11_2
+	je	LBB12_2
 	add	esp, 12
 	pop	esi
 	pop	edi
 	pop	ebx
 	pop	ebp
 	ret
-LBB11_2:
+LBB12_2:
 	sub	esp, 4
-	lea	eax, [ebx + l_anon.[ID].4-L11$pb]
+	lea	eax, [ebx + l_anon.[ID].4-L12$pb]
 	push	eax
 	push	edi
 	push	esi
@@ -315,6 +340,6 @@ l_anon.[ID].3:
 	.p2align	2, 0x0
 l_anon.[ID].4:
 	.long	l_anon.[ID].0
-	.asciz	"3\000\000\000B\000\000\000\005\000\000"
+	.asciz	"3\000\000\000L\000\000\000\005\000\000"
 
 .subsections_via_symbols

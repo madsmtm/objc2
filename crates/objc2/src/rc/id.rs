@@ -377,6 +377,13 @@ impl<T: Message> Id<T> {
         // swiftc: https://github.com/apple/swift/blob/swift-5.5.3-RELEASE/lib/IRGen/GenObjC.cpp#L148-L173
         // Clang: https://github.com/llvm/llvm-project/blob/889317d47b7f046cf0e68746da8f7f264582fb5b/clang/lib/CodeGen/CGObjC.cpp#L2339-L2373
         //
+        // Note that LLVM may sometimes insert extra instructions between the
+        // assembly and the `objc_retainAutoreleasedReturnValue` call,
+        // especially when doing tail calls and it needs to clean up the
+        // function frame. Unsure how to avoid this in a performant manner?
+        // Maybe force not doing tail calls by inserting assembly to do the
+        // call manually?
+        //
         // Resources:
         // - https://www.mikeash.com/pyblog/friday-qa-2011-09-30-automatic-reference-counting.html
         // - https://www.galloway.me.uk/2012/02/how-does-objc_retainautoreleasedreturnvalue-work/
@@ -423,7 +430,7 @@ impl<T: Message> Id<T> {
             // https://developer.apple.com/videos/play/wwdc2022/110363/
             #[cfg(all(target_arch = "aarch64", not(feature = "unstable-apple-new")))]
             unsafe {
-                // Same as `mov x29, x29`
+                // Same as `mov x29, x29`.
                 core::arch::asm!("mov fp, fp", options(nomem, preserves_flags, nostack))
             };
 

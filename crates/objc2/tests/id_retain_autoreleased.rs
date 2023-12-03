@@ -34,7 +34,7 @@ fn test_retain_autoreleased() {
         } else if cfg!(all(target_arch = "arm", panic = "unwind")) {
             // 32-bit ARM unwinding interferes with the optimization
             2
-        } else if cfg!(any(debug_assertions, feature = "exception")) {
+        } else if cfg!(any(debug_assertions, feature = "catch-all")) {
             2
         } else {
             1

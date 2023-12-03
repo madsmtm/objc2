@@ -193,6 +193,9 @@ jobs:
     - fmt
     - lint
 
+    env:
+      TRYBUILD: overwrite
+
     steps:
     - uses: actions/checkout@v3
       with:
@@ -212,6 +215,10 @@ jobs:
 
     - name: Run UI tests
       run: cargo run --features=run --bin=test-ui
+
+    - name: Check diff
+      if: ${{ always() }}
+      run: git diff --exit-code
 
   assembly:
     name: Assembly tests

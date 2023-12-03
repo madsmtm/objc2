@@ -1,6 +1,6 @@
 [package]
 name = "icrate"
-version = "0.0.4" # Remember to update html_root_url in lib.rs
+version = "0.1.0" # Remember to update html_root_url in lib.rs
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 rust-version = "1.60"
@@ -20,8 +20,8 @@ documentation = "https://docs.rs/icrate/"
 license = "MIT"
 
 [dependencies]
-objc2 = { path = "../objc2", version = "0.4.1", default-features = false, optional = true }
-block2 = { path = "../block2", version = "0.3.0", default-features = false, optional = true }
+objc2 = { path = "../objc2", version = "0.5.0", default-features = false, optional = true }
+block2 = { path = "../block2", version = "0.4.0", default-features = false, optional = true }
 dispatch = { version = "0.2.0", optional = true }
 
 [dev-dependencies]

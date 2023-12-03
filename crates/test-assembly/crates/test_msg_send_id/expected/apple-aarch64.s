@@ -130,6 +130,19 @@ _handle_autoreleased:
 	ldp	x29, x30, [sp], #16
 	b	_objc_retainAutoreleasedReturnValue
 
+	.globl	_handle_autoreleased_with_arg
+	.p2align	2
+_handle_autoreleased_with_arg:
+	stp	x29, x30, [sp, #-16]!
+	mov	x29, sp
+	and	w2, w2, #0xff
+	bl	_objc_msgSend
+	; InlineAsm Start
+	mov	x29, x29
+	; InlineAsm End
+	ldp	x29, x30, [sp], #16
+	b	_objc_retainAutoreleasedReturnValue
+
 	.globl	_handle_autoreleased_fallible
 	.p2align	2
 _handle_autoreleased_fallible:
@@ -143,11 +156,11 @@ _handle_autoreleased_fallible:
 	mov	x29, x29
 	; InlineAsm End
 	bl	_objc_retainAutoreleasedReturnValue
-	cbz	x0, LBB11_2
+	cbz	x0, LBB12_2
 	ldp	x29, x30, [sp, #16]
 	ldp	x20, x19, [sp], #32
 	ret
-LBB11_2:
+LBB12_2:
 Lloh6:
 	adrp	x2, l_anon.[ID].4@PAGE
 Lloh7:
@@ -204,6 +217,6 @@ l_anon.[ID].3:
 	.p2align	3, 0x0
 l_anon.[ID].4:
 	.quad	l_anon.[ID].0
-	.asciz	"3\000\000\000\000\000\000\000B\000\000\000\005\000\000"
+	.asciz	"3\000\000\000\000\000\000\000L\000\000\000\005\000\000"
 
 .subsections_via_symbols

@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.3.2 - 2023-12-03
+
 ### Added
 * Added `objc_terminate`, `object_isClass`, `objc_alloc` and
   `objc_allocWithZone` now that Rust's macOS deployment target is 10.12.
