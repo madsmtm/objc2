@@ -33,7 +33,7 @@
 use core::marker::PhantomData;
 
 use crate::runtime::{AnyObject, ProtocolObject};
-use crate::{ClassType, Message, ProtocolType};
+use crate::{ClassType, Message};
 
 mod private_mutability {
     pub trait Sealed {}
@@ -269,7 +269,7 @@ mod private_traits {
 }
 
 impl<T: ?Sized + ClassType> private_traits::Sealed for T {}
-impl<P: ?Sized + ProtocolType> private_traits::Sealed for ProtocolObject<P> {}
+impl<P: ?Sized> private_traits::Sealed for ProtocolObject<P> {}
 impl private_traits::Sealed for AnyObject {}
 
 /// Marker trait for classes where [`Id::clone`] is safe.
@@ -303,7 +303,7 @@ impl MutabilityIsIdCloneable for InteriorMutable {}
 impl MutabilityIsIdCloneable for MainThreadOnly {}
 
 unsafe impl<T: ?Sized + ClassType> IsIdCloneable for T where T::Mutability: MutabilityIsIdCloneable {}
-unsafe impl<P: ?Sized + ProtocolType + IsIdCloneable> IsIdCloneable for ProtocolObject<P> {}
+unsafe impl<P: ?Sized + IsIdCloneable> IsIdCloneable for ProtocolObject<P> {}
 // SAFETY: Same as for root classes.
 unsafe impl IsIdCloneable for AnyObject {}
 
@@ -336,7 +336,7 @@ impl MutabilityIsRetainable for InteriorMutable {}
 impl MutabilityIsRetainable for MainThreadOnly {}
 
 unsafe impl<T: ?Sized + ClassType> IsRetainable for T where T::Mutability: MutabilityIsRetainable {}
-unsafe impl<P: ?Sized + ProtocolType + IsRetainable> IsRetainable for ProtocolObject<P> {}
+unsafe impl<P: ?Sized + IsRetainable> IsRetainable for ProtocolObject<P> {}
 
 /// Marker trait for classes that can be allocated from any thread.
 ///
@@ -367,10 +367,7 @@ unsafe impl<T: ?Sized + ClassType> IsAllocableAnyThread for T where
     T::Mutability: MutabilityIsAllocableAnyThread
 {
 }
-unsafe impl<P: ?Sized + ProtocolType + IsAllocableAnyThread> IsAllocableAnyThread
-    for ProtocolObject<P>
-{
-}
+unsafe impl<P: ?Sized + IsAllocableAnyThread> IsAllocableAnyThread for ProtocolObject<P> {}
 
 /// Marker trait for classes that may feasibly be used behind a mutable
 /// reference.
@@ -401,7 +398,7 @@ unsafe impl<T: ?Sized + ClassType> IsAllowedMutable for T where
     T::Mutability: MutabilityIsAllowedMutable
 {
 }
-unsafe impl<P: ?Sized + ProtocolType + IsAllowedMutable> IsAllowedMutable for ProtocolObject<P> {}
+unsafe impl<P: ?Sized + IsAllowedMutable> IsAllowedMutable for ProtocolObject<P> {}
 // SAFETY: Same as for root classes.
 unsafe impl IsAllowedMutable for AnyObject {}
 
@@ -430,7 +427,7 @@ impl MutabilityIsMutable for Mutable {}
 impl<IS: ?Sized> MutabilityIsMutable for MutableWithImmutableSuperclass<IS> {}
 
 unsafe impl<T: ?Sized + ClassType> IsMutable for T where T::Mutability: MutabilityIsMutable {}
-unsafe impl<P: ?Sized + ProtocolType + IsMutable> IsMutable for ProtocolObject<P> {}
+unsafe impl<P: ?Sized + IsMutable> IsMutable for ProtocolObject<P> {}
 
 /// Marker trait for classes that are only available on the main thread.
 ///
@@ -455,7 +452,7 @@ unsafe impl<T: ?Sized + ClassType> IsMainThreadOnly for T where
     T::Mutability: MutabilityIsMainThreadOnly
 {
 }
-unsafe impl<P: ?Sized + ProtocolType + IsMainThreadOnly> IsMainThreadOnly for ProtocolObject<P> {}
+unsafe impl<P: ?Sized + IsMainThreadOnly> IsMainThreadOnly for ProtocolObject<P> {}
 
 /// Marker trait for classes whose `hash` and `isEqual:` methods are stable.
 ///
@@ -489,7 +486,7 @@ impl<MS: ?Sized> MutabilityHashIsStable for ImmutableWithMutableSubclass<MS> {}
 impl<IS: ?Sized> MutabilityHashIsStable for MutableWithImmutableSuperclass<IS> {}
 
 unsafe impl<T: ?Sized + ClassType> HasStableHash for T where T::Mutability: MutabilityHashIsStable {}
-unsafe impl<P: ?Sized + ProtocolType + HasStableHash> HasStableHash for ProtocolObject<P> {}
+unsafe impl<P: ?Sized + HasStableHash> HasStableHash for ProtocolObject<P> {}
 
 /// Retrieve the immutable/mutable counterpart class, and fall back to `Self`
 /// if not applicable.
@@ -589,7 +586,7 @@ where
     type Mutable = <T::Mutability as private_counterpart::MutabilityCounterpartOrSelf<T>>::Mutable;
 }
 
-unsafe impl<P: ?Sized + ProtocolType> CounterpartOrSelf for ProtocolObject<P> {
+unsafe impl<P: ?Sized> CounterpartOrSelf for ProtocolObject<P> {
     // SAFETY: The only place where this would differ from `Self` is for
     // classes with `MutableWithImmutableSuperclass<IS>`.
     //
