@@ -169,7 +169,6 @@
 #![warn(clippy::ptr_as_ptr)]
 #![warn(clippy::missing_errors_doc)]
 #![warn(clippy::missing_panics_doc)]
-#![allow(clippy::negative_feature_names)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2/0.4.1")]
 
