@@ -14,6 +14,7 @@ unsafe fn handle_alloc_init(cls: &AnyClass) -> Id<AnyObject> {
     msg_send_id![msg_send_id![cls, alloc], init]
 }
 
+#[allow(clippy::extra_unused_type_parameters)]
 fn generic<T>() -> Sel {
     sel!(generic:selector:)
 }

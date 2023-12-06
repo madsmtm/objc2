@@ -71,18 +71,18 @@ L2$pb:
 	pop	esi
 	mov	edi, dword ptr [ebp + 8]
 	sub	esp, 4
-	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_5ace898e385eba05-L2$pb]
-	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_1f1c7bd8029c3138-L2$pb]
+	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_f0e0414fd9875b81-L2$pb]
+	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_124acdf5c403f4b7-L2$pb]
 	push	edi
 	call	_objc_msgSend
 	add	esp, 12
-	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_5ace898e385eba05-L2$pb]
-	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_eb5b4d2de37744da-L2$pb]
+	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_f0e0414fd9875b81-L2$pb]
+	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_2949aa14a0c1ed09-L2$pb]
 	push	edi
 	call	_objc_msgSend
 	add	esp, 12
-	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_5ace898e385eba05-L2$pb]
-	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_c76827c00227cd8a-L2$pb]
+	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_f0e0414fd9875b81-L2$pb]
+	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_cfad9aae979f14dd-L2$pb]
 	push	edi
 	call	_objc_msgSend
 	add	esp, 16
@@ -119,71 +119,71 @@ L_OBJC_IMAGE_INFO_ad1b815073641351:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__cstring,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_5ace898e385eba05
-L_OBJC_METH_VAR_NAME_5ace898e385eba05:
+	.globl	L_OBJC_METH_VAR_NAME_f0e0414fd9875b81
+L_OBJC_METH_VAR_NAME_f0e0414fd9875b81:
 	.asciz	"generic:selector:"
 
 	.section	__OBJC,__message_refs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_5ace898e385eba05
+	.globl	L_OBJC_SELECTOR_REFERENCES_f0e0414fd9875b81
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_5ace898e385eba05:
-	.long	L_OBJC_METH_VAR_NAME_5ace898e385eba05
+L_OBJC_SELECTOR_REFERENCES_f0e0414fd9875b81:
+	.long	L_OBJC_METH_VAR_NAME_f0e0414fd9875b81
 
 	.section	__OBJC,__image_info
-	.globl	L_OBJC_IMAGE_INFO_5ace898e385eba05
+	.globl	L_OBJC_IMAGE_INFO_f0e0414fd9875b81
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_5ace898e385eba05:
+L_OBJC_IMAGE_INFO_f0e0414fd9875b81:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__cstring,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_1f1c7bd8029c3138
-L_OBJC_METH_VAR_NAME_1f1c7bd8029c3138:
+	.globl	L_OBJC_METH_VAR_NAME_124acdf5c403f4b7
+L_OBJC_METH_VAR_NAME_124acdf5c403f4b7:
 	.asciz	"performSelector:"
 
 	.section	__OBJC,__message_refs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_1f1c7bd8029c3138
+	.globl	L_OBJC_SELECTOR_REFERENCES_124acdf5c403f4b7
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_1f1c7bd8029c3138:
-	.long	L_OBJC_METH_VAR_NAME_1f1c7bd8029c3138
+L_OBJC_SELECTOR_REFERENCES_124acdf5c403f4b7:
+	.long	L_OBJC_METH_VAR_NAME_124acdf5c403f4b7
 
 	.section	__OBJC,__image_info
-	.globl	L_OBJC_IMAGE_INFO_1f1c7bd8029c3138
+	.globl	L_OBJC_IMAGE_INFO_124acdf5c403f4b7
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_1f1c7bd8029c3138:
+L_OBJC_IMAGE_INFO_124acdf5c403f4b7:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__cstring,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_eb5b4d2de37744da
-L_OBJC_METH_VAR_NAME_eb5b4d2de37744da:
+	.globl	L_OBJC_METH_VAR_NAME_2949aa14a0c1ed09
+L_OBJC_METH_VAR_NAME_2949aa14a0c1ed09:
 	.asciz	"performSelector:"
 
 	.section	__OBJC,__message_refs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_eb5b4d2de37744da
+	.globl	L_OBJC_SELECTOR_REFERENCES_2949aa14a0c1ed09
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_eb5b4d2de37744da:
-	.long	L_OBJC_METH_VAR_NAME_eb5b4d2de37744da
+L_OBJC_SELECTOR_REFERENCES_2949aa14a0c1ed09:
+	.long	L_OBJC_METH_VAR_NAME_2949aa14a0c1ed09
 
 	.section	__OBJC,__image_info
-	.globl	L_OBJC_IMAGE_INFO_eb5b4d2de37744da
+	.globl	L_OBJC_IMAGE_INFO_2949aa14a0c1ed09
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_eb5b4d2de37744da:
+L_OBJC_IMAGE_INFO_2949aa14a0c1ed09:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__TEXT,__cstring,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_c76827c00227cd8a
-L_OBJC_METH_VAR_NAME_c76827c00227cd8a:
+	.globl	L_OBJC_METH_VAR_NAME_cfad9aae979f14dd
+L_OBJC_METH_VAR_NAME_cfad9aae979f14dd:
 	.asciz	"performSelector:"
 
 	.section	__OBJC,__message_refs,literal_pointers,no_dead_strip
-	.globl	L_OBJC_SELECTOR_REFERENCES_c76827c00227cd8a
+	.globl	L_OBJC_SELECTOR_REFERENCES_cfad9aae979f14dd
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_c76827c00227cd8a:
-	.long	L_OBJC_METH_VAR_NAME_c76827c00227cd8a
+L_OBJC_SELECTOR_REFERENCES_cfad9aae979f14dd:
+	.long	L_OBJC_METH_VAR_NAME_cfad9aae979f14dd
 
 	.section	__OBJC,__image_info
-	.globl	L_OBJC_IMAGE_INFO_c76827c00227cd8a
+	.globl	L_OBJC_IMAGE_INFO_cfad9aae979f14dd
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_c76827c00227cd8a:
+L_OBJC_IMAGE_INFO_cfad9aae979f14dd:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__IMPORT,__pointers,non_lazy_symbol_pointers

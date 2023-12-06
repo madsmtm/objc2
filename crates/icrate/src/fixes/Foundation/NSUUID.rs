@@ -13,6 +13,9 @@ use crate::Foundation;
 pub(crate) struct UuidBytes(pub(crate) [u8; 16]);
 
 unsafe impl RefEncode for UuidBytes {
+    #[cfg(target_arch = "aarch64")]
+    const ENCODING_REF: Encoding = Encoding::String;
+    #[cfg(not(target_arch = "aarch64"))]
     const ENCODING_REF: Encoding = Encoding::Array(16, &u8::ENCODING);
 }
 
