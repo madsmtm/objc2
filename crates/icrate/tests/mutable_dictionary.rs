@@ -1,7 +1,7 @@
 #![cfg(feature = "Foundation_NSMutableDictionary")]
 #![cfg(feature = "Foundation_NSNumber")]
 use objc2::msg_send;
-use objc2::rc::{Id, __RcTestObject, __ThreadTestData};
+use objc2::rc::Id;
 
 use icrate::Foundation::{NSMutableDictionary, NSNumber, NSObject};
 
@@ -87,61 +87,6 @@ fn test_insert() {
 }
 
 #[test]
-fn test_insert_key_copies() {
-    let mut dict = <NSMutableDictionary<__RcTestObject, _>>::new();
-    let key1 = __RcTestObject::new();
-    let mut expected = __ThreadTestData::current();
-
-    let _ = dict.insert_id(&key1, NSNumber::new_i32(1));
-    // Create copy
-    expected.copy += 1;
-    expected.alloc += 1;
-    expected.init += 1;
-    expected.assert_current();
-
-    dict.removeAllObjects();
-    // Release key
-    expected.release += 1;
-    expected.drop += 1;
-    expected.assert_current();
-}
-
-#[test]
-fn test_get_key_copies() {
-    let mut dict = <NSMutableDictionary<__RcTestObject, _>>::new();
-    let key1 = __RcTestObject::new();
-    let _ = dict.insert_id(&key1, NSNumber::new_i32(1));
-    let expected = __ThreadTestData::current();
-
-    let _ = dict.get(&key1);
-    // No change, getting doesn't do anything to the key!
-    expected.assert_current();
-}
-
-#[test]
-fn test_insert_value_retain_release() {
-    let mut dict = <NSMutableDictionary<NSNumber, _>>::new();
-    dict.insert_id(&NSNumber::new_i32(1), __RcTestObject::new());
-    let to_insert = __RcTestObject::new();
-    let mut expected = __ThreadTestData::current();
-
-    let old = dict.insert(&NSNumber::new_i32(1), &to_insert);
-    // Grab old value
-    expected.retain += 1;
-
-    // Dictionary takes new value and overwrites the old one
-    expected.retain += 1;
-    expected.release += 1;
-
-    expected.assert_current();
-
-    drop(old);
-    expected.release += 1;
-    expected.drop += 1;
-    expected.assert_current();
-}
-
-#[test]
 fn test_remove() {
     let mut dict = sample_dict();
     assert_eq!(dict.len(), 3);
@@ -159,33 +104,6 @@ fn test_clear() {
 
     dict.removeAllObjects();
     assert!(dict.is_empty());
-}
-
-#[test]
-fn test_remove_clear_release_dealloc() {
-    let mut dict = <NSMutableDictionary<NSNumber, _>>::new();
-    for i in 0..4 {
-        dict.insert_id(&NSNumber::new_i32(i), __RcTestObject::new());
-    }
-    let mut expected = __ThreadTestData::current();
-
-    let _obj = dict.remove(&NSNumber::new_i32(1));
-    expected.retain += 1;
-    expected.release += 1;
-    expected.assert_current();
-    assert_eq!(dict.len(), 3);
-
-    let _obj = dict.remove(&NSNumber::new_i32(2));
-    expected.retain += 1;
-    expected.release += 1;
-    expected.assert_current();
-    assert_eq!(dict.len(), 2);
-
-    dict.removeAllObjects();
-    expected.release += 2;
-    expected.drop += 2;
-    expected.assert_current();
-    assert_eq!(dict.len(), 0);
 }
 
 #[test]

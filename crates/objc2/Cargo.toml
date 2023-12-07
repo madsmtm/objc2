@@ -110,6 +110,23 @@ iai = { version = "0.1", git = "https://github.com/madsmtm/iai", branch = "callg
 static_assertions = "1.1.0"
 memoffset = "0.9.0"
 
+# Allow using `icrate` in examples, documentation and external tests
+[dev-dependencies.icrate]
+path = "../icrate"
+features = [
+    "Foundation",
+    "Foundation_NSArray",
+    "Foundation_NSMutableArray",
+    "Foundation_NSString",
+    "Foundation_NSMutableString",
+    "Foundation_NSSet",
+    "Foundation_NSMutableSet",
+    "Foundation_NSDictionary",
+    "Foundation_NSMutableDictionary",
+    "Foundation_NSValue",
+    "Foundation_NSNumber",
+]
+
 [[bench]]
 name = "autorelease"
 harness = false

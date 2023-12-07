@@ -1,44 +1,15 @@
 #![cfg(feature = "Foundation_NSValue")]
-use core::ptr;
 use core::slice;
 use core::str;
 use std::ffi::CStr;
 use std::os::raw::c_char;
 
-use objc2::rc::{__RcTestObject, __ThreadTestData};
-
-use icrate::Foundation::{self, NSPoint, NSRange, NSRect, NSSize, NSValue};
+use icrate::Foundation::{NSPoint, NSRange, NSRect, NSSize, NSValue};
 
 #[test]
 fn basic() {
     let val = NSValue::new(13u32);
     assert_eq!(unsafe { val.get::<u32>() }, 13);
-}
-
-#[test]
-fn does_not_retain() {
-    use Foundation::NSCopying;
-
-    let obj = __RcTestObject::new();
-    let expected = __ThreadTestData::current();
-
-    let val = NSValue::new::<*const __RcTestObject>(&*obj);
-    expected.assert_current();
-
-    assert!(ptr::eq(
-        unsafe { val.get::<*const __RcTestObject>() },
-        &*obj
-    ));
-    expected.assert_current();
-
-    let _clone = val.clone();
-    expected.assert_current();
-
-    let _copy = val.copy();
-    expected.assert_current();
-
-    drop(val);
-    expected.assert_current();
 }
 
 #[test]

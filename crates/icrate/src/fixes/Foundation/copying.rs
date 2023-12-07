@@ -42,9 +42,6 @@ extern_protocol!(
     unsafe impl ProtocolType for dyn NSCopying {}
 );
 
-// FIXME: Remove this hack which makes NSMutableDictionary tests work
-unsafe impl NSCopying for objc2::rc::__RcTestObject {}
-
 extern_protocol!(
     /// A protocol to provide mutable copies of objects.
     ///

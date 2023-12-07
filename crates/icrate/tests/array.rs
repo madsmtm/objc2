@@ -4,7 +4,7 @@ use core::ptr;
 
 use icrate::Foundation::{NSArray, NSNumber, NSObject};
 use objc2::mutability::IsRetainable;
-use objc2::rc::{Id, __RcTestObject, __ThreadTestData};
+use objc2::rc::Id;
 use objc2::runtime::{AnyObject, ProtocolObject};
 use objc2::{extern_protocol, ProtocolType};
 
@@ -84,111 +84,6 @@ fn test_get() {
     let empty_array = <NSArray<NSObject>>::new();
     assert!(empty_array.first().is_none());
     assert!(empty_array.last().is_none());
-}
-
-#[test]
-fn test_retains_stored() {
-    let obj = __RcTestObject::new();
-    let mut expected = __ThreadTestData::current();
-
-    let input = [obj.clone(), obj.clone()];
-    expected.retain += 2;
-    expected.assert_current();
-
-    let array = NSArray::from_id_slice(&input);
-    expected.retain += 2;
-    expected.assert_current();
-
-    let _obj = array.first().unwrap();
-    expected.assert_current();
-
-    drop(array);
-    expected.release += 2;
-    expected.assert_current();
-
-    let array = NSArray::from_vec(Vec::from(input));
-    expected.retain += 2;
-    expected.release += 2;
-    expected.assert_current();
-
-    let _obj = array.get(0).unwrap();
-    let _obj = array.get(1).unwrap();
-    assert!(array.get(2).is_none());
-    expected.assert_current();
-
-    drop(array);
-    expected.release += 2;
-    expected.assert_current();
-
-    drop(obj);
-    expected.release += 1;
-    expected.drop += 1;
-    expected.assert_current();
-}
-
-#[test]
-#[cfg(feature = "Foundation_NSMutableArray")]
-fn test_nscopying_uses_retain() {
-    use icrate::Foundation::{NSCopying, NSMutableCopying};
-
-    let obj = __RcTestObject::new();
-    let array = NSArray::from_id_slice(&[obj]);
-    let mut expected = __ThreadTestData::current();
-
-    let _copy = array.copy();
-    expected.assert_current();
-
-    let _copy = array.mutableCopy();
-    expected.retain += 1;
-    expected.assert_current();
-}
-
-#[test]
-#[cfg_attr(
-    feature = "apple",
-    ignore = "this works differently on different framework versions"
-)]
-fn test_iter_minimal_retains() {
-    let objs = [__RcTestObject::new()];
-    let array = NSArray::from_id_slice(&objs);
-    drop(objs);
-    let mut expected = __ThreadTestData::current();
-
-    // Iter
-    let mut iter = array.iter();
-    expected.assert_current();
-
-    assert!(iter.next().is_some());
-    expected.assert_current();
-
-    assert_eq!(iter.count(), 0);
-    expected.assert_current();
-
-    // IterRetained
-    let mut iter = array.iter_retained();
-    expected.assert_current();
-
-    assert!(iter.next().is_some());
-    expected.retain += 1;
-    expected.release += 1;
-    expected.assert_current();
-
-    assert_eq!(iter.count(), 0);
-    expected.assert_current();
-
-    // IntoIter
-    let mut iter = array.into_iter();
-    expected.assert_current();
-
-    assert!(iter.next().is_some());
-    expected.retain += 1;
-    expected.release += 1;
-    expected.assert_current();
-
-    assert_eq!(iter.count(), 0);
-    expected.release += 1;
-    expected.drop += 1;
-    expected.assert_current();
 }
 
 #[test]

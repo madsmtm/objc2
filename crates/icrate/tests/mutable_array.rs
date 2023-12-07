@@ -1,5 +1,5 @@
 #![cfg(feature = "Foundation_NSMutableArray")]
-use objc2::rc::{__RcTestObject, __ThreadTestData, autoreleasepool, Allocated};
+use objc2::rc::{autoreleasepool, Allocated};
 use objc2::{msg_send, ClassType};
 
 #[cfg(feature = "Foundation_NSNumber")]
@@ -17,42 +17,6 @@ fn test_creation() {
 
     let _ = <NSMutableArray<NSNumber>>::from_slice(&[]);
     let _ = NSMutableArray::from_slice(&[&*NSNumber::new_u8(4), &*NSNumber::new_u8(2)]);
-}
-
-#[test]
-fn test_adding() {
-    let mut array = NSMutableArray::new();
-    let obj1 = __RcTestObject::new();
-    let obj2 = __RcTestObject::new();
-    let mut expected = __ThreadTestData::current();
-
-    array.push(obj1);
-    expected.retain += 1;
-    expected.release += 1;
-    expected.assert_current();
-    assert_eq!(array.len(), 1);
-    assert_eq!(array.get(0), array.get(0));
-
-    array.insert(0, obj2);
-    expected.retain += 1;
-    expected.release += 1;
-    expected.assert_current();
-    assert_eq!(array.len(), 2);
-}
-
-#[test]
-fn test_replace() {
-    let mut array = NSMutableArray::new();
-    let obj1 = __RcTestObject::new();
-    let obj2 = __RcTestObject::new();
-    array.push(obj1);
-    let mut expected = __ThreadTestData::current();
-
-    let old_obj = array.replace(0, obj2).unwrap();
-    expected.retain += 2;
-    expected.release += 2;
-    expected.assert_current();
-    assert_ne!(&*old_obj, array.get(0).unwrap());
 }
 
 #[test]
@@ -127,33 +91,6 @@ fn test_threaded() {
             assert!(!ptr.is_null());
         });
     });
-}
-
-#[test]
-fn test_remove() {
-    let mut array = NSMutableArray::new();
-    for _ in 0..4 {
-        array.push(__RcTestObject::new());
-    }
-    let mut expected = __ThreadTestData::current();
-
-    let _obj = array.remove(1);
-    expected.retain += 1;
-    expected.release += 1;
-    expected.assert_current();
-    assert_eq!(array.len(), 3);
-
-    let _obj = array.pop();
-    expected.retain += 1;
-    expected.release += 1;
-    expected.assert_current();
-    assert_eq!(array.len(), 2);
-
-    array.removeAllObjects();
-    expected.release += 2;
-    expected.drop += 2;
-    expected.assert_current();
-    assert_eq!(array.len(), 0);
 }
 
 #[test]

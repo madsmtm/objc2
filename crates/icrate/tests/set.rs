@@ -2,8 +2,6 @@
 #![cfg(feature = "Foundation_NSString")]
 #![cfg(feature = "Foundation_NSNumber")]
 
-use objc2::rc::{__RcTestObject, __ThreadTestData};
-
 use icrate::Foundation::{self, ns_string, NSNumber, NSSet, NSString};
 
 #[test]
@@ -194,105 +192,6 @@ fn test_debug() {
         format!("{set:?}").as_str(),
         "{\"one\", \"two\"}" | "{\"two\", \"one\"}"
     ));
-}
-
-#[test]
-fn test_retains_stored() {
-    let obj = __RcTestObject::new();
-    let mut expected = __ThreadTestData::current();
-
-    let input = [obj.clone(), obj.clone()];
-    expected.retain += 2;
-    expected.assert_current();
-
-    let set = NSSet::from_id_slice(&input);
-    expected.retain += 1;
-    expected.assert_current();
-
-    let _obj = set.get_any().unwrap();
-    expected.assert_current();
-
-    drop(set);
-    expected.release += 1;
-    expected.assert_current();
-
-    let set = NSSet::from_vec(Vec::from(input));
-    expected.retain += 1;
-    expected.release += 2;
-    expected.assert_current();
-
-    drop(set);
-    expected.release += 1;
-    expected.assert_current();
-
-    drop(obj);
-    expected.release += 1;
-    expected.drop += 1;
-    expected.assert_current();
-}
-
-#[test]
-fn test_nscopying_uses_retain() {
-    use Foundation::{NSCopying, NSMutableCopying};
-
-    let obj = __RcTestObject::new();
-    let set = NSSet::from_id_slice(&[obj]);
-    let mut expected = __ThreadTestData::current();
-
-    let _copy = set.copy();
-    expected.assert_current();
-
-    let _copy = set.mutableCopy();
-    expected.retain += 1;
-    expected.assert_current();
-}
-
-#[test]
-#[cfg_attr(
-    feature = "apple",
-    ignore = "this works differently on different framework versions"
-)]
-fn test_iter_minimal_retains() {
-    let objs = [__RcTestObject::new()];
-    let set = NSSet::from_id_slice(&objs);
-    drop(objs);
-    let mut expected = __ThreadTestData::current();
-
-    // Iter
-    let mut iter = set.iter();
-    expected.assert_current();
-
-    assert!(iter.next().is_some());
-    expected.assert_current();
-
-    assert_eq!(iter.count(), 0);
-    expected.assert_current();
-
-    // IterRetained
-    let mut iter = set.iter_retained();
-    expected.assert_current();
-
-    assert!(iter.next().is_some());
-    expected.retain += 1;
-    expected.release += 1;
-    expected.assert_current();
-
-    assert_eq!(iter.count(), 0);
-    expected.assert_current();
-
-    // IntoIter
-    let mut iter = set.into_iter();
-    expected.assert_current();
-
-    assert!(iter.next().is_some());
-    expected.retain += 1;
-    expected.release += 1;
-    expected.assert_current();
-
-    assert_eq!(iter.count(), 0);
-    expected.release += 1;
-    expected.drop += 1;
-    expected.assert_current();
 }
 
 /// This currently works, but we should figure out a way to disallow it!
