@@ -1,9 +1,11 @@
 #![cfg(feature = "Foundation_NSMutableDictionary")]
 #![cfg(feature = "Foundation_NSNumber")]
+use alloc::vec;
+
 use objc2::msg_send;
 use objc2::rc::Id;
 
-use icrate::Foundation::{NSMutableDictionary, NSNumber, NSObject};
+use crate::Foundation::{self, NSMutableDictionary, NSNumber, NSObject};
 
 fn sample_dict() -> Id<NSMutableDictionary<NSNumber, NSObject>> {
     NSMutableDictionary::from_id_slice(
@@ -17,7 +19,7 @@ fn sample_dict() -> Id<NSMutableDictionary<NSNumber, NSObject>> {
 }
 
 #[cfg(feature = "Foundation_NSMutableString")]
-fn sample_dict_mut() -> Id<NSMutableDictionary<NSNumber, icrate::Foundation::NSMutableString>> {
+fn sample_dict_mut() -> Id<NSMutableDictionary<NSNumber, Foundation::NSMutableString>> {
     NSMutableDictionary::from_vec(
         &[
             &*NSNumber::new_i32(1),
@@ -25,9 +27,9 @@ fn sample_dict_mut() -> Id<NSMutableDictionary<NSNumber, icrate::Foundation::NSM
             &*NSNumber::new_i32(3),
         ],
         vec![
-            icrate::Foundation::NSMutableString::from_str("a"),
-            icrate::Foundation::NSMutableString::from_str("b"),
-            icrate::Foundation::NSMutableString::from_str("c"),
+            Foundation::NSMutableString::from_str("a"),
+            Foundation::NSMutableString::from_str("b"),
+            Foundation::NSMutableString::from_str("c"),
         ],
     )
 }
@@ -35,12 +37,10 @@ fn sample_dict_mut() -> Id<NSMutableDictionary<NSNumber, icrate::Foundation::NSM
 #[test]
 #[cfg(feature = "Foundation_NSMutableString")]
 fn dict_from_mutable() {
-    let _: Id<NSMutableDictionary<icrate::Foundation::NSString, icrate::Foundation::NSString>> =
+    let _: Id<NSMutableDictionary<Foundation::NSString, Foundation::NSString>> =
         NSMutableDictionary::from_id_slice(
-            &[&*icrate::Foundation::NSMutableString::from_str("a")],
-            &[Id::into_super(
-                icrate::Foundation::NSMutableString::from_str("b"),
-            )],
+            &[&*Foundation::NSMutableString::from_str("a")],
+            &[Id::into_super(Foundation::NSMutableString::from_str("b"))],
         );
 }
 

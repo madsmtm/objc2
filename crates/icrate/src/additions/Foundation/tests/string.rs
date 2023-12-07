@@ -1,9 +1,11 @@
 #![cfg(feature = "Foundation_NSString")]
+use alloc::format;
+use alloc::string::ToString;
 use std::ptr;
 
 use objc2::rc::autoreleasepool;
 
-use icrate::Foundation::{self, ns_string, NSString};
+use crate::Foundation::{self, ns_string, NSString};
 
 #[test]
 fn test_equality() {

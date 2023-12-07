@@ -18,6 +18,8 @@ mod process_info;
 mod range;
 pub mod set;
 mod string;
+#[cfg(test)]
+mod tests;
 mod thread;
 mod util;
 mod uuid;

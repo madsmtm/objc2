@@ -1,5 +1,7 @@
 #![cfg(feature = "Foundation_NSData")]
-use icrate::Foundation::NSData;
+use alloc::{format, vec};
+
+use crate::Foundation::NSData;
 
 #[test]
 fn test_bytes() {

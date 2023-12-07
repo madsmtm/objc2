@@ -1,7 +1,9 @@
 #![cfg(feature = "Foundation_NSException")]
 #![cfg(feature = "Foundation_NSString")]
 #![cfg(feature = "Foundation_NSDictionary")]
-use icrate::Foundation::{NSException, NSObject, NSString};
+use alloc::format;
+
+use crate::Foundation::{NSException, NSObject, NSString};
 
 #[test]
 fn create_and_query() {

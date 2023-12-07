@@ -1,10 +1,12 @@
 #![cfg(feature = "Foundation_NSMutableArray")]
+use alloc::vec;
+
 use objc2::rc::{autoreleasepool, Allocated};
 use objc2::{msg_send, ClassType};
 
 #[cfg(feature = "Foundation_NSNumber")]
-use icrate::Foundation::NSNumber;
-use icrate::Foundation::{self, NSMutableArray, NSObject};
+use crate::Foundation::NSNumber;
+use crate::Foundation::{self, NSMutableArray, NSObject};
 
 #[test]
 #[cfg(feature = "Foundation_NSNumber")]

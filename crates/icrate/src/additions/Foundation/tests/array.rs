@@ -1,8 +1,10 @@
 #![cfg(feature = "Foundation_NSArray")]
 #![cfg(feature = "Foundation_NSNumber")]
+use alloc::vec::Vec;
+use alloc::{format, vec};
 use core::ptr;
 
-use icrate::Foundation::{NSArray, NSNumber, NSObject};
+use crate::Foundation::{NSArray, NSNumber, NSObject};
 use objc2::mutability::IsRetainable;
 use objc2::rc::Id;
 use objc2::runtime::{AnyObject, ProtocolObject};

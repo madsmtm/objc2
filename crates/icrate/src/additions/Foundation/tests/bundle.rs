@@ -1,5 +1,7 @@
 #![cfg(feature = "Foundation_NSBundle")]
-use icrate::Foundation::NSBundle;
+use alloc::format;
+
+use crate::Foundation::NSBundle;
 
 #[test]
 #[cfg(feature = "Foundation_NSString")]
@@ -9,7 +11,7 @@ fn try_running_functions() {
     // This is mostly empty since cargo doesn't bundle the application
     // before executing.
     let bundle = NSBundle::mainBundle();
-    println!("{bundle:?}");
+    std::println!("{bundle:?}");
     assert_eq!(format!("{:?}", bundle.infoDictionary().unwrap()), "{}");
     assert_eq!(bundle.name(), None);
 }

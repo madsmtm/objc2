@@ -1,9 +1,12 @@
 #![cfg(feature = "Foundation_NSAttributedString")]
 #![cfg(feature = "Foundation_NSString")]
+use alloc::string::ToString;
+use alloc::{format, vec};
+
 use objc2::rc::{autoreleasepool, Id};
 use objc2::runtime::AnyObject;
 
-use icrate::Foundation::{self, NSAttributedString, NSObject, NSString};
+use crate::Foundation::{self, NSAttributedString, NSObject, NSString};
 
 #[test]
 fn test_new() {

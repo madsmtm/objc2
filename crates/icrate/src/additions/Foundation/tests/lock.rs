@@ -1,5 +1,5 @@
 #![cfg(feature = "Foundation_NSLock")]
-use icrate::Foundation::{NSLock, NSLocking};
+use crate::Foundation::{NSLock, NSLocking};
 
 #[test]
 fn lock_unlock() {

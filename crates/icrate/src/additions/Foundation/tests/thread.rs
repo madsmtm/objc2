@@ -1,5 +1,7 @@
 #![cfg(feature = "Foundation_NSThread")]
-use icrate::Foundation::{is_main_thread, MainThreadMarker, NSThread};
+use alloc::format;
+
+use crate::Foundation::{is_main_thread, MainThreadMarker, NSThread};
 
 #[test]
 #[cfg_attr(

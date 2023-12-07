@@ -1,10 +1,11 @@
 #![cfg(feature = "Foundation_NSValue")]
+use alloc::format;
 use core::slice;
 use core::str;
 use std::ffi::CStr;
 use std::os::raw::c_char;
 
-use icrate::Foundation::{NSPoint, NSRange, NSRect, NSSize, NSValue};
+use crate::Foundation::{NSPoint, NSRange, NSRect, NSSize, NSValue};
 
 #[test]
 fn basic() {

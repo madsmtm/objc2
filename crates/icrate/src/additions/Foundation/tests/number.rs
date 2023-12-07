@@ -1,5 +1,7 @@
 #![cfg(feature = "Foundation_NSNumber")]
-use icrate::Foundation::NSNumber;
+use alloc::format;
+
+use crate::Foundation::NSNumber;
 
 #[test]
 fn basic() {

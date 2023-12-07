@@ -1,8 +1,10 @@
 #![cfg(feature = "Foundation_NSDictionary")]
 #![cfg(feature = "Foundation_NSString")]
+use alloc::{format, vec};
+
 use objc2::rc::{autoreleasepool, Id};
 
-use icrate::Foundation::{NSDictionary, NSObject, NSString};
+use crate::Foundation::{NSDictionary, NSObject, NSString};
 
 fn sample_dict(key: &str) -> Id<NSDictionary<NSString, NSObject>> {
     let string = NSString::from_str(key);

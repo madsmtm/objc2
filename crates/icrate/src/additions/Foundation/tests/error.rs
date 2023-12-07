@@ -1,6 +1,8 @@
 #![cfg(feature = "Foundation_NSError")]
 #![cfg(feature = "Foundation_NSString")]
-use icrate::Foundation::{ns_string, NSError, NSURLErrorDomain};
+use alloc::format;
+
+use crate::Foundation::{ns_string, NSError, NSURLErrorDomain};
 
 #[test]
 fn basic() {

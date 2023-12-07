@@ -1,4 +1,3 @@
-#![cfg(feature = "Foundation")]
 #![cfg(feature = "Foundation_NSString")]
 use icrate::Foundation::{NSCopying, NSMutableCopying, NSString};
 use objc2::{rc::Id, runtime::ProtocolObject};

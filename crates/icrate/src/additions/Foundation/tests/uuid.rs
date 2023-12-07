@@ -1,5 +1,7 @@
 #![cfg(feature = "Foundation_NSUUID")]
-use icrate::Foundation::NSUUID;
+use alloc::format;
+
+use crate::Foundation::NSUUID;
 use objc2::rc::Id;
 
 #[test]

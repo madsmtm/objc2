@@ -1,6 +1,8 @@
 #![cfg(feature = "Foundation_NSMutableSet")]
 #![cfg(feature = "Foundation_NSString")]
-use icrate::Foundation::{self, ns_string, NSMutableSet, NSSet, NSString};
+use alloc::vec;
+
+use crate::Foundation::{self, ns_string, NSMutableSet, NSSet, NSString};
 
 #[test]
 fn test_insert() {

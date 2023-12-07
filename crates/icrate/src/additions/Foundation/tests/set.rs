@@ -1,8 +1,10 @@
 #![cfg(feature = "Foundation_NSSet")]
 #![cfg(feature = "Foundation_NSString")]
 #![cfg(feature = "Foundation_NSNumber")]
+use alloc::vec::Vec;
+use alloc::{format, vec};
 
-use icrate::Foundation::{self, ns_string, NSNumber, NSSet, NSString};
+use crate::Foundation::{self, ns_string, NSNumber, NSSet, NSString};
 
 #[test]
 fn test_new() {

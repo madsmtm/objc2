@@ -5,3 +5,16 @@ pub fn NSApp(mtm: crate::Foundation::MainThreadMarker) -> Id<crate::AppKit::NSAp
     // TODO: Use the `NSApp` static
     crate::AppKit::NSApplication::sharedApplication(mtm)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use crate::AppKit::NSAccessibilityElementProtocol;
+
+    #[test]
+    fn accessibility_element_protocol() {
+        let actual = <dyn NSAccessibilityElementProtocol>::NAME;
+        assert_eq!(actual, "NSAccessibilityElement");
+    }
+}

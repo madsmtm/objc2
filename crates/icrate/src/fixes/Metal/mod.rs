@@ -66,3 +66,21 @@ impl_encode! {
         )],
     );
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use alloc::string::ToString;
+    use objc2::encode::Encode;
+
+    use crate::Metal::MTLPackedFloat4x3;
+
+    #[test]
+    fn test_packed_float() {
+        assert_eq!(
+            MTLPackedFloat4x3::ENCODING.to_string(),
+            "{_MTLPackedFloat4x3=[4{_MTLPackedFloat3=(?={?=fff}[3f])}]}",
+        );
+    }
+}

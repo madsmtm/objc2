@@ -3,7 +3,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use static_assertions::{assert_impl_all, assert_not_impl_any};
 
-use icrate::Foundation::*;
+use crate::Foundation::*;
 use objc2::mutability::{Immutable, Mutable};
 use objc2::rc::Id;
 use objc2::runtime::AnyObject;

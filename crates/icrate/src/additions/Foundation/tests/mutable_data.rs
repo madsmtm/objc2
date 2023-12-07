@@ -3,7 +3,7 @@
 use objc2::rc::Id;
 use objc2::runtime::AnyObject;
 
-use icrate::Foundation::{NSData, NSMutableData, NSObject};
+use crate::Foundation::{NSData, NSMutableData, NSObject};
 
 #[test]
 fn test_bytes_mut() {

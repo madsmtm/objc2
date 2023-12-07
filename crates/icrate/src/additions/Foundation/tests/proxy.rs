@@ -1,5 +1,5 @@
 #![cfg(feature = "Foundation_NSProxy")]
-use icrate::Foundation::NSProxy;
+use crate::Foundation::NSProxy;
 use objc2::ClassType;
 
 #[test]

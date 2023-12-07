@@ -1,11 +1,13 @@
 #![cfg(feature = "Foundation_NSMutableString")]
+use alloc::format;
+use alloc::string::ToString;
 use core::any::TypeId;
 use std::ptr;
 
 use objc2::mutability::CounterpartOrSelf;
 use objc2::rc::Id;
 
-use icrate::Foundation::{
+use crate::Foundation::{
     self, NSCopying, NSMutableCopying, NSMutableString, NSObjectProtocol, NSString,
 };
 
