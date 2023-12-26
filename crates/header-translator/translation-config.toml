@@ -404,6 +404,14 @@ maccatalyst = "13.0"
 ios = "2.0"
 tvos = "9.0"
 
+[library.ServiceManagement]
+imports = ["Foundation"]
+macos = "10.6"
+maccatalyst = "13.0"
+ios = "12.1"
+tvos = "12.1"
+watchos = "5.1"
+
 [library.SoundAnalysis]
 imports = ["Foundation"]
 macos = "10.15"
@@ -1733,4 +1741,28 @@ skipped = true
 [fn.CWKeychainSetWiFiEAPIdentity]
 skipped = true
 [class.CWInterface.methods.associateToEnterpriseNetwork_identity_username_password_error]
+skipped = true
+
+# Items from ServiceManagement that uses types from CoreFoundation
+[fn.SMJobBless]
+skipped = true
+[fn.SMLoginItemSetEnabled]
+skipped = true
+[static.kSMDomainSystemLaunchd]
+skipped = true
+[static.kSMDomainUserLaunchd]
+skipped = true
+[static.kSMErrorDomainFramework]
+skipped = true
+[static.kSMErrorDomainIPC]
+skipped = true
+[static.kSMErrorDomainLaunchd]
+skipped = true
+[fn.SMCopyAllJobDictionaries]
+skipped = true
+[fn.SMJobCopyDictionary]
+skipped = true
+[fn.SMJobRemove]
+skipped = true
+[fn.SMJobSubmit]
 skipped = true
