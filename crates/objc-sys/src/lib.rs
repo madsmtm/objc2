@@ -142,9 +142,9 @@ macro_rules! extern_c_unwind {
 
 mod class;
 mod constants;
-
 mod exception;
 mod image_info;
+mod libc;
 mod message;
 mod method;
 mod object;
@@ -155,19 +155,20 @@ mod selector;
 mod types;
 mod various;
 
-pub use class::*;
-pub use constants::*;
-pub use exception::*;
-pub use image_info::*;
-pub use message::*;
-pub use method::*;
-pub use object::*;
-pub use property::*;
-pub use protocol::*;
-pub use rc::*;
-pub use selector::*;
-pub use types::*;
-pub use various::*;
+pub use self::class::*;
+pub use self::constants::*;
+pub use self::exception::*;
+pub use self::image_info::*;
+pub use self::libc::*;
+pub use self::message::*;
+pub use self::method::*;
+pub use self::object::*;
+pub use self::property::*;
+pub use self::protocol::*;
+pub use self::rc::*;
+pub use self::selector::*;
+pub use self::types::*;
+pub use self::various::*;
 
 /// We don't know much about the actual structs, so better mark them `!Send`,
 /// `!Sync`, `!UnwindSafe`, `!RefUnwindSafe`, `!Unpin` and as mutable behind

@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Added `free` method (same as `libc::free`).
+
 
 ## 0.3.2 - 2023-12-03
 
