@@ -82,7 +82,7 @@ Lloh10:
 Lloh11:
 	add	x0, x0, l_anon.[ID].17@PAGEOFF
 	mov	w1, #7
-	bl	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::new::GENERATED_ID, 0)
 	cbz	x0, LBB4_8
 	str	x0, [sp, #8]
 Lloh12:
@@ -104,7 +104,7 @@ Lloh19:
 	add	x0, sp, #8
 	mov	x2, x19
 	mov	x3, #0
-	bl	SYM(objc2::declare::ClassBuilder::add_class_method_inner::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::add_class_method_inner::GENERATED_ID, 0)
 Lloh20:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_cf773331f3cfba54@PAGE
 Lloh21:
@@ -120,7 +120,7 @@ Lloh25:
 	add	x0, sp, #8
 	mov	x2, x19
 	mov	x3, #0
-	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 Lloh26:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_abdcbb85641cd990@PAGE
 Lloh27:
@@ -137,7 +137,7 @@ Lloh31:
 	mov	x2, x20
 	mov	w3, #1
 	mov	x4, x20
-	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 Lloh32:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_ef8de92414f2d9c8@PAGE
 Lloh33:
@@ -154,7 +154,7 @@ Lloh37:
 	mov	x2, x19
 	mov	x3, #0
 	mov	x4, x21
-	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 Lloh38:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_4a611090161f3fae@PAGE
 Lloh39:
@@ -167,7 +167,7 @@ Lloh41:
 	mov	x2, x20
 	mov	w3, #1
 	mov	x4, x21
-	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 Lloh42:
 	adrp	x0, l_anon.[ID].24@PAGE
 Lloh43:
@@ -177,7 +177,7 @@ Lloh43:
 	cbz	x0, LBB4_4
 	mov	x1, x0
 	add	x0, sp, #8
-	bl	SYM(objc2::declare::ClassBuilder::add_protocol::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::add_protocol::GENERATED_ID, 0)
 LBB4_4:
 Lloh44:
 	adrp	x0, l_anon.[ID].25@PAGE
@@ -188,7 +188,7 @@ Lloh45:
 	cbz	x0, LBB4_6
 	mov	x1, x0
 	add	x0, sp, #8
-	bl	SYM(objc2::declare::ClassBuilder::add_protocol::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::add_protocol::GENERATED_ID, 0)
 LBB4_6:
 Lloh46:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_2837f061c311eb14@PAGE
@@ -208,9 +208,9 @@ Lloh53:
 	add	x5, x5, _copyWithZone@PAGEOFF
 	add	x0, sp, #8
 	mov	w3, #1
-	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	ldr	x0, [sp, #8]
-	bl	SYM(objc2::declare::ClassBuilder::register::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::register::GENERATED_ID, 0)
 	adrp	x8, __MergedGlobals@PAGE
 	str	x0, [x8, __MergedGlobals@PAGEOFF]
 	ldp	x29, x30, [sp, #48]
@@ -289,7 +289,7 @@ Lloh65:
 Lloh66:
 	add	x0, x0, l_anon.[ID].18@PAGEOFF
 	mov	w1, #9
-	bl	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::new::GENERATED_ID, 0)
 	cbz	x0, LBB5_6
 	str	x0, [sp, #24]
 Lloh67:
@@ -313,7 +313,7 @@ Lloh75:
 	add	x0, sp, #24
 	mov	x2, x19
 	mov	x3, #0
-	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	ldr	x8, [sp, #24]
 	str	x8, [sp, #8]
 Lloh76:
@@ -333,7 +333,7 @@ Lloh82:
 	add	x0, sp, #8
 	mov	x2, x19
 	mov	x3, #0
-	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	ldr	x8, [sp, #8]
 	str	x8, [sp, #16]
 	mov	w8, #16
@@ -354,7 +354,7 @@ Lloh86:
 	mov	w2, #5
 	mov	w3, #16
 	mov	w4, #3
-	bl	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
 Lloh87:
 	adrp	x1, l_anon.[ID].12@PAGE
 Lloh88:
@@ -367,9 +367,9 @@ Lloh90:
 	mov	w2, #9
 	mov	w3, #1
 	mov	w4, #0
-	bl	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
 	ldr	x0, [sp, #16]
-	bl	SYM(objc2::declare::ClassBuilder::register::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::register::GENERATED_ID, 0)
 	mov	x19, x0
 	mov	x1, x20
 	mov	w2, #5
@@ -467,7 +467,7 @@ Lloh107:
 Lloh108:
 	add	x0, x0, l_anon.[ID].16@PAGEOFF
 	mov	w1, #15
-	bl	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::new::GENERATED_ID, 0)
 	cbz	x0, LBB6_5
 	str	x0, [sp, #8]
 Lloh109:
@@ -490,7 +490,7 @@ Lloh117:
 	add	x5, x5, _init_forgetable_ivars@PAGEOFF
 	add	x0, sp, #8
 	mov	x3, #0
-	bl	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	ldr	x8, [sp, #8]
 	str	x8, [sp, #16]
 	mov	w8, #8
@@ -511,9 +511,9 @@ Lloh121:
 	mov	w2, #5
 	mov	w3, #8
 	mov	w4, #2
-	bl	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
 	ldr	x0, [sp, #16]
-	bl	SYM(objc2::declare::ClassBuilder::register::GENERATED_ID, 0)
+	bl	SYM(objc2::runtime::declare::ClassBuilder::register::GENERATED_ID, 0)
 	mov	x19, x0
 	mov	x1, x20
 	mov	w2, #5

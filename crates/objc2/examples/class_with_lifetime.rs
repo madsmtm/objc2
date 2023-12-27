@@ -4,10 +4,9 @@
 use std::marker::PhantomData;
 use std::sync::Once;
 
-use objc2::declare::ClassBuilder;
 use objc2::mutability::Mutable;
 use objc2::rc::Id;
-use objc2::runtime::{AnyClass, NSObject, Sel};
+use objc2::runtime::{AnyClass, ClassBuilder, NSObject, Sel};
 use objc2::{msg_send, msg_send_id, sel};
 use objc2::{ClassType, Encoding, Message, RefEncode};
 

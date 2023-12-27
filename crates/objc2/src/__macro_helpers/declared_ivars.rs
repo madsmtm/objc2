@@ -50,9 +50,8 @@ use alloc::format;
 use core::mem;
 use core::ptr::{self, NonNull};
 
-use crate::declare::ClassBuilder;
 use crate::encode::{Encode, Encoding};
-use crate::runtime::{AnyClass, AnyObject, MessageReceiver, Sel};
+use crate::runtime::{AnyClass, AnyObject, ClassBuilder, MessageReceiver, Sel};
 use crate::{sel, ClassType, DeclaredClass};
 
 /// A type representing the drop flags that may be set for a type.

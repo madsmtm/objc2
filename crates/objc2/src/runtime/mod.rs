@@ -33,6 +33,7 @@ use std::os::raw::c_uint;
 #[doc(hidden)]
 pub mod __nsstring;
 mod bool;
+mod declare;
 mod message_receiver;
 mod method_encoding_iter;
 mod method_implementation;
@@ -54,6 +55,7 @@ use crate::{ffi, Message};
 pub use self::nsproxy::NSProxy as __NSProxy;
 
 pub use self::bool::Bool;
+pub use self::declare::{ClassBuilder, ProtocolBuilder};
 pub use self::message_receiver::MessageReceiver;
 pub use self::method_implementation::MethodImplementation;
 pub use self::nsobject::{NSObject, NSObjectProtocol};

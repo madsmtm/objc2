@@ -79,7 +79,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	rdx, qword ptr [rax]
 	lea	rdi, [rip + l_anon.[ID].17]
 	mov	esi, 7
-	call	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::new::GENERATED_ID, 0)
 	test	rax, rax
 	je	LBB4_8
 	mov	qword ptr [rbp - 40], rax
@@ -91,14 +91,14 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	rdi, rbx
 	mov	rdx, r14
 	xor	ecx, ecx
-	call	SYM(objc2::declare::ClassBuilder::add_class_method_inner::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::add_class_method_inner::GENERATED_ID, 0)
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_cf773331f3cfba54]
 	lea	r8, [rip + l_anon.[ID].5]
 	lea	r9, [rip + _method_simple]
 	mov	rdi, rbx
 	mov	rdx, r14
 	xor	ecx, ecx
-	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_abdcbb85641cd990]
 	lea	r15, [rip + l_anon.[ID].6]
 	lea	r9, [rip + _method_bool]
@@ -106,7 +106,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	rdi, rbx
 	mov	rdx, r15
 	mov	r8, r15
-	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_ef8de92414f2d9c8]
 	lea	r12, [rip + l_anon.[ID].4]
 	lea	r9, [rip + _method_id]
@@ -114,14 +114,14 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	rdx, r14
 	xor	ecx, ecx
 	mov	r8, r12
-	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_4a611090161f3fae]
 	lea	r9, [rip + _method_id_with_param]
 	mov	ecx, 1
 	mov	rdi, rbx
 	mov	rdx, r15
 	mov	r8, r12
-	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	lea	rdi, [rip + L_anon.[ID].24]
 	mov	esi, 8
 	call	SYM(objc2::runtime::AnyProtocol::get::GENERATED_ID, 0)
@@ -129,7 +129,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	je	LBB4_4
 	lea	rdi, [rbp - 40]
 	mov	rsi, rax
-	call	SYM(objc2::declare::ClassBuilder::add_protocol::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::add_protocol::GENERATED_ID, 0)
 LBB4_4:
 	lea	rdi, [rip + l_anon.[ID].25]
 	mov	esi, 9
@@ -138,7 +138,7 @@ LBB4_4:
 	je	LBB4_6
 	lea	rdi, [rbp - 40]
 	mov	rsi, rax
-	call	SYM(objc2::declare::ClassBuilder::add_protocol::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::add_protocol::GENERATED_ID, 0)
 LBB4_6:
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_2837f061c311eb14]
 	lea	rdx, [rip + l_anon.[ID].9]
@@ -146,9 +146,9 @@ LBB4_6:
 	lea	r9, [rip + _copyWithZone]
 	lea	rdi, [rbp - 40]
 	mov	ecx, 1
-	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	mov	rdi, qword ptr [rbp - 40]
-	call	SYM(objc2::declare::ClassBuilder::register::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::register::GENERATED_ID, 0)
 	mov	qword ptr [rip + SYM(test_declare_class[CRATE_ID]::_::__OBJC2_CLASS, 0).0], rax
 	add	rsp, 16
 	pop	rbx
@@ -183,7 +183,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	rdx, qword ptr [rax]
 	lea	rdi, [rip + l_anon.[ID].18]
 	mov	esi, 9
-	call	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::new::GENERATED_ID, 0)
 	test	rax, rax
 	je	LBB5_6
 	mov	qword ptr [rbp - 72], rax
@@ -195,7 +195,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	lea	rdi, [rbp - 72]
 	mov	rdx, rbx
 	xor	ecx, ecx
-	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	mov	rax, qword ptr [rbp - 72]
 	mov	qword ptr [rbp - 24], rax
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
@@ -205,7 +205,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	lea	rdi, [rbp - 24]
 	mov	rdx, rbx
 	xor	ecx, ecx
-	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	mov	rax, qword ptr [rbp - 24]
 	mov	qword ptr [rbp - 32], rax
 	mov	qword ptr [rbp - 64], 16
@@ -220,16 +220,16 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	rdi, rbx
 	mov	rsi, r14
 	mov	r8d, 3
-	call	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
 	lea	rsi, [rip + l_anon.[ID].12]
 	lea	r9, [rip + l_anon.[ID].13]
 	mov	edx, 9
 	mov	ecx, 1
 	mov	rdi, rbx
 	xor	r8d, r8d
-	call	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
 	mov	rdi, qword ptr [rbp - 32]
-	call	SYM(objc2::declare::ClassBuilder::register::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::register::GENERATED_ID, 0)
 	mov	rbx, rax
 	mov	edx, 5
 	mov	rdi, rax
@@ -286,7 +286,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	rdx, qword ptr [rax]
 	lea	rdi, [rip + l_anon.[ID].16]
 	mov	esi, 15
-	call	SYM(objc2::declare::ClassBuilder::new::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::new::GENERATED_ID, 0)
 	test	rax, rax
 	je	LBB6_5
 	mov	qword ptr [rbp - 24], rax
@@ -297,7 +297,7 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	lea	r9, [rip + _init_forgetable_ivars]
 	lea	rdi, [rbp - 24]
 	xor	ecx, ecx
-	call	SYM(objc2::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::add_method_inner::GENERATED_ID, 0)
 	mov	rax, qword ptr [rbp - 24]
 	mov	qword ptr [rbp - 32], rax
 	mov	qword ptr [rbp - 64], 8
@@ -311,9 +311,9 @@ SYM(<std[CRATE_ID]::sync::once::Once>::call_once::<<test_declare_class[CRATE_ID]
 	mov	ecx, 8
 	mov	rsi, r14
 	mov	r8d, 2
-	call	SYM(objc2::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::add_ivar_inner_mono::GENERATED_ID, 0)
 	mov	rdi, qword ptr [rbp - 32]
-	call	SYM(objc2::declare::ClassBuilder::register::GENERATED_ID, 0)
+	call	SYM(objc2::runtime::declare::ClassBuilder::register::GENERATED_ID, 0)
 	mov	rbx, rax
 	mov	edx, 5
 	mov	rdi, rax

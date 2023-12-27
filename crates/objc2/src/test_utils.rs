@@ -2,10 +2,9 @@ use core::ops::{Deref, DerefMut};
 use std::os::raw::c_char;
 use std::sync::Once;
 
-use crate::declare::{ClassBuilder, ProtocolBuilder};
 use crate::encode::{Encode, Encoding, RefEncode};
 use crate::rc::Id;
-use crate::runtime::{AnyClass, AnyObject, AnyProtocol, Sel};
+use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ClassBuilder, ProtocolBuilder, Sel};
 use crate::{ffi, msg_send, mutability, sel, ClassType, Message};
 
 #[derive(Debug)]

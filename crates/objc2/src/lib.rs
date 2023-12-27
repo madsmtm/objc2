@@ -143,12 +143,11 @@
 //! ## Other functionality
 //!
 //! That was a quick introduction, this library also has [support for handling
-//! exceptions][exc], [the ability to dynamically declare Objective-C
-//! classes][declare], [advanced reference-counting utilities][rc], and more -
+//! exceptions][exc], [the ability to declare Objective-C
+//! classes][declare_class!], [advanced reference-counting utilities][rc], and more -
 //! peruse the documentation at will!
 //!
 //! [exc]: crate::exception
-//! [declare]: crate::declare
 //! [rc]: crate::rc
 
 #![no_std]
@@ -208,7 +207,6 @@ macro_rules! __hash_idents {
 
 #[doc(hidden)]
 pub mod __macro_helpers;
-pub mod declare;
 pub mod encode;
 pub mod exception;
 mod macros;
@@ -219,6 +217,22 @@ pub mod runtime;
 mod test_utils;
 mod top_level_traits;
 mod verify;
+
+/// Deprecated location for a few things that are now in the [`runtime`]
+/// module.
+#[deprecated = "Moved to the `runtime` module"]
+pub mod declare {
+    pub use super::runtime::{ClassBuilder, ProtocolBuilder};
+    use super::*;
+
+    /// Use [`runtime::ClassBuilder`] instead.
+    #[deprecated = "Use `runtime::ClassBuilder` instead."]
+    pub type ClassDecl = runtime::ClassBuilder;
+
+    /// Use [`runtime::ProtocolBuilder`] instead.
+    #[deprecated = "Use `runtime::ProtocolBuilder` instead."]
+    pub type ProtocolDecl = runtime::ProtocolBuilder;
+}
 
 // Link to Foundation to make NSObject work
 #[cfg_attr(

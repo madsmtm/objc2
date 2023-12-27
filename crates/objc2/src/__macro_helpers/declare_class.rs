@@ -4,10 +4,11 @@ use core::marker::PhantomData;
 #[cfg(all(debug_assertions, feature = "verify"))]
 use std::collections::HashSet;
 
-use crate::declare::ClassBuilder;
 use crate::encode::{Encode, Encoding};
 use crate::rc::{Allocated, Id};
-use crate::runtime::{AnyClass, AnyObject, MessageReceiver, MethodImplementation, Sel};
+use crate::runtime::{
+    AnyClass, AnyObject, ClassBuilder, MessageReceiver, MethodImplementation, Sel,
+};
 #[cfg(all(debug_assertions, feature = "verify"))]
 use crate::runtime::{AnyProtocol, MethodDescription};
 use crate::{ClassType, DeclaredClass, Message, ProtocolType};

@@ -1,9 +1,4 @@
 //! # Dynamically creating classes and protocols.
-//!
-//! Classes can be declared using the [`ClassBuilder`] struct. Instance
-//! variables and methods can then be added before the class is ultimately
-//! registered.
-
 use alloc::format;
 use alloc::string::ToString;
 use core::mem;
@@ -165,10 +160,6 @@ pub struct ClassBuilder {
     // get this pointer using `AnyClass::classes`!
     cls: NonNull<ffi::objc_class>,
 }
-
-/// Use [`ClassBuilder`] instead.
-#[deprecated = "Use `ClassBuilder` instead."]
-pub type ClassDecl = ClassBuilder;
 
 // SAFETY: The stuff that touch global state does so using locks internally.
 //
@@ -471,10 +462,6 @@ impl Drop for ClassBuilder {
 pub struct ProtocolBuilder {
     proto: NonNull<AnyProtocol>,
 }
-
-/// Use [`ProtocolBuilder`] instead.
-#[deprecated = "Use `ProtocolBuilder` instead."]
-pub type ProtocolDecl = ProtocolBuilder;
 
 // SAFETY: Similar to ClassBuilder
 unsafe impl Send for ProtocolBuilder {}

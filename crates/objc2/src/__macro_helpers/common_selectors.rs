@@ -80,8 +80,8 @@ fn cxx_destruct_sel() -> Sel {
 mod tests {
     use core::sync::atomic::{AtomicBool, Ordering};
 
-    use crate::declare::ClassBuilder;
     use crate::rc::Id;
+    use crate::runtime::ClassBuilder;
     use crate::runtime::NSObject;
     use crate::{msg_send_id, ClassType};
 
