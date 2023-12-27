@@ -37,12 +37,9 @@ fn main() {
         "-[NSObject hash] takes {} parameters",
         method.arguments_count()
     );
-    #[cfg(feature = "malloc")]
-    {
-        let hash_return = method.return_type();
-        println!("-[NSObject hash] return type: {hash_return:?}");
-        assert!(usize::ENCODING.equivalent_to_str(&hash_return));
-    }
+    let hash_return = method.return_type();
+    println!("-[NSObject hash] return type: {hash_return:?}");
+    assert!(usize::ENCODING.equivalent_to_str(&hash_return));
 
     // Create an instance
     let obj = NSObject::new();
