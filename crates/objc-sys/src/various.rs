@@ -64,6 +64,7 @@ extern_c! {
         out_len: *mut c_uint,
     ) -> *mut *const c_char;
     #[cfg(any(doc, apple))]
+    /// The returned array is deallocated with [`free`][crate::free].
     pub fn objc_copyImageNames(out_len: *mut c_uint) -> *mut *const c_char;
 
     #[cfg(any(doc, apple, objfw))]

@@ -3,7 +3,7 @@
 
 export MACOSX_DEPLOYMENT_TARGET=10.12
 export IPHONEOS_DEPLOYMENT_TARGET=10.0
-export FEATURES=std,malloc,block,exception,catch-all,verify,unstable-static-class,unstable-static-sel
+export FEATURES=std,block,exception,catch-all,unstable-static-class,unstable-static-sel
 
 # Start the simulator
 open /Applications/Xcode.app/Contents/Developer/Applications/Simulator.app

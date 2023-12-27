@@ -119,8 +119,7 @@
 //! # panic!("does not panic in release mode, so for testing we make it!");
 //! ```
 //!
-//! This library contains further such debug checks, most of which are enabled
-//! by default. To enable all of them, use the `"verify"` cargo feature.
+//! This library contains further such debug checks.
 //!
 //! [`Vec`]: std::vec::Vec
 //!

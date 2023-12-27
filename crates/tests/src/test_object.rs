@@ -9,7 +9,6 @@ use objc2::rc::{autoreleasepool, AutoreleasePool, Id};
 use objc2::runtime::{
     AnyClass, AnyObject, AnyProtocol, Bool, NSObject, NSObjectProtocol, ProtocolObject,
 };
-#[cfg(feature = "malloc")]
 use objc2::sel;
 use objc2::{
     class, extern_protocol, msg_send, msg_send_id, mutability, ClassType, Message, ProtocolType,
@@ -184,7 +183,6 @@ impl MyTestObject {
     }
 }
 
-#[cfg(feature = "malloc")]
 macro_rules! assert_in {
     ($item:expr, $lst:expr) => {{
         let mut found = false;
@@ -201,7 +199,6 @@ macro_rules! assert_in {
         );
     }};
 }
-#[cfg(feature = "malloc")]
 macro_rules! assert_not_in {
     ($item:expr, $lst:expr) => {{
         let mut found = false;
@@ -224,12 +221,9 @@ fn test_class() {
     let cls = MyTestObject::class();
     assert_eq!(MyTestObject::add_numbers(-3, 15), 12);
 
-    #[cfg(feature = "malloc")]
-    {
-        let classes = AnyClass::classes();
-        assert_eq!(classes.len(), AnyClass::classes_count());
-        assert_in!(cls, classes);
-    }
+    let classes = AnyClass::classes();
+    assert_eq!(classes.len(), AnyClass::classes_count());
+    assert_in!(cls, classes);
 
     // Test objc2::runtime functionality
     assert_eq!(AnyClass::get("MyTestObject"), Some(cls));
@@ -252,23 +246,17 @@ fn test_class() {
     let protocol = AnyProtocol::get("NSObject").unwrap();
     assert!(cls.conforms_to(protocol));
     assert!(!cls.conforms_to(AnyProtocol::get("NSCopying").unwrap()));
-    #[cfg(feature = "malloc")]
-    {
-        assert_not_in!(protocol, cls.adopted_protocols());
-        assert_in!(
-            AnyProtocol::get("MyTestProtocol").unwrap(),
-            cls.adopted_protocols()
-        );
-    }
+    assert_not_in!(protocol, cls.adopted_protocols());
+    assert_in!(
+        AnyProtocol::get("MyTestProtocol").unwrap(),
+        cls.adopted_protocols()
+    );
 
-    #[cfg(feature = "malloc")]
-    {
-        let method = cls.instance_method(sel!(addToVar1:)).unwrap();
-        assert_in!(method, cls.instance_methods());
+    let method = cls.instance_method(sel!(addToVar1:)).unwrap();
+    assert_in!(method, cls.instance_methods());
 
-        let ivar = cls.instance_variable("var1").unwrap();
-        assert_in!(ivar, cls.instance_variables());
-    }
+    let ivar = cls.instance_variable("var1").unwrap();
+    assert_in!(ivar, cls.instance_variables());
 }
 
 #[test]

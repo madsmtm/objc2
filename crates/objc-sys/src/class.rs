@@ -53,6 +53,7 @@ extern_c! {
     pub fn objc_lookUpClass(name: *const c_char) -> *const objc_class;
     #[cfg(any(doc, not(objfw)))]
     pub fn objc_getMetaClass(name: *const c_char) -> *const objc_class;
+    /// The returned array is deallocated with [`free`][crate::free].
     pub fn objc_copyClassList(out_len: *mut c_uint) -> *mut *const objc_class;
     pub fn objc_getClassList(buffer: *mut *const objc_class, buffer_len: c_int) -> c_int;
 
@@ -98,21 +99,25 @@ extern_c! {
         -> BOOL;
 
     #[cfg(any(doc, not(objfw)))] // Available in newer versions
+    /// The return value is deallocated with [`free`][crate::free].
     pub fn class_copyIvarList(
         cls: *const objc_class,
         out_len: *mut c_uint,
     ) -> *mut *const objc_ivar;
     #[cfg(any(doc, not(objfw)))] // Available in newer versions
+    /// The returned array is deallocated with [`free`][crate::free].
     pub fn class_copyMethodList(
         cls: *const objc_class,
         out_len: *mut c_uint,
     ) -> *mut *const objc_method;
     #[cfg(any(doc, not(objfw)))] // Available in newer versions
+    /// The returned array is deallocated with [`free`][crate::free].
     pub fn class_copyPropertyList(
         cls: *const objc_class,
         out_len: *mut c_uint,
     ) -> *mut *const objc_property;
     #[cfg(any(doc, not(objfw)))]
+    /// The returned array is deallocated with [`free`][crate::free].
     pub fn class_copyProtocolList(
         cls: *const objc_class,
         out_len: *mut c_uint,

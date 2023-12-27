@@ -14,18 +14,14 @@
 //! ```
 #![allow(clippy::missing_panics_doc)]
 
-#[cfg(feature = "malloc")]
 use alloc::vec::Vec;
 use core::fmt;
 use core::hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 use core::str;
-#[cfg(feature = "malloc")]
-use malloc_buf::Malloc;
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
-#[cfg(feature = "malloc")]
 use std::os::raw::c_uint;
 
 // Note: While this is not public, it is still a breaking change to remove,
@@ -34,6 +30,8 @@ use std::os::raw::c_uint;
 pub mod __nsstring;
 mod bool;
 mod declare;
+#[cfg(not(feature = "malloc"))]
+mod malloc;
 mod message_receiver;
 mod method_encoding_iter;
 mod method_implementation;
@@ -62,6 +60,44 @@ pub use self::nsobject::{NSObject, NSObjectProtocol};
 pub use self::nszone::NSZone;
 pub use self::protocol_object::{ImplementedBy, ProtocolObject};
 pub use crate::verify::VerificationError;
+
+#[cfg(not(feature = "malloc"))]
+use self::malloc::{MallocSlice, MallocStr};
+#[cfg(feature = "malloc")]
+use malloc_buf::{Malloc as MallocSlice, Malloc as MallocStr};
+
+/// We do not want to expose `MallocSlice` to end users, because in the
+/// future, we want to be able to change it to `Box<[T], MallocAllocator>`.
+///
+/// So instead we use an unnameable type.
+#[cfg(not(feature = "malloc"))]
+macro_rules! MallocSlice {
+    ($t:ty) => {
+        impl std::ops::Deref<Target = [$t]> + AsRef<[$t]> + std::fmt::Debug
+    };
+}
+
+#[cfg(feature = "malloc")]
+macro_rules! MallocSlice {
+    ($t:ty) => {
+        malloc_buf::Malloc<[$t]>
+    };
+}
+
+/// Same as `MallocSlice!`.
+#[cfg(not(feature = "malloc"))]
+macro_rules! MallocStr {
+    () => {
+        impl std::ops::Deref<Target = str> + AsRef<str> + std::fmt::Debug + std::fmt::Display
+    };
+}
+
+#[cfg(feature = "malloc")]
+macro_rules! MallocStr {
+    () => {
+        malloc_buf::Malloc<str>
+    };
+}
 
 /// Implement PartialEq, Eq and Hash using pointer semantics; there's not
 /// really a better way to do it for this type
@@ -469,7 +505,6 @@ impl fmt::Debug for Ivar {
     }
 }
 
-#[cfg_attr(not(feature = "malloc"), allow(dead_code))]
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub(crate) struct MethodDescription {
     pub(crate) sel: Sel,
@@ -477,7 +512,6 @@ pub(crate) struct MethodDescription {
 }
 
 impl MethodDescription {
-    #[cfg_attr(not(feature = "malloc"), allow(dead_code))]
     pub(crate) unsafe fn from_raw(raw: ffi::objc_method_description) -> Option<Self> {
         // SAFETY: Sel::from_ptr checks for NULL, rest is checked by caller.
         let sel = unsafe { Sel::from_ptr(raw.name) }?;
@@ -526,23 +560,21 @@ impl Method {
     }
 
     /// Returns the `Encoding` of self's return type.
-    #[cfg(feature = "malloc")]
     #[doc(alias = "method_copyReturnType")]
-    pub fn return_type(&self) -> Malloc<str> {
+    pub fn return_type(&self) -> MallocStr!() {
         unsafe {
             let encoding = ffi::method_copyReturnType(self.as_ptr());
-            Malloc::from_c_str(encoding).unwrap()
+            MallocStr::from_c_str(encoding).unwrap()
         }
     }
 
     /// Returns the `Encoding` of a single parameter type of self, or
     /// [`None`] if self has no parameter at the given index.
-    #[cfg(feature = "malloc")]
     #[doc(alias = "method_copyArgumentType")]
-    pub fn argument_type(&self, index: usize) -> Option<Malloc<str>> {
+    pub fn argument_type(&self, index: usize) -> Option<MallocStr!()> {
         unsafe {
             let encoding = ffi::method_copyArgumentType(self.as_ptr(), index as c_uint);
-            NonNull::new(encoding).map(|encoding| Malloc::from_c_str(encoding.as_ptr()).unwrap())
+            NonNull::new(encoding).map(|encoding| MallocStr::from_c_str(encoding.as_ptr()).unwrap())
         }
     }
 
@@ -720,13 +752,12 @@ impl AnyClass {
     // fn lookup(name: &str) -> Option<&'static Self>;
 
     /// Obtains the list of registered class definitions.
-    #[cfg(feature = "malloc")]
     #[doc(alias = "objc_copyClassList")]
-    pub fn classes() -> Malloc<[&'static Self]> {
+    pub fn classes() -> MallocSlice!(&'static Self) {
         unsafe {
             let mut count: c_uint = 0;
             let classes: *mut &Self = ffi::objc_copyClassList(&mut count).cast();
-            Malloc::from_array(classes, count as usize)
+            MallocSlice::from_array(classes, count as usize)
         }
     }
 
@@ -858,13 +889,12 @@ impl AnyClass {
     }
 
     /// Describes the instance methods implemented by self.
-    #[cfg(feature = "malloc")]
     #[doc(alias = "class_copyMethodList")]
-    pub fn instance_methods(&self) -> Malloc<[&Method]> {
+    pub fn instance_methods(&self) -> MallocSlice!(&Method) {
         unsafe {
             let mut count: c_uint = 0;
             let methods: *mut &Method = ffi::class_copyMethodList(self.as_ptr(), &mut count).cast();
-            Malloc::from_array(methods, count as usize)
+            MallocSlice::from_array(methods, count as usize)
         }
     }
 
@@ -878,25 +908,23 @@ impl AnyClass {
     }
 
     /// Get a list of the protocols to which this class conforms.
-    #[cfg(feature = "malloc")]
     #[doc(alias = "class_copyProtocolList")]
-    pub fn adopted_protocols(&self) -> Malloc<[&AnyProtocol]> {
+    pub fn adopted_protocols(&self) -> MallocSlice!(&AnyProtocol) {
         unsafe {
             let mut count: c_uint = 0;
             let protos: *mut &AnyProtocol =
                 ffi::class_copyProtocolList(self.as_ptr(), &mut count).cast();
-            Malloc::from_array(protos, count as usize)
+            MallocSlice::from_array(protos, count as usize)
         }
     }
 
     /// Describes the instance variables declared by self.
-    #[cfg(feature = "malloc")]
     #[doc(alias = "class_copyIvarList")]
-    pub fn instance_variables(&self) -> Malloc<[&Ivar]> {
+    pub fn instance_variables(&self) -> MallocSlice!(&Ivar) {
         unsafe {
             let mut count: c_uint = 0;
             let ivars: *mut &Ivar = ffi::class_copyIvarList(self.as_ptr(), &mut count).cast();
-            Malloc::from_array(ivars, count as usize)
+            MallocSlice::from_array(ivars, count as usize)
         }
     }
 
@@ -921,7 +949,7 @@ impl AnyClass {
 
     // <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html>
     // fn property(&self, name: &str) -> Option<&Property>;
-    // fn properties(&self) -> Malloc<[&Property]>;
+    // fn properties(&self) -> MallocSlice!(&Property);
     // unsafe fn replace_method(&self, name: Sel, imp: Imp, types: &str) -> Imp;
     // unsafe fn replace_property(&self, name: &str, attributes: &[ffi::objc_property_attribute_t]);
     // fn method_imp(&self, name: Sel) -> Imp; // + _stret
@@ -1016,25 +1044,23 @@ impl AnyProtocol {
     }
 
     /// Obtains the list of registered protocol definitions.
-    #[cfg(feature = "malloc")]
     #[doc(alias = "objc_copyProtocolList")]
-    pub fn protocols() -> Malloc<[&'static Self]> {
+    pub fn protocols() -> MallocSlice!(&'static Self) {
         unsafe {
             let mut count: c_uint = 0;
             let protocols: *mut &Self = ffi::objc_copyProtocolList(&mut count).cast();
-            Malloc::from_array(protocols, count as usize)
+            MallocSlice::from_array(protocols, count as usize)
         }
     }
 
     /// Get a list of the protocols to which this protocol conforms.
-    #[cfg(feature = "malloc")]
     #[doc(alias = "protocol_copyProtocolList")]
-    pub fn adopted_protocols(&self) -> Malloc<[&AnyProtocol]> {
+    pub fn adopted_protocols(&self) -> MallocSlice!(&AnyProtocol) {
         unsafe {
             let mut count: c_uint = 0;
             let protocols: *mut &AnyProtocol =
                 ffi::protocol_copyProtocolList(self.as_ptr(), &mut count).cast();
-            Malloc::from_array(protocols, count as usize)
+            MallocSlice::from_array(protocols, count as usize)
         }
     }
 
@@ -1058,7 +1084,6 @@ impl AnyProtocol {
         str::from_utf8(name.to_bytes()).unwrap()
     }
 
-    #[cfg(feature = "malloc")]
     fn method_descriptions_inner(&self, required: bool, instance: bool) -> Vec<MethodDescription> {
         let mut count: c_uint = 0;
         let descriptions = unsafe {
@@ -1072,7 +1097,7 @@ impl AnyProtocol {
         if descriptions.is_null() {
             return Vec::new();
         }
-        let descriptions = unsafe { Malloc::from_array(descriptions, count as usize) };
+        let descriptions = unsafe { MallocSlice::from_array(descriptions, count as usize) };
         descriptions
             .iter()
             .map(|desc| {
@@ -1081,14 +1106,12 @@ impl AnyProtocol {
             .collect()
     }
 
-    #[cfg(feature = "malloc")]
     #[allow(dead_code)]
     #[doc(alias = "protocol_copyMethodDescriptionList")]
     pub(crate) fn method_descriptions(&self, required: bool) -> Vec<MethodDescription> {
         self.method_descriptions_inner(required, true)
     }
 
-    #[cfg(feature = "malloc")]
     #[allow(dead_code)]
     #[doc(alias = "protocol_copyMethodDescriptionList")]
     pub(crate) fn class_method_descriptions(&self, required: bool) -> Vec<MethodDescription> {
@@ -1305,9 +1328,10 @@ mod tests {
     use core::mem::size_of;
 
     use super::*;
+    use crate::declare::ClassBuilder;
     use crate::runtime::MessageReceiver;
     use crate::test_utils;
-    use crate::{class, msg_send, sel};
+    use crate::{class, msg_send, sel, ClassType};
 
     #[test]
     fn test_selector() {
@@ -1356,8 +1380,6 @@ mod tests {
         assert_eq!(ivar.name(), "_foo");
         assert!(<u32>::ENCODING.equivalent_to_str(ivar.type_encoding()));
         assert!(ivar.offset() > 0);
-
-        #[cfg(feature = "malloc")]
         assert!(cls.instance_variables().len() > 0);
     }
 
@@ -1368,13 +1390,11 @@ mod tests {
         let method = cls.instance_method(sel).unwrap();
         assert_eq!(method.name().name(), "foo");
         assert_eq!(method.arguments_count(), 2);
-        #[cfg(feature = "malloc")]
-        {
-            assert!(<u32>::ENCODING.equivalent_to_str(&method.return_type()));
-            assert!(Sel::ENCODING.equivalent_to_str(&method.argument_type(1).unwrap()));
 
-            assert!(cls.instance_methods().iter().any(|m| *m == method));
-        }
+        assert!(<u32>::ENCODING.equivalent_to_str(&method.return_type()));
+        assert!(Sel::ENCODING.equivalent_to_str(&method.argument_type(1).unwrap()));
+
+        assert!(cls.instance_methods().iter().any(|m| *m == method));
     }
 
     #[test]
@@ -1383,17 +1403,15 @@ mod tests {
         let method = cls.class_method(sel!(classFoo)).unwrap();
         assert_eq!(method.name().name(), "classFoo");
         assert_eq!(method.arguments_count(), 2);
-        #[cfg(feature = "malloc")]
-        {
-            assert!(<u32>::ENCODING.equivalent_to_str(&method.return_type()));
-            assert!(Sel::ENCODING.equivalent_to_str(&method.argument_type(1).unwrap()));
 
-            assert!(cls
-                .metaclass()
-                .instance_methods()
-                .iter()
-                .any(|m| *m == method));
-        }
+        assert!(<u32>::ENCODING.equivalent_to_str(&method.return_type()));
+        assert!(Sel::ENCODING.equivalent_to_str(&method.argument_type(1).unwrap()));
+
+        assert!(cls
+            .metaclass()
+            .instance_methods()
+            .iter()
+            .any(|m| *m == method));
     }
 
     #[test]
@@ -1429,7 +1447,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "malloc")]
     fn test_classes() {
         let classes = AnyClass::classes();
         assert!(classes.len() > 0);
@@ -1442,30 +1459,27 @@ mod tests {
         let class = test_utils::custom_class();
         assert!(class.conforms_to(proto));
 
-        #[cfg(feature = "malloc")]
-        {
-            // The selectors are broken somehow on GNUStep < 2.0
-            if cfg!(any(not(feature = "gnustep-1-7"), feature = "gnustep-2-0")) {
-                let desc = MethodDescription {
-                    sel: sel!(setBar:),
-                    types: "v@:i",
-                };
-                assert_eq!(&proto.method_descriptions(true), &[desc]);
-                let desc = MethodDescription {
-                    sel: sel!(getName),
-                    types: "*@:",
-                };
-                assert_eq!(&proto.method_descriptions(false), &[desc]);
-                let desc = MethodDescription {
-                    sel: sel!(addNumber:toNumber:),
-                    types: "i@:ii",
-                };
-                assert_eq!(&proto.class_method_descriptions(true), &[desc]);
-            }
-            assert_eq!(&proto.class_method_descriptions(false), &[]);
-
-            assert!(class.adopted_protocols().iter().any(|p| *p == proto));
+        // The selectors are broken somehow on GNUStep < 2.0
+        if cfg!(any(not(feature = "gnustep-1-7"), feature = "gnustep-2-0")) {
+            let desc = MethodDescription {
+                sel: sel!(setBar:),
+                types: "v@:i",
+            };
+            assert_eq!(&proto.method_descriptions(true), &[desc]);
+            let desc = MethodDescription {
+                sel: sel!(getName),
+                types: "*@:",
+            };
+            assert_eq!(&proto.method_descriptions(false), &[desc]);
+            let desc = MethodDescription {
+                sel: sel!(addNumber:toNumber:),
+                types: "i@:ii",
+            };
+            assert_eq!(&proto.class_method_descriptions(true), &[desc]);
         }
+        assert_eq!(&proto.class_method_descriptions(false), &[]);
+
+        assert!(class.adopted_protocols().iter().any(|p| *p == proto));
     }
 
     #[test]
@@ -1480,7 +1494,6 @@ mod tests {
         let sub_proto = test_utils::custom_subprotocol();
         let super_proto = test_utils::custom_protocol();
         assert!(sub_proto.conforms_to(super_proto));
-        #[cfg(feature = "malloc")]
         assert_eq!(sub_proto.adopted_protocols()[0], super_proto);
     }
 
@@ -1489,7 +1502,6 @@ mod tests {
         // Ensure that a protocol has been registered on linux
         let _ = test_utils::custom_protocol();
 
-        #[cfg(feature = "malloc")]
         assert!(AnyProtocol::protocols().len() > 0);
     }
 
@@ -1510,6 +1522,14 @@ mod tests {
     fn test_object_ivar_unknown() {
         let cls = test_utils::custom_class();
         assert_eq!(cls.instance_variable("unknown"), None);
+    }
+
+    #[test]
+    fn test_no_ivars() {
+        let cls = ClassBuilder::new("NoIvarObject", NSObject::class())
+            .unwrap()
+            .register();
+        assert_eq!(cls.instance_variables().len(), 0);
     }
 
     #[test]
@@ -1620,5 +1640,25 @@ mod tests {
         assert!(get_ivar_layout(class!(NSException)).is_null());
         assert!(get_ivar_layout(class!(NSNumber)).is_null());
         assert!(get_ivar_layout(class!(NSString)).is_null());
+    }
+
+    // Required for backwards compat
+    #[test]
+    #[cfg(feature = "malloc")]
+    fn test_still_has_malloc_buf_type() {
+        let _: malloc_buf::Malloc<[&AnyClass]> = AnyClass::classes();
+    }
+
+    #[cfg(feature = "malloc")]
+    #[allow(dead_code)]
+    fn assert_malloc_buf_compatible_with_anonymous_type(
+    ) -> (MallocSlice!(&'static AnyClass), MallocStr!()) {
+        (
+            AnyClass::classes(),
+            NSObject::class()
+                .instance_method(sel!(description))
+                .unwrap()
+                .return_type(),
+        )
     }
 }

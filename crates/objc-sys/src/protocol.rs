@@ -23,6 +23,7 @@ extern_c! {
     #[cfg(any(doc, not(objfw)))]
     pub fn objc_getProtocol(name: *const c_char) -> *const objc_protocol;
     #[cfg(any(doc, not(objfw)))]
+    /// The returned array is deallocated with [`free`][crate::free].
     pub fn objc_copyProtocolList(out_len: *mut c_uint) -> *mut *const objc_protocol;
 
     #[cfg(any(doc, not(objfw)))]
@@ -57,6 +58,7 @@ extern_c! {
     #[cfg(any(doc, not(objfw)))]
     pub fn protocol_addProtocol(proto: *mut objc_protocol, addition: *const objc_protocol);
     #[cfg(any(doc, not(objfw)))]
+    /// The returned array is deallocated with [`free`][crate::free].
     pub fn protocol_copyMethodDescriptionList(
         proto: *const objc_protocol,
         is_required_method: BOOL,
@@ -64,11 +66,13 @@ extern_c! {
         out_len: *mut c_uint,
     ) -> *mut objc_method_description;
     #[cfg(any(doc, not(objfw)))]
+    /// The returned array is deallocated with [`free`][crate::free].
     pub fn protocol_copyPropertyList(
         proto: *const objc_protocol,
         out_len: *mut c_uint,
     ) -> *mut *const objc_property;
     #[cfg(any(doc, not(objfw)))]
+    /// The returned array is deallocated with [`free`][crate::free].
     pub fn protocol_copyProtocolList(
         proto: *const objc_protocol,
         out_len: *mut c_uint,

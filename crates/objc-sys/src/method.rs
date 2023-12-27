@@ -25,8 +25,10 @@ pub struct objc_method_description {
 
 extern_c! {
     #[cfg(any(doc, not(objfw)))]
+    /// The return value is deallocated with [`free`][crate::free].
     pub fn method_copyArgumentType(method: *const objc_method, index: c_uint) -> *mut c_char;
     #[cfg(any(doc, not(objfw)))]
+    /// The return value is deallocated with [`free`][crate::free].
     pub fn method_copyReturnType(method: *const objc_method) -> *mut c_char;
     #[cfg(any(doc, not(objfw)))]
     pub fn method_exchangeImplementations(method1: *mut objc_method, method2: *mut objc_method);

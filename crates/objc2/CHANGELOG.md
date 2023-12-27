@@ -6,9 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Made the following runtime methods available without the `"malloc"` feature
+  flag:
+  - `Method::return_type`.
+  - `Method::argument_type`.
+  - `AnyClass::classes`.
+  - `AnyClass::instance_methods`.
+  - `AnyClass::adopted_protocols`.
+  - `AnyClass::instance_variables`.
+  - `AnyProtocol::protocols`.
+  - `AnyProtocol::adopted_protocols`.
+
 ### Changed
 * Moved `ClassBuilder` and `ProtocolBuilder` from the `declare` module to the
   `runtime` module. The old locations are deprecated.
+* Enabled the `"verify"` feature flag's functionality when debug assertions are
+  enabled.
 
 
 ## 0.5.0 - 2023-12-03

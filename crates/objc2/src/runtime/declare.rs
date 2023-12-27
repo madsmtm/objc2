@@ -781,7 +781,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "malloc")]
     fn test_in_all_classes() {
         fn is_present(cls: *const AnyClass) -> bool {
             // Check whether the class is present in AnyClass::classes()

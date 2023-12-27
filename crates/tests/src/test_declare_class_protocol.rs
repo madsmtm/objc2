@@ -91,7 +91,7 @@ fn test_declare_class_invalid_method() {
 
 #[test]
 #[cfg_attr(
-    all(debug_assertions, feature = "verify"),
+    debug_assertions,
     should_panic = "must implement required protocol method -[NSCopying copyWithZone:]"
 )]
 fn test_declare_class_missing_protocol_method() {
@@ -115,7 +115,7 @@ fn test_declare_class_missing_protocol_method() {
 }
 
 #[test]
-// #[cfg_attr(all(debug_assertions, feature = "verify"), should_panic = "...")]
+// #[cfg_attr(debug_assertions, should_panic = "...")]
 fn test_declare_class_invalid_protocol_method() {
     declare_class!(
         struct Custom;
@@ -142,7 +142,7 @@ fn test_declare_class_invalid_protocol_method() {
 
 #[test]
 #[cfg_attr(
-    all(debug_assertions, feature = "verify"),
+    debug_assertions,
     should_panic = "failed overriding protocol method -[NSCopying someOtherMethod]: method not found"
 )]
 fn test_declare_class_extra_protocol_method() {

@@ -25,6 +25,7 @@ pub struct objc_property_attribute_t {
 
 extern_c! {
     #[cfg(any(doc, not(objfw)))]
+    /// The returned array is deallocated with [`free`][crate::free].
     pub fn property_copyAttributeList(
         property: *const objc_property,
         out_len: *mut c_uint,
