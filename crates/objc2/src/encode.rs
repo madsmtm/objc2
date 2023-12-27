@@ -229,21 +229,25 @@ pub unsafe trait RefEncode {
     const ENCODING_REF: Encoding;
 }
 
-/// A helper trait for types that are encodable inside an [`Option`].
+/// A helper trait for types that follow the "null pointer optimization", and
+/// are encodable inside an [`Option`].
 ///
-/// See [the nomicon][nomicon-nullable] for details on which types uphold this
-/// promise.
+/// See [the `Option` documentation][option-repr] for details on which types
+/// this holds for, and [the nomicon][nomicon-npo] for more details on the
+/// null pointer optimization.
 ///
-/// This is used to work around the orphan rule, which would normally prevent
-/// you from implementing [`Encode`]/[`RefEncode`] for `Option<CustomType>`.
+/// This trait used to work around the orphan rule, which would normally
+/// prevent you from implementing [`Encode`]/[`RefEncode`] for
+/// `Option<CustomType>`.
 ///
-/// [nomicon-nullable]: https://doc.rust-lang.org/nightly/nomicon/ffi.html#the-nullable-pointer-optimization
+/// [option-repr]: https://doc.rust-lang.org/1.75.0/std/option/index.html#representation
+/// [nomicon-npo]: https://doc.rust-lang.org/nightly/nomicon/ffi.html#the-nullable-pointer-optimization
 ///
 ///
 /// # Safety
 ///
-/// You must ensure that the implemented type `T` has the same layout as
-/// `Option<T>`.
+/// You must ensure that the implemented type `T` has the same layout and
+/// function call ABI as `Option<T>`.
 ///
 ///
 /// # Examples
@@ -572,6 +576,9 @@ encode_impls!(
 
 macro_rules! encode_impls_size {
     ($($t:ty => ($t16:ty, $t32:ty, $t64:ty),)*) => ($(
+        // SAFETY: `usize` and `isize` is ABI compatible with `uN`/`iN` of the
+        // same size.
+        // <https://doc.rust-lang.org/nightly/std/primitive.fn.html#abi-compatibility>
         #[doc = concat!("The encoding of [`", stringify!($t), "`] varies based on the target pointer width.")]
         unsafe impl Encode for $t {
             #[cfg(target_pointer_width = "16")]
