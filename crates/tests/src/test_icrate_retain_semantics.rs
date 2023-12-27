@@ -1,3 +1,4 @@
+#![cfg(feature = "Foundation_all")]
 use std::ptr;
 use std::vec::Vec;
 
