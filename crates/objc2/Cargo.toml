@@ -23,8 +23,8 @@ license = "MIT"
 default = ["std", "apple"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "objc2-encode/std", "objc-sys/std", "icrate/std"]
-alloc = ["objc2-encode/alloc", "objc-sys/alloc", "icrate/alloc"]
+std = ["alloc", "objc2-encode/std", "objc-sys/std"]
+alloc = ["objc2-encode/alloc", "objc-sys/alloc"]
 
 # Enables `objc2::exception::throw` and `objc2::exception::catch`
 exception = ["objc-sys/unstable-exception"]
@@ -90,12 +90,12 @@ unstable-docsrs = []
 unstable-apple-new = ["apple"]
 
 # Runtime selection. See `objc-sys` for details.
-apple = ["objc-sys/apple", "icrate/apple"]
-gnustep-1-7 = ["objc-sys/gnustep-1-7", "icrate/gnustep-1-7"]
-gnustep-1-8 = ["gnustep-1-7", "objc-sys/gnustep-1-8", "icrate/gnustep-1-8"]
-gnustep-1-9 = ["gnustep-1-8", "objc-sys/gnustep-1-9", "icrate/gnustep-1-9"]
-gnustep-2-0 = ["gnustep-1-9", "objc-sys/gnustep-2-0", "icrate/gnustep-2-0"]
-gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1", "icrate/gnustep-2-1"]
+apple = ["objc-sys/apple"]
+gnustep-1-7 = ["objc-sys/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "objc-sys/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "objc-sys/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "objc-sys/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1"]
 # Used by `block2`
 unstable-compiler-rt = ["apple"]
 
@@ -109,24 +109,6 @@ objc2-proc-macros = { path = "../objc2-proc-macros", version = "0.1.1", optional
 iai = { version = "0.1", git = "https://github.com/madsmtm/iai", branch = "callgrind" }
 static_assertions = "1.1.0"
 memoffset = "0.9.0"
-
-# Allow using `icrate` in examples, documentation and external tests
-[dev-dependencies.icrate]
-path = "../icrate"
-default-features = false
-features = [
-    "Foundation",
-    "Foundation_NSArray",
-    "Foundation_NSMutableArray",
-    "Foundation_NSString",
-    "Foundation_NSMutableString",
-    "Foundation_NSSet",
-    "Foundation_NSMutableSet",
-    "Foundation_NSDictionary",
-    "Foundation_NSMutableDictionary",
-    "Foundation_NSValue",
-    "Foundation_NSNumber",
-]
 
 [[bench]]
 name = "autorelease"

@@ -316,7 +316,6 @@ name = "objc2"
 version = "0.5.0"
 dependencies = [
  "iai",
- "icrate",
  "malloc_buf",
  "memoffset",
  "objc-sys",

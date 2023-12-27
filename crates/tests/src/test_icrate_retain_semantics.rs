@@ -1,4 +1,5 @@
 use std::ptr;
+use std::vec::Vec;
 
 use icrate::Foundation::{
     NSArray, NSCopying, NSMutableArray, NSMutableCopying, NSMutableDictionary, NSMutableSet,
