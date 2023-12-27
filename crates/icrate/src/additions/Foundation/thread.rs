@@ -40,6 +40,45 @@ fn make_multithreaded() {
     // Don't bother waiting for it to complete!
 }
 
+/// Submit the given closure to the runloop on the main thread.
+///
+/// If the current thread is the main thread, this runs the closure.
+///
+/// The closure is passed a [`MainThreadMarker`] that it can further use
+/// to access APIs that are only accessible from the main thread.
+///
+/// This function should only be used in applications whose main thread is
+/// running an event loop with `dispatch_main`, `UIApplicationMain`,
+/// `NSApplicationMain`, `CFRunLoop` or similar; it will block
+/// indefinitely if that is not the case.
+///
+///
+/// # Example
+///
+/// ```no_run
+/// use icrate::Foundation::run_on_main;
+/// run_on_main(|mtm| {
+///     // Do something on the main thread with the given marker
+/// });
+/// ```
+#[cfg(feature = "dispatch")]
+pub fn run_on_main<F, R>(f: F) -> R
+where
+    F: Send + FnOnce(MainThreadMarker) -> R,
+    R: Send,
+{
+    if let Some(mtm) = MainThreadMarker::new() {
+        f(mtm)
+    } else {
+        dispatch::Queue::main().exec_sync(|| {
+            // SAFETY: The outer closure is submitted to run on the main
+            // thread, so now, when the closure actually runs, it's
+            // guaranteed to be on the main thread.
+            f(unsafe { MainThreadMarker::new_unchecked() })
+        })
+    }
+}
+
 /// A marker type taken by functions that can only be executed on the main
 /// thread.
 ///
@@ -166,41 +205,15 @@ impl MainThreadMarker {
 
     /// Submit the given closure to the runloop on the main thread.
     ///
-    /// If the current thread is the main thread, this runs the closure.
-    ///
-    /// The closure is passed a [`MainThreadMarker`] that it can further use
-    /// to access APIs that are only accessible from the main thread.
-    ///
-    /// This function should only be used in applications whose main thread is
-    /// running an event loop with `dispatch_main`, `UIApplicationMain`,
-    /// `NSApplicationMain`, `CFRunLoop` or similar; it will block
-    /// indefinitely if that is not the case.
-    ///
-    ///
-    /// # Example
-    ///
-    /// ```no_run
-    /// use icrate::Foundation::MainThreadMarker;
-    /// MainThreadMarker::run_on_main(|mtm| {
-    ///     // Do something on the main thread with the given marker
-    /// });
-    /// ```
+    /// Deprecated in favour of the free-standing function [`run_on_main`].
+    #[deprecated = "Use the free-standing function `run_on_main` instead"]
     #[cfg(feature = "dispatch")]
     pub fn run_on_main<F, R>(f: F) -> R
     where
         F: Send + FnOnce(MainThreadMarker) -> R,
         R: Send,
     {
-        if let Some(mtm) = MainThreadMarker::new() {
-            f(mtm)
-        } else {
-            dispatch::Queue::main().exec_sync(|| {
-                // SAFETY: The outer closure is submitted to run on the main
-                // thread, so now, when the closure actually runs, it's
-                // guaranteed to be on the main thread.
-                f(unsafe { MainThreadMarker::new_unchecked() })
-            })
-        }
+        run_on_main(f)
     }
 }
 
@@ -232,7 +245,7 @@ impl fmt::Debug for MainThreadMarker {
 /// On `Drop`, the inner type is sent to the main thread's runloop and dropped
 /// there. This may lead to deadlocks if the main runloop is not running, or
 /// if it is waiting on a lock that the dropping thread is holding. See
-/// [`MainThreadMarker::run_on_main`] for some of the caveats around that.
+/// [`run_on_main`] for some of the caveats around that.
 ///
 ///
 /// # Related
@@ -268,7 +281,7 @@ impl<T> Drop for MainThreadBound<T> {
         if mem::needs_drop::<T>() {
             // TODO: Figure out whether we should assume the main thread to be
             // dead if we're panicking, and leak instead?
-            MainThreadMarker::run_on_main(|_mtm| {
+            run_on_main(|_mtm| {
                 let this = self;
                 // SAFETY: The value is dropped on the main thread, which is
                 // the same thread that it originated from (guaranteed by
@@ -332,31 +345,31 @@ impl<T> MainThreadBound<T> {
     }
 }
 
-/// Helper functions for running [`MainThreadMarker::run_on_main`].
+/// Helper functions for running [`run_on_main`].
 #[cfg(feature = "dispatch")]
 impl<T> MainThreadBound<T> {
     /// Access the item on the main thread.
     ///
-    /// See [`MainThreadMarker::run_on_main`] for caveats.
+    /// See [`run_on_main`] for caveats.
     #[inline]
     pub fn get_on_main<F, R>(&self, f: F) -> R
     where
         F: Send + FnOnce(&T) -> R,
         R: Send,
     {
-        MainThreadMarker::run_on_main(|mtm| f(self.get(mtm)))
+        run_on_main(|mtm| f(self.get(mtm)))
     }
 
     /// Access the item mutably on the main thread.
     ///
-    /// See [`MainThreadMarker::run_on_main`] for caveats.
+    /// See [`run_on_main`] for caveats.
     #[inline]
     pub fn get_on_main_mut<F, R>(&mut self, f: F) -> R
     where
         F: Send + FnOnce(&mut T) -> R,
         R: Send,
     {
-        MainThreadMarker::run_on_main(|mtm| f(self.get_mut(mtm)))
+        run_on_main(|mtm| f(self.get_mut(mtm)))
     }
 }
 
