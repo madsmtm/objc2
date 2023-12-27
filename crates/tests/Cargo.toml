@@ -14,7 +14,6 @@ default = ["apple", "std", "Foundation_all"]
 std = ["block2/std", "objc2/std", "icrate/std"]
 exception = ["objc2/exception", "Foundation_all"]
 catch-all = ["objc2/catch-all", "exception"]
-verify = ["objc2/verify"]
 # TODO: Fix this
 Foundation_all = [
     "icrate/Foundation",

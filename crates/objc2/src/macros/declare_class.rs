@@ -156,10 +156,10 @@
 /// - A class with the specified name already exists.
 /// - Debug assertions are enabled, and an overriden method's signature is not
 ///   equal to the one on the superclass.
-/// - The `verify` feature and debug assertions are enabled, and the required
-///   protocol methods are not implemented.
+/// - Debug assertions are enabled, and the protocol's required methods are not
+///   implemented.
 ///
-/// And possibly more similar cases.
+/// And possibly more similar cases in the future.
 ///
 ///
 /// # Safety
@@ -279,8 +279,7 @@
 ///         }
 ///
 ///         // If we have tried to add other methods here, or had forgotten
-///         // to implement the method, we would have gotten an error with the
-///         // `verify` feature enabled.
+///         // to implement the method, we would have gotten an error.
 ///     }
 /// );
 ///

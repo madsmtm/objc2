@@ -32,9 +32,6 @@ exception = ["objc-sys/unstable-exception"]
 # Wrap every `objc2::msg_send` call in a `@try/@catch` block
 catch-all = ["exception"]
 
-# Enable all verification steps when debug assertions are enabled.
-verify = []
-
 # Allow `*const c_void` and `*mut c_void` to be used as arguments and return
 # types where other pointers were expected.
 #
@@ -48,6 +45,10 @@ unstable-msg-send-always-comma = []
 # This was necessary to access certain functionality in the past, but it is no
 # longer required.
 malloc = ["malloc_buf"]
+
+# This was necessary to enable certain debug assertions in the past, but it is
+# no longer required.
+verify = []
 
 # Make the `sel!` macro look up the selector statically.
 #

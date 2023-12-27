@@ -21,6 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 * Moved `ClassBuilder` and `ProtocolBuilder` from the `declare` module to the
   `runtime` module. The old locations are deprecated.
+* Enabled the `"verify"` feature flag's functionality when debug assertions are
+  enabled.
 
 
 ## 0.5.0 - 2023-12-03

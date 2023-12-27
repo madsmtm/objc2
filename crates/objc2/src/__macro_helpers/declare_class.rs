@@ -1,7 +1,7 @@
-#[cfg(all(debug_assertions, feature = "verify"))]
+#[cfg(debug_assertions)]
 use alloc::vec::Vec;
 use core::marker::PhantomData;
-#[cfg(all(debug_assertions, feature = "verify"))]
+#[cfg(debug_assertions)]
 use std::collections::HashSet;
 
 use crate::encode::{Encode, Encoding};
@@ -9,7 +9,7 @@ use crate::rc::{Allocated, Id};
 use crate::runtime::{
     AnyClass, AnyObject, ClassBuilder, MessageReceiver, MethodImplementation, Sel,
 };
-#[cfg(all(debug_assertions, feature = "verify"))]
+#[cfg(debug_assertions)]
 use crate::runtime::{AnyProtocol, MethodDescription};
 use crate::{ClassType, DeclaredClass, Message, ProtocolType};
 
@@ -243,7 +243,7 @@ impl<T: DeclaredClass> ClassBuilderHelper<T> {
             self.builder.add_protocol(protocol);
         }
 
-        #[cfg(all(debug_assertions, feature = "verify"))]
+        #[cfg(debug_assertions)]
         {
             ClassProtocolMethodsBuilder {
                 builder: self,
@@ -265,7 +265,7 @@ impl<T: DeclaredClass> ClassBuilderHelper<T> {
             }
         }
 
-        #[cfg(not(all(debug_assertions, feature = "verify")))]
+        #[cfg(not(debug_assertions))]
         {
             ClassProtocolMethodsBuilder { builder: self }
         }
@@ -303,19 +303,19 @@ impl<T: DeclaredClass> ClassBuilderHelper<T> {
 #[derive(Debug)]
 pub struct ClassProtocolMethodsBuilder<'a, T: ?Sized> {
     builder: &'a mut ClassBuilderHelper<T>,
-    #[cfg(all(debug_assertions, feature = "verify"))]
+    #[cfg(debug_assertions)]
     protocol: Option<&'static AnyProtocol>,
-    #[cfg(all(debug_assertions, feature = "verify"))]
+    #[cfg(debug_assertions)]
     required_instance_methods: Vec<MethodDescription>,
-    #[cfg(all(debug_assertions, feature = "verify"))]
+    #[cfg(debug_assertions)]
     optional_instance_methods: Vec<MethodDescription>,
-    #[cfg(all(debug_assertions, feature = "verify"))]
+    #[cfg(debug_assertions)]
     registered_instance_methods: HashSet<Sel>,
-    #[cfg(all(debug_assertions, feature = "verify"))]
+    #[cfg(debug_assertions)]
     required_class_methods: Vec<MethodDescription>,
-    #[cfg(all(debug_assertions, feature = "verify"))]
+    #[cfg(debug_assertions)]
     optional_class_methods: Vec<MethodDescription>,
-    #[cfg(all(debug_assertions, feature = "verify"))]
+    #[cfg(debug_assertions)]
     registered_class_methods: HashSet<Sel>,
 }
 
@@ -326,7 +326,7 @@ impl<T: DeclaredClass> ClassProtocolMethodsBuilder<'_, T> {
     where
         F: MethodImplementation<Callee = T>,
     {
-        #[cfg(all(debug_assertions, feature = "verify"))]
+        #[cfg(debug_assertions)]
         if let Some(protocol) = self.protocol {
             let _types = self
                 .required_instance_methods
@@ -344,7 +344,7 @@ impl<T: DeclaredClass> ClassProtocolMethodsBuilder<'_, T> {
         // SAFETY: Checked by caller
         unsafe { self.builder.add_method(sel, func) };
 
-        #[cfg(all(debug_assertions, feature = "verify"))]
+        #[cfg(debug_assertions)]
         if !self.registered_instance_methods.insert(sel) {
             unreachable!("already added")
         }
@@ -355,7 +355,7 @@ impl<T: DeclaredClass> ClassProtocolMethodsBuilder<'_, T> {
     where
         F: MethodImplementation<Callee = AnyClass>,
     {
-        #[cfg(all(debug_assertions, feature = "verify"))]
+        #[cfg(debug_assertions)]
         if let Some(protocol) = self.protocol {
             let _types = self
                 .required_class_methods
@@ -373,13 +373,13 @@ impl<T: DeclaredClass> ClassProtocolMethodsBuilder<'_, T> {
         // SAFETY: Checked by caller
         unsafe { self.builder.add_class_method(sel, func) };
 
-        #[cfg(all(debug_assertions, feature = "verify"))]
+        #[cfg(debug_assertions)]
         if !self.registered_class_methods.insert(sel) {
             unreachable!("already added")
         }
     }
 
-    #[cfg(all(debug_assertions, feature = "verify"))]
+    #[cfg(debug_assertions)]
     pub fn finish(self) {
         let superclass = self.builder.builder.superclass();
 
@@ -427,6 +427,6 @@ impl<T: DeclaredClass> ClassProtocolMethodsBuilder<'_, T> {
     }
 
     #[inline]
-    #[cfg(not(all(debug_assertions, feature = "verify")))]
+    #[cfg(not(debug_assertions))]
     pub fn finish(self) {}
 }
