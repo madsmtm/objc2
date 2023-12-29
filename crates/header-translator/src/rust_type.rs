@@ -203,12 +203,17 @@ impl IdType {
     }
 
     fn parse_objc_pointer(
-        ty: Type<'_>,
+        mut ty: Type<'_>,
         pointer_name: &str,
         lifetime: &mut Lifetime,
         is_kindof: &mut bool,
         context: &Context<'_>,
     ) -> Self {
+        // TODO: Maybe do something with the information in the elaborated type?
+        if let Some(true) = ty.is_elaborated() {
+            ty = ty.get_elaborated_type().expect("elaborated");
+        }
+
         let generics: Vec<_> = ty
             .get_objc_type_arguments()
             .into_iter()
@@ -326,6 +331,12 @@ impl IdType {
                         Self::AnyClass { protocols }
                     }
                     kind => panic!("unknown ObjCObject kind {ty:?}, {kind:?}"),
+                }
+            }
+            TypeKind::Typedef => {
+                let declaration = ty.get_declaration().expect("Typedef declaration");
+                Self::TypeDef {
+                    id: ItemIdentifier::new(&declaration, context),
                 }
             }
             _ => panic!("pointee was neither objcinterface nor objcobject: {ty:?}"),
@@ -679,6 +690,14 @@ impl Inner {
                     check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
                 };
                 Self::Sel { nullability }
+            }
+            // These can appear without being wrapped in a pointer by being in typedefs
+            // TODO: Emit this properly.
+            ObjCObject => {
+                let decl = ty.get_declaration().expect("ObjCObject declaration");
+                Self::TypeDef {
+                    id: ItemIdentifier::with_name("AnyObject".to_string(), &decl, context),
+                }
             }
             Pointer => {
                 let mut parser = AttributeParser::new(&attributed_name, &name);

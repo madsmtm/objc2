@@ -7,16 +7,17 @@
 
 Rust bindings to Apple's frameworks.
 
-This README is kept intentionally small in an effort to consolidate the documentation, see [the Rust docs](https://docs.rs/icrate/) for more details.
-
+This README is kept intentionally small in an effort to consolidate the
+documentation, see [the Rust docs](https://docs.rs/icrate/) for more details.
 
 ## Supported versions
 
-These bindings are automatically generated from the SDKs in Xcode 15.0.1 (will
-be periodically updated).
+These bindings are automatically generated from the SDKs in Xcode 15.1 (will be
+periodically updated).
 
 Currently supports:
-- macOS: `10.12-14.0`
-- iOS/iPadOS: `10.0-17.0` (WIP)
-- tvOS: `10.0-17.0` (WIP)
-- watchOS: `5.0-10.0` (WIP)
+
+- macOS: `10.12-14.2`
+- iOS/iPadOS: `10.0-17.2` (WIP)
+- tvOS: `10.0-17.2` (WIP)
+- watchOS: `5.0-10.2` (WIP)

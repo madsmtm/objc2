@@ -10,10 +10,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## icrate Unreleased - YYYY-MM-DD
 
+### Changed
+* Updated SDK from Xcode 15.0.1 to 15.1.
+
+  View the release notes to learn more details:
+  - [15.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-15_1-release-notes)
+
 ### Deprecated
 * Deprecated `MainThreadMarker::run_on_main`, use the new free-standing function
   `run_on_main` instead.
+* Deprecated `CATransaction::batch`. This is still in beta, according to the
+  documentation.
 
+### Removed
+* Removed private functionality in the `Speech` framework. This was never
+  intended to be exposed by Apple.
+
+  This is technically a breaking change, but will be allowed in a minor
+  version since it isn't supported by Apple.
 
 ## icrate 0.1.0 - 2023-12-23
 

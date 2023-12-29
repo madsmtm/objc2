@@ -3409,6 +3409,7 @@ GameKit_GKLocalPlayer = [
 ]
 GameKit_GKMatch = []
 GameKit_GKMatchRequest = []
+GameKit_GKMatchedPlayers = []
 GameKit_GKMatchmaker = []
 GameKit_GKMatchmakerViewController = [
     "AppKit_NSViewController",
@@ -3458,6 +3459,7 @@ GameKit_all = [
     "GameKit_GKLocalPlayer",
     "GameKit_GKMatch",
     "GameKit_GKMatchRequest",
+    "GameKit_GKMatchedPlayers",
     "GameKit_GKMatchmaker",
     "GameKit_GKMatchmakerViewController",
     "GameKit_GKNotificationBanner",
@@ -4843,25 +4845,6 @@ Speech_SFSpeechURLRecognitionRequest = [
 Speech_SFTranscription = []
 Speech_SFTranscriptionSegment = []
 Speech_SFVoiceAnalytics = []
-Speech__SFAnalysisContext = []
-Speech__SFAnalyzerTranscriptionSegment = []
-Speech__SFCommandRecognizerArgument = []
-Speech__SFCommandRecognizerInterpretation = []
-Speech__SFContextualNamedEntity = []
-Speech__SFEndpointingResult = []
-Speech__SFInputSequencer = []
-Speech__SFModelDownloadRequest = []
-Speech__SFSpeechAnalyzer = []
-Speech__SFSpeechAnalyzerCommandRecognizerOptions = []
-Speech__SFSpeechAnalyzerOptions = []
-Speech__SFSpeechAnalyzerOptionsLoggingInfo = []
-Speech__SFSpeechAnalyzerOptionsPowerContext = []
-Speech__SFSpeechAnalyzerTranscriberOptions = []
-Speech__SFToken = []
-Speech__SFTranscriberModelOptions = []
-Speech__SFTranscriberResult = []
-Speech__STCommandRecognizerResult = []
-Speech__STTranscriberMultisegmentResult = []
 Speech_all = [
     "Speech",
     "Speech_SFAcousticFeature",
@@ -4877,25 +4860,6 @@ Speech_all = [
     "Speech_SFTranscription",
     "Speech_SFTranscriptionSegment",
     "Speech_SFVoiceAnalytics",
-    "Speech__SFAnalysisContext",
-    "Speech__SFAnalyzerTranscriptionSegment",
-    "Speech__SFCommandRecognizerArgument",
-    "Speech__SFCommandRecognizerInterpretation",
-    "Speech__SFContextualNamedEntity",
-    "Speech__SFEndpointingResult",
-    "Speech__SFInputSequencer",
-    "Speech__SFModelDownloadRequest",
-    "Speech__SFSpeechAnalyzer",
-    "Speech__SFSpeechAnalyzerCommandRecognizerOptions",
-    "Speech__SFSpeechAnalyzerOptions",
-    "Speech__SFSpeechAnalyzerOptionsLoggingInfo",
-    "Speech__SFSpeechAnalyzerOptionsPowerContext",
-    "Speech__SFSpeechAnalyzerTranscriberOptions",
-    "Speech__SFToken",
-    "Speech__SFTranscriberModelOptions",
-    "Speech__SFTranscriberResult",
-    "Speech__STCommandRecognizerResult",
-    "Speech__STTranscriberMultisegmentResult",
 ]
 StoreKit = [
     "AppKit",
