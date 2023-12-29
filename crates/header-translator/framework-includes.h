@@ -87,6 +87,8 @@
 
 #import <QuartzCore/CoreAnimation.h>
 
+#import <ServiceManagement/ServiceManagement.h>
+
 #import <SoundAnalysis/SoundAnalysis.h>
 
 #import <Speech/Speech.h>

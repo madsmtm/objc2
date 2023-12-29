@@ -48,6 +48,7 @@ data! {
     mod MetricKit;
     mod OSAKit;
     mod PhotoKit;
+    mod ServiceManagement;
     mod SoundAnalysis;
     mod Speech;
     mod StoreKit;

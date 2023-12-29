@@ -4797,6 +4797,14 @@ PhotoKit_all = [
     "PhotoKit_PHProjectChangeRequest",
     "PhotoKit_PHVideoRequestOptions",
 ]
+ServiceManagement = [
+    "Foundation",
+]
+ServiceManagement_SMAppService = []
+ServiceManagement_all = [
+    "ServiceManagement",
+    "ServiceManagement_SMAppService",
+]
 SoundAnalysis = [
     "Foundation",
 ]
@@ -5602,6 +5610,7 @@ unstable-frameworks-macos-10-12 = [
     "Metal_all",
     "OSAKit_all",
     "PhotoKit_all",
+    "ServiceManagement_all",
     "StoreKit_all",
     "WebKit_all",
     "unstable-example-basic_usage",
