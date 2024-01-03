@@ -176,6 +176,9 @@ data! {
         unsafe -removeTrackingRect;
         unsafe -addCursorRect_cursor;
         unsafe -setHidden;
+
+        unsafe -convertRect_toView;
+        unsafe -isFlipped;
     }
 
     // Documented as "Main Thread Only", but:
@@ -258,6 +261,8 @@ data! {
         unsafe -invalidateCursorRectsForView;
         unsafe -setDelegate;
         unsafe -sendEvent;
+        unsafe -convertPointFromScreen;
+        unsafe -convertRectToScreen;
 
         // `addChildWindow:ordered:` is not safe, as cycles must be prevented
     }
