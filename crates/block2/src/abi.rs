@@ -11,14 +11,14 @@
 )]
 
 use core::ffi::c_void;
-use std::os::raw::{c_char, c_ulong};
+use std::os::raw::{c_char, c_int, c_ulong};
 
 use crate::ffi::Class;
 
 /// Block descriptor flags.
 /// Values for Block_layout->flags to describe block objects
 #[allow(non_camel_case_types)]
-pub type block_flags = i32;
+pub type block_flags = c_int;
 
 #[cfg(any(doc, feature = "apple"))]
 pub const BLOCK_DEALLOCATING: block_flags = 0x0001;
@@ -79,7 +79,8 @@ pub const BLOCK_IS_GLOBAL: block_flags = 1 << 28;
 ///
 /// See <https://clang.llvm.org/docs/Block-ABI-Apple.html#high-level>
 #[doc(alias = "BLOCK_USE_SRET")]
-#[doc(alias = "BLOCK_HAS_DESCRIPTOR")] // compiler-rt || macOS 10.6
+#[doc(alias = "BLOCK_HAS_DESCRIPTOR")]
+// compiler-rt || macOS 10.6
 pub const BLOCK_USE_STRET: block_flags = 1 << 29;
 
 /// Block has an Objective-C type encoding.
@@ -90,51 +91,35 @@ pub const BLOCK_HAS_SIGNATURE: block_flags = 1 << 30;
 /// compiler
 pub const BLOCK_HAS_EXTENDED_LAYOUT: block_flags = 1 << 31;
 
-/// Flags used in the final argument to _Block_object_assign() and
-/// _Block_object_dispose().  These indicate the type of copy or dispose to
-/// perform.
-/// Values for _Block_object_assign() and _Block_object_dispose() parameters
-///
-/// This is a helper type, in the sources this type does not have a name!
-#[allow(non_camel_case_types)]
-pub type block_assign_dispose_flags = i32;
-
 /// The value is of some id-like type, and should be copied as an Objective-C
 /// object: i.e. by sending -retain or via the GC assign functions in GC mode
 /// (not yet supported).
 ///
 /// id, NSObject, __attribute__((NSObject)), block, ...
-pub const BLOCK_FIELD_IS_OBJECT: block_assign_dispose_flags = 3;
+pub const BLOCK_FIELD_IS_OBJECT: c_int = 3;
 
 /// The field is a block.  This must be copied by the block copy functions.
 ///
 /// a block variable
-pub const BLOCK_FIELD_IS_BLOCK: block_assign_dispose_flags = 7;
+pub const BLOCK_FIELD_IS_BLOCK: c_int = 7;
 
 /// The field is an indirect reference to a variable declared with the __block
 /// storage qualifier.
 ///
 /// the on stack structure holding the __block variable
-pub const BLOCK_FIELD_IS_BYREF: block_assign_dispose_flags = 8;
+pub const BLOCK_FIELD_IS_BYREF: c_int = 8;
 
 /// The field is an indirect reference to a variable declared with the __block
 /// storage qualifier.
 ///
 /// declared __weak, only used in byref copy helpers
-pub const BLOCK_FIELD_IS_WEAK: block_assign_dispose_flags = 16;
+pub const BLOCK_FIELD_IS_WEAK: c_int = 16;
 
 /// The field is an indirect reference to a variable declared with the __block
 /// storage qualifier.
 ///
 /// called from __block (byref) copy/dispose support routines.
-pub const BLOCK_BYREF_CALLER: block_assign_dispose_flags = 128;
-
-#[cfg(any(doc, feature = "apple"))]
-pub const BLOCK_ALL_COPY_DISPOSE_FLAGS: block_assign_dispose_flags = BLOCK_FIELD_IS_OBJECT
-    | BLOCK_FIELD_IS_BLOCK
-    | BLOCK_FIELD_IS_BYREF
-    | BLOCK_FIELD_IS_WEAK
-    | BLOCK_BYREF_CALLER;
+pub const BLOCK_BYREF_CALLER: c_int = 128;
 
 // TODO: BLOCK_LAYOUT_X
 
