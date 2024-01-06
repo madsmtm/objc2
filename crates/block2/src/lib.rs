@@ -248,3 +248,12 @@ pub use block::{Block, BlockArguments};
 pub use concrete_block::{ConcreteBlock, IntoConcreteBlock};
 pub use global::GlobalBlock;
 pub use rc_block::RcBlock;
+
+// Note: We could use `_Block_object_assign` and `_Block_object_dispose` to
+// implement a `ByRef<T>` wrapper, which would behave like `__block` marked
+// variables and have roughly the same memory management scheme as blocks.
+//
+// But I've yet to see the value in such a wrapper in Rust code compared to
+// just using `Box`, `Rc` or `Arc`, and since `__block` variables are
+// basically never exposed as part of a (public) function's API, we won't
+// implement such a thing yet.
