@@ -5,75 +5,132 @@
 //! [ABI]: https://clang.llvm.org/docs/Block-ABI-Apple.html
 #![allow(unused)]
 
+use core::fmt;
 use core::{ffi::c_void, mem::MaybeUninit};
 use std::os::raw::{c_char, c_int, c_ulong};
+
+use alloc::format;
 
 use crate::ffi::Class;
 
 /// Block descriptor flags.
-#[allow(non_camel_case_types)]
-pub(crate) type BlockFlags = c_int;
+#[repr(transparent)]
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(crate) struct BlockFlags(pub(crate) c_int);
 
-/// Note: Not public ABI.
-pub(crate) const BLOCK_DEALLOCATING: BlockFlags = 0x0001;
+impl BlockFlags {
+    pub(crate) const EMPTY: Self = Self(0);
 
-/// Note: Not public ABI.
-pub(crate) const BLOCK_REFCOUNT_MASK: BlockFlags = if cfg!(feature = "gnustep-1-7") {
-    // Mask for the reference count in byref structure's flags field. The low
-    // 3 bytes are reserved for the reference count, the top byte for the flags.
-    0x00ffffff
-} else if cfg!(any(feature = "compiler-rt", feature = "objfw")) {
-    0xffff
-} else if cfg!(feature = "apple") {
-    0xfffe // runtime
-} else {
-    0
-};
+    /// Note: Not public ABI.
+    const BLOCK_DEALLOCATING: Self = Self(0x0001);
 
-/// Note: Not public ABI.
-pub(crate) const BLOCK_INLINE_LAYOUT_STRING: BlockFlags = 1 << 21;
+    /// Note: Not public ABI.
+    const BLOCK_REFCOUNT_MASK: Self = Self(if cfg!(feature = "gnustep-1-7") {
+        // Mask for the reference count in byref structure's flags field. The low
+        // 3 bytes are reserved for the reference count, the top byte for the flags.
+        0x00ffffff
+    } else if cfg!(any(feature = "compiler-rt", feature = "objfw")) {
+        0xffff
+    } else if cfg!(feature = "apple") {
+        0xfffe // runtime
+    } else {
+        0
+    });
 
-/// Note: Not public ABI.
-pub(crate) const BLOCK_SMALL_DESCRIPTOR: BlockFlags = 1 << 22;
+    /// Note: Not public ABI.
+    const BLOCK_INLINE_LAYOUT_STRING: Self = Self(1 << 21);
 
-pub(crate) const BLOCK_IS_NOESCAPE: BlockFlags = 1 << 23;
+    /// Note: Not public ABI.
+    const BLOCK_SMALL_DESCRIPTOR: Self = Self(1 << 22);
 
-/// Note: Not public ABI.
-pub(crate) const BLOCK_NEEDS_FREE: BlockFlags = 1 << 24;
+    pub(crate) const BLOCK_IS_NOESCAPE: Self = Self(1 << 23);
 
-/// The block descriptor contains copy and dispose helpers.
-pub(crate) const BLOCK_HAS_COPY_DISPOSE: BlockFlags = 1 << 25;
+    /// Note: Not public ABI.
+    const BLOCK_NEEDS_FREE: Self = Self(1 << 24);
 
-/// Helpers have C++ code.
-#[doc(alias = "BLOCK_HAS_CXX_OBJ")]
-pub(crate) const BLOCK_HAS_CTOR: BlockFlags = 1 << 26;
+    /// The block descriptor contains copy and dispose helpers.
+    pub(crate) const BLOCK_HAS_COPY_DISPOSE: Self = Self(1 << 25);
 
-/// Note: Not public ABI.
-pub(crate) const BLOCK_IS_GC: BlockFlags = 1 << 27;
+    /// Helpers have C++ code.
+    #[doc(alias = "BLOCK_HAS_CXX_OBJ")]
+    pub(crate) const BLOCK_HAS_CTOR: Self = Self(1 << 26);
 
-/// Block is stored in global memory and does not need to be copied.
-pub(crate) const BLOCK_IS_GLOBAL: BlockFlags = 1 << 28;
+    /// Note: Not public ABI.
+    const BLOCK_IS_GC: Self = Self(1 << 27);
 
-/// Block function uses a calling convention that returns a structure via a
-/// pointer passed in by the caller.
-///
-/// match (BLOCK_USE_STRET, BLOCK_HAS_SIGNATURE) {
-///     (false, false) => 10.6.ABI, no signature field available
-///     (true, false)  => 10.6.ABI, no signature field available
-///     (false, true)  => ABI.2010.3.16, regular calling convention, presence of signature field
-///     (true, true)   => ABI.2010.3.16, stret calling convention, presence of signature field,
-/// }
-///
-/// See <https://clang.llvm.org/docs/Block-ABI-Apple.html#high-level>
-#[doc(alias = "BLOCK_USE_SRET")]
-#[doc(alias = "BLOCK_HAS_DESCRIPTOR")]
-pub(crate) const BLOCK_USE_STRET: BlockFlags = 1 << 29;
+    /// Block is stored in global memory and does not need to be copied.
+    pub(crate) const BLOCK_IS_GLOBAL: Self = Self(1 << 28);
 
-/// Block has an Objective-C type encoding.
-pub(crate) const BLOCK_HAS_SIGNATURE: BlockFlags = 1 << 30;
+    /// Block function uses a calling convention that returns a structure via a
+    /// pointer passed in by the caller.
+    ///
+    /// match (BLOCK_USE_STRET, BLOCK_HAS_SIGNATURE) {
+    ///     (false, false) => 10.6.ABI, no signature field available
+    ///     (true, false)  => 10.6.ABI, no signature field available
+    ///     (false, true)  => ABI.2010.3.16, regular calling convention, presence of signature field
+    ///     (true, true)   => ABI.2010.3.16, stret calling convention, presence of signature field,
+    /// }
+    ///
+    /// See <https://clang.llvm.org/docs/Block-ABI-Apple.html#high-level>
+    #[doc(alias = "BLOCK_USE_SRET")]
+    #[doc(alias = "BLOCK_HAS_DESCRIPTOR")]
+    pub(crate) const BLOCK_USE_STRET: Self = Self(1 << 29);
 
-/// Note: Not public ABI.
-pub(crate) const BLOCK_HAS_EXTENDED_LAYOUT: BlockFlags = 1 << 31;
+    /// Block has an Objective-C type encoding.
+    pub(crate) const BLOCK_HAS_SIGNATURE: Self = Self(1 << 30);
+
+    /// Note: Not public ABI.
+    const BLOCK_HAS_EXTENDED_LAYOUT: Self = Self(1 << 31);
+}
+
+impl fmt::Debug for BlockFlags {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut f = f.debug_struct("BlockFlags");
+        f.field("value", &format!("{:032b}", self.0));
+
+        macro_rules! test_flags {
+            {$(
+                $(#[$m:meta])?
+                $name:ident: $flag:ident
+            );* $(;)?} => ($(
+                $(#[$m])?
+                f.field(stringify!($name), &(self.0 & Self::$flag.0 != 0));
+            )*)
+        }
+        test_flags! {
+            #[cfg(feature = "apple")]
+            deallocating: BLOCK_DEALLOCATING;
+            #[cfg(feature = "apple")]
+            inline_layout_string: BLOCK_INLINE_LAYOUT_STRING;
+            #[cfg(feature = "apple")]
+            small_descriptor: BLOCK_SMALL_DESCRIPTOR;
+            #[cfg(feature = "apple")]
+            is_noescape: BLOCK_IS_NOESCAPE;
+            #[cfg(feature = "apple")]
+            needs_free: BLOCK_NEEDS_FREE;
+            has_copy_dispose: BLOCK_HAS_COPY_DISPOSE;
+            has_ctor: BLOCK_HAS_CTOR;
+            #[cfg(feature = "apple")]
+            is_gc: BLOCK_IS_GC;
+            is_global: BLOCK_IS_GLOBAL;
+            use_stret: BLOCK_USE_STRET;
+            has_signature: BLOCK_HAS_SIGNATURE;
+            #[cfg(feature = "apple")]
+            has_extended_layout: BLOCK_HAS_EXTENDED_LAYOUT;
+        }
+
+        f.field(
+            "over_referenced",
+            &(self.0 & Self::BLOCK_REFCOUNT_MASK.0 == Self::BLOCK_REFCOUNT_MASK.0),
+        );
+        f.field(
+            "reference_count",
+            &((self.0 & Self::BLOCK_REFCOUNT_MASK.0) >> 1),
+        );
+
+        f.finish_non_exhaustive()
+    }
+}
 
 /// The value is of some id-like type, and should be copied as an Objective-C
 /// object: i.e. by sending -retain or via the GC assign functions in GC mode

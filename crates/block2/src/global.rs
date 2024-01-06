@@ -8,12 +8,13 @@ use std::os::raw::c_ulong;
 use objc2::encode::EncodeReturn;
 
 use super::Block;
-use crate::{abi, BlockArguments};
+use crate::abi::{BlockDescriptor, BlockFlags, BlockLayout};
+use crate::BlockArguments;
 
 // TODO: Should this be a static to help the compiler deduplicating them?
-const GLOBAL_DESCRIPTOR: abi::BlockDescriptor = abi::BlockDescriptor {
+const GLOBAL_DESCRIPTOR: BlockDescriptor = BlockDescriptor {
     reserved: 0,
-    size: mem::size_of::<abi::BlockLayout>() as c_ulong,
+    size: mem::size_of::<BlockLayout>() as c_ulong,
 };
 
 /// An Objective-C block that does not capture its environment.
@@ -28,7 +29,7 @@ const GLOBAL_DESCRIPTOR: abi::BlockDescriptor = abi::BlockDescriptor {
 /// [`global_block!`]: crate::global_block
 #[repr(C)]
 pub struct GlobalBlock<A, R = ()> {
-    pub(crate) layout: abi::BlockLayout,
+    pub(crate) layout: BlockLayout,
     p: PhantomData<(A, R)>,
 }
 
@@ -52,22 +53,23 @@ where
 // triggers an error.
 impl<A, R> GlobalBlock<A, R> {
     // TODO: Use new ABI with BLOCK_HAS_SIGNATURE
-    const FLAGS: abi::BlockFlags = abi::BLOCK_IS_GLOBAL | abi::BLOCK_USE_STRET;
+    const FLAGS: BlockFlags =
+        BlockFlags(BlockFlags::BLOCK_IS_GLOBAL.0 | BlockFlags::BLOCK_USE_STRET.0);
 
     #[doc(hidden)]
-    pub const __DEFAULT_LAYOUT: abi::BlockLayout = abi::BlockLayout {
+    pub const __DEFAULT_LAYOUT: BlockLayout = BlockLayout {
         // Populated in `global_block!`
         isa: ptr::null_mut(),
         flags: Self::FLAGS,
         reserved: MaybeUninit::new(0),
         // Populated in `global_block!`
         invoke: None,
-        descriptor: &GLOBAL_DESCRIPTOR as *const abi::BlockDescriptor as *mut c_void,
+        descriptor: &GLOBAL_DESCRIPTOR as *const BlockDescriptor as *mut c_void,
     };
 
     /// Use the [`global_block`] macro instead.
     #[doc(hidden)]
-    pub const unsafe fn from_layout(layout: abi::BlockLayout) -> Self {
+    pub const unsafe fn from_layout(layout: BlockLayout) -> Self {
         Self {
             layout,
             p: PhantomData,
@@ -253,7 +255,7 @@ mod tests {
     #[test]
     fn test_debug() {
         let invoke = NOOP_BLOCK.layout.invoke.unwrap();
-        let size = mem::size_of::<abi::BlockLayout>();
+        let size = mem::size_of::<BlockLayout>();
         let expected = format!(
             "GlobalBlock {{
     isa: _NSConcreteGlobalBlock,

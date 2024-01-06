@@ -1,10 +1,13 @@
-use alloc::format;
 use core::ffi::c_void;
 use core::fmt::{Debug, DebugStruct, Error, Formatter};
 use core::ptr;
 use std::ffi::CStr;
 
-use crate::{abi, ffi, Block, ConcreteBlock, GlobalBlock, RcBlock};
+use crate::abi::{
+    BlockDescriptor, BlockDescriptorCopyDispose, BlockDescriptorCopyDisposeSignature,
+    BlockDescriptorSignature, BlockFlags, BlockLayout,
+};
+use crate::{ffi, Block, ConcreteBlock, GlobalBlock, RcBlock};
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 struct Isa(*const ffi::Class);
@@ -34,16 +37,16 @@ impl Debug for Isa {
     }
 }
 
-fn debug_block_layout(layout: &abi::BlockLayout, f: &mut DebugStruct<'_, '_>) {
+fn debug_block_layout(layout: &BlockLayout, f: &mut DebugStruct<'_, '_>) {
     f.field("isa", &Isa(layout.isa));
-    f.field("flags", &BlockFlags(layout.flags));
+    f.field("flags", &layout.flags);
     f.field("reserved", &layout.reserved);
     f.field("invoke", &layout.invoke);
     f.field(
         "descriptor",
-        &BlockDescriptor {
-            has_copy_dispose: layout.flags & abi::BLOCK_HAS_COPY_DISPOSE != 0,
-            has_signature: layout.flags & abi::BLOCK_HAS_SIGNATURE != 0,
+        &BlockDescriptorHelper {
+            has_copy_dispose: layout.flags.0 & BlockFlags::BLOCK_HAS_COPY_DISPOSE.0 != 0,
+            has_signature: layout.flags.0 & BlockFlags::BLOCK_HAS_SIGNATURE.0 != 0,
             descriptor: layout.descriptor,
         },
     );
@@ -53,7 +56,7 @@ impl<A, R> Debug for Block<A, R> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
         let mut f = f.debug_struct("Block");
         let ptr: *const Self = self;
-        let layout = unsafe { ptr.cast::<abi::BlockLayout>().as_ref().unwrap() };
+        let layout = unsafe { ptr.cast::<BlockLayout>().as_ref().unwrap() };
         debug_block_layout(layout, &mut f);
         f.finish_non_exhaustive()
     }
@@ -62,7 +65,7 @@ impl<A, R> Debug for Block<A, R> {
 impl<A, R> Debug for RcBlock<A, R> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
         let mut f = f.debug_struct("RcBlock");
-        let layout = unsafe { self.ptr.cast::<abi::BlockLayout>().as_ref().unwrap() };
+        let layout = unsafe { self.ptr.cast::<BlockLayout>().as_ref().unwrap() };
         debug_block_layout(layout, &mut f);
         f.finish_non_exhaustive()
     }
@@ -86,64 +89,13 @@ impl<A, R> Debug for GlobalBlock<A, R> {
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
-struct BlockFlags(abi::BlockFlags);
-
-impl Debug for BlockFlags {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
-        let mut f = f.debug_struct("BlockFlags");
-        f.field("value", &format!("{:032b}", self.0));
-
-        macro_rules! test_flags {
-            {$(
-                $(#[$m:meta])?
-                $name:ident: $flag:ident
-            );* $(;)?} => ($(
-                $(#[$m])?
-                f.field(stringify!($name), &(self.0 & abi::$flag != 0));
-            )*)
-        }
-        test_flags! {
-            #[cfg(feature = "apple")]
-            deallocating: BLOCK_DEALLOCATING;
-            #[cfg(feature = "apple")]
-            inline_layout_string: BLOCK_INLINE_LAYOUT_STRING;
-            #[cfg(feature = "apple")]
-            small_descriptor: BLOCK_SMALL_DESCRIPTOR;
-            #[cfg(feature = "apple")]
-            is_noescape: BLOCK_IS_NOESCAPE;
-            #[cfg(feature = "apple")]
-            needs_free: BLOCK_NEEDS_FREE;
-            has_copy_dispose: BLOCK_HAS_COPY_DISPOSE;
-            has_ctor: BLOCK_HAS_CTOR;
-            #[cfg(feature = "apple")]
-            is_gc: BLOCK_IS_GC;
-            is_global: BLOCK_IS_GLOBAL;
-            use_stret: BLOCK_USE_STRET;
-            has_signature: BLOCK_HAS_SIGNATURE;
-            #[cfg(feature = "apple")]
-            has_extended_layout: BLOCK_HAS_EXTENDED_LAYOUT;
-        }
-
-        f.field(
-            "over_referenced",
-            &(self.0 & abi::BLOCK_REFCOUNT_MASK == abi::BLOCK_REFCOUNT_MASK),
-        );
-        f.field(
-            "reference_count",
-            &((self.0 & abi::BLOCK_REFCOUNT_MASK) >> 1),
-        );
-        f.finish_non_exhaustive()
-    }
-}
-
-#[derive(Clone, Copy, PartialEq, Eq)]
-struct BlockDescriptor {
+struct BlockDescriptorHelper {
     has_copy_dispose: bool,
     has_signature: bool,
     descriptor: *const c_void,
 }
 
-impl Debug for BlockDescriptor {
+impl Debug for BlockDescriptorHelper {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
         if self.descriptor.is_null() {
             return f.write_str("(null)");
@@ -151,12 +103,7 @@ impl Debug for BlockDescriptor {
 
         let mut f = f.debug_struct("BlockDescriptor");
 
-        let header = unsafe {
-            self.descriptor
-                .cast::<abi::BlockDescriptor>()
-                .as_ref()
-                .unwrap()
-        };
+        let header = unsafe { self.descriptor.cast::<BlockDescriptor>().as_ref().unwrap() };
 
         f.field("reserved", &header.reserved);
         f.field("size", &header.size);
@@ -166,7 +113,7 @@ impl Debug for BlockDescriptor {
             (true, false) => {
                 let descriptor = unsafe {
                     self.descriptor
-                        .cast::<abi::BlockDescriptorCopyDispose>()
+                        .cast::<BlockDescriptorCopyDispose>()
                         .as_ref()
                         .unwrap()
                 };
@@ -176,7 +123,7 @@ impl Debug for BlockDescriptor {
             (false, true) => {
                 let descriptor = unsafe {
                     self.descriptor
-                        .cast::<abi::BlockDescriptorSignature>()
+                        .cast::<BlockDescriptorSignature>()
                         .as_ref()
                         .unwrap()
                 };
@@ -192,7 +139,7 @@ impl Debug for BlockDescriptor {
             (true, true) => {
                 let descriptor = unsafe {
                     self.descriptor
-                        .cast::<abi::BlockDescriptorCopyDisposeSignature>()
+                        .cast::<BlockDescriptorCopyDisposeSignature>()
                         .as_ref()
                         .unwrap()
                 };

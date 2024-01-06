@@ -7,7 +7,8 @@ use std::os::raw::c_ulong;
 
 use objc2::encode::{EncodeArgument, EncodeReturn, Encoding, RefEncode};
 
-use crate::{abi, ffi, Block, BlockArguments, RcBlock};
+use crate::abi::{BlockDescriptorCopyDispose, BlockFlags, BlockLayout};
+use crate::{ffi, Block, BlockArguments, RcBlock};
 
 mod private {
     pub trait Sealed<A> {}
@@ -163,7 +164,7 @@ concrete_block_impl!(
 #[repr(C)]
 pub struct ConcreteBlock<A, R, F> {
     p: PhantomData<Block<A, R>>,
-    pub(crate) layout: abi::BlockLayout,
+    pub(crate) layout: BlockLayout,
     pub(crate) closure: F,
 }
 
@@ -187,13 +188,13 @@ where
 
 impl<A, R, F> ConcreteBlock<A, R, F> {
     // TODO: Use new ABI with BLOCK_HAS_SIGNATURE
-    const FLAGS: abi::BlockFlags = if mem::needs_drop::<Self>() {
-        abi::BLOCK_HAS_COPY_DISPOSE
+    const FLAGS: BlockFlags = if mem::needs_drop::<Self>() {
+        BlockFlags::BLOCK_HAS_COPY_DISPOSE
     } else {
-        0
+        BlockFlags::EMPTY
     };
 
-    const DESCRIPTOR: abi::BlockDescriptorCopyDispose = abi::BlockDescriptorCopyDispose {
+    const DESCRIPTOR: BlockDescriptorCopyDispose = BlockDescriptorCopyDispose {
         reserved: 0,
         size: mem::size_of::<Self>() as c_ulong,
         copy: if mem::needs_drop::<Self>() {
@@ -212,12 +213,12 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
     /// Unsafe because the caller must ensure the invoke function takes the
     /// correct arguments.
     unsafe fn with_invoke(invoke: unsafe extern "C" fn(), closure: F) -> Self {
-        let layout = abi::BlockLayout {
+        let layout = BlockLayout {
             isa: unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) },
             flags: Self::FLAGS,
             reserved: MaybeUninit::new(0),
             invoke: Some(invoke),
-            descriptor: &Self::DESCRIPTOR as *const abi::BlockDescriptorCopyDispose as *mut c_void,
+            descriptor: &Self::DESCRIPTOR as *const BlockDescriptorCopyDispose as *mut c_void,
         };
         Self {
             p: PhantomData,
