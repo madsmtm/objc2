@@ -17,10 +17,6 @@ impl Isa {
     fn is_stack(self) -> bool {
         ptr::eq(unsafe { &ffi::_NSConcreteStackBlock }, self.0)
     }
-
-    fn is_malloc(self) -> bool {
-        ptr::eq(unsafe { &abi::_NSConcreteMallocBlock }, self.0)
-    }
 }
 
 impl Debug for Isa {
@@ -29,10 +25,8 @@ impl Debug for Isa {
             f.write_str("_NSConcreteGlobalBlock")
         } else if self.is_stack() {
             f.write_str("_NSConcreteStackBlock")
-        } else if self.is_malloc() {
-            f.write_str("_NSConcreteMallocBlock")
         } else {
-            write!(f, "{:?}", self.0)
+            write!(f, "{:?} (likely _NSConcreteMallocBlock)", self.0)
         }
     }
 }
@@ -225,18 +219,14 @@ mod tests {
         let isa = Isa(unsafe { &ffi::_NSConcreteGlobalBlock });
         assert!(isa.is_global());
         assert!(!isa.is_stack());
-        assert!(!isa.is_malloc());
         let isa = Isa(unsafe { &ffi::_NSConcreteStackBlock });
         assert!(!isa.is_global());
         assert!(isa.is_stack());
-        assert!(!isa.is_malloc());
         let isa = Isa(unsafe { &abi::_NSConcreteMallocBlock });
         assert!(!isa.is_global());
         assert!(!isa.is_stack());
-        assert!(isa.is_malloc());
         let isa = Isa(ptr::null());
         assert!(!isa.is_global());
         assert!(!isa.is_stack());
-        assert!(!isa.is_malloc());
     }
 }
