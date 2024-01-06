@@ -171,7 +171,7 @@ macro_rules! global_block {
         #[allow(unused_unsafe)]
         $vis static $name: $crate::GlobalBlock<($($t,)*) $(, $r)?> = unsafe {
             let mut layout = $crate::GlobalBlock::<($($t,)*) $(, $r)?>::__DEFAULT_LAYOUT;
-            layout.isa = &$crate::ffi::_NSConcreteGlobalBlock;
+            layout.isa = ::core::ptr::addr_of!($crate::ffi::_NSConcreteGlobalBlock);
             layout.invoke = ::core::option::Option::Some({
                 unsafe extern "C" fn inner(_: *mut $crate::__Block_layout, $($a: $t),*) $(-> $r)? {
                     $body

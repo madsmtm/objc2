@@ -153,9 +153,11 @@ mod tests {
 
     #[test]
     fn test_linkable() {
-        println!("{:p}", unsafe { &_NSConcreteGlobalBlock });
-        println!("{:p}", unsafe { &_NSConcreteStackBlock });
-        println!("{:p}", unsafe { &private::_NSConcreteMallocBlock });
+        println!("{:?}", unsafe { ptr::addr_of!(_NSConcreteGlobalBlock) });
+        println!("{:?}", unsafe { ptr::addr_of!(_NSConcreteStackBlock) });
+        println!("{:?}", unsafe {
+            ptr::addr_of!(private::_NSConcreteMallocBlock)
+        });
         println!("{:p}", _Block_copy as unsafe extern "C" fn(_) -> _);
         println!(
             "{:p}",

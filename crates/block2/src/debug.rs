@@ -11,11 +11,14 @@ struct Isa(*const ffi::Class);
 
 impl Isa {
     fn is_global(self) -> bool {
-        ptr::eq(unsafe { &ffi::_NSConcreteGlobalBlock }, self.0)
+        ptr::eq(
+            unsafe { ptr::addr_of!(ffi::_NSConcreteGlobalBlock) },
+            self.0,
+        )
     }
 
     fn is_stack(self) -> bool {
-        ptr::eq(unsafe { &ffi::_NSConcreteStackBlock }, self.0)
+        ptr::eq(unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) }, self.0)
     }
 }
 
@@ -216,13 +219,13 @@ mod tests {
 
     #[test]
     fn test_isa() {
-        let isa = Isa(unsafe { &ffi::_NSConcreteGlobalBlock });
+        let isa = Isa(unsafe { ptr::addr_of!(ffi::_NSConcreteGlobalBlock) });
         assert!(isa.is_global());
         assert!(!isa.is_stack());
-        let isa = Isa(unsafe { &ffi::_NSConcreteStackBlock });
+        let isa = Isa(unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) });
         assert!(!isa.is_global());
         assert!(isa.is_stack());
-        let isa = Isa(unsafe { &ffi::private::_NSConcreteMallocBlock });
+        let isa = Isa(unsafe { ptr::addr_of!(ffi::private::_NSConcreteMallocBlock) });
         assert!(!isa.is_global());
         assert!(!isa.is_stack());
         let isa = Isa(ptr::null());

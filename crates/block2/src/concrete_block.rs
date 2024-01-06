@@ -215,7 +215,7 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
     /// correct arguments.
     unsafe fn with_invoke(invoke: unsafe extern "C" fn(), closure: F) -> Self {
         let layout = abi::Block_layout {
-            isa: unsafe { &ffi::_NSConcreteStackBlock },
+            isa: unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) },
             flags: Self::FLAGS,
             reserved: 0,
             invoke: Some(invoke),
