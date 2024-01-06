@@ -4,10 +4,10 @@ use core::fmt::{Debug, DebugStruct, Error, Formatter};
 use core::ptr;
 use std::ffi::CStr;
 
-use crate::{ffi, Block, ConcreteBlock, GlobalBlock, RcBlock};
+use crate::{abi, ffi, Block, ConcreteBlock, GlobalBlock, RcBlock};
 
 #[derive(Clone, Copy, PartialEq, Eq)]
-struct Isa(*const ffi::Class);
+struct Isa(*const abi::Class);
 
 impl Isa {
     fn is_global(self) -> bool {
@@ -19,7 +19,7 @@ impl Isa {
     }
 
     fn is_malloc(self) -> bool {
-        ptr::eq(unsafe { &ffi::_NSConcreteMallocBlock }, self.0)
+        ptr::eq(unsafe { &abi::_NSConcreteMallocBlock }, self.0)
     }
 }
 
@@ -37,7 +37,7 @@ impl Debug for Isa {
     }
 }
 
-fn debug_block_layout(layout: &ffi::Block_layout, f: &mut DebugStruct<'_, '_>) {
+fn debug_block_layout(layout: &abi::Block_layout, f: &mut DebugStruct<'_, '_>) {
     f.field("isa", &Isa(layout.isa));
     f.field("flags", &BlockFlags(layout.flags));
     f.field("reserved", &layout.reserved);
@@ -45,8 +45,8 @@ fn debug_block_layout(layout: &ffi::Block_layout, f: &mut DebugStruct<'_, '_>) {
     f.field(
         "descriptor",
         &BlockDescriptor {
-            has_copy_dispose: layout.flags & ffi::BLOCK_HAS_COPY_DISPOSE != 0,
-            has_signature: layout.flags & ffi::BLOCK_HAS_SIGNATURE != 0,
+            has_copy_dispose: layout.flags & abi::BLOCK_HAS_COPY_DISPOSE != 0,
+            has_signature: layout.flags & abi::BLOCK_HAS_SIGNATURE != 0,
             descriptor: layout.descriptor,
         },
     );
@@ -56,7 +56,7 @@ impl<A, R> Debug for Block<A, R> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
         let mut f = f.debug_struct("Block");
         let ptr: *const Self = self;
-        let layout = unsafe { ptr.cast::<ffi::Block_layout>().as_ref().unwrap() };
+        let layout = unsafe { ptr.cast::<abi::Block_layout>().as_ref().unwrap() };
         debug_block_layout(layout, &mut f);
         f.finish_non_exhaustive()
     }
@@ -65,7 +65,7 @@ impl<A, R> Debug for Block<A, R> {
 impl<A, R> Debug for RcBlock<A, R> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
         let mut f = f.debug_struct("RcBlock");
-        let layout = unsafe { self.ptr.cast::<ffi::Block_layout>().as_ref().unwrap() };
+        let layout = unsafe { self.ptr.cast::<abi::Block_layout>().as_ref().unwrap() };
         debug_block_layout(layout, &mut f);
         f.finish_non_exhaustive()
     }
@@ -89,7 +89,7 @@ impl<A, R> Debug for GlobalBlock<A, R> {
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
-struct BlockFlags(ffi::block_flags);
+struct BlockFlags(abi::block_flags);
 
 impl Debug for BlockFlags {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
@@ -102,7 +102,7 @@ impl Debug for BlockFlags {
                 $name:ident: $flag:ident
             );* $(;)?} => ($(
                 $(#[$m])?
-                f.field(stringify!($name), &(self.0 & ffi::$flag != 0));
+                f.field(stringify!($name), &(self.0 & abi::$flag != 0));
             )*)
         }
         test_flags! {
@@ -129,11 +129,11 @@ impl Debug for BlockFlags {
 
         f.field(
             "over_referenced",
-            &(self.0 & ffi::BLOCK_REFCOUNT_MASK == ffi::BLOCK_REFCOUNT_MASK),
+            &(self.0 & abi::BLOCK_REFCOUNT_MASK == abi::BLOCK_REFCOUNT_MASK),
         );
         f.field(
             "reference_count",
-            &((self.0 & ffi::BLOCK_REFCOUNT_MASK) >> 1),
+            &((self.0 & abi::BLOCK_REFCOUNT_MASK) >> 1),
         );
         f.finish_non_exhaustive()
     }
@@ -156,7 +156,7 @@ impl Debug for BlockDescriptor {
 
         let header = unsafe {
             self.descriptor
-                .cast::<ffi::Block_descriptor_header>()
+                .cast::<abi::Block_descriptor_header>()
                 .as_ref()
                 .unwrap()
         };
@@ -169,7 +169,7 @@ impl Debug for BlockDescriptor {
             (true, false) => {
                 let descriptor = unsafe {
                     self.descriptor
-                        .cast::<ffi::Block_descriptor>()
+                        .cast::<abi::Block_descriptor>()
                         .as_ref()
                         .unwrap()
                 };
@@ -179,7 +179,7 @@ impl Debug for BlockDescriptor {
             (false, true) => {
                 let descriptor = unsafe {
                     self.descriptor
-                        .cast::<ffi::Block_descriptor_basic>()
+                        .cast::<abi::Block_descriptor_basic>()
                         .as_ref()
                         .unwrap()
                 };
@@ -195,7 +195,7 @@ impl Debug for BlockDescriptor {
             (true, true) => {
                 let descriptor = unsafe {
                     self.descriptor
-                        .cast::<ffi::Block_descriptor_with_signature>()
+                        .cast::<abi::Block_descriptor_with_signature>()
                         .as_ref()
                         .unwrap()
                 };
@@ -230,7 +230,7 @@ mod tests {
         assert!(!isa.is_global());
         assert!(isa.is_stack());
         assert!(!isa.is_malloc());
-        let isa = Isa(unsafe { &ffi::_NSConcreteMallocBlock });
+        let isa = Isa(unsafe { &abi::_NSConcreteMallocBlock });
         assert!(!isa.is_global());
         assert!(!isa.is_stack());
         assert!(isa.is_malloc());

@@ -99,15 +99,17 @@ compile_error!("The `std` feature currently must be enabled.");
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
-pub use block_sys as ffi;
-
+mod abi;
 mod block;
 mod concrete_block;
 mod debug;
+pub mod ffi;
 mod global;
 mod rc_block;
 
 pub use block::{Block, BlockArguments};
+#[doc(hidden)]
+pub use block_sys::Block_layout as __Block_layout;
 pub use concrete_block::{ConcreteBlock, IntoConcreteBlock};
 pub use global::GlobalBlock;
 pub use rc_block::RcBlock;

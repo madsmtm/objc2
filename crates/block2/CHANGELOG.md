@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Changed
+* **BREAKING**: Only expose the actually public symbols `_Block_copy`,
+  `_Block_release`, `_Block_object_assign`, `_Block_object_dispose`,
+  `_NSConcreteGlobalBlock`, `_NSConcreteStackBlock` and `Class` in `ffi`
+  module.
+
 
 ## 0.4.0 - 2023-12-03
 

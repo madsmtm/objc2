@@ -7,13 +7,13 @@ use std::os::raw::c_ulong;
 
 use objc2::encode::EncodeReturn;
 
-use super::{ffi, Block};
-use crate::BlockArguments;
+use super::Block;
+use crate::{abi, BlockArguments};
 
 // TODO: Should this be a static to help the compiler deduplicating them?
-const GLOBAL_DESCRIPTOR: ffi::Block_descriptor_header = ffi::Block_descriptor_header {
+const GLOBAL_DESCRIPTOR: abi::Block_descriptor_header = abi::Block_descriptor_header {
     reserved: 0,
-    size: mem::size_of::<ffi::Block_layout>() as c_ulong,
+    size: mem::size_of::<abi::Block_layout>() as c_ulong,
 };
 
 /// An Objective-C block that does not capture its environment.
@@ -28,7 +28,7 @@ const GLOBAL_DESCRIPTOR: ffi::Block_descriptor_header = ffi::Block_descriptor_he
 /// [`global_block!`]: crate::global_block
 #[repr(C)]
 pub struct GlobalBlock<A, R = ()> {
-    pub(crate) layout: ffi::Block_layout,
+    pub(crate) layout: abi::Block_layout,
     p: PhantomData<(A, R)>,
 }
 
@@ -52,22 +52,22 @@ where
 // triggers an error.
 impl<A, R> GlobalBlock<A, R> {
     // TODO: Use new ABI with BLOCK_HAS_SIGNATURE
-    const FLAGS: ffi::block_flags = ffi::BLOCK_IS_GLOBAL | ffi::BLOCK_USE_STRET;
+    const FLAGS: abi::block_flags = abi::BLOCK_IS_GLOBAL | abi::BLOCK_USE_STRET;
 
     #[doc(hidden)]
-    pub const __DEFAULT_LAYOUT: ffi::Block_layout = ffi::Block_layout {
+    pub const __DEFAULT_LAYOUT: abi::Block_layout = abi::Block_layout {
         // Populated in `global_block!`
         isa: ptr::null_mut(),
         flags: Self::FLAGS,
         reserved: 0,
         // Populated in `global_block!`
         invoke: None,
-        descriptor: &GLOBAL_DESCRIPTOR as *const ffi::Block_descriptor_header as *mut c_void,
+        descriptor: &GLOBAL_DESCRIPTOR as *const abi::Block_descriptor_header as *mut c_void,
     };
 
     /// Use the [`global_block`] macro instead.
     #[doc(hidden)]
-    pub const unsafe fn from_layout(layout: ffi::Block_layout) -> Self {
+    pub const unsafe fn from_layout(layout: abi::Block_layout) -> Self {
         Self {
             layout,
             p: PhantomData,
@@ -173,10 +173,10 @@ macro_rules! global_block {
             let mut layout = $crate::GlobalBlock::<($($t,)*) $(, $r)?>::__DEFAULT_LAYOUT;
             layout.isa = &$crate::ffi::_NSConcreteGlobalBlock;
             layout.invoke = ::core::option::Option::Some({
-                unsafe extern "C" fn inner(_: *mut $crate::ffi::Block_layout, $($a: $t),*) $(-> $r)? {
+                unsafe extern "C" fn inner(_: *mut $crate::__Block_layout, $($a: $t),*) $(-> $r)? {
                     $body
                 }
-                let inner: unsafe extern "C" fn(*mut $crate::ffi::Block_layout, $($a: $t),*) $(-> $r)? = inner;
+                let inner: unsafe extern "C" fn(*mut $crate::__Block_layout, $($a: $t),*) $(-> $r)? = inner;
 
                 // TODO: SAFETY
                 ::core::mem::transmute(inner)
@@ -253,7 +253,7 @@ mod tests {
     #[test]
     fn test_debug() {
         let invoke = NOOP_BLOCK.layout.invoke.unwrap();
-        let size = mem::size_of::<ffi::Block_layout>();
+        let size = mem::size_of::<abi::Block_layout>();
         let expected = format!(
             "GlobalBlock {{
     isa: _NSConcreteGlobalBlock,
