@@ -242,8 +242,6 @@ pub mod ffi;
 mod global;
 mod rc_block;
 
-#[doc(hidden)]
-pub use abi::BlockLayout as __BlockLayout;
 pub use block::{Block, BlockArguments};
 pub use concrete_block::{ConcreteBlock, IntoConcreteBlock};
 pub use global::GlobalBlock;

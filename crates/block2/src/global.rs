@@ -186,13 +186,15 @@ macro_rules! global_block {
             let mut layout = $crate::GlobalBlock::<($($t,)*) $(, $r)?>::__DEFAULT_LAYOUT;
             layout.isa = ::core::ptr::addr_of!($crate::ffi::_NSConcreteGlobalBlock);
             layout.invoke = ::core::option::Option::Some({
-                unsafe extern "C" fn inner(_: *mut $crate::__BlockLayout, $($a: $t),*) $(-> $r)? {
+                unsafe extern "C" fn inner(_: *mut $crate::GlobalBlock<($($t,)*) $(, $r)?>, $($a: $t),*) $(-> $r)? {
                     $body
                 }
-                let inner: unsafe extern "C" fn(*mut $crate::__BlockLayout, $($a: $t),*) $(-> $r)? = inner;
 
                 // TODO: SAFETY
-                ::core::mem::transmute(inner)
+                ::core::mem::transmute::<
+                    unsafe extern "C" fn(*mut $crate::GlobalBlock<($($t,)*) $(, $r)?>, $($a: $t),*) $(-> $r)?,
+                    unsafe extern "C" fn(),
+                >(inner)
             });
             $crate::GlobalBlock::from_layout(layout)
         };
