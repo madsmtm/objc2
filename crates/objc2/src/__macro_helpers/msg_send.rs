@@ -181,7 +181,7 @@ impl<T: ?Sized + Message> MsgSend for ManuallyDrop<Id<T>> {
 
     #[inline]
     fn into_raw_receiver(self) -> *mut AnyObject {
-        Id::consume_as_ptr(ManuallyDrop::into_inner(self)).cast()
+        Id::into_raw(ManuallyDrop::into_inner(self)).cast()
     }
 }
 

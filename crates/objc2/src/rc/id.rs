@@ -227,6 +227,33 @@ impl<T: ?Sized + Message> Id<T> {
         unsafe { Self::from_raw(ptr) }
     }
 
+    /// Consumes the `Id`, returning a raw pointer with +1 retain count.
+    ///
+    /// After calling this function, the caller is responsible for the memory
+    /// previously managed by the `Id`.
+    ///
+    /// This is effectively the opposite of [`Id::from_raw`], see that for
+    /// more details on when this function is useful.
+    ///
+    ///
+    /// # Examples
+    ///
+    /// Converting an `Id` to a pointer and back.
+    ///
+    /// ```
+    /// use objc2::rc::Id;
+    /// use objc2::runtime::NSObject;
+    ///
+    /// let obj = NSObject::new();
+    /// let ptr = Id::into_raw(obj);
+    /// // SAFETY: The pointer is valid, and has +1 retain count from above.
+    /// let obj = unsafe { Id::from_raw(ptr) }.unwrap();
+    /// ```
+    #[inline]
+    pub fn into_raw(this: Self) -> *mut T {
+        ManuallyDrop::new(this).ptr.as_ptr()
+    }
+
     /// Returns a raw pointer to the object.
     ///
     /// The pointer is valid for at least as long as the `Id` is held.
@@ -258,16 +285,11 @@ impl<T: ?Sized + Message> Id<T> {
     }
 
     #[inline]
-    pub(crate) fn consume_as_ptr(this: Self) -> *mut T {
-        ManuallyDrop::new(this).ptr.as_ptr()
-    }
-
-    #[inline]
     pub(crate) fn consume_as_ptr_option(this: Option<Self>) -> *mut T
     where
         T: Sized,
     {
-        this.map(|this| Id::consume_as_ptr(this))
+        this.map(|this| Id::into_raw(this))
             .unwrap_or_else(ptr::null_mut)
     }
 }

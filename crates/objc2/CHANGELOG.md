@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `AnyClass::instance_variables`.
   - `AnyProtocol::protocols`.
   - `AnyProtocol::adopted_protocols`.
+* Added `Id::into_raw` as the oppositve of `Id::from_raw`.
 
 ### Changed
 * Moved `ClassBuilder` and `ProtocolBuilder` from the `declare` module to the

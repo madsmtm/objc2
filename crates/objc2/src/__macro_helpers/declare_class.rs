@@ -108,7 +108,7 @@ pub trait MaybeOptionId: MaybeUnwrap {
 impl<T: Message> MaybeOptionId for Id<T> {
     #[inline]
     fn consumed_return(self) -> IdReturnValue {
-        let ptr: *mut T = Id::consume_as_ptr(self);
+        let ptr: *mut T = Id::into_raw(self);
         IdReturnValue(ptr.cast())
     }
 
