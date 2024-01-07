@@ -1,8 +1,8 @@
-use core::ffi::c_void;
 use core::marker::PhantomData;
 use core::mem;
 use core::ops::Deref;
 use core::ptr;
+use core::{ffi::c_void, mem::MaybeUninit};
 use std::os::raw::c_ulong;
 
 use objc2::encode::EncodeReturn;
@@ -11,9 +11,9 @@ use super::Block;
 use crate::{abi, BlockArguments};
 
 // TODO: Should this be a static to help the compiler deduplicating them?
-const GLOBAL_DESCRIPTOR: abi::Block_descriptor_header = abi::Block_descriptor_header {
+const GLOBAL_DESCRIPTOR: abi::BlockDescriptor = abi::BlockDescriptor {
     reserved: 0,
-    size: mem::size_of::<abi::Block_layout>() as c_ulong,
+    size: mem::size_of::<abi::BlockLayout>() as c_ulong,
 };
 
 /// An Objective-C block that does not capture its environment.
@@ -28,7 +28,7 @@ const GLOBAL_DESCRIPTOR: abi::Block_descriptor_header = abi::Block_descriptor_he
 /// [`global_block!`]: crate::global_block
 #[repr(C)]
 pub struct GlobalBlock<A, R = ()> {
-    pub(crate) layout: abi::Block_layout,
+    pub(crate) layout: abi::BlockLayout,
     p: PhantomData<(A, R)>,
 }
 
@@ -52,22 +52,22 @@ where
 // triggers an error.
 impl<A, R> GlobalBlock<A, R> {
     // TODO: Use new ABI with BLOCK_HAS_SIGNATURE
-    const FLAGS: abi::block_flags = abi::BLOCK_IS_GLOBAL | abi::BLOCK_USE_STRET;
+    const FLAGS: abi::BlockFlags = abi::BLOCK_IS_GLOBAL | abi::BLOCK_USE_STRET;
 
     #[doc(hidden)]
-    pub const __DEFAULT_LAYOUT: abi::Block_layout = abi::Block_layout {
+    pub const __DEFAULT_LAYOUT: abi::BlockLayout = abi::BlockLayout {
         // Populated in `global_block!`
         isa: ptr::null_mut(),
         flags: Self::FLAGS,
-        reserved: 0,
+        reserved: MaybeUninit::new(0),
         // Populated in `global_block!`
         invoke: None,
-        descriptor: &GLOBAL_DESCRIPTOR as *const abi::Block_descriptor_header as *mut c_void,
+        descriptor: &GLOBAL_DESCRIPTOR as *const abi::BlockDescriptor as *mut c_void,
     };
 
     /// Use the [`global_block`] macro instead.
     #[doc(hidden)]
-    pub const unsafe fn from_layout(layout: abi::Block_layout) -> Self {
+    pub const unsafe fn from_layout(layout: abi::BlockLayout) -> Self {
         Self {
             layout,
             p: PhantomData,
@@ -173,10 +173,10 @@ macro_rules! global_block {
             let mut layout = $crate::GlobalBlock::<($($t,)*) $(, $r)?>::__DEFAULT_LAYOUT;
             layout.isa = ::core::ptr::addr_of!($crate::ffi::_NSConcreteGlobalBlock);
             layout.invoke = ::core::option::Option::Some({
-                unsafe extern "C" fn inner(_: *mut $crate::__Block_layout, $($a: $t),*) $(-> $r)? {
+                unsafe extern "C" fn inner(_: *mut $crate::__BlockLayout, $($a: $t),*) $(-> $r)? {
                     $body
                 }
-                let inner: unsafe extern "C" fn(*mut $crate::__Block_layout, $($a: $t),*) $(-> $r)? = inner;
+                let inner: unsafe extern "C" fn(*mut $crate::__BlockLayout, $($a: $t),*) $(-> $r)? = inner;
 
                 // TODO: SAFETY
                 ::core::mem::transmute(inner)
@@ -253,12 +253,12 @@ mod tests {
     #[test]
     fn test_debug() {
         let invoke = NOOP_BLOCK.layout.invoke.unwrap();
-        let size = mem::size_of::<abi::Block_layout>();
+        let size = mem::size_of::<abi::BlockLayout>();
         let expected = format!(
             "GlobalBlock {{
     isa: _NSConcreteGlobalBlock,
     flags: {DEBUG_BLOCKFLAGS},
-    reserved: 0,
+    reserved: core::mem::maybe_uninit::MaybeUninit<i32>,
     invoke: Some(
         {invoke:#?},
     ),

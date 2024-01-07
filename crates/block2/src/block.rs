@@ -89,10 +89,10 @@ block_args_impl!(
 #[repr(C)]
 pub struct Block<A, R> {
     _inner: [u8; 0],
-    // We store `Block_layout` + a bit more, but `Block` has to remain an
-    // empty type otherwise the compiler thinks we only have provenance over
-    // `Block_layout`.
-    _layout: PhantomData<abi::Block_layout>,
+    // We store `BlockLayout` + the closure captures, but `Block` has to
+    // remain an empty type otherwise the compiler thinks we only have
+    // provenance over `BlockLayout`.
+    _layout: PhantomData<abi::BlockLayout>,
     // To get correct variance on args and return types
     _p: PhantomData<fn(A) -> R>,
 }
@@ -113,7 +113,7 @@ impl<A: BlockArguments, R: EncodeReturn> Block<A, R> {
     /// caller must ensure that calling it will not cause a data race.
     pub unsafe fn call(&self, args: A) -> R {
         let ptr: *const Self = self;
-        let layout = unsafe { ptr.cast::<abi::Block_layout>().as_ref().unwrap_unchecked() };
+        let layout = unsafe { ptr.cast::<abi::BlockLayout>().as_ref().unwrap_unchecked() };
         // TODO: Is `invoke` actually ever null?
         let invoke = layout.invoke.unwrap_or_else(|| unreachable!());
 

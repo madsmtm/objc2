@@ -3,27 +3,22 @@
 //! be looking!
 //!
 //! [ABI]: https://clang.llvm.org/docs/Block-ABI-Apple.html
-#![allow(
-    unreachable_pub,
-    unused,
-    non_camel_case_types,
-    missing_debug_implementations
-)]
+#![allow(unused)]
 
-use core::ffi::c_void;
+use core::{ffi::c_void, mem::MaybeUninit};
 use std::os::raw::{c_char, c_int, c_ulong};
 
 use crate::ffi::Class;
 
 /// Block descriptor flags.
-/// Values for Block_layout->flags to describe block objects
 #[allow(non_camel_case_types)]
-pub type block_flags = c_int;
+pub(crate) type BlockFlags = c_int;
 
-#[cfg(any(doc, feature = "apple"))]
-pub const BLOCK_DEALLOCATING: block_flags = 0x0001;
+/// Note: Not public ABI.
+pub(crate) const BLOCK_DEALLOCATING: BlockFlags = 0x0001;
 
-pub const BLOCK_REFCOUNT_MASK: block_flags = if cfg!(feature = "gnustep-1-7") {
+/// Note: Not public ABI.
+pub(crate) const BLOCK_REFCOUNT_MASK: BlockFlags = if cfg!(feature = "gnustep-1-7") {
     // Mask for the reference count in byref structure's flags field. The low
     // 3 bytes are reserved for the reference count, the top byte for the flags.
     0x00ffffff
@@ -35,37 +30,29 @@ pub const BLOCK_REFCOUNT_MASK: block_flags = if cfg!(feature = "gnustep-1-7") {
     0
 };
 
-#[cfg(any(doc, feature = "apple"))]
-/// compiler
-pub const BLOCK_INLINE_LAYOUT_STRING: block_flags = 1 << 21;
+/// Note: Not public ABI.
+pub(crate) const BLOCK_INLINE_LAYOUT_STRING: BlockFlags = 1 << 21;
 
-#[cfg(any(doc, feature = "apple"))]
-/// compiler
-pub const BLOCK_SMALL_DESCRIPTOR: block_flags = 1 << 22;
+/// Note: Not public ABI.
+pub(crate) const BLOCK_SMALL_DESCRIPTOR: BlockFlags = 1 << 22;
 
-#[cfg(any(doc, feature = "apple"))] // Part of ABI?
-/// compiler
-pub const BLOCK_IS_NOESCAPE: block_flags = 1 << 23;
+pub(crate) const BLOCK_IS_NOESCAPE: BlockFlags = 1 << 23;
 
-#[cfg(any(doc, feature = "apple"))]
-/// runtime
-pub const BLOCK_NEEDS_FREE: block_flags = 1 << 24;
+/// Note: Not public ABI.
+pub(crate) const BLOCK_NEEDS_FREE: BlockFlags = 1 << 24;
 
 /// The block descriptor contains copy and dispose helpers.
-/// compiler
-pub const BLOCK_HAS_COPY_DISPOSE: block_flags = 1 << 25;
+pub(crate) const BLOCK_HAS_COPY_DISPOSE: BlockFlags = 1 << 25;
 
-/// The helpers have C++ code.
-/// compiler: helpers have C++ code
-pub const BLOCK_HAS_CTOR: block_flags = 1 << 26;
+/// Helpers have C++ code.
+#[doc(alias = "BLOCK_HAS_CXX_OBJ")]
+pub(crate) const BLOCK_HAS_CTOR: BlockFlags = 1 << 26;
 
-#[cfg(any(doc, feature = "apple"))]
-/// compiler
-pub const BLOCK_IS_GC: block_flags = 1 << 27;
+/// Note: Not public ABI.
+pub(crate) const BLOCK_IS_GC: BlockFlags = 1 << 27;
 
 /// Block is stored in global memory and does not need to be copied.
-/// compiler
-pub const BLOCK_IS_GLOBAL: block_flags = 1 << 28;
+pub(crate) const BLOCK_IS_GLOBAL: BlockFlags = 1 << 28;
 
 /// Block function uses a calling convention that returns a structure via a
 /// pointer passed in by the caller.
@@ -80,165 +67,165 @@ pub const BLOCK_IS_GLOBAL: block_flags = 1 << 28;
 /// See <https://clang.llvm.org/docs/Block-ABI-Apple.html#high-level>
 #[doc(alias = "BLOCK_USE_SRET")]
 #[doc(alias = "BLOCK_HAS_DESCRIPTOR")]
-// compiler-rt || macOS 10.6
-pub const BLOCK_USE_STRET: block_flags = 1 << 29;
+pub(crate) const BLOCK_USE_STRET: BlockFlags = 1 << 29;
 
 /// Block has an Objective-C type encoding.
-/// compiler
-pub const BLOCK_HAS_SIGNATURE: block_flags = 1 << 30;
+pub(crate) const BLOCK_HAS_SIGNATURE: BlockFlags = 1 << 30;
 
-#[cfg(any(doc, feature = "apple"))]
-/// compiler
-pub const BLOCK_HAS_EXTENDED_LAYOUT: block_flags = 1 << 31;
+/// Note: Not public ABI.
+pub(crate) const BLOCK_HAS_EXTENDED_LAYOUT: BlockFlags = 1 << 31;
 
 /// The value is of some id-like type, and should be copied as an Objective-C
 /// object: i.e. by sending -retain or via the GC assign functions in GC mode
 /// (not yet supported).
 ///
 /// id, NSObject, __attribute__((NSObject)), block, ...
-pub const BLOCK_FIELD_IS_OBJECT: c_int = 3;
+pub(crate) const BLOCK_FIELD_IS_OBJECT: c_int = 3;
 
 /// The field is a block.  This must be copied by the block copy functions.
 ///
 /// a block variable
-pub const BLOCK_FIELD_IS_BLOCK: c_int = 7;
+pub(crate) const BLOCK_FIELD_IS_BLOCK: c_int = 7;
 
 /// The field is an indirect reference to a variable declared with the __block
 /// storage qualifier.
 ///
 /// the on stack structure holding the __block variable
-pub const BLOCK_FIELD_IS_BYREF: c_int = 8;
+pub(crate) const BLOCK_FIELD_IS_BYREF: c_int = 8;
 
 /// The field is an indirect reference to a variable declared with the __block
 /// storage qualifier.
 ///
 /// declared __weak, only used in byref copy helpers
-pub const BLOCK_FIELD_IS_WEAK: c_int = 16;
+pub(crate) const BLOCK_FIELD_IS_WEAK: c_int = 16;
 
 /// The field is an indirect reference to a variable declared with the __block
 /// storage qualifier.
 ///
 /// called from __block (byref) copy/dispose support routines.
-pub const BLOCK_BYREF_CALLER: c_int = 128;
-
-// TODO: BLOCK_LAYOUT_X
+pub(crate) const BLOCK_BYREF_CALLER: c_int = 128;
 
 /// The expected layout of every block.
 #[repr(C)]
 #[doc(alias = "__block_literal")]
-pub struct Block_layout {
-    /// Class pointer. Always initialised to &_NSConcreteStackBlock for blocks
-    /// that are created on the stack or &_NSConcreteGlobalBlock for blocks
-    /// that are created in global storage.
+#[doc(alias = "Block_layout")]
+#[doc(alias = "Block_basic")]
+#[allow(missing_debug_implementations)]
+pub struct BlockLayout {
+    /// Class pointer.
+    ///
+    /// Always initialised to &_NSConcreteStackBlock for blocks that are
+    /// created on the stack or &_NSConcreteGlobalBlock for blocks that are
+    /// created in global storage.
     pub isa: *const Class,
     /// Flags.
-    /// See the `block_flags` enumerated type for possible values.
-    /// Contains ref count in Apple and ObjFW.
-    pub flags: block_flags,
-    /// Reserved - always initialised to 0 by the compiler (but this is not
-    /// said in the specification).
     ///
-    /// Used for the reference count in GNUStep and WinObjC.
-    pub reserved: i32,
-    /// The function that implements the block.  The first argument is this
-    /// structure, the subsequent arguments are the block's explicit
-    /// parameters. If the BLOCK_USE_SRET & BLOCK_HAS_SIGNATURE flag is set,
-    /// there is an additional hidden argument, which is a pointer to the
-    /// space on the stack allocated to hold the return value.
+    /// See the `BlockFlags` enumerated type for possible values.
+    ///
+    /// Contains reference count in Apple's and ObjFW's runtime.
+    #[doc(alias = "Block_flags")]
+    pub(crate) flags: BlockFlags,
+    /// Reserved.
+    ///
+    /// Initialized to 0 by the compiler, but is said to be uninitialized in
+    /// the specification.
+    ///
+    /// Used for the reference count in GNUStep's and WinObjC's runtime.
+    #[doc(alias = "Block_size")]
+    pub(crate) reserved: MaybeUninit<c_int>,
+    /// The function that implements the block.
+    ///
+    /// The first argument is a pointer to this structure, the subsequent
+    /// arguments are the block's explicit parameters.
+    ///
+    /// If the BLOCK_USE_SRET & BLOCK_HAS_SIGNATURE flag is set, there is an
+    /// additional hidden argument, which is a pointer to the space on the
+    /// stack allocated to hold the return value.
     pub invoke: Option<unsafe extern "C" fn()>,
     /// The block's descriptor. The actual type of this is:
     /// ```pseudo-code
     /// match (BLOCK_HAS_COPY_DISPOSE, BLOCK_HAS_SIGNATURE) {
-    ///     (false, false) => Block_descriptor_header,
-    ///     (true, false) => Block_descriptor,
-    ///     (false, true) => Block_descriptor_basic,
-    ///     (true, true) => Block_descriptor_with_signature,
+    ///     (false, false) => BlockDescriptor,
+    ///     (true, false) => BlockDescriptorCopyDispose,
+    ///     (false, true) => BlockDescriptorSignature,
+    ///     (true, true) => BlockDescriptorCopyDisposeSignature,
     /// }
     /// ```
     ///
-    /// But since all of these start with `Block_descriptor_header`, it is
-    /// always safe to reinterpret this pointer as that.
-    // Note: Important to use `*const c_void` until we know which type it is!
-    pub descriptor: *const c_void,
+    /// Since all of these start with `BlockDescriptor`, it is always safe to
+    /// reinterpret this pointer as that.
+    ///
+    /// Note: We don't use a `union` here, since that would be forced to have
+    /// a greater size than is actually required.
+    pub(crate) descriptor: *const c_void,
 }
 
+/// Basic block descriptor.
 #[repr(C)]
-#[allow(missing_copy_implementations)]
 #[doc(alias = "__block_descriptor")]
 #[doc(alias = "Block_descriptor_1")]
-pub struct Block_descriptor_header {
+pub(crate) struct BlockDescriptor {
     /// Reserved for future use. Currently always 0.
-    pub reserved: c_ulong, // usize
+    pub(crate) reserved: c_ulong,
     /// Size of the block.
-    pub size: c_ulong, // usize
+    pub(crate) size: c_ulong,
 }
 
 /// Block descriptor that contains copy and dispose operations.
 ///
-/// Requires BLOCK_HAS_COPY_DISPOSE
+/// Requires BLOCK_HAS_COPY_DISPOSE.
 #[repr(C)]
+#[doc(alias = "__block_descriptor")]
 #[doc(alias = "Block_descriptor_2")]
-pub struct Block_descriptor {
-    pub header: Block_descriptor_header,
+pub(crate) struct BlockDescriptorCopyDispose {
+    /// Reserved for future use. Currently always 0.
+    pub(crate) reserved: c_ulong,
+    /// Size of the block.
+    pub(crate) size: c_ulong,
 
-    /// Copy function, generated by the compiler to help copy the block if it
-    /// contains nontrivial copy operations.
-    pub copy: Option<unsafe extern "C" fn(dst: *mut c_void, src: *mut c_void)>,
-    /// Dispose function, generated by the compiler to help copy the block if
-    /// it contains nontrivial destructors.
-    pub dispose: Option<unsafe extern "C" fn(src: *mut c_void)>,
+    /// Helper to copy the block if it contains nontrivial copy operations.
+    pub(crate) copy: Option<unsafe extern "C" fn(dst: *mut c_void, src: *mut c_void)>,
+    /// Helper to destroy the block after being copied.
+    pub(crate) dispose: Option<unsafe extern "C" fn(src: *mut c_void)>,
 }
 
-/// Extended block descriptor that does not contain copy and dispose helper
-/// functions.
+/// Block descriptor that has an encoding / a signature.
 ///
-/// Requires BLOCK_HAS_SIGNATURE
+/// Requires BLOCK_HAS_SIGNATURE.
 #[repr(C)]
+#[doc(alias = "__block_descriptor")]
 #[doc(alias = "Block_descriptor_3")]
-pub struct Block_descriptor_basic {
-    pub header: Block_descriptor_header,
+pub(crate) struct BlockDescriptorSignature {
+    /// Reserved for future use. Currently always 0.
+    pub(crate) reserved: c_ulong,
+    /// Size of the block.
+    pub(crate) size: c_ulong,
 
     /// Objective-C type encoding of the block.
     #[doc(alias = "signature")]
-    pub encoding: *const c_char,
+    pub(crate) encoding: *const c_char,
 }
 
-/// Requires BLOCK_HAS_COPY_DISPOSE and BLOCK_HAS_SIGNATURE
+/// Block descriptor that contains copy and dispose operations, and which
+/// has an encoding / a signature.
+///
+/// Requires BLOCK_HAS_COPY_DISPOSE and BLOCK_HAS_SIGNATURE.
 #[repr(C)]
+#[doc(alias = "__block_descriptor")]
 #[doc(alias = "Block_descriptor_2")]
 #[doc(alias = "Block_descriptor_3")]
-pub struct Block_descriptor_with_signature {
-    pub header: Block_descriptor_header,
+pub(crate) struct BlockDescriptorCopyDisposeSignature {
+    /// Reserved for future use. Currently always 0.
+    pub(crate) reserved: c_ulong,
+    /// Size of the block.
+    pub(crate) size: c_ulong,
 
-    /// Same as [`Block_descriptor::copy`].
-    pub copy: Option<unsafe extern "C" fn(dst: *mut c_void, src: *mut c_void)>,
-    /// Same as [`Block_descriptor::dispose`].
-    pub dispose: Option<unsafe extern "C" fn(src: *mut c_void)>,
+    /// Helper to copy the block if it contains nontrivial copy operations.
+    pub(crate) copy: Option<unsafe extern "C" fn(dst: *mut c_void, src: *mut c_void)>,
+    /// Helper to destroy the block if required.
+    pub(crate) dispose: Option<unsafe extern "C" fn(src: *mut c_void)>,
 
     /// Objective-C type encoding of the block.
     #[doc(alias = "signature")]
-    pub encoding: *const c_char,
+    pub(crate) encoding: *const c_char,
 }
-
-// #[cfg(any(doc, feature = "apple"))]
-// pub layout: *const c_char,
-
-// #[repr(C)]
-// pub struct Block_descriptor_small {
-//     pub size: u32,
-//     pub signature: i32,
-//     pub layout: i32,
-//     pub copy: i32,
-//     pub dispose: i32,
-// }
-
-// #[repr(C)]
-// pub struct Block_basic {
-//     pub isa: *mut Class,
-//     pub Block_flags: i32,
-//     pub Block_size: i32,
-//     pub Block_invoke: Option<unsafe extern "C" fn()>,
-//     pub Block_copy: Option<unsafe extern "C" fn(dst: *mut c_void, src: *mut c_void)>,
-//     pub Block_dispose: Option<unsafe extern "C" fn(block: *mut c_void)>,
-// }
-// Example usage: https://github.com/apple-oss-distributions/libdispatch/blob/libdispatch-84.5/src/once.c

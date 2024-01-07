@@ -1,6 +1,6 @@
 use core::ffi::c_void;
 use core::marker::PhantomData;
-use core::mem::{self, ManuallyDrop};
+use core::mem::{self, ManuallyDrop, MaybeUninit};
 use core::ops::Deref;
 use core::ptr;
 use std::os::raw::c_ulong;
@@ -163,7 +163,7 @@ concrete_block_impl!(
 #[repr(C)]
 pub struct ConcreteBlock<A, R, F> {
     p: PhantomData<Block<A, R>>,
-    pub(crate) layout: abi::Block_layout,
+    pub(crate) layout: abi::BlockLayout,
     pub(crate) closure: F,
 }
 
@@ -187,17 +187,15 @@ where
 
 impl<A, R, F> ConcreteBlock<A, R, F> {
     // TODO: Use new ABI with BLOCK_HAS_SIGNATURE
-    const FLAGS: abi::block_flags = if mem::needs_drop::<Self>() {
+    const FLAGS: abi::BlockFlags = if mem::needs_drop::<Self>() {
         abi::BLOCK_HAS_COPY_DISPOSE
     } else {
         0
     };
 
-    const DESCRIPTOR: abi::Block_descriptor = abi::Block_descriptor {
-        header: abi::Block_descriptor_header {
-            reserved: 0,
-            size: mem::size_of::<Self>() as c_ulong,
-        },
+    const DESCRIPTOR: abi::BlockDescriptorCopyDispose = abi::BlockDescriptorCopyDispose {
+        reserved: 0,
+        size: mem::size_of::<Self>() as c_ulong,
         copy: if mem::needs_drop::<Self>() {
             Some(block_context_copy::<Self>)
         } else {
@@ -214,12 +212,12 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
     /// Unsafe because the caller must ensure the invoke function takes the
     /// correct arguments.
     unsafe fn with_invoke(invoke: unsafe extern "C" fn(), closure: F) -> Self {
-        let layout = abi::Block_layout {
+        let layout = abi::BlockLayout {
             isa: unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) },
             flags: Self::FLAGS,
-            reserved: 0,
+            reserved: MaybeUninit::new(0),
             invoke: Some(invoke),
-            descriptor: &Self::DESCRIPTOR as *const abi::Block_descriptor as *mut c_void,
+            descriptor: &Self::DESCRIPTOR as *const abi::BlockDescriptorCopyDispose as *mut c_void,
         };
         Self {
             p: PhantomData,

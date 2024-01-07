@@ -34,7 +34,7 @@ impl Debug for Isa {
     }
 }
 
-fn debug_block_layout(layout: &abi::Block_layout, f: &mut DebugStruct<'_, '_>) {
+fn debug_block_layout(layout: &abi::BlockLayout, f: &mut DebugStruct<'_, '_>) {
     f.field("isa", &Isa(layout.isa));
     f.field("flags", &BlockFlags(layout.flags));
     f.field("reserved", &layout.reserved);
@@ -53,7 +53,7 @@ impl<A, R> Debug for Block<A, R> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
         let mut f = f.debug_struct("Block");
         let ptr: *const Self = self;
-        let layout = unsafe { ptr.cast::<abi::Block_layout>().as_ref().unwrap() };
+        let layout = unsafe { ptr.cast::<abi::BlockLayout>().as_ref().unwrap() };
         debug_block_layout(layout, &mut f);
         f.finish_non_exhaustive()
     }
@@ -62,7 +62,7 @@ impl<A, R> Debug for Block<A, R> {
 impl<A, R> Debug for RcBlock<A, R> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
         let mut f = f.debug_struct("RcBlock");
-        let layout = unsafe { self.ptr.cast::<abi::Block_layout>().as_ref().unwrap() };
+        let layout = unsafe { self.ptr.cast::<abi::BlockLayout>().as_ref().unwrap() };
         debug_block_layout(layout, &mut f);
         f.finish_non_exhaustive()
     }
@@ -86,7 +86,7 @@ impl<A, R> Debug for GlobalBlock<A, R> {
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
-struct BlockFlags(abi::block_flags);
+struct BlockFlags(abi::BlockFlags);
 
 impl Debug for BlockFlags {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
@@ -153,7 +153,7 @@ impl Debug for BlockDescriptor {
 
         let header = unsafe {
             self.descriptor
-                .cast::<abi::Block_descriptor_header>()
+                .cast::<abi::BlockDescriptor>()
                 .as_ref()
                 .unwrap()
         };
@@ -166,7 +166,7 @@ impl Debug for BlockDescriptor {
             (true, false) => {
                 let descriptor = unsafe {
                     self.descriptor
-                        .cast::<abi::Block_descriptor>()
+                        .cast::<abi::BlockDescriptorCopyDispose>()
                         .as_ref()
                         .unwrap()
                 };
@@ -176,7 +176,7 @@ impl Debug for BlockDescriptor {
             (false, true) => {
                 let descriptor = unsafe {
                     self.descriptor
-                        .cast::<abi::Block_descriptor_basic>()
+                        .cast::<abi::BlockDescriptorSignature>()
                         .as_ref()
                         .unwrap()
                 };
@@ -192,7 +192,7 @@ impl Debug for BlockDescriptor {
             (true, true) => {
                 let descriptor = unsafe {
                     self.descriptor
-                        .cast::<abi::Block_descriptor_with_signature>()
+                        .cast::<abi::BlockDescriptorCopyDisposeSignature>()
                         .as_ref()
                         .unwrap()
                 };
