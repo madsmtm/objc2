@@ -69,8 +69,8 @@ extern "C" {
 }
 
 #[no_mangle]
-extern "C" fn debug_block(layout: *mut c_void) {
-    let block: &Block<(), ()> = unsafe { &*(layout as *const Block<(), ()>) };
+extern "C" fn debug_block(block: *mut c_void) {
+    let block: &Block<(), ()> = unsafe { &*(block as *const Block<(), ()>) };
     std::println!("{block:#?}");
 }
 

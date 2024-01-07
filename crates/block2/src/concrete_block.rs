@@ -1,13 +1,16 @@
 use core::ffi::c_void;
+use core::fmt;
 use core::marker::PhantomData;
-use core::mem::{self, ManuallyDrop};
+use core::mem::{self, ManuallyDrop, MaybeUninit};
 use core::ops::Deref;
 use core::ptr;
 use std::os::raw::c_ulong;
 
 use objc2::encode::{EncodeArgument, EncodeReturn, Encoding, RefEncode};
 
-use crate::{abi, ffi, Block, BlockArguments, RcBlock};
+use crate::abi::{BlockDescriptorCopyDispose, BlockDescriptorPtr, BlockFlags, BlockHeader};
+use crate::debug::debug_block_header;
+use crate::{ffi, Block, BlockArguments, RcBlock};
 
 mod private {
     pub trait Sealed<A> {}
@@ -163,7 +166,7 @@ concrete_block_impl!(
 #[repr(C)]
 pub struct ConcreteBlock<A, R, F> {
     p: PhantomData<Block<A, R>>,
-    pub(crate) layout: abi::Block_layout,
+    pub(crate) header: BlockHeader,
     pub(crate) closure: F,
 }
 
@@ -187,17 +190,15 @@ where
 
 impl<A, R, F> ConcreteBlock<A, R, F> {
     // TODO: Use new ABI with BLOCK_HAS_SIGNATURE
-    const FLAGS: abi::block_flags = if mem::needs_drop::<Self>() {
-        abi::BLOCK_HAS_COPY_DISPOSE
+    const FLAGS: BlockFlags = if mem::needs_drop::<Self>() {
+        BlockFlags::BLOCK_HAS_COPY_DISPOSE
     } else {
-        0
+        BlockFlags::EMPTY
     };
 
-    const DESCRIPTOR: abi::Block_descriptor = abi::Block_descriptor {
-        header: abi::Block_descriptor_header {
-            reserved: 0,
-            size: mem::size_of::<Self>() as c_ulong,
-        },
+    const DESCRIPTOR: BlockDescriptorCopyDispose = BlockDescriptorCopyDispose {
+        reserved: 0,
+        size: mem::size_of::<Self>() as c_ulong,
         copy: if mem::needs_drop::<Self>() {
             Some(block_context_copy::<Self>)
         } else {
@@ -214,16 +215,18 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
     /// Unsafe because the caller must ensure the invoke function takes the
     /// correct arguments.
     unsafe fn with_invoke(invoke: unsafe extern "C" fn(), closure: F) -> Self {
-        let layout = abi::Block_layout {
+        let header = BlockHeader {
             isa: unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) },
             flags: Self::FLAGS,
-            reserved: 0,
+            reserved: MaybeUninit::new(0),
             invoke: Some(invoke),
-            descriptor: &Self::DESCRIPTOR as *const abi::Block_descriptor as *mut c_void,
+            descriptor: BlockDescriptorPtr {
+                with_copy_dispose: &Self::DESCRIPTOR,
+            },
         };
         Self {
             p: PhantomData,
-            layout,
+            header,
             closure,
         }
     }
@@ -243,7 +246,7 @@ impl<A, R, F: 'static> ConcreteBlock<A, R, F> {
 
 impl<A, R, F: Clone> Clone for ConcreteBlock<A, R, F> {
     fn clone(&self) -> Self {
-        unsafe { Self::with_invoke(self.layout.invoke.unwrap(), self.closure.clone()) }
+        unsafe { Self::with_invoke(self.header.invoke.unwrap(), self.closure.clone()) }
     }
 }
 
@@ -264,4 +267,13 @@ unsafe extern "C" fn block_context_dispose<B>(block: *mut c_void) {
 
 unsafe extern "C" fn block_context_copy<B>(_dst: *mut c_void, _src: *mut c_void) {
     // The runtime memmoves the src block into the dst block, nothing to do
+}
+
+impl<A, R, F: fmt::Debug> fmt::Debug for ConcreteBlock<A, R, F> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut f = f.debug_struct("ConcreteBlock");
+        debug_block_header(&self.header, &mut f);
+        f.field("closure", &self.closure);
+        f.finish()
+    }
 }
