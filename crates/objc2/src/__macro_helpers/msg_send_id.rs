@@ -166,7 +166,7 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Id<U>>> for New {
         // SAFETY: Checked by caller
         let obj = unsafe { MsgSend::send_message(ptr, sel, args) };
         // SAFETY: The selector is `new`, so this has +1 retain count
-        let obj = unsafe { Id::new(obj) };
+        let obj = unsafe { Id::from_raw(obj) };
 
         // SAFETY: The object is still valid after a message send to a `new`
         // method - it would not be if the method was `init`.
@@ -188,7 +188,7 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Id<U>>> for New {
         // SAFETY: Same as in `send_message_id`
         let obj = unsafe { MsgSend::send_super_message(ptr, superclass, sel, args) };
         // SAFETY: Same as in `send_message_id`
-        let obj = unsafe { Id::new(obj) };
+        let obj = unsafe { Id::from_raw(obj) };
         // SAFETY: Same as in `send_message_id`
         R::maybe_unwrap::<Self>(obj, (unsafe { ptr.as_ref() }, sel))
     }
@@ -266,7 +266,7 @@ impl<T: ?Sized + Message> MsgSendId<Allocated<T>, Option<Id<T>>> for Init {
         // did not intend after every `alloc`.
         let obj = unsafe { MsgSend::send_message(ptr, sel, args) };
         // SAFETY: The selector is `init`, so this has +1 retain count
-        let obj = unsafe { Id::new(obj) };
+        let obj = unsafe { Id::from_raw(obj) };
         R::maybe_unwrap::<Self>(obj, (ptr.cast(), sel))
     }
 }
@@ -292,7 +292,7 @@ impl<T: DeclaredClass> MsgSendSuperId<PartialInit<T>, Option<Id<T>>> for Init {
             unsafe { set_finalized(ptr) };
         }
         // SAFETY: Same as `send_message_id`
-        let obj = unsafe { Id::new(ptr) };
+        let obj = unsafe { Id::from_raw(ptr) };
         R::maybe_unwrap::<Self>(obj, (ptr.cast(), sel))
     }
 }
@@ -308,7 +308,7 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendId<T, Option<Id<U>>> for CopyOrMutC
         let obj = unsafe { MsgSend::send_message(obj, sel, args) };
         // SAFETY: The selector is `copy` or `mutableCopy`, so this has +1
         // retain count
-        let obj = unsafe { Id::new(obj) };
+        let obj = unsafe { Id::from_raw(obj) };
         R::maybe_unwrap::<Self>(obj, ())
     }
 }
@@ -326,7 +326,7 @@ impl<T: MsgSend, U: ?Sized + Message> MsgSendSuperId<T, Option<Id<U>>> for CopyO
         // SAFETY: Same as in `send_message_id`
         let obj = unsafe { MsgSend::send_super_message(obj, superclass, sel, args) };
         // SAFETY: Same as in `send_message_id`
-        let obj = unsafe { Id::new(obj) };
+        let obj = unsafe { Id::from_raw(obj) };
         R::maybe_unwrap::<Self>(obj, ())
     }
 }

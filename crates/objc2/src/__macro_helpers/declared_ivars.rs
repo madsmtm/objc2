@@ -436,7 +436,7 @@ mod tests {
     where
         T::Super: ClassType,
     {
-        unsafe { Id::new(msg_send![super(Allocated::into_ptr(obj)), init]) }.unwrap()
+        unsafe { Id::from_raw(msg_send![super(Allocated::into_ptr(obj)), init]) }.unwrap()
     }
 
     /// Initialize, but fail to finalize (which is only done by `msg_send_id!`).
@@ -446,7 +446,7 @@ mod tests {
         T::Ivars: Default,
     {
         let obj = obj.set_ivars(Default::default());
-        unsafe { Id::new(msg_send![super(PartialInit::into_ptr(obj)), init]) }.unwrap()
+        unsafe { Id::from_raw(msg_send![super(PartialInit::into_ptr(obj)), init]) }.unwrap()
     }
 
     /// Initialize properly.

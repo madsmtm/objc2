@@ -243,7 +243,7 @@ unsafe fn try_no_ret<F: FnOnce()>(closure: F) -> Result<(), Option<Id<Exception>
         // Code throwing an exception know that they don't hold sole access to
         // that object any more, so even if the type was originally mutable,
         // it is okay to create a new `Id` to it here.
-        Err(unsafe { Id::new(exception.cast()) })
+        Err(unsafe { Id::from_raw(exception.cast()) })
     }
 }
 

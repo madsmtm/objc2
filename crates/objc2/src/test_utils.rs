@@ -236,7 +236,7 @@ pub(crate) fn custom_subprotocol() -> &'static AnyProtocol {
 
 pub(crate) fn custom_object() -> Id<CustomObject> {
     let ptr: *const AnyClass = custom_class();
-    unsafe { Id::new(ffi::class_createInstance(ptr.cast(), 0).cast()) }.unwrap()
+    unsafe { Id::from_raw(ffi::class_createInstance(ptr.cast(), 0).cast()) }.unwrap()
 }
 
 pub(crate) fn custom_subclass() -> &'static AnyClass {
@@ -270,5 +270,5 @@ pub(crate) fn custom_subclass() -> &'static AnyClass {
 
 pub(crate) fn custom_subclass_object() -> Id<CustomObject> {
     let ptr: *const AnyClass = custom_subclass();
-    unsafe { Id::new(ffi::class_createInstance(ptr.cast(), 0).cast()) }.unwrap()
+    unsafe { Id::from_raw(ffi::class_createInstance(ptr.cast(), 0).cast()) }.unwrap()
 }

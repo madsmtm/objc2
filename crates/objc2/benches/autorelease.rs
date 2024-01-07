@@ -32,7 +32,7 @@ fn alloc_nsobject() -> *mut NSObject {
 fn new_nsobject() -> Id<NSObject> {
     let obj = alloc_nsobject();
     let obj: *mut NSObject = unsafe { msg_send![obj, init] };
-    unsafe { Id::new(obj).unwrap_unchecked() }
+    unsafe { Id::from_raw(obj).unwrap_unchecked() }
 }
 
 fn new_nsdata() -> Id<NSObject> {
@@ -45,7 +45,7 @@ fn new_nsdata() -> Id<NSObject> {
             length: BYTES.len(),
         ]
     };
-    unsafe { Id::new(obj).unwrap_unchecked() }
+    unsafe { Id::from_raw(obj).unwrap_unchecked() }
 }
 
 fn new_leaked_nsdata() -> *const NSObject {
@@ -67,7 +67,7 @@ fn autoreleased_nsdata() -> *const NSObject {
 fn new_nsstring() -> Id<NSObject> {
     let obj: *mut NSObject = unsafe { msg_send![class!(NSString), alloc] };
     let obj: *mut NSObject = unsafe { msg_send![obj, init] };
-    unsafe { Id::new(obj).unwrap_unchecked() }
+    unsafe { Id::from_raw(obj).unwrap_unchecked() }
 }
 
 fn new_leaked_nsstring() -> *const NSObject {

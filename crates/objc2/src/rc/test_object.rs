@@ -306,7 +306,7 @@ impl __RcTestObject {
     #[doc(hidden)]
     pub fn new() -> Id<Self> {
         // Use msg_send! - msg_send_id! is tested elsewhere!
-        unsafe { Id::new(msg_send![Self::class(), new]) }.unwrap()
+        unsafe { Id::from_raw(msg_send![Self::class(), new]) }.unwrap()
     }
 }
 

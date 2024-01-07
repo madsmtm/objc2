@@ -23,7 +23,7 @@ use crate::{ffi, ClassType, Message};
 ///
 /// This can usually be gotten from one of the methods in `icrate`, but can be
 /// created manually with the [`msg_send_id!`] macro (or even more manually,
-/// with the [`Id::new`], [`Id::retain`] or [`Id::retain_autoreleased`]
+/// with the [`Id::retain`], [`Id::from_raw`] or [`Id::retain_autoreleased`]
 /// methods).
 ///
 /// [`msg_send_id!`]: crate::msg_send_id
@@ -171,6 +171,10 @@ impl<T: ?Sized + Message> Id<T> {
     /// from somewhere else, usually Objective-C methods like `init`, `alloc`,
     /// `new`, `copy`, or methods with the `ns_returns_retained` attribute.
     ///
+    /// If you do not have +1 retain count, such as if your object was
+    /// retrieved from other methods than the ones noted above, use
+    /// [`Id::retain`] instead.
+    ///
     ///
     /// # Safety
     ///
@@ -189,11 +193,11 @@ impl<T: ?Sized + Message> Id<T> {
     /// use objc2::runtime::NSObject;
     /// use objc2::{msg_send, msg_send_id, ClassType};
     ///
-    /// // Manually using `msg_send!` and `Id::new`
+    /// // Manually using `msg_send!` and `Id::from_raw`
     /// let obj: *mut NSObject = unsafe { msg_send![NSObject::class(), alloc] };
     /// let obj: *mut NSObject = unsafe { msg_send![obj, init] };
     /// // SAFETY: `-[NSObject init]` returns +1 retain count
-    /// let obj: Id<NSObject> = unsafe { Id::new(obj).unwrap() };
+    /// let obj: Id<NSObject> = unsafe { Id::from_raw(obj).unwrap() };
     ///
     /// // Or with `msg_send_id!`
     /// let obj: Id<NSObject> = unsafe { msg_send_id![NSObject::alloc(), init] };
@@ -204,10 +208,23 @@ impl<T: ?Sized + Message> Id<T> {
     #[inline]
     // Note: We don't take a reference as a parameter since it would be too
     // easy to accidentally create two aliasing mutable references.
-    pub unsafe fn new(ptr: *mut T) -> Option<Self> {
+    pub unsafe fn from_raw(ptr: *mut T) -> Option<Self> {
         // Should optimize down to a noop.
         // SAFETY: Upheld by the caller
         NonNull::new(ptr).map(|ptr| unsafe { Id::new_nonnull(ptr) })
+    }
+
+    /// Deprecated alias for [`Id::from_raw`], see that for details.
+    ///
+    ///
+    /// # Safety
+    ///
+    /// Same as [`Id::from_raw`].
+    #[deprecated = "use the more descriptive name `Id::from_raw` instead"]
+    #[inline]
+    pub unsafe fn new(ptr: *mut T) -> Option<Self> {
+        // SAFETY: Upheld by caller
+        unsafe { Self::from_raw(ptr) }
     }
 
     /// Returns a raw pointer to the object.
@@ -336,7 +353,7 @@ impl<T: Message> Id<T> {
         let res: *mut T = unsafe { objc_retain_fast(ptr.cast()) }.cast();
         debug_assert_eq!(res, ptr, "objc_retain did not return the same pointer");
         // SAFETY: We just retained the object, so it has +1 retain count
-        unsafe { Self::new(res) }
+        unsafe { Self::from_raw(res) }
     }
 
     /// Retains a previously autoreleased object pointer.
@@ -472,7 +489,7 @@ impl<T: Message> Id<T> {
         );
 
         // SAFETY: Same as `Id::retain`.
-        unsafe { Self::new(res) }
+        unsafe { Self::from_raw(res) }
     }
 
     #[inline]

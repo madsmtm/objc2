@@ -23,6 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `runtime` module. The old locations are deprecated.
 * Enabled the `"verify"` feature flag's functionality when debug assertions are
   enabled.
+* Renamed `Id::new` to `Id::from_raw`. The previous name is kept as a
+  deprecated alias.
 
 
 ## 0.5.0 - 2023-12-03

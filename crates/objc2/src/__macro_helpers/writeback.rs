@@ -147,7 +147,7 @@ impl<T: Message + 'static> ConvertArgument for &mut Option<Id<T>> {
         // ```
         //
         // And in that case, we can elide the `objc_release`!
-        let _: Option<Id<T>> = unsafe { Id::new(old) };
+        let _: Option<Id<T>> = unsafe { Id::from_raw(old) };
     }
 }
 

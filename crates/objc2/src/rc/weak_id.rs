@@ -100,7 +100,7 @@ impl<T: Message> WeakId<T> {
         let ptr = self.inner.get();
         let obj = unsafe { ffi::objc_loadWeakRetained(ptr) }.cast();
         // SAFETY: The object has +1 retain count
-        unsafe { Id::new(obj) }
+        unsafe { Id::from_raw(obj) }
     }
 
     // TODO: Add `autorelease(&self, pool) -> Option<&T>` using `objc_loadWeak`?
