@@ -32,7 +32,7 @@ pub unsafe trait IntoConcreteBlock<A: BlockArguments>: private::Sealed<A> + Size
     type Output: EncodeReturn;
 
     #[doc(hidden)]
-    fn __into_concrete_block(self) -> ConcreteBlock<A, Self::Output, Self>;
+    fn __get_invoke_stack_block() -> unsafe extern "C" fn();
 }
 
 macro_rules! concrete_block_impl {
@@ -48,8 +48,8 @@ macro_rules! concrete_block_impl {
         {
             type Output = R;
 
-            fn __into_concrete_block(self) -> ConcreteBlock<($($t,)*), R, X> {
-                extern "C" fn invoke<$($t,)* R, X>(
+            fn __get_invoke_stack_block() -> unsafe extern "C" fn() {
+                unsafe extern "C" fn invoke<$($t,)* R, X>(
                     block: &ConcreteBlock<($($t,)*), R, X>,
                     $($a: $t,)*
                 ) -> R
@@ -59,9 +59,12 @@ macro_rules! concrete_block_impl {
                     (block.closure)($($a),*)
                 }
 
-                let f: extern "C" fn(&ConcreteBlock<($($t,)*), R, X>, $($a: $t,)*) -> R = invoke;
-                let f: unsafe extern "C" fn() = unsafe { mem::transmute(f) };
-                unsafe { ConcreteBlock::with_invoke(f, self) }
+                unsafe {
+                    mem::transmute::<
+                        unsafe extern "C" fn(&ConcreteBlock<($($t,)*), R, X>, $($a: $t,)*) -> R,
+                        unsafe extern "C" fn(),
+                    >(invoke)
+                }
             }
         }
     );
@@ -174,7 +177,7 @@ where
     /// When the block is called, it will return the value that results from
     /// calling the closure.
     pub fn new(closure: F) -> Self {
-        closure.__into_concrete_block()
+        unsafe { Self::with_invoke(F::__get_invoke_stack_block(), closure) }
     }
 }
 
