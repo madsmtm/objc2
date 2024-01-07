@@ -1,12 +1,8 @@
-use core::ffi::c_void;
 use core::fmt::{Debug, DebugStruct, Error, Formatter};
 use core::ptr;
 use std::ffi::CStr;
 
-use crate::abi::{
-    BlockDescriptor, BlockDescriptorCopyDispose, BlockDescriptorCopyDisposeSignature,
-    BlockDescriptorSignature, BlockFlags, BlockLayout,
-};
+use crate::abi::{BlockDescriptorPtr, BlockFlags, BlockLayout};
 use crate::ffi;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -52,22 +48,22 @@ pub(crate) fn debug_block_layout(layout: &BlockLayout, f: &mut DebugStruct<'_, '
     );
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy)]
 struct BlockDescriptorHelper {
     has_copy_dispose: bool,
     has_signature: bool,
-    descriptor: *const c_void,
+    descriptor: BlockDescriptorPtr,
 }
 
 impl Debug for BlockDescriptorHelper {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
-        if self.descriptor.is_null() {
+        if unsafe { self.descriptor.basic }.is_null() {
             return f.write_str("(null)");
         }
 
         let mut f = f.debug_struct("BlockDescriptor");
 
-        let header = unsafe { self.descriptor.cast::<BlockDescriptor>().as_ref().unwrap() };
+        let header = unsafe { self.descriptor.basic.as_ref().unwrap() };
 
         f.field("reserved", &header.reserved);
         f.field("size", &header.size);
@@ -75,22 +71,12 @@ impl Debug for BlockDescriptorHelper {
         match (self.has_copy_dispose, self.has_signature) {
             (false, false) => {}
             (true, false) => {
-                let descriptor = unsafe {
-                    self.descriptor
-                        .cast::<BlockDescriptorCopyDispose>()
-                        .as_ref()
-                        .unwrap()
-                };
+                let descriptor = unsafe { self.descriptor.with_copy_dispose.as_ref().unwrap() };
                 f.field("copy", &descriptor.copy);
                 f.field("dispose", &descriptor.dispose);
             }
             (false, true) => {
-                let descriptor = unsafe {
-                    self.descriptor
-                        .cast::<BlockDescriptorSignature>()
-                        .as_ref()
-                        .unwrap()
-                };
+                let descriptor = unsafe { self.descriptor.with_signature.as_ref().unwrap() };
                 f.field(
                     "encoding",
                     &if descriptor.encoding.is_null() {
@@ -103,7 +89,7 @@ impl Debug for BlockDescriptorHelper {
             (true, true) => {
                 let descriptor = unsafe {
                     self.descriptor
-                        .cast::<BlockDescriptorCopyDisposeSignature>()
+                        .with_copy_dispose_signature
                         .as_ref()
                         .unwrap()
                 };

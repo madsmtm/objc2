@@ -8,7 +8,7 @@ use std::os::raw::c_ulong;
 
 use objc2::encode::{EncodeArgument, EncodeReturn, Encoding, RefEncode};
 
-use crate::abi::{BlockDescriptorCopyDispose, BlockFlags, BlockLayout};
+use crate::abi::{BlockDescriptorCopyDispose, BlockDescriptorPtr, BlockFlags, BlockLayout};
 use crate::debug::debug_block_layout;
 use crate::{ffi, Block, BlockArguments, RcBlock};
 
@@ -220,7 +220,9 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
             flags: Self::FLAGS,
             reserved: MaybeUninit::new(0),
             invoke: Some(invoke),
-            descriptor: &Self::DESCRIPTOR as *const BlockDescriptorCopyDispose as *mut c_void,
+            descriptor: BlockDescriptorPtr {
+                with_copy_dispose: &Self::DESCRIPTOR,
+            },
         };
         Self {
             p: PhantomData,

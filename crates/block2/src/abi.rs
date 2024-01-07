@@ -199,22 +199,32 @@ pub struct BlockLayout {
     /// additional hidden argument, which is a pointer to the space on the
     /// stack allocated to hold the return value.
     pub invoke: Option<unsafe extern "C" fn()>,
-    /// The block's descriptor. The actual type of this is:
-    /// ```pseudo-code
-    /// match (BLOCK_HAS_COPY_DISPOSE, BLOCK_HAS_SIGNATURE) {
-    ///     (false, false) => BlockDescriptor,
-    ///     (true, false) => BlockDescriptorCopyDispose,
-    ///     (false, true) => BlockDescriptorSignature,
-    ///     (true, true) => BlockDescriptorCopyDisposeSignature,
-    /// }
-    /// ```
-    ///
-    /// Since all of these start with `BlockDescriptor`, it is always safe to
-    /// reinterpret this pointer as that.
-    ///
-    /// Note: We don't use a `union` here, since that would be forced to have
-    /// a greater size than is actually required.
-    pub(crate) descriptor: *const c_void,
+    /// The block's descriptor.
+    pub(crate) descriptor: BlockDescriptorPtr,
+}
+
+/// The type of this is:
+/// ```pseudo-code
+/// match (BLOCK_HAS_COPY_DISPOSE, BLOCK_HAS_SIGNATURE) {
+///     (false, false) => BlockDescriptor,
+///     (true, false) => BlockDescriptorCopyDispose,
+///     (false, true) => BlockDescriptorSignature,
+///     (true, true) => BlockDescriptorCopyDisposeSignature,
+/// }
+/// ```
+///
+/// Since all of these start with `BlockDescriptor`, it is always safe to
+/// use the `basic` field.
+//
+// Note: We use an union on top of the pointer, since otherwise the descriptor
+// would be forced to have a greater size than is actually required.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub(crate) union BlockDescriptorPtr {
+    pub(crate) basic: *const BlockDescriptor,
+    pub(crate) with_copy_dispose: *const BlockDescriptorCopyDispose,
+    pub(crate) with_signature: *const BlockDescriptorSignature,
+    pub(crate) with_copy_dispose_signature: *const BlockDescriptorCopyDisposeSignature,
 }
 
 /// Basic block descriptor.

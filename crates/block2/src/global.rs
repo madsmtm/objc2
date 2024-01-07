@@ -1,14 +1,14 @@
 use core::fmt;
 use core::marker::PhantomData;
 use core::mem;
+use core::mem::MaybeUninit;
 use core::ops::Deref;
 use core::ptr;
-use core::{ffi::c_void, mem::MaybeUninit};
 use std::os::raw::c_ulong;
 
 use objc2::encode::EncodeReturn;
 
-use crate::abi::{BlockDescriptor, BlockFlags, BlockLayout};
+use crate::abi::{BlockDescriptor, BlockDescriptorPtr, BlockFlags, BlockLayout};
 use crate::debug::debug_block_layout;
 use crate::{Block, BlockArguments};
 
@@ -65,7 +65,9 @@ impl<A, R> GlobalBlock<A, R> {
         reserved: MaybeUninit::new(0),
         // Populated in `global_block!`
         invoke: None,
-        descriptor: &GLOBAL_DESCRIPTOR as *const BlockDescriptor as *mut c_void,
+        descriptor: BlockDescriptorPtr {
+            basic: &GLOBAL_DESCRIPTOR,
+        },
     };
 
     /// Use the [`global_block`] macro instead.
