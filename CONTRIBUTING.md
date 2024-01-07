@@ -59,7 +59,6 @@ Copy and fill out the following checklist into the release PR:
     - `objc2-proc-macros`
     - `objc-sys`
     - `objc2-encode`
-    - `block-sys`
     - `objc2`
     - `block2`
     - `icrate`

@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `_Block_release`, `_Block_object_assign`, `_Block_object_dispose`,
   `_NSConcreteGlobalBlock`, `_NSConcreteStackBlock` and `Class` in `ffi`
   module.
+* No longer use the `block-sys` crate for linking to the blocks runtime.
 
 
 ## 0.4.0 - 2023-12-03
@@ -76,7 +77,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 * **BREAKING**: Updated `objc2-encode` to `v2.0.0-pre.0`.
-* **BREAKING**: Updated `ffi` module to `block-sys v0.0.4`.
+* **BREAKING**: Updated `ffi` module to `block-sys v0.0.4`. This tweaks the
+  types of a lot of fields and arguments, and makes the apple runtime always
+  be the default.
 
 ### Removed
 * **BREAKING**: Removed `DerefMut` implementation for `ConcreteBlock`.
@@ -97,7 +100,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   creating blocks that don't reference their environment.
 
 ### Changed
-* **BREAKING**: Updated `ffi` module to `block-sys v0.0.2`
+* **BREAKING**: Updated `ffi` module to `block-sys v0.0.2`. This means that
+  `Class` is now `!UnwindSafe`.
 
 
 ## 0.2.0-alpha.1 - 2021-11-22

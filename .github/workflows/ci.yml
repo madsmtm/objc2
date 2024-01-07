@@ -38,7 +38,6 @@ env:
   #
   # This excludes `header-translator`, `test-assembly`, `tests` and `test-ui`.
   PUBLIC_CRATES: >-
-    --package=block-sys
     --package=block2
     --package=icrate
     --package=objc-sys
@@ -780,10 +779,8 @@ jobs:
     - lint
 
     env:
-      # `compiler-rt` is only relevant for these crates
-      PUBLIC_CRATES: >-
-        --package=block-sys
-        --package=block2
+      # `compiler-rt` is only relevant for block2
+      PUBLIC_CRATES: --package=block2
 
     steps:
     - uses: actions/checkout@v3

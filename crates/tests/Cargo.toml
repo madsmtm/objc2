@@ -39,7 +39,6 @@ gnustep-2-1 = ["gnustep-2-0", "block2/gnustep-2-1", "objc2/gnustep-2-1", "icrate
 
 [dependencies]
 block2 = { path = "../block2", default-features = false }
-block-sys = { path = "../block-sys", default-features = false }
 objc-sys = { path = "../objc-sys", default-features = false }
 objc2 = { path = "../objc2", default-features = false }
 icrate = { path = "../icrate", default-features = false }
