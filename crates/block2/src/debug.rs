@@ -7,7 +7,7 @@ use crate::abi::{
     BlockDescriptor, BlockDescriptorCopyDispose, BlockDescriptorCopyDisposeSignature,
     BlockDescriptorSignature, BlockFlags, BlockLayout,
 };
-use crate::{ffi, Block, ConcreteBlock, GlobalBlock, RcBlock};
+use crate::ffi;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 struct Isa(*const ffi::Class);
@@ -37,7 +37,7 @@ impl Debug for Isa {
     }
 }
 
-fn debug_block_layout(layout: &BlockLayout, f: &mut DebugStruct<'_, '_>) {
+pub(crate) fn debug_block_layout(layout: &BlockLayout, f: &mut DebugStruct<'_, '_>) {
     f.field("isa", &Isa(layout.isa));
     f.field("flags", &layout.flags);
     f.field("reserved", &layout.reserved);
@@ -50,42 +50,6 @@ fn debug_block_layout(layout: &BlockLayout, f: &mut DebugStruct<'_, '_>) {
             descriptor: layout.descriptor,
         },
     );
-}
-
-impl<A, R> Debug for Block<A, R> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
-        let mut f = f.debug_struct("Block");
-        let ptr: *const Self = self;
-        let layout = unsafe { ptr.cast::<BlockLayout>().as_ref().unwrap() };
-        debug_block_layout(layout, &mut f);
-        f.finish_non_exhaustive()
-    }
-}
-
-impl<A, R> Debug for RcBlock<A, R> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
-        let mut f = f.debug_struct("RcBlock");
-        let layout = unsafe { self.ptr.cast::<BlockLayout>().as_ref().unwrap() };
-        debug_block_layout(layout, &mut f);
-        f.finish_non_exhaustive()
-    }
-}
-
-impl<A, R, F: Debug> Debug for ConcreteBlock<A, R, F> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
-        let mut f = f.debug_struct("ConcreteBlock");
-        debug_block_layout(&self.layout, &mut f);
-        f.field("closure", &self.closure);
-        f.finish()
-    }
-}
-
-impl<A, R> Debug for GlobalBlock<A, R> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
-        let mut f = f.debug_struct("GlobalBlock");
-        debug_block_layout(&self.layout, &mut f);
-        f.finish_non_exhaustive()
-    }
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]

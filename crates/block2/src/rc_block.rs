@@ -1,5 +1,8 @@
+use core::fmt;
 use core::ops::Deref;
 
+use crate::abi::BlockLayout;
+use crate::debug::debug_block_layout;
 use crate::{ffi, Block};
 
 /// A reference-counted Objective-C block.
@@ -55,5 +58,14 @@ impl<A, R> Deref for RcBlock<A, R> {
 impl<A, R> Drop for RcBlock<A, R> {
     fn drop(&mut self) {
         unsafe { ffi::_Block_release(self.ptr.cast()) };
+    }
+}
+
+impl<A, R> fmt::Debug for RcBlock<A, R> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut f = f.debug_struct("RcBlock");
+        let layout = unsafe { self.ptr.cast::<BlockLayout>().as_ref().unwrap() };
+        debug_block_layout(layout, &mut f);
+        f.finish_non_exhaustive()
     }
 }

@@ -1,3 +1,4 @@
+use core::fmt;
 use core::marker::PhantomData;
 use core::mem;
 use core::ops::Deref;
@@ -7,9 +8,9 @@ use std::os::raw::c_ulong;
 
 use objc2::encode::EncodeReturn;
 
-use super::Block;
 use crate::abi::{BlockDescriptor, BlockFlags, BlockLayout};
-use crate::BlockArguments;
+use crate::debug::debug_block_layout;
+use crate::{Block, BlockArguments};
 
 // TODO: Should this be a static to help the compiler deduplicating them?
 const GLOBAL_DESCRIPTOR: BlockDescriptor = BlockDescriptor {
@@ -89,6 +90,14 @@ where
         let ptr: *const Block<A, R> = ptr.cast();
         // TODO: SAFETY
         unsafe { ptr.as_ref().unwrap_unchecked() }
+    }
+}
+
+impl<A, R> fmt::Debug for GlobalBlock<A, R> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut f = f.debug_struct("GlobalBlock");
+        debug_block_layout(&self.layout, &mut f);
+        f.finish_non_exhaustive()
     }
 }
 

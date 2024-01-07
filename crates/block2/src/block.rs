@@ -1,9 +1,11 @@
+use core::fmt;
 use core::marker::PhantomData;
 use core::mem;
 
 use objc2::encode::{EncodeArgument, EncodeReturn, Encoding, RefEncode};
 
 use crate::abi::BlockLayout;
+use crate::debug::debug_block_layout;
 
 /// Types that may be used as the arguments of an Objective-C block.
 ///
@@ -118,5 +120,15 @@ impl<A: BlockArguments, R: EncodeReturn> Block<A, R> {
         let invoke = layout.invoke.unwrap_or_else(|| unreachable!());
 
         unsafe { A::__call_block(invoke, ptr as *mut Self, args) }
+    }
+}
+
+impl<A, R> fmt::Debug for Block<A, R> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut f = f.debug_struct("Block");
+        let ptr: *const Self = self;
+        let layout = unsafe { ptr.cast::<BlockLayout>().as_ref().unwrap() };
+        debug_block_layout(layout, &mut f);
+        f.finish_non_exhaustive()
     }
 }

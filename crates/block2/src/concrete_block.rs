@@ -1,4 +1,5 @@
 use core::ffi::c_void;
+use core::fmt;
 use core::marker::PhantomData;
 use core::mem::{self, ManuallyDrop, MaybeUninit};
 use core::ops::Deref;
@@ -8,6 +9,7 @@ use std::os::raw::c_ulong;
 use objc2::encode::{EncodeArgument, EncodeReturn, Encoding, RefEncode};
 
 use crate::abi::{BlockDescriptorCopyDispose, BlockFlags, BlockLayout};
+use crate::debug::debug_block_layout;
 use crate::{ffi, Block, BlockArguments, RcBlock};
 
 mod private {
@@ -263,4 +265,13 @@ unsafe extern "C" fn block_context_dispose<B>(block: *mut c_void) {
 
 unsafe extern "C" fn block_context_copy<B>(_dst: *mut c_void, _src: *mut c_void) {
     // The runtime memmoves the src block into the dst block, nothing to do
+}
+
+impl<A, R, F: fmt::Debug> fmt::Debug for ConcreteBlock<A, R, F> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut f = f.debug_struct("ConcreteBlock");
+        debug_block_layout(&self.layout, &mut f);
+        f.field("closure", &self.closure);
+        f.finish()
+    }
 }
