@@ -162,13 +162,13 @@ pub(crate) const BLOCK_FIELD_IS_WEAK: c_int = 16;
 /// called from __block (byref) copy/dispose support routines.
 pub(crate) const BLOCK_BYREF_CALLER: c_int = 128;
 
-/// The expected layout of every block.
+/// The expected header of every block.
 #[repr(C)]
 #[doc(alias = "__block_literal")]
 #[doc(alias = "Block_layout")]
 #[doc(alias = "Block_basic")]
 #[allow(missing_debug_implementations)]
-pub struct BlockLayout {
+pub struct BlockHeader {
     /// Class pointer.
     ///
     /// Always initialised to &_NSConcreteStackBlock for blocks that are

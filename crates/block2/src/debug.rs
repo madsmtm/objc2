@@ -2,7 +2,7 @@ use core::fmt::{Debug, DebugStruct, Error, Formatter};
 use core::ptr;
 use std::ffi::CStr;
 
-use crate::abi::{BlockDescriptorPtr, BlockFlags, BlockLayout};
+use crate::abi::{BlockDescriptorPtr, BlockFlags, BlockHeader};
 use crate::ffi;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -33,17 +33,17 @@ impl Debug for Isa {
     }
 }
 
-pub(crate) fn debug_block_layout(layout: &BlockLayout, f: &mut DebugStruct<'_, '_>) {
-    f.field("isa", &Isa(layout.isa));
-    f.field("flags", &layout.flags);
-    f.field("reserved", &layout.reserved);
-    f.field("invoke", &layout.invoke);
+pub(crate) fn debug_block_header(header: &BlockHeader, f: &mut DebugStruct<'_, '_>) {
+    f.field("isa", &Isa(header.isa));
+    f.field("flags", &header.flags);
+    f.field("reserved", &header.reserved);
+    f.field("invoke", &header.invoke);
     f.field(
         "descriptor",
         &BlockDescriptorHelper {
-            has_copy_dispose: layout.flags.0 & BlockFlags::BLOCK_HAS_COPY_DISPOSE.0 != 0,
-            has_signature: layout.flags.0 & BlockFlags::BLOCK_HAS_SIGNATURE.0 != 0,
-            descriptor: layout.descriptor,
+            has_copy_dispose: header.flags.0 & BlockFlags::BLOCK_HAS_COPY_DISPOSE.0 != 0,
+            has_signature: header.flags.0 & BlockFlags::BLOCK_HAS_SIGNATURE.0 != 0,
+            descriptor: header.descriptor,
         },
     );
 }

@@ -8,8 +8,8 @@ use std::os::raw::c_ulong;
 
 use objc2::encode::{EncodeArgument, EncodeReturn, Encoding, RefEncode};
 
-use crate::abi::{BlockDescriptorCopyDispose, BlockDescriptorPtr, BlockFlags, BlockLayout};
-use crate::debug::debug_block_layout;
+use crate::abi::{BlockDescriptorCopyDispose, BlockDescriptorPtr, BlockFlags, BlockHeader};
+use crate::debug::debug_block_header;
 use crate::{ffi, Block, BlockArguments, RcBlock};
 
 mod private {
@@ -166,7 +166,7 @@ concrete_block_impl!(
 #[repr(C)]
 pub struct ConcreteBlock<A, R, F> {
     p: PhantomData<Block<A, R>>,
-    pub(crate) layout: BlockLayout,
+    pub(crate) header: BlockHeader,
     pub(crate) closure: F,
 }
 
@@ -215,7 +215,7 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
     /// Unsafe because the caller must ensure the invoke function takes the
     /// correct arguments.
     unsafe fn with_invoke(invoke: unsafe extern "C" fn(), closure: F) -> Self {
-        let layout = BlockLayout {
+        let header = BlockHeader {
             isa: unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) },
             flags: Self::FLAGS,
             reserved: MaybeUninit::new(0),
@@ -226,7 +226,7 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
         };
         Self {
             p: PhantomData,
-            layout,
+            header,
             closure,
         }
     }
@@ -246,7 +246,7 @@ impl<A, R, F: 'static> ConcreteBlock<A, R, F> {
 
 impl<A, R, F: Clone> Clone for ConcreteBlock<A, R, F> {
     fn clone(&self) -> Self {
-        unsafe { Self::with_invoke(self.layout.invoke.unwrap(), self.closure.clone()) }
+        unsafe { Self::with_invoke(self.header.invoke.unwrap(), self.closure.clone()) }
     }
 }
 
@@ -272,7 +272,7 @@ unsafe extern "C" fn block_context_copy<B>(_dst: *mut c_void, _src: *mut c_void)
 impl<A, R, F: fmt::Debug> fmt::Debug for ConcreteBlock<A, R, F> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut f = f.debug_struct("ConcreteBlock");
-        debug_block_layout(&self.layout, &mut f);
+        debug_block_header(&self.header, &mut f);
         f.field("closure", &self.closure);
         f.finish()
     }

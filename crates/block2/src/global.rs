@@ -8,14 +8,14 @@ use std::os::raw::c_ulong;
 
 use objc2::encode::EncodeReturn;
 
-use crate::abi::{BlockDescriptor, BlockDescriptorPtr, BlockFlags, BlockLayout};
-use crate::debug::debug_block_layout;
+use crate::abi::{BlockDescriptor, BlockDescriptorPtr, BlockFlags, BlockHeader};
+use crate::debug::debug_block_header;
 use crate::{Block, BlockArguments};
 
 // TODO: Should this be a static to help the compiler deduplicating them?
 const GLOBAL_DESCRIPTOR: BlockDescriptor = BlockDescriptor {
     reserved: 0,
-    size: mem::size_of::<BlockLayout>() as c_ulong,
+    size: mem::size_of::<BlockHeader>() as c_ulong,
 };
 
 /// An Objective-C block that does not capture its environment.
@@ -30,7 +30,7 @@ const GLOBAL_DESCRIPTOR: BlockDescriptor = BlockDescriptor {
 /// [`global_block!`]: crate::global_block
 #[repr(C)]
 pub struct GlobalBlock<A, R = ()> {
-    pub(crate) layout: BlockLayout,
+    pub(crate) header: BlockHeader,
     p: PhantomData<(A, R)>,
 }
 
@@ -58,7 +58,7 @@ impl<A, R> GlobalBlock<A, R> {
         BlockFlags(BlockFlags::BLOCK_IS_GLOBAL.0 | BlockFlags::BLOCK_USE_STRET.0);
 
     #[doc(hidden)]
-    pub const __DEFAULT_LAYOUT: BlockLayout = BlockLayout {
+    pub const __DEFAULT_HEADER: BlockHeader = BlockHeader {
         // Populated in `global_block!`
         isa: ptr::null_mut(),
         flags: Self::FLAGS,
@@ -72,9 +72,9 @@ impl<A, R> GlobalBlock<A, R> {
 
     /// Use the [`global_block`] macro instead.
     #[doc(hidden)]
-    pub const unsafe fn from_layout(layout: BlockLayout) -> Self {
+    pub const unsafe fn from_header(header: BlockHeader) -> Self {
         Self {
-            layout,
+            header,
             p: PhantomData,
         }
     }
@@ -98,7 +98,7 @@ where
 impl<A, R> fmt::Debug for GlobalBlock<A, R> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut f = f.debug_struct("GlobalBlock");
-        debug_block_layout(&self.layout, &mut f);
+        debug_block_header(&self.header, &mut f);
         f.finish_non_exhaustive()
     }
 }
@@ -183,9 +183,9 @@ macro_rules! global_block {
         $(#[$m])*
         #[allow(unused_unsafe)]
         $vis static $name: $crate::GlobalBlock<($($t,)*) $(, $r)?> = unsafe {
-            let mut layout = $crate::GlobalBlock::<($($t,)*) $(, $r)?>::__DEFAULT_LAYOUT;
-            layout.isa = ::core::ptr::addr_of!($crate::ffi::_NSConcreteGlobalBlock);
-            layout.invoke = ::core::option::Option::Some({
+            let mut header = $crate::GlobalBlock::<($($t,)*) $(, $r)?>::__DEFAULT_HEADER;
+            header.isa = ::core::ptr::addr_of!($crate::ffi::_NSConcreteGlobalBlock);
+            header.invoke = ::core::option::Option::Some({
                 unsafe extern "C" fn inner(_: *mut $crate::GlobalBlock<($($t,)*) $(, $r)?>, $($a: $t),*) $(-> $r)? {
                     $body
                 }
@@ -196,7 +196,7 @@ macro_rules! global_block {
                     unsafe extern "C" fn(),
                 >(inner)
             });
-            $crate::GlobalBlock::from_layout(layout)
+            $crate::GlobalBlock::from_header(header)
         };
     };
 }
@@ -267,8 +267,8 @@ mod tests {
 
     #[test]
     fn test_debug() {
-        let invoke = NOOP_BLOCK.layout.invoke.unwrap();
-        let size = mem::size_of::<BlockLayout>();
+        let invoke = NOOP_BLOCK.header.invoke.unwrap();
+        let size = mem::size_of::<BlockHeader>();
         let expected = format!(
             "GlobalBlock {{
     isa: _NSConcreteGlobalBlock,
