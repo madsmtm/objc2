@@ -1,4 +1,6 @@
-use block2::{ffi, Block};
+use std::os::raw::c_void;
+
+use block2::Block;
 use objc2::{Encode, Encoding};
 
 /// A block that takes no arguments and returns an integer: `int32_t (^)()`.
@@ -67,9 +69,8 @@ extern "C" {
 }
 
 #[no_mangle]
-extern "C" fn debug_block(layout: &ffi::Block_layout) {
-    let block: &Block<(), ()> =
-        unsafe { &*(layout as *const ffi::Block_layout as *const Block<(), ()>) };
+extern "C" fn debug_block(layout: *mut c_void) {
+    let block: &Block<(), ()> = unsafe { &*(layout as *const Block<(), ()>) };
     std::println!("{block:#?}");
 }
 

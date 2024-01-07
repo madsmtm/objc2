@@ -50,17 +50,9 @@ dependencies = [
 ]
 
 [[package]]
-name = "block-sys"
-version = "0.2.0"
-dependencies = [
- "objc-sys",
-]
-
-[[package]]
 name = "block2"
 version = "0.4.0"
 dependencies = [
- "block-sys",
  "objc2",
 ]
 
@@ -636,7 +628,6 @@ dependencies = [
 name = "tests"
 version = "0.1.0"
 dependencies = [
- "block-sys",
  "block2",
  "cc",
  "icrate",
