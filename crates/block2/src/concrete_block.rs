@@ -36,10 +36,7 @@ pub unsafe trait IntoConcreteBlock<A: BlockArguments>: private::Sealed<A> + Size
 }
 
 macro_rules! concrete_block_impl {
-    ($f:ident) => (
-        concrete_block_impl!($f,);
-    );
-    ($f:ident, $($a:ident : $t:ident),*) => (
+    ($($a:ident : $t:ident),*) => (
         impl<$($t: EncodeArgument,)* R: EncodeReturn, X> private::Sealed<($($t,)*)> for X
         where
             X: Fn($($t,)*) -> R,
@@ -52,7 +49,7 @@ macro_rules! concrete_block_impl {
             type Output = R;
 
             fn __into_concrete_block(self) -> ConcreteBlock<($($t,)*), R, X> {
-                extern "C" fn $f<$($t,)* R, X>(
+                extern "C" fn invoke<$($t,)* R, X>(
                     block: &ConcreteBlock<($($t,)*), R, X>,
                     $($a: $t,)*
                 ) -> R
@@ -62,7 +59,7 @@ macro_rules! concrete_block_impl {
                     (block.closure)($($a),*)
                 }
 
-                let f: extern "C" fn(&ConcreteBlock<($($t,)*), R, X>, $($a: $t,)*) -> R = $f;
+                let f: extern "C" fn(&ConcreteBlock<($($t,)*), R, X>, $($a: $t,)*) -> R = invoke;
                 let f: unsafe extern "C" fn() = unsafe { mem::transmute(f) };
                 unsafe { ConcreteBlock::with_invoke(f, self) }
             }
@@ -70,14 +67,13 @@ macro_rules! concrete_block_impl {
     );
 }
 
-concrete_block_impl!(concrete_block_invoke_args0);
-concrete_block_impl!(concrete_block_invoke_args1, a: A);
-concrete_block_impl!(concrete_block_invoke_args2, a: A, b: B);
-concrete_block_impl!(concrete_block_invoke_args3, a: A, b: B, c: C);
-concrete_block_impl!(concrete_block_invoke_args4, a: A, b: B, c: C, d: D);
-concrete_block_impl!(concrete_block_invoke_args5, a: A, b: B, c: C, d: D, e: E);
+concrete_block_impl!();
+concrete_block_impl!(a: A);
+concrete_block_impl!(a: A, b: B);
+concrete_block_impl!(a: A, b: B, c: C);
+concrete_block_impl!(a: A, b: B, c: C, d: D);
+concrete_block_impl!(a: A, b: B, c: C, d: D, e: E);
 concrete_block_impl!(
-    concrete_block_invoke_args6,
     a: A,
     b: B,
     c: C,
@@ -86,7 +82,6 @@ concrete_block_impl!(
     f: F
 );
 concrete_block_impl!(
-    concrete_block_invoke_args7,
     a: A,
     b: B,
     c: C,
@@ -96,7 +91,6 @@ concrete_block_impl!(
     g: G
 );
 concrete_block_impl!(
-    concrete_block_invoke_args8,
     a: A,
     b: B,
     c: C,
@@ -107,7 +101,6 @@ concrete_block_impl!(
     h: H
 );
 concrete_block_impl!(
-    concrete_block_invoke_args9,
     a: A,
     b: B,
     c: C,
@@ -119,7 +112,6 @@ concrete_block_impl!(
     i: I
 );
 concrete_block_impl!(
-    concrete_block_invoke_args10,
     a: A,
     b: B,
     c: C,
@@ -132,7 +124,6 @@ concrete_block_impl!(
     j: J
 );
 concrete_block_impl!(
-    concrete_block_invoke_args11,
     a: A,
     b: B,
     c: C,
@@ -146,7 +137,6 @@ concrete_block_impl!(
     k: K
 );
 concrete_block_impl!(
-    concrete_block_invoke_args12,
     a: A,
     b: B,
     c: C,
