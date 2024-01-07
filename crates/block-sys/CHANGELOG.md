@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
+## 0.2.1 - 2024-01-07
+
+### Changed
+* Deprecated this crate in favour of `block2::ffi`.
+
+
 ## 0.2.0 - 2023-02-07
 
 ### Changed

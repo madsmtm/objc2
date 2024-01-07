@@ -1,5 +1,7 @@
 //! # Raw bindings to Apple's C language extension of blocks
 //!
+//! **This crate is deprecated. Use `block2::ffi` instead.**
+//!
 //! The documentation for these bindings is a mix from GNUStep's and Apple's
 //! sources, but the [ABI specification][ABI] is really the place you should
 //! be looking!
@@ -24,9 +26,10 @@
 #![warn(clippy::missing_panics_doc)]
 #![allow(non_camel_case_types)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/block-sys/0.2.0")]
+#![doc(html_root_url = "https://docs.rs/block-sys/0.2.1")]
 #![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg, doc_cfg_hide))]
 #![cfg_attr(feature = "unstable-docsrs", doc(cfg_hide(doc)))]
+#![deprecated = "`block-sys` is deprecated. Use `block2::ffi` instead"]
 
 extern crate std;
 

@@ -5,6 +5,8 @@
 [![Documentation](https://docs.rs/block-sys/badge.svg)](https://docs.rs/block-sys/)
 [![CI](https://github.com/madsmtm/objc2/actions/workflows/ci.yml/badge.svg)](https://github.com/madsmtm/objc2/actions/workflows/ci.yml)
 
+**This crate is deprecated. Use `block2::ffi` instead.**
+
 Raw Rust bindings to Apple's C language extension of blocks.
 
 This crate is part of the [`objc2` project](https://github.com/madsmtm/objc2),
