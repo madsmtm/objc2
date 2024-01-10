@@ -7,17 +7,19 @@ use crate::{objc_object, objc_selector};
 /// Don't be fooled by the backup definition in `objc.h`; __OBJC_BOOL_IS_BOOL
 /// is always defined by `clang` when compiling Objective-C sources. The below
 /// cfgs are determined experimentally via. cross compiling.
+///
+/// See also <https://www.jviotti.com/2024/01/05/is-objective-c-bool-a-boolean-type-it-depends.html>.
 #[cfg(apple)]
 mod inner {
     // __OBJC_BOOL_IS_BOOL
     #[cfg(any(
         // aarch64-apple-*
         target_arch = "aarch64",
-        // + x86_64-apple-ios (but not x86_64-apple-ios-macabi)
+        // + x86_64-apple-ios (i.e. the simulator) (but not x86_64-apple-ios-macabi)
         all(target_os = "ios", target_pointer_width = "64", not(target_abi_macabi)),
         // + x86_64-apple-tvos
         all(target_os = "tvos", target_pointer_width = "64"),
-        // + *-apple-watchos (no Rust targets with this yet)
+        // + *-apple-watchos
         target_os = "watchos",
     ))]
     // C: _Bool
