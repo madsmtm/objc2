@@ -151,17 +151,20 @@ This project also draws inspiration from:
 - [`objr` and family](https://github.com/drewcrawford/objr#objr-expanded-universe)
 - [`rust-macios`](https://github.com/a-isaiahharvey/rust-macios)
 - [`uikit-sys`](https://github.com/simlay/uikit-sys) and `@simlay`'s [Objective-C work on `bindgen`](https://rust-lang.github.io/rust-bindgen/objc.html)
+- [`cidre`](https://github.com/yury/cidre)
 
 Finally, this is by far not the only project that ever tried to interoperate with Objective-C; other languages have done so as well (to varying degrees of success):
 - Swift: Built from the beginning for Objective-C interop, and is what `objc2` aspires to have feature-parity with (though will probably never reach). Truly beautifully designed language!
 - C#: Xamarin, [Xamarin.Mac](https://www.mono-project.com/docs/tools+libraries/libraries/monomac/), a good source of inspiration for what "should" work.
-- Python: [PyObjC](https://pypi.org/project/pyobjc/) (previously?) official Apple project which works with "BridgeSupport", [`objp`](https://pypi.org/project/objp/)
+- Python: [PyObjC](https://pypi.org/project/pyobjc/) (previously?) official Apple project that worked with "BridgeSupport", nowadays they also [generate metadata by invoking Clang](https://github.com/ronaldoussoren/objective.metadata). Others include [`objp`](https://pypi.org/project/objp/) and [rubicon.objc](https://rubicon-objc.readthedocs.io/en/latest/index.html)
 - Ruby: [MacRuby](http://macruby.org/), RubyCocoa
 - Dart: [`ffigen`](https://github.com/dart-lang/ffigen/tree/master/example/objective_c)
+- Kotlin: [somewhat built-in support](https://kotlinlang.org/docs/native-objc-interop.html)
 - Nim: [somewhat built-in support](https://nim-lang.org/docs/backends.html), [`darwin`](https://github.com/yglukhov/darwin), [`objc`](https://github.com/jangko/objc)
 - D: [somewhat built-in support](https://dlang.org/spec/objc_interface.html), [`derelict`](https://github.com/AuburnSounds/Dplug/tree/v12.8.0/macos/derelict/cocoa)
 - Java: [Java-Objective-C-Bridge](https://github.com/shannah/Java-Objective-C-Bridge), Apple also has a very old official project
 - Node.js: [NodObjC](https://github.com/TooTallNate/NodObjC), [`objc`](https://github.com/lukaskollmer/objc)
 - Zig: [zig-objcrt](https://github.com/hazeycode/zig-objcrt)
-- V: Not really existing, they just write and compile Objective-C code, and use manual C-bindings
+- D: [somewhat built-in support](https://dlang.org/spec/objc_interface.html), [`derelict`](https://github.com/AuburnSounds/Dplug/tree/v12.8.0/macos/derelict/cocoa)
+- V: Not really existing, they just write and compile Objective-C code, and use manual C-bindings.
 - Go: [MacDriver](https://github.com/progrium/macdriver)
