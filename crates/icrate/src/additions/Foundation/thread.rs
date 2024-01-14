@@ -95,6 +95,37 @@ where
 /// - [Mike Ash' article on thread safety](https://www.mikeash.com/pyblog/friday-qa-2009-01-09.html)
 ///
 ///
+/// # Main Thread Checker
+///
+/// Xcode provides a tool called the ["Main Thread Checker"][mtc] which
+/// verifies that UI APIs are being used from the correct thread. This is not
+/// as principled as `MainThreadMarker`, but is helpful for catching mistakes.
+///
+/// You can use this tool on macOS by loading `libMainThreadChecker.dylib`
+/// into your process using `DYLD_INSERT_LIBRARIES`:
+///
+/// ```console
+/// DYLD_INSERT_LIBRARIES=/Applications/Xcode.app/Contents/Developer/usr/lib/libMainThreadChecker.dylib MTC_RESET_INSERT_LIBRARIES=0 cargo run
+/// ```
+///
+/// If you're not running your binary through Cargo, you can omit
+/// [`MTC_RESET_INSERT_LIBRARIES`][mtc-reset].
+///
+/// ```console
+/// DYLD_INSERT_LIBRARIES=/Applications/Xcode.app/Contents/Developer/usr/lib/libMainThreadChecker.dylib target/debug/myapp
+/// ```
+///
+/// If you're developing for iOS, you probably better off enabling the tool in
+/// Xcode's own UI.
+///
+/// See [this excellent blog post][mtc-cfg] for details on further
+/// configuration options.
+///
+/// [mtc]: https://developer.apple.com/documentation/xcode/diagnosing-memory-thread-and-crash-issues-early#Detect-improper-UI-updates-on-background-threads
+/// [mtc-reset]: https://bryce.co/main-thread-checker-configuration/#mtc_reset_insert_libraries
+/// [mtc-cfg]: https://bryce.co/main-thread-checker-configuration/
+///
+///
 /// # Examples
 ///
 /// Use when designing APIs that are only safe to use on the main thread:
