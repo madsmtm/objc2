@@ -10,6 +10,12 @@
 //! [`NSNumber::encoding`] with [`Encoding::Float`] or
 //! [`Encoding::Double`], and use [`NSNumber::as_f32`] or
 //! [`NSNumber::as_f64`] to get the desired floating point value directly.
+//!
+//! TODO: Once we have better CoreFoundation support, use that to create
+//! efficient static numbers. See:
+//! <https://github.com/nvzqz/fruity/blob/811d7787495eaaee6bc39d372004e5d96ef9f49b/src/foundation/ns_number.rs#L328-L401>
+//!
+//! (Same goes for `NSNull`).
 use core::cmp::Ordering;
 use core::fmt;
 use core::hash;
