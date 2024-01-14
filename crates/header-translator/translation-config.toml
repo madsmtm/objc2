@@ -342,6 +342,13 @@ watchos = "5.0"
 
 [library.Metal]
 imports = ["Foundation"]
+extra-docs = """
+Metal has tools for validating that you're using it correctly, using these
+is highly recommended! See [Apple's documentation][apple-doc], or run
+`man MetalValidation` to get information on environment variables.
+
+[apple-doc]: https://developer.apple.com/documentation/xcode/validating-your-apps-metal-api-usage/
+"""
 additions = true
 fixes = true
 macos = "10.11"
