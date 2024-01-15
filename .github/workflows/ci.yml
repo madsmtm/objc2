@@ -44,7 +44,7 @@ env:
     --package=objc2
     --package=objc2-encode
     --package=objc2-proc-macros
-  # The current nightly Rust version that our CI uses
+  # The current nightly Rust version. Keep this synced with `rust-toolchain.toml`
   CURRENT_NIGHTLY: nightly-2023-11-22
   # Various features that we'd usually want to test with
   #
@@ -78,7 +78,7 @@ jobs:
         submodules: true
 
     - name: Use system Rust
-      run: cargo --version
+      run: rustup override set stable
 
     - name: cargo fmt
       # This runs on the entire repository, including submodules
@@ -132,12 +132,21 @@ jobs:
       with:
         submodules: true
 
-    - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: ${{ env.CURRENT_NIGHTLY }}
-        components: clippy ${{ matrix.build-std && ', rust-src' || '' }}
-        targets: ${{ (!matrix.build-std) && matrix.target || null }}
+    - name: Use nightly toolchain
+      run: |
+        rustup toolchain install ${{ env.CURRENT_NIGHTLY }} --profile=minimal --no-self-update
+        rustup override set ${{ env.CURRENT_NIGHTLY }}
+
+    - name: Add clippy component
+      run: rustup component add clippy
+
+    - name: Add rust-src component for -Zbuild-std
+      if: matrix.build-std
+      run: rustup component add rust-src
+
+    - name: Install target
+      if: ${{ matrix.target && !matrix.build-std }}
+      run: rustup target add ${{ matrix.target }}
 
     - name: Cache Cargo
       uses: actions/cache@v3
@@ -164,11 +173,13 @@ jobs:
       with:
         submodules: true
 
-    - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: '1.60'
-        targets: x86_64-apple-darwin
+    - name: Use MSRV toolchain
+      run: |
+        rustup toolchain install 1.60 --profile=minimal --no-self-update
+        rustup override set 1.60
+
+    - name: Install target
+      run: rustup target add x86_64-apple-darwin
 
     - name: Cache Cargo
       uses: actions/cache@v3
@@ -200,11 +211,13 @@ jobs:
       with:
         submodules: true
 
-    - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: ${{ env.CURRENT_NIGHTLY }}
-        components: rust-src
+    - name: Use nightly toolchain
+      run: |
+        rustup toolchain install ${{ env.CURRENT_NIGHTLY }} --profile=minimal --no-self-update
+        rustup override set ${{ env.CURRENT_NIGHTLY }}
+
+    - name: Add rust-src component to allow compiler UI to display sources
+      run: rustup component add rust-src
 
     - name: Cache Cargo
       uses: actions/cache@v3
@@ -234,11 +247,13 @@ jobs:
       with:
         submodules: true
 
-    - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: ${{ env.CURRENT_NIGHTLY }}
-        components: rust-src
+    - name: Use nightly toolchain
+      run: |
+        rustup toolchain install ${{ env.CURRENT_NIGHTLY }} --profile=minimal --no-self-update
+        rustup override set ${{ env.CURRENT_NIGHTLY }}
+
+    - name: Add rust-src component for -Zbuild-std
+      run: rustup component add rust-src
 
     - name: Cache Cargo
       uses: actions/cache@v3
@@ -273,7 +288,7 @@ jobs:
         submodules: true
 
     - name: Use system Rust
-      run: cargo --version
+      run: rustup override set stable
 
     - name: Cache Cargo
       uses: actions/cache@v3
@@ -303,7 +318,7 @@ jobs:
         submodules: true
 
     - name: Use system Rust
-      run: cargo --version
+      run: rustup override set stable
 
     - name: Cache Cargo
       uses: actions/cache@v3
@@ -330,10 +345,10 @@ jobs:
       with:
         submodules: true
 
-    - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: stable
+    - name: Use nightly toolchain
+      run: |
+        rustup toolchain install ${{ env.CURRENT_NIGHTLY }} --profile=minimal --no-self-update
+        rustup override set ${{ env.CURRENT_NIGHTLY }}
 
     - name: Cache Cargo
       uses: actions/cache@v3
@@ -416,12 +431,22 @@ jobs:
       with:
         submodules: true
 
-    - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: ${{ matrix.nightly && env.CURRENT_NIGHTLY || 'stable' }}
-        components: ${{ matrix.build-std && 'rust-src' }}
-        target: ${{ (!matrix.build-std) && matrix.target || null }}
+    - name: Use nightly toolchain
+      if: ${{ matrix.nightly }}
+      run: |
+        rustup toolchain install ${{ env.CURRENT_NIGHTLY }} --profile=minimal --no-self-update
+        rustup override set ${{ env.CURRENT_NIGHTLY }}
+    - name: Use stable toolchain
+      if: ${{ !matrix.nightly }}
+      run: rustup override set stable
+
+    - name: Add rust-src component for -Zbuild-std
+      if: matrix.build-std
+      run: rustup component add rust-src
+
+    - name: Install target
+      if: ${{ matrix.target && !matrix.build-std }}
+      run: rustup target add ${{ matrix.target }}
 
     - name: Cache Cargo
       uses: actions/cache@v3
@@ -504,11 +529,11 @@ jobs:
       with:
         submodules: true
 
-    - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: stable
-        targets: x86_64-apple-ios
+    - name: Use stable toolchain
+      run: rustup override set stable
+
+    - name: Install simulator target
+      run: rustup target add x86_64-apple-ios
 
     - name: Cache Cargo
       uses: actions/cache@v3
@@ -706,11 +731,18 @@ jobs:
         make install
         ls -al $HOME/extern/*
 
-    - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: ${{ matrix.nightly && env.CURRENT_NIGHTLY || 'stable' }}
-        targets: ${{ matrix.target }}
+    - name: Use nightly toolchain
+      if: ${{ matrix.nightly }}
+      run: |
+        rustup toolchain install ${{ env.CURRENT_NIGHTLY }} --profile=minimal --no-self-update
+        rustup override set ${{ env.CURRENT_NIGHTLY }}
+    - name: Use stable toolchain
+      if: ${{ !matrix.nightly }}
+      run: rustup override set stable
+
+    - name: Install target
+      if: ${{ matrix.target }}
+      run: rustup target add ${{ matrix.target }}
 
     - name: Cache Cargo
       uses: actions/cache@v3
@@ -788,7 +820,7 @@ jobs:
         submodules: true
 
     - name: Use system Rust
-      run: cargo --version
+      run: rustup override set stable
 
     - name: Cache Cargo
       uses: actions/cache@v3

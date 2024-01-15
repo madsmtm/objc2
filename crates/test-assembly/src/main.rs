@@ -4,7 +4,7 @@
 //!
 //! Use as:
 //! ```
-//! TEST_OVERWRITE=1 cargo run --bin test-assembly -- --target=x86_64-apple-darwin
+//! TEST_OVERWRITE=1 cargo run --bin=test-assembly -- -Z build-std --target=x86_64-apple-darwin
 //! ```
 //!
 //! Very limited currently, for example we can't stably test things that emits
