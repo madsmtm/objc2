@@ -262,11 +262,10 @@ unsafe extern "C" fn block_context_copy<B>(_dst: *mut c_void, _src: *mut c_void)
     // The runtime memmoves the src block into the dst block, nothing to do
 }
 
-impl<A, R, F: fmt::Debug> fmt::Debug for StackBlock<A, R, F> {
+impl<A, R, F> fmt::Debug for StackBlock<A, R, F> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut f = f.debug_struct("StackBlock");
         debug_block_header(&self.header, &mut f);
-        f.field("closure", &self.closure);
-        f.finish()
+        f.finish_non_exhaustive()
     }
 }

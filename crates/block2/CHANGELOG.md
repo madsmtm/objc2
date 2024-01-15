@@ -15,6 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Renamed `ConcreteBlock` to `StackBlock`. The old name is deprecated.
 * **BREAKING**: Renamed `IntoConcreteBlock` to `IntoBlock`.
 
+### Fixed
+* Relaxed the `F: Debug` bound on `StackBlock`'s `Debug` implementation.
+
 
 ## 0.4.0 - 2023-12-03
 
