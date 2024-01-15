@@ -245,11 +245,11 @@ mod stack;
 pub use self::block::{Block, BlockArguments};
 pub use self::global::GlobalBlock;
 pub use self::rc_block::RcBlock;
-#[deprecated = "renamed to `IntoBlock`"]
-pub use self::stack::IntoBlock as IntoConcreteBlock;
-#[deprecated = "renamed to `StackBlock`"]
-pub use self::stack::StackBlock as ConcreteBlock;
 pub use self::stack::{IntoBlock, StackBlock};
+
+/// Deprecated alias for `StackBlock`.
+#[deprecated = "renamed to `StackBlock`"]
+pub type ConcreteBlock<A, R, F> = self::stack::StackBlock<A, R, F>;
 
 // Note: We could use `_Block_object_assign` and `_Block_object_dispose` to
 // implement a `ByRef<T>` wrapper, which would behave like `__block` marked
