@@ -210,6 +210,10 @@ fn set_iter_minimal_retains() {
 }
 
 #[test]
+#[cfg_attr(
+    feature = "gnustep-1-7",
+    ignore = "thread safety issues regarding initialization"
+)]
 fn array_adding() {
     let mut array = NSMutableArray::new();
     let obj1 = __RcTestObject::new();
@@ -231,6 +235,10 @@ fn array_adding() {
 }
 
 #[test]
+#[cfg_attr(
+    feature = "gnustep-1-7",
+    ignore = "thread safety issues regarding initialization"
+)]
 fn array_replace() {
     let mut array = NSMutableArray::new();
     let obj1 = __RcTestObject::new();
@@ -246,6 +254,10 @@ fn array_replace() {
 }
 
 #[test]
+#[cfg_attr(
+    feature = "gnustep-1-7",
+    ignore = "thread safety issues regarding initialization"
+)]
 fn array_remove() {
     let mut array = NSMutableArray::new();
     for _ in 0..4 {
