@@ -16,7 +16,7 @@ mod private {
     pub trait Sealed<A> {}
 }
 
-/// Types that may be converted into a [`StackBlock`].
+/// Types that may be converted into a block.
 ///
 /// This is implemented for [`Fn`] closures of up to 12 arguments, where each
 /// argument implements [`EncodeArgument`] and the return type implements
@@ -27,7 +27,7 @@ mod private {
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait IntoConcreteBlock<A: BlockArguments>: private::Sealed<A> + Sized {
+pub unsafe trait IntoBlock<A: BlockArguments>: private::Sealed<A> + Sized {
     /// The return type of the resulting `StackBlock`.
     type Output: EncodeReturn;
 
@@ -35,14 +35,14 @@ pub unsafe trait IntoConcreteBlock<A: BlockArguments>: private::Sealed<A> + Size
     fn __get_invoke_stack_block() -> unsafe extern "C" fn();
 }
 
-macro_rules! concrete_block_impl {
+macro_rules! into_block_impl {
     ($($a:ident : $t:ident),*) => (
         impl<$($t: EncodeArgument,)* R: EncodeReturn, X> private::Sealed<($($t,)*)> for X
         where
             X: Fn($($t,)*) -> R,
         {}
 
-        unsafe impl<$($t: EncodeArgument,)* R: EncodeReturn, X> IntoConcreteBlock<($($t,)*)> for X
+        unsafe impl<$($t: EncodeArgument,)* R: EncodeReturn, X> IntoBlock<($($t,)*)> for X
         where
             X: Fn($($t,)*) -> R,
         {
@@ -70,13 +70,13 @@ macro_rules! concrete_block_impl {
     );
 }
 
-concrete_block_impl!();
-concrete_block_impl!(a: A);
-concrete_block_impl!(a: A, b: B);
-concrete_block_impl!(a: A, b: B, c: C);
-concrete_block_impl!(a: A, b: B, c: C, d: D);
-concrete_block_impl!(a: A, b: B, c: C, d: D, e: E);
-concrete_block_impl!(
+into_block_impl!();
+into_block_impl!(a: A);
+into_block_impl!(a: A, b: B);
+into_block_impl!(a: A, b: B, c: C);
+into_block_impl!(a: A, b: B, c: C, d: D);
+into_block_impl!(a: A, b: B, c: C, d: D, e: E);
+into_block_impl!(
     a: A,
     b: B,
     c: C,
@@ -84,7 +84,7 @@ concrete_block_impl!(
     e: E,
     f: F
 );
-concrete_block_impl!(
+into_block_impl!(
     a: A,
     b: B,
     c: C,
@@ -93,7 +93,7 @@ concrete_block_impl!(
     f: F,
     g: G
 );
-concrete_block_impl!(
+into_block_impl!(
     a: A,
     b: B,
     c: C,
@@ -103,7 +103,7 @@ concrete_block_impl!(
     g: G,
     h: H
 );
-concrete_block_impl!(
+into_block_impl!(
     a: A,
     b: B,
     c: C,
@@ -114,7 +114,7 @@ concrete_block_impl!(
     h: H,
     i: I
 );
-concrete_block_impl!(
+into_block_impl!(
     a: A,
     b: B,
     c: C,
@@ -126,7 +126,7 @@ concrete_block_impl!(
     i: I,
     j: J
 );
-concrete_block_impl!(
+into_block_impl!(
     a: A,
     b: B,
     c: C,
@@ -139,7 +139,7 @@ concrete_block_impl!(
     j: J,
     k: K
 );
-concrete_block_impl!(
+into_block_impl!(
     a: A,
     b: B,
     c: C,
@@ -171,7 +171,7 @@ impl<A, R, F> StackBlock<A, R, F>
 where
     A: BlockArguments,
     R: EncodeReturn,
-    F: IntoConcreteBlock<A, Output = R>,
+    F: IntoBlock<A, Output = R>,
 {
     /// Constructs a `StackBlock` with the given closure.
     /// When the block is called, it will return the value that results from

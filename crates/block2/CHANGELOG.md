@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   module.
 * No longer use the `block-sys` crate for linking to the blocks runtime.
 * Renamed `ConcreteBlock` to `StackBlock`. The old name is deprecated.
+* Renamed `IntoConcreteBlock` to `IntoBlock`. The old name is deprecated.
 
 
 ## 0.4.0 - 2023-12-03
