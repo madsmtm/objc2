@@ -23,10 +23,10 @@ const GLOBAL_DESCRIPTOR: BlockDescriptor = BlockDescriptor {
 /// This is effectively a glorified function pointer, and can created and
 /// stored in static memory using the [`global_block!`] macro.
 ///
-/// If [`ConcreteBlock`] is the [`Fn`]-block equivalent, this is likewise the
+/// If [`StackBlock`] is the [`Fn`]-block equivalent, this is likewise the
 /// [`fn`]-block equivalent.
 ///
-/// [`ConcreteBlock`]: crate::ConcreteBlock
+/// [`StackBlock`]: crate::StackBlock
 /// [`global_block!`]: crate::global_block
 #[repr(C)]
 pub struct GlobalBlock<A, R = ()> {

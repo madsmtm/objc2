@@ -270,11 +270,11 @@ impl IdFromIterator<u8> for NSMutableData {
 unsafe fn with_vec<T: Message>(obj: Allocated<T>, bytes: Vec<u8>) -> Id<T> {
     use core::mem::ManuallyDrop;
 
-    use block2::{Block, ConcreteBlock};
+    use block2::{Block, StackBlock};
 
     let capacity = bytes.capacity();
 
-    let dealloc = ConcreteBlock::new(move |bytes: *mut c_void, len: usize| unsafe {
+    let dealloc = StackBlock::new(move |bytes: *mut c_void, len: usize| unsafe {
         // Recreate the Vec and let it drop
         let _ = <Vec<u8>>::from_raw_parts(bytes.cast(), len, capacity);
     });

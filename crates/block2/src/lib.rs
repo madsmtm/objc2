@@ -46,22 +46,22 @@
 //! ## Creating blocks
 //!
 //! Creating a block to pass to Objective-C can be done with the
-//! [`ConcreteBlock`] struct. For example, to create a block that adds two
+//! [`StackBlock`] struct. For example, to create a block that adds two
 //! integers, we could write:
 //!
 //! ```
-//! use block2::ConcreteBlock;
-//! let block = ConcreteBlock::new(|a: i32, b: i32| a + b);
+//! use block2::StackBlock;
+//! let block = StackBlock::new(|a: i32, b: i32| a + b);
 //! let block = block.copy();
 //! assert_eq!(unsafe { block.call((5, 8)) }, 13);
 //! ```
 //!
 //! It is important to copy your block to the heap (with the [`copy`] method)
-//! before passing it to Objective-C; this is because our [`ConcreteBlock`] is
+//! before passing it to Objective-C; this is because our [`StackBlock`] is
 //! only meant to be copied once, and we can enforce this in Rust, but if
 //! Objective-C code were to copy it twice we could have a double free.
 //!
-//! [`copy`]: ConcreteBlock::copy
+//! [`copy`]: StackBlock::copy
 //!
 //! As an optimization if your block doesn't capture any variables, you can
 //! use the [`global_block!`] macro to create a static block:
@@ -236,16 +236,18 @@ extern crate objc2 as _;
 
 mod abi;
 mod block;
-mod concrete_block;
 mod debug;
 pub mod ffi;
 mod global;
 mod rc_block;
+mod stack;
 
-pub use block::{Block, BlockArguments};
-pub use concrete_block::{ConcreteBlock, IntoConcreteBlock};
-pub use global::GlobalBlock;
-pub use rc_block::RcBlock;
+pub use self::block::{Block, BlockArguments};
+pub use self::global::GlobalBlock;
+pub use self::rc_block::RcBlock;
+#[deprecated = "renamed to `StackBlock`"]
+pub use self::stack::StackBlock as ConcreteBlock;
+pub use self::stack::{IntoConcreteBlock, StackBlock};
 
 // Note: We could use `_Block_object_assign` and `_Block_object_dispose` to
 // implement a `ByRef<T>` wrapper, which would behave like `__block` marked

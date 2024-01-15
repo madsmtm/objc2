@@ -57,7 +57,7 @@ pub fn invoke_large_struct_block(
 mod tests {
     use super::*;
     use alloc::string::ToString;
-    use block2::{global_block, ConcreteBlock, RcBlock};
+    use block2::{global_block, RcBlock, StackBlock};
 
     global_block! {
         /// Test `global_block` in an external crate
@@ -89,23 +89,23 @@ mod tests {
 
     #[test]
     fn test_create_block() {
-        let block = ConcreteBlock::new(|| 13);
+        let block = StackBlock::new(|| 13);
         let result = invoke_int_block(&block);
         assert_eq!(result, 13);
     }
 
     #[test]
     fn test_create_block_args() {
-        let block = ConcreteBlock::new(|a: i32| a + 5);
+        let block = StackBlock::new(|a: i32| a + 5);
         let result = invoke_add_block(&block, 6);
         assert_eq!(result, 11);
     }
 
     #[test]
-    fn test_concrete_block_copy() {
+    fn test_block_copy() {
         let s = "Hello!".to_string();
         let expected_len = s.len() as i32;
-        let block = ConcreteBlock::new(move || s.len() as i32);
+        let block = StackBlock::new(move || s.len() as i32);
         assert_eq!(invoke_int_block(&block), expected_len);
 
         let copied = block.copy();
@@ -113,10 +113,10 @@ mod tests {
     }
 
     #[test]
-    fn test_concrete_block_stack_copy() {
+    fn test_block_stack_copy() {
         fn make_block() -> RcBlock<(), i32> {
             let x = 7;
-            let block = ConcreteBlock::new(move || x);
+            let block = StackBlock::new(move || x);
             block.copy()
         }
 
@@ -141,7 +141,7 @@ mod tests {
         assert_eq!(unsafe { BLOCK.call((data,)) }, new_data);
         assert_eq!(invoke_large_struct_block(&BLOCK, data), new_data);
 
-        let block = ConcreteBlock::new(|mut x: LargeStruct| {
+        let block = StackBlock::new(|mut x: LargeStruct| {
             x.mutate();
             x
         });

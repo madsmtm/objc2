@@ -16,7 +16,7 @@ mod private {
     pub trait Sealed<A> {}
 }
 
-/// Types that may be converted into a [`ConcreteBlock`].
+/// Types that may be converted into a [`StackBlock`].
 ///
 /// This is implemented for [`Fn`] closures of up to 12 arguments, where each
 /// argument implements [`EncodeArgument`] and the return type implements
@@ -28,7 +28,7 @@ mod private {
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restrition should be lifted!
 pub unsafe trait IntoConcreteBlock<A: BlockArguments>: private::Sealed<A> + Sized {
-    /// The return type of the resulting `ConcreteBlock`.
+    /// The return type of the resulting `StackBlock`.
     type Output: EncodeReturn;
 
     #[doc(hidden)]
@@ -50,7 +50,7 @@ macro_rules! concrete_block_impl {
 
             fn __get_invoke_stack_block() -> unsafe extern "C" fn() {
                 unsafe extern "C" fn invoke<$($t,)* R, X>(
-                    block: &ConcreteBlock<($($t,)*), R, X>,
+                    block: &StackBlock<($($t,)*), R, X>,
                     $($a: $t,)*
                 ) -> R
                 where
@@ -61,7 +61,7 @@ macro_rules! concrete_block_impl {
 
                 unsafe {
                     mem::transmute::<
-                        unsafe extern "C" fn(&ConcreteBlock<($($t,)*), R, X>, $($a: $t,)*) -> R,
+                        unsafe extern "C" fn(&StackBlock<($($t,)*), R, X>, $($a: $t,)*) -> R,
                         unsafe extern "C" fn(),
                     >(invoke)
                 }
@@ -157,23 +157,23 @@ concrete_block_impl!(
 /// An Objective-C block whose size is known at compile time and may be
 /// constructed on the stack.
 #[repr(C)]
-pub struct ConcreteBlock<A, R, F> {
+pub struct StackBlock<A, R, F> {
     p: PhantomData<Block<A, R>>,
     pub(crate) header: BlockHeader,
     pub(crate) closure: F,
 }
 
-unsafe impl<A: BlockArguments, R: EncodeReturn, F> RefEncode for ConcreteBlock<A, R, F> {
+unsafe impl<A: BlockArguments, R: EncodeReturn, F> RefEncode for StackBlock<A, R, F> {
     const ENCODING_REF: Encoding = Encoding::Block;
 }
 
-impl<A, R, F> ConcreteBlock<A, R, F>
+impl<A, R, F> StackBlock<A, R, F>
 where
     A: BlockArguments,
     R: EncodeReturn,
     F: IntoConcreteBlock<A, Output = R>,
 {
-    /// Constructs a `ConcreteBlock` with the given closure.
+    /// Constructs a `StackBlock` with the given closure.
     /// When the block is called, it will return the value that results from
     /// calling the closure.
     pub fn new(closure: F) -> Self {
@@ -181,7 +181,7 @@ where
     }
 }
 
-impl<A, R, F> ConcreteBlock<A, R, F> {
+impl<A, R, F> StackBlock<A, R, F> {
     // TODO: Use new ABI with BLOCK_HAS_SIGNATURE
     const FLAGS: BlockFlags = if mem::needs_drop::<Self>() {
         BlockFlags::BLOCK_HAS_COPY_DISPOSE
@@ -204,7 +204,7 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
         },
     };
 
-    /// Constructs a `ConcreteBlock` with the given invoke function and closure.
+    /// Constructs a `StackBlock` with the given invoke function and closure.
     /// Unsafe because the caller must ensure the invoke function takes the
     /// correct arguments.
     unsafe fn with_invoke(invoke: unsafe extern "C" fn(), closure: F) -> Self {
@@ -225,7 +225,7 @@ impl<A, R, F> ConcreteBlock<A, R, F> {
     }
 }
 
-impl<A, R, F: 'static> ConcreteBlock<A, R, F> {
+impl<A, R, F: 'static> StackBlock<A, R, F> {
     /// Copy self onto the heap as an `RcBlock`.
     pub fn copy(self) -> RcBlock<A, R> {
         // Our copy helper will run so the block will be moved to the heap
@@ -237,13 +237,13 @@ impl<A, R, F: 'static> ConcreteBlock<A, R, F> {
     }
 }
 
-impl<A, R, F: Clone> Clone for ConcreteBlock<A, R, F> {
+impl<A, R, F: Clone> Clone for StackBlock<A, R, F> {
     fn clone(&self) -> Self {
         unsafe { Self::with_invoke(self.header.invoke.unwrap(), self.closure.clone()) }
     }
 }
 
-impl<A, R, F> Deref for ConcreteBlock<A, R, F> {
+impl<A, R, F> Deref for StackBlock<A, R, F> {
     type Target = Block<A, R>;
 
     fn deref(&self) -> &Self::Target {
@@ -262,9 +262,9 @@ unsafe extern "C" fn block_context_copy<B>(_dst: *mut c_void, _src: *mut c_void)
     // The runtime memmoves the src block into the dst block, nothing to do
 }
 
-impl<A, R, F: fmt::Debug> fmt::Debug for ConcreteBlock<A, R, F> {
+impl<A, R, F: fmt::Debug> fmt::Debug for StackBlock<A, R, F> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut f = f.debug_struct("ConcreteBlock");
+        let mut f = f.debug_struct("StackBlock");
         debug_block_header(&self.header, &mut f);
         f.field("closure", &self.closure);
         f.finish()
