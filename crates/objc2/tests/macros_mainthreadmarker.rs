@@ -51,7 +51,9 @@ unsafe impl NSObjectProtocol for Cls {}
 // `icrate::Foundation::MainThreadMarker` to ensure soundness, they will not
 // do this!
 #[derive(Clone, Copy)]
-struct MainThreadMarker(bool);
+struct MainThreadMarker {
+    _some_field: u32,
+}
 
 extern_methods!(
     unsafe impl Cls {
@@ -68,7 +70,7 @@ extern_methods!(
 
 #[test]
 fn call() {
-    let mtm = MainThreadMarker(true);
+    let mtm = MainThreadMarker { _some_field: 0 };
     let obj1 = Cls::new(mtm);
 
     let res = Cls::method(mtm, 2, mtm);

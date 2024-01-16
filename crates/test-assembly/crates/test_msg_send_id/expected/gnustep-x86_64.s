@@ -35,17 +35,16 @@ handle_new_fallible:
 	mov	rsi, rbx
 	call	rax
 	test	rax, rax
-	je	.LBB1_1
+	je	.LBB1_2
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB1_1:
+.LBB1_2:
 	lea	rdx, [rip + .Lanon.[ID].1]
 	mov	rdi, r14
 	mov	rsi, rbx
 	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<1_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
-	ud2
 .Lfunc_end1:
 	.size	handle_new_fallible, .Lfunc_end1-handle_new_fallible
 
@@ -105,7 +104,7 @@ handle_init_fallible:
 	mov	rbx, rsi
 	mov	r14, rdi
 	test	rdi, rdi
-	je	.LBB4_2
+	je	.LBB4_3
 	mov	rdi, r14
 	mov	rsi, rbx
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
@@ -113,17 +112,16 @@ handle_init_fallible:
 	mov	rsi, rbx
 	call	rax
 	test	rax, rax
-	je	.LBB4_2
+	je	.LBB4_3
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB4_2:
+.LBB4_3:
 	lea	rdx, [rip + .Lanon.[ID].2]
 	mov	rdi, r14
 	mov	rsi, rbx
 	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
-	ud2
 .Lfunc_end4:
 	.size	handle_init_fallible, .Lfunc_end4-handle_init_fallible
 
@@ -255,15 +253,14 @@ handle_copy_fallible:
 	mov	rsi, rbx
 	call	rax
 	test	rax, rax
-	je	.LBB9_1
+	je	.LBB9_2
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB9_1:
+.LBB9_2:
 	lea	rdi, [rip + .Lanon.[ID].3]
 	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
-	ud2
 .Lfunc_end9:
 	.size	handle_copy_fallible, .Lfunc_end9-handle_copy_fallible
 
@@ -330,17 +327,16 @@ handle_autoreleased_fallible:
 	mov	rdi, rax
 	call	qword ptr [rip + objc_retainAutoreleasedReturnValue@GOTPCREL]
 	test	rax, rax
-	je	.LBB12_1
+	je	.LBB12_2
 	add	rsp, 8
 	pop	rbx
 	pop	r14
 	ret
-.LBB12_1:
+.LBB12_2:
 	lea	rdx, [rip + .Lanon.[ID].4]
 	mov	rdi, r14
 	mov	rsi, rbx
 	call	qword ptr [rip + SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@GOTPCREL]
-	ud2
 .Lfunc_end12:
 	.size	handle_autoreleased_fallible, .Lfunc_end12-handle_autoreleased_fallible
 

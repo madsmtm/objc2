@@ -151,7 +151,9 @@ mod tests {
         }
     }
 
-    struct Iter<'a>(&'a Collection);
+    struct Iter<'a> {
+        _inner: &'a Collection,
+    }
 
     impl<'a> Iterator for Iter<'a> {
         type Item = &'a NSObject;
@@ -165,11 +167,13 @@ mod tests {
         type IntoIter = Iter<'a>;
 
         fn into_iter(self) -> Self::IntoIter {
-            Iter(self)
+            Iter { _inner: self }
         }
     }
 
-    struct IterMut<'a>(&'a mut Collection);
+    struct IterMut<'a> {
+        _inner: &'a mut Collection,
+    }
 
     impl<'a> Iterator for IterMut<'a> {
         type Item = &'a mut NSObject;
@@ -184,11 +188,13 @@ mod tests {
         type IntoIter = IterMut<'a>;
 
         fn into_iter(self) -> Self::IntoIter {
-            IterMut(self)
+            IterMut { _inner: self }
         }
     }
 
-    struct IntoIter(Id<Collection>);
+    struct IntoIter {
+        _inner: Id<Collection>,
+    }
 
     impl Iterator for IntoIter {
         type Item = Id<NSObject>;
@@ -202,7 +208,7 @@ mod tests {
         type IntoIter = IntoIter;
 
         fn id_into_iter(this: Id<Self>) -> Self::IntoIter {
-            IntoIter(this)
+            IntoIter { _inner: this }
         }
     }
 

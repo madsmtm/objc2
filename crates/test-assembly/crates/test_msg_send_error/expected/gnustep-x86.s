@@ -18,20 +18,18 @@ SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRA
 	call	objc_retain@PLT
 	add	esp, 16
 	test	eax, eax
-	je	.LBB0_1
+	je	.LBB0_2
 	add	esp, 4
 	pop	esi
 	pop	ebx
 	ret
-.LBB0_1:
+.LBB0_2:
 	sub	esp, 4
 	lea	eax, [ebx + .Lanon.[ID].0@GOTOFF]
 	push	esi
 	push	56
 	push	eax
 	call	SYM(core::option::expect_failed::GENERATED_ID, 0)@PLT
-	add	esp, 16
-	ud2
 .Lfunc_end0:
 	.size	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end0-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 
@@ -51,11 +49,11 @@ SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_
 	call	objc_retain@PLT
 	add	esp, 16
 	test	eax, eax
-	je	.LBB1_1
+	je	.LBB1_2
 	add	esp, 8
 	pop	ebx
 	ret
-.LBB1_1:
+.LBB1_2:
 	sub	esp, 4
 	lea	eax, [ebx + .Lanon.[ID].3@GOTOFF]
 	lea	ecx, [ebx + .Lanon.[ID].1@GOTOFF]
@@ -63,8 +61,6 @@ SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_
 	push	54
 	push	ecx
 	call	SYM(core::option::expect_failed::GENERATED_ID, 0)@PLT
-	add	esp, 16
-	ud2
 .Lfunc_end1:
 	.size	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end1-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 

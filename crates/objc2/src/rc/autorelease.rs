@@ -163,7 +163,7 @@ pub struct AutoreleasePool<'pool> {
 thread_local! {
     /// We track the thread's pools to verify that object lifetimes are only
     /// taken from the innermost pool.
-    static POOLS: RefCell<Vec<*mut c_void>> = RefCell::new(Vec::new());
+    static POOLS: RefCell<Vec<*mut c_void>> = const { RefCell::new(Vec::new()) };
 }
 
 impl<'pool> AutoreleasePool<'pool> {

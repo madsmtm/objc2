@@ -919,7 +919,9 @@ mod tests {
     )]
     fn test_ivar_sizing() {
         #[repr(align(16))]
-        struct U128align16([u64; 2]);
+        struct U128align16 {
+            _inner: [u64; 2],
+        }
 
         unsafe impl Encode for U128align16 {
             const ENCODING: Encoding = <[u64; 2]>::ENCODING;
