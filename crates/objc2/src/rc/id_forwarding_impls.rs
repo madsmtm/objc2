@@ -21,6 +21,7 @@ use std::io;
 use super::Id;
 use crate::mutability::IsMutable;
 
+#[allow(clippy::unconditional_recursion)]
 impl<T: PartialEq + ?Sized> PartialEq for Id<T> {
     #[inline]
     fn eq(&self, other: &Self) -> bool {

@@ -5,12 +5,12 @@ error[E0277]: `*const NSObject` cannot be shared between threads safely
   |                  ^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be shared between threads safely
   |
   = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`
-note: required because it appears within the type `UnknownStorage<NSObject>`
+note: required because it appears within the type `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
   |                ^^^^^^^^^^^^^^
-note: required because it appears within the type `EquivalentType<NSObject>`
+note: required because it appears within the type `icrate::objc2::rc::id::private::EquivalentType<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct EquivalentType<T: ?Sized + ClassType>(
@@ -78,12 +78,12 @@ error[E0277]: `*const NSObject` cannot be sent between threads safely
   |                  ^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be sent between threads safely
   |
   = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`
-note: required because it appears within the type `UnknownStorage<NSObject>`
+note: required because it appears within the type `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
   |                ^^^^^^^^^^^^^^
-note: required because it appears within the type `EquivalentType<NSObject>`
+note: required because it appears within the type `icrate::objc2::rc::id::private::EquivalentType<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct EquivalentType<T: ?Sized + ClassType>(
@@ -162,12 +162,12 @@ error[E0277]: `*const NSObject` cannot be shared between threads safely
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be shared between threads safely
   |
   = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`
-note: required because it appears within the type `UnknownStorage<NSObject>`
+note: required because it appears within the type `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
   |                ^^^^^^^^^^^^^^
-note: required because it appears within the type `EquivalentType<NSObject>`
+note: required because it appears within the type `icrate::objc2::rc::id::private::EquivalentType<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct EquivalentType<T: ?Sized + ClassType>(
@@ -245,12 +245,12 @@ error[E0277]: `*const NSObject` cannot be sent between threads safely
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be sent between threads safely
   |
   = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`
-note: required because it appears within the type `UnknownStorage<NSObject>`
+note: required because it appears within the type `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
   |                ^^^^^^^^^^^^^^
-note: required because it appears within the type `EquivalentType<NSObject>`
+note: required because it appears within the type `icrate::objc2::rc::id::private::EquivalentType<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct EquivalentType<T: ?Sized + ClassType>(

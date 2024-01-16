@@ -5,13 +5,13 @@ error[E0277]: `*mut c_void` cannot be shared between threads safely
   |                  ^^^^^^^^^^^^^^^^^^^ `*mut c_void` cannot be shared between threads safely
   |
   = help: within `AutoreleasePool<'_>`, the trait `Sync` is not implemented for `*mut c_void`
-note: required because it appears within the type `Pool`
+note: required because it appears within the type `objc2::rc::autorelease::Pool`
  --> $WORKSPACE/crates/objc2/src/rc/autorelease.rs
   |
   | struct Pool {
   |        ^^^^
-  = note: required because it appears within the type `&Pool`
-note: required because it appears within the type `Option<&Pool>`
+  = note: required because it appears within the type `&objc2::rc::autorelease::Pool`
+note: required because it appears within the type `Option<&objc2::rc::autorelease::Pool>`
  --> $RUST/core/src/option.rs
   |
   | pub enum Option<T> {
@@ -34,13 +34,13 @@ error[E0277]: `*mut c_void` cannot be shared between threads safely
   |                  ^^^^^^^^^^^^^^^^^^^ `*mut c_void` cannot be shared between threads safely
   |
   = help: within `objc2::rc::autorelease::Pool`, the trait `Sync` is not implemented for `*mut c_void`
-note: required because it appears within the type `Pool`
+note: required because it appears within the type `objc2::rc::autorelease::Pool`
  --> $WORKSPACE/crates/objc2/src/rc/autorelease.rs
   |
   | struct Pool {
   |        ^^^^
   = note: required for `&objc2::rc::autorelease::Pool` to implement `Send`
-note: required because it appears within the type `Option<&Pool>`
+note: required because it appears within the type `Option<&objc2::rc::autorelease::Pool>`
  --> $RUST/core/src/option.rs
   |
   | pub enum Option<T> {

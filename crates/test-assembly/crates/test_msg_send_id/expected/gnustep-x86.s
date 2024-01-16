@@ -56,20 +56,18 @@ handle_new_fallible:
 	call	eax
 	add	esp, 16
 	test	eax, eax
-	je	.LBB1_1
+	je	.LBB1_2
 	pop	esi
 	pop	edi
 	pop	ebx
 	ret
-.LBB1_1:
+.LBB1_2:
 	sub	esp, 4
 	lea	eax, [ebx + .Lanon.[ID].1@GOTOFF]
 	push	eax
 	push	edi
 	push	esi
 	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<1_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
-	add	esp, 16
-	ud2
 .Lfunc_end1:
 	.size	handle_new_fallible, .Lfunc_end1-handle_new_fallible
 
@@ -159,7 +157,7 @@ handle_init_fallible:
 .Ltmp4:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp4-.L4$pb)
 	test	esi, esi
-	je	.LBB4_2
+	je	.LBB4_3
 	sub	esp, 8
 	push	edi
 	push	esi
@@ -170,20 +168,18 @@ handle_init_fallible:
 	call	eax
 	add	esp, 16
 	test	eax, eax
-	je	.LBB4_2
+	je	.LBB4_3
 	pop	esi
 	pop	edi
 	pop	ebx
 	ret
-.LBB4_2:
+.LBB4_3:
 	sub	esp, 4
 	lea	eax, [ebx + .Lanon.[ID].2@GOTOFF]
 	push	eax
 	push	edi
 	push	esi
 	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
-	add	esp, 16
-	ud2
 .Lfunc_end4:
 	.size	handle_init_fallible, .Lfunc_end4-handle_init_fallible
 
@@ -365,17 +361,16 @@ handle_copy_fallible:
 	mov	dword ptr [esp], esi
 	call	eax
 	test	eax, eax
-	je	.LBB9_1
+	je	.LBB9_2
 	add	esp, 16
 	pop	esi
 	pop	edi
 	pop	ebx
 	ret
-.LBB9_1:
+.LBB9_2:
 	lea	eax, [ebx + .Lanon.[ID].3@GOTOFF]
 	mov	dword ptr [esp], eax
 	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<4_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
-	ud2
 .Lfunc_end9:
 	.size	handle_copy_fallible, .Lfunc_end9-handle_copy_fallible
 
@@ -478,20 +473,18 @@ handle_autoreleased_fallible:
 	call	objc_retainAutoreleasedReturnValue@PLT
 	add	esp, 16
 	test	eax, eax
-	je	.LBB12_1
+	je	.LBB12_2
 	pop	esi
 	pop	edi
 	pop	ebx
 	ret
-.LBB12_1:
+.LBB12_2:
 	sub	esp, 4
 	lea	eax, [ebx + .Lanon.[ID].4@GOTOFF]
 	push	eax
 	push	edi
 	push	esi
 	call	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<5_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)@PLT
-	add	esp, 16
-	ud2
 .Lfunc_end12:
 	.size	handle_autoreleased_fallible, .Lfunc_end12-handle_autoreleased_fallible
 

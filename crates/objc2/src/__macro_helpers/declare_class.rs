@@ -24,6 +24,7 @@ use crate::mutability;
 #[doc(hidden)]
 #[repr(transparent)]
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct IdReturnValue(pub(crate) *mut AnyObject);
 
 // SAFETY: `IdReturnValue` is `#[repr(transparent)]`

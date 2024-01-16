@@ -853,15 +853,15 @@ l_anon.[ID].21:
 	.quad	l_anon.[ID].20
 	.asciz	"p\000\000\000\000\000\000\000\225\000\000\0002\000\000"
 
+	.section	__TEXT,__const
+l_anon.[ID].22:
+	.ascii	"crates/$DIR/lib.rs"
+
 .zerofill __DATA,__bss,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_CLASS, 0).0,8,3
 	.globl	SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2)
 .zerofill __DATA,__common,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_IVAR_OFFSET, 2),8,3
 	.globl	SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 1)
 .zerofill __DATA,__common,SYM(test_declare_class[CRATE_ID]::_::__OBJC2_DROP_FLAG_OFFSET, 1),8,3
-	.section	__TEXT,__const
-l_anon.[ID].22:
-	.ascii	"crates/$DIR/lib.rs"
-
 	.section	__DATA,__const
 	.p2align	3, 0x0
 l_anon.[ID].23:

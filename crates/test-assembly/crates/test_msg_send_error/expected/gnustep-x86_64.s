@@ -8,15 +8,14 @@ SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRA
 	mov	rbx, rsi
 	call	qword ptr [rip + objc_retain@GOTPCREL]
 	test	rax, rax
-	je	.LBB0_1
+	je	.LBB0_2
 	pop	rbx
 	ret
-.LBB0_1:
+.LBB0_2:
 	lea	rdi, [rip + .Lanon.[ID].0]
 	mov	esi, 56
 	mov	rdx, rbx
 	call	qword ptr [rip + SYM(core::option::expect_failed::GENERATED_ID, 0)@GOTPCREL]
-	ud2
 .Lfunc_end0:
 	.size	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end0-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send_id::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 
@@ -27,15 +26,14 @@ SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_
 	push	rax
 	call	qword ptr [rip + objc_retain@GOTPCREL]
 	test	rax, rax
-	je	.LBB1_1
+	je	.LBB1_2
 	pop	rcx
 	ret
-.LBB1_1:
+.LBB1_2:
 	lea	rdi, [rip + .Lanon.[ID].1]
 	lea	rdx, [rip + .Lanon.[ID].3]
 	mov	esi, 54
 	call	qword ptr [rip + SYM(core::option::expect_failed::GENERATED_ID, 0)@GOTPCREL]
-	ud2
 .Lfunc_end1:
 	.size	SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0), .Lfunc_end1-SYM(objc2[CRATE_ID]::__macro_helpers::msg_send::encountered_error::<objc2[CRATE_ID]::runtime::AnyObject>, 0)
 
