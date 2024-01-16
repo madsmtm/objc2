@@ -482,7 +482,7 @@ mod tests {
 
     use crate::extern_class;
     use crate::mutability::Mutable;
-    use crate::rc::__RcTestObject;
+    use crate::rc::RcTestObject;
 
     extern_class!(
         #[derive(Debug, PartialEq, Eq, Hash)]
@@ -584,11 +584,11 @@ mod tests {
     fn test_is_kind_of() {
         let obj = NSObject::new();
         assert!(obj.is_kind_of::<NSObject>());
-        assert!(!obj.is_kind_of::<__RcTestObject>());
+        assert!(!obj.is_kind_of::<RcTestObject>());
 
-        let obj = __RcTestObject::new();
+        let obj = RcTestObject::new();
         assert!(obj.is_kind_of::<NSObject>());
-        assert!(obj.is_kind_of::<__RcTestObject>());
+        assert!(obj.is_kind_of::<RcTestObject>());
     }
 
     #[test]

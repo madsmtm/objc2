@@ -897,7 +897,7 @@ mod tests {
 
     use super::*;
     use crate::mutability::{Immutable, Mutable};
-    use crate::rc::{__RcTestObject, __ThreadTestData, autoreleasepool};
+    use crate::rc::{autoreleasepool, RcTestObject, ThreadTestData};
     use crate::runtime::{AnyObject, NSObject, NSObjectProtocol};
     use crate::{declare_class, msg_send, DeclaredClass};
 
@@ -955,9 +955,9 @@ mod tests {
 
     #[test]
     fn test_drop() {
-        let mut expected = __ThreadTestData::current();
+        let mut expected = ThreadTestData::current();
 
-        let obj = __RcTestObject::new();
+        let obj = RcTestObject::new();
         expected.alloc += 1;
         expected.init += 1;
         expected.assert_current();
@@ -970,9 +970,9 @@ mod tests {
 
     #[test]
     fn test_autorelease() {
-        let obj = __RcTestObject::new();
+        let obj = RcTestObject::new();
         let cloned = obj.clone();
-        let mut expected = __ThreadTestData::current();
+        let mut expected = ThreadTestData::current();
 
         autoreleasepool(|pool| {
             let _ref = Id::autorelease(obj, pool);
@@ -996,9 +996,9 @@ mod tests {
 
     #[test]
     fn test_clone() {
-        let obj = __RcTestObject::new();
+        let obj = RcTestObject::new();
         assert_eq!(obj.retainCount(), 1);
-        let mut expected = __ThreadTestData::current();
+        let mut expected = ThreadTestData::current();
 
         expected.assert_current();
         assert_eq!(obj.retainCount(), 1);
@@ -1036,10 +1036,10 @@ mod tests {
 
     #[test]
     fn test_retain_autoreleased_works_as_retain() {
-        let obj = __RcTestObject::new();
-        let mut expected = __ThreadTestData::current();
+        let obj = RcTestObject::new();
+        let mut expected = ThreadTestData::current();
 
-        let ptr = Id::as_ptr(&obj) as *mut __RcTestObject;
+        let ptr = Id::as_ptr(&obj) as *mut RcTestObject;
         let _obj2 = unsafe { Id::retain_autoreleased(ptr) }.unwrap();
         expected.retain += 1;
         expected.assert_current();
@@ -1047,15 +1047,15 @@ mod tests {
 
     #[test]
     fn test_cast() {
-        let obj: Id<__RcTestObject> = __RcTestObject::new();
-        let expected = __ThreadTestData::current();
+        let obj: Id<RcTestObject> = RcTestObject::new();
+        let expected = ThreadTestData::current();
 
         // SAFETY: Any object can be cast to `AnyObject`
         let obj: Id<AnyObject> = unsafe { Id::cast(obj) };
         expected.assert_current();
 
         // SAFETY: The object was originally `__RcTestObject`
-        let _obj: Id<__RcTestObject> = unsafe { Id::cast(obj) };
+        let _obj: Id<RcTestObject> = unsafe { Id::cast(obj) };
         expected.assert_current();
     }
 

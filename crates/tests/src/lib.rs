@@ -14,6 +14,7 @@ extern crate std;
 mod block;
 #[cfg(all(test, feature = "exception"))]
 mod exception;
+mod rc_test_object;
 #[cfg(test)]
 mod test_declare_class_protocol;
 #[cfg(test)]
@@ -31,3 +32,5 @@ extern "C" fn debug_block(block: *mut c_void) {
     let block: &Block<dyn Fn()> = unsafe { &*(block as *const Block<dyn Fn()>) };
     std::println!("{block:#?}");
 }
+
+use objc2::*;

@@ -187,8 +187,11 @@ impl<T: ?Sized + Message> MsgSend for ManuallyDrop<Id<T>> {
 
 #[cfg(test)]
 mod tests {
-    use crate::msg_send;
-    use crate::test_utils;
+    use crate::rc::{autoreleasepool, RcTestObject, ThreadTestData};
+    use crate::runtime::NSObject;
+    use crate::{
+        declare_class, msg_send, msg_send_id, mutability, test_utils, ClassType, DeclaredClass,
+    };
 
     use super::*;
 
@@ -199,5 +202,79 @@ mod tests {
             let _: () = msg_send![obj, release];
         };
         // `obj` is consumed, can't use here
+    }
+
+    macro_rules! test_error_bool {
+        ($expected:expr, $($obj:tt)*) => {
+            // Succeeds
+            let res: Result<(), Id<RcTestObject>> = unsafe {
+                msg_send![$($obj)*, boolAndShouldError: false, error: _]
+            };
+            assert_eq!(res, Ok(()));
+            $expected.assert_current();
+
+            // Errors
+            let res = autoreleasepool(|_pool| {
+                // `Ok` type is inferred to be `()`
+                let res: Id<RcTestObject> = unsafe {
+                    msg_send![$($obj)*, boolAndShouldError: true, error: _]
+                }.expect_err("not err");
+                $expected.alloc += 1;
+                $expected.init += 1;
+                $expected.autorelease += 1;
+                $expected.retain += 1;
+                $expected.assert_current();
+                res
+            });
+            $expected.release += 1;
+            $expected.assert_current();
+
+            drop(res);
+            $expected.release += 1;
+            $expected.drop += 1;
+            $expected.assert_current();
+        }
+    }
+
+    declare_class!(
+        #[derive(Debug, PartialEq, Eq)]
+        struct RcTestObjectSubclass;
+
+        unsafe impl ClassType for RcTestObjectSubclass {
+            #[inherits(NSObject)]
+            type Super = RcTestObject;
+            type Mutability = mutability::Immutable;
+            const NAME: &'static str = "RcTestObjectSubclass";
+        }
+
+        impl DeclaredClass for RcTestObjectSubclass {}
+    );
+
+    #[cfg_attr(not(test), allow(unused))]
+    impl RcTestObjectSubclass {
+        fn new() -> Id<Self> {
+            unsafe { msg_send_id![Self::class(), new] }
+        }
+    }
+
+    #[test]
+    fn test_error_bool() {
+        let mut expected = ThreadTestData::current();
+
+        let cls = RcTestObject::class();
+        test_error_bool!(expected, cls);
+
+        let obj = RcTestObject::new();
+        expected.alloc += 1;
+        expected.init += 1;
+        test_error_bool!(expected, &obj);
+
+        let obj = RcTestObjectSubclass::new();
+        expected.alloc += 1;
+        expected.init += 1;
+        test_error_bool!(expected, &obj);
+        test_error_bool!(expected, super(&obj));
+        test_error_bool!(expected, super(&obj, RcTestObjectSubclass::class()));
+        test_error_bool!(expected, super(&obj, RcTestObject::class()));
     }
 }

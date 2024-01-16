@@ -53,6 +53,7 @@ mod autorelease;
 mod id;
 mod id_forwarding_impls;
 mod id_traits;
+#[cfg(test)]
 mod test_object;
 mod weak_id;
 
@@ -62,6 +63,6 @@ pub use self::autorelease::{
 };
 pub use self::id::Id;
 pub use self::id_traits::{DefaultId, IdFromIterator, IdIntoIterator};
-#[doc(hidden)]
-pub use self::test_object::{__RcTestObject, __ThreadTestData};
+#[cfg(test)]
+pub(crate) use self::test_object::{RcTestObject, ThreadTestData};
 pub use self::weak_id::WeakId;

@@ -427,7 +427,7 @@ mod tests {
 
     use super::*;
     use crate::mutability::{InteriorMutable, Mutable};
-    use crate::rc::{Allocated, Id, PartialInit, __RcTestObject, __ThreadTestData};
+    use crate::rc::{Allocated, Id, PartialInit, RcTestObject, ThreadTestData};
     use crate::runtime::NSObject;
     use crate::{declare_class, msg_send, msg_send_id};
 
@@ -732,19 +732,19 @@ mod tests {
             }
 
             impl DeclaredClass for RcIvar {
-                type Ivars = Option<Id<__RcTestObject>>;
+                type Ivars = Option<Id<RcTestObject>>;
             }
 
             unsafe impl RcIvar {
                 #[method_id(init)]
                 fn init(this: Allocated<Self>) -> Option<Id<Self>> {
-                    let this = this.set_ivars(Some(__RcTestObject::new()));
+                    let this = this.set_ivars(Some(RcTestObject::new()));
                     unsafe { msg_send_id![super(this), init] }
                 }
             }
         );
 
-        let mut expected = __ThreadTestData::current();
+        let mut expected = ThreadTestData::current();
 
         let _ = RcIvar::alloc();
         expected.assert_current();
@@ -756,7 +756,7 @@ mod tests {
         let mut obj = unsafe { init_no_finalize(RcIvar::alloc()) };
         expected.assert_current();
 
-        *obj.ivars_mut() = Some(__RcTestObject::new());
+        *obj.ivars_mut() = Some(RcTestObject::new());
         expected.alloc += 1;
         expected.init += 1;
         expected.assert_current();
@@ -784,7 +784,7 @@ mod tests {
         #[derive(Default, Debug, PartialEq, Eq)]
         struct RcIvarSubclassIvars {
             int: i32,
-            obj: Id<__RcTestObject>,
+            obj: Id<RcTestObject>,
         }
 
         declare_class!(
@@ -805,7 +805,7 @@ mod tests {
                 fn init(this: Allocated<Self>) -> Option<Id<Self>> {
                     let this = this.set_ivars(RcIvarSubclassIvars {
                         int: 42,
-                        obj: __RcTestObject::new(),
+                        obj: RcTestObject::new(),
                     });
                     unsafe { msg_send_id![super(this), init] }
                 }

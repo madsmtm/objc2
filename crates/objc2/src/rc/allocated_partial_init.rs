@@ -311,7 +311,7 @@ mod tests {
     use static_assertions::assert_not_impl_any;
 
     use super::*;
-    use crate::rc::__RcTestObject;
+    use crate::rc::RcTestObject;
     use crate::runtime::NSObject;
 
     #[test]
@@ -347,7 +347,7 @@ mod tests {
     )]
     fn test_set_ivars_null() {
         // SAFETY: The pointer is NULL
-        let obj: Allocated<__RcTestObject> = unsafe { Allocated::new(ptr::null_mut()) };
+        let obj: Allocated<RcTestObject> = unsafe { Allocated::new(ptr::null_mut()) };
         let _ = obj.set_ivars(());
     }
 }

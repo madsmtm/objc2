@@ -217,15 +217,15 @@ impl<T: Message + 'static> ConvertArgument for Option<&mut Option<Id<T>>> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::rc::{__RcTestObject, __ThreadTestData, autoreleasepool};
+    use crate::rc::{autoreleasepool, Allocated, RcTestObject, ThreadTestData};
     use crate::{msg_send, msg_send_id, ClassType};
 
     #[test]
     fn test_bool_error() {
-        let mut expected = __ThreadTestData::current();
+        let mut expected = ThreadTestData::current();
 
-        fn bool_error(should_error: bool, error: Option<&mut Option<Id<__RcTestObject>>>) {
-            let cls = __RcTestObject::class();
+        fn bool_error(should_error: bool, error: Option<&mut Option<Id<RcTestObject>>>) {
+            let cls = RcTestObject::class();
             let did_succeed: bool =
                 unsafe { msg_send![cls, boolAndShouldError: should_error, error: error] };
             assert_ne!(should_error, did_succeed);
@@ -236,9 +236,9 @@ mod tests {
         expected.assert_current();
 
         fn helper(
-            expected: &mut __ThreadTestData,
+            expected: &mut ThreadTestData,
             should_error: bool,
-            mut error: Option<Id<__RcTestObject>>,
+            mut error: Option<Id<RcTestObject>>,
         ) {
             std::dbg!(should_error, &error);
             autoreleasepool(|_| {
@@ -273,14 +273,14 @@ mod tests {
         expected.init += 1;
         expected.retain += 1;
         expected.release += 1;
-        helper(&mut expected, false, Some(__RcTestObject::new()));
+        helper(&mut expected, false, Some(RcTestObject::new()));
 
         expected.alloc += 1;
         expected.init += 1;
         expected.retain += 1;
         expected.release += 1;
         expected.drop += 1;
-        helper(&mut expected, true, Some(__RcTestObject::new()));
+        helper(&mut expected, true, Some(RcTestObject::new()));
     }
 
     #[test]
@@ -293,8 +293,8 @@ mod tests {
     )]
     #[should_panic = "found that NULL was written to `&mut Id<_>`, which is UB! You should handle this with `&mut Option<Id<_>>` instead"]
     fn test_debug_check_ub() {
-        let cls = __RcTestObject::class();
-        let mut param: Id<_> = __RcTestObject::new();
+        let cls = RcTestObject::class();
+        let mut param: Id<_> = RcTestObject::new();
         let _: () = unsafe { msg_send![cls, outParamNull: &mut param] };
     }
 
@@ -303,16 +303,16 @@ mod tests {
 
     #[test]
     fn test_id_interaction() {
-        let mut expected = __ThreadTestData::current();
-        let cls = __RcTestObject::class();
+        let mut expected = ThreadTestData::current();
+        let cls = RcTestObject::class();
 
-        let mut err: Id<__RcTestObject> = __RcTestObject::new();
+        let mut err: Id<RcTestObject> = RcTestObject::new();
         expected.alloc += 1;
         expected.init += 1;
         expected.assert_current();
 
         autoreleasepool(|_| {
-            let obj: Option<Id<__RcTestObject>> =
+            let obj: Option<Id<RcTestObject>> =
                 unsafe { msg_send_id![cls, idAndShouldError: false, error: &mut err] };
             expected.alloc += 1;
             expected.init += 1;
@@ -339,6 +339,49 @@ mod tests {
         expected.assert_current();
 
         drop(err);
+        expected.release += 1;
+        expected.drop += 1;
+        expected.assert_current();
+    }
+
+    #[test]
+    fn test_error_alloc() {
+        let mut expected = ThreadTestData::current();
+
+        // Succeeds
+        let mut error: Option<Id<RcTestObject>> = None;
+        let res: Allocated<RcTestObject> = unsafe {
+            msg_send_id![RcTestObject::class(), allocAndShouldError: false, error: &mut error]
+        };
+        expected.alloc += 1;
+        expected.assert_current();
+        assert!(!Allocated::as_ptr(&res).is_null());
+        assert!(error.is_none());
+
+        drop(res);
+        expected.release += 1;
+        // Drop flag ensures uninitialized do not drop
+        // expected.drop += 1;
+        expected.assert_current();
+
+        // Errors
+        let res: Id<RcTestObject> = autoreleasepool(|_pool| {
+            let mut error = None;
+            let res: Allocated<RcTestObject> = unsafe {
+                msg_send_id![RcTestObject::class(), allocAndShouldError: true, error: &mut error]
+            };
+            expected.alloc += 1;
+            expected.init += 1;
+            expected.autorelease += 1;
+            expected.retain += 1;
+            expected.assert_current();
+            assert!(Allocated::as_ptr(&res).is_null());
+            error.unwrap()
+        });
+        expected.release += 1;
+        expected.assert_current();
+
+        drop(res);
         expected.release += 1;
         expected.drop += 1;
         expected.assert_current();

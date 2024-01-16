@@ -3,17 +3,19 @@ use std::ptr;
 use std::vec::Vec;
 
 use objc2::mutability::Immutable;
-use objc2::rc::{Id, __RcTestObject, __ThreadTestData};
+use objc2::rc::Id;
 use objc2::{declare_class, extern_methods, ClassType, DeclaredClass};
 use objc2_foundation::{
     NSArray, NSCopying, NSMutableArray, NSMutableCopying, NSMutableDictionary, NSMutableSet,
     NSNumber, NSSet, NSValue,
 };
 
+use crate::rc_test_object::{RcTestObject, ThreadTestData};
+
 #[test]
 fn array_retains_stored() {
-    let obj = __RcTestObject::new();
-    let mut expected = __ThreadTestData::current();
+    let obj = RcTestObject::new();
+    let mut expected = ThreadTestData::current();
 
     let input = [obj.clone(), obj.clone()];
     expected.retain += 2;
@@ -52,8 +54,8 @@ fn array_retains_stored() {
 
 #[test]
 fn set_retains_stored() {
-    let obj = __RcTestObject::new();
-    let mut expected = __ThreadTestData::current();
+    let obj = RcTestObject::new();
+    let mut expected = ThreadTestData::current();
 
     let input = [obj.clone(), obj.clone()];
     expected.retain += 2;
@@ -87,9 +89,9 @@ fn set_retains_stored() {
 
 #[test]
 fn array_nscopying_uses_retain() {
-    let obj = __RcTestObject::new();
+    let obj = RcTestObject::new();
     let array = NSArray::from_id_slice(&[obj]);
-    let mut expected = __ThreadTestData::current();
+    let mut expected = ThreadTestData::current();
 
     let _copy = array.copy();
     expected.assert_current();
@@ -101,9 +103,9 @@ fn array_nscopying_uses_retain() {
 
 #[test]
 fn set_nscopying_uses_retain() {
-    let obj = __RcTestObject::new();
+    let obj = RcTestObject::new();
     let set = NSSet::from_id_slice(&[obj]);
-    let mut expected = __ThreadTestData::current();
+    let mut expected = ThreadTestData::current();
 
     let _copy = set.copy();
     expected.assert_current();
@@ -119,10 +121,10 @@ fn set_nscopying_uses_retain() {
     ignore = "this works differently on different framework versions"
 )]
 fn array_iter_minimal_retains() {
-    let objs = [__RcTestObject::new()];
+    let objs = [RcTestObject::new()];
     let array = NSArray::from_id_slice(&objs);
     drop(objs);
-    let mut expected = __ThreadTestData::current();
+    let mut expected = ThreadTestData::current();
 
     // Iter
     let mut iter = array.iter();
@@ -167,10 +169,10 @@ fn array_iter_minimal_retains() {
     ignore = "this works differently on different framework versions"
 )]
 fn set_iter_minimal_retains() {
-    let objs = [__RcTestObject::new()];
+    let objs = [RcTestObject::new()];
     let set = NSSet::from_id_slice(&objs);
     drop(objs);
-    let mut expected = __ThreadTestData::current();
+    let mut expected = ThreadTestData::current();
 
     // Iter
     let mut iter = set.iter();
@@ -216,9 +218,9 @@ fn set_iter_minimal_retains() {
 )]
 fn array_adding() {
     let mut array = NSMutableArray::new();
-    let obj1 = __RcTestObject::new();
-    let obj2 = __RcTestObject::new();
-    let mut expected = __ThreadTestData::current();
+    let obj1 = RcTestObject::new();
+    let obj2 = RcTestObject::new();
+    let mut expected = ThreadTestData::current();
 
     array.push(obj1);
     expected.retain += 1;
@@ -241,10 +243,10 @@ fn array_adding() {
 )]
 fn array_replace() {
     let mut array = NSMutableArray::new();
-    let obj1 = __RcTestObject::new();
-    let obj2 = __RcTestObject::new();
+    let obj1 = RcTestObject::new();
+    let obj2 = RcTestObject::new();
     array.push(obj1);
-    let mut expected = __ThreadTestData::current();
+    let mut expected = ThreadTestData::current();
 
     let old_obj = array.replace(0, obj2).unwrap();
     expected.retain += 2;
@@ -261,9 +263,9 @@ fn array_replace() {
 fn array_remove() {
     let mut array = NSMutableArray::new();
     for _ in 0..4 {
-        array.push(__RcTestObject::new());
+        array.push(RcTestObject::new());
     }
-    let mut expected = __ThreadTestData::current();
+    let mut expected = ThreadTestData::current();
 
     let _obj = array.remove(1);
     expected.retain += 1;
@@ -286,11 +288,11 @@ fn array_remove() {
 
 #[test]
 fn set_insert_retain_release() {
-    let mut set = <NSMutableSet<__RcTestObject>>::new();
-    let obj1 = __RcTestObject::new();
-    let obj2 = __RcTestObject::new();
+    let mut set = <NSMutableSet<RcTestObject>>::new();
+    let obj1 = RcTestObject::new();
+    let obj2 = RcTestObject::new();
     let obj2_copy = obj2.retain();
-    let mut expected = __ThreadTestData::current();
+    let mut expected = ThreadTestData::current();
 
     set.insert(&obj1);
     // Retain to store in set
@@ -316,9 +318,9 @@ fn set_insert_retain_release() {
 fn set_clear_release_dealloc() {
     let mut set = NSMutableSet::new();
     for _ in 0..4 {
-        set.insert_id(__RcTestObject::new());
+        set.insert_id(RcTestObject::new());
     }
-    let mut expected = __ThreadTestData::current();
+    let mut expected = ThreadTestData::current();
 
     set.removeAllObjects();
     expected.release += 4;
@@ -329,16 +331,13 @@ fn set_clear_release_dealloc() {
 
 #[test]
 fn value_does_not_retain() {
-    let obj = __RcTestObject::new();
-    let expected = __ThreadTestData::current();
+    let obj = RcTestObject::new();
+    let expected = ThreadTestData::current();
 
-    let val = NSValue::new::<*const __RcTestObject>(&*obj);
+    let val = NSValue::new::<*const RcTestObject>(&*obj);
     expected.assert_current();
 
-    assert!(ptr::eq(
-        unsafe { val.get::<*const __RcTestObject>() },
-        &*obj
-    ));
+    assert!(ptr::eq(unsafe { val.get::<*const RcTestObject>() }, &*obj));
     expected.assert_current();
 
     let _clone = val.clone();
@@ -356,7 +355,7 @@ declare_class!(
     struct NSCopyingRcTestObject;
 
     unsafe impl ClassType for NSCopyingRcTestObject {
-        type Super = __RcTestObject;
+        type Super = RcTestObject;
         type Mutability = Immutable;
         const NAME: &'static str = "NSCopyingRcTestObject";
     }
@@ -377,7 +376,7 @@ extern_methods!(
 fn dictionary_insert_key_copies() {
     let mut dict = <NSMutableDictionary<NSCopyingRcTestObject, _>>::new();
     let key1 = NSCopyingRcTestObject::new();
-    let mut expected = __ThreadTestData::current();
+    let mut expected = ThreadTestData::current();
 
     let _ = dict.insert_id(&key1, NSNumber::new_i32(1));
     // Create copy
@@ -398,7 +397,7 @@ fn dictionary_get_key_copies() {
     let mut dict = <NSMutableDictionary<NSCopyingRcTestObject, _>>::new();
     let key1 = NSCopyingRcTestObject::new();
     let _ = dict.insert_id(&key1, NSNumber::new_i32(1));
-    let expected = __ThreadTestData::current();
+    let expected = ThreadTestData::current();
 
     let _ = dict.get(&key1);
     // No change, getting doesn't do anything to the key!
@@ -408,9 +407,9 @@ fn dictionary_get_key_copies() {
 #[test]
 fn dictionary_insert_value_retain_release() {
     let mut dict = <NSMutableDictionary<NSNumber, _>>::new();
-    dict.insert_id(&NSNumber::new_i32(1), __RcTestObject::new());
-    let to_insert = __RcTestObject::new();
-    let mut expected = __ThreadTestData::current();
+    dict.insert_id(&NSNumber::new_i32(1), RcTestObject::new());
+    let to_insert = RcTestObject::new();
+    let mut expected = ThreadTestData::current();
 
     let old = dict.insert(&NSNumber::new_i32(1), &to_insert);
     // Grab old value
@@ -432,9 +431,9 @@ fn dictionary_insert_value_retain_release() {
 fn dictionary_remove_clear_release_dealloc() {
     let mut dict = <NSMutableDictionary<NSNumber, _>>::new();
     for i in 0..4 {
-        dict.insert_id(&NSNumber::new_i32(i), __RcTestObject::new());
+        dict.insert_id(&NSNumber::new_i32(i), RcTestObject::new());
     }
-    let mut expected = __ThreadTestData::current();
+    let mut expected = ThreadTestData::current();
 
     let _obj = dict.remove(&NSNumber::new_i32(1));
     expected.retain += 1;

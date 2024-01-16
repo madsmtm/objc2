@@ -8,9 +8,14 @@ use std::ptr;
 use std::sync::Mutex;
 
 use objc2::encode::Encode;
-use objc2::rc::{Allocated, Id, __RcTestObject};
-use objc2::runtime::NSObject;
+use objc2::rc::{self, Allocated, Id};
+use objc2::runtime::{self, NSObject};
 use objc2::{class, declare_class, msg_send, msg_send_id, mutability, ClassType, DeclaredClass};
+
+#[path = "../src/rc/test_object.rs"]
+#[allow(dead_code)]
+mod test_object;
+use self::test_object::RcTestObject;
 
 static EXPECTED_MESSAGE: Mutex<String> = Mutex::new(String::new());
 static EXPECTED_LINE: Mutex<u32> = Mutex::new(0);
@@ -138,19 +143,19 @@ fn test_error_methods(checker: &PanicChecker) {
 
     let msg = "invalid message send to -[NSObject someSelectorWithError:]: method not found";
     checker.assert_panics(msg, line!() + 3, || {
-        let obj = __RcTestObject::new();
+        let obj = RcTestObject::new();
         let _: Result<(), Id<NSObject>> =
             unsafe { msg_send![super(&obj), someSelectorWithError: _] };
     });
 }
 
 fn test_id_unwrap(checker: &PanicChecker) {
-    let cls = __RcTestObject::class();
-    let obj = __RcTestObject::new();
+    let cls = RcTestObject::class();
+    let obj = RcTestObject::new();
 
     let msg = "failed creating new instance using +[__RcTestObject newReturningNull]";
     checker.assert_panics(msg, line!() + 1, || {
-        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![cls, newReturningNull] };
+        let _obj: Id<RcTestObject> = unsafe { msg_send_id![cls, newReturningNull] };
     });
 
     let msg = if cfg!(debug_assertions) {
@@ -159,24 +164,24 @@ fn test_id_unwrap(checker: &PanicChecker) {
         "failed allocating object"
     };
     checker.assert_panics(msg, line!() + 2, || {
-        let obj: Allocated<__RcTestObject> = unsafe { msg_send_id![cls, allocReturningNull] };
-        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![obj, init] };
+        let obj: Allocated<RcTestObject> = unsafe { msg_send_id![cls, allocReturningNull] };
+        let _obj: Id<RcTestObject> = unsafe { msg_send_id![obj, init] };
     });
 
     let msg = "failed initializing object with -initReturningNull";
     checker.assert_panics(msg, line!() + 2, || {
-        let _obj: Id<__RcTestObject> =
-            unsafe { msg_send_id![__RcTestObject::alloc(), initReturningNull] };
+        let _obj: Id<RcTestObject> =
+            unsafe { msg_send_id![RcTestObject::alloc(), initReturningNull] };
     });
 
     let msg = "failed copying object";
     checker.assert_panics(msg, line!() + 1, || {
-        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![&obj, copyReturningNull] };
+        let _obj: Id<RcTestObject> = unsafe { msg_send_id![&obj, copyReturningNull] };
     });
 
     let msg = "unexpected NULL returned from -[__RcTestObject methodReturningNull]";
     checker.assert_panics(msg, line!() + 1, || {
-        let _obj: Id<__RcTestObject> = unsafe { msg_send_id![&obj, methodReturningNull] };
+        let _obj: Id<RcTestObject> = unsafe { msg_send_id![&obj, methodReturningNull] };
     });
 }
 

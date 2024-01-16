@@ -191,13 +191,13 @@ mod tests {
     use core::mem;
 
     use super::*;
-    use crate::rc::{__RcTestObject, __ThreadTestData};
+    use crate::rc::{RcTestObject, ThreadTestData};
     use crate::runtime::NSObject;
 
     #[test]
     fn test_weak() {
-        let obj = __RcTestObject::new();
-        let mut expected = __ThreadTestData::current();
+        let obj = RcTestObject::new();
+        let mut expected = ThreadTestData::current();
 
         let weak = WeakId::from(&obj);
         expected.assert_current();
@@ -225,8 +225,8 @@ mod tests {
 
     #[test]
     fn test_weak_clone() {
-        let obj: Id<_> = __RcTestObject::new();
-        let mut expected = __ThreadTestData::current();
+        let obj: Id<_> = RcTestObject::new();
+        let mut expected = ThreadTestData::current();
 
         let weak = WeakId::from(&obj);
         expected.assert_current();
@@ -255,7 +255,7 @@ mod tests {
 
     #[test]
     fn test_weak_default() {
-        let weak: WeakId<__RcTestObject> = WeakId::default();
+        let weak: WeakId<RcTestObject> = WeakId::default();
         assert!(weak.load().is_none());
         drop(weak);
     }
