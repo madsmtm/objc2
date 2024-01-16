@@ -1,4 +1,5 @@
 //! Test msg_send! syntax with missing commas.
+#![deny(deprecated)]
 use icrate::Foundation::NSString;
 use objc2::rc::Id;
 use objc2::{msg_send, msg_send_bool, msg_send_id, ClassType};
