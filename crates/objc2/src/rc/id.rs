@@ -514,8 +514,24 @@ impl<T: Message> Id<T> {
         unsafe { Self::from_raw(res) }
     }
 
+    /// Autoreleases the [`Id`], returning a pointer.
+    ///
+    /// The object is not immediately released, but will be when the innermost
+    /// / current autorelease pool (given as a parameter) is drained.
+    ///
+    /// This is useful when defining your own classes and you have some error
+    /// parameter passed as `Option<&mut *mut NSError>`, and you want to
+    /// create and autorelease an error before returning.
+    ///
+    /// See [`Id::autorelease`] and [`Id::autorelease_mut`] for alternatives
+    /// that yield safe references.
+    ///
+    /// This is an associated method, and must be called as
+    /// `Id::autorelease_ptr(obj)`.
+    #[doc(alias = "objc_autorelease")]
+    #[must_use = "if you don't intend to use the object any more, drop it as usual"]
     #[inline]
-    pub(super) fn autorelease_inner(this: Self) -> *mut T {
+    pub fn autorelease_ptr(this: Self) -> *mut T {
         let ptr = ManuallyDrop::new(this).ptr.as_ptr();
         // SAFETY:
         // - The `ptr` is guaranteed to be valid and have at least one
@@ -541,7 +557,7 @@ impl<T: Message> Id<T> {
     #[inline]
     #[allow(clippy::needless_lifetimes)]
     pub fn autorelease<'p>(this: Self, pool: AutoreleasePool<'p>) -> &'p T {
-        let ptr = Self::autorelease_inner(this);
+        let ptr = Self::autorelease_ptr(this);
         // SAFETY: The pointer is valid as a reference
         unsafe { pool.ptr_as_ref(ptr) }
     }
@@ -564,7 +580,7 @@ impl<T: Message> Id<T> {
     where
         T: IsMutable,
     {
-        let ptr = Self::autorelease_inner(this);
+        let ptr = Self::autorelease_ptr(this);
         // SAFETY:
         // - The pointer is valid as a reference.
         // - The object is safe as mutable because of the `T: IsMutable`
