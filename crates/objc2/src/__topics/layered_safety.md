@@ -42,7 +42,7 @@ This is actually what's done [in the standard library][std-objc], since they
 need to do it so rarely, and the extra dependency on a crate wouldn't be worth
 the cost.
 
-[`objc_msgSend`]: https://docs.rs/objc-sys/0.2.0-beta.3/objc_sys/fn.objc_msgSend.html
+[`objc_msgSend`]: crate::ffi::objc_msgSend
 [std-objc]: https://github.com/rust-lang/rust/blob/aa0189170057a6b56f445f05b9840caf6f260212/library/std/src/sys/unix/args.rs#L196-L248
 
 
@@ -51,13 +51,18 @@ the cost.
 Doing the Rust equivalent of Objective-C's `NSUInteger hash_code = [obj hash];`.
 
 ```rust
-let obj: *const c_void = ...;
-let sel = unsafe { ffi::sel_registerName(b"hash\0".as_ptr() as *const c_char) };
+use std::mem::transmute;
+use std::ffi::c_char;
+use objc2::ffi::{objc_object, objc_msgSend, sel_registerName, NSUInteger, SEL};
+
+let obj: *const objc_object;
+# let obj = &*objc2::runtime::NSObject::new() as *const objc2::runtime::NSObject as *const _;
+let sel = unsafe { sel_registerName(b"hash\0".as_ptr() as *const c_char) };
 let msg_send_fn = unsafe {
-    mem::transmute::<
+    transmute::<
         unsafe extern "C" fn(),
-        unsafe extern "C" fn(*const c_void, SEL) -> NSUInteger,
-    >(ffi::objc_msgSend)
+        unsafe extern "C" fn(*const objc_object, SEL) -> NSUInteger,
+    >(objc_msgSend)
 };
 let hash_code = unsafe { msg_send_fn(obj, sel) };
 ```
@@ -76,7 +81,7 @@ This cannot catch mistakes like passing `null` where a non-null object was
 expected, but it helps a lot with accidentally passing a `&c_int` where `int`
 was expected.
 
-[`MessageReceiver::send_message`]: https://docs.rs/objc2/0.3.0-beta.4/objc2/trait.MessageReceiver.html#method.send_message
+[`MessageReceiver::send_message`]: crate::runtime::MessageReceiver::send_message
 
 
 ### Example
@@ -84,7 +89,11 @@ was expected.
 We'll reuse the `hash` example from above again.
 
 ```rust
-let obj: &NSObject = ...;
+use objc2::ffi::NSUInteger;
+use objc2::runtime::{MessageReceiver, NSObject, Sel};
+
+let obj: &NSObject;
+# let obj = &*objc2::runtime::NSObject::new();
 let sel = Sel::register("hash");
 let hash_code: NSUInteger = unsafe {
     MessageReceiver::send_message(obj, sel, ())
@@ -99,7 +108,7 @@ the selector expression, as well as ensuring that the number of arguments to
 the method is correct. It also handles details surrounding Objective-C's
 `BOOL` type.
 
-[`msg_send!`]: https://docs.rs/objc2/0.3.0-beta.4/objc2/macro.msg_send.html
+[`msg_send!`]: crate::msg_send
 
 
 ### Examples
@@ -107,13 +116,23 @@ the method is correct. It also handles details surrounding Objective-C's
 The `hash` example again.
 
 ```rust
-let obj: &NSObject = ...;
+use objc2::ffi::NSUInteger;
+use objc2::runtime::NSObject;
+use objc2::msg_send;
+
+let obj: &NSObject;
+# let obj = &*objc2::runtime::NSObject::new();
 let hash_code: NSUInteger = unsafe { msg_send![obj, hash] };
 ```
 
-Creating and using an instance of [`NSData`]:
+That example is now pretty close to as minimal as it gets, so let's introduce
+something more complex; creating and using an instance of [`NSData`].
 
 ```rust
+use objc2::ffi::NSUInteger;
+use objc2::runtime::NSObject;
+use objc2::{class, msg_send};
+
 let obj: *const NSObject = unsafe { msg_send![class!(NSData), new] };
 let length: NSUInteger = unsafe { msg_send![obj, length] };
 // We have to specify the return type here, see layer 4 below
@@ -123,7 +142,7 @@ let _: () = unsafe { msg_send![obj, release] };
 [`NSData`]: https://developer.apple.com/documentation/foundation/nsdata?language=objc
 
 
-## Layer 3b: `Id`
+## Layer 3b: `msg_send_id!`
 
 As you can see in the new example involving `NSData`, it can be quite tedious
 to remember the `release` call when you're done with the object. Furthermore,
@@ -135,8 +154,8 @@ we can solve this with [`msg_send_id!`] and the smart pointer [`rc::Id`],
 which work together to ensure that the memory management of the object is done
 correctly.
 
-[`msg_send_id!`]: https://docs.rs/objc2/0.3.0-beta.4/objc2/macro.msg_send_id.html
-[`rc::Id`]: https://docs.rs/objc2/0.3.0-beta.4/objc2/rc/struct.Id.html
+[`msg_send_id!`]: crate::msg_send_id
+[`rc::Id`]: crate::rc::Id
 
 
 ### Example
@@ -144,6 +163,11 @@ correctly.
 The `NSData` example again.
 
 ```rust
+use objc2::ffi::NSUInteger;
+use objc2::rc::Id;
+use objc2::runtime::NSObject;
+use objc2::{class, msg_send, msg_send_id};
+
 let obj: Id<NSObject> = unsafe { msg_send_id![class!(NSData), new] };
 let length: NSUInteger = unsafe { msg_send![&obj, length] };
 // `obj` goes out of scope, `release` is automatically sent to the object
@@ -166,8 +190,8 @@ defining our methods, which is also a big improvement over the `msg_send!` /
 `msg_send_id!` macros, since it allows us to directly "see" the types, instead
 of having them work by type-inference.
 
-[`extern_class!`]: https://docs.rs/objc2/0.3.0-beta.4/objc2/macro.extern_class.html
-[`extern_methods!`]: https://docs.rs/objc2/0.3.0-beta.4/objc2/macro.extern_methods.html
+[`extern_class!`]: crate::extern_class
+[`extern_methods!`]: crate::extern_methods
 
 
 ### Example
@@ -175,23 +199,28 @@ of having them work by type-inference.
 The `NSData` example again.
 
 ```rust
+use objc2::ffi::NSUInteger;
+use objc2::rc::Id;
+use objc2::runtime::NSObject;
+use objc2::{extern_class, extern_methods, mutability, ClassType};
+
 extern_class!(
     #[derive(PartialEq, Eq, Hash)]
     pub struct NSData;
 
     unsafe impl ClassType for NSData {
         type Super = NSObject;
-        type Mutability = ImmutableWithMutableSubclass<NSMutableData>;
+        type Mutability = mutability::InteriorMutable;
     }
 );
 
 extern_methods!(
     unsafe impl NSData {
         #[method_id(new)]
-        fn new() -> Id<Self>;
+        pub fn new() -> Id<Self>;
 
         #[method(length)]
-        fn length(&self) -> NSUInteger;
+        pub fn length(&self) -> NSUInteger;
     }
 );
 
@@ -207,7 +236,7 @@ all of it would take a lifetime. Especially keeping track of which methods are
 nullable, and which are not, is difficult.
 
 Instead, we can autogenerate the above definition from the headers directly
-using type information exposed by `libclang`, giving us a very high confidence
+using type information exposed by `clang`, giving us a very high confidence
 that it is correct!
 
 
@@ -215,7 +244,7 @@ that it is correct!
 
 The `NSData` example again.
 
-```rust
+```rust, ignore
 use icrate::Foundation::NSData;
 
 let obj = NSData::new();

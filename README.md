@@ -47,7 +47,7 @@ Needless to say, nothing is perfect, so if you think you've found a soundness
 hole, please don't hesitate to report it on the [issue tracker]. Known
 soundness holes (however theoretical) are tracked in the [`I-unsound`] label.
 
-[layered-safety]: ./LAYERED_SAFETY.md
+[layered-safety]: ./crates/objc2/src/__topics/layered_safety.md
 [`I-unsound`]: https://github.com/madsmtm/objc2/labels/I-unsound
 [issue tracker]: https://github.com/madsmtm/objc2/issues/new
 

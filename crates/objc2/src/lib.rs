@@ -1,5 +1,8 @@
 //! # Objective-C interface and runtime bindings
 //!
+//! Quick links:
+//! - [Topics][crate::__topics].
+//!
 //! Objective-C was the standard programming language on Apple platforms like
 //! macOS, iOS, iPadOS, tvOS and watchOS. It is an object-oriented language
 //! centered around "sending messages" to its instances - this can for the
@@ -11,11 +14,11 @@
 //! using Rust. This crate enables you to do that, in as safe a manner as
 //! possible.
 //!
-//! See [the document on "Layered Safety"][layered-safety] for a bit of an
+//! See [the document on "Layered Safety"][layered_safety] for a bit of an
 //! introduction to how the safety in this crate works, and see [`icrate`] for
 //! higher-level bindings to Apple's frameworks.
 //!
-//! [layered-safety]: https://github.com/madsmtm/objc2/blob/master/LAYERED_SAFETY.md
+//! [layered_safety]: crate::__topics::layered_safety
 //! [`icrate`]: https://docs.rs/icrate/latest/icrate/
 //!
 //!
@@ -206,6 +209,8 @@ macro_rules! __hash_idents {
 
 #[doc(hidden)]
 pub mod __macro_helpers;
+#[cfg(any(doc, doctest, test))]
+pub mod __topics;
 pub mod encode;
 pub mod exception;
 mod macros;
