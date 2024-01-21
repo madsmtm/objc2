@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Added `Id::autorelease_ptr`.
+* Added the feature flag `"relax-sign-encoding"`, which when enabled, allows
+  using e.g. `NSInteger` in places where you would otherwise have to use
+  `NSUInteger`.
 
 ### Deprecated
 * Deprecated the `apple` Cargo feature flag, it is assumed by default on Apple
