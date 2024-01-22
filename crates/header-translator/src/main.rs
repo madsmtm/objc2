@@ -76,7 +76,7 @@ fn main() -> Result<(), BoxError> {
         })
         .collect();
 
-    if sdks.len() != 8 {
+    if sdks.len() != 10 {
         error!("should have one of each platform: {sdks:?}");
     }
 

@@ -11,10 +11,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## icrate Unreleased - YYYY-MM-DD
 
 ### Changed
-* Updated SDK from Xcode 15.0.1 to 15.1.
+* Updated SDK from Xcode 15.0.1 to 15.2.
 
   View the release notes to learn more details:
   - [15.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-15_1-release-notes)
+  - [15.2](https://developer.apple.com/documentation/xcode-release-notes/xcode-15_2-release-notes)
 * Marked `NSView::isFlipped`, `NSView::convertRect_toView`,
   `NSWindow::convertRectToScreen` and `NSWindow::convertPointFromScreen` as
   safe.
