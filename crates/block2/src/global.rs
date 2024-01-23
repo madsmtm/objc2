@@ -3,7 +3,7 @@ use core::marker::PhantomData;
 use core::mem;
 use core::mem::MaybeUninit;
 use core::ops::Deref;
-use core::ptr;
+use core::ptr::{self, NonNull};
 use std::os::raw::c_ulong;
 
 use objc2::encode::EncodeReturn;
@@ -30,7 +30,7 @@ const GLOBAL_DESCRIPTOR: BlockDescriptor = BlockDescriptor {
 /// [`global_block!`]: crate::global_block
 #[repr(C)]
 pub struct GlobalBlock<A, R = ()> {
-    pub(crate) header: BlockHeader,
+    header: BlockHeader,
     p: PhantomData<(A, R)>,
 }
 
@@ -72,6 +72,7 @@ impl<A, R> GlobalBlock<A, R> {
 
     /// Use the [`global_block`] macro instead.
     #[doc(hidden)]
+    #[inline]
     pub const unsafe fn from_header(header: BlockHeader) -> Self {
         Self {
             header,
@@ -87,11 +88,12 @@ where
 {
     type Target = Block<A, R>;
 
+    #[inline]
     fn deref(&self) -> &Self::Target {
-        let ptr: *const Self = self;
-        let ptr: *const Block<A, R> = ptr.cast();
+        let ptr: NonNull<Self> = NonNull::from(self);
+        let ptr: NonNull<Block<A, R>> = ptr.cast();
         // TODO: SAFETY
-        unsafe { ptr.as_ref().unwrap_unchecked() }
+        unsafe { ptr.as_ref() }
     }
 }
 

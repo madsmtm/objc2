@@ -258,7 +258,7 @@ unsafe extern "C" fn block_context_dispose<B>(block: *mut c_void) {
     unsafe { ptr::drop_in_place(block.cast::<B>()) };
 }
 
-unsafe extern "C" fn block_context_copy<B>(_dst: *mut c_void, _src: *mut c_void) {
+unsafe extern "C" fn block_context_copy<B>(_dst: *mut c_void, _src: *const c_void) {
     // The runtime memmoves the src block into the dst block, nothing to do
 }
 

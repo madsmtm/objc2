@@ -168,6 +168,7 @@ pub(crate) const BLOCK_BYREF_CALLER: c_int = 128;
 #[doc(alias = "Block_layout")]
 #[doc(alias = "Block_basic")]
 #[allow(missing_debug_implementations)]
+#[derive(Clone, Copy)]
 pub struct BlockHeader {
     /// Class pointer.
     ///
@@ -231,6 +232,7 @@ pub(crate) union BlockDescriptorPtr {
 #[repr(C)]
 #[doc(alias = "__block_descriptor")]
 #[doc(alias = "Block_descriptor_1")]
+#[derive(Clone, Copy, Debug)]
 pub(crate) struct BlockDescriptor {
     /// Reserved for future use. Currently always 0.
     pub(crate) reserved: c_ulong,
@@ -244,6 +246,7 @@ pub(crate) struct BlockDescriptor {
 #[repr(C)]
 #[doc(alias = "__block_descriptor")]
 #[doc(alias = "Block_descriptor_2")]
+#[derive(Clone, Copy, Debug)]
 pub(crate) struct BlockDescriptorCopyDispose {
     /// Reserved for future use. Currently always 0.
     pub(crate) reserved: c_ulong,
@@ -251,7 +254,7 @@ pub(crate) struct BlockDescriptorCopyDispose {
     pub(crate) size: c_ulong,
 
     /// Helper to copy the block if it contains nontrivial copy operations.
-    pub(crate) copy: Option<unsafe extern "C" fn(dst: *mut c_void, src: *mut c_void)>,
+    pub(crate) copy: Option<unsafe extern "C" fn(dst: *mut c_void, src: *const c_void)>,
     /// Helper to destroy the block after being copied.
     pub(crate) dispose: Option<unsafe extern "C" fn(src: *mut c_void)>,
 }
@@ -262,6 +265,7 @@ pub(crate) struct BlockDescriptorCopyDispose {
 #[repr(C)]
 #[doc(alias = "__block_descriptor")]
 #[doc(alias = "Block_descriptor_3")]
+#[derive(Clone, Copy, Debug)]
 pub(crate) struct BlockDescriptorSignature {
     /// Reserved for future use. Currently always 0.
     pub(crate) reserved: c_ulong,
@@ -281,6 +285,7 @@ pub(crate) struct BlockDescriptorSignature {
 #[doc(alias = "__block_descriptor")]
 #[doc(alias = "Block_descriptor_2")]
 #[doc(alias = "Block_descriptor_3")]
+#[derive(Clone, Copy, Debug)]
 pub(crate) struct BlockDescriptorCopyDisposeSignature {
     /// Reserved for future use. Currently always 0.
     pub(crate) reserved: c_ulong,
@@ -288,8 +293,8 @@ pub(crate) struct BlockDescriptorCopyDisposeSignature {
     pub(crate) size: c_ulong,
 
     /// Helper to copy the block if it contains nontrivial copy operations.
-    pub(crate) copy: Option<unsafe extern "C" fn(dst: *mut c_void, src: *mut c_void)>,
-    /// Helper to destroy the block if required.
+    pub(crate) copy: Option<unsafe extern "C" fn(dst: *mut c_void, src: *const c_void)>,
+    /// Helper to destroy the block after being copied.
     pub(crate) dispose: Option<unsafe extern "C" fn(src: *mut c_void)>,
 
     /// Objective-C type encoding of the block.

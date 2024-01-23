@@ -88,6 +88,13 @@ block_args_impl!(
 
 /// An Objective-C block that takes arguments of `A` when called and
 /// returns a value of `R`.
+///
+///
+/// # Memory layout
+///
+/// This is intented to be an `extern type`, and as such the memory layout of
+/// this type is _not_ guaranteed. That said, pointers to this type are always
+/// thin, and match that of Objective-C blocks.
 #[repr(C)]
 pub struct Block<A, R> {
     _inner: [u8; 0],
@@ -99,6 +106,7 @@ pub struct Block<A, R> {
     _p: PhantomData<fn(A) -> R>,
 }
 
+// SAFETY: Pointers to `Block` is an Objective-C block.
 unsafe impl<A: BlockArguments, R: EncodeReturn> RefEncode for Block<A, R> {
     const ENCODING_REF: Encoding = Encoding::Block;
 }
