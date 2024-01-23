@@ -6,17 +6,17 @@ use block2::{Block, RcBlock, StackBlock};
 
 #[no_mangle]
 fn stack_block_to_rc() -> RcBlock<(i32,), i32> {
-    StackBlock::new(|x| x + 2).copy()
+    StackBlock::new(|x| x + 2).to_rc()
 }
 
 #[no_mangle]
 fn rc_block() -> RcBlock<(i32,), i32> {
-    StackBlock::new(|x| x + 3).copy()
+    RcBlock::new(|x| x + 2)
 }
 
 #[no_mangle]
 fn rc_block_drop(b: Box<i32>) -> RcBlock<(i32,), i32> {
-    StackBlock::new(move |x| x + *b).copy()
+    RcBlock::new(move |x| x + *b)
 }
 
 extern "C" {
@@ -37,6 +37,6 @@ fn create_and_use_stack_block_drop(b: Box<i32>) {
 
 #[no_mangle]
 fn create_and_use_rc_block() {
-    let block = StackBlock::new(|x| x + 2).copy();
+    let block = RcBlock::new(|x| x + 2);
     unsafe { needs_block(&block) };
 }

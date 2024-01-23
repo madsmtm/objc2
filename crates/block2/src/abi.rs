@@ -254,8 +254,14 @@ pub(crate) struct BlockDescriptorCopyDispose {
     pub(crate) size: c_ulong,
 
     /// Helper to copy the block if it contains nontrivial copy operations.
+    ///
+    /// This may be NULL since macOS 11.0.1 in Apple's runtime, but this
+    /// should not be relied on.
     pub(crate) copy: Option<unsafe extern "C" fn(dst: *mut c_void, src: *const c_void)>,
     /// Helper to destroy the block after being copied.
+    ///
+    /// This may be NULL since macOS 11.0.1 in Apple's runtime, but this
+    /// should not be relied on.
     pub(crate) dispose: Option<unsafe extern "C" fn(src: *mut c_void)>,
 }
 
@@ -293,8 +299,14 @@ pub(crate) struct BlockDescriptorCopyDisposeSignature {
     pub(crate) size: c_ulong,
 
     /// Helper to copy the block if it contains nontrivial copy operations.
+    ///
+    /// This may be NULL since macOS 11.0.1 in Apple's runtime, but this
+    /// should not be relied on.
     pub(crate) copy: Option<unsafe extern "C" fn(dst: *mut c_void, src: *const c_void)>,
     /// Helper to destroy the block after being copied.
+    ///
+    /// This may be NULL since macOS 11.0.1 in Apple's runtime, but this
+    /// should not be relied on.
     pub(crate) dispose: Option<unsafe extern "C" fn(src: *mut c_void)>,
 
     /// Objective-C type encoding of the block.

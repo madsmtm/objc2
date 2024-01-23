@@ -45,35 +45,112 @@
 //!
 //! ## Creating blocks
 //!
-//! Creating a block to pass to Objective-C can be done with the
-//! [`StackBlock`] struct. For example, to create a block that adds two
-//! integers, we could write:
+//! Creating a block to pass to Objective-C can be done with [`RcBlock`] or
+//! [`StackBlock`], depending on if you want to move the block to the heap,
+//! or let the callee decide if it needs to do that.
+//!
+//! To declare external functions or methods that takes blocks, use
+//! `&Block<A, R>` or `Option<&Block<A, R>>`, where `A` is a tuple with the
+//! argument types, and `R` is the return type.
+//!
+//! As an example, we're going to work with a block that adds two integers.
+//!
+//! ```
+//! use block2::Block;
+//!
+//! // External function that takes a block
+//! extern "C" {
+//!     fn add_numbers_using_block(block: &Block<(i32, i32), i32>);
+//! }
+//! #
+//! # use objc2::ClassType;
+//! # objc2::extern_class!(
+//! #     struct MyClass;
+//! #
+//! #     unsafe impl ClassType for MyClass {
+//! #         type Super = objc2::runtime::NSObject;
+//! #         type Mutability = objc2::mutability::InteriorMutable;
+//! #         const NAME: &'static str = "NSObject";
+//! #     }
+//! # );
+//!
+//! // External method that takes a block
+//! objc2::extern_methods!(
+//!     unsafe impl MyClass {
+//!         #[method(addNumbersUsingBlock:)]
+//!         pub fn addNumbersUsingBlock(&self, block: &Block<(i32, i32), i32>);
+//!     }
+//! );
+//! ```
+//!
+//! To call such a function / method, we could create a new block from a
+//! closure using [`RcBlock::new`].
+//!
+//! ```
+//! use block2::RcBlock;
+//! #
+//! # extern "C" {
+//! #     fn add_numbers_using_block(block: &block2::Block<(i32, i32), i32>);
+//! # }
+//! # mod imp {
+//! #     #[no_mangle]
+//! #     extern "C" fn add_numbers_using_block(block: &block2::Block<(i32, i32), i32>) {
+//! #         assert_eq!(unsafe { block.call((5, 8)) }, 13);
+//! #     }
+//! # }
+//!
+//! let block = RcBlock::new(|a: i32, b: i32| a + b);
+//! unsafe { add_numbers_using_block(&block) };
+//! ```
+//!
+//! This creates the block on the heap. If the external function you're
+//! calling is not going to copy the block, it may be more performant if you
+//! construct a [`StackBlock`] directly, using [`StackBlock::new`].
+//!
+//! Note though that this requires that the closure is [`Clone`], as the
+//! external code may want to copy the block to the heap in the future.
 //!
 //! ```
 //! use block2::StackBlock;
+//! #
+//! # extern "C" {
+//! #     fn add_numbers_using_block(block: &block2::Block<(i32, i32), i32>);
+//! # }
+//! # mod imp {
+//! #     #[no_mangle]
+//! #     extern "C" fn add_numbers_using_block(block: &block2::Block<(i32, i32), i32>) {
+//! #         assert_eq!(unsafe { block.call((5, 8)) }, 13);
+//! #     }
+//! # }
+//!
 //! let block = StackBlock::new(|a: i32, b: i32| a + b);
-//! let block = block.copy();
-//! assert_eq!(unsafe { block.call((5, 8)) }, 13);
+//! unsafe { add_numbers_using_block(&block) };
 //! ```
 //!
-//! It is important to copy your block to the heap (with the [`copy`] method)
-//! before passing it to Objective-C; this is because our [`StackBlock`] is
-//! only meant to be copied once, and we can enforce this in Rust, but if
-//! Objective-C code were to copy it twice we could have a double free.
-//!
-//! [`copy`]: StackBlock::copy
-//!
-//! As an optimization if your block doesn't capture any variables, you can
-//! use the [`global_block!`] macro to create a static block:
+//! As an optimization if your block doesn't capture any variables (as in the
+//! above examples), you can use the [`global_block!`] macro to create a
+//! static block.
 //!
 //! ```
 //! use block2::global_block;
+//! #
+//! # extern "C" {
+//! #     fn add_numbers_using_block(block: &block2::Block<(i32, i32), i32>);
+//! # }
+//! # mod imp {
+//! #     #[no_mangle]
+//! #     extern "C" fn add_numbers_using_block(block: &block2::Block<(i32, i32), i32>) {
+//! #         assert_eq!(unsafe { block.call((5, 8)) }, 13);
+//! #     }
+//! # }
+//!
 //! global_block! {
-//!     static MY_BLOCK = || -> f32 {
-//!         10.0
+//!     static MY_BLOCK = |a: i32, b: i32| -> i32 {
+//!         a + b
 //!     };
 //! }
-//! assert_eq!(unsafe { MY_BLOCK.call(()) }, 10.0);
+//!
+//! unsafe { add_numbers_using_block(&MY_BLOCK) };
 //! ```
 //!
 //!

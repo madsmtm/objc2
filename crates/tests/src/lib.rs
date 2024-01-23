@@ -7,6 +7,8 @@ use block2::{Block, RcBlock};
 extern crate alloc;
 extern crate std;
 
+#[cfg(test)]
+mod block;
 #[cfg(all(test, feature = "exception"))]
 mod exception;
 pub mod ffi;
@@ -24,40 +26,37 @@ use crate::ffi::LargeStruct;
 pub fn get_int_block_with(i: i32) -> RcBlock<(), i32> {
     unsafe {
         let ptr = ffi::get_int_block_with(i);
-        RcBlock::new(ptr as *mut _)
+        RcBlock::from_raw(ptr).unwrap()
     }
 }
 
 pub fn get_add_block_with(i: i32) -> RcBlock<(i32,), i32> {
     unsafe {
         let ptr = ffi::get_add_block_with(i);
-        RcBlock::new(ptr as *mut _)
+        RcBlock::from_raw(ptr).unwrap()
     }
 }
 
 pub fn invoke_int_block(block: &Block<(), i32>) -> i32 {
-    let ptr = block as *const _;
-    unsafe { ffi::invoke_int_block(ptr as *mut _) }
+    unsafe { ffi::invoke_int_block(block) }
 }
 
 pub fn invoke_add_block(block: &Block<(i32,), i32>, a: i32) -> i32 {
-    let ptr = block as *const _;
-    unsafe { ffi::invoke_add_block(ptr as *mut _, a) }
+    unsafe { ffi::invoke_add_block(block, a) }
 }
 
 pub fn invoke_large_struct_block(
     block: &Block<(LargeStruct,), LargeStruct>,
     x: LargeStruct,
 ) -> LargeStruct {
-    let ptr = block as *const _;
-    unsafe { ffi::invoke_large_struct_block(ptr as *mut _, x) }
+    unsafe { ffi::invoke_large_struct_block(block, x) }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use alloc::string::ToString;
-    use block2::{global_block, RcBlock, StackBlock};
+    use block2::{global_block, StackBlock};
 
     global_block! {
         /// Test `global_block` in an external crate
@@ -108,16 +107,15 @@ mod tests {
         let block = StackBlock::new(move || s.len() as i32);
         assert_eq!(invoke_int_block(&block), expected_len);
 
-        let copied = block.copy();
+        let copied = block.to_rc();
         assert_eq!(invoke_int_block(&copied), expected_len);
     }
 
     #[test]
-    fn test_block_stack_copy() {
-        fn make_block() -> RcBlock<(), i32> {
+    fn test_block_stack_move() {
+        fn make_block() -> StackBlock<(), i32, impl Fn() -> i32> {
             let x = 7;
-            let block = StackBlock::new(move || x);
-            block.copy()
+            StackBlock::new(move || x)
         }
 
         let block = make_block();
@@ -146,7 +144,7 @@ mod tests {
             x
         });
         assert_eq!(invoke_large_struct_block(&block, data), new_data);
-        let block = block.copy();
+        let block = block.to_rc();
         assert_eq!(invoke_large_struct_block(&block, data), new_data);
     }
 }
