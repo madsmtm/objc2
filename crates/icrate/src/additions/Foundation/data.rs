@@ -2,12 +2,16 @@
 #[cfg(feature = "block")]
 use alloc::vec::Vec;
 use core::fmt;
+#[cfg(feature = "block")]
+use core::mem::ManuallyDrop;
 use core::ops::Index;
 #[cfg(feature = "Foundation_NSMutableData")]
 use core::ops::{IndexMut, Range};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::slice::{self, SliceIndex};
 
+#[cfg(feature = "block")]
+use block2::{Block, RcBlock};
 #[cfg(feature = "block")]
 use objc2::rc::IdFromIterator;
 
@@ -268,17 +272,12 @@ impl IdFromIterator<u8> for NSMutableData {
 
 #[cfg(feature = "block")]
 unsafe fn with_vec<T: Message>(obj: Allocated<T>, bytes: Vec<u8>) -> Id<T> {
-    use core::mem::ManuallyDrop;
-
-    use block2::{Block, StackBlock};
-
     let capacity = bytes.capacity();
 
-    let dealloc = StackBlock::new(move |bytes: *mut c_void, len: usize| unsafe {
+    let dealloc = RcBlock::new(move |bytes: *mut c_void, len: usize| {
         // Recreate the Vec and let it drop
-        let _ = <Vec<u8>>::from_raw_parts(bytes.cast(), len, capacity);
+        let _ = unsafe { <Vec<u8>>::from_raw_parts(bytes.cast(), len, capacity) };
     });
-    let dealloc = dealloc.copy();
     let dealloc: &Block<(*mut c_void, usize), ()> = &dealloc;
 
     let mut bytes = ManuallyDrop::new(bytes);

@@ -6,16 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Added `RcBlock::new(closure)` as a more efficient and flexible alternative
+  to `StackBlock::new(closure).to_rc()`.
+* Added `StackBlock::to_rc` to convert stack blocks to `RcBlock`.
+
 ### Changed
+* **BREAKING**: Renamed `RcBlock::new(ptr)` to `RcBlock::from_raw(ptr)`.
+* **BREAKING**: Made `RcBlock` use the null-pointer optimization;
+  `RcBlock::from_raw` and `RcBlock::copy` now return an `Option`.
 * **BREAKING**: Only expose the actually public symbols `_Block_copy`,
   `_Block_release`, `_Block_object_assign`, `_Block_object_dispose`,
   `_NSConcreteGlobalBlock`, `_NSConcreteStackBlock` and `Class` in `ffi`
   module.
+* **BREAKING**: Renamed `IntoConcreteBlock` to `IntoBlock`.
 * No longer use the `block-sys` crate for linking to the blocks runtime.
 * Renamed `ConcreteBlock` to `StackBlock`. The old name is deprecated.
-* **BREAKING**: Renamed `IntoConcreteBlock` to `IntoBlock`.
+* Added `Copy` implementation for `StackBlock`.
+
+### Deprecated
+* Deprecated `StackBlock::copy`, it is no longer necessary.
 
 ### Fixed
+* **BREAKING**: `StackBlock::new` now requires the closure to be `Clone`. If
+  this is not desired, use `RcBlock::new` instead.
 * Relaxed the `F: Debug` bound on `StackBlock`'s `Debug` implementation.
 
 

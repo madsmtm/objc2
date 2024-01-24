@@ -525,6 +525,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "test_block"
+version = "0.1.0"
+dependencies = [
+ "block2",
+]
+
+[[package]]
 name = "test_declare_class"
 version = "0.1.0"
 dependencies = [
