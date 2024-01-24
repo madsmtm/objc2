@@ -455,7 +455,7 @@ impl<'a> MsgSendIdFailed<'a> for Alloc {
 }
 
 impl MsgSendIdFailed<'_> for Init {
-    type Args = (*const AnyObject, Sel);
+    type Args = (*mut AnyObject, Sel);
 
     #[cold]
     fn failed((ptr, sel): Self::Args) -> ! {
