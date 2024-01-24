@@ -1,0 +1,84 @@
+error: lifetime may not live long enough
+ --> ui/block_inner_wrong_variance.rs
+  |
+  | fn block<'a, 'r, 'f, 'b>(
+  |              -- lifetime `'r` defined here
+...
+  |     b
+  |     ^ returning this value requires that `'r` must outlive `'static`
+
+error: lifetime may not live long enough
+ --> ui/block_inner_wrong_variance.rs
+  |
+  | fn block<'a, 'r, 'f, 'b>(
+  |          -- lifetime `'a` defined here
+...
+  |     b
+  |     ^ returning this value requires that `'a` must outlive `'static`
+
+help: the following changes may resolve your lifetime errors
+  |
+  = help: replace `'r` with `'static`
+  = help: replace `'a` with `'static`
+
+error: lifetime may not live long enough
+ --> ui/block_inner_wrong_variance.rs
+  |
+  | fn global<'a, 'r, 'f>(
+  |               -- lifetime `'r` defined here
+...
+  |     b
+  |     ^ returning this value requires that `'r` must outlive `'static`
+
+error: lifetime may not live long enough
+ --> ui/block_inner_wrong_variance.rs
+  |
+  | fn global<'a, 'r, 'f>(
+  |           -- lifetime `'a` defined here
+...
+  |     b
+  |     ^ returning this value requires that `'a` must outlive `'static`
+
+error: lifetime may not live long enough
+ --> ui/block_inner_wrong_variance.rs
+  |
+  | fn rc<'a, 'r, 'f>(
+  |           -- lifetime `'r` defined here
+...
+  |     b
+  |     ^ returning this value requires that `'r` must outlive `'static`
+
+error: lifetime may not live long enough
+ --> ui/block_inner_wrong_variance.rs
+  |
+  | fn rc<'a, 'r, 'f>(
+  |       -- lifetime `'a` defined here
+...
+  |     b
+  |     ^ returning this value requires that `'a` must outlive `'static`
+
+error: lifetime may not live long enough
+ --> ui/block_inner_wrong_variance.rs
+  |
+  | fn stack<'a, 'r, 'f, 'b, F>(
+  |              -- lifetime `'r` defined here
+...
+  |     b
+  |     ^ returning this value requires that `'r` must outlive `'static`
+  |
+  = note: requirement occurs because of the type `StackBlock<'_, (&i32,), &i32, F>`, which makes the generic argument `(&i32,)` invariant
+  = note: the struct `StackBlock<'f, A, R, Closure>` is invariant over the parameter `A`
+  = help: see <https://doc.rust-lang.org/nomicon/subtyping.html> for more information about variance
+
+error: lifetime may not live long enough
+ --> ui/block_inner_wrong_variance.rs
+  |
+  | fn stack<'a, 'r, 'f, 'b, F>(
+  |          -- lifetime `'a` defined here
+...
+  |     b
+  |     ^ returning this value requires that `'a` must outlive `'static`
+  |
+  = note: requirement occurs because of the type `StackBlock<'_, (&i32,), &i32, F>`, which makes the generic argument `(&i32,)` invariant
+  = note: the struct `StackBlock<'f, A, R, Closure>` is invariant over the parameter `A`
+  = help: see <https://doc.rust-lang.org/nomicon/subtyping.html> for more information about variance

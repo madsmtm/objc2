@@ -156,7 +156,7 @@ _stack_block_to_rc:
 	pop	rbp
 	ret
 LBB14_2:
-	call	SYM(block2::rc_block::rc_new_fail::GENERATED_ID, 0)
+	call	SYM(block2::rc_block::block_copy_fail::GENERATED_ID, 0)
 
 	.globl	_rc_block
 	.p2align	4, 0x90

@@ -1,0 +1,20 @@
+error[E0521]: borrowed data escapes outside of function
+ --> ui/block_carrying_lifetime.rs
+  |
+  |   fn tries_to_retain_past_given_lifetime(block: &Block<dyn Fn() + '_>) {
+  |                                          -----
+  |                                          |
+  |                                          `block` is a reference that is only valid in the function body
+  |                                          has type `&Block<(dyn Fn() + '1)>`
+...
+  | /     BLOCK.with(|thread_local| {
+  | |         thread_local.set(block.copy()).unwrap();
+  | |     });
+  | |      ^
+  | |      |
+  | |______`block` escapes the function body here
+  |        argument requires that `'1` must outlive `'static`
+  |
+  = note: requirement occurs because of the type `OnceCell<RcBlock<dyn Fn()>>`, which makes the generic argument `RcBlock<dyn Fn()>` invariant
+  = note: the struct `OnceCell<T>` is invariant over the parameter `T`
+  = help: see <https://doc.rust-lang.org/nomicon/subtyping.html> for more information about variance

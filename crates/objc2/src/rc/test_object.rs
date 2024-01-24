@@ -21,6 +21,8 @@ pub struct __ThreadTestData {
     pub autorelease: usize,
     pub try_retain: usize,
     pub try_retain_fail: usize,
+    // TODO: Is there some way we can test weak pointers? Or is that implemented entirely in Foundation?
+    // Maybe `_setWeaklyReferenced` can be useful?
 }
 
 impl __ThreadTestData {

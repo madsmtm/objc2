@@ -3,21 +3,36 @@ use core::fmt;
 use core::marker::PhantomData;
 use core::mem::{self, MaybeUninit};
 use core::ops::Deref;
+use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 use std::os::raw::c_ulong;
 
-use objc2::encode::{EncodeReturn, Encoding, RefEncode};
+use objc2::encode::{EncodeArguments, EncodeReturn, Encoding, RefEncode};
 
 use crate::abi::{
     BlockDescriptor, BlockDescriptorCopyDispose, BlockDescriptorPtr, BlockFlags, BlockHeader,
 };
 use crate::debug::debug_block_header;
-use crate::rc_block::rc_new_fail;
-use crate::{ffi, Block, BlockArguments, IntoBlock, RcBlock};
+use crate::{ffi, Block, IntoBlock};
 
 /// An Objective-C block constructed on the stack.
 ///
 /// This is a smart pointer that [`Deref`]s to [`Block`].
+///
+///
+/// # Type parameters
+///
+/// The type parameters for this is a bit complex due to trait system
+/// limitations. Usually, you will not need to specify them, as the compiler
+/// should be able to infer them.
+///
+/// - The lifetime `'f`, which is the lifetime of the block.
+/// - The parameter `A`, which is a tuple representing the parameters to the
+///   block.
+/// - The parameter `R`, which is the return type of the block.
+/// - The parameter `Closure`, which is the contained closure type. This is
+///   usually not nameable, and you will have to use `_`, `impl Fn()` or
+///   similar.
 ///
 ///
 /// # Memory layout
@@ -25,10 +40,13 @@ use crate::{ffi, Block, BlockArguments, IntoBlock, RcBlock};
 /// The memory layout of this type is _not_ guaranteed.
 ///
 /// That said, it will always be safe to reintepret pointers to this as a
-/// pointer to a `Block<A, R>`.
+/// pointer to a [`Block`] with the corresponding `dyn Fn` type.
 #[repr(C)]
-pub struct StackBlock<A, R, F> {
-    p: PhantomData<Block<A, R>>,
+pub struct StackBlock<'f, A, R, Closure> {
+    /// For correct variance of the other type parameters.
+    ///
+    /// We add extra auto traits such that they depend on the closure instead.
+    p: PhantomData<dyn Fn(A) -> R + Send + Sync + RefUnwindSafe + UnwindSafe + Unpin + 'f>,
     header: BlockHeader,
     /// The block's closure.
     ///
@@ -36,17 +54,22 @@ pub struct StackBlock<A, R, F> {
     ///
     /// Note that this is not wrapped in a `ManuallyDrop`; once the
     /// `StackBlock` is dropped, the closure will also be dropped.
-    pub(crate) closure: F,
+    pub(crate) closure: Closure,
 }
 
 // SAFETY: Pointers to the stack block is always safe to reintepret as an
 // ordinary block pointer.
-unsafe impl<A, R, F> RefEncode for StackBlock<A, R, F> {
+unsafe impl<'f, A, R, Closure> RefEncode for StackBlock<'f, A, R, Closure>
+where
+    A: EncodeArguments,
+    R: EncodeReturn,
+    Closure: IntoBlock<'f, A, R>,
+{
     const ENCODING_REF: Encoding = Encoding::Block;
 }
 
 // Basic constants and helpers.
-impl<A: BlockArguments, R: EncodeReturn, F> StackBlock<A, R, F> {
+impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
     /// The size of the block header and the trailing closure.
     ///
     /// This ensures that the closure that the block contains is also moved to
@@ -83,7 +106,7 @@ impl<A: BlockArguments, R: EncodeReturn, F> StackBlock<A, R, F> {
 }
 
 // `StackBlock::new`
-impl<A: BlockArguments, R: EncodeReturn, F: Clone> StackBlock<A, R, F> {
+impl<'f, A, R, Closure: Clone> StackBlock<'f, A, R, Closure> {
     /// Clone the closure from one block to another.
     unsafe extern "C" fn clone_closure(dst: *mut c_void, src: *const c_void) {
         let dst: *mut Self = dst.cast();
@@ -117,7 +140,9 @@ impl<A: BlockArguments, R: EncodeReturn, F: Clone> StackBlock<A, R, F> {
         copy: Some(Self::clone_closure),
         dispose: Some(Self::drop_closure),
     };
+}
 
+impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
     /// Construct a `StackBlock` with the given closure.
     ///
     /// Note that this requires [`Clone`], as a C block is generally assumed
@@ -126,17 +151,21 @@ impl<A: BlockArguments, R: EncodeReturn, F: Clone> StackBlock<A, R, F> {
     ///
     /// When the block is called, it will return the value that results from
     /// calling the closure.
+    ///
+    /// [`RcBlock::new`]: crate::RcBlock::new
     #[inline]
-    pub fn new(closure: F) -> Self
+    pub fn new(closure: Closure) -> Self
     where
-        F: IntoBlock<A, R>,
+        A: EncodeArguments,
+        R: EncodeReturn,
+        Closure: IntoBlock<'f, A, R> + Clone,
     {
         let header = BlockHeader {
             isa: unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) },
             // TODO: Add signature.
             flags: BlockFlags::BLOCK_HAS_COPY_DISPOSE,
             reserved: MaybeUninit::new(0),
-            invoke: Some(F::__get_invoke_stack_block()),
+            invoke: Some(Closure::__get_invoke_stack_block()),
             // TODO: Use `Self::DESCRIPTOR_BASIC` when `F: Copy`
             // (probably only possible with specialization).
             descriptor: BlockDescriptorPtr {
@@ -149,41 +178,10 @@ impl<A: BlockArguments, R: EncodeReturn, F: Clone> StackBlock<A, R, F> {
             closure,
         }
     }
-
-    /// Copy the stack block onto the heap as an `RcBlock`.
-    ///
-    /// Most of the time you'll want to use [`RcBlock::new`] directly instead.
-    //
-    // TODO: Place this on `Block<A, R>`, once that carries a lifetime.
-    #[inline]
-    pub fn to_rc(&self) -> RcBlock<A, R>
-    where
-        // This bound is required because the `RcBlock` has no way of tracking
-        // a lifetime.
-        F: 'static,
-    {
-        let ptr: *const Self = self;
-        let ptr: *const Block<A, R> = ptr.cast();
-        let ptr: *mut Block<A, R> = ptr as *mut _;
-        // SAFETY: A pointer to `StackBlock` is safe to convert to a pointer
-        // to `Block`, and because of the `F: 'static` lifetime bound, the
-        // block will be alive for the lifetime of the new `RcBlock`.
-        unsafe { RcBlock::copy(ptr) }.unwrap_or_else(|| rc_new_fail())
-    }
-
-    /// No longer necessary, the implementation does this for you when needed.
-    #[inline]
-    #[deprecated = "no longer necessary"]
-    pub fn copy(self) -> RcBlock<A, R>
-    where
-        F: 'static,
-    {
-        self.to_rc()
-    }
 }
 
 // `RcBlock::new`
-impl<A: BlockArguments, R: EncodeReturn, F> StackBlock<A, R, F> {
+impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
     unsafe extern "C" fn empty_clone_closure(_dst: *mut c_void, _src: *const c_void) {
         // We do nothing, the closure has been `memmove`'d already, and
         // ownership will be passed in `RcBlock::new`.
@@ -200,9 +198,11 @@ impl<A: BlockArguments, R: EncodeReturn, F> StackBlock<A, R, F> {
     ///
     /// `_Block_copy` must be called on the resulting stack block only once.
     #[inline]
-    pub(crate) unsafe fn new_no_clone(closure: F) -> Self
+    pub(crate) unsafe fn new_no_clone(closure: Closure) -> Self
     where
-        F: IntoBlock<A, R>,
+        A: EncodeArguments,
+        R: EncodeReturn,
+        Closure: IntoBlock<'f, A, R>,
     {
         // Don't need to emit copy and dispose helpers if the closure
         // doesn't need it.
@@ -227,7 +227,7 @@ impl<A: BlockArguments, R: EncodeReturn, F> StackBlock<A, R, F> {
             isa: unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) },
             flags,
             reserved: MaybeUninit::new(0),
-            invoke: Some(F::__get_invoke_stack_block()),
+            invoke: Some(Closure::__get_invoke_stack_block()),
             descriptor,
         };
         Self {
@@ -238,7 +238,7 @@ impl<A: BlockArguments, R: EncodeReturn, F> StackBlock<A, R, F> {
     }
 }
 
-impl<A, R, F: Clone> Clone for StackBlock<A, R, F> {
+impl<'f, A, R, Closure: Clone> Clone for StackBlock<'f, A, R, Closure> {
     #[inline]
     fn clone(&self) -> Self {
         Self {
@@ -249,15 +249,20 @@ impl<A, R, F: Clone> Clone for StackBlock<A, R, F> {
     }
 }
 
-impl<A, R, F: Copy> Copy for StackBlock<A, R, F> {}
+impl<'f, A, R, Closure: Copy> Copy for StackBlock<'f, A, R, Closure> {}
 
-impl<A, R, F> Deref for StackBlock<A, R, F> {
-    type Target = Block<A, R>;
+impl<'f, A, R, Closure> Deref for StackBlock<'f, A, R, Closure>
+where
+    A: EncodeArguments,
+    R: EncodeReturn,
+    Closure: IntoBlock<'f, A, R>,
+{
+    type Target = Block<Closure::Dyn>;
 
     #[inline]
     fn deref(&self) -> &Self::Target {
         let ptr: NonNull<Self> = NonNull::from(self);
-        let ptr: NonNull<Block<A, R>> = ptr.cast();
+        let ptr: NonNull<Block<Closure::Dyn>> = ptr.cast();
         // SAFETY: A pointer to `StackBlock` is always safe to convert to a
         // pointer to `Block`, and the reference will be valid as long the
         // stack block exists.
@@ -268,7 +273,7 @@ impl<A, R, F> Deref for StackBlock<A, R, F> {
     }
 }
 
-impl<A, R, F> fmt::Debug for StackBlock<A, R, F> {
+impl<'f, A, R, Closure> fmt::Debug for StackBlock<'f, A, R, Closure> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut f = f.debug_struct("StackBlock");
         debug_block_header(&self.header, &mut f);
@@ -284,11 +289,18 @@ mod tests {
     fn test_size() {
         assert_eq!(
             mem::size_of::<BlockHeader>(),
-            <StackBlock<(), (), ()>>::SIZE as _,
+            <StackBlock<'_, (), (), ()>>::SIZE as _,
         );
         assert_eq!(
             mem::size_of::<BlockHeader>() + mem::size_of::<fn()>(),
-            <StackBlock<(), (), fn()>>::SIZE as _,
+            <StackBlock<'_, (), (), fn()>>::SIZE as _,
         );
+    }
+
+    #[allow(dead_code)]
+    fn covariant<'b, 'f>(
+        b: StackBlock<'static, (), (), impl Fn() + 'static>,
+    ) -> StackBlock<'b, (), (), impl Fn() + 'f> {
+        b
     }
 }

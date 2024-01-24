@@ -1,41 +1,103 @@
 //! # Apple's C language extension of blocks
 //!
-//! C Blocks are the C-equivalent of Rust's closures, in that they have the
-//! ability to capture their environments.
+//! C Blocks are functions which capture their environments, i.e. the
+//! C-equivalent of Rust's [`Fn`] closures. As they were originally developed
+//! by Apple, they're often used in Objective-C code. This crate provides
+//! capabilities to create, manage and invoke these blocks, in an ergonomic,
+//! "Rust-centric" fashion.
 //!
-//! This crate provides capabilities to create and invoke these blocks, in an
-//! ergonomic "Rust-centric" fashion.
+//! At a high level, this crate contains four types, each representing
+//! different kinds of blocks, and different kinds of ownership.
+//!
+//! | `block2` type                            | Equivalent Rust type  |
+//! | ---------------------------------------- | --------------------- |
+//! | `&Block<dyn Fn() + 'a>`                  | `&dyn Fn() + 'a`      |
+//! | `RcBlock<dyn Fn() + 'a>`                 | `Arc<dyn Fn() + 'a>`  |
+//! | `StackBlock<'a, (), (), impl Fn() + 'a>` | `impl Fn() + 'a`      |
+//! | `GlobalBlock<dyn Fn()>`                  | [`fn` item]           |
 //!
 //! For more information on the specifics of the block implementation, see the
 //! [C language specification][lang] and the [ABI specification][ABI].
 //!
-//! (Note that while this library can be used separately from Objective-C,
-//! they're most commonly used together).
-//!
 //! [lang]: https://clang.llvm.org/docs/BlockLanguageSpec.html
 //! [ABI]: http://clang.llvm.org/docs/Block-ABI-Apple.html
+//! [`fn` item]: https://doc.rust-lang.org/reference/types/function-item.html
+//!
+//!
+//! ## External functions using blocks
+//!
+//! To declare external functions or methods that takes blocks, use
+//! `&Block<dyn Fn(Params) -> R>` or `Option<&Block<dyn Fn(Args) -> R>>`,
+//! where `Params` is the parameter types, and `R` is the return type.
+//!
+//! In the next few examples, we're going to work with a function
+//! `check_addition`, that takes as parameter a block that adds two integers,
+//! and checks that the addition is correct.
+//!
+//! Such a function could be written in C like in the following.
+//!
+//! ```objc
+//! #include <cassert>
+//! #include <stdint.h>
+//! #include <Block.h>
+//!
+//! void check_addition(int32_t (^block)(int32_t, int32_t)) {
+//!     assert(block(5, 8) == 13);
+//! }
+//! ```
+//!
+//! An `extern "C" { ... }` declaration for that function would then be:
+//!
+//! ```
+//! use block2::Block;
+//!
+//! extern "C" {
+//!     fn check_addition(block: &Block<dyn Fn(i32, i32) -> i32>);
+//! }
+//! ```
+//!
+//! This can similarly be done inside external methods declared with
+//! [`objc2::extern_methods!`].
+//!
+//! ```
+//! use block2::Block;
+//! use objc2::extern_methods;
+//! #
+//! # use objc2::ClassType;
+//! # objc2::extern_class!(
+//! #     struct MyClass;
+//! #
+//! #     unsafe impl ClassType for MyClass {
+//! #         type Super = objc2::runtime::NSObject;
+//! #         type Mutability = objc2::mutability::InteriorMutable;
+//! #         const NAME: &'static str = "NSObject";
+//! #     }
+//! # );
+//!
+//! extern_methods!(
+//!     unsafe impl MyClass {
+//!         #[method(checkAddition:)]
+//!         pub fn checkAddition(&self, block: &Block<dyn Fn(i32, i32) -> i32>);
+//!     }
+//! );
+//! ```
+//!
+//! If the function/method allowed passing `NULL` blocks, the type would be
+//! `Option<&Block<dyn Fn(i32, i32) -> i32>>` instead.
 //!
 //!
 //! ## Invoking blocks
 //!
-//! The [`Block`] struct is used for invoking blocks from Objective-C. For
-//! example, consider this Objective-C function that takes a block as a
-//! parameter, executes the block with some arguments, and returns the result:
-//!
-//! ```objc
-//! #include <stdint.h>
-//! #include <Block.h>
-//! int32_t run_block(int32_t (^block)(int32_t, int32_t)) {
-//!     return block(5, 8);
-//! }
-//! ```
-//!
-//! We could write the equivalent function in Rust like this:
+//! We can also define the external function in Rust, and expose it to
+//! Objective-C. To do this, we can use [`Block::call`] to invoke the block
+//! inside the function.
 //!
 //! ```
 //! use block2::Block;
-//! unsafe fn run_block(block: &Block<(i32, i32), i32>) -> i32 {
-//!     block.call((5, 8))
+//!
+//! #[no_mangle]
+//! extern "C" fn check_addition(block: &Block<dyn Fn(i32, i32) -> i32>) {
+//!     assert_eq!(block.call((5, 8)), 13);
 //! }
 //! ```
 //!
@@ -49,109 +111,105 @@
 //! [`StackBlock`], depending on if you want to move the block to the heap,
 //! or let the callee decide if it needs to do that.
 //!
-//! To declare external functions or methods that takes blocks, use
-//! `&Block<A, R>` or `Option<&Block<A, R>>`, where `A` is a tuple with the
-//! argument types, and `R` is the return type.
-//!
-//! As an example, we're going to work with a block that adds two integers.
-//!
-//! ```
-//! use block2::Block;
-//!
-//! // External function that takes a block
-//! extern "C" {
-//!     fn add_numbers_using_block(block: &Block<(i32, i32), i32>);
-//! }
-//! #
-//! # use objc2::ClassType;
-//! # objc2::extern_class!(
-//! #     struct MyClass;
-//! #
-//! #     unsafe impl ClassType for MyClass {
-//! #         type Super = objc2::runtime::NSObject;
-//! #         type Mutability = objc2::mutability::InteriorMutable;
-//! #         const NAME: &'static str = "NSObject";
-//! #     }
-//! # );
-//!
-//! // External method that takes a block
-//! objc2::extern_methods!(
-//!     unsafe impl MyClass {
-//!         #[method(addNumbersUsingBlock:)]
-//!         pub fn addNumbersUsingBlock(&self, block: &Block<(i32, i32), i32>);
-//!     }
-//! );
-//! ```
-//!
 //! To call such a function / method, we could create a new block from a
 //! closure using [`RcBlock::new`].
 //!
 //! ```
 //! use block2::RcBlock;
 //! #
-//! # extern "C" {
-//! #     fn add_numbers_using_block(block: &block2::Block<(i32, i32), i32>);
-//! # }
-//! # mod imp {
-//! #     #[no_mangle]
-//! #     extern "C" fn add_numbers_using_block(block: &block2::Block<(i32, i32), i32>) {
-//! #         assert_eq!(unsafe { block.call((5, 8)) }, 13);
-//! #     }
+//! # extern "C" fn check_addition(block: &block2::Block<dyn Fn(i32, i32) -> i32>) {
+//! #     assert_eq!(block.call((5, 8)), 13);
 //! # }
 //!
-//! let block = RcBlock::new(|a: i32, b: i32| a + b);
-//! unsafe { add_numbers_using_block(&block) };
+//! let block = RcBlock::new(|a, b| a + b);
+//! check_addition(&block);
 //! ```
 //!
 //! This creates the block on the heap. If the external function you're
 //! calling is not going to copy the block, it may be more performant if you
 //! construct a [`StackBlock`] directly, using [`StackBlock::new`].
 //!
-//! Note though that this requires that the closure is [`Clone`], as the
-//! external code may want to copy the block to the heap in the future.
+//! Note that this requires that the closure is [`Clone`], as the external
+//! code is allowed to copy the block to the heap in the future.
 //!
 //! ```
 //! use block2::StackBlock;
 //! #
-//! # extern "C" {
-//! #     fn add_numbers_using_block(block: &block2::Block<(i32, i32), i32>);
-//! # }
-//! # mod imp {
-//! #     #[no_mangle]
-//! #     extern "C" fn add_numbers_using_block(block: &block2::Block<(i32, i32), i32>) {
-//! #         assert_eq!(unsafe { block.call((5, 8)) }, 13);
-//! #     }
+//! # extern "C" fn check_addition(block: &block2::Block<dyn Fn(i32, i32) -> i32>) {
+//! #     assert_eq!(block.call((5, 8)), 13);
 //! # }
 //!
-//! let block = StackBlock::new(|a: i32, b: i32| a + b);
-//! unsafe { add_numbers_using_block(&block) };
+//! let block = StackBlock::new(|a, b| a + b);
+//! check_addition(&block);
 //! ```
 //!
-//! As an optimization if your block doesn't capture any variables (as in the
-//! above examples), you can use the [`global_block!`] macro to create a
+//! As an optimization, if your closure doesn't capture any variables (as in
+//! the above examples), you can use the [`global_block!`] macro to create a
 //! static block.
 //!
 //! ```
 //! use block2::global_block;
 //! #
-//! # extern "C" {
-//! #     fn add_numbers_using_block(block: &block2::Block<(i32, i32), i32>);
-//! # }
-//! # mod imp {
-//! #     #[no_mangle]
-//! #     extern "C" fn add_numbers_using_block(block: &block2::Block<(i32, i32), i32>) {
-//! #         assert_eq!(unsafe { block.call((5, 8)) }, 13);
-//! #     }
+//! # extern "C" fn check_addition(block: &block2::Block<dyn Fn(i32, i32) -> i32>) {
+//! #     assert_eq!(block.call((5, 8)), 13);
 //! # }
 //!
 //! global_block! {
-//!     static MY_BLOCK = |a: i32, b: i32| -> i32 {
+//!     static BLOCK = |a: i32, b: i32| -> i32 {
 //!         a + b
 //!     };
 //! }
 //!
-//! unsafe { add_numbers_using_block(&MY_BLOCK) };
+//! check_addition(&BLOCK);
 //! ```
+//!
+//!
+//! ## Lifetimes
+//!
+//! When dealing with blocks, there can be quite a few lifetimes to keep in
+//! mind.
+//!
+//! The most important one is the lifetime of the block's data, i.e. the
+//! lifetime of the data in the closure contained in the block. This lifetime
+//! can be specified as `'f` in `&Block<dyn Fn() + 'f>`.
+//!
+//! Note that `&Block<dyn Fn()>`, without any lifetime specifier, can be a bit
+//! confusing, as the default depends on where it is typed. In function/method
+//! signatures, it defaults to `'static`, but as the type of e.g. a `let`
+//! binding, the lifetime may be inferred to be something smaller, see [the
+//! reference][ref-dyn-lifetime] for details. If in doubt, either add a
+//! `+ 'static` or `+ '_` to force an escaping or non-escaping block.
+//!
+//! Another lifetime is the lifetime of the currently held pointer, i.e. `'b`
+//! in `&'b Block<dyn Fn()>`. This lifetime can be safely extended using
+//! [`Block::copy`], so should prove to be little trouble (of course the
+//! lifetime still can't be extended past the lifetime of the captured data
+//! above).
+//!
+//! Finally, the block's parameter and return types can also contain
+//! lifetimes, as `'a` and `'r` in `&Block<dyn Fn(&'a i32) -> &'r u32>`.
+//! Unfortunately, these lifetimes are quite problematic and unsupported at
+//! the moment, due to Rust trait limitations regarding higher-ranked trait
+//! bounds. If you run into problems with this in a block that takes or
+//! returns a reference, consider using the ABI-compatible `NonNull<T>`, or
+//! transmute to a `'static` lifetime.
+//!
+//! [ref-dyn-lifetime]: https://doc.rust-lang.org/reference/lifetime-elision.html#default-trait-object-lifetimes
+//!
+//!
+//! ## Thread safety
+//!
+//! Thread-safe blocks are not yet representable in `block2`, and as such any
+//! function that requires a thread-safe block must be marked `unsafe`.
+//!
+//!
+//! ## Mutability
+//!
+//! Blocks are generally assumed to be shareable, and as such can only very
+//! rarely be made mutable. In particular, there is no good way to prevent
+//! re-entrancy.
+//!
+//! You will likely have to use interior mutability instead.
 //!
 //!
 //! ## Specifying a runtime
@@ -170,7 +228,7 @@
 //!
 //! - Feature flag: `apple`.
 //!
-//! This is the most common an most sophisticated runtime, and it has quite a
+//! This is the most common and most sophisticated runtime, and it has quite a
 //! lot more features than the specification mandates.
 //!
 //! The minimum required operating system versions are as follows (though in
@@ -324,11 +382,11 @@ pub use self::block::Block;
 pub use self::global::GlobalBlock;
 pub use self::rc_block::RcBlock;
 pub use self::stack::StackBlock;
-pub use self::traits::{BlockArguments, IntoBlock};
+pub use self::traits::{BlockFn, IntoBlock};
 
-/// Deprecated alias for `StackBlock`.
+/// Deprecated alias for a `'static` `StackBlock`.
 #[deprecated = "renamed to `StackBlock`"]
-pub type ConcreteBlock<A, R, F> = self::stack::StackBlock<A, R, F>;
+pub type ConcreteBlock<A, R, Closure> = StackBlock<'static, A, R, Closure>;
 
 // Note: We could use `_Block_object_assign` and `_Block_object_dispose` to
 // implement a `ByRef<T>` wrapper, which would behave like `__block` marked

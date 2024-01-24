@@ -124,7 +124,7 @@ Lloh7:
 	add	sp, sp, #48
 	ret
 LBB14_2:
-	bl	SYM(block2::rc_block::rc_new_fail::GENERATED_ID, 0)
+	bl	SYM(block2::rc_block::block_copy_fail::GENERATED_ID, 0)
 	.loh AdrpAdd	Lloh6, Lloh7
 	.loh AdrpAdd	Lloh4, Lloh5
 	.loh AdrpLdrGot	Lloh2, Lloh3

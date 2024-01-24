@@ -113,8 +113,8 @@ note: required by a bound in `is_encode`
 error[E0277]: the trait bound `(): Encode` is not satisfied
  --> ui/not_encode.rs
   |
-  |     is_encode::<&Block<((), i32), ()>>();
-  |                 ^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `()`
+  |     is_encode::<&Block<dyn Fn((), i32)>>();
+  |                 ^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `()`
   |
   = help: the following other types implement trait `Encode`:
             isize
@@ -127,9 +127,35 @@ error[E0277]: the trait bound `(): Encode` is not satisfied
             u16
           and $N others
   = note: required for `()` to implement `EncodeArgument`
-  = note: required for `((), i32)` to implement `BlockArguments`
-  = note: required for `block2::Block<((), i32), ()>` to implement `RefEncode`
-  = note: required for `&block2::Block<((), i32), ()>` to implement `Encode`
+  = note: required for `dyn Fn((), i32)` to implement `BlockFn`
+  = note: required for `block2::Block<dyn Fn((), i32)>` to implement `RefEncode`
+  = note: required for `&block2::Block<dyn Fn((), i32)>` to implement `Encode`
+note: required by a bound in `is_encode`
+ --> ui/not_encode.rs
+  |
+  | fn is_encode<T: Encode>() {}
+  |                 ^^^^^^ required by this bound in `is_encode`
+
+error[E0277]: the trait bound `bool: Encode` is not satisfied
+ --> ui/not_encode.rs
+  |
+  |     is_encode::<&Block<dyn Fn() -> bool>>();
+  |                 ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `bool`
+  |
+  = help: the following other types implement trait `Encode`:
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
+          and $N others
+  = note: required for `bool` to implement `EncodeReturn`
+  = note: required for `dyn Fn() -> bool` to implement `BlockFn`
+  = note: required for `block2::Block<dyn Fn() -> bool>` to implement `RefEncode`
+  = note: required for `&block2::Block<dyn Fn() -> bool>` to implement `Encode`
 note: required by a bound in `is_encode`
  --> ui/not_encode.rs
   |
@@ -216,8 +242,8 @@ note: required by a bound in `is_encode`
   |                 ^^^^^^ required by this bound in `is_encode`
 help: consider removing the leading `&`-reference
   |
-24 -     is_encode::<&Sel>();
-24 +     is_encode::<Sel>();
+26 -     is_encode::<&Sel>();
+26 +     is_encode::<Sel>();
    |
 
 error[E0277]: the trait bound `UnsafeCell<&u8>: OptionEncode` is not satisfied

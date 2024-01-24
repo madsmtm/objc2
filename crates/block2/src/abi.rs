@@ -193,11 +193,11 @@ pub struct BlockHeader {
     pub(crate) reserved: MaybeUninit<c_int>,
     /// The function that implements the block.
     ///
-    /// The first argument is a pointer to this structure, the subsequent
-    /// arguments are the block's explicit parameters.
+    /// The first parameter is a pointer to this structure, the subsequent
+    /// parameters are the block's explicit parameters.
     ///
     /// If the BLOCK_USE_SRET & BLOCK_HAS_SIGNATURE flag is set, there is an
-    /// additional hidden argument, which is a pointer to the space on the
+    /// additional hidden parameter, which is a pointer to the space on the
     /// stack allocated to hold the return value.
     pub invoke: Option<unsafe extern "C" fn()>,
     /// The block's descriptor.

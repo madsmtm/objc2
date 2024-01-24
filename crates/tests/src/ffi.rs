@@ -31,22 +31,24 @@ unsafe impl Encode for LargeStruct {
 
 extern "C" {
     /// Returns a pointer to a global block that returns 7.
-    pub fn get_int_block() -> *mut Block<(), i32>;
+    pub fn get_int_block() -> *mut Block<dyn Fn() -> i32>;
     /// Returns a pointer to a copied block that returns `i`.
-    pub fn get_int_block_with(i: i32) -> *mut Block<(), i32>;
+    pub fn get_int_block_with(i: i32) -> *mut Block<dyn Fn() -> i32>;
     /// Returns a pointer to a global block that returns its argument + 7.
-    pub fn get_add_block() -> *mut Block<(i32,), i32>;
+    pub fn get_add_block() -> *mut Block<dyn Fn(i32) -> i32>;
     /// Returns a pointer to a copied block that returns its argument + `i`.
-    pub fn get_add_block_with(i: i32) -> *mut Block<(i32,), i32>;
+    pub fn get_add_block_with(i: i32) -> *mut Block<dyn Fn(i32) -> i32>;
     /// Invokes a block and returns its result.
-    pub fn invoke_int_block(block: &Block<(), i32>) -> i32;
+    pub fn invoke_int_block(block: &Block<dyn Fn() -> i32>) -> i32;
     /// Invokes a block with `a` and returns the result.
-    pub fn invoke_add_block(block: &Block<(i32,), i32>, a: i32) -> i32;
+    pub fn invoke_add_block(block: &Block<dyn Fn(i32) -> i32>, a: i32) -> i32;
 
-    pub fn get_large_struct_block() -> *mut Block<(LargeStruct,), LargeStruct>;
-    pub fn get_large_struct_block_with(i: LargeStruct) -> *mut Block<(LargeStruct,), LargeStruct>;
+    pub fn get_large_struct_block() -> *mut Block<dyn Fn(LargeStruct) -> LargeStruct>;
+    pub fn get_large_struct_block_with(
+        i: LargeStruct,
+    ) -> *mut Block<dyn Fn(LargeStruct) -> LargeStruct>;
     pub fn invoke_large_struct_block(
-        block: &Block<(LargeStruct,), LargeStruct>,
+        block: &Block<dyn Fn(LargeStruct) -> LargeStruct>,
         s: LargeStruct,
     ) -> LargeStruct;
 
@@ -55,7 +57,7 @@ extern "C" {
 
 #[no_mangle]
 extern "C" fn debug_block(block: *mut c_void) {
-    let block: &Block<(), ()> = unsafe { &*(block as *const Block<(), ()>) };
+    let block: &Block<dyn Fn()> = unsafe { &*(block as *const Block<dyn Fn()>) };
     std::println!("{block:#?}");
 }
 

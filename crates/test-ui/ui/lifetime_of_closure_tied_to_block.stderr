@@ -1,0 +1,48 @@
+error[E0597]: `x` does not live long enough
+ --> ui/lifetime_of_closure_tied_to_block.rs
+  |
+  |         RcBlock::new(|| x + 2)
+  |                      -- ^ borrowed value does not live long enough
+  |                      |
+  |                      value captured here
+  |     };
+  |     - `x` dropped here while still borrowed
+
+error[E0597]: `x` does not live long enough
+  --> ui/lifetime_of_closure_tied_to_block.rs
+   |
+   |         RcBlock::new(|| x + 2).clone()
+   |         ----------------^-----
+   |         |            |  |
+   |         |            |  borrowed value does not live long enough
+   |         |            value captured here
+   |         a temporary with access to the borrow is created here ...
+   |     };
+   |     -- ... and the borrow might be used here, when that temporary is dropped and runs the `Drop` code for type `RcBlock`
+   |     |
+   |     `x` dropped here while still borrowed
+   |
+help: consider adding semicolon after the expression so its temporaries are dropped sooner, before the local variables declared by the block are dropped
+   |
+11 |         RcBlock::new(|| x + 2).clone();
+   |                                       +
+
+error[E0597]: `x` does not live long enough
+ --> ui/lifetime_of_closure_tied_to_block.rs
+  |
+  |         StackBlock::new(|| x + 2)
+  |                         -- ^ borrowed value does not live long enough
+  |                         |
+  |                         value captured here
+  |     };
+  |     - `x` dropped here while still borrowed
+
+error[E0597]: `x` does not live long enough
+ --> ui/lifetime_of_closure_tied_to_block.rs
+  |
+  |         StackBlock::new(|| x + 2).copy()
+  |                         -- ^ borrowed value does not live long enough
+  |                         |
+  |                         value captured here
+  |     };
+  |     - `x` dropped here while still borrowed

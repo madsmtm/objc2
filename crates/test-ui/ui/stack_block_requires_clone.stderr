@@ -1,0 +1,31 @@
+error[E0277]: the trait bound `Foo: Clone` is not satisfied in `{closure@$DIR/ui/stack_block_requires_clone.rs:7:29: 7:36}`
+ --> ui/stack_block_requires_clone.rs
+  |
+  |       let _ = StackBlock::new(move || {
+  |               --------------- ^------
+  |               |               |
+  |  _____________|_______________within this `{closure@$DIR/ui/stack_block_requires_clone.rs:7:29: 7:36}`
+  | |             |
+  | |             required by a bound introduced by this call
+  | |         let _ = &foo;
+  | |     });
+  | |_____^ within `{closure@$DIR/ui/stack_block_requires_clone.rs:7:29: 7:36}`, the trait `Clone` is not implemented for `Foo`
+  |
+note: required because it's used within this closure
+ --> ui/stack_block_requires_clone.rs
+  |
+  |     let _ = StackBlock::new(move || {
+  |                             ^^^^^^^
+note: required by a bound in `StackBlock::<'f, A, R, Closure>::new`
+ --> $WORKSPACE/crates/block2/src/stack.rs
+  |
+  |     pub fn new(closure: Closure) -> Self
+  |            --- required by a bound in this associated function
+...
+  |         Closure: IntoBlock<'f, A, R> + Clone,
+  |                                        ^^^^^ required by this bound in `StackBlock::<'f, A, R, Closure>::new`
+help: consider annotating `Foo` with `#[derive(Clone)]`
+  |
+3   + #[derive(Clone)]
+4   | struct Foo;
+    |

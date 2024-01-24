@@ -1,38 +1,49 @@
 use core::mem;
 use core::ptr;
 
+use objc2::encode::EncodeArguments;
 use objc2::encode::{EncodeArgument, EncodeReturn};
 
 use crate::{Block, StackBlock};
 
 mod private {
-    pub trait Sealed<A> {}
+    pub trait Sealed<A, R> {}
 }
 
-/// Types that may be used as the arguments of an Objective-C block.
+/// Types that represent closure parameters/arguments and return types in a
+/// block.
 ///
-/// This is implemented for tuples of up to 12 arguments, where each argument
-/// implements [`EncodeArgument`].
+/// This is implemented for [`dyn`] [`Fn`] closures with up to 12 parameters,
+/// where each parameter implements [`EncodeArgument`] and the return type
+/// implements [`EncodeReturn`].
+///
+/// [`dyn`]: https://doc.rust-lang.org/std/keyword.dyn.html
 ///
 ///
 /// # Safety
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait BlockArguments: Sized {
-    /// Calls the given method the block and arguments.
+pub unsafe trait BlockFn: private::Sealed<Self::Args, Self::Output> {
+    /// The parameters/arguments to the block.
+    type Args: EncodeArguments;
+
+    /// The return type of the block.
+    type Output: EncodeReturn;
+
+    /// Calls the given invoke function with the block and arguments.
     #[doc(hidden)]
-    unsafe fn __call_block<R: EncodeReturn>(
+    unsafe fn __call_block(
         invoke: unsafe extern "C" fn(),
-        block: *mut Block<Self, R>,
-        args: Self,
-    ) -> R;
+        block: *mut Block<Self>,
+        args: Self::Args,
+    ) -> Self::Output;
 }
 
 /// Types that may be converted into a block.
 ///
-/// This is implemented for [`Fn`] closures of up to 12 arguments, where each
-/// argument implements [`EncodeArgument`] and the return type implements
+/// This is implemented for [`Fn`] closures of up to 12 parameters, where each
+/// parameter implements [`EncodeArgument`] and the return type implements
 /// [`EncodeReturn`].
 ///
 ///
@@ -40,31 +51,38 @@ pub unsafe trait BlockArguments: Sized {
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait IntoBlock<A, R>: private::Sealed<A> + Sized
+pub unsafe trait IntoBlock<'f, A, R>: private::Sealed<A, R>
 where
-    A: BlockArguments,
+    A: EncodeArguments,
     R: EncodeReturn,
 {
+    /// The type-erased `dyn Fn(...Args) -> R + 'f`.
+    type Dyn: ?Sized + BlockFn<Args = A, Output = R>;
+
     #[doc(hidden)]
     fn __get_invoke_stack_block() -> unsafe extern "C" fn();
 }
 
 macro_rules! impl_traits {
-    ($($a:ident : $t:ident),*) => (
-        impl<$($t: EncodeArgument,)* R: EncodeReturn, Closure> private::Sealed<($($t,)*)> for Closure
+    ($($a:ident: $t:ident),*) => (
+        impl<$($t: EncodeArgument,)* R: EncodeReturn, Closure> private::Sealed<($($t,)*), R> for Closure
         where
-            Closure: Fn($($t,)*) -> R,
+            Closure: ?Sized + Fn($($t),*) -> R,
         {}
 
-        unsafe impl<$($t: EncodeArgument),*> BlockArguments for ($($t,)*) {
+        // TODO: Add `+ Send`, `+ Sync` and `+ Send + Sync` versions.
+        unsafe impl<$($t: EncodeArgument,)* R: EncodeReturn> BlockFn for dyn Fn($($t),*) -> R + '_ {
+            type Args = ($($t,)*);
+            type Output = R;
+
             #[inline]
-            unsafe fn __call_block<R: EncodeReturn>(
+            unsafe fn __call_block(
                 invoke: unsafe extern "C" fn(),
-                block: *mut Block<Self, R>,
-                ($($a,)*): Self,
-            ) -> R {
+                block: *mut Block<Self>,
+                ($($a,)*): Self::Args,
+            ) -> Self::Output {
                 // Very similar to `MessageArguments::__invoke`
-                let invoke: unsafe extern "C" fn(*mut Block<Self, R> $(, $t)*) -> R = unsafe {
+                let invoke: unsafe extern "C" fn(*mut Block<Self> $(, $t)*) -> R = unsafe {
                     mem::transmute(invoke)
                 };
 
@@ -72,18 +90,22 @@ macro_rules! impl_traits {
             }
         }
 
-        unsafe impl<$($t: EncodeArgument,)* R: EncodeReturn, Closure> IntoBlock<($($t,)*), R> for Closure
+        unsafe impl<'f, $($t,)* R, Closure> IntoBlock<'f, ($($t,)*), R> for Closure
         where
-            Closure: Fn($($t,)*) -> R,
+            $($t: EncodeArgument,)*
+            R: EncodeReturn,
+            Closure: Fn($($t),*) -> R + 'f,
         {
+            type Dyn = dyn Fn($($t),*) -> R + 'f;
+
             #[inline]
             fn __get_invoke_stack_block() -> unsafe extern "C" fn() {
-                unsafe extern "C" fn invoke<$($t,)* R, Closure>(
-                    block: *mut StackBlock<($($t,)*), R, Closure>,
+                unsafe extern "C" fn invoke<'f, $($t,)* R, Closure>(
+                    block: *mut StackBlock<'f, ($($t,)*), R, Closure>,
                     $($a: $t,)*
                 ) -> R
                 where
-                    Closure: Fn($($t,)*) -> R,
+                    Closure: Fn($($t),*) -> R + 'f
                 {
                     let closure = unsafe { &*ptr::addr_of!((*block).closure) };
                     (closure)($($a),*)
@@ -91,7 +113,7 @@ macro_rules! impl_traits {
 
                 unsafe {
                     mem::transmute::<
-                        unsafe extern "C" fn(*mut StackBlock<($($t,)*), R, Closure>, $($a: $t,)*) -> R,
+                        unsafe extern "C" fn(*mut StackBlock<'f, ($($t,)*), R, Closure>, $($t,)*) -> R,
                         unsafe extern "C" fn(),
                     >(invoke)
                 }
