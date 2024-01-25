@@ -1,11 +1,11 @@
 //! A minimal alternative to crates like `malloc_buf`, `mbox` and `malloced`.
-use core::ffi::CStr;
 use core::fmt;
 use core::marker::PhantomData;
 use core::ops::Deref;
 use core::ptr::{self, NonNull};
 use core::str;
 use core::str::Utf8Error;
+use std::ffi::CStr;
 use std::os::raw::c_char;
 
 use crate::ffi;
@@ -33,13 +33,18 @@ impl<T> MallocSlice<T> {
             _p: PhantomData,
         }
     }
+
+    fn len(&self) -> usize {
+        // TODO: Use `self.ptr.len()` once in MSRV
+        (**self).len()
+    }
 }
 
 impl<T> Drop for MallocSlice<T> {
     fn drop(&mut self) {
         // If the length is 0, then the pointer is dangling from `from_array`
         // (since the length is immutable), and we can skip calling `free`.
-        if self.ptr.len() != 0 {
+        if self.len() != 0 {
             // SAFETY: We take ownership over the slice elements in
             // `from_array`.
             unsafe { ptr::drop_in_place(self.ptr.as_ptr()) };
