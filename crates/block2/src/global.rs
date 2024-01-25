@@ -30,8 +30,11 @@ const GLOBAL_DESCRIPTOR: BlockDescriptor = BlockDescriptor {
 /// [`global_block!`]: crate::global_block
 #[repr(C)]
 pub struct GlobalBlock<A, R = ()> {
-    header: BlockHeader,
-    p: PhantomData<fn(A) -> R>,
+    // TODO: Make this properly private once we have a higher MSRV
+    #[doc(hidden)]
+    pub header: BlockHeader,
+    #[doc(hidden)]
+    pub p: PhantomData<fn(A) -> R>,
 }
 
 unsafe impl<A, R> Sync for GlobalBlock<A, R>
@@ -69,13 +72,6 @@ impl<A, R> GlobalBlock<A, R> {
             basic: &GLOBAL_DESCRIPTOR,
         },
     };
-
-    /// Use the [`global_block`] macro instead.
-    #[doc(hidden)]
-    #[inline]
-    pub const unsafe fn from_header(header: BlockHeader, p: PhantomData<fn(A) -> R>) -> Self {
-        Self { header, p }
-    }
 }
 
 impl<A, R> Deref for GlobalBlock<A, R>
@@ -198,7 +194,10 @@ macro_rules! global_block {
                     unsafe extern "C" fn(),
                 >(inner)
             });
-            $crate::GlobalBlock::from_header(header, ::core::marker::PhantomData)
+            $crate::GlobalBlock {
+                header,
+                p: ::core::marker::PhantomData
+            }
         };
     };
 }
