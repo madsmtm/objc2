@@ -73,11 +73,8 @@ impl<A, R> GlobalBlock<A, R> {
     /// Use the [`global_block`] macro instead.
     #[doc(hidden)]
     #[inline]
-    pub const unsafe fn from_header(header: BlockHeader) -> Self {
-        Self {
-            header,
-            p: PhantomData,
-        }
+    pub const unsafe fn from_header(header: BlockHeader, p: PhantomData<fn(A) -> R>) -> Self {
+        Self { header, p }
     }
 }
 
@@ -201,7 +198,7 @@ macro_rules! global_block {
                     unsafe extern "C" fn(),
                 >(inner)
             });
-            $crate::GlobalBlock::from_header(header)
+            $crate::GlobalBlock::from_header(header, ::core::marker::PhantomData)
         };
     };
 }
