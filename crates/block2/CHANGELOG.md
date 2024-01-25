@@ -31,6 +31,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: `StackBlock::new` now requires the closure to be `Clone`. If
   this is not desired, use `RcBlock::new` instead.
 * Relaxed the `F: Debug` bound on `StackBlock`'s `Debug` implementation.
+* **BREAKING**: Fixed `GlobalBlock` not having the correct variance. This may
+  break if you were using lifetimes in your parameters, as those are now a bit
+  too restrictive.
 
 
 ## 0.4.0 - 2023-12-03

@@ -31,7 +31,7 @@ const GLOBAL_DESCRIPTOR: BlockDescriptor = BlockDescriptor {
 #[repr(C)]
 pub struct GlobalBlock<A, R = ()> {
     header: BlockHeader,
-    p: PhantomData<(A, R)>,
+    p: PhantomData<fn(A) -> R>,
 }
 
 unsafe impl<A, R> Sync for GlobalBlock<A, R>
@@ -133,18 +133,6 @@ impl<A, R> fmt::Debug for GlobalBlock<A, R> {
 /// assert_eq!(unsafe { ADDER_BLOCK.call((5, 7)) }, 12);
 /// ```
 ///
-/// ```
-/// use block2::global_block;
-/// global_block! {
-///     pub static MUTATING_BLOCK = |x: &mut i32| {
-///         *x = *x + 42;
-///     };
-/// }
-/// let mut x = 5;
-/// unsafe { MUTATING_BLOCK.call((&mut x,)) };
-/// assert_eq!(x, 47);
-/// ```
-///
 /// The following does not compile because [`Box`] is not [`EncodeReturn`]:
 ///
 /// ```compile_fail
@@ -152,6 +140,21 @@ impl<A, R> fmt::Debug for GlobalBlock<A, R> {
 /// global_block! {
 ///     pub static BLOCK = |b: Box<i32>| {};
 /// }
+/// ```
+///
+/// This also doesn't work (yet), as global blocks are overly restrictive
+/// about the lifetimes involved.
+///
+/// ```compile_fail
+/// use block2::global_block;
+/// global_block! {
+///     pub static BLOCK_WITH_LIFETIME = |x: &i32| -> i32 {
+///         *x + 42
+///     };
+/// }
+/// let x = 5;
+/// let res = unsafe { BLOCK_WITH_LIFETIME.call((&x,)) };
+/// assert_eq!(res, 47);
 /// ```
 ///
 /// There is also no way to get a block function that's generic over its
