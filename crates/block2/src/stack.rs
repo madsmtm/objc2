@@ -6,158 +6,14 @@ use core::ops::Deref;
 use core::ptr::{self, NonNull};
 use std::os::raw::c_ulong;
 
-use objc2::encode::{EncodeArgument, EncodeReturn, Encoding, RefEncode};
+use objc2::encode::{EncodeReturn, Encoding, RefEncode};
 
 use crate::abi::{
     BlockDescriptor, BlockDescriptorCopyDispose, BlockDescriptorPtr, BlockFlags, BlockHeader,
 };
 use crate::debug::debug_block_header;
 use crate::rc_block::rc_new_fail;
-use crate::{ffi, Block, BlockArguments, RcBlock};
-
-mod private {
-    pub trait Sealed<A> {}
-}
-
-/// Types that may be converted into a block.
-///
-/// This is implemented for [`Fn`] closures of up to 12 arguments, where each
-/// argument implements [`EncodeArgument`] and the return type implements
-/// [`EncodeReturn`].
-///
-///
-/// # Safety
-///
-/// This is a sealed trait, and should not need to be implemented. Open an
-/// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait IntoBlock<A: BlockArguments>: private::Sealed<A> + Sized {
-    /// The return type of the resulting block.
-    type Output: EncodeReturn;
-
-    #[doc(hidden)]
-    fn __get_invoke_stack_block() -> unsafe extern "C" fn();
-}
-
-macro_rules! into_block_impl {
-    ($($a:ident : $t:ident),*) => (
-        impl<$($t: EncodeArgument,)* R: EncodeReturn, X> private::Sealed<($($t,)*)> for X
-        where
-            X: Fn($($t,)*) -> R,
-        {}
-
-        unsafe impl<$($t: EncodeArgument,)* R: EncodeReturn, X> IntoBlock<($($t,)*)> for X
-        where
-            X: Fn($($t,)*) -> R,
-        {
-            type Output = R;
-
-            #[inline]
-            fn __get_invoke_stack_block() -> unsafe extern "C" fn() {
-                unsafe extern "C" fn invoke<$($t,)* R, X>(
-                    block: *mut StackBlock<($($t,)*), R, X>,
-                    $($a: $t,)*
-                ) -> R
-                where
-                    X: Fn($($t,)*) -> R,
-                {
-                    let closure = unsafe { &*ptr::addr_of!((*block).closure) };
-                    (closure)($($a),*)
-                }
-
-                unsafe {
-                    mem::transmute::<
-                        unsafe extern "C" fn(*mut StackBlock<($($t,)*), R, X>, $($a: $t,)*) -> R,
-                        unsafe extern "C" fn(),
-                    >(invoke)
-                }
-            }
-        }
-    );
-}
-
-into_block_impl!();
-into_block_impl!(a: A);
-into_block_impl!(a: A, b: B);
-into_block_impl!(a: A, b: B, c: C);
-into_block_impl!(a: A, b: B, c: C, d: D);
-into_block_impl!(a: A, b: B, c: C, d: D, e: E);
-into_block_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F
-);
-into_block_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G
-);
-into_block_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H
-);
-into_block_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I
-);
-into_block_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J
-);
-into_block_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K
-);
-into_block_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L
-);
+use crate::{ffi, Block, BlockArguments, IntoBlock, RcBlock};
 
 /// An Objective-C block constructed on the stack.
 ///
@@ -180,7 +36,7 @@ pub struct StackBlock<A, R, F> {
     ///
     /// Note that this is not wrapped in a `ManuallyDrop`; once the
     /// `StackBlock` is dropped, the closure will also be dropped.
-    closure: F,
+    pub(crate) closure: F,
 }
 
 // SAFETY: Pointers to the stack block is always safe to reintepret as an

@@ -318,11 +318,13 @@ pub mod ffi;
 mod global;
 mod rc_block;
 mod stack;
+mod traits;
 
-pub use self::block::{Block, BlockArguments};
+pub use self::block::Block;
 pub use self::global::GlobalBlock;
 pub use self::rc_block::RcBlock;
-pub use self::stack::{IntoBlock, StackBlock};
+pub use self::stack::StackBlock;
+pub use self::traits::{BlockArguments, IntoBlock};
 
 /// Deprecated alias for `StackBlock`.
 #[deprecated = "renamed to `StackBlock`"]
