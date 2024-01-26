@@ -162,7 +162,7 @@ Finally, this is by far not the only project that ever tried to interoperate wit
 - Kotlin: [somewhat built-in support](https://kotlinlang.org/docs/native-objc-interop.html)
 - Nim: [somewhat built-in support](https://nim-lang.org/docs/backends.html), [`darwin`](https://github.com/yglukhov/darwin), [`objc`](https://github.com/jangko/objc)
 - D: [somewhat built-in support](https://dlang.org/spec/objc_interface.html), [`derelict`](https://github.com/AuburnSounds/Dplug/tree/v12.8.0/macos/derelict/cocoa)
-- Java: [Java-Objective-C-Bridge](https://github.com/shannah/Java-Objective-C-Bridge), Apple also has a very old official project
+- Java: [Java-Objective-C-Bridge](https://github.com/shannah/Java-Objective-C-Bridge), [Multi-OS Engine: Nat/J](https://github.com/multi-os-engine/moe-natj) (also has a [generator](https://github.com/multi-os-engine/moe-natjgen)), Apple also has a very old official project.
 - Node.js: [NodObjC](https://github.com/TooTallNate/NodObjC), [`objc`](https://github.com/lukaskollmer/objc)
 - Zig: [zig-objcrt](https://github.com/hazeycode/zig-objcrt)
 - D: [somewhat built-in support](https://dlang.org/spec/objc_interface.html), [`derelict`](https://github.com/AuburnSounds/Dplug/tree/v12.8.0/macos/derelict/cocoa)
