@@ -40,10 +40,11 @@ pub unsafe trait BlockArguments: Sized {
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restrition should be lifted!
-pub unsafe trait IntoBlock<A: BlockArguments>: private::Sealed<A> + Sized {
-    /// The return type of the resulting block.
-    type Output: EncodeReturn;
-
+pub unsafe trait IntoBlock<A, R>: private::Sealed<A> + Sized
+where
+    A: BlockArguments,
+    R: EncodeReturn,
+{
     #[doc(hidden)]
     fn __get_invoke_stack_block() -> unsafe extern "C" fn();
 }
@@ -71,12 +72,10 @@ macro_rules! impl_traits {
             }
         }
 
-        unsafe impl<$($t: EncodeArgument,)* R: EncodeReturn, Closure> IntoBlock<($($t,)*)> for Closure
+        unsafe impl<$($t: EncodeArgument,)* R: EncodeReturn, Closure> IntoBlock<($($t,)*), R> for Closure
         where
             Closure: Fn($($t,)*) -> R,
         {
-            type Output = R;
-
             #[inline]
             fn __get_invoke_stack_block() -> unsafe extern "C" fn() {
                 unsafe extern "C" fn invoke<$($t,)* R, Closure>(

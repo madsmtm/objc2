@@ -19,7 +19,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `_Block_release`, `_Block_object_assign`, `_Block_object_dispose`,
   `_NSConcreteGlobalBlock`, `_NSConcreteStackBlock` and `Class` in `ffi`
   module.
-* **BREAKING**: Renamed `IntoConcreteBlock` to `IntoBlock`.
+* **BREAKING**: Renamed `IntoConcreteBlock` to `IntoBlock`, and moved
+  associated type `Output` to be a generic parameter.
 * No longer use the `block-sys` crate for linking to the blocks runtime.
 * Renamed `ConcreteBlock` to `StackBlock`. The old name is deprecated.
 * Added `Copy` implementation for `StackBlock`.

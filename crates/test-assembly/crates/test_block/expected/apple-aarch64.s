@@ -1,35 +1,35 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.p2align	2
-SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>, 0):
+SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>, 0):
 	ldr	x8, [x0, #32]
 	ldr	w8, [x8]
 	add	w0, w8, w1
 	ret
 
 	.p2align	2
-SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>, 0):
+SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>, 0):
 	add	w0, w1, #2
 	ret
 
 	.p2align	2
-SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_rc_block::{closure#0}>, 0):
+SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_rc_block::{closure#0}>, 0):
 	add	w0, w1, #2
 	ret
 
 	.p2align	2
-SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>, 0):
+SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>, 0):
 	add	w0, w1, #2
 	ret
 
 	.p2align	2
-SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>, 0):
+SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>, 0):
 	ldr	x8, [x0, #32]
 	ldr	w8, [x8]
 	add	w0, w8, w1
 	ret
 
 	.p2align	2
-SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block::{closure#0}>, 0):
+SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block::{closure#0}>, 0):
 	add	w0, w1, #2
 	ret
 
@@ -109,9 +109,9 @@ Lloh3:
 	mov	w9, #33554432
 	stp	x8, x9, [sp]
 Lloh4:
-	adrp	x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>, 0)@PAGE
+	adrp	x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>, 0)@PAGE
 Lloh5:
-	add	x8, x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>, 0)@PAGEOFF
+	add	x8, x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>, 0)@PAGEOFF
 Lloh6:
 	adrp	x9, l_anon.[ID].2@PAGE
 Lloh7:
@@ -141,9 +141,9 @@ Lloh9:
 	ldr	x8, [x8, __NSConcreteStackBlock@GOTPAGEOFF]
 	stp	x8, xzr, [sp]
 Lloh10:
-	adrp	x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block::{closure#0}>, 0)@PAGE
+	adrp	x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block::{closure#0}>, 0)@PAGE
 Lloh11:
-	add	x8, x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block::{closure#0}>, 0)@PAGEOFF
+	add	x8, x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block::{closure#0}>, 0)@PAGEOFF
 Lloh12:
 	adrp	x9, l_anon.[ID].1@PAGE
 Lloh13:
@@ -173,9 +173,9 @@ Lloh15:
 	ldr	x8, [x8, __NSConcreteStackBlock@GOTPAGEOFF]
 	mov	w9, #33554432
 Lloh16:
-	adrp	x10, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>, 0)@PAGE
+	adrp	x10, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>, 0)@PAGE
 Lloh17:
-	add	x10, x10, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>, 0)@PAGEOFF
+	add	x10, x10, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>, 0)@PAGEOFF
 	stp	x8, x9, [sp, #8]
 Lloh18:
 	adrp	x8, l_anon.[ID].0@PAGE
@@ -208,9 +208,9 @@ Lloh21:
 	mov	w9, #33554432
 	stp	x8, x9, [sp]
 Lloh22:
-	adrp	x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>, 0)@PAGE
+	adrp	x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>, 0)@PAGE
 Lloh23:
-	add	x8, x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>, 0)@PAGEOFF
+	add	x8, x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>, 0)@PAGEOFF
 Lloh24:
 	adrp	x9, l_anon.[ID].3@PAGE
 Lloh25:
@@ -237,9 +237,9 @@ Lloh27:
 	ldr	x8, [x8, __NSConcreteStackBlock@GOTPAGEOFF]
 	mov	w9, #33554432
 Lloh28:
-	adrp	x10, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>, 0)@PAGE
+	adrp	x10, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>, 0)@PAGE
 Lloh29:
-	add	x10, x10, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>, 0)@PAGEOFF
+	add	x10, x10, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>, 0)@PAGEOFF
 	stp	x8, x9, [sp, #8]
 Lloh30:
 	adrp	x8, l_anon.[ID].4@PAGE
@@ -273,9 +273,9 @@ Lloh33:
 	ldr	x8, [x8, __NSConcreteStackBlock@GOTPAGEOFF]
 	stp	x8, xzr, [sp]
 Lloh34:
-	adrp	x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_rc_block::{closure#0}>, 0)@PAGE
+	adrp	x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_rc_block::{closure#0}>, 0)@PAGE
 Lloh35:
-	add	x8, x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,)>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_rc_block::{closure#0}>, 0)@PAGEOFF
+	add	x8, x8, SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_rc_block::{closure#0}>, 0)@PAGEOFF
 Lloh36:
 	adrp	x9, l_anon.[ID].1@PAGE
 Lloh37:

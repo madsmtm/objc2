@@ -79,7 +79,7 @@ impl<A: BlockArguments, R: EncodeReturn> RcBlock<A, R> {
     where
         // The `F: 'static` bound is required because the `RcBlock` has no way
         // of tracking a lifetime.
-        F: IntoBlock<A, Output = R> + 'static,
+        F: IntoBlock<A, R> + 'static,
     {
         // SAFETY: The stack block is copied once below.
         //

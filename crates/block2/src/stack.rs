@@ -129,7 +129,7 @@ impl<A: BlockArguments, R: EncodeReturn, F: Clone> StackBlock<A, R, F> {
     #[inline]
     pub fn new(closure: F) -> Self
     where
-        F: IntoBlock<A, Output = R>,
+        F: IntoBlock<A, R>,
     {
         let header = BlockHeader {
             isa: unsafe { ptr::addr_of!(ffi::_NSConcreteStackBlock) },
@@ -202,7 +202,7 @@ impl<A: BlockArguments, R: EncodeReturn, F> StackBlock<A, R, F> {
     #[inline]
     pub(crate) unsafe fn new_no_clone(closure: F) -> Self
     where
-        F: IntoBlock<A, Output = R>,
+        F: IntoBlock<A, R>,
     {
         // Don't need to emit copy and dispose helpers if the closure
         // doesn't need it.
