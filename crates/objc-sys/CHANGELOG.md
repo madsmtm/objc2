@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Added `free` method (same as `libc::free`).
+* Moved documentation from `README.md` to `docs.rs`.
 
 
 ## 0.3.2 - 2023-12-03
