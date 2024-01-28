@@ -12,6 +12,18 @@
 //! [apple-doc-index]: https://developer.apple.com/documentation/technologies
 //!
 //!
+//! ## Supported versions
+//!
+//! - macOS: `10.12-14.2`
+//! - iOS/iPadOS: `10.0-17.2` (WIP)
+//! - tvOS: `10.0-17.2` (WIP)
+//! - watchOS: `5.0-10.2` (WIP)
+//! - visionOS: Not currently supported
+//!
+//! These bindings are currently generated from the SDKs in Xcode 15.2.
+//! The Xcode version will be periodically updated.
+//!
+//!
 //! ## Use of `Deref`
 //!
 //! `icrate` uses the [`Deref`] trait in a bit special way: All objects deref
