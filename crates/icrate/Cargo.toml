@@ -1894,98 +1894,6 @@ Contacts_all = [
     "Contacts_CNSaveRequest",
     "Contacts_CNSocialProfile",
 ]
-CoreAnimation = [
-    "Foundation",
-]
-CoreAnimation_CAAnimation = []
-CoreAnimation_CAAnimationGroup = [
-    "CoreAnimation_CAAnimation",
-]
-CoreAnimation_CABasicAnimation = [
-    "CoreAnimation_CAPropertyAnimation",
-]
-CoreAnimation_CAConstraint = []
-CoreAnimation_CAConstraintLayoutManager = []
-CoreAnimation_CADisplayLink = []
-CoreAnimation_CAEDRMetadata = []
-CoreAnimation_CAEmitterCell = []
-CoreAnimation_CAEmitterLayer = [
-    "CoreAnimation_CALayer",
-]
-CoreAnimation_CAGradientLayer = [
-    "CoreAnimation_CALayer",
-]
-CoreAnimation_CAKeyframeAnimation = [
-    "CoreAnimation_CAPropertyAnimation",
-]
-CoreAnimation_CALayer = []
-CoreAnimation_CAMediaTimingFunction = []
-CoreAnimation_CAMetalDisplayLink = []
-CoreAnimation_CAMetalDisplayLinkUpdate = []
-CoreAnimation_CAPropertyAnimation = [
-    "CoreAnimation_CAAnimation",
-]
-CoreAnimation_CARemoteLayerClient = []
-CoreAnimation_CARemoteLayerServer = []
-CoreAnimation_CARenderer = []
-CoreAnimation_CAReplicatorLayer = [
-    "CoreAnimation_CALayer",
-]
-CoreAnimation_CAScrollLayer = [
-    "CoreAnimation_CALayer",
-]
-CoreAnimation_CAShapeLayer = [
-    "CoreAnimation_CALayer",
-]
-CoreAnimation_CASpringAnimation = [
-    "CoreAnimation_CABasicAnimation",
-]
-CoreAnimation_CATextLayer = [
-    "CoreAnimation_CALayer",
-]
-CoreAnimation_CATiledLayer = [
-    "CoreAnimation_CALayer",
-]
-CoreAnimation_CATransaction = []
-CoreAnimation_CATransformLayer = [
-    "CoreAnimation_CALayer",
-]
-CoreAnimation_CATransition = [
-    "CoreAnimation_CAAnimation",
-]
-CoreAnimation_CAValueFunction = []
-CoreAnimation_all = [
-    "CoreAnimation",
-    "CoreAnimation_CAAnimation",
-    "CoreAnimation_CAAnimationGroup",
-    "CoreAnimation_CABasicAnimation",
-    "CoreAnimation_CAConstraint",
-    "CoreAnimation_CAConstraintLayoutManager",
-    "CoreAnimation_CADisplayLink",
-    "CoreAnimation_CAEDRMetadata",
-    "CoreAnimation_CAEmitterCell",
-    "CoreAnimation_CAEmitterLayer",
-    "CoreAnimation_CAGradientLayer",
-    "CoreAnimation_CAKeyframeAnimation",
-    "CoreAnimation_CALayer",
-    "CoreAnimation_CAMediaTimingFunction",
-    "CoreAnimation_CAMetalDisplayLink",
-    "CoreAnimation_CAMetalDisplayLinkUpdate",
-    "CoreAnimation_CAPropertyAnimation",
-    "CoreAnimation_CARemoteLayerClient",
-    "CoreAnimation_CARemoteLayerServer",
-    "CoreAnimation_CARenderer",
-    "CoreAnimation_CAReplicatorLayer",
-    "CoreAnimation_CAScrollLayer",
-    "CoreAnimation_CAShapeLayer",
-    "CoreAnimation_CASpringAnimation",
-    "CoreAnimation_CATextLayer",
-    "CoreAnimation_CATiledLayer",
-    "CoreAnimation_CATransaction",
-    "CoreAnimation_CATransformLayer",
-    "CoreAnimation_CATransition",
-    "CoreAnimation_CAValueFunction",
-]
 CoreData = [
     "Foundation",
     "CoreData_NSAsynchronousFetchResult",
@@ -4685,119 +4593,211 @@ OSAKit_all = [
     "OSAKit_OSAScriptController",
     "OSAKit_OSAScriptView",
 ]
-PhotoKit = [
+Photos = [
     "AppKit",
     "CoreLocation",
     "Foundation",
 ]
-PhotoKit_PHAdjustmentData = []
-PhotoKit_PHAsset = [
-    "PhotoKit_PHObject",
+Photos_PHAdjustmentData = []
+Photos_PHAsset = [
+    "Photos_PHObject",
 ]
-PhotoKit_PHAssetChangeRequest = [
-    "PhotoKit_PHChangeRequest",
+Photos_PHAssetChangeRequest = [
+    "Photos_PHChangeRequest",
 ]
-PhotoKit_PHAssetCollection = [
-    "PhotoKit_PHCollection",
+Photos_PHAssetCollection = [
+    "Photos_PHCollection",
 ]
-PhotoKit_PHAssetCollectionChangeRequest = [
-    "PhotoKit_PHChangeRequest",
+Photos_PHAssetCollectionChangeRequest = [
+    "Photos_PHChangeRequest",
 ]
-PhotoKit_PHAssetCreationRequest = [
-    "PhotoKit_PHAssetChangeRequest",
+Photos_PHAssetCreationRequest = [
+    "Photos_PHAssetChangeRequest",
 ]
-PhotoKit_PHAssetResource = []
-PhotoKit_PHAssetResourceCreationOptions = []
-PhotoKit_PHAssetResourceManager = []
-PhotoKit_PHAssetResourceRequestOptions = []
-PhotoKit_PHCachingImageManager = [
-    "PhotoKit_PHImageManager",
+Photos_PHAssetResource = []
+Photos_PHAssetResourceCreationOptions = []
+Photos_PHAssetResourceManager = []
+Photos_PHAssetResourceRequestOptions = []
+Photos_PHCachingImageManager = [
+    "Photos_PHImageManager",
 ]
-PhotoKit_PHChange = []
-PhotoKit_PHChangeRequest = []
-PhotoKit_PHCloudIdentifier = []
-PhotoKit_PHCloudIdentifierMapping = []
-PhotoKit_PHCollection = [
-    "PhotoKit_PHObject",
+Photos_PHChange = []
+Photos_PHChangeRequest = []
+Photos_PHCloudIdentifier = []
+Photos_PHCloudIdentifierMapping = []
+Photos_PHCollection = [
+    "Photos_PHObject",
 ]
-PhotoKit_PHCollectionList = [
-    "PhotoKit_PHCollection",
+Photos_PHCollectionList = [
+    "Photos_PHCollection",
 ]
-PhotoKit_PHCollectionListChangeRequest = [
-    "PhotoKit_PHChangeRequest",
+Photos_PHCollectionListChangeRequest = [
+    "Photos_PHChangeRequest",
 ]
-PhotoKit_PHContentEditingInput = []
-PhotoKit_PHContentEditingInputRequestOptions = []
-PhotoKit_PHContentEditingOutput = []
-PhotoKit_PHFetchOptions = []
-PhotoKit_PHFetchResult = []
-PhotoKit_PHFetchResultChangeDetails = []
-PhotoKit_PHImageManager = []
-PhotoKit_PHImageRequestOptions = []
-PhotoKit_PHLivePhoto = []
-PhotoKit_PHLivePhotoEditingContext = []
-PhotoKit_PHLivePhotoRequestOptions = []
-PhotoKit_PHLocalIdentifierMapping = []
-PhotoKit_PHObject = []
-PhotoKit_PHObjectChangeDetails = []
-PhotoKit_PHObjectPlaceholder = [
-    "PhotoKit_PHObject",
+Photos_PHContentEditingInput = []
+Photos_PHContentEditingInputRequestOptions = []
+Photos_PHContentEditingOutput = []
+Photos_PHFetchOptions = []
+Photos_PHFetchResult = []
+Photos_PHFetchResultChangeDetails = []
+Photos_PHImageManager = []
+Photos_PHImageRequestOptions = []
+Photos_PHLivePhoto = []
+Photos_PHLivePhotoEditingContext = []
+Photos_PHLivePhotoRequestOptions = []
+Photos_PHLocalIdentifierMapping = []
+Photos_PHObject = []
+Photos_PHObjectChangeDetails = []
+Photos_PHObjectPlaceholder = [
+    "Photos_PHObject",
 ]
-PhotoKit_PHPersistentChange = []
-PhotoKit_PHPersistentChangeFetchResult = []
-PhotoKit_PHPersistentChangeToken = []
-PhotoKit_PHPersistentObjectChangeDetails = []
-PhotoKit_PHPhotoLibrary = []
-PhotoKit_PHProject = [
-    "PhotoKit_PHAssetCollection",
+Photos_PHPersistentChange = []
+Photos_PHPersistentChangeFetchResult = []
+Photos_PHPersistentChangeToken = []
+Photos_PHPersistentObjectChangeDetails = []
+Photos_PHPhotoLibrary = []
+Photos_PHProject = [
+    "Photos_PHAssetCollection",
 ]
-PhotoKit_PHProjectChangeRequest = [
-    "PhotoKit_PHChangeRequest",
+Photos_PHProjectChangeRequest = [
+    "Photos_PHChangeRequest",
 ]
-PhotoKit_PHVideoRequestOptions = []
-PhotoKit_all = [
-    "PhotoKit",
-    "PhotoKit_PHAdjustmentData",
-    "PhotoKit_PHAsset",
-    "PhotoKit_PHAssetChangeRequest",
-    "PhotoKit_PHAssetCollection",
-    "PhotoKit_PHAssetCollectionChangeRequest",
-    "PhotoKit_PHAssetCreationRequest",
-    "PhotoKit_PHAssetResource",
-    "PhotoKit_PHAssetResourceCreationOptions",
-    "PhotoKit_PHAssetResourceManager",
-    "PhotoKit_PHAssetResourceRequestOptions",
-    "PhotoKit_PHCachingImageManager",
-    "PhotoKit_PHChange",
-    "PhotoKit_PHChangeRequest",
-    "PhotoKit_PHCloudIdentifier",
-    "PhotoKit_PHCloudIdentifierMapping",
-    "PhotoKit_PHCollection",
-    "PhotoKit_PHCollectionList",
-    "PhotoKit_PHCollectionListChangeRequest",
-    "PhotoKit_PHContentEditingInput",
-    "PhotoKit_PHContentEditingInputRequestOptions",
-    "PhotoKit_PHContentEditingOutput",
-    "PhotoKit_PHFetchOptions",
-    "PhotoKit_PHFetchResult",
-    "PhotoKit_PHFetchResultChangeDetails",
-    "PhotoKit_PHImageManager",
-    "PhotoKit_PHImageRequestOptions",
-    "PhotoKit_PHLivePhoto",
-    "PhotoKit_PHLivePhotoEditingContext",
-    "PhotoKit_PHLivePhotoRequestOptions",
-    "PhotoKit_PHLocalIdentifierMapping",
-    "PhotoKit_PHObject",
-    "PhotoKit_PHObjectChangeDetails",
-    "PhotoKit_PHObjectPlaceholder",
-    "PhotoKit_PHPersistentChange",
-    "PhotoKit_PHPersistentChangeFetchResult",
-    "PhotoKit_PHPersistentChangeToken",
-    "PhotoKit_PHPersistentObjectChangeDetails",
-    "PhotoKit_PHPhotoLibrary",
-    "PhotoKit_PHProject",
-    "PhotoKit_PHProjectChangeRequest",
-    "PhotoKit_PHVideoRequestOptions",
+Photos_PHVideoRequestOptions = []
+Photos_all = [
+    "Photos",
+    "Photos_PHAdjustmentData",
+    "Photos_PHAsset",
+    "Photos_PHAssetChangeRequest",
+    "Photos_PHAssetCollection",
+    "Photos_PHAssetCollectionChangeRequest",
+    "Photos_PHAssetCreationRequest",
+    "Photos_PHAssetResource",
+    "Photos_PHAssetResourceCreationOptions",
+    "Photos_PHAssetResourceManager",
+    "Photos_PHAssetResourceRequestOptions",
+    "Photos_PHCachingImageManager",
+    "Photos_PHChange",
+    "Photos_PHChangeRequest",
+    "Photos_PHCloudIdentifier",
+    "Photos_PHCloudIdentifierMapping",
+    "Photos_PHCollection",
+    "Photos_PHCollectionList",
+    "Photos_PHCollectionListChangeRequest",
+    "Photos_PHContentEditingInput",
+    "Photos_PHContentEditingInputRequestOptions",
+    "Photos_PHContentEditingOutput",
+    "Photos_PHFetchOptions",
+    "Photos_PHFetchResult",
+    "Photos_PHFetchResultChangeDetails",
+    "Photos_PHImageManager",
+    "Photos_PHImageRequestOptions",
+    "Photos_PHLivePhoto",
+    "Photos_PHLivePhotoEditingContext",
+    "Photos_PHLivePhotoRequestOptions",
+    "Photos_PHLocalIdentifierMapping",
+    "Photos_PHObject",
+    "Photos_PHObjectChangeDetails",
+    "Photos_PHObjectPlaceholder",
+    "Photos_PHPersistentChange",
+    "Photos_PHPersistentChangeFetchResult",
+    "Photos_PHPersistentChangeToken",
+    "Photos_PHPersistentObjectChangeDetails",
+    "Photos_PHPhotoLibrary",
+    "Photos_PHProject",
+    "Photos_PHProjectChangeRequest",
+    "Photos_PHVideoRequestOptions",
+]
+QuartzCore = [
+    "Foundation",
+]
+QuartzCore_CAAnimation = []
+QuartzCore_CAAnimationGroup = [
+    "QuartzCore_CAAnimation",
+]
+QuartzCore_CABasicAnimation = [
+    "QuartzCore_CAPropertyAnimation",
+]
+QuartzCore_CAConstraint = []
+QuartzCore_CAConstraintLayoutManager = []
+QuartzCore_CADisplayLink = []
+QuartzCore_CAEDRMetadata = []
+QuartzCore_CAEmitterCell = []
+QuartzCore_CAEmitterLayer = [
+    "QuartzCore_CALayer",
+]
+QuartzCore_CAGradientLayer = [
+    "QuartzCore_CALayer",
+]
+QuartzCore_CAKeyframeAnimation = [
+    "QuartzCore_CAPropertyAnimation",
+]
+QuartzCore_CALayer = []
+QuartzCore_CAMediaTimingFunction = []
+QuartzCore_CAMetalDisplayLink = []
+QuartzCore_CAMetalDisplayLinkUpdate = []
+QuartzCore_CAPropertyAnimation = [
+    "QuartzCore_CAAnimation",
+]
+QuartzCore_CARemoteLayerClient = []
+QuartzCore_CARemoteLayerServer = []
+QuartzCore_CARenderer = []
+QuartzCore_CAReplicatorLayer = [
+    "QuartzCore_CALayer",
+]
+QuartzCore_CAScrollLayer = [
+    "QuartzCore_CALayer",
+]
+QuartzCore_CAShapeLayer = [
+    "QuartzCore_CALayer",
+]
+QuartzCore_CASpringAnimation = [
+    "QuartzCore_CABasicAnimation",
+]
+QuartzCore_CATextLayer = [
+    "QuartzCore_CALayer",
+]
+QuartzCore_CATiledLayer = [
+    "QuartzCore_CALayer",
+]
+QuartzCore_CATransaction = []
+QuartzCore_CATransformLayer = [
+    "QuartzCore_CALayer",
+]
+QuartzCore_CATransition = [
+    "QuartzCore_CAAnimation",
+]
+QuartzCore_CAValueFunction = []
+QuartzCore_all = [
+    "QuartzCore",
+    "QuartzCore_CAAnimation",
+    "QuartzCore_CAAnimationGroup",
+    "QuartzCore_CABasicAnimation",
+    "QuartzCore_CAConstraint",
+    "QuartzCore_CAConstraintLayoutManager",
+    "QuartzCore_CADisplayLink",
+    "QuartzCore_CAEDRMetadata",
+    "QuartzCore_CAEmitterCell",
+    "QuartzCore_CAEmitterLayer",
+    "QuartzCore_CAGradientLayer",
+    "QuartzCore_CAKeyframeAnimation",
+    "QuartzCore_CALayer",
+    "QuartzCore_CAMediaTimingFunction",
+    "QuartzCore_CAMetalDisplayLink",
+    "QuartzCore_CAMetalDisplayLinkUpdate",
+    "QuartzCore_CAPropertyAnimation",
+    "QuartzCore_CARemoteLayerClient",
+    "QuartzCore_CARemoteLayerServer",
+    "QuartzCore_CARenderer",
+    "QuartzCore_CAReplicatorLayer",
+    "QuartzCore_CAScrollLayer",
+    "QuartzCore_CAShapeLayer",
+    "QuartzCore_CASpringAnimation",
+    "QuartzCore_CATextLayer",
+    "QuartzCore_CATiledLayer",
+    "QuartzCore_CATransaction",
+    "QuartzCore_CATransformLayer",
+    "QuartzCore_CATransition",
+    "QuartzCore_CAValueFunction",
 ]
 ServiceManagement = [
     "Foundation",
@@ -5557,7 +5557,6 @@ unstable-frameworks-macos-10-12 = [
     "Automator_all",
     "CloudKit_all",
     "Contacts_all",
-    "CoreAnimation_all",
     "CoreData_all",
     "CoreLocation_all",
     "CoreWLAN_all",
@@ -5573,7 +5572,8 @@ unstable-frameworks-macos-10-12 = [
     "MetalKit_all",
     "Metal_all",
     "OSAKit_all",
-    "PhotoKit_all",
+    "Photos_all",
+    "QuartzCore_all",
     "ServiceManagement_all",
     "StoreKit_all",
     "WebKit_all",

@@ -386,7 +386,7 @@ maccatalyst = "13.0"
 ios = "13.0"
 
 [library.Photos]
-name = "PhotoKit"
+pretty-name = "PhotoKit"
 imports = ["AppKit", "CoreLocation", "Foundation"]
 macos = "10.11"
 maccatalyst = "13.0"
@@ -399,7 +399,7 @@ imports = ["AppKit", "Foundation"]
 macos = "10.4"
 
 [library.QuartzCore]
-name = "CoreAnimation"
+pretty-name = "CoreAnimation"
 fixes = true
 extra-docs = """
 This actually lives in the `QuartzCore` framework, but `CoreAnimation` is
@@ -1213,11 +1213,14 @@ skipped = true
 [class.MTKTextureLoader.methods.newTextureWithCGImage_options_error]
 skipped = true
 [class.MTKView.methods]
-# Needs `CAMetalDrawable`
-currentDrawable = { skipped = true }
 # Needs `CGColorSpaceRef`
 colorspace = { skipped = true }
 setColorspace = { skipped = true }
+# Needs `CAMetalDrawable`
+[class.MTKView.methods.currentDrawable]
+skipped = true
+[class.CAMetalDisplayLinkUpdate.methods.drawable]
+skipped = true
 # Needs `Component` from Core Services / Carbon Core / Component Manager
 [class.OSALanguage.methods]
 initWithComponent = { skipped = true }

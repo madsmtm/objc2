@@ -86,7 +86,7 @@ impl<N: ToOptionString> ItemIdentifier<N> {
 
         Self {
             name,
-            library: context.get_library_alias(library_name),
+            library: library_name,
             file_name,
         }
     }

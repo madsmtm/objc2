@@ -23,8 +23,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Deprecated
 * Deprecated `MainThreadMarker::run_on_main`, use the new free-standing function
   `run_on_main` instead.
-* Deprecated `CATransaction::batch`. This is still in beta, according to the
-  documentation.
 
 ### Removed
 * Removed private functionality in the `Speech` framework. This was never
@@ -32,6 +30,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   This is technically a breaking change, but will be allowed in a minor
   version since it isn't supported by Apple.
+
+### Fixed
+* Fixed the `QuartzCore` and `Photos` frameworks not being loaded correctly.
 
 ## icrate 0.1.0 - 2023-12-23
 

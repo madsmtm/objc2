@@ -81,10 +81,7 @@ impl Output {
             .collect();
         let mut gnustep_features: BTreeSet<String> = vec![].into_iter().collect();
 
-        for (mut library_name, library) in &config.libraries {
-            if let Some(alias) = &library.name {
-                library_name = alias;
-            }
+        for (library_name, library) in &config.libraries {
             let library_features = library
                 .imports
                 .iter()
@@ -145,8 +142,7 @@ impl Output {
         );
 
         for (library_name, library) in &self.libraries {
-            let library_alias = config.get_library_alias(library_name.clone());
-            let mut library_features = BTreeSet::from([library_alias.clone()]);
+            let mut library_features = BTreeSet::from([library_name.clone()]);
 
             for file in library.files.values() {
                 for stmt in &file.stmts {
@@ -182,7 +178,7 @@ impl Output {
             }
 
             let _ = features.insert(
-                format!("{library_alias}_all"),
+                format!("{library_name}_all"),
                 library_features.into_iter().collect::<Vec<_>>(),
             );
         }

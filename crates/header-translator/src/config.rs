@@ -46,20 +46,6 @@ impl Config {
             .and_then(|data| data.renamed.clone())
             .unwrap_or(name)
     }
-
-    pub fn get_library_alias(&self, library_name: String) -> String {
-        self.libraries
-            .iter()
-            .find_map(|(n, data)| {
-                if let Some(name) = &data.name {
-                    if n == &library_name {
-                        return Some(name.clone());
-                    }
-                }
-                None
-            })
-            .unwrap_or(library_name)
-    }
 }
 
 fn get_version<'de, D: serde::Deserializer<'de>>(
@@ -99,8 +85,9 @@ fn get_version<'de, D: serde::Deserializer<'de>>(
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct LibraryData {
+    #[serde(rename = "pretty-name")]
     #[serde(default)]
-    pub name: Option<String>,
+    pub pretty_name: Option<String>,
     pub imports: Vec<String>,
     #[serde(rename = "gnustep-library")]
     #[serde(default)]

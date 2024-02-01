@@ -13,7 +13,7 @@ pub struct File {
 impl File {
     pub fn new(library_name: &str, context: &Context<'_>) -> Self {
         Self {
-            library_name: context.get_library_alias(library_name.to_string()),
+            library_name: library_name.to_string(),
             imports: context
                 .libraries
                 .get(library_name)
