@@ -1,9 +1,186 @@
 use core::cell::RefCell;
 use std::thread_local;
 
-use block2::{Block, RcBlock, StackBlock};
+use alloc::string::ToString;
+use block2::{global_block, Block, RcBlock, StackBlock};
+use objc2::encode::{Encode, Encoding};
 use objc2::rc::Id;
 use objc2::runtime::{AnyObject, Bool, NSObject};
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct LargeStruct {
+    pub x: f32,
+    pub y: [u8; 100],
+}
+
+impl LargeStruct {
+    pub fn get() -> Self {
+        let mut y = [10; 100];
+        y[42] = 123;
+        Self { x: 5.0, y }
+    }
+
+    pub fn mutate(&mut self) {
+        self.x -= 1.0;
+        self.y[12] += 1;
+        self.y[99] = 123;
+    }
+}
+
+unsafe impl Encode for LargeStruct {
+    const ENCODING: Encoding =
+        Encoding::Struct("LargeStruct", &[f32::ENCODING, <[u8; 100]>::ENCODING]);
+}
+
+extern "C" {
+    /// Returns a pointer to a global block that returns 7.
+    pub fn get_int_block() -> *mut Block<dyn Fn() -> i32>;
+    /// Returns a pointer to a copied block that returns `i`.
+    pub fn get_int_block_with(i: i32) -> *mut Block<dyn Fn() -> i32>;
+    /// Invokes a block and returns its result.
+    pub fn invoke_int_block(block: &Block<dyn Fn() -> i32>) -> i32;
+
+    /// Returns a pointer to a global block that returns its argument + 7.
+    pub fn get_add_block() -> *mut Block<dyn Fn(i32) -> i32>;
+    /// Returns a pointer to a copied block that returns its argument + `i`.
+    pub fn get_add_block_with(i: i32) -> *mut Block<dyn Fn(i32) -> i32>;
+    /// Invokes a block with `a` and returns the result.
+    pub fn invoke_add_block(block: &Block<dyn Fn(i32) -> i32>, a: i32) -> i32;
+
+    pub fn get_large_struct_block() -> *mut Block<dyn Fn(LargeStruct) -> LargeStruct>;
+    pub fn get_large_struct_block_with(
+        i: LargeStruct,
+    ) -> *mut Block<dyn Fn(LargeStruct) -> LargeStruct>;
+    pub fn invoke_large_struct_block(
+        block: &Block<dyn Fn(LargeStruct) -> LargeStruct>,
+        s: LargeStruct,
+    ) -> LargeStruct;
+
+    pub fn try_block_debugging(x: i32);
+}
+
+#[test]
+fn test_block_debugging() {
+    unsafe { try_block_debugging(5) };
+    // Uncomment to see debug output
+    // panic!();
+}
+
+#[test]
+fn test_int_block() {
+    unsafe {
+        assert_eq!(invoke_int_block(&*get_int_block()), 7);
+        assert_eq!(invoke_int_block(&*get_int_block_with(13)), 13);
+    }
+}
+
+#[test]
+fn test_add_block() {
+    unsafe {
+        assert_eq!(invoke_add_block(&*get_add_block(), 5), 12);
+        assert_eq!(invoke_add_block(&*get_add_block_with(3), 5), 8);
+    }
+}
+
+#[test]
+fn test_large_struct_block() {
+    let data = LargeStruct::get();
+    let mut expected = data;
+    expected.mutate();
+
+    assert_eq!(
+        unsafe { invoke_large_struct_block(&*get_large_struct_block(), data) },
+        expected
+    );
+    assert_eq!(
+        unsafe { invoke_large_struct_block(&*get_large_struct_block_with(expected), data) },
+        expected
+    );
+
+    global_block! {
+        static BLOCK = |data: LargeStruct| -> LargeStruct {
+            let mut data = data;
+            data.mutate();
+            data
+        };
+    }
+
+    let data = LargeStruct::get();
+    let mut new_data = data;
+    new_data.mutate();
+
+    assert_eq!(BLOCK.call((data,)), new_data);
+    assert_eq!(unsafe { invoke_large_struct_block(&BLOCK, data) }, new_data);
+
+    let block = StackBlock::new(|mut x: LargeStruct| {
+        x.mutate();
+        x
+    });
+    assert_eq!(unsafe { invoke_large_struct_block(&block, data) }, new_data);
+    let block = block.copy();
+    assert_eq!(unsafe { invoke_large_struct_block(&block, data) }, new_data);
+}
+
+global_block! {
+    /// Test `global_block` in an external crate
+    static MY_BLOCK = || -> i32 {
+        42
+    };
+}
+
+#[test]
+fn test_global_block() {
+    assert_eq!(unsafe { invoke_int_block(&MY_BLOCK) }, 42);
+}
+
+#[test]
+fn test_call_block() {
+    let block = unsafe { RcBlock::from_raw(get_int_block_with(13)) }.unwrap();
+    assert_eq!(block.call(()), 13);
+}
+
+#[test]
+fn test_call_block_args() {
+    let block = unsafe { RcBlock::from_raw(get_add_block_with(13)) }.unwrap();
+    assert_eq!(block.call((2,)), 15);
+}
+
+#[test]
+fn test_create_block() {
+    let block = StackBlock::new(|| 13);
+    let result = unsafe { invoke_int_block(&block) };
+    assert_eq!(result, 13);
+}
+
+#[test]
+fn test_create_block_args() {
+    let block = StackBlock::new(|a: i32| a + 5);
+    let result = unsafe { invoke_add_block(&block, 6) };
+    assert_eq!(result, 11);
+}
+
+#[test]
+fn test_block_copy() {
+    let s = "Hello!".to_string();
+    let expected_len = s.len() as i32;
+    let block = StackBlock::new(move || s.len() as i32);
+    assert_eq!(unsafe { invoke_int_block(&block) }, expected_len);
+
+    let copied = block.copy();
+    assert_eq!(unsafe { invoke_int_block(&copied) }, expected_len);
+}
+
+#[test]
+fn test_block_stack_move() {
+    fn make_block() -> StackBlock<'static, (), i32, impl Fn() -> i32> {
+        let x = 7;
+        StackBlock::new(move || x)
+    }
+
+    let block = make_block();
+    assert_eq!(unsafe { invoke_int_block(&block) }, 7);
+}
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Hash)]
 struct Count {
