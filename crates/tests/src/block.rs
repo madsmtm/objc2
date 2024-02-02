@@ -33,6 +33,8 @@ unsafe impl Encode for LargeStruct {
         Encoding::Struct("LargeStruct", &[f32::ENCODING, <[u8; 100]>::ENCODING]);
 }
 
+type Add12 = Block<dyn Fn(i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32) -> i32>;
+
 extern "C" {
     /// Returns a pointer to a global block that returns 7.
     pub fn get_int_block() -> *mut Block<dyn Fn() -> i32>;
@@ -47,6 +49,24 @@ extern "C" {
     pub fn get_add_block_with(i: i32) -> *mut Block<dyn Fn(i32) -> i32>;
     /// Invokes a block with `a` and returns the result.
     pub fn invoke_add_block(block: &Block<dyn Fn(i32) -> i32>, a: i32) -> i32;
+
+    pub fn get_add_12() -> *mut Add12;
+    pub fn get_add_12_with(x: i32) -> *mut Add12;
+    pub fn invoke_add_12(
+        block: &Add12,
+        a1: i32,
+        a2: i32,
+        a3: i32,
+        a4: i32,
+        a5: i32,
+        a6: i32,
+        a7: i32,
+        a8: i32,
+        a9: i32,
+        a10: i32,
+        a11: i32,
+        a12: i32,
+    ) -> i32;
 
     pub fn get_large_struct_block() -> *mut Block<dyn Fn(LargeStruct) -> LargeStruct>;
     pub fn get_large_struct_block_with(
@@ -69,18 +89,84 @@ fn test_block_debugging() {
 
 #[test]
 fn test_int_block() {
-    unsafe {
-        assert_eq!(invoke_int_block(&*get_int_block()), 7);
-        assert_eq!(invoke_int_block(&*get_int_block_with(13)), 13);
+    #[track_caller]
+    fn invoke_assert(block: &Block<dyn Fn() -> i32>, expected: i32) {
+        assert_eq!(block.call(()), expected);
+        assert_eq!(unsafe { invoke_int_block(block) }, expected);
     }
+
+    global_block! {
+        static GLOBAL_BLOCK = || -> i32 {
+            42
+        };
+    }
+
+    invoke_assert(unsafe { &*get_int_block() }, 7);
+    invoke_assert(
+        &unsafe { RcBlock::from_raw(get_int_block_with(3)) }.unwrap(),
+        3,
+    );
+    invoke_assert(&StackBlock::new(|| 10), 10);
+    invoke_assert(&RcBlock::new(|| 6), 6);
+    invoke_assert(&GLOBAL_BLOCK, 42);
 }
 
 #[test]
 fn test_add_block() {
-    unsafe {
-        assert_eq!(invoke_add_block(&*get_add_block(), 5), 12);
-        assert_eq!(invoke_add_block(&*get_add_block_with(3), 5), 8);
+    #[track_caller]
+    fn invoke_assert(block: &Block<dyn Fn(i32) -> i32>, expected: i32) {
+        assert_eq!(block.call((5,)), expected);
+        assert_eq!(unsafe { invoke_add_block(block, 5) }, expected);
     }
+
+    global_block! {
+        static GLOBAL_BLOCK = |x: i32| -> i32 {
+            x + 42
+        };
+    }
+
+    invoke_assert(unsafe { &*get_add_block() }, 12);
+    invoke_assert(
+        &unsafe { RcBlock::from_raw(get_add_block_with(3)) }.unwrap(),
+        8,
+    );
+    invoke_assert(&StackBlock::new(|a: i32| a + 6), 11);
+    invoke_assert(&RcBlock::new(|a: i32| a + 6), 11);
+    invoke_assert(&GLOBAL_BLOCK, 47);
+}
+
+#[test]
+fn test_add_12() {
+    #[track_caller]
+    fn invoke_assert(block: &Add12, expected: i32) {
+        assert_eq!(
+            block.call((1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)),
+            expected
+        );
+        assert_eq!(
+            unsafe { invoke_add_12(block, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12) },
+            expected
+        );
+    }
+
+    global_block! {
+        static GLOBAL_BLOCK = |
+            a1: i32, a2: i32, a3: i32, a4: i32,
+            a5: i32, a6: i32, a7: i32, a8: i32,
+            a9: i32, a10: i32, a11: i32, a12: i32,
+        | -> i32 {
+            a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8 + a9 + a10 + a11 + a12 + 42
+        };
+    }
+
+    invoke_assert(unsafe { &*get_add_12() }, 78);
+    invoke_assert(unsafe { &*get_add_12_with(13) }, 91);
+    let closure = |a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12| {
+        a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8 + a9 + a10 + a11 + a12
+    };
+    invoke_assert(&StackBlock::new(closure), 78);
+    invoke_assert(&RcBlock::new(closure), 78);
+    invoke_assert(&GLOBAL_BLOCK, 120);
 }
 
 #[test]
@@ -120,44 +206,6 @@ fn test_large_struct_block() {
     assert_eq!(unsafe { invoke_large_struct_block(&block, data) }, new_data);
     let block = block.copy();
     assert_eq!(unsafe { invoke_large_struct_block(&block, data) }, new_data);
-}
-
-global_block! {
-    /// Test `global_block` in an external crate
-    static MY_BLOCK = || -> i32 {
-        42
-    };
-}
-
-#[test]
-fn test_global_block() {
-    assert_eq!(unsafe { invoke_int_block(&MY_BLOCK) }, 42);
-}
-
-#[test]
-fn test_call_block() {
-    let block = unsafe { RcBlock::from_raw(get_int_block_with(13)) }.unwrap();
-    assert_eq!(block.call(()), 13);
-}
-
-#[test]
-fn test_call_block_args() {
-    let block = unsafe { RcBlock::from_raw(get_add_block_with(13)) }.unwrap();
-    assert_eq!(block.call((2,)), 15);
-}
-
-#[test]
-fn test_create_block() {
-    let block = StackBlock::new(|| 13);
-    let result = unsafe { invoke_int_block(&block) };
-    assert_eq!(result, 13);
-}
-
-#[test]
-fn test_create_block_args() {
-    let block = StackBlock::new(|a: i32| a + 5);
-    let result = unsafe { invoke_add_block(&block, 6) };
-    assert_eq!(result, 11);
 }
 
 #[test]
