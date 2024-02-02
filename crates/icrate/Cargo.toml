@@ -4597,6 +4597,7 @@ Photos = [
     "AppKit",
     "CoreLocation",
     "Foundation",
+    "UniformTypeIdentifiers",
 ]
 Photos_PHAdjustmentData = []
 Photos_PHAsset = [

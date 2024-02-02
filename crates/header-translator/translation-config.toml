@@ -387,7 +387,7 @@ ios = "13.0"
 
 [library.Photos]
 pretty-name = "PhotoKit"
-imports = ["AppKit", "CoreLocation", "Foundation"]
+imports = ["AppKit", "CoreLocation", "Foundation", "UniformTypeIdentifiers"]
 macos = "10.11"
 maccatalyst = "13.0"
 ios = "8.0"
