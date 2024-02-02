@@ -3,43 +3,54 @@ use core::mem::ManuallyDrop;
 use core::ops::Deref;
 use core::ptr::NonNull;
 
-use objc2::encode::EncodeReturn;
+use objc2::encode::{EncodeArguments, EncodeReturn};
 
 use crate::abi::BlockHeader;
 use crate::debug::debug_block_header;
-use crate::{ffi, Block, BlockArguments, IntoBlock, StackBlock};
+use crate::{ffi, Block, IntoBlock, StackBlock};
 
 /// A reference-counted Objective-C block that is stored on the heap.
 ///
 /// This is a smart pointer that [`Deref`]s to [`Block`].
 ///
+/// The generic type `F` must be a [`dyn`] [`Fn`] that implements the
+/// [`BlockFn`] trait, just like described in [`Block`]'s documentation.
+///
+/// [`dyn`]: https://doc.rust-lang.org/std/keyword.dyn.html
+/// [`BlockFn`]: crate::BlockFn
+///
 ///
 /// # Memory-layout
 ///
 /// This is guaranteed to have the same size and alignment as a pointer to a
-/// block, `*const Block<A, R>`.
+/// block (i.e. same size as `*const Block<A, R>`).
 ///
 /// Additionally, it participates in the null-pointer optimization, that is,
 /// `Option<RcBlock<A, R>>` is guaranteed to have the same size as
 /// `RcBlock<A, R>`.
 #[doc(alias = "MallocBlock")]
-pub struct RcBlock<A, R> {
-    ptr: NonNull<Block<A, R>>,
+pub struct RcBlock<F: ?Sized> {
+    // Covariant
+    ptr: NonNull<Block<F>>,
 }
 
-impl<A, R> RcBlock<A, R> {
+impl<F: ?Sized> RcBlock<F> {
     /// Construct an `RcBlock` from the given block pointer by taking
     /// ownership.
     ///
     /// This will return `None` if the pointer is NULL.
     ///
+    ///
     /// # Safety
     ///
-    /// The given pointer must point to a valid block, the arguments and
-    /// return type must be correct, and the block must have a +1 reference /
+    /// The given pointer must point to a valid block, the parameter and
+    /// return types must be correct, and the block must have a +1 reference /
     /// retain count from somewhere else.
+    ///
+    /// Additionally, the block must be safe to call (or, if it is not, then
+    /// you must treat every call to the block as `unsafe`).
     #[inline]
-    pub unsafe fn from_raw(ptr: *mut Block<A, R>) -> Option<Self> {
+    pub unsafe fn from_raw(ptr: *mut Block<F>) -> Option<Self> {
         NonNull::new(ptr).map(|ptr| Self { ptr })
     }
 
@@ -51,21 +62,29 @@ impl<A, R> RcBlock<A, R> {
     /// This will return `None` if the pointer is NULL, or if an allocation
     /// failure occurred.
     ///
+    /// See [`Block::copy`] for a safe alternative when you already know the
+    /// block pointer is valid.
+    ///
+    ///
     /// # Safety
     ///
-    /// The given pointer must point to a valid block, and the arguments and
-    /// return type must be correct.
+    /// The given pointer must point to a valid block, and the parameter and
+    /// return types must be correct.
+    ///
+    /// Additionally, the block must be safe to call (or, if it is not, then
+    /// you must treat every call to the block as `unsafe`).
     #[doc(alias = "Block_copy")]
     #[doc(alias = "_Block_copy")]
     #[inline]
-    pub unsafe fn copy(ptr: *mut Block<A, R>) -> Option<Self> {
-        let ptr: *mut Block<A, R> = unsafe { ffi::_Block_copy(ptr.cast()) }.cast();
+    pub unsafe fn copy(ptr: *mut Block<F>) -> Option<Self> {
+        let ptr: *mut Block<F> = unsafe { ffi::_Block_copy(ptr.cast()) }.cast();
         // SAFETY: We just copied the block, so the reference count is +1
         unsafe { Self::from_raw(ptr) }
     }
 }
 
-impl<A: BlockArguments, R: EncodeReturn> RcBlock<A, R> {
+// TODO: Move so this appears first in the docs.
+impl<F: ?Sized> RcBlock<F> {
     /// Construct a `RcBlock` with the given closure.
     ///
     /// The closure will be coped to the heap on construction.
@@ -75,11 +94,11 @@ impl<A: BlockArguments, R: EncodeReturn> RcBlock<A, R> {
     //
     // Note: Unsure if this should be #[inline], but I think it may be able to
     // benefit from not being so.
-    pub fn new<F>(closure: F) -> Self
+    pub fn new<'f, A, R, Closure>(closure: Closure) -> Self
     where
-        // The `F: 'static` bound is required because the `RcBlock` has no way
-        // of tracking a lifetime.
-        F: IntoBlock<A, R> + 'static,
+        A: EncodeArguments,
+        R: EncodeReturn,
+        Closure: IntoBlock<'f, A, R, Dyn = F>,
     {
         // SAFETY: The stack block is copied once below.
         //
@@ -93,8 +112,8 @@ impl<A: BlockArguments, R: EncodeReturn> RcBlock<A, R> {
 
         // Transfer ownership from the stack to the heap.
         let mut block = ManuallyDrop::new(block);
-        let ptr: *mut StackBlock<A, R, F> = &mut *block;
-        let ptr: *mut Block<A, R> = ptr.cast();
+        let ptr: *mut StackBlock<'f, A, R, Closure> = &mut *block;
+        let ptr: *mut Block<F> = ptr.cast();
         // SAFETY: The block will be moved to the heap, and we forget the
         // original block because the heap block will drop in our dispose
         // helper.
@@ -102,20 +121,31 @@ impl<A: BlockArguments, R: EncodeReturn> RcBlock<A, R> {
     }
 }
 
-impl<A, R> Clone for RcBlock<A, R> {
+impl<F: ?Sized> Clone for RcBlock<F> {
+    /// Increase the reference-count of the block.
+    #[doc(alias = "Block_copy")]
+    #[doc(alias = "_Block_copy")]
     #[inline]
     fn clone(&self) -> Self {
-        // SAFETY: The pointer is valid, since the only way to get an RcBlock
-        // in the first place is through unsafe functions.
+        // SAFETY: The block pointer is valid, and its safety invariant is
+        // upheld, since the only way to get an `RcBlock` in the first place
+        // is through unsafe functions that requires these preconditions to be
+        // upheld.
         unsafe { Self::copy(self.ptr.as_ptr()) }.unwrap_or_else(|| rc_clone_fail())
     }
 }
 
 // Intentionally not `#[track_caller]`, to keep the code-size smaller (as this
 // error is very unlikely).
-pub(crate) fn rc_new_fail() -> ! {
+fn rc_new_fail() -> ! {
     // This likely means the system is out of memory.
     panic!("failed creating RcBlock")
+}
+
+// Intentionally not `#[track_caller]`, see above.
+pub(crate) fn block_copy_fail() -> ! {
+    // This likely means the system is out of memory.
+    panic!("failed copying Block")
 }
 
 // Intentionally not `#[track_caller]`, see above.
@@ -123,11 +153,11 @@ fn rc_clone_fail() -> ! {
     unreachable!("cloning a RcBlock bumps the reference count, which should be infallible")
 }
 
-impl<A, R> Deref for RcBlock<A, R> {
-    type Target = Block<A, R>;
+impl<F: ?Sized> Deref for RcBlock<F> {
+    type Target = Block<F>;
 
     #[inline]
-    fn deref(&self) -> &Block<A, R> {
+    fn deref(&self) -> &Block<F> {
         // SAFETY: The pointer is valid, as ensured by creation methods, and
         // will be so for as long as the `RcBlock` is, since that holds +1
         // reference count.
@@ -135,7 +165,7 @@ impl<A, R> Deref for RcBlock<A, R> {
     }
 }
 
-impl<A, R> Drop for RcBlock<A, R> {
+impl<F: ?Sized> Drop for RcBlock<F> {
     /// Release the block, decreasing the reference-count by 1.
     ///
     /// The `Drop` method of the underlying closure will be called once the
@@ -150,11 +180,89 @@ impl<A, R> Drop for RcBlock<A, R> {
     }
 }
 
-impl<A, R> fmt::Debug for RcBlock<A, R> {
+impl<F: ?Sized> fmt::Debug for RcBlock<F> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut f = f.debug_struct("RcBlock");
         let header = unsafe { self.ptr.cast::<BlockHeader>().as_ref() };
         debug_block_header(header, &mut f);
         f.finish_non_exhaustive()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use alloc::rc::Rc;
+    use core::cell::OnceCell;
+
+    use super::*;
+
+    #[test]
+    fn return_rc_block() {
+        fn get_adder(x: i32) -> RcBlock<dyn Fn(i32) -> i32> {
+            RcBlock::new(move |y| y + x)
+        }
+
+        let add2 = get_adder(2);
+        assert_eq!(add2.call((5,)), 7);
+        assert_eq!(add2.call((-1,)), 1);
+    }
+
+    #[test]
+    fn rc_block_with_precisely_described_lifetimes() {
+        fn args<'a, 'b>(
+            f: impl Fn(&'a i32, &'b i32) + 'static,
+        ) -> RcBlock<dyn Fn(&'a i32, &'b i32) + 'static> {
+            RcBlock::new(f)
+        }
+
+        fn args_return<'a, 'b>(
+            f: impl Fn(&'a i32) -> &'b i32 + 'static,
+        ) -> RcBlock<dyn Fn(&'a i32) -> &'b i32 + 'static> {
+            RcBlock::new(f)
+        }
+
+        fn args_entire<'a, 'b>(f: impl Fn(&'a i32) + 'b) -> RcBlock<dyn Fn(&'a i32) + 'b> {
+            RcBlock::new(f)
+        }
+
+        fn return_entire<'a, 'b>(
+            f: impl Fn() -> &'a i32 + 'b,
+        ) -> RcBlock<dyn Fn() -> &'a i32 + 'b> {
+            RcBlock::new(f)
+        }
+
+        let _ = args(|_, _| {});
+        let _ = args_return(|x| x);
+        let _ = args_entire(|_| {});
+        let _ = return_entire(|| &5);
+    }
+
+    #[allow(dead_code)]
+    fn covariant<'f>(b: RcBlock<dyn Fn() + 'static>) -> RcBlock<dyn Fn() + 'f> {
+        b
+    }
+
+    #[test]
+    fn allow_re_entrancy() {
+        #[allow(clippy::type_complexity)]
+        let block: Rc<OnceCell<RcBlock<dyn Fn(u32) -> u32>>> = Rc::new(OnceCell::new());
+
+        let captured_block = block.clone();
+        let fibonacci = move |n| {
+            let captured_fibonacci = captured_block.get().unwrap();
+            match n {
+                0 => 0,
+                1 => 1,
+                n => captured_fibonacci.call((n - 1,)) + captured_fibonacci.call((n - 2,)),
+            }
+        };
+
+        let block = block.get_or_init(|| RcBlock::new(fibonacci));
+
+        assert_eq!(block.call((0,)), 0);
+        assert_eq!(block.call((1,)), 1);
+        assert_eq!(block.call((6,)), 8);
+        assert_eq!(block.call((10,)), 55);
+        assert_eq!(block.call((19,)), 4181);
     }
 }

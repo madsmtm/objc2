@@ -7,11 +7,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
+* **BREAKING**: Added `Block::copy` to convert blocks to `RcBlock`. This
+  replaces `StackBlock::copy`, but since `StackBlock` implements `Deref`, this
+  will likely work as before.
 * Added `RcBlock::new(closure)` as a more efficient and flexible alternative
-  to `StackBlock::new(closure).to_rc()`.
-* Added `StackBlock::to_rc` to convert stack blocks to `RcBlock`.
+  to `StackBlock::new(closure).copy()`.
+* Added `BlockFn` trait to describe valid `dyn Fn` types for blocks.
 
 ### Changed
+* **BREAKING**: Changed how blocks specify their parameter and return types.
+  We now use `dyn Fn` so that it is more clear what the parameter and return
+  types are. This also allows us to support non-`'static` blocks.
+
+  ```rust
+  // Before
+  let block: &Block<(), ()>;
+  let block: &Block<(i32,), i32>;
+  let block: &Block<(i32, u32), (i32, u32)>;
+
+  // After
+  let block: &Block<dyn Fn()>;
+  let block: &Block<dyn Fn(i32) -> i32>;
+  let block: &Block<dyn Fn(i32, u32) -> (i32, u32)>;
+  // Now possible
+  let block: &Block<dyn Fn() + '_>; // Non-'static block
+  ```
+* **BREAKING**: Make `Block::call` safe, and instead move the upholding of the
+  safety invariant to the type itself.
 * **BREAKING**: Renamed `RcBlock::new(ptr)` to `RcBlock::from_raw(ptr)`.
 * **BREAKING**: Made `RcBlock` use the null-pointer optimization;
   `RcBlock::from_raw` and `RcBlock::copy` now return an `Option`.
@@ -19,14 +41,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `_Block_release`, `_Block_object_assign`, `_Block_object_dispose`,
   `_NSConcreteGlobalBlock`, `_NSConcreteStackBlock` and `Class` in `ffi`
   module.
-* **BREAKING**: Renamed `IntoConcreteBlock` to `IntoBlock`, and moved
-  associated type `Output` to be a generic parameter.
+* **BREAKING**: Renamed `IntoConcreteBlock` to `IntoBlock`, moved
+  associated type `Output` to be a generic parameter, and added lifetime
+  parameter.`
 * No longer use the `block-sys` crate for linking to the blocks runtime.
-* Renamed `ConcreteBlock` to `StackBlock`. The old name is deprecated.
+* Renamed `ConcreteBlock` to `StackBlock`, and added a lifetime parameter. The
+  old name is deprecated.
 * Added `Copy` implementation for `StackBlock`.
 
-### Deprecated
-* Deprecated `StackBlock::copy`, it is no longer necessary.
+### Removed
+* **BREAKING**: Removed `BlockArguments` in favour of `BlockFn`, which
+  describes both the parameter types, as well as the return type.
 
 ### Fixed
 * **BREAKING**: `StackBlock::new` now requires the closure to be `Clone`. If
@@ -101,7 +126,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 * **BREAKING**: Updated `objc2-encode` to `v2.0.0-pre.0`.
 * **BREAKING**: Updated `ffi` module to `block-sys v0.0.4`. This tweaks the
-  types of a lot of fields and arguments, and makes the apple runtime always
+  types of a lot of fields and parameters, and makes the apple runtime always
   be the default.
 
 ### Removed
@@ -144,9 +169,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## 0.2.0-alpha.0 - 2021-10-28
 
 ### Added
-* **BREAKING**: Blocks now require that arguments and return type implement
+* **BREAKING**: Blocks now require that parameter and return types implement
   `objc2_encode::Encode`. This is a safety measure to prevent creating blocks
-  with invalid arguments.
+  with invalid parameters.
 * Blocks now implements `objc2_encode::RefEncode` (and as such can be used in
   Objective-C message sends).
 * Update to 2018 edition.

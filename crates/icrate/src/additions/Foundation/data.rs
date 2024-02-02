@@ -278,7 +278,7 @@ unsafe fn with_vec<T: Message>(obj: Allocated<T>, bytes: Vec<u8>) -> Id<T> {
         // Recreate the Vec and let it drop
         let _ = unsafe { <Vec<u8>>::from_raw_parts(bytes.cast(), len, capacity) };
     });
-    let dealloc: &Block<(*mut c_void, usize), ()> = &dealloc;
+    let dealloc: &Block<dyn Fn(*mut c_void, usize) + 'static> = &dealloc;
 
     let mut bytes = ManuallyDrop::new(bytes);
     let bytes_ptr: *mut c_void = bytes.as_mut_ptr().cast();

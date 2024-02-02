@@ -5,22 +5,22 @@
 use block2::{Block, RcBlock, StackBlock};
 
 #[no_mangle]
-fn stack_block_to_rc() -> RcBlock<(i32,), i32> {
-    StackBlock::new(|x| x + 2).to_rc()
+fn stack_block_to_rc() -> RcBlock<dyn Fn(i32) -> i32> {
+    StackBlock::new(|x| x + 2).copy()
 }
 
 #[no_mangle]
-fn rc_block() -> RcBlock<(i32,), i32> {
+fn rc_block() -> RcBlock<dyn Fn(i32) -> i32> {
     RcBlock::new(|x| x + 2)
 }
 
 #[no_mangle]
-fn rc_block_drop(b: Box<i32>) -> RcBlock<(i32,), i32> {
+fn rc_block_drop(b: Box<i32>) -> RcBlock<dyn Fn(i32) -> i32> {
     RcBlock::new(move |x| x + *b)
 }
 
 extern "C" {
-    fn needs_block(block: &Block<(i32,), i32>);
+    fn needs_block(block: &Block<dyn Fn(i32) -> i32>);
 }
 
 #[no_mangle]

@@ -16,7 +16,7 @@ fn main() {
 
     {
         let x = 5 + 2;
-        unsafe { PUT_STATIC_IN_THREAD_LOCAL.call((&x,)) };
+        PUT_STATIC_IN_THREAD_LOCAL.call((&x,));
     }
 
     // `CONTAINS_STATIC` now references `x`, which has gone out of scope.

@@ -8,8 +8,20 @@
 //! information about each API. (There are [plans][#309] for importing that
 //! documentation here).
 //!
-//! [#309]: https://github.com/madsmtm/objc2/issues/309
+//! This crate uses [`objc2`] to declare the external interface to the
+//! Objective-C classes and protocols. It is highly recommended that you read
+//! the documentation there for details on how the Objective-C interop works.
+//!
+//! It also uses [`block2::Block`] in the public API, check out the [`block2`]
+//! crate for how to call such methods using a closure.
+//!
+//! A common mistake is to specify a different [`objc2`] or [`block2`] version
+//! in your `Cargo.toml` than the one your version of `icrate` uses. The
+//! versions that `icrate` currently uses is exported as `icrate::objc2` and
+//! `icrate::block2` for convenience.
+//!
 //! [apple-doc-index]: https://developer.apple.com/documentation/technologies
+//! [#309]: https://github.com/madsmtm/objc2/issues/309
 //!
 //!
 //! ## Supported versions

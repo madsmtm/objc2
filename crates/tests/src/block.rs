@@ -2,7 +2,8 @@ use core::cell::RefCell;
 use std::thread_local;
 
 use block2::{Block, RcBlock, StackBlock};
-use objc2::{rc::Id, runtime::AnyObject};
+use objc2::rc::Id;
+use objc2::runtime::{AnyObject, Bool, NSObject};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Hash)]
 struct Count {
@@ -124,11 +125,11 @@ fn stack_to_rc() {
     });
     expected.assert_current();
 
-    let rc1 = stack.to_rc();
+    let rc1 = stack.copy();
     expected.clone += 1;
     expected.assert_current();
 
-    let rc2 = stack.to_rc();
+    let rc2 = stack.copy();
     expected.clone += 1;
     expected.assert_current();
 
@@ -164,7 +165,7 @@ fn retain_release_rc_block() {
     });
     expected.assert_current();
 
-    let ptr = &*block as *const Block<_, _> as *mut AnyObject;
+    let ptr = &*block as *const Block<_> as *mut AnyObject;
     let obj = unsafe { Id::retain(ptr) }.unwrap();
     expected.assert_current();
 
@@ -194,7 +195,7 @@ fn retain_release_stack_block() {
     });
     expected.assert_current();
 
-    let ptr = &*block as *const Block<_, _> as *mut AnyObject;
+    let ptr = &*block as *const Block<_> as *mut AnyObject;
     // Don't use `Id::retain`, as that has debug assertions against the kind
     // of things GNUStep is doing.
     let obj = if cfg!(feature = "gnustep-1-7") {
@@ -217,4 +218,17 @@ fn retain_release_stack_block() {
     drop(block);
     expected.drop += 1;
     expected.assert_current();
+}
+
+#[test]
+fn capture_id() {
+    let stack_block = {
+        let obj1 = NSObject::new();
+        let obj2 = NSObject::new();
+        StackBlock::new(move || Bool::new(obj1 == obj2))
+    };
+
+    let rc_block = stack_block.copy();
+
+    assert!(rc_block.call(()).is_false());
 }

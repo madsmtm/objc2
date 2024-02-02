@@ -17,7 +17,7 @@ error[E0277]: the trait bound `Box<i32>: objc2::encode::Encode` is not satisfied
             u16
           and $N others
   = note: required for `Box<i32>` to implement `objc2::encode::EncodeArgument`
-  = note: required for `(Box<i32>,)` to implement `BlockArguments`
-  = note: required for `GlobalBlock<(Box<i32>,)>` to implement `Sync`
+  = note: required for `(dyn Fn(Box<i32>) + 'static)` to implement `BlockFn`
+  = note: required for `GlobalBlock<(dyn Fn(Box<i32>) + 'static)>` to implement `Sync`
   = note: shared static variables must have a type that implements `Sync`
   = note: this error originates in the macro `global_block` (in Nightly builds, run with -Z macro-backtrace for more info)

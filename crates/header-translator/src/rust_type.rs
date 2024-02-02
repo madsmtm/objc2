@@ -1232,18 +1232,26 @@ impl fmt::Display for Inner {
             Self::Fn { .. } => write!(f, "TodoFunction"),
             Self::Block {
                 sendable: _,
-                no_escape: _,
+                no_escape,
                 arguments,
                 result_type,
             } => {
-                write!(f, "Block<(")?;
+                write!(f, "Block<dyn Fn(")?;
                 for arg in arguments {
                     write!(f, "{arg}, ")?;
                 }
-                write!(f, "), ")?;
+                write!(f, ")")?;
                 match &**result_type {
-                    Self::Void => write!(f, "()")?,
-                    ty => write!(f, "{ty}")?,
+                    Self::Void => {}
+                    ty => write!(f, " -> {ty}")?,
+                }
+                if *no_escape {
+                    write!(f, " + '_")?;
+                } else {
+                    // `dyn Fn()` in function parameters implies `+ 'static`,
+                    // so no need to specify that.
+                    //
+                    // write!(f, " + 'static")?;
                 }
                 write!(f, ">")
             }
