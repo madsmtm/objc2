@@ -688,7 +688,7 @@ impl Stmt {
                     )
                 }
 
-                let superclasses: Vec<_> = parse_superclasses(entity, context)
+                let superclasses: Vec<_> = parse_superclasses(&get_category_cls(entity), context)
                     .into_iter()
                     .map(|(id, generics, entity)| {
                         let (sendable, mainthreadonly) = parse_attributes(&entity, context);
