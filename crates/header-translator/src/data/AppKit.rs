@@ -2,30 +2,30 @@
 data! {
     // TODO: This should be one of MainThreadOnly or Immutable (+Send/Sync)
     class NSAppearance {
-        unsafe -appearanceNamed;
-        unsafe -bestMatchFromAppearancesWithNames;
+        unsafe -appearanceNamed:;
+        unsafe -bestMatchFromAppearancesWithNames:;
     }
 
     class NSApplication {
         unsafe +sharedApplication;
 
         unsafe -currentEvent;
-        unsafe -postEvent_atStart;
+        unsafe -postEvent:atStart:;
         unsafe -presentationOptions;
         unsafe -windows;
         unsafe -keyWindow;
-        unsafe -setDelegate;
-        unsafe -setPresentationOptions;
-        unsafe -hide;
-        unsafe -orderFrontCharacterPalette;
-        unsafe -hideOtherApplications;
-        unsafe -stop;
-        unsafe -activateIgnoringOtherApps;
-        unsafe -requestUserAttention;
-        unsafe -setActivationPolicy;
-        unsafe -setMainMenu;
+        unsafe -setDelegate:;
+        unsafe -setPresentationOptions:;
+        unsafe -hide:;
+        unsafe -orderFrontCharacterPalette:;
+        unsafe -hideOtherApplications:;
+        unsafe -stop:;
+        unsafe -activateIgnoringOtherApps:;
+        unsafe -requestUserAttention:;
+        unsafe -setActivationPolicy:;
+        unsafe -setMainMenu:;
         unsafe -effectiveAppearance;
-        unsafe -setAppearance;
+        unsafe -setAppearance:;
 
         // `run` cannot be safe, the user must ensure there is no re-entrancy.
     }
@@ -49,7 +49,7 @@ data! {
 
     class NSControl {
         unsafe -isEnabled;
-        unsafe -setEnabled;
+        unsafe -setEnabled:;
     }
 
     // NSCursor is immutable, stated here:
@@ -57,7 +57,7 @@ data! {
     //
     // TODO: Send + Sync
     class NSCursor: Immutable {
-        unsafe -initWithImage_hotSpot;
+        unsafe -initWithImage:hotSpot:;
 
         unsafe -arrowCursor;
         unsafe -IBeamCursor;
@@ -103,25 +103,25 @@ data! {
     // Unsure yet if it would be beneficial to mark this as `Mutable`, or if
     // we should just keep it as interiormutable?
     class NSImage {
-        unsafe -initWithData;
-        unsafe -initByReferencingFile;
+        unsafe -initWithData:;
+        unsafe -initByReferencingFile:;
     }
 
     class NSMenu: MainThreadOnly {
         unsafe -init;
-        unsafe -addItem;
+        unsafe -addItem:;
     }
 
     // Any modification of the target or the action has to remain `unsafe`
     class NSMenuItem: MainThreadOnly {
         unsafe -init;
         unsafe +separatorItem;
-        unsafe -setKeyEquivalentModifierMask;
-        unsafe -setSubmenu;
+        unsafe -setKeyEquivalentModifierMask:;
+        unsafe -setSubmenu:;
     }
 
     class NSPasteboard {
-        unsafe -propertyListForType;
+        unsafe -propertyListForType:;
     }
 
     // Documented as "Thread-Unsafe"
@@ -140,7 +140,7 @@ data! {
 
     class NSWindowTabGroup: MainThreadOnly {
         unsafe -windows;
-        unsafe -setSelectedWindow;
+        unsafe -setSelectedWindow:;
     }
 
     class NSTextInputContext: MainThreadOnly {
@@ -167,17 +167,17 @@ data! {
         unsafe -inputContext;
         unsafe -visibleRect;
         unsafe -hasMarkedText;
-        unsafe -convertPoint_fromView;
+        unsafe -convertPoint:fromView:;
         unsafe -window;
 
-        unsafe -setWantsBestResolutionOpenGLSurface;
-        unsafe -setWantsLayer;
-        unsafe -setPostsFrameChangedNotifications;
-        unsafe -removeTrackingRect;
-        unsafe -addCursorRect_cursor;
-        unsafe -setHidden;
+        unsafe -setWantsBestResolutionOpenGLSurface:;
+        unsafe -setWantsLayer:;
+        unsafe -setPostsFrameChangedNotifications:;
+        unsafe -removeTrackingRect:;
+        unsafe -addCursorRect:cursor:;
+        unsafe -setHidden:;
 
-        unsafe -convertRect_toView;
+        unsafe -convertRect:toView:;
         unsafe -isFlipped;
     }
 
@@ -197,51 +197,51 @@ data! {
         unsafe -frame;
         unsafe -backingScaleFactor;
         unsafe -contentView;
-        unsafe -setContentView;
-        unsafe -setInitialFirstResponder;
-        unsafe -makeFirstResponder;
-        unsafe -contentRectForFrameRect;
+        unsafe -setContentView:;
+        unsafe -setInitialFirstResponder:;
+        unsafe -makeFirstResponder:;
+        unsafe -contentRectForFrameRect:;
         unsafe -screen;
-        unsafe -setContentSize;
-        unsafe -setFrameTopLeftPoint;
-        unsafe -setMinSize;
-        unsafe -setMaxSize;
-        unsafe -setResizeIncrements;
+        unsafe -setContentSize:;
+        unsafe -setFrameTopLeftPoint:;
+        unsafe -setMinSize:;
+        unsafe -setMaxSize:;
+        unsafe -setResizeIncrements:;
         unsafe -contentResizeIncrements;
-        unsafe -setContentResizeIncrements;
-        unsafe -setFrame_display;
-        unsafe -setMovable;
-        unsafe -setSharingType;
-        unsafe -setTabbingMode;
-        unsafe -setOpaque;
+        unsafe -setContentResizeIncrements:;
+        unsafe -setFrame:display:;
+        unsafe -setMovable:;
+        unsafe -setSharingType:;
+        unsafe -setTabbingMode:;
+        unsafe -setOpaque:;
         unsafe -hasShadow;
-        unsafe -setHasShadow;
-        unsafe -setIgnoresMouseEvents;
-        unsafe -setBackgroundColor;
+        unsafe -setHasShadow:;
+        unsafe -setIgnoresMouseEvents:;
+        unsafe -setBackgroundColor:;
         unsafe -styleMask;
-        unsafe -setStyleMask;
-        unsafe -registerForDraggedTypes;
-        unsafe -makeKeyAndOrderFront;
-        unsafe -orderFront;
-        unsafe -miniaturize;
-        unsafe -sender;
-        unsafe -toggleFullScreen;
-        unsafe -orderOut;
-        unsafe -zoom;
-        unsafe -selectNextKeyView;
-        unsafe -selectPreviousKeyView;
+        unsafe -setStyleMask:;
+        unsafe -registerForDraggedTypes:;
+        unsafe -makeKeyAndOrderFront:;
+        unsafe -orderFront:;
+        unsafe -miniaturize:;
+        // TODO: unsafe -deminiaturize:;
+        unsafe -toggleFullScreen:;
+        unsafe -orderOut:;
+        unsafe -zoom:;
+        unsafe -selectNextKeyView:;
+        unsafe -selectPreviousKeyView:;
         unsafe -firstResponder;
-        unsafe -standardWindowButton;
-        unsafe -setTitle;
+        unsafe -standardWindowButton:;
+        unsafe -setTitle:;
         unsafe -title;
-        unsafe -setAcceptsMouseMovedEvents;
-        unsafe -setTitlebarAppearsTransparent;
-        unsafe -setTitleVisibility;
-        unsafe -setMovableByWindowBackground;
-        unsafe -setLevel;
-        unsafe -setAllowsAutomaticWindowTabbing;
-        unsafe -setTabbingIdentifier;
-        unsafe -setDocumentEdited;
+        unsafe -setAcceptsMouseMovedEvents:;
+        unsafe -setTitlebarAppearsTransparent:;
+        unsafe -setTitleVisibility:;
+        unsafe -setMovableByWindowBackground:;
+        unsafe -setLevel:;
+        unsafe -setAllowsAutomaticWindowTabbing:;
+        unsafe -setTabbingIdentifier:;
+        unsafe -setDocumentEdited:;
         unsafe -occlusionState;
         unsafe -center;
         unsafe -isResizable;
@@ -252,17 +252,17 @@ data! {
         unsafe -isKeyWindow;
         unsafe -isZoomed;
         unsafe -allowsAutomaticWindowTabbing;
-        unsafe -selectNextTab;
+        unsafe -selectNextTab:;
         unsafe -tabbingIdentifier;
         unsafe -tabGroup;
         unsafe -isDocumentEdited;
         unsafe -close;
-        unsafe -performWindowDragWithEvent;
-        unsafe -invalidateCursorRectsForView;
-        unsafe -setDelegate;
-        unsafe -sendEvent;
-        unsafe -convertPointFromScreen;
-        unsafe -convertRectToScreen;
+        unsafe -performWindowDragWithEvent:;
+        unsafe -invalidateCursorRectsForView:;
+        unsafe -setDelegate:;
+        unsafe -sendEvent:;
+        unsafe -convertPointFromScreen:;
+        unsafe -convertRectToScreen:;
 
         // `addChildWindow:ordered:` is not safe, as cycles must be prevented
     }

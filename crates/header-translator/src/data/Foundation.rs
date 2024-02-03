@@ -36,29 +36,29 @@ data! {
 
     class NSString: ImmutableWithMutableSubclass<Foundation::NSMutableString> {
         unsafe -init;
-        unsafe -compare;
-        unsafe -hasPrefix;
-        unsafe -hasSuffix;
+        unsafe -compare:;
+        unsafe -hasPrefix:;
+        unsafe -hasSuffix:;
         // The other string is non-null, and won't be retained
-        unsafe -stringByAppendingString;
-        unsafe -stringByAppendingPathComponent;
+        unsafe -stringByAppendingString:;
+        unsafe -stringByAppendingPathComponent:;
         // Assuming `NSStringEncoding` can be made safe
-        unsafe -lengthOfBytesUsingEncoding;
+        unsafe -lengthOfBytesUsingEncoding:;
         unsafe -length;
         // Safe to call, but the returned pointer may not be safe to use
         unsafe -UTF8String;
-        unsafe -initWithString;
-        unsafe +stringWithString;
+        unsafe -initWithString:;
+        unsafe +stringWithString:;
     }
 
     class NSMutableString: MutableWithImmutableSuperclass<Foundation::NSString> {
         unsafe -init;
-        unsafe -initWithCapacity;
-        unsafe +stringWithCapacity;
-        unsafe -initWithString;
-        unsafe +stringWithString;
-        unsafe -appendString;
-        unsafe -setString;
+        unsafe -initWithCapacity:;
+        unsafe +stringWithCapacity:;
+        unsafe -initWithString:;
+        unsafe +stringWithString:;
+        unsafe -appendString:;
+        unsafe -setString:;
     }
 
     // Allowed to be just `Immutable` since we've removed the `NSCopying` and
@@ -69,17 +69,17 @@ data! {
 
     class NSAttributedString: ImmutableWithMutableSubclass<Foundation::NSMutableAttributedString> {
         unsafe -init;
-        unsafe -initWithString;
-        unsafe -initWithAttributedString;
+        unsafe -initWithString:;
+        unsafe -initWithAttributedString:;
         unsafe -string;
         unsafe -length;
     }
 
     class NSMutableAttributedString: MutableWithImmutableSuperclass<Foundation::NSAttributedString> {
         unsafe -init;
-        unsafe -initWithString;
-        unsafe -initWithAttributedString;
-        unsafe -setAttributedString;
+        unsafe -initWithString:;
+        unsafe -initWithAttributedString:;
+        unsafe -setAttributedString:;
     }
 
     class NSBundle {
@@ -89,18 +89,18 @@ data! {
 
     class NSData: ImmutableWithMutableSubclass<Foundation::NSMutableData> {
         unsafe -init;
-        unsafe -initWithData;
-        unsafe +dataWithData;
+        unsafe -initWithData:;
+        unsafe +dataWithData:;
         unsafe -length;
         unsafe -bytes;
     }
 
     class NSMutableData: MutableWithImmutableSuperclass<Foundation::NSData> {
         unsafe -init;
-        unsafe +dataWithData;
-        unsafe -initWithCapacity;
-        unsafe +dataWithCapacity;
-        unsafe -setLength;
+        unsafe +dataWithData:;
+        unsafe -initWithCapacity:;
+        unsafe +dataWithCapacity:;
+        unsafe -setLength:;
         unsafe -mutableBytes;
     }
 
@@ -116,7 +116,7 @@ data! {
 
     class NSMutableDictionary: MutableWithImmutableSuperclass<Foundation::NSDictionary> {
         unsafe -init;
-        unsafe -removeObjectForKey;
+        unsafe -removeObjectForKey:;
         unsafe -removeAllObjects;
     }
 
@@ -136,18 +136,18 @@ data! {
     class NSLock {
         unsafe -init;
         unsafe -name;
-        unsafe -setName;
+        unsafe -setName:;
     }
 
     class NSValue: Immutable {
         unsafe -objCType;
-        unsafe -isEqualToValue;
+        unsafe -isEqualToValue:;
     }
 
     class NSUUID: Immutable {
         unsafe +UUID;
         unsafe -init;
-        unsafe -initWithUUIDString;
+        unsafe -initWithUUIDString:;
         unsafe -UUIDString;
     }
 
@@ -187,38 +187,38 @@ data! {
     class NSMutableIndexSet: MutableWithImmutableSuperclass<Foundation::NSIndexSet> {}
 
     class NSNumber: Immutable {
-        unsafe -initWithChar;
-        unsafe -initWithUnsignedChar;
-        unsafe -initWithShort;
-        unsafe -initWithUnsignedShort;
-        unsafe -initWithInt;
-        unsafe -initWithUnsignedInt;
-        unsafe -initWithLong;
-        unsafe -initWithUnsignedLong;
-        unsafe -initWithLongLong;
-        unsafe -initWithUnsignedLongLong;
-        unsafe -initWithFloat;
-        unsafe -initWithDouble;
-        unsafe -initWithBool;
-        unsafe -initWithInteger;
-        unsafe -initWithUnsignedInteger;
-        unsafe +numberWithChar;
-        unsafe +numberWithUnsignedChar;
-        unsafe +numberWithShort;
-        unsafe +numberWithUnsignedShort;
-        unsafe +numberWithInt;
-        unsafe +numberWithUnsignedInt;
-        unsafe +numberWithLong;
-        unsafe +numberWithUnsignedLong;
-        unsafe +numberWithLongLong;
-        unsafe +numberWithUnsignedLongLong;
-        unsafe +numberWithFloat;
-        unsafe +numberWithDouble;
-        unsafe +numberWithBool;
-        unsafe +numberWithInteger;
-        unsafe +numberWithUnsignedInteger;
-        unsafe -compare;
-        unsafe -isEqualToNumber;
+        unsafe -initWithChar:;
+        unsafe -initWithUnsignedChar:;
+        unsafe -initWithShort:;
+        unsafe -initWithUnsignedShort:;
+        unsafe -initWithInt:;
+        unsafe -initWithUnsignedInt:;
+        unsafe -initWithLong:;
+        unsafe -initWithUnsignedLong:;
+        unsafe -initWithLongLong:;
+        unsafe -initWithUnsignedLongLong:;
+        unsafe -initWithFloat:;
+        unsafe -initWithDouble:;
+        unsafe -initWithBool:;
+        unsafe -initWithInteger:;
+        unsafe -initWithUnsignedInteger:;
+        unsafe +numberWithChar:;
+        unsafe +numberWithUnsignedChar:;
+        unsafe +numberWithShort:;
+        unsafe +numberWithUnsignedShort:;
+        unsafe +numberWithInt:;
+        unsafe +numberWithUnsignedInt:;
+        unsafe +numberWithLong:;
+        unsafe +numberWithUnsignedLong:;
+        unsafe +numberWithLongLong:;
+        unsafe +numberWithUnsignedLongLong:;
+        unsafe +numberWithFloat:;
+        unsafe +numberWithDouble:;
+        unsafe +numberWithBool:;
+        unsafe +numberWithInteger:;
+        unsafe +numberWithUnsignedInteger:;
+        unsafe -compare:;
+        unsafe -isEqualToNumber:;
         unsafe -charValue;
         unsafe -unsignedCharValue;
         unsafe -shortValue;

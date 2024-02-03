@@ -196,12 +196,13 @@ macro_rules! __data_methods {
     (
         @($data:expr)
 
-        unsafe -$name:ident;
+        unsafe -$sel_base:ident $(: $($sel_ext:ident:)*)?;
 
         $($rest:tt)*
     ) => {
+        let sel = concat!(stringify!($sel_base), $(':', $(stringify!($sel_ext), ':',)*)?);
         #[allow(unused_mut)]
-        let mut method_data = $data.methods.entry(stringify!($name).to_string()).or_default();
+        let mut method_data = $data.methods.entry(sel.to_string()).or_default();
 
         method_data.unsafe_ = false;
 
@@ -214,14 +215,14 @@ macro_rules! __data_methods {
     (
         @($data:expr)
 
-        unsafe +$name:ident;
+        unsafe +$sel_base:ident $(: $($sel_ext:ident:)*)?;
 
         $($rest:tt)*
     ) => {
         // TODO
         __data_methods! {
             @($data)
-            unsafe -$name;
+            unsafe -$sel_base $(: $($sel_ext:)*)?;
 
             $($rest)*
         }
@@ -230,12 +231,13 @@ macro_rules! __data_methods {
     (
         @($data:expr)
 
-        mut -$name:ident;
+        mut -$sel_base:ident $(: $($sel_ext:ident:)*)?;
 
         $($rest:tt)*
     ) => {
+        let sel = concat!(stringify!($sel_base), $(':', $(stringify!($sel_ext), ':',)*)?);
         #[allow(unused_mut)]
-        let mut method_data = $data.methods.entry(stringify!($name).to_string()).or_default();
+        let mut method_data = $data.methods.entry(sel.to_string()).or_default();
 
         method_data.mutating = Some(true);
 
@@ -248,14 +250,14 @@ macro_rules! __data_methods {
     (
         @($data:expr)
 
-        mut +$name:ident;
+        mut +$sel_base:ident $(: $($sel_ext:ident:)*)?;
 
         $($rest:tt)*
     ) => {
         // TODO
         __data_methods! {
             @($data)
-            mut -$name;
+            mut -$sel_base $(: $($sel_ext:)*)?;
 
             $($rest)*
         }
@@ -264,12 +266,13 @@ macro_rules! __data_methods {
     (
         @($data:expr)
 
-        unsafe mut -$name:ident;
+        unsafe mut -$sel_base:ident $(: $($sel_ext:ident:)*)?;
 
         $($rest:tt)*
     ) => {
+        let sel = concat!(stringify!($sel_base), $(':', $(stringify!($sel_ext), ':',)*)?);
         #[allow(unused_mut)]
-        let mut method_data = $data.methods.entry(stringify!($name).to_string()).or_default();
+        let mut method_data = $data.methods.entry(sel.to_string()).or_default();
 
         method_data.unsafe_ = false;
         method_data.mutating = Some(true);
@@ -283,14 +286,14 @@ macro_rules! __data_methods {
     (
         @($data:expr)
 
-        unsafe mut +$name:ident;
+        unsafe mut +$sel_base:ident $(: $($sel_ext:ident:)*)?;
 
         $($rest:tt)*
     ) => {
         // TODO
         __data_methods! {
             @($data)
-            unsafe mut -$name;
+            unsafe mut -$sel_base $(: $($sel_ext:)*)?;
 
             $($rest)*
         }

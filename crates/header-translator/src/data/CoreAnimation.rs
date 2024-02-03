@@ -14,27 +14,27 @@ data! {
         // -modelLayer must be called in a specific context
 
         unsafe -bounds;
-        unsafe -setBounds;
+        unsafe -setBounds:;
         unsafe -position;
-        unsafe -setPosition;
+        unsafe -setPosition:;
         unsafe -zPosition;
-        unsafe -setZPosition;
+        unsafe -setZPosition:;
         unsafe -anchorPoint;
-        unsafe -setAnchorPoint;
+        unsafe -setAnchorPoint:;
         unsafe -anchorPointZ;
-        unsafe -setAnchorPointZ;
+        unsafe -setAnchorPointZ:;
         unsafe -transform;
-        unsafe -setTransform;
+        unsafe -setTransform:;
         unsafe -affineTransform;
-        unsafe -setAffineTransform;
+        unsafe -setAffineTransform:;
         unsafe -frame;
-        unsafe -setFrame;
+        unsafe -setFrame:;
         unsafe -isHidden;
-        unsafe -setHidden;
+        unsafe -setHidden:;
         unsafe -isDoubleSided;
-        unsafe -setDoubleSided;
+        unsafe -setDoubleSided:;
         unsafe -isGeometryFlipped;
-        unsafe -setGeometryFlipped;
+        unsafe -setGeometryFlipped:;
 
         unsafe -contentsAreFlipped;
 
@@ -50,144 +50,144 @@ data! {
         // If the layer already has a superlayer, it will be changed
         // appropriately by these methods (`removeFromSuperlayer` is called on
         // the given layer inside these).
-        unsafe -addSublayer;
-        unsafe -insertSublayer_atIndex;
-        unsafe -insertSublayer_below;
-        unsafe -insertSublayer_above;
+        unsafe -addSublayer:;
+        unsafe -insertSublayer:atIndex:;
+        unsafe -insertSublayer:below:;
+        unsafe -insertSublayer:above:;
 
         // -replaceSublayer is not safe since it requires `oldlayer` to exist
         // in the current layer.
 
         unsafe -sublayerTransform;
-        unsafe -setSublayerTransform;
+        unsafe -setSublayerTransform:;
         unsafe -mask;
         // -setMask's argument must have a `nil` superlayer
         unsafe -masksToBounds;
-        unsafe -setMasksToBounds;
+        unsafe -setMasksToBounds:;
 
-        unsafe -convertPoint_fromLayer;
-        unsafe -convertPoint_toLayer;
-        unsafe -convertRect_fromLayer;
-        unsafe -convertRect_toLayer;
-        unsafe -convertTime_fromLayer;
-        unsafe -convertTime_toLayer;
-        unsafe -hitTest;
-        unsafe -containsPoint;
+        unsafe -convertPoint:fromLayer:;
+        unsafe -convertPoint:toLayer:;
+        unsafe -convertRect:fromLayer:;
+        unsafe -convertRect:toLayer:;
+        unsafe -convertTime:fromLayer:;
+        unsafe -convertTime:toLayer:;
+        unsafe -hitTest:;
+        unsafe -containsPoint:;
 
         // No type set:
         // -contents;
         // -setContents;
         unsafe -contentsRect;
-        unsafe -setContentsRect;
+        unsafe -setContentsRect:;
         unsafe -contentsGravity;
-        unsafe -setContentsGravity;
+        unsafe -setContentsGravity:;
         unsafe -contentsScale;
-        unsafe -setContentsScale;
+        unsafe -setContentsScale:;
         unsafe -contentsCenter;
-        unsafe -setContentsCenter;
+        unsafe -setContentsCenter:;
         unsafe -contentsFormat;
-        unsafe -setContentsFormat;
+        unsafe -setContentsFormat:;
         unsafe -minificationFilter;
-        unsafe -setMinificationFilter;
+        unsafe -setMinificationFilter:;
         unsafe -magnificationFilter;
-        unsafe -setMagnificationFilter;
+        unsafe -setMagnificationFilter:;
         unsafe -minificationFilterBias;
-        unsafe -setMinificationFilterBias;
+        unsafe -setMinificationFilterBias:;
         unsafe -isOpaque;
-        unsafe -setOpaque;
+        unsafe -setOpaque:;
 
         unsafe -display;
         unsafe -setNeedsDisplay;
-        unsafe -setNeedsDisplayInRect;
+        unsafe -setNeedsDisplayInRect:;
         unsafe -needsDisplay;
         unsafe -displayIfNeeded;
         unsafe -needsDisplayOnBoundsChange;
-        unsafe -setNeedsDisplayOnBoundsChange;
+        unsafe -setNeedsDisplayOnBoundsChange:;
 
         unsafe -drawsAsynchronously;
-        unsafe -setDrawsAsynchronously;
+        unsafe -setDrawsAsynchronously:;
         unsafe -edgeAntialiasingMask;
-        unsafe -setEdgeAntialiasingMask;
+        unsafe -setEdgeAntialiasingMask:;
         unsafe -allowsEdgeAntialiasing;
-        unsafe -setAllowsEdgeAntialiasing;
+        unsafe -setAllowsEdgeAntialiasing:;
         unsafe -cornerRadius;
-        unsafe -setCornerRadius;
+        unsafe -setCornerRadius:;
         unsafe -maskedCorners;
-        unsafe -setMaskedCorners;
+        unsafe -setMaskedCorners:;
         unsafe -cornerCurve;
-        unsafe -setCornerCurve;
-        unsafe -cornerCurveExpansionFactor;
+        unsafe -setCornerCurve:;
+        unsafe -cornerCurveExpansionFactor:;
         unsafe -borderWidth;
-        unsafe -setBorderWidth;
+        unsafe -setBorderWidth:;
         unsafe -opacity;
         // Gives "undefined results" outside [0; 1], but by this the authors
         // very likely didn't mean "triggers language-level UB".
-        unsafe -setOpacity;
+        unsafe -setOpacity:;
         unsafe -allowsGroupOpacity;
-        unsafe -setAllowsGroupOpacity;
+        unsafe -setAllowsGroupOpacity:;
         // No type set:
         // -compositingFilter;
-        // -setCompositingFilter;
+        // -setCompositingFilter:;
         // -filters;
-        // -setFilters;
+        // -setFilters:;
         // -backgroundFilters;
-        // -setBackgroundFilters;
+        // -setBackgroundFilters:;
         unsafe -shouldRasterize;
-        unsafe -setShouldRasterize;
+        unsafe -setShouldRasterize:;
         unsafe -rasterizationScale;
-        unsafe -setRasterizationScale;
+        unsafe -setRasterizationScale:;
         unsafe -shadowOpacity;
         // Gives "undefined results" outside [0; 1], but by this the authors
         // very likely didn't mean "triggers language-level UB".
-        unsafe -setShadowOpacity;
+        unsafe -setShadowOpacity:;
         unsafe -shadowOffset;
-        unsafe -setShadowOffset;
+        unsafe -setShadowOffset:;
         unsafe -shadowRadius;
-        unsafe -setShadowRadius;
+        unsafe -setShadowRadius:;
         unsafe -autoresizingMask;
-        unsafe -setAutoresizingMask;
+        unsafe -setAutoresizingMask:;
         unsafe -layoutManager;
-        unsafe -setLayoutManager;
+        unsafe -setLayoutManager:;
 
         unsafe -preferredFrameSize;
         unsafe -setNeedsLayout;
         unsafe -needsLayout;
         unsafe -layoutIfNeeded;
         unsafe -layoutSublayers;
-        unsafe -resizeSublayersWithOldSize;
-        unsafe -resizeWithOldSuperlayerSize;
+        unsafe -resizeSublayersWithOldSize:;
+        unsafe -resizeWithOldSuperlayerSize:;
 
-        unsafe -defaultActionForKey;
-        unsafe -actionForKey;
+        unsafe -defaultActionForKey:;
+        unsafe -actionForKey:;
         unsafe -actions;
-        unsafe -setActions;
+        unsafe -setActions:;
 
         // Copies the animation
-        unsafe -addAnimation_forKey;
+        unsafe -addAnimation:forKey:;
 
         unsafe -removeAllAnimations;
-        unsafe -removeAnimationForKey;
+        unsafe -removeAnimationForKey:;
         unsafe -animationKeys;
 
         // Not safe since modifying the returned animation is UB.
         // -animationForKey;
 
         unsafe -name;
-        unsafe -setName;
+        unsafe -setName:;
         unsafe -delegate;
-        unsafe -setDelegate;
+        unsafe -setDelegate:;
         // No type set:
         // -style;
-        // -setStyle;
+        // -setStyle:;
     }
 
     class CARenderer {
         unsafe -layer;
-        unsafe -setLayer;
+        unsafe -setLayer:;
         unsafe -bounds;
-        unsafe -setBounds;
+        unsafe -setBounds:;
         unsafe -updateBounds;
-        unsafe -addUpdateRect;
+        unsafe -addUpdateRect:;
         unsafe -render;
         unsafe -nextFrameTime;
         unsafe -endFrame;
@@ -200,17 +200,17 @@ data! {
         unsafe +flush;
 
         unsafe +animationDuration;
-        unsafe +setAnimationDuration;
+        unsafe +setAnimationDuration:;
 
         unsafe +animationTimingFunction;
-        unsafe +setAnimationTimingFunction;
+        unsafe +setAnimationTimingFunction:;
 
         unsafe +disableActions;
-        unsafe +setDisableActions;
+        unsafe +setDisableActions:;
 
         // TODO:
         // unsafe +completionBlock;
-        // unsafe +setCompletionBlock;
+        // unsafe +setCompletionBlock:;
     }
 
     unsafe fn CACurrentMediaTime;

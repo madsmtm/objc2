@@ -303,9 +303,8 @@ impl Method {
     /// `EntityKind::ObjCClassMethodDecl`.
     pub fn partial(entity: Entity<'_>) -> PartialMethod<'_> {
         let selector = entity.get_name().expect("method selector");
-        let fn_name = selector.trim_end_matches(|c| c == ':').replace(':', "_");
 
-        let _span = debug_span!("method", fn_name).entered();
+        let _span = debug_span!("method", selector).entered();
 
         let is_class = match entity.get_kind() {
             EntityKind::ObjCInstanceMethodDecl => false,
@@ -317,7 +316,6 @@ impl Method {
             entity,
             selector,
             is_class,
-            fn_name,
             _span,
         }
     }
@@ -333,12 +331,11 @@ impl Method {
         PartialProperty {
             entity,
             name,
-            getter_name: entity.get_objc_getter_name().expect("property getter name"),
-            setter_name: has_setter.then(|| {
+            getter_sel: entity.get_objc_getter_name().expect("property getter name"),
+            setter_sel: has_setter.then(|| {
                 entity
                     .get_objc_setter_name()
                     .expect("property setter name")
-                    .trim_end_matches(|c| c == ':')
                     .to_string()
             }),
             is_class: attributes.map(|a| a.class).unwrap_or(false),
@@ -359,9 +356,8 @@ impl Method {
 #[derive(Debug)]
 pub struct PartialMethod<'tu> {
     entity: Entity<'tu>,
-    selector: String,
+    pub selector: String,
     pub is_class: bool,
-    pub fn_name: String,
     _span: EnteredSpan,
 }
 
@@ -371,7 +367,6 @@ impl<'tu> PartialMethod<'tu> {
             entity,
             selector,
             is_class,
-            fn_name,
             _span,
         } = self;
 
@@ -480,6 +475,8 @@ impl<'tu> PartialMethod<'tu> {
             result_type.set_is_error();
         }
 
+        let fn_name = selector.trim_end_matches(|c| c == ':').replace(':', "_");
+
         Some((
             modifiers.designated_initializer,
             Method {
@@ -508,8 +505,8 @@ impl<'tu> PartialMethod<'tu> {
 pub struct PartialProperty<'tu> {
     pub entity: Entity<'tu>,
     pub name: String,
-    pub getter_name: String,
-    pub setter_name: Option<String>,
+    pub getter_sel: String,
+    pub setter_sel: Option<String>,
     pub is_class: bool,
     pub attributes: Option<ObjCAttributes>,
     pub _span: EnteredSpan,
@@ -525,8 +522,8 @@ impl PartialProperty<'_> {
         let Self {
             entity,
             name,
-            getter_name,
-            setter_name,
+            getter_sel,
+            setter_sel,
             is_class,
             attributes,
             _span,
@@ -559,11 +556,11 @@ impl PartialProperty<'_> {
                 context,
             );
 
-            let memory_management = MemoryManagement::new(is_class, &getter_name, &ty, modifiers);
+            let memory_management = MemoryManagement::new(is_class, &getter_sel, &ty, modifiers);
 
             Some(Method {
-                selector: getter_name.clone(),
-                fn_name: getter_name,
+                selector: getter_sel.clone(),
+                fn_name: getter_sel,
                 availability: availability.clone(),
                 is_class,
                 is_optional_protocol: entity.is_objc_optional(),
@@ -582,8 +579,8 @@ impl PartialProperty<'_> {
             None
         };
 
-        let setter = if let Some(setter_name) = setter_name {
-            let setter_data = setter_data.expect("setter_data must be present if setter_name was");
+        let setter = if let Some(selector) = setter_sel {
+            let setter_data = setter_data.expect("setter_data must be present if setter_sel was");
             if !setter_data.skipped {
                 let ty = Ty::parse_property(
                     entity.get_type().expect("property type"),
@@ -592,13 +589,13 @@ impl PartialProperty<'_> {
                     context,
                 );
 
-                let selector = setter_name.clone() + ":";
+                let fn_name = selector.strip_suffix(':').unwrap().to_string();
                 let memory_management =
                     MemoryManagement::new(is_class, &selector, &Ty::VOID_RESULT, modifiers);
 
                 Some(Method {
                     selector,
-                    fn_name: setter_name,
+                    fn_name,
                     availability,
                     is_class,
                     is_optional_protocol: entity.is_objc_optional(),

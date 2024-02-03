@@ -513,13 +513,13 @@ skipped = true
 skipped = true
 [fn.CVBufferRelease]
 skipped = true
-[protocol.NSKeyedUnarchiverDelegate.methods.unarchiver_didDecodeObject]
+[protocol.NSKeyedUnarchiverDelegate.methods."unarchiver:didDecodeObject:"]
 skipped = true
 # + a few methods from DriverKit.framework and Kernel.framework, but those
 # are written in C++, so we're not going to ever handle them anyhow.
 
 # `ns_consumes_self` and `os_consumes_this`
-[class.NSObject.methods.awakeAfterUsingCoder]
+[class.NSObject.methods."awakeAfterUsingCoder:"]
 skipped = true
 
 # `ns_returns_autoreleased`
@@ -530,9 +530,9 @@ skipped = true
 skipped = true
 
 # `objc_ownership` in .apinotes
-[class.NSBundle.methods.loadNibNamed_owner_topLevelObjects]
+[class.NSBundle.methods."loadNibNamed:owner:topLevelObjects:"]
 skipped = true
-[class.NSNib.methods.instantiateWithOwner_topLevelObjects]
+[class.NSNib.methods."instantiateWithOwner:topLevelObjects:"]
 skipped = true
 
 # Return type `oneway void`
@@ -547,11 +547,11 @@ skipped = true
 # `alloc`-family methods
 [class.NSObject.methods.alloc]
 skipped = true
-[class.NSObject.methods.allocWithZone]
+[class.NSObject.methods."allocWithZone:"]
 skipped = true
 [class.NSProxy.methods.alloc]
 skipped = true
-[class.NSProxy.methods.allocWithZone]
+[class.NSProxy.methods."allocWithZone:"]
 skipped = true
 
 ###
@@ -559,29 +559,29 @@ skipped = true
 ###
 
 # Uses `SomeObject * __strong *`, which is unsupported
-[class.NSNetService.methods.getInputStream_outputStream]
+[class.NSNetService.methods."getInputStream:outputStream:"]
 skipped = true
 [class.NSPropertyListSerialization.methods]
-dataFromPropertyList_format_errorDescription = { skipped = true }
-propertyListFromData_mutabilityOption_format_errorDescription = { skipped = true }
+"dataFromPropertyList:format:errorDescription:" = { skipped = true }
+"propertyListFromData:mutabilityOption:format:errorDescription:" = { skipped = true }
 [fn.MTLCopyAllDevicesWithObserver]
 skipped = true
 
 # Uses `__autoreleasing` in a typedef, which I'm unsure how to handle
 [typedef.MTLAutoreleasedArgument]
 skipped = true
-[protocol.MTLFunction.methods.newArgumentEncoderWithBufferIndex_reflection]
+[protocol.MTLFunction.methods."newArgumentEncoderWithBufferIndex:reflection:"]
 skipped = true
 [typedef.MTLAutoreleasedRenderPipelineReflection]
 skipped = true
 [typedef.MTLAutoreleasedComputePipelineReflection]
 skipped = true
 [protocol.MTLDevice.methods]
-newRenderPipelineStateWithDescriptor_options_reflection_error = { skipped = true }
-newComputePipelineStateWithFunction_options_reflection_error = { skipped = true }
-newComputePipelineStateWithDescriptor_options_reflection_error = { skipped = true }
-newRenderPipelineStateWithTileDescriptor_options_reflection_error = { skipped = true }
-newRenderPipelineStateWithMeshDescriptor_options_reflection_error = { skipped = true }
+"newRenderPipelineStateWithDescriptor:options:reflection:error:" = { skipped = true }
+"newComputePipelineStateWithFunction:options:reflection:error:" = { skipped = true }
+"newComputePipelineStateWithDescriptor:options:reflection:error:" = { skipped = true }
+"newRenderPipelineStateWithTileDescriptor:options:reflection:error:" = { skipped = true }
+"newRenderPipelineStateWithMeshDescriptor:options:reflection:error:" = { skipped = true }
 
 # Uses NS_RETURNS_NOT_RETAINED on a `NSString*`
 [class.DOMMutationEvent.methods.newValue]
@@ -597,20 +597,20 @@ executionBlocks = { skipped = true }
 
 # These use `Class<NSItemProvider...>`, which is unsupported
 [class.NSItemProvider.methods]
-registerObjectOfClass_visibility_loadHandler = { skipped = true }
-canLoadObjectOfClass = { skipped = true }
-loadObjectOfClass_completionHandler = { skipped = true }
+"registerObjectOfClass:visibility:loadHandler:" = { skipped = true }
+"canLoadObjectOfClass:" = { skipped = true }
+"loadObjectOfClass:completionHandler:" = { skipped = true }
 
 # Has `error:` parameter, but returns NSInteger (where 0 means error)
-[class.NSJSONSerialization.methods.writeJSONObject_toStream_options_error]
+[class.NSJSONSerialization.methods."writeJSONObject:toStream:options:error:"]
 skipped = true
-[class.NSPropertyListSerialization.methods.writePropertyList_toStream_format_options_error]
+[class.NSPropertyListSerialization.methods."writePropertyList:toStream:format:options:error:"]
 skipped = true
 [class.NSManagedObjectContext.methods]
-countForFetchRequest_error = { skipped = true }
+"countForFetchRequest:error:" = { skipped = true }
 
 # Not supported on clang 11.0.0
-[class.NSBundle.methods.localizedAttributedStringForKey_value_table]
+[class.NSBundle.methods."localizedAttributedStringForKey:value:table:"]
 skipped = true
 
 # Root classes, defined in `objc2` for now
@@ -636,25 +636,25 @@ skipped = true
 
 # Uses stuff from core Darwin libraries which we have not yet mapped
 [class.NSAppleEventDescriptor.methods]
-descriptorWithDescriptorType_bytes_length = { skipped = true }
-descriptorWithDescriptorType_data = { skipped = true }
-appleEventWithEventClass_eventID_targetDescriptor_returnID_transactionID = { skipped = true }
-descriptorWithProcessIdentifier = { skipped = true }
-initWithAEDescNoCopy = { skipped = true }
-initWithDescriptorType_bytes_length = { skipped = true }
-initWithDescriptorType_data = { skipped = true }
-initWithEventClass_eventID_targetDescriptor_returnID_transactionID = { skipped = true }
-setParamDescriptor_forKeyword = { skipped = true }
-paramDescriptorForKeyword = { skipped = true }
-removeParamDescriptorWithKeyword = { skipped = true }
-setAttributeDescriptor_forKeyword = { skipped = true }
-attributeDescriptorForKeyword = { skipped = true }
-sendEventWithOptions_timeout_error = { skipped = true }
-setDescriptor_forKeyword = { skipped = true }
-descriptorForKeyword = { skipped = true }
-removeDescriptorWithKeyword = { skipped = true }
-keywordForDescriptorAtIndex = { skipped = true }
-coerceToDescriptorType = { skipped = true }
+"descriptorWithDescriptorType:bytes:length:" = { skipped = true }
+"descriptorWithDescriptorType:data:" = { skipped = true }
+"appleEventWithEventClass:eventID:targetDescriptor:returnID:transactionID:" = { skipped = true }
+"descriptorWithProcessIdentifier:" = { skipped = true }
+"initWithAEDescNoCopy:" = { skipped = true }
+"initWithDescriptorType:bytes:length:" = { skipped = true }
+"initWithDescriptorType:data:" = { skipped = true }
+"initWithEventClass:eventID:targetDescriptor:returnID:transactionID:" = { skipped = true }
+"setParamDescriptor:forKeyword:" = { skipped = true }
+"paramDescriptorForKeyword:" = { skipped = true }
+"removeParamDescriptorWithKeyword:" = { skipped = true }
+"setAttributeDescriptor:forKeyword:" = { skipped = true }
+"attributeDescriptorForKeyword:" = { skipped = true }
+"sendEventWithOptions:timeout:error:" = { skipped = true }
+"setDescriptor:forKeyword:" = { skipped = true }
+"descriptorForKeyword:" = { skipped = true }
+"removeDescriptorWithKeyword:" = { skipped = true }
+"keywordForDescriptorAtIndex:" = { skipped = true }
+"coerceToDescriptorType:" = { skipped = true }
 aeDesc = { skipped = true }
 descriptorType = { skipped = true }
 eventClass = { skipped = true }
@@ -662,47 +662,47 @@ eventID = { skipped = true }
 returnID = { skipped = true }
 transactionID = { skipped = true }
 [class.NSAppleEventManager.methods]
-setEventHandler_andSelector_forEventClass_andEventID = { skipped = true }
-removeEventHandlerForEventClass_andEventID = { skipped = true }
-dispatchRawAppleEvent_withRawReply_handlerRefCon = { skipped = true }
+"setEventHandler:andSelector:forEventClass:andEventID:" = { skipped = true }
+"removeEventHandlerForEventClass:andEventID:" = { skipped = true }
+"dispatchRawAppleEvent:withRawReply:handlerRefCon:" = { skipped = true }
 [class.NSOperationQueue.methods.underlyingQueue]
 skipped = true
-[class.NSOperationQueue.methods.setUnderlyingQueue]
+[class.NSOperationQueue.methods."setUnderlyingQueue:"]
 skipped = true
 [class.NSRunLoop.methods.getCFRunLoop]
 skipped = true
 [class.NSURLCredential.methods]
-initWithIdentity_certificates_persistence = { skipped = true }
-credentialWithIdentity_certificates_persistence = { skipped = true }
-initWithTrust = { skipped = true }
-credentialForTrust = { skipped = true }
+"initWithIdentity:certificates:persistence:" = { skipped = true }
+"credentialWithIdentity:certificates:persistence:" = { skipped = true }
+"initWithTrust:" = { skipped = true }
+"credentialForTrust:" = { skipped = true }
 [class.NSURLCredential.methods.identity]
 skipped = true
 [class.NSURLProtectionSpace.methods.serverTrust]
 skipped = true
 [class.NSURLSessionConfiguration.methods]
 TLSMinimumSupportedProtocol = { skipped = true }
-setTLSMinimumSupportedProtocol = { skipped = true }
+"setTLSMinimumSupportedProtocol:" = { skipped = true }
 TLSMaximumSupportedProtocol = { skipped = true }
-setTLSMaximumSupportedProtocol = { skipped = true }
+"setTLSMaximumSupportedProtocol:" = { skipped = true }
 TLSMinimumSupportedProtocolVersion = { skipped = true }
-setTLSMinimumSupportedProtocolVersion = { skipped = true }
+"setTLSMinimumSupportedProtocolVersion:" = { skipped = true }
 TLSMaximumSupportedProtocolVersion = { skipped = true }
-setTLSMaximumSupportedProtocolVersion = { skipped = true }
+"setTLSMaximumSupportedProtocolVersion:" = { skipped = true }
 [class.NSUUID.methods]
-initWithUUIDBytes = { skipped = true }
-getUUIDBytes = { skipped = true }
+"initWithUUIDBytes:" = { skipped = true }
+"getUUIDBytes:" = { skipped = true }
 [class.NSXPCConnection.methods]
 auditSessionIdentifier = { skipped = true }
 processIdentifier = { skipped = true }
 effectiveUserIdentifier = { skipped = true }
 effectiveGroupIdentifier = { skipped = true }
 [class.NSXPCInterface.methods]
-setXPCType_forSelector_argumentIndex_ofReply = { skipped = true }
-XPCTypeForSelector_argumentIndex_ofReply = { skipped = true }
+"setXPCType:forSelector:argumentIndex:ofReply:" = { skipped = true }
+"XPCTypeForSelector:argumentIndex:ofReply:" = { skipped = true }
 [class.NSXPCCoder.methods]
-encodeXPCObject_forKey = { skipped = true }
-decodeXPCObjectOfType_forKey = { skipped = true }
+"encodeXPCObject:forKey:" = { skipped = true }
+"decodeXPCObjectOfType:forKey:" = { skipped = true }
 
 # Uses constants from CoreFoundation or similar frameworks
 [enum.NSAppleEventSendOptions]
@@ -733,25 +733,25 @@ skipped = true
 skipped = true
 
 # Uses va_list
-[class.NSAttributedString.methods.initWithFormat_options_locale_arguments]
+[class.NSAttributedString.methods."initWithFormat:options:locale:arguments:"]
 skipped = true
-[class.NSException.methods.raise_format_arguments]
+[class.NSException.methods."raise:format:arguments:"]
 skipped = true
-[class.NSExpression.methods.expressionWithFormat_arguments]
+[class.NSExpression.methods."expressionWithFormat:arguments:"]
 skipped = true
-[class.NSPredicate.methods.predicateWithFormat_arguments]
+[class.NSPredicate.methods."predicateWithFormat:arguments:"]
 skipped = true
-[class.NSString.methods.initWithFormat_arguments]
+[class.NSString.methods."initWithFormat:arguments:"]
 skipped = true
-[class.NSString.methods.initWithFormat_locale_arguments]
+[class.NSString.methods."initWithFormat:locale:arguments:"]
 skipped = true
-[class.NSString.methods.initWithValidatedFormat_validFormatSpecifiers_arguments_error]
+[class.NSString.methods."initWithValidatedFormat:validFormatSpecifiers:arguments:error:"]
 skipped = true
-[class.NSString.methods.initWithValidatedFormat_validFormatSpecifiers_locale_arguments_error]
+[class.NSString.methods."initWithValidatedFormat:validFormatSpecifiers:locale:arguments:error:"]
 skipped = true
-[class.NSAttributedString.methods.initWithFormat_options_locale_context_arguments]
+[class.NSAttributedString.methods."initWithFormat:options:locale:context:arguments:"]
 skipped = true
-[class.NSMutableAttributedString.methods.initWithFormat_options_locale_context_arguments]
+[class.NSMutableAttributedString.methods."initWithFormat:options:locale:context:arguments:"]
 skipped = true
 [fn.NSLogv]
 skipped = true
@@ -763,15 +763,15 @@ skipped = true
 # Uses NSImage, which is only available in AppKit
 [class.NSUserNotification.methods.contentImage]
 skipped = true
-[class.NSUserNotification.methods.setContentImage]
+[class.NSUserNotification.methods."setContentImage:"]
 skipped = true
 
 # Uses , which is only available in CoreAnimation
-[class.NSView.methods.displayLinkWithTarget_selector]
+[class.NSView.methods."displayLinkWithTarget:selector:"]
 skipped = true
-[class.NSWindow.methods.displayLinkWithTarget_selector]
+[class.NSWindow.methods."displayLinkWithTarget:selector:"]
 skipped = true
-[class.NSScreen.methods.displayLinkWithTarget_selector]
+[class.NSScreen.methods."displayLinkWithTarget:selector:"]
 skipped = true
 
 # Outlier that really should have been part of the original enum
@@ -780,8 +780,8 @@ skipped = true
 
 # Has the wrong generic parameter
 [class.NSDictionary.methods]
-initWithContentsOfURL_error = { skipped = true }
-dictionaryWithContentsOfURL_error = { skipped = true }
+"initWithContentsOfURL:error:" = { skipped = true }
+"dictionaryWithContentsOfURL:error:" = { skipped = true }
 
 # Custom implementation for now
 [struct._NSRange]
@@ -832,17 +832,17 @@ skipped = true
 # Our implementation of superclass methods currently place them in the wrong
 # module, so we do this hack for now.
 [class.NSMutableAttributedString.methods]
-initWithURL_options_documentAttributes_error = { skipped = true }
-initWithData_options_documentAttributes_error = { skipped = true }
-initWithRTF_documentAttributes = { skipped = true }
-initWithRTFD_documentAttributes = { skipped = true }
-initWithHTML_documentAttributes = { skipped = true }
-initWithHTML_baseURL_documentAttributes = { skipped = true }
-initWithDocFormat_documentAttributes = { skipped = true }
-initWithHTML_options_documentAttributes = { skipped = true }
-initWithRTFDFileWrapper_documentAttributes = { skipped = true }
-initWithURL_documentAttributes = { skipped = true }
-initWithPath_documentAttributes = { skipped = true }
+"initWithURL:options:documentAttributes:error:" = { skipped = true }
+"initWithData:options:documentAttributes:error:" = { skipped = true }
+"initWithRTF:documentAttributes:" = { skipped = true }
+"initWithRTFD:documentAttributes:" = { skipped = true }
+"initWithHTML:documentAttributes:" = { skipped = true }
+"initWithHTML:baseURL:documentAttributes:" = { skipped = true }
+"initWithDocFormat:documentAttributes:" = { skipped = true }
+"initWithHTML:options:documentAttributes:" = { skipped = true }
+"initWithRTFDFileWrapper:documentAttributes:" = { skipped = true }
+"initWithURL:documentAttributes:" = { skipped = true }
+"initWithPath:documentAttributes:" = { skipped = true }
 
 # Uses a bit of complex feature testing setup, see ASFoundation.h
 [typedef.ASPresentationAnchor]
@@ -878,7 +878,7 @@ skipped = true
 # Typedef that uses a generic from a class
 [typedef.NSCollectionViewDiffableDataSourceItemProvider]
 skipped = true
-[class.NSCollectionViewDiffableDataSource.methods.initWithCollectionView_itemProvider]
+[class.NSCollectionViewDiffableDataSource.methods."initWithCollectionView:itemProvider:"]
 skipped = true
 
 # Requires `MainThreadOnly`, which I'm not sure is a good idea here?
@@ -906,7 +906,7 @@ renamed = "NSAccessibilityElementProtocol"
 renamed = "NSFileProviderItemProtocol"
 
 # Both property and method
-[class.NSDocument.methods.setDisplayName]
+[class.NSDocument.methods."setDisplayName:"]
 skipped = true
 
 # Duplicated method
@@ -920,7 +920,7 @@ skipped = true
 # Duplicated property
 [class.MTLRasterizationRateLayerDescriptor.methods.sampleCount]
 skipped = true
-[class.MTLRasterizationRateLayerDescriptor.methods.setSampleCount]
+[class.MTLRasterizationRateLayerDescriptor.methods."setSampleCount:"]
 skipped = true
 
 # Uses stuff from different frameworks / system libraries
@@ -928,31 +928,31 @@ skipped = true
 skipped = true
 [class.NSAnimationContext.methods.timingFunction]
 skipped = true
-[class.NSAnimationContext.methods.setTimingFunction]
+[class.NSAnimationContext.methods."setTimingFunction:"]
 skipped = true
-[class.NSBezierPath.methods.appendBezierPathWithCGGlyph_inFont]
+[class.NSBezierPath.methods."appendBezierPathWithCGGlyph:inFont:"]
 skipped = true
-[class.NSBezierPath.methods.appendBezierPathWithCGGlyphs_count_inFont]
+[class.NSBezierPath.methods."appendBezierPathWithCGGlyphs:count:inFont:"]
 skipped = true
-[class.NSBezierPath.methods.bezierPathWithCGPath]
+[class.NSBezierPath.methods."bezierPathWithCGPath:"]
 skipped = true
 [class.NSBezierPath.methods.CGPath]
 skipped = true
-[class.NSBezierPath.methods.setCGPath]
+[class.NSBezierPath.methods."setCGPath:"]
 skipped = true
-[class.NSBitmapImageRep.methods.initWithCGImage]
+[class.NSBitmapImageRep.methods."initWithCGImage:"]
 skipped = true
-[class.NSBitmapImageRep.methods.initWithCIImage]
+[class.NSBitmapImageRep.methods."initWithCIImage:"]
 skipped = true
 [class.NSBitmapImageRep.methods.CGImage]
 skipped = true
 [class.NSColor.methods.CGColor]
 skipped = true
-[class.NSColor.methods.colorWithCGColor]
+[class.NSColor.methods."colorWithCGColor:"]
 skipped = true
-[class.NSColor.methods.colorWithCIColor]
+[class.NSColor.methods."colorWithCIColor:"]
 skipped = true
-[class.NSColorSpace.methods.initWithCGColorSpace]
+[class.NSColorSpace.methods."initWithCGColorSpace:"]
 skipped = true
 [class.NSColorSpace.methods.CGColorSpace]
 skipped = true
@@ -960,44 +960,44 @@ skipped = true
 skipped = true
 [class.NSEvent.methods.CGEvent]
 skipped = true
-[class.NSEvent.methods.eventWithCGEvent]
+[class.NSEvent.methods."eventWithCGEvent:"]
 skipped = true
 [class.NSFont.methods]
-boundingRectForCGGlyph = { skipped = true }
-advancementForCGGlyph = { skipped = true }
-getBoundingRects_forCGGlyphs_count = { skipped = true }
-getAdvancements_forCGGlyphs_count = { skipped = true }
-[class.NSGlyphInfo.methods.glyphInfoWithCGGlyph_forFont_baseString]
+"boundingRectForCGGlyph:" = { skipped = true }
+"advancementForCGGlyph:" = { skipped = true }
+"getBoundingRects:forCGGlyphs:count:" = { skipped = true }
+"getAdvancements:forCGGlyphs:count:" = { skipped = true }
+[class.NSGlyphInfo.methods."glyphInfoWithCGGlyph:forFont:baseString:"]
 skipped = true
 [class.NSGlyphInfo.methods.glyphID]
 skipped = true
-[class.NSGraphicsContext.methods.graphicsContextWithCGContext_flipped]
+[class.NSGraphicsContext.methods."graphicsContextWithCGContext:flipped:"]
 skipped = true
 [class.NSGraphicsContext.methods.CGContext]
 skipped = true
 [class.NSGraphicsContext.methods.CIContext]
 skipped = true
 [class.NSImage.methods]
-initWithCGImage_size = { skipped = true }
-CGImageForProposedRect_context_hints = { skipped = true }
-initWithIconRef = { skipped = true }
-[class.NSImageRep.methods.CGImageForProposedRect_context_hints]
+"initWithCGImage:size:" = { skipped = true }
+"CGImageForProposedRect:context:hints:" = { skipped = true }
+"initWithIconRef:" = { skipped = true }
+[class.NSImageRep.methods."CGImageForProposedRect:context:hints:"]
 skipped = true
-[class.NSItemProvider.methods.registerCloudKitShareWithPreparationHandler]
+[class.NSItemProvider.methods."registerCloudKitShareWithPreparationHandler:"]
 skipped = true
-[class.NSItemProvider.methods.registerCloudKitShare_container]
+[class.NSItemProvider.methods."registerCloudKitShare:container:"]
 skipped = true
 [class.NSLayoutManager.methods]
-setGlyphs_properties_characterIndexes_font_forGlyphRange = { skipped = true }
-CGGlyphAtIndex_isValidIndex = { skipped = true }
-CGGlyphAtIndex = { skipped = true }
-getGlyphsInRange_glyphs_properties_characterIndexes_bidiLevels = { skipped = true }
-glyphIndexForPoint_inTextContainer_fractionOfDistanceThroughGlyph = { skipped = true }
-showCGGlyphs_positions_count_font_textMatrix_attributes_inContext = { skipped = true }
-showCGGlyphs_positions_count_font_matrix_attributes_inContext = { skipped = true }
-[class.NSLayoutManagerDelegate.methods.layoutManager_shouldGenerateGlyphs_properties_characterIndexes_font_forGlyphRange]
+"setGlyphs:properties:characterIndexes:font:forGlyphRange:" = { skipped = true }
+"CGGlyphAtIndex:isValidIndex:" = { skipped = true }
+"CGGlyphAtIndex:" = { skipped = true }
+"getGlyphsInRange:glyphs:properties:characterIndexes:bidiLevels:" = { skipped = true }
+"glyphIndexForPoint:inTextContainer:fractionOfDistanceThroughGlyph:" = { skipped = true }
+"showCGGlyphs:positions:count:font:textMatrix:attributes:inContext:" = { skipped = true }
+"showCGGlyphs:positions:count:font:matrix:attributes:inContext:" = { skipped = true }
+[class.NSLayoutManagerDelegate.methods."layoutManager:shouldGenerateGlyphs:properties:characterIndexes:font:forGlyphRange:"]
 skipped = true
-[class.NSMovie.methods.initWithMovie]
+[class.NSMovie.methods."initWithMovie:"]
 skipped = true
 [class.NSMovie.methods.QTMovie]
 skipped = true
@@ -1017,95 +1017,95 @@ skipped = true
 skipped = true
 [fn.NSOpenGLGetVersion]
 skipped = true
-[class.NSTextLayoutFragment.methods.drawAtPoint_inContext]
+[class.NSTextLayoutFragment.methods."drawAtPoint:inContext:"]
 skipped = true
-[class.NSTextLineFragment.methods.drawAtPoint_inContext]
+[class.NSTextLineFragment.methods."drawAtPoint:inContext:"]
 skipped = true
-[class.NSTextView.methods.quickLookPreviewableItemsInRanges]
+[class.NSTextView.methods."quickLookPreviewableItemsInRanges:"]
 skipped = true
 [class.NSRunningApplication.methods.processIdentifier]
 skipped = true
-[class.NSRunningApplication.methods.runningApplicationWithProcessIdentifier]
+[class.NSRunningApplication.methods."runningApplicationWithProcessIdentifier:"]
 skipped = true
 [class.NSSavePanel.methods.allowedContentTypes]
 skipped = true
-[class.NSSavePanel.methods.setAllowedContentTypes]
+[class.NSSavePanel.methods."setAllowedContentTypes:"]
 skipped = true
 [class.NSView.methods]
 layer = { skipped = true }
-setLayer = { skipped = true }
+"setLayer:" = { skipped = true }
 backgroundFilters = { skipped = true }
-setBackgroundFilters = { skipped = true }
+"setBackgroundFilters:" = { skipped = true }
 compositingFilter = { skipped = true }
-setCompositingFilter = { skipped = true }
+"setCompositingFilter:" = { skipped = true }
 contentFilters = { skipped = true }
-setContentFilters = { skipped = true }
+"setContentFilters:" = { skipped = true }
 makeBackingLayer = { skipped = true }
-[class.NSObject.methods.layer_shouldInheritContentsScale_fromWindow]
+[class.NSObject.methods."layer:shouldInheritContentsScale:fromWindow:"]
 skipped = true
 [class.NSWorkspace.methods]
-iconForContentType = { skipped = true }
-URLForApplicationToOpenContentType = { skipped = true }
-URLsForApplicationsToOpenContentType = { skipped = true }
-setDefaultApplicationAtURL_toOpenContentType_completionHandler = { skipped = true }
+"iconForContentType:" = { skipped = true }
+"URLForApplicationToOpenContentType:" = { skipped = true }
+"URLsForApplicationsToOpenContentType:" = { skipped = true }
+"setDefaultApplicationAtURL:toOpenContentType:completionHandler:" = { skipped = true }
 [class.NSWorkspaceOpenConfiguration.methods.architecture]
 skipped = true
-[class.NSWorkspaceOpenConfiguration.methods.setArchitecture]
+[class.NSWorkspaceOpenConfiguration.methods."setArchitecture:"]
 skipped = true
 [protocol.NSApplicationDelegate.methods]
-application_handlerForIntent = { skipped = true }
-application_userDidAcceptCloudKitShareWithMetadata = { skipped = true }
+"application:handlerForIntent:" = { skipped = true }
+"application:userDidAcceptCloudKitShareWithMetadata:" = { skipped = true }
 [protocol.NSLayoutManagerDelegate.methods]
-layoutManager_shouldGenerateGlyphs_properties_characterIndexes_font_forGlyphRange = { skipped = true }
+"layoutManager:shouldGenerateGlyphs:properties:characterIndexes:font:forGlyphRange:" = { skipped = true }
 [protocol.NSCloudSharingServiceDelegate.methods]
-sharingService_didSaveShare = { skipped = true }
-sharingService_didStopSharing = { skipped = true }
+"sharingService:didSaveShare:" = { skipped = true }
+"sharingService:didStopSharing:" = { skipped = true }
 [protocol.NSCloudSharingValidation]
 skipped = true
 [protocol.NSViewLayerContentScaleDelegate]
 skipped = true
 [class.NSCoreDataCoreSpotlightDelegate.methods]
-attributeSetForObject = { skipped = true }
-searchableIndex_reindexAllSearchableItemsWithAcknowledgementHandler = { skipped = true }
-searchableIndex_reindexSearchableItemsWithIdentifiers_acknowledgementHandler = { skipped = true }
+"attributeSetForObject:" = { skipped = true }
+"searchableIndex:reindexAllSearchableItemsWithAcknowledgementHandler:" = { skipped = true }
+"searchableIndex:reindexSearchableItemsWithIdentifiers:acknowledgementHandler:" = { skipped = true }
 [class.NSPersistentCloudKitContainer.methods]
-recordForManagedObjectID = { skipped = true }
-recordsForManagedObjectIDs = { skipped = true }
-recordIDForManagedObjectID = { skipped = true }
-recordIDsForManagedObjectIDs = { skipped = true }
+"recordForManagedObjectID:" = { skipped = true }
+"recordsForManagedObjectIDs:" = { skipped = true }
+"recordIDForManagedObjectID:" = { skipped = true }
+"recordIDsForManagedObjectIDs:" = { skipped = true }
 [class.NSPersistentCloudKitContainerOptions.methods]
 databaseScope = { skipped = true }
-setDatabaseScope = { skipped = true }
+"setDatabaseScope:" = { skipped = true }
 [protocol.NSFetchedResultsControllerDelegate.methods]
-controller_didChangeContentWithSnapshot = { skipped = true }
+"controller:didChangeContentWithSnapshot:" = { skipped = true }
 [class.CAKeyframeAnimation.methods]
 path = { skipped = true }
-setPath = { skipped = true }
+"setPath:" = { skipped = true }
 [class.CAShapeLayer.methods]
 path = { skipped = true }
-setPath = { skipped = true }
+"setPath:" = { skipped = true }
 fillColor = { skipped = true }
-setFillColor = { skipped = true }
+"setFillColor:" = { skipped = true }
 strokeColor = { skipped = true }
-setStrokeColor = { skipped = true }
+"setStrokeColor:" = { skipped = true }
 [class.CAEmitterCell.methods]
 color = { skipped = true }
-setColor = { skipped = true }
+"setColor:" = { skipped = true }
 [class.CALayer.methods]
 affineTransform = { skipped = true }
-setAffineTransform = { skipped = true }
-drawInContext = { skipped = true }
-renderInContext = { skipped = true }
+"setAffineTransform:" = { skipped = true }
+"drawInContext:" = { skipped = true }
+"renderInContext:" = { skipped = true }
 backgroundColor = { skipped = true }
-setBackgroundColor = { skipped = true }
+"setBackgroundColor:" = { skipped = true }
 borderColor = { skipped = true }
-setBorderColor = { skipped = true }
+"setBorderColor:" = { skipped = true }
 shadowColor = { skipped = true }
-setShadowColor = { skipped = true }
+"setShadowColor:" = { skipped = true }
 shadowPath = { skipped = true }
-setShadowPath = { skipped = true }
+"setShadowPath:" = { skipped = true }
 [protocol.CALayerDelegate.methods]
-drawLayer_inContext = { skipped = true }
+"drawLayer:inContext:" = { skipped = true }
 [protocol.CAMetalDrawable]
 skipped = true
 [class.CAMetalLayer]
@@ -1113,43 +1113,43 @@ skipped = true
 [class.CAOpenGLLayer]
 skipped = true
 [class.CARenderer.methods]
-rendererWithMTLTexture_options = { skipped = true }
-setDestination = { skipped = true }
-beginFrameAtTime_timeStamp = { skipped = true }
+"rendererWithMTLTexture:options:" = { skipped = true }
+"setDestination:" = { skipped = true }
+"beginFrameAtTime:timeStamp:" = { skipped = true }
 [class.CARemoteLayerClient.methods]
-initWithServerPort = { skipped = true }
+"initWithServerPort:" = { skipped = true }
 [class.CARemoteLayerServer.methods]
 serverPort = { skipped = true }
 [class.CAReplicatorLayer.methods]
 instanceColor = { skipped = true }
-setInstanceColor = { skipped = true }
+"setInstanceColor:" = { skipped = true }
 [class.CATextLayer.methods]
 font = { skipped = true }
-setFont = { skipped = true }
+"setFont:" = { skipped = true }
 foregroundColor = { skipped = true }
-setForegroundColor = { skipped = true }
+"setForegroundColor:" = { skipped = true }
 [fn.CATransform3DMakeAffineTransform]
 skipped = true
 [fn.CATransform3DGetAffineTransform]
 skipped = true
-[class.MTLSharedEventListener.methods.initWithDispatchQueue]
+[class.MTLSharedEventListener.methods."initWithDispatchQueue:"]
 skipped = true
 [class.MTLSharedEventListener.methods.dispatchQueue]
 skipped = true
-[protocol.MTLDevice.methods.newLibraryWithData_error]
+[protocol.MTLDevice.methods."newLibraryWithData:error:"]
 skipped = true
-[protocol.MTLDevice.methods.newTextureWithDescriptor_iosurface_plane]
+[protocol.MTLDevice.methods."newTextureWithDescriptor:iosurface:plane:"]
 skipped = true
 [protocol.MTLTexture.methods.iosurface]
 skipped = true
 [class.ASAuthorizationProviderExtensionLoginManager.methods]
-saveCertificate_keyType = { skipped = true }
-copyKeyForKeyType = { skipped = true }
-copyIdentityForKeyType = { skipped = true }
+"saveCertificate:keyType:" = { skipped = true }
+"copyKeyForKeyType:" = { skipped = true }
+"copyIdentityForKeyType:" = { skipped = true }
 [class.BGTaskScheduler.methods]
 # Needs `dispatch_queue_t`
-registerForTaskWithIdentifier_usingQueue_launchHandler = { skipped = true }
-[class.AXBrailleMap.methods.presentImage]
+"registerForTaskWithIdentifier:usingQueue:launchHandler:" = { skipped = true }
+[class.AXBrailleMap.methods."presentImage:"]
 # Needs `CGImageRef`
 skipped = true
 [fn.AXNameFromColor]
@@ -1158,45 +1158,45 @@ skipped = true
 [class.CLSContext.methods.thumbnail]
 # Needs `CGImageRef`
 skipped = true
-[class.CLSContext.methods.setThumbnail]
+[class.CLSContext.methods."setThumbnail:"]
 # Needs `CGImageRef`
 skipped = true
 # Needs `CGColorRef`
 [class.EKCalendar.methods]
 CGColor = { skipped = true }
-setCGColor = { skipped = true }
+"setCGColor:" = { skipped = true }
 # Needs `TISInputSourceRef` from Carbon (HIToolbox)
 [class.IMKCandidates.methods]
-setSelectionKeysKeylayout = { skipped = true }
+"setSelectionKeysKeylayout:" = { skipped = true }
 selectionKeysKeylayout = { skipped = true }
 # Needs `CGRectEdge`
 [fn.MKMapRectDivide]
 skipped = true
 [class.MKMapSnapshotter.methods]
 # Needs `dispatch_queue_t`
-startWithQueue_completionHandler = { skipped = true }
+"startWithQueue:completionHandler:" = { skipped = true }
 [class.MKOverlayPathRenderer.methods]
 # Needs `CGLineJoin`
 lineJoin = { skipped = true }
-setLineJoin = { skipped = true }
+"setLineJoin:" = { skipped = true }
 # Needs `CGLineCap`
 lineCap = { skipped = true }
-setLineCap = { skipped = true }
+"setLineCap:" = { skipped = true }
 # Needs `CGPathRef`
 path = { skipped = true }
-setPath = { skipped = true }
+"setPath:" = { skipped = true }
 # Needs `CGContextRef`
-applyStrokePropertiesToContext_atZoomScale = { skipped = true }
-applyFillPropertiesToContext_atZoomScale = { skipped = true }
+"applyStrokePropertiesToContext:atZoomScale:" = { skipped = true }
+"applyFillPropertiesToContext:atZoomScale:" = { skipped = true }
 # Needs `CGPathRef` and `CGContextRef`
-strokePath_inContext = { skipped = true }
-fillPath_inContext = { skipped = true }
+"strokePath:inContext:" = { skipped = true }
+"fillPath:inContext:" = { skipped = true }
 [class.MKOverlayRenderer.methods]
 # Needs `CGContextRef`
-drawMapRect_zoomScale_inContext = { skipped = true }
+"drawMapRect:zoomScale:inContext:" = { skipped = true }
 # Needs `CGBlendMode`
 blendMode = { skipped = true }
-setBlendMode = { skipped = true }
+"setBlendMode:" = { skipped = true }
 [class.MTKMeshBuffer.methods]
 # Needs `MDLMeshBufferZone` from ModelIO framework
 zone = { skipped = true }
@@ -1208,14 +1208,14 @@ skipped = true
 [fn.MTKMetalVertexFormatFromModelIO]
 skipped = true
 # Needs `CGImageRef`
-[class.MTKTextureLoader.methods.newTextureWithCGImage_options_completionHandler]
+[class.MTKTextureLoader.methods."newTextureWithCGImage:options:completionHandler:"]
 skipped = true
-[class.MTKTextureLoader.methods.newTextureWithCGImage_options_error]
+[class.MTKTextureLoader.methods."newTextureWithCGImage:options:error:"]
 skipped = true
 [class.MTKView.methods]
 # Needs `CGColorSpaceRef`
 colorspace = { skipped = true }
-setColorspace = { skipped = true }
+"setColorspace:" = { skipped = true }
 # Needs `CAMetalDrawable`
 [class.MTKView.methods.currentDrawable]
 skipped = true
@@ -1223,118 +1223,118 @@ skipped = true
 skipped = true
 # Needs `Component` from Core Services / Carbon Core / Component Manager
 [class.OSALanguage.methods]
-initWithComponent = { skipped = true }
+"initWithComponent:" = { skipped = true }
 componentInstance = { skipped = true }
 [class.OSALanguageInstance.methods.componentInstance]
 skipped = true
 # Needs `dispatch_queue_t`
-[class.CXCallController.methods.initWithQueue]
+[class.CXCallController.methods."initWithQueue:"]
 skipped = true
-[class.CXCallObserver.methods.setDelegate_queue]
+[class.CXCallObserver.methods."setDelegate:queue:"]
 skipped = true
-[class.CXProvider.methods.setDelegate_queue]
+[class.CXProvider.methods."setDelegate:queue:"]
 skipped = true
 # Needs `dispatch_queue_t`
-[class.EAWiFiUnconfiguredAccessoryBrowser.methods.initWithDelegate_queue]
+[class.EAWiFiUnconfiguredAccessoryBrowser.methods."initWithDelegate:queue:"]
 skipped = true
 # Needs `dispatch_queue_t`
 [protocol.GCDevice.methods.handlerQueue]
 skipped = true
-[protocol.GCDevice.methods.setHandlerQueue]
+[protocol.GCDevice.methods."setHandlerQueue:"]
 skipped = true
 # Needs `dispatch_queue_t`
-[class.CLLocationUpdater.methods.liveUpdaterWithQueue_handler]
+[class.CLLocationUpdater.methods."liveUpdaterWithQueue:handler:"]
 skipped = true
-[class.CLLocationUpdater.methods.liveUpdaterWithConfiguration_queue_handler]
+[class.CLLocationUpdater.methods."liveUpdaterWithConfiguration:queue:handler:"]
 skipped = true
 [class.CLMonitorConfiguration.methods.queue]
 skipped = true
-[class.CLMonitorConfiguration.methods.configWithMonitorName_queue_eventHandler]
+[class.CLMonitorConfiguration.methods."configWithMonitorName:queue:eventHandler:"]
 skipped = true
 # Needs `dispatch_queue_t`
 [protocol.GCDevicePhysicalInput.methods.queue]
 skipped = true
-[protocol.GCDevicePhysicalInput.methods.setQueue]
+[protocol.GCDevicePhysicalInput.methods."setQueue:"]
 skipped = true
 # Needs `CFIndex` (fixed locally for now)
 [typedef.GCKeyCode]
 skipped = true
 # Needs `IOHIDDeviceRef` from IOKit
-[class.GCController.methods.supportsHIDDevice]
+[class.GCController.methods."supportsHIDDevice:"]
 skipped = true
 # Needs `CMSampleBufferRef` from CoreMedia
 [class.SFSpeechAudioBufferRecognitionRequest.methods]
-appendAudioSampleBuffer = { skipped = true }
+"appendAudioSampleBuffer:" = { skipped = true }
 # Needs `CMTimeRange`
 [class.SNTimeDurationConstraint.methods.durationRange]
 skipped = true
-[class.SNTimeDurationConstraint.methods.initWithDurationRange]
+[class.SNTimeDurationConstraint.methods."initWithDurationRange:"]
 skipped = true
 [class.SNClassificationResult.methods.timeRange]
 skipped = true
-[class._SFSpeechAnalyzer.methods.initWithClientIdentifier_inputSequence_audioFormat_transcriberResultDelegate_endpointingResultDelegate_queue_transcriberOptions_commandRecognizerOptions_options_restrictedLogging_geoLMRegionID_contextualNamedEntities_didChangeVolatileRange]
+[class._SFSpeechAnalyzer.methods."initWithClientIdentifier:inputSequence:audioFormat:transcriberResultDelegate:endpointingResultDelegate:queue:transcriberOptions:commandRecognizerOptions:options:restrictedLogging:geoLMRegionID:contextualNamedEntities:didChangeVolatileRange:"]
 skipped = true
 [class._SFTranscriberResult.methods.range]
 skipped = true
-[class._SFTranscriberResult.methods.initWithRange_normalizedTranscriberMultisegmentResult_normalizedCommandRecognizerResult_contextualizedTranscriberMultisegmentResult_contextualizedCommandRecognizerResult]
+[class._SFTranscriberResult.methods."initWithRange:normalizedTranscriberMultisegmentResult:normalizedCommandRecognizerResult:contextualizedTranscriberMultisegmentResult:contextualizedCommandRecognizerResult:"]
 skipped = true
-[class._STTranscriberMultisegmentResult.methods.recognitionAudioRange]
+[class._STTranscriberMultisegmentResult.methods."recognitionAudioRange:"]
 skipped = true
-[class._STTranscriberMultisegmentResult.methods.initWithSegments_transcriptions_earResultType_nBestChoices_recognitionAudioRange]
+[class._STTranscriberMultisegmentResult.methods."initWithSegments:transcriptions:earResultType:nBestChoices:recognitionAudioRange:"]
 skipped = true
 [class._SFEndpointingResult.methods.range]
 skipped = true
-[class._SFEndpointingResult.methods.initWithRange_wordCount_eosLikelihood_pauseCounts_silencePosterior]
+[class._SFEndpointingResult.methods."initWithRange:wordCount:eosLikelihood:pauseCounts:silencePosterior:"]
 skipped = true
 # Needs `CMTime`
-[class.SNClassifySoundRequest.methods.setWindowDuration]
+[class.SNClassifySoundRequest.methods."setWindowDuration:"]
 skipped = true
 [class.SNClassifySoundRequest.methods.windowDuration]
 skipped = true
 [class._SFSpeechAnalyzer.methods.getNextBufferStartTimeWithCompletion]
 skipped = true
-[class._SFSpeechAnalyzer.methods.setDidChangeVolatileRange_completion]
+[class._SFSpeechAnalyzer.methods."setDidChangeVolatileRange:completion:"]
 skipped = true
-[class._SFSpeechAnalyzer.methods.finalizeThrough_completion]
+[class._SFSpeechAnalyzer.methods."finalizeThrough:completion:"]
 skipped = true
-[class._SFSpeechAnalyzer.methods.finalizeAndFinishThrough_completion]
+[class._SFSpeechAnalyzer.methods."finalizeAndFinishThrough:completion:"]
 skipped = true
 # Needs `SecAccessControlRef` from Security
-[class.LAContext.methods.evaluateAccessControl_operation_localizedReason_reply]
+[class.LAContext.methods."evaluateAccessControl:operation:localizedReason:reply:"]
 skipped = true
 # Needs `SecKeyAlgorithm` from Security
-[class.LAPrivateKey.methods.canDecryptUsingSecKeyAlgorithm]
+[class.LAPrivateKey.methods."canDecryptUsingSecKeyAlgorithm:"]
 skipped = true
-[class.LAPrivateKey.methods.canExchangeKeysUsingSecKeyAlgorithm]
+[class.LAPrivateKey.methods."canExchangeKeysUsingSecKeyAlgorithm:"]
 skipped = true
-[class.LAPrivateKey.methods.canSignUsingSecKeyAlgorithm]
+[class.LAPrivateKey.methods."canSignUsingSecKeyAlgorithm:"]
 skipped = true
-[class.LAPrivateKey.methods.exchangeKeysWithPublicKey_secKeyAlgorithm_secKeyParameters_completion]
+[class.LAPrivateKey.methods."exchangeKeysWithPublicKey:secKeyAlgorithm:secKeyParameters:completion:"]
 skipped = true
-[class.LAPrivateKey.methods.decryptData_secKeyAlgorithm_completion]
+[class.LAPrivateKey.methods."decryptData:secKeyAlgorithm:completion:"]
 skipped = true
-[class.LAPrivateKey.methods.signData_secKeyAlgorithm_completion]
+[class.LAPrivateKey.methods."signData:secKeyAlgorithm:completion:"]
 skipped = true
-[class.LAPublicKey.methods.canEncryptUsingSecKeyAlgorithm]
+[class.LAPublicKey.methods."canEncryptUsingSecKeyAlgorithm:"]
 skipped = true
-[class.LAPublicKey.methods.canVerifyUsingSecKeyAlgorithm]
+[class.LAPublicKey.methods."canVerifyUsingSecKeyAlgorithm:"]
 skipped = true
-[class.LAPublicKey.methods.encryptData_secKeyAlgorithm_completion]
+[class.LAPublicKey.methods."encryptData:secKeyAlgorithm:completion:"]
 skipped = true
-[class.LAPublicKey.methods.verifyData_signature_secKeyAlgorithm_completion]
+[class.LAPublicKey.methods."verifyData:signature:secKeyAlgorithm:completion:"]
 skipped = true
 # Needs `SecKeyRef` from Security
 [class.ASAuthorizationProviderExtensionLoginConfiguration.methods.loginRequestEncryptionPublicKey]
 skipped = true
-[class.ASAuthorizationProviderExtensionLoginConfiguration.methods.setLoginRequestEncryptionPublicKey]
+[class.ASAuthorizationProviderExtensionLoginConfiguration.methods."setLoginRequestEncryptionPublicKey:"]
 skipped = true
 # Needs `CGImagePropertyOrientation` from `ImageIO`
 [class.PHLivePhotoEditingContext.methods.orientation]
 skipped = true
-[class.PHImageManager.methods.requestImageDataAndOrientationForAsset_options_resultHandler]
+[class.PHImageManager.methods."requestImageDataAndOrientationForAsset:options:resultHandler:"]
 skipped = true
 # Needs `UIImageOrientation` from `UIKit`
-[class.PHImageManager.methods.requestImageDataForAsset_options_resultHandler]
+[class.PHImageManager.methods."requestImageDataForAsset:options:resultHandler:"]
 skipped = true
 # Needs `CMTime` from `CoreMedia`
 [class.PHLivePhotoEditingContext.methods.duration]
@@ -1346,38 +1346,38 @@ skipped = true
 # Needs `PHLivePhotoFrameProcessingBlock` (skipped because needs `CIImage`)
 [class.PHLivePhotoEditingContext.methods.frameProcessor]
 skipped = true
-[class.PHLivePhotoEditingContext.methods.setFrameProcessor]
+[class.PHLivePhotoEditingContext.methods."setFrameProcessor:"]
 skipped = true
 # Needs `CIImage` from `CoreImage`
 [typedef.PHLivePhotoFrameProcessingBlock]
 skipped = true
 # Needs `dispatch_block_t`
-[class.PHPhotoLibrary.methods.performChanges_completionHandler]
+[class.PHPhotoLibrary.methods."performChanges:completionHandler:"]
 skipped = true
-[class.PHPhotoLibrary.methods.performChangesAndWait_error]
+[class.PHPhotoLibrary.methods."performChangesAndWait:error:"]
 skipped = true
 # Needs `CMTimeRange` from `CoreMedia`
-[class.MPAdTimeRange.methods.initWithTimeRange]
+[class.MPAdTimeRange.methods."initWithTimeRange:"]
 skipped = true
 [class.MPAdTimeRange.methods.timeRange]
 skipped = true
-[class.MPAdTimeRange.methods.setTimeRange]
+[class.MPAdTimeRange.methods."setTimeRange:"]
 skipped = true
 # Uses LocalAuthentication framework
 [protocol.ASAuthorizationWebBrowserExternallyAuthenticatableRequest.methods]
 authenticatedContext = { skipped = true }
-setAuthenticatedContext = { skipped = true }
+"setAuthenticatedContext:" = { skipped = true }
 # Needs `pid_t`
 [class.MXMetaData.methods.pid]
 skipped = true
 # Needs `nw_proxy_config_t`
 [class.WKWebsiteDataStore.methods]
 proxyConfigurations = { skipped = true }
-setProxyConfigurations = { skipped = true }
+"setProxyConfigurations:" = { skipped = true }
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]
-menuHasKeyEquivalent_forEvent_target_action = { skipped = true }
+"menuHasKeyEquivalent:forEvent:target:action:" = { skipped = true }
 
 # These subclass a generic struct, and hence the type parameter defaults to
 # `AnyObject`, which is not PartialEq, Eq nor Hash.
@@ -1410,9 +1410,9 @@ skipped = true
 # I'm unsure of the ABI of the array this takes
 [fn.NSDrawBitmap]
 skipped = true
-[class.NSView.methods.getRectsExposedDuringLiveResize_count]
+[class.NSView.methods."getRectsExposedDuringLiveResize:count:"]
 skipped = true
-[class.CAMediaTimingFunction.methods.getControlPointAtIndex_values]
+[class.CAMediaTimingFunction.methods."getControlPointAtIndex:values:"]
 skipped = true
 
 # Overridden fmt::Debug because we're missing https://github.com/madsmtm/objc2/issues/267
@@ -1504,7 +1504,7 @@ skipped = true
 # Needs `JSContext` from JavaScriptCore
 [class.WebFrame.methods.javaScriptContext]
 skipped = true
-[protocol.WebFrameLoadDelegate.methods.webView_didCreateJavaScriptContext_forFrame]
+[protocol.WebFrameLoadDelegate.methods."webView:didCreateJavaScriptContext:forFrame:"]
 skipped = true
 # Needs `JSGlobalContextRef` from JavaScriptCore
 [class.WebFrame.methods.globalContext]
@@ -1515,20 +1515,20 @@ skipped = true
 
 # error: translator assertion failure: invalid error nullability (left: Unspecified) (Right: Nullable)
 [class.GKSession.methods]
-acceptConnectionFromPeer_error = { skipped = true }
-sendData_toPeers_withDataMode_error = { skipped = true }
-sendDataToAllPeers_withDataMode_error = { skipped = true }
+"acceptConnectionFromPeer:error:" = { skipped = true }
+"sendData:toPeers:withDataMode:error:" = { skipped = true }
+"sendDataToAllPeers:withDataMode:error:" = { skipped = true }
 [class.GKVoiceChatService.methods]
-acceptCallID_error = { skipped = true }
-startVoiceChatWithParticipantID_error = { skipped = true }
+"acceptCallID:error:" = { skipped = true }
+"startVoiceChatWithParticipantID:error:" = { skipped = true }
 [class.WebHistory.methods]
-loadFromURL_error = { skipped = true }
-saveToURL_error = { skipped = true }
-[class.AMWorkspace.methods.runWorkflowAtPath_withInput_error]
+"loadFromURL:error:" = { skipped = true }
+"saveToURL:error:" = { skipped = true }
+[class.AMWorkspace.methods."runWorkflowAtPath:withInput:error:"]
 skipped = true
 
 # error: unknown error result type
-[class.MTKTextureLoader.methods.newTexturesWithContentsOfURLs_options_error]
+[class.MTKTextureLoader.methods."newTexturesWithContentsOfURLs:options:error:"]
 skipped = true
 
 [class.WKNavigationAction.methods]
@@ -1557,8 +1557,8 @@ skipped = true
 
 # error: translator assertion failure: (left `"CLLocation"`) (right `"const CLLocation"`)
 [class.CLLocation.methods]
-getDistanceFrom = { skipped = true }
-distanceFromLocation = { skipped = true }
+"getDistanceFrom:" = { skipped = true }
+"distanceFromLocation:" = { skipped = true }
 
 # tries to parse these as `pub type <name> = *const NSString`; fix manually for now
 [typedef.GCInputElementName]
@@ -1669,12 +1669,12 @@ skipped = true
 [typedef.MXLaunchTaskID]
 skipped = true
 # fails to parse method argument with `MXLaunchTaskID`
-[class.MXMetricManager.methods.extendLaunchMeasurementForTaskID_error]
+[class.MXMetricManager.methods."extendLaunchMeasurementForTaskID:error:"]
 skipped = true
-[class.MXMetricManager.methods.finishExtendedLaunchMeasurementForTaskID_error]
+[class.MXMetricManager.methods."finishExtendedLaunchMeasurementForTaskID:error:"]
 skipped = true
 # `os_log_t` not defined; skip for now
-[class.MXMetricManager.methods.makeLogHandleWithCategory]
+[class.MXMetricManager.methods."makeLogHandleWithCategory:"]
 skipped = true
 
 # Custom generics because of auto traits
@@ -1750,7 +1750,7 @@ skipped = true
 skipped = true
 [fn.CWKeychainSetWiFiEAPIdentity]
 skipped = true
-[class.CWInterface.methods.associateToEnterpriseNetwork_identity_username_password_error]
+[class.CWInterface.methods."associateToEnterpriseNetwork:identity:username:password:error:"]
 skipped = true
 
 # Items from ServiceManagement that uses types from CoreFoundation

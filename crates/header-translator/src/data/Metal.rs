@@ -1,57 +1,57 @@
 data! {
     // TODO: Verify that index out-of-bounds is sound for various arrays.
     // class MyArray {
-    //     unsafe -objectAtIndexedSubscript;
-    //     unsafe -setObject_atIndexedSubscript;
+    //     unsafe -objectAtIndexedSubscript:;
+    //     unsafe -setObject:atIndexedSubscript:;
     // }
 
     class MTLPrimitiveAccelerationStructureDescriptor {
         unsafe +descriptor;
-        unsafe -setGeometryDescriptors;
+        unsafe -setGeometryDescriptors:;
     }
 
     class MTLAccelerationStructureGeometryDescriptor {
-        unsafe -setPrimitiveDataBuffer;
-        unsafe -setPrimitiveDataStride;
-        unsafe -setPrimitiveDataElementSize;
-        unsafe -setIntersectionFunctionTableOffset;
+        unsafe -setPrimitiveDataBuffer:;
+        unsafe -setPrimitiveDataStride:;
+        unsafe -setPrimitiveDataElementSize:;
+        unsafe -setIntersectionFunctionTableOffset:;
     }
 
     class MTLAccelerationStructureTriangleGeometryDescriptor {
         unsafe +descriptor;
-        unsafe -setIndexBuffer;
-        // unsafe -setIndexType;
-        unsafe -setVertexBuffer;
-        unsafe -setVertexStride;
-        unsafe -setTriangleCount;
+        unsafe -setIndexBuffer:;
+        // unsafe -setIndexType:;
+        unsafe -setVertexBuffer:;
+        unsafe -setVertexStride:;
+        unsafe -setTriangleCount:;
     }
 
     class MTLAccelerationStructureBoundingBoxGeometryDescriptor {
         unsafe +descriptor;
-        unsafe -setBoundingBoxBuffer;
-        unsafe -setBoundingBoxCount;
+        unsafe -setBoundingBoxBuffer:;
+        unsafe -setBoundingBoxCount:;
     }
 
     class MTLInstanceAccelerationStructureDescriptor {
         unsafe +descriptor;
-        unsafe -setInstancedAccelerationStructures;
-        unsafe -setInstanceCount;
-        unsafe -setInstanceDescriptorBuffer;
+        unsafe -setInstancedAccelerationStructures:;
+        unsafe -setInstanceCount:;
+        unsafe -setInstanceDescriptorBuffer:;
     }
 
     protocol MTLAccelerationStructureCommandEncoder {
-        unsafe -buildAccelerationStructure_descriptor_scratchBuffer_scratchBufferOffset;
-        unsafe -writeCompactedAccelerationStructureSize_toBuffer_offset;
-        unsafe -copyAndCompactAccelerationStructure_toAccelerationStructure;
+        unsafe -buildAccelerationStructure:descriptor:scratchBuffer:scratchBufferOffset:;
+        unsafe -writeCompactedAccelerationStructureSize:toBuffer:offset:;
+        unsafe -copyAndCompactAccelerationStructure:toAccelerationStructure:;
     }
 
     class MTLIntersectionFunctionTableDescriptor {
         unsafe +new;
-        unsafe -setFunctionCount;
+        unsafe -setFunctionCount:;
     }
 
     protocol MTLIntersectionFunctionTable {
-        unsafe -setFunction_atIndex;
+        unsafe -setFunction:atIndex:;
     }
 
     class MTLStructMember {
@@ -64,7 +64,7 @@ data! {
 
     class MTLStructType {
         unsafe -members;
-        unsafe -memberByName;
+        unsafe -memberByName:;
     }
 
     class MTLArrayType {
@@ -77,7 +77,7 @@ data! {
 
     class MTLArgument {
         unsafe -name;
-        unsafe -type_;
+        // TODO: unsafe -type;
         unsafe -access;
         unsafe -index;
         unsafe -isActive;
@@ -93,31 +93,31 @@ data! {
 
     class MTLArgumentDescriptor {
         unsafe +argumentDescriptor;
-        unsafe -setDataType;
-        unsafe -setIndex;
-        unsafe -setAccess;
-        // unsafe -setArrayLength;
-        unsafe -setTextureType;
+        unsafe -setDataType:;
+        unsafe -setIndex:;
+        unsafe -setAccess:;
+        // unsafe -setArrayLength:;
+        unsafe -setTextureType:;
     }
 
     protocol MTLBuffer {
         unsafe -length;
         unsafe -contents;
-        unsafe -didModifyRange;
-        unsafe -newTextureWithDescriptor_offset_bytesPerRow;
-        unsafe -addDebugMarker_range;
+        unsafe -didModifyRange:;
+        unsafe -newTextureWithDescriptor:offset:bytesPerRow:;
+        unsafe -addDebugMarker:range:;
         unsafe -removeAllDebugMarkers;
         unsafe -remoteStorageBuffer;
-        unsafe -newRemoteBufferViewForDevice;
+        unsafe -newRemoteBufferViewForDevice:;
         unsafe -gpuAddress;
     }
 
     class MTLCaptureDescriptor {
         unsafe +new;
         unsafe -destination;
-        unsafe -setDestination;
+        unsafe -setDestination:;
         unsafe -outputURL;
-        unsafe -setOutputURL;
+        unsafe -setOutputURL:;
     }
 
     protocol MTLCaptureScope {
@@ -130,77 +130,77 @@ data! {
     // +sharedCaptureManager is not safe either, since we do interior mutation
     // here.
     class MTLCaptureManager {
-        unsafe -newCaptureScopeWithDevice;
-        unsafe -newCaptureScopeWithCommandQueue;
-        unsafe -supportsDestination;
+        unsafe -newCaptureScopeWithDevice:;
+        unsafe -newCaptureScopeWithCommandQueue:;
+        unsafe -supportsDestination:;
 
-        unsafe -startCaptureWithDescriptor_error;
-        unsafe -startCaptureWithDevice;
-        unsafe -startCaptureWithCommandQueue;
-        unsafe -startCaptureWithScope;
+        unsafe -startCaptureWithDescriptor:error:;
+        unsafe -startCaptureWithDevice:;
+        unsafe -startCaptureWithCommandQueue:;
+        unsafe -startCaptureWithScope:;
         unsafe -stopCapture;
 
         unsafe -defaultCaptureScope;
-        unsafe -setDefaultCaptureScope;
+        unsafe -setDefaultCaptureScope:;
 
         unsafe -isCapturing;
     }
 
     protocol MTLCommandBuffer {
         unsafe -label;
-        unsafe -setLabel;
+        unsafe -setLabel:;
         unsafe -enqueue;
         unsafe -commit;
-        unsafe -presentDrawable;
+        unsafe -presentDrawable:;
         unsafe -waitUntilScheduled;
         // TODO once blocks are better
         // unsafe -addCompletedHandler;
         unsafe -status;
         unsafe -blitCommandEncoder;
-        unsafe -renderCommandEncoderWithDescriptor;
+        unsafe -renderCommandEncoderWithDescriptor:;
         unsafe -computeCommandEncoder;
-        unsafe -computeCommandEncoderWithDispatchType;
-        unsafe -encodeWaitForEvent_value;
-        unsafe -encodeSignalEvent_value;
-        unsafe -parallelRenderCommandEncoderWithDescriptor;
+        unsafe -computeCommandEncoderWithDispatchType:;
+        unsafe -encodeWaitForEvent:value:;
+        unsafe -encodeSignalEvent:value:;
+        unsafe -parallelRenderCommandEncoderWithDescriptor:;
         unsafe -accelerationStructureCommandEncoder;
-        unsafe -pushDebugGroup;
+        unsafe -pushDebugGroup:;
         unsafe -popDebugGroup;
     }
 
     protocol MTLCommandQueue {
         unsafe -label;
-        unsafe -setLabel;
+        unsafe -setLabel:;
         unsafe -device;
         unsafe -commandBuffer;
     }
 
     class MTLStencilDescriptor {
         unsafe -stencilCompareFunction;
-        unsafe -setStencilCompareFunction;
+        unsafe -setStencilCompareFunction:;
         unsafe -stencilFailureOperation;
-        unsafe -setStencilFailureOperation;
+        unsafe -setStencilFailureOperation:;
         unsafe -depthFailureOperation;
-        unsafe -setDepthFailureOperation;
+        unsafe -setDepthFailureOperation:;
         unsafe -depthStencilPassOperation;
-        unsafe -setDepthStencilPassOperation;
+        unsafe -setDepthStencilPassOperation:;
         unsafe -readMask;
-        unsafe -setReadMask;
+        unsafe -setReadMask:;
         unsafe -writeMask;
-        unsafe -setWriteMask;
+        unsafe -setWriteMask:;
     }
 
     class MTLDepthStencilDescriptor {
         unsafe -depthCompareFunction;
-        unsafe -setDepthCompareFunction;
+        unsafe -setDepthCompareFunction:;
         unsafe -isDepthWriteEnabled;
-        unsafe -setDepthWriteEnabled;
+        unsafe -setDepthWriteEnabled:;
         unsafe -frontFaceStencil;
-        unsafe -setFrontFaceStencil;
+        unsafe -setFrontFaceStencil:;
         unsafe -backFaceStencil;
-        unsafe -setBackFaceStencil;
+        unsafe -setBackFaceStencil:;
         unsafe -label;
-        unsafe -setLabel;
+        unsafe -setLabel:;
     }
 
     protocol MTLDepthStencilState {
@@ -235,40 +235,40 @@ data! {
         unsafe -supportsShaderBarycentricCoordinates;
         unsafe -currentAllocatedSize;
         unsafe -newCommandQueue;
-        unsafe -newCommandQueueWithMaxCommandBufferCount;
-        unsafe -heapTextureSizeAndAlignWithDescriptor;
-        unsafe -heapBufferSizeAndAlignWithLength_options;
-        unsafe -newHeapWithDescriptor;
-        unsafe -newBufferWithLength_options;
-        unsafe -newDepthStencilStateWithDescriptor;
-        unsafe -newTextureWithDescriptor;
-        unsafe -newSamplerStateWithDescriptor;
+        unsafe -newCommandQueueWithMaxCommandBufferCount:;
+        unsafe -heapTextureSizeAndAlignWithDescriptor:;
+        unsafe -heapBufferSizeAndAlignWithLength:options:;
+        unsafe -newHeapWithDescriptor:;
+        unsafe -newBufferWithLength:options:;
+        unsafe -newDepthStencilStateWithDescriptor:;
+        unsafe -newTextureWithDescriptor:;
+        unsafe -newSamplerStateWithDescriptor:;
         unsafe -newDefaultLibrary;
-        unsafe -newLibraryWithFile_error;
-        unsafe -newLibraryWithSource_options_error;
-        unsafe -newRenderPipelineStateWithDescriptor_error;
-        unsafe -newComputePipelineStateWithFunction_error;
+        unsafe -newLibraryWithFile:error:;
+        unsafe -newLibraryWithSource:options:error:;
+        unsafe -newRenderPipelineStateWithDescriptor:error:;
+        unsafe -newComputePipelineStateWithFunction:error:;
         unsafe -newFence;
-        unsafe -supportsFeatureSet;
-        unsafe -supportsFamily;
-        unsafe -supportsTextureSampleCount;
-        unsafe -minimumLinearTextureAlignmentForPixelFormat;
-        unsafe -minimumTextureBufferAlignmentForPixelFormat;
+        unsafe -supportsFeatureSet:;
+        unsafe -supportsFamily:;
+        unsafe -supportsTextureSampleCount:;
+        unsafe -minimumLinearTextureAlignmentForPixelFormat:;
+        unsafe -minimumTextureBufferAlignmentForPixelFormat:;
         unsafe -maxThreadgroupMemoryLength;
         unsafe -maxArgumentBufferSamplerCount;
-        unsafe -newArgumentEncoderWithArguments;
+        unsafe -newArgumentEncoderWithArguments:;
         unsafe -newEvent;
         unsafe -newSharedEvent;
         unsafe -maxBufferLength;
-        unsafe -supportsCounterSampling;
-        unsafe -supportsVertexAmplificationCount;
+        unsafe -supportsCounterSampling:;
+        unsafe -supportsVertexAmplificationCount:;
         unsafe -supportsDynamicLibraries;
-        unsafe -newDynamicLibrary_error;
-        unsafe -newDynamicLibraryWithURL_error;
-        unsafe -newBinaryArchiveWithDescriptor_error;
+        unsafe -newDynamicLibrary:error:;
+        unsafe -newDynamicLibraryWithURL:error:;
+        unsafe -newBinaryArchiveWithDescriptor:error:;
         unsafe -supportsRaytracing;
-        unsafe -accelerationStructureSizesWithDescriptor;
-        unsafe -newAccelerationStructureWithSize;
+        unsafe -accelerationStructureSizesWithDescriptor:;
+        unsafe -newAccelerationStructureWithSize:;
         unsafe -supportsFunctionPointers;
     }
 
@@ -279,10 +279,10 @@ data! {
 
     protocol MTLCommandEncoder {
         unsafe -label;
-        unsafe -setLabel;
+        unsafe -setLabel:;
         unsafe -endEncoding;
-        unsafe -insertDebugSignpost;
-        unsafe -pushDebugGroup;
+        unsafe -insertDebugSignpost:;
+        unsafe -pushDebugGroup:;
         unsafe -popDebugGroup;
     }
 
@@ -293,87 +293,87 @@ data! {
     // TODO: Verify that offset out-of-bounds is sound.
     // TODO: Verify that index out-of-bounds is sound.
     protocol MTLRenderCommandEncoder {
-        unsafe -setRenderPipelineState;
-        // unsafe -setVertexBuffer_offset_atIndex;
-        // unsafe -setVertexTexture_atIndex;
+        unsafe -setRenderPipelineState:;
+        // unsafe -setVertexBuffer:offset:atIndex:;
+        // unsafe -setVertexTexture:atIndex:;
         // ...
-        unsafe -setViewport;
-        unsafe -setFrontFacingWinding;
-        unsafe -setCullMode;
-        unsafe -setDepthClipMode;
-        unsafe -setDepthBias_slopeScale_clamp;
-        unsafe -setScissorRect;
-        unsafe -setTriangleFillMode;
-        // unsafe -setFragmentBuffer_...;
+        unsafe -setViewport:;
+        unsafe -setFrontFacingWinding:;
+        unsafe -setCullMode:;
+        unsafe -setDepthClipMode:;
+        unsafe -setDepthBias:slopeScale:clamp:;
+        unsafe -setScissorRect:;
+        unsafe -setTriangleFillMode:;
+        // unsafe -setFragmentBuffer:...;
         // ...
-        unsafe -setBlendColorRed_green_blue_alpha;
-        unsafe -setDepthStencilState;
-        unsafe -setStencilReferenceValue;
-        unsafe -setStencilFrontReferenceValue_backReferenceValue;
-        unsafe -setVisibilityResultMode_offset;
-        // unsafe -drawPrimitives_...;
+        unsafe -setBlendColorRed:green:blue:alpha:;
+        unsafe -setDepthStencilState:;
+        unsafe -setStencilReferenceValue:;
+        unsafe -setStencilFrontReferenceValue:backReferenceValue:;
+        unsafe -setVisibilityResultMode:offset:;
+        // unsafe -drawPrimitives:...;
         // ...
-        unsafe -updateFence_afterStages;
-        unsafe -waitForFence_beforeStages;
-        // unsafe -setThreadgroupMemoryLength_offset_atIndex;
-        unsafe -useResource_usage;
-        unsafe -useResource_usage_stages;
-        unsafe -useHeap;
-        unsafe -useHeap_stages;
+        unsafe -updateFence:afterStages:;
+        unsafe -waitForFence:beforeStages:;
+        // unsafe -setThreadgroupMemoryLength:offset:atIndex:;
+        unsafe -useResource:usage:;
+        unsafe -useResource:usage:stages:;
+        unsafe -useHeap:;
+        unsafe -useHeap:stages:;
     }
 
     // TODO: Verify out-of-bounds access is sound.
     protocol MTLBlitCommandEncoder {
-        unsafe -synchronizeResource;
+        unsafe -synchronizeResource:;
         // unsafe -copyFrom...;
-        unsafe -generateMipmapsForTexture;
-        unsafe -fillBuffer_range_value;
-        unsafe -updateFence;
-        unsafe -waitForFence;
-        unsafe -optimizeContentsForGPUAccess;
-        // unsafe -optimizeContentsForGPUAccess_slice_level;
+        unsafe -generateMipmapsForTexture:;
+        unsafe -fillBuffer:range:value:;
+        unsafe -updateFence:;
+        unsafe -waitForFence:;
+        unsafe -optimizeContentsForGPUAccess:;
+        // unsafe -optimizeContentsForGPUAccess:slice:level:;
     }
 
     // TODO: Verify out-of-bounds access is sound.
     protocol MTLComputeCommandEncoder {
-        unsafe -setComputePipelineState;
-        // unsafe -setBuffer_...;
-        // unsafe -setIntersectionFunctionTable_atBufferIndex;
-        unsafe -dispatchThreadgroups_threadsPerThreadgroup;
-        // unsafe -dispatchThreadgroupsWithIndirectBuffer_indirectBufferOffset_threadsPerThreadgroup;
-        unsafe -dispatchThreads_threadsPerThreadgroup;
-        unsafe -updateFence;
-        unsafe -waitForFence;
-        unsafe -useResource_usage;
-        unsafe -useHeap;
+        unsafe -setComputePipelineState:;
+        // unsafe -setBuffer:...;
+        // unsafe -setIntersectionFunctionTable:atBufferIndex:;
+        unsafe -dispatchThreadgroups:threadsPerThreadgroup:;
+        // unsafe -dispatchThreadgroupsWithIndirectBuffer:indirectBufferOffset:threadsPerThreadgroup:;
+        unsafe -dispatchThreads:threadsPerThreadgroup:;
+        unsafe -updateFence:;
+        unsafe -waitForFence:;
+        unsafe -useResource:usage:;
+        unsafe -useHeap:;
     }
 
     // TODO: Verify out-of-bounds access is sound.
     protocol MTLArgumentEncoder {
         unsafe -encodedLength;
         unsafe -alignment;
-        // unsafe -setArgumentBuffer_offset;
+        // unsafe -setArgumentBuffer:offset:;
         // ...
     }
 
     class MTLHeapDescriptor {
         unsafe -size;
-        unsafe -setSize;
+        unsafe -setSize:;
         unsafe -storageMode;
-        unsafe -setStorageMode;
+        unsafe -setStorageMode:;
         unsafe -cpuCacheMode;
-        unsafe -setCpuCacheMode;
+        unsafe -setCpuCacheMode:;
         unsafe -hazardTrackingMode;
-        unsafe -setHazardTrackingMode;
+        unsafe -setHazardTrackingMode:;
         unsafe -resourceOptions;
-        unsafe -setResourceOptions;
-        unsafe -type_;
-        unsafe -setType;
+        unsafe -setResourceOptions:;
+        // TODO: unsafe -type;
+        unsafe -setType:;
     }
 
     protocol MTLHeap {
         unsafe -label;
-        unsafe -setLabel;
+        unsafe -setLabel:;
         unsafe -device;
         unsafe -storageMode;
         unsafe -cpuCacheMode;
@@ -382,37 +382,37 @@ data! {
         unsafe -size;
         unsafe -usedSize;
         unsafe -currentAllocatedSize;
-        unsafe -maxAvailableSizeWithAlignment;
-        unsafe -newBufferWithLength_options;
-        unsafe -newTextureWithDescriptor;
-        unsafe -setPurgeableState;
-        unsafe -type_;
+        unsafe -maxAvailableSizeWithAlignment:;
+        unsafe -newBufferWithLength:options:;
+        unsafe -newTextureWithDescriptor:;
+        unsafe -setPurgeableState:;
+        // TODO: unsafe -type;
         // TODO: Verify that offset out-of-bounds is sound.
-        // unsafe -newBufferWithLength_options_offset;
-        // unsafe -newTextureWithDescriptor_offset;
+        // unsafe -newBufferWithLength:options:offset:;
+        // unsafe -newTextureWithDescriptor:offset:;
     }
 
     class MTLIndirectCommandBufferDescriptor {
         unsafe -commandTypes;
-        unsafe -setCommandTypes;
+        unsafe -setCommandTypes:;
         unsafe -inheritPipelineState;
-        unsafe -setInheritPipelineState;
+        unsafe -setInheritPipelineState:;
         unsafe -inheritBuffers;
-        unsafe -setInheritBuffers;
+        unsafe -setInheritBuffers:;
         unsafe -maxVertexBufferBindCount;
-        unsafe -setMaxVertexBufferBindCount;
+        unsafe -setMaxVertexBufferBindCount:;
         unsafe -maxFragmentBufferBindCount;
-        unsafe -setMaxFragmentBufferBindCount;
+        unsafe -setMaxFragmentBufferBindCount:;
         unsafe -maxKernelBufferBindCount;
-        unsafe -setMaxKernelBufferBindCount;
+        unsafe -setMaxKernelBufferBindCount:;
     }
 
     protocol MTLIndirectCommandBuffer {
         unsafe -size;
         // TODO: Verify that index out-of-bounds is sound.
-        // unsafe -resetWithRange;
-        // unsafe -indirectRenderCommandAtIndex;
-        // unsafe -indirectComputeCommandAtIndex;
+        // unsafe -resetWithRange:;
+        // unsafe -indirectRenderCommandAtIndex:;
+        // unsafe -indirectComputeCommandAtIndex:;
     }
 
     class MTLVertexAttribute {
@@ -435,7 +435,7 @@ data! {
 
     class MTLFunctionConstant {
         unsafe -name;
-        unsafe -type_;
+        // TODO: unsafe -type;
         unsafe -index;
         unsafe -required;
     }
@@ -444,18 +444,18 @@ data! {
         unsafe +new;
         unsafe +functionDescriptor;
         unsafe -name;
-        unsafe -setName;
+        unsafe -setName:;
         unsafe -specializedName;
-        unsafe -setSpecializedName;
+        unsafe -setSpecializedName:;
         unsafe -constantValues;
-        unsafe -setConstantValues;
+        unsafe -setConstantValues:;
         unsafe -options;
-        unsafe -setOptions;
+        unsafe -setOptions:;
     }
 
     protocol MTLFunction {
         unsafe -label;
-        unsafe -setLabel;
+        unsafe -setLabel:;
         unsafe -device;
         unsafe -functionType;
         unsafe -patchType;
@@ -465,7 +465,7 @@ data! {
         unsafe -name;
         unsafe -functionConstantsDictionary;
         // TODO: Verify that index out-of-bounds is sound.
-        // unsafe -newArgumentEncoderWithBufferIndex;
+        // unsafe -newArgumentEncoderWithBufferIndex:;
         unsafe -options;
         unsafe -label;
     }
@@ -485,124 +485,124 @@ data! {
         unsafe +new;
         unsafe -preprocessorMacros;
         unsafe -fastMathEnabled;
-        unsafe -setFastMathEnabled;
+        unsafe -setFastMathEnabled:;
         unsafe -languageVersion;
-        unsafe -setLanguageVersion;
+        unsafe -setLanguageVersion:;
         unsafe -libraryType;
-        unsafe -setLibraryType;
+        unsafe -setLibraryType:;
         unsafe -installName;
         unsafe -libraries;
-        unsafe -setLibraries;
+        unsafe -setLibraries:;
         unsafe -preserveInvariance;
-        unsafe -setPreserveInvariance;
+        unsafe -setPreserveInvariance:;
     }
 
     protocol MTLLibrary {
         unsafe -label;
-        unsafe -setLabel;
+        unsafe -setLabel:;
         unsafe -device;
-        unsafe -newFunctionWithName;
-        unsafe -newFunctionWithName_constantValues_error;
-        unsafe -newFunctionWithDescriptor_error;
-        unsafe -newIntersectionFunctionWithDescriptor_error;
+        unsafe -newFunctionWithName:;
+        unsafe -newFunctionWithName:constantValues:error:;
+        unsafe -newFunctionWithDescriptor:error:;
+        unsafe -newIntersectionFunctionWithDescriptor:error:;
         unsafe -functionNames;
-        unsafe -type_;
+        // TODO: unsafe -type;
         unsafe -installName;
     }
 
     protocol MTLDynamicLibrary {
         unsafe -label;
-        unsafe -setLabel;
+        unsafe -setLabel:;
         unsafe -device;
         unsafe -installName;
-        unsafe -serializeToURL_error;
+        unsafe -serializeToURL:error:;
     }
 
     class MTLBinaryArchiveDescriptor {
         unsafe +new;
         unsafe -url;
-        unsafe -setUrl;
+        unsafe -setUrl:;
     }
 
     protocol MTLBinaryArchive {
         unsafe -label;
-        unsafe -setLabel;
+        unsafe -setLabel:;
         unsafe -device;
-        unsafe -addComputePipelineFunctionsWithDescriptor_error;
-        unsafe -addRenderPipelineFunctionsWithDescriptor_error;
-        unsafe -serializeToURL_error;
+        unsafe -addComputePipelineFunctionsWithDescriptor:error:;
+        unsafe -addRenderPipelineFunctionsWithDescriptor:error:;
+        unsafe -serializeToURL:error:;
     }
 
     class MTLLinkedFunctions {
         unsafe +new;
         unsafe -linkedFunctions;
         unsafe -functions;
-        unsafe -setFunctions;
+        unsafe -setFunctions:;
         unsafe -binaryFunctions;
-        unsafe -setBinaryFunctions;
+        unsafe -setBinaryFunctions:;
         unsafe -groups;
-        unsafe -setGroups;
+        unsafe -setGroups:;
         unsafe -privateFunctions;
-        unsafe -setPrivateFunctions;
+        unsafe -setPrivateFunctions:;
     }
 
     class MTLRenderPassAttachmentDescriptor {
         unsafe -texture;
-        unsafe -setTexture;
+        unsafe -setTexture:;
         unsafe -level;
-        unsafe -setLevel;
+        unsafe -setLevel:;
         unsafe -slice;
-        unsafe -setSlice;
+        unsafe -setSlice:;
         unsafe -depthPlane;
-        unsafe -setDepthPlane;
+        unsafe -setDepthPlane:;
         unsafe -resolveTexture;
-        unsafe -setResolveTexture;
+        unsafe -setResolveTexture:;
         unsafe -resolveLevel;
-        unsafe -setResolveLevel;
+        unsafe -setResolveLevel:;
         unsafe -resolveSlice;
-        unsafe -setResolveSlice;
+        unsafe -setResolveSlice:;
         unsafe -resolveDepthPlane;
-        unsafe -setResolveDepthPlane;
+        unsafe -setResolveDepthPlane:;
         unsafe -loadAction;
-        unsafe -setLoadAction;
+        unsafe -setLoadAction:;
         unsafe -storeAction;
-        unsafe -setStoreAction;
+        unsafe -setStoreAction:;
         unsafe -storeActionOptions;
-        unsafe -setStoreActionOptions;
+        unsafe -setStoreActionOptions:;
     }
 
     class MTLRenderPassColorAttachmentDescriptor {
         unsafe +new;
         unsafe -clearColor;
-        unsafe -setClearColor;
+        unsafe -setClearColor:;
     }
 
     class MTLRenderPassDepthAttachmentDescriptor {
         unsafe -clearDepth;
-        unsafe -setClearDepth;
+        unsafe -setClearDepth:;
         unsafe -depthResolveFilter;
-        unsafe -setDepthResolveFilter;
+        unsafe -setDepthResolveFilter:;
     }
 
     class MTLRenderPassStencilAttachmentDescriptor {
         unsafe -clearStencil;
-        unsafe -setClearStencil;
+        unsafe -setClearStencil:;
         unsafe -stencilResolveFilter;
-        unsafe -setStencilResolveFilter;
+        unsafe -setStencilResolveFilter:;
     }
 
     // TODO: Verify that index out-of-bounds is sound.
     class MTLRenderPassSampleBufferAttachmentDescriptor {
         unsafe -sampleBuffer;
-        unsafe -setSampleBuffer;
+        unsafe -setSampleBuffer:;
         unsafe -startOfVertexSampleIndex;
-        // unsafe -setStartOfVertexSampleIndex;
+        // unsafe -setStartOfVertexSampleIndex:;
         unsafe -endOfVertexSampleIndex;
-        // unsafe -setEndOfVertexSampleIndex;
+        // unsafe -setEndOfVertexSampleIndex:;
         unsafe -startOfFragmentSampleIndex;
-        // unsafe -setStartOfFragmentSampleIndex;
+        // unsafe -setStartOfFragmentSampleIndex:;
         unsafe -endOfFragmentSampleIndex;
-        // unsafe -setEndOfFragmentSampleIndex;
+        // unsafe -setEndOfFragmentSampleIndex:;
     }
 
     // TODO: Verify that index out-of-bounds is sound.
@@ -610,41 +610,41 @@ data! {
         unsafe +renderPassDescriptor;
         unsafe -colorAttachments;
         unsafe -depthAttachment;
-        unsafe -setDepthAttachment;
+        unsafe -setDepthAttachment:;
         unsafe -stencilAttachment;
-        unsafe -setStencilAttachment;
+        unsafe -setStencilAttachment:;
         unsafe -visibilityResultBuffer;
-        unsafe -setVisibilityResultBuffer;
+        unsafe -setVisibilityResultBuffer:;
         unsafe -renderTargetArrayLength;
-        // unsafe -setRenderTargetArrayLength;
+        // unsafe -setRenderTargetArrayLength:;
         unsafe -imageblockSampleLength;
-        // unsafe -setImageblockSampleLength;
+        // unsafe -setImageblockSampleLength:;
         unsafe -threadgroupMemoryLength;
-        // unsafe -setThreadgroupMemoryLength;
+        // unsafe -setThreadgroupMemoryLength:;
         unsafe -tileWidth;
-        unsafe -setTileWidth;
+        unsafe -setTileWidth:;
         unsafe -tileHeight;
-        unsafe -setTileHeight;
+        unsafe -setTileHeight:;
         unsafe -defaultRasterSampleCount;
-        unsafe -setDefaultRasterSampleCount;
+        unsafe -setDefaultRasterSampleCount:;
         unsafe -renderTargetWidth;
-        unsafe -setRenderTargetWidth;
+        unsafe -setRenderTargetWidth:;
         unsafe -renderTargetHeight;
-        unsafe -setRenderTargetHeight;
+        unsafe -setRenderTargetHeight:;
         unsafe -rasterizationRateMap;
-        unsafe -setRasterizationRateMap;
+        unsafe -setRasterizationRateMap:;
         unsafe -sampleBufferAttachments;
     }
 
     protocol MTLResource {
         unsafe -label;
-        unsafe -setLabel;
+        unsafe -setLabel:;
         unsafe -device;
         unsafe -cpuCacheMode;
         unsafe -storageMode;
         unsafe -hazardTrackingMode;
         unsafe -resourceOptions;
-        unsafe -setPurgeableState;
+        unsafe -setPurgeableState:;
         unsafe -heap;
         unsafe -heapOffset;
         unsafe -allocatedSize;
@@ -654,35 +654,35 @@ data! {
     class MTLSamplerDescriptor {
         unsafe +new;
         unsafe -minFilter;
-        unsafe -setMinFilter;
+        unsafe -setMinFilter:;
         unsafe -magFilter;
-        unsafe -setMagFilter;
+        unsafe -setMagFilter:;
         unsafe -mipFilter;
-        unsafe -setMipFilter;
+        unsafe -setMipFilter:;
         unsafe -maxAnisotropy;
-        unsafe -setMaxAnisotropy;
+        unsafe -setMaxAnisotropy:;
         unsafe -sAddressMode;
-        unsafe -setSAddressMode;
+        unsafe -setSAddressMode:;
         unsafe -tAddressMode;
-        unsafe -setTAddressMode;
+        unsafe -setTAddressMode:;
         unsafe -rAddressMode;
-        unsafe -setRAddressMode;
+        unsafe -setRAddressMode:;
         unsafe -borderColor;
-        unsafe -setBorderColor;
+        unsafe -setBorderColor:;
         unsafe -normalizedCoordinates;
-        unsafe -setNormalizedCoordinates;
+        unsafe -setNormalizedCoordinates:;
         unsafe -lodMinClamp;
-        unsafe -setLodMinClamp;
+        unsafe -setLodMinClamp:;
         unsafe -lodMaxClamp;
-        unsafe -setLodMaxClamp;
+        unsafe -setLodMaxClamp:;
         unsafe -lodAverage;
-        unsafe -setLodAverage;
+        unsafe -setLodAverage:;
         unsafe -compareFunction;
-        unsafe -setCompareFunction;
+        unsafe -setCompareFunction:;
         unsafe -supportArgumentBuffers;
-        unsafe -setSupportArgumentBuffers;
+        unsafe -setSupportArgumentBuffers:;
         unsafe -label;
-        unsafe -setLabel;
+        unsafe -setLabel:;
     }
 
     protocol MTLSamplerState {
@@ -693,7 +693,7 @@ data! {
     protocol MTLEvent {
         unsafe -device;
         unsafe -label;
-        unsafe -setLabel;
+        unsafe -setLabel:;
     }
 
     class MTLSharedEventListener {
@@ -703,7 +703,7 @@ data! {
     class MTLSharedEvent {
         unsafe -newSharedEventHandle;
         unsafe -signaledValue;
-        unsafe -setSignaledValue;
+        unsafe -setSignaledValue:;
     }
 
     class MTLSharedEventHandle {
@@ -713,7 +713,7 @@ data! {
     protocol MTLFence {
         unsafe -device;
         unsafe -label;
-        unsafe -setLabel;
+        unsafe -setLabel:;
     }
 
     class MTLSharedTextureHandle {
@@ -723,39 +723,39 @@ data! {
 
     // Sizes must be >= 1
     class MTLTextureDescriptor {
-        // unsafe -texture2DDescriptorWithPixelFormat_width_height_mipmapped;
-        // unsafe -textureCubeDescriptorWithPixelFormat_size_mipmapped;
-        // unsafe -textureBufferDescriptorWithPixelFormat_width_resourceOptions_usage;
+        // unsafe -texture2DDescriptorWithPixelFormat:width:height:mipmapped:;
+        // unsafe -textureCubeDescriptorWithPixelFormat:size:mipmapped:;
+        // unsafe -textureBufferDescriptorWithPixelFormat:width:resourceOptions:usage:;
         unsafe -textureType;
-        unsafe -setTextureType;
+        unsafe -setTextureType:;
         unsafe -pixelFormat;
-        unsafe -setPixelFormat;
+        unsafe -setPixelFormat:;
         unsafe -width;
-        // unsafe -setWidth;
+        // unsafe -setWidth:;
         unsafe -height;
-        // unsafe -setHeight;
+        // unsafe -setHeight:;
         unsafe -depth;
-        // unsafe -setDepth;
+        // unsafe -setDepth:;
         unsafe -mipmapLevelCount;
-        // unsafe -setMipmapLevelCount;
+        // unsafe -setMipmapLevelCount:;
         unsafe -sampleCount;
-        // unsafe -setSampleCount;
+        // unsafe -setSampleCount:;
         unsafe -arrayLength;
-        // unsafe -setArrayLength;
+        // unsafe -setArrayLength:;
         unsafe -resourceOptions;
-        unsafe -setResourceOptions;
+        unsafe -setResourceOptions:;
         unsafe -cpuCacheMode;
-        unsafe -setCpuCacheMode;
+        unsafe -setCpuCacheMode:;
         unsafe -storageMode;
-        unsafe -setStorageMode;
+        unsafe -setStorageMode:;
         unsafe -hazardTrackingMode;
-        unsafe -setHazardTrackingMode;
+        unsafe -setHazardTrackingMode:;
         unsafe -usage;
-        unsafe -setUsage;
+        unsafe -setUsage:;
         unsafe -allowGPUOptimizedContents;
-        unsafe -setAllowGPUOptimizedContents;
+        unsafe -setAllowGPUOptimizedContents:;
         unsafe -swizzle;
-        unsafe -setSwizzle;
+        unsafe -setSwizzle:;
     }
 
     protocol MTLTexture {
@@ -782,56 +782,56 @@ data! {
         unsafe -tailSizeInBytes;
         unsafe -isSparse;
         unsafe -allowGPUOptimizedContents;
-        unsafe -newTextureViewWithPixelFormat;
+        unsafe -newTextureViewWithPixelFormat:;
         unsafe -newSharedTextureHandle;
         unsafe -remoteStorageTexture;
         unsafe -swizzle;
         // TODO: Verify that index out-of-bounds is sound.
-        // unsafe -newTextureViewWithPixelFormat_textureType_levels_slices;
-        // unsafe -newTextureViewWithPixelFormat_textureType_levels_slices_swizzle;
+        // unsafe -newTextureViewWithPixelFormat:textureType:levels:slices:;
+        // unsafe -newTextureViewWithPixelFormat:textureType:levels:slices:swizzle:;
     }
 
     class MTLBufferLayoutDescriptor {
         unsafe -stride;
-        unsafe -setStride;
+        unsafe -setStride:;
         unsafe -stepFunction;
-        unsafe -setStepFunction;
+        unsafe -setStepFunction:;
         unsafe -stepRate;
-        unsafe -setStepRate;
+        unsafe -setStepRate:;
     }
 
     class MTLAttributeDescriptor {
         unsafe -format;
-        unsafe -setFormat;
+        unsafe -setFormat:;
         unsafe -offset;
-        unsafe -setOffset;
+        unsafe -setOffset:;
         unsafe -bufferIndex;
         // TODO: Verify that index out-of-bounds is sound.
-        // unsafe -setBufferIndex;
+        // unsafe -setBufferIndex:;
     }
 
     class MTLVertexBufferLayoutDescriptor {
         unsafe +new;
         unsafe -stride;
         // Must be a multiple of 4
-        // unsafe -setStride;
+        // unsafe -setStride:;
         unsafe -stepFunction;
-        // setStepFunction and setStepRate must be done in lockstep
-        // unsafe -setStepFunction;
+        // setStepFunction: and setStepRate: must be done in lockstep
+        // unsafe -setStepFunction:;
         unsafe -stepRate;
-        // unsafe -setStepRate;
+        // unsafe -setStepRate:;
     }
 
     class MTLVertexAttributeDescriptor {
         unsafe +new;
         unsafe -format;
-        unsafe -setFormat;
+        unsafe -setFormat:;
         unsafe -offset;
         // Must be a multiple of 4
-        // unsafe -setOffset;
+        // unsafe -setOffset:;
         unsafe -bufferIndex;
         // TODO: Verify that index out-of-bounds is sound.
-        // unsafe -setBufferIndex;
+        // unsafe -setBufferIndex:;
     }
 
     class MTLVertexDescriptor {
@@ -847,15 +847,15 @@ data! {
         unsafe -layouts;
         unsafe -attributes;
         unsafe -indexType;
-        // unsafe -setIndexType;
+        // unsafe -setIndexType:;
         unsafe -indexBufferIndex;
-        // unsafe -setIndexBufferIndex;
+        // unsafe -setIndexBufferIndex:;
         unsafe -reset;
     }
 
     class MTLPipelineBufferDescriptor {
         unsafe -mutability;
-        unsafe -setMutability;
+        unsafe -setMutability:;
     }
 
     class MTLComputePipelineReflection {
@@ -865,31 +865,31 @@ data! {
     class MTLComputePipelineDescriptor {
         unsafe +new;
         unsafe -label;
-        unsafe -setLabel;
+        unsafe -setLabel:;
         unsafe -computeFunction;
-        unsafe -setComputeFunction;
+        unsafe -setComputeFunction:;
         unsafe -threadGroupSizeIsMultipleOfThreadExecutionWidth;
-        // unsafe -setThreadGroupSizeIsMultipleOfThreadExecutionWidth;
+        // unsafe -setThreadGroupSizeIsMultipleOfThreadExecutionWidth:;
         unsafe -maxTotalThreadsPerThreadgroup;
-        unsafe -setMaxTotalThreadsPerThreadgroup;
+        unsafe -setMaxTotalThreadsPerThreadgroup:;
         unsafe -stageInputDescriptor;
-        unsafe -setStageInputDescriptor;
+        unsafe -setStageInputDescriptor:;
         unsafe -buffers;
         unsafe -supportIndirectCommandBuffers;
-        unsafe -setSupportIndirectCommandBuffers;
+        unsafe -setSupportIndirectCommandBuffers:;
         unsafe -insertLibraries;
-        unsafe -setInsertLibraries;
+        unsafe -setInsertLibraries:;
         unsafe -preloadedLibraries;
-        unsafe -setPreloadedLibraries;
+        unsafe -setPreloadedLibraries:;
         unsafe -binaryArchives;
-        unsafe -setBinaryArchives;
+        unsafe -setBinaryArchives:;
         unsafe -reset;
         unsafe -linkedFunctions;
-        unsafe -setLinkedFunctions;
+        unsafe -setLinkedFunctions:;
         unsafe -supportAddingBinaryFunctions;
-        unsafe -setSupportAddingBinaryFunctions;
+        unsafe -setSupportAddingBinaryFunctions:;
         unsafe -maxCallStackDepth;
-        unsafe -setMaxCallStackDepth;
+        unsafe -setMaxCallStackDepth:;
     }
 
     protocol MTLComputePipelineState {
@@ -898,12 +898,12 @@ data! {
         unsafe -maxTotalThreadsPerThreadgroup;
         unsafe -threadExecutionWidth;
         unsafe -staticThreadgroupMemoryLength;
-        // unsafe -imageblockMemoryLengthForDimensions;
+        // unsafe -imageblockMemoryLengthForDimensions:;
         unsafe -supportIndirectCommandBuffers;
-        unsafe -functionHandleWithFunction;
-        unsafe -newComputePipelineStateWithAdditionalBinaryFunctions_error;
-        unsafe -newVisibleFunctionTableWithDescriptor;
-        unsafe -newIntersectionFunctionTableWithDescriptor;
+        unsafe -functionHandleWithFunction:;
+        unsafe -newComputePipelineStateWithAdditionalBinaryFunctions:error:;
+        unsafe -newVisibleFunctionTableWithDescriptor:;
+        unsafe -newIntersectionFunctionTableWithDescriptor:;
     }
 
     class MTLRenderPipelineReflection {
@@ -915,73 +915,73 @@ data! {
     class MTLRenderPipelineDescriptor {
         unsafe +new;
         unsafe -label;
-        unsafe -setLabel;
+        unsafe -setLabel:;
         unsafe -vertexFunction;
-        unsafe -setVertexFunction;
+        unsafe -setVertexFunction:;
         unsafe -fragmentFunction;
-        unsafe -setFragmentFunction;
+        unsafe -setFragmentFunction:;
         unsafe -vertexDescriptor;
-        unsafe -setVertexDescriptor;
+        unsafe -setVertexDescriptor:;
         unsafe -sampleCount;
-        unsafe -setSampleCount;
+        unsafe -setSampleCount:;
         unsafe -rasterSampleCount;
-        unsafe -setRasterSampleCount;
+        unsafe -setRasterSampleCount:;
         unsafe -isAlphaToCoverageEnabled;
-        unsafe -setAlphaToCoverageEnabled;
+        unsafe -setAlphaToCoverageEnabled:;
         unsafe -isAlphaToOneEnabled;
-        unsafe -setAlphaToOneEnabled;
+        unsafe -setAlphaToOneEnabled:;
         unsafe -isRasterizationEnabled;
-        unsafe -setRasterizationEnabled;
+        unsafe -setRasterizationEnabled:;
         unsafe -maxVertexAmplificationCount;
         // Call supportsVertexAmplificationCount: on device first
-        // unsafe -setMaxVertexAmplificationCount;
+        // unsafe -setMaxVertexAmplificationCount:;
         unsafe -colorAttachments;
         unsafe -depthAttachmentPixelFormat;
-        unsafe -setDepthAttachmentPixelFormat;
+        unsafe -setDepthAttachmentPixelFormat:;
         unsafe -stencilAttachmentPixelFormat;
-        unsafe -setStencilAttachmentPixelFormat;
+        unsafe -setStencilAttachmentPixelFormat:;
         unsafe -inputPrimitiveTopology;
         // Must be specified when layered rendering is enabled
-        // unsafe -setInputPrimitiveTopology;
+        // unsafe -setInputPrimitiveTopology:;
         unsafe -tessellationPartitionMode;
         // Affects maxTessellationFactor
-        // unsafe -setTessellationPartitionMode;
+        // unsafe -setTessellationPartitionMode:;
         unsafe -maxTessellationFactor;
         // Must be between 16 and 64 and depends on tessellationPartitionMode
-        // unsafe -setMaxTessellationFactor;
+        // unsafe -setMaxTessellationFactor:;
         unsafe -isTessellationFactorScaleEnabled;
-        unsafe -setTessellationFactorScaleEnabled;
+        unsafe -setTessellationFactorScaleEnabled:;
         unsafe -tessellationFactorFormat;
-        unsafe -setTessellationFactorFormat;
+        unsafe -setTessellationFactorFormat:;
         unsafe -tessellationControlPointIndexType;
         // Requires specific values when using indexed control points
-        // unsafe -setTessellationControlPointIndexType;
+        // unsafe -setTessellationControlPointIndexType:;
         unsafe -tessellationFactorStepFunction;
-        unsafe -setTessellationFactorStepFunction;
+        unsafe -setTessellationFactorStepFunction:;
         unsafe -tessellationOutputWindingOrder;
-        unsafe -setTessellationOutputWindingOrder;
+        unsafe -setTessellationOutputWindingOrder:;
         unsafe -vertexBuffers;
         unsafe -fragmentBuffers;
         unsafe -supportIndirectCommandBuffers;
-        unsafe -setSupportIndirectCommandBuffers;
+        unsafe -setSupportIndirectCommandBuffers:;
         unsafe -binaryArchives;
-        unsafe -setBinaryArchives;
+        unsafe -setBinaryArchives:;
         unsafe -vertexPreloadedLibraries;
-        unsafe -setVertexPreloadedLibraries;
+        unsafe -setVertexPreloadedLibraries:;
         unsafe -fragmentPreloadedLibraries;
-        unsafe -setFragmentPreloadedLibraries;
+        unsafe -setFragmentPreloadedLibraries:;
         unsafe -vertexLinkedFunctions;
-        unsafe -setVertexLinkedFunctions;
+        unsafe -setVertexLinkedFunctions:;
         unsafe -fragmentLinkedFunctions;
-        unsafe -setFragmentLinkedFunctions;
+        unsafe -setFragmentLinkedFunctions:;
         unsafe -supportAddingVertexBinaryFunctions;
-        unsafe -setSupportAddingVertexBinaryFunctions;
+        unsafe -setSupportAddingVertexBinaryFunctions:;
         unsafe -supportAddingFragmentBinaryFunctions;
-        unsafe -setSupportAddingFragmentBinaryFunctions;
+        unsafe -setSupportAddingFragmentBinaryFunctions:;
         unsafe -maxVertexCallStackDepth;
-        unsafe -setMaxVertexCallStackDepth;
+        unsafe -setMaxVertexCallStackDepth:;
         unsafe -maxFragmentCallStackDepth;
-        unsafe -setMaxFragmentCallStackDepth;
+        unsafe -setMaxFragmentCallStackDepth:;
         unsafe -reset;
     }
 
@@ -991,32 +991,32 @@ data! {
         unsafe -maxTotalThreadsPerThreadgroup;
         unsafe -threadgroupSizeMatchesTileSize;
         unsafe -imageblockSampleLength;
-        unsafe -imageblockMemoryLengthForDimensions;
+        unsafe -imageblockMemoryLengthForDimensions:;
         unsafe -supportIndirectCommandBuffers;
-        unsafe -functionHandleWithFunction_stage;
-        unsafe -newVisibleFunctionTableWithDescriptor_stage;
-        unsafe -newIntersectionFunctionTableWithDescriptor_stage;
-        unsafe -newRenderPipelineStateWithAdditionalBinaryFunctions_error;
+        unsafe -functionHandleWithFunction:stage:;
+        unsafe -newVisibleFunctionTableWithDescriptor:stage:;
+        unsafe -newIntersectionFunctionTableWithDescriptor:stage:;
+        unsafe -newRenderPipelineStateWithAdditionalBinaryFunctions:error:;
     }
 
     class MTLRenderPipelineColorAttachmentDescriptor {
         unsafe -pixelFormat;
-        unsafe -setPixelFormat;
+        unsafe -setPixelFormat:;
         unsafe -isBlendingEnabled;
-        unsafe -setBlendingEnabled;
+        unsafe -setBlendingEnabled:;
         unsafe -sourceRGBBlendFactor;
-        unsafe -setSourceRGBBlendFactor;
+        unsafe -setSourceRGBBlendFactor:;
         unsafe -destinationRGBBlendFactor;
-        unsafe -setDestinationRGBBlendFactor;
+        unsafe -setDestinationRGBBlendFactor:;
         unsafe -rgbBlendOperation;
-        unsafe -setRgbBlendOperation;
+        unsafe -setRgbBlendOperation:;
         unsafe -sourceAlphaBlendFactor;
-        unsafe -setSourceAlphaBlendFactor;
+        unsafe -setSourceAlphaBlendFactor:;
         unsafe -destinationAlphaBlendFactor;
-        unsafe -setDestinationAlphaBlendFactor;
+        unsafe -setDestinationAlphaBlendFactor:;
         unsafe -alphaBlendOperation;
-        unsafe -setAlphaBlendOperation;
+        unsafe -setAlphaBlendOperation:;
         unsafe -writeMask;
-        unsafe -setWriteMask;
+        unsafe -setWriteMask:;
     }
 }

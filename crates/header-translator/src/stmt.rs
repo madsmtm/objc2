@@ -180,11 +180,11 @@ fn parse_methods(
             drop(span);
             let partial = Method::partial(entity);
 
-            if !properties.remove(&(partial.is_class, partial.fn_name.clone())) {
-                let data = get_data(&partial.fn_name);
+            if !properties.remove(&(partial.is_class, partial.selector.clone())) {
+                let data = get_data(&partial.selector);
                 if let Some((designated_initializer, method)) = partial.parse(data, context) {
                     if designated_initializer {
-                        designated_initializers.push(method.fn_name.clone());
+                        designated_initializers.push(method.selector.clone());
                     }
                     methods.push(method);
                 }
@@ -197,21 +197,21 @@ fn parse_methods(
             // TODO: Use `get_overridden_methods` to deduplicate property
             // getters (when declared on both immutable and mutable class).
 
-            let getter_data = get_data(&partial.getter_name);
+            let getter_data = get_data(&partial.getter_sel);
             let setter_data = partial
-                .setter_name
+                .setter_sel
                 .as_ref()
-                .map(|setter_name| get_data(setter_name));
+                .map(|setter_sel| get_data(setter_sel));
 
             let (getter, setter) = partial.parse(getter_data, setter_data, context);
             if let Some(getter) = getter {
-                if !properties.insert((getter.is_class, getter.fn_name.clone())) {
+                if !properties.insert((getter.is_class, getter.selector.clone())) {
                     error!(?setter, "already exisiting property");
                 }
                 methods.push(getter);
             }
             if let Some(setter) = setter {
-                if !properties.insert((setter.is_class, setter.fn_name.clone())) {
+                if !properties.insert((setter.is_class, setter.selector.clone())) {
                     error!(?setter, "already exisiting property");
                 }
                 methods.push(setter);
