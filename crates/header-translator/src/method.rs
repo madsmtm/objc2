@@ -374,6 +374,19 @@ impl<'tu> PartialMethod<'tu> {
             return None;
         }
 
+        // Don't emit memory-management methods
+        match &*selector {
+            // Available via. `ClassType`
+            "alloc" | "allocWithZone:" if is_class => {
+                return None;
+            }
+            // Available via. `Id` (and disallowed by ARC).
+            "retain" | "release" | "autorelease" | "dealloc" if !is_class => {
+                return None;
+            }
+            _ => {}
+        }
+
         if entity.is_variadic() {
             warn!("can't handle variadic method");
             return None;

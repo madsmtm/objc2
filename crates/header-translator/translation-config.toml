@@ -544,16 +544,6 @@ skipped = true
 skipped = true
 # + some more in IMServicePlugIn.framework
 
-# `alloc`-family methods
-[class.NSObject.methods.alloc]
-skipped = true
-[class.NSObject.methods."allocWithZone:"]
-skipped = true
-[class.NSProxy.methods.alloc]
-skipped = true
-[class.NSProxy.methods."allocWithZone:"]
-skipped = true
-
 ###
 ### Lifetime annotations that we don't handle yet.
 ###
