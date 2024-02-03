@@ -17,6 +17,7 @@ mod config;
 mod context;
 mod data;
 mod expr;
+mod feature;
 mod file;
 mod id;
 mod library;

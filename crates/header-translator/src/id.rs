@@ -151,18 +151,6 @@ impl ItemIdentifier {
         self.library == "Foundation" && self.name == "NSComparator"
     }
 
-    pub fn feature(&self) -> Option<impl fmt::Display + '_> {
-        struct ItemIdentifierFeature<'a>(&'a ItemIdentifier);
-
-        impl fmt::Display for ItemIdentifierFeature<'_> {
-            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                write!(f, "{}_{}", self.0.library, self.0.name)
-            }
-        }
-
-        (!self.is_system()).then_some(ItemIdentifierFeature(self))
-    }
-
     pub fn path(&self) -> impl fmt::Display + '_ {
         struct ItemIdentifierPath<'a>(&'a ItemIdentifier);
 

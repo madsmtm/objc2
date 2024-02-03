@@ -4,6 +4,7 @@ use std::fs;
 use std::path::Path;
 
 use crate::config::{Config, LibraryData};
+use crate::feature::Feature;
 use crate::library::Library;
 use crate::stmt::Stmt;
 
@@ -151,23 +152,20 @@ impl Output {
                         Stmt::ClassDecl {
                             id, superclasses, ..
                         } => {
-                            if let Some(feature) = id.feature() {
+                            if let Some(feature) = Feature::new(id).name() {
                                 // Only require the first superclass as feature,
                                 // since the rest will be enabled transitively.
                                 if let Some((superclass, _)) = superclasses.first() {
-                                    let superclass_features: Vec<_> = superclass
-                                        .feature()
-                                        .map(|f| f.to_string())
-                                        .into_iter()
-                                        .collect();
+                                    let superclass_features: Vec<_> =
+                                        Feature::new(superclass).name().into_iter().collect();
                                     if let Some(existing) =
-                                        features.insert(feature.to_string(), superclass_features)
+                                        features.insert(feature.clone(), superclass_features)
                                     {
                                         error!(?existing, "duplicate feature");
                                     }
                                 }
 
-                                if !library_features.insert(feature.to_string()) {
+                                if !library_features.insert(feature) {
                                     error!("duplicate feature");
                                 }
                             }

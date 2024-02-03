@@ -11,6 +11,8 @@ use crate::availability::Availability;
 use crate::config::{ClassData, MethodData};
 use crate::context::Context;
 use crate::expr::Expr;
+use crate::feature::Feature;
+use crate::feature::Features;
 use crate::id::ItemIdentifier;
 use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
@@ -1360,13 +1362,15 @@ impl fmt::Display for Stmt {
                     "__inner_extern_class"
                 };
 
-                let main_feature_gate = match mutability {
-                    Mutability::MutableWithImmutableSuperclass(superclass) => superclass.feature(),
+                let main_feature = match mutability {
+                    Mutability::MutableWithImmutableSuperclass(superclass) => {
+                        Feature::new(superclass)
+                    }
                     Mutability::Immutable
                     | Mutability::Mutable
                     | Mutability::ImmutableWithMutableSubclass(_)
                     | Mutability::InteriorMutable
-                    | Mutability::MainThreadOnly => id.feature(),
+                    | Mutability::MainThreadOnly => Feature::new(id),
                 };
 
                 let (superclass, superclasses_rest) = superclasses.split_at(1);
@@ -1376,9 +1380,7 @@ impl fmt::Display for Stmt {
 
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    {derives}")?;
-                if let Some(feature) = &main_feature_gate {
-                    writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
-                }
+                write!(f, "    {}", main_feature.cfg_gate_ln())?;
                 write!(f, "{availability}")?;
                 write!(f, "    pub struct {}", id.name)?;
                 if !generics.is_empty() {
@@ -1408,9 +1410,7 @@ impl fmt::Display for Stmt {
 
                 writeln!(f)?;
 
-                if let Some(feature) = &main_feature_gate {
-                    writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
-                }
+                write!(f, "    {}", main_feature.cfg_gate_ln())?;
                 writeln!(
                     f,
                     "    unsafe impl{} ClassType for {}{} {{",
@@ -1462,15 +1462,11 @@ impl fmt::Display for Stmt {
 
                 if *sendable && generics.is_empty() {
                     writeln!(f)?;
-                    if let Some(feature) = &main_feature_gate {
-                        writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
-                    }
+                    write!(f, "{}", main_feature.cfg_gate_ln())?;
                     writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
 
                     writeln!(f)?;
-                    if let Some(feature) = &main_feature_gate {
-                        writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
-                    }
+                    write!(f, "{}", main_feature.cfg_gate_ln())?;
                     writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
                 }
             }
@@ -1510,9 +1506,7 @@ impl fmt::Display for Stmt {
                         }
                     }
                 }
-                if let Some(feature) = cls.feature() {
-                    writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
-                }
+                write!(f, "    {}", Feature::new(cls).cfg_gate_ln())?;
                 // TODO: Add ?Sized here once `extern_methods!` supports it.
                 writeln!(
                     f,
@@ -1522,9 +1516,7 @@ impl fmt::Display for Stmt {
                     GenericTyHelper(cls_generics),
                 )?;
                 for method in methods {
-                    // Use a set to deduplicate features, and to have them in
-                    // a consistent order
-                    let mut features = BTreeSet::new();
+                    let mut features = Features::new();
                     method.visit_required_types(|item| {
                         if cls.library == item.library && cls.name == item.name {
                             // The feature is guaranteed enabled if the class
@@ -1537,28 +1529,9 @@ impl fmt::Display for Stmt {
                                 return;
                             }
                         }
-                        if let Some(feature) = item.feature() {
-                            features.insert(format!("feature = \"{feature}\""));
-                        }
+                        features.add_item(item);
                     });
-                    match features.len() {
-                        0 => {}
-                        1 => {
-                            writeln!(f, "        #[cfg({})]", features.first().unwrap())?;
-                        }
-                        _ => {
-                            writeln!(
-                                f,
-                                "        #[cfg(all({}))]",
-                                features
-                                    .iter()
-                                    .map(|s| &**s)
-                                    .collect::<Vec<&str>>()
-                                    .join(",")
-                            )?;
-                        }
-                    }
-
+                    write!(f, "        {}", features.cfg_gate_ln())?;
                     writeln!(f, "{method}")?;
                 }
                 writeln!(f, "    }}")?;
@@ -1566,10 +1539,8 @@ impl fmt::Display for Stmt {
 
                 if let Some(method) = methods.iter().find(|method| method.usable_in_default_id()) {
                     writeln!(f)?;
-                    if let Some(feature) = cls.feature() {
-                        // Assume new methods require no extra features
-                        writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
-                    }
+                    // Assume new methods require no extra features
+                    write!(f, "    {}", Feature::new(cls).cfg_gate_ln())?;
                     writeln!(
                         f,
                         "impl{} DefaultId for {}{} {{",
@@ -1629,9 +1600,7 @@ impl fmt::Display for Stmt {
                     ("InvalidGenericBound", None)
                 };
 
-                if let Some(feature) = cls.feature() {
-                    writeln!(f, "#[cfg(feature = \"{feature}\")]")?;
-                }
+                write!(f, "{}", Feature::new(cls).cfg_gate_ln())?;
                 writeln!(
                     f,
                     "unsafe impl{} {} for {}{} {}{{}}",
@@ -1685,31 +1654,9 @@ impl fmt::Display for Stmt {
                 writeln!(f, " {{")?;
 
                 for method in methods {
-                    // Use a set to deduplicate features, and to have them in
-                    // a consistent order
-                    let mut features = BTreeSet::new();
-                    method.visit_required_types(|item| {
-                        if let Some(feature) = item.feature() {
-                            features.insert(format!("feature = \"{feature}\""));
-                        }
-                    });
-                    match features.len() {
-                        0 => {}
-                        1 => {
-                            writeln!(f, "        #[cfg({})]", features.first().unwrap())?;
-                        }
-                        _ => {
-                            writeln!(
-                                f,
-                                "        #[cfg(all({}))]",
-                                features
-                                    .iter()
-                                    .map(|s| &**s)
-                                    .collect::<Vec<&str>>()
-                                    .join(",")
-                            )?;
-                        }
-                    }
+                    let mut features = Features::new();
+                    method.visit_required_types(|item| features.add_item(item));
+                    write!(f, "        {}", features.cfg_gate_ln())?;
                     writeln!(f, "{method}")?;
                 }
                 writeln!(f, "    }}")?;
@@ -1821,38 +1768,15 @@ impl fmt::Display for Stmt {
                 body,
                 safe,
             } => {
-                // Use a set to deduplicate features, and to have them in
-                // a consistent order
-                let mut features = BTreeSet::new();
-                self.visit_required_types(|item| {
-                    if let Some(feature) = item.feature() {
-                        features.insert(format!("feature = \"{feature}\""));
-                    }
-                });
-
                 if body.is_some() {
                     writeln!(f, "inline_fn!(")?;
                 } else {
                     writeln!(f, "extern_fn!(")?;
                 }
 
-                match features.len() {
-                    0 => {}
-                    1 => {
-                        writeln!(f, "    #[cfg({})]", features.first().unwrap())?;
-                    }
-                    _ => {
-                        writeln!(
-                            f,
-                            "    #[cfg(all({}))]",
-                            features
-                                .iter()
-                                .map(|s| &**s)
-                                .collect::<Vec<&str>>()
-                                .join(",")
-                        )?;
-                    }
-                }
+                let mut features = Features::new();
+                self.visit_required_types(|item| features.add_item(item));
+                write!(f, "    {}", features.cfg_gate_ln())?;
 
                 let unsafe_ = if *safe { "" } else { " unsafe" };
 

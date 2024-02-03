@@ -1,10 +1,11 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 use std::fmt;
 use std::fs;
 use std::io;
 use std::path::Path;
 
 use crate::config::LibraryData;
+use crate::feature::Features;
 use crate::file::File;
 
 #[derive(Debug, PartialEq, Default)]
@@ -139,31 +140,9 @@ impl fmt::Display for Library {
             let file_name = file_name.replace('+', "_");
             for stmt in &file.stmts {
                 if let Some(name) = stmt.name() {
-                    // Use a set to deduplicate features, and to have them in
-                    // a consistent order
-                    let mut features = BTreeSet::new();
-                    stmt.visit_required_types(|item| {
-                        if let Some(feature) = item.feature() {
-                            features.insert(format!("feature = \"{feature}\""));
-                        }
-                    });
-                    match features.len() {
-                        0 => {}
-                        1 => {
-                            writeln!(f, "#[cfg({})]", features.first().unwrap())?;
-                        }
-                        _ => {
-                            writeln!(
-                                f,
-                                "#[cfg(all({}))]",
-                                features
-                                    .iter()
-                                    .map(|s| &**s)
-                                    .collect::<Vec<&str>>()
-                                    .join(",")
-                            )?;
-                        }
-                    }
+                    let mut features = Features::new();
+                    stmt.visit_required_types(|item| features.add_item(item));
+                    write!(f, "{}", features.cfg_gate_ln())?;
 
                     let visibility = if name.starts_with('_') {
                         "pub(crate)"
