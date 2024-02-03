@@ -216,7 +216,7 @@ impl MethodData {
             // Only use `unsafe` from itself, never take if from the superclass
             unsafe_: self.unsafe_,
             skipped: self.skipped | superclass.skipped,
-            mutating: self.mutating,
+            mutating: self.mutating.or(superclass.mutating),
         }
     }
 }

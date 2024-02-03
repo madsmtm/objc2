@@ -3,7 +3,7 @@ use std::fmt;
 
 use crate::ItemIdentifier;
 
-#[derive(PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Feature<'a>(&'a ItemIdentifier);
 
 impl<'a> Feature<'a> {
@@ -42,6 +42,7 @@ impl<'a> Feature<'a> {
 
 // Use a set to deduplicate features, and to have them in
 // a consistent order.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Features(BTreeSet<String>);
 
 impl Features {
@@ -52,6 +53,12 @@ impl Features {
     pub fn add_item(&mut self, item: &ItemIdentifier) {
         if let Some(name) = Feature::new(item).name() {
             self.0.insert(name);
+        }
+    }
+
+    pub fn remove_item(&mut self, item: &ItemIdentifier) {
+        if let Some(name) = Feature::new(item).name() {
+            self.0.remove(&name);
         }
     }
 

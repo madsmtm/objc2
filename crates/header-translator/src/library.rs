@@ -5,7 +5,6 @@ use std::io;
 use std::path::Path;
 
 use crate::config::LibraryData;
-use crate::feature::Features;
 use crate::file::File;
 
 #[derive(Debug, PartialEq, Default)]
@@ -139,9 +138,9 @@ impl fmt::Display for Library {
             // NOTE: some SDK files have '+' in the file name
             let file_name = file_name.replace('+', "_");
             for stmt in &file.stmts {
+                let features = stmt.features();
+
                 if let Some(name) = stmt.name() {
-                    let mut features = Features::new();
-                    stmt.visit_required_types(|item| features.add_item(item));
                     write!(f, "{}", features.cfg_gate_ln())?;
 
                     let visibility = if name.starts_with('_') {
@@ -155,6 +154,7 @@ impl fmt::Display for Library {
 
                 let extra_declared_types = stmt.extra_declared_types();
                 if !extra_declared_types.is_empty() {
+                    write!(f, "{}", features.cfg_gate_ln())?;
                     write!(f, "pub use self::__{file_name}::{{")?;
                     for item in extra_declared_types {
                         writeln!(f, "    {item},")?;

@@ -168,6 +168,9 @@ fn parse_attributes(entity: &Entity<'_>, context: &Context<'_>) -> (Option<bool>
 fn parse_methods(
     entity: &Entity<'_>,
     get_data: impl Fn(&str) -> MethodData,
+    is_mutable: bool,
+    is_protocol: bool,
+    implied_features: &[ItemIdentifier],
     context: &Context<'_>,
 ) -> (Vec<Method>, Vec<String>) {
     let mut methods = Vec::new();
@@ -184,7 +187,9 @@ fn parse_methods(
 
             if !properties.remove(&(partial.is_class, partial.selector.clone())) {
                 let data = get_data(&partial.selector);
-                if let Some((designated_initializer, method)) = partial.parse(data, context) {
+                if let Some((designated_initializer, method)) =
+                    partial.parse(data, is_mutable, is_protocol, implied_features, context)
+                {
                     if designated_initializer {
                         designated_initializers.push(method.selector.clone());
                     }
@@ -205,7 +210,14 @@ fn parse_methods(
                 .as_ref()
                 .map(|setter_sel| get_data(setter_sel));
 
-            let (getter, setter) = partial.parse(getter_data, setter_data, context);
+            let (getter, setter) = partial.parse(
+                getter_data,
+                setter_data,
+                is_mutable,
+                is_protocol,
+                implied_features,
+                context,
+            );
             if let Some(getter) = getter {
                 if !properties.insert((getter.is_class, getter.selector.clone())) {
                     error!(?setter, "already exisiting property");
@@ -370,7 +382,6 @@ pub enum Stmt {
         availability: Availability,
         cls: ItemIdentifier,
         cls_generics: Vec<String>,
-        cls_superclasses: Vec<(ItemIdentifier, Vec<String>)>,
         methods: Vec<Method>,
     },
     /// @protocol name <protocols*>
@@ -483,23 +494,17 @@ fn parse_fn_param_children(entity: &Entity<'_>, context: &Context<'_>) {
     });
 }
 
-pub(crate) fn get_category_cls<'tu>(entity: &Entity<'tu>) -> Entity<'tu> {
-    let mut cls = None;
-    entity.visit_children(|entity, _parent| {
-        if entity.get_kind() == EntityKind::ObjCClassRef {
-            if cls.is_some() {
-                panic!("could not find unique category class")
-            }
-            let definition = entity
-                .get_definition()
-                .expect("category class ref definition");
-            cls = Some(definition);
-            EntityVisitResult::Break
-        } else {
-            EntityVisitResult::Continue
-        }
-    });
-    cls.expect("could not find category class")
+fn get_class_implied_features(cls: &Entity<'_>, context: &Context<'_>) -> Vec<ItemIdentifier> {
+    // The feature is guaranteed enabled if the class
+    // itself is enabled.
+    let mut implied_features = vec![ItemIdentifier::new(cls, context)];
+
+    // Same for superclasses.
+    for (id, _, _) in parse_superclasses(cls, context) {
+        implied_features.push(id);
+    }
+
+    implied_features
 }
 
 impl Stmt {
@@ -525,11 +530,17 @@ impl Stmt {
 
                 let availability = Availability::parse(entity, context);
 
+                let implied_features = get_class_implied_features(entity, context);
+
                 verify_objc_decl(entity, context);
                 let generics = parse_class_generics(entity, context);
                 let (methods, designated_initializers) = parse_methods(
                     entity,
                     |name| ClassData::get_method_data(data, name),
+                    data.map(|data| data.mutability.is_mutable())
+                        .unwrap_or(false),
+                    false,
+                    &implied_features,
                     context,
                 );
 
@@ -581,6 +592,15 @@ impl Stmt {
                                     ClassData::get_method_data(superclass_data, name);
                                 data.merge_with_superclass(superclass_data)
                             },
+                            data.map(|data| data.mutability.is_mutable())
+                                .or(superclass_data.map(|data| data.mutability.is_mutable()))
+                                .unwrap_or(false),
+                            false,
+                            // Even though the methods are originally defined
+                            // elsewhere, we're going to be _emitting_ them on
+                            // the current class, so that's also where we're
+                            // taking our implied features from.
+                            &implied_features,
                             context,
                         );
                         methods.retain(|method| {
@@ -595,7 +615,6 @@ impl Stmt {
                                 availability: Availability::parse(entity, context),
                                 cls: id.clone(),
                                 cls_generics: generics.clone(),
-                                cls_superclasses: superclasses.clone(),
                                 methods,
                             })
                         }
@@ -607,7 +626,6 @@ impl Stmt {
                     availability: availability.clone(),
                     cls: id.clone(),
                     cls_generics: generics.clone(),
-                    cls_superclasses: superclasses.clone(),
                     methods,
                 };
 
@@ -640,7 +658,24 @@ impl Stmt {
                 let category = ItemIdentifier::new_optional(entity, context);
                 let availability = Availability::parse(entity, context);
 
-                let cls = ItemIdentifier::new(&get_category_cls(entity), context);
+                let mut cls_entity = None;
+                entity.visit_children(|entity, _parent| {
+                    if entity.get_kind() == EntityKind::ObjCClassRef {
+                        if cls_entity.is_some() {
+                            panic!("could not find unique category class")
+                        }
+                        let definition = entity
+                            .get_definition()
+                            .expect("category class ref definition");
+                        cls_entity = Some(definition);
+                        EntityVisitResult::Break
+                    } else {
+                        EntityVisitResult::Continue
+                    }
+                });
+                let cls_entity = cls_entity.expect("could not find category class");
+
+                let cls = ItemIdentifier::new(&cls_entity, context);
                 let data = context.class_data.get(&cls.name);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
@@ -670,6 +705,10 @@ impl Stmt {
                 let (methods, designated_initializers) = parse_methods(
                     entity,
                     |name| ClassData::get_method_data(data, name),
+                    data.map(|data| data.mutability.is_mutable())
+                        .unwrap_or(false),
+                    false,
+                    &get_class_implied_features(&cls_entity, context),
                     context,
                 );
 
@@ -688,11 +727,6 @@ impl Stmt {
                     )
                 }
 
-                let superclasses: Vec<_> = parse_superclasses(&get_category_cls(entity), context)
-                    .into_iter()
-                    .map(|(id, generics, _)| (id, generics))
-                    .collect();
-
                 let subclass_methods = if let Mutability::ImmutableWithMutableSubclass(subclass) =
                     data.map(|data| data.mutability.clone()).unwrap_or_default()
                 {
@@ -706,6 +740,11 @@ impl Stmt {
                             let subclass_data = ClassData::get_method_data(subclass_data, name);
                             subclass_data.merge_with_superclass(data)
                         },
+                        data.map(|data| data.mutability.is_mutable())
+                            .or(subclass_data.map(|data| data.mutability.is_mutable()))
+                            .unwrap_or(false),
+                        false,
+                        &get_class_implied_features(&cls_entity, context),
                         context,
                     );
                     methods.retain(|method| method.emit_on_subclasses());
@@ -720,11 +759,6 @@ impl Stmt {
                             cls: subclass,
                             // And that they have the same amount of generics.
                             cls_generics: generics.clone(),
-                            cls_superclasses: superclasses
-                                .iter()
-                                .cloned()
-                                .chain(iter::once((cls.clone(), generics.clone())))
-                                .collect(),
                             methods,
                         })
                     }
@@ -737,7 +771,6 @@ impl Stmt {
                     availability: availability.clone(),
                     cls: cls.clone(),
                     cls_generics: generics.clone(),
-                    cls_superclasses: superclasses,
                     methods,
                 })
                 .chain(subclass_methods)
@@ -774,6 +807,9 @@ impl Stmt {
                             .copied()
                             .unwrap_or_default()
                     },
+                    false,
+                    true,
+                    &[],
                     context,
                 );
 
@@ -1228,24 +1264,23 @@ impl Stmt {
         }
     }
 
-    pub fn visit_required_types(&self, mut f: impl FnMut(&ItemIdentifier)) {
+    pub(crate) fn features(&self) -> Features {
+        let mut features = Features::new();
         match self {
-            Stmt::ClassDecl { id, .. } => {
-                f(id);
-            }
+            Stmt::ClassDecl { id, .. } => features.add_item(id),
             Stmt::FnDecl {
                 arguments,
                 result_type,
                 ..
             } => {
                 for (_, arg) in arguments {
-                    arg.visit_required_types(&mut f);
+                    arg.visit_required_types(&mut |item| features.add_item(item));
                 }
-
-                result_type.visit_required_types(&mut f);
+                result_type.visit_required_types(&mut |item| features.add_item(item));
             }
             _ => {}
         }
+        features
     }
 
     pub(crate) fn name(&self) -> Option<&str> {
@@ -1465,7 +1500,6 @@ impl fmt::Display for Stmt {
                 availability: _,
                 cls,
                 cls_generics,
-                cls_superclasses,
                 methods,
             } => {
                 writeln!(f, "extern_methods!(")?;
@@ -1505,22 +1539,6 @@ impl fmt::Display for Stmt {
                     GenericTyHelper(cls_generics),
                 )?;
                 for method in methods {
-                    let mut features = Features::new();
-                    method.visit_required_types(|item| {
-                        if cls.library == item.library && cls.name == item.name {
-                            // The feature is guaranteed enabled if the class
-                            // itself is enabled.
-                            return;
-                        }
-                        for (superclass, _) in cls_superclasses {
-                            if superclass.library == item.library && superclass.name == item.name {
-                                // Same for superclasses.
-                                return;
-                            }
-                        }
-                        features.add_item(item);
-                    });
-                    write!(f, "        {}", features.cfg_gate_ln())?;
                     writeln!(f, "{method}")?;
                 }
                 writeln!(f, "    }}")?;
@@ -1528,7 +1546,7 @@ impl fmt::Display for Stmt {
 
                 if let Some(method) = methods.iter().find(|method| method.usable_in_default_id()) {
                     writeln!(f)?;
-                    // Assume new methods require no extra features
+                    // Assume `new` methods require no extra features
                     write!(f, "    {}", Feature::new(cls).cfg_gate_ln())?;
                     writeln!(
                         f,
@@ -1643,9 +1661,6 @@ impl fmt::Display for Stmt {
                 writeln!(f, " {{")?;
 
                 for method in methods {
-                    let mut features = Features::new();
-                    method.visit_required_types(|item| features.add_item(item));
-                    write!(f, "        {}", features.cfg_gate_ln())?;
                     writeln!(f, "{method}")?;
                 }
                 writeln!(f, "    }}")?;
@@ -1763,9 +1778,7 @@ impl fmt::Display for Stmt {
                     writeln!(f, "extern_fn!(")?;
                 }
 
-                let mut features = Features::new();
-                self.visit_required_types(|item| features.add_item(item));
-                write!(f, "    {}", features.cfg_gate_ln())?;
+                write!(f, "    {}", self.features().cfg_gate_ln())?;
 
                 let unsafe_ = if *safe { "" } else { " unsafe" };
 

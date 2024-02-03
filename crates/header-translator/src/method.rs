@@ -6,11 +6,11 @@ use tracing::span::EnteredSpan;
 use crate::availability::Availability;
 use crate::config::MethodData;
 use crate::context::Context;
+use crate::feature::Features;
 use crate::id::ItemIdentifier;
 use crate::immediate_children;
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::{MethodArgumentQualifier, Ty};
-use crate::stmt::get_category_cls;
 use crate::unexposed_attr::UnexposedAttr;
 
 impl MethodArgumentQualifier {
@@ -246,6 +246,7 @@ pub struct Method {
     pub selector: String,
     pub fn_name: String,
     availability: Availability,
+    features: Features,
     pub is_class: bool,
     is_optional_protocol: bool,
     memory_management: MemoryManagement,
@@ -271,32 +272,6 @@ impl Method {
             && self.arguments.is_empty()
             && self.safe
             && !self.mainthreadonly
-    }
-
-    fn parent_type_data(entity: &Entity<'_>, context: &Context<'_>) -> (bool, bool) {
-        let parent = entity.get_semantic_parent().expect("method parent");
-        let (parent, is_protocol) = match parent.get_kind() {
-            EntityKind::ObjCInterfaceDecl => (parent, false),
-            EntityKind::ObjCCategoryDecl => (get_category_cls(&parent), false),
-            EntityKind::ObjCProtocolDecl => (parent, true),
-            kind => {
-                error!(?kind, "unknown method parent kind");
-                (parent, false)
-            }
-        };
-        let parent_id = ItemIdentifier::new(&parent, context);
-
-        let is_mutable = if !is_protocol {
-            context
-                .class_data
-                .get(&parent_id.name)
-                .map(|data| data.mutability.is_mutable())
-                .unwrap_or(false)
-        } else {
-            false
-        };
-
-        (is_mutable, is_protocol)
     }
 
     /// Takes one of `EntityKind::ObjCInstanceMethodDecl` or
@@ -343,14 +318,6 @@ impl Method {
             _span,
         }
     }
-
-    pub fn visit_required_types(&self, mut f: impl FnMut(&ItemIdentifier)) {
-        for (_, arg) in &self.arguments {
-            arg.visit_required_types(&mut f);
-        }
-
-        self.result_type.visit_required_types(&mut f);
-    }
 }
 
 #[derive(Debug)]
@@ -362,7 +329,14 @@ pub struct PartialMethod<'tu> {
 }
 
 impl<'tu> PartialMethod<'tu> {
-    pub fn parse(self, data: MethodData, context: &Context<'_>) -> Option<(bool, Method)> {
+    pub fn parse<'a>(
+        self,
+        data: MethodData,
+        parent_is_mutable: bool,
+        parent_is_protocol: bool,
+        implied_features: impl IntoIterator<Item = &'a ItemIdentifier>,
+        context: &Context<'_>,
+    ) -> Option<(bool, Method)> {
         let Self {
             entity,
             selector,
@@ -391,8 +365,6 @@ impl<'tu> PartialMethod<'tu> {
             warn!("can't handle variadic method");
             return None;
         }
-
-        let (parent_is_mutable, is_protocol) = Method::parent_type_data(&entity, context);
 
         let availability = Availability::parse(&entity, context);
 
@@ -488,6 +460,15 @@ impl<'tu> PartialMethod<'tu> {
             result_type.set_is_error();
         }
 
+        let mut features = Features::new();
+        for (_, arg_ty) in &arguments {
+            arg_ty.visit_required_types(&mut |item| features.add_item(item));
+        }
+        result_type.visit_required_types(&mut |item| features.add_item(item));
+        for ignored in implied_features {
+            features.remove_item(ignored);
+        }
+
         let fn_name = selector.trim_end_matches(|c| c == ':').replace(':', "_");
 
         Some((
@@ -496,6 +477,7 @@ impl<'tu> PartialMethod<'tu> {
                 selector,
                 fn_name,
                 availability,
+                features,
                 is_class,
                 is_optional_protocol: entity.is_objc_optional(),
                 memory_management,
@@ -506,7 +488,7 @@ impl<'tu> PartialMethod<'tu> {
                 // since immutable methods are usually either declared on an
                 // immutable subclass, or as a property.
                 mutating: data.mutating.unwrap_or(parent_is_mutable),
-                is_protocol,
+                is_protocol: parent_is_protocol,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly: modifiers.mainthreadonly,
             },
@@ -526,10 +508,13 @@ pub struct PartialProperty<'tu> {
 }
 
 impl PartialProperty<'_> {
-    pub fn parse(
+    pub fn parse<'a>(
         self,
         getter_data: MethodData,
         setter_data: Option<MethodData>,
+        parent_is_mutable: bool,
+        parent_is_protocol: bool,
+        implied_features: impl IntoIterator<Item = &'a ItemIdentifier> + Clone,
         context: &Context<'_>,
     ) -> (Option<Method>, Option<Method>) {
         let Self {
@@ -549,8 +534,6 @@ impl PartialProperty<'_> {
             return (None, None);
         }
 
-        let (parent_is_mutable, is_protocol) = Method::parent_type_data(&entity, context);
-
         let availability = Availability::parse(&entity, context);
 
         let modifiers = MethodModifiers::parse(&entity, context);
@@ -569,12 +552,19 @@ impl PartialProperty<'_> {
                 context,
             );
 
+            let mut features = Features::new();
+            ty.visit_required_types(&mut |item| features.add_item(item));
+            for ignored in implied_features.clone() {
+                features.remove_item(ignored);
+            }
+
             let memory_management = MemoryManagement::new(is_class, &getter_sel, &ty, modifiers);
 
             Some(Method {
                 selector: getter_sel.clone(),
                 fn_name: getter_sel,
                 availability: availability.clone(),
+                features: features.clone(),
                 is_class,
                 is_optional_protocol: entity.is_objc_optional(),
                 memory_management,
@@ -584,7 +574,7 @@ impl PartialProperty<'_> {
                 // Getters are usually not mutable, even if the class itself
                 // is, so let's default to immutable.
                 mutating: getter_data.mutating.unwrap_or(false),
-                is_protocol,
+                is_protocol: parent_is_protocol,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly: modifiers.mainthreadonly,
             })
@@ -602,6 +592,12 @@ impl PartialProperty<'_> {
                     context,
                 );
 
+                let mut features = Features::new();
+                ty.visit_required_types(&mut |item| features.add_item(item));
+                for ignored in implied_features {
+                    features.remove_item(ignored);
+                }
+
                 let fn_name = selector.strip_suffix(':').unwrap().to_string();
                 let memory_management =
                     MemoryManagement::new(is_class, &selector, &Ty::VOID_RESULT, modifiers);
@@ -610,6 +606,7 @@ impl PartialProperty<'_> {
                     selector,
                     fn_name,
                     availability,
+                    features,
                     is_class,
                     is_optional_protocol: entity.is_objc_optional(),
                     memory_management,
@@ -618,7 +615,7 @@ impl PartialProperty<'_> {
                     safe: !setter_data.unsafe_,
                     // Setters are usually mutable if the class itself is.
                     mutating: setter_data.mutating.unwrap_or(parent_is_mutable),
-                    is_protocol,
+                    is_protocol: parent_is_protocol,
                     non_isolated: modifiers.non_isolated,
                     mainthreadonly: modifiers.mainthreadonly,
                 })
@@ -659,6 +656,7 @@ impl fmt::Display for Method {
         // Attributes
         //
 
+        write!(f, "{}", self.features.cfg_gate_ln())?;
         write!(f, "{}", self.availability)?;
 
         if self.is_optional_protocol {
