@@ -336,6 +336,15 @@ impl fmt::Display for Mutability {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub enum MethodSource {
+    Class,
+    Superclass(ItemIdentifier),
+    /// Some categories don't have a name (e.g. on `NSClipView`).
+    Category(ItemIdentifier<Option<String>>),
+    SuperclassCategory(ItemIdentifier, ItemIdentifier<Option<String>>),
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub enum Stmt {
     /// @interface name: superclass <protocols*>
     /// ->
@@ -351,18 +360,16 @@ pub enum Stmt {
         skipped: bool,
         sendable: bool,
     },
-    /// @interface class_name (name) <protocols*>
+    /// @interface class_name (category_name) <protocols*>
     /// ->
     /// extern_methods!
-    Methods {
-        cls: ItemIdentifier,
-        generics: Vec<String>,
-        /// For the categories that have a name (though some don't, see NSClipView)
-        category: ItemIdentifier<Option<String>>,
+    ClassMethods {
+        source: MethodSource,
         availability: Availability,
-        superclasses: Vec<(ItemIdentifier, Vec<String>)>,
+        cls: ItemIdentifier,
+        cls_generics: Vec<String>,
+        cls_superclasses: Vec<(ItemIdentifier, Vec<String>)>,
         methods: Vec<Method>,
-        description: Option<String>,
     },
     /// @protocol name <protocols*>
     /// ->
@@ -581,30 +588,25 @@ impl Stmt {
                         if methods.is_empty() {
                             None
                         } else {
-                            Some(Self::Methods {
-                                cls: id.clone(),
-                                generics: generics.clone(),
-                                category: ItemIdentifier::with_name(None, entity, context),
+                            Some(Self::ClassMethods {
+                                source: MethodSource::Superclass(superclass_id.clone()),
                                 availability: Availability::parse(entity, context),
-                                superclasses: superclasses.clone(),
+                                cls: id.clone(),
+                                cls_generics: generics.clone(),
+                                cls_superclasses: superclasses.clone(),
                                 methods,
-                                description: Some(format!(
-                                    "Methods declared on superclass `{}`",
-                                    superclass_id.name
-                                )),
                             })
                         }
                     })
                     .collect();
 
-                let methods = Self::Methods {
-                    cls: id.clone(),
-                    generics: generics.clone(),
-                    category: ItemIdentifier::with_name(None, entity, context),
+                let methods = Self::ClassMethods {
+                    source: MethodSource::Class,
                     availability: availability.clone(),
-                    superclasses: superclasses.clone(),
+                    cls: id.clone(),
+                    cls_generics: generics.clone(),
+                    cls_superclasses: superclasses.clone(),
                     methods,
-                    description: None,
                 };
 
                 iter::once(Self::ClassDecl {
@@ -719,38 +721,33 @@ impl Stmt {
                     if methods.is_empty() {
                         None
                     } else {
-                        Some(Self::Methods {
-                            cls: subclass,
+                        Some(Self::ClassMethods {
+                            source: MethodSource::SuperclassCategory(cls.clone(), category.clone()),
                             // Assume that immutable/mutable pairs have the
-                            // same amount of generics.
-                            generics: generics.clone(),
-                            category: category.clone(),
-                            // And that they have the same availability.
+                            // same availability.
                             availability: availability.clone(),
-                            superclasses: superclasses
+                            cls: subclass,
+                            // And that they have the same amount of generics.
+                            cls_generics: generics.clone(),
+                            cls_superclasses: superclasses
                                 .iter()
                                 .cloned()
                                 .chain(iter::once((cls.clone(), generics.clone())))
                                 .collect(),
                             methods,
-                            description: Some(format!(
-                                "Methods declared on superclass `{}`",
-                                cls.name
-                            )),
                         })
                     }
                 } else {
                     None
                 };
 
-                iter::once(Self::Methods {
-                    cls: cls.clone(),
-                    generics: generics.clone(),
-                    category,
+                iter::once(Self::ClassMethods {
+                    source: MethodSource::Category(category),
                     availability: availability.clone(),
-                    superclasses,
+                    cls: cls.clone(),
+                    cls_generics: generics.clone(),
+                    cls_superclasses: superclasses,
                     methods,
-                    description: None,
                 })
                 .chain(subclass_methods)
                 .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
@@ -1216,11 +1213,11 @@ impl Stmt {
     pub fn compare(&self, other: &Self) {
         if self != other {
             if let (
-                Self::Methods {
+                Self::ClassMethods {
                     methods: self_methods,
                     ..
                 },
-                Self::Methods {
+                Self::ClassMethods {
                     methods: other_methods,
                     ..
                 },
@@ -1269,7 +1266,7 @@ impl Stmt {
                     Some(&*id.name)
                 }
             }
-            Stmt::Methods { .. } => None,
+            Stmt::ClassMethods { .. } => None,
             Stmt::ProtocolDecl { id, .. } => Some(&*id.name),
             Stmt::ProtocolImpl { .. } => None,
             Stmt::StructDecl { id, .. } => Some(&*id.name),
@@ -1477,25 +1474,41 @@ impl fmt::Display for Stmt {
                     writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
                 }
             }
-            Self::Methods {
-                cls,
-                generics,
-                category,
+            Self::ClassMethods {
+                source,
                 // TODO: Output `#[deprecated]` only on categories
                 availability: _,
-                superclasses,
+                cls,
+                cls_generics,
+                cls_superclasses,
                 methods,
-                description,
             } => {
                 writeln!(f, "extern_methods!(")?;
-                if let Some(description) = description {
-                    writeln!(f, "    /// {description}")?;
-                    if category.name.is_some() {
-                        writeln!(f, "    ///")?;
+                match source {
+                    MethodSource::Class => {}
+                    MethodSource::Superclass(superclass) => {
+                        writeln!(
+                            f,
+                            "    /// Methods declared on superclass `{}`",
+                            superclass.name
+                        )?;
                     }
-                }
-                if let Some(category_name) = &category.name {
-                    writeln!(f, "    /// {category_name}")?;
+                    MethodSource::Category(category) => {
+                        if let Some(category_name) = &category.name {
+                            writeln!(f, "    /// {category_name}")?;
+                        }
+                    }
+                    MethodSource::SuperclassCategory(superclass, category) => {
+                        writeln!(
+                            f,
+                            "    /// Methods declared on superclass `{}`",
+                            superclass.name
+                        )?;
+                        if let Some(category_name) = &category.name {
+                            writeln!(f, "    ///")?;
+                            writeln!(f, "    /// {category_name}")?;
+                        }
+                    }
                 }
                 if let Some(feature) = cls.feature() {
                     writeln!(f, "    #[cfg(feature = \"{feature}\")]")?;
@@ -1504,9 +1517,9 @@ impl fmt::Display for Stmt {
                 writeln!(
                     f,
                     "    unsafe impl{} {}{} {{",
-                    GenericParamsHelper(generics, "Message"),
-                    cls.path_in_relation_to(category),
-                    GenericTyHelper(generics),
+                    GenericParamsHelper(cls_generics, "Message"),
+                    cls.path(),
+                    GenericTyHelper(cls_generics),
                 )?;
                 for method in methods {
                     // Use a set to deduplicate features, and to have them in
@@ -1518,7 +1531,7 @@ impl fmt::Display for Stmt {
                             // itself is enabled.
                             return;
                         }
-                        for (superclass, _) in superclasses {
+                        for (superclass, _) in cls_superclasses {
                             if superclass.library == item.library && superclass.name == item.name {
                                 // Same for superclasses.
                                 return;
@@ -1560,9 +1573,9 @@ impl fmt::Display for Stmt {
                     writeln!(
                         f,
                         "impl{} DefaultId for {}{} {{",
-                        GenericParamsHelper(generics, "Message"),
-                        cls.path_in_relation_to(category),
-                        GenericTyHelper(generics),
+                        GenericParamsHelper(cls_generics, "Message"),
+                        cls.path(),
+                        GenericTyHelper(cls_generics),
                     )?;
                     writeln!(f, "    #[inline]")?;
                     writeln!(f, "    fn default_id() -> Id<Self> {{")?;
