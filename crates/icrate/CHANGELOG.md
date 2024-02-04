@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## icrate Unreleased - YYYY-MM-DD
 
+### Added
+* Added `NSObject` categories, notably those used by key-value coding and
+  observing.
+
 ### Changed
 * Updated SDK from Xcode 15.0.1 to 15.2.
 
