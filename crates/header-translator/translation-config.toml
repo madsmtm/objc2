@@ -1385,12 +1385,6 @@ NSCancelButton = { skipped = true }
 NSFileHandlingPanelCancelButton = { skipped = true }
 NSFileHandlingPanelOKButton = { skipped = true }
 
-# Categories for classes defined in other frameworks
-[class.CIImage]
-skipped = true
-[class.CIColor]
-skipped = true
-
 # Different definitions depending on target
 [enum.NSImageResizingMode]
 skipped = true
