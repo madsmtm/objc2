@@ -169,7 +169,7 @@ fn parse_methods(
     entity: &Entity<'_>,
     get_data: impl Fn(&str) -> MethodData,
     is_mutable: bool,
-    is_protocol: bool,
+    is_pub: bool,
     implied_features: &[ItemIdentifier],
     context: &Context<'_>,
 ) -> (Vec<Method>, Vec<String>) {
@@ -188,7 +188,7 @@ fn parse_methods(
             if !properties.remove(&(partial.is_class, partial.selector.clone())) {
                 let data = get_data(&partial.selector);
                 if let Some((designated_initializer, method)) =
-                    partial.parse(data, is_mutable, is_protocol, implied_features, context)
+                    partial.parse(data, is_mutable, is_pub, implied_features, context)
                 {
                     if designated_initializer {
                         designated_initializers.push(method.selector.clone());
@@ -214,7 +214,7 @@ fn parse_methods(
                 getter_data,
                 setter_data,
                 is_mutable,
-                is_protocol,
+                is_pub,
                 implied_features,
                 context,
             );
@@ -350,15 +350,6 @@ impl fmt::Display for Mutability {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum MethodSource {
-    Class,
-    Superclass(ItemIdentifier),
-    /// Some categories don't have a name (e.g. on `NSClipView`).
-    Category(ItemIdentifier<Option<String>>),
-    SuperclassCategory(ItemIdentifier, ItemIdentifier<Option<String>>),
-}
-
-#[derive(Debug, Clone, PartialEq)]
 pub enum Stmt {
     /// @interface name: superclass <protocols*>
     /// ->
@@ -377,11 +368,22 @@ pub enum Stmt {
     /// @interface class_name (category_name) <protocols*>
     /// ->
     /// extern_methods!
-    ClassMethods {
-        source: MethodSource,
+    ExternMethods {
         availability: Availability,
         cls: ItemIdentifier,
+        source_superclass: Option<ItemIdentifier>,
         cls_generics: Vec<String>,
+        category_name: Option<String>,
+        methods: Vec<Method>,
+    },
+    /// @interface class_name (category_name) <protocols*>
+    /// ->
+    /// extern_category!
+    ExternCategory {
+        id: ItemIdentifier,
+        actual_name: Option<String>,
+        availability: Availability,
+        cls: ItemIdentifier,
         methods: Vec<Method>,
     },
     /// @protocol name <protocols*>
@@ -539,7 +541,7 @@ impl Stmt {
                     |name| ClassData::get_method_data(data, name),
                     data.map(|data| data.mutability.is_mutable())
                         .unwrap_or(false),
-                    false,
+                    true,
                     &implied_features,
                     context,
                 );
@@ -595,7 +597,7 @@ impl Stmt {
                             data.map(|data| data.mutability.is_mutable())
                                 .or(superclass_data.map(|data| data.mutability.is_mutable()))
                                 .unwrap_or(false),
-                            false,
+                            true,
                             // Even though the methods are originally defined
                             // elsewhere, we're going to be _emitting_ them on
                             // the current class, so that's also where we're
@@ -610,22 +612,24 @@ impl Stmt {
                         if methods.is_empty() {
                             None
                         } else {
-                            Some(Self::ClassMethods {
-                                source: MethodSource::Superclass(superclass_id.clone()),
+                            Some(Self::ExternMethods {
                                 availability: Availability::parse(entity, context),
                                 cls: id.clone(),
+                                source_superclass: Some(superclass_id.clone()),
                                 cls_generics: generics.clone(),
+                                category_name: None,
                                 methods,
                             })
                         }
                     })
                     .collect();
 
-                let methods = Self::ClassMethods {
-                    source: MethodSource::Class,
+                let methods = Self::ExternMethods {
                     availability: availability.clone(),
                     cls: id.clone(),
+                    source_superclass: None,
                     cls_generics: generics.clone(),
+                    category_name: None,
                     methods,
                 };
 
@@ -702,15 +706,97 @@ impl Stmt {
                     .unwrap_or_default();
                 protocols.retain(|protocol| !skipped_protocols.contains(&protocol.name));
 
-                let (methods, designated_initializers) = parse_methods(
-                    entity,
-                    |name| ClassData::get_method_data(data, name),
-                    data.map(|data| data.mutability.is_mutable())
-                        .unwrap_or(false),
-                    false,
-                    &get_class_implied_features(&cls_entity, context),
-                    context,
-                );
+                // For ease-of-use, if the category is defined in the same
+                // library as the class, we just emit it as `extern_methods!`.
+                let output = if cls.library == category.library {
+                    let (methods, designated_initializers) = parse_methods(
+                        entity,
+                        |name| ClassData::get_method_data(data, name),
+                        data.map(|data| data.mutability.is_mutable())
+                            .unwrap_or(false),
+                        true,
+                        &get_class_implied_features(&cls_entity, context),
+                        context,
+                    );
+
+                    if !designated_initializers.is_empty() {
+                        warn!(
+                            ?designated_initializers,
+                            "designated initializer in category"
+                        );
+                    }
+
+                    Some(Self::ExternMethods {
+                        availability: availability.clone(),
+                        cls: cls.clone(),
+                        source_superclass: None,
+                        cls_generics: generics.clone(),
+                        category_name: category.name.clone(),
+                        methods,
+                    })
+                } else {
+                    if !generics.is_empty() {
+                        panic!("external category: cannot handle generics");
+                    }
+
+                    // Rough heuristic to determine category name.
+                    //
+                    // Note: There isn't really a good way to do this, as
+                    // category names are not part of the public API in
+                    // Objective-C.
+                    let id = category.clone().map_name(|name| match name {
+                        None => format!("{}Category", cls.name),
+                        Some(name) => {
+                            if name.contains(&cls.name)
+                                || name.contains(&cls.name.replace("Mutable", ""))
+                            {
+                                name.clone()
+                            } else {
+                                format!("{}{}", cls.name, name)
+                            }
+                        }
+                    });
+
+                    let (methods, designated_initializers) = parse_methods(
+                        entity,
+                        |name| ClassData::get_method_data(data, name),
+                        false,
+                        false,
+                        &get_class_implied_features(&cls_entity, context),
+                        context,
+                    );
+
+                    if !designated_initializers.is_empty() {
+                        warn!(
+                            ?designated_initializers,
+                            "designated initializer in category"
+                        );
+                    }
+
+                    // Categories are often used to implement protocols for a
+                    // type, so as an optimization let's not emit empty
+                    // external declarations.
+                    //
+                    // Additionally, if all methods are deprecated, then there
+                    // really isn't a need for us to emit the category
+                    // (especially on NSObject, as that just adds a bunch of
+                    // clutter).
+                    if methods
+                        .iter()
+                        .all(|method| method.availability.is_deprecated())
+                    {
+                        None
+                    } else {
+                        Some(Self::ExternCategory {
+                            id,
+                            actual_name: category.name.clone(),
+                            availability: availability.clone(),
+                            cls: cls.clone(),
+                            methods,
+                        })
+                    }
+                }
+                .into_iter();
 
                 let (sendable, mainthreadonly) = parse_attributes(entity, context);
                 if let Some(sendable) = sendable {
@@ -718,13 +804,6 @@ impl Stmt {
                 }
                 if mainthreadonly {
                     error!("@UIActor on category");
-                }
-
-                if !designated_initializers.is_empty() {
-                    warn!(
-                        ?designated_initializers,
-                        "designated initializer in category"
-                    )
                 }
 
                 let subclass_methods = if let Mutability::ImmutableWithMutableSubclass(subclass) =
@@ -743,7 +822,7 @@ impl Stmt {
                         data.map(|data| data.mutability.is_mutable())
                             .or(subclass_data.map(|data| data.mutability.is_mutable()))
                             .unwrap_or(false),
-                        false,
+                        true,
                         &get_class_implied_features(&cls_entity, context),
                         context,
                     );
@@ -751,14 +830,15 @@ impl Stmt {
                     if methods.is_empty() {
                         None
                     } else {
-                        Some(Self::ClassMethods {
-                            source: MethodSource::SuperclassCategory(cls.clone(), category.clone()),
+                        Some(Self::ExternMethods {
+                            source_superclass: Some(cls.clone()),
                             // Assume that immutable/mutable pairs have the
                             // same availability.
                             availability: availability.clone(),
                             cls: subclass,
                             // And that they have the same amount of generics.
                             cls_generics: generics.clone(),
+                            category_name: category.name.clone(),
                             methods,
                         })
                     }
@@ -766,21 +846,15 @@ impl Stmt {
                     None
                 };
 
-                iter::once(Self::ClassMethods {
-                    source: MethodSource::Category(category),
-                    availability: availability.clone(),
-                    cls: cls.clone(),
-                    cls_generics: generics.clone(),
-                    methods,
-                })
-                .chain(subclass_methods)
-                .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
-                    cls: cls.clone(),
-                    generics: generics.clone(),
-                    availability: availability.clone(),
-                    protocol,
-                }))
-                .collect()
+                output
+                    .chain(subclass_methods)
+                    .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
+                        cls: cls.clone(),
+                        generics: generics.clone(),
+                        availability: availability.clone(),
+                        protocol,
+                    }))
+                    .collect()
             }
             EntityKind::ObjCProtocolDecl => {
                 let actual_id = ItemIdentifier::new(entity, context);
@@ -808,7 +882,7 @@ impl Stmt {
                             .unwrap_or_default()
                     },
                     false,
-                    true,
+                    false,
                     &[],
                     context,
                 );
@@ -1240,11 +1314,11 @@ impl Stmt {
     pub fn compare(&self, other: &Self) {
         if self != other {
             if let (
-                Self::ClassMethods {
+                Self::ExternMethods {
                     methods: self_methods,
                     ..
                 },
-                Self::ClassMethods {
+                Self::ExternMethods {
                     methods: other_methods,
                     ..
                 },
@@ -1268,6 +1342,7 @@ impl Stmt {
         let mut features = Features::new();
         match self {
             Stmt::ClassDecl { id, .. } => features.add_item(id),
+            Stmt::ExternCategory { cls, .. } => features.add_item(cls),
             Stmt::FnDecl {
                 arguments,
                 result_type,
@@ -1289,19 +1364,20 @@ impl Stmt {
                 if *skipped {
                     None
                 } else {
-                    Some(&*id.name)
+                    Some(&id.name)
                 }
             }
-            Stmt::ClassMethods { .. } => None,
-            Stmt::ProtocolDecl { id, .. } => Some(&*id.name),
+            Stmt::ExternMethods { .. } => None,
+            Stmt::ExternCategory { id, .. } => Some(&id.name),
+            Stmt::ProtocolDecl { id, .. } => Some(&id.name),
             Stmt::ProtocolImpl { .. } => None,
-            Stmt::StructDecl { id, .. } => Some(&*id.name),
+            Stmt::StructDecl { id, .. } => Some(&id.name),
             Stmt::EnumDecl { id, .. } => id.name.as_deref(),
-            Stmt::VarDecl { id, .. } => Some(&*id.name),
+            Stmt::VarDecl { id, .. } => Some(&id.name),
             Stmt::FnDecl { id, body, .. } if body.is_none() => Some(&*id.name),
             // TODO
             Stmt::FnDecl { .. } => None,
-            Stmt::AliasDecl { id, .. } => Some(&*id.name),
+            Stmt::AliasDecl { id, .. } => Some(&id.name),
         }
     }
 
@@ -1494,40 +1570,27 @@ impl fmt::Display for Stmt {
                     writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
                 }
             }
-            Self::ClassMethods {
-                source,
-                // TODO: Output `#[deprecated]` only on categories
+            Self::ExternMethods {
                 availability: _,
                 cls,
+                source_superclass,
                 cls_generics,
+                category_name,
                 methods,
             } => {
                 writeln!(f, "extern_methods!(")?;
-                match source {
-                    MethodSource::Class => {}
-                    MethodSource::Superclass(superclass) => {
-                        writeln!(
-                            f,
-                            "    /// Methods declared on superclass `{}`",
-                            superclass.name
-                        )?;
+                if let Some(source_superclass) = source_superclass {
+                    writeln!(
+                        f,
+                        "    /// Methods declared on superclass `{}`",
+                        source_superclass.name
+                    )?;
+                    if let Some(category_name) = category_name {
+                        writeln!(f, "///")?;
+                        writeln!(f, "    /// {category_name}")?;
                     }
-                    MethodSource::Category(category) => {
-                        if let Some(category_name) = &category.name {
-                            writeln!(f, "    /// {category_name}")?;
-                        }
-                    }
-                    MethodSource::SuperclassCategory(superclass, category) => {
-                        writeln!(
-                            f,
-                            "    /// Methods declared on superclass `{}`",
-                            superclass.name
-                        )?;
-                        if let Some(category_name) = &category.name {
-                            writeln!(f, "    ///")?;
-                            writeln!(f, "    /// {category_name}")?;
-                        }
-                    }
+                } else if let Some(category_name) = category_name {
+                    writeln!(f, "    /// {category_name}")?;
                 }
                 write!(f, "    {}", Feature::new(cls).cfg_gate_ln())?;
                 // TODO: Add ?Sized here once `extern_methods!` supports it.
@@ -1561,6 +1624,46 @@ impl fmt::Display for Stmt {
                     writeln!(f, "    }}")?;
                     writeln!(f, "}}")?;
                 }
+            }
+            Self::ExternCategory {
+                id,
+                actual_name,
+                availability,
+                cls,
+                methods,
+            } => {
+                writeln!(f, "extern_category!(")?;
+
+                if let Some(actual_name) = actual_name {
+                    if *actual_name != id.name {
+                        writeln!(f, "    /// Category \"{actual_name}\" on [`{}`].", cls.name)?;
+                        writeln!(f, "    #[doc(alias = \"{actual_name}\")]")?;
+                    } else {
+                        writeln!(f, "    /// Category on [`{}`].", cls.name)?;
+                    }
+                } else {
+                    writeln!(f, "    /// Category on [`{}`].", cls.name)?;
+                }
+
+                write!(f, "    {}", Feature::new(cls).cfg_gate_ln())?;
+                write!(f, "{availability}")?;
+                writeln!(f, "    pub unsafe trait {} {{", id.name)?;
+                for method in methods {
+                    writeln!(f, "{method}")?;
+                }
+                writeln!(f, "    }}")?;
+
+                writeln!(f)?;
+
+                write!(f, "    {}", Feature::new(cls).cfg_gate_ln())?;
+                writeln!(
+                    f,
+                    "    unsafe impl {} for {} {{}}",
+                    id.name,
+                    cls.path_in_relation_to(id),
+                )?;
+
+                writeln!(f, ");")?;
             }
             Self::ProtocolImpl {
                 cls,

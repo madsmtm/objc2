@@ -25,8 +25,8 @@ pub(crate) use objc2::runtime::{AnyClass, AnyObject, Bool, Sel};
 pub(crate) use objc2::runtime::{NSObject, NSObjectProtocol, ProtocolObject};
 #[cfg(feature = "objective-c")]
 pub(crate) use objc2::{
-    __inner_extern_class, extern_class, extern_methods, extern_protocol, ClassType, Message,
-    ProtocolType,
+    __inner_extern_class, extern_category, extern_class, extern_methods, extern_protocol,
+    ClassType, Message, ProtocolType,
 };
 
 #[cfg(feature = "block")]

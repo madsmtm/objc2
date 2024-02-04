@@ -245,16 +245,16 @@ impl MemoryManagement {
 pub struct Method {
     pub selector: String,
     pub fn_name: String,
-    availability: Availability,
+    pub availability: Availability,
     features: Features,
     pub is_class: bool,
-    is_optional_protocol: bool,
+    is_optional: bool,
     memory_management: MemoryManagement,
     pub(crate) arguments: Vec<(String, Ty)>,
     pub result_type: Ty,
     safe: bool,
     mutating: bool,
-    is_protocol: bool,
+    is_pub: bool,
     // Thread-safe, even on main-thread only (@MainActor/@UIActor) classes
     non_isolated: bool,
     pub(crate) mainthreadonly: bool,
@@ -333,7 +333,7 @@ impl<'tu> PartialMethod<'tu> {
         self,
         data: MethodData,
         parent_is_mutable: bool,
-        parent_is_protocol: bool,
+        is_pub: bool,
         implied_features: impl IntoIterator<Item = &'a ItemIdentifier>,
         context: &Context<'_>,
     ) -> Option<(bool, Method)> {
@@ -479,7 +479,7 @@ impl<'tu> PartialMethod<'tu> {
                 availability,
                 features,
                 is_class,
-                is_optional_protocol: entity.is_objc_optional(),
+                is_optional: entity.is_objc_optional(),
                 memory_management,
                 arguments,
                 result_type,
@@ -488,7 +488,7 @@ impl<'tu> PartialMethod<'tu> {
                 // since immutable methods are usually either declared on an
                 // immutable subclass, or as a property.
                 mutating: data.mutating.unwrap_or(parent_is_mutable),
-                is_protocol: parent_is_protocol,
+                is_pub,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly: modifiers.mainthreadonly,
             },
@@ -513,7 +513,7 @@ impl PartialProperty<'_> {
         getter_data: MethodData,
         setter_data: Option<MethodData>,
         parent_is_mutable: bool,
-        parent_is_protocol: bool,
+        is_pub: bool,
         implied_features: impl IntoIterator<Item = &'a ItemIdentifier> + Clone,
         context: &Context<'_>,
     ) -> (Option<Method>, Option<Method>) {
@@ -566,7 +566,7 @@ impl PartialProperty<'_> {
                 availability: availability.clone(),
                 features: features.clone(),
                 is_class,
-                is_optional_protocol: entity.is_objc_optional(),
+                is_optional: entity.is_objc_optional(),
                 memory_management,
                 arguments: Vec::new(),
                 result_type: ty,
@@ -574,7 +574,7 @@ impl PartialProperty<'_> {
                 // Getters are usually not mutable, even if the class itself
                 // is, so let's default to immutable.
                 mutating: getter_data.mutating.unwrap_or(false),
-                is_protocol: parent_is_protocol,
+                is_pub,
                 non_isolated: modifiers.non_isolated,
                 mainthreadonly: modifiers.mainthreadonly,
             })
@@ -608,14 +608,14 @@ impl PartialProperty<'_> {
                     availability,
                     features,
                     is_class,
-                    is_optional_protocol: entity.is_objc_optional(),
+                    is_optional: entity.is_objc_optional(),
                     memory_management,
                     arguments: vec![(name, ty)],
                     result_type: Ty::VOID_RESULT,
                     safe: !setter_data.unsafe_,
                     // Setters are usually mutable if the class itself is.
                     mutating: setter_data.mutating.unwrap_or(parent_is_mutable),
-                    is_protocol: parent_is_protocol,
+                    is_pub,
                     non_isolated: modifiers.non_isolated,
                     mainthreadonly: modifiers.mainthreadonly,
                 })
@@ -659,7 +659,7 @@ impl fmt::Display for Method {
         write!(f, "{}", self.features.cfg_gate_ln())?;
         write!(f, "{}", self.availability)?;
 
-        if self.is_optional_protocol {
+        if self.is_optional {
             writeln!(f, "        #[optional]")?;
         }
 
@@ -683,7 +683,7 @@ impl fmt::Display for Method {
         //
 
         write!(f, "        ")?;
-        if !self.is_protocol {
+        if self.is_pub {
             write!(f, "pub ")?;
         }
 

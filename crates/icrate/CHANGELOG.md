@@ -19,10 +19,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Marked `NSView::isFlipped`, `NSView::convertRect_toView`,
   `NSWindow::convertRectToScreen` and `NSWindow::convertPointFromScreen` as
   safe.
+* **BREAKING**: Changed how categories are handled; now, when a library has
+  defined methods on a class defined in a different framework, a helper trait
+  is output with the methods, instead of the methods being implemented
+  directly on the type.
 
 ### Deprecated
-* Deprecated `MainThreadMarker::run_on_main`, use the new free-standing function
-  `run_on_main` instead.
+* Deprecated `Foundation::MainThreadMarker::run_on_main`, use the new
+  free-standing function `Foundation::run_on_main` instead.
 
 ### Removed
 * Removed private functionality in the `Speech` framework. This was never
