@@ -2,20 +2,17 @@
 name = "objc2-proc-macros"
 # Remember to update html_root_url in lib.rs
 version = "0.1.1"
-authors = ["Mads Marquart <mads@marquart.dk>", "Calvin Watford"]
-edition = "2021"
-rust-version = "1.64"
-
 description = "Procedural macros for the objc2 project"
 keywords = ["objective-c", "macos", "ios", "proc-macro"]
 categories = [
     "development-tools",
     "os::macos-apis",
 ]
-readme = "README.md"
-repository = "https://github.com/madsmtm/objc2"
-documentation = "https://docs.rs/objc2-proc-macros/"
-license = "MIT"
+authors = ["Mads Marquart <mads@marquart.dk>", "Calvin Watford"]
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [lib]
 proc-macro = true

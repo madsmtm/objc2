@@ -6,10 +6,6 @@ name = "objc-sys"
 # Also, beware of using pre-release versions here, since because of the
 # `links` key, two pre-releases requested with `=...` are incompatible.
 version = "0.3.2"
-authors = ["Mads Marquart <mads@marquart.dk>"]
-edition = "2021"
-rust-version = "1.64"
-
 description = "Raw bindings to the Objective-C runtime and ABI"
 keywords = ["objective-c", "macos", "ios", "objc_msgSend", "sys"]
 categories = [
@@ -17,11 +13,11 @@ categories = [
     # "no_std" # TODO
     "os::macos-apis",
 ]
-repository = "https://github.com/madsmtm/objc2"
-documentation = "https://docs.rs/objc-sys/"
-license = "MIT"
-
-readme = "README.md"
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license.workspace = true
 
 # Downstream users can customize the linking to libobjc!
 # See https://doc.rust-lang.org/cargo/reference/build-scripts.html#overriding-build-scripts

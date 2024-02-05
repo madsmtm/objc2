@@ -1,10 +1,6 @@
 [package]
 name = "icrate"
 version = "0.1.0" # Remember to update html_root_url in lib.rs
-authors = ["Mads Marquart <mads@marquart.dk>"]
-edition = "2021"
-rust-version = "1.64"
-
 description = "Bindings to Apple's frameworks"
 keywords = ["macos", "ios", "cocoa", "apple", "framework"]
 categories = [
@@ -14,10 +10,11 @@ categories = [
     "external-ffi-bindings",
     "os::macos-apis",
 ]
-readme = "README.md"
-repository = "https://github.com/madsmtm/objc2"
-documentation = "https://docs.rs/icrate/"
-license = "MIT"
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [lints]
 workspace = true

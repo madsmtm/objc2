@@ -1,10 +1,6 @@
 [package]
 name = "objc2"
 version = "0.5.0" # Remember to update html_root_url in lib.rs
-authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
-edition = "2021"
-rust-version = "1.64"
-
 description = "Objective-C interface and runtime bindings"
 keywords = ["objective-c", "macos", "ios", "objc_msgSend", "objc"]
 categories = [
@@ -12,10 +8,11 @@ categories = [
     "development-tools::ffi",
     "os::macos-apis",
 ]
-readme = "README.md"
-repository = "https://github.com/madsmtm/objc2"
-documentation = "https://docs.rs/objc2/"
-license = "MIT"
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+license.workspace = true
 
 [lints]
 workspace = true

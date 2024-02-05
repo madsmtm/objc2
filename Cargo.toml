@@ -24,3 +24,10 @@ lto = true
 # Don't emit unwind info; while important to get right, the control flow is
 # very hard to glean from assembly output.
 panic = "abort"
+
+[workspace.package]
+authors = ["Mads Marquart <mads@marquart.dk>"]
+edition = "2021"
+rust-version = "1.64"
+repository = "https://github.com/madsmtm/objc2"
+license = "MIT"
