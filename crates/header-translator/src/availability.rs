@@ -139,11 +139,10 @@ impl Availability {
             _swift,
         }
     }
-}
 
-impl fmt::Display for Availability {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match &self.deprecated {
+    pub fn is_deprecated(&self) -> bool {
+        !matches!(
+            self.deprecated,
             Versions {
                 ios: None,
                 ios_app_extension: None,
@@ -153,7 +152,15 @@ impl fmt::Display for Availability {
                 watchos: None,
                 tvos: None,
                 visionos: None,
-            } => {
+            }
+        )
+    }
+}
+
+impl fmt::Display for Availability {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match &self.deprecated {
+            _ if !self.is_deprecated() => {
                 // Not deprecated
             }
             Versions { .. } => {

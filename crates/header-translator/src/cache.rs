@@ -78,7 +78,10 @@ impl<'a> Cache<'a> {
         let mut names = BTreeMap::<(ItemIdentifier, String), &mut Method>::new();
         for stmt in file.stmts.iter_mut() {
             match stmt {
-                Stmt::ClassMethods {
+                Stmt::ExternMethods {
+                    cls: id, methods, ..
+                }
+                | Stmt::ExternCategory {
                     cls: id, methods, ..
                 }
                 | Stmt::ProtocolDecl { id, methods, .. } => {
@@ -114,7 +117,10 @@ impl<'a> Cache<'a> {
         // Add `mainthreadonly` to relevant methods
         for stmt in file.stmts.iter_mut() {
             match stmt {
-                Stmt::ClassMethods {
+                Stmt::ExternMethods {
+                    cls: id, methods, ..
+                }
+                | Stmt::ExternCategory {
                     cls: id, methods, ..
                 }
                 | Stmt::ProtocolDecl { id, methods, .. } => {

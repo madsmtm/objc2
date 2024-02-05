@@ -603,11 +603,9 @@ skipped = true
 [class.NSBundle.methods."localizedAttributedStringForKey:value:table:"]
 skipped = true
 
-# Root classes, defined in `objc2` for now
+# Root class, defined in `objc2` for now
 [class.NSProxy]
 skipped = true
-[class.NSObject]
-skipped = true # Also ignore categories on NSObject for now
 
 [protocol.NSObject]
 renamed = "NSObjectProtocol"
@@ -1384,12 +1382,6 @@ NSOKButton = { skipped = true }
 NSCancelButton = { skipped = true }
 NSFileHandlingPanelCancelButton = { skipped = true }
 NSFileHandlingPanelOKButton = { skipped = true }
-
-# Categories for classes defined in other frameworks
-[class.CIImage]
-skipped = true
-[class.CIColor]
-skipped = true
 
 # Different definitions depending on target
 [enum.NSImageResizingMode]
