@@ -3,7 +3,7 @@ name = "icrate"
 version = "0.1.0" # Remember to update html_root_url in lib.rs
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
-rust-version = "1.60"
+rust-version = "1.64"
 
 description = "Bindings to Apple's frameworks"
 keywords = ["macos", "ios", "cocoa", "apple", "framework"]

@@ -4,7 +4,7 @@ name = "block2"
 version = "0.4.0"
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
-rust-version = "1.60"
+rust-version = "1.64"
 
 description = "Apple's C language extension of blocks"
 keywords = ["objective-c", "macos", "ios", "blocks"]

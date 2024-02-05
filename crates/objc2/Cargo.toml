@@ -3,7 +3,7 @@ name = "objc2"
 version = "0.5.0" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
-rust-version = "1.60"
+rust-version = "1.64"
 
 description = "Objective-C interface and runtime bindings"
 keywords = ["objective-c", "macos", "ios", "objc_msgSend", "objc"]

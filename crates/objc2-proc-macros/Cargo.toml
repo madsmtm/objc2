@@ -4,7 +4,7 @@ name = "objc2-proc-macros"
 version = "0.1.1"
 authors = ["Mads Marquart <mads@marquart.dk>", "Calvin Watford"]
 edition = "2021"
-rust-version = "1.60"
+rust-version = "1.64"
 
 description = "Procedural macros for the objc2 project"
 keywords = ["objective-c", "macos", "ios", "proc-macro"]
