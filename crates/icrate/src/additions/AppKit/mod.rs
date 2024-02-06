@@ -19,6 +19,9 @@ pub use crate::generated::AppKit::*;
 
 use crate::common::*;
 
+#[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-gui", kind = "dylib"))]
+extern "C" {}
+
 /// (!TARGET_CPU_X86_64 || (TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST))
 ///
 /// <https://github.com/xamarin/xamarin-macios/issues/12111>

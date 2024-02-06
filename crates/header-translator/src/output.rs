@@ -80,7 +80,6 @@ impl Output {
         let mut macos_14_features: BTreeSet<String> = vec!["unstable-frameworks-macos-13".into()]
             .into_iter()
             .collect();
-        let mut gnustep_features: BTreeSet<String> = vec![].into_iter().collect();
 
         for (library_name, library) in &config.libraries {
             let library_features = library
@@ -107,10 +106,6 @@ impl Output {
                     error!(?library_name, "has library that does not fit any version");
                 }
             }
-
-            if library.gnustep_library.is_some() {
-                gnustep_features.insert(format!("{library_name}_all"));
-            }
         }
 
         let _ = features.insert(
@@ -136,10 +131,6 @@ impl Output {
         let _ = features.insert(
             "unstable-frameworks-macos-14".into(),
             macos_14_features.into_iter().collect(),
-        );
-        let _ = features.insert(
-            "unstable-frameworks-gnustep".into(),
-            gnustep_features.into_iter().collect(),
         );
 
         for (library_name, library) in &self.libraries {

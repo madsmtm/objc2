@@ -83,6 +83,10 @@ fn test_new_mutable() {
 
 #[test]
 #[cfg(feature = "Foundation_NSMutableAttributedString")]
+#[cfg_attr(
+    feature = "gnustep-1-7",
+    ignore = "thread safety issues regarding initialization"
+)]
 fn test_copy_mutable() {
     use Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
 

@@ -116,7 +116,7 @@ jobs:
             $PUBLIC_CRATES
             $OTHER_RUNTIME --features=gnustep-1-9
             --features=$INTERESTING_FEATURES,catch-all
-            --features=unstable-frameworks-gnustep
+            --features=AppKit_all,Foundation_all
         - name: header-translator
           target: x86_64-unknown-linux-gnu
           args: -pheader-translator
@@ -584,21 +584,18 @@ jobs:
           target: x86_64-unknown-linux-gnu
           runtime: gnustep-1-9
           libobjc2: "1.9"
-          frameworks: gnustep
         - name: Test GNUStep with libobjc2 v2.0
           # Fails for some reason on Ubuntu 22
           os: ubuntu-20.04
           target: x86_64-unknown-linux-gnu
           runtime: gnustep-2-0
           libobjc2: "2.0"
-          frameworks: gnustep
         - name: Test GNUStep with libobjc2 v2.1 on nightly
           target: x86_64-unknown-linux-gnu
           nightly: true
           runtime: gnustep-2-1
           libobjc2: "2.1"
           fuzz: true
-          frameworks: gnustep
         - name: Test GNUStep 32bit
           # Ubuntu 22 image doesn't have the required C++ libraries
           # installed for 32-bit
@@ -608,7 +605,6 @@ jobs:
           configureflags: --target=x86-pc-linux-gnu
           runtime: gnustep-1-9
           libobjc2: "1.9"
-          frameworks: gnustep-32bit
 
     env:
       CARGO_BUILD_TARGET: ${{ matrix.target }}
@@ -767,8 +763,8 @@ jobs:
       run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation_all
 
     - name: Test all frameworks
-      if: ${{ env.FULL }}
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,unstable-frameworks-${{ matrix.frameworks }}
+      if: ${{ env.FULL && matrix.target == 'x86_64-unknown-linux-gnu' }}
+      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation_all,AppKit_all
 
     - name: Test in release mode
       # Disabled on GNUStep 2.1 for now

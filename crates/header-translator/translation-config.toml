@@ -27,7 +27,7 @@ tvos = "9.0"
 
 [library.AppKit]
 imports = ["CoreData", "Foundation"]
-gnustep-library = "gnustep-gui"
+cfg-apple-link = true
 extra-features = [
     # Temporary, since some structs and statics use these
     "AppKit_NSApplication",
@@ -115,6 +115,7 @@ watchos = "2.0"
 
 [library.CoreData]
 imports = ["Foundation"]
+cfg-apple-link = true
 # Temporary, since some structs and statics use these
 extra-features = ["CoreData_NSAsynchronousFetchResult"]
 macos = "10.4"
@@ -194,7 +195,7 @@ ios = "11.0"
 
 [library.Foundation]
 imports = []
-gnustep-library = "gnustep-base"
+cfg-apple-link = true
 extra-features = [
     "objc2",
     "block2",

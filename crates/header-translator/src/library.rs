@@ -57,19 +57,19 @@ impl fmt::Display for Library {
         writeln!(f, "//! # Bindings to the `{}` framework", self.link_name)?;
         writeln!(f)?;
 
-        // Link to the correct framework
-        //
-        // FIXME: We always do cfg_attr(feature = "apple", ...) to make compiling things for GNUStep easier.
-        writeln!(
-            f,
-            "#[cfg_attr(feature = \"apple\", link(name = \"{}\", kind = \"framework\"))]",
-            self.link_name
-        )?;
-        if let Some(gnustep_library) = &self.data.gnustep_library {
+        // Link to the correct framework.
+        if self.data.cfg_apple_link {
+            // Allow a different linking on GNUStep
             writeln!(
                 f,
-                "#[cfg_attr(feature = \"gnustep-1-7\", link(name = \"{}\", kind = \"dylib\"))]",
-                gnustep_library
+                "#[cfg_attr(feature = \"apple\", link(name = \"{}\", kind = \"framework\"))]",
+                self.link_name
+            )?;
+        } else {
+            writeln!(
+                f,
+                "#[link(name = \"{}\", kind = \"framework\")]",
+                self.link_name
             )?;
         }
         writeln!(f, "extern \"C\" {{}}")?;

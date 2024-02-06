@@ -86,9 +86,9 @@ fn get_version<'de, D: serde::Deserializer<'de>>(
 #[serde(deny_unknown_fields)]
 pub struct LibraryData {
     pub imports: Vec<String>,
-    #[serde(rename = "gnustep-library")]
+    #[serde(rename = "cfg-apple-link")]
     #[serde(default)]
-    pub gnustep_library: Option<String>,
+    pub cfg_apple_link: bool,
     #[serde(rename = "extra-features")]
     #[serde(default)]
     pub extra_features: Vec<String>,

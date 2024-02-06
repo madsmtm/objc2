@@ -90,3 +90,6 @@ pub use objc2::ffi::{NSInteger, NSUInteger};
 #[cfg(feature = "Foundation_NSProxy")]
 pub use objc2::runtime::__NSProxy as NSProxy;
 pub use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
+
+#[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-base", kind = "dylib"))]
+extern "C" {}
