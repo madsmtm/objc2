@@ -100,12 +100,6 @@ impl fmt::Display for Library {
             writeln!(f, "pub use self::additions::*;")?;
         }
         writeln!(f)?;
-        if self.data.has_fixes {
-            writeln!(f, "#[path = \"../../fixes/{}/mod.rs\"]", self.link_name)?;
-            writeln!(f, "mod fixes;")?;
-            writeln!(f, "pub use self::fixes::*;")?;
-        }
-        writeln!(f)?;
 
         // Link to the correct framework
         //

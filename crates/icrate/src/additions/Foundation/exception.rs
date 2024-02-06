@@ -17,6 +17,13 @@ unsafe impl Send for NSException {}
 impl UnwindSafe for NSException {}
 impl RefUnwindSafe for NSException {}
 
+extern_methods!(
+    unsafe impl NSException {
+        #[method(raise)]
+        unsafe fn raise_raw(&self);
+    }
+);
+
 impl NSException {
     /// Create a new [`NSException`] object.
     ///

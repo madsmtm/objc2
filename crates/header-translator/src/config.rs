@@ -98,9 +98,6 @@ pub struct LibraryData {
     #[serde(default)]
     #[serde(rename = "additions")]
     pub has_additions: bool,
-    #[serde(default)]
-    #[serde(rename = "fixes")]
-    pub has_fixes: bool,
     #[serde(rename = "extra-features")]
     #[serde(default)]
     pub extra_features: Vec<String>,

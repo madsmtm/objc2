@@ -29,7 +29,6 @@ tvos = "9.0"
 imports = ["CoreData", "Foundation"]
 gnustep-library = "gnustep-gui"
 additions = true
-fixes = true
 extra-features = [
     # Temporary, since some structs and statics use these
     "AppKit_NSApplication",
@@ -57,7 +56,7 @@ description = "An example showing basic and a bit more advanced usage of `NSPast
 
 [library.AuthenticationServices]
 imports = ["AppKit", "Foundation"]
-fixes = true
+additions = true
 # Temporary, since some structs and statics use these
 extra-features = ["Foundation_NSURL"]
 macos = "10.15"
@@ -213,7 +212,6 @@ types, collections, and operating-system services.
 See [Apple's documentation](https://developer.apple.com/documentation/foundation?language=objc)
 """
 additions = true
-fixes = true
 extra-features = [
     "objective-c",
     "block",
@@ -244,7 +242,7 @@ description = "An example showing how to define your own interfaces to parts tha
 
 [library.GameController]
 imports = ["AppKit", "Foundation"]
-fixes = true
+additions = true
 extra-features = [
     "GameController_GCControllerAxisInput",
     "GameController_GCControllerButtonInput",
@@ -287,13 +285,13 @@ ios = "11.0"
 
 [library.InputMethodKit]
 imports = ["AppKit", "Foundation"]
-fixes = true
+additions = true
 macos = "10.5"
 maccatalyst = "13.0"
 
 [library.LocalAuthentication]
 imports = ["Foundation"]
-fixes = true
+additions = true
 macos = "10.10"
 maccatalyst = "13.0"
 ios = "8.0"
@@ -319,7 +317,7 @@ macos = "12.0"
 
 [library.MapKit]
 imports = ["AppKit", "Contacts", "CoreLocation", "Foundation"]
-fixes = true
+additions = true
 extra-features = [
     "MapKit_MKDirectionsResponse",
     "MapKit_MKETAResponse",
@@ -350,7 +348,6 @@ is highly recommended! See [Apple's documentation][apple-doc], or run
 [apple-doc]: https://developer.apple.com/documentation/xcode/validating-your-apps-metal-api-usage/
 """
 additions = true
-fixes = true
 macos = "10.11"
 maccatalyst = "13.0"
 ios = "8.0"
@@ -380,7 +377,7 @@ tvos = "9.0"
 
 [library.MetricKit]
 imports = ["Foundation"]
-fixes = true
+additions = true
 macos = "12.0"
 maccatalyst = "13.0"
 ios = "13.0"
@@ -400,7 +397,7 @@ macos = "10.4"
 
 [library.QuartzCore]
 pretty-name = "CoreAnimation"
-fixes = true
+additions = true
 extra-docs = """
 This actually lives in the `QuartzCore` framework, but `CoreAnimation` is
 the name that people use to refer to it.
@@ -460,7 +457,7 @@ watchos = "3.0"
 
 [library.WebKit]
 imports = ["AppKit", "Foundation"]
-fixes = true
+additions = true
 extra-features = ["Foundation_NSAttributedString"]
 macos = "10.2"
 maccatalyst = "13.0"
@@ -1398,7 +1395,7 @@ skipped = true
 skipped = true
 
 # Overridden fmt::Debug because we're missing https://github.com/madsmtm/objc2/issues/267
-# See fixes/debug.rs
+# See additions/debug.rs
 [class.NSAttributedString]
 derives = "PartialEq, Eq, Hash"
 [class.NSBundle]
@@ -1514,7 +1511,7 @@ skipped = true
 skipped = true
 
 [class.WKNavigationAction.methods]
-# Not marked as nullable but should be; manually defined in fixes
+# Not marked as nullable but should be; manually defined in additions
 sourceFrame = { skipped = true }
 
 [class.WKWebView.methods]

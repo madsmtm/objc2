@@ -28,6 +28,20 @@ unsafe impl Send for NSData {}
 impl UnwindSafe for NSData {}
 impl RefUnwindSafe for NSData {}
 
+// GNUStep returns NULL from these methods
+extern_methods!(
+    unsafe impl NSData {
+        #[method(bytes)]
+        pub(crate) fn bytes_raw(&self) -> Option<NonNull<c_void>>;
+    }
+
+    #[cfg(feature = "Foundation_NSMutableData")]
+    unsafe impl NSMutableData {
+        #[method(mutableBytes)]
+        pub(crate) fn mutable_bytes_raw(&mut self) -> Option<NonNull<c_void>>;
+    }
+);
+
 impl NSData {
     pub fn with_bytes(bytes: &[u8]) -> Id<Self> {
         let bytes_ptr = bytes.as_ptr() as *mut c_void;

@@ -2,11 +2,38 @@
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
+use objc2::encode::{Encode, Encoding, RefEncode};
+
 use crate::common::*;
-use crate::Foundation::{self, UuidBytes, NSUUID};
+use crate::Foundation::{self, NSUUID};
 
 impl UnwindSafe for NSUUID {}
 impl RefUnwindSafe for NSUUID {}
+
+/// The headers describe `initWithUUIDBytes:` and `getUUIDBytes:` as
+/// taking `uuid_t`, but something fishy is going on, in reality they
+/// expect a reference to these!
+///
+/// Hence we create this newtype to change the encoding.
+#[repr(transparent)]
+struct UuidBytes([u8; 16]);
+
+unsafe impl RefEncode for UuidBytes {
+    #[cfg(target_arch = "aarch64")]
+    const ENCODING_REF: Encoding = Encoding::String;
+    #[cfg(not(target_arch = "aarch64"))]
+    const ENCODING_REF: Encoding = Encoding::Array(16, &u8::ENCODING);
+}
+
+extern_methods!(
+    unsafe impl NSUUID {
+        #[method_id(initWithUUIDBytes:)]
+        fn initWithUUIDBytes(this: Allocated<Self>, bytes: &UuidBytes) -> Id<Self>;
+
+        #[method(getUUIDBytes:)]
+        fn getUUIDBytes(&self, bytes: &mut UuidBytes);
+    }
+);
 
 impl NSUUID {
     /// The 'nil UUID'.

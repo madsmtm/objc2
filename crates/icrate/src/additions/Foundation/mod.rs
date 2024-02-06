@@ -6,13 +6,20 @@ pub mod array;
 mod attributed_string;
 mod bundle;
 mod comparison_result;
+mod copying;
 mod data;
+mod debug;
+mod decimal;
 pub mod dictionary;
 pub mod enumerator;
 mod error;
 mod exception;
+mod fast_enumeration_state;
+mod generics;
 mod geometry;
 mod macros;
+mod not_found;
+mod ns_consumed;
 mod number;
 mod process_info;
 mod range;
@@ -21,15 +28,23 @@ mod string;
 #[cfg(test)]
 mod tests;
 mod thread;
+mod to_owned;
 mod util;
 mod uuid;
 mod value;
 
 pub use self::comparison_result::NSComparisonResult;
+pub use self::copying::{NSCopying, NSMutableCopying};
+pub use self::decimal::NSDecimal;
+pub use self::fast_enumeration_state::NSFastEnumerationState;
+pub use self::generics::*;
 pub use self::geometry::{
     CGFloat, CGPoint, CGRect, CGSize, NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint,
     NSRect, NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize,
 };
+pub use self::not_found::NSNotFound;
+#[cfg(feature = "Foundation_NSMapTable")]
+pub use self::ns_consumed::NSFreeMapTable;
 pub use self::range::NSRange;
 pub use self::thread::MainThreadMarker;
 #[cfg(feature = "Foundation_NSThread")]

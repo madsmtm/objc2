@@ -1,18 +1,8 @@
 use core::fmt;
 
-use crate::common::*;
 use objc2::encode::Encoding;
 
-pub type CFTimeInterval = c_double;
-
-pub const MTLResourceCPUCacheModeShift: NSUInteger = 0;
-pub const MTLResourceCPUCacheModeMask: NSUInteger = 0xf << MTLResourceCPUCacheModeShift;
-
-pub const MTLResourceStorageModeShift: NSUInteger = 4;
-pub const MTLResourceStorageModeMask: NSUInteger = 0xf << MTLResourceStorageModeShift;
-
-pub const MTLResourceHazardTrackingModeShift: NSUInteger = 8;
-pub const MTLResourceHazardTrackingModeMask: NSUInteger = 0x3 << MTLResourceHazardTrackingModeShift;
+use crate::common::*;
 
 // TODO: Investigate the need for this helper struct?
 //
