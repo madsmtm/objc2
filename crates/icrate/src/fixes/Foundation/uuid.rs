@@ -1,4 +1,3 @@
-#![cfg(feature = "Foundation_NSUUID")]
 use objc2::encode::{Encode, Encoding, RefEncode};
 
 use crate::common::*;
