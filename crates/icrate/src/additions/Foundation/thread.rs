@@ -62,6 +62,7 @@ fn make_multithreaded() {
 /// });
 /// ```
 #[cfg(feature = "dispatch")]
+#[cfg(feature = "Foundation_NSThread")]
 pub fn run_on_main<F, R>(f: F) -> R
 where
     F: Send + FnOnce(MainThreadMarker) -> R,
@@ -239,6 +240,7 @@ impl MainThreadMarker {
     /// Deprecated in favour of the free-standing function [`run_on_main`].
     #[deprecated = "Use the free-standing function `run_on_main` instead"]
     #[cfg(feature = "dispatch")]
+    #[cfg(feature = "Foundation_NSThread")]
     pub fn run_on_main<F, R>(f: F) -> R
     where
         F: Send + FnOnce(MainThreadMarker) -> R,
@@ -287,6 +289,7 @@ impl fmt::Debug for MainThreadMarker {
 /// ensures that a type is only usable from the main thread.
 #[doc(alias = "@MainActor")]
 #[cfg(feature = "dispatch")]
+#[cfg(feature = "Foundation_NSThread")]
 pub struct MainThreadBound<T>(ManuallyDrop<T>);
 
 // SAFETY: The inner value is guaranteed to originate from the main thread
@@ -297,6 +300,7 @@ pub struct MainThreadBound<T>(ManuallyDrop<T>);
 //
 // Finally, the value is dropped on the main thread in `Drop`.
 #[cfg(feature = "dispatch")]
+#[cfg(feature = "Foundation_NSThread")]
 unsafe impl<T> Send for MainThreadBound<T> {}
 
 // SAFETY: We only provide access to the inner value via. `get` and `get_mut`.
@@ -304,9 +308,11 @@ unsafe impl<T> Send for MainThreadBound<T> {}
 // Both of these take [`MainThreadMarker`], which guarantees that the access
 // is done from the main thread.
 #[cfg(feature = "dispatch")]
+#[cfg(feature = "Foundation_NSThread")]
 unsafe impl<T> Sync for MainThreadBound<T> {}
 
 #[cfg(feature = "dispatch")]
+#[cfg(feature = "Foundation_NSThread")]
 impl<T> Drop for MainThreadBound<T> {
     fn drop(&mut self) {
         if mem::needs_drop::<T>() {
@@ -328,6 +334,7 @@ impl<T> Drop for MainThreadBound<T> {
 
 /// Main functionality.
 #[cfg(feature = "dispatch")]
+#[cfg(feature = "Foundation_NSThread")]
 impl<T> MainThreadBound<T> {
     /// Create a new [`MainThreadBound`] value of type `T`.
     ///
@@ -378,6 +385,7 @@ impl<T> MainThreadBound<T> {
 
 /// Helper functions for running [`run_on_main`].
 #[cfg(feature = "dispatch")]
+#[cfg(feature = "Foundation_NSThread")]
 impl<T> MainThreadBound<T> {
     /// Access the item on the main thread.
     ///
@@ -405,6 +413,7 @@ impl<T> MainThreadBound<T> {
 }
 
 #[cfg(feature = "dispatch")]
+#[cfg(feature = "Foundation_NSThread")]
 impl<T> fmt::Debug for MainThreadBound<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("MainThreadBound").finish_non_exhaustive()

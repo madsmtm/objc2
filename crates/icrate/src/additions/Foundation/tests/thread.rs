@@ -70,10 +70,13 @@ fn test_debug() {
 
 #[test]
 #[cfg(feature = "dispatch")]
+#[cfg(feature = "Foundation_NSThread")]
 fn test_main_thread_bound_traits() {
-    use icrate::Foundation::MainThreadBound;
+    use crate::Foundation::MainThreadBound;
 
-    struct Foo(*const ());
+    struct Foo {
+        _inner: *const (),
+    }
 
     fn assert_send_sync<T: Send + Sync>() {}
 
@@ -89,9 +92,10 @@ fn test_main_thread_bound_traits() {
 
 #[test]
 #[cfg(feature = "dispatch")]
+#[cfg(feature = "Foundation_NSThread")]
 fn test_main_thread_bound_into_inner() {
+    use crate::Foundation::MainThreadBound;
     use core::cell::Cell;
-    use icrate::Foundation::MainThreadBound;
 
     // SAFETY: For testing only
     let mtm = unsafe { MainThreadMarker::new_unchecked() };

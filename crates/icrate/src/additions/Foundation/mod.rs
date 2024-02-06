@@ -31,12 +31,12 @@ pub use self::geometry::{
     NSRect, NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize,
 };
 pub use self::range::NSRange;
-#[cfg(feature = "Foundation_NSThread")]
-#[cfg(feature = "dispatch")]
-pub use self::thread::MainThreadBound;
 pub use self::thread::MainThreadMarker;
 #[cfg(feature = "Foundation_NSThread")]
 pub use self::thread::{is_main_thread, is_multi_threaded};
+#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "dispatch")]
+pub use self::thread::{run_on_main, MainThreadBound};
 
 #[cfg(feature = "Foundation_NSString")]
 #[doc(inline)]
