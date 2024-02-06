@@ -10,14 +10,14 @@
 use std::thread;
 use std::time::Duration;
 
-use icrate::Foundation::{ns_string, NSObject, NSString};
 use objc2::mutability::InteriorMutable;
 use objc2::rc::Id;
 use objc2::{extern_class, msg_send, msg_send_id, ClassType};
+use objc2_foundation::{ns_string, NSObject, NSString};
 
 #[cfg(target_os = "macos")]
 mod appkit {
-    use icrate::Foundation::NSCopying;
+    use objc2_foundation::NSCopying;
     use std::cell::Cell;
 
     use super::*;

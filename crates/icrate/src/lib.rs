@@ -155,14 +155,15 @@ macro_rules! ns_string {
     };
 }
 
+#[cfg(feature = "Foundation")]
+pub use objc2_foundation as Foundation;
+
 #[cfg(feature = "AppKit")]
 pub use self::additions::AppKit;
 #[cfg(feature = "AuthenticationServices")]
 pub use self::additions::AuthenticationServices;
 #[cfg(feature = "CallKit")]
 pub use self::additions::CallKit;
-#[cfg(feature = "Foundation")]
-pub use self::additions::Foundation;
 #[cfg(feature = "GameController")]
 pub use self::additions::GameController;
 #[cfg(feature = "InputMethodKit")]
