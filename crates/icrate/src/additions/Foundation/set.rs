@@ -12,7 +12,7 @@ use super::util;
 use crate::common::*;
 #[cfg(feature = "Foundation_NSMutableSet")]
 use crate::Foundation::NSMutableSet;
-use crate::Foundation::{self, NSSet};
+use crate::Foundation::NSSet;
 
 impl<T: Message> NSSet<T> {
     /// Returns the number of elements in the set.
@@ -146,7 +146,7 @@ impl<T: Message + Eq + Hash> NSSet<T> {
     /// ```
     #[doc(alias = "allObjects")]
     #[cfg(feature = "Foundation_NSArray")]
-    pub fn to_array(&self) -> Id<Foundation::NSArray<T>>
+    pub fn to_array(&self) -> Id<crate::Foundation::NSArray<T>>
     where
         T: IsIdCloneable,
     {
