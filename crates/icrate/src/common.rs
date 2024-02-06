@@ -10,35 +10,35 @@ pub(crate) use std::os::raw::{
     c_ulong, c_ulonglong, c_ushort,
 };
 
-#[cfg(feature = "objective-c")]
+#[cfg(feature = "objc2")]
 pub(crate) use objc2::ffi::{NSInteger, NSIntegerMax, NSUInteger, NSUIntegerMax, IMP};
-#[cfg(feature = "objective-c")]
+#[cfg(feature = "objc2")]
 pub(crate) use objc2::mutability::{
     Immutable, ImmutableWithMutableSubclass, InteriorMutable, IsIdCloneable, IsMainThreadOnly,
     MainThreadOnly, Mutable, MutableWithImmutableSuperclass,
 };
-#[cfg(feature = "objective-c")]
+#[cfg(feature = "objc2")]
 pub(crate) use objc2::rc::{Allocated, DefaultId, Id};
-#[cfg(feature = "objective-c")]
+#[cfg(feature = "objc2")]
 pub(crate) use objc2::runtime::{AnyClass, AnyObject, Bool, Sel};
-#[cfg(feature = "objective-c")]
+#[cfg(feature = "objc2")]
 pub(crate) use objc2::runtime::{NSObject, NSObjectProtocol, ProtocolObject};
-#[cfg(feature = "objective-c")]
+#[cfg(feature = "objc2")]
 pub(crate) use objc2::{
     __inner_extern_class, extern_category, extern_class, extern_methods, extern_protocol,
     ClassType, Message, ProtocolType,
 };
 
-#[cfg(feature = "block")]
+#[cfg(feature = "block2")]
 pub(crate) use block2::Block;
 
 // TODO
-#[cfg(feature = "objective-c")]
+#[cfg(feature = "objc2")]
 pub(crate) type AnyProtocol = AnyObject;
 pub(crate) type TodoFunction = *const c_void;
-#[cfg(feature = "objective-c")]
+#[cfg(feature = "objc2")]
 pub(crate) type TodoClass = AnyObject;
-#[cfg(feature = "objective-c")]
+#[cfg(feature = "objc2")]
 pub(crate) type TodoProtocols = AnyObject;
 
 // MacTypes.h

@@ -29,7 +29,7 @@ static_assertions = "1.1.0"
 
 [package.metadata.docs.rs]
 default-target = "x86_64-apple-darwin"
-features = ["block", "objective-c", "dispatch", "unstable-frameworks-all", "unstable-private", "unstable-docsrs"]
+features = ["block2", "objc2", "dispatch", "unstable-frameworks-all", "unstable-private", "unstable-docsrs"]
 
 targets = [
     # MacOS
@@ -98,10 +98,10 @@ gnustep-1-9 = ["gnustep-1-8", "objc2?/gnustep-1-9", "block2?/gnustep-1-9"]
 gnustep-2-0 = ["gnustep-1-9", "objc2?/gnustep-2-0", "block2?/gnustep-2-0"]
 gnustep-2-1 = ["gnustep-2-0", "objc2?/gnustep-2-1", "block2?/gnustep-2-1"]
 
-# Expose features that requires Objective-C.
+# Deprecated.
 objective-c = ["objc2"]
 
-# Expose features that requires creating blocks.
+# Deprecated.
 block = ["block2"]
 
 # For better documentation on docs.rs
@@ -2357,8 +2357,8 @@ FileProvider_all = [
     "FileProvider_NSFileProviderRequest",
 ]
 Foundation = [
-    "objective-c",
-    "block",
+    "objc2",
+    "block2",
     "Foundation_NSError",
     "Foundation_NSAppleEventDescriptor",
     "Foundation_NSHashTable",

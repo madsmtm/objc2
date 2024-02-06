@@ -2,12 +2,12 @@
 
 macro_rules! impl_encode {
     ($name:ident = $encoding:expr;) => {
-        #[cfg(feature = "objective-c")]
+        #[cfg(feature = "objc2")]
         unsafe impl objc2::Encode for $name {
             const ENCODING: objc2::Encoding = $encoding;
         }
 
-        #[cfg(feature = "objective-c")]
+        #[cfg(feature = "objc2")]
         unsafe impl objc2::RefEncode for $name {
             const ENCODING_REF: objc2::Encoding =
                 objc2::Encoding::Pointer(&<Self as objc2::Encode>::ENCODING);

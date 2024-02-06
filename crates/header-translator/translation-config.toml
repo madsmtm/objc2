@@ -213,8 +213,8 @@ See [Apple's documentation](https://developer.apple.com/documentation/foundation
 """
 additions = true
 extra-features = [
-    "objective-c",
-    "block",
+    "objc2",
+    "block2",
     # Temporary, since some structs and statics use these
     "Foundation_NSError",
     "Foundation_NSAppleEventDescriptor",

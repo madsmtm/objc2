@@ -148,10 +148,10 @@ extern crate std;
 #[doc = include_str!("../README.md")]
 extern "C" {}
 
-#[cfg(feature = "objective-c")]
+#[cfg(feature = "objc2")]
 pub extern crate objc2;
 
-#[cfg(feature = "block")]
+#[cfg(feature = "block2")]
 pub extern crate block2;
 
 mod common;

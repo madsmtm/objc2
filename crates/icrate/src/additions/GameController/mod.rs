@@ -111,7 +111,7 @@ pub struct GCExtendedGamepadSnapshotData {
     pub leftThumbstickButton: Bool,
     pub rightThumbstickButton: Bool,
 }
-#[cfg(feature = "objective-c")]
+#[cfg(feature = "objc2")]
 #[allow(deprecated)]
 unsafe impl objc2::Encode for GCExtendedGamepadSnapshotData {
     const ENCODING: objc2::Encoding = (objc2::Encoding::Struct(
@@ -139,7 +139,7 @@ unsafe impl objc2::Encode for GCExtendedGamepadSnapshotData {
         ],
     ));
 }
-#[cfg(feature = "objective-c")]
+#[cfg(feature = "objc2")]
 #[allow(deprecated)]
 unsafe impl objc2::RefEncode for GCExtendedGamepadSnapshotData {
     const ENCODING_REF: objc2::Encoding =

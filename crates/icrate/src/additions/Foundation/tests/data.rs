@@ -17,7 +17,7 @@ fn test_no_bytes() {
     assert!(Some(data.bytes()).is_some());
 }
 
-#[cfg(feature = "block")]
+#[cfg(feature = "block2")]
 #[test]
 fn test_from_vec() {
     let bytes = vec![3, 7, 16];
@@ -34,7 +34,7 @@ fn test_debug() {
     assert_eq!(format!("{data:?}"), "[3, 7, 16, 52, 112, 19]");
 }
 
-#[cfg(feature = "block")]
+#[cfg(feature = "block2")]
 #[test]
 fn test_collect() {
     let bytes = [3, 7, 16, 52, 112, 19];

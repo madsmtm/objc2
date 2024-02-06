@@ -1,8 +1,8 @@
 #![cfg(feature = "Foundation_NSData")]
-#[cfg(feature = "block")]
+#[cfg(feature = "block2")]
 use alloc::vec::Vec;
 use core::fmt;
-#[cfg(feature = "block")]
+#[cfg(feature = "block2")]
 use core::mem::ManuallyDrop;
 use core::ops::Index;
 #[cfg(feature = "Foundation_NSMutableData")]
@@ -10,9 +10,9 @@ use core::ops::{IndexMut, Range};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::slice::{self, SliceIndex};
 
-#[cfg(feature = "block")]
+#[cfg(feature = "block2")]
 use block2::{Block, RcBlock};
-#[cfg(feature = "block")]
+#[cfg(feature = "block2")]
 use objc2::rc::IdFromIterator;
 
 use crate::common::*;
@@ -48,7 +48,7 @@ impl NSData {
         unsafe { Self::initWithBytes_length(Self::alloc(), bytes_ptr, bytes.len()) }
     }
 
-    #[cfg(feature = "block")]
+    #[cfg(feature = "block2")]
     pub fn from_vec(bytes: Vec<u8>) -> Id<Self> {
         // GNUStep's NSData `initWithBytesNoCopy:length:deallocator:` has a
         // bug; it forgets to assign the input buffer and length to the
@@ -74,7 +74,7 @@ impl NSMutableData {
         unsafe { Self::initWithBytes_length(Self::alloc(), bytes_ptr, bytes.len()) }
     }
 
-    #[cfg(feature = "block")]
+    #[cfg(feature = "block2")]
     pub fn from_vec(bytes: Vec<u8>) -> Id<Self> {
         // SAFETY: Same as `NSData::from_vec`
         unsafe { with_vec(Self::alloc(), bytes) }
@@ -267,7 +267,7 @@ impl std::io::Write for NSMutableData {
     }
 }
 
-#[cfg(feature = "block")]
+#[cfg(feature = "block2")]
 impl IdFromIterator<u8> for NSData {
     fn id_from_iter<I: IntoIterator<Item = u8>>(iter: I) -> Id<Self> {
         let vec = Vec::from_iter(iter);
@@ -276,7 +276,7 @@ impl IdFromIterator<u8> for NSData {
 }
 
 #[cfg(feature = "Foundation_NSMutableData")]
-#[cfg(feature = "block")]
+#[cfg(feature = "block2")]
 impl IdFromIterator<u8> for NSMutableData {
     fn id_from_iter<I: IntoIterator<Item = u8>>(iter: I) -> Id<Self> {
         let vec = Vec::from_iter(iter);
@@ -284,7 +284,7 @@ impl IdFromIterator<u8> for NSMutableData {
     }
 }
 
-#[cfg(feature = "block")]
+#[cfg(feature = "block2")]
 unsafe fn with_vec<T: Message>(obj: Allocated<T>, bytes: Vec<u8>) -> Id<T> {
     let capacity = bytes.capacity();
 

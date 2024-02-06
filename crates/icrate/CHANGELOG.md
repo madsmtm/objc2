@@ -27,6 +27,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   defined methods on a class defined in a different framework, a helper trait
   is output with the methods, instead of the methods being implemented
   directly on the type.
+* Renamed the `block` and `objective-c` feature flags to `block2` and `objc2`.
+
+  The old feature flags are kept as deprecated.
 
 ### Deprecated
 * Deprecated `Foundation::MainThreadMarker::run_on_main`, use the new
