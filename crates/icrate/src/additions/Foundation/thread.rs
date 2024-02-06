@@ -3,6 +3,7 @@ use core::marker::PhantomData;
 #[cfg(feature = "dispatch")]
 #[cfg(feature = "Foundation_NSThread")]
 use core::mem::{self, ManuallyDrop};
+#[cfg(feature = "Foundation_NSThread")]
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use crate::common::*;

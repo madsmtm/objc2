@@ -23,7 +23,7 @@ get_ascii:
 	lea	eax, [ebx + .Lanon.[ID].0@GOTOFF]
 	push	3
 	push	eax
-	call	SYM(icrate::generated::Foundation::additions::string::<impl icrate::generated::Foundation::__NSString::NSString>::from_str::GENERATED_ID, 0)@PLT
+	call	SYM(icrate::additions::Foundation::string::<impl icrate::generated::Foundation::__NSString::NSString>::from_str::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	mov	ecx, eax
 	xchg	dword ptr [ebx + SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0@GOTOFF], ecx
@@ -56,7 +56,7 @@ get_utf16:
 	lea	eax, [ebx + .Lanon.[ID].1@GOTOFF]
 	push	5
 	push	eax
-	call	SYM(icrate::generated::Foundation::additions::string::<impl icrate::generated::Foundation::__NSString::NSString>::from_str::GENERATED_ID, 0)@PLT
+	call	SYM(icrate::additions::Foundation::string::<impl icrate::generated::Foundation::__NSString::NSString>::from_str::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	mov	ecx, eax
 	xchg	dword ptr [ebx + SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0@GOTOFF], ecx
@@ -89,7 +89,7 @@ get_with_nul:
 	lea	eax, [ebx + .Lanon.[ID].2@GOTOFF]
 	push	6
 	push	eax
-	call	SYM(icrate::generated::Foundation::additions::string::<impl icrate::generated::Foundation::__NSString::NSString>::from_str::GENERATED_ID, 0)@PLT
+	call	SYM(icrate::additions::Foundation::string::<impl icrate::generated::Foundation::__NSString::NSString>::from_str::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	mov	ecx, eax
 	xchg	dword ptr [ebx + SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0@GOTOFF], ecx

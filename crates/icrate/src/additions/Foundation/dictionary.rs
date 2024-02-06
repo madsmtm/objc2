@@ -15,7 +15,7 @@ use super::util;
 use crate::common::*;
 #[cfg(feature = "Foundation_NSMutableDictionary")]
 use crate::Foundation::NSMutableDictionary;
-use crate::Foundation::{self, NSCopying, NSDictionary};
+use crate::Foundation::{NSCopying, NSDictionary};
 
 fn keys_to_ptr<Q>(keys: &[&Q]) -> *mut NonNull<ProtocolObject<dyn NSCopying>>
 where
@@ -307,7 +307,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     /// assert_eq!(array.len(), 1);
     /// ```
     #[cfg(feature = "Foundation_NSArray")]
-    pub fn to_array(&self) -> Id<Foundation::NSArray<V>>
+    pub fn to_array(&self) -> Id<crate::Foundation::NSArray<V>>
     where
         V: IsIdCloneable,
     {

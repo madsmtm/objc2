@@ -22,7 +22,7 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/generics.rs
+ --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
@@ -61,7 +61,7 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/generics.rs
+ --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
@@ -95,7 +95,7 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/generics.rs
+ --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
@@ -145,7 +145,7 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/generics.rs
+ --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
@@ -179,12 +179,12 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/generics.rs
+ --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/generics.rs
+ --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
   |
   |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^
@@ -223,12 +223,12 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/generics.rs
+ --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/generics.rs
+ --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
   |
   |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^
@@ -262,12 +262,12 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/generics.rs
+ --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/generics.rs
+ --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
   |
   |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^
@@ -317,12 +317,12 @@ note: required because it appears within the type `PhantomData<Id<NSObject>>`
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/generics.rs
+ --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/generated/Foundation/../../additions/Foundation/generics.rs
+ --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
   |
   |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^

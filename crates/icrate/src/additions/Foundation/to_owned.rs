@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use alloc::borrow::ToOwned;
 
 use crate::common::*;
