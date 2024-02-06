@@ -50,7 +50,8 @@ the cost.
 
 Doing the Rust equivalent of Objective-C's `NSUInteger hash_code = [obj hash];`.
 
-```rust
+```rust, ignore
+# // Fails with `unstable-c-unwind`, so disabled for now.
 use std::mem::transmute;
 use std::ffi::c_char;
 use objc2::ffi::{objc_object, objc_msgSend, sel_registerName, NSUInteger, SEL};
