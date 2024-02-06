@@ -21,7 +21,7 @@ use objc2::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
 use crate::common::*;
 #[cfg(feature = "Foundation_NSMutableString")]
 use crate::Foundation::NSMutableString;
-use crate::Foundation::{self, NSString};
+use crate::Foundation::NSString;
 
 // SAFETY: `NSString` is immutable and `NSMutableString` can only be mutated
 // from `&mut` methods.

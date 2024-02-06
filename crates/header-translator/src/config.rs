@@ -85,19 +85,10 @@ fn get_version<'de, D: serde::Deserializer<'de>>(
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct LibraryData {
-    #[serde(rename = "pretty-name")]
-    #[serde(default)]
-    pub pretty_name: Option<String>,
     pub imports: Vec<String>,
     #[serde(rename = "gnustep-library")]
     #[serde(default)]
     pub gnustep_library: Option<String>,
-    #[serde(default)]
-    #[serde(rename = "extra-docs")]
-    pub extra_docs: String,
-    #[serde(default)]
-    #[serde(rename = "additions")]
-    pub has_additions: bool,
     #[serde(rename = "extra-features")]
     #[serde(default)]
     pub extra_features: Vec<String>,
@@ -116,8 +107,6 @@ pub struct LibraryData {
     #[serde(default)]
     #[serde(deserialize_with = "get_version")]
     pub watchos: Option<Version>,
-    #[serde(default)]
-    pub examples: Vec<Example>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

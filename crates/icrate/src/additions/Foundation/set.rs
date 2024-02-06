@@ -3,7 +3,6 @@
 use alloc::vec::Vec;
 use core::fmt;
 use core::hash::Hash;
-use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::mutability::{HasStableHash, IsRetainable};
 use objc2::rc::IdFromIterator;

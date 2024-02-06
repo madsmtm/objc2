@@ -1,7 +1,5 @@
-use crate::Metal;
-
 #[cfg(feature = "Metal_MTLDevice")]
-impl Metal::MTLDevice {
+impl crate::Metal::MTLDevice {
     // pub fn system_default() -> Option<Self> {
     //     MTLCreateSystemDefaultDevice()
     // }

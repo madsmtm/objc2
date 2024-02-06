@@ -1,3 +1,6 @@
+//! # Bindings to the `AuthenticationServices` framework
+pub use crate::generated::AuthenticationServices::*;
+
 use crate::common::*;
 
 // TODO: UIViewController on iOS, NSViewController on macOS

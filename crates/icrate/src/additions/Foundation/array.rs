@@ -4,7 +4,6 @@ use alloc::vec::Vec;
 use core::fmt;
 use core::mem;
 use core::ops::{Index, IndexMut, Range};
-use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::mutability::{IsMutable, IsRetainable};
 use objc2::rc::IdFromIterator;

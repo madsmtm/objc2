@@ -28,7 +28,6 @@ tvos = "9.0"
 [library.AppKit]
 imports = ["CoreData", "Foundation"]
 gnustep-library = "gnustep-gui"
-additions = true
 extra-features = [
     # Temporary, since some structs and statics use these
     "AppKit_NSApplication",
@@ -46,17 +45,8 @@ extra-features = [
 macos = "10.0"
 maccatalyst = "13.0"
 
-[[library.AppKit.examples]]
-name = "delegate"
-description = "Implementing `NSApplicationDelegate` for a custom class"
-
-[[library.AppKit.examples]]
-name = "nspasteboard"
-description = "An example showing basic and a bit more advanced usage of `NSPasteboard`"
-
 [library.AuthenticationServices]
 imports = ["AppKit", "Foundation"]
-additions = true
 # Temporary, since some structs and statics use these
 extra-features = ["Foundation_NSURL"]
 macos = "10.15"
@@ -205,13 +195,6 @@ ios = "11.0"
 [library.Foundation]
 imports = []
 gnustep-library = "gnustep-base"
-extra-docs = """
-This is the [`std`] equivalent for Objective-C, containing essential data
-types, collections, and operating-system services.
-
-See [Apple's documentation](https://developer.apple.com/documentation/foundation?language=objc)
-"""
-additions = true
 extra-features = [
     "objc2",
     "block2",
@@ -232,17 +215,8 @@ ios = "2.0"
 tvos = "9.0"
 watchos = "2.0"
 
-[[library.Foundation.examples]]
-name = "basic_usage"
-description = "Basic usage of a few Foundation types"
-
-[[library.Foundation.examples]]
-name = "speech_synthesis"
-description = "An example showing how to define your own interfaces to parts that may be missing in `icrate`"
-
 [library.GameController]
 imports = ["AppKit", "Foundation"]
-additions = true
 extra-features = [
     "GameController_GCControllerAxisInput",
     "GameController_GCControllerButtonInput",
@@ -285,13 +259,11 @@ ios = "11.0"
 
 [library.InputMethodKit]
 imports = ["AppKit", "Foundation"]
-additions = true
 macos = "10.5"
 maccatalyst = "13.0"
 
 [library.LocalAuthentication]
 imports = ["Foundation"]
-additions = true
 macos = "10.10"
 maccatalyst = "13.0"
 ios = "8.0"
@@ -317,7 +289,6 @@ macos = "12.0"
 
 [library.MapKit]
 imports = ["AppKit", "Contacts", "CoreLocation", "Foundation"]
-additions = true
 extra-features = [
     "MapKit_MKDirectionsResponse",
     "MapKit_MKETAResponse",
@@ -340,22 +311,10 @@ watchos = "5.0"
 
 [library.Metal]
 imports = ["Foundation"]
-extra-docs = """
-Metal has tools for validating that you're using it correctly, using these
-is highly recommended! See [Apple's documentation][apple-doc], or run
-`man MetalValidation` to get information on environment variables.
-
-[apple-doc]: https://developer.apple.com/documentation/xcode/validating-your-apps-metal-api-usage/
-"""
-additions = true
 macos = "10.11"
 maccatalyst = "13.0"
 ios = "8.0"
 tvos = "9.0"
-
-[[library.Metal.examples]]
-name = "metal"
-description = "Drawing a rotating triangle"
 
 [library.MetalFX]
 imports = ["Foundation", "Metal"]
@@ -377,13 +336,11 @@ tvos = "9.0"
 
 [library.MetricKit]
 imports = ["Foundation"]
-additions = true
 macos = "12.0"
 maccatalyst = "13.0"
 ios = "13.0"
 
 [library.Photos]
-pretty-name = "PhotoKit"
 imports = ["AppKit", "CoreLocation", "Foundation", "UniformTypeIdentifiers"]
 macos = "10.11"
 maccatalyst = "13.0"
@@ -396,12 +353,6 @@ imports = ["AppKit", "Foundation"]
 macos = "10.4"
 
 [library.QuartzCore]
-pretty-name = "CoreAnimation"
-additions = true
-extra-docs = """
-This actually lives in the `QuartzCore` framework, but `CoreAnimation` is
-the name that people use to refer to it.
-"""
 imports = ["Foundation"]
 macos = "10.3"
 maccatalyst = "13.0"
@@ -457,14 +408,10 @@ watchos = "3.0"
 
 [library.WebKit]
 imports = ["AppKit", "Foundation"]
-additions = true
 extra-features = ["Foundation_NSAttributedString"]
 macos = "10.2"
 maccatalyst = "13.0"
 ios = "16.0"
-
-[[library.WebKit.examples]]
-name = "browser"
 
 ###
 ### Attributes that change a function/method's calling convention.

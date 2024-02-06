@@ -59,8 +59,6 @@ impl_encode! {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     use alloc::string::ToString;
     use objc2::encode::Encode;
 

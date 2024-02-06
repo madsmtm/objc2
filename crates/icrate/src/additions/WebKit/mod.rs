@@ -1,6 +1,15 @@
+//! # Bindings to the `WebKit` framework
+//!
+//!
+//! ## Example
+//!
+//! ```ignore
+#![doc = include_str!("../../../examples/browser.rs")]
+//! ```
+
+pub use crate::generated::WebKit::*;
+
 use crate::common::*;
-#[cfg(feature = "WebKit_WKNavigationAction")]
-use crate::WebKit::*;
 
 extern_methods!(
     #[cfg(feature = "WebKit_WKNavigationAction")]

@@ -16,9 +16,9 @@ use block2::{Block, RcBlock};
 use objc2::rc::IdFromIterator;
 
 use crate::common::*;
+use crate::Foundation::NSData;
 #[cfg(feature = "Foundation_NSMutableData")]
 use crate::Foundation::NSMutableData;
-use crate::Foundation::{self, NSData};
 
 // SAFETY: `NSData` is immutable and `NSMutableData` can only be mutated from
 // `&mut` methods.

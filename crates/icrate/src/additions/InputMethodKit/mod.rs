@@ -1,3 +1,7 @@
+//! # Bindings to the `InputMethodKit` framework
+
+pub use crate::generated::InputMethodKit::*;
+
 use crate::Foundation::*;
 
 extern_static!(kIMKCommandClientName: &'static NSString);

@@ -46,10 +46,6 @@ impl Library {
     }
 }
 
-fn prepare_for_docs(s: &str) -> String {
-    s.trim().replace('\n', "\n//! ")
-}
-
 impl fmt::Display for Library {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(
@@ -58,47 +54,7 @@ impl fmt::Display for Library {
         )?;
         writeln!(f, "// DO NOT EDIT")?;
         writeln!(f)?;
-        writeln!(
-            f,
-            "//! # Bindings to the `{}` framework",
-            self.data.pretty_name.as_deref().unwrap_or(&self.link_name)
-        )?;
-        if !self.data.extra_docs.is_empty() {
-            writeln!(f, "//!")?;
-            writeln!(f, "//! {}.", prepare_for_docs(&self.data.extra_docs))?;
-        }
-        if !self.data.examples.is_empty() {
-            writeln!(f, "//!")?;
-            writeln!(f, "//!")?;
-            let examples_plural = if self.data.examples.len() > 1 {
-                "s"
-            } else {
-                ""
-            };
-            writeln!(f, "//! ## Example{examples_plural}")?;
-            for example in &self.data.examples {
-                writeln!(f, "//!")?;
-                writeln!(f, "//! {}.", prepare_for_docs(&example.description))?;
-                writeln!(f, "//!")?;
-                writeln!(f, "//! ```ignore")?;
-                writeln!(
-                    f,
-                    "#![doc = include_str!(\"../../../examples/{}.rs\")]",
-                    example.name
-                )?;
-                writeln!(f, "//! ```")?;
-            }
-        }
-        if let Some(pretty_name) = &self.data.pretty_name {
-            writeln!(f, "#![doc(alias = \"{pretty_name}\")]")?;
-        }
-        writeln!(f)?;
-
-        if self.data.has_additions {
-            writeln!(f, "#[path = \"../../additions/{}/mod.rs\"]", self.link_name)?;
-            writeln!(f, "mod additions;")?;
-            writeln!(f, "pub use self::additions::*;")?;
-        }
+        writeln!(f, "//! # Bindings to the `{}` framework", self.link_name)?;
         writeln!(f)?;
 
         // Link to the correct framework

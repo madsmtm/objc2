@@ -157,13 +157,11 @@ pub extern crate block2;
 mod common;
 #[macro_use]
 mod macros;
+mod additions;
 #[allow(unreachable_pub)]
 #[allow(unused_imports)]
 #[allow(deprecated)]
 mod generated;
-
-#[allow(unreachable_pub, unused_imports)]
-pub use self::generated::*;
 
 /// Deprecated alias of [`Foundation::ns_string`].
 #[macro_export]
@@ -174,3 +172,107 @@ macro_rules! ns_string {
         $crate::Foundation::ns_string!($s)
     };
 }
+
+#[cfg(feature = "AppKit")]
+pub use self::additions::AppKit;
+#[cfg(feature = "AuthenticationServices")]
+pub use self::additions::AuthenticationServices;
+#[cfg(feature = "Foundation")]
+pub use self::additions::Foundation;
+#[cfg(feature = "GameController")]
+pub use self::additions::GameController;
+#[cfg(feature = "InputMethodKit")]
+pub use self::additions::InputMethodKit;
+#[cfg(feature = "LocalAuthentication")]
+pub use self::additions::LocalAuthentication;
+#[cfg(feature = "MapKit")]
+pub use self::additions::MapKit;
+#[cfg(feature = "Metal")]
+pub use self::additions::Metal;
+#[cfg(feature = "MetricKit")]
+pub use self::additions::MetricKit;
+#[cfg(feature = "Photos")]
+pub use self::additions::Photos;
+#[cfg(feature = "QuartzCore")]
+pub use self::additions::QuartzCore;
+#[cfg(feature = "WebKit")]
+pub use self::additions::WebKit;
+
+#[cfg(feature = "Accessibility")]
+pub use self::generated::Accessibility;
+#[cfg(feature = "AdServices")]
+pub use self::generated::AdServices;
+#[cfg(feature = "AdSupport")]
+pub use self::generated::AdSupport;
+#[cfg(feature = "AutomaticAssessmentConfiguration")]
+pub use self::generated::AutomaticAssessmentConfiguration;
+#[cfg(feature = "Automator")]
+pub use self::generated::Automator;
+#[cfg(feature = "BackgroundAssets")]
+pub use self::generated::BackgroundAssets;
+#[cfg(feature = "BackgroundTasks")]
+pub use self::generated::BackgroundTasks;
+#[cfg(feature = "BusinessChat")]
+pub use self::generated::BusinessChat;
+#[cfg(feature = "CallKit")]
+pub use self::generated::CallKit;
+#[cfg(feature = "ClassKit")]
+pub use self::generated::ClassKit;
+#[cfg(feature = "CloudKit")]
+pub use self::generated::CloudKit;
+#[cfg(feature = "Contacts")]
+pub use self::generated::Contacts;
+#[cfg(feature = "CoreData")]
+pub use self::generated::CoreData;
+#[cfg(feature = "CoreLocation")]
+pub use self::generated::CoreLocation;
+#[cfg(feature = "CoreWLAN")]
+pub use self::generated::CoreWLAN;
+#[cfg(feature = "DataDetection")]
+pub use self::generated::DataDetection;
+#[cfg(feature = "DeviceCheck")]
+pub use self::generated::DeviceCheck;
+#[cfg(feature = "EventKit")]
+pub use self::generated::EventKit;
+#[cfg(feature = "ExceptionHandling")]
+pub use self::generated::ExceptionHandling;
+#[cfg(feature = "ExtensionKit")]
+pub use self::generated::ExtensionKit;
+#[cfg(feature = "ExternalAccessory")]
+pub use self::generated::ExternalAccessory;
+#[cfg(feature = "FileProvider")]
+pub use self::generated::FileProvider;
+#[cfg(feature = "FileProviderUI")]
+pub use self::generated::FileProviderUI;
+#[cfg(feature = "GameKit")]
+pub use self::generated::GameKit;
+#[cfg(feature = "HealthKit")]
+pub use self::generated::HealthKit;
+#[cfg(feature = "IdentityLookup")]
+pub use self::generated::IdentityLookup;
+#[cfg(feature = "LinkPresentation")]
+pub use self::generated::LinkPresentation;
+#[cfg(feature = "LocalAuthenticationEmbeddedUI")]
+pub use self::generated::LocalAuthenticationEmbeddedUI;
+#[cfg(feature = "MailKit")]
+pub use self::generated::MailKit;
+#[cfg(feature = "MediaPlayer")]
+pub use self::generated::MediaPlayer;
+#[cfg(feature = "MetalFX")]
+pub use self::generated::MetalFX;
+#[cfg(feature = "MetalKit")]
+pub use self::generated::MetalKit;
+#[cfg(feature = "OSAKit")]
+pub use self::generated::OSAKit;
+#[cfg(feature = "ServiceManagement")]
+pub use self::generated::ServiceManagement;
+#[cfg(feature = "SoundAnalysis")]
+pub use self::generated::SoundAnalysis;
+#[cfg(feature = "Speech")]
+pub use self::generated::Speech;
+#[cfg(feature = "StoreKit")]
+pub use self::generated::StoreKit;
+#[cfg(feature = "UniformTypeIdentifiers")]
+pub use self::generated::UniformTypeIdentifiers;
+#[cfg(feature = "UserNotifications")]
+pub use self::generated::UserNotifications;

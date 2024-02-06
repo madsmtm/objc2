@@ -1,3 +1,6 @@
+//! # Bindings to the `GameController` framework
+pub use crate::generated::GameController::*;
+
 use crate::common::*;
 use crate::Foundation::NSString;
 

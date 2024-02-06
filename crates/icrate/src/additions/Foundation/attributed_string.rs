@@ -1,8 +1,6 @@
 #![cfg(feature = "Foundation_NSAttributedString")]
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use objc2::extern_methods;
-
 use crate::common::*;
 use crate::Foundation::{self, NSAttributedString, NSAttributedStringKey};
 

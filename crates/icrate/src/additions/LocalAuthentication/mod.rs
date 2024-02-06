@@ -1,3 +1,6 @@
+//! # Bindings to the `LocalAuthentication` framework
+pub use crate::generated::LocalAuthentication::*;
+
 use crate::Foundation::NSInteger;
 
 ns_enum!(

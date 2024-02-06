@@ -1,13 +1,11 @@
 //! Utilities for the `NSDictionary` and `NSMutableDictionary` classes.
 #![cfg(feature = "Foundation_NSDictionary")]
 use alloc::vec::Vec;
-use core::borrow::Borrow;
 use core::cmp::min;
 use core::fmt;
 use core::hash::Hash;
 use core::mem;
 use core::ops::{Index, IndexMut};
-use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 
 use objc2::mutability::{CounterpartOrSelf, HasStableHash, IsIdCloneable, IsMutable, IsRetainable};

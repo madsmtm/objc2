@@ -1,5 +1,4 @@
 use crate::common::*;
-use crate::Metal;
 
 #[allow(dead_code)]
 fn slice_to_ptr_count<T>(slice: &[T]) -> (NonNull<T>, usize) {
@@ -11,10 +10,10 @@ fn slice_to_ptr_count<T>(slice: &[T]) -> (NonNull<T>, usize) {
 }
 
 #[cfg(feature = "Metal_MTLRenderCommandEncoder")]
-impl Metal::MTLRenderCommandEncoder {
+impl crate::Metal::MTLRenderCommandEncoder {
     // TODO: Safety
     #[cfg(feature = "Metal_MTLViewport")]
-    pub unsafe fn setViewports(&self, viewports: &[Metal::MTLViewport]) {
+    pub unsafe fn setViewports(&self, viewports: &[crate::Metal::MTLViewport]) {
         let (ptr, count) = slice_to_ptr_count(viewports);
         unsafe { self.setViewports_count(ptr, count) }
     }

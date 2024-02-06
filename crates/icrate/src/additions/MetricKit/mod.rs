@@ -1,6 +1,7 @@
+pub use crate::generated::MetricKit::*;
+
 use crate::common::*;
 use crate::Foundation::*;
-use crate::MetricKit::*;
 
 pub type MXLaunchTaskID = NSString;
 

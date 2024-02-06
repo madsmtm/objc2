@@ -1,5 +1,7 @@
 use core::fmt;
 use core::marker::PhantomData;
+#[cfg(feature = "dispatch")]
+#[cfg(feature = "Foundation_NSThread")]
 use core::mem::{self, ManuallyDrop};
 use core::panic::{RefUnwindSafe, UnwindSafe};
 

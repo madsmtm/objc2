@@ -19,10 +19,11 @@ impl RefUnwindSafe for NSUUID {}
 struct UuidBytes([u8; 16]);
 
 unsafe impl RefEncode for UuidBytes {
-    #[cfg(target_arch = "aarch64")]
-    const ENCODING_REF: Encoding = Encoding::String;
-    #[cfg(not(target_arch = "aarch64"))]
-    const ENCODING_REF: Encoding = Encoding::Array(16, &u8::ENCODING);
+    const ENCODING_REF: Encoding = if cfg!(target_arch = "aarch64") {
+        Encoding::String
+    } else {
+        Encoding::Array(16, &u8::ENCODING)
+    };
 }
 
 extern_methods!(
