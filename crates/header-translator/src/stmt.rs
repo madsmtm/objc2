@@ -706,9 +706,26 @@ impl Stmt {
                     .unwrap_or_default();
                 protocols.retain(|protocol| !skipped_protocols.contains(&protocol.name));
 
+                let protocol_impls = protocols.into_iter().map(|protocol| Self::ProtocolImpl {
+                    cls: cls.clone(),
+                    generics: generics.clone(),
+                    availability: availability.clone(),
+                    protocol,
+                });
+
+                let (sendable, mainthreadonly) = parse_attributes(entity, context);
+                if let Some(sendable) = sendable {
+                    error!(?sendable, "sendable on category");
+                }
+                if mainthreadonly {
+                    error!("@UIActor on category");
+                }
+
                 // For ease-of-use, if the category is defined in the same
                 // library as the class, we just emit it as `extern_methods!`.
-                let output = if cls.library == category.library {
+                if cls.library == category.library {
+                    // extern_methods!
+
                     let (methods, designated_initializers) = parse_methods(
                         entity,
                         |name| ClassData::get_method_data(data, name),
@@ -726,7 +743,47 @@ impl Stmt {
                         );
                     }
 
-                    Some(Self::ExternMethods {
+                    let extra_methods = if let Mutability::ImmutableWithMutableSubclass(subclass) =
+                        data.map(|data| data.mutability.clone()).unwrap_or_default()
+                    {
+                        let subclass_data = context.class_data.get(&subclass.name);
+                        assert!(!subclass_data.map(|data| data.skipped).unwrap_or_default());
+
+                        let (mut methods, _) = parse_methods(
+                            entity,
+                            |name| {
+                                let data = ClassData::get_method_data(data, name);
+                                let subclass_data = ClassData::get_method_data(subclass_data, name);
+                                subclass_data.merge_with_superclass(data)
+                            },
+                            data.map(|data| data.mutability.is_mutable())
+                                .or(subclass_data.map(|data| data.mutability.is_mutable()))
+                                .unwrap_or(false),
+                            true,
+                            &get_class_implied_features(&cls_entity, context),
+                            context,
+                        );
+                        methods.retain(|method| method.emit_on_subclasses());
+                        if methods.is_empty() {
+                            None
+                        } else {
+                            Some(Self::ExternMethods {
+                                source_superclass: Some(cls.clone()),
+                                // Assume that immutable/mutable pairs have the
+                                // same availability.
+                                availability: availability.clone(),
+                                cls: subclass,
+                                // And that they have the same amount of generics.
+                                cls_generics: generics.clone(),
+                                category_name: category.name.clone(),
+                                methods,
+                            })
+                        }
+                    } else {
+                        None
+                    };
+
+                    iter::once(Self::ExternMethods {
                         availability: availability.clone(),
                         cls: cls.clone(),
                         source_superclass: None,
@@ -734,7 +791,12 @@ impl Stmt {
                         category_name: category.name.clone(),
                         methods,
                     })
+                    .chain(extra_methods)
+                    .chain(protocol_impls)
+                    .collect()
                 } else {
+                    // extern_category!
+
                     if !generics.is_empty() {
                         panic!("external category: cannot handle generics");
                     }
@@ -795,66 +857,10 @@ impl Stmt {
                             methods,
                         })
                     }
-                }
-                .into_iter();
-
-                let (sendable, mainthreadonly) = parse_attributes(entity, context);
-                if let Some(sendable) = sendable {
-                    error!(?sendable, "sendable on category");
-                }
-                if mainthreadonly {
-                    error!("@UIActor on category");
-                }
-
-                let subclass_methods = if let Mutability::ImmutableWithMutableSubclass(subclass) =
-                    data.map(|data| data.mutability.clone()).unwrap_or_default()
-                {
-                    let subclass_data = context.class_data.get(&subclass.name);
-                    assert!(!subclass_data.map(|data| data.skipped).unwrap_or_default());
-
-                    let (mut methods, _) = parse_methods(
-                        entity,
-                        |name| {
-                            let data = ClassData::get_method_data(data, name);
-                            let subclass_data = ClassData::get_method_data(subclass_data, name);
-                            subclass_data.merge_with_superclass(data)
-                        },
-                        data.map(|data| data.mutability.is_mutable())
-                            .or(subclass_data.map(|data| data.mutability.is_mutable()))
-                            .unwrap_or(false),
-                        true,
-                        &get_class_implied_features(&cls_entity, context),
-                        context,
-                    );
-                    methods.retain(|method| method.emit_on_subclasses());
-                    if methods.is_empty() {
-                        None
-                    } else {
-                        Some(Self::ExternMethods {
-                            source_superclass: Some(cls.clone()),
-                            // Assume that immutable/mutable pairs have the
-                            // same availability.
-                            availability: availability.clone(),
-                            cls: subclass,
-                            // And that they have the same amount of generics.
-                            cls_generics: generics.clone(),
-                            category_name: category.name.clone(),
-                            methods,
-                        })
-                    }
-                } else {
-                    None
-                };
-
-                output
-                    .chain(subclass_methods)
-                    .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
-                        cls: cls.clone(),
-                        generics: generics.clone(),
-                        availability: availability.clone(),
-                        protocol,
-                    }))
+                    .into_iter()
+                    .chain(protocol_impls)
                     .collect()
+                }
             }
             EntityKind::ObjCProtocolDecl => {
                 let actual_id = ItemIdentifier::new(entity, context);
