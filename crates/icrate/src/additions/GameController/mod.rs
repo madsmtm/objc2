@@ -1,4 +1,6 @@
 //! # Bindings to the `GameController` framework
+#![allow(non_upper_case_globals)]
+#![allow(non_snake_case)]
 pub use crate::generated::GameController::*;
 
 use crate::common::*;

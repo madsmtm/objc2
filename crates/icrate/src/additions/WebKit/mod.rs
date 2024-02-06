@@ -6,6 +6,7 @@
 //! ```ignore
 #![doc = include_str!("../../../examples/browser.rs")]
 //! ```
+#![allow(non_snake_case)]
 
 pub use crate::generated::WebKit::*;
 

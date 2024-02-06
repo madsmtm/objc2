@@ -1,3 +1,5 @@
+//! # Bindings to the `MetrixKit` framework
+#![allow(non_snake_case)]
 pub use crate::generated::MetricKit::*;
 
 use crate::common::*;

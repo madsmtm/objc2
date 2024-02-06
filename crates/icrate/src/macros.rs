@@ -123,6 +123,7 @@ macro_rules! extern_enum_inner {
         $($rest:tt)*
     ) => {
         $(#[$field_m])*
+        #[allow(non_upper_case_globals)]
         $v const $field: $ty = $value;
 
         extern_enum_inner! {

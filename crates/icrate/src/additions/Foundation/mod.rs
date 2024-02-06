@@ -19,6 +19,7 @@
 //! ```ignore
 #![doc = include_str!("../../../examples/speech_synthesis.rs")]
 //! ```
+#![allow(non_snake_case)]
 
 #[doc(hidden)]
 pub mod __macro_helpers;

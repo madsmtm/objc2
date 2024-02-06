@@ -55,6 +55,33 @@ impl fmt::Display for Library {
         writeln!(f, "// DO NOT EDIT")?;
         writeln!(f)?;
         writeln!(f, "//! # Bindings to the `{}` framework", self.link_name)?;
+
+        // Lints
+        // We emit `use [framework]::*` more than necessary often.
+        writeln!(f, "#![allow(unused_imports)]")?;
+        // Deprecated items are often still used in other signatures.
+        writeln!(f, "#![allow(deprecated)]")?;
+        // Methods use a different naming scheme.
+        writeln!(f, "#![allow(non_snake_case)]")?;
+        // We emit C types with a different naming scheme.
+        writeln!(f, "#![allow(non_camel_case_types)]")?;
+        // Statics and enum fields use a different naming scheme.
+        writeln!(f, "#![allow(non_upper_case_globals)]")?;
+        // We don't yet emit documentation for methods.
+        writeln!(f, "#![allow(missing_docs)]")?;
+
+        // Clippy lints
+        // We have no control over how many arguments a method takes.
+        writeln!(f, "#![allow(clippy::too_many_arguments)]")?;
+        // We have no control over how complex a type is.
+        writeln!(f, "#![allow(clippy::type_complexity)]")?;
+        // Apple's naming scheme allows this.
+        writeln!(f, "#![allow(clippy::upper_case_acronyms)]")?;
+        // Headers often use `x << 0` for clarity.
+        writeln!(f, "#![allow(clippy::identity_op)]")?;
+        // We don't have the manpower to document the safety of methods.
+        writeln!(f, "#![allow(clippy::missing_safety_doc)]")?;
+
         writeln!(f)?;
 
         // Link to the correct framework.

@@ -13,6 +13,7 @@ extern_protocol!(
     /// See [Apple's documentation][apple-doc] for details.
     ///
     /// [apple-doc]: https://developer.apple.com/documentation/foundation/nscopying
+    #[allow(clippy::missing_safety_doc)]
     pub unsafe trait NSCopying {
         /// Returns a new instance that's a copy of the receiver.
         ///
@@ -51,6 +52,7 @@ extern_protocol!(
     /// See [Apple's documentation][apple-doc] for details.
     ///
     /// [apple-doc]: https://developer.apple.com/documentation/foundation/nsmutablecopying
+    #[allow(clippy::missing_safety_doc)]
     pub unsafe trait NSMutableCopying {
         /// Returns a new instance that's a mutable copy of the receiver.
         ///

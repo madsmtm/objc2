@@ -126,14 +126,6 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 #![warn(clippy::cargo)]
 #![warn(clippy::ptr_as_ptr)]
-#![allow(clippy::upper_case_acronyms)]
-#![allow(non_camel_case_types)]
-#![allow(non_upper_case_globals)]
-#![allow(non_snake_case)]
-#![allow(clippy::too_many_arguments)]
-#![allow(clippy::type_complexity)]
-#![allow(clippy::identity_op)]
-#![allow(clippy::missing_safety_doc)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/icrate/0.1.0")]
 #![recursion_limit = "512"]
@@ -159,8 +151,6 @@ mod common;
 mod macros;
 mod additions;
 #[allow(unreachable_pub)]
-#[allow(unused_imports)]
-#[allow(deprecated)]
 mod generated;
 
 /// Deprecated alias of [`Foundation::ns_string`].

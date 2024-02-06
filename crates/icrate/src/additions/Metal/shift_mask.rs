@@ -1,3 +1,4 @@
+#![allow(non_upper_case_globals)]
 use crate::common::*;
 
 pub const MTLResourceCPUCacheModeShift: NSUInteger = 0;
