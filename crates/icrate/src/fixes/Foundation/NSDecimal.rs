@@ -1,4 +1,4 @@
-use std::os::raw::c_ushort;
+use crate::common::*;
 
 extern_struct!(
     pub struct NSDecimal {

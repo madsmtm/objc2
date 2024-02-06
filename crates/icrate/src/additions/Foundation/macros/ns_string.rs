@@ -1,4 +1,3 @@
-#![cfg(feature = "Foundation_NSString")]
 /// Create a [`NSString`] from a static [`str`].
 ///
 /// Equivalent to the [boxed C-strings] `@"string"` syntax in Objective-C.

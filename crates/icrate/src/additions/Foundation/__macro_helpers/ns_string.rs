@@ -1,4 +1,3 @@
-#![cfg(feature = "Foundation_NSString")]
 #![allow(missing_copy_implementations)]
 //! Macro for making a static NSString.
 //!
