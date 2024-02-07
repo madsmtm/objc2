@@ -1129,7 +1129,11 @@ impl Inner {
 
     pub fn visit_toplevel_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
         match self {
-            Self::Id { ty, .. } => {
+            Self::Id {
+                ty,
+                nullability: Nullability::NonNull,
+                ..
+            } => {
                 ty.visit_toplevel_types(f);
             }
             Self::Pointer {
