@@ -449,8 +449,7 @@ fn check_nullability(ty: &Type<'_>, new: Option<Nullability>) -> Nullability {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-enum Inner {
-    // Primitives
+enum Primitive {
     Void,
     C99Bool,
     Char,
@@ -478,6 +477,55 @@ enum Inner {
     U64,
     ISize,
     USize,
+    // Objective-C
+    ObjcBool,
+    NSInteger,
+    NSUInteger,
+}
+
+impl fmt::Display for Primitive {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            // Primitives
+            Self::Void => write!(f, "c_void"),
+            Self::C99Bool => write!(f, "bool"),
+            Self::Char => write!(f, "c_char"),
+            Self::SChar => write!(f, "c_schar"),
+            Self::UChar => write!(f, "c_uchar"),
+            Self::Short => write!(f, "c_short"),
+            Self::UShort => write!(f, "c_ushort"),
+            Self::Int => write!(f, "c_int"),
+            Self::UInt => write!(f, "c_uint"),
+            Self::Long => write!(f, "c_long"),
+            Self::ULong => write!(f, "c_ulong"),
+            Self::LongLong => write!(f, "c_longlong"),
+            Self::ULongLong => write!(f, "c_ulonglong"),
+            Self::Float => write!(f, "c_float"),
+            Self::Double => write!(f, "c_double"),
+            Self::F32 => write!(f, "f32"),
+            Self::F64 => write!(f, "f64"),
+            Self::I8 => write!(f, "i8"),
+            Self::U8 => write!(f, "u8"),
+            Self::I16 => write!(f, "i16"),
+            Self::U16 => write!(f, "u16"),
+            Self::I32 => write!(f, "i32"),
+            Self::U32 => write!(f, "u32"),
+            Self::I64 => write!(f, "i64"),
+            Self::U64 => write!(f, "u64"),
+            // TODO: Use core::ffi::c_ssize_t
+            Self::ISize => write!(f, "isize"),
+            // TODO: Use core::ffi::c_size_t
+            Self::USize => write!(f, "usize"),
+            Self::ObjcBool => write!(f, "Bool"),
+            Self::NSInteger => write!(f, "NSInteger"),
+            Self::NSUInteger => write!(f, "NSUInteger"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+enum Inner {
+    Primitive(Primitive),
 
     // Objective-C
     Id {
@@ -492,7 +540,6 @@ enum Inner {
     Sel {
         nullability: Nullability,
     },
-    ObjcBool,
 
     // Others
     Pointer {
@@ -611,24 +658,23 @@ impl Inner {
             }
         };
 
-        use TypeKind::*;
         match ty.get_kind() {
-            Void => Self::Void,
-            Bool => Self::C99Bool,
-            CharS | CharU => Self::Char,
-            SChar => Self::SChar,
-            UChar => Self::UChar,
-            Short => Self::Short,
-            UShort => Self::UShort,
-            Int => Self::Int,
-            UInt => Self::UInt,
-            Long => Self::Long,
-            ULong => Self::ULong,
-            LongLong => Self::LongLong,
-            ULongLong => Self::ULongLong,
-            Float => Self::Float,
-            Double => Self::Double,
-            Record => {
+            TypeKind::Void => Self::Primitive(Primitive::Void),
+            TypeKind::Bool => Self::Primitive(Primitive::C99Bool),
+            TypeKind::CharS | TypeKind::CharU => Self::Primitive(Primitive::Char),
+            TypeKind::SChar => Self::Primitive(Primitive::SChar),
+            TypeKind::UChar => Self::Primitive(Primitive::UChar),
+            TypeKind::Short => Self::Primitive(Primitive::Short),
+            TypeKind::UShort => Self::Primitive(Primitive::UShort),
+            TypeKind::Int => Self::Primitive(Primitive::Int),
+            TypeKind::UInt => Self::Primitive(Primitive::UInt),
+            TypeKind::Long => Self::Primitive(Primitive::Long),
+            TypeKind::ULong => Self::Primitive(Primitive::ULong),
+            TypeKind::LongLong => Self::Primitive(Primitive::LongLong),
+            TypeKind::ULongLong => Self::Primitive(Primitive::ULongLong),
+            TypeKind::Float => Self::Primitive(Primitive::Float),
+            TypeKind::Double => Self::Primitive(Primitive::Double),
+            TypeKind::Record => {
                 let declaration = ty.get_declaration().expect("record declaration");
                 let name = ty
                     .get_display_name()
@@ -638,7 +684,7 @@ impl Inner {
                     id: ItemIdentifier::with_name(name, &declaration, context),
                 }
             }
-            Enum => {
+            TypeKind::Enum => {
                 let declaration = ty.get_declaration().expect("enum declaration");
                 let name = ty
                     .get_display_name()
@@ -648,7 +694,7 @@ impl Inner {
                     id: ItemIdentifier::with_name(name, &declaration, context),
                 }
             }
-            ObjCId => {
+            TypeKind::ObjCId => {
                 let mut parser = AttributeParser::new(&attributed_name, "id");
 
                 lifetime.update(parser.lifetime(ParsePosition::Prefix));
@@ -672,7 +718,7 @@ impl Inner {
                     nullability,
                 }
             }
-            ObjCClass => {
+            TypeKind::ObjCClass => {
                 let mut parser = AttributeParser::new(&attributed_name, &name);
                 let _lifetime = parser.lifetime(ParsePosition::Suffix);
                 let nullability = if let Some(nullability) = unexposed_nullability {
@@ -682,7 +728,7 @@ impl Inner {
                 };
                 Self::Class { nullability }
             }
-            ObjCSel => {
+            TypeKind::ObjCSel => {
                 let mut parser = AttributeParser::new(&attributed_name, &name);
                 let nullability = if let Some(nullability) = unexposed_nullability {
                     nullability
@@ -693,13 +739,13 @@ impl Inner {
             }
             // These can appear without being wrapped in a pointer by being in typedefs
             // TODO: Emit this properly.
-            ObjCObject => {
+            TypeKind::ObjCObject => {
                 let decl = ty.get_declaration().expect("ObjCObject declaration");
                 Self::TypeDef {
                     id: ItemIdentifier::with_name("AnyObject".to_string(), &decl, context),
                 }
             }
-            Pointer => {
+            TypeKind::Pointer => {
                 let mut parser = AttributeParser::new(&attributed_name, &name);
                 let pointee = ty.get_pointee_type().expect("pointer to have pointee");
                 if let TypeKind::FunctionPrototype = pointee.get_kind() {
@@ -720,7 +766,7 @@ impl Inner {
                     pointee: Box::new(pointee),
                 }
             }
-            BlockPointer => {
+            TypeKind::BlockPointer => {
                 let mut parser = AttributeParser::new(&attributed_name, &name);
                 parser.set_fn_ptr();
 
@@ -752,7 +798,7 @@ impl Inner {
                     pointee => panic!("unexpected pointee in block: {pointee:?}"),
                 }
             }
-            ObjCObjectPointer => {
+            TypeKind::ObjCObjectPointer => {
                 let mut parser = AttributeParser::new(&attributed_name, &name);
                 let is_kindof = parser.is_kindof(ParsePosition::Prefix);
 
@@ -814,7 +860,7 @@ impl Inner {
                     nullability,
                 }
             }
-            Typedef => {
+            TypeKind::Typedef => {
                 let typedef_name = ty.get_typedef_name().expect("typedef has name");
 
                 let mut parser = AttributeParser::new(&attributed_name, &typedef_name);
@@ -858,32 +904,35 @@ impl Inner {
                 };
 
                 match &*typedef_name {
-                    "BOOL" => Self::ObjcBool,
+                    "BOOL" => Self::Primitive(Primitive::ObjcBool),
 
-                    "int8_t" => Self::I8,
-                    "uint8_t" => Self::U8,
-                    "int16_t" => Self::I16,
-                    "uint16_t" => Self::U16,
-                    "int32_t" => Self::I32,
-                    "uint32_t" => Self::U32,
-                    "int64_t" => Self::I64,
-                    "uint64_t" => Self::U64,
-                    "ssize_t" => Self::ISize,
-                    "size_t" => Self::USize,
+                    "int8_t" => Self::Primitive(Primitive::I8),
+                    "uint8_t" => Self::Primitive(Primitive::U8),
+                    "int16_t" => Self::Primitive(Primitive::I16),
+                    "uint16_t" => Self::Primitive(Primitive::U16),
+                    "int32_t" => Self::Primitive(Primitive::I32),
+                    "uint32_t" => Self::Primitive(Primitive::U32),
+                    "int64_t" => Self::Primitive(Primitive::I64),
+                    "uint64_t" => Self::Primitive(Primitive::U64),
+                    "ssize_t" => Self::Primitive(Primitive::ISize),
+                    "size_t" => Self::Primitive(Primitive::USize),
 
                     // MacTypes.h
-                    "UInt8" => Self::U8,
-                    "UInt16" => Self::U16,
-                    "UInt32" => Self::U32,
-                    "UInt64" => Self::U64,
-                    "SInt8" => Self::I8,
-                    "SInt16" => Self::I16,
-                    "SInt32" => Self::I32,
-                    "SInt64" => Self::I64,
-                    "Float32" => Self::F32,
-                    "Float64" => Self::F64,
+                    "UInt8" => Self::Primitive(Primitive::U8),
+                    "UInt16" => Self::Primitive(Primitive::U16),
+                    "UInt32" => Self::Primitive(Primitive::U32),
+                    "UInt64" => Self::Primitive(Primitive::U64),
+                    "SInt8" => Self::Primitive(Primitive::I8),
+                    "SInt16" => Self::Primitive(Primitive::I16),
+                    "SInt32" => Self::Primitive(Primitive::I32),
+                    "SInt64" => Self::Primitive(Primitive::I64),
+                    "Float32" => Self::Primitive(Primitive::F32),
+                    "Float64" => Self::Primitive(Primitive::F64),
                     "Float80" => panic!("can't handle 80 bit MacOS float"),
                     "Float96" => panic!("can't handle 96 bit 68881 float"),
+
+                    "NSInteger" => Self::Primitive(Primitive::NSInteger),
+                    "NSUInteger" => Self::Primitive(Primitive::NSUInteger),
 
                     "instancetype" => Self::Id {
                         ty: IdType::Self_,
@@ -897,7 +946,7 @@ impl Inner {
                         let _span = debug_span!("typedef", ?typedef_name, ?canonical, ?declaration)
                             .entered();
                         match canonical.get_kind() {
-                            ObjCObjectPointer => {
+                            TypeKind::ObjCObjectPointer => {
                                 let pointee = canonical
                                     .get_pointee_type()
                                     .expect("pointer type to have pointee");
@@ -950,7 +999,7 @@ impl Inner {
                     }
                 }
             }
-            FunctionPrototype => {
+            TypeKind::FunctionPrototype => {
                 let call_conv = ty.get_calling_convention().expect("fn calling convention");
                 assert_eq!(
                     call_conv,
@@ -975,7 +1024,7 @@ impl Inner {
                     result_type: Box::new(result_type),
                 }
             }
-            IncompleteArray => {
+            TypeKind::IncompleteArray => {
                 let mut parser = AttributeParser::new(&attributed_name, &name);
                 parser.set_incomplete_array();
 
@@ -998,7 +1047,7 @@ impl Inner {
                     pointee: Box::new(pointee),
                 }
             }
-            ConstantArray => {
+            TypeKind::ConstantArray => {
                 let mut parser = AttributeParser::new(&attributed_name, &name);
                 parser.set_constant_array();
                 let _is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
@@ -1034,12 +1083,13 @@ impl Inner {
 
     fn visit_required_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
         match self {
+            Self::Primitive(_) => {}
             // Objective-C
             Self::Id { ty, .. } => {
                 // f("objc2");
                 ty.visit_required_types(f);
             }
-            Self::Class { .. } | Self::Sel { .. } | Self::ObjcBool => {
+            Self::Class { .. } | Self::Sel { .. } => {
                 // f("objc2");
             }
 
@@ -1102,41 +1152,11 @@ impl Inner {
 /// required.
 impl fmt::Display for Inner {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use Inner::*;
         match self {
-            // Primitives
-            Void => write!(f, "c_void"),
-            C99Bool => write!(f, "bool"),
-            Char => write!(f, "c_char"),
-            SChar => write!(f, "c_schar"),
-            UChar => write!(f, "c_uchar"),
-            Short => write!(f, "c_short"),
-            UShort => write!(f, "c_ushort"),
-            Int => write!(f, "c_int"),
-            UInt => write!(f, "c_uint"),
-            Long => write!(f, "c_long"),
-            ULong => write!(f, "c_ulong"),
-            LongLong => write!(f, "c_longlong"),
-            ULongLong => write!(f, "c_ulonglong"),
-            Float => write!(f, "c_float"),
-            Double => write!(f, "c_double"),
-            F32 => write!(f, "f32"),
-            F64 => write!(f, "f64"),
-            I8 => write!(f, "i8"),
-            U8 => write!(f, "u8"),
-            I16 => write!(f, "i16"),
-            U16 => write!(f, "u16"),
-            I32 => write!(f, "i32"),
-            U32 => write!(f, "u32"),
-            I64 => write!(f, "i64"),
-            U64 => write!(f, "u64"),
-            // TODO: Use core::ffi::c_ssize_t
-            ISize => write!(f, "isize"),
-            // TODO: Use core::ffi::c_size_t
-            USize => write!(f, "usize"),
+            Self::Primitive(prim) => write!(f, "{prim}"),
 
             // Objective-C
-            Id {
+            Self::Id {
                 ty,
                 is_const,
                 // Ignore
@@ -1151,24 +1171,23 @@ impl fmt::Display for Inner {
                     write!(f, "*mut {ty}")
                 }
             }
-            Class { nullability } => {
+            Self::Class { nullability } => {
                 if *nullability == Nullability::NonNull {
                     write!(f, "NonNull<AnyClass>")
                 } else {
                     write!(f, "*const AnyClass")
                 }
             }
-            Sel { nullability } => {
+            Self::Sel { nullability } => {
                 if *nullability == Nullability::NonNull {
                     write!(f, "Sel")
                 } else {
                     write!(f, "Option<Sel>")
                 }
             }
-            ObjcBool => write!(f, "Bool"),
 
             // Others
-            Pointer {
+            Self::Pointer {
                 nullability,
                 is_const,
                 pointee,
@@ -1191,7 +1210,7 @@ impl fmt::Display for Inner {
                     }
                     write!(f, ")")?;
                     match &**result_type {
-                        Self::Void => {
+                        Self::Primitive(Primitive::Void) => {
                             // Don't output anything
                         }
                         ty => write!(f, " -> {ty}")?,
@@ -1211,7 +1230,7 @@ impl fmt::Display for Inner {
                     }
                 }
             },
-            IncompleteArray {
+            Self::IncompleteArray {
                 nullability,
                 is_const,
                 pointee,
@@ -1224,11 +1243,13 @@ impl fmt::Display for Inner {
                     write!(f, "*mut {pointee}")
                 }
             }
-            Array {
+            Self::Array {
                 element_type,
                 num_elements,
             } => write!(f, "ArrayUnknownABI<[{element_type}; {num_elements}]>"),
-            Enum { id } | Struct { id } | TypeDef { id } => write!(f, "{}", id.path()),
+            Self::Enum { id } | Self::Struct { id } | Self::TypeDef { id } => {
+                write!(f, "{}", id.path())
+            }
             Self::Fn { .. } => write!(f, "TodoFunction"),
             Self::Block {
                 sendable: _,
@@ -1242,7 +1263,7 @@ impl fmt::Display for Inner {
                 }
                 write!(f, ")")?;
                 match &**result_type {
-                    Self::Void => {}
+                    Self::Primitive(Primitive::Void) => {}
                     ty => write!(f, " -> {ty}")?,
                 }
                 if *no_escape {
@@ -1286,7 +1307,7 @@ pub struct Ty {
 
 impl Ty {
     pub const VOID_RESULT: Self = Self {
-        ty: Inner::Void,
+        ty: Inner::Primitive(Primitive::Void),
         kind: TyKind::MethodReturn { with_error: false },
     };
 
@@ -1417,7 +1438,7 @@ impl Ty {
             Inner::Struct { id } if id.name == typedef_name => None,
             // Opaque structs
             Inner::Pointer { pointee, .. } if matches!(&**pointee, Inner::Struct { .. }) => {
-                **pointee = Inner::Void;
+                **pointee = Inner::Primitive(Primitive::Void);
                 Some(Self {
                     ty,
                     kind: TyKind::Typedef,
@@ -1528,6 +1549,10 @@ impl Ty {
         ty.visit_lifetime(|_lifetime| {
             error!(?ty, "unexpected lifetime in enum");
         });
+
+        if !matches!(ty, Inner::Primitive(_)) {
+            warn!(?ty, "enum type not a primitive");
+        }
 
         Self {
             ty,
@@ -1681,7 +1706,7 @@ impl fmt::Display for Ty {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self.kind {
             TyKind::MethodReturn { with_error: false } => {
-                if let Inner::Void = &self.ty {
+                if let Inner::Primitive(Primitive::Void) = &self.ty {
                     // Don't output anything
                     return Ok(());
                 }
@@ -1710,11 +1735,11 @@ impl fmt::Display for Ty {
                             write!(f, "Option<&'static AnyClass>")
                         }
                     }
-                    Inner::C99Bool => {
+                    Inner::Primitive(Primitive::C99Bool) => {
                         warn!("C99's bool as Objective-C method return is ill supported");
                         write!(f, "bool")
                     }
-                    Inner::ObjcBool => write!(f, "bool"),
+                    Inner::Primitive(Primitive::ObjcBool) => write!(f, "bool"),
                     ty => write!(f, "{ty}"),
                 }
             }
@@ -1732,7 +1757,7 @@ impl fmt::Display for Ty {
                         ItemIdentifier::nserror().path(),
                     )
                 }
-                Inner::ObjcBool => {
+                Inner::Primitive(Primitive::ObjcBool) => {
                     // NO -> error
                     write!(
                         f,
@@ -1813,10 +1838,10 @@ impl fmt::Display for Ty {
                         write!(f, "Option<&AnyClass>")
                     }
                 }
-                Inner::C99Bool if self.kind == TyKind::MethodArgument => {
+                Inner::Primitive(Primitive::C99Bool) if self.kind == TyKind::MethodArgument => {
                     panic!("C99's bool as Objective-C method argument is unsupported")
                 }
-                Inner::ObjcBool if self.kind == TyKind::MethodArgument => {
+                Inner::Primitive(Primitive::ObjcBool) if self.kind == TyKind::MethodArgument => {
                     write!(f, "bool")
                 }
                 ty @ Inner::Pointer {
@@ -1865,7 +1890,7 @@ impl fmt::Display for Ty {
             },
             TyKind::Enum => write!(f, "{}", self.ty),
             TyKind::FnReturn => {
-                if let Inner::Void = &self.ty {
+                if let Inner::Primitive(Primitive::Void) = &self.ty {
                     // Don't output anything
                     return Ok(());
                 }
