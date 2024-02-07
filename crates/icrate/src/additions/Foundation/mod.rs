@@ -91,5 +91,15 @@ pub use objc2::ffi::{NSInteger, NSUInteger};
 pub use objc2::runtime::__NSProxy as NSProxy;
 pub use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
 
+// MacTypes.h
+#[allow(unused)]
+pub(crate) type Boolean = u8; // unsigned char
+#[allow(unused)]
+pub(crate) type FourCharCode = u32;
+#[allow(unused)]
+pub(crate) type OSType = FourCharCode;
+#[allow(unused)]
+pub(crate) type UTF32Char = u32; // Or maybe Rust's char?
+
 #[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-base", kind = "dylib"))]
 extern "C" {}

@@ -177,6 +177,8 @@ macro_rules! ns_string {
 pub use self::additions::AppKit;
 #[cfg(feature = "AuthenticationServices")]
 pub use self::additions::AuthenticationServices;
+#[cfg(feature = "CallKit")]
+pub use self::additions::CallKit;
 #[cfg(feature = "Foundation")]
 pub use self::additions::Foundation;
 #[cfg(feature = "GameController")]
@@ -214,8 +216,6 @@ pub use self::generated::BackgroundAssets;
 pub use self::generated::BackgroundTasks;
 #[cfg(feature = "BusinessChat")]
 pub use self::generated::BusinessChat;
-#[cfg(feature = "CallKit")]
-pub use self::generated::CallKit;
 #[cfg(feature = "ClassKit")]
 pub use self::generated::ClassKit;
 #[cfg(feature = "CloudKit")]

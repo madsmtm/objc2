@@ -2,6 +2,8 @@
 pub mod AppKit;
 #[cfg(feature = "AuthenticationServices")]
 pub mod AuthenticationServices;
+#[cfg(feature = "CallKit")]
+pub mod CallKit;
 #[cfg(feature = "Foundation")]
 pub mod Foundation;
 #[cfg(feature = "GameController")]

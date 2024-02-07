@@ -40,12 +40,3 @@ pub(crate) type TodoFunction = *const c_void;
 pub(crate) type TodoClass = AnyObject;
 #[cfg(feature = "objc2")]
 pub(crate) type TodoProtocols = AnyObject;
-
-// MacTypes.h
-pub(crate) type Boolean = u8; // unsigned char
-pub(crate) type FourCharCode = u32;
-pub(crate) type OSType = FourCharCode;
-pub(crate) type ResType = FourCharCode;
-pub(crate) type UTF32Char = u32; // Or maybe Rust's char?
-
-pub(crate) const INT64_MAX: i64 = i64::MAX;
