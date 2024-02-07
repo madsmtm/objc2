@@ -252,6 +252,7 @@ pub struct Method {
     memory_management: MemoryManagement,
     pub(crate) arguments: Vec<(String, Ty)>,
     pub result_type: Ty,
+    is_error: bool,
     safe: bool,
     mutating: bool,
     is_pub: bool,
@@ -456,15 +457,14 @@ impl<'tu> PartialMethod<'tu> {
             result_type.try_fix_related_result_type();
         }
 
-        if is_error {
-            result_type.set_is_error();
-        }
-
         let mut features = Features::new();
         for (_, arg_ty) in &arguments {
             arg_ty.visit_required_types(&mut |item| features.add_item(item));
         }
         result_type.visit_required_types(&mut |item| features.add_item(item));
+        if is_error {
+            features.add_item(&ItemIdentifier::nserror());
+        }
         for ignored in implied_features {
             features.remove_item(ignored);
         }
@@ -483,6 +483,7 @@ impl<'tu> PartialMethod<'tu> {
                 memory_management,
                 arguments,
                 result_type,
+                is_error,
                 safe: !data.unsafe_,
                 // Mutable if the parent is mutable is a reasonable default,
                 // since immutable methods are usually either declared on an
@@ -570,6 +571,7 @@ impl PartialProperty<'_> {
                 memory_management,
                 arguments: Vec::new(),
                 result_type: ty,
+                is_error: false,
                 safe: !getter_data.unsafe_,
                 // Getters are usually not mutable, even if the class itself
                 // is, so let's default to immutable.
@@ -612,6 +614,7 @@ impl PartialProperty<'_> {
                     memory_management,
                     arguments: vec![(name, ty)],
                     result_type: Ty::VOID_RESULT,
+                    is_error: false,
                     safe: !setter_data.unsafe_,
                     // Setters are usually mutable if the class itself is.
                     mutating: setter_data.mutating.unwrap_or(parent_is_mutable),
@@ -675,7 +678,7 @@ impl fmt::Display for Method {
         } else {
             write!(f, "        #[method(")?;
         }
-        let error_trailing = if self.result_type.is_error() { "_" } else { "" };
+        let error_trailing = if self.is_error { "_" } else { "" };
         writeln!(f, "{}{})]", self.selector, error_trailing)?;
 
         //
@@ -706,7 +709,7 @@ impl fmt::Display for Method {
         // Arguments
         for (param, arg_ty) in &self.arguments {
             let param = handle_reserved(&crate::to_snake_case(param));
-            write!(f, "{param}: {arg_ty}, ")?;
+            write!(f, "{param}: {}, ", arg_ty.method_argument())?;
         }
         if self.mainthreadonly {
             write!(f, "mtm: MainThreadMarker")?;
@@ -714,7 +717,12 @@ impl fmt::Display for Method {
         write!(f, ")")?;
 
         // Result
-        writeln!(f, "{};", self.result_type)?;
+        if self.is_error {
+            write!(f, "{}", self.result_type.method_return_with_error())?;
+        } else {
+            write!(f, "{}", self.result_type.method_return())?;
+        }
+        writeln!(f, ";")?;
 
         Ok(())
     }
