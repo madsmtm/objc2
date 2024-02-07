@@ -1688,6 +1688,14 @@ impl Ty {
         matches!(self, Self::TypeDef { id, .. } if id.name == s)
     }
 
+    pub(crate) fn is_enum_through_typedef(&self) -> bool {
+        match self {
+            Self::Enum { .. } => true,
+            Self::TypeDef { to, .. } => to.is_enum_through_typedef(),
+            _ => false,
+        }
+    }
+
     pub(crate) fn try_fix_related_result_type(&mut self) {
         if let Self::Pointer { pointee, .. } = self {
             if let Self::AnyObject { protocols } = &**pointee {

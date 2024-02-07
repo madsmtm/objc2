@@ -61,7 +61,7 @@ macro_rules! extern_struct {
 
 macro_rules! extern_enum {
     (
-        #[underlying($ty:ty)]
+        #[underlying($ty:path)]
         $(#[$m:meta])*
         $v:vis enum $name:ident {
             $(
@@ -70,9 +70,18 @@ macro_rules! extern_enum {
             ),* $(,)?
         }
     ) => {
-        // TODO: Improve type-safety
+        // TODO: Unsure if this should require `unsafe` to construct, depends
+        // on whether you can cause unsoundness by passing invalid enum values
+        // to the external code?
         $(#[$m])*
-        $v type $name = $ty;
+        #[repr(transparent)]
+        #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+        $v struct $name(pub $ty);
+
+        // SAFETY: The type is `#[repr(transparent)]`
+        impl_encode! {
+            $name = <$ty as objc2::Encode>::ENCODING;
+        }
 
         extern_enum_inner! {
             ($v)
@@ -90,13 +99,13 @@ macro_rules! extern_enum_inner {
     // Base case
     (
         ($v:vis)
-        ($ty:ty)
+        ($ty:path)
     ) => {};
 
     // Parse each field
     (
         ($v:vis)
-        ($ty:ty)
+        ($ty:path)
 
         $(#[$field_m:meta])*
         $field:ident = $value:expr,
@@ -105,7 +114,7 @@ macro_rules! extern_enum_inner {
     ) => {
         $(#[$field_m])*
         #[allow(non_upper_case_globals)]
-        $v const $field: $ty = $value;
+        $v const $field: $ty = $ty($value);
 
         extern_enum_inner! {
             ($v)
@@ -279,7 +288,8 @@ macro_rules! extern_static {
     ($name:ident: MKAnnotationViewZPriority = $($value:tt)*) => {
         pub static $name: MKAnnotationViewZPriority = $($value)* as _;
     };
-    ($name:ident: $ty:ty = $value:expr) => {
+    // Normal case
+    ($name:ident: $ty:path = $value:expr) => {
         pub static $name: $ty = $value;
     };
 }

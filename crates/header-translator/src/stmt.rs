@@ -1928,7 +1928,17 @@ impl fmt::Display for Stmt {
                 ty,
                 value: Some(expr),
             } => {
-                writeln!(f, "extern_static!({}: {} = {expr});", id.name, ty.var())?;
+                if ty.is_enum_through_typedef() {
+                    writeln!(
+                        f,
+                        "extern_static!({}: {} = {}({expr}));",
+                        id.name,
+                        ty.var(),
+                        ty.var()
+                    )?;
+                } else {
+                    writeln!(f, "extern_static!({}: {} = {expr});", id.name, ty.var())?;
+                }
             }
             Self::FnDecl {
                 id,

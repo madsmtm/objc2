@@ -215,9 +215,15 @@ impl fmt::Display for Expr {
                     write!(f, "{name}")
                 }
             }
-            Self::Enum { id: _, variant } => write!(f, "{variant}"),
+            Self::Enum { id: _, variant } => write!(f, "{variant}.0"),
             Self::Const(id) => write!(f, "{}", id.name),
-            Self::Var { id, ty: _ } => write!(f, "{}", id.name),
+            Self::Var { id, ty } => {
+                if ty.is_enum_through_typedef() {
+                    write!(f, "{}.0", id.name)
+                } else {
+                    write!(f, "{}", id.name)
+                }
+            }
             Self::Tokens(tokens) => {
                 for token in tokens {
                     match token {

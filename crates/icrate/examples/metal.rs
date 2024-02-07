@@ -5,8 +5,8 @@ use core::{cell::OnceCell, ptr::NonNull};
 use icrate::{
     AppKit::{
         NSApplication, NSApplicationActivationPolicyRegular, NSApplicationDelegate,
-        NSBackingStoreBuffered, NSWindow, NSWindowStyleMaskClosable, NSWindowStyleMaskResizable,
-        NSWindowStyleMaskTitled,
+        NSBackingStoreBuffered, NSWindow, NSWindowStyleMask, NSWindowStyleMaskClosable,
+        NSWindowStyleMaskResizable, NSWindowStyleMaskTitled,
     },
     Foundation::{
         ns_string, MainThreadMarker, NSDate, NSNotification, NSObject, NSObjectProtocol, NSPoint,
@@ -152,9 +152,11 @@ declare_class!(
             // create the app window
             let window = {
                 let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(768., 768.));
-                let style = NSWindowStyleMaskClosable
-                    | NSWindowStyleMaskResizable
-                    | NSWindowStyleMaskTitled;
+                let style = NSWindowStyleMask(
+                    NSWindowStyleMaskClosable.0
+                    | NSWindowStyleMaskResizable.0
+                    | NSWindowStyleMaskTitled.0
+                );
                 let backing_store_type = NSBackingStoreBuffered;
                 let flag = false;
                 unsafe {

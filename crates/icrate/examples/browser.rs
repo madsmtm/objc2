@@ -9,8 +9,8 @@ use icrate::{
         NSControlTextEditingDelegate, NSLayoutAttributeHeight, NSLayoutAttributeWidth, NSMenu,
         NSMenuItem, NSStackView, NSStackViewDistributionFill, NSStackViewDistributionFillEqually,
         NSTextField, NSTextFieldDelegate, NSTextView, NSUserInterfaceLayoutOrientationHorizontal,
-        NSUserInterfaceLayoutOrientationVertical, NSWindow, NSWindowStyleMaskClosable,
-        NSWindowStyleMaskResizable, NSWindowStyleMaskTitled,
+        NSUserInterfaceLayoutOrientationVertical, NSWindow, NSWindowStyleMask,
+        NSWindowStyleMaskClosable, NSWindowStyleMaskResizable, NSWindowStyleMaskTitled,
     },
     Foundation::{
         ns_string, MainThreadMarker, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect,
@@ -78,9 +78,11 @@ declare_class!(
             // create the app window
             let window = {
                 let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(1024., 768.));
-                let style = NSWindowStyleMaskClosable
-                    | NSWindowStyleMaskResizable
-                    | NSWindowStyleMaskTitled;
+                let style = NSWindowStyleMask(
+                    NSWindowStyleMaskClosable.0
+                    | NSWindowStyleMaskResizable.0
+                    | NSWindowStyleMaskTitled.0
+                );
                 let backing_store_type = NSBackingStoreBuffered;
                 let flag = false;
                 unsafe {
