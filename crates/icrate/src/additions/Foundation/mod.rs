@@ -41,7 +41,6 @@ mod fast_enumeration_state;
 mod generics;
 mod geometry;
 mod macros;
-mod not_found;
 mod ns_consumed;
 mod number;
 mod process_info;
@@ -67,7 +66,6 @@ pub use self::geometry::{
     CGFloat, CGPoint, CGRect, CGSize, NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint,
     NSRect, NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize,
 };
-pub use self::not_found::NSNotFound;
 #[cfg(feature = "Foundation_NSMapTable")]
 pub use self::ns_consumed::NSFreeMapTable;
 pub use self::range::NSRange;

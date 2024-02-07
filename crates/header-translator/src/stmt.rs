@@ -443,12 +443,25 @@ pub enum Stmt {
     ///     variants*
     /// };
     EnumDecl {
-        id: ItemIdentifier<Option<String>>,
+        id: ItemIdentifier,
         availability: Availability,
         ty: Ty,
         kind: Option<UnexposedAttr>,
         variants: Vec<(String, Availability, Expr)>,
         sendable: Option<bool>,
+    },
+    /// Anonymous enum variants are emitted as free constants.
+    ///
+    /// enum {
+    ///     variants*
+    /// };
+    ConstDecl {
+        id: ItemIdentifier,
+        availability: Availability,
+        ty: Ty,
+        value: Expr,
+        // Hack to get prettier output
+        is_last: bool,
     },
     /// static const ty name = expr;
     /// extern const ty name;
@@ -507,6 +520,25 @@ fn get_class_implied_features(cls: &Entity<'_>, context: &Context<'_>) -> Vec<It
     }
 
     implied_features
+}
+
+pub(crate) fn new_enum_id(
+    entity: &Entity<'_>,
+    context: &Context<'_>,
+) -> ItemIdentifier<Option<String>> {
+    assert_eq!(entity.get_kind(), EntityKind::EnumDecl);
+    let mut id = ItemIdentifier::new_optional(entity, context);
+
+    if id
+        .name
+        .as_deref()
+        .map(|name| name.starts_with("enum (unnamed at"))
+        .unwrap_or(false)
+    {
+        id.name = None;
+    }
+
+    id
 }
 
 impl Stmt {
@@ -1077,16 +1109,7 @@ impl Stmt {
                     return vec![];
                 }
 
-                let mut id = ItemIdentifier::new_optional(entity, context);
-
-                if id
-                    .name
-                    .as_deref()
-                    .map(|name| name.starts_with("enum (unnamed at"))
-                    .unwrap_or(false)
-                {
-                    id.name = None;
-                }
+                let id = new_enum_id(entity, context);
 
                 let data = context
                     .enum_data
@@ -1120,21 +1143,37 @@ impl Stmt {
                             return;
                         }
 
-                        let pointer_width =
-                            entity.get_translation_unit().get_target().pointer_width;
+                        let value = entity
+                            .get_enum_constant_value()
+                            .expect("enum constant value");
 
-                        let val = Expr::from_val(
-                            entity
-                                .get_enum_constant_value()
-                                .expect("enum constant value"),
-                            is_signed,
-                            pointer_width,
-                        );
-                        let expr = if data.use_value {
-                            val
+                        let mut expr = if is_signed {
+                            Expr::Signed(value.0)
                         } else {
-                            Expr::parse_enum_constant(&entity, context).unwrap_or(val)
+                            Expr::Unsigned(value.1)
                         };
+
+                        if !data.use_value {
+                            // Some enums constants don't declare a value, but
+                            // let it be inferred from the position in the
+                            // enum instead; in those cases, we use the value
+                            // generated above.
+                            immediate_children(&entity, |entity, _span| match entity.get_kind() {
+                                EntityKind::UnexposedAttr => {
+                                    if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                                        error!(?attr, "unknown attribute");
+                                    }
+                                }
+                                EntityKind::VisibilityAttr => {}
+                                _ if entity.is_expression() => {
+                                    expr = Expr::parse_enum_constant(&entity, context);
+                                }
+                                _ => {
+                                    panic!("unknown EnumConstantDecl child in {name:?}: {entity:?}")
+                                }
+                            });
+                        };
+
                         variants.push((name, availability, expr));
                     }
                     EntityKind::UnexposedAttr => {
@@ -1169,18 +1208,37 @@ impl Stmt {
                     _ => error!("unknown"),
                 });
 
-                if id.name.is_none() && variants.is_empty() {
-                    return vec![];
+                if id.name.is_none() {
+                    // Availability propagates to the variants automatically
+                    let _ = availability;
+                    // TODO: Unsure how to handle error enums
+                    assert!(matches!(
+                        kind,
+                        None | Some(UnexposedAttr::Enum) | Some(UnexposedAttr::ErrorEnum)
+                    ));
+                    assert_eq!(sendable, None);
+                    let variants_len = variants.len();
+                    variants
+                        .into_iter()
+                        .enumerate()
+                        .map(|(i, (name, availability, value))| Self::ConstDecl {
+                            id: id.clone().map_name(|_| name),
+                            availability,
+                            ty: ty.clone(),
+                            value,
+                            is_last: i == variants_len - 1,
+                        })
+                        .collect()
+                } else {
+                    vec![Self::EnumDecl {
+                        id: id.map_name(|name| name.unwrap()),
+                        availability,
+                        ty,
+                        kind,
+                        variants,
+                        sendable,
+                    }]
                 }
-
-                vec![Self::EnumDecl {
-                    id,
-                    availability,
-                    ty,
-                    kind,
-                    variants,
-                    sendable,
-                }]
             }
             EntityKind::VarDecl => {
                 let id = ItemIdentifier::new(entity, context);
@@ -1210,22 +1268,13 @@ impl Stmt {
                     EntityKind::TypeRef => {}
                     _ if entity.is_expression() => {
                         if value.is_none() {
-                            value = Some(Expr::parse_var(&entity));
+                            value = Some(Expr::parse_var(&entity, context));
                         } else {
                             panic!("got variable value twice")
                         }
                     }
                     _ => panic!("unknown vardecl child in {id:?}: {entity:?}"),
                 });
-
-                let value = match value {
-                    Some(Some(expr)) => Some(expr),
-                    Some(None) => {
-                        warn!("skipped static");
-                        return vec![];
-                    }
-                    None => None,
-                };
 
                 vec![Self::VarDecl {
                     id,
@@ -1378,7 +1427,8 @@ impl Stmt {
             Stmt::ProtocolDecl { id, .. } => Some(&id.name),
             Stmt::ProtocolImpl { .. } => None,
             Stmt::StructDecl { id, .. } => Some(&id.name),
-            Stmt::EnumDecl { id, .. } => id.name.as_deref(),
+            Stmt::EnumDecl { id, .. } => Some(&id.name),
+            Stmt::ConstDecl { id, .. } => Some(&id.name),
             Stmt::VarDecl { id, .. } => Some(&id.name),
             Stmt::FnDecl { id, body, .. } if body.is_none() => Some(&*id.name),
             // TODO
@@ -1835,11 +1885,7 @@ impl fmt::Display for Stmt {
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    #[underlying({ty})]")?;
                 write!(f, "{availability}")?;
-                writeln!(
-                    f,
-                    "    pub enum {} {{",
-                    id.name.as_deref().unwrap_or("__anonymous__")
-                )?;
+                writeln!(f, "    pub enum {} {{", id.name)?;
                 for (name, availability, expr) in variants {
                     write!(f, "{availability}")?;
                     writeln!(f, "        {name} = {expr},")?;
@@ -1848,13 +1894,24 @@ impl fmt::Display for Stmt {
                 writeln!(f, ");")?;
 
                 if let Some(true) = sendable {
-                    if let Some(name) = &id.name {
-                        writeln!(f)?;
-                        writeln!(f, "unsafe impl Send for {name} {{}}")?;
+                    writeln!(f)?;
+                    writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
 
-                        writeln!(f)?;
-                        writeln!(f, "unsafe impl Sync for {name} {{}}")?;
-                    }
+                    writeln!(f)?;
+                    writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
+                }
+            }
+            Self::ConstDecl {
+                id,
+                availability,
+                ty,
+                value,
+                is_last,
+            } => {
+                write!(f, "{availability}")?;
+                write!(f, "pub const {}: {ty} = {value};", id.name)?;
+                if *is_last {
+                    writeln!(f)?;
                 }
             }
             Self::VarDecl {

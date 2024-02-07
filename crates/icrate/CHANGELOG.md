@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added `NSObject` categories, notably those used by key-value coding and
   observing.
+* Added a few statics that were previously omitted (notably a few
+  `NSWindowLevel` constants).
 
 ### Changed
 * Updated SDK from Xcode 15.0.1 to 15.2.
@@ -45,6 +47,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 * Fixed the `QuartzCore` and `Photos` frameworks not being loaded correctly.
 * Fixed a few feature gates on methods showing up unnecessarily.
+* **BREAKING**: Added `MainThreadMarker` parameter to a few methods where it
+  was erroneously missing.
 
 ## icrate 0.1.0 - 2023-12-23
 
