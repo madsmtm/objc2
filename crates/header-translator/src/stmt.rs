@@ -509,6 +509,25 @@ fn get_class_implied_features(cls: &Entity<'_>, context: &Context<'_>) -> Vec<It
     implied_features
 }
 
+pub(crate) fn new_enum_id(
+    entity: &Entity<'_>,
+    context: &Context<'_>,
+) -> ItemIdentifier<Option<String>> {
+    assert_eq!(entity.get_kind(), EntityKind::EnumDecl);
+    let mut id = ItemIdentifier::new_optional(entity, context);
+
+    if id
+        .name
+        .as_deref()
+        .map(|name| name.starts_with("enum (unnamed at"))
+        .unwrap_or(false)
+    {
+        id.name = None;
+    }
+
+    id
+}
+
 impl Stmt {
     pub fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Vec<Self> {
         let _span = debug_span!(
@@ -1077,16 +1096,7 @@ impl Stmt {
                     return vec![];
                 }
 
-                let mut id = ItemIdentifier::new_optional(entity, context);
-
-                if id
-                    .name
-                    .as_deref()
-                    .map(|name| name.starts_with("enum (unnamed at"))
-                    .unwrap_or(false)
-                {
-                    id.name = None;
-                }
+                let id = new_enum_id(entity, context);
 
                 let data = context
                     .enum_data
@@ -1120,21 +1130,37 @@ impl Stmt {
                             return;
                         }
 
-                        let pointer_width =
-                            entity.get_translation_unit().get_target().pointer_width;
+                        let value = entity
+                            .get_enum_constant_value()
+                            .expect("enum constant value");
 
-                        let val = Expr::from_val(
-                            entity
-                                .get_enum_constant_value()
-                                .expect("enum constant value"),
-                            is_signed,
-                            pointer_width,
-                        );
-                        let expr = if data.use_value {
-                            val
+                        let mut expr = if is_signed {
+                            Expr::Signed(value.0)
                         } else {
-                            Expr::parse_enum_constant(&entity, context).unwrap_or(val)
+                            Expr::Unsigned(value.1)
                         };
+
+                        if !data.use_value {
+                            // Some enums constants don't declare a value, but
+                            // let it be inferred from the position in the
+                            // enum instead; in those cases, we use the value
+                            // generated above.
+                            immediate_children(&entity, |entity, _span| match entity.get_kind() {
+                                EntityKind::UnexposedAttr => {
+                                    if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                                        error!(?attr, "unknown attribute");
+                                    }
+                                }
+                                EntityKind::VisibilityAttr => {}
+                                _ if entity.is_expression() => {
+                                    expr = Expr::parse_enum_constant(&entity, context);
+                                }
+                                _ => {
+                                    panic!("unknown EnumConstantDecl child in {name:?}: {entity:?}")
+                                }
+                            });
+                        };
+
                         variants.push((name, availability, expr));
                     }
                     EntityKind::UnexposedAttr => {
@@ -1210,22 +1236,13 @@ impl Stmt {
                     EntityKind::TypeRef => {}
                     _ if entity.is_expression() => {
                         if value.is_none() {
-                            value = Some(Expr::parse_var(&entity));
+                            value = Some(Expr::parse_var(&entity, context));
                         } else {
                             panic!("got variable value twice")
                         }
                     }
                     _ => panic!("unknown vardecl child in {id:?}: {entity:?}"),
                 });
-
-                let value = match value {
-                    Some(Some(expr)) => Some(expr),
-                    Some(None) => {
-                        warn!("skipped static");
-                        return vec![];
-                    }
-                    None => None,
-                };
 
                 vec![Self::VarDecl {
                     id,
