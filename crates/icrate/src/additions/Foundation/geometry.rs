@@ -371,14 +371,18 @@ pub type NSRect = CGRect;
 ns_enum!(
     #[underlying(NSUInteger)]
     pub enum NSRectEdge {
-        NSRectEdgeMinX = 0,
-        NSRectEdgeMinY = 1,
-        NSRectEdgeMaxX = 2,
-        NSRectEdgeMaxY = 3,
-        NSMinXEdge = Self::NSRectEdgeMinX.0,
-        NSMinYEdge = Self::NSRectEdgeMinY.0,
-        NSMaxXEdge = Self::NSRectEdgeMaxX.0,
-        NSMaxYEdge = Self::NSRectEdgeMaxY.0,
+        #[doc(alias = "NSRectEdgeMinX")]
+        MinX = 0,
+        #[doc(alias = "NSRectEdgeMinY")]
+        MinY = 1,
+        #[doc(alias = "NSRectEdgeMaxX")]
+        MaxX = 2,
+        #[doc(alias = "NSRectEdgeMaxY")]
+        MaxY = 3,
+        NSMinXEdge = NSRectEdge::MinX.0,
+        NSMinYEdge = NSRectEdge::MinY.0,
+        NSMaxXEdge = NSRectEdge::MaxX.0,
+        NSMaxYEdge = NSRectEdge::MaxY.0,
     }
 );
 

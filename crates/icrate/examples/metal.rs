@@ -152,9 +152,9 @@ declare_class!(
             let window = {
                 let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(768., 768.));
                 let style = NSWindowStyleMask(
-                    NSWindowStyleMask::NSWindowStyleMaskClosable.0
-                        | NSWindowStyleMask::NSWindowStyleMaskResizable.0
-                        | NSWindowStyleMask::NSWindowStyleMaskTitled.0,
+                    NSWindowStyleMask::Closable.0
+                        | NSWindowStyleMask::Resizable.0
+                        | NSWindowStyleMask::Titled.0,
                 );
                 let backing_store_type = NSBackingStoreType::NSBackingStoreBuffered;
                 let flag = false;
@@ -328,11 +328,7 @@ declare_class!(
             // configure the encoder with the pipeline and draw the triangle
             encoder.setRenderPipelineState(pipeline_state);
             unsafe {
-                encoder.drawPrimitives_vertexStart_vertexCount(
-                    MTLPrimitiveType::MTLPrimitiveTypeTriangle,
-                    0,
-                    3,
-                )
+                encoder.drawPrimitives_vertexStart_vertexCount(MTLPrimitiveType::Triangle, 0, 3)
             };
             encoder.endEncoding();
 
@@ -366,7 +362,7 @@ fn main() {
     let mtm = MainThreadMarker::new().unwrap();
     // configure the app
     let app = NSApplication::sharedApplication(mtm);
-    app.setActivationPolicy(NSApplicationActivationPolicy::NSApplicationActivationPolicyRegular);
+    app.setActivationPolicy(NSApplicationActivationPolicy::Regular);
 
     // configure the application delegate
     let delegate = Delegate::new(mtm);

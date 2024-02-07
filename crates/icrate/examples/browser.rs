@@ -77,9 +77,9 @@ declare_class!(
             let window = {
                 let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(1024., 768.));
                 let style = NSWindowStyleMask(
-                    NSWindowStyleMask::NSWindowStyleMaskClosable.0
-                        | NSWindowStyleMask::NSWindowStyleMaskResizable.0
-                        | NSWindowStyleMask::NSWindowStyleMaskTitled.0,
+                    NSWindowStyleMask::Closable.0
+                        | NSWindowStyleMask::Resizable.0
+                        | NSWindowStyleMask::Titled.0,
                 );
                 let backing_store_type = NSBackingStoreType::NSBackingStoreBuffered;
                 let flag = false;
@@ -105,9 +105,9 @@ declare_class!(
                 let frame_rect = NSRect::ZERO;
                 let this = unsafe { NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
                 unsafe {
-                    this.setOrientation(NSUserInterfaceLayoutOrientation::NSUserInterfaceLayoutOrientationHorizontal);
-                    this.setAlignment(NSLayoutAttribute::NSLayoutAttributeHeight);
-                    this.setDistribution(NSStackViewDistribution::NSStackViewDistributionFill);
+                    this.setOrientation(NSUserInterfaceLayoutOrientation::Horizontal);
+                    this.setAlignment(NSLayoutAttribute::Height);
+                    this.setDistribution(NSStackViewDistribution::Fill);
                     this.setSpacing(0.);
                 }
                 this
@@ -118,11 +118,9 @@ declare_class!(
                 let frame_rect = NSRect::ZERO;
                 let this = unsafe { NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
                 unsafe {
-                    this.setOrientation(NSUserInterfaceLayoutOrientation::NSUserInterfaceLayoutOrientationHorizontal);
-                    this.setAlignment(NSLayoutAttribute::NSLayoutAttributeHeight);
-                    this.setDistribution(
-                        NSStackViewDistribution::NSStackViewDistributionFillEqually,
-                    );
+                    this.setOrientation(NSUserInterfaceLayoutOrientation::Horizontal);
+                    this.setAlignment(NSLayoutAttribute::Height);
+                    this.setDistribution(NSStackViewDistribution::FillEqually);
                     this.setSpacing(0.);
                 }
                 this
@@ -138,7 +136,7 @@ declare_class!(
                     unsafe { NSButton::buttonWithTitle_target_action(title, target, action, mtm) };
                 #[allow(deprecated)]
                 unsafe {
-                    this.setBezelStyle(NSBezelStyle::NSBezelStyleShadowlessSquare)
+                    this.setBezelStyle(NSBezelStyle::ShadowlessSquare)
                 };
                 this
             };
@@ -153,7 +151,7 @@ declare_class!(
                     unsafe { NSButton::buttonWithTitle_target_action(title, target, action, mtm) };
                 #[allow(deprecated)]
                 unsafe {
-                    this.setBezelStyle(NSBezelStyle::NSBezelStyleShadowlessSquare)
+                    this.setBezelStyle(NSBezelStyle::ShadowlessSquare)
                 };
                 this
             };
@@ -185,11 +183,9 @@ declare_class!(
                 let frame_rect = window.frame();
                 let this = unsafe { NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
                 unsafe {
-                    this.setOrientation(
-                        NSUserInterfaceLayoutOrientation::NSUserInterfaceLayoutOrientationVertical,
-                    );
-                    this.setAlignment(NSLayoutAttribute::NSLayoutAttributeWidth);
-                    this.setDistribution(NSStackViewDistribution::NSStackViewDistributionFill);
+                    this.setOrientation(NSUserInterfaceLayoutOrientation::Vertical);
+                    this.setAlignment(NSLayoutAttribute::Width);
+                    this.setDistribution(NSStackViewDistribution::Fill);
                     this.setSpacing(0.);
                 }
                 this
@@ -305,7 +301,7 @@ impl Delegate {
 fn main() {
     let mtm = MainThreadMarker::new().unwrap();
     let app = NSApplication::sharedApplication(mtm);
-    app.setActivationPolicy(NSApplicationActivationPolicy::NSApplicationActivationPolicyRegular);
+    app.setActivationPolicy(NSApplicationActivationPolicy::Regular);
 
     // configure the application delegate
     let delegate = Delegate::new(mtm);

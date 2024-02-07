@@ -737,6 +737,8 @@ skipped = true
 skipped = true
 [struct.NSRect]
 skipped = true
+
+# References CGRectEdge
 [enum.NSRectEdge]
 skipped = true
 [enum.anonymous.constants.NSRectEdgeMinX]
@@ -1584,13 +1586,6 @@ skipped-protocols = ["MDLMeshBufferAllocator"]
 skipped-protocols = ["MDLMeshBuffer", "MDLNamed"]
 [class.MTKView]
 skipped-protocols = ["CALayerDelegate"]
-
-# produces wrong values for `LACredentialTypeSmartCardPIN` case; manually define for now
-[enum.LACredentialType]
-skipped = true
-# produces wrong values for most cases; manually define for now
-[enum.LAError]
-skipped = true
 
 # fails to strip const from `typedef const NSString *const MXLaunchTaskID;`
 [typedef.MXLaunchTaskID]

@@ -22,13 +22,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   View the release notes to learn more details:
   - [15.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-15_1-release-notes)
   - [15.2](https://developer.apple.com/documentation/xcode-release-notes/xcode-15_2-release-notes)
-* Marked `NSView::isFlipped`, `NSView::convertRect_toView`,
-  `NSWindow::convertRectToScreen` and `NSWindow::convertPointFromScreen` as
-  safe.
 * **BREAKING**: Changed how categories are handled; now, when a library has
   defined methods on a class defined in a different framework, a helper trait
   is output with the methods, instead of the methods being implemented
   directly on the type.
+* **BREAKING**: Changed how enums are handled; now a newtype is generated for
+  each enum, with the enum variants as constants on that newtype, instead of
+  cluttering the top-level namespace.
+* Marked `NSView::isFlipped`, `NSView::convertRect_toView`,
+  `NSWindow::convertRectToScreen` and `NSWindow::convertPointFromScreen` as
+  safe.
 * Renamed the `block` and `objective-c` feature flags to `block2` and `objc2`.
 
   The old feature flags are kept as deprecated.

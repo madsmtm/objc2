@@ -71,7 +71,7 @@ fn main() {
     let mtm: MainThreadMarker = MainThreadMarker::new().unwrap();
 
     let app = NSApplication::sharedApplication(mtm);
-    app.setActivationPolicy(NSApplicationActivationPolicy::NSApplicationActivationPolicyRegular);
+    app.setActivationPolicy(NSApplicationActivationPolicy::Regular);
 
     // configure the application delegate
     let delegate = AppDelegate::new(42, true, mtm);
