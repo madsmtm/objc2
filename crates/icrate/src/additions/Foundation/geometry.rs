@@ -375,10 +375,10 @@ ns_enum!(
         NSRectEdgeMinY = 1,
         NSRectEdgeMaxX = 2,
         NSRectEdgeMaxY = 3,
-        NSMinXEdge = NSRectEdgeMinX.0,
-        NSMinYEdge = NSRectEdgeMinY.0,
-        NSMaxXEdge = NSRectEdgeMaxX.0,
-        NSMaxYEdge = NSRectEdgeMaxY.0,
+        NSMinXEdge = Self::NSRectEdgeMinX.0,
+        NSMinYEdge = Self::NSRectEdgeMinY.0,
+        NSMaxXEdge = Self::NSRectEdgeMaxX.0,
+        NSMaxYEdge = Self::NSRectEdgeMaxY.0,
     }
 );
 

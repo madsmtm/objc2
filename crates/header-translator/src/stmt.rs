@@ -1436,14 +1436,6 @@ impl Stmt {
             Stmt::AliasDecl { id, .. } => Some(&id.name),
         }
     }
-
-    pub(crate) fn extra_declared_types(&self) -> Vec<&str> {
-        if let Stmt::EnumDecl { variants, .. } = self {
-            variants.iter().map(|(name, _, _)| &**name).collect()
-        } else {
-            vec![]
-        }
-    }
 }
 
 impl fmt::Display for Stmt {

@@ -83,43 +83,12 @@ macro_rules! extern_enum {
             $name = <$ty as objc2::Encode>::ENCODING;
         }
 
-        extern_enum_inner! {
-            ($v)
-            ($name)
+        impl $name {
             $(
                 $(#[$field_m])*
-                $field = $value,
+                #[allow(non_upper_case_globals)]
+                pub const $field: Self = Self($value);
             )*
-        }
-    };
-}
-
-// tt-munch each enum field
-macro_rules! extern_enum_inner {
-    // Base case
-    (
-        ($v:vis)
-        ($ty:path)
-    ) => {};
-
-    // Parse each field
-    (
-        ($v:vis)
-        ($ty:path)
-
-        $(#[$field_m:meta])*
-        $field:ident = $value:expr,
-
-        $($rest:tt)*
-    ) => {
-        $(#[$field_m])*
-        #[allow(non_upper_case_globals)]
-        $v const $field: $ty = $ty($value);
-
-        extern_enum_inner! {
-            ($v)
-            ($ty)
-            $($rest)*
         }
     };
 }
@@ -187,15 +156,14 @@ macro_rules! ns_closed_enum {
             ),* $(,)?
         }
     ) => {
-        // TODO: Handle this differently
-        extern_enum! {
-            #[underlying(NSUInteger)]
+        ns_closed_enum_inner! {
+            #[repr(usize)]
             $(#[$m])*
             $v enum $name {
                 $(
                     $(#[$field_m])*
-                    $field = $value
-                ),*
+                    $field = $value,
+                )*
             }
         }
     };
@@ -209,18 +177,48 @@ macro_rules! ns_closed_enum {
             ),* $(,)?
         }
     ) => {
-        // TODO: Handle this differently
-        extern_enum! {
-            #[underlying(NSInteger)]
+        ns_closed_enum_inner! {
+            #[repr(isize)]
             $(#[$m])*
             $v enum $name {
                 $(
                     $(#[$field_m])*
-                    $field = $value
-                ),*
+                    $field = $value,
+                )*
             }
         }
     };
+}
+
+macro_rules! ns_closed_enum_inner {
+    (
+        #[repr($ty:ty)]
+        $(#[$m:meta])*
+        $v:vis enum $name:ident {
+            $(
+                $(#[$field_m:meta])*
+                $field:ident = $value:expr,
+            )*
+        }
+    ) => {
+        // SAFETY: `NS_CLOSED_ENUM` is guaranteed to never gain additional
+        // cases, so we are allowed to use a Rust enum (which in turn will
+        // assume that the unused patterns are valid to use as a niche).
+        #[repr($ty)]
+        $(#[$m])*
+        #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+        $v enum $name {
+            $(
+                $(#[$field_m])*
+                $field = $value,
+            )*
+        }
+
+        // SAFETY: The enum is `#[repr($ty)]`.
+        impl_encode! {
+            $name = <$ty as objc2::Encode>::ENCODING;
+        }
+    }
 }
 
 /// Corresponds to `NS_ERROR_ENUM`
