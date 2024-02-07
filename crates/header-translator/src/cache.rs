@@ -199,7 +199,7 @@ impl<'a> Cache<'a> {
                 }) = iter.peek_mut()
                 {
                     if enum_ty.is_typedef_to(&id.name) {
-                        *enum_id = id.clone().to_some();
+                        *enum_id = id.clone();
                         *enum_ty = ty.clone();
                         // Skip adding the now-redundant alias to the list of statements
                         continue;

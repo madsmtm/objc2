@@ -63,25 +63,6 @@ macro_rules! extern_enum {
     (
         #[underlying($ty:ty)]
         $(#[$m:meta])*
-        $v:vis enum __anonymous__ {
-            $(
-                $(#[$field_m:meta])*
-                $field:ident = $value:expr
-            ),* $(,)?
-        }
-    ) => {
-        extern_enum_inner! {
-            ($v)
-            ($ty)
-            $(
-                $(#[$field_m])*
-                $field = $value,
-            )*
-        }
-    };
-    (
-        #[underlying($ty:ty)]
-        $(#[$m:meta])*
         $v:vis enum $name:ident {
             $(
                 $(#[$field_m:meta])*

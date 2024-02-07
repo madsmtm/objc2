@@ -49,6 +49,7 @@ impl UnexposedAttr {
             }
             "NS_ERROR_ENUM" => {
                 let _ = get_arguments();
+                // TODO: Add error domain here
                 Some(Self::ErrorEnum)
             }
             "NS_TYPED_ENUM" | "NS_STRING_ENUM" | "CF_TYPED_ENUM" => Some(Self::TypedEnum),
