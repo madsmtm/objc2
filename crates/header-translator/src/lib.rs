@@ -16,6 +16,7 @@ mod cache;
 mod config;
 mod context;
 mod data;
+mod display_helper;
 mod expr;
 mod feature;
 mod file;

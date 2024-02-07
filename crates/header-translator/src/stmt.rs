@@ -1853,7 +1853,7 @@ impl fmt::Display for Stmt {
                         write!(f, "pub ")?;
                     }
                     let name = handle_reserved(name);
-                    writeln!(f, "{name}: {ty},")?;
+                    writeln!(f, "{name}: {},", ty.struct_())?;
                 }
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
@@ -1883,7 +1883,7 @@ impl fmt::Display for Stmt {
                     _ => panic!("invalid enum kind"),
                 };
                 writeln!(f, "{macro_name}!(")?;
-                writeln!(f, "    #[underlying({ty})]")?;
+                writeln!(f, "    #[underlying({})]", ty.enum_())?;
                 write!(f, "{availability}")?;
                 writeln!(f, "    pub enum {} {{", id.name)?;
                 for (name, availability, expr) in variants {
@@ -1909,7 +1909,7 @@ impl fmt::Display for Stmt {
                 is_last,
             } => {
                 write!(f, "{availability}")?;
-                write!(f, "pub const {}: {ty} = {value};", id.name)?;
+                write!(f, "pub const {}: {} = {value};", id.name, ty.enum_())?;
                 if *is_last {
                     writeln!(f)?;
                 }
@@ -1920,7 +1920,7 @@ impl fmt::Display for Stmt {
                 ty,
                 value: None,
             } => {
-                writeln!(f, "extern_static!({}: {ty});", id.name)?;
+                writeln!(f, "extern_static!({}: {});", id.name, ty.var())?;
             }
             Self::VarDecl {
                 id,
@@ -1928,7 +1928,7 @@ impl fmt::Display for Stmt {
                 ty,
                 value: Some(expr),
             } => {
-                writeln!(f, "extern_static!({}: {ty} = {expr});", id.name)?;
+                writeln!(f, "extern_static!({}: {} = {expr});", id.name, ty.var())?;
             }
             Self::FnDecl {
                 id,
@@ -1952,9 +1952,9 @@ impl fmt::Display for Stmt {
                 write!(f, "    pub{unsafe_} fn {}(", id.name)?;
                 for (param, arg_ty) in arguments {
                     let param = handle_reserved(&crate::to_snake_case(param));
-                    write!(f, "{param}: {arg_ty},")?;
+                    write!(f, "{param}: {},", arg_ty.fn_argument())?;
                 }
-                write!(f, "){result_type}")?;
+                write!(f, "){}", result_type.fn_return())?;
 
                 if body.is_some() {
                     writeln!(f, "{{")?;
@@ -1974,14 +1974,19 @@ impl fmt::Display for Stmt {
             } => {
                 match kind {
                     Some(UnexposedAttr::TypedEnum) => {
-                        writeln!(f, "typed_enum!(pub type {} = {ty};);", id.name)?;
+                        writeln!(f, "typed_enum!(pub type {} = {};);", id.name, ty.typedef())?;
                     }
                     Some(UnexposedAttr::TypedExtensibleEnum) => {
-                        writeln!(f, "typed_extensible_enum!(pub type {} = {ty};);", id.name)?;
+                        writeln!(
+                            f,
+                            "typed_extensible_enum!(pub type {} = {};);",
+                            id.name,
+                            ty.typedef()
+                        )?;
                     }
                     None | Some(UnexposedAttr::BridgedTypedef) => {
                         // "bridged" typedefs should use a normal type alias.
-                        writeln!(f, "pub type {} = {ty};", id.name)?;
+                        writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
                     }
                     kind => panic!("invalid alias kind {kind:?} for {ty:?}"),
                 }

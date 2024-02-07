@@ -5,6 +5,7 @@ use clang::{CallingConvention, EntityKind, Nullability, Type, TypeKind};
 use proc_macro2::{TokenStream, TokenTree};
 
 use crate::context::Context;
+use crate::display_helper::FormatterFn;
 use crate::id::ItemIdentifier;
 use crate::unexposed_attr::UnexposedAttr;
 
@@ -159,244 +160,6 @@ impl Drop for AttributeParser<'_, '_> {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-enum TypeParams {
-    Empty,
-    // TODO: Ensure in the type-system that these are never empty
-    Generics(Vec<IdType>),
-    Protocols(Vec<ItemIdentifier>),
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-enum IdType {
-    Class {
-        id: ItemIdentifier,
-        params: TypeParams,
-    },
-    TypeDef {
-        id: ItemIdentifier,
-    },
-    GenericParam {
-        name: String,
-    },
-    AnyObject {
-        protocols: Vec<ItemIdentifier>,
-    },
-    AnyProtocol,
-    AnyClass {
-        protocols: Vec<ItemIdentifier>,
-    },
-    Self_,
-}
-
-impl IdType {
-    fn _id(&self) -> Option<&ItemIdentifier> {
-        match self {
-            Self::Class { id, .. } => Some(id),
-            Self::AnyObject { protocols } => match &**protocols {
-                [id] => Some(id),
-                _ => None,
-            },
-            Self::TypeDef { id, .. } => Some(id),
-            _ => None,
-        }
-    }
-
-    fn parse_objc_pointer(
-        mut ty: Type<'_>,
-        pointer_name: &str,
-        lifetime: &mut Lifetime,
-        is_kindof: &mut bool,
-        context: &Context<'_>,
-    ) -> Self {
-        // TODO: Maybe do something with the information in the elaborated type?
-        if let Some(true) = ty.is_elaborated() {
-            ty = ty.get_elaborated_type().expect("elaborated");
-        }
-
-        let generics: Vec<_> = ty
-            .get_objc_type_arguments()
-            .into_iter()
-            .map(
-                |param| match Inner::parse(param, Lifetime::Unspecified, context) {
-                    Inner::Id {
-                        ty,
-                        is_const: false,
-                        lifetime: Lifetime::Unspecified,
-                        nullability: Nullability::Unspecified,
-                    } => ty,
-                    Inner::Class {
-                        nullability: Nullability::Unspecified,
-                    } => Self::AnyClass { protocols: vec![] },
-                    param => {
-                        panic!("invalid generic parameter {param:?} in {ty:?}")
-                    }
-                },
-            )
-            .collect();
-
-        let protocols: Vec<_> = ty
-            .get_objc_protocol_declarations()
-            .into_iter()
-            .map(|entity| {
-                ItemIdentifier::new(&entity, context)
-                    .map_name(|name| context.replace_protocol_name(name))
-            })
-            .collect();
-
-        match ty.get_kind() {
-            TypeKind::ObjCInterface => {
-                if !generics.is_empty() {
-                    panic!("generics not empty: {ty:?}, {generics:?}");
-                }
-                if !protocols.is_empty() {
-                    panic!("protocols not empty: {ty:?}, {protocols:?}");
-                }
-                let name = ty.get_display_name();
-
-                let mut parser = AttributeParser::new(pointer_name, &name);
-
-                *is_kindof = parser.is_kindof(ParsePosition::Prefix);
-                lifetime.update(parser.lifetime(ParsePosition::Suffix));
-                // Ignore const for now
-                _ = parser.is_const(ParsePosition::Suffix);
-                parser.set_inner_pointer();
-                drop(parser);
-
-                if name == "Protocol" {
-                    Self::AnyProtocol
-                } else {
-                    let declaration = ty.get_declaration().expect("ObjCInterface declaration");
-                    let id = ItemIdentifier::new(&declaration, context);
-                    assert_eq!(id.name, name);
-                    Self::Class {
-                        id,
-                        params: TypeParams::Empty,
-                    }
-                }
-            }
-            TypeKind::ObjCObject => {
-                let pointee_name = ty.get_display_name();
-                let base_ty = ty
-                    .get_objc_object_base_type()
-                    .expect("object to have base type");
-                let name = base_ty.get_display_name();
-
-                match base_ty.get_kind() {
-                    TypeKind::ObjCId => {
-                        assert_eq!(name, "id");
-
-                        let mut parser = AttributeParser::new(pointer_name, &pointee_name);
-                        lifetime.update(parser.lifetime(ParsePosition::Prefix));
-
-                        if !generics.is_empty() {
-                            panic!("generics not empty: {ty:?}, {generics:?}");
-                        }
-
-                        Self::AnyObject { protocols }
-                    }
-                    TypeKind::ObjCInterface => {
-                        let declaration = base_ty
-                            .get_declaration()
-                            .expect("ObjCObject -> ObjCInterface declaration");
-                        let id = ItemIdentifier::new(&declaration, context);
-                        assert_eq!(id.name, name);
-
-                        if !generics.is_empty() && !protocols.is_empty() {
-                            panic!("got object with both protocols and generics: {name:?}, {protocols:?}, {generics:?}");
-                        }
-
-                        if generics.is_empty() && protocols.is_empty() {
-                            panic!("got object with empty protocols and generics: {name:?}");
-                        }
-
-                        let mut parser = AttributeParser::new(pointer_name, &pointee_name);
-                        *is_kindof = parser.is_kindof(ParsePosition::Prefix);
-                        lifetime.update(parser.lifetime(ParsePosition::Prefix));
-                        lifetime.update(parser.lifetime(ParsePosition::Suffix));
-                        parser.set_inner_pointer();
-
-                        Self::Class {
-                            id,
-                            params: if protocols.is_empty() {
-                                TypeParams::Generics(generics)
-                            } else {
-                                TypeParams::Protocols(protocols)
-                            },
-                        }
-                    }
-                    TypeKind::ObjCClass => {
-                        assert!(generics.is_empty(), "ObjCClass with generics");
-
-                        Self::AnyClass { protocols }
-                    }
-                    kind => panic!("unknown ObjCObject kind {ty:?}, {kind:?}"),
-                }
-            }
-            TypeKind::Typedef => {
-                let declaration = ty.get_declaration().expect("Typedef declaration");
-                Self::TypeDef {
-                    id: ItemIdentifier::new(&declaration, context),
-                }
-            }
-            _ => panic!("pointee was neither objcinterface nor objcobject: {ty:?}"),
-        }
-    }
-
-    fn visit_required_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
-        // TODO
-        // if let Some(id) = self.id() {
-        //     f(&id);
-        // }
-
-        if let Self::Class { id, params, .. } = self {
-            f(id);
-            if let TypeParams::Generics(generics) = params {
-                for generic in generics {
-                    generic.visit_required_types(f);
-                }
-            }
-        }
-    }
-
-    fn visit_toplevel_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
-        if let Some(id) = self._id() {
-            f(id);
-        }
-    }
-}
-
-impl fmt::Display for IdType {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Class { id, params, .. } => {
-                write!(f, "{}", id.path())?;
-                if let TypeParams::Generics(generics) = params {
-                    write!(f, "<")?;
-                    for generic in generics {
-                        write!(f, "{generic},")?;
-                    }
-                    write!(f, ">")?;
-                }
-                Ok(())
-            }
-            Self::AnyObject { protocols } => match &**protocols {
-                [] => write!(f, "AnyObject"),
-                [id] if id.is_nsobject() => write!(f, "NSObject"),
-                [id] => write!(f, "ProtocolObject<dyn {}>", id.path()),
-                // TODO: Handle this better
-                _ => write!(f, "TodoProtocols"),
-            },
-            Self::TypeDef { id, .. } => write!(f, "{}", id.path()),
-            Self::GenericParam { name } => write!(f, "{name}"),
-            Self::AnyProtocol => write!(f, "AnyProtocol"),
-            // TODO: Handle this better
-            Self::AnyClass { .. } => write!(f, "TodoClass"),
-            Self::Self_ { .. } => write!(f, "Self"),
-        }
-    }
-}
-
 /// ObjCLifetime
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum Lifetime {
@@ -448,8 +211,15 @@ fn check_nullability(ty: &Type<'_>, new: Option<Nullability>) -> Nullability {
     new.unwrap_or(Nullability::Unspecified)
 }
 
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub enum MethodArgumentQualifier {
+    In,
+    Inout,
+    Out,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-enum Primitive {
+pub enum Primitive {
     Void,
     C99Bool,
     Char,
@@ -524,36 +294,57 @@ impl fmt::Display for Primitive {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-enum Inner {
+pub enum Ty {
     Primitive(Primitive),
-
-    // Objective-C
-    Id {
-        ty: IdType,
-        is_const: bool,
-        lifetime: Lifetime,
-        nullability: Nullability,
-    },
     Class {
-        nullability: Nullability,
+        id: ItemIdentifier,
+        generics: Vec<Self>,
+        protocols: Vec<ItemIdentifier>,
     },
+    GenericParam {
+        name: String,
+    },
+    AnyObject {
+        protocols: Vec<ItemIdentifier>,
+    },
+    AnyProtocol,
+    AnyClass {
+        protocols: Vec<ItemIdentifier>,
+    },
+    Self_,
     Sel {
         nullability: Nullability,
     },
-
-    // Others
     Pointer {
         nullability: Nullability,
         is_const: bool,
-        pointee: Box<Inner>,
+        lifetime: Lifetime,
+        pointee: Box<Self>,
+    },
+    // When we encounter a typedef declaration like this:
+    //     typedef NSString* NSAbc;
+    //
+    // We emit it as:
+    //     type NSAbc = NSString;
+    //     struct NSAbc(NSString);
+    //
+    // Instead of:
+    //     type NSAbc = *const NSString;
+    //
+    // Because that means we can use ordinary Id<NSAbc> elsewhere.
+    TypeDef {
+        id: ItemIdentifier,
+        nullability: Nullability,
+        lifetime: Lifetime,
+        to: Box<Self>,
     },
     IncompleteArray {
         nullability: Nullability,
         is_const: bool,
-        pointee: Box<Inner>,
+        pointee: Box<Self>,
     },
     Array {
-        element_type: Box<Inner>,
+        element_type: Box<Self>,
         num_elements: usize,
     },
     Enum {
@@ -565,22 +356,18 @@ enum Inner {
     Fn {
         is_variadic: bool,
         no_escape: bool,
-        arguments: Vec<Inner>,
-        result_type: Box<Inner>,
+        arguments: Vec<Self>,
+        result_type: Box<Self>,
     },
     Block {
         sendable: Option<bool>,
         no_escape: bool,
-        arguments: Vec<Inner>,
-        result_type: Box<Inner>,
-    },
-
-    TypeDef {
-        id: ItemIdentifier,
+        arguments: Vec<Self>,
+        result_type: Box<Self>,
     },
 }
 
-impl Inner {
+impl Ty {
     fn parse(attributed_ty: Type<'_>, mut lifetime: Lifetime, context: &Context<'_>) -> Self {
         let _span = debug_span!("ty", ?attributed_ty, ?lifetime).entered();
 
@@ -711,22 +498,28 @@ impl Inner {
                     check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
                 };
 
-                Self::Id {
-                    ty: IdType::AnyObject { protocols: vec![] },
+                Self::Pointer {
+                    nullability,
                     is_const,
                     lifetime,
-                    nullability,
+                    pointee: Box::new(Self::AnyObject { protocols: vec![] }),
                 }
             }
             TypeKind::ObjCClass => {
                 let mut parser = AttributeParser::new(&attributed_name, &name);
-                let _lifetime = parser.lifetime(ParsePosition::Suffix);
+                let lifetime = parser.lifetime(ParsePosition::Suffix);
                 let nullability = if let Some(nullability) = unexposed_nullability {
                     nullability
                 } else {
                     check_nullability(&attributed_ty, parser.nullability(ParsePosition::Suffix))
                 };
-                Self::Class { nullability }
+
+                Self::Pointer {
+                    nullability,
+                    is_const: true,
+                    lifetime,
+                    pointee: Box::new(Self::AnyClass { protocols: vec![] }),
+                }
             }
             TypeKind::ObjCSel => {
                 let mut parser = AttributeParser::new(&attributed_name, &name);
@@ -737,12 +530,86 @@ impl Inner {
                 };
                 Self::Sel { nullability }
             }
-            // These can appear without being wrapped in a pointer by being in typedefs
-            // TODO: Emit this properly.
+            TypeKind::ObjCInterface => {
+                let declaration = ty.get_declaration().expect("ObjCInterface declaration");
+
+                if !ty.get_objc_type_arguments().is_empty() {
+                    panic!("generics not empty: {ty:?}");
+                }
+                if !ty.get_objc_protocol_declarations().is_empty() {
+                    panic!("protocols not empty: {ty:?}");
+                }
+
+                if name == "Protocol" {
+                    Self::AnyProtocol
+                } else {
+                    let id = ItemIdentifier::new(&declaration, context);
+                    assert_eq!(id.name, name);
+                    Self::Class {
+                        id,
+                        protocols: vec![],
+                        generics: vec![],
+                    }
+                }
+            }
             TypeKind::ObjCObject => {
-                let decl = ty.get_declaration().expect("ObjCObject declaration");
-                Self::TypeDef {
-                    id: ItemIdentifier::with_name("AnyObject".to_string(), &decl, context),
+                let base_ty = ty
+                    .get_objc_object_base_type()
+                    .expect("object to have base type");
+                let name = base_ty.get_display_name();
+
+                let generics: Vec<_> = ty
+                    .get_objc_type_arguments()
+                    .into_iter()
+                    .map(|param| Self::parse(param, Lifetime::Unspecified, context))
+                    .collect();
+
+                let protocols: Vec<_> = ty
+                    .get_objc_protocol_declarations()
+                    .into_iter()
+                    .map(|entity| {
+                        ItemIdentifier::new(&entity, context)
+                            .map_name(|name| context.replace_protocol_name(name))
+                    })
+                    .collect();
+
+                match base_ty.get_kind() {
+                    TypeKind::ObjCId => {
+                        assert_eq!(name, "id");
+
+                        if !generics.is_empty() {
+                            panic!("generics not empty: {ty:?}, {generics:?}");
+                        }
+
+                        Self::AnyObject { protocols }
+                    }
+                    TypeKind::ObjCInterface => {
+                        let declaration = base_ty
+                            .get_declaration()
+                            .expect("ObjCObject -> ObjCInterface declaration");
+                        let id = ItemIdentifier::new(&declaration, context);
+                        assert_eq!(id.name, name);
+
+                        if !generics.is_empty() && !protocols.is_empty() {
+                            panic!("got object with both protocols and generics: {name:?}, {protocols:?}, {generics:?}");
+                        }
+
+                        if generics.is_empty() && protocols.is_empty() {
+                            panic!("got object with empty protocols and generics: {name:?}");
+                        }
+
+                        Self::Class {
+                            id,
+                            generics,
+                            protocols,
+                        }
+                    }
+                    TypeKind::ObjCClass => {
+                        assert!(generics.is_empty(), "ObjCClass with generics");
+
+                        Self::AnyClass { protocols }
+                    }
+                    kind => panic!("unknown ObjCObject kind {ty:?}, {kind:?}"),
                 }
             }
             TypeKind::Pointer => {
@@ -763,6 +630,7 @@ impl Inner {
                 Self::Pointer {
                     nullability,
                     is_const,
+                    lifetime,
                     pointee: Box::new(pointee),
                 }
             }
@@ -788,6 +656,7 @@ impl Inner {
                     } => Self::Pointer {
                         nullability,
                         is_const,
+                        lifetime,
                         pointee: Box::new(Self::Block {
                             sendable: None,
                             no_escape,
@@ -818,25 +687,25 @@ impl Inner {
                 drop(parser);
 
                 let pointer_name = ty.get_display_name();
-                let attributed_ty = ty.get_pointee_type().expect("pointer type to have pointee");
+                let pointee = ty.get_pointee_type().expect("pointer type to have pointee");
 
-                let mut ty = attributed_ty;
+                let mut ty = pointee;
                 while let TypeKind::Attributed = ty.get_kind() {
                     ty = ty
                         .get_modified_type()
                         .expect("attributed type to have modified type");
                 }
-                let attributed_name = attributed_ty.get_display_name();
+                let attributed_name = pointee.get_display_name();
                 let name = ty.get_display_name();
 
                 let mut parser = AttributeParser::new(&attributed_name, &name);
 
-                let mut is_kindof = is_kindof || parser.is_kindof(ParsePosition::Prefix);
+                let mut _is_kindof = is_kindof || parser.is_kindof(ParsePosition::Prefix);
 
                 let pointee_is_const = parser.is_const(ParsePosition::Suffix);
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
                 let new = parser.nullability(ParsePosition::Suffix);
-                if new != attributed_ty.get_nullability() {
+                if new != pointee.get_nullability() {
                     error!("failed parsing nullability");
                 }
                 update_nullability(&mut nullability, new);
@@ -847,24 +716,44 @@ impl Inner {
                 }
                 drop(parser);
 
-                Self::Id {
-                    ty: IdType::parse_objc_pointer(
-                        ty,
-                        &pointer_name,
-                        &mut lifetime,
-                        &mut is_kindof,
-                        context,
-                    ),
+                let pointee_name = ty.get_display_name();
+                let mut parser = AttributeParser::new(&pointer_name, &pointee_name);
+
+                _is_kindof = parser.is_kindof(ParsePosition::Prefix);
+                lifetime.update(parser.lifetime(ParsePosition::Prefix));
+                lifetime.update(parser.lifetime(ParsePosition::Suffix));
+                // Ignore const for now
+                _ = parser.is_const(ParsePosition::Suffix);
+                if !matches!(
+                    pointee.get_objc_object_base_type().map(|ty| ty.get_kind()),
+                    Some(TypeKind::ObjCId | TypeKind::ObjCClass)
+                ) {
+                    parser.set_inner_pointer();
+                }
+                drop(parser);
+
+                // TODO: Maybe do something with the information in the elaborated type?
+                if let Some(true) = ty.is_elaborated() {
+                    ty = ty.get_elaborated_type().expect("elaborated");
+                }
+
+                Self::Pointer {
+                    nullability,
                     is_const,
                     lifetime,
-                    nullability,
+                    pointee: Box::new(Self::parse(ty, lifetime, context)),
                 }
             }
             TypeKind::Typedef => {
                 let typedef_name = ty.get_typedef_name().expect("typedef has name");
+                let declaration = ty.get_declaration().expect("typedef declaration");
+                let to = declaration
+                    .get_typedef_underlying_type()
+                    .expect("typedef underlying type");
+                let _span = debug_span!("typedef", ?typedef_name, ?declaration, ?to).entered();
 
                 let mut parser = AttributeParser::new(&attributed_name, &typedef_name);
-                let mut is_kindof = parser.is_kindof(ParsePosition::Prefix);
+                let mut _is_kindof = parser.is_kindof(ParsePosition::Prefix);
                 let is_const1 = parser.is_const(ParsePosition::Prefix);
                 lifetime.update(parser.lifetime(ParsePosition::Prefix));
 
@@ -904,99 +793,61 @@ impl Inner {
                 };
 
                 match &*typedef_name {
-                    "BOOL" => Self::Primitive(Primitive::ObjcBool),
+                    "BOOL" => return Self::Primitive(Primitive::ObjcBool),
 
-                    "int8_t" => Self::Primitive(Primitive::I8),
-                    "uint8_t" => Self::Primitive(Primitive::U8),
-                    "int16_t" => Self::Primitive(Primitive::I16),
-                    "uint16_t" => Self::Primitive(Primitive::U16),
-                    "int32_t" => Self::Primitive(Primitive::I32),
-                    "uint32_t" => Self::Primitive(Primitive::U32),
-                    "int64_t" => Self::Primitive(Primitive::I64),
-                    "uint64_t" => Self::Primitive(Primitive::U64),
-                    "ssize_t" => Self::Primitive(Primitive::ISize),
-                    "size_t" => Self::Primitive(Primitive::USize),
+                    "int8_t" => return Self::Primitive(Primitive::I8),
+                    "uint8_t" => return Self::Primitive(Primitive::U8),
+                    "int16_t" => return Self::Primitive(Primitive::I16),
+                    "uint16_t" => return Self::Primitive(Primitive::U16),
+                    "int32_t" => return Self::Primitive(Primitive::I32),
+                    "uint32_t" => return Self::Primitive(Primitive::U32),
+                    "int64_t" => return Self::Primitive(Primitive::I64),
+                    "uint64_t" => return Self::Primitive(Primitive::U64),
+                    "ssize_t" => return Self::Primitive(Primitive::ISize),
+                    "size_t" => return Self::Primitive(Primitive::USize),
 
                     // MacTypes.h
-                    "UInt8" => Self::Primitive(Primitive::U8),
-                    "UInt16" => Self::Primitive(Primitive::U16),
-                    "UInt32" => Self::Primitive(Primitive::U32),
-                    "UInt64" => Self::Primitive(Primitive::U64),
-                    "SInt8" => Self::Primitive(Primitive::I8),
-                    "SInt16" => Self::Primitive(Primitive::I16),
-                    "SInt32" => Self::Primitive(Primitive::I32),
-                    "SInt64" => Self::Primitive(Primitive::I64),
-                    "Float32" => Self::Primitive(Primitive::F32),
-                    "Float64" => Self::Primitive(Primitive::F64),
+                    "UInt8" => return Self::Primitive(Primitive::U8),
+                    "UInt16" => return Self::Primitive(Primitive::U16),
+                    "UInt32" => return Self::Primitive(Primitive::U32),
+                    "UInt64" => return Self::Primitive(Primitive::U64),
+                    "SInt8" => return Self::Primitive(Primitive::I8),
+                    "SInt16" => return Self::Primitive(Primitive::I16),
+                    "SInt32" => return Self::Primitive(Primitive::I32),
+                    "SInt64" => return Self::Primitive(Primitive::I64),
+                    "Float32" => return Self::Primitive(Primitive::F32),
+                    "Float64" => return Self::Primitive(Primitive::F64),
                     "Float80" => panic!("can't handle 80 bit MacOS float"),
                     "Float96" => panic!("can't handle 96 bit 68881 float"),
 
-                    "NSInteger" => Self::Primitive(Primitive::NSInteger),
-                    "NSUInteger" => Self::Primitive(Primitive::NSUInteger),
+                    "NSInteger" => return Self::Primitive(Primitive::NSInteger),
+                    "NSUInteger" => return Self::Primitive(Primitive::NSUInteger),
 
-                    "instancetype" => Self::Id {
-                        ty: IdType::Self_,
-                        is_const,
-                        lifetime,
-                        nullability,
-                    },
-                    _ => {
-                        let canonical = ty.get_canonical_type();
-                        let declaration = ty.get_declaration();
-                        let _span = debug_span!("typedef", ?typedef_name, ?canonical, ?declaration)
-                            .entered();
-                        match canonical.get_kind() {
-                            TypeKind::ObjCObjectPointer => {
-                                let pointee = canonical
-                                    .get_pointee_type()
-                                    .expect("pointer type to have pointee");
-                                let _span = debug_span!("ObjCObjectPointer", ?pointee).entered();
-                                let declaration =
-                                    declaration.expect("typedef ObjCObjectPointer declaration");
-
-                                assert!(
-                                    pointee.get_objc_type_arguments().is_empty(),
-                                    "typedef generics not empty"
-                                );
-
-                                let ty = if let EntityKind::TemplateTypeParameter =
-                                    declaration.get_kind()
-                                {
-                                    IdType::GenericParam { name: typedef_name }
-                                } else {
-                                    // TODO: Refactor this
-                                    let _ = IdType::parse_objc_pointer(
-                                        pointee,
-                                        &canonical.get_display_name(),
-                                        &mut lifetime,
-                                        &mut is_kindof,
-                                        context,
-                                    );
-
-                                    IdType::TypeDef {
-                                        id: ItemIdentifier::new(&declaration, context),
-                                    }
-                                };
-
-                                Self::Id {
-                                    ty,
-                                    is_const,
-                                    lifetime,
-                                    nullability,
-                                }
-                            }
-                            _ => {
-                                let declaration = declaration.expect("typedef declaration");
-                                Self::TypeDef {
-                                    id: ItemIdentifier::with_name(
-                                        typedef_name,
-                                        &declaration,
-                                        context,
-                                    ),
-                                }
-                            }
+                    "instancetype" => {
+                        return Self::Pointer {
+                            nullability,
+                            is_const,
+                            lifetime,
+                            pointee: Box::new(Self::Self_),
                         }
                     }
+                    _ => {}
+                }
+
+                if let EntityKind::TemplateTypeParameter = declaration.get_kind() {
+                    return Self::Pointer {
+                        nullability,
+                        is_const,
+                        lifetime,
+                        pointee: Box::new(Self::GenericParam { name: typedef_name }),
+                    };
+                }
+
+                Self::TypeDef {
+                    id: ItemIdentifier::with_name(typedef_name, &declaration, context),
+                    nullability,
+                    lifetime,
+                    to: Box::new(Self::parse(to, Lifetime::Unspecified, context)),
                 }
             }
             TypeKind::FunctionPrototype => {
@@ -1011,11 +862,11 @@ impl Inner {
                     .get_argument_types()
                     .expect("fn type to have argument types")
                     .into_iter()
-                    .map(|ty| Inner::parse(ty, Lifetime::Unspecified, context))
+                    .map(|ty| Self::parse(ty, Lifetime::Unspecified, context))
                     .collect();
 
                 let result_type = ty.get_result_type().expect("fn type to have result type");
-                let result_type = Inner::parse(result_type, Lifetime::Unspecified, context);
+                let result_type = Self::parse(result_type, Lifetime::Unspecified, context);
 
                 Self::Fn {
                     is_variadic: ty.is_variadic(),
@@ -1071,37 +922,31 @@ impl Inner {
         }
     }
 
-    fn visit_lifetime(&self, mut f: impl FnMut(Lifetime)) {
-        match self {
-            Self::Id { lifetime, .. } => f(*lifetime),
-            Self::Pointer { pointee, .. } => pointee.visit_lifetime(f),
-            Self::IncompleteArray { pointee, .. } => pointee.visit_lifetime(f),
-            Self::Array { element_type, .. } => element_type.visit_lifetime(f),
-            _ => {}
-        }
-    }
-
-    fn visit_required_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
+    pub(crate) fn visit_required_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
         match self {
             Self::Primitive(_) => {}
             // Objective-C
-            Self::Id { ty, .. } => {
-                // f("objc2");
-                ty.visit_required_types(f);
+            Self::Class { id, generics, .. } => {
+                f(id);
+                for generic in generics {
+                    generic.visit_required_types(f);
+                }
             }
-            Self::Class { .. } | Self::Sel { .. } => {
+            Self::AnyClass { .. } | Self::Sel { .. } => {
                 // f("objc2");
             }
-
             // Others
             Self::Pointer { pointee, .. } | Self::IncompleteArray { pointee, .. } => {
                 pointee.visit_required_types(f);
+            }
+            Self::TypeDef { .. } => {
+                // TODO
             }
             Self::Array { element_type, .. } => {
                 element_type.visit_required_types(f);
             }
             // TODO
-            // Enum { id } | Struct { id } | TypeDef { id } => {
+            // Enum { id } | Struct { id } => {
             //
             // }
             Self::Fn {
@@ -1127,131 +972,204 @@ impl Inner {
         }
     }
 
-    pub fn visit_toplevel_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
+    pub(crate) fn visit_toplevel_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
         match self {
-            Self::Id {
-                ty,
-                nullability: Nullability::NonNull,
-                ..
-            } => {
-                ty.visit_toplevel_types(f);
+            Self::Class { id, .. } => {
+                f(id);
+            }
+            Self::AnyObject { protocols, .. } => {
+                if let [id] = &**protocols {
+                    f(id);
+                }
             }
             Self::Pointer {
                 // Only visit non-null types
                 nullability: Nullability::NonNull,
                 is_const: _,
+                lifetime: _,
                 pointee,
             } => {
                 pointee.visit_toplevel_types(f);
             }
-            // TODO
-            Self::TypeDef { id } => f(id),
+            Self::TypeDef {
+                id,
+                nullability: Nullability::NonNull,
+                to,
+                ..
+            } => {
+                f(id);
+                to.visit_toplevel_types(f);
+            }
             _ => {}
         }
     }
-}
 
-/// This is sound to output in (almost, c_void is not a valid return type) any
-/// context. `Ty` is then used to change these types into something nicer when
-/// required.
-impl fmt::Display for Inner {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn is_object_like(&self) -> bool {
         match self {
-            Self::Primitive(prim) => write!(f, "{prim}"),
-
-            // Objective-C
-            Self::Id {
-                ty,
-                is_const,
-                // Ignore
-                lifetime: _,
-                nullability,
-            } => {
-                if *nullability == Nullability::NonNull {
-                    write!(f, "NonNull<{ty}>")
-                } else if *is_const {
-                    write!(f, "*const {ty}")
-                } else {
-                    write!(f, "*mut {ty}")
-                }
-            }
-            Self::Class { nullability } => {
-                if *nullability == Nullability::NonNull {
-                    write!(f, "NonNull<AnyClass>")
-                } else {
-                    write!(f, "*const AnyClass")
-                }
-            }
-            Self::Sel { nullability } => {
-                if *nullability == Nullability::NonNull {
-                    write!(f, "Sel")
-                } else {
-                    write!(f, "Option<Sel>")
-                }
-            }
-
-            // Others
-            Self::Pointer {
-                nullability,
-                is_const,
-                pointee,
-            } => match &**pointee {
-                Self::Fn {
-                    is_variadic,
-                    no_escape: _,
-                    arguments,
-                    result_type,
-                } => {
-                    if *nullability != Nullability::NonNull {
-                        write!(f, "Option<")?;
-                    }
-                    write!(f, "unsafe extern \"C\" fn(")?;
-                    for arg in arguments {
-                        write!(f, "{arg},")?;
-                    }
-                    if *is_variadic {
-                        write!(f, "...")?;
-                    }
-                    write!(f, ")")?;
-                    match &**result_type {
-                        Self::Primitive(Primitive::Void) => {
-                            // Don't output anything
-                        }
-                        ty => write!(f, " -> {ty}")?,
-                    }
-                    if *nullability != Nullability::NonNull {
-                        write!(f, ">")?;
-                    }
-                    Ok(())
-                }
-                pointee => {
-                    if *nullability == Nullability::NonNull {
-                        write!(f, "NonNull<{pointee}>")
-                    } else if *is_const {
-                        write!(f, "*const {pointee}")
-                    } else {
-                        write!(f, "*mut {pointee}")
-                    }
-                }
+            Self::Class { .. }
+            | Self::GenericParam { .. }
+            | Self::AnyObject { .. }
+            | Self::AnyProtocol
+            | Self::Self_ => true,
+            Self::TypeDef { to, .. } => match &**to {
+                Self::Class { .. }
+                | Self::GenericParam { .. }
+                | Self::AnyObject { .. }
+                | Self::AnyProtocol
+                | Self::Self_ => true,
+                // FIXME: This recurses badly and too deeply
+                Self::Pointer { pointee, .. } => pointee.is_object_like(),
+                Self::TypeDef { to, .. } => to.is_object_like(),
+                _ => false,
             },
-            Self::IncompleteArray {
-                nullability,
-                is_const,
-                pointee,
-            } => {
-                if *nullability == Nullability::NonNull {
-                    write!(f, "NonNull<{pointee}>")
-                } else if *is_const {
-                    write!(f, "*const {pointee}")
-                } else {
-                    write!(f, "*mut {pointee}")
+            _ => false,
+        }
+    }
+
+    fn plain(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| {
+            match self {
+                Self::Primitive(prim) => write!(f, "{prim}"),
+                Self::Sel { nullability } => {
+                    if *nullability == Nullability::NonNull {
+                        write!(f, "Sel")
+                    } else {
+                        write!(f, "Option<Sel>")
+                    }
+                }
+                Self::Pointer {
+                    nullability,
+                    is_const,
+                    // Ignore
+                    lifetime: _,
+                    pointee,
+                } => match &**pointee {
+                    Self::Fn {
+                        is_variadic,
+                        no_escape: _,
+                        arguments,
+                        result_type,
+                    } => {
+                        if *nullability != Nullability::NonNull {
+                            write!(f, "Option<")?;
+                        }
+                        write!(f, "unsafe extern \"C\" fn(")?;
+                        for arg in arguments {
+                            write!(f, "{},", arg.plain())?;
+                        }
+                        if *is_variadic {
+                            write!(f, "...")?;
+                        }
+                        write!(f, ")")?;
+                        write!(f, "{}", result_type.fn_return())?;
+                        if *nullability != Nullability::NonNull {
+                            write!(f, ">")?;
+                        }
+                        Ok(())
+                    }
+                    pointee => {
+                        if *nullability == Nullability::NonNull {
+                            write!(f, "NonNull<{}>", pointee.behind_pointer())
+                        } else if *is_const {
+                            write!(f, "*const {}", pointee.behind_pointer())
+                        } else {
+                            write!(f, "*mut {}", pointee.behind_pointer())
+                        }
+                    }
+                },
+                Self::TypeDef {
+                    id, nullability, ..
+                } if self.is_object_like() => {
+                    if *nullability == Nullability::NonNull {
+                        write!(f, "NonNull<{}>", id.path())
+                    } else {
+                        write!(f, "*mut {}", id.path())
+                    }
+                }
+                Self::TypeDef { id, .. } => {
+                    write!(f, "{}", id.path())
+                }
+                Self::IncompleteArray {
+                    nullability,
+                    is_const,
+                    pointee,
+                } => {
+                    if *nullability == Nullability::NonNull {
+                        write!(f, "NonNull<{}>", pointee.behind_pointer())
+                    } else if *is_const {
+                        write!(f, "*const {}", pointee.behind_pointer())
+                    } else {
+                        write!(f, "*mut {}", pointee.behind_pointer())
+                    }
+                }
+                Self::Array {
+                    element_type,
+                    num_elements,
+                } => write!(
+                    f,
+                    "ArrayUnknownABI<[{}; {num_elements}]>",
+                    element_type.plain()
+                ),
+                Self::Enum { id } | Self::Struct { id } => {
+                    write!(f, "{}", id.path())
+                }
+                _ => {
+                    error!(?self, "must be behind pointer");
+                    write!(f, "{}", self.behind_pointer())
                 }
             }
-            Self::Array {
-                element_type,
-                num_elements,
-            } => write!(f, "ArrayUnknownABI<[{element_type}; {num_elements}]>"),
-            Self::Enum { id } | Self::Struct { id } | Self::TypeDef { id } => {
+        })
+    }
+
+    fn behind_pointer(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Class {
+                id,
+                generics,
+                protocols: _,
+            } => {
+                write!(f, "{}", id.path())?;
+                if !generics.is_empty() {
+                    write!(f, "<")?;
+                    for generic in generics {
+                        match generic {
+                            Self::Pointer { pointee, .. } if pointee.is_object_like() => {
+                                write!(f, "{},", pointee.behind_pointer())?
+                            }
+                            Self::TypeDef { id, .. } if generic.is_object_like() => {
+                                write!(f, "{},", id.path())?
+                            }
+                            Self::Pointer { pointee, .. }
+                                if matches!(**pointee, Self::AnyClass { .. }) =>
+                            {
+                                write!(f, "TodoClass,")?
+                            }
+                            generic => {
+                                error!(?generic, ?self, "unknown generic");
+                                write!(f, "{},", generic.behind_pointer())?
+                            }
+                        }
+                    }
+                    write!(f, ">")?;
+                }
+                Ok(())
+            }
+            Self::GenericParam { name } => write!(f, "{name}"),
+            Self::AnyObject { protocols } => match &**protocols {
+                [] => write!(f, "AnyObject"),
+                [id] if id.is_nsobject() => write!(f, "NSObject"),
+                [id] => write!(f, "ProtocolObject<dyn {}>", id.path()),
+                // TODO: Handle this better
+                _ => write!(f, "TodoProtocols"),
+            },
+            Self::AnyProtocol => write!(f, "AnyProtocol"),
+            Self::AnyClass { protocols } => match &**protocols {
+                [] => write!(f, "AnyClass"),
+                // TODO: Handle this better
+                _ => write!(f, "AnyClass"),
+            },
+            Self::Self_ => write!(f, "Self"),
+            Self::TypeDef { id, .. } => {
                 write!(f, "{}", id.path())
             }
             Self::Fn { .. } => write!(f, "TodoFunction"),
@@ -1263,13 +1181,10 @@ impl fmt::Display for Inner {
             } => {
                 write!(f, "Block<dyn Fn(")?;
                 for arg in arguments {
-                    write!(f, "{arg}, ")?;
+                    write!(f, "{}, ", arg.plain())?;
                 }
                 write!(f, ")")?;
-                match &**result_type {
-                    Self::Primitive(Primitive::Void) => {}
-                    ty => write!(f, " -> {ty}")?,
-                }
+                write!(f, "{}", result_type.fn_return())?;
                 if *no_escape {
                     write!(f, " + '_")?;
                 } else {
@@ -1280,53 +1195,272 @@ impl fmt::Display for Inner {
                 }
                 write!(f, ">")
             }
-        }
+            _ => write!(f, "{}", self.plain()),
+        })
     }
-}
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
-pub enum MethodArgumentQualifier {
-    In,
-    Inout,
-    Out,
-}
+    pub(crate) fn method_return(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| {
+            if let Self::Primitive(Primitive::Void) = self {
+                // Don't output anything
+                return Ok(());
+            }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-enum TyKind {
-    MethodReturn { with_error: bool },
-    FnReturn,
-    Static,
-    Typedef,
-    MethodArgument,
-    FnArgument,
-    Struct,
-    Enum,
-}
+            write!(f, " -> ")?;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct Ty {
-    ty: Inner,
-    kind: TyKind,
-}
+            match self {
+                Self::Pointer {
+                    nullability,
+                    lifetime: Lifetime::Unspecified,
+                    pointee,
+                    ..
+                } if pointee.is_object_like() => {
+                    if *nullability == Nullability::NonNull {
+                        write!(f, "Id<{}>", pointee.behind_pointer())
+                    } else {
+                        write!(f, "Option<Id<{}>>", pointee.behind_pointer())
+                    }
+                }
+                Self::TypeDef {
+                    id, nullability, ..
+                } if self.is_object_like() => {
+                    if *nullability == Nullability::NonNull {
+                        write!(f, "Id<{}>", id.path())
+                    } else {
+                        write!(f, "Option<Id<{}>>", id.path())
+                    }
+                }
+                Self::Pointer {
+                    nullability,
+                    pointee,
+                    ..
+                } if matches!(**pointee, Self::AnyClass { .. }) => {
+                    if *nullability == Nullability::NonNull {
+                        write!(f, "&'static {}", pointee.behind_pointer())
+                    } else {
+                        write!(f, "Option<&'static {}>", pointee.behind_pointer())
+                    }
+                }
+                Self::Primitive(Primitive::C99Bool) => {
+                    warn!("C99's bool as Objective-C method return is ill supported");
+                    write!(f, "bool")
+                }
+                Self::Primitive(Primitive::ObjcBool) => write!(f, "bool"),
+                _ => write!(f, "{}", self.plain()),
+            }
+        })
+    }
 
-impl Ty {
-    pub const VOID_RESULT: Self = Self {
-        ty: Inner::Primitive(Primitive::Void),
-        kind: TyKind::MethodReturn { with_error: false },
-    };
+    pub(crate) fn method_return_with_error(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| {
+            match self {
+                Self::Pointer {
+                    nullability: Nullability::Nullable,
+                    lifetime: Lifetime::Unspecified,
+                    is_const: false,
+                    pointee,
+                } if pointee.is_object_like() => {
+                    // NULL -> error
+                    write!(
+                        f,
+                        " -> Result<Id<{}>, Id<{}>>",
+                        pointee.behind_pointer(),
+                        ItemIdentifier::nserror().path(),
+                    )
+                }
+                Self::TypeDef {
+                    id,
+                    nullability: Nullability::Nullable,
+                    lifetime: Lifetime::Unspecified,
+                    to: _,
+                } if self.is_object_like() => {
+                    // NULL -> error
+                    write!(
+                        f,
+                        " -> Result<Id<{}>, Id<{}>>",
+                        id.path(),
+                        ItemIdentifier::nserror().path(),
+                    )
+                }
+                Self::Primitive(Primitive::ObjcBool) => {
+                    // NO -> error
+                    write!(
+                        f,
+                        " -> Result<(), Id<{}>>",
+                        ItemIdentifier::nserror().path()
+                    )
+                }
+                _ => {
+                    error!("unknown error result type {self:?}");
+                    write!(f, "{}", self.method_return())
+                }
+            }
+        })
+    }
 
-    pub fn parse_method_argument(
+    pub(crate) fn fn_return(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| {
+            if let Self::Primitive(Primitive::Void) = self {
+                // Don't output anything
+                return Ok(());
+            }
+
+            write!(f, " -> {}", self.plain())
+        })
+    }
+
+    pub(crate) fn var(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Pointer {
+                nullability,
+                // `const` is irrelevant in statics since they're always
+                // constant.
+                is_const: _,
+                lifetime: Lifetime::Strong | Lifetime::Unspecified,
+                pointee,
+            } if pointee.is_object_like() => {
+                if *nullability == Nullability::NonNull {
+                    write!(f, "&'static {}", pointee.behind_pointer())
+                } else {
+                    write!(f, "Option<&'static {}>", pointee.behind_pointer())
+                }
+            }
+            Self::TypeDef {
+                id, nullability, ..
+            } if self.is_object_like() => {
+                if *nullability == Nullability::NonNull {
+                    write!(f, "&'static {}", id.path())
+                } else {
+                    write!(f, "Option<&'static {}>", id.path())
+                }
+            }
+            _ => write!(f, "{}", self.plain()),
+        })
+    }
+
+    pub(crate) fn typedef(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match &self {
+            Self::Pointer {
+                nullability: _,
+                is_const: _,
+                lifetime: Lifetime::Unspecified | Lifetime::Strong,
+                pointee,
+            } if pointee.is_object_like() => {
+                write!(f, "{}", pointee.behind_pointer())
+            }
+            Self::TypeDef { id, .. } if self.is_object_like() => {
+                write!(f, "{}", id.path())
+            }
+            // Notice: We mark `typedefs` as-if behind a pointer
+            _ => write!(f, "{}", self.behind_pointer()),
+        })
+    }
+
+    pub(crate) fn fn_argument(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Pointer {
+                nullability,
+                is_const: _,
+                lifetime: Lifetime::Unspecified | Lifetime::Strong,
+                pointee,
+            } if pointee.is_object_like() => {
+                if *nullability == Nullability::NonNull {
+                    write!(f, "&{}", pointee.behind_pointer())
+                } else {
+                    write!(f, "Option<&{}>", pointee.behind_pointer())
+                }
+            }
+            Self::TypeDef {
+                id, nullability, ..
+            } if self.is_object_like() => {
+                if *nullability == Nullability::NonNull {
+                    write!(f, "&{}", id.path())
+                } else {
+                    write!(f, "Option<&{}>", id.path())
+                }
+            }
+            Self::Pointer {
+                nullability,
+                is_const: _,
+                lifetime: _,
+                pointee,
+            } if matches!(**pointee, Self::AnyClass { .. } | Self::Block { .. }) => {
+                if *nullability == Nullability::NonNull {
+                    write!(f, "&{}", pointee.behind_pointer())
+                } else {
+                    write!(f, "Option<&{}>", pointee.behind_pointer())
+                }
+            }
+            _ => write!(f, "{}", self.plain()),
+        })
+    }
+
+    pub(crate) fn method_argument(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Primitive(Primitive::C99Bool) => {
+                panic!("C99's bool as Objective-C method argument is unsupported")
+            }
+            Self::Primitive(Primitive::ObjcBool) => {
+                write!(f, "bool")
+            }
+            Self::Pointer {
+                nullability,
+                is_const: false,
+                lifetime: Lifetime::Unspecified,
+                pointee,
+            } => match &**pointee {
+                Self::Pointer {
+                    nullability: inner_nullability,
+                    // Don't care about the const-ness of the id.
+                    is_const: _,
+                    lifetime: Lifetime::Autoreleasing,
+                    pointee,
+                } => {
+                    let tokens = if *inner_nullability == Nullability::NonNull {
+                        format!("Id<{}>", pointee.behind_pointer())
+                    } else {
+                        format!("Option<Id<{}>>", pointee.behind_pointer())
+                    };
+                    if *nullability == Nullability::NonNull {
+                        write!(f, "&mut {tokens}")
+                    } else {
+                        write!(f, "Option<&mut {tokens}>")
+                    }
+                }
+                _ => write!(f, "{}", self.fn_argument()),
+            },
+            _ => write!(f, "{}", self.fn_argument()),
+        })
+    }
+
+    pub(crate) fn struct_(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Array {
+                element_type,
+                num_elements,
+            } => write!(f, "[{}; {num_elements}]", element_type.plain()),
+            _ => write!(f, "{}", self.plain()),
+        })
+    }
+
+    pub(crate) fn enum_(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| write!(f, "{}", self.plain()))
+    }
+
+    pub(crate) const VOID_RESULT: Self = Self::Primitive(Primitive::Void);
+
+    pub(crate) fn parse_method_argument(
         ty: Type<'_>,
         _qualifier: Option<MethodArgumentQualifier>,
         mut arg_sendable: Option<bool>,
         mut arg_no_escape: bool,
         context: &Context<'_>,
     ) -> Self {
-        let mut ty = Inner::parse(ty, Lifetime::Unspecified, context);
+        let mut ty = Self::parse(ty, Lifetime::Unspecified, context);
 
         match &mut ty {
-            Inner::Pointer { pointee, .. } => match &mut **pointee {
-                Inner::Block {
+            Self::Pointer { pointee, .. } => match &mut **pointee {
+                Self::Block {
                     sendable,
                     no_escape,
                     ..
@@ -1336,14 +1470,15 @@ impl Ty {
                     arg_sendable = None;
                     arg_no_escape = false;
                 }
-                Inner::Fn { no_escape, .. } => {
+                Self::Fn { no_escape, .. } => {
                     *no_escape = arg_no_escape;
                     arg_no_escape = false;
                 }
                 _ => {}
             },
-            // Ignore NSComparator for now
-            Inner::TypeDef { id } if id.is_nscomparator() => {
+            // Ignore typedefs for now
+            Self::TypeDef { .. } => {
+                arg_sendable = None;
                 arg_no_escape = false;
             }
             _ => {}
@@ -1357,41 +1492,24 @@ impl Ty {
             warn!(?ty, "did not consume no_escape in argument");
         }
 
-        match &ty {
-            Inner::Pointer { pointee, .. } => pointee.visit_lifetime(|lifetime| {
-                if lifetime != Lifetime::Autoreleasing {
-                    error!(?ty, "unexpected lifetime in pointer argument");
-                }
-            }),
-            Inner::IncompleteArray { pointee, .. } => pointee.visit_lifetime(|lifetime| {
-                if lifetime != Lifetime::Unretained {
-                    error!(?ty, "unexpected lifetime in incomplete array argument");
-                }
-            }),
-            _ => ty.visit_lifetime(|lifetime| {
-                if lifetime != Lifetime::Strong {
-                    error!(?ty, "unexpected lifetime in argument");
-                }
-            }),
-        }
-
         // TODO: Is the qualifier useful for anything?
 
-        Self {
-            ty,
-            kind: TyKind::MethodArgument,
-        }
+        ty
     }
 
-    pub fn parse_method_return(ty: Type<'_>, default_nonnull: bool, context: &Context<'_>) -> Self {
-        let mut ty = Inner::parse(ty, Lifetime::Unspecified, context);
+    pub(crate) fn parse_method_return(
+        ty: Type<'_>,
+        default_nonnull: bool,
+        context: &Context<'_>,
+    ) -> Self {
+        let mut ty = Self::parse(ty, Lifetime::Unspecified, context);
 
         // As in `parse_property_return`, the nullability is not guaranteed by
         // the method, and can also fail in OOM situations, but that is
         // handled by `#[method_id(...)]`
         if default_nonnull {
             match &mut ty {
-                Inner::Id { nullability, .. } => {
+                Self::Pointer { nullability, .. } | Self::TypeDef { nullability, .. } => {
                     if *nullability == Nullability::Unspecified {
                         *nullability = Nullability::NonNull;
                     }
@@ -1400,92 +1518,60 @@ impl Ty {
             }
         }
 
-        ty.visit_lifetime(|lifetime| {
-            if lifetime != Lifetime::Unspecified {
-                error!(?ty, "unexpected lifetime in return");
-            }
-        });
-
-        Self {
-            ty,
-            kind: TyKind::MethodReturn { with_error: false },
-        }
+        ty
     }
 
-    pub fn parse_function_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let mut this = Self::parse_method_argument(ty, None, None, false, context);
-        this.kind = TyKind::FnArgument;
-        this
+    pub(crate) fn parse_function_argument(ty: Type<'_>, context: &Context<'_>) -> Self {
+        Self::parse_method_argument(ty, None, None, false, context)
     }
 
-    pub fn parse_function_return(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let mut this = Self::parse_method_return(ty, false, context);
-        this.kind = TyKind::FnReturn;
-        this
+    pub(crate) fn parse_function_return(ty: Type<'_>, context: &Context<'_>) -> Self {
+        Self::parse_method_return(ty, false, context)
     }
 
-    pub fn parse_typedef(ty: Type<'_>, typedef_name: &str, context: &Context<'_>) -> Option<Self> {
-        let mut ty = Inner::parse(ty, Lifetime::Unspecified, context);
-
-        ty.visit_lifetime(|lifetime| {
-            if lifetime != Lifetime::Unspecified {
-                error!(?ty, "unexpected lifetime in typedef");
-            }
-        });
+    pub(crate) fn parse_typedef(
+        ty: Type<'_>,
+        typedef_name: &str,
+        context: &Context<'_>,
+    ) -> Option<Self> {
+        let mut ty = Self::parse(ty, Lifetime::Unspecified, context);
 
         match &mut ty {
             // Handled by Stmt::EnumDecl
-            Inner::Enum { .. } => None,
+            Self::Enum { .. } => None,
             // No need to output a typedef if it'll just point to the same thing.
             //
             // TODO: We're discarding a slight bit of availability data this way.
-            Inner::Struct { id } if id.name == typedef_name => None,
+            Self::Struct { id } if id.name == typedef_name => None,
             // Opaque structs
-            Inner::Pointer { pointee, .. } if matches!(&**pointee, Inner::Struct { .. }) => {
-                **pointee = Inner::Primitive(Primitive::Void);
-                Some(Self {
-                    ty,
-                    kind: TyKind::Typedef,
-                })
+            Self::Pointer { pointee, .. } if matches!(&**pointee, Self::Struct { .. }) => {
+                **pointee = Self::Primitive(Primitive::Void);
+                Some(ty)
             }
-            Inner::IncompleteArray { .. } => {
+            Self::IncompleteArray { .. } => {
                 unimplemented!("incomplete array in struct")
             }
-            _ => Some(Self {
-                ty,
-                kind: TyKind::Typedef,
-            }),
+            _ => Some(ty),
         }
     }
 
-    pub fn parse_property(
+    pub(crate) fn parse_property(
         ty: Type<'_>,
         // Ignored; see `parse_property_return`
         _is_copy: bool,
         _sendable: Option<bool>,
         context: &Context<'_>,
     ) -> Self {
-        let ty = Inner::parse(ty, Lifetime::Unspecified, context);
-
-        ty.visit_lifetime(|lifetime| {
-            if lifetime != Lifetime::Unspecified {
-                error!(?ty, "unexpected lifetime in property");
-            }
-        });
-
-        Self {
-            ty,
-            kind: TyKind::MethodArgument,
-        }
+        Self::parse(ty, Lifetime::Unspecified, context)
     }
 
-    pub fn parse_property_return(
+    pub(crate) fn parse_property_return(
         ty: Type<'_>,
         is_copy: bool,
         _sendable: Option<bool>,
         context: &Context<'_>,
     ) -> Self {
-        let mut ty = Inner::parse(ty, Lifetime::Unspecified, context);
+        let mut ty = Self::parse(ty, Lifetime::Unspecified, context);
 
         // `@property(copy)` is expected to always return a nonnull instance
         // (e.g. for strings it returns the empty string, while
@@ -1505,402 +1591,117 @@ impl Ty {
         // return type as `Id`.
         if is_copy {
             match &mut ty {
-                Inner::Id { nullability, .. } => {
+                Self::Pointer { nullability, .. } | Self::TypeDef { nullability, .. } => {
                     if *nullability == Nullability::Unspecified {
                         *nullability = Nullability::NonNull;
                     }
-                }
-                Inner::Pointer {
-                    nullability: Nullability::Nullable | Nullability::NonNull,
-                    ..
-                } => {
-                    // Ignore pointers
                 }
                 _ => warn!(?ty, "property(copy) which is not an object"),
             }
         }
 
-        ty.visit_lifetime(|lifetime| {
-            if lifetime != Lifetime::Unspecified {
-                error!(?ty, "unexpected lifetime in property");
-            }
-        });
-
-        Self {
-            ty,
-            kind: TyKind::MethodReturn { with_error: false },
-        }
+        ty
     }
 
-    pub fn parse_struct_field(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = Inner::parse(ty, Lifetime::Unspecified, context);
-
-        ty.visit_lifetime(|lifetime| {
-            if lifetime != Lifetime::Unretained {
-                error!(?ty, "unexpected lifetime in struct field");
-            }
-        });
-
-        Self {
-            ty,
-            kind: TyKind::Struct,
-        }
+    pub(crate) fn parse_struct_field(ty: Type<'_>, context: &Context<'_>) -> Self {
+        Self::parse(ty, Lifetime::Unspecified, context)
     }
 
-    pub fn parse_enum(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = Inner::parse(ty, Lifetime::Unspecified, context);
+    pub(crate) fn parse_enum(ty: Type<'_>, context: &Context<'_>) -> Self {
+        let ty = Self::parse(ty, Lifetime::Unspecified, context);
 
-        ty.visit_lifetime(|_lifetime| {
-            error!(?ty, "unexpected lifetime in enum");
-        });
-
-        if !matches!(ty, Inner::Primitive(_)) {
+        if !matches!(ty, Self::Primitive(_)) {
             warn!(?ty, "enum type not a primitive");
         }
 
-        Self {
-            ty,
-            kind: TyKind::Enum,
-        }
+        ty
     }
 
-    pub fn parse_static(ty: Type<'_>, context: &Context<'_>) -> Self {
-        let ty = Inner::parse(ty, Lifetime::Unspecified, context);
-
-        ty.visit_lifetime(|lifetime| {
-            if lifetime != Lifetime::Strong && lifetime != Lifetime::Unspecified {
-                error!(?ty, "unexpected lifetime in var");
-            }
-        });
-
-        Self {
-            ty,
-            kind: TyKind::Static,
-        }
+    pub(crate) fn parse_static(ty: Type<'_>, context: &Context<'_>) -> Self {
+        Self::parse(ty, Lifetime::Unspecified, context)
     }
 
-    pub fn visit_required_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
-        if let TyKind::MethodReturn { with_error: true } = &self.kind {
-            f(&ItemIdentifier::nserror());
-        }
-
-        self.ty.visit_required_types(f);
-    }
-
-    pub fn visit_toplevel_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
-        if let TyKind::MethodReturn { with_error: true } = &self.kind {
-            f(&ItemIdentifier::nserror());
-        }
-
-        self.ty.visit_toplevel_types(f);
-    }
-}
-
-impl Ty {
-    pub fn argument_is_error_out(&self) -> bool {
-        if let Inner::Pointer {
+    pub(crate) fn argument_is_error_out(&self) -> bool {
+        if let Self::Pointer {
             nullability,
             is_const,
+            lifetime: Lifetime::Unspecified,
             pointee,
-        } = &self.ty
+        } = self
         {
-            if let Inner::Id {
-                ty:
-                    IdType::Class {
-                        id,
-                        params: TypeParams::Empty,
-                    },
-                is_const: id_is_const,
+            if let Self::Pointer {
+                nullability: inner_nullability,
+                is_const: inner_is_const,
                 lifetime,
-                nullability: id_nullability,
+                pointee,
             } = &**pointee
             {
-                if !id.is_nserror() {
-                    return false;
-                }
-                assert_eq!(
-                    *nullability,
-                    Nullability::Nullable,
-                    "invalid error nullability {self:?}"
-                );
-                assert!(!is_const, "expected error not const {self:?}");
+                if let Self::Class {
+                    id,
+                    generics,
+                    protocols,
+                } = &**pointee
+                {
+                    if !id.is_nserror() {
+                        return false;
+                    }
+                    assert_eq!(
+                        *nullability,
+                        Nullability::Nullable,
+                        "invalid error nullability {self:?}"
+                    );
+                    assert!(!is_const, "expected error not const {self:?}");
+                    assert_eq!(
+                        *inner_nullability,
+                        Nullability::Nullable,
+                        "invalid inner error nullability {self:?}"
+                    );
+                    assert!(!inner_is_const, "expected inner error not const {self:?}");
 
-                assert_eq!(
-                    *id_nullability,
-                    Nullability::Nullable,
-                    "invalid inner error nullability {self:?}"
-                );
-                assert!(!id_is_const, "expected inner error not const {self:?}");
-                assert_eq!(
-                    *lifetime,
-                    Lifetime::Autoreleasing,
-                    "invalid error lifetime {self:?}"
-                );
-                return true;
+                    assert_eq!(generics, &[], "invalid error generics {self:?}");
+                    assert_eq!(protocols, &[], "invalid error protocols {self:?}");
+                    assert_eq!(
+                        *lifetime,
+                        Lifetime::Autoreleasing,
+                        "invalid error lifetime {self:?}"
+                    );
+                    return true;
+                }
             }
         }
         false
     }
 
-    pub fn is_id(&self) -> bool {
-        matches!(self.ty, Inner::Id { .. })
-    }
-
-    pub fn set_is_error(&mut self) {
-        if let TyKind::MethodReturn { with_error } = &mut self.kind {
-            *with_error = true;
-        } else {
-            panic!("invalid set_is_error usage");
+    pub(crate) fn is_id(&self) -> bool {
+        match self {
+            Self::Pointer { pointee, .. } if pointee.is_object_like() => true,
+            Self::TypeDef { .. } if self.is_object_like() => true,
+            _ => false,
         }
     }
 
-    pub fn is_error(&self) -> bool {
-        if let TyKind::MethodReturn { with_error } = &self.kind {
-            *with_error
-        } else {
-            panic!("invalid set_is_error usage");
-        }
+    pub(crate) fn is_instancetype(&self) -> bool {
+        matches!(self, Self::Pointer { pointee, .. } if **pointee == Self::Self_)
     }
 
-    pub fn is_instancetype(&self) -> bool {
-        matches!(
-            &self.ty,
-            Inner::Id {
-                ty: IdType::Self_ { .. },
-                ..
-            }
-        )
+    pub(crate) fn is_typedef_to(&self, s: &str) -> bool {
+        matches!(self, Self::TypeDef { id, .. } if id.name == s)
     }
 
-    pub fn is_typedef_to(&self, s: &str) -> bool {
-        matches!(&self.ty, Inner::TypeDef { id } if id.name == s)
-    }
-
-    pub fn try_fix_related_result_type(&mut self) {
-        if let Inner::Id { ty, .. } = &mut self.ty {
-            if let IdType::AnyObject { protocols } = &ty {
+    pub(crate) fn try_fix_related_result_type(&mut self) {
+        if let Self::Pointer { pointee, .. } = self {
+            if let Self::AnyObject { protocols } = &**pointee {
                 if !protocols.is_empty() {
-                    warn!(?ty, "related result type with protocols");
+                    warn!(?pointee, "related result type with protocols");
                     return;
                 }
 
-                *ty = IdType::Self_;
+                **pointee = Self::Self_;
             } else {
                 // Only fix if the type is `id`
             }
         } else {
             panic!("tried to fix related result type on non-id type")
-        }
-    }
-
-    pub fn is_nsstring(&self) -> bool {
-        if let Inner::Id {
-            ty: IdType::Class { id, .. },
-            ..
-        } = &self.ty
-        {
-            id.is_nsstring()
-        } else {
-            false
-        }
-    }
-}
-
-impl fmt::Display for Ty {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match &self.kind {
-            TyKind::MethodReturn { with_error: false } => {
-                if let Inner::Primitive(Primitive::Void) = &self.ty {
-                    // Don't output anything
-                    return Ok(());
-                }
-
-                write!(f, " -> ")?;
-
-                match &self.ty {
-                    Inner::Id {
-                        ty,
-                        // Ignore
-                        is_const: _,
-                        // Ignore
-                        lifetime: _,
-                        nullability,
-                    } => {
-                        if *nullability == Nullability::NonNull {
-                            write!(f, "Id<{ty}>")
-                        } else {
-                            write!(f, "Option<Id<{ty}>>")
-                        }
-                    }
-                    Inner::Class { nullability } => {
-                        if *nullability == Nullability::NonNull {
-                            write!(f, "&'static AnyClass")
-                        } else {
-                            write!(f, "Option<&'static AnyClass>")
-                        }
-                    }
-                    Inner::Primitive(Primitive::C99Bool) => {
-                        warn!("C99's bool as Objective-C method return is ill supported");
-                        write!(f, "bool")
-                    }
-                    Inner::Primitive(Primitive::ObjcBool) => write!(f, "bool"),
-                    ty => write!(f, "{ty}"),
-                }
-            }
-            TyKind::MethodReturn { with_error: true } => match &self.ty {
-                Inner::Id {
-                    ty,
-                    lifetime: Lifetime::Unspecified,
-                    is_const: false,
-                    nullability: Nullability::Nullable,
-                } => {
-                    // NULL -> error
-                    write!(
-                        f,
-                        " -> Result<Id<{ty}>, Id<{}>>",
-                        ItemIdentifier::nserror().path(),
-                    )
-                }
-                Inner::Primitive(Primitive::ObjcBool) => {
-                    // NO -> error
-                    write!(
-                        f,
-                        " -> Result<(), Id<{}>>",
-                        ItemIdentifier::nserror().path()
-                    )
-                }
-                _ => panic!("unknown error result type {self:?}"),
-            },
-            TyKind::Static => match &self.ty {
-                Inner::Id {
-                    ty,
-                    // `const` is irrelevant in statics since they're always
-                    // constant.
-                    is_const: _,
-                    lifetime: Lifetime::Strong | Lifetime::Unspecified,
-                    nullability,
-                } => {
-                    if *nullability == Nullability::NonNull {
-                        write!(f, "&'static {ty}")
-                    } else {
-                        write!(f, "Option<&'static {ty}>")
-                    }
-                }
-                ty @ Inner::Id { .. } => panic!("invalid static {ty:?}"),
-                ty => write!(f, "{ty}"),
-            },
-            TyKind::Typedef => match &self.ty {
-                // When we encounter a typedef declaration like this:
-                //     typedef NSString* NSAbc;
-                //
-                // We parse it as one of:
-                //     type NSAbc = NSString;
-                //     struct NSAbc(NSString);
-                //
-                // Instead of:
-                //     type NSAbc = *const NSString;
-                //
-                // Because that means we can use ordinary Id<NSAbc> elsewhere.
-                Inner::Id {
-                    ty:
-                        ty @ IdType::Class {
-                            params: TypeParams::Empty,
-                            ..
-                        },
-                    is_const: _,
-                    lifetime: _,
-                    nullability: Nullability::Nullable | Nullability::Unspecified,
-                } => {
-                    write!(f, "{ty}")
-                }
-                Inner::Id {
-                    ty: ty @ IdType::AnyObject { .. },
-                    ..
-                } => write!(f, "{ty}"),
-                ty @ Inner::Id { .. } => {
-                    panic!("unexpected form of typedef: {ty:?}");
-                }
-                ty => write!(f, "{ty}"),
-            },
-            TyKind::MethodArgument | TyKind::FnArgument => match &self.ty {
-                Inner::Id {
-                    ty,
-                    is_const: false,
-                    lifetime: Lifetime::Unspecified | Lifetime::Strong,
-                    nullability,
-                } => {
-                    if *nullability == Nullability::NonNull {
-                        write!(f, "&{ty}")
-                    } else {
-                        write!(f, "Option<&{ty}>")
-                    }
-                }
-                Inner::Class { nullability } => {
-                    if *nullability == Nullability::NonNull {
-                        write!(f, "&AnyClass")
-                    } else {
-                        write!(f, "Option<&AnyClass>")
-                    }
-                }
-                Inner::Primitive(Primitive::C99Bool) if self.kind == TyKind::MethodArgument => {
-                    panic!("C99's bool as Objective-C method argument is unsupported")
-                }
-                Inner::Primitive(Primitive::ObjcBool) if self.kind == TyKind::MethodArgument => {
-                    write!(f, "bool")
-                }
-                ty @ Inner::Pointer {
-                    nullability,
-                    is_const: false,
-                    pointee,
-                } => match &**pointee {
-                    Inner::Id {
-                        ty,
-                        // Don't care about the const-ness of the id.
-                        is_const: _,
-                        lifetime: Lifetime::Autoreleasing,
-                        nullability: inner_nullability,
-                    } if self.kind == TyKind::MethodArgument => {
-                        let tokens = if *inner_nullability == Nullability::NonNull {
-                            format!("Id<{ty}>")
-                        } else {
-                            format!("Option<Id<{ty}>>")
-                        };
-                        if *nullability == Nullability::NonNull {
-                            write!(f, "&mut {tokens}")
-                        } else {
-                            write!(f, "Option<&mut {tokens}>")
-                        }
-                    }
-                    Inner::Id { .. } if self.kind == TyKind::MethodArgument => {
-                        unreachable!("invalid out-pointer id {self:?}")
-                    }
-                    block @ Inner::Block { .. } => {
-                        if *nullability == Nullability::NonNull {
-                            write!(f, "&{block}")
-                        } else {
-                            write!(f, "Option<&{block}>")
-                        }
-                    }
-                    _ => write!(f, "{ty}"),
-                },
-                ty => write!(f, "{ty}"),
-            },
-            TyKind::Struct => match &self.ty {
-                Inner::Array {
-                    element_type,
-                    num_elements,
-                } => write!(f, "[{element_type}; {num_elements}]"),
-                ty => write!(f, "{ty}"),
-            },
-            TyKind::Enum => write!(f, "{}", self.ty),
-            TyKind::FnReturn => {
-                if let Inner::Primitive(Primitive::Void) = &self.ty {
-                    // Don't output anything
-                    return Ok(());
-                }
-
-                write!(f, " -> {}", self.ty)
-            }
         }
     }
 }
