@@ -1,5 +1,6 @@
 #![cfg(feature = "Foundation_NSDictionary")]
 #![cfg(feature = "Foundation_NSString")]
+#![cfg(feature = "Foundation_NSObject")]
 use alloc::{format, vec};
 
 use objc2::rc::{autoreleasepool, Id};

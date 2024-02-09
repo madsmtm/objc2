@@ -1,13 +1,13 @@
-#![cfg(feature = "Foundation_NSException")]
+#[cfg(feature = "Foundation_NSString")]
 use core::fmt;
 use core::hint::unreachable_unchecked;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::exception::Exception;
-use objc2::{msg_send_id, sel};
+use objc2::sel;
 
 use crate::common::*;
-use crate::Foundation::{self, NSException, NSExceptionName, NSObject, NSObjectProtocol};
+use crate::Foundation::{NSException, NSObject, NSObjectProtocol};
 
 // SAFETY: Exception objects are immutable data containers, and documented as
 // thread safe.
@@ -32,12 +32,12 @@ impl NSException {
     #[cfg(feature = "Foundation_NSString")]
     #[cfg(feature = "Foundation_NSDictionary")]
     pub fn new(
-        name: &NSExceptionName,
-        reason: Option<&Foundation::NSString>,
-        user_info: Option<&Foundation::NSDictionary<AnyObject, AnyObject>>,
+        name: &crate::Foundation::NSExceptionName,
+        reason: Option<&crate::Foundation::NSString>,
+        user_info: Option<&crate::Foundation::NSDictionary<AnyObject, AnyObject>>,
     ) -> Option<Id<Self>> {
         unsafe {
-            msg_send_id![
+            objc2::msg_send_id![
                 Self::alloc(),
                 initWithName: name,
                 reason: reason,

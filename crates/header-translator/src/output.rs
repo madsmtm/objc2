@@ -5,8 +5,8 @@ use std::path::Path;
 
 use crate::config::{Config, LibraryData};
 use crate::feature::Feature;
+use crate::file::clean_name;
 use crate::library::Library;
-use crate::stmt::Stmt;
 
 use semver::VersionReq;
 
@@ -125,34 +125,19 @@ impl Output {
         for (library_name, library) in &self.libraries {
             let mut library_features = BTreeSet::from([library_name.clone()]);
 
-            for file in library.files.values() {
-                for stmt in &file.stmts {
-                    #[allow(clippy::single_match)] // There will be others
-                    match stmt {
-                        Stmt::ClassDecl {
-                            id, superclasses, ..
-                        } => {
-                            if let Some(feature) = Feature::new(id).name() {
-                                // Only require the first superclass as feature,
-                                // since the rest will be enabled transitively.
-                                if let Some((superclass, _)) = superclasses.first() {
-                                    let superclass_features: Vec<_> =
-                                        Feature::new(superclass).name().into_iter().collect();
-                                    if let Some(existing) =
-                                        features.insert(feature.clone(), superclass_features)
-                                    {
-                                        error!(?existing, "duplicate feature");
-                                    }
-                                }
-
-                                if !library_features.insert(feature) {
-                                    error!("duplicate feature");
-                                }
-                            }
-                        }
-                        _ => {}
-                    }
-                }
+            for (file_name, file) in &library.files {
+                let feature_name = format!("{}_{}", library_name, clean_name(file_name));
+                let mut required_features: BTreeSet<_> = file
+                    .required_imports() // TODO
+                    .filter_map(|id| Feature::new(&id).name())
+                    .collect();
+                required_features.remove(&feature_name); // Don't depend on itself
+                required_features.clear(); // TODO
+                features.insert(
+                    feature_name.clone(),
+                    required_features.into_iter().collect(),
+                );
+                library_features.insert(feature_name);
             }
 
             let _ = features.insert(

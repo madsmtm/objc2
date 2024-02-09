@@ -201,14 +201,14 @@ impl Expr {
                     // features.add_item(&id);
                 }
             }
-            Self::Enum { .. } => {
-                // features.add_item(&id);
+            Self::Enum { id, .. } => {
+                features.add_item(id);
             }
-            Self::Const(_) => {
-                // features.add_item(&id);
+            Self::Const(id) => {
+                features.add_item(id);
             }
-            Self::Var { ty, .. } => {
-                // features.add_item(&id);
+            Self::Var { id, ty, .. } => {
+                features.add_item(id);
                 features.merge(ty.required_features(&Features::new()));
             }
             Self::Tokens(tokens) => {

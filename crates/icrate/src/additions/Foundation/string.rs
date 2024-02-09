@@ -1,8 +1,6 @@
-#![cfg(feature = "Foundation_NSString")]
 use core::cmp;
 use core::ffi::c_void;
 use core::fmt;
-#[cfg(feature = "Foundation_NSMutableString")]
 use core::ops::AddAssign;
 use core::panic::RefUnwindSafe;
 use core::panic::UnwindSafe;
@@ -19,9 +17,7 @@ use objc2::rc::{autoreleasepool_leaking, AutoreleasePool};
 use objc2::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
 
 use crate::common::*;
-#[cfg(feature = "Foundation_NSMutableString")]
-use crate::Foundation::NSMutableString;
-use crate::Foundation::NSString;
+use crate::Foundation::{NSMutableString, NSString};
 
 // SAFETY: `NSString` is immutable and `NSMutableString` can only be mutated
 // from `&mut` methods.
@@ -134,7 +130,6 @@ impl NSString {
     // See https://github.com/drewcrawford/foundationr/blob/b27683417a35510e8e5d78a821f081905b803de6/src/nsstring.rs
 }
 
-#[cfg(feature = "Foundation_NSMutableString")]
 impl NSMutableString {
     /// Creates a new [`NSMutableString`] by copying the given string slice.
     #[doc(alias = "initWithBytes:length:encoding:")]
@@ -159,7 +154,6 @@ unsafe fn init_with_str<T: Message>(obj: Allocated<T>, string: &str) -> Id<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableString")]
 impl PartialEq<NSString> for NSMutableString {
     #[inline]
     fn eq(&self, other: &NSString) -> bool {
@@ -167,7 +161,6 @@ impl PartialEq<NSString> for NSMutableString {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableString")]
 impl PartialEq<NSMutableString> for NSString {
     #[inline]
     fn eq(&self, other: &NSMutableString) -> bool {
@@ -188,7 +181,6 @@ impl Ord for NSString {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableString")]
 impl PartialOrd for NSMutableString {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
@@ -196,7 +188,6 @@ impl PartialOrd for NSMutableString {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableString")]
 impl PartialOrd<NSString> for NSMutableString {
     #[inline]
     fn partial_cmp(&self, other: &NSString) -> Option<cmp::Ordering> {
@@ -204,7 +195,6 @@ impl PartialOrd<NSString> for NSMutableString {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableString")]
 impl PartialOrd<NSMutableString> for NSString {
     #[inline]
     fn partial_cmp(&self, other: &NSMutableString) -> Option<cmp::Ordering> {
@@ -212,7 +202,6 @@ impl PartialOrd<NSMutableString> for NSString {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableString")]
 impl Ord for NSMutableString {
     #[inline]
     fn cmp(&self, other: &Self) -> cmp::Ordering {
@@ -224,7 +213,6 @@ impl Ord for NSMutableString {
 // See `fruity`'s implementation:
 // https://github.com/nvzqz/fruity/blob/320efcf715c2c5fbd2f3084f671f2be2e03a6f2b/src/foundation/ns_string/mod.rs#L69-L163
 
-#[cfg(feature = "Foundation_NSMutableString")]
 impl AddAssign<&NSString> for NSMutableString {
     #[inline]
     fn add_assign(&mut self, other: &NSString) {
@@ -238,7 +226,6 @@ impl fmt::Display for NSString {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableString")]
 impl fmt::Display for NSMutableString {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -252,7 +239,13 @@ impl fmt::Debug for NSString {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableString")]
+impl fmt::Debug for NSMutableString {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Debug::fmt(&**self, f)
+    }
+}
+
 impl fmt::Write for NSMutableString {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         let nsstring = NSString::from_str(s);

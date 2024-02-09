@@ -178,6 +178,8 @@ cfg-apple-link = true
 extra-features = [
     "objc2",
     "block2",
+    # Ord, Debug and other such fundamental impls requires these.
+    "Foundation_NSObjCRuntime",
     # Some fmt::Debug impls require these
     "Foundation_NSString",
     "Foundation_NSDictionary",
@@ -990,6 +992,8 @@ shadowPath = { skipped = true }
 skipped = true
 [class.CAMetalLayer]
 skipped = true
+[class.CAMetalDisplayLink.methods."initWithMetalLayer:"]
+skipped = true # Needs `CAMetalLayer`
 [class.CAOpenGLLayer]
 skipped = true
 [class.CARenderer.methods]
@@ -1223,13 +1227,16 @@ skipped = true
 skipped = true
 [protocol.PHLivePhotoFrame.methods.time]
 skipped = true
-# Needs `PHLivePhotoFrameProcessingBlock` (skipped because needs `CIImage`)
+# Needs `CIImage` from `CoreImage`
+[typedef.PHLivePhotoFrameProcessingBlock]
+skipped = true
+[class.PHLivePhotoEditingContext.methods.fullSizeImage]
+skipped = true
 [class.PHLivePhotoEditingContext.methods.frameProcessor]
 skipped = true
 [class.PHLivePhotoEditingContext.methods."setFrameProcessor:"]
 skipped = true
-# Needs `CIImage` from `CoreImage`
-[typedef.PHLivePhotoFrameProcessingBlock]
+[protocol.PHLivePhotoFrame.methods.image]
 skipped = true
 # Needs `dispatch_block_t`
 [class.PHPhotoLibrary.methods."performChanges:completionHandler:"]
@@ -1254,6 +1261,93 @@ skipped = true
 [class.WKWebsiteDataStore.methods]
 proxyConfigurations = { skipped = true }
 "setProxyConfigurations:" = { skipped = true }
+# Needs `CIImage` from `CoreImage`
+[class.CIImage.categories.NSAppKitAdditions]
+skipped = true
+# Needs `CIColor` from `CoreImage`
+[class.CIColor.categories.NSAppKitAdditions]
+skipped = true
+# Needs `Symbols` framework
+[class.NSImageView.categories.NSSymbolEffect]
+skipped = true
+# Needs `AVFAudio` framework
+[protocol.CXProviderDelegate.methods."provider:didActivateAudioSession:"]
+skipped = true
+[protocol.CXProviderDelegate.methods."provider:didDeactivateAudioSession:"]
+skipped = true
+[class.SNAudioStreamAnalyzer.methods."initWithFormat:"]
+skipped = true
+[class.SNAudioStreamAnalyzer.methods."analyzeAudioBuffer:atAudioFramePosition:"]
+skipped = true
+[class.SFSpeechAudioBufferRecognitionRequest.methods.nativeAudioFormat]
+skipped = true
+[class.SFSpeechAudioBufferRecognitionRequest.methods."appendAudioPCMBuffer:"]
+skipped = true
+# Needs `AVFoundation` framework
+[class.AVMediaSelectionOption.categories.MPNowPlayingInfoLanguageOptionAdditions]
+skipped = true
+[class.AVMediaSelectionGroup.categories.MPNowPlayingInfoLanguageOptionAdditions]
+skipped = true
+[class.AVPlayerItem.categories.MPAdditions]
+skipped = true
+[class.MPNowPlayingSession.methods."initWithPlayers:"]
+skipped = true
+[class.MPNowPlayingSession.methods.players]
+skipped = true
+[class.MPNowPlayingSession.methods."addPlayer:"]
+skipped = true
+[class.MPNowPlayingSession.methods."removePlayer:"]
+skipped = true
+[class.PHContentEditingInput.methods.avAsset]
+skipped = true
+[class.PHContentEditingInput.methods.audiovisualAsset]
+skipped = true
+[class.PHImageManager.methods."requestPlayerItemForVideo:options:resultHandler:"]
+skipped = true
+[class.PHImageManager.methods."requestExportSessionForVideo:options:exportPreset:resultHandler:"]
+skipped = true
+[class.PHImageManager.methods."requestAVAssetForVideo:options:resultHandler:"]
+skipped = true
+# Needs `IMKTextInput`, which is defined in `Carbon` for some reason
+[class.IMKInputController.methods.client]
+skipped = true
+# Needs `ModelIO` framework
+[class.MTKMesh.methods."initWithMesh:device:error:"]
+skipped = true
+[class.MTKMesh.methods."newMeshesFromAsset:device:sourceMeshes:error:"]
+skipped = true
+[class.MTKMesh.methods.vertexDescriptor]
+skipped = true
+[fn.MTKModelIOVertexDescriptorFromMetal]
+skipped = true
+[fn.MTKModelIOVertexDescriptorFromMetalWithError]
+skipped = true
+[fn.MTKMetalVertexDescriptorFromModelIO]
+skipped = true
+[fn.MTKMetalVertexDescriptorFromModelIOWithError]
+skipped = true
+[class.MTKTextureLoader.methods."newTextureWithMDLTexture:options:completionHandler:"]
+skipped = true
+[class.MTKTextureLoader.methods."newTextureWithMDLTexture:options:error:"]
+skipped = true
+# Needs `MLModel` from the `CoreML` framework
+[class.SNClassifySoundRequest.methods."initWithMLModel:error:"]
+skipped = true
+# Needs `SFAuthorization` from the `SecurityFoundation` framework
+[class.CWInterface.methods."commitConfiguration:authorization:error:"]
+skipped = true
+# Needs the `AddressBook` framework
+[class.EKParticipant.methods."ABPersonInAddressBook:"]
+skipped = true
+# Needs the `UIKit` framework
+[class.EAWiFiUnconfiguredAccessoryBrowser.methods."configureAccessory:withConfigurationUIOnViewController:"]
+skipped = true
+# Needs `CHHapticEngine` from the `CoreHaptics` framework
+[class.GCDeviceHaptics.methods."createEngineWithLocality:"]
+skipped = true
+# Needs `JSValue` from the `JavaScriptCore` framework
+[class.WebScriptObject.methods.JSValue]
+skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]

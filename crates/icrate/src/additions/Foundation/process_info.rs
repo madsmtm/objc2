@@ -1,4 +1,3 @@
-#![cfg(feature = "Foundation_NSProcessInfo")]
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 

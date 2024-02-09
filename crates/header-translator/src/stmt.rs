@@ -1,4 +1,5 @@
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::fmt;
@@ -13,6 +14,7 @@ use crate::context::Context;
 use crate::expr::Expr;
 use crate::feature::Features;
 use crate::id::ItemIdentifier;
+use crate::id::Location;
 use crate::immediate_children;
 use crate::method::{handle_reserved, Method};
 use crate::rust_type::Ty;
@@ -38,9 +40,9 @@ impl fmt::Display for Derives {
 }
 
 /// Find all protocols, protocol's protocols and superclass' protocols.
-fn parse_protocols(
-    entity: &Entity<'_>,
-    protocols: &mut BTreeSet<ItemIdentifier>,
+fn parse_protocols<'tu>(
+    entity: &Entity<'tu>,
+    protocols: &mut BTreeMap<ItemIdentifier, Entity<'tu>>,
     context: &Context<'_>,
 ) {
     immediate_children(entity, |entity, _span| match entity.get_kind() {
@@ -48,10 +50,10 @@ fn parse_protocols(
             let entity = entity
                 .get_reference()
                 .expect("ObjCProtocolRef to reference entity");
-            if protocols.insert(
-                ItemIdentifier::new(&entity, context)
-                    .map_name(|name| context.replace_protocol_name(name)),
-            ) {
+            if protocols
+                .insert(ItemIdentifier::new(&entity, context), entity)
+                .is_none()
+            {
                 // Only recurse if we haven't already seen this protocol
                 parse_protocols(&entity, protocols, context);
             }
@@ -386,6 +388,7 @@ pub enum Stmt {
     /// extern_class!
     ClassDecl {
         id: ItemIdentifier,
+        features: Features,
         generics: Vec<String>,
         availability: Availability,
         superclasses: Vec<(ItemIdentifier, Vec<String>)>,
@@ -399,8 +402,10 @@ pub enum Stmt {
     /// ->
     /// extern_methods!
     ExternMethods {
+        id: Location,
         availability: Availability,
         cls: ItemIdentifier,
+        cls_features: Features,
         source_superclass: Option<ItemIdentifier>,
         cls_generics: Vec<String>,
         category_name: Option<String>,
@@ -422,6 +427,7 @@ pub enum Stmt {
     /// extern_protocol!
     ProtocolDecl {
         id: ItemIdentifier,
+        features: Features,
         actual_name: Option<String>,
         availability: Availability,
         protocols: BTreeSet<ItemIdentifier>,
@@ -432,8 +438,11 @@ pub enum Stmt {
     /// @interface ty: _ <protocols*>
     /// @interface ty (_) <protocols*>
     ProtocolImpl {
+        id: Location,
         cls: ItemIdentifier,
+        cls_features: Features,
         protocol: ItemIdentifier,
+        protocol_features: Features,
         generics: Vec<String>,
         availability: Availability,
     },
@@ -592,6 +601,7 @@ impl Stmt {
                 let availability = Availability::parse(entity, context);
                 let thread_safety = ThreadSafety::from_decl(entity, context);
 
+                let features = Features::required_by_decl(entity, context);
                 let implied_features = Features::implied_by_decl(entity, context);
 
                 verify_objc_decl(entity, context);
@@ -609,11 +619,10 @@ impl Stmt {
 
                 let mut protocols = Default::default();
                 parse_protocols(entity, &mut protocols, context);
-
                 let skipped_protocols = data
                     .map(|data| data.skipped_protocols.clone())
                     .unwrap_or_default();
-                protocols.retain(|protocol| !skipped_protocols.contains(&protocol.name));
+                protocols.retain(|protocol, _| !skipped_protocols.contains(&protocol.name));
 
                 let superclasses_full = parse_superclasses(entity, context);
 
@@ -663,8 +672,10 @@ impl Stmt {
                             None
                         } else {
                             Some(Self::ExternMethods {
+                                id: id.location(),
                                 availability: Availability::parse(entity, context),
                                 cls: id.clone(),
+                                cls_features: features.clone(),
                                 source_superclass: Some(superclass_id.clone()),
                                 cls_generics: generics.clone(),
                                 category_name: None,
@@ -675,8 +686,10 @@ impl Stmt {
                     .collect();
 
                 let methods = Self::ExternMethods {
+                    id: id.location(),
                     availability: availability.clone(),
                     cls: id.clone(),
+                    cls_features: features.clone(),
                     source_superclass: None,
                     cls_generics: generics.clone(),
                     category_name: None,
@@ -685,6 +698,7 @@ impl Stmt {
 
                 iter::once(Self::ClassDecl {
                     id: id.clone(),
+                    features: features.clone(),
                     generics: generics.clone(),
                     availability: availability.clone(),
                     superclasses,
@@ -700,9 +714,12 @@ impl Stmt {
                     // trait, it's propagated to subclasses anyhow!
                     sendable: thread_safety.explicit_sendable(),
                 })
-                .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
+                .chain(protocols.into_iter().map(|(p, entity)| Self::ProtocolImpl {
+                    id: id.location(),
                     cls: id.clone(),
-                    protocol,
+                    cls_features: features.clone(),
+                    protocol: p.map_name(|name| context.replace_protocol_name(name)),
+                    protocol_features: Features::required_by_decl(&entity, context),
                     generics: generics.clone(),
                     availability: availability.clone(),
                 }))
@@ -732,6 +749,7 @@ impl Stmt {
                 let cls_entity = cls_entity.expect("could not find category class");
 
                 let cls_thread_safety = ThreadSafety::from_decl(&cls_entity, context);
+                let cls_features = Features::required_by_decl(&cls_entity, context);
 
                 let cls = ItemIdentifier::new(&cls_entity, context);
                 let data = context.class_data.get(&cls.name);
@@ -758,20 +776,20 @@ impl Stmt {
                     .map(|data| data.skipped_protocols.clone())
                     .unwrap_or_default();
                 let protocols = parse_direct_protocols(entity, context);
-                let protocols: BTreeSet<_> = protocols
+                let protocols: BTreeMap<_, _> = protocols
                     .into_iter()
-                    .map(|protocol| {
-                        ItemIdentifier::new(&protocol, context)
-                            .map_name(|name| context.replace_protocol_name(name))
-                    })
-                    .filter(|protocol| !skipped_protocols.contains(&protocol.name))
+                    .map(|entity| (ItemIdentifier::new(&entity, context), entity))
+                    .filter(|(protocol, _)| !skipped_protocols.contains(&protocol.name))
                     .collect();
 
-                let protocol_impls = protocols.into_iter().map(|protocol| Self::ProtocolImpl {
+                let protocol_impls = protocols.into_iter().map(|(p, entity)| Self::ProtocolImpl {
+                    id: category.location(),
                     cls: cls.clone(),
+                    cls_features: cls_features.clone(),
                     generics: generics.clone(),
                     availability: availability.clone(),
-                    protocol,
+                    protocol: p.map_name(|name| context.replace_protocol_name(name)),
+                    protocol_features: Features::required_by_decl(&entity, context),
                 });
 
                 // For ease-of-use, if the category is defined in the same
@@ -826,12 +844,15 @@ impl Stmt {
                             None
                         } else {
                             Some(Self::ExternMethods {
+                                id: category.location(),
                                 source_superclass: Some(cls.clone()),
                                 // Assume that immutable/mutable pairs have the
-                                // same availability.
+                                // same availability ...
                                 availability: availability.clone(),
                                 cls: subclass,
-                                // And that they have the same amount of generics.
+                                // ... the same features ...
+                                cls_features: cls_features.clone(),
+                                // ... and that they have the same amount of generics.
                                 cls_generics: generics.clone(),
                                 category_name: category.name.clone(),
                                 methods,
@@ -842,8 +863,10 @@ impl Stmt {
                     };
 
                     iter::once(Self::ExternMethods {
+                        id: category.location(),
                         availability: availability.clone(),
                         cls: cls.clone(),
+                        cls_features: cls_features.clone(),
                         source_superclass: None,
                         cls_generics: generics.clone(),
                         category_name: category.name.clone(),
@@ -914,7 +937,7 @@ impl Stmt {
                             actual_name: category.name.clone(),
                             availability: availability.clone(),
                             cls: cls.clone(),
-                            cls_features: Features::required_by_decl(&cls_entity, context),
+                            cls_features: cls_features.clone(),
                             methods,
                         })
                     }
@@ -972,6 +995,7 @@ impl Stmt {
 
                 vec![Self::ProtocolDecl {
                     id,
+                    features: Features::required_by_decl(entity, context),
                     actual_name,
                     availability,
                     protocols,
@@ -1391,47 +1415,50 @@ impl Stmt {
 
     /// Features required for the statement itself to be available.
     pub(crate) fn required_features(&self) -> Features {
-        let mut features = Features::new();
-
-        match self {
-            Self::ClassDecl { id, skipped, .. } => {
-                if !*skipped {
-                    features.add_item(id);
-                    // Superclass features are implied.
-                    // for (superclass, _) in superclasses {
-                    //     features.add_item(superclass);
-                    // }
-                }
+        let mut features = match self {
+            Self::ClassDecl { features, .. } => features.clone(),
+            Self::ExternMethods {
+                id, cls_features, ..
+            } => {
+                let mut features = cls_features.clone();
+                features.remove_item(id);
+                features
             }
-            Self::ExternMethods { cls, .. } => {
-                features.add_item(cls);
-            }
-            Self::ExternCategory { .. } => {
-                // Intentionally doesn't require anything
-            }
-            Self::ProtocolDecl { .. } => {}
-            Self::ProtocolImpl { cls, .. } => {
-                features.add_item(cls);
+            // Intentionally doesn't require anything
+            Self::ExternCategory { .. } => Features::new(),
+            Self::ProtocolDecl { features, .. } => features.clone(),
+            Self::ProtocolImpl {
+                id,
+                cls_features,
+                protocol_features,
+                ..
+            } => {
+                let mut features = Features::new();
+                features.merge(cls_features.clone());
+                features.merge(protocol_features.clone());
+                features.remove_item(id);
+                features
             }
             Self::StructDecl { fields, .. } => {
+                let mut features = Features::new();
                 for (_, field_ty) in fields {
                     features.merge(field_ty.required_features(&Features::new()));
                 }
+                features
             }
-            Self::EnumDecl { ty, variants, .. } => {
-                features.merge(ty.required_features(&Features::new()));
-                for (_, _, expr) in variants {
-                    features.merge(expr.required_features());
-                }
-            }
-            Self::ConstDecl { ty, .. } => {
-                features.merge(ty.required_features(&Features::new()));
+            // Variants manage features themselves
+            Self::EnumDecl { ty, .. } => ty.required_features(&Features::new()),
+            Self::ConstDecl { ty, value, .. } => {
+                let mut features = ty.required_features(&Features::new());
+                features.merge(value.required_features());
+                features
             }
             Self::VarDecl { ty, value, .. } => {
-                features.merge(ty.required_features(&Features::new()));
+                let mut features = ty.required_features(&Features::new());
                 if let Some(value) = value {
                     features.merge(value.required_features());
                 }
+                features
             }
             Self::FnDecl {
                 arguments,
@@ -1439,20 +1466,41 @@ impl Stmt {
                 body: None,
                 ..
             } => {
+                let mut features = Features::new();
                 for (_, arg_ty) in arguments {
                     features.merge(arg_ty.required_features(&Features::new()));
                 }
                 features.merge(result_type.required_features(&Features::new()));
+                features
             }
             // TODO
-            Self::FnDecl { body: Some(_), .. } => {}
-            Self::AliasDecl { ty, .. } => {
-                features.merge(ty.required_features(&Features::new()));
-            }
+            Self::FnDecl { body: Some(_), .. } => Features::new(),
+            Self::AliasDecl { ty, .. } => ty.required_features(&Features::new()),
+        };
+
+        if let Some(item) = self.provided_item() {
+            features.remove_item(&item);
         }
 
         features
     }
+
+    // pub(crate) fn required_imports(&self) -> impl Iterator<Item = ItemIdentifier> {
+    //     let required_by_inner: Vec<_> = match self {
+    //         Self::ExternMethods { methods, .. }
+    //         | Self::ExternCategory { methods, .. }
+    //         | Self::ProtocolDecl { methods, .. } => methods
+    //             .iter()
+    //             .flat_map(|method| method.required_items())
+    //             .collect(),
+    //         Self::EnumDecl { variants, .. } => variants
+    //             .iter()
+    //             .flat_map(|(_, _, expr)| expr.required_items())
+    //             .collect(),
+    //         _ => vec![],
+    //     };
+    //     self.required_items().chain(required_by_inner)
+    // }
 }
 
 impl fmt::Display for Stmt {
@@ -1508,6 +1556,7 @@ impl fmt::Display for Stmt {
         match self {
             Self::ClassDecl {
                 id,
+                features: _,
                 generics,
                 availability,
                 superclasses,
@@ -1527,19 +1576,6 @@ impl fmt::Display for Stmt {
                     "__inner_extern_class"
                 };
 
-                let main_feature = match mutability {
-                    Mutability::MutableWithImmutableSuperclass(superclass) => {
-                        let mut features = Features::new();
-                        features.add_item(superclass);
-                        features
-                    }
-                    Mutability::Immutable
-                    | Mutability::Mutable
-                    | Mutability::ImmutableWithMutableSubclass(_)
-                    | Mutability::InteriorMutable
-                    | Mutability::MainThreadOnly => self.required_features(),
-                };
-
                 let (superclass, superclasses_rest) = superclasses.split_at(1);
                 let (superclass, superclass_generics) = superclass
                     .first()
@@ -1547,7 +1583,7 @@ impl fmt::Display for Stmt {
 
                 writeln!(f, "{macro_name}!(")?;
                 writeln!(f, "    {derives}")?;
-                write!(f, "    {}", main_feature.cfg_gate_ln())?;
+                write!(f, "    {}", self.required_features().cfg_gate_ln())?;
                 write!(f, "    {availability}")?;
                 write!(f, "    pub struct {}", id.name)?;
                 if !generics.is_empty() {
@@ -1577,7 +1613,7 @@ impl fmt::Display for Stmt {
 
                 writeln!(f)?;
 
-                write!(f, "    {}", main_feature.cfg_gate_ln())?;
+                write!(f, "    {}", self.required_features().cfg_gate_ln())?;
                 writeln!(
                     f,
                     "    unsafe impl{} ClassType for {}{} {{",
@@ -1629,17 +1665,19 @@ impl fmt::Display for Stmt {
 
                 if *sendable && generics.is_empty() {
                     writeln!(f)?;
-                    write!(f, "{}", main_feature.cfg_gate_ln())?;
+                    write!(f, "{}", self.required_features().cfg_gate_ln())?;
                     writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
 
                     writeln!(f)?;
-                    write!(f, "{}", main_feature.cfg_gate_ln())?;
+                    write!(f, "{}", self.required_features().cfg_gate_ln())?;
                     writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
                 }
             }
             Self::ExternMethods {
+                id: _,
                 availability: _,
                 cls,
+                cls_features: _,
                 source_superclass,
                 cls_generics,
                 category_name,
@@ -1734,9 +1772,12 @@ impl fmt::Display for Stmt {
                 writeln!(f, ");")?;
             }
             Self::ProtocolImpl {
+                id,
                 cls,
+                cls_features: _,
                 generics,
                 protocol,
+                protocol_features: _,
                 availability: _,
             } => {
                 let (generic_bound, where_bound) = if !generics.is_empty() {
@@ -1783,14 +1824,15 @@ impl fmt::Display for Stmt {
                     f,
                     "unsafe impl{} {} for {}{} {}{{}}",
                     GenericParamsHelper(generics, generic_bound),
-                    protocol.path_in_relation_to(cls),
-                    cls.path(),
+                    protocol.path_in_relation_to(id),
+                    cls.path_in_relation_to(id),
                     GenericTyHelper(generics),
                     WhereBoundHelper(generics, where_bound)
                 )?;
             }
             Self::ProtocolDecl {
                 id,
+                features: _,
                 actual_name,
                 availability,
                 protocols,
@@ -1906,9 +1948,8 @@ impl fmt::Display for Stmt {
                 write!(f, "    {availability}")?;
                 writeln!(f, "    pub enum {} {{", id.name)?;
                 for (name, availability, expr) in variants {
-                    let mut features = Features::new();
-                    features.merge(expr.required_features());
-                    features.remove(&ty.required_features(&Features::new()));
+                    let mut features = expr.required_features();
+                    features.remove(&self.required_features());
                     features.remove_item(id);
                     write!(f, "        {}", features.cfg_gate_ln())?;
                     write!(f, "        {availability}")?;

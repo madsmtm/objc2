@@ -1,5 +1,6 @@
-#![cfg(feature = "Foundation_NSMutableDictionary")]
-#![cfg(feature = "Foundation_NSNumber")]
+#![cfg(feature = "Foundation_NSDictionary")]
+#![cfg(feature = "Foundation_NSValue")]
+#![cfg(feature = "Foundation_NSObject")]
 use alloc::vec;
 
 use objc2::msg_send;
@@ -18,7 +19,7 @@ fn sample_dict() -> Id<NSMutableDictionary<NSNumber, NSObject>> {
     )
 }
 
-#[cfg(feature = "Foundation_NSMutableString")]
+#[cfg(feature = "Foundation_NSString")]
 fn sample_dict_mut() -> Id<NSMutableDictionary<NSNumber, Foundation::NSMutableString>> {
     NSMutableDictionary::from_vec(
         &[
@@ -35,7 +36,7 @@ fn sample_dict_mut() -> Id<NSMutableDictionary<NSNumber, Foundation::NSMutableSt
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSMutableString")]
+#[cfg(feature = "Foundation_NSString")]
 fn dict_from_mutable() {
     let _: Id<NSMutableDictionary<Foundation::NSString, Foundation::NSString>> =
         NSMutableDictionary::from_id_slice(
@@ -51,7 +52,7 @@ fn test_new() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSMutableString")]
+#[cfg(feature = "Foundation_NSString")]
 fn test_get_mut() {
     let mut dict = sample_dict_mut();
 
@@ -61,7 +62,7 @@ fn test_get_mut() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSMutableString")]
+#[cfg(feature = "Foundation_NSString")]
 fn test_values_mut() {
     let mut dict = sample_dict_mut();
     let vec = dict.values_vec_mut();

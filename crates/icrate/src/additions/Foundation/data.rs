@@ -1,12 +1,12 @@
-#![cfg(feature = "Foundation_NSData")]
 #[cfg(feature = "block2")]
 use alloc::vec::Vec;
 use core::fmt;
 #[cfg(feature = "block2")]
 use core::mem::ManuallyDrop;
 use core::ops::Index;
-#[cfg(feature = "Foundation_NSMutableData")]
-use core::ops::{IndexMut, Range};
+use core::ops::IndexMut;
+#[cfg(feature = "Foundation_NSRange")]
+use core::ops::Range;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::slice::{self, SliceIndex};
 
@@ -16,9 +16,7 @@ use block2::{Block, RcBlock};
 use objc2::rc::IdFromIterator;
 
 use crate::common::*;
-use crate::Foundation::NSData;
-#[cfg(feature = "Foundation_NSMutableData")]
-use crate::Foundation::NSMutableData;
+use crate::Foundation::{NSData, NSMutableData};
 
 // SAFETY: `NSData` is immutable and `NSMutableData` can only be mutated from
 // `&mut` methods.
@@ -35,7 +33,6 @@ extern_methods!(
         pub(crate) fn bytes_raw(&self) -> Option<NonNull<c_void>>;
     }
 
-    #[cfg(feature = "Foundation_NSMutableData")]
     unsafe impl NSMutableData {
         #[method(mutableBytes)]
         pub(crate) fn mutable_bytes_raw(&mut self) -> Option<NonNull<c_void>>;
@@ -66,7 +63,6 @@ impl NSData {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableData")]
 impl NSMutableData {
     pub fn with_bytes(bytes: &[u8]) -> Id<Self> {
         let bytes_ptr = bytes.as_ptr() as *mut c_void;
@@ -103,7 +99,6 @@ impl NSData {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableData")]
 impl NSMutableData {
     #[doc(alias = "mutableBytes")]
     pub fn bytes_mut(&mut self) -> &mut [u8] {
@@ -128,6 +123,7 @@ impl NSMutableData {
     }
 
     #[doc(alias = "replaceBytesInRange:withBytes:length:")]
+    #[cfg(feature = "Foundation_NSRange")]
     pub fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
         // No need to verify the length of the range here,
         // `replaceBytesInRange:` zero-fills if out of bounds.
@@ -135,6 +131,7 @@ impl NSMutableData {
         unsafe { self.replaceBytesInRange_withBytes_length(range.into(), ptr, bytes.len()) }
     }
 
+    #[cfg(feature = "Foundation_NSRange")]
     pub fn set_bytes(&mut self, bytes: &[u8]) {
         let len = self.len();
         self.replace_range(0..len, bytes);
@@ -147,14 +144,12 @@ impl AsRef<[u8]> for NSData {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableData")]
 impl AsRef<[u8]> for NSMutableData {
     fn as_ref(&self) -> &[u8] {
         self.bytes()
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableData")]
 impl AsMut<[u8]> for NSMutableData {
     fn as_mut(&mut self) -> &mut [u8] {
         self.bytes_mut()
@@ -174,7 +169,6 @@ impl<I: SliceIndex<[u8]>> Index<I> for NSData {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableData")]
 impl<I: SliceIndex<[u8]>> Index<I> for NSMutableData {
     type Output = I::Output;
 
@@ -184,7 +178,6 @@ impl<I: SliceIndex<[u8]>> Index<I> for NSMutableData {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableData")]
 impl<I: SliceIndex<[u8]>> IndexMut<I> for NSMutableData {
     #[inline]
     fn index_mut(&mut self, index: I) -> &mut Self::Output {
@@ -200,6 +193,13 @@ impl fmt::Debug for NSData {
     }
 }
 
+impl fmt::Debug for NSMutableData {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Debug::fmt(&**self, f)
+    }
+}
+
 impl<'a> IntoIterator for &'a NSData {
     type Item = &'a u8;
     type IntoIter = core::slice::Iter<'a, u8>;
@@ -209,7 +209,6 @@ impl<'a> IntoIterator for &'a NSData {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableData")]
 impl<'a> IntoIterator for &'a NSMutableData {
     type Item = &'a u8;
     type IntoIter = core::slice::Iter<'a, u8>;
@@ -219,7 +218,6 @@ impl<'a> IntoIterator for &'a NSMutableData {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableData")]
 impl<'a> IntoIterator for &'a mut NSMutableData {
     type Item = &'a mut u8;
     type IntoIter = core::slice::IterMut<'a, u8>;
@@ -229,7 +227,6 @@ impl<'a> IntoIterator for &'a mut NSMutableData {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableData")]
 impl Extend<u8> for NSMutableData {
     /// You should use [`extend_from_slice`] whenever possible, it is more
     /// performant.
@@ -242,7 +239,6 @@ impl Extend<u8> for NSMutableData {
 }
 
 // Vec also has this impl
-#[cfg(feature = "Foundation_NSMutableData")]
 impl<'a> Extend<&'a u8> for NSMutableData {
     fn extend<T: IntoIterator<Item = &'a u8>>(&mut self, iter: T) {
         let iterator = iter.into_iter();
@@ -250,7 +246,6 @@ impl<'a> Extend<&'a u8> for NSMutableData {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableData")]
 impl std::io::Write for NSMutableData {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
         self.extend_from_slice(buf);
@@ -275,7 +270,6 @@ impl IdFromIterator<u8> for NSData {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableData")]
 #[cfg(feature = "block2")]
 impl IdFromIterator<u8> for NSMutableData {
     fn id_from_iter<I: IntoIterator<Item = u8>>(iter: I) -> Id<Self> {

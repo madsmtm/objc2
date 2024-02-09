@@ -1,15 +1,11 @@
-#![cfg(feature = "Foundation_NSMutableString")]
+#![cfg(feature = "Foundation_NSString")]
 use alloc::format;
 use alloc::string::ToString;
 use core::any::TypeId;
-use std::ptr;
 
 use objc2::mutability::CounterpartOrSelf;
-use objc2::rc::Id;
 
-use crate::Foundation::{
-    self, NSCopying, NSMutableCopying, NSMutableString, NSObjectProtocol, NSString,
-};
+use crate::Foundation::{NSMutableString, NSString};
 
 #[test]
 fn display_debug() {
@@ -49,8 +45,10 @@ fn test_with_capacity() {
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSObject")]
 fn test_copy() {
-    use Foundation::{NSCopying, NSMutableCopying};
+    use crate::Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
+    use objc2::rc::Id;
 
     let s1 = NSMutableString::from_str("abc");
     let s2 = s1.copy();
@@ -84,13 +82,17 @@ fn counterpart() {
 }
 
 #[test]
+#[cfg(all(feature = "Foundation_NSObject", feature = "Foundation_NSZone"))]
 fn test_copy_with_zone() {
+    use crate::Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
+    use objc2::rc::Id;
+
     let s1 = NSString::from_str("abc");
-    let s2 = unsafe { s1.copyWithZone(ptr::null_mut()) };
+    let s2 = unsafe { s1.copyWithZone(core::ptr::null_mut()) };
     assert_eq!(Id::as_ptr(&s1), Id::as_ptr(&s2));
     assert!(s2.is_kind_of::<NSString>());
 
-    let s3 = unsafe { s1.mutableCopyWithZone(ptr::null_mut()) };
+    let s3 = unsafe { s1.mutableCopyWithZone(core::ptr::null_mut()) };
     assert_ne!(Id::as_ptr(&s1).cast::<NSMutableString>(), Id::as_ptr(&s3));
-    assert!(s3.is_kind_of::<Foundation::NSMutableString>());
+    assert!(s3.is_kind_of::<NSMutableString>());
 }

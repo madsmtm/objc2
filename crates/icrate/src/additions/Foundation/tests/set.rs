@@ -1,6 +1,6 @@
 #![cfg(feature = "Foundation_NSSet")]
 #![cfg(feature = "Foundation_NSString")]
-#![cfg(feature = "Foundation_NSNumber")]
+#![cfg(feature = "Foundation_NSValue")]
 use alloc::vec::Vec;
 use alloc::{format, vec};
 
@@ -129,6 +129,7 @@ fn test_is_disjoint() {
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSArray")]
 fn test_to_array() {
     let nums = [1, 2, 3];
     let set = NSSet::from_id_slice(&nums.map(NSNumber::new_i32));
@@ -155,7 +156,7 @@ fn test_into_iter() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSMutableString")]
+#[cfg(feature = "Foundation_NSString")]
 fn test_into_vec() {
     let strs = vec![
         Foundation::NSString::from_str("one"),
@@ -176,6 +177,7 @@ fn test_equality() {
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSObject")]
 fn test_copy() {
     use Foundation::NSCopying;
 

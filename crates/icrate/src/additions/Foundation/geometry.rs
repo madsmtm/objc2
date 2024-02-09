@@ -14,7 +14,7 @@ type InnerFloat = f32;
 /// here for convenience.
 ///
 /// See [Apple's documentation](https://developer.apple.com/documentation/coregraphics/cgfloat?language=objc).
-// Defined in CoreGraphics/CGBase.h
+// Defined in CoreGraphics/CGBase.h and CoreFoundation/CFCGTypes.h
 // TODO: Use a newtype here?
 pub type CGFloat = InnerFloat;
 
@@ -406,6 +406,7 @@ mod tests {
     // well (so that we're confident that the implementations are equivalent).
     #[test]
     #[cfg(any(all(feature = "apple", target_os = "macos"), feature = "gnustep-1-7"))] // or macabi
+    #[cfg(feature = "Foundation_NSGeometry")]
     fn test_partial_eq() {
         use crate::Foundation::{NSEqualPoints, NSEqualRects, NSEqualSizes};
 

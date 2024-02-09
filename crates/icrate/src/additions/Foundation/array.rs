@@ -1,9 +1,9 @@
 //! Utilities for the `NSArray` and `NSMutableArray` classes.
-#![cfg(feature = "Foundation_NSArray")]
 use alloc::vec::Vec;
 use core::fmt;
-use core::mem;
-use core::ops::{Index, IndexMut, Range};
+#[cfg(feature = "Foundation_NSRange")]
+use core::ops::Range;
+use core::ops::{Index, IndexMut};
 
 use objc2::mutability::{IsMutable, IsRetainable};
 use objc2::rc::IdFromIterator;
@@ -11,7 +11,6 @@ use objc2::rc::IdFromIterator;
 use super::iter;
 use super::util;
 use crate::common::*;
-#[cfg(feature = "Foundation_NSMutableArray")]
 use crate::Foundation::NSMutableArray;
 use crate::Foundation::{self, NSArray};
 
@@ -59,12 +58,14 @@ impl<T: Message> NSArray<T> {
     }
 
     #[doc(alias = "getObjects:range:")]
+    #[cfg(feature = "Foundation_NSRange")]
     pub fn to_vec(&self) -> Vec<&T> {
         // SAFETY: The range is know to be in bounds
         unsafe { self.objects_in_range_unchecked(0..self.len()) }
     }
 
     #[doc(alias = "getObjects:range:")]
+    #[cfg(feature = "Foundation_NSRange")]
     pub fn to_vec_retained(&self) -> Vec<Id<T>>
     where
         T: IsIdCloneable,
@@ -82,7 +83,6 @@ impl<T: Message> NSArray<T> {
     // duplicate those.
 }
 
-#[cfg(feature = "Foundation_NSMutableArray")]
 impl<T: Message> NSMutableArray<T> {
     pub fn from_vec(mut vec: Vec<Id<T>>) -> Id<Self> {
         let len = vec.len();
@@ -111,6 +111,7 @@ impl<T: Message> NSMutableArray<T> {
         unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
     }
 
+    #[cfg(feature = "Foundation_NSRange")]
     pub fn into_vec(array: Id<Self>) -> Vec<Id<T>> {
         // SAFETY: We've consumed the array, so taking ownership of the
         // returned values is safe.
@@ -221,17 +222,19 @@ extern_methods!(
 );
 
 impl<T: Message> NSArray<T> {
+    #[cfg(feature = "Foundation_NSRange")]
     unsafe fn objects_in_range_unchecked(&self, range: Range<usize>) -> Vec<&T> {
         let range = Foundation::NSRange::from(range);
         let mut vec: Vec<NonNull<T>> = Vec::with_capacity(range.length);
         unsafe {
             self.getObjects_range(NonNull::new(vec.as_mut_ptr()).unwrap(), range);
             vec.set_len(range.length);
-            mem::transmute(vec)
+            core::mem::transmute(vec)
         }
     }
 
     #[doc(alias = "getObjects:range:")]
+    #[cfg(feature = "Foundation_NSRange")]
     pub fn objects_in_range(&self, range: Range<usize>) -> Option<Vec<&T>> {
         if range.end > self.len() {
             return None;
@@ -241,7 +244,6 @@ impl<T: Message> NSArray<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableArray")]
 impl<T: Message> NSMutableArray<T> {
     #[doc(alias = "addObject:")]
     pub fn push(&mut self, obj: Id<T>) {
@@ -367,7 +369,6 @@ unsafe impl<T: Message> iter::FastEnumerationHelper for NSArray<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableArray")]
 unsafe impl<T: Message> iter::FastEnumerationHelper for NSMutableArray<T> {
     type Item = T;
 
@@ -414,7 +415,6 @@ __impl_into_iter! {
         type IntoIter = Iter<'_, T>;
     }
 
-    #[cfg(feature = "Foundation_NSMutableArray")]
     impl<T: Message> IntoIterator for &NSMutableArray<T> {
         type IntoIter = Iter<'_, T>;
     }
@@ -423,7 +423,6 @@ __impl_into_iter! {
         type IntoIter = IterMut<'_, T>;
     }
 
-    #[cfg(feature = "Foundation_NSMutableArray")]
     impl<T: Message + IsMutable> IntoIterator for &mut NSMutableArray<T> {
         type IntoIter = IterMut<'_, T>;
     }
@@ -432,7 +431,6 @@ __impl_into_iter! {
         type IntoIter = IntoIter<T>;
     }
 
-    #[cfg(feature = "Foundation_NSMutableArray")]
     impl<T: Message> IntoIterator for Id<NSMutableArray<T>> {
         type IntoIter = IntoIter<T>;
     }
@@ -446,7 +444,6 @@ impl<T: Message> Index<usize> for NSArray<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableArray")]
 impl<T: Message> Index<usize> for NSMutableArray<T> {
     type Output = T;
 
@@ -461,7 +458,6 @@ impl<T: Message + IsMutable> IndexMut<usize> for NSArray<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableArray")]
 impl<T: Message + IsMutable> IndexMut<usize> for NSMutableArray<T> {
     fn index_mut(&mut self, index: usize) -> &mut T {
         self.get_mut(index).unwrap()
@@ -475,14 +471,19 @@ impl<T: fmt::Debug + Message> fmt::Debug for NSArray<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableArray")]
+impl<T: fmt::Debug + Message> fmt::Debug for NSMutableArray<T> {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Debug::fmt(&**self, f)
+    }
+}
+
 impl<T: Message> Extend<Id<T>> for NSMutableArray<T> {
     fn extend<I: IntoIterator<Item = Id<T>>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| self.push(item))
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableArray")]
 impl<'a, T: Message + IsRetainable> Extend<&'a T> for NSMutableArray<T> {
     fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
         // SAFETY: Because of the `T: IsRetainable` bound, it is safe for the
@@ -506,7 +507,6 @@ impl<T: Message> IdFromIterator<Id<T>> for NSArray<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableArray")]
 impl<'a, T: Message + IsRetainable + 'a> IdFromIterator<&'a T> for NSMutableArray<T> {
     fn id_from_iter<I: IntoIterator<Item = &'a T>>(iter: I) -> Id<Self> {
         let vec = Vec::from_iter(iter);
@@ -514,7 +514,6 @@ impl<'a, T: Message + IsRetainable + 'a> IdFromIterator<&'a T> for NSMutableArra
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableArray")]
 impl<T: Message> IdFromIterator<Id<T>> for NSMutableArray<T> {
     fn id_from_iter<I: IntoIterator<Item = Id<T>>>(iter: I) -> Id<Self> {
         let vec = Vec::from_iter(iter);

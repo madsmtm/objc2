@@ -1,4 +1,3 @@
-#![cfg(feature = "Foundation_NSError")]
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 

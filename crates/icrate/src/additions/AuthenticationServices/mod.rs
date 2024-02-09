@@ -4,10 +4,13 @@ pub use crate::generated::AuthenticationServices::*;
 use crate::common::*;
 
 // TODO: UIViewController on iOS, NSViewController on macOS
+#[cfg(all(feature = "AppKit_NSResponder", feature = "AppKit_NSViewController"))]
 pub type ASViewController = NSObject;
 // TODO: UIWindow on iOS, NSWindow on macOS
+#[cfg(all(feature = "AppKit_NSResponder", feature = "AppKit_NSWindow"))]
 pub type ASPresentationAnchor = NSObject;
 // TODO: UIImage on iOS, NSImage on macOS
+#[cfg(feature = "AppKit_NSImage")]
 pub type ASImage = NSObject;
 
 // TODO: UIControl on iOS, NSControl on macOS
@@ -16,10 +19,18 @@ type ASControl = NSObject;
 
 extern_class!(
     #[derive(Debug, PartialEq, Eq, Hash)]
-    #[cfg(feature = "AuthenticationServices_ASCredentialProviderViewController")]
+    #[cfg(all(
+        feature = "AuthenticationServices_ASCredentialProviderViewController",
+        feature = "AppKit_NSResponder",
+        feature = "AppKit_NSViewController"
+    ))]
     pub struct ASCredentialProviderViewController;
 
-    #[cfg(feature = "AuthenticationServices_ASCredentialProviderViewController")]
+    #[cfg(all(
+        feature = "AuthenticationServices_ASCredentialProviderViewController",
+        feature = "AppKit_NSResponder",
+        feature = "AppKit_NSViewController"
+    ))]
     unsafe impl ClassType for ASCredentialProviderViewController {
         type Super = ASViewController;
         type Mutability = MainThreadOnly;
@@ -28,10 +39,18 @@ extern_class!(
 
 extern_class!(
     #[derive(Debug, PartialEq, Eq, Hash)]
-    #[cfg(feature = "AuthenticationServices_ASAccountAuthenticationModificationViewController")]
+    #[cfg(all(
+        feature = "AuthenticationServices_ASAccountAuthenticationModificationViewController",
+        feature = "AppKit_NSResponder",
+        feature = "AppKit_NSViewController"
+    ))]
     pub struct ASAccountAuthenticationModificationViewController;
 
-    #[cfg(feature = "AuthenticationServices_ASAccountAuthenticationModificationViewController")]
+    #[cfg(all(
+        feature = "AuthenticationServices_ASAccountAuthenticationModificationViewController",
+        feature = "AppKit_NSResponder",
+        feature = "AppKit_NSViewController"
+    ))]
     unsafe impl ClassType for ASAccountAuthenticationModificationViewController {
         type Super = ASViewController;
         type Mutability = MainThreadOnly;
@@ -40,10 +59,20 @@ extern_class!(
 
 extern_class!(
     #[derive(Debug, PartialEq, Eq, Hash)]
-    #[cfg(feature = "AuthenticationServices_ASAuthorizationAppleIDButton")]
+    #[cfg(all(
+        feature = "AuthenticationServices_ASAuthorizationAppleIDButton",
+        feature = "AppKit_NSControl",
+        feature = "AppKit_NSResponder",
+        feature = "AppKit_NSView"
+    ))]
     pub struct ASAuthorizationAppleIDButton;
 
-    #[cfg(feature = "AuthenticationServices_ASAuthorizationAppleIDButton")]
+    #[cfg(all(
+        feature = "AuthenticationServices_ASAuthorizationAppleIDButton",
+        feature = "AppKit_NSControl",
+        feature = "AppKit_NSResponder",
+        feature = "AppKit_NSView"
+    ))]
     unsafe impl ClassType for ASAuthorizationAppleIDButton {
         type Super = ASControl;
         type Mutability = MainThreadOnly;

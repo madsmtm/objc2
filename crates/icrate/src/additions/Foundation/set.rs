@@ -1,5 +1,4 @@
 //! Utilities for the `NSSet` and `NSMutableSet` classes.
-#![cfg(feature = "Foundation_NSSet")]
 use alloc::vec::Vec;
 use core::fmt;
 use core::hash::Hash;
@@ -10,9 +9,7 @@ use objc2::rc::IdFromIterator;
 use super::iter;
 use super::util;
 use crate::common::*;
-#[cfg(feature = "Foundation_NSMutableSet")]
-use crate::Foundation::NSMutableSet;
-use crate::Foundation::NSSet;
+use crate::Foundation::{NSCountedSet, NSMutableSet, NSSet};
 
 impl<T: Message> NSSet<T> {
     /// Returns the number of elements in the set.
@@ -160,7 +157,6 @@ impl<T: Message + Eq + Hash> NSSet<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableSet")]
 impl<T: Message + Eq + Hash> NSMutableSet<T> {
     /// Creates an [`NSMutableSet`] from a vector.
     ///
@@ -357,14 +353,14 @@ extern_methods!(
     }
 );
 
-#[cfg(feature = "Foundation_NSMutableSet")]
 impl<T: Message + Eq + Hash> NSMutableSet<T> {
     /// Add a value to the set. Returns whether the value was
     /// newly inserted.
     ///
     /// # Examples
     ///
-    /// ```
+    #[cfg_attr(feature = "Foundation_NSValue", doc = "```")]
+    #[cfg_attr(not(feature = "Foundation_NSValue"), doc = "```ignore")]
     /// use icrate::Foundation::{NSNumber, NSMutableSet};
     ///
     /// let mut set = NSMutableSet::new();
@@ -477,7 +473,6 @@ unsafe impl<T: Message> iter::FastEnumerationHelper for NSSet<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableSet")]
 unsafe impl<T: Message> iter::FastEnumerationHelper for NSMutableSet<T> {
     type Item = T;
 
@@ -516,7 +511,6 @@ __impl_into_iter! {
         type IntoIter = Iter<'_, T>;
     }
 
-    #[cfg(feature = "Foundation_NSMutableSet")]
     impl<T: Message> IntoIterator for &NSMutableSet<T> {
         type IntoIter = Iter<'_, T>;
     }
@@ -525,7 +519,6 @@ __impl_into_iter! {
         type IntoIter = IntoIter<T>;
     }
 
-    #[cfg(feature = "Foundation_NSMutableSet")]
     impl<T: Message> IntoIterator for Id<NSMutableSet<T>> {
         type IntoIter = IntoIter<T>;
     }
@@ -538,7 +531,20 @@ impl<T: fmt::Debug + Message> fmt::Debug for NSSet<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableSet")]
+impl<T: fmt::Debug + Message> fmt::Debug for NSMutableSet<T> {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Debug::fmt(&**self, f)
+    }
+}
+
+impl<T: fmt::Debug + Message> fmt::Debug for NSCountedSet<T> {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Debug::fmt(&**self, f)
+    }
+}
+
 impl<T: Message + Eq + Hash + HasStableHash> Extend<Id<T>> for NSMutableSet<T> {
     fn extend<I: IntoIterator<Item = Id<T>>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| {
@@ -547,7 +553,6 @@ impl<T: Message + Eq + Hash + HasStableHash> Extend<Id<T>> for NSMutableSet<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableSet")]
 impl<'a, T: Message + Eq + Hash + HasStableHash + IsRetainable> Extend<&'a T> for NSMutableSet<T> {
     fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| {
@@ -572,7 +577,6 @@ impl<T: Message + Eq + Hash + HasStableHash> IdFromIterator<Id<T>> for NSSet<T> 
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableSet")]
 impl<'a, T: Message + Eq + Hash + HasStableHash + IsRetainable + 'a> IdFromIterator<&'a T>
     for NSMutableSet<T>
 {
@@ -582,7 +586,6 @@ impl<'a, T: Message + Eq + Hash + HasStableHash + IsRetainable + 'a> IdFromItera
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableSet")]
 impl<T: Message + Eq + Hash + HasStableHash> IdFromIterator<Id<T>> for NSMutableSet<T> {
     fn id_from_iter<I: IntoIterator<Item = Id<T>>>(iter: I) -> Id<Self> {
         let vec = Vec::from_iter(iter);

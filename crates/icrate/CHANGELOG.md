@@ -29,6 +29,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Changed how enums are handled; now a newtype is generated for
   each enum, with the enum variants as constants on that newtype, instead of
   cluttering the top-level namespace.
+* **BREAKING**: Changed how feature flags work, they are now based on the
+  header file name where the item is defined, instead of being based on the
+  class name itself.
+
+  This should decrease compilation times by quite a lot, at the cost of having
+  to specify more precisely what you need in your `Cargo.toml`.
+
+  An example migration can be seen in the following:
+
+  ```toml
+  # Before
+  [dependencies.icrate]
+  version = "0.1.0"
+  features = [
+    "Foundation",
+    "Foundation_NSNotification",
+    "Foundation_NSString",
+    "Foundation_NSThread",
+    "Foundation_NSArray",
+    "Foundation_NSMutableArray", # Removed, this is included via. `Foundation_NSArray`
+    "AppKit",
+    "AppKit_NSApplication",
+  ]
+
+  # After
+  [dependencies.icrate]
+  version = "0.2.0"
+  features = [
+    "Foundation",
+    "Foundation_NSNotification",
+    "Foundation_NSString",
+    "Foundation_NSThread",
+    "Foundation_NSObject", # Added, required to get the `NSCopying` protocol
+    "Foundation_NSArray",
+    "AppKit",
+    "AppKit_NSResponder", # Added, required by `NSApplication`
+    "AppKit_NSApplication",
+    "AppKit_NSRunningApplication", # Added, a lot of application constants come from here
+  ]
+  ```
 * Marked `NSView::isFlipped`, `NSView::convertRect_toView`,
   `NSWindow::convertRectToScreen` and `NSWindow::convertPointFromScreen` as
   safe.

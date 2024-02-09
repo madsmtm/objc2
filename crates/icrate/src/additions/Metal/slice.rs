@@ -1,4 +1,7 @@
+#![allow(unused_imports)]
+#![allow(clippy::missing_safety_doc)]
 use crate::common::*;
+use crate::Metal::*;
 
 #[allow(dead_code)]
 fn slice_to_ptr_count<T>(slice: &[T]) -> (NonNull<T>, usize) {
@@ -9,11 +12,21 @@ fn slice_to_ptr_count<T>(slice: &[T]) -> (NonNull<T>, usize) {
     (ptr, slice.len())
 }
 
-#[cfg(feature = "Metal_MTLRenderCommandEncoder")]
-impl crate::Metal::MTLRenderCommandEncoder {
+#[cfg(all(
+    feature = "Metal_MTLRenderCommandEncoder",
+    feature = "Metal_MTLCommandEncoder"
+))]
+pub trait MTLRenderCommandEncoderSliceExt: MTLRenderCommandEncoder + Message {
     // TODO: Safety
-    #[cfg(feature = "Metal_MTLViewport")]
-    pub unsafe fn setViewports(&self, viewports: &[crate::Metal::MTLViewport]) {
+    unsafe fn setViewports(&self, viewports: &[MTLViewport]);
+}
+
+#[cfg(all(
+    feature = "Metal_MTLRenderCommandEncoder",
+    feature = "Metal_MTLCommandEncoder"
+))]
+impl<P: MTLRenderCommandEncoder + Message> MTLRenderCommandEncoderSliceExt for P {
+    unsafe fn setViewports(&self, viewports: &[MTLViewport]) {
         let (ptr, count) = slice_to_ptr_count(viewports);
         unsafe { self.setViewports_count(ptr, count) }
     }

@@ -1,6 +1,6 @@
 //! Utilities for the `NSDictionary` and `NSMutableDictionary` classes.
-#![cfg(feature = "Foundation_NSDictionary")]
 use alloc::vec::Vec;
+#[cfg(feature = "Foundation_NSObject")]
 use core::cmp::min;
 use core::fmt;
 use core::hash::Hash;
@@ -8,15 +8,18 @@ use core::mem;
 use core::ops::{Index, IndexMut};
 use core::ptr::{self, NonNull};
 
-use objc2::mutability::{CounterpartOrSelf, HasStableHash, IsIdCloneable, IsMutable, IsRetainable};
+#[cfg(feature = "Foundation_NSObject")]
+use objc2::mutability::IsRetainable;
+use objc2::mutability::{CounterpartOrSelf, HasStableHash, IsIdCloneable, IsMutable};
 
 use super::iter;
 use super::util;
 use crate::common::*;
-#[cfg(feature = "Foundation_NSMutableDictionary")]
-use crate::Foundation::NSMutableDictionary;
-use crate::Foundation::{NSCopying, NSDictionary};
+#[cfg(feature = "Foundation_NSObject")]
+use crate::Foundation::NSCopying;
+use crate::Foundation::{NSDictionary, NSMutableDictionary};
 
+#[cfg(feature = "Foundation_NSObject")]
 fn keys_to_ptr<Q>(keys: &[&Q]) -> *mut NonNull<ProtocolObject<dyn NSCopying>>
 where
     Q: Message + NSCopying,
@@ -28,6 +31,7 @@ where
     keys
 }
 
+#[cfg(feature = "Foundation_NSObject")]
 impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
     pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Id<V>>) -> Id<Self>
     where
@@ -92,7 +96,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableDictionary")]
+#[cfg(feature = "Foundation_NSObject")]
 impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, V> {
     pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Id<V>>) -> Id<Self>
     where
@@ -170,17 +174,11 @@ extern_methods!(
         /// # Examples
         ///
         #[cfg_attr(
-            all(
-                feature = "Foundation_NSMutableDictionary",
-                feature = "Foundation_NSMutableString"
-            ),
+            all(feature = "Foundation_NSString", feature = "Foundation_NSObject"),
             doc = "```"
         )]
         #[cfg_attr(
-            not(all(
-                feature = "Foundation_NSMutableDictionary",
-                feature = "Foundation_NSMutableString"
-            )),
+            not(all(feature = "Foundation_NSString", feature = "Foundation_NSObject")),
             doc = "```ignore"
         )]
         /// use icrate::Foundation::{ns_string, NSMutableDictionary, NSMutableString, NSString};
@@ -237,17 +235,11 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     /// # Examples
     ///
     #[cfg_attr(
-        all(
-            feature = "Foundation_NSMutableDictionary",
-            feature = "Foundation_NSMutableString"
-        ),
+        all(feature = "Foundation_NSString", feature = "Foundation_NSObject"),
         doc = "```"
     )]
     #[cfg_attr(
-        not(all(
-            feature = "Foundation_NSMutableDictionary",
-            feature = "Foundation_NSMutableString"
-        )),
+        not(all(feature = "Foundation_NSString", feature = "Foundation_NSObject")),
         doc = "```ignore"
     )]
     /// use icrate::Foundation::{ns_string, NSMutableDictionary, NSMutableString, NSString};
@@ -294,11 +286,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     ///
     /// # Examples
     ///
-    #[cfg_attr(all(feature = "Foundation_NSMutableDictionary"), doc = "```")]
-    #[cfg_attr(
-        not(all(feature = "Foundation_NSMutableDictionary")),
-        doc = "```ignore"
-    )]
+    /// ```
     /// use icrate::Foundation::{ns_string, NSMutableDictionary, NSObject, NSString};
     ///
     /// let mut dict = NSMutableDictionary::new();
@@ -317,7 +305,6 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableDictionary")]
 impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, V> {
     /// Inserts a key-value pair into the dictionary.
     ///
@@ -333,6 +320,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
     /// let mut dict = NSMutableDictionary::new();
     /// dict.insert_id(ns_string!("one"), NSObject::new());
     /// ```
+    #[cfg(feature = "Foundation_NSObject")]
     #[doc(alias = "setObject:forKey:")]
     pub fn insert_id(&mut self, key: &K, value: Id<V>) -> Option<Id<V>>
     where
@@ -363,6 +351,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
     /// let mut dict = NSMutableDictionary::new();
     /// dict.insert_id(ns_string!("key"), ns_string!("value").copy());
     /// ```
+    #[cfg(feature = "Foundation_NSObject")]
     #[doc(alias = "setObject:forKey:")]
     pub fn insert(&mut self, key: &K, value: &V) -> Option<Id<V>>
     where
@@ -386,7 +375,14 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
     ///
     /// # Examples
     ///
-    /// ```
+    #[cfg_attr(
+        all(feature = "Foundation_NSString", feature = "Foundation_NSObject"),
+        doc = "```"
+    )]
+    #[cfg_attr(
+        not(all(feature = "Foundation_NSString", feature = "Foundation_NSObject")),
+        doc = "```ignore"
+    )]
     /// use icrate::Foundation::{ns_string, NSMutableDictionary, NSObject};
     ///
     /// let mut dict = NSMutableDictionary::new();
@@ -481,7 +477,6 @@ unsafe impl<K: Message, V: Message> iter::FastEnumerationHelper for NSDictionary
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableDictionary")]
 unsafe impl<K: Message, V: Message> iter::FastEnumerationHelper for NSMutableDictionary<K, V> {
     // The same goes for mutable dictionaries.
     type Item = K;
@@ -569,7 +564,6 @@ impl<'a, K: Message + Eq + Hash, V: Message> Index<&'a K> for NSDictionary<K, V>
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableDictionary")]
 impl<'a, K: Message + Eq + Hash, V: Message> Index<&'a K> for NSMutableDictionary<K, V> {
     type Output = V;
 
@@ -584,7 +578,6 @@ impl<'a, K: Message + Eq + Hash, V: Message + IsMutable> IndexMut<&'a K> for NSD
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableDictionary")]
 impl<'a, K: Message + Eq + Hash, V: Message + IsMutable> IndexMut<&'a K>
     for NSMutableDictionary<K, V>
 {
@@ -599,5 +592,12 @@ impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug for NSDictiona
         let (keys, values) = self.to_vecs();
         let iter = keys.into_iter().zip(values);
         f.debug_map().entries(iter).finish()
+    }
+}
+
+impl<K: fmt::Debug + Message, V: fmt::Debug + Message> fmt::Debug for NSMutableDictionary<K, V> {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Debug::fmt(&**self, f)
     }
 }

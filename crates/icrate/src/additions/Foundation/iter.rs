@@ -814,7 +814,7 @@ macro_rules! __impl_into_iter {
 
 #[cfg(test)]
 #[cfg(feature = "Foundation_NSArray")]
-#[cfg(feature = "Foundation_NSNumber")]
+#[cfg(feature = "Foundation_NSValue")]
 mod tests {
     use super::*;
     use core::mem::size_of;

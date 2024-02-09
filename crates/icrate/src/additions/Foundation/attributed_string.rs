@@ -1,8 +1,8 @@
-#![cfg(feature = "Foundation_NSAttributedString")]
+use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use crate::common::*;
-use crate::Foundation::{self, NSAttributedString, NSAttributedStringKey};
+use crate::Foundation::*;
 
 // SAFETY: `NSAttributedString` is immutable and `NSMutableAttributedString`
 // can only be mutated from `&mut` methods.
@@ -26,8 +26,8 @@ impl NSAttributedString {
     #[cfg(feature = "Foundation_NSDictionary")]
     #[cfg(feature = "Foundation_NSString")]
     pub unsafe fn new_with_attributes(
-        string: &Foundation::NSString,
-        attributes: &Foundation::NSDictionary<NSAttributedStringKey, AnyObject>,
+        string: &NSString,
+        attributes: &NSDictionary<NSAttributedStringKey, AnyObject>,
     ) -> Id<Self> {
         unsafe { Self::initWithString_attributes(Self::alloc(), string, Some(attributes)) }
     }
@@ -35,23 +35,36 @@ impl NSAttributedString {
     /// Creates a new attributed string without any attributes.
     #[doc(alias = "initWithString:")]
     #[cfg(feature = "Foundation_NSString")]
-    pub fn from_nsstring(string: &Foundation::NSString) -> Id<Self> {
+    pub fn from_nsstring(string: &NSString) -> Id<Self> {
         Self::initWithString(Self::alloc(), string)
     }
 }
 
-#[cfg(feature = "Foundation_NSMutableAttributedString")]
-impl Foundation::NSMutableAttributedString {
+impl NSMutableAttributedString {
     // TODO: new_with_attributes
 
     #[doc(alias = "initWithString:")]
     #[cfg(feature = "Foundation_NSString")]
-    pub fn from_nsstring(string: &Foundation::NSString) -> Id<Self> {
+    pub fn from_nsstring(string: &NSString) -> Id<Self> {
         Self::initWithString(Self::alloc(), string)
     }
 
     #[doc(alias = "initWithAttributedString:")]
     pub fn from_attributed_nsstring(attributed_string: &NSAttributedString) -> Id<Self> {
         Self::initWithAttributedString(Self::alloc(), attributed_string)
+    }
+}
+
+impl fmt::Debug for NSAttributedString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Use -[NSAttributedString description] since it is pretty good
+        let obj: &NSObject = self;
+        fmt::Debug::fmt(obj, f)
+    }
+}
+
+impl fmt::Debug for NSMutableAttributedString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Debug::fmt(&**self, f)
     }
 }

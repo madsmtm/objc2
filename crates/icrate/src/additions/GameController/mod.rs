@@ -4,97 +4,28 @@
 pub use crate::generated::GameController::*;
 
 use crate::common::*;
-use crate::Foundation::NSString;
+
+#[cfg(all(
+    feature = "GameController_GCInputNames",
+    feature = "Foundation_NSString"
+))]
+mod input_names;
+
+#[cfg(all(
+    feature = "GameController_GCInputNames",
+    feature = "Foundation_NSString"
+))]
+pub use self::input_names::*;
 
 // TODO: GCKeyCode = CFIndex
 // NOTE: CFIndex is c_long_long on __LLP64__ / Windows 64-bit (doesn't matter for us)
+#[cfg(feature = "GameController_GCKeyCodes")]
 pub type GCKeyCode = c_long;
-
-typed_extensible_enum!(
-    pub type GCInputElementName = NSString;
-);
-
-typed_extensible_enum!(
-    pub type GCInputButtonName = NSString;
-);
-
-typed_extensible_enum!(
-    pub type GCInputAxisName = NSString;
-);
-
-typed_extensible_enum!(
-    pub type GCInputSwitchName = NSString;
-);
-
-typed_extensible_enum!(
-    pub type GCInputDirectionPadName = NSString;
-);
-
-extern_static!(GCInputButtonA: &'static GCInputButtonName);
-
-extern_static!(GCInputButtonB: &'static GCInputButtonName);
-
-extern_static!(GCInputButtonX: &'static GCInputButtonName);
-
-extern_static!(GCInputButtonY: &'static GCInputButtonName);
-
-extern_static!(GCInputDirectionPad: &'static GCInputDirectionPadName);
-
-extern_static!(GCInputLeftThumbstick: &'static GCInputDirectionPadName);
-
-extern_static!(GCInputRightThumbstick: &'static GCInputDirectionPadName);
-
-extern_static!(GCInputLeftShoulder: &'static GCInputButtonName);
-
-extern_static!(GCInputRightShoulder: &'static GCInputButtonName);
-
-extern_static!(GCInputLeftTrigger: &'static GCInputButtonName);
-
-extern_static!(GCInputRightTrigger: &'static GCInputButtonName);
-
-extern_static!(GCInputLeftThumbstickButton: &'static GCInputButtonName);
-
-extern_static!(GCInputRightThumbstickButton: &'static GCInputButtonName);
-
-extern_static!(GCInputButtonHome: &'static GCInputButtonName);
-
-extern_static!(GCInputButtonMenu: &'static GCInputButtonName);
-
-extern_static!(GCInputButtonOptions: &'static GCInputButtonName);
-
-extern_static!(GCInputButtonShare: &'static GCInputButtonName);
-
-extern_static!(GCInputXboxPaddleOne: &'static GCInputButtonName);
-
-extern_static!(GCInputXboxPaddleTwo: &'static GCInputButtonName);
-
-extern_static!(GCInputXboxPaddleThree: &'static GCInputButtonName);
-
-extern_static!(GCInputXboxPaddleFour: &'static GCInputButtonName);
-
-extern_static!(GCInputDualShockTouchpadOne: &'static GCInputDirectionPadName);
-
-extern_static!(GCInputDualShockTouchpadTwo: &'static GCInputDirectionPadName);
-
-extern_static!(GCInputDualShockTouchpadButton: &'static GCInputButtonName);
-
-extern_static!(GCInputSteeringWheel: &'static GCInputAxisName);
-
-extern_static!(GCInputShifter: &'static GCInputElementName);
-
-extern_static!(GCInputPedalAccelerator: &'static GCInputButtonName);
-
-extern_static!(GCInputPedalBrake: &'static GCInputButtonName);
-
-extern_static!(GCInputPedalClutch: &'static GCInputButtonName);
-
-extern_static!(GCInputLeftPaddle: &'static GCInputButtonName);
-
-extern_static!(GCInputRightPaddle: &'static GCInputButtonName);
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
 #[deprecated = "GCExtendedGamepadSnapshot has been deprecated, use [GCController controllerWithExtendedGamepad] instead"]
+#[cfg(feature = "GameController_GCExtendedGamepadSnapshot")]
 pub struct GCExtendedGamepadSnapshotData {
     pub version: u16,
     pub size: u16,
@@ -118,6 +49,7 @@ pub struct GCExtendedGamepadSnapshotData {
 }
 #[cfg(feature = "objc2")]
 #[allow(deprecated)]
+#[cfg(feature = "GameController_GCExtendedGamepadSnapshot")]
 unsafe impl objc2::Encode for GCExtendedGamepadSnapshotData {
     const ENCODING: objc2::Encoding = (objc2::Encoding::Struct(
         "GCExtendedGamepadSnapshotData",
@@ -146,6 +78,7 @@ unsafe impl objc2::Encode for GCExtendedGamepadSnapshotData {
 }
 #[cfg(feature = "objc2")]
 #[allow(deprecated)]
+#[cfg(feature = "GameController_GCExtendedGamepadSnapshot")]
 unsafe impl objc2::RefEncode for GCExtendedGamepadSnapshotData {
     const ENCODING_REF: objc2::Encoding =
         objc2::Encoding::Pointer(&<Self as objc2::Encode>::ENCODING);

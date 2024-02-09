@@ -1,4 +1,3 @@
-#![cfg(feature = "Foundation_NSNumber")]
 //! Note that due to limitations in Objective-C type encodings, it is not
 //! possible to distinguish between an `NSNumber` created from [`bool`],
 //! and one created from an [`i8`]/[`u8`]. You should use the getter
@@ -24,7 +23,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use objc2::encode::Encoding;
 
 use crate::common::*;
-use crate::Foundation::{CGFloat, NSNumber};
+use crate::Foundation::NSNumber;
 
 impl UnwindSafe for NSNumber {}
 impl RefUnwindSafe for NSNumber {}
@@ -60,7 +59,8 @@ impl NSNumber {
     }
 
     #[inline]
-    pub fn new_cgfloat(val: CGFloat) -> Id<Self> {
+    #[cfg(feature = "Foundation_NSGeometry")]
+    pub fn new_cgfloat(val: crate::Foundation::CGFloat) -> Id<Self> {
         #[cfg(target_pointer_width = "64")]
         {
             Self::new_f64(val)
@@ -103,7 +103,8 @@ impl NSNumber {
     }
 
     #[inline]
-    pub fn as_cgfloat(&self) -> CGFloat {
+    #[cfg(feature = "Foundation_NSGeometry")]
+    pub fn as_cgfloat(&self) -> crate::Foundation::CGFloat {
         #[cfg(target_pointer_width = "64")]
         {
             self.as_f64()
@@ -257,5 +258,13 @@ impl Ord for NSNumber {
 impl fmt::Display for NSNumber {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(&self.stringValue(), f)
+    }
+}
+
+impl fmt::Debug for NSNumber {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Delegate to -[NSObject description]
+        // (happens to return the same as -[NSNumber stringValue])
+        fmt::Debug::fmt(&***self, f)
     }
 }

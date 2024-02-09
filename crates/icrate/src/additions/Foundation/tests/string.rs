@@ -1,11 +1,10 @@
 #![cfg(feature = "Foundation_NSString")]
 use alloc::format;
 use alloc::string::ToString;
-use std::ptr;
 
 use objc2::rc::autoreleasepool;
 
-use crate::Foundation::{self, ns_string, NSString};
+use crate::Foundation::{ns_string, NSString};
 
 #[test]
 fn test_equality() {
@@ -72,10 +71,10 @@ fn test_interior_nul() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSMutableString")]
+#[cfg(feature = "Foundation_NSObject")]
 fn test_copy() {
+    use crate::Foundation::{NSCopying, NSMutableCopying, NSMutableString, NSObjectProtocol};
     use objc2::rc::Id;
-    use Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
 
     let s1 = NSString::from_str("abc");
     let s2 = s1.copy();
@@ -85,17 +84,18 @@ fn test_copy() {
 
     let s3 = s1.mutableCopy();
     assert_ne!(Id::as_ptr(&s1), Id::as_ptr(&s3).cast());
-    assert!(s3.is_kind_of::<Foundation::NSMutableString>());
+    assert!(s3.is_kind_of::<NSMutableString>());
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSObject")]
 fn test_copy_nsstring_is_same() {
-    use Foundation::NSCopying;
+    use crate::Foundation::NSCopying;
 
     let string1 = NSString::from_str("Hello, world!");
     let string2 = string1.copy();
     assert!(
-        ptr::eq(&*string1, &*string2),
+        core::ptr::eq(&*string1, &*string2),
         "Cloned NSString didn't have the same address"
     );
 }
@@ -183,6 +183,7 @@ fn test_cmp() {
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSPathUtilities")]
 fn test_append() {
     let error_tag = NSString::from_str("Error: ");
     let error_string = NSString::from_str("premature end of file.");

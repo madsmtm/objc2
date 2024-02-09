@@ -6,4 +6,5 @@
 
 pub use crate::generated::QuartzCore::*;
 
-pub type CFTimeInterval = std::os::raw::c_double;
+// CoreFoundation
+pub(crate) type CFTimeInterval = std::os::raw::c_double;
