@@ -62,10 +62,7 @@ pub use self::copying::{NSCopying, NSMutableCopying};
 pub use self::decimal::NSDecimal;
 pub use self::fast_enumeration_state::NSFastEnumerationState;
 pub use self::generics::*;
-pub use self::geometry::{
-    CGFloat, CGPoint, CGRect, CGSize, NSMaxXEdge, NSMaxYEdge, NSMinXEdge, NSMinYEdge, NSPoint,
-    NSRect, NSRectEdge, NSRectEdgeMaxX, NSRectEdgeMaxY, NSRectEdgeMinX, NSRectEdgeMinY, NSSize,
-};
+pub use self::geometry::{CGFloat, CGPoint, CGRect, CGSize, NSPoint, NSRect, NSRectEdge, NSSize};
 #[cfg(feature = "Foundation_NSMapTable")]
 pub use self::ns_consumed::NSFreeMapTable;
 pub use self::range::NSRange;

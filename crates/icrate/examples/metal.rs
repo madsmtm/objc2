@@ -4,9 +4,8 @@ use core::{cell::OnceCell, ptr::NonNull};
 
 use icrate::{
     AppKit::{
-        NSApplication, NSApplicationActivationPolicyRegular, NSApplicationDelegate,
-        NSBackingStoreBuffered, NSWindow, NSWindowStyleMaskClosable, NSWindowStyleMaskResizable,
-        NSWindowStyleMaskTitled,
+        NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate, NSBackingStoreType,
+        NSWindow, NSWindowStyleMask,
     },
     Foundation::{
         ns_string, MainThreadMarker, NSDate, NSNotification, NSObject, NSObjectProtocol, NSPoint,
@@ -14,7 +13,7 @@ use icrate::{
     },
     Metal::{
         MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue, MTLCreateSystemDefaultDevice,
-        MTLDevice, MTLDrawable, MTLLibrary, MTLPrimitiveTypeTriangle, MTLRenderCommandEncoder,
+        MTLDevice, MTLDrawable, MTLLibrary, MTLPrimitiveType, MTLRenderCommandEncoder,
         MTLRenderPipelineDescriptor, MTLRenderPipelineState,
     },
     MetalKit::{MTKView, MTKViewDelegate},
@@ -152,10 +151,12 @@ declare_class!(
             // create the app window
             let window = {
                 let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(768., 768.));
-                let style = NSWindowStyleMaskClosable
-                    | NSWindowStyleMaskResizable
-                    | NSWindowStyleMaskTitled;
-                let backing_store_type = NSBackingStoreBuffered;
+                let style = NSWindowStyleMask(
+                    NSWindowStyleMask::Closable.0
+                        | NSWindowStyleMask::Resizable.0
+                        | NSWindowStyleMask::Titled.0,
+                );
+                let backing_store_type = NSBackingStoreType::NSBackingStoreBuffered;
                 let flag = false;
                 unsafe {
                     NSWindow::initWithContentRect_styleMask_backing_defer(
@@ -327,7 +328,7 @@ declare_class!(
             // configure the encoder with the pipeline and draw the triangle
             encoder.setRenderPipelineState(pipeline_state);
             unsafe {
-                encoder.drawPrimitives_vertexStart_vertexCount(MTLPrimitiveTypeTriangle, 0, 3)
+                encoder.drawPrimitives_vertexStart_vertexCount(MTLPrimitiveType::Triangle, 0, 3)
             };
             encoder.endEncoding();
 
@@ -361,7 +362,7 @@ fn main() {
     let mtm = MainThreadMarker::new().unwrap();
     // configure the app
     let app = NSApplication::sharedApplication(mtm);
-    app.setActivationPolicy(NSApplicationActivationPolicyRegular);
+    app.setActivationPolicy(NSApplicationActivationPolicy::Regular);
 
     // configure the application delegate
     let delegate = Delegate::new(mtm);

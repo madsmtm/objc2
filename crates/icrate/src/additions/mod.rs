@@ -11,8 +11,6 @@ pub mod Foundation;
 pub mod GameController;
 #[cfg(feature = "InputMethodKit")]
 pub mod InputMethodKit;
-#[cfg(feature = "LocalAuthentication")]
-pub mod LocalAuthentication;
 #[cfg(feature = "MapKit")]
 pub mod MapKit;
 #[cfg(feature = "Metal")]

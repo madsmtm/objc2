@@ -34,8 +34,10 @@ ns_enum!(
     #[underlying(NSInteger)]
     #[allow(clippy::bool_to_int_with_if)]
     pub enum NSImageResizingMode {
-        NSImageResizingModeStretch = if TARGET_ABI_USES_IOS_VALUES { 0 } else { 1 },
-        NSImageResizingModeTile = if TARGET_ABI_USES_IOS_VALUES { 1 } else { 0 },
+        #[doc(alias = "NSImageResizingModeStretch")]
+        Stretch = if TARGET_ABI_USES_IOS_VALUES { 0 } else { 1 },
+        #[doc(alias = "NSImageResizingModeTile")]
+        Tile = if TARGET_ABI_USES_IOS_VALUES { 1 } else { 0 },
     }
 );
 
@@ -43,11 +45,16 @@ ns_enum!(
     #[underlying(NSInteger)]
     #[allow(clippy::bool_to_int_with_if)]
     pub enum NSTextAlignment {
-        NSTextAlignmentLeft = 0,
-        NSTextAlignmentRight = if TARGET_ABI_USES_IOS_VALUES { 2 } else { 1 },
-        NSTextAlignmentCenter = if TARGET_ABI_USES_IOS_VALUES { 1 } else { 2 },
-        NSTextAlignmentJustified = 3,
-        NSTextAlignmentNatural = 4,
+        #[doc(alias = "NSTextAlignmentLeft")]
+        Left = 0,
+        #[doc(alias = "NSTextAlignmentRight")]
+        Right = if TARGET_ABI_USES_IOS_VALUES { 2 } else { 1 },
+        #[doc(alias = "NSTextAlignmentCenter")]
+        Center = if TARGET_ABI_USES_IOS_VALUES { 1 } else { 2 },
+        #[doc(alias = "NSTextAlignmentJustified")]
+        Justified = 3,
+        #[doc(alias = "NSTextAlignmentNatural")]
+        Natural = 4,
     }
 );
 

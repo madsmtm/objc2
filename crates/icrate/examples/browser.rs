@@ -4,13 +4,11 @@ use core::cell::OnceCell;
 #[allow(deprecated)]
 use icrate::{
     AppKit::{
-        NSApplication, NSApplicationActivationPolicyRegular, NSApplicationDelegate,
-        NSBackingStoreBuffered, NSBezelStyleShadowlessSquare, NSButton, NSColor, NSControl,
-        NSControlTextEditingDelegate, NSLayoutAttributeHeight, NSLayoutAttributeWidth, NSMenu,
-        NSMenuItem, NSStackView, NSStackViewDistributionFill, NSStackViewDistributionFillEqually,
-        NSTextField, NSTextFieldDelegate, NSTextView, NSUserInterfaceLayoutOrientationHorizontal,
-        NSUserInterfaceLayoutOrientationVertical, NSWindow, NSWindowStyleMaskClosable,
-        NSWindowStyleMaskResizable, NSWindowStyleMaskTitled,
+        NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate, NSBackingStoreType,
+        NSBezelStyle, NSButton, NSColor, NSControl, NSControlTextEditingDelegate,
+        NSLayoutAttribute, NSMenu, NSMenuItem, NSStackView, NSStackViewDistribution, NSTextField,
+        NSTextFieldDelegate, NSTextView, NSUserInterfaceLayoutOrientation, NSWindow,
+        NSWindowStyleMask,
     },
     Foundation::{
         ns_string, MainThreadMarker, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect,
@@ -78,10 +76,12 @@ declare_class!(
             // create the app window
             let window = {
                 let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(1024., 768.));
-                let style = NSWindowStyleMaskClosable
-                    | NSWindowStyleMaskResizable
-                    | NSWindowStyleMaskTitled;
-                let backing_store_type = NSBackingStoreBuffered;
+                let style = NSWindowStyleMask(
+                    NSWindowStyleMask::Closable.0
+                        | NSWindowStyleMask::Resizable.0
+                        | NSWindowStyleMask::Titled.0,
+                );
+                let backing_store_type = NSBackingStoreType::NSBackingStoreBuffered;
                 let flag = false;
                 unsafe {
                     NSWindow::initWithContentRect_styleMask_backing_defer(
@@ -105,9 +105,9 @@ declare_class!(
                 let frame_rect = NSRect::ZERO;
                 let this = unsafe { NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
                 unsafe {
-                    this.setOrientation(NSUserInterfaceLayoutOrientationHorizontal);
-                    this.setAlignment(NSLayoutAttributeHeight);
-                    this.setDistribution(NSStackViewDistributionFill);
+                    this.setOrientation(NSUserInterfaceLayoutOrientation::Horizontal);
+                    this.setAlignment(NSLayoutAttribute::Height);
+                    this.setDistribution(NSStackViewDistribution::Fill);
                     this.setSpacing(0.);
                 }
                 this
@@ -118,9 +118,9 @@ declare_class!(
                 let frame_rect = NSRect::ZERO;
                 let this = unsafe { NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
                 unsafe {
-                    this.setOrientation(NSUserInterfaceLayoutOrientationHorizontal);
-                    this.setAlignment(NSLayoutAttributeHeight);
-                    this.setDistribution(NSStackViewDistributionFillEqually);
+                    this.setOrientation(NSUserInterfaceLayoutOrientation::Horizontal);
+                    this.setAlignment(NSLayoutAttribute::Height);
+                    this.setDistribution(NSStackViewDistribution::FillEqually);
                     this.setSpacing(0.);
                 }
                 this
@@ -136,7 +136,7 @@ declare_class!(
                     unsafe { NSButton::buttonWithTitle_target_action(title, target, action, mtm) };
                 #[allow(deprecated)]
                 unsafe {
-                    this.setBezelStyle(NSBezelStyleShadowlessSquare)
+                    this.setBezelStyle(NSBezelStyle::ShadowlessSquare)
                 };
                 this
             };
@@ -151,7 +151,7 @@ declare_class!(
                     unsafe { NSButton::buttonWithTitle_target_action(title, target, action, mtm) };
                 #[allow(deprecated)]
                 unsafe {
-                    this.setBezelStyle(NSBezelStyleShadowlessSquare)
+                    this.setBezelStyle(NSBezelStyle::ShadowlessSquare)
                 };
                 this
             };
@@ -183,9 +183,9 @@ declare_class!(
                 let frame_rect = window.frame();
                 let this = unsafe { NSStackView::initWithFrame(mtm.alloc(), frame_rect) };
                 unsafe {
-                    this.setOrientation(NSUserInterfaceLayoutOrientationVertical);
-                    this.setAlignment(NSLayoutAttributeWidth);
-                    this.setDistribution(NSStackViewDistributionFill);
+                    this.setOrientation(NSUserInterfaceLayoutOrientation::Vertical);
+                    this.setAlignment(NSLayoutAttribute::Width);
+                    this.setDistribution(NSStackViewDistribution::Fill);
                     this.setSpacing(0.);
                 }
                 this
@@ -301,7 +301,7 @@ impl Delegate {
 fn main() {
     let mtm = MainThreadMarker::new().unwrap();
     let app = NSApplication::sharedApplication(mtm);
-    app.setActivationPolicy(NSApplicationActivationPolicyRegular);
+    app.setActivationPolicy(NSApplicationActivationPolicy::Regular);
 
     // configure the application delegate
     let delegate = Delegate::new(mtm);

@@ -5,7 +5,7 @@ use clang::token::TokenKind;
 use clang::{Entity, EntityKind, EntityVisitResult, EvaluationResult};
 
 use crate::rust_type::Ty;
-use crate::stmt::new_enum_id;
+use crate::stmt::{enum_constant_name, new_enum_id};
 use crate::{Context, ItemIdentifier};
 
 #[derive(Clone, Debug, PartialEq)]
@@ -215,9 +215,18 @@ impl fmt::Display for Expr {
                     write!(f, "{name}")
                 }
             }
-            Self::Enum { id: _, variant } => write!(f, "{variant}"),
+            Self::Enum { id, variant } => {
+                let pretty_name = enum_constant_name(&id.name, variant);
+                write!(f, "{}::{pretty_name}.0", id.name)
+            }
             Self::Const(id) => write!(f, "{}", id.name),
-            Self::Var { id, ty: _ } => write!(f, "{}", id.name),
+            Self::Var { id, ty } => {
+                if ty.is_enum_through_typedef() {
+                    write!(f, "{}.0", id.name)
+                } else {
+                    write!(f, "{}", id.name)
+                }
+            }
             Self::Tokens(tokens) => {
                 for token in tokens {
                     match token {

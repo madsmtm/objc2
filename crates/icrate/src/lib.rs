@@ -175,8 +175,6 @@ pub use self::additions::Foundation;
 pub use self::additions::GameController;
 #[cfg(feature = "InputMethodKit")]
 pub use self::additions::InputMethodKit;
-#[cfg(feature = "LocalAuthentication")]
-pub use self::additions::LocalAuthentication;
 #[cfg(feature = "MapKit")]
 pub use self::additions::MapKit;
 #[cfg(feature = "Metal")]
@@ -242,6 +240,8 @@ pub use self::generated::HealthKit;
 pub use self::generated::IdentityLookup;
 #[cfg(feature = "LinkPresentation")]
 pub use self::generated::LinkPresentation;
+#[cfg(feature = "LocalAuthentication")]
+pub use self::generated::LocalAuthentication;
 #[cfg(feature = "LocalAuthenticationEmbeddedUI")]
 pub use self::generated::LocalAuthenticationEmbeddedUI;
 #[cfg(feature = "MailKit")]

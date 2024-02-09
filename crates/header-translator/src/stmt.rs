@@ -541,6 +541,15 @@ pub(crate) fn new_enum_id(
     id
 }
 
+/// Quick n' dirty logic for minimizing the enum constant name.
+pub(crate) fn enum_constant_name<'a>(enum_name: &str, constant_name: &'a str) -> &'a str {
+    let res = constant_name.trim_start_matches(enum_name);
+    if res.starts_with(|c: char| c.is_numeric()) {
+        return constant_name;
+    }
+    res
+}
+
 impl Stmt {
     pub fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Vec<Self> {
         let _span = debug_span!(
@@ -1436,14 +1445,6 @@ impl Stmt {
             Stmt::AliasDecl { id, .. } => Some(&id.name),
         }
     }
-
-    pub(crate) fn extra_declared_types(&self) -> Vec<&str> {
-        if let Stmt::EnumDecl { variants, .. } = self {
-            variants.iter().map(|(name, _, _)| &**name).collect()
-        } else {
-            vec![]
-        }
-    }
 }
 
 impl fmt::Display for Stmt {
@@ -1888,7 +1889,11 @@ impl fmt::Display for Stmt {
                 writeln!(f, "    pub enum {} {{", id.name)?;
                 for (name, availability, expr) in variants {
                     write!(f, "{availability}")?;
-                    writeln!(f, "        {name} = {expr},")?;
+                    let pretty_name = enum_constant_name(&id.name, name);
+                    if pretty_name != name {
+                        writeln!(f, "        #[doc(alias = \"{name}\")]")?;
+                    }
+                    writeln!(f, "        {pretty_name} = {expr},")?;
                 }
                 writeln!(f, "    }}")?;
                 writeln!(f, ");")?;
@@ -1928,7 +1933,17 @@ impl fmt::Display for Stmt {
                 ty,
                 value: Some(expr),
             } => {
-                writeln!(f, "extern_static!({}: {} = {expr});", id.name, ty.var())?;
+                if ty.is_enum_through_typedef() {
+                    writeln!(
+                        f,
+                        "extern_static!({}: {} = {}({expr}));",
+                        id.name,
+                        ty.var(),
+                        ty.var()
+                    )?;
+                } else {
+                    writeln!(f, "extern_static!({}: {} = {expr});", id.name, ty.var())?;
+                }
             }
             Self::FnDecl {
                 id,

@@ -1,5 +1,5 @@
 #![deny(unsafe_op_in_unsafe_fn)]
-use icrate::AppKit::{NSApplication, NSApplicationActivationPolicyRegular, NSApplicationDelegate};
+use icrate::AppKit::{NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate};
 use icrate::Foundation::{
     ns_string, MainThreadMarker, NSCopying, NSNotification, NSObject, NSObjectProtocol, NSString,
 };
@@ -71,7 +71,7 @@ fn main() {
     let mtm: MainThreadMarker = MainThreadMarker::new().unwrap();
 
     let app = NSApplication::sharedApplication(mtm);
-    app.setActivationPolicy(NSApplicationActivationPolicyRegular);
+    app.setActivationPolicy(NSApplicationActivationPolicy::Regular);
 
     // configure the application delegate
     let delegate = AppDelegate::new(42, true, mtm);
