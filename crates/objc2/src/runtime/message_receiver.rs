@@ -73,6 +73,7 @@ mod msg_send_primitive {
     ///
     /// <https://web.archive.org/web/20191016000656/http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042f/IHI0042F_aapcs.pdf>
     /// <https://developer.arm.com/documentation/ihi0042/latest>
+    /// <https://github.com/llvm/llvm-project/blob/llvmorg-17.0.6/clang/lib/CodeGen/Targets/ARM.cpp#L531>
     unsafe impl<T: EncodeReturn> MsgSendFn for T {
         const MSG_SEND: Imp = {
             if let Encoding::LongLong | Encoding::ULongLong | Encoding::Double = T::ENCODING_RETURN
@@ -102,6 +103,7 @@ mod msg_send_primitive {
     /// Structures of other sizes are placed at the address supplied by the caller.
     ///
     /// <https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/LowLevelABI/130-IA-32_Function_Calling_Conventions/IA32.html>
+    /// <https://github.com/llvm/llvm-project/blob/llvmorg-17.0.6/clang/lib/CodeGen/Targets/X86.cpp#L472>
     unsafe impl<T: EncodeReturn> MsgSendFn for T {
         const MSG_SEND: Imp = {
             // See https://github.com/apple-oss-distributions/objc4/blob/objc4-818.2/runtime/message.h#L156-L172
@@ -128,6 +130,7 @@ mod msg_send_primitive {
     /// the return value and passes the address of this storage.
     ///
     /// <https://www.uclibc.org/docs/psABI-x86_64.pdf>
+    /// <https://github.com/llvm/llvm-project/blob/llvmorg-17.0.6/clang/lib/CodeGen/Targets/X86.cpp#L2532>
     unsafe impl<T: EncodeReturn> MsgSendFn for T {
         const MSG_SEND: Imp = {
             // See https://github.com/apple-oss-distributions/objc4/blob/objc4-818.2/runtime/message.h#L156-L172
