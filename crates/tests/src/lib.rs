@@ -2,6 +2,7 @@
 //!
 //! This is used so that we don't need to add a `build.rs` script to `block2`.
 #![no_std]
+#![cfg_attr(feature = "apple", feature(repr_simd))]
 
 use std::os::raw::c_void;
 
@@ -21,6 +22,9 @@ mod test_encode_utils;
 mod test_foundation_retain_semantics;
 #[cfg(test)]
 mod test_object;
+#[cfg(test)]
+#[cfg(feature = "apple")]
+mod test_simd_return;
 
 #[no_mangle]
 extern "C" fn debug_block(block: *mut c_void) {

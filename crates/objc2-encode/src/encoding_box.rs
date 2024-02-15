@@ -5,7 +5,7 @@ use core::fmt;
 use core::str::FromStr;
 
 use crate::helper::{compare_encodings, Helper, NestingLevel};
-use crate::parse::{ParseError, Parser};
+use crate::parse::{ErrorKind, ParseError, Parser};
 use crate::Encoding;
 
 /// The boxed version of [`Encoding`].
@@ -123,6 +123,12 @@ impl EncodingBox {
         parser.strip_leading_qualifiers();
 
         match parser.parse_encoding_or_none() {
+            Err(ErrorKind::Unknown(b'0'..=b'9')) => {
+                let remaining = parser.remaining();
+                *s = remaining;
+
+                Ok(EncodingBox::None)
+            }
             Err(err) => Err(ParseError::new(parser, err)),
             Ok(encoding) => {
                 let remaining = parser.remaining();
