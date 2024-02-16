@@ -29,7 +29,7 @@ impl BlockFlags {
         // Mask for the reference count in byref structure's flags field. The low
         // 3 bytes are reserved for the reference count, the top byte for the flags.
         0x00ffffff
-    } else if cfg!(any(feature = "compiler-rt", feature = "objfw")) {
+    } else if cfg!(any(feature = "compiler-rt", feature = "unstable-objfw")) {
         0xffff
     } else if cfg!(feature = "apple") {
         0xfffe // runtime

@@ -49,7 +49,6 @@
 #![warn(clippy::missing_panics_doc)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-encode/4.0.0")]
-#![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]
 
 #[cfg(doctest)]
 #[doc = include_str!("../README.md")]

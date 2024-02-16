@@ -36,6 +36,7 @@ gnustep-1-8 = ["gnustep-1-7", "block2/gnustep-1-8", "objc2/gnustep-1-8", "icrate
 gnustep-1-9 = ["gnustep-1-8", "block2/gnustep-1-9", "objc2/gnustep-1-9", "icrate/gnustep-1-9"]
 gnustep-2-0 = ["gnustep-1-9", "block2/gnustep-2-0", "objc2/gnustep-2-0", "icrate/gnustep-2-0"]
 gnustep-2-1 = ["gnustep-2-0", "block2/gnustep-2-1", "objc2/gnustep-2-1", "icrate/gnustep-2-1"]
+unstable-objfw = ["block2/unstable-objfw", "objc-sys/unstable-objfw"]
 
 [dependencies]
 block2 = { path = "../block2", default-features = false }

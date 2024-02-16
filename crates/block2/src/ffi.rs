@@ -19,7 +19,7 @@ pub struct Class {
 
     /// The size of this is unknown, so let's use a ZST so the compiler
     /// doesn't assume anything about the size.
-    #[cfg(any(feature = "gnustep-1-7", feature = "objfw"))]
+    #[cfg(any(feature = "gnustep-1-7", feature = "unstable-objfw"))]
     _priv: [u8; 0],
 
     /// Mark as `!Send + !Sync + !Unpin` and as mutable behind shared
