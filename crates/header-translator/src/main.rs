@@ -297,8 +297,6 @@ fn get_translation_unit<'i: 'tu, 'tu>(
 ) -> TranslationUnit<'tu> {
     let _span = info_span!("initializing translation unit").entered();
 
-    let target = format!("--target={llvm_target}");
-
     let tu = index
         .parser(Path::new(env!("CARGO_MANIFEST_DIR")).join("framework-includes.h"))
         .detailed_preprocessing_record(true)
@@ -313,7 +311,8 @@ fn get_translation_unit<'i: 'tu, 'tu>(
         .arguments(&[
             "-x",
             "objective-c",
-            &target,
+            "-target",
+            llvm_target,
             "-Wall",
             "-Wextra",
             "-fobjc-arc",
