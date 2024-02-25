@@ -1,7 +1,6 @@
 use std::fmt;
 
 use clang::{Entity, EntityKind, ObjCAttributes, ObjCQualifiers};
-use tracing::span::EnteredSpan;
 
 use crate::availability::Availability;
 use crate::config::MethodData;
@@ -261,6 +260,16 @@ pub struct Method {
     pub(crate) mainthreadonly: bool,
 }
 
+#[derive(Debug)]
+pub struct PartialProperty<'tu> {
+    pub entity: Entity<'tu>,
+    pub name: String,
+    pub getter_sel: String,
+    pub setter_sel: Option<String>,
+    pub is_class: bool,
+    pub attributes: Option<ObjCAttributes>,
+}
+
 impl Method {
     /// Value that uniquely identifies the method in a class.
     pub fn id(&self) -> (bool, String) {
@@ -275,34 +284,12 @@ impl Method {
             && !self.mainthreadonly
     }
 
-    /// Takes one of `EntityKind::ObjCInstanceMethodDecl` or
-    /// `EntityKind::ObjCClassMethodDecl`.
-    pub fn partial(entity: Entity<'_>) -> PartialMethod<'_> {
-        let selector = entity.get_name().expect("method selector");
-
-        let _span = debug_span!("method", selector).entered();
-
-        let is_class = match entity.get_kind() {
-            EntityKind::ObjCInstanceMethodDecl => false,
-            EntityKind::ObjCClassMethodDecl => true,
-            _ => unreachable!("unknown method kind"),
-        };
-
-        PartialMethod {
-            entity,
-            selector,
-            is_class,
-            _span,
-        }
-    }
-
     /// Takes `EntityKind::ObjCPropertyDecl`.
-    pub fn partial_property(entity: Entity<'_>) -> PartialProperty<'_> {
+    pub(crate) fn partial_property(entity: Entity<'_>) -> PartialProperty<'_> {
         let attributes = entity.get_objc_attributes();
         let has_setter = attributes.map(|a| !a.readonly).unwrap_or(true);
 
         let name = entity.get_display_name().expect("property name");
-        let _span = debug_span!("property", name).entered();
 
         PartialProperty {
             entity,
@@ -316,38 +303,29 @@ impl Method {
             }),
             is_class: attributes.map(|a| a.class).unwrap_or(false),
             attributes,
-            _span,
         }
     }
-}
 
-#[derive(Debug)]
-pub struct PartialMethod<'tu> {
-    entity: Entity<'tu>,
-    pub selector: String,
-    pub is_class: bool,
-    _span: EnteredSpan,
-}
-
-impl<'tu> PartialMethod<'tu> {
-    pub fn parse<'a>(
-        self,
+    pub(crate) fn parse_method<'a>(
+        entity: Entity<'_>,
         data: MethodData,
         parent_is_mutable: bool,
         is_pub: bool,
         implied_features: impl IntoIterator<Item = &'a ItemIdentifier>,
         context: &Context<'_>,
     ) -> Option<(bool, Method)> {
-        let Self {
-            entity,
-            selector,
-            is_class,
-            _span,
-        } = self;
+        let selector = entity.get_name().expect("method selector");
+        let _span = debug_span!("method", selector).entered();
 
         if data.skipped {
             return None;
         }
+
+        let is_class = match entity.get_kind() {
+            EntityKind::ObjCInstanceMethodDecl => false,
+            EntityKind::ObjCClassMethodDecl => true,
+            _ => unreachable!("unknown method kind"),
+        };
 
         // Don't emit memory-management methods
         match &*selector {
@@ -495,22 +473,9 @@ impl<'tu> PartialMethod<'tu> {
             },
         ))
     }
-}
 
-#[derive(Debug)]
-pub struct PartialProperty<'tu> {
-    pub entity: Entity<'tu>,
-    pub name: String,
-    pub getter_sel: String,
-    pub setter_sel: Option<String>,
-    pub is_class: bool,
-    pub attributes: Option<ObjCAttributes>,
-    pub _span: EnteredSpan,
-}
-
-impl PartialProperty<'_> {
-    pub fn parse<'a>(
-        self,
+    pub(crate) fn parse_property<'a>(
+        property: PartialProperty<'_>,
         getter_data: MethodData,
         setter_data: Option<MethodData>,
         parent_is_mutable: bool,
@@ -518,15 +483,15 @@ impl PartialProperty<'_> {
         implied_features: impl IntoIterator<Item = &'a ItemIdentifier> + Clone,
         context: &Context<'_>,
     ) -> (Option<Method>, Option<Method>) {
-        let Self {
+        let PartialProperty {
             entity,
             name,
             getter_sel,
             setter_sel,
             is_class,
             attributes,
-            _span,
-        } = self;
+        } = property;
+        let _span = debug_span!("property", name).entered();
 
         // Early return if both getter and setter are skipped
         //
@@ -631,9 +596,7 @@ impl PartialProperty<'_> {
 
         (getter, setter)
     }
-}
 
-impl Method {
     pub(crate) fn emit_on_subclasses(&self) -> bool {
         if !self.result_type.is_instancetype() {
             return false;
