@@ -568,7 +568,10 @@ impl Ty {
                     .get_objc_protocol_declarations()
                     .into_iter()
                     .map(|entity| {
-                        ItemIdentifier::new(&entity, context)
+                        let definition = entity
+                            .get_definition()
+                            .expect("objc protocol declaration definition");
+                        ItemIdentifier::new(&definition, context)
                             .map_name(|name| context.replace_protocol_name(name))
                     })
                     .collect();
