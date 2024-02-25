@@ -21,7 +21,7 @@ pub enum Expr {
     Unsigned(u64),
     Float(f64),
     MacroInvocation {
-        name: String,
+        id: ItemIdentifier,
         evaluated: Option<Box<Expr>>,
     },
     Enum {
@@ -99,11 +99,8 @@ impl Expr {
                 .macro_invocations
                 .get(&location.get_spelling_location())
             {
-                let name = macro_invocation
-                    .get_name()
-                    .expect("expr macro invocation name");
                 return Expr::MacroInvocation {
-                    name,
+                    id: ItemIdentifier::new(macro_invocation, context),
                     evaluated: Some(Box::new(Self::from_evaluated(entity))),
                 };
             } else {
@@ -123,11 +120,8 @@ impl Expr {
                             .macro_invocations
                             .get(&token.get_location().get_spelling_location())
                             .expect("expr macro invocation");
-                        let name = macro_invocation
-                            .get_name()
-                            .expect("expr macro invocation name");
                         Expr::MacroInvocation {
-                            name,
+                            id: ItemIdentifier::new(macro_invocation, context),
                             evaluated: None,
                         }
                     })
@@ -200,19 +194,19 @@ impl fmt::Display for Expr {
             Self::Signed(signed) => write!(f, "{signed}"),
             Self::Unsigned(unsigned) => write!(f, "{unsigned}"),
             Self::Float(n) => write!(f, "{n}"),
-            Self::MacroInvocation { name, evaluated } => {
-                if name == "NSIntegerMax" {
+            Self::MacroInvocation { id, evaluated } => {
+                if id.name == "NSIntegerMax" {
                     write!(f, "NSIntegerMax as _")
-                } else if name == "NSUIntegerMax" {
+                } else if id.name == "NSUIntegerMax" {
                     write!(f, "NSUIntegerMax as _")
-                } else if name == "FLT_MAX" {
+                } else if id.name == "FLT_MAX" {
                     write!(f, "c_float::MAX as _")
-                } else if name == "DBL_MAX" {
+                } else if id.name == "DBL_MAX" {
                     write!(f, "c_double::MAX as _")
                 } else if let Some(evaluated) = evaluated {
                     write!(f, "{evaluated}")
                 } else {
-                    write!(f, "{name}")
+                    write!(f, "{}", id.path())
                 }
             }
             Self::Enum { id, variant } => {
