@@ -45,7 +45,7 @@ impl MethodArgumentQualifier {
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, Default)]
-struct MethodModifiers {
+pub(crate) struct MethodModifiers {
     returns_inner_pointer: bool,
     consumes_self: bool,
     returns_retained: bool,
@@ -53,11 +53,11 @@ struct MethodModifiers {
     designated_initializer: bool,
     non_isolated: bool,
     sendable: Option<bool>,
-    mainthreadonly: bool,
+    pub(crate) mainthreadonly: bool,
 }
 
 impl MethodModifiers {
-    fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Self {
+    pub(crate) fn parse(entity: &Entity<'_>, context: &Context<'_>) -> Self {
         let mut this = Self::default();
 
         immediate_children(entity, |entity, _span| match entity.get_kind() {
@@ -310,6 +310,7 @@ impl Method {
         entity: Entity<'_>,
         data: MethodData,
         parent_is_mutable: bool,
+        _parent_is_mainthreadonly: bool,
         is_pub: bool,
         implied_features: impl IntoIterator<Item = &'a ItemIdentifier>,
         context: &Context<'_>,
@@ -474,11 +475,13 @@ impl Method {
         ))
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub(crate) fn parse_property<'a>(
         property: PartialProperty<'_>,
         getter_data: MethodData,
         setter_data: Option<MethodData>,
         parent_is_mutable: bool,
+        _parent_is_mainthreadonly: bool,
         is_pub: bool,
         implied_features: impl IntoIterator<Item = &'a ItemIdentifier> + Clone,
         context: &Context<'_>,

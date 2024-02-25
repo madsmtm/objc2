@@ -15,6 +15,7 @@ use crate::feature::Feature;
 use crate::feature::Features;
 use crate::id::ItemIdentifier;
 use crate::immediate_children;
+use crate::method::MethodModifiers;
 use crate::method::{handle_reserved, Method};
 use crate::rust_type::Ty;
 use crate::unexposed_attr::UnexposedAttr;
@@ -66,8 +67,11 @@ fn parse_protocols(
     });
 }
 
-fn parse_direct_protocols(entity: &Entity<'_>, context: &Context<'_>) -> BTreeSet<ItemIdentifier> {
-    let mut protocols = BTreeSet::new();
+pub(crate) fn parse_direct_protocols<'clang>(
+    entity: &Entity<'clang>,
+    _context: &Context<'_>,
+) -> Vec<Entity<'clang>> {
+    let mut protocols = Vec::new();
 
     #[allow(clippy::single_match)]
     immediate_children(entity, |entity, _span| match entity.get_kind() {
@@ -75,10 +79,7 @@ fn parse_direct_protocols(entity: &Entity<'_>, context: &Context<'_>) -> BTreeSe
             let entity = entity
                 .get_reference()
                 .expect("ObjCProtocolRef to reference entity");
-            protocols.insert(
-                ItemIdentifier::new(&entity, context)
-                    .map_name(|name| context.replace_protocol_name(name)),
-            );
+            protocols.push(entity);
         }
         _ => {}
     });
@@ -86,7 +87,7 @@ fn parse_direct_protocols(entity: &Entity<'_>, context: &Context<'_>) -> BTreeSe
     protocols
 }
 
-fn parse_superclasses<'ty>(
+pub(crate) fn parse_superclasses<'ty>(
     entity: &Entity<'ty>,
     context: &Context<'_>,
 ) -> Vec<(ItemIdentifier, Vec<String>, Entity<'ty>)> {
@@ -165,6 +166,113 @@ fn parse_attributes(entity: &Entity<'_>, context: &Context<'_>) -> (Option<bool>
     (sendable, mainthreadonly)
 }
 
+fn decl_sendable_mainthreadonly(entity: &Entity<'_>, context: &Context<'_>) -> (bool, bool) {
+    match entity.get_kind() {
+        EntityKind::ObjCInterfaceDecl => {
+            let (sendable, mut mainthreadonly) = parse_attributes(entity, context);
+
+            for (_, _, entity) in parse_superclasses(entity, context) {
+                // Ignore sendability on superclasses; since it's an
+                // auto trait, it's propagated to subclasses anyhow!
+                let (_sendable, superclass_mainthreadonly) = parse_attributes(&entity, context);
+
+                if superclass_mainthreadonly {
+                    mainthreadonly = true;
+                }
+            }
+
+            (sendable.unwrap_or(false), mainthreadonly)
+        }
+        EntityKind::ObjCCategoryDecl => {
+            let (sendable, mainthreadonly) = parse_attributes(entity, context);
+            if let Some(sendable) = sendable {
+                error!(?sendable, "sendable on category");
+            }
+            if mainthreadonly {
+                error!("@UIActor on category");
+            }
+            (sendable.unwrap_or(false), mainthreadonly)
+        }
+        EntityKind::ObjCProtocolDecl => {
+            let (sendable, mut mainthreadonly) = parse_attributes(entity, context);
+
+            let data = context
+                .protocol_data
+                .get(&ItemIdentifier::new(entity, context).name);
+
+            // Set the protocol as main thread only if all methods are
+            // explicitly _marked_ (not inferred, since then we'd have to
+            // recurse into types) main thread only.
+            //
+            // This is done to make the UI nicer when the user tries to
+            // implement such traits.
+            //
+            // Note: This is a deviation from the headers, but I don't
+            // see a way for this to be unsound? As an example, let's say
+            // there is some Objective-C code that assumes it can create
+            // an object which is not `MainThreadOnly`, and then sets it
+            // as the application delegate.
+            //
+            // Rust code that later retrieves the delegate would assume
+            // that the object is `MainThreadOnly`, and could use this
+            // information to create `MainThreadMarker`; but they can
+            // _already_ do that, since the only way to retrieve the
+            // delegate in the first place would be through
+            // `NSApplication`!
+            let entities = method_or_property_entities(entity, context);
+            if !entities.is_empty()
+                && entities.iter().all(|method_or_property| {
+                    MethodModifiers::parse(method_or_property, context).mainthreadonly
+                })
+            {
+                mainthreadonly = true;
+            }
+
+            // Overwrite with config preference
+            if let Some(data) = data
+                .map(|data| data.requires_mainthreadonly)
+                .unwrap_or_default()
+            {
+                if mainthreadonly == data {
+                    warn!(
+                        mainthreadonly,
+                        data, "set requires-mainthreadonly to the same value that it already has"
+                    );
+                }
+                mainthreadonly = data;
+            }
+
+            (sendable.unwrap_or(false), mainthreadonly)
+        }
+        _ => (false, false),
+    }
+}
+
+/// Whether an instance of a declaration is able to provide a
+/// `MainThreadMarker`.
+#[allow(dead_code)]
+pub(crate) fn decl_provides_mainthreadonly(entity: &Entity<'_>, context: &Context<'_>) -> bool {
+    let (_, mainthreadonly) = decl_sendable_mainthreadonly(entity, context);
+
+    // If declared explicitly
+    if mainthreadonly {
+        return true;
+    }
+
+    // If the protocol wasn't declared main thread itself, try to search
+    // inherited / super protocols instead.
+    if EntityKind::ObjCProtocolDecl == entity.get_kind() {
+        for protocol in parse_direct_protocols(entity, context) {
+            // Recurse
+            if decl_provides_mainthreadonly(&protocol, context) {
+                return true;
+            }
+        }
+    }
+
+    false
+}
+
 /// Deduplicate methods that are autogenerated from properties.
 ///
 /// Guaranteed to only contain `ObjCInstanceMethodDecl`, `ObjCClassMethodDecl`
@@ -223,6 +331,7 @@ fn parse_methods(
     entity: &Entity<'_>,
     get_data: impl Fn(&str) -> MethodData,
     is_mutable: bool,
+    is_mainthreadonly: bool,
     is_pub: bool,
     implied_features: &[ItemIdentifier],
     context: &Context<'_>,
@@ -241,6 +350,7 @@ fn parse_methods(
                     entity,
                     data,
                     is_mutable,
+                    is_mainthreadonly,
                     is_pub,
                     implied_features,
                     context,
@@ -268,6 +378,7 @@ fn parse_methods(
                     getter_data,
                     setter_data,
                     is_mutable,
+                    is_mainthreadonly,
                     is_pub,
                     implied_features,
                     context,
@@ -600,6 +711,8 @@ impl Stmt {
         )
         .entered();
 
+        let (sendable, mainthreadonly) = decl_sendable_mainthreadonly(entity, context);
+
         match entity.get_kind() {
             // These are inconsequential for us, since we resolve imports differently
             EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef => vec![],
@@ -623,12 +736,11 @@ impl Stmt {
                     |name| ClassData::get_method_data(data, name),
                     data.map(|data| data.mutability.is_mutable())
                         .unwrap_or(false),
+                    mainthreadonly,
                     true,
                     &implied_features,
                     context,
                 );
-
-                let (sendable, mut mainthreadonly) = parse_attributes(entity, context);
 
                 let mut protocols = Default::default();
                 parse_protocols(entity, &mut protocols, context);
@@ -642,17 +754,7 @@ impl Stmt {
 
                 let superclasses: Vec<_> = superclasses_full
                     .iter()
-                    .map(|(id, generics, entity)| {
-                        // Ignore sendability on superclasses; because it's an auto trait, it's propagated to subclasses anyhow!
-                        let (_sendable, superclass_mainthreadonly) =
-                            parse_attributes(entity, context);
-
-                        if superclass_mainthreadonly {
-                            mainthreadonly = true;
-                        }
-
-                        (id.clone(), generics.clone())
-                    })
+                    .map(|(id, generics, _)| (id.clone(), generics.clone()))
                     .collect();
 
                 // Used for duplicate checking (sometimes the subclass
@@ -679,6 +781,7 @@ impl Stmt {
                             data.map(|data| data.mutability.is_mutable())
                                 .or(superclass_data.map(|data| data.mutability.is_mutable()))
                                 .unwrap_or(false),
+                            mainthreadonly,
                             true,
                             // Even though the methods are originally defined
                             // elsewhere, we're going to be _emitting_ them on
@@ -728,7 +831,7 @@ impl Stmt {
                         data.map(|data| data.mutability.clone()).unwrap_or_default()
                     },
                     skipped: data.map(|data| data.definition_skipped).unwrap_or_default(),
-                    sendable: sendable.unwrap_or(false),
+                    sendable,
                 })
                 .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
                     cls: id.clone(),
@@ -761,6 +864,8 @@ impl Stmt {
                 });
                 let cls_entity = cls_entity.expect("could not find category class");
 
+                let (_, cls_mainthreadonly) = decl_sendable_mainthreadonly(&cls_entity, context);
+
                 let cls = ItemIdentifier::new(&cls_entity, context);
                 let data = context.class_data.get(&cls.name);
 
@@ -781,12 +886,19 @@ impl Stmt {
 
                 verify_objc_decl(entity, context);
                 let generics = parse_class_generics(entity, context);
-                let mut protocols = parse_direct_protocols(entity, context);
 
                 let skipped_protocols = data
                     .map(|data| data.skipped_protocols.clone())
                     .unwrap_or_default();
-                protocols.retain(|protocol| !skipped_protocols.contains(&protocol.name));
+                let protocols = parse_direct_protocols(entity, context);
+                let protocols: BTreeSet<_> = protocols
+                    .into_iter()
+                    .map(|protocol| {
+                        ItemIdentifier::new(&protocol, context)
+                            .map_name(|name| context.replace_protocol_name(name))
+                    })
+                    .filter(|protocol| !skipped_protocols.contains(&protocol.name))
+                    .collect();
 
                 let protocol_impls = protocols.into_iter().map(|protocol| Self::ProtocolImpl {
                     cls: cls.clone(),
@@ -794,14 +906,6 @@ impl Stmt {
                     availability: availability.clone(),
                     protocol,
                 });
-
-                let (sendable, mainthreadonly) = parse_attributes(entity, context);
-                if let Some(sendable) = sendable {
-                    error!(?sendable, "sendable on category");
-                }
-                if mainthreadonly {
-                    error!("@UIActor on category");
-                }
 
                 // For ease-of-use, if the category is defined in the same
                 // library as the class, we just emit it as `extern_methods!`.
@@ -813,6 +917,7 @@ impl Stmt {
                         |name| ClassData::get_method_data(data, name),
                         data.map(|data| data.mutability.is_mutable())
                             .unwrap_or(false),
+                        cls_mainthreadonly,
                         true,
                         &get_class_implied_features(&cls_entity, context),
                         context,
@@ -841,6 +946,7 @@ impl Stmt {
                             data.map(|data| data.mutability.is_mutable())
                                 .or(subclass_data.map(|data| data.mutability.is_mutable()))
                                 .unwrap_or(false),
+                            cls_mainthreadonly,
                             true,
                             &get_class_implied_features(&cls_entity, context),
                             context,
@@ -905,6 +1011,7 @@ impl Stmt {
                         entity,
                         |name| ClassData::get_method_data(data, name),
                         false,
+                        cls_mainthreadonly,
                         false,
                         &get_class_implied_features(&cls_entity, context),
                         context,
@@ -962,6 +1069,13 @@ impl Stmt {
 
                 verify_objc_decl(entity, context);
                 let protocols = parse_direct_protocols(entity, context);
+                let protocols: BTreeSet<_> = protocols
+                    .into_iter()
+                    .map(|protocol| {
+                        ItemIdentifier::new(&protocol, context)
+                            .map_name(|name| context.replace_protocol_name(name))
+                    })
+                    .collect();
                 let (methods, designated_initializers) = parse_methods(
                     entity,
                     |name| {
@@ -970,12 +1084,11 @@ impl Stmt {
                             .unwrap_or_default()
                     },
                     false,
+                    mainthreadonly,
                     false,
                     &[],
                     context,
                 );
-
-                let (sendable, mut mainthreadonly) = parse_attributes(entity, context);
 
                 if !designated_initializers.is_empty() {
                     warn!(
@@ -984,50 +1097,13 @@ impl Stmt {
                     )
                 }
 
-                // Set the protocol as main thread only if all methods are
-                // main thread only.
-                //
-                // This is done to make the UI nicer when the user tries to
-                // implement such traits.
-                //
-                // Note: This is a deviation from the headers, but I don't
-                // see a way for this to be unsound? As an example, let's say
-                // there is some Objective-C code that assumes it can create
-                // an object which is not `MainThreadOnly`, and then sets it
-                // as the application delegate.
-                //
-                // Rust code that later retrieves the delegate would assume
-                // that the object is `MainThreadOnly`, and could use this
-                // information to create `MainThreadMarker`; but they can
-                // _already_ do that, since the only way to retrieve the
-                // delegate in the first place would be through
-                // `NSApplication`!
-                if !methods.is_empty() && methods.iter().all(|method| method.mainthreadonly) {
-                    mainthreadonly = true;
-                }
-
-                // Overwrite with config preference
-                if let Some(data) = data
-                    .map(|data| data.requires_mainthreadonly)
-                    .unwrap_or_default()
-                {
-                    if mainthreadonly == data {
-                        warn!(
-                            mainthreadonly,
-                            data,
-                            "set requires-mainthreadonly to the same value that it already has"
-                        );
-                    }
-                    mainthreadonly = data;
-                }
-
                 vec![Self::ProtocolDecl {
                     id,
                     actual_name,
                     availability,
                     protocols,
                     methods,
-                    required_sendable: sendable.unwrap_or(false),
+                    required_sendable: sendable,
                     required_mainthreadonly: mainthreadonly,
                 }]
             }
