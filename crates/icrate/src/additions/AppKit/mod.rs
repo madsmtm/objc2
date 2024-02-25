@@ -7,6 +7,14 @@
 //! You should aspire to do all your UI initialization work in there!
 //!
 //!
+//! ## NSWindow
+//!
+//! Be careful when creating `NSWindow` if it's not inside a window
+//! controller; in those cases you're _required_ to call
+//! `window.releasedWhenClosed(false)` to get correct memory management, which
+//! is also why the creation methods for `NSWindow` are `unsafe`.
+//!
+//!
 //! ## Examples
 //!
 //! Implementing `NSApplicationDelegate` for a custom class.
