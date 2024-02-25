@@ -1,5 +1,11 @@
 //! # Bindings to the `AppKit` framework
 //!
+//! Note that a lot of functionality in AppKit requires that the application
+//! has initialized properly, which is only done after the application
+//! delegate has received `applicationDidFinishLaunching`.
+//!
+//! You should aspire to do all your UI initialization work in there!
+//!
 //!
 //! ## Examples
 //!
