@@ -1492,33 +1492,6 @@ impl Stmt {
         }
     }
 
-    pub fn compare(&self, other: &Self) {
-        if self != other {
-            if let (
-                Self::ExternMethods {
-                    methods: self_methods,
-                    ..
-                },
-                Self::ExternMethods {
-                    methods: other_methods,
-                    ..
-                },
-            ) = (&self, &other)
-            {
-                super::compare_slice(
-                    self_methods,
-                    other_methods,
-                    |i, self_method, other_method| {
-                        let _span = debug_span!("method", i).entered();
-                        assert_eq!(self_method, other_method, "methods were not equal");
-                    },
-                );
-            }
-
-            panic!("statements were not equal:\n{self:#?}\n{other:#?}");
-        }
-    }
-
     pub(crate) fn features(&self) -> Features {
         let mut features = Features::new();
         match self {

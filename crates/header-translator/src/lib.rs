@@ -3,7 +3,6 @@
 #[macro_use]
 extern crate tracing;
 
-use std::collections::BTreeMap;
 use std::fmt;
 use std::path::Path;
 use std::process::{Command, Stdio};
@@ -37,35 +36,6 @@ pub use self::id::ItemIdentifier;
 pub use self::library::Library;
 pub use self::output::Output;
 pub use self::stmt::{Mutability, Stmt};
-
-pub fn compare_btree<T>(
-    data1: &BTreeMap<String, T>,
-    data2: &BTreeMap<String, T>,
-    f: impl Fn(&str, &T, &T),
-) {
-    for (key1, item1) in data1 {
-        let item2 = data2
-            .get(key1)
-            .unwrap_or_else(|| panic!("did not find key {key1} in data2"));
-        f(key1, item1, item2);
-    }
-    assert_eq!(data1.len(), data2.len(), "too few items in first map");
-}
-
-pub fn compare_slice<T: core::fmt::Debug>(data1: &[T], data2: &[T], f: impl Fn(usize, &T, &T)) {
-    let mut iter2 = data1.iter();
-    for (i, item1) in data2.iter().enumerate() {
-        if let Some(item2) = iter2.next() {
-            f(i, item1, item2);
-        } else {
-            panic!("no more statements in second vec at index {i}");
-        }
-    }
-    let remaining: Vec<_> = iter2.collect();
-    if !remaining.is_empty() {
-        panic!("remaining statements in second vec: {remaining:#?}");
-    }
-}
 
 pub fn run_cargo_fmt(package: &str) {
     let status = Command::new("cargo")

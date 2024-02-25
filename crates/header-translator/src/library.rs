@@ -37,13 +37,6 @@ impl Library {
 
         Ok(())
     }
-
-    pub fn compare(&self, other: &Self) {
-        super::compare_btree(&self.files, &other.files, |name, self_file, other_file| {
-            let _span = debug_span!("file", name).entered();
-            self_file.compare(other_file);
-        });
-    }
 }
 
 impl fmt::Display for Library {

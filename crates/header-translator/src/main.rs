@@ -118,10 +118,7 @@ fn main() -> Result<(), BoxError> {
             let curr_result = parse_sdk(&index, &sdk, llvm_target, &config);
 
             if let Some(prev_result) = &result {
-                let _span = info_span!("comparing results").entered();
-                prev_result.compare(&curr_result);
-
-                // Extra check in case our comparison above was not exaustive
+                // Ensure that each target produces the same result.
                 assert_eq!(*prev_result, curr_result);
             } else {
                 result = Some(curr_result);

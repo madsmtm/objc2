@@ -24,17 +24,6 @@ impl Output {
         Self { libraries }
     }
 
-    pub fn compare(&self, other: &Self) {
-        super::compare_btree(
-            &self.libraries,
-            &other.libraries,
-            |libary_name, self_library, other_library| {
-                let _span = debug_span!("library", libary_name).entered();
-                self_library.compare(other_library);
-            },
-        );
-    }
-
     pub fn output_module(&self, path: &Path) -> fmt::Result {
         let mut f = String::new();
 

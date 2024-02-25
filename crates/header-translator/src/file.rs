@@ -27,13 +27,6 @@ impl File {
     pub fn add_stmt(&mut self, stmt: Stmt) {
         self.stmts.push(stmt);
     }
-
-    pub fn compare(&self, other: &Self) {
-        super::compare_slice(&self.stmts, &other.stmts, |i, self_stmt, other_stmt| {
-            let _span = debug_span!("stmt", i).entered();
-            self_stmt.compare(other_stmt);
-        });
-    }
 }
 
 impl fmt::Display for File {
