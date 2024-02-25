@@ -2,12 +2,12 @@ data! {
     // SAFETY: `new` or `initWithObjects:` may choose to deduplicate arrays,
     // and returning mutable references to those would be unsound - hence
     // `NSArray` cannot be mutable.
-    class NSArray: ImmutableWithMutableSubclass<Foundation::NSMutableArray> {
+    class NSArray: ImmutableWithMutableSubclass<Foundation::NSArray::NSMutableArray> {
         unsafe -init;
         unsafe -count;
     }
 
-    class NSMutableArray: MutableWithImmutableSuperclass<Foundation::NSArray> {
+    class NSMutableArray: MutableWithImmutableSuperclass<Foundation::NSArray::NSArray> {
         unsafe -init;
         unsafe -removeAllObjects;
     }
@@ -34,7 +34,7 @@ data! {
     }
     class NSDirectoryEnumerator: Mutable {}
 
-    class NSString: ImmutableWithMutableSubclass<Foundation::NSMutableString> {
+    class NSString: ImmutableWithMutableSubclass<Foundation::NSString::NSMutableString> {
         unsafe -init;
         unsafe -compare:;
         unsafe -hasPrefix:;
@@ -51,7 +51,7 @@ data! {
         unsafe +stringWithString:;
     }
 
-    class NSMutableString: MutableWithImmutableSuperclass<Foundation::NSString> {
+    class NSMutableString: MutableWithImmutableSuperclass<Foundation::NSString::NSString> {
         unsafe -init;
         unsafe -initWithCapacity:;
         unsafe +stringWithCapacity:;
@@ -67,7 +67,7 @@ data! {
     class NSSimpleCString: Immutable {}
     class NSConstantString: Immutable {}
 
-    class NSAttributedString: ImmutableWithMutableSubclass<Foundation::NSMutableAttributedString> {
+    class NSAttributedString: ImmutableWithMutableSubclass<Foundation::NSAttributedString::NSMutableAttributedString> {
         unsafe -init;
         unsafe -initWithString:;
         unsafe -initWithAttributedString:;
@@ -75,7 +75,7 @@ data! {
         unsafe -length;
     }
 
-    class NSMutableAttributedString: MutableWithImmutableSuperclass<Foundation::NSAttributedString> {
+    class NSMutableAttributedString: MutableWithImmutableSuperclass<Foundation::NSAttributedString::NSAttributedString> {
         unsafe -init;
         unsafe -initWithString:;
         unsafe -initWithAttributedString:;
@@ -87,7 +87,7 @@ data! {
         unsafe -infoDictionary;
     }
 
-    class NSData: ImmutableWithMutableSubclass<Foundation::NSMutableData> {
+    class NSData: ImmutableWithMutableSubclass<Foundation::NSData::NSMutableData> {
         unsafe -init;
         unsafe -initWithData:;
         unsafe +dataWithData:;
@@ -95,7 +95,7 @@ data! {
         unsafe -bytes;
     }
 
-    class NSMutableData: MutableWithImmutableSuperclass<Foundation::NSData> {
+    class NSMutableData: MutableWithImmutableSuperclass<Foundation::NSData::NSData> {
         unsafe -init;
         unsafe +dataWithData:;
         unsafe -initWithCapacity:;
@@ -109,12 +109,12 @@ data! {
     // wrong type).
     class NSPurgeableData: Mutable {}
 
-    class NSDictionary: ImmutableWithMutableSubclass<Foundation::NSMutableDictionary> {
+    class NSDictionary: ImmutableWithMutableSubclass<Foundation::NSDictionary::NSMutableDictionary> {
         unsafe -init;
         unsafe -count;
     }
 
-    class NSMutableDictionary: MutableWithImmutableSuperclass<Foundation::NSDictionary> {
+    class NSMutableDictionary: MutableWithImmutableSuperclass<Foundation::NSDictionary::NSDictionary> {
         unsafe -init;
         unsafe -removeObjectForKey:;
         unsafe -removeAllObjects;
@@ -167,24 +167,24 @@ data! {
         unsafe -operatingSystemVersion;
     }
 
-    class NSSet: ImmutableWithMutableSubclass<Foundation::NSMutableSet> {
+    class NSSet: ImmutableWithMutableSubclass<Foundation::NSSet::NSMutableSet> {
         unsafe -init;
         unsafe -count;
     }
 
-    class NSMutableSet: MutableWithImmutableSuperclass<Foundation::NSSet> {
+    class NSMutableSet: MutableWithImmutableSuperclass<Foundation::NSSet::NSSet> {
         unsafe -init;
         unsafe -removeAllObjects;
     }
 
-    class NSCharacterSet: ImmutableWithMutableSubclass<Foundation::NSMutableCharacterSet> {}
-    class NSMutableCharacterSet: MutableWithImmutableSuperclass<Foundation::NSCharacterSet> {}
+    class NSCharacterSet: ImmutableWithMutableSubclass<Foundation::NSCharacterSet::NSMutableCharacterSet> {}
+    class NSMutableCharacterSet: MutableWithImmutableSuperclass<Foundation::NSCharacterSet::NSCharacterSet> {}
 
-    class NSOrderedSet: ImmutableWithMutableSubclass<Foundation::NSMutableOrderedSet> {}
-    class NSMutableOrderedSet: MutableWithImmutableSuperclass<Foundation::NSOrderedSet> {}
+    class NSOrderedSet: ImmutableWithMutableSubclass<Foundation::NSOrderedSet::NSMutableOrderedSet> {}
+    class NSMutableOrderedSet: MutableWithImmutableSuperclass<Foundation::NSOrderedSet::NSOrderedSet> {}
 
-    class NSIndexSet: ImmutableWithMutableSubclass<Foundation::NSMutableIndexSet> {}
-    class NSMutableIndexSet: MutableWithImmutableSuperclass<Foundation::NSIndexSet> {}
+    class NSIndexSet: ImmutableWithMutableSubclass<Foundation::NSIndexSet::NSMutableIndexSet> {}
+    class NSMutableIndexSet: MutableWithImmutableSuperclass<Foundation::NSIndexSet::NSIndexSet> {}
 
     class NSNumber: Immutable {
         unsafe -initWithChar:;
@@ -239,8 +239,8 @@ data! {
 
     class NSDecimalNumber: Immutable {}
 
-    class NSURLRequest: ImmutableWithMutableSubclass<Foundation::NSMutableURLRequest> {}
-    class NSMutableURLRequest: MutableWithImmutableSuperclass<Foundation::NSURLRequest> {}
+    class NSURLRequest: ImmutableWithMutableSubclass<Foundation::NSURLRequest::NSMutableURLRequest> {}
+    class NSMutableURLRequest: MutableWithImmutableSuperclass<Foundation::NSURLRequest::NSURLRequest> {}
 
     class NSIndexPath: Immutable {}
 }

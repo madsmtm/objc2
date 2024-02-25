@@ -60,11 +60,11 @@ impl<N: Ord> Ord for ItemIdentifier<N> {
 }
 
 impl<N: ToOptionString> ItemIdentifier<N> {
-    pub fn from_raw(name: N, library: String) -> Self {
+    pub fn from_raw(name: N, library: String, file_name: String) -> Self {
         Self {
             name,
             library,
-            file_name: None,
+            file_name: Some(file_name),
         }
     }
 
@@ -73,7 +73,7 @@ impl<N: ToOptionString> ItemIdentifier<N> {
             .get_library_and_file_name(entity)
             .unwrap_or_else(|| {
                 warn!(?entity, "ItemIdentifier from unknown header");
-                ("Unknown".to_string(), None)
+                ("__Unknown__".to_string(), None)
             });
 
         // TODO: Get rid of this hack

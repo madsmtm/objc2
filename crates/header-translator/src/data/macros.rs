@@ -47,19 +47,21 @@ macro_rules! data {
 
 macro_rules! __set_mutability {
     ($data:expr;) => {};
-    ($data:expr; ImmutableWithMutableSubclass<$framework:ident::$subclass:ident>) => {
+    ($data:expr; ImmutableWithMutableSubclass<$framework:ident::$file_name:ident::$subclass:ident>) => {
         $data.mutability = $crate::stmt::Mutability::ImmutableWithMutableSubclass(
             $crate::ItemIdentifier::from_raw(
                 stringify!($subclass).to_string(),
                 stringify!($framework).to_string(),
+                stringify!($file_name).to_string(),
             ),
         );
     };
-    ($data:expr; MutableWithImmutableSuperclass<$framework:ident::$superclass:ident>) => {
+    ($data:expr; MutableWithImmutableSuperclass<$framework:ident::$file_name:ident::$superclass:ident>) => {
         $data.mutability = $crate::stmt::Mutability::MutableWithImmutableSuperclass(
             $crate::ItemIdentifier::from_raw(
                 stringify!($superclass).to_string(),
                 stringify!($framework).to_string(),
+                stringify!($file_name).to_string(),
             ),
         );
     };
@@ -83,7 +85,7 @@ macro_rules! __data_inner {
     (
         @($config:expr)
 
-        class $class:ident $(: $mutability:ident $(<$framework:ident::$ty:ident>)?)? {
+        class $class:ident $(: $mutability:ident $(<$framework:ident::$file_name:ident::$ty:ident>)?)? {
             $($methods:tt)*
         }
 
@@ -94,7 +96,7 @@ macro_rules! __data_inner {
 
         __set_mutability! {
             data;
-            $($mutability $(<$framework::$ty>)?)?
+            $($mutability $(<$framework::$file_name::$ty>)?)?
         }
 
         __data_methods! {
