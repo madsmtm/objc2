@@ -94,9 +94,14 @@ impl UnexposedAttr {
             "GK_EXTERN_WEAK" => None,
             // Availability attributes - their data is already exposed.
             "__IOS_AVAILABLE"
+            | "__IOS_DEPRECATED"
+            | "__OSX_AVAILABLE"
             | "__OSX_AVAILABLE_STARTING"
+            | "__OSX_DEPRECATED"
             | "__TVOS_AVAILABLE"
+            | "__TVOS_DEPRECATED"
             | "__WATCHOS_AVAILABLE"
+            | "__WATCHOS_DEPRECATED"
             | "API_AVAILABLE_BEGIN"
             | "API_AVAILABLE"
             | "API_DEPRECATED"
