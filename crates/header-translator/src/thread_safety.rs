@@ -86,11 +86,6 @@ impl ThreadSafetyAttr {
                     return Some(Self::MainThreadOnly);
                 }
             }
-            EntityKind::ObjCCategoryDecl => {
-                if let Some(attr) = attr {
-                    error!(?attr, "thread safety attribute on category");
-                }
-            }
             EntityKind::ObjCProtocolDecl => {
                 let data = context
                     .protocol_data
@@ -172,7 +167,6 @@ impl ThreadSafetyAttr {
                 // Classes default to not being sendable
                 Self::NotSendable
             }
-            EntityKind::ObjCCategoryDecl => Self::NotSendable,
             EntityKind::ObjCProtocolDecl => {
                 // If the protocol wasn't declared main thread itself, try
                 // to search inherited / super protocols instead.

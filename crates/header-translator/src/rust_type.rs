@@ -1,12 +1,13 @@
 use std::fmt;
 use std::str::FromStr;
 
-use clang::{CallingConvention, EntityKind, Nullability, Type, TypeKind};
+use clang::{CallingConvention, Entity, EntityKind, Nullability, Type, TypeKind};
 use proc_macro2::{TokenStream, TokenTree};
 
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
-use crate::id::{ItemIdentifier, ItemRef};
+use crate::id::ItemIdentifier;
+use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -289,6 +290,22 @@ impl fmt::Display for Primitive {
             Self::ObjcBool => write!(f, "Bool"),
             Self::NSInteger => write!(f, "NSInteger"),
             Self::NSUInteger => write!(f, "NSUInteger"),
+        }
+    }
+}
+
+/// A reference to a class or a protocol declaration.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct ItemRef {
+    id: ItemIdentifier,
+    thread_safety: ThreadSafety,
+}
+
+impl ItemRef {
+    fn new(entity: &Entity<'_>, context: &Context<'_>) -> Self {
+        Self {
+            id: ItemIdentifier::new(entity, context),
+            thread_safety: ThreadSafety::from_decl(entity, context),
         }
     }
 }
