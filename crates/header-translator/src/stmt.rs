@@ -11,7 +11,6 @@ use crate::availability::Availability;
 use crate::config::{ClassData, MethodData};
 use crate::context::Context;
 use crate::expr::Expr;
-use crate::feature::Feature;
 use crate::feature::Features;
 use crate::id::ItemIdentifier;
 use crate::immediate_children;
@@ -415,6 +414,7 @@ pub enum Stmt {
         actual_name: Option<String>,
         availability: Availability,
         cls: ItemIdentifier,
+        cls_features: Features,
         methods: Vec<Method>,
     },
     /// @protocol name <protocols*>
@@ -774,12 +774,13 @@ impl Stmt {
                     protocol,
                 });
 
-                let implied_features = Features::implied_by_decl(&cls_entity, context);
-
                 // For ease-of-use, if the category is defined in the same
                 // library as the class, we just emit it as `extern_methods!`.
                 if cls.library == category.library {
                     // extern_methods!
+
+                    // Use implied features from class.
+                    let implied_features = Features::implied_by_decl(&cls_entity, context);
 
                     let (methods, designated_initializers) = parse_methods(
                         entity,
@@ -882,7 +883,8 @@ impl Stmt {
                         false,
                         &cls_thread_safety,
                         false,
-                        &implied_features,
+                        // The category itself is not cfg-guarded
+                        &Features::new(),
                         context,
                     );
 
@@ -912,6 +914,7 @@ impl Stmt {
                             actual_name: category.name.clone(),
                             availability: availability.clone(),
                             cls: cls.clone(),
+                            cls_features: Features::required_by_decl(&cls_entity, context),
                             methods,
                         })
                     }
@@ -1403,9 +1406,8 @@ impl Stmt {
             Self::ExternMethods { cls, .. } => {
                 features.add_item(cls);
             }
-            Self::ExternCategory { cls, .. } => {
-                // TODO: Intentionally don't require `cls`
-                features.add_item(cls);
+            Self::ExternCategory { .. } => {
+                // Intentionally doesn't require anything
             }
             Self::ProtocolDecl { .. } => {}
             Self::ProtocolImpl { cls, .. } => {
@@ -1695,6 +1697,7 @@ impl fmt::Display for Stmt {
                 actual_name,
                 availability,
                 cls,
+                cls_features,
                 methods,
             } => {
                 writeln!(f, "extern_category!(")?;
@@ -1710,7 +1713,6 @@ impl fmt::Display for Stmt {
                     writeln!(f, "    /// Category on [`{}`].", cls.name)?;
                 }
 
-                // TODO: Emit categories without features
                 write!(f, "    {}", self.required_features().cfg_gate_ln())?;
                 write!(f, "    {availability}")?;
                 writeln!(f, "    pub unsafe trait {} {{", id.name)?;
@@ -1721,8 +1723,7 @@ impl fmt::Display for Stmt {
 
                 writeln!(f)?;
 
-                // TODO: Merge this with `self.features()` somehow?
-                write!(f, "    {}", Feature::new(cls).cfg_gate_ln())?;
+                write!(f, "    {}", cls_features.cfg_gate_ln())?;
                 writeln!(
                     f,
                     "    unsafe impl {} for {} {{}}",

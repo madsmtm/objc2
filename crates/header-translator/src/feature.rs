@@ -13,26 +13,6 @@ impl<'a> Feature<'a> {
         Self(item)
     }
 
-    pub fn cfg_gate_ln(&self) -> impl fmt::Display + '_ {
-        struct Inner<'a>(&'a ItemIdentifier);
-
-        impl fmt::Display for Inner<'_> {
-            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                if self.0.is_system() {
-                    Ok(())
-                } else {
-                    writeln!(
-                        f,
-                        "#[cfg(feature = \"{}_{}\")]",
-                        self.0.library, self.0.name
-                    )
-                }
-            }
-        }
-
-        Inner(self.0)
-    }
-
     pub fn name(&self) -> Option<String> {
         if self.0.is_system() {
             None
@@ -44,7 +24,7 @@ impl<'a> Feature<'a> {
 
 // Use a set to deduplicate features, and to have them in
 // a consistent order.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
 pub struct Features(BTreeSet<String>);
 
 impl Features {
