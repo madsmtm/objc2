@@ -92,6 +92,10 @@ impl ThreadSafetyAttr {
                 }
             }
             EntityKind::ObjCProtocolDecl => {
+                let data = context
+                    .protocol_data
+                    .get(&ItemIdentifier::new(entity, context).name);
+
                 // Set the protocol as main thread only if all methods are
                 // explicitly _marked_ (not inferred, since then we'd have to
                 // recurse into types) main thread only.
@@ -111,7 +115,11 @@ impl ThreadSafetyAttr {
                 // _already_ do that, since the only way to retrieve the
                 // delegate in the first place would be through
                 // `NSApplication`!
-                let entities = method_or_property_entities(entity, context);
+                let entities = method_or_property_entities(entity, |name| {
+                    data.and_then(|data| data.methods.get(name))
+                        .copied()
+                        .unwrap_or_default()
+                });
                 if !entities.is_empty()
                     && entities.iter().all(|method_or_property| {
                         MethodModifiers::parse(method_or_property, context).mainthreadonly
@@ -119,10 +127,6 @@ impl ThreadSafetyAttr {
                 {
                     attr = Some(Self::MainThreadOnly);
                 }
-
-                let data = context
-                    .protocol_data
-                    .get(&ItemIdentifier::new(entity, context).name);
 
                 // Overwrite with config preference
                 if let Some(data) = data

@@ -149,7 +149,7 @@ fn parse_class_generics(entity: &Entity<'_>, _context: &Context<'_>) -> Vec<Stri
 /// and `ObjCPropertyDecl`.
 pub(crate) fn method_or_property_entities<'tu>(
     entity: &Entity<'tu>,
-    _context: &Context<'_>,
+    get_data: impl Fn(&str) -> MethodData,
 ) -> Vec<Entity<'tu>> {
     let mut entities = Vec::new();
 
@@ -161,6 +161,10 @@ pub(crate) fn method_or_property_entities<'tu>(
         EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
             let is_class = entity.get_kind() == EntityKind::ObjCClassMethodDecl;
             let selector = entity.get_name().expect("method selector");
+
+            if get_data(&selector).skipped {
+                return;
+            }
 
             if !properties.remove(&(is_class, selector)) {
                 entities.push(entity);
@@ -174,11 +178,16 @@ pub(crate) fn method_or_property_entities<'tu>(
             // TODO: Use `get_overridden_methods` to deduplicate property
             // getters (when declared on both immutable and mutable class).
 
-            if !properties.insert((partial.is_class, partial.getter_sel.clone())) {
+            if !get_data(&partial.getter_sel).skipped
+                && !properties.insert((partial.is_class, partial.getter_sel.clone()))
+            {
                 error!(?partial, ?entity, "already exisiting getter property");
             }
-            if let Some(setter) = &partial.setter_sel {
-                if !properties.insert((partial.is_class, setter.clone())) {
+
+            if let Some(setter_sel) = &partial.setter_sel {
+                if !get_data(setter_sel).skipped
+                    && !properties.insert((partial.is_class, setter_sel.clone()))
+                {
                     error!(?partial, ?entity, "already exisiting setter property");
                 }
             }
@@ -209,7 +218,7 @@ fn parse_methods(
     let mut methods = Vec::new();
     let mut designated_initializers = Vec::new();
 
-    for entity in method_or_property_entities(entity, context) {
+    for entity in method_or_property_entities(entity, &get_data) {
         match entity.get_kind() {
             EntityKind::ObjCInstanceMethodDecl | EntityKind::ObjCClassMethodDecl => {
                 let selector = entity.get_name().expect("method selector");
