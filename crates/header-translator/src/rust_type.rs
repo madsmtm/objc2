@@ -6,7 +6,7 @@ use proc_macro2::{TokenStream, TokenTree};
 
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
-use crate::id::ItemIdentifier;
+use crate::id::{ItemIdentifier, ItemRef};
 use crate::unexposed_attr::UnexposedAttr;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -297,19 +297,19 @@ impl fmt::Display for Primitive {
 pub enum Ty {
     Primitive(Primitive),
     Class {
-        id: ItemIdentifier,
+        decl: ItemRef,
         generics: Vec<Self>,
-        protocols: Vec<ItemIdentifier>,
+        protocols: Vec<ItemRef>,
     },
     GenericParam {
         name: String,
     },
     AnyObject {
-        protocols: Vec<ItemIdentifier>,
+        protocols: Vec<ItemRef>,
     },
     AnyProtocol,
     AnyClass {
-        protocols: Vec<ItemIdentifier>,
+        protocols: Vec<ItemRef>,
     },
     Self_,
     Sel {
@@ -349,9 +349,11 @@ pub enum Ty {
     },
     Enum {
         id: ItemIdentifier,
+        // TODO: Variants?
     },
     Struct {
         id: ItemIdentifier,
+        // TODO: Fields
     },
     Fn {
         is_variadic: bool,
@@ -543,10 +545,10 @@ impl Ty {
                 if name == "Protocol" {
                     Self::AnyProtocol
                 } else {
-                    let id = ItemIdentifier::new(&declaration, context);
-                    assert_eq!(id.name, name);
+                    let decl = ItemRef::new(&declaration, context);
+                    assert_eq!(decl.id.name, name);
                     Self::Class {
-                        id,
+                        decl,
                         protocols: vec![],
                         generics: vec![],
                     }
@@ -571,8 +573,9 @@ impl Ty {
                         let definition = entity
                             .get_definition()
                             .expect("objc protocol declaration definition");
-                        ItemIdentifier::new(&definition, context)
-                            .map_name(|name| context.replace_protocol_name(name))
+                        let mut decl = ItemRef::new(&definition, context);
+                        decl.id.name = context.replace_protocol_name(decl.id.name);
+                        decl
                     })
                     .collect();
 
@@ -590,8 +593,8 @@ impl Ty {
                         let declaration = base_ty
                             .get_declaration()
                             .expect("ObjCObject -> ObjCInterface declaration");
-                        let id = ItemIdentifier::new(&declaration, context);
-                        assert_eq!(id.name, name);
+                        let decl = ItemRef::new(&declaration, context);
+                        assert_eq!(decl.id.name, name);
 
                         if !generics.is_empty() && !protocols.is_empty() {
                             panic!("got object with both protocols and generics: {name:?}, {protocols:?}, {generics:?}");
@@ -602,7 +605,7 @@ impl Ty {
                         }
 
                         Self::Class {
-                            id,
+                            decl,
                             generics,
                             protocols,
                         }
@@ -929,8 +932,8 @@ impl Ty {
         match self {
             Self::Primitive(_) => {}
             // Objective-C
-            Self::Class { id, generics, .. } => {
-                f(id);
+            Self::Class { decl, generics, .. } => {
+                f(&decl.id);
                 for generic in generics {
                     generic.visit_required_types(f);
                 }
@@ -975,35 +978,93 @@ impl Ty {
         }
     }
 
-    pub(crate) fn visit_toplevel_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
+    /// Whether this type requires MainThreadMarker to construct.
+    pub(crate) fn requires_mainthreadmarker(&self, self_requires: bool) -> bool {
         match self {
-            Self::Class { id, .. } => {
-                f(id);
+            Self::Primitive(_) => false,
+            Self::Class {
+                decl,
+                generics,
+                protocols,
+            } => {
+                decl.thread_safety.inferred_mainthreadonly()
+                    || generics
+                        .iter()
+                        .any(|generic| generic.requires_mainthreadmarker(self_requires))
+                    || protocols
+                        .iter()
+                        .any(|protocol| protocol.thread_safety.inferred_mainthreadonly())
             }
-            Self::AnyObject { protocols, .. } => {
-                if let [id] = &**protocols {
-                    f(id);
+            Self::GenericParam { .. } => false,
+            Self::AnyObject { protocols } => protocols
+                .iter()
+                .any(|protocol| protocol.thread_safety.inferred_mainthreadonly()),
+            Self::AnyProtocol => false,
+            Self::AnyClass { protocols } => protocols
+                .iter()
+                .any(|protocol| protocol.thread_safety.inferred_mainthreadonly()),
+            Self::Self_ => self_requires,
+            Self::Sel { .. } => false,
+            Self::Pointer { pointee, .. } => pointee.requires_mainthreadmarker(self_requires),
+            Self::IncompleteArray { pointee, .. } => {
+                pointee.requires_mainthreadmarker(self_requires)
+            }
+            Self::TypeDef { to, .. } => to.requires_mainthreadmarker(self_requires),
+            Self::Array { element_type, .. } => {
+                element_type.requires_mainthreadmarker(self_requires)
+            }
+            Self::Enum { .. } => false,
+            // TODO: Recurse fields
+            Self::Struct { .. } => false,
+            Self::Fn {
+                is_variadic: _,
+                no_escape: _,
+                arguments,
+                result_type,
+            }
+            | Self::Block {
+                sendable: _,
+                no_escape: _,
+                arguments,
+                result_type,
+            } => {
+                // We're overly cautious here, might be able to relax this if
+                // the block is sendable.
+                arguments
+                    .iter()
+                    .any(|arg| arg.requires_mainthreadmarker(self_requires))
+                    || result_type.requires_mainthreadmarker(self_requires)
+            }
+        }
+    }
+
+    /// Whether this type can provide a MainThreadMarker.
+    pub(crate) fn provides_mainthreadmarker(&self) -> bool {
+        // Important: We mostly visit the top-level types, to not include
+        // optional things like `Option<&NSView>` or `&NSArray<NSView>`.
+        match self {
+            Self::Class { decl, .. } => decl.thread_safety.inferred_mainthreadonly(),
+            Self::AnyObject { protocols } => {
+                match &**protocols {
+                    [] => false,
+                    [decl] => decl.thread_safety.inferred_mainthreadonly(),
+                    // TODO: Handle this better
+                    _ => false,
                 }
             }
             Self::Pointer {
-                // Only visit non-null types
+                // Only visit non-null pointers
                 nullability: Nullability::NonNull,
-                is_const: _,
-                lifetime: _,
                 pointee,
-            } => {
-                pointee.visit_toplevel_types(f);
-            }
+                ..
+            } => pointee.provides_mainthreadmarker(),
             Self::TypeDef {
-                id,
+                // Only visit non-null typedefs
                 nullability: Nullability::NonNull,
                 to,
                 ..
-            } => {
-                f(id);
-                to.visit_toplevel_types(f);
-            }
-            _ => {}
+            } => to.provides_mainthreadmarker(),
+            _ => false,
         }
     }
 
@@ -1127,11 +1188,11 @@ impl Ty {
     fn behind_pointer(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             Self::Class {
-                id,
+                decl,
                 generics,
                 protocols: _,
             } => {
-                write!(f, "{}", id.path())?;
+                write!(f, "{}", decl.id.path())?;
                 if !generics.is_empty() {
                     write!(f, "<")?;
                     for generic in generics {
@@ -1160,8 +1221,8 @@ impl Ty {
             Self::GenericParam { name } => write!(f, "{name}"),
             Self::AnyObject { protocols } => match &**protocols {
                 [] => write!(f, "AnyObject"),
-                [id] if id.is_nsobject() => write!(f, "NSObject"),
-                [id] => write!(f, "ProtocolObject<dyn {}>", id.path()),
+                [decl] if decl.id.is_nsobject() => write!(f, "NSObject"),
+                [decl] => write!(f, "ProtocolObject<dyn {}>", decl.id.path()),
                 // TODO: Handle this better
                 _ => write!(f, "TodoProtocols"),
             },
@@ -1640,12 +1701,12 @@ impl Ty {
             } = &**pointee
             {
                 if let Self::Class {
-                    id,
+                    decl,
                     generics,
                     protocols,
                 } = &**pointee
                 {
-                    if !id.is_nserror() {
+                    if !decl.id.is_nserror() {
                         return false;
                     }
                     assert_eq!(

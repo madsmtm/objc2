@@ -5,6 +5,7 @@ use core::hash;
 use clang::Entity;
 
 use crate::context::Context;
+use crate::thread_safety::ThreadSafety;
 
 pub trait ToOptionString {
     fn to_option(&self) -> Option<&str>;
@@ -191,5 +192,21 @@ impl ItemIdentifier {
 impl ItemIdentifier<Option<String>> {
     pub fn new_optional(entity: &Entity<'_>, context: &Context<'_>) -> Self {
         Self::with_name(entity.get_name(), entity, context)
+    }
+}
+
+/// A reference to an item declaration.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct ItemRef {
+    pub(crate) id: ItemIdentifier,
+    pub(crate) thread_safety: ThreadSafety,
+}
+
+impl ItemRef {
+    pub(crate) fn new(entity: &Entity<'_>, context: &Context<'_>) -> Self {
+        Self {
+            id: ItemIdentifier::new(entity, context),
+            thread_safety: ThreadSafety::from_decl(entity, context),
+        }
     }
 }

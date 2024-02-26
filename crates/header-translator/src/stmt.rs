@@ -15,9 +15,9 @@ use crate::feature::Feature;
 use crate::feature::Features;
 use crate::id::ItemIdentifier;
 use crate::immediate_children;
-use crate::method::MethodModifiers;
 use crate::method::{handle_reserved, Method};
 use crate::rust_type::Ty;
+use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
 
 #[derive(serde::Deserialize, Debug, Clone, PartialEq, Eq)]
@@ -143,136 +143,6 @@ fn parse_class_generics(entity: &Entity<'_>, _context: &Context<'_>) -> Vec<Stri
     generics
 }
 
-fn parse_attributes(entity: &Entity<'_>, context: &Context<'_>) -> (Option<bool>, bool) {
-    let mut sendable = None;
-    let mut mainthreadonly = false;
-
-    immediate_children(entity, |entity, _span| {
-        if let EntityKind::UnexposedAttr = entity.get_kind() {
-            if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                match attr {
-                    UnexposedAttr::Sendable => sendable = Some(true),
-                    UnexposedAttr::NonSendable => sendable = Some(false),
-                    UnexposedAttr::UIActor => {
-                        sendable = Some(false);
-                        mainthreadonly = true;
-                    }
-                    attr => error!(?attr, "unknown attribute"),
-                }
-            }
-        }
-    });
-
-    (sendable, mainthreadonly)
-}
-
-fn decl_sendable_mainthreadonly(entity: &Entity<'_>, context: &Context<'_>) -> (bool, bool) {
-    match entity.get_kind() {
-        EntityKind::ObjCInterfaceDecl => {
-            let (sendable, mut mainthreadonly) = parse_attributes(entity, context);
-
-            for (_, _, entity) in parse_superclasses(entity, context) {
-                // Ignore sendability on superclasses; since it's an
-                // auto trait, it's propagated to subclasses anyhow!
-                let (_sendable, superclass_mainthreadonly) = parse_attributes(&entity, context);
-
-                if superclass_mainthreadonly {
-                    mainthreadonly = true;
-                }
-            }
-
-            (sendable.unwrap_or(false), mainthreadonly)
-        }
-        EntityKind::ObjCCategoryDecl => {
-            let (sendable, mainthreadonly) = parse_attributes(entity, context);
-            if let Some(sendable) = sendable {
-                error!(?sendable, "sendable on category");
-            }
-            if mainthreadonly {
-                error!("@UIActor on category");
-            }
-            (sendable.unwrap_or(false), mainthreadonly)
-        }
-        EntityKind::ObjCProtocolDecl => {
-            let (sendable, mut mainthreadonly) = parse_attributes(entity, context);
-
-            let data = context
-                .protocol_data
-                .get(&ItemIdentifier::new(entity, context).name);
-
-            // Set the protocol as main thread only if all methods are
-            // explicitly _marked_ (not inferred, since then we'd have to
-            // recurse into types) main thread only.
-            //
-            // This is done to make the UI nicer when the user tries to
-            // implement such traits.
-            //
-            // Note: This is a deviation from the headers, but I don't
-            // see a way for this to be unsound? As an example, let's say
-            // there is some Objective-C code that assumes it can create
-            // an object which is not `MainThreadOnly`, and then sets it
-            // as the application delegate.
-            //
-            // Rust code that later retrieves the delegate would assume
-            // that the object is `MainThreadOnly`, and could use this
-            // information to create `MainThreadMarker`; but they can
-            // _already_ do that, since the only way to retrieve the
-            // delegate in the first place would be through
-            // `NSApplication`!
-            let entities = method_or_property_entities(entity, context);
-            if !entities.is_empty()
-                && entities.iter().all(|method_or_property| {
-                    MethodModifiers::parse(method_or_property, context).mainthreadonly
-                })
-            {
-                mainthreadonly = true;
-            }
-
-            // Overwrite with config preference
-            if let Some(data) = data
-                .map(|data| data.requires_mainthreadonly)
-                .unwrap_or_default()
-            {
-                if mainthreadonly == data {
-                    warn!(
-                        mainthreadonly,
-                        data, "set requires-mainthreadonly to the same value that it already has"
-                    );
-                }
-                mainthreadonly = data;
-            }
-
-            (sendable.unwrap_or(false), mainthreadonly)
-        }
-        _ => (false, false),
-    }
-}
-
-/// Whether an instance of a declaration is able to provide a
-/// `MainThreadMarker`.
-#[allow(dead_code)]
-pub(crate) fn decl_provides_mainthreadonly(entity: &Entity<'_>, context: &Context<'_>) -> bool {
-    let (_, mainthreadonly) = decl_sendable_mainthreadonly(entity, context);
-
-    // If declared explicitly
-    if mainthreadonly {
-        return true;
-    }
-
-    // If the protocol wasn't declared main thread itself, try to search
-    // inherited / super protocols instead.
-    if EntityKind::ObjCProtocolDecl == entity.get_kind() {
-        for protocol in parse_direct_protocols(entity, context) {
-            // Recurse
-            if decl_provides_mainthreadonly(&protocol, context) {
-                return true;
-            }
-        }
-    }
-
-    false
-}
-
 /// Deduplicate methods that are autogenerated from properties.
 ///
 /// Guaranteed to only contain `ObjCInstanceMethodDecl`, `ObjCClassMethodDecl`
@@ -331,7 +201,7 @@ fn parse_methods(
     entity: &Entity<'_>,
     get_data: impl Fn(&str) -> MethodData,
     is_mutable: bool,
-    is_mainthreadonly: bool,
+    thread_safety: &ThreadSafety,
     is_pub: bool,
     implied_features: &[ItemIdentifier],
     context: &Context<'_>,
@@ -350,7 +220,7 @@ fn parse_methods(
                     entity,
                     data,
                     is_mutable,
-                    is_mainthreadonly,
+                    thread_safety.inferred_mainthreadonly(),
                     is_pub,
                     implied_features,
                     context,
@@ -378,7 +248,7 @@ fn parse_methods(
                     getter_data,
                     setter_data,
                     is_mutable,
-                    is_mainthreadonly,
+                    thread_safety.inferred_mainthreadonly(),
                     is_pub,
                     implied_features,
                     context,
@@ -711,8 +581,6 @@ impl Stmt {
         )
         .entered();
 
-        let (sendable, mainthreadonly) = decl_sendable_mainthreadonly(entity, context);
-
         match entity.get_kind() {
             // These are inconsequential for us, since we resolve imports differently
             EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef => vec![],
@@ -726,6 +594,7 @@ impl Stmt {
                 }
 
                 let availability = Availability::parse(entity, context);
+                let thread_safety = ThreadSafety::from_decl(entity, context);
 
                 let implied_features = get_class_implied_features(entity, context);
 
@@ -736,7 +605,7 @@ impl Stmt {
                     |name| ClassData::get_method_data(data, name),
                     data.map(|data| data.mutability.is_mutable())
                         .unwrap_or(false),
-                    mainthreadonly,
+                    &thread_safety,
                     true,
                     &implied_features,
                     context,
@@ -781,7 +650,7 @@ impl Stmt {
                             data.map(|data| data.mutability.is_mutable())
                                 .or(superclass_data.map(|data| data.mutability.is_mutable()))
                                 .unwrap_or(false),
-                            mainthreadonly,
+                            &thread_safety,
                             true,
                             // Even though the methods are originally defined
                             // elsewhere, we're going to be _emitting_ them on
@@ -825,13 +694,15 @@ impl Stmt {
                     superclasses,
                     designated_initializers,
                     derives: data.map(|data| data.derives.clone()).unwrap_or_default(),
-                    mutability: if mainthreadonly {
+                    mutability: if thread_safety.inferred_mainthreadonly() {
                         Mutability::MainThreadOnly
                     } else {
                         data.map(|data| data.mutability.clone()).unwrap_or_default()
                     },
                     skipped: data.map(|data| data.definition_skipped).unwrap_or_default(),
-                    sendable,
+                    // Ignore sendability on superclasses; since it's an auto
+                    // trait, it's propagated to subclasses anyhow!
+                    sendable: thread_safety.explicit_sendable(),
                 })
                 .chain(protocols.into_iter().map(|protocol| Self::ProtocolImpl {
                     cls: id.clone(),
@@ -864,7 +735,7 @@ impl Stmt {
                 });
                 let cls_entity = cls_entity.expect("could not find category class");
 
-                let (_, cls_mainthreadonly) = decl_sendable_mainthreadonly(&cls_entity, context);
+                let cls_thread_safety = ThreadSafety::from_decl(&cls_entity, context);
 
                 let cls = ItemIdentifier::new(&cls_entity, context);
                 let data = context.class_data.get(&cls.name);
@@ -917,7 +788,7 @@ impl Stmt {
                         |name| ClassData::get_method_data(data, name),
                         data.map(|data| data.mutability.is_mutable())
                             .unwrap_or(false),
-                        cls_mainthreadonly,
+                        &cls_thread_safety,
                         true,
                         &get_class_implied_features(&cls_entity, context),
                         context,
@@ -946,7 +817,7 @@ impl Stmt {
                             data.map(|data| data.mutability.is_mutable())
                                 .or(subclass_data.map(|data| data.mutability.is_mutable()))
                                 .unwrap_or(false),
-                            cls_mainthreadonly,
+                            &cls_thread_safety,
                             true,
                             &get_class_implied_features(&cls_entity, context),
                             context,
@@ -1011,7 +882,7 @@ impl Stmt {
                         entity,
                         |name| ClassData::get_method_data(data, name),
                         false,
-                        cls_mainthreadonly,
+                        &cls_thread_safety,
                         false,
                         &get_class_implied_features(&cls_entity, context),
                         context,
@@ -1066,6 +937,7 @@ impl Stmt {
                 }
 
                 let availability = Availability::parse(entity, context);
+                let thread_safety = ThreadSafety::from_decl(entity, context);
 
                 verify_objc_decl(entity, context);
                 let protocols = parse_direct_protocols(entity, context);
@@ -1084,7 +956,7 @@ impl Stmt {
                             .unwrap_or_default()
                     },
                     false,
-                    mainthreadonly,
+                    &thread_safety,
                     false,
                     &[],
                     context,
@@ -1103,8 +975,8 @@ impl Stmt {
                     availability,
                     protocols,
                     methods,
-                    required_sendable: sendable,
-                    required_mainthreadonly: mainthreadonly,
+                    required_sendable: thread_safety.explicit_sendable(),
+                    required_mainthreadonly: thread_safety.explicit_mainthreadonly(),
                 }]
             }
             EntityKind::TypedefDecl => {

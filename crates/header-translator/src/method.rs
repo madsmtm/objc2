@@ -249,15 +249,15 @@ pub struct Method {
     pub is_class: bool,
     is_optional: bool,
     memory_management: MemoryManagement,
-    pub(crate) arguments: Vec<(String, Ty)>,
-    pub result_type: Ty,
+    arguments: Vec<(String, Ty)>,
+    result_type: Ty,
     is_error: bool,
     safe: bool,
     mutating: bool,
     is_pub: bool,
     // Thread-safe, even on main-thread only (@MainActor/@UIActor) classes
     non_isolated: bool,
-    pub(crate) mainthreadonly: bool,
+    mainthreadonly: bool,
 }
 
 #[derive(Debug)]
@@ -268,6 +268,51 @@ pub struct PartialProperty<'tu> {
     pub setter_sel: Option<String>,
     pub is_class: bool,
     pub attributes: Option<ObjCAttributes>,
+}
+
+fn mainthreadonly_override<'a>(
+    result_type: &Ty,
+    argument_types: impl IntoIterator<Item = &'a Ty>,
+    parent_is_mainthreadonly: bool,
+    is_class: bool,
+    mainthreadonly_modifier: bool,
+) -> bool {
+    let mut result_type_requires_mainthreadmarker =
+        result_type.requires_mainthreadmarker(parent_is_mainthreadonly);
+
+    let mut any_argument_provides_mainthreadmarker = argument_types
+        .into_iter()
+        .any(|arg_ty| arg_ty.provides_mainthreadmarker());
+
+    if parent_is_mainthreadonly {
+        if is_class {
+            // Assume the method needs main thread if it's
+            // declared on a main thread only class.
+            result_type_requires_mainthreadmarker = true;
+        } else {
+            // Method takes `&self` or `&mut self`, or is
+            // an initialization method, all of which
+            // already require the main thread.
+            //
+            // Note: Initialization methods can be passed
+            // `None`, but in that case the return will
+            // always be NULL.
+            any_argument_provides_mainthreadmarker = true;
+        }
+    }
+
+    if any_argument_provides_mainthreadmarker {
+        // MainThreadMarker can be retrieved from
+        // `MainThreadMarker::from` inside these methods,
+        // and hence passing it is redundant.
+        false
+    } else if result_type_requires_mainthreadmarker {
+        true
+    } else {
+        // If neither, then we respect any annotation
+        // the method may have had before
+        mainthreadonly_modifier
+    }
 }
 
 impl Method {
@@ -310,7 +355,7 @@ impl Method {
         entity: Entity<'_>,
         data: MethodData,
         parent_is_mutable: bool,
-        _parent_is_mainthreadonly: bool,
+        parent_is_mainthreadonly: bool,
         is_pub: bool,
         implied_features: impl IntoIterator<Item = &'a ItemIdentifier>,
         context: &Context<'_>,
@@ -450,6 +495,14 @@ impl Method {
 
         let fn_name = selector.trim_end_matches(|c| c == ':').replace(':', "_");
 
+        let mainthreadonly = mainthreadonly_override(
+            &result_type,
+            arguments.iter().map(|(_, ty)| ty),
+            parent_is_mainthreadonly,
+            is_class,
+            modifiers.mainthreadonly,
+        );
+
         Some((
             modifiers.designated_initializer,
             Method {
@@ -470,7 +523,7 @@ impl Method {
                 mutating: data.mutating.unwrap_or(parent_is_mutable),
                 is_pub,
                 non_isolated: modifiers.non_isolated,
-                mainthreadonly: modifiers.mainthreadonly,
+                mainthreadonly,
             },
         ))
     }
@@ -481,7 +534,7 @@ impl Method {
         getter_data: MethodData,
         setter_data: Option<MethodData>,
         parent_is_mutable: bool,
-        _parent_is_mainthreadonly: bool,
+        parent_is_mainthreadonly: bool,
         is_pub: bool,
         implied_features: impl IntoIterator<Item = &'a ItemIdentifier> + Clone,
         context: &Context<'_>,
@@ -529,6 +582,14 @@ impl Method {
 
             let memory_management = MemoryManagement::new(is_class, &getter_sel, &ty, modifiers);
 
+            let mainthreadonly = mainthreadonly_override(
+                &ty,
+                &[],
+                parent_is_mainthreadonly,
+                is_class,
+                modifiers.mainthreadonly,
+            );
+
             Some(Method {
                 selector: getter_sel.clone(),
                 fn_name: getter_sel,
@@ -546,7 +607,7 @@ impl Method {
                 mutating: getter_data.mutating.unwrap_or(false),
                 is_pub,
                 non_isolated: modifiers.non_isolated,
-                mainthreadonly: modifiers.mainthreadonly,
+                mainthreadonly,
             })
         } else {
             None
@@ -555,6 +616,7 @@ impl Method {
         let setter = if let Some(selector) = setter_sel {
             let setter_data = setter_data.expect("setter_data must be present if setter_sel was");
             if !setter_data.skipped {
+                let result_type = Ty::VOID_RESULT;
                 let ty = Ty::parse_property(
                     entity.get_type().expect("property type"),
                     is_copy,
@@ -570,7 +632,15 @@ impl Method {
 
                 let fn_name = selector.strip_suffix(':').unwrap().to_string();
                 let memory_management =
-                    MemoryManagement::new(is_class, &selector, &Ty::VOID_RESULT, modifiers);
+                    MemoryManagement::new(is_class, &selector, &result_type, modifiers);
+
+                let mainthreadonly = mainthreadonly_override(
+                    &result_type,
+                    std::iter::once(&ty),
+                    parent_is_mainthreadonly,
+                    is_class,
+                    modifiers.mainthreadonly,
+                );
 
                 Some(Method {
                     selector,
@@ -581,14 +651,14 @@ impl Method {
                     is_optional: entity.is_objc_optional(),
                     memory_management,
                     arguments: vec![(name, ty)],
-                    result_type: Ty::VOID_RESULT,
+                    result_type,
                     is_error: false,
                     safe: !setter_data.unsafe_,
                     // Setters are usually mutable if the class itself is.
                     mutating: setter_data.mutating.unwrap_or(parent_is_mutable),
                     is_pub,
                     non_isolated: modifiers.non_isolated,
-                    mainthreadonly: modifiers.mainthreadonly,
+                    mainthreadonly,
                 })
             } else {
                 None

@@ -11,7 +11,7 @@ use tracing_subscriber::registry::Registry;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 
-use header_translator::{run_cargo_fmt, Cache, Config, Context, File, Output, Stmt};
+use header_translator::{global_analysis, run_cargo_fmt, Config, Context, File, Output, Stmt};
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
 
@@ -132,8 +132,7 @@ fn main() -> Result<(), BoxError> {
 
     let mut final_result = final_result.expect("got a result");
     let span = info_span!("analyzing").entered();
-    let cache = Cache::new(&final_result, &config);
-    cache.update(&mut final_result);
+    global_analysis(&mut final_result);
     drop(span);
 
     let generated_dir = crate_src.join("generated");
