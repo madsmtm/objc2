@@ -366,11 +366,14 @@ pub enum Ty {
     },
     Enum {
         id: ItemIdentifier,
-        // TODO: Variants?
+        ty: Box<Self>,
+        // No need to store variants here, they don't matter for what the type
+        // itself can do.
     },
     Struct {
         id: ItemIdentifier,
-        // TODO: Fields
+        /// FIXME: This does not work for recursive structs.
+        fields: Vec<Ty>,
     },
     Fn {
         is_variadic: bool,
@@ -488,6 +491,18 @@ impl Ty {
                     .to_string();
                 Self::Struct {
                     id: ItemIdentifier::with_name(name, &declaration, context),
+                    fields: ty
+                        .get_fields()
+                        .expect("struct fields")
+                        .into_iter()
+                        .map(|field| {
+                            Self::parse(
+                                field.get_type().expect("struct field type"),
+                                Lifetime::Unspecified,
+                                context,
+                            )
+                        })
+                        .collect(),
                 }
             }
             TypeKind::Enum => {
@@ -498,6 +513,13 @@ impl Ty {
                     .to_string();
                 Self::Enum {
                     id: ItemIdentifier::with_name(name, &declaration, context),
+                    ty: Box::new(Ty::parse(
+                        declaration
+                            .get_enum_underlying_type()
+                            .expect("enum underlying type"),
+                        Lifetime::Unspecified,
+                        context,
+                    )),
                 }
             }
             TypeKind::ObjCId => {
@@ -1030,9 +1052,10 @@ impl Ty {
             Self::Array { element_type, .. } => {
                 element_type.requires_mainthreadmarker(self_requires)
             }
-            Self::Enum { .. } => false,
-            // TODO: Recurse fields
-            Self::Struct { .. } => false,
+            Self::Enum { ty, .. } => ty.requires_mainthreadmarker(self_requires),
+            Self::Struct { fields, .. } => fields
+                .iter()
+                .any(|field| field.requires_mainthreadmarker(self_requires)),
             Self::Fn {
                 is_variadic: _,
                 no_escape: _,
@@ -1056,7 +1079,7 @@ impl Ty {
     }
 
     /// Whether this type can provide a MainThreadMarker.
-    pub(crate) fn provides_mainthreadmarker(&self) -> bool {
+    pub(crate) fn provides_mainthreadmarker(&self, self_provides: bool) -> bool {
         // Important: We mostly visit the top-level types, to not include
         // optional things like `Option<&NSView>` or `&NSArray<NSView>`.
         match self {
@@ -1069,18 +1092,23 @@ impl Ty {
                     _ => false,
                 }
             }
+            Self::Self_ => self_provides,
             Self::Pointer {
                 // Only visit non-null pointers
                 nullability: Nullability::NonNull,
                 pointee,
                 ..
-            } => pointee.provides_mainthreadmarker(),
+            } => pointee.provides_mainthreadmarker(self_provides),
             Self::TypeDef {
                 // Only visit non-null typedefs
                 nullability: Nullability::NonNull,
                 to,
                 ..
-            } => to.provides_mainthreadmarker(),
+            } => to.provides_mainthreadmarker(self_provides),
+            Self::Enum { ty, .. } => ty.provides_mainthreadmarker(self_provides),
+            Self::Struct { fields, .. } => fields
+                .iter()
+                .any(|field| field.provides_mainthreadmarker(self_provides)),
             _ => false,
         }
     }
@@ -1191,7 +1219,10 @@ impl Ty {
                     "ArrayUnknownABI<[{}; {num_elements}]>",
                     element_type.plain()
                 ),
-                Self::Enum { id } | Self::Struct { id } => {
+                Self::Struct { id, .. } => {
+                    write!(f, "{}", id.path())
+                }
+                Self::Enum { id, .. } => {
                     write!(f, "{}", id.path())
                 }
                 _ => {
@@ -1623,7 +1654,7 @@ impl Ty {
             // No need to output a typedef if it'll just point to the same thing.
             //
             // TODO: We're discarding a slight bit of availability data this way.
-            Self::Struct { id } if id.name == typedef_name => None,
+            Self::Struct { id, .. } if id.name == typedef_name => None,
             // Opaque structs
             Self::Pointer { pointee, .. } if matches!(&**pointee, Self::Struct { .. }) => {
                 **pointee = Self::Primitive(Primitive::Void);

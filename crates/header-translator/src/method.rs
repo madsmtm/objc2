@@ -282,7 +282,7 @@ fn mainthreadonly_override<'a>(
 
     let mut any_argument_provides_mainthreadmarker = argument_types
         .into_iter()
-        .any(|arg_ty| arg_ty.provides_mainthreadmarker());
+        .any(|arg_ty| arg_ty.provides_mainthreadmarker(parent_is_mainthreadonly));
 
     if parent_is_mainthreadonly {
         if is_class {
