@@ -4,6 +4,7 @@ use std::fmt;
 use clang::token::TokenKind;
 use clang::{Entity, EntityKind, EntityVisitResult, EvaluationResult};
 
+use crate::feature::Features;
 use crate::rust_type::Ty;
 use crate::stmt::{enum_constant_name, new_enum_id};
 use crate::{Context, ItemIdentifier};
@@ -27,8 +28,9 @@ pub enum Expr {
     Enum {
         id: ItemIdentifier,
         variant: String,
+        // TODO: Type
     },
-    Const(ItemIdentifier),
+    Const(ItemIdentifier), // TODO: Type
     Var {
         id: ItemIdentifier,
         ty: Ty,
@@ -185,6 +187,44 @@ impl Expr {
             },
             _ => panic!("unknown DeclRefExpr {definition:#?} in {entity:#?}"),
         }
+    }
+
+    pub(crate) fn required_features(&self) -> Features {
+        let mut features = Features::new();
+
+        match self {
+            Self::Signed(_) => {}
+            Self::Unsigned(_) => {}
+            Self::Float(_) => {}
+            Self::MacroInvocation { evaluated, .. } => {
+                if evaluated.is_none() {
+                    // features.add_item(&id);
+                }
+            }
+            Self::Enum { .. } => {
+                // features.add_item(&id);
+            }
+            Self::Const(_) => {
+                // features.add_item(&id);
+            }
+            Self::Var { ty, .. } => {
+                // features.add_item(&id);
+                features.merge(ty.required_features(&Features::new()));
+            }
+            Self::Tokens(tokens) => {
+                for token in tokens {
+                    match token {
+                        Token::Punctuation(_) => {}
+                        Token::Literal(_) => {}
+                        Token::Expr(expr) => {
+                            features.merge(expr.required_features());
+                        }
+                    }
+                }
+            }
+        }
+
+        features
     }
 }
 

@@ -6,6 +6,7 @@ use proc_macro2::{TokenStream, TokenTree};
 
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
+use crate::feature::Features;
 use crate::id::ItemIdentifier;
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
@@ -299,6 +300,7 @@ impl fmt::Display for Primitive {
 pub struct ItemRef {
     id: ItemIdentifier,
     thread_safety: ThreadSafety,
+    required_features: Features,
 }
 
 impl ItemRef {
@@ -306,6 +308,7 @@ impl ItemRef {
         Self {
             id: ItemIdentifier::new(entity, context),
             thread_safety: ThreadSafety::from_decl(entity, context),
+            required_features: Features::required_by_decl(entity, context),
         }
     }
 }
@@ -967,33 +970,53 @@ impl Ty {
         }
     }
 
-    pub(crate) fn visit_required_types(&self, f: &mut impl FnMut(&ItemIdentifier)) {
+    pub(crate) fn required_features(&self, self_features: &Features) -> Features {
         match self {
-            Self::Primitive(_) => {}
-            // Objective-C
-            Self::Class { decl, generics, .. } => {
-                f(&decl.id);
+            Self::Primitive(_) => Features::new(),
+            Self::Class {
+                decl,
+                generics,
+                protocols,
+            } => {
+                let mut features = decl.required_features.clone();
                 for generic in generics {
-                    generic.visit_required_types(f);
+                    features.merge(generic.required_features(self_features));
                 }
+                for protocol in protocols {
+                    features.merge(protocol.required_features.clone());
+                }
+                features
             }
-            Self::AnyClass { .. } | Self::Sel { .. } => {
-                // f("objc2");
+            Self::GenericParam { .. } => Features::new(),
+            Self::AnyObject { protocols } => {
+                let mut features = Features::new();
+                for protocol in protocols {
+                    features.merge(protocol.required_features.clone());
+                }
+                features
             }
-            // Others
-            Self::Pointer { pointee, .. } | Self::IncompleteArray { pointee, .. } => {
-                pointee.visit_required_types(f);
+            Self::AnyProtocol => Features::new(),
+            Self::AnyClass { protocols } => {
+                let mut features = Features::new();
+                for protocol in protocols {
+                    features.merge(protocol.required_features.clone());
+                }
+                features
             }
-            Self::TypeDef { .. } => {
-                // TODO
+            Self::Self_ => self_features.clone(),
+            Self::Sel { .. } => Features::new(),
+            Self::Pointer { pointee, .. } => pointee.required_features(self_features),
+            Self::IncompleteArray { pointee, .. } => pointee.required_features(self_features),
+            Self::TypeDef { to, .. } => to.required_features(self_features),
+            Self::Array { element_type, .. } => element_type.required_features(self_features),
+            Self::Enum { ty, .. } => ty.required_features(self_features),
+            Self::Struct { fields, .. } => {
+                let mut features = Features::new();
+                for field in fields {
+                    features.merge(field.required_features(self_features));
+                }
+                features
             }
-            Self::Array { element_type, .. } => {
-                element_type.visit_required_types(f);
-            }
-            // TODO
-            // Enum { id } | Struct { id } => {
-            //
-            // }
             Self::Fn {
                 is_variadic: _,
                 no_escape: _,
@@ -1006,14 +1029,13 @@ impl Ty {
                 arguments,
                 result_type,
             } => {
-                // TODO if block
-                // f("block2");
+                let mut features = Features::new();
                 for arg in arguments {
-                    arg.visit_required_types(f);
+                    features.merge(arg.required_features(self_features));
                 }
-                result_type.visit_required_types(f);
+                features.merge(result_type.required_features(self_features));
+                features
             }
-            _ => {}
         }
     }
 

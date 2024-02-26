@@ -28,27 +28,11 @@ tvos = "9.0"
 [library.AppKit]
 imports = ["CoreData", "Foundation"]
 cfg-apple-link = true
-extra-features = [
-    # Temporary, since some structs and statics use these
-    "AppKit_NSApplication",
-    "AppKit_NSCollectionLayoutSection",
-    "AppKit_NSCollectionLayoutGroupCustomItem",
-    "AppKit_NSCollectionView",
-    "AppKit_NSView",
-    "AppKit_NSTableView",
-    "AppKit_NSTableColumn",
-    "AppKit_NSTableRowView",
-    "Foundation_NSIndexPath",
-    "Foundation_NSArray",
-    "Foundation_NSCoder",
-]
 macos = "10.0"
 maccatalyst = "13.0"
 
 [library.AuthenticationServices]
 imports = ["AppKit", "Foundation"]
-# Temporary, since some structs and statics use these
-extra-features = ["Foundation_NSURL"]
 macos = "10.15"
 maccatalyst = "13.0"
 ios = "12.0"
@@ -99,7 +83,6 @@ ios = "11.4"
 
 [library.CloudKit]
 imports = ["CoreLocation", "Foundation"]
-extra-features = ["CloudKit_CKShare"]
 macos = "10.10"
 maccatalyst = "13.0"
 ios = "8.0"
@@ -116,8 +99,6 @@ watchos = "2.0"
 [library.CoreData]
 imports = ["Foundation"]
 cfg-apple-link = true
-# Temporary, since some structs and statics use these
-extra-features = ["CoreData_NSAsynchronousFetchResult"]
 macos = "10.4"
 maccatalyst = "13.0"
 ios = "3.0"
@@ -126,7 +107,6 @@ watchos = "2.0"
 
 [library.CoreLocation]
 imports = ["Contacts", "Foundation"]
-extra-features = ["CoreLocation_CLPlacemark"]
 # macos = "10.6"
 macos = "10.11"      # Temporarily raised since `CoreLocation` imports `Contacts`
 maccatalyst = "13.0"
@@ -156,7 +136,6 @@ watchos = "9.0"
 
 [library.EventKit]
 imports = ["AppKit", "CoreLocation", "Foundation", "MapKit"]
-extra-features = ["EventKit_EKEvent"]
 macos = "10.8"
 maccatalyst = "13.0"
 ios = "4.0"
@@ -199,12 +178,6 @@ cfg-apple-link = true
 extra-features = [
     "objc2",
     "block2",
-    # Temporary, since some structs and statics use these
-    "Foundation_NSError",
-    "Foundation_NSAppleEventDescriptor",
-    "Foundation_NSHashTable",
-    "Foundation_NSMapTable",
-    "Foundation_NSProgress",
     # Some fmt::Debug impls require these
     "Foundation_NSString",
     "Foundation_NSDictionary",
@@ -218,19 +191,6 @@ watchos = "2.0"
 
 [library.GameController]
 imports = ["AppKit", "Foundation"]
-extra-features = [
-    "GameController_GCControllerAxisInput",
-    "GameController_GCControllerButtonInput",
-    "GameController_GCControllerDirectionPad",
-    "GameController_GCControllerTouchpad",
-    "GameController_GCExtendedGamepad",
-    "GameController_GCControllerElement",
-    "GameController_GCGamepad",
-    "GameController_GCKeyboardInput",
-    "GameController_GCMicroGamepad",
-    "GameController_GCMotion",
-    "GameController_GCMouseInput",
-]
 macos = "10.9"
 maccatalyst = "13.0"
 ios = "7.0"
@@ -238,7 +198,6 @@ tvos = "9.0"
 
 [library.GameKit]
 imports = ["AppKit", "Foundation"]
-extra-features = ["AppKit_NSViewController"]
 macos = "10.8"
 maccatalyst = "13.0"
 ios = "3.0"
@@ -272,7 +231,6 @@ watchos = "9.0"
 
 [library.LocalAuthenticationEmbeddedUI]
 imports = ["AppKit", "Foundation", "LocalAuthentication"]
-extra-features = ["AppKit_NSWindow"]
 macos = "12.0"
 maccatalyst = "16.0"
 ios = "16.0"
@@ -290,12 +248,6 @@ macos = "12.0"
 
 [library.MapKit]
 imports = ["AppKit", "Contacts", "CoreLocation", "Foundation"]
-extra-features = [
-    "MapKit_MKDirectionsResponse",
-    "MapKit_MKETAResponse",
-    "MapKit_MKLocalSearchResponse",
-    "MapKit_MKMapSnapshot",
-]
 macos = "10.9"
 maccatalyst = "13.0"
 ios = "3.0"
@@ -325,11 +277,6 @@ ios = "16.0"
 
 [library.MetalKit]
 imports = ["AppKit", "Foundation", "Metal"]
-# Temporary, since some structs and statics use these
-extra-features = [
-    "Metal_MTLRenderPipelineReflection",
-    "Metal_MTLComputePipelineReflection",
-]
 macos = "10.11"
 maccatalyst = "13.0"
 ios = "9.0"
@@ -392,7 +339,6 @@ watchos = "6.2"
 
 [library.UniformTypeIdentifiers]
 imports = ["Foundation"]
-extra-features = ["UniformTypeIdentifiers_UTType"]
 macos = "11.0"
 maccatalyst = "14.0"
 ios = "14.0"
@@ -409,7 +355,6 @@ watchos = "3.0"
 
 [library.WebKit]
 imports = ["AppKit", "Foundation"]
-extra-features = ["Foundation_NSAttributedString"]
 macos = "10.2"
 maccatalyst = "13.0"
 ios = "16.0"

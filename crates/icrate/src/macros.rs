@@ -1,12 +1,17 @@
 #![allow(unused_macros)]
 
 macro_rules! impl_encode {
-    ($name:ident = $encoding:expr;) => {
+    (
+        $(#[$m:meta])*
+        $name:ident = $encoding:expr;
+    ) => {
+        $(#[$m])*
         #[cfg(feature = "objc2")]
         unsafe impl objc2::Encode for $name {
             const ENCODING: objc2::Encoding = $encoding;
         }
 
+        $(#[$m])*
         #[cfg(feature = "objc2")]
         unsafe impl objc2::RefEncode for $name {
             const ENCODING_REF: objc2::Encoding =
@@ -30,6 +35,7 @@ macro_rules! extern_struct {
             $($field_v $field: $ty,)*
         }
 
+        $(#[$m])*
         impl_encode! {
             $name = objc2::Encoding::Struct(
                 $encoding_name,
@@ -50,6 +56,7 @@ macro_rules! extern_struct {
             $($field_v $field: $ty,)*
         }
 
+        $(#[$m])*
         impl_encode! {
             $name = objc2::Encoding::Struct(
                 stringify!($name),

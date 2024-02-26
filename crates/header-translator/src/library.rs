@@ -7,6 +7,11 @@ use std::path::Path;
 use crate::config::LibraryData;
 use crate::file::File;
 
+/// Some SDK files have '+' in the file name, so we change those to `_`.
+pub(crate) fn clean_file_name(name: &str) -> String {
+    name.replace('+', "_")
+}
+
 #[derive(Debug, PartialEq, Default)]
 pub struct Library {
     pub files: BTreeMap<String, File>,
@@ -25,8 +30,7 @@ impl Library {
 
     pub fn output(&self, path: &Path) -> io::Result<()> {
         for (name, file) in &self.files {
-            // NOTE: some SDK files have '+' in the file name
-            let name = name.replace('+', "_");
+            let name = clean_file_name(name);
             let mut path = path.join(name);
             path.set_extension("rs");
             fs::write(&path, file.to_string())?;
@@ -96,8 +100,7 @@ impl fmt::Display for Library {
         writeln!(f)?;
 
         for name in self.files.keys() {
-            // NOTE: some SDK files have '+' in the file name
-            let name = name.replace('+', "_");
+            let name = clean_file_name(name);
             writeln!(f, "#[path = \"{name}.rs\"]")?;
             writeln!(f, "mod __{name};")?;
         }
@@ -105,21 +108,26 @@ impl fmt::Display for Library {
         writeln!(f)?;
 
         for (file_name, file) in &self.files {
-            // NOTE: some SDK files have '+' in the file name
-            let file_name = file_name.replace('+', "_");
             for stmt in &file.stmts {
-                let features = stmt.features();
+                let features = stmt.required_features();
 
-                if let Some(name) = stmt.name() {
+                if let Some(item) = stmt.provided_item() {
+                    assert_eq!(item.file_name.as_ref(), Some(file_name));
+
                     write!(f, "{}", features.cfg_gate_ln())?;
 
-                    let visibility = if name.starts_with('_') {
+                    let visibility = if item.name.starts_with('_') {
                         "pub(crate)"
                     } else {
                         "pub"
                     };
 
-                    write!(f, "{visibility} use self::__{file_name}::{{{name}}};")?;
+                    write!(
+                        f,
+                        "{visibility} use self::__{}::{{{}}};",
+                        clean_file_name(file_name),
+                        item.name,
+                    )?;
                 }
             }
         }

@@ -351,13 +351,13 @@ impl Method {
         }
     }
 
-    pub(crate) fn parse_method<'a>(
+    pub(crate) fn parse_method(
         entity: Entity<'_>,
         data: MethodData,
         parent_is_mutable: bool,
         parent_is_mainthreadonly: bool,
         is_pub: bool,
-        implied_features: impl IntoIterator<Item = &'a ItemIdentifier>,
+        implied_features: &Features,
         context: &Context<'_>,
     ) -> Option<(bool, Method)> {
         let selector = entity.get_name().expect("method selector");
@@ -483,15 +483,13 @@ impl Method {
 
         let mut features = Features::new();
         for (_, arg_ty) in &arguments {
-            arg_ty.visit_required_types(&mut |item| features.add_item(item));
+            features.merge(arg_ty.required_features(implied_features));
         }
-        result_type.visit_required_types(&mut |item| features.add_item(item));
+        features.merge(result_type.required_features(implied_features));
         if is_error {
             features.add_item(&ItemIdentifier::nserror());
         }
-        for ignored in implied_features {
-            features.remove_item(ignored);
-        }
+        features.remove(implied_features);
 
         let fn_name = selector.trim_end_matches(|c| c == ':').replace(':', "_");
 
@@ -529,14 +527,14 @@ impl Method {
     }
 
     #[allow(clippy::too_many_arguments)]
-    pub(crate) fn parse_property<'a>(
+    pub(crate) fn parse_property(
         property: PartialProperty<'_>,
         getter_data: MethodData,
         setter_data: Option<MethodData>,
         parent_is_mutable: bool,
         parent_is_mainthreadonly: bool,
         is_pub: bool,
-        implied_features: impl IntoIterator<Item = &'a ItemIdentifier> + Clone,
+        implied_features: &Features,
         context: &Context<'_>,
     ) -> (Option<Method>, Option<Method>) {
         let PartialProperty {
@@ -575,10 +573,8 @@ impl Method {
             );
 
             let mut features = Features::new();
-            ty.visit_required_types(&mut |item| features.add_item(item));
-            for ignored in implied_features.clone() {
-                features.remove_item(ignored);
-            }
+            features.merge(ty.required_features(implied_features));
+            features.remove(implied_features);
 
             let memory_management = MemoryManagement::new(is_class, &getter_sel, &ty, modifiers);
 
@@ -625,10 +621,8 @@ impl Method {
                 );
 
                 let mut features = Features::new();
-                ty.visit_required_types(&mut |item| features.add_item(item));
-                for ignored in implied_features {
-                    features.remove_item(ignored);
-                }
+                features.merge(ty.required_features(implied_features));
+                features.remove(implied_features);
 
                 let fn_name = selector.strip_suffix(':').unwrap().to_string();
                 let memory_management =

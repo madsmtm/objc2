@@ -247,17 +247,6 @@ AdSupport_all = [
 AppKit = [
     "CoreData",
     "Foundation",
-    "AppKit_NSApplication",
-    "AppKit_NSCollectionLayoutSection",
-    "AppKit_NSCollectionLayoutGroupCustomItem",
-    "AppKit_NSCollectionView",
-    "AppKit_NSView",
-    "AppKit_NSTableView",
-    "AppKit_NSTableColumn",
-    "AppKit_NSTableRowView",
-    "Foundation_NSIndexPath",
-    "Foundation_NSArray",
-    "Foundation_NSCoder",
 ]
 AppKit_NSATSTypesetter = [
     "AppKit_NSTypesetter",
@@ -1141,7 +1130,6 @@ AppKit_all = [
 AuthenticationServices = [
     "AppKit",
     "Foundation",
-    "Foundation_NSURL",
 ]
 AuthenticationServices_ASAccountAuthenticationModificationController = []
 AuthenticationServices_ASAccountAuthenticationModificationExtensionContext = [
@@ -1518,7 +1506,6 @@ ClassKit_all = [
 CloudKit = [
     "CoreLocation",
     "Foundation",
-    "CloudKit_CKShare",
 ]
 CloudKit_CKAcceptSharesOperation = [
     "CloudKit_CKOperation",
@@ -1895,7 +1882,6 @@ Contacts_all = [
 ]
 CoreData = [
     "Foundation",
-    "CoreData_NSAsynchronousFetchResult",
 ]
 CoreData_NSAsynchronousFetchRequest = [
     "CoreData_NSPersistentStoreRequest",
@@ -2081,7 +2067,6 @@ CoreData_all = [
 CoreLocation = [
     "Contacts",
     "Foundation",
-    "CoreLocation_CLPlacemark",
 ]
 CoreLocation_CLBackgroundActivitySession = []
 CoreLocation_CLBeacon = []
@@ -2223,7 +2208,6 @@ EventKit = [
     "CoreLocation",
     "Foundation",
     "MapKit",
-    "EventKit_EKEvent",
 ]
 EventKit_EKAlarm = [
     "EventKit_EKObject",
@@ -2358,11 +2342,6 @@ FileProvider_all = [
 Foundation = [
     "objc2",
     "block2",
-    "Foundation_NSError",
-    "Foundation_NSAppleEventDescriptor",
-    "Foundation_NSHashTable",
-    "Foundation_NSMapTable",
-    "Foundation_NSProgress",
     "Foundation_NSString",
     "Foundation_NSDictionary",
     "Foundation_NSEnumerator",
@@ -3139,17 +3118,6 @@ Foundation_all = [
 GameController = [
     "AppKit",
     "Foundation",
-    "GameController_GCControllerAxisInput",
-    "GameController_GCControllerButtonInput",
-    "GameController_GCControllerDirectionPad",
-    "GameController_GCControllerTouchpad",
-    "GameController_GCExtendedGamepad",
-    "GameController_GCControllerElement",
-    "GameController_GCGamepad",
-    "GameController_GCKeyboardInput",
-    "GameController_GCMicroGamepad",
-    "GameController_GCMotion",
-    "GameController_GCMouseInput",
 ]
 GameController_GCColor = []
 GameController_GCController = []
@@ -3273,7 +3241,6 @@ GameController_all = [
 GameKit = [
     "AppKit",
     "Foundation",
-    "AppKit_NSViewController",
 ]
 GameKit_GKAccessPoint = []
 GameKit_GKAchievement = []
@@ -3757,7 +3724,6 @@ LocalAuthenticationEmbeddedUI = [
     "AppKit",
     "Foundation",
     "LocalAuthentication",
-    "AppKit_NSWindow",
 ]
 LocalAuthenticationEmbeddedUI_LAAuthenticationView = [
     "AppKit_NSView",
@@ -3835,10 +3801,6 @@ MapKit = [
     "Contacts",
     "CoreLocation",
     "Foundation",
-    "MapKit_MKDirectionsResponse",
-    "MapKit_MKETAResponse",
-    "MapKit_MKLocalSearchResponse",
-    "MapKit_MKMapSnapshot",
 ]
 MapKit_MKAnnotationView = [
     "AppKit_NSView",
@@ -4198,8 +4160,6 @@ MetalKit = [
     "AppKit",
     "Foundation",
     "Metal",
-    "Metal_MTLRenderPipelineReflection",
-    "Metal_MTLComputePipelineReflection",
 ]
 MetalKit_MTKMesh = []
 MetalKit_MTKMeshBuffer = []
@@ -4938,7 +4898,6 @@ StoreKit_all = [
 ]
 UniformTypeIdentifiers = [
     "Foundation",
-    "UniformTypeIdentifiers_UTType",
 ]
 UniformTypeIdentifiers_UTType = []
 UniformTypeIdentifiers_all = [
@@ -5009,7 +4968,6 @@ UserNotifications_all = [
 WebKit = [
     "AppKit",
     "Foundation",
-    "Foundation_NSAttributedString",
 ]
 WebKit_DOMAbstractView = [
     "WebKit_DOMObject",

@@ -1,7 +1,9 @@
 use std::collections::BTreeSet;
 use std::fmt;
 
-use crate::ItemIdentifier;
+use clang::{Entity, EntityKind};
+
+use crate::{stmt::parse_superclasses, Context, ItemIdentifier};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Feature<'a>(&'a ItemIdentifier);
@@ -62,6 +64,16 @@ impl Features {
         }
     }
 
+    pub fn merge(&mut self, features: Features) {
+        self.0.extend(features.0);
+    }
+
+    pub fn remove(&mut self, features: &Features) {
+        for name in &features.0 {
+            self.0.remove(name);
+        }
+    }
+
     pub fn cfg_gate_ln(&self) -> impl fmt::Display + '_ {
         struct Inner<'a>(&'a BTreeSet<String>);
 
@@ -93,5 +105,34 @@ impl Features {
         }
 
         Inner(&self.0)
+    }
+
+    /// Get the features required for a given declaration to be enabled.
+    pub(crate) fn required_by_decl(entity: &Entity<'_>, context: &Context<'_>) -> Self {
+        match entity.get_kind() {
+            EntityKind::ObjCInterfaceDecl => {
+                let mut features = Self::new();
+                features.add_item(&ItemIdentifier::new(entity, context));
+                features
+            }
+            EntityKind::ObjCProtocolDecl => Self::new(),
+            _ => panic!("invalid required_by_decl kind {entity:?}"),
+        }
+    }
+
+    /// Get the features implied enabled by having a given declaration.
+    pub(crate) fn implied_by_decl(entity: &Entity<'_>, context: &Context<'_>) -> Self {
+        let mut features = Self::required_by_decl(entity, context);
+        match entity.get_kind() {
+            EntityKind::ObjCInterfaceDecl => {
+                // The feature is enabled if superclass' features are.
+                for (id, _, _) in parse_superclasses(entity, context) {
+                    features.add_item(&id);
+                }
+                features
+            }
+            EntityKind::ObjCProtocolDecl => features,
+            _ => panic!("invalid implied_by_decl kind {entity:?}"),
+        }
     }
 }
