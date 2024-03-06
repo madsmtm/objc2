@@ -1309,10 +1309,6 @@ impl AnyObject {
         // SAFETY: Upheld by caller
         unsafe { ivar.load_mut::<T>(self) }
     }
-
-    // objc_setAssociatedObject
-    // objc_getAssociatedObject
-    // objc_removeAssociatedObjects
 }
 
 impl fmt::Debug for AnyObject {
