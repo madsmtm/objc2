@@ -45,7 +45,7 @@ env:
     --package=objc2-encode
     --package=objc2-proc-macros
   # The current nightly Rust version. Keep this synced with `rust-toolchain.toml`
-  CURRENT_NIGHTLY: nightly-2024-01-15
+  CURRENT_NIGHTLY: nightly-2024-03-13
   # Various features that we'd usually want to test with
   #
   # Note: The `exception` feature is not enabled here, since it requires
@@ -158,8 +158,7 @@ jobs:
       run: cargo doc --no-deps --document-private-items ${{ matrix.args }}
 
     - name: cargo clippy
-      # Temporarily allow diverging_sub_expression until we figure out how to silence them in declare_class!
-      run: cargo clippy --all-targets ${{ matrix.args }} -- --allow=clippy::diverging_sub_expression
+      run: cargo clippy --all-targets ${{ matrix.args }}
 
   msrv:
     name: Check MSRV

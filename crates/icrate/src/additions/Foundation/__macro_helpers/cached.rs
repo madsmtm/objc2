@@ -13,6 +13,7 @@ pub struct CachedId<T> {
 
 impl<T> CachedId<T> {
     /// Constructs a new [`CachedId`].
+    #[allow(clippy::new_without_default)]
     pub const fn new() -> Self {
         Self {
             ptr: AtomicPtr::new(ptr::null_mut()),

@@ -1,9 +1,10 @@
-error[E0277]: the trait bound `&mut Id<NSArray<NSString>>: IntoIterator` is not satisfied
+error[E0277]: `&mut Id<NSArray<NSString>>` is not an iterator
  --> ui/array_iter_invalid.rs
   |
   |     for s in &mut arr {
-  |              ^^^^^^^^ the trait `IntoIterator` is not implemented for `&mut Id<NSArray<NSString>>`
+  |              ^^^^^^^^ `&mut Id<NSArray<NSString>>` is not an iterator
   |
+  = help: the trait `IntoIterator` is not implemented for `&mut Id<NSArray<NSString>>`
   = note: `IntoIterator` is implemented for `&Id<NSArray<NSString>>`, but not for `&mut Id<NSArray<NSString>>`
 help: consider removing the leading `&`-reference
   |
@@ -11,24 +12,26 @@ help: consider removing the leading `&`-reference
 6 +     for s in arr {
   |
 
-error[E0277]: the trait bound `&mut Id<NSArray<NSMutableString>>: IntoIterator` is not satisfied
+error[E0277]: `&mut Id<NSArray<NSMutableString>>` is not an iterator
  --> ui/array_iter_invalid.rs
   |
   |     for s in &mut arr {
-  |              ^^^^^^^^ the trait `IntoIterator` is not implemented for `&mut Id<NSArray<NSMutableString>>`
+  |              ^^^^^^^^ `&mut Id<NSArray<NSMutableString>>` is not an iterator
   |
+  = help: the trait `IntoIterator` is not implemented for `&mut Id<NSArray<NSMutableString>>`
   = help: the following other types implement trait `IntoIterator`:
             Id<T>
             &'a Id<T>
             &'a mut Id<T>
   = note: `IntoIterator` is implemented for `&Id<NSArray<NSMutableString>>`, but not for `&mut Id<NSArray<NSMutableString>>`
 
-error[E0277]: the trait bound `&mut Id<NSMutableArray<NSString>>: IntoIterator` is not satisfied
+error[E0277]: `&mut Id<NSMutableArray<NSString>>` is not an iterator
  --> ui/array_iter_invalid.rs
   |
   |     for s in &mut arr {
-  |              ^^^^^^^^ the trait `IntoIterator` is not implemented for `&mut Id<NSMutableArray<NSString>>`
+  |              ^^^^^^^^ `&mut Id<NSMutableArray<NSString>>` is not an iterator
   |
+  = help: the trait `IntoIterator` is not implemented for `&mut Id<NSMutableArray<NSString>>`
   = note: `IntoIterator` is implemented for `&Id<NSMutableArray<NSString>>`, but not for `&mut Id<NSMutableArray<NSString>>`
 help: consider removing the leading `&`-reference
   |
@@ -36,12 +39,13 @@ help: consider removing the leading `&`-reference
 16 +     for s in arr {
    |
 
-error[E0277]: the trait bound `Id<NSArray<NSMutableString>>: IntoIterator` is not satisfied
+error[E0277]: `Id<NSArray<NSMutableString>>` is not an iterator
  --> ui/array_iter_invalid.rs
   |
   |     for _ in arr {}
-  |              ^^^ the trait `IntoIterator` is not implemented for `Id<NSArray<NSMutableString>>`
+  |              ^^^ `Id<NSArray<NSMutableString>>` is not an iterator
   |
+  = help: the trait `IntoIterator` is not implemented for `Id<NSArray<NSMutableString>>`
   = help: the following other types implement trait `IntoIterator`:
             Id<T>
             &'a Id<T>

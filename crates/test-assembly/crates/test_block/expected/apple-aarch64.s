@@ -228,9 +228,11 @@ Lloh25:
 	.globl	_create_and_use_stack_block_drop
 	.p2align	2
 _create_and_use_stack_block_drop:
-	sub	sp, sp, #64
-	stp	x29, x30, [sp, #48]
-	add	x29, sp, #48
+	sub	sp, sp, #80
+	stp	x20, x19, [sp, #48]
+	stp	x29, x30, [sp, #64]
+	add	x29, sp, #64
+	mov	x19, x0
 Lloh26:
 	adrp	x8, __NSConcreteStackBlock@GOTPAGE
 Lloh27:
@@ -249,12 +251,13 @@ Lloh31:
 	str	x0, [sp, #40]
 	add	x0, sp, #8
 	bl	_needs_block
-	ldr	x0, [sp, #40]
+	mov	x0, x19
 	mov	w1, #4
 	mov	w2, #4
 	bl	___rust_dealloc
-	ldp	x29, x30, [sp, #48]
-	add	sp, sp, #64
+	ldp	x29, x30, [sp, #64]
+	ldp	x20, x19, [sp, #48]
+	add	sp, sp, #80
 	ret
 	.loh AdrpAdd	Lloh30, Lloh31
 	.loh AdrpAdd	Lloh28, Lloh29

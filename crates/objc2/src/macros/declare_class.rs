@@ -976,6 +976,7 @@ macro_rules! __declare_class_method_out_inner {
         ($($body_prefix:tt)*)
     } => {
         $($m_checked)*
+        #[allow(clippy::diverging_sub_expression)]
         $($qualifiers)* extern "C" fn $name(
             $($params_prefix)*
             $($params_converted)*
@@ -1008,6 +1009,7 @@ macro_rules! __declare_class_method_out_inner {
         ($($body_prefix:tt)*)
     } => {
         $($m_checked)*
+        #[allow(clippy::diverging_sub_expression)]
         $($qualifiers)* extern "C" fn $name(
             $($params_prefix)*
             $($params_converted)*

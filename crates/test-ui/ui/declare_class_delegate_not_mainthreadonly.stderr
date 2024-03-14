@@ -2,7 +2,7 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsMainThre
  --> ui/declare_class_delegate_not_mainthreadonly.rs
   |
   |     unsafe impl NSApplicationDelegate for CustomObject {
-  |                                           ^^^^^^^^^^^^ the trait `mutability::MutabilityIsMainThreadOnly` is not implemented for `InteriorMutable`
+  |                                           ^^^^^^^^^^^^ the trait `mutability::MutabilityIsMainThreadOnly` is not implemented for `InteriorMutable`, which is required by `CustomObject: IsMainThreadOnly`
   |
   = help: the trait `mutability::MutabilityIsMainThreadOnly` is implemented for `MainThreadOnly`
   = note: required for `CustomObject` to implement `IsMainThreadOnly`

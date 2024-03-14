@@ -5,9 +5,9 @@ use objc2::declare::ClassBuilder;
 use objc2::runtime::{NSObject, Sel};
 use objc2::sel;
 
-extern "C" fn my_bool_taking_method(obj: &NSObject, sel: Sel, arg: bool) {}
+extern "C" fn my_bool_taking_method(_obj: &NSObject, _sel: Sel, _arg: bool) {}
 
-extern "C" fn my_bool_returning_method(obj: &NSObject, sel: Sel) -> bool {
+extern "C" fn my_bool_returning_method(_obj: &NSObject, _sel: Sel) -> bool {
     true
 }
 

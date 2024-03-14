@@ -1328,8 +1328,6 @@ mod tests {
     use core::mem::size_of;
 
     use super::*;
-    use crate::declare::ClassBuilder;
-    use crate::runtime::MessageReceiver;
     use crate::test_utils;
     use crate::{class, msg_send, sel, ClassType};
 
@@ -1525,6 +1523,10 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(
+        feature = "malloc",
+        ignore = "The `malloc_buf` crate calls `from_raw_parts` unsoundly"
+    )]
     fn test_no_ivars() {
         let cls = ClassBuilder::new("NoIvarObject", NSObject::class())
             .unwrap()

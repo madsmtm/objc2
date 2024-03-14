@@ -2,7 +2,7 @@ error[E0277]: the trait bound `i32: Message` is not satisfied
  --> ui/nsarray_not_message.rs
   |
   |     let _: Id<NSArray<i32>> = NSArray::new();
-  |                               ^^^^^^^^^^^^ the trait `Message` is not implemented for `i32`
+  |                               ^^^^^^^^^^^^^^ the trait `Message` is not implemented for `i32`
   |
   = help: the following other types implement trait `Message`:
             Exception
@@ -28,24 +28,15 @@ note: required by a bound in `icrate::generated::Foundation::__NSArray::<impl NS
   | |_^ required by this bound in `icrate::generated::Foundation::__NSArray::<impl NSArray<ObjectType>>::new`
   = note: this error originates in the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Id<NSObject>: ClassType` is not satisfied
+error[E0277]: the trait bound `Id<NSObject>: IsRetainable` is not satisfied
  --> ui/nsarray_not_message.rs
   |
   |     let _: Id<NSArray<Id<NSObject>>> = NSArray::from_slice(&[&NSObject::new()]);
-  |                                        ------------------- ^^^^^^^^^^^^^^^^^^^ the trait `ClassType` is not implemented for `Id<NSObject>`
+  |                                        ------------------- ^^^^^^^^^^^^^^^^^^^ the trait `ClassType` is not implemented for `Id<NSObject>`, which is required by `Id<NSObject>: IsRetainable`
   |                                        |
   |                                        required by a bound introduced by this call
   |
-  = help: the following other types implement trait `ClassType`:
-            NSArray<ObjectType>
-            NSObject
-            __NSProxy
-            NSMutableArray<ObjectType>
-            NSDictionary<KeyType, ObjectType>
-            NSMutableDictionary<KeyType, ObjectType>
-            NSSet<ObjectType>
-            NSMutableSet<ObjectType>
-          and $N others
+  = help: the trait `IsRetainable` is implemented for `ProtocolObject<P>`
   = note: required for `Id<NSObject>` to implement `IsRetainable`
 note: required by a bound in `icrate::Foundation::array::<impl NSArray<T>>::from_slice`
  --> $WORKSPACE/crates/icrate/src/additions/Foundation/array.rs

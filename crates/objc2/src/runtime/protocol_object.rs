@@ -115,10 +115,10 @@ impl<P: ?Sized> ProtocolObject<P> {
 
     /// Get a type-erased object from a type implementing a protocol.
     #[inline]
-    pub fn from_id<T: Message>(obj: Id<T>) -> Id<Self>
+    pub fn from_id<T>(obj: Id<T>) -> Id<Self>
     where
         P: ImplementedBy<T> + 'static,
-        T: 'static,
+        T: Message + 'static,
     {
         // SAFETY:
         // - The type can be represented as the casted-to type.
@@ -193,6 +193,7 @@ where
 
 #[cfg(test)]
 #[allow(clippy::missing_safety_doc)]
+#[allow(dead_code)]
 mod tests {
     use alloc::format;
     use core::mem::ManuallyDrop;
@@ -201,7 +202,7 @@ mod tests {
 
     use super::*;
     use crate::mutability::Mutable;
-    use crate::runtime::{NSObject, NSObjectProtocol};
+    use crate::runtime::NSObject;
     use crate::{
         declare_class, extern_methods, extern_protocol, ClassType, DeclaredClass, ProtocolType,
     };

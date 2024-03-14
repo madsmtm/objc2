@@ -2,7 +2,7 @@ error[E0277]: the trait bound `Root: mutability::MutabilityIsMutable` is not sat
  --> ui/nsobject_not_mutable.rs
   |
   |     let mut_ptr = Id::as_mut_ptr(&mut obj);
-  |                   -------------- ^^^^^^^^ the trait `mutability::MutabilityIsMutable` is not implemented for `Root`
+  |                   -------------- ^^^^^^^^ the trait `mutability::MutabilityIsMutable` is not implemented for `Root`, which is required by `NSObject: IsMutable`
   |                   |
   |                   required by a bound introduced by this call
   |
@@ -23,7 +23,7 @@ error[E0277]: the trait bound `Root: mutability::MutabilityIsMutable` is not sat
  --> ui/nsobject_not_mutable.rs
   |
   |         let mut_ref = Id::autorelease_mut(obj, pool);
-  |                       ------------------- ^^^ the trait `mutability::MutabilityIsMutable` is not implemented for `Root`
+  |                       ------------------- ^^^ the trait `mutability::MutabilityIsMutable` is not implemented for `Root`, which is required by `NSObject: IsMutable`
   |                       |
   |                       required by a bound introduced by this call
   |

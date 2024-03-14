@@ -52,15 +52,14 @@ _get_common_twice:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 Lloh12:
-	adrp	x20, SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
+	adrp	x19, SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
 Lloh13:
-	ldr	x20, [x20, SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
-	ldr	x19, [x20]
-	cbz	x19, LBB2_3
-	ldr	x1, [x20]
+	ldr	x19, [x19, SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
+	ldr	x0, [x19]
+	cbz	x0, LBB2_3
+	ldr	x1, [x19]
 	cbz	x1, LBB2_4
 LBB2_2:
-	mov	x0, x19
 	ldp	x29, x30, [sp, #16]
 	ldp	x20, x19, [sp], #32
 	ret
@@ -74,18 +73,19 @@ Lloh16:
 Lloh17:
 	add	x1, x1, l_anon.[ID].1@PAGEOFF
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	mov	x19, x0
-	ldr	x1, [x20]
+	ldr	x1, [x19]
 	cbnz	x1, LBB2_2
 LBB2_4:
 Lloh18:
-	adrp	x0, SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
+	adrp	x8, SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGE
 Lloh19:
-	ldr	x0, [x0, SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
+	ldr	x8, [x8, SYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)@GOTPAGEOFF]
 Lloh20:
 	adrp	x1, l_anon.[ID].1@PAGE
 Lloh21:
 	add	x1, x1, l_anon.[ID].1@PAGEOFF
+	mov	x19, x0
+	mov	x0, x8
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	x1, x0
 	mov	x0, x19
@@ -151,32 +151,31 @@ _use_fns:
 	stp	x20, x19, [sp, #16]
 	stp	x29, x30, [sp, #32]
 	add	x29, sp, #32
-	mov	x19, x8
 Lloh34:
-	adrp	x8, __MergedGlobals@PAGE
+	adrp	x9, __MergedGlobals@PAGE
 Lloh35:
-	ldr	x20, [x8, __MergedGlobals@PAGEOFF]
-	cbz	x20, LBB5_5
+	ldr	x19, [x9, __MergedGlobals@PAGEOFF]
+	cbz	x19, LBB5_5
 Lloh36:
-	adrp	x8, __MergedGlobals@PAGE+8
+	adrp	x9, __MergedGlobals@PAGE+8
 Lloh37:
-	ldr	x21, [x8, __MergedGlobals@PAGEOFF+8]
-	cbz	x21, LBB5_6
+	ldr	x20, [x9, __MergedGlobals@PAGEOFF+8]
+	cbz	x20, LBB5_6
 LBB5_2:
 Lloh38:
-	adrp	x8, __MergedGlobals@PAGE+16
+	adrp	x9, __MergedGlobals@PAGE+16
 Lloh39:
-	ldr	x22, [x8, __MergedGlobals@PAGEOFF+16]
-	cbz	x22, LBB5_7
+	ldr	x21, [x9, __MergedGlobals@PAGEOFF+16]
+	cbz	x21, LBB5_7
 LBB5_3:
 Lloh40:
-	adrp	x8, __MergedGlobals@PAGE+24
+	adrp	x9, __MergedGlobals@PAGE+24
 Lloh41:
-	ldr	x0, [x8, __MergedGlobals@PAGEOFF+24]
+	ldr	x0, [x9, __MergedGlobals@PAGEOFF+24]
 	cbz	x0, LBB5_8
 LBB5_4:
-	stp	x20, x21, [x19]
-	stp	x22, x0, [x19, #16]
+	stp	x19, x20, [x8]
+	stp	x21, x0, [x8, #16]
 	ldp	x29, x30, [sp, #32]
 	ldp	x20, x19, [sp, #16]
 	ldp	x22, x21, [sp], #48
@@ -190,13 +189,15 @@ Lloh44:
 	adrp	x1, l_anon.[ID].0@PAGE
 Lloh45:
 	add	x1, x1, l_anon.[ID].0@PAGEOFF
+	mov	x19, x8
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	mov	x20, x0
+	mov	x8, x19
+	mov	x19, x0
 Lloh46:
-	adrp	x8, __MergedGlobals@PAGE+8
+	adrp	x9, __MergedGlobals@PAGE+8
 Lloh47:
-	ldr	x21, [x8, __MergedGlobals@PAGEOFF+8]
-	cbnz	x21, LBB5_2
+	ldr	x20, [x9, __MergedGlobals@PAGEOFF+8]
+	cbnz	x20, LBB5_2
 LBB5_6:
 Lloh48:
 	adrp	x0, __MergedGlobals@PAGE+8
@@ -206,13 +207,15 @@ Lloh50:
 	adrp	x1, l_anon.[ID].0@PAGE
 Lloh51:
 	add	x1, x1, l_anon.[ID].0@PAGEOFF
+	mov	x20, x8
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	mov	x21, x0
+	mov	x8, x20
+	mov	x20, x0
 Lloh52:
-	adrp	x8, __MergedGlobals@PAGE+16
+	adrp	x9, __MergedGlobals@PAGE+16
 Lloh53:
-	ldr	x22, [x8, __MergedGlobals@PAGEOFF+16]
-	cbnz	x22, LBB5_3
+	ldr	x21, [x9, __MergedGlobals@PAGEOFF+16]
+	cbnz	x21, LBB5_3
 LBB5_7:
 Lloh54:
 	adrp	x0, __MergedGlobals@PAGE+16
@@ -222,12 +225,14 @@ Lloh56:
 	adrp	x1, l_anon.[ID].2@PAGE
 Lloh57:
 	add	x1, x1, l_anon.[ID].2@PAGEOFF
+	mov	x21, x8
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	mov	x22, x0
+	mov	x8, x21
+	mov	x21, x0
 Lloh58:
-	adrp	x8, __MergedGlobals@PAGE+24
+	adrp	x9, __MergedGlobals@PAGE+24
 Lloh59:
-	ldr	x0, [x8, __MergedGlobals@PAGEOFF+24]
+	ldr	x0, [x9, __MergedGlobals@PAGEOFF+24]
 	cbnz	x0, LBB5_4
 LBB5_8:
 Lloh60:
@@ -238,9 +243,10 @@ Lloh62:
 	adrp	x1, l_anon.[ID].4@PAGE
 Lloh63:
 	add	x1, x1, l_anon.[ID].4@PAGEOFF
+	mov	x22, x8
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	stp	x20, x21, [x19]
-	stp	x22, x0, [x19, #16]
+	stp	x19, x20, [x22]
+	stp	x21, x0, [x22, #16]
 	ldp	x29, x30, [sp, #32]
 	ldp	x20, x19, [sp, #16]
 	ldp	x22, x21, [sp], #48
@@ -264,21 +270,18 @@ Lloh63:
 	.globl	_use_same_twice
 	.p2align	2
 _use_same_twice:
-	stp	x22, x21, [sp, #-48]!
-	stp	x20, x19, [sp, #16]
-	stp	x29, x30, [sp, #32]
-	add	x29, sp, #32
-	mov	x19, x8
-	adrp	x21, __MergedGlobals@PAGE
-	ldr	x20, [x21, __MergedGlobals@PAGEOFF]
-	cbz	x20, LBB6_3
-	ldr	x0, [x21, __MergedGlobals@PAGEOFF]
+	stp	x20, x19, [sp, #-32]!
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+	adrp	x20, __MergedGlobals@PAGE
+	ldr	x19, [x20, __MergedGlobals@PAGEOFF]
+	cbz	x19, LBB6_3
+	ldr	x0, [x20, __MergedGlobals@PAGEOFF]
 	cbz	x0, LBB6_4
 LBB6_2:
-	stp	x20, x0, [x19]
-	ldp	x29, x30, [sp, #32]
-	ldp	x20, x19, [sp, #16]
-	ldp	x22, x21, [sp], #48
+	stp	x19, x0, [x8]
+	ldp	x29, x30, [sp, #16]
+	ldp	x20, x19, [sp], #32
 	ret
 LBB6_3:
 Lloh64:
@@ -289,9 +292,11 @@ Lloh66:
 	adrp	x1, l_anon.[ID].0@PAGE
 Lloh67:
 	add	x1, x1, l_anon.[ID].0@PAGEOFF
+	mov	x19, x8
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	mov	x20, x0
-	ldr	x0, [x21, __MergedGlobals@PAGEOFF]
+	mov	x8, x19
+	mov	x19, x0
+	ldr	x0, [x20, __MergedGlobals@PAGEOFF]
 	cbnz	x0, LBB6_2
 LBB6_4:
 Lloh68:
@@ -302,11 +307,11 @@ Lloh70:
 	adrp	x1, l_anon.[ID].0@PAGE
 Lloh71:
 	add	x1, x1, l_anon.[ID].0@PAGEOFF
+	mov	x20, x8
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	stp	x20, x0, [x19]
-	ldp	x29, x30, [sp, #32]
-	ldp	x20, x19, [sp, #16]
-	ldp	x22, x21, [sp], #48
+	stp	x19, x0, [x20]
+	ldp	x29, x30, [sp, #16]
+	ldp	x20, x19, [sp], #32
 	ret
 	.loh AdrpAdd	Lloh66, Lloh67
 	.loh AdrpAdd	Lloh64, Lloh65

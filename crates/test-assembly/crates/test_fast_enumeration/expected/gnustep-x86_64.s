@@ -6,10 +6,8 @@
 	.type	iter_create,@function
 iter_create:
 	mov	rax, rdi
+	mov	qword ptr [rdi], rsi
 	xorps	xmm0, xmm0
-	movups	xmmword ptr [rdi + 176], xmm0
-	movups	xmmword ptr [rdi + 160], xmm0
-	mov	qword ptr [rdi + 192], 0
 	movups	xmmword ptr [rdi + 8], xmm0
 	movups	xmmword ptr [rdi + 24], xmm0
 	movups	xmmword ptr [rdi + 40], xmm0
@@ -18,9 +16,10 @@ iter_create:
 	movups	xmmword ptr [rdi + 88], xmm0
 	movups	xmmword ptr [rdi + 104], xmm0
 	movups	xmmword ptr [rdi + 120], xmm0
-	mov	qword ptr [rdi], rsi
 	movups	xmmword ptr [rdi + 136], xmm0
-	mov	qword ptr [rdi + 152], 0
+	movups	xmmword ptr [rdi + 152], xmm0
+	movups	xmmword ptr [rdi + 168], xmm0
+	movups	xmmword ptr [rdi + 184], xmm0
 	movups	xmmword ptr [rdi + 200], xmm0
 	ret
 .Lfunc_end0:
@@ -42,19 +41,19 @@ iter_once:
 	jb	.LBB1_4
 	lea	r14, [rbx + 8]
 	mov	r15, qword ptr [rbx]
-	lea	r12, [rbx + 136]
 	mov	rax, qword ptr [rip + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
-	mov	r13, qword ptr [rax]
-	test	r13, r13
+	mov	r12, qword ptr [rax]
+	test	r12, r12
 	je	.LBB1_2
 .LBB1_3:
+	lea	r13, [rbx + 136]
 	mov	rdi, r15
-	mov	rsi, r13
+	mov	rsi, r12
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	mov	r8d, 16
 	mov	rdi, r15
-	mov	rsi, r13
-	mov	rdx, r12
+	mov	rsi, r12
+	mov	rdx, r13
 	mov	rcx, r14
 	call	rax
 	mov	rcx, rax
@@ -79,7 +78,7 @@ iter_once:
 	mov	rdi, qword ptr [rip + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	lea	rsi, [rip + .Lanon.[ID].0]
 	call	qword ptr [rip + SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@GOTPCREL]
-	mov	r13, rax
+	mov	r12, rax
 	jmp	.LBB1_3
 .Lfunc_end1:
 	.size	iter_once, .Lfunc_end1-iter_once
@@ -109,7 +108,7 @@ iter:
 	push	r12
 	push	rbx
 	sub	rsp, 216
-	mov	r15, rdi
+	mov	r13, rdi
 	xorps	xmm0, xmm0
 	movups	xmmword ptr [rsp + 176], xmm0
 	movups	xmmword ptr [rsp + 160], xmm0
@@ -128,8 +127,8 @@ iter:
 	mov	qword ptr [rsp + 152], 0
 	movups	xmmword ptr [rsp + 200], xmm0
 	xor	ecx, ecx
-	mov	r13, qword ptr [rip + use_obj@GOTPCREL]
-	mov	r12, qword ptr [rip + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
+	mov	r12, qword ptr [rip + use_obj@GOTPCREL]
+	mov	r15, qword ptr [rip + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	mov	rbx, qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	xor	eax, eax
 	jmp	.LBB3_1
@@ -139,22 +138,22 @@ iter:
 	lea	rdx, [rax + 1]
 	mov	qword ptr [rsp + 200], rdx
 	mov	rdi, qword ptr [rcx + 8*rax]
-	call	r13
-	mov	r15, qword ptr [rsp]
+	call	r12
+	mov	r13, qword ptr [rsp]
 	mov	rax, qword ptr [rsp + 200]
 	mov	rcx, qword ptr [rsp + 208]
 .LBB3_1:
 	cmp	rax, rcx
 	jb	.LBB3_6
-	mov	rbp, qword ptr [r12]
+	mov	rbp, qword ptr [r15]
 	test	rbp, rbp
 	je	.LBB3_3
 .LBB3_4:
-	mov	rdi, r15
+	mov	rdi, r13
 	mov	rsi, rbp
 	call	rbx
 	mov	r8d, 16
-	mov	rdi, r15
+	mov	rdi, r13
 	mov	rsi, rbp
 	mov	rdx, r14
 	lea	rcx, [rsp + 8]
@@ -165,7 +164,7 @@ iter:
 	xor	eax, eax
 	jmp	.LBB3_6
 .LBB3_3:
-	mov	rdi, r12
+	mov	rdi, r15
 	lea	rsi, [rip + .Lanon.[ID].0]
 	call	qword ptr [rip + SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@GOTPCREL]
 	mov	rbp, rax

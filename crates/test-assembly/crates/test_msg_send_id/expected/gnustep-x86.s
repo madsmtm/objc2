@@ -209,15 +209,15 @@ handle_alloc_init:
 	add	esp, 16
 	test	eax, eax
 	je	.LBB5_2
-	mov	edi, dword ptr [esp + 24]
-	mov	esi, eax
+	mov	esi, dword ptr [esp + 24]
 	sub	esp, 8
-	push	edi
+	push	esi
 	push	eax
+	mov	edi, eax
 	call	objc_msg_lookup@PLT
 	add	esp, 8
-	push	edi
 	push	esi
+	push	edi
 	call	eax
 	add	esp, 16
 	pop	esi

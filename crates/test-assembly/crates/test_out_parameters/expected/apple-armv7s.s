@@ -25,13 +25,13 @@ _null_nonnull:
 	beq	LBB1_2
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
-	mov	r4, r2
-	ldr	r5, [r2]
+	ldr	r4, [r2]
+	mov	r5, r2
 	bl	_objc_msgSend
 	mov	r6, r0
-	ldr	r0, [r4]
+	ldr	r0, [r5]
 	bl	_objc_retain
-	mov	r0, r5
+	mov	r0, r4
 	bl	_objc_release
 	mov	r0, r6
 	pop	{r4, r5, r6, r7, pc}
@@ -67,8 +67,8 @@ _null_null:
 	beq	LBB3_4
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
-	mov	r6, r2
 	ldr	r4, [r2]
+	mov	r6, r2
 	bl	_objc_msgSend
 	mov	r5, r0
 	ldr	r0, [r6]

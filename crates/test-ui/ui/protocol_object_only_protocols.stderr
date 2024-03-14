@@ -11,8 +11,8 @@ error[E0277]: the trait bound `NSObject: ImplementedBy<NSObject>` is not satisfi
             (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
-            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
+            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSFastEnumeration + 'static)
             (dyn NSCoding + 'static)
           and $N others
@@ -38,8 +38,8 @@ error[E0277]: the trait bound `dyn Send: ImplementedBy<NSObject>` is not satisfi
             (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
-            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
+            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSFastEnumeration + 'static)
             (dyn NSCoding + 'static)
           and $N others
@@ -65,8 +65,8 @@ error[E0277]: the trait bound `dyn Foo: ImplementedBy<NSObject>` is not satisfie
             (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
-            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
+            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSFastEnumeration + 'static)
             (dyn NSCoding + 'static)
           and $N others
@@ -87,14 +87,14 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |                                                           |
   |                                                           required by a bound introduced by this call
   |
-  = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
+  = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`, which is required by `dyn NSObjectProtocol + Send: ImplementedBy<NSObject>`
   = help: the following other types implement trait `ImplementedBy<T>`:
             (dyn NSCopying + 'static)
             (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
-            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
+            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSFastEnumeration + 'static)
             (dyn NSCoding + 'static)
           and $N others
@@ -142,14 +142,14 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |                                                           |
   |                                                           required by a bound introduced by this call
   |
-  = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
+  = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`, which is required by `dyn NSObjectProtocol + Sync: ImplementedBy<NSObject>`
   = help: the following other types implement trait `ImplementedBy<T>`:
             (dyn NSCopying + 'static)
             (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
-            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
+            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSFastEnumeration + 'static)
             (dyn NSCoding + 'static)
           and $N others
@@ -186,14 +186,14 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |                                                                  |
   |                                                                  required by a bound introduced by this call
   |
-  = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
+  = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`, which is required by `dyn NSObjectProtocol + Send + Sync: ImplementedBy<NSObject>`
   = help: the following other types implement trait `ImplementedBy<T>`:
             (dyn NSCopying + 'static)
             (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
-            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
+            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSFastEnumeration + 'static)
             (dyn NSCoding + 'static)
           and $N others
@@ -230,14 +230,14 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |                                                                  |
   |                                                                  required by a bound introduced by this call
   |
-  = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
+  = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`, which is required by `dyn NSObjectProtocol + Send + Sync: ImplementedBy<NSObject>`
   = help: the following other types implement trait `ImplementedBy<T>`:
             (dyn NSCopying + 'static)
             (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
-            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
+            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSFastEnumeration + 'static)
             (dyn NSCoding + 'static)
           and $N others
@@ -281,7 +281,7 @@ error[E0277]: the trait bound `NSObject: NSCopying` is not satisfied
  --> ui/protocol_object_only_protocols.rs
   |
   |     let _: &ProtocolObject<dyn NSCopying> = ProtocolObject::from_ref(&*obj);
-  |                                             ------------------------ ^^^^^ the trait `NSCopying` is not implemented for `NSObject`
+  |                                             ------------------------ ^^^^^ the trait `NSCopying` is not implemented for `NSObject`, which is required by `dyn NSCopying: ImplementedBy<NSObject>`
   |                                             |
   |                                             required by a bound introduced by this call
   |
@@ -318,8 +318,8 @@ error[E0277]: the trait bound `dyn NSCopying + Send: ImplementedBy<NSObject>` is
             (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
-            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
+            (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSFastEnumeration + 'static)
             (dyn NSCoding + 'static)
           and $N others

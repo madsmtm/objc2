@@ -1,5 +1,4 @@
 use core::fmt;
-use core::marker::PhantomData;
 #[cfg(feature = "dispatch")]
 #[cfg(feature = "Foundation_NSThread")]
 use core::mem::{self, ManuallyDrop};
@@ -11,7 +10,6 @@ use crate::common::*;
 use crate::Foundation::NSThread;
 
 use objc2::msg_send_id;
-use objc2::mutability::IsMainThreadOnly;
 
 #[cfg(feature = "Foundation_NSThread")]
 unsafe impl Send for NSThread {}

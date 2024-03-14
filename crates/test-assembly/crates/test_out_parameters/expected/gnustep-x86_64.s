@@ -45,30 +45,30 @@ null_nonnull:
 	push	rbx
 	push	rax
 	mov	rbx, rdx
-	mov	r15, rsi
-	mov	r12, rdi
+	mov	r12, rsi
+	mov	r15, rdi
 	test	rdx, rdx
 	je	.LBB1_1
 	mov	r14, qword ptr [rbx]
 	jmp	.LBB1_3
 .LBB1_1:
 .LBB1_3:
-	mov	rdi, r12
-	mov	rsi, r15
+	mov	rdi, r15
+	mov	rsi, r12
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	rdi, r12
-	mov	rsi, r15
+	mov	rdi, r15
+	mov	rsi, r12
 	mov	rdx, rbx
 	call	rax
-	mov	r15, rax
 	test	rbx, rbx
 	je	.LBB1_5
 	mov	rdi, qword ptr [rbx]
+	mov	rbx, rax
 	call	qword ptr [rip + objc_retain@GOTPCREL]
 	mov	rdi, r14
 	call	qword ptr [rip + objc_release@GOTPCREL]
+	mov	rax, rbx
 .LBB1_5:
-	mov	rax, r15
 	add	rsp, 8
 	pop	rbx
 	pop	r12
@@ -126,19 +126,19 @@ null_null:
 	push	rbx
 	push	rax
 	mov	r14, rdx
-	mov	r15, rsi
-	mov	r12, rdi
+	mov	r12, rsi
+	mov	r15, rdi
 	test	rdx, rdx
 	je	.LBB3_1
 	mov	rbx, qword ptr [r14]
 	jmp	.LBB3_3
 .LBB3_1:
 .LBB3_3:
-	mov	rdi, r12
-	mov	rsi, r15
+	mov	rdi, r15
+	mov	rsi, r12
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	rdi, r12
-	mov	rsi, r15
+	mov	rdi, r15
+	mov	rsi, r12
 	mov	rdx, r14
 	call	rax
 	mov	r15, rax

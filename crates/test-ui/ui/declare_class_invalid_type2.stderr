@@ -25,7 +25,7 @@ error[E0277]: the trait bound `i32: MaybeOptionId` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `MaybeOptionId` is not implemented for `i32`
+  | |_^ the trait `MaybeOptionId` is not implemented for `i32`, which is required by `RetainSemantics<5>: MessageRecieveId<&CustomObject, i32>`
   |
   = help: the following other types implement trait `MaybeOptionId`:
             Id<T>

@@ -123,28 +123,27 @@ _use_fns:
 	sub	esp, 12
 	call	L4$pb
 L4$pb:
-	pop	edi
-	mov	ecx, dword ptr [edi + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L4$pb]
-	test	ecx, ecx
-	je	LBB4_1
-	mov	edx, dword ptr [edi + SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0)-L4$pb]
+	pop	esi
+	mov	edx, dword ptr [esi + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L4$pb]
 	test	edx, edx
+	je	LBB4_1
+	mov	edi, dword ptr [esi + SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0)-L4$pb]
+	test	edi, edi
 	je	LBB4_3
 LBB4_4:
-	mov	ebx, dword ptr [ebp + 8]
-	mov	esi, dword ptr [edi + SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0)-L4$pb]
-	test	esi, esi
+	mov	eax, dword ptr [ebp + 8]
+	mov	ebx, dword ptr [esi + SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0)-L4$pb]
+	test	ebx, ebx
 	je	LBB4_5
 LBB4_6:
-	mov	eax, dword ptr [edi + SYM(test_dynamic_class[CRATE_ID]::use_fns::CACHED_CLASS, 0)-L4$pb]
-	test	eax, eax
+	mov	ecx, dword ptr [esi + SYM(test_dynamic_class[CRATE_ID]::use_fns::CACHED_CLASS, 0)-L4$pb]
+	test	ecx, ecx
 	je	LBB4_7
 LBB4_8:
-	mov	dword ptr [ebx], ecx
-	mov	dword ptr [ebx + 4], edx
-	mov	dword ptr [ebx + 8], esi
-	mov	dword ptr [ebx + 12], eax
-	mov	eax, ebx
+	mov	dword ptr [eax], edx
+	mov	dword ptr [eax + 4], edi
+	mov	dword ptr [eax + 8], ebx
+	mov	dword ptr [eax + 12], ecx
 	add	esp, 12
 	pop	esi
 	pop	edi
@@ -153,67 +152,67 @@ LBB4_8:
 	ret	4
 LBB4_1:
 	sub	esp, 4
-	lea	eax, [edi + l_anon.[ID].2-L4$pb]
-	lea	ecx, [edi + l_anon.[ID].0-L4$pb]
-	lea	edx, [edi + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L4$pb]
+	lea	eax, [esi + l_anon.[ID].2-L4$pb]
+	lea	ecx, [esi + l_anon.[ID].0-L4$pb]
+	lea	edx, [esi + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L4$pb]
 	push	eax
 	push	ecx
 	push	edx
 	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 	add	esp, 16
-	mov	ecx, eax
-	mov	edx, dword ptr [edi + SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0)-L4$pb]
-	test	edx, edx
+	mov	edx, eax
+	mov	edi, dword ptr [esi + SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0)-L4$pb]
+	test	edi, edi
 	jne	LBB4_4
 LBB4_3:
 	sub	esp, 4
-	lea	eax, [edi + l_anon.[ID].3-L4$pb]
-	mov	esi, ecx
-	lea	ecx, [edi + l_anon.[ID].0-L4$pb]
-	lea	edx, [edi + SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0)-L4$pb]
+	lea	eax, [esi + l_anon.[ID].3-L4$pb]
+	lea	ecx, [esi + l_anon.[ID].0-L4$pb]
+	mov	edi, edx
+	lea	edx, [esi + SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0)-L4$pb]
 	push	eax
 	push	ecx
 	push	edx
 	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
-	mov	ecx, esi
+	mov	edx, edi
 	add	esp, 16
-	mov	edx, eax
-	mov	ebx, dword ptr [ebp + 8]
-	mov	esi, dword ptr [edi + SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0)-L4$pb]
-	test	esi, esi
+	mov	edi, eax
+	mov	eax, dword ptr [ebp + 8]
+	mov	ebx, dword ptr [esi + SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0)-L4$pb]
+	test	ebx, ebx
 	jne	LBB4_6
 LBB4_5:
 	sub	esp, 4
-	lea	eax, [edi + l_anon.[ID].5-L4$pb]
-	mov	dword ptr [ebp - 16], ecx
-	lea	ecx, [edi + l_anon.[ID].4-L4$pb]
-	mov	esi, edx
-	lea	edx, [edi + SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0)-L4$pb]
+	lea	eax, [esi + l_anon.[ID].5-L4$pb]
+	lea	ecx, [esi + l_anon.[ID].4-L4$pb]
+	mov	ebx, edx
+	lea	edx, [esi + SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0)-L4$pb]
 	push	eax
 	push	ecx
 	push	edx
 	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
-	mov	edx, esi
-	mov	ecx, dword ptr [ebp - 16]
+	mov	edx, ebx
 	add	esp, 16
-	mov	esi, eax
-	mov	eax, dword ptr [edi + SYM(test_dynamic_class[CRATE_ID]::use_fns::CACHED_CLASS, 0)-L4$pb]
-	test	eax, eax
+	mov	ebx, eax
+	mov	eax, dword ptr [ebp + 8]
+	mov	ecx, dword ptr [esi + SYM(test_dynamic_class[CRATE_ID]::use_fns::CACHED_CLASS, 0)-L4$pb]
+	test	ecx, ecx
 	jne	LBB4_8
 LBB4_7:
 	sub	esp, 4
-	lea	eax, [edi + l_anon.[ID].9-L4$pb]
-	mov	dword ptr [ebp - 16], ecx
-	lea	ecx, [edi + l_anon.[ID].8-L4$pb]
-	mov	dword ptr [ebp - 20], edx
-	lea	edx, [edi + SYM(test_dynamic_class[CRATE_ID]::use_fns::CACHED_CLASS, 0)-L4$pb]
-	push	eax
+	lea	ecx, [esi + l_anon.[ID].9-L4$pb]
+	mov	dword ptr [ebp - 16], edx
+	lea	edx, [esi + l_anon.[ID].8-L4$pb]
+	lea	esi, [esi + SYM(test_dynamic_class[CRATE_ID]::use_fns::CACHED_CLASS, 0)-L4$pb]
 	push	ecx
 	push	edx
+	push	esi
+	mov	esi, eax
 	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
-	mov	edx, dword ptr [ebp - 20]
-	mov	ecx, dword ptr [ebp - 16]
+	mov	edx, dword ptr [ebp - 16]
 	add	esp, 16
+	mov	ecx, eax
+	mov	eax, esi
 	jmp	LBB4_8
 
 	.globl	_use_same_twice
@@ -227,18 +226,17 @@ _use_same_twice:
 	sub	esp, 12
 	call	L5$pb
 L5$pb:
-	pop	ebx
-	mov	esi, dword ptr [ebp + 8]
-	mov	edi, dword ptr [ebx + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L5$pb]
-	test	edi, edi
+	pop	edi
+	mov	eax, dword ptr [ebp + 8]
+	mov	esi, dword ptr [edi + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L5$pb]
+	test	esi, esi
 	je	LBB5_1
-	mov	eax, dword ptr [ebx + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L5$pb]
-	test	eax, eax
+	mov	ecx, dword ptr [edi + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L5$pb]
+	test	ecx, ecx
 	je	LBB5_3
 LBB5_4:
-	mov	dword ptr [esi], edi
-	mov	dword ptr [esi + 4], eax
-	mov	eax, esi
+	mov	dword ptr [eax], esi
+	mov	dword ptr [eax + 4], ecx
 	add	esp, 12
 	pop	esi
 	pop	edi
@@ -247,28 +245,33 @@ LBB5_4:
 	ret	4
 LBB5_1:
 	sub	esp, 4
-	lea	eax, [ebx + l_anon.[ID].2-L5$pb]
-	lea	ecx, [ebx + l_anon.[ID].0-L5$pb]
-	lea	edx, [ebx + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L5$pb]
-	push	eax
+	lea	ecx, [edi + l_anon.[ID].2-L5$pb]
+	lea	edx, [edi + l_anon.[ID].0-L5$pb]
+	lea	esi, [edi + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L5$pb]
 	push	ecx
 	push	edx
+	push	esi
+	mov	ebx, eax
 	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 	add	esp, 16
-	mov	edi, eax
-	mov	eax, dword ptr [ebx + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L5$pb]
-	test	eax, eax
+	mov	esi, eax
+	mov	eax, ebx
+	mov	ecx, dword ptr [edi + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L5$pb]
+	test	ecx, ecx
 	jne	LBB5_4
 LBB5_3:
 	sub	esp, 4
-	lea	eax, [ebx + l_anon.[ID].2-L5$pb]
-	lea	ecx, [ebx + l_anon.[ID].0-L5$pb]
-	lea	edx, [ebx + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L5$pb]
-	push	eax
+	lea	ecx, [edi + l_anon.[ID].2-L5$pb]
+	lea	edx, [edi + l_anon.[ID].0-L5$pb]
+	lea	edi, [edi + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)-L5$pb]
 	push	ecx
 	push	edx
+	push	edi
+	mov	edi, eax
 	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 	add	esp, 16
+	mov	ecx, eax
+	mov	eax, edi
 	jmp	LBB5_4
 
 	.globl	_use_in_loop

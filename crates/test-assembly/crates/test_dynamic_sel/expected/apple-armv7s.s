@@ -45,21 +45,34 @@ LPC1_1:
 	.p2align	2
 	.code	32
 _get_common_twice:
-	push	{r4, r5, r7, lr}
-	add	r7, sp, #8
-	movw	r5, :lower16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_0+8))
-	movt	r5, :upper16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_0+8))
+	push	{r4, r7, lr}
+	add	r7, sp, #4
+	movw	r4, :lower16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_0+8))
+	movt	r4, :upper16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_0+8))
 LPC2_0:
-	ldr	r5, [pc, r5]
-	ldr	r4, [r5]
-	cmp	r4, #0
+	ldr	r4, [pc, r4]
+	ldr	r0, [r4]
+	cmp	r0, #0
 	beq	LBB2_3
-	ldr	r1, [r5]
+LBB2_1:
+	ldr	r1, [r4]
 	cmp	r1, #0
-	beq	LBB2_4
+	popne	{r4, r7, pc}
 LBB2_2:
+	movw	r2, :lower16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_3+8))
+	movt	r2, :upper16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_3+8))
+LPC2_3:
+	ldr	r2, [pc, r2]
+	movw	r1, :lower16:(l_anon.[ID].1-(LPC2_4+8))
+	movt	r1, :upper16:(l_anon.[ID].1-(LPC2_4+8))
+LPC2_4:
+	add	r1, pc, r1
+	mov	r4, r0
+	mov	r0, r2
+	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	mov	r1, r0
 	mov	r0, r4
-	pop	{r4, r5, r7, pc}
+	pop	{r4, r7, pc}
 LBB2_3:
 	movw	r0, :lower16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_1+8))
 	movt	r0, :upper16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_1+8))
@@ -70,23 +83,7 @@ LPC2_1:
 LPC2_2:
 	add	r1, pc, r1
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	mov	r4, r0
-	ldr	r1, [r5]
-	cmp	r1, #0
-	bne	LBB2_2
-LBB2_4:
-	movw	r0, :lower16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_3+8))
-	movt	r0, :upper16:(LSYM(objc2::__macro_helpers::common_selectors::alloc_sel::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC2_3+8))
-LPC2_3:
-	ldr	r0, [pc, r0]
-	movw	r1, :lower16:(l_anon.[ID].1-(LPC2_4+8))
-	movt	r1, :upper16:(l_anon.[ID].1-(LPC2_4+8))
-LPC2_4:
-	add	r1, pc, r1
-	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	mov	r1, r0
-	mov	r0, r4
-	pop	{r4, r5, r7, pc}
+	b	LBB2_1
 
 	.globl	_get_different_sel
 	.p2align	2
@@ -136,127 +133,142 @@ _use_fns:
 	push	{r4, r5, r6, r7, lr}
 	add	r7, sp, #12
 	push	{r8, r10}
-	movw	r10, :lower16:(__MergedGlobals-(LPC5_0+8))
-	movt	r10, :upper16:(__MergedGlobals-(LPC5_0+8))
+	movw	r8, :lower16:(__MergedGlobals-(LPC5_0+8))
+	movt	r8, :upper16:(__MergedGlobals-(LPC5_0+8))
 LPC5_0:
-	add	r10, pc, r10
-	mov	r4, r0
-	ldr	r8, [r10]
-	cmp	r8, #0
+	add	r8, pc, r8
+	ldr	r4, [r8]
+	cmp	r4, #0
 	beq	LBB5_5
-	ldr	r6, [r10, #4]
-	cmp	r6, #0
+	ldr	r5, [r8, #4]
+	cmp	r5, #0
 	beq	LBB5_6
 LBB5_2:
-	ldr	r5, [r10, #8]
-	cmp	r5, #0
+	ldr	r6, [r8, #8]
+	cmp	r6, #0
 	beq	LBB5_7
 LBB5_3:
-	ldr	r0, [r10, #12]
-	cmp	r0, #0
+	ldr	r1, [r8, #12]
+	cmp	r1, #0
 	beq	LBB5_8
 LBB5_4:
-	str	r8, [r4]
-	str	r6, [r4, #4]
-	str	r5, [r4, #8]
-	str	r0, [r4, #12]
+	stm	r0, {r4, r5, r6}
+	str	r1, [r0, #12]
 	pop	{r8, r10}
 	pop	{r4, r5, r6, r7, pc}
 LBB5_5:
-	movw	r0, :lower16:(__MergedGlobals-(LPC5_1+8))
-	movt	r0, :upper16:(__MergedGlobals-(LPC5_1+8))
+	movw	r2, :lower16:(__MergedGlobals-(LPC5_1+8))
+	movt	r2, :upper16:(__MergedGlobals-(LPC5_1+8))
 LPC5_1:
-	add	r0, pc, r0
+	add	r2, pc, r2
 	movw	r1, :lower16:(l_anon.[ID].0-(LPC5_2+8))
 	movt	r1, :upper16:(l_anon.[ID].0-(LPC5_2+8))
 LPC5_2:
 	add	r1, pc, r1
+	mov	r5, r0
+	mov	r0, r2
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	mov	r8, r0
-	ldr	r6, [r10, #4]
-	cmp	r6, #0
+	mov	r4, r0
+	mov	r0, r5
+	ldr	r5, [r8, #4]
+	cmp	r5, #0
 	bne	LBB5_2
 LBB5_6:
-	add	r0, r10, #4
+	add	r2, r8, #4
 	movw	r1, :lower16:(l_anon.[ID].0-(LPC5_3+8))
 	movt	r1, :upper16:(l_anon.[ID].0-(LPC5_3+8))
 LPC5_3:
 	add	r1, pc, r1
-	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	r6, r0
-	ldr	r5, [r10, #8]
-	cmp	r5, #0
+	mov	r0, r2
+	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
+	mov	r5, r0
+	mov	r0, r6
+	ldr	r6, [r8, #8]
+	cmp	r6, #0
 	bne	LBB5_3
 LBB5_7:
-	add	r0, r10, #8
+	add	r2, r8, #8
 	movw	r1, :lower16:(L_anon.[ID].2-(LPC5_4+8))
 	movt	r1, :upper16:(L_anon.[ID].2-(LPC5_4+8))
 LPC5_4:
 	add	r1, pc, r1
+	mov	r10, r0
+	mov	r0, r2
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	mov	r5, r0
-	ldr	r0, [r10, #12]
-	cmp	r0, #0
+	mov	r6, r0
+	mov	r0, r10
+	ldr	r1, [r8, #12]
+	cmp	r1, #0
 	bne	LBB5_4
 LBB5_8:
-	add	r0, r10, #12
+	add	r2, r8, #12
 	movw	r1, :lower16:(l_anon.[ID].4-(LPC5_5+8))
 	movt	r1, :upper16:(l_anon.[ID].4-(LPC5_5+8))
 LPC5_5:
 	add	r1, pc, r1
+	mov	r8, r0
+	mov	r0, r2
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	b	LBB5_4
+	mov	r1, r0
+	mov	r0, r8
+	stm	r0, {r4, r5, r6}
+	str	r1, [r0, #12]
+	pop	{r8, r10}
+	pop	{r4, r5, r6, r7, pc}
 
 	.globl	_use_same_twice
 	.p2align	2
 	.code	32
 _use_same_twice:
-	push	{r4, r5, r7, lr}
-	add	r7, sp, #8
-	push	{r8}
+	push	{r4, r5, r6, r7, lr}
+	add	r7, sp, #12
 	movw	r5, :lower16:(__MergedGlobals-(LPC6_0+8))
 	movt	r5, :upper16:(__MergedGlobals-(LPC6_0+8))
 LPC6_0:
 	add	r5, pc, r5
-	mov	r4, r0
-	ldr	r8, [r5]
-	cmp	r8, #0
+	ldr	r4, [r5]
+	cmp	r4, #0
 	beq	LBB6_3
-	ldr	r9, [r5]
-	cmp	r9, #0
+	ldr	r5, [r5]
+	cmp	r5, #0
 	beq	LBB6_4
 LBB6_2:
-	strd	r8, r9, [r4]
-	pop	{r8}
-	pop	{r4, r5, r7, pc}
+	strd	r4, r5, [r0]
+	pop	{r4, r5, r6, r7, pc}
 LBB6_3:
-	movw	r0, :lower16:(__MergedGlobals-(LPC6_1+8))
-	movt	r0, :upper16:(__MergedGlobals-(LPC6_1+8))
+	movw	r2, :lower16:(__MergedGlobals-(LPC6_1+8))
+	movt	r2, :upper16:(__MergedGlobals-(LPC6_1+8))
 LPC6_1:
-	add	r0, pc, r0
+	add	r2, pc, r2
 	movw	r1, :lower16:(l_anon.[ID].0-(LPC6_2+8))
 	movt	r1, :upper16:(l_anon.[ID].0-(LPC6_2+8))
 LPC6_2:
 	add	r1, pc, r1
+	mov	r6, r0
+	mov	r0, r2
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	mov	r8, r0
-	ldr	r9, [r5]
-	cmp	r9, #0
+	mov	r4, r0
+	mov	r0, r6
+	ldr	r5, [r5]
+	cmp	r5, #0
 	bne	LBB6_2
 LBB6_4:
-	movw	r0, :lower16:(__MergedGlobals-(LPC6_3+8))
-	movt	r0, :upper16:(__MergedGlobals-(LPC6_3+8))
+	movw	r2, :lower16:(__MergedGlobals-(LPC6_3+8))
+	movt	r2, :upper16:(__MergedGlobals-(LPC6_3+8))
 LPC6_3:
-	add	r0, pc, r0
+	add	r2, pc, r2
 	movw	r1, :lower16:(l_anon.[ID].0-(LPC6_4+8))
 	movt	r1, :upper16:(l_anon.[ID].0-(LPC6_4+8))
 LPC6_4:
 	add	r1, pc, r1
+	mov	r6, r0
+	mov	r0, r2
 	bl	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
-	mov	r9, r0
-	strd	r8, r9, [r4]
-	pop	{r8}
-	pop	{r4, r5, r7, pc}
+	mov	r5, r0
+	mov	r0, r6
+	strd	r4, r5, [r0]
+	pop	{r4, r5, r6, r7, pc}
 
 	.globl	_use_in_loop
 	.p2align	2

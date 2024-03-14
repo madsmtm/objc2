@@ -21,9 +21,9 @@ _handle_alloc_init:
 	movt	r1, :upper16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_0+8))
 LPC1_0:
 	ldr	r1, [pc, r1]
-	mov	r5, r0
-	ldr	r4, [r1]
-	mov	r1, r4
+	mov	r4, r0
+	ldr	r5, [r1]
+	mov	r1, r5
 	bl	_objc_msgSend
 	cmp	r0, #0
 	popne	{r4, r5, r7, pc}
@@ -32,8 +32,8 @@ LBB1_1:
 	movt	r2, :upper16:(l_anon.[ID].1-(LPC1_1+8))
 LPC1_1:
 	add	r2, pc, r2
-	mov	r0, r5
-	mov	r1, r4
+	mov	r0, r4
+	mov	r1, r5
 	mov	lr, pc
 	b	SYM(<objc2::__macro_helpers::method_family::RetainSemantics<3_u8> as objc2::__macro_helpers::msg_send_id::MsgSendIdFailed>::failed::GENERATED_ID, 0)
 

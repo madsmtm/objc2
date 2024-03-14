@@ -10,7 +10,7 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `Box<CustomObject>`
+  | |_the trait `MessageReceiver` is not implemented for `Box<CustomObject>`, which is required by `extern "C" fn(Box<CustomObject>, objc2::runtime::Sel): MethodImplementation`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
@@ -44,7 +44,7 @@ error[E0277]: the trait bound `Id<CustomObject>: MessageReceiver` is not satisfi
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `Id<CustomObject>`
+  | |_the trait `MessageReceiver` is not implemented for `Id<CustomObject>`, which is required by `extern "C" fn(Id<CustomObject>, objc2::runtime::Sel): MethodImplementation`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
@@ -78,7 +78,7 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `CustomObject`
+  | |_the trait `MessageReceiver` is not implemented for `CustomObject`, which is required by `extern "C" fn(CustomObject, objc2::runtime::Sel): MethodImplementation`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
@@ -162,7 +162,7 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `Box<CustomObject>`
+  | |_the trait `MessageReceiver` is not implemented for `Box<CustomObject>`, which is required by `extern "C" fn(Box<CustomObject>, objc2::runtime::Sel) -> IdReturnValue: MethodImplementation`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
@@ -196,7 +196,7 @@ error[E0277]: the trait bound `Id<CustomObject>: MessageReceiver` is not satisfi
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `Id<CustomObject>`
+  | |_the trait `MessageReceiver` is not implemented for `Id<CustomObject>`, which is required by `extern "C" fn(Id<CustomObject>, objc2::runtime::Sel) -> IdReturnValue: MethodImplementation`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
@@ -230,7 +230,7 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
   | | );
   | | ^
   | | |
-  | |_the trait `MessageReceiver` is not implemented for `CustomObject`
+  | |_the trait `MessageReceiver` is not implemented for `CustomObject`, which is required by `extern "C" fn(CustomObject, objc2::runtime::Sel) -> IdReturnValue: MethodImplementation`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `MessageReceiver`:
@@ -262,7 +262,7 @@ error[E0277]: the trait bound `Box<CustomObject>: MessageReceiver` is not satisf
 ... |
   | |     }
   | | );
-  | |_^ the trait `MessageReceiver` is not implemented for `Box<CustomObject>`
+  | |_^ the trait `MessageReceiver` is not implemented for `Box<CustomObject>`, which is required by `RetainSemantics<5>: MessageRecieveId<Box<CustomObject>, Id<CustomObject>>`
   |
   = help: the following other types implement trait `MessageReceiver`:
             NonNull<T>
@@ -285,7 +285,7 @@ error[E0277]: the trait bound `Id<CustomObject>: MessageReceiver` is not satisfi
 ... |
   | |     }
   | | );
-  | |_^ the trait `MessageReceiver` is not implemented for `Id<CustomObject>`
+  | |_^ the trait `MessageReceiver` is not implemented for `Id<CustomObject>`, which is required by `RetainSemantics<5>: MessageRecieveId<Id<CustomObject>, Id<CustomObject>>`
   |
   = help: the following other types implement trait `MessageReceiver`:
             NonNull<T>
@@ -308,7 +308,7 @@ error[E0277]: the trait bound `CustomObject: MessageReceiver` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `MessageReceiver` is not implemented for `CustomObject`
+  | |_^ the trait `MessageReceiver` is not implemented for `CustomObject`, which is required by `RetainSemantics<5>: MessageRecieveId<CustomObject, Id<CustomObject>>`
   |
   = help: the following other types implement trait `MessageReceiver`:
             NonNull<T>
@@ -331,7 +331,7 @@ error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not 
 ... |
   | |     }
   | | );
-  | |_^ the trait `MessageReceiver` is not implemented for `Allocated<CustomObject>`
+  | |_^ the trait `MessageReceiver` is not implemented for `Allocated<CustomObject>`, which is required by `RetainSemantics<5>: MessageRecieveId<Allocated<CustomObject>, Id<CustomObject>>`
   |
   = help: the following other types implement trait `MessageReceiver`:
             NonNull<T>

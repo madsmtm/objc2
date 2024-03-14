@@ -120,12 +120,12 @@ error_init:
 	mov	qword ptr [rsp], 0
 	test	rdi, rdi
 	je	.LBB4_1
-	mov	rbx, rsi
-	mov	r14, rdi
+	mov	rbx, rdi
+	mov	r14, rsi
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
 	mov	rdx, rsp
-	mov	rdi, r14
-	mov	rsi, rbx
+	mov	rdi, rbx
+	mov	rsi, r14
 	call	rax
 	test	rax, rax
 	je	.LBB4_4

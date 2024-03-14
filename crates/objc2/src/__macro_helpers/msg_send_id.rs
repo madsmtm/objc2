@@ -503,15 +503,14 @@ impl<'a> MsgSendIdFailed<'a> for Other {
 mod tests {
     use super::*;
 
-    use core::ptr;
-
     use crate::rc::{__RcTestObject, __ThreadTestData};
-    use crate::runtime::{AnyObject, NSObject, NSZone};
-    use crate::{class, msg_send_id, ClassType};
+    use crate::runtime::{NSObject, NSZone};
+    use crate::{class, msg_send_id};
 
     mod test_trait_disambugated {
         use super::*;
 
+        #[allow(dead_code)]
         trait Abc {
             fn send_message_id(&self) {}
         }

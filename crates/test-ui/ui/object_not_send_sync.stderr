@@ -4,7 +4,7 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |     needs_sync::<AnyObject>();
   |                  ^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
-  = help: within `AnyObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
+  = help: within `AnyObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`, which is required by `AnyObject: Sync`
 note: required because it appears within the type `objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
   |
@@ -27,7 +27,7 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |     needs_send::<AnyObject>();
   |                  ^^^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
   |
-  = help: within `AnyObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
+  = help: within `AnyObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`, which is required by `AnyObject: Send`
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
 note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
  --> $RUST/core/src/marker.rs
@@ -61,7 +61,7 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |     needs_sync::<NSObject>();
   |                  ^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
-  = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
+  = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`, which is required by `NSObject: Sync`
 note: required because it appears within the type `objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
   |
@@ -89,7 +89,7 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |     needs_send::<NSObject>();
   |                  ^^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
   |
-  = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
+  = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`, which is required by `NSObject: Send`
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
 note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
  --> $RUST/core/src/marker.rs
@@ -128,7 +128,7 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |     needs_sync::<NSValue>();
   |                  ^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
-  = help: within `NSValue`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
+  = help: within `NSValue`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`, which is required by `NSValue: Sync`
 note: required because it appears within the type `objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
   |
@@ -161,7 +161,7 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |     needs_send::<NSValue>();
   |                  ^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
   |
-  = help: within `NSValue`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
+  = help: within `NSValue`, the trait `Send` is not implemented for `*const UnsafeCell<()>`, which is required by `NSValue: Send`
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
 note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
  --> $RUST/core/src/marker.rs

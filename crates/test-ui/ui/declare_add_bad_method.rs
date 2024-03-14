@@ -32,7 +32,7 @@ fn main() {
 
     // Test arguments
     unsafe {
-        fn foo(_obj: &NSObject, _sel: Sel, item: bool) {}
+        fn foo(_obj: &NSObject, _sel: Sel, _item: bool) {}
         builder.add_method(sel!(foo:), foo as fn(_, _, _));
     }
 }

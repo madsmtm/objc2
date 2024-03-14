@@ -429,7 +429,7 @@ mod tests {
     use crate::mutability::{InteriorMutable, Mutable};
     use crate::rc::{Allocated, Id, PartialInit, __RcTestObject, __ThreadTestData};
     use crate::runtime::NSObject;
-    use crate::{declare_class, msg_send, msg_send_id, ClassType, DeclaredClass};
+    use crate::{declare_class, msg_send, msg_send_id};
 
     /// Initialize superclasses, but not own class.
     unsafe fn init_only_superclasses<T: DeclaredClass>(obj: Allocated<T>) -> Id<T>
@@ -720,6 +720,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::assigning_clones)]
     fn test_ivar_access() {
         declare_class!(
             struct RcIvar;

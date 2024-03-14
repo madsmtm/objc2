@@ -1,4 +1,4 @@
-error[E0277]: the trait bound `Id<CustomObject>: Encode` is not satisfied
+error[E0277]: the trait bound `Id<CustomObject>: EncodeReturn` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
@@ -8,18 +8,9 @@ error[E0277]: the trait bound `Id<CustomObject>: Encode` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Id<CustomObject>`
+  | |_^ the trait `Encode` is not implemented for `Id<CustomObject>`, which is required by `Id<CustomObject>: __macro_helpers::convert::return_private::Sealed`
   |
-  = help: the following other types implement trait `Encode`:
-            isize
-            i8
-            i16
-            i32
-            i64
-            usize
-            u8
-            u16
-          and $N others
+  = help: the trait `EncodeReturn` is implemented for `()`
   = note: required for `Id<CustomObject>` to implement `EncodeReturn`
   = note: required for `Id<CustomObject>` to implement `__macro_helpers::convert::return_private::Sealed`
 note: required by a bound in `ConvertReturn`
@@ -33,7 +24,7 @@ note: required by a bound in `ConvertReturn`
             T
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Vec<()>: Encode` is not satisfied
+error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
   | / declare_class!(
@@ -43,18 +34,9 @@ error[E0277]: the trait bound `Vec<()>: Encode` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Vec<()>`
+  | |_^ the trait `Encode` is not implemented for `Vec<()>`, which is required by `Vec<()>: __macro_helpers::convert::return_private::Sealed`
   |
-  = help: the following other types implement trait `Encode`:
-            isize
-            i8
-            i16
-            i32
-            i64
-            usize
-            u8
-            u16
-          and $N others
+  = help: the trait `EncodeReturn` is implemented for `()`
   = note: required for `Vec<()>` to implement `EncodeReturn`
   = note: required for `Vec<()>` to implement `__macro_helpers::convert::return_private::Sealed`
 note: required by a bound in `ConvertReturn`
@@ -68,6 +50,206 @@ note: required by a bound in `ConvertReturn`
             T
   = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
+error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `Box<u32>`, which is required by `Box<u32>: __macro_helpers::convert::argument_private::Sealed`
+  |
+  = help: the following other types implement trait `__macro_helpers::convert::argument_private::Sealed`:
+            bool
+            Option<&mut Id<T>>
+            Option<&mut Option<Id<T>>>
+            &mut Id<T>
+            &mut Option<Id<T>>
+  = note: required for `Box<u32>` to implement `EncodeArgument`
+  = note: required for `Box<u32>` to implement `__macro_helpers::convert::argument_private::Sealed`
+note: required by a bound in `ConvertArgument`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/convert.rs
+  |
+  | pub trait ConvertArgument: argument_private::Sealed {
+  |                            ^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertArgument`
+  = note: `ConvertArgument` is a "sealed trait", because to implement it you also need to implement `objc2::__macro_helpers::convert::argument_private::Sealed`, which is not accessible; this is usually done to force you to use one of the provided types that already implement it
+  = help: the following types implement the trait:
+            &mut objc2::rc::Id<T>
+            &mut std::option::Option<objc2::rc::Id<T>>
+            bool
+            std::option::Option<&mut objc2::rc::Id<T>>
+            std::option::Option<&mut std::option::Option<objc2::rc::Id<T>>>
+            T
+  = note: this error originates in the macro `$crate::__declare_class_rewrite_params` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `CustomObject`, which is required by `CustomObject: __macro_helpers::convert::argument_private::Sealed`
+  |
+  = help: the following other types implement trait `__macro_helpers::convert::argument_private::Sealed`:
+            bool
+            Option<&mut Id<T>>
+            Option<&mut Option<Id<T>>>
+            &mut Id<T>
+            &mut Option<Id<T>>
+  = note: required for `CustomObject` to implement `EncodeArgument`
+  = note: required for `CustomObject` to implement `__macro_helpers::convert::argument_private::Sealed`
+note: required by a bound in `ConvertArgument`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/convert.rs
+  |
+  | pub trait ConvertArgument: argument_private::Sealed {
+  |                            ^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertArgument`
+  = note: `ConvertArgument` is a "sealed trait", because to implement it you also need to implement `objc2::__macro_helpers::convert::argument_private::Sealed`, which is not accessible; this is usually done to force you to use one of the provided types that already implement it
+  = help: the following types implement the trait:
+            &mut objc2::rc::Id<T>
+            &mut std::option::Option<objc2::rc::Id<T>>
+            bool
+            std::option::Option<&mut objc2::rc::Id<T>>
+            std::option::Option<&mut std::option::Option<objc2::rc::Id<T>>>
+            T
+  = note: this error originates in the macro `$crate::__declare_class_rewrite_params` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Id<CustomObject>: EncodeReturn` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `Id<CustomObject>`, which is required by `Id<CustomObject>: ConvertReturn`
+  |
+  = help: the trait `EncodeReturn` is implemented for `()`
+  = note: required for `Id<CustomObject>` to implement `EncodeReturn`
+  = note: required for `Id<CustomObject>` to implement `ConvertReturn`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Id<CustomObject>: Encode` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_the trait `Encode` is not implemented for `Id<CustomObject>`, which is required by `extern "C" fn(&AnyClass, objc2::runtime::Sel) -> Id<CustomObject>: MethodImplementation`
+  |   required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `Encode`:
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
+          and $N others
+  = note: required for `Id<CustomObject>` to implement `EncodeReturn`
+  = note: required for `extern "C" fn(&AnyClass, objc2::runtime::Sel) -> Id<CustomObject>` to implement `MethodImplementation`
+note: required by a bound in `ClassBuilderHelper::<T>::add_class_method`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
+  |
+  |     pub unsafe fn add_class_method<F>(&mut self, sel: Sel, func: F)
+  |                   ---------------- required by a bound in this associated function
+  |     where
+  |         F: MethodImplementation<Callee = AnyClass>,
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_class_method`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `Vec<()>`, which is required by `Vec<()>: ConvertReturn`
+  |
+  = help: the trait `EncodeReturn` is implemented for `()`
+  = note: required for `Vec<()>` to implement `EncodeReturn`
+  = note: required for `Vec<()>` to implement `ConvertReturn`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Vec<()>: Encode` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | | ^
+  | | |
+  | |_the trait `Encode` is not implemented for `Vec<()>`, which is required by `extern "C" fn(&AnyClass, objc2::runtime::Sel) -> Vec<()>: MethodImplementation`
+  |   required by a bound introduced by this call
+  |
+  = help: the following other types implement trait `Encode`:
+            isize
+            i8
+            i16
+            i32
+            i64
+            usize
+            u8
+            u16
+          and $N others
+  = note: required for `Vec<()>` to implement `EncodeReturn`
+  = note: required for `extern "C" fn(&AnyClass, objc2::runtime::Sel) -> Vec<()>` to implement `MethodImplementation`
+note: required by a bound in `ClassBuilderHelper::<T>::add_class_method`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
+  |
+  |     pub unsafe fn add_class_method<F>(&mut self, sel: Sel, func: F)
+  |                   ---------------- required by a bound in this associated function
+  |     where
+  |         F: MethodImplementation<Callee = AnyClass>,
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_class_method`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `Box<u32>`, which is required by `Box<u32>: ConvertArgument`
+  |
+  = help: the following other types implement trait `ConvertArgument`:
+            bool
+            Option<&mut Id<T>>
+            Option<&mut Option<Id<T>>>
+            &mut Id<T>
+            &mut Option<Id<T>>
+  = note: required for `Box<u32>` to implement `EncodeArgument`
+  = note: required for `Box<u32>` to implement `ConvertArgument`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
 error[E0277]: the trait bound `Box<u32>: Encode` is not satisfied
  --> ui/declare_class_invalid_type.rs
   |
@@ -78,7 +260,10 @@ error[E0277]: the trait bound `Box<u32>: Encode` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Box<u32>`
+  | | ^
+  | | |
+  | |_the trait `Encode` is not implemented for `Box<u32>`, which is required by `extern "C" fn(&CustomObject, objc2::runtime::Sel, Box<u32>): MethodImplementation`
+  |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `Encode`:
             isize
@@ -91,21 +276,38 @@ error[E0277]: the trait bound `Box<u32>: Encode` is not satisfied
             u16
           and $N others
   = note: required for `Box<u32>` to implement `EncodeArgument`
-  = note: required for `Box<u32>` to implement `__macro_helpers::convert::argument_private::Sealed`
-note: required by a bound in `ConvertArgument`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/convert.rs
+  = note: required for `extern "C" fn(&CustomObject, objc2::runtime::Sel, Box<u32>)` to implement `MethodImplementation`
+note: required by a bound in `ClassBuilderHelper::<T>::add_method`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
   |
-  | pub trait ConvertArgument: argument_private::Sealed {
-  |                            ^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertArgument`
-  = note: `ConvertArgument` is a "sealed trait", because to implement it you also need to implement `objc2::__macro_helpers::convert::argument_private::Sealed`, which is not accessible; this is usually done to force you to use one of the provided types that already implement it
-  = help: the following types implement the trait:
-            std::option::Option<&mut objc2::rc::Id<T>>
-            std::option::Option<&mut std::option::Option<objc2::rc::Id<T>>>
+  |     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
+  |                   ---------- required by a bound in this associated function
+  |     where
+  |         F: MethodImplementation<Callee = T>,
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `CustomObject`, which is required by `CustomObject: ConvertArgument`
+  |
+  = help: the following other types implement trait `ConvertArgument`:
             bool
-            &mut objc2::rc::Id<T>
-            &mut std::option::Option<objc2::rc::Id<T>>
-            T
-  = note: this error originates in the macro `$crate::__declare_class_rewrite_params` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+            Option<&mut Id<T>>
+            Option<&mut Option<Id<T>>>
+            &mut Id<T>
+            &mut Option<Id<T>>
+  = note: required for `CustomObject` to implement `EncodeArgument`
+  = note: required for `CustomObject` to implement `ConvertArgument`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `CustomObject: Encode` is not satisfied
  --> ui/declare_class_invalid_type.rs
@@ -117,7 +319,10 @@ error[E0277]: the trait bound `CustomObject: Encode` is not satisfied
 ... |
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `CustomObject`
+  | | ^
+  | | |
+  | |_the trait `Encode` is not implemented for `CustomObject`, which is required by `extern "C" fn(&CustomObject, objc2::runtime::Sel, CustomObject): MethodImplementation`
+  |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `Encode`:
             isize
@@ -130,18 +335,91 @@ error[E0277]: the trait bound `CustomObject: Encode` is not satisfied
             u16
           and $N others
   = note: required for `CustomObject` to implement `EncodeArgument`
-  = note: required for `CustomObject` to implement `__macro_helpers::convert::argument_private::Sealed`
-note: required by a bound in `ConvertArgument`
- --> $WORKSPACE/crates/objc2/src/__macro_helpers/convert.rs
+  = note: required for `extern "C" fn(&CustomObject, objc2::runtime::Sel, CustomObject)` to implement `MethodImplementation`
+note: required by a bound in `ClassBuilderHelper::<T>::add_method`
+ --> $WORKSPACE/crates/objc2/src/__macro_helpers/declare_class.rs
   |
-  | pub trait ConvertArgument: argument_private::Sealed {
-  |                            ^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertArgument`
-  = note: `ConvertArgument` is a "sealed trait", because to implement it you also need to implement `objc2::__macro_helpers::convert::argument_private::Sealed`, which is not accessible; this is usually done to force you to use one of the provided types that already implement it
-  = help: the following types implement the trait:
-            std::option::Option<&mut objc2::rc::Id<T>>
-            std::option::Option<&mut std::option::Option<objc2::rc::Id<T>>>
+  |     pub unsafe fn add_method<F>(&mut self, sel: Sel, func: F)
+  |                   ---------- required by a bound in this associated function
+  |     where
+  |         F: MethodImplementation<Callee = T>,
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ClassBuilderHelper::<T>::add_method`
+  = note: this error originates in the macro `$crate::__declare_class_register_out` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Id<CustomObject>: EncodeReturn` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `Id<CustomObject>`, which is required by `Id<CustomObject>: ConvertReturn`
+  |
+  = help: the trait `EncodeReturn` is implemented for `()`
+  = note: required for `Id<CustomObject>` to implement `EncodeReturn`
+  = note: required for `Id<CustomObject>` to implement `ConvertReturn`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `Vec<()>`, which is required by `Vec<()>: ConvertReturn`
+  |
+  = help: the trait `EncodeReturn` is implemented for `()`
+  = note: required for `Vec<()>` to implement `EncodeReturn`
+  = note: required for `Vec<()>` to implement `ConvertReturn`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `Box<u32>`, which is required by `Box<u32>: ConvertArgument`
+  |
+  = help: the following other types implement trait `ConvertArgument`:
             bool
-            &mut objc2::rc::Id<T>
-            &mut std::option::Option<objc2::rc::Id<T>>
-            T
-  = note: this error originates in the macro `$crate::__declare_class_rewrite_params` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+            Option<&mut Id<T>>
+            Option<&mut Option<Id<T>>>
+            &mut Id<T>
+            &mut Option<Id<T>>
+  = note: required for `Box<u32>` to implement `EncodeArgument`
+  = note: required for `Box<u32>` to implement `ConvertArgument`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
+ --> ui/declare_class_invalid_type.rs
+  |
+  | / declare_class!(
+  | |     struct CustomObject;
+  | |
+  | |     unsafe impl ClassType for CustomObject {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `Encode` is not implemented for `CustomObject`, which is required by `CustomObject: ConvertArgument`
+  |
+  = help: the following other types implement trait `ConvertArgument`:
+            bool
+            Option<&mut Id<T>>
+            Option<&mut Option<Id<T>>>
+            &mut Id<T>
+            &mut Option<Id<T>>
+  = note: required for `CustomObject` to implement `EncodeArgument`
+  = note: required for `CustomObject` to implement `ConvertArgument`
+  = note: this error originates in the macro `$crate::__declare_class_method_out_inner` which comes from the expansion of the macro `declare_class` (in Nightly builds, run with -Z macro-backtrace for more info)

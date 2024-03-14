@@ -1,16 +1,11 @@
 use core::cmp;
-use core::ffi::c_void;
 use core::fmt;
 use core::ops::AddAssign;
 use core::panic::RefUnwindSafe;
 use core::panic::UnwindSafe;
 #[cfg(feature = "apple")]
-use core::ptr::NonNull;
-#[cfg(feature = "apple")]
 use core::slice;
 use core::str;
-#[cfg(feature = "apple")]
-use std::os::raw::c_char;
 
 use objc2::msg_send_id;
 use objc2::rc::{autoreleasepool_leaking, AutoreleasePool};

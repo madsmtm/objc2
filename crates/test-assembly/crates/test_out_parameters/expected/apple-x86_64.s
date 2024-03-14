@@ -36,13 +36,13 @@ _null_nonnull:
 	push	r14
 	push	rbx
 	push	rax
-	mov	rbx, rdx
-	mov	r14, qword ptr [rdx]
+	mov	rbx, qword ptr [rdx]
+	mov	r14, rdx
 	call	_objc_msgSend
 	mov	r15, rax
-	mov	rdi, qword ptr [rbx]
+	mov	rdi, qword ptr [r14]
 	call	_objc_retain
-	mov	rdi, r14
+	mov	rdi, rbx
 	call	_objc_release
 	mov	rax, r15
 	add	rsp, 8
@@ -94,8 +94,8 @@ _null_null:
 	push	r14
 	push	rbx
 	push	rax
-	mov	r15, rdx
 	mov	rbx, qword ptr [rdx]
+	mov	r15, rdx
 	call	_objc_msgSend
 	mov	r14, rax
 	mov	rdi, qword ptr [r15]

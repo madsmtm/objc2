@@ -2,7 +2,7 @@ error[E0277]: the trait bound `bool: Encode` is not satisfied
  --> ui/add_method_no_bool.rs
   |
   |     builder.add_method(sel!(myBoolTakingMethod:), method);
-  |             ----------                            ^^^^^^ the trait `Encode` is not implemented for `bool`
+  |             ----------                            ^^^^^^ the trait `Encode` is not implemented for `bool`, which is required by `unsafe extern "C" fn(&NSObject, objc2::runtime::Sel, bool): MethodImplementation`
   |             |
   |             required by a bound introduced by this call
   |
@@ -31,7 +31,7 @@ error[E0277]: the trait bound `bool: Encode` is not satisfied
  --> ui/add_method_no_bool.rs
   |
   |     builder.add_method(sel!(myBoolReturningMethod), method);
-  |             ----------                              ^^^^^^ the trait `Encode` is not implemented for `bool`
+  |             ----------                              ^^^^^^ the trait `Encode` is not implemented for `bool`, which is required by `unsafe extern "C" fn(&NSObject, objc2::runtime::Sel) -> bool: MethodImplementation`
   |             |
   |             required by a bound introduced by this call
   |

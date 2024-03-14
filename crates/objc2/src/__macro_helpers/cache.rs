@@ -15,8 +15,9 @@ pub struct CachedSel {
 
 impl CachedSel {
     /// Constructs a new [`CachedSel`].
-    pub const fn new() -> CachedSel {
-        CachedSel {
+    #[allow(clippy::new_without_default)]
+    pub const fn new() -> Self {
+        Self {
             ptr: AtomicPtr::new(ptr::null_mut()),
         }
     }
@@ -60,6 +61,7 @@ pub struct CachedClass {
 
 impl CachedClass {
     /// Constructs a new [`CachedClass`].
+    #[allow(clippy::new_without_default)]
     pub const fn new() -> CachedClass {
         CachedClass {
             ptr: AtomicPtr::new(ptr::null_mut()),
