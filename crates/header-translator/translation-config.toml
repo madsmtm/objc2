@@ -1348,6 +1348,9 @@ skipped = true
 # Needs `JSValue` from the `JavaScriptCore` framework
 [class.WebScriptObject.methods.JSValue]
 skipped = true
+# Needs mach / kernel types
+[protocol.MTLResource.methods."setOwnerWithIdentity:"]
+skipped = true
 
 # Uses a pointer to SEL, which doesn't implement Encode yet
 [protocol.NSMenuDelegate.methods]

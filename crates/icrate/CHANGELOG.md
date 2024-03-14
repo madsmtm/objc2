@@ -17,11 +17,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `NSWindowLevel` constants).
 
 ### Changed
-* Updated SDK from Xcode 15.0.1 to 15.2.
+* Updated SDK from Xcode 15.0.1 to 15.3.
 
   View the release notes to learn more details:
   - [15.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-15_1-release-notes)
   - [15.2](https://developer.apple.com/documentation/xcode-release-notes/xcode-15_2-release-notes)
+  - [15.3](https://developer.apple.com/documentation/xcode-release-notes/xcode-15_3-release-notes)
 * **BREAKING**: Changed how categories are handled; now, when a library has
   defined methods on a class defined in a different framework, a helper trait
   is output with the methods, instead of the methods being implemented

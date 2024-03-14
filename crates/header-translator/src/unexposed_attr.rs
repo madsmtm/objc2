@@ -71,7 +71,7 @@ impl UnexposedAttr {
                 let _ = get_arguments();
                 None
             }
-            "NS_SWIFT_SENDABLE" => Some(Self::Sendable),
+            "NS_SWIFT_SENDABLE" | "AS_SWIFT_SENDABLE" => Some(Self::Sendable),
             "NS_SWIFT_NONSENDABLE" => Some(Self::NonSendable),
             "NS_SWIFT_UI_ACTOR" => Some(Self::UIActor),
             "NS_SWIFT_NONISOLATED" => Some(Self::NonIsolated),
@@ -87,7 +87,7 @@ impl UnexposedAttr {
             "__unused" => None,
             // We assume that a function is inline if it has a body, so not
             // interesting.
-            "NS_INLINE" => None,
+            "CF_INLINE" | "NS_INLINE" => None,
             // We don't synthethize properties, so irrelevant for us.
             "NS_REQUIRES_PROPERTY_DEFINITIONS" => None,
             // Weak specifiers - would be interesting if Rust supported weak statics

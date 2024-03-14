@@ -888,6 +888,9 @@ AuthenticationServices_ASAuthorizationWebBrowserPlatformPublicKeyCredentialAsser
 AuthenticationServices_ASAuthorizationWebBrowserPlatformPublicKeyCredentialProvider = []
 AuthenticationServices_ASAuthorizationWebBrowserPlatformPublicKeyCredentialRegistrationRequest = []
 AuthenticationServices_ASAuthorizationWebBrowserPublicKeyCredentialManager = []
+AuthenticationServices_ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialAssertionRequest = []
+AuthenticationServices_ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialProvider = []
+AuthenticationServices_ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialRegistrationRequest = []
 AuthenticationServices_ASCOSEConstants = []
 AuthenticationServices_ASCredentialIdentity = []
 AuthenticationServices_ASCredentialIdentityStore = []
@@ -910,6 +913,7 @@ AuthenticationServices_ASPublicKeyCredential = []
 AuthenticationServices_ASPublicKeyCredentialClientData = []
 AuthenticationServices_ASSettingsHelper = []
 AuthenticationServices_ASWebAuthenticationSession = []
+AuthenticationServices_ASWebAuthenticationSessionCallback = []
 AuthenticationServices_ASWebAuthenticationSessionRequest = []
 AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionHandling = []
 AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionManager = []
@@ -973,6 +977,9 @@ AuthenticationServices_all = [
     "AuthenticationServices_ASAuthorizationWebBrowserPlatformPublicKeyCredentialProvider",
     "AuthenticationServices_ASAuthorizationWebBrowserPlatformPublicKeyCredentialRegistrationRequest",
     "AuthenticationServices_ASAuthorizationWebBrowserPublicKeyCredentialManager",
+    "AuthenticationServices_ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialAssertionRequest",
+    "AuthenticationServices_ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialProvider",
+    "AuthenticationServices_ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialRegistrationRequest",
     "AuthenticationServices_ASCOSEConstants",
     "AuthenticationServices_ASCredentialIdentity",
     "AuthenticationServices_ASCredentialIdentityStore",
@@ -995,6 +1002,7 @@ AuthenticationServices_all = [
     "AuthenticationServices_ASPublicKeyCredentialClientData",
     "AuthenticationServices_ASSettingsHelper",
     "AuthenticationServices_ASWebAuthenticationSession",
+    "AuthenticationServices_ASWebAuthenticationSessionCallback",
     "AuthenticationServices_ASWebAuthenticationSessionRequest",
     "AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionHandling",
     "AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionManager",
@@ -2053,6 +2061,7 @@ GameController = [
     "AppKit",
     "Foundation",
 ]
+GameController_GCAxis2DInput = []
 GameController_GCAxisElement = []
 GameController_GCAxisInput = []
 GameController_GCButtonElement = []
@@ -2108,9 +2117,11 @@ GameController_GCSwitchElement = []
 GameController_GCSwitchPositionInput = []
 GameController_GCSyntheticDeviceKeys = []
 GameController_GCTouchedStateInput = []
+GameController_GCTypes = []
 GameController_GCXboxGamepad = []
 GameController_all = [
     "GameController",
+    "GameController_GCAxis2DInput",
     "GameController_GCAxisElement",
     "GameController_GCAxisInput",
     "GameController_GCButtonElement",
@@ -2166,6 +2177,7 @@ GameController_all = [
     "GameController_GCSwitchPositionInput",
     "GameController_GCSyntheticDeviceKeys",
     "GameController_GCTouchedStateInput",
+    "GameController_GCTypes",
     "GameController_GCXboxGamepad",
 ]
 GameKit = [
@@ -2811,10 +2823,12 @@ MetalFX = [
     "Foundation",
     "Metal",
 ]
+MetalFX_MTLFXDefines = []
 MetalFX_MTLFXSpatialScaler = []
 MetalFX_MTLFXTemporalScaler = []
 MetalFX_all = [
     "MetalFX",
+    "MetalFX_MTLFXDefines",
     "MetalFX_MTLFXSpatialScaler",
     "MetalFX_MTLFXTemporalScaler",
 ]
