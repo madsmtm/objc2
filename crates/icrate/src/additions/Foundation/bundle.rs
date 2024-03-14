@@ -1,8 +1,7 @@
-#![cfg(feature = "Foundation_NSBundle")]
+use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use crate::common::*;
-use crate::Foundation::{self, NSBundle};
+use crate::Foundation::NSBundle;
 
 impl UnwindSafe for NSBundle {}
 impl RefUnwindSafe for NSBundle {}
@@ -10,8 +9,10 @@ impl RefUnwindSafe for NSBundle {}
 impl NSBundle {
     #[cfg(feature = "Foundation_NSString")]
     #[cfg(feature = "Foundation_NSDictionary")]
-    pub fn name(&self) -> Option<Id<Foundation::NSString>> {
-        use Foundation::{NSCopying, NSString};
+    #[cfg(feature = "Foundation_NSObject")]
+    pub fn name(&self) -> Option<objc2::rc::Id<crate::Foundation::NSString>> {
+        use crate::Foundation::{NSCopying, NSString};
+        use objc2::runtime::AnyObject;
 
         let info = self.infoDictionary()?;
         // TODO: Use ns_string!
@@ -21,5 +22,12 @@ impl NSBundle {
         // SAFETY: TODO
         let name = unsafe { ptr.as_ref().unwrap_unchecked() };
         Some(name.copy())
+    }
+}
+
+impl fmt::Debug for NSBundle {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Delegate to NSObject
+        (**self).fmt(f)
     }
 }

@@ -14,17 +14,12 @@ struct CargoToml {
 
 const POPULAR_FEATURES: &[&str] = &[
     "Foundation_NSString",
-    "Foundation_NSMutableString",
     "Foundation_NSArray",
-    "Foundation_NSMutableArray",
     "Foundation_NSDictionary",
-    "Foundation_NSMutableDictionary",
     "Foundation_NSSet",
-    "Foundation_NSMutableSet",
     "Foundation_NSEnumerator",
     "Foundation_NSError",
     "Foundation_NSException",
-    "Foundation_NSNumber",
     "Foundation_NSValue",
     "Foundation_NSThread",
 ];
@@ -55,8 +50,11 @@ fn main() -> Result<(), Box<dyn Error>> {
             } else if feature.contains("_all") || feature.contains("unstable-frameworks-") {
                 // Skip "_all" features for now
                 None
-            } else if !feature.contains("Foundation") {
-                // Skip all other than "Foundation" features for now
+            } else if !feature.contains("Foundation")
+                && !feature.contains("AppKit")
+                && !feature.contains("Metal")
+            {
+                // Skip all other than "Foundation", "AppKit" and "Metal" features for now
                 None
             } else {
                 Some(vec![&**feature])
@@ -67,7 +65,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     for features in feature_sets {
         println!(
-            "running: cargo check --features=Foundation,{}",
+            "running: cargo check --features=Foundation,AppKit,Metal,{}",
             features.join(",")
         );
 
@@ -77,6 +75,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                 "--quiet",
                 "--package=icrate",
                 "--features=Foundation",
+                "--features=AppKit",
+                "--features=Metal",
                 "--features",
                 &features.join(","),
             ])

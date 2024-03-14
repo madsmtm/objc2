@@ -1,5 +1,6 @@
 use objc2::mutability::CounterpartOrSelf;
 use objc2::rc::Id;
+#[cfg(feature = "Foundation_NSZone")]
 use objc2::runtime::NSZone;
 use objc2::{extern_protocol, ProtocolType};
 
@@ -35,6 +36,7 @@ extern_protocol!(
         ///
         /// The zone pointer must be valid or NULL.
         #[method_id(copyWithZone:)]
+        #[cfg(feature = "Foundation_NSZone")]
         unsafe fn copyWithZone(&self, zone: *mut NSZone) -> Id<Self::Immutable>
         where
             Self: CounterpartOrSelf;
@@ -74,6 +76,7 @@ extern_protocol!(
         ///
         /// The zone pointer must be valid or NULL.
         #[method_id(mutableCopyWithZone:)]
+        #[cfg(feature = "Foundation_NSZone")]
         unsafe fn mutableCopyWithZone(&self, zone: *mut NSZone) -> Id<Self::Mutable>
         where
             Self: CounterpartOrSelf;

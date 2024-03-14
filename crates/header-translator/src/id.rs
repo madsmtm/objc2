@@ -6,7 +6,7 @@ use clang::Entity;
 
 use crate::context::Context;
 
-pub trait ToOptionString {
+pub trait ToOptionString: fmt::Debug {
     fn to_option(&self) -> Option<&str>;
 }
 
@@ -19,6 +19,12 @@ impl ToOptionString for String {
 impl ToOptionString for Option<String> {
     fn to_option(&self) -> Option<&str> {
         self.as_deref()
+    }
+}
+
+impl ToOptionString for () {
+    fn to_option(&self) -> Option<&str> {
+        None
     }
 }
 
@@ -76,12 +82,14 @@ impl<N: ToOptionString> ItemIdentifier<N> {
                 ("__Unknown__".to_string(), None)
             });
 
-        // TODO: Get rid of this hack
-        if library_name == "CoreGraphics" {
-            if let Some("CGFloat" | "CGPoint" | "CGRect" | "CGSize") = name.to_option() {
-                library_name = "Foundation".to_string();
-                file_name = Some("NSGeometry".to_string());
-            }
+        // TODO: Get rid of these hacks
+        if let Some("CGFloat" | "CGPoint" | "CGRect" | "CGSize") = name.to_option() {
+            library_name = "Foundation".to_string();
+            file_name = Some("NSGeometry".to_string());
+        }
+        if let Some("CFTimeInterval") = name.to_option() {
+            library_name = "System".to_string();
+            file_name = None;
         }
 
         Self {
@@ -104,12 +112,23 @@ impl<N: ToOptionString> ItemIdentifier<N> {
         }
     }
 
+    pub fn location(&self) -> Location
+    where
+        N: Clone,
+    {
+        self.clone().map_name(|_| ())
+    }
+
     pub fn with_new_path<R: ToOptionString>(self, other: &ItemIdentifier<R>) -> Self {
         Self {
             name: self.name,
             library: other.library.clone(),
             file_name: other.file_name.clone(),
         }
+    }
+
+    pub fn is_system(&self) -> bool {
+        self.library == "System"
     }
 }
 
@@ -121,10 +140,6 @@ impl ItemIdentifier {
 
     pub fn to_some(self) -> ItemIdentifier<Option<String>> {
         self.map_name(Some)
-    }
-
-    pub fn is_system(&self) -> bool {
-        self.library == "System"
     }
 
     pub fn is_nsobject(&self) -> bool {
@@ -193,3 +208,5 @@ impl ItemIdentifier<Option<String>> {
         Self::with_name(entity.get_name(), entity, context)
     }
 }
+
+pub type Location = ItemIdentifier<()>;

@@ -23,6 +23,15 @@ impl UnwindSafe for NSThread {}
 #[cfg(feature = "Foundation_NSThread")]
 impl RefUnwindSafe for NSThread {}
 
+#[cfg(feature = "Foundation_NSThread")]
+impl fmt::Debug for NSThread {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Use -[NSThread description] since that includes the thread number
+        let obj: &crate::Foundation::NSObject = self;
+        fmt::Debug::fmt(obj, f)
+    }
+}
+
 /// Whether the application is multithreaded according to Cocoa.
 #[cfg(feature = "Foundation_NSThread")]
 pub fn is_multi_threaded() -> bool {

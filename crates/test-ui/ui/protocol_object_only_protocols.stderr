@@ -7,14 +7,14 @@ error[E0277]: the trait bound `NSObject: ImplementedBy<NSObject>` is not satisfi
   |                                        required by a bound introduced by this call
   |
   = help: the following other types implement trait `ImplementedBy<T>`:
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
-            (dyn NSCopying + 'static)
-            (dyn NSMutableCopying + 'static)
-            (dyn NSCacheDelegate + 'static)
-            (dyn NSConnectionDelegate + 'static)
+            (dyn NSFastEnumeration + 'static)
+            (dyn NSCoding + 'static)
           and $N others
 note: required by a bound in `ProtocolObject::<P>::from_ref`
  --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
@@ -34,14 +34,14 @@ error[E0277]: the trait bound `dyn Send: ImplementedBy<NSObject>` is not satisfi
   |                                        required by a bound introduced by this call
   |
   = help: the following other types implement trait `ImplementedBy<T>`:
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
-            (dyn NSCopying + 'static)
-            (dyn NSMutableCopying + 'static)
-            (dyn NSCacheDelegate + 'static)
-            (dyn NSConnectionDelegate + 'static)
+            (dyn NSFastEnumeration + 'static)
+            (dyn NSCoding + 'static)
           and $N others
 note: required by a bound in `ProtocolObject::<P>::from_ref`
  --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
@@ -61,14 +61,14 @@ error[E0277]: the trait bound `dyn Foo: ImplementedBy<NSObject>` is not satisfie
   |                                       required by a bound introduced by this call
   |
   = help: the following other types implement trait `ImplementedBy<T>`:
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
-            (dyn NSCopying + 'static)
-            (dyn NSMutableCopying + 'static)
-            (dyn NSCacheDelegate + 'static)
-            (dyn NSConnectionDelegate + 'static)
+            (dyn NSFastEnumeration + 'static)
+            (dyn NSCoding + 'static)
           and $N others
 note: required by a bound in `ProtocolObject::<P>::from_ref`
  --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
@@ -89,14 +89,14 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |
   = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
   = help: the following other types implement trait `ImplementedBy<T>`:
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
-            (dyn NSCopying + 'static)
-            (dyn NSMutableCopying + 'static)
-            (dyn NSCacheDelegate + 'static)
-            (dyn NSConnectionDelegate + 'static)
+            (dyn NSFastEnumeration + 'static)
+            (dyn NSCoding + 'static)
           and $N others
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
 note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
@@ -144,14 +144,14 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |
   = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
   = help: the following other types implement trait `ImplementedBy<T>`:
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
-            (dyn NSCopying + 'static)
-            (dyn NSMutableCopying + 'static)
-            (dyn NSCacheDelegate + 'static)
-            (dyn NSConnectionDelegate + 'static)
+            (dyn NSFastEnumeration + 'static)
+            (dyn NSCoding + 'static)
           and $N others
 note: required because it appears within the type `objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
@@ -188,14 +188,14 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |
   = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
   = help: the following other types implement trait `ImplementedBy<T>`:
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
-            (dyn NSCopying + 'static)
-            (dyn NSMutableCopying + 'static)
-            (dyn NSCacheDelegate + 'static)
-            (dyn NSConnectionDelegate + 'static)
+            (dyn NSFastEnumeration + 'static)
+            (dyn NSCoding + 'static)
           and $N others
 note: required because it appears within the type `objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
@@ -232,14 +232,14 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |
   = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
   = help: the following other types implement trait `ImplementedBy<T>`:
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
-            (dyn NSCopying + 'static)
-            (dyn NSMutableCopying + 'static)
-            (dyn NSCacheDelegate + 'static)
-            (dyn NSConnectionDelegate + 'static)
+            (dyn NSFastEnumeration + 'static)
+            (dyn NSCoding + 'static)
           and $N others
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
 note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
@@ -286,14 +286,14 @@ error[E0277]: the trait bound `NSObject: NSCopying` is not satisfied
   |                                             required by a bound introduced by this call
   |
   = help: the following other types implement trait `NSCopying`:
-            ProtocolObject<T>
             NSArray<ObjectType>
             NSMutableArray<ObjectType>
+            ProtocolObject<T>
             NSDictionary<KeyType, ObjectType>
+            NSMutableDictionary<KeyType, ObjectType>
             NSSet<ObjectType>
-            NSError
-            NSNotification
-            NSString
+            NSMutableSet<ObjectType>
+            NSCountedSet<ObjectType>
           and $N others
   = note: required for `dyn NSCopying` to implement `ImplementedBy<NSObject>`
 note: required by a bound in `ProtocolObject::<P>::from_ref`
@@ -314,14 +314,14 @@ error[E0277]: the trait bound `dyn NSCopying + Send: ImplementedBy<NSObject>` is
   |                                                    required by a bound introduced by this call
   |
   = help: the following other types implement trait `ImplementedBy<T>`:
+            (dyn NSCopying + 'static)
+            (dyn NSMutableCopying + 'static)
             (dyn NSObjectProtocol + 'static)
             (dyn NSObjectProtocol + Sync + 'static)
             (dyn NSObjectProtocol + Send + Sync + 'static)
             (dyn NSObjectProtocol + Send + 'static)
-            (dyn NSCopying + 'static)
-            (dyn NSMutableCopying + 'static)
-            (dyn NSCacheDelegate + 'static)
-            (dyn NSConnectionDelegate + 'static)
+            (dyn NSFastEnumeration + 'static)
+            (dyn NSCoding + 'static)
           and $N others
 note: required by a bound in `ProtocolObject::<P>::from_ref`
  --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs

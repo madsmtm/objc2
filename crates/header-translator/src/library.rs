@@ -5,6 +5,7 @@ use std::io;
 use std::path::Path;
 
 use crate::config::LibraryData;
+use crate::file::clean_name;
 use crate::file::File;
 
 /// Some SDK files have '+' in the file name, so we change those to `_`.
@@ -100,7 +101,8 @@ impl fmt::Display for Library {
         writeln!(f)?;
 
         for name in self.files.keys() {
-            let name = clean_file_name(name);
+            let name = clean_name(name);
+            write!(f, "#[cfg(feature = \"{}_{}\")]", self.link_name, name)?;
             writeln!(f, "#[path = \"{name}.rs\"]")?;
             writeln!(f, "mod __{name};")?;
         }
@@ -109,11 +111,11 @@ impl fmt::Display for Library {
 
         for (file_name, file) in &self.files {
             for stmt in &file.stmts {
-                let features = stmt.required_features();
-
                 if let Some(item) = stmt.provided_item() {
                     assert_eq!(item.file_name.as_ref(), Some(file_name));
 
+                    let mut features = stmt.required_features();
+                    features.add_item(&item);
                     write!(f, "{}", features.cfg_gate_ln())?;
 
                     let visibility = if item.name.starts_with('_') {
@@ -121,7 +123,6 @@ impl fmt::Display for Library {
                     } else {
                         "pub"
                     };
-
                     write!(
                         f,
                         "{visibility} use self::__{}::{{{}}};",

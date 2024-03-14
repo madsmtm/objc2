@@ -15,17 +15,34 @@
 #![doc = include_str!("../../../examples/metal.rs")]
 //! ```
 
+#[cfg(feature = "Metal_MTLCaptureManager")]
 mod capture;
+#[cfg(feature = "Metal_MTLDevice")]
 mod device;
+#[cfg(feature = "Metal_MTLAccelerationStructureTypes")]
 mod packed;
 #[cfg(feature = "unstable-private")]
 mod private;
-mod shift_mask;
+#[cfg(feature = "Metal_MTLResource")]
+mod resource;
 mod slice;
 
+#[allow(unreachable_pub)]
+#[allow(unused_imports)]
 pub use crate::generated::Metal::*;
 
+#[cfg(feature = "Metal_MTLAccelerationStructureTypes")]
 pub use self::packed::{MTLPackedFloat3, __MTLPackedFloat3};
-pub use self::shift_mask::*;
+#[cfg(feature = "unstable-private")]
+pub use self::private::MTLDevicePrivate;
+#[cfg(feature = "Metal_MTLResource")]
+pub use self::resource::*;
+#[cfg(all(
+    feature = "Metal_MTLRenderCommandEncoder",
+    feature = "Metal_MTLCommandEncoder"
+))]
+pub use self::slice::MTLRenderCommandEncoderSliceExt;
 
-pub type CFTimeInterval = std::os::raw::c_double;
+// CoreFoundation
+#[allow(dead_code)]
+pub(crate) type CFTimeInterval = std::os::raw::c_double;

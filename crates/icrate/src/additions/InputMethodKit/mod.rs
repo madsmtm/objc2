@@ -3,12 +3,35 @@
 
 pub use crate::generated::InputMethodKit::*;
 
-use crate::Foundation::*;
+#[cfg(feature = "Foundation_NSString")]
+#[allow(unused_imports)]
+use crate::Foundation::NSString;
 
-extern_static!(kIMKCommandClientName: &'static NSString);
+#[cfg(all(
+    feature = "InputMethodKit_IMKInputController",
+    feature = "Foundation_NSString"
+))]
 extern_static!(kIMKCommandMenuItemName: &'static NSString);
+#[cfg(all(
+    feature = "InputMethodKit_IMKInputController",
+    feature = "Foundation_NSString"
+))]
+extern_static!(kIMKCommandClientName: &'static NSString);
+
+#[cfg(all(
+    feature = "InputMethodKit_IMKCandidates",
+    feature = "Foundation_NSString"
+))]
 extern_static!(IMKCandidatesOpacityAttributeName: &'static NSString);
+#[cfg(all(
+    feature = "InputMethodKit_IMKCandidates",
+    feature = "Foundation_NSString"
+))]
 extern_static!(IMKCandidatesSendServerKeyEventFirst: &'static NSString);
-extern_static!(IMKControllerClass: &'static NSString);
-extern_static!(IMKDelegateClass: &'static NSString);
+
+#[cfg(all(feature = "InputMethodKit_IMKServer", feature = "Foundation_NSString"))]
 extern_static!(IMKModeDictionary: &'static NSString);
+#[cfg(all(feature = "InputMethodKit_IMKServer", feature = "Foundation_NSString"))]
+extern_static!(IMKControllerClass: &'static NSString);
+#[cfg(all(feature = "InputMethodKit_IMKServer", feature = "Foundation_NSString"))]
+extern_static!(IMKDelegateClass: &'static NSString);

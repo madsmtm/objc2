@@ -1,4 +1,3 @@
-#![cfg(feature = "Foundation_NSValue")]
 use alloc::string::ToString;
 use core::fmt;
 use core::hash;
@@ -9,7 +8,7 @@ use std::ffi::{CStr, CString};
 use objc2::encode::Encode;
 
 use crate::common::*;
-use crate::Foundation::{NSPoint, NSRange, NSRect, NSSize, NSValue};
+use crate::Foundation::NSValue;
 
 // We can't implement any auto traits for NSValue, since it can contain an
 // arbitary object!
@@ -24,12 +23,12 @@ impl NSValue {
     ///
     /// # Examples
     ///
-    /// Create an `NSValue` containing an [`NSPoint`].
+    /// Create an `NSValue` containing an `i32`.
     ///
     /// ```
-    /// use icrate::Foundation::{NSPoint, NSValue};
+    /// use icrate::Foundation::NSValue;
     ///
-    /// let val = NSValue::new::<NSPoint>(NSPoint::new(1.0, 1.0));
+    /// let val = NSValue::new(42i32);
     /// ```
     ///
     /// [`NSPoint`]: crate::Foundation::NSPoint
@@ -102,8 +101,9 @@ impl NSValue {
         unsafe { value.assume_init() }
     }
 
-    pub fn get_range(&self) -> Option<NSRange> {
-        if self.contains_encoding::<NSRange>() {
+    #[cfg(feature = "Foundation_NSRange")]
+    pub fn get_range(&self) -> Option<crate::Foundation::NSRange> {
+        if self.contains_encoding::<crate::Foundation::NSRange>() {
             // SAFETY: We just checked that this contains an NSRange
             Some(unsafe { self.rangeValue() })
         } else {
@@ -111,8 +111,9 @@ impl NSValue {
         }
     }
 
-    pub fn get_point(&self) -> Option<NSPoint> {
-        if self.contains_encoding::<NSPoint>() {
+    #[cfg(feature = "Foundation_NSGeometry")]
+    pub fn get_point(&self) -> Option<crate::Foundation::NSPoint> {
+        if self.contains_encoding::<crate::Foundation::NSPoint>() {
             // SAFETY: We just checked that this contains an NSPoint
             //
             // Note: The documentation says that `pointValue`, `sizeValue` and
@@ -124,8 +125,9 @@ impl NSValue {
         }
     }
 
-    pub fn get_size(&self) -> Option<NSSize> {
-        if self.contains_encoding::<NSSize>() {
+    #[cfg(feature = "Foundation_NSGeometry")]
+    pub fn get_size(&self) -> Option<crate::Foundation::NSSize> {
+        if self.contains_encoding::<crate::Foundation::NSSize>() {
             // SAFETY: We just checked that this contains an NSSize
             Some(unsafe { self.sizeValue() })
         } else {
@@ -133,8 +135,9 @@ impl NSValue {
         }
     }
 
-    pub fn get_rect(&self) -> Option<NSRect> {
-        if self.contains_encoding::<NSRect>() {
+    #[cfg(feature = "Foundation_NSGeometry")]
+    pub fn get_rect(&self) -> Option<crate::Foundation::NSRect> {
+        if self.contains_encoding::<crate::Foundation::NSRect>() {
             // SAFETY: We just checked that this contains an NSRect
             Some(unsafe { self.rectValue() })
         } else {

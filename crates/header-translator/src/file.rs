@@ -2,12 +2,18 @@ use std::fmt;
 
 use crate::context::Context;
 use crate::stmt::Stmt;
+use crate::ItemIdentifier;
 
 #[derive(Debug, PartialEq)]
 pub struct File {
     library_name: String,
     imports: Vec<String>,
     pub(crate) stmts: Vec<Stmt>,
+}
+
+/// Some SDK files have '+' in the file name, so we change those to `_`.
+pub(crate) fn clean_name(name: &str) -> String {
+    name.replace('+', "_")
 }
 
 impl File {
@@ -26,6 +32,11 @@ impl File {
 
     pub fn add_stmt(&mut self, stmt: Stmt) {
         self.stmts.push(stmt);
+    }
+
+    pub(crate) fn required_imports(&self) -> impl Iterator<Item = ItemIdentifier> + '_ {
+        // TODO
+        vec![].into_iter()
     }
 }
 

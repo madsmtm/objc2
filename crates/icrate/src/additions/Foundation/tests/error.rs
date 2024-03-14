@@ -2,15 +2,15 @@
 #![cfg(feature = "Foundation_NSString")]
 use alloc::format;
 
-use crate::Foundation::{ns_string, NSError, NSURLErrorDomain};
+use crate::Foundation::{ns_string, NSCocoaErrorDomain, NSError};
 
 #[test]
 fn basic() {
-    let error = NSError::new(-999, unsafe { NSURLErrorDomain });
+    let error = NSError::new(-999, unsafe { NSCocoaErrorDomain });
     let expected = if cfg!(feature = "apple") {
-        "The operation couldn’t be completed. (NSURLErrorDomain error -999.)"
+        "The operation couldn’t be completed. (Cocoa error -999.)"
     } else {
-        "NSURLErrorDomain -999"
+        "NSCocoaErrorDomain -999"
     };
     assert_eq!(format!("{error}"), expected);
 }

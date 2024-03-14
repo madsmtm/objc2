@@ -40,3 +40,6 @@ pub(crate) type TodoFunction = *const c_void;
 pub(crate) type TodoClass = AnyObject;
 #[cfg(feature = "objc2")]
 pub(crate) type TodoProtocols = AnyObject;
+
+#[cfg(feature = "Foundation")]
+pub(crate) use crate::Foundation::MainThreadMarker;

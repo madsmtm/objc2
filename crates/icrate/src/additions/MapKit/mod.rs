@@ -2,5 +2,5 @@
 
 pub use crate::generated::MapKit::*;
 
-#[cfg(feature = "MapKit_MKMapItem")]
+#[cfg(all(feature = "Foundation_NSObject", feature = "MapKit_MKMapItem"))]
 unsafe impl crate::Foundation::NSCoding for crate::MapKit::MKMapItem {}

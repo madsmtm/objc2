@@ -3,21 +3,27 @@ use std::fmt;
 
 use clang::{Entity, EntityKind};
 
+use crate::file::clean_name;
+use crate::id::ToOptionString;
+use crate::stmt::parse_direct_protocols;
+use crate::Mutability;
 use crate::{stmt::parse_superclasses, Context, ItemIdentifier};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct Feature<'a>(&'a ItemIdentifier);
+pub struct Feature<'a, N>(&'a ItemIdentifier<N>);
 
-impl<'a> Feature<'a> {
-    pub fn new(item: &'a ItemIdentifier) -> Self {
+impl<'a, N: ToOptionString> Feature<'a, N> {
+    pub fn new(item: &'a ItemIdentifier<N>) -> Self {
         Self(item)
     }
 
     pub fn name(&self) -> Option<String> {
         if self.0.is_system() {
             None
+        } else if let Some(file_name) = &self.0.file_name {
+            Some(format!("{}_{}", self.0.library, clean_name(file_name)))
         } else {
-            Some(format!("{}_{}", self.0.library, self.0.name))
+            Some(format!("Unknown-{}_{:?}", self.0.library, self.0.name))
         }
     }
 }
@@ -38,7 +44,7 @@ impl Features {
         }
     }
 
-    pub fn remove_item(&mut self, item: &ItemIdentifier) {
+    pub fn remove_item<N: ToOptionString>(&mut self, item: &ItemIdentifier<N>) {
         if let Some(name) = Feature::new(item).name() {
             self.0.remove(&name);
         }
@@ -91,28 +97,37 @@ impl Features {
     pub(crate) fn required_by_decl(entity: &Entity<'_>, context: &Context<'_>) -> Self {
         match entity.get_kind() {
             EntityKind::ObjCInterfaceDecl => {
+                let id = ItemIdentifier::new(entity, context);
+                let data = context.class_data.get(&id.name);
+
                 let mut features = Self::new();
-                features.add_item(&ItemIdentifier::new(entity, context));
+                features.add_item(&id);
+                for (id, _, _) in parse_superclasses(entity, context) {
+                    features.add_item(&id);
+                }
+                if let Some(Mutability::ImmutableWithMutableSubclass(subclass)) =
+                    data.map(|data| &data.mutability)
+                {
+                    features.add_item(subclass);
+                }
+
                 features
             }
-            EntityKind::ObjCProtocolDecl => Self::new(),
+            EntityKind::ObjCProtocolDecl => {
+                let mut features = Self::new();
+                features.add_item(&ItemIdentifier::new(entity, context));
+                for entity in parse_direct_protocols(entity, context) {
+                    features.merge(Self::required_by_decl(&entity, context));
+                }
+                features
+            }
             _ => panic!("invalid required_by_decl kind {entity:?}"),
         }
     }
 
     /// Get the features implied enabled by having a given declaration.
     pub(crate) fn implied_by_decl(entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        let mut features = Self::required_by_decl(entity, context);
-        match entity.get_kind() {
-            EntityKind::ObjCInterfaceDecl => {
-                // The feature is enabled if superclass' features are.
-                for (id, _, _) in parse_superclasses(entity, context) {
-                    features.add_item(&id);
-                }
-                features
-            }
-            EntityKind::ObjCProtocolDecl => features,
-            _ => panic!("invalid implied_by_decl kind {entity:?}"),
-        }
+        // No extra features are implied
+        Self::required_by_decl(entity, context)
     }
 }

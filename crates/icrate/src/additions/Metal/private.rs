@@ -3,27 +3,32 @@
 //! The credit for finding these belong to the [metal-rs] project.
 //!
 //! [metal-rs]: https://github.com/gfx-rs/metal-rs
+#![allow(clippy::missing_safety_doc)]
 
 use crate::common::*;
-use crate::Foundation;
-use crate::Metal;
+use crate::Foundation::*;
+use crate::Metal::*;
 
-extern_methods!(
-    #[cfg(feature = "Metal_MTLDevice")]
-    unsafe impl Metal::MTLDevice {
-        #[method_id(vendorName)]
-        #[cfg(feature = "Foundation_NSString")]
-        pub unsafe fn vendorName(&self) -> Id<Foundation::NSString>;
+use objc2::msg_send_id;
 
-        #[method_id(familyName)]
-        #[cfg(feature = "Foundation_NSString")]
-        pub unsafe fn familyName(&self) -> Id<Foundation::NSString>;
+pub unsafe trait MTLDevicePrivate: MTLDevice + Message {
+    #[cfg(feature = "Foundation_NSString")]
+    unsafe fn vendorName(&self) -> Id<NSString> {
+        unsafe { msg_send_id![self, vendorName] }
     }
-);
+
+    #[cfg(feature = "Foundation_NSString")]
+    unsafe fn familyName(&self) -> Id<NSString> {
+        unsafe { msg_send_id![self, familyName] }
+    }
+}
+
+#[cfg(feature = "Metal_MTLDevice")]
+unsafe impl<P: MTLDevice + Message> MTLDevicePrivate for P {}
 
 extern_methods!(
-    #[cfg(feature = "Metal_MTLRenderPipelineReflection")]
-    unsafe impl Metal::MTLRenderPipelineReflection {
+    #[cfg(feature = "Metal_MTLRenderPipeline")]
+    unsafe impl MTLRenderPipelineReflection {
         #[cfg(feature = "Metal_MTLDevice")]
         #[method_id(initWithVertexData:fragmentData:serializedVertexDescriptor:device:options:flags:)]
         pub unsafe fn initWithVertexData(
@@ -31,7 +36,7 @@ extern_methods!(
             vertex_data: *mut c_void,
             fragment_data: *mut c_void,
             vertex_desc: *mut c_void,
-            device: &Metal::MTLDevice,
+            device: &ProtocolObject<dyn MTLDevice>,
             options: u64,
             flags: u64,
         ) -> Option<Id<Self>>;
@@ -41,7 +46,7 @@ extern_methods!(
         pub unsafe fn newSerializedVertexDataWithFlags_error(
             &self,
             flags: u64,
-        ) -> Result<Id<AnyObject>, Id<Foundation::NSError>>;
+        ) -> Result<Id<AnyObject>, Id<NSError>>;
 
         #[method(serializeFragmentData)]
         pub unsafe fn serializeFragmentData(&self) -> *mut c_void;
@@ -50,7 +55,7 @@ extern_methods!(
 
 extern_methods!(
     #[cfg(feature = "Metal_MTLSamplerDescriptor")]
-    unsafe impl Metal::MTLSamplerDescriptor {
+    unsafe impl MTLSamplerDescriptor {
         #[method(setLodBias:)]
         pub unsafe fn setLodBias(&self, bias: f32);
     }
@@ -58,7 +63,7 @@ extern_methods!(
 
 extern_methods!(
     #[cfg(feature = "Metal_MTLVertexDescriptor")]
-    unsafe impl Metal::MTLVertexDescriptor {
+    unsafe impl MTLVertexDescriptor {
         #[method_id(newSerializedDescriptor)]
         pub unsafe fn newSerializedDescriptor(&self) -> Option<Id<AnyObject>>;
     }

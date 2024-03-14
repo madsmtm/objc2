@@ -1,5 +1,7 @@
-#[cfg(feature = "Metal_MTLDevice")]
-impl crate::Metal::MTLDevice {
+#![cfg(commented_out)]
+use crate::Metal::MTLDevice;
+
+pub trait MTLDeviceExtension {
     // pub fn system_default() -> Option<Self> {
     //     MTLCreateSystemDefaultDevice()
     // }
@@ -11,3 +13,5 @@ impl crate::Metal::MTLDevice {
     //     NSArray::from(MTLCreateSystemDefaultDevice())
     // }
 }
+
+impl<P: MTLDevice> MTLDeviceExtension for P {}

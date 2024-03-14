@@ -227,13 +227,13 @@ __inner_extern_class!(
 
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
-    #[cfg(feature = "Foundation_NSCountedSet")]
+    #[cfg(feature = "Foundation_NSSet")]
     pub struct NSCountedSet<ObjectType: ?Sized = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSMutableSet<ObjectType>,
     }
 
-    #[cfg(feature = "Foundation_NSCountedSet")]
+    #[cfg(feature = "Foundation_NSSet")]
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSCountedSet<ObjectType> {
         #[inherits(NSSet<ObjectType>, NSObject)]
         type Super = NSMutableSet<ObjectType>;

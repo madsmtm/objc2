@@ -31,7 +31,6 @@ fn test_from_nsstring() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSMutableAttributedString")]
 fn test_copy() {
     use Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
 
@@ -75,14 +74,12 @@ fn test_debug() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSMutableAttributedString")]
 fn test_new_mutable() {
     let s = Foundation::NSMutableAttributedString::new();
     assert_eq!(&s.string().to_string(), "");
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSMutableAttributedString")]
 #[cfg_attr(
     feature = "gnustep-1-7",
     ignore = "thread safety issues regarding initialization"

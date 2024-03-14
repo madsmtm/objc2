@@ -19,15 +19,11 @@ Foundation_all = [
     "icrate/Foundation",
     "icrate/Foundation_NSException",
     "icrate/Foundation_NSArray",
-    "icrate/Foundation_NSMutableArray",
     "icrate/Foundation_NSString",
-    "icrate/Foundation_NSMutableString",
     "icrate/Foundation_NSSet",
-    "icrate/Foundation_NSMutableSet",
     "icrate/Foundation_NSDictionary",
-    "icrate/Foundation_NSMutableDictionary",
     "icrate/Foundation_NSValue",
-    "icrate/Foundation_NSNumber",
+    "icrate/Foundation_NSObject",
 ]
 
 apple = ["block2/apple", "objc2/apple", "icrate/apple"]

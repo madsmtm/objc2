@@ -1,4 +1,3 @@
-#![cfg(feature = "Foundation_NSUUID")]
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 

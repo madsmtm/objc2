@@ -1,5 +1,4 @@
 //! Utilities for the `NSEnumerator` class.
-#![cfg(feature = "Foundation_NSEnumerator")]
 use super::iter;
 use crate::common::*;
 use crate::Foundation::NSEnumerator;

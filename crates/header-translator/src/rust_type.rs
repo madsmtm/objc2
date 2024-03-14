@@ -1007,14 +1007,23 @@ impl Ty {
             Self::Sel { .. } => Features::new(),
             Self::Pointer { pointee, .. } => pointee.required_features(self_features),
             Self::IncompleteArray { pointee, .. } => pointee.required_features(self_features),
-            Self::TypeDef { to, .. } => to.required_features(self_features),
+            Self::TypeDef { id, to, .. } => {
+                let mut features = to.required_features(self_features);
+                features.add_item(id);
+                features
+            }
             Self::Array { element_type, .. } => element_type.required_features(self_features),
-            Self::Enum { ty, .. } => ty.required_features(self_features),
-            Self::Struct { fields, .. } => {
+            Self::Enum { id, ty } => {
+                let mut features = ty.required_features(self_features);
+                features.add_item(id);
+                features
+            }
+            Self::Struct { id, fields } => {
                 let mut features = Features::new();
                 for field in fields {
                     features.merge(field.required_features(self_features));
                 }
+                features.add_item(id);
                 features
             }
             Self::Fn {

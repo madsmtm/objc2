@@ -5,7 +5,7 @@ use core::str;
 use std::ffi::CStr;
 use std::os::raw::c_char;
 
-use crate::Foundation::{NSPoint, NSRange, NSRect, NSSize, NSValue};
+use crate::Foundation::NSValue;
 
 #[test]
 fn basic() {
@@ -47,20 +47,27 @@ fn test_debug() {
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSRange")]
 fn nsrange() {
+    use crate::Foundation::NSRange;
     let range = NSRange::from(1..2);
     let val = NSValue::new(range);
     assert_eq!(val.get_range(), Some(range));
-    assert_eq!(val.get_point(), None);
-    assert_eq!(val.get_size(), None);
-    assert_eq!(val.get_rect(), None);
+    #[cfg(feature = "Foundation_NSGeometry")]
+    {
+        assert_eq!(val.get_point(), None);
+        assert_eq!(val.get_size(), None);
+        assert_eq!(val.get_rect(), None);
+    }
     // NSValue -getValue is broken on GNUStep for some types
     #[cfg(not(feature = "gnustep-1-7"))]
     assert_eq!(unsafe { val.get::<NSRange>() }, range);
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSGeometry")]
 fn nspoint() {
+    use crate::Foundation::NSPoint;
     let point = NSPoint::new(1.0, 2.0);
     let val = NSValue::new(point);
     assert_eq!(val.get_point(), Some(point));
@@ -69,7 +76,9 @@ fn nspoint() {
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSGeometry")]
 fn nssize() {
+    use crate::Foundation::NSSize;
     let point = NSSize::new(1.0, 2.0);
     let val = NSValue::new(point);
     assert_eq!(val.get_size(), Some(point));
@@ -78,7 +87,9 @@ fn nssize() {
 }
 
 #[test]
+#[cfg(feature = "Foundation_NSGeometry")]
 fn nsrect() {
+    use crate::Foundation::{NSPoint, NSRect, NSSize};
     let rect = NSRect::new(NSPoint::new(1.0, 2.0), NSSize::new(3.0, 4.0));
     let val = NSValue::new(rect);
     assert_eq!(val.get_rect(), Some(rect));

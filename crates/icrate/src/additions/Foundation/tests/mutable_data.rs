@@ -1,4 +1,4 @@
-#![cfg(feature = "Foundation_NSMutableData")]
+#![cfg(feature = "Foundation_NSData")]
 
 use objc2::rc::Id;
 use objc2::runtime::AnyObject;
