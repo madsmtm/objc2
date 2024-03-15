@@ -1,4 +1,5 @@
 #![deny(unsafe_op_in_unsafe_fn)]
+#![allow(clippy::incompatible_msrv)]
 
 use core::{cell::OnceCell, ptr::NonNull};
 

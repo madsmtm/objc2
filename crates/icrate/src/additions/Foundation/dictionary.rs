@@ -6,7 +6,7 @@ use core::fmt;
 use core::hash::Hash;
 use core::mem;
 use core::ops::{Index, IndexMut};
-use core::ptr::{self, NonNull};
+use core::ptr;
 
 #[cfg(feature = "Foundation_NSObject")]
 use objc2::mutability::IsRetainable;

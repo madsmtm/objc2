@@ -1,4 +1,4 @@
-error[E0277]: the trait bound `Id<MyObject>: Encode` is not satisfied
+error[E0277]: the trait bound `Id<MyObject>: ConvertReturn` is not satisfied
  --> ui/extern_methods_invalid_type.rs
   |
   | / extern_methods!(
@@ -7,18 +7,9 @@ error[E0277]: the trait bound `Id<MyObject>: Encode` is not satisfied
   | |         fn a(&self) -> Id<Self>;
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Id<MyObject>`
+  | |_^ the trait `Encode` is not implemented for `Id<MyObject>`, which is required by `Id<MyObject>: ConvertReturn`
   |
-  = help: the following other types implement trait `Encode`:
-            isize
-            i8
-            i16
-            i32
-            i64
-            usize
-            u8
-            u16
-          and $N others
+  = help: the trait `ConvertReturn` is implemented for `bool`
   = note: required for `Id<MyObject>` to implement `EncodeReturn`
   = note: required for `Id<MyObject>` to implement `ConvertReturn`
 note: required by a bound in `MsgSend::send_message`
@@ -62,7 +53,7 @@ error[E0277]: the trait bound `Box<i32>: Encode` is not satisfied
   | |         fn c(&self, arg: Box<i32>);
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Box<i32>`
+  | |_^ the trait `Encode` is not implemented for `Box<i32>`, which is required by `(Box<i32>,): ConvertArguments`
   |
   = help: the following other types implement trait `Encode`:
             isize
@@ -87,7 +78,7 @@ note: required by a bound in `MsgSend::send_message`
   |            ^^^^^^^^^^^^^^^^ required by this bound in `MsgSend::send_message`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Result<(), Id<NSObject>>: Encode` is not satisfied
+error[E0277]: the trait bound `Result<(), Id<NSObject>>: ConvertReturn` is not satisfied
  --> ui/extern_methods_invalid_type.rs
   |
   | / extern_methods!(
@@ -96,18 +87,9 @@ error[E0277]: the trait bound `Result<(), Id<NSObject>>: Encode` is not satisfie
   | |         fn error(arg: i32) -> Result<(), Id<NSObject>>;
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `Result<(), Id<NSObject>>`
+  | |_^ the trait `Encode` is not implemented for `Result<(), Id<NSObject>>`, which is required by `Result<(), Id<NSObject>>: ConvertReturn`
   |
-  = help: the following other types implement trait `Encode`:
-            isize
-            i8
-            i16
-            i32
-            i64
-            usize
-            u8
-            u16
-          and $N others
+  = help: the trait `ConvertReturn` is implemented for `bool`
   = note: required for `Result<(), Id<NSObject>>` to implement `EncodeReturn`
   = note: required for `Result<(), Id<NSObject>>` to implement `ConvertReturn`
 note: required by a bound in `MsgSend::send_message`
@@ -142,7 +124,7 @@ note: required by a bound in `send_message_id`
   |                                                       ^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `MsgSendId::send_message_id`
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `MainThreadMarker: Encode` is not satisfied
+error[E0277]: the trait bound `MainThreadMarker: ConvertReturn` is not satisfied
  --> ui/extern_methods_invalid_type.rs
   |
   | / extern_methods!(
@@ -151,18 +133,9 @@ error[E0277]: the trait bound `MainThreadMarker: Encode` is not satisfied
   | |         fn main_thread_marker_as_return() -> MainThreadMarker;
   | |     }
   | | );
-  | |_^ the trait `Encode` is not implemented for `MainThreadMarker`
+  | |_^ the trait `Encode` is not implemented for `MainThreadMarker`, which is required by `MainThreadMarker: ConvertReturn`
   |
-  = help: the following other types implement trait `Encode`:
-            isize
-            i8
-            i16
-            i32
-            i64
-            usize
-            u8
-            u16
-          and $N others
+  = help: the trait `ConvertReturn` is implemented for `bool`
   = note: required for `MainThreadMarker` to implement `EncodeReturn`
   = note: required for `MainThreadMarker` to implement `ConvertReturn`
 note: required by a bound in `MsgSend::send_message`

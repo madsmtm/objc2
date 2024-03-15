@@ -214,13 +214,13 @@ fn parse_sdk(index: &Index<'_>, sdk: &SdkPath, llvm_target: &str, config: &Confi
                 file_span.take();
                 file_span_name = String::new();
 
-                library_span_name = library_name.clone();
+                library_span_name.clone_from(&library_name);
                 library_span = Some(debug_span!("library", name = library_name).entered());
             }
             if file_span_name != file_name {
                 file_span.take();
 
-                file_span_name = file_name.clone();
+                file_span_name.clone_from(&file_name);
                 file_span = Some(debug_span!("file", name = file_name).entered());
             }
 

@@ -78,11 +78,11 @@ handle_init:
 	push	r14
 	push	rbx
 	push	rax
-	mov	rbx, rsi
-	mov	r14, rdi
+	mov	rbx, rdi
+	mov	r14, rsi
 	call	qword ptr [rip + objc_msg_lookup@GOTPCREL]
-	mov	rdi, r14
-	mov	rsi, rbx
+	mov	rdi, rbx
+	mov	rsi, r14
 	add	rsp, 8
 	pop	rbx
 	pop	r14

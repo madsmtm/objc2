@@ -2,7 +2,7 @@ error[E0277]: the trait bound `Root: mutability::MutabilityHashIsStable` is not 
  --> ui/nsset_from_nsobject.rs
   |
   |     let _ = NSSet::from_vec(vec![NSObject::new()]);
-  |             --------------- ^^^^^^^^^^^^^^^^^^^^^ the trait `mutability::MutabilityHashIsStable` is not implemented for `Root`
+  |             --------------- ^^^^^^^^^^^^^^^^^^^^^ the trait `mutability::MutabilityHashIsStable` is not implemented for `Root`, which is required by `NSObject: HasStableHash`
   |             |
   |             required by a bound introduced by this call
   |

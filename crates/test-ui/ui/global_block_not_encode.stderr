@@ -4,7 +4,7 @@ error[E0277]: the trait bound `Box<i32>: objc2::encode::Encode` is not satisfied
   | / global_block! {
   | |     pub static BLOCK = |_b: Box<i32>| {};
   | | }
-  | |_^ the trait `objc2::encode::Encode` is not implemented for `Box<i32>`
+  | |_^ the trait `objc2::encode::Encode` is not implemented for `Box<i32>`, which is required by `GlobalBlock<(dyn Fn(Box<i32>) + 'static)>: Sync`
   |
   = help: the following other types implement trait `objc2::encode::Encode`:
             isize

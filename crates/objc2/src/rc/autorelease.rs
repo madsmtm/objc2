@@ -518,7 +518,6 @@ where
 
 #[cfg(test)]
 mod tests {
-    use core::marker::Unpin;
     use core::mem;
     use core::panic::{RefUnwindSafe, UnwindSafe};
 

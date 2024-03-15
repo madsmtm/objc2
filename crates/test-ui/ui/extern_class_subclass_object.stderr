@@ -65,3 +65,22 @@ error[E0119]: conflicting implementations of trait `BorrowMut<AnyObject>` for ty
   |   conflicting implementation for `MyRootClass`
   |
   = note: this error originates in the macro `$crate::__impl_as_ref_borrow` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `AnyObject: ClassType` is not satisfied
+ --> ui/extern_class_subclass_object.rs
+  |
+  | / extern_class!(
+  | |     pub struct MyRootClass;
+  | |
+  | |     unsafe impl ClassType for MyRootClass {
+... |
+  | |     }
+  | | );
+  | |_^ the trait `ClassType` is not implemented for `AnyObject`
+  |
+  = help: the following other types implement trait `ClassType`:
+            MyRootClass
+            NSObject
+            __NSProxy
+            __RcTestObject
+  = note: this error originates in the macro `$crate::__inner_extern_class` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)

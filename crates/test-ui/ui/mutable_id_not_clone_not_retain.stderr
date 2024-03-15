@@ -26,12 +26,15 @@ note: the trait `IsIdCloneable` must be implemented
   |
   | pub unsafe trait IsIdCloneable: private_traits::Sealed {}
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  = help: items from traits can only be used if the trait is implemented and in scope
+  = note: the following trait defines an item `clone`, perhaps you need to implement it:
+          candidate #1: `Clone`
 
 error[E0277]: the trait bound `Mutable: mutability::MutabilityIsRetainable` is not satisfied
  --> ui/mutable_id_not_clone_not_retain.rs
   |
   |     let _ = obj.retain();
-  |                 ^^^^^^ the trait `mutability::MutabilityIsRetainable` is not implemented for `Mutable`
+  |                 ^^^^^^ the trait `mutability::MutabilityIsRetainable` is not implemented for `Mutable`, which is required by `NSMutableObject: IsRetainable`
   |
   = help: the following other types implement trait `mutability::MutabilityIsRetainable`:
             Immutable

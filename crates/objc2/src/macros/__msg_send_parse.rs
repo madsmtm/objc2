@@ -147,7 +147,7 @@ macro_rules! __comma_between_args {
     ) => {
         $crate::__comma_between_args_inner! {
             ("msg_send")
-            ($crate::__macro_helpers::stringify!(super($obj)), $($args)*)
+            ("super", $crate::__macro_helpers::stringify!(($obj)), $($args)*)
         }
     };
     (
@@ -157,7 +157,7 @@ macro_rules! __comma_between_args {
     ) => {
         $crate::__comma_between_args_inner! {
             ("msg_send")
-            ($crate::__macro_helpers::stringify!(super($obj, $superclass)), $($args)*)
+            ("super", $crate::__macro_helpers::stringify!(($obj, $superclass)), $($args)*)
         }
     };
     (
@@ -180,7 +180,7 @@ macro_rules! __comma_between_args {
     ) => {
         $crate::__comma_between_args_inner! {
             ("msg_send_id")
-            ($crate::__macro_helpers::stringify!(super($obj)), $($args)*)
+            ("super", $crate::__macro_helpers::stringify!(($obj)), $($args)*)
         }
     };
     (
@@ -192,7 +192,7 @@ macro_rules! __comma_between_args {
     ) => {
         $crate::__comma_between_args_inner! {
             ("msg_send_id")
-            ($crate::__macro_helpers::stringify!(super($obj, $superclass)), $($args)*)
+            ("super", $crate::__macro_helpers::stringify!(($obj, $superclass)), $($args)*)
         }
     };
     (

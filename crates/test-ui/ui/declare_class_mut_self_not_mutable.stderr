@@ -10,7 +10,7 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   | | );
   | | ^
   | | |
-  | |_the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
+  | |_the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`, which is required by `&mut CustomObject: MessageReceiver`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
@@ -42,7 +42,7 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   | | );
   | | ^
   | | |
-  | |_the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
+  | |_the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`, which is required by `&mut CustomObject: MessageReceiver`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
@@ -74,7 +74,7 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   | | );
   | | ^
   | | |
-  | |_the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
+  | |_the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`, which is required by `&mut CustomObject: MessageReceiver`
   |   required by a bound introduced by this call
   |
   = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
@@ -104,7 +104,7 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
 ... |
   | |     }
   | | );
-  | |_^ the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`
+  | |_^ the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`, which is required by `RetainSemantics<5>: MessageRecieveId<&mut CustomObject, Id<CustomObject>>`
   |
   = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
             Root

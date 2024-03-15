@@ -7,33 +7,21 @@ _iter_create:
 	mov	ebp, esp
 	mov	eax, dword ptr [ebp + 8]
 	mov	ecx, dword ptr [ebp + 12]
-	mov	dword ptr [eax + 84], 0
-	mov	dword ptr [eax + 80], 0
-	mov	dword ptr [eax + 92], 0
-	mov	dword ptr [eax + 88], 0
-	mov	dword ptr [eax + 96], 0
 	mov	dword ptr [eax], ecx
-	mov	dword ptr [eax + 8], 0
-	mov	dword ptr [eax + 4], 0
-	mov	dword ptr [eax + 16], 0
-	mov	dword ptr [eax + 12], 0
-	mov	dword ptr [eax + 24], 0
-	mov	dword ptr [eax + 20], 0
-	mov	dword ptr [eax + 32], 0
-	mov	dword ptr [eax + 28], 0
-	mov	dword ptr [eax + 40], 0
-	mov	dword ptr [eax + 36], 0
-	mov	dword ptr [eax + 48], 0
-	mov	dword ptr [eax + 44], 0
-	mov	dword ptr [eax + 56], 0
-	mov	dword ptr [eax + 52], 0
-	mov	dword ptr [eax + 64], 0
-	mov	dword ptr [eax + 60], 0
-	mov	dword ptr [eax + 72], 0
-	mov	dword ptr [eax + 68], 0
-	mov	dword ptr [eax + 76], 0
-	mov	dword ptr [eax + 100], 0
-	mov	dword ptr [eax + 104], 0
+	xorps	xmm0, xmm0
+	movsd	qword ptr [eax + 4], xmm0
+	movsd	qword ptr [eax + 12], xmm0
+	movsd	qword ptr [eax + 20], xmm0
+	movsd	qword ptr [eax + 28], xmm0
+	movsd	qword ptr [eax + 36], xmm0
+	movsd	qword ptr [eax + 44], xmm0
+	movsd	qword ptr [eax + 52], xmm0
+	movsd	qword ptr [eax + 60], xmm0
+	movsd	qword ptr [eax + 68], xmm0
+	movsd	qword ptr [eax + 76], xmm0
+	movsd	qword ptr [eax + 84], xmm0
+	movsd	qword ptr [eax + 92], xmm0
+	movsd	qword ptr [eax + 100], xmm0
 	pop	ebp
 	ret	4
 
@@ -54,20 +42,19 @@ L1$pb:
 	cmp	eax, dword ptr [esi + 104]
 	jb	LBB1_4
 	lea	ebx, [esi + 4]
-	mov	eax, dword ptr [esi]
-	mov	dword ptr [ebp - 16], eax
-	lea	edi, [esi + 68]
+	mov	edi, dword ptr [esi]
 	mov	edx, dword ptr [ecx + LSYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-L1$pb]
 	mov	eax, dword ptr [edx]
 	test	eax, eax
 	je	LBB1_2
 LBB1_3:
+	lea	ecx, [esi + 68]
 	sub	esp, 12
 	push	16
 	push	ebx
-	push	edi
+	push	ecx
 	push	eax
-	push	dword ptr [ebp - 16]
+	push	edi
 	call	_objc_msgSend
 	add	esp, 32
 	mov	ecx, eax
@@ -125,31 +112,21 @@ _iter:
 L3$pb:
 	pop	eax
 	mov	ebx, dword ptr [ebp + 8]
-	mov	dword ptr [ebp - 40], 0
-	mov	dword ptr [ebp - 44], 0
-	mov	dword ptr [ebp - 32], 0
-	mov	dword ptr [ebp - 36], 0
+	xorps	xmm0, xmm0
+	movsd	qword ptr [ebp - 36], xmm0
+	movsd	qword ptr [ebp - 44], xmm0
 	mov	dword ptr [ebp - 28], 0
 	mov	dword ptr [ebp - 124], ebx
 	lea	edi, [ebp - 56]
-	mov	dword ptr [ebp - 116], 0
-	mov	dword ptr [ebp - 120], 0
-	mov	dword ptr [ebp - 108], 0
-	mov	dword ptr [ebp - 112], 0
-	mov	dword ptr [ebp - 100], 0
-	mov	dword ptr [ebp - 104], 0
-	mov	dword ptr [ebp - 92], 0
-	mov	dword ptr [ebp - 96], 0
-	mov	dword ptr [ebp - 84], 0
-	mov	dword ptr [ebp - 88], 0
-	mov	dword ptr [ebp - 76], 0
-	mov	dword ptr [ebp - 80], 0
-	mov	dword ptr [ebp - 68], 0
-	mov	dword ptr [ebp - 72], 0
-	mov	dword ptr [ebp - 60], 0
-	mov	dword ptr [ebp - 64], 0
-	mov	dword ptr [ebp - 52], 0
-	mov	dword ptr [ebp - 56], 0
+	movsd	qword ptr [ebp - 120], xmm0
+	movsd	qword ptr [ebp - 112], xmm0
+	movsd	qword ptr [ebp - 104], xmm0
+	movsd	qword ptr [ebp - 96], xmm0
+	movsd	qword ptr [ebp - 88], xmm0
+	movsd	qword ptr [ebp - 80], xmm0
+	movsd	qword ptr [ebp - 72], xmm0
+	movsd	qword ptr [ebp - 64], xmm0
+	movsd	qword ptr [ebp - 56], xmm0
 	mov	dword ptr [ebp - 48], 0
 	mov	dword ptr [ebp - 24], 0
 	mov	dword ptr [ebp - 20], 0
@@ -218,31 +195,21 @@ _iter_noop:
 L4$pb:
 	pop	eax
 	mov	ebx, dword ptr [ebp + 8]
-	mov	dword ptr [ebp - 40], 0
-	mov	dword ptr [ebp - 44], 0
-	mov	dword ptr [ebp - 32], 0
-	mov	dword ptr [ebp - 36], 0
+	xorps	xmm0, xmm0
+	movsd	qword ptr [ebp - 36], xmm0
+	movsd	qword ptr [ebp - 44], xmm0
 	mov	dword ptr [ebp - 28], 0
 	mov	dword ptr [ebp - 124], ebx
 	lea	edi, [ebp - 56]
-	mov	dword ptr [ebp - 116], 0
-	mov	dword ptr [ebp - 120], 0
-	mov	dword ptr [ebp - 108], 0
-	mov	dword ptr [ebp - 112], 0
-	mov	dword ptr [ebp - 100], 0
-	mov	dword ptr [ebp - 104], 0
-	mov	dword ptr [ebp - 92], 0
-	mov	dword ptr [ebp - 96], 0
-	mov	dword ptr [ebp - 84], 0
-	mov	dword ptr [ebp - 88], 0
-	mov	dword ptr [ebp - 76], 0
-	mov	dword ptr [ebp - 80], 0
-	mov	dword ptr [ebp - 68], 0
-	mov	dword ptr [ebp - 72], 0
-	mov	dword ptr [ebp - 60], 0
-	mov	dword ptr [ebp - 64], 0
-	mov	dword ptr [ebp - 52], 0
-	mov	dword ptr [ebp - 56], 0
+	movsd	qword ptr [ebp - 120], xmm0
+	movsd	qword ptr [ebp - 112], xmm0
+	movsd	qword ptr [ebp - 104], xmm0
+	movsd	qword ptr [ebp - 96], xmm0
+	movsd	qword ptr [ebp - 88], xmm0
+	movsd	qword ptr [ebp - 80], xmm0
+	movsd	qword ptr [ebp - 72], xmm0
+	movsd	qword ptr [ebp - 64], xmm0
+	movsd	qword ptr [ebp - 56], xmm0
 	mov	dword ptr [ebp - 48], 0
 	mov	dword ptr [ebp - 24], 0
 	mov	dword ptr [ebp - 20], 0
@@ -306,31 +273,21 @@ _iter_retained:
 L5$pb:
 	pop	eax
 	mov	esi, dword ptr [ebp + 8]
-	mov	dword ptr [ebp - 40], 0
-	mov	dword ptr [ebp - 44], 0
-	mov	dword ptr [ebp - 32], 0
-	mov	dword ptr [ebp - 36], 0
+	xorps	xmm0, xmm0
+	movsd	qword ptr [ebp - 36], xmm0
+	movsd	qword ptr [ebp - 44], xmm0
 	mov	dword ptr [ebp - 28], 0
 	mov	dword ptr [ebp - 124], esi
 	lea	ebx, [ebp - 56]
-	mov	dword ptr [ebp - 116], 0
-	mov	dword ptr [ebp - 120], 0
-	mov	dword ptr [ebp - 108], 0
-	mov	dword ptr [ebp - 112], 0
-	mov	dword ptr [ebp - 100], 0
-	mov	dword ptr [ebp - 104], 0
-	mov	dword ptr [ebp - 92], 0
-	mov	dword ptr [ebp - 96], 0
-	mov	dword ptr [ebp - 84], 0
-	mov	dword ptr [ebp - 88], 0
-	mov	dword ptr [ebp - 76], 0
-	mov	dword ptr [ebp - 80], 0
-	mov	dword ptr [ebp - 68], 0
-	mov	dword ptr [ebp - 72], 0
-	mov	dword ptr [ebp - 60], 0
-	mov	dword ptr [ebp - 64], 0
-	mov	dword ptr [ebp - 52], 0
-	mov	dword ptr [ebp - 56], 0
+	movsd	qword ptr [ebp - 120], xmm0
+	movsd	qword ptr [ebp - 112], xmm0
+	movsd	qword ptr [ebp - 104], xmm0
+	movsd	qword ptr [ebp - 96], xmm0
+	movsd	qword ptr [ebp - 88], xmm0
+	movsd	qword ptr [ebp - 80], xmm0
+	movsd	qword ptr [ebp - 72], xmm0
+	movsd	qword ptr [ebp - 64], xmm0
+	movsd	qword ptr [ebp - 56], xmm0
 	mov	dword ptr [ebp - 48], 0
 	mov	dword ptr [ebp - 24], 0
 	mov	dword ptr [ebp - 20], 0

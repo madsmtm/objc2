@@ -53,39 +53,39 @@ null_nonnull:
 	push	edi
 	push	esi
 	sub	esp, 28
-	mov	ebp, dword ptr [esp + 56]
-	mov	edi, dword ptr [esp + 52]
-	mov	esi, dword ptr [esp + 48]
+	mov	edi, dword ptr [esp + 56]
+	mov	esi, dword ptr [esp + 52]
+	mov	ebp, dword ptr [esp + 48]
 	call	.L1$pb
 .L1$pb:
 	pop	ebx
 .Ltmp1:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp1-.L1$pb)
-	test	ebp, ebp
+	test	edi, edi
 	je	.LBB1_1
-	mov	eax, dword ptr [ebp]
+	mov	eax, dword ptr [edi]
 	mov	dword ptr [esp + 24], eax
 	jmp	.LBB1_3
 .LBB1_1:
 .LBB1_3:
-	mov	dword ptr [esp + 4], edi
-	mov	dword ptr [esp], esi
+	mov	dword ptr [esp + 4], esi
+	mov	dword ptr [esp], ebp
 	call	objc_msg_lookup@PLT
-	mov	dword ptr [esp + 8], ebp
-	mov	dword ptr [esp + 4], edi
-	mov	dword ptr [esp], esi
+	mov	dword ptr [esp + 8], edi
+	mov	dword ptr [esp + 4], esi
+	mov	dword ptr [esp], ebp
 	call	eax
-	mov	esi, eax
-	test	ebp, ebp
+	test	edi, edi
 	je	.LBB1_5
-	mov	eax, dword ptr [ebp]
-	mov	dword ptr [esp], eax
+	mov	ecx, dword ptr [edi]
+	mov	esi, eax
+	mov	dword ptr [esp], ecx
 	call	objc_retain@PLT
 	mov	eax, dword ptr [esp + 24]
 	mov	dword ptr [esp], eax
 	call	objc_release@PLT
-.LBB1_5:
 	mov	eax, esi
+.LBB1_5:
 	add	esp, 28
 	pop	esi
 	pop	edi
@@ -150,10 +150,10 @@ null_null:
 	push	ebx
 	push	edi
 	push	esi
-	sub	esp, 28
-	mov	ebp, dword ptr [esp + 56]
-	mov	edi, dword ptr [esp + 52]
-	mov	esi, dword ptr [esp + 48]
+	sub	esp, 12
+	mov	ebp, dword ptr [esp + 40]
+	mov	esi, dword ptr [esp + 36]
+	mov	ecx, dword ptr [esp + 32]
 	call	.L3$pb
 .L3$pb:
 	pop	ebx
@@ -161,17 +161,17 @@ null_null:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp3-.L3$pb)
 	test	ebp, ebp
 	je	.LBB3_1
-	mov	eax, dword ptr [ebp]
-	mov	dword ptr [esp + 24], eax
+	mov	edi, dword ptr [ebp]
 	jmp	.LBB3_3
 .LBB3_1:
 .LBB3_3:
-	mov	dword ptr [esp + 4], edi
-	mov	dword ptr [esp], esi
+	mov	dword ptr [esp + 4], esi
+	mov	dword ptr [esp], ecx
 	call	objc_msg_lookup@PLT
+	mov	ecx, dword ptr [esp + 32]
 	mov	dword ptr [esp + 8], ebp
-	mov	dword ptr [esp + 4], edi
-	mov	dword ptr [esp], esi
+	mov	dword ptr [esp + 4], esi
+	mov	dword ptr [esp], ecx
 	call	eax
 	mov	esi, eax
 	test	ebp, ebp
@@ -179,14 +179,13 @@ null_null:
 	mov	eax, dword ptr [ebp]
 	mov	dword ptr [esp], eax
 	call	objc_retain@PLT
-	cmp	dword ptr [esp + 24], 0
+	test	edi, edi
 	je	.LBB3_6
-	mov	eax, dword ptr [esp + 24]
-	mov	dword ptr [esp], eax
+	mov	dword ptr [esp], edi
 	call	objc_release@PLT
 .LBB3_6:
 	mov	eax, esi
-	add	esp, 28
+	add	esp, 12
 	pop	esi
 	pop	edi
 	pop	ebx

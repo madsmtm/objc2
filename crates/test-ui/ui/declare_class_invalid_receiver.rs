@@ -1,3 +1,4 @@
+#![allow(unused_variables)]
 use objc2::rc::{Allocated, Id};
 use objc2::runtime::{AnyClass, NSObject};
 use objc2::{declare_class, mutability, ClassType, DeclaredClass};

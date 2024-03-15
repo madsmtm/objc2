@@ -229,22 +229,25 @@ _create_and_use_stack_block:
 _create_and_use_stack_block_drop:
 	push	rbp
 	mov	rbp, rsp
-	sub	rsp, 48
+	push	rbx
+	sub	rsp, 40
+	mov	rbx, rdi
 	mov	rax, qword ptr [rip + __NSConcreteStackBlock@GOTPCREL]
-	mov	qword ptr [rbp - 40], rax
-	mov	qword ptr [rbp - 32], 33554432
+	mov	qword ptr [rbp - 48], rax
+	mov	qword ptr [rbp - 40], 33554432
 	lea	rax, [rip + SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<(_,), _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>, 0)]
-	mov	qword ptr [rbp - 24], rax
+	mov	qword ptr [rbp - 32], rax
 	lea	rax, [rip + l_anon.[ID].4]
-	mov	qword ptr [rbp - 16], rax
-	mov	qword ptr [rbp - 8], rdi
-	lea	rdi, [rbp - 40]
+	mov	qword ptr [rbp - 24], rax
+	mov	qword ptr [rbp - 16], rdi
+	lea	rdi, [rbp - 48]
 	call	_needs_block
-	mov	rdi, qword ptr [rbp - 8]
 	mov	esi, 4
 	mov	edx, 4
+	mov	rdi, rbx
 	call	___rust_dealloc
-	add	rsp, 48
+	add	rsp, 40
+	pop	rbx
 	pop	rbp
 	ret
 

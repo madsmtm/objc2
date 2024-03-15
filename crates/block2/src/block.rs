@@ -130,8 +130,6 @@ mod tests {
     use core::cell::Cell;
     use core::sync::atomic::{AtomicUsize, Ordering};
 
-    use crate::RcBlock;
-
     use super::*;
 
     /// Test that the way you specify lifetimes are as documented in the

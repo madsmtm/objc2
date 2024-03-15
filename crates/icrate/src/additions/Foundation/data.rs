@@ -11,7 +11,7 @@ use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::slice::{self, SliceIndex};
 
 #[cfg(feature = "block2")]
-use block2::{Block, RcBlock};
+use block2::RcBlock;
 #[cfg(feature = "block2")]
 use objc2::rc::IdFromIterator;
 

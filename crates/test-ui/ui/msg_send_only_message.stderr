@@ -1,18 +1,14 @@
-error[E0277]: the trait bound `{integer}: MessageReceiver` is not satisfied
+error[E0277]: the trait bound `{integer}: MsgSend` is not satisfied
  --> ui/msg_send_only_message.rs
   |
   |     unsafe { msg_send![1, new] };
   |              ----------^------
   |              |         |
-  |              |         the trait `MessageReceiver` is not implemented for `{integer}`
+  |              |         the trait `MessageReceiver` is not implemented for `{integer}`, which is required by `{integer}: MsgSend`
   |              required by a bound introduced by this call
   |
-  = help: the following other types implement trait `MessageReceiver`:
-            NonNull<T>
-            *const AnyClass
-            *const T
-            *mut T
-            &'a T
-            &'a mut T
-            &'a AnyClass
+  = help: the following other types implement trait `MsgSend`:
+            ManuallyDrop<Id<T>>
+            &'a Id<T>
+            &'a mut Id<T>
   = note: required for `{integer}` to implement `MsgSend`

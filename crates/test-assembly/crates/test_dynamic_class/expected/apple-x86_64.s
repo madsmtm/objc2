@@ -77,27 +77,26 @@ _use_fns:
 	push	r14
 	push	r12
 	push	rbx
-	mov	rbx, rdi
-	mov	r14, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)]
-	test	r14, r14
+	mov	rax, rdi
+	mov	rbx, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)]
+	test	rbx, rbx
 	je	LBB4_1
-	mov	r15, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0)]
-	test	r15, r15
+	mov	r14, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0)]
+	test	r14, r14
 	je	LBB4_3
 LBB4_4:
-	mov	r12, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0)]
-	test	r12, r12
+	mov	r15, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0)]
+	test	r15, r15
 	je	LBB4_5
 LBB4_6:
-	mov	rax, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::use_fns::CACHED_CLASS, 0)]
-	test	rax, rax
+	mov	rcx, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::use_fns::CACHED_CLASS, 0)]
+	test	rcx, rcx
 	je	LBB4_7
 LBB4_8:
-	mov	qword ptr [rbx], r14
-	mov	qword ptr [rbx + 8], r15
-	mov	qword ptr [rbx + 16], r12
-	mov	qword ptr [rbx + 24], rax
-	mov	rax, rbx
+	mov	qword ptr [rax], rbx
+	mov	qword ptr [rax + 8], r14
+	mov	qword ptr [rax + 16], r15
+	mov	qword ptr [rax + 24], rcx
 	pop	rbx
 	pop	r12
 	pop	r14
@@ -108,34 +107,43 @@ LBB4_1:
 	lea	rdi, [rip + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)]
 	lea	rsi, [rip + l_anon.[ID].0]
 	lea	rdx, [rip + l_anon.[ID].2]
-	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 	mov	r14, rax
-	mov	r15, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0)]
-	test	r15, r15
+	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	mov	rbx, rax
+	mov	rax, r14
+	mov	r14, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0)]
+	test	r14, r14
 	jne	LBB4_4
 LBB4_3:
 	lea	rdi, [rip + SYM(test_dynamic_class[CRATE_ID]::get_same_class::CACHED_CLASS, 0)]
 	lea	rsi, [rip + l_anon.[ID].0]
 	lea	rdx, [rip + l_anon.[ID].3]
-	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 	mov	r15, rax
-	mov	r12, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0)]
-	test	r12, r12
+	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	mov	r14, rax
+	mov	rax, r15
+	mov	r15, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0)]
+	test	r15, r15
 	jne	LBB4_6
 LBB4_5:
 	lea	rdi, [rip + SYM(test_dynamic_class[CRATE_ID]::get_different_class::CACHED_CLASS, 0)]
 	lea	rsi, [rip + l_anon.[ID].4]
 	lea	rdx, [rip + l_anon.[ID].5]
-	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 	mov	r12, rax
-	mov	rax, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::use_fns::CACHED_CLASS, 0)]
-	test	rax, rax
+	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	mov	r15, rax
+	mov	rax, r12
+	mov	rcx, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::use_fns::CACHED_CLASS, 0)]
+	test	rcx, rcx
 	jne	LBB4_8
 LBB4_7:
 	lea	rdi, [rip + SYM(test_dynamic_class[CRATE_ID]::use_fns::CACHED_CLASS, 0)]
 	lea	rsi, [rip + l_anon.[ID].8]
 	lea	rdx, [rip + l_anon.[ID].9]
+	mov	r12, rax
 	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	mov	rcx, rax
+	mov	rax, r12
 	jmp	LBB4_8
 
 	.globl	_use_same_twice
@@ -145,17 +153,16 @@ _use_same_twice:
 	mov	rbp, rsp
 	push	r14
 	push	rbx
-	mov	rbx, rdi
-	mov	r14, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)]
-	test	r14, r14
+	mov	rax, rdi
+	mov	rbx, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)]
+	test	rbx, rbx
 	je	LBB5_1
-	mov	rax, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)]
-	test	rax, rax
+	mov	rcx, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)]
+	test	rcx, rcx
 	je	LBB5_3
 LBB5_4:
-	mov	qword ptr [rbx], r14
-	mov	qword ptr [rbx + 8], rax
-	mov	rax, rbx
+	mov	qword ptr [rax], rbx
+	mov	qword ptr [rax + 8], rcx
 	pop	rbx
 	pop	r14
 	pop	rbp
@@ -164,16 +171,21 @@ LBB5_1:
 	lea	rdi, [rip + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)]
 	lea	rsi, [rip + l_anon.[ID].0]
 	lea	rdx, [rip + l_anon.[ID].2]
-	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
 	mov	r14, rax
-	mov	rax, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)]
-	test	rax, rax
+	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	mov	rbx, rax
+	mov	rax, r14
+	mov	rcx, qword ptr [rip + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)]
+	test	rcx, rcx
 	jne	LBB5_4
 LBB5_3:
 	lea	rdi, [rip + SYM(test_dynamic_class[CRATE_ID]::get_class::CACHED_CLASS, 0)]
 	lea	rsi, [rip + l_anon.[ID].0]
 	lea	rdx, [rip + l_anon.[ID].2]
+	mov	r14, rax
 	call	SYM(objc2::__macro_helpers::cache::CachedClass::fetch::GENERATED_ID, 0)
+	mov	rcx, rax
+	mov	rax, r14
 	jmp	LBB5_4
 
 	.globl	_use_in_loop

@@ -4,7 +4,7 @@ error[E0277]: `*const NSObject` cannot be shared between threads safely
   |     needs_sync::<NSArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be shared between threads safely
   |
-  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`
+  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`, which is required by `NSArray<NSObject>: Sync`
 note: required because it appears within the type `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
@@ -38,7 +38,7 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |     needs_sync::<NSArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
-  = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
+  = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`, which is required by `NSArray<NSObject>: Sync`
 note: required because it appears within the type `objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
   |
@@ -77,7 +77,7 @@ error[E0277]: `*const NSObject` cannot be sent between threads safely
   |     needs_send::<NSArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be sent between threads safely
   |
-  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`
+  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`, which is required by `NSArray<NSObject>: Send`
 note: required because it appears within the type `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
@@ -111,7 +111,7 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |     needs_send::<NSArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
   |
-  = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
+  = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`, which is required by `NSArray<NSObject>: Send`
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
 note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
  --> $RUST/core/src/marker.rs
@@ -161,7 +161,7 @@ error[E0277]: `*const NSObject` cannot be shared between threads safely
   |     needs_sync::<NSMutableArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be shared between threads safely
   |
-  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`
+  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`, which is required by `NSMutableArray<NSObject>: Sync`
 note: required because it appears within the type `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
@@ -200,7 +200,7 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |     needs_sync::<NSMutableArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
-  = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
+  = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`, which is required by `NSMutableArray<NSObject>: Sync`
 note: required because it appears within the type `objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
   |
@@ -244,7 +244,7 @@ error[E0277]: `*const NSObject` cannot be sent between threads safely
   |     needs_send::<NSMutableArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be sent between threads safely
   |
-  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`
+  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`, which is required by `NSMutableArray<NSObject>: Send`
 note: required because it appears within the type `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
@@ -283,7 +283,7 @@ error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
   |     needs_send::<NSMutableArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*const UnsafeCell<()>` cannot be sent between threads safely
   |
-  = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`
+  = help: within `NSObject`, the trait `Send` is not implemented for `*const UnsafeCell<()>`, which is required by `NSMutableArray<NSObject>: Send`
   = note: required because it appears within the type `(*const UnsafeCell<()>, PhantomPinned)`
 note: required because it appears within the type `PhantomData<(*const UnsafeCell<()>, PhantomPinned)>`
  --> $RUST/core/src/marker.rs

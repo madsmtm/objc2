@@ -259,7 +259,6 @@ impl fmt::Display for Encoding {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::helper::NestingLevel;
     use crate::static_str::{static_encoding_str_array, static_encoding_str_len};
     use alloc::string::ToString;
     use alloc::vec;

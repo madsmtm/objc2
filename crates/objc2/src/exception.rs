@@ -302,7 +302,6 @@ mod tests {
 
     use super::*;
     use crate::msg_send_id;
-    use crate::runtime::NSObject;
 
     #[test]
     fn test_catch() {

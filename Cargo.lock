@@ -107,8 +107,7 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 [[package]]
 name = "clang"
 version = "2.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "84c044c781163c001b913cd018fc95a628c50d0d2dfea8bca77dad71edb16e37"
+source = "git+https://github.com/madsmtm/clang-rs.git?branch=fix-ub-tokenize#825e933e203cd9c7ee59c9b260ad0fb41f19fb38"
 dependencies = [
  "clang-sys",
  "libc",
