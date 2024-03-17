@@ -271,6 +271,14 @@ maccatalyst = "13.0"
 ios = "8.0"
 tvos = "9.0"
 
+
+[library.MetalPerformanceShaders]
+imports = ["Foundation", "Metal"]
+macos = "13.0"
+maccatalyst = "16.0"
+ios = "16.0"
+
+
 [library.MetalFX]
 imports = ["Foundation", "Metal"]
 macos = "13.0"
