@@ -7,6 +7,9 @@ publish = false
 repository = "https://github.com/madsmtm/objc2"
 license = "MIT"
 
+[lints]
+workspace = true
+
 [features]
 # UI tests don't work without `Foundation` feature, but we have no way of
 # specifying that, as trybuild doesn't take any arguments

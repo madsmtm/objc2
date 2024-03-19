@@ -9,19 +9,19 @@ use objc2::runtime::{AnyObject, Bool, NSObject};
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct LargeStruct {
-    pub x: f32,
-    pub y: [u8; 100],
+struct LargeStruct {
+    x: f32,
+    y: [u8; 100],
 }
 
 impl LargeStruct {
-    pub fn get() -> Self {
+    fn get() -> Self {
         let mut y = [10; 100];
         y[42] = 123;
         Self { x: 5.0, y }
     }
 
-    pub fn mutate(&mut self) {
+    fn mutate(&mut self) {
         self.x -= 1.0;
         self.y[12] += 1;
         self.y[99] = 123;
@@ -37,22 +37,22 @@ type Add12 = Block<dyn Fn(i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32,
 
 extern "C" {
     /// Returns a pointer to a global block that returns 7.
-    pub fn get_int_block() -> *mut Block<dyn Fn() -> i32>;
+    fn get_int_block() -> *mut Block<dyn Fn() -> i32>;
     /// Returns a pointer to a copied block that returns `i`.
-    pub fn get_int_block_with(i: i32) -> *mut Block<dyn Fn() -> i32>;
+    fn get_int_block_with(i: i32) -> *mut Block<dyn Fn() -> i32>;
     /// Invokes a block and returns its result.
-    pub fn invoke_int_block(block: &Block<dyn Fn() -> i32>) -> i32;
+    fn invoke_int_block(block: &Block<dyn Fn() -> i32>) -> i32;
 
     /// Returns a pointer to a global block that returns its argument + 7.
-    pub fn get_add_block() -> *mut Block<dyn Fn(i32) -> i32>;
+    fn get_add_block() -> *mut Block<dyn Fn(i32) -> i32>;
     /// Returns a pointer to a copied block that returns its argument + `i`.
-    pub fn get_add_block_with(i: i32) -> *mut Block<dyn Fn(i32) -> i32>;
+    fn get_add_block_with(i: i32) -> *mut Block<dyn Fn(i32) -> i32>;
     /// Invokes a block with `a` and returns the result.
-    pub fn invoke_add_block(block: &Block<dyn Fn(i32) -> i32>, a: i32) -> i32;
+    fn invoke_add_block(block: &Block<dyn Fn(i32) -> i32>, a: i32) -> i32;
 
-    pub fn get_add_12() -> *mut Add12;
-    pub fn get_add_12_with(x: i32) -> *mut Add12;
-    pub fn invoke_add_12(
+    fn get_add_12() -> *mut Add12;
+    fn get_add_12_with(x: i32) -> *mut Add12;
+    fn invoke_add_12(
         block: &Add12,
         a1: i32,
         a2: i32,
@@ -68,16 +68,16 @@ extern "C" {
         a12: i32,
     ) -> i32;
 
-    pub fn get_large_struct_block() -> *mut Block<dyn Fn(LargeStruct) -> LargeStruct>;
-    pub fn get_large_struct_block_with(
+    fn get_large_struct_block() -> *mut Block<dyn Fn(LargeStruct) -> LargeStruct>;
+    fn get_large_struct_block_with(
         i: LargeStruct,
     ) -> *mut Block<dyn Fn(LargeStruct) -> LargeStruct>;
-    pub fn invoke_large_struct_block(
+    fn invoke_large_struct_block(
         block: &Block<dyn Fn(LargeStruct) -> LargeStruct>,
         s: LargeStruct,
     ) -> LargeStruct;
 
-    pub fn try_block_debugging(x: i32);
+    fn try_block_debugging(x: i32);
 }
 
 #[test]

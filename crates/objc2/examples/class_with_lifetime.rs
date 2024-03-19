@@ -12,7 +12,7 @@ use objc2::{ClassType, Encoding, Message, RefEncode};
 
 /// Struct that represents our custom object.
 #[repr(C)]
-pub struct MyObject<'a> {
+struct MyObject<'a> {
     // Required to give MyObject the proper layout
     superclass: NSObject,
     p: PhantomData<&'a mut u8>,
@@ -42,19 +42,19 @@ impl<'a> MyObject<'a> {
         })
     }
 
-    pub fn new(number: &'a mut u8) -> Id<Self> {
+    fn new(number: &'a mut u8) -> Id<Self> {
         // SAFETY: The lifetime of the reference is properly bound to the
         // returned type
         unsafe { msg_send_id![Self::alloc(), initWithPtr: number] }
     }
 
-    pub fn get(&self) -> u8 {
+    fn get(&self) -> u8 {
         let ivar = Self::class().instance_variable("number").unwrap();
         // SAFETY: The ivar is added with the same type below, and is initialized in `init_with_ptr`
         unsafe { **ivar.load::<&mut u8>(&self.superclass) }
     }
 
-    pub fn set(&mut self, number: u8) {
+    fn set(&mut self, number: u8) {
         let ivar = Self::class().instance_variable("number").unwrap();
         // SAFETY: The ivar is added with the same type below, and is initialized in `init_with_ptr`
         unsafe { **ivar.load_mut::<&mut u8>(&mut self.superclass) = number };

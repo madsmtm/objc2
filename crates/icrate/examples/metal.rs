@@ -68,33 +68,33 @@ const SHADERS: &str = r#"
 
 #[derive(Copy, Clone)]
 #[repr(C)]
-pub struct SceneProperties {
-    pub time: f32,
+struct SceneProperties {
+    time: f32,
 }
 
 #[derive(Copy, Clone)]
 #[repr(C)]
-pub struct VertexInput {
-    pub position: Position,
-    pub color: Color,
-}
-
-#[derive(Copy, Clone)]
-// NOTE: this has the same ABI as `MTLPackedFloat3`
-#[repr(C)]
-pub struct Position {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
+struct VertexInput {
+    position: Position,
+    color: Color,
 }
 
 #[derive(Copy, Clone)]
 // NOTE: this has the same ABI as `MTLPackedFloat3`
 #[repr(C)]
-pub struct Color {
-    pub r: f32,
-    pub g: f32,
-    pub b: f32,
+struct Position {
+    x: f32,
+    y: f32,
+    z: f32,
+}
+
+#[derive(Copy, Clone)]
+// NOTE: this has the same ABI as `MTLPackedFloat3`
+#[repr(C)]
+struct Color {
+    r: f32,
+    g: f32,
+    b: f32,
 }
 
 macro_rules! idcell {
@@ -347,7 +347,7 @@ declare_class!(
 );
 
 impl Delegate {
-    pub fn new(mtm: MainThreadMarker) -> Id<Self> {
+    fn new(mtm: MainThreadMarker) -> Id<Self> {
         let this = mtm.alloc();
         let this = this.set_ivars(Ivars {
             start_date: unsafe { NSDate::now() },

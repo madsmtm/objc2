@@ -1,4 +1,5 @@
 #![cfg(all(target_pointer_width = "64", not(feature = "catch-all")))]
+#![allow(dead_code)]
 //! Test that our use of #[track_caller] is making the correct line number
 //! show up.
 use std::panic;
@@ -14,7 +15,7 @@ use objc2::{class, declare_class, msg_send, msg_send_id, mutability, ClassType, 
 static EXPECTED_MESSAGE: Mutex<String> = Mutex::new(String::new());
 static EXPECTED_LINE: Mutex<u32> = Mutex::new(0);
 
-pub struct PanicChecker(());
+struct PanicChecker(());
 
 impl PanicChecker {
     fn new() -> Self {
@@ -90,7 +91,7 @@ fn test_track_caller() {
     test_unknown_class(&checker);
 }
 
-pub fn test_nil(checker: &PanicChecker) {
+fn test_nil(checker: &PanicChecker) {
     let nil: *mut NSObject = ptr::null_mut();
 
     let msg = "messsaging description to nil";
@@ -105,7 +106,7 @@ pub fn test_nil(checker: &PanicChecker) {
     });
 }
 
-pub fn test_verify(checker: &PanicChecker) {
+fn test_verify(checker: &PanicChecker) {
     let obj = NSObject::new();
 
     let msg = "invalid message send to -[NSObject description]: expected return to have type code '@', but found 'v'";
@@ -119,7 +120,7 @@ pub fn test_verify(checker: &PanicChecker) {
     });
 }
 
-pub fn test_error_methods(checker: &PanicChecker) {
+fn test_error_methods(checker: &PanicChecker) {
     let nil: *mut NSObject = ptr::null_mut();
 
     let msg = "messsaging someSelectorWithError: to nil";
@@ -143,7 +144,7 @@ pub fn test_error_methods(checker: &PanicChecker) {
     });
 }
 
-pub fn test_id_unwrap(checker: &PanicChecker) {
+fn test_id_unwrap(checker: &PanicChecker) {
     let cls = __RcTestObject::class();
     let obj = __RcTestObject::new();
 
@@ -179,7 +180,7 @@ pub fn test_id_unwrap(checker: &PanicChecker) {
     });
 }
 
-pub fn test_catch_all(checker: &PanicChecker) {
+fn test_catch_all(checker: &PanicChecker) {
     let obj: Id<NSObject> = unsafe { msg_send_id![class!(NSArray), new] };
 
     let msg = "NSRangeException";
@@ -212,7 +213,7 @@ declare_class!(
     }
 );
 
-pub fn test_unwind(checker: &PanicChecker) {
+fn test_unwind(checker: &PanicChecker) {
     let msg = "panic in PanickingClass";
     let line = line!() - 7;
     checker.assert_panics(msg, line, || {
@@ -224,7 +225,7 @@ pub fn test_unwind(checker: &PanicChecker) {
 }
 
 #[cfg(not(feature = "unstable-static-class"))]
-pub fn test_unknown_class(checker: &PanicChecker) {
+fn test_unknown_class(checker: &PanicChecker) {
     let msg = "class NonExistantClass could not be found";
     checker.assert_panics(msg, line!() + 1, || {
         let _ = class!(NonExistantClass);

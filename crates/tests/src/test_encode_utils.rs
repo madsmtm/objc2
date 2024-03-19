@@ -12,7 +12,7 @@ use std::string::ToString;
 use super::*;
 
 unsafe fn assert_encoding(s: *const c_char, e: Encoding) {
-    let s = CStr::from_ptr(s).to_str().unwrap();
+    let s = unsafe { CStr::from_ptr(s) }.to_str().unwrap();
     if !e.equivalent_to_str(s) {
         panic!("{} were not equivalent to {}", e, s);
     }
@@ -22,7 +22,7 @@ unsafe fn assert_encoding(s: *const c_char, e: Encoding) {
 
 #[allow(unused)]
 unsafe fn assert_str<T: Display>(s: *const c_char, expected: T) {
-    let s = CStr::from_ptr(s).to_str().unwrap();
+    let s = unsafe { CStr::from_ptr(s) }.to_str().unwrap();
     // Exact comparison to ensure we catch regressions.
     assert_eq!(s, expected.to_string());
 }

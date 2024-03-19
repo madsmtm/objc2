@@ -3,15 +3,7 @@
 //! You should not need to use this crate directly, all its public items are
 //! exported in other crates.
 
-#![warn(elided_lifetimes_in_paths)]
 #![warn(missing_docs)]
-#![warn(missing_copy_implementations)]
-#![warn(missing_debug_implementations)]
-#![deny(non_ascii_idents)]
-#![warn(unreachable_pub)]
-#![deny(unsafe_op_in_unsafe_fn)]
-#![warn(clippy::cargo)]
-#![warn(clippy::ptr_as_ptr)]
 #![warn(clippy::missing_errors_doc)]
 #![warn(clippy::missing_panics_doc)]
 // Update in Cargo.toml as well.

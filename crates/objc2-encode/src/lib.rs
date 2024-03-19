@@ -36,15 +36,7 @@
 //! - [`clang`'s source code for generating `@encode`](https://github.com/llvm/llvm-project/blob/fae0dfa6421ea6c02f86ba7292fa782e1e2b69d1/clang/lib/AST/ASTContext.cpp#L7500-L7850).
 
 #![no_std]
-#![warn(elided_lifetimes_in_paths)]
-#![warn(missing_copy_implementations)]
-#![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
-#![deny(non_ascii_idents)]
-#![warn(unreachable_pub)]
-#![deny(unsafe_op_in_unsafe_fn)]
-#![warn(clippy::cargo)]
-#![warn(clippy::ptr_as_ptr)]
 #![warn(clippy::missing_errors_doc)]
 #![warn(clippy::missing_panics_doc)]
 // Update in Cargo.toml as well.

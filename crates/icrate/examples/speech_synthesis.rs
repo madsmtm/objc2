@@ -27,7 +27,7 @@ mod appkit {
 
     extern_class!(
         /// <https://developer.apple.com/documentation/appkit/nsspeechsynthesizer?language=objc>
-        pub struct Synthesizer;
+        pub(crate) struct Synthesizer;
 
         unsafe impl ClassType for Synthesizer {
             type Super = NSObject;
@@ -38,7 +38,7 @@ mod appkit {
 
     impl Synthesizer {
         // Uses default voice
-        pub fn new() -> Id<Self> {
+        pub(crate) fn new() -> Id<Self> {
             unsafe { msg_send_id![Self::class(), new] }
         }
 
@@ -54,7 +54,7 @@ mod appkit {
             let _: bool = unsafe { msg_send![self, startSpeakingString: s] };
         }
 
-        pub fn speak(&self, utterance: &Utterance) {
+        pub(crate) fn speak(&self, utterance: &Utterance) {
             // Convert to the range 90-720 that `NSSpeechSynthesizer` seems to
             // support
             //
@@ -65,20 +65,20 @@ mod appkit {
             self.start_speaking(&utterance.string);
         }
 
-        pub fn is_speaking(&self) -> bool {
+        pub(crate) fn is_speaking(&self) -> bool {
             unsafe { msg_send![self, isSpeaking] }
         }
     }
 
     // Shim to make NSSpeechSynthesizer work similar to AVSpeechSynthesizer
-    pub struct Utterance {
+    pub(crate) struct Utterance {
         rate: Cell<f32>,
         volume: Cell<f32>,
         string: Id<NSString>,
     }
 
     impl Utterance {
-        pub fn new(string: &NSString) -> Self {
+        pub(crate) fn new(string: &NSString) -> Self {
             Self {
                 rate: Cell::new(0.5),
                 volume: Cell::new(1.0),
@@ -86,11 +86,11 @@ mod appkit {
             }
         }
 
-        pub fn set_rate(&self, rate: f32) {
+        pub(crate) fn set_rate(&self, rate: f32) {
             self.rate.set(rate);
         }
 
-        pub fn set_volume(&self, volume: f32) {
+        pub(crate) fn set_volume(&self, volume: f32) {
             self.volume.set(volume);
         }
     }
@@ -106,7 +106,7 @@ mod avfaudio {
     extern_class!(
         /// <https://developer.apple.com/documentation/avfaudio/avspeechsynthesizer?language=objc>
         #[derive(Debug)]
-        pub struct Synthesizer;
+        pub(crate) struct Synthesizer;
 
         unsafe impl ClassType for Synthesizer {
             type Super = NSObject;
@@ -116,15 +116,15 @@ mod avfaudio {
     );
 
     impl Synthesizer {
-        pub fn new() -> Id<Self> {
+        pub(crate) fn new() -> Id<Self> {
             unsafe { msg_send_id![Self::class(), new] }
         }
 
-        pub fn speak(&self, utterance: &Utterance) {
+        pub(crate) fn speak(&self, utterance: &Utterance) {
             unsafe { msg_send![self, speakUtterance: utterance] }
         }
 
-        pub fn is_speaking(&self) -> bool {
+        pub(crate) fn is_speaking(&self) -> bool {
             unsafe { msg_send![self, isSpeaking] }
         }
     }
@@ -142,15 +142,15 @@ mod avfaudio {
     );
 
     impl Utterance {
-        pub fn new(string: &NSString) -> Id<Self> {
+        pub(crate) fn new(string: &NSString) -> Id<Self> {
             unsafe { msg_send_id![Self::alloc(), initWithString: string] }
         }
 
-        pub fn set_rate(&self, rate: f32) {
+        pub(crate) fn set_rate(&self, rate: f32) {
             unsafe { msg_send![self, setRate: rate] }
         }
 
-        pub fn set_volume(&self, volume: f32) {
+        pub(crate) fn set_volume(&self, volume: f32) {
             unsafe { msg_send![self, setVolume: volume] }
         }
     }

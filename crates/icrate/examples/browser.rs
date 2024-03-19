@@ -1,4 +1,5 @@
 #![deny(unsafe_op_in_unsafe_fn)]
+#![allow(clippy::incompatible_msrv)]
 use core::cell::OnceCell;
 
 #[allow(deprecated)]
@@ -291,7 +292,7 @@ declare_class!(
 );
 
 impl Delegate {
-    pub fn new(mtm: MainThreadMarker) -> Id<Self> {
+    fn new(mtm: MainThreadMarker) -> Id<Self> {
         let this = mtm.alloc();
         let this = this.set_ivars(Ivars::default());
         unsafe { msg_send_id![super(this), init] }

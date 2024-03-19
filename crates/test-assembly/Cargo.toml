@@ -9,6 +9,9 @@ license = "MIT"
 
 build = "build.rs"
 
+[lints]
+workspace = true
+
 [dependencies]
 cargo_metadata = "0.18"
 rustc-demangle = "0.1"

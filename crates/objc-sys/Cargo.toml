@@ -28,6 +28,9 @@ readme = "README.md"
 links = "objc_0_3"
 build = "build.rs"
 
+[lints]
+workspace = true
+
 [features]
 # The default runtime is Apple's. Other platforms will probably error if the
 # correct feature flag is not specified.

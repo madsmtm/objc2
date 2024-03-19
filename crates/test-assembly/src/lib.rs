@@ -80,10 +80,10 @@ pub fn read_assembly<P: AsRef<Path>>(path: P, package_path: &Path) -> io::Result
     );
     let s = regex::Regex::new(r"/rustc/[0-9a-f]*/")
         .unwrap()
-        .replace_all(&s, |_: &regex::Captures| "$RUSTC/");
+        .replace_all(&s, |_: &regex::Captures<'_>| "$RUSTC/");
     let s = regex::Regex::new(r"/.*/rustlib/src/rust/")
         .unwrap()
-        .replace_all(&s, |_: &regex::Captures| "$RUSTC/");
+        .replace_all(&s, |_: &regex::Captures<'_>| "$RUSTC/");
 
     // HACK: Make location data the same no matter which platform generated
     // the data.
@@ -174,7 +174,7 @@ fn demangle_assembly(assembly: &str) -> String {
     let mut demangle_unique: HashMap<String, Vec<String>> = HashMap::new();
 
     // Find all identifiers, and attempt to demangle them
-    let assembly = RE_SYMBOL.replace_all(assembly, |caps: &Captures| {
+    let assembly = RE_SYMBOL.replace_all(assembly, |caps: &Captures<'_>| {
         let mut symbol = caps.get(0).unwrap().as_str();
         let (mut prefix, mut suffix) = ("", "");
         if symbol.starts_with("L__") {

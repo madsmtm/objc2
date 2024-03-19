@@ -17,6 +17,9 @@ repository = "https://github.com/madsmtm/objc2"
 documentation = "https://docs.rs/objc2/"
 license = "MIT"
 
+[lints]
+workspace = true
+
 # NOTE: 'unstable' features are _not_ considered part of the SemVer contract,
 # and may be removed in a minor release.
 [features]

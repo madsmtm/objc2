@@ -36,7 +36,7 @@ fn new_nsobject() -> Id<NSObject> {
 }
 
 fn new_nsdata() -> Id<NSObject> {
-    let bytes_ptr = BYTES.as_ptr() as *const c_void;
+    let bytes_ptr: *const c_void = BYTES.as_ptr().cast();
     let obj: *mut NSObject = unsafe { msg_send![class!(NSData), alloc] };
     let obj: *mut NSObject = unsafe {
         msg_send![
@@ -53,7 +53,7 @@ fn new_leaked_nsdata() -> *const NSObject {
 }
 
 fn autoreleased_nsdata() -> *const NSObject {
-    // let bytes_ptr = BYTES.as_ptr() as *const c_void;
+    // let bytes_ptr: *const c_void = BYTES.as_ptr().cast();
     // unsafe {
     //     msg_send![
     //         class!(NSData),
@@ -112,7 +112,7 @@ macro_rules! main_with_warmup {
         mod warmup_fns {
             $(
                 #[inline(never)]
-                pub fn $f() {
+                pub(crate) fn $f() {
                     let _ = iai::black_box(super::$f());
                 }
             )+

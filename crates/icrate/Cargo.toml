@@ -19,6 +19,9 @@ repository = "https://github.com/madsmtm/objc2"
 documentation = "https://docs.rs/icrate/"
 license = "MIT"
 
+[lints]
+workspace = true
+
 [dependencies]
 objc2 = { path = "../objc2", version = "0.5.0", default-features = false, optional = true }
 block2 = { path = "../block2", version = "0.4.0", default-features = false, optional = true }

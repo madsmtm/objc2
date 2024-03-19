@@ -9,6 +9,9 @@ license = "MIT"
 
 build = "build.rs"
 
+[lints]
+workspace = true
+
 [features]
 default = ["apple", "std", "Foundation_all"]
 std = ["block2/std", "objc2/std", "icrate/std"]

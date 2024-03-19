@@ -86,12 +86,12 @@ type PhantomData = BogusType;
 
 // Test begin below this line
 
-pub struct MyCustomIvars {
+struct MyCustomIvars {
     ivars: i32,
 }
 
 new_objc2::declare_class!(
-    pub struct CustomObject;
+    struct CustomObject;
 
     unsafe impl ClassType for CustomObject {
         type Super = new_objc2::runtime::NSObject;
@@ -121,10 +121,10 @@ mod test_extern_methods {
     new_objc2::extern_methods!(
         unsafe impl CustomObject {
             #[method(a)]
-            pub fn a();
+            fn a();
 
             #[method(b)]
-            pub fn b(&self);
+            fn b(&self);
         }
     );
 }
@@ -150,17 +150,17 @@ new_objc2::extern_protocol!(
 );
 
 #[test]
-pub fn test_selector() {
+fn test_selector() {
     let _sel = new_objc2::sel!(abc);
     let _sel = new_objc2::sel!(abc:def:);
 }
 
 #[test]
-pub fn test_class() {
+fn test_class() {
     let _class = new_objc2::class!(NSObject);
 }
 
-pub fn test_msg_send(obj: &CustomObject) {
+fn test_msg_send(obj: &CustomObject) {
     let superclass = obj.class().superclass().unwrap();
     let _: () = unsafe { new_objc2::msg_send![obj, a] };
     let _: () = unsafe { new_objc2::msg_send![obj, a: obj, b: obj] };
@@ -170,7 +170,7 @@ pub fn test_msg_send(obj: &CustomObject) {
     let _: () = unsafe { new_objc2::msg_send![super(obj, superclass), a: obj, b: obj] };
 }
 
-pub fn test_msg_send_id(obj: &new_objc2::runtime::AnyObject) {
+fn test_msg_send_id(obj: &new_objc2::runtime::AnyObject) {
     let _: new_objc2::rc::Id<new_objc2::runtime::AnyObject> =
         unsafe { new_objc2::msg_send_id![obj, a] };
     let _: new_objc2::__macro_helpers::Option<new_objc2::rc::Id<new_objc2::runtime::AnyObject>> =

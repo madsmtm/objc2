@@ -53,7 +53,7 @@ declare_class!(
 );
 
 impl AppDelegate {
-    pub fn new(ivar: u8, another_ivar: bool, mtm: MainThreadMarker) -> Id<Self> {
+    fn new(ivar: u8, another_ivar: bool, mtm: MainThreadMarker) -> Id<Self> {
         let this = mtm.alloc();
         let this = this.set_ivars(Ivars {
             ivar,

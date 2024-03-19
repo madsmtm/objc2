@@ -20,6 +20,9 @@ license = "MIT"
 [lib]
 proc-macro = true
 
+[lints]
+workspace = true
+
 [features]
 default = ["apple"]
 
