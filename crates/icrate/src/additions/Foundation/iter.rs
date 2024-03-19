@@ -44,7 +44,6 @@ struct FastEnumeratorHelper {
     ///
     /// This is set to `None` initially, but later loaded to `Some(_)` after
     /// the first enumeration.
-    #[cfg(debug_assertions)]
     mutations_state: Option<c_ulong>,
 }
 
@@ -57,6 +56,23 @@ unsafe impl Send for FastEnumeratorHelper {}
 // SAFETY: `FastEnumeratorHelper` is only mutable behind `&mut`, and as such
 // is safe to share with other threads.
 unsafe impl Sync for FastEnumeratorHelper {}
+
+#[cfg(feature = "unstable-mutation-return-null")]
+extern "C" {
+    static kCFNull: NonNull<AnyObject>;
+}
+
+#[cfg(not(feature = "unstable-mutation-return-null"))]
+#[cfg_attr(debug_assertions, track_caller)]
+fn items_ptr_null() -> ! {
+    panic!("`itemsPtr` was NULL, likely due to mutation during iteration");
+}
+
+#[cfg(not(feature = "unstable-mutation-return-null"))]
+#[cfg_attr(debug_assertions, track_caller)]
+fn mutation_detected() -> ! {
+    panic!("mutation detected during enumeration");
+}
 
 impl FastEnumeratorHelper {
     #[inline]
@@ -71,7 +87,6 @@ impl FastEnumeratorHelper {
             buf: [ptr::null_mut(); BUF_SIZE],
             current_item: 0,
             items_count: 0,
-            #[cfg(debug_assertions)]
             mutations_state: None,
         }
     }
@@ -88,7 +103,6 @@ impl FastEnumeratorHelper {
     ///
     /// The collection must be the same on each call.
     #[inline]
-    #[track_caller]
     unsafe fn load_next_items(&mut self, collection: &ProtocolObject<dyn NSFastEnumeration>) {
         // SAFETY: The ptr comes from a slice, which is always non-null.
         //
@@ -107,13 +121,6 @@ impl FastEnumeratorHelper {
                 self.buf.len(),
             )
         };
-
-        #[cfg(debug_assertions)]
-        {
-            if self.items_count > 0 && self.state.itemsPtr.is_null() {
-                panic!("`itemsPtr` was NULL");
-            }
-        }
 
         // For unwind safety, we only set this _after_ the message send has
         // completed, otherwise, if it unwinded, upon iterating again we might
@@ -149,48 +156,55 @@ impl FastEnumeratorHelper {
                 // We are done enumerating.
                 return None;
             }
+
+            if self.state.itemsPtr.is_null() {
+                #[cfg(feature = "unstable-mutation-return-null")]
+                return Some(unsafe { kCFNull });
+                #[cfg(not(feature = "unstable-mutation-return-null"))]
+                items_ptr_null();
+            }
         }
 
-        #[cfg(debug_assertions)]
-        {
-            // If the mutation ptr is not set, we do nothing.
-            if let Some(ptr) = NonNull::new(self.state.mutationsPtr) {
-                // SAFETY:
-                // - The pointer is not NULL.
-                //
-                // - The enumerator is expected to give back a dereferenceable
-                //   pointer, that is alive for as long as the collection is
-                //   alive.
-                //
-                //   Note that iterating past the first returned `None` is not
-                //   tested by most Objective-C implementations, so it may
-                //   deallocate the mutations ptr in that case?
-                //
-                // - The enumeration should not be modifiable across threads,
-                //   so neither will this pointer be accessed from different
-                //   threads.
-                //
-                //   Note that this assumption is relatively likely to be
-                //   violated, but if that is the case, the program already
-                //   has UB, so then it is better that we detect it.
-                //
-                // - The value is an integer, so is always initialized.
-                //
-                //
-                // We do an unaligned read here since we have no guarantees
-                // about this pointer, and efficiency doesn't really matter.
-                let new_state = unsafe { ptr.as_ptr().read_unaligned() };
-                match self.mutations_state {
-                    // On the first iteration, initialize the mutation state
-                    None => {
-                        self.mutations_state = Some(new_state);
-                    }
-                    // On subsequent iterations, verify that the state hasn't
-                    // changed.
-                    Some(current_state) => {
-                        if current_state != new_state {
-                            panic!("mutation detected during enumeration. This is undefined behaviour, and must be avoided");
-                        }
+        // If the mutation ptr is not set, we do nothing.
+        if let Some(ptr) = NonNull::new(self.state.mutationsPtr) {
+            // SAFETY:
+            // - The pointer is not NULL.
+            //
+            // - The enumerator is expected to give back a dereferenceable
+            //   pointer, that is alive for as long as the collection is
+            //   alive.
+            //
+            //   Note that iterating past the first returned `None` is not
+            //   tested by most Objective-C implementations, so it may
+            //   deallocate the mutations ptr in that case?
+            //
+            // - The enumeration should not be modifiable across threads,
+            //   so neither will this pointer be accessed from different
+            //   threads.
+            //
+            //   Note that this assumption is relatively likely to be
+            //   violated, but if that is the case, the program already
+            //   has UB, so then it is better that we detect it.
+            //
+            // - The value is an integer, so is always initialized.
+            //
+            //
+            // We do an unaligned read here since we have no guarantees
+            // about this pointer, and efficiency doesn't really matter.
+            let new_state = unsafe { ptr.as_ptr().read_unaligned() };
+            match self.mutations_state {
+                // On the first iteration, initialize the mutation state
+                None => {
+                    self.mutations_state = Some(new_state);
+                }
+                // On subsequent iterations, verify that the state hasn't
+                // changed.
+                Some(current_state) => {
+                    if current_state != new_state {
+                        #[cfg(feature = "unstable-mutation-return-null")]
+                        return Some(unsafe { kCFNull });
+                        #[cfg(not(feature = "unstable-mutation-return-null"))]
+                        mutation_detected();
                     }
                 }
             }
@@ -199,7 +213,7 @@ impl FastEnumeratorHelper {
         // Compute a pointer to the current item.
         //
         // SAFETY: The index is checked above to be in bounds of the returned
-        // array.
+        // array, and the item pointer is checked to not be NULL.
         let ptr = unsafe { self.state.itemsPtr.add(self.current_item) };
         // Move to the next item.
         self.current_item += 1;
@@ -823,14 +837,14 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        any(not(target_pointer_width = "64"), debug_assertions),
-        ignore = "assertions assume pointer-width of 64, and the size only really matter in release mode"
+        not(target_pointer_width = "64"),
+        ignore = "assertions assume pointer-width of 64"
     )]
     fn test_enumerator_helper() {
         // We should attempt to reduce these if possible
         assert_eq!(size_of::<NSFastEnumerationState>(), 64);
-        assert_eq!(size_of::<FastEnumeratorHelper>(), 208);
-        assert_eq!(size_of::<Iter<'_, NSArray<NSNumber>>>(), 216);
+        assert_eq!(size_of::<FastEnumeratorHelper>(), 224);
+        assert_eq!(size_of::<Iter<'_, NSArray<NSNumber>>>(), 232);
     }
 
     #[test]

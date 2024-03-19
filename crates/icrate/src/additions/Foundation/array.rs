@@ -246,13 +246,13 @@ impl<T: Message> NSArray<T> {
 
 impl<T: Message> NSMutableArray<T> {
     #[doc(alias = "addObject:")]
-    pub fn push(&mut self, obj: Id<T>) {
+    pub fn push(&self, obj: Id<T>) {
         // SAFETY: We've consumed ownership of the object.
         unsafe { self.addObject(&obj) }
     }
 
     #[doc(alias = "insertObject:atIndex:")]
-    pub fn insert(&mut self, index: usize, obj: Id<T>) {
+    pub fn insert(&self, index: usize, obj: Id<T>) {
         // TODO: Replace this check with catching the thrown NSRangeException
         let len = self.len();
         if index < len {
@@ -268,7 +268,7 @@ impl<T: Message> NSMutableArray<T> {
     }
 
     #[doc(alias = "replaceObjectAtIndex:withObject:")]
-    pub fn replace(&mut self, index: usize, obj: Id<T>) -> Result<Id<T>, Id<T>> {
+    pub fn replace(&self, index: usize, obj: Id<T>) -> Result<Id<T>, Id<T>> {
         if let Some(old_obj) = self.get(index) {
             // SAFETY: We remove the object from the array below.
             let old_obj = unsafe { util::mutable_collection_retain_removed_id(old_obj) };
@@ -282,7 +282,7 @@ impl<T: Message> NSMutableArray<T> {
     }
 
     #[doc(alias = "removeObjectAtIndex:")]
-    pub fn remove(&mut self, index: usize) -> Option<Id<T>> {
+    pub fn remove(&self, index: usize) -> Option<Id<T>> {
         let obj = self.get(index)?;
         // SAFETY: We remove the object from the array below.
         let obj = unsafe { util::mutable_collection_retain_removed_id(obj) };
@@ -292,7 +292,7 @@ impl<T: Message> NSMutableArray<T> {
     }
 
     #[doc(alias = "removeLastObject")]
-    pub fn pop(&mut self) -> Option<Id<T>> {
+    pub fn pop(&self) -> Option<Id<T>> {
         let obj = self.last()?;
         // SAFETY: We remove the object from the array below.
         let obj = unsafe { util::mutable_collection_retain_removed_id(obj) };
@@ -302,7 +302,7 @@ impl<T: Message> NSMutableArray<T> {
     }
 
     #[doc(alias = "sortUsingFunction:context:")]
-    pub fn sort_by<F: FnMut(&T, &T) -> core::cmp::Ordering>(&mut self, compare: F) {
+    pub fn sort_by<F: FnMut(&T, &T) -> core::cmp::Ordering>(&self, compare: F) {
         // TODO: "C-unwind"
         unsafe extern "C" fn compare_with_closure<T, F: FnMut(&T, &T) -> core::cmp::Ordering>(
             obj1: NonNull<T>,

@@ -60,11 +60,7 @@ fn test_allowed_mutation_while_iterating() {
 #[test]
 #[should_panic = "mutation detected during enumeration"]
 #[cfg_attr(
-    not(debug_assertions),
-    ignore = "enumeration mutation only detected with debug assertions on"
-)]
-#[cfg_attr(
-    all(debug_assertions, feature = "gnustep-1-7"),
+    feature = "gnustep-1-7",
     ignore = "thread safety issues regarding initialization"
 )]
 fn test_iter_mutation_detection() {
@@ -122,4 +118,21 @@ fn test_sort() {
         assert_eq!(strings[0].as_str(pool), "hi");
         assert_eq!(strings[1].as_str(pool), "hello");
     });
+}
+
+#[test]
+#[cfg(feature = "Foundation_NSValue")]
+#[should_panic = "`itemsPtr` was NULL, likely due to mutation during iteration"]
+fn null_itemsptr() {
+    // Found while fuzzing
+
+    let array = NSMutableArray::new();
+    let mut iter = array.iter();
+    array.push(NSNumber::new_i32(0));
+    array.push(NSNumber::new_i32(0));
+    array.remove(0);
+    array.push(NSNumber::new_i32(0));
+    let _ = iter.next();
+    array.removeAllObjects();
+    let _ = iter.next();
 }

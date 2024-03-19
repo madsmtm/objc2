@@ -1,4 +1,9 @@
 target/
 artifacts/
-# This grows very quickly, and doesn't really need to be in-tree
-corpus/encoding_parse/
+coverage/
+
+# The corpus generally grows very quickly, and doesn't really need to be in-tree
+corpus/
+# However, we do want to keep it for classes and selectors
+!corpus/class/
+!corpus/sel/

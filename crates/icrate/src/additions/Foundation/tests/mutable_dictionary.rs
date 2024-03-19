@@ -117,10 +117,6 @@ fn test_to_array() {
 
 #[test]
 #[should_panic = "mutation detected during enumeration"]
-#[cfg_attr(
-    not(debug_assertions),
-    ignore = "enumeration mutation only detected with debug assertions on"
-)]
 fn test_iter_mutation_detection() {
     let dict = sample_dict();
 
