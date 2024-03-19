@@ -27,12 +27,12 @@ type InnerImp = unsafe extern "C-unwind" fn();
 pub type IMP = Option<InnerImp>;
 
 // /// Remember that this is non-null!
-// #[cfg(any(doc, apple_new))]
+// #[cfg(any(doc, all(feature = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
 // pub type objc_hook_getClass =
 //     unsafe extern "C" fn(name: *const c_char, out_cls: *mut *const crate::objc_class) -> BOOL;
 //
 // /// Remember that this is non-null!
-// #[cfg(any(doc, apple_new))]
+// #[cfg(any(doc, all(feature = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
 // pub type objc_hook_lazyClassNamer =
 //     unsafe extern "C" fn(cls: *const crate::objc_class) -> *const c_char;
 
@@ -98,14 +98,14 @@ extern_c! {
 
     // Available in macOS 10.14.4
     // /// Remember that this is non-null!
-    // #[cfg(any(doc, apple_new))]
+    // #[cfg(any(doc, all(feature = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
     // pub fn objc_setHook_getClass(
     //     new_value: objc_hook_getClass,
     //     out_old_value: *mut objc_hook_getClass,
     // );
     // Available in macOS 11
     // /// Remember that this is non-null!
-    // #[cfg(any(doc, apple_new))]
+    // #[cfg(any(doc, all(feature = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
     // pub fn objc_setHook_lazyClassNamer(
     //     new_value: objc_hook_lazyClassNamer,
     //     out_old_value: *mut objc_hook_lazyClassNamer,
