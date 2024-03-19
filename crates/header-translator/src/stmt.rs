@@ -1927,23 +1927,40 @@ impl fmt::Display for Stmt {
                 fields,
                 sendable,
             } => {
-                writeln!(f, "extern_struct!(")?;
-                if let Some(encoding_name) = encoding_name {
-                    writeln!(f, "    #[encoding_name({encoding_name:?})]")?;
-                }
-                write!(f, "    {}", self.required_features().cfg_gate_ln())?;
-                write!(f, "    {availability}")?;
-                writeln!(f, "    pub struct {} {{", id.name)?;
+                write!(f, "{}", self.required_features().cfg_gate_ln())?;
+                write!(f, "{availability}")?;
+                write!(f, "#[repr(C)]")?;
+                write!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
+                writeln!(f, "pub struct {} {{", id.name)?;
                 for (name, ty) in fields {
-                    write!(f, "        ")?;
+                    write!(f, "    ")?;
                     if !name.starts_with('_') {
                         write!(f, "pub ")?;
                     }
                     let name = handle_reserved(name);
                     writeln!(f, "{name}: {},", ty.struct_())?;
                 }
-                writeln!(f, "    }}")?;
-                writeln!(f, ");")?;
+                writeln!(f, "}}")?;
+                writeln!(f)?;
+
+                let encoding = FormatterFn(|f| {
+                    write!(
+                        f,
+                        "Encoding::Struct({:?}, &[",
+                        encoding_name.as_deref().unwrap_or(&id.name),
+                    )?;
+                    for (_, ty) in fields {
+                        write!(f, "<{}>::ENCODING,", ty.struct_())?;
+                    }
+                    write!(f, "])")?;
+                    Ok(())
+                });
+
+                // SAFETY: The struct is marked `#[repr(C)]`.
+                write!(f, "{}", self.required_features().cfg_gate_ln())?;
+                writeln!(f, "{}", unsafe_impl_encode(&id.name, encoding))?;
+                write!(f, "{}", self.required_features().cfg_gate_ln())?;
+                writeln!(f, "{}", unsafe_impl_refencode(&id.name))?;
 
                 if let Some(true) = sendable {
                     writeln!(f)?;
