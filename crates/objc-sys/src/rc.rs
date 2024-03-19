@@ -11,7 +11,10 @@
 //! [ARC]: https://clang.llvm.org/docs/AutomaticReferenceCounting.html#runtime-support
 use core::ffi::c_void;
 
-#[cfg(any(doc, apple_new))]
+#[cfg(any(
+    doc,
+    all(feature = "apple", not(all(target_os = "macos", target_arch = "x86")))
+))]
 use crate::objc_class;
 use crate::objc_object;
 
@@ -21,9 +24,9 @@ extern_c_unwind! {
     // Autoreleasepool
     // ObjFW: Defined in `autorelease.h`, not available with libobjfw-rt!
 
-    #[cfg(any(doc, not(objfw)))]
+    #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn objc_autoreleasePoolPop(pool: *mut c_void);
-    #[cfg(any(doc, not(objfw)))]
+    #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn objc_autoreleasePoolPush() -> *mut c_void;
 
     // Autorelease
@@ -59,7 +62,7 @@ extern_c_unwind! {
         -> *mut objc_object;
 
     // TODO: Decide about nonstandard extensions like these:
-    // #[cfg(any(doc, gnustep))]
+    // #[cfg(any(doc, feature = "gnustep-1-7"))]
     // pub fn objc_delete_weak_refs(obj: *mut objc_object) -> BOOL;
 
     // Fast paths for certain selectors.
@@ -74,11 +77,11 @@ extern_c_unwind! {
     // <https://github.com/llvm/llvm-project/blob/llvmorg-17.0.5/clang/include/clang/Basic/ObjCRuntime.h#L229>
 
     // Available since macOS 10.9.
-    #[cfg(any(doc, apple_new))]
+    #[cfg(any(doc, all(feature = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
     pub fn objc_alloc(value: *const objc_class) -> *mut objc_object;
 
     // Available since macOS 10.9.
-    #[cfg(any(doc, apple_new))]
+    #[cfg(any(doc, all(feature = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
     pub fn objc_allocWithZone(value: *const objc_class) -> *mut objc_object;
 
     // TODO: objc_alloc_init once supported

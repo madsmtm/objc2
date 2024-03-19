@@ -38,7 +38,6 @@ fn main() {
     // println!("cargo:rustc-cfg=libobjc2_strict_apple_compat");
 
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
-    let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
 
     let mut apple = env::var_os("CARGO_FEATURE_APPLE").is_some();
     let mut gnustep = env::var_os("CARGO_FEATURE_GNUSTEP_1_7").is_some();
@@ -88,25 +87,6 @@ fn main() {
         (false, false, false) => panic!("Must specify the desired runtime (using cargo features)."),
         _ => panic!("Invalid feature combination; only one runtime may be selected!"),
     };
-
-    // Add `#[cfg(RUNTIME)]` directive
-    let runtime_cfg = match runtime {
-        Runtime::Apple => "apple",
-        // WinObjC can be treated like GNUStep 1.8
-        Runtime::GNUStep(_, _) | Runtime::WinObjC => "gnustep",
-        Runtime::ObjFW(_) => "objfw",
-    };
-    println!("cargo:rustc-cfg={runtime_cfg}");
-
-    if let Runtime::Apple = &runtime {
-        // A few things are defined differently depending on the __OBJC2__
-        // variable, which is set for all platforms except 32-bit macOS.
-        if target_os == "macos" && target_arch == "x86" {
-            println!("cargo:rustc-cfg=apple_old");
-        } else {
-            println!("cargo:rustc-cfg=apple_new");
-        }
-    }
 
     let clang_objc_runtime = match &runtime {
         // Default to `clang`'s own heuristics.
