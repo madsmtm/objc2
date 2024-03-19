@@ -368,23 +368,36 @@ pub type NSSize = CGSize;
 /// See [Apple's documentation](https://developer.apple.com/documentation/foundation/nsrect?language=objc).
 pub type NSRect = CGRect;
 
-ns_enum!(
-    #[underlying(NSUInteger)]
-    pub enum NSRectEdge {
-        #[doc(alias = "NSRectEdgeMinX")]
-        MinX = 0,
-        #[doc(alias = "NSRectEdgeMinY")]
-        MinY = 1,
-        #[doc(alias = "NSRectEdgeMaxX")]
-        MaxX = 2,
-        #[doc(alias = "NSRectEdgeMaxY")]
-        MaxY = 3,
-        NSMinXEdge = NSRectEdge::MinX.0,
-        NSMinYEdge = NSRectEdge::MinY.0,
-        NSMaxXEdge = NSRectEdge::MaxX.0,
-        NSMaxYEdge = NSRectEdge::MaxY.0,
-    }
-);
+// NS_ENUM
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct NSRectEdge(pub NSUInteger);
+
+#[cfg(feature = "objc2")]
+unsafe impl Encode for NSRectEdge {
+    const ENCODING: Encoding = NSUInteger::ENCODING;
+}
+
+#[cfg(feature = "objc2")]
+unsafe impl RefEncode for NSRectEdge {
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
+}
+
+#[allow(non_upper_case_globals)]
+impl NSRectEdge {
+    #[doc(alias = "NSRectEdgeMinX")]
+    pub const MinX: Self = Self(0);
+    #[doc(alias = "NSRectEdgeMinY")]
+    pub const MinY: Self = Self(1);
+    #[doc(alias = "NSRectEdgeMaxX")]
+    pub const MaxX: Self = Self(2);
+    #[doc(alias = "NSRectEdgeMaxY")]
+    pub const MaxY: Self = Self(3);
+    pub const NSMinXEdge: Self = Self(NSRectEdge::MinX.0);
+    pub const NSMinYEdge: Self = Self(NSRectEdge::MinY.0);
+    pub const NSMaxXEdge: Self = Self(NSRectEdge::MaxX.0);
+    pub const NSMaxYEdge: Self = Self(NSRectEdge::MaxY.0);
+}
 
 #[cfg(test)]
 mod tests {

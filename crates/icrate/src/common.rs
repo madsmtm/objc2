@@ -11,6 +11,8 @@ pub(crate) use std::os::raw::{
 };
 
 #[cfg(feature = "objc2")]
+pub(crate) use objc2::encode::{Encode, Encoding, RefEncode};
+#[cfg(feature = "objc2")]
 pub(crate) use objc2::ffi::{NSInteger, NSIntegerMax, NSUInteger, NSUIntegerMax, IMP};
 #[cfg(feature = "objc2")]
 pub(crate) use objc2::mutability::{

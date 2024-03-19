@@ -11,6 +11,7 @@ use clang::{Entity, EntityKind, EntityVisitResult};
 use crate::availability::Availability;
 use crate::config::{ClassData, MethodData};
 use crate::context::Context;
+use crate::display_helper::FormatterFn;
 use crate::expr::Expr;
 use crate::feature::Features;
 use crate::id::ItemIdentifier;
@@ -1553,6 +1554,34 @@ impl fmt::Display for Stmt {
             }
         }
 
+        // TODO: Derive this after https://github.com/madsmtm/objc2/issues/55
+        fn unsafe_impl_encode<'a>(
+            ident: impl fmt::Display + 'a,
+            encoding: impl fmt::Display + 'a,
+        ) -> impl fmt::Display + 'a {
+            FormatterFn(move |f| {
+                writeln!(f, "#[cfg(feature = \"objc2\")]")?;
+                writeln!(f, "unsafe impl Encode for {ident} {{")?;
+                writeln!(f, "    const ENCODING: Encoding = {encoding};")?;
+                writeln!(f, "}}")?;
+                Ok(())
+            })
+        }
+
+        // TODO: Derive this after https://github.com/madsmtm/objc2/issues/55
+        fn unsafe_impl_refencode<'a>(ident: impl fmt::Display + 'a) -> impl fmt::Display + 'a {
+            FormatterFn(move |f| {
+                writeln!(f, "#[cfg(feature = \"objc2\")]")?;
+                writeln!(f, "unsafe impl RefEncode for {ident} {{")?;
+                writeln!(
+                    f,
+                    "    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);"
+                )?;
+                writeln!(f, "}}")?;
+                Ok(())
+            })
+        }
+
         match self {
             Self::ClassDecl {
                 id,
@@ -1934,33 +1963,102 @@ impl fmt::Display for Stmt {
                 variants,
                 sendable,
             } => {
-                let macro_name = match kind {
-                    None => "extern_enum",
-                    Some(UnexposedAttr::Enum) => "ns_enum",
-                    Some(UnexposedAttr::Options) => "ns_options",
-                    Some(UnexposedAttr::ClosedEnum) => "ns_closed_enum",
-                    Some(UnexposedAttr::ErrorEnum) => "ns_error_enum",
-                    _ => panic!("invalid enum kind"),
-                };
-                writeln!(f, "{macro_name}!(")?;
-                writeln!(f, "    #[underlying({})]", ty.enum_())?;
-                write!(f, "    {}", self.required_features().cfg_gate_ln())?;
-                write!(f, "    {availability}")?;
-                writeln!(f, "    pub enum {} {{", id.name)?;
-                for (name, availability, expr) in variants {
-                    let mut features = expr.required_features();
-                    features.remove(&self.required_features());
-                    features.remove_item(id);
-                    write!(f, "        {}", features.cfg_gate_ln())?;
-                    write!(f, "        {availability}")?;
-                    let pretty_name = enum_constant_name(&id.name, name);
-                    if pretty_name != name {
-                        writeln!(f, "        #[doc(alias = \"{name}\")]")?;
+                match kind {
+                    // TODO: Once Rust gains support for more precisely
+                    // specifying niches, use that to convert this into a
+                    // native enum with a hidden variant that contains the
+                    // remaining cases.
+                    None
+                    // Swift emits these slightly differently, with
+                    // only `NS_ENUM` being a "native" enum with
+                    // exhaustiveness-checking and all.
+                    //
+                    // <https://developer.apple.com/documentation/swift/grouping-related-objective-c-constants#Declare-Simple-Enumerations>
+                    | Some(UnexposedAttr::Enum)
+                    // TODO: Use bitflags! here.
+                    | Some(UnexposedAttr::Options)
+                    // TODO: Handle this differently.
+                    | Some(UnexposedAttr::ErrorEnum) => {
+                        match kind {
+                            None => {}
+                            Some(UnexposedAttr::Enum) => writeln!(f, "// NS_ENUM")?,
+                            Some(UnexposedAttr::Options) => writeln!(f, "// NS_OPTIONS")?,
+                            Some(UnexposedAttr::ErrorEnum) => writeln!(f, "// NS_ERROR_ENUM")?,
+                            _ => unreachable!(),
+                        }
+
+                        write!(f, "{}", self.required_features().cfg_gate_ln())?;
+                        write!(f, "{availability}")?;
+                        writeln!(f, "#[repr(transparent)]")?;
+                        // TODO: Implement `Debug` manually
+                        writeln!(
+                            f,
+                            "#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]"
+                        )?;
+                        // External enums can be safely constructed from the
+                        // raw value, and as such it is safe to expose it
+                        // directly without causing unsoundess in external
+                        // libraries (but it will likely lead to an exception
+                        // or a crash, if the invalid value is used).
+                        writeln!(f, "pub struct {}(pub {});", id.name, ty.enum_())?;
+
+                        write!(f, "{}", self.required_features().cfg_gate_ln())?;
+                        writeln!(f, "impl {} {{", id.name)?;
+                        for (name, availability, expr) in variants {
+                            let mut features = expr.required_features();
+                            features.remove(&self.required_features());
+                            features.remove_item(id);
+                            write!(f, "    {}", features.cfg_gate_ln())?;
+                            write!(f, "    {availability}")?;
+                            let pretty_name = enum_constant_name(&id.name, name);
+                            if pretty_name != name {
+                                writeln!(f, "    #[doc(alias = \"{name}\")]")?;
+                            }
+                            writeln!(f, "    pub const {pretty_name}: Self = Self({expr});")?;
+                        }
+                        writeln!(f, "}}")?;
+                        writeln!(f)?;
                     }
-                    writeln!(f, "        {pretty_name} = {expr},")?;
+                    Some(UnexposedAttr::ClosedEnum) => {
+                        // SAFETY: `NS_CLOSED_ENUM` is guaranteed to never
+                        // gain additional cases, so we are allowed to use a
+                        // Rust enum (which in turn will assume that the
+                        // unused patterns are valid to use as a niche).
+                        writeln!(f, "// NS_CLOSED_ENUM")?;
+                        write!(f, "{}", self.required_features().cfg_gate_ln())?;
+                        write!(f, "{availability}")?;
+                        writeln!(f, "{}", ty.closed_enum_repr())?;
+                        writeln!(
+                            f,
+                            "#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]"
+                        )?;
+                        writeln!(f, "pub enum {} {{", id.name)?;
+                        for (name, availability, expr) in variants {
+                            let mut features = expr.required_features();
+                            features.remove(&self.required_features());
+                            features.remove_item(id);
+                            write!(f, "    {}", features.cfg_gate_ln())?;
+                            write!(f, "    {availability}")?;
+                            let pretty_name = enum_constant_name(&id.name, name);
+                            if pretty_name != name {
+                                writeln!(f, "    #[doc(alias = \"{name}\")]")?;
+                            }
+                            writeln!(f, "    {pretty_name} = {expr},")?;
+                        }
+                        writeln!(f, "}}")?;
+                        writeln!(f)?;
+                    }
+                    _ => panic!("invalid enum kind"),
                 }
-                writeln!(f, "    }}")?;
-                writeln!(f, ");")?;
+
+                // SAFETY: The enum is either a `#[repr(transparent)]` newtype
+                // over the type, or a `#[repr(REPR)]`, where REPR is a valid
+                // repr with the same size and alignment as the type.
+                write!(f, "{}", self.required_features().cfg_gate_ln())?;
+                let encoding = format!("{}::ENCODING", ty.enum_());
+                writeln!(f, "{}", unsafe_impl_encode(&id.name, encoding))?;
+                write!(f, "{}", self.required_features().cfg_gate_ln())?;
+                writeln!(f, "{}", unsafe_impl_refencode(&id.name))?;
 
                 if let Some(true) = sendable {
                     writeln!(f)?;
@@ -2097,21 +2195,22 @@ impl fmt::Display for Stmt {
                 ty,
                 kind,
             } => {
-                write!(f, "{}", self.required_features().cfg_gate_ln())?;
                 match kind {
                     Some(UnexposedAttr::TypedEnum) => {
-                        writeln!(f, "typed_enum!(pub type {} = {};);", id.name, ty.typedef())?;
+                        // TODO: Handle this differently
+                        writeln!(f, "// NS_TYPED_ENUM")?;
+                        write!(f, "{}", self.required_features().cfg_gate_ln())?;
+                        writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
                     }
                     Some(UnexposedAttr::TypedExtensibleEnum) => {
-                        writeln!(
-                            f,
-                            "typed_extensible_enum!(pub type {} = {};);",
-                            id.name,
-                            ty.typedef()
-                        )?;
+                        // TODO: Handle this differently
+                        writeln!(f, "// NS_TYPED_EXTENSIBLE_ENUM")?;
+                        write!(f, "{}", self.required_features().cfg_gate_ln())?;
+                        writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
                     }
                     None | Some(UnexposedAttr::BridgedTypedef) => {
                         // "bridged" typedefs should use a normal type alias.
+                        write!(f, "{}", self.required_features().cfg_gate_ln())?;
                         writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
                     }
                     kind => panic!("invalid alias kind {kind:?} for {ty:?}"),

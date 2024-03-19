@@ -1,24 +1,19 @@
 use crate::Foundation::NSString;
 
-typed_extensible_enum!(
-    pub type GCInputElementName = NSString;
-);
+// NS_TYPED_EXTENSIBLE_ENUM
+pub type GCInputElementName = NSString;
 
-typed_extensible_enum!(
-    pub type GCInputButtonName = NSString;
-);
+// NS_TYPED_EXTENSIBLE_ENUM
+pub type GCInputButtonName = NSString;
 
-typed_extensible_enum!(
-    pub type GCInputAxisName = NSString;
-);
+// NS_TYPED_EXTENSIBLE_ENUM
+pub type GCInputAxisName = NSString;
 
-typed_extensible_enum!(
-    pub type GCInputSwitchName = NSString;
-);
+// NS_TYPED_EXTENSIBLE_ENUM
+pub type GCInputSwitchName = NSString;
 
-typed_extensible_enum!(
-    pub type GCInputDirectionPadName = NSString;
-);
+// NS_TYPED_EXTENSIBLE_ENUM
+pub type GCInputDirectionPadName = NSString;
 
 extern "C" {
     pub static GCInputButtonA: &'static GCInputButtonName;

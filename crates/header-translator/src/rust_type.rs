@@ -1590,6 +1590,14 @@ impl Ty {
         FormatterFn(move |f| write!(f, "{}", self.plain()))
     }
 
+    pub(crate) fn closed_enum_repr(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Primitive(Primitive::NSInteger) => write!(f, "#[repr(isize)] // NSInteger"),
+            Self::Primitive(Primitive::NSUInteger) => write!(f, "#[repr(usize)] // NSUInteger"),
+            _ => panic!("invalid closed enum repr"),
+        })
+    }
+
     pub(crate) const VOID_RESULT: Self = Self::Primitive(Primitive::Void);
 
     pub(crate) fn parse_method_argument(
