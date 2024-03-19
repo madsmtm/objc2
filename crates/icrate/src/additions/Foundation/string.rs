@@ -6,12 +6,13 @@ use core::panic::UnwindSafe;
 #[cfg(feature = "apple")]
 use core::slice;
 use core::str;
+use std::os::raw::c_void;
 
 use objc2::msg_send_id;
-use objc2::rc::{autoreleasepool_leaking, AutoreleasePool};
+use objc2::rc::{autoreleasepool_leaking, Allocated, AutoreleasePool, Id};
 use objc2::runtime::__nsstring::{nsstring_len, nsstring_to_str, UTF8_ENCODING};
+use objc2::{ClassType, Message};
 
-use crate::common::*;
 use crate::Foundation::{NSMutableString, NSString};
 
 // SAFETY: `NSString` is immutable and `NSMutableString` can only be mutated
@@ -58,6 +59,9 @@ impl NSString {
     #[cfg(feature = "apple")]
     // TODO: Finish this
     fn as_str_wip(&self) -> Option<&str> {
+        use core::ptr::NonNull;
+        use std::os::raw::c_char;
+
         type CFStringEncoding = u32;
         #[allow(non_upper_case_globals)]
         // https://developer.apple.com/documentation/corefoundation/cfstringbuiltinencodings/kcfstringencodingutf8?language=objc
@@ -86,6 +90,8 @@ impl NSString {
     #[cfg(feature = "apple")]
     // TODO: Finish this
     fn as_utf16(&self) -> Option<&[u16]> {
+        use core::ptr::NonNull;
+
         extern "C" {
             // https://developer.apple.com/documentation/corefoundation/1542939-cfstringgetcharactersptr?language=objc
             fn CFStringGetCharactersPtr(s: &NSString) -> *const u16;

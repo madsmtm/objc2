@@ -1,5 +1,5 @@
 #![allow(non_upper_case_globals)]
-use crate::common::*;
+use objc2::ffi::NSUInteger;
 
 pub const MTLResourceCPUCacheModeShift: NSUInteger = 0;
 pub const MTLResourceCPUCacheModeMask: NSUInteger = 0xf << MTLResourceCPUCacheModeShift;

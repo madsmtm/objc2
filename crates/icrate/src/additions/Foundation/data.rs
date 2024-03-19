@@ -1,21 +1,20 @@
 #[cfg(feature = "block2")]
 use alloc::vec::Vec;
+use core::ffi::c_void;
 use core::fmt;
-#[cfg(feature = "block2")]
-use core::mem::ManuallyDrop;
 use core::ops::Index;
 use core::ops::IndexMut;
 #[cfg(feature = "Foundation_NSRange")]
 use core::ops::Range;
 use core::panic::{RefUnwindSafe, UnwindSafe};
+use core::ptr::NonNull;
 use core::slice::{self, SliceIndex};
 
-#[cfg(feature = "block2")]
-use block2::RcBlock;
+use objc2::rc::Id;
 #[cfg(feature = "block2")]
 use objc2::rc::IdFromIterator;
+use objc2::{extern_methods, ClassType};
 
-use crate::common::*;
 use crate::Foundation::{NSData, NSMutableData};
 
 // SAFETY: `NSData` is immutable and `NSMutableData` can only be mutated from
@@ -279,7 +278,11 @@ impl IdFromIterator<u8> for NSMutableData {
 }
 
 #[cfg(feature = "block2")]
-unsafe fn with_vec<T: Message>(obj: Allocated<T>, bytes: Vec<u8>) -> Id<T> {
+unsafe fn with_vec<T: objc2::Message>(obj: objc2::rc::Allocated<T>, bytes: Vec<u8>) -> Id<T> {
+    use core::mem::ManuallyDrop;
+
+    use block2::{Block, RcBlock};
+
     let capacity = bytes.capacity();
 
     let dealloc = RcBlock::new(move |bytes: *mut c_void, len: usize| {

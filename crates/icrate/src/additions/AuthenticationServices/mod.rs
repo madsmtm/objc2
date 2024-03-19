@@ -1,7 +1,8 @@
 //! # Bindings to the `AuthenticationServices` framework
 pub use crate::generated::AuthenticationServices::*;
 
-use crate::common::*;
+use objc2::runtime::NSObject;
+use objc2::{extern_class, mutability, ClassType};
 
 // TODO: UIViewController on iOS, NSViewController on macOS
 #[cfg(all(feature = "AppKit_NSResponder", feature = "AppKit_NSViewController"))]
@@ -33,7 +34,7 @@ extern_class!(
     ))]
     unsafe impl ClassType for ASCredentialProviderViewController {
         type Super = ASViewController;
-        type Mutability = MainThreadOnly;
+        type Mutability = mutability::MainThreadOnly;
     }
 );
 
@@ -53,7 +54,7 @@ extern_class!(
     ))]
     unsafe impl ClassType for ASAccountAuthenticationModificationViewController {
         type Super = ASViewController;
-        type Mutability = MainThreadOnly;
+        type Mutability = mutability::MainThreadOnly;
     }
 );
 
@@ -75,6 +76,6 @@ extern_class!(
     ))]
     unsafe impl ClassType for ASAuthorizationAppleIDButton {
         type Super = ASControl;
-        type Mutability = MainThreadOnly;
+        type Mutability = mutability::MainThreadOnly;
     }
 );

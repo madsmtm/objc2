@@ -1,6 +1,7 @@
-use objc2::encode::Encoding;
+use std::os::raw::c_ulong;
 
-use crate::common::*;
+use objc2::encode::{Encode, Encoding, RefEncode};
+use objc2::runtime::AnyObject;
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -11,8 +12,8 @@ pub struct NSFastEnumerationState {
     pub extra: [c_ulong; 5],
 }
 
-impl_encode! {
-    NSFastEnumerationState = Encoding::Struct(
+unsafe impl Encode for NSFastEnumerationState {
+    const ENCODING: Encoding = Encoding::Struct(
         "?",
         &[
             Encoding::C_ULONG,
@@ -21,4 +22,8 @@ impl_encode! {
             Encoding::Array(5, &Encoding::C_ULONG),
         ],
     );
+}
+
+unsafe impl RefEncode for NSFastEnumerationState {
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }

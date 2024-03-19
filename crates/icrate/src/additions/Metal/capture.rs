@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
-use crate::common::*;
 use crate::Metal::*;
+use objc2::runtime::{AnyObject, ProtocolObject};
 
 // SAFETY: The documentation for captureObject specifies that the object
 // may be one of these three:

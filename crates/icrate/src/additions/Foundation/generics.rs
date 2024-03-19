@@ -1,7 +1,10 @@
 #![allow(dead_code)]
+use core::marker::PhantomData;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use crate::common::*;
+use objc2::rc::Id;
+use objc2::runtime::{AnyObject, NSObject};
+use objc2::{__inner_extern_class, mutability, ClassType, Message};
 
 #[derive(PartialEq, Eq, Hash, PartialOrd, Ord, Clone, Copy, Debug)]
 #[repr(transparent)]
@@ -86,7 +89,7 @@ __inner_extern_class!(
     #[cfg(feature = "Foundation_NSArray")]
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSArray<ObjectType> {
         type Super = NSObject;
-        type Mutability = ImmutableWithMutableSubclass<NSMutableArray<ObjectType>>;
+        type Mutability = mutability::ImmutableWithMutableSubclass<NSMutableArray<ObjectType>>;
 
         fn as_super(&self) -> &Self::Super {
             &self.__superclass.0
@@ -110,7 +113,7 @@ __inner_extern_class!(
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSMutableArray<ObjectType> {
         #[inherits(NSObject)]
         type Super = NSArray<ObjectType>;
-        type Mutability = MutableWithImmutableSuperclass<NSArray<ObjectType>>;
+        type Mutability = mutability::MutableWithImmutableSuperclass<NSArray<ObjectType>>;
 
         fn as_super(&self) -> &Self::Super {
             &self.__superclass
@@ -138,7 +141,8 @@ __inner_extern_class!(
         for NSDictionary<KeyType, ObjectType>
     {
         type Super = NSObject;
-        type Mutability = ImmutableWithMutableSubclass<NSMutableDictionary<KeyType, ObjectType>>;
+        type Mutability =
+            mutability::ImmutableWithMutableSubclass<NSMutableDictionary<KeyType, ObjectType>>;
 
         fn as_super(&self) -> &Self::Super {
             &self.__superclass.0
@@ -164,7 +168,8 @@ __inner_extern_class!(
     {
         #[inherits(NSObject)]
         type Super = NSDictionary<KeyType, ObjectType>;
-        type Mutability = MutableWithImmutableSuperclass<NSDictionary<KeyType, ObjectType>>;
+        type Mutability =
+            mutability::MutableWithImmutableSuperclass<NSDictionary<KeyType, ObjectType>>;
 
         fn as_super(&self) -> &Self::Super {
             &self.__superclass
@@ -189,7 +194,7 @@ __inner_extern_class!(
     #[cfg(feature = "Foundation_NSSet")]
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSSet<ObjectType> {
         type Super = NSObject;
-        type Mutability = ImmutableWithMutableSubclass<NSMutableSet<ObjectType>>;
+        type Mutability = mutability::ImmutableWithMutableSubclass<NSMutableSet<ObjectType>>;
 
         fn as_super(&self) -> &Self::Super {
             &self.__superclass.0
@@ -213,7 +218,7 @@ __inner_extern_class!(
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSMutableSet<ObjectType> {
         #[inherits(NSObject)]
         type Super = NSSet<ObjectType>;
-        type Mutability = MutableWithImmutableSuperclass<NSSet<ObjectType>>;
+        type Mutability = mutability::MutableWithImmutableSuperclass<NSSet<ObjectType>>;
 
         fn as_super(&self) -> &Self::Super {
             &self.__superclass
@@ -237,7 +242,7 @@ __inner_extern_class!(
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSCountedSet<ObjectType> {
         #[inherits(NSSet<ObjectType>, NSObject)]
         type Super = NSMutableSet<ObjectType>;
-        type Mutability = Mutable;
+        type Mutability = mutability::Mutable;
 
         fn as_super(&self) -> &Self::Super {
             &self.__superclass
@@ -262,7 +267,7 @@ __inner_extern_class!(
     #[cfg(feature = "Foundation_NSOrderedSet")]
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSOrderedSet<ObjectType> {
         type Super = NSObject;
-        type Mutability = ImmutableWithMutableSubclass<NSMutableOrderedSet<ObjectType>>;
+        type Mutability = mutability::ImmutableWithMutableSubclass<NSMutableOrderedSet<ObjectType>>;
 
         fn as_super(&self) -> &Self::Super {
             &self.__superclass.0
@@ -286,7 +291,7 @@ __inner_extern_class!(
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSMutableOrderedSet<ObjectType> {
         #[inherits(NSObject)]
         type Super = NSOrderedSet<ObjectType>;
-        type Mutability = MutableWithImmutableSuperclass<NSOrderedSet<ObjectType>>;
+        type Mutability = mutability::MutableWithImmutableSuperclass<NSOrderedSet<ObjectType>>;
 
         fn as_super(&self) -> &Self::Super {
             &self.__superclass
@@ -319,7 +324,7 @@ __inner_extern_class!(
     #[cfg(feature = "Foundation_NSEnumerator")]
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSEnumerator<ObjectType> {
         type Super = NSObject;
-        type Mutability = Mutable;
+        type Mutability = mutability::Mutable;
 
         fn as_super(&self) -> &Self::Super {
             &self.__superclass.0

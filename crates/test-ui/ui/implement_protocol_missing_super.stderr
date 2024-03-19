@@ -5,11 +5,11 @@ error[E0277]: the trait bound `CustomObject: NSObjectProtocol` is not satisfied
   |                                          ^^^^^^^^^^^^ the trait `NSObjectProtocol` is not implemented for `CustomObject`
   |
   = help: the following other types implement trait `NSObjectProtocol`:
-            NSArray<ObjectType>
             NSObject
             __NSProxy
-            NSMutableArray<ObjectType>
             ProtocolObject<T>
+            NSArray<ObjectType>
+            NSMutableArray<ObjectType>
             NSDictionary<KeyType, ObjectType>
             NSMutableDictionary<KeyType, ObjectType>
             NSSet<ObjectType>

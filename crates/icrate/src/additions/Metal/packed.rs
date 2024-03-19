@@ -1,8 +1,8 @@
 use core::fmt;
+use std::os::raw::c_float;
 
-use objc2::encode::Encoding;
-
-use crate::common::*;
+#[cfg(feature = "objc2")]
+use objc2::encode::{Encode, Encoding, RefEncode};
 
 // TODO: Investigate the need for this helper struct?
 //
@@ -40,21 +40,26 @@ impl fmt::Debug for MTLPackedFloat3 {
     }
 }
 
-impl_encode! {
-    MTLPackedFloat3 = Encoding::Struct(
+#[cfg(feature = "objc2")]
+unsafe impl Encode for MTLPackedFloat3 {
+    const ENCODING: Encoding = Encoding::Struct(
         "_MTLPackedFloat3",
         &[Encoding::Union(
             "?",
-            &[Encoding::Struct(
-                "?",
-                &[c_float::ENCODING, c_float::ENCODING, c_float::ENCODING],
-            ),
-            Encoding::Array(
-                3,
-                &c_float::ENCODING,
-            )],
+            &[
+                Encoding::Struct(
+                    "?",
+                    &[c_float::ENCODING, c_float::ENCODING, c_float::ENCODING],
+                ),
+                Encoding::Array(3, &c_float::ENCODING),
+            ],
         )],
     );
+}
+
+#[cfg(feature = "objc2")]
+unsafe impl RefEncode for MTLPackedFloat3 {
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 
 #[cfg(test)]

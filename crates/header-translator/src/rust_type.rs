@@ -1590,6 +1590,14 @@ impl Ty {
         FormatterFn(move |f| write!(f, "{}", self.plain()))
     }
 
+    pub(crate) fn closed_enum_repr(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Primitive(Primitive::NSInteger) => write!(f, "#[repr(isize)] // NSInteger"),
+            Self::Primitive(Primitive::NSUInteger) => write!(f, "#[repr(usize)] // NSUInteger"),
+            _ => panic!("invalid closed enum repr"),
+        })
+    }
+
     pub(crate) const VOID_RESULT: Self = Self::Primitive(Primitive::Void);
 
     pub(crate) fn parse_method_argument(
@@ -1835,6 +1843,16 @@ impl Ty {
         match self {
             Self::Enum { .. } => true,
             Self::TypeDef { to, .. } => to.is_enum_through_typedef(),
+            _ => false,
+        }
+    }
+
+    pub(crate) fn is_floating_through_typedef(&self) -> bool {
+        match self {
+            Self::Primitive(
+                Primitive::F32 | Primitive::F64 | Primitive::Float | Primitive::Double,
+            ) => true,
+            Self::TypeDef { to, .. } => to.is_floating_through_typedef(),
             _ => false,
         }
     }

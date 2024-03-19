@@ -138,10 +138,8 @@ pub extern crate objc2;
 #[cfg(feature = "block2")]
 pub extern crate block2;
 
-mod common;
-#[macro_use]
-mod macros;
 mod additions;
+mod common;
 #[allow(unreachable_pub)]
 mod generated;
 
