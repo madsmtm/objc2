@@ -24,9 +24,9 @@ extern_c_unwind! {
     // Autoreleasepool
     // ObjFW: Defined in `autorelease.h`, not available with libobjfw-rt!
 
-    #[cfg(any(doc, not(objfw)))]
+    #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn objc_autoreleasePoolPop(pool: *mut c_void);
-    #[cfg(any(doc, not(objfw)))]
+    #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn objc_autoreleasePoolPush() -> *mut c_void;
 
     // Autorelease
@@ -62,7 +62,7 @@ extern_c_unwind! {
         -> *mut objc_object;
 
     // TODO: Decide about nonstandard extensions like these:
-    // #[cfg(any(doc, gnustep))]
+    // #[cfg(any(doc, feature = "gnustep-1-7"))]
     // pub fn objc_delete_weak_refs(obj: *mut objc_object) -> BOOL;
 
     // Fast paths for certain selectors.

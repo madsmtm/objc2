@@ -88,15 +88,6 @@ fn main() {
         _ => panic!("Invalid feature combination; only one runtime may be selected!"),
     };
 
-    // Add `#[cfg(RUNTIME)]` directive
-    let runtime_cfg = match runtime {
-        Runtime::Apple => "apple",
-        // WinObjC can be treated like GNUStep 1.8
-        Runtime::GNUStep(_, _) | Runtime::WinObjC => "gnustep",
-        Runtime::ObjFW(_) => "objfw",
-    };
-    println!("cargo:rustc-cfg={runtime_cfg}");
-
     let clang_objc_runtime = match &runtime {
         // Default to `clang`'s own heuristics.
         //

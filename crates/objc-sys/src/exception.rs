@@ -45,7 +45,7 @@ pub type objc_exception_preprocessor =
 ))]
 pub type objc_uncaught_exception_handler = unsafe extern "C" fn(exception: *mut objc_object);
 
-#[cfg(objfw)]
+#[cfg(feature = "unstable-objfw")]
 pub type objc_uncaught_exception_handler =
     Option<unsafe extern "C" fn(exception: *mut objc_object)>;
 
@@ -73,15 +73,15 @@ extern_c_unwind! {
     #[cold]
     pub fn objc_exception_rethrow() -> !;
 
-    #[cfg(gnustep)]
+    #[cfg(feature = "gnustep-1-7")]
     #[cold]
     pub fn objc_exception_rethrow(exc_buf: *mut c_void) -> !;
 }
 
 extern_c! {
-    #[cfg(any(doc, gnustep, all(feature = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
+    #[cfg(any(doc, feature = "gnustep-1-7", all(feature = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
     pub fn objc_begin_catch(exc_buf: *mut c_void) -> *mut objc_object;
-    #[cfg(any(doc, gnustep, all(feature = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
+    #[cfg(any(doc, feature = "gnustep-1-7", all(feature = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
     pub fn objc_end_catch();
 
     #[cfg(any(doc, all(feature = "apple", target_os = "macos", target_arch = "x86")))]
@@ -101,7 +101,7 @@ extern_c! {
     pub fn objc_setExceptionPreprocessor(
         f: objc_exception_preprocessor,
     ) -> objc_exception_preprocessor;
-    #[cfg(any(doc, all(feature = "apple", not(all(target_os = "macos", target_arch = "x86"))), objfw))]
+    #[cfg(any(doc, all(feature = "apple", not(all(target_os = "macos", target_arch = "x86"))), feature = "unstable-objfw"))]
     pub fn objc_setUncaughtExceptionHandler(
         f: objc_uncaught_exception_handler,
     ) -> objc_uncaught_exception_handler;
@@ -114,7 +114,7 @@ extern_c! {
     // Only available when ENABLE_OBJCXX is set, and a useable C++ runtime is
     // present when building libobjc2.
     //
-    // #[cfg(any(doc, gnustep))]
+    // #[cfg(any(doc, feature = "gnustep-1-7"))]
     // pub fn objc_set_apple_compatible_objcxx_exceptions(newValue: c_int) -> c_int;
 
     #[cold]
