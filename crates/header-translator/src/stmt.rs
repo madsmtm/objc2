@@ -1992,8 +1992,10 @@ impl fmt::Display for Stmt {
                 ty,
                 value: None,
             } => {
+                writeln!(f, "extern \"C\" {{")?;
                 write!(f, "{}", self.required_features().cfg_gate_ln())?;
-                writeln!(f, "extern_static!({}: {});", id.name, ty.var())?;
+                writeln!(f, "pub static {}: {};", id.name, ty.var())?;
+                writeln!(f, "}}")?;
             }
             Self::VarDecl {
                 id,
@@ -2001,19 +2003,17 @@ impl fmt::Display for Stmt {
                 ty,
                 value: Some(expr),
             } => {
-                if ty.is_enum_through_typedef() {
-                    write!(f, "{}", self.required_features().cfg_gate_ln())?;
-                    writeln!(
-                        f,
-                        "extern_static!({}: {} = {}({expr}));",
-                        id.name,
-                        ty.var(),
-                        ty.var()
-                    )?;
+                write!(f, "{}", self.required_features().cfg_gate_ln())?;
+                write!(f, "pub static {}: {} = ", id.name, ty.var())?;
+
+                if ty.is_floating_through_typedef() {
+                    write!(f, "{expr} as _")?;
+                } else if ty.is_enum_through_typedef() {
+                    write!(f, "{}({expr})", ty.var())?;
                 } else {
-                    write!(f, "{}", self.required_features().cfg_gate_ln())?;
-                    writeln!(f, "extern_static!({}: {} = {expr});", id.name, ty.var())?;
+                    write!(f, "{expr}")?;
                 }
+                writeln!(f, ";")?;
             }
             Self::FnDecl {
                 id,

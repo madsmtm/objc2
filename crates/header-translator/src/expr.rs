@@ -240,9 +240,9 @@ impl fmt::Display for Expr {
                 } else if id.name == "NSUIntegerMax" {
                     write!(f, "NSUIntegerMax as _")
                 } else if id.name == "FLT_MAX" {
-                    write!(f, "c_float::MAX as _")
+                    write!(f, "c_float::MAX")
                 } else if id.name == "DBL_MAX" {
-                    write!(f, "c_double::MAX as _")
+                    write!(f, "c_double::MAX")
                 } else if let Some(evaluated) = evaluated {
                     write!(f, "{evaluated}")
                 } else {

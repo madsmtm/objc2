@@ -273,34 +273,3 @@ macro_rules! typed_extensible_enum {
         pub type $name = $ty;
     };
 }
-
-macro_rules! extern_static {
-    ($name:ident: $ty:ty) => {
-        extern "C" {
-            pub static $name: $ty;
-        }
-    };
-    // Floats in statics are broken
-    ($name:ident: NSAppKitVersion = $($value:tt)*) => {
-        pub static $name: NSAppKitVersion = $($value)* as _;
-    };
-    ($name:ident: NSLayoutPriority = $($value:tt)*) => {
-        pub static $name: NSLayoutPriority = $($value)* as _;
-    };
-    ($name:ident: NSStackViewVisibilityPriority = $($value:tt)*) => {
-        pub static $name: NSStackViewVisibilityPriority = $($value)* as _;
-    };
-    ($name:ident: NSTouchBarItemPriority = $($value:tt)*) => {
-        pub static $name: NSTouchBarItemPriority = $($value)* as _;
-    };
-    ($name:ident: MKFeatureDisplayPriority = $($value:tt)*) => {
-        pub static $name: MKFeatureDisplayPriority = $($value)* as _;
-    };
-    ($name:ident: MKAnnotationViewZPriority = $($value:tt)*) => {
-        pub static $name: MKAnnotationViewZPriority = $($value)* as _;
-    };
-    // Normal case
-    ($name:ident: $ty:path = $value:expr) => {
-        pub static $name: $ty = $value;
-    };
-}

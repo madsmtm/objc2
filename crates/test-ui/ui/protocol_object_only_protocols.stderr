@@ -286,8 +286,8 @@ error[E0277]: the trait bound `NSObject: NSCopying` is not satisfied
   |                                             required by a bound introduced by this call
   |
   = help: the following other types implement trait `NSCopying`:
-            NSArray<ObjectType>
             ProtocolObject<T>
+            NSArray<ObjectType>
             NSMutableArray<ObjectType>
             NSDictionary<KeyType, ObjectType>
             NSMutableDictionary<KeyType, ObjectType>

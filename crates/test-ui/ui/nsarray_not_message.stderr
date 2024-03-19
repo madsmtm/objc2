@@ -8,11 +8,11 @@ error[E0277]: the trait bound `i32: Message` is not satisfied
             Exception
             NSObject
             __NSProxy
-            NSArray<ObjectType>
             ProtocolObject<P>
+            NSArray<ObjectType>
             NSMutableArray<ObjectType>
             NSDictionary<KeyType, ObjectType>
-            NSMutableDictionary<KeyType, ObjectType>
+            AnyObject
           and $N others
 note: required by a bound in `icrate::generated::Foundation::__NSArray::<impl NSArray<ObjectType>>::new`
  --> $WORKSPACE/crates/icrate/src/generated/Foundation/NSArray.rs

@@ -1839,6 +1839,16 @@ impl Ty {
         }
     }
 
+    pub(crate) fn is_floating_through_typedef(&self) -> bool {
+        match self {
+            Self::Primitive(
+                Primitive::F32 | Primitive::F64 | Primitive::Float | Primitive::Double,
+            ) => true,
+            Self::TypeDef { to, .. } => to.is_floating_through_typedef(),
+            _ => false,
+        }
+    }
+
     pub(crate) fn try_fix_related_result_type(&mut self) {
         if let Self::Pointer { pointee, .. } = self {
             if let Self::AnyObject { protocols } = &**pointee {
