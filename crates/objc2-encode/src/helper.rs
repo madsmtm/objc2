@@ -69,7 +69,7 @@ pub(crate) fn compare_encodings<E1: EncodingType, E2: EncodingType>(
     };
 
     match (enc1.helper(), enc2.helper()) {
-        (Primitive(p1), Primitive(p2)) => p1 == p2,
+        (Primitive(p1), Primitive(p2)) => p1.to_signed() == p2.to_signed(),
         (BitField(size1, Some((offset1, type1))), BitField(size2, Some((offset2, type2)))) => {
             size1 == size2
                 && offset1 == offset2
@@ -141,6 +141,18 @@ pub(crate) enum Primitive {
 }
 
 impl Primitive {
+    fn to_signed(self) -> Self {
+        use Primitive::*;
+        match self {
+            UChar => Char,
+            UShort => Short,
+            UInt => Int,
+            ULong => Long,
+            ULongLong => LongLong,
+            this => this,
+        }
+    }
+
     pub(crate) const fn to_str(self) -> &'static str {
         use Primitive::*;
         match self {
