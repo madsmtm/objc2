@@ -2017,38 +2017,79 @@ impl fmt::Display for Stmt {
             }
             Self::FnDecl {
                 id,
+                availability: _,
+                arguments,
+                result_type,
+                body: Some(_),
+                safe: _,
+            } => {
+                write!(f, "// TODO: ")?;
+                write!(f, "pub fn {}(", id.name)?;
+                for (param, arg_ty) in arguments {
+                    let param = handle_reserved(&crate::to_snake_case(param));
+                    write!(f, "{param}: {},", arg_ty.fn_argument())?;
+                }
+                writeln!(f, "){};", result_type.fn_return())?;
+            }
+            Self::FnDecl {
+                id,
                 availability,
                 arguments,
                 result_type,
-                body,
-                safe,
+                body: None,
+                safe: false,
             } => {
-                if body.is_some() {
-                    writeln!(f, "inline_fn!(")?;
-                } else {
-                    writeln!(f, "extern_fn!(")?;
-                }
-
-                let unsafe_ = if *safe { "" } else { " unsafe" };
+                writeln!(f, "extern \"C\" {{")?;
 
                 write!(f, "    {}", self.required_features().cfg_gate_ln())?;
                 write!(f, "    {availability}")?;
-                write!(f, "    pub{unsafe_} fn {}(", id.name)?;
+                write!(f, "    pub fn {}(", id.name)?;
                 for (param, arg_ty) in arguments {
                     let param = handle_reserved(&crate::to_snake_case(param));
                     write!(f, "{param}: {},", arg_ty.fn_argument())?;
                 }
                 write!(f, "){}", result_type.fn_return())?;
+                writeln!(f, ";")?;
 
-                if body.is_some() {
-                    writeln!(f, "{{")?;
-                    writeln!(f, "        todo!()")?;
-                    writeln!(f, "    }}")?;
-                } else {
-                    writeln!(f, ";")?;
+                writeln!(f, "}}")?;
+            }
+            Self::FnDecl {
+                id,
+                availability,
+                arguments,
+                result_type,
+                body: None,
+                safe: true,
+            } => {
+                write!(f, "{}", self.required_features().cfg_gate_ln())?;
+                write!(f, "{availability}")?;
+                writeln!(f, "#[inline]")?;
+                write!(f, "pub extern \"C\" fn {}(", id.name)?;
+                for (param, arg_ty) in arguments {
+                    let param = handle_reserved(&crate::to_snake_case(param));
+                    write!(f, "{param}: {},", arg_ty.fn_argument())?;
                 }
+                writeln!(f, "){} {{", result_type.fn_return())?;
 
-                writeln!(f, ");")?;
+                writeln!(f, "    extern \"C\" {{")?;
+
+                write!(f, "        fn {}(", id.name)?;
+                for (param, arg_ty) in arguments {
+                    let param = handle_reserved(&crate::to_snake_case(param));
+                    write!(f, "{param}: {},", arg_ty.fn_argument())?;
+                }
+                writeln!(f, "){};", result_type.fn_return())?;
+
+                writeln!(f, "    }}")?;
+
+                write!(f, "    unsafe {{ {}(", id.name)?;
+                for (param, _) in arguments {
+                    let param = handle_reserved(&crate::to_snake_case(param));
+                    write!(f, "{param},")?;
+                }
+                writeln!(f, ") }}")?;
+
+                writeln!(f, "}}")?;
             }
             Self::AliasDecl {
                 id,

@@ -304,39 +304,3 @@ macro_rules! extern_static {
         pub static $name: $ty = $value;
     };
 }
-
-macro_rules! extern_fn {
-    (
-        $(#[$m:meta])*
-        $v:vis unsafe fn $name:ident($($params:tt)*) $(-> $res:ty)?;
-    ) => {
-        $(#[$m])*
-        extern "C" {
-            $v fn $name($($params)*) $(-> $res)?;
-        }
-    };
-    (
-        $(#[$m:meta])*
-        $v:vis fn $name:ident($($arg:ident: $arg_ty:ty),* $(,)?) $(-> $res:ty)?;
-    ) => {
-        #[inline]
-        $(#[$m])*
-        $v extern "C" fn $name($($arg: $arg_ty),*) $(-> $res)? {
-            extern "C" {
-                fn $name($($arg: $arg_ty),*) $(-> $res)?;
-            }
-            unsafe {
-                $name($($arg),*)
-            }
-        }
-    };
-}
-
-macro_rules! inline_fn {
-    (
-        $(#[$m:meta])*
-        $v:vis unsafe fn $name:ident($($params:tt)*) $(-> $res:ty)? $body:block
-    ) => {
-        // TODO
-    };
-}

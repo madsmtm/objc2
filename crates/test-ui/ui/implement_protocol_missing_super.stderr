@@ -6,8 +6,8 @@ error[E0277]: the trait bound `CustomObject: NSObjectProtocol` is not satisfied
   |
   = help: the following other types implement trait `NSObjectProtocol`:
             NSObject
-            NSArray<ObjectType>
             __NSProxy
+            NSArray<ObjectType>
             ProtocolObject<T>
             NSMutableArray<ObjectType>
             NSDictionary<KeyType, ObjectType>
