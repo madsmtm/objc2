@@ -77,9 +77,6 @@ macro_rules! extern_enum {
             ),* $(,)?
         }
     ) => {
-        // TODO: Unsure if this should require `unsafe` to construct, depends
-        // on whether you can cause unsoundness by passing invalid enum values
-        // to the external code?
         $(#[$m])*
         #[repr(transparent)]
         #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -105,17 +102,26 @@ macro_rules! ns_enum {
     (
         #[underlying($ty:ty)]
         $(#[$m:meta])*
-        $v:vis enum $($name:ident)? {
+        $v:vis enum $name:ident {
             $(
                 $(#[$field_m:meta])*
                 $field:ident = $value:expr
             ),* $(,)?
         }
     ) => {
+        // External enums can be safely constructed from the raw value, this
+        // will not cause unsoundess in external libraries (but will likely
+        // lead to an exception / a crash, if the invalid value is used).
+        //
+        // <https://developer.apple.com/documentation/swift/grouping-related-objective-c-constants#Declare-Simple-Enumerations>
+        //
+        // TODO: Once Rust gains support for more precisely specifying niches,
+        // use that to convert this into a native enum with a hidden variant
+        // that contains the remaining cases.
         extern_enum! {
             #[underlying($ty)]
             $(#[$m])*
-            $v enum $($name)? {
+            $v enum $name {
                 $(
                     $(#[$field_m])*
                     $field = $value
@@ -233,7 +239,7 @@ macro_rules! ns_error_enum {
     (
         #[underlying(NSInteger)]
         $(#[$m:meta])*
-        $v:vis enum $($name:ident)? {
+        $v:vis enum $name:ident {
             $(
                 $(#[$field_m:meta])*
                 $field:ident = $value:expr
@@ -244,7 +250,7 @@ macro_rules! ns_error_enum {
         extern_enum! {
             #[underlying(NSInteger)]
             $(#[$m])*
-            $v enum $($name)? {
+            $v enum $name {
                 $(
                     $(#[$field_m])*
                     $field = $value
