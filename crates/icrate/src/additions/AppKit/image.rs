@@ -1,4 +1,4 @@
-use crate::common::*;
+use objc2::ffi::NSInteger;
 
 use super::TARGET_ABI_USES_IOS_VALUES;
 

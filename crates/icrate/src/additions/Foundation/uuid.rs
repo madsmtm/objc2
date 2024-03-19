@@ -2,8 +2,9 @@ use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::encode::{Encode, Encoding, RefEncode};
+use objc2::rc::{Allocated, Id};
+use objc2::{extern_methods, ClassType};
 
-use crate::common::*;
 use crate::Foundation::{self, NSUUID};
 
 impl UnwindSafe for NSUUID {}

@@ -1,10 +1,15 @@
 #![allow(dead_code)]
-use core::ptr;
+use core::ptr::{self, NonNull};
+#[cfg(debug_assertions)]
+use std::os::raw::c_ulong;
 
-use objc2::mutability::IsMutable;
+use objc2::mutability::IsIdCloneable;
+use objc2::rc::Id;
+use objc2::runtime::AnyObject;
+use objc2::{mutability::IsMutable, runtime::ProtocolObject};
+use objc2::{ClassType, Message};
 
 use super::util;
-use crate::common::*;
 use crate::Foundation::{NSFastEnumeration, NSFastEnumerationState};
 
 /// Swift and Objective-C both have a stack buffer size of 16, so we do that

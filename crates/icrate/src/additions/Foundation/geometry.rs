@@ -1,5 +1,5 @@
-use crate::common::*;
 use objc2::encode::{Encode, Encoding, RefEncode};
+use objc2::ffi::NSUInteger;
 
 #[cfg(target_pointer_width = "64")]
 type InnerFloat = f64;

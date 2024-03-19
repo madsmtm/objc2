@@ -1,6 +1,8 @@
 //! Utilities for the `NSEnumerator` class.
+use objc2::rc::Id;
+use objc2::Message;
+
 use super::iter;
-use crate::common::*;
 use crate::Foundation::NSEnumerator;
 
 // TODO: Measure whether iterating through `nextObject` or fast enumeration is

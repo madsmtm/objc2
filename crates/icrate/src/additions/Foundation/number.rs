@@ -21,8 +21,8 @@ use core::hash;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::encode::Encoding;
+use objc2::rc::Id;
 
-use crate::common::*;
 use crate::Foundation::NSNumber;
 
 impl UnwindSafe for NSNumber {}

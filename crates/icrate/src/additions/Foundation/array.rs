@@ -4,13 +4,15 @@ use core::fmt;
 #[cfg(feature = "Foundation_NSRange")]
 use core::ops::Range;
 use core::ops::{Index, IndexMut};
+use core::ptr::NonNull;
+use std::os::raw::c_void;
 
-use objc2::mutability::{IsMutable, IsRetainable};
-use objc2::rc::IdFromIterator;
+use objc2::mutability::{IsIdCloneable, IsMutable, IsRetainable};
+use objc2::rc::{Id, IdFromIterator};
+use objc2::{extern_methods, ClassType, Message};
 
 use super::iter;
 use super::util;
-use crate::common::*;
 use crate::Foundation::NSMutableArray;
 use crate::Foundation::{self, NSArray};
 

@@ -4,9 +4,10 @@ use core::hint::unreachable_unchecked;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::exception::Exception;
-use objc2::sel;
+use objc2::rc::Id;
+use objc2::runtime::{AnyObject, NSObject, NSObjectProtocol};
+use objc2::{extern_methods, sel, ClassType};
 
-use crate::common::*;
 use crate::Foundation::NSException;
 
 // SAFETY: Exception objects are immutable data containers, and documented as

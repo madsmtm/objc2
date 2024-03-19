@@ -9,14 +9,13 @@
 #![allow(non_snake_case)]
 
 pub use crate::generated::WebKit::*;
-
-use crate::common::*;
+use objc2::extern_methods;
 
 extern_methods!(
     #[cfg(feature = "WebKit_WKNavigationAction")]
     unsafe impl WKNavigationAction {
         #[cfg(feature = "WebKit_WKFrameInfo")]
         #[method_id(@__retain_semantics Other sourceFrame)]
-        pub unsafe fn sourceFrame(&self) -> Option<Id<WKFrameInfo>>;
+        pub unsafe fn sourceFrame(&self) -> Option<objc2::rc::Id<WKFrameInfo>>;
     }
 );

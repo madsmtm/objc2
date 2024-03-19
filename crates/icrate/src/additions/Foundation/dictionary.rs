@@ -6,15 +6,20 @@ use core::fmt;
 use core::hash::Hash;
 use core::mem;
 use core::ops::{Index, IndexMut};
-use core::ptr;
+use core::ptr::{self, NonNull};
 
 #[cfg(feature = "Foundation_NSObject")]
 use objc2::mutability::IsRetainable;
 use objc2::mutability::{CounterpartOrSelf, HasStableHash, IsIdCloneable, IsMutable};
+use objc2::rc::Id;
+#[cfg(feature = "Foundation_NSObject")]
+use objc2::runtime::ProtocolObject;
+#[cfg(feature = "Foundation_NSObject")]
+use objc2::ClassType;
+use objc2::{extern_methods, Message};
 
 use super::iter;
 use super::util;
-use crate::common::*;
 #[cfg(feature = "Foundation_NSObject")]
 use crate::Foundation::NSCopying;
 use crate::Foundation::{NSDictionary, NSMutableDictionary};

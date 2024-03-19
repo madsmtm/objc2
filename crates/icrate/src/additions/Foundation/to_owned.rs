@@ -1,7 +1,10 @@
 #![allow(unused_imports)]
 use alloc::borrow::ToOwned;
 
-use crate::common::*;
+use objc2::mutability::IsIdCloneable;
+use objc2::rc::Id;
+use objc2::Message;
+
 use crate::Foundation::{self, NSCopying, NSMutableCopying};
 
 #[cfg(feature = "Foundation_NSArray")]

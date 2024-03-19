@@ -4,12 +4,15 @@
 //!
 //! [metal-rs]: https://github.com/gfx-rs/metal-rs
 #![allow(clippy::missing_safety_doc)]
+#![allow(unused_imports)]
+use std::ffi::c_void;
 
-use crate::common::*;
 use crate::Foundation::*;
 use crate::Metal::*;
 
-use objc2::msg_send_id;
+use objc2::rc::{Allocated, Id};
+use objc2::runtime::{AnyObject, ProtocolObject};
+use objc2::{extern_methods, msg_send_id, Message};
 
 pub unsafe trait MTLDevicePrivate: MTLDevice + Message {
     #[cfg(feature = "Foundation_NSString")]

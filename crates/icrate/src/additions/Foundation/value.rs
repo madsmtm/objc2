@@ -2,12 +2,14 @@ use alloc::string::ToString;
 use core::fmt;
 use core::hash;
 use core::mem::MaybeUninit;
+use core::ptr::NonNull;
 use core::str;
 use std::ffi::{CStr, CString};
 
 use objc2::encode::Encode;
+use objc2::rc::Id;
+use objc2::ClassType;
 
-use crate::common::*;
 use crate::Foundation::NSValue;
 
 // We can't implement any auto traits for NSValue, since it can contain an

@@ -3,12 +3,12 @@ use alloc::vec::Vec;
 use core::fmt;
 use core::hash::Hash;
 
-use objc2::mutability::{HasStableHash, IsRetainable};
-use objc2::rc::IdFromIterator;
+use objc2::mutability::{HasStableHash, IsIdCloneable, IsRetainable};
+use objc2::rc::{Id, IdFromIterator};
+use objc2::{extern_methods, ClassType, Message};
 
 use super::iter;
 use super::util;
-use crate::common::*;
 use crate::Foundation::{NSCountedSet, NSMutableSet, NSSet};
 
 impl<T: Message> NSSet<T> {

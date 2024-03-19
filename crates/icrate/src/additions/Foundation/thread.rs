@@ -1,15 +1,17 @@
 use core::fmt;
+use core::marker::PhantomData;
 #[cfg(feature = "dispatch")]
 #[cfg(feature = "Foundation_NSThread")]
 use core::mem::{self, ManuallyDrop};
 #[cfg(feature = "Foundation_NSThread")]
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use crate::common::*;
 #[cfg(feature = "Foundation_NSThread")]
 use crate::Foundation::NSThread;
 
-use objc2::msg_send_id;
+use objc2::mutability::IsMainThreadOnly;
+use objc2::rc::Allocated;
+use objc2::{msg_send_id, ClassType};
 
 #[cfg(feature = "Foundation_NSThread")]
 unsafe impl Send for NSThread {}

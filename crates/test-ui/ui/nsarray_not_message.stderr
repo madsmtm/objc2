@@ -6,11 +6,11 @@ error[E0277]: the trait bound `i32: Message` is not satisfied
   |
   = help: the following other types implement trait `Message`:
             Exception
-            NSArray<ObjectType>
             NSObject
+            NSArray<ObjectType>
             __NSProxy
-            NSMutableArray<ObjectType>
             ProtocolObject<P>
+            NSMutableArray<ObjectType>
             NSDictionary<KeyType, ObjectType>
             NSMutableDictionary<KeyType, ObjectType>
           and $N others

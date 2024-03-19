@@ -1,7 +1,10 @@
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-use crate::common::*;
+use objc2::rc::Id;
+use objc2::runtime::AnyObject;
+use objc2::ClassType;
+
 use crate::Foundation::*;
 
 // SAFETY: `NSAttributedString` is immutable and `NSMutableAttributedString`
