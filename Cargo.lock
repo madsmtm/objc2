@@ -185,6 +185,7 @@ dependencies = [
  "block2",
  "dispatch",
  "objc2",
+ "objc2-helpers",
  "static_assertions",
 ]
 
@@ -318,6 +319,14 @@ dependencies = [
 [[package]]
 name = "objc2-encode"
 version = "4.0.0"
+
+[[package]]
+name = "objc2-helpers"
+version = "0.0.0"
+dependencies = [
+ "block2",
+ "objc2",
+]
 
 [[package]]
 name = "objc2-proc-macros"

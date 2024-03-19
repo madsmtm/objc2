@@ -139,9 +139,11 @@ pub extern crate objc2;
 pub extern crate block2;
 
 mod additions;
-mod common;
 #[allow(unreachable_pub)]
 mod generated;
+
+#[allow(unused_imports)]
+pub(crate) use objc2_helpers as common;
 
 /// Deprecated alias of [`Foundation::ns_string`].
 #[macro_export]
