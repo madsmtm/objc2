@@ -67,11 +67,7 @@
 // For auto_doc_cfg
 #[cfg(feature = "Foundation_NSString")]
 #[macro_export]
-// `macro_export` places the macro in the crate root, while we'd rather have
-// it scoped under `Foundation`; so let's call this something private, and
-// export it there with `#[doc(inline)]` instead.
-#[doc(hidden)]
-macro_rules! __ns_string {
+macro_rules! ns_string {
     ($s:expr) => {{
         // Immediately place in constant for better UI
         const INPUT: &str = $s;
@@ -124,7 +120,7 @@ macro_rules! __ns_string_static {
         // The full UTF-16 contents along with the written length.
         const UTF16_FULL: (&[u16; $inp.len()], usize) = {
             let mut out = [0u16; $inp.len()];
-            let mut iter = $crate::Foundation::__macro_helpers::EncodeUtf16Iter::new($inp);
+            let mut iter = $crate::__macro_helpers::EncodeUtf16Iter::new($inp);
             let mut written = 0;
 
             while let Some((state, chars)) = iter.next() {
@@ -165,17 +161,17 @@ macro_rules! __ns_string_static {
         // The section is the same as what clang sets, see:
         // https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CodeGenModule.cpp#L5243
         #[link_section = "__DATA,__cfstring"]
-        static CFSTRING: $crate::Foundation::__macro_helpers::CFConstString = unsafe {
-            if $crate::Foundation::__macro_helpers::is_ascii_no_nul($inp) {
+        static CFSTRING: $crate::__macro_helpers::CFConstString = unsafe {
+            if $crate::__macro_helpers::is_ascii_no_nul($inp) {
                 // This is technically an optimization (UTF-16 strings are
                 // always valid), but it's a fairly important one!
-                $crate::Foundation::__macro_helpers::CFConstString::new_ascii(
-                    &$crate::Foundation::__macro_helpers::__CFConstantStringClassReference,
+                $crate::__macro_helpers::CFConstString::new_ascii(
+                    &$crate::__macro_helpers::__CFConstantStringClassReference,
                     &ASCII,
                 )
             } else {
-                $crate::Foundation::__macro_helpers::CFConstString::new_utf16(
-                    &$crate::Foundation::__macro_helpers::__CFConstantStringClassReference,
+                $crate::__macro_helpers::CFConstString::new_utf16(
+                    &$crate::__macro_helpers::__CFConstantStringClassReference,
                     &UTF16,
                 )
             }
@@ -188,9 +184,8 @@ macro_rules! __ns_string_static {
 #[macro_export]
 macro_rules! __ns_string_inner {
     ($inp:ident) => {{
-        static CACHED_NSSTRING: $crate::Foundation::__macro_helpers::CachedId<
-            $crate::Foundation::NSString,
-        > = $crate::Foundation::__macro_helpers::CachedId::new();
-        CACHED_NSSTRING.get(|| $crate::Foundation::NSString::from_str($inp))
+        static CACHED_NSSTRING: $crate::__macro_helpers::CachedId<$crate::NSString> =
+            $crate::__macro_helpers::CachedId::new();
+        CACHED_NSSTRING.get(|| $crate::NSString::from_str($inp))
     }};
 }

@@ -11,15 +11,25 @@
 //! Basic usage of a few Foundation types.
 //!
 //! ```ignore
-#![doc = include_str!("../../../examples/basic_usage.rs")]
+#![doc = include_str!("../examples/basic_usage.rs")]
 //! ```
 //!
 //! An example showing how to define your own interfaces to parts that may be missing in `icrate`.
 //!
 //! ```ignore
-#![doc = include_str!("../../../examples/speech_synthesis.rs")]
+#![doc = include_str!("../examples/speech_synthesis.rs")]
 //! ```
+#![no_std]
+// Update in Cargo.toml as well.
+#![doc(html_root_url = "https://docs.rs/objc2-foundation/0.2.0")]
 #![allow(non_snake_case)]
+#![recursion_limit = "256"]
+
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
+#[cfg(feature = "std")]
+extern crate std;
 
 #[doc(hidden)]
 pub mod __macro_helpers;
@@ -49,6 +59,7 @@ mod error;
 mod exception;
 #[cfg(feature = "Foundation_NSEnumerator")]
 mod fast_enumeration_state;
+mod generated;
 mod generics;
 #[cfg(feature = "Foundation_NSGeometry")]
 mod geometry;
@@ -75,7 +86,13 @@ mod uuid;
 #[cfg(feature = "Foundation_NSValue")]
 mod value;
 
-pub use crate::generated::Foundation::*;
+// Temporary
+#[allow(non_snake_case)]
+mod Foundation {
+    pub use crate::*;
+}
+
+pub(crate) use objc2_helpers as common;
 
 #[cfg(feature = "Foundation_NSObjCRuntime")]
 pub use self::comparison_result::NSComparisonResult;
@@ -85,6 +102,7 @@ pub use self::copying::{NSCopying, NSMutableCopying};
 pub use self::decimal::NSDecimal;
 #[cfg(feature = "Foundation_NSEnumerator")]
 pub use self::fast_enumeration_state::NSFastEnumerationState;
+pub use self::generated::*;
 pub use self::generics::*;
 #[cfg(feature = "Foundation_NSGeometry")]
 pub use self::geometry::{CGFloat, CGPoint, CGRect, CGSize, NSPoint, NSRect, NSRectEdge, NSSize};
@@ -98,10 +116,6 @@ pub use self::thread::{is_main_thread, is_multi_threaded};
 #[cfg(feature = "Foundation_NSThread")]
 #[cfg(feature = "dispatch")]
 pub use self::thread::{run_on_main, MainThreadBound};
-
-#[cfg(feature = "Foundation_NSString")]
-#[doc(inline)]
-pub use crate::__ns_string as ns_string;
 
 // Available under Foundation, so makes sense here as well:
 // https://developer.apple.com/documentation/foundation/numbers_data_and_basic_values?language=objc

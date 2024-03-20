@@ -85,6 +85,8 @@ fn get_version<'de, D: serde::Deserializer<'de>>(
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct LibraryData {
+    #[serde(rename = "crate")]
+    pub krate: String,
     pub imports: Vec<String>,
     #[serde(rename = "cfg-apple-link")]
     #[serde(default)]

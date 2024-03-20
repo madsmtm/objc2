@@ -5,6 +5,7 @@
 ###
 
 [library.Accessibility]
+krate = "objc2-accessibility"
 imports = ["Foundation"]
 macos = "11.0"
 maccatalyst = "14.0"
@@ -13,12 +14,14 @@ tvos = "14.0"
 watchos = "7.0"
 
 [library.AdServices]
+krate = "objc2-ad-services"
 imports = ["Foundation"]
 macos = "11.1"
 maccatalyst = "14.3"
 ios = "14.3"
 
 [library.AdSupport]
+krate = "objc2-ad-support"
 imports = ["Foundation"]
 macos = "10.14"
 maccatalyst = "13.0"
@@ -26,12 +29,14 @@ ios = "6.0"
 tvos = "9.0"
 
 [library.AppKit]
+krate = "objc2-app-kit"
 imports = ["CoreData", "Foundation"]
 cfg-apple-link = true
 macos = "10.0"
 maccatalyst = "13.0"
 
 [library.AuthenticationServices]
+krate = "objc2-authentication-services"
 imports = ["AppKit", "Foundation"]
 macos = "10.15"
 maccatalyst = "13.0"
@@ -40,35 +45,41 @@ tvos = "13.0"
 watchos = "6.0"
 
 [library.AutomaticAssessmentConfiguration]
+krate = "objc2-automatic-assessment-configuration"
 imports = ["Foundation"]
 macos = "10.15.4"
 maccatalyst = "13.4"
 ios = "13.4"
 
 [library.Automator]
+krate = "objc2-automator"
 imports = ["AppKit", "Foundation", "OSAKit"]
 macos = "10.4"
 maccatalyst = "14.0"
 
 [library.BackgroundAssets]
+krate = "objc2-background-assets"
 imports = ["Foundation"]
 macos = "13.0"
 maccatalyst = "16.0"
 ios = "16.0"
 
 [library.BackgroundTasks]
+krate = "objc2-background-tasks"
 imports = ["Foundation"]
 maccatalyst = "13.0"
 ios = "13.0"
 tvos = "13.0"
 
 [library.BusinessChat]
+krate = "objc2-business-chat"
 imports = ["AppKit", "Foundation"]
 macos = "10.14"
 maccatalyst = "13.0"               # Unsure
 ios = "11.0"                       # Unsure
 
 [library.CallKit]
+krate = "objc2-call-kit"
 imports = ["Foundation"]
 macos = "13.0"
 maccatalyst = "13.0"
@@ -76,12 +87,14 @@ ios = "10.0"
 watchos = "9.0"
 
 [library.ClassKit]
+krate = "objc2-class-kit"
 imports = ["Foundation"]
 macos = "11.0"
 maccatalyst = "14.0"
 ios = "11.4"
 
 [library.CloudKit]
+krate = "objc2-cloud-kit"
 imports = ["CoreLocation", "Foundation"]
 macos = "10.10"
 maccatalyst = "13.0"
@@ -90,6 +103,7 @@ tvos = "9.0"
 watchos = "3.0"
 
 [library.Contacts]
+krate = "objc2-contacts"
 imports = ["Foundation"]
 macos = "10.11"
 maccatalyst = "13.0"
@@ -97,6 +111,7 @@ ios = "9.0"
 watchos = "2.0"
 
 [library.CoreData]
+krate = "objc2-core-data"
 imports = ["Foundation"]
 cfg-apple-link = true
 macos = "10.4"
@@ -106,6 +121,7 @@ tvos = "9.0"
 watchos = "2.0"
 
 [library.CoreLocation]
+krate = "objc2-core-location"
 imports = ["Contacts", "Foundation"]
 # macos = "10.6"
 macos = "10.11"      # Temporarily raised since `CoreLocation` imports `Contacts`
@@ -115,10 +131,12 @@ tvos = "9.0"
 watchos = "2.0"
 
 [library.CoreWLAN]
+krate = "objc2-core-wlan"
 imports = ["Foundation"]
 macos = "10.6"
 
 [library.DataDetection]
+krate = "objc2-data-detection"
 imports = ["Foundation"]
 macos = "12.0"
 maccatalyst = "15.0"
@@ -127,6 +145,7 @@ tvos = "15.0"
 watchos = "8.0"
 
 [library.DeviceCheck]
+krate = "objc2-device-check"
 imports = ["Foundation"]
 macos = "10.15"
 maccatalyst = "13.0"
@@ -135,6 +154,7 @@ tvos = "11.0"
 watchos = "9.0"
 
 [library.EventKit]
+krate = "objc2-event-kit"
 imports = ["AppKit", "CoreLocation", "Foundation", "MapKit"]
 macos = "10.8"
 maccatalyst = "13.0"
@@ -142,11 +162,13 @@ ios = "4.0"
 watchos = "2.0"
 
 [library.ExceptionHandling]
+krate = "objc2-exception-handling"
 imports = ["Foundation"]
 macos = "10.0"
 maccatalyst = "13.0"
 
 [library.ExtensionKit]
+krate = "objc2-extension-kit"
 imports = ["AppKit", "Foundation"]
 macos = "13.0"
 maccatalyst = "13.0"
@@ -155,6 +177,7 @@ tvos = "16.0"
 watchos = "9.0"
 
 [library.ExternalAccessory]
+krate = "objc2-external-accessory"
 imports = ["Foundation"]
 macos = "10.13"
 maccatalyst = "16.0"
@@ -162,17 +185,20 @@ ios = "3.0"
 tvos = "10.0"
 
 [library.FileProvider]
+krate = "objc2-file-provider"
 imports = ["AppKit", "Foundation", "UniformTypeIdentifiers"]
 macos = "10.15"
 ios = "11.0"
 
 [library.FileProviderUI]
+krate = "objc2-file-provider-ui"
 imports = ["AppKit", "FileProvider", "Foundation"]
 macos = "10.15"
 maccatalyst = "15.0"
 ios = "11.0"
 
 [library.Foundation]
+krate = "objc2-foundation"
 imports = []
 cfg-apple-link = true
 extra-features = [
@@ -192,6 +218,7 @@ tvos = "9.0"
 watchos = "2.0"
 
 [library.GameController]
+krate = "objc2-game-controller"
 imports = ["AppKit", "Foundation"]
 macos = "10.9"
 maccatalyst = "13.0"
@@ -199,6 +226,7 @@ ios = "7.0"
 tvos = "9.0"
 
 [library.GameKit]
+krate = "objc2-game-kit"
 imports = ["AppKit", "Foundation"]
 macos = "10.8"
 maccatalyst = "13.0"
@@ -207,6 +235,7 @@ tvos = "9.0"
 watchos = "3.0"
 
 [library.HealthKit]
+krate = "objc2-health-kit"
 imports = ["CoreLocation", "Foundation", "UniformTypeIdentifiers"]
 macos = "13.0"
 maccatalyst = "13.0"
@@ -214,17 +243,20 @@ ios = "8.0"
 watchos = "2.0"
 
 [library.IdentityLookup]
+krate = "objc2-identity-lookup"
 imports = ["Foundation"]
 macos = "10.15"
 maccatalyst = "13.0"
 ios = "11.0"
 
 [library.InputMethodKit]
+krate = "objc2-input-method-kit"
 imports = ["AppKit", "Foundation"]
 macos = "10.5"
 maccatalyst = "13.0"
 
 [library.LocalAuthentication]
+krate = "objc2-local-authentication"
 imports = ["Foundation"]
 macos = "10.10"
 maccatalyst = "13.0"
@@ -232,12 +264,14 @@ ios = "8.0"
 watchos = "9.0"
 
 [library.LocalAuthenticationEmbeddedUI]
+krate = "objc2-local-authentication-embedded-ui"
 imports = ["AppKit", "Foundation", "LocalAuthentication"]
 macos = "12.0"
 maccatalyst = "16.0"
 ios = "16.0"
 
 [library.LinkPresentation]
+krate = "objc2-link-presentation"
 imports = ["AppKit", "Foundation"]
 macos = "10.15"
 maccatalyst = "13.0"
@@ -245,10 +279,12 @@ ios = "13.0"
 tvos = "14.0"
 
 [library.MailKit]
+krate = "objc2-mail-kit"
 imports = ["AppKit", "Foundation"]
 macos = "12.0"
 
 [library.MapKit]
+krate = "objc2-map-kit"
 imports = ["AppKit", "Contacts", "CoreLocation", "Foundation"]
 macos = "10.9"
 maccatalyst = "13.0"
@@ -257,6 +293,7 @@ tvos = "9.2"
 watchos = "2.0"
 
 [library.MediaPlayer]
+krate = "objc2-media-player"
 imports = ["AppKit", "Foundation"]
 macos = "10.12.1"
 maccatalyst = "13.0"
@@ -265,6 +302,7 @@ tvos = "9.0"
 watchos = "5.0"
 
 [library.Metal]
+krate = "objc2-metal"
 imports = ["Foundation"]
 macos = "10.11"
 maccatalyst = "13.0"
@@ -272,12 +310,14 @@ ios = "8.0"
 tvos = "9.0"
 
 [library.MetalFX]
+krate = "objc2-metal-fx"
 imports = ["Foundation", "Metal"]
 macos = "13.0"
 maccatalyst = "16.0"
 ios = "16.0"
 
 [library.MetalKit]
+krate = "objc2-metal-kit"
 imports = ["AppKit", "Foundation", "Metal"]
 macos = "10.11"
 maccatalyst = "13.0"
@@ -285,12 +325,14 @@ ios = "9.0"
 tvos = "9.0"
 
 [library.MetricKit]
+krate = "objc2-metric-kit"
 imports = ["Foundation"]
 macos = "12.0"
 maccatalyst = "13.0"
 ios = "13.0"
 
 [library.Photos]
+krate = "objc2-photos"
 imports = ["AppKit", "CoreLocation", "Foundation", "UniformTypeIdentifiers"]
 macos = "10.11"
 maccatalyst = "13.0"
@@ -299,10 +341,12 @@ tvos = "10.0"
 watchos = "9.0"
 
 [library.OSAKit]
+krate = "objc2-osa-kit"
 imports = ["AppKit", "Foundation"]
 macos = "10.4"
 
 [library.QuartzCore]
+krate = "objc2-quartz-core"
 imports = ["Foundation"]
 macos = "10.3"
 maccatalyst = "13.0"
@@ -310,6 +354,7 @@ ios = "2.0"
 tvos = "9.0"
 
 [library.ServiceManagement]
+krate = "objc2-service-management"
 imports = ["Foundation"]
 macos = "10.6"
 maccatalyst = "13.0"
@@ -318,6 +363,7 @@ tvos = "12.1"
 watchos = "5.1"
 
 [library.SoundAnalysis]
+krate = "objc2-sound-analysis"
 imports = ["Foundation"]
 macos = "10.15"
 maccatalyst = "13.0"
@@ -326,12 +372,14 @@ tvos = "13.0"
 watchos = "9.0"
 
 [library.Speech]
+krate = "objc2-speech"
 imports = ["Foundation"]
 macos = "10.15"
 maccatalyst = "13.0"
 ios = "10.0"
 
 [library.StoreKit]
+krate = "objc2-store-kit"
 imports = ["AppKit", "Foundation"]
 macos = "10.7"
 maccatalyst = "13.0"
@@ -340,6 +388,7 @@ tvos = "9.0"
 watchos = "6.2"
 
 [library.UniformTypeIdentifiers]
+krate = "objc2-uniform-type-identifiers"
 imports = ["Foundation"]
 macos = "11.0"
 maccatalyst = "14.0"
@@ -348,6 +397,7 @@ tvos = "14.0"
 watchos = "7.0"
 
 [library.UserNotifications]
+krate = "objc2-user-notifications"
 imports = ["CoreLocation", "Foundation"]
 macos = "10.14"
 maccatalyst = "13.0"
@@ -356,6 +406,7 @@ tvos = "10.0"
 watchos = "3.0"
 
 [library.WebKit]
+krate = "objc2-web-kit"
 imports = ["AppKit", "Foundation"]
 macos = "10.2"
 maccatalyst = "13.0"
