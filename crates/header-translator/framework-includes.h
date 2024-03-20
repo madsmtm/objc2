@@ -81,6 +81,8 @@
 
 #import <MetalKit/MetalKit.h>
 
+#import <MetalPerformanceShaders/MetalPerformanceShaders.h>
+
 #import <MetricKit/MetricKit.h>
 
 #import <Photos/Photos.h>

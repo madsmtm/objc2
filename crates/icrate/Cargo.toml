@@ -2835,6 +2835,10 @@ MetalFX_all = [
     "MetalFX_MTLFXSpatialScaler",
     "MetalFX_MTLFXTemporalScaler",
 ]
+MetalPerformanceShaders = [
+    "Foundation",
+    "Metal",
+]
 MetalKit = [
     "AppKit",
     "Foundation",

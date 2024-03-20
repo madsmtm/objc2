@@ -45,6 +45,7 @@ data! {
     mod Metal;
     mod MetalFX;
     mod MetalKit;
+    mod MetalPerformanceShaders;
     mod MetricKit;
     mod OSAKit;
     mod PhotoKit;
