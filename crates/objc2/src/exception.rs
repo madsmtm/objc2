@@ -78,7 +78,7 @@ impl Exception {
             let obj: *const Exception = self;
             let obj = unsafe { obj.cast::<NSObject>().as_ref().unwrap() };
             // Get class dynamically instead of with `class!` macro
-            Some(obj.__isKindOfClass(AnyClass::get("NSException")?))
+            Some(obj.isKindOfClass(AnyClass::get("NSException")?))
         } else {
             Some(false)
         }

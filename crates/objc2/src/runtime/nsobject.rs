@@ -1,13 +1,12 @@
 use core::fmt;
 use core::hash;
 
+use crate::ffi::NSUInteger;
 use crate::mutability::Root;
 use crate::rc::{DefaultId, Id};
-use crate::runtime::{AnyClass, AnyObject, ProtocolObject};
+use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ImplementedBy, ProtocolObject, Sel};
 use crate::{extern_methods, msg_send, msg_send_id, Message};
 use crate::{ClassType, ProtocolType};
-
-use super::ImplementedBy;
 
 /// The root class of most Objective-C class hierarchies.
 ///
@@ -97,57 +96,72 @@ unsafe impl ClassType for NSObject {
 ///
 /// Like with [other protocols](ProtocolType), the type must represent a class
 /// that implements the `NSObject` protocol.
-#[allow(non_snake_case)]
+//
+// Note: Most of the methods on this must remain `unsafe` to override,
+// including `isEqual` and `hash`, since hashing collections like
+// `NSDictionary` and `NSSet` rely on it being stable.
+#[allow(non_snake_case)] // Follow the naming scheme in `icrate`
 pub unsafe trait NSObjectProtocol {
-    // Note: This method must remain `unsafe` to override, since hashing
-    // collections like `NSDictionary` and `NSSet` rely on it being stable.
-    #[doc(hidden)]
-    fn __isEqual(&self, other: &Self) -> bool
+    /// Check whether the object is equal to an arbitrary other object.
+    ///
+    /// Most objects that implement `NSObjectProtocol` also implements the
+    /// [`PartialEq`] trait. If the objects you are comparing are of the same
+    /// type, you likely want to use that instead.
+    ///
+    /// See [Apple's documentation][apple-doc] for details.
+    ///
+    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418795-isequal?language=objc
+    #[doc(alias = "isEqual:")]
+    fn isEqual(&self, other: &AnyObject) -> bool
     where
         Self: Sized + Message,
     {
         unsafe { msg_send![self, isEqual: other] }
     }
 
-    // Note: This method must remain `unsafe` to override, since hashing
-    // collections like `NSDictionary` and `NSSet` rely on it being stable.
-    #[doc(hidden)]
-    fn __hash(&self) -> usize
+    /// An integer that can be used as a table address in a hash table
+    /// structure.
+    ///
+    /// Most objects that implement `NSObjectProtocol` also implements the
+    /// [`Hash`][std::hash::Hash] trait, you likely want to use that instead.
+    ///
+    /// See [Apple's documentation][apple-doc] for details.
+    ///
+    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418859-hash?language=objc
+    fn hash(&self) -> NSUInteger
     where
         Self: Sized + Message,
     {
         unsafe { msg_send![self, hash] }
     }
 
-    #[doc(hidden)]
-    fn __description(&self) -> Option<Id<NSObject>>
-    where
-        Self: Sized + Message,
-    {
-        unsafe { msg_send_id![self, description] }
-    }
-
-    #[doc(hidden)]
-    fn __isKindOfClass(&self, cls: &AnyClass) -> bool
+    /// Check if the object is an instance of the class, or one of its
+    /// subclasses.
+    ///
+    /// See [Apple's documentation][apple-doc] for more details on what you
+    /// may (and what you may not) do with this information.
+    ///
+    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418511-iskindofclass?language=objc
+    #[doc(alias = "isKindOfClass:")]
+    fn isKindOfClass(&self, cls: &AnyClass) -> bool
     where
         Self: Sized + Message,
     {
         unsafe { msg_send![self, isKindOfClass: cls] }
     }
 
-    /// Check if the object is an instance of the class, or one of it's
+    /// Check if the object is an instance of the class type, or one of its
     /// subclasses.
     ///
-    /// See [Apple's documentation][apple-doc] for more details on what you
-    /// may (and what you may not) do with this information.
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418511-iskindofclass
+    /// See [`isKindOfClass`][Self::isKindOfClass] for details.
     #[doc(alias = "isKindOfClass")]
+    #[doc(alias = "isKindOfClass:")]
+    // TODO: Consider deprecating this
     fn is_kind_of<T: ClassType>(&self) -> bool
     where
         Self: Sized + Message,
     {
-        self.__isKindOfClass(T::class())
+        self.isKindOfClass(T::class())
     }
 
     // Note: We don't provide a method to convert `NSObject` to `T` based on
@@ -156,6 +170,180 @@ pub unsafe trait NSObjectProtocol {
     // For example, something may have a return type of `NSString`, while
     // behind the scenes they really return `NSMutableString` and expect it to
     // not be modified.
+
+    /// Check if the object is an instance of a specific class, without
+    /// checking subclasses.
+    ///
+    /// Note that this is rarely what you want, the specific class of an
+    /// object is considered a private implementation detail. Use
+    /// [`isKindOfClass`][Self::isKindOfClass] instead to check whether an
+    /// object is an instance of a given class.
+    ///
+    /// See [Apple's documentation][apple-doc] for more details.
+    ///
+    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418766-ismemberofclass?language=objc
+    #[doc(alias = "isMemberOfClass:")]
+    fn isMemberOfClass(&self, cls: &AnyClass) -> bool
+    where
+        Self: Sized + Message,
+    {
+        unsafe { msg_send![self, isMemberOfClass: cls] }
+    }
+
+    /// Check whether the object implements or inherits a method with the
+    /// given selector.
+    ///
+    /// See [Apple's documentation][apple-doc] for more details.
+    ///
+    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418583-respondstoselector?language=objc
+    ///
+    ///
+    /// # Example
+    ///
+    /// Check whether `NSApplication` has the [`effectiveAppearance`] method
+    /// before calling it, to support systems older than macOS 10.14 where the
+    /// method was added.
+    ///
+    /// ```
+    /// # #[cfg(available_in_icrate)]
+    /// use icrate::AppKit::{NSApplication, NSAppearance, NSAppearanceNameAqua};
+    /// use objc2::runtime::NSObjectProtocol;
+    /// use objc2::sel;
+    ///
+    /// # let obj = objc2::runtime::NSObject::new();
+    /// # assert!(!obj.respondsToSelector(sel!(effectiveAppearance)));
+    /// #
+    /// # #[cfg(available_in_icrate)] {
+    /// let appearance = if obj.respondsToSelector(sel!(effectiveAppearance)) {
+    ///     NSApplication::sharedApplication(mtm).effectiveAppearance()
+    /// } else {
+    ///     unsafe { NSAppearance::appearanceNamed(NSAppearanceNameAqua).unwrap() }
+    /// };
+    /// # }
+    /// ```
+    ///
+    /// [`effectiveAppearance`]: https://developer.apple.com/documentation/appkit/nsapplication/2967171-effectiveappearance?language=objc
+    #[doc(alias = "respondsToSelector:")]
+    fn respondsToSelector(&self, aSelector: Sel) -> bool
+    where
+        Self: Sized + Message,
+    {
+        unsafe { msg_send![self, respondsToSelector: aSelector] }
+    }
+
+    /// Check whether the object conforms to a given protocol.
+    ///
+    /// See [Apple's documentation][apple-doc] for details.
+    ///
+    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/nsobject/1418893-conformstoprotocol?language=objc
+    #[doc(alias = "conformsToProtocol:")]
+    fn conformsToProtocol(&self, aProtocol: &AnyProtocol) -> bool
+    where
+        Self: Sized + Message,
+    {
+        unsafe { msg_send![self, conformsToProtocol: aProtocol] }
+    }
+
+    /// A textual representation of the object.
+    ///
+    /// The returned class is `NSString`, but since that is defined in
+    /// `icrate`, and `NSObjectProtocol` is defined in `objc2`, the declared
+    /// return type is unfortunately restricted to be [`NSObject`]. It is
+    /// always safe to cast the return value of this to `NSString`.
+    ///
+    /// You might want to use the [`Debug`][fmt::Debug] impl of the object
+    /// instead, or if the object implements [`Display`][fmt::Display], the
+    /// [`to_string`][std::string::ToString::to_string] method.
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use objc2::rc::Id;
+    /// # use objc2::runtime::{NSObjectProtocol, NSObject, NSObject as NSString};
+    /// # #[cfg(available_in_icrate)]
+    /// use icrate::Foundation::{NSString, NSObjectProtocol};
+    ///
+    /// # let obj = NSObject::new();
+    /// // SAFETY: Descriptions are always `NSString`.
+    /// let desc: Id<NSString> = unsafe { Id::cast(obj.description()) };
+    /// println!("{desc:?}");
+    /// ```
+    fn description(&self) -> Id<NSObject>
+    where
+        Self: Sized + Message,
+    {
+        unsafe { msg_send_id![self, description] }
+    }
+
+    /// A textual representation of the object to use when debugging.
+    ///
+    /// Like with [`description`][Self::description], the return type of this
+    /// is always `NSString`.
+    ///
+    /// LLVM's po command uses this property to create a textual
+    /// representation of the object. The default implemention returns the
+    /// same value as `description`. Override either to provide custom object
+    /// descriptions.
+    // optional, introduced in macOS 10.8
+    fn debugDescription(&self) -> Id<NSObject>
+    where
+        Self: Sized + Message,
+    {
+        unsafe { msg_send_id![self, debugDescription] }
+    }
+
+    /// Check whether the receiver is a subclass of the `NSProxy` root class
+    /// instead of the usual [`NSObject`].
+    ///
+    /// See [Apple's documentation][apple-doc] for details.
+    ///
+    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418528-isproxy?language=objc
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use objc2::runtime::{NSObject, NSObjectProtocol};
+    ///
+    /// let obj = NSObject::new();
+    /// assert!(!obj.isProxy());
+    /// ```
+    fn isProxy(&self) -> bool
+    where
+        Self: Sized + Message,
+    {
+        unsafe { msg_send![self, isProxy] }
+    }
+
+    /// The reference count of the object.
+    ///
+    /// This can rarely be useful when debugging memory management issues,
+    /// though beware that in most real-world scenarios, your object may be
+    /// retained by several autorelease pools, especially when debug
+    /// assertions are enabled, so this value may not represent what you'd
+    /// expect.
+    ///
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use objc2::ClassType;
+    /// use objc2::runtime::{NSObject, NSObjectProtocol};
+    ///
+    /// let obj = NSObject::new();
+    /// assert_eq!(obj.retainCount(), 1);
+    /// let obj2 = obj.clone();
+    /// assert_eq!(obj.retainCount(), 2);
+    /// drop(obj2);
+    /// assert_eq!(obj.retainCount(), 1);
+    /// ```
+    fn retainCount(&self) -> NSUInteger
+    where
+        Self: Sized + Message,
+    {
+        unsafe { msg_send![self, retainCount] }
+    }
 }
 
 crate::__inner_extern_protocol!(
@@ -213,7 +401,7 @@ impl PartialEq for NSObject {
     #[inline]
     #[doc(alias = "isEqual:")]
     fn eq(&self, other: &Self) -> bool {
-        self.__isEqual(other)
+        self.isEqual(other)
     }
 }
 
@@ -229,7 +417,7 @@ impl Eq for NSObject {}
 impl hash::Hash for NSObject {
     #[inline]
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
-        self.__hash().hash(state);
+        <Self as NSObjectProtocol>::hash(self).hash(state);
     }
 }
 
@@ -381,5 +569,20 @@ mod tests {
     fn conforms_to_nsobjectprotocol() {
         let protocol = <dyn NSObjectProtocol>::protocol().unwrap();
         assert!(NSObject::class().conforms_to(protocol));
+    }
+
+    // Ensure that importing `NSObjectProtocol::hash` does not cause conflicts
+    // when using `Hash::hash` on normal types.
+    mod hash_does_not_overlap_with_normal_hash_method {
+        #[allow(unused_imports)]
+        use crate::runtime::NSObjectProtocol;
+        use std::hash::{DefaultHasher, Hash};
+
+        #[test]
+        fn inner() {
+            let integer = 5;
+            let mut hasher = DefaultHasher::new();
+            integer.hash(&mut hasher);
+        }
     }
 }

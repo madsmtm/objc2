@@ -2,11 +2,7 @@ use core::mem::ManuallyDrop;
 
 use objc2::msg_send;
 use objc2::rc::{autoreleasepool, Id};
-use objc2::runtime::NSObject;
-
-fn retain_count(obj: &NSObject) -> usize {
-    unsafe { msg_send![obj, retainCount] }
-}
+use objc2::runtime::{NSObject, NSObjectProtocol};
 
 fn create_obj() -> Id<NSObject> {
     let obj = ManuallyDrop::new(NSObject::new());
@@ -41,13 +37,13 @@ fn test_retain_autoreleased() {
         };
 
         let data = create_obj();
-        assert_eq!(retain_count(&data), expected);
+        assert_eq!(data.retainCount(), expected);
 
         let data = create_obj();
-        assert_eq!(retain_count(&data), expected);
+        assert_eq!(data.retainCount(), expected);
 
         // Here we manually clean up the autorelease, so it will always be 1.
         let data = autoreleasepool(|_| create_obj());
-        assert_eq!(retain_count(&data), 1);
+        assert_eq!(data.retainCount(), 1);
     });
 }

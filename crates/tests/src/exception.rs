@@ -5,13 +5,7 @@ use icrate::Foundation::{NSArray, NSException, NSString};
 use objc2::exception::{catch, throw};
 use objc2::msg_send;
 use objc2::rc::{autoreleasepool, Id};
-use objc2::runtime::{AnyObject, NSObject};
-
-#[track_caller]
-fn assert_retain_count(obj: &AnyObject, expected: usize) {
-    let retain_count: usize = unsafe { msg_send![obj, retainCount] };
-    assert_eq!(retain_count, expected);
-}
+use objc2::runtime::{NSObject, NSObjectProtocol};
 
 #[test]
 #[cfg_attr(
@@ -24,7 +18,7 @@ fn throw_catch_raise_catch() {
 
     let exc = NSException::new(&name, Some(&reason), None).unwrap();
 
-    assert_retain_count(&exc, 1);
+    assert_eq!(exc.retainCount(), 1);
 
     let exc = autoreleasepool(|_| {
         let exc = NSException::into_exception(exc);
@@ -32,11 +26,11 @@ fn throw_catch_raise_catch() {
         let exc = res.unwrap_err().unwrap();
         let exc = NSException::from_exception(exc).unwrap();
 
-        assert_retain_count(&exc, 1);
+        assert_eq!(exc.retainCount(), 1);
         exc
     });
 
-    assert_retain_count(&exc, 1);
+    assert_eq!(exc.retainCount(), 1);
 
     let exc = autoreleasepool(|_| {
         let inner = || {
@@ -51,11 +45,11 @@ fn throw_catch_raise_catch() {
 
         // Undesired: The inner pool _should_ have been drained on unwind, but
         // it isn't, see `rc::Pool::drain`.
-        assert_retain_count(&exc, 2);
+        assert_eq!(exc.retainCount(), 2);
         exc
     });
 
-    assert_retain_count(&exc, 1);
+    assert_eq!(exc.retainCount(), 1);
 
     assert_eq!(exc.name(), name);
     assert_eq!(exc.reason().unwrap(), reason);
@@ -94,7 +88,7 @@ fn raise_catch() {
     let reason = NSString::from_str("def");
 
     let exc = NSException::new(&name, Some(&reason), None).unwrap();
-    assert_retain_count(&exc, 1);
+    assert_eq!(exc.retainCount(), 1);
 
     let exc = autoreleasepool(|pool| {
         let exc = Id::autorelease(exc, pool);
@@ -106,11 +100,12 @@ fn raise_catch() {
             }
         };
         let res = unsafe { catch(inner) }.unwrap_err().unwrap();
-        assert_retain_count(&exc, 2);
+        assert_eq!(exc.retainCount(), 2);
         res
     });
 
-    assert_retain_count(&exc, 1);
+    let retain_count: usize = unsafe { msg_send![&exc, retainCount] };
+    assert_eq!(retain_count, 1);
 
     assert_eq!(format!("{exc}"), "def");
     assert_eq!(

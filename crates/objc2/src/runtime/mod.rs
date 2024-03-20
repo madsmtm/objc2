@@ -1200,6 +1200,19 @@ impl AnyObject {
     }
 
     /// Dynamically find the class of this object.
+    ///
+    ///
+    /// # Example
+    ///
+    /// Check that an instance of `NSObject` has the precise class `NSObject`.
+    ///
+    /// ```
+    /// use objc2::ClassType;
+    /// use objc2::runtime::NSObject;
+    ///
+    /// let obj = NSObject::new();
+    /// assert_eq!(obj.class(), NSObject::class());
+    /// ```
     #[inline]
     #[doc(alias = "object_getClass")]
     pub fn class(&self) -> &'static AnyClass {

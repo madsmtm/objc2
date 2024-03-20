@@ -18,6 +18,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `AnyProtocol::protocols`.
   - `AnyProtocol::adopted_protocols`.
 * Added `Id::into_raw` as the oppositve of `Id::from_raw`.
+* Added the following missing methods on `NSObjectProtocol`:
+  - `isEqual`.
+  - `hash`.
+  - `isKindOfClass`.
+  - `isMemberOfClass`.
+  - `respondsToSelector`.
+  - `conformsToProtocol`.
+  - `description`.
+  - `debugDescription`.
+  - `isProxy`.
+  - `retainCount`.
 
 ### Changed
 * Moved `ClassBuilder` and `ProtocolBuilder` from the `declare` module to the

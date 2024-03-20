@@ -882,7 +882,7 @@ mod tests {
     use super::*;
     use crate::mutability::{Immutable, Mutable};
     use crate::rc::{__RcTestObject, __ThreadTestData, autoreleasepool};
-    use crate::runtime::{AnyObject, NSObject};
+    use crate::runtime::{AnyObject, NSObject, NSObjectProtocol};
     use crate::{declare_class, msg_send, DeclaredClass};
 
     #[test]
@@ -937,12 +937,6 @@ mod tests {
         assert_impl_all!(Id<MutableSendSyncObject>: Send, Sync);
     }
 
-    #[track_caller]
-    fn assert_retain_count(obj: &AnyObject, expected: usize) {
-        let retain_count: usize = unsafe { msg_send![obj, retainCount] };
-        assert_eq!(retain_count, expected);
-    }
-
     #[test]
     fn test_drop() {
         let mut expected = __ThreadTestData::current();
@@ -968,11 +962,11 @@ mod tests {
             let _ref = Id::autorelease(obj, pool);
             expected.autorelease += 1;
             expected.assert_current();
-            assert_retain_count(&cloned, 2);
+            assert_eq!(cloned.retainCount(), 2);
         });
         expected.release += 1;
         expected.assert_current();
-        assert_retain_count(&cloned, 1);
+        assert_eq!(cloned.retainCount(), 1);
 
         autoreleasepool(|pool| {
             let _ref = Id::autorelease(cloned, pool);
@@ -987,34 +981,36 @@ mod tests {
     #[test]
     fn test_clone() {
         let obj = __RcTestObject::new();
-        assert_retain_count(&obj, 1);
+        assert_eq!(obj.retainCount(), 1);
         let mut expected = __ThreadTestData::current();
 
         expected.assert_current();
-        assert_retain_count(&obj, 1);
+        assert_eq!(obj.retainCount(), 1);
 
         let cloned = obj.clone();
         expected.retain += 1;
         expected.assert_current();
-        assert_retain_count(&cloned, 2);
-        assert_retain_count(&obj, 2);
+        assert_eq!(cloned.retainCount(), 2);
+        assert_eq!(obj.retainCount(), 2);
 
         let obj = Id::into_super(Id::into_super(obj));
         let cloned_and_type_erased = obj.clone();
         expected.retain += 1;
         expected.assert_current();
-        assert_retain_count(&cloned_and_type_erased, 3);
-        assert_retain_count(&obj, 3);
+        let retain_count: usize = unsafe { msg_send![&cloned_and_type_erased, retainCount] };
+        assert_eq!(retain_count, 3);
+        let retain_count: usize = unsafe { msg_send![&obj, retainCount] };
+        assert_eq!(retain_count, 3);
 
         drop(obj);
         expected.release += 1;
         expected.assert_current();
-        assert_retain_count(&cloned, 2);
+        assert_eq!(cloned.retainCount(), 2);
 
         drop(cloned_and_type_erased);
         expected.release += 1;
         expected.assert_current();
-        assert_retain_count(&cloned, 1);
+        assert_eq!(cloned.retainCount(), 1);
 
         drop(cloned);
         expected.release += 1;

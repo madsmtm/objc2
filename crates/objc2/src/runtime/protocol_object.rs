@@ -132,7 +132,7 @@ impl<P: ?Sized + NSObjectProtocol> PartialEq for ProtocolObject<P> {
     #[inline]
     #[doc(alias = "isEqual:")]
     fn eq(&self, other: &Self) -> bool {
-        self.__isEqual(other)
+        self.isEqual(&other.inner)
     }
 }
 
@@ -141,31 +141,24 @@ impl<P: ?Sized + NSObjectProtocol> Eq for ProtocolObject<P> {}
 impl<P: ?Sized + NSObjectProtocol> hash::Hash for ProtocolObject<P> {
     #[inline]
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
-        self.__hash().hash(state);
+        <Self as NSObjectProtocol>::hash(self).hash(state);
     }
 }
 
 impl<P: ?Sized + NSObjectProtocol> fmt::Debug for ProtocolObject<P> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // Attempt to format description string
-        if let Some(description) = self.__description() {
-            // We use a leaking autorelease pool since often the string
-            // will be UTF-8, and in that case the pool will be
-            // irrelevant. Also, it allows us to pass the formatter into
-            // the pool (since it may contain a pool internally that it
-            // assumes is current when writing).
-            autoreleasepool_leaking(|pool| {
-                // SAFETY: `description` selector is guaranteed to always
-                // return an instance of `NSString`.
-                let s = unsafe { nsstring_to_str(&description, pool) };
-                fmt::Display::fmt(s, f)
-            })
-        } else {
-            // If description was `NULL`, use `AnyObject`'s `Debug` impl
-            // instead
-            let obj: &AnyObject = &self.inner;
-            fmt::Debug::fmt(obj, f)
-        }
+        let description = self.description();
+        // We use a leaking autorelease pool since often the string
+        // will be UTF-8, and in that case the pool will be
+        // irrelevant. Also, it allows us to pass the formatter into
+        // the pool (since it may contain a pool internally that it
+        // assumes is current when writing).
+        autoreleasepool_leaking(|pool| {
+            // SAFETY: `description` selector is guaranteed to always
+            // return an instance of `NSString`.
+            let s = unsafe { nsstring_to_str(&description, pool) };
+            fmt::Display::fmt(s, f)
+        })
     }
 }
 
@@ -386,7 +379,7 @@ mod tests {
         let mut hashstate_b = DefaultHasher::new();
 
         obj.hash(&mut hashstate_a);
-        foobar.hash(&mut hashstate_b);
+        <_ as Hash>::hash(foobar, &mut hashstate_b);
 
         assert_eq!(hashstate_a.finish(), hashstate_b.finish());
     }

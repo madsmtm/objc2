@@ -346,6 +346,9 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
 
     /// Sends a message to the receiver with the given selector and arguments.
     ///
+    /// This should be used instead of the [`performSelector:`] family of
+    /// methods, as this is both more performant and flexible than that.
+    ///
     /// The correct version of `objc_msgSend` will be chosen based on the
     /// return type. For more information, see [the Messaging section in
     /// Apple's Objective-C Runtime Programming Guide][guide-messaging].
@@ -353,6 +356,7 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     /// If the selector is known at compile-time, it is recommended to use the
     /// [`msg_send!`] macro rather than this method.
     ///
+    /// [`performSelector:`]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418867-performselector?language=objc
     /// [guide-messaging]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtHowMessagingWorks.html
     ///
     ///
@@ -364,8 +368,30 @@ pub unsafe trait MessageReceiver: private::Sealed + Sized {
     /// arguments as is given.
     ///
     /// [`msg_send!`]: crate::msg_send
+    ///
+    ///
+    /// # Example
+    ///
+    /// Call the `copy` method, but using a dynamic selector instead.
+    ///
+    /// ```no_run
+    /// use objc2::rc::Id;
+    /// use objc2::runtime::MessageReceiver;
+    /// use objc2::sel;
+    /// # use objc2::runtime::NSObject as MyObject;
+    ///
+    /// let obj = MyObject::new();
+    /// // SAFETY: The `copy` method takes no arguments, and returns an object
+    /// let copy: *mut MyObject = unsafe { obj.send_message(sel!(copy), ()) };
+    /// // SAFETY: The `copy` method returns an object with +1 retain count
+    /// let copy = unsafe { Id::from_raw(copy) }.unwrap();
+    /// ```
     #[inline]
     #[track_caller]
+    #[doc(alias = "performSelector")]
+    #[doc(alias = "performSelector:")]
+    #[doc(alias = "performSelector:withObject:")]
+    #[doc(alias = "performSelector:withObject:withObject:")]
     unsafe fn send_message<A: EncodeArguments, R: EncodeReturn>(self, sel: Sel, args: A) -> R {
         let receiver = self.__as_raw_receiver();
         #[cfg(debug_assertions)]

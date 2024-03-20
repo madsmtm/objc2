@@ -74,7 +74,7 @@ impl PartialEq for NSProxy {
     #[inline]
     #[doc(alias = "isEqual:")]
     fn eq(&self, other: &Self) -> bool {
-        self.__isEqual(other)
+        self.isEqual(other)
     }
 }
 
@@ -83,7 +83,7 @@ impl Eq for NSProxy {}
 impl hash::Hash for NSProxy {
     #[inline]
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
-        self.__hash().hash(state);
+        <NSProxy as NSObjectProtocol>::hash(self).hash(state);
     }
 }
 
