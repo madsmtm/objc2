@@ -3,7 +3,7 @@ use core::hash;
 
 use crate::ffi::NSUInteger;
 use crate::mutability::Root;
-use crate::rc::{DefaultId, Id};
+use crate::rc::{Allocated, DefaultId, Id};
 use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ImplementedBy, ProtocolObject, Sel};
 use crate::{extern_methods, msg_send, msg_send_id, Message};
 use crate::{ClassType, ProtocolType};
@@ -383,10 +383,47 @@ where
 unsafe impl NSObjectProtocol for NSObject {}
 
 extern_methods!(
+    #[allow(non_snake_case)] // Follow the naming scheme in `icrate`
     unsafe impl NSObject {
         /// Create a new empty `NSObject`.
+        ///
+        /// This method is a shorthand for calling [`alloc`][ClassType::alloc]
+        /// and then [`init`][Self::init].
         #[method_id(new)]
         pub fn new() -> Id<Self>;
+
+        /// Initialize an already allocated object.
+        ///
+        /// See [Apple's documentation][apple-doc] for details.
+        ///
+        /// [apple-doc]: https://developer.apple.com/documentation/objectivec/nsobject/1418641-init?language=objc
+        ///
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use objc2::runtime::NSObject;
+        /// use objc2::ClassType;
+        ///
+        /// let obj = NSObject::init(NSObject::alloc());
+        /// ```
+        #[method_id(init)]
+        pub fn init(this: Allocated<Self>) -> Id<Self>;
+
+        #[method(doesNotRecognizeSelector:)]
+        fn doesNotRecognizeSelector_inner(&self, sel: Sel);
+
+        /// Handle messages the object doesn’t recognize.
+        ///
+        /// See [Apple's documentation][apple-doc] for details.
+        ///
+        /// [apple-doc]: https://developer.apple.com/documentation/objectivec/nsobject/1418637-doesnotrecognizeselector?language=objc
+        pub fn doesNotRecognizeSelector(&self, sel: Sel) -> ! {
+            self.doesNotRecognizeSelector_inner(sel);
+            unreachable!("doesNotRecognizeSelector: should not return")
+        }
+
+        // TODO: `methodForSelector:`, but deprecated, showing how you should do without?
     }
 );
 

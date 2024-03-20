@@ -29,6 +29,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `debugDescription`.
   - `isProxy`.
   - `retainCount`.
+* Added `NSObject::init`.
+* Added `NSObject::doesNotRecognizeSelector`.
 
 ### Changed
 * Moved `ClassBuilder` and `ProtocolBuilder` from the `declare` module to the
