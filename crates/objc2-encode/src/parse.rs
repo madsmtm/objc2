@@ -103,6 +103,13 @@ impl fmt::Display for ErrorKind {
 
 type Result<T, E = ErrorKind> = core::result::Result<T, E>;
 
+enum ParseInner {
+    Empty,
+    Encoding(EncodingBox),
+    ContainerEnd(ContainerKind),
+    ArrayEnd,
+}
+
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub(crate) struct Parser<'a> {
     data: &'a str,
@@ -140,6 +147,10 @@ impl<'a> Parser<'a> {
 
     fn advance(&mut self) {
         self.split_point += 1;
+    }
+
+    fn rollback(&mut self) {
+        self.split_point -= 1;
     }
 
     fn consume_while(&mut self, mut condition: impl FnMut(u8) -> bool) {
@@ -288,11 +299,25 @@ impl Parser<'_> {
                     self.expect_byte(b'=')?;
                     // Parse as equal if the container is empty
                     if items.is_empty() {
-                        while self.try_peek() != Some(kind.end_byte()) {
-                            let _ = self.parse_encoding().ok()?;
+                        loop {
+                            match self.parse_inner().ok()? {
+                                ParseInner::Empty => {
+                                    // Require the container to have an end
+                                    return None;
+                                }
+                                ParseInner::Encoding(_) => {}
+                                ParseInner::ContainerEnd(parsed_kind) => {
+                                    if parsed_kind == kind {
+                                        return Some(());
+                                    } else {
+                                        return None;
+                                    }
+                                }
+                                ParseInner::ArrayEnd => {
+                                    return None;
+                                }
+                            }
                         }
-                        self.advance();
-                        return Some(());
                     }
                     // Parse as equal if the string's container is empty
                     if self.try_peek() == Some(kind.end_byte()) {
@@ -305,6 +330,7 @@ impl Parser<'_> {
                 }
                 self.expect_byte(kind.end_byte())
             }
+            Helper::NoneInvalid => Some(()),
         }
     }
 }
@@ -337,34 +363,44 @@ impl Parser<'_> {
         let mut items = Vec::new();
         // Parse items until hits end
         loop {
-            let b = self.try_peek().ok_or(ErrorKind::WrongEndContainer(kind))?;
-            if b == kind.end_byte() {
-                self.advance();
-                break;
-            } else {
-                // Wasn't the end, so try to extract one more encoding
-                items.push(self.parse_encoding()?);
+            match self.parse_inner()? {
+                ParseInner::Empty => {
+                    return Err(ErrorKind::WrongEndContainer(kind));
+                }
+                ParseInner::Encoding(enc) => {
+                    items.push(enc);
+                }
+                ParseInner::ContainerEnd(parsed_kind) => {
+                    if parsed_kind == kind {
+                        return Ok((s, items));
+                    } else {
+                        return Err(ErrorKind::Unknown(parsed_kind.end_byte()));
+                    }
+                }
+                ParseInner::ArrayEnd => {
+                    return Err(ErrorKind::Unknown(b']'));
+                }
             }
         }
-        Ok((s, items))
     }
 
-    pub(crate) fn parse_encoding(&mut self) -> Result<EncodingBox> {
-        self.try_parse_encoding()
-            .and_then(|res| res.ok_or(ErrorKind::UnexpectedEnd))
+    pub(crate) fn parse_encoding_or_none(&mut self) -> Result<EncodingBox> {
+        match self.parse_inner()? {
+            ParseInner::Empty => Ok(EncodingBox::None),
+            ParseInner::Encoding(enc) => Ok(enc),
+            ParseInner::ContainerEnd(kind) => Err(ErrorKind::Unknown(kind.end_byte())),
+            ParseInner::ArrayEnd => Err(ErrorKind::Unknown(b']')),
+        }
     }
 
-    fn try_parse_encoding(&mut self) -> Result<Option<EncodingBox>> {
-        Ok(if let Some(b) = self.try_peek() {
-            self.advance();
-            Some(self.parse_encoding_inner(b)?)
-        } else {
-            None
-        })
-    }
+    fn parse_inner(&mut self) -> Result<ParseInner> {
+        if self.is_empty() {
+            return Ok(ParseInner::Empty);
+        }
+        let b = self.peek()?;
+        self.advance();
 
-    fn parse_encoding_inner(&mut self, b: u8) -> Result<EncodingBox> {
-        Ok(match b {
+        Ok(ParseInner::Encoding(match b {
             b'c' => EncodingBox::Char,
             b's' => EncodingBox::Short,
             b'i' => EncodingBox::Int,
@@ -422,26 +458,59 @@ impl Parser<'_> {
                     EncodingBox::BitField(size, None)
                 }
             }
-            b'^' => EncodingBox::Pointer(Box::new(self.parse_encoding()?)),
-            b'A' => EncodingBox::Atomic(Box::new(self.parse_encoding()?)),
+            b'^' => EncodingBox::Pointer(Box::new(match self.parse_inner()? {
+                ParseInner::Empty => EncodingBox::None,
+                ParseInner::Encoding(enc) => enc,
+                ParseInner::ContainerEnd(_) | ParseInner::ArrayEnd => {
+                    self.rollback();
+                    EncodingBox::None
+                }
+            })),
+            b'A' => EncodingBox::Atomic(Box::new(match self.parse_inner()? {
+                ParseInner::Empty => EncodingBox::None,
+                ParseInner::Encoding(enc) => enc,
+                ParseInner::ContainerEnd(_) | ParseInner::ArrayEnd => {
+                    self.rollback();
+                    EncodingBox::None
+                }
+            })),
             b'[' => {
                 let len = self.parse_u64()?;
-                let item = self.parse_encoding()?;
-                self.expect_byte(b']').ok_or(ErrorKind::WrongEndArray)?;
-                EncodingBox::Array(len, Box::new(item))
+                match self.parse_inner()? {
+                    ParseInner::Empty => {
+                        return Err(ErrorKind::WrongEndArray);
+                    }
+                    ParseInner::Encoding(item) => {
+                        self.expect_byte(b']').ok_or(ErrorKind::WrongEndArray)?;
+                        EncodingBox::Array(len, Box::new(item))
+                    }
+                    ParseInner::ArrayEnd => EncodingBox::Array(len, Box::new(EncodingBox::None)),
+                    ParseInner::ContainerEnd(kind) => {
+                        return Err(ErrorKind::Unknown(kind.end_byte()))
+                    }
+                }
+            }
+            b']' => {
+                return Ok(ParseInner::ArrayEnd);
             }
             b'{' => {
                 let kind = ContainerKind::Struct;
                 let (name, items) = self.parse_container(kind)?;
                 EncodingBox::Struct(name.to_string(), items)
             }
+            b'}' => {
+                return Ok(ParseInner::ContainerEnd(ContainerKind::Struct));
+            }
             b'(' => {
                 let kind = ContainerKind::Union;
                 let (name, items) = self.parse_container(kind)?;
                 EncodingBox::Union(name.to_string(), items)
             }
+            b')' => {
+                return Ok(ParseInner::ContainerEnd(ContainerKind::Union));
+            }
             b => return Err(ErrorKind::Unknown(b)),
-        })
+        }))
     }
 
     fn try_parse_bitfield_gnustep(&mut self) -> Result<Option<(u8, EncodingBox)>> {
@@ -516,7 +585,7 @@ mod tests {
             let mut parser = Parser::new(enc);
             assert_eq!(
                 parser
-                    .parse_encoding()
+                    .parse_encoding_or_none()
                     .and_then(|enc| parser.expect_empty().map(|()| enc)),
                 expected
             );
@@ -549,5 +618,14 @@ mod tests {
             )),
         );
         assert_bitfield("b2000C257", Err(ErrorKind::IntegerTooLarge));
+    }
+
+    #[test]
+    fn parse_closing() {
+        let mut parser = Parser::new("]");
+        assert_eq!(
+            parser.parse_encoding_or_none(),
+            Err(ErrorKind::Unknown(b']'))
+        );
     }
 }

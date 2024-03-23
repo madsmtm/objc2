@@ -31,8 +31,10 @@ fn main() {
     builder.compiler("clang");
     builder.file("extern/encode_utils.m");
     builder.file("extern/test_object.m");
+    builder.file("extern/test_simd_return.m");
     println!("cargo:rerun-if-changed=extern/encode_utils.m");
     println!("cargo:rerun-if-changed=extern/test_object.m");
+    println!("cargo:rerun-if-changed=extern/test_simd_return.m");
 
     builder.flag("-fblocks");
 

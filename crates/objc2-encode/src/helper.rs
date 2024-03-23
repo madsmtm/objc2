@@ -107,6 +107,7 @@ pub(crate) fn compare_encodings<E1: EncodingType, E2: EncodingType>(
                 }
             }
         }
+        (NoneInvalid, NoneInvalid) => true,
         (_, _) => false,
     }
 }
@@ -242,6 +243,7 @@ pub(crate) enum Helper<'a, E = Encoding> {
     Indirection(IndirectionKind, &'a E),
     Array(u64, &'a E),
     Container(ContainerKind, &'a str, &'a [E]),
+    NoneInvalid,
 }
 
 impl<E: EncodingType> Helper<'_, E> {
@@ -279,6 +281,7 @@ impl<E: EncodingType> Helper<'_, E> {
                 }
                 write!(f, "{}", kind.end())?;
             }
+            Self::NoneInvalid => {}
         }
         Ok(())
     }
@@ -328,6 +331,7 @@ impl Helper<'_> {
                 }
                 Self::Container(ContainerKind::Union, name, members)
             }
+            None => Self::NoneInvalid,
         }
     }
 }
@@ -376,6 +380,7 @@ impl<'a> Helper<'a, EncodingBox> {
                 }
                 Self::Container(ContainerKind::Union, name, members)
             }
+            None => Self::NoneInvalid,
         }
     }
 }

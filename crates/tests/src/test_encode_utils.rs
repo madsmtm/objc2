@@ -296,6 +296,14 @@ assert_types! {
 
     UUID_T no_atomic => enc Encoding::Array(16, &u8::ENCODING),
 
+    // simd
+
+    SIMD_INT2 => enc Encoding::None,
+    SIMD_FLOAT1 => c_float,
+    SIMD_FLOAT2 => enc Encoding::None,
+    SIMD_FLOAT2X4 => enc Encoding::Struct("?", &[Encoding::Array(2, &Encoding::None)]),
+    SIMD_FLOAT4X2 => enc Encoding::Struct("?", &[Encoding::Array(4, &Encoding::None)]),
+
     // Possible extras; need to be #[cfg]-ed somehow
 
     // SIGNED_INT_128 => i128,

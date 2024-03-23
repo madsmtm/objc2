@@ -572,7 +572,17 @@ encode_impls!(
     // https://github.com/rust-lang/rust/issues/54341
 );
 
-// TODO: Structs in core::arch?
+#[cfg(target_arch = "aarch64")]
+unsafe impl Encode for core::arch::aarch64::float32x2_t {
+    const ENCODING: Encoding = Encoding::None;
+}
+
+#[cfg(target_arch = "aarch64")]
+unsafe impl Encode for core::arch::aarch64::float32x4_t {
+    const ENCODING: Encoding = Encoding::None;
+}
+
+// TODO: Further structs in core::arch?
 
 macro_rules! encode_impls_size {
     ($($t:ty => ($t16:ty, $t32:ty, $t64:ty),)*) => ($(
