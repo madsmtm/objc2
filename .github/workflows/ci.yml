@@ -273,7 +273,7 @@ jobs:
 
   header-translator:
     name: Verify header translator output
-    runs-on: macos-13
+    runs-on: macos-14
     needs:
     - fmt
     - lint
