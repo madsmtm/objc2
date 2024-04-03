@@ -6,8 +6,8 @@ use proc_macro2::{TokenStream, TokenTree};
 
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
-use crate::feature::Features;
 use crate::id::ItemIdentifier;
+use crate::stmt::items_required_by_decl;
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
 
@@ -300,7 +300,7 @@ impl fmt::Display for Primitive {
 pub struct ItemRef {
     id: ItemIdentifier,
     thread_safety: ThreadSafety,
-    required_features: Features,
+    required_items: Vec<ItemIdentifier>,
 }
 
 impl ItemRef {
@@ -308,7 +308,7 @@ impl ItemRef {
         Self {
             id: ItemIdentifier::new(entity, context),
             thread_safety: ThreadSafety::from_decl(entity, context),
-            required_features: Features::required_by_decl(entity, context),
+            required_items: items_required_by_decl(entity, context),
         }
     }
 }
@@ -970,61 +970,64 @@ impl Ty {
         }
     }
 
-    pub(crate) fn required_features(&self, self_features: &Features) -> Features {
+    pub(crate) fn required_items(&self) -> Vec<ItemIdentifier> {
         match self {
-            Self::Primitive(_) => Features::new(),
+            Self::Primitive(_) => Vec::new(),
             Self::Class {
                 decl,
                 generics,
                 protocols,
             } => {
-                let mut features = decl.required_features.clone();
+                let mut items = decl.required_items.clone();
                 for generic in generics {
-                    features.merge(generic.required_features(self_features));
+                    items.extend(generic.required_items());
                 }
                 for protocol in protocols {
-                    features.merge(protocol.required_features.clone());
+                    items.extend(protocol.required_items.clone());
                 }
-                features
+                items
             }
-            Self::GenericParam { .. } => Features::new(),
+            Self::GenericParam { .. } => Vec::new(),
             Self::AnyObject { protocols } => {
-                let mut features = Features::new();
+                let mut items = Vec::new();
                 for protocol in protocols {
-                    features.merge(protocol.required_features.clone());
+                    items.extend(protocol.required_items.clone());
                 }
-                features
+                items
             }
-            Self::AnyProtocol => Features::new(),
+            Self::AnyProtocol => Vec::new(),
             Self::AnyClass { protocols } => {
-                let mut features = Features::new();
+                let mut items = Vec::new();
                 for protocol in protocols {
-                    features.merge(protocol.required_features.clone());
+                    items.extend(protocol.required_items.clone());
                 }
-                features
+                items
             }
-            Self::Self_ => self_features.clone(),
-            Self::Sel { .. } => Features::new(),
-            Self::Pointer { pointee, .. } => pointee.required_features(self_features),
-            Self::IncompleteArray { pointee, .. } => pointee.required_features(self_features),
+            // Methods are always emitted on an `impl`, which means that
+            // `Self` is always available there, and don't required additional
+            // imports, cfgs or other such things.
+            Self::Self_ => Vec::new(),
+            Self::Sel { .. } => Vec::new(),
+            Self::Pointer { pointee, .. } => pointee.required_items(),
+            Self::IncompleteArray { pointee, .. } => pointee.required_items(),
             Self::TypeDef { id, to, .. } => {
-                let mut features = to.required_features(self_features);
-                features.add_item(id);
-                features
+                let mut items = to.required_items();
+                items.push(id.clone());
+                items
             }
-            Self::Array { element_type, .. } => element_type.required_features(self_features),
+            Self::Array { element_type, .. } => element_type.required_items(),
             Self::Enum { id, ty } => {
-                let mut features = ty.required_features(self_features);
-                features.add_item(id);
-                features
+                let mut items = ty.required_items();
+                items.push(id.clone());
+                items
             }
             Self::Struct { id, fields } => {
-                let mut features = Features::new();
+                let mut items = Vec::new();
                 for field in fields {
-                    features.merge(field.required_features(self_features));
+                    items.extend(field.required_items());
                 }
-                features.add_item(id);
-                features
+                items.push(id.clone());
+                items
             }
             Self::Fn {
                 is_variadic: _,
@@ -1038,12 +1041,12 @@ impl Ty {
                 arguments,
                 result_type,
             } => {
-                let mut features = Features::new();
+                let mut items = Vec::new();
                 for arg in arguments {
-                    features.merge(arg.required_features(self_features));
+                    items.extend(arg.required_items());
                 }
-                features.merge(result_type.required_features(self_features));
-                features
+                items.extend(result_type.required_items());
+                items
             }
         }
     }

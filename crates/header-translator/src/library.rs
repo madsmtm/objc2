@@ -7,6 +7,8 @@ use std::path::Path;
 use crate::config::LibraryData;
 use crate::file::clean_name;
 use crate::file::File;
+use crate::id::cfg_gate_ln;
+use crate::id::Location;
 
 /// Some SDK files have '+' in the file name, so we change those to `_`.
 pub(crate) fn clean_file_name(name: &str) -> String {
@@ -112,11 +114,11 @@ impl fmt::Display for Library {
         for (file_name, file) in &self.files {
             for stmt in &file.stmts {
                 if let Some(item) = stmt.provided_item() {
-                    assert_eq!(item.file_name.as_ref(), Some(file_name));
+                    assert_eq!(item.location().file_name.as_ref(), Some(file_name));
 
-                    let mut features = stmt.required_features();
-                    features.add_item(&item);
-                    write!(f, "{}", features.cfg_gate_ln())?;
+                    let mut items = stmt.required_items();
+                    items.push(item.clone());
+                    write!(f, "{}", cfg_gate_ln::<_, Location>(items, []))?;
 
                     let visibility = if item.name.starts_with('_') {
                         "pub(crate)"

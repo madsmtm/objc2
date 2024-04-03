@@ -5,7 +5,6 @@ use clang::{Entity, EntityKind, ObjCAttributes, ObjCQualifiers};
 use crate::availability::Availability;
 use crate::config::MethodData;
 use crate::context::Context;
-use crate::feature::Features;
 use crate::id::ItemIdentifier;
 use crate::immediate_children;
 use crate::objc2_utils::in_selector_family;
@@ -245,7 +244,6 @@ pub struct Method {
     pub selector: String,
     pub fn_name: String,
     pub availability: Availability,
-    features: Features,
     pub is_class: bool,
     is_optional: bool,
     memory_management: MemoryManagement,
@@ -357,7 +355,6 @@ impl Method {
         parent_is_mutable: bool,
         parent_is_mainthreadonly: bool,
         is_pub: bool,
-        implied_features: &Features,
         context: &Context<'_>,
     ) -> Option<(bool, Method)> {
         let selector = entity.get_name().expect("method selector");
@@ -481,16 +478,6 @@ impl Method {
             result_type.try_fix_related_result_type();
         }
 
-        let mut features = Features::new();
-        for (_, arg_ty) in &arguments {
-            features.merge(arg_ty.required_features(implied_features));
-        }
-        features.merge(result_type.required_features(implied_features));
-        if is_error {
-            features.add_item(&ItemIdentifier::nserror());
-        }
-        features.remove(implied_features);
-
         let fn_name = selector.trim_end_matches(|c| c == ':').replace(':', "_");
 
         let mainthreadonly = mainthreadonly_override(
@@ -507,7 +494,6 @@ impl Method {
                 selector,
                 fn_name,
                 availability,
-                features,
                 is_class,
                 is_optional: entity.is_objc_optional(),
                 memory_management,
@@ -534,7 +520,6 @@ impl Method {
         parent_is_mutable: bool,
         parent_is_mainthreadonly: bool,
         is_pub: bool,
-        implied_features: &Features,
         context: &Context<'_>,
     ) -> (Option<Method>, Option<Method>) {
         let PartialProperty {
@@ -572,10 +557,6 @@ impl Method {
                 context,
             );
 
-            let mut features = Features::new();
-            features.merge(ty.required_features(implied_features));
-            features.remove(implied_features);
-
             let memory_management = MemoryManagement::new(is_class, &getter_sel, &ty, modifiers);
 
             let mainthreadonly = mainthreadonly_override(
@@ -590,7 +571,6 @@ impl Method {
                 selector: getter_sel.clone(),
                 fn_name: getter_sel,
                 availability: availability.clone(),
-                features: features.clone(),
                 is_class,
                 is_optional: entity.is_objc_optional(),
                 memory_management,
@@ -620,10 +600,6 @@ impl Method {
                     context,
                 );
 
-                let mut features = Features::new();
-                features.merge(ty.required_features(implied_features));
-                features.remove(implied_features);
-
                 let fn_name = selector.strip_suffix(':').unwrap().to_string();
                 let memory_management =
                     MemoryManagement::new(is_class, &selector, &result_type, modifiers);
@@ -640,7 +616,6 @@ impl Method {
                     selector,
                     fn_name,
                     availability,
-                    features,
                     is_class,
                     is_optional: entity.is_objc_optional(),
                     memory_management,
@@ -674,6 +649,18 @@ impl Method {
             self.memory_management == MemoryManagement::IdInit
         }
     }
+
+    pub(crate) fn required_items(&self) -> Vec<ItemIdentifier> {
+        let mut items = Vec::new();
+        for (_, arg_ty) in &self.arguments {
+            items.extend(arg_ty.required_items());
+        }
+        items.extend(self.result_type.required_items());
+        if self.is_error {
+            items.push(ItemIdentifier::nserror());
+        }
+        items
+    }
 }
 
 impl fmt::Display for Method {
@@ -689,7 +676,6 @@ impl fmt::Display for Method {
         // Attributes
         //
 
-        write!(f, "{}", self.features.cfg_gate_ln())?;
         write!(f, "{}", self.availability)?;
 
         if self.is_optional {

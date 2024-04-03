@@ -16,7 +16,6 @@ mod context;
 mod data;
 mod display_helper;
 mod expr;
-mod feature;
 mod file;
 mod global_analysis;
 mod id;

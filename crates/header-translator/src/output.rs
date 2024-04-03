@@ -4,7 +4,6 @@ use std::fs;
 use std::path::Path;
 
 use crate::config::{Config, LibraryData};
-use crate::feature::Feature;
 use crate::file::clean_name;
 use crate::library::Library;
 
@@ -125,18 +124,9 @@ impl Output {
         for (library_name, library) in &self.libraries {
             let mut library_features = BTreeSet::from([library_name.clone()]);
 
-            for (file_name, file) in &library.files {
+            for file_name in library.files.keys() {
                 let feature_name = format!("{}_{}", library_name, clean_name(file_name));
-                let mut required_features: BTreeSet<_> = file
-                    .required_imports() // TODO
-                    .filter_map(|id| Feature::new(&id).name())
-                    .collect();
-                required_features.remove(&feature_name); // Don't depend on itself
-                required_features.clear(); // TODO
-                features.insert(
-                    feature_name.clone(),
-                    required_features.into_iter().collect(),
-                );
+                features.insert(feature_name.clone(), Vec::new());
                 library_features.insert(feature_name);
             }
 

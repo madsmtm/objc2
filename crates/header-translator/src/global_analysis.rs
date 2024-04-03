@@ -5,7 +5,6 @@ use std::collections::BTreeMap;
 use std::mem;
 
 use crate::file::File;
-use crate::id::ItemIdentifier;
 use crate::method::Method;
 use crate::output::Output;
 use crate::stmt::Stmt;
@@ -23,7 +22,7 @@ pub fn global_analysis(output: &mut Output) {
 fn update_file(file: &mut File) {
     // disambiguate duplicate names
     // NOTE: this only works within single files
-    let mut names = BTreeMap::<(ItemIdentifier, String), &mut Method>::new();
+    let mut names = BTreeMap::<(String, String), &mut Method>::new();
     for stmt in file.stmts.iter_mut() {
         match stmt {
             Stmt::ExternMethods {
@@ -34,7 +33,7 @@ fn update_file(file: &mut File) {
             }
             | Stmt::ProtocolDecl { id, methods, .. } => {
                 for method in methods.iter_mut() {
-                    let key = (id.clone(), method.fn_name.clone());
+                    let key = (id.clone().name, method.fn_name.clone());
                     if let Some(other) = names.get_mut(&key) {
                         match (method.is_class, other.is_class) {
                             // Assume that the methods clashed because one

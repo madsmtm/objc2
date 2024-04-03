@@ -2,7 +2,6 @@ use std::fmt;
 
 use crate::context::Context;
 use crate::stmt::Stmt;
-use crate::ItemIdentifier;
 
 #[derive(Debug, PartialEq)]
 pub struct File {
@@ -32,11 +31,6 @@ impl File {
 
     pub fn add_stmt(&mut self, stmt: Stmt) {
         self.stmts.push(stmt);
-    }
-
-    pub(crate) fn required_imports(&self) -> impl Iterator<Item = ItemIdentifier> + '_ {
-        // TODO
-        vec![].into_iter()
     }
 }
 

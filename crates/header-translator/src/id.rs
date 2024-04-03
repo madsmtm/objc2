@@ -1,10 +1,13 @@
-use core::cmp::Ordering;
 use core::fmt;
 use core::hash;
+use std::cmp::Ordering;
+use std::collections::BTreeSet;
 
 use clang::Entity;
 
 use crate::context::Context;
+use crate::display_helper::FormatterFn;
+use crate::file::clean_name;
 
 pub trait ToOptionString: fmt::Debug {
     fn to_option(&self) -> Option<&str>;
@@ -29,48 +32,71 @@ impl ToOptionString for () {
 }
 
 #[derive(Debug, Clone)]
-pub struct ItemIdentifier<N = String> {
-    /// Names in Objective-C are global, so this is always enough to uniquely
-    /// identify the item.
-    ///
-    /// Often, though, we want to know the library an item came from as well.
-    pub name: N,
-    pub library: String,
+pub struct Location {
+    library: String,
     pub file_name: Option<String>,
 }
 
-impl<N: PartialEq> PartialEq for ItemIdentifier<N> {
-    fn eq(&self, other: &Self) -> bool {
-        self.name == other.name
+impl PartialEq for Location {
+    fn eq(&self, _other: &Self) -> bool {
+        true
     }
 }
 
-impl<N: Eq> Eq for ItemIdentifier<N> {}
+impl Eq for Location {}
 
-impl<N: hash::Hash> hash::Hash for ItemIdentifier<N> {
-    fn hash<H: hash::Hasher>(&self, state: &mut H) {
-        self.name.hash(state);
-    }
+impl hash::Hash for Location {
+    fn hash<H: hash::Hasher>(&self, _state: &mut H) {}
 }
 
-impl<N: Ord> PartialOrd for ItemIdentifier<N> {
+impl PartialOrd for Location {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl<N: Ord> Ord for ItemIdentifier<N> {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.name.cmp(&other.name)
+impl Ord for Location {
+    fn cmp(&self, _other: &Self) -> Ordering {
+        Ordering::Equal
     }
 }
 
+impl Location {
+    pub fn feature_name(&self) -> Option<String> {
+        if self.library == "System" {
+            None
+        } else if let Some(file_name) = &self.file_name {
+            Some(format!("{}_{}", self.library, clean_name(file_name)))
+        } else {
+            error!("tried to get feature name of location with an unknown file name");
+            Some(format!("{}_Unknown", self.library))
+        }
+    }
+}
+
+/// Names in C and Objective-C are global, so this is always enough to
+/// uniquely identify an item.
+///
+/// Often, though, we want to know the library, file name and general location
+/// an item came from as well.
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct ItemIdentifier<N = String> {
+    pub name: N,
+    location: Location,
+}
+
 impl<N: ToOptionString> ItemIdentifier<N> {
+    pub fn library(&self) -> &str {
+        &self.location.library
+    }
+
     pub fn from_raw(name: N, library: String, file_name: String) -> Self {
         Self {
             name,
-            library,
-            file_name: Some(file_name),
+            location: Location {
+                library,
+                file_name: Some(file_name),
+            },
         }
     }
 
@@ -94,41 +120,30 @@ impl<N: ToOptionString> ItemIdentifier<N> {
 
         Self {
             name,
-            library: library_name,
-            file_name,
+            location: Location {
+                library: library_name,
+                file_name,
+            },
         }
     }
 
     pub fn map_name<R: ToOptionString>(self, f: impl FnOnce(N) -> R) -> ItemIdentifier<R> {
-        let Self {
-            name,
-            library,
-            file_name,
-        } = self;
+        let Self { name, location } = self;
         ItemIdentifier {
             name: f(name),
-            library,
-            file_name,
+            location,
         }
     }
 
-    pub fn location(&self) -> Location
-    where
-        N: Clone,
-    {
-        self.clone().map_name(|_| ())
+    pub fn location(&self) -> &Location {
+        &self.location
     }
 
     pub fn with_new_path<R: ToOptionString>(self, other: &ItemIdentifier<R>) -> Self {
         Self {
             name: self.name,
-            library: other.library.clone(),
-            file_name: other.file_name.clone(),
+            location: other.location.clone(),
         }
-    }
-
-    pub fn is_system(&self) -> bool {
-        self.library == "System"
     }
 }
 
@@ -143,27 +158,30 @@ impl ItemIdentifier {
     }
 
     pub fn is_nsobject(&self) -> bool {
-        self.library == "System" && (self.name == "NSObject" || self.name == "NSObjectProtocol")
+        self.location.library == "System"
+            && (self.name == "NSObject" || self.name == "NSObjectProtocol")
     }
 
     pub fn is_nserror(&self) -> bool {
-        self.library == "Foundation" && self.name == "NSError"
+        self.location.library == "Foundation" && self.name == "NSError"
     }
 
     pub fn nserror() -> Self {
         Self {
             name: "NSError".to_string(),
-            library: "Foundation".to_string(),
-            file_name: Some("NSError".to_string()),
+            location: Location {
+                library: "Foundation".to_string(),
+                file_name: Some("NSError".to_string()),
+            },
         }
     }
 
     pub fn is_nsstring(&self) -> bool {
-        self.library == "Foundation" && self.name == "NSString"
+        self.location.library == "Foundation" && self.name == "NSString"
     }
 
     pub fn is_nscomparator(&self) -> bool {
-        self.library == "Foundation" && self.name == "NSComparator"
+        self.location.library == "Foundation" && self.name == "NSComparator"
     }
 
     pub fn path(&self) -> impl fmt::Display + '_ {
@@ -183,15 +201,12 @@ impl ItemIdentifier {
         ItemIdentifierPath(self)
     }
 
-    pub fn path_in_relation_to<'a, T: ToOptionString>(
-        &'a self,
-        other: &'a ItemIdentifier<T>,
-    ) -> impl fmt::Display + 'a {
-        struct ItemIdentifierPathInRelationTo<'a, T>(&'a ItemIdentifier, &'a ItemIdentifier<T>);
+    pub fn path_in_relation_to<'a>(&'a self, other: &'a Location) -> impl fmt::Display + 'a {
+        struct ItemIdentifierPathInRelationTo<'a>(&'a ItemIdentifier, &'a Location);
 
-        impl<T> fmt::Display for ItemIdentifierPathInRelationTo<'_, T> {
+        impl fmt::Display for ItemIdentifierPathInRelationTo<'_> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                if self.1.file_name == self.0.file_name {
+                if self.1.file_name == self.0.location.file_name {
                     write!(f, "{}", self.0.name)
                 } else {
                     write!(f, "{}", self.0.path())
@@ -209,4 +224,63 @@ impl ItemIdentifier<Option<String>> {
     }
 }
 
-pub type Location = ItemIdentifier<()>;
+impl AsRef<Self> for Location {
+    fn as_ref(&self) -> &Self {
+        self
+    }
+}
+
+impl AsRef<Self> for ItemIdentifier {
+    fn as_ref(&self) -> &Self {
+        self
+    }
+}
+
+impl AsRef<Location> for ItemIdentifier {
+    fn as_ref(&self) -> &Location {
+        &self.location
+    }
+}
+
+/// Helper to emit a `#[cfg(feature = "...")]`-gate based on the required
+/// items and the implied features.
+pub fn cfg_gate_ln<R: AsRef<Location>, I: AsRef<Location>>(
+    required_features: impl IntoIterator<Item = R>,
+    implied_features: impl IntoIterator<Item = I>,
+) -> impl fmt::Display {
+    // Use a set to deduplicate features, and to have them in
+    // a consistent order.
+    let mut feature_names: BTreeSet<String> = required_features
+        .into_iter()
+        .filter_map(|id| id.as_ref().feature_name())
+        .collect();
+
+    for location in implied_features {
+        if let Some(feature_name) = location.as_ref().feature_name() {
+            feature_names.remove(&feature_name);
+        }
+    }
+
+    FormatterFn(move |f| match feature_names.len() {
+        0 => Ok(()),
+        1 => {
+            let feature = feature_names.first().unwrap();
+            writeln!(f, "#[cfg(feature = \"{feature}\")]")
+        }
+        _ => {
+            write!(f, "#[cfg(all(")?;
+
+            for (i, feature) in feature_names.iter().enumerate() {
+                if i != 0 {
+                    write!(f, ", ")?;
+                }
+                write!(f, "feature = \"{feature}\"")?;
+            }
+
+            write!(f, "))]")?;
+            writeln!(f)?;
+
+            Ok(())
+        }
+    })
+}

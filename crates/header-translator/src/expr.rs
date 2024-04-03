@@ -4,7 +4,6 @@ use std::fmt;
 use clang::token::TokenKind;
 use clang::{Entity, EntityKind, EntityVisitResult, EvaluationResult};
 
-use crate::feature::Features;
 use crate::rust_type::Ty;
 use crate::stmt::{enum_constant_name, new_enum_id};
 use crate::{Context, ItemIdentifier};
@@ -189,8 +188,8 @@ impl Expr {
         }
     }
 
-    pub(crate) fn required_features(&self) -> Features {
-        let mut features = Features::new();
+    pub(crate) fn required_items(&self) -> Vec<ItemIdentifier> {
+        let mut items = Vec::new();
 
         match self {
             Self::Signed(_) => {}
@@ -202,14 +201,14 @@ impl Expr {
                 }
             }
             Self::Enum { id, .. } => {
-                features.add_item(id);
+                items.push(id.clone());
             }
             Self::Const(id) => {
-                features.add_item(id);
+                items.push(id.clone());
             }
             Self::Var { id, ty, .. } => {
-                features.add_item(id);
-                features.merge(ty.required_features(&Features::new()));
+                items.push(id.clone());
+                items.extend(ty.required_items());
             }
             Self::Tokens(tokens) => {
                 for token in tokens {
@@ -217,14 +216,14 @@ impl Expr {
                         Token::Punctuation(_) => {}
                         Token::Literal(_) => {}
                         Token::Expr(expr) => {
-                            features.merge(expr.required_features());
+                            items.extend(expr.required_items());
                         }
                     }
                 }
             }
         }
 
-        features
+        items
     }
 }
 
