@@ -613,7 +613,8 @@ mod tests {
     mod hash_does_not_overlap_with_normal_hash_method {
         #[allow(unused_imports)]
         use crate::runtime::NSObjectProtocol;
-        use std::hash::{DefaultHasher, Hash};
+        use std::collections::hash_map::DefaultHasher;
+        use std::hash::Hash;
 
         #[test]
         fn inner() {
