@@ -1747,7 +1747,10 @@ impl fmt::Display for Stmt {
                 )?;
                 let required_items = self.required_items();
                 for method in methods {
-                    let implied_features = required_items.iter().map(|item| item.location());
+                    let implied_features = required_items
+                        .iter()
+                        .map(|item| item.location())
+                        .chain(iter::once(self.location()));
                     write!(
                         f,
                         "{}",
@@ -1802,7 +1805,10 @@ impl fmt::Display for Stmt {
                 writeln!(f, "    pub unsafe trait {} {{", id.name)?;
                 let required_items = self.required_items();
                 for method in methods {
-                    let implied_features = required_items.iter().map(|item| item.location());
+                    let implied_features = required_items
+                        .iter()
+                        .map(|item| item.location())
+                        .chain(iter::once(self.location()));
                     write!(
                         f,
                         "{}",
