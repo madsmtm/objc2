@@ -1740,3 +1740,7 @@ skipped = true
 skipped = true
 [fn.SMJobSubmit]
 skipped = true
+
+# Private
+[fn._MXSignpostMetricsSnapshot]
+skipped = true
