@@ -107,6 +107,9 @@ pub struct LibraryData {
     #[serde(default)]
     #[serde(deserialize_with = "get_version")]
     pub watchos: Option<Version>,
+    #[serde(default)]
+    #[serde(deserialize_with = "get_version")]
+    pub visionos: Option<Version>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]

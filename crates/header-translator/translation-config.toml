@@ -11,12 +11,14 @@ maccatalyst = "14.0"
 ios = "14.0"
 tvos = "14.0"
 watchos = "7.0"
+visionos = "1.0"
 
 [library.AdServices]
 imports = ["Foundation"]
 macos = "11.1"
 maccatalyst = "14.3"
 ios = "14.3"
+visionos = "1.0"
 
 [library.AdSupport]
 imports = ["Foundation"]
@@ -38,12 +40,14 @@ maccatalyst = "13.0"
 ios = "12.0"
 tvos = "13.0"
 watchos = "6.0"
+visionos = "1.0"
 
 [library.AutomaticAssessmentConfiguration]
 imports = ["Foundation"]
 macos = "10.15.4"
 maccatalyst = "13.4"
 ios = "13.4"
+visionos = "1.0"
 
 [library.Automator]
 imports = ["AppKit", "Foundation", "OSAKit"]
@@ -55,12 +59,14 @@ imports = ["Foundation"]
 macos = "13.0"
 maccatalyst = "16.0"
 ios = "16.0"
+visionos = "1.0"
 
 [library.BackgroundTasks]
 imports = ["Foundation"]
 maccatalyst = "13.0"
 ios = "13.0"
 tvos = "13.0"
+visionos = "1.0"
 
 [library.BusinessChat]
 imports = ["AppKit", "Foundation"]
@@ -74,12 +80,14 @@ macos = "13.0"
 maccatalyst = "13.0"
 ios = "10.0"
 watchos = "9.0"
+visionos = "1.0"
 
 [library.ClassKit]
 imports = ["Foundation"]
 macos = "11.0"
 maccatalyst = "14.0"
 ios = "11.4"
+visionos = "1.0"
 
 [library.CloudKit]
 imports = ["CoreLocation", "Foundation"]
@@ -88,6 +96,7 @@ maccatalyst = "13.0"
 ios = "8.0"
 tvos = "9.0"
 watchos = "3.0"
+visionos = "1.0"
 
 [library.Contacts]
 imports = ["Foundation"]
@@ -95,6 +104,7 @@ macos = "10.11"
 maccatalyst = "13.0"
 ios = "9.0"
 watchos = "2.0"
+visionos = "1.0"
 
 [library.CoreData]
 imports = ["Foundation"]
@@ -104,6 +114,7 @@ maccatalyst = "13.0"
 ios = "3.0"
 tvos = "9.0"
 watchos = "2.0"
+visionos = "1.0"
 
 [library.CoreLocation]
 imports = ["Contacts", "Foundation"]
@@ -113,10 +124,12 @@ maccatalyst = "13.0"
 ios = "2.0"
 tvos = "9.0"
 watchos = "2.0"
+visionos = "1.0"
 
 [library.CoreWLAN]
 imports = ["Foundation"]
 macos = "10.6"
+maccatalyst = "13.0"
 
 [library.DataDetection]
 imports = ["Foundation"]
@@ -125,6 +138,7 @@ maccatalyst = "15.0"
 ios = "15.0"
 tvos = "15.0"
 watchos = "8.0"
+visionos = "1.0"
 
 [library.DeviceCheck]
 imports = ["Foundation"]
@@ -133,6 +147,7 @@ maccatalyst = "13.0"
 ios = "11.0"
 tvos = "11.0"
 watchos = "9.0"
+visionos = "1.0"
 
 [library.EventKit]
 imports = ["AppKit", "CoreLocation", "Foundation", "MapKit"]
@@ -140,6 +155,7 @@ macos = "10.8"
 maccatalyst = "13.0"
 ios = "4.0"
 watchos = "2.0"
+visionos = "1.0"
 
 [library.ExceptionHandling]
 imports = ["Foundation"]
@@ -153,6 +169,7 @@ maccatalyst = "13.0"
 ios = "16.1"
 tvos = "16.0"
 watchos = "9.0"
+visionos = "1.0"
 
 [library.ExternalAccessory]
 imports = ["Foundation"]
@@ -160,17 +177,20 @@ macos = "10.13"
 maccatalyst = "16.0"
 ios = "3.0"
 tvos = "10.0"
+visionos = "1.0"
 
 [library.FileProvider]
 imports = ["AppKit", "Foundation", "UniformTypeIdentifiers"]
 macos = "10.15"
 ios = "11.0"
+visionos = "1.0"
 
 [library.FileProviderUI]
 imports = ["AppKit", "FileProvider", "Foundation"]
 macos = "10.15"
 maccatalyst = "15.0"
 ios = "11.0"
+visionos = "1.0"
 
 [library.Foundation]
 imports = []
@@ -190,6 +210,7 @@ maccatalyst = "13.0"
 ios = "2.0"
 tvos = "9.0"
 watchos = "2.0"
+visionos = "1.0"
 
 [library.GameController]
 imports = ["AppKit", "Foundation"]
@@ -197,6 +218,7 @@ macos = "10.9"
 maccatalyst = "13.0"
 ios = "7.0"
 tvos = "9.0"
+visionos = "1.0"
 
 [library.GameKit]
 imports = ["AppKit", "Foundation"]
@@ -205,6 +227,7 @@ maccatalyst = "13.0"
 ios = "3.0"
 tvos = "9.0"
 watchos = "3.0"
+visionos = "1.0"
 
 [library.HealthKit]
 imports = ["CoreLocation", "Foundation", "UniformTypeIdentifiers"]
@@ -212,17 +235,19 @@ macos = "13.0"
 maccatalyst = "13.0"
 ios = "8.0"
 watchos = "2.0"
+visionos = "1.0"
 
 [library.IdentityLookup]
 imports = ["Foundation"]
 macos = "10.15"
 maccatalyst = "13.0"
 ios = "11.0"
+visionos = "1.0"
 
 [library.InputMethodKit]
 imports = ["AppKit", "Foundation"]
 macos = "10.5"
-maccatalyst = "13.0"
+maccatalyst = "13.0" # Unsure
 
 [library.LocalAuthentication]
 imports = ["Foundation"]
@@ -230,12 +255,14 @@ macos = "10.10"
 maccatalyst = "13.0"
 ios = "8.0"
 watchos = "9.0"
+visionos = "1.0"
 
 [library.LocalAuthenticationEmbeddedUI]
 imports = ["AppKit", "Foundation", "LocalAuthentication"]
 macos = "12.0"
 maccatalyst = "16.0"
 ios = "16.0"
+visionos = "1.0"
 
 [library.LinkPresentation]
 imports = ["AppKit", "Foundation"]
@@ -243,6 +270,7 @@ macos = "10.15"
 maccatalyst = "13.0"
 ios = "13.0"
 tvos = "14.0"
+visionos = "1.0"
 
 [library.MailKit]
 imports = ["AppKit", "Foundation"]
@@ -255,6 +283,7 @@ maccatalyst = "13.0"
 ios = "3.0"
 tvos = "9.2"
 watchos = "2.0"
+visionos = "1.0"
 
 [library.MediaPlayer]
 imports = ["AppKit", "Foundation"]
@@ -263,6 +292,7 @@ maccatalyst = "13.0"
 ios = "2.0"
 tvos = "9.0"
 watchos = "5.0"
+visionos = "1.0"
 
 [library.Metal]
 imports = ["Foundation"]
@@ -270,12 +300,14 @@ macos = "10.11"
 maccatalyst = "13.0"
 ios = "8.0"
 tvos = "9.0"
+visionos = "1.0"
 
 [library.MetalFX]
 imports = ["Foundation", "Metal"]
 macos = "13.0"
 maccatalyst = "16.0"
 ios = "16.0"
+visionos = "1.0"
 
 [library.MetalKit]
 imports = ["AppKit", "Foundation", "Metal"]
@@ -283,12 +315,14 @@ macos = "10.11"
 maccatalyst = "13.0"
 ios = "9.0"
 tvos = "9.0"
+visionos = "1.0"
 
 [library.MetricKit]
 imports = ["Foundation"]
 macos = "12.0"
 maccatalyst = "13.0"
 ios = "13.0"
+visionos = "1.0"
 
 [library.Photos]
 imports = ["AppKit", "CoreLocation", "Foundation", "UniformTypeIdentifiers"]
@@ -297,6 +331,7 @@ maccatalyst = "13.0"
 ios = "8.0"
 tvos = "10.0"
 watchos = "9.0"
+visionos = "1.0"
 
 [library.OSAKit]
 imports = ["AppKit", "Foundation"]
@@ -308,14 +343,12 @@ macos = "10.3"
 maccatalyst = "13.0"
 ios = "2.0"
 tvos = "9.0"
+visionos = "1.0"
 
 [library.ServiceManagement]
 imports = ["Foundation"]
 macos = "10.6"
 maccatalyst = "13.0"
-ios = "12.1"
-tvos = "12.1"
-watchos = "5.1"
 
 [library.SoundAnalysis]
 imports = ["Foundation"]
@@ -324,12 +357,14 @@ maccatalyst = "13.0"
 ios = "13.0"
 tvos = "13.0"
 watchos = "9.0"
+visionos = "1.0"
 
 [library.Speech]
 imports = ["Foundation"]
 macos = "10.15"
 maccatalyst = "13.0"
 ios = "10.0"
+visionos = "1.0"
 
 [library.StoreKit]
 imports = ["AppKit", "Foundation"]
@@ -338,6 +373,7 @@ maccatalyst = "13.0"
 ios = "3.0"
 tvos = "9.0"
 watchos = "6.2"
+visionos = "1.0"
 
 [library.UniformTypeIdentifiers]
 imports = ["Foundation"]
@@ -346,6 +382,7 @@ maccatalyst = "14.0"
 ios = "14.0"
 tvos = "14.0"
 watchos = "7.0"
+visionos = "1.0"
 
 [library.UserNotifications]
 imports = ["CoreLocation", "Foundation"]
@@ -354,12 +391,14 @@ maccatalyst = "13.0"
 ios = "10.0"
 tvos = "10.0"
 watchos = "3.0"
+visionos = "1.0"
 
 [library.WebKit]
 imports = ["AppKit", "Foundation"]
 macos = "10.2"
 maccatalyst = "13.0"
 ios = "16.0"
+visionos = "1.0"
 
 ###
 ### Attributes that change a function/method's calling convention.

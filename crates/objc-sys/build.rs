@@ -46,7 +46,7 @@ fn main() {
     // Choose defaults when generating docs
     // Only when the crate is being compiled directly
     if cfg!(feature = "unstable-docsrs") {
-        if let "macos" | "ios" | "tvos" | "watchos" = &*target_os {
+        if let "macos" | "ios" | "tvos" | "watchos" | "visionos" = &*target_os {
             apple = true;
         } else {
             gnustep = true; // Also winobjc
