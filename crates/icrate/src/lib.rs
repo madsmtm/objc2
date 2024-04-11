@@ -30,7 +30,7 @@
 //! - iOS/iPadOS: `10.0-17.4` (WIP)
 //! - tvOS: `10.0-17.4` (WIP)
 //! - watchOS: `5.0-10.4` (WIP)
-//! - visionOS: Not currently supported
+//! - visionOS: `1.0-1.1` (WIP)
 //!
 //! These bindings are currently generated from the SDKs in Xcode 15.3.
 //! The Xcode version will be periodically updated.
