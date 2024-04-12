@@ -1,7 +1,7 @@
 //! # Objective-C interface and runtime bindings
 //!
 //! Quick links:
-//! - [Topics][crate::__topics].
+//! - [Topics][crate::topics].
 //!
 //! Objective-C was the standard programming language on Apple platforms like
 //! macOS, iOS, iPadOS, tvOS and watchOS. It is an object-oriented language
@@ -18,7 +18,7 @@
 //! introduction to how the safety in this crate works, and see [`icrate`] for
 //! higher-level bindings to Apple's frameworks.
 //!
-//! [layered_safety]: crate::__topics::layered_safety
+//! [layered_safety]: crate::topics::layered_safety
 //! [`icrate`]: https://docs.rs/icrate/latest/icrate/
 //!
 //!
@@ -201,8 +201,6 @@ macro_rules! __hash_idents {
 
 #[doc(hidden)]
 pub mod __macro_helpers;
-#[cfg(any(doc, doctest, test))]
-pub mod __topics;
 pub mod encode;
 pub mod exception;
 mod macros;
@@ -212,6 +210,8 @@ pub mod runtime;
 #[cfg(test)]
 mod test_utils;
 mod top_level_traits;
+#[cfg(any(doc, doctest, test))]
+pub mod topics;
 mod verify;
 
 /// Deprecated location for a few things that are now in the [`runtime`]
