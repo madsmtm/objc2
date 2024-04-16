@@ -209,7 +209,7 @@ pub type SEL = *const objc_selector;
 /// A mutable pointer to an object / instance.
 ///
 /// Type alias provided for convenience. You'll likely want to use one of:
-/// - `icrate::Foundation::NS[...]` for when you know the class of the object
+/// - `objc2_foundation::NS[...]` for when you know the class of the object
 ///   you're dealing with.
 /// - `objc2::rc::Id` for a proper way of doing memory management.
 /// - `objc2::runtime::AnyObject` for a bit safer representation of this.

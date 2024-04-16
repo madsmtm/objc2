@@ -48,7 +48,7 @@ declare_class!(
 unsafe impl NSObjectProtocol for Cls {}
 
 // The macro does a textual match; but when users actually use
-// `icrate::Foundation::MainThreadMarker` to ensure soundness, they will not
+// `objc2_foundation::MainThreadMarker` to ensure soundness, they will not
 // do this!
 #[derive(Clone, Copy)]
 struct MainThreadMarker {

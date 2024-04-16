@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::error::Error;
 use std::fmt;
 use std::fs;
@@ -36,7 +36,7 @@ pub struct Config {
     pub typedef_data: HashMap<String, TypedefData>,
     #[serde(rename = "library")]
     #[serde(default)]
-    pub libraries: HashMap<String, LibraryData>,
+    pub libraries: BTreeMap<String, LibraryData>,
 }
 
 impl Config {
@@ -85,13 +85,20 @@ fn get_version<'de, D: serde::Deserializer<'de>>(
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct LibraryData {
-    pub imports: Vec<String>,
-    #[serde(rename = "cfg-apple-link")]
+    #[serde(rename = "crate")]
+    pub krate: String,
+    /// Dependencies are optional by default, this can be used to make a
+    /// dependency required.
+    ///
+    /// This is used when depending on `objc2-foundation`, as we don't really
+    /// want a feature for something as fundamental as `NSString`.
+    /// Additionally, it is used for things like `MetalKit` always wanting
+    /// `Metal` enabled.
+    #[serde(rename = "required-dependencies")]
+    pub required_dependencies: HashSet<String>,
+    #[serde(rename = "custom-lib-rs")]
     #[serde(default)]
-    pub cfg_apple_link: bool,
-    #[serde(rename = "extra-features")]
-    #[serde(default)]
-    pub extra_features: Vec<String>,
+    pub custom_lib_rs: bool,
     #[serde(default)]
     #[serde(deserialize_with = "get_version")]
     pub macos: Option<Version>,
@@ -110,6 +117,8 @@ pub struct LibraryData {
     #[serde(default)]
     #[serde(deserialize_with = "get_version")]
     pub visionos: Option<Version>,
+    #[serde(default)]
+    pub gnustep: bool,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
@@ -255,10 +264,18 @@ impl Config {
     pub fn from_file(file: &Path) -> Result<Self, Box<dyn Error>> {
         let s = fs::read_to_string(file)?;
 
-        let mut this = basic_toml::from_str(&s)?;
+        let mut config: Self = basic_toml::from_str(&s)?;
 
-        data::apply_tweaks(&mut this);
+        for (name, data) in &config.libraries {
+            assert_eq!(
+                name.to_lowercase(),
+                data.krate.replace("objc2-", "").replace('-', ""),
+                "crate name had an unexpected format",
+            );
+        }
 
-        Ok(this)
+        data::apply_tweaks(&mut config);
+
+        Ok(config)
     }
 }

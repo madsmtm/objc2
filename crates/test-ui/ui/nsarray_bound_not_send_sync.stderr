@@ -4,25 +4,25 @@ error[E0277]: `*const NSObject` cannot be shared between threads safely
   |     needs_sync::<NSArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be shared between threads safely
   |
-  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`, which is required by `NSArray<NSObject>: Sync`
-note: required because it appears within the type `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`
+  = help: within `objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`, which is required by `NSArray<NSObject>: Sync`
+note: required because it appears within the type `objc2::rc::id::private::UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
   |                ^^^^^^^^^^^^^^
-note: required because it appears within the type `icrate::objc2::rc::id::private::EquivalentType<NSObject>`
+note: required because it appears within the type `objc2::rc::id::private::EquivalentType<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct EquivalentType<T: ?Sized + ClassType>(
   |                ^^^^^^^^^^^^^^
-  = note: required for `Id<NSObject>` to implement `Sync`
-note: required because it appears within the type `PhantomData<Id<NSObject>>`
+  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Sync`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
@@ -39,12 +39,12 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |                  ^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
   = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`, which is required by `NSArray<NSObject>: Sync`
-note: required because it appears within the type `objc_object`
+note: required because it appears within the type `objc_sys::object::objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
-note: required because it appears within the type `AnyObject`
+note: required because it appears within the type `objc2::runtime::AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
   | pub struct AnyObject(ffi::objc_object);
@@ -54,14 +54,14 @@ note: required because it appears within the type `NSObject`
   |
   | pub struct NSObject {
   |            ^^^^^^^^
-  = note: required for `Id<NSObject>` to implement `Sync`
-note: required because it appears within the type `PhantomData<Id<NSObject>>`
+  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Sync`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
@@ -77,25 +77,25 @@ error[E0277]: `*const NSObject` cannot be sent between threads safely
   |     needs_send::<NSArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be sent between threads safely
   |
-  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`, which is required by `NSArray<NSObject>: Send`
-note: required because it appears within the type `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`
+  = help: within `objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`, which is required by `NSArray<NSObject>: Send`
+note: required because it appears within the type `objc2::rc::id::private::UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
   |                ^^^^^^^^^^^^^^
-note: required because it appears within the type `icrate::objc2::rc::id::private::EquivalentType<NSObject>`
+note: required because it appears within the type `objc2::rc::id::private::EquivalentType<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct EquivalentType<T: ?Sized + ClassType>(
   |                ^^^^^^^^^^^^^^
-  = note: required for `Id<NSObject>` to implement `Send`
-note: required because it appears within the type `PhantomData<Id<NSObject>>`
+  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Send`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
@@ -123,12 +123,12 @@ note: required because it appears within the type `UnsafeCell<PhantomData<(*cons
   |
   | pub struct UnsafeCell<T: ?Sized> {
   |            ^^^^^^^^^^
-note: required because it appears within the type `objc_object`
+note: required because it appears within the type `objc_sys::object::objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
-note: required because it appears within the type `AnyObject`
+note: required because it appears within the type `objc2::runtime::AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
   | pub struct AnyObject(ffi::objc_object);
@@ -138,14 +138,14 @@ note: required because it appears within the type `NSObject`
   |
   | pub struct NSObject {
   |            ^^^^^^^^
-  = note: required for `Id<NSObject>` to implement `Send`
-note: required because it appears within the type `PhantomData<Id<NSObject>>`
+  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Send`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
@@ -161,30 +161,30 @@ error[E0277]: `*const NSObject` cannot be shared between threads safely
   |     needs_sync::<NSMutableArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be shared between threads safely
   |
-  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`, which is required by `NSMutableArray<NSObject>: Sync`
-note: required because it appears within the type `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`
+  = help: within `objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Sync` is not implemented for `*const NSObject`, which is required by `NSMutableArray<NSObject>: Sync`
+note: required because it appears within the type `objc2::rc::id::private::UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
   |                ^^^^^^^^^^^^^^
-note: required because it appears within the type `icrate::objc2::rc::id::private::EquivalentType<NSObject>`
+note: required because it appears within the type `objc2::rc::id::private::EquivalentType<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct EquivalentType<T: ?Sized + ClassType>(
   |                ^^^^^^^^^^^^^^
-  = note: required for `Id<NSObject>` to implement `Sync`
-note: required because it appears within the type `PhantomData<Id<NSObject>>`
+  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Sync`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
   |
   |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^
@@ -201,12 +201,12 @@ error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` 
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
   |
   = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`, which is required by `NSMutableArray<NSObject>: Sync`
-note: required because it appears within the type `objc_object`
+note: required because it appears within the type `objc_sys::object::objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
-note: required because it appears within the type `AnyObject`
+note: required because it appears within the type `objc2::runtime::AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
   | pub struct AnyObject(ffi::objc_object);
@@ -216,19 +216,19 @@ note: required because it appears within the type `NSObject`
   |
   | pub struct NSObject {
   |            ^^^^^^^^
-  = note: required for `Id<NSObject>` to implement `Sync`
-note: required because it appears within the type `PhantomData<Id<NSObject>>`
+  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Sync`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
   |
   |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^
@@ -244,30 +244,30 @@ error[E0277]: `*const NSObject` cannot be sent between threads safely
   |     needs_send::<NSMutableArray<NSObject>>();
   |                  ^^^^^^^^^^^^^^^^^^^^^^^^ `*const NSObject` cannot be sent between threads safely
   |
-  = help: within `icrate::objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`, which is required by `NSMutableArray<NSObject>: Send`
-note: required because it appears within the type `icrate::objc2::rc::id::private::UnknownStorage<NSObject>`
+  = help: within `objc2::rc::id::private::EquivalentType<NSObject>`, the trait `Send` is not implemented for `*const NSObject`, which is required by `NSMutableArray<NSObject>: Send`
+note: required because it appears within the type `objc2::rc::id::private::UnknownStorage<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct UnknownStorage<T: ?Sized>(*const T, AnyObject);
   |                ^^^^^^^^^^^^^^
-note: required because it appears within the type `icrate::objc2::rc::id::private::EquivalentType<NSObject>`
+note: required because it appears within the type `objc2::rc::id::private::EquivalentType<NSObject>`
  --> $WORKSPACE/crates/objc2/src/rc/id.rs
   |
   |     pub struct EquivalentType<T: ?Sized + ClassType>(
   |                ^^^^^^^^^^^^^^
-  = note: required for `Id<NSObject>` to implement `Send`
-note: required because it appears within the type `PhantomData<Id<NSObject>>`
+  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Send`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
   |
   |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^
@@ -295,12 +295,12 @@ note: required because it appears within the type `UnsafeCell<PhantomData<(*cons
   |
   | pub struct UnsafeCell<T: ?Sized> {
   |            ^^^^^^^^^^
-note: required because it appears within the type `objc_object`
+note: required because it appears within the type `objc_sys::object::objc_object`
  --> $WORKSPACE/crates/objc-sys/src/object.rs
   |
   | pub struct objc_object {
   |            ^^^^^^^^^^^
-note: required because it appears within the type `AnyObject`
+note: required because it appears within the type `objc2::runtime::AnyObject`
  --> $WORKSPACE/crates/objc2/src/runtime/mod.rs
   |
   | pub struct AnyObject(ffi::objc_object);
@@ -310,19 +310,19 @@ note: required because it appears within the type `NSObject`
   |
   | pub struct NSObject {
   |            ^^^^^^^^
-  = note: required for `Id<NSObject>` to implement `Send`
-note: required because it appears within the type `PhantomData<Id<NSObject>>`
+  = note: required for `objc2::rc::id::Id<NSObject>` to implement `Send`
+note: required because it appears within the type `PhantomData<objc2::rc::id::Id<NSObject>>`
  --> $RUST/core/src/marker.rs
   |
   | pub struct PhantomData<T: ?Sized>;
   |            ^^^^^^^^^^^
 note: required because it appears within the type `NSArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
   |
   |     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^
 note: required because it appears within the type `NSMutableArray<NSObject>`
- --> $WORKSPACE/crates/icrate/src/additions/Foundation/generics.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generics.rs
   |
   |     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
   |                ^^^^^^^^^^^^^^

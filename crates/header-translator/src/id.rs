@@ -8,6 +8,7 @@ use clang::Entity;
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::file::clean_name;
+use crate::Config;
 
 pub trait ToOptionString: fmt::Debug {
     fn to_option(&self) -> Option<&str>;
@@ -33,8 +34,8 @@ impl ToOptionString for () {
 
 #[derive(Debug, Clone)]
 pub struct Location {
-    library: String,
-    pub file_name: Option<String>,
+    pub library: String,
+    file_name: Option<String>,
 }
 
 impl PartialEq for Location {
@@ -61,15 +62,64 @@ impl Ord for Location {
     }
 }
 
+pub enum Feature {
+    Dependency(String),
+    Feature(String),
+}
+
+impl Feature {
+    pub fn into_string(self) -> String {
+        match self {
+            Self::Dependency(krate) => krate,
+            Self::Feature(feature_name) => feature_name,
+        }
+    }
+}
+
 impl Location {
-    pub fn feature_name(&self) -> Option<String> {
+    pub fn krate<'a>(&self, config: &'a Config) -> Option<&'a str> {
+        if self.library == "block2" {
+            return Some("block2");
+        }
+        Some(&config.libraries.get(&self.library)?.krate)
+    }
+
+    pub fn assert_file(&self, file_name: &str) {
+        assert_eq!(self.file_name.as_deref(), Some(file_name));
+    }
+
+    /// Only the library of the emmision location matters.
+    pub fn feature(&self, config: &Config, emission_location: &Self) -> Option<Feature> {
         if self.library == "System" {
             None
-        } else if let Some(file_name) = &self.file_name {
-            Some(format!("{}_{}", self.library, clean_name(file_name)))
+        } else if self.library == "block2" {
+            Some(Feature::Dependency("block2".to_string()))
+        } else if self.library == emission_location.library {
+            if let Some(file_name) = &self.file_name {
+                Some(Feature::Feature(format!(
+                    "{}_{}",
+                    self.library,
+                    clean_name(file_name)
+                )))
+            } else {
+                error!("tried to get feature name of location with an unknown file name");
+                Some(Feature::Feature(format!("{}_Unknown", self.library)))
+            }
+        } else if let Some(krate) = self.krate(config) {
+            let required = config.libraries[&emission_location.library]
+                .required_dependencies
+                .contains(krate);
+            if required {
+                None
+            } else {
+                Some(Feature::Dependency(krate.to_string()))
+            }
         } else {
-            error!("tried to get feature name of location with an unknown file name");
-            Some(format!("{}_Unknown", self.library))
+            debug!(
+                library = self.library,
+                "tried to get feature name of unknown library"
+            );
+            None
         }
     }
 }
@@ -176,6 +226,16 @@ impl ItemIdentifier {
         }
     }
 
+    pub fn block() -> Self {
+        Self {
+            name: "Block".to_string(),
+            location: Location {
+                library: "block2".to_string(),
+                file_name: None,
+            },
+        }
+    }
+
     pub fn is_nsstring(&self) -> bool {
         self.location.library == "Foundation" && self.name == "NSString"
     }
@@ -244,20 +304,25 @@ impl AsRef<Location> for ItemIdentifier {
 
 /// Helper to emit a `#[cfg(feature = "...")]`-gate based on the required
 /// items and the implied features.
+///
+/// Only the library of the emmision location matters.
 pub fn cfg_gate_ln<R: AsRef<Location>, I: AsRef<Location>>(
     required_features: impl IntoIterator<Item = R>,
     implied_features: impl IntoIterator<Item = I>,
+    config: &Config,
+    emission_location: &Location,
 ) -> impl fmt::Display {
     // Use a set to deduplicate features, and to have them in
     // a consistent order.
     let mut feature_names: BTreeSet<String> = required_features
         .into_iter()
-        .filter_map(|id| id.as_ref().feature_name())
+        .filter_map(|id| id.as_ref().feature(config, emission_location))
+        .map(|f| f.into_string())
         .collect();
 
     for location in implied_features {
-        if let Some(feature_name) = location.as_ref().feature_name() {
-            feature_names.remove(&feature_name);
+        if let Some(feature_name) = location.as_ref().feature(config, emission_location) {
+            feature_names.remove(&feature_name.into_string());
         }
     }
 

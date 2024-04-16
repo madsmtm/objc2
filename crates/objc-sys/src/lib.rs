@@ -29,7 +29,7 @@
 //! - Feature flag: `apple`.
 //!
 //! This is used by default, and has the highest support priority (all of
-//! `objc2`/`icrate` will work with this runtime).
+//! `objc2` will work with this runtime).
 //!
 //! The supported runtime version (higher versions lets the compiler enable
 //! newer optimizations, at the cost of not supporting older operating

@@ -1,19 +1,19 @@
-error[E0277]: the trait bound `Root: mutability::MutabilityHashIsStable` is not satisfied
+error[E0277]: the trait bound `objc2::mutability::Root: objc2::mutability::MutabilityHashIsStable` is not satisfied
  --> ui/nsset_from_nsobject.rs
   |
   |     let _ = NSSet::from_vec(vec![NSObject::new()]);
-  |             --------------- ^^^^^^^^^^^^^^^^^^^^^ the trait `mutability::MutabilityHashIsStable` is not implemented for `Root`, which is required by `NSObject: HasStableHash`
+  |             --------------- ^^^^^^^^^^^^^^^^^^^^^ the trait `objc2::mutability::MutabilityHashIsStable` is not implemented for `objc2::mutability::Root`, which is required by `NSObject: objc2::mutability::HasStableHash`
   |             |
   |             required by a bound introduced by this call
   |
-  = help: the following other types implement trait `mutability::MutabilityHashIsStable`:
-            Immutable
-            Mutable
-            ImmutableWithMutableSubclass<MS>
-            MutableWithImmutableSuperclass<IS>
-  = note: required for `NSObject` to implement `HasStableHash`
+  = help: the following other types implement trait `objc2::mutability::MutabilityHashIsStable`:
+            objc2::mutability::Immutable
+            objc2::mutability::Mutable
+            objc2::mutability::ImmutableWithMutableSubclass<MS>
+            objc2::mutability::MutableWithImmutableSuperclass<IS>
+  = note: required for `NSObject` to implement `objc2::mutability::HasStableHash`
 note: required by a bound in `set::<impl NSSet<T>>::from_vec`
- --> $WORKSPACE/crates/icrate/src/additions/Foundation/set.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/set.rs
   |
   |     pub fn from_vec(mut vec: Vec<Id<T>>) -> Id<Self>
   |            -------- required by a bound in this associated function

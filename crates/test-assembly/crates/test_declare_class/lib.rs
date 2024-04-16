@@ -6,10 +6,10 @@
 #![cfg(target_pointer_width = "64")]
 use core::ptr;
 
-use icrate::Foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
 use objc2::rc::{Allocated, Id};
 use objc2::runtime::AnyClass;
 use objc2::{declare_class, msg_send_id, mutability, ClassType, DeclaredClass};
+use objc2_foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
 
 declare_class!(
     #[no_mangle]

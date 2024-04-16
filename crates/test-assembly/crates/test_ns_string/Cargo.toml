@@ -8,22 +8,21 @@ publish = false
 path = "lib.rs"
 
 [dependencies]
-icrate = { path = "../../../icrate", default-features = false }
+objc2-foundation = { path = "../../../../framework-crates/objc2-foundation", default-features = false }
 
 [features]
-default = ["apple", "std", "Foundation", "Foundation_NSString"]
-std = ["icrate/std"]
+default = ["apple", "std", "all"]
+std = ["objc2-foundation/std"]
 
 # Runtime
-apple = ["icrate/apple"]
-gnustep-1-7 = ["icrate/gnustep-1-7"]
-gnustep-1-8 = ["gnustep-1-7", "icrate/gnustep-1-8"]
-gnustep-1-9 = ["gnustep-1-8", "icrate/gnustep-1-9"]
-gnustep-2-0 = ["gnustep-1-9", "icrate/gnustep-2-0"]
-gnustep-2-1 = ["gnustep-2-0", "icrate/gnustep-2-1"]
+apple = ["objc2-foundation/apple"]
+gnustep-1-7 = ["objc2-foundation/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "objc2-foundation/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "objc2-foundation/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "objc2-foundation/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "objc2-foundation/gnustep-2-1"]
 
-Foundation = ["icrate/Foundation"]
-Foundation_NSString = ["icrate/Foundation_NSString"]
+all = ["objc2-foundation/block2", "objc2-foundation/Foundation_NSString"]
 
 # Hack
-assembly-features = ["Foundation", "Foundation_NSString", "icrate/unstable-static-nsstring"]
+assembly-features = ["all", "objc2-foundation/unstable-static-nsstring"]

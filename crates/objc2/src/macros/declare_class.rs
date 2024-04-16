@@ -203,8 +203,8 @@
 /// use std::os::raw::c_int;
 ///
 /// # use objc2::runtime::{NSObject, NSObjectProtocol, NSZone};
-/// # #[cfg(available_in_icrate)]
-/// use icrate::Foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
+/// # #[cfg(available_in_foundation)]
+/// use objc2_foundation::{NSCopying, NSObject, NSObjectProtocol, NSZone};
 /// use objc2::rc::{Allocated, Id};
 /// use objc2::{
 ///     declare_class, extern_protocol, msg_send, msg_send_id, mutability, ClassType,
@@ -270,7 +270,7 @@
 ///
 ///     unsafe impl NSObjectProtocol for MyCustomObject {}
 ///
-///     # #[cfg(available_in_icrate)]
+///     # #[cfg(available_in_foundation)]
 ///     unsafe impl NSCopying for MyCustomObject {
 ///         #[method_id(copyWithZone:)]
 ///         fn copyWithZone(&self, _zone: *const NSZone) -> Id<Self> {
@@ -308,7 +308,7 @@
 ///     assert!(obj.ivars().object.is_kind_of::<NSObject>());
 ///
 /// #   let obj: Id<MyCustomObject> = unsafe { msg_send_id![&obj, copy] };
-/// #   #[cfg(available_in_icrate)]
+/// #   #[cfg(available_in_foundation)]
 ///     let obj = obj.copy();
 ///
 ///     assert_eq!(obj.get_foo(), 3);

@@ -1,5 +1,5 @@
 #![allow(unused_variables)]
-use icrate::Foundation::ns_string;
+use objc2_foundation::ns_string;
 
 fn main() {
     let s: &str = "abc";

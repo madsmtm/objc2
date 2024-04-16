@@ -1,0 +1,41 @@
+[dependencies]
+objc2 = { path = "../../crates/objc2", version = "0.5.0", default-features = false }
+block2 = { path = "../../crates/block2", version = "0.4.0", default-features = false, optional = true }
+
+[features]
+default = ["std", "apple"]
+
+# Currently not possible to turn off, put here for forwards compatibility.
+std = ["alloc", "objc2/std", "block2?/std", "objc2-foundation/std", "objc2-core-data?/std"]
+alloc = ["objc2/alloc", "block2?/alloc", "objc2-foundation/alloc", "objc2-core-data?/alloc"]
+
+# Runtime selection. See `objc-sys` for details.
+apple = ["objc2/apple", "block2?/apple", "objc2-foundation/apple", "objc2-core-data?/apple"]
+gnustep-1-7 = ["objc2/gnustep-1-7", "block2?/gnustep-1-7", "objc2-foundation/gnustep-1-7", "objc2-core-data?/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "objc2/gnustep-1-8", "block2?/gnustep-1-8", "objc2-foundation/gnustep-1-8", "objc2-core-data?/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "objc2/gnustep-1-9", "block2?/gnustep-1-9", "objc2-foundation/gnustep-1-9", "objc2-core-data?/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0", "block2?/gnustep-2-0", "objc2-foundation/gnustep-2-0", "objc2-core-data?/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1", "block2?/gnustep-2-1", "objc2-foundation/gnustep-2-1", "objc2-core-data?/gnustep-2-1"]
+
+[[example]]
+name = "delegate"
+required-features = [
+    "apple",
+    "objc2-foundation/Foundation_NSNotification",
+    "objc2-foundation/Foundation_NSString",
+    "objc2-foundation/Foundation_NSObject",
+    "objc2-foundation/Foundation_NSThread",
+    "AppKit_NSResponder",
+    "AppKit_NSApplication",
+    "AppKit_NSRunningApplication",
+]
+
+[[example]]
+name = "nspasteboard"
+required-features = [
+    "apple",
+    "objc2-foundation/Foundation_NSArray",
+    "objc2-foundation/Foundation_NSString",
+    "objc2-foundation/Foundation_NSObject",
+    "AppKit_NSPasteboard",
+]

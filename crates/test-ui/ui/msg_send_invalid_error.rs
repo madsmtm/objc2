@@ -1,7 +1,7 @@
 //! Test that msg_send! error handling works correctly.
-use icrate::Foundation::NSString;
 use objc2::rc::Id;
 use objc2::{msg_send, ClassType};
+use objc2_foundation::NSString;
 
 fn main() {
     let obj: &NSString;

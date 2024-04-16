@@ -1,6 +1,6 @@
 //! Test underspecified msg_send! errors.
-use icrate::Foundation::NSString;
 use objc2::msg_send;
+use objc2_foundation::NSString;
 
 fn main() {
     let obj: &NSString;

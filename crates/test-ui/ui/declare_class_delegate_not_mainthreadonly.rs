@@ -1,12 +1,12 @@
 //! Test that implementing `NSApplicationDelegate` and similar requires
 //! a `MainThreadOnly` class.
-use icrate::Foundation::{MainThreadMarker, NSNotification, NSObject, NSObjectProtocol};
 use objc2::mutability::IsMainThreadOnly;
 use objc2::rc::Id;
 use objc2::{
     declare_class, extern_methods, extern_protocol, mutability, ClassType, DeclaredClass,
     ProtocolType,
 };
+use objc2_foundation::{MainThreadMarker, NSNotification, NSObject, NSObjectProtocol};
 
 // Use fake `NSApplicationDelegate` so that this works on iOS too.
 extern_protocol!(

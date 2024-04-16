@@ -4,24 +4,26 @@ Objective-C is different from Rust<sup>[citation needed]</sup>. In particular,
 Rust has a concept of "safety" (see the [nomicon] for details), which
 Objective-C completely lacks.
 
-You will find when using `icrate` that basically everything (that has not been
-manually audited) is `unsafe`. So you might rightfully ask: What's the point
-then? Can't I just use `msg_send!`, and save the extra dependency?
-Yes, you could, but in fact `icrate` is much safer than doing method calling
-manually, even though you may end up writing `unsafe` just as many times. I
-dub this "layered safety"<sup>1</sup> to capture the fact that _not all usage
-of `unsafe` is created equally_!
+You will find when using the framework crates that basically everything (that
+has not been manually audited) is `unsafe`. So you might rightfully ask:
+What's the point then? Can't I just use `msg_send!`, and save the extra
+dependency?
+Yes, you could, but in fact the framework crates are much safer than doing
+method calling manually, even though you may end up writing `unsafe` just as
+many times. I dub this "layered safety"<sup>1</sup> to capture the fact that
+_not all usage of `unsafe` is created equally_!
 
-Simply put, when using an `unsafe` method in `icrate`, you have to ensure the
-compiler of much fewer things than when doing method calling manually.
+Simply put, when using an `unsafe` method in e.g. `objc2-foundation`, you have
+to ensure the compiler of much fewer things than when doing method calling
+manually.
 To see why this is the case, let me guide you through the various abstraction
-layers that `icrate` and `objc2` provide, and we'll see how each step makes
-things safer!
+layers that the framework crates and `objc2` provide, and we'll see how each
+step makes things safer!
 
-`icrate` is not perfect, and there may be cases where you have to drop down
-into lower-level details; luckily though, the fact that we have this layered
-architecture with each step exposed along the way allows you to do exactly
-that!
+The framework crates are not perfect though, and there may be cases where you
+have to drop down into lower-level details; luckily though, the fact that we
+have this layered architecture with each step exposed along the way allows you
+to do exactly that!
 
 <sup>1: I haven't heard this concept named before, if you know of prior art on this please let me know.</sup>
 
@@ -230,7 +232,7 @@ let length = obj.length();
 ```
 
 
-## Layer 5: `icrate`
+## Layer 5: Framework crates
 
 Apple has a _lot_ of Objective-C code, and manually defining an interface to
 all of it would take a lifetime. Especially keeping track of which methods are
@@ -246,7 +248,7 @@ that it is correct!
 The `NSData` example again.
 
 ```rust, ignore
-use icrate::Foundation::NSData;
+use objc2_foundation::NSData;
 
 let obj = NSData::new();
 let length = obj.length();

@@ -6,16 +6,13 @@ use std::mem;
 
 use crate::file::File;
 use crate::method::Method;
-use crate::output::Output;
 use crate::stmt::Stmt;
+use crate::Library;
 
-pub fn global_analysis(output: &mut Output) {
-    for (name, library) in &mut output.libraries {
-        let _span = debug_span!("library", name).entered();
-        for (name, file) in &mut library.files {
-            let _span = debug_span!("file", name).entered();
-            update_file(file);
-        }
+pub fn global_analysis(library: &mut Library) {
+    for (name, file) in &mut library.files {
+        let _span = debug_span!("file", name).entered();
+        update_file(file);
     }
 }
 

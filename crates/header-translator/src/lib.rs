@@ -3,7 +3,7 @@
 #[macro_use]
 extern crate tracing;
 
-use std::fmt;
+use std::fmt::{self, Display};
 use std::path::Path;
 use std::process::{Command, Stdio};
 
@@ -22,24 +22,23 @@ mod id;
 mod library;
 mod method;
 mod objc2_utils;
-mod output;
 mod rust_type;
 mod stmt;
 mod thread_safety;
 mod unexposed_attr;
 
-pub use self::config::Config;
+pub use self::config::{Config, LibraryData};
 pub use self::context::Context;
 pub use self::file::File;
 pub use self::global_analysis::global_analysis;
 pub use self::id::ItemIdentifier;
 pub use self::library::Library;
-pub use self::output::Output;
 pub use self::stmt::{Mutability, Stmt};
 
-pub fn run_cargo_fmt(package: &str) {
+pub fn run_cargo_fmt(packages: impl IntoIterator<Item = impl Display>) {
     let status = Command::new("cargo")
-        .args(["fmt", "--package", package])
+        .arg("fmt")
+        .args(packages.into_iter().map(|package| format!("-p{package}")))
         .current_dir(Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap())
         .status()
         .expect("failed running cargo fmt");
@@ -98,3 +97,5 @@ pub(crate) fn to_snake_case(input: impl AsRef<str>) -> String {
         heck::ToSnakeCase::to_snake_case(input)
     }
 }
+
+pub const VERSION: &str = "0.2.0";

@@ -217,23 +217,23 @@ mod tests {
         use super::*;
 
         let before = r#"
-   movw    r10, :lower16:(L__ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h32db0c71005d38edE$non_lazy_ptr-(LPC5_0+8))
-   movt    r10, :upper16:(L__ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h32db0c71005d38edE$non_lazy_ptr-(LPC5_0+8))
+   movw    r10, :lower16:(L__ZN16objc2_foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17hb82d9a01a97e5b26E$non_lazy_ptr-(LPC5_0+8))
+   movt    r10, :upper16:(L__ZN16objc2_foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17hb82d9a01a97e5b26E$non_lazy_ptr-(LPC5_0+8))
 
    .section __DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
    .p2align    2, 0x0
-L__ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h32db0c71005d38edE$non_lazy_ptr:
-   .indirect_symbol  __ZN6icrate10Foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17h86a0ced45445d2c5E
+L__ZN16objc2_foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17hb82d9a01a97e5b26E$non_lazy_ptr:
+   .indirect_symbol    __ZN16objc2_foundation9generated14__NSEnumerator17NSFastEnumeration41countByEnumeratingWithState_objects_count10CACHED_SEL17hb82d9a01a97e5b26E
    .long   0
         "#;
         let after = r#"
-   movw    r10, :lower16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_0+8))
-   movt    r10, :upper16:(LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_0+8))
+   movw    r10, :lower16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_0+8))
+   movt    r10, :upper16:(LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr-(LPC5_0+8))
 
    .section __DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
    .p2align    2, 0x0
-LSYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
-   .indirect_symbol  SYM(icrate::Foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 1)
+LSYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)$non_lazy_ptr:
+   .indirect_symbol    SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)
    .long   0
         "#;
         let output = demangle_assembly(before);

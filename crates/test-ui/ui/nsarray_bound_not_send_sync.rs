@@ -1,4 +1,4 @@
-use icrate::Foundation::{NSArray, NSMutableArray, NSObject};
+use objc2_foundation::{NSArray, NSMutableArray, NSObject};
 
 fn needs_sync<T: ?Sized + Sync>() {}
 fn needs_send<T: ?Sized + Send>() {}

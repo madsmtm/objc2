@@ -39,20 +39,30 @@ env:
   # This excludes `header-translator`, `test-assembly`, `tests` and `test-ui`.
   PUBLIC_CRATES: >-
     --package=block2
-    --package=icrate
     --package=objc-sys
     --package=objc2
     --package=objc2-encode
     --package=objc2-proc-macros
+
+  # BEGIN AUTOMATICALLY GENERATED
+  FRAMEWORKS_MACOS_10_12: --package=objc2-app-kit --package=objc2-automator --package=objc2-cloud-kit --package=objc2-contacts --package=objc2-core-data --package=objc2-core-location --package=objc2-core-wlan --package=objc2-event-kit --package=objc2-exception-handling --package=objc2-foundation --package=objc2-game-controller --package=objc2-game-kit --package=objc2-input-method-kit --package=objc2-local-authentication --package=objc2-map-kit --package=objc2-media-player --package=objc2-metal --package=objc2-metal-kit --package=objc2-osa-kit --package=objc2-quartz-core --package=objc2-service-management --package=objc2-store-kit --package=objc2-web-kit
+  FRAMEWORKS_MACOS_10_13: --package=objc2-app-kit --package=objc2-automator --package=objc2-cloud-kit --package=objc2-contacts --package=objc2-core-data --package=objc2-core-location --package=objc2-core-wlan --package=objc2-event-kit --package=objc2-exception-handling --package=objc2-external-accessory --package=objc2-foundation --package=objc2-game-controller --package=objc2-game-kit --package=objc2-input-method-kit --package=objc2-local-authentication --package=objc2-map-kit --package=objc2-media-player --package=objc2-metal --package=objc2-metal-kit --package=objc2-osa-kit --package=objc2-quartz-core --package=objc2-service-management --package=objc2-store-kit --package=objc2-web-kit
+  FRAMEWORKS_MACOS_11: --package=objc2-accessibility --package=objc2-ad-support --package=objc2-app-kit --package=objc2-authentication-services --package=objc2-automatic-assessment-configuration --package=objc2-automator --package=objc2-business-chat --package=objc2-class-kit --package=objc2-cloud-kit --package=objc2-contacts --package=objc2-core-data --package=objc2-core-location --package=objc2-core-wlan --package=objc2-device-check --package=objc2-event-kit --package=objc2-exception-handling --package=objc2-external-accessory --package=objc2-file-provider --package=objc2-file-provider-ui --package=objc2-foundation --package=objc2-game-controller --package=objc2-game-kit --package=objc2-identity-lookup --package=objc2-input-method-kit --package=objc2-link-presentation --package=objc2-local-authentication --package=objc2-map-kit --package=objc2-media-player --package=objc2-metal --package=objc2-metal-kit --package=objc2-osa-kit --package=objc2-photos --package=objc2-quartz-core --package=objc2-service-management --package=objc2-sound-analysis --package=objc2-speech --package=objc2-store-kit --package=objc2-uniform-type-identifiers --package=objc2-user-notifications --package=objc2-web-kit
+  FRAMEWORKS_MACOS_12: --package=objc2-accessibility --package=objc2-ad-services --package=objc2-ad-support --package=objc2-app-kit --package=objc2-authentication-services --package=objc2-automatic-assessment-configuration --package=objc2-automator --package=objc2-business-chat --package=objc2-class-kit --package=objc2-cloud-kit --package=objc2-contacts --package=objc2-core-data --package=objc2-core-location --package=objc2-core-wlan --package=objc2-data-detection --package=objc2-device-check --package=objc2-event-kit --package=objc2-exception-handling --package=objc2-external-accessory --package=objc2-file-provider --package=objc2-file-provider-ui --package=objc2-foundation --package=objc2-game-controller --package=objc2-game-kit --package=objc2-identity-lookup --package=objc2-input-method-kit --package=objc2-link-presentation --package=objc2-local-authentication --package=objc2-local-authentication-embedded-ui --package=objc2-mail-kit --package=objc2-map-kit --package=objc2-media-player --package=objc2-metal --package=objc2-metal-kit --package=objc2-metric-kit --package=objc2-osa-kit --package=objc2-photos --package=objc2-quartz-core --package=objc2-service-management --package=objc2-sound-analysis --package=objc2-speech --package=objc2-store-kit --package=objc2-uniform-type-identifiers --package=objc2-user-notifications --package=objc2-web-kit
+  FRAMEWORKS_MACOS_13: --package=objc2-accessibility --package=objc2-ad-services --package=objc2-ad-support --package=objc2-app-kit --package=objc2-authentication-services --package=objc2-automatic-assessment-configuration --package=objc2-automator --package=objc2-background-assets --package=objc2-business-chat --package=objc2-call-kit --package=objc2-class-kit --package=objc2-cloud-kit --package=objc2-contacts --package=objc2-core-data --package=objc2-core-location --package=objc2-core-wlan --package=objc2-data-detection --package=objc2-device-check --package=objc2-event-kit --package=objc2-exception-handling --package=objc2-extension-kit --package=objc2-external-accessory --package=objc2-file-provider --package=objc2-file-provider-ui --package=objc2-foundation --package=objc2-game-controller --package=objc2-game-kit --package=objc2-health-kit --package=objc2-identity-lookup --package=objc2-input-method-kit --package=objc2-link-presentation --package=objc2-local-authentication --package=objc2-local-authentication-embedded-ui --package=objc2-mail-kit --package=objc2-map-kit --package=objc2-media-player --package=objc2-metal --package=objc2-metal-fx --package=objc2-metal-kit --package=objc2-metric-kit --package=objc2-osa-kit --package=objc2-photos --package=objc2-quartz-core --package=objc2-service-management --package=objc2-sound-analysis --package=objc2-speech --package=objc2-store-kit --package=objc2-uniform-type-identifiers --package=objc2-user-notifications --package=objc2-web-kit
+  FRAMEWORKS_MACOS_14: --package=objc2-accessibility --package=objc2-ad-services --package=objc2-ad-support --package=objc2-app-kit --package=objc2-authentication-services --package=objc2-automatic-assessment-configuration --package=objc2-automator --package=objc2-background-assets --package=objc2-business-chat --package=objc2-call-kit --package=objc2-class-kit --package=objc2-cloud-kit --package=objc2-contacts --package=objc2-core-data --package=objc2-core-location --package=objc2-core-wlan --package=objc2-data-detection --package=objc2-device-check --package=objc2-event-kit --package=objc2-exception-handling --package=objc2-extension-kit --package=objc2-external-accessory --package=objc2-file-provider --package=objc2-file-provider-ui --package=objc2-foundation --package=objc2-game-controller --package=objc2-game-kit --package=objc2-health-kit --package=objc2-identity-lookup --package=objc2-input-method-kit --package=objc2-link-presentation --package=objc2-local-authentication --package=objc2-local-authentication-embedded-ui --package=objc2-mail-kit --package=objc2-map-kit --package=objc2-media-player --package=objc2-metal --package=objc2-metal-fx --package=objc2-metal-kit --package=objc2-metric-kit --package=objc2-osa-kit --package=objc2-photos --package=objc2-quartz-core --package=objc2-service-management --package=objc2-sound-analysis --package=objc2-speech --package=objc2-store-kit --package=objc2-uniform-type-identifiers --package=objc2-user-notifications --package=objc2-web-kit
+  FRAMEWORKS_IOS_10: --package=objc2-foundation --package=objc2-metal
+  FRAMEWORKS_GNUSTEP: --package=objc2-app-kit --package=objc2-core-data --package=objc2-foundation
+  # END AUTOMATICALLY GENERATED
+
   # The current nightly Rust version. Keep this synced with `rust-toolchain.toml`
   CURRENT_NIGHTLY: nightly-2024-03-13
   # Various features that we'd usually want to test with
   #
   # Note: The `exception` feature is not enabled here, since it requires
   # compiling C code, even if just running a `check`/`clippy` build.
-  INTERESTING_FEATURES: malloc,block,unstable-private
-  UNSTABLE_FEATURES: unstable-autoreleasesafe,unstable-c-unwind
-  LATEST_MACOS_FEATURE: unstable-frameworks-macos-14
+  INTERESTING_FEATURES: --features=malloc,block2,unstable-private,all
+  UNSTABLE_FEATURES: --features=unstable-autoreleasesafe,unstable-c-unwind
   # Required when we want to use a different runtime than the default `apple`
   OTHER_RUNTIME: --no-default-features --features=std
   # https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
@@ -96,27 +106,14 @@ jobs:
         include:
         - name: macOS 64bit
           target: aarch64-apple-darwin
-          # Ideally this would use $LATEST_MACOS_FEATURE, but this causes clippy to
-          # use too much memory for the CI runner
-          args: >-
-            $PUBLIC_CRATES
-            --features=$INTERESTING_FEATURES
-            --features=unstable-frameworks-macos-12
+          args: $PUBLIC_CRATES $FRAMEWORKS_MACOS_14 $INTERESTING_FEATURES
         - name: iOS 32bit
           target: armv7s-apple-ios
           build-std: true
-          args: >-
-            -Zbuild-std
-            $PUBLIC_CRATES
-            --features=$INTERESTING_FEATURES
-            --features=unstable-frameworks-ios
+          args: $PUBLIC_CRATES $FRAMEWORKS_IOS_10 $INTERESTING_FEATURES -Zbuild-std
         - name: GNUStep + exceptions
           target: x86_64-unknown-linux-gnu
-          args: >-
-            $PUBLIC_CRATES
-            $OTHER_RUNTIME --features=gnustep-1-9
-            --features=$INTERESTING_FEATURES,catch-all
-            --features=AppKit_all,Foundation_all
+          args: $PUBLIC_CRATES $FRAMEWORKS_GNUSTEP $INTERESTING_FEATURES $OTHER_RUNTIME --features=gnustep-1-9,catch-all
         - name: header-translator
           target: x86_64-unknown-linux-gnu
           args: -pheader-translator
@@ -187,11 +184,7 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: cargo check
-      run: >-
-        cargo check
-        $PUBLIC_CRATES
-        --features=$INTERESTING_FEATURES
-        --features=$LATEST_MACOS_FEATURE
+      run: cargo check $PUBLIC_CRATES $FRAMEWORKS_MACOS_14 $INTERESTING_FEATURES
       env:
         RUSTFLAGS: "--codegen=debuginfo=0" # Removed --deny=warnings
 
@@ -301,11 +294,11 @@ jobs:
     - name: Verify that no files changed
       run: git diff --exit-code --submodule=diff
 
-  check-icrate-features:
+  check-framework-features:
     # if: ${{ env.FULL }}
     # This will take ~40 minutes
     if: ${{ github.head_ref == 'new-versions' || github.ref_name == 'ci-full' }}
-    name: Check icrate features
+    name: Check framework features
     runs-on: macos-12
     needs:
     - fmt
@@ -325,8 +318,8 @@ jobs:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Check `icrate` with each feature enabled separately
-      run: cargo run --bin=check_icrate_features
+    - name: Check frameworks with each feature enabled separately
+      run: cargo run --bin=check_framework_features
 
   test-macos:
     name: Test macOS 12
@@ -359,7 +352,7 @@ jobs:
       run: cargo test $ARGS $PUBLIC_CRATES -ptests
 
     - name: Test all frameworks
-      run: cargo test $ARGS $PUBLIC_CRATES -ptests --features=$INTERESTING_FEATURES,unstable-frameworks-macos-12
+      run: cargo test $ARGS $PUBLIC_CRATES $FRAMEWORKS_MACOS_10_12 -ptests $INTERESTING_FEATURES
 
   test-apple:
     # if: ${{ env.FULL }}
@@ -378,43 +371,43 @@ jobs:
         include:
         - name: Test macOS 13
           os: macos-13
-          frameworks: macos-13
+          frameworks: MACOS_13
         - name: Test macOS 11
           os: macos-11
-          frameworks: macos-11
+          frameworks: MACOS_11
         - name: Build macOS AArch64
           target: aarch64-apple-darwin
-          frameworks: macos-11
+          frameworks: MACOS_11
         - name: Test macOS old SDK
           # Oldest macOS version we support
           sdk: "10.12"
-          frameworks: macos-10-12
+          frameworks: MACOS_10_12
         - name: Test macOS nightly
           nightly: true
-          frameworks: macos-11
+          frameworks: MACOS_11
         - name: Build macOS 32bit
           target: i686-apple-darwin
           nightly: true
           build-std: true
           # Newest SDK that supports 32-bit
           sdk: "10.13"
-          frameworks: macos-10-13
+          frameworks: MACOS_10_13
         - name: Build iOS simulator ARM64
           target: aarch64-apple-ios-sim
-          frameworks: ios
+          frameworks: IOS_10
         - name: Build iOS ARM64
           target: aarch64-apple-ios
-          frameworks: ios
+          frameworks: IOS_10
         - name: Build iOS ARMv7s
           target: armv7s-apple-ios
           nightly: true
           build-std: true
-          frameworks: ios
+          frameworks: IOS_10
         - name: Build iOS 32bit x86
           target: i386-apple-ios
           nightly: true
           build-std: true
-          frameworks: ios
+          frameworks: IOS_10
 
     env:
       CARGO_BUILD_TARGET: ${{ matrix.target || 'x86_64-apple-darwin' }}
@@ -485,34 +478,26 @@ jobs:
       run: cargo test $ARGS $PUBLIC_CRATES -ptests
 
     - name: Test Foundation
-      run: >-
-        cargo test $ARGS $PUBLIC_CRATES -ptests
-        --features=$INTERESTING_FEATURES,Foundation_all
+      run: cargo test $ARGS $PUBLIC_CRATES -ptests $INTERESTING_FEATURES -pobjc2-foundation
 
     - name: Test all frameworks
-      run: >-
-        cargo test $ARGS $PUBLIC_CRATES -ptests
-        --features=$INTERESTING_FEATURES,catch-all,unstable-frameworks-${{ matrix.frameworks }}
+      run: cargo test $ARGS $PUBLIC_CRATES -ptests $INTERESTING_FEATURES --features=catch-all $FRAMEWORKS_${{ matrix.frameworks }}
 
-    - name: Test in release mode
-      run: >-
-        cargo test $ARGS $PUBLIC_CRATES -ptests
-        --features=$INTERESTING_FEATURES,catch-all,Foundation_all --release
+    - name: Test Foundation in release mode
+      run: cargo test $ARGS $PUBLIC_CRATES -ptests $INTERESTING_FEATURES -pobjc2-foundation --features=catch-all --release
 
-    - name: Test with unstable features
+    - name: Test Foundation with unstable features
       if: ${{ matrix.nightly }}
-      run: >-
-        cargo test $ARGS $PUBLIC_CRATES -ptests
-        --features=$INTERESTING_FEATURES,catch-all,Foundation_all,$UNSTABLE_FEATURES
+      run: cargo test $ARGS $PUBLIC_CRATES -ptests $INTERESTING_FEATURES -pobjc2-foundation --features=catch-all $UNSTABLE_FEATURES
 
     # TODO: Re-enable this on all of Foundation once we do some form of
     # availability checking.
     - name: Test static class and selectors
-      if: ${{ !contains(matrix.frameworks, 'ios') && !contains(matrix.frameworks, 'macos-10-12') }}
+      if: ${{ !contains(matrix.frameworks, 'IOS') && !contains(matrix.frameworks, 'MACOS_10_12') }}
       run: >-
-        cargo test $ARGS $PUBLIC_CRATES -ptests
+        cargo test $ARGS $PUBLIC_CRATES -ptests -pobjc2-foundation
         --features=unstable-static-sel,unstable-static-class,unstable-static-nsstring
-        --features=Foundation,Foundation_NSString
+        --features=Foundation_NSString
 
   test-ios:
     # if: ${{ env.FULL }}
@@ -561,11 +546,7 @@ jobs:
         echo "SIM_ID=$SIM_ID" >> $GITHUB_ENV
 
     - name: Test
-      run: >-
-        cargo-dinghy --device=$SIM_ID test
-        $PUBLIC_CRATES -ptests
-        --features=$INTERESTING_FEATURES,catch-all
-        --features=unstable-frameworks-ios
+      run: cargo-dinghy --device=$SIM_ID test $PUBLIC_CRATES $FRAMEWORKS_IOS_10 -ptests $INTERESTING_FEATURES --features=catch-all
 
   test-gnustep:
     name: ${{ matrix.name }}
@@ -759,16 +740,16 @@ jobs:
       run: cargo install cargo-fuzz --version=^0.11.2
 
     - name: Test Foundation
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation_all
+      run: cargo test $ARGS $PUBLIC_CRATES $INTERESTING_FEATURES -ptests -pobjc2-foundation --features=catch-all
 
     - name: Test all frameworks
       if: ${{ env.FULL && matrix.target == 'x86_64-unknown-linux-gnu' }}
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation_all,AppKit_all
+      run: cargo test $ARGS $PUBLIC_CRATES $INTERESTING_FEATURES -ptests $FRAMEWORKS_GNUSTEP --features=catch-all
 
     - name: Test in release mode
       # Disabled on GNUStep 2.1 for now
       if: ${{ env.FULL && matrix.runtime != 'gnustep-2-1' }}
-      run: cargo test $ARGS --features=Foundation_all --release
+      run: cargo test $ARGS $PUBLIC_CRATES -pobjc2-foundation --release
 
     - name: Run fuzzing
       if: ${{ matrix.fuzz }}
@@ -796,7 +777,7 @@ jobs:
 
     - name: Test with unstable features
       if: ${{ env.FULL && matrix.nightly }}
-      run: cargo test $ARGS --features=$INTERESTING_FEATURES,catch-all,Foundation_all,$UNSTABLE_FEATURES
+      run: cargo test $ARGS $PUBLIC_CRATES $INTERESTING_FEATURES -pobjc2-foundation --features=catch-all $UNSTABLE_FEATURES
 
   test-compiler-rt:
     name: Test Compiler-RT

@@ -16,7 +16,7 @@ use crate::{ClassType, ProtocolType};
 /// Since this class is only available with the `Foundation` framework,
 /// `objc2` links to it for you.
 ///
-/// This is exported under `icrate::Foundation::NSObject`, you probably
+/// This is exported under `objc2_foundation::NSObject`, you probably
 /// want to use that path instead.
 ///
 /// [cls]: https://developer.apple.com/documentation/objectivec/nsobject?language=objc
@@ -85,7 +85,7 @@ unsafe impl ClassType for NSObject {
 /// bound in [`extern_protocol!`], to allow your protocol to implement `Debug`
 /// `Hash`, `PartialEq` and `Eq`.
 ///
-/// This trait is exported under `icrate::Foundation::NSObjectProtocol`, you
+/// This trait is exported under `objc2_foundation::NSObjectProtocol`, you
 /// probably want to use that path instead.
 ///
 /// [proto]: https://developer.apple.com/documentation/objectivec/1418956-nsobject?language=objc
@@ -100,7 +100,7 @@ unsafe impl ClassType for NSObject {
 // Note: Most of the methods on this must remain `unsafe` to override,
 // including `isEqual` and `hash`, since hashing collections like
 // `NSDictionary` and `NSSet` rely on it being stable.
-#[allow(non_snake_case)] // Follow the naming scheme in `icrate`
+#[allow(non_snake_case)] // Follow the naming scheme in framework crates
 pub unsafe trait NSObjectProtocol {
     /// Check whether the object is equal to an arbitrary other object.
     ///
@@ -205,15 +205,15 @@ pub unsafe trait NSObjectProtocol {
     /// method was added.
     ///
     /// ```
-    /// # #[cfg(available_in_icrate)]
-    /// use icrate::AppKit::{NSApplication, NSAppearance, NSAppearanceNameAqua};
+    /// # #[cfg(available_in_frameworks)]
+    /// use objc2_app_kit::{NSApplication, NSAppearance, NSAppearanceNameAqua};
     /// use objc2::runtime::NSObjectProtocol;
     /// use objc2::sel;
     ///
     /// # let obj = objc2::runtime::NSObject::new();
     /// # assert!(!obj.respondsToSelector(sel!(effectiveAppearance)));
     /// #
-    /// # #[cfg(available_in_icrate)] {
+    /// # #[cfg(available_in_frameworks)] {
     /// let appearance = if obj.respondsToSelector(sel!(effectiveAppearance)) {
     ///     NSApplication::sharedApplication(mtm).effectiveAppearance()
     /// } else {
@@ -247,9 +247,9 @@ pub unsafe trait NSObjectProtocol {
     /// A textual representation of the object.
     ///
     /// The returned class is `NSString`, but since that is defined in
-    /// `icrate`, and `NSObjectProtocol` is defined in `objc2`, the declared
-    /// return type is unfortunately restricted to be [`NSObject`]. It is
-    /// always safe to cast the return value of this to `NSString`.
+    /// `objc2-foundation`, and `NSObjectProtocol` is defined in `objc2`, the
+    /// declared return type is unfortunately restricted to be [`NSObject`].
+    /// It is always safe to cast the return value of this to `NSString`.
     ///
     /// You might want to use the [`Debug`][fmt::Debug] impl of the object
     /// instead, or if the object implements [`Display`][fmt::Display], the
@@ -261,8 +261,8 @@ pub unsafe trait NSObjectProtocol {
     /// ```
     /// use objc2::rc::Id;
     /// # use objc2::runtime::{NSObjectProtocol, NSObject, NSObject as NSString};
-    /// # #[cfg(available_in_icrate)]
-    /// use icrate::Foundation::{NSString, NSObjectProtocol};
+    /// # #[cfg(available_in_foundation)]
+    /// use objc2_foundation::{NSObject, NSObjectProtocol, NSString};
     ///
     /// # let obj = NSObject::new();
     /// // SAFETY: Descriptions are always `NSString`.
@@ -383,7 +383,7 @@ where
 unsafe impl NSObjectProtocol for NSObject {}
 
 extern_methods!(
-    #[allow(non_snake_case)] // Follow the naming scheme in `icrate`
+    #[allow(non_snake_case)] // Follow the naming scheme in framework crates
     unsafe impl NSObject {
         /// Create a new empty `NSObject`.
         ///

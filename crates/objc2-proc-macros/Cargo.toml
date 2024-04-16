@@ -35,4 +35,15 @@ gnustep-2-0 = ["gnustep-1-9"]
 gnustep-2-1 = ["gnustep-2-0"]
 
 [package.metadata.docs.rs]
-default-target = "x86_64-apple-darwin"
+default-target = "aarch64-apple-darwin"
+targets = [
+    "aarch64-apple-darwin",
+    "x86_64-apple-darwin",
+    "aarch64-apple-ios",
+    "x86_64-apple-ios",
+    "aarch64-apple-tvos",
+    "aarch64-apple-watchos",
+    "aarch64-apple-ios-macabi",
+    "x86_64-unknown-linux-gnu",
+    "i686-unknown-linux-gnu",
+]

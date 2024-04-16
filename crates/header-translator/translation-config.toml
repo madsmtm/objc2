@@ -5,7 +5,8 @@
 ###
 
 [library.Accessibility]
-imports = ["Foundation"]
+crate = "objc2-accessibility"
+required-dependencies = ["objc2-foundation"]
 macos = "11.0"
 maccatalyst = "14.0"
 ios = "14.0"
@@ -14,27 +15,33 @@ watchos = "7.0"
 visionos = "1.0"
 
 [library.AdServices]
-imports = ["Foundation"]
+crate = "objc2-ad-services"
+required-dependencies = ["objc2-foundation"]
 macos = "11.1"
 maccatalyst = "14.3"
 ios = "14.3"
 visionos = "1.0"
 
 [library.AdSupport]
-imports = ["Foundation"]
+crate = "objc2-ad-support"
+required-dependencies = ["objc2-foundation"]
 macos = "10.14"
 maccatalyst = "13.0"
 ios = "6.0"
 tvos = "9.0"
 
 [library.AppKit]
-imports = ["CoreData", "Foundation"]
-cfg-apple-link = true
+crate = "objc2-app-kit"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
 macos = "10.0"
 maccatalyst = "13.0"
+gnustep = true
 
 [library.AuthenticationServices]
-imports = ["AppKit", "Foundation"]
+crate = "objc2-authentication-services"
+required-dependencies = ["objc2-app-kit", "objc2-foundation"]
+custom-lib-rs = true
 macos = "10.15"
 maccatalyst = "13.0"
 ios = "12.0"
@@ -43,39 +50,46 @@ watchos = "6.0"
 visionos = "1.0"
 
 [library.AutomaticAssessmentConfiguration]
-imports = ["Foundation"]
+crate = "objc2-automatic-assessment-configuration"
+required-dependencies = ["objc2-foundation"]
 macos = "10.15.4"
 maccatalyst = "13.4"
 ios = "13.4"
 visionos = "1.0"
 
 [library.Automator]
-imports = ["AppKit", "Foundation", "OSAKit"]
+crate = "objc2-automator"
+required-dependencies = ["objc2-foundation"]
 macos = "10.4"
 maccatalyst = "14.0"
 
 [library.BackgroundAssets]
-imports = ["Foundation"]
+crate = "objc2-background-assets"
+required-dependencies = ["objc2-foundation"]
 macos = "13.0"
 maccatalyst = "16.0"
 ios = "16.0"
 visionos = "1.0"
 
 [library.BackgroundTasks]
-imports = ["Foundation"]
+crate = "objc2-background-tasks"
+required-dependencies = ["objc2-foundation"]
 maccatalyst = "13.0"
 ios = "13.0"
 tvos = "13.0"
 visionos = "1.0"
 
 [library.BusinessChat]
-imports = ["AppKit", "Foundation"]
+crate = "objc2-business-chat"
+required-dependencies = ["objc2-app-kit", "objc2-foundation"]
 macos = "10.14"
 maccatalyst = "13.0"               # Unsure
 ios = "11.0"                       # Unsure
 
 [library.CallKit]
-imports = ["Foundation"]
+crate = "objc2-call-kit"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
 macos = "13.0"
 maccatalyst = "13.0"
 ios = "10.0"
@@ -83,14 +97,16 @@ watchos = "9.0"
 visionos = "1.0"
 
 [library.ClassKit]
-imports = ["Foundation"]
+crate = "objc2-class-kit"
+required-dependencies = ["objc2-foundation"]
 macos = "11.0"
 maccatalyst = "14.0"
 ios = "11.4"
 visionos = "1.0"
 
 [library.CloudKit]
-imports = ["CoreLocation", "Foundation"]
+crate = "objc2-cloud-kit"
+required-dependencies = ["objc2-foundation"]
 macos = "10.10"
 maccatalyst = "13.0"
 ios = "8.0"
@@ -99,7 +115,8 @@ watchos = "3.0"
 visionos = "1.0"
 
 [library.Contacts]
-imports = ["Foundation"]
+crate = "objc2-contacts"
+required-dependencies = ["objc2-foundation"]
 macos = "10.11"
 maccatalyst = "13.0"
 ios = "9.0"
@@ -107,17 +124,19 @@ watchos = "2.0"
 visionos = "1.0"
 
 [library.CoreData]
-imports = ["Foundation"]
-cfg-apple-link = true
+crate = "objc2-core-data"
+required-dependencies = ["objc2-foundation"]
 macos = "10.4"
 maccatalyst = "13.0"
 ios = "3.0"
 tvos = "9.0"
 watchos = "2.0"
 visionos = "1.0"
+gnustep = true
 
 [library.CoreLocation]
-imports = ["Contacts", "Foundation"]
+crate = "objc2-core-location"
+required-dependencies = ["objc2-foundation"]
 # macos = "10.6"
 macos = "10.11"      # Temporarily raised since `CoreLocation` imports `Contacts`
 maccatalyst = "13.0"
@@ -127,12 +146,14 @@ watchos = "2.0"
 visionos = "1.0"
 
 [library.CoreWLAN]
-imports = ["Foundation"]
+crate = "objc2-core-wlan"
+required-dependencies = ["objc2-foundation"]
 macos = "10.6"
 maccatalyst = "13.0"
 
 [library.DataDetection]
-imports = ["Foundation"]
+crate = "objc2-data-detection"
+required-dependencies = ["objc2-foundation"]
 macos = "12.0"
 maccatalyst = "15.0"
 ios = "15.0"
@@ -141,7 +162,8 @@ watchos = "8.0"
 visionos = "1.0"
 
 [library.DeviceCheck]
-imports = ["Foundation"]
+crate = "objc2-device-check"
+required-dependencies = ["objc2-foundation"]
 macos = "10.15"
 maccatalyst = "13.0"
 ios = "11.0"
@@ -150,7 +172,8 @@ watchos = "9.0"
 visionos = "1.0"
 
 [library.EventKit]
-imports = ["AppKit", "CoreLocation", "Foundation", "MapKit"]
+crate = "objc2-event-kit"
+required-dependencies = ["objc2-foundation"]
 macos = "10.8"
 maccatalyst = "13.0"
 ios = "4.0"
@@ -158,12 +181,14 @@ watchos = "2.0"
 visionos = "1.0"
 
 [library.ExceptionHandling]
-imports = ["Foundation"]
+crate = "objc2-exception-handling"
+required-dependencies = ["objc2-foundation"]
 macos = "10.0"
 maccatalyst = "13.0"
 
 [library.ExtensionKit]
-imports = ["AppKit", "Foundation"]
+crate = "objc2-extension-kit"
+required-dependencies = ["objc2-foundation"]
 macos = "13.0"
 maccatalyst = "13.0"
 ios = "16.1"
@@ -172,7 +197,8 @@ watchos = "9.0"
 visionos = "1.0"
 
 [library.ExternalAccessory]
-imports = ["Foundation"]
+crate = "objc2-external-accessory"
+required-dependencies = ["objc2-foundation"]
 macos = "10.13"
 maccatalyst = "16.0"
 ios = "3.0"
@@ -180,40 +206,36 @@ tvos = "10.0"
 visionos = "1.0"
 
 [library.FileProvider]
-imports = ["AppKit", "Foundation", "UniformTypeIdentifiers"]
+crate = "objc2-file-provider"
+required-dependencies = ["objc2-foundation"]
 macos = "10.15"
 ios = "11.0"
 visionos = "1.0"
 
 [library.FileProviderUI]
-imports = ["AppKit", "FileProvider", "Foundation"]
+crate = "objc2-file-provider-ui"
+required-dependencies = ["objc2-file-provider", "objc2-foundation"]
 macos = "10.15"
 maccatalyst = "15.0"
 ios = "11.0"
 visionos = "1.0"
 
 [library.Foundation]
-imports = []
-cfg-apple-link = true
-extra-features = [
-    "objc2",
-    "block2",
-    # Ord, Debug and other such fundamental impls requires these.
-    "Foundation_NSObjCRuntime",
-    # Some fmt::Debug impls require these
-    "Foundation_NSString",
-    "Foundation_NSDictionary",
-    "Foundation_NSEnumerator",
-]
+crate = "objc2-foundation"
+required-dependencies = []
+custom-lib-rs = true
 macos = "10.0"
 maccatalyst = "13.0"
 ios = "2.0"
 tvos = "9.0"
 watchos = "2.0"
 visionos = "1.0"
+gnustep = true
 
 [library.GameController]
-imports = ["AppKit", "Foundation"]
+crate = "objc2-game-controller"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
 macos = "10.9"
 maccatalyst = "13.0"
 ios = "7.0"
@@ -221,7 +243,8 @@ tvos = "9.0"
 visionos = "1.0"
 
 [library.GameKit]
-imports = ["AppKit", "Foundation"]
+crate = "objc2-game-kit"
+required-dependencies = ["objc2-foundation"]
 macos = "10.8"
 maccatalyst = "13.0"
 ios = "3.0"
@@ -230,7 +253,8 @@ watchos = "3.0"
 visionos = "1.0"
 
 [library.HealthKit]
-imports = ["CoreLocation", "Foundation", "UniformTypeIdentifiers"]
+crate = "objc2-health-kit"
+required-dependencies = ["objc2-foundation"]
 macos = "13.0"
 maccatalyst = "13.0"
 ios = "8.0"
@@ -238,19 +262,32 @@ watchos = "2.0"
 visionos = "1.0"
 
 [library.IdentityLookup]
-imports = ["Foundation"]
+crate = "objc2-identity-lookup"
+required-dependencies = ["objc2-foundation"]
 macos = "10.15"
 maccatalyst = "13.0"
 ios = "11.0"
 visionos = "1.0"
 
 [library.InputMethodKit]
-imports = ["AppKit", "Foundation"]
+crate = "objc2-input-method-kit"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
 macos = "10.5"
 maccatalyst = "13.0" # Unsure
 
+[library.LinkPresentation]
+crate = "objc2-link-presentation"
+required-dependencies = ["objc2-foundation"]
+macos = "10.15"
+maccatalyst = "13.0"
+ios = "13.0"
+tvos = "14.0"
+visionos = "1.0"
+
 [library.LocalAuthentication]
-imports = ["Foundation"]
+crate = "objc2-local-authentication"
+required-dependencies = ["objc2-foundation"]
 macos = "10.10"
 maccatalyst = "13.0"
 ios = "8.0"
@@ -258,26 +295,22 @@ watchos = "9.0"
 visionos = "1.0"
 
 [library.LocalAuthenticationEmbeddedUI]
-imports = ["AppKit", "Foundation", "LocalAuthentication"]
+crate = "objc2-local-authentication-embedded-ui"
+required-dependencies = ["objc2-foundation", "objc2-local-authentication"]
 macos = "12.0"
 maccatalyst = "16.0"
 ios = "16.0"
 visionos = "1.0"
 
-[library.LinkPresentation]
-imports = ["AppKit", "Foundation"]
-macos = "10.15"
-maccatalyst = "13.0"
-ios = "13.0"
-tvos = "14.0"
-visionos = "1.0"
-
 [library.MailKit]
-imports = ["AppKit", "Foundation"]
+crate = "objc2-mail-kit"
+required-dependencies = ["objc2-foundation"]
 macos = "12.0"
 
 [library.MapKit]
-imports = ["AppKit", "Contacts", "CoreLocation", "Foundation"]
+crate = "objc2-map-kit"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
 macos = "10.9"
 maccatalyst = "13.0"
 ios = "3.0"
@@ -286,7 +319,8 @@ watchos = "2.0"
 visionos = "1.0"
 
 [library.MediaPlayer]
-imports = ["AppKit", "Foundation"]
+crate = "objc2-media-player"
+required-dependencies = ["objc2-foundation"]
 macos = "10.12.1"
 maccatalyst = "13.0"
 ios = "2.0"
@@ -295,7 +329,9 @@ watchos = "5.0"
 visionos = "1.0"
 
 [library.Metal]
-imports = ["Foundation"]
+crate = "objc2-metal"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
 macos = "10.11"
 maccatalyst = "13.0"
 ios = "8.0"
@@ -303,14 +339,16 @@ tvos = "9.0"
 visionos = "1.0"
 
 [library.MetalFX]
-imports = ["Foundation", "Metal"]
+crate = "objc2-metal-fx"
+required-dependencies = ["objc2-foundation", "objc2-metal"]
 macos = "13.0"
 maccatalyst = "16.0"
 ios = "16.0"
 visionos = "1.0"
 
 [library.MetalKit]
-imports = ["AppKit", "Foundation", "Metal"]
+crate = "objc2-metal-kit"
+required-dependencies = ["objc2-foundation", "objc2-metal"]
 macos = "10.11"
 maccatalyst = "13.0"
 ios = "9.0"
@@ -318,14 +356,18 @@ tvos = "9.0"
 visionos = "1.0"
 
 [library.MetricKit]
-imports = ["Foundation"]
+crate = "objc2-metric-kit"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
 macos = "12.0"
 maccatalyst = "13.0"
 ios = "13.0"
 visionos = "1.0"
 
 [library.Photos]
-imports = ["AppKit", "CoreLocation", "Foundation", "UniformTypeIdentifiers"]
+crate = "objc2-photos"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
 macos = "10.11"
 maccatalyst = "13.0"
 ios = "8.0"
@@ -334,11 +376,14 @@ watchos = "9.0"
 visionos = "1.0"
 
 [library.OSAKit]
-imports = ["AppKit", "Foundation"]
+crate = "objc2-osa-kit"
+required-dependencies = ["objc2-app-kit", "objc2-foundation"]
 macos = "10.4"
 
 [library.QuartzCore]
-imports = ["Foundation"]
+crate = "objc2-quartz-core"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
 macos = "10.3"
 maccatalyst = "13.0"
 ios = "2.0"
@@ -346,12 +391,14 @@ tvos = "9.0"
 visionos = "1.0"
 
 [library.ServiceManagement]
-imports = ["Foundation"]
+crate = "objc2-service-management"
+required-dependencies = ["objc2-foundation"]
 macos = "10.6"
 maccatalyst = "13.0"
 
 [library.SoundAnalysis]
-imports = ["Foundation"]
+crate = "objc2-sound-analysis"
+required-dependencies = ["objc2-foundation"]
 macos = "10.15"
 maccatalyst = "13.0"
 ios = "13.0"
@@ -360,14 +407,16 @@ watchos = "9.0"
 visionos = "1.0"
 
 [library.Speech]
-imports = ["Foundation"]
+crate = "objc2-speech"
+required-dependencies = ["objc2-foundation"]
 macos = "10.15"
 maccatalyst = "13.0"
 ios = "10.0"
 visionos = "1.0"
 
 [library.StoreKit]
-imports = ["AppKit", "Foundation"]
+crate = "objc2-store-kit"
+required-dependencies = ["objc2-foundation"]
 macos = "10.7"
 maccatalyst = "13.0"
 ios = "3.0"
@@ -376,7 +425,8 @@ watchos = "6.2"
 visionos = "1.0"
 
 [library.UniformTypeIdentifiers]
-imports = ["Foundation"]
+crate = "objc2-uniform-type-identifiers"
+required-dependencies = ["objc2-foundation"]
 macos = "11.0"
 maccatalyst = "14.0"
 ios = "14.0"
@@ -385,7 +435,8 @@ watchos = "7.0"
 visionos = "1.0"
 
 [library.UserNotifications]
-imports = ["CoreLocation", "Foundation"]
+crate = "objc2-user-notifications"
+required-dependencies = ["objc2-foundation"]
 macos = "10.14"
 maccatalyst = "13.0"
 ios = "10.0"
@@ -394,7 +445,9 @@ watchos = "3.0"
 visionos = "1.0"
 
 [library.WebKit]
-imports = ["AppKit", "Foundation"]
+crate = "objc2-web-kit"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
 macos = "10.2"
 maccatalyst = "13.0"
 ios = "16.0"

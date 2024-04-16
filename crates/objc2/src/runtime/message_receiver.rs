@@ -268,7 +268,7 @@ mod msg_send_primitive {
     }
 }
 
-/// Help with monomorphizing in `icrate`
+/// Help with monomorphizing in framework crates
 #[cfg(debug_assertions)]
 #[track_caller]
 fn msg_send_check(

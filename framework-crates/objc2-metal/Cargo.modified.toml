@@ -1,0 +1,42 @@
+[[example]]
+name = "triangle"
+required-features = [
+    "objc2-app-kit/AppKit_NSGraphics",
+    "objc2-app-kit/AppKit_NSWindow",
+    "objc2-app-kit/AppKit_NSResponder",
+    "objc2-app-kit/AppKit_NSApplication",
+    "objc2-app-kit/AppKit_NSRunningApplication",
+    "objc2-app-kit/AppKit_NSView",
+    "objc2-foundation/Foundation_NSError",
+    "objc2-foundation/Foundation_NSString",
+    "objc2-foundation/Foundation_NSDate",
+    "objc2-foundation/Foundation_NSNotification",
+    "objc2-foundation/Foundation_NSThread",
+    "objc2-foundation/Foundation_NSGeometry",
+    "Metal_MTLLibrary",
+    "Metal_MTLRenderPipeline",
+    "Metal_MTLRenderCommandEncoder",
+    "Metal_MTLCommandBuffer",
+    "Metal_MTLCommandEncoder",
+    "Metal_MTLCommandQueue",
+    "Metal_MTLPixelFormat",
+    "Metal_MTLDevice",
+    "Metal_MTLDrawable",
+    "Metal_MTLRenderPass",
+    "objc2-metal-kit/MetalKit_MTKView",
+    "objc2-metal-kit/objc2-app-kit",
+]
+
+[features]
+# Private framework functionality
+#
+# These functions/methods are all marked `unsafe`, since they may not always
+# exist.
+unstable-private = [
+    "objc2-foundation/Foundation_NSString",
+    "objc2-foundation/Foundation_NSError",
+]
+
+[dev-dependencies]
+objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.0" }
+objc2-metal-kit = { path = "../objc2-metal-kit", version = "0.2.0" }
