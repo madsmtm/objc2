@@ -257,6 +257,8 @@ assert_types! {
 
     // Objective-C
 
+    // https://github.com/llvm/llvm-project/issues/87490
+    #[ignore = "pointers to booleans are broken on newer Clang versions"]
     OBJC_BOOL => Bool,
     ID => enc <*mut AnyObject>::ENCODING,
     CLASS => enc <&AnyClass>::ENCODING,
