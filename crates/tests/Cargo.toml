@@ -49,3 +49,6 @@ cc = "1.0"
 
 [dev-dependencies]
 paste = "1.0"
+
+[package.metadata.release]
+release = false

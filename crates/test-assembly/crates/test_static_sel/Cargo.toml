@@ -23,3 +23,6 @@ gnustep-2-1 = ["gnustep-2-0", "objc2?/gnustep-2-1"]
 
 # Hack to prevent the feature flag from being enabled in the entire project
 assembly-features = ["objc2?/unstable-static-sel-inlined"]
+
+[package.metadata.release]
+release = false

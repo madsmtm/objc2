@@ -51,3 +51,6 @@ objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-f
 [[bin]]
 name = "test-ui"
 required-features = ["run"]
+
+[package.metadata.release]
+release = false

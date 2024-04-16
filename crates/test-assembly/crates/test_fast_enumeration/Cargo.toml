@@ -27,3 +27,6 @@ all = ["objc2-foundation/block2", "objc2-foundation/NSEnumerator", "objc2-founda
 
 # Hack
 assembly-features = ["all"] # "objc2/unstable-static-sel-inlined"
+
+[package.metadata.release]
+release = false

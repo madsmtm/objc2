@@ -23,3 +23,6 @@ gnustep-2-1 = ["gnustep-2-0", "block2/gnustep-2-1"]
 
 # Hack
 assembly-features = []
+
+[package.metadata.release]
+release = false

@@ -26,3 +26,6 @@ all = ["objc2-foundation/block2", "objc2-foundation/NSString"]
 
 # Hack
 assembly-features = ["all", "objc2-foundation/unstable-static-nsstring"]
+
+[package.metadata.release]
+release = false

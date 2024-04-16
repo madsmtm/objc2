@@ -25,3 +25,11 @@ lto = true
 # Don't emit unwind info; while important to get right, the control flow is
 # very hard to glean from assembly output.
 panic = "abort"
+
+# Release data for framework crates
+[workspace.metadata.release]
+allow-branch = ["master"]
+shared-version = true # Framework crates share a version number
+tag-prefix = "icrate"
+tag-name = "{{prefix}}-{{version}}"
+enable-features = ["all"]

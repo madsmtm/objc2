@@ -53,3 +53,6 @@ path = "fuzz_targets/nsstring.rs"
 test = false
 doc = false
 required-features = ["objc2-foundation/NSString"]
+
+[package.metadata.release]
+release = false

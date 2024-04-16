@@ -70,3 +70,6 @@ targets = [
     "x86_64-unknown-linux-gnu",
     "i686-unknown-linux-gnu",
 ]
+
+[package.metadata.release]
+shared-version = false
