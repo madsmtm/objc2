@@ -99,6 +99,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   functions and statics.
 
 
+## icrate 0.1.2 - 2023-04-18
+
+## Fixed
+* Fixed "multiple applicable items in scope" error when upgrading `objc2` to `v0.5.1`.
+
+
 ## icrate 0.1.1 - 2023-04-17
 
 ### Deprecated
