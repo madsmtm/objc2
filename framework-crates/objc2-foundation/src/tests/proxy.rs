@@ -1,4 +1,4 @@
-#![cfg(feature = "Foundation_NSProxy")]
+#![cfg(feature = "NSProxy")]
 use crate::Foundation::NSProxy;
 use objc2::ClassType;
 

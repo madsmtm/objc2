@@ -58,341 +58,341 @@ unstable-static-nsstring = []
 dispatch = ["dep:dispatch"]
 block2 = ["dep:block2"]
 
-Foundation_FoundationErrors = []
-Foundation_FoundationLegacySwiftCompatibility = []
-Foundation_NSAffineTransform = []
-Foundation_NSAppleEventDescriptor = []
-Foundation_NSAppleEventManager = []
-Foundation_NSAppleScript = []
-Foundation_NSArchiver = []
-Foundation_NSArray = []
-Foundation_NSAttributedString = []
-Foundation_NSAutoreleasePool = []
-Foundation_NSBackgroundActivityScheduler = []
-Foundation_NSBundle = []
-Foundation_NSByteCountFormatter = []
-Foundation_NSByteOrder = []
-Foundation_NSCache = []
-Foundation_NSCalendar = []
-Foundation_NSCalendarDate = []
-Foundation_NSCharacterSet = []
-Foundation_NSClassDescription = []
-Foundation_NSCoder = []
-Foundation_NSComparisonPredicate = []
-Foundation_NSCompoundPredicate = []
-Foundation_NSConnection = []
-Foundation_NSData = []
-Foundation_NSDate = []
-Foundation_NSDateComponentsFormatter = []
-Foundation_NSDateFormatter = []
-Foundation_NSDateInterval = []
-Foundation_NSDateIntervalFormatter = []
-Foundation_NSDecimal = []
-Foundation_NSDecimalNumber = []
-Foundation_NSDictionary = []
-Foundation_NSDistantObject = []
-Foundation_NSDistributedLock = []
-Foundation_NSDistributedNotificationCenter = []
-Foundation_NSEnergyFormatter = []
-Foundation_NSEnumerator = []
-Foundation_NSError = []
-Foundation_NSException = []
-Foundation_NSExpression = []
-Foundation_NSExtensionContext = []
-Foundation_NSExtensionItem = []
-Foundation_NSExtensionRequestHandling = []
-Foundation_NSFileCoordinator = []
-Foundation_NSFileHandle = []
-Foundation_NSFileManager = []
-Foundation_NSFilePresenter = []
-Foundation_NSFileVersion = []
-Foundation_NSFileWrapper = []
-Foundation_NSFormatter = []
-Foundation_NSGarbageCollector = []
-Foundation_NSGeometry = []
-Foundation_NSHFSFileTypes = []
-Foundation_NSHTTPCookie = []
-Foundation_NSHTTPCookieStorage = []
-Foundation_NSHashTable = []
-Foundation_NSHost = []
-Foundation_NSISO8601DateFormatter = []
-Foundation_NSIndexPath = []
-Foundation_NSIndexSet = []
-Foundation_NSInflectionRule = []
-Foundation_NSInvocation = []
-Foundation_NSItemProvider = []
-Foundation_NSJSONSerialization = []
-Foundation_NSKeyValueCoding = []
-Foundation_NSKeyValueObserving = []
-Foundation_NSKeyedArchiver = []
-Foundation_NSLengthFormatter = []
-Foundation_NSLinguisticTagger = []
-Foundation_NSListFormatter = []
-Foundation_NSLocale = []
-Foundation_NSLock = []
-Foundation_NSMapTable = []
-Foundation_NSMassFormatter = []
-Foundation_NSMeasurement = []
-Foundation_NSMeasurementFormatter = []
-Foundation_NSMetadata = []
-Foundation_NSMetadataAttributes = []
-Foundation_NSMethodSignature = []
-Foundation_NSMorphology = []
-Foundation_NSNetServices = []
-Foundation_NSNotification = []
-Foundation_NSNotificationQueue = []
-Foundation_NSNull = []
-Foundation_NSNumberFormatter = []
-Foundation_NSObjCRuntime = []
-Foundation_NSObject = []
-Foundation_NSObjectScripting = []
-Foundation_NSOperation = []
-Foundation_NSOrderedCollectionChange = []
-Foundation_NSOrderedCollectionDifference = []
-Foundation_NSOrderedSet = []
-Foundation_NSOrthography = []
-Foundation_NSPathUtilities = []
-Foundation_NSPersonNameComponents = []
-Foundation_NSPersonNameComponentsFormatter = []
-Foundation_NSPointerArray = []
-Foundation_NSPointerFunctions = []
-Foundation_NSPort = []
-Foundation_NSPortCoder = []
-Foundation_NSPortMessage = []
-Foundation_NSPortNameServer = []
-Foundation_NSPredicate = []
-Foundation_NSProcessInfo = []
-Foundation_NSProgress = []
-Foundation_NSPropertyList = []
-Foundation_NSProtocolChecker = []
-Foundation_NSProxy = []
-Foundation_NSRange = []
-Foundation_NSRegularExpression = []
-Foundation_NSRelativeDateTimeFormatter = []
-Foundation_NSRunLoop = []
-Foundation_NSScanner = []
-Foundation_NSScriptClassDescription = []
-Foundation_NSScriptCoercionHandler = []
-Foundation_NSScriptCommand = []
-Foundation_NSScriptCommandDescription = []
-Foundation_NSScriptExecutionContext = []
-Foundation_NSScriptKeyValueCoding = []
-Foundation_NSScriptObjectSpecifiers = []
-Foundation_NSScriptStandardSuiteCommands = []
-Foundation_NSScriptSuiteRegistry = []
-Foundation_NSScriptWhoseTests = []
-Foundation_NSSet = []
-Foundation_NSSortDescriptor = []
-Foundation_NSSpellServer = []
-Foundation_NSStream = []
-Foundation_NSString = []
-Foundation_NSTask = []
-Foundation_NSTermOfAddress = []
-Foundation_NSTextCheckingResult = []
-Foundation_NSThread = []
-Foundation_NSTimeZone = []
-Foundation_NSTimer = []
-Foundation_NSURL = []
-Foundation_NSURLAuthenticationChallenge = []
-Foundation_NSURLCache = []
-Foundation_NSURLConnection = []
-Foundation_NSURLCredential = []
-Foundation_NSURLCredentialStorage = []
-Foundation_NSURLDownload = []
-Foundation_NSURLError = []
-Foundation_NSURLHandle = []
-Foundation_NSURLProtectionSpace = []
-Foundation_NSURLProtocol = []
-Foundation_NSURLRequest = []
-Foundation_NSURLResponse = []
-Foundation_NSURLSession = []
-Foundation_NSUUID = []
-Foundation_NSUbiquitousKeyValueStore = []
-Foundation_NSUndoManager = []
-Foundation_NSUnit = []
-Foundation_NSUserActivity = []
-Foundation_NSUserDefaults = []
-Foundation_NSUserNotification = []
-Foundation_NSUserScriptTask = []
-Foundation_NSValue = []
-Foundation_NSValueTransformer = []
-Foundation_NSXMLDTD = []
-Foundation_NSXMLDTDNode = []
-Foundation_NSXMLDocument = []
-Foundation_NSXMLElement = []
-Foundation_NSXMLNode = []
-Foundation_NSXMLNodeOptions = []
-Foundation_NSXMLParser = []
-Foundation_NSXPCConnection = []
-Foundation_NSZone = []
+FoundationErrors = []
+FoundationLegacySwiftCompatibility = []
+NSAffineTransform = []
+NSAppleEventDescriptor = []
+NSAppleEventManager = []
+NSAppleScript = []
+NSArchiver = []
+NSArray = []
+NSAttributedString = []
+NSAutoreleasePool = []
+NSBackgroundActivityScheduler = []
+NSBundle = []
+NSByteCountFormatter = []
+NSByteOrder = []
+NSCache = []
+NSCalendar = []
+NSCalendarDate = []
+NSCharacterSet = []
+NSClassDescription = []
+NSCoder = []
+NSComparisonPredicate = []
+NSCompoundPredicate = []
+NSConnection = []
+NSData = []
+NSDate = []
+NSDateComponentsFormatter = []
+NSDateFormatter = []
+NSDateInterval = []
+NSDateIntervalFormatter = []
+NSDecimal = []
+NSDecimalNumber = []
+NSDictionary = []
+NSDistantObject = []
+NSDistributedLock = []
+NSDistributedNotificationCenter = []
+NSEnergyFormatter = []
+NSEnumerator = []
+NSError = []
+NSException = []
+NSExpression = []
+NSExtensionContext = []
+NSExtensionItem = []
+NSExtensionRequestHandling = []
+NSFileCoordinator = []
+NSFileHandle = []
+NSFileManager = []
+NSFilePresenter = []
+NSFileVersion = []
+NSFileWrapper = []
+NSFormatter = []
+NSGarbageCollector = []
+NSGeometry = []
+NSHFSFileTypes = []
+NSHTTPCookie = []
+NSHTTPCookieStorage = []
+NSHashTable = []
+NSHost = []
+NSISO8601DateFormatter = []
+NSIndexPath = []
+NSIndexSet = []
+NSInflectionRule = []
+NSInvocation = []
+NSItemProvider = []
+NSJSONSerialization = []
+NSKeyValueCoding = []
+NSKeyValueObserving = []
+NSKeyedArchiver = []
+NSLengthFormatter = []
+NSLinguisticTagger = []
+NSListFormatter = []
+NSLocale = []
+NSLock = []
+NSMapTable = []
+NSMassFormatter = []
+NSMeasurement = []
+NSMeasurementFormatter = []
+NSMetadata = []
+NSMetadataAttributes = []
+NSMethodSignature = []
+NSMorphology = []
+NSNetServices = []
+NSNotification = []
+NSNotificationQueue = []
+NSNull = []
+NSNumberFormatter = []
+NSObjCRuntime = []
+NSObject = []
+NSObjectScripting = []
+NSOperation = []
+NSOrderedCollectionChange = []
+NSOrderedCollectionDifference = []
+NSOrderedSet = []
+NSOrthography = []
+NSPathUtilities = []
+NSPersonNameComponents = []
+NSPersonNameComponentsFormatter = []
+NSPointerArray = []
+NSPointerFunctions = []
+NSPort = []
+NSPortCoder = []
+NSPortMessage = []
+NSPortNameServer = []
+NSPredicate = []
+NSProcessInfo = []
+NSProgress = []
+NSPropertyList = []
+NSProtocolChecker = []
+NSProxy = []
+NSRange = []
+NSRegularExpression = []
+NSRelativeDateTimeFormatter = []
+NSRunLoop = []
+NSScanner = []
+NSScriptClassDescription = []
+NSScriptCoercionHandler = []
+NSScriptCommand = []
+NSScriptCommandDescription = []
+NSScriptExecutionContext = []
+NSScriptKeyValueCoding = []
+NSScriptObjectSpecifiers = []
+NSScriptStandardSuiteCommands = []
+NSScriptSuiteRegistry = []
+NSScriptWhoseTests = []
+NSSet = []
+NSSortDescriptor = []
+NSSpellServer = []
+NSStream = []
+NSString = []
+NSTask = []
+NSTermOfAddress = []
+NSTextCheckingResult = []
+NSThread = []
+NSTimeZone = []
+NSTimer = []
+NSURL = []
+NSURLAuthenticationChallenge = []
+NSURLCache = []
+NSURLConnection = []
+NSURLCredential = []
+NSURLCredentialStorage = []
+NSURLDownload = []
+NSURLError = []
+NSURLHandle = []
+NSURLProtectionSpace = []
+NSURLProtocol = []
+NSURLRequest = []
+NSURLResponse = []
+NSURLSession = []
+NSUUID = []
+NSUbiquitousKeyValueStore = []
+NSUndoManager = []
+NSUnit = []
+NSUserActivity = []
+NSUserDefaults = []
+NSUserNotification = []
+NSUserScriptTask = []
+NSValue = []
+NSValueTransformer = []
+NSXMLDTD = []
+NSXMLDTDNode = []
+NSXMLDocument = []
+NSXMLElement = []
+NSXMLNode = []
+NSXMLNodeOptions = []
+NSXMLParser = []
+NSXPCConnection = []
+NSZone = []
 all = [
-    "Foundation_FoundationErrors",
-    "Foundation_FoundationLegacySwiftCompatibility",
-    "Foundation_NSAffineTransform",
-    "Foundation_NSAppleEventDescriptor",
-    "Foundation_NSAppleEventManager",
-    "Foundation_NSAppleScript",
-    "Foundation_NSArchiver",
-    "Foundation_NSArray",
-    "Foundation_NSAttributedString",
-    "Foundation_NSAutoreleasePool",
-    "Foundation_NSBackgroundActivityScheduler",
-    "Foundation_NSBundle",
-    "Foundation_NSByteCountFormatter",
-    "Foundation_NSByteOrder",
-    "Foundation_NSCache",
-    "Foundation_NSCalendar",
-    "Foundation_NSCalendarDate",
-    "Foundation_NSCharacterSet",
-    "Foundation_NSClassDescription",
-    "Foundation_NSCoder",
-    "Foundation_NSComparisonPredicate",
-    "Foundation_NSCompoundPredicate",
-    "Foundation_NSConnection",
-    "Foundation_NSData",
-    "Foundation_NSDate",
-    "Foundation_NSDateComponentsFormatter",
-    "Foundation_NSDateFormatter",
-    "Foundation_NSDateInterval",
-    "Foundation_NSDateIntervalFormatter",
-    "Foundation_NSDecimal",
-    "Foundation_NSDecimalNumber",
-    "Foundation_NSDictionary",
-    "Foundation_NSDistantObject",
-    "Foundation_NSDistributedLock",
-    "Foundation_NSDistributedNotificationCenter",
-    "Foundation_NSEnergyFormatter",
-    "Foundation_NSEnumerator",
-    "Foundation_NSError",
-    "Foundation_NSException",
-    "Foundation_NSExpression",
-    "Foundation_NSExtensionContext",
-    "Foundation_NSExtensionItem",
-    "Foundation_NSExtensionRequestHandling",
-    "Foundation_NSFileCoordinator",
-    "Foundation_NSFileHandle",
-    "Foundation_NSFileManager",
-    "Foundation_NSFilePresenter",
-    "Foundation_NSFileVersion",
-    "Foundation_NSFileWrapper",
-    "Foundation_NSFormatter",
-    "Foundation_NSGarbageCollector",
-    "Foundation_NSGeometry",
-    "Foundation_NSHFSFileTypes",
-    "Foundation_NSHTTPCookie",
-    "Foundation_NSHTTPCookieStorage",
-    "Foundation_NSHashTable",
-    "Foundation_NSHost",
-    "Foundation_NSISO8601DateFormatter",
-    "Foundation_NSIndexPath",
-    "Foundation_NSIndexSet",
-    "Foundation_NSInflectionRule",
-    "Foundation_NSInvocation",
-    "Foundation_NSItemProvider",
-    "Foundation_NSJSONSerialization",
-    "Foundation_NSKeyValueCoding",
-    "Foundation_NSKeyValueObserving",
-    "Foundation_NSKeyedArchiver",
-    "Foundation_NSLengthFormatter",
-    "Foundation_NSLinguisticTagger",
-    "Foundation_NSListFormatter",
-    "Foundation_NSLocale",
-    "Foundation_NSLock",
-    "Foundation_NSMapTable",
-    "Foundation_NSMassFormatter",
-    "Foundation_NSMeasurement",
-    "Foundation_NSMeasurementFormatter",
-    "Foundation_NSMetadata",
-    "Foundation_NSMetadataAttributes",
-    "Foundation_NSMethodSignature",
-    "Foundation_NSMorphology",
-    "Foundation_NSNetServices",
-    "Foundation_NSNotification",
-    "Foundation_NSNotificationQueue",
-    "Foundation_NSNull",
-    "Foundation_NSNumberFormatter",
-    "Foundation_NSObjCRuntime",
-    "Foundation_NSObject",
-    "Foundation_NSObjectScripting",
-    "Foundation_NSOperation",
-    "Foundation_NSOrderedCollectionChange",
-    "Foundation_NSOrderedCollectionDifference",
-    "Foundation_NSOrderedSet",
-    "Foundation_NSOrthography",
-    "Foundation_NSPathUtilities",
-    "Foundation_NSPersonNameComponents",
-    "Foundation_NSPersonNameComponentsFormatter",
-    "Foundation_NSPointerArray",
-    "Foundation_NSPointerFunctions",
-    "Foundation_NSPort",
-    "Foundation_NSPortCoder",
-    "Foundation_NSPortMessage",
-    "Foundation_NSPortNameServer",
-    "Foundation_NSPredicate",
-    "Foundation_NSProcessInfo",
-    "Foundation_NSProgress",
-    "Foundation_NSPropertyList",
-    "Foundation_NSProtocolChecker",
-    "Foundation_NSProxy",
-    "Foundation_NSRange",
-    "Foundation_NSRegularExpression",
-    "Foundation_NSRelativeDateTimeFormatter",
-    "Foundation_NSRunLoop",
-    "Foundation_NSScanner",
-    "Foundation_NSScriptClassDescription",
-    "Foundation_NSScriptCoercionHandler",
-    "Foundation_NSScriptCommand",
-    "Foundation_NSScriptCommandDescription",
-    "Foundation_NSScriptExecutionContext",
-    "Foundation_NSScriptKeyValueCoding",
-    "Foundation_NSScriptObjectSpecifiers",
-    "Foundation_NSScriptStandardSuiteCommands",
-    "Foundation_NSScriptSuiteRegistry",
-    "Foundation_NSScriptWhoseTests",
-    "Foundation_NSSet",
-    "Foundation_NSSortDescriptor",
-    "Foundation_NSSpellServer",
-    "Foundation_NSStream",
-    "Foundation_NSString",
-    "Foundation_NSTask",
-    "Foundation_NSTermOfAddress",
-    "Foundation_NSTextCheckingResult",
-    "Foundation_NSThread",
-    "Foundation_NSTimeZone",
-    "Foundation_NSTimer",
-    "Foundation_NSURL",
-    "Foundation_NSURLAuthenticationChallenge",
-    "Foundation_NSURLCache",
-    "Foundation_NSURLConnection",
-    "Foundation_NSURLCredential",
-    "Foundation_NSURLCredentialStorage",
-    "Foundation_NSURLDownload",
-    "Foundation_NSURLError",
-    "Foundation_NSURLHandle",
-    "Foundation_NSURLProtectionSpace",
-    "Foundation_NSURLProtocol",
-    "Foundation_NSURLRequest",
-    "Foundation_NSURLResponse",
-    "Foundation_NSURLSession",
-    "Foundation_NSUUID",
-    "Foundation_NSUbiquitousKeyValueStore",
-    "Foundation_NSUndoManager",
-    "Foundation_NSUnit",
-    "Foundation_NSUserActivity",
-    "Foundation_NSUserDefaults",
-    "Foundation_NSUserNotification",
-    "Foundation_NSUserScriptTask",
-    "Foundation_NSValue",
-    "Foundation_NSValueTransformer",
-    "Foundation_NSXMLDTD",
-    "Foundation_NSXMLDTDNode",
-    "Foundation_NSXMLDocument",
-    "Foundation_NSXMLElement",
-    "Foundation_NSXMLNode",
-    "Foundation_NSXMLNodeOptions",
-    "Foundation_NSXMLParser",
-    "Foundation_NSXPCConnection",
-    "Foundation_NSZone",
+    "FoundationErrors",
+    "FoundationLegacySwiftCompatibility",
+    "NSAffineTransform",
+    "NSAppleEventDescriptor",
+    "NSAppleEventManager",
+    "NSAppleScript",
+    "NSArchiver",
+    "NSArray",
+    "NSAttributedString",
+    "NSAutoreleasePool",
+    "NSBackgroundActivityScheduler",
+    "NSBundle",
+    "NSByteCountFormatter",
+    "NSByteOrder",
+    "NSCache",
+    "NSCalendar",
+    "NSCalendarDate",
+    "NSCharacterSet",
+    "NSClassDescription",
+    "NSCoder",
+    "NSComparisonPredicate",
+    "NSCompoundPredicate",
+    "NSConnection",
+    "NSData",
+    "NSDate",
+    "NSDateComponentsFormatter",
+    "NSDateFormatter",
+    "NSDateInterval",
+    "NSDateIntervalFormatter",
+    "NSDecimal",
+    "NSDecimalNumber",
+    "NSDictionary",
+    "NSDistantObject",
+    "NSDistributedLock",
+    "NSDistributedNotificationCenter",
+    "NSEnergyFormatter",
+    "NSEnumerator",
+    "NSError",
+    "NSException",
+    "NSExpression",
+    "NSExtensionContext",
+    "NSExtensionItem",
+    "NSExtensionRequestHandling",
+    "NSFileCoordinator",
+    "NSFileHandle",
+    "NSFileManager",
+    "NSFilePresenter",
+    "NSFileVersion",
+    "NSFileWrapper",
+    "NSFormatter",
+    "NSGarbageCollector",
+    "NSGeometry",
+    "NSHFSFileTypes",
+    "NSHTTPCookie",
+    "NSHTTPCookieStorage",
+    "NSHashTable",
+    "NSHost",
+    "NSISO8601DateFormatter",
+    "NSIndexPath",
+    "NSIndexSet",
+    "NSInflectionRule",
+    "NSInvocation",
+    "NSItemProvider",
+    "NSJSONSerialization",
+    "NSKeyValueCoding",
+    "NSKeyValueObserving",
+    "NSKeyedArchiver",
+    "NSLengthFormatter",
+    "NSLinguisticTagger",
+    "NSListFormatter",
+    "NSLocale",
+    "NSLock",
+    "NSMapTable",
+    "NSMassFormatter",
+    "NSMeasurement",
+    "NSMeasurementFormatter",
+    "NSMetadata",
+    "NSMetadataAttributes",
+    "NSMethodSignature",
+    "NSMorphology",
+    "NSNetServices",
+    "NSNotification",
+    "NSNotificationQueue",
+    "NSNull",
+    "NSNumberFormatter",
+    "NSObjCRuntime",
+    "NSObject",
+    "NSObjectScripting",
+    "NSOperation",
+    "NSOrderedCollectionChange",
+    "NSOrderedCollectionDifference",
+    "NSOrderedSet",
+    "NSOrthography",
+    "NSPathUtilities",
+    "NSPersonNameComponents",
+    "NSPersonNameComponentsFormatter",
+    "NSPointerArray",
+    "NSPointerFunctions",
+    "NSPort",
+    "NSPortCoder",
+    "NSPortMessage",
+    "NSPortNameServer",
+    "NSPredicate",
+    "NSProcessInfo",
+    "NSProgress",
+    "NSPropertyList",
+    "NSProtocolChecker",
+    "NSProxy",
+    "NSRange",
+    "NSRegularExpression",
+    "NSRelativeDateTimeFormatter",
+    "NSRunLoop",
+    "NSScanner",
+    "NSScriptClassDescription",
+    "NSScriptCoercionHandler",
+    "NSScriptCommand",
+    "NSScriptCommandDescription",
+    "NSScriptExecutionContext",
+    "NSScriptKeyValueCoding",
+    "NSScriptObjectSpecifiers",
+    "NSScriptStandardSuiteCommands",
+    "NSScriptSuiteRegistry",
+    "NSScriptWhoseTests",
+    "NSSet",
+    "NSSortDescriptor",
+    "NSSpellServer",
+    "NSStream",
+    "NSString",
+    "NSTask",
+    "NSTermOfAddress",
+    "NSTextCheckingResult",
+    "NSThread",
+    "NSTimeZone",
+    "NSTimer",
+    "NSURL",
+    "NSURLAuthenticationChallenge",
+    "NSURLCache",
+    "NSURLConnection",
+    "NSURLCredential",
+    "NSURLCredentialStorage",
+    "NSURLDownload",
+    "NSURLError",
+    "NSURLHandle",
+    "NSURLProtectionSpace",
+    "NSURLProtocol",
+    "NSURLRequest",
+    "NSURLResponse",
+    "NSURLSession",
+    "NSUUID",
+    "NSUbiquitousKeyValueStore",
+    "NSUndoManager",
+    "NSUnit",
+    "NSUserActivity",
+    "NSUserDefaults",
+    "NSUserNotification",
+    "NSUserScriptTask",
+    "NSValue",
+    "NSValueTransformer",
+    "NSXMLDTD",
+    "NSXMLDTDNode",
+    "NSXMLDocument",
+    "NSXMLElement",
+    "NSXMLNode",
+    "NSXMLNodeOptions",
+    "NSXMLParser",
+    "NSXPCConnection",
+    "NSZone",
     "block2",
 ]
 
@@ -402,17 +402,17 @@ static_assertions = "1.1.0"
 [[example]]
 name = "basic_usage"
 required-features = [
-    "Foundation_NSArray",
-    "Foundation_NSDictionary",
-    "Foundation_NSEnumerator",
-    "Foundation_NSRange",
-    "Foundation_NSObject",
+    "NSArray",
+    "NSDictionary",
+    "NSEnumerator",
+    "NSRange",
+    "NSObject",
 ]
 
 [[example]]
 name = "speech_synthesis"
 required-features = [
     "apple",
-    "Foundation_NSString",
-    "Foundation_NSObject",
+    "NSString",
+    "NSObject",
 ]

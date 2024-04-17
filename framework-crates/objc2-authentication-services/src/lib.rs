@@ -32,15 +32,15 @@ pub type ASPresentationAnchor = NSObject;
 pub type ASImage = NSObject;
 
 // TODO: UIControl on iOS, NSControl on macOS
-#[cfg(feature = "AuthenticationServices_ASAuthorizationAppleIDButton")]
+#[cfg(feature = "ASAuthorizationAppleIDButton")]
 type ASControl = NSObject;
 
 extern_class!(
     #[derive(Debug, PartialEq, Eq, Hash)]
-    #[cfg(feature = "AuthenticationServices_ASCredentialProviderViewController")]
+    #[cfg(feature = "ASCredentialProviderViewController")]
     pub struct ASCredentialProviderViewController;
 
-    #[cfg(feature = "AuthenticationServices_ASCredentialProviderViewController")]
+    #[cfg(feature = "ASCredentialProviderViewController")]
     unsafe impl ClassType for ASCredentialProviderViewController {
         type Super = ASViewController;
         type Mutability = mutability::MainThreadOnly;
@@ -49,10 +49,10 @@ extern_class!(
 
 extern_class!(
     #[derive(Debug, PartialEq, Eq, Hash)]
-    #[cfg(feature = "AuthenticationServices_ASAccountAuthenticationModificationViewController")]
+    #[cfg(feature = "ASAccountAuthenticationModificationViewController")]
     pub struct ASAccountAuthenticationModificationViewController;
 
-    #[cfg(feature = "AuthenticationServices_ASAccountAuthenticationModificationViewController")]
+    #[cfg(feature = "ASAccountAuthenticationModificationViewController")]
     unsafe impl ClassType for ASAccountAuthenticationModificationViewController {
         type Super = ASViewController;
         type Mutability = mutability::MainThreadOnly;
@@ -61,10 +61,10 @@ extern_class!(
 
 extern_class!(
     #[derive(Debug, PartialEq, Eq, Hash)]
-    #[cfg(feature = "AuthenticationServices_ASAuthorizationAppleIDButton")]
+    #[cfg(feature = "ASAuthorizationAppleIDButton")]
     pub struct ASAuthorizationAppleIDButton;
 
-    #[cfg(feature = "AuthenticationServices_ASAuthorizationAppleIDButton")]
+    #[cfg(feature = "ASAuthorizationAppleIDButton")]
     unsafe impl ClassType for ASAuthorizationAppleIDButton {
         type Super = ASControl;
         type Mutability = mutability::MainThreadOnly;

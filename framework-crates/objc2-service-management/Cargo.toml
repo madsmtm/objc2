@@ -45,16 +45,16 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 
-ServiceManagement_SMAppService = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+SMAppService = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-ServiceManagement_SMErrors = []
-ServiceManagement_SMLoginItem = []
+SMErrors = []
+SMLoginItem = []
 all = [
-    "ServiceManagement_SMAppService",
-    "ServiceManagement_SMErrors",
-    "ServiceManagement_SMLoginItem",
+    "SMAppService",
+    "SMErrors",
+    "SMLoginItem",
     "block2",
 ]

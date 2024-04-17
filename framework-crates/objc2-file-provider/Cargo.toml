@@ -47,113 +47,113 @@ unstable-docsrs = []
 block2 = ["dep:block2"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 
-FileProvider_NSFileProviderActions = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-foundation/Foundation_NSValue",
+NSFileProviderActions = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSValue",
 ]
-FileProvider_NSFileProviderDefines = []
-FileProvider_NSFileProviderDomain = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+NSFileProviderDefines = []
+NSFileProviderDomain = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-FileProvider_NSFileProviderEnumerating = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+NSFileProviderEnumerating = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-FileProvider_NSFileProviderError = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+NSFileProviderError = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-FileProvider_NSFileProviderExtension = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+NSFileProviderExtension = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-FileProvider_NSFileProviderItem = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPersonNameComponents",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
-    "objc2-uniform-type-identifiers?/UniformTypeIdentifiers_UTType",
+NSFileProviderItem = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPersonNameComponents",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
+    "objc2-uniform-type-identifiers?/UTType",
 ]
-FileProvider_NSFileProviderItemDecoration = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
+NSFileProviderItemDecoration = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
-FileProvider_NSFileProviderManager = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSProgress",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-foundation/Foundation_NSURLSession",
+NSFileProviderManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSProgress",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSURLSession",
 ]
-FileProvider_NSFileProviderModifyItemOptions = []
-FileProvider_NSFileProviderReplicatedExtension = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSProgress",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+NSFileProviderModifyItemOptions = []
+NSFileProviderReplicatedExtension = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSProgress",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-FileProvider_NSFileProviderRequest = ["objc2-foundation/Foundation_NSURL"]
-FileProvider_NSFileProviderService = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSFileManager",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSXPCConnection",
+NSFileProviderRequest = ["objc2-foundation/NSURL"]
+NSFileProviderService = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSFileManager",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSXPCConnection",
 ]
-FileProvider_NSFileProviderTesting = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+NSFileProviderTesting = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-FileProvider_NSFileProviderThumbnailing = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSProgress",
-    "objc2-foundation/Foundation_NSString",
+NSFileProviderThumbnailing = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSProgress",
+    "objc2-foundation/NSString",
 ]
 all = [
-    "FileProvider_NSFileProviderActions",
-    "FileProvider_NSFileProviderDefines",
-    "FileProvider_NSFileProviderDomain",
-    "FileProvider_NSFileProviderEnumerating",
-    "FileProvider_NSFileProviderError",
-    "FileProvider_NSFileProviderExtension",
-    "FileProvider_NSFileProviderItem",
-    "FileProvider_NSFileProviderItemDecoration",
-    "FileProvider_NSFileProviderManager",
-    "FileProvider_NSFileProviderModifyItemOptions",
-    "FileProvider_NSFileProviderReplicatedExtension",
-    "FileProvider_NSFileProviderRequest",
-    "FileProvider_NSFileProviderService",
-    "FileProvider_NSFileProviderTesting",
-    "FileProvider_NSFileProviderThumbnailing",
+    "NSFileProviderActions",
+    "NSFileProviderDefines",
+    "NSFileProviderDomain",
+    "NSFileProviderEnumerating",
+    "NSFileProviderError",
+    "NSFileProviderExtension",
+    "NSFileProviderItem",
+    "NSFileProviderItemDecoration",
+    "NSFileProviderManager",
+    "NSFileProviderModifyItemOptions",
+    "NSFileProviderReplicatedExtension",
+    "NSFileProviderRequest",
+    "NSFileProviderService",
+    "NSFileProviderTesting",
+    "NSFileProviderThumbnailing",
     "block2",
     "objc2-uniform-type-identifiers",
 ]

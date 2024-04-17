@@ -25,8 +25,8 @@ impl NSAttributedString {
     ///
     /// The attributes must be valid.
     #[doc(alias = "initWithString:")]
-    #[cfg(feature = "Foundation_NSDictionary")]
-    #[cfg(feature = "Foundation_NSString")]
+    #[cfg(feature = "NSDictionary")]
+    #[cfg(feature = "NSString")]
     pub unsafe fn new_with_attributes(
         string: &NSString,
         attributes: &NSDictionary<NSAttributedStringKey, objc2::runtime::AnyObject>,
@@ -36,7 +36,7 @@ impl NSAttributedString {
 
     /// Creates a new attributed string without any attributes.
     #[doc(alias = "initWithString:")]
-    #[cfg(feature = "Foundation_NSString")]
+    #[cfg(feature = "NSString")]
     pub fn from_nsstring(string: &NSString) -> Id<Self> {
         Self::initWithString(Self::alloc(), string)
     }
@@ -46,7 +46,7 @@ impl NSMutableAttributedString {
     // TODO: new_with_attributes
 
     #[doc(alias = "initWithString:")]
-    #[cfg(feature = "Foundation_NSString")]
+    #[cfg(feature = "NSString")]
     pub fn from_nsstring(string: &NSString) -> Id<Self> {
         Self::initWithString(Self::alloc(), string)
     }

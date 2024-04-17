@@ -50,294 +50,294 @@ unstable-docsrs = []
 block2 = ["dep:block2"]
 objc2-core-location = ["dep:objc2-core-location"]
 
-CloudKit_CKAcceptSharesOperation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
+CKAcceptSharesOperation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
 ]
-CloudKit_CKAllowedSharingOptions = ["objc2-foundation/Foundation_NSObject"]
-CloudKit_CKAsset = ["objc2-foundation/Foundation_NSURL"]
-CloudKit_CKContainer = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+CKAllowedSharingOptions = ["objc2-foundation/NSObject"]
+CKAsset = ["objc2-foundation/NSURL"]
+CKContainer = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-CloudKit_CKDatabase = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSString",
+CKDatabase = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKDatabaseOperation = ["objc2-foundation/Foundation_NSOperation"]
-CloudKit_CKDefines = []
-CloudKit_CKDiscoverAllUserIdentitiesOperation = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
+CKDatabaseOperation = ["objc2-foundation/NSOperation"]
+CKDefines = []
+CKDiscoverAllUserIdentitiesOperation = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
 ]
-CloudKit_CKDiscoverUserIdentitiesOperation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
+CKDiscoverUserIdentitiesOperation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
 ]
-CloudKit_CKError = ["objc2-foundation/Foundation_NSString"]
-CloudKit_CKFetchDatabaseChangesOperation = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
+CKError = ["objc2-foundation/NSString"]
+CKFetchDatabaseChangesOperation = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
 ]
-CloudKit_CKFetchNotificationChangesOperation = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
+CKFetchNotificationChangesOperation = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
 ]
-CloudKit_CKFetchRecordChangesOperation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSString",
+CKFetchRecordChangesOperation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKFetchRecordZoneChangesOperation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSString",
+CKFetchRecordZoneChangesOperation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKFetchRecordZonesOperation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
+CKFetchRecordZonesOperation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
 ]
-CloudKit_CKFetchRecordsOperation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSString",
+CKFetchRecordsOperation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKFetchShareMetadataOperation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+CKFetchShareMetadataOperation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-CloudKit_CKFetchShareParticipantsOperation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
+CKFetchShareParticipantsOperation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
 ]
-CloudKit_CKFetchSubscriptionsOperation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSString",
+CKFetchSubscriptionsOperation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKFetchWebAuthTokenOperation = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSString",
+CKFetchWebAuthTokenOperation = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKLocationSortDescriptor = [
-    "objc2-core-location?/CoreLocation_CLLocation",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSortDescriptor",
-    "objc2-foundation/Foundation_NSString",
+CKLocationSortDescriptor = [
+    "objc2-core-location?/CLLocation",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSortDescriptor",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKMarkNotificationsReadOperation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
+CKMarkNotificationsReadOperation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
 ]
-CloudKit_CKModifyBadgeOperation = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
+CKModifyBadgeOperation = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
 ]
-CloudKit_CKModifyRecordZonesOperation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
+CKModifyRecordZonesOperation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
 ]
-CloudKit_CKModifyRecordsOperation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
+CKModifyRecordsOperation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
 ]
-CloudKit_CKModifySubscriptionsOperation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSString",
+CKModifySubscriptionsOperation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKNotification = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+CKNotification = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-CloudKit_CKOperation = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSString",
+CKOperation = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKOperationGroup = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CKOperationGroup = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKQuery = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSSortDescriptor",
-    "objc2-foundation/Foundation_NSString",
+CKQuery = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSSortDescriptor",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKQueryOperation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSString",
+CKQueryOperation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKRecord = [
-    "objc2-core-location?/CoreLocation_CLLocation",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+CKRecord = [
+    "objc2-core-location?/CLLocation",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-CloudKit_CKRecordID = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CKRecordID = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKRecordZone = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CKRecordZone = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKRecordZoneID = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CKRecordZoneID = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKReference = ["objc2-foundation/Foundation_NSObject"]
-CloudKit_CKServerChangeToken = ["objc2-foundation/Foundation_NSObject"]
-CloudKit_CKShare = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+CKReference = ["objc2-foundation/NSObject"]
+CKServerChangeToken = ["objc2-foundation/NSObject"]
+CKShare = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-CloudKit_CKShareMetadata = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CKShareMetadata = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKShareParticipant = ["objc2-foundation/Foundation_NSObject"]
-CloudKit_CKSubscription = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSString",
+CKShareParticipant = ["objc2-foundation/NSObject"]
+CKSubscription = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKSyncEngine = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSet",
+CKSyncEngine = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
 ]
-CloudKit_CKSyncEngineConfiguration = ["objc2-foundation/Foundation_NSString"]
-CloudKit_CKSyncEngineEvent = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+CKSyncEngineConfiguration = ["objc2-foundation/NSString"]
+CKSyncEngineEvent = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKSyncEngineRecordZoneChangeBatch = ["objc2-foundation/Foundation_NSArray"]
-CloudKit_CKSyncEngineState = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
+CKSyncEngineRecordZoneChangeBatch = ["objc2-foundation/NSArray"]
+CKSyncEngineState = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
 ]
-CloudKit_CKSystemSharingUIObserver = ["objc2-foundation/Foundation_NSError"]
-CloudKit_CKUserIdentity = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSPersonNameComponents",
-    "objc2-foundation/Foundation_NSString",
+CKSystemSharingUIObserver = ["objc2-foundation/NSError"]
+CKUserIdentity = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSPersonNameComponents",
+    "objc2-foundation/NSString",
 ]
-CloudKit_CKUserIdentityLookupInfo = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CKUserIdentityLookupInfo = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-CloudKit_NSItemProvider_CKSharingSupport = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSItemProvider",
+NSItemProvider_CKSharingSupport = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSItemProvider",
 ]
 all = [
-    "CloudKit_CKAcceptSharesOperation",
-    "CloudKit_CKAllowedSharingOptions",
-    "CloudKit_CKAsset",
-    "CloudKit_CKContainer",
-    "CloudKit_CKDatabase",
-    "CloudKit_CKDatabaseOperation",
-    "CloudKit_CKDefines",
-    "CloudKit_CKDiscoverAllUserIdentitiesOperation",
-    "CloudKit_CKDiscoverUserIdentitiesOperation",
-    "CloudKit_CKError",
-    "CloudKit_CKFetchDatabaseChangesOperation",
-    "CloudKit_CKFetchNotificationChangesOperation",
-    "CloudKit_CKFetchRecordChangesOperation",
-    "CloudKit_CKFetchRecordZoneChangesOperation",
-    "CloudKit_CKFetchRecordZonesOperation",
-    "CloudKit_CKFetchRecordsOperation",
-    "CloudKit_CKFetchShareMetadataOperation",
-    "CloudKit_CKFetchShareParticipantsOperation",
-    "CloudKit_CKFetchSubscriptionsOperation",
-    "CloudKit_CKFetchWebAuthTokenOperation",
-    "CloudKit_CKLocationSortDescriptor",
-    "CloudKit_CKMarkNotificationsReadOperation",
-    "CloudKit_CKModifyBadgeOperation",
-    "CloudKit_CKModifyRecordZonesOperation",
-    "CloudKit_CKModifyRecordsOperation",
-    "CloudKit_CKModifySubscriptionsOperation",
-    "CloudKit_CKNotification",
-    "CloudKit_CKOperation",
-    "CloudKit_CKOperationGroup",
-    "CloudKit_CKQuery",
-    "CloudKit_CKQueryOperation",
-    "CloudKit_CKRecord",
-    "CloudKit_CKRecordID",
-    "CloudKit_CKRecordZone",
-    "CloudKit_CKRecordZoneID",
-    "CloudKit_CKReference",
-    "CloudKit_CKServerChangeToken",
-    "CloudKit_CKShare",
-    "CloudKit_CKShareMetadata",
-    "CloudKit_CKShareParticipant",
-    "CloudKit_CKSubscription",
-    "CloudKit_CKSyncEngine",
-    "CloudKit_CKSyncEngineConfiguration",
-    "CloudKit_CKSyncEngineEvent",
-    "CloudKit_CKSyncEngineRecordZoneChangeBatch",
-    "CloudKit_CKSyncEngineState",
-    "CloudKit_CKSystemSharingUIObserver",
-    "CloudKit_CKUserIdentity",
-    "CloudKit_CKUserIdentityLookupInfo",
-    "CloudKit_NSItemProvider_CKSharingSupport",
+    "CKAcceptSharesOperation",
+    "CKAllowedSharingOptions",
+    "CKAsset",
+    "CKContainer",
+    "CKDatabase",
+    "CKDatabaseOperation",
+    "CKDefines",
+    "CKDiscoverAllUserIdentitiesOperation",
+    "CKDiscoverUserIdentitiesOperation",
+    "CKError",
+    "CKFetchDatabaseChangesOperation",
+    "CKFetchNotificationChangesOperation",
+    "CKFetchRecordChangesOperation",
+    "CKFetchRecordZoneChangesOperation",
+    "CKFetchRecordZonesOperation",
+    "CKFetchRecordsOperation",
+    "CKFetchShareMetadataOperation",
+    "CKFetchShareParticipantsOperation",
+    "CKFetchSubscriptionsOperation",
+    "CKFetchWebAuthTokenOperation",
+    "CKLocationSortDescriptor",
+    "CKMarkNotificationsReadOperation",
+    "CKModifyBadgeOperation",
+    "CKModifyRecordZonesOperation",
+    "CKModifyRecordsOperation",
+    "CKModifySubscriptionsOperation",
+    "CKNotification",
+    "CKOperation",
+    "CKOperationGroup",
+    "CKQuery",
+    "CKQueryOperation",
+    "CKRecord",
+    "CKRecordID",
+    "CKRecordZone",
+    "CKRecordZoneID",
+    "CKReference",
+    "CKServerChangeToken",
+    "CKShare",
+    "CKShareMetadata",
+    "CKShareParticipant",
+    "CKSubscription",
+    "CKSyncEngine",
+    "CKSyncEngineConfiguration",
+    "CKSyncEngineEvent",
+    "CKSyncEngineRecordZoneChangeBatch",
+    "CKSyncEngineState",
+    "CKSystemSharingUIObserver",
+    "CKUserIdentity",
+    "CKUserIdentityLookupInfo",
+    "NSItemProvider_CKSharingSupport",
     "block2",
     "objc2-core-location",
 ]

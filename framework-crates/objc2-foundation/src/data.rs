@@ -4,7 +4,7 @@ use core::ffi::c_void;
 use core::fmt;
 use core::ops::Index;
 use core::ops::IndexMut;
-#[cfg(feature = "Foundation_NSRange")]
+#[cfg(feature = "NSRange")]
 use core::ops::Range;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
@@ -122,7 +122,7 @@ impl NSMutableData {
     }
 
     #[doc(alias = "replaceBytesInRange:withBytes:length:")]
-    #[cfg(feature = "Foundation_NSRange")]
+    #[cfg(feature = "NSRange")]
     pub fn replace_range(&mut self, range: Range<usize>, bytes: &[u8]) {
         // No need to verify the length of the range here,
         // `replaceBytesInRange:` zero-fills if out of bounds.
@@ -130,7 +130,7 @@ impl NSMutableData {
         unsafe { self.replaceBytesInRange_withBytes_length(range.into(), ptr, bytes.len()) }
     }
 
-    #[cfg(feature = "Foundation_NSRange")]
+    #[cfg(feature = "NSRange")]
     pub fn set_bytes(&mut self, bytes: &[u8]) {
         let len = self.len();
         self.replace_range(0..len, bytes);

@@ -47,133 +47,133 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 
-CallKit_CXAction = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUUID",
+CXAction = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUUID",
 ]
-CallKit_CXAnswerCallAction = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUUID",
+CXAnswerCallAction = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUUID",
 ]
-CallKit_CXBase = []
-CallKit_CXCall = ["objc2-foundation/Foundation_NSUUID"]
-CallKit_CXCallAction = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUUID",
+CXBase = []
+CXCall = ["objc2-foundation/NSUUID"]
+CXCallAction = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUUID",
 ]
-CallKit_CXCallController = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
+CXCallController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
 ]
-CallKit_CXCallDirectory = []
-CallKit_CXCallDirectoryExtensionContext = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSExtensionContext",
-    "objc2-foundation/Foundation_NSString",
+CXCallDirectory = []
+CXCallDirectoryExtensionContext = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSExtensionContext",
+    "objc2-foundation/NSString",
 ]
-CallKit_CXCallDirectoryManager = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+CXCallDirectoryManager = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-CallKit_CXCallDirectoryProvider = [
-    "objc2-foundation/Foundation_NSExtensionContext",
-    "objc2-foundation/Foundation_NSExtensionRequestHandling",
+CXCallDirectoryProvider = [
+    "objc2-foundation/NSExtensionContext",
+    "objc2-foundation/NSExtensionRequestHandling",
 ]
-CallKit_CXCallObserver = ["objc2-foundation/Foundation_NSArray"]
-CallKit_CXCallUpdate = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CXCallObserver = ["objc2-foundation/NSArray"]
+CXCallUpdate = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-CallKit_CXEndCallAction = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUUID",
+CXEndCallAction = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUUID",
 ]
-CallKit_CXError = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+CXError = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-CallKit_CXHandle = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CXHandle = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-CallKit_CXPlayDTMFCallAction = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUUID",
+CXPlayDTMFCallAction = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
 ]
-CallKit_CXProvider = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSUUID",
+CXProvider = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSUUID",
 ]
-CallKit_CXProviderConfiguration = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+CXProviderConfiguration = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-CallKit_CXSetGroupCallAction = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUUID",
+CXSetGroupCallAction = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUUID",
 ]
-CallKit_CXSetHeldCallAction = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUUID",
+CXSetHeldCallAction = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUUID",
 ]
-CallKit_CXSetMutedCallAction = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUUID",
+CXSetMutedCallAction = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUUID",
 ]
-CallKit_CXStartCallAction = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUUID",
+CXStartCallAction = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
 ]
-CallKit_CXTransaction = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUUID",
+CXTransaction = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUUID",
 ]
 all = [
-    "CallKit_CXAction",
-    "CallKit_CXAnswerCallAction",
-    "CallKit_CXBase",
-    "CallKit_CXCall",
-    "CallKit_CXCallAction",
-    "CallKit_CXCallController",
-    "CallKit_CXCallDirectory",
-    "CallKit_CXCallDirectoryExtensionContext",
-    "CallKit_CXCallDirectoryManager",
-    "CallKit_CXCallDirectoryProvider",
-    "CallKit_CXCallObserver",
-    "CallKit_CXCallUpdate",
-    "CallKit_CXEndCallAction",
-    "CallKit_CXError",
-    "CallKit_CXHandle",
-    "CallKit_CXPlayDTMFCallAction",
-    "CallKit_CXProvider",
-    "CallKit_CXProviderConfiguration",
-    "CallKit_CXSetGroupCallAction",
-    "CallKit_CXSetHeldCallAction",
-    "CallKit_CXSetMutedCallAction",
-    "CallKit_CXStartCallAction",
-    "CallKit_CXTransaction",
+    "CXAction",
+    "CXAnswerCallAction",
+    "CXBase",
+    "CXCall",
+    "CXCallAction",
+    "CXCallController",
+    "CXCallDirectory",
+    "CXCallDirectoryExtensionContext",
+    "CXCallDirectoryManager",
+    "CXCallDirectoryProvider",
+    "CXCallObserver",
+    "CXCallUpdate",
+    "CXEndCallAction",
+    "CXError",
+    "CXHandle",
+    "CXPlayDTMFCallAction",
+    "CXProvider",
+    "CXProviderConfiguration",
+    "CXSetGroupCallAction",
+    "CXSetHeldCallAction",
+    "CXSetMutedCallAction",
+    "CXStartCallAction",
+    "CXTransaction",
     "block2",
 ]

@@ -53,100 +53,100 @@ objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-location = ["dep:objc2-core-location"]
 objc2-map-kit = ["dep:objc2-map-kit"]
 
-EventKit_EKAlarm = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+EKAlarm = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-EventKit_EKCalendar = [
-    "objc2-app-kit?/AppKit_NSColor",
-    "objc2-foundation/Foundation_NSString",
+EKCalendar = [
+    "objc2-app-kit?/NSColor",
+    "objc2-foundation/NSString",
 ]
-EventKit_EKCalendarItem = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSTimeZone",
-    "objc2-foundation/Foundation_NSURL",
+EKCalendarItem = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSTimeZone",
+    "objc2-foundation/NSURL",
 ]
-EventKit_EKError = ["objc2-foundation/Foundation_NSString"]
-EventKit_EKEvent = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSString",
+EKError = ["objc2-foundation/NSString"]
+EKEvent = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSString",
 ]
-EventKit_EKEventStore = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSString",
+EKEventStore = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSString",
 ]
-EventKit_EKObject = []
-EventKit_EKParticipant = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+EKObject = []
+EKParticipant = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-EventKit_EKRecurrenceDayOfWeek = ["objc2-foundation/Foundation_NSObject"]
-EventKit_EKRecurrenceEnd = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
+EKRecurrenceDayOfWeek = ["objc2-foundation/NSObject"]
+EKRecurrenceEnd = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
 ]
-EventKit_EKRecurrenceRule = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+EKRecurrenceRule = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-EventKit_EKReminder = [
-    "objc2-foundation/Foundation_NSCalendar",
-    "objc2-foundation/Foundation_NSDate",
+EKReminder = [
+    "objc2-foundation/NSCalendar",
+    "objc2-foundation/NSDate",
 ]
-EventKit_EKSource = [
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+EKSource = [
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
-EventKit_EKStructuredLocation = [
-    "objc2-core-location?/CoreLocation_CLLocation",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-map-kit?/MapKit_MKMapItem",
+EKStructuredLocation = [
+    "objc2-core-location?/CLLocation",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-map-kit?/MKMapItem",
 ]
-EventKit_EKTypes = []
-EventKit_EKVirtualConferenceDescriptor = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+EKTypes = []
+EKVirtualConferenceDescriptor = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-EventKit_EKVirtualConferenceProvider = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSExtensionRequestHandling",
-    "objc2-foundation/Foundation_NSString",
+EKVirtualConferenceProvider = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSExtensionRequestHandling",
+    "objc2-foundation/NSString",
 ]
-EventKit_EventKitDefines = []
+EventKitDefines = []
 all = [
-    "EventKit_EKAlarm",
-    "EventKit_EKCalendar",
-    "EventKit_EKCalendarItem",
-    "EventKit_EKError",
-    "EventKit_EKEvent",
-    "EventKit_EKEventStore",
-    "EventKit_EKObject",
-    "EventKit_EKParticipant",
-    "EventKit_EKRecurrenceDayOfWeek",
-    "EventKit_EKRecurrenceEnd",
-    "EventKit_EKRecurrenceRule",
-    "EventKit_EKReminder",
-    "EventKit_EKSource",
-    "EventKit_EKStructuredLocation",
-    "EventKit_EKTypes",
-    "EventKit_EKVirtualConferenceDescriptor",
-    "EventKit_EKVirtualConferenceProvider",
-    "EventKit_EventKitDefines",
+    "EKAlarm",
+    "EKCalendar",
+    "EKCalendarItem",
+    "EKError",
+    "EKEvent",
+    "EKEventStore",
+    "EKObject",
+    "EKParticipant",
+    "EKRecurrenceDayOfWeek",
+    "EKRecurrenceEnd",
+    "EKRecurrenceRule",
+    "EKReminder",
+    "EKSource",
+    "EKStructuredLocation",
+    "EKTypes",
+    "EKVirtualConferenceDescriptor",
+    "EKVirtualConferenceProvider",
+    "EventKitDefines",
     "block2",
     "objc2-app-kit",
     "objc2-core-location",

@@ -31,9 +31,9 @@ pub use self::generated::*;
 use objc2::extern_methods;
 
 extern_methods!(
-    #[cfg(feature = "WebKit_WKNavigationAction")]
+    #[cfg(feature = "WKNavigationAction")]
     unsafe impl WKNavigationAction {
-        #[cfg(feature = "WebKit_WKFrameInfo")]
+        #[cfg(feature = "WKFrameInfo")]
         #[method_id(@__retain_semantics Other sourceFrame)]
         pub unsafe fn sourceFrame(&self) -> Option<objc2::rc::Id<WKFrameInfo>>;
     }

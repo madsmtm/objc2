@@ -44,201 +44,201 @@ alloc = ["objc2/alloc"]
 # For better documentation on docs.rs
 unstable-docsrs = []
 
-MetricKit_MXAnimationMetric = [
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXAnimationMetric = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXAppExitMetric = ["objc2-foundation/Foundation_NSObject"]
-MetricKit_MXAppLaunchDiagnostic = [
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXAppExitMetric = ["objc2-foundation/NSObject"]
+MXAppLaunchDiagnostic = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXAppLaunchMetric = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXAppLaunchMetric = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXAppResponsivenessMetric = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXAppResponsivenessMetric = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXAppRunTimeMetric = [
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXAppRunTimeMetric = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXAverage = [
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
+MXAverage = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
 ]
-MetricKit_MXCPUExceptionDiagnostic = [
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXCPUExceptionDiagnostic = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXCPUMetric = [
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXCPUMetric = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXCallStackTree = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
+MXCallStackTree = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
 ]
-MetricKit_MXCellularConditionMetric = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXCellularConditionMetric = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXCrashDiagnostic = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+MXCrashDiagnostic = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-MetricKit_MXCrashDiagnosticObjectiveCExceptionReason = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MXCrashDiagnosticObjectiveCExceptionReason = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-MetricKit_MXDiagnostic = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MXDiagnostic = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-MetricKit_MXDiagnosticPayload = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
+MXDiagnosticPayload = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
 ]
-MetricKit_MXDiskIOMetric = [
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXDiskIOMetric = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXDiskWriteExceptionDiagnostic = [
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXDiskWriteExceptionDiagnostic = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXDisplayMetric = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXDisplayMetric = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXError = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+MXError = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-MetricKit_MXGPUMetric = [
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXGPUMetric = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXHangDiagnostic = [
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXHangDiagnostic = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXHistogram = [
-    "objc2-foundation/Foundation_NSEnumerator",
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
+MXHistogram = [
+    "objc2-foundation/NSEnumerator",
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
 ]
-MetricKit_MXLocationActivityMetric = [
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXLocationActivityMetric = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXMemoryMetric = [
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXMemoryMetric = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXMetaData = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MXMetaData = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-MetricKit_MXMetric = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
+MXMetric = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
 ]
-MetricKit_MXMetricManager = ["objc2-foundation/Foundation_NSArray"]
-MetricKit_MXMetricPayload = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MXMetricManager = ["objc2-foundation/NSArray"]
+MXMetricPayload = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-MetricKit_MXNetworkTransferMetric = [
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUnit",
+MXNetworkTransferMetric = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXSignpost = []
-MetricKit_MXSignpostMetric = [
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUnit",
+MXSignpost = []
+MXSignpostMetric = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXSignpostRecord = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSMeasurement",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUnit",
+MXSignpostRecord = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUnit",
 ]
-MetricKit_MXSignpost_Private = []
-MetricKit_MXUnit = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUnit",
+MXSignpost_Private = []
+MXUnit = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUnit",
 ]
 all = [
-    "MetricKit_MXAnimationMetric",
-    "MetricKit_MXAppExitMetric",
-    "MetricKit_MXAppLaunchDiagnostic",
-    "MetricKit_MXAppLaunchMetric",
-    "MetricKit_MXAppResponsivenessMetric",
-    "MetricKit_MXAppRunTimeMetric",
-    "MetricKit_MXAverage",
-    "MetricKit_MXCPUExceptionDiagnostic",
-    "MetricKit_MXCPUMetric",
-    "MetricKit_MXCallStackTree",
-    "MetricKit_MXCellularConditionMetric",
-    "MetricKit_MXCrashDiagnostic",
-    "MetricKit_MXCrashDiagnosticObjectiveCExceptionReason",
-    "MetricKit_MXDiagnostic",
-    "MetricKit_MXDiagnosticPayload",
-    "MetricKit_MXDiskIOMetric",
-    "MetricKit_MXDiskWriteExceptionDiagnostic",
-    "MetricKit_MXDisplayMetric",
-    "MetricKit_MXError",
-    "MetricKit_MXGPUMetric",
-    "MetricKit_MXHangDiagnostic",
-    "MetricKit_MXHistogram",
-    "MetricKit_MXLocationActivityMetric",
-    "MetricKit_MXMemoryMetric",
-    "MetricKit_MXMetaData",
-    "MetricKit_MXMetric",
-    "MetricKit_MXMetricManager",
-    "MetricKit_MXMetricPayload",
-    "MetricKit_MXNetworkTransferMetric",
-    "MetricKit_MXSignpost",
-    "MetricKit_MXSignpostMetric",
-    "MetricKit_MXSignpostRecord",
-    "MetricKit_MXSignpost_Private",
-    "MetricKit_MXUnit",
+    "MXAnimationMetric",
+    "MXAppExitMetric",
+    "MXAppLaunchDiagnostic",
+    "MXAppLaunchMetric",
+    "MXAppResponsivenessMetric",
+    "MXAppRunTimeMetric",
+    "MXAverage",
+    "MXCPUExceptionDiagnostic",
+    "MXCPUMetric",
+    "MXCallStackTree",
+    "MXCellularConditionMetric",
+    "MXCrashDiagnostic",
+    "MXCrashDiagnosticObjectiveCExceptionReason",
+    "MXDiagnostic",
+    "MXDiagnosticPayload",
+    "MXDiskIOMetric",
+    "MXDiskWriteExceptionDiagnostic",
+    "MXDisplayMetric",
+    "MXError",
+    "MXGPUMetric",
+    "MXHangDiagnostic",
+    "MXHistogram",
+    "MXLocationActivityMetric",
+    "MXMemoryMetric",
+    "MXMetaData",
+    "MXMetric",
+    "MXMetricManager",
+    "MXMetricPayload",
+    "MXNetworkTransferMetric",
+    "MXSignpost",
+    "MXSignpostMetric",
+    "MXSignpostRecord",
+    "MXSignpost_Private",
+    "MXUnit",
 ]

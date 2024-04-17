@@ -1,5 +1,5 @@
-#![cfg(feature = "Foundation_NSSet")]
-#![cfg(feature = "Foundation_NSString")]
+#![cfg(feature = "NSSet")]
+#![cfg(feature = "NSString")]
 use alloc::vec;
 
 use crate::Foundation::{self, ns_string, NSMutableSet, NSString};
@@ -34,7 +34,7 @@ fn test_clear() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 fn test_into_vec() {
     let strs = vec![
         Foundation::NSMutableString::from_str("one"),
@@ -63,7 +63,7 @@ fn test_extend() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 fn test_mutable_copy() {
     use Foundation::{NSMutableCopying, NSSet};
 

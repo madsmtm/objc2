@@ -46,70 +46,70 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 
-ClassKit_CLSActivity = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
+CLSActivity = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
 ]
-ClassKit_CLSActivityItem = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CLSActivityItem = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-ClassKit_CLSBinaryItem = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CLSBinaryItem = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-ClassKit_CLSContext = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+CLSContext = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-ClassKit_CLSContextProvider = ["objc2-foundation/Foundation_NSError"]
-ClassKit_CLSDataStore = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+CLSContextProvider = ["objc2-foundation/NSError"]
+CLSDataStore = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-ClassKit_CLSDefines = ["objc2-foundation/Foundation_NSString"]
-ClassKit_CLSObject = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
+CLSDefines = ["objc2-foundation/NSString"]
+CLSObject = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
 ]
-ClassKit_CLSProgressReportingCapability = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CLSProgressReportingCapability = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-ClassKit_CLSQuantityItem = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CLSQuantityItem = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-ClassKit_CLSScoreItem = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CLSScoreItem = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-ClassKit_NSUserActivity_CLSDeepLinks = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUserActivity",
+NSUserActivity_CLSDeepLinks = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUserActivity",
 ]
 all = [
-    "ClassKit_CLSActivity",
-    "ClassKit_CLSActivityItem",
-    "ClassKit_CLSBinaryItem",
-    "ClassKit_CLSContext",
-    "ClassKit_CLSContextProvider",
-    "ClassKit_CLSDataStore",
-    "ClassKit_CLSDefines",
-    "ClassKit_CLSObject",
-    "ClassKit_CLSProgressReportingCapability",
-    "ClassKit_CLSQuantityItem",
-    "ClassKit_CLSScoreItem",
-    "ClassKit_NSUserActivity_CLSDeepLinks",
+    "CLSActivity",
+    "CLSActivityItem",
+    "CLSBinaryItem",
+    "CLSContext",
+    "CLSContextProvider",
+    "CLSDataStore",
+    "CLSDefines",
+    "CLSObject",
+    "CLSProgressReportingCapability",
+    "CLSQuantityItem",
+    "CLSScoreItem",
+    "NSUserActivity_CLSDeepLinks",
     "block2",
 ]

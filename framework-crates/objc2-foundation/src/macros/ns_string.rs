@@ -65,7 +65,7 @@
 /// assert_eq!(ns_string!("exa\0mple").to_string(), "exa\0mple");
 /// ```
 // For auto_doc_cfg
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 #[macro_export]
 macro_rules! ns_string {
     ($s:expr) => {{

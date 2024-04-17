@@ -13,19 +13,13 @@ fn slice_to_ptr_count<T>(slice: &[T]) -> (NonNull<T>, usize) {
     (ptr, slice.len())
 }
 
-#[cfg(all(
-    feature = "Metal_MTLRenderCommandEncoder",
-    feature = "Metal_MTLCommandEncoder"
-))]
+#[cfg(all(feature = "MTLRenderCommandEncoder", feature = "MTLCommandEncoder"))]
 pub trait MTLRenderCommandEncoderSliceExt: MTLRenderCommandEncoder + objc2::Message {
     // TODO: Safety
     unsafe fn setViewports(&self, viewports: &[MTLViewport]);
 }
 
-#[cfg(all(
-    feature = "Metal_MTLRenderCommandEncoder",
-    feature = "Metal_MTLCommandEncoder"
-))]
+#[cfg(all(feature = "MTLRenderCommandEncoder", feature = "MTLCommandEncoder"))]
 impl<P: MTLRenderCommandEncoder + objc2::Message> MTLRenderCommandEncoderSliceExt for P {
     unsafe fn setViewports(&self, viewports: &[MTLViewport]) {
         let (ptr, count) = slice_to_ptr_count(viewports);

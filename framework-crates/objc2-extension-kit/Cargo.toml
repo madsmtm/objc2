@@ -48,35 +48,35 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 objc2-app-kit = ["dep:objc2-app-kit"]
 
-ExtensionKit_EXAppExtensionBrowserViewController = [
-    "objc2-app-kit?/AppKit_NSKeyValueBinding",
-    "objc2-app-kit?/AppKit_NSNib",
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSStoryboardSegue",
-    "objc2-app-kit?/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+EXAppExtensionBrowserViewController = [
+    "objc2-app-kit?/NSKeyValueBinding",
+    "objc2-app-kit?/NSNib",
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSStoryboardSegue",
+    "objc2-app-kit?/NSUserInterfaceItemIdentification",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-ExtensionKit_EXHostViewController = [
-    "objc2-app-kit?/AppKit_NSKeyValueBinding",
-    "objc2-app-kit?/AppKit_NSNib",
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSStoryboardSegue",
-    "objc2-app-kit?/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/AppKit_NSView",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSXPCConnection",
+EXHostViewController = [
+    "objc2-app-kit?/NSKeyValueBinding",
+    "objc2-app-kit?/NSNib",
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSStoryboardSegue",
+    "objc2-app-kit?/NSUserInterfaceItemIdentification",
+    "objc2-app-kit?/NSView",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSXPCConnection",
 ]
 all = [
-    "ExtensionKit_EXAppExtensionBrowserViewController",
-    "ExtensionKit_EXHostViewController",
+    "EXAppExtensionBrowserViewController",
+    "EXHostViewController",
     "objc2-app-kit",
 ]

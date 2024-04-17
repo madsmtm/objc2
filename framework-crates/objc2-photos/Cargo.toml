@@ -54,185 +54,185 @@ objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-location = ["dep:objc2-core-location"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 
-Photos_PHAdjustmentData = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSString",
+PHAdjustmentData = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSString",
 ]
-Photos_PHAsset = [
-    "objc2-core-location?/CoreLocation_CLLocation",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+PHAsset = [
+    "objc2-core-location?/CLLocation",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-Photos_PHAssetChangeRequest = [
-    "objc2-app-kit?/AppKit_NSImage",
-    "objc2-core-location?/CoreLocation_CLLocation",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSEnumerator",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+PHAssetChangeRequest = [
+    "objc2-app-kit?/NSImage",
+    "objc2-core-location?/CLLocation",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSEnumerator",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-Photos_PHAssetCollectionChangeRequest = [
-    "objc2-foundation/Foundation_NSEnumerator",
-    "objc2-foundation/Foundation_NSIndexSet",
-    "objc2-foundation/Foundation_NSString",
+PHAssetCollectionChangeRequest = [
+    "objc2-foundation/NSEnumerator",
+    "objc2-foundation/NSIndexSet",
+    "objc2-foundation/NSString",
 ]
-Photos_PHAssetCreationRequest = [
-    "objc2-app-kit?/AppKit_NSImage",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-foundation/Foundation_NSValue",
+PHAssetCreationRequest = [
+    "objc2-app-kit?/NSImage",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSValue",
 ]
-Photos_PHAssetResource = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
+PHAssetResource = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
-Photos_PHAssetResourceManager = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSURL",
+PHAssetResourceManager = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSURL",
 ]
-Photos_PHChange = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSIndexSet",
+PHChange = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSIndexSet",
 ]
-Photos_PHChangeRequest = []
-Photos_PHCloudIdentifier = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+PHChangeRequest = []
+PHCloudIdentifier = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Photos_PHCollection = [
-    "objc2-core-location?/CoreLocation_CLLocation",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+PHCollection = [
+    "objc2-core-location?/CLLocation",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-Photos_PHCollectionListChangeRequest = [
-    "objc2-foundation/Foundation_NSEnumerator",
-    "objc2-foundation/Foundation_NSIndexSet",
-    "objc2-foundation/Foundation_NSString",
+PHCollectionListChangeRequest = [
+    "objc2-foundation/NSEnumerator",
+    "objc2-foundation/NSIndexSet",
+    "objc2-foundation/NSString",
 ]
-Photos_PHContentEditingInput = [
-    "objc2-app-kit?/AppKit_NSImage",
-    "objc2-core-location?/CoreLocation_CLLocation",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+PHContentEditingInput = [
+    "objc2-app-kit?/NSImage",
+    "objc2-core-location?/CLLocation",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-Photos_PHContentEditingOutput = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-uniform-type-identifiers?/UniformTypeIdentifiers_UTType",
+PHContentEditingOutput = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSURL",
+    "objc2-uniform-type-identifiers?/UTType",
 ]
-Photos_PHError = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+PHError = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-Photos_PHFetchOptions = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSSortDescriptor",
+PHFetchOptions = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSSortDescriptor",
 ]
-Photos_PHFetchResult = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSEnumerator",
-    "objc2-foundation/Foundation_NSIndexSet",
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
+PHFetchResult = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSEnumerator",
+    "objc2-foundation/NSIndexSet",
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
 ]
-Photos_PHImageManager = [
-    "objc2-app-kit?/AppKit_NSImage",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+PHImageManager = [
+    "objc2-app-kit?/NSImage",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Photos_PHLivePhoto = [
-    "objc2-app-kit?/AppKit_NSImage",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSItemProvider",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+PHLivePhoto = [
+    "objc2-app-kit?/NSImage",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSItemProvider",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-Photos_PHLivePhotoEditingContext = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSString",
+PHLivePhotoEditingContext = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
 ]
-Photos_PHObject = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+PHObject = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Photos_PHPersistentChange = ["objc2-foundation/Foundation_NSError"]
-Photos_PHPersistentChangeFetchResult = []
-Photos_PHPersistentChangeToken = ["objc2-foundation/Foundation_NSObject"]
-Photos_PHPersistentObjectChangeDetails = [
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+PHPersistentChange = ["objc2-foundation/NSError"]
+PHPersistentChangeFetchResult = []
+PHPersistentChangeToken = ["objc2-foundation/NSObject"]
+PHPersistentObjectChangeDetails = [
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
-Photos_PHPhotoLibrary = ["objc2-foundation/Foundation_NSError"]
-Photos_PHProject = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
+PHPhotoLibrary = ["objc2-foundation/NSError"]
+PHProject = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
 ]
-Photos_PHProjectChangeRequest = [
-    "objc2-app-kit?/AppKit_NSImage",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSEnumerator",
-    "objc2-foundation/Foundation_NSString",
+PHProjectChangeRequest = [
+    "objc2-app-kit?/NSImage",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSEnumerator",
+    "objc2-foundation/NSString",
 ]
-Photos_PhotosTypes = []
+PhotosTypes = []
 all = [
-    "Photos_PHAdjustmentData",
-    "Photos_PHAsset",
-    "Photos_PHAssetChangeRequest",
-    "Photos_PHAssetCollectionChangeRequest",
-    "Photos_PHAssetCreationRequest",
-    "Photos_PHAssetResource",
-    "Photos_PHAssetResourceManager",
-    "Photos_PHChange",
-    "Photos_PHChangeRequest",
-    "Photos_PHCloudIdentifier",
-    "Photos_PHCollection",
-    "Photos_PHCollectionListChangeRequest",
-    "Photos_PHContentEditingInput",
-    "Photos_PHContentEditingOutput",
-    "Photos_PHError",
-    "Photos_PHFetchOptions",
-    "Photos_PHFetchResult",
-    "Photos_PHImageManager",
-    "Photos_PHLivePhoto",
-    "Photos_PHLivePhotoEditingContext",
-    "Photos_PHObject",
-    "Photos_PHPersistentChange",
-    "Photos_PHPersistentChangeFetchResult",
-    "Photos_PHPersistentChangeToken",
-    "Photos_PHPersistentObjectChangeDetails",
-    "Photos_PHPhotoLibrary",
-    "Photos_PHProject",
-    "Photos_PHProjectChangeRequest",
-    "Photos_PhotosTypes",
+    "PHAdjustmentData",
+    "PHAsset",
+    "PHAssetChangeRequest",
+    "PHAssetCollectionChangeRequest",
+    "PHAssetCreationRequest",
+    "PHAssetResource",
+    "PHAssetResourceManager",
+    "PHChange",
+    "PHChangeRequest",
+    "PHCloudIdentifier",
+    "PHCollection",
+    "PHCollectionListChangeRequest",
+    "PHContentEditingInput",
+    "PHContentEditingOutput",
+    "PHError",
+    "PHFetchOptions",
+    "PHFetchResult",
+    "PHImageManager",
+    "PHLivePhoto",
+    "PHLivePhotoEditingContext",
+    "PHObject",
+    "PHPersistentChange",
+    "PHPersistentChangeFetchResult",
+    "PHPersistentChangeToken",
+    "PHPersistentObjectChangeDetails",
+    "PHPhotoLibrary",
+    "PHProject",
+    "PHProjectChangeRequest",
+    "PhotosTypes",
     "block2",
     "objc2-app-kit",
     "objc2-core-location",

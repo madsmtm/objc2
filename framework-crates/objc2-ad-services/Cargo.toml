@@ -44,8 +44,8 @@ alloc = ["objc2/alloc"]
 # For better documentation on docs.rs
 unstable-docsrs = []
 
-AdServices_AAAttribution = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+AAAttribution = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-all = ["AdServices_AAAttribution"]
+all = ["AAAttribution"]

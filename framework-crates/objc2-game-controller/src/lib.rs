@@ -15,21 +15,21 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
-#[cfg(feature = "GameController_GCExtendedGamepadSnapshot")]
+#[cfg(feature = "GCExtendedGamepadSnapshot")]
 mod extended_gamepad_snapshot;
 mod generated;
-#[cfg(feature = "GameController_GCInputNames")]
+#[cfg(feature = "GCInputNames")]
 mod input_names;
 
-#[cfg(feature = "GameController_GCExtendedGamepadSnapshot")]
+#[cfg(feature = "GCExtendedGamepadSnapshot")]
 #[allow(deprecated)]
 pub use self::extended_gamepad_snapshot::GCExtendedGamepadSnapshotData;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
-#[cfg(feature = "GameController_GCInputNames")]
+#[cfg(feature = "GCInputNames")]
 pub use self::input_names::*;
 
 // TODO: GCKeyCode = CFIndex
 // NOTE: CFIndex is c_long_long on __LLP64__ / Windows 64-bit (doesn't matter for us)
-#[cfg(feature = "GameController_GCKeyCodes")]
+#[cfg(feature = "GCKeyCodes")]
 pub type GCKeyCode = std::os::raw::c_long;

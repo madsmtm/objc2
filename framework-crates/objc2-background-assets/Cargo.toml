@@ -46,47 +46,47 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 
-BackgroundAssets_BAAppExtensionInfo = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSValue",
+BAAppExtensionInfo = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSValue",
 ]
-BackgroundAssets_BABase = []
-BackgroundAssets_BADownload = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+BABase = []
+BADownload = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-BackgroundAssets_BADownloadManager = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-foundation/Foundation_NSURLAuthenticationChallenge",
-    "objc2-foundation/Foundation_NSURLCredential",
-    "objc2-foundation/Foundation_NSURLSession",
+BADownloadManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSURLAuthenticationChallenge",
+    "objc2-foundation/NSURLCredential",
+    "objc2-foundation/NSURLSession",
 ]
-BackgroundAssets_BADownloaderExtension = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-foundation/Foundation_NSURLAuthenticationChallenge",
-    "objc2-foundation/Foundation_NSURLCredential",
-    "objc2-foundation/Foundation_NSURLSession",
+BADownloaderExtension = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSURLAuthenticationChallenge",
+    "objc2-foundation/NSURLCredential",
+    "objc2-foundation/NSURLSession",
 ]
-BackgroundAssets_BAError = ["objc2-foundation/Foundation_NSString"]
-BackgroundAssets_BATypes = []
-BackgroundAssets_BAURLDownload = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURLRequest",
+BAError = ["objc2-foundation/NSString"]
+BATypes = []
+BAURLDownload = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURLRequest",
 ]
 all = [
-    "BackgroundAssets_BAAppExtensionInfo",
-    "BackgroundAssets_BABase",
-    "BackgroundAssets_BADownload",
-    "BackgroundAssets_BADownloadManager",
-    "BackgroundAssets_BADownloaderExtension",
-    "BackgroundAssets_BAError",
-    "BackgroundAssets_BATypes",
-    "BackgroundAssets_BAURLDownload",
+    "BAAppExtensionInfo",
+    "BABase",
+    "BADownload",
+    "BADownloadManager",
+    "BADownloaderExtension",
+    "BAError",
+    "BATypes",
+    "BAURLDownload",
     "block2",
 ]

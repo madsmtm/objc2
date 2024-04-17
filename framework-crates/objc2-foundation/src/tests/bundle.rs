@@ -1,11 +1,11 @@
-#![cfg(feature = "Foundation_NSBundle")]
+#![cfg(feature = "NSBundle")]
 use alloc::format;
 
 use crate::Foundation::NSBundle;
 
 #[test]
-#[cfg(feature = "Foundation_NSString")]
-#[cfg(feature = "Foundation_NSDictionary")]
+#[cfg(feature = "NSString")]
+#[cfg(feature = "NSDictionary")]
 #[cfg_attr(not(target_os = "macos"), ignore = "varies between platforms")]
 fn try_running_functions() {
     // This is mostly empty since cargo doesn't bundle the application

@@ -1,4 +1,4 @@
-#![cfg(feature = "Foundation_NSString")]
+#![cfg(feature = "NSString")]
 use objc2::{rc::Id, runtime::ProtocolObject};
 use objc2_foundation::{NSCopying, NSMutableCopying, NSString};
 

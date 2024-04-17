@@ -7,7 +7,7 @@ use objc2::Message;
 
 use crate::Foundation::{self, NSCopying, NSMutableCopying};
 
-#[cfg(feature = "Foundation_NSArray")]
+#[cfg(feature = "NSArray")]
 impl<T: Message + IsIdCloneable> ToOwned for Foundation::NSArray<T> {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
@@ -15,7 +15,7 @@ impl<T: Message + IsIdCloneable> ToOwned for Foundation::NSArray<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSArray")]
+#[cfg(feature = "NSArray")]
 impl<T: Message + IsIdCloneable> ToOwned for Foundation::NSMutableArray<T> {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
@@ -23,7 +23,7 @@ impl<T: Message + IsIdCloneable> ToOwned for Foundation::NSMutableArray<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSData")]
+#[cfg(feature = "NSData")]
 impl ToOwned for Foundation::NSData {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
@@ -31,7 +31,7 @@ impl ToOwned for Foundation::NSData {
     }
 }
 
-#[cfg(feature = "Foundation_NSData")]
+#[cfg(feature = "NSData")]
 impl ToOwned for Foundation::NSMutableData {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
@@ -39,7 +39,7 @@ impl ToOwned for Foundation::NSMutableData {
     }
 }
 
-#[cfg(feature = "Foundation_NSException")]
+#[cfg(feature = "NSException")]
 impl ToOwned for Foundation::NSException {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
@@ -47,7 +47,7 @@ impl ToOwned for Foundation::NSException {
     }
 }
 
-#[cfg(feature = "Foundation_NSSet")]
+#[cfg(feature = "NSSet")]
 impl<T: Message + IsIdCloneable> ToOwned for Foundation::NSSet<T> {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
@@ -55,7 +55,7 @@ impl<T: Message + IsIdCloneable> ToOwned for Foundation::NSSet<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSSet")]
+#[cfg(feature = "NSSet")]
 impl<T: Message + IsIdCloneable> ToOwned for Foundation::NSMutableSet<T> {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
@@ -63,7 +63,7 @@ impl<T: Message + IsIdCloneable> ToOwned for Foundation::NSMutableSet<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 impl ToOwned for Foundation::NSString {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
@@ -71,7 +71,7 @@ impl ToOwned for Foundation::NSString {
     }
 }
 
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 impl ToOwned for Foundation::NSMutableString {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
@@ -79,7 +79,7 @@ impl ToOwned for Foundation::NSMutableString {
     }
 }
 
-#[cfg(feature = "Foundation_NSAttributedString")]
+#[cfg(feature = "NSAttributedString")]
 impl ToOwned for Foundation::NSAttributedString {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
@@ -87,7 +87,7 @@ impl ToOwned for Foundation::NSAttributedString {
     }
 }
 
-#[cfg(feature = "Foundation_NSAttributedString")]
+#[cfg(feature = "NSAttributedString")]
 impl ToOwned for Foundation::NSMutableAttributedString {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
@@ -95,7 +95,7 @@ impl ToOwned for Foundation::NSMutableAttributedString {
     }
 }
 
-#[cfg(feature = "Foundation_NSUUID")]
+#[cfg(feature = "NSUUID")]
 impl ToOwned for Foundation::NSUUID {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
@@ -103,7 +103,7 @@ impl ToOwned for Foundation::NSUUID {
     }
 }
 
-#[cfg(feature = "Foundation_NSValue")]
+#[cfg(feature = "NSValue")]
 impl ToOwned for Foundation::NSValue {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {
@@ -111,7 +111,7 @@ impl ToOwned for Foundation::NSValue {
     }
 }
 
-#[cfg(feature = "Foundation_NSValue")]
+#[cfg(feature = "NSValue")]
 impl ToOwned for Foundation::NSNumber {
     type Owned = Id<Self>;
     fn to_owned(&self) -> Self::Owned {

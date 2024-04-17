@@ -1,5 +1,5 @@
 extern "C" {
-    #[cfg(feature = "Foundation_NSMapTable")]
+    #[cfg(feature = "NSMapTable")]
     pub fn NSFreeMapTable(table: *mut crate::Foundation::NSMapTable);
 }
 

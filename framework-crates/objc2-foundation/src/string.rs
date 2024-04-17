@@ -1,4 +1,4 @@
-#[cfg(feature = "Foundation_NSObjCRuntime")]
+#[cfg(feature = "NSObjCRuntime")]
 use core::cmp;
 use core::fmt;
 use core::ops::AddAssign;
@@ -169,7 +169,7 @@ impl PartialEq<NSMutableString> for NSString {
     }
 }
 
-#[cfg(feature = "Foundation_NSObjCRuntime")]
+#[cfg(feature = "NSObjCRuntime")]
 impl PartialOrd for NSString {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
@@ -177,14 +177,14 @@ impl PartialOrd for NSString {
     }
 }
 
-#[cfg(feature = "Foundation_NSObjCRuntime")]
+#[cfg(feature = "NSObjCRuntime")]
 impl Ord for NSString {
     fn cmp(&self, other: &Self) -> cmp::Ordering {
         self.compare(other).into()
     }
 }
 
-#[cfg(feature = "Foundation_NSObjCRuntime")]
+#[cfg(feature = "NSObjCRuntime")]
 impl PartialOrd for NSMutableString {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
@@ -192,7 +192,7 @@ impl PartialOrd for NSMutableString {
     }
 }
 
-#[cfg(feature = "Foundation_NSObjCRuntime")]
+#[cfg(feature = "NSObjCRuntime")]
 impl PartialOrd<NSString> for NSMutableString {
     #[inline]
     fn partial_cmp(&self, other: &NSString) -> Option<cmp::Ordering> {
@@ -200,7 +200,7 @@ impl PartialOrd<NSString> for NSMutableString {
     }
 }
 
-#[cfg(feature = "Foundation_NSObjCRuntime")]
+#[cfg(feature = "NSObjCRuntime")]
 impl PartialOrd<NSMutableString> for NSString {
     #[inline]
     fn partial_cmp(&self, other: &NSMutableString) -> Option<cmp::Ordering> {
@@ -208,7 +208,7 @@ impl PartialOrd<NSMutableString> for NSString {
     }
 }
 
-#[cfg(feature = "Foundation_NSObjCRuntime")]
+#[cfg(feature = "NSObjCRuntime")]
 impl Ord for NSMutableString {
     #[inline]
     fn cmp(&self, other: &Self) -> cmp::Ordering {

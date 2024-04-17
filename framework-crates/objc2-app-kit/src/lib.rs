@@ -59,20 +59,20 @@ extern "C" {}
 pub(crate) const TARGET_ABI_USES_IOS_VALUES: bool =
     !cfg!(any(target_arch = "x86", target_arch = "x86_64")) || cfg!(not(target_os = "macos"));
 
-#[cfg(feature = "AppKit_NSApplication")]
+#[cfg(feature = "NSApplication")]
 mod application;
 mod generated;
-#[cfg(feature = "AppKit_NSImage")]
+#[cfg(feature = "NSImage")]
 mod image;
-#[cfg(feature = "AppKit_NSText")]
+#[cfg(feature = "NSText")]
 mod text;
 
-#[cfg(feature = "AppKit_NSApplication")]
+#[cfg(feature = "NSApplication")]
 pub use self::application::*;
 pub use self::generated::*;
-#[cfg(feature = "AppKit_NSImage")]
+#[cfg(feature = "NSImage")]
 pub use self::image::*;
-#[cfg(feature = "AppKit_NSText")]
+#[cfg(feature = "NSText")]
 pub use self::text::*;
 
 // MacTypes.h
@@ -82,7 +82,7 @@ pub(crate) type UTF32Char = u32; // Or maybe Rust's char?
 #[cfg(test)]
 mod tests {
     #[test]
-    #[cfg(feature = "AppKit_NSAccessibilityProtocols")]
+    #[cfg(feature = "NSAccessibilityProtocols")]
     fn accessibility_element_protocol() {
         use crate::NSAccessibilityElementProtocol;
         use objc2::ProtocolType;

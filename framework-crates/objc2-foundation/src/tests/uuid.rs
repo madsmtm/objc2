@@ -1,4 +1,4 @@
-#![cfg(feature = "Foundation_NSUUID")]
+#![cfg(feature = "NSUUID")]
 use alloc::format;
 
 use crate::Foundation::NSUUID;
@@ -25,7 +25,7 @@ fn test_bytes() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 fn display_debug() {
     let uuid = NSUUID::from_bytes([10; 16]);
     let expected = "0A0A0A0A-0A0A-0A0A-0A0A-0A0A0A0A0A0A";

@@ -23,13 +23,13 @@ pub unsafe trait MTLDevicePrivate: Message {
     }
 }
 
-#[cfg(feature = "Metal_MTLDevice")]
+#[cfg(feature = "MTLDevice")]
 unsafe impl<P: MTLDevice + Message> MTLDevicePrivate for P {}
 
 extern_methods!(
-    #[cfg(feature = "Metal_MTLRenderPipeline")]
+    #[cfg(feature = "MTLRenderPipeline")]
     unsafe impl MTLRenderPipelineReflection {
-        #[cfg(feature = "Metal_MTLDevice")]
+        #[cfg(feature = "MTLDevice")]
         #[method_id(initWithVertexData:fragmentData:serializedVertexDescriptor:device:options:flags:)]
         pub unsafe fn initWithVertexData(
             this: Allocated<Self>,
@@ -53,7 +53,7 @@ extern_methods!(
 );
 
 extern_methods!(
-    #[cfg(feature = "Metal_MTLSamplerDescriptor")]
+    #[cfg(feature = "MTLSamplerDescriptor")]
     unsafe impl MTLSamplerDescriptor {
         #[method(setLodBias:)]
         pub unsafe fn setLodBias(&self, bias: f32);
@@ -61,7 +61,7 @@ extern_methods!(
 );
 
 extern_methods!(
-    #[cfg(feature = "Metal_MTLVertexDescriptor")]
+    #[cfg(feature = "MTLVertexDescriptor")]
     unsafe impl MTLVertexDescriptor {
         #[method_id(newSerializedDescriptor)]
         pub unsafe fn newSerializedDescriptor(&self) -> Option<Id<AnyObject>>;

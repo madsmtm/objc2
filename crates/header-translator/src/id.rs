@@ -96,11 +96,7 @@ impl Location {
             Some(Feature::Dependency("block2".to_string()))
         } else if self.library == emission_location.library {
             if let Some(file_name) = &self.file_name {
-                Some(Feature::Feature(format!(
-                    "{}_{}",
-                    self.library,
-                    clean_name(file_name)
-                )))
+                Some(Feature::Feature(clean_name(file_name)))
             } else {
                 error!("tried to get feature name of location with an unknown file name");
                 Some(Feature::Feature(format!("{}_Unknown", self.library)))

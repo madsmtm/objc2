@@ -47,145 +47,145 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 
-QuartzCore_CAAnimation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+CAAnimation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-QuartzCore_CABase = []
-QuartzCore_CAConstraintLayoutManager = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CABase = []
+CAConstraintLayoutManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-QuartzCore_CADisplayLink = [
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSRunLoop",
-    "objc2-foundation/Foundation_NSString",
+CADisplayLink = [
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSRunLoop",
+    "objc2-foundation/NSString",
 ]
-QuartzCore_CAEDRMetadata = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
+CAEDRMetadata = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
 ]
-QuartzCore_CAEmitterCell = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CAEmitterCell = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-QuartzCore_CAEmitterLayer = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CAEmitterLayer = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-QuartzCore_CAFrameRateRange = []
-QuartzCore_CAGradientLayer = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+CAFrameRateRange = []
+CAGradientLayer = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-QuartzCore_CALayer = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNull",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CALayer = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNull",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-QuartzCore_CAMediaTiming = ["objc2-foundation/Foundation_NSString"]
-QuartzCore_CAMediaTimingFunction = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CAMediaTiming = ["objc2-foundation/NSString"]
+CAMediaTimingFunction = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-QuartzCore_CAMetalDisplayLink = [
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSRunLoop",
-    "objc2-foundation/Foundation_NSString",
+CAMetalDisplayLink = [
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSRunLoop",
+    "objc2-foundation/NSString",
 ]
-QuartzCore_CAMetalLayer = []
-QuartzCore_CAOpenGLLayer = []
-QuartzCore_CARemoteLayerClient = []
-QuartzCore_CARemoteLayerServer = []
-QuartzCore_CARenderer = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSString",
+CAMetalLayer = []
+CAOpenGLLayer = []
+CARemoteLayerClient = []
+CARemoteLayerServer = []
+CARenderer = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
 ]
-QuartzCore_CAReplicatorLayer = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
+CAReplicatorLayer = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
 ]
-QuartzCore_CAScrollLayer = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CAScrollLayer = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-QuartzCore_CAShapeLayer = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+CAShapeLayer = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-QuartzCore_CATextLayer = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CATextLayer = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-QuartzCore_CATiledLayer = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
+CATiledLayer = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
 ]
-QuartzCore_CATransaction = ["objc2-foundation/Foundation_NSString"]
-QuartzCore_CATransform3D = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSValue",
+CATransaction = ["objc2-foundation/NSString"]
+CATransform3D = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSValue",
 ]
-QuartzCore_CATransformLayer = ["objc2-foundation/Foundation_NSObject"]
-QuartzCore_CAValueFunction = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CATransformLayer = ["objc2-foundation/NSObject"]
+CAValueFunction = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-QuartzCore_CoreAnimation = []
-QuartzCore_CoreImage = []
-QuartzCore_CoreVideo = []
+CoreAnimation = []
+CoreImage = []
+CoreVideo = []
 all = [
-    "QuartzCore_CAAnimation",
-    "QuartzCore_CABase",
-    "QuartzCore_CAConstraintLayoutManager",
-    "QuartzCore_CADisplayLink",
-    "QuartzCore_CAEDRMetadata",
-    "QuartzCore_CAEmitterCell",
-    "QuartzCore_CAEmitterLayer",
-    "QuartzCore_CAFrameRateRange",
-    "QuartzCore_CAGradientLayer",
-    "QuartzCore_CALayer",
-    "QuartzCore_CAMediaTiming",
-    "QuartzCore_CAMediaTimingFunction",
-    "QuartzCore_CAMetalDisplayLink",
-    "QuartzCore_CAMetalLayer",
-    "QuartzCore_CAOpenGLLayer",
-    "QuartzCore_CARemoteLayerClient",
-    "QuartzCore_CARemoteLayerServer",
-    "QuartzCore_CARenderer",
-    "QuartzCore_CAReplicatorLayer",
-    "QuartzCore_CAScrollLayer",
-    "QuartzCore_CAShapeLayer",
-    "QuartzCore_CATextLayer",
-    "QuartzCore_CATiledLayer",
-    "QuartzCore_CATransaction",
-    "QuartzCore_CATransform3D",
-    "QuartzCore_CATransformLayer",
-    "QuartzCore_CAValueFunction",
-    "QuartzCore_CoreAnimation",
-    "QuartzCore_CoreImage",
-    "QuartzCore_CoreVideo",
+    "CAAnimation",
+    "CABase",
+    "CAConstraintLayoutManager",
+    "CADisplayLink",
+    "CAEDRMetadata",
+    "CAEmitterCell",
+    "CAEmitterLayer",
+    "CAFrameRateRange",
+    "CAGradientLayer",
+    "CALayer",
+    "CAMediaTiming",
+    "CAMediaTimingFunction",
+    "CAMetalDisplayLink",
+    "CAMetalLayer",
+    "CAOpenGLLayer",
+    "CARemoteLayerClient",
+    "CARemoteLayerServer",
+    "CARenderer",
+    "CAReplicatorLayer",
+    "CAScrollLayer",
+    "CAShapeLayer",
+    "CATextLayer",
+    "CATiledLayer",
+    "CATransaction",
+    "CATransform3D",
+    "CATransformLayer",
+    "CAValueFunction",
+    "CoreAnimation",
+    "CoreImage",
+    "CoreVideo",
     "block2",
 ]

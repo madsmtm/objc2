@@ -47,32 +47,32 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 
-ExternalAccessory_EAAccessory = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
+EAAccessory = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
-ExternalAccessory_EAAccessoryManager = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSString",
+EAAccessoryManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSString",
 ]
-ExternalAccessory_EASession = [
-    "objc2-foundation/Foundation_NSStream",
-    "objc2-foundation/Foundation_NSString",
+EASession = [
+    "objc2-foundation/NSStream",
+    "objc2-foundation/NSString",
 ]
-ExternalAccessory_EAWiFiUnconfiguredAccessory = ["objc2-foundation/Foundation_NSString"]
-ExternalAccessory_EAWiFiUnconfiguredAccessoryBrowser = [
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSSet",
+EAWiFiUnconfiguredAccessory = ["objc2-foundation/NSString"]
+EAWiFiUnconfiguredAccessoryBrowser = [
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSSet",
 ]
-ExternalAccessory_ExternalAccessoryDefines = []
+ExternalAccessoryDefines = []
 all = [
-    "ExternalAccessory_EAAccessory",
-    "ExternalAccessory_EAAccessoryManager",
-    "ExternalAccessory_EASession",
-    "ExternalAccessory_EAWiFiUnconfiguredAccessory",
-    "ExternalAccessory_EAWiFiUnconfiguredAccessoryBrowser",
-    "ExternalAccessory_ExternalAccessoryDefines",
+    "EAAccessory",
+    "EAAccessoryManager",
+    "EASession",
+    "EAWiFiUnconfiguredAccessory",
+    "EAWiFiUnconfiguredAccessoryBrowser",
+    "ExternalAccessoryDefines",
     "block2",
 ]

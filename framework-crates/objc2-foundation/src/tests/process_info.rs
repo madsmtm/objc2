@@ -1,5 +1,5 @@
-#![cfg(feature = "Foundation_NSString")]
-#![cfg(feature = "Foundation_NSProcessInfo")]
+#![cfg(feature = "NSString")]
+#![cfg(feature = "NSProcessInfo")]
 use alloc::format;
 
 use crate::Foundation::NSProcessInfo;

@@ -1,4 +1,4 @@
-#![cfg(feature = "Foundation_NSLock")]
+#![cfg(feature = "NSLock")]
 use crate::Foundation::{NSLock, NSLocking};
 
 #[test]

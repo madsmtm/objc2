@@ -32,31 +32,28 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
-#[cfg(feature = "Metal_MTLCaptureManager")]
+#[cfg(feature = "MTLCaptureManager")]
 mod capture;
-#[cfg(feature = "Metal_MTLDevice")]
+#[cfg(feature = "MTLDevice")]
 mod device;
 mod generated;
-#[cfg(feature = "Metal_MTLAccelerationStructureTypes")]
+#[cfg(feature = "MTLAccelerationStructureTypes")]
 mod packed;
 #[cfg(feature = "unstable-private")]
 mod private;
-#[cfg(feature = "Metal_MTLResource")]
+#[cfg(feature = "MTLResource")]
 mod resource;
 mod slice;
 
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
-#[cfg(feature = "Metal_MTLAccelerationStructureTypes")]
+#[cfg(feature = "MTLAccelerationStructureTypes")]
 pub use self::packed::{MTLPackedFloat3, __MTLPackedFloat3};
 #[cfg(feature = "unstable-private")]
 pub use self::private::MTLDevicePrivate;
-#[cfg(feature = "Metal_MTLResource")]
+#[cfg(feature = "MTLResource")]
 pub use self::resource::*;
-#[cfg(all(
-    feature = "Metal_MTLRenderCommandEncoder",
-    feature = "Metal_MTLCommandEncoder"
-))]
+#[cfg(all(feature = "MTLRenderCommandEncoder", feature = "MTLCommandEncoder"))]
 pub use self::slice::MTLRenderCommandEncoderSliceExt;
 
 // CoreFoundation

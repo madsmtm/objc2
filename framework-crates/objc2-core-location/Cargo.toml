@@ -50,125 +50,125 @@ unstable-docsrs = []
 block2 = ["dep:block2"]
 objc2-contacts = ["dep:objc2-contacts"]
 
-CoreLocation_CLAvailability = []
-CoreLocation_CLBackgroundActivitySession = []
-CoreLocation_CLBeaconIdentityCondition = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUUID",
-    "objc2-foundation/Foundation_NSValue",
+CLAvailability = []
+CLBackgroundActivitySession = []
+CLBeaconIdentityCondition = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUUID",
+    "objc2-foundation/NSValue",
 ]
-CoreLocation_CLBeaconIdentityConstraint = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSUUID",
+CLBeaconIdentityConstraint = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUUID",
 ]
-CoreLocation_CLBeaconRegion = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUUID",
-    "objc2-foundation/Foundation_NSValue",
+CLBeaconRegion = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
+    "objc2-foundation/NSValue",
 ]
-CoreLocation_CLCircularGeographicCondition = ["objc2-foundation/Foundation_NSObject"]
-CoreLocation_CLCircularRegion = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CLCircularGeographicCondition = ["objc2-foundation/NSObject"]
+CLCircularRegion = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-CoreLocation_CLCondition = ["objc2-foundation/Foundation_NSObject"]
-CoreLocation_CLError = ["objc2-foundation/Foundation_NSString"]
-CoreLocation_CLErrorDomain = ["objc2-foundation/Foundation_NSString"]
-CoreLocation_CLGeocoder = [
-    "objc2-contacts?/Contacts_CNPostalAddress",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSLocale",
-    "objc2-foundation/Foundation_NSString",
+CLCondition = ["objc2-foundation/NSObject"]
+CLError = ["objc2-foundation/NSString"]
+CLErrorDomain = ["objc2-foundation/NSString"]
+CLGeocoder = [
+    "objc2-contacts?/CNPostalAddress",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSLocale",
+    "objc2-foundation/NSString",
 ]
-CoreLocation_CLHeading = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
+CLHeading = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
 ]
-CoreLocation_CLLocation = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
+CLLocation = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
 ]
-CoreLocation_CLLocationManager = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+CLLocationManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
-CoreLocation_CLLocationManagerDelegate = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
+CLLocationManagerDelegate = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
 ]
-CoreLocation_CLLocationManager_CLVisitExtensions = []
-CoreLocation_CLLocationPushServiceError = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+CLLocationManager_CLVisitExtensions = []
+CLLocationPushServiceError = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-CoreLocation_CLLocationPushServiceExtension = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSString",
+CLLocationPushServiceExtension = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSString",
 ]
-CoreLocation_CLLocationUpdater = []
-CoreLocation_CLMonitor = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
+CLLocationUpdater = []
+CLMonitor = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
-CoreLocation_CLMonitorConfiguration = ["objc2-foundation/Foundation_NSString"]
-CoreLocation_CLMonitoringEvent = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CLMonitorConfiguration = ["objc2-foundation/NSString"]
+CLMonitoringEvent = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-CoreLocation_CLMonitoringRecord = ["objc2-foundation/Foundation_NSObject"]
-CoreLocation_CLPlacemark = [
-    "objc2-contacts?/Contacts_CNPostalAddress",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSTimeZone",
+CLMonitoringRecord = ["objc2-foundation/NSObject"]
+CLPlacemark = [
+    "objc2-contacts?/CNPostalAddress",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSTimeZone",
 ]
-CoreLocation_CLRegion = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CLRegion = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-CoreLocation_CLVisit = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
+CLVisit = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
 ]
 all = [
-    "CoreLocation_CLAvailability",
-    "CoreLocation_CLBackgroundActivitySession",
-    "CoreLocation_CLBeaconIdentityCondition",
-    "CoreLocation_CLBeaconIdentityConstraint",
-    "CoreLocation_CLBeaconRegion",
-    "CoreLocation_CLCircularGeographicCondition",
-    "CoreLocation_CLCircularRegion",
-    "CoreLocation_CLCondition",
-    "CoreLocation_CLError",
-    "CoreLocation_CLErrorDomain",
-    "CoreLocation_CLGeocoder",
-    "CoreLocation_CLHeading",
-    "CoreLocation_CLLocation",
-    "CoreLocation_CLLocationManager",
-    "CoreLocation_CLLocationManagerDelegate",
-    "CoreLocation_CLLocationManager_CLVisitExtensions",
-    "CoreLocation_CLLocationPushServiceError",
-    "CoreLocation_CLLocationPushServiceExtension",
-    "CoreLocation_CLLocationUpdater",
-    "CoreLocation_CLMonitor",
-    "CoreLocation_CLMonitorConfiguration",
-    "CoreLocation_CLMonitoringEvent",
-    "CoreLocation_CLMonitoringRecord",
-    "CoreLocation_CLPlacemark",
-    "CoreLocation_CLRegion",
-    "CoreLocation_CLVisit",
+    "CLAvailability",
+    "CLBackgroundActivitySession",
+    "CLBeaconIdentityCondition",
+    "CLBeaconIdentityConstraint",
+    "CLBeaconRegion",
+    "CLCircularGeographicCondition",
+    "CLCircularRegion",
+    "CLCondition",
+    "CLError",
+    "CLErrorDomain",
+    "CLGeocoder",
+    "CLHeading",
+    "CLLocation",
+    "CLLocationManager",
+    "CLLocationManagerDelegate",
+    "CLLocationManager_CLVisitExtensions",
+    "CLLocationPushServiceError",
+    "CLLocationPushServiceExtension",
+    "CLLocationUpdater",
+    "CLMonitor",
+    "CLMonitorConfiguration",
+    "CLMonitoringEvent",
+    "CLMonitoringRecord",
+    "CLPlacemark",
+    "CLRegion",
+    "CLVisit",
     "block2",
     "objc2-contacts",
 ]

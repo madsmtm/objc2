@@ -1,6 +1,6 @@
-#![cfg(feature = "Foundation_NSDictionary")]
-#![cfg(feature = "Foundation_NSString")]
-#![cfg(feature = "Foundation_NSObject")]
+#![cfg(feature = "NSDictionary")]
+#![cfg(feature = "NSString")]
+#![cfg(feature = "NSObject")]
 use alloc::{format, vec};
 
 use objc2::rc::{autoreleasepool, Id};
@@ -63,7 +63,7 @@ fn test_keys_and_objects() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 fn test_iter_keys() {
     let dict = sample_dict("abcd");
     assert_eq!(dict.keys().count(), 1);
@@ -73,14 +73,14 @@ fn test_iter_keys() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 fn test_iter_values() {
     let dict = sample_dict("abcd");
     assert_eq!(dict.values().count(), 1);
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSArray")]
+#[cfg(feature = "NSArray")]
 fn test_arrays() {
     let dict = sample_dict("abcd");
 

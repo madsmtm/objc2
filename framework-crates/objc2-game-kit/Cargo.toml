@@ -50,299 +50,299 @@ unstable-docsrs = []
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 
-GameKit_GKAccessPoint = [
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSWindow",
-    "objc2-foundation/Foundation_NSGeometry",
+GKAccessPoint = [
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSWindow",
+    "objc2-foundation/NSGeometry",
 ]
-GameKit_GKAchievement = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+GKAchievement = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKAchievementDescription = [
-    "objc2-app-kit?/AppKit_NSImage",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+GKAchievementDescription = [
+    "objc2-app-kit?/NSImage",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-GameKit_GKAchievementViewController = [
-    "objc2-app-kit?/AppKit_NSKeyValueBinding",
-    "objc2-app-kit?/AppKit_NSNib",
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSStoryboardSegue",
-    "objc2-app-kit?/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+GKAchievementViewController = [
+    "objc2-app-kit?/NSKeyValueBinding",
+    "objc2-app-kit?/NSNib",
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSStoryboardSegue",
+    "objc2-app-kit?/NSUserInterfaceItemIdentification",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKBasePlayer = ["objc2-foundation/Foundation_NSString"]
-GameKit_GKChallenge = [
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+GKBasePlayer = ["objc2-foundation/NSString"]
+GKChallenge = [
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKChallengeEventHandler = []
-GameKit_GKChallengesViewController = [
-    "objc2-app-kit?/AppKit_NSKeyValueBinding",
-    "objc2-app-kit?/AppKit_NSNib",
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSStoryboardSegue",
-    "objc2-app-kit?/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+GKChallengeEventHandler = []
+GKChallengesViewController = [
+    "objc2-app-kit?/NSKeyValueBinding",
+    "objc2-app-kit?/NSNib",
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSStoryboardSegue",
+    "objc2-app-kit?/NSUserInterfaceItemIdentification",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKCloudPlayer = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+GKCloudPlayer = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKDefines = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSString",
+GKDefines = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKDialogController = [
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-app-kit?/AppKit_NSWindow",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
+GKDialogController = [
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSViewController",
+    "objc2-app-kit?/NSWindow",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
 ]
-GameKit_GKError = ["objc2-foundation/Foundation_NSString"]
-GameKit_GKEventListener = []
-GameKit_GKFriendRequestComposeViewController = [
-    "objc2-app-kit?/AppKit_NSKeyValueBinding",
-    "objc2-app-kit?/AppKit_NSNib",
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSStoryboardSegue",
-    "objc2-app-kit?/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+GKError = ["objc2-foundation/NSString"]
+GKEventListener = []
+GKFriendRequestComposeViewController = [
+    "objc2-app-kit?/NSKeyValueBinding",
+    "objc2-app-kit?/NSNib",
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSStoryboardSegue",
+    "objc2-app-kit?/NSUserInterfaceItemIdentification",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKGameCenterViewController = [
-    "objc2-app-kit?/AppKit_NSKeyValueBinding",
-    "objc2-app-kit?/AppKit_NSNib",
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSStoryboardSegue",
-    "objc2-app-kit?/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+GKGameCenterViewController = [
+    "objc2-app-kit?/NSKeyValueBinding",
+    "objc2-app-kit?/NSNib",
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSStoryboardSegue",
+    "objc2-app-kit?/NSUserInterfaceItemIdentification",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKGameSession = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+GKGameSession = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-GameKit_GKGameSessionError = ["objc2-foundation/Foundation_NSString"]
-GameKit_GKGameSessionEventListener = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSString",
+GKGameSessionError = ["objc2-foundation/NSString"]
+GKGameSessionEventListener = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKGameSessionSharingViewController = []
-GameKit_GKLeaderboard = [
-    "objc2-app-kit?/AppKit_NSImage",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
+GKGameSessionSharingViewController = []
+GKLeaderboard = [
+    "objc2-app-kit?/NSImage",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKLeaderboardEntry = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSString",
+GKLeaderboardEntry = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKLeaderboardScore = ["objc2-foundation/Foundation_NSString"]
-GameKit_GKLeaderboardSet = [
-    "objc2-app-kit?/AppKit_NSImage",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+GKLeaderboardScore = ["objc2-foundation/NSString"]
+GKLeaderboardSet = [
+    "objc2-app-kit?/NSImage",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKLeaderboardViewController = [
-    "objc2-app-kit?/AppKit_NSKeyValueBinding",
-    "objc2-app-kit?/AppKit_NSNib",
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSStoryboardSegue",
-    "objc2-app-kit?/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+GKLeaderboardViewController = [
+    "objc2-app-kit?/NSKeyValueBinding",
+    "objc2-app-kit?/NSNib",
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSStoryboardSegue",
+    "objc2-app-kit?/NSUserInterfaceItemIdentification",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKLocalPlayer = [
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-app-kit?/AppKit_NSWindow",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+GKLocalPlayer = [
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSViewController",
+    "objc2-app-kit?/NSWindow",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-GameKit_GKMatch = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+GKMatch = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKMatchmaker = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+GKMatchmaker = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKMatchmakerViewController = [
-    "objc2-app-kit?/AppKit_NSKeyValueBinding",
-    "objc2-app-kit?/AppKit_NSNib",
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSStoryboardSegue",
-    "objc2-app-kit?/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+GKMatchmakerViewController = [
+    "objc2-app-kit?/NSKeyValueBinding",
+    "objc2-app-kit?/NSNib",
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSStoryboardSegue",
+    "objc2-app-kit?/NSUserInterfaceItemIdentification",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKNotificationBanner = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSString",
+GKNotificationBanner = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKPeerPickerController = []
-GameKit_GKPlayer = [
-    "objc2-app-kit?/AppKit_NSImage",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSString",
+GKPeerPickerController = []
+GKPlayer = [
+    "objc2-app-kit?/NSImage",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKPublicConstants = ["objc2-foundation/Foundation_NSString"]
-GameKit_GKPublicProtocols = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+GKPublicConstants = ["objc2-foundation/NSString"]
+GKPublicProtocols = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKSavedGame = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+GKSavedGame = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKSavedGameListener = ["objc2-foundation/Foundation_NSArray"]
-GameKit_GKScore = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+GKSavedGameListener = ["objc2-foundation/NSArray"]
+GKScore = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKSession = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSString",
+GKSession = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKSessionError = ["objc2-foundation/Foundation_NSString"]
-GameKit_GKTurnBasedMatch = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+GKSessionError = ["objc2-foundation/NSString"]
+GKTurnBasedMatch = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKTurnBasedMatchmakerViewController = [
-    "objc2-app-kit?/AppKit_NSKeyValueBinding",
-    "objc2-app-kit?/AppKit_NSNib",
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSStoryboardSegue",
-    "objc2-app-kit?/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+GKTurnBasedMatchmakerViewController = [
+    "objc2-app-kit?/NSKeyValueBinding",
+    "objc2-app-kit?/NSNib",
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSStoryboardSegue",
+    "objc2-app-kit?/NSUserInterfaceItemIdentification",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKVoiceChat = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
+GKVoiceChat = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
-GameKit_GKVoiceChatService = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSString",
+GKVoiceChatService = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSString",
 ]
 all = [
-    "GameKit_GKAccessPoint",
-    "GameKit_GKAchievement",
-    "GameKit_GKAchievementDescription",
-    "GameKit_GKAchievementViewController",
-    "GameKit_GKBasePlayer",
-    "GameKit_GKChallenge",
-    "GameKit_GKChallengeEventHandler",
-    "GameKit_GKChallengesViewController",
-    "GameKit_GKCloudPlayer",
-    "GameKit_GKDefines",
-    "GameKit_GKDialogController",
-    "GameKit_GKError",
-    "GameKit_GKEventListener",
-    "GameKit_GKFriendRequestComposeViewController",
-    "GameKit_GKGameCenterViewController",
-    "GameKit_GKGameSession",
-    "GameKit_GKGameSessionError",
-    "GameKit_GKGameSessionEventListener",
-    "GameKit_GKGameSessionSharingViewController",
-    "GameKit_GKLeaderboard",
-    "GameKit_GKLeaderboardEntry",
-    "GameKit_GKLeaderboardScore",
-    "GameKit_GKLeaderboardSet",
-    "GameKit_GKLeaderboardViewController",
-    "GameKit_GKLocalPlayer",
-    "GameKit_GKMatch",
-    "GameKit_GKMatchmaker",
-    "GameKit_GKMatchmakerViewController",
-    "GameKit_GKNotificationBanner",
-    "GameKit_GKPeerPickerController",
-    "GameKit_GKPlayer",
-    "GameKit_GKPublicConstants",
-    "GameKit_GKPublicProtocols",
-    "GameKit_GKSavedGame",
-    "GameKit_GKSavedGameListener",
-    "GameKit_GKScore",
-    "GameKit_GKSession",
-    "GameKit_GKSessionError",
-    "GameKit_GKTurnBasedMatch",
-    "GameKit_GKTurnBasedMatchmakerViewController",
-    "GameKit_GKVoiceChat",
-    "GameKit_GKVoiceChatService",
+    "GKAccessPoint",
+    "GKAchievement",
+    "GKAchievementDescription",
+    "GKAchievementViewController",
+    "GKBasePlayer",
+    "GKChallenge",
+    "GKChallengeEventHandler",
+    "GKChallengesViewController",
+    "GKCloudPlayer",
+    "GKDefines",
+    "GKDialogController",
+    "GKError",
+    "GKEventListener",
+    "GKFriendRequestComposeViewController",
+    "GKGameCenterViewController",
+    "GKGameSession",
+    "GKGameSessionError",
+    "GKGameSessionEventListener",
+    "GKGameSessionSharingViewController",
+    "GKLeaderboard",
+    "GKLeaderboardEntry",
+    "GKLeaderboardScore",
+    "GKLeaderboardSet",
+    "GKLeaderboardViewController",
+    "GKLocalPlayer",
+    "GKMatch",
+    "GKMatchmaker",
+    "GKMatchmakerViewController",
+    "GKNotificationBanner",
+    "GKPeerPickerController",
+    "GKPlayer",
+    "GKPublicConstants",
+    "GKPublicProtocols",
+    "GKSavedGame",
+    "GKSavedGameListener",
+    "GKScore",
+    "GKSession",
+    "GKSessionError",
+    "GKTurnBasedMatch",
+    "GKTurnBasedMatchmakerViewController",
+    "GKVoiceChat",
+    "GKVoiceChatService",
     "block2",
     "objc2-app-kit",
 ]

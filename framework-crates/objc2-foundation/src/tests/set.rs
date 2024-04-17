@@ -1,6 +1,6 @@
-#![cfg(feature = "Foundation_NSSet")]
-#![cfg(feature = "Foundation_NSString")]
-#![cfg(feature = "Foundation_NSValue")]
+#![cfg(feature = "NSSet")]
+#![cfg(feature = "NSString")]
+#![cfg(feature = "NSValue")]
 use alloc::vec::Vec;
 use alloc::{format, vec};
 
@@ -129,7 +129,7 @@ fn test_is_disjoint() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSArray")]
+#[cfg(feature = "NSArray")]
 fn test_to_array() {
     let nums = [1, 2, 3];
     let set = NSSet::from_id_slice(&nums.map(NSNumber::new_i32));
@@ -156,7 +156,7 @@ fn test_into_iter() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 fn test_into_vec() {
     let strs = vec![
         Foundation::NSString::from_str("one"),
@@ -177,7 +177,7 @@ fn test_equality() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 fn test_copy() {
     use Foundation::NSCopying;
 
@@ -200,7 +200,7 @@ fn test_debug() {
 
 /// This currently works, but we should figure out a way to disallow it!
 #[test]
-#[cfg(all(feature = "Foundation_NSArray", feature = "Foundation_NSConnection"))]
+#[cfg(all(feature = "NSArray", feature = "NSConnection"))]
 #[allow(deprecated)]
 fn invalid_generic() {
     let something_interior_mutable = unsafe { Foundation::NSConnection::defaultConnection() };

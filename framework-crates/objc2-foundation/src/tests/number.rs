@@ -1,4 +1,4 @@
-#![cfg(feature = "Foundation_NSValue")]
+#![cfg(feature = "NSValue")]
 use alloc::format;
 
 use crate::Foundation::NSNumber;
@@ -113,7 +113,7 @@ fn float_int_equality() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 fn display_debug() {
     use std::fmt;
 

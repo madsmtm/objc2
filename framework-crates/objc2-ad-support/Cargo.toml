@@ -45,5 +45,5 @@ alloc = ["objc2/alloc"]
 # For better documentation on docs.rs
 unstable-docsrs = []
 
-AdSupport_ASIdentifierManager = ["objc2-foundation/Foundation_NSUUID"]
-all = ["AdSupport_ASIdentifierManager"]
+ASIdentifierManager = ["objc2-foundation/NSUUID"]
+all = ["ASIdentifierManager"]

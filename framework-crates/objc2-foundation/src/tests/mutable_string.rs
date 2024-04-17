@@ -1,4 +1,4 @@
-#![cfg(feature = "Foundation_NSString")]
+#![cfg(feature = "NSString")]
 use alloc::format;
 use alloc::string::ToString;
 use core::any::TypeId;
@@ -45,7 +45,7 @@ fn test_with_capacity() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 fn test_copy() {
     use crate::Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
     use objc2::rc::Id;
@@ -82,7 +82,7 @@ fn counterpart() {
 }
 
 #[test]
-#[cfg(all(feature = "Foundation_NSObject", feature = "Foundation_NSZone"))]
+#[cfg(all(feature = "NSObject", feature = "NSZone"))]
 fn test_copy_with_zone() {
     use crate::Foundation::{NSCopying, NSMutableCopying, NSObjectProtocol};
     use objc2::rc::Id;

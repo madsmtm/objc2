@@ -50,141 +50,141 @@ unstable-docsrs = []
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 
-StoreKit_SKANError = ["objc2-foundation/Foundation_NSString"]
-StoreKit_SKAdImpression = [
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+SKANError = ["objc2-foundation/NSString"]
+SKAdImpression = [
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-StoreKit_SKAdNetwork = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+SKAdNetwork = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-StoreKit_SKArcadeService = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
+SKArcadeService = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
 ]
-StoreKit_SKCloudServiceController = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSString",
+SKCloudServiceController = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSString",
 ]
-StoreKit_SKCloudServiceSetupViewController = [
-    "objc2-app-kit?/AppKit_NSKeyValueBinding",
-    "objc2-app-kit?/AppKit_NSNib",
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSStoryboardSegue",
-    "objc2-app-kit?/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+SKCloudServiceSetupViewController = [
+    "objc2-app-kit?/NSKeyValueBinding",
+    "objc2-app-kit?/NSNib",
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSStoryboardSegue",
+    "objc2-app-kit?/NSUserInterfaceItemIdentification",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-StoreKit_SKDownload = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-foundation/Foundation_NSValue",
+SKDownload = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSValue",
 ]
-StoreKit_SKError = ["objc2-foundation/Foundation_NSString"]
-StoreKit_SKOverlay = ["objc2-foundation/Foundation_NSError"]
-StoreKit_SKOverlayConfiguration = ["objc2-foundation/Foundation_NSString"]
-StoreKit_SKOverlayTransitionContext = ["objc2-foundation/Foundation_NSGeometry"]
-StoreKit_SKPayment = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+SKError = ["objc2-foundation/NSString"]
+SKOverlay = ["objc2-foundation/NSError"]
+SKOverlayConfiguration = ["objc2-foundation/NSString"]
+SKOverlayTransitionContext = ["objc2-foundation/NSGeometry"]
+SKPayment = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-StoreKit_SKPaymentDiscount = [
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUUID",
-    "objc2-foundation/Foundation_NSValue",
+SKPaymentDiscount = [
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
+    "objc2-foundation/NSValue",
 ]
-StoreKit_SKPaymentQueue = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+SKPaymentQueue = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-StoreKit_SKPaymentTransaction = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+SKPaymentTransaction = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-StoreKit_SKProduct = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDecimalNumber",
-    "objc2-foundation/Foundation_NSLocale",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+SKProduct = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDecimalNumber",
+    "objc2-foundation/NSLocale",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-StoreKit_SKProductDiscount = [
-    "objc2-foundation/Foundation_NSDecimalNumber",
-    "objc2-foundation/Foundation_NSLocale",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+SKProductDiscount = [
+    "objc2-foundation/NSDecimalNumber",
+    "objc2-foundation/NSLocale",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-StoreKit_SKProductStorePromotionController = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
+SKProductStorePromotionController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
 ]
-StoreKit_SKProductsRequest = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+SKProductsRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
-StoreKit_SKReceiptRefreshRequest = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSString",
+SKReceiptRefreshRequest = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSString",
 ]
-StoreKit_SKRequest = ["objc2-foundation/Foundation_NSError"]
-StoreKit_SKStoreProductViewController = [
-    "objc2-app-kit?/AppKit_NSKeyValueBinding",
-    "objc2-app-kit?/AppKit_NSNib",
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSStoryboardSegue",
-    "objc2-app-kit?/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+SKRequest = ["objc2-foundation/NSError"]
+SKStoreProductViewController = [
+    "objc2-app-kit?/NSKeyValueBinding",
+    "objc2-app-kit?/NSNib",
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSStoryboardSegue",
+    "objc2-app-kit?/NSUserInterfaceItemIdentification",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-StoreKit_SKStoreReviewController = []
-StoreKit_SKStorefront = ["objc2-foundation/Foundation_NSString"]
-StoreKit_StoreKitDefines = []
+SKStoreReviewController = []
+SKStorefront = ["objc2-foundation/NSString"]
+StoreKitDefines = []
 all = [
-    "StoreKit_SKANError",
-    "StoreKit_SKAdImpression",
-    "StoreKit_SKAdNetwork",
-    "StoreKit_SKArcadeService",
-    "StoreKit_SKCloudServiceController",
-    "StoreKit_SKCloudServiceSetupViewController",
-    "StoreKit_SKDownload",
-    "StoreKit_SKError",
-    "StoreKit_SKOverlay",
-    "StoreKit_SKOverlayConfiguration",
-    "StoreKit_SKOverlayTransitionContext",
-    "StoreKit_SKPayment",
-    "StoreKit_SKPaymentDiscount",
-    "StoreKit_SKPaymentQueue",
-    "StoreKit_SKPaymentTransaction",
-    "StoreKit_SKProduct",
-    "StoreKit_SKProductDiscount",
-    "StoreKit_SKProductStorePromotionController",
-    "StoreKit_SKProductsRequest",
-    "StoreKit_SKReceiptRefreshRequest",
-    "StoreKit_SKRequest",
-    "StoreKit_SKStoreProductViewController",
-    "StoreKit_SKStoreReviewController",
-    "StoreKit_SKStorefront",
-    "StoreKit_StoreKitDefines",
+    "SKANError",
+    "SKAdImpression",
+    "SKAdNetwork",
+    "SKArcadeService",
+    "SKCloudServiceController",
+    "SKCloudServiceSetupViewController",
+    "SKDownload",
+    "SKError",
+    "SKOverlay",
+    "SKOverlayConfiguration",
+    "SKOverlayTransitionContext",
+    "SKPayment",
+    "SKPaymentDiscount",
+    "SKPaymentQueue",
+    "SKPaymentTransaction",
+    "SKProduct",
+    "SKProductDiscount",
+    "SKProductStorePromotionController",
+    "SKProductsRequest",
+    "SKReceiptRefreshRequest",
+    "SKRequest",
+    "SKStoreProductViewController",
+    "SKStoreReviewController",
+    "SKStorefront",
+    "StoreKitDefines",
     "block2",
     "objc2-app-kit",
 ]

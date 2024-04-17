@@ -1,5 +1,5 @@
-#![cfg(feature = "Foundation_NSAttributedString")]
-#![cfg(feature = "Foundation_NSString")]
+#![cfg(feature = "NSAttributedString")]
+#![cfg(feature = "NSString")]
 use alloc::string::ToString;
 use alloc::{format, vec};
 
@@ -47,7 +47,7 @@ fn test_copy() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSDictionary")]
+#[cfg(feature = "NSDictionary")]
 fn test_debug() {
     let s = NSAttributedString::from_nsstring(&NSString::from_str("abc"));
     let expected = if cfg!(feature = "gnustep-1-7") {

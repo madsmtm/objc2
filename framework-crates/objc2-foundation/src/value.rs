@@ -103,7 +103,7 @@ impl NSValue {
         unsafe { value.assume_init() }
     }
 
-    #[cfg(feature = "Foundation_NSRange")]
+    #[cfg(feature = "NSRange")]
     pub fn get_range(&self) -> Option<crate::Foundation::NSRange> {
         if self.contains_encoding::<crate::Foundation::NSRange>() {
             // SAFETY: We just checked that this contains an NSRange
@@ -113,7 +113,7 @@ impl NSValue {
         }
     }
 
-    #[cfg(feature = "Foundation_NSGeometry")]
+    #[cfg(feature = "NSGeometry")]
     pub fn get_point(&self) -> Option<crate::Foundation::NSPoint> {
         if self.contains_encoding::<crate::Foundation::NSPoint>() {
             // SAFETY: We just checked that this contains an NSPoint
@@ -127,7 +127,7 @@ impl NSValue {
         }
     }
 
-    #[cfg(feature = "Foundation_NSGeometry")]
+    #[cfg(feature = "NSGeometry")]
     pub fn get_size(&self) -> Option<crate::Foundation::NSSize> {
         if self.contains_encoding::<crate::Foundation::NSSize>() {
             // SAFETY: We just checked that this contains an NSSize
@@ -137,7 +137,7 @@ impl NSValue {
         }
     }
 
-    #[cfg(feature = "Foundation_NSGeometry")]
+    #[cfg(feature = "NSGeometry")]
     pub fn get_rect(&self) -> Option<crate::Foundation::NSRect> {
         if self.contains_encoding::<crate::Foundation::NSRect>() {
             // SAFETY: We just checked that this contains an NSRect

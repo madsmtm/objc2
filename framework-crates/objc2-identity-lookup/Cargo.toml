@@ -46,80 +46,80 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 
-IdentityLookup_ILBase = []
-IdentityLookup_ILCallClassificationRequest = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
+ILBase = []
+ILCallClassificationRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
 ]
-IdentityLookup_ILCallCommunication = ["objc2-foundation/Foundation_NSObject"]
-IdentityLookup_ILClassificationActions = []
-IdentityLookup_ILClassificationRequest = ["objc2-foundation/Foundation_NSObject"]
-IdentityLookup_ILClassificationResponse = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ILCallCommunication = ["objc2-foundation/NSObject"]
+ILClassificationActions = []
+ILClassificationRequest = ["objc2-foundation/NSObject"]
+ILClassificationResponse = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-IdentityLookup_ILCommunication = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ILCommunication = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-IdentityLookup_ILMessageClassificationRequest = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
+ILMessageClassificationRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
 ]
-IdentityLookup_ILMessageCommunication = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ILMessageCommunication = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-IdentityLookup_ILMessageFilterAction = []
-IdentityLookup_ILMessageFilterCapabilitiesQueryHandling = ["objc2-foundation/Foundation_NSExtensionContext"]
-IdentityLookup_ILMessageFilterCapabilitiesQueryRequest = ["objc2-foundation/Foundation_NSObject"]
-IdentityLookup_ILMessageFilterCapabilitiesQueryResponse = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSValue",
+ILMessageFilterAction = []
+ILMessageFilterCapabilitiesQueryHandling = ["objc2-foundation/NSExtensionContext"]
+ILMessageFilterCapabilitiesQueryRequest = ["objc2-foundation/NSObject"]
+ILMessageFilterCapabilitiesQueryResponse = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSValue",
 ]
-IdentityLookup_ILMessageFilterError = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+ILMessageFilterError = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-IdentityLookup_ILMessageFilterExtension = []
-IdentityLookup_ILMessageFilterExtensionContext = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSExtensionContext",
+ILMessageFilterExtension = []
+ILMessageFilterExtensionContext = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSExtensionContext",
 ]
-IdentityLookup_ILMessageFilterQueryHandling = ["objc2-foundation/Foundation_NSExtensionContext"]
-IdentityLookup_ILMessageFilterQueryRequest = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ILMessageFilterQueryHandling = ["objc2-foundation/NSExtensionContext"]
+ILMessageFilterQueryRequest = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-IdentityLookup_ILMessageFilterQueryResponse = ["objc2-foundation/Foundation_NSObject"]
-IdentityLookup_ILNetworkResponse = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSURLResponse",
+ILMessageFilterQueryResponse = ["objc2-foundation/NSObject"]
+ILNetworkResponse = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSURLResponse",
 ]
 all = [
-    "IdentityLookup_ILBase",
-    "IdentityLookup_ILCallClassificationRequest",
-    "IdentityLookup_ILCallCommunication",
-    "IdentityLookup_ILClassificationActions",
-    "IdentityLookup_ILClassificationRequest",
-    "IdentityLookup_ILClassificationResponse",
-    "IdentityLookup_ILCommunication",
-    "IdentityLookup_ILMessageClassificationRequest",
-    "IdentityLookup_ILMessageCommunication",
-    "IdentityLookup_ILMessageFilterAction",
-    "IdentityLookup_ILMessageFilterCapabilitiesQueryHandling",
-    "IdentityLookup_ILMessageFilterCapabilitiesQueryRequest",
-    "IdentityLookup_ILMessageFilterCapabilitiesQueryResponse",
-    "IdentityLookup_ILMessageFilterError",
-    "IdentityLookup_ILMessageFilterExtension",
-    "IdentityLookup_ILMessageFilterExtensionContext",
-    "IdentityLookup_ILMessageFilterQueryHandling",
-    "IdentityLookup_ILMessageFilterQueryRequest",
-    "IdentityLookup_ILMessageFilterQueryResponse",
-    "IdentityLookup_ILNetworkResponse",
+    "ILBase",
+    "ILCallClassificationRequest",
+    "ILCallCommunication",
+    "ILClassificationActions",
+    "ILClassificationRequest",
+    "ILClassificationResponse",
+    "ILCommunication",
+    "ILMessageClassificationRequest",
+    "ILMessageCommunication",
+    "ILMessageFilterAction",
+    "ILMessageFilterCapabilitiesQueryHandling",
+    "ILMessageFilterCapabilitiesQueryRequest",
+    "ILMessageFilterCapabilitiesQueryResponse",
+    "ILMessageFilterError",
+    "ILMessageFilterExtension",
+    "ILMessageFilterExtensionContext",
+    "ILMessageFilterQueryHandling",
+    "ILMessageFilterQueryRequest",
+    "ILMessageFilterQueryResponse",
+    "ILNetworkResponse",
     "block2",
 ]

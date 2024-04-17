@@ -15,7 +15,7 @@
 //! <https://github.com/nvzqz/fruity/blob/811d7787495eaaee6bc39d372004e5d96ef9f49b/src/foundation/ns_number.rs#L328-L401>
 //!
 //! (Same goes for `NSNull`).
-#[cfg(feature = "Foundation_NSObjCRuntime")]
+#[cfg(feature = "NSObjCRuntime")]
 use core::cmp::Ordering;
 use core::fmt;
 use core::hash;
@@ -60,7 +60,7 @@ impl NSNumber {
     }
 
     #[inline]
-    #[cfg(feature = "Foundation_NSGeometry")]
+    #[cfg(feature = "NSGeometry")]
     pub fn new_cgfloat(val: crate::Foundation::CGFloat) -> Id<Self> {
         #[cfg(target_pointer_width = "64")]
         {
@@ -104,7 +104,7 @@ impl NSNumber {
     }
 
     #[inline]
-    #[cfg(feature = "Foundation_NSGeometry")]
+    #[cfg(feature = "NSGeometry")]
     pub fn as_cgfloat(&self) -> crate::Foundation::CGFloat {
         #[cfg(target_pointer_width = "64")]
         {
@@ -238,7 +238,7 @@ impl Eq for NSNumber {}
 
 /// Beware: This uses the Objective-C method "compare:", which has different
 /// floating point NaN semantics than Rust!
-#[cfg(feature = "Foundation_NSObjCRuntime")]
+#[cfg(feature = "NSObjCRuntime")]
 impl PartialOrd for NSNumber {
     #[doc(alias = "compare:")]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
@@ -248,7 +248,7 @@ impl PartialOrd for NSNumber {
 
 /// Beware: This uses the Objective-C method "compare:", which has different
 /// floating point NaN semantics than Rust!
-#[cfg(feature = "Foundation_NSObjCRuntime")]
+#[cfg(feature = "NSObjCRuntime")]
 impl Ord for NSNumber {
     #[doc(alias = "compare:")]
     fn cmp(&self, other: &Self) -> Ordering {
@@ -257,7 +257,7 @@ impl Ord for NSNumber {
     }
 }
 
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 impl fmt::Display for NSNumber {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(&self.stringValue(), f)

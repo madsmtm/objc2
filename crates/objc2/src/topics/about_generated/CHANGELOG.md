@@ -63,10 +63,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   [dependencies]
   # Removed `Foundation_NSMutableArray`, it is included via. `NSArray`.
   # Added `NSObject` as the `NSCopying` protocol comes from there.
-  objc2-foundation = { version = "0.2", features = ["Foundation_NSNotification", "Foundation_NSString", "Foundation_NSThread", "Foundation_NSObject", "Foundation_NSArray"] }
+  objc2-foundation = { version = "0.2", features = ["NSNotification", "NSString", "NSThread", "NSObject", "NSArray"] }
   # Added `NSResponder` as it's required by `NSApplication`.
   # Added `NSRunningApplication` as a lot of application constants come from here.
-  objc2-app-kit = { version = "0.2", features = ["AppKit_NSResponder", "AppKit_NSApplication", "AppKit_NSRunningApplication"] }
+  objc2-app-kit = { version = "0.2", features = ["NSResponder", "NSApplication", "NSRunningApplication"] }
   ```
 * Marked `NSView::isFlipped`, `NSView::convertRect_toView`,
   `NSWindow::convertRectToScreen` and `NSWindow::convertPointFromScreen` as

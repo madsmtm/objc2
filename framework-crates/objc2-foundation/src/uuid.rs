@@ -1,4 +1,4 @@
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
@@ -64,7 +64,7 @@ impl NSUUID {
         Self::initWithUUIDBytes(Self::alloc(), &bytes)
     }
 
-    #[cfg(feature = "Foundation_NSString")]
+    #[cfg(feature = "NSString")]
     pub fn from_string(string: &crate::NSString) -> Option<Id<Self>> {
         Self::initWithUUIDString(Self::alloc(), string)
     }
@@ -76,14 +76,14 @@ impl NSUUID {
     }
 }
 
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 impl fmt::Display for NSUUID {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(&self.UUIDString(), f)
     }
 }
 
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 impl fmt::Debug for NSUUID {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // The `uuid` crate does `Debug` and `Display` equally, and so do we

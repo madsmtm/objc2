@@ -1,4 +1,4 @@
-#![cfg(feature = "Foundation_NSValue")]
+#![cfg(feature = "NSValue")]
 use alloc::format;
 use core::slice;
 use core::str;
@@ -47,13 +47,13 @@ fn test_debug() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSRange")]
+#[cfg(feature = "NSRange")]
 fn nsrange() {
     use crate::Foundation::NSRange;
     let range = NSRange::from(1..2);
     let val = NSValue::new(range);
     assert_eq!(val.get_range(), Some(range));
-    #[cfg(feature = "Foundation_NSGeometry")]
+    #[cfg(feature = "NSGeometry")]
     {
         assert_eq!(val.get_point(), None);
         assert_eq!(val.get_size(), None);
@@ -65,7 +65,7 @@ fn nsrange() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSGeometry")]
+#[cfg(feature = "NSGeometry")]
 fn nspoint() {
     use crate::Foundation::NSPoint;
     let point = NSPoint::new(1.0, 2.0);
@@ -76,7 +76,7 @@ fn nspoint() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSGeometry")]
+#[cfg(feature = "NSGeometry")]
 fn nssize() {
     use crate::Foundation::NSSize;
     let point = NSSize::new(1.0, 2.0);
@@ -87,7 +87,7 @@ fn nssize() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSGeometry")]
+#[cfg(feature = "NSGeometry")]
 fn nsrect() {
     use crate::Foundation::{NSPoint, NSRect, NSSize};
     let rect = NSRect::new(NSPoint::new(1.0, 2.0), NSSize::new(3.0, 4.0));

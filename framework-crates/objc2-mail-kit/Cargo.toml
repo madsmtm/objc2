@@ -46,126 +46,126 @@ unstable-docsrs = []
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 
-MailKit_MEAddressAnnotation = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MEAddressAnnotation = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-MailKit_MEComposeContext = ["objc2-foundation/Foundation_NSUUID"]
-MailKit_MEComposeSession = [
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUUID",
+MEComposeContext = ["objc2-foundation/NSUUID"]
+MEComposeSession = [
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
 ]
-MailKit_MEContentBlocker = ["objc2-foundation/Foundation_NSData"]
-MailKit_MEDecodedMessage = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
+MEContentBlocker = ["objc2-foundation/NSData"]
+MEDecodedMessage = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
 ]
-MailKit_MEDecodedMessageBanner = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MEDecodedMessageBanner = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-MailKit_MEEmailAddress = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MEEmailAddress = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-MailKit_MEEncodedOutgoingMessage = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
+MEEncodedOutgoingMessage = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
 ]
-MailKit_MEExtension = []
-MailKit_MEExtensionManager = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+MEExtension = []
+MEExtensionManager = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-MailKit_MEExtensionViewController = [
-    "objc2-app-kit?/AppKit_NSKeyValueBinding",
-    "objc2-app-kit?/AppKit_NSNib",
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSStoryboardSegue",
-    "objc2-app-kit?/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MEExtensionViewController = [
+    "objc2-app-kit?/NSKeyValueBinding",
+    "objc2-app-kit?/NSNib",
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSStoryboardSegue",
+    "objc2-app-kit?/NSUserInterfaceItemIdentification",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-MailKit_MEMessage = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MEMessage = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-MailKit_MEMessageAction = ["objc2-foundation/Foundation_NSObject"]
-MailKit_MEMessageActionDecision = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
+MEMessageAction = ["objc2-foundation/NSObject"]
+MEMessageActionDecision = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
 ]
-MailKit_MEMessageActionHandler = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
+MEMessageActionHandler = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
-MailKit_MEMessageDecoder = ["objc2-foundation/Foundation_NSData"]
-MailKit_MEMessageEncoder = []
-MailKit_MEMessageEncodingResult = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
+MEMessageDecoder = ["objc2-foundation/NSData"]
+MEMessageEncoder = []
+MEMessageEncodingResult = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
 ]
-MailKit_MEMessageSecurityHandler = [
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+MEMessageSecurityHandler = [
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-MailKit_MEMessageSecurityInformation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MEMessageSecurityInformation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-MailKit_MEMessageSigner = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MEMessageSigner = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-MailKit_MEOutgoingMessageEncodingStatus = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
+MEOutgoingMessageEncodingStatus = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
 ]
 all = [
-    "MailKit_MEAddressAnnotation",
-    "MailKit_MEComposeContext",
-    "MailKit_MEComposeSession",
-    "MailKit_MEContentBlocker",
-    "MailKit_MEDecodedMessage",
-    "MailKit_MEDecodedMessageBanner",
-    "MailKit_MEEmailAddress",
-    "MailKit_MEEncodedOutgoingMessage",
-    "MailKit_MEExtension",
-    "MailKit_MEExtensionManager",
-    "MailKit_MEExtensionViewController",
-    "MailKit_MEMessage",
-    "MailKit_MEMessageAction",
-    "MailKit_MEMessageActionDecision",
-    "MailKit_MEMessageActionHandler",
-    "MailKit_MEMessageDecoder",
-    "MailKit_MEMessageEncoder",
-    "MailKit_MEMessageEncodingResult",
-    "MailKit_MEMessageSecurityHandler",
-    "MailKit_MEMessageSecurityInformation",
-    "MailKit_MEMessageSigner",
-    "MailKit_MEOutgoingMessageEncodingStatus",
+    "MEAddressAnnotation",
+    "MEComposeContext",
+    "MEComposeSession",
+    "MEContentBlocker",
+    "MEDecodedMessage",
+    "MEDecodedMessageBanner",
+    "MEEmailAddress",
+    "MEEncodedOutgoingMessage",
+    "MEExtension",
+    "MEExtensionManager",
+    "MEExtensionViewController",
+    "MEMessage",
+    "MEMessageAction",
+    "MEMessageActionDecision",
+    "MEMessageActionHandler",
+    "MEMessageDecoder",
+    "MEMessageEncoder",
+    "MEMessageEncodingResult",
+    "MEMessageSecurityHandler",
+    "MEMessageSecurityInformation",
+    "MEMessageSigner",
+    "MEOutgoingMessageEncodingStatus",
     "block2",
     "objc2-app-kit",
 ]

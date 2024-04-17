@@ -46,67 +46,67 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 
-Speech_SFErrors = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+SFErrors = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-Speech_SFSpeechLanguageModel = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+SFSpeechLanguageModel = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-Speech_SFSpeechRecognitionMetadata = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
+SFSpeechRecognitionMetadata = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
 ]
-Speech_SFSpeechRecognitionRequest = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+SFSpeechRecognitionRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-Speech_SFSpeechRecognitionResult = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
+SFSpeechRecognitionResult = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
 ]
-Speech_SFSpeechRecognitionTask = ["objc2-foundation/Foundation_NSError"]
-Speech_SFSpeechRecognitionTaskHint = []
-Speech_SFSpeechRecognizer = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSLocale",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSSet",
+SFSpeechRecognitionTask = ["objc2-foundation/NSError"]
+SFSpeechRecognitionTaskHint = []
+SFSpeechRecognizer = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSLocale",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSSet",
 ]
-Speech_SFTranscription = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+SFTranscription = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Speech_SFTranscriptionSegment = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
+SFTranscriptionSegment = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
 ]
-Speech_SFVoiceAnalytics = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSValue",
+SFVoiceAnalytics = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSValue",
 ]
 all = [
-    "Speech_SFErrors",
-    "Speech_SFSpeechLanguageModel",
-    "Speech_SFSpeechRecognitionMetadata",
-    "Speech_SFSpeechRecognitionRequest",
-    "Speech_SFSpeechRecognitionResult",
-    "Speech_SFSpeechRecognitionTask",
-    "Speech_SFSpeechRecognitionTaskHint",
-    "Speech_SFSpeechRecognizer",
-    "Speech_SFTranscription",
-    "Speech_SFTranscriptionSegment",
-    "Speech_SFVoiceAnalytics",
+    "SFErrors",
+    "SFSpeechLanguageModel",
+    "SFSpeechRecognitionMetadata",
+    "SFSpeechRecognitionRequest",
+    "SFSpeechRecognitionResult",
+    "SFSpeechRecognitionTask",
+    "SFSpeechRecognitionTaskHint",
+    "SFSpeechRecognizer",
+    "SFTranscription",
+    "SFTranscriptionSegment",
+    "SFVoiceAnalytics",
     "block2",
 ]

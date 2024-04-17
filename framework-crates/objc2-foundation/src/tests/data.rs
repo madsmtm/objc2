@@ -1,4 +1,4 @@
-#![cfg(feature = "Foundation_NSData")]
+#![cfg(feature = "NSData")]
 use alloc::{format, vec};
 
 use crate::Foundation::NSData;

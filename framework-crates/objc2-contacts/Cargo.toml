@@ -47,161 +47,161 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 
-Contacts_CNChangeHistoryEvent = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNChangeHistoryEvent = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNChangeHistoryFetchRequest = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNChangeHistoryFetchRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNContact = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCalendar",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNContact = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCalendar",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNContactFetchRequest = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSPredicate",
+CNContactFetchRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSPredicate",
 ]
-Contacts_CNContactFormatter = [
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSFormatter",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNContactFormatter = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSFormatter",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNContactProperty = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNContactProperty = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNContactRelation = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNContactRelation = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNContactStore = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSEnumerator",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSString",
+CNContactStore = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSEnumerator",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNContactVCardSerialization = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
+CNContactVCardSerialization = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
 ]
-Contacts_CNContact_NSItemProvider = ["objc2-foundation/Foundation_NSItemProvider"]
-Contacts_CNContact_Predicates = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSString",
+CNContact_NSItemProvider = ["objc2-foundation/NSItemProvider"]
+CNContact_Predicates = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNContactsUserDefaults = ["objc2-foundation/Foundation_NSString"]
-Contacts_CNContainer = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNContactsUserDefaults = ["objc2-foundation/NSString"]
+CNContainer = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNContainer_Predicates = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSString",
+CNContainer_Predicates = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNError = ["objc2-foundation/Foundation_NSString"]
-Contacts_CNFetchRequest = []
-Contacts_CNFetchResult = ["objc2-foundation/Foundation_NSData"]
-Contacts_CNGroup = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNError = ["objc2-foundation/NSString"]
+CNFetchRequest = []
+CNFetchResult = ["objc2-foundation/NSData"]
+CNGroup = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNGroup_Predicates = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSString",
+CNGroup_Predicates = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNInstantMessageAddress = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNInstantMessageAddress = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNLabeledValue = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNLabeledValue = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNMutableContact = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCalendar",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNMutableContact = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCalendar",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNMutableGroup = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNMutableGroup = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNMutablePostalAddress = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNMutablePostalAddress = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNPhoneNumber = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNPhoneNumber = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNPostalAddress = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNPostalAddress = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNPostalAddressFormatter = [
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSFormatter",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNPostalAddressFormatter = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSFormatter",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_CNSaveRequest = ["objc2-foundation/Foundation_NSString"]
-Contacts_CNSocialProfile = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CNSaveRequest = ["objc2-foundation/NSString"]
+CNSocialProfile = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Contacts_ContactsDefines = []
+ContactsDefines = []
 all = [
-    "Contacts_CNChangeHistoryEvent",
-    "Contacts_CNChangeHistoryFetchRequest",
-    "Contacts_CNContact",
-    "Contacts_CNContactFetchRequest",
-    "Contacts_CNContactFormatter",
-    "Contacts_CNContactProperty",
-    "Contacts_CNContactRelation",
-    "Contacts_CNContactStore",
-    "Contacts_CNContactVCardSerialization",
-    "Contacts_CNContact_NSItemProvider",
-    "Contacts_CNContact_Predicates",
-    "Contacts_CNContactsUserDefaults",
-    "Contacts_CNContainer",
-    "Contacts_CNContainer_Predicates",
-    "Contacts_CNError",
-    "Contacts_CNFetchRequest",
-    "Contacts_CNFetchResult",
-    "Contacts_CNGroup",
-    "Contacts_CNGroup_Predicates",
-    "Contacts_CNInstantMessageAddress",
-    "Contacts_CNLabeledValue",
-    "Contacts_CNMutableContact",
-    "Contacts_CNMutableGroup",
-    "Contacts_CNMutablePostalAddress",
-    "Contacts_CNPhoneNumber",
-    "Contacts_CNPostalAddress",
-    "Contacts_CNPostalAddressFormatter",
-    "Contacts_CNSaveRequest",
-    "Contacts_CNSocialProfile",
-    "Contacts_ContactsDefines",
+    "CNChangeHistoryEvent",
+    "CNChangeHistoryFetchRequest",
+    "CNContact",
+    "CNContactFetchRequest",
+    "CNContactFormatter",
+    "CNContactProperty",
+    "CNContactRelation",
+    "CNContactStore",
+    "CNContactVCardSerialization",
+    "CNContact_NSItemProvider",
+    "CNContact_Predicates",
+    "CNContactsUserDefaults",
+    "CNContainer",
+    "CNContainer_Predicates",
+    "CNError",
+    "CNFetchRequest",
+    "CNFetchResult",
+    "CNGroup",
+    "CNGroup_Predicates",
+    "CNInstantMessageAddress",
+    "CNLabeledValue",
+    "CNMutableContact",
+    "CNMutableGroup",
+    "CNMutablePostalAddress",
+    "CNPhoneNumber",
+    "CNPostalAddress",
+    "CNPostalAddressFormatter",
+    "CNSaveRequest",
+    "CNSocialProfile",
+    "ContactsDefines",
     "block2",
 ]
