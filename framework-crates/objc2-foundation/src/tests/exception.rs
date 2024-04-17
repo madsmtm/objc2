@@ -1,6 +1,7 @@
 #![cfg(feature = "NSException")]
 #![cfg(feature = "NSString")]
 #![cfg(feature = "NSDictionary")]
+#![cfg(feature = "NSObjCRuntime")]
 use alloc::format;
 
 use crate::Foundation::{NSException, NSObject, NSString};

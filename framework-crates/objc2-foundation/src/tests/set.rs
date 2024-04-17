@@ -200,10 +200,10 @@ fn test_debug() {
 
 /// This currently works, but we should figure out a way to disallow it!
 #[test]
-#[cfg(all(feature = "NSArray", feature = "NSConnection"))]
+#[cfg(all(feature = "NSArray", feature = "NSCalendar"))]
 #[allow(deprecated)]
 fn invalid_generic() {
-    let something_interior_mutable = unsafe { Foundation::NSConnection::defaultConnection() };
+    let something_interior_mutable = unsafe { Foundation::NSCalendar::currentCalendar() };
     let set = NSSet::from_id_slice(&[Foundation::NSArray::from_id_slice(&[
         something_interior_mutable,
     ])]);

@@ -110,7 +110,7 @@ fn test_into_vec() {
 }
 
 #[test]
-#[cfg(feature = "NSString")]
+#[cfg(all(feature = "NSObjCRuntime", feature = "NSString"))]
 fn test_sort() {
     use Foundation::NSString;
 
