@@ -29,6 +29,7 @@ panic = "abort"
 # Release data for framework crates
 [workspace.metadata.release]
 allow-branch = ["master"]
+push-remote = "0origin"
 shared-version = true # Framework crates share a version number
 tag-prefix = "icrate"
 tag-name = "{{prefix}}-{{version}}"
