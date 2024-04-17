@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 
+## 4.0.1 - 2024-04-17
+
+### Changed
+* Build documentation on docs.rs on more Apple platforms.
+
+
 ## 4.0.0 - 2023-12-03
 
 ### Changed

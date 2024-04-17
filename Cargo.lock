@@ -501,7 +501,7 @@ dependencies = [
 
 [[package]]
 name = "objc2-encode"
-version = "4.0.0"
+version = "4.0.1"
 
 [[package]]
 name = "objc2-event-kit"
