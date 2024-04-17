@@ -189,7 +189,7 @@ dependencies = [
 
 [[package]]
 name = "icrate"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "block2",
  "dispatch",

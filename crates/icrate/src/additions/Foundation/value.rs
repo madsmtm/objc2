@@ -155,7 +155,7 @@ impl NSValue {
 impl hash::Hash for NSValue {
     #[inline]
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
-        (**self).hash(state)
+        hash::Hash::hash(&**self, state)
     }
 }
 
