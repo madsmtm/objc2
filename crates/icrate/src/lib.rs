@@ -111,7 +111,7 @@
 #![allow(clippy::identity_op)]
 #![allow(clippy::missing_safety_doc)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/icrate/0.1.0")]
+#![doc(html_root_url = "https://docs.rs/icrate/0.1.1")]
 #![recursion_limit = "512"]
 
 #[cfg(feature = "alloc")]

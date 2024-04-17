@@ -7,7 +7,9 @@
 
 Rust bindings to Apple's frameworks.
 
-This README is kept intentionally small in an effort to consolidate the documentation, see [the Rust docs](https://docs.rs/icrate/) for more details.
+**This crate has been split into multiple smaller ones, and is now deprecated!**
+
+See [`objc2`](https://docs.rs/objc2/latest/objc2/topics/about_generated/list/index.html) for the list of available crates.
 
 
 ## Supported versions

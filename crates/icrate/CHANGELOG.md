@@ -11,6 +11,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## icrate Unreleased - YYYY-MM-DD
 
 
+## icrate 0.1.1 - 2023-04-17
+
+### Deprecated
+* Deprecated the `icrate` crate, it has been split into multiple smaller crates.
+
+
 ## icrate 0.1.0 - 2023-12-23
 
 ### Added
