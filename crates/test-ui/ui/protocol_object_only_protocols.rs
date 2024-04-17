@@ -1,6 +1,6 @@
 //! Ensure that `ProtocolObject` cannot be incorrectly constructed.
-use icrate::Foundation::NSCopying;
 use objc2::runtime::{NSObject, NSObjectProtocol, ProtocolObject};
+use objc2_foundation::NSCopying;
 
 trait Foo {
     fn foo(&self) {}

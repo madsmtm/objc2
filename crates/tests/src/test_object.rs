@@ -2,8 +2,6 @@
 use core::mem::{size_of, ManuallyDrop};
 use std::os::raw::c_int;
 
-#[cfg(feature = "Foundation_all")]
-use icrate::Foundation::NSNumber;
 use objc2::encode::{Encoding, RefEncode};
 use objc2::rc::{autoreleasepool, AutoreleasePool, Id};
 use objc2::runtime::{
@@ -13,6 +11,8 @@ use objc2::sel;
 use objc2::{
     class, extern_protocol, msg_send, msg_send_id, mutability, ClassType, Message, ProtocolType,
 };
+#[cfg(feature = "all")]
+use objc2_foundation::NSNumber;
 
 extern_protocol!(
     unsafe trait MyTestProtocol: NSObjectProtocol {
@@ -22,11 +22,11 @@ extern_protocol!(
         #[method(b)]
         fn b() -> c_int;
 
-        #[cfg(feature = "Foundation_all")]
+        #[cfg(feature = "all")]
         #[method_id(c)]
         fn c(&self) -> Id<NSNumber>;
 
-        #[cfg(feature = "Foundation_all")]
+        #[cfg(feature = "all")]
         #[method_id(d)]
         fn d() -> Id<NSNumber>;
 
@@ -38,12 +38,12 @@ extern_protocol!(
         #[optional]
         fn f() -> c_int;
 
-        #[cfg(feature = "Foundation_all")]
+        #[cfg(feature = "all")]
         #[optional]
         #[method_id(g)]
         fn g(&self) -> Id<NSNumber>;
 
-        #[cfg(feature = "Foundation_all")]
+        #[cfg(feature = "all")]
         #[optional]
         #[method_id(h)]
         fn h() -> Id<NSNumber>;
@@ -309,15 +309,15 @@ fn test_protocol() {
     let proto: Id<ProtocolObject<dyn MyTestProtocol>> = ProtocolObject::from_id(obj);
     assert_eq!(proto.a(), 1);
     assert_eq!(MyTestObject::b(), 2);
-    #[cfg(feature = "Foundation_all")]
+    #[cfg(feature = "all")]
     assert_eq!(proto.c().as_i32(), 3);
-    #[cfg(feature = "Foundation_all")]
+    #[cfg(feature = "all")]
     assert_eq!(MyTestObject::d().as_i32(), 4);
     assert_eq!(proto.e(), 5);
     assert_eq!(MyTestObject::f(), 6);
-    #[cfg(feature = "Foundation_all")]
+    #[cfg(feature = "all")]
     assert_eq!(proto.g().as_i32(), 7);
-    #[cfg(feature = "Foundation_all")]
+    #[cfg(feature = "all")]
     assert_eq!(MyTestObject::h().as_i32(), 8);
 
     // Check that transforming to `NSObjectProtocol` works

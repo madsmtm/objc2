@@ -1,11 +1,11 @@
 use alloc::format;
 use alloc::string::ToString;
 
-use icrate::Foundation::{NSArray, NSException, NSString};
 use objc2::exception::{catch, throw};
 use objc2::msg_send;
 use objc2::rc::{autoreleasepool, Id};
 use objc2::runtime::{NSObject, NSObjectProtocol};
+use objc2_foundation::{NSArray, NSException, NSString};
 
 #[test]
 #[cfg_attr(

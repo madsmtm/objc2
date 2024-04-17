@@ -1,9 +1,9 @@
 //! Test that fast enumeration is handled efficiently.
-#![cfg(feature = "Foundation_NSArray")]
+#![cfg(feature = "all")]
 use core::hint::black_box;
 
-use icrate::Foundation::array::Iter;
-use icrate::Foundation::{NSArray, NSObject};
+use objc2_foundation::array::Iter;
+use objc2_foundation::{NSArray, NSObject};
 
 // Should ideally be a fast zero-initialization.
 #[no_mangle]

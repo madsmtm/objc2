@@ -2,10 +2,10 @@
 ///
 /// This is similar to an `@interface` declaration in Objective-C.
 ///
-/// It is useful for things like `icrate`, which needs to create interfaces to
-/// existing, externally defined classes like `NSString`, `NSURL` and so on,
-/// but can also be useful for users that have custom classes written in
-/// Objective-C that they want to access from Rust.
+/// It is useful for things like `objc2-foundation`, which needs to create
+/// interfaces to existing, externally defined classes like `NSString`,
+/// `NSURL` and so on, but can also be useful for users that have custom
+/// classes written in Objective-C that they want to access from Rust.
 ///
 ///
 /// # Specification
@@ -87,11 +87,11 @@
 /// # Examples
 ///
 /// Create a new type to represent the `NSFormatter` class (for demonstration,
-/// `icrate::Foundation::NSFormatter` exist for exactly this purpose).
+/// `objc2_foundation::NSFormatter` exist for exactly this purpose).
 ///
 /// ```
 /// # #[cfg(not_available)]
-/// use icrate::Foundation::{NSCoding, NSCopying, NSObjectProtocol};
+/// use objc2_foundation::{NSCoding, NSCopying, NSObjectProtocol};
 /// # use objc2::runtime::NSObjectProtocol;
 /// use objc2::rc::Id;
 /// use objc2::runtime::NSObject;
@@ -135,7 +135,7 @@
 ///
 /// ```
 /// # #[cfg(not_available)]
-/// use icrate::Foundation::{NSCoding, NSCopying, NSObjectProtocol};
+/// use objc2_foundation::{NSCoding, NSCopying, NSObjectProtocol};
 /// # use objc2::runtime::NSObjectProtocol;
 /// use objc2::runtime::NSObject;
 /// use objc2::{extern_class, mutability, ClassType};
@@ -170,7 +170,7 @@
 /// unsafe impl NSCoding for NSDateFormatter {}
 /// ```
 ///
-/// See the source code of `icrate` for many more examples.
+/// See the source code of `objc2-foundation` for many more examples.
 #[doc(alias = "@interface")]
 #[macro_export]
 macro_rules! extern_class {
@@ -314,7 +314,7 @@ macro_rules! __impl_as_ref_borrow {
 }
 
 /// Note: While this is not public, it is still a breaking change to change
-/// this, since `icrate` relies on it.
+/// this, since framework crates rely on it.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __inner_extern_class {

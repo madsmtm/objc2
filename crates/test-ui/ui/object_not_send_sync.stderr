@@ -145,7 +145,7 @@ note: required because it appears within the type `NSObject`
   | pub struct NSObject {
   |            ^^^^^^^^
 note: required because it appears within the type `NSValue`
- --> $WORKSPACE/crates/icrate/src/generated/Foundation/NSValue.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSValue.rs
   |
   |     pub struct NSValue;
   |                ^^^^^^^
@@ -189,7 +189,7 @@ note: required because it appears within the type `NSObject`
   | pub struct NSObject {
   |            ^^^^^^^^
 note: required because it appears within the type `NSValue`
- --> $WORKSPACE/crates/icrate/src/generated/Foundation/NSValue.rs
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSValue.rs
   |
   |     pub struct NSValue;
   |                ^^^^^^^

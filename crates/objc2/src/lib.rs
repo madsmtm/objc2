@@ -1,7 +1,9 @@
 //! # Objective-C interface and runtime bindings
 //!
 //! Quick links:
-//! - [Topics][crate::topics].
+//! - [All Topics][crate::topics].
+//! - [About framework crates][crate::topics::about_generated].
+//! - [List of framework crates][crate::topics::about_generated::list].
 //!
 //! Objective-C was the standard programming language on Apple platforms like
 //! macOS, iOS, iPadOS, tvOS and watchOS. It is an object-oriented language
@@ -13,13 +15,6 @@
 //! Objective-C, and hence we would like the ability to interract with these
 //! using Rust. This crate enables you to do that, in as safe a manner as
 //! possible.
-//!
-//! See [the document on "Layered Safety"][layered_safety] for a bit of an
-//! introduction to how the safety in this crate works, and see [`icrate`] for
-//! higher-level bindings to Apple's frameworks.
-//!
-//! [layered_safety]: crate::topics::layered_safety
-//! [`icrate`]: https://docs.rs/icrate/latest/icrate/
 //!
 //!
 //! ## Basic usage
@@ -74,7 +69,7 @@
 //! have accidentally made `hash` an `f32`, or any other type, and this would
 //! trigger undefined behaviour!
 //!
-//! See the `icrate` crate for much more ergonomic usage of the system
+//! See [the framework crates] for much more ergonomic usage of the system
 //! frameworks like `Foundation`, `AppKit`, `UIKit` and so on.
 //!
 //! Anyhow, all of this `unsafe` nicely leads us to another feature that this
@@ -82,6 +77,7 @@
 //!
 //! [`NSObject`]: crate::runtime::NSObject
 //! [`rc::Id`]: crate::rc::Id
+//! [the framework crates]: crate::topics::about_generated
 //!
 //!
 //! ## Encodings and message type verification
@@ -199,6 +195,10 @@ macro_rules! __hash_idents {
     };
 }
 
+// Note: While this is not public, it is still a breaking change to change,
+// since framework crates rely on it.
+#[doc(hidden)]
+pub mod __framework_prelude;
 #[doc(hidden)]
 pub mod __macro_helpers;
 pub mod encode;

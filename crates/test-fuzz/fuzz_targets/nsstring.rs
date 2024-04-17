@@ -1,7 +1,7 @@
 #![no_main]
-use icrate::Foundation::NSString;
 use libfuzzer_sys::fuzz_target;
 use objc2::rc::autoreleasepool;
+use objc2_foundation::NSString;
 
 fuzz_target!(|s: &str| {
     autoreleasepool(|pool| {

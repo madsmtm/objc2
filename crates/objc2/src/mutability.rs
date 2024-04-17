@@ -74,8 +74,8 @@ enum Never {}
 
 /// Marker type for root classes.
 ///
-/// This is used for `icrate::Foundation::NSObject` and
-/// `icrate::Foundation::NSProxy`, which are the two fundamental types that
+/// This is used for `objc2_foundation::NSObject` and
+/// `objc2_foundation::NSProxy`, which are the two fundamental types that
 /// all others inherit from.
 ///
 /// Functionality that is provided with this:

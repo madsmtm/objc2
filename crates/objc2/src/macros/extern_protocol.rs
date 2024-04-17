@@ -79,7 +79,8 @@
 /// use objc2::runtime::{NSObject, NSObjectProtocol};
 /// use objc2::{extern_protocol, ProtocolType};
 ///
-/// // Assume these were correctly define, as if the came from `icrate`
+/// // Assume these were correctly defined, as if they came from
+/// // `objc2-foundation`
 /// type NSArray<T> = T;
 /// type NSString = NSObject;
 /// type NSProgress = NSObject;
@@ -144,7 +145,7 @@
 /// // from it as we specified.
 /// ```
 ///
-/// See the source code of `icrate` for many more examples.
+/// See the source code of `objc2-foundation` for many more examples.
 #[doc(alias = "@protocol")]
 #[macro_export]
 macro_rules! extern_protocol {

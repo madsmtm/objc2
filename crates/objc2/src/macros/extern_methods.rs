@@ -26,7 +26,7 @@
 /// [`Result`]. See the error section in [`msg_send!`] and [`msg_send_id!`]
 /// for details.
 ///
-/// If you use `icrate::Foundation::MainThreadMarker` as a parameter type, the
+/// If you use `objc2_foundation::MainThreadMarker` as a parameter type, the
 /// macro will ignore it, allowing you to neatly specify "this method must be
 /// run on the main thread". Note that due to type-system limitations, this is
 /// currently a textual match on `MainThreadMarker`; so you must use that
@@ -181,7 +181,7 @@
 /// }
 /// ```
 ///
-/// See the source code of `icrate` for many more examples.
+/// See the source code of `objc2-foundation` for many more examples.
 #[macro_export]
 macro_rules! extern_methods {
     // Generic impls

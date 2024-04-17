@@ -8,7 +8,7 @@ use crate::rc::AutoreleasePool;
 use crate::runtime::NSObject;
 
 // Note: While this is not public, it is still a breaking change to modify,
-// since `icrate` relies on it.
+// since `objc2-foundation` relies on it.
 #[cfg(feature = "apple")]
 pub const UTF8_ENCODING: usize = 4;
 #[cfg(feature = "gnustep-1-7")]
@@ -21,7 +21,7 @@ pub const UTF8_ENCODING: i32 = 4;
 /// The object must be an instance of `NSString`.
 //
 // Note: While this is not public, it is still a breaking change to modify,
-// since `icrate` relies on it.
+// since `objc2-foundation` relies on it.
 pub unsafe fn nsstring_len(obj: &NSObject) -> NSUInteger {
     unsafe { msg_send![obj, lengthOfBytesUsingEncoding: UTF8_ENCODING] }
 }
@@ -33,7 +33,7 @@ pub unsafe fn nsstring_len(obj: &NSObject) -> NSUInteger {
 /// The object must be an instance of `NSString`.
 //
 // Note: While this is not public, it is still a breaking change to modify,
-// since `icrate` relies on it.
+// since `objc2-foundation` relies on it.
 pub unsafe fn nsstring_to_str<'r, 's: 'r, 'p: 'r>(
     obj: &'s NSObject,
     pool: AutoreleasePool<'p>,

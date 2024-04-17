@@ -1,4 +1,4 @@
-use icrate::Foundation::{NSArray, NSCopying, NSMutableArray, NSMutableString, NSString};
+use objc2_foundation::{NSArray, NSCopying, NSMutableArray, NSMutableString, NSString};
 
 fn main() {
     let arr: &mut NSArray<NSMutableString> = &mut NSMutableArray::new();

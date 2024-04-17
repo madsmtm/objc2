@@ -1,5 +1,5 @@
-use icrate::Foundation::{NSArray, NSMutableArray, NSMutableString, NSString};
 use objc2::rc::Id;
+use objc2_foundation::{NSArray, NSMutableArray, NSMutableString, NSString};
 
 fn main() {
     let arr: Id<NSArray<NSString>> = NSArray::new();

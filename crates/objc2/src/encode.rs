@@ -45,8 +45,8 @@
 //!
 //! Implementing [`Encode`] for a few core-graphics types.
 //!
-//! Note that these are available in `icrate`, so the implementation here is
-//! mostly for demonstration.
+//! Note that these are available in `objc2-foundation`, so the implementation
+//! here is mostly for demonstration.
 //!
 //! ```
 #![doc = include_str!("../examples/encode_core_graphics.rs")]

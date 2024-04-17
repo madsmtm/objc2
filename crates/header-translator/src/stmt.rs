@@ -21,6 +21,7 @@ use crate::method::{handle_reserved, Method};
 use crate::rust_type::Ty;
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
+use crate::Config;
 
 #[derive(serde::Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Derives(Cow<'static, str>);
@@ -1509,522 +1510,574 @@ impl Stmt {
         }
     }
 
-    fn cfg_gate_ln(&self) -> impl fmt::Display + '_ {
-        cfg_gate_ln(self.required_items(), [self.location()])
+    /// Items required for any part of the statement.
+    pub(crate) fn required_items_inner(&self) -> Vec<ItemIdentifier> {
+        let required_by_inner: Vec<_> = match self {
+            Self::ExternCategory {
+                cls_required_items,
+                methods,
+                ..
+            } => methods
+                .iter()
+                .flat_map(|method| method.required_items())
+                .chain(cls_required_items.clone())
+                .collect(),
+            Self::ExternMethods { methods, .. } | Self::ProtocolDecl { methods, .. } => methods
+                .iter()
+                .flat_map(|method| method.required_items())
+                .collect(),
+            Self::EnumDecl { variants, .. } => variants
+                .iter()
+                .flat_map(|(_, _, expr)| expr.required_items())
+                .collect(),
+            _ => vec![],
+        };
+        self.required_items()
+            .into_iter()
+            .chain(required_by_inner)
+            .collect()
     }
-}
 
-impl fmt::Display for Stmt {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let _span = debug_span!("stmt", discriminant = ?mem::discriminant(self)).entered();
+    fn cfg_gate_ln<'a>(&'a self, config: &'a Config) -> impl fmt::Display + 'a {
+        cfg_gate_ln(
+            self.required_items(),
+            [self.location()],
+            config,
+            self.location(),
+        )
+    }
 
-        struct GenericTyHelper<'a>(&'a [String]);
+    pub fn fmt<'a>(&'a self, config: &'a Config) -> impl fmt::Display + 'a {
+        FormatterFn(move |f| {
+            let _span = debug_span!("stmt", discriminant = ?mem::discriminant(self)).entered();
 
-        impl fmt::Display for GenericTyHelper<'_> {
-            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                if !self.0.is_empty() {
-                    write!(f, "<")?;
-                    for generic in self.0 {
-                        write!(f, "{generic}, ")?;
-                    }
-                    write!(f, ">")?;
-                }
-                Ok(())
-            }
-        }
+            struct GenericTyHelper<'a>(&'a [String]);
 
-        struct GenericParamsHelper<'a>(&'a [String], &'a str);
-
-        impl fmt::Display for GenericParamsHelper<'_> {
-            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                if !self.0.is_empty() {
-                    write!(f, "<")?;
-                    for generic in self.0 {
-                        write!(f, "{generic}: {}, ", self.1)?;
-                    }
-                    write!(f, ">")?;
-                }
-                Ok(())
-            }
-        }
-
-        struct WhereBoundHelper<'a>(&'a [String], Option<&'a str>);
-
-        impl fmt::Display for WhereBoundHelper<'_> {
-            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                if let Some(bound) = self.1 {
+            impl fmt::Display for GenericTyHelper<'_> {
+                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                     if !self.0.is_empty() {
-                        writeln!(f, "where")?;
+                        write!(f, "<")?;
                         for generic in self.0 {
-                            writeln!(f, "{generic}{bound},")?;
+                            write!(f, "{generic}, ")?;
+                        }
+                        write!(f, ">")?;
+                    }
+                    Ok(())
+                }
+            }
+
+            struct GenericParamsHelper<'a>(&'a [String], &'a str);
+
+            impl fmt::Display for GenericParamsHelper<'_> {
+                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                    if !self.0.is_empty() {
+                        write!(f, "<")?;
+                        for generic in self.0 {
+                            write!(f, "{generic}: {}, ", self.1)?;
+                        }
+                        write!(f, ">")?;
+                    }
+                    Ok(())
+                }
+            }
+
+            struct WhereBoundHelper<'a>(&'a [String], Option<&'a str>);
+
+            impl fmt::Display for WhereBoundHelper<'_> {
+                fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                    if let Some(bound) = self.1 {
+                        if !self.0.is_empty() {
+                            writeln!(f, "where")?;
+                            for generic in self.0 {
+                                writeln!(f, "{generic}{bound},")?;
+                            }
                         }
                     }
+                    Ok(())
                 }
-                Ok(())
             }
-        }
 
-        // TODO: Derive this after https://github.com/madsmtm/objc2/issues/55
-        fn unsafe_impl_encode<'a>(
-            ident: impl fmt::Display + 'a,
-            encoding: impl fmt::Display + 'a,
-        ) -> impl fmt::Display + 'a {
-            FormatterFn(move |f| {
-                writeln!(f, "#[cfg(feature = \"objc2\")]")?;
-                writeln!(f, "unsafe impl Encode for {ident} {{")?;
-                writeln!(f, "    const ENCODING: Encoding = {encoding};")?;
-                writeln!(f, "}}")?;
-                Ok(())
-            })
-        }
+            // TODO: Derive this after https://github.com/madsmtm/objc2/issues/55
+            fn unsafe_impl_encode<'a>(
+                ident: impl fmt::Display + 'a,
+                encoding: impl fmt::Display + 'a,
+            ) -> impl fmt::Display + 'a {
+                FormatterFn(move |f| {
+                    writeln!(f, "unsafe impl Encode for {ident} {{")?;
+                    writeln!(f, "    const ENCODING: Encoding = {encoding};")?;
+                    writeln!(f, "}}")?;
+                    Ok(())
+                })
+            }
 
-        // TODO: Derive this after https://github.com/madsmtm/objc2/issues/55
-        fn unsafe_impl_refencode<'a>(ident: impl fmt::Display + 'a) -> impl fmt::Display + 'a {
-            FormatterFn(move |f| {
-                writeln!(f, "#[cfg(feature = \"objc2\")]")?;
-                writeln!(f, "unsafe impl RefEncode for {ident} {{")?;
-                writeln!(
-                    f,
-                    "    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);"
-                )?;
-                writeln!(f, "}}")?;
-                Ok(())
-            })
-        }
-
-        match self {
-            Self::ClassDecl {
-                id,
-                required_items: _,
-                generics,
-                availability,
-                superclasses,
-                designated_initializers: _,
-                derives,
-                mutability,
-                skipped,
-                sendable,
-            } => {
-                if *skipped {
-                    return Ok(());
-                }
-
-                let macro_name = if generics.is_empty() {
-                    "extern_class"
-                } else {
-                    "__inner_extern_class"
-                };
-
-                let (superclass, superclasses_rest) = superclasses.split_at(1);
-                let (superclass, superclass_generics) = superclass
-                    .first()
-                    .expect("must have a least one superclass");
-
-                writeln!(f, "{macro_name}!(")?;
-                writeln!(f, "    {derives}")?;
-                write!(f, "    {}", self.cfg_gate_ln())?;
-                write!(f, "    {availability}")?;
-                write!(f, "    pub struct {}", id.name)?;
-                if !generics.is_empty() {
-                    write!(f, "<")?;
-                    for generic in generics {
-                        write!(f, "{generic}: ?Sized = AnyObject, ")?;
-                    }
-                    write!(f, ">")?;
-                };
-                if generics.is_empty() {
-                    writeln!(f, ";")?;
-                } else {
-                    writeln!(f, " {{")?;
+            // TODO: Derive this after https://github.com/madsmtm/objc2/issues/55
+            fn unsafe_impl_refencode<'a>(ident: impl fmt::Display + 'a) -> impl fmt::Display + 'a {
+                FormatterFn(move |f| {
+                    writeln!(f, "unsafe impl RefEncode for {ident} {{")?;
                     writeln!(
                         f,
-                        "__superclass: {}{},",
+                        "    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);"
+                    )?;
+                    writeln!(f, "}}")?;
+                    Ok(())
+                })
+            }
+
+            match self {
+                Self::ClassDecl {
+                    id,
+                    required_items: _,
+                    generics,
+                    availability,
+                    superclasses,
+                    designated_initializers: _,
+                    derives,
+                    mutability,
+                    skipped,
+                    sendable,
+                } => {
+                    if *skipped {
+                        return Ok(());
+                    }
+
+                    let macro_name = if generics.is_empty() {
+                        "extern_class"
+                    } else {
+                        "__inner_extern_class"
+                    };
+
+                    let (superclass, superclasses_rest) = superclasses.split_at(1);
+                    let (superclass, superclass_generics) = superclass
+                        .first()
+                        .expect("must have a least one superclass");
+
+                    writeln!(f, "{macro_name}!(")?;
+                    writeln!(f, "    {derives}")?;
+                    write!(f, "    {}", self.cfg_gate_ln(config))?;
+                    write!(f, "    {availability}")?;
+                    write!(f, "    pub struct {}", id.name)?;
+                    if !generics.is_empty() {
+                        write!(f, "<")?;
+                        for generic in generics {
+                            write!(f, "{generic}: ?Sized = AnyObject, ")?;
+                        }
+                        write!(f, ">")?;
+                    };
+                    if generics.is_empty() {
+                        writeln!(f, ";")?;
+                    } else {
+                        writeln!(f, " {{")?;
+                        writeln!(
+                            f,
+                            "__superclass: {}{},",
+                            superclass.path_in_relation_to(id.location()),
+                            GenericTyHelper(superclass_generics),
+                        )?;
+                        for (i, generic) in generics.iter().enumerate() {
+                            // Invariant over the generic by default
+                            writeln!(f, "_inner{i}: PhantomData<*mut {generic}>,")?;
+                        }
+                        writeln!(f, "notunwindsafe: PhantomData<&'static mut ()>,")?;
+                        writeln!(f, "}}")?;
+                    }
+
+                    writeln!(f)?;
+
+                    write!(f, "    {}", self.cfg_gate_ln(config))?;
+                    writeln!(
+                        f,
+                        "    unsafe impl{} ClassType for {}{} {{",
+                        GenericParamsHelper(generics, "?Sized + Message"),
+                        id.name,
+                        GenericTyHelper(generics),
+                    )?;
+                    if !superclasses_rest.is_empty() {
+                        write!(f, "        #[inherits(")?;
+                        let mut iter = superclasses_rest.iter();
+                        // Using generics in here is not technically correct, but
+                        // should work for our use-cases.
+                        if let Some((superclass, generics)) = iter.next() {
+                            write!(
+                                f,
+                                "{}{}",
+                                superclass.path_in_relation_to(id.location()),
+                                GenericTyHelper(generics)
+                            )?;
+                        }
+                        for (superclass, generics) in iter {
+                            write!(
+                                f,
+                                ", {}{}",
+                                superclass.path_in_relation_to(id.location()),
+                                GenericTyHelper(generics)
+                            )?;
+                        }
+                        writeln!(f, ")]")?;
+                    }
+                    writeln!(
+                        f,
+                        "        type Super = {}{};",
                         superclass.path_in_relation_to(id.location()),
                         GenericTyHelper(superclass_generics),
                     )?;
-                    for (i, generic) in generics.iter().enumerate() {
-                        // Invariant over the generic by default
-                        writeln!(f, "_inner{i}: PhantomData<*mut {generic}>,")?;
-                    }
-                    writeln!(f, "notunwindsafe: PhantomData<&'static mut ()>,")?;
-                    writeln!(f, "}}")?;
-                }
-
-                writeln!(f)?;
-
-                write!(f, "    {}", self.cfg_gate_ln())?;
-                writeln!(
-                    f,
-                    "    unsafe impl{} ClassType for {}{} {{",
-                    GenericParamsHelper(generics, "?Sized + Message"),
-                    id.name,
-                    GenericTyHelper(generics),
-                )?;
-                if !superclasses_rest.is_empty() {
-                    write!(f, "        #[inherits(")?;
-                    let mut iter = superclasses_rest.iter();
-                    // Using generics in here is not technically correct, but
-                    // should work for our use-cases.
-                    if let Some((superclass, generics)) = iter.next() {
-                        write!(
+                    writeln!(f, "        type Mutability = {mutability};")?;
+                    if !generics.is_empty() {
+                        writeln!(f)?;
+                        writeln!(
                             f,
-                            "{}{}",
-                            superclass.path_in_relation_to(id.location()),
-                            GenericTyHelper(generics)
+                            "        fn as_super(&self) -> &Self::Super {{ &self.__superclass }}"
                         )?;
+                        writeln!(f)?;
+                        writeln!(f, "        fn as_super_mut(&mut self) -> &mut Self::Super {{ &mut self.__superclass }}")?;
                     }
-                    for (superclass, generics) in iter {
-                        write!(
+                    writeln!(f, "    }}")?;
+                    writeln!(f, ");")?;
+
+                    if *sendable && generics.is_empty() {
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
+
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
+                    }
+                }
+                Self::ExternMethods {
+                    location: _,
+                    availability: _,
+                    cls,
+                    cls_required_items: _,
+                    source_superclass,
+                    cls_generics,
+                    category_name,
+                    methods,
+                } => {
+                    writeln!(f, "extern_methods!(")?;
+                    if let Some(source_superclass) = source_superclass {
+                        writeln!(
                             f,
-                            ", {}{}",
-                            superclass.path_in_relation_to(id.location()),
-                            GenericTyHelper(generics)
+                            "    /// Methods declared on superclass `{}`",
+                            source_superclass.name
                         )?;
-                    }
-                    writeln!(f, ")]")?;
-                }
-                writeln!(
-                    f,
-                    "        type Super = {}{};",
-                    superclass.path_in_relation_to(id.location()),
-                    GenericTyHelper(superclass_generics),
-                )?;
-                writeln!(f, "        type Mutability = {mutability};")?;
-                if !generics.is_empty() {
-                    writeln!(f)?;
-                    writeln!(
-                        f,
-                        "        fn as_super(&self) -> &Self::Super {{ &self.__superclass }}"
-                    )?;
-                    writeln!(f)?;
-                    writeln!(f, "        fn as_super_mut(&mut self) -> &mut Self::Super {{ &mut self.__superclass }}")?;
-                }
-                writeln!(f, "    }}")?;
-                writeln!(f, ");")?;
-
-                if *sendable && generics.is_empty() {
-                    writeln!(f)?;
-                    write!(f, "{}", self.cfg_gate_ln())?;
-                    writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
-
-                    writeln!(f)?;
-                    write!(f, "{}", self.cfg_gate_ln())?;
-                    writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
-                }
-            }
-            Self::ExternMethods {
-                location: _,
-                availability: _,
-                cls,
-                cls_required_items: _,
-                source_superclass,
-                cls_generics,
-                category_name,
-                methods,
-            } => {
-                writeln!(f, "extern_methods!(")?;
-                if let Some(source_superclass) = source_superclass {
-                    writeln!(
-                        f,
-                        "    /// Methods declared on superclass `{}`",
-                        source_superclass.name
-                    )?;
-                    if let Some(category_name) = category_name {
-                        writeln!(f, "///")?;
+                        if let Some(category_name) = category_name {
+                            writeln!(f, "///")?;
+                            writeln!(f, "    /// {category_name}")?;
+                        }
+                    } else if let Some(category_name) = category_name {
                         writeln!(f, "    /// {category_name}")?;
                     }
-                } else if let Some(category_name) = category_name {
-                    writeln!(f, "    /// {category_name}")?;
-                }
-                write!(f, "    {}", self.cfg_gate_ln())?;
-                // TODO: Add ?Sized here once `extern_methods!` supports it.
-                writeln!(
-                    f,
-                    "    unsafe impl{} {}{} {{",
-                    GenericParamsHelper(cls_generics, "Message"),
-                    cls.path(),
-                    GenericTyHelper(cls_generics),
-                )?;
-                let required_items = self.required_items();
-                for method in methods {
-                    let implied_features = required_items
-                        .iter()
-                        .map(|item| item.location())
-                        .chain(iter::once(self.location()));
-                    write!(
-                        f,
-                        "{}",
-                        cfg_gate_ln(method.required_items(), implied_features)
-                    )?;
-                    writeln!(f, "{method}")?;
-                }
-                writeln!(f, "    }}")?;
-                writeln!(f, ");")?;
-
-                if let Some(method) = methods.iter().find(|method| method.usable_in_default_id()) {
-                    writeln!(f)?;
-                    // Assume `new` methods require no extra features
-                    write!(f, "{}", self.cfg_gate_ln())?;
+                    write!(f, "    {}", self.cfg_gate_ln(config))?;
+                    // TODO: Add ?Sized here once `extern_methods!` supports it.
                     writeln!(
                         f,
-                        "impl{} DefaultId for {}{} {{",
+                        "    unsafe impl{} {}{} {{",
                         GenericParamsHelper(cls_generics, "Message"),
                         cls.path(),
                         GenericTyHelper(cls_generics),
                     )?;
-                    writeln!(f, "    #[inline]")?;
-                    writeln!(f, "    fn default_id() -> Id<Self> {{")?;
-                    writeln!(f, "        Self::{}()", method.fn_name)?;
+                    let required_items = self.required_items();
+                    for method in methods {
+                        let implied_features = required_items
+                            .iter()
+                            .map(|item| item.location())
+                            .chain(iter::once(self.location()));
+                        write!(
+                            f,
+                            "{}",
+                            cfg_gate_ln(
+                                method.required_items(),
+                                implied_features,
+                                config,
+                                self.location()
+                            )
+                        )?;
+                        writeln!(f, "{method}")?;
+                    }
                     writeln!(f, "    }}")?;
-                    writeln!(f, "}}")?;
-                }
-            }
-            Self::ExternCategory {
-                id,
-                actual_name,
-                availability,
-                cls,
-                cls_required_items,
-                methods,
-            } => {
-                writeln!(f, "extern_category!(")?;
+                    writeln!(f, ");")?;
 
-                if let Some(actual_name) = actual_name {
-                    if *actual_name != id.name {
-                        writeln!(f, "    /// Category \"{actual_name}\" on [`{}`].", cls.name)?;
-                        writeln!(f, "    #[doc(alias = \"{actual_name}\")]")?;
+                    if let Some(method) =
+                        methods.iter().find(|method| method.usable_in_default_id())
+                    {
+                        writeln!(f)?;
+                        // Assume `new` methods require no extra features
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(
+                            f,
+                            "impl{} DefaultId for {}{} {{",
+                            GenericParamsHelper(cls_generics, "Message"),
+                            cls.path(),
+                            GenericTyHelper(cls_generics),
+                        )?;
+                        writeln!(f, "    #[inline]")?;
+                        writeln!(f, "    fn default_id() -> Id<Self> {{")?;
+                        writeln!(f, "        Self::{}()", method.fn_name)?;
+                        writeln!(f, "    }}")?;
+                        writeln!(f, "}}")?;
+                    }
+                }
+                Self::ExternCategory {
+                    id,
+                    actual_name,
+                    availability,
+                    cls,
+                    cls_required_items,
+                    methods,
+                } => {
+                    writeln!(f, "extern_category!(")?;
+
+                    if let Some(actual_name) = actual_name {
+                        if *actual_name != id.name {
+                            writeln!(f, "    /// Category \"{actual_name}\" on [`{}`].", cls.name)?;
+                            writeln!(f, "    #[doc(alias = \"{actual_name}\")]")?;
+                        } else {
+                            writeln!(f, "    /// Category on [`{}`].", cls.name)?;
+                        }
                     } else {
                         writeln!(f, "    /// Category on [`{}`].", cls.name)?;
                     }
-                } else {
-                    writeln!(f, "    /// Category on [`{}`].", cls.name)?;
-                }
 
-                write!(f, "    {}", self.cfg_gate_ln())?;
-                write!(f, "    {availability}")?;
-                writeln!(f, "    pub unsafe trait {} {{", id.name)?;
-                let required_items = self.required_items();
-                for method in methods {
-                    let implied_features = required_items
-                        .iter()
-                        .map(|item| item.location())
-                        .chain(iter::once(self.location()));
+                    write!(f, "    {}", self.cfg_gate_ln(config))?;
+                    write!(f, "    {availability}")?;
+                    writeln!(f, "    pub unsafe trait {} {{", id.name)?;
+                    let required_items = self.required_items();
+                    for method in methods {
+                        let implied_features = required_items
+                            .iter()
+                            .map(|item| item.location())
+                            .chain(iter::once(self.location()));
+                        write!(
+                            f,
+                            "{}",
+                            cfg_gate_ln(
+                                method.required_items(),
+                                implied_features,
+                                config,
+                                self.location()
+                            )
+                        )?;
+                        writeln!(f, "{method}")?;
+                    }
+                    writeln!(f, "    }}")?;
+
+                    writeln!(f)?;
+
                     write!(
                         f,
-                        "{}",
-                        cfg_gate_ln(method.required_items(), implied_features)
+                        "    {}",
+                        cfg_gate_ln(
+                            cls_required_items,
+                            [self.location()],
+                            config,
+                            self.location()
+                        )
                     )?;
-                    writeln!(f, "{method}")?;
+                    writeln!(
+                        f,
+                        "    unsafe impl {} for {} {{}}",
+                        id.name,
+                        cls.path_in_relation_to(id.location()),
+                    )?;
+
+                    writeln!(f, ");")?;
                 }
-                writeln!(f, "    }}")?;
+                Self::ProtocolImpl {
+                    location: id,
+                    cls,
+                    cls_required_items: _,
+                    generics,
+                    protocol,
+                    protocol_required_items: _,
+                    availability: _,
+                } => {
+                    let (generic_bound, where_bound) = if !generics.is_empty() {
+                        match (protocol.library(), &*protocol.name) {
+                            // The object inherits from `NSObject` or `NSProxy` no
+                            // matter what the generic type is, so this must be
+                            // safe.
+                            (_, _) if protocol.is_nsobject() => ("?Sized", None),
+                            // Encoding and decoding requires that the inner types
+                            // are codable as well.
+                            ("Foundation", "NSCoding") => ("?Sized + NSCoding", None),
+                            ("Foundation", "NSSecureCoding") => ("?Sized + NSSecureCoding", None),
+                            // Copying collections is done as a shallow copy:
+                            // <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Collections/Articles/Copying.html>
+                            //
+                            // E.g. it does a retain count bump on the items, and
+                            // hence does not require the inner type to implement
+                            // `NSCopying`.
+                            //
+                            // The types does have to be cloneable, since generic
+                            // types effectively store an `Id<T>` of the type.
+                            ("Foundation", "NSCopying") => ("?Sized + IsIdCloneable", None),
+                            ("Foundation", "NSMutableCopying") => ("?Sized + IsIdCloneable", None),
+                            // TODO: Do we need further tweaks to this?
+                            ("Foundation", "NSFastEnumeration") => ("?Sized", None),
+                            // AppKit fixes. TODO: Should we add more bounds here?
+                            ("AppKit", "NSCollectionViewDataSource") => ("?Sized", None),
+                            ("AppKit", "NSTableViewDataSource") => ("?Sized", None),
+                            _ => {
+                                error!(
+                                    ?protocol,
+                                    ?cls,
+                                    "unknown where bound for generic protocol impl"
+                                );
+                                ("?Sized", None)
+                            }
+                        }
+                    } else {
+                        ("InvalidGenericBound", None)
+                    };
 
-                writeln!(f)?;
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    writeln!(
+                        f,
+                        "unsafe impl{} {} for {}{} {}{{}}",
+                        GenericParamsHelper(generics, generic_bound),
+                        protocol.path_in_relation_to(id),
+                        cls.path_in_relation_to(id),
+                        GenericTyHelper(generics),
+                        WhereBoundHelper(generics, where_bound)
+                    )?;
+                }
+                Self::ProtocolDecl {
+                    id,
+                    required_items: _,
+                    actual_name,
+                    availability,
+                    protocols,
+                    methods,
+                    required_sendable: _,
+                    required_mainthreadonly,
+                } => {
+                    writeln!(f, "extern_protocol!(")?;
 
-                write!(
-                    f,
-                    "    {}",
-                    cfg_gate_ln(cls_required_items, [self.location()])
-                )?;
-                writeln!(
-                    f,
-                    "    unsafe impl {} for {} {{}}",
-                    id.name,
-                    cls.path_in_relation_to(id.location()),
-                )?;
-
-                writeln!(f, ");")?;
-            }
-            Self::ProtocolImpl {
-                location: id,
-                cls,
-                cls_required_items: _,
-                generics,
-                protocol,
-                protocol_required_items: _,
-                availability: _,
-            } => {
-                let (generic_bound, where_bound) = if !generics.is_empty() {
-                    match (protocol.library(), &*protocol.name) {
-                        // The object inherits from `NSObject` or `NSProxy` no
-                        // matter what the generic type is, so this must be
-                        // safe.
-                        (_, _) if protocol.is_nsobject() => ("?Sized", None),
-                        // Encoding and decoding requires that the inner types
-                        // are codable as well.
-                        ("Foundation", "NSCoding") => ("?Sized + NSCoding", None),
-                        ("Foundation", "NSSecureCoding") => ("?Sized + NSSecureCoding", None),
-                        // Copying collections is done as a shallow copy:
-                        // <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Collections/Articles/Copying.html>
-                        //
-                        // E.g. it does a retain count bump on the items, and
-                        // hence does not require the inner type to implement
-                        // `NSCopying`.
-                        //
-                        // The types does have to be cloneable, since generic
-                        // types effectively store an `Id<T>` of the type.
-                        ("Foundation", "NSCopying") => ("?Sized + IsIdCloneable", None),
-                        ("Foundation", "NSMutableCopying") => ("?Sized + IsIdCloneable", None),
-                        // TODO: Do we need further tweaks to this?
-                        ("Foundation", "NSFastEnumeration") => ("?Sized", None),
-                        // AppKit fixes. TODO: Should we add more bounds here?
-                        ("AppKit", "NSCollectionViewDataSource") => ("?Sized", None),
-                        ("AppKit", "NSTableViewDataSource") => ("?Sized", None),
-                        _ => {
-                            error!(
-                                ?protocol,
-                                ?cls,
-                                "unknown where bound for generic protocol impl"
-                            );
-                            ("?Sized", None)
+                    write!(f, "    {}", self.cfg_gate_ln(config))?;
+                    write!(f, "    {availability}")?;
+                    write!(f, "    pub unsafe trait {}", id.name)?;
+                    if !protocols.is_empty() {
+                        for (i, protocol) in protocols.iter().enumerate() {
+                            if i == 0 {
+                                write!(f, ": ")?;
+                            } else {
+                                write!(f, "+ ")?;
+                            }
+                            write!(f, "{}", protocol.path())?;
                         }
                     }
-                } else {
-                    ("InvalidGenericBound", None)
-                };
-
-                write!(f, "{}", self.cfg_gate_ln())?;
-                writeln!(
-                    f,
-                    "unsafe impl{} {} for {}{} {}{{}}",
-                    GenericParamsHelper(generics, generic_bound),
-                    protocol.path_in_relation_to(id),
-                    cls.path_in_relation_to(id),
-                    GenericTyHelper(generics),
-                    WhereBoundHelper(generics, where_bound)
-                )?;
-            }
-            Self::ProtocolDecl {
-                id,
-                required_items: _,
-                actual_name,
-                availability,
-                protocols,
-                methods,
-                required_sendable: _,
-                required_mainthreadonly,
-            } => {
-                writeln!(f, "extern_protocol!(")?;
-
-                write!(f, "    {}", self.cfg_gate_ln())?;
-                write!(f, "    {availability}")?;
-                write!(f, "    pub unsafe trait {}", id.name)?;
-                if !protocols.is_empty() {
-                    for (i, protocol) in protocols.iter().enumerate() {
-                        if i == 0 {
+                    // TODO
+                    // if *required_sendable {
+                    //     if protocols.is_empty() {
+                    //         write!(f, ": ")?;
+                    //     } else {
+                    //         write!(f, "+ ")?;
+                    //     }
+                    //     write!(f, "Send + Sync")?;
+                    // }
+                    if *required_mainthreadonly {
+                        if protocols.is_empty() {
                             write!(f, ": ")?;
                         } else {
                             write!(f, "+ ")?;
                         }
-                        write!(f, "{}", protocol.path())?;
+                        write!(f, "IsMainThreadOnly")?;
                     }
-                }
-                // TODO
-                // if *required_sendable {
-                //     if protocols.is_empty() {
-                //         write!(f, ": ")?;
-                //     } else {
-                //         write!(f, "+ ")?;
-                //     }
-                //     write!(f, "Send + Sync")?;
-                // }
-                if *required_mainthreadonly {
-                    if protocols.is_empty() {
-                        write!(f, ": ")?;
-                    } else {
-                        write!(f, "+ ")?;
+                    writeln!(f, " {{")?;
+
+                    let required_items = self.required_items();
+                    for method in methods {
+                        let implied_features = required_items
+                            .iter()
+                            .map(|item| item.location())
+                            .chain(iter::once(self.location()));
+                        write!(
+                            f,
+                            "{}",
+                            cfg_gate_ln(
+                                method.required_items(),
+                                implied_features,
+                                config,
+                                self.location()
+                            )
+                        )?;
+                        writeln!(f, "{method}")?;
                     }
-                    write!(f, "IsMainThreadOnly")?;
-                }
-                writeln!(f, " {{")?;
-
-                let required_items = self.required_items();
-                for method in methods {
-                    let implied_features = required_items
-                        .iter()
-                        .map(|item| item.location())
-                        .chain(iter::once(self.location()));
-                    write!(
-                        f,
-                        "{}",
-                        cfg_gate_ln(method.required_items(), implied_features)
-                    )?;
-                    writeln!(f, "{method}")?;
-                }
-                writeln!(f, "    }}")?;
-                writeln!(f)?;
-
-                write!(f, "    {}", self.cfg_gate_ln())?;
-                writeln!(f, "    unsafe impl ProtocolType for dyn {} {{", id.name)?;
-                if let Some(actual_name) = actual_name {
+                    writeln!(f, "    }}")?;
                     writeln!(f)?;
-                    writeln!(f, "        const NAME: &'static str = {actual_name:?};")?;
-                    write!(f, "    ")?;
-                }
-                writeln!(f, "}}")?;
-                writeln!(f, ");")?;
-            }
-            Self::StructDecl {
-                id,
-                encoding_name,
-                availability,
-                boxable: _,
-                fields,
-                sendable,
-            } => {
-                write!(f, "{}", self.cfg_gate_ln())?;
-                write!(f, "{availability}")?;
-                write!(f, "#[repr(C)]")?;
-                write!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
-                writeln!(f, "pub struct {} {{", id.name)?;
-                for (name, ty) in fields {
-                    write!(f, "    ")?;
-                    if !name.starts_with('_') {
-                        write!(f, "pub ")?;
+
+                    write!(f, "    {}", self.cfg_gate_ln(config))?;
+                    writeln!(f, "    unsafe impl ProtocolType for dyn {} {{", id.name)?;
+                    if let Some(actual_name) = actual_name {
+                        writeln!(f)?;
+                        writeln!(f, "        const NAME: &'static str = {actual_name:?};")?;
+                        write!(f, "    ")?;
                     }
-                    let name = handle_reserved(name);
-                    writeln!(f, "{name}: {},", ty.struct_())?;
+                    writeln!(f, "}}")?;
+                    writeln!(f, ");")?;
                 }
-                writeln!(f, "}}")?;
-                writeln!(f)?;
-
-                let encoding = FormatterFn(|f| {
-                    write!(
-                        f,
-                        "Encoding::Struct({:?}, &[",
-                        encoding_name.as_deref().unwrap_or(&id.name),
-                    )?;
-                    for (_, ty) in fields {
-                        write!(f, "<{}>::ENCODING,", ty.struct_())?;
+                Self::StructDecl {
+                    id,
+                    encoding_name,
+                    availability,
+                    boxable: _,
+                    fields,
+                    sendable,
+                } => {
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{availability}")?;
+                    write!(f, "#[repr(C)]")?;
+                    write!(f, "#[derive(Clone, Copy, Debug, PartialEq)]")?;
+                    writeln!(f, "pub struct {} {{", id.name)?;
+                    for (name, ty) in fields {
+                        write!(f, "    ")?;
+                        if !name.starts_with('_') {
+                            write!(f, "pub ")?;
+                        }
+                        let name = handle_reserved(name);
+                        writeln!(f, "{name}: {},", ty.struct_())?;
                     }
-                    write!(f, "])")?;
-                    Ok(())
-                });
-
-                // SAFETY: The struct is marked `#[repr(C)]`.
-                write!(f, "{}", self.cfg_gate_ln())?;
-                writeln!(f, "{}", unsafe_impl_encode(&id.name, encoding))?;
-                write!(f, "{}", self.cfg_gate_ln())?;
-                writeln!(f, "{}", unsafe_impl_refencode(&id.name))?;
-
-                if let Some(true) = sendable {
+                    writeln!(f, "}}")?;
                     writeln!(f)?;
-                    write!(f, "{}", self.cfg_gate_ln())?;
-                    writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
 
-                    writeln!(f)?;
-                    write!(f, "{}", self.cfg_gate_ln())?;
-                    writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
+                    let encoding = FormatterFn(|f| {
+                        write!(
+                            f,
+                            "Encoding::Struct({:?}, &[",
+                            encoding_name.as_deref().unwrap_or(&id.name),
+                        )?;
+                        for (_, ty) in fields {
+                            write!(f, "<{}>::ENCODING,", ty.struct_())?;
+                        }
+                        write!(f, "])")?;
+                        Ok(())
+                    });
+
+                    // SAFETY: The struct is marked `#[repr(C)]`.
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    writeln!(f, "{}", unsafe_impl_encode(&id.name, encoding))?;
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    writeln!(f, "{}", unsafe_impl_refencode(&id.name))?;
+
+                    if let Some(true) = sendable {
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
+
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
+                    }
                 }
-            }
-            Self::EnumDecl {
-                id,
-                availability,
-                ty,
-                kind,
-                variants,
-                sendable,
-            } => {
-                match kind {
+                Self::EnumDecl {
+                    id,
+                    availability,
+                    ty,
+                    kind,
+                    variants,
+                    sendable,
+                } => {
+                    match kind {
                     // TODO: Once Rust gains support for more precisely
                     // specifying niches, use that to convert this into a
                     // native enum with a hidden variant that contains the
@@ -2048,7 +2101,7 @@ impl fmt::Display for Stmt {
                             _ => unreachable!(),
                         }
 
-                        write!(f, "{}", self.cfg_gate_ln())?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
                         write!(f, "{availability}")?;
                         writeln!(f, "#[repr(transparent)]")?;
                         // TODO: Implement `Debug` manually
@@ -2063,7 +2116,7 @@ impl fmt::Display for Stmt {
                         // or a crash, if the invalid value is used).
                         writeln!(f, "pub struct {}(pub {});", id.name, ty.enum_())?;
 
-                        write!(f, "{}", self.cfg_gate_ln())?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
                         writeln!(f, "impl {} {{", id.name)?;
 
                         let required_items = self.required_items();
@@ -2072,7 +2125,7 @@ impl fmt::Display for Stmt {
                                 .iter()
                                 .map(|item| item.location())
                                 .chain(iter::once(self.location()));
-                            write!(f, "    {}", cfg_gate_ln(expr.required_items(), implied_features))?;
+                            write!(f, "    {}", cfg_gate_ln(expr.required_items(), implied_features, config, self.location()))?;
                             write!(f, "    {availability}")?;
                             let pretty_name = enum_constant_name(&id.name, name);
                             if pretty_name != name {
@@ -2089,7 +2142,7 @@ impl fmt::Display for Stmt {
                         // Rust enum (which in turn will assume that the
                         // unused patterns are valid to use as a niche).
                         writeln!(f, "// NS_CLOSED_ENUM")?;
-                        write!(f, "{}", self.cfg_gate_ln())?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
                         write!(f, "{availability}")?;
                         writeln!(f, "{}", ty.closed_enum_repr())?;
                         writeln!(
@@ -2104,7 +2157,7 @@ impl fmt::Display for Stmt {
                                 .iter()
                                 .map(|item| item.location())
                                 .chain(iter::once(self.location()));
-                            write!(f, "    {}", cfg_gate_ln(expr.required_items(), implied_features))?;
+                            write!(f, "    {}", cfg_gate_ln(expr.required_items(), implied_features, config, self.location()))?;
                             write!(f, "    {availability}")?;
                             let pretty_name = enum_constant_name(&id.name, name);
                             if pretty_name != name {
@@ -2118,172 +2171,173 @@ impl fmt::Display for Stmt {
                     _ => panic!("invalid enum kind"),
                 }
 
-                // SAFETY: The enum is either a `#[repr(transparent)]` newtype
-                // over the type, or a `#[repr(REPR)]`, where REPR is a valid
-                // repr with the same size and alignment as the type.
-                write!(f, "{}", self.cfg_gate_ln())?;
-                let encoding = format!("{}::ENCODING", ty.enum_());
-                writeln!(f, "{}", unsafe_impl_encode(&id.name, encoding))?;
-                write!(f, "{}", self.cfg_gate_ln())?;
-                writeln!(f, "{}", unsafe_impl_refencode(&id.name))?;
+                    // SAFETY: The enum is either a `#[repr(transparent)]` newtype
+                    // over the type, or a `#[repr(REPR)]`, where REPR is a valid
+                    // repr with the same size and alignment as the type.
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    let encoding = format!("{}::ENCODING", ty.enum_());
+                    writeln!(f, "{}", unsafe_impl_encode(&id.name, encoding))?;
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    writeln!(f, "{}", unsafe_impl_refencode(&id.name))?;
 
-                if let Some(true) = sendable {
-                    writeln!(f)?;
-                    write!(f, "{}", self.cfg_gate_ln())?;
-                    writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
+                    if let Some(true) = sendable {
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
 
-                    writeln!(f)?;
-                    write!(f, "{}", self.cfg_gate_ln())?;
-                    writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
-                }
-            }
-            Self::ConstDecl {
-                id,
-                availability,
-                ty,
-                value,
-                is_last,
-            } => {
-                write!(f, "{}", self.cfg_gate_ln())?;
-                write!(f, "{availability}")?;
-                write!(f, "pub const {}: {} = {value};", id.name, ty.enum_())?;
-                if *is_last {
-                    writeln!(f)?;
-                }
-            }
-            Self::VarDecl {
-                id,
-                availability: _,
-                ty,
-                value: None,
-            } => {
-                writeln!(f, "extern \"C\" {{")?;
-                write!(f, "{}", self.cfg_gate_ln())?;
-                writeln!(f, "pub static {}: {};", id.name, ty.var())?;
-                writeln!(f, "}}")?;
-            }
-            Self::VarDecl {
-                id,
-                availability: _,
-                ty,
-                value: Some(expr),
-            } => {
-                write!(f, "{}", self.cfg_gate_ln())?;
-                write!(f, "pub static {}: {} = ", id.name, ty.var())?;
-
-                if ty.is_floating_through_typedef() {
-                    write!(f, "{expr} as _")?;
-                } else if ty.is_enum_through_typedef() {
-                    write!(f, "{}({expr})", ty.var())?;
-                } else {
-                    write!(f, "{expr}")?;
-                }
-                writeln!(f, ";")?;
-            }
-            Self::FnDecl {
-                id,
-                availability: _,
-                arguments,
-                result_type,
-                body: Some(_),
-                safe: _,
-            } => {
-                write!(f, "// TODO: ")?;
-                write!(f, "pub fn {}(", id.name)?;
-                for (param, arg_ty) in arguments {
-                    let param = handle_reserved(&crate::to_snake_case(param));
-                    write!(f, "{param}: {},", arg_ty.fn_argument())?;
-                }
-                writeln!(f, "){};", result_type.fn_return())?;
-            }
-            Self::FnDecl {
-                id,
-                availability,
-                arguments,
-                result_type,
-                body: None,
-                safe: false,
-            } => {
-                writeln!(f, "extern \"C\" {{")?;
-
-                write!(f, "    {}", self.cfg_gate_ln())?;
-                write!(f, "    {availability}")?;
-                write!(f, "    pub fn {}(", id.name)?;
-                for (param, arg_ty) in arguments {
-                    let param = handle_reserved(&crate::to_snake_case(param));
-                    write!(f, "{param}: {},", arg_ty.fn_argument())?;
-                }
-                write!(f, "){}", result_type.fn_return())?;
-                writeln!(f, ";")?;
-
-                writeln!(f, "}}")?;
-            }
-            Self::FnDecl {
-                id,
-                availability,
-                arguments,
-                result_type,
-                body: None,
-                safe: true,
-            } => {
-                write!(f, "{}", self.cfg_gate_ln())?;
-                write!(f, "{availability}")?;
-                writeln!(f, "#[inline]")?;
-                write!(f, "pub extern \"C\" fn {}(", id.name)?;
-                for (param, arg_ty) in arguments {
-                    let param = handle_reserved(&crate::to_snake_case(param));
-                    write!(f, "{param}: {},", arg_ty.fn_argument())?;
-                }
-                writeln!(f, "){} {{", result_type.fn_return())?;
-
-                writeln!(f, "    extern \"C\" {{")?;
-
-                write!(f, "        fn {}(", id.name)?;
-                for (param, arg_ty) in arguments {
-                    let param = handle_reserved(&crate::to_snake_case(param));
-                    write!(f, "{param}: {},", arg_ty.fn_argument())?;
-                }
-                writeln!(f, "){};", result_type.fn_return())?;
-
-                writeln!(f, "    }}")?;
-
-                write!(f, "    unsafe {{ {}(", id.name)?;
-                for (param, _) in arguments {
-                    let param = handle_reserved(&crate::to_snake_case(param));
-                    write!(f, "{param},")?;
-                }
-                writeln!(f, ") }}")?;
-
-                writeln!(f, "}}")?;
-            }
-            Self::AliasDecl {
-                id,
-                availability: _,
-                ty,
-                kind,
-            } => {
-                match kind {
-                    Some(UnexposedAttr::TypedEnum) => {
-                        // TODO: Handle this differently
-                        writeln!(f, "// NS_TYPED_ENUM")?;
-                        write!(f, "{}", self.cfg_gate_ln())?;
-                        writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
                     }
-                    Some(UnexposedAttr::TypedExtensibleEnum) => {
-                        // TODO: Handle this differently
-                        writeln!(f, "// NS_TYPED_EXTENSIBLE_ENUM")?;
-                        write!(f, "{}", self.cfg_gate_ln())?;
-                        writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
-                    }
-                    None | Some(UnexposedAttr::BridgedTypedef) => {
-                        // "bridged" typedefs should use a normal type alias.
-                        write!(f, "{}", self.cfg_gate_ln())?;
-                        writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
-                    }
-                    kind => panic!("invalid alias kind {kind:?} for {ty:?}"),
                 }
-            }
-        };
-        Ok(())
+                Self::ConstDecl {
+                    id,
+                    availability,
+                    ty,
+                    value,
+                    is_last,
+                } => {
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{availability}")?;
+                    write!(f, "pub const {}: {} = {value};", id.name, ty.enum_())?;
+                    if *is_last {
+                        writeln!(f)?;
+                    }
+                }
+                Self::VarDecl {
+                    id,
+                    availability: _,
+                    ty,
+                    value: None,
+                } => {
+                    writeln!(f, "extern \"C\" {{")?;
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    writeln!(f, "pub static {}: {};", id.name, ty.var())?;
+                    writeln!(f, "}}")?;
+                }
+                Self::VarDecl {
+                    id,
+                    availability: _,
+                    ty,
+                    value: Some(expr),
+                } => {
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "pub static {}: {} = ", id.name, ty.var())?;
+
+                    if ty.is_floating_through_typedef() {
+                        write!(f, "{expr} as _")?;
+                    } else if ty.is_enum_through_typedef() {
+                        write!(f, "{}({expr})", ty.var())?;
+                    } else {
+                        write!(f, "{expr}")?;
+                    }
+                    writeln!(f, ";")?;
+                }
+                Self::FnDecl {
+                    id,
+                    availability: _,
+                    arguments,
+                    result_type,
+                    body: Some(_),
+                    safe: _,
+                } => {
+                    write!(f, "// TODO: ")?;
+                    write!(f, "pub fn {}(", id.name)?;
+                    for (param, arg_ty) in arguments {
+                        let param = handle_reserved(&crate::to_snake_case(param));
+                        write!(f, "{param}: {},", arg_ty.fn_argument())?;
+                    }
+                    writeln!(f, "){};", result_type.fn_return())?;
+                }
+                Self::FnDecl {
+                    id,
+                    availability,
+                    arguments,
+                    result_type,
+                    body: None,
+                    safe: false,
+                } => {
+                    writeln!(f, "extern \"C\" {{")?;
+
+                    write!(f, "    {}", self.cfg_gate_ln(config))?;
+                    write!(f, "    {availability}")?;
+                    write!(f, "    pub fn {}(", id.name)?;
+                    for (param, arg_ty) in arguments {
+                        let param = handle_reserved(&crate::to_snake_case(param));
+                        write!(f, "{param}: {},", arg_ty.fn_argument())?;
+                    }
+                    write!(f, "){}", result_type.fn_return())?;
+                    writeln!(f, ";")?;
+
+                    writeln!(f, "}}")?;
+                }
+                Self::FnDecl {
+                    id,
+                    availability,
+                    arguments,
+                    result_type,
+                    body: None,
+                    safe: true,
+                } => {
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{availability}")?;
+                    writeln!(f, "#[inline]")?;
+                    write!(f, "pub extern \"C\" fn {}(", id.name)?;
+                    for (param, arg_ty) in arguments {
+                        let param = handle_reserved(&crate::to_snake_case(param));
+                        write!(f, "{param}: {},", arg_ty.fn_argument())?;
+                    }
+                    writeln!(f, "){} {{", result_type.fn_return())?;
+
+                    writeln!(f, "    extern \"C\" {{")?;
+
+                    write!(f, "        fn {}(", id.name)?;
+                    for (param, arg_ty) in arguments {
+                        let param = handle_reserved(&crate::to_snake_case(param));
+                        write!(f, "{param}: {},", arg_ty.fn_argument())?;
+                    }
+                    writeln!(f, "){};", result_type.fn_return())?;
+
+                    writeln!(f, "    }}")?;
+
+                    write!(f, "    unsafe {{ {}(", id.name)?;
+                    for (param, _) in arguments {
+                        let param = handle_reserved(&crate::to_snake_case(param));
+                        write!(f, "{param},")?;
+                    }
+                    writeln!(f, ") }}")?;
+
+                    writeln!(f, "}}")?;
+                }
+                Self::AliasDecl {
+                    id,
+                    availability: _,
+                    ty,
+                    kind,
+                } => {
+                    match kind {
+                        Some(UnexposedAttr::TypedEnum) => {
+                            // TODO: Handle this differently
+                            writeln!(f, "// NS_TYPED_ENUM")?;
+                            write!(f, "{}", self.cfg_gate_ln(config))?;
+                            writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
+                        }
+                        Some(UnexposedAttr::TypedExtensibleEnum) => {
+                            // TODO: Handle this differently
+                            writeln!(f, "// NS_TYPED_EXTENSIBLE_ENUM")?;
+                            write!(f, "{}", self.cfg_gate_ln(config))?;
+                            writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
+                        }
+                        None | Some(UnexposedAttr::BridgedTypedef) => {
+                            // "bridged" typedefs should use a normal type alias.
+                            write!(f, "{}", self.cfg_gate_ln(config))?;
+                            writeln!(f, "pub type {} = {};", id.name, ty.typedef())?;
+                        }
+                        kind => panic!("invalid alias kind {kind:?} for {ty:?}"),
+                    }
+                }
+            };
+            Ok(())
+        })
     }
 }

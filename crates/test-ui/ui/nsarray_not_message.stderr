@@ -9,13 +9,13 @@ error[E0277]: the trait bound `i32: Message` is not satisfied
             NSObject
             __NSProxy
             ProtocolObject<P>
-            NSArray<ObjectType>
             AnyObject
-            NSMutableArray<ObjectType>
-            NSDictionary<KeyType, ObjectType>
+            NSError
+            NSNotification
+            NSNotificationCenter
           and $N others
-note: required by a bound in `icrate::generated::Foundation::__NSArray::<impl NSArray<ObjectType>>::new`
- --> $WORKSPACE/crates/icrate/src/generated/Foundation/NSArray.rs
+note: required by a bound in `objc2_foundation::generated::__NSArray::<impl NSArray<ObjectType>>::new`
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
   | / extern_methods!(
   | |     /// Methods declared on superclass `NSObject`
@@ -25,7 +25,7 @@ note: required by a bound in `icrate::generated::Foundation::__NSArray::<impl NS
   | |                --- required by a bound in this associated function
   | |     }
   | | );
-  | |_^ required by this bound in `icrate::generated::Foundation::__NSArray::<impl NSArray<ObjectType>>::new`
+  | |_^ required by this bound in `objc2_foundation::generated::__NSArray::<impl NSArray<ObjectType>>::new`
   = note: this error originates in the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Id<NSObject>: IsRetainable` is not satisfied
@@ -38,11 +38,11 @@ error[E0277]: the trait bound `Id<NSObject>: IsRetainable` is not satisfied
   |
   = help: the trait `IsRetainable` is implemented for `ProtocolObject<P>`
   = note: required for `Id<NSObject>` to implement `IsRetainable`
-note: required by a bound in `icrate::Foundation::array::<impl NSArray<T>>::from_slice`
- --> $WORKSPACE/crates/icrate/src/additions/Foundation/array.rs
+note: required by a bound in `objc2_foundation::array::<impl NSArray<T>>::from_slice`
+ --> $WORKSPACE/framework-crates/objc2-foundation/src/array.rs
   |
   |     pub fn from_slice(slice: &[&T]) -> Id<Self>
   |            ---------- required by a bound in this associated function
   |     where
   |         T: IsRetainable,
-  |            ^^^^^^^^^^^^ required by this bound in `icrate::Foundation::array::<impl NSArray<T>>::from_slice`
+  |            ^^^^^^^^^^^^ required by this bound in `objc2_foundation::array::<impl NSArray<T>>::from_slice`

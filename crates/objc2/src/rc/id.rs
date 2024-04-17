@@ -21,10 +21,10 @@ use crate::{ffi, ClassType, Message};
 /// `T`'s [`ClassType`] implementation (if any) determines whether it is
 /// mutable, and by extension whether `Id<T>` is mutable.
 ///
-/// This can usually be gotten from one of the methods in `icrate`, but can be
-/// created manually with the [`msg_send_id!`] macro (or even more manually,
-/// with the [`Id::retain`], [`Id::from_raw`] or [`Id::retain_autoreleased`]
-/// methods).
+/// This can usually be gotten from one of the methods in the framework
+/// crates, but can be created manually with the [`msg_send_id!`] macro (or
+/// even more manually, with the [`Id::retain`], [`Id::from_raw`] or
+/// [`Id::retain_autoreleased`] methods).
 ///
 /// [`msg_send_id!`]: crate::msg_send_id
 ///
@@ -84,7 +84,7 @@ use crate::{ffi, ClassType, Message};
 ///
 /// ```
 /// # #[cfg(not_available)]
-/// use icrate::Foundation::{NSObject, NSString};
+/// use objc2_foundation::{NSObject, NSString};
 /// # use objc2::runtime::NSObject;
 /// use objc2::rc::Id;
 /// use objc2::{ClassType, msg_send_id};

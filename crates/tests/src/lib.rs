@@ -18,7 +18,7 @@ mod test_declare_class_protocol;
 #[cfg(test)]
 mod test_encode_utils;
 #[cfg(test)]
-mod test_icrate_retain_semantics;
+mod test_foundation_retain_semantics;
 #[cfg(test)]
 mod test_object;
 

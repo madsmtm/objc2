@@ -31,8 +31,8 @@ specific API!
 4. Beware of `Mutable` classes (e.g. `NSMutableString`); these usually need to
     be passed as `&mut T`, or operate on `&mut self`.
 
-Note: It is _not_ considered a breaking change in `icrate` for a method to be
-marked safe, so such an improvement can be made in a minor version!
+Note: It is _not_ considered a breaking change for a method to be marked safe,
+so such an improvement can be made in a minor version!
 
 [#359]: https://github.com/madsmtm/objc2/pull/359
 

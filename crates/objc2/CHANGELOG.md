@@ -296,7 +296,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   An example:
   ```rust
   // Before
-  use icrate::Foundation::NSObject;
+  use objc2::runtime::NSObject;
   use objc2::{declare_class, ClassType};
 
   declare_class!(
@@ -310,7 +310,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   );
 
   // After
-  use icrate::Foundation::NSObject;
+  use objc2::runtime::NSObject;
   use objc2::mutability::InteriorMutable;
   use objc2::{declare_class, ClassType};
 

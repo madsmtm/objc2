@@ -11,6 +11,7 @@ license = "Zlib OR Apache-2.0 OR MIT"
 # https://github.com/KyleMayes/clang-rs/pull/58
 clang = { git = "https://github.com/madsmtm/clang-rs.git", branch = "fix-ub-tokenize", features = ["runtime", "clang_10_0"] }
 clang-sys = { version = "1.4.0" }
+toml_edit = "0.22.9"
 basic-toml = "0.1.2"
 serde = { version = "1.0.144", features = ["derive"] }
 apple-sdk = { version = "0.5.1", default-features = false }

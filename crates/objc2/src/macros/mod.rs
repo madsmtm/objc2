@@ -777,7 +777,7 @@ macro_rules! __class_inner {
 ///
 /// In particular, if you make the last argument the special marker `_`, then
 /// the macro will return a `Result<(), Id<E>>` (where you must specify `E`
-/// yourself, usually you'd use `icrate::Foundation::NSError`).
+/// yourself, usually you'd use `objc2_foundation::NSError`).
 ///
 /// At runtime, we create the temporary error variable for you on the stack
 /// and send it as the out-parameter to the method. If the method then returns
@@ -1137,7 +1137,7 @@ macro_rules! msg_send_bool {
 ///
 /// In particular, you can make the last argument the special marker `_`, and
 /// then the macro will return a `Result<Id<T>, Id<E>>` (where you must
-/// specify `E` yourself, usually you'd use `icrate::Foundation::NSError`).
+/// specify `E` yourself, usually you'd use `objc2_foundation::NSError`).
 ///
 ///
 /// # Panics

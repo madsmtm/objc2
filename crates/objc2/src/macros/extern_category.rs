@@ -1,7 +1,7 @@
 /// Not yet public API.
 //
 // Note: While this is not public, it is still a breaking change to change
-// the API for this, since `icrate` relies on it.
+// the API for this, since framework crates rely on it.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! extern_category {

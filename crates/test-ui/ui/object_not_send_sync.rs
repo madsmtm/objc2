@@ -3,8 +3,8 @@
 //!
 //! Also test that `NSValue` is not Send nor Sync, because its contained value
 //! might not be.
-use icrate::Foundation::NSValue;
-use objc2::runtime::{NSObject, AnyObject};
+use objc2::runtime::{AnyObject, NSObject};
+use objc2_foundation::NSValue;
 
 fn needs_sync<T: ?Sized + Sync>() {}
 fn needs_send<T: ?Sized + Send>() {}

@@ -1,7 +1,7 @@
 //! Test underspecified msg_send_id! errors.
-use icrate::Foundation::{NSError, NSString};
 use objc2::msg_send_id;
 use objc2::rc::Id;
+use objc2_foundation::{NSError, NSString};
 
 fn main() {
     let obj: &NSString;

@@ -48,7 +48,7 @@ iter_once:
 	lea	eax, [edi + 4]
 	mov	ebp, dword ptr [edi]
 	mov	dword ptr [esp + 8], eax
-	mov	eax, dword ptr [ebx + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
+	mov	eax, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
 	mov	esi, dword ptr [eax]
 	test	esi, esi
 	je	.LBB1_2
@@ -134,7 +134,7 @@ iter:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp1-.L3$pb)
 	movsd	qword ptr [esp + 104], xmm0
 	movsd	qword ptr [esp + 96], xmm0
-	mov	edi, dword ptr [ebx + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
+	mov	edi, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
 	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
 	mov	dword ptr [esp + 12], ecx
 	xor	ecx, ecx
@@ -227,7 +227,7 @@ iter_noop:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp2-.L4$pb)
 	movsd	qword ptr [esp + 104], xmm0
 	movsd	qword ptr [esp + 96], xmm0
-	mov	ebp, dword ptr [ebx + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
+	mov	ebp, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
 	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
 	mov	dword ptr [esp + 12], ecx
 	xor	ecx, ecx
@@ -315,7 +315,7 @@ iter_retained:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp3-.L5$pb)
 	movsd	qword ptr [esp + 104], xmm0
 	movsd	qword ptr [esp + 96], xmm0
-	mov	edi, dword ptr [ebx + SYM(icrate::generated::Foundation::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
+	mov	edi, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
 	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
 	mov	dword ptr [esp + 12], ecx
 	xor	ecx, ecx

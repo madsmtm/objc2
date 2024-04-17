@@ -1,9 +1,9 @@
-#![cfg(feature = "Foundation_all")]
-use icrate::Foundation::NSCopying;
+#![cfg(feature = "all")]
 use objc2::mutability::Immutable;
 use objc2::rc::Id;
 use objc2::runtime::{NSObject, NSZone};
 use objc2::{declare_class, ClassType, DeclaredClass, ProtocolType};
+use objc2_foundation::NSCopying;
 
 #[test]
 #[should_panic = "could not create new class TestDeclareClassDuplicate. Perhaps a class with that name already exists?"]

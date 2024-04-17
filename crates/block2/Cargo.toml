@@ -57,20 +57,16 @@ unstable-docsrs = []
 objc2 = { path = "../objc2", version = "0.5.0", default-features = false }
 
 [package.metadata.docs.rs]
-default-target = "x86_64-apple-darwin"
+default-target = "aarch64-apple-darwin"
 features = ["unstable-docsrs", "unstable-private"]
 targets = [
-    # MacOS
-    "x86_64-apple-darwin",
     "aarch64-apple-darwin",
-    # "i686-apple-darwin",
-    # iOS
+    "x86_64-apple-darwin",
     "aarch64-apple-ios",
     "x86_64-apple-ios",
-    # "i386-apple-ios",
-    # GNUStep
+    "aarch64-apple-tvos",
+    "aarch64-apple-watchos",
+    "aarch64-apple-ios-macabi",
     "x86_64-unknown-linux-gnu",
     "i686-unknown-linux-gnu",
-    # Windows
-    "x86_64-pc-windows-msvc",
 ]

@@ -1034,14 +1034,21 @@ impl Ty {
                 no_escape: _,
                 arguments,
                 result_type,
+            } => {
+                let mut items = vec![];
+                for arg in arguments {
+                    items.extend(arg.required_items());
+                }
+                items.extend(result_type.required_items());
+                items
             }
-            | Self::Block {
+            Self::Block {
                 sendable: _,
                 no_escape: _,
                 arguments,
                 result_type,
             } => {
-                let mut items = Vec::new();
+                let mut items = vec![ItemIdentifier::block()];
                 for arg in arguments {
                     items.extend(arg.required_items());
                 }
