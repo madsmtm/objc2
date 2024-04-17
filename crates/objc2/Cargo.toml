@@ -1,6 +1,6 @@
 [package]
 name = "objc2"
-version = "0.5.0" # Remember to update html_root_url in lib.rs
+version = "0.5.1" # Remember to update html_root_url in lib.rs
 authors = ["Steven Sheldon", "Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
 rust-version = "1.60"
@@ -103,8 +103,8 @@ unstable-compiler-rt = ["apple"]
 
 [dependencies]
 malloc_buf = { version = "1.0", optional = true }
-objc-sys = { path = "../objc-sys", version = "0.3.2", default-features = false }
-objc2-encode = { path = "../objc2-encode", version = "4.0.0", default-features = false }
+objc-sys = { path = "../objc-sys", version = "0.3.3", default-features = false }
+objc2-encode = { path = "../objc2-encode", version = "4.0.1", default-features = false }
 objc2-proc-macros = { path = "../objc2-proc-macros", version = "0.1.1", optional = true }
 
 [dev-dependencies]

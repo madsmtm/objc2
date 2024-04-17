@@ -26,6 +26,8 @@ all = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSValue",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSEnumerator",
+    "objc2-foundation/NSObjCRuntime",
 ]
 
 apple = ["block2/apple", "objc2/apple", "objc2-foundation/apple"]

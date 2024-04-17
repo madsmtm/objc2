@@ -199,7 +199,7 @@ see that for related crates.", self.data.krate, self.link_name)?;
 
         for (krate, required) in &dependencies {
             let (path, version) = match *krate {
-                "block2" => ("../../crates/block2".to_string(), "0.4.0"),
+                "block2" => ("../../crates/block2".to_string(), "0.5.0"),
                 krate => (format!("../{krate}"), VERSION),
             };
             let mut table = InlineTable::from_iter([
