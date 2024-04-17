@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.5.0 - 2024-04-17
+
 ### Added
 * **BREAKING**: Added `Block::copy` to convert blocks to `RcBlock`. This
   replaces `StackBlock::copy`, but since `StackBlock` implements `Deref`, this

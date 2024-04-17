@@ -51,7 +51,7 @@ dependencies = [
 
 [[package]]
 name = "block2"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "objc2",
 ]

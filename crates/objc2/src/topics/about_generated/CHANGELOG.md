@@ -72,6 +72,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `NSWindow::convertRectToScreen` and `NSWindow::convertPointFromScreen` as
   safe.
 * Renamed the `block` and `objective-c` feature flags to `block2` and `objc2`.
+* **BREAKING**: Updated `block2` to `v0.5`.
 
 ### Deprecated
 * Deprecated `Foundation::MainThreadMarker::run_on_main`, use the new
