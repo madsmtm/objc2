@@ -54,7 +54,7 @@ unstable-private = []
 unstable-docsrs = []
 
 [dependencies]
-objc2 = { path = "../objc2", version = "0.5.0", default-features = false }
+objc2 = { path = "../objc2", version = "0.5.1", default-features = false }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

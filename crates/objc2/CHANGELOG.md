@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.5.1 - 2024-04-17
+
 ### Added
 * Made the following runtime methods available without the `"malloc"` feature
   flag:

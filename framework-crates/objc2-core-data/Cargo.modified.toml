@@ -1,5 +1,5 @@
 [dependencies]
-objc2 = { path = "../../crates/objc2", version = "0.5.0", default-features = false }
+objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false }
 block2 = { path = "../../crates/block2", version = "0.4.0", default-features = false, optional = true }
 
 [features]
