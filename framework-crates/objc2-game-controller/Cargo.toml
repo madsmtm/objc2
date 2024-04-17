@@ -49,190 +49,190 @@ unstable-docsrs = []
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 
-GameController_GCAxis2DInput = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSSet",
+GCAxis2DInput = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSSet",
 ]
-GameController_GCAxisElement = []
-GameController_GCAxisInput = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSSet",
+GCAxisElement = []
+GCAxisInput = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSSet",
 ]
-GameController_GCButtonElement = []
-GameController_GCColor = ["objc2-foundation/Foundation_NSObject"]
-GameController_GCController = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
+GCButtonElement = []
+GCColor = ["objc2-foundation/NSObject"]
+GCController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
-GameController_GCControllerAxisInput = []
-GameController_GCControllerButtonInput = []
-GameController_GCControllerDirectionPad = []
-GameController_GCControllerElement = [
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+GCControllerAxisInput = []
+GCControllerButtonInput = []
+GCControllerDirectionPad = []
+GCControllerElement = [
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
-GameController_GCControllerInput = []
-GameController_GCControllerTouchpad = []
-GameController_GCDevice = ["objc2-foundation/Foundation_NSString"]
-GameController_GCDeviceBattery = []
-GameController_GCDeviceCursor = []
-GameController_GCDeviceHaptics = [
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+GCControllerInput = []
+GCControllerTouchpad = []
+GCDevice = ["objc2-foundation/NSString"]
+GCDeviceBattery = []
+GCDeviceCursor = []
+GCDeviceHaptics = [
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
-GameController_GCDeviceLight = []
-GameController_GCDevicePhysicalInput = []
-GameController_GCDevicePhysicalInputState = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSString",
+GCDeviceLight = []
+GCDevicePhysicalInput = []
+GCDevicePhysicalInputState = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSString",
 ]
-GameController_GCDevicePhysicalInputStateDiff = ["objc2-foundation/Foundation_NSEnumerator"]
-GameController_GCDirectionPadElement = []
-GameController_GCDirectionalGamepad = ["objc2-foundation/Foundation_NSString"]
-GameController_GCDualSenseAdaptiveTrigger = []
-GameController_GCDualSenseGamepad = []
-GameController_GCDualShockGamepad = []
-GameController_GCEventViewController = [
-    "objc2-app-kit?/AppKit_NSKeyValueBinding",
-    "objc2-app-kit?/AppKit_NSNib",
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSStoryboardSegue",
-    "objc2-app-kit?/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+GCDevicePhysicalInputStateDiff = ["objc2-foundation/NSEnumerator"]
+GCDirectionPadElement = []
+GCDirectionalGamepad = ["objc2-foundation/NSString"]
+GCDualSenseAdaptiveTrigger = []
+GCDualSenseGamepad = []
+GCDualShockGamepad = []
+GCEventViewController = [
+    "objc2-app-kit?/NSKeyValueBinding",
+    "objc2-app-kit?/NSNib",
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSStoryboardSegue",
+    "objc2-app-kit?/NSUserInterfaceItemIdentification",
+    "objc2-app-kit?/NSViewController",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-GameController_GCExtendedGamepad = []
-GameController_GCExtendedGamepadSnapshot = ["objc2-foundation/Foundation_NSData"]
-GameController_GCExtern = []
-GameController_GCGamepad = []
-GameController_GCGamepadSnapshot = ["objc2-foundation/Foundation_NSData"]
-GameController_GCGearShifterElement = []
-GameController_GCInputNames = ["objc2-foundation/Foundation_NSString"]
-GameController_GCKeyCodes = []
-GameController_GCKeyNames = ["objc2-foundation/Foundation_NSString"]
-GameController_GCKeyboard = ["objc2-foundation/Foundation_NSString"]
-GameController_GCKeyboardInput = []
-GameController_GCLinearInput = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSSet",
+GCExtendedGamepad = []
+GCExtendedGamepadSnapshot = ["objc2-foundation/NSData"]
+GCExtern = []
+GCGamepad = []
+GCGamepadSnapshot = ["objc2-foundation/NSData"]
+GCGearShifterElement = []
+GCInputNames = ["objc2-foundation/NSString"]
+GCKeyCodes = []
+GCKeyNames = ["objc2-foundation/NSString"]
+GCKeyboard = ["objc2-foundation/NSString"]
+GCKeyboardInput = []
+GCLinearInput = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSSet",
 ]
-GameController_GCMicroGamepad = ["objc2-foundation/Foundation_NSString"]
-GameController_GCMicroGamepadSnapshot = ["objc2-foundation/Foundation_NSData"]
-GameController_GCMotion = []
-GameController_GCMouse = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
+GCMicroGamepad = ["objc2-foundation/NSString"]
+GCMicroGamepadSnapshot = ["objc2-foundation/NSData"]
+GCMotion = []
+GCMouse = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
-GameController_GCMouseInput = ["objc2-foundation/Foundation_NSArray"]
-GameController_GCPhysicalInputElement = [
-    "objc2-foundation/Foundation_NSEnumerator",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+GCMouseInput = ["objc2-foundation/NSArray"]
+GCPhysicalInputElement = [
+    "objc2-foundation/NSEnumerator",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
-GameController_GCPhysicalInputProfile = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+GCPhysicalInputProfile = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
-GameController_GCPhysicalInputSource = [
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+GCPhysicalInputSource = [
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
-GameController_GCPressedStateInput = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSSet",
+GCPressedStateInput = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSSet",
 ]
-GameController_GCProductCategories = ["objc2-foundation/Foundation_NSString"]
-GameController_GCRacingWheel = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+GCProductCategories = ["objc2-foundation/NSString"]
+GCRacingWheel = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
-GameController_GCRacingWheelInput = []
-GameController_GCRelativeInput = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSSet",
+GCRacingWheelInput = []
+GCRelativeInput = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSSet",
 ]
-GameController_GCSteeringWheelElement = []
-GameController_GCSwitchElement = []
-GameController_GCSwitchPositionInput = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSSet",
+GCSteeringWheelElement = []
+GCSwitchElement = []
+GCSwitchPositionInput = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSSet",
 ]
-GameController_GCSyntheticDeviceKeys = []
-GameController_GCTouchedStateInput = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSSet",
+GCSyntheticDeviceKeys = []
+GCTouchedStateInput = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSSet",
 ]
-GameController_GCTypes = [
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+GCTypes = [
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-GameController_GCXboxGamepad = []
+GCXboxGamepad = []
 all = [
-    "GameController_GCAxis2DInput",
-    "GameController_GCAxisElement",
-    "GameController_GCAxisInput",
-    "GameController_GCButtonElement",
-    "GameController_GCColor",
-    "GameController_GCController",
-    "GameController_GCControllerAxisInput",
-    "GameController_GCControllerButtonInput",
-    "GameController_GCControllerDirectionPad",
-    "GameController_GCControllerElement",
-    "GameController_GCControllerInput",
-    "GameController_GCControllerTouchpad",
-    "GameController_GCDevice",
-    "GameController_GCDeviceBattery",
-    "GameController_GCDeviceCursor",
-    "GameController_GCDeviceHaptics",
-    "GameController_GCDeviceLight",
-    "GameController_GCDevicePhysicalInput",
-    "GameController_GCDevicePhysicalInputState",
-    "GameController_GCDevicePhysicalInputStateDiff",
-    "GameController_GCDirectionPadElement",
-    "GameController_GCDirectionalGamepad",
-    "GameController_GCDualSenseAdaptiveTrigger",
-    "GameController_GCDualSenseGamepad",
-    "GameController_GCDualShockGamepad",
-    "GameController_GCEventViewController",
-    "GameController_GCExtendedGamepad",
-    "GameController_GCExtendedGamepadSnapshot",
-    "GameController_GCExtern",
-    "GameController_GCGamepad",
-    "GameController_GCGamepadSnapshot",
-    "GameController_GCGearShifterElement",
-    "GameController_GCInputNames",
-    "GameController_GCKeyCodes",
-    "GameController_GCKeyNames",
-    "GameController_GCKeyboard",
-    "GameController_GCKeyboardInput",
-    "GameController_GCLinearInput",
-    "GameController_GCMicroGamepad",
-    "GameController_GCMicroGamepadSnapshot",
-    "GameController_GCMotion",
-    "GameController_GCMouse",
-    "GameController_GCMouseInput",
-    "GameController_GCPhysicalInputElement",
-    "GameController_GCPhysicalInputProfile",
-    "GameController_GCPhysicalInputSource",
-    "GameController_GCPressedStateInput",
-    "GameController_GCProductCategories",
-    "GameController_GCRacingWheel",
-    "GameController_GCRacingWheelInput",
-    "GameController_GCRelativeInput",
-    "GameController_GCSteeringWheelElement",
-    "GameController_GCSwitchElement",
-    "GameController_GCSwitchPositionInput",
-    "GameController_GCSyntheticDeviceKeys",
-    "GameController_GCTouchedStateInput",
-    "GameController_GCTypes",
-    "GameController_GCXboxGamepad",
+    "GCAxis2DInput",
+    "GCAxisElement",
+    "GCAxisInput",
+    "GCButtonElement",
+    "GCColor",
+    "GCController",
+    "GCControllerAxisInput",
+    "GCControllerButtonInput",
+    "GCControllerDirectionPad",
+    "GCControllerElement",
+    "GCControllerInput",
+    "GCControllerTouchpad",
+    "GCDevice",
+    "GCDeviceBattery",
+    "GCDeviceCursor",
+    "GCDeviceHaptics",
+    "GCDeviceLight",
+    "GCDevicePhysicalInput",
+    "GCDevicePhysicalInputState",
+    "GCDevicePhysicalInputStateDiff",
+    "GCDirectionPadElement",
+    "GCDirectionalGamepad",
+    "GCDualSenseAdaptiveTrigger",
+    "GCDualSenseGamepad",
+    "GCDualShockGamepad",
+    "GCEventViewController",
+    "GCExtendedGamepad",
+    "GCExtendedGamepadSnapshot",
+    "GCExtern",
+    "GCGamepad",
+    "GCGamepadSnapshot",
+    "GCGearShifterElement",
+    "GCInputNames",
+    "GCKeyCodes",
+    "GCKeyNames",
+    "GCKeyboard",
+    "GCKeyboardInput",
+    "GCLinearInput",
+    "GCMicroGamepad",
+    "GCMicroGamepadSnapshot",
+    "GCMotion",
+    "GCMouse",
+    "GCMouseInput",
+    "GCPhysicalInputElement",
+    "GCPhysicalInputProfile",
+    "GCPhysicalInputSource",
+    "GCPressedStateInput",
+    "GCProductCategories",
+    "GCRacingWheel",
+    "GCRacingWheelInput",
+    "GCRelativeInput",
+    "GCSteeringWheelElement",
+    "GCSwitchElement",
+    "GCSwitchPositionInput",
+    "GCSyntheticDeviceKeys",
+    "GCTouchedStateInput",
+    "GCTypes",
+    "GCXboxGamepad",
     "block2",
     "objc2-app-kit",
 ]

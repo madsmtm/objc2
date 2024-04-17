@@ -55,2000 +55,2000 @@ gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1", "block2?/gnustep-2-1", "objc2
 block2 = ["dep:block2"]
 objc2-core-data = ["dep:objc2-core-data"]
 
-AppKit_AppKitDefines = []
-AppKit_AppKitErrors = []
-AppKit_NSATSTypesetter = [
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSRange",
-]
-AppKit_NSAccessibility = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSAccessibilityColor = ["objc2-foundation/Foundation_NSString"]
-AppKit_NSAccessibilityConstants = [
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSAccessibilityCustomAction = ["objc2-foundation/Foundation_NSString"]
-AppKit_NSAccessibilityCustomRotor = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSAccessibilityElement = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSAccessibilityProtocols = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-foundation/Foundation_NSValue",
-]
-AppKit_NSActionCell = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSAffineTransform = ["objc2-foundation/Foundation_NSAffineTransform"]
-AppKit_NSAlert = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSAlignmentFeedbackFilter = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSGeometry",
-]
-AppKit_NSAnimation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
-]
-AppKit_NSAnimationContext = ["objc2-foundation/Foundation_NSDate"]
-AppKit_NSAppearance = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSAppleScriptExtensions = [
-    "objc2-foundation/Foundation_NSAppleScript",
-    "objc2-foundation/Foundation_NSAttributedString",
-]
-AppKit_NSApplication = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSException",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-foundation/Foundation_NSUserActivity",
-]
-AppKit_NSApplicationScripting = ["objc2-foundation/Foundation_NSArray"]
-AppKit_NSArrayController = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSIndexSet",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSSortDescriptor",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSAttributedString = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSFileWrapper",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSBezierPath = [
-    "objc2-foundation/Foundation_NSAffineTransform",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSBitmapImageRep = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSBox = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSBrowser = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSIndexPath",
-    "objc2-foundation/Foundation_NSIndexSet",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSBrowserCell = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSButton = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSButtonCell = [
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSButtonTouchBarItem = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSCIImageRep = []
-AppKit_NSCachedImageRep = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSCandidateListTouchBarItem = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSCell = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSFormatter",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSClickGestureRecognizer = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSClipView = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSCollectionView = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSIndexPath",
-    "objc2-foundation/Foundation_NSIndexSet",
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSCollectionViewCompositionalLayout = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSIndexPath",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSCollectionViewFlowLayout = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSIndexPath",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSCollectionViewGridLayout = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSCollectionViewLayout = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSIndexPath",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSCollectionViewTransitionLayout = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSColor = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSColorList = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSColorPanel = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSColorPicker = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSColorPickerTouchBarItem = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSColorPicking = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSColorSampler = []
-AppKit_NSColorSpace = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSColorWell = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSComboBox = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSComboBoxCell = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSComboButton = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSControl = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSFormatter",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSController = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSCursor = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSCustomImageRep = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSCustomTouchBarItem = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSDataAsset = [
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSDatePicker = [
-    "objc2-foundation/Foundation_NSCalendar",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSLocale",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSTimeZone",
-]
-AppKit_NSDatePickerCell = [
-    "objc2-foundation/Foundation_NSCalendar",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSLocale",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSTimeZone",
-]
-AppKit_NSDictionaryController = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSDiffableDataSource = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSIndexPath",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSDockTile = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSDocument = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSFilePresenter",
-    "objc2-foundation/Foundation_NSFileVersion",
-    "objc2-foundation/Foundation_NSFileWrapper",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-foundation/Foundation_NSUndoManager",
-]
-AppKit_NSDocumentController = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSDocumentScripting = [
-    "objc2-foundation/Foundation_NSScriptCommand",
-    "objc2-foundation/Foundation_NSScriptObjectSpecifiers",
-    "objc2-foundation/Foundation_NSScriptStandardSuiteCommands",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSDragging = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSDraggingItem = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSDraggingSession = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSDrawer = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSEPSImageRep = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSErrors = [
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSEvent = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSFilePromiseProvider = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSFilePromiseReceiver = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSFileWrapperExtensions = ["objc2-foundation/Foundation_NSFileWrapper"]
-AppKit_NSFont = [
-    "objc2-foundation/Foundation_NSAffineTransform",
-    "objc2-foundation/Foundation_NSCharacterSet",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSFontAssetRequest = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSProgress",
-]
-AppKit_NSFontCollection = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSLocale",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
-]
-AppKit_NSFontDescriptor = [
-    "objc2-foundation/Foundation_NSAffineTransform",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSFontManager = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSFontPanel = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSForm = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSFormCell = [
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSGestureRecognizer = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSGlyphGenerator = ["objc2-foundation/Foundation_NSAttributedString"]
-AppKit_NSGlyphInfo = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSGradient = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSGraphics = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSGraphicsContext = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSGridView = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-]
-AppKit_NSGroupTouchBarItem = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSHapticFeedback = []
-AppKit_NSHelpManager = [
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSImage = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSItemProvider",
-    "objc2-foundation/Foundation_NSLocale",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSImageCell = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSImageRep = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSImageView = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSInputManager = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSInputServer = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSInterfaceStyle = ["objc2-foundation/Foundation_NSString"]
-AppKit_NSItemProvider = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSItemProvider",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSKeyValueBinding = [
-    "objc2-core-data?/CoreData_NSAttributeDescription",
-    "objc2-core-data?/CoreData_NSPropertyDescription",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSLayoutAnchor = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSLayoutConstraint = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSLayoutGuide = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSLayoutManager = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSLevelIndicator = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSLevelIndicatorCell = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSMagnificationGestureRecognizer = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSMatrix = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSMediaLibraryBrowserController = ["objc2-foundation/Foundation_NSGeometry"]
-AppKit_NSMenu = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSZone",
-]
-AppKit_NSMenuItem = [
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSMenuItemBadge = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSMenuItemCell = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSMenuToolbarItem = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSMovie = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSNib = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSNibDeclarations = []
-AppKit_NSNibLoading = []
-AppKit_NSObjectController = [
-    "objc2-core-data?/CoreData_NSFetchRequest",
-    "objc2-core-data?/CoreData_NSManagedObjectContext",
-    "objc2-core-data?/CoreData_NSPersistentStoreRequest",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSOpenGL = []
-AppKit_NSOpenGLLayer = []
-AppKit_NSOpenGLView = []
-AppKit_NSOpenPanel = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSOutlineView = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSIndexSet",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSortDescriptor",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSPDFImageRep = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSPDFInfo = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSPDFPanel = ["objc2-foundation/Foundation_NSString"]
-AppKit_NSPICTImageRep = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSPageController = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSPageLayout = ["objc2-foundation/Foundation_NSArray"]
-AppKit_NSPanGestureRecognizer = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSPanel = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSParagraphStyle = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCharacterSet",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSLocale",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSPasteboard = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSFileWrapper",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSPasteboardItem = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSPathCell = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSPathComponentCell = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSPathControl = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSPathControlItem = [
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSPersistentDocument = [
-    "objc2-core-data?/CoreData_NSManagedObjectContext",
-    "objc2-core-data?/CoreData_NSManagedObjectModel",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSFilePresenter",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSPickerTouchBarItem = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSPopUpButton = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSPopUpButtonCell = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSPopover = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSPopoverTouchBarItem = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSPredicateEditor = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSPredicateEditorRowTemplate = [
-    "objc2-core-data?/CoreData_NSAttributeDescription",
-    "objc2-core-data?/CoreData_NSEntityDescription",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSComparisonPredicate",
-    "objc2-foundation/Foundation_NSExpression",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
-]
-AppKit_NSPressGestureRecognizer = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSPressureConfiguration = []
-AppKit_NSPreviewRepresentingActivityItem = [
-    "objc2-foundation/Foundation_NSItemProvider",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSPrintInfo = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSPrintOperation = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSPrintPanel = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSPrinter = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSProgressIndicator = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSProgress",
-]
-AppKit_NSResponder = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUndoManager",
-]
-AppKit_NSRotationGestureRecognizer = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSRuleEditor = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSIndexSet",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSRulerMarker = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSRulerView = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
-]
-AppKit_NSRunningApplication = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSSavePanel = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSScreen = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSScrollView = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSScroller = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSScrubber = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSIndexSet",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSScrubberItemView = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSScrubberLayout = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSIndexSet",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSet",
-]
-AppKit_NSSearchField = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSSearchFieldCell = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSSearchToolbarItem = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSSecureTextField = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSSegmentedCell = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSSegmentedControl = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSShadow = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSSharingService = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSItemProvider",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSSharingServicePickerToolbarItem = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSSharingServicePickerTouchBarItem = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSSlider = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSSliderAccessory = ["objc2-foundation/Foundation_NSObject"]
-AppKit_NSSliderCell = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSSliderTouchBarItem = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSSound = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSSpeechRecognizer = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSSpeechSynthesizer = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSSpellChecker = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSOrthography",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSTextCheckingResult",
-]
-AppKit_NSSpellProtocol = []
-AppKit_NSSplitView = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSSplitViewController = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSSplitViewItem = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSStackView = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSStatusBar = ["objc2-foundation/Foundation_NSGeometry"]
-AppKit_NSStatusBarButton = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSStatusItem = [
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSStepper = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSStepperCell = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSStepperTouchBarItem = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSFormatter",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSStoryboard = [
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSStoryboardSegue = ["objc2-foundation/Foundation_NSString"]
-AppKit_NSStringDrawing = [
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSSwitch = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSTabView = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSTabViewController = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTabViewItem = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTableCellView = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSTableColumn = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSortDescriptor",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTableHeaderCell = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTableHeaderView = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSTableRowView = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSTableView = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSEnumerator",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSIndexSet",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSSortDescriptor",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-]
-AppKit_NSTableViewDiffableDataSource = []
-AppKit_NSTableViewRowAction = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSText = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextAlternatives = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextAttachment = [
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSFileWrapper",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextAttachmentCell = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextCheckingClient = [
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextCheckingController = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSTextCheckingResult",
-]
-AppKit_NSTextContainer = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSTextContent = ["objc2-foundation/Foundation_NSString"]
-AppKit_NSTextContentManager = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextElement = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-]
-AppKit_NSTextField = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSTextCheckingResult",
-]
-AppKit_NSTextFieldCell = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextFinder = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
-]
-AppKit_NSTextInputClient = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextInputContext = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextInsertionIndicator = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSTextLayoutFragment = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSOperation",
-]
-AppKit_NSTextLayoutManager = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextLineFragment = [
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextList = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextListElement = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextRange = ["objc2-foundation/Foundation_NSObjCRuntime"]
-AppKit_NSTextSelection = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextSelectionNavigation = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextStorage = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTextStorageScripting = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-]
-AppKit_NSTextTable = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-]
-AppKit_NSTextView = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSOrthography",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSTextCheckingResult",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-foundation/Foundation_NSUndoManager",
-    "objc2-foundation/Foundation_NSValue",
-]
-AppKit_NSTextViewportLayoutController = ["objc2-foundation/Foundation_NSGeometry"]
-AppKit_NSTintConfiguration = ["objc2-foundation/Foundation_NSObject"]
-AppKit_NSTitlebarAccessoryViewController = [
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTokenField = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCharacterSet",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTokenFieldCell = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCharacterSet",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSToolbar = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSToolbarItem = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSToolbarItemGroup = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTouch = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSTouchBar = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTouchBarItem = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTrackingArea = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSTrackingSeparatorToolbarItem = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTreeController = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSIndexPath",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSortDescriptor",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSTreeNode = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSIndexPath",
-    "objc2-foundation/Foundation_NSSortDescriptor",
-]
-AppKit_NSTypesetter = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSUserActivity = [
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUserActivity",
-]
-AppKit_NSUserDefaultsController = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUserDefaults",
-]
-AppKit_NSUserInterfaceCompression = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSUserInterfaceItemIdentification = ["objc2-foundation/Foundation_NSString"]
-AppKit_NSUserInterfaceItemSearching = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSUserInterfaceLayout = []
-AppKit_NSUserInterfaceValidation = []
-AppKit_NSView = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSViewController = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSExtensionContext",
-    "objc2-foundation/Foundation_NSExtensionRequestHandling",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSVisualEffectView = [
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-]
-AppKit_NSWindow = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-foundation/Foundation_NSUndoManager",
-    "objc2-foundation/Foundation_NSValue",
-]
-AppKit_NSWindowController = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSWindowRestoration = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSOperation",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSWindowScripting = [
-    "objc2-foundation/Foundation_NSScriptCommand",
-    "objc2-foundation/Foundation_NSScriptStandardSuiteCommands",
-]
-AppKit_NSWindowTab = [
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSWindowTabGroup = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
-]
-AppKit_NSWorkspace = [
-    "objc2-foundation/Foundation_NSAppleEventDescriptor",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSFileManager",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-foundation/Foundation_NSValue",
+AppKitDefines = []
+AppKitErrors = []
+NSATSTypesetter = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSRange",
+]
+NSAccessibility = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSString",
+]
+NSAccessibilityColor = ["objc2-foundation/NSString"]
+NSAccessibilityConstants = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSAccessibilityCustomAction = ["objc2-foundation/NSString"]
+NSAccessibilityCustomRotor = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSAccessibilityElement = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
+]
+NSAccessibilityProtocols = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSValue",
+]
+NSActionCell = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSAffineTransform = ["objc2-foundation/NSAffineTransform"]
+NSAlert = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+]
+NSAlignmentFeedbackFilter = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSGeometry",
+]
+NSAnimation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
+]
+NSAnimationContext = ["objc2-foundation/NSDate"]
+NSAppearance = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSAppleScriptExtensions = [
+    "objc2-foundation/NSAppleScript",
+    "objc2-foundation/NSAttributedString",
+]
+NSApplication = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSException",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSUserActivity",
+]
+NSApplicationScripting = ["objc2-foundation/NSArray"]
+NSArrayController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSIndexSet",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSSortDescriptor",
+    "objc2-foundation/NSString",
+]
+NSAttributedString = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSFileWrapper",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSBezierPath = [
+    "objc2-foundation/NSAffineTransform",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSBitmapImageRep = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSBox = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSBrowser = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSIndexPath",
+    "objc2-foundation/NSIndexSet",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSBrowserCell = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSButton = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSButtonCell = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSButtonTouchBarItem = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSCIImageRep = []
+NSCachedImageRep = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSCandidateListTouchBarItem = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSCell = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSFormatter",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSClickGestureRecognizer = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+]
+NSClipView = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+]
+NSCollectionView = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSIndexPath",
+    "objc2-foundation/NSIndexSet",
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSCollectionViewCompositionalLayout = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSIndexPath",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSCollectionViewFlowLayout = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSIndexPath",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSCollectionViewGridLayout = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSCollectionViewLayout = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSIndexPath",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
+NSCollectionViewTransitionLayout = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSColor = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSColorList = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSColorPanel = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSColorPicker = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
+]
+NSColorPickerTouchBarItem = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSColorPicking = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
+]
+NSColorSampler = []
+NSColorSpace = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSColorWell = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSComboBox = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSComboBoxCell = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSComboButton = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSControl = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSFormatter",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSController = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+]
+NSCursor = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSCustomImageRep = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSCustomTouchBarItem = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSDataAsset = [
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSDatePicker = [
+    "objc2-foundation/NSCalendar",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSLocale",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSTimeZone",
+]
+NSDatePickerCell = [
+    "objc2-foundation/NSCalendar",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSLocale",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSTimeZone",
+]
+NSDictionaryController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSDiffableDataSource = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSIndexPath",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSDockTile = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
+]
+NSDocument = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSFilePresenter",
+    "objc2-foundation/NSFileVersion",
+    "objc2-foundation/NSFileWrapper",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSUndoManager",
+]
+NSDocumentController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSDocumentScripting = [
+    "objc2-foundation/NSScriptCommand",
+    "objc2-foundation/NSScriptObjectSpecifiers",
+    "objc2-foundation/NSScriptStandardSuiteCommands",
+    "objc2-foundation/NSString",
+]
+NSDragging = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSDraggingItem = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
+]
+NSDraggingSession = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
+]
+NSDrawer = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSEPSImageRep = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSErrors = [
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSString",
+]
+NSEvent = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
+NSFilePromiseProvider = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSFilePromiseReceiver = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSFileWrapperExtensions = ["objc2-foundation/NSFileWrapper"]
+NSFont = [
+    "objc2-foundation/NSAffineTransform",
+    "objc2-foundation/NSCharacterSet",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSFontAssetRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSProgress",
+]
+NSFontCollection = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSLocale",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
+]
+NSFontDescriptor = [
+    "objc2-foundation/NSAffineTransform",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
+NSFontManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
+]
+NSFontPanel = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSForm = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSFormCell = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSGestureRecognizer = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSGlyphGenerator = ["objc2-foundation/NSAttributedString"]
+NSGlyphInfo = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSGradient = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSGraphics = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
+]
+NSGraphicsContext = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
+]
+NSGridView = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+]
+NSGroupTouchBarItem = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSHapticFeedback = []
+NSHelpManager = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSString",
+]
+NSImage = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSItemProvider",
+    "objc2-foundation/NSLocale",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSImageCell = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSImageRep = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSImageView = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSInputManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSInputServer = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSInterfaceStyle = ["objc2-foundation/NSString"]
+NSItemProvider = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSItemProvider",
+    "objc2-foundation/NSString",
+]
+NSKeyValueBinding = [
+    "objc2-core-data?/NSAttributeDescription",
+    "objc2-core-data?/NSPropertyDescription",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSLayoutAnchor = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSLayoutConstraint = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
+]
+NSLayoutGuide = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSLayoutManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSLevelIndicator = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSLevelIndicatorCell = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSMagnificationGestureRecognizer = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSMatrix = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSMediaLibraryBrowserController = ["objc2-foundation/NSGeometry"]
+NSMenu = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSZone",
+]
+NSMenuItem = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSMenuItemBadge = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSMenuItemCell = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSMenuToolbarItem = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSMovie = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+]
+NSNib = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSNibDeclarations = []
+NSNibLoading = []
+NSObjectController = [
+    "objc2-core-data?/NSFetchRequest",
+    "objc2-core-data?/NSManagedObjectContext",
+    "objc2-core-data?/NSPersistentStoreRequest",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSString",
+]
+NSOpenGL = []
+NSOpenGLLayer = []
+NSOpenGLView = []
+NSOpenPanel = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSOutlineView = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSIndexSet",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSortDescriptor",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSPDFImageRep = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSPDFInfo = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSPDFPanel = ["objc2-foundation/NSString"]
+NSPICTImageRep = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSPageController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSPageLayout = ["objc2-foundation/NSArray"]
+NSPanGestureRecognizer = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSPanel = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSParagraphStyle = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCharacterSet",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSLocale",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSPasteboard = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSFileWrapper",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSPasteboardItem = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSString",
+]
+NSPathCell = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSPathComponentCell = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSPathControl = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSPathControlItem = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSPersistentDocument = [
+    "objc2-core-data?/NSManagedObjectContext",
+    "objc2-core-data?/NSManagedObjectModel",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSFilePresenter",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSPickerTouchBarItem = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSPopUpButton = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSPopUpButtonCell = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSPopover = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSPopoverTouchBarItem = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSPredicateEditor = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSPredicateEditorRowTemplate = [
+    "objc2-core-data?/NSAttributeDescription",
+    "objc2-core-data?/NSEntityDescription",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSComparisonPredicate",
+    "objc2-foundation/NSExpression",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
+]
+NSPressGestureRecognizer = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSPressureConfiguration = []
+NSPreviewRepresentingActivityItem = [
+    "objc2-foundation/NSItemProvider",
+    "objc2-foundation/NSString",
+]
+NSPrintInfo = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSPrintOperation = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSPrintPanel = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
+NSPrinter = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSProgressIndicator = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSProgress",
+]
+NSResponder = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUndoManager",
+]
+NSRotationGestureRecognizer = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSRuleEditor = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSIndexSet",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSString",
+]
+NSRulerMarker = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSRulerView = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
+]
+NSRunningApplication = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSSavePanel = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSScreen = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSString",
+]
+NSScrollView = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSScroller = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSScrubber = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSIndexSet",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSScrubberItemView = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSScrubberLayout = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSIndexSet",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+]
+NSSearchField = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSSearchFieldCell = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSSearchToolbarItem = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSSecureTextField = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSSegmentedCell = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSSegmentedControl = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSShadow = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSSharingService = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSItemProvider",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSSharingServicePickerToolbarItem = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSSharingServicePickerTouchBarItem = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSSlider = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSSliderAccessory = ["objc2-foundation/NSObject"]
+NSSliderCell = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSSliderTouchBarItem = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSSound = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSSpeechRecognizer = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+]
+NSSpeechSynthesizer = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSSpellChecker = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSOrthography",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSTextCheckingResult",
+]
+NSSpellProtocol = []
+NSSplitView = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSSplitViewController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSSplitViewItem = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSStackView = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSStatusBar = ["objc2-foundation/NSGeometry"]
+NSStatusBarButton = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSStatusItem = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
+]
+NSStepper = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSStepperCell = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSStepperTouchBarItem = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSFormatter",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSStoryboard = [
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSString",
+]
+NSStoryboardSegue = ["objc2-foundation/NSString"]
+NSStringDrawing = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
+]
+NSSwitch = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSTabView = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSTabViewController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSTabViewItem = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSTableCellView = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSTableColumn = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSortDescriptor",
+    "objc2-foundation/NSString",
+]
+NSTableHeaderCell = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSTableHeaderView = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSTableRowView = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSTableView = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSEnumerator",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSIndexSet",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSSortDescriptor",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
+NSTableViewDiffableDataSource = []
+NSTableViewRowAction = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSText = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSTextAlternatives = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSTextAttachment = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSFileWrapper",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSTextAttachmentCell = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSTextCheckingClient = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSTextCheckingController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSTextCheckingResult",
+]
+NSTextContainer = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSTextContent = ["objc2-foundation/NSString"]
+NSTextContentManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSTextElement = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+]
+NSTextField = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSTextCheckingResult",
+]
+NSTextFieldCell = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSTextFinder = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
+]
+NSTextInputClient = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSTextInputContext = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSString",
+]
+NSTextInsertionIndicator = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSTextLayoutFragment = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSOperation",
+]
+NSTextLayoutManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSString",
+]
+NSTextLineFragment = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSTextList = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSTextListElement = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSString",
+]
+NSTextRange = ["objc2-foundation/NSObjCRuntime"]
+NSTextSelection = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSTextSelectionNavigation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSString",
+]
+NSTextStorage = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSTextStorageScripting = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+]
+NSTextTable = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+]
+NSTextView = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSOrthography",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSTextCheckingResult",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSUndoManager",
+    "objc2-foundation/NSValue",
+]
+NSTextViewportLayoutController = ["objc2-foundation/NSGeometry"]
+NSTintConfiguration = ["objc2-foundation/NSObject"]
+NSTitlebarAccessoryViewController = [
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSTokenField = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCharacterSet",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSTokenFieldCell = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCharacterSet",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSToolbar = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
+NSToolbarItem = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
+NSToolbarItemGroup = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSTouch = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSTouchBar = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
+NSTouchBarItem = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSTrackingArea = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSTrackingSeparatorToolbarItem = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSTreeController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSIndexPath",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSortDescriptor",
+    "objc2-foundation/NSString",
+]
+NSTreeNode = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSIndexPath",
+    "objc2-foundation/NSSortDescriptor",
+]
+NSTypesetter = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSUserActivity = [
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUserActivity",
+]
+NSUserDefaultsController = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUserDefaults",
+]
+NSUserInterfaceCompression = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
+NSUserInterfaceItemIdentification = ["objc2-foundation/NSString"]
+NSUserInterfaceItemSearching = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSUserInterfaceLayout = []
+NSUserInterfaceValidation = []
+NSView = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
+]
+NSViewController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSExtensionContext",
+    "objc2-foundation/NSExtensionRequestHandling",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSVisualEffectView = [
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
+NSWindow = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSUndoManager",
+    "objc2-foundation/NSValue",
+]
+NSWindowController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+NSWindowRestoration = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSOperation",
+    "objc2-foundation/NSString",
+]
+NSWindowScripting = [
+    "objc2-foundation/NSScriptCommand",
+    "objc2-foundation/NSScriptStandardSuiteCommands",
+]
+NSWindowTab = [
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSString",
+]
+NSWindowTabGroup = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+]
+NSWorkspace = [
+    "objc2-foundation/NSAppleEventDescriptor",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSFileManager",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSValue",
 ]
 all = [
-    "AppKit_AppKitDefines",
-    "AppKit_AppKitErrors",
-    "AppKit_NSATSTypesetter",
-    "AppKit_NSAccessibility",
-    "AppKit_NSAccessibilityColor",
-    "AppKit_NSAccessibilityConstants",
-    "AppKit_NSAccessibilityCustomAction",
-    "AppKit_NSAccessibilityCustomRotor",
-    "AppKit_NSAccessibilityElement",
-    "AppKit_NSAccessibilityProtocols",
-    "AppKit_NSActionCell",
-    "AppKit_NSAffineTransform",
-    "AppKit_NSAlert",
-    "AppKit_NSAlignmentFeedbackFilter",
-    "AppKit_NSAnimation",
-    "AppKit_NSAnimationContext",
-    "AppKit_NSAppearance",
-    "AppKit_NSAppleScriptExtensions",
-    "AppKit_NSApplication",
-    "AppKit_NSApplicationScripting",
-    "AppKit_NSArrayController",
-    "AppKit_NSAttributedString",
-    "AppKit_NSBezierPath",
-    "AppKit_NSBitmapImageRep",
-    "AppKit_NSBox",
-    "AppKit_NSBrowser",
-    "AppKit_NSBrowserCell",
-    "AppKit_NSButton",
-    "AppKit_NSButtonCell",
-    "AppKit_NSButtonTouchBarItem",
-    "AppKit_NSCIImageRep",
-    "AppKit_NSCachedImageRep",
-    "AppKit_NSCandidateListTouchBarItem",
-    "AppKit_NSCell",
-    "AppKit_NSClickGestureRecognizer",
-    "AppKit_NSClipView",
-    "AppKit_NSCollectionView",
-    "AppKit_NSCollectionViewCompositionalLayout",
-    "AppKit_NSCollectionViewFlowLayout",
-    "AppKit_NSCollectionViewGridLayout",
-    "AppKit_NSCollectionViewLayout",
-    "AppKit_NSCollectionViewTransitionLayout",
-    "AppKit_NSColor",
-    "AppKit_NSColorList",
-    "AppKit_NSColorPanel",
-    "AppKit_NSColorPicker",
-    "AppKit_NSColorPickerTouchBarItem",
-    "AppKit_NSColorPicking",
-    "AppKit_NSColorSampler",
-    "AppKit_NSColorSpace",
-    "AppKit_NSColorWell",
-    "AppKit_NSComboBox",
-    "AppKit_NSComboBoxCell",
-    "AppKit_NSComboButton",
-    "AppKit_NSControl",
-    "AppKit_NSController",
-    "AppKit_NSCursor",
-    "AppKit_NSCustomImageRep",
-    "AppKit_NSCustomTouchBarItem",
-    "AppKit_NSDataAsset",
-    "AppKit_NSDatePicker",
-    "AppKit_NSDatePickerCell",
-    "AppKit_NSDictionaryController",
-    "AppKit_NSDiffableDataSource",
-    "AppKit_NSDockTile",
-    "AppKit_NSDocument",
-    "AppKit_NSDocumentController",
-    "AppKit_NSDocumentScripting",
-    "AppKit_NSDragging",
-    "AppKit_NSDraggingItem",
-    "AppKit_NSDraggingSession",
-    "AppKit_NSDrawer",
-    "AppKit_NSEPSImageRep",
-    "AppKit_NSErrors",
-    "AppKit_NSEvent",
-    "AppKit_NSFilePromiseProvider",
-    "AppKit_NSFilePromiseReceiver",
-    "AppKit_NSFileWrapperExtensions",
-    "AppKit_NSFont",
-    "AppKit_NSFontAssetRequest",
-    "AppKit_NSFontCollection",
-    "AppKit_NSFontDescriptor",
-    "AppKit_NSFontManager",
-    "AppKit_NSFontPanel",
-    "AppKit_NSForm",
-    "AppKit_NSFormCell",
-    "AppKit_NSGestureRecognizer",
-    "AppKit_NSGlyphGenerator",
-    "AppKit_NSGlyphInfo",
-    "AppKit_NSGradient",
-    "AppKit_NSGraphics",
-    "AppKit_NSGraphicsContext",
-    "AppKit_NSGridView",
-    "AppKit_NSGroupTouchBarItem",
-    "AppKit_NSHapticFeedback",
-    "AppKit_NSHelpManager",
-    "AppKit_NSImage",
-    "AppKit_NSImageCell",
-    "AppKit_NSImageRep",
-    "AppKit_NSImageView",
-    "AppKit_NSInputManager",
-    "AppKit_NSInputServer",
-    "AppKit_NSInterfaceStyle",
-    "AppKit_NSItemProvider",
-    "AppKit_NSKeyValueBinding",
-    "AppKit_NSLayoutAnchor",
-    "AppKit_NSLayoutConstraint",
-    "AppKit_NSLayoutGuide",
-    "AppKit_NSLayoutManager",
-    "AppKit_NSLevelIndicator",
-    "AppKit_NSLevelIndicatorCell",
-    "AppKit_NSMagnificationGestureRecognizer",
-    "AppKit_NSMatrix",
-    "AppKit_NSMediaLibraryBrowserController",
-    "AppKit_NSMenu",
-    "AppKit_NSMenuItem",
-    "AppKit_NSMenuItemBadge",
-    "AppKit_NSMenuItemCell",
-    "AppKit_NSMenuToolbarItem",
-    "AppKit_NSMovie",
-    "AppKit_NSNib",
-    "AppKit_NSNibDeclarations",
-    "AppKit_NSNibLoading",
-    "AppKit_NSObjectController",
-    "AppKit_NSOpenGL",
-    "AppKit_NSOpenGLLayer",
-    "AppKit_NSOpenGLView",
-    "AppKit_NSOpenPanel",
-    "AppKit_NSOutlineView",
-    "AppKit_NSPDFImageRep",
-    "AppKit_NSPDFInfo",
-    "AppKit_NSPDFPanel",
-    "AppKit_NSPICTImageRep",
-    "AppKit_NSPageController",
-    "AppKit_NSPageLayout",
-    "AppKit_NSPanGestureRecognizer",
-    "AppKit_NSPanel",
-    "AppKit_NSParagraphStyle",
-    "AppKit_NSPasteboard",
-    "AppKit_NSPasteboardItem",
-    "AppKit_NSPathCell",
-    "AppKit_NSPathComponentCell",
-    "AppKit_NSPathControl",
-    "AppKit_NSPathControlItem",
-    "AppKit_NSPersistentDocument",
-    "AppKit_NSPickerTouchBarItem",
-    "AppKit_NSPopUpButton",
-    "AppKit_NSPopUpButtonCell",
-    "AppKit_NSPopover",
-    "AppKit_NSPopoverTouchBarItem",
-    "AppKit_NSPredicateEditor",
-    "AppKit_NSPredicateEditorRowTemplate",
-    "AppKit_NSPressGestureRecognizer",
-    "AppKit_NSPressureConfiguration",
-    "AppKit_NSPreviewRepresentingActivityItem",
-    "AppKit_NSPrintInfo",
-    "AppKit_NSPrintOperation",
-    "AppKit_NSPrintPanel",
-    "AppKit_NSPrinter",
-    "AppKit_NSProgressIndicator",
-    "AppKit_NSResponder",
-    "AppKit_NSRotationGestureRecognizer",
-    "AppKit_NSRuleEditor",
-    "AppKit_NSRulerMarker",
-    "AppKit_NSRulerView",
-    "AppKit_NSRunningApplication",
-    "AppKit_NSSavePanel",
-    "AppKit_NSScreen",
-    "AppKit_NSScrollView",
-    "AppKit_NSScroller",
-    "AppKit_NSScrubber",
-    "AppKit_NSScrubberItemView",
-    "AppKit_NSScrubberLayout",
-    "AppKit_NSSearchField",
-    "AppKit_NSSearchFieldCell",
-    "AppKit_NSSearchToolbarItem",
-    "AppKit_NSSecureTextField",
-    "AppKit_NSSegmentedCell",
-    "AppKit_NSSegmentedControl",
-    "AppKit_NSShadow",
-    "AppKit_NSSharingService",
-    "AppKit_NSSharingServicePickerToolbarItem",
-    "AppKit_NSSharingServicePickerTouchBarItem",
-    "AppKit_NSSlider",
-    "AppKit_NSSliderAccessory",
-    "AppKit_NSSliderCell",
-    "AppKit_NSSliderTouchBarItem",
-    "AppKit_NSSound",
-    "AppKit_NSSpeechRecognizer",
-    "AppKit_NSSpeechSynthesizer",
-    "AppKit_NSSpellChecker",
-    "AppKit_NSSpellProtocol",
-    "AppKit_NSSplitView",
-    "AppKit_NSSplitViewController",
-    "AppKit_NSSplitViewItem",
-    "AppKit_NSStackView",
-    "AppKit_NSStatusBar",
-    "AppKit_NSStatusBarButton",
-    "AppKit_NSStatusItem",
-    "AppKit_NSStepper",
-    "AppKit_NSStepperCell",
-    "AppKit_NSStepperTouchBarItem",
-    "AppKit_NSStoryboard",
-    "AppKit_NSStoryboardSegue",
-    "AppKit_NSStringDrawing",
-    "AppKit_NSSwitch",
-    "AppKit_NSTabView",
-    "AppKit_NSTabViewController",
-    "AppKit_NSTabViewItem",
-    "AppKit_NSTableCellView",
-    "AppKit_NSTableColumn",
-    "AppKit_NSTableHeaderCell",
-    "AppKit_NSTableHeaderView",
-    "AppKit_NSTableRowView",
-    "AppKit_NSTableView",
-    "AppKit_NSTableViewDiffableDataSource",
-    "AppKit_NSTableViewRowAction",
-    "AppKit_NSText",
-    "AppKit_NSTextAlternatives",
-    "AppKit_NSTextAttachment",
-    "AppKit_NSTextAttachmentCell",
-    "AppKit_NSTextCheckingClient",
-    "AppKit_NSTextCheckingController",
-    "AppKit_NSTextContainer",
-    "AppKit_NSTextContent",
-    "AppKit_NSTextContentManager",
-    "AppKit_NSTextElement",
-    "AppKit_NSTextField",
-    "AppKit_NSTextFieldCell",
-    "AppKit_NSTextFinder",
-    "AppKit_NSTextInputClient",
-    "AppKit_NSTextInputContext",
-    "AppKit_NSTextInsertionIndicator",
-    "AppKit_NSTextLayoutFragment",
-    "AppKit_NSTextLayoutManager",
-    "AppKit_NSTextLineFragment",
-    "AppKit_NSTextList",
-    "AppKit_NSTextListElement",
-    "AppKit_NSTextRange",
-    "AppKit_NSTextSelection",
-    "AppKit_NSTextSelectionNavigation",
-    "AppKit_NSTextStorage",
-    "AppKit_NSTextStorageScripting",
-    "AppKit_NSTextTable",
-    "AppKit_NSTextView",
-    "AppKit_NSTextViewportLayoutController",
-    "AppKit_NSTintConfiguration",
-    "AppKit_NSTitlebarAccessoryViewController",
-    "AppKit_NSTokenField",
-    "AppKit_NSTokenFieldCell",
-    "AppKit_NSToolbar",
-    "AppKit_NSToolbarItem",
-    "AppKit_NSToolbarItemGroup",
-    "AppKit_NSTouch",
-    "AppKit_NSTouchBar",
-    "AppKit_NSTouchBarItem",
-    "AppKit_NSTrackingArea",
-    "AppKit_NSTrackingSeparatorToolbarItem",
-    "AppKit_NSTreeController",
-    "AppKit_NSTreeNode",
-    "AppKit_NSTypesetter",
-    "AppKit_NSUserActivity",
-    "AppKit_NSUserDefaultsController",
-    "AppKit_NSUserInterfaceCompression",
-    "AppKit_NSUserInterfaceItemIdentification",
-    "AppKit_NSUserInterfaceItemSearching",
-    "AppKit_NSUserInterfaceLayout",
-    "AppKit_NSUserInterfaceValidation",
-    "AppKit_NSView",
-    "AppKit_NSViewController",
-    "AppKit_NSVisualEffectView",
-    "AppKit_NSWindow",
-    "AppKit_NSWindowController",
-    "AppKit_NSWindowRestoration",
-    "AppKit_NSWindowScripting",
-    "AppKit_NSWindowTab",
-    "AppKit_NSWindowTabGroup",
-    "AppKit_NSWorkspace",
+    "AppKitDefines",
+    "AppKitErrors",
+    "NSATSTypesetter",
+    "NSAccessibility",
+    "NSAccessibilityColor",
+    "NSAccessibilityConstants",
+    "NSAccessibilityCustomAction",
+    "NSAccessibilityCustomRotor",
+    "NSAccessibilityElement",
+    "NSAccessibilityProtocols",
+    "NSActionCell",
+    "NSAffineTransform",
+    "NSAlert",
+    "NSAlignmentFeedbackFilter",
+    "NSAnimation",
+    "NSAnimationContext",
+    "NSAppearance",
+    "NSAppleScriptExtensions",
+    "NSApplication",
+    "NSApplicationScripting",
+    "NSArrayController",
+    "NSAttributedString",
+    "NSBezierPath",
+    "NSBitmapImageRep",
+    "NSBox",
+    "NSBrowser",
+    "NSBrowserCell",
+    "NSButton",
+    "NSButtonCell",
+    "NSButtonTouchBarItem",
+    "NSCIImageRep",
+    "NSCachedImageRep",
+    "NSCandidateListTouchBarItem",
+    "NSCell",
+    "NSClickGestureRecognizer",
+    "NSClipView",
+    "NSCollectionView",
+    "NSCollectionViewCompositionalLayout",
+    "NSCollectionViewFlowLayout",
+    "NSCollectionViewGridLayout",
+    "NSCollectionViewLayout",
+    "NSCollectionViewTransitionLayout",
+    "NSColor",
+    "NSColorList",
+    "NSColorPanel",
+    "NSColorPicker",
+    "NSColorPickerTouchBarItem",
+    "NSColorPicking",
+    "NSColorSampler",
+    "NSColorSpace",
+    "NSColorWell",
+    "NSComboBox",
+    "NSComboBoxCell",
+    "NSComboButton",
+    "NSControl",
+    "NSController",
+    "NSCursor",
+    "NSCustomImageRep",
+    "NSCustomTouchBarItem",
+    "NSDataAsset",
+    "NSDatePicker",
+    "NSDatePickerCell",
+    "NSDictionaryController",
+    "NSDiffableDataSource",
+    "NSDockTile",
+    "NSDocument",
+    "NSDocumentController",
+    "NSDocumentScripting",
+    "NSDragging",
+    "NSDraggingItem",
+    "NSDraggingSession",
+    "NSDrawer",
+    "NSEPSImageRep",
+    "NSErrors",
+    "NSEvent",
+    "NSFilePromiseProvider",
+    "NSFilePromiseReceiver",
+    "NSFileWrapperExtensions",
+    "NSFont",
+    "NSFontAssetRequest",
+    "NSFontCollection",
+    "NSFontDescriptor",
+    "NSFontManager",
+    "NSFontPanel",
+    "NSForm",
+    "NSFormCell",
+    "NSGestureRecognizer",
+    "NSGlyphGenerator",
+    "NSGlyphInfo",
+    "NSGradient",
+    "NSGraphics",
+    "NSGraphicsContext",
+    "NSGridView",
+    "NSGroupTouchBarItem",
+    "NSHapticFeedback",
+    "NSHelpManager",
+    "NSImage",
+    "NSImageCell",
+    "NSImageRep",
+    "NSImageView",
+    "NSInputManager",
+    "NSInputServer",
+    "NSInterfaceStyle",
+    "NSItemProvider",
+    "NSKeyValueBinding",
+    "NSLayoutAnchor",
+    "NSLayoutConstraint",
+    "NSLayoutGuide",
+    "NSLayoutManager",
+    "NSLevelIndicator",
+    "NSLevelIndicatorCell",
+    "NSMagnificationGestureRecognizer",
+    "NSMatrix",
+    "NSMediaLibraryBrowserController",
+    "NSMenu",
+    "NSMenuItem",
+    "NSMenuItemBadge",
+    "NSMenuItemCell",
+    "NSMenuToolbarItem",
+    "NSMovie",
+    "NSNib",
+    "NSNibDeclarations",
+    "NSNibLoading",
+    "NSObjectController",
+    "NSOpenGL",
+    "NSOpenGLLayer",
+    "NSOpenGLView",
+    "NSOpenPanel",
+    "NSOutlineView",
+    "NSPDFImageRep",
+    "NSPDFInfo",
+    "NSPDFPanel",
+    "NSPICTImageRep",
+    "NSPageController",
+    "NSPageLayout",
+    "NSPanGestureRecognizer",
+    "NSPanel",
+    "NSParagraphStyle",
+    "NSPasteboard",
+    "NSPasteboardItem",
+    "NSPathCell",
+    "NSPathComponentCell",
+    "NSPathControl",
+    "NSPathControlItem",
+    "NSPersistentDocument",
+    "NSPickerTouchBarItem",
+    "NSPopUpButton",
+    "NSPopUpButtonCell",
+    "NSPopover",
+    "NSPopoverTouchBarItem",
+    "NSPredicateEditor",
+    "NSPredicateEditorRowTemplate",
+    "NSPressGestureRecognizer",
+    "NSPressureConfiguration",
+    "NSPreviewRepresentingActivityItem",
+    "NSPrintInfo",
+    "NSPrintOperation",
+    "NSPrintPanel",
+    "NSPrinter",
+    "NSProgressIndicator",
+    "NSResponder",
+    "NSRotationGestureRecognizer",
+    "NSRuleEditor",
+    "NSRulerMarker",
+    "NSRulerView",
+    "NSRunningApplication",
+    "NSSavePanel",
+    "NSScreen",
+    "NSScrollView",
+    "NSScroller",
+    "NSScrubber",
+    "NSScrubberItemView",
+    "NSScrubberLayout",
+    "NSSearchField",
+    "NSSearchFieldCell",
+    "NSSearchToolbarItem",
+    "NSSecureTextField",
+    "NSSegmentedCell",
+    "NSSegmentedControl",
+    "NSShadow",
+    "NSSharingService",
+    "NSSharingServicePickerToolbarItem",
+    "NSSharingServicePickerTouchBarItem",
+    "NSSlider",
+    "NSSliderAccessory",
+    "NSSliderCell",
+    "NSSliderTouchBarItem",
+    "NSSound",
+    "NSSpeechRecognizer",
+    "NSSpeechSynthesizer",
+    "NSSpellChecker",
+    "NSSpellProtocol",
+    "NSSplitView",
+    "NSSplitViewController",
+    "NSSplitViewItem",
+    "NSStackView",
+    "NSStatusBar",
+    "NSStatusBarButton",
+    "NSStatusItem",
+    "NSStepper",
+    "NSStepperCell",
+    "NSStepperTouchBarItem",
+    "NSStoryboard",
+    "NSStoryboardSegue",
+    "NSStringDrawing",
+    "NSSwitch",
+    "NSTabView",
+    "NSTabViewController",
+    "NSTabViewItem",
+    "NSTableCellView",
+    "NSTableColumn",
+    "NSTableHeaderCell",
+    "NSTableHeaderView",
+    "NSTableRowView",
+    "NSTableView",
+    "NSTableViewDiffableDataSource",
+    "NSTableViewRowAction",
+    "NSText",
+    "NSTextAlternatives",
+    "NSTextAttachment",
+    "NSTextAttachmentCell",
+    "NSTextCheckingClient",
+    "NSTextCheckingController",
+    "NSTextContainer",
+    "NSTextContent",
+    "NSTextContentManager",
+    "NSTextElement",
+    "NSTextField",
+    "NSTextFieldCell",
+    "NSTextFinder",
+    "NSTextInputClient",
+    "NSTextInputContext",
+    "NSTextInsertionIndicator",
+    "NSTextLayoutFragment",
+    "NSTextLayoutManager",
+    "NSTextLineFragment",
+    "NSTextList",
+    "NSTextListElement",
+    "NSTextRange",
+    "NSTextSelection",
+    "NSTextSelectionNavigation",
+    "NSTextStorage",
+    "NSTextStorageScripting",
+    "NSTextTable",
+    "NSTextView",
+    "NSTextViewportLayoutController",
+    "NSTintConfiguration",
+    "NSTitlebarAccessoryViewController",
+    "NSTokenField",
+    "NSTokenFieldCell",
+    "NSToolbar",
+    "NSToolbarItem",
+    "NSToolbarItemGroup",
+    "NSTouch",
+    "NSTouchBar",
+    "NSTouchBarItem",
+    "NSTrackingArea",
+    "NSTrackingSeparatorToolbarItem",
+    "NSTreeController",
+    "NSTreeNode",
+    "NSTypesetter",
+    "NSUserActivity",
+    "NSUserDefaultsController",
+    "NSUserInterfaceCompression",
+    "NSUserInterfaceItemIdentification",
+    "NSUserInterfaceItemSearching",
+    "NSUserInterfaceLayout",
+    "NSUserInterfaceValidation",
+    "NSView",
+    "NSViewController",
+    "NSVisualEffectView",
+    "NSWindow",
+    "NSWindowController",
+    "NSWindowRestoration",
+    "NSWindowScripting",
+    "NSWindowTab",
+    "NSWindowTabGroup",
+    "NSWorkspace",
     "block2",
     "objc2-core-data",
 ]
@@ -2057,21 +2057,21 @@ all = [
 name = "delegate"
 required-features = [
     "apple",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSThread",
-    "AppKit_NSResponder",
-    "AppKit_NSApplication",
-    "AppKit_NSRunningApplication",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSThread",
+    "NSResponder",
+    "NSApplication",
+    "NSRunningApplication",
 ]
 
 [[example]]
 name = "nspasteboard"
 required-features = [
     "apple",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSObject",
-    "AppKit_NSPasteboard",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSObject",
+    "NSPasteboard",
 ]

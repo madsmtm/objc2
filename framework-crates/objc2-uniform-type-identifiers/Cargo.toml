@@ -48,36 +48,36 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 
-UniformTypeIdentifiers_NSItemProvider_UTType = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSItemProvider",
-    "objc2-foundation/Foundation_NSProgress",
-    "objc2-foundation/Foundation_NSURL",
+NSItemProvider_UTType = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSItemProvider",
+    "objc2-foundation/NSProgress",
+    "objc2-foundation/NSURL",
 ]
-UniformTypeIdentifiers_UTAdditions = [
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+UTAdditions = [
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-UniformTypeIdentifiers_UTCoreTypes = []
-UniformTypeIdentifiers_UTDefines = []
-UniformTypeIdentifiers_UTTagClass = ["objc2-foundation/Foundation_NSString"]
-UniformTypeIdentifiers_UTType = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-foundation/Foundation_NSValue",
+UTCoreTypes = []
+UTDefines = []
+UTTagClass = ["objc2-foundation/NSString"]
+UTType = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSValue",
 ]
 all = [
-    "UniformTypeIdentifiers_NSItemProvider_UTType",
-    "UniformTypeIdentifiers_UTAdditions",
-    "UniformTypeIdentifiers_UTCoreTypes",
-    "UniformTypeIdentifiers_UTDefines",
-    "UniformTypeIdentifiers_UTTagClass",
-    "UniformTypeIdentifiers_UTType",
+    "NSItemProvider_UTType",
+    "UTAdditions",
+    "UTCoreTypes",
+    "UTDefines",
+    "UTTagClass",
+    "UTType",
     "block2",
 ]

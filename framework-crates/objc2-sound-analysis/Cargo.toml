@@ -48,37 +48,37 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 
-SoundAnalysis_SNAnalyzer = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSURL",
+SNAnalyzer = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSURL",
 ]
-SoundAnalysis_SNClassificationResult = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
+SNClassificationResult = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
-SoundAnalysis_SNClassifySoundRequest = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+SNClassifySoundRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-SoundAnalysis_SNDefines = []
-SoundAnalysis_SNError = ["objc2-foundation/Foundation_NSString"]
-SoundAnalysis_SNRequest = []
-SoundAnalysis_SNResult = ["objc2-foundation/Foundation_NSError"]
-SoundAnalysis_SNTimeDurationConstraint = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSValue",
+SNDefines = []
+SNError = ["objc2-foundation/NSString"]
+SNRequest = []
+SNResult = ["objc2-foundation/NSError"]
+SNTimeDurationConstraint = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSValue",
 ]
-SoundAnalysis_SNTypes = ["objc2-foundation/Foundation_NSString"]
+SNTypes = ["objc2-foundation/NSString"]
 all = [
-    "SoundAnalysis_SNAnalyzer",
-    "SoundAnalysis_SNClassificationResult",
-    "SoundAnalysis_SNClassifySoundRequest",
-    "SoundAnalysis_SNDefines",
-    "SoundAnalysis_SNError",
-    "SoundAnalysis_SNRequest",
-    "SoundAnalysis_SNResult",
-    "SoundAnalysis_SNTimeDurationConstraint",
-    "SoundAnalysis_SNTypes",
+    "SNAnalyzer",
+    "SNClassificationResult",
+    "SNClassifySoundRequest",
+    "SNDefines",
+    "SNError",
+    "SNRequest",
+    "SNResult",
+    "SNTimeDurationConstraint",
+    "SNTypes",
     "block2",
 ]

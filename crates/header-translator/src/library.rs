@@ -245,9 +245,8 @@ see that for related crates.", self.data.krate, self.link_name)?;
 
         // Own features
         for (file_name, file) in &self.files {
-            let feature_name = format!("{}_{}", self.link_name, clean_name(file_name));
             generated_features.insert(
-                feature_name.clone(),
+                clean_name(file_name),
                 file.required_features(config).into_iter().collect(),
             );
         }
@@ -340,7 +339,7 @@ see that for related crates.", self.data.krate, self.link_name)?;
 
             for name in self.files.keys() {
                 let name = clean_name(name);
-                write!(f, "#[cfg(feature = \"{}_{}\")]", self.link_name, name)?;
+                write!(f, "#[cfg(feature = \"{name}\")]")?;
                 writeln!(f, "#[path = \"{name}.rs\"]")?;
                 writeln!(f, "mod __{name};")?;
             }

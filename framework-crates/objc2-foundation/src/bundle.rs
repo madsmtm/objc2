@@ -7,9 +7,9 @@ impl UnwindSafe for NSBundle {}
 impl RefUnwindSafe for NSBundle {}
 
 impl NSBundle {
-    #[cfg(feature = "Foundation_NSString")]
-    #[cfg(feature = "Foundation_NSDictionary")]
-    #[cfg(feature = "Foundation_NSObject")]
+    #[cfg(feature = "NSString")]
+    #[cfg(feature = "NSDictionary")]
+    #[cfg(feature = "NSObject")]
     pub fn name(&self) -> Option<objc2::rc::Id<crate::Foundation::NSString>> {
         use crate::Foundation::{NSCopying, NSString};
         use objc2::runtime::AnyObject;

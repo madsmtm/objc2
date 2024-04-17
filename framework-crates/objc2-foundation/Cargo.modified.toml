@@ -12,19 +12,19 @@ features = ["dispatch", "all", "unstable-docsrs"]
 [[example]]
 name = "basic_usage"
 required-features = [
-    "Foundation_NSArray",
-    "Foundation_NSDictionary",
-    "Foundation_NSEnumerator",
-    "Foundation_NSRange",
-    "Foundation_NSObject",
+    "NSArray",
+    "NSDictionary",
+    "NSEnumerator",
+    "NSRange",
+    "NSObject",
 ]
 
 [[example]]
 name = "speech_synthesis"
 required-features = [
     "apple",
-    "Foundation_NSString",
-    "Foundation_NSObject",
+    "NSString",
+    "NSObject",
 ]
 
 [features]

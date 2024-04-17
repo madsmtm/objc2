@@ -47,47 +47,47 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 
-LocalAuthentication_LABase = []
-LocalAuthentication_LAContext = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+LABase = []
+LAContext = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-LocalAuthentication_LAError = ["objc2-foundation/Foundation_NSString"]
-LocalAuthentication_LAPersistedRight = []
-LocalAuthentication_LAPrivateKey = []
-LocalAuthentication_LAPublicDefines = []
-LocalAuthentication_LAPublicKey = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
+LAError = ["objc2-foundation/NSString"]
+LAPersistedRight = []
+LAPrivateKey = []
+LAPublicDefines = []
+LAPublicKey = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
 ]
-LocalAuthentication_LARequirement = []
-LocalAuthentication_LARight = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+LARequirement = []
+LARight = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-LocalAuthentication_LARightStore = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+LARightStore = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-LocalAuthentication_LASecret = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
+LASecret = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
 ]
 all = [
-    "LocalAuthentication_LABase",
-    "LocalAuthentication_LAContext",
-    "LocalAuthentication_LAError",
-    "LocalAuthentication_LAPersistedRight",
-    "LocalAuthentication_LAPrivateKey",
-    "LocalAuthentication_LAPublicDefines",
-    "LocalAuthentication_LAPublicKey",
-    "LocalAuthentication_LARequirement",
-    "LocalAuthentication_LARight",
-    "LocalAuthentication_LARightStore",
-    "LocalAuthentication_LASecret",
+    "LABase",
+    "LAContext",
+    "LAError",
+    "LAPersistedRight",
+    "LAPrivateKey",
+    "LAPublicDefines",
+    "LAPublicKey",
+    "LARequirement",
+    "LARight",
+    "LARightStore",
+    "LASecret",
     "block2",
 ]

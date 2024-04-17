@@ -1,6 +1,6 @@
 //! Utilities for the `NSDictionary` and `NSMutableDictionary` classes.
 use alloc::vec::Vec;
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 use core::cmp::min;
 use core::fmt;
 use core::hash::Hash;
@@ -8,24 +8,24 @@ use core::mem;
 use core::ops::{Index, IndexMut};
 use core::ptr::{self, NonNull};
 
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 use objc2::mutability::IsRetainable;
 use objc2::mutability::{CounterpartOrSelf, HasStableHash, IsIdCloneable, IsMutable};
 use objc2::rc::Id;
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 use objc2::runtime::ProtocolObject;
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 use objc2::ClassType;
 use objc2::{extern_methods, Message};
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 use super::iter;
 use super::util;
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 use crate::Foundation::NSCopying;
 use crate::Foundation::{NSDictionary, NSMutableDictionary};
 
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 fn keys_to_ptr<Q>(keys: &[&Q]) -> *mut NonNull<ProtocolObject<dyn NSCopying>>
 where
     Q: Message + NSCopying,
@@ -37,7 +37,7 @@ where
     keys
 }
 
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
     pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Id<V>>) -> Id<Self>
     where
@@ -102,7 +102,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSDictionary<K, V> {
     }
 }
 
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, V> {
     pub fn from_vec<Q>(keys: &[&Q], mut objects: Vec<Id<V>>) -> Id<Self>
     where
@@ -179,12 +179,9 @@ extern_methods!(
         ///
         /// # Examples
         ///
+        #[cfg_attr(all(feature = "NSString", feature = "NSObject"), doc = "```")]
         #[cfg_attr(
-            all(feature = "Foundation_NSString", feature = "Foundation_NSObject"),
-            doc = "```"
-        )]
-        #[cfg_attr(
-            not(all(feature = "Foundation_NSString", feature = "Foundation_NSObject")),
+            not(all(feature = "NSString", feature = "NSObject")),
             doc = "```ignore"
         )]
         /// use objc2_foundation::{ns_string, NSMutableDictionary, NSMutableString, NSString};
@@ -240,12 +237,9 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     ///
     /// # Examples
     ///
+    #[cfg_attr(all(feature = "NSString", feature = "NSObject"), doc = "```")]
     #[cfg_attr(
-        all(feature = "Foundation_NSString", feature = "Foundation_NSObject"),
-        doc = "```"
-    )]
-    #[cfg_attr(
-        not(all(feature = "Foundation_NSString", feature = "Foundation_NSObject")),
+        not(all(feature = "NSString", feature = "NSObject")),
         doc = "```ignore"
     )]
     /// use objc2_foundation::{ns_string, NSMutableDictionary, NSMutableString, NSString};
@@ -300,7 +294,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     /// let array = dict.to_array();
     /// assert_eq!(array.len(), 1);
     /// ```
-    #[cfg(feature = "Foundation_NSArray")]
+    #[cfg(feature = "NSArray")]
     pub fn to_array(&self) -> Id<crate::Foundation::NSArray<V>>
     where
         V: IsIdCloneable,
@@ -326,7 +320,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
     /// let mut dict = NSMutableDictionary::new();
     /// dict.insert_id(ns_string!("one"), NSObject::new());
     /// ```
-    #[cfg(feature = "Foundation_NSObject")]
+    #[cfg(feature = "NSObject")]
     #[doc(alias = "setObject:forKey:")]
     pub fn insert_id(&mut self, key: &K, value: Id<V>) -> Option<Id<V>>
     where
@@ -357,7 +351,7 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
     /// let mut dict = NSMutableDictionary::new();
     /// dict.insert_id(ns_string!("key"), ns_string!("value").copy());
     /// ```
-    #[cfg(feature = "Foundation_NSObject")]
+    #[cfg(feature = "NSObject")]
     #[doc(alias = "setObject:forKey:")]
     pub fn insert(&mut self, key: &K, value: &V) -> Option<Id<V>>
     where
@@ -381,12 +375,9 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
     ///
     /// # Examples
     ///
+    #[cfg_attr(all(feature = "NSString", feature = "NSObject"), doc = "```")]
     #[cfg_attr(
-        all(feature = "Foundation_NSString", feature = "Foundation_NSObject"),
-        doc = "```"
-    )]
-    #[cfg_attr(
-        not(all(feature = "Foundation_NSString", feature = "Foundation_NSObject")),
+        not(all(feature = "NSString", feature = "NSObject")),
         doc = "```ignore"
     )]
     /// use objc2_foundation::{ns_string, NSMutableDictionary, NSObject};
@@ -412,13 +403,13 @@ impl<K: Message + Eq + Hash + HasStableHash, V: Message> NSMutableDictionary<K, 
 
 impl<K: Message, V: Message> NSDictionary<K, V> {
     #[doc(alias = "keyEnumerator")]
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     pub fn keys(&self) -> Keys<'_, K, V> {
         Keys(iter::Iter::new(self))
     }
 
     #[doc(alias = "keyEnumerator")]
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     pub fn keys_retained(&self) -> KeysRetained<'_, K, V>
     where
         K: IsIdCloneable,
@@ -432,7 +423,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     // }
 
     #[doc(alias = "objectEnumerator")]
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     pub fn values(&self) -> Values<'_, K, V> {
         let enumerator = unsafe { self.objectEnumerator() };
         // SAFETY: The enumerator came from the dictionary.
@@ -440,7 +431,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     }
 
     #[doc(alias = "objectEnumerator")]
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     pub fn values_mut(&mut self) -> ValuesMut<'_, K, V>
     where
         V: IsMutable,
@@ -451,7 +442,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     }
 
     #[doc(alias = "objectEnumerator")]
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     pub fn values_retained(&self) -> ValuesRetained<'_, K, V>
     where
         V: IsIdCloneable,
@@ -462,7 +453,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     }
 
     #[doc(alias = "objectEnumerator")]
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     pub fn into_values(this: Id<Self>) -> IntoValues<K, V>
     where
         V: IsIdCloneable,
@@ -473,7 +464,7 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 unsafe impl<K: Message, V: Message> iter::FastEnumerationHelper for NSDictionary<K, V> {
     // Fast enumeration for dictionaries returns the keys.
     type Item = K;
@@ -484,7 +475,7 @@ unsafe impl<K: Message, V: Message> iter::FastEnumerationHelper for NSDictionary
     }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 unsafe impl<K: Message, V: Message> iter::FastEnumerationHelper for NSMutableDictionary<K, V> {
     // The same goes for mutable dictionaries.
     type Item = K;
@@ -497,7 +488,7 @@ unsafe impl<K: Message, V: Message> iter::FastEnumerationHelper for NSMutableDic
 
 // We also cfg-gate `Keys` behind `NSEnumerator` for symmetry, even though we
 // don't necessarily need to.
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 mod iter_helpers {
     use super::*;
     use crate::Foundation::NSEnumerator;
@@ -561,7 +552,7 @@ mod iter_helpers {
     }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 pub use self::iter_helpers::*;
 
 impl<'a, K: Message + Eq + Hash, V: Message> Index<&'a K> for NSDictionary<K, V> {

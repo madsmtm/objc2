@@ -1,4 +1,4 @@
-#![cfg(feature = "Foundation_NSString")]
+#![cfg(feature = "NSString")]
 use alloc::format;
 use alloc::string::ToString;
 
@@ -71,7 +71,7 @@ fn test_interior_nul() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 fn test_copy() {
     use crate::Foundation::{NSCopying, NSMutableCopying, NSMutableString, NSObjectProtocol};
     use objc2::rc::Id;
@@ -88,7 +88,7 @@ fn test_copy() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 fn test_copy_nsstring_is_same() {
     use crate::Foundation::NSCopying;
 
@@ -156,7 +156,7 @@ fn test_prefix_suffix() {
 
 #[test]
 #[allow(clippy::nonminimal_bool)]
-#[cfg(feature = "Foundation_NSObjCRuntime")]
+#[cfg(feature = "NSObjCRuntime")]
 fn test_cmp() {
     let s1 = NSString::from_str("aa");
     assert!(s1 <= s1);
@@ -184,7 +184,7 @@ fn test_cmp() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSPathUtilities")]
+#[cfg(feature = "NSPathUtilities")]
 fn test_append() {
     let error_tag = NSString::from_str("Error: ");
     let error_string = NSString::from_str("premature end of file.");

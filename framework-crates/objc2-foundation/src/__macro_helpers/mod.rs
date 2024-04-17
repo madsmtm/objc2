@@ -1,7 +1,7 @@
 mod cached;
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 mod ns_string;
 
 pub use self::cached::CachedId;
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 pub use self::ns_string::*;

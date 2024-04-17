@@ -20,37 +20,21 @@ mod generated;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 
-#[cfg(feature = "Foundation_NSString")]
-#[allow(unused_imports)]
-use objc2_foundation::NSString;
-
 extern "C" {
-    #[cfg(all(
-        feature = "InputMethodKit_IMKInputController",
-        feature = "Foundation_NSString"
-    ))]
-    pub static kIMKCommandMenuItemName: &'static NSString;
-    #[cfg(all(
-        feature = "InputMethodKit_IMKInputController",
-        feature = "Foundation_NSString"
-    ))]
-    pub static kIMKCommandClientName: &'static NSString;
+    #[cfg(feature = "IMKInputController")]
+    pub static kIMKCommandMenuItemName: &'static objc2_foundation::NSString;
+    #[cfg(feature = "IMKInputController")]
+    pub static kIMKCommandClientName: &'static objc2_foundation::NSString;
 
-    #[cfg(all(
-        feature = "InputMethodKit_IMKCandidates",
-        feature = "Foundation_NSString"
-    ))]
-    pub static IMKCandidatesOpacityAttributeName: &'static NSString;
-    #[cfg(all(
-        feature = "InputMethodKit_IMKCandidates",
-        feature = "Foundation_NSString"
-    ))]
-    pub static IMKCandidatesSendServerKeyEventFirst: &'static NSString;
+    #[cfg(all(feature = "IMKCandidates", feature = "NSString_TODO"))]
+    pub static IMKCandidatesOpacityAttributeName: &'static objc2_foundation::NSString;
+    #[cfg(all(feature = "IMKCandidates", feature = "NSString_TODO"))]
+    pub static IMKCandidatesSendServerKeyEventFirst: &'static objc2_foundation::NSString;
 
-    #[cfg(all(feature = "InputMethodKit_IMKServer", feature = "Foundation_NSString"))]
-    pub static IMKModeDictionary: &'static NSString;
-    #[cfg(all(feature = "InputMethodKit_IMKServer", feature = "Foundation_NSString"))]
-    pub static IMKControllerClass: &'static NSString;
-    #[cfg(all(feature = "InputMethodKit_IMKServer", feature = "Foundation_NSString"))]
-    pub static IMKDelegateClass: &'static NSString;
+    #[cfg(feature = "IMKServer")]
+    pub static IMKModeDictionary: &'static objc2_foundation::NSString;
+    #[cfg(feature = "IMKServer")]
+    pub static IMKControllerClass: &'static objc2_foundation::NSString;
+    #[cfg(feature = "IMKServer")]
+    pub static IMKDelegateClass: &'static objc2_foundation::NSString;
 }

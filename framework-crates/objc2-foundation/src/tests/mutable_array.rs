@@ -1,15 +1,15 @@
-#![cfg(feature = "Foundation_NSArray")]
+#![cfg(feature = "NSArray")]
 use alloc::vec;
 
 use objc2::rc::{autoreleasepool, Allocated};
 use objc2::{msg_send, ClassType};
 
-#[cfg(feature = "Foundation_NSValue")]
+#[cfg(feature = "NSValue")]
 use crate::Foundation::NSNumber;
 use crate::Foundation::{self, NSMutableArray, NSObject};
 
 #[test]
-#[cfg(feature = "Foundation_NSValue")]
+#[cfg(feature = "NSValue")]
 fn test_creation() {
     let _ = <NSMutableArray<NSNumber>>::from_vec(vec![]);
     let _ = NSMutableArray::from_vec(vec![NSNumber::new_u8(4), NSNumber::new_u8(2)]);
@@ -22,7 +22,7 @@ fn test_creation() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 #[cfg_attr(
     feature = "gnustep-1-7",
     ignore = "thread safety issues regarding initialization"
@@ -38,7 +38,7 @@ fn test_containing_mutable_objects() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 #[cfg_attr(
     feature = "gnustep-1-7",
     ignore = "thread safety issues regarding initialization"
@@ -96,8 +96,8 @@ fn test_threaded() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSString")]
-#[cfg(feature = "Foundation_NSRange")]
+#[cfg(feature = "NSString")]
+#[cfg(feature = "NSRange")]
 #[cfg_attr(
     feature = "gnustep-1-7",
     ignore = "thread safety issues regarding initialization"
@@ -110,7 +110,7 @@ fn test_into_vec() {
 }
 
 #[test]
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 fn test_sort() {
     use Foundation::NSString;
 

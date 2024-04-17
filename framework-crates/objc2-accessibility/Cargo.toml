@@ -48,43 +48,43 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 
-Accessibility_AXAudiograph = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+AXAudiograph = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-Accessibility_AXBrailleMap = [
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
+AXBrailleMap = [
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
 ]
-Accessibility_AXColorUtilities = []
-Accessibility_AXCustomContent = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+AXColorUtilities = []
+AXCustomContent = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Accessibility_AXFoundation = []
-Accessibility_AXHearingUtilities = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUUID",
+AXFoundation = []
+AXHearingUtilities = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
 ]
-Accessibility_AXSettings = [
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSString",
+AXSettings = [
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSString",
 ]
 all = [
-    "Accessibility_AXAudiograph",
-    "Accessibility_AXBrailleMap",
-    "Accessibility_AXColorUtilities",
-    "Accessibility_AXCustomContent",
-    "Accessibility_AXFoundation",
-    "Accessibility_AXHearingUtilities",
-    "Accessibility_AXSettings",
+    "AXAudiograph",
+    "AXBrailleMap",
+    "AXColorUtilities",
+    "AXCustomContent",
+    "AXFoundation",
+    "AXHearingUtilities",
+    "AXSettings",
     "block2",
 ]

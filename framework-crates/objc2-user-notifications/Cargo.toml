@@ -50,85 +50,85 @@ unstable-docsrs = []
 block2 = ["dep:block2"]
 objc2-core-location = ["dep:objc2-core-location"]
 
-UserNotifications_NSString_UserNotifications = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
+NSString_UserNotifications = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
-UserNotifications_UNError = ["objc2-foundation/Foundation_NSString"]
-UserNotifications_UNNotification = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
+UNError = ["objc2-foundation/NSString"]
+UNNotification = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
 ]
-UserNotifications_UNNotificationAction = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+UNNotificationAction = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-UserNotifications_UNNotificationActionIcon = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+UNNotificationActionIcon = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-UserNotifications_UNNotificationAttachment = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+UNNotificationAttachment = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-UserNotifications_UNNotificationCategory = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+UNNotificationCategory = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-UserNotifications_UNNotificationContent = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+UNNotificationContent = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-UserNotifications_UNNotificationRequest = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+UNNotificationRequest = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-UserNotifications_UNNotificationResponse = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+UNNotificationResponse = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-UserNotifications_UNNotificationServiceExtension = []
-UserNotifications_UNNotificationSettings = ["objc2-foundation/Foundation_NSObject"]
-UserNotifications_UNNotificationSound = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+UNNotificationServiceExtension = []
+UNNotificationSettings = ["objc2-foundation/NSObject"]
+UNNotificationSound = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-UserNotifications_UNNotificationTrigger = [
-    "objc2-core-location?/CoreLocation_CLRegion",
-    "objc2-foundation/Foundation_NSCalendar",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
+UNNotificationTrigger = [
+    "objc2-core-location?/CLRegion",
+    "objc2-foundation/NSCalendar",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
 ]
-UserNotifications_UNUserNotificationCenter = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+UNUserNotificationCenter = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
 all = [
-    "UserNotifications_NSString_UserNotifications",
-    "UserNotifications_UNError",
-    "UserNotifications_UNNotification",
-    "UserNotifications_UNNotificationAction",
-    "UserNotifications_UNNotificationActionIcon",
-    "UserNotifications_UNNotificationAttachment",
-    "UserNotifications_UNNotificationCategory",
-    "UserNotifications_UNNotificationContent",
-    "UserNotifications_UNNotificationRequest",
-    "UserNotifications_UNNotificationResponse",
-    "UserNotifications_UNNotificationServiceExtension",
-    "UserNotifications_UNNotificationSettings",
-    "UserNotifications_UNNotificationSound",
-    "UserNotifications_UNNotificationTrigger",
-    "UserNotifications_UNUserNotificationCenter",
+    "NSString_UserNotifications",
+    "UNError",
+    "UNNotification",
+    "UNNotificationAction",
+    "UNNotificationActionIcon",
+    "UNNotificationAttachment",
+    "UNNotificationCategory",
+    "UNNotificationContent",
+    "UNNotificationRequest",
+    "UNNotificationResponse",
+    "UNNotificationServiceExtension",
+    "UNNotificationSettings",
+    "UNNotificationSound",
+    "UNNotificationTrigger",
+    "UNUserNotificationCenter",
     "block2",
     "objc2-core-location",
 ]

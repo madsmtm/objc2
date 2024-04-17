@@ -13,15 +13,15 @@ struct CargoToml {
 }
 
 const POPULAR_FOUNDATION_FEATURES: &[&str] = &[
-    "Foundation_NSString",
-    "Foundation_NSArray",
-    "Foundation_NSDictionary",
-    "Foundation_NSSet",
-    "Foundation_NSEnumerator",
-    "Foundation_NSError",
-    "Foundation_NSException",
-    "Foundation_NSValue",
-    "Foundation_NSThread",
+    "NSString",
+    "NSArray",
+    "NSDictionary",
+    "NSSet",
+    "NSEnumerator",
+    "NSError",
+    "NSException",
+    "NSValue",
+    "NSThread",
 ];
 
 fn get_pairs<'a>(items: &'a [&'a str]) -> impl Iterator<Item = (&'a str, &'a str)> + 'a {

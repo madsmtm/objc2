@@ -49,421 +49,421 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 
-AuthenticationServices_ASAccountAuthenticationModificationController = [
-    "objc2-app-kit/AppKit_NSResponder",
-    "objc2-app-kit/AppKit_NSWindow",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
+ASAccountAuthenticationModificationController = [
+    "objc2-app-kit/NSResponder",
+    "objc2-app-kit/NSWindow",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
 ]
-AuthenticationServices_ASAccountAuthenticationModificationExtensionContext = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSExtensionContext",
-    "objc2-foundation/Foundation_NSString",
+ASAccountAuthenticationModificationExtensionContext = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSExtensionContext",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAccountAuthenticationModificationReplacePasswordWithSignInWithAppleRequest = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSString",
+ASAccountAuthenticationModificationReplacePasswordWithSignInWithAppleRequest = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAccountAuthenticationModificationRequest = []
-AuthenticationServices_ASAccountAuthenticationModificationUpgradePasswordToStrongPasswordRequest = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSString",
+ASAccountAuthenticationModificationRequest = []
+ASAccountAuthenticationModificationUpgradePasswordToStrongPasswordRequest = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAccountAuthenticationModificationViewController = [
-    "objc2-app-kit/AppKit_NSKeyValueBinding",
-    "objc2-app-kit/AppKit_NSNib",
-    "objc2-app-kit/AppKit_NSResponder",
-    "objc2-app-kit/AppKit_NSStoryboardSegue",
-    "objc2-app-kit/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSExtensionContext",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASAccountAuthenticationModificationViewController = [
+    "objc2-app-kit/NSKeyValueBinding",
+    "objc2-app-kit/NSNib",
+    "objc2-app-kit/NSResponder",
+    "objc2-app-kit/NSStoryboardSegue",
+    "objc2-app-kit/NSUserInterfaceItemIdentification",
+    "objc2-app-kit/NSViewController",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSExtensionContext",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorization = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorization = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationAppleIDButton = [
-    "objc2-app-kit/AppKit_NSAccessibilityProtocols",
-    "objc2-app-kit/AppKit_NSAnimation",
-    "objc2-app-kit/AppKit_NSAppearance",
-    "objc2-app-kit/AppKit_NSControl",
-    "objc2-app-kit/AppKit_NSDragging",
-    "objc2-app-kit/AppKit_NSResponder",
-    "objc2-app-kit/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit/AppKit_NSView",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
+ASAuthorizationAppleIDButton = [
+    "objc2-app-kit/NSAccessibilityProtocols",
+    "objc2-app-kit/NSAnimation",
+    "objc2-app-kit/NSAppearance",
+    "objc2-app-kit/NSControl",
+    "objc2-app-kit/NSDragging",
+    "objc2-app-kit/NSResponder",
+    "objc2-app-kit/NSUserInterfaceItemIdentification",
+    "objc2-app-kit/NSView",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
 ]
-AuthenticationServices_ASAuthorizationAppleIDCredential = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSPersonNameComponents",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationAppleIDCredential = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSPersonNameComponents",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationAppleIDProvider = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationAppleIDProvider = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationAppleIDRequest = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationAppleIDRequest = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationController = [
-    "objc2-app-kit/AppKit_NSResponder",
-    "objc2-app-kit/AppKit_NSWindow",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationController = [
+    "objc2-app-kit/NSResponder",
+    "objc2-app-kit/NSWindow",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationCredential = ["objc2-foundation/Foundation_NSObject"]
-AuthenticationServices_ASAuthorizationCustomMethod = ["objc2-foundation/Foundation_NSString"]
-AuthenticationServices_ASAuthorizationError = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationCredential = ["objc2-foundation/NSObject"]
+ASAuthorizationCustomMethod = ["objc2-foundation/NSString"]
+ASAuthorizationError = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationOpenIDRequest = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationOpenIDRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationPasswordProvider = []
-AuthenticationServices_ASAuthorizationPasswordRequest = ["objc2-foundation/Foundation_NSObject"]
-AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialAssertion = ["objc2-foundation/Foundation_NSObject"]
-AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialAssertionRequest = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
+ASAuthorizationPasswordProvider = []
+ASAuthorizationPasswordRequest = ["objc2-foundation/NSObject"]
+ASAuthorizationPlatformPublicKeyCredentialAssertion = ["objc2-foundation/NSObject"]
+ASAuthorizationPlatformPublicKeyCredentialAssertionRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
 ]
-AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialDescriptor = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
+ASAuthorizationPlatformPublicKeyCredentialDescriptor = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
 ]
-AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialProvider = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationPlatformPublicKeyCredentialProvider = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialRegistration = ["objc2-foundation/Foundation_NSObject"]
-AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest = ["objc2-foundation/Foundation_NSObject"]
-AuthenticationServices_ASAuthorizationProvider = []
-AuthenticationServices_ASAuthorizationProviderExtensionAuthorizationRequest = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-foundation/Foundation_NSURLResponse",
+ASAuthorizationPlatformPublicKeyCredentialRegistration = ["objc2-foundation/NSObject"]
+ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest = ["objc2-foundation/NSObject"]
+ASAuthorizationProvider = []
+ASAuthorizationProviderExtensionAuthorizationRequest = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSURLResponse",
 ]
-AuthenticationServices_ASAuthorizationProviderExtensionAuthorizationResult = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURLResponse",
+ASAuthorizationProviderExtensionAuthorizationResult = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURLResponse",
 ]
-AuthenticationServices_ASAuthorizationProviderExtensionLoginConfiguration = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+ASAuthorizationProviderExtensionLoginConfiguration = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-AuthenticationServices_ASAuthorizationProviderExtensionLoginManager = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationProviderExtensionLoginManager = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationProviderExtensionRegistrationHandler = ["objc2-foundation/Foundation_NSString"]
-AuthenticationServices_ASAuthorizationProviderExtensionUserLoginConfiguration = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationProviderExtensionRegistrationHandler = ["objc2-foundation/NSString"]
+ASAuthorizationProviderExtensionUserLoginConfiguration = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationPublicKeyCredentialAssertion = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
+ASAuthorizationPublicKeyCredentialAssertion = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
 ]
-AuthenticationServices_ASAuthorizationPublicKeyCredentialAssertionRequest = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationPublicKeyCredentialAssertionRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationPublicKeyCredentialConstants = ["objc2-foundation/Foundation_NSString"]
-AuthenticationServices_ASAuthorizationPublicKeyCredentialDescriptor = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
+ASAuthorizationPublicKeyCredentialConstants = ["objc2-foundation/NSString"]
+ASAuthorizationPublicKeyCredentialDescriptor = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
 ]
-AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobAssertionInput = ["objc2-foundation/Foundation_NSData"]
-AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobAssertionOutput = ["objc2-foundation/Foundation_NSData"]
-AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobRegistrationInput = []
-AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobRegistrationOutput = []
-AuthenticationServices_ASAuthorizationPublicKeyCredentialParameters = ["objc2-foundation/Foundation_NSObject"]
-AuthenticationServices_ASAuthorizationPublicKeyCredentialRegistration = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
+ASAuthorizationPublicKeyCredentialLargeBlobAssertionInput = ["objc2-foundation/NSData"]
+ASAuthorizationPublicKeyCredentialLargeBlobAssertionOutput = ["objc2-foundation/NSData"]
+ASAuthorizationPublicKeyCredentialLargeBlobRegistrationInput = []
+ASAuthorizationPublicKeyCredentialLargeBlobRegistrationOutput = []
+ASAuthorizationPublicKeyCredentialParameters = ["objc2-foundation/NSObject"]
+ASAuthorizationPublicKeyCredentialRegistration = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
 ]
-AuthenticationServices_ASAuthorizationPublicKeyCredentialRegistrationRequest = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationPublicKeyCredentialRegistrationRequest = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationRequest = ["objc2-foundation/Foundation_NSObject"]
-AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialAssertion = ["objc2-foundation/Foundation_NSObject"]
-AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialAssertionRequest = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
+ASAuthorizationRequest = ["objc2-foundation/NSObject"]
+ASAuthorizationSecurityKeyPublicKeyCredentialAssertion = ["objc2-foundation/NSObject"]
+ASAuthorizationSecurityKeyPublicKeyCredentialAssertionRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
 ]
-AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialProvider = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationSecurityKeyPublicKeyCredentialProvider = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialRegistration = ["objc2-foundation/Foundation_NSObject"]
-AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialRegistrationRequest = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationSecurityKeyPublicKeyCredentialRegistration = ["objc2-foundation/NSObject"]
+ASAuthorizationSecurityKeyPublicKeyCredentialRegistrationRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationSingleSignOnCredential = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURLResponse",
+ASAuthorizationSingleSignOnCredential = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURLResponse",
 ]
-AuthenticationServices_ASAuthorizationSingleSignOnProvider = ["objc2-foundation/Foundation_NSURL"]
-AuthenticationServices_ASAuthorizationSingleSignOnRequest = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSURL",
+ASAuthorizationSingleSignOnProvider = ["objc2-foundation/NSURL"]
+ASAuthorizationSingleSignOnRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSURL",
 ]
-AuthenticationServices_ASAuthorizationWebBrowserExternallyAuthenticatableRequest = []
-AuthenticationServices_ASAuthorizationWebBrowserPlatformPublicKeyCredential = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationWebBrowserExternallyAuthenticatableRequest = []
+ASAuthorizationWebBrowserPlatformPublicKeyCredential = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationWebBrowserPlatformPublicKeyCredentialAssertionRequest = []
-AuthenticationServices_ASAuthorizationWebBrowserPlatformPublicKeyCredentialProvider = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationWebBrowserPlatformPublicKeyCredentialAssertionRequest = []
+ASAuthorizationWebBrowserPlatformPublicKeyCredentialProvider = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationWebBrowserPlatformPublicKeyCredentialRegistrationRequest = ["objc2-foundation/Foundation_NSArray"]
-AuthenticationServices_ASAuthorizationWebBrowserPublicKeyCredentialManager = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationWebBrowserPlatformPublicKeyCredentialRegistrationRequest = ["objc2-foundation/NSArray"]
+ASAuthorizationWebBrowserPublicKeyCredentialManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialAssertionRequest = []
-AuthenticationServices_ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialProvider = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialAssertionRequest = []
+ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialProvider = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialRegistrationRequest = []
-AuthenticationServices_ASCOSEConstants = []
-AuthenticationServices_ASCredentialIdentity = ["objc2-foundation/Foundation_NSString"]
-AuthenticationServices_ASCredentialIdentityStore = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialRegistrationRequest = []
+ASCOSEConstants = []
+ASCredentialIdentity = ["objc2-foundation/NSString"]
+ASCredentialIdentityStore = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASCredentialIdentityStoreState = []
-AuthenticationServices_ASCredentialProviderExtensionContext = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSExtensionContext",
+ASCredentialIdentityStoreState = []
+ASCredentialProviderExtensionContext = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSExtensionContext",
 ]
-AuthenticationServices_ASCredentialProviderViewController = [
-    "objc2-app-kit/AppKit_NSKeyValueBinding",
-    "objc2-app-kit/AppKit_NSNib",
-    "objc2-app-kit/AppKit_NSResponder",
-    "objc2-app-kit/AppKit_NSStoryboardSegue",
-    "objc2-app-kit/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit/AppKit_NSViewController",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSExtensionContext",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASCredentialProviderViewController = [
+    "objc2-app-kit/NSKeyValueBinding",
+    "objc2-app-kit/NSNib",
+    "objc2-app-kit/NSResponder",
+    "objc2-app-kit/NSStoryboardSegue",
+    "objc2-app-kit/NSUserInterfaceItemIdentification",
+    "objc2-app-kit/NSViewController",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSExtensionContext",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASCredentialRequest = ["objc2-foundation/Foundation_NSObject"]
-AuthenticationServices_ASCredentialServiceIdentifier = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASCredentialRequest = ["objc2-foundation/NSObject"]
+ASCredentialServiceIdentifier = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASExtensionErrors = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+ASExtensionErrors = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASFoundation = []
-AuthenticationServices_ASPasskeyAssertionCredential = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASFoundation = []
+ASPasskeyAssertionCredential = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASPasskeyCredentialIdentity = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASPasskeyCredentialIdentity = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASPasskeyCredentialRequest = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+ASPasskeyCredentialRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-AuthenticationServices_ASPasskeyCredentialRequestParameters = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASPasskeyCredentialRequestParameters = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASPasskeyRegistrationCredential = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASPasskeyRegistrationCredential = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASPasswordCredential = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASPasswordCredential = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASPasswordCredentialIdentity = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+ASPasswordCredentialIdentity = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASPasswordCredentialRequest = ["objc2-foundation/Foundation_NSObject"]
-AuthenticationServices_ASPublicKeyCredential = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
+ASPasswordCredentialRequest = ["objc2-foundation/NSObject"]
+ASPublicKeyCredential = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
 ]
-AuthenticationServices_ASPublicKeyCredentialClientData = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSString",
+ASPublicKeyCredentialClientData = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSString",
 ]
-AuthenticationServices_ASSettingsHelper = ["objc2-foundation/Foundation_NSError"]
-AuthenticationServices_ASWebAuthenticationSession = [
-    "objc2-app-kit/AppKit_NSResponder",
-    "objc2-app-kit/AppKit_NSWindow",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+ASSettingsHelper = ["objc2-foundation/NSError"]
+ASWebAuthenticationSession = [
+    "objc2-app-kit/NSResponder",
+    "objc2-app-kit/NSWindow",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-AuthenticationServices_ASWebAuthenticationSessionCallback = [
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+ASWebAuthenticationSessionCallback = [
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-AuthenticationServices_ASWebAuthenticationSessionRequest = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-foundation/Foundation_NSUUID",
+ASWebAuthenticationSessionRequest = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+    "objc2-foundation/NSUUID",
 ]
-AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionHandling = []
-AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionManager = []
+ASWebAuthenticationSessionWebBrowserSessionHandling = []
+ASWebAuthenticationSessionWebBrowserSessionManager = []
 all = [
-    "AuthenticationServices_ASAccountAuthenticationModificationController",
-    "AuthenticationServices_ASAccountAuthenticationModificationExtensionContext",
-    "AuthenticationServices_ASAccountAuthenticationModificationReplacePasswordWithSignInWithAppleRequest",
-    "AuthenticationServices_ASAccountAuthenticationModificationRequest",
-    "AuthenticationServices_ASAccountAuthenticationModificationUpgradePasswordToStrongPasswordRequest",
-    "AuthenticationServices_ASAccountAuthenticationModificationViewController",
-    "AuthenticationServices_ASAuthorization",
-    "AuthenticationServices_ASAuthorizationAppleIDButton",
-    "AuthenticationServices_ASAuthorizationAppleIDCredential",
-    "AuthenticationServices_ASAuthorizationAppleIDProvider",
-    "AuthenticationServices_ASAuthorizationAppleIDRequest",
-    "AuthenticationServices_ASAuthorizationController",
-    "AuthenticationServices_ASAuthorizationCredential",
-    "AuthenticationServices_ASAuthorizationCustomMethod",
-    "AuthenticationServices_ASAuthorizationError",
-    "AuthenticationServices_ASAuthorizationOpenIDRequest",
-    "AuthenticationServices_ASAuthorizationPasswordProvider",
-    "AuthenticationServices_ASAuthorizationPasswordRequest",
-    "AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialAssertion",
-    "AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialAssertionRequest",
-    "AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialDescriptor",
-    "AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialProvider",
-    "AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialRegistration",
-    "AuthenticationServices_ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest",
-    "AuthenticationServices_ASAuthorizationProvider",
-    "AuthenticationServices_ASAuthorizationProviderExtensionAuthorizationRequest",
-    "AuthenticationServices_ASAuthorizationProviderExtensionAuthorizationResult",
-    "AuthenticationServices_ASAuthorizationProviderExtensionLoginConfiguration",
-    "AuthenticationServices_ASAuthorizationProviderExtensionLoginManager",
-    "AuthenticationServices_ASAuthorizationProviderExtensionRegistrationHandler",
-    "AuthenticationServices_ASAuthorizationProviderExtensionUserLoginConfiguration",
-    "AuthenticationServices_ASAuthorizationPublicKeyCredentialAssertion",
-    "AuthenticationServices_ASAuthorizationPublicKeyCredentialAssertionRequest",
-    "AuthenticationServices_ASAuthorizationPublicKeyCredentialConstants",
-    "AuthenticationServices_ASAuthorizationPublicKeyCredentialDescriptor",
-    "AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobAssertionInput",
-    "AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobAssertionOutput",
-    "AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobRegistrationInput",
-    "AuthenticationServices_ASAuthorizationPublicKeyCredentialLargeBlobRegistrationOutput",
-    "AuthenticationServices_ASAuthorizationPublicKeyCredentialParameters",
-    "AuthenticationServices_ASAuthorizationPublicKeyCredentialRegistration",
-    "AuthenticationServices_ASAuthorizationPublicKeyCredentialRegistrationRequest",
-    "AuthenticationServices_ASAuthorizationRequest",
-    "AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialAssertion",
-    "AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialAssertionRequest",
-    "AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor",
-    "AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialProvider",
-    "AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialRegistration",
-    "AuthenticationServices_ASAuthorizationSecurityKeyPublicKeyCredentialRegistrationRequest",
-    "AuthenticationServices_ASAuthorizationSingleSignOnCredential",
-    "AuthenticationServices_ASAuthorizationSingleSignOnProvider",
-    "AuthenticationServices_ASAuthorizationSingleSignOnRequest",
-    "AuthenticationServices_ASAuthorizationWebBrowserExternallyAuthenticatableRequest",
-    "AuthenticationServices_ASAuthorizationWebBrowserPlatformPublicKeyCredential",
-    "AuthenticationServices_ASAuthorizationWebBrowserPlatformPublicKeyCredentialAssertionRequest",
-    "AuthenticationServices_ASAuthorizationWebBrowserPlatformPublicKeyCredentialProvider",
-    "AuthenticationServices_ASAuthorizationWebBrowserPlatformPublicKeyCredentialRegistrationRequest",
-    "AuthenticationServices_ASAuthorizationWebBrowserPublicKeyCredentialManager",
-    "AuthenticationServices_ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialAssertionRequest",
-    "AuthenticationServices_ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialProvider",
-    "AuthenticationServices_ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialRegistrationRequest",
-    "AuthenticationServices_ASCOSEConstants",
-    "AuthenticationServices_ASCredentialIdentity",
-    "AuthenticationServices_ASCredentialIdentityStore",
-    "AuthenticationServices_ASCredentialIdentityStoreState",
-    "AuthenticationServices_ASCredentialProviderExtensionContext",
-    "AuthenticationServices_ASCredentialProviderViewController",
-    "AuthenticationServices_ASCredentialRequest",
-    "AuthenticationServices_ASCredentialServiceIdentifier",
-    "AuthenticationServices_ASExtensionErrors",
-    "AuthenticationServices_ASFoundation",
-    "AuthenticationServices_ASPasskeyAssertionCredential",
-    "AuthenticationServices_ASPasskeyCredentialIdentity",
-    "AuthenticationServices_ASPasskeyCredentialRequest",
-    "AuthenticationServices_ASPasskeyCredentialRequestParameters",
-    "AuthenticationServices_ASPasskeyRegistrationCredential",
-    "AuthenticationServices_ASPasswordCredential",
-    "AuthenticationServices_ASPasswordCredentialIdentity",
-    "AuthenticationServices_ASPasswordCredentialRequest",
-    "AuthenticationServices_ASPublicKeyCredential",
-    "AuthenticationServices_ASPublicKeyCredentialClientData",
-    "AuthenticationServices_ASSettingsHelper",
-    "AuthenticationServices_ASWebAuthenticationSession",
-    "AuthenticationServices_ASWebAuthenticationSessionCallback",
-    "AuthenticationServices_ASWebAuthenticationSessionRequest",
-    "AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionHandling",
-    "AuthenticationServices_ASWebAuthenticationSessionWebBrowserSessionManager",
+    "ASAccountAuthenticationModificationController",
+    "ASAccountAuthenticationModificationExtensionContext",
+    "ASAccountAuthenticationModificationReplacePasswordWithSignInWithAppleRequest",
+    "ASAccountAuthenticationModificationRequest",
+    "ASAccountAuthenticationModificationUpgradePasswordToStrongPasswordRequest",
+    "ASAccountAuthenticationModificationViewController",
+    "ASAuthorization",
+    "ASAuthorizationAppleIDButton",
+    "ASAuthorizationAppleIDCredential",
+    "ASAuthorizationAppleIDProvider",
+    "ASAuthorizationAppleIDRequest",
+    "ASAuthorizationController",
+    "ASAuthorizationCredential",
+    "ASAuthorizationCustomMethod",
+    "ASAuthorizationError",
+    "ASAuthorizationOpenIDRequest",
+    "ASAuthorizationPasswordProvider",
+    "ASAuthorizationPasswordRequest",
+    "ASAuthorizationPlatformPublicKeyCredentialAssertion",
+    "ASAuthorizationPlatformPublicKeyCredentialAssertionRequest",
+    "ASAuthorizationPlatformPublicKeyCredentialDescriptor",
+    "ASAuthorizationPlatformPublicKeyCredentialProvider",
+    "ASAuthorizationPlatformPublicKeyCredentialRegistration",
+    "ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest",
+    "ASAuthorizationProvider",
+    "ASAuthorizationProviderExtensionAuthorizationRequest",
+    "ASAuthorizationProviderExtensionAuthorizationResult",
+    "ASAuthorizationProviderExtensionLoginConfiguration",
+    "ASAuthorizationProviderExtensionLoginManager",
+    "ASAuthorizationProviderExtensionRegistrationHandler",
+    "ASAuthorizationProviderExtensionUserLoginConfiguration",
+    "ASAuthorizationPublicKeyCredentialAssertion",
+    "ASAuthorizationPublicKeyCredentialAssertionRequest",
+    "ASAuthorizationPublicKeyCredentialConstants",
+    "ASAuthorizationPublicKeyCredentialDescriptor",
+    "ASAuthorizationPublicKeyCredentialLargeBlobAssertionInput",
+    "ASAuthorizationPublicKeyCredentialLargeBlobAssertionOutput",
+    "ASAuthorizationPublicKeyCredentialLargeBlobRegistrationInput",
+    "ASAuthorizationPublicKeyCredentialLargeBlobRegistrationOutput",
+    "ASAuthorizationPublicKeyCredentialParameters",
+    "ASAuthorizationPublicKeyCredentialRegistration",
+    "ASAuthorizationPublicKeyCredentialRegistrationRequest",
+    "ASAuthorizationRequest",
+    "ASAuthorizationSecurityKeyPublicKeyCredentialAssertion",
+    "ASAuthorizationSecurityKeyPublicKeyCredentialAssertionRequest",
+    "ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor",
+    "ASAuthorizationSecurityKeyPublicKeyCredentialProvider",
+    "ASAuthorizationSecurityKeyPublicKeyCredentialRegistration",
+    "ASAuthorizationSecurityKeyPublicKeyCredentialRegistrationRequest",
+    "ASAuthorizationSingleSignOnCredential",
+    "ASAuthorizationSingleSignOnProvider",
+    "ASAuthorizationSingleSignOnRequest",
+    "ASAuthorizationWebBrowserExternallyAuthenticatableRequest",
+    "ASAuthorizationWebBrowserPlatformPublicKeyCredential",
+    "ASAuthorizationWebBrowserPlatformPublicKeyCredentialAssertionRequest",
+    "ASAuthorizationWebBrowserPlatformPublicKeyCredentialProvider",
+    "ASAuthorizationWebBrowserPlatformPublicKeyCredentialRegistrationRequest",
+    "ASAuthorizationWebBrowserPublicKeyCredentialManager",
+    "ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialAssertionRequest",
+    "ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialProvider",
+    "ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialRegistrationRequest",
+    "ASCOSEConstants",
+    "ASCredentialIdentity",
+    "ASCredentialIdentityStore",
+    "ASCredentialIdentityStoreState",
+    "ASCredentialProviderExtensionContext",
+    "ASCredentialProviderViewController",
+    "ASCredentialRequest",
+    "ASCredentialServiceIdentifier",
+    "ASExtensionErrors",
+    "ASFoundation",
+    "ASPasskeyAssertionCredential",
+    "ASPasskeyCredentialIdentity",
+    "ASPasskeyCredentialRequest",
+    "ASPasskeyCredentialRequestParameters",
+    "ASPasskeyRegistrationCredential",
+    "ASPasswordCredential",
+    "ASPasswordCredentialIdentity",
+    "ASPasswordCredentialRequest",
+    "ASPublicKeyCredential",
+    "ASPublicKeyCredentialClientData",
+    "ASSettingsHelper",
+    "ASWebAuthenticationSession",
+    "ASWebAuthenticationSessionCallback",
+    "ASWebAuthenticationSessionRequest",
+    "ASWebAuthenticationSessionWebBrowserSessionHandling",
+    "ASWebAuthenticationSessionWebBrowserSessionManager",
     "block2",
 ]

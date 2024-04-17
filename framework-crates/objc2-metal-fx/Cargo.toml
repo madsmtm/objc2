@@ -45,27 +45,27 @@ alloc = ["objc2/alloc"]
 # For better documentation on docs.rs
 unstable-docsrs = []
 
-MetalFX_MTLFXDefines = []
-MetalFX_MTLFXSpatialScaler = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-metal/Metal_MTLCommandBuffer",
-    "objc2-metal/Metal_MTLDevice",
-    "objc2-metal/Metal_MTLFence",
-    "objc2-metal/Metal_MTLPixelFormat",
-    "objc2-metal/Metal_MTLResource",
-    "objc2-metal/Metal_MTLTexture",
+MTLFXDefines = []
+MTLFXSpatialScaler = [
+    "objc2-foundation/NSObject",
+    "objc2-metal/MTLCommandBuffer",
+    "objc2-metal/MTLDevice",
+    "objc2-metal/MTLFence",
+    "objc2-metal/MTLPixelFormat",
+    "objc2-metal/MTLResource",
+    "objc2-metal/MTLTexture",
 ]
-MetalFX_MTLFXTemporalScaler = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-metal/Metal_MTLCommandBuffer",
-    "objc2-metal/Metal_MTLDevice",
-    "objc2-metal/Metal_MTLFence",
-    "objc2-metal/Metal_MTLPixelFormat",
-    "objc2-metal/Metal_MTLResource",
-    "objc2-metal/Metal_MTLTexture",
+MTLFXTemporalScaler = [
+    "objc2-foundation/NSObject",
+    "objc2-metal/MTLCommandBuffer",
+    "objc2-metal/MTLDevice",
+    "objc2-metal/MTLFence",
+    "objc2-metal/MTLPixelFormat",
+    "objc2-metal/MTLResource",
+    "objc2-metal/MTLTexture",
 ]
 all = [
-    "MetalFX_MTLFXDefines",
-    "MetalFX_MTLFXSpatialScaler",
-    "MetalFX_MTLFXTemporalScaler",
+    "MTLFXDefines",
+    "MTLFXSpatialScaler",
+    "MTLFXTemporalScaler",
 ]

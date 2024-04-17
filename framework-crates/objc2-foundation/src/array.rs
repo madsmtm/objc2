@@ -1,8 +1,8 @@
 //! Utilities for the `NSArray` and `NSMutableArray` classes.
 use alloc::vec::Vec;
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 use core::fmt;
-#[cfg(feature = "Foundation_NSRange")]
+#[cfg(feature = "NSRange")]
 use core::ops::Range;
 use core::ops::{Index, IndexMut};
 
@@ -10,7 +10,7 @@ use objc2::mutability::{IsIdCloneable, IsMutable, IsRetainable};
 use objc2::rc::{Id, IdFromIterator};
 use objc2::{extern_methods, ClassType, Message};
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 use super::iter;
 use super::util;
 use crate::Foundation::{NSArray, NSMutableArray};
@@ -59,14 +59,14 @@ impl<T: Message> NSArray<T> {
     }
 
     #[doc(alias = "getObjects:range:")]
-    #[cfg(feature = "Foundation_NSRange")]
+    #[cfg(feature = "NSRange")]
     pub fn to_vec(&self) -> Vec<&T> {
         // SAFETY: The range is know to be in bounds
         unsafe { self.objects_in_range_unchecked(0..self.len()) }
     }
 
     #[doc(alias = "getObjects:range:")]
-    #[cfg(feature = "Foundation_NSRange")]
+    #[cfg(feature = "NSRange")]
     pub fn to_vec_retained(&self) -> Vec<Id<T>>
     where
         T: IsIdCloneable,
@@ -112,7 +112,7 @@ impl<T: Message> NSMutableArray<T> {
         unsafe { Self::initWithObjects_count(Self::alloc(), ptr, len) }
     }
 
-    #[cfg(feature = "Foundation_NSRange")]
+    #[cfg(feature = "NSRange")]
     pub fn into_vec(array: Id<Self>) -> Vec<Id<T>> {
         // SAFETY: We've consumed the array, so taking ownership of the
         // returned values is safe.
@@ -223,7 +223,7 @@ extern_methods!(
 );
 
 impl<T: Message> NSArray<T> {
-    #[cfg(feature = "Foundation_NSRange")]
+    #[cfg(feature = "NSRange")]
     unsafe fn objects_in_range_unchecked(&self, range: Range<usize>) -> Vec<&T> {
         let range = crate::Foundation::NSRange::from(range);
         let mut vec: Vec<core::ptr::NonNull<T>> = Vec::with_capacity(range.length);
@@ -235,7 +235,7 @@ impl<T: Message> NSArray<T> {
     }
 
     #[doc(alias = "getObjects:range:")]
-    #[cfg(feature = "Foundation_NSRange")]
+    #[cfg(feature = "NSRange")]
     pub fn objects_in_range(&self, range: Range<usize>) -> Option<Vec<&T>> {
         if range.end > self.len() {
             return None;
@@ -302,7 +302,7 @@ impl<T: Message> NSMutableArray<T> {
         Some(obj)
     }
 
-    #[cfg(feature = "Foundation_NSObjCRuntime")]
+    #[cfg(feature = "NSObjCRuntime")]
     #[doc(alias = "sortUsingFunction:context:")]
     pub fn sort_by<F: FnMut(&T, &T) -> core::cmp::Ordering>(&mut self, compare: F) {
         // TODO: "C-unwind"
@@ -337,14 +337,14 @@ impl<T: Message> NSMutableArray<T> {
 }
 
 impl<T: Message> NSArray<T> {
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     #[doc(alias = "objectEnumerator")]
     #[inline]
     pub fn iter(&self) -> Iter<'_, T> {
         Iter(super::iter::Iter::new(self))
     }
 
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     #[doc(alias = "objectEnumerator")]
     #[inline]
     pub fn iter_mut(&mut self) -> IterMut<'_, T>
@@ -354,7 +354,7 @@ impl<T: Message> NSArray<T> {
         IterMut(super::iter::IterMut::new(self))
     }
 
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     #[doc(alias = "objectEnumerator")]
     #[inline]
     pub fn iter_retained(&self) -> IterRetained<'_, T>
@@ -365,7 +365,7 @@ impl<T: Message> NSArray<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 unsafe impl<T: Message> iter::FastEnumerationHelper for NSArray<T> {
     type Item = T;
 
@@ -375,7 +375,7 @@ unsafe impl<T: Message> iter::FastEnumerationHelper for NSArray<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 unsafe impl<T: Message> iter::FastEnumerationHelper for NSMutableArray<T> {
     type Item = T;
 
@@ -387,45 +387,45 @@ unsafe impl<T: Message> iter::FastEnumerationHelper for NSMutableArray<T> {
 
 /// An iterator over the items of a `NSArray`.
 #[derive(Debug)]
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 pub struct Iter<'a, T: Message>(iter::Iter<'a, NSArray<T>>);
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 __impl_iter! {
     impl<'a, T: Message> Iterator<Item = &'a T> for Iter<'a, T> { ... }
 }
 
 /// A mutable iterator over the items of a `NSArray`.
 #[derive(Debug)]
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 pub struct IterMut<'a, T: Message>(iter::IterMut<'a, NSArray<T>>);
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 __impl_iter! {
     impl<'a, T: Message + IsMutable> Iterator<Item = &'a mut T> for IterMut<'a, T> { ... }
 }
 
 /// An iterator that retains the items of a `NSArray`.
 #[derive(Debug)]
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 pub struct IterRetained<'a, T: Message>(iter::IterRetained<'a, NSArray<T>>);
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 __impl_iter! {
     impl<'a, T: Message + IsIdCloneable> Iterator<Item = Id<T>> for IterRetained<'a, T> { ... }
 }
 
 /// A consuming iterator over the items of a `NSArray`.
 #[derive(Debug)]
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 pub struct IntoIter<T: Message>(iter::IntoIter<NSArray<T>>);
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 __impl_iter! {
     impl<'a, T: Message> Iterator<Item = Id<T>> for IntoIter<T> { ... }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 __impl_into_iter! {
     impl<T: Message> IntoIterator for &NSArray<T> {
         type IntoIter = Iter<'_, T>;
@@ -480,7 +480,7 @@ impl<T: Message + IsMutable> IndexMut<usize> for NSMutableArray<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 impl<T: fmt::Debug + Message> fmt::Debug for NSArray<T> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -488,7 +488,7 @@ impl<T: fmt::Debug + Message> fmt::Debug for NSArray<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 impl<T: fmt::Debug + Message> fmt::Debug for NSMutableArray<T> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

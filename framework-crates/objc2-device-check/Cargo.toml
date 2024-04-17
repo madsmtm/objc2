@@ -48,22 +48,22 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 
-DeviceCheck_DCAppAttestService = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+DCAppAttestService = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-DeviceCheck_DCDevice = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
+DCDevice = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
 ]
-DeviceCheck_DCError = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+DCError = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
 all = [
-    "DeviceCheck_DCAppAttestService",
-    "DeviceCheck_DCDevice",
-    "DeviceCheck_DCError",
+    "DCAppAttestService",
+    "DCDevice",
+    "DCError",
     "block2",
 ]

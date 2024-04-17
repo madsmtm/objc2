@@ -50,149 +50,149 @@ unstable-docsrs = []
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 
-MediaPlayer_AVFoundation_MPNowPlayingInfoLanguageOptionAdditions = []
-MediaPlayer_AVPlayerItem_MediaPlayerAdditions = []
-MediaPlayer_MPContentItem = ["objc2-foundation/Foundation_NSString"]
-MediaPlayer_MPError = ["objc2-foundation/Foundation_NSString"]
-MediaPlayer_MPMediaEntity = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+AVFoundation_MPNowPlayingInfoLanguageOptionAdditions = []
+AVPlayerItem_MediaPlayerAdditions = []
+MPContentItem = ["objc2-foundation/NSString"]
+MPError = ["objc2-foundation/NSString"]
+MPMediaEntity = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
-MediaPlayer_MPMediaItem = [
-    "objc2-app-kit?/AppKit_NSImage",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+MPMediaItem = [
+    "objc2-app-kit?/NSImage",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-MediaPlayer_MPMediaItemCollection = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
+MPMediaItemCollection = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
 ]
-MediaPlayer_MPMediaLibrary = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUUID",
+MPMediaLibrary = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
 ]
-MediaPlayer_MPMediaPickerController = []
-MediaPlayer_MPMediaPlayback = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSString",
+MPMediaPickerController = []
+MPMediaPlayback = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSString",
 ]
-MediaPlayer_MPMediaPlaylist = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MPMediaPlaylist = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-MediaPlayer_MPMediaQuery = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+MPMediaQuery = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
-MediaPlayer_MPMediaQuerySection = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
+MPMediaQuerySection = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
 ]
-MediaPlayer_MPMoviePlayerController = []
-MediaPlayer_MPMoviePlayerViewController = []
-MediaPlayer_MPMusicPlayerApplicationController = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+MPMoviePlayerController = []
+MPMoviePlayerViewController = []
+MPMusicPlayerApplicationController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-MediaPlayer_MPMusicPlayerController = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSString",
+MPMusicPlayerController = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSString",
 ]
-MediaPlayer_MPMusicPlayerQueueDescriptor = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSString",
+MPMusicPlayerQueueDescriptor = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSString",
 ]
-MediaPlayer_MPNowPlayingInfoCenter = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSString",
+MPNowPlayingInfoCenter = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSString",
 ]
-MediaPlayer_MPNowPlayingInfoLanguageOption = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
+MPNowPlayingInfoLanguageOption = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
-MediaPlayer_MPNowPlayingSession = ["objc2-foundation/Foundation_NSObject"]
-MediaPlayer_MPPlayableContentDataSource = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSIndexPath",
-    "objc2-foundation/Foundation_NSString",
+MPNowPlayingSession = ["objc2-foundation/NSObject"]
+MPPlayableContentDataSource = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSIndexPath",
+    "objc2-foundation/NSString",
 ]
-MediaPlayer_MPPlayableContentDelegate = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSIndexPath",
+MPPlayableContentDelegate = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSIndexPath",
 ]
-MediaPlayer_MPPlayableContentManager = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
+MPPlayableContentManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
-MediaPlayer_MPPlayableContentManagerContext = []
-MediaPlayer_MPRemoteCommand = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+MPPlayableContentManagerContext = []
+MPRemoteCommand = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-MediaPlayer_MPRemoteCommandCenter = []
-MediaPlayer_MPRemoteCommandEvent = ["objc2-foundation/Foundation_NSDate"]
-MediaPlayer_MPRemoteControlTypes = []
-MediaPlayer_MPVolumeSettings = []
-MediaPlayer_MPVolumeView = []
-MediaPlayer_MediaPlayerDefines = []
-MediaPlayer_NSUserActivity_MediaPlayerAdditions = [
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUserActivity",
+MPRemoteCommandCenter = []
+MPRemoteCommandEvent = ["objc2-foundation/NSDate"]
+MPRemoteControlTypes = []
+MPVolumeSettings = []
+MPVolumeView = []
+MediaPlayerDefines = []
+NSUserActivity_MediaPlayerAdditions = [
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUserActivity",
 ]
 all = [
-    "MediaPlayer_AVFoundation_MPNowPlayingInfoLanguageOptionAdditions",
-    "MediaPlayer_AVPlayerItem_MediaPlayerAdditions",
-    "MediaPlayer_MPContentItem",
-    "MediaPlayer_MPError",
-    "MediaPlayer_MPMediaEntity",
-    "MediaPlayer_MPMediaItem",
-    "MediaPlayer_MPMediaItemCollection",
-    "MediaPlayer_MPMediaLibrary",
-    "MediaPlayer_MPMediaPickerController",
-    "MediaPlayer_MPMediaPlayback",
-    "MediaPlayer_MPMediaPlaylist",
-    "MediaPlayer_MPMediaQuery",
-    "MediaPlayer_MPMediaQuerySection",
-    "MediaPlayer_MPMoviePlayerController",
-    "MediaPlayer_MPMoviePlayerViewController",
-    "MediaPlayer_MPMusicPlayerApplicationController",
-    "MediaPlayer_MPMusicPlayerController",
-    "MediaPlayer_MPMusicPlayerQueueDescriptor",
-    "MediaPlayer_MPNowPlayingInfoCenter",
-    "MediaPlayer_MPNowPlayingInfoLanguageOption",
-    "MediaPlayer_MPNowPlayingSession",
-    "MediaPlayer_MPPlayableContentDataSource",
-    "MediaPlayer_MPPlayableContentDelegate",
-    "MediaPlayer_MPPlayableContentManager",
-    "MediaPlayer_MPPlayableContentManagerContext",
-    "MediaPlayer_MPRemoteCommand",
-    "MediaPlayer_MPRemoteCommandCenter",
-    "MediaPlayer_MPRemoteCommandEvent",
-    "MediaPlayer_MPRemoteControlTypes",
-    "MediaPlayer_MPVolumeSettings",
-    "MediaPlayer_MPVolumeView",
-    "MediaPlayer_MediaPlayerDefines",
-    "MediaPlayer_NSUserActivity_MediaPlayerAdditions",
+    "AVFoundation_MPNowPlayingInfoLanguageOptionAdditions",
+    "AVPlayerItem_MediaPlayerAdditions",
+    "MPContentItem",
+    "MPError",
+    "MPMediaEntity",
+    "MPMediaItem",
+    "MPMediaItemCollection",
+    "MPMediaLibrary",
+    "MPMediaPickerController",
+    "MPMediaPlayback",
+    "MPMediaPlaylist",
+    "MPMediaQuery",
+    "MPMediaQuerySection",
+    "MPMoviePlayerController",
+    "MPMoviePlayerViewController",
+    "MPMusicPlayerApplicationController",
+    "MPMusicPlayerController",
+    "MPMusicPlayerQueueDescriptor",
+    "MPNowPlayingInfoCenter",
+    "MPNowPlayingInfoLanguageOption",
+    "MPNowPlayingSession",
+    "MPPlayableContentDataSource",
+    "MPPlayableContentDelegate",
+    "MPPlayableContentManager",
+    "MPPlayableContentManagerContext",
+    "MPRemoteCommand",
+    "MPRemoteCommandCenter",
+    "MPRemoteCommandEvent",
+    "MPRemoteControlTypes",
+    "MPVolumeSettings",
+    "MPVolumeView",
+    "MediaPlayerDefines",
+    "NSUserActivity_MediaPlayerAdditions",
     "block2",
     "objc2-app-kit",
 ]

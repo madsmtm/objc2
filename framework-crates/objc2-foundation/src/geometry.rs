@@ -417,7 +417,7 @@ mod tests {
     // well (so that we're confident that the implementations are equivalent).
     #[test]
     #[cfg(any(all(feature = "apple", target_os = "macos"), feature = "gnustep-1-7"))] // or macabi
-    #[cfg(feature = "Foundation_NSGeometry")]
+    #[cfg(feature = "NSGeometry")]
     fn test_partial_eq() {
         use crate::Foundation::{NSEqualPoints, NSEqualRects, NSEqualSizes};
 

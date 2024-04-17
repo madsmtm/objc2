@@ -1,2 +1,2 @@
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 mod ns_string;

@@ -19,13 +19,13 @@ exception = ["objc2/exception", "all"]
 catch-all = ["objc2/catch-all", "exception"]
 # TODO: Fix this
 all = [
-    "objc2-foundation/Foundation_NSException",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSValue",
-    "objc2-foundation/Foundation_NSObject",
+    "objc2-foundation/NSException",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSValue",
+    "objc2-foundation/NSObject",
 ]
 
 apple = ["block2/apple", "objc2/apple", "objc2-foundation/apple"]

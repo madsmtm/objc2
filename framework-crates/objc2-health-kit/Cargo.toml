@@ -51,456 +51,456 @@ block2 = ["dep:block2"]
 objc2-core-location = ["dep:objc2-core-location"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 
-HealthKit_HKActivitySummary = [
-    "objc2-foundation/Foundation_NSCalendar",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKActivitySummary = [
+    "objc2-foundation/NSCalendar",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKActivitySummaryQuery = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPredicate",
+HKActivitySummaryQuery = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
 ]
-HealthKit_HKAnchoredObjectQuery = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPredicate",
+HKAnchoredObjectQuery = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
 ]
-HealthKit_HKAppleWalkingSteadinessClassification = ["objc2-foundation/Foundation_NSError"]
-HealthKit_HKAttachment = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUUID",
-    "objc2-uniform-type-identifiers?/UniformTypeIdentifiers_UTType",
+HKAppleWalkingSteadinessClassification = ["objc2-foundation/NSError"]
+HKAttachment = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
+    "objc2-uniform-type-identifiers?/UTType",
 ]
-HealthKit_HKAttachmentStore = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSProgress",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
-    "objc2-uniform-type-identifiers?/UniformTypeIdentifiers_UTType",
+HKAttachmentStore = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSProgress",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+    "objc2-uniform-type-identifiers?/UTType",
 ]
-HealthKit_HKAudiogramSample = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKAudiogramSample = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKCDADocumentSample = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKCDADocumentSample = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKCategorySample = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKCategorySample = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKCategoryValues = []
-HealthKit_HKCharacteristicObjects = ["objc2-foundation/Foundation_NSObject"]
-HealthKit_HKCharacteristicValues = []
-HealthKit_HKClinicalRecord = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKCategoryValues = []
+HKCharacteristicObjects = ["objc2-foundation/NSObject"]
+HKCharacteristicValues = []
+HKClinicalRecord = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKClinicalType = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKClinicalType = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKContactsLensSpecification = ["objc2-foundation/Foundation_NSObject"]
-HealthKit_HKContactsPrescription = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKContactsLensSpecification = ["objc2-foundation/NSObject"]
+HKContactsPrescription = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKCorrelation = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+HKCorrelation = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKCorrelationQuery = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPredicate",
+HKCorrelationQuery = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
 ]
-HealthKit_HKCumulativeQuantitySample = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKCumulativeQuantitySample = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKCumulativeQuantitySeriesSample = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKCumulativeQuantitySeriesSample = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKDefines = [
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+HKDefines = [
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-HealthKit_HKDeletedObject = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUUID",
+HKDeletedObject = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
 ]
-HealthKit_HKDevice = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKDevice = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKDiscreteQuantitySample = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDateInterval",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKDiscreteQuantitySample = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDateInterval",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKDocumentQuery = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSSortDescriptor",
+HKDocumentQuery = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSSortDescriptor",
 ]
-HealthKit_HKDocumentSample = ["objc2-foundation/Foundation_NSObject"]
-HealthKit_HKElectrocardiogram = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKDocumentSample = ["objc2-foundation/NSObject"]
+HKElectrocardiogram = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKElectrocardiogramQuery = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
+HKElectrocardiogramQuery = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
 ]
-HealthKit_HKFHIRRelease = ["objc2-foundation/Foundation_NSString"]
-HealthKit_HKFHIRResource = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+HKFHIRRelease = ["objc2-foundation/NSString"]
+HKFHIRResource = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-HealthKit_HKFHIRVersion = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKFHIRVersion = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKGlassesLensSpecification = ["objc2-foundation/Foundation_NSObject"]
-HealthKit_HKGlassesPrescription = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKGlassesLensSpecification = ["objc2-foundation/NSObject"]
+HKGlassesPrescription = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKHealthStore = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCalendar",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+HKHealthStore = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCalendar",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKHeartbeatSeriesBuilder = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+HKHeartbeatSeriesBuilder = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKHeartbeatSeriesQuery = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
+HKHeartbeatSeriesQuery = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
 ]
-HealthKit_HKHeartbeatSeriesSample = ["objc2-foundation/Foundation_NSObject"]
-HealthKit_HKLensSpecification = []
-HealthKit_HKLiveWorkoutBuilder = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSSet",
+HKHeartbeatSeriesSample = ["objc2-foundation/NSObject"]
+HKLensSpecification = []
+HKLiveWorkoutBuilder = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSSet",
 ]
-HealthKit_HKLiveWorkoutDataSource = [
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSSet",
+HKLiveWorkoutDataSource = [
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSSet",
 ]
-HealthKit_HKMetadata = ["objc2-foundation/Foundation_NSString"]
-HealthKit_HKObject = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUUID",
+HKMetadata = ["objc2-foundation/NSString"]
+HKObject = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
 ]
-HealthKit_HKObjectType = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKObjectType = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKObserverQuery = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSSet",
+HKObserverQuery = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSSet",
 ]
-HealthKit_HKQuantity = [
-    "objc2-foundation/Foundation_NSObjCRuntime",
-    "objc2-foundation/Foundation_NSObject",
+HKQuantity = [
+    "objc2-foundation/NSObjCRuntime",
+    "objc2-foundation/NSObject",
 ]
-HealthKit_HKQuantityAggregationStyle = []
-HealthKit_HKQuantitySample = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKQuantityAggregationStyle = []
+HKQuantitySample = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKQuantitySeriesSampleBuilder = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDateInterval",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+HKQuantitySeriesSampleBuilder = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDateInterval",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKQuantitySeriesSampleQuery = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDateInterval",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPredicate",
+HKQuantitySeriesSampleQuery = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDateInterval",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
 ]
-HealthKit_HKQuery = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCalendar",
-    "objc2-foundation/Foundation_NSComparisonPredicate",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDateInterval",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUUID",
-    "objc2-foundation/Foundation_NSValue",
+HKQuery = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCalendar",
+    "objc2-foundation/NSComparisonPredicate",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDateInterval",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
+    "objc2-foundation/NSValue",
 ]
-HealthKit_HKQueryAnchor = ["objc2-foundation/Foundation_NSObject"]
-HealthKit_HKQueryDescriptor = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSPredicate",
+HKQueryAnchor = ["objc2-foundation/NSObject"]
+HKQueryDescriptor = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSPredicate",
 ]
-HealthKit_HKSample = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKSample = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKSampleQuery = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSSortDescriptor",
+HKSampleQuery = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSSortDescriptor",
 ]
-HealthKit_HKSeriesBuilder = []
-HealthKit_HKSeriesSample = ["objc2-foundation/Foundation_NSObject"]
-HealthKit_HKSource = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKSeriesBuilder = []
+HKSeriesSample = ["objc2-foundation/NSObject"]
+HKSource = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKSourceQuery = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSSet",
+HKSourceQuery = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSSet",
 ]
-HealthKit_HKSourceRevision = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSProcessInfo",
-    "objc2-foundation/Foundation_NSString",
+HKSourceRevision = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSProcessInfo",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKStatistics = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDateInterval",
-    "objc2-foundation/Foundation_NSObject",
+HKStatistics = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDateInterval",
+    "objc2-foundation/NSObject",
 ]
-HealthKit_HKStatisticsCollectionQuery = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSCalendar",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSSet",
+HKStatisticsCollectionQuery = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSCalendar",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSSet",
 ]
-HealthKit_HKStatisticsQuery = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPredicate",
+HKStatisticsQuery = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
 ]
-HealthKit_HKTypeIdentifiers = ["objc2-foundation/Foundation_NSString"]
-HealthKit_HKUnit = [
-    "objc2-foundation/Foundation_NSEnergyFormatter",
-    "objc2-foundation/Foundation_NSLengthFormatter",
-    "objc2-foundation/Foundation_NSMassFormatter",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKTypeIdentifiers = ["objc2-foundation/NSString"]
+HKUnit = [
+    "objc2-foundation/NSEnergyFormatter",
+    "objc2-foundation/NSLengthFormatter",
+    "objc2-foundation/NSMassFormatter",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKVerifiableClinicalRecord = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKVerifiableClinicalRecord = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKVerifiableClinicalRecordQuery = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSPredicate",
-    "objc2-foundation/Foundation_NSString",
+HKVerifiableClinicalRecordQuery = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSPredicate",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKVerifiableClinicalRecordSubject = [
-    "objc2-foundation/Foundation_NSCalendar",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKVerifiableClinicalRecordSubject = [
+    "objc2-foundation/NSCalendar",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKVisionPrescription = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKVisionPrescription = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKVisionPrism = ["objc2-foundation/Foundation_NSObject"]
-HealthKit_HKWorkout = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDateInterval",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKVisionPrism = ["objc2-foundation/NSObject"]
+HKWorkout = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDateInterval",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKWorkoutActivity = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUUID",
+HKWorkoutActivity = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
 ]
-HealthKit_HKWorkoutBuilder = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSUUID",
+HKWorkoutBuilder = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
 ]
-HealthKit_HKWorkoutConfiguration = ["objc2-foundation/Foundation_NSObject"]
-HealthKit_HKWorkoutRoute = ["objc2-foundation/Foundation_NSObject"]
-HealthKit_HKWorkoutRouteBuilder = [
-    "objc2-core-location?/CoreLocation_CLLocation",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+HKWorkoutConfiguration = ["objc2-foundation/NSObject"]
+HKWorkoutRoute = ["objc2-foundation/NSObject"]
+HKWorkoutRouteBuilder = [
+    "objc2-core-location?/CLLocation",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-HealthKit_HKWorkoutRouteQuery = [
-    "objc2-core-location?/CoreLocation_CLLocation",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDateInterval",
-    "objc2-foundation/Foundation_NSError",
+HKWorkoutRouteQuery = [
+    "objc2-core-location?/CLLocation",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDateInterval",
+    "objc2-foundation/NSError",
 ]
-HealthKit_HKWorkoutSession = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+HKWorkoutSession = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
 all = [
-    "HealthKit_HKActivitySummary",
-    "HealthKit_HKActivitySummaryQuery",
-    "HealthKit_HKAnchoredObjectQuery",
-    "HealthKit_HKAppleWalkingSteadinessClassification",
-    "HealthKit_HKAttachment",
-    "HealthKit_HKAttachmentStore",
-    "HealthKit_HKAudiogramSample",
-    "HealthKit_HKCDADocumentSample",
-    "HealthKit_HKCategorySample",
-    "HealthKit_HKCategoryValues",
-    "HealthKit_HKCharacteristicObjects",
-    "HealthKit_HKCharacteristicValues",
-    "HealthKit_HKClinicalRecord",
-    "HealthKit_HKClinicalType",
-    "HealthKit_HKContactsLensSpecification",
-    "HealthKit_HKContactsPrescription",
-    "HealthKit_HKCorrelation",
-    "HealthKit_HKCorrelationQuery",
-    "HealthKit_HKCumulativeQuantitySample",
-    "HealthKit_HKCumulativeQuantitySeriesSample",
-    "HealthKit_HKDefines",
-    "HealthKit_HKDeletedObject",
-    "HealthKit_HKDevice",
-    "HealthKit_HKDiscreteQuantitySample",
-    "HealthKit_HKDocumentQuery",
-    "HealthKit_HKDocumentSample",
-    "HealthKit_HKElectrocardiogram",
-    "HealthKit_HKElectrocardiogramQuery",
-    "HealthKit_HKFHIRRelease",
-    "HealthKit_HKFHIRResource",
-    "HealthKit_HKFHIRVersion",
-    "HealthKit_HKGlassesLensSpecification",
-    "HealthKit_HKGlassesPrescription",
-    "HealthKit_HKHealthStore",
-    "HealthKit_HKHeartbeatSeriesBuilder",
-    "HealthKit_HKHeartbeatSeriesQuery",
-    "HealthKit_HKHeartbeatSeriesSample",
-    "HealthKit_HKLensSpecification",
-    "HealthKit_HKLiveWorkoutBuilder",
-    "HealthKit_HKLiveWorkoutDataSource",
-    "HealthKit_HKMetadata",
-    "HealthKit_HKObject",
-    "HealthKit_HKObjectType",
-    "HealthKit_HKObserverQuery",
-    "HealthKit_HKQuantity",
-    "HealthKit_HKQuantityAggregationStyle",
-    "HealthKit_HKQuantitySample",
-    "HealthKit_HKQuantitySeriesSampleBuilder",
-    "HealthKit_HKQuantitySeriesSampleQuery",
-    "HealthKit_HKQuery",
-    "HealthKit_HKQueryAnchor",
-    "HealthKit_HKQueryDescriptor",
-    "HealthKit_HKSample",
-    "HealthKit_HKSampleQuery",
-    "HealthKit_HKSeriesBuilder",
-    "HealthKit_HKSeriesSample",
-    "HealthKit_HKSource",
-    "HealthKit_HKSourceQuery",
-    "HealthKit_HKSourceRevision",
-    "HealthKit_HKStatistics",
-    "HealthKit_HKStatisticsCollectionQuery",
-    "HealthKit_HKStatisticsQuery",
-    "HealthKit_HKTypeIdentifiers",
-    "HealthKit_HKUnit",
-    "HealthKit_HKVerifiableClinicalRecord",
-    "HealthKit_HKVerifiableClinicalRecordQuery",
-    "HealthKit_HKVerifiableClinicalRecordSubject",
-    "HealthKit_HKVisionPrescription",
-    "HealthKit_HKVisionPrism",
-    "HealthKit_HKWorkout",
-    "HealthKit_HKWorkoutActivity",
-    "HealthKit_HKWorkoutBuilder",
-    "HealthKit_HKWorkoutConfiguration",
-    "HealthKit_HKWorkoutRoute",
-    "HealthKit_HKWorkoutRouteBuilder",
-    "HealthKit_HKWorkoutRouteQuery",
-    "HealthKit_HKWorkoutSession",
+    "HKActivitySummary",
+    "HKActivitySummaryQuery",
+    "HKAnchoredObjectQuery",
+    "HKAppleWalkingSteadinessClassification",
+    "HKAttachment",
+    "HKAttachmentStore",
+    "HKAudiogramSample",
+    "HKCDADocumentSample",
+    "HKCategorySample",
+    "HKCategoryValues",
+    "HKCharacteristicObjects",
+    "HKCharacteristicValues",
+    "HKClinicalRecord",
+    "HKClinicalType",
+    "HKContactsLensSpecification",
+    "HKContactsPrescription",
+    "HKCorrelation",
+    "HKCorrelationQuery",
+    "HKCumulativeQuantitySample",
+    "HKCumulativeQuantitySeriesSample",
+    "HKDefines",
+    "HKDeletedObject",
+    "HKDevice",
+    "HKDiscreteQuantitySample",
+    "HKDocumentQuery",
+    "HKDocumentSample",
+    "HKElectrocardiogram",
+    "HKElectrocardiogramQuery",
+    "HKFHIRRelease",
+    "HKFHIRResource",
+    "HKFHIRVersion",
+    "HKGlassesLensSpecification",
+    "HKGlassesPrescription",
+    "HKHealthStore",
+    "HKHeartbeatSeriesBuilder",
+    "HKHeartbeatSeriesQuery",
+    "HKHeartbeatSeriesSample",
+    "HKLensSpecification",
+    "HKLiveWorkoutBuilder",
+    "HKLiveWorkoutDataSource",
+    "HKMetadata",
+    "HKObject",
+    "HKObjectType",
+    "HKObserverQuery",
+    "HKQuantity",
+    "HKQuantityAggregationStyle",
+    "HKQuantitySample",
+    "HKQuantitySeriesSampleBuilder",
+    "HKQuantitySeriesSampleQuery",
+    "HKQuery",
+    "HKQueryAnchor",
+    "HKQueryDescriptor",
+    "HKSample",
+    "HKSampleQuery",
+    "HKSeriesBuilder",
+    "HKSeriesSample",
+    "HKSource",
+    "HKSourceQuery",
+    "HKSourceRevision",
+    "HKStatistics",
+    "HKStatisticsCollectionQuery",
+    "HKStatisticsQuery",
+    "HKTypeIdentifiers",
+    "HKUnit",
+    "HKVerifiableClinicalRecord",
+    "HKVerifiableClinicalRecordQuery",
+    "HKVerifiableClinicalRecordSubject",
+    "HKVisionPrescription",
+    "HKVisionPrism",
+    "HKWorkout",
+    "HKWorkoutActivity",
+    "HKWorkoutBuilder",
+    "HKWorkoutConfiguration",
+    "HKWorkoutRoute",
+    "HKWorkoutRouteBuilder",
+    "HKWorkoutRouteQuery",
+    "HKWorkoutSession",
     "block2",
     "objc2-core-location",
     "objc2-uniform-type-identifiers",

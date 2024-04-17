@@ -46,14 +46,14 @@ alloc = ["objc2/alloc"]
 # For better documentation on docs.rs
 unstable-docsrs = []
 
-DataDetection_DDMatch = [
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSTimeZone",
-    "objc2-foundation/Foundation_NSURL",
+DDMatch = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSTimeZone",
+    "objc2-foundation/NSURL",
 ]
-DataDetection_DataDetectionBase = []
+DataDetectionBase = []
 all = [
-    "DataDetection_DDMatch",
-    "DataDetection_DataDetectionBase",
+    "DDMatch",
+    "DataDetectionBase",
 ]

@@ -497,7 +497,7 @@ jobs:
       run: >-
         cargo test $ARGS $PUBLIC_CRATES -ptests -pobjc2-foundation
         --features=unstable-static-sel,unstable-static-class,unstable-static-nsstring
-        --features=Foundation_NSString
+        --features=NSString
 
   test-ios:
     # if: ${{ env.FULL }}

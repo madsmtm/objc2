@@ -1,29 +1,29 @@
 use core::fmt;
 use core::marker::PhantomData;
 #[cfg(feature = "dispatch")]
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 use core::mem::{self, ManuallyDrop};
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 use crate::Foundation::NSThread;
 
 use objc2::mutability::IsMainThreadOnly;
 use objc2::rc::Allocated;
 use objc2::{msg_send_id, ClassType};
 
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 unsafe impl Send for NSThread {}
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 unsafe impl Sync for NSThread {}
 
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 impl UnwindSafe for NSThread {}
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 impl RefUnwindSafe for NSThread {}
 
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 impl fmt::Debug for NSThread {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Use -[NSThread description] since that includes the thread number
@@ -33,19 +33,19 @@ impl fmt::Debug for NSThread {
 }
 
 /// Whether the application is multithreaded according to Cocoa.
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 pub fn is_multi_threaded() -> bool {
     NSThread::isMultiThreaded()
 }
 
 /// Whether the current thread is the main thread.
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 pub fn is_main_thread() -> bool {
     NSThread::isMainThread_class()
 }
 
 #[allow(unused)]
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 fn make_multithreaded() {
     let thread = unsafe { NSThread::new() };
     unsafe { thread.start() };
@@ -74,7 +74,7 @@ fn make_multithreaded() {
 /// });
 /// ```
 #[cfg(feature = "dispatch")]
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 pub fn run_on_main<F, R>(f: F) -> R
 where
     F: Send + FnOnce(MainThreadMarker) -> R,
@@ -156,13 +156,13 @@ where
 ///
 /// // Usage
 ///
-/// // Create a new marker. This requires the `"Foundation_NSThread"` feature.
+/// // Create a new marker. This requires the `"NSThread"` feature.
 /// // If that is not available, create the marker unsafely with
 /// // `new_unchecked`, after having checked that the thread is the main one
 /// // through other means.
-/// #[cfg(feature = "Foundation_NSThread")]
+/// #[cfg(feature = "NSThread")]
 /// let mtm = MainThreadMarker::new().expect("must be on the main thread");
-/// #[cfg(not(feature = "Foundation_NSThread"))]
+/// #[cfg(not(feature = "NSThread"))]
 /// let mtm = unsafe { MainThreadMarker::new_unchecked() };
 /// unsafe { do_thing(obj, mtm) }
 /// ```
@@ -178,7 +178,7 @@ impl MainThreadMarker {
     /// Construct a new [`MainThreadMarker`].
     ///
     /// Returns [`None`] if the current thread was not the main thread.
-    #[cfg(feature = "Foundation_NSThread")]
+    #[cfg(feature = "NSThread")]
     #[inline]
     pub fn new() -> Option<Self> {
         if NSThread::isMainThread_class() {
@@ -252,7 +252,7 @@ impl MainThreadMarker {
     /// Deprecated in favour of the free-standing function [`run_on_main`].
     #[deprecated = "Use the free-standing function `run_on_main` instead"]
     #[cfg(feature = "dispatch")]
-    #[cfg(feature = "Foundation_NSThread")]
+    #[cfg(feature = "NSThread")]
     pub fn run_on_main<F, R>(f: F) -> R
     where
         F: Send + FnOnce(MainThreadMarker) -> R,
@@ -301,7 +301,7 @@ impl fmt::Debug for MainThreadMarker {
 /// ensures that a type is only usable from the main thread.
 #[doc(alias = "@MainActor")]
 #[cfg(feature = "dispatch")]
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 pub struct MainThreadBound<T>(ManuallyDrop<T>);
 
 // SAFETY: The inner value is guaranteed to originate from the main thread
@@ -312,7 +312,7 @@ pub struct MainThreadBound<T>(ManuallyDrop<T>);
 //
 // Finally, the value is dropped on the main thread in `Drop`.
 #[cfg(feature = "dispatch")]
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 unsafe impl<T> Send for MainThreadBound<T> {}
 
 // SAFETY: We only provide access to the inner value via. `get` and `get_mut`.
@@ -320,11 +320,11 @@ unsafe impl<T> Send for MainThreadBound<T> {}
 // Both of these take [`MainThreadMarker`], which guarantees that the access
 // is done from the main thread.
 #[cfg(feature = "dispatch")]
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 unsafe impl<T> Sync for MainThreadBound<T> {}
 
 #[cfg(feature = "dispatch")]
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 impl<T> Drop for MainThreadBound<T> {
     fn drop(&mut self) {
         if mem::needs_drop::<T>() {
@@ -346,7 +346,7 @@ impl<T> Drop for MainThreadBound<T> {
 
 /// Main functionality.
 #[cfg(feature = "dispatch")]
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 impl<T> MainThreadBound<T> {
     /// Create a new [`MainThreadBound`] value of type `T`.
     ///
@@ -397,7 +397,7 @@ impl<T> MainThreadBound<T> {
 
 /// Helper functions for running [`run_on_main`].
 #[cfg(feature = "dispatch")]
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 impl<T> MainThreadBound<T> {
     /// Access the item on the main thread.
     ///
@@ -425,7 +425,7 @@ impl<T> MainThreadBound<T> {
 }
 
 #[cfg(feature = "dispatch")]
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 impl<T> fmt::Debug for MainThreadBound<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("MainThreadBound").finish_non_exhaustive()

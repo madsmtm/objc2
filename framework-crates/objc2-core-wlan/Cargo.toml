@@ -43,43 +43,43 @@ alloc = ["objc2/alloc"]
 # For better documentation on docs.rs
 unstable-docsrs = []
 
-CoreWLAN_CWChannel = ["objc2-foundation/Foundation_NSObject"]
-CoreWLAN_CWConfiguration = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSOrderedSet",
+CWChannel = ["objc2-foundation/NSObject"]
+CWConfiguration = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSOrderedSet",
 ]
-CoreWLAN_CWInterface = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSSet",
-    "objc2-foundation/Foundation_NSString",
+CWInterface = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
-CoreWLAN_CWNetwork = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CWNetwork = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-CoreWLAN_CWNetworkProfile = [
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+CWNetworkProfile = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-CoreWLAN_CWWiFiClient = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+CWWiFiClient = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-CoreWLAN_CoreWLANConstants = ["objc2-foundation/Foundation_NSString"]
-CoreWLAN_CoreWLANTypes = []
-CoreWLAN_CoreWLANUtil = ["objc2-foundation/Foundation_NSSet"]
+CoreWLANConstants = ["objc2-foundation/NSString"]
+CoreWLANTypes = []
+CoreWLANUtil = ["objc2-foundation/NSSet"]
 all = [
-    "CoreWLAN_CWChannel",
-    "CoreWLAN_CWConfiguration",
-    "CoreWLAN_CWInterface",
-    "CoreWLAN_CWNetwork",
-    "CoreWLAN_CWNetworkProfile",
-    "CoreWLAN_CWWiFiClient",
-    "CoreWLAN_CoreWLANConstants",
-    "CoreWLAN_CoreWLANTypes",
-    "CoreWLAN_CoreWLANUtil",
+    "CWChannel",
+    "CWConfiguration",
+    "CWInterface",
+    "CWNetwork",
+    "CWNetworkProfile",
+    "CWWiFiClient",
+    "CoreWLANConstants",
+    "CoreWLANTypes",
+    "CoreWLANUtil",
 ]

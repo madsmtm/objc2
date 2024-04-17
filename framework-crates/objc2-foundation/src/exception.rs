@@ -1,4 +1,4 @@
-#[cfg(all(feature = "Foundation_NSObjCRuntime", feature = "Foundation_NSString"))]
+#[cfg(all(feature = "NSObjCRuntime", feature = "NSString"))]
 use core::fmt;
 use core::hint::unreachable_unchecked;
 use core::panic::{RefUnwindSafe, UnwindSafe};
@@ -30,8 +30,8 @@ impl NSException {
     ///
     /// Returns `None` if the exception couldn't be created (example: If the
     /// process is out of memory).
-    #[cfg(all(feature = "Foundation_NSObjCRuntime", feature = "Foundation_NSString"))]
-    #[cfg(feature = "Foundation_NSDictionary")]
+    #[cfg(all(feature = "NSObjCRuntime", feature = "NSString"))]
+    #[cfg(feature = "NSDictionary")]
     pub fn new(
         name: &crate::Foundation::NSExceptionName,
         reason: Option<&crate::Foundation::NSString>,
@@ -98,7 +98,7 @@ impl NSException {
     }
 }
 
-#[cfg(all(feature = "Foundation_NSObjCRuntime", feature = "Foundation_NSString"))]
+#[cfg(all(feature = "NSObjCRuntime", feature = "NSString"))]
 impl fmt::Debug for NSException {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let obj: &objc2::runtime::AnyObject = self.as_ref();

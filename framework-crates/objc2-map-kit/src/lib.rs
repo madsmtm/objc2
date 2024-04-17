@@ -19,5 +19,5 @@ mod generated;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 
-#[cfg(feature = "MapKit_MKMapItem")]
+#[cfg(feature = "MKMapItem")]
 unsafe impl objc2_foundation::NSCoding for crate::MKMapItem {}

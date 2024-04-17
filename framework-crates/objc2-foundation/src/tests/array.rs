@@ -1,6 +1,6 @@
-#![cfg(feature = "Foundation_NSArray")]
-#![cfg(feature = "Foundation_NSValue")]
-#![cfg(feature = "Foundation_NSRange")]
+#![cfg(feature = "NSArray")]
+#![cfg(feature = "NSValue")]
+#![cfg(feature = "NSRange")]
 use alloc::vec::Vec;
 use alloc::{format, vec};
 use core::ptr;

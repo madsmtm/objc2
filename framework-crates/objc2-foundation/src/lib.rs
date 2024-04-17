@@ -77,82 +77,82 @@ extern crate std;
 
 #[doc(hidden)]
 pub mod __macro_helpers;
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 #[macro_use]
 mod iter;
-#[cfg(feature = "Foundation_NSArray")]
+#[cfg(feature = "NSArray")]
 pub mod array;
-#[cfg(feature = "Foundation_NSAttributedString")]
+#[cfg(feature = "NSAttributedString")]
 mod attributed_string;
-#[cfg(feature = "Foundation_NSBundle")]
+#[cfg(feature = "NSBundle")]
 mod bundle;
-#[cfg(feature = "Foundation_NSObjCRuntime")]
+#[cfg(feature = "NSObjCRuntime")]
 mod comparison_result;
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 mod copying;
-#[cfg(feature = "Foundation_NSData")]
+#[cfg(feature = "NSData")]
 mod data;
-#[cfg(feature = "Foundation_NSDecimal")]
+#[cfg(feature = "NSDecimal")]
 mod decimal;
-#[cfg(feature = "Foundation_NSDictionary")]
+#[cfg(feature = "NSDictionary")]
 pub mod dictionary;
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 pub mod enumerator;
-#[cfg(feature = "Foundation_NSError")]
+#[cfg(feature = "NSError")]
 mod error;
-#[cfg(feature = "Foundation_NSException")]
+#[cfg(feature = "NSException")]
 mod exception;
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 mod fast_enumeration_state;
 mod generated;
 mod generics;
-#[cfg(feature = "Foundation_NSGeometry")]
+#[cfg(feature = "NSGeometry")]
 mod geometry;
 mod macros;
 mod ns_consumed;
-#[cfg(feature = "Foundation_NSValue")]
+#[cfg(feature = "NSValue")]
 mod number;
-#[cfg(feature = "Foundation_NSProcessInfo")]
+#[cfg(feature = "NSProcessInfo")]
 mod process_info;
-#[cfg(feature = "Foundation_NSRange")]
+#[cfg(feature = "NSRange")]
 mod range;
-#[cfg(feature = "Foundation_NSSet")]
+#[cfg(feature = "NSSet")]
 pub mod set;
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 mod string;
 #[cfg(test)]
 mod tests;
 mod thread;
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 mod to_owned;
 mod util;
-#[cfg(feature = "Foundation_NSUUID")]
+#[cfg(feature = "NSUUID")]
 mod uuid;
-#[cfg(feature = "Foundation_NSValue")]
+#[cfg(feature = "NSValue")]
 mod value;
 
-#[cfg(feature = "Foundation_NSObjCRuntime")]
+#[cfg(feature = "NSObjCRuntime")]
 pub use self::comparison_result::NSComparisonResult;
-#[cfg(feature = "Foundation_NSObject")]
+#[cfg(feature = "NSObject")]
 pub use self::copying::{NSCopying, NSMutableCopying};
-#[cfg(feature = "Foundation_NSDecimal")]
+#[cfg(feature = "NSDecimal")]
 pub use self::decimal::NSDecimal;
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 pub use self::fast_enumeration_state::NSFastEnumerationState;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generics::*;
-#[cfg(feature = "Foundation_NSGeometry")]
+#[cfg(feature = "NSGeometry")]
 pub use self::geometry::{CGFloat, CGPoint, CGRect, CGSize, NSPoint, NSRect, NSRectEdge, NSSize};
-#[cfg(feature = "Foundation_NSMapTable")]
+#[cfg(feature = "NSMapTable")]
 pub use self::ns_consumed::NSFreeMapTable;
-#[cfg(feature = "Foundation_NSRange")]
+#[cfg(feature = "NSRange")]
 pub use self::range::NSRange;
 pub use self::thread::MainThreadMarker;
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 pub use self::thread::{is_main_thread, is_multi_threaded};
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 #[cfg(feature = "dispatch")]
 pub use self::thread::{run_on_main, MainThreadBound};
 
@@ -162,10 +162,10 @@ pub use objc2::ffi::{NSInteger, NSUInteger};
 
 // Special types that are stored in `objc2`, but really belong here
 #[doc(inline)]
-#[cfg(feature = "Foundation_NSZone")]
+#[cfg(feature = "NSZone")]
 pub use objc2::runtime::NSZone;
 #[doc(inline)]
-#[cfg(feature = "Foundation_NSProxy")]
+#[cfg(feature = "NSProxy")]
 pub use objc2::runtime::__NSProxy as NSProxy;
 pub use objc2::runtime::{NSObject, NSObjectProtocol};
 

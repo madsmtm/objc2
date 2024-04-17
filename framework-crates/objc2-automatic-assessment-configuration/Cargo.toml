@@ -44,28 +44,28 @@ alloc = ["objc2/alloc"]
 # For better documentation on docs.rs
 unstable-docsrs = []
 
-AutomaticAssessmentConfiguration_AEAssessmentApplication = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+AEAssessmentApplication = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-AutomaticAssessmentConfiguration_AEAssessmentConfiguration = [
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
+AEAssessmentConfiguration = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
 ]
-AutomaticAssessmentConfiguration_AEAssessmentParticipantConfiguration = ["objc2-foundation/Foundation_NSObject"]
-AutomaticAssessmentConfiguration_AEAssessmentSession = []
-AutomaticAssessmentConfiguration_AEAssessmentSessionDelegate = ["objc2-foundation/Foundation_NSError"]
-AutomaticAssessmentConfiguration_AEErrors = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+AEAssessmentParticipantConfiguration = ["objc2-foundation/NSObject"]
+AEAssessmentSession = []
+AEAssessmentSessionDelegate = ["objc2-foundation/NSError"]
+AEErrors = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-AutomaticAssessmentConfiguration_AEVisibility = []
+AEVisibility = []
 all = [
-    "AutomaticAssessmentConfiguration_AEAssessmentApplication",
-    "AutomaticAssessmentConfiguration_AEAssessmentConfiguration",
-    "AutomaticAssessmentConfiguration_AEAssessmentParticipantConfiguration",
-    "AutomaticAssessmentConfiguration_AEAssessmentSession",
-    "AutomaticAssessmentConfiguration_AEAssessmentSessionDelegate",
-    "AutomaticAssessmentConfiguration_AEErrors",
-    "AutomaticAssessmentConfiguration_AEVisibility",
+    "AEAssessmentApplication",
+    "AEAssessmentConfiguration",
+    "AEAssessmentParticipantConfiguration",
+    "AEAssessmentSession",
+    "AEAssessmentSessionDelegate",
+    "AEErrors",
+    "AEVisibility",
 ]

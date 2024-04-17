@@ -1,4 +1,4 @@
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 
@@ -12,7 +12,7 @@ unsafe impl Sync for NSProcessInfo {}
 impl UnwindSafe for NSProcessInfo {}
 impl RefUnwindSafe for NSProcessInfo {}
 
-#[cfg(feature = "Foundation_NSString")]
+#[cfg(feature = "NSString")]
 impl fmt::Debug for NSProcessInfo {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("NSProcessInfo")

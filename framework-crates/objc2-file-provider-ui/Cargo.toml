@@ -49,34 +49,34 @@ unstable-docsrs = []
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 
-FileProviderUI_FPUIActionExtensionContext = [
-    "objc2-file-provider/FileProvider_NSFileProviderDomain",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSExtensionContext",
-    "objc2-foundation/Foundation_NSString",
+FPUIActionExtensionContext = [
+    "objc2-file-provider/NSFileProviderDomain",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSExtensionContext",
+    "objc2-foundation/NSString",
 ]
-FileProviderUI_FPUIActionExtensionViewController = [
-    "objc2-app-kit?/AppKit_NSKeyValueBinding",
-    "objc2-app-kit?/AppKit_NSNib",
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-app-kit?/AppKit_NSStoryboardSegue",
-    "objc2-app-kit?/AppKit_NSUserInterfaceItemIdentification",
-    "objc2-app-kit?/AppKit_NSViewController",
-    "objc2-file-provider/FileProvider_NSFileProviderItem",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSExtensionContext",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+FPUIActionExtensionViewController = [
+    "objc2-app-kit?/NSKeyValueBinding",
+    "objc2-app-kit?/NSNib",
+    "objc2-app-kit?/NSResponder",
+    "objc2-app-kit?/NSStoryboardSegue",
+    "objc2-app-kit?/NSUserInterfaceItemIdentification",
+    "objc2-app-kit?/NSViewController",
+    "objc2-file-provider/NSFileProviderItem",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSExtensionContext",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-FileProviderUI_FPUIBase = []
+FPUIBase = []
 all = [
-    "FileProviderUI_FPUIActionExtensionContext",
-    "FileProviderUI_FPUIActionExtensionViewController",
-    "FileProviderUI_FPUIBase",
+    "FPUIActionExtensionContext",
+    "FPUIActionExtensionViewController",
+    "FPUIBase",
     "block2",
     "objc2-app-kit",
 ]

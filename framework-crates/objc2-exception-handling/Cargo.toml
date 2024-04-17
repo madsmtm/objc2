@@ -43,12 +43,12 @@ alloc = ["objc2/alloc"]
 # For better documentation on docs.rs
 unstable-docsrs = []
 
-ExceptionHandling_ExceptionHandlingDefines = []
-ExceptionHandling_NSExceptionHandler = [
-    "objc2-foundation/Foundation_NSException",
-    "objc2-foundation/Foundation_NSString",
+ExceptionHandlingDefines = []
+NSExceptionHandler = [
+    "objc2-foundation/NSException",
+    "objc2-foundation/NSString",
 ]
 all = [
-    "ExceptionHandling_ExceptionHandlingDefines",
-    "ExceptionHandling_NSExceptionHandler",
+    "ExceptionHandlingDefines",
+    "NSExceptionHandler",
 ]

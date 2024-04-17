@@ -21,21 +21,21 @@ gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1", "block2?/gnustep-2-1", "objc2
 name = "delegate"
 required-features = [
     "apple",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSThread",
-    "AppKit_NSResponder",
-    "AppKit_NSApplication",
-    "AppKit_NSRunningApplication",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSThread",
+    "NSResponder",
+    "NSApplication",
+    "NSRunningApplication",
 ]
 
 [[example]]
 name = "nspasteboard"
 required-features = [
     "apple",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSObject",
-    "AppKit_NSPasteboard",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSObject",
+    "NSPasteboard",
 ]

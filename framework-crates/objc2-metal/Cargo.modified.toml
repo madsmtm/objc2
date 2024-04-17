@@ -1,29 +1,29 @@
 [[example]]
 name = "triangle"
 required-features = [
-    "objc2-app-kit/AppKit_NSGraphics",
-    "objc2-app-kit/AppKit_NSWindow",
-    "objc2-app-kit/AppKit_NSResponder",
-    "objc2-app-kit/AppKit_NSApplication",
-    "objc2-app-kit/AppKit_NSRunningApplication",
-    "objc2-app-kit/AppKit_NSView",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSThread",
-    "objc2-foundation/Foundation_NSGeometry",
-    "Metal_MTLLibrary",
-    "Metal_MTLRenderPipeline",
-    "Metal_MTLRenderCommandEncoder",
-    "Metal_MTLCommandBuffer",
-    "Metal_MTLCommandEncoder",
-    "Metal_MTLCommandQueue",
-    "Metal_MTLPixelFormat",
-    "Metal_MTLDevice",
-    "Metal_MTLDrawable",
-    "Metal_MTLRenderPass",
-    "objc2-metal-kit/MetalKit_MTKView",
+    "objc2-app-kit/NSGraphics",
+    "objc2-app-kit/NSWindow",
+    "objc2-app-kit/NSResponder",
+    "objc2-app-kit/NSApplication",
+    "objc2-app-kit/NSRunningApplication",
+    "objc2-app-kit/NSView",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSThread",
+    "objc2-foundation/NSGeometry",
+    "MTLLibrary",
+    "MTLRenderPipeline",
+    "MTLRenderCommandEncoder",
+    "MTLCommandBuffer",
+    "MTLCommandEncoder",
+    "MTLCommandQueue",
+    "MTLPixelFormat",
+    "MTLDevice",
+    "MTLDrawable",
+    "MTLRenderPass",
+    "objc2-metal-kit/MTKView",
     "objc2-metal-kit/objc2-app-kit",
 ]
 
@@ -33,8 +33,8 @@ required-features = [
 # These functions/methods are all marked `unsafe`, since they may not always
 # exist.
 unstable-private = [
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSError",
 ]
 
 [dev-dependencies]

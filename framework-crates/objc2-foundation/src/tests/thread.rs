@@ -1,4 +1,4 @@
-#![cfg(feature = "Foundation_NSThread")]
+#![cfg(feature = "NSThread")]
 use alloc::format;
 
 use crate::Foundation::{is_main_thread, MainThreadMarker, NSThread};
@@ -70,7 +70,7 @@ fn test_debug() {
 
 #[test]
 #[cfg(feature = "dispatch")]
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 fn test_main_thread_bound_traits() {
     use crate::Foundation::MainThreadBound;
 
@@ -92,7 +92,7 @@ fn test_main_thread_bound_traits() {
 
 #[test]
 #[cfg(feature = "dispatch")]
-#[cfg(feature = "Foundation_NSThread")]
+#[cfg(feature = "NSThread")]
 fn test_main_thread_bound_into_inner() {
     use crate::Foundation::MainThreadBound;
     use core::cell::Cell;

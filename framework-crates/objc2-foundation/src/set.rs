@@ -1,6 +1,6 @@
 //! Utilities for the `NSSet` and `NSMutableSet` classes.
 use alloc::vec::Vec;
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 use core::fmt;
 use core::hash::Hash;
 
@@ -8,7 +8,7 @@ use objc2::mutability::{HasStableHash, IsIdCloneable, IsRetainable};
 use objc2::rc::{Id, IdFromIterator};
 use objc2::{extern_methods, ClassType, Message};
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 use super::iter;
 use super::util;
 use crate::Foundation::{NSMutableSet, NSSet};
@@ -112,12 +112,12 @@ impl<T: Message + Eq + Hash> NSSet<T> {
     /// let vec = set.to_vec();
     /// assert_eq!(vec.len(), 3);
     /// ```
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     pub fn to_vec(&self) -> Vec<&T> {
         self.into_iter().collect()
     }
 
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     pub fn to_vec_retained(&self) -> Vec<Id<T>>
     where
         T: IsIdCloneable,
@@ -145,7 +145,7 @@ impl<T: Message + Eq + Hash> NSSet<T> {
     /// assert!(set.to_array().iter().all(|i| nums.contains(&i.as_i32())));
     /// ```
     #[doc(alias = "allObjects")]
-    #[cfg(feature = "Foundation_NSArray")]
+    #[cfg(feature = "NSArray")]
     pub fn to_array(&self) -> Id<crate::Foundation::NSArray<T>>
     where
         T: IsIdCloneable,
@@ -227,7 +227,7 @@ impl<T: Message + Eq + Hash> NSMutableSet<T> {
     /// let vec = NSMutableSet::into_vec(set);
     /// assert_eq!(vec.len(), 3);
     /// ```
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     pub fn into_vec(set: Id<Self>) -> Vec<Id<T>> {
         set.into_iter().collect()
     }
@@ -363,8 +363,8 @@ impl<T: Message + Eq + Hash> NSMutableSet<T> {
     ///
     /// # Examples
     ///
-    #[cfg_attr(feature = "Foundation_NSValue", doc = "```")]
-    #[cfg_attr(not(feature = "Foundation_NSValue"), doc = "```ignore")]
+    #[cfg_attr(feature = "NSValue", doc = "```")]
+    #[cfg_attr(not(feature = "NSValue"), doc = "```ignore")]
     /// use objc2_foundation::{NSNumber, NSMutableSet};
     ///
     /// let mut set = NSMutableSet::new();
@@ -453,14 +453,14 @@ impl<T: Message> NSSet<T> {
     /// }
     /// ```
     #[doc(alias = "objectEnumerator")]
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     #[inline]
     pub fn iter(&self) -> Iter<'_, T> {
         Iter(super::iter::Iter::new(self))
     }
 
     #[doc(alias = "objectEnumerator")]
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     #[inline]
     pub fn iter_retained(&self) -> IterRetained<'_, T>
     where
@@ -470,7 +470,7 @@ impl<T: Message> NSSet<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 unsafe impl<T: Message> iter::FastEnumerationHelper for NSSet<T> {
     type Item = T;
 
@@ -480,7 +480,7 @@ unsafe impl<T: Message> iter::FastEnumerationHelper for NSSet<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 unsafe impl<T: Message> iter::FastEnumerationHelper for NSMutableSet<T> {
     type Item = T;
 
@@ -492,35 +492,35 @@ unsafe impl<T: Message> iter::FastEnumerationHelper for NSMutableSet<T> {
 
 /// An iterator over the items of a `NSSet`.
 #[derive(Debug)]
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 pub struct Iter<'a, T: Message>(iter::Iter<'a, NSSet<T>>);
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 __impl_iter! {
     impl<'a, T: Message> Iterator<Item = &'a T> for Iter<'a, T> { ... }
 }
 
 /// An iterator that retains the items of a `NSSet`.
 #[derive(Debug)]
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 pub struct IterRetained<'a, T: Message>(iter::IterRetained<'a, NSSet<T>>);
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 __impl_iter! {
     impl<'a, T: Message + IsIdCloneable> Iterator<Item = Id<T>> for IterRetained<'a, T> { ... }
 }
 
 /// A consuming iterator over the items of a `NSSet`.
 #[derive(Debug)]
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 pub struct IntoIter<T: Message>(iter::IntoIter<NSSet<T>>);
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 __impl_iter! {
     impl<'a, T: Message> Iterator<Item = Id<T>> for IntoIter<T> { ... }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 __impl_into_iter! {
     impl<T: Message> IntoIterator for &NSSet<T> {
         type IntoIter = Iter<'_, T>;
@@ -539,7 +539,7 @@ __impl_into_iter! {
     }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 impl<T: fmt::Debug + Message> fmt::Debug for NSSet<T> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -547,7 +547,7 @@ impl<T: fmt::Debug + Message> fmt::Debug for NSSet<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 impl<T: fmt::Debug + Message> fmt::Debug for NSMutableSet<T> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -555,7 +555,7 @@ impl<T: fmt::Debug + Message> fmt::Debug for NSMutableSet<T> {
     }
 }
 
-#[cfg(feature = "Foundation_NSEnumerator")]
+#[cfg(feature = "NSEnumerator")]
 impl<T: fmt::Debug + Message> fmt::Debug for crate::Foundation::NSCountedSet<T> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

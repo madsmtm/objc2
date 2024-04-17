@@ -45,32 +45,32 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 objc2-app-kit = ["dep:objc2-app-kit"]
 
-InputMethodKit_IMKCandidates = [
-    "objc2-app-kit?/AppKit_NSResponder",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSCoder",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSObject",
+IMKCandidates = [
+    "objc2-app-kit?/NSResponder",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
 ]
-InputMethodKit_IMKInputController = [
-    "objc2-app-kit?/AppKit_NSEvent",
-    "objc2-app-kit?/AppKit_NSMenu",
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSAttributedString",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSGeometry",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
+IMKInputController = [
+    "objc2-app-kit?/NSEvent",
+    "objc2-app-kit?/NSMenu",
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
 ]
-InputMethodKit_IMKServer = [
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSString",
+IMKServer = [
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSString",
 ]
 all = [
-    "InputMethodKit_IMKCandidates",
-    "InputMethodKit_IMKInputController",
-    "InputMethodKit_IMKServer",
+    "IMKCandidates",
+    "IMKInputController",
+    "IMKServer",
     "objc2-app-kit",
 ]

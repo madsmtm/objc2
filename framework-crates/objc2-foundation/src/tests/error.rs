@@ -1,5 +1,5 @@
-#![cfg(feature = "Foundation_NSError")]
-#![cfg(feature = "Foundation_NSString")]
+#![cfg(feature = "NSError")]
+#![cfg(feature = "NSString")]
 use alloc::format;
 
 use crate::Foundation::{ns_string, NSCocoaErrorDomain, NSError};

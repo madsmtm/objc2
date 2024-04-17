@@ -16,11 +16,11 @@ was declared inside of that header is locked behind that Cargo feature.
 
 As an example, let's use `MetalKit`. This framework has four public C headers,
 `MTKDefines.h`, `MTKModel.h`, `MTKTextureLoader.h` and `MTKView.h`. This in
-turn means we get four Cargo features in `objc2-metal-kit`,
-`MetalKit_MTKDefines`, `MetalKit_MTKModel`, `MetalKit_MTKTextureLoader` and
-`MetalKit_MTKView`, that enables the functionality exposed by each of those
-headers, as well as any required dependency features (e.g. `MTKModel.h` uses
-`MTLDevice`, so `objc2-metal/Metal_MTLDevice` is enabled for you).
+turn means we get four Cargo features in `objc2-metal-kit`, `MTKDefines`,
+`MTKModel`, `MTKTextureLoader` and `MTKView`, that enables the functionality
+exposed by each of those headers, as well as any required dependency features
+(e.g. `MTKModel.h` uses `MTLDevice`, so `objc2-metal/MTLDevice` is enabled for
+you).
 
 
 ## Dependency features

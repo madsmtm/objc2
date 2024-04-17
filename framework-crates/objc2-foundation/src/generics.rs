@@ -20,7 +20,7 @@ impl<T: ?Sized> UnwindSafe for UnsafeIgnoreAutoTraits<T> {}
 
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
-    #[cfg(feature = "Foundation_NSArray")]
+    #[cfg(feature = "NSArray")]
     pub struct NSArray<ObjectType: ?Sized = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
@@ -86,7 +86,7 @@ __inner_extern_class!(
         __inner: PhantomData<Id<ObjectType>>,
     }
 
-    #[cfg(feature = "Foundation_NSArray")]
+    #[cfg(feature = "NSArray")]
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSArray<ObjectType> {
         type Super = NSObject;
         type Mutability = mutability::ImmutableWithMutableSubclass<NSMutableArray<ObjectType>>;
@@ -103,13 +103,13 @@ __inner_extern_class!(
 
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
-    #[cfg(feature = "Foundation_NSArray")]
+    #[cfg(feature = "NSArray")]
     pub struct NSMutableArray<ObjectType: ?Sized = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSArray<ObjectType>,
     }
 
-    #[cfg(feature = "Foundation_NSArray")]
+    #[cfg(feature = "NSArray")]
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSMutableArray<ObjectType> {
         #[inherits(NSObject)]
         type Super = NSArray<ObjectType>;
@@ -127,7 +127,7 @@ __inner_extern_class!(
 
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
-    #[cfg(feature = "Foundation_NSDictionary")]
+    #[cfg(feature = "NSDictionary")]
     pub struct NSDictionary<KeyType: ?Sized = AnyObject, ObjectType: ?Sized = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
@@ -136,7 +136,7 @@ __inner_extern_class!(
         __inner: PhantomData<(Id<KeyType>, Id<ObjectType>)>,
     }
 
-    #[cfg(feature = "Foundation_NSDictionary")]
+    #[cfg(feature = "NSDictionary")]
     unsafe impl<KeyType: ?Sized + Message, ObjectType: ?Sized + Message> ClassType
         for NSDictionary<KeyType, ObjectType>
     {
@@ -156,13 +156,13 @@ __inner_extern_class!(
 
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
-    #[cfg(feature = "Foundation_NSDictionary")]
+    #[cfg(feature = "NSDictionary")]
     pub struct NSMutableDictionary<KeyType: ?Sized = AnyObject, ObjectType: ?Sized = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSDictionary<KeyType, ObjectType>,
     }
 
-    #[cfg(feature = "Foundation_NSDictionary")]
+    #[cfg(feature = "NSDictionary")]
     unsafe impl<KeyType: ?Sized + Message, ObjectType: ?Sized + Message> ClassType
         for NSMutableDictionary<KeyType, ObjectType>
     {
@@ -183,7 +183,7 @@ __inner_extern_class!(
 
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
-    #[cfg(feature = "Foundation_NSSet")]
+    #[cfg(feature = "NSSet")]
     pub struct NSSet<ObjectType: ?Sized = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
@@ -191,7 +191,7 @@ __inner_extern_class!(
         __inner: PhantomData<Id<ObjectType>>,
     }
 
-    #[cfg(feature = "Foundation_NSSet")]
+    #[cfg(feature = "NSSet")]
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSSet<ObjectType> {
         type Super = NSObject;
         type Mutability = mutability::ImmutableWithMutableSubclass<NSMutableSet<ObjectType>>;
@@ -208,13 +208,13 @@ __inner_extern_class!(
 
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
-    #[cfg(feature = "Foundation_NSSet")]
+    #[cfg(feature = "NSSet")]
     pub struct NSMutableSet<ObjectType: ?Sized = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSSet<ObjectType>,
     }
 
-    #[cfg(feature = "Foundation_NSSet")]
+    #[cfg(feature = "NSSet")]
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSMutableSet<ObjectType> {
         #[inherits(NSObject)]
         type Super = NSSet<ObjectType>;
@@ -232,13 +232,13 @@ __inner_extern_class!(
 
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
-    #[cfg(feature = "Foundation_NSSet")]
+    #[cfg(feature = "NSSet")]
     pub struct NSCountedSet<ObjectType: ?Sized = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSMutableSet<ObjectType>,
     }
 
-    #[cfg(feature = "Foundation_NSSet")]
+    #[cfg(feature = "NSSet")]
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSCountedSet<ObjectType> {
         #[inherits(NSSet<ObjectType>, NSObject)]
         type Super = NSMutableSet<ObjectType>;
@@ -256,7 +256,7 @@ __inner_extern_class!(
 
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
-    #[cfg(feature = "Foundation_NSOrderedSet")]
+    #[cfg(feature = "NSOrderedSet")]
     pub struct NSOrderedSet<ObjectType: ?Sized = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
@@ -264,7 +264,7 @@ __inner_extern_class!(
         __inner: PhantomData<Id<ObjectType>>,
     }
 
-    #[cfg(feature = "Foundation_NSOrderedSet")]
+    #[cfg(feature = "NSOrderedSet")]
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSOrderedSet<ObjectType> {
         type Super = NSObject;
         type Mutability = mutability::ImmutableWithMutableSubclass<NSMutableOrderedSet<ObjectType>>;
@@ -281,13 +281,13 @@ __inner_extern_class!(
 
 __inner_extern_class!(
     #[derive(PartialEq, Eq, Hash)]
-    #[cfg(feature = "Foundation_NSOrderedSet")]
+    #[cfg(feature = "NSOrderedSet")]
     pub struct NSMutableOrderedSet<ObjectType: ?Sized = AnyObject> {
         // Inherit auto traits from superclass.
         __superclass: NSOrderedSet<ObjectType>,
     }
 
-    #[cfg(feature = "Foundation_NSOrderedSet")]
+    #[cfg(feature = "NSOrderedSet")]
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSMutableOrderedSet<ObjectType> {
         #[inherits(NSObject)]
         type Super = NSOrderedSet<ObjectType>;
@@ -305,7 +305,7 @@ __inner_extern_class!(
 
 __inner_extern_class!(
     #[derive(Debug, PartialEq, Eq, Hash)]
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     pub struct NSEnumerator<ObjectType: ?Sized = AnyObject> {
         // SAFETY: Auto traits specified below.
         __superclass: UnsafeIgnoreAutoTraits<NSObject>,
@@ -321,7 +321,7 @@ __inner_extern_class!(
         __inner: PhantomData<Id<ObjectType>>,
     }
 
-    #[cfg(feature = "Foundation_NSEnumerator")]
+    #[cfg(feature = "NSEnumerator")]
     unsafe impl<ObjectType: ?Sized + Message> ClassType for NSEnumerator<ObjectType> {
         type Super = NSObject;
         type Mutability = mutability::Mutable;

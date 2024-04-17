@@ -46,271 +46,271 @@ alloc = ["objc2/alloc"]
 # For better documentation on docs.rs
 unstable-docsrs = []
 unstable-private = [
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSError",
 ]
 block2 = ["dep:block2"]
 
-Metal_MTLAccelerationStructure = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MTLAccelerationStructure = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLAccelerationStructureCommandEncoder = ["objc2-foundation/Foundation_NSObject"]
-Metal_MTLAccelerationStructureTypes = []
-Metal_MTLArgument = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSString",
+MTLAccelerationStructureCommandEncoder = ["objc2-foundation/NSObject"]
+MTLAccelerationStructureTypes = []
+MTLArgument = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLArgumentEncoder = [
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
+MTLArgumentEncoder = [
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLBinaryArchive = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+MTLBinaryArchive = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-Metal_MTLBlitCommandEncoder = ["objc2-foundation/Foundation_NSRange"]
-Metal_MTLBlitPass = ["objc2-foundation/Foundation_NSObject"]
-Metal_MTLBuffer = [
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
+MTLBlitCommandEncoder = ["objc2-foundation/NSRange"]
+MTLBlitPass = ["objc2-foundation/NSObject"]
+MTLBuffer = [
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLCaptureManager = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+MTLCaptureManager = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-Metal_MTLCaptureScope = ["objc2-foundation/Foundation_NSString"]
-Metal_MTLCommandBuffer = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSEnumerator",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MTLCaptureScope = ["objc2-foundation/NSString"]
+MTLCommandBuffer = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSEnumerator",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLCommandEncoder = ["objc2-foundation/Foundation_NSString"]
-Metal_MTLCommandQueue = ["objc2-foundation/Foundation_NSString"]
-Metal_MTLComputeCommandEncoder = ["objc2-foundation/Foundation_NSRange"]
-Metal_MTLComputePass = ["objc2-foundation/Foundation_NSObject"]
-Metal_MTLComputePipeline = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MTLCommandEncoder = ["objc2-foundation/NSString"]
+MTLCommandQueue = ["objc2-foundation/NSString"]
+MTLComputeCommandEncoder = ["objc2-foundation/NSRange"]
+MTLComputePass = ["objc2-foundation/NSObject"]
+MTLComputePipeline = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLCounters = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSData",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
+MTLCounters = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLDefines = []
-Metal_MTLDepthStencil = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MTLDefines = []
+MTLDepthStencil = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLDevice = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSBundle",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+MTLDevice = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-Metal_MTLDrawable = []
-Metal_MTLDynamicLibrary = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+MTLDrawable = []
+MTLDynamicLibrary = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-Metal_MTLEvent = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MTLEvent = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLFence = ["objc2-foundation/Foundation_NSString"]
-Metal_MTLFunctionConstantValues = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
+MTLFence = ["objc2-foundation/NSString"]
+MTLFunctionConstantValues = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLFunctionDescriptor = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MTLFunctionDescriptor = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLFunctionHandle = ["objc2-foundation/Foundation_NSString"]
-Metal_MTLFunctionLog = [
-    "objc2-foundation/Foundation_NSEnumerator",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSURL",
+MTLFunctionHandle = ["objc2-foundation/NSString"]
+MTLFunctionLog = [
+    "objc2-foundation/NSEnumerator",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
-Metal_MTLFunctionStitching = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MTLFunctionStitching = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLHeap = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MTLHeap = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLIOCommandBuffer = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
+MTLIOCommandBuffer = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLIOCommandQueue = [
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MTLIOCommandQueue = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLIOCompressor = []
-Metal_MTLIndirectCommandBuffer = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
+MTLIOCompressor = []
+MTLIndirectCommandBuffer = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
 ]
-Metal_MTLIndirectCommandEncoder = []
-Metal_MTLIntersectionFunctionTable = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
+MTLIndirectCommandEncoder = []
+MTLIntersectionFunctionTable = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
 ]
-Metal_MTLLibrary = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MTLLibrary = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLLinkedFunctions = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSDictionary",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MTLLinkedFunctions = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLParallelRenderCommandEncoder = []
-Metal_MTLPipeline = ["objc2-foundation/Foundation_NSObject"]
-Metal_MTLPixelFormat = []
-Metal_MTLRasterizationRate = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSValue",
+MTLParallelRenderCommandEncoder = []
+MTLPipeline = ["objc2-foundation/NSObject"]
+MTLPixelFormat = []
+MTLRasterizationRate = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
-Metal_MTLRenderCommandEncoder = ["objc2-foundation/Foundation_NSRange"]
-Metal_MTLRenderPass = ["objc2-foundation/Foundation_NSObject"]
-Metal_MTLRenderPipeline = [
-    "objc2-foundation/Foundation_NSArray",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MTLRenderCommandEncoder = ["objc2-foundation/NSRange"]
+MTLRenderPass = ["objc2-foundation/NSObject"]
+MTLRenderPipeline = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLResource = ["objc2-foundation/Foundation_NSString"]
-Metal_MTLResourceStateCommandEncoder = []
-Metal_MTLResourceStatePass = ["objc2-foundation/Foundation_NSObject"]
-Metal_MTLSampler = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSString",
+MTLResource = ["objc2-foundation/NSString"]
+MTLResourceStateCommandEncoder = []
+MTLResourceStatePass = ["objc2-foundation/NSObject"]
+MTLSampler = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLStageInputOutputDescriptor = ["objc2-foundation/Foundation_NSObject"]
-Metal_MTLTexture = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
-    "objc2-foundation/Foundation_NSString",
+MTLStageInputOutputDescriptor = ["objc2-foundation/NSObject"]
+MTLTexture = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
+    "objc2-foundation/NSString",
 ]
-Metal_MTLTypes = []
-Metal_MTLVertexDescriptor = ["objc2-foundation/Foundation_NSObject"]
-Metal_MTLVisibleFunctionTable = [
-    "objc2-foundation/Foundation_NSObject",
-    "objc2-foundation/Foundation_NSRange",
+MTLTypes = []
+MTLVertexDescriptor = ["objc2-foundation/NSObject"]
+MTLVisibleFunctionTable = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSRange",
 ]
 all = [
-    "Metal_MTLAccelerationStructure",
-    "Metal_MTLAccelerationStructureCommandEncoder",
-    "Metal_MTLAccelerationStructureTypes",
-    "Metal_MTLArgument",
-    "Metal_MTLArgumentEncoder",
-    "Metal_MTLBinaryArchive",
-    "Metal_MTLBlitCommandEncoder",
-    "Metal_MTLBlitPass",
-    "Metal_MTLBuffer",
-    "Metal_MTLCaptureManager",
-    "Metal_MTLCaptureScope",
-    "Metal_MTLCommandBuffer",
-    "Metal_MTLCommandEncoder",
-    "Metal_MTLCommandQueue",
-    "Metal_MTLComputeCommandEncoder",
-    "Metal_MTLComputePass",
-    "Metal_MTLComputePipeline",
-    "Metal_MTLCounters",
-    "Metal_MTLDefines",
-    "Metal_MTLDepthStencil",
-    "Metal_MTLDevice",
-    "Metal_MTLDrawable",
-    "Metal_MTLDynamicLibrary",
-    "Metal_MTLEvent",
-    "Metal_MTLFence",
-    "Metal_MTLFunctionConstantValues",
-    "Metal_MTLFunctionDescriptor",
-    "Metal_MTLFunctionHandle",
-    "Metal_MTLFunctionLog",
-    "Metal_MTLFunctionStitching",
-    "Metal_MTLHeap",
-    "Metal_MTLIOCommandBuffer",
-    "Metal_MTLIOCommandQueue",
-    "Metal_MTLIOCompressor",
-    "Metal_MTLIndirectCommandBuffer",
-    "Metal_MTLIndirectCommandEncoder",
-    "Metal_MTLIntersectionFunctionTable",
-    "Metal_MTLLibrary",
-    "Metal_MTLLinkedFunctions",
-    "Metal_MTLParallelRenderCommandEncoder",
-    "Metal_MTLPipeline",
-    "Metal_MTLPixelFormat",
-    "Metal_MTLRasterizationRate",
-    "Metal_MTLRenderCommandEncoder",
-    "Metal_MTLRenderPass",
-    "Metal_MTLRenderPipeline",
-    "Metal_MTLResource",
-    "Metal_MTLResourceStateCommandEncoder",
-    "Metal_MTLResourceStatePass",
-    "Metal_MTLSampler",
-    "Metal_MTLStageInputOutputDescriptor",
-    "Metal_MTLTexture",
-    "Metal_MTLTypes",
-    "Metal_MTLVertexDescriptor",
-    "Metal_MTLVisibleFunctionTable",
+    "MTLAccelerationStructure",
+    "MTLAccelerationStructureCommandEncoder",
+    "MTLAccelerationStructureTypes",
+    "MTLArgument",
+    "MTLArgumentEncoder",
+    "MTLBinaryArchive",
+    "MTLBlitCommandEncoder",
+    "MTLBlitPass",
+    "MTLBuffer",
+    "MTLCaptureManager",
+    "MTLCaptureScope",
+    "MTLCommandBuffer",
+    "MTLCommandEncoder",
+    "MTLCommandQueue",
+    "MTLComputeCommandEncoder",
+    "MTLComputePass",
+    "MTLComputePipeline",
+    "MTLCounters",
+    "MTLDefines",
+    "MTLDepthStencil",
+    "MTLDevice",
+    "MTLDrawable",
+    "MTLDynamicLibrary",
+    "MTLEvent",
+    "MTLFence",
+    "MTLFunctionConstantValues",
+    "MTLFunctionDescriptor",
+    "MTLFunctionHandle",
+    "MTLFunctionLog",
+    "MTLFunctionStitching",
+    "MTLHeap",
+    "MTLIOCommandBuffer",
+    "MTLIOCommandQueue",
+    "MTLIOCompressor",
+    "MTLIndirectCommandBuffer",
+    "MTLIndirectCommandEncoder",
+    "MTLIntersectionFunctionTable",
+    "MTLLibrary",
+    "MTLLinkedFunctions",
+    "MTLParallelRenderCommandEncoder",
+    "MTLPipeline",
+    "MTLPixelFormat",
+    "MTLRasterizationRate",
+    "MTLRenderCommandEncoder",
+    "MTLRenderPass",
+    "MTLRenderPipeline",
+    "MTLResource",
+    "MTLResourceStateCommandEncoder",
+    "MTLResourceStatePass",
+    "MTLSampler",
+    "MTLStageInputOutputDescriptor",
+    "MTLTexture",
+    "MTLTypes",
+    "MTLVertexDescriptor",
+    "MTLVisibleFunctionTable",
     "block2",
 ]
 
 [[example]]
 name = "triangle"
 required-features = [
-    "objc2-app-kit/AppKit_NSGraphics",
-    "objc2-app-kit/AppKit_NSWindow",
-    "objc2-app-kit/AppKit_NSResponder",
-    "objc2-app-kit/AppKit_NSApplication",
-    "objc2-app-kit/AppKit_NSRunningApplication",
-    "objc2-app-kit/AppKit_NSView",
-    "objc2-foundation/Foundation_NSError",
-    "objc2-foundation/Foundation_NSString",
-    "objc2-foundation/Foundation_NSDate",
-    "objc2-foundation/Foundation_NSNotification",
-    "objc2-foundation/Foundation_NSThread",
-    "objc2-foundation/Foundation_NSGeometry",
-    "Metal_MTLLibrary",
-    "Metal_MTLRenderPipeline",
-    "Metal_MTLRenderCommandEncoder",
-    "Metal_MTLCommandBuffer",
-    "Metal_MTLCommandEncoder",
-    "Metal_MTLCommandQueue",
-    "Metal_MTLPixelFormat",
-    "Metal_MTLDevice",
-    "Metal_MTLDrawable",
-    "Metal_MTLRenderPass",
-    "objc2-metal-kit/MetalKit_MTKView",
+    "objc2-app-kit/NSGraphics",
+    "objc2-app-kit/NSWindow",
+    "objc2-app-kit/NSResponder",
+    "objc2-app-kit/NSApplication",
+    "objc2-app-kit/NSRunningApplication",
+    "objc2-app-kit/NSView",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSNotification",
+    "objc2-foundation/NSThread",
+    "objc2-foundation/NSGeometry",
+    "MTLLibrary",
+    "MTLRenderPipeline",
+    "MTLRenderCommandEncoder",
+    "MTLCommandBuffer",
+    "MTLCommandEncoder",
+    "MTLCommandQueue",
+    "MTLPixelFormat",
+    "MTLDevice",
+    "MTLDrawable",
+    "MTLRenderPass",
+    "objc2-metal-kit/MTKView",
     "objc2-metal-kit/objc2-app-kit",
 ]
 
