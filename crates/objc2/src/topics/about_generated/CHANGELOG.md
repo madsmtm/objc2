@@ -98,6 +98,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Fixed feature flags not being emitted on typedefs, enums,
   functions and statics.
 
+
+## icrate 0.1.1 - 2023-04-17
+
+### Deprecated
+* Deprecated the `icrate` crate, it has been split into multiple smaller crates.
+
+
 ## icrate 0.1.0 - 2023-12-23
 
 ### Added
