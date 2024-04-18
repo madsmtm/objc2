@@ -13,7 +13,9 @@ use crate::objc2_utils::in_selector_family;
 use crate::rust_type::{MethodArgumentQualifier, Ty};
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
-use crate::{immediate_children, Location};
+use crate::{immediate_children, ItemIdentifier, Location};
+
+use heck::ToSnakeCase;
 
 impl MethodArgumentQualifier {
     pub fn parse(qualifiers: ObjCQualifiers) -> Self {
@@ -530,7 +532,16 @@ impl Method {
             result_type.try_fix_related_result_type();
         }
 
-        let fn_name = selector.trim_end_matches(':').replace(':', "_");
+        let fn_name = if ItemIdentifier::new(&entity, context).library_name() == "Metal"
+            || ItemIdentifier::new(&entity, context).library_name() == "QuartzCore"
+        {
+            selector
+                .trim_end_matches(':')
+                .replace(':', "_")
+                .to_snake_case()
+        } else {
+            selector.trim_end_matches(':').replace(':', "_")
+        };
 
         let mainthreadonly = mainthreadonly_override(
             &result_type,
@@ -705,7 +716,13 @@ impl Method {
 
             Some(Method {
                 selector: getter_sel.clone(),
-                fn_name: getter_sel.clone(),
+                fn_name: if ItemIdentifier::new(&entity, context).library_name() == "Metal"
+                    || ItemIdentifier::new(&entity, context).library_name() == "QuartzCore"
+                {
+                    getter_sel.to_snake_case()
+                } else {
+                    getter_sel.clone()
+                },
                 availability: availability.clone(),
                 is_class,
                 is_optional: entity.is_objc_optional(),
@@ -795,7 +812,13 @@ impl Method {
 
                 Some(Method {
                     selector,
-                    fn_name,
+                    fn_name: if ItemIdentifier::new(&entity, context).library_name() == "Metal"
+                        || ItemIdentifier::new(&entity, context).library_name() == "QuartzCore"
+                    {
+                        fn_name.to_snake_case()
+                    } else {
+                        fn_name
+                    },
                     availability,
                     is_class,
                     is_optional: entity.is_objc_optional(),
