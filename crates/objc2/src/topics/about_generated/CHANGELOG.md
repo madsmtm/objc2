@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* Added `objc2_metal::CAMetalDrawable` and `objc2_metal::CAMetalLayer`.
+
 
 ## 0.2.0 - 2024-04-17
 

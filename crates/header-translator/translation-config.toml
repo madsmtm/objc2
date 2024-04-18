@@ -1080,12 +1080,10 @@ shadowPath = { skipped = true }
 "setShadowPath:" = { skipped = true }
 [protocol.CALayerDelegate.methods]
 "drawLayer:inContext:" = { skipped = true }
-[protocol.CAMetalDrawable]
-skipped = true
-[class.CAMetalLayer]
-skipped = true
-[class.CAMetalDisplayLink.methods."initWithMetalLayer:"]
-skipped = true # Needs `CAMetalLayer`
+[class.CAMetalLayer.methods]
+# Needs `CGColorSpaceRef`
+colorspace = { skipped = true }
+"setColorspace:" = { skipped = true }
 [class.CAOpenGLLayer]
 skipped = true
 [class.CARenderer.methods]

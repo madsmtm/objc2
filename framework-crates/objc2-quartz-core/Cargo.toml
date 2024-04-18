@@ -24,6 +24,7 @@ workspace = true
 objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false, features = ["apple"] }
 block2 = { path = "../../crates/block2", version = "0.5.0", optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.0" }
+objc2-metal = { path = "../objc2-metal", version = "0.2.0", optional = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -46,6 +47,7 @@ alloc = ["objc2/alloc"]
 # For better documentation on docs.rs
 unstable-docsrs = []
 block2 = ["dep:block2"]
+objc2-metal = ["dep:objc2-metal"]
 
 CAAnimation = [
     "objc2-foundation/NSArray",
@@ -109,7 +111,16 @@ CAMetalDisplayLink = [
     "objc2-foundation/NSRunLoop",
     "objc2-foundation/NSString",
 ]
-CAMetalLayer = []
+CAMetalLayer = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+    "objc2-metal?/MTLDevice",
+    "objc2-metal?/MTLDrawable",
+    "objc2-metal?/MTLPixelFormat",
+    "objc2-metal?/MTLResource",
+    "objc2-metal?/MTLTexture",
+]
 CAOpenGLLayer = []
 CARemoteLayerClient = []
 CARemoteLayerServer = []
@@ -188,4 +199,5 @@ all = [
     "CoreImage",
     "CoreVideo",
     "block2",
+    "objc2-metal",
 ]
