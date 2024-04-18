@@ -14,11 +14,11 @@ use objc2::runtime::{AnyObject, ProtocolObject};
 use objc2::{extern_methods, msg_send, Message};
 
 pub unsafe trait MTLDevicePrivate: Message {
-    unsafe fn vendorName(&self) -> Retained<objc2_foundation::NSString> {
+    unsafe fn vendor_name(&self) -> Retained<objc2_foundation::NSString> {
         unsafe { msg_send![self, vendorName] }
     }
 
-    unsafe fn familyName(&self) -> Retained<objc2_foundation::NSString> {
+    unsafe fn family_name(&self) -> Retained<objc2_foundation::NSString> {
         unsafe { msg_send![self, familyName] }
     }
 }
@@ -31,7 +31,7 @@ impl MTLRenderPipelineReflection {
     extern_methods!(
         #[cfg(feature = "MTLDevice")]
         #[unsafe(method(initWithVertexData:fragmentData:serializedVertexDescriptor:device:options:flags:))]
-        pub unsafe fn initWithVertexData(
+        pub unsafe fn init_with_vertex_data(
             this: Allocated<Self>,
             vertex_data: *mut c_void,
             fragment_data: *mut c_void,
@@ -42,13 +42,13 @@ impl MTLRenderPipelineReflection {
         ) -> Option<Retained<Self>>;
 
         #[unsafe(method(newSerializedVertexDataWithFlags:error:_))]
-        pub unsafe fn newSerializedVertexDataWithFlags_error(
+        pub unsafe fn new_serialized_vertex_data_with_flags_error(
             &self,
             flags: u64,
         ) -> Result<Retained<AnyObject>, Retained<objc2_foundation::NSError>>;
 
         #[unsafe(method(serializeFragmentData))]
-        pub unsafe fn serializeFragmentData(&self) -> *mut c_void;
+        pub unsafe fn serialize_fragment_data(&self) -> *mut c_void;
     );
 }
 
@@ -56,7 +56,7 @@ impl MTLRenderPipelineReflection {
 impl MTLSamplerDescriptor {
     extern_methods!(
         #[unsafe(method(setLodBias:))]
-        pub unsafe fn setLodBias(&self, bias: f32);
+        pub unsafe fn set_lod_bias(&self, bias: f32);
     );
 }
 
@@ -64,6 +64,6 @@ impl MTLSamplerDescriptor {
 impl MTLVertexDescriptor {
     extern_methods!(
         #[unsafe(method(newSerializedDescriptor))]
-        pub unsafe fn newSerializedDescriptor(&self) -> Option<Retained<AnyObject>>;
+        pub unsafe fn new_serialized_descriptor(&self) -> Option<Retained<AnyObject>>;
     );
 }

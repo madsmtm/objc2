@@ -8,7 +8,7 @@ impl MTLRasterizationRateLayerDescriptor {
         /// axis. The depth component of the returned `MTLSize` is always 0.
         #[cfg(feature = "MTLTypes")]
         #[unsafe(method(sampleCount))]
-        pub fn sampleCount(&self) -> crate::MTLSize;
+        pub fn sample_count(&self) -> crate::MTLSize;
     );
 }
 
@@ -27,7 +27,7 @@ impl MTLRasterizationRateMapDescriptor {
         ///
         /// The function copies the array of pointers internally, the caller need not keep the array alive after creating the descriptor.
         #[unsafe(method(rasterizationRateMapDescriptorWithScreenSize:layerCount:layers:))]
-        pub unsafe fn rasterizationRateMapDescriptorWithScreenSize_layerCount_layers(
+        pub unsafe fn rasterization_rate_map_descriptor_with_screen_size_layer_count_layers(
             screen_size: crate::MTLSize,
             layer_count: objc2_foundation::NSUInteger,
             layers: core::ptr::NonNull<core::ptr::NonNull<MTLRasterizationRateLayerDescriptor>>,

@@ -11,7 +11,7 @@ impl MTLCaptureDescriptor {
     pub fn set_capture_device(&self, device: &ProtocolObject<dyn MTLDevice>) {
         let device: *const _ = device;
         let device: *const AnyObject = device.cast();
-        unsafe { self.setCaptureObject(Some(&*device)) }
+        unsafe { self.set_capture_object(Some(&*device)) }
     }
 
     #[doc(alias = "setCaptureObject")]
@@ -19,7 +19,7 @@ impl MTLCaptureDescriptor {
     pub fn set_capture_scope(&self, scope: &ProtocolObject<dyn MTLCaptureScope>) {
         let scope: *const _ = scope;
         let scope: *const AnyObject = scope.cast();
-        unsafe { self.setCaptureObject(Some(&*scope)) }
+        unsafe { self.set_capture_object(Some(&*scope)) }
     }
 
     #[doc(alias = "setCaptureObject")]
@@ -27,6 +27,6 @@ impl MTLCaptureDescriptor {
     pub fn set_capture_command_queue(&self, command_queue: &ProtocolObject<dyn MTLCommandQueue>) {
         let command_queue: *const _ = command_queue;
         let command_queue: *const AnyObject = command_queue.cast();
-        unsafe { self.setCaptureObject(Some(&*command_queue)) }
+        unsafe { self.set_capture_object(Some(&*command_queue)) }
     }
 }
