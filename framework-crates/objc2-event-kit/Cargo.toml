@@ -22,6 +22,7 @@ workspace = true
 
 [dependencies]
 objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false, features = ["apple"] }
+bitflags = { version = "2.5.0", optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.0", optional = true }
 objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.0", optional = true }
 objc2-core-location = { path = "../objc2-core-location", version = "0.2.0", optional = true }
@@ -48,6 +49,7 @@ alloc = ["objc2/alloc"]
 
 # For better documentation on docs.rs
 unstable-docsrs = []
+bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-location = ["dep:objc2-core-location"]
@@ -115,7 +117,7 @@ EKStructuredLocation = [
     "objc2-foundation/NSString",
     "objc2-map-kit?/MKMapItem",
 ]
-EKTypes = []
+EKTypes = ["bitflags"]
 EKVirtualConferenceDescriptor = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
@@ -147,6 +149,7 @@ all = [
     "EKVirtualConferenceDescriptor",
     "EKVirtualConferenceProvider",
     "EventKitDefines",
+    "bitflags",
     "block2",
     "objc2-app-kit",
     "objc2-core-location",

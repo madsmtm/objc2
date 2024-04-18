@@ -1548,10 +1548,16 @@ impl Stmt {
                 .iter()
                 .flat_map(|method| method.required_items())
                 .collect(),
-            Self::EnumDecl { variants, .. } => variants
-                .iter()
-                .flat_map(|(_, _, expr)| expr.required_items())
-                .collect(),
+            Self::EnumDecl { kind, variants, .. } => {
+                let mut items: Vec<_> = variants
+                    .iter()
+                    .flat_map(|(_, _, expr)| expr.required_items())
+                    .collect();
+                if let Some(UnexposedAttr::Options) = kind {
+                    items.push(ItemIdentifier::bitflags());
+                }
+                items
+            }
             _ => vec![],
         };
         self.required_items()
@@ -2113,14 +2119,11 @@ impl Stmt {
                     //
                     // <https://developer.apple.com/documentation/swift/grouping-related-objective-c-constants#Declare-Simple-Enumerations>
                     | Some(UnexposedAttr::Enum)
-                    // TODO: Use bitflags! here.
-                    | Some(UnexposedAttr::Options)
                     // TODO: Handle this differently.
                     | Some(UnexposedAttr::ErrorEnum) => {
                         match kind {
                             None => {}
                             Some(UnexposedAttr::Enum) => writeln!(f, "// NS_ENUM")?,
-                            Some(UnexposedAttr::Options) => writeln!(f, "// NS_OPTIONS")?,
                             Some(UnexposedAttr::ErrorEnum) => writeln!(f, "// NS_ERROR_ENUM")?,
                             _ => unreachable!(),
                         }
@@ -2157,6 +2160,42 @@ impl Stmt {
                             }
                             writeln!(f, "    pub const {pretty_name}: Self = Self({expr});")?;
                         }
+                        writeln!(f, "}}")?;
+                        writeln!(f)?;
+                    }
+                    Some(UnexposedAttr::Options) => {
+                        writeln!(f, "// NS_OPTIONS")?;
+
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        write!(f, "{availability}")?;
+                        writeln!(f, "#[repr(transparent)]")?;
+                        writeln!(
+                            f,
+                            "#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]"
+                        )?;
+                        // TODO(breaking): Make the inner field private
+                        writeln!(f, "pub struct {}(pub {});", id.name, ty.enum_())?;
+
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "bitflags::bitflags! {{")?;
+
+                        writeln!(f, "    impl {}: {} {{", id.name, ty.enum_())?;
+
+                        let required_items = self.required_items();
+                        for (name, availability, expr) in variants {
+                            let implied_features = required_items
+                                .iter()
+                                .map(|item| item.location())
+                                .chain(iter::once(self.location()));
+                            write!(f, "{}", cfg_gate_ln(expr.required_items(), implied_features, config, self.location()))?;
+                            write!(f, "{availability}")?;
+                            let pretty_name = enum_constant_name(&id.name, name);
+                            if pretty_name != name {
+                                writeln!(f, "        #[doc(alias = \"{name}\")]")?;
+                            }
+                            writeln!(f, "        const {pretty_name} = {expr};")?;
+                        }
+                        writeln!(f, "    }}")?;
                         writeln!(f, "}}")?;
                         writeln!(f)?;
                     }

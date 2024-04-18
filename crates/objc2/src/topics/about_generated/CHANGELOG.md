@@ -13,6 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
+* `NS_OPTIONS` enums are now `bitflags!`-style enums.
+
+  This means that they have the usual `ops::BitAnd`, `ops::BitOr`, `ops::Not`,
+  etc. implementations that you would expect from an option enum.
 * Added `CoreBluetooth` framework as `objc2-core-bluetooth`.
 * Added `Virtualization` framework as `objc2-virtualization`.
 * Added `objc2_quartz_core::CAMetalDrawable` and

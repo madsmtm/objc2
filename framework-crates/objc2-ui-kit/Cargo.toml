@@ -22,6 +22,7 @@ workspace = true
 
 [dependencies]
 objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false, features = ["apple"] }
+bitflags = { version = "2.5.0", optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.0", optional = true }
 objc2-cloud-kit = { path = "../objc2-cloud-kit", version = "0.2.0", optional = true }
 objc2-core-data = { path = "../objc2-core-data", version = "0.2.0", optional = true }
@@ -54,6 +55,7 @@ alloc = ["objc2/alloc"]
 
 # For better documentation on docs.rs
 unstable-docsrs = []
+bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-cloud-kit = ["dep:objc2-cloud-kit"]
 objc2-core-data = ["dep:objc2-core-data"]
@@ -67,6 +69,7 @@ objc2-user-notifications = ["dep:objc2-user-notifications"]
 
 DocumentManager = []
 NSAttributedString = [
+    "bitflags",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
@@ -104,12 +107,14 @@ NSLayoutAnchor = [
     "objc2-foundation/NSString",
 ]
 NSLayoutConstraint = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
 ]
 NSLayoutManager = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
@@ -118,6 +123,7 @@ NSLayoutManager = [
     "objc2-foundation/NSRange",
 ]
 NSParagraphStyle = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCharacterSet",
     "objc2-foundation/NSDictionary",
@@ -132,6 +138,7 @@ NSShadow = [
     "objc2-foundation/NSObject",
 ]
 NSStringDrawing = [
+    "bitflags",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSGeometry",
@@ -154,6 +161,7 @@ NSTextContainer = [
     "objc2-foundation/NSObject",
 ]
 NSTextContentManager = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
@@ -168,6 +176,7 @@ NSTextElement = [
     "objc2-foundation/NSAttributedString",
 ]
 NSTextLayoutFragment = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
@@ -175,6 +184,7 @@ NSTextLayoutFragment = [
     "objc2-foundation/NSOperation",
 ]
 NSTextLayoutManager = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSCoder",
@@ -194,6 +204,7 @@ NSTextLineFragment = [
     "objc2-foundation/NSString",
 ]
 NSTextList = [
+    "bitflags",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -215,11 +226,13 @@ NSTextSelection = [
     "objc2-foundation/NSString",
 ]
 NSTextSelectionNavigation = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
 ]
 NSTextStorage = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSNotification",
@@ -235,6 +248,7 @@ PrintKitUI = []
 ShareSheet = []
 UIAccelerometer = ["objc2-foundation/NSDate"]
 UIAccessibility = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSGeometry",
@@ -248,6 +262,7 @@ UIAccessibilityAdditions = [
     "objc2-foundation/NSString",
 ]
 UIAccessibilityConstants = [
+    "bitflags",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSString",
@@ -342,6 +357,7 @@ UIAlertView = [
 ]
 UIAppearance = ["objc2-foundation/NSArray"]
 UIApplication = [
+    "bitflags",
     "objc2-cloud-kit?/CKShareMetadata",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
@@ -460,6 +476,7 @@ UICellConfigurationState = [
     "objc2-foundation/NSObject",
 ]
 UICloudSharingController = [
+    "bitflags",
     "objc2-cloud-kit?/CKContainer",
     "objc2-cloud-kit?/CKRecord",
     "objc2-cloud-kit?/CKShare",
@@ -476,6 +493,7 @@ UICollectionLayoutList = [
     "objc2-foundation/NSObject",
 ]
 UICollectionView = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
@@ -543,6 +561,7 @@ UICollectionViewTransitionLayout = [
 ]
 UICollectionViewUpdateItem = ["objc2-foundation/NSIndexPath"]
 UICollisionBehavior = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
@@ -569,6 +588,7 @@ UIColorWell = [
     "objc2-quartz-core?/CALayer",
 ]
 UICommand = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
@@ -623,6 +643,7 @@ UIContextMenuInteraction = [
 ]
 UIContextualAction = ["objc2-foundation/NSString"]
 UIControl = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
@@ -631,7 +652,7 @@ UIControl = [
     "objc2-foundation/NSString",
     "objc2-quartz-core?/CALayer",
 ]
-UIDataDetectors = []
+UIDataDetectors = ["bitflags"]
 UIDataSourceTranslating = ["objc2-foundation/NSIndexPath"]
 UIDatePicker = [
     "objc2-foundation/NSCalendar",
@@ -661,6 +682,7 @@ UIDiffableDataSource = [
     "objc2-foundation/NSString",
 ]
 UIDocument = [
+    "bitflags",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
@@ -673,6 +695,7 @@ UIDocument = [
     "objc2-foundation/NSUserActivity",
 ]
 UIDocumentBrowserAction = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
@@ -774,6 +797,7 @@ UIEditMenuInteraction = [
     "objc2-foundation/NSObject",
 ]
 UIEvent = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSSet",
@@ -801,6 +825,7 @@ UIFindInteraction = [
 ]
 UIFindSession = ["objc2-foundation/NSString"]
 UIFocus = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSNotification",
@@ -834,6 +859,7 @@ UIFont = [
     "objc2-foundation/NSString",
 ]
 UIFontDescriptor = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
@@ -860,6 +886,7 @@ UIFontPickerViewControllerConfiguration = [
 ]
 UIFoundation = []
 UIGeometry = [
+    "bitflags",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
@@ -904,6 +931,7 @@ UIGravityBehavior = [
     "objc2-foundation/NSGeometry",
 ]
 UIGuidedAccess = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
@@ -1086,6 +1114,7 @@ UIManagedDocument = [
     "objc2-foundation/NSURL",
 ]
 UIMenu = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
@@ -1103,6 +1132,7 @@ UIMenuController = [
 ]
 UIMenuDisplayPreferences = ["objc2-foundation/NSObject"]
 UIMenuElement = [
+    "bitflags",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -1161,7 +1191,7 @@ UINibDeclarations = []
 UINibLoading = ["objc2-foundation/NSString"]
 UINotificationFeedbackGenerator = ["objc2-foundation/NSGeometry"]
 UIOpenURLContext = ["objc2-foundation/NSURL"]
-UIOrientation = []
+UIOrientation = ["bitflags"]
 UIPageControl = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
@@ -1178,6 +1208,7 @@ UIPageViewController = [
     "objc2-foundation/NSString",
 ]
 UIPanGestureRecognizer = [
+    "bitflags",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
 ]
@@ -1259,7 +1290,10 @@ UIPopoverPresentationController = [
     "objc2-foundation/NSGeometry",
 ]
 UIPopoverPresentationControllerSourceItem = ["objc2-foundation/NSGeometry"]
-UIPopoverSupport = ["objc2-foundation/NSGeometry"]
+UIPopoverSupport = [
+    "bitflags",
+    "objc2-foundation/NSGeometry",
+]
 UIPresentationController = ["objc2-foundation/NSGeometry"]
 UIPress = [
     "objc2-foundation/NSArray",
@@ -1315,6 +1349,7 @@ UIPrintServiceExtension = [
     "objc2-foundation/NSURL",
 ]
 UIPrinter = [
+    "bitflags",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
@@ -1535,7 +1570,10 @@ UIStoryboardPopoverSegue = ["objc2-foundation/NSString"]
 UIStoryboardSegue = ["objc2-foundation/NSString"]
 UIStringDrawing = ["objc2-foundation/NSString"]
 UISwipeActionsConfiguration = ["objc2-foundation/NSArray"]
-UISwipeGestureRecognizer = ["objc2-foundation/NSCoder"]
+UISwipeGestureRecognizer = [
+    "bitflags",
+    "objc2-foundation/NSCoder",
+]
 UISwitch = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
@@ -1587,6 +1625,7 @@ UITableView = [
     "objc2-quartz-core?/CALayer",
 ]
 UITableViewCell = [
+    "bitflags",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
@@ -1630,7 +1669,10 @@ UITextDragURLPreviews = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
-UITextDragging = ["objc2-foundation/NSArray"]
+UITextDragging = [
+    "bitflags",
+    "objc2-foundation/NSArray",
+]
 UITextDropProposal = ["objc2-foundation/NSObject"]
 UITextDropping = ["objc2-foundation/NSProgress"]
 UITextField = [
@@ -1731,6 +1773,7 @@ UIToolbarAppearance = [
     "objc2-foundation/NSObject",
 ]
 UITouch = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSGeometry",
@@ -1753,6 +1796,7 @@ UITraitCollection = [
 ]
 UIUserActivity = ["objc2-foundation/NSUserActivity"]
 UIUserNotificationSettings = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
@@ -1770,6 +1814,7 @@ UIVideoEditorController = [
     "objc2-foundation/NSString",
 ]
 UIView = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
@@ -2258,6 +2303,7 @@ all = [
     "UIWindowSceneProminentPlacement",
     "UIWindowSceneStandardPlacement",
     "UNNotificationResponse_UIKitAdditions",
+    "bitflags",
     "block2",
     "objc2-cloud-kit",
     "objc2-core-data",

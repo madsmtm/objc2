@@ -64,6 +64,9 @@ impl Ord for Location {
 
 impl Location {
     pub fn krate<'a>(&self, config: &'a Config) -> Option<&'a str> {
+        if self.library == "bitflags" {
+            return Some("bitflags");
+        }
         if self.library == "block2" {
             return Some("block2");
         }
@@ -74,10 +77,7 @@ impl Location {
     }
 
     pub fn import<'a>(&self, config: &'a Config) -> Option<&'a str> {
-        if self.library == "block2" {
-            return None;
-        }
-        if self.library == "libc" {
+        if self.library == "bitflags" || self.library == "block2" || self.library == "libc" {
             return None;
         }
         Some(&config.libraries.get(&self.library)?.krate)
@@ -95,6 +95,8 @@ impl Location {
             || self.library == emission_library
         {
             None
+        } else if self.library == "bitflags" {
+            Some("bitflags".to_string())
         } else if let Some(krate) = self.krate(config) {
             let required = config.libraries[emission_library]
                 .required_dependencies
@@ -119,10 +121,13 @@ impl Location {
     fn feature(&self, config: &Config, emission_location: &Self) -> Option<String> {
         if self.library == "System" {
             None
-        } else if self.library == "libc" {
-            Some("libc".to_string())
+        } else if self.library == "bitflags" {
+            // Always enabled in the current file
+            None
         } else if self.library == "block2" {
             Some("block2".to_string())
+        } else if self.library == "libc" {
+            Some("libc".to_string())
         } else if self.library == emission_location.library {
             if let Some(file_name) = &self.file_name {
                 Some(clean_name(file_name))
@@ -258,6 +263,16 @@ impl ItemIdentifier {
         }
     }
 
+    pub fn bitflags() -> Self {
+        Self {
+            name: "bitflags".to_string(),
+            location: Location {
+                library: "bitflags".to_string(),
+                file_name: None,
+            },
+        }
+    }
+
     #[cfg(test)]
     pub fn dummy() -> Self {
         Self {
@@ -282,8 +297,11 @@ impl ItemIdentifier {
 
         impl fmt::Display for ItemIdentifierPath<'_> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                if self.0.library() == "block2" || self.0.library() == "libc" {
-                    write!(f, "libc::{}", self.0.name)
+                if self.0.library() == "bitflags"
+                    || self.0.library() == "block2"
+                    || self.0.library() == "libc"
+                {
+                    write!(f, "{}::{}", self.0.library(), self.0.name)
                 } else {
                     write!(f, "{}", self.0.name)
                 }

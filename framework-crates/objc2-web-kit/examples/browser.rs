@@ -74,11 +74,9 @@ declare_class!(
             // create the app window
             let window = {
                 let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(1024., 768.));
-                let style = NSWindowStyleMask(
-                    NSWindowStyleMask::Closable.0
-                        | NSWindowStyleMask::Resizable.0
-                        | NSWindowStyleMask::Titled.0,
-                );
+                let style = NSWindowStyleMask::Closable
+                    | NSWindowStyleMask::Resizable
+                    | NSWindowStyleMask::Titled;
                 let backing_store_type = NSBackingStoreType::NSBackingStoreBuffered;
                 let flag = false;
                 unsafe {

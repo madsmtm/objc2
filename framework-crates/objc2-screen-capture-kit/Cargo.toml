@@ -22,6 +22,7 @@ workspace = true
 
 [dependencies]
 objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false, features = ["apple"] }
+bitflags = { version = "2.5.0", optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.0", optional = true }
 libc = { version = "0.2.80", optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.0" }
@@ -43,10 +44,12 @@ alloc = ["objc2/alloc"]
 
 # For better documentation on docs.rs
 unstable-docsrs = []
+bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 libc = ["dep:libc"]
 
 SCContentSharingPicker = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
@@ -72,6 +75,7 @@ all = [
     "SCScreenshotManager",
     "SCShareableContent",
     "SCStream",
+    "bitflags",
     "block2",
     "libc",
 ]

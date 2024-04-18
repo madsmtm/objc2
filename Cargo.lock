@@ -50,6 +50,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "bitflags"
+version = "2.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cf4b9d6a944f767f8e5e0db018570623c85f3d925ac718db4e06d0187adb21c1"
+
+[[package]]
 name = "block2"
 version = "0.5.0"
 dependencies = [
@@ -352,6 +358,7 @@ dependencies = [
 name = "objc2-accessibility"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-foundation",
@@ -386,6 +393,7 @@ dependencies = [
 name = "objc2-app-kit"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "libc",
  "objc2",
@@ -408,6 +416,7 @@ dependencies = [
 name = "objc2-authentication-services"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-app-kit",
@@ -418,6 +427,7 @@ dependencies = [
 name = "objc2-automatic-assessment-configuration"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "objc2",
  "objc2-foundation",
 ]
@@ -436,6 +446,7 @@ dependencies = [
 name = "objc2-av-kit"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-app-kit",
@@ -491,6 +502,7 @@ dependencies = [
 name = "objc2-cloud-kit"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-core-location",
@@ -520,6 +532,7 @@ dependencies = [
 name = "objc2-core-bluetooth"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "objc2",
  "objc2-foundation",
 ]
@@ -528,6 +541,7 @@ dependencies = [
 name = "objc2-core-data"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-foundation",
@@ -557,6 +571,7 @@ dependencies = [
 name = "objc2-core-ml"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-foundation",
@@ -567,6 +582,7 @@ dependencies = [
 name = "objc2-core-motion"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-core-location",
@@ -577,6 +593,7 @@ dependencies = [
 name = "objc2-core-wlan"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "objc2",
  "objc2-foundation",
 ]
@@ -606,6 +623,7 @@ version = "4.0.1"
 name = "objc2-event-kit"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-app-kit",
@@ -635,6 +653,7 @@ dependencies = [
 name = "objc2-external-accessory"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-foundation",
@@ -644,6 +663,7 @@ dependencies = [
 name = "objc2-file-provider"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-foundation",
@@ -665,6 +685,7 @@ dependencies = [
 name = "objc2-foundation"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "dispatch",
  "libc",
@@ -676,6 +697,7 @@ dependencies = [
 name = "objc2-game-controller"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-app-kit",
@@ -696,6 +718,7 @@ dependencies = [
 name = "objc2-health-kit"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-core-location",
@@ -765,6 +788,7 @@ dependencies = [
 name = "objc2-map-kit"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-app-kit",
@@ -777,6 +801,7 @@ dependencies = [
 name = "objc2-media-player"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-app-kit",
@@ -787,6 +812,7 @@ dependencies = [
 name = "objc2-metal"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-app-kit",
@@ -829,6 +855,7 @@ dependencies = [
 name = "objc2-ml-compute"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-foundation",
@@ -849,6 +876,7 @@ dependencies = [
 name = "objc2-natural-language"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-foundation",
@@ -876,6 +904,7 @@ dependencies = [
 name = "objc2-osa-kit"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "objc2",
  "objc2-app-kit",
  "objc2-foundation",
@@ -885,6 +914,7 @@ dependencies = [
 name = "objc2-photos"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-app-kit",
@@ -902,6 +932,7 @@ version = "0.1.1"
 name = "objc2-quartz-core"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-foundation",
@@ -912,6 +943,7 @@ dependencies = [
 name = "objc2-screen-capture-kit"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "libc",
  "objc2",
@@ -949,6 +981,7 @@ dependencies = [
 name = "objc2-store-kit"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-app-kit",
@@ -967,6 +1000,7 @@ dependencies = [
 name = "objc2-ui-kit"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-cloud-kit",
@@ -994,6 +1028,7 @@ dependencies = [
 name = "objc2-user-notifications"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-core-location",
@@ -1004,6 +1039,7 @@ dependencies = [
 name = "objc2-virtualization"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-app-kit",
@@ -1025,6 +1061,7 @@ dependencies = [
 name = "objc2-web-kit"
 version = "0.2.0"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-app-kit",

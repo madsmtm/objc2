@@ -258,6 +258,9 @@ impl fmt::Display for Expr {
             }
             Self::Enum { id, variant } => {
                 let pretty_name = enum_constant_name(&id.name, variant);
+                // Note: Even if we had the enum kind available here, we would
+                // not be able to avoid the `.0` here, as the expression must
+                // be `const`.
                 write!(f, "{}::{pretty_name}.0", id.name)
             }
             Self::Const(id) => write!(f, "{}", id.name),

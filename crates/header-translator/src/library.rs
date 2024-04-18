@@ -207,12 +207,14 @@ see that for related crates.", self.data.krate, self.link_name)?;
                 ]),
                 // Use a reasonably new version of libc
                 "libc" => InlineTable::from_iter([("version", Value::from("0.2.80"))]),
+                // Use a version of bitflags that supports `impl`
+                "bitflags" => InlineTable::from_iter([("version", Value::from("2.5.0"))]),
                 krate => InlineTable::from_iter([
                     ("path", Value::from(format!("../{krate}"))),
                     ("version", Value::from(VERSION)),
                 ]),
             };
-            if self.data.gnustep && *krate != "libc" {
+            if self.data.gnustep && *krate != "libc" && *krate != "bitflags" {
                 table.insert("default-features", Value::from(false));
             }
             if !required {

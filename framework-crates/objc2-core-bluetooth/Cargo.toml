@@ -22,6 +22,7 @@ workspace = true
 
 [dependencies]
 objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false, features = ["apple"] }
+bitflags = { version = "2.5.0", optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.0" }
 
 [package.metadata.docs.rs]
@@ -45,12 +46,14 @@ alloc = ["objc2/alloc"]
 
 # For better documentation on docs.rs
 unstable-docsrs = []
+bitflags = ["dep:bitflags"]
 
 CBATTRequest = ["objc2-foundation/NSData"]
 CBAdvertisementData = ["objc2-foundation/NSString"]
 CBAttribute = []
 CBCentral = ["objc2-foundation/NSObject"]
 CBCentralManager = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
@@ -60,6 +63,7 @@ CBCentralManager = [
 ]
 CBCentralManagerConstants = ["objc2-foundation/NSString"]
 CBCharacteristic = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
 ]
@@ -114,4 +118,5 @@ all = [
     "CBPeripheralManagerConstants",
     "CBService",
     "CBUUID",
+    "bitflags",
 ]

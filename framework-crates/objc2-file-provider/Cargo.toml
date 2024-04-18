@@ -22,6 +22,7 @@ workspace = true
 
 [dependencies]
 objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false, features = ["apple"] }
+bitflags = { version = "2.5.0", optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.0", optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.0" }
 objc2-uniform-type-identifiers = { path = "../objc2-uniform-type-identifiers", version = "0.2.0", optional = true }
@@ -44,6 +45,7 @@ alloc = ["objc2/alloc"]
 
 # For better documentation on docs.rs
 unstable-docsrs = []
+bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 
@@ -57,6 +59,7 @@ NSFileProviderActions = [
 ]
 NSFileProviderDefines = []
 NSFileProviderDomain = [
+    "bitflags",
     "objc2-foundation/NSData",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSObjCRuntime",
@@ -80,6 +83,7 @@ NSFileProviderExtension = [
     "objc2-foundation/NSURL",
 ]
 NSFileProviderItem = [
+    "bitflags",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSDictionary",
@@ -94,6 +98,7 @@ NSFileProviderItemDecoration = [
     "objc2-foundation/NSString",
 ]
 NSFileProviderManager = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
@@ -104,8 +109,9 @@ NSFileProviderManager = [
     "objc2-foundation/NSURL",
     "objc2-foundation/NSURLSession",
 ]
-NSFileProviderModifyItemOptions = []
+NSFileProviderModifyItemOptions = ["bitflags"]
 NSFileProviderReplicatedExtension = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
@@ -154,6 +160,7 @@ all = [
     "NSFileProviderService",
     "NSFileProviderTesting",
     "NSFileProviderThumbnailing",
+    "bitflags",
     "block2",
     "objc2-uniform-type-identifiers",
 ]

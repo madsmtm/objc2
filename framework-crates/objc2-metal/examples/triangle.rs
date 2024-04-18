@@ -90,11 +90,9 @@ declare_class!(
             // create the app window
             let window = {
                 let content_rect = NSRect::new(NSPoint::new(0., 0.), NSSize::new(768., 768.));
-                let style = NSWindowStyleMask(
-                    NSWindowStyleMask::Closable.0
-                        | NSWindowStyleMask::Resizable.0
-                        | NSWindowStyleMask::Titled.0,
-                );
+                let style = NSWindowStyleMask::Closable
+                    | NSWindowStyleMask::Resizable
+                    | NSWindowStyleMask::Titled;
                 let backing_store_type = NSBackingStoreType::NSBackingStoreBuffered;
                 let flag = false;
                 unsafe {
@@ -137,7 +135,10 @@ declare_class!(
 
             // compile the shaders
             let library = device
-                .newLibraryWithSource_options_error(ns_string!(include_str!("triangle.metal")), None)
+                .newLibraryWithSource_options_error(
+                    ns_string!(include_str!("triangle.metal")),
+                    None,
+                )
                 .expect("Failed to create a library.");
 
             // configure the vertex shader

@@ -22,6 +22,7 @@ workspace = true
 
 [dependencies]
 objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false, features = ["apple"] }
+bitflags = { version = "2.5.0", optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.0", optional = true }
 objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.0" }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.0" }
@@ -47,6 +48,7 @@ alloc = ["objc2/alloc"]
 
 # For better documentation on docs.rs
 unstable-docsrs = []
+bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 
 ASAccountAuthenticationModificationController = [
@@ -118,6 +120,7 @@ ASAuthorizationAppleIDRequest = [
     "objc2-foundation/NSString",
 ]
 ASAuthorizationController = [
+    "bitflags",
     "objc2-app-kit/NSResponder",
     "objc2-app-kit/NSWindow",
     "objc2-foundation/NSArray",
@@ -169,6 +172,7 @@ ASAuthorizationProviderExtensionAuthorizationResult = [
     "objc2-foundation/NSURLResponse",
 ]
 ASAuthorizationProviderExtensionLoginConfiguration = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
@@ -181,7 +185,10 @@ ASAuthorizationProviderExtensionLoginManager = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]
-ASAuthorizationProviderExtensionRegistrationHandler = ["objc2-foundation/NSString"]
+ASAuthorizationProviderExtensionRegistrationHandler = [
+    "bitflags",
+    "objc2-foundation/NSString",
+]
 ASAuthorizationProviderExtensionUserLoginConfiguration = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
@@ -280,6 +287,7 @@ ASAuthorizationWebBrowserSecurityKeyPublicKeyCredentialRegistrationRequest = []
 ASCOSEConstants = []
 ASCredentialIdentity = ["objc2-foundation/NSString"]
 ASCredentialIdentityStore = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
@@ -470,5 +478,6 @@ all = [
     "ASWebAuthenticationSessionRequest",
     "ASWebAuthenticationSessionWebBrowserSessionHandling",
     "ASWebAuthenticationSessionWebBrowserSessionManager",
+    "bitflags",
     "block2",
 ]
