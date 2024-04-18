@@ -15,7 +15,7 @@ pub use crate::encode::{Encode, Encoding, RefEncode};
 pub use crate::ffi::{NSInteger, NSIntegerMax, NSUInteger, NSUIntegerMax, IMP};
 pub use crate::mutability::{
     Immutable, ImmutableWithMutableSubclass, InteriorMutable, IsIdCloneable, IsMainThreadOnly,
-    MainThreadOnly, Mutable, MutableWithImmutableSuperclass,
+    IsRetainable, MainThreadOnly, Mutable, MutableWithImmutableSuperclass,
 };
 pub use crate::rc::{Allocated, DefaultId, Id};
 pub use crate::runtime::{

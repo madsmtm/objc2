@@ -2018,6 +2018,22 @@ impl Stmt {
                         }
                         write!(f, "IsMainThreadOnly")?;
                     }
+                    // HACK: Make all Metal protocols retainable (i.e. allow
+                    // using `.retain()` on `&ProtocolObject<dyn MTLDevice>`).
+                    //
+                    // This is a problem generally, but especially useful in
+                    // Metal, as most of the functionality is only exposed
+                    // through protocols (instead of concrete classes).
+                    //
+                    // This should become unnecessary after #563.
+                    if id.library_name() == "Metal" {
+                        if protocols.is_empty() {
+                            write!(f, ": ")?;
+                        } else {
+                            write!(f, "+ ")?;
+                        }
+                        write!(f, "IsRetainable")?;
+                    }
                     writeln!(f, " {{")?;
 
                     let required_items = self.required_items();

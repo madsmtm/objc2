@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   This means that they have the usual `ops::BitAnd`, `ops::BitOr`, `ops::Not`,
   etc. implementations that you would expect from an option enum.
+* Added optional support for a few methods depending on types from `libc`.
 * Added new framework crates:
   - `CoreBluetooth` / `objc2-core-bluetooth`.
   - `Virtualization` / `objc2-virtualization`.
@@ -40,12 +41,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `PhotosUI` / `objc2-photos-ui`.
   - `FinderSync` / `objc2-finder-sync`.
   - `Social` / `objc2-social`.
-* Added `objc2_quartz_core::CAMetalDrawable` and
-  `objc2_quartz_core::CAMetalLayer`.
-* Added methods to access `CALayer` from `objc2_app_kit::NSView`.
-* Added optional support for a few methods depending on types from `libc`.
-* Added `MTLCounterErrorValue`, `MTLCounterDontSample` and
-  `MTLTextureSwizzleChannelsDefault` Metal constants.
+* `objc2-quartz-core`: Added `CAMetalDrawable` and `CAMetalLayer`.
+* `objc2-app-kit`: Added methods to access `CALayer` from `NSView`.
+* `objc2-metal`: Added `MTLCounterErrorValue`, `MTLCounterDontSample` and
+  `MTLTextureSwizzleChannelsDefault` constants.
 
 ### Changed
 * Updated SDK from Xcode 15.3 to 15.4.
@@ -53,8 +52,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   View the release notes to learn more details:
   - [15.4](https://developer.apple.com/documentation/xcode-release-notes/xcode-15_4-release-notes)
 
+### Fixed
+* `objc2-metal`: All protocols are now marked as `IsRetainable`.
+
+  This may technically break your code if you had some custom object that
+  implements the protocol, but was marked with `Mutability = Mutable`, but
+  Metal protocols are assumed retainable by Objective-C code, so that'd have
+  been unsound anyway.
+
 ### Removed
-* `objc2_metal`: Removed internal `__MTLPackedFloat3` and made `MTLPackedFloat3` public.
+* `objc2-metal`: Removed internal `__MTLPackedFloat3` and made `MTLPackedFloat3` public.
 
 
 ## 0.2.0 - 2024-04-17
