@@ -10,11 +10,11 @@ bindgen = { version = "0.60", default-features = false, features = ["logging", "
 
 [dependencies]
 core-graphics-types = "0.1"
-cocoa = "0.24"
+cocoa = "0.25"
 core-graphics = "0.22"
 png = "0.17"
 metal = { path = "../../" }
-winit = "0.27"
+winit = "0.29"
 
 [dependencies.objc]
 version = "0.2.4"
