@@ -155,7 +155,11 @@ fn main() -> Result<(), BoxError> {
 
         // Recreate symlink to generated directory
         let symlink_path = crate_dir.join("src").join("generated");
-        fs::remove_file(&symlink_path)?;
+        match fs::remove_file(&symlink_path) {
+            Ok(()) => {}
+            Err(err) if err.kind() == ErrorKind::NotFound => {}
+            Err(err) => Err(err)?,
+        }
         #[cfg(unix)]
         let res =
             std::os::unix::fs::symlink(format!("../../../generated/{library_name}"), &symlink_path);
