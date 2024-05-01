@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::ops;
 use std::path::{Path, PathBuf};
 
@@ -13,7 +13,6 @@ pub struct Context<'a> {
     pub macro_invocations: HashMap<Location<'a>, Entity<'a>>,
     framework_dir: PathBuf,
     include_dir: PathBuf,
-    system_headers: HashSet<&'static Path>,
 }
 
 impl<'a> Context<'a> {
@@ -23,12 +22,6 @@ impl<'a> Context<'a> {
             macro_invocations: Default::default(),
             framework_dir: sdk.path.join("System/Library/Frameworks"),
             include_dir: sdk.path.join("usr/include"),
-            system_headers: HashSet::from([
-                Path::new("MacTypes.h"),
-                Path::new("objc/objc.h"),
-                Path::new("objc/NSObject.h"),
-                Path::new("objc/NSObjCRuntime.h"),
-            ]),
         }
     }
 
@@ -42,8 +35,11 @@ impl<'a> Context<'a> {
                 if let Ok(path) = path.strip_prefix(&self.framework_dir) {
                     return Some(split_path(path));
                 } else if let Ok(path) = path.strip_prefix(&self.include_dir) {
-                    if self.system_headers.contains(path) {
+                    if path.starts_with("objc") || path == Path::new("MacTypes.h") {
                         return Some(("System".to_string(), None));
+                    }
+                    if path.starts_with("sys") {
+                        return Some(("libc".to_string(), None));
                     }
                 }
             }

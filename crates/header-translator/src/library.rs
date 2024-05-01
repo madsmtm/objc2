@@ -200,15 +200,19 @@ see that for related crates.", self.data.krate, self.link_name)?;
             .collect();
 
         for (krate, required) in &dependencies {
-            let (path, version) = match *krate {
-                "block2" => ("../../crates/block2".to_string(), "0.5.0"),
-                krate => (format!("../{krate}"), VERSION),
+            let mut table = match *krate {
+                "block2" => InlineTable::from_iter([
+                    ("path", Value::from("../../crates/block2".to_string())),
+                    ("version", Value::from("0.5.0")),
+                ]),
+                // Use a reasonably new version of libc
+                "libc" => InlineTable::from_iter([("version", Value::from("0.2.80"))]),
+                krate => InlineTable::from_iter([
+                    ("path", Value::from(format!("../{krate}"))),
+                    ("version", Value::from(VERSION)),
+                ]),
             };
-            let mut table = InlineTable::from_iter([
-                ("path", Value::from(path)),
-                ("version", Value::from(version)),
-            ]);
-            if self.data.gnustep {
+            if self.data.gnustep && *krate != "libc" {
                 table.insert("default-features", Value::from(false));
             }
             if !required {

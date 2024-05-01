@@ -28,6 +28,16 @@ impl File {
         self.stmts.push(stmt);
     }
 
+    pub fn imports<'c>(&self, config: &'c Config) -> BTreeSet<&'c str> {
+        self.stmts
+            .iter()
+            .flat_map(|stmt| stmt.required_items_inner())
+            .filter(|item| item.location().library != self.library_name)
+            // Ignore crate imports for required items from unknown crates
+            .filter_map(|item| item.location().import(config))
+            .collect()
+    }
+
     pub fn crates<'c>(&self, config: &'c Config) -> BTreeSet<&'c str> {
         self.stmts
             .iter()
@@ -62,16 +72,16 @@ impl File {
 
             writeln!(f, "use objc2::__framework_prelude::*;")?;
 
-            let mut crates = self.crates(config);
+            let mut imports = self.imports(config);
             // TODO: Remove this once MainThreadMarker is moved to objc2
-            crates.extend(
+            imports.extend(
                 config.libraries[&self.library_name]
                     .required_dependencies
                     .iter()
                     .map(|krate| &**krate),
             );
 
-            for krate in crates {
+            for krate in imports {
                 let required = config.libraries[&self.library_name]
                     .required_dependencies
                     .contains(krate);

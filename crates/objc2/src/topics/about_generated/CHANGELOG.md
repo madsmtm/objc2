@@ -13,9 +13,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased - YYYY-MM-DD
 
 ### Added
+* Added `CoreBluetooth` framework as `objc2-core-bluetooth`.
+* Added `Virtualization` framework as `objc2-virtualization`.
 * Added `objc2_quartz_core::CAMetalDrawable` and
   `objc2_quartz_core::CAMetalLayer`.
 * Added methods to access `CALayer` from `objc2_app_kit::NSView`.
+* Added optional support for a few methods depending on types from `libc`.
 
 ### Removed
 * `objc2_metal`: Removed internal `__MTLPackedFloat3` and made `MTLPackedFloat3` public.

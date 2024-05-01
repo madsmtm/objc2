@@ -7,9 +7,6 @@ maccatalyst = "13.0"
 ios = "13.0"
 visionos = "1.0"
 
-# Needs `pid_t`
-class.MXMetaData.methods.pid.skipped = true
-
 # fails to strip const from `typedef const NSString *const MXLaunchTaskID;`
 typedef.MXLaunchTaskID.skipped = true
 

@@ -210,7 +210,6 @@ enum.anonymous.constants.NS_BigEndian.skipped = true
 class.NSAppleEventDescriptor.methods."descriptorWithDescriptorType:bytes:length:".skipped = true
 class.NSAppleEventDescriptor.methods."descriptorWithDescriptorType:data:".skipped = true
 class.NSAppleEventDescriptor.methods."appleEventWithEventClass:eventID:targetDescriptor:returnID:transactionID:".skipped = true
-class.NSAppleEventDescriptor.methods."descriptorWithProcessIdentifier:".skipped = true
 class.NSAppleEventDescriptor.methods."initWithAEDescNoCopy:".skipped = true
 class.NSAppleEventDescriptor.methods."initWithDescriptorType:bytes:length:".skipped = true
 class.NSAppleEventDescriptor.methods."initWithDescriptorType:data:".skipped = true
@@ -252,9 +251,6 @@ class.NSURLSessionConfiguration.methods."setTLSMinimumSupportedProtocolVersion:"
 class.NSURLSessionConfiguration.methods.TLSMaximumSupportedProtocolVersion.skipped = true
 class.NSURLSessionConfiguration.methods."setTLSMaximumSupportedProtocolVersion:".skipped = true
 class.NSXPCConnection.methods.auditSessionIdentifier.skipped = true
-class.NSXPCConnection.methods.processIdentifier.skipped = true
-class.NSXPCConnection.methods.effectiveUserIdentifier.skipped = true
-class.NSXPCConnection.methods.effectiveGroupIdentifier.skipped = true
 class.NSXPCInterface.methods."setXPCType:forSelector:argumentIndex:ofReply:".skipped = true
 class.NSXPCInterface.methods."XPCTypeForSelector:argumentIndex:ofReply:".skipped = true
 class.NSXPCCoder.methods."encodeXPCObject:forKey:".skipped = true

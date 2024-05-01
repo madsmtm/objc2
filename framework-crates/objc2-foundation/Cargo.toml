@@ -23,6 +23,7 @@ workspace = true
 [dependencies]
 objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false }
 block2 = { path = "../../crates/block2", version = "0.5.0", default-features = false, optional = true }
+libc = { version = "0.2.80", optional = true }
 dispatch = { version = "0.2.0", optional = true }
 
 [package.metadata.docs.rs]
@@ -57,6 +58,7 @@ gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1", "block2?/gnustep-2-1"]
 unstable-static-nsstring = []
 dispatch = ["dep:dispatch"]
 block2 = ["dep:block2"]
+libc = ["dep:libc"]
 
 FoundationErrors = []
 FoundationLegacySwiftCompatibility = []
@@ -394,6 +396,7 @@ all = [
     "NSXPCConnection",
     "NSZone",
     "block2",
+    "libc",
 ]
 
 [dev-dependencies]

@@ -368,6 +368,7 @@ name = "objc2-app-kit"
 version = "0.2.0"
 dependencies = [
  "block2",
+ "libc",
  "objc2",
  "objc2-core-data",
  "objc2-foundation",
@@ -606,6 +607,7 @@ version = "0.2.0"
 dependencies = [
  "block2",
  "dispatch",
+ "libc",
  "objc2",
  "static_assertions",
 ]
@@ -758,6 +760,7 @@ dependencies = [
 name = "objc2-metric-kit"
 version = "0.2.0"
 dependencies = [
+ "libc",
  "objc2",
  "objc2-foundation",
 ]
