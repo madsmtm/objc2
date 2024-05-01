@@ -2,8 +2,9 @@
 	.globl	_iter_create
 	.p2align	2
 _iter_create:
-	str	x0, [x8]
+	stp	xzr, xzr, [x8, #192]
 	movi.2d	v0, #0000000000000000
+	stp	q0, q0, [x8, #160]
 	stur	q0, [x8, #8]
 	stur	q0, [x8, #24]
 	stur	q0, [x8, #40]
@@ -12,11 +13,10 @@ _iter_create:
 	stur	q0, [x8, #88]
 	stur	q0, [x8, #104]
 	stur	q0, [x8, #120]
-	stur	q0, [x8, #136]
-	stur	q0, [x8, #152]
-	stur	q0, [x8, #168]
-	stur	q0, [x8, #184]
-	stur	q0, [x8, #200]
+	str	x0, [x8]
+	stp	xzr, xzr, [x8, #144]
+	str	xzr, [x8, #136]
+	str	xzr, [x8, #208]
 	ret
 
 	.globl	_iter_once

@@ -8,7 +8,9 @@ iter_create:
 	mov	eax, dword ptr [esp + 4]
 	mov	ecx, dword ptr [esp + 8]
 	xorps	xmm0, xmm0
-	mov	dword ptr [eax], ecx
+	movsd	qword ptr [eax + 88], xmm0
+	movsd	qword ptr [eax + 80], xmm0
+	mov	dword ptr [eax + 96], 0
 	movsd	qword ptr [eax + 4], xmm0
 	movsd	qword ptr [eax + 12], xmm0
 	movsd	qword ptr [eax + 20], xmm0
@@ -17,11 +19,12 @@ iter_create:
 	movsd	qword ptr [eax + 44], xmm0
 	movsd	qword ptr [eax + 52], xmm0
 	movsd	qword ptr [eax + 60], xmm0
-	movsd	qword ptr [eax + 68], xmm0
-	movsd	qword ptr [eax + 76], xmm0
-	movsd	qword ptr [eax + 84], xmm0
-	movsd	qword ptr [eax + 92], xmm0
-	movsd	qword ptr [eax + 100], xmm0
+	mov	dword ptr [eax], ecx
+	mov	dword ptr [eax + 68], 0
+	mov	dword ptr [eax + 72], 0
+	mov	dword ptr [eax + 76], 0
+	mov	dword ptr [eax + 100], 0
+	mov	dword ptr [eax + 104], 0
 	ret	4
 .Lfunc_end0:
 	.size	iter_create, .Lfunc_end0-iter_create
@@ -48,13 +51,13 @@ iter_once:
 	lea	eax, [edi + 4]
 	mov	ebp, dword ptr [edi]
 	mov	dword ptr [esp + 8], eax
+	lea	eax, [edi + 68]
+	mov	dword ptr [esp + 4], eax
 	mov	eax, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
 	mov	esi, dword ptr [eax]
 	test	esi, esi
 	je	.LBB1_2
 .LBB1_3:
-	lea	eax, [edi + 68]
-	mov	dword ptr [esp + 4], eax
 	sub	esp, 8
 	push	esi
 	push	ebp
@@ -134,11 +137,6 @@ iter:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp1-.L3$pb)
 	movsd	qword ptr [esp + 104], xmm0
 	movsd	qword ptr [esp + 96], xmm0
-	mov	edi, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
-	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
-	mov	dword ptr [esp + 12], ecx
-	xor	ecx, ecx
-	mov	dword ptr [esp + 16], ebp
 	movsd	qword ptr [esp + 20], xmm0
 	movsd	qword ptr [esp + 28], xmm0
 	movsd	qword ptr [esp + 36], xmm0
@@ -147,7 +145,13 @@ iter:
 	movsd	qword ptr [esp + 60], xmm0
 	movsd	qword ptr [esp + 68], xmm0
 	movsd	qword ptr [esp + 76], xmm0
-	movsd	qword ptr [esp + 84], xmm0
+	mov	edi, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
+	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
+	mov	dword ptr [esp + 12], ecx
+	xor	ecx, ecx
+	mov	dword ptr [esp + 16], ebp
+	mov	dword ptr [esp + 84], 0
+	mov	dword ptr [esp + 88], 0
 	mov	dword ptr [esp + 92], 0
 	mov	dword ptr [esp + 116], 0
 	mov	dword ptr [esp + 120], 0
@@ -219,7 +223,7 @@ iter_noop:
 	call	.L4$pb
 .L4$pb:
 	pop	ebx
-	mov	edi, dword ptr [esp + 144]
+	mov	ebp, dword ptr [esp + 144]
 	xorps	xmm0, xmm0
 	xor	eax, eax
 	mov	dword ptr [esp + 112], 0
@@ -227,11 +231,6 @@ iter_noop:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp2-.L4$pb)
 	movsd	qword ptr [esp + 104], xmm0
 	movsd	qword ptr [esp + 96], xmm0
-	mov	ebp, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
-	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
-	mov	dword ptr [esp + 12], ecx
-	xor	ecx, ecx
-	mov	dword ptr [esp + 16], edi
 	movsd	qword ptr [esp + 20], xmm0
 	movsd	qword ptr [esp + 28], xmm0
 	movsd	qword ptr [esp + 36], xmm0
@@ -240,7 +239,13 @@ iter_noop:
 	movsd	qword ptr [esp + 60], xmm0
 	movsd	qword ptr [esp + 68], xmm0
 	movsd	qword ptr [esp + 76], xmm0
-	movsd	qword ptr [esp + 84], xmm0
+	mov	edi, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
+	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
+	mov	dword ptr [esp + 12], ecx
+	xor	ecx, ecx
+	mov	dword ptr [esp + 16], ebp
+	mov	dword ptr [esp + 84], 0
+	mov	dword ptr [esp + 88], 0
 	mov	dword ptr [esp + 92], 0
 	mov	dword ptr [esp + 116], 0
 	mov	dword ptr [esp + 120], 0
@@ -252,13 +257,13 @@ iter_noop:
 .LBB4_1:
 	cmp	ecx, eax
 	jb	.LBB4_6
-	mov	esi, dword ptr [ebp]
+	mov	esi, dword ptr [edi]
 	test	esi, esi
 	je	.LBB4_3
 .LBB4_4:
 	sub	esp, 8
 	push	esi
-	push	edi
+	push	ebp
 	call	objc_msg_lookup@PLT
 	add	esp, 4
 	push	16
@@ -267,19 +272,19 @@ iter_noop:
 	lea	ecx, [esp + 104]
 	push	ecx
 	push	esi
-	push	edi
+	push	ebp
 	call	eax
 	add	esp, 32
 	test	eax, eax
 	mov	dword ptr [esp + 120], eax
 	je	.LBB4_7
-	mov	edi, dword ptr [esp + 16]
+	mov	ebp, dword ptr [esp + 16]
 	xor	ecx, ecx
 	jmp	.LBB4_6
 .LBB4_3:
 	sub	esp, 8
 	push	dword ptr [esp + 20]
-	push	ebp
+	push	edi
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)@PLT
 	add	esp, 16
 	mov	esi, eax
@@ -315,11 +320,6 @@ iter_retained:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp3-.L5$pb)
 	movsd	qword ptr [esp + 104], xmm0
 	movsd	qword ptr [esp + 96], xmm0
-	mov	edi, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
-	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
-	mov	dword ptr [esp + 12], ecx
-	xor	ecx, ecx
-	mov	dword ptr [esp + 16], ebp
 	movsd	qword ptr [esp + 20], xmm0
 	movsd	qword ptr [esp + 28], xmm0
 	movsd	qword ptr [esp + 36], xmm0
@@ -328,7 +328,13 @@ iter_retained:
 	movsd	qword ptr [esp + 60], xmm0
 	movsd	qword ptr [esp + 68], xmm0
 	movsd	qword ptr [esp + 76], xmm0
-	movsd	qword ptr [esp + 84], xmm0
+	mov	edi, dword ptr [ebx + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOT]
+	lea	ecx, [ebx + .Lanon.[ID].0@GOTOFF]
+	mov	dword ptr [esp + 12], ecx
+	xor	ecx, ecx
+	mov	dword ptr [esp + 16], ebp
+	mov	dword ptr [esp + 84], 0
+	mov	dword ptr [esp + 88], 0
 	mov	dword ptr [esp + 92], 0
 	mov	dword ptr [esp + 116], 0
 	mov	dword ptr [esp + 120], 0

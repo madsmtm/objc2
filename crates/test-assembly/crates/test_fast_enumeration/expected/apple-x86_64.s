@@ -5,16 +5,34 @@
 _iter_create:
 	push	rbp
 	mov	rbp, rsp
-	push	rbx
-	push	rax
-	mov	rbx, rdi
+	mov	rax, rdi
+	mov	qword ptr [rdi + 192], 0
+	mov	qword ptr [rdi + 184], 0
+	mov	qword ptr [rdi + 176], 0
+	mov	qword ptr [rdi + 168], 0
+	mov	qword ptr [rdi + 160], 0
+	mov	qword ptr [rdi + 8], 0
+	mov	qword ptr [rdi + 16], 0
+	mov	qword ptr [rdi + 24], 0
+	mov	qword ptr [rdi + 32], 0
+	mov	qword ptr [rdi + 40], 0
+	mov	qword ptr [rdi + 48], 0
+	mov	qword ptr [rdi + 56], 0
+	mov	qword ptr [rdi + 64], 0
+	mov	qword ptr [rdi + 72], 0
+	mov	qword ptr [rdi + 80], 0
+	mov	qword ptr [rdi + 88], 0
+	mov	qword ptr [rdi + 96], 0
+	mov	qword ptr [rdi + 104], 0
+	mov	qword ptr [rdi + 112], 0
+	mov	qword ptr [rdi + 120], 0
+	mov	qword ptr [rdi + 128], 0
 	mov	qword ptr [rdi], rsi
-	add	rdi, 8
-	mov	esi, 208
-	call	___bzero
-	mov	rax, rbx
-	add	rsp, 8
-	pop	rbx
+	mov	qword ptr [rdi + 152], 0
+	mov	qword ptr [rdi + 144], 0
+	mov	qword ptr [rdi + 136], 0
+	mov	qword ptr [rdi + 208], 0
+	mov	qword ptr [rdi + 200], 0
 	pop	rbp
 	ret
 
@@ -25,20 +43,20 @@ _iter_once:
 	mov	rbp, rsp
 	push	r15
 	push	r14
+	push	r12
 	push	rbx
-	push	rax
 	mov	rbx, rdi
 	mov	rax, qword ptr [rdi + 200]
 	cmp	rax, qword ptr [rdi + 208]
 	jb	LBB1_4
 	lea	rcx, [rbx + 8]
 	mov	rdi, qword ptr [rbx]
+	lea	rdx, [rbx + 136]
 	mov	rax, qword ptr [rip + SYM(objc2_foundation::generated::__NSEnumerator::NSFastEnumeration::countByEnumeratingWithState_objects_count::CACHED_SEL::GENERATED_ID, 0)@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 	test	rsi, rsi
 	je	LBB1_2
 LBB1_3:
-	lea	rdx, [rbx + 136]
 	mov	r8d, 16
 	call	_objc_msgSend
 	mov	rcx, rax
@@ -53,8 +71,8 @@ LBB1_4:
 	mov	qword ptr [rbx + 200], rdx
 	mov	rax, qword ptr [rcx + 8*rax]
 LBB1_5:
-	add	rsp, 8
 	pop	rbx
+	pop	r12
 	pop	r14
 	pop	r15
 	pop	rbp
@@ -65,8 +83,10 @@ LBB1_2:
 	mov	r14, rdi
 	mov	rdi, rax
 	mov	r15, rcx
+	mov	r12, rdx
 	call	SYM(objc2::__macro_helpers::cache::CachedSel::fetch::GENERATED_ID, 0)
 	mov	rdi, r14
+	mov	rdx, r12
 	mov	rcx, r15
 	mov	rsi, rax
 	jmp	LBB1_3

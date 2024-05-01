@@ -46,5 +46,5 @@ note: associated function defined here
 help: use the `?` operator to extract the `Option<Allocated<MyObject>>` value, propagating an `Option::None` value to the caller
  --> $WORKSPACE/crates/objc2/src/macros/__rewrite_self_param.rs
   |
-  |             ($this?)
-  |                   +
+  |         }?
+  |          +

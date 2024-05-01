@@ -9,3 +9,8 @@ error[E0505]: cannot move out of `ns_string` because it is borrowed
   |              ^^^^^^^^^ move out of `ns_string` occurs here
   |         println!("{}", s);
   |                        - borrow later used here
+  |
+help: consider cloning the value if the performance cost is acceptable
+  |
+8 |         let s = ns_string.clone().as_str(pool);
+  |                          ++++++++

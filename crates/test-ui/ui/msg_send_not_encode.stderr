@@ -24,14 +24,14 @@ error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
   |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Vec<u8>`, which is required by `(Vec<u8>,): ConvertArguments`
   |
   = help: the following other types implement trait `Encode`:
-            isize
-            i8
-            i16
-            i32
-            i64
-            usize
-            u8
-            u16
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
           and $N others
   = note: required for `Vec<u8>` to implement `EncodeArgument`
   = note: required for `Vec<u8>` to implement `ConvertArgument`
@@ -53,14 +53,14 @@ error[E0277]: the trait bound `(): Encode` is not satisfied
   |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `()`, which is required by `((),): ConvertArguments`
   |
   = help: the following other types implement trait `Encode`:
-            isize
-            i8
-            i16
-            i32
-            i64
-            usize
-            u8
-            u16
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
           and $N others
   = note: required for `()` to implement `EncodeArgument`
   = note: required for `()` to implement `ConvertArgument`

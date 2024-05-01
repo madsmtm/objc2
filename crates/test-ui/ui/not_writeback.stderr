@@ -25,14 +25,14 @@ error[E0277]: the trait bound `Id<NSObject>: Encode` is not satisfied
   |                          ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Id<NSObject>`, which is required by `(Id<NSObject>,): ConvertArguments`
   |
   = help: the following other types implement trait `Encode`:
-            isize
-            i8
-            i16
-            i32
-            i64
-            usize
-            u8
-            u16
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
           and $N others
   = note: required for `Id<NSObject>` to implement `EncodeArgument`
   = note: required for `Id<NSObject>` to implement `ConvertArgument`
@@ -54,14 +54,14 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `RefEncode` is not implemented for `Id<NSObject>`, which is required by `(&Id<NSObject>,): ConvertArguments`
   |
   = help: the following other types implement trait `RefEncode`:
-            isize
-            i8
-            i16
-            i32
-            i64
-            usize
-            u8
-            u16
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AnyClass
+            AnyObject
+            AnyProtocol
+            AtomicI16
           and $N others
   = note: required for `&Id<NSObject>` to implement `Encode`
   = note: required for `&Id<NSObject>` to implement `EncodeArgument`
@@ -84,14 +84,14 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `RefEncode` is not implemented for `Id<NSObject>`, which is required by `(Option<&Id<NSObject>>,): ConvertArguments`
   |
   = help: the following other types implement trait `RefEncode`:
-            isize
-            i8
-            i16
-            i32
-            i64
-            usize
-            u8
-            u16
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AnyClass
+            AnyObject
+            AnyProtocol
+            AtomicI16
           and $N others
   = note: required for `&Id<NSObject>` to implement `Encode`
   = note: 1 redundant requirement hidden
@@ -116,14 +116,14 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
   |                          ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `RefEncode` is not implemented for `Id<NSObject>`, which is required by `(*mut Id<NSObject>,): ConvertArguments`
   |
   = help: the following other types implement trait `RefEncode`:
-            isize
-            i8
-            i16
-            i32
-            i64
-            usize
-            u8
-            u16
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AnyClass
+            AnyObject
+            AnyProtocol
+            AtomicI16
           and $N others
   = note: required for `*mut Id<NSObject>` to implement `Encode`
   = note: required for `*mut Id<NSObject>` to implement `EncodeArgument`
@@ -146,14 +146,14 @@ error[E0277]: the trait bound `Id<NSObject>: RefEncode` is not satisfied
   |                          ^^^^^^^^^^^^^^^^^^^^^^^^ the trait `RefEncode` is not implemented for `Id<NSObject>`, which is required by `(&mut &mut Id<NSObject>,): ConvertArguments`
   |
   = help: the following other types implement trait `RefEncode`:
-            isize
-            i8
-            i16
-            i32
-            i64
-            usize
-            u8
-            u16
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AnyClass
+            AnyObject
+            AnyProtocol
+            AtomicI16
           and $N others
   = note: required for `&mut Id<NSObject>` to implement `RefEncode`
   = note: required for `&mut &mut Id<NSObject>` to implement `Encode`

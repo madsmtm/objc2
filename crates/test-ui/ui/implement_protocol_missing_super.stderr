@@ -5,14 +5,14 @@ error[E0277]: the trait bound `CustomObject: NSObjectProtocol` is not satisfied
   |                                          ^^^^^^^^^^^^ the trait `NSObjectProtocol` is not implemented for `CustomObject`
   |
   = help: the following other types implement trait `NSObjectProtocol`:
-            NSObject
-            __NSProxy
-            ProtocolObject<T>
+            NSArray<ObjectType>
+            NSConstantString
+            NSCountedSet<ObjectType>
+            NSDictionary<KeyType, ObjectType>
+            NSEnumerator<ObjectType>
             NSError
-            NSNotification
-            NSNotificationCenter
-            NSString
-            NSMutableString
+            NSMutableArray<ObjectType>
+            NSMutableDictionary<KeyType, ObjectType>
           and $N others
 note: required by a bound in `NSURLSessionDelegate`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSURLSession.rs

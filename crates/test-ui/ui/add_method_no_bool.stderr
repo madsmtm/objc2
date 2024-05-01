@@ -7,14 +7,14 @@ error[E0277]: the trait bound `bool: Encode` is not satisfied
   |             required by a bound introduced by this call
   |
   = help: the following other types implement trait `Encode`:
-            isize
-            i8
-            i16
-            i32
-            i64
-            usize
-            u8
-            u16
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
           and $N others
   = note: required for `bool` to implement `EncodeArgument`
   = note: required for `unsafe extern "C" fn(&NSObject, objc2::runtime::Sel, bool)` to implement `MethodImplementation`
@@ -36,14 +36,14 @@ error[E0277]: the trait bound `bool: Encode` is not satisfied
   |             required by a bound introduced by this call
   |
   = help: the following other types implement trait `Encode`:
-            isize
-            i8
-            i16
-            i32
-            i64
-            usize
-            u8
-            u16
+            &'a T
+            &'a mut T
+            *const T
+            *mut T
+            AtomicI16
+            AtomicI32
+            AtomicI64
+            AtomicI8
           and $N others
   = note: required for `bool` to implement `EncodeReturn`
   = note: required for `unsafe extern "C" fn(&NSObject, objc2::runtime::Sel) -> bool` to implement `MethodImplementation`

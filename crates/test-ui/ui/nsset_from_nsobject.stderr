@@ -8,8 +8,8 @@ error[E0277]: the trait bound `objc2::mutability::Root: objc2::mutability::Mutab
   |
   = help: the following other types implement trait `objc2::mutability::MutabilityHashIsStable`:
             objc2::mutability::Immutable
-            objc2::mutability::Mutable
             objc2::mutability::ImmutableWithMutableSubclass<MS>
+            objc2::mutability::Mutable
             objc2::mutability::MutableWithImmutableSuperclass<IS>
   = note: required for `NSObject` to implement `objc2::mutability::HasStableHash`
 note: required by a bound in `set::<impl NSSet<T>>::from_vec`

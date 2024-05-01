@@ -56,7 +56,7 @@ env:
   # END AUTOMATICALLY GENERATED
 
   # The current nightly Rust version. Keep this synced with `rust-toolchain.toml`
-  CURRENT_NIGHTLY: nightly-2024-03-13
+  CURRENT_NIGHTLY: nightly-2024-05-01
   # Various features that we'd usually want to test with
   #
   # Note: The `exception` feature is not enabled here, since it requires
@@ -190,7 +190,7 @@ jobs:
 
   ui:
     name: Compiler UI
-    runs-on: macos-latest
+    runs-on: macos-13
     needs:
     - fmt
     - lint

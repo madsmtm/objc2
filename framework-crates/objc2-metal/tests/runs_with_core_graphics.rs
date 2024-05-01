@@ -6,6 +6,7 @@ use objc2_metal::{MTLCopyAllDevices, MTLCreateSystemDefaultDevice};
 extern "C" {}
 
 #[test]
+#[ignore = "doesn't work in CI"]
 fn test_create_default() {
     let _ = unsafe { Id::from_raw(MTLCreateSystemDefaultDevice()).unwrap() };
 }

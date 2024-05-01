@@ -5,14 +5,14 @@ error[E0277]: the trait bound `i32: Message` is not satisfied
   |                               ^^^^^^^^^^^^^^ the trait `Message` is not implemented for `i32`
   |
   = help: the following other types implement trait `Message`:
-            Exception
-            NSObject
-            __NSProxy
-            ProtocolObject<P>
             AnyObject
+            Exception
+            NSArray<ObjectType>
+            NSConstantString
+            NSCountedSet<ObjectType>
+            NSDictionary<KeyType, ObjectType>
+            NSEnumerator<ObjectType>
             NSError
-            NSNotification
-            NSNotificationCenter
           and $N others
 note: required by a bound in `objc2_foundation::generated::__NSArray::<impl NSArray<ObjectType>>::new`
  --> $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs

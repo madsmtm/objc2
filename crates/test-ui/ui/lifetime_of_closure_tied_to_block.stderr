@@ -1,6 +1,8 @@
 error[E0597]: `x` does not live long enough
  --> ui/lifetime_of_closure_tied_to_block.rs
   |
+  |         let x = 2;
+  |             - binding `x` declared here
   |         RcBlock::new(|| x + 2)
   |                      -- ^ borrowed value does not live long enough
   |                      |
@@ -11,6 +13,8 @@ error[E0597]: `x` does not live long enough
 error[E0597]: `x` does not live long enough
   --> ui/lifetime_of_closure_tied_to_block.rs
    |
+   |         let x = 2;
+   |             - binding `x` declared here
    |         RcBlock::new(|| x + 2).clone()
    |         ----------------^-----
    |         |            |  |
@@ -30,6 +34,8 @@ help: consider adding semicolon after the expression so its temporaries are drop
 error[E0597]: `x` does not live long enough
  --> ui/lifetime_of_closure_tied_to_block.rs
   |
+  |         let x = 2;
+  |             - binding `x` declared here
   |         StackBlock::new(|| x + 2)
   |                         -- ^ borrowed value does not live long enough
   |                         |
@@ -40,6 +46,8 @@ error[E0597]: `x` does not live long enough
 error[E0597]: `x` does not live long enough
  --> ui/lifetime_of_closure_tied_to_block.rs
   |
+  |         let x = 2;
+  |             - binding `x` declared here
   |         StackBlock::new(|| x + 2).copy()
   |                         -- ^ borrowed value does not live long enough
   |                         |
