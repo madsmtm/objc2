@@ -26,7 +26,7 @@ pub fn get_text_2(pasteboard: &NSPasteboard) -> Option<Id<NSString>> {
     let string_class = {
         let cls: *const AnyClass = NSString::class();
         let cls = cls as *mut AnyObject;
-        unsafe { Id::from_raw(cls).unwrap() }
+        unsafe { Id::retain(cls).unwrap() }
     };
     let class_array = NSArray::from_vec(vec![string_class]);
     let objects = unsafe { pasteboard.readObjectsForClasses_options(&class_array, None) };
