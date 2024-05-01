@@ -361,6 +361,7 @@ dependencies = [
  "objc2",
  "objc2-core-data",
  "objc2-foundation",
+ "objc2-quartz-core",
 ]
 
 [[package]]

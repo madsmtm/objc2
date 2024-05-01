@@ -1006,17 +1006,12 @@ skipped = true
 [class.NSSavePanel.methods."setAllowedContentTypes:"]
 skipped = true
 [class.NSView.methods]
-layer = { skipped = true }
-"setLayer:" = { skipped = true }
 backgroundFilters = { skipped = true }
 "setBackgroundFilters:" = { skipped = true }
 compositingFilter = { skipped = true }
 "setCompositingFilter:" = { skipped = true }
 contentFilters = { skipped = true }
 "setContentFilters:" = { skipped = true }
-makeBackingLayer = { skipped = true }
-[class.NSObject.methods."layer:shouldInheritContentsScale:fromWindow:"]
-skipped = true
 [class.NSWorkspace.methods]
 "iconForContentType:" = { skipped = true }
 "URLForApplicationToOpenContentType:" = { skipped = true }
@@ -1035,8 +1030,6 @@ skipped = true
 "sharingService:didSaveShare:" = { skipped = true }
 "sharingService:didStopSharing:" = { skipped = true }
 [protocol.NSCloudSharingValidation]
-skipped = true
-[protocol.NSViewLayerContentScaleDelegate]
 skipped = true
 [class.NSCoreDataCoreSpotlightDelegate.methods]
 "attributeSetForObject:" = { skipped = true }

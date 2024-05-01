@@ -25,6 +25,7 @@ objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = fal
 block2 = { path = "../../crates/block2", version = "0.5.0", default-features = false, optional = true }
 objc2-core-data = { path = "../objc2-core-data", version = "0.2.0", default-features = false, optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.0", default-features = false }
+objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.0", default-features = false, optional = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -54,6 +55,7 @@ gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0", "block2?/gnustep-2-0", "objc2
 gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1", "block2?/gnustep-2-1", "objc2-foundation/gnustep-2-1", "objc2-core-data?/gnustep-2-1"]
 block2 = ["dep:block2"]
 objc2-core-data = ["dep:objc2-core-data"]
+objc2-quartz-core = ["dep:objc2-quartz-core"]
 
 AppKitDefines = []
 AppKitErrors = []
@@ -1699,6 +1701,7 @@ NSView = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
+    "objc2-quartz-core?/CALayer",
 ]
 NSViewController = [
     "objc2-foundation/NSArray",
@@ -2051,6 +2054,7 @@ all = [
     "NSWorkspace",
     "block2",
     "objc2-core-data",
+    "objc2-quartz-core",
 ]
 
 [[example]]
