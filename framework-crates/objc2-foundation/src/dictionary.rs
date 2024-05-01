@@ -210,12 +210,12 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     #[doc(alias = "getObjects:andKeys:")]
     pub fn keys_vec(&self) -> Vec<&K> {
         let len = self.len();
-        let mut keys: Vec<NonNull<K>> = Vec::with_capacity(len);
+        let mut keys = Vec::with_capacity(len);
         unsafe {
             #[allow(deprecated)]
             self.getObjects_andKeys(ptr::null_mut(), keys.as_mut_ptr());
             keys.set_len(len);
-            mem::transmute(keys)
+            mem::transmute::<Vec<NonNull<K>>, Vec<&K>>(keys)
         }
     }
 
@@ -224,12 +224,12 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
     #[doc(alias = "getObjects:andKeys:")]
     pub fn values_vec(&self) -> Vec<&V> {
         let len = self.len();
-        let mut vals: Vec<NonNull<V>> = Vec::with_capacity(len);
+        let mut vals = Vec::with_capacity(len);
         unsafe {
             #[allow(deprecated)]
             self.getObjects_andKeys(vals.as_mut_ptr(), ptr::null_mut());
             vals.set_len(len);
-            mem::transmute(vals)
+            mem::transmute::<Vec<NonNull<V>>, Vec<&V>>(vals)
         }
     }
 
@@ -256,26 +256,29 @@ impl<K: Message, V: Message> NSDictionary<K, V> {
         V: IsMutable,
     {
         let len = self.len();
-        let mut vals: Vec<NonNull<V>> = Vec::with_capacity(len);
+        let mut vals = Vec::with_capacity(len);
         unsafe {
             #[allow(deprecated)]
             self.getObjects_andKeys(vals.as_mut_ptr(), ptr::null_mut());
             vals.set_len(len);
-            mem::transmute(vals)
+            mem::transmute::<Vec<NonNull<V>>, Vec<&mut V>>(vals)
         }
     }
 
     #[doc(alias = "getObjects:andKeys:")]
     pub fn to_vecs(&self) -> (Vec<&K>, Vec<&V>) {
         let len = self.len();
-        let mut keys: Vec<NonNull<K>> = Vec::with_capacity(len);
-        let mut objs: Vec<NonNull<V>> = Vec::with_capacity(len);
+        let mut keys = Vec::with_capacity(len);
+        let mut objs = Vec::with_capacity(len);
         unsafe {
             #[allow(deprecated)]
             self.getObjects_andKeys(objs.as_mut_ptr(), keys.as_mut_ptr());
             keys.set_len(len);
             objs.set_len(len);
-            (mem::transmute(keys), mem::transmute(objs))
+            (
+                mem::transmute::<Vec<NonNull<K>>, Vec<&K>>(keys),
+                mem::transmute::<Vec<NonNull<V>>, Vec<&V>>(objs),
+            )
         }
     }
 

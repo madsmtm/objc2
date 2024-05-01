@@ -20,9 +20,9 @@ error[E0277]: `&mut Id<NSArray<NSMutableString>>` is not an iterator
   |
   = help: the trait `IntoIterator` is not implemented for `&mut Id<NSArray<NSMutableString>>`
   = help: the following other types implement trait `IntoIterator`:
-            Id<T>
             &'a Id<T>
             &'a mut Id<T>
+            Id<T>
   = note: `IntoIterator` is implemented for `&Id<NSArray<NSMutableString>>`, but not for `&mut Id<NSArray<NSMutableString>>`
 
 error[E0277]: `&mut Id<NSMutableArray<NSString>>` is not an iterator
@@ -47,6 +47,6 @@ error[E0277]: `Id<NSArray<NSMutableString>>` is not an iterator
   |
   = help: the trait `IntoIterator` is not implemented for `Id<NSArray<NSMutableString>>`
   = help: the following other types implement trait `IntoIterator`:
-            Id<T>
             &'a Id<T>
             &'a mut Id<T>
+            Id<T>

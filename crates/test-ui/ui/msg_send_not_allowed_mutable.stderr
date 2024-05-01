@@ -8,10 +8,10 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   |                          required by a bound introduced by this call
   |
   = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
-            Root
-            Mutable
             ImmutableWithMutableSubclass<MS>
+            Mutable
             MutableWithImmutableSuperclass<IS>
+            Root
   = note: required for `NSThread` to implement `IsAllowedMutable`
   = note: required for `&mut NSThread` to implement `MessageReceiver`
   = note: required for `&mut NSThread` to implement `MsgSend`
@@ -23,10 +23,10 @@ error[E0277]: the trait bound `InteriorMutable: mutability::MutabilityIsAllowedM
   |                                    ^^^^^^^^^^^^^^^^^^^^^^^ the trait `mutability::MutabilityIsAllowedMutable` is not implemented for `InteriorMutable`, which is required by `RetainSemantics<5>: MsgSendId<_, _>`
   |
   = help: the following other types implement trait `mutability::MutabilityIsAllowedMutable`:
-            Root
-            Mutable
             ImmutableWithMutableSubclass<MS>
+            Mutable
             MutableWithImmutableSuperclass<IS>
+            Root
   = note: required for `NSThread` to implement `IsAllowedMutable`
   = note: required for `&mut NSThread` to implement `MessageReceiver`
   = note: required for `&mut NSThread` to implement `MsgSend`

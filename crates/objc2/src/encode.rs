@@ -1027,7 +1027,7 @@ mod tests {
 
     #[test]
     fn test_arguments() {
-        assert!(<()>::ENCODINGS.is_empty());
+        assert_eq!(<()>::ENCODINGS, &[] as &[Encoding]);
         assert_eq!(<(i8,)>::ENCODINGS, &[i8::ENCODING]);
         assert_eq!(<(i8, u32)>::ENCODINGS, &[i8::ENCODING, u32::ENCODING]);
     }

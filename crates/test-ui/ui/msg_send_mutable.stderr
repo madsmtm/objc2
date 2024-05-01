@@ -9,3 +9,9 @@ error[E0382]: use of moved value: `obj`
   |     // Could be solved with a reborrow
   |     let _: () = unsafe { msg_send![obj, selector] };
   |                                    ^^^ value used here after move
+  |
+help: consider cloning the value if the performance cost is acceptable
+ --> $WORKSPACE/crates/objc2/src/macros/mod.rs
+  |
+  |         result = $crate::__macro_helpers::MsgSend::$fn::<_, _>($($fn_args)+, $crate::sel!($($selector)*), ($($argument,)*)).clone();
+  |                                                                                                                            ++++++++

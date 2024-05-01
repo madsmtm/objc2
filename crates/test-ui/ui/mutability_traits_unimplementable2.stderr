@@ -5,8 +5,8 @@ error[E0277]: the trait bound `CustomStruct: mutability::private_traits::Sealed`
   |                                           ^^^^^^^^^^^^ the trait `ClassType` is not implemented for `CustomStruct`, which is required by `CustomStruct: mutability::private_traits::Sealed`
   |
   = help: the following other types implement trait `mutability::private_traits::Sealed`:
-            ProtocolObject<P>
             AnyObject
+            ProtocolObject<P>
   = note: required for `CustomStruct` to implement `mutability::private_traits::Sealed`
 note: required by a bound in `IsIdCloneable`
  --> $WORKSPACE/crates/objc2/src/mutability.rs
@@ -26,8 +26,8 @@ error[E0277]: the trait bound `CustomStruct: IsAllowedMutable` is not satisfied
   |                                       ^^^^^^^^^^^^ the trait `ClassType` is not implemented for `CustomStruct`, which is required by `CustomStruct: IsAllowedMutable`
   |
   = help: the following other types implement trait `IsAllowedMutable`:
-            ProtocolObject<P>
             AnyObject
+            ProtocolObject<P>
   = note: required for `CustomStruct` to implement `IsAllowedMutable`
 note: required by a bound in `IsMutable`
  --> $WORKSPACE/crates/objc2/src/mutability.rs

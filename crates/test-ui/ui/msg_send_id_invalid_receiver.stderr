@@ -90,13 +90,13 @@ error[E0277]: the trait bound `Id<NSObject>: MessageReceiver` is not satisfied
   |                                    ^^^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Id<NSObject>`, which is required by `RetainSemantics<1>: MsgSendId<_, _>`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            NonNull<T>
+            &'a AnyClass
+            &'a T
+            &'a mut T
             *const AnyClass
             *const T
             *mut T
-            &'a T
-            &'a mut T
-            &'a AnyClass
+            NonNull<T>
   = note: required for `Id<NSObject>` to implement `MsgSend`
   = note: required for `RetainSemantics<1>` to implement `MsgSendId<Id<NSObject>, Option<Id<_>>>`
   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -108,13 +108,13 @@ error[E0277]: the trait bound `Id<NSObject>: MessageReceiver` is not satisfied
   |                                    ^^^^^^^^^^^^^^^^^^^^^^^ the trait `MessageReceiver` is not implemented for `Id<NSObject>`, which is required by `RetainSemantics<4>: MsgSendId<_, _>`
   |
   = help: the following other types implement trait `MessageReceiver`:
-            NonNull<T>
+            &'a AnyClass
+            &'a T
+            &'a mut T
             *const AnyClass
             *const T
             *mut T
-            &'a T
-            &'a mut T
-            &'a AnyClass
+            NonNull<T>
   = note: required for `Id<NSObject>` to implement `MsgSend`
   = note: required for `RetainSemantics<4>` to implement `MsgSendId<Id<NSObject>, Option<Id<_>>>`
   = note: this error originates in the macro `$crate::__msg_send_id_helper` which comes from the expansion of the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
