@@ -1,0 +1,15 @@
+framework = "Accessibility"
+crate = "objc2-accessibility"
+required-dependencies = ["objc2-foundation"]
+macos = "11.0"
+maccatalyst = "14.0"
+ios = "14.0"
+tvos = "14.0"
+watchos = "7.0"
+visionos = "1.0"
+
+# Needs `CGImageRef`
+class.AXBrailleMap.methods."presentImage:".skipped = true
+
+# Needs `CGColorRef`
+fn.AXNameFromColor.skipped = true

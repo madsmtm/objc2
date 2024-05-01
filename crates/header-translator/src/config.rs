@@ -4,47 +4,41 @@ use std::fmt;
 use std::fs;
 use std::path::Path;
 
+use heck::ToTrainCase;
 use semver::Version;
 use serde::Deserialize;
 
-use crate::data;
+use crate::id::Location;
 use crate::stmt::{Derives, Mutability};
+use crate::{data, ItemIdentifier};
 
-#[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Config {
-    #[serde(rename = "class")]
-    #[serde(default)]
-    pub class_data: HashMap<String, ClassData>,
-    #[serde(rename = "protocol")]
-    #[serde(default)]
-    pub protocol_data: HashMap<String, ProtocolData>,
-    #[serde(rename = "struct")]
-    #[serde(default)]
-    pub struct_data: HashMap<String, StructData>,
-    #[serde(rename = "enum")]
-    #[serde(default)]
-    pub enum_data: HashMap<String, EnumData>,
-    #[serde(rename = "fn")]
-    #[serde(default)]
-    pub fns: HashMap<String, FnData>,
-    #[serde(rename = "static")]
-    #[serde(default)]
-    pub statics: HashMap<String, StaticData>,
-    #[serde(rename = "typedef")]
-    #[serde(default)]
-    pub typedef_data: HashMap<String, TypedefData>,
-    #[serde(rename = "library")]
-    #[serde(default)]
-    pub libraries: BTreeMap<String, LibraryData>,
+    pub libraries: BTreeMap<String, LibraryConfig>,
+    pub system: LibraryConfig,
 }
 
 impl Config {
-    pub fn replace_protocol_name(&self, name: String) -> String {
-        self.protocol_data
-            .get(&name)
-            .and_then(|data| data.renamed.clone())
-            .unwrap_or(name)
+    pub fn library(&self, location: impl AsRef<Location>) -> &LibraryConfig {
+        let location = location.as_ref();
+        if location.library == "System" {
+            return &self.system;
+        }
+        self.libraries.get(&location.library).unwrap_or_else(|| {
+            error!("tried to get library config from {location:?}");
+            &self.system
+        })
+    }
+
+    pub fn replace_protocol_name(&self, id: ItemIdentifier) -> ItemIdentifier {
+        let library_config = self.library(&id);
+        id.map_name(|name| {
+            library_config
+                .protocol_data
+                .get(&name)
+                .and_then(|data| data.renamed.clone())
+                .unwrap_or(name)
+        })
     }
 }
 
@@ -84,7 +78,9 @@ fn get_version<'de, D: serde::Deserializer<'de>>(
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct LibraryData {
+pub struct LibraryConfig {
+    #[serde(rename = "framework")]
+    pub framework: String,
     #[serde(rename = "crate")]
     pub krate: String,
     /// Dependencies are optional by default, this can be used to make a
@@ -99,6 +95,7 @@ pub struct LibraryData {
     #[serde(rename = "custom-lib-rs")]
     #[serde(default)]
     pub custom_lib_rs: bool,
+
     #[serde(default)]
     #[serde(deserialize_with = "get_version")]
     pub macos: Option<Version>,
@@ -119,6 +116,28 @@ pub struct LibraryData {
     pub visionos: Option<Version>,
     #[serde(default)]
     pub gnustep: bool,
+
+    #[serde(rename = "class")]
+    #[serde(default)]
+    pub class_data: HashMap<String, ClassData>,
+    #[serde(rename = "protocol")]
+    #[serde(default)]
+    pub protocol_data: HashMap<String, ProtocolData>,
+    #[serde(rename = "struct")]
+    #[serde(default)]
+    pub struct_data: HashMap<String, StructData>,
+    #[serde(rename = "enum")]
+    #[serde(default)]
+    pub enum_data: HashMap<String, EnumData>,
+    #[serde(rename = "fn")]
+    #[serde(default)]
+    pub fns: HashMap<String, FnData>,
+    #[serde(rename = "static")]
+    #[serde(default)]
+    pub statics: HashMap<String, StaticData>,
+    #[serde(rename = "typedef")]
+    #[serde(default)]
+    pub typedef_data: HashMap<String, TypedefData>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
@@ -260,19 +279,22 @@ impl Default for MethodData {
     }
 }
 
-impl Config {
+impl LibraryConfig {
     pub fn from_file(file: &Path) -> Result<Self, Box<dyn Error>> {
         let s = fs::read_to_string(file)?;
 
         let mut config: Self = basic_toml::from_str(&s)?;
 
-        for (name, data) in &config.libraries {
-            assert_eq!(
-                name.to_lowercase(),
-                data.krate.replace("objc2-", "").replace('-', ""),
-                "crate name had an unexpected format",
-            );
-        }
+        assert_eq!(
+            config.framework.to_lowercase(),
+            config.krate.replace("objc2-", "").replace('-', ""),
+            "crate name had an unexpected format",
+        );
+        assert_eq!(
+            Some(&*config.framework.to_train_case().to_lowercase()),
+            config.krate.strip_prefix("objc2-"),
+            "crate name had an unexpected format",
+        );
 
         data::apply_tweaks(&mut config);
 

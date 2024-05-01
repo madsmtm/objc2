@@ -18,7 +18,9 @@ pub enum UnexposedAttr {
     Bridged,
     BridgedMutable,
 
+    /// `ns_returns_retained` / `cf_returns_retained` / `os_returns_retained`
     ReturnsRetained,
+    /// `ns_returns_not_retained` / `cf_returns_not_retained` / `os_returns_not_retained`
     ReturnsNotRetained,
 
     Sendable,

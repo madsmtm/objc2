@@ -286,13 +286,13 @@ impl AsRef<Self> for Location {
     }
 }
 
-impl AsRef<Self> for ItemIdentifier {
+impl<N> AsRef<Self> for ItemIdentifier<N> {
     fn as_ref(&self) -> &Self {
         self
     }
 }
 
-impl AsRef<Location> for ItemIdentifier {
+impl<N> AsRef<Location> for ItemIdentifier<N> {
     fn as_ref(&self) -> &Location {
         &self.location
     }

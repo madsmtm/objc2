@@ -1,0 +1,168 @@
+framework = "AppKit"
+crate = "objc2-app-kit"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
+macos = "10.0"
+maccatalyst = "13.0"
+gnustep = true
+
+# `objc_ownership` in .apinotes
+class.NSBundle.methods."loadNibNamed:owner:topLevelObjects:".skipped = true
+class.NSNib.methods."instantiateWithOwner:topLevelObjects:".skipped = true
+
+# Return type `oneway void`
+class.NSPasteboard.methods.releaseGlobally.skipped = true
+class.NSView.methods.releaseGState.skipped = true
+# + some more in IMServicePlugIn.framework
+
+# Uses `NS_SWIFT_UI_ACTOR` on a static, which is hard to support.
+#
+# Will have to be a method that takes `MainThreadMarker`.
+static.NSApp.skipped = true
+
+# These protocol impls would return the wrong types
+class.NSTextStorage.skipped-protocols = ["NSCopying", "NSMutableCopying"]
+
+# Typedef that uses a generic from a class
+typedef.NSCollectionViewDiffableDataSourceItemProvider.skipped = true
+class.NSCollectionViewDiffableDataSource.methods."initWithCollectionView:itemProvider:".skipped = true
+
+# Requires `MainThreadOnly`, which I'm not sure is a good idea here?
+class.NSCollectionViewDiffableDataSource.skipped-protocols = ["NSCollectionViewDataSource"]
+class.NSManagedObjectContext.skipped-protocols = ["NSEditor", "NSEditorRegistration"]
+
+# Most methods on these require MainThreadMarker anyhow
+protocol.NSDraggingInfo.requires-mainthreadonly = true
+protocol.NSBrowserDelegate.requires-mainthreadonly = true
+protocol.NSSplitViewDelegate.requires-mainthreadonly = true
+
+# Both protocols and classes
+protocol.NSTextAttachmentCell.renamed = "NSTextAttachmentCellProtocol"
+protocol.NSAccessibilityElement.renamed = "NSAccessibilityElementProtocol"
+
+# Both property and method
+class.NSDocument.methods."setDisplayName:".skipped = true
+
+# Wrong type for enum
+enum.anonymous.constants.NSOKButton.skipped = true
+enum.anonymous.constants.NSCancelButton.skipped = true
+enum.anonymous.constants.NSFileHandlingPanelCancelButton.skipped = true
+enum.anonymous.constants.NSFileHandlingPanelOKButton.skipped = true
+
+# These subclass a generic struct, and hence the type parameter defaults to
+# `AnyObject`, which is not PartialEq, Eq nor Hash.
+class.NSLayoutXAxisAnchor.derives = "Debug"
+class.NSLayoutYAxisAnchor.derives = "Debug"
+class.NSLayoutDimension.derives = "Debug"
+
+# Different definitions depending on target
+enum.NSImageResizingMode.skipped = true
+enum.NSTextAlignment.skipped = true
+
+# I'm unsure of the ABI of the array this takes
+fn.NSDrawBitmap.skipped = true
+class.NSView.methods."getRectsExposedDuringLiveResize:count:".skipped = true
+
+# Uses a pointer to SEL, which doesn't implement Encode yet
+protocol.NSMenuDelegate.methods."menuHasKeyEquivalent:forEvent:target:action:".skipped = true
+
+# Uses `CADisplayLink`, which is only available in CoreAnimation
+class.NSView.methods."displayLinkWithTarget:selector:".skipped = true
+class.NSWindow.methods."displayLinkWithTarget:selector:".skipped = true
+class.NSScreen.methods."displayLinkWithTarget:selector:".skipped = true
+
+# Duplicated method
+class.NSSlider.methods.isVertical.skipped = true
+class.NSSliderCell.methods.isVertical.skipped = true
+class.NSGestureRecognizer.methods.state.skipped = true
+
+# Needs `Symbols` framework
+class.NSImageView.categories.NSSymbolEffect.skipped = true
+
+# Defining categories on `CoreImage`
+class.CIImage.categories.NSAppKitAdditions.skipped = true
+class.CIColor.categories.NSAppKitAdditions.skipped = true
+
+# Needs CoreGraphics
+class.NSColor.methods.CGColor.skipped = true
+class.NSColor.methods."colorWithCGColor:".skipped = true
+class.NSColor.methods."colorWithCIColor:".skipped = true
+class.NSColorSpace.methods."initWithCGColorSpace:".skipped = true
+class.NSColorSpace.methods.CGColorSpace.skipped = true
+class.NSLayoutManager.methods."CGGlyphAtIndex:isValidIndex:".skipped = true
+class.NSLayoutManager.methods."CGGlyphAtIndex:".skipped = true
+class.NSLayoutManager.methods."showCGGlyphs:positions:count:font:textMatrix:attributes:inContext:".skipped = true
+class.NSLayoutManager.methods."showCGGlyphs:positions:count:font:matrix:attributes:inContext:".skipped = true
+class.NSImage.methods."initWithCGImage:size:".skipped = true
+class.NSImage.methods."CGImageForProposedRect:context:hints:".skipped = true
+class.NSImage.methods."initWithIconRef:".skipped = true
+class.NSImageRep.methods."CGImageForProposedRect:context:hints:".skipped = true
+class.NSBitmapImageRep.methods."initWithCGImage:".skipped = true
+class.NSBitmapImageRep.methods."initWithCIImage:".skipped = true
+class.NSBitmapImageRep.methods.CGImage.skipped = true
+class.NSEvent.methods.CGEvent.skipped = true
+class.NSEvent.methods."eventWithCGEvent:".skipped = true
+class.NSBezierPath.methods."appendBezierPathWithCGGlyph:inFont:".skipped = true
+class.NSBezierPath.methods."appendBezierPathWithCGGlyphs:count:inFont:".skipped = true
+class.NSBezierPath.methods."bezierPathWithCGPath:".skipped = true
+class.NSBezierPath.methods.CGPath.skipped = true
+class.NSBezierPath.methods."setCGPath:".skipped = true
+class.NSFont.methods."boundingRectForCGGlyph:".skipped = true
+class.NSFont.methods."advancementForCGGlyph:".skipped = true
+class.NSFont.methods."getBoundingRects:forCGGlyphs:count:".skipped = true
+class.NSFont.methods."getAdvancements:forCGGlyphs:count:".skipped = true
+class.NSGlyphInfo.methods."glyphInfoWithCGGlyph:forFont:baseString:".skipped = true
+class.NSGraphicsContext.methods."graphicsContextWithCGContext:flipped:".skipped = true
+class.NSGraphicsContext.methods.CGContext.skipped = true
+
+# OpenGL
+class.NSOpenGLContext.skipped = true
+class.NSOpenGLLayer.skipped = true
+class.NSOpenGLPixelFormat.skipped = true
+class.NSOpenGLPixelBuffer.skipped = true
+class.NSOpenGLView.skipped = true
+fn.NSOpenGLSetOption.skipped = true
+fn.NSOpenGLGetOption.skipped = true
+fn.NSOpenGLGetVersion.skipped = true
+
+# Uses `CKShare` from CloudKit
+protocol.NSCloudSharingValidation.skipped = true
+protocol.NSCloudSharingServiceDelegate.methods."sharingService:didSaveShare:".skipped = true
+protocol.NSCloudSharingServiceDelegate.methods."sharingService:didStopSharing:".skipped = true
+
+# Uses stuff from different frameworks / system libraries
+class.NSAnimationContext.methods.timingFunction.skipped = true
+class.NSAnimationContext.methods."setTimingFunction:".skipped = true
+class.NSLayoutManager.methods."setGlyphs:properties:characterIndexes:font:forGlyphRange:".skipped = true
+class.NSLayoutManager.methods."getGlyphsInRange:glyphs:properties:characterIndexes:bidiLevels:".skipped = true
+class.NSLayoutManager.methods."glyphIndexForPoint:inTextContainer:fractionOfDistanceThroughGlyph:".skipped = true
+class.NSLayoutManagerDelegate.methods."layoutManager:shouldGenerateGlyphs:properties:characterIndexes:font:forGlyphRange:".skipped = true
+class.NSMovie.methods."initWithMovie:".skipped = true
+class.NSMovie.methods.QTMovie.skipped = true
+class.NSTextLayoutFragment.methods."drawAtPoint:inContext:".skipped = true
+class.NSTextLineFragment.methods."drawAtPoint:inContext:".skipped = true
+class.NSTextView.methods."quickLookPreviewableItemsInRanges:".skipped = true
+class.NSRunningApplication.methods.processIdentifier.skipped = true
+class.NSRunningApplication.methods."runningApplicationWithProcessIdentifier:".skipped = true
+class.NSSavePanel.methods.allowedContentTypes.skipped = true
+class.NSSavePanel.methods."setAllowedContentTypes:".skipped = true
+class.NSView.methods.backgroundFilters.skipped = true
+class.NSView.methods."setBackgroundFilters:".skipped = true
+class.NSView.methods.compositingFilter.skipped = true
+class.NSView.methods."setCompositingFilter:".skipped = true
+class.NSView.methods.contentFilters.skipped = true
+class.NSView.methods."setContentFilters:".skipped = true
+class.NSWorkspace.methods."iconForContentType:".skipped = true
+class.NSWorkspace.methods."URLForApplicationToOpenContentType:".skipped = true
+class.NSWorkspace.methods."URLsForApplicationsToOpenContentType:".skipped = true
+class.NSWorkspace.methods."setDefaultApplicationAtURL:toOpenContentType:completionHandler:".skipped = true
+class.NSWorkspaceOpenConfiguration.methods.architecture.skipped = true
+class.NSWorkspaceOpenConfiguration.methods."setArchitecture:".skipped = true
+protocol.NSApplicationDelegate.methods."application:handlerForIntent:".skipped = true
+protocol.NSApplicationDelegate.methods."application:userDidAcceptCloudKitShareWithMetadata:".skipped = true
+protocol.NSLayoutManagerDelegate.methods."layoutManager:shouldGenerateGlyphs:properties:characterIndexes:font:forGlyphRange:".skipped = true
+class.NSCIImageRep.skipped = true
+class.NSGraphicsContext.methods.CIContext.skipped = true
+class.NSItemProvider.methods."registerCloudKitShareWithPreparationHandler:".skipped = true
+class.NSItemProvider.methods."registerCloudKitShare:container:".skipped = true
+class.NSGlyphInfo.methods.glyphID.skipped = true

@@ -1,0 +1,36 @@
+framework = "Photos"
+crate = "objc2-photos"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
+macos = "10.11"
+maccatalyst = "13.0"
+ios = "8.0"
+tvos = "10.0"
+watchos = "9.0"
+visionos = "1.0"
+
+# Needs `CGImagePropertyOrientation` from `ImageIO`
+class.PHLivePhotoEditingContext.methods.orientation.skipped = true
+class.PHImageManager.methods."requestImageDataAndOrientationForAsset:options:resultHandler:".skipped = true
+# Needs `UIImageOrientation` from `UIKit`
+class.PHImageManager.methods."requestImageDataForAsset:options:resultHandler:".skipped = true
+# Needs `CMTime` from `CoreMedia`
+class.PHLivePhotoEditingContext.methods.duration.skipped = true
+class.PHLivePhotoEditingContext.methods.photoTime.skipped = true
+protocol.PHLivePhotoFrame.methods.time.skipped = true
+# Needs `CIImage` from `CoreImage`
+typedef.PHLivePhotoFrameProcessingBlock.skipped = true
+class.PHLivePhotoEditingContext.methods.fullSizeImage.skipped = true
+class.PHLivePhotoEditingContext.methods.frameProcessor.skipped = true
+class.PHLivePhotoEditingContext.methods."setFrameProcessor:".skipped = true
+protocol.PHLivePhotoFrame.methods.image.skipped = true
+# Needs `dispatch_block_t`
+class.PHPhotoLibrary.methods."performChanges:completionHandler:".skipped = true
+class.PHPhotoLibrary.methods."performChangesAndWait:error:".skipped = true
+
+# Needs `AVFoundation` framework
+class.PHContentEditingInput.methods.avAsset.skipped = true
+class.PHContentEditingInput.methods.audiovisualAsset.skipped = true
+class.PHImageManager.methods."requestPlayerItemForVideo:options:resultHandler:".skipped = true
+class.PHImageManager.methods."requestExportSessionForVideo:options:exportPreset:resultHandler:".skipped = true
+class.PHImageManager.methods."requestAVAssetForVideo:options:resultHandler:".skipped = true

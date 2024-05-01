@@ -18,7 +18,7 @@ data! {
     mod ClassKit;
     mod CloudKit;
     mod Contacts;
-    mod CoreAnimation;
+    mod QuartzCore;
     mod CoreData;
     mod CoreLocation;
     mod CoreWLAN;
@@ -47,7 +47,7 @@ data! {
     mod MetalKit;
     mod MetricKit;
     mod OSAKit;
-    mod PhotoKit;
+    mod Photos;
     mod ServiceManagement;
     mod SoundAnalysis;
     mod Speech;

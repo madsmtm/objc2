@@ -1,0 +1,43 @@
+framework = "MapKit"
+crate = "objc2-map-kit"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
+macos = "10.9"
+maccatalyst = "13.0"
+ios = "3.0"
+tvos = "9.2"
+watchos = "2.0"
+visionos = "1.0"
+
+# Needs `CGRectEdge`
+fn.MKMapRectDivide.skipped = true
+
+# Needs `CGContextRef`
+class.MKOverlayRenderer.methods."drawMapRect:zoomScale:inContext:".skipped = true
+
+# Needs `CGBlendMode`
+class.MKOverlayRenderer.methods.blendMode.skipped = true
+class.MKOverlayRenderer.methods."setBlendMode:".skipped = true
+
+# Needs `dispatch_queue_t`
+class.MKMapSnapshotter.methods."startWithQueue:completionHandler:".skipped = true
+
+# Needs `CGLineJoin`
+class.MKOverlayPathRenderer.methods.lineJoin.skipped = true
+class.MKOverlayPathRenderer.methods."setLineJoin:".skipped = true
+
+# Needs `CGLineCap`
+class.MKOverlayPathRenderer.methods.lineCap.skipped = true
+class.MKOverlayPathRenderer.methods."setLineCap:".skipped = true
+
+# Needs `CGPathRef`
+class.MKOverlayPathRenderer.methods.path.skipped = true
+class.MKOverlayPathRenderer.methods."setPath:".skipped = true
+
+# Needs `CGContextRef`
+class.MKOverlayPathRenderer.methods."applyStrokePropertiesToContext:atZoomScale:".skipped = true
+class.MKOverlayPathRenderer.methods."applyFillPropertiesToContext:atZoomScale:".skipped = true
+
+# Needs `CGPathRef` and `CGContextRef`
+class.MKOverlayPathRenderer.methods."strokePath:inContext:".skipped = true
+class.MKOverlayPathRenderer.methods."fillPath:inContext:".skipped = true

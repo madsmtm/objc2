@@ -9,7 +9,7 @@ use std::path::Path;
 use toml_edit::InlineTable;
 use toml_edit::{value, Array, DocumentMut, Formatted, Item, Table, Value};
 
-use crate::config::LibraryData;
+use crate::config::LibraryConfig;
 use crate::display_helper::FormatterFn;
 use crate::file::clean_name;
 use crate::file::File;
@@ -22,11 +22,11 @@ use crate::VERSION;
 pub struct Library {
     pub files: BTreeMap<String, File>,
     link_name: String,
-    pub data: LibraryData,
+    pub data: LibraryConfig,
 }
 
 impl Library {
-    pub fn new(name: &str, data: &LibraryData) -> Self {
+    pub fn new(name: &str, data: &LibraryConfig) -> Self {
         Self {
             files: BTreeMap::new(),
             link_name: name.to_string(),

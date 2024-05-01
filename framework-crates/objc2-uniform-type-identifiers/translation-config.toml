@@ -1,0 +1,9 @@
+framework = "UniformTypeIdentifiers"
+crate = "objc2-uniform-type-identifiers"
+required-dependencies = ["objc2-foundation"]
+macos = "11.0"
+maccatalyst = "14.0"
+ios = "14.0"
+tvos = "14.0"
+watchos = "7.0"
+visionos = "1.0"

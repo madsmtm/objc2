@@ -1,0 +1,9 @@
+framework = "OSAKit"
+crate = "objc2-osa-kit"
+required-dependencies = ["objc2-app-kit", "objc2-foundation"]
+macos = "10.4"
+
+# Needs `Component` from Core Services / Carbon Core / Component Manager
+class.OSALanguage.methods."initWithComponent:".skipped = true
+class.OSALanguage.methods.componentInstance.skipped = true
+class.OSALanguageInstance.methods.componentInstance.skipped = true

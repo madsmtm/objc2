@@ -1,0 +1,8 @@
+framework = "Automator"
+crate = "objc2-automator"
+required-dependencies = ["objc2-foundation"]
+macos = "10.4"
+maccatalyst = "14.0"
+
+# error: translator assertion failure: invalid error nullability (left: Unspecified) (Right: Nullable)
+class.AMWorkspace.methods."runWorkflowAtPath:withInput:error:".skipped = true

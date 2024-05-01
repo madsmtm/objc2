@@ -1,0 +1,18 @@
+framework = "ServiceManagement"
+crate = "objc2-service-management"
+required-dependencies = ["objc2-foundation"]
+macos = "10.6"
+maccatalyst = "13.0"
+
+# Items from ServiceManagement that uses types from CoreFoundation
+fn.SMJobBless.skipped = true
+fn.SMLoginItemSetEnabled.skipped = true
+static.kSMDomainSystemLaunchd.skipped = true
+static.kSMDomainUserLaunchd.skipped = true
+static.kSMErrorDomainFramework.skipped = true
+static.kSMErrorDomainIPC.skipped = true
+static.kSMErrorDomainLaunchd.skipped = true
+fn.SMCopyAllJobDictionaries.skipped = true
+fn.SMJobCopyDictionary.skipped = true
+fn.SMJobRemove.skipped = true
+fn.SMJobSubmit.skipped = true

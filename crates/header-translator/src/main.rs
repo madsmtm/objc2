@@ -14,7 +14,7 @@ use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 
 use header_translator::{
-    global_analysis, run_cargo_fmt, Config, Context, File, Library, LibraryData, Stmt,
+    global_analysis, run_cargo_fmt, Config, Context, File, Library, LibraryConfig, Stmt,
 };
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
@@ -47,7 +47,7 @@ fn main() -> Result<(), BoxError> {
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
     let workspace_dir = manifest_dir.parent().unwrap().parent().unwrap();
 
-    let config = load_config(manifest_dir);
+    let config = load_config(workspace_dir)?;
 
     clang_sys::load()?;
     info!(clang_version = clang::get_version());
@@ -188,10 +188,30 @@ fn main() -> Result<(), BoxError> {
     Ok(())
 }
 
-fn load_config(manifest_dir: &Path) -> Config {
-    let _span = info_span!("loading config").entered();
+fn load_config(workspace_dir: &Path) -> Result<Config, BoxError> {
+    let _span = info_span!("loading configs").entered();
 
-    Config::from_file(&manifest_dir.join("translation-config.toml")).expect("read config")
+    let mut libraries = BTreeMap::default();
+
+    for dir in fs::read_dir(workspace_dir.join("framework-crates"))? {
+        let dir = dir?;
+        if !dir.file_type()?.is_dir() {
+            continue;
+        }
+        let path = dir.path().join("translation-config.toml");
+        let config =
+            LibraryConfig::from_file(&path).unwrap_or_else(|e| panic!("read {path:?} config: {e}"));
+        assert_eq!(*config.krate, *dir.file_name());
+        libraries.insert(config.framework.to_string(), config);
+    }
+
+    let path = workspace_dir
+        .join("crates")
+        .join("header-translator")
+        .join("system-config.toml");
+    let system = LibraryConfig::from_file(&path).expect("read system config");
+
+    Ok(Config { libraries, system })
 }
 
 fn parse_sdk(
@@ -386,7 +406,7 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
         mut ci: impl Write,
         config: &Config,
         env_name: &str,
-        check: impl Fn(&LibraryData) -> bool,
+        check: impl Fn(&LibraryConfig) -> bool,
     ) -> io::Result<()> {
         // Use a BTreeSet to sort the libraries
         let mut frameworks = BTreeSet::new();

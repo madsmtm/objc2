@@ -1,0 +1,22 @@
+framework = "LocalAuthentication"
+crate = "objc2-local-authentication"
+required-dependencies = ["objc2-foundation"]
+macos = "10.10"
+maccatalyst = "13.0"
+ios = "8.0"
+watchos = "9.0"
+visionos = "1.0"
+
+# Needs `SecAccessControlRef` from Security
+class.LAContext.methods."evaluateAccessControl:operation:localizedReason:reply:".skipped = true
+# Needs `SecKeyAlgorithm` from Security
+class.LAPrivateKey.methods."canDecryptUsingSecKeyAlgorithm:".skipped = true
+class.LAPrivateKey.methods."canExchangeKeysUsingSecKeyAlgorithm:".skipped = true
+class.LAPrivateKey.methods."canSignUsingSecKeyAlgorithm:".skipped = true
+class.LAPrivateKey.methods."exchangeKeysWithPublicKey:secKeyAlgorithm:secKeyParameters:completion:".skipped = true
+class.LAPrivateKey.methods."decryptData:secKeyAlgorithm:completion:".skipped = true
+class.LAPrivateKey.methods."signData:secKeyAlgorithm:completion:".skipped = true
+class.LAPublicKey.methods."canEncryptUsingSecKeyAlgorithm:".skipped = true
+class.LAPublicKey.methods."canVerifyUsingSecKeyAlgorithm:".skipped = true
+class.LAPublicKey.methods."encryptData:secKeyAlgorithm:completion:".skipped = true
+class.LAPublicKey.methods."verifyData:signature:secKeyAlgorithm:completion:".skipped = true

@@ -616,7 +616,7 @@ impl Ty {
                             .get_definition()
                             .expect("objc protocol declaration definition");
                         let mut decl = ItemRef::new(&definition, context);
-                        decl.id.name = context.replace_protocol_name(decl.id.name);
+                        decl.id = context.replace_protocol_name(decl.id);
                         decl
                     })
                     .collect();

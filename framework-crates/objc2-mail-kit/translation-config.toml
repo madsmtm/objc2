@@ -1,0 +1,4 @@
+framework = "MailKit"
+crate = "objc2-mail-kit"
+required-dependencies = ["objc2-foundation"]
+macos = "12.0"

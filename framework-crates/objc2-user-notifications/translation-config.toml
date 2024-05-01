@@ -1,0 +1,9 @@
+framework = "UserNotifications"
+crate = "objc2-user-notifications"
+required-dependencies = ["objc2-foundation"]
+macos = "10.14"
+maccatalyst = "13.0"
+ios = "10.0"
+tvos = "10.0"
+watchos = "3.0"
+visionos = "1.0"

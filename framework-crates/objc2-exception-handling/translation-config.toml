@@ -1,0 +1,5 @@
+framework = "ExceptionHandling"
+crate = "objc2-exception-handling"
+required-dependencies = ["objc2-foundation"]
+macos = "10.0"
+maccatalyst = "13.0"

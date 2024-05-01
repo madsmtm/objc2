@@ -1,0 +1,44 @@
+framework = "Metal"
+crate = "objc2-metal"
+required-dependencies = ["objc2-foundation"]
+custom-lib-rs = true
+macos = "10.11"
+maccatalyst = "13.0"
+ios = "8.0"
+tvos = "9.0"
+visionos = "1.0"
+
+# Uses `SomeObject * __strong *`, which is unsupported
+fn.MTLCopyAllDevicesWithObserver.skipped = true
+
+# Uses `__autoreleasing` in a typedef, which I'm unsure how to handle
+typedef.MTLAutoreleasedArgument.skipped = true
+protocol.MTLFunction.methods."newArgumentEncoderWithBufferIndex:reflection:".skipped = true
+typedef.MTLAutoreleasedRenderPipelineReflection.skipped = true
+typedef.MTLAutoreleasedComputePipelineReflection.skipped = true
+protocol.MTLDevice.methods."newRenderPipelineStateWithDescriptor:options:reflection:error:".skipped = true
+protocol.MTLDevice.methods."newComputePipelineStateWithFunction:options:reflection:error:".skipped = true
+protocol.MTLDevice.methods."newComputePipelineStateWithDescriptor:options:reflection:error:".skipped = true
+protocol.MTLDevice.methods."newRenderPipelineStateWithTileDescriptor:options:reflection:error:".skipped = true
+protocol.MTLDevice.methods."newRenderPipelineStateWithMeshDescriptor:options:reflection:error:".skipped = true
+
+# Duplicated property
+class.MTLRasterizationRateLayerDescriptor.methods.sampleCount.skipped = true
+class.MTLRasterizationRateLayerDescriptor.methods."setSampleCount:".skipped = true
+
+# Needs dispatch
+class.MTLSharedEventListener.methods."initWithDispatchQueue:".skipped = true
+class.MTLSharedEventListener.methods.dispatchQueue.skipped = true
+protocol.MTLDevice.methods."newLibraryWithData:error:".skipped = true
+
+# Needs IOSurfaceRef
+protocol.MTLDevice.methods."newTextureWithDescriptor:iosurface:plane:".skipped = true
+protocol.MTLTexture.methods.iosurface.skipped = true
+
+# Needs mach / kernel types
+protocol.MTLResource.methods."setOwnerWithIdentity:".skipped = true
+
+# Uses unions internally
+struct._MTLPackedFloat3.skipped = true
+typedef.MTLPackedFloat3.skipped = true
+fn.MTLPackedFloat3Make.skipped = true

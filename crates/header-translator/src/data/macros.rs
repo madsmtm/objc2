@@ -2,45 +2,31 @@
 macro_rules! data {
     // Parse module declarations
     (
-        @($($parsed_module:ident)*)
-
-        mod $module:ident;
-
-        $($rest:tt)*
-    ) => {
-        data! {
-            @($($parsed_module)* $module)
-
-            $($rest)*
-        }
-    };
-    (
-        @($($module:ident)*)
-
-        $($rest:tt)*
+        $(
+            mod $module:ident;
+        )+
     ) => {
         $(
             #[allow(non_snake_case)]
             mod $module;
-        )*
+        )+
 
         #[allow(unused_variables)]
-        pub(crate) fn apply_tweaks(config: &mut $crate::config::Config) {
+        pub(crate) fn apply_tweaks(data: &mut $crate::config::LibraryConfig) {
             $(
-                $module::apply_tweaks(config);
-            )*
-
+                if data.framework == stringify!($module) {
+                    $module::apply_tweaks(data);
+                }
+            )+
+        }
+    };
+    ($($rest:tt)*) => {
+        #[allow(unused_variables)]
+        pub(crate) fn apply_tweaks(config: &mut $crate::config::LibraryConfig) {
             __data_inner! {
                 @(config)
                 $($rest)*
             }
-        }
-    };
-    ($($rest:tt)*) => {
-        data! {
-            @()
-
-            $($rest)*
         }
     };
 }

@@ -416,6 +416,7 @@ impl Method {
                     | EntityKind::ParmDecl => {
                         // Ignore
                     }
+                    // `ns_consumed`, `cf_consumed` and `os_consumed`
                     EntityKind::NSConsumed => {
                         error!("found NSConsumed, which requires manual handling");
                     }

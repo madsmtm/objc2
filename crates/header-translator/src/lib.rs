@@ -27,7 +27,7 @@ mod stmt;
 mod thread_safety;
 mod unexposed_attr;
 
-pub use self::config::{Config, LibraryData};
+pub use self::config::{Config, LibraryConfig};
 pub use self::context::Context;
 pub use self::file::File;
 pub use self::global_analysis::global_analysis;

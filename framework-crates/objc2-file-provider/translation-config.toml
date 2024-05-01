@@ -1,0 +1,9 @@
+framework = "FileProvider"
+crate = "objc2-file-provider"
+required-dependencies = ["objc2-foundation"]
+macos = "10.15"
+ios = "11.0"
+visionos = "1.0"
+
+# Protocol that has a typedef defined for it for ease of use
+protocol.NSFileProviderItem.renamed = "NSFileProviderItemProtocol"

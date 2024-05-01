@@ -70,6 +70,7 @@ fn parse_protocols<'tu>(
     });
 }
 
+/// Parse the directly referenced protocols of a declaration.
 pub(crate) fn parse_direct_protocols<'clang>(
     entity: &Entity<'clang>,
     _context: &Context<'_>,
@@ -77,12 +78,16 @@ pub(crate) fn parse_direct_protocols<'clang>(
     let mut protocols = Vec::new();
 
     #[allow(clippy::single_match)]
-    immediate_children(entity, |entity, _span| match entity.get_kind() {
+    immediate_children(entity, |child, _span| match child.get_kind() {
         EntityKind::ObjCProtocolRef => {
-            let entity = entity
+            let child = child
                 .get_reference()
                 .expect("ObjCProtocolRef to reference entity");
-            protocols.push(entity);
+            if child == *entity {
+                error!(?entity, "recursive protocol");
+            } else {
+                protocols.push(child);
+            }
         }
         _ => {}
     });
@@ -288,7 +293,7 @@ pub(crate) fn items_required_by_decl(
 
     match entity.get_kind() {
         EntityKind::ObjCInterfaceDecl => {
-            let data = context.class_data.get(&id.name);
+            let data = context.library(&id).class_data.get(&id.name);
 
             for (superclass, _, _) in parse_superclasses(entity, context) {
                 items.push(superclass);
@@ -627,7 +632,7 @@ impl Stmt {
             EntityKind::ObjCInterfaceDecl => {
                 // entity.get_mangled_objc_names()
                 let id = ItemIdentifier::new(entity, context);
-                let data = context.class_data.get(&id.name);
+                let data = context.library(&id).class_data.get(&id.name);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -672,7 +677,10 @@ impl Stmt {
                 let superclass_methods: Vec<_> = superclasses_full
                     .iter()
                     .filter_map(|(superclass_id, _, entity)| {
-                        let superclass_data = context.class_data.get(&superclass_id.name);
+                        let superclass_data = context
+                            .library(superclass_id)
+                            .class_data
+                            .get(&superclass_id.name);
 
                         // Explicitly keep going, even if the class itself is skipped
                         // if superclass_data.skipped
@@ -746,7 +754,7 @@ impl Stmt {
                     location: id.location().clone(),
                     cls: id.clone(),
                     cls_required_items: required_items.clone(),
-                    protocol: p.map_name(|name| context.replace_protocol_name(name)),
+                    protocol: context.replace_protocol_name(p),
                     protocol_required_items: items_required_by_decl(&entity, context),
                     generics: generics.clone(),
                     availability: availability.clone(),
@@ -776,11 +784,8 @@ impl Stmt {
                 });
                 let cls_entity = cls_entity.expect("could not find category class");
 
-                let cls_thread_safety = ThreadSafety::from_decl(&cls_entity, context);
-                let cls_required_items = items_required_by_decl(&cls_entity, context);
-
                 let cls = ItemIdentifier::new(&cls_entity, context);
-                let data = context.class_data.get(&cls.name);
+                let data = context.library(&category).class_data.get(&cls.name);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -796,6 +801,9 @@ impl Stmt {
                         return vec![];
                     }
                 }
+
+                let cls_thread_safety = ThreadSafety::from_decl(&cls_entity, context);
+                let cls_required_items = items_required_by_decl(&cls_entity, context);
 
                 verify_objc_decl(entity, context);
                 let generics = parse_class_generics(entity, context);
@@ -816,7 +824,7 @@ impl Stmt {
                     cls_required_items: cls_required_items.clone(),
                     generics: generics.clone(),
                     availability: availability.clone(),
-                    protocol: p.map_name(|name| context.replace_protocol_name(name)),
+                    protocol: context.replace_protocol_name(p),
                     protocol_required_items: items_required_by_decl(&entity, context),
                 });
 
@@ -845,7 +853,8 @@ impl Stmt {
                     let extra_methods = if let Mutability::ImmutableWithMutableSubclass(subclass) =
                         data.map(|data| data.mutability.clone()).unwrap_or_default()
                     {
-                        let subclass_data = context.class_data.get(&subclass.name);
+                        let subclass_data =
+                            context.library(&subclass).class_data.get(&subclass.name);
                         assert!(!subclass_data.map(|data| data.skipped).unwrap_or_default());
 
                         let (mut methods, _) = parse_methods(
@@ -969,13 +978,16 @@ impl Stmt {
             }
             EntityKind::ObjCProtocolDecl => {
                 let actual_id = ItemIdentifier::new(entity, context);
-                let data = context.protocol_data.get(&actual_id.name);
+                let data = context
+                    .library(&actual_id)
+                    .protocol_data
+                    .get(&actual_id.name);
                 let actual_name = data
                     .map(|data| data.renamed.is_some())
                     .unwrap_or_default()
                     .then(|| actual_id.name.clone());
 
-                let id = actual_id.map_name(|name| context.replace_protocol_name(name));
+                let id = context.replace_protocol_name(actual_id);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -988,10 +1000,8 @@ impl Stmt {
                 let protocols = parse_direct_protocols(entity, context);
                 let protocols: BTreeSet<_> = protocols
                     .into_iter()
-                    .map(|protocol| {
-                        ItemIdentifier::new(&protocol, context)
-                            .map_name(|name| context.replace_protocol_name(name))
-                    })
+                    .map(|protocol| ItemIdentifier::new(&protocol, context))
+                    .map(|protocol| context.replace_protocol_name(protocol))
                     .collect();
                 let (methods, designated_initializers) = parse_methods(
                     entity,
@@ -1051,6 +1061,7 @@ impl Stmt {
                 });
 
                 if context
+                    .library(&id)
                     .typedef_data
                     .get(&id.name)
                     .map(|data| data.skipped)
@@ -1079,6 +1090,7 @@ impl Stmt {
                 let availability = Availability::parse(entity, context);
 
                 if context
+                    .library(&id)
                     .struct_data
                     .get(&id.name)
                     .map(|data| data.skipped)
@@ -1155,6 +1167,7 @@ impl Stmt {
                 let id = new_enum_id(entity, context);
 
                 let data = context
+                    .library(&id)
                     .enum_data
                     .get(id.name.as_deref().unwrap_or("anonymous"))
                     .cloned()
@@ -1287,6 +1300,7 @@ impl Stmt {
                 let id = ItemIdentifier::new(entity, context);
 
                 if context
+                    .library(&id)
                     .statics
                     .get(&id.name)
                     .map(|data| data.skipped)
@@ -1329,7 +1343,12 @@ impl Stmt {
             EntityKind::FunctionDecl => {
                 let id = ItemIdentifier::new(entity, context);
 
-                let data = context.fns.get(&id.name).cloned().unwrap_or_default();
+                let data = context
+                    .library(&id)
+                    .fns
+                    .get(&id.name)
+                    .cloned()
+                    .unwrap_or_default();
 
                 if data.skipped {
                     return vec![];

@@ -1,0 +1,23 @@
+framework = "MediaPlayer"
+crate = "objc2-media-player"
+required-dependencies = ["objc2-foundation"]
+macos = "10.12.1"
+maccatalyst = "13.0"
+ios = "2.0"
+tvos = "9.0"
+watchos = "5.0"
+visionos = "1.0"
+
+# Needs `AVFoundation` framework
+class.AVMediaSelectionOption.categories.MPNowPlayingInfoLanguageOptionAdditions.skipped = true
+class.AVMediaSelectionGroup.categories.MPNowPlayingInfoLanguageOptionAdditions.skipped = true
+class.AVPlayerItem.categories.MPAdditions.skipped = true
+class.MPNowPlayingSession.methods."initWithPlayers:".skipped = true
+class.MPNowPlayingSession.methods.players.skipped = true
+class.MPNowPlayingSession.methods."addPlayer:".skipped = true
+class.MPNowPlayingSession.methods."removePlayer:".skipped = true
+
+# Needs `CMTimeRange` from `CoreMedia`
+class.MPAdTimeRange.methods."initWithTimeRange:".skipped = true
+class.MPAdTimeRange.methods.timeRange.skipped = true
+class.MPAdTimeRange.methods."setTimeRange:".skipped = true

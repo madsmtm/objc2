@@ -1,0 +1,6 @@
+framework = "BusinessChat"
+crate = "objc2-business-chat"
+required-dependencies = ["objc2-app-kit", "objc2-foundation"]
+macos = "10.14"
+maccatalyst = "13.0"               # Unsure
+ios = "11.0"                       # Unsure
