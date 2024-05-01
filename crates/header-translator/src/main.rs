@@ -445,7 +445,10 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
         // that enables `objc2-app-kit` as well.
         matches!(&*lib.krate, "objc2-foundation" | "objc2-metal")
     })?;
-    writer(&mut ci, config, "FRAMEWORKS_GNUSTEP", |lib| lib.gnustep)?;
+    writer(&mut ci, config, "FRAMEWORKS_GNUSTEP", |lib| {
+        lib.gnustep
+            && ["objc2-app-kit", "objc2-foundation", "objc2-core-data"].contains(&&*lib.krate)
+    })?;
 
     write!(&mut ci, "  # END AUTOMATICALLY GENERATED{after}")?;
 
