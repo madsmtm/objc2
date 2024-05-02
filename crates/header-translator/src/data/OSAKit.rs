@@ -1,3 +1,0 @@
-data! {
-    class OSAScriptController: MainThreadOnly {}
-}

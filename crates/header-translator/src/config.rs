@@ -6,11 +6,11 @@ use std::path::Path;
 
 use heck::ToTrainCase;
 use semver::Version;
-use serde::Deserialize;
+use serde::{de, Deserialize, Deserializer};
 
 use crate::id::Location;
 use crate::stmt::{Derives, Mutability};
-use crate::{data, ItemIdentifier};
+use crate::ItemIdentifier;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Config {
@@ -162,7 +162,7 @@ pub struct ClassData {
     pub categories: HashMap<String, CategoryData>,
     #[serde(default)]
     pub derives: Derives,
-    #[serde(skip)]
+    #[serde(default)]
     pub mutability: Mutability,
     #[serde(rename = "skipped-protocols")]
     #[serde(default)]
@@ -283,7 +283,7 @@ impl LibraryConfig {
     pub fn from_file(file: &Path) -> Result<Self, Box<dyn Error>> {
         let s = fs::read_to_string(file)?;
 
-        let mut config: Self = basic_toml::from_str(&s)?;
+        let config: Self = basic_toml::from_str(&s)?;
 
         assert_eq!(
             config.framework.to_lowercase(),
@@ -296,8 +296,66 @@ impl LibraryConfig {
             "crate name had an unexpected format",
         );
 
-        data::apply_tweaks(&mut config);
-
         Ok(config)
+    }
+}
+
+impl<'de> Deserialize<'de> for Mutability {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        fn parse_itemidentifier(value: &str) -> Option<ItemIdentifier> {
+            let (library, rest) = value.split_once("::")?;
+            let (file_name, name) = rest.split_once("::")?;
+            Some(ItemIdentifier::from_raw(
+                name.to_string(),
+                library.to_string(),
+                file_name.to_string(),
+            ))
+        }
+
+        struct MutabilityVisitor;
+
+        impl<'de> de::Visitor<'de> for MutabilityVisitor {
+            type Value = Mutability;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                formatter.write_str("mutability")
+            }
+
+            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                if let Some(value) = value.strip_prefix("ImmutableWithMutableSubclass(") {
+                    let value = value
+                        .strip_suffix(')')
+                        .ok_or(de::Error::custom("end parenthesis"))?;
+                    let item =
+                        parse_itemidentifier(value).ok_or(de::Error::custom("requires ::"))?;
+                    return Ok(Mutability::ImmutableWithMutableSubclass(item));
+                }
+
+                if let Some(value) = value.strip_prefix("MutableWithImmutableSuperclass(") {
+                    let value = value
+                        .strip_suffix(')')
+                        .ok_or(de::Error::custom("end parenthesis"))?;
+                    let item =
+                        parse_itemidentifier(value).ok_or(de::Error::custom("requires ::"))?;
+                    return Ok(Mutability::MutableWithImmutableSuperclass(item));
+                }
+
+                match value {
+                    "Immutable" => Ok(Mutability::Immutable),
+                    "Mutable" => Ok(Mutability::Mutable),
+                    "InteriorMutable" => Ok(Mutability::InteriorMutable),
+                    "MainThreadOnly" => Ok(Mutability::MainThreadOnly),
+                    value => Err(de::Error::custom(format!("unknown variant {value:?}"))),
+                }
+            }
+        }
+
+        deserializer.deserialize_str(MutabilityVisitor)
     }
 }

@@ -37,3 +37,35 @@ If you're working on improving this, you should run the `check_framework_feature
 ```console
 cargo run --bin check_framework_features
 ```
+
+
+## Data enrichment
+
+The `translation-config.toml` file describes various tweaks that we need to do because our header translation is incomplete in some areas.
+
+However, even if our header translation was perfect, we still need a way to enrich the generated data, since C headers have no way to describe which methods are safe, or mutable, and which are not!
+
+
+### What is required for a method to be safe?
+
+This is a longer discussion, but the following guidelines will get you far. Do
+not be afraid of opening an issue or PR that discusses the safety of a
+specific API!
+
+1. The method must not take a raw pointer; one could trivially pass
+    `ptr::invalid()` and cause UB with that.
+2. Any extra requirements that the method states in its documentation must be
+    upheld. For example, a method may declare in its documentation that some
+    property must be something specific in relation to another property. Since
+    we don't know whether this is upheld, the method is not safe.
+
+    Note: This is the hardest part; determining for sure if a given method is
+    safe or not!
+3. If the method can throw an exception if provided with invalid inputs, it is
+    not safe. Consider declaring a helper method that checks the preconditions
+    first!
+4. Beware of `Mutable` classes (e.g. `NSMutableString`); these usually need to
+    be passed as `&mut T`, or operate on `&mut self`.
+
+Note: It is _not_ considered a breaking change for a method to be marked safe,
+so such an improvement can be made in a minor version!
