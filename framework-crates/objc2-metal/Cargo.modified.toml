@@ -38,5 +38,5 @@ unstable-private = [
 ]
 
 [dev-dependencies]
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.0" }
-objc2-metal-kit = { path = "../objc2-metal-kit", version = "0.2.0" }
+objc2-app-kit = { path = "../objc2-app-kit" }
+objc2-metal-kit = { path = "../objc2-metal-kit" }
