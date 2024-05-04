@@ -107,15 +107,24 @@ VZLinuxBootLoader = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
-VZLinuxRosettaAbstractSocketCachingOptions = []
+VZLinuxRosettaAbstractSocketCachingOptions = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+]
 VZLinuxRosettaCachingOptions = []
-VZLinuxRosettaDirectoryShare = []
-VZLinuxRosettaUnixSocketCachingOptions = []
+VZLinuxRosettaDirectoryShare = ["objc2-foundation/NSError"]
+VZLinuxRosettaUnixSocketCachingOptions = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+]
 VZMACAddress = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
-VZMacAuxiliaryStorage = []
+VZMacAuxiliaryStorage = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSURL",
+]
 VZMacGraphicsDevice = []
 VZMacGraphicsDeviceConfiguration = [
     "objc2-foundation/NSArray",
@@ -127,16 +136,31 @@ VZMacGraphicsDisplayConfiguration = [
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
 ]
-VZMacHardwareModel = []
-VZMacKeyboardConfiguration = []
-VZMacMachineIdentifier = []
-VZMacOSBootLoader = []
+VZMacHardwareModel = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+]
+VZMacKeyboardConfiguration = ["objc2-foundation/NSObject"]
+VZMacMachineIdentifier = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+]
+VZMacOSBootLoader = ["objc2-foundation/NSObject"]
 VZMacOSConfigurationRequirements = []
-VZMacOSInstaller = []
-VZMacOSRestoreImage = []
+VZMacOSInstaller = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSProgress",
+    "objc2-foundation/NSURL",
+]
+VZMacOSRestoreImage = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSProcessInfo",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
 VZMacOSVirtualMachineStartOptions = []
-VZMacPlatformConfiguration = []
-VZMacTrackpadConfiguration = []
+VZMacPlatformConfiguration = ["objc2-foundation/NSObject"]
+VZMacTrackpadConfiguration = ["objc2-foundation/NSObject"]
 VZMemoryBalloonDevice = []
 VZMemoryBalloonDeviceConfiguration = ["objc2-foundation/NSObject"]
 VZMultipleDirectoryShare = [
@@ -214,6 +238,7 @@ VZVirtioTraditionalMemoryBalloonDeviceConfiguration = ["objc2-foundation/NSObjec
 VZVirtualMachine = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
+    "objc2-foundation/NSURL",
 ]
 VZVirtualMachineConfiguration = [
     "objc2-foundation/NSArray",
