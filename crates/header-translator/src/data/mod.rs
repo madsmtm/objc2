@@ -54,5 +54,6 @@ data! {
     mod StoreKit;
     mod UniformTypeIdentifiers;
     mod UserNotifications;
+    mod Virtualization;
     mod WebKit;
 }
