@@ -76,7 +76,7 @@ impl Drop for Pool {
                 c.borrow_mut().pop(),
                 Some(self.context),
                 "popped pool that was not the innermost pool"
-            )
+            );
         });
     }
 }
@@ -187,7 +187,7 @@ impl<'pool> AutoreleasePool<'pool> {
                     c.borrow().last(),
                     Some(&pool.context),
                     "tried to use lifetime from pool that was not innermost"
-                )
+                );
             });
         }
     }

@@ -292,7 +292,7 @@ impl hash::Hash for Sel {
     #[inline]
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
         // Note: We hash the name instead of the pointer
-        self.name().hash(state)
+        self.name().hash(state);
     }
 }
 

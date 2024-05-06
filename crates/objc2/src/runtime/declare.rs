@@ -260,7 +260,7 @@ impl ClassBuilder {
                 F::Arguments::ENCODINGS,
                 &F::Return::ENCODING_RETURN,
                 func.__imp(),
-            )
+            );
         }
     }
 
@@ -324,7 +324,7 @@ impl ClassBuilder {
                 F::Arguments::ENCODINGS,
                 &F::Return::ENCODING_RETURN,
                 func.__imp(),
-            )
+            );
         }
     }
 
@@ -525,7 +525,7 @@ impl ProtocolBuilder {
             &Ret::ENCODING_RETURN,
             required,
             true,
-        )
+        );
     }
 
     /// Adds a class method declaration with a given description.
@@ -540,7 +540,7 @@ impl ProtocolBuilder {
             &Ret::ENCODING_RETURN,
             required,
             false,
-        )
+        );
     }
 
     /// Adds a requirement on another protocol.

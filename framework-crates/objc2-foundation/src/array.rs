@@ -498,7 +498,7 @@ impl<T: fmt::Debug + Message> fmt::Debug for NSMutableArray<T> {
 
 impl<T: Message> Extend<Id<T>> for NSMutableArray<T> {
     fn extend<I: IntoIterator<Item = Id<T>>>(&mut self, iter: I) {
-        iter.into_iter().for_each(move |item| self.push(item))
+        iter.into_iter().for_each(move |item| self.push(item));
     }
 }
 
@@ -507,7 +507,7 @@ impl<'a, T: Message + IsRetainable> Extend<&'a T> for NSMutableArray<T> {
         // SAFETY: Because of the `T: IsRetainable` bound, it is safe for the
         // array to retain the object here.
         iter.into_iter()
-            .for_each(move |item| unsafe { self.addObject(item) })
+            .for_each(move |item| unsafe { self.addObject(item) });
     }
 }
 

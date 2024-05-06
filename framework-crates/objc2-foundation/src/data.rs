@@ -118,7 +118,7 @@ impl NSMutableData {
     }
 
     pub fn push(&mut self, byte: u8) {
-        self.extend_from_slice(&[byte])
+        self.extend_from_slice(&[byte]);
     }
 
     #[doc(alias = "replaceBytesInRange:withBytes:length:")]
