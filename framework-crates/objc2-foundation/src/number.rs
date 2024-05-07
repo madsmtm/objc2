@@ -211,7 +211,7 @@ impl NSNumber {
 impl hash::Hash for NSNumber {
     #[inline]
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
-        (**self).hash(state)
+        (**self).hash(state);
     }
 }
 

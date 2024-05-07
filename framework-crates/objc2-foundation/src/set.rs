@@ -567,7 +567,7 @@ impl<T: Message + Eq + Hash + HasStableHash> Extend<Id<T>> for NSMutableSet<T> {
     fn extend<I: IntoIterator<Item = Id<T>>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| {
             self.insert_id(item);
-        })
+        });
     }
 }
 
@@ -575,7 +575,7 @@ impl<'a, T: Message + Eq + Hash + HasStableHash + IsRetainable> Extend<&'a T> fo
     fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
         iter.into_iter().for_each(move |item| {
             self.insert(item);
-        })
+        });
     }
 }
 

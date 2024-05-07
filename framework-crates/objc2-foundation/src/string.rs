@@ -223,7 +223,7 @@ impl Ord for NSMutableString {
 impl AddAssign<&NSString> for NSMutableString {
     #[inline]
     fn add_assign(&mut self, other: &NSString) {
-        self.appendString(other)
+        self.appendString(other);
     }
 }
 

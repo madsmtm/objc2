@@ -37,7 +37,7 @@ fn test_main_thread_auto_traits() {
 
     fn assert_traits<T: Unpin + UnwindSafe + RefUnwindSafe + Sized>() {}
 
-    assert_traits::<MainThreadMarker>()
+    assert_traits::<MainThreadMarker>();
 }
 
 #[test]
