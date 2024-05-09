@@ -121,6 +121,7 @@ impl UnexposedAttr {
             | "MP_DEPRECATED"
             | "MP_UNAVAILABLE_BEGIN"
             | "MP_UNAVAILABLE"
+            | "NS_AVAILABLE_IOS"
             | "NS_AVAILABLE_MAC"
             | "NS_AVAILABLE"
             | "NS_CLASS_AVAILABLE_MAC"
@@ -162,6 +163,7 @@ impl UnexposedAttr {
             | "__WATCHOS_PROHIBITED"
             | "__WATCHOS_UNAVAILABLE"
             | "APPKIT_API_UNAVAILABLE_BEGIN_MACCATALYST"
+            | "CB_CM_API_AVAILABLE"
             | "MP_INIT_UNAVAILABLE"
             | "NS_AUTOMATED_REFCOUNT_UNAVAILABLE"
             | "NS_AUTOMATED_REFCOUNT_WEAK_UNAVAILABLE"
@@ -173,6 +175,7 @@ impl UnexposedAttr {
             s if s.starts_with("FILEPROVIDER_API_AVAILABILITY_") => None,
             // Might be interesting in the future
             "CF_SWIFT_NAME"
+            | "DISPATCH_SWIFT_NAME"
             | "NS_REFINED_FOR_SWIFT_ASYNC"
             | "NS_SWIFT_ASYNC_NAME"
             | "NS_SWIFT_ASYNC_THROWS_ON_FALSE"

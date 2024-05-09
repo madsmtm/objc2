@@ -32,6 +32,8 @@
 
 #import <Contacts/Contacts.h>
 
+#import <CoreBluetooth/CoreBluetooth.h>
+
 #import <CoreData/CoreData.h>
 
 #import <CoreLocation/CoreLocation.h>
