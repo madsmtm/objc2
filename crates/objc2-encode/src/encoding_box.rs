@@ -88,6 +88,8 @@ pub enum EncodingBox {
     Struct(String, Vec<Self>),
     /// Same as [`Encoding::Union`].
     Union(String, Vec<Self>),
+    /// Same as [`Encoding::None`].
+    None,
 }
 
 impl EncodingBox {
@@ -120,7 +122,7 @@ impl EncodingBox {
         let mut parser = Parser::new(s);
         parser.strip_leading_qualifiers();
 
-        match parser.parse_encoding() {
+        match parser.parse_encoding_or_none() {
             Err(err) => Err(ParseError::new(parser, err)),
             Ok(encoding) => {
                 let remaining = parser.remaining();
@@ -159,7 +161,7 @@ impl FromStr for EncodingBox {
         parser.strip_leading_qualifiers();
 
         parser
-            .parse_encoding()
+            .parse_encoding_or_none()
             .and_then(|enc| parser.expect_empty().map(|()| enc))
             .map_err(|err| ParseError::new(parser, err))
     }
