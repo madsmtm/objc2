@@ -5,6 +5,7 @@
 #import <Automator/Automator.h>
 #import <MailKit/MailKit.h>
 #import <OSAKit/OSAKit.h>
+#import <Virtualization/Virtualization.h>
 #endif
 
 #import <Accessibility/Accessibility.h>
