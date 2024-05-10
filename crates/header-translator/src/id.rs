@@ -62,20 +62,6 @@ impl Ord for Location {
     }
 }
 
-pub enum Feature {
-    Dependency(String),
-    Feature(String),
-}
-
-impl Feature {
-    pub fn into_string(self) -> String {
-        match self {
-            Self::Dependency(krate) => krate,
-            Self::Feature(feature_name) => feature_name,
-        }
-    }
-}
-
 impl Location {
     pub fn krate<'a>(&self, config: &'a Config) -> Option<&'a str> {
         if self.library == "block2" {
@@ -89,17 +75,42 @@ impl Location {
     }
 
     /// Only the library of the emmision location matters.
-    pub fn feature(&self, config: &Config, emission_location: &Self) -> Option<Feature> {
+    pub fn cargo_toml_feature(&self, config: &Config, emission_library: &str) -> Option<String> {
+        if self.library == "System" || self.library == "block2" || self.library == emission_library
+        {
+            None
+        } else if let Some(krate) = self.krate(config) {
+            let required = config.libraries[emission_library]
+                .required_dependencies
+                .contains(krate);
+            let feature_name = if let Some(file_name) = &self.file_name {
+                clean_name(file_name)
+            } else {
+                error!("tried to get feature name of location with an unknown file name");
+                format!("{}_Unknown", self.library)
+            };
+            Some(format!(
+                "{krate}{}/{feature_name}",
+                if required { "" } else { "?" }
+            ))
+        } else {
+            debug!(?self, "failed getting crate name");
+            None
+        }
+    }
+
+    /// Only the library of the emmision location matters.
+    fn feature(&self, config: &Config, emission_location: &Self) -> Option<String> {
         if self.library == "System" {
             None
         } else if self.library == "block2" {
-            Some(Feature::Dependency("block2".to_string()))
+            Some("block2".to_string())
         } else if self.library == emission_location.library {
             if let Some(file_name) = &self.file_name {
-                Some(Feature::Feature(clean_name(file_name)))
+                Some(clean_name(file_name))
             } else {
                 error!("tried to get feature name of location with an unknown file name");
-                Some(Feature::Feature(format!("{}_Unknown", self.library)))
+                Some(format!("{}_Unknown", self.library))
             }
         } else if let Some(krate) = self.krate(config) {
             let required = config.libraries[&emission_location.library]
@@ -108,7 +119,7 @@ impl Location {
             if required {
                 None
             } else {
-                Some(Feature::Dependency(krate.to_string()))
+                Some(krate.to_string())
             }
         } else {
             debug!(
@@ -313,12 +324,11 @@ pub fn cfg_gate_ln<R: AsRef<Location>, I: AsRef<Location>>(
     let mut feature_names: BTreeSet<String> = required_features
         .into_iter()
         .filter_map(|id| id.as_ref().feature(config, emission_location))
-        .map(|f| f.into_string())
         .collect();
 
     for location in implied_features {
         if let Some(feature_name) = location.as_ref().feature(config, emission_location) {
-            feature_names.remove(&feature_name.into_string());
+            feature_names.remove(&feature_name);
         }
     }
 

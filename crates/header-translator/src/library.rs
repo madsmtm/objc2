@@ -247,7 +247,7 @@ see that for related crates.", self.data.krate, self.link_name)?;
         for (file_name, file) in &self.files {
             generated_features.insert(
                 clean_name(file_name),
-                file.required_features(config).into_iter().collect(),
+                file.required_cargo_features(config).into_iter().collect(),
             );
         }
 

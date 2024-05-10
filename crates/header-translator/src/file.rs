@@ -2,7 +2,6 @@ use std::collections::BTreeSet;
 use std::fmt;
 
 use crate::display_helper::FormatterFn;
-use crate::id::Feature;
 use crate::stmt::Stmt;
 use crate::Config;
 
@@ -39,33 +38,13 @@ impl File {
             .collect()
     }
 
-    pub fn required_features(&self, config: &Config) -> BTreeSet<String> {
+    pub fn required_cargo_features(&self, config: &Config) -> BTreeSet<String> {
         let mut required_features = BTreeSet::new();
         for stmt in &self.stmts {
             for required_item in stmt.required_items_inner() {
                 let location = required_item.location();
-                if location.library != self.library_name {
-                    if let Some(krate) = location.krate(config) {
-                        let required = config.libraries[&self.library_name]
-                            .required_dependencies
-                            .contains(krate);
-                        match location.feature(config, location) {
-                            Some(Feature::Dependency(_)) => {}
-                            Some(Feature::Feature(feature_name)) => {
-                                required_features.insert(format!(
-                                    "{krate}{}/{feature_name}",
-                                    if required { "" } else { "?" }
-                                ));
-                            }
-                            None => {}
-                        }
-                    } else {
-                        debug!(
-                            ?required_item,
-                            item = ?stmt.provided_item(),
-                            "failed getting crate name",
-                        );
-                    }
+                if let Some(feature) = location.cargo_toml_feature(config, &self.library_name) {
+                    required_features.insert(feature);
                 }
             }
         }
