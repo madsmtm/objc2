@@ -1332,7 +1332,7 @@ impl Ty {
                 arguments,
                 result_type,
             } => {
-                write!(f, "Block<dyn Fn(")?;
+                write!(f, "block2::Block<dyn Fn(")?;
                 for arg in arguments {
                     write!(f, "{}, ", arg.plain())?;
                 }

@@ -75,7 +75,7 @@ impl Location {
 
     pub fn import<'a>(&self, config: &'a Config) -> Option<&'a str> {
         if self.library == "block2" {
-            return Some("block2");
+            return None;
         }
         if self.library == "libc" {
             return None;
@@ -271,7 +271,7 @@ impl ItemIdentifier {
 
         impl fmt::Display for ItemIdentifierPath<'_> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                if self.0.library() == "libc" {
+                if self.0.library() == "block2" || self.0.library() == "libc" {
                     write!(f, "libc::{}", self.0.name)
                 } else {
                     write!(f, "{}", self.0.name)
