@@ -150,6 +150,12 @@ pub enum Encoding {
     /// Note that the `=` may be omitted in some situations; this is
     /// considered equal to the case where there are no members.
     Union(&'static str, &'static [Encoding]),
+    /// The type does not have an Objective-C encoding.
+    ///
+    /// This is usually only used on types where Clang fails to generate the
+    /// Objective-C encoding, like SIMD types marked with
+    /// `__attribute__((__ext_vector_type__(1)))`.
+    None,
     // TODO: "Vector" types have the '!' encoding, but are not implemented in
     // clang
 
@@ -260,6 +266,7 @@ impl fmt::Display for Encoding {
 mod tests {
     use super::*;
     use crate::static_str::{static_encoding_str_array, static_encoding_str_len};
+    use alloc::boxed::Box;
     use alloc::string::ToString;
     use alloc::vec;
     use core::str::FromStr;
@@ -602,6 +609,32 @@ mod tests {
             !"^{_CGLContextObject}";
             !"^{SomeOtherStruct=}";
         }
+
+        fn none() {
+            Encoding::None;
+            "";
+            !"?";
+        }
+
+        fn none_in_array() {
+            Encoding::Array(42, &Encoding::None);
+            !Encoding::Array(42, &Encoding::Unknown);
+            "[42]";
+            !"[42i]";
+        }
+
+        fn none_in_pointer() {
+            Encoding::Pointer(&Encoding::None);
+            !Encoding::Pointer(&Encoding::Unknown);
+            "^";
+            !"";
+            !"^i";
+        }
+
+        fn none_in_pointer_in_array() {
+            Encoding::Array(42, &Encoding::Pointer(&Encoding::None));
+            "[42^]";
+        }
     }
 
     #[test]
@@ -635,6 +668,24 @@ mod tests {
         let expected = EncodingBox::Struct(
             "S".to_string(),
             vec![EncodingBox::Block, EncodingBox::Block],
+        );
+        assert_eq!(parsed, expected);
+
+        assert!(!enc.equivalent_to_box(&expected));
+    }
+
+    // Similar to `?`, `` cannot be accurately represented inside pointers
+    // inside structs, and may be parsed incorrectly.
+    #[test]
+    fn none_in_struct() {
+        let enc = Encoding::Struct("?", &[Encoding::Pointer(&Encoding::None), Encoding::Int]);
+        let s = "{?=^i}";
+        assert_eq!(&enc.to_string(), s);
+
+        let parsed = EncodingBox::from_str(s).unwrap();
+        let expected = EncodingBox::Struct(
+            "?".to_string(),
+            vec![EncodingBox::Pointer(Box::new(EncodingBox::Int))],
         );
         assert_eq!(parsed, expected);
 

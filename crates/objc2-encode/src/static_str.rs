@@ -65,6 +65,7 @@ pub(crate) const fn static_encoding_str_len(encoding: &Encoding, level: NestingL
             }
             res + 1
         }
+        NoneInvalid => 0,
     }
 }
 
@@ -208,6 +209,7 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
 
             res[res_i] = kind.end_byte();
         }
+        NoneInvalid => {}
     };
     res
 }
