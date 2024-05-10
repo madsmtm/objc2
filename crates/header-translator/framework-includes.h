@@ -14,6 +14,8 @@
 
 #import <Accessibility/Accessibility.h>
 
+#import <Accounts/Accounts.h>
+
 #import <AdServices/AdServices.h>
 
 #import <AdSupport/AdSupport.h>

@@ -1058,7 +1058,8 @@ impl Stmt {
                     | EntityKind::ObjCClassRef
                     | EntityKind::ObjCProtocolRef
                     | EntityKind::TypeRef
-                    | EntityKind::ParmDecl => {}
+                    | EntityKind::ParmDecl
+                    | EntityKind::EnumDecl => {}
                     _ => error!("unknown"),
                 });
 

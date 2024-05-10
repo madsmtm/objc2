@@ -1,6 +1,7 @@
 | Framework | Crate | Documentation |
 | --- | --- | --- |
 | `Accessibility` | [![`objc2-accessibility`](https://badgen.net/crates/v/objc2-accessibility)](https://crates.io/crates/objc2-accessibility) | [![docs.rs](https://docs.rs/objc2-accessibility/badge.svg)](https://docs.rs/objc2-accessibility/) |
+| `Accounts` | [![`objc2-accounts`](https://badgen.net/crates/v/objc2-accounts)](https://crates.io/crates/objc2-accounts) | [![docs.rs](https://docs.rs/objc2-accounts/badge.svg)](https://docs.rs/objc2-accounts/) |
 | `AdServices` | [![`objc2-ad-services`](https://badgen.net/crates/v/objc2-ad-services)](https://crates.io/crates/objc2-ad-services) | [![docs.rs](https://docs.rs/objc2-ad-services/badge.svg)](https://docs.rs/objc2-ad-services/) |
 | `AdSupport` | [![`objc2-ad-support`](https://badgen.net/crates/v/objc2-ad-support)](https://crates.io/crates/objc2-ad-support) | [![docs.rs](https://docs.rs/objc2-ad-support/badge.svg)](https://docs.rs/objc2-ad-support/) |
 | `AppKit` | [![`objc2-app-kit`](https://badgen.net/crates/v/objc2-app-kit)](https://crates.io/crates/objc2-app-kit) | [![docs.rs](https://docs.rs/objc2-app-kit/badge.svg)](https://docs.rs/objc2-app-kit/) |
