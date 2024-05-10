@@ -26,6 +26,12 @@
 //! ```ignore
 #![doc = include_str!("../examples/triangle.rs")]
 //! ```
+//!
+//! With the following shader.
+//!
+//! ```ignore
+#![doc = include_str!("../examples/triangle.metal")]
+//! ```
 #![recursion_limit = "256"]
 #![allow(non_snake_case)]
 #![no_std]
