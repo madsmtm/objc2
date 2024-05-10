@@ -17,8 +17,8 @@ use objc2_foundation::{
 };
 use objc2_metal::{
     MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue, MTLCreateSystemDefaultDevice, MTLDevice,
-    MTLLibrary, MTLPrimitiveType, MTLRenderCommandEncoder, MTLRenderPipelineDescriptor,
-    MTLRenderPipelineState,
+    MTLLibrary, MTLPackedFloat3, MTLPrimitiveType, MTLRenderCommandEncoder,
+    MTLRenderPipelineDescriptor, MTLRenderPipelineState,
 };
 use objc2_metal_kit::{MTKView, MTKViewDelegate};
 
@@ -73,26 +73,8 @@ struct SceneProperties {
 #[derive(Copy, Clone)]
 #[repr(C)]
 struct VertexInput {
-    position: Position,
-    color: Color,
-}
-
-#[derive(Copy, Clone)]
-// NOTE: this has the same ABI as `MTLPackedFloat3`
-#[repr(C)]
-struct Position {
-    x: f32,
-    y: f32,
-    z: f32,
-}
-
-#[derive(Copy, Clone)]
-// NOTE: this has the same ABI as `MTLPackedFloat3`
-#[repr(C)]
-struct Color {
-    r: f32,
-    g: f32,
-    b: f32,
+    position: MTLPackedFloat3,
+    color: MTLPackedFloat3,
 }
 
 macro_rules! idcell {
@@ -272,39 +254,39 @@ declare_class!(
             // compute the triangle geometry
             let vertex_input_data: &[VertexInput] = &[
                 VertexInput {
-                    position: Position {
+                    position: MTLPackedFloat3 {
                         x: -f32::sqrt(3.0) / 4.0,
                         y: -0.25,
                         z: 0.,
                     },
-                    color: Color {
-                        r: 1.,
-                        g: 0.,
-                        b: 0.,
+                    color: MTLPackedFloat3 {
+                        x: 1.,
+                        y: 0.,
+                        z: 0.,
                     },
                 },
                 VertexInput {
-                    position: Position {
+                    position: MTLPackedFloat3 {
                         x: f32::sqrt(3.0) / 4.0,
                         y: -0.25,
                         z: 0.,
                     },
-                    color: Color {
-                        r: 0.,
-                        g: 1.,
-                        b: 0.,
+                    color: MTLPackedFloat3 {
+                        x: 0.,
+                        y: 1.,
+                        z: 0.,
                     },
                 },
                 VertexInput {
-                    position: Position {
+                    position: MTLPackedFloat3 {
                         x: 0.,
                         y: 0.5,
                         z: 0.,
                     },
-                    color: Color {
-                        r: 0.,
-                        g: 0.,
-                        b: 1.,
+                    color: MTLPackedFloat3 {
+                        x: 0.,
+                        y: 0.,
+                        z: 1.,
                     },
                 },
             ];

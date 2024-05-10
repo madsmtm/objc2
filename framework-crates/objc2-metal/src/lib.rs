@@ -55,7 +55,7 @@ mod slice;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 #[cfg(feature = "MTLAccelerationStructureTypes")]
-pub use self::packed::{MTLPackedFloat3, __MTLPackedFloat3};
+pub use self::packed::MTLPackedFloat3;
 #[cfg(feature = "unstable-private")]
 pub use self::private::MTLDevicePrivate;
 #[cfg(feature = "MTLResource")]

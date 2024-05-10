@@ -300,6 +300,7 @@ required-features = [
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSThread",
     "objc2-foundation/NSGeometry",
+    "MTLAccelerationStructureTypes",
     "MTLLibrary",
     "MTLRenderPipeline",
     "MTLRenderCommandEncoder",

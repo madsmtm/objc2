@@ -17,6 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `objc2_quartz_core::CAMetalLayer`.
 * Added methods to access `CALayer` from `objc2_app_kit::NSView`.
 
+### Removed
+* `objc2_metal`: Removed internal `__MTLPackedFloat3` and made `MTLPackedFloat3` public.
+
 
 ## 0.2.0 - 2024-04-17
 
