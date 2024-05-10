@@ -20,6 +20,8 @@
 
 #import <AdSupport/AdSupport.h>
 
+#import <AppTrackingTransparency/AppTrackingTransparency.h>
+
 #import <AuthenticationServices/AuthenticationServices.h>
 
 #import <AutomaticAssessmentConfiguration/AutomaticAssessmentConfiguration.h>

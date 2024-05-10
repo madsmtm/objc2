@@ -317,7 +317,9 @@ fn parse_sdk(
                         // No more includes / macro expansions after this line
                         let mut maybe_file = library.files.get_mut(&file_name);
                         for stmt in Stmt::parse(&entity, &context) {
-                            let file: &mut File = maybe_file.as_mut().expect("file");
+                            let file: &mut File = maybe_file.as_mut().unwrap_or_else(|| {
+                                panic!("could not find file {file_name} in library")
+                            });
                             file.add_stmt(stmt);
                         }
                     }
