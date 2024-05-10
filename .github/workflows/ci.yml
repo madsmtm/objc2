@@ -83,7 +83,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -125,7 +125,7 @@ jobs:
       CARGO_BUILD_TARGET: ${{ matrix.target }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -146,7 +146,7 @@ jobs:
       run: rustup target add ${{ matrix.target }}
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
@@ -165,7 +165,7 @@ jobs:
       CARGO_BUILD_TARGET: x86_64-apple-darwin
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -178,7 +178,7 @@ jobs:
       run: rustup target add x86_64-apple-darwin
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
@@ -199,7 +199,7 @@ jobs:
       TRYBUILD: overwrite
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -212,7 +212,7 @@ jobs:
       run: rustup component add rust-src
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
@@ -235,7 +235,7 @@ jobs:
       TEST_OVERWRITE: 1
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -248,7 +248,7 @@ jobs:
       run: rustup component add rust-src
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
@@ -275,7 +275,7 @@ jobs:
       DEVELOPER_DIR: /Applications/Xcode_15.3.app/Contents/Developer
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -283,7 +283,7 @@ jobs:
       run: rustup override set stable
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
@@ -305,7 +305,7 @@ jobs:
     - lint
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -313,7 +313,7 @@ jobs:
       run: rustup override set stable
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
@@ -333,7 +333,7 @@ jobs:
       ARGS: --no-default-features --features=std,apple
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -343,7 +343,7 @@ jobs:
         rustup override set ${{ env.CURRENT_NIGHTLY }}
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
@@ -427,7 +427,7 @@ jobs:
         ${{ matrix.target && '--no-run' }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -449,7 +449,7 @@ jobs:
       run: rustup target add ${{ matrix.target }}
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
@@ -457,7 +457,7 @@ jobs:
     - name: Cache SDK
       id: sdk-cache
       if: matrix.sdk
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/sdk
         key: sdk-test-apple-${{ matrix.name }}
@@ -517,7 +517,7 @@ jobs:
     - lint
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -528,7 +528,7 @@ jobs:
       run: rustup target add x86_64-apple-ios
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
@@ -605,13 +605,13 @@ jobs:
       RUNTIME_VERSION: gnustep-${{ matrix.libobjc2 }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
     - name: Cache external dependencies
       id: extern-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         # We could have just cached build-files, and then rerun the build tool
         # every time, letting it figure out what's changed. However, this has
@@ -729,7 +729,7 @@ jobs:
       run: rustup target add ${{ matrix.target }}
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
@@ -737,7 +737,7 @@ jobs:
     - name: Cache cargo-fuzz
       if: ${{ matrix.fuzz }}
       id: fuzz-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cargo/bin/cargo-fuzz
         # Change this key if we update the required cargo-fuzz version
@@ -799,7 +799,7 @@ jobs:
       PUBLIC_CRATES: --package=block2
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -807,7 +807,7 @@ jobs:
       run: rustup override set stable
 
     - name: Cache Cargo
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CARGO_CACHE_PATH }}
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
