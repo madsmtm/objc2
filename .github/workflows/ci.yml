@@ -370,19 +370,25 @@ jobs:
       matrix:
         include:
         - name: Test macOS 13
+          target: x86_64-apple-darwin
           os: macos-13
           frameworks: MACOS_13
         - name: Test macOS 11
+          target: x86_64-apple-darwin
           os: macos-11
           frameworks: MACOS_11
         - name: Build macOS AArch64
           target: aarch64-apple-darwin
           frameworks: MACOS_11
         - name: Test macOS old SDK
+          target: x86_64-apple-darwin
           # Oldest macOS version we support
           sdk: "10.12"
           frameworks: MACOS_10_12
+          # The SDK itself only supports compiling build scripts for x86_64
+          os: macos-13
         - name: Test macOS nightly
+          target: aarch64-apple-darwin
           nightly: true
           frameworks: MACOS_11
         - name: Build macOS 32bit
@@ -392,6 +398,8 @@ jobs:
           # Newest SDK that supports 32-bit
           sdk: "10.13"
           frameworks: MACOS_10_13
+          # The SDK itself only supports compiling build scripts for x86_64
+          os: macos-13
         - name: Build iOS simulator ARM64
           target: aarch64-apple-ios-sim
           frameworks: IOS_10
@@ -410,7 +418,7 @@ jobs:
           frameworks: IOS_10
 
     env:
-      CARGO_BUILD_TARGET: ${{ matrix.target || 'x86_64-apple-darwin' }}
+      CARGO_BUILD_TARGET: ${{ matrix.target }}
       # Modern macOS can only run the target that they're built for.
       # So we pass `--no-run` when building for other targets.
       ARGS: >-
@@ -437,7 +445,7 @@ jobs:
       run: rustup component add rust-src
 
     - name: Install target
-      if: ${{ matrix.target && !matrix.build-std }}
+      if: ${{ !matrix.build-std }}
       run: rustup target add ${{ matrix.target }}
 
     - name: Cache Cargo
@@ -777,7 +785,7 @@ jobs:
 
     - name: Test with unstable features
       if: ${{ env.FULL && matrix.nightly }}
-      run: cargo test $ARGS $PUBLIC_CRATES $INTERESTING_FEATURES -pobjc2-foundation --features=catch-all $UNSTABLE_FEATURES
+      run: cargo test $ARGS -ptests $PUBLIC_CRATES $INTERESTING_FEATURES -pobjc2-foundation --features=catch-all $UNSTABLE_FEATURES
 
   test-compiler-rt:
     name: Test Compiler-RT

@@ -1,6 +1,6 @@
 #![cfg(feature = "MTLDevice")]
 use objc2::rc::Id;
-use objc2_metal::{MTLCopyAllDevices, MTLCreateSystemDefaultDevice};
+use objc2_metal::MTLCreateSystemDefaultDevice;
 
 #[link(name = "CoreGraphics", kind = "framework")]
 extern "C" {}
@@ -12,6 +12,7 @@ fn test_create_default() {
 }
 
 #[test]
+#[cfg(target_os = "macos")]
 fn get_all() {
-    let _ = unsafe { Id::from_raw(MTLCopyAllDevices().as_ptr()).unwrap() };
+    let _ = unsafe { Id::from_raw(objc2_metal::MTLCopyAllDevices().as_ptr()).unwrap() };
 }
