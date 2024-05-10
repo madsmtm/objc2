@@ -42,11 +42,7 @@ impl Config {
     }
 }
 
-fn get_version<'de, D: serde::Deserializer<'de>>(
-    deserializer: D,
-) -> Result<Option<Version>, D::Error> {
-    use serde::de;
-
+fn get_version<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Option<Version>, D::Error> {
     struct VersionVisitor;
 
     impl de::Visitor<'_> for VersionVisitor {
