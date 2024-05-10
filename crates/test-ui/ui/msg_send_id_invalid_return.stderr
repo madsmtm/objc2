@@ -27,7 +27,6 @@ error[E0277]: the trait bound `AnyClass: Message` is not satisfied
             NSObject
             ProtocolObject<P>
             __NSProxy
-            __RcTestObject
   = note: required for `RetainSemantics<1>` to implement `MsgSendId<&AnyClass, Option<Id<AnyClass>>>`
   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
@@ -43,7 +42,6 @@ error[E0277]: the trait bound `AnyClass: Message` is not satisfied
             NSObject
             ProtocolObject<P>
             __NSProxy
-            __RcTestObject
   = note: required for `RetainSemantics<1>` to implement `MsgSendId<&AnyClass, Option<Id<AnyClass>>>`
   = note: this error originates in the macro `msg_send_id` (in Nightly builds, run with -Z macro-backtrace for more info)
 
@@ -76,7 +74,6 @@ error[E0277]: the trait bound `AnyClass: Message` is not satisfied
             NSObject
             ProtocolObject<P>
             __NSProxy
-            __RcTestObject
 note: required by a bound in `__macro_helpers::msg_send_id::<impl RetainSemantics<2>>::send_message_id_alloc`
  --> $WORKSPACE/crates/objc2/src/__macro_helpers/msg_send_id.rs
   |
