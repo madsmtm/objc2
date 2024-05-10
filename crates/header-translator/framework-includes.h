@@ -92,6 +92,8 @@
 
 #import <MLCompute/MLCompute.h>
 
+#import <NearbyInteraction/NearbyInteraction.h>
+
 #import <Photos/Photos.h>
 
 #import <QuartzCore/CoreAnimation.h>

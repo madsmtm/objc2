@@ -46,6 +46,7 @@
 | `MetalFX` | [![`objc2-metal-fx`](https://badgen.net/crates/v/objc2-metal-fx)](https://crates.io/crates/objc2-metal-fx) | [![docs.rs](https://docs.rs/objc2-metal-fx/badge.svg)](https://docs.rs/objc2-metal-fx/) |
 | `MetalKit` | [![`objc2-metal-kit`](https://badgen.net/crates/v/objc2-metal-kit)](https://crates.io/crates/objc2-metal-kit) | [![docs.rs](https://docs.rs/objc2-metal-kit/badge.svg)](https://docs.rs/objc2-metal-kit/) |
 | `MetricKit` | [![`objc2-metric-kit`](https://badgen.net/crates/v/objc2-metric-kit)](https://crates.io/crates/objc2-metric-kit) | [![docs.rs](https://docs.rs/objc2-metric-kit/badge.svg)](https://docs.rs/objc2-metric-kit/) |
+| `NearbyInteraction` | [![`objc2-nearby-interaction`](https://badgen.net/crates/v/objc2-nearby-interaction)](https://crates.io/crates/objc2-nearby-interaction) | [![docs.rs](https://docs.rs/objc2-nearby-interaction/badge.svg)](https://docs.rs/objc2-nearby-interaction/) |
 | `OSAKit` | [![`objc2-osa-kit`](https://badgen.net/crates/v/objc2-osa-kit)](https://crates.io/crates/objc2-osa-kit) | [![docs.rs](https://docs.rs/objc2-osa-kit/badge.svg)](https://docs.rs/objc2-osa-kit/) |
 | `Photos` | [![`objc2-photos`](https://badgen.net/crates/v/objc2-photos)](https://crates.io/crates/objc2-photos) | [![docs.rs](https://docs.rs/objc2-photos/badge.svg)](https://docs.rs/objc2-photos/) |
 | `QuartzCore` | [![`objc2-quartz-core`](https://badgen.net/crates/v/objc2-quartz-core)](https://crates.io/crates/objc2-quartz-core) | [![docs.rs](https://docs.rs/objc2-quartz-core/badge.svg)](https://docs.rs/objc2-quartz-core/) |
