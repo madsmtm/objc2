@@ -118,6 +118,7 @@ CAMetalDisplayLink = [
     "objc2-foundation/NSObjCRuntime",
     "objc2-foundation/NSRunLoop",
     "objc2-foundation/NSString",
+    "objc2-metal?/MTLDrawable",
 ]
 CAMetalLayer = [
     "objc2-foundation/NSDictionary",

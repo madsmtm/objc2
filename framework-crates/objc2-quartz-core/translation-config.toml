@@ -52,9 +52,6 @@ class.CATextLayer.methods."setForegroundColor:".skipped = true
 fn.CATransform3DMakeAffineTransform.skipped = true
 fn.CATransform3DGetAffineTransform.skipped = true
 
-# Needs `CAMetalDrawable`
-class.CAMetalDisplayLinkUpdate.methods.drawable.skipped = true
-
 # I'm unsure of the ABI of the array this takes
 class.CAMediaTimingFunction.methods."getControlPointAtIndex:values:".skipped = true
 

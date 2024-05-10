@@ -17,8 +17,8 @@ use objc2_foundation::{
 };
 use objc2_metal::{
     MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue, MTLCreateSystemDefaultDevice, MTLDevice,
-    MTLDrawable, MTLLibrary, MTLPrimitiveType, MTLRenderCommandEncoder,
-    MTLRenderPipelineDescriptor, MTLRenderPipelineState,
+    MTLLibrary, MTLPrimitiveType, MTLRenderCommandEncoder, MTLRenderPipelineDescriptor,
+    MTLRenderPipelineState,
 };
 use objc2_metal_kit::{MTKView, MTKViewDelegate};
 
@@ -240,14 +240,8 @@ declare_class!(
             idcell!(command_queue <= self);
             idcell!(pipeline_state <= self);
 
-            // FIXME: `MTKView` doesn't have a generated binding for `currentDrawable` yet
-            // (because it needs a definition of `CAMetalDrawable`, which we don't support yet) so
-            // we have to use a raw `msg_send_id` call here instead.
-            let current_drawable: Option<Id<ProtocolObject<dyn MTLDrawable>>> =
-                msg_send_id![mtk_view, currentDrawable];
-
             // prepare for drawing
-            let Some(current_drawable) = current_drawable else {
+            let Some(current_drawable) = (unsafe { mtk_view.currentDrawable() }) else {
                 return;
             };
             let Some(command_buffer) = command_queue.commandBuffer() else {
@@ -332,7 +326,7 @@ declare_class!(
             encoder.endEncoding();
 
             // schedule the command buffer for display and commit
-            command_buffer.presentDrawable(&current_drawable);
+            command_buffer.presentDrawable(ProtocolObject::from_ref(&*current_drawable));
             command_buffer.commit();
         }
 

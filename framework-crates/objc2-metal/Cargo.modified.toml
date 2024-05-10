@@ -23,8 +23,10 @@ required-features = [
     "MTLDevice",
     "MTLDrawable",
     "MTLRenderPass",
+    "objc2-quartz-core/objc2-metal",
     "objc2-metal-kit/MTKView",
     "objc2-metal-kit/objc2-app-kit",
+    "objc2-metal-kit/objc2-quartz-core",
 ]
 
 [features]
@@ -39,4 +41,5 @@ unstable-private = [
 
 [dev-dependencies]
 objc2-app-kit = { path = "../objc2-app-kit" }
+objc2-quartz-core = { path = "../objc2-quartz-core" }
 objc2-metal-kit = { path = "../objc2-metal-kit" }

@@ -730,6 +730,7 @@ dependencies = [
  "objc2-app-kit",
  "objc2-foundation",
  "objc2-metal-kit",
+ "objc2-quartz-core",
 ]
 
 [[package]]
@@ -750,6 +751,7 @@ dependencies = [
  "objc2-app-kit",
  "objc2-foundation",
  "objc2-metal",
+ "objc2-quartz-core",
 ]
 
 [[package]]

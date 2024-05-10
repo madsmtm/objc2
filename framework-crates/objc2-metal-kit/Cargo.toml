@@ -26,6 +26,7 @@ block2 = { path = "../../crates/block2", version = "0.5.0", optional = true }
 objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.0", optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.0" }
 objc2-metal = { path = "../objc2-metal", version = "0.2.0" }
+objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.0", optional = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -49,6 +50,7 @@ alloc = ["objc2/alloc"]
 unstable-docsrs = []
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
+objc2-quartz-core = ["dep:objc2-quartz-core"]
 
 MTKDefines = []
 MTKModel = [
@@ -87,10 +89,13 @@ MTKView = [
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-metal/MTLDevice",
+    "objc2-metal/MTLDrawable",
     "objc2-metal/MTLPixelFormat",
     "objc2-metal/MTLRenderPass",
     "objc2-metal/MTLResource",
     "objc2-metal/MTLTexture",
+    "objc2-quartz-core?/CALayer",
+    "objc2-quartz-core?/CAMetalLayer",
 ]
 all = [
     "MTKDefines",
@@ -99,4 +104,5 @@ all = [
     "MTKView",
     "block2",
     "objc2-app-kit",
+    "objc2-quartz-core",
 ]
