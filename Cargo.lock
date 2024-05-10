@@ -751,6 +751,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-ml-compute"
+version = "0.2.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-foundation",
+ "objc2-metal",
+]
+
+[[package]]
 name = "objc2-osa-kit"
 version = "0.2.0"
 dependencies = [

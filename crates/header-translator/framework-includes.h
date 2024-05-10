@@ -88,6 +88,8 @@
 
 #import <MetricKit/MetricKit.h>
 
+#import <MLCompute/MLCompute.h>
+
 #import <Photos/Photos.h>
 
 #import <QuartzCore/CoreAnimation.h>
