@@ -98,6 +98,8 @@
 
 #import <StoreKit/StoreKit.h>
 
+#import <Symbols/Symbols.h>
+
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 #import <UserNotifications/UserNotifications.h>
