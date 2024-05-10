@@ -40,6 +40,8 @@
 
 #import <Contacts/Contacts.h>
 
+#import <ContactsUI/ContactsUI.h>
+
 #import <CoreBluetooth/CoreBluetooth.h>
 
 #import <CoreData/CoreData.h>
