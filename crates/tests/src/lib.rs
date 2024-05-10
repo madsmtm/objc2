@@ -2,7 +2,7 @@
 //!
 //! This is used so that we don't need to add a `build.rs` script to `block2`.
 #![no_std]
-#![cfg_attr(feature = "apple", feature(repr_simd))]
+#![cfg_attr(all(feature = "apple", feature = "unstable-simd"), feature(repr_simd))]
 
 use std::os::raw::c_void;
 
@@ -23,7 +23,7 @@ mod test_foundation_retain_semantics;
 #[cfg(test)]
 mod test_object;
 #[cfg(test)]
-#[cfg(feature = "apple")]
+#[cfg(all(feature = "apple", feature = "unstable-simd"))]
 mod test_simd_return;
 
 #[no_mangle]

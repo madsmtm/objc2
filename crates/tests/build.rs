@@ -31,6 +31,7 @@ fn main() {
     builder.compiler("clang");
     builder.file("extern/encode_utils.m");
     builder.file("extern/test_object.m");
+    #[cfg(feature = "unstable-simd")]
     builder.file("extern/test_simd_return.m");
     println!("cargo:rerun-if-changed=extern/encode_utils.m");
     println!("cargo:rerun-if-changed=extern/test_object.m");
