@@ -58,6 +58,9 @@ class.CAMetalDisplayLinkUpdate.methods.drawable.skipped = true
 # I'm unsure of the ABI of the array this takes
 class.CAMediaTimingFunction.methods."getControlPointAtIndex:values:".skipped = true
 
+# Needs `EAGLDrawable` from `OpenGLES`
+class.CAEAGLLayer.skipped-protocols = ["EAGLDrawable"]
+
 ###
 ### Safety
 ###

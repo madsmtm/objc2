@@ -5,6 +5,10 @@
 #import <Automator/Automator.h>
 #import <MailKit/MailKit.h>
 #import <OSAKit/OSAKit.h>
+#import <ServiceManagement/ServiceManagement.h>
+#import <InputMethodKit/InputMethodKit.h>
+#import <ExceptionHandling/ExceptionHandling.h>
+#import <CoreWLAN/CoreWLAN.h>
 #import <Virtualization/Virtualization.h>
 #endif
 
@@ -38,15 +42,11 @@
 
 #import <CoreLocation/CoreLocation.h>
 
-#import <CoreWLAN/CoreWLAN.h>
-
 #import <DataDetection/DataDetection.h>
 
 #import <DeviceCheck/DeviceCheck.h>
 
 #import <EventKit/EventKit.h>
-
-#import <ExceptionHandling/ExceptionHandling.h>
 
 #import <ExtensionKit/ExtensionKit.h>
 
@@ -65,8 +65,6 @@
 #import <HealthKit/HealthKit.h>
 
 #import <IdentityLookup/IdentityLookup.h>
-
-#import <InputMethodKit/InputMethodKit.h>
 
 #import <LinkPresentation/LinkPresentation.h>
 
@@ -90,8 +88,6 @@
 
 #import <QuartzCore/CoreAnimation.h>
 
-#import <ServiceManagement/ServiceManagement.h>
-
 #import <SoundAnalysis/SoundAnalysis.h>
 
 #import <Speech/Speech.h>
@@ -105,3 +101,7 @@
 #import <UserNotifications/UserNotifications.h>
 
 #import <WebKit/WebKit.h>
+
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h>
+#endif

@@ -76,7 +76,7 @@ impl UnexposedAttr {
             "NS_SWIFT_SENDABLE" | "AS_SWIFT_SENDABLE" => Some(Self::Sendable),
             "NS_SWIFT_NONSENDABLE" => Some(Self::NonSendable),
             "NS_SWIFT_UI_ACTOR" => Some(Self::UIActor),
-            "NS_SWIFT_NONISOLATED" => Some(Self::NonIsolated),
+            "NS_SWIFT_NONISOLATED" | "UIKIT_SWIFT_ACTOR_INDEPENDENT" => Some(Self::NonIsolated),
             // TODO
             "NS_FORMAT_FUNCTION" | "NS_FORMAT_ARGUMENT" => {
                 let _ = get_arguments();
@@ -111,19 +111,22 @@ impl UnexposedAttr {
             | "API_DEPRECATED_WITH_REPLACEMENT"
             | "API_UNAVAILABLE_BEGIN"
             | "API_UNAVAILABLE"
+            | "CF_AVAILABLE_IOS"
+            | "CF_AVAILABLE_MAC"
             | "CF_SWIFT_UNAVAILABLE"
             | "CG_AVAILABLE_BUT_DEPRECATED"
             | "CG_AVAILABLE_STARTING"
             | "CK_UNAVAILABLE"
             | "FPUI_AVAILABLE"
             | "MP_API"
-            | "MP_DEPRECATED_WITH_REPLACEMENT"
             | "MP_DEPRECATED"
+            | "MP_DEPRECATED_WITH_REPLACEMENT"
             | "MP_UNAVAILABLE_BEGIN"
             | "MP_UNAVAILABLE"
             | "NS_AVAILABLE_IOS"
             | "NS_AVAILABLE_MAC"
             | "NS_AVAILABLE"
+            | "NS_CLASS_AVAILABLE_IOS"
             | "NS_CLASS_AVAILABLE_MAC"
             | "NS_CLASS_AVAILABLE"
             | "NS_CLASS_DEPRECATED_IOS"
@@ -132,11 +135,13 @@ impl UnexposedAttr {
             | "NS_DEPRECATED_MAC"
             | "NS_DEPRECATED"
             | "NS_ENUM_AVAILABLE"
+            | "NS_ENUM_AVAILABLE_IOS"
             | "NS_ENUM_AVAILABLE_MAC"
             | "NS_ENUM_DEPRECATED"
             | "NS_ENUM_DEPRECATED_IOS"
             | "NS_ENUM_DEPRECATED_MAC"
             | "NS_EXTENSION_UNAVAILABLE"
+            | "NS_EXTENSION_UNAVAILABLE_IOS"
             | "NS_OPENGL_CLASS_DEPRECATED"
             | "NS_OPENGL_DEPRECATED"
             | "NS_OPENGL_ENUM_DEPRECATED"
@@ -144,6 +149,10 @@ impl UnexposedAttr {
             | "OBJC_AVAILABLE"
             | "OBJC_DEPRECATED"
             | "OBJC_SWIFT_UNAVAILABLE"
+            | "UIKIT_AVAILABLE_TVOS_ONLY"
+            | "UIKIT_AVAILABLE_IOS_ONLY"
+            | "UIKIT_CLASS_AVAILABLE_IOS_ONLY"
+            | "UIKIT_CLASS_AVAILABLE_IOS_TVOS"
             | "WEBKIT_AVAILABLE_MAC"
             | "WEBKIT_CLASS_DEPRECATED_MAC"
             | "WEBKIT_DEPRECATED_MAC"
@@ -169,7 +178,8 @@ impl UnexposedAttr {
             | "NS_AUTOMATED_REFCOUNT_WEAK_UNAVAILABLE"
             | "NS_UNAVAILABLE"
             | "UNAVAILABLE_ATTRIBUTE"
-            | "UT_AVAILABLE_BEGIN" => None,
+            | "UT_AVAILABLE_BEGIN"
+            | "MP_DEPRECATED_BEGIN" => None,
             s if s.starts_with("AVAILABLE_MAC_OS_X_VERSION_") => None,
             s if s.starts_with("DEPRECATED_IN_MAC_OS_X_VERSION_") => None,
             s if s.starts_with("FILEPROVIDER_API_AVAILABILITY_") => None,

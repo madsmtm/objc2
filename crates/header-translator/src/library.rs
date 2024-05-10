@@ -48,6 +48,8 @@ impl Library {
 
         // Output `src/generated/*.rs`.
         for (name, file) in &self.files {
+            let _span = debug_span!("writing file", name).entered();
+
             let name = clean_name(name);
             let mut path = generated_dir.join(name);
             path.set_extension("rs");
