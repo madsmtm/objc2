@@ -5,6 +5,7 @@
 #import <Automator/Automator.h>
 #import <MailKit/MailKit.h>
 #import <OSAKit/OSAKit.h>
+#import <ScreenCaptureKit/ScreenCaptureKit.h>
 #import <ServiceManagement/ServiceManagement.h>
 #import <InputMethodKit/InputMethodKit.h>
 #import <ExceptionHandling/ExceptionHandling.h>
