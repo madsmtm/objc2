@@ -134,7 +134,15 @@ impl Expr {
                         .trim_end_matches('u')
                         .trim_end_matches('U');
                     let lit = lit.replace("0X", "0x");
-                    Token::Literal(lit)
+                    if let Some(lit) = lit.strip_prefix('\'') {
+                        // Byte-character literal
+                        let char = lit
+                            .strip_suffix('\'')
+                            .expect("start quote to have end quote");
+                        Token::Literal(format!("b'{char}' as _"))
+                    } else {
+                        Token::Literal(lit)
+                    }
                 }
                 (TokenKind::Punctuation, punct) => {
                     match &*punct {

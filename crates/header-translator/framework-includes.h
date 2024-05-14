@@ -47,6 +47,8 @@
 
 #import <CoreData/CoreData.h>
 
+#import <CoreImage/CoreImage.h>
+
 #import <CoreLocation/CoreLocation.h>
 
 #import <DataDetection/DataDetection.h>

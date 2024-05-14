@@ -74,14 +74,9 @@ class.NSGestureRecognizer.methods.state.skipped = true
 # Needs `Symbols` framework
 class.NSImageView.categories.NSSymbolEffect.skipped = true
 
-# Defining categories on `CoreImage`
-class.CIImage.categories.NSAppKitAdditions.skipped = true
-class.CIColor.categories.NSAppKitAdditions.skipped = true
-
 # Needs CoreGraphics
 class.NSColor.methods.CGColor.skipped = true
 class.NSColor.methods."colorWithCGColor:".skipped = true
-class.NSColor.methods."colorWithCIColor:".skipped = true
 class.NSColorSpace.methods."initWithCGColorSpace:".skipped = true
 class.NSColorSpace.methods.CGColorSpace.skipped = true
 class.NSLayoutManager.methods."CGGlyphAtIndex:isValidIndex:".skipped = true
@@ -93,7 +88,6 @@ class.NSImage.methods."CGImageForProposedRect:context:hints:".skipped = true
 class.NSImage.methods."initWithIconRef:".skipped = true
 class.NSImageRep.methods."CGImageForProposedRect:context:hints:".skipped = true
 class.NSBitmapImageRep.methods."initWithCGImage:".skipped = true
-class.NSBitmapImageRep.methods."initWithCIImage:".skipped = true
 class.NSBitmapImageRep.methods.CGImage.skipped = true
 class.NSEvent.methods.CGEvent.skipped = true
 class.NSEvent.methods."eventWithCGEvent:".skipped = true
@@ -154,8 +148,6 @@ class.NSWorkspaceOpenConfiguration.methods."setArchitecture:".skipped = true
 protocol.NSApplicationDelegate.methods."application:handlerForIntent:".skipped = true
 protocol.NSApplicationDelegate.methods."application:userDidAcceptCloudKitShareWithMetadata:".skipped = true
 protocol.NSLayoutManagerDelegate.methods."layoutManager:shouldGenerateGlyphs:properties:characterIndexes:font:forGlyphRange:".skipped = true
-class.NSCIImageRep.skipped = true
-class.NSGraphicsContext.methods.CIContext.skipped = true
 class.NSItemProvider.methods."registerCloudKitShareWithPreparationHandler:".skipped = true
 class.NSItemProvider.methods."registerCloudKitShare:container:".skipped = true
 class.NSGlyphInfo.methods.glyphID.skipped = true

@@ -371,6 +371,7 @@ dependencies = [
  "libc",
  "objc2",
  "objc2-core-data",
+ "objc2-core-image",
  "objc2-foundation",
  "objc2-quartz-core",
 ]
@@ -501,6 +502,16 @@ dependencies = [
  "block2",
  "objc2",
  "objc2-foundation",
+]
+
+[[package]]
+name = "objc2-core-image"
+version = "0.2.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-foundation",
+ "objc2-metal",
 ]
 
 [[package]]
@@ -799,6 +810,7 @@ dependencies = [
  "block2",
  "objc2",
  "objc2-app-kit",
+ "objc2-core-image",
  "objc2-core-location",
  "objc2-foundation",
  "objc2-uniform-type-identifiers",
@@ -881,6 +893,7 @@ dependencies = [
  "objc2",
  "objc2-cloud-kit",
  "objc2-core-data",
+ "objc2-core-image",
  "objc2-core-location",
  "objc2-foundation",
  "objc2-link-presentation",

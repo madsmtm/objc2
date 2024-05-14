@@ -72,24 +72,10 @@ static.UITextWritingDirectionNatural.skipped = true
 static.UITextWritingDirectionLeftToRight.skipped = true
 static.UITextWritingDirectionRightToLeft.skipped = true
 
-# Needs `CIColor`
-class.UIColor.methods."colorWithCIColor:".skipped = true
-class.UIColor.methods."initWithCIColor:".skipped = true
-class.UIColor.methods.CIColor.skipped = true
-class.CIColor.categories.UIKitAdditions.skipped = true
-
 # Needs `CGColorRef`
 class.UIColor.methods."colorWithCGColor:".skipped = true
 class.UIColor.methods."initWithCGColor:".skipped = true
 class.UIColor.methods.CGColor.skipped = true
-
-# Needs `CIImage`
-class.UIImage.methods."imageWithCIImage:".skipped = true
-class.UIImage.methods."imageWithCIImage:scale:orientation:".skipped = true
-class.UIImage.methods."initWithCIImage:".skipped = true
-class.UIImage.methods."initWithCIImage:scale:orientation:".skipped = true
-class.UIImage.methods.CIImage.skipped = true
-class.CIImage.categories.UIKitAdditions.skipped = true
 
 # Needs `CGImageRef`
 class.UIImage.methods."imageWithCGImage:".skipped = true

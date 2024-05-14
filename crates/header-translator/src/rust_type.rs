@@ -249,6 +249,7 @@ pub enum Primitive {
     U64,
     ISize,
     USize,
+    PtrDiff,
     // Objective-C
     ObjcBool,
     NSInteger,
@@ -288,6 +289,8 @@ impl fmt::Display for Primitive {
             Self::ISize => write!(f, "isize"),
             // TODO: Use core::ffi::c_size_t
             Self::USize => write!(f, "usize"),
+            // TODO: Use core::ffi::c_ptr_diff_t
+            Self::PtrDiff => write!(f, "isize"),
             Self::ObjcBool => write!(f, "Bool"),
             Self::NSInteger => write!(f, "NSInteger"),
             Self::NSUInteger => write!(f, "NSUInteger"),
@@ -848,11 +851,14 @@ impl Ty {
                     "int16_t" => return Self::Primitive(Primitive::I16),
                     "uint16_t" => return Self::Primitive(Primitive::U16),
                     "int32_t" => return Self::Primitive(Primitive::I32),
+                    "__int32_t" => return Self::Primitive(Primitive::I32),
                     "uint32_t" => return Self::Primitive(Primitive::U32),
+                    "__uint32_t" => return Self::Primitive(Primitive::U32),
                     "int64_t" => return Self::Primitive(Primitive::I64),
                     "uint64_t" => return Self::Primitive(Primitive::U64),
                     "ssize_t" => return Self::Primitive(Primitive::ISize),
                     "size_t" => return Self::Primitive(Primitive::USize),
+                    "ptrdiff_t" => return Self::Primitive(Primitive::PtrDiff),
 
                     // MacTypes.h
                     "UInt8" => return Self::Primitive(Primitive::U8),

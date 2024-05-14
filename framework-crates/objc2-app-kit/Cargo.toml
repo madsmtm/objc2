@@ -25,6 +25,7 @@ objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = fal
 block2 = { path = "../../crates/block2", version = "0.5.0", default-features = false, optional = true }
 libc = { version = "0.2.80", optional = true }
 objc2-core-data = { path = "../objc2-core-data", version = "0.2.0", default-features = false, optional = true }
+objc2-core-image = { path = "../objc2-core-image", version = "0.2.0", default-features = false, optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.0", default-features = false }
 objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.0", default-features = false, optional = true }
 
@@ -57,6 +58,7 @@ gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1", "block2?/gnustep-2-1", "objc2
 block2 = ["dep:block2"]
 libc = ["dep:libc"]
 objc2-core-data = ["dep:objc2-core-data"]
+objc2-core-image = ["dep:objc2-core-image"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 
 AppKitDefines = []
@@ -180,6 +182,7 @@ NSBezierPath = [
     "objc2-foundation/NSObject",
 ]
 NSBitmapImageRep = [
+    "objc2-core-image?/CIImage",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSData",
@@ -230,7 +233,12 @@ NSButtonTouchBarItem = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
-NSCIImageRep = []
+NSCIImageRep = [
+    "objc2-core-image?/CIImage",
+    "objc2-foundation/NSCoder",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/NSObject",
+]
 NSCachedImageRep = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
@@ -311,6 +319,7 @@ NSCollectionViewTransitionLayout = [
     "objc2-foundation/NSString",
 ]
 NSColor = [
+    "objc2-core-image?/CIColor",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSCoder",
@@ -620,6 +629,7 @@ NSGraphics = [
     "objc2-foundation/NSString",
 ]
 NSGraphicsContext = [
+    "objc2-core-image?/CIContext",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSString",
@@ -2057,6 +2067,7 @@ all = [
     "block2",
     "libc",
     "objc2-core-data",
+    "objc2-core-image",
     "objc2-quartz-core",
 ]
 

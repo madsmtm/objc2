@@ -25,6 +25,7 @@ objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = fal
 block2 = { path = "../../crates/block2", version = "0.5.0", optional = true }
 objc2-cloud-kit = { path = "../objc2-cloud-kit", version = "0.2.0", optional = true }
 objc2-core-data = { path = "../objc2-core-data", version = "0.2.0", optional = true }
+objc2-core-image = { path = "../objc2-core-image", version = "0.2.0", optional = true }
 objc2-core-location = { path = "../objc2-core-location", version = "0.2.0", optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.0" }
 objc2-link-presentation = { path = "../objc2-link-presentation", version = "0.2.0", optional = true }
@@ -56,6 +57,7 @@ unstable-docsrs = []
 block2 = ["dep:block2"]
 objc2-cloud-kit = ["dep:objc2-cloud-kit"]
 objc2-core-data = ["dep:objc2-core-data"]
+objc2-core-image = ["dep:objc2-core-image"]
 objc2-core-location = ["dep:objc2-core-location"]
 objc2-link-presentation = ["dep:objc2-link-presentation"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
@@ -546,6 +548,7 @@ UICollisionBehavior = [
     "objc2-foundation/NSObject",
 ]
 UIColor = [
+    "objc2-core-image?/CIColor",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSItemProvider",
@@ -918,10 +921,12 @@ UIHoverGestureRecognizer = [
 ]
 UIHoverStyle = ["objc2-foundation/NSObject"]
 UIImage = [
+    "objc2-core-image?/CIImage",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDate",
+    "objc2-foundation/NSDictionary",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSItemProvider",
     "objc2-foundation/NSObject",
@@ -2256,6 +2261,7 @@ all = [
     "block2",
     "objc2-cloud-kit",
     "objc2-core-data",
+    "objc2-core-image",
     "objc2-core-location",
     "objc2-link-presentation",
     "objc2-quartz-core",
