@@ -30,8 +30,7 @@
 //! Finally, the `Id` goes out of scope, and the object is released and
 //! deallocated.
 //!
-#![cfg_attr(feature = "apple", doc = "```")]
-#![cfg_attr(not(feature = "apple"), doc = "```no_run")]
+//! ```
 //! use objc2::{msg_send, msg_send_id, ClassType};
 //! use objc2::ffi::NSUInteger;
 //! use objc2::rc::Id;
@@ -105,8 +104,7 @@
 //! To take the example above, if we changed the `hash` method's return type
 //! as in the following example, it'll panic if debug assertions are enabled:
 //!
-#![cfg_attr(all(feature = "apple", debug_assertions), doc = "```should_panic")]
-#![cfg_attr(not(all(feature = "apple", debug_assertions)), doc = "```no_run")]
+//! ```should_panic
 //! # use objc2::{msg_send, ClassType};
 //! # use objc2::runtime::NSObject;
 //! #
