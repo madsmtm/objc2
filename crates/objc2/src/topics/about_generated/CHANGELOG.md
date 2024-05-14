@@ -20,6 +20,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added methods to access `CALayer` from `objc2_app_kit::NSView`.
 * Added optional support for a few methods depending on types from `libc`.
 
+### Changed
+* Updated SDK from Xcode 15.3 to 15.4.
+
+  View the release notes to learn more details:
+  - [15.4](https://developer.apple.com/documentation/xcode-release-notes/xcode-15_4-release-notes)
+
 ### Removed
 * `objc2_metal`: Removed internal `__MTLPackedFloat3` and made `MTLPackedFloat3` public.
 

@@ -22,11 +22,11 @@ for the [`block2`] crate for how to call such methods using a closure.
 
 ## Currently supported versions
 
-- macOS: `10.12-14.4`
-- iOS/iPadOS: `10.0-17.4` (WIP)
-- tvOS: `10.0-17.4` (WIP)
-- watchOS: `5.0-10.4` (WIP)
-- visionOS: `1.0-1.1` (WIP)
+- macOS: `10.12-14.5`
+- iOS/iPadOS: `10.0-17.5` (WIP)
+- tvOS: `10.0-17.5` (WIP)
+- watchOS: `5.0-10.5` (WIP)
+- visionOS: `1.0-1.2` (WIP)
 
-These bindings are currently generated from the SDKs in Xcode 15.3.
+These bindings are currently generated from the SDKs in Xcode 15.4.
 The Xcode version will be periodically updated.

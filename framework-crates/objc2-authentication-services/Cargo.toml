@@ -221,6 +221,7 @@ ASAuthorizationSecurityKeyPublicKeyCredentialAssertion = ["objc2-foundation/NSOb
 ASAuthorizationSecurityKeyPublicKeyCredentialAssertionRequest = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
 ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor = [
     "objc2-foundation/NSArray",
@@ -232,7 +233,11 @@ ASAuthorizationSecurityKeyPublicKeyCredentialProvider = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSString",
 ]
-ASAuthorizationSecurityKeyPublicKeyCredentialRegistration = ["objc2-foundation/NSObject"]
+ASAuthorizationSecurityKeyPublicKeyCredentialRegistration = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 ASAuthorizationSecurityKeyPublicKeyCredentialRegistrationRequest = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
