@@ -95,7 +95,11 @@ impl UnexposedAttr {
             // Weak specifiers - would be interesting if Rust supported weak statics
             "GK_EXTERN_WEAK" => None,
             // Availability attributes - their data is already exposed.
-            "__IOS_AVAILABLE"
+            "__API_AVAILABLE"
+            | "__API_DEPRECATED"
+            | "__API_DEPRECATED_WITH_REPLACEMENT"
+            | "__API_UNAVAILABLE"
+            | "__IOS_AVAILABLE"
             | "__IOS_DEPRECATED"
             | "__OSX_AVAILABLE"
             | "__OSX_AVAILABLE_STARTING"

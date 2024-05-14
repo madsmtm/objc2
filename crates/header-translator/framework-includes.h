@@ -51,6 +51,8 @@
 
 #import <CoreLocation/CoreLocation.h>
 
+#import <CoreMotion/CoreMotion.h>
+
 #import <DataDetection/DataDetection.h>
 
 #import <DeviceCheck/DeviceCheck.h>
