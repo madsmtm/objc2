@@ -97,6 +97,8 @@
 
 #import <MLCompute/MLCompute.h>
 
+#import <MultipeerConnectivity/MultipeerConnectivity.h>
+
 #import <NearbyInteraction/NearbyInteraction.h>
 
 #import <Photos/Photos.h>

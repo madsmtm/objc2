@@ -93,7 +93,7 @@ impl UnexposedAttr {
             // We don't synthethize properties, so irrelevant for us.
             "NS_REQUIRES_PROPERTY_DEFINITIONS" => None,
             // Weak specifiers - would be interesting if Rust supported weak statics
-            "GK_EXTERN_WEAK" => None,
+            "GK_EXTERN_WEAK" | "MC_EXTERN_WEAK" => None,
             // Availability attributes - their data is already exposed.
             "__API_AVAILABLE"
             | "__API_DEPRECATED"
