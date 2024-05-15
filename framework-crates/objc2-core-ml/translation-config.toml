@@ -1,0 +1,23 @@
+framework = "CoreML"
+crate = "objc2-core-ml"
+required-dependencies = ["objc2-foundation"]
+macos = "10.13"
+maccatalyst = "10.13"
+ios = "11.0"
+tvos = "11.0"
+watchos = "4.0"
+visionos = "1.0"
+
+# Needs CoreVideo
+class.MLFeatureValue.methods.imageBufferValue.skipped = true
+class.MLFeatureValue.methods."featureValueWithPixelBuffer:".skipped = true
+class.MLMultiArray.methods.pixelBuffer.skipped = true
+class.MLMultiArray.methods."initWithPixelBuffer:shape:".skipped = true
+
+# Needs CoreGraphics
+class.MLFeatureValue.methods."featureValueWithCGImage:pixelsWide:pixelsHigh:pixelFormatType:options:error:".skipped = true
+class.MLFeatureValue.methods."featureValueWithCGImage:constraint:options:error:".skipped = true
+class.MLFeatureValue.methods."featureValueWithCGImage:orientation:pixelsWide:pixelsHigh:pixelFormatType:options:error:".skipped = true
+class.MLFeatureValue.methods."featureValueWithCGImage:orientation:constraint:options:error:".skipped = true
+class.MLFeatureValue.methods."featureValueWithImageAtURL:orientation:pixelsWide:pixelsHigh:pixelFormatType:options:error:".skipped = true
+class.MLFeatureValue.methods."featureValueWithImageAtURL:orientation:constraint:options:error:".skipped = true
