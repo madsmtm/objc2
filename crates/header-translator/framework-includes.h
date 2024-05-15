@@ -121,6 +121,8 @@
 
 #import <UserNotifications/UserNotifications.h>
 
+#import <Vision/Vision.h>
+
 #import <WebKit/WebKit.h>
 
 #if TARGET_OS_IPHONE

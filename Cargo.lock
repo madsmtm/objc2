@@ -972,6 +972,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-vision"
+version = "0.2.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-core-image",
+ "objc2-core-ml",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-web-kit"
 version = "0.2.0"
 dependencies = [

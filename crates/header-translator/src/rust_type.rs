@@ -1160,6 +1160,20 @@ impl Ty {
         }
     }
 
+    fn inner_typedef_is_object_life(&self) -> bool {
+        match self {
+            Self::Class { .. }
+            | Self::GenericParam { .. }
+            | Self::AnyObject { .. }
+            | Self::AnyProtocol
+            | Self::Self_ => true,
+            // FIXME: This recurses badly and too deeply
+            Self::Pointer { pointee, .. } => pointee.inner_typedef_is_object_life(),
+            Self::TypeDef { to, .. } => to.inner_typedef_is_object_life(),
+            _ => false,
+        }
+    }
+
     fn is_object_like(&self) -> bool {
         match self {
             Self::Class { .. }
@@ -1167,17 +1181,7 @@ impl Ty {
             | Self::AnyObject { .. }
             | Self::AnyProtocol
             | Self::Self_ => true,
-            Self::TypeDef { to, .. } => match &**to {
-                Self::Class { .. }
-                | Self::GenericParam { .. }
-                | Self::AnyObject { .. }
-                | Self::AnyProtocol
-                | Self::Self_ => true,
-                // FIXME: This recurses badly and too deeply
-                Self::Pointer { pointee, .. } => pointee.is_object_like(),
-                Self::TypeDef { to, .. } => to.is_object_like(),
-                _ => false,
-            },
+            Self::TypeDef { to, .. } => to.inner_typedef_is_object_life(),
             _ => false,
         }
     }
@@ -1966,5 +1970,35 @@ mod tests {
         let (actual, attr) = parse_unexposed_tokens("NS_SWIFT_UI_ACTOR SEL");
         assert_eq!(actual, "SEL");
         assert_eq!(attr, Some(UnexposedAttr::UIActor));
+    }
+
+    #[test]
+    fn test_nested_typedef_is_object_like() {
+        let ty = Ty::TypeDef {
+            id: ItemIdentifier::dummy(),
+            nullability: Nullability::Unspecified,
+            lifetime: Lifetime::Unspecified,
+            to: Box::new(Ty::TypeDef {
+                id: ItemIdentifier::dummy(),
+                nullability: Nullability::Unspecified,
+                lifetime: Lifetime::Unspecified,
+                to: Box::new(Ty::Pointer {
+                    nullability: Nullability::Unspecified,
+                    is_const: false,
+                    lifetime: Lifetime::Unspecified,
+                    pointee: Box::new(Ty::Class {
+                        decl: ItemRef {
+                            id: ItemIdentifier::dummy(),
+                            thread_safety: ThreadSafety::dummy(),
+                            required_items: vec![],
+                        },
+                        generics: vec![],
+                        protocols: vec![],
+                    }),
+                }),
+            }),
+        };
+
+        assert!(ty.is_object_like());
     }
 }

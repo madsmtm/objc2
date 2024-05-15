@@ -258,6 +258,17 @@ impl ItemIdentifier {
         }
     }
 
+    #[cfg(test)]
+    pub fn dummy() -> Self {
+        Self {
+            name: "DUMMY".to_string(),
+            location: Location {
+                library: "System".to_string(),
+                file_name: None,
+            },
+        }
+    }
+
     pub fn is_nsstring(&self) -> bool {
         self.location.library == "Foundation" && self.name == "NSString"
     }

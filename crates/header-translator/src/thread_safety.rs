@@ -188,6 +188,14 @@ pub(crate) struct ThreadSafety {
 }
 
 impl ThreadSafety {
+    #[cfg(test)]
+    pub(crate) fn dummy() -> Self {
+        Self {
+            explicit: None,
+            inferred: ThreadSafetyAttr::NotSendable,
+        }
+    }
+
     pub(crate) fn from_decl(entity: &Entity<'_>, context: &Context<'_>) -> Self {
         let explicit = ThreadSafetyAttr::parse_explicit_decl(entity, context);
         let inferred =
