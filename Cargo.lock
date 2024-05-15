@@ -807,6 +807,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-natural-language"
+version = "0.2.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-nearby-interaction"
 version = "0.2.0"
 dependencies = [

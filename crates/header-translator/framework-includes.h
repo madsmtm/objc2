@@ -99,6 +99,8 @@
 
 #import <MultipeerConnectivity/MultipeerConnectivity.h>
 
+#import <NaturalLanguage/NaturalLanguage.h>
+
 #import <NearbyInteraction/NearbyInteraction.h>
 
 #import <Photos/Photos.h>
