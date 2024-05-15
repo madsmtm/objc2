@@ -1,0 +1,43 @@
+framework = "AVKit"
+crate = "objc2-av-kit"
+required-dependencies = ["objc2-foundation"]
+macos = "10.9"
+maccatalyst = "13.0"
+ios = "8.0"
+tvos = "9.0"
+watchos = "9.0"
+visionos = "1.0"
+
+# Needs AVFoundation
+class.AVCaptureView.methods.session.skipped = true
+class.AVCaptureView.methods."setSession:showVideoPreview:showAudioPreview:".skipped = true
+class.AVCaptureView.methods.videoGravity.skipped = true
+class.AVCaptureView.methods."setVideoGravity:".skipped = true
+class.AVCaptureView.methods.fileOutput.skipped = true
+protocol.AVCaptureViewDelegate.methods."captureView:startRecordingToFileOutput:".skipped = true
+class.AVPictureInPictureController.methods."initWithPlayerLayer:".skipped = true
+class.AVPictureInPictureController.methods.playerLayer.skipped = true
+class.AVPictureInPictureControllerContentSource.methods."initWithPlayerLayer:".skipped = true
+class.AVPictureInPictureControllerContentSource.methods.playerLayer.skipped = true
+class.AVPictureInPictureControllerContentSource.methods."initWithSampleBufferDisplayLayer:playbackDelegate:".skipped = true
+class.AVPictureInPictureControllerContentSource.methods.sampleBufferDisplayLayer.skipped = true
+class.AVPlayerView.methods.player.skipped = true
+class.AVPlayerView.methods."setPlayer:".skipped = true
+class.AVPlayerView.methods.videoGravity.skipped = true
+class.AVPlayerView.methods."setVideoGravity:".skipped = true
+class.AVRoutePickerView.methods.player.skipped = true
+class.AVRoutePickerView.methods."setPlayer:".skipped = true
+class.AVRoutePickerView.methods.customRoutingController.skipped = true
+class.AVRoutePickerView.methods."setCustomRoutingController:".skipped = true
+
+# Needs AVFoundation (iOS)
+class.AVAudioSession.categories.AVPlaybackRouteSelecting.skipped = true
+class.AVPlayerItem.categories.AVKitAdditions.skipped = true
+class.AVPlayerViewController.methods.player.skipped = true
+class.AVPlayerViewController.methods."setPlayer:".skipped = true
+protocol.AVPlayerViewControllerDelegate.methods."playerViewController:didSelectMediaSelectionOption:inMediaSelectionGroup:".skipped = true
+
+# Needs CoreMedia
+protocol.AVPictureInPictureSampleBufferPlaybackDelegate.methods."pictureInPictureControllerTimeRangeForPlayback:".skipped = true
+protocol.AVPictureInPictureSampleBufferPlaybackDelegate.methods."pictureInPictureController:didTransitionToRenderSize:".skipped = true
+protocol.AVPictureInPictureSampleBufferPlaybackDelegate.methods."pictureInPictureController:skipByInterval:completionHandler:".skipped = true

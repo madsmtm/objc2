@@ -27,6 +27,8 @@
 
 #import <AutomaticAssessmentConfiguration/AutomaticAssessmentConfiguration.h>
 
+#import <AVKit/AVKit.h>
+
 #import <BackgroundAssets/BackgroundAssets.h>
 
 #import <BackgroundTasks/BackgroundTasks.h>

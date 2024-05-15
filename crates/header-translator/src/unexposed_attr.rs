@@ -186,6 +186,7 @@ impl UnexposedAttr {
             | "__WATCHOS_PROHIBITED"
             | "__WATCHOS_UNAVAILABLE"
             | "APPKIT_API_UNAVAILABLE_BEGIN_MACCATALYST"
+            | "AVKIT_INIT_UNAVAILABLE"
             | "CB_CM_API_AVAILABLE"
             | "MP_INIT_UNAVAILABLE"
             | "NS_AUTOMATED_REFCOUNT_UNAVAILABLE"
