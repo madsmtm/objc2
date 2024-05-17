@@ -39,6 +39,28 @@ cargo run --bin check_framework_features
 ```
 
 
+## Adding a new framework crate
+
+To add a new framework crate, create a new empty crate in [`framework-crates`](../../framework-crates/), along with a bare-bones `translation-config.toml`. You can use this as a template:
+```toml
+framework = "XXX"
+crate = "objc2-xxx"
+required-dependencies = ["objc2-foundation"]
+macos = "XXX"
+maccatalyst = "XXX"
+ios = "XXX"
+tvos = "XXX"
+watchos = "XXX"
+visionos = "XXX"
+```
+
+The version numbers should be filled in from the front page of Apple's documentation for the given framework. Once this is done, you should be able to run `header-translator`, and have it generate the framework.
+
+You will need to further modify this `translation-config.toml` with `skipped` items until `header-translator` produces no more `ERROR` logging messages, and it compiles successfully.
+
+Feel free to open a half-finished PR if you need assistance.
+
+
 ## Data enrichment
 
 The `translation-config.toml` file describes various tweaks that we need to do because our header translation is incomplete in some areas.

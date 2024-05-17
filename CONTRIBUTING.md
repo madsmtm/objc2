@@ -12,7 +12,18 @@ details on how to do that).
 [so-symlink]: https://stackoverflow.com/a/59761201/5203369
 
 
-## `git` submodules
+## Framework crates
+
+`objc2` uses a custom tool called `header-translator` to generate the framework
+crates. Head over to [the README](./crates/header-translator/README.md) for
+more detailed instructions on how to use this tool, and generate new bindings.
+
+Note that crates that use `CoreFoundation`-like functionality is likely to not
+yet be translatable, see [#556](https://github.com/madsmtm/objc2/issues/556)
+for progress on this front.
+
+
+### `git` submodules
 
 The framework crates uses a submodule pointing to [`madsmtm/objc2-generated`].
 This exists to keep the primary repository free from the clutter inherently
