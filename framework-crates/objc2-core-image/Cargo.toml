@@ -21,10 +21,10 @@ license = "MIT"
 workspace = true
 
 [dependencies]
-objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false, features = ["apple"] }
-block2 = { path = "../../crates/block2", version = "0.5.0", optional = true }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.0" }
-objc2-metal = { path = "../objc2-metal", version = "0.2.0", optional = true }
+objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false }
+block2 = { path = "../../crates/block2", version = "0.5.0", default-features = false, optional = true }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.0", default-features = false }
+objc2-metal = { path = "../objc2-metal", version = "0.2.0", default-features = false, optional = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -35,6 +35,8 @@ targets = [
     "aarch64-apple-ios",
     "aarch64-apple-tvos",
     "aarch64-apple-ios-macabi",
+    "x86_64-unknown-linux-gnu",
+    "i686-unknown-linux-gnu",
 ]
 
 [features]
@@ -46,6 +48,12 @@ alloc = ["objc2/alloc"]
 
 # For better documentation on docs.rs
 unstable-docsrs = []
+apple = ["objc2/apple", "block2?/apple", "objc2-foundation/apple"]
+gnustep-1-7 = ["objc2/gnustep-1-7", "block2?/gnustep-1-7", "objc2-foundation/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "objc2/gnustep-1-8", "block2?/gnustep-1-8", "objc2-foundation/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "objc2/gnustep-1-9", "block2?/gnustep-1-9", "objc2-foundation/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "objc2/gnustep-2-0", "block2?/gnustep-2-0", "objc2-foundation/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "objc2/gnustep-2-1", "block2?/gnustep-2-1", "objc2-foundation/gnustep-2-1"]
 block2 = ["dep:block2"]
 objc2-metal = ["dep:objc2-metal"]
 
