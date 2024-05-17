@@ -23,7 +23,7 @@ We're (slowly) working on fixing this, see [servo/core-foundation-rs#628], but i
 [`Encode`]: crate::encode::Encode
 
 
-### Example
+### Examples
 
 Declaring an external function to [`CFRunLoopObserverCreateWithHandler`](https://developer.apple.com/documentation/corefoundation/1542816-cfrunloopobservercreatewithhandl?language=objc), which uses blocks and `block2`, and as such require its parameters to implement `Encode`.
 
@@ -70,6 +70,27 @@ let observer = unsafe {
 };
 #
 # assert!(CFRunLoopObserverRefWrapper::ENCODING.equivalent_to_str("^{__CFRunLoopObserver=}"));
+```
+
+An alternative, if you don't want to go through the trouble of creating a newtype, is to use the `"relax-void-encoding"` Cargo feature.
+
+Here we set the [`-[CALayer borderColor]`](https://developer.apple.com/documentation/quartzcore/calayer/1410903-bordercolor?language=objc) property (which uses `CGColorRef`).
+
+```rust, ignore
+use core_foundation::base::ToVoid;
+use core_graphics::color::CGColor;
+use objc2_quartz_core::CALayer;
+use objc2::msg_send;
+
+fn set_border_color(layer: &CALayer, color: &CGColor) {
+    let color = color.to_void();
+    // Passing `*const c_void` here requires the "relax-void-encoding" feature
+    unsafe { msg_send![layer, setBorderColor: color] }
+}
+
+let layer = unsafe { CALayer::new() };
+let color = CGColor::rgb(1.0, 0.0, 0.0, 1.0);
+set_border_color(&layer, &color);
 ```
 
 
