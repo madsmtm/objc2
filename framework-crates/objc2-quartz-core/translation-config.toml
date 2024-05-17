@@ -1,5 +1,6 @@
 framework = "QuartzCore"
 crate = "objc2-quartz-core"
+umbrella-header = "CoreAnimation.h"
 required-dependencies = ["objc2-foundation"]
 custom-lib-rs = true
 macos = "10.3"

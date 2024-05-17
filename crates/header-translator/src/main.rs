@@ -85,21 +85,36 @@ fn main() -> Result<(), BoxError> {
 
     let mut libraries = BTreeMap::new();
 
+    let tempdir = workspace_dir.join("target").join("header-translator");
+    fs::create_dir_all(&tempdir)?;
+
     // TODO: Compare between SDKs
     for sdk in sdks {
         // These are found using the `get_llvm_targets.fish` helper script
-        let llvm_targets: &[_] = match &sdk.platform {
-            Platform::MacOsX => &[
-                // "x86_64-apple-macosx10.12.0",
-                "arm64-apple-macosx11.0.0",
-                // "i686-apple-macosx10.12.0",
-            ],
-            Platform::IPhoneOs => &[
-                "arm64-apple-ios10.0.0",
-                // "armv7s-apple-ios10.0.0",
-                // "arm64-apple-ios14.0-macabi",
-                // "x86_64-apple-ios13.0-macabi",
-            ],
+        let (llvm_targets, platform_header, platform_config_filter): (
+            &[_],
+            _,
+            fn(&LibraryConfig) -> bool,
+        ) = match &sdk.platform {
+            Platform::MacOsX => (
+                &[
+                    // "x86_64-apple-macosx10.12.0",
+                    "arm64-apple-macosx11.0.0",
+                    // "i686-apple-macosx10.12.0",
+                ],
+                "macos.h",
+                |config| config.macos.is_some(),
+            ),
+            Platform::IPhoneOs => (
+                &[
+                    "arm64-apple-ios10.0.0",
+                    // "armv7s-apple-ios10.0.0",
+                    // "arm64-apple-ios14.0-macabi",
+                    // "x86_64-apple-ios13.0-macabi",
+                ],
+                "ios.h",
+                |config| config.ios.is_some(),
+            ),
             // Platform::IPhoneSimulator => &[
             //     "arm64-apple-ios10.0.0-simulator",
             //     "x86_64-apple-ios10.0.0-simulator",
@@ -116,9 +131,34 @@ fn main() -> Result<(), BoxError> {
 
         let mut result: Option<BTreeMap<String, Library>> = None;
 
+        let includes = tempdir.join(platform_header);
+
+        let mut includes_file = fs::File::create(&includes).unwrap();
+        for lib in config.libraries.values() {
+            if !platform_config_filter(lib) {
+                continue;
+            }
+            if let Some(umbrella_header) = &lib.umbrella_header {
+                writeln!(
+                    &mut includes_file,
+                    "#import <{}/{}>",
+                    lib.framework, umbrella_header
+                )?;
+            } else {
+                writeln!(
+                    &mut includes_file,
+                    "#import <{}/{}.h>",
+                    lib.framework, lib.framework,
+                )?;
+            }
+        }
+        includes_file.flush().unwrap();
+        drop(includes_file);
+
         for llvm_target in llvm_targets {
             let _span = info_span!("parsing", platform = ?sdk.platform, llvm_target).entered();
-            let curr_result = parse_sdk(&index, &sdk, llvm_target, &config);
+
+            let curr_result = parse_sdk(&index, &sdk, llvm_target, &config, &includes);
 
             if let Some(prev_result) = &result {
                 // Ensure that each target produces the same result.
@@ -235,8 +275,9 @@ fn parse_sdk(
     sdk: &SdkPath,
     llvm_target: &str,
     config: &Config,
+    includes: &Path,
 ) -> BTreeMap<String, Library> {
-    let tu = get_translation_unit(index, sdk, llvm_target);
+    let tu = get_translation_unit(index, sdk, llvm_target, includes);
 
     let mut preprocessing = true;
     let mut libraries: BTreeMap<String, Library> = config
@@ -338,11 +379,12 @@ fn get_translation_unit<'i: 'tu, 'tu>(
     index: &'i Index<'tu>,
     sdk: &SdkPath,
     llvm_target: &str,
+    includes: &Path,
 ) -> TranslationUnit<'tu> {
     let _span = info_span!("initializing translation unit").entered();
 
     let tu = index
-        .parser(Path::new(env!("CARGO_MANIFEST_DIR")).join("framework-includes.h"))
+        .parser(includes)
         .detailed_preprocessing_record(true)
         .incomplete(true)
         .skip_function_bodies(true)
@@ -351,7 +393,7 @@ fn get_translation_unit<'i: 'tu, 'tu>(
         .include_attributed_types(true)
         .visit_implicit_attributes(true)
         // .ignore_non_errors_from_included_files(true)
-        // .retain_excluded_conditional_blocks(true)
+        .retain_excluded_conditional_blocks(true)
         .arguments(&[
             "-x",
             "objective-c",

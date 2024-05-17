@@ -75,10 +75,11 @@ fn get_version<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Option<Vers
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct LibraryConfig {
-    #[serde(rename = "framework")]
     pub framework: String,
     #[serde(rename = "crate")]
     pub krate: String,
+    #[serde(rename = "umbrella-header")]
+    pub umbrella_header: Option<String>,
     /// Dependencies are optional by default, this can be used to make a
     /// dependency required.
     ///
