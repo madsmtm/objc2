@@ -23,11 +23,11 @@ workspace = true
 # NOTE: 'unstable' features are _not_ considered part of the SemVer contract,
 # and may be removed in a minor release.
 [features]
-default = ["std", "apple"]
+default = ["std", "apple", "core-foundation/default", "block2/default", "objc2-foundation/default"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "objc2-encode/std", "objc-sys/std"]
-alloc = ["objc2-encode/alloc", "objc-sys/alloc"]
+std = ["alloc", "objc2-encode/std", "objc-sys/std", "block2/std", "objc2-foundation/std"]
+alloc = ["objc2-encode/alloc", "objc-sys/alloc", "block2/alloc", "objc2-foundation/alloc"]
 
 # Enables `objc2::exception::throw` and `objc2::exception::catch`
 exception = ["objc-sys/unstable-exception"]
@@ -92,12 +92,12 @@ unstable-docsrs = []
 unstable-apple-new = ["apple"]
 
 # Runtime selection. See `objc-sys` for details.
-apple = ["objc-sys/apple"]
-gnustep-1-7 = ["objc-sys/gnustep-1-7"]
-gnustep-1-8 = ["gnustep-1-7", "objc-sys/gnustep-1-8"]
-gnustep-1-9 = ["gnustep-1-8", "objc-sys/gnustep-1-9"]
-gnustep-2-0 = ["gnustep-1-9", "objc-sys/gnustep-2-0"]
-gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1"]
+apple = ["objc-sys/apple", "block2/apple", "objc2-foundation/apple"]
+gnustep-1-7 = ["objc-sys/gnustep-1-7", "block2/gnustep-1-7", "objc2-foundation/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "objc-sys/gnustep-1-8", "block2/gnustep-1-8", "objc2-foundation/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "objc-sys/gnustep-1-9", "block2/gnustep-1-9", "objc2-foundation/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "objc-sys/gnustep-2-0", "block2/gnustep-2-0", "objc2-foundation/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1", "block2/gnustep-2-1", "objc2-foundation/gnustep-2-1"]
 # Used by `block2`
 unstable-compiler-rt = ["apple"]
 
@@ -111,6 +111,9 @@ objc2-proc-macros = { path = "../objc2-proc-macros", version = "0.1.1", optional
 iai = { version = "0.1", git = "https://github.com/madsmtm/iai", branch = "callgrind" }
 static_assertions = "1.1.0"
 memoffset = "0.9.0"
+core-foundation = { version = "0.9.3", default-features = false }
+block2 = { path = "../block2", default-features = false }
+objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false, features = ["NSString", "NSObject"] }
 
 [[bench]]
 name = "autorelease"
