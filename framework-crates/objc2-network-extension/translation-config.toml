@@ -1,0 +1,31 @@
+framework = "NetworkExtension"
+crate = "objc2-network-extension"
+required-dependencies = ["objc2-foundation"]
+macos = "10.10"
+maccatalyst = "13.0"
+ios = "8.0"
+tvos = "17.0"
+watchos = "7.0"
+visionos = "1.0"
+
+# error: translator assertion failure: (left `"NSString"`) (right `"const NSString"`)
+static.kNEHotspotHelperOptionDisplayName.skipped = true
+static.NEFilterProviderRemediationMapRemediationURLs.skipped = true
+static.NEFilterProviderRemediationMapRemediationButtonTexts.skipped = true
+
+# Needs Network framework
+class.NEAppProxyFlow.methods."setMetadata:".skipped = true
+class.NEAppProxyFlow.methods.networkInterface.skipped = true
+class.NEAppProxyFlow.methods."setNetworkInterface:".skipped = true
+typedef.NEFilterPacketHandler.skipped = true
+class.NEFilterPacketProvider.methods.packetHandler.skipped = true
+class.NEFilterPacketProvider.methods."setPacketHandler:".skipped = true
+
+# Needs `dispatch_queue_t` from libdispatch
+class.NEHotspotHelper.methods."registerWithOptions:queue:handler:".skipped = true
+
+# Needs Security
+class.NEHotspotEAPSettings.methods."setIdentity:".skipped = true
+class.NEVPNManager.methods."setAuthorization:".skipped = true
+protocol.NWTCPConnectionAuthenticationDelegate.methods."provideIdentityForConnection:completionHandler:".skipped = true
+protocol.NWTCPConnectionAuthenticationDelegate.methods."evaluateTrustForConnection:peerCertificateChain:completionHandler:".skipped = true

@@ -863,6 +863,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-network-extension"
+version = "0.2.0"
+dependencies = [
+ "block2",
+ "libc",
+ "objc2",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-osa-kit"
 version = "0.2.0"
 dependencies = [
