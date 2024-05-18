@@ -208,7 +208,7 @@ mod tests {
 
     #[test]
     // Test on platform where we know the type of BOOL
-    #[cfg(all(feature = "apple", target_os = "macos", target_arch = "x86_64"))]
+    #[cfg(all(target_vendor = "apple", target_os = "macos", target_arch = "x86_64"))]
     fn test_outside_normal() {
         let b = Bool::from_raw(42);
         assert!(b.is_true());

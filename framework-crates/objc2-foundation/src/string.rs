@@ -4,7 +4,7 @@ use core::fmt;
 use core::ops::AddAssign;
 use core::panic::RefUnwindSafe;
 use core::panic::UnwindSafe;
-#[cfg(feature = "apple")]
+#[cfg(target_vendor = "apple")]
 use core::slice;
 use core::str;
 use std::os::raw::c_void;
@@ -57,7 +57,7 @@ impl NSString {
     /// if performance is not an issue.
     #[doc(alias = "CFStringGetCStringPtr")]
     #[allow(unused)]
-    #[cfg(feature = "apple")]
+    #[cfg(target_vendor = "apple")]
     // TODO: Finish this
     fn as_str_wip(&self) -> Option<&str> {
         use core::ptr::NonNull;
@@ -88,7 +88,7 @@ impl NSString {
     ///
     /// [UTF-16]: https://en.wikipedia.org/wiki/UTF-16
     #[allow(unused)]
-    #[cfg(feature = "apple")]
+    #[cfg(target_vendor = "apple")]
     // TODO: Finish this
     fn as_utf16(&self) -> Option<&[u16]> {
         use core::ptr::NonNull;

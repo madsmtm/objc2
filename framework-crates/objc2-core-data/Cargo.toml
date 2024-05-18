@@ -41,7 +41,7 @@ targets = [
 ]
 
 [features]
-default = ["std", "apple"]
+default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "objc2/std", "block2?/std", "objc2-foundation/std"]
@@ -49,7 +49,7 @@ alloc = ["objc2/alloc", "block2?/alloc", "objc2-foundation/alloc"]
 
 # For better documentation on docs.rs
 unstable-docsrs = []
-apple = ["objc2/apple", "block2?/apple", "objc2-foundation/apple"]
+apple = []
 gnustep-1-7 = ["objc2/gnustep-1-7", "block2?/gnustep-1-7", "objc2-foundation/gnustep-1-7"]
 gnustep-1-8 = ["gnustep-1-7", "objc2/gnustep-1-8", "block2?/gnustep-1-8", "objc2-foundation/gnustep-1-8"]
 gnustep-1-9 = ["gnustep-1-8", "objc2/gnustep-1-9", "block2?/gnustep-1-9", "objc2-foundation/gnustep-1-9"]

@@ -334,7 +334,7 @@ see that for related crates.", self.data.krate, self.link_name)?;
                 // Allow for different linking on GNUStep
                 writeln!(
                     f,
-                    "#[cfg_attr(feature = \"apple\", link(name = \"{}\", kind = \"framework\"))]",
+                    "#[cfg_attr(target_vendor = \"apple\", link(name = \"{}\", kind = \"framework\"))]",
                     self.link_name
                 )?;
             } else {

@@ -234,7 +234,10 @@ impl Alloc {
         cls: &AnyClass,
     ) -> R {
         // Available on non-fragile Apple runtimes.
-        #[cfg(all(feature = "apple", not(all(target_os = "macos", target_arch = "x86"))))]
+        #[cfg(all(
+            target_vendor = "apple",
+            not(all(target_os = "macos", target_arch = "x86"))
+        ))]
         {
             // SAFETY: Checked by caller
             let obj: *mut T = unsafe { crate::ffi::objc_alloc(cls.as_ptr()).cast() };
@@ -242,7 +245,10 @@ impl Alloc {
             let obj = unsafe { Allocated::new(obj) };
             R::maybe_unwrap::<Alloc>(obj, ())
         }
-        #[cfg(not(all(feature = "apple", not(all(target_os = "macos", target_arch = "x86")))))]
+        #[cfg(not(all(
+            target_vendor = "apple",
+            not(all(target_os = "macos", target_arch = "x86"))
+        )))]
         {
             // SAFETY: Checked by caller
             unsafe { Alloc::send_message_id(cls, sel!(alloc), ()) }
@@ -567,7 +573,7 @@ mod tests {
 
     #[test]
     // newScriptingObjectOfClass only available on macOS
-    #[cfg_attr(not(all(feature = "apple", target_os = "macos")), ignore)]
+    #[cfg_attr(not(all(target_vendor = "apple", target_os = "macos")), ignore)]
     fn test_new_with_args() {
         let mut expected = ThreadTestData::current();
 

@@ -14,6 +14,8 @@ fn main() {
     println!("cargo:rerun-if-changed=build.rs");
 
     let target = env::var("TARGET").unwrap();
+    let target_vendor = env::var("CARGO_CFG_TARGET_VENDOR").unwrap();
+    let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
 
     // Used to figure out when BOOL should be i8 vs. bool
     // Matches:
@@ -40,34 +42,13 @@ fn main() {
     // TODO: Figure out when to enable this
     // println!("cargo:rustc-cfg=libobjc2_strict_apple_compat");
 
-    let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
-
-    let mut apple = env::var_os("CARGO_FEATURE_APPLE").is_some();
-    let mut gnustep = env::var_os("CARGO_FEATURE_GNUSTEP_1_7").is_some();
-    let objfw = env::var_os("CARGO_FEATURE_UNSTABLE_OBJFW").is_some();
-
-    // Choose defaults when generating docs
-    // Only when the crate is being compiled directly
-    if cfg!(feature = "unstable-docsrs") {
-        if let "macos" | "ios" | "tvos" | "watchos" | "visionos" = &*target_os {
-            apple = true;
-        } else {
-            gnustep = true; // Also winobjc
-        }
-    }
-
-    let runtime = match (apple, gnustep, objfw) {
-        // Same logic as in https://github.com/rust-lang/rust/blob/1.63.0/compiler/rustc_target/src/spec/apple_base.rs
-        (true, false, false) => Runtime::Apple,
-        (false, true, false) => {
-            // Choose defaults when generating docs
-            if cfg!(feature = "unstable-docsrs") {
-                if "windows" == target_os {
-                    Runtime::WinObjC
-                } else {
-                    Runtime::GNUStep(1, 7)
-                }
-            } else if env::var_os("CARGO_FEATURE_UNSTABLE_WINOBJC").is_some() {
+    let runtime = match (
+        env::var_os("CARGO_FEATURE_GNUSTEP_1_7").is_some(),
+        env::var_os("CARGO_FEATURE_UNSTABLE_OBJFW").is_some(),
+    ) {
+        (true, true) => panic!("Invalid feature combination; only one runtime may be selected!"),
+        (true, false) => {
+            if env::var_os("CARGO_FEATURE_UNSTABLE_WINOBJC").is_some() {
                 Runtime::WinObjC
             } else if env::var_os("CARGO_FEATURE_GNUSTEP_2_1").is_some() {
                 Runtime::GNUStep(2, 1)
@@ -82,13 +63,24 @@ fn main() {
                 Runtime::GNUStep(1, 7)
             }
         }
-        (false, false, true) => {
+        (false, true) => {
             // For now
             unimplemented!("ObjFW is not yet supported")
             // ObjFW(None)
         }
-        (false, false, false) => panic!("Must specify the desired runtime (using cargo features)."),
-        _ => panic!("Invalid feature combination; only one runtime may be selected!"),
+        (false, false) if target_vendor == "apple" => Runtime::Apple,
+        // Choose defaults when generating docs, though only when the crate is
+        // being compiled directly (i.e. we don't use the `DOCS_RS` env var).
+        (false, false) if cfg!(feature = "unstable-docsrs") => {
+            if target_os == "windows" {
+                Runtime::WinObjC
+            } else {
+                Runtime::GNUStep(1, 7)
+            }
+        }
+        (false, false) => {
+            panic!("Must specify the desired runtime using Cargo features on non-Apple platforms")
+        }
     };
 
     let clang_objc_runtime = match &runtime {

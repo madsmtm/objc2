@@ -8,14 +8,12 @@ publish = false
 path = "lib.rs"
 
 [dependencies]
-objc2 = { path = "../../../objc2", default-features = false, optional = true }
-objc2-foundation = { path = "../../../../framework-crates/objc2-foundation", default-features = false, optional = true }
+objc2 = { path = "../../../objc2", optional = true }
+objc2-foundation = { path = "../../../../framework-crates/objc2-foundation", optional = true }
 
 [features]
-default = ["apple", "std", "all", "objc2", "objc2-foundation"]
-std = ["objc2?/std", "objc2-foundation?/std"]
+default = ["all", "objc2", "objc2-foundation"]
 # Runtime
-apple = ["objc2?/apple", "objc2-foundation?/apple"]
 gnustep-1-7 = ["objc2?/gnustep-1-7", "objc2-foundation?/gnustep-1-7"]
 gnustep-1-8 = ["gnustep-1-7", "objc2?/gnustep-1-8", "objc2-foundation?/gnustep-1-8"]
 gnustep-1-9 = ["gnustep-1-8", "objc2?/gnustep-1-9", "objc2-foundation?/gnustep-1-9"]

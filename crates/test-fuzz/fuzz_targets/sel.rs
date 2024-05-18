@@ -4,7 +4,7 @@ use objc2::runtime::Sel;
 use std::ffi::CString;
 
 fuzz_target!(|s: &str| {
-    #[cfg(feature = "gnustep-1-7")]
+    #[cfg(not(target_vendor = "apple"))] // GNUstep
     let _cls = <objc2::runtime::NSObject as objc2::ClassType>::class();
 
     #[allow(clippy::eq_op)]

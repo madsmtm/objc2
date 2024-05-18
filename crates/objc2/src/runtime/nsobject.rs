@@ -46,7 +46,7 @@ unsafe impl ClassType for NSObject {
 
     #[inline]
     fn class() -> &'static AnyClass {
-        #[cfg(feature = "apple")]
+        #[cfg(not(feature = "gnustep-1-7"))]
         {
             crate::__class_inner!("NSObject", "NSObject")
         }

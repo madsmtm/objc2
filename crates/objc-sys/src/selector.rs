@@ -19,6 +19,6 @@ extern_c! {
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn sel_getUid(name: *const c_char) -> *const objc_selector;
 
-    #[cfg(any(doc, feature = "apple"))]
+    #[cfg(any(doc, target_vendor = "apple"))]
     pub fn sel_isMapped(sel: *const objc_selector) -> BOOL;
 }

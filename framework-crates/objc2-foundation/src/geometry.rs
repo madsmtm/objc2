@@ -23,10 +23,10 @@ pub type CGFloat = InnerFloat;
 //
 // TODO: Adjust `objc2-encode` so that this is handled there, and so that we
 // can effectively forget about it and use `NS` and `CG` types equally.
-#[cfg(all(
-    feature = "apple",
-    not(all(target_os = "macos", target_pointer_width = "32"))
-))]
+#[cfg(not(any(
+    feature = "gnustep-1-7",
+    all(target_os = "macos", target_pointer_width = "32")
+)))]
 mod names {
     pub(super) const POINT: &str = "CGPoint";
     pub(super) const SIZE: &str = "CGSize";
@@ -416,7 +416,10 @@ mod tests {
     // and so on properly, so let's ensure that NSEqualXXX handles these as
     // well (so that we're confident that the implementations are equivalent).
     #[test]
-    #[cfg(any(all(feature = "apple", target_os = "macos"), feature = "gnustep-1-7"))] // or macabi
+    #[cfg(any(
+        all(target_vendor = "apple", target_os = "macos"), // or macabi
+        feature = "gnustep-1-7"
+    ))]
     #[cfg(feature = "NSGeometry")]
     fn test_partial_eq() {
         use crate::Foundation::{NSEqualPoints, NSEqualRects, NSEqualSizes};

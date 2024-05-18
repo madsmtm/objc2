@@ -21,7 +21,7 @@ license = "MIT"
 workspace = true
 
 [dependencies]
-objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false, features = ["apple"] }
+objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false }
 objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.0", optional = true }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.0" }
 objc2-osa-kit = { path = "../objc2-osa-kit", version = "0.2.0", optional = true }

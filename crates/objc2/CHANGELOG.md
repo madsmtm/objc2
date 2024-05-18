@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Added `Id::autorelease_ptr`.
 
+### Deprecated
+* Deprecated the `apple` Cargo feature flag, it is assumed by default on Apple
+  platforms.
+
 
 ## 0.5.1 - 2024-04-17
 

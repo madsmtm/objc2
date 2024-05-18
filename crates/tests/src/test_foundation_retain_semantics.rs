@@ -117,7 +117,7 @@ fn set_nscopying_uses_retain() {
 
 #[test]
 #[cfg_attr(
-    feature = "apple",
+    target_vendor = "apple",
     ignore = "this works differently on different framework versions"
 )]
 fn array_iter_minimal_retains() {
@@ -165,7 +165,7 @@ fn array_iter_minimal_retains() {
 
 #[test]
 #[cfg_attr(
-    feature = "apple",
+    target_vendor = "apple",
     ignore = "this works differently on different framework versions"
 )]
 fn set_iter_minimal_retains() {

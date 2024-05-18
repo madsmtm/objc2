@@ -232,7 +232,7 @@ mod tests {
         expected.assert_current();
 
         let weak2 = weak.clone();
-        if cfg!(feature = "apple") {
+        if cfg!(target_vendor = "apple") {
             expected.try_retain += 1;
             expected.release += 1;
         }

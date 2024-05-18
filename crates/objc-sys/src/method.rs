@@ -39,7 +39,7 @@ extern_c! {
         dst: *mut c_char,
         dst_len: usize,
     );
-    #[cfg(any(doc, feature = "apple"))]
+    #[cfg(any(doc, target_vendor = "apple"))]
     pub fn method_getDescription(m: *const objc_method) -> *const objc_method_description;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn method_getImplementation(method: *const objc_method) -> IMP;

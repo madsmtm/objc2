@@ -23,7 +23,7 @@ workspace = true
 # NOTE: 'unstable' features are _not_ considered part of the SemVer contract,
 # and may be removed in a minor release.
 [features]
-default = ["std", "apple", "core-foundation/default", "block2/default", "objc2-foundation/default"]
+default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "objc2-encode/std", "objc-sys/std", "block2/std", "objc2-foundation/std"]
@@ -89,17 +89,19 @@ unstable-docsrs = []
 # Currently untested, might be unsound or lead to confusing compiler errors.
 #
 # Additionally, the message sending improvements is not yet implemented.
-unstable-apple-new = ["apple"]
+unstable-apple-new = []
+
+# Deprecated; this is the default on Apple platforms, and not applicable on other platforms.
+apple = []
 
 # Runtime selection. See `objc-sys` for details.
-apple = ["objc-sys/apple", "block2/apple", "objc2-foundation/apple"]
-gnustep-1-7 = ["objc-sys/gnustep-1-7", "block2/gnustep-1-7", "objc2-foundation/gnustep-1-7"]
-gnustep-1-8 = ["gnustep-1-7", "objc-sys/gnustep-1-8", "block2/gnustep-1-8", "objc2-foundation/gnustep-1-8"]
-gnustep-1-9 = ["gnustep-1-8", "objc-sys/gnustep-1-9", "block2/gnustep-1-9", "objc2-foundation/gnustep-1-9"]
-gnustep-2-0 = ["gnustep-1-9", "objc-sys/gnustep-2-0", "block2/gnustep-2-0", "objc2-foundation/gnustep-2-0"]
-gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1", "block2/gnustep-2-1", "objc2-foundation/gnustep-2-1"]
+gnustep-1-7 = ["objc-sys/gnustep-1-7", "block2/gnustep-1-7"]
+gnustep-1-8 = ["gnustep-1-7", "objc-sys/gnustep-1-8", "block2/gnustep-1-8"]
+gnustep-1-9 = ["gnustep-1-8", "objc-sys/gnustep-1-9", "block2/gnustep-1-9"]
+gnustep-2-0 = ["gnustep-1-9", "objc-sys/gnustep-2-0", "block2/gnustep-2-0"]
+gnustep-2-1 = ["gnustep-2-0", "objc-sys/gnustep-2-1", "block2/gnustep-2-1"]
 # Used by `block2`
-unstable-compiler-rt = ["apple"]
+unstable-compiler-rt = ["gnustep-1-7"]
 
 [dependencies]
 malloc_buf = { version = "1.0", optional = true }
@@ -111,9 +113,11 @@ objc2-proc-macros = { path = "../objc2-proc-macros", version = "0.1.1", optional
 iai = { version = "0.1", git = "https://github.com/madsmtm/iai", branch = "callgrind" }
 static_assertions = "1.1.0"
 memoffset = "0.9.0"
-core-foundation = { version = "0.9.3", default-features = false }
 block2 = { path = "../block2", default-features = false }
 objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false, features = ["NSString", "NSObject"] }
+
+[target.'cfg(target_vendor = "apple")'.dev-dependencies]
+core-foundation = "0.9.3"
 
 [[bench]]
 name = "autorelease"

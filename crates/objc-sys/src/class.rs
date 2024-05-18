@@ -39,10 +39,10 @@ extern_c_unwind! {
     pub fn class_respondsToSelector(cls: *const objc_class, sel: *const objc_selector) -> BOOL;
 
     // #[deprecated = "use class_getMethodImplementation instead"]
-    // #[cfg(any(doc, feature = "apple"))]
+    // #[cfg(any(doc, target_vendor = "apple"))]
     // pub fn class_lookupMethod
     // #[deprecated = "use class_respondsToSelector instead"]
-    // #[cfg(any(doc, feature = "apple"))]
+    // #[cfg(any(doc, target_vendor = "apple"))]
     // pub fn class_respondsToMethod
 }
 
@@ -62,7 +62,7 @@ extern_c! {
         name: *const c_char,
         extra_bytes: usize,
     ) -> *mut objc_class;
-    #[cfg(any(doc, feature = "apple"))]
+    #[cfg(any(doc, target_vendor = "apple"))]
     pub fn objc_duplicateClass(
         original: *const objc_class,
         name: *const c_char,
@@ -127,7 +127,7 @@ extern_c! {
     pub fn class_createInstance(cls: *const objc_class, extra_bytes: usize) -> *mut objc_object;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn class_getClassVariable(cls: *const objc_class, name: *const c_char) -> *const objc_ivar;
-    #[cfg(any(doc, feature = "apple"))]
+    #[cfg(any(doc, target_vendor = "apple"))]
     pub fn class_getImageName(cls: *const objc_class) -> *const c_char;
     pub fn class_getInstanceSize(cls: *const objc_class) -> usize;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
@@ -143,7 +143,7 @@ extern_c! {
     pub fn class_getSuperclass(cls: *const objc_class) -> *const objc_class;
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn class_getVersion(cls: *const objc_class) -> c_int;
-    #[cfg(any(doc, feature = "apple"))]
+    #[cfg(any(doc, target_vendor = "apple"))]
     pub fn class_getWeakIvarLayout(cls: *const objc_class) -> *const ivar_layout_type;
     pub fn class_isMetaClass(cls: *const objc_class) -> BOOL;
     pub fn class_replaceMethod(
@@ -163,7 +163,7 @@ extern_c! {
     pub fn class_setIvarLayout(cls: *mut objc_class, layout: *const ivar_layout_type);
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
     pub fn class_setVersion(cls: *mut objc_class, version: c_int);
-    #[cfg(any(doc, feature = "apple"))]
+    #[cfg(any(doc, target_vendor = "apple"))]
     pub fn class_setWeakIvarLayout(cls: *mut objc_class, layout: *const ivar_layout_type);
 
     // #[deprecated = "not recommended"]

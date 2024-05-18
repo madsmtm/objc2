@@ -8,13 +8,10 @@ publish = false
 path = "lib.rs"
 
 [dependencies]
-block2 = { path = "../../../block2", default-features = false }
+block2 = { path = "../../../block2" }
 
 [features]
-default = ["apple", "std"]
-std = ["block2/std"]
 # Runtime
-apple = ["block2/apple"]
 gnustep-1-7 = ["block2/gnustep-1-7"]
 gnustep-1-8 = ["gnustep-1-7", "block2/gnustep-1-8"]
 gnustep-1-9 = ["gnustep-1-8", "block2/gnustep-1-9"]

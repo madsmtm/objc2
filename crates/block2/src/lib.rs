@@ -318,20 +318,20 @@ extern "C" {}
 #[cfg(not(feature = "std"))]
 compile_error!("The `std` feature currently must be enabled.");
 
-#[cfg(not(any(
-    feature = "apple",
-    feature = "compiler-rt",
-    feature = "gnustep-1-7",
-    feature = "unstable-objfw",
-)))]
+#[cfg(all(
+    not(feature = "unstable-docsrs"),
+    not(any(
+        target_vendor = "apple",
+        feature = "compiler-rt",
+        feature = "gnustep-1-7",
+        feature = "unstable-objfw",
+    ))
+))]
 compile_error!("A runtime must be selected");
 
 #[cfg(any(
-    all(feature = "apple", feature = "compiler-rt"),
     all(feature = "compiler-rt", feature = "gnustep-1-7"),
     all(feature = "gnustep-1-7", feature = "unstable-objfw"),
-    all(feature = "unstable-objfw", feature = "apple"),
-    all(feature = "apple", feature = "gnustep-1-7"),
     all(feature = "compiler-rt", feature = "unstable-objfw"),
 ))]
 compile_error!("Only one runtime may be selected");
@@ -348,7 +348,16 @@ compile_error!("ObjFW is not yet supported");
 // Alternative: Only link to `libsystem_blocks.dylib`:
 // println!("cargo:rustc-link-search=native=/usr/lib/system");
 // println!("cargo:rustc-link-lib=dylib=system_blocks");
-#[cfg_attr(feature = "apple", link(name = "System", kind = "dylib"))]
+#[cfg_attr(
+    all(
+        target_vendor = "apple",
+        not(feature = "compiler-rt"),
+        not(feature = "gnustep-1-7"),
+        not(feature = "unstable-objfw"),
+        not(feature = "std"), // `libSystem` is already linked by `libstd`.
+    ),
+    link(name = "System", kind = "dylib")
+)]
 // Link to `libBlocksRuntime`.
 #[cfg_attr(feature = "compiler-rt", link(name = "BlocksRuntime", kind = "dylib"))]
 // Link to `libobjfw`, which provides the blocks implementation.

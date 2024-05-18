@@ -1,5 +1,5 @@
 //! Test output of `extern_protocol!` as well as `ProtocolObject<dyn T>`.
-#![cfg(feature = "apple")]
+#![cfg(target_vendor = "apple")]
 use core::mem::ManuallyDrop;
 
 use objc2::rc::Id;

@@ -8,13 +8,11 @@ publish = false
 path = "lib.rs"
 
 [dependencies]
-objc2 = { path = "../../../objc2", default-features = false, optional = true }
+objc2 = { path = "../../../objc2", optional = true }
 
 [features]
-default = ["apple", "std"]
-std = ["objc2?/std"]
+default = ["objc2"]
 # Runtime
-apple = ["objc2", "objc2?/apple"]
 gnustep-1-7 = ["objc2?/gnustep-1-7"]
 gnustep-1-8 = ["gnustep-1-7", "objc2?/gnustep-1-8"]
 gnustep-1-9 = ["gnustep-1-8", "objc2?/gnustep-1-9"]

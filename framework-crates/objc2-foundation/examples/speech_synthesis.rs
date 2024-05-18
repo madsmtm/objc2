@@ -100,7 +100,10 @@ mod appkit {
 mod avfaudio {
     use super::*;
 
-    #[link(name = "AVFoundation", kind = "framework")]
+    #[cfg_attr(
+        not(feature = "gnustep-1-7"),
+        link(name = "AVFoundation", kind = "framework")
+    )]
     extern "C" {}
 
     extern_class!(

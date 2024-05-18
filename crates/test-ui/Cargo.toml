@@ -14,8 +14,6 @@ workspace = true
 # UI tests don't work without `Foundation` feature, but we have no way of
 # specifying that, as trybuild doesn't take any arguments
 default = [
-    "apple",
-    "std",
     "objc2-foundation/block2",
     "objc2-foundation/NSObjCRuntime",
     "objc2-foundation/NSString",
@@ -31,22 +29,19 @@ default = [
     "objc2-foundation/NSDictionary",
     "objc2/unstable-msg-send-always-comma",
 ]
-std = ["block2/std", "objc2/std", "objc2-foundation/std"]
+run = ["trybuild"]
 
-apple = ["block2/apple", "objc2/apple", "objc2-foundation/apple"]
 gnustep-1-7 = ["block2/gnustep-1-7", "objc2/gnustep-1-7", "objc2-foundation/gnustep-1-7"]
 gnustep-1-8 = ["gnustep-1-7", "block2/gnustep-1-8", "objc2/gnustep-1-8", "objc2-foundation/gnustep-1-8"]
 gnustep-1-9 = ["gnustep-1-8", "block2/gnustep-1-9", "objc2/gnustep-1-9", "objc2-foundation/gnustep-1-9"]
 gnustep-2-0 = ["gnustep-1-9", "block2/gnustep-2-0", "objc2/gnustep-2-0", "objc2-foundation/gnustep-2-0"]
 gnustep-2-1 = ["gnustep-2-0", "block2/gnustep-2-1", "objc2/gnustep-2-1", "objc2-foundation/gnustep-2-1"]
 
-run = ["trybuild"]
-
 [dependencies]
 trybuild = { version = "1.0.72", optional = true }
-block2 = { path = "../block2", default-features = false }
-objc2 = { path = "../objc2", default-features = false }
-objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false }
+block2 = { path = "../block2" }
+objc2 = { path = "../objc2" }
+objc2-foundation = { path = "../../framework-crates/objc2-foundation" }
 
 [[bin]]
 name = "test-ui"

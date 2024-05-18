@@ -317,7 +317,7 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        all(feature = "apple", target_os = "macos", target_arch = "x86"),
+        all(target_vendor = "apple", target_os = "macos", target_arch = "x86"),
         ignore = "`NULL` exceptions are invalid on 32-bit / w. fragile runtime"
     )]
     fn test_catch_null() {

@@ -24,10 +24,12 @@ proc-macro = true
 workspace = true
 
 [features]
-default = ["apple"]
+default = []
+
+# Deprecated; this is the default on Apple platforms, and not applicable on other platforms.
+apple = []
 
 # Runtime selection (for future compatibility)
-apple = []
 gnustep-1-7 = []
 gnustep-1-8 = ["gnustep-1-7"]
 gnustep-1-9 = ["gnustep-1-8"]

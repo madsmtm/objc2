@@ -5,14 +5,14 @@ use objc2_foundation::{ns_string, NSString};
 
 // Temporary to allow testing putting string references in statics.
 // This doesn't yet compile on other platforms, but could in the future!
-#[cfg(all(feature = "apple", feature = "assembly-features"))]
+#[cfg(all(target_vendor = "apple", feature = "assembly-features"))]
 #[no_mangle]
 static EMPTY: &NSString = {
     const INPUT: &[u8] = b"";
     objc2_foundation::__ns_string_static!(INPUT);
     CFSTRING.as_nsstring_const()
 };
-#[cfg(all(feature = "apple", feature = "assembly-features"))]
+#[cfg(all(target_vendor = "apple", feature = "assembly-features"))]
 #[no_mangle]
 static XYZ: &NSString = {
     const INPUT: &[u8] = b"xyz";

@@ -269,30 +269,35 @@ impl Sel {
     }
 }
 
-// `ffi::sel_isEqual` uses pointer comparison on Apple (the documentation
-// explicitly notes this); so as an optimization, let's do that as well!
-#[cfg(feature = "apple")]
-standard_pointer_impls!(Sel);
-
-// GNUStep implements "typed" selectors, which means their pointer values
-// sometimes differ; so let's use the runtime-provided `sel_isEqual`.
-#[cfg(not(feature = "apple"))]
 impl PartialEq for Sel {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
-        unsafe { Bool::from_raw(ffi::sel_isEqual(self.as_ptr(), other.as_ptr())).as_bool() }
+        if cfg!(feature = "gnustep-1-7") {
+            // GNUStep implements "typed" selectors, which means their pointer
+            // values sometimes differ; so let's use the runtime-provided
+            // `sel_isEqual`.
+            unsafe { Bool::from_raw(ffi::sel_isEqual(self.as_ptr(), other.as_ptr())).as_bool() }
+        } else {
+            // `ffi::sel_isEqual` uses pointer comparison on Apple (the
+            // documentation explicitly notes this); so as an optimization,
+            // let's do that as well!
+            self.as_ptr() == other.as_ptr()
+        }
     }
 }
 
-#[cfg(not(feature = "apple"))]
 impl Eq for Sel {}
 
-#[cfg(not(feature = "apple"))]
 impl hash::Hash for Sel {
     #[inline]
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
-        // Note: We hash the name instead of the pointer
-        self.name().hash(state);
+        if cfg!(feature = "gnustep-1-7") {
+            // Note: We hash the name instead of the pointer on GNUStep, since
+            // they're typed.
+            self.name().hash(state);
+        } else {
+            self.as_ptr().hash(state);
+        }
     }
 }
 

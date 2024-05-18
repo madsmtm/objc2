@@ -4,7 +4,7 @@ use std::os::raw::c_char;
 
 #[cfg(any(doc, not(feature = "unstable-objfw")))]
 use crate::objc_ivar;
-#[cfg(any(doc, feature = "apple"))]
+#[cfg(any(doc, target_vendor = "apple"))]
 use crate::BOOL;
 use crate::{objc_class, OpaqueData};
 
@@ -25,7 +25,7 @@ extern_c! {
     pub fn object_getClass(obj: *const objc_object) -> *const objc_class;
     pub fn object_getClassName(obj: *const objc_object) -> *const c_char;
     pub fn object_setClass(obj: *mut objc_object, cls: *const objc_class) -> *const objc_class;
-    #[cfg(any(doc, feature = "apple"))]
+    #[cfg(any(doc, target_vendor = "apple"))]
     pub fn object_isClass(obj: *const objc_object) -> BOOL;
 
     #[cfg(any(doc, not(feature = "unstable-objfw")))]
@@ -36,7 +36,7 @@ extern_c! {
     pub fn object_setIvar(obj: *mut objc_object, ivar: *const objc_ivar, value: *mut objc_object);
 
     #[deprecated = "Not needed since ARC"]
-    #[cfg(any(doc, feature = "apple"))]
+    #[cfg(any(doc, target_vendor = "apple"))]
     pub fn object_copy(obj: *const objc_object, size: usize) -> *mut objc_object;
 
     #[deprecated = "Not needed since ARC"]
@@ -53,7 +53,7 @@ extern_c! {
 
     // Available in macOS 10.12
     // #[deprecated = "Not needed since ARC"]
-    // #[cfg(any(doc, feature = "apple"))]
+    // #[cfg(any(doc, target_vendor = "apple"))]
     // pub fn object_setInstanceVariableWithStrongDefault(
     //     obj: *mut objc_object,
     //     name: *const c_char,
@@ -69,13 +69,13 @@ extern_c! {
     ) -> *const objc_ivar;
 
     #[deprecated = "Not needed since ARC"]
-    #[cfg(any(doc, feature = "apple"))]
+    #[cfg(any(doc, target_vendor = "apple"))]
     pub fn objc_getFutureClass(name: *const c_char) -> *const objc_class;
     #[deprecated = "Not needed since ARC"]
-    #[cfg(any(doc, feature = "apple"))]
+    #[cfg(any(doc, target_vendor = "apple"))]
     pub fn objc_constructInstance(cls: *const objc_class, bytes: *mut c_void) -> *mut objc_object;
     #[deprecated = "Not needed since ARC"]
-    #[cfg(any(doc, feature = "apple"))]
+    #[cfg(any(doc, target_vendor = "apple"))]
     pub fn objc_destructInstance(obj: *mut objc_object) -> *mut c_void;
 
     // TODO: Unsure if we should expose these; are they useful, and stable?
@@ -106,9 +106,9 @@ extern_c! {
     // );
 
     // #[deprecated = "use object_copy instead"]
-    // #[cfg(any(doc, all(feature = "apple", target_os = "macos")))]
+    // #[cfg(any(doc, all(target_vendor = "apple", target_os = "macos")))]
     // object_copyFromZone
     // #[deprecated = "use class_createInstance instead"]
-    // #[cfg(any(doc, all(feature = "apple", target_os = "macos")))]
+    // #[cfg(any(doc, all(target_vendor = "apple", target_os = "macos")))]
     // class_createInstanceFromZone
 }

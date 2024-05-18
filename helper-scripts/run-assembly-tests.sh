@@ -16,9 +16,9 @@ echo "Old Apple"
 $RUN i686-apple-darwin
 
 echo "GNUStep"
-$RUN x86_64-unknown-linux-gnu --no-default-features --features=std,gnustep-2-1
-$RUN i686-unknown-linux-gnu --no-default-features --features=std,gnustep-2-1
+$RUN x86_64-unknown-linux-gnu --no-default-features --features=gnustep-2-1
+$RUN i686-unknown-linux-gnu --no-default-features --features=gnustep-2-1
 
 echo "Old GNUStep"
-$RUN x86_64-unknown-linux-gnu --no-default-features --features=std,gnustep-1-7
-$RUN i686-unknown-linux-gnu --no-default-features --features=std,gnustep-1-7
+$RUN x86_64-unknown-linux-gnu --no-default-features --features=gnustep-1-7
+$RUN i686-unknown-linux-gnu --no-default-features --features=gnustep-1-7

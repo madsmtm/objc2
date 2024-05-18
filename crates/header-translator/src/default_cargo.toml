@@ -21,7 +21,7 @@ license = "MIT"
 workspace = true
 
 [dependencies]
-objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false, features = ["apple"] }
+objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false }
 
 [package.metadata.docs.rs]
 default-target = "UNSET"

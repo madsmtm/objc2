@@ -99,7 +99,7 @@ const WITH_ATOMIC_INNER: Encoding = Encoding::Struct(
     ],
 );
 
-#[cfg(feature = "apple")]
+#[cfg(not(feature = "gnustep-1-7"))]
 const BITFIELD: Encoding = Encoding::Struct(
     "bitfield",
     &[
@@ -108,7 +108,7 @@ const BITFIELD: Encoding = Encoding::Struct(
         Encoding::BitField(2, None),
     ],
 );
-#[cfg(feature = "apple")]
+#[cfg(not(feature = "gnustep-1-7"))]
 const BITFIELD_ALL_TYPES: Encoding = Encoding::Struct(
     "bitfield_all_types",
     &[
@@ -300,15 +300,15 @@ assert_types! {
 
     // simd
 
-    #[cfg(feature = "apple")]
+    #[cfg(target_vendor = "apple")]
     SIMD_INT2 => enc Encoding::None,
-    #[cfg(feature = "apple")]
+    #[cfg(target_vendor = "apple")]
     SIMD_FLOAT1 => c_float,
-    #[cfg(feature = "apple")]
+    #[cfg(target_vendor = "apple")]
     SIMD_FLOAT2 => enc Encoding::None,
-    #[cfg(feature = "apple")]
+    #[cfg(target_vendor = "apple")]
     SIMD_FLOAT2X4 => enc Encoding::Struct("?", &[Encoding::Array(2, &Encoding::None)]),
-    #[cfg(feature = "apple")]
+    #[cfg(target_vendor = "apple")]
     SIMD_FLOAT4X2 => enc Encoding::Struct("?", &[Encoding::Array(4, &Encoding::None)]),
 
     // Possible extras; need to be #[cfg]-ed somehow

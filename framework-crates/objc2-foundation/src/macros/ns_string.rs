@@ -76,7 +76,7 @@ macro_rules! ns_string {
 }
 
 #[doc(hidden)]
-#[cfg(all(feature = "apple", feature = "unstable-static-nsstring"))]
+#[cfg(all(target_vendor = "apple", feature = "unstable-static-nsstring"))]
 #[macro_export]
 macro_rules! __ns_string_inner {
     ($inp:ident) => {{
@@ -88,7 +88,7 @@ macro_rules! __ns_string_inner {
 }
 
 #[doc(hidden)]
-#[cfg(all(feature = "apple", feature = "unstable-static-nsstring"))]
+#[cfg(all(target_vendor = "apple", feature = "unstable-static-nsstring"))]
 #[macro_export]
 macro_rules! __ns_string_static {
     ($inp:ident) => {
@@ -180,7 +180,7 @@ macro_rules! __ns_string_static {
 }
 
 #[doc(hidden)]
-#[cfg(not(all(feature = "apple", feature = "unstable-static-nsstring")))]
+#[cfg(not(all(target_vendor = "apple", feature = "unstable-static-nsstring")))]
 #[macro_export]
 macro_rules! __ns_string_inner {
     ($inp:ident) => {{

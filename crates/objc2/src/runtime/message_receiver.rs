@@ -39,7 +39,7 @@ macro_rules! conditional_try {
 // <https://web.archive.org/web/20200118080513/http://www.friday.com/bbum/2009/12/18/objc_msgsend-part-1-the-road-map/>
 // <https://www.mikeash.com/pyblog/objc_msgsends-new-prototype.html>
 // <https://www.mikeash.com/pyblog/friday-qa-2012-11-16-lets-build-objc_msgsend.html>
-#[cfg(feature = "apple")]
+#[cfg(all(target_vendor = "apple", not(feature = "gnustep-1-7")))]
 mod msg_send_primitive {
     #[allow(unused_imports)]
     use core::mem;
@@ -265,6 +265,31 @@ mod msg_send_primitive {
         let msg_send_fn = unsafe { ffi::objc_msg_lookup_super(&sup, sel.as_ptr()) };
         let msg_send_fn = unwrap_msg_send_fn(msg_send_fn);
         unsafe { A::__invoke(msg_send_fn, receiver, sel, args) }
+    }
+}
+
+#[cfg(all(not(target_vendor = "apple"), not(feature = "gnustep-1-7")))]
+mod msg_send_primitive {
+    use crate::encode::{EncodeArguments, EncodeReturn};
+    use crate::runtime::{AnyClass, AnyObject, Sel};
+
+    #[track_caller]
+    pub(crate) unsafe fn send<A: EncodeArguments, R: EncodeReturn>(
+        _receiver: *mut AnyObject,
+        _sel: Sel,
+        _args: A,
+    ) -> R {
+        unimplemented!("no runtime chosen")
+    }
+
+    #[track_caller]
+    pub(crate) unsafe fn send_super<A: EncodeArguments, R: EncodeReturn>(
+        _receiver: *mut AnyObject,
+        _superclass: &AnyClass,
+        _sel: Sel,
+        _args: A,
+    ) -> R {
+        unimplemented!("no runtime chosen")
     }
 }
 

@@ -9,7 +9,7 @@ use crate::{objc_object, objc_selector};
 /// cfgs are determined experimentally via. cross compiling.
 ///
 /// See also <https://www.jviotti.com/2024/01/05/is-objective-c-bool-a-boolean-type-it-depends.html>.
-#[cfg(feature = "apple")]
+#[cfg(all(not(feature = "gnustep-1-7"), not(feature = "unstable-objfw")))]
 mod inner {
     // __OBJC_BOOL_IS_BOOL
     #[cfg(any(

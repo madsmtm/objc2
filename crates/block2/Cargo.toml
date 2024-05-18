@@ -20,16 +20,14 @@ documentation = "https://docs.rs/block2/"
 license = "MIT"
 
 [features]
-# The default runtime is Apple's. Other platforms will probably error if the
-# correct feature flag is not specified.
-default = ["std", "apple"]
+default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "objc2/std"]
 alloc = ["objc2/alloc"]
 
-# Link to Apple's libclosure (exists in libSystem).
-apple = ["objc2/apple"]
+# Deprecated; this is the default on Apple platforms, and not applicable on other platforms.
+apple = []
 
 # Link to libBlocksRuntime from compiler-rt.
 compiler-rt = ["objc2/unstable-compiler-rt"] # TODO: fix this

@@ -21,7 +21,7 @@ license = "MIT"
 workspace = true
 
 [dependencies]
-objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false, features = ["apple"] }
+objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false }
 block2 = { path = "../../crates/block2", version = "0.5.0", optional = true }
 objc2-core-image = { path = "../objc2-core-image", version = "0.2.0", optional = true }
 objc2-core-ml = { path = "../objc2-core-ml", version = "0.2.0", optional = true }

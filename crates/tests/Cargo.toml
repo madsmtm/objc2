@@ -13,8 +13,7 @@ build = "build.rs"
 workspace = true
 
 [features]
-default = ["apple", "std", "all"]
-std = ["block2/std", "objc2/std", "objc2-foundation/std"]
+default = ["all"]
 exception = ["objc2/exception", "all"]
 catch-all = ["objc2/catch-all", "exception"]
 # TODO: Fix this
@@ -32,7 +31,6 @@ all = [
 
 unstable-simd = []
 
-apple = ["block2/apple", "objc2/apple", "objc2-foundation/apple"]
 gnustep-1-7 = ["block2/gnustep-1-7", "objc2/gnustep-1-7", "objc2-foundation/gnustep-1-7"]
 gnustep-1-8 = ["gnustep-1-7", "block2/gnustep-1-8", "objc2/gnustep-1-8", "objc2-foundation/gnustep-1-8"]
 gnustep-1-9 = ["gnustep-1-8", "block2/gnustep-1-9", "objc2/gnustep-1-9", "objc2-foundation/gnustep-1-9"]
@@ -41,10 +39,10 @@ gnustep-2-1 = ["gnustep-2-0", "block2/gnustep-2-1", "objc2/gnustep-2-1", "objc2-
 unstable-objfw = ["block2/unstable-objfw", "objc-sys/unstable-objfw"]
 
 [dependencies]
-block2 = { path = "../block2", default-features = false }
-objc-sys = { path = "../objc-sys", default-features = false }
-objc2 = { path = "../objc2", default-features = false }
-objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-features = false }
+block2 = { path = "../block2" }
+objc-sys = { path = "../objc-sys" }
+objc2 = { path = "../objc2" }
+objc2-foundation = { path = "../../framework-crates/objc2-foundation" }
 
 [build-dependencies]
 cc = "1.0"

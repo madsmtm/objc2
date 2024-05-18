@@ -44,14 +44,14 @@ extern_c_unwind! {
     pub fn objc_msgSend();
     // objc_msgSend_debug
 
-    #[cfg(any(doc, feature = "apple"))]
+    #[cfg(any(doc, target_vendor = "apple"))]
     pub fn objc_msgSendSuper();
     // objc_msgSendSuper2
     // objc_msgSendSuper2_debug
 
-    #[cfg(any(doc, feature = "apple"))]
+    #[cfg(any(doc, target_vendor = "apple"))]
     pub fn method_invoke();
-    #[cfg(any(doc, feature = "apple"))]
+    #[cfg(any(doc, target_vendor = "apple"))]
     pub fn _objc_msgForward();
     pub fn class_getMethodImplementation();
 
@@ -61,14 +61,14 @@ extern_c_unwind! {
     pub fn objc_msgSend_stret();
     // objc_msgSend_stret_debug
 
-    #[cfg(any(doc, all(feature = "apple", not(target_arch = "aarch64"))))]
+    #[cfg(any(doc, all(target_vendor = "apple", not(target_arch = "aarch64"))))]
     pub fn objc_msgSendSuper_stret();
     // objc_msgSendSuper2_stret
     // objc_msgSendSuper2_stret_debug
 
-    #[cfg(any(doc, all(feature = "apple", not(target_arch = "aarch64"))))]
+    #[cfg(any(doc, all(target_vendor = "apple", not(target_arch = "aarch64"))))]
     pub fn method_invoke_stret();
-    #[cfg(any(doc, all(feature = "apple", not(target_arch = "aarch64"))))]
+    #[cfg(any(doc, all(target_vendor = "apple", not(target_arch = "aarch64"))))]
     pub fn _objc_msgForward_stret();
     #[cfg(any(doc, feature = "unstable-objfw", not(target_arch = "aarch64")))]
     pub fn class_getMethodImplementation_stret();
@@ -81,7 +81,7 @@ extern_c_unwind! {
 
     // __x86_64__
 
-    #[cfg(any(doc, all(feature = "apple", target_arch = "x86_64")))]
+    #[cfg(any(doc, all(target_vendor = "apple", target_arch = "x86_64")))]
     pub fn objc_msgSend_fp2ret();
     // objc_msgSend_fp2ret_debug
 }

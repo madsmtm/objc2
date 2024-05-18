@@ -1,6 +1,6 @@
 //! Test assembly output of `block2`.
 // Limit to 64-bit Apple since we don't do anything target-specific.
-#![cfg(all(feature = "apple", target_pointer_width = "64"))]
+#![cfg(all(target_vendor = "apple", target_pointer_width = "64"))]
 
 use block2::{Block, RcBlock, StackBlock};
 

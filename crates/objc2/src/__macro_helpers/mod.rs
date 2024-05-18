@@ -101,7 +101,7 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        not(all(feature = "apple", target_os = "macos", target_arch = "x86")),
+        not(all(target_vendor = "apple", target_os = "macos", target_arch = "x86")),
         ignore = "Only relevant on macOS 32-bit"
     )]
     fn ensure_size_of_module_info() {

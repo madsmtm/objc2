@@ -232,7 +232,7 @@ mod tests {
         assert_eq!(MY_BLOCK.call(()), 42);
     }
 
-    #[cfg(feature = "apple")]
+    #[cfg(target_vendor = "apple")]
     const DEBUG_BLOCKFLAGS: &str = r#"BlockFlags {
         value: "00110000000000000000000000000000",
         deallocating: false,
@@ -252,7 +252,7 @@ mod tests {
         ..
     }"#;
 
-    #[cfg(not(feature = "apple"))]
+    #[cfg(not(target_vendor = "apple"))]
     const DEBUG_BLOCKFLAGS: &str = r#"BlockFlags {
         value: "00110000000000000000000000000000",
         has_copy_dispose: false,

@@ -32,15 +32,13 @@ build = "build.rs"
 workspace = true
 
 [features]
-# The default runtime is Apple's. Other platforms will probably error if the
-# correct feature flag is not specified.
-default = ["std", "apple"]
+default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc"]
 alloc = []
 
-# Link to Apple's objc4
+# Deprecated; this is the default on Apple platforms, and not applicable on other platforms.
 apple = []
 
 # Link to GNUStep's libobjc2
@@ -68,8 +66,7 @@ cc = { version = "1.0.80", optional = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-no-default-features = true
-features = ["std", "unstable-docsrs"]
+features = ["unstable-docsrs"]
 targets = [
     "aarch64-apple-darwin",
     "x86_64-apple-darwin",

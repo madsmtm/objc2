@@ -34,7 +34,7 @@ impl UnwindSafe for NSZone {}
 impl RefUnwindSafe for NSZone {}
 
 unsafe impl RefEncode for NSZone {
-    #[cfg(feature = "apple")]
+    #[cfg(not(feature = "gnustep-1-7"))]
     const ENCODING_REF: Encoding = Encoding::Pointer(&Encoding::Struct("_NSZone", &[]));
     #[cfg(feature = "gnustep-1-7")]
     const ENCODING_REF: Encoding = Encoding::Pointer(&Encoding::Struct(

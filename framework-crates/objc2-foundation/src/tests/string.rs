@@ -113,10 +113,11 @@ fn test_strips_first_leading_zero_width_no_break_space() {
     let s = "\u{feff}\u{feff}a\u{feff}";
 
     // Huh, this difference might be a GNUStep bug?
-    #[cfg(feature = "apple")]
-    let expected = "\u{feff}a\u{feff}";
-    #[cfg(feature = "gnustep-1-7")]
-    let expected = "a\u{feff}";
+    let expected = if cfg!(feature = "gnustep-1-7") {
+        "a\u{feff}"
+    } else {
+        "\u{feff}a\u{feff}"
+    };
 
     let ns_string = NSString::from_str(s);
     autoreleasepool(|pool| {

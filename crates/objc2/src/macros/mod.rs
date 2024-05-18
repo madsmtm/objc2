@@ -343,7 +343,7 @@ macro_rules! __statics_string_to_known_length_bytes {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(feature = "apple")]
+#[cfg(target_vendor = "apple")]
 macro_rules! __statics_image_info {
     ($hash:expr) => {
         /// We always emit the image info tag, since we need it to:
@@ -369,7 +369,7 @@ macro_rules! __statics_image_info {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(feature = "apple")]
+#[cfg(target_vendor = "apple")]
 macro_rules! __statics_module_info {
     ($hash:expr) => {
         #[link_section = "__TEXT,__cstring,cstring_literals"]
@@ -390,7 +390,7 @@ macro_rules! __statics_module_info {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(feature = "apple")]
+#[cfg(target_vendor = "apple")]
 macro_rules! __statics_sel {
     {
         ($data:expr)
@@ -460,7 +460,7 @@ macro_rules! __statics_sel {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(not(feature = "apple"))]
+#[cfg(not(target_vendor = "apple"))]
 macro_rules! __statics_sel {
     ($($args:tt)*) => {
         // TODO
@@ -472,7 +472,10 @@ macro_rules! __statics_sel {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(all(feature = "apple", not(all(target_os = "macos", target_arch = "x86"))))]
+#[cfg(all(
+    target_vendor = "apple",
+    not(all(target_os = "macos", target_arch = "x86"))
+))]
 macro_rules! __statics_class {
     {
         ($name:expr)
@@ -517,7 +520,7 @@ macro_rules! __statics_class {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(all(feature = "apple", all(target_os = "macos", target_arch = "x86")))]
+#[cfg(all(target_vendor = "apple", all(target_os = "macos", target_arch = "x86")))]
 macro_rules! __statics_class {
     {
         ($name:expr)
@@ -551,7 +554,7 @@ macro_rules! __statics_class {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(not(feature = "apple"))]
+#[cfg(not(target_vendor = "apple"))]
 macro_rules! __statics_class {
     ($($args:tt)*) => {
         // TODO

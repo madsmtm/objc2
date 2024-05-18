@@ -31,7 +31,7 @@ impl BlockFlags {
         0x00ffffff
     } else if cfg!(any(feature = "compiler-rt", feature = "unstable-objfw")) {
         0xffff
-    } else if cfg!(feature = "apple") {
+    } else if cfg!(target_vendor = "apple") {
         0xfffe // runtime
     } else {
         0
@@ -98,24 +98,24 @@ impl fmt::Debug for BlockFlags {
             )*)
         }
         test_flags! {
-            #[cfg(feature = "apple")]
+            #[cfg(target_vendor = "apple")]
             deallocating: BLOCK_DEALLOCATING;
-            #[cfg(feature = "apple")]
+            #[cfg(target_vendor = "apple")]
             inline_layout_string: BLOCK_INLINE_LAYOUT_STRING;
-            #[cfg(feature = "apple")]
+            #[cfg(target_vendor = "apple")]
             small_descriptor: BLOCK_SMALL_DESCRIPTOR;
-            #[cfg(feature = "apple")]
+            #[cfg(target_vendor = "apple")]
             is_noescape: BLOCK_IS_NOESCAPE;
-            #[cfg(feature = "apple")]
+            #[cfg(target_vendor = "apple")]
             needs_free: BLOCK_NEEDS_FREE;
             has_copy_dispose: BLOCK_HAS_COPY_DISPOSE;
             has_ctor: BLOCK_HAS_CTOR;
-            #[cfg(feature = "apple")]
+            #[cfg(target_vendor = "apple")]
             is_gc: BLOCK_IS_GC;
             is_global: BLOCK_IS_GLOBAL;
             use_stret: BLOCK_USE_STRET;
             has_signature: BLOCK_HAS_SIGNATURE;
-            #[cfg(feature = "apple")]
+            #[cfg(target_vendor = "apple")]
             has_extended_layout: BLOCK_HAS_EXTENDED_LAYOUT;
         }
 

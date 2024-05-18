@@ -791,7 +791,7 @@ mod tests {
         let builder = ClassBuilder::new("TestFetchWhileCreatingClass", superclass).unwrap();
 
         if cfg!(all(
-            feature = "apple",
+            target_vendor = "apple",
             any(target_arch = "aarch64", target_arch = "x86_64")
         )) {
             // It is IMO a bug that it is present here!

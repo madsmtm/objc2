@@ -9,7 +9,7 @@ use crate::runtime::NSObject;
 
 // Note: While this is not public, it is still a breaking change to modify,
 // since `objc2-foundation` relies on it.
-#[cfg(feature = "apple")]
+#[cfg(not(feature = "gnustep-1-7"))]
 pub const UTF8_ENCODING: usize = 4;
 #[cfg(feature = "gnustep-1-7")]
 pub const UTF8_ENCODING: i32 = 4;

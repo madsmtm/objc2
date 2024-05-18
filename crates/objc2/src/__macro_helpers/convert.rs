@@ -321,7 +321,7 @@ mod tests {
         assert!(!ConvertReturn::__into_declared_return(false).as_bool());
         assert!(ConvertReturn::__into_declared_return(true).as_bool());
 
-        #[cfg(all(feature = "apple", target_os = "macos", target_arch = "x86_64"))]
+        #[cfg(all(target_vendor = "apple", target_os = "macos", target_arch = "x86_64"))]
         assert_eq!(
             <bool as ConvertArgument>::__Inner::ENCODING_ARGUMENT,
             crate::encode::Encoding::Char,

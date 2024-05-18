@@ -443,7 +443,7 @@ impl<T: Message> Id<T> {
 
         // Only worth doing on the Apple runtime.
         // Not supported on TARGET_OS_WIN32.
-        #[cfg(all(feature = "apple", not(target_os = "windows")))]
+        #[cfg(target_vendor = "apple")]
         {
             // Supported since macOS 10.7.
             #[cfg(target_arch = "x86_64")]
@@ -490,7 +490,7 @@ impl<T: Message> Id<T> {
         // occur.
         //
         // This is brittle! We should find a better solution!
-        #[cfg(all(feature = "apple", not(target_os = "windows"), target_arch = "x86_64"))]
+        #[cfg(all(target_vendor = "apple", target_arch = "x86_64"))]
         {
             // SAFETY: Similar to above.
             unsafe { core::arch::asm!("nop", options(nomem, preserves_flags, nostack)) };

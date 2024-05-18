@@ -229,9 +229,9 @@ pub mod declare {
 }
 
 // Link to Foundation to make NSObject work
+#[cfg_attr(target_vendor = "apple", link(name = "Foundation", kind = "framework"))]
 #[cfg_attr(
-    all(feature = "apple", not(feature = "unstable-compiler-rt")),
-    link(name = "Foundation", kind = "framework")
+    all(feature = "gnustep-1-7", not(feature = "unstable-compiler-rt")),
+    link(name = "gnustep-base", kind = "dylib")
 )]
-#[cfg_attr(feature = "gnustep-1-7", link(name = "gnustep-base", kind = "dylib"))]
 extern "C" {}

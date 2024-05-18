@@ -63,8 +63,6 @@ env:
   # compiling C code, even if just running a `check`/`clippy` build.
   INTERESTING_FEATURES: --features=malloc,block2,unstable-private,all
   UNSTABLE_FEATURES: --features=unstable-autoreleasesafe,unstable-c-unwind
-  # Required when we want to use a different runtime than the default `apple`
-  OTHER_RUNTIME: --no-default-features --features=std
   # https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
   # Note: We don't cache `~/.cargo/bin`, that is done separately when needed.
   CARGO_CACHE_PATH: |
@@ -113,7 +111,7 @@ jobs:
           args: $PUBLIC_CRATES $FRAMEWORKS_IOS_10 $INTERESTING_FEATURES -Zbuild-std
         - name: GNUStep + exceptions
           target: x86_64-unknown-linux-gnu
-          args: $PUBLIC_CRATES $FRAMEWORKS_GNUSTEP $INTERESTING_FEATURES $OTHER_RUNTIME --features=gnustep-1-9,catch-all
+          args: $PUBLIC_CRATES $FRAMEWORKS_GNUSTEP $INTERESTING_FEATURES --features=gnustep-1-9,catch-all
         - name: header-translator
           target: x86_64-unknown-linux-gnu
           args: -pheader-translator
@@ -329,9 +327,6 @@ jobs:
     # Currently the slowest check, so let's get it started as soon as possible
     # - lint
 
-    env:
-      ARGS: --no-default-features --features=std,apple
-
     steps:
     - uses: actions/checkout@v4
       with:
@@ -349,10 +344,10 @@ jobs:
         key: cargo-${{ github.job }}-${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Test without features
-      run: cargo test $ARGS $PUBLIC_CRATES -ptests
+      run: cargo test $PUBLIC_CRATES -ptests
 
     - name: Test all frameworks
-      run: cargo test $ARGS $PUBLIC_CRATES $FRAMEWORKS_MACOS_10_12 -ptests $INTERESTING_FEATURES
+      run: cargo test $PUBLIC_CRATES $FRAMEWORKS_MACOS_10_12 -ptests $INTERESTING_FEATURES
 
   test-apple:
     # if: ${{ env.FULL }}
@@ -422,7 +417,6 @@ jobs:
       # Modern macOS can only run the target that they're built for.
       # So we pass `--no-run` when building for other targets.
       ARGS: >-
-        --no-default-features --features=std,apple
         ${{ matrix.build-std && '-Zbuild-std -Zdoctest-xcompile' }}
         ${{ matrix.target && '--no-run' }}
 
@@ -600,7 +594,6 @@ jobs:
       CXXFLAGS: ${{ matrix.cflags }}
       ASMFLAGS: ${{ matrix.cflags }}
       LDFLAGS: ${{ matrix.cflags }}
-      ARGS: --no-default-features --features=std,${{ matrix.runtime }}
       # http://wiki.gnustep.org/index.php/Building_GNUstep_under_Debian_FreeBSD#installing_gnustep-make
       RUNTIME_VERSION: gnustep-${{ matrix.libobjc2 }}
 
@@ -748,16 +741,16 @@ jobs:
       run: cargo install cargo-fuzz --version=^0.11.2
 
     - name: Test Foundation
-      run: cargo test $ARGS $PUBLIC_CRATES $INTERESTING_FEATURES -ptests -pobjc2-foundation --features=catch-all
+      run: cargo test --features=${{ matrix.runtime }} $PUBLIC_CRATES $INTERESTING_FEATURES -ptests -pobjc2-foundation --features=catch-all
 
     - name: Test all frameworks
       if: ${{ env.FULL && matrix.target == 'x86_64-unknown-linux-gnu' }}
-      run: cargo test $ARGS $PUBLIC_CRATES $INTERESTING_FEATURES -ptests $FRAMEWORKS_GNUSTEP --features=catch-all
+      run: cargo test --features=${{ matrix.runtime }} $PUBLIC_CRATES $INTERESTING_FEATURES -ptests $FRAMEWORKS_GNUSTEP --features=catch-all
 
     - name: Test in release mode
       # Disabled on GNUStep 2.1 for now
       if: ${{ env.FULL && matrix.runtime != 'gnustep-2-1' }}
-      run: cargo test $ARGS $PUBLIC_CRATES -pobjc2-foundation --release
+      run: cargo test --features=${{ matrix.runtime }} $PUBLIC_CRATES -pobjc2-foundation --release
 
     - name: Run fuzzing
       if: ${{ matrix.fuzz }}
@@ -769,7 +762,7 @@ jobs:
         # `max_total_time`, to get more determinism.
         for fuzz_target in $(cargo-fuzz list --fuzz-dir=./crates/test-fuzz/)
         do
-          cargo-fuzz run --fuzz-dir=./crates/test-fuzz/ $fuzz_target $ARGS,fuzz-all -- -runs=10000 -timeout=2 -jobs=10
+          cargo-fuzz run --fuzz-dir=./crates/test-fuzz/ $fuzz_target --features=${{ matrix.runtime }},fuzz-all -- -runs=10000 -timeout=2 -jobs=10
         done
 
         # Check if the fuzzer encountered something that should be added to
@@ -781,11 +774,11 @@ jobs:
       if: ${{ false }}
       # Difficult to install Valgrind on macOS
       # See https://github.com/LouisBrunner/valgrind-macos
-      run: cargo bench $ARGS
+      run: cargo bench --features=${{ matrix.runtime }}
 
     - name: Test with unstable features
       if: ${{ env.FULL && matrix.nightly }}
-      run: cargo test $ARGS -ptests $PUBLIC_CRATES $INTERESTING_FEATURES -pobjc2-foundation --features=catch-all $UNSTABLE_FEATURES
+      run: cargo test --features=${{ matrix.runtime }} -ptests $PUBLIC_CRATES $INTERESTING_FEATURES -pobjc2-foundation --features=catch-all $UNSTABLE_FEATURES
 
   test-compiler-rt:
     name: Test Compiler-RT
@@ -818,7 +811,7 @@ jobs:
         sudo apt-get -y install clang libblocksruntime-dev
 
     - name: Test
-      run: cargo test $PUBLIC_CRATES $OTHER_RUNTIME --features=compiler-rt
+      run: cargo test $PUBLIC_CRATES --features=compiler-rt
 
     - name: Test in release mode
-      run: cargo test $PUBLIC_CRATES $OTHER_RUNTIME --features=compiler-rt --release
+      run: cargo test $PUBLIC_CRATES --features=compiler-rt --release
