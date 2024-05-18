@@ -2141,6 +2141,15 @@ impl Stmt {
                         // directly without causing unsoundess in external
                         // libraries (but it will likely lead to an exception
                         // or a crash, if the invalid value is used).
+                        //
+                        // Note: This cannot be a Rust `enum`, since that
+                        // assumes that the enum is exhaustive ABI-wise, even
+                        // with `#[non_exhaustive]`, see:
+                        // <https://play.rust-lang.org/?version=stable&mode=release&edition=2021&gist=3a19fcb4267d6fdb0d26b0c9defd946a>
+                        //
+                        // What we really need here is some way to specify
+                        // niches of integers, then a hacky solution to this
+                        // would be doable.
                         writeln!(f, "pub struct {}(pub {});", id.name, ty.enum_())?;
 
                         write!(f, "{}", self.cfg_gate_ln(config))?;
