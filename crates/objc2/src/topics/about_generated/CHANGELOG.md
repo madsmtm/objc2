@@ -19,6 +19,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `objc2_quartz_core::CAMetalLayer`.
 * Added methods to access `CALayer` from `objc2_app_kit::NSView`.
 * Added optional support for a few methods depending on types from `libc`.
+* Added `MTLCounterErrorValue`, `MTLCounterDontSample` and
+  `MTLTextureSwizzleChannelsDefault` Metal constants.
 
 ### Changed
 * Updated SDK from Xcode 15.3 to 15.4.

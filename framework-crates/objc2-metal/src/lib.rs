@@ -47,6 +47,8 @@ extern crate std;
 
 #[cfg(feature = "MTLCaptureManager")]
 mod capture;
+#[cfg(feature = "MTLCounters")]
+mod counters;
 #[cfg(feature = "MTLDevice")]
 mod device;
 mod generated;
@@ -57,7 +59,11 @@ mod private;
 #[cfg(feature = "MTLResource")]
 mod resource;
 mod slice;
+#[cfg(feature = "MTLTexture")]
+mod texture;
 
+#[cfg(feature = "MTLCounters")]
+pub use self::counters::*;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 #[cfg(feature = "MTLAccelerationStructureTypes")]
@@ -68,6 +74,8 @@ pub use self::private::MTLDevicePrivate;
 pub use self::resource::*;
 #[cfg(all(feature = "MTLRenderCommandEncoder", feature = "MTLCommandEncoder"))]
 pub use self::slice::MTLRenderCommandEncoderSliceExt;
+#[cfg(feature = "MTLTexture")]
+pub use self::texture::*;
 
 // CoreFoundation
 #[allow(dead_code)]
