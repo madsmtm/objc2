@@ -17,8 +17,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   This means that they have the usual `ops::BitAnd`, `ops::BitOr`, `ops::Not`,
   etc. implementations that you would expect from an option enum.
-* Added `CoreBluetooth` framework as `objc2-core-bluetooth`.
-* Added `Virtualization` framework as `objc2-virtualization`.
+* Added new framework crates:
+  - `CoreBluetooth` / `objc2-core-bluetooth`.
+  - `Virtualization` / `objc2-virtualization`.
+  - `Symbols` / `objc2-symbols`.
+  - `UIKit` / `objc2-ui-kit`.
+  - `Accounts` / `objc2-accounts`.
+  - `AppTrackingTransparency` / `objc2-app-tracking-transparency`.
+  - `MLCompute` / `objc2-ml-compute`.
+  - `ContactsUI` / `objc2-contacts-ui`.
+  - `NearbyInteraction` / `objc2-nearby-interaction`.
+  - `ScreenCaptureKit` / `objc2-screen-capture-kit`.
+  - `CoreImage` / `objc2-core-image`.
+  - `CoreMotion` / `objc2-core-motion`.
+  - `MultipeerConnectivity` / `objc2-multipeer-connectivity`.
+  - `NaturalLanguage` / `objc2-natural-language`.
+  - `CoreML` / `objc2-core-ml`.
+  - `Vision` / `objc2-vision`.
+  - `AVKit` / `objc2-av-kit`.
+  - `NetworkExtension` / `objc2-network-extension`.
 * Added `objc2_quartz_core::CAMetalDrawable` and
   `objc2_quartz_core::CAMetalLayer`.
 * Added methods to access `CALayer` from `objc2_app_kit::NSView`.
