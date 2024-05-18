@@ -20,9 +20,6 @@ class.VNImageHomographicAlignmentObservation.methods.warpTransform.skipped = tru
 class.VNHumanBodyPose3DObservation.methods.cameraOriginMatrix.skipped = true
 class.VNHumanBodyPose3DObservation.methods."getCameraRelativePosition:forJointName:error:".skipped = true
 
-# Workaround for header-translator not supporting definitions in umbrella header
-static.VNVisionVersionNumber.skipped = true
-
 # error: unknown error result type
 class.VNTrackingRequest.methods."supportedNumberOfTrackersAndReturnError:".skipped = true
 

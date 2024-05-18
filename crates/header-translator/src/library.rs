@@ -1,3 +1,4 @@
+use std::collections::btree_map::Entry;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::fmt;
@@ -11,16 +12,14 @@ use toml_edit::{value, Array, DocumentMut, Formatted, Item, Table, Value};
 
 use crate::config::LibraryConfig;
 use crate::display_helper::FormatterFn;
-use crate::file::clean_name;
-use crate::file::File;
-use crate::id::cfg_gate_ln;
-use crate::id::Location;
+use crate::module::Module;
 use crate::Config;
+use crate::Location;
 use crate::VERSION;
 
-#[derive(Debug, PartialEq, Default)]
+#[derive(Debug, PartialEq)]
 pub struct Library {
-    pub files: BTreeMap<String, File>,
+    pub module: Module,
     link_name: String,
     pub data: LibraryConfig,
 }
@@ -28,10 +27,31 @@ pub struct Library {
 impl Library {
     pub fn new(name: &str, data: &LibraryConfig) -> Self {
         Self {
-            files: BTreeMap::new(),
+            module: Module::new(),
             link_name: name.to_string(),
             data: data.clone(),
         }
+    }
+
+    pub fn add_module(&mut self, path: Vec<String>) {
+        let mut current = &mut self.module;
+        for p in path {
+            current = current.submodules.entry(p.clone()).or_default();
+        }
+    }
+
+    pub fn module_mut(&mut self, location: &Location) -> &mut Module {
+        let mut current = &mut self.module;
+        for p in location.modules() {
+            current = match current.submodules.entry(p.to_string()) {
+                Entry::Occupied(entry) => entry.into_mut(),
+                Entry::Vacant(entry) => {
+                    error!(?location, "expected module to be available in library");
+                    entry.insert(Default::default())
+                }
+            };
+        }
+        current
     }
 
     pub fn output(
@@ -41,22 +61,11 @@ impl Library {
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
         let generated_dir = crate_dir.join("src").join("generated");
 
-        // Remove previously generated files
-        for file in generated_dir.read_dir()? {
-            fs::remove_file(file?.path())?;
-        }
+        // Output `src/generated/*`.
+        self.module
+            .output(&generated_dir, config, &self.link_name)?;
 
-        // Output `src/generated/*.rs`.
-        for (name, file) in &self.files {
-            let _span = debug_span!("writing file", name).entered();
-
-            let name = clean_name(name);
-            let mut path = generated_dir.join(name);
-            path.set_extension("rs");
-            fs::write(&path, file.contents(config).to_string())?;
-        }
-
-        // Output `src/generated/mod.rs`.
+        // Overwrite `src/generated/mod.rs` with more data.
         fs::write(
             generated_dir.join("mod.rs"),
             self.contents(config).to_string(),
@@ -192,9 +201,9 @@ see that for related crates.", self.data.krate, self.link_name)?;
             value(default_target.unwrap());
 
         let dependencies: BTreeMap<_, _> = self
-            .files
-            .values()
-            .flat_map(|file| file.crates(config))
+            .module
+            .crates(config, &self.link_name)
+            .into_iter()
             .chain(self.data.required_dependencies.iter().map(|krate| &**krate))
             .map(|krate| (krate, self.data.required_dependencies.contains(krate)))
             .collect();
@@ -249,15 +258,8 @@ see that for related crates.", self.data.krate, self.link_name)?;
 
         add_newline_at_end(&mut cargo_toml["features"]);
 
-        let mut generated_features = BTreeMap::new();
-
         // Own features
-        for (file_name, file) in &self.files {
-            generated_features.insert(
-                clean_name(file_name),
-                file.required_cargo_features(config).into_iter().collect(),
-            );
-        }
+        let mut generated_features = self.module.required_cargo_features(config, &self.link_name);
 
         let _ = generated_features.insert(
             "all".to_string(),
@@ -345,41 +347,12 @@ see that for related crates.", self.data.krate, self.link_name)?;
             writeln!(f, "extern \"C\" {{}}")?;
             writeln!(f)?;
 
-            for name in self.files.keys() {
-                let name = clean_name(name);
-                write!(f, "#[cfg(feature = \"{name}\")]")?;
-                writeln!(f, "#[path = \"{name}.rs\"]")?;
-                writeln!(f, "mod __{name};")?;
+            if !self.module.submodules.is_empty() {
+                write!(f, "{}", self.module.modules(config))?;
             }
 
-            writeln!(f)?;
-
-            for (file_name, file) in &self.files {
-                for stmt in &file.stmts {
-                    if let Some(item) = stmt.provided_item() {
-                        item.location().assert_file(file_name);
-
-                        let mut items = stmt.required_items();
-                        items.push(item.clone());
-                        write!(
-                            f,
-                            "{}",
-                            cfg_gate_ln::<_, Location>(items, [], config, item.location())
-                        )?;
-
-                        let visibility = if item.name.starts_with('_') {
-                            "pub(crate)"
-                        } else {
-                            "pub"
-                        };
-                        write!(
-                            f,
-                            "{visibility} use self::__{}::{{{}}};",
-                            clean_name(file_name),
-                            item.name,
-                        )?;
-                    }
-                }
+            if !self.module.stmts.is_empty() {
+                write!(f, "{}", self.module.stmts(config, &self.link_name))?;
             }
 
             Ok(())

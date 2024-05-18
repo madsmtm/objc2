@@ -437,9 +437,11 @@ impl Ty {
             attributed_name = new_attributed_name;
             name = new_name;
 
-            ty = ty
-                .get_modified_type()
-                .expect("attributed type to have modified type");
+            if let Some(modified) = ty.get_modified_type() {
+                ty = modified;
+            } else {
+                error!("expected unexposed type to have modified type");
+            }
             nullability
         } else {
             None
@@ -591,7 +593,9 @@ impl Ty {
                     Self::AnyProtocol
                 } else {
                     let decl = ItemRef::new(&declaration, context);
-                    assert_eq!(decl.id.name, name);
+                    if decl.id.name != name {
+                        error!(?name, "invalid interface name");
+                    }
                     Self::Class {
                         decl,
                         protocols: vec![],
@@ -847,15 +851,21 @@ impl Ty {
                     "BOOL" => return Self::Primitive(Primitive::ObjcBool),
 
                     "int8_t" => return Self::Primitive(Primitive::I8),
+                    "__int8_t" => return Self::Primitive(Primitive::I8),
                     "uint8_t" => return Self::Primitive(Primitive::U8),
+                    "__uint8_t" => return Self::Primitive(Primitive::U8),
                     "int16_t" => return Self::Primitive(Primitive::I16),
+                    "__int16_t" => return Self::Primitive(Primitive::I16),
                     "uint16_t" => return Self::Primitive(Primitive::U16),
+                    "__uint16_t" => return Self::Primitive(Primitive::U16),
                     "int32_t" => return Self::Primitive(Primitive::I32),
                     "__int32_t" => return Self::Primitive(Primitive::I32),
                     "uint32_t" => return Self::Primitive(Primitive::U32),
                     "__uint32_t" => return Self::Primitive(Primitive::U32),
                     "int64_t" => return Self::Primitive(Primitive::I64),
+                    "__int64_t" => return Self::Primitive(Primitive::I64),
                     "uint64_t" => return Self::Primitive(Primitive::U64),
+                    "__uint64_t" => return Self::Primitive(Primitive::U64),
                     "ssize_t" => return Self::Primitive(Primitive::ISize),
                     "size_t" => return Self::Primitive(Primitive::USize),
                     "ptrdiff_t" => return Self::Primitive(Primitive::PtrDiff),
@@ -972,7 +982,12 @@ impl Ty {
                     num_elements,
                 }
             }
-            _ => panic!("unsupported type: {ty:?}"),
+            _ => {
+                error!(?ty, "unknown type kind");
+                Self::GenericParam {
+                    name: "Unknown".to_string(),
+                }
+            }
         }
     }
 
@@ -1561,7 +1576,8 @@ impl Ty {
     pub(crate) fn method_argument(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             Self::Primitive(Primitive::C99Bool) => {
-                panic!("C99's bool as Objective-C method argument is unsupported")
+                error!("C99's bool as Objective-C method argument is unsupported");
+                write!(f, "C99Bool")
             }
             Self::Primitive(Primitive::ObjcBool) => {
                 write!(f, "bool")

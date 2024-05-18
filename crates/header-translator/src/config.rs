@@ -8,7 +8,7 @@ use heck::ToTrainCase;
 use semver::Version;
 use serde::{de, Deserialize, Deserializer};
 
-use crate::id::Location;
+use crate::id::{Location, LocationLibrary};
 use crate::stmt::{Derives, Mutability};
 use crate::ItemIdentifier;
 
@@ -21,13 +21,17 @@ pub struct Config {
 impl Config {
     pub fn library(&self, location: impl AsRef<Location>) -> &LibraryConfig {
         let location = location.as_ref();
-        if location.library == "System" {
-            return &self.system;
+        match location.library() {
+            LocationLibrary::System => &self.system,
+            LocationLibrary::Library(library) => self.libraries.get(library).unwrap_or_else(|| {
+                error!("tried to get library config from {location:?}");
+                &self.system
+            }),
+            _ => {
+                error!("tried to get library config from {location:?}");
+                &self.system
+            }
         }
-        self.libraries.get(&location.library).unwrap_or_else(|| {
-            error!("tried to get library config from {location:?}");
-            &self.system
-        })
     }
 
     pub fn replace_protocol_name(&self, id: ItemIdentifier) -> ItemIdentifier {
@@ -307,8 +311,7 @@ impl<'de> Deserialize<'de> for Mutability {
             let (file_name, name) = rest.split_once("::")?;
             Some(ItemIdentifier::from_raw(
                 name.to_string(),
-                library.to_string(),
-                file_name.to_string(),
+                vec![library.to_string(), file_name.to_string()],
             ))
         }
 

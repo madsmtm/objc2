@@ -14,7 +14,7 @@ use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 
 use header_translator::{
-    global_analysis, run_cargo_fmt, Config, Context, File, Library, LibraryConfig, Stmt,
+    global_analysis, run_cargo_fmt, Config, Context, Library, LibraryConfig, Stmt,
 };
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
@@ -286,32 +286,27 @@ fn parse_sdk(
         .map(|(name, data)| (name.into(), Library::new(name, data)))
         .collect();
 
-    let mut library_span = None;
-    let mut library_span_name = String::new();
-    let mut file_span = None;
-    let mut file_span_name = String::new();
+    let mut library_span: Option<(_, _)> = None;
+    let mut file_span: Option<(_, _)> = None;
 
     let mut context = Context::new(config, sdk);
 
     tu.get_entity().visit_children(|entity, _parent| {
         let _span = trace_span!("entity", ?entity).entered();
-        if let Some((library_name, Some(file_name))) = context.get_library_and_file_name(&entity) {
-            if library_span_name != library_name {
-                library_span.take();
+        if let Some(location) = context.get_location(&entity) {
+            let library_name = location.library_name();
+            if library_span.as_ref().map(|(_, s)| s) != Some(library_name) {
+                library_span = Some((
+                    debug_span!("library", name = library_name).entered(),
+                    library_name.clone(),
+                ));
                 file_span.take();
-                file_span_name = String::new();
-
-                library_span_name.clone_from(&library_name);
-                library_span = Some(debug_span!("library", name = library_name).entered());
             }
-            if file_span_name != file_name {
-                file_span.take();
-
-                file_span_name.clone_from(&file_name);
-                file_span = Some(debug_span!("file", name = file_name).entered());
+            if file_span.as_ref().map(|(_, l)| l) != Some(&location) {
+                file_span = Some((debug_span!("file", ?location).entered(), location.clone()));
             }
 
-            if let Some(library) = libraries.get_mut(&library_name) {
+            if let Some(library) = libraries.get_mut(library_name) {
                 match entity.get_kind() {
                     EntityKind::InclusionDirective if preprocessing => {
                         let name = entity.get_name().expect("inclusion name");
@@ -329,21 +324,18 @@ fn parse_sdk(
                             }
 
                             // If inclusion is not umbrella header
-                            if included != library_name {
+                            if included != *library_name {
                                 // The file is often included twice, even
                                 // within the same file, so insertion can fail
-                                library
-                                    .files
-                                    .entry(included)
-                                    .or_insert_with(|| File::new(&library_name));
+                                library.add_module(vec![included])
                             }
                         }
                     }
                     EntityKind::MacroExpansion if preprocessing => {
-                        let location = entity.get_location().expect("macro location");
+                        let clang_location = entity.get_location().expect("macro location");
                         context
                             .macro_invocations
-                            .insert(location.get_spelling_location(), entity);
+                            .insert(clang_location.get_spelling_location(), entity);
                     }
                     EntityKind::MacroDefinition if preprocessing => {
                         // let name = entity.get_name().expect("macro def name");
@@ -356,12 +348,9 @@ fn parse_sdk(
                         }
                         preprocessing = false;
                         // No more includes / macro expansions after this line
-                        let mut maybe_file = library.files.get_mut(&file_name);
                         for stmt in Stmt::parse(&entity, &context) {
-                            let file: &mut File = maybe_file.as_mut().unwrap_or_else(|| {
-                                panic!("could not find file {file_name} in library")
-                            });
-                            file.add_stmt(stmt);
+                            let module = library.module_mut(&location);
+                            module.add_stmt(stmt);
                         }
                     }
                 }

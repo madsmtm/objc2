@@ -15,11 +15,11 @@ mod config;
 mod context;
 mod display_helper;
 mod expr;
-mod file;
 mod global_analysis;
 mod id;
 mod library;
 mod method;
+mod module;
 mod objc2_utils;
 mod rust_type;
 mod stmt;
@@ -28,10 +28,10 @@ mod unexposed_attr;
 
 pub use self::config::{Config, LibraryConfig};
 pub use self::context::Context;
-pub use self::file::File;
 pub use self::global_analysis::global_analysis;
-pub use self::id::ItemIdentifier;
+pub use self::id::{ItemIdentifier, Location};
 pub use self::library::Library;
+pub use self::module::Module;
 pub use self::stmt::{Mutability, Stmt};
 
 pub fn run_cargo_fmt(packages: impl IntoIterator<Item = impl Display>) {

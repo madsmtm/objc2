@@ -832,7 +832,7 @@ impl Stmt {
 
                 // For ease-of-use, if the category is defined in the same
                 // library as the class, we just emit it as `extern_methods!`.
-                if cls.library() == category.library() {
+                if cls.library_name() == category.library_name() {
                     // extern_methods!
 
                     let (methods, designated_initializers) = parse_methods(
@@ -1330,7 +1330,7 @@ impl Stmt {
                         if value.is_none() {
                             value = Some(Expr::parse_var(&entity, context));
                         } else {
-                            panic!("got variable value twice")
+                            error!(?value, ?entity, "got variable value twice");
                         }
                     }
                     _ => panic!("unknown vardecl child in {id:?}: {entity:?}"),
@@ -1920,7 +1920,7 @@ impl Stmt {
                     availability: _,
                 } => {
                     let (generic_bound, where_bound) = if !generics.is_empty() {
-                        match (protocol.library(), &*protocol.name) {
+                        match (protocol.library_name(), &*protocol.name) {
                             // The object inherits from `NSObject` or `NSProxy` no
                             // matter what the generic type is, so this must be
                             // safe.

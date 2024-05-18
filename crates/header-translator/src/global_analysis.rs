@@ -4,23 +4,20 @@
 use std::collections::BTreeMap;
 use std::mem;
 
-use crate::file::File;
 use crate::method::Method;
+use crate::module::Module;
 use crate::stmt::Stmt;
 use crate::Library;
 
 pub fn global_analysis(library: &mut Library) {
-    for (name, file) in &mut library.files {
-        let _span = debug_span!("file", name).entered();
-        update_file(file);
-    }
+    update_module(&mut library.module);
 }
 
-fn update_file(file: &mut File) {
+fn update_module(module: &mut Module) {
     // disambiguate duplicate names
     // NOTE: this only works within single files
     let mut names = BTreeMap::<(String, String), &mut Method>::new();
-    for stmt in file.stmts.iter_mut() {
+    for stmt in module.stmts.iter_mut() {
         match stmt {
             Stmt::ExternMethods {
                 cls: id, methods, ..
@@ -59,7 +56,7 @@ fn update_file(file: &mut File) {
     }
 
     // Fix up a few typedef + enum declarations
-    let mut iter = mem::take(&mut file.stmts).into_iter().peekable();
+    let mut iter = mem::take(&mut module.stmts).into_iter().peekable();
     while let Some(stmt) = iter.next() {
         if let Stmt::AliasDecl {
             id,
@@ -85,6 +82,12 @@ fn update_file(file: &mut File) {
                 }
             }
         }
-        file.stmts.push(stmt);
+        module.stmts.push(stmt);
+    }
+
+    // Recurse for submodules
+    for (name, module) in &mut module.submodules {
+        let _span = debug_span!("file", name).entered();
+        update_module(module);
     }
 }
