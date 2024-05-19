@@ -38,6 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `NetworkExtension` / `objc2-network-extension`.
   - `SensitiveContentAnalysis` / `objc2-sensitive-content-analysis`.
   - `PhotosUI` / `objc2-photos-ui`.
+  - `FinderSync` / `objc2-finder-sync`.
 * Added `objc2_quartz_core::CAMetalDrawable` and
   `objc2_quartz_core::CAMetalLayer`.
 * Added methods to access `CALayer` from `objc2_app_kit::NSView`.

@@ -53,7 +53,7 @@ impl Module {
             .collect()
     }
 
-    pub fn required_cargo_features(
+    pub fn required_cargo_features_inner(
         &self,
         config: &Config,
         emission_library: &str,
@@ -63,7 +63,7 @@ impl Module {
         // Deliberately skipping own stmts
 
         for (file_name, module) in &self.submodules {
-            let features = required_features.entry(clean_name(file_name)).or_default();
+            let mut features = BTreeSet::new();
             for stmt in &module.stmts {
                 for required_item in stmt.required_items_inner() {
                     let location = required_item.location();
@@ -74,8 +74,9 @@ impl Module {
                     }
                 }
             }
-
-            required_features.extend(module.required_cargo_features(config, emission_library));
+            required_features.insert(clean_name(file_name), features);
+            required_features
+                .extend(module.required_cargo_features_inner(config, emission_library));
         }
 
         required_features
@@ -197,13 +198,12 @@ impl Module {
         path: &Path,
         config: &Config,
         emission_library: &str,
+        top_level_contents: impl fmt::Display,
+        is_top_level: bool,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
-        if self.submodules.is_empty() {
+        if self.submodules.is_empty() && !is_top_level {
             // Only output a single file
-            fs::write(
-                path.with_extension("rs"),
-                self.contents(config, emission_library).to_string(),
-            )?;
+            fs::write(path.with_extension("rs"), top_level_contents.to_string())?;
         } else {
             // Output an entire module
             fs::create_dir_all(path)?;
@@ -214,7 +214,13 @@ impl Module {
             for (name, module) in &self.submodules {
                 let name = clean_name(name);
                 let _span = debug_span!("writing file", name).entered();
-                module.output(&path.join(&name), config, emission_library)?;
+                module.output(
+                    &path.join(&name),
+                    config,
+                    emission_library,
+                    module.contents(config, emission_library),
+                    false,
+                )?;
                 if module.submodules.is_empty() {
                     expected_files.push(format!("{name}.rs").into());
                 } else {
@@ -222,10 +228,7 @@ impl Module {
                 }
             }
 
-            fs::write(
-                path.join("mod.rs"),
-                self.contents(config, emission_library).to_string(),
-            )?;
+            fs::write(path.join("mod.rs"), top_level_contents.to_string())?;
             expected_files.push("mod.rs".into());
 
             // Remove previously generated files

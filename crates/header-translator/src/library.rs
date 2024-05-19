@@ -62,13 +62,12 @@ impl Library {
         let generated_dir = crate_dir.join("src").join("generated");
 
         // Output `src/generated/*`.
-        self.module
-            .output(&generated_dir, config, &self.link_name)?;
-
-        // Overwrite `src/generated/mod.rs` with more data.
-        fs::write(
-            generated_dir.join("mod.rs"),
-            self.contents(config).to_string(),
+        self.module.output(
+            &generated_dir,
+            config,
+            &self.link_name,
+            self.contents(config),
+            true,
         )?;
 
         if !self.data.custom_lib_rs {
@@ -197,15 +196,45 @@ see that for related crates.", self.data.krate, self.link_name)?;
         cargo_toml["package"]["metadata"]["docs"]["rs"]["default-target"] =
             value(default_target.unwrap());
 
-        let dependencies: BTreeMap<_, _> = self
+        let mut dependencies: BTreeMap<_, _> = self
             .module
             .crates(config, &self.link_name)
             .into_iter()
             .chain(self.data.required_dependencies.iter().map(|krate| &**krate))
-            .map(|krate| (krate, self.data.required_dependencies.contains(krate)))
+            .map(|krate| {
+                (
+                    krate,
+                    (
+                        self.data.required_dependencies.contains(krate),
+                        <BTreeSet<String>>::new(),
+                    ),
+                )
+            })
             .collect();
 
-        for (krate, required) in &dependencies {
+        // Process top-level statements
+        for stmt in &self.module.stmts {
+            for required_item in stmt.required_items_inner() {
+                let location = required_item.location();
+                if let Some(feature) = location.cargo_toml_feature(config, &self.link_name) {
+                    if feature == "bitflags" {
+                        if let Some((bitflags_required, _)) = dependencies.get_mut("bitflags") {
+                            *bitflags_required = true;
+                        }
+                    } else {
+                        let (krate, feature) = feature.split_once('/').unwrap();
+                        let krate = krate.strip_suffix('?').unwrap_or(krate);
+                        if let Some((_, krate_features)) = dependencies.get_mut(krate) {
+                            krate_features.insert(feature.to_string());
+                        } else {
+                            error!(?location, ?feature, "tried to set krate dependency feature");
+                        }
+                    }
+                }
+            }
+        }
+
+        for (krate, (required, features)) in &dependencies {
             let mut table = match *krate {
                 "block2" => InlineTable::from_iter([
                     ("path", Value::from("../../crates/block2".to_string())),
@@ -225,6 +254,10 @@ see that for related crates.", self.data.krate, self.link_name)?;
             }
             if !required {
                 table.insert("optional", Value::from(true));
+            }
+            if !features.is_empty() {
+                let array: Array = features.iter().collect();
+                table.insert("features", Value::from(array));
             }
 
             // Don't override if set by Cargo.modified.toml
@@ -246,7 +279,7 @@ see that for related crates.", self.data.krate, self.link_name)?;
             Err(e) => Err(e)?,
         }
 
-        for (krate, required) in &dependencies {
+        for (krate, (required, _)) in &dependencies {
             if !required {
                 let array: Array = [format!("dep:{krate}")].iter().collect();
                 cargo_toml["features"][krate] = value(array);
@@ -256,7 +289,9 @@ see that for related crates.", self.data.krate, self.link_name)?;
         add_newline_at_end(&mut cargo_toml["features"]);
 
         // Own features
-        let mut generated_features = self.module.required_cargo_features(config, &self.link_name);
+        let mut generated_features = self
+            .module
+            .required_cargo_features_inner(config, &self.link_name);
 
         let _ = generated_features.insert(
             "all".to_string(),
@@ -266,7 +301,7 @@ see that for related crates.", self.data.krate, self.link_name)?;
                 .chain(
                     dependencies
                         .iter()
-                        .filter(|(_, required)| !*required)
+                        .filter(|(_, (required, _))| !*required)
                         .map(|(krate, _)| krate.to_string()),
                 )
                 .collect::<BTreeSet<_>>(),
