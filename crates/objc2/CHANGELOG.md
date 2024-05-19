@@ -783,7 +783,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   ```
 
   Unfortunately, you will now encounter a very confusing error:
-  ```
+  ```text
     |
   2 | builder.add_method(sel!(init), init);
     |         ^^^^^^^^^^ implementation of `MethodImplementation` is not general enough
