@@ -41,7 +41,7 @@ default = ["std"]
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "bitflags?/std", "objc2/std", "objc2-foundation/std"]
 alloc = ["objc2/alloc", "objc2-foundation/alloc"]
-bitflags = ["dep:bitflags"]
+bitflags = ["dep:bitflags", "objc2-foundation/bitflags"]
 
 AEAssessmentApplication = [
     "objc2-foundation/NSObject",

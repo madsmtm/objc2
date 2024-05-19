@@ -44,8 +44,8 @@ default = ["std"]
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-foundation/std", "objc2-metal?/std"]
 alloc = ["block2?/alloc", "objc2/alloc", "objc2-foundation/alloc", "objc2-metal?/alloc"]
-bitflags = ["dep:bitflags"]
-block2 = ["dep:block2"]
+bitflags = ["dep:bitflags", "objc2-foundation/bitflags", "objc2-metal?/bitflags"]
+block2 = ["dep:block2", "objc2-foundation/block2", "objc2-metal?/block2"]
 objc2-metal = ["dep:objc2-metal"]
 
 MLCActivationDescriptor = ["objc2-foundation/NSObject"]

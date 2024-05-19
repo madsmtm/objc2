@@ -197,6 +197,11 @@ fn main() -> Result<(), BoxError> {
     }
     drop(span);
 
+    let dependency_map: BTreeMap<_, _> = libraries
+        .iter()
+        .map(|(library_name, library)| (&**library_name, library.dependencies(&config)))
+        .collect();
+
     for (library_name, library) in &libraries {
         let _span = info_span!("writing", library_name).entered();
 
@@ -230,7 +235,7 @@ fn main() -> Result<(), BoxError> {
             Err(err) => Err(err)?,
         }
 
-        library.output(&crate_dir, &config)?;
+        library.output(&crate_dir, &config, &dependency_map)?;
     }
 
     let span = info_span!("formatting").entered();

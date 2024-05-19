@@ -24,6 +24,8 @@ pub struct Library {
     pub data: LibraryConfig,
 }
 
+type Dependencies<'c> = BTreeMap<&'c str, (bool, String, BTreeSet<String>)>;
+
 impl Library {
     pub fn new(name: &str, data: &LibraryConfig) -> Self {
         Self {
@@ -54,10 +56,62 @@ impl Library {
         current
     }
 
+    pub fn dependencies<'c>(&self, config: &'c Config) -> Dependencies<'c> {
+        let mut dependencies: BTreeMap<_, _> = self
+            .module
+            .all_items()
+            .into_iter()
+            .flat_map(|item| {
+                let location = item.location();
+                location
+                    .library(config, &self.link_name)
+                    .krate()
+                    .map(|(krate, required)| {
+                        (
+                            krate,
+                            (
+                                required,
+                                location.library_name().to_string(),
+                                BTreeSet::new(),
+                            ),
+                        )
+                    })
+            })
+            .collect();
+
+        // Process top-level statements
+        for stmt in &self.module.stmts {
+            for required_item in stmt.required_items_inner() {
+                let location = required_item.location();
+                if let Some(feature) = location
+                    .library(config, &self.link_name)
+                    .cargo_toml_feature()
+                {
+                    if feature == "bitflags" {
+                        if let Some((bitflags_required, _, _)) = dependencies.get_mut("bitflags") {
+                            *bitflags_required = true;
+                        }
+                    } else {
+                        let (krate, feature) = feature.split_once('/').unwrap();
+                        let krate = krate.strip_suffix('?').unwrap_or(krate);
+                        if let Some((_, _, krate_features)) = dependencies.get_mut(krate) {
+                            krate_features.insert(feature.to_string());
+                        } else {
+                            error!(?location, ?feature, "tried to set krate dependency feature");
+                        }
+                    }
+                }
+            }
+        }
+
+        dependencies
+    }
+
     pub fn output(
         &self,
         crate_dir: &Path,
         config: &Config,
+        dependency_map: &BTreeMap<&str, Dependencies<'_>>,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
         let generated_dir = crate_dir.join("src").join("generated");
 
@@ -196,43 +250,7 @@ see that for related crates.", self.data.krate, self.link_name)?;
         cargo_toml["package"]["metadata"]["docs"]["rs"]["default-target"] =
             value(default_target.unwrap());
 
-        let mut dependencies: BTreeMap<_, _> = self
-            .module
-            .all_items()
-            .into_iter()
-            .flat_map(|item| {
-                let lib = item.location().library(config, &self.link_name);
-                lib.krate()
-                    .map(|(krate, required)| (krate, (required, BTreeSet::new())))
-            })
-            .collect();
-
-        // Process top-level statements
-        for stmt in &self.module.stmts {
-            for required_item in stmt.required_items_inner() {
-                let location = required_item.location();
-                if let Some(feature) = location
-                    .library(config, &self.link_name)
-                    .cargo_toml_feature()
-                {
-                    if feature == "bitflags" {
-                        if let Some((bitflags_required, _)) = dependencies.get_mut("bitflags") {
-                            *bitflags_required = true;
-                        }
-                    } else {
-                        let (krate, feature) = feature.split_once('/').unwrap();
-                        let krate = krate.strip_suffix('?').unwrap_or(krate);
-                        if let Some((_, krate_features)) = dependencies.get_mut(krate) {
-                            krate_features.insert(feature.to_string());
-                        } else {
-                            error!(?location, ?feature, "tried to set krate dependency feature");
-                        }
-                    }
-                }
-            }
-        }
-
-        for (krate, (required, features)) in &dependencies {
+        for (krate, (required, _, features)) in &dependency_map[&*self.link_name] {
             let mut table = match *krate {
                 "objc2" => InlineTable::from_iter([
                     ("path", Value::from("../../crates/objc2".to_string())),
@@ -296,11 +314,30 @@ see that for related crates.", self.data.krate, self.link_name)?;
             Err(e) => Err(e)?,
         }
 
-        for (krate, (required, _)) in &dependencies {
-            if !required {
-                let array: Array = [format!("dep:{krate}")].iter().collect();
-                cargo_toml["features"][krate] = value(array);
+        for (krate, (required, _, _)) in &dependency_map[&*self.link_name] {
+            if *required {
+                continue;
             }
+
+            let mut array: Array = [format!("dep:{krate}")].iter().collect();
+            // Enable features of the dependency as well
+            // E.g. `block2 = ["dep:block2", "objc2-foundation/block2"]`
+            for (dependency_krate, (dependency_required, dependency_library, _)) in
+                &dependency_map[&*self.link_name]
+            {
+                if let Some(dependency) = dependency_map.get(&**dependency_library) {
+                    if let Some((inner_required, _, _)) = dependency.get(krate) {
+                        if *inner_required {
+                            continue;
+                        }
+                        array.push(format!(
+                            "{dependency_krate}{}/{krate}",
+                            if *dependency_required { "" } else { "?" }
+                        ));
+                    }
+                }
+            }
+            cargo_toml["features"][krate] = value(array);
         }
 
         add_newline_at_end(&mut cargo_toml["features"]);
@@ -316,9 +353,9 @@ see that for related crates.", self.data.krate, self.link_name)?;
                 .keys()
                 .cloned()
                 .chain(
-                    dependencies
+                    dependency_map[&*self.link_name]
                         .iter()
-                        .filter(|(_, (required, _))| !*required)
+                        .filter(|(_, (required, _, _))| !*required)
                         .map(|(krate, _)| krate.to_string()),
                 )
                 .collect::<BTreeSet<_>>(),

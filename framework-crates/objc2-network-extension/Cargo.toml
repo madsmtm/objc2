@@ -44,8 +44,8 @@ default = ["std"]
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "block2?/std", "libc?/std", "objc2/std", "objc2-foundation/std"]
 alloc = ["block2?/alloc", "objc2/alloc", "objc2-foundation/alloc"]
-block2 = ["dep:block2"]
-libc = ["dep:libc"]
+block2 = ["dep:block2", "objc2-foundation/block2"]
+libc = ["dep:libc", "objc2-foundation/libc"]
 
 NEAppProxyFlow = [
     "objc2-foundation/NSError",

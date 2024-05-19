@@ -41,7 +41,7 @@ default = ["std"]
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "libc?/std", "objc2/std", "objc2-foundation/std"]
 alloc = ["objc2/alloc", "objc2-foundation/alloc"]
-libc = ["dep:libc"]
+libc = ["dep:libc", "objc2-foundation/libc"]
 
 MXAnimationMetric = [
     "objc2-foundation/NSMeasurement",

@@ -45,8 +45,8 @@ default = ["std"]
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-app-kit?/std", "objc2-foundation/std"]
 alloc = ["block2?/alloc", "objc2/alloc", "objc2-app-kit?/alloc", "objc2-foundation/alloc"]
-bitflags = ["dep:bitflags"]
-block2 = ["dep:block2"]
+bitflags = ["dep:bitflags", "objc2-app-kit?/bitflags", "objc2-foundation/bitflags"]
+block2 = ["dep:block2", "objc2-app-kit?/block2", "objc2-foundation/block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 
 AVFoundation_MPNowPlayingInfoLanguageOptionAdditions = []
