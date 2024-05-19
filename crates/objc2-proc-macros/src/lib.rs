@@ -9,10 +9,6 @@
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-proc-macros/0.1.1")]
 
-#[cfg(doctest)]
-#[doc = include_str!("../README.md")]
-extern "C" {}
-
 use core::hash::{Hash, Hasher};
 
 use proc_macro::Ident;

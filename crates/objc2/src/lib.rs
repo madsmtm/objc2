@@ -168,10 +168,6 @@ compile_error!("The `std` feature currently must be enabled.");
 extern crate alloc;
 extern crate std;
 
-#[cfg(doctest)]
-#[doc = include_str!("../README.md")]
-extern "C" {}
-
 #[doc(no_inline)]
 pub use objc_sys as ffi;
 

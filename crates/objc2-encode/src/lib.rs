@@ -42,10 +42,6 @@
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-encode/4.0.1")]
 
-#[cfg(doctest)]
-#[doc = include_str!("../README.md")]
-extern "C" {}
-
 #[cfg(not(feature = "alloc"))]
 compile_error!("the `alloc` feature currently must be enabled");
 

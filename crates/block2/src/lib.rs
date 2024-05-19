@@ -311,10 +311,6 @@
 extern crate alloc;
 extern crate std;
 
-#[cfg(doctest)]
-#[doc = include_str!("../README.md")]
-extern "C" {}
-
 #[cfg(not(feature = "std"))]
 compile_error!("The `std` feature currently must be enabled.");
 
