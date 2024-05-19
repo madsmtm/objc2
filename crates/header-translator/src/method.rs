@@ -663,6 +663,9 @@ impl Method {
         if self.is_error {
             items.push(ItemIdentifier::nserror());
         }
+        if self.mainthreadonly {
+            items.push(ItemIdentifier::main_thread_marker());
+        }
         items
     }
 }

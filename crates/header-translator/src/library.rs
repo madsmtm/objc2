@@ -198,17 +198,12 @@ see that for related crates.", self.data.krate, self.link_name)?;
 
         let mut dependencies: BTreeMap<_, _> = self
             .module
-            .crates(config, &self.link_name)
+            .all_items()
             .into_iter()
-            .chain(self.data.required_dependencies.iter().map(|krate| &**krate))
-            .map(|krate| {
-                (
-                    krate,
-                    (
-                        self.data.required_dependencies.contains(krate),
-                        <BTreeSet<String>>::new(),
-                    ),
-                )
+            .flat_map(|item| {
+                let lib = item.location().library(config, &self.link_name);
+                lib.krate()
+                    .map(|(krate, required)| (krate, (required, BTreeSet::new())))
             })
             .collect();
 
@@ -216,7 +211,10 @@ see that for related crates.", self.data.krate, self.link_name)?;
         for stmt in &self.module.stmts {
             for required_item in stmt.required_items_inner() {
                 let location = required_item.location();
-                if let Some(feature) = location.cargo_toml_feature(config, &self.link_name) {
+                if let Some(feature) = location
+                    .library(config, &self.link_name)
+                    .cargo_toml_feature()
+                {
                     if feature == "bitflags" {
                         if let Some((bitflags_required, _)) = dependencies.get_mut("bitflags") {
                             *bitflags_required = true;
@@ -236,6 +234,10 @@ see that for related crates.", self.data.krate, self.link_name)?;
 
         for (krate, (required, features)) in &dependencies {
             let mut table = match *krate {
+                "objc2" => InlineTable::from_iter([
+                    ("path", Value::from("../../crates/objc2".to_string())),
+                    ("version", Value::from("0.5.1")),
+                ]),
                 "block2" => InlineTable::from_iter([
                     ("path", Value::from("../../crates/block2".to_string())),
                     ("version", Value::from("0.5.0")),
@@ -249,9 +251,7 @@ see that for related crates.", self.data.krate, self.link_name)?;
                     ("version", Value::from(VERSION)),
                 ]),
             };
-            if self.data.gnustep && *krate != "libc" && *krate != "bitflags" {
-                table.insert("default-features", Value::from(false));
-            }
+            table.insert("default-features", Value::from(false));
             if !required {
                 table.insert("optional", Value::from(true));
             }
@@ -266,6 +266,23 @@ see that for related crates.", self.data.krate, self.link_name)?;
                 .unwrap()
                 .entry(krate)
                 .or_insert(Item::Value(Value::InlineTable(table)));
+
+            cargo_toml["features"]["std"]
+                .as_array_mut()
+                .unwrap()
+                .push(Value::from(format!(
+                    "{krate}{}/std",
+                    if *required { "" } else { "?" },
+                )));
+            if *krate != "bitflags" && *krate != "libc" {
+                cargo_toml["features"]["alloc"]
+                    .as_array_mut()
+                    .unwrap()
+                    .push(Value::from(format!(
+                        "{krate}{}/alloc",
+                        if *required { "" } else { "?" },
+                    )));
+            }
         }
 
         match fs::read_to_string(crate_dir.join("Cargo.modified.toml")) {

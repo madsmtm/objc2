@@ -1,7 +1,5 @@
 [dependencies]
 dispatch = { version = "0.2.0", optional = true }
-objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false }
-block2 = { path = "../../crates/block2", version = "0.5.0", default-features = false, optional = true }
 
 [dev-dependencies]
 static_assertions = "1.1.0"
@@ -27,12 +25,6 @@ required-features = [
 ]
 
 [features]
-default = ["std"]
-
-# Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "objc2/std", "block2?/std"]
-alloc = ["objc2/alloc", "block2?/alloc"]
-
 # Deprecated; this is the default on Apple platforms, and not applicable on other platforms.
 apple = []
 

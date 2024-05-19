@@ -21,19 +21,19 @@ license = "MIT"
 workspace = true
 
 [dependencies]
+bitflags = { version = "2.5.0", default-features = false, optional = true }
+block2 = { path = "../../crates/block2", version = "0.5.0", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false }
-bitflags = { version = "2.5.0", optional = true }
-block2 = { path = "../../crates/block2", version = "0.5.0", optional = true }
-objc2-cloud-kit = { path = "../objc2-cloud-kit", version = "0.2.0", optional = true }
-objc2-core-data = { path = "../objc2-core-data", version = "0.2.0", optional = true }
-objc2-core-image = { path = "../objc2-core-image", version = "0.2.0", optional = true }
-objc2-core-location = { path = "../objc2-core-location", version = "0.2.0", optional = true }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.0" }
-objc2-link-presentation = { path = "../objc2-link-presentation", version = "0.2.0", optional = true }
-objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.0", optional = true }
-objc2-symbols = { path = "../objc2-symbols", version = "0.2.0", optional = true }
-objc2-uniform-type-identifiers = { path = "../objc2-uniform-type-identifiers", version = "0.2.0", optional = true }
-objc2-user-notifications = { path = "../objc2-user-notifications", version = "0.2.0", optional = true }
+objc2-cloud-kit = { path = "../objc2-cloud-kit", version = "0.2.0", default-features = false, optional = true }
+objc2-core-data = { path = "../objc2-core-data", version = "0.2.0", default-features = false, optional = true }
+objc2-core-image = { path = "../objc2-core-image", version = "0.2.0", default-features = false, optional = true }
+objc2-core-location = { path = "../objc2-core-location", version = "0.2.0", default-features = false, optional = true }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.0", default-features = false }
+objc2-link-presentation = { path = "../objc2-link-presentation", version = "0.2.0", default-features = false, optional = true }
+objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.0", default-features = false, optional = true }
+objc2-symbols = { path = "../objc2-symbols", version = "0.2.0", default-features = false, optional = true }
+objc2-uniform-type-identifiers = { path = "../objc2-uniform-type-identifiers", version = "0.2.0", default-features = false, optional = true }
+objc2-user-notifications = { path = "../objc2-user-notifications", version = "0.2.0", default-features = false, optional = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"
@@ -50,8 +50,8 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "objc2/std"]
-alloc = ["objc2/alloc"]
+std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-cloud-kit?/std", "objc2-core-data?/std", "objc2-core-image?/std", "objc2-core-location?/std", "objc2-foundation/std", "objc2-link-presentation?/std", "objc2-quartz-core?/std", "objc2-symbols?/std", "objc2-uniform-type-identifiers?/std", "objc2-user-notifications?/std"]
+alloc = ["block2?/alloc", "objc2/alloc", "objc2-cloud-kit?/alloc", "objc2-core-data?/alloc", "objc2-core-image?/alloc", "objc2-core-location?/alloc", "objc2-foundation/alloc", "objc2-link-presentation?/alloc", "objc2-quartz-core?/alloc", "objc2-symbols?/alloc", "objc2-uniform-type-identifiers?/alloc", "objc2-user-notifications?/alloc"]
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-cloud-kit = ["dep:objc2-cloud-kit"]

@@ -22,9 +22,9 @@ workspace = true
 
 [dependencies]
 objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false }
-objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.0", optional = true }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.0" }
-objc2-osa-kit = { path = "../objc2-osa-kit", version = "0.2.0", optional = true }
+objc2-app-kit = { path = "../objc2-app-kit", version = "0.2.0", default-features = false, optional = true }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.0", default-features = false }
+objc2-osa-kit = { path = "../objc2-osa-kit", version = "0.2.0", default-features = false, optional = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -39,8 +39,8 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "objc2/std"]
-alloc = ["objc2/alloc"]
+std = ["alloc", "objc2/std", "objc2-app-kit?/std", "objc2-foundation/std", "objc2-osa-kit?/std"]
+alloc = ["objc2/alloc", "objc2-app-kit?/alloc", "objc2-foundation/alloc", "objc2-osa-kit?/alloc"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-osa-kit = ["dep:objc2-osa-kit"]
 

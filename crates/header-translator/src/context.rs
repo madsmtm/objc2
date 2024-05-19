@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::collections::HashMap;
 use std::ops;
 use std::path::{Path, PathBuf};
@@ -30,7 +31,7 @@ impl<'a> Context<'a> {
             if let Some(file) = location.get_file_location().file {
                 let path = file.get_path();
                 if let Ok(path) = path.strip_prefix(&self.framework_dir) {
-                    let mut components: Vec<_> = path
+                    let mut components: Vec<Cow<'_, str>> = path
                         .components()
                         .filter(|component| {
                             component.as_os_str() != "Headers"
@@ -39,14 +40,14 @@ impl<'a> Context<'a> {
                         .map(|component| component.as_os_str().to_str().expect("component to_str"))
                         .map(|component| component.strip_suffix(".framework").unwrap_or(component))
                         .map(|component| component.strip_suffix(".h").unwrap_or(component))
-                        .map(|s| s.to_string())
+                        .map(|s| s.to_string().into())
                         .collect();
 
                     // Put items in umbrella header in `mod.rs`
                     if let [.., innermost_framework_name, file_name] = &*components {
                         let umbrella_header = self
                             .libraries
-                            .get(innermost_framework_name)
+                            .get(&**innermost_framework_name)
                             .and_then(|lib| lib.umbrella_header.as_deref())
                             .unwrap_or(innermost_framework_name);
 
@@ -57,11 +58,14 @@ impl<'a> Context<'a> {
 
                     return Some(Location::from_components(components));
                 } else if let Ok(path) = path.strip_prefix(&self.include_dir) {
-                    if path.starts_with("objc") || path == Path::new("MacTypes.h") {
-                        return Some(Location::from_components(vec!["System".to_string()]));
+                    if path.starts_with("objc") {
+                        return Some(Location::from_components(vec!["objc2".into()]));
+                    }
+                    if path == Path::new("MacTypes.h") {
+                        return Some(Location::from_components(vec!["System".into()]));
                     }
                     if path.starts_with("sys") {
-                        return Some(Location::from_components(vec!["libc".to_string()]));
+                        return Some(Location::from_components(vec!["libc".into()]));
                     }
                 }
             }

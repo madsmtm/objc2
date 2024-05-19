@@ -1,14 +1,4 @@
-[dependencies]
-objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false }
-block2 = { path = "../../crates/block2", version = "0.5.0", default-features = false, optional = true }
-
 [features]
-default = ["std"]
-
-# Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "objc2/std", "block2?/std", "objc2-foundation/std", "objc2-core-data?/std", "objc2-quartz-core?/std"]
-alloc = ["objc2/alloc", "block2?/alloc", "objc2-foundation/alloc", "objc2-core-data?/alloc", "objc2-quartz-core?/alloc"]
-
 # Deprecated; this is the default on Apple platforms, and not applicable on other platforms.
 apple = []
 

@@ -256,45 +256,68 @@ pub enum Primitive {
     NSUInteger,
 }
 
-impl fmt::Display for Primitive {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl Primitive {
+    fn required_items(&self) -> Vec<ItemIdentifier> {
+        let s = self.as_str();
+        match self {
+            Self::ObjcBool => vec![ItemIdentifier::objc2("Bool")],
+            Self::NSInteger => vec![ItemIdentifier::objc2("NSInteger")],
+            Self::NSUInteger => vec![ItemIdentifier::objc2("NSUInteger")],
+            _ => {
+                if s.starts_with("c_") {
+                    // Temporary, until we can import these by themselves
+                    vec![ItemIdentifier::objc2(s)]
+                } else {
+                    vec![]
+                }
+            }
+        }
+    }
+
+    const fn as_str(&self) -> &'static str {
         match self {
             // Primitives
-            Self::Void => write!(f, "c_void"),
-            Self::C99Bool => write!(f, "bool"),
-            Self::Char => write!(f, "c_char"),
-            Self::SChar => write!(f, "c_schar"),
-            Self::UChar => write!(f, "c_uchar"),
-            Self::Short => write!(f, "c_short"),
-            Self::UShort => write!(f, "c_ushort"),
-            Self::Int => write!(f, "c_int"),
-            Self::UInt => write!(f, "c_uint"),
-            Self::Long => write!(f, "c_long"),
-            Self::ULong => write!(f, "c_ulong"),
-            Self::LongLong => write!(f, "c_longlong"),
-            Self::ULongLong => write!(f, "c_ulonglong"),
-            Self::Float => write!(f, "c_float"),
-            Self::Double => write!(f, "c_double"),
-            Self::F32 => write!(f, "f32"),
-            Self::F64 => write!(f, "f64"),
-            Self::I8 => write!(f, "i8"),
-            Self::U8 => write!(f, "u8"),
-            Self::I16 => write!(f, "i16"),
-            Self::U16 => write!(f, "u16"),
-            Self::I32 => write!(f, "i32"),
-            Self::U32 => write!(f, "u32"),
-            Self::I64 => write!(f, "i64"),
-            Self::U64 => write!(f, "u64"),
+            Self::Void => "c_void",
+            Self::C99Bool => "bool",
+            Self::Char => "c_char",
+            Self::SChar => "c_schar",
+            Self::UChar => "c_uchar",
+            Self::Short => "c_short",
+            Self::UShort => "c_ushort",
+            Self::Int => "c_int",
+            Self::UInt => "c_uint",
+            Self::Long => "c_long",
+            Self::ULong => "c_ulong",
+            Self::LongLong => "c_longlong",
+            Self::ULongLong => "c_ulonglong",
+            Self::Float => "c_float",
+            Self::Double => "c_double",
+            Self::F32 => "f32",
+            Self::F64 => "f64",
+            Self::I8 => "i8",
+            Self::U8 => "u8",
+            Self::I16 => "i16",
+            Self::U16 => "u16",
+            Self::I32 => "i32",
+            Self::U32 => "u32",
+            Self::I64 => "i64",
+            Self::U64 => "u64",
             // TODO: Use core::ffi::c_ssize_t
-            Self::ISize => write!(f, "isize"),
+            Self::ISize => "isize",
             // TODO: Use core::ffi::c_size_t
-            Self::USize => write!(f, "usize"),
+            Self::USize => "usize",
             // TODO: Use core::ffi::c_ptr_diff_t
-            Self::PtrDiff => write!(f, "isize"),
-            Self::ObjcBool => write!(f, "Bool"),
-            Self::NSInteger => write!(f, "NSInteger"),
-            Self::NSUInteger => write!(f, "NSUInteger"),
+            Self::PtrDiff => "isize",
+            Self::ObjcBool => "Bool",
+            Self::NSInteger => "NSInteger",
+            Self::NSUInteger => "NSUInteger",
         }
+    }
+}
+
+impl fmt::Display for Primitive {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.as_str())
     }
 }
 
@@ -307,6 +330,10 @@ pub struct ItemRef {
 }
 
 impl ItemRef {
+    fn required_items(&self) -> Vec<ItemIdentifier> {
+        self.required_items.clone()
+    }
+
     fn new(entity: &Entity<'_>, context: &Context<'_>) -> Self {
         Self {
             id: ItemIdentifier::new(entity, context),
@@ -993,34 +1020,34 @@ impl Ty {
 
     pub(crate) fn required_items(&self) -> Vec<ItemIdentifier> {
         match self {
-            Self::Primitive(_) => Vec::new(),
+            Self::Primitive(prim) => prim.required_items(),
             Self::Class {
                 decl,
                 generics,
                 protocols,
             } => {
-                let mut items = decl.required_items.clone();
+                let mut items = decl.required_items();
                 for generic in generics {
                     items.extend(generic.required_items());
                 }
                 for protocol in protocols {
-                    items.extend(protocol.required_items.clone());
+                    items.extend(protocol.required_items());
                 }
                 items
             }
             Self::GenericParam { .. } => Vec::new(),
             Self::AnyObject { protocols } => {
-                let mut items = Vec::new();
+                let mut items = vec![ItemIdentifier::objc2("AnyObject")];
                 for protocol in protocols {
-                    items.extend(protocol.required_items.clone());
+                    items.extend(protocol.required_items());
                 }
                 items
             }
-            Self::AnyProtocol => Vec::new(),
+            Self::AnyProtocol => vec![ItemIdentifier::objc2("AnyProtocol")],
             Self::AnyClass { protocols } => {
-                let mut items = Vec::new();
+                let mut items = vec![ItemIdentifier::objc2("AnyClass")];
                 for protocol in protocols {
-                    items.extend(protocol.required_items.clone());
+                    items.extend(protocol.required_items());
                 }
                 items
             }
@@ -1028,12 +1055,36 @@ impl Ty {
             // `Self` is always available there, and don't required additional
             // imports, cfgs or other such things.
             Self::Self_ => Vec::new(),
-            Self::Sel { .. } => Vec::new(),
-            Self::Pointer { pointee, .. } => pointee.required_items(),
-            Self::IncompleteArray { pointee, .. } => pointee.required_items(),
-            Self::TypeDef { id, to, .. } => {
+            Self::Sel { .. } => vec![ItemIdentifier::objc2("Sel")],
+            Self::Pointer {
+                pointee,
+                nullability,
+                ..
+            }
+            | Self::IncompleteArray {
+                pointee,
+                nullability,
+                ..
+            } => {
+                let mut items = pointee.required_items();
+                // Temporary
+                if *nullability == Nullability::NonNull {
+                    items.push(ItemIdentifier::objc2("NonNull"));
+                }
+                items
+            }
+            Self::TypeDef {
+                id,
+                to,
+                nullability,
+                ..
+            } => {
                 let mut items = to.required_items();
                 items.push(id.clone());
+                // Temporary
+                if *nullability == Nullability::NonNull {
+                    items.push(ItemIdentifier::objc2("NonNull"));
+                }
                 items
             }
             Self::Array { element_type, .. } => element_type.required_items(),

@@ -203,9 +203,9 @@ impl Expr {
             Self::Signed(_) => {}
             Self::Unsigned(_) => {}
             Self::Float(_) => {}
-            Self::MacroInvocation { evaluated, .. } => {
+            Self::MacroInvocation { evaluated, id } => {
                 if evaluated.is_none() {
-                    // features.add_item(&id);
+                    items.push(id.clone());
                 }
             }
             Self::Enum { id, .. } => {
@@ -214,7 +214,7 @@ impl Expr {
             Self::Const(id) => {
                 items.push(id.clone());
             }
-            Self::Var { id, ty, .. } => {
+            Self::Var { id, ty } => {
                 items.push(id.clone());
                 items.extend(ty.required_items());
             }

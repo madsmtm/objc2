@@ -1,5 +1,6 @@
 use core::fmt;
 use core::hash;
+use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BTreeSet;
 
@@ -34,125 +35,155 @@ impl ToOptionString for () {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Location {
-    path_components: Vec<String>,
+    path_components: Vec<Cow<'static, str>>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum LocationLibrary<'a> {
+pub enum LocationLibrary<'location, 'config> {
     System,
     Bitflags,
     Block2,
     Libc,
-    Library(&'a str),
+    Objc2,
+    InSameLibrary {
+        library: &'location str,
+        file_name: Option<&'location str>,
+        krate: &'config str,
+    },
+    InExternalLibrary {
+        library: &'location str,
+        file_name: Option<&'location str>,
+        krate: &'config str,
+        required: bool,
+    },
+}
+
+impl<'location, 'config> LocationLibrary<'location, 'config> {
+    pub fn krate(&self) -> Option<(&'config str, bool)> {
+        match self {
+            Self::System => None,
+            Self::Bitflags => Some(("bitflags", false)),
+            Self::Block2 => Some(("block2", false)),
+            Self::Libc => Some(("libc", false)),
+            Self::Objc2 => Some(("objc2", true)),
+            Self::InSameLibrary { .. } => None,
+            Self::InExternalLibrary {
+                krate, required, ..
+            } => Some((krate, *required)),
+        }
+    }
+
+    pub fn import(&self) -> Option<(&'config str, bool)> {
+        match self {
+            Self::Objc2 => Some(("objc2::__framework_prelude", true)),
+            Self::InExternalLibrary {
+                krate, required, ..
+            } => Some((krate, *required)),
+            _ => None,
+        }
+    }
+
+    pub fn cargo_toml_feature(&self) -> Option<String> {
+        match self {
+            Self::Bitflags => Some("bitflags".to_string()),
+            Self::InExternalLibrary {
+                file_name: Some(file_name),
+                krate,
+                required,
+                ..
+            } => Some(format!(
+                "{krate}{}/{}",
+                if *required { "" } else { "?" },
+                clean_name(file_name),
+            )),
+            _ => None,
+        }
+    }
+
+    fn feature(&self) -> Option<String> {
+        match self {
+            Self::Block2 => Some("block2".to_string()),
+            Self::Libc => Some("libc".to_string()),
+            // Always enabled in the current file
+            Self::Bitflags | Self::Objc2 => None,
+            Self::InSameLibrary {
+                file_name: Some(file_name),
+                ..
+            } => Some(clean_name(file_name)),
+            Self::InExternalLibrary {
+                krate,
+                required: false,
+                ..
+            } => Some(krate.to_string()),
+            _ => None,
+        }
+    }
 }
 
 impl Location {
-    pub(crate) fn from_components(path_components: Vec<String>) -> Self {
+    pub(crate) fn from_components(path_components: Vec<Cow<'static, str>>) -> Self {
         Self { path_components }
     }
 
-    pub fn library_name(&self) -> &String {
+    pub fn library_name(&self) -> &str {
         self.path_components
             .first()
             .expect("location to have at least one component")
+    }
+
+    fn file_name(&self) -> Option<&str> {
+        match &*self.path_components {
+            [_, .., file_name] => Some(&**file_name),
+            // Umbrella header
+            [_] | [] => None,
+        }
     }
 
     pub fn modules(&self) -> impl IntoIterator<Item = &'_ str> + '_ {
         self.path_components.iter().skip(1).map(|s| &**s)
     }
 
-    pub fn library(&self) -> LocationLibrary<'_> {
-        match &**self.library_name() {
+    pub fn library<'location, 'config>(
+        &'location self,
+        config: &'config Config,
+        emission_library: &str,
+    ) -> LocationLibrary<'location, 'config> {
+        match self.library_name() {
             "System" => LocationLibrary::System,
             "bitflags" => LocationLibrary::Bitflags,
             "block2" => LocationLibrary::Block2,
             "libc" => LocationLibrary::Libc,
-            library => LocationLibrary::Library(library),
-        }
-    }
-
-    pub fn krate<'a>(&self, config: &'a Config) -> Option<&'a str> {
-        match self.library() {
-            LocationLibrary::System => None,
-            LocationLibrary::Bitflags => Some("bitflags"),
-            LocationLibrary::Block2 => Some("block2"),
-            LocationLibrary::Libc => Some("libc"),
-            LocationLibrary::Library(library) => Some(&config.libraries.get(library)?.krate),
-        }
-    }
-
-    pub fn import<'a>(&self, config: &'a Config) -> Option<&'a str> {
-        match self.library() {
-            LocationLibrary::Library(library) => Some(&config.libraries.get(library)?.krate),
-            _ => None,
+            "objc2" => LocationLibrary::Objc2,
+            library => {
+                if let Some(krate) = config.libraries.get(library).map(|lib| &*lib.krate) {
+                    if library == emission_library {
+                        LocationLibrary::InSameLibrary {
+                            library,
+                            file_name: self.file_name(),
+                            krate,
+                        }
+                    } else {
+                        let file_name = self.file_name();
+                        let required = config.libraries[emission_library]
+                            .required_dependencies
+                            .contains(krate);
+                        LocationLibrary::InExternalLibrary {
+                            library,
+                            file_name,
+                            krate,
+                            required,
+                        }
+                    }
+                } else {
+                    debug!(location = ?self, "failed getting crate name");
+                    LocationLibrary::System
+                }
+            }
         }
     }
 
     pub fn assert_file(&self, file_name: &str) {
-        assert_eq!(self.path_components.last().map(|s| &**s), Some(file_name));
-    }
-
-    /// Only the library of the emmision location matters.
-    pub fn cargo_toml_feature(&self, config: &Config, emission_library: &str) -> Option<String> {
-        match self.library() {
-            LocationLibrary::System | LocationLibrary::Block2 | LocationLibrary::Libc => None,
-            LocationLibrary::Bitflags => Some("bitflags".to_string()),
-            LocationLibrary::Library(library) => {
-                if library == emission_library {
-                    None
-                } else if let Some(krate) = Some(&config.libraries.get(library)?.krate) {
-                    let required = config.libraries[emission_library]
-                        .required_dependencies
-                        .contains(krate);
-
-                    match &*self.path_components {
-                        [_, .., file_name] => Some(format!(
-                            "{krate}{}/{}",
-                            if required { "" } else { "?" },
-                            clean_name(file_name)
-                        )),
-                        // Umbrella header
-                        [_] | [] => None,
-                    }
-                } else {
-                    debug!(?self, "failed getting crate name");
-                    None
-                }
-            }
-        }
-    }
-
-    /// Only the library of the emmision location matters.
-    fn feature(&self, config: &Config, emission_location: &Self) -> Option<String> {
-        match self.library() {
-            LocationLibrary::System => None,
-            LocationLibrary::Block2 => Some("block2".to_string()),
-            LocationLibrary::Libc => Some("libc".to_string()),
-            // Always enabled in the current file
-            LocationLibrary::Bitflags => None,
-            LocationLibrary::Library(library) => {
-                let emission_library = emission_location.path_components.first().unwrap();
-                if library == emission_library {
-                    match &*self.path_components {
-                        [_, .., file_name] => Some(clean_name(file_name)),
-                        // Umbrella header
-                        [_] | [] => None,
-                    }
-                } else if let Some(krate) = Some(&config.libraries.get(library)?.krate) {
-                    let required = config.libraries[emission_library]
-                        .required_dependencies
-                        .contains(krate);
-                    if required {
-                        None
-                    } else {
-                        Some(krate.to_string())
-                    }
-                } else {
-                    debug!(?self, "tried to get feature name of unknown library");
-                    None
-                }
-            }
-        }
+        assert_eq!(self.file_name(), Some(file_name));
     }
 }
 
@@ -196,7 +227,7 @@ impl<N: ToOptionString> ItemIdentifier<N> {
         self.location.library_name()
     }
 
-    pub fn from_raw(name: N, path_components: Vec<String>) -> Self {
+    pub fn from_raw(name: N, path_components: Vec<Cow<'static, str>>) -> Self {
         Self {
             name,
             location: Location { path_components },
@@ -206,16 +237,15 @@ impl<N: ToOptionString> ItemIdentifier<N> {
     pub fn with_name(name: N, entity: &Entity<'_>, context: &Context<'_>) -> Self {
         let mut location = context.get_location(entity).unwrap_or_else(|| {
             warn!(?entity, "ItemIdentifier from unknown header");
-            Location::from_components(vec!["__Unknown__".to_string()])
+            Location::from_components(vec!["__Unknown__".into()])
         });
 
         // TODO: Get rid of these hacks
         if let Some("CGFloat" | "CGPoint" | "CGRect" | "CGSize") = name.to_option() {
-            location =
-                Location::from_components(vec!["Foundation".to_string(), "NSGeometry".to_string()]);
+            location = Location::from_components(vec!["Foundation".into(), "NSGeometry".into()]);
         }
         if let Some("CFTimeInterval") = name.to_option() {
-            location = Location::from_components(vec!["System".to_string()]);
+            location = Location::from_components(vec!["System".into()]);
         }
 
         Self { name, location }
@@ -231,6 +261,10 @@ impl<N: ToOptionString> ItemIdentifier<N> {
 
     pub fn location(&self) -> &Location {
         &self.location
+    }
+
+    pub fn into_location(self) -> Location {
+        self.location
     }
 
     pub fn with_new_path<R: ToOptionString>(self, other: &ItemIdentifier<R>) -> Self {
@@ -252,7 +286,7 @@ impl ItemIdentifier {
     }
 
     pub fn is_nsobject(&self) -> bool {
-        self.library_name() == "System"
+        self.library_name() == "objc2"
             && (self.name == "NSObject" || self.name == "NSObjectProtocol")
     }
 
@@ -262,33 +296,44 @@ impl ItemIdentifier {
 
     pub fn nserror() -> Self {
         Self {
-            name: "NSError".to_string(),
-            location: Location::from_components(vec![
-                "Foundation".to_string(),
-                "NSError".to_string(),
-            ]),
+            name: "NSError".into(),
+            location: Location::from_components(vec!["Foundation".into(), "NSError".into()]),
         }
     }
 
     pub fn block() -> Self {
         Self {
-            name: "Block".to_string(),
-            location: Location::from_components(vec!["block2".to_string()]),
+            name: "Block".into(),
+            location: Location::from_components(vec!["block2".into()]),
         }
     }
 
     pub fn bitflags() -> Self {
         Self {
-            name: "bitflags".to_string(),
-            location: Location::from_components(vec!["bitflags".to_string()]),
+            name: "bitflags".into(),
+            location: Location::from_components(vec!["bitflags".into()]),
+        }
+    }
+
+    pub fn objc2(name: impl Into<String>) -> Self {
+        Self {
+            name: name.into(),
+            location: Location::from_components(vec!["objc2".into()]),
+        }
+    }
+
+    pub fn main_thread_marker() -> Self {
+        Self {
+            name: "MainThreadMarker".into(),
+            location: Location::from_components(vec!["Foundation".into()]),
         }
     }
 
     #[cfg(test)]
     pub fn dummy() -> Self {
         Self {
-            name: "DUMMY".to_string(),
-            location: Location::from_components(vec!["System".to_string()]),
+            name: "DUMMY".into(),
+            location: Location::from_components(vec!["System".into()]),
         }
     }
 
@@ -305,12 +350,11 @@ impl ItemIdentifier {
 
         impl fmt::Display for ItemIdentifierPath<'_> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                match self.0.location.library() {
-                    LocationLibrary::System => write!(f, "{}", self.0.name),
-                    LocationLibrary::Bitflags => write!(f, "bitflags::{}", self.0.name),
-                    LocationLibrary::Block2 => write!(f, "block2::{}", self.0.name),
-                    LocationLibrary::Libc => write!(f, "libc::{}", self.0.name),
-                    LocationLibrary::Library(_) => write!(f, "{}", self.0.name),
+                match self.0.location.library_name() {
+                    "bitflags" => write!(f, "bitflags::{}", self.0.name),
+                    "block2" => write!(f, "block2::{}", self.0.name),
+                    "libc" => write!(f, "libc::{}", self.0.name),
+                    _ => write!(f, "{}", self.0.name),
                 }
             }
         }
@@ -323,7 +367,7 @@ impl ItemIdentifier {
 
         impl fmt::Display for ItemIdentifierPathInRelationTo<'_> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                if self.1.path_components.last() == self.0.location.path_components.last() {
+                if self.1.file_name() == self.0.location.file_name() {
                     write!(f, "{}", self.0.name)
                 } else {
                     write!(f, "{}", self.0.path())
@@ -373,11 +417,19 @@ pub fn cfg_gate_ln<R: AsRef<Location>, I: AsRef<Location>>(
     // a consistent order.
     let mut feature_names: BTreeSet<String> = required_features
         .into_iter()
-        .filter_map(|id| id.as_ref().feature(config, emission_location))
+        .filter_map(|id| {
+            id.as_ref()
+                .library(config, emission_location.library_name())
+                .feature()
+        })
         .collect();
 
     for location in implied_features {
-        if let Some(feature_name) = location.as_ref().feature(config, emission_location) {
+        if let Some(feature_name) = location
+            .as_ref()
+            .library(config, emission_location.library_name())
+            .feature()
+        {
             feature_names.remove(&feature_name);
         }
     }

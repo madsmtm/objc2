@@ -288,7 +288,7 @@ pub(crate) fn items_required_by_decl(
 ) -> Vec<ItemIdentifier> {
     let id = ItemIdentifier::new(entity, context);
 
-    let mut items = Vec::new();
+    let mut items = vec![ItemIdentifier::objc2("__macros__")];
 
     match entity.get_kind() {
         EntityKind::ObjCInterfaceDecl => {
@@ -1480,7 +1480,7 @@ impl Stmt {
             } => cls_required_items.clone(),
             // Intentionally doesn't require anything, the impl itself is
             // cfg-gated
-            Self::ExternCategory { .. } => Vec::new(),
+            Self::ExternCategory { .. } => vec![ItemIdentifier::objc2("__macros__")],
             Self::ProtocolDecl { required_items, .. } => required_items.clone(),
             Self::ProtocolImpl {
                 cls_required_items,
@@ -1497,10 +1497,15 @@ impl Stmt {
                 for (_, field_ty) in fields {
                     items.extend(field_ty.required_items());
                 }
+                items.push(ItemIdentifier::objc2("Encoding"));
                 items
             }
             // Variants manage required items themselves
-            Self::EnumDecl { ty, .. } => ty.required_items(),
+            Self::EnumDecl { ty, .. } => {
+                let mut items = ty.required_items();
+                items.push(ItemIdentifier::objc2("Encoding"));
+                items
+            }
             Self::ConstDecl { ty, value, .. } => {
                 let mut items = ty.required_items();
                 items.extend(value.required_items());

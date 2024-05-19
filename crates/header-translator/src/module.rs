@@ -6,7 +6,7 @@ use std::{fmt, fs};
 use crate::display_helper::FormatterFn;
 use crate::id::{cfg_gate_ln, Location};
 use crate::stmt::Stmt;
-use crate::Config;
+use crate::{Config, ItemIdentifier};
 
 #[derive(Default, Debug, PartialEq)]
 pub struct Module {
@@ -28,27 +28,14 @@ impl Module {
         self.stmts.push(stmt);
     }
 
-    pub fn imports<'c>(&self, config: &'c Config, emission_library: &str) -> BTreeSet<&'c str> {
+    pub fn all_items(&self) -> BTreeSet<ItemIdentifier> {
         self.stmts
             .iter()
             .flat_map(|stmt| stmt.required_items_inner())
-            .filter(|item| item.library_name() != emission_library)
-            // Ignore crate imports for required items from unknown crates
-            .filter_map(|item| item.location().import(config))
-            .collect()
-    }
-
-    pub fn crates<'c>(&self, config: &'c Config, emission_library: &str) -> BTreeSet<&'c str> {
-        self.stmts
-            .iter()
-            .flat_map(|stmt| stmt.required_items_inner())
-            .filter(|item| item.library_name() != emission_library)
-            // Ignore crate imports for required items from unknown crates
-            .filter_map(|item| item.location().krate(config))
             .chain(
                 self.submodules
                     .values()
-                    .flat_map(|module| module.crates(config, emission_library)),
+                    .flat_map(|module| module.all_items()),
             )
             .collect()
     }
@@ -67,7 +54,10 @@ impl Module {
             for stmt in &module.stmts {
                 for required_item in stmt.required_items_inner() {
                     let location = required_item.location();
-                    if let Some(feature) = location.cargo_toml_feature(config, emission_library) {
+                    if let Some(feature) = location
+                        .library(config, emission_library)
+                        .cargo_toml_feature()
+                    {
                         // Feature names are based on the file name, not the
                         // whole path to the feature.
                         features.insert(feature);
@@ -88,21 +78,14 @@ impl Module {
         emission_library: &'a str,
     ) -> impl fmt::Display + 'a {
         FormatterFn(move |f| {
-            writeln!(f, "use objc2::__framework_prelude::*;")?;
+            let imports: BTreeMap<_, _> = self
+                .stmts
+                .iter()
+                .flat_map(|stmt| stmt.required_items_inner())
+                .filter_map(|item| item.location().library(config, emission_library).import())
+                .collect();
 
-            let mut imports = self.imports(config, emission_library);
-            // TODO: Remove this once MainThreadMarker is moved to objc2
-            imports.extend(
-                config.libraries[emission_library]
-                    .required_dependencies
-                    .iter()
-                    .map(|krate| &**krate),
-            );
-
-            for krate in imports {
-                let required = config.libraries[emission_library]
-                    .required_dependencies
-                    .contains(krate);
+            for (krate, required) in imports {
                 if !required {
                     writeln!(f, "#[cfg(feature = {:?})]", krate)?;
                 }
@@ -185,7 +168,7 @@ impl Module {
                 write!(f, "{}", self.modules(config))?;
             }
 
-            if !self.stmts.is_empty() || self.submodules.is_empty() {
+            if !self.stmts.is_empty() {
                 write!(f, "{}", self.stmts(config, emission_library))?;
             }
 

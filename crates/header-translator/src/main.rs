@@ -286,7 +286,7 @@ fn parse_sdk(
         .map(|(name, data)| (name.into(), Library::new(name, data)))
         .collect();
 
-    let mut library_span: Option<(_, _)> = None;
+    let mut library_span: Option<(_, String)> = None;
     let mut file_span: Option<(_, _)> = None;
 
     let mut context = Context::new(config, sdk);
@@ -295,10 +295,10 @@ fn parse_sdk(
         let _span = trace_span!("entity", ?entity).entered();
         if let Some(location) = context.get_location(&entity) {
             let library_name = location.library_name();
-            if library_span.as_ref().map(|(_, s)| s) != Some(library_name) {
+            if library_span.as_ref().map(|(_, s)| &**s) != Some(library_name) {
                 library_span = Some((
                     debug_span!("library", name = library_name).entered(),
-                    library_name.clone(),
+                    library_name.to_string(),
                 ));
                 file_span.take();
             }

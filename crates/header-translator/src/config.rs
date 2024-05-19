@@ -8,7 +8,7 @@ use heck::ToTrainCase;
 use semver::Version;
 use serde::{de, Deserialize, Deserializer};
 
-use crate::id::{Location, LocationLibrary};
+use crate::id::Location;
 use crate::stmt::{Derives, Mutability};
 use crate::ItemIdentifier;
 
@@ -21,16 +21,14 @@ pub struct Config {
 impl Config {
     pub fn library(&self, location: impl AsRef<Location>) -> &LibraryConfig {
         let location = location.as_ref();
-        match location.library() {
-            LocationLibrary::System => &self.system,
-            LocationLibrary::Library(library) => self.libraries.get(library).unwrap_or_else(|| {
+        let library_name = location.library_name();
+        if library_name == "System" || library_name == "objc2" {
+            &self.system
+        } else {
+            self.libraries.get(library_name).unwrap_or_else(|| {
                 error!("tried to get library config from {location:?}");
                 &self.system
-            }),
-            _ => {
-                error!("tried to get library config from {location:?}");
-                &self.system
-            }
+            })
         }
     }
 
@@ -310,8 +308,8 @@ impl<'de> Deserialize<'de> for Mutability {
             let (library, rest) = value.split_once("::")?;
             let (file_name, name) = rest.split_once("::")?;
             Some(ItemIdentifier::from_raw(
-                name.to_string(),
-                vec![library.to_string(), file_name.to_string()],
+                name.into(),
+                vec![library.to_string().into(), file_name.to_string().into()],
             ))
         }
 

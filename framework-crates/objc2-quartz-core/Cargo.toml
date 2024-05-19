@@ -21,9 +21,9 @@ license = "MIT"
 workspace = true
 
 [dependencies]
-objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false }
-bitflags = { version = "2.5.0", optional = true }
+bitflags = { version = "2.5.0", default-features = false, optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.0", default-features = false, optional = true }
+objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false }
 objc2-foundation = { path = "../objc2-foundation", version = "0.2.0", default-features = false }
 objc2-metal = { path = "../objc2-metal", version = "0.2.0", default-features = false, optional = true }
 
@@ -44,8 +44,8 @@ targets = [
 default = ["std"]
 
 # Currently not possible to turn off, put here for forwards compatibility.
-std = ["alloc", "objc2/std", "block2?/std", "objc2-foundation/std"]
-alloc = ["objc2/alloc", "block2?/alloc", "objc2-foundation/alloc"]
+std = ["alloc", "bitflags?/std", "block2?/std", "objc2/std", "objc2-foundation/std", "objc2-metal?/std"]
+alloc = ["block2?/alloc", "objc2/alloc", "objc2-foundation/alloc", "objc2-metal?/alloc"]
 apple = []
 gnustep-1-7 = ["objc2/gnustep-1-7", "block2?/gnustep-1-7", "objc2-foundation/gnustep-1-7"]
 gnustep-1-8 = ["gnustep-1-7", "objc2/gnustep-1-8", "block2?/gnustep-1-8", "objc2-foundation/gnustep-1-8"]
