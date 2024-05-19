@@ -40,8 +40,37 @@ pub fn is_multi_threaded() -> bool {
 
 /// Whether the current thread is the main thread.
 #[cfg(feature = "NSThread")]
+#[inline]
 pub fn is_main_thread() -> bool {
-    NSThread::isMainThread_class()
+    #[cfg(not(feature = "gnustep-1-7"))]
+    #[inline(always)]
+    fn imp() -> bool {
+        // Normally you would use NSThread::isMainThread, but that function uses pthread_main_np under
+        // the hood. Benchmarks have shown that calling it directly is up to four times faster. So, we
+        // just use that instead.
+
+        #[cfg(feature = "libc")]
+        use libc::pthread_main_np;
+
+        #[link(name = "c", kind = "dylib")]
+        #[cfg(not(feature = "libc"))]
+        extern "C" {
+            // Avoid a dependency on `libc` if possible
+            fn pthread_main_np() -> std::os::raw::c_int;
+        }
+
+        // SAFETY: Does not affect thread safety if we're running in an actual macOS environment.
+        unsafe { pthread_main_np() != 0 }
+    }
+
+    #[cfg(feature = "gnustep-1-7")]
+    #[inline(always)]
+    fn imp() -> bool {
+        // Fall back to isMainThread on GNUStep, as pthread_main_np is not always available.
+        NSThread::isMainThread_class()
+    }
+
+    imp()
 }
 
 #[allow(unused)]
@@ -181,7 +210,7 @@ impl MainThreadMarker {
     #[cfg(feature = "NSThread")]
     #[inline]
     pub fn new() -> Option<Self> {
-        if NSThread::isMainThread_class() {
+        if is_main_thread() {
             // SAFETY: We just checked that we are running on the main thread.
             Some(unsafe { Self::new_unchecked() })
         } else {
