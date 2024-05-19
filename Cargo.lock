@@ -925,6 +925,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-photos-ui"
+version = "0.2.0"
+dependencies = [
+ "bitflags",
+ "block2",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-core-location",
+ "objc2-foundation",
+ "objc2-map-kit",
+ "objc2-photos",
+]
+
+[[package]]
 name = "objc2-proc-macros"
 version = "0.1.1"
 
