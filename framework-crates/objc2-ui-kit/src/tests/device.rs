@@ -6,5 +6,5 @@ use objc2_foundation::MainThreadMarker;
 fn current_device() {
     // SAFETY: This is just while testing
     let mtm = unsafe { MainThreadMarker::new_unchecked() };
-    let _device = unsafe { UIDevice::currentDevice(mtm) };
+    let _device = UIDevice::currentDevice(mtm);
 }
