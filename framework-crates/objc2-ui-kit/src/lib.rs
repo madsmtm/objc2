@@ -18,6 +18,8 @@ extern crate std;
 
 mod generated;
 mod geometry;
+#[cfg(feature = "UIGestureRecognizer")]
+mod gesture_recognizer;
 #[cfg(feature = "UIPasteConfigurationSupporting")]
 mod paste_configuration;
 #[cfg(feature = "UIResponder")]
