@@ -951,6 +951,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-sensitive-content-analysis"
+version = "0.2.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-service-management"
 version = "0.2.0"
 dependencies = [

@@ -1,0 +1,9 @@
+framework = "SensitiveContentAnalysis"
+crate = "objc2-sensitive-content-analysis"
+required-dependencies = ["objc2-foundation"]
+macos = "14.0"
+maccatalyst = "17.0"
+ios = "17.0"
+
+# Needs `CGImageRef` from CoreGraphics
+class.SCSensitivityAnalyzer.methods."analyzeCGImage:completionHandler:".skipped = true
