@@ -305,8 +305,8 @@
 #![warn(clippy::missing_panics_doc)]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/block2/0.5.0")]
-#![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg, doc_cfg_hide))]
-#![cfg_attr(feature = "unstable-docsrs", doc(cfg_hide(doc)))]
+#![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide))]
+#![cfg_attr(docsrs, doc(cfg_hide(doc)))]
 
 extern crate alloc;
 extern crate std;
@@ -319,7 +319,7 @@ extern "C" {}
 compile_error!("The `std` feature currently must be enabled.");
 
 #[cfg(all(
-    not(feature = "unstable-docsrs"),
+    not(docsrs),
     not(any(
         target_vendor = "apple",
         feature = "compiler-rt",

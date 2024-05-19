@@ -74,9 +74,6 @@ unstable-autoreleasesafe = []
 # You must manually enable `objc-sys/unstable-c-unwind` to use this.
 unstable-c-unwind = []
 
-# For better documentation on docs.rs
-unstable-docsrs = []
-
 # Enable some new features available on ARM64 on:
 # - macOS 13.0
 # - iOS 16.0
@@ -125,7 +122,7 @@ harness = false
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["exception", "unstable-docsrs"]
+features = ["exception"]
 targets = [
     "aarch64-apple-darwin",
     "x86_64-apple-darwin",

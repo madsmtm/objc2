@@ -37,7 +37,7 @@ objc2-user-notifications = { path = "../objc2-user-notifications", version = "0.
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"
-features = ["all", "unstable-docsrs"]
+features = ["all"]
 targets = [
     "aarch64-apple-ios",
     "x86_64-apple-ios",
@@ -52,9 +52,6 @@ default = ["std"]
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "objc2/std"]
 alloc = ["objc2/alloc"]
-
-# For better documentation on docs.rs
-unstable-docsrs = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-cloud-kit = ["dep:objc2-cloud-kit"]

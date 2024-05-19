@@ -92,10 +92,7 @@ impl Library {
             )?;
             writeln!(lib_rs, "//! [framework-crates]: https://docs.rs/objc2/latest/objc2/topics/about_generated/index.html")?;
             writeln!(lib_rs, "#![no_std]")?;
-            writeln!(
-                lib_rs,
-                "#![cfg_attr(feature = \"unstable-docsrs\", feature(doc_auto_cfg))]"
-            )?;
+            writeln!(lib_rs, "#![cfg_attr(docsrs, feature(doc_auto_cfg))]")?;
             writeln!(lib_rs, "// Update in Cargo.toml as well.")?;
             writeln!(
                 lib_rs,

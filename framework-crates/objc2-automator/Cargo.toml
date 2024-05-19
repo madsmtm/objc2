@@ -28,7 +28,7 @@ objc2-osa-kit = { path = "../objc2-osa-kit", version = "0.2.0", optional = true 
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all", "unstable-docsrs"]
+features = ["all"]
 targets = [
     "aarch64-apple-darwin",
     "x86_64-apple-darwin",
@@ -41,9 +41,6 @@ default = ["std"]
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "objc2/std"]
 alloc = ["objc2/alloc"]
-
-# For better documentation on docs.rs
-unstable-docsrs = []
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-osa-kit = ["dep:objc2-osa-kit"]
 

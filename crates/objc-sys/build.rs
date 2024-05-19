@@ -69,9 +69,8 @@ fn main() {
             // ObjFW(None)
         }
         (false, false) if target_vendor == "apple" => Runtime::Apple,
-        // Choose defaults when generating docs, though only when the crate is
-        // being compiled directly (i.e. we don't use the `DOCS_RS` env var).
-        (false, false) if cfg!(feature = "unstable-docsrs") => {
+        // Choose defaults when generating docs
+        (false, false) if std::env::var("DOCS_RS").is_ok() => {
             if target_os == "windows" {
                 Runtime::WinObjC
             } else {
@@ -135,10 +134,9 @@ fn main() {
             // docs.rs doesn't have clang, so skip building this. The
             // documentation will still work since it doesn't need to link.
             //
-            // This is independent of the `unstable-docsrs` feature flag; we
-            // never want to try invoking clang on docs.rs, whether we're the
-            // crate being documented currently, or a dependency of another
-            // crate.
+            // This is independent of the `docsrs` cfg; we never want to try
+            // invoking clang on docs.rs, whether we're the crate being
+            // documented currently, or a dependency of another crate.
             return;
         }
         println!("cargo:rerun-if-changed=extern/exception.m");

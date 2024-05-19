@@ -32,7 +32,7 @@ objc2-uniform-type-identifiers = { path = "../objc2-uniform-type-identifiers", v
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all", "unstable-docsrs"]
+features = ["all"]
 targets = [
     "aarch64-apple-darwin",
     "x86_64-apple-darwin",
@@ -48,9 +48,6 @@ default = ["std"]
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "objc2/std"]
 alloc = ["objc2/alloc"]
-
-# For better documentation on docs.rs
-unstable-docsrs = []
 bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 objc2-app-kit = ["dep:objc2-app-kit"]

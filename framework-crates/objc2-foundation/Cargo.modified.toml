@@ -7,7 +7,7 @@ block2 = { path = "../../crates/block2", version = "0.5.0", default-features = f
 static_assertions = "1.1.0"
 
 [package.metadata.docs.rs]
-features = ["dispatch", "all", "unstable-docsrs"]
+features = ["dispatch", "all"]
 
 [[example]]
 name = "basic_usage"

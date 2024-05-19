@@ -171,8 +171,8 @@
 #![allow(missing_debug_implementations)]
 #![doc(html_root_url = "https://docs.rs/objc-sys/0.3.3")]
 #![cfg_attr(feature = "unstable-c-unwind", feature(c_unwind))]
-#![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg, doc_cfg_hide))]
-#![cfg_attr(feature = "unstable-docsrs", doc(cfg_hide(doc)))]
+#![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg_hide))]
+#![cfg_attr(docsrs, doc(cfg_hide(doc)))]
 
 // TODO: Remove this and add "no-std" category to Cargo.toml
 // Requires a better solution for C-types in `no_std` crates.

@@ -59,14 +59,12 @@ unstable-c-unwind = []
 
 # Private
 unstable-exception = ["cc"]
-unstable-docsrs = []
 
 [build-dependencies]
 cc = { version = "1.0.80", optional = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["unstable-docsrs"]
 targets = [
     "aarch64-apple-darwin",
     "x86_64-apple-darwin",

@@ -25,7 +25,7 @@ objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = fal
 
 [package.metadata.docs.rs]
 default-target = "UNSET"
-features = ["all", "unstable-docsrs"]
+features = ["all"]
 targets = [
 ]
 
@@ -35,6 +35,3 @@ default = ["std"]
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "objc2/std"]
 alloc = ["objc2/alloc"]
-
-# For better documentation on docs.rs
-unstable-docsrs = []

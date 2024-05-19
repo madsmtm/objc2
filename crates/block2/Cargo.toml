@@ -48,15 +48,12 @@ unstable-objfw = []
 # Expose private ffi functions and statics.
 unstable-private = []
 
-# For better documentation on docs.rs.
-unstable-docsrs = []
-
 [dependencies]
 objc2 = { path = "../objc2", version = "0.5.1", default-features = false }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["unstable-docsrs", "unstable-private"]
+features = ["unstable-private"]
 targets = [
     "aarch64-apple-darwin",
     "x86_64-apple-darwin",

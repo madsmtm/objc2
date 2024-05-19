@@ -32,7 +32,7 @@ objc2-quartz-core = { path = "../objc2-quartz-core", version = "0.2.0", default-
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
-features = ["all", "unstable-docsrs"]
+features = ["all"]
 targets = [
     "aarch64-apple-darwin",
     "x86_64-apple-darwin",
@@ -47,9 +47,6 @@ default = ["std"]
 # Currently not possible to turn off, put here for forwards compatibility.
 std = ["alloc", "objc2/std", "block2?/std", "objc2-foundation/std", "objc2-core-data?/std", "objc2-quartz-core?/std"]
 alloc = ["objc2/alloc", "block2?/alloc", "objc2-foundation/alloc", "objc2-core-data?/alloc", "objc2-quartz-core?/alloc"]
-
-# For better documentation on docs.rs
-unstable-docsrs = []
 apple = []
 gnustep-1-7 = ["objc2/gnustep-1-7", "block2?/gnustep-1-7", "objc2-foundation/gnustep-1-7", "objc2-core-data?/gnustep-1-7", "objc2-quartz-core?/gnustep-1-7"]
 gnustep-1-8 = ["gnustep-1-7", "objc2/gnustep-1-8", "block2?/gnustep-1-8", "objc2-foundation/gnustep-1-8", "objc2-core-data?/gnustep-1-8", "objc2-quartz-core?/gnustep-1-8"]

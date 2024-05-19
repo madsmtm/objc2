@@ -38,9 +38,7 @@ fn get_features(cargo_toml: &Path) -> Result<Vec<String>, Box<dyn Error>> {
     // Skip GNUStep-related and "all" features
     Ok(features
         .into_keys()
-        .filter(|feature| {
-            !feature.contains("gnustep") && feature != "all" && feature != "unstable-docsrs"
-        })
+        .filter(|feature| !feature.contains("gnustep") && feature != "all")
         .collect())
 }
 

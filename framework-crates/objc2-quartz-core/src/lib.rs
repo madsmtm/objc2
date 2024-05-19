@@ -9,7 +9,7 @@
 //! the name that people use to refer to it.
 #![recursion_limit = "256"]
 #![no_std]
-#![cfg_attr(feature = "unstable-docsrs", feature(doc_auto_cfg))]
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-quartz-core/0.2.0")]
 
