@@ -1,0 +1,6 @@
+framework = "Social"
+crate = "objc2-social"
+required-dependencies = ["objc2-foundation"]
+macos = "10.8"
+maccatalyst = "13.0"
+ios = "6.0"

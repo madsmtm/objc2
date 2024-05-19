@@ -993,6 +993,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-social"
+version = "0.2.0"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-accounts",
+ "objc2-app-kit",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-sound-analysis"
 version = "0.2.0"
 dependencies = [
