@@ -680,13 +680,13 @@ mod tests {
     #[test]
     #[cfg_attr(
         debug_assertions,
-        should_panic = "declared invalid method -[TestClassBuilderInvalidMethod foo]: expected return to have type code 'I', but found 'i'"
+        should_panic = "declared invalid method -[TestClassBuilderInvalidMethod foo]: expected return to have type code 'I', but found 's'"
     )]
     fn invalid_method() {
         let cls = test_utils::custom_class();
         let mut builder = ClassBuilder::new("TestClassBuilderInvalidMethod", cls).unwrap();
 
-        extern "C" fn foo(_this: &NSObject, _cmd: Sel) -> i32 {
+        extern "C" fn foo(_this: &NSObject, _cmd: Sel) -> i16 {
             0
         }
 
@@ -697,7 +697,7 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        debug_assertions,
+        all(debug_assertions, not(feature = "relax-sign-encoding")),
         should_panic = "declared invalid method +[TestClassBuilderInvalidClassMethod classFoo]: expected return to have type code 'I', but found 'i'"
     )]
     fn invalid_class_method() {

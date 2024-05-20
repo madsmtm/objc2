@@ -42,6 +42,13 @@ catch-all = ["exception"]
 # to objc2.
 relax-void-encoding = []
 
+# Make signed and unsigned types interchangable when used as arguments/return
+# types in methods.
+#
+# This may be useful for dealing with Swift code that incorrectly uses `Int`
+# instead of `UInt`.
+relax-sign-encoding = []
+
 # Enable deprecation of using `msg_send!` without a comma between arguments.
 unstable-msg-send-always-comma = []
 

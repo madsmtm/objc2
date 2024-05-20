@@ -119,6 +119,10 @@ pub(crate) fn custom_class() -> &'static AnyClass {
             7
         }
 
+        extern "C" fn get_nsinteger(_this: &AnyObject, _cmd: Sel) -> ffi::NSInteger {
+            5
+        }
+
         extern "C" fn custom_obj_set_bar(this: &mut AnyObject, _cmd: Sel, bar: u32) {
             let ivar = this.class().instance_variable("_bar").unwrap();
             unsafe { *ivar.load_mut::<u32>(this) = bar }
@@ -182,6 +186,9 @@ pub(crate) fn custom_class() -> &'static AnyClass {
             builder.add_method(sel!(customStruct), get_struct);
             let class_method: extern "C" fn(_, _) -> _ = custom_obj_class_method;
             builder.add_class_method(sel!(classFoo), class_method);
+
+            let get_nsinteger: extern "C" fn(_, _) -> _ = get_nsinteger;
+            builder.add_method(sel!(getNSInteger), get_nsinteger);
 
             let protocol_instance_method: extern "C" fn(_, _, _) = custom_obj_set_bar;
             builder.add_method(sel!(setBar:), protocol_instance_method);
