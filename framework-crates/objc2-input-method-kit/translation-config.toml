@@ -3,7 +3,6 @@ crate = "objc2-input-method-kit"
 required-dependencies = ["objc2-foundation"]
 custom-lib-rs = true
 macos = "10.5"
-maccatalyst = "13.0" # Unsure
 
 # Needs `TISInputSourceRef` from Carbon (HIToolbox)
 class.IMKCandidates.methods."setSelectionKeysKeylayout:".skipped = true
