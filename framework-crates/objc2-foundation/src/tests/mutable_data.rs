@@ -33,6 +33,7 @@ fn test_append() {
 }
 
 #[test]
+#[cfg(feature = "NSRange")]
 fn test_replace() {
     let mut data = NSMutableData::with_bytes(&[7, 16]);
     data.replace_range(0..0, &[3]);
