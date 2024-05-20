@@ -6,7 +6,6 @@ maccatalyst = "13.0"
 ios = "5.0"
 tvos = "9.0"
 visionos = "1.0"
-gnustep = true
 
 # CF_RETURNS_NOT_RETAINED
 class.CIColor.methods.colorSpace.skipped = true

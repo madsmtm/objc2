@@ -8,7 +8,6 @@ maccatalyst = "13.0"
 ios = "2.0"
 tvos = "9.0"
 visionos = "1.0"
-gnustep = true
 
 # Uses stuff from CoreFoundation and CoreGraphics
 class.CAKeyframeAnimation.methods.path.skipped = true

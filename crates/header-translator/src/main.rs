@@ -522,10 +522,7 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
             "objc2-foundation" | "objc2-metal" | "objc2-ui-kit"
         )
     })?;
-    writer(&mut ci, config, "FRAMEWORKS_GNUSTEP", |lib| {
-        lib.gnustep
-            && ["objc2-app-kit", "objc2-foundation", "objc2-core-data"].contains(&&*lib.krate)
-    })?;
+    writer(&mut ci, config, "FRAMEWORKS_GNUSTEP", |lib| lib.gnustep)?;
 
     write!(&mut ci, "  # END AUTOMATICALLY GENERATED{after}")?;
 
