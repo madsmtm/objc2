@@ -1,6 +1,6 @@
-#![allow(dead_code)]
 use std::fmt::Display;
 
+use crate::config::LibraryConfig;
 use crate::display_helper::FormatterFn;
 
 #[derive(Debug, Copy, Clone, Default, PartialEq)]
@@ -31,6 +31,14 @@ impl CfgState {
         };
     }
 
+    fn implied(&mut self, implied: bool) {
+        *self = match (*self, implied) {
+            (Self::ShouldGate, false) => Self::ShouldGate,
+            (_, false) => Self::AlreadyGated,
+            (state, true) => state,
+        };
+    }
+
     fn active(&self) -> bool {
         matches!(self, Self::ShouldGate)
     }
@@ -52,6 +60,43 @@ pub struct PlatformCfg {
 }
 
 impl PlatformCfg {
+    pub fn from_config(lib: &LibraryConfig) -> Self {
+        Self {
+            macos: CfgState::new(lib.macos.is_some()),
+            // FIXME: Temporarily disable any form of Mac Catalyst handling,
+            // as `cfg(target_abi = ...)` is only stable since Rust 1.78, and
+            // that is higher than our MSRV.
+            maccatalyst: CfgState::AlreadyGated,
+            ios: CfgState::new(lib.ios.is_some()),
+            tvos: CfgState::new(lib.tvos.is_some()),
+            watchos: CfgState::new(lib.watchos.is_some()),
+            visionos: CfgState::new(lib.visionos.is_some()),
+            gnustep: CfgState::new(lib.gnustep),
+        }
+    }
+
+    pub fn dependency(&mut self, dependency: &LibraryConfig) {
+        self.macos.dependency(dependency.macos.is_some());
+        // FIXME: Temporarily disable Mac Catalyst, see above
+        // self.maccatalyst.dependency(dependency.maccatalyst.is_some());
+        self.ios.dependency(dependency.ios.is_some());
+        self.tvos.dependency(dependency.tvos.is_some());
+        self.watchos.dependency(dependency.watchos.is_some());
+        self.visionos.dependency(dependency.visionos.is_some());
+        self.gnustep.dependency(dependency.gnustep);
+    }
+
+    pub fn implied(&mut self, implied: &LibraryConfig) {
+        self.macos.implied(implied.macos.is_some());
+        // FIXME: Temporarily disable Mac Catalyst, see above
+        // self.maccatalyst.implied(implied.maccatalyst.is_some());
+        self.ios.implied(implied.ios.is_some());
+        self.tvos.implied(implied.tvos.is_some());
+        self.watchos.implied(implied.watchos.is_some());
+        self.visionos.implied(implied.visionos.is_some());
+        self.gnustep.implied(implied.gnustep);
+    }
+
     pub fn cfgs(&self) -> Option<impl Display + '_> {
         // Don't emit a cfg if we can avoid it
         if self.macos.allowed_active()

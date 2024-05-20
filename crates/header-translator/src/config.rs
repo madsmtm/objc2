@@ -8,7 +8,6 @@ use heck::ToTrainCase;
 use semver::Version;
 use serde::{de, Deserialize, Deserializer};
 
-use crate::id::Location;
 use crate::stmt::{Derives, Mutability};
 use crate::ItemIdentifier;
 
@@ -18,22 +17,43 @@ pub struct Config {
     pub system: LibraryConfig,
 }
 
+fn uses_system_config(library_name: &str) -> bool {
+    match library_name {
+        "System" | "bitflags" | "block2" | "libc" | "objc2" => true,
+        // Temporary
+        "CoreFoundation" => true,
+        _ => false,
+    }
+}
+
 impl Config {
-    pub fn library(&self, location: impl AsRef<Location>) -> &LibraryConfig {
-        let location = location.as_ref();
-        let library_name = location.library_name();
-        if library_name == "System" || library_name == "objc2" {
+    pub fn library(&self, library_name: &str) -> &LibraryConfig {
+        if uses_system_config(library_name) {
             &self.system
         } else {
             self.libraries.get(library_name).unwrap_or_else(|| {
-                error!("tried to get library config from {location:?}");
+                error!("tried to get library config from {library_name:?}");
                 &self.system
             })
         }
     }
 
+    pub fn library_from_crate(&self, krate: &str) -> &LibraryConfig {
+        if uses_system_config(krate) {
+            &self.system
+        } else {
+            self.libraries
+                .values()
+                .find(|lib| lib.krate == krate)
+                .unwrap_or_else(|| {
+                    error!("tried to get library config from krate {krate:?}");
+                    &self.system
+                })
+        }
+    }
+
     pub fn replace_protocol_name(&self, id: ItemIdentifier) -> ItemIdentifier {
-        let library_config = self.library(&id);
+        let library_config = self.library(id.library_name());
         id.map_name(|name| {
             library_config
                 .protocol_data

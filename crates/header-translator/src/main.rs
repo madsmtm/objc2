@@ -515,12 +515,9 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
             .is_some_and(|v| VersionReq::parse("<=14.0").unwrap().matches(v))
     })?;
     writer(&mut ci, config, "FRAMEWORKS_IOS_10", |lib| {
-        // HACK: We can't test iOS frameworks with the `"all"` feature, as
-        // that enables `objc2-app-kit` as well.
-        matches!(
-            &*lib.krate,
-            "objc2-foundation" | "objc2-metal" | "objc2-ui-kit"
-        )
+        lib.ios
+            .as_ref()
+            .is_some_and(|v| VersionReq::parse("<=10.0").unwrap().matches(v))
     })?;
     writer(&mut ci, config, "FRAMEWORKS_GNUSTEP", |lib| lib.gnustep)?;
 

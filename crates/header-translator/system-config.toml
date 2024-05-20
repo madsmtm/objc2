@@ -2,6 +2,13 @@
 framework = "System"
 crate = "objc2-system"
 required-dependencies = []
+macos = "10.0"
+maccatalyst = "13.0"
+ios = "2.0"
+tvos = "9.0"
+watchos = "2.0"
+visionos = "1.0"
+gnustep = true
 
 # Both a protocol and a class, so we use Swift's naming scheme
 protocol.NSObject.renamed = "NSObjectProtocol"

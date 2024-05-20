@@ -77,7 +77,7 @@ impl ThreadSafetyAttr {
         match entity.get_kind() {
             EntityKind::ObjCInterfaceDecl => {
                 let id = ItemIdentifier::new(entity, context);
-                let data = context.library(&id).class_data.get(&id.name);
+                let data = context.library(id.library_name()).class_data.get(&id.name);
 
                 if data.map(|data| data.mutability.clone()).unwrap_or_default()
                     == Mutability::MainThreadOnly
@@ -87,7 +87,10 @@ impl ThreadSafetyAttr {
             }
             EntityKind::ObjCProtocolDecl => {
                 let id = ItemIdentifier::new(entity, context);
-                let data = context.library(&id).protocol_data.get(&id.name);
+                let data = context
+                    .library(id.library_name())
+                    .protocol_data
+                    .get(&id.name);
 
                 // Set the protocol as main thread only if all methods are
                 // explicitly _marked_ (not inferred, since then we'd have to

@@ -3,6 +3,7 @@ use std::ffi::OsString;
 use std::path::Path;
 use std::{fmt, fs};
 
+use crate::cfgs::PlatformCfg;
 use crate::display_helper::FormatterFn;
 use crate::id::{cfg_gate_ln, Location};
 use crate::stmt::Stmt;
@@ -82,12 +83,23 @@ impl Module {
                 .stmts
                 .iter()
                 .flat_map(|stmt| stmt.required_items_inner())
-                .filter_map(|item| item.location().library(config, emission_library).import())
+                .filter_map(|item| {
+                    item.location()
+                        .library(config, emission_library)
+                        .import()
+                        .map(|import_data| (item.library_name().to_string(), import_data))
+                })
                 .collect();
 
-            for (krate, required) in imports {
+            let emission_config = &config.library(emission_library);
+            for (library_name, (krate, required)) in imports {
                 if !required {
                     writeln!(f, "#[cfg(feature = {:?})]", krate)?;
+                }
+                let mut platform_cfg = PlatformCfg::from_config(emission_config);
+                platform_cfg.dependency(config.library(&library_name));
+                if let Some(cfg) = platform_cfg.cfgs() {
+                    writeln!(f, "#[cfg({cfg})]")?;
                 }
                 writeln!(f, "use {}::*;", krate.replace('-', "_"))?;
             }
@@ -130,7 +142,7 @@ impl Module {
                         write!(
                             f,
                             "{}",
-                            cfg_gate_ln::<_, Location>(items, [], config, item.location())
+                            cfg_gate_ln(items, &[] as &[Location], config, item.location())
                         )?;
 
                         let visibility = if item.name.starts_with('_') {

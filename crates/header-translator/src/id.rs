@@ -6,6 +6,7 @@ use std::collections::BTreeSet;
 
 use clang::Entity;
 
+use crate::cfgs::PlatformCfg;
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::module::clean_name;
@@ -154,6 +155,8 @@ impl Location {
             "block2" => LocationLibrary::Block2,
             "libc" => LocationLibrary::Libc,
             "objc2" => LocationLibrary::Objc2,
+            // Temporary
+            "CoreFoundation" => LocationLibrary::System,
             library => {
                 if let Some(krate) = config.libraries.get(library).map(|lib| &*lib.krate) {
                     if library == emission_library {
@@ -175,7 +178,7 @@ impl Location {
                         }
                     }
                 } else {
-                    debug!(location = ?self, "failed getting crate name");
+                    error!(location = ?self, "failed getting crate name");
                     LocationLibrary::System
                 }
             }
@@ -407,53 +410,62 @@ impl<N> AsRef<Location> for ItemIdentifier<N> {
 /// items and the implied features.
 ///
 /// Only the library of the emmision location matters.
-pub fn cfg_gate_ln<R: AsRef<Location>, I: AsRef<Location>>(
-    required_features: impl IntoIterator<Item = R>,
-    implied_features: impl IntoIterator<Item = I>,
-    config: &Config,
-    emission_location: &Location,
-) -> impl fmt::Display {
+pub fn cfg_gate_ln<'a, R: AsRef<Location> + 'a, I: AsRef<Location> + 'a>(
+    required_features: impl IntoIterator<Item = R> + 'a,
+    implied_features: impl IntoIterator<Item = I> + 'a,
+    config: &'a Config,
+    emission_location: &'a Location,
+) -> impl fmt::Display + 'a {
+    let emission_library = emission_location.library_name();
     // Use a set to deduplicate features, and to have them in
     // a consistent order.
-    let mut feature_names: BTreeSet<String> = required_features
-        .into_iter()
-        .filter_map(|id| {
-            id.as_ref()
-                .library(config, emission_location.library_name())
-                .feature()
-        })
-        .collect();
+    let mut feature_names = BTreeSet::new();
+    let mut platform_cfg = PlatformCfg::from_config(config.library(emission_library));
 
-    for location in implied_features {
-        if let Some(feature_name) = location
-            .as_ref()
-            .library(config, emission_location.library_name())
-            .feature()
-        {
-            feature_names.remove(&feature_name);
+    for location in required_features {
+        let location: &Location = location.as_ref();
+        if let Some(feature_name) = location.library(config, emission_library).feature() {
+            feature_names.insert(feature_name);
         }
+
+        platform_cfg.dependency(config.library(location.library_name()));
     }
 
-    FormatterFn(move |f| match feature_names.len() {
-        0 => Ok(()),
-        1 => {
-            let feature = feature_names.first().unwrap();
-            writeln!(f, "#[cfg(feature = \"{feature}\")]")
+    for location in implied_features {
+        let location: &Location = location.as_ref();
+        if let Some(feature_name) = location.library(config, emission_library).feature() {
+            feature_names.remove(&feature_name);
         }
-        _ => {
-            write!(f, "#[cfg(all(")?;
 
-            for (i, feature) in feature_names.iter().enumerate() {
-                if i != 0 {
-                    write!(f, ", ")?;
-                }
-                write!(f, "feature = \"{feature}\"")?;
+        platform_cfg.implied(config.library(location.library_name()));
+    }
+
+    FormatterFn(move |f| {
+        match feature_names.len() {
+            0 => {}
+            1 => {
+                let feature = feature_names.first().unwrap();
+                writeln!(f, "#[cfg(feature = \"{feature}\")]")?;
             }
+            _ => {
+                write!(f, "#[cfg(all(")?;
 
-            write!(f, "))]")?;
-            writeln!(f)?;
+                for (i, feature) in feature_names.iter().enumerate() {
+                    if i != 0 {
+                        write!(f, ", ")?;
+                    }
+                    write!(f, "feature = \"{feature}\"")?;
+                }
 
-            Ok(())
+                write!(f, "))]")?;
+                writeln!(f)?;
+            }
         }
+
+        if let Some(cfg) = platform_cfg.cfgs() {
+            writeln!(f, "#[cfg({cfg})]")?;
+        }
+
+        Ok(())
     })
 }

@@ -292,7 +292,7 @@ pub(crate) fn items_required_by_decl(
 
     match entity.get_kind() {
         EntityKind::ObjCInterfaceDecl => {
-            let data = context.library(&id).class_data.get(&id.name);
+            let data = context.library(id.library_name()).class_data.get(&id.name);
 
             for (superclass, _, _) in parse_superclasses(entity, context) {
                 items.push(superclass);
@@ -634,7 +634,7 @@ impl Stmt {
             EntityKind::ObjCInterfaceDecl => {
                 // entity.get_mangled_objc_names()
                 let id = ItemIdentifier::new(entity, context);
-                let data = context.library(&id).class_data.get(&id.name);
+                let data = context.library(id.library_name()).class_data.get(&id.name);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -680,7 +680,7 @@ impl Stmt {
                     .iter()
                     .filter_map(|(superclass_id, _, entity)| {
                         let superclass_data = context
-                            .library(superclass_id)
+                            .library(superclass_id.library_name())
                             .class_data
                             .get(&superclass_id.name);
 
@@ -787,7 +787,10 @@ impl Stmt {
                 let cls_entity = cls_entity.expect("could not find category class");
 
                 let cls = ItemIdentifier::new(&cls_entity, context);
-                let data = context.library(&category).class_data.get(&cls.name);
+                let data = context
+                    .library(category.library_name())
+                    .class_data
+                    .get(&cls.name);
 
                 if data.map(|data| data.skipped).unwrap_or_default() {
                     return vec![];
@@ -855,8 +858,10 @@ impl Stmt {
                     let extra_methods = if let Mutability::ImmutableWithMutableSubclass(subclass) =
                         data.map(|data| data.mutability.clone()).unwrap_or_default()
                     {
-                        let subclass_data =
-                            context.library(&subclass).class_data.get(&subclass.name);
+                        let subclass_data = context
+                            .library(subclass.library_name())
+                            .class_data
+                            .get(&subclass.name);
                         assert!(!subclass_data.map(|data| data.skipped).unwrap_or_default());
 
                         let (mut methods, _) = parse_methods(
@@ -981,7 +986,7 @@ impl Stmt {
             EntityKind::ObjCProtocolDecl => {
                 let actual_id = ItemIdentifier::new(entity, context);
                 let data = context
-                    .library(&actual_id)
+                    .library(actual_id.library_name())
                     .protocol_data
                     .get(&actual_id.name);
                 let actual_name = data
@@ -1064,7 +1069,7 @@ impl Stmt {
                 });
 
                 if context
-                    .library(&id)
+                    .library(id.library_name())
                     .typedef_data
                     .get(&id.name)
                     .map(|data| data.skipped)
@@ -1093,7 +1098,7 @@ impl Stmt {
                 let availability = Availability::parse(entity, context);
 
                 if context
-                    .library(&id)
+                    .library(id.library_name())
                     .struct_data
                     .get(&id.name)
                     .map(|data| data.skipped)
@@ -1170,7 +1175,7 @@ impl Stmt {
                 let id = new_enum_id(entity, context);
 
                 let data = context
-                    .library(&id)
+                    .library(id.library_name())
                     .enum_data
                     .get(id.name.as_deref().unwrap_or("anonymous"))
                     .cloned()
@@ -1303,7 +1308,7 @@ impl Stmt {
                 let id = ItemIdentifier::new(entity, context);
 
                 if context
-                    .library(&id)
+                    .library(id.library_name())
                     .statics
                     .get(&id.name)
                     .map(|data| data.skipped)
@@ -1347,7 +1352,7 @@ impl Stmt {
                 let id = ItemIdentifier::new(entity, context);
 
                 let data = context
-                    .library(&id)
+                    .library(id.library_name())
                     .fns
                     .get(&id.name)
                     .cloned()
