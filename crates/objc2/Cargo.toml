@@ -148,3 +148,4 @@ targets = [
 [package.metadata.release]
 shared-version = false
 tag-prefix = "objc"
+enable-features = []

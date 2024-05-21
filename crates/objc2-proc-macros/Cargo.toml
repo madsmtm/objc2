@@ -53,3 +53,4 @@ targets = [
 [package.metadata.release]
 shared-version = false
 tag-prefix = "objc-proc-macros"
+enable-features = []
