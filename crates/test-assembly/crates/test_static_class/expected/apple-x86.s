@@ -8,7 +8,7 @@ _get_class:
 	call	L0$pb
 L0$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_CLASSLIST_REFERENCES_$_831fece26e45cd9e-L0$pb]
+	mov	eax, dword ptr [eax + L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6-L0$pb]
 	pop	ebp
 	ret
 
@@ -20,7 +20,7 @@ _get_same_class:
 	call	L1$pb
 L1$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_CLASSLIST_REFERENCES_$_723df0da59ee573a-L1$pb]
+	mov	eax, dword ptr [eax + L_OBJC_CLASSLIST_REFERENCES_$_8f52a951012bf702-L1$pb]
 	pop	ebp
 	ret
 
@@ -32,7 +32,7 @@ _get_different_class:
 	call	L2$pb
 L2$pb:
 	pop	eax
-	mov	eax, dword ptr [eax + L_OBJC_CLASSLIST_REFERENCES_$_a1c78af2bef71f32-L2$pb]
+	mov	eax, dword ptr [eax + L_OBJC_CLASSLIST_REFERENCES_$_4882212c6ef400ba-L2$pb]
 	pop	ebp
 	ret
 
@@ -55,10 +55,10 @@ _use_fns:
 L4$pb:
 	pop	ecx
 	mov	eax, dword ptr [ebp + 8]
-	mov	edx, dword ptr [ecx + L_OBJC_CLASSLIST_REFERENCES_$_831fece26e45cd9e-L4$pb]
-	mov	esi, dword ptr [ecx + L_OBJC_CLASSLIST_REFERENCES_$_723df0da59ee573a-L4$pb]
-	mov	edi, dword ptr [ecx + L_OBJC_CLASSLIST_REFERENCES_$_a1c78af2bef71f32-L4$pb]
-	mov	ecx, dword ptr [ecx + L_OBJC_CLASSLIST_REFERENCES_$_ae7bef6061eca0c4-L4$pb]
+	mov	edx, dword ptr [ecx + L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6-L4$pb]
+	mov	esi, dword ptr [ecx + L_OBJC_CLASSLIST_REFERENCES_$_8f52a951012bf702-L4$pb]
+	mov	edi, dword ptr [ecx + L_OBJC_CLASSLIST_REFERENCES_$_4882212c6ef400ba-L4$pb]
+	mov	ecx, dword ptr [ecx + L_OBJC_CLASSLIST_REFERENCES_$_5ca3eecf631727de-L4$pb]
 	mov	dword ptr [eax], edx
 	mov	dword ptr [eax + 4], esi
 	mov	dword ptr [eax + 8], edi
@@ -77,7 +77,7 @@ _use_same_twice:
 L5$pb:
 	pop	ecx
 	mov	eax, dword ptr [ebp + 8]
-	mov	ecx, dword ptr [ecx + L_OBJC_CLASSLIST_REFERENCES_$_831fece26e45cd9e-L5$pb]
+	mov	ecx, dword ptr [ecx + L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6-L5$pb]
 	mov	dword ptr [eax], ecx
 	mov	dword ptr [eax + 4], ecx
 	pop	ebp
@@ -92,75 +92,75 @@ _use_in_loop:
 	ret
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_831fece26e45cd9e
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6
 	.p2align	2, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_831fece26e45cd9e:
+L_OBJC_CLASSLIST_REFERENCES_$_7443a74fb2d1e4c6:
 	.long	_OBJC_CLASS_$_NSObject
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_831fece26e45cd9e
+	.globl	L_OBJC_IMAGE_INFO_7443a74fb2d1e4c6
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_831fece26e45cd9e:
+L_OBJC_IMAGE_INFO_7443a74fb2d1e4c6:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_723df0da59ee573a
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_8f52a951012bf702
 	.p2align	2, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_723df0da59ee573a:
+L_OBJC_CLASSLIST_REFERENCES_$_8f52a951012bf702:
 	.long	_OBJC_CLASS_$_NSObject
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_723df0da59ee573a
+	.globl	L_OBJC_IMAGE_INFO_8f52a951012bf702
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_723df0da59ee573a:
+L_OBJC_IMAGE_INFO_8f52a951012bf702:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_a1c78af2bef71f32
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_4882212c6ef400ba
 	.p2align	2, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_a1c78af2bef71f32:
+L_OBJC_CLASSLIST_REFERENCES_$_4882212c6ef400ba:
 	.long	_OBJC_CLASS_$_NSString
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_a1c78af2bef71f32
+	.globl	L_OBJC_IMAGE_INFO_4882212c6ef400ba
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_a1c78af2bef71f32:
+L_OBJC_IMAGE_INFO_4882212c6ef400ba:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_ce452f03dca2d1c0
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_9c6ceff32d4e4b8b
 	.p2align	2, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_ce452f03dca2d1c0:
+L_OBJC_CLASSLIST_REFERENCES_$_9c6ceff32d4e4b8b:
 	.long	_OBJC_CLASS_$_NSData
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_ce452f03dca2d1c0
+	.globl	L_OBJC_IMAGE_INFO_9c6ceff32d4e4b8b
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_ce452f03dca2d1c0:
+L_OBJC_IMAGE_INFO_9c6ceff32d4e4b8b:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_ae7bef6061eca0c4
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_5ca3eecf631727de
 	.p2align	2, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_ae7bef6061eca0c4:
+L_OBJC_CLASSLIST_REFERENCES_$_5ca3eecf631727de:
 	.long	_OBJC_CLASS_$_NSException
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_ae7bef6061eca0c4
+	.globl	L_OBJC_IMAGE_INFO_5ca3eecf631727de
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_ae7bef6061eca0c4:
+L_OBJC_IMAGE_INFO_5ca3eecf631727de:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__objc_classrefs,regular,no_dead_strip
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_bedb39edf06e7f45
+	.globl	L_OBJC_CLASSLIST_REFERENCES_$_76a360f1704b1e39
 	.p2align	2, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_bedb39edf06e7f45:
+L_OBJC_CLASSLIST_REFERENCES_$_76a360f1704b1e39:
 	.long	_OBJC_CLASS_$_NSLock
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_bedb39edf06e7f45
+	.globl	L_OBJC_IMAGE_INFO_76a360f1704b1e39
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_bedb39edf06e7f45:
+L_OBJC_IMAGE_INFO_76a360f1704b1e39:
 	.asciz	"\000\000\000\000@\000\000"
 
 .subsections_via_symbols

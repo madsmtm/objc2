@@ -10,7 +10,7 @@ get_class:
 	pop	eax
 .Ltmp0:
 	add	eax, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp0-.L0$pb)
-	mov	eax, dword ptr [eax + ._OBJC_CLASS_NSObject@GOT]
+	mov	eax, dword ptr [eax + _OBJC_CLASS_NSObject@GOT]
 	ret
 .Lfunc_end0:
 	.size	get_class, .Lfunc_end0-get_class
@@ -25,7 +25,7 @@ get_same_class:
 	pop	eax
 .Ltmp1:
 	add	eax, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp1-.L1$pb)
-	mov	eax, dword ptr [eax + ._OBJC_CLASS_NSObject@GOT]
+	mov	eax, dword ptr [eax + _OBJC_CLASS_NSObject@GOT]
 	ret
 .Lfunc_end1:
 	.size	get_same_class, .Lfunc_end1-get_same_class
@@ -40,7 +40,7 @@ get_different_class:
 	pop	eax
 .Ltmp2:
 	add	eax, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp2-.L2$pb)
-	mov	eax, dword ptr [eax + ._OBJC_CLASS_NSString@GOT]
+	mov	eax, dword ptr [eax + _OBJC_CLASS_NSString@GOT]
 	ret
 .Lfunc_end2:
 	.size	get_different_class, .Lfunc_end2-get_different_class
@@ -65,11 +65,11 @@ use_fns:
 	mov	eax, dword ptr [esp + 4]
 .Ltmp3:
 	add	ecx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp3-.L4$pb)
-	mov	edx, dword ptr [ecx + ._OBJC_CLASS_NSObject@GOT]
+	mov	edx, dword ptr [ecx + _OBJC_CLASS_NSObject@GOT]
 	mov	dword ptr [eax], edx
 	mov	dword ptr [eax + 4], edx
-	mov	edx, dword ptr [ecx + ._OBJC_CLASS_NSString@GOT]
-	mov	ecx, dword ptr [ecx + ._OBJC_CLASS_NSException@GOT]
+	mov	edx, dword ptr [ecx + _OBJC_CLASS_NSString@GOT]
+	mov	ecx, dword ptr [ecx + _OBJC_CLASS_NSException@GOT]
 	mov	dword ptr [eax + 8], edx
 	mov	dword ptr [eax + 12], ecx
 	ret	4
@@ -87,7 +87,7 @@ use_same_twice:
 	mov	eax, dword ptr [esp + 4]
 .Ltmp4:
 	add	ecx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp4-.L5$pb)
-	mov	ecx, dword ptr [ecx + ._OBJC_CLASS_NSObject@GOT]
+	mov	ecx, dword ptr [ecx + _OBJC_CLASS_NSObject@GOT]
 	mov	dword ptr [eax], ecx
 	mov	dword ptr [eax + 4], ecx
 	ret	4

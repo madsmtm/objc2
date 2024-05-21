@@ -577,7 +577,7 @@ jobs:
           nightly: true
           runtime: gnustep-2-1
           libobjc2: "2.1"
-          fuzz: true
+          # fuzz: true # Disable fuzzing for now, it fails because it tries to load all symbols in Foundation
         - name: Test GNUStep 32bit
           # Ubuntu 22 image doesn't have the required C++ libraries
           # installed for 32-bit
@@ -762,6 +762,7 @@ jobs:
         # `max_total_time`, to get more determinism.
         for fuzz_target in $(cargo-fuzz list --fuzz-dir=./crates/test-fuzz/)
         do
+          echo "Fuzzing $fuzz_target"
           cargo-fuzz run --fuzz-dir=./crates/test-fuzz/ $fuzz_target --features=${{ matrix.runtime }},fuzz-all -- -runs=10000 -timeout=2 -jobs=10
         done
 

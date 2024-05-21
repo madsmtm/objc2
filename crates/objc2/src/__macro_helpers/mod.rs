@@ -35,6 +35,13 @@ pub use self::method_family::{
 pub use self::msg_send::MsgSend;
 pub use self::msg_send_id::{MaybeUnwrap, MsgSendId, MsgSendSuperId};
 
+/// Disallow using this passed in value in const and statics for forwards
+/// compatibility (this function is not a `const` function).
+#[inline]
+pub fn disallow_in_static<T>(item: &'static T) -> &'static T {
+    item
+}
+
 /// Helper struct for emitting the module info that macOS 32-bit requires.
 ///
 /// <https://github.com/llvm/llvm-project/blob/release/13.x/clang/lib/CodeGen/CGObjCMac.cpp#L5211-L5234>

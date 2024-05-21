@@ -60,7 +60,7 @@ mod extern_protocol;
 /// assert_eq!(cls1, cls2);
 /// ```
 ///
-/// Try to get a non-existing class.
+/// Try to get a non-existing class (this will panic, or fail to link).
 ///
 #[cfg_attr(not(feature = "unstable-static-class"), doc = "```should_panic")]
 #[cfg_attr(feature = "unstable-static-class", doc = "```ignore")]
@@ -554,18 +554,6 @@ macro_rules! __statics_class {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(not(target_vendor = "apple"))]
-macro_rules! __statics_class {
-    ($($args:tt)*) => {
-        // TODO
-        $crate::__macro_helpers::compile_error!(
-            "The `\"unstable-static-class\"` feature is not yet supported on GNUStep!"
-        )
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
 #[cfg(all(
     feature = "unstable-static-sel",
     not(feature = "unstable-static-sel-inlined")
@@ -620,6 +608,7 @@ macro_rules! __sel_inner {
 #[macro_export]
 #[cfg(all(
     feature = "unstable-static-class",
+    not(feature = "gnustep-1-7"),
     not(feature = "unstable-static-class-inlined")
 ))]
 macro_rules! __class_inner {
@@ -641,7 +630,11 @@ macro_rules! __class_inner {
 
 #[doc(hidden)]
 #[macro_export]
-#[cfg(feature = "unstable-static-class-inlined")]
+#[cfg(all(
+    feature = "unstable-static-class",
+    not(feature = "gnustep-1-7"),
+    feature = "unstable-static-class-inlined"
+))]
 macro_rules! __class_inner {
     ($name:expr, $hash:expr) => {{
         $crate::__statics_class! {
@@ -653,6 +646,47 @@ macro_rules! __class_inner {
         // SAFETY: See above
         unsafe {
             *REF.get()
+        }
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+// The linking changed in libobjc2 v2.0
+#[cfg(all(feature = "gnustep-1-7", not(feature = "gnustep-2-0"),))]
+macro_rules! __class_static_name {
+    ($name:expr) => {
+        $crate::__macro_helpers::concat!("_OBJC_CLASS_", $name)
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(feature = "gnustep-2-0")]
+macro_rules! __class_static_name {
+    ($name:expr) => {
+        $crate::__macro_helpers::concat!("._OBJC_CLASS_", $name)
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+#[cfg(all(feature = "unstable-static-class", feature = "gnustep-1-7"))]
+macro_rules! __class_inner {
+    ($name:expr, $_hash:expr) => {{
+        // NOTE: This is not verified for correctness in any way whatsoever.
+        extern "C" {
+            #[link_name = $crate::__class_static_name!($name)]
+            static CLASS: $crate::runtime::AnyClass;
+
+            // Others:
+            // __objc_class_name_
+            // _OBJC_CLASS_REF_
+        }
+
+        #[allow(unused_unsafe)]
+        unsafe {
+            $crate::__macro_helpers::disallow_in_static(&CLASS)
         }
     }};
 }

@@ -318,12 +318,12 @@ l_anon.[ID].1:
 	.p2align	2, 0x0
 l_anon.[ID].2:
 	.long	l_anon.[ID].1
-	.asciz	"J\000\000\000\b\000\000\000\005\000\000"
+	.asciz	"J\000\000\000\007\000\000\000\005\000\000"
 
 	.p2align	2, 0x0
 l_anon.[ID].3:
 	.long	l_anon.[ID].1
-	.asciz	"J\000\000\000\r\000\000\000\005\000\000"
+	.asciz	"J\000\000\000\f\000\000\000\005\000\000"
 
 	.section	__TEXT,__const
 l_anon.[ID].4:
@@ -333,7 +333,7 @@ l_anon.[ID].4:
 	.p2align	2, 0x0
 l_anon.[ID].5:
 	.long	l_anon.[ID].1
-	.asciz	"J\000\000\000\022\000\000\000\005\000\000"
+	.asciz	"J\000\000\000\021\000\000\000\005\000\000"
 
 	.section	__TEXT,__const
 l_anon.[ID].6:
@@ -343,7 +343,7 @@ l_anon.[ID].6:
 	.p2align	2, 0x0
 l_anon.[ID].7:
 	.long	l_anon.[ID].1
-	.asciz	"J\000\000\000\027\000\000\000\r\000\000"
+	.asciz	"J\000\000\000\026\000\000\000\r\000\000"
 
 	.section	__TEXT,__const
 l_anon.[ID].8:
@@ -353,7 +353,7 @@ l_anon.[ID].8:
 	.p2align	2, 0x0
 l_anon.[ID].9:
 	.long	l_anon.[ID].1
-	.asciz	"J\000\000\000\037\000\000\000\016\000\000"
+	.asciz	"J\000\000\000\036\000\000\000\016\000\000"
 
 	.section	__TEXT,__const
 l_anon.[ID].10:
@@ -363,7 +363,7 @@ l_anon.[ID].10:
 	.p2align	2, 0x0
 l_anon.[ID].11:
 	.long	l_anon.[ID].1
-	.asciz	"J\000\000\000-\000\000\000\021\000\000"
+	.asciz	"J\000\000\000,\000\000\000\021\000\000"
 
 .zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::unused_class::CACHED_CLASS, 0),4,2
 .zerofill __DATA,__bss,SYM(test_dynamic_class[CRATE_ID]::use_in_loop::CACHED_CLASS, 0),4,2

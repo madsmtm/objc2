@@ -1,5 +1,4 @@
 //! Test the output of the `class!` macro.
-#![cfg(target_vendor = "apple")]
 use objc2::class;
 use objc2::runtime::AnyClass;
 

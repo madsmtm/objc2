@@ -37,24 +37,7 @@ unsafe impl ClassType for NSProxy {
 
     #[inline]
     fn class() -> &'static AnyClass {
-        #[cfg(not(feature = "gnustep-1-7"))]
-        {
-            crate::__class_inner!("NSProxy", "NSProxy")
-        }
-        #[cfg(feature = "gnustep-1-7")]
-        {
-            extern "C" {
-                // The linking changed in libobjc2 v2.0
-                #[cfg_attr(feature = "gnustep-2-0", link_name = "._OBJC_CLASS_NSProxy")]
-                #[cfg_attr(not(feature = "gnustep-2-0"), link_name = "_OBJC_CLASS_NSProxy")]
-                static OBJC_CLASS_NSProxy: AnyClass;
-                // Others:
-                // __objc_class_name_NSProxy
-                // _OBJC_CLASS_REF_NSProxy
-            }
-
-            unsafe { &OBJC_CLASS_NSProxy }
-        }
+        crate::__class_inner!("NSProxy", "NSProxy")
     }
 
     #[inline]

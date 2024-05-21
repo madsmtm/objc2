@@ -46,24 +46,7 @@ unsafe impl ClassType for NSObject {
 
     #[inline]
     fn class() -> &'static AnyClass {
-        #[cfg(not(feature = "gnustep-1-7"))]
-        {
-            crate::__class_inner!("NSObject", "NSObject")
-        }
-        #[cfg(feature = "gnustep-1-7")]
-        {
-            extern "C" {
-                // The linking changed in libobjc2 v2.0
-                #[cfg_attr(feature = "gnustep-2-0", link_name = "._OBJC_CLASS_NSObject")]
-                #[cfg_attr(not(feature = "gnustep-2-0"), link_name = "_OBJC_CLASS_NSObject")]
-                static OBJC_CLASS_NSObject: AnyClass;
-                // Others:
-                // __objc_class_name_NSObject
-                // _OBJC_CLASS_REF_NSObject
-            }
-
-            unsafe { &OBJC_CLASS_NSObject }
-        }
+        crate::__class_inner!("NSObject", "NSObject")
     }
 
     #[inline]

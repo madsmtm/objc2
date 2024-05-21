@@ -401,6 +401,8 @@ pub trait DeclaredClass: ClassType {
 /// // Get a protocol object representing the `NSObject` protocol
 /// let protocol = <dyn NSObjectProtocol>::protocol().expect("NSObject to have a protocol");
 /// assert_eq!(<dyn NSObjectProtocol>::NAME, protocol.name());
+/// # // Ensure Foundation links on GNUStep
+/// # let _cls = objc2::class!(NSObject);
 /// ```
 ///
 /// Use the [`extern_protocol!`] macro to implement this trait for a type.

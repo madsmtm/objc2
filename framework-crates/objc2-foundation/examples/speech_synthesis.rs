@@ -6,6 +6,7 @@
 //!
 //! Works on macOS >= 10.7 and iOS > 7.0.
 #![deny(unsafe_op_in_unsafe_fn)]
+#![allow(unused_imports)]
 
 use std::thread;
 use std::time::Duration;
@@ -16,7 +17,7 @@ use objc2::{extern_class, msg_send, msg_send_id, ClassType};
 use objc2_foundation::{ns_string, NSObject, NSString};
 
 #[cfg(target_os = "macos")]
-mod appkit {
+mod implementation {
     use objc2_foundation::NSCopying;
     use std::cell::Cell;
 
@@ -96,14 +97,11 @@ mod appkit {
     }
 }
 
-#[cfg(not(target_os = "macos"))]
-mod avfaudio {
+#[cfg(all(target_vendor = "apple", not(target_os = "macos")))]
+mod implementation {
     use super::*;
 
-    #[cfg_attr(
-        not(feature = "gnustep-1-7"),
-        link(name = "AVFoundation", kind = "framework")
-    )]
+    #[link(name = "AVFoundation", kind = "framework")]
     extern "C" {}
 
     extern_class!(
@@ -159,11 +157,10 @@ mod avfaudio {
     }
 }
 
-#[cfg(target_os = "macos")]
-use appkit::{Synthesizer, Utterance};
-#[cfg(not(target_os = "macos"))]
-use avfaudio::{Synthesizer, Utterance};
+#[cfg(target_vendor = "apple")]
+use implementation::{Synthesizer, Utterance};
 
+#[cfg(target_vendor = "apple")]
 fn main() {
     let synthesizer = Synthesizer::new();
     let utterance = Utterance::new(ns_string!("Hello from Rust!"));
@@ -177,4 +174,9 @@ fn main() {
     while synthesizer.is_speaking() {
         thread::sleep(Duration::from_millis(100));
     }
+}
+
+#[cfg(not(target_vendor = "apple"))]
+fn main() {
+    panic!("this example is only supported on Apple platforms");
 }
