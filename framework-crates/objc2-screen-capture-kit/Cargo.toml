@@ -3,7 +3,7 @@
 
 [package]
 name = "objc2-screen-capture-kit"
-version = "0.2.1" # Remember to update html_root_url in lib.rs
+version = "0.2.2" # Remember to update html_root_url in lib.rs
 description = "Bindings to the ScreenCaptureKit framework"
 edition = "2021"
 rust-version = "1.60"
@@ -25,7 +25,7 @@ bitflags = { version = "2.5.0", default-features = false, optional = true }
 block2 = { path = "../../crates/block2", version = "0.5.1", default-features = false, optional = true }
 libc = { version = "0.2.80", default-features = false, optional = true }
 objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.1", default-features = false }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.2", default-features = false }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

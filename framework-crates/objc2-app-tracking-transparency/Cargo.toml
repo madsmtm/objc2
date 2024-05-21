@@ -3,7 +3,7 @@
 
 [package]
 name = "objc2-app-tracking-transparency"
-version = "0.2.1" # Remember to update html_root_url in lib.rs
+version = "0.2.2" # Remember to update html_root_url in lib.rs
 description = "Bindings to the AppTrackingTransparency framework"
 edition = "2021"
 rust-version = "1.60"

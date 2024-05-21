@@ -7,7 +7,7 @@
 #![no_std]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2-ui-kit/0.2.1")]
+#![doc(html_root_url = "https://docs.rs/objc2-ui-kit/0.2.2")]
 #![recursion_limit = "256"]
 
 #[cfg(feature = "alloc")]
