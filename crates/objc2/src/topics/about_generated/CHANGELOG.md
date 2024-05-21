@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.2.1 - 2024-05-21
+
 ### Added
 * `NS_OPTIONS` enums are now `bitflags!`-style enums.
 

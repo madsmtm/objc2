@@ -98,4 +98,4 @@ pub(crate) fn to_snake_case(input: impl AsRef<str>) -> String {
     }
 }
 
-pub const VERSION: &str = "0.2.0";
+pub const VERSION: &str = "0.2.1";

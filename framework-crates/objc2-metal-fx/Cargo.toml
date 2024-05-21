@@ -3,7 +3,7 @@
 
 [package]
 name = "objc2-metal-fx"
-version = "0.2.0" # Remember to update html_root_url in lib.rs
+version = "0.2.1" # Remember to update html_root_url in lib.rs
 description = "Bindings to the MetalFX framework"
 edition = "2021"
 rust-version = "1.60"
@@ -21,9 +21,9 @@ license = "MIT"
 workspace = true
 
 [dependencies]
-objc2 = { path = "../../crates/objc2", version = "0.5.1", default-features = false }
-objc2-foundation = { path = "../objc2-foundation", version = "0.2.0", default-features = false }
-objc2-metal = { path = "../objc2-metal", version = "0.2.0", default-features = false }
+objc2 = { path = "../../crates/objc2", version = "0.5.2", default-features = false }
+objc2-foundation = { path = "../objc2-foundation", version = "0.2.1", default-features = false }
+objc2-metal = { path = "../objc2-metal", version = "0.2.1", default-features = false }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

@@ -7,7 +7,7 @@
 #![no_std]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2-external-accessory/0.2.0")]
+#![doc(html_root_url = "https://docs.rs/objc2-external-accessory/0.2.1")]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
