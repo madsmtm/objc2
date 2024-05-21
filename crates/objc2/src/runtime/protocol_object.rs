@@ -53,7 +53,7 @@ pub unsafe trait ImplementedBy<T: ?Sized + Message> {
 ///
 /// let obj: Id<MyObject> = MyObject::new();
 /// let proto: &ProtocolObject<dyn MyProtocol> = ProtocolObject::from_ref(&*obj);
-/// let proto: Id<ProtocolObject<dyn MyProtocol>> = ProtocolObject::from_id(obj);
+/// let proto: Id<ProtocolObject<dyn MyProtocol>> = ProtocolObject::from_retained(obj);
 /// ```
 #[doc(alias = "id")]
 #[repr(C)]
@@ -114,8 +114,20 @@ impl<P: ?Sized> ProtocolObject<P> {
     }
 
     /// Get a type-erased object from a type implementing a protocol.
+    ///
+    /// Soft-deprecated alias of [`ProtocolObject::from_retained`].
     #[inline]
     pub fn from_id<T>(obj: Id<T>) -> Id<Self>
+    where
+        P: ImplementedBy<T> + 'static,
+        T: Message + 'static,
+    {
+        Self::from_retained(obj)
+    }
+
+    /// Get a type-erased object from a type implementing a protocol.
+    #[inline]
+    pub fn from_retained<T>(obj: Id<T>) -> Id<Self>
     where
         P: ImplementedBy<T> + 'static,
         T: Message + 'static,
@@ -351,7 +363,7 @@ mod tests {
             ProtocolObject::from_ref(&*obj);
 
         let _foobar: &mut ProtocolObject<dyn FooBar> = ProtocolObject::from_mut(&mut *obj);
-        let _foobar: Id<ProtocolObject<dyn FooBar>> = ProtocolObject::from_id(obj);
+        let _foobar: Id<ProtocolObject<dyn FooBar>> = ProtocolObject::from_retained(obj);
     }
 
     #[test]

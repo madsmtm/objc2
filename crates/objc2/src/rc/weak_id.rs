@@ -5,7 +5,7 @@ use core::marker::PhantomData;
 use core::ptr;
 use std::panic::{RefUnwindSafe, UnwindSafe};
 
-use super::Id;
+use super::Retained;
 use crate::mutability::{IsIdCloneable, IsRetainable};
 use crate::{ffi, Message};
 
@@ -22,15 +22,16 @@ use crate::{ffi, Message};
 /// # Comparison to `std` types
 ///
 /// This is the Objective-C equivalent of [`sync::Weak`] from the standard
-/// library, and hence is only usable on types where `Id<T>` acts like
+/// library, and hence is only usable on types where `Retained<T>` acts like
 /// [`sync::Arc`], a.k.a. on non-mutable types.
 ///
 /// [`sync::Weak`]: std::sync::Weak
 /// [`sync::Arc`]: std::sync::Arc
 #[repr(transparent)] // This is not a public guarantee
-pub struct WeakId<T: ?Sized> {
+#[doc(alias = "WeakId")]
+pub struct Weak<T: ?Sized> {
     /// We give the runtime the address to this box, so that it can modify it
-    /// even if the `WeakId` is moved.
+    /// even if the `Weak` is moved.
     ///
     /// Loading may modify the pointer through a shared reference, so we use
     /// an UnsafeCell to get a *mut without self being mutable.
@@ -42,12 +43,15 @@ pub struct WeakId<T: ?Sized> {
     /// TODO: Verify the need for UnsafeCell?
     /// TODO: Investigate if we can avoid some allocations using `Pin`.
     inner: Box<UnsafeCell<*mut ffi::objc_object>>,
-    /// WeakId inherits variance, dropck and various marker traits from
-    /// `Id<T>`.
-    item: PhantomData<Id<T>>,
+    /// Weak inherits variance, dropck and various marker traits from
+    /// `Retained<T>`.
+    item: PhantomData<Retained<T>>,
 }
 
-impl<T: Message> WeakId<T> {
+/// Soft-deprecated type-alias to [`Weak`].
+pub type WeakId<T> = Weak<T>;
+
+impl<T: Message> Weak<T> {
     /// Construct a new weak pointer that references the given object.
     #[doc(alias = "objc_initWeak")]
     #[inline]
@@ -59,17 +63,29 @@ impl<T: Message> WeakId<T> {
         unsafe { Self::new_inner(obj) }
     }
 
-    /// Construct a new weak pointer that references the given [`Id`].
+    /// Construct a new weak pointer that references the given [`Retained`].
     ///
-    /// You should prefer [`WeakId::new`] whenever the object is retainable.
+    /// Soft-deprecated alias of [`Weak::from_retained`].
     #[doc(alias = "objc_initWeak")]
     #[inline]
-    pub fn from_id(obj: &Id<T>) -> Self
+    pub fn from_id(obj: &Retained<T>) -> Self
     where
         T: IsIdCloneable,
     {
-        // SAFETY: `obj` is cloneable, and is known to have come from `Id`.
-        unsafe { Self::new_inner(Id::as_ptr(obj)) }
+        Self::from_retained(obj)
+    }
+
+    /// Construct a new weak pointer that references the given [`Retained`].
+    ///
+    /// You should prefer [`Weak::new`] whenever the object is retainable.
+    #[doc(alias = "objc_initWeak")]
+    #[inline]
+    pub fn from_retained(obj: &Retained<T>) -> Self
+    where
+        T: IsIdCloneable,
+    {
+        // SAFETY: `obj` is cloneable, and is known to have come from `Retained`.
+        unsafe { Self::new_inner(Retained::as_ptr(obj)) }
     }
 
     /// Raw constructor.
@@ -88,25 +104,25 @@ impl<T: Message> WeakId<T> {
         }
     }
 
-    /// Load the object into an [`Id`] if it still exists.
+    /// Load the object into an [`Retained`] if it still exists.
     ///
-    /// Returns [`None`] if the object has been deallocated, or the `WeakId`
+    /// Returns [`None`] if the object has been deallocated, or the `Weak`
     /// was created with [`Default::default`].
     #[doc(alias = "retain")]
     #[doc(alias = "objc_loadWeak")]
     #[doc(alias = "objc_loadWeakRetained")]
     #[inline]
-    pub fn load(&self) -> Option<Id<T>> {
+    pub fn load(&self) -> Option<Retained<T>> {
         let ptr = self.inner.get();
         let obj = unsafe { ffi::objc_loadWeakRetained(ptr) }.cast();
         // SAFETY: The object has +1 retain count
-        unsafe { Id::from_raw(obj) }
+        unsafe { Retained::from_raw(obj) }
     }
 
     // TODO: Add `autorelease(&self, pool) -> Option<&T>` using `objc_loadWeak`?
 }
 
-impl<T: ?Sized> Drop for WeakId<T> {
+impl<T: ?Sized> Drop for Weak<T> {
     /// Destroys the weak pointer.
     #[doc(alias = "objc_destroyWeak")]
     #[inline]
@@ -116,7 +132,7 @@ impl<T: ?Sized> Drop for WeakId<T> {
 }
 
 // TODO: Add ?Sized
-impl<T: Message + IsRetainable> Clone for WeakId<T> {
+impl<T: Message + IsRetainable> Clone for Weak<T> {
     /// Make a clone of the weak pointer that points to the same object.
     #[doc(alias = "objc_copyWeak")]
     fn clone(&self) -> Self {
@@ -130,7 +146,7 @@ impl<T: Message + IsRetainable> Clone for WeakId<T> {
 }
 
 // TODO: Add ?Sized
-impl<T: Message + IsRetainable> Default for WeakId<T> {
+impl<T: Message + IsRetainable> Default for Weak<T> {
     /// Constructs a new weak pointer that doesn't reference any object.
     ///
     /// Calling [`Self::load`] on the return value always gives [`None`].
@@ -141,48 +157,48 @@ impl<T: Message + IsRetainable> Default for WeakId<T> {
     }
 }
 
-impl<T: ?Sized> fmt::Debug for WeakId<T> {
+impl<T: ?Sized> fmt::Debug for Weak<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Note: We intentionally don't try to debug-print the value, since
         // that could lead to cycles. See:
         // https://github.com/rust-lang/rust/pull/90291
-        write!(f, "(WeakId)")
+        write!(f, "(Weak)")
     }
 }
 
 // Same as `std::sync::Weak<T>`.
-unsafe impl<T: ?Sized + Sync + Send + IsIdCloneable> Sync for WeakId<T> {}
+unsafe impl<T: ?Sized + Sync + Send + IsIdCloneable> Sync for Weak<T> {}
 
 // Same as `std::sync::Weak<T>`.
-unsafe impl<T: ?Sized + Sync + Send + IsIdCloneable> Send for WeakId<T> {}
+unsafe impl<T: ?Sized + Sync + Send + IsIdCloneable> Send for Weak<T> {}
 
 // Same as `std::sync::Weak<T>`.
-impl<T: ?Sized> Unpin for WeakId<T> {}
+impl<T: ?Sized> Unpin for Weak<T> {}
 
 // Same as `std::sync::Weak<T>`.
-impl<T: ?Sized + RefUnwindSafe + IsIdCloneable> RefUnwindSafe for WeakId<T> {}
+impl<T: ?Sized + RefUnwindSafe + IsIdCloneable> RefUnwindSafe for Weak<T> {}
 
 // Same as `std::sync::Weak<T>`.
-impl<T: ?Sized + RefUnwindSafe + IsIdCloneable> UnwindSafe for WeakId<T> {}
+impl<T: ?Sized + RefUnwindSafe + IsIdCloneable> UnwindSafe for Weak<T> {}
 
-impl<T: Message + IsRetainable> From<&T> for WeakId<T> {
+impl<T: Message + IsRetainable> From<&T> for Weak<T> {
     #[inline]
     fn from(obj: &T) -> Self {
-        WeakId::new(obj)
+        Weak::new(obj)
     }
 }
 
-impl<T: Message + IsIdCloneable> From<&Id<T>> for WeakId<T> {
+impl<T: Message + IsIdCloneable> From<&Retained<T>> for Weak<T> {
     #[inline]
-    fn from(obj: &Id<T>) -> Self {
-        WeakId::from_id(obj)
+    fn from(obj: &Retained<T>) -> Self {
+        Weak::from_retained(obj)
     }
 }
 
-impl<T: Message + IsIdCloneable> From<Id<T>> for WeakId<T> {
+impl<T: Message + IsIdCloneable> From<Retained<T>> for Weak<T> {
     #[inline]
-    fn from(obj: Id<T>) -> Self {
-        WeakId::from_id(&obj)
+    fn from(obj: Retained<T>) -> Self {
+        Weak::from_retained(&obj)
     }
 }
 
@@ -199,7 +215,7 @@ mod tests {
         let obj = RcTestObject::new();
         let mut expected = ThreadTestData::current();
 
-        let weak = WeakId::from(&obj);
+        let weak = Weak::from(&obj);
         expected.assert_current();
 
         let strong = weak.load().unwrap();
@@ -225,10 +241,10 @@ mod tests {
 
     #[test]
     fn test_weak_clone() {
-        let obj: Id<_> = RcTestObject::new();
+        let obj = RcTestObject::new();
         let mut expected = ThreadTestData::current();
 
-        let weak = WeakId::from(&obj);
+        let weak = Weak::from(&obj);
         expected.assert_current();
 
         let weak2 = weak.clone();
@@ -255,7 +271,7 @@ mod tests {
 
     #[test]
     fn test_weak_default() {
-        let weak: WeakId<RcTestObject> = WeakId::default();
+        let weak: Weak<RcTestObject> = Weak::default();
         assert!(weak.load().is_none());
         drop(weak);
     }
@@ -266,16 +282,16 @@ mod tests {
         p: PhantomData<&'a str>,
     }
 
-    /// Test that `WeakId<T>` is covariant over `T`.
+    /// Test that `Weak<T>` is covariant over `T`.
     #[allow(unused)]
-    fn assert_variance<'a, 'b>(obj: &'a WeakId<MyObject<'static>>) -> &'a WeakId<MyObject<'b>> {
+    fn assert_variance<'a, 'b>(obj: &'a Weak<MyObject<'static>>) -> &'a Weak<MyObject<'b>> {
         obj
     }
 
     #[test]
     fn test_size_of() {
         assert_eq!(
-            mem::size_of::<Option<WeakId<NSObject>>>(),
+            mem::size_of::<Option<Weak<NSObject>>>(),
             mem::size_of::<*const ()>()
         );
     }

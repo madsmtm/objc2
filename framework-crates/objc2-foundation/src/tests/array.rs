@@ -178,7 +178,8 @@ fn test_trait_retainable() {
 
     unsafe impl TestProtocol for NSNumber {}
 
-    let obj: Id<ProtocolObject<dyn TestProtocol>> = ProtocolObject::from_id(NSNumber::new_i32(42));
+    let obj: Id<ProtocolObject<dyn TestProtocol>> =
+        ProtocolObject::from_retained(NSNumber::new_i32(42));
     let _ = NSArray::from_slice(&[&*obj, &*obj]);
     let _ = NSArray::from_id_slice(&[obj.clone(), obj.clone()]);
     let _ = NSArray::from_vec(vec![obj.clone(), obj.clone()]);

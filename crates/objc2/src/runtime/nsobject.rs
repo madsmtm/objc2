@@ -3,7 +3,7 @@ use core::hash;
 
 use crate::ffi::NSUInteger;
 use crate::mutability::Root;
-use crate::rc::{Allocated, DefaultId, Id};
+use crate::rc::{Allocated, DefaultRetained, Id};
 use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ImplementedBy, ProtocolObject, Sel};
 use crate::{extern_methods, msg_send, msg_send_id, Message};
 use crate::{ClassType, ProtocolType};
@@ -451,7 +451,7 @@ impl fmt::Debug for NSObject {
     }
 }
 
-impl DefaultId for NSObject {
+impl DefaultRetained for NSObject {
     #[inline]
     fn default_id() -> Id<Self> {
         Self::new()

@@ -12,6 +12,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   using e.g. `NSInteger` in places where you would otherwise have to use
   `NSUInteger`.
 
+### Changed
+* Renamed `Id` to `Retained`, to better reflect what it represents.
+
+  The old name is kept as a soft-deprecated type-alias (will be fully
+  deprecated in `v0.6.0`).
+
+  The same is done for:
+  - `rc::WeakId` to `rc::Weak`.
+  - `rc::DefaultId` to `rc::DefaultRetained`.
+  - `rc::IdFromIterator` to `rc::RetainedFromIterator`.
+  - `rc::IdIntoIterator` to `rc::RetainedIntoIterator`.
+
 ### Deprecated
 * Deprecated the `apple` Cargo feature flag, it is assumed by default on Apple
   platforms.

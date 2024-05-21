@@ -41,7 +41,7 @@ pub fn get_text_2(pasteboard: &NSPasteboard) -> Option<Id<NSString>> {
 
 pub fn set_text(pasteboard: &NSPasteboard, text: &NSString) {
     let _ = unsafe { pasteboard.clearContents() };
-    let obj = ProtocolObject::from_id(text.copy());
+    let obj = ProtocolObject::from_retained(text.copy());
     let objects = NSArray::from_vec(vec![obj]);
     let res = unsafe { pasteboard.writeObjects(&objects) };
     if !res {

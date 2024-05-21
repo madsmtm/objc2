@@ -7,7 +7,7 @@
 //! objects are correctly retained and released when created and dropped,
 //! respectively. This ties in strongly with the [`msg_send_id!`] macro.
 //!
-//! Weak references may be created using the [`WeakId`] struct; these will not
+//! Weak references may be created using the [`Weak`] struct; these will not
 //! retain the object, but one can attempt to load them and obtain an `Id`, or
 //! safely fail if the object has been deallocated.
 //!
@@ -28,7 +28,7 @@
 //! ## Example
 //!
 //! ```
-//! use objc2::rc::{autoreleasepool, Id, WeakId};
+//! use objc2::rc::{autoreleasepool, Id, Weak};
 //! use objc2::runtime::NSObject;
 //!
 //! // Id will release the object when dropped
@@ -43,7 +43,7 @@
 //! });
 //!
 //! // Weak references won't retain the object
-//! let weak = WeakId::from_id(&obj);
+//! let weak = Weak::from_retained(&obj);
 //! drop(obj);
 //! assert!(weak.load().is_none());
 //! ```
@@ -61,8 +61,14 @@ pub use self::allocated_partial_init::{Allocated, PartialInit};
 pub use self::autorelease::{
     autoreleasepool, autoreleasepool_leaking, AutoreleasePool, AutoreleaseSafe,
 };
-pub use self::id::Id;
-pub use self::id_traits::{DefaultId, IdFromIterator, IdIntoIterator};
+pub use self::id::{Id, Retained};
+pub use self::id_traits::{DefaultRetained, RetainedFromIterator, RetainedIntoIterator};
 #[cfg(test)]
 pub(crate) use self::test_object::{RcTestObject, ThreadTestData};
-pub use self::weak_id::WeakId;
+pub use self::weak_id::{Weak, WeakId};
+
+// Soft-deprecated aliases
+pub use self::id_traits::{
+    DefaultRetained as DefaultId, RetainedFromIterator as IdFromIterator,
+    RetainedIntoIterator as IdIntoIterator,
+};

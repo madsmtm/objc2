@@ -12,34 +12,35 @@ use crate::{ffi, ClassType, Message};
 
 /// A reference counted pointer type for Objective-C objects.
 ///
-/// [`Id`] strongly references or "retains" the given object `T`, and
+/// [`Retained`] strongly references or "retains" the given object `T`, and
 /// decrements the retain count or "releases" it again when dropped, thereby
 /// ensuring it will be deallocated at the right time.
 ///
-/// The type `T` inside `Id<T>` can be anything that implements [`Message`].
+/// The type `T` inside `Retained<T>` can be anything that implements
+/// [`Message`].
 ///
 /// `T`'s [`ClassType`] implementation (if any) determines whether it is
-/// mutable, and by extension whether `Id<T>` is mutable.
+/// mutable, and by extension whether `Retained<T>` is mutable.
 ///
 /// This can usually be gotten from one of the methods in the framework
 /// crates, but can be created manually with the [`msg_send_id!`] macro (or
-/// even more manually, with the [`Id::retain`], [`Id::from_raw`] or
-/// [`Id::retain_autoreleased`] methods).
+/// even more manually, with the [`Retained::retain`], [`Retained::from_raw`]
+/// or [`Retained::retain_autoreleased`] methods).
 ///
 /// [`msg_send_id!`]: crate::msg_send_id
 ///
 ///
 /// # Comparison to `std` types
 ///
-/// `Id<T>` can be thought of as kind of a weird combination of [`Arc`] and
-/// [`Box`]:
+/// `Retained<T>` can be thought of as kind of a weird combination of [`Arc`]
+/// and [`Box`]:
 ///
 /// If `T` implements [`IsMutable`] (like it does on `NSMutableString` and
-/// `NSMutableArray<_>`), `Id<T>` acts like `Box<T>`, and allows mutable /
-/// unique access to the type.
+/// `NSMutableArray<_>`), `Retained<T>` acts like `Box<T>`, and allows mutable
+/// / unique access to the type.
 ///
-/// Otherwise, which is the most common case, `Id<T>` acts like `Arc<T>`, and
-/// allows cloning by bumping the reference count.
+/// Otherwise, which is the most common case, `Retained<T>` acts like
+/// `Arc<T>`, and allows cloning by bumping the reference count.
 ///
 /// [`Arc`]: alloc::sync::Arc
 /// [`Box`]: alloc::boxed::Box
@@ -47,25 +48,25 @@ use crate::{ffi, ClassType, Message};
 ///
 /// # Forwarding implementations
 ///
-/// Since `Id<T>` is a smart pointer, it [`Deref`]s to `T`, and similarly
-/// implements [`DerefMut`] when mutable.
+/// Since `Retained<T>` is a smart pointer, it [`Deref`]s to `T`, and
+/// similarly implements [`DerefMut`] when mutable.
 ///
 /// It also forwards the implementation of a bunch of standard library traits
 /// such as [`PartialEq`], [`AsRef`], and so on, so that it becomes possible
-/// to use e.g. `Id<NSString>` as if it was `NSString`. (Having `NSString`
-/// directly is not possible since Objective-C objects cannot live on the
-/// stack, but instead must reside on the heap).
+/// to use e.g. `Retained<NSString>` as if it was `NSString`. (Having
+/// `NSString` directly is not possible since Objective-C objects cannot live
+/// on the stack, but instead must reside on the heap).
 ///
 /// Note that because of current limitations in the Rust trait system, some
 /// traits like [`Default`], [`IntoIterator`], [`FromIterator`], [`From`] and
 /// [`Into`] are not directly implementable on `NSString`; for that use-case,
-/// we instead provide the [`DefaultId`], [`IdIntoIterator`] and
-/// [`IdFromIterator`] traits, which make some of the the aforementioned
-/// traits implementable on `Id`.
+/// we instead provide the [`DefaultRetained`], [`RetainedIntoIterator`] and
+/// [`RetainedFromIterator`] traits, which make some of the the aforementioned
+/// traits implementable on `Retained`.
 ///
-/// [`DefaultId`]: crate::rc::DefaultId
-/// [`IdIntoIterator`]: crate::rc::IdIntoIterator
-/// [`IdFromIterator`]: crate::rc::IdFromIterator
+/// [`DefaultRetained`]: crate::rc::DefaultRetained
+/// [`RetainedIntoIterator`]: crate::rc::RetainedIntoIterator
+/// [`RetainedFromIterator`]: crate::rc::RetainedFromIterator
 ///
 ///
 /// # Memory layout
@@ -74,19 +75,19 @@ use crate::{ffi, ClassType, Message};
 /// object, `*const T`.
 ///
 /// Additionally, it participates in the null-pointer optimization, that is,
-/// `Option<Id<T>>` is guaranteed to have the same size as `Id<T>`.
-///
+/// `Option<Retained<T>>` is guaranteed to have the same size as
+/// `Retained<T>`.
 ///
 ///
 /// # Example
 ///
-/// Various usage of `Id` on an immutable object.
+/// Various usage of `Retained` on an immutable object.
 ///
 /// ```
 /// # #[cfg(not_available)]
 /// use objc2_foundation::{NSObject, NSString};
 /// # use objc2::runtime::NSObject;
-/// use objc2::rc::Id;
+/// use objc2::rc::Retained;
 /// use objc2::{ClassType, msg_send_id};
 /// #
 /// # objc2::extern_class!(
@@ -99,11 +100,11 @@ use crate::{ffi, ClassType, Message};
 /// #     }
 /// # );
 ///
-/// // Use `msg_send_id!` to create an `Id` with correct memory management
+/// // Use `msg_send_id!` to create an `Retained` with correct memory management
 /// //
 /// // SAFETY: The types are correct, and it is safe to call the `new`
 /// // selector on `NSString`.
-/// let string: Id<NSString> = unsafe { msg_send_id![NSString::class(), new] };
+/// let string: Retained<NSString> = unsafe { msg_send_id![NSString::class(), new] };
 /// // Or:
 /// // let string = NSString::new();
 ///
@@ -113,23 +114,23 @@ use crate::{ffi, ClassType, Message};
 ///
 /// // Bump the reference count of the object (possible because the object is
 /// // immutable, would not be possible for `NSMutableString`).
-/// let another_ref: Id<NSString> = string.clone();
+/// let another_ref: Retained<NSString> = string.clone();
 ///
 /// // Convert one of the references to a reference to `NSObject` instead
-/// let obj: Id<NSObject> = Id::into_super(string);
+/// let obj: Retained<NSObject> = Retained::into_super(string);
 ///
 /// // And use the `Debug` impl from that
 /// assert_eq!(format!("{obj:?}"), "");
 ///
-/// // Finally, the `Id`s go out of scope, the reference counts are decreased,
-/// // and the string will deallocate
+/// // Finally, the `Retained`s go out of scope, the reference counts are
+/// // decreased, and the string will deallocate
 /// ```
 #[repr(transparent)]
 #[doc(alias = "id")]
-#[doc(alias = "Retained")]
+#[doc(alias = "Id")]
 #[doc(alias = "StrongPtr")]
 // TODO: Add `ptr::Thin` bound on `T` to allow for only extern types
-pub struct Id<T: ?Sized> {
+pub struct Retained<T: ?Sized> {
     /// A pointer to the contained object. The pointer is always retained.
     ///
     /// It is important that this is `NonNull`, since we want to dereference
@@ -151,7 +152,16 @@ pub struct Id<T: ?Sized> {
     notunwindsafe: PhantomData<&'static mut ()>,
 }
 
-impl<T: ?Sized> Id<T> {
+/// Short type-alias to [`Retained`].
+///
+/// This type is soft-deprecated, and will be fully deprecated in `v0.6.0`,
+/// see [#617].
+///
+/// [`Retained<T>`]: Retained
+/// [#617]: https://github.com/madsmtm/objc2/issues/617
+pub type Id<T> = Retained<T>;
+
+impl<T: ?Sized> Retained<T> {
     #[inline]
     pub(crate) unsafe fn new_nonnull(ptr: NonNull<T>) -> Self {
         Self {
@@ -162,8 +172,8 @@ impl<T: ?Sized> Id<T> {
     }
 }
 
-impl<T: ?Sized + Message> Id<T> {
-    /// Construct an [`Id`] from a pointer that already has +1 retain count.
+impl<T: ?Sized + Message> Retained<T> {
+    /// Construct an [`Retained`] from a pointer that already has +1 retain count.
     ///
     /// Returns `None` if the pointer was NULL.
     ///
@@ -173,12 +183,12 @@ impl<T: ?Sized + Message> Id<T> {
     ///
     /// If you do not have +1 retain count, such as if your object was
     /// retrieved from other methods than the ones noted above, use
-    /// [`Id::retain`] instead.
+    /// [`Retained::retain`] instead.
     ///
     ///
     /// # Safety
     ///
-    /// You must uphold the same requirements as described in [`Id::retain`].
+    /// You must uphold the same requirements as described in [`Retained::retain`].
     ///
     /// Additionally, you must ensure the given object pointer has +1 retain
     /// count.
@@ -189,18 +199,18 @@ impl<T: ?Sized + Message> Id<T> {
     /// Comparing different ways of creating a new `NSObject`.
     ///
     /// ```
-    /// use objc2::rc::Id;
+    /// use objc2::rc::Retained;
     /// use objc2::runtime::NSObject;
     /// use objc2::{msg_send, msg_send_id, ClassType};
     ///
-    /// // Manually using `msg_send!` and `Id::from_raw`
+    /// // Manually using `msg_send!` and `Retained::from_raw`
     /// let obj: *mut NSObject = unsafe { msg_send![NSObject::class(), alloc] };
     /// let obj: *mut NSObject = unsafe { msg_send![obj, init] };
     /// // SAFETY: `-[NSObject init]` returns +1 retain count
-    /// let obj: Id<NSObject> = unsafe { Id::from_raw(obj).unwrap() };
+    /// let obj: Retained<NSObject> = unsafe { Retained::from_raw(obj).unwrap() };
     ///
     /// // Or with `msg_send_id!`
-    /// let obj: Id<NSObject> = unsafe { msg_send_id![NSObject::alloc(), init] };
+    /// let obj: Retained<NSObject> = unsafe { msg_send_id![NSObject::alloc(), init] };
     ///
     /// // Or using the `NSObject::new` method
     /// let obj = NSObject::new();
@@ -211,43 +221,43 @@ impl<T: ?Sized + Message> Id<T> {
     pub unsafe fn from_raw(ptr: *mut T) -> Option<Self> {
         // Should optimize down to a noop.
         // SAFETY: Upheld by the caller
-        NonNull::new(ptr).map(|ptr| unsafe { Id::new_nonnull(ptr) })
+        NonNull::new(ptr).map(|ptr| unsafe { Retained::new_nonnull(ptr) })
     }
 
-    /// Deprecated alias for [`Id::from_raw`], see that for details.
+    /// Deprecated alias for [`Retained::from_raw`], see that for details.
     ///
     ///
     /// # Safety
     ///
-    /// Same as [`Id::from_raw`].
-    #[deprecated = "use the more descriptive name `Id::from_raw` instead"]
+    /// Same as [`Retained::from_raw`].
+    #[deprecated = "use the more descriptive name `Retained::from_raw` instead"]
     #[inline]
     pub unsafe fn new(ptr: *mut T) -> Option<Self> {
         // SAFETY: Upheld by caller
         unsafe { Self::from_raw(ptr) }
     }
 
-    /// Consumes the `Id`, returning a raw pointer with +1 retain count.
+    /// Consumes the `Retained`, returning a raw pointer with +1 retain count.
     ///
     /// After calling this function, the caller is responsible for the memory
-    /// previously managed by the `Id`.
+    /// previously managed by the `Retained`.
     ///
-    /// This is effectively the opposite of [`Id::from_raw`], see that for
+    /// This is effectively the opposite of [`Retained::from_raw`], see that for
     /// more details on when this function is useful.
     ///
     ///
     /// # Examples
     ///
-    /// Converting an `Id` to a pointer and back.
+    /// Converting an `Retained` to a pointer and back.
     ///
     /// ```
-    /// use objc2::rc::Id;
+    /// use objc2::rc::Retained;
     /// use objc2::runtime::NSObject;
     ///
     /// let obj = NSObject::new();
-    /// let ptr = Id::into_raw(obj);
+    /// let ptr = Retained::into_raw(obj);
     /// // SAFETY: The pointer is valid, and has +1 retain count from above.
-    /// let obj = unsafe { Id::from_raw(ptr) }.unwrap();
+    /// let obj = unsafe { Retained::from_raw(ptr) }.unwrap();
     /// ```
     #[inline]
     pub fn into_raw(this: Self) -> *mut T {
@@ -256,11 +266,11 @@ impl<T: ?Sized + Message> Id<T> {
 
     /// Returns a raw pointer to the object.
     ///
-    /// The pointer is valid for at least as long as the `Id` is held.
+    /// The pointer is valid for at least as long as the `Retained` is held.
     ///
-    /// See [`Id::as_mut_ptr`] for the mutable equivalent.
+    /// See [`Retained::as_mut_ptr`] for the mutable equivalent.
     ///
-    /// This is an associated method, and must be called as `Id::as_ptr(obj)`.
+    /// This is an associated method, and must be called as `Retained::as_ptr(obj)`.
     #[inline]
     pub fn as_ptr(this: &Self) -> *const T {
         this.ptr.as_ptr()
@@ -268,12 +278,12 @@ impl<T: ?Sized + Message> Id<T> {
 
     /// Returns a raw mutable pointer to the object.
     ///
-    /// The pointer is valid for at least as long as the `Id` is held.
+    /// The pointer is valid for at least as long as the `Retained` is held.
     ///
-    /// See [`Id::as_ptr`] for the immutable equivalent.
+    /// See [`Retained::as_ptr`] for the immutable equivalent.
     ///
     /// This is an associated method, and must be called as
-    /// `Id::as_mut_ptr(obj)`.
+    /// `Retained::as_mut_ptr(obj)`.
     #[inline]
     #[allow(unknown_lints)] // New lint below
     #[allow(clippy::needless_pass_by_ref_mut)]
@@ -289,19 +299,19 @@ impl<T: ?Sized + Message> Id<T> {
     where
         T: Sized,
     {
-        this.map(|this| Id::into_raw(this))
+        this.map(|this| Retained::into_raw(this))
             .unwrap_or_else(ptr::null_mut)
     }
 }
 
 // TODO: Add ?Sized bound
-impl<T: Message> Id<T> {
+impl<T: Message> Retained<T> {
     /// Convert the type of the given object to another.
     ///
     /// This is equivalent to a `cast` between two pointers.
     ///
-    /// See [`Id::into_super`] and [`ProtocolObject::from_id`] for safe
-    /// alternatives.
+    /// See [`Retained::into_super`] and [`ProtocolObject::from_retained`] for
+    /// safe alternatives.
     ///
     /// This is common to do when you know that an object is a subclass of
     /// a specific class (e.g. casting an instance of `NSString` to `NSObject`
@@ -311,7 +321,7 @@ impl<T: Message> Id<T> {
     /// assumes no specific class.
     ///
     /// [`AnyObject`]: crate::runtime::AnyObject
-    /// [`ProtocolObject::from_id`]: crate::runtime::ProtocolObject::from_id
+    /// [`ProtocolObject::from_retained`]: crate::runtime::ProtocolObject::from_retained
     ///
     ///
     /// # Safety
@@ -325,21 +335,21 @@ impl<T: Message> Id<T> {
     /// Additionally, you must ensure that any safety invariants that the new
     /// type has are upheld.
     ///
-    /// Note that it is not in general safe to cast e.g. `Id<NSString>` to
-    /// `Id<NSMutableString>`, even if you've checked at runtime that the
+    /// Note that it is not in general safe to cast e.g. `Retained<NSString>` to
+    /// `Retained<NSMutableString>`, even if you've checked at runtime that the
     /// object is an instance of `NSMutableString`! This is because
-    /// `Id<NSMutableString>` assumes the string is unique, whereas it may
-    /// have been cloned while being an `Id<NSString>`.
+    /// `Retained<NSMutableString>` assumes the string is unique, whereas it may
+    /// have been cloned while being an `Retained<NSString>`.
     #[inline]
-    pub unsafe fn cast<U: Message>(this: Self) -> Id<U> {
+    pub unsafe fn cast<U: Message>(this: Self) -> Retained<U> {
         let ptr = ManuallyDrop::new(this).ptr.cast();
         // SAFETY: The object is forgotten, so we have +1 retain count.
         //
         // Caller verifies that the returned object is of the correct type.
-        unsafe { Id::new_nonnull(ptr) }
+        unsafe { Retained::new_nonnull(ptr) }
     }
 
-    /// Retain the pointer and construct an [`Id`] from it.
+    /// Retain the pointer and construct an [`Retained`] from it.
     ///
     /// Returns `None` if the pointer was NULL.
     ///
@@ -348,7 +358,7 @@ impl<T: Message> Id<T> {
     /// while you work on it.
     ///
     /// For normal Objective-C methods, you may want to use
-    /// [`Id::retain_autoreleased`] instead, as that is usually more
+    /// [`Retained::retain_autoreleased`] instead, as that is usually more
     /// performant.
     ///
     /// See [`ClassType::retain`] for a safe alternative.
@@ -358,7 +368,7 @@ impl<T: Message> Id<T> {
     ///
     /// If the object is mutable, the caller must ensure that there are no
     /// other pointers or references to the object, such that the returned
-    /// `Id` pointer is unique.
+    /// `Retained` pointer is unique.
     ///
     /// Additionally, the pointer must be valid as a reference (aligned,
     /// dereferencable and initialized, see the [`std::ptr`] module for more
@@ -370,7 +380,7 @@ impl<T: Message> Id<T> {
     /// [`std::ptr`]: core::ptr
     #[doc(alias = "objc_retain")]
     #[inline]
-    pub unsafe fn retain(ptr: *mut T) -> Option<Id<T>> {
+    pub unsafe fn retain(ptr: *mut T) -> Option<Retained<T>> {
         // SAFETY: The caller upholds that the pointer is valid
         let res: *mut T = unsafe { objc_retain_fast(ptr.cast()) }.cast();
         debug_assert_eq!(res, ptr, "objc_retain did not return the same pointer");
@@ -383,7 +393,7 @@ impl<T: Message> Id<T> {
     /// This is useful when calling Objective-C methods that return
     /// autoreleased objects, see [Cocoa's Memory Management Policy][mmRules].
     ///
-    /// This has exactly the same semantics as [`Id::retain`], except it can
+    /// This has exactly the same semantics as [`Retained::retain`], except it can
     /// sometimes avoid putting the object into the autorelease pool, possibly
     /// yielding increased speed and reducing memory pressure.
     ///
@@ -396,10 +406,10 @@ impl<T: Message> Id<T> {
     ///
     /// # Safety
     ///
-    /// Same as [`Id::retain`].
+    /// Same as [`Retained::retain`].
     #[doc(alias = "objc_retainAutoreleasedReturnValue")]
     #[inline]
-    pub unsafe fn retain_autoreleased(ptr: *mut T) -> Option<Id<T>> {
+    pub unsafe fn retain_autoreleased(ptr: *mut T) -> Option<Retained<T>> {
         // Add magic nop instruction to participate in the fast autorelease
         // scheme.
         //
@@ -480,7 +490,7 @@ impl<T: Message> Id<T> {
             };
         }
 
-        // SAFETY: Same as `Id::retain`, this is just an optimization.
+        // SAFETY: Same as `Retained::retain`, this is just an optimization.
         let res: *mut T = unsafe { ffi::objc_retainAutoreleasedReturnValue(ptr.cast()) }.cast();
 
         // Ideally, we'd be able to specify that the above call should never
@@ -510,11 +520,11 @@ impl<T: Message> Id<T> {
             "objc_retainAutoreleasedReturnValue did not return the same pointer"
         );
 
-        // SAFETY: Same as `Id::retain`.
+        // SAFETY: Same as `Retained::retain`.
         unsafe { Self::from_raw(res) }
     }
 
-    /// Autoreleases the [`Id`], returning a pointer.
+    /// Autoreleases the [`Retained`], returning a pointer.
     ///
     /// The object is not immediately released, but will be when the innermost
     /// / current autorelease pool (given as a parameter) is drained.
@@ -523,11 +533,11 @@ impl<T: Message> Id<T> {
     /// parameter passed as `Option<&mut *mut NSError>`, and you want to
     /// create and autorelease an error before returning.
     ///
-    /// See [`Id::autorelease`] and [`Id::autorelease_mut`] for alternatives
+    /// See [`Retained::autorelease`] and [`Retained::autorelease_mut`] for alternatives
     /// that yield safe references.
     ///
     /// This is an associated method, and must be called as
-    /// `Id::autorelease_ptr(obj)`.
+    /// `Retained::autorelease_ptr(obj)`.
     #[doc(alias = "objc_autorelease")]
     #[must_use = "if you don't intend to use the object any more, drop it as usual"]
     #[inline]
@@ -543,15 +553,15 @@ impl<T: Message> Id<T> {
         res
     }
 
-    /// Autoreleases the [`Id`], returning a reference bound to the pool.
+    /// Autoreleases the [`Retained`], returning a reference bound to the pool.
     ///
     /// The object is not immediately released, but will be when the innermost
     /// / current autorelease pool (given as a parameter) is drained.
     ///
-    /// See [`Id::autorelease_mut`] for the mutable alternative.
+    /// See [`Retained::autorelease_mut`] for the mutable alternative.
     ///
     /// This is an associated method, and must be called as
-    /// `Id::autorelease(obj, pool)`.
+    /// `Retained::autorelease(obj, pool)`.
     #[doc(alias = "objc_autorelease")]
     #[must_use = "if you don't intend to use the object any more, drop it as usual"]
     #[inline]
@@ -562,16 +572,16 @@ impl<T: Message> Id<T> {
         unsafe { pool.ptr_as_ref(ptr) }
     }
 
-    /// Autoreleases the [`Id`], returning a mutable reference bound to the
+    /// Autoreleases the [`Retained`], returning a mutable reference bound to the
     /// pool.
     ///
     /// The object is not immediately released, but will be when the innermost
     /// / current autorelease pool (given as a parameter) is drained.
     ///
-    /// See [`Id::autorelease`] for the immutable alternative.
+    /// See [`Retained::autorelease`] for the immutable alternative.
     ///
     /// This is an associated method, and must be called as
-    /// `Id::autorelease_mut(obj, pool)`.
+    /// `Retained::autorelease_mut(obj, pool)`.
     #[doc(alias = "objc_autorelease")]
     #[must_use = "if you don't intend to use the object any more, drop it as usual"]
     #[inline]
@@ -584,7 +594,7 @@ impl<T: Message> Id<T> {
         // SAFETY:
         // - The pointer is valid as a reference.
         // - The object is safe as mutable because of the `T: IsMutable`
-        //   bound + the consumption of unique access to the `Id`.
+        //   bound + the consumption of unique access to the `Retained`.
         unsafe { pool.ptr_as_mut(ptr) }
     }
 
@@ -603,7 +613,7 @@ impl<T: Message> Id<T> {
         res
     }
 
-    /// Autoreleases and prepares the [`Id`] to be returned to Objective-C.
+    /// Autoreleases and prepares the [`Retained`] to be returned to Objective-C.
     ///
     /// The object is not immediately released, but will be when the innermost
     /// autorelease pool is drained.
@@ -612,7 +622,7 @@ impl<T: Message> Id<T> {
     /// will often find yourself in need of returning autoreleased objects to
     /// properly follow [Cocoa's Memory Management Policy][mmRules].
     ///
-    /// To that end, you could use [`Id::autorelease`], but that would require
+    /// To that end, you could use [`Retained::autorelease`], but that would require
     /// you to have an [`AutoreleasePool`] object at hand, which you often
     /// won't have in such cases. This function doesn't require a `pool`
     /// object (but as a downside returns a pointer instead of a reference).
@@ -620,7 +630,7 @@ impl<T: Message> Id<T> {
     /// This is also more efficient than a normal `autorelease`, since it
     /// makes a best effort attempt to hand off ownership of the retain count
     /// to a subsequent call to `objc_retainAutoreleasedReturnValue` /
-    /// [`Id::retain_autoreleased`] in the enclosing call frame.
+    /// [`Retained::retain_autoreleased`] in the enclosing call frame.
     ///
     /// This optimization relies heavily on this function being tail called,
     /// so make sure you only call this function at the end of your method.
@@ -631,20 +641,20 @@ impl<T: Message> Id<T> {
     ///
     /// # Example
     ///
-    /// Returning an `Id` from a declared method (note: the [`declare_class!`]
+    /// Returning an `Retained` from a declared method (note: the [`declare_class!`]
     /// macro supports doing this for you automatically).
     ///
     /// ```
     /// use objc2::{class, msg_send_id, sel};
     /// use objc2::declare::ClassBuilder;
-    /// use objc2::rc::Id;
+    /// use objc2::rc::Retained;
     /// use objc2::runtime::{AnyClass, AnyObject, Sel};
     ///
     /// let mut builder = ClassBuilder::new("ExampleObject", class!(NSObject)).unwrap();
     ///
     /// extern "C" fn get(cls: &AnyClass, _cmd: Sel) -> *mut AnyObject {
-    ///     let obj: Id<AnyObject> = unsafe { msg_send_id![cls, new] };
-    ///     Id::autorelease_return(obj)
+    ///     let obj: Retained<AnyObject> = unsafe { msg_send_id![cls, new] };
+    ///     Retained::autorelease_return(obj)
     /// }
     ///
     /// unsafe {
@@ -666,13 +676,13 @@ impl<T: Message> Id<T> {
     }
 }
 
-impl<T: ClassType + 'static> Id<T>
+impl<T: ClassType + 'static> Retained<T>
 where
     T::Super: 'static,
 {
     /// Convert the object into its superclass.
     #[inline]
-    pub fn into_super(this: Self) -> Id<T::Super> {
+    pub fn into_super(this: Self) -> Retained<T::Super> {
         // SAFETY:
         // - The casted-to type is a superclass of the type.
         // - Both types are `'static`, so no lifetime information is lost
@@ -683,7 +693,7 @@ where
 }
 
 // TODO: Add ?Sized bound
-impl<T: Message + IsIdCloneable> Clone for Id<T> {
+impl<T: Message + IsIdCloneable> Clone for Retained<T> {
     /// Makes a clone of the shared object.
     ///
     /// This increases the object's reference count.
@@ -693,14 +703,14 @@ impl<T: Message + IsIdCloneable> Clone for Id<T> {
     fn clone(&self) -> Self {
         // SAFETY:
         // - The object is known to not be mutable due to the `IsIdCloneable`
-        //   bound. Additionally, since the object is already an `Id`, types
+        //   bound. Additionally, since the object is already an `Retained`, types
         //   like `NSObject` and `NSString` that have a mutable subclass is
         //   also allowed (since even if the object is originally an
-        //   `Id<NSMutableString>`, by converting it into `Id<NSObject>` or
-        //   `Id<NSString>` that fact is wholly forgotten, and the object
+        //   `Retained<NSMutableString>`, by converting it into `Retained<NSObject>` or
+        //   `Retained<NSString>` that fact is wholly forgotten, and the object
         //   cannot ever be mutated again).
         // - The pointer is valid.
-        let obj = unsafe { Id::retain(self.ptr.as_ptr()) };
+        let obj = unsafe { Retained::retain(self.ptr.as_ptr()) };
         // SAFETY: `objc_retain` always returns the same object pointer, and
         // the pointer is guaranteed non-null.
         unsafe { obj.unwrap_unchecked() }
@@ -714,7 +724,7 @@ impl<T: Message + IsIdCloneable> Clone for Id<T> {
 /// borrowed data.
 ///
 /// [dropck_eyepatch]: https://doc.rust-lang.org/nightly/nomicon/dropck.html#an-escape-hatch
-impl<T: ?Sized> Drop for Id<T> {
+impl<T: ?Sized> Drop for Retained<T> {
     /// Releases the retained object.
     ///
     /// The contained object's destructor (`Drop` impl, if it has one) is
@@ -726,7 +736,7 @@ impl<T: ?Sized> Drop for Id<T> {
     fn drop(&mut self) {
         // We could technically run the destructor for `T` when it is mutable,
         // but that would be confusing and inconsistent since we cannot really
-        // guarantee that it is run if the `Id<T>` is passed to Objective-C.
+        // guarantee that it is run if the `Retained<T>` is passed to Objective-C.
 
         // SAFETY: The `ptr` is guaranteed to be valid and have at least one
         // retain count.
@@ -734,7 +744,7 @@ impl<T: ?Sized> Drop for Id<T> {
     }
 }
 
-impl<T: ?Sized> Deref for Id<T> {
+impl<T: ?Sized> Deref for Retained<T> {
     type Target = T;
 
     /// Obtain an immutable reference to the object.
@@ -747,18 +757,18 @@ impl<T: ?Sized> Deref for Id<T> {
     }
 }
 
-impl<T: ?Sized + IsMutable> DerefMut for Id<T> {
+impl<T: ?Sized + IsMutable> DerefMut for Retained<T> {
     /// Obtain a mutable reference to the object.
     #[inline]
     fn deref_mut(&mut self) -> &mut T {
         // SAFETY: The pointer's validity is verified when the type is
-        // created, and `Id` is the unique owner of the object because of the
+        // created, and `Retained` is the unique owner of the object because of the
         // `IsMutable` bound, so mutability is safe.
         unsafe { self.ptr.as_mut() }
     }
 }
 
-impl<T: ?Sized> fmt::Pointer for Id<T> {
+impl<T: ?Sized> fmt::Pointer for Retained<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Pointer::fmt(&self.ptr.as_ptr(), f)
     }
@@ -786,58 +796,58 @@ mod private {
     use crate::mutability;
 
     #[doc(hidden)]
-    pub trait IdSendSyncHelper<T: ?Sized>: mutability::Mutability {
+    pub trait SendSyncHelper<T: ?Sized>: mutability::Mutability {
         // TODO: Move this to be a hidden type under `Mutability` once GATs
         // are in our MSRV.
         type EquivalentType: ?Sized;
     }
 
-    impl<T: ?Sized> IdSendSyncHelper<T> for mutability::Root {
+    impl<T: ?Sized> SendSyncHelper<T> for mutability::Root {
         // To give us freedom in the future (no `Root` types implement any
         // auto traits anyhow).
         type EquivalentType = UnknownStorage<T>;
     }
 
-    impl<T: ?Sized> IdSendSyncHelper<T> for mutability::Immutable {
+    impl<T: ?Sized> SendSyncHelper<T> for mutability::Immutable {
         type EquivalentType = ArcLikeStorage<T>;
     }
 
-    impl<T: ?Sized> IdSendSyncHelper<T> for mutability::Mutable {
+    impl<T: ?Sized> SendSyncHelper<T> for mutability::Mutable {
         type EquivalentType = BoxLikeStorage<T>;
     }
 
-    impl<T: ?Sized, MS: ?Sized> IdSendSyncHelper<T> for mutability::ImmutableWithMutableSubclass<MS> {
+    impl<T: ?Sized, MS: ?Sized> SendSyncHelper<T> for mutability::ImmutableWithMutableSubclass<MS> {
         type EquivalentType = ArcLikeStorage<T>;
     }
 
-    impl<T: ?Sized, IS: ?Sized> IdSendSyncHelper<T> for mutability::MutableWithImmutableSuperclass<IS> {
+    impl<T: ?Sized, IS: ?Sized> SendSyncHelper<T> for mutability::MutableWithImmutableSuperclass<IS> {
         type EquivalentType = BoxLikeStorage<T>;
     }
 
-    impl<T: ?Sized> IdSendSyncHelper<T> for mutability::InteriorMutable {
+    impl<T: ?Sized> SendSyncHelper<T> for mutability::InteriorMutable {
         type EquivalentType = ArcLikeStorage<T>;
     }
 
-    impl<T: ?Sized> IdSendSyncHelper<T> for mutability::MainThreadOnly {
+    impl<T: ?Sized> SendSyncHelper<T> for mutability::MainThreadOnly {
         type EquivalentType = ArcLikeStorage<T>;
     }
 
     /// Helper struct for avoiding a gnarly ICE in `rustdoc` when generating
-    /// documentation for auto traits for `Id<T>` where `T: !ClassType`.
+    /// documentation for auto traits for `Retained<T>` where `T: !ClassType`.
     ///
     /// See related issues:
     /// - <https://github.com/rust-lang/rust/issues/91380>
     /// - <https://github.com/rust-lang/rust/issues/107715>
     pub struct EquivalentType<T: ?Sized + ClassType>(
-        <T::Mutability as IdSendSyncHelper<T>>::EquivalentType,
+        <T::Mutability as SendSyncHelper<T>>::EquivalentType,
     )
     where
-        T::Mutability: IdSendSyncHelper<T>;
+        T::Mutability: SendSyncHelper<T>;
 }
 
 // https://doc.rust-lang.org/nomicon/arc-mutex/arc-base.html#send-and-sync
 
-/// `Id<T>` is always `Send` if `T` is `Send + Sync`.
+/// `Retained<T>` is always `Send` if `T` is `Send + Sync`.
 ///
 /// Additionally, for mutable types, `T` doesn't have to be `Sync` (only
 /// requires `T: Send`), since it has unique access to the object.
@@ -846,28 +856,28 @@ mod private {
 // - `T: Send` is required because otherwise you could move the object to
 //   another thread and let `dealloc` get called there.
 // - If `T` is not mutable, `T: Sync` is required because otherwise you could
-//   clone `&Id<T>`, send it to another thread, and drop the clone last,
+//   clone `&Retained<T>`, send it to another thread, and drop the clone last,
 //   making `dealloc` get called on the other thread.
-unsafe impl<T: ?Sized + ClassType + Send> Send for Id<T>
+unsafe impl<T: ?Sized + ClassType + Send> Send for Retained<T>
 where
-    T::Mutability: private::IdSendSyncHelper<T>,
+    T::Mutability: private::SendSyncHelper<T>,
     private::EquivalentType<T>: Send,
 {
 }
 
-/// `Id<T>` is always `Sync` if `T` is `Send + Sync`.
+/// `Retained<T>` is always `Sync` if `T` is `Send + Sync`.
 ///
 /// Additionally, for mutable types, `T` doesn't have to be `Send` (only
 /// requires `T: Sync`), since it has unique access to the object.
 //
 // SAFETY:
-// - `T: Sync` is required because `&Id<T>` give access to `&T`.
+// - `T: Sync` is required because `&Retained<T>` give access to `&T`.
 // - If `T` is not mutable, `T: Send` is required because otherwise you could
-//   clone `&Id<T>` from another thread, and drop the clone last, making
+//   clone `&Retained<T>` from another thread, and drop the clone last, making
 //   `dealloc` get called on the other thread.
-unsafe impl<T: ?Sized + ClassType + Sync> Sync for Id<T>
+unsafe impl<T: ?Sized + ClassType + Sync> Sync for Retained<T>
 where
-    T::Mutability: private::IdSendSyncHelper<T>,
+    T::Mutability: private::SendSyncHelper<T>,
     private::EquivalentType<T>: Sync,
 {
 }
@@ -876,17 +886,17 @@ where
 //
 // See https://doc.rust-lang.org/1.54.0/src/alloc/boxed.rs.html#1652-1675
 // and the `Arc` implementation.
-impl<T: ?Sized> Unpin for Id<T> {}
+impl<T: ?Sized> Unpin for Retained<T> {}
 
-impl<T: ?Sized + RefUnwindSafe> RefUnwindSafe for Id<T> {}
+impl<T: ?Sized + RefUnwindSafe> RefUnwindSafe for Retained<T> {}
 
 // TODO: Relax this bound
-impl<T: ?Sized + RefUnwindSafe + UnwindSafe> UnwindSafe for Id<T> {}
+impl<T: ?Sized + RefUnwindSafe + UnwindSafe> UnwindSafe for Retained<T> {}
 
 #[cfg(doc)]
 #[allow(unused)]
-struct TestDocIdWithNonClassType {
-    id: Id<crate::runtime::AnyObject>,
+struct TestDocWithNonClassType {
+    id: Retained<crate::runtime::AnyObject>,
 }
 
 #[cfg(test)]
@@ -937,20 +947,20 @@ mod tests {
         unsafe impl Send for MutableSendSyncObject {}
         unsafe impl Sync for MutableSendSyncObject {}
 
-        assert_impl_all!(Id<AnyObject>: Unpin);
-        assert_not_impl_any!(Id<AnyObject>: Send, Sync, UnwindSafe, RefUnwindSafe);
+        assert_impl_all!(Retained<AnyObject>: Unpin);
+        assert_not_impl_any!(Retained<AnyObject>: Send, Sync, UnwindSafe, RefUnwindSafe);
 
-        assert_not_impl_any!(Id<ImmutableObject>: Send, Sync);
-        assert_not_impl_any!(Id<ImmutableSendObject>: Send, Sync);
-        assert_not_impl_any!(Id<ImmutableSyncObject>: Send, Sync);
-        assert_impl_all!(Id<ImmutableSendSyncObject>: Send, Sync);
+        assert_not_impl_any!(Retained<ImmutableObject>: Send, Sync);
+        assert_not_impl_any!(Retained<ImmutableSendObject>: Send, Sync);
+        assert_not_impl_any!(Retained<ImmutableSyncObject>: Send, Sync);
+        assert_impl_all!(Retained<ImmutableSendSyncObject>: Send, Sync);
 
-        assert_not_impl_any!(Id<MutableObject>: Send, Sync);
-        assert_not_impl_any!(Id<MutableSendObject>: Sync);
-        assert_impl_all!(Id<MutableSendObject>: Send);
-        assert_not_impl_any!(Id<MutableSyncObject>: Send);
-        assert_impl_all!(Id<MutableSyncObject>: Sync);
-        assert_impl_all!(Id<MutableSendSyncObject>: Send, Sync);
+        assert_not_impl_any!(Retained<MutableObject>: Send, Sync);
+        assert_not_impl_any!(Retained<MutableSendObject>: Sync);
+        assert_impl_all!(Retained<MutableSendObject>: Send);
+        assert_not_impl_any!(Retained<MutableSyncObject>: Send);
+        assert_impl_all!(Retained<MutableSyncObject>: Sync);
+        assert_impl_all!(Retained<MutableSendSyncObject>: Send, Sync);
     }
 
     #[test]
@@ -975,7 +985,7 @@ mod tests {
         let mut expected = ThreadTestData::current();
 
         autoreleasepool(|pool| {
-            let _ref = Id::autorelease(obj, pool);
+            let _ref = Retained::autorelease(obj, pool);
             expected.autorelease += 1;
             expected.assert_current();
             assert_eq!(cloned.retainCount(), 2);
@@ -985,7 +995,7 @@ mod tests {
         assert_eq!(cloned.retainCount(), 1);
 
         autoreleasepool(|pool| {
-            let _ref = Id::autorelease(cloned, pool);
+            let _ref = Retained::autorelease(cloned, pool);
             expected.autorelease += 1;
             expected.assert_current();
         });
@@ -1009,7 +1019,7 @@ mod tests {
         assert_eq!(cloned.retainCount(), 2);
         assert_eq!(obj.retainCount(), 2);
 
-        let obj = Id::into_super(Id::into_super(obj));
+        let obj = Retained::into_super(Retained::into_super(obj));
         let cloned_and_type_erased = obj.clone();
         expected.retain += 1;
         expected.assert_current();
@@ -1039,23 +1049,23 @@ mod tests {
         let obj = RcTestObject::new();
         let mut expected = ThreadTestData::current();
 
-        let ptr = Id::as_ptr(&obj) as *mut RcTestObject;
-        let _obj2 = unsafe { Id::retain_autoreleased(ptr) }.unwrap();
+        let ptr = Retained::as_ptr(&obj) as *mut RcTestObject;
+        let _obj2 = unsafe { Retained::retain_autoreleased(ptr) }.unwrap();
         expected.retain += 1;
         expected.assert_current();
     }
 
     #[test]
     fn test_cast() {
-        let obj: Id<RcTestObject> = RcTestObject::new();
+        let obj: Retained<RcTestObject> = RcTestObject::new();
         let expected = ThreadTestData::current();
 
         // SAFETY: Any object can be cast to `AnyObject`
-        let obj: Id<AnyObject> = unsafe { Id::cast(obj) };
+        let obj: Retained<AnyObject> = unsafe { Retained::cast(obj) };
         expected.assert_current();
 
         // SAFETY: The object was originally `__RcTestObject`
-        let _obj: Id<RcTestObject> = unsafe { Id::cast(obj) };
+        let _obj: Retained<RcTestObject> = unsafe { Retained::cast(obj) };
         expected.assert_current();
     }
 
@@ -1065,9 +1075,9 @@ mod tests {
         p: PhantomData<&'a str>,
     }
 
-    /// Test that `Id<T>` is covariant over `T`.
+    /// Test that `Retained<T>` is covariant over `T`.
     #[allow(unused)]
-    fn assert_id_variance<'b>(obj: Id<MyObject<'static>>) -> Id<MyObject<'b>> {
+    fn assert_id_variance<'b>(obj: Retained<MyObject<'static>>) -> Retained<MyObject<'b>> {
         obj
     }
 
@@ -1075,7 +1085,7 @@ mod tests {
     fn test_size_of() {
         let ptr_size = size_of::<&NSObject>();
 
-        assert_eq!(size_of::<Id<NSObject>>(), ptr_size);
-        assert_eq!(size_of::<Option<Id<NSObject>>>(), ptr_size);
+        assert_eq!(size_of::<Retained<NSObject>>(), ptr_size);
+        assert_eq!(size_of::<Option<Retained<NSObject>>>(), ptr_size);
     }
 }
