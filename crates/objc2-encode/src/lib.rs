@@ -40,7 +40,7 @@
 #![warn(clippy::missing_errors_doc)]
 #![warn(clippy::missing_panics_doc)]
 // Update in Cargo.toml as well.
-#![doc(html_root_url = "https://docs.rs/objc2-encode/4.0.1")]
+#![doc(html_root_url = "https://docs.rs/objc2-encode/4.0.2")]
 
 #[cfg(not(feature = "alloc"))]
 compile_error!("the `alloc` feature currently must be enabled");
