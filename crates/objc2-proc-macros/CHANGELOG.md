@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## 0.1.2 - 2024-05-21
+
 ### Deprecated
 * Deprecated the `apple` Cargo feature flag, it is assumed by default on Apple
   platforms.
